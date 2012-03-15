@@ -12,26 +12,26 @@ void testApp::setup(){
 
 	setOFRoot(getOFRootFromConfig());
 
-	int plat = ofGetTargetPlatform();
+	int targ = ofGetTargetPlatform();
 	//plat = OF_TARGET_IPHONE;
 	
-    setupForPlatform(plat);
+    setupForTarget(targ);
 
     if(projectPath!=""){
-        project->setup(getOFRelPath(projectPath));
+        project->setup(target);
         project->create(projectPath);
         vector < string > addons;
         parseAddonsDotMake(project->getPath() + "addons.make", addons);
         for (int i = 0; i < addons.size(); i++){
             ofAddon addon;
-            addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
+            addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
             project->addAddon(addon);
         }
-        project->save(projectPath);
+        project->save();
         std::exit(0);
     }
 
-    panelAddons.setup("addons");
+    panelAddons.setup();
     ofDirectory addons(ofFilePath::join(getOFRoot(),"addons"));
     addons.listDir();
     for(int i=0;i<(int)addons.size();i++){
@@ -68,63 +68,64 @@ void testApp::setup(){
 	ofSetFrameRate(60);
 }
 
-void testApp::setupForPlatform(int plat){
-	if(project){
+void testApp::setupForTarget(int targ){
+	
+    if(project){
 		delete project;
 	}
 	
-	switch(plat){
-    case OF_TARGET_OSX:
-    	project = new xcodeProject;
-    	platform = "osx";
-		((xcodeProject *)project)->setupForPlatform(platform);
-    	break;
-    case OF_TARGET_WINGCC:
-    	project = new CBWinProject;
-    	platform = "wincb";
-    	break;
-    case OF_TARGET_WINVS:
-    	project = new visualStudioProject;
-    	platform = "vs2010";
-    	break;
-    case OF_TARGET_IPHONE:
-		project = new xcodeProject();
-    	platform = "ios";		
-		((xcodeProject *)project)->setupForPlatform(platform);		
-    	break;
-    case OF_TARGET_ANDROID:
-    	break;
-    case OF_TARGET_LINUX:
-    	project = new CBLinuxProject;
-    	platform = "linux";
-    	break;
-    case OF_TARGET_LINUX64:
-    	project = new CBLinuxProject;
-    	platform = "linux64";
-    	break;
+	switch(targ){
+        case OF_TARGET_OSX:
+            project = new xcodeProject;
+            project->setup("osx");
+            target = "osx";
+            break;
+    //    case OF_TARGET_WINGCC:
+    //    	project = new CBWinProject;
+    //    	target = "wincb";
+    //    	break;
+    //    case OF_TARGET_WINVS:
+    //    	project = new visualStudioProject;
+    //    	target = "vs2010";
+    //    	break;
+    //    case OF_TARGET_IPHONE:
+    //		project = new xcodeProject();
+    //    	target = "ios";		
+    //		((xcodeProject *)project)->setupForPlatform(target);		
+    //    	break;
+    //    case OF_TARGET_ANDROID:
+    //    	break;
+    //    case OF_TARGET_LINUX:
+    //    	project = new CBLinuxProject;
+    //    	target = "linux";
+    //    	break;
+    //    case OF_TARGET_LINUX64:
+    //    	project = new CBLinuxProject;
+    //    	target = "linux64";
+    //    	break;
     }
 }
 
 void testApp::generateExamplesCB(bool & pressed){
 
-	vector <int> platformsToMake;
-	if( osxToggle )		platformsToMake.push_back(OF_TARGET_OSX);
-	if( iosToggle )		platformsToMake.push_back(OF_TARGET_IPHONE);
-	if( wincbToggle )	platformsToMake.push_back(OF_TARGET_WINGCC);
-	if( winvsToggle )	platformsToMake.push_back(OF_TARGET_WINVS);
-	if( linuxcbToggle )	platformsToMake.push_back(OF_TARGET_LINUX);
+	vector <int> targetsToMake;
+	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
+	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
+	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
+	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
+	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
 	
-	if( platformsToMake.size() == 0 ){
+	if( targetsToMake.size() == 0 ){
 		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
 	}
 
-	for(int i = 0; i < platformsToMake.size(); i++){
-		setupForPlatform(platformsToMake[i]);
+	for(int i = 0; i < targetsToMake.size(); i++){
+		setupForTarget(targetsToMake[i]);
 		generateExamples();
 	}
 	
-	int plat = ofGetTargetPlatform();	
-    setupForPlatform(plat);
+	int target = ofGetTargetPlatform();	
+    setupForTarget(target);
 }
 
 void testApp::generateExamples(){
@@ -134,7 +135,7 @@ void testApp::generateExamples(){
 
     for (int i = 0; i < dir.size(); i++){
         
-		if( platform == "ios" ){
+		if( target == "ios" ){
 			if( dir.getName(i) != "ios" ) continue;
 		}else{
 			if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
@@ -144,17 +145,17 @@ void testApp::generateExamples(){
         subdir.listDir(dir.getPath(i));
         
         for (int j = 0; j < subdir.size(); j++){
-            project->setup();
+            project->setup(target);
             project->create(subdir.getPath(j));
             vector < string > addons;
             parseAddonsDotMake(project->getPath() + "addons.make", addons);
             for (int i = 0; i < addons.size(); i++){
                 ofAddon addon;
                 addon.pathToOF = getOFRelPath(subdir.getPath(j));
-                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
+                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
                 project->addAddon(addon);
             }
-            project->save(subdir.getPath(j));
+            project->save();
         }
     }
 }
@@ -164,7 +165,7 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
     
-    project->setup(getOFRelPath(res.filePath));
+    project->setup(target);
     project->create(res.filePath);
     vector<string> addonsToggles = panelAddons.getControlNames();
 	for (int i = 0; i < addonsToggles.size(); i++){
@@ -172,13 +173,13 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
 		if(toggle){
 			ofAddon addon;
             addon.pathToOF = getOFRelPath(res.filePath);
-			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
+			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
 			printf("adding %s addons \n", addonsToggles[i].c_str());
             project->addAddon(addon);
             
 		}
 	}
-    project->save(res.filePath);
+    project->save();
     
     return res;
 }
@@ -188,7 +189,7 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
-    project->setup(getOFRelPath(res.filePath));
+    project->setup(target);
 	project->create(res.filePath);
 	vector<string> addonsToggles = panelAddons.getControlNames();
 	for (int i = 0; i < addonsToggles.size(); i++){
@@ -196,13 +197,13 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 		if(toggle){
 			ofAddon addon;
 			addon.pathToOF = getOFRelPath(res.filePath);
-			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
+			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
 			printf("adding %s addons \n", addonsToggles[i].c_str());
 			project->addAddon(addon);
 
 		}
 	}
-	project->save(res.filePath);
+	project->save();
 
 	return res;
 }
