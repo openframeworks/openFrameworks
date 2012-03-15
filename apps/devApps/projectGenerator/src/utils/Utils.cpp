@@ -72,11 +72,11 @@ std::string LoadFileAsString(const std::string & fn)
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    if( ofFile::doesFileExist(fileName) ){
-		printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
+		//printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
 		std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
 		ifile.seekg(0,std::ios_base::end);
 		long s=ifile.tellg();
-		cout << "size of s is " << s << endl; 
+		//cout << "size of s is " << s << endl; 
 		char *buffer=new char[s];
 		ifile.seekg(0);
 		ifile.read(buffer,s);
@@ -90,7 +90,9 @@ void findandreplaceInTexfile (string fileName, std::string tFind, std::string tR
 		std::ofstream ofile(ofToDataPath(fileName).c_str());
 		ofile.write(txt.c_str(),txt.size());
 		//return 0;
-    }
+   } else {
+       ; // some error checking here would be good. 
+   }
 }
 
 
@@ -286,8 +288,6 @@ string getOFRelPath(string from){
     path.makeAbsolute();
 
     
-    cout << "getOFRelPath " << base.toString() << " " << path.toString() << endl;
-    
 	string relPath;
 	if (path.toString() == base.toString()){
 		// do something.
@@ -296,6 +296,7 @@ string getOFRelPath(string from){
 	int maxx = MAX(base.depth(), path.depth());
 	for (int i = 0; i <= maxx; i++){
 
+        
 		bool bRunOut = false;
 		bool bChanged = false;
 		if (i <= base.depth() && i <= path.depth()){
@@ -307,8 +308,10 @@ string getOFRelPath(string from){
 		} else {
 			bRunOut = true;
 		}
+        
+        
 		if (bRunOut == true || bChanged == true){
-			for (int j = i; j <= base.depth(); j++){
+            for (int j = i; j < base.depth(); j++){
 				relPath += "../";
 			}
 			for (int j = i; j <= path.depth(); j++){
@@ -318,7 +321,6 @@ string getOFRelPath(string from){
 		}
 	}
     
-    cout << relPath << " ---- " << endl;
     
     
     return relPath;

@@ -21,17 +21,19 @@ public:
 		Linux64
 	};
 
-    CBLinuxProject(Arch arch);
-    CBLinuxProject();
+   
+    void setup();
 
-    void setArch(Arch arch);
-	
-    void setup(string ofRoot= "../../../");
+    bool createProjectFile();
+    bool loadProjectFile();
+    bool saveProjectFile();
 
+    /*
 	bool load(string path);
 	bool create(string path);
 	bool save(string path){return true;}
-
+     */
+    
 	void addSrc(string srcName, string folder);
 	void addInclude(string includeName);
 	void addLibrary(string libraryName);

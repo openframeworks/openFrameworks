@@ -1,17 +1,39 @@
 #include "xcodeProject.h"
 #include <iostream>
-#include "Utils.h"
+
+
+
+/*
+ 
+xcode project files are plists but we can convert to xml, using plutil: 
+ 
+plutil -convert xml1 -o - myproj.xcodeproj/project.pbxproj 
+ 
+as an XML file, it's very odd and fairly unreadable, which is why this code is pretty gnarly. 
+ 
+some additional things that might be useful to try in the future: 
+ 
+(json parsing)  http://emilloer.com/2011/08/15/dealing-with-project-dot-pbxproj-in-ruby/
+(objective c) https://github.com/expanz/xcode-editor  
+(plist c++) https://github.com/animetrics/PlistCpp
+ 
+*/
+
+
+
+
+// we are going to use POCO for computing the MD5 Hash of file names and paths, etc: 
 
 #include "Poco/HMACEngine.h"
 #include "Poco/MD5Engine.h"
-
 using Poco::DigestEngine;
 using Poco::HMACEngine;
 using Poco::MD5Engine;
 
+// to add things to the xcode project file, we need some template XML around
+// these are common things we'll want to add
+
 #define STRINGIFY(A)  #A
-
-
 
 //-----------------------------------------------------------------
 const char PBXGroup[] = 
@@ -104,17 +126,7 @@ STRINGIFY(
 );
 
 
-string xcodeProject::LOG_NAME = "xcodeProject";
-
-
-void xcodeProject::setup(string _ofRoot){
-    templatePath	= ofFilePath::join(getOFRoot(),"scripts/"+target+"/template/");
-    //templatePath	= ofToDataPath("xcode/template/",true);
-    ofRoot			= _ofRoot;
-}
-
-void xcodeProject::setupForPlatform(string targetPlatform){
-	target				= targetPlatform;
+void xcodeProject::setup(){
 	if( target == "osx" ){	
 		srcUUID			= "E4B69E1C0A3A1BDC003C02F2";
 		addonUUID		= "BB4B014C10F69532006C3DED"; 
@@ -127,175 +139,58 @@ void xcodeProject::setupForPlatform(string targetPlatform){
 }
 
 
-//void xcodeProject::parseAddons(){
-//	addons.clear();
-//	ofFile addonsmake(projectDir+"addons.make");
-//	if(!addonsmake.exists()){
-//		addonsmake.create();
-//		addonsmake.open(projectDir+"addons.make");
-//	}
-//	ofBuffer addonsmakebuff;
-//	addonsmake >> addonsmakebuff;
-//	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
-//		string line = addonsmakebuff.getNextLine();
-//		if(line!=""){
-//			addons.push_back(ofAddon(getOFRoot()+"/addons/"+line,"xcode"));
-//		}
-//	}
-//}
-
 void xcodeProject::saveScheme(){
     ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/");
     dir.create(true);
-    
-     string schemeTo = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + ".xcscheme";
-    
+    string schemeTo = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + ".xcscheme";
     ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample.xcscheme", schemeTo);
-    
     cout << "trying to copy " << projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/emptyExample.xcscheme" << " ------ > " << schemeTo <<endl;
     findandreplaceInTexfile(schemeTo, "emptyExample", projectName);
-    
-    
     string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
     ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
-    
-    
-    //xcshareddata/WorkspaceSettings.xcsettings
-    
-    
 }
 
 
 void xcodeProject::saveWorkspaceXML(){
-    
-    
     string xcodeProjectWorkspace = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/contents.xcworkspacedata";
-    
-    
     ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/");
     dir.create(true);
-    
     cout << "trying copy " << templatePath + "emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata" << " -----> " << xcodeProjectWorkspace <<endl;
-    
-    
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
-    
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
-    
 }
 
 
-bool xcodeProject::create(string path){
+bool xcodeProject::createProjectFile(){
     
-    projectDir = ofFilePath::addTrailingSlash(path);
-	projectName = ofFilePath::getFileName(path);
-	
-    //cout << "project dir:" << projectDir;
-    //cout << "project name:" << projectName;
+    // todo: some error checking. 
     
-    bool bDoesDirExist = false;
+    string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
+    ofDirectory xcodeDir(xcodeProject);
+    xcodeDir.create(true);
     
-    ofDirectory project(projectDir);    // this is a directory, really?
-	if(project.exists()){
-        bDoesDirExist = true;
-    }
     
-    if (!bDoesDirExist){
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj/project.pbxproj"), 
+                       ofFilePath::join(xcodeProject, "project.pbxproj"), true, true);
+            
     
-        ofFile project(projectDir + projectName + ".xcodeproj");    // this is a directory, really?
-        
-        if(!project.exists()){
-            ofLogVerbose(LOG_NAME) << "creating non existent project";
-            ofDirectory dir(projectDir);
-            dir.create(true);
-			
-			ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj"),projectDir);
-    		ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir);
-    		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-    		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);		
-			
-			if( target == "osx" ){
-				ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
-			}else{
-				ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir);
-				ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir);
-			}
-			
-            load(ofFilePath::join(projectDir, "emptyExample.xcodeproj/project.pbxproj"));
-            renameProject();
-            string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-            ofDirectory xcodeDir(xcodeProject);
-            xcodeDir.create(true);
-            saveFile(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
-            ofDirectory::removeDirectory(ofFilePath::join(projectDir, "emptyExample.xcodeproj"), true);
-            saveWorkspaceXML();
-            saveScheme();
-            
-            
-            
-        } else {
-            // this exists, what to do now?  (load and parse?)
-        }
-        
-    } else {
-        printf("this exists ! \n");
-        vector < string > fileNames;
-       
-        getFilesRecursively(projectDir + "src", fileNames);
-
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir);
-
-		if( target == "osx" ){
-			ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
-		}else{
-			ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir);
-			ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir);
-    		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);			
-		}
-
-        load(ofFilePath::join(projectDir, "emptyExample.xcodeproj/project.pbxproj"));
-        renameProject();
-
-        string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-        ofDirectory xcodeDir(xcodeProject);
-        xcodeDir.create(true);
-        saveFile(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
-        
-        
-        if (projectName != "emptyExample"){
-            ofDirectory::removeDirectory(ofFilePath::join(projectDir, "emptyExample.xcodeproj"), true);
-        }
-        
-        saveWorkspaceXML();
-        saveScheme();
-        
-        for (int i = 0; i < fileNames.size(); i++){
-            
-            string first, last;
-            splitFromFirst(fileNames[i],projectName, first, last);  
-            
-            // last is now something like " /src/main.cpp"
-            // drop the trailing slash;
-            last.erase(last.begin());
-            
-            string fileName = last;
-            splitFromLast(fileName, "/", first, last);  
-            
-            if (fileName != "src/testApp.cpp" &&
-                fileName != "src/testApp.h" &&
-                fileName != "src/main.cpp" && 
-				fileName != "src/testApp.mm" &&
-				fileName != "src/main.mm"){
-					addSrc(fileName, first);
-            }
-        }
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir, true, true);
+    
+    if( target == "osx" ){
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
+    }else{
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir);
     }
 
-    return bLoaded;
+    // this is for xcode 4 sceme issues. but I'm not sure this is right. 
     
+    saveWorkspaceXML();
+    saveScheme();
     
+    return true;
 }
+
 
 
 void xcodeProject::renameProject(){
@@ -303,41 +198,52 @@ void xcodeProject::renameProject(){
     for (pugi::xpath_node_set::const_iterator it = uuidSet.begin(); it != uuidSet.end(); ++it){
         pugi::xpath_node node = *it;
         string val = it->node().first_child().value();
-        
         findandreplace(val, "emptyExample",  projectName);
-        
         it->node().first_child().set_value(val.c_str());
-        //( std::string& tInput, std::string tFind, std::string tReplace ) 
     }
 }
 
 
-bool xcodeProject::load(string path){
-    pugi::xml_parse_result result = doc.load_file(ofToDataPath(path).c_str());
+bool xcodeProject::loadProjectFile(){
+    string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
+    renameProject();
+    pugi::xml_parse_result result = doc.load_file(ofToDataPath(fileName).c_str());
     
-    //bLoaded = true;
+    return result.status==pugi::status_ok;
     
-	return result.status==pugi::status_ok;
 }  
 
 
-void xcodeProject::saveFile(string fileName){
-    doc.save_file(ofToDataPath(fileName).c_str());
-}
 
-bool xcodeProject::save(string fileName){
+bool xcodeProject::saveProjectFile(){
     
-    if (ofRoot != "../../../"){
-            string relPath2 = ofRoot;
-            relPath2.erase(relPath2.end()-1);
-            findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
-            findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", ofRoot);
-            findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
-        
+    
+    
+    // does this belong here?
+    
+    renameProject();
+    
+    // save the project out:
+    
+    string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
+    bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
+    string relRoot = getOFRelPath(projectDir);
+    
+    
+    
+    cout << "projectDir " << projectDir << endl;
+    cout << "relRoot " << relRoot << endl;
+    
+    
+    if (relRoot != "../../../"){
+        string relPath2 = relRoot;
+        relPath2.erase(relPath2.end()-1);
+        findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", relRoot);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
     }
-    return true;
-
-
+    
+    return bOk;
 }  
 
 
@@ -621,7 +527,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
         
     }
         
-    saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+    //saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 } 
 
 
@@ -668,15 +574,12 @@ void xcodeProject::addInclude(string includeName){
         addInclude(includeName);
     }
     
-    saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+    //saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 
 }  
         
         
 void xcodeProject::addLibrary(string libraryName){
-    
-    // split apart path or not?
-    
     
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'OTHER_LDFLAGS')]/following-sibling::node()[1]");
@@ -684,9 +587,7 @@ void xcodeProject::addLibrary(string libraryName){
     
     
     if (headerArray.size() > 0){
-        
         for (pugi::xpath_node_set::const_iterator it = headerArray.begin(); it != headerArray.end(); ++it){
-            
             pugi::xpath_node node = *it;
             node.node().append_child("string").append_child(pugi::node_pcdata).set_value(libraryName.c_str());
         }
@@ -698,8 +599,7 @@ void xcodeProject::addLibrary(string libraryName){
         sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'buildSettings')]/following-sibling::node()[1]");
         
         pugi::xpath_node_set dictArray = doc.select_nodes(query);
-        
-        
+
         for (pugi::xpath_node_set::const_iterator it = dictArray.begin(); it != dictArray.end(); ++it){
             pugi::xpath_node node = *it;
             
@@ -719,34 +619,6 @@ void xcodeProject::addLibrary(string libraryName){
         addLibrary(libraryName);
     }
     
-    saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+    //saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 }
 
-void xcodeProject::addAddon(ofAddon & addon){
-    
-    printf("adding addon ---------------------------- \n");
-    for(int i=0;i<(int)addon.includePaths.size();i++){
-		cout << "include path: " << addon.includePaths[i] << endl;
-        addInclude(addon.includePaths[i]);
-	}
-    
-	for(int i=0;i<(int)addon.libs.size();i++){
-        cout << "libs : " << addon.libs[i] << endl;
-		addLibrary(addon.libs[i]);
-	}
-    
-	for(int i=0;i< addon.srcFiles.size(); i++){
-        cout << "src : " << addon.srcFiles[i] << "(" << addon.filesToFolders[addon.srcFiles[i]] << ")" << endl;
-        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-	}
-    printf("done adding addon ---------------------------- \n");
-    
-}
-
-string xcodeProject::getName(){
-    return projectName;
-}
-
-string xcodeProject::getPath(){
-    return projectDir;
-}
