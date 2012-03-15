@@ -587,9 +587,9 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 		return false;
 	}
 
-	if( overwrite ){
-		if( ofFile::doesFileExist(pathDst) ){
-			ofFile::removeFile(pathDst);
+	if( ofFile::doesFileExist(pathDst) ){
+        if( overwrite ){
+            ofFile::removeFile(pathDst);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::copyFromTo destination file/folder exists, use bool overwrite if you want to overwrite destination file/folder");
 			return false;
