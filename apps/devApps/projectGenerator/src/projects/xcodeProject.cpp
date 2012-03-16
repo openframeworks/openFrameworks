@@ -229,12 +229,7 @@ bool xcodeProject::saveProjectFile(){
     bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
     string relRoot = getOFRelPath(projectDir);
     
-    
-    
-    cout << "projectDir " << projectDir << endl;
-    cout << "relRoot " << relRoot << endl;
-    
-    
+
     if (relRoot != "../../../"){
         string relPath2 = relRoot;
         relPath2.erase(relPath2.end()-1);

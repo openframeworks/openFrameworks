@@ -29,10 +29,9 @@ bool CBLinuxProject::createProjectFile(){
     ofFile project(projectDir + projectName + ".cbp");
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.cbp"),project.path());
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),projectDir);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),ofFilePath::join(projectDir,"Makefile"));
     ofFile config(ofFilePath::join(projectDir,"config.make"));
-    if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),projectDir);
-    
+    if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),config.path());
     return true;
 }
 bool CBLinuxProject::loadProjectFile(){
@@ -60,6 +59,19 @@ bool CBLinuxProject::saveProjectFile(){
         }
     }
     doc.save_file((projectDir + projectName + ".cbp").c_str());
+    
+    //let's do some renaming: 
+    string relRoot = getOFRelPath(projectDir);
+    
+    if (relRoot != "../../../"){
+        string relPath2 = relRoot;
+        relPath2.erase(relPath2.end()-1);
+        findandreplaceInTexfile(projectDir + "config.make", "../../..", relPath2);
+        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "../../../", relRoot);
+        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
+    }
+    
+    
 }
 
 

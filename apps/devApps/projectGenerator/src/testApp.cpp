@@ -95,14 +95,14 @@ void testApp::setupForTarget(int targ){
     //    	break;
     //    case OF_TARGET_ANDROID:
     //    	break;
-    //    case OF_TARGET_LINUX:
-    //    	project = new CBLinuxProject;
-    //    	target = "linux";
-    //    	break;
-    //    case OF_TARGET_LINUX64:
-    //    	project = new CBLinuxProject;
-    //    	target = "linux64";
-    //    	break;
+        case OF_TARGET_LINUX:
+        	project = new CBLinuxProject;
+        	target = "linux";
+        	break;
+        case OF_TARGET_LINUX64:
+        	project = new CBLinuxProject;
+        	target = "linux64";
+        	break;
     }
 }
 
