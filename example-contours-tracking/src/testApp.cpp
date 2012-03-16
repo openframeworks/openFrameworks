@@ -13,8 +13,8 @@ void testApp::setup() {
 	contourFinder.setMinAreaRadius(1);
 	contourFinder.setMaxAreaRadius(100);
 	contourFinder.setThreshold(15);
-	contourFinder.getTracker().setMaximumAge(4);
-	contourFinder.getTracker().setMaximumAge(32);
+	contourFinder.getTracker().setMaximumLastSeen(4);
+	contourFinder.getTracker().setMaximumDistance(32);
 	
 	showLabels = true;
 }
@@ -30,6 +30,7 @@ void testApp::update() {
 void testApp::draw() {
 	ofSetBackgroundAuto(showLabels);
 	RectTracker& tracker = contourFinder.getTracker();
+	
 	if(showLabels) {
 		ofSetColor(255);
 		movie.draw(0, 0);
@@ -63,6 +64,32 @@ void testApp::draw() {
 				ofLine(previousPosition, currentPosition);
 			}
 		}
+	}
+	
+	// this chunk of code visualizes the creation and destruction of labels
+	vector<unsigned int>& currentLabels = tracker.getCurrentLabels();
+	vector<unsigned int>& previousLabels = tracker.getPreviousLabels();
+	vector<unsigned int>& newLabels = tracker.getNewLabels();
+	vector<unsigned int>& deadLabels = tracker.getDeadLabels();
+	ofSetColor(cyanPrint);
+	for(int i = 0; i < currentLabels.size(); i++) {
+		int j = currentLabels[i];
+		ofLine(j, 0, j, 4);
+	}
+	ofSetColor(magentaPrint);
+	for(int i = 0; i < previousLabels.size(); i++) {
+		int j = previousLabels[i];
+		ofLine(j, 4, j, 8);
+	}
+	ofSetColor(yellowPrint);
+	for(int i = 0; i < newLabels.size(); i++) {
+		int j = newLabels[i];
+		ofLine(j, 8, j, 12);
+	}
+	ofSetColor(ofColor::white);
+	for(int i = 0; i < deadLabels.size(); i++) {
+		int j = deadLabels[i];
+		ofLine(j, 12, j, 16);
 	}
 }
 

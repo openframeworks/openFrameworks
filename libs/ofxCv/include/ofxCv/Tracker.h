@@ -2,8 +2,8 @@
  the tracker is used for tracking the identities of a collection of objects that
  change slightly over time. example applications are in contour tracking and
  face tracking. when using a tracker, the two most important things to know are
- the maximumAge and maximumDistance. maximumAge determines how many frames an
- object can last without being seen until the tracker forgets about it.
+ the maximumLastSeen and maximumDistance. maximumLastSeen determines how many
+ frames an object can last without being seen until the tracker forgets about it.
  maximumDistance determines how far an object can move until the tracker
  considers it a new object.
  
@@ -104,7 +104,7 @@ namespace ofxCv {
 		std::map<unsigned int, TrackedObject<T>*> previousLabelMap, currentLabelMap;
 		
 		float maximumDistance;
-		unsigned int maximumAge;
+		unsigned int maximumLastSeen;
 		unsigned int curLabel;
 		unsigned int getNewLabel() {
 			return curLabel++;
@@ -113,10 +113,10 @@ namespace ofxCv {
 	public:
 		Tracker<T>()
 		:curLabel(0)
-		,maximumAge(4)
+		,maximumLastSeen(4)
 		,maximumDistance(64) {
 		}
-		void setMaximumAge(unsigned int maximumAge);
+		void setMaximumLastSeen(unsigned int maximumLastSeen);
 		void setMaximumDistance(float maximumDistance);
 		vector<unsigned int>& track(const vector<T>& objects);
 		
@@ -137,8 +137,8 @@ namespace ofxCv {
 	};
 	
 	template <class T>
-	void Tracker<T>::setMaximumAge(unsigned int maximumAge) {
-		this->maximumAge = maximumAge;
+	void Tracker<T>::setMaximumLastSeen(unsigned int maximumLastSeen) {
+		this->maximumLastSeen = maximumLastSeen;
 	}
 	
 	template <class T>
@@ -206,7 +206,7 @@ namespace ofxCv {
 		// copy old unmatched objects if young enough, lastSeen is increased
 		deadLabels.clear();
 		for(int j = 0; j < m; j++) {
-			if(!matchedPrevious[j] && previous[j].getAge() < maximumAge) {
+			if(!matchedPrevious[j] && previous[j].getLastSeen() < maximumLastSeen) {
 				current.push_back(previous[j]);
 				current.back().timeStep(false);
 			} else {
