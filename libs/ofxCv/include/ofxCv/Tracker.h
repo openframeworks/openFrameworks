@@ -194,10 +194,11 @@ namespace ofxCv {
 		// copy old unmatched objects if young enough, age is increased
 		deadLabels.clear();
 		for(int j = 0; j < m; j++) {
-			if(!matchedPrevious[j] && previous[j].getAge() < maximumAge) {
-				current.push_back(previous[j]);
-				current.back().timeStep();
-			} else {
+			if(!matchedPrevious[j]) {
+				if(previous[j].getAge() < maximumAge) {
+					current.push_back(previous[j]);
+					current.back().timeStep();
+				}
 				deadLabels.push_back(previous[j].getLabel());
 			}
 		}
