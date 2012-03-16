@@ -83,7 +83,7 @@ void CBLinuxProject::addSrc(string srcName, string folder){
 	if(!node.empty()){
 		node.child("Option").attribute("virtualFolder").set_value(folder.c_str());
 	}
-    doc.save_file((projectDir + projectName + ".cbp").c_str());
+    
 }
 
 void CBLinuxProject::addInclude(string includeName){
@@ -95,31 +95,6 @@ void CBLinuxProject::addLibrary(string libraryName){
 }
 
 
-void CBLinuxProject::addAddon(ofAddon & addon){
-
-	/*for(int i=0;i<addon.includePaths.size();i++){
-		addInclude(addon.includePaths[i]);
-	}
-
-	for(int i=0;i<addon.libs.size();i++){
-		addLibrary(addon.libs[i]);
-	}*/
-
-	for(int i=0;i<(int)addons.size();i++){
-		if(addons[i].name==addon.name) return;
-	}
-
-	addons.push_back(addon);
-
-	for(int i=0;i<(int)addon.srcFiles.size();i++){
-		addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-	}
-
-	ofFile addonsmake(projectDir+"addons.make",ofFile::WriteOnly);
-	for(int i=0;i<(int)addons.size();i++){
-		addonsmake << addons[i].name << endl;
-	}
-}
 
 string CBLinuxProject::getName(){
 	return projectName;
