@@ -53,7 +53,7 @@ bool visualStudioProject::saveProjectFile(){
     findandreplaceInTexfile(project.path(),"emptyExample",projectName);
     
 
-    string relRoot = getOFRelPath(projectDir);
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     if (relRoot != "../../../"){
         
         string relRootWindows = relRoot;

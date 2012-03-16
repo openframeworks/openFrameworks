@@ -50,7 +50,7 @@ bool CBWinProject::saveProjectFile(){
     doc.save_file((projectDir + projectName + ".cbp").c_str());
     
     //let's do some renaming: 
-    string relRoot = getOFRelPath(projectDir);
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     
     if (relRoot != "../../../"){
         
