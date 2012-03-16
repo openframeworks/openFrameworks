@@ -74,35 +74,33 @@ void testApp::setupForTarget(int targ){
 		delete project;
 	}
 	
-	switch(targ){
+    switch(targ){
         case OF_TARGET_OSX:
             project = new xcodeProject;
-            project->setup("osx");
             target = "osx";
             break;
-    //    case OF_TARGET_WINGCC:
-    //    	project = new CBWinProject;
-    //    	target = "wincb";
-    //    	break;
-    //    case OF_TARGET_WINVS:
-    //    	project = new visualStudioProject;
-    //    	target = "vs2010";
-    //    	break;
-    //    case OF_TARGET_IPHONE:
-    //		project = new xcodeProject();
-    //    	target = "ios";		
-    //		((xcodeProject *)project)->setupForPlatform(target);		
-    //    	break;
-    //    case OF_TARGET_ANDROID:
-    //    	break;
-        case OF_TARGET_LINUX:
-        	project = new CBLinuxProject;
-        	target = "linux";
-        	break;
-        case OF_TARGET_LINUX64:
-        	project = new CBLinuxProject;
-        	target = "linux64";
-        	break;
+    case OF_TARGET_WINGCC:
+            project = new CBWinProject;
+            target = "win_cb";
+            break;
+    case OF_TARGET_WINVS:
+            project = new visualStudioProject;
+            target = "vs2010";
+            break;
+    case OF_TARGET_IPHONE:
+            project = new xcodeProject();
+            target = "ios";		
+            break;
+    case OF_TARGET_ANDROID:
+            break;
+    case OF_TARGET_LINUX:
+            project = new CBLinuxProject;
+            target = "linux";
+            break;
+    case OF_TARGET_LINUX64:
+            project = new CBLinuxProject;
+            target = "linux64";
+            break;
     }
 }
 

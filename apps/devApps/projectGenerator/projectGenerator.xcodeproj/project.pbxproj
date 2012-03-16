@@ -17,6 +17,8 @@
 		113CAA7414F88F4200D3906E /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA6E14F88F4200D3906E /* tinyxmlerror.cpp */; };
 		113CAA7514F88F4200D3906E /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA6F14F88F4200D3906E /* tinyxmlparser.cpp */; };
 		113CAA7614F88F4200D3906E /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA7114F88F4200D3906E /* ofxXmlSettings.cpp */; };
+		116601FE1513758200DE9D73 /* CBWinProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116601FA1513758200DE9D73 /* CBWinProject.cpp */; };
+		116601FF1513758200DE9D73 /* visualStudioProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116601FC1513758200DE9D73 /* visualStudioProject.cpp */; };
 		116EA815150E68B2004EBBD3 /* baseProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116EA814150E68B2004EBBD3 /* baseProject.cpp */; };
 		116EA81D150E7288004EBBD3 /* CBLinuxProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116EA81B150E7287004EBBD3 /* CBLinuxProject.cpp */; };
 		2D786179150137420086071C /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D786175150137420086071C /* ofxBaseGui.cpp */; };
@@ -99,6 +101,10 @@
 		113CAA6F14F88F4200D3906E /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		113CAA7114F88F4200D3906E /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		113CAA7214F88F4200D3906E /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
+		116601FA1513758200DE9D73 /* CBWinProject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBWinProject.cpp; sourceTree = "<group>"; };
+		116601FB1513758200DE9D73 /* CBWinProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBWinProject.h; sourceTree = "<group>"; };
+		116601FC1513758200DE9D73 /* visualStudioProject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = visualStudioProject.cpp; sourceTree = "<group>"; };
+		116601FD1513758200DE9D73 /* visualStudioProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = visualStudioProject.h; sourceTree = "<group>"; };
 		116EA814150E68B2004EBBD3 /* baseProject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = baseProject.cpp; sourceTree = "<group>"; };
 		116EA81B150E7287004EBBD3 /* CBLinuxProject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBLinuxProject.cpp; sourceTree = "<group>"; };
 		116EA81C150E7288004EBBD3 /* CBLinuxProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBLinuxProject.h; sourceTree = "<group>"; };
@@ -160,6 +166,10 @@
 		1120712314AE3D4F0035CB7E /* projects */ = {
 			isa = PBXGroup;
 			children = (
+				116601FA1513758200DE9D73 /* CBWinProject.cpp */,
+				116601FB1513758200DE9D73 /* CBWinProject.h */,
+				116601FC1513758200DE9D73 /* visualStudioProject.cpp */,
+				116601FD1513758200DE9D73 /* visualStudioProject.h */,
 				1120712414AE3D4F0035CB7E /* baseProject.h */,
 				116EA814150E68B2004EBBD3 /* baseProject.cpp */,
 				1120712B14AE3D4F0035CB7E /* xcodeProject.cpp */,
@@ -458,6 +468,8 @@
 				2D78617C150137420086071C /* ofxToggle.cpp in Sources */,
 				116EA815150E68B2004EBBD3 /* baseProject.cpp in Sources */,
 				116EA81D150E7288004EBBD3 /* CBLinuxProject.cpp in Sources */,
+				116601FE1513758200DE9D73 /* CBWinProject.cpp in Sources */,
+				116601FF1513758200DE9D73 /* visualStudioProject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
