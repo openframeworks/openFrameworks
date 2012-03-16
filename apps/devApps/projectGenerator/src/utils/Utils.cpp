@@ -286,6 +286,7 @@ string getOFRelPath(string from){
     Poco::Path path;
     path.parse( getOFRoot() );
     path.makeAbsolute();
+
     
 	string relPath;
 	if (path.toString() == base.toString()){
@@ -294,7 +295,6 @@ string getOFRelPath(string from){
 
 	int maxx = MAX(base.depth(), path.depth());
 	for (int i = 0; i <= maxx; i++){
-
         
 		bool bRunOut = false;
 		bool bChanged = false;
@@ -308,6 +308,7 @@ string getOFRelPath(string from){
 			bRunOut = true;
 		}
         
+        
 		if (bRunOut == true || bChanged == true){
             for (int j = i; j <= base.depth(); j++){
 				relPath += "../";
@@ -319,7 +320,7 @@ string getOFRelPath(string from){
 		}
 	}
     
-    
+    ofLogVerbose() << " returning path " << relPath << endl; 
     
     return relPath;
 }

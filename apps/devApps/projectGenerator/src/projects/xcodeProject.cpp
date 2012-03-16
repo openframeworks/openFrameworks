@@ -227,7 +227,7 @@ bool xcodeProject::saveProjectFile(){
     
     string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
     bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
-    string relRoot = getOFRelPath(projectDir);
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     
 
     if (relRoot != "../../../"){
