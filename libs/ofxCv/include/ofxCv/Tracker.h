@@ -43,8 +43,7 @@ namespace ofxCv {
 	template <class T>
 	class TrackedObject {
 	protected:
-		unsigned int lastSeen, label;
-		unsigned long age;
+		unsigned int lastSeen, label, age;
 		int index;
 	public:
 		T object;
@@ -61,7 +60,7 @@ namespace ofxCv {
 		,label(previous.label)
 		,index(index)
 		,lastSeen(0)
-		,age(previous.age+1){
+		,age(previous.age){
 		}
 		TrackedObject(const TrackedObject<T>& old)
 		:object(old.object)
@@ -70,8 +69,11 @@ namespace ofxCv {
 		,lastSeen(old.lastSeen)
 		,age(old.age){
 		}
-		void timeStep() {
-			lastSeen++;
+		void timeStep(bool visible) {
+			age++;
+			if(!visible) {
+				lastSeen++;
+			}
 		}
 		unsigned int getLastSeen() const {
 			return lastSeen;
@@ -177,34 +179,36 @@ namespace ofxCv {
 			MatchPair& match = all[k].first;
 			int i = match.first;
 			int j = match.second;
-			// only use match if both objects are unmatched, age is reset to 0
+			// only use match if both objects are unmatched, lastSeen is set to 0
 			if(!matchedObjects[i] && !matchedPrevious[j]) {
 				matchedObjects[i] = true;
 				matchedPrevious[j] = true;
 				int index = current.size();
 				current.push_back(TrackedObject<T>(objects[i], previous[j], index));
+				current.back().timeStep(true);
 				currentLabels[i] = current.back().getLabel();
 			}
 		}
 		
-		// create new labels for new unmatched objects, age is set to 0
+		// create new labels for new unmatched objects, lastSeen is set to 0
 		newLabels.clear();
 		for(int i = 0; i < n; i++) {
 			if(!matchedObjects[i]) {
 				int curLabel = getNewLabel();
 				int index = current.size();
 				current.push_back(TrackedObject<T>(objects[i], curLabel, index));
+				current.back().timeStep(true);
 				currentLabels[i] = curLabel;
 				newLabels.push_back(curLabel);
 			}
 		}
 		
-		// copy old unmatched objects if young enough, age is increased
+		// copy old unmatched objects if young enough, lastSeen is increased
 		deadLabels.clear();
 		for(int j = 0; j < m; j++) {
 			if(!matchedPrevious[j] && previous[j].getAge() < maximumAge) {
 				current.push_back(previous[j]);
-				current.back().timeStep();
+				current.back().timeStep(false);
 			} else {
 				deadLabels.push_back(previous[j].getLabel());
 			}

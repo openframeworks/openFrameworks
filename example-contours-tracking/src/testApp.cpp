@@ -29,6 +29,7 @@ void testApp::update() {
 
 void testApp::draw() {
 	ofSetBackgroundAuto(showLabels);
+	RectTracker& tracker = contourFinder.getTracker();
 	if(showLabels) {
 		ofSetColor(255);
 		movie.draw(0, 0);
@@ -37,14 +38,15 @@ void testApp::draw() {
 			ofPoint center = toOf(contourFinder.getCenter(i));
 			ofPushMatrix();
 			ofTranslate(center.x, center.y);
-			ofDrawBitmapString(ofToString(contourFinder.getLabel(i)), 0, 0);
+			int label = contourFinder.getLabel(i);
+			string msg = ofToString(label) + ":" + ofToString(tracker.getAge(label));
+			ofDrawBitmapString(msg, 0, 0);
 			ofVec2f velocity = toOf(contourFinder.getVelocity(i));
 			ofScale(5, 5);
 			ofLine(0, 0, velocity.x, velocity.y);
 			ofPopMatrix();
 		}
 	} else {
-		RectTracker& tracker = contourFinder.getTracker();
 		for(int i = 0; i < contourFinder.size(); i++) {
 			unsigned int label = contourFinder.getLabel(i);
 			// only draw a line if this is not a new label
