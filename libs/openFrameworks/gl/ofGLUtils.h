@@ -16,6 +16,9 @@ enum ofPrimitiveMode{
 	OF_PRIMITIVE_LINE_STRIP,
 	OF_PRIMITIVE_LINE_LOOP,
 	OF_PRIMITIVE_POINTS
+	OF_PRIMITIVE_QUADS,
+	OF_PRIMITIVE_QUAD_STRIP,
+	OF_PRIMITIVE_POLYGON
 };
 
 //legacy - 
@@ -102,6 +105,15 @@ inline GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 		case OF_PRIMITIVE_POINTS:
 			return GL_POINTS;
 			break;
+		case OF_PRIMITIVE_QUADS:
+			return GL_QUADS;
+			break;
+		case OF_PRIMITIVE_QUAD_STRIP:
+			return GL_QUAD_STRIP;
+			break;			
+		case OF_PRIMITIVE_POLYGON:
+			return GL_POLYGON;
+			break;	
 		default:
 			ofLog(OF_LOG_ERROR,"asked for unsupported or non existant primitive mode " + ofToString(mode) + " returning GL_TRIANGLES");
 			return GL_TRIANGLES;
@@ -132,6 +144,15 @@ inline ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 		case GL_POINTS:
 			return OF_PRIMITIVE_POINTS;
 			break;
+		case GL_QUADS:
+			return OF_PRIMITIVE_QUADS;
+			break;
+		case GL_QUAD_STRIP:
+			return OF_PRIMITIVE_QUAD_STRIP;
+			break;			
+		case GL_POLYGON:
+			return OF_PRIMITIVE_POLYGON;
+			break;	
 		default:
 			ofLog(OF_LOG_ERROR,"asked for non existant primitive mode " + ofToString(mode) + " returning OF_PRIMITIVE_TRIANGLES");
 			return OF_PRIMITIVE_TRIANGLES;
