@@ -427,6 +427,9 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation ori
 	if(vFlip) {
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
+
+	if(nearDist == -1) nearDist = 0;
+	if(farDist == -1) farDist = 10000;
 	
 	glOrtho(0, viewW, 0, viewH, nearDist, farDist);
 
