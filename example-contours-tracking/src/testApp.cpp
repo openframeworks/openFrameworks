@@ -13,7 +13,9 @@ void testApp::setup() {
 	contourFinder.setMinAreaRadius(1);
 	contourFinder.setMaxAreaRadius(100);
 	contourFinder.setThreshold(15);
-	contourFinder.getTracker().setMaximumLastSeen(4);
+	// wait for half a frame before forgetting something
+	contourFinder.getTracker().setPersistence(15);
+	// an object can move up to 32 pixels per frame
 	contourFinder.getTracker().setMaximumDistance(32);
 	
 	showLabels = true;

@@ -2,8 +2,8 @@
  the tracker is used for tracking the identities of a collection of objects that
  change slightly over time. example applications are in contour tracking and
  face tracking. when using a tracker, the two most important things to know are
- the maximumLastSeen and maximumDistance. maximumLastSeen determines how many
- frames an object can last without being seen until the tracker forgets about it.
+ the persistence and maximumDistance. persistence determines how many frames an
+ object can last without being seen until the tracker forgets about it.
  maximumDistance determines how far an object can move until the tracker
  considers it a new object.
  
@@ -53,21 +53,21 @@ namespace ofxCv {
 		,lastSeen(0)
 		,age(0)
 		,label(label)
-		,index(index){
+		,index(index) {
 		}
 		TrackedObject(const T& object, const TrackedObject<T>& previous, int index)
 		:object(object)
 		,label(previous.label)
 		,index(index)
 		,lastSeen(0)
-		,age(previous.age){
+		,age(previous.age) {
 		}
 		TrackedObject(const TrackedObject<T>& old)
 		:object(old.object)
 		,label(old.label)
 		,index(-1)
 		,lastSeen(old.lastSeen)
-		,age(old.age){
+		,age(old.age) {
 		}
 		void timeStep(bool visible) {
 			age++;
@@ -104,8 +104,7 @@ namespace ofxCv {
 		std::map<unsigned int, TrackedObject<T>*> previousLabelMap, currentLabelMap;
 		
 		float maximumDistance;
-		unsigned int maximumLastSeen;
-		unsigned int curLabel;
+		unsigned int persistence, curLabel;
 		unsigned int getNewLabel() {
 			return curLabel++;
 		}
@@ -113,10 +112,10 @@ namespace ofxCv {
 	public:
 		Tracker<T>()
 		:curLabel(0)
-		,maximumLastSeen(4)
+		,persistence(15)
 		,maximumDistance(64) {
 		}
-		void setMaximumLastSeen(unsigned int maximumLastSeen);
+		void setPersistence(unsigned int persistence);
 		void setMaximumDistance(float maximumDistance);
 		vector<unsigned int>& track(const vector<T>& objects);
 		
@@ -137,8 +136,8 @@ namespace ofxCv {
 	};
 	
 	template <class T>
-	void Tracker<T>::setMaximumLastSeen(unsigned int maximumLastSeen) {
-		this->maximumLastSeen = maximumLastSeen;
+	void Tracker<T>::setPersistence(unsigned int persistence) {
+		this->persistence = persistence;
 	}
 	
 	template <class T>
@@ -207,7 +206,7 @@ namespace ofxCv {
 		deadLabels.clear();
 		for(int j = 0; j < m; j++) {
 			if(!matchedPrevious[j]) {
-				if(previous[j].getLastSeen() < maximumLastSeen) {
+				if(previous[j].getLastSeen() < persistence) {
 					current.push_back(previous[j]);
 					current.back().timeStep(false);
 				}
