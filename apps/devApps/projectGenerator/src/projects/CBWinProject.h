@@ -18,14 +18,13 @@ public:
 	
     
     //
-    void setup(string ofRoot= "../../../");
+    void setup();
     
-    CBWinProject();
+    bool createProjectFile();
+    bool loadProjectFile();
+    bool saveProjectFile();
 
-	bool load(string path);
-	bool create(string path);
-	bool save(string path){return true;}
-
+    
 	void addSrc(string srcName, string folder);
 	void addInclude(string includeName);
 	void addLibrary(string libraryName);
