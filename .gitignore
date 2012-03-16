@@ -35,9 +35,9 @@ examples/*/*/*.sln
 examples/*/*/*.vcxproj
 examples/*/*/*.vcxproj.user
 
-#rule to avoid non-official examples going into git
-#see examples/.gitignore
-apps/**
+#rule to avoid non-official apps going into git
+#see apps/.gitignore
+apps/*
 
 #codeblocks OF lib files
 libs/openFrameworksCompiled/project/*/*.depend
