@@ -43,33 +43,40 @@ namespace ofxCv {
 	template <class T>
 	class TrackedObject {
 	protected:
-		unsigned int age, label;
+		unsigned int lastSeen, label;
+		unsigned long age;
 		int index;
 	public:
 		T object;
 		
 		TrackedObject(const T& object, unsigned int label, int index)
 		:object(object)
+		,lastSeen(0)
+		,age(0)
 		,label(label)
-		,index(index)
-		,age(0) {
+		,index(index){
 		}
 		TrackedObject(const T& object, const TrackedObject<T>& previous, int index)
 		:object(object)
 		,label(previous.label)
 		,index(index)
-		,age(0) {
+		,lastSeen(0)
+		,age(previous.age+1){
 		}
 		TrackedObject(const TrackedObject<T>& old)
 		:object(old.object)
 		,label(old.label)
 		,index(-1)
-		,age(old.age) {
+		,lastSeen(old.lastSeen)
+		,age(old.age){
 		}
 		void timeStep() {
-			age++;
+			lastSeen++;
 		}
-		unsigned int getAge() const {
+		unsigned int getLastSeen() const {
+			return lastSeen;
+		}
+		unsigned long getAge() const {
 			return age;
 		}
 		unsigned int getLabel() const {
@@ -92,7 +99,7 @@ namespace ofxCv {
 	protected:		
 		vector<TrackedObject<T> > previous, current;
 		vector<unsigned int> currentLabels, previousLabels, newLabels, deadLabels;
-		std::map<unsigned int, T*> previousLabelMap, currentLabelMap;
+		std::map<unsigned int, TrackedObject<T>*> previousLabelMap, currentLabelMap;
 		
 		float maximumDistance;
 		unsigned int maximumAge;
@@ -124,6 +131,7 @@ namespace ofxCv {
 		T& getCurrent(unsigned int label) const;
 		bool existsCurrent(unsigned int label) const;
 		bool existsPrevious(unsigned int label) const;
+		int getAge(unsigned int label) const;
 	};
 	
 	template <class T>
@@ -206,12 +214,12 @@ namespace ofxCv {
 		currentLabelMap.clear();
 		for(int i = 0; i < current.size(); i++) {
 			unsigned int label = current[i].getLabel();
-			currentLabelMap[label] = &(current[i].object);
+			currentLabelMap[label] = &(current[i]);
 		}
 		previousLabelMap.clear();
 		for(int i = 0; i < previous.size(); i++) {
 			unsigned int label = previous[i].getLabel();
-			previousLabelMap[label] = &(previous[i].object);
+			previousLabelMap[label] = &(previous[i]);
 		}
 		
 		return currentLabels;
@@ -249,12 +257,12 @@ namespace ofxCv {
 	
 	template <class T>
 	T& Tracker<T>::getPrevious(unsigned int label) const {
-		return *(previousLabelMap.find(label)->second);
+		return previousLabelMap.find(label)->second->object;
 	}
 	
 	template <class T>
 	T& Tracker<T>::getCurrent(unsigned int label) const {
-		return *(currentLabelMap.find(label)->second);
+		return currentLabelMap.find(label)->second->object;
 	}
 	
 	template <class T>
@@ -265,6 +273,11 @@ namespace ofxCv {
 	template <class T>
 	bool Tracker<T>::existsPrevious(unsigned int label) const {
 		return previousLabelMap.count(label) > 0;
+	}
+
+	template <class T>
+	int Tracker<T>::getAge(unsigned int label) const{
+		return currentLabelMap.find(label)->second->getAge();
 	}
 	
 	typedef Tracker<cv::Rect> RectTracker;
