@@ -82,7 +82,7 @@ void ofAddon::fromFS(string path, string platform){
     for (int i = 0; i < libFolders.size(); i++){
         libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+ofRootPath.length());
         libFolders[i] = pathToOF + libFolders[i];
-		cout << " adding lib folder " << libFolders[i] << endl; 
+		ofLogVerbose() << " adding lib folder " << libFolders[i] << endl; 
         paths.push_back(libFolders[i]);
     }
     
