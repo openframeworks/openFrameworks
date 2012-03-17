@@ -22,15 +22,16 @@ void ofAddon::fromFS(string path, string platform){
 	name = ofFilePath::getFileName(path);
 
     string filePath = path + "/src";
-    
+    string ofRootPath = getOFRoot() + "/"; //we need to add a trailing slash for the erase to work properly
     
     cout << "in fromFS, trying src " << filePath << endl;
     getFilesRecursively(filePath, srcFiles);
 
     for(int i=0;i<(int)srcFiles.size();i++){
-    	srcFiles[i].erase (srcFiles[i].begin(), srcFiles[i].begin()+getOFRoot().length());
-    	int init = srcFiles[i].find("/")+1;
-    	int end = srcFiles[i].rfind("/") - srcFiles[i].find("/");
+    	srcFiles[i].erase (srcFiles[i].begin(), srcFiles[i].begin()+ofRootPath.length());
+		ofLogVerbose() << " srcFiles " << srcFiles[i] << endl; 
+    	int init = 0;
+    	int end = srcFiles[i].rfind("/");
     	string folder = srcFiles[i].substr(init,end);
     	srcFiles[i] = pathToOF + srcFiles[i];
     	filesToFolders[srcFiles[i]] = folder;
@@ -45,9 +46,10 @@ void ofAddon::fromFS(string path, string platform){
 
     // I need to add libFiles to srcFiles
     for (int i = 0; i < (int)libFiles.size(); i++){
-    	libFiles[i].erase (libFiles[i].begin(), libFiles[i].begin()+getOFRoot().length());
-    	int init = libFiles[i].find("/")+1;
-    	int end = libFiles[i].rfind("/") - libFiles[i].find("/");
+    	libFiles[i].erase (libFiles[i].begin(), libFiles[i].begin()+ofRootPath.length());
+		ofLogVerbose() << " libFiles " << libFiles[i] << endl; 
+    	int init = 0;
+    	int end = libFiles[i].rfind("/");
     	string folder = libFiles[i].substr(init,end);
     	libFiles[i] = pathToOF + libFiles[i];
         srcFiles.push_back(libFiles[i]);
@@ -55,7 +57,7 @@ void ofAddon::fromFS(string path, string platform){
     }
 
     for (int i = 0; i < (int)libs.size(); i++){
-    	libs[i].erase (libs[i].begin(), libs[i].begin()+getOFRoot().length());
+    	libs[i].erase (libs[i].begin(), libs[i].begin()+ofRootPath.length());
     	libs[i] = pathToOF + libs[i];
     }
 
@@ -78,13 +80,13 @@ void ofAddon::fromFS(string path, string platform){
     getFoldersRecursively(path + "/src", srcFolders);
     
     for (int i = 0; i < libFolders.size(); i++){
-        libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+getOFRoot().length());
+        libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+ofRootPath.length());
         libFolders[i] = pathToOF + libFolders[i];
         paths.push_back(libFolders[i]);
     }
     
     for (int i = 0; i < srcFolders.size(); i++){
-        srcFolders[i].erase (srcFolders[i].begin(), srcFolders[i].begin()+getOFRoot().length());
+        srcFolders[i].erase (srcFolders[i].begin(), srcFolders[i].begin()+ofRootPath.length());
         srcFolders[i] = pathToOF + srcFolders[i];
         paths.push_back(srcFolders[i]);
     }
