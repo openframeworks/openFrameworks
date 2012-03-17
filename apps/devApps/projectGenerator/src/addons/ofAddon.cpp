@@ -74,14 +74,15 @@ void ofAddon::fromFS(string path, string platform){
     
     vector < string > libFolders;
     cout << "trying get folders recursively " << (path + "/libs") << endl;
-    getFoldersRecursively(path + "/libs", libFolders);
+    getFoldersRecursively(path + "/libs", libFolders, platform);
     
     vector < string > srcFolders;
-    getFoldersRecursively(path + "/src", srcFolders);
+    getFoldersRecursively(path + "/src", srcFolders, platform);
     
     for (int i = 0; i < libFolders.size(); i++){
         libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+ofRootPath.length());
         libFolders[i] = pathToOF + libFolders[i];
+		cout << " adding lib folder " << libFolders[i] << endl; 
         paths.push_back(libFolders[i]);
     }
     
