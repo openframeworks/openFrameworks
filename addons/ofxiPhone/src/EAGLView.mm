@@ -153,11 +153,12 @@
 		}
 		
 		ofTouchEventArgs touchArgs;
+        touchArgs.numTouches = [[event touchesForView:self] count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		if([touch tapCount] == 2) ofNotifyEvent(ofEvents.touchDoubleTap,touchArgs);	// send doubletap
-		ofNotifyEvent(ofEvents.touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
+		if([touch tapCount] == 2) ofNotifyEvent(ofEvents().touchDoubleTap,touchArgs);	// send doubletap
+		ofNotifyEvent(ofEvents().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}
 	
 }
@@ -185,7 +186,7 @@
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		ofNotifyEvent(ofEvents.touchMoved, touchArgs);
+		ofNotifyEvent(ofEvents().touchMoved, touchArgs);
 	}
 	
 }
@@ -214,7 +215,7 @@
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		ofNotifyEvent(ofEvents.touchUp, touchArgs);
+		ofNotifyEvent(ofEvents().touchUp, touchArgs);
 	}
 }
 
@@ -237,7 +238,7 @@
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		ofNotifyEvent(ofEvents.touchCancelled, touchArgs);
+		ofNotifyEvent(ofEvents().touchCancelled, touchArgs);
 	}
 	
 	[self touchesEnded:touches withEvent:event];

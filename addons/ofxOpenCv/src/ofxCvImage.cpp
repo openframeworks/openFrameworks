@@ -28,8 +28,13 @@ ofxCvImage::~ofxCvImage() {
 //--------------------------------------------------------------------------------
 void ofxCvImage::allocate( int w, int h ) {
 	if (bAllocated == true){
-		ofLog(OF_LOG_WARNING, "in allocate, reallocating a ofxCvImage");
+		ofLog(OF_LOG_VERBOSE, "in allocate, reallocating a ofxCvImage");
 		clear();
+	}
+	
+	if( w == 0 || h == 0 ){
+		ofLog(OF_LOG_ERROR, "in allocate, width or height cannot be 0");
+		return;
 	}
 
 	cvImage = cvCreateImage( cvSize(w,h), ipldepth, iplchannels );
@@ -103,7 +108,10 @@ void ofxCvImage::flagImageChanged() {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setROI( int x, int y, int w, int h ) {
-
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in setROI, image is not allocated");	
+		return;
+	}
     x = (int)ofClamp(x, 0, (int)width-1);
     y = (int)ofClamp(y, 0, (int)height-1);
     w = (int)ofClamp(w, 0, (int)width - x);
@@ -191,19 +199,31 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
 
 //--------------------------------------------------------------------------------
 void  ofxCvImage::operator = ( const IplImage* mom ) {
-	if( mom->width == width && mom->height == height &&
-	    mom->nChannels == cvImage->nChannels &&
-        mom->depth == cvImage->depth )
-    {
+	if( mom->width == 0 || mom->height == 0 ){
+		ofLog(OF_LOG_ERROR, "in =, mom width or height is 0");
+		return;
+	}
+			
+	if( mom->nChannels == cvImage->nChannels && mom->depth == cvImage->depth ){
+		if( !bAllocated ){ 	//lets allocate if needed
+			allocate(mom->width, mom->height);
+		}else if( mom->width != width || mom->height != height ){
+            ofLog(OF_LOG_ERROR, "in =, width / height mismatch");
+			return;
+		}
 		cvCopy( mom, cvImage );
         flagImageChanged();
 	} else {
-        ofLog(OF_LOG_ERROR, "in =, images need to match in size, channels, and depth");
+        ofLog(OF_LOG_ERROR, "in =, images need to match in channels, and depth");
 	}
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator -= ( float value ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in -=, need to allocate image first");
+		return;		
+	}
 	cvSubS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
     flagImageChanged();
@@ -211,6 +231,10 @@ void ofxCvImage::operator -= ( float value ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator += ( float value ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in -=, need to allocate image first");
+		return;		
+	}
 	cvAddS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
     flagImageChanged();
@@ -219,6 +243,15 @@ void ofxCvImage::operator += ( float value ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator -= ( ofxCvImage& mom ) {
+	if( !mom.bAllocated ){
+		ofLog(OF_LOG_ERROR, "in -=, mom needs to be allocated");	
+		return;	
+	}
+	if( !bAllocated ){
+		ofLog(OF_LOG_NOTICE, "in -=, allocating to match dimensions");			
+		allocate(mom.getWidth(), mom.getHeight());
+	}
+
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
@@ -236,6 +269,15 @@ void ofxCvImage::operator -= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator += ( ofxCvImage& mom ) {
+	if( !mom.bAllocated ){
+		ofLog(OF_LOG_ERROR, "in +=, mom needs to be allocated");	
+		return;	
+	}
+	if( !bAllocated ){
+		ofLog(OF_LOG_NOTICE, "in +=, allocating to match dimensions");			
+		allocate(mom.getWidth(), mom.getHeight());
+	}
+
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
@@ -253,6 +295,15 @@ void ofxCvImage::operator += ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator *= ( ofxCvImage& mom ) {
+	if( !mom.bAllocated ){
+		ofLog(OF_LOG_ERROR, "in *=, mom needs to be allocated");	
+		return;	
+	}
+	if( !bAllocated ){
+		ofLog(OF_LOG_NOTICE, "in *=, allocating to match dimensions");			
+		allocate(mom.getWidth(), mom.getHeight());
+	}
+
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
@@ -271,6 +322,15 @@ void ofxCvImage::operator *= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator &= ( ofxCvImage& mom ) {
+	if( !mom.bAllocated ){
+		ofLog(OF_LOG_ERROR, "in &=, mom needs to be allocated");	
+		return;	
+	}
+	if( !bAllocated ){
+		ofLog(OF_LOG_NOTICE, "in &=, allocating to match dimensions");			
+		allocate(mom.getWidth(), mom.getHeight());
+	}
+
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
@@ -288,17 +348,21 @@ void ofxCvImage::operator &= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void  ofxCvImage::drawBlobIntoMe( ofxCvBlob& blob, int color ) {
-       if( blob.pts.size() > 0 ) {
-           CvPoint* pts = new CvPoint[blob.nPts];
-           for( int i=0; i < blob.nPts ; i++ ) {
-               pts[i].x = (int)blob.pts[i].x;
-               pts[i].y = (int)blob.pts[i].y;
-           }
-           int nPts = blob.nPts;
-           cvFillPoly( cvImage, &pts, &nPts, 1,
-                       CV_RGB(color,color,color) );
-           delete pts;
-       }
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in drawBlobIntoMe, need to allocate image first");
+		return;
+	}
+	if( blob.pts.size() > 0 ) {
+	   CvPoint* pts = new CvPoint[blob.nPts];
+	   for( int i=0; i < blob.nPts ; i++ ) {
+		   pts[i].x = (int)blob.pts[i].x;
+		   pts[i].y = (int)blob.pts[i].y;
+	   }
+	   int nPts = blob.nPts;
+	   cvFillPoly( cvImage, &pts, &nPts, 1,
+				   CV_RGB(color,color,color) );
+	   delete pts;
+	}
 }
 
 
@@ -445,6 +509,10 @@ void ofxCvImage::resetAnchor(){
 // Image Filter Operations
 //--------------------------------------------------------------------------------
 void ofxCvImage::dilate() {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in dilate, need to allocate image first");
+		return;		
+	}
 	cvDilate( cvImage, cvImageTemp, 0, 1 );
 	swapTemp();
     flagImageChanged();
@@ -452,6 +520,10 @@ void ofxCvImage::dilate() {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::erode() {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in erode, need to allocate image first");
+		return;		
+	}
 	cvErode( cvImage, cvImageTemp, 0, 1 );
 	swapTemp();
     flagImageChanged();
@@ -459,6 +531,10 @@ void ofxCvImage::erode() {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::blur( int value ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in blur, need to allocate image first");
+		return;		
+	}
     if( value % 2 == 0 ) {
         ofLog(OF_LOG_NOTICE, "in blur, value not odd -> will add 1 to cover your back");
         value++;
@@ -470,6 +546,10 @@ void ofxCvImage::blur( int value ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::blurGaussian( int value ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in blurGaussian, need to allocate image first");
+		return;		
+	}
     if( value % 2 == 0 ) {
         ofLog(OF_LOG_NOTICE, "in blurGaussian, value not odd -> will add 1 to cover your back");
         value++;
@@ -481,6 +561,10 @@ void ofxCvImage::blurGaussian( int value ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::invert(){
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in invert, need to allocate image first");
+		return;		
+	}
     cvNot(cvImage, cvImage);
     flagImageChanged();
 }
@@ -492,6 +576,10 @@ void ofxCvImage::invert(){
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::mirror( bool bFlipVertically, bool bFlipHorizontally ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in mirror, need to allocate image first");
+		return;		
+	}	
 	int flipMode = 0;
 
 	if( bFlipVertically && !bFlipHorizontally ) flipMode = 0;
@@ -506,18 +594,30 @@ void ofxCvImage::mirror( bool bFlipVertically, bool bFlipHorizontally ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::translate( float x, float y ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in translate, need to allocate image first");
+		return;		
+	}	
     transform( 0, 0,0, 1,1, x,y );
     flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::rotate( float angle, float centerX, float centerY ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in rotate, need to allocate image first");
+		return;		
+	}
     transform( angle, centerX, centerY, 1,1, 0,0 );
     flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::scale( float scaleX, float scaleY ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in scale, need to allocate image first");
+		return;		
+	}
     transform( 0, 0,0, scaleX,scaleY, 0,0 );
     flagImageChanged();
 }
@@ -526,6 +626,12 @@ void ofxCvImage::scale( float scaleX, float scaleY ) {
 void ofxCvImage::transform( float angle, float centerX, float centerY,
                             float scaleX, float scaleY,
                             float moveX, float moveY ){
+
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in transform, need to allocate image first");
+		return;		
+	}	
+													
     float sina = sin(angle * DEG_TO_RAD);
     float cosa = cos(angle * DEG_TO_RAD);
     CvMat*  transmat = cvCreateMat( 2,3, CV_32F );
@@ -548,6 +654,11 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
                             float tangentDistX, float tangentDistY,
                             float focalX, float focalY,
                             float centerX, float centerY ){
+							
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in undistort, need to allocate image first");
+		return;		
+	}							
     float camIntrinsics[] = { focalX, 0, centerX, 0, focalY, centerY, 0, 0, 1 };
     float distortionCoeffs[] = { radialDistX, radialDistY, tangentDistX, tangentDistY };
     cvUnDistortOnce( cvImage, cvImageTemp, camIntrinsics, distortionCoeffs, 1 );
@@ -558,6 +669,10 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::remap( IplImage* mapX, IplImage* mapY ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in remap, need to allocate image first");
+		return;		
+	}	
     cvRemap( cvImage, cvImageTemp, mapX, mapY );
 	swapTemp();
     flagImageChanged();
@@ -576,6 +691,10 @@ void ofxCvImage::remap( IplImage* mapX, IplImage* mapY ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPoint& C, const ofPoint& D ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in warpPerspective, need to allocate image first");
+		return;		
+	}
     // compute matrix for perspectival warping (homography)
     CvPoint2D32f cvsrc[4];
     CvPoint2D32f cvdst[4];
@@ -611,7 +730,17 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPo
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoint dst[4] ){
-    if( mom.getCvImage()->nChannels == cvImage->nChannels &&
+    
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in warpIntoMe, image not allocated");
+		return;		
+	}
+	if( !mom.bAllocated ){
+		ofLog(OF_LOG_ERROR, "in warpIntoMe, mom not allocated");
+		return;		
+	}
+		
+	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth ) {
 
     	// compute matrix for perspectival warping (homography)
@@ -642,6 +771,11 @@ void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoin
 
 //--------------------------------------------------------------------------------
 int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
+	if( !bAllocated ){
+		ofLog(OF_LOG_ERROR, "in countNonZeroInRegion, need to allocate image first");
+		return 0;		
+	}
+	
     //TODO: test this method
 
 	if (w == 0 || h == 0) return 0;
@@ -695,7 +829,7 @@ void ofxCvImage::rangeMap( IplImage* mom, IplImage* kid, float min1, float max1,
 
 //--------------------------------------------------------------------------------
 bool ofxCvImage::matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 ) {
-    if( rec1.width == rec2.width && rec1.height == rec2.height ) {
+    if( rec1.width == rec2.width && rec1.height == rec2.height && rec1.width != 0 && rec1.height != 0 ) {
         return true;
     } else {
         return false;
