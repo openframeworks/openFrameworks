@@ -18,9 +18,9 @@ bool visualStudioProject::createProjectFile(){
     ofFile user(projectDir + projectName + ".vcxproj.user");
     ofFile solution(projectDir + projectName + ".sln");
     
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path());
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user.path());
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution.path());
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path(),false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user.path(), false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution.path(), false, true);
 
     return true;
 }
@@ -76,6 +76,8 @@ bool visualStudioProject::saveProjectFile(){
 
 
 void visualStudioProject::addSrc(string srcFile, string folder){
+    
+    // TODO: no folder love here...
     
     fixSlashOrder(srcFile);
     
@@ -168,25 +170,3 @@ void visualStudioProject::addLibrary(string libraryName){
 
 
 }
-
-
-void visualStudioProject::addAddon(ofAddon & addon){
-	for(int i=0;i<(int)addon.includePaths.size();i++){
-		addInclude(addon.includePaths[i]);
-	}
-	for(int i=0;i<(int)addon.libs.size();i++){
-		addLibrary(addon.libs[i]);
-	}
-	for(int i=0;i<(int)addon.srcFiles.size();i++){
-		addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-	}
-}
-
-string visualStudioProject::getName(){
-	return projectName;
-}
-
-string visualStudioProject::getPath(){
-	return projectDir;
-}
-

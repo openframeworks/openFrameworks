@@ -18,9 +18,20 @@ void CBWinProject::setup() {
 }
 
 bool CBWinProject::createProjectFile(){
+    
+     printf("a\n");
+    
+                                          
     ofFile project(projectDir + projectName + ".cbp");
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project.path());
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
+    
+    cout << ofFilePath::join(templatePath,"emptyExample.cbp") << endl;
+    cout << project.path() << endl;
+    
+    
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project.path(), false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"), false, true);
+    
+    printf("b\n");
     return true;
 }
 bool CBWinProject::loadProjectFile(){
@@ -79,6 +90,7 @@ void CBWinProject::addSrc(string srcName, string folder){
 }
 
 void CBWinProject::addInclude(string includeName){
+    cout << "adding include " << includeName << endl;
     appendValue(doc, "Add", "directory", includeName);
 }
 
