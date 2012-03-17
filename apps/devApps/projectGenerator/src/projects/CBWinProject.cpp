@@ -19,19 +19,11 @@ void CBWinProject::setup() {
 
 bool CBWinProject::createProjectFile(){
     
-     printf("a\n");
-    
-                                          
     ofFile project(projectDir + projectName + ".cbp");
-    
-    cout << ofFilePath::join(templatePath,"emptyExample.cbp") << endl;
-    cout << project.path() << endl;
-    
     
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project.path(), false, true);
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"), false, true);
     
-    printf("b\n");
     return true;
 }
 bool CBWinProject::loadProjectFile(){
