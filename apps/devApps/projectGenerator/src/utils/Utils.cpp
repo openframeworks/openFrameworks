@@ -228,14 +228,9 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
             libsorderMake >> libsorderMakeBuff;
             while(!libsorderMakeBuff.isLastLine() && libsorderMakeBuff.size() > 0){
                 string line = libsorderMakeBuff.getNextLine();
-                //libsInOrder.push_back(line);
-                cout << path + "/lib" + line + ".a" << endl;
                 libLibs.push_back(path + "/lib" + line + ".a");
             }
             
-            
-            
-            //std::exit(0);
             
         } else {
         
