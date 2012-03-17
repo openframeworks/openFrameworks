@@ -52,8 +52,8 @@ void testApp::draw(){
 	if (bSnapshot == true){
 		// grab a rectangle at 200,200, width and height of 300,180
 		img.grabScreen(200,200,300,180);
-		char fileName[255];
-		sprintf(fileName, "snapshot_%0.3i.png", snapCounter);
+
+		string fileName = "snapshot_"+ofToString(10000+snapCounter)+".png";
 		img.saveImage(fileName);
 		sprintf(snapString, "saved %s", fileName);
 		snapCounter++;

@@ -5,6 +5,8 @@
 
 class ofxToggle : public ofxBaseGui{
 public:
+	ofxToggle(){};
+	ofxToggle(string toggleName, ofxParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle * setup(string toggleName, ofxParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	
 
@@ -20,12 +22,12 @@ public:
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
-		ofAddListener(value.changedE,listener,method);
+		value.addListener(listener,method);
 	}
 
 	template<class ListenerClass>
 	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
-		ofRemoveListener(value.changedE,listener,method);
+		value.removeListener(listener,method);
 	}
 
 
