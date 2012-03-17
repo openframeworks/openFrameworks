@@ -40,24 +40,16 @@ bool baseProject::create(string path){
         
         for (int i = 0; i < fileNames.size(); i++){
             
-            // TODO: this can fail, if your OF directory is in some bad place like: 
-            // /home/src/openframeworks/....
-            // where it would pick up in the word src first. 
-            // so let's make this much smarter!
+            fileNames[i].erase(fileNames[i].begin(), fileNames[i].begin() + projectDir.length());
             
             string first, last;
-            splitFromFirst(fileNames[i],projectName, first, last);  
-            // last is now something like " /src/main.cpp"
-            // drop the trailing slash;
-            last.erase(last.begin());
-            string fileName = last;
-            splitFromLast(fileName, "/", first, last);  
-            if (fileName != "src/testApp.cpp" &&
-                fileName != "src/testApp.h" &&
-                fileName != "src/main.cpp" && 
-                fileName != "src/testApp.mm" &&
-                fileName != "src/main.mm"){
-                addSrc(fileName, first);
+            splitFromLast(fileNames[i], "/", first, last);  
+            if (fileNames[i] != "src/testApp.cpp" &&
+                fileNames[i] != "src/testApp.h" &&
+                fileNames[i] != "src/main.cpp" && 
+                fileNames[i] != "src/testApp.mm" &&
+                fileNames[i] != "src/main.mm"){
+                addSrc(fileNames[i], first);
             }
         }
     }
