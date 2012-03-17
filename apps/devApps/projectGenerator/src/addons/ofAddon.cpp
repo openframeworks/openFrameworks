@@ -22,9 +22,9 @@ void ofAddon::fromFS(string path, string platform){
 	name = ofFilePath::getFileName(path);
 
     string filePath = path + "/src";
-    string ofRootPath = getOFRoot() + "/"; //we need to add a trailing slash for the erase to work properly
+    string ofRootPath = ofFilePath::addTrailingSlash(getOFRoot()); //we need to add a trailing slash for the erase to work properly
     
-    cout << "in fromFS, trying src " << filePath << endl;
+    ofLogVerbose() << "in fromFS, trying src " << filePath << endl;
     getFilesRecursively(filePath, srcFiles);
 
     for(int i=0;i<(int)srcFiles.size();i++){
@@ -73,7 +73,7 @@ void ofAddon::fromFS(string path, string platform){
     // get every folder in addon/src and addon/libs
     
     vector < string > libFolders;
-    cout << "trying get folders recursively " << (path + "/libs") << endl;
+    ofLogVerbose() << "trying get folders recursively " << (path + "/libs") << endl;
     getFoldersRecursively(path + "/libs", libFolders, platform);
     
     vector < string > srcFolders;
