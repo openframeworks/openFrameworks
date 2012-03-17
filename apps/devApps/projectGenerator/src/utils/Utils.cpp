@@ -101,7 +101,7 @@ void findandreplaceInTexfile (string fileName, std::string tFind, std::string tR
 bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attribute, string newValue){
     char xpathExpressionExists[1024];
     sprintf(xpathExpressionExists, "//%s[@%s='%s']", tag.c_str(), attribute.c_str(), newValue.c_str());
-    cout <<xpathExpressionExists <<endl;
+    //cout <<xpathExpressionExists <<endl;
     pugi::xpath_node_set set = doc.select_nodes(xpathExpressionExists);
     if (set.size() != 0){
         return true;
@@ -116,6 +116,7 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
         // otherwise, add it please:
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s]", tag.c_str(), attribute.c_str());
+        cout << xpathExpression << endl;
         pugi::xpath_node_set add = doc.select_nodes(xpathExpression);
         pugi::xml_node node = add[add.size()-1].node();
         pugi::xml_node nodeAdded = node.parent().append_copy(node);
@@ -180,37 +181,78 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
     ofDirectory dir;
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
-        ofFile temp(dir.getFile(i));
-        if (temp.isDirectory()){
-            //getLibsRecursively(dir.getPath(i), folderNames);
-            getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
-            
-        } else {
-            
-            //string ext = ofFilePath::getFileExt(temp.getFile(i));
-            string ext;
-            string first;
-            splitFromLast(dir.getPath(i), ".", first, ext);
-            
+        
+        if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
             
             vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-            if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
-                
-                if(platform!=""){
-                    bool platformFound = false;
-                    for(int i=0;i<(int)splittedPath.size();i++){
-                        if(splittedPath[i]==platform){
-                            platformFound = true;
-                            break;
-                        }
-                    }
-                    if(!platformFound){
-                        continue;
+            
+            if(platform!=""){
+                bool platformFound = false;
+                for(int j=0;j<(int)splittedPath.size();j++){
+                    if(splittedPath[j]==platform){
+                        platformFound = true;
+                        break;
                     }
                 }
-                libLibs.push_back(dir.getPath(i));
-            } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-                libFiles.push_back(dir.getPath(i));
+                if(!platformFound){
+                    continue;
+                }
+            }
+            
+            
+            vector < string > libsInOrder;
+            ofFile libsorderMake(ofFilePath::join(path, "libsorder.make"));
+            ofBuffer libsorderMakeBuff;
+            libsorderMake >> libsorderMakeBuff;
+            while(!libsorderMakeBuff.isLastLine() && libsorderMakeBuff.size() > 0){
+                string line = libsorderMakeBuff.getNextLine();
+                //libsInOrder.push_back(line);
+                cout << path + "/lib" + line + ".a" << endl;
+                libLibs.push_back(path + "/lib" + line + ".a");
+            }
+            
+            
+            
+            //std::exit(0);
+            
+        } else {
+        
+            ofFile temp(dir.getFile(i));
+            
+            
+            
+            if (temp.isDirectory()){
+                //getLibsRecursively(dir.getPath(i), folderNames);
+                getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
+                
+            } else {
+                
+                
+                //string ext = ofFilePath::getFileExt(temp.getFile(i));
+                string ext;
+                string first;
+                splitFromLast(dir.getPath(i), ".", first, ext);
+                
+                
+                vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
+                    
+                    if(platform!=""){
+                        bool platformFound = false;
+                        for(int j=0;j<(int)splittedPath.size();j++){
+                            if(splittedPath[j]==platform){
+                                platformFound = true;
+                                break;
+                            }
+                        }
+                        if(!platformFound){
+                            continue;
+                        }
+                    }
+                    libLibs.push_back(dir.getPath(i));
+                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+                    libFiles.push_back(dir.getPath(i));
+                }
             }
         }
     }    
