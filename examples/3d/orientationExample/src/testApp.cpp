@@ -55,17 +55,32 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofBackground(0);
+	ofColor cyan = ofColor::fromHex(0x00abec);
+	ofColor magenta = ofColor::fromHex(0xec008c);
+	ofColor yellow = ofColor::fromHex(0xffee00);
+	
+	ofBackgroundGradient(magenta * .6, magenta * .4);
 	ofNoFill();
 	
 	easyCam.begin();
+	ofRotateX(15);
 
-	ofDrawAxis(32);
-	pathLines.draw(); // draw the path of the box
+	ofSetColor(0);
+	ofDrawGrid(500, 10, false, false, true, false);
+	
+	// draw the path of the box
+	ofSetLineWidth(2);
+	ofSetColor(cyan);
+	pathLines.draw();
+	
+	// draw a line connecting the box to the grid
+	ofSetColor(yellow);
+	ofLine(current.x, current.y, current.z, current.x, 0, current.z);
 	
 	// translate and rotate to the current position and orientation
 	ofTranslate(current.x, current.y, current.z);
 	rotateToNormal(current - previous);
+	ofSetColor(255);
 	ofBox(32);
 	ofDrawAxis(32);
 	
