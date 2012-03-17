@@ -29,6 +29,7 @@ bool debugMode = false;
  out-of-phase slices in the first dimension: t + phase for the u, and t - phase
  for the v.
  */
+//--------------------------------------------------------------
 ofVec2f testApp::getField(ofVec2f position) {
 	float normx = ofNormalize(position.x, 0, ofGetWidth());
 	float normy = ofNormalize(position.y, 0, ofGetHeight());
@@ -37,6 +38,7 @@ ofVec2f testApp::getField(ofVec2f position) {
 	return ofVec2f(u, v);
 }
 
+//--------------------------------------------------------------
 void testApp::setup() {
 	ofSetVerticalSync(true); // don't go too fast
 	ofEnableAlphaBlending();
@@ -52,6 +54,7 @@ void testApp::setup() {
 	cloud.setMode(OF_PRIMITIVE_POINTS);
 }
 
+//--------------------------------------------------------------
 void testApp::update() {
 	width = ofGetWidth(), height = ofGetHeight();
   t = ofGetFrameNum() * timeSpeed;
@@ -77,6 +80,7 @@ void testApp::update() {
 	}
 } 
 
+//--------------------------------------------------------------
 void testApp::draw() {
 	ofBackground(255);
   if(debugMode) {
@@ -107,12 +111,34 @@ void testApp::draw() {
 	ofDrawBitmapStringHighlight("click to reset\nhit any key for debug", 10, 10, ofColor::white, ofColor::black);
 }
 
-// when you click the mouse, reset all the points
+//--------------------------------------------------------------
+void testApp::keyPressed(int key) {
+	// when you hit a key, draw the debug screen
+  debugMode = !debugMode;
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key) {
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y) {
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button) {
+}
+
+//--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button) {
+	// when you click the mouse, reset all the points
   setup();
 }
 
-// when you hit a key, draw the debug screen
-void testApp::keyPressed(int key) {
-  debugMode = !debugMode;
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button) {
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h) {
 }
