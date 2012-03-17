@@ -6,6 +6,7 @@
 	to determine the rotation that is required from a standard axis (0,0,1) to the
 	desired normal vector, then apply that rotation. 
 */
+//--------------------------------------------------------------
 void rotateToNormal(ofVec3f normal) {
 	normal.normalize();
 	
@@ -82,7 +83,7 @@ void testApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void testApp::mouseMoved(int x, int y){
 
 }
 

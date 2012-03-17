@@ -5,9 +5,7 @@
 #define NUM_BILLBOARDS 10000
 
 class testApp : public ofBaseApp {
-	
 public:
-	
 	void setup();
 	void update();
 	void draw();
@@ -19,6 +17,8 @@ public:
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
 	
 	ofVbo vbo;
 	ofShader shader;
