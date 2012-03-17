@@ -177,10 +177,10 @@ bool xcodeProject::createProjectFile(){
     ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir, true, true);
     
     if( target == "osx" ){
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir, true, true);
     }else{
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir);
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
     }
 
     // this is for xcode 4 sceme issues. but I'm not sure this is right. 
@@ -188,6 +188,17 @@ bool xcodeProject::createProjectFile(){
     saveWorkspaceXML();
     saveScheme();
     
+    // make everything relative the right way. 
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
+    if (relRoot != "../../../"){
+        string relPath2 = relRoot;
+        relPath2.erase(relPath2.end()-1);
+        findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", relRoot);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
+    }
+    
+
     return true;
 }
 
@@ -227,17 +238,6 @@ bool xcodeProject::saveProjectFile(){
     
     string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
     bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
-    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
-    
-
-    if (relRoot != "../../../"){
-        string relPath2 = relRoot;
-        relPath2.erase(relPath2.end()-1);
-        findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", relRoot);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
-    }
-    
     return bOk;
 }  
 
@@ -530,6 +530,8 @@ void xcodeProject::addSrc(string srcFile, string folder){
 
 void xcodeProject::addInclude(string includeName){
     
+    
+    
 
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'HEADER_SEARCH_PATHS')]/following-sibling::node()[1]");
@@ -575,6 +577,9 @@ void xcodeProject::addInclude(string includeName){
         
         
 void xcodeProject::addLibrary(string libraryName){
+    
+    cout << " adding libraryName " << libraryName << endl; 
+    
     
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'OTHER_LDFLAGS')]/following-sibling::node()[1]");

@@ -40,7 +40,6 @@ private:
 	
     
 	pugi::xml_document doc;
-	string projectDir, projectName;
 	vector<ofAddon> addons;
 	string ofRoot;
 };
