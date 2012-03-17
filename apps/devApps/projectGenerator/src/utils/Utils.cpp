@@ -148,6 +148,28 @@ void getFilesRecursively(const string & path, vector < string > & fileNames){
 
 }
 
+static vector <string> platforms; 
+bool isFolderNotCurrentPlatform(string folderName, string platform){
+	if( platforms.size() == 0 ){
+		platforms.push_back("osx");
+		platforms.push_back("win_cb");
+		platforms.push_back("vs2010");
+		platforms.push_back("ios");
+		platforms.push_back("linux");		
+		platforms.push_back("linux64");
+		platforms.push_back("android");
+		platforms.push_back("iphone");
+	}
+		
+	for(int i = 0; i < platforms.size(); i++){
+		if( folderName == platforms[i] && folderName != platform ){
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void splitFromLast(string toSplit, string deliminator, string & first, string & second){
     size_t found = toSplit.find_last_of(deliminator.c_str());
     first = toSplit.substr(0,found);
@@ -161,13 +183,13 @@ void splitFromFirst(string toSplit, string deliminator, string & first, string &
 }
 
 
-void getFoldersRecursively(const string & path, vector < string > & folderNames){
+void getFoldersRecursively(const string & path, vector < string > & folderNames, string platform){
     ofDirectory dir;
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
         ofFile temp(dir.getFile(i));
-        if (temp.isDirectory()){
-            getFoldersRecursively(dir.getPath(i), folderNames);
+        if (temp.isDirectory() && isFolderNotCurrentPlatform(temp.getFileName(), platform) == false ){
+            getFoldersRecursively(dir.getPath(i), folderNames, platform);
         }
     }    
     folderNames.push_back(path);
