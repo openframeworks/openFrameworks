@@ -61,6 +61,18 @@ void ofxPanel::add(ofxBaseGui * element){
 	}
 }
 
+void ofxPanel::add(ofxParameter<float> & parameter){
+	add(new ofxFloatSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
+}
+
+void ofxPanel::add(ofxParameter<int> & parameter){
+	add(new ofxIntSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
+}
+
+void ofxPanel::add(ofxParameter<bool> & parameter){
+	add(new ofxToggle(parameter.getName(),parameter));
+}
+
 void ofxPanel::clear(){
 	collection.clear();
 }
