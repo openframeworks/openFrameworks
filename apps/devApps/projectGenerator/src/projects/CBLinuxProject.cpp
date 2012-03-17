@@ -27,11 +27,11 @@ void CBLinuxProject::setup() {
 
 bool CBLinuxProject::createProjectFile(){
     ofFile project(projectDir + projectName + ".cbp");
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.cbp"),project.path());
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),ofFilePath::join(projectDir,"Makefile"));
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.cbp"),project.path(), false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"), false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),ofFilePath::join(projectDir,"Makefile"), false, true);
     ofFile config(ofFilePath::join(projectDir,"config.make"));
-    if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),config.path());
+    if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),config.path(), false, true);
     
     // handle the relative roots. 
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
