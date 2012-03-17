@@ -12,7 +12,7 @@ void testApp::setup(){
 
 	setOFRoot(getOFRootFromConfig());
 
-	int targ = OF_TARGET_WINVS; //ofGetTargetPlatform();
+	int targ = ofGetTargetPlatform();
 	//plat = OF_TARGET_IPHONE;
 	
     setupForTarget(targ);

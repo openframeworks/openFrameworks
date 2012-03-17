@@ -5,29 +5,33 @@
  The ofMesh is uploaded to the GPU once per frame, while the ofVboMesh is
  uploaded once. This makes it much faster to draw multiple copies of an
  ofVboMesh than multiple copies of an ofMesh.
-*/
+ */
 
 /*
  These functions are for adding quads and triangles to an ofMesh -- either
  vertices, or texture coordinates.
-*/
+ */
+//--------------------------------------------------------------
 void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
 	mesh.addVertex(a);
 	mesh.addVertex(b);
 	mesh.addVertex(c);
 }
 
+//--------------------------------------------------------------
 void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
+//--------------------------------------------------------------
 void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c) {
 	mesh.addTexCoord(a);
 	mesh.addTexCoord(b);
 	mesh.addTexCoord(c);
 }
 
+//--------------------------------------------------------------
 void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
 	addTexCoords(mesh, a, b, c);
 	addTexCoords(mesh, a, c, d);
@@ -36,7 +40,8 @@ void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
 /*
  The 3d data is stored in an image where alpha represents depth. Here we create
  a 3d point from the current x,y image position.
-*/
+ */
+//--------------------------------------------------------------
 ofVec3f getVertexFromImg(ofImage& img, int x, int y) {
 	ofColor color = img.getColor(x, y);
 	if(color.a > 0) {
@@ -47,6 +52,7 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y) {
 	}
 }
 
+//--------------------------------------------------------------
 void testApp::setup() {
 	img.loadImage("linzer.png");
 	
@@ -63,7 +69,7 @@ void testApp::setup() {
 			 the current pixel, the one to the right, to the bottom right, and
 			 beneath. These are called nw, ne, se and sw. To get the texture coords
 			 we need to use the actual image indices.
-			*/
+			 */
 			ofVec3f nw = getVertexFromImg(img, x, y);
 			ofVec3f ne = getVertexFromImg(img, x + skip, y);
 			ofVec3f sw = getVertexFromImg(img, x, y + skip);
@@ -86,10 +92,12 @@ void testApp::setup() {
 	glEnable(GL_DEPTH_TEST);
 }
 
+//--------------------------------------------------------------
 void testApp::update() {
 	
 }
 
+//--------------------------------------------------------------
 void testApp::draw() {
 	ofBackground(0);
 	cam.begin();
@@ -121,4 +129,49 @@ void testApp::draw() {
 	
 	// draw the framerate in the top left corner
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+}
+
+//--------------------------------------------------------------
+void testApp::keyPressed(int key){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+	
 }
