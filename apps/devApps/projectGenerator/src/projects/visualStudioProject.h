@@ -21,13 +21,7 @@ public:
     void addInclude(string includeName);
     void addLibrary(string libraryName);
 
-	void addAddon(ofAddon & addon);
-
-	string getName();
-	string getPath();
-
+		
 	static string LOG_NAME;
 
-private:
-	string projectDir, projectName, ofRoot;
 };
