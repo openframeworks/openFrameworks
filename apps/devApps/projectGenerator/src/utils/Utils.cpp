@@ -133,7 +133,7 @@ void getFilesRecursively(const string & path, vector < string > & fileNames){
     
     ofDirectory dir;
     
-    cout << "in getFilesRecursively "<< path << endl;
+    ofLogVerbose() << "in getFilesRecursively "<< path << endl;
     
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
