@@ -15,11 +15,10 @@ public:
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
 	
 	ofVec2f getField(ofVec2f position);
-	
-	void keyPressed(int key);
-	void mousePressed(int x, int y, int button);
 	
 	vector<ofVec2f> points;
 	ofMesh cloud;
