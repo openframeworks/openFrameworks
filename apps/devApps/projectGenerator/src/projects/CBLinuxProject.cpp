@@ -32,6 +32,20 @@ bool CBLinuxProject::createProjectFile(){
     ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),ofFilePath::join(projectDir,"Makefile"));
     ofFile config(ofFilePath::join(projectDir,"config.make"));
     if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),config.path());
+    
+    // handle the relative roots. 
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
+    if (relRoot != "../../../"){
+        string relPath2 = relRoot;
+        relPath2.erase(relPath2.end()-1);
+        findandreplaceInTexfile(projectDir + "config.make", "../../..", relPath2);
+        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "../../../", relRoot);
+        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
+    }
+    
+    
+    
+    
     return true;
 }
 bool CBLinuxProject::loadProjectFile(){
@@ -59,19 +73,7 @@ bool CBLinuxProject::saveProjectFile(){
         }
     }
     doc.save_file((projectDir + projectName + ".cbp").c_str());
-    
-    //let's do some renaming: 
-    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
-    
-    if (relRoot != "../../../"){
-        string relPath2 = relRoot;
-        relPath2.erase(relPath2.end()-1);
-        findandreplaceInTexfile(projectDir + "config.make", "../../..", relPath2);
-        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "../../../", relRoot);
-        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
-    }
-    
-    
+
 }
 
 

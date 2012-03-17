@@ -20,9 +20,32 @@ void CBWinProject::setup() {
 bool CBWinProject::createProjectFile(){
     
     ofFile project(projectDir + projectName + ".cbp");
+    ofFile workspace(projectDir + projectName + ".cbp");
     
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project.path(), false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"), false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),workspace.path(), false, true);
+    
+    
+    //let's do some renaming: 
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
+    
+    if (relRoot != "../../../"){
+        
+        string relRootWindows = relRoot;
+        // let's make it windows friendly:
+        for(int i = 0; i < relRootWindows.length(); i++) { 
+            if( relRootWindows[i] == '/' ) 
+                relRootWindows[i] = '\\'; 
+        } 
+        
+        findandreplaceInTexfile(workspace.path(), "../../../", relRoot);
+        findandreplaceInTexfile(project.path(), "../../../", relRoot);
+        
+        findandreplaceInTexfile(workspace.path(), "..\\..\\..\\", relRootWindows);
+        findandreplaceInTexfile(project.path(), "..\\..\\..\\", relRootWindows);
+    }
+    
+    
     
     return true;
 }
@@ -52,24 +75,7 @@ bool CBWinProject::saveProjectFile(){
     }
     doc.save_file((projectDir + projectName + ".cbp").c_str());
     
-    //let's do some renaming: 
-    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     
-    if (relRoot != "../../../"){
-        
-        string relRootWindows = relRoot;
-        // let's make it windows friendly:
-        for(int i = 0; i < relRootWindows.length(); i++) { 
-            if( relRootWindows[i] == '/' ) 
-                relRootWindows[i] = '\\'; 
-        } 
-        
-        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "../../../", relRoot);
-        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
-        
-        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "..\\..\\..\\", relRootWindows);
-        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "..\\..\\..\\", relRootWindows);
-    }
 }
 
 

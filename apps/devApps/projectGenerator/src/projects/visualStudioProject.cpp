@@ -22,37 +22,9 @@ bool visualStudioProject::createProjectFile(){
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user.path(), false, true);
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution.path(), false, true);
 
-    return true;
-}
-
-    
-bool visualStudioProject::loadProjectFile(){
-    
-    ofFile project(projectDir + projectName + ".vcxproj");
-	if(!project.exists()){
-		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
-		return false;
-	}
-	pugi::xml_parse_result result = doc.load(project);
-    bLoaded = result.status==pugi::status_ok;
-    return bLoaded;
-}
-
-
-bool visualStudioProject::saveProjectFile(){
-
-    
-    ofFile project(projectDir + projectName + ".vcxproj");
-    ofFile user(projectDir + projectName + ".vcxproj.user");
-    ofFile solution(projectDir + projectName + ".sln");
-    
     findandreplaceInTexfile(solution.path(),"emptyExample_vs2010",projectName);
-
-    doc.save_file((projectDir + projectName + ".vcxproj").c_str());
-
     findandreplaceInTexfile(project.path(),"emptyExample",projectName);
     
-
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     if (relRoot != "../../../"){
         
@@ -70,8 +42,27 @@ bool visualStudioProject::saveProjectFile(){
         //..\..\..\libs
         findandreplaceInTexfile(project.path(), "../../../", relRoot);
     }
+
+    return true;
+}
+
     
+bool visualStudioProject::loadProjectFile(){
     
+    ofFile project(projectDir + projectName + ".vcxproj");
+	if(!project.exists()){
+		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
+		return false;
+	}
+	pugi::xml_parse_result result = doc.load(project);
+    bLoaded = result.status==pugi::status_ok;
+    return bLoaded;
+}
+
+
+bool visualStudioProject::saveProjectFile(){    
+    doc.save_file((projectDir + projectName + ".vcxproj").c_str());
+
 }
 
 

@@ -188,6 +188,17 @@ bool xcodeProject::createProjectFile(){
     saveWorkspaceXML();
     saveScheme();
     
+    // make everything relative the right way. 
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
+    if (relRoot != "../../../"){
+        string relPath2 = relRoot;
+        relPath2.erase(relPath2.end()-1);
+        findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", relRoot);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
+    }
+    
+
     return true;
 }
 
@@ -227,17 +238,6 @@ bool xcodeProject::saveProjectFile(){
     
     string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
     bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
-    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
-    
-
-    if (relRoot != "../../../"){
-        string relPath2 = relRoot;
-        relPath2.erase(relPath2.end()-1);
-        findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", relRoot);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
-    }
-    
     return bOk;
 }  
 
@@ -530,6 +530,8 @@ void xcodeProject::addSrc(string srcFile, string folder){
 
 void xcodeProject::addInclude(string includeName){
     
+    
+    
 
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'HEADER_SEARCH_PATHS')]/following-sibling::node()[1]");
@@ -575,6 +577,9 @@ void xcodeProject::addInclude(string includeName){
         
         
 void xcodeProject::addLibrary(string libraryName){
+    
+    cout << " adding libraryName " << libraryName << endl; 
+    
     
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'OTHER_LDFLAGS')]/following-sibling::node()[1]");
