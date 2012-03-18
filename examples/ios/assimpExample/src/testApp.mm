@@ -8,9 +8,9 @@ void testApp::setup(){
     // we need GL_TEXTURE_2D for our models coords.
     ofDisableArbTex();
 
-    if(model.loadModel("astroBoy_walk.dae",true)){
+    if(model.loadModel("astroBoy_walk.dae", true)){
     	model.setAnimation(0);
-    	model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+    	model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
     	//model.createLightsFromAiModel();
     	//model.disableTextures();
     	//model.disableMaterials();
@@ -31,9 +31,9 @@ void testApp::setup(){
     light.enable();
     ofEnableSeparateSpecularLight();
 
-	bAnimate		= true;
-	bAnimateMouse 	= false;
-	animationTime	= 0.0;
+	bAnimate = true;
+	bAnimateMouse = false;
+	animationTime = 0.0;
 }
 
 //--------------------------------------------------------------
@@ -42,8 +42,8 @@ void testApp::update(){
 	//this is for animation if the model has it. 
 	if( bAnimate ){
 		animationTime += ofGetLastFrameTime();
-		if( animationTime >= 1.0 ){
-			animationTime = 0.0;
+		if(animationTime >= 1.0){
+            animationTime = 0.0;
 		}
 	    model.setNormalizedTime(animationTime);
 		mesh = model.getCurrentAnimatedMesh(0);
@@ -75,41 +75,46 @@ void testApp::draw(){
 		model.drawFaces();
     ofPopMatrix();
 
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
+    ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate(), 2), 10, 15);
     ofDrawBitmapString("fingers 2-5 load models", 10, 30);
     ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 45);
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::exit(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs & touch){
 	
-	if( touch.id >= 1 ){
+	if(touch.id >= 1){
 		
-		switch (touch.id) {
+		switch(touch.id){
 		
 			case 1:
 				model.loadModel("dwarf.x");
-				model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
 				model.setScale(1.2, 1.2, 1.2);	
 				ofDisableSeparateSpecularLight();
 				break;
 			case 2:
 				model.loadModel("TurbochiFromXSI.dae");
-				model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-				model.setRotation(0,90,1,0,0);
+				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
+				model.setRotation(0, 90, 1, 0, 0);
 				model.setScale(1.2, 1.2, 1.2);
 				ofEnableSeparateSpecularLight();
 				break;				
 			case 3:
 				model.loadModel("squirrel/NewSquirrel.3ds");
-				model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-				model.setRotation(0,-90,1,0,0);
+				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
+				model.setRotation(0, -90, 1, 0, 0);
 				ofDisableSeparateSpecularLight();
 				break;
 			case 4:
 				model.loadModel("astroBoy_walk.dae");
-				model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
 				ofEnableSeparateSpecularLight();
 				break;
 								
@@ -129,24 +134,42 @@ void testApp::touchDown(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
+void testApp::touchCancelled(ofTouchEventArgs & touch){
 
 }
 
+//--------------------------------------------------------------
+void testApp::lostFocus(){
+    
+}
 
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+    
+}
 
