@@ -339,6 +339,7 @@ void setOFRoot(string path){
 }
 
 string getOFRelPath(string from){
+	from = ofFilePath::removeTrailingSlash(from);
     Poco::Path base(true);
     base.parse(from);
 
