@@ -115,29 +115,53 @@ void testApp::draw(){
 	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
 	ofDrawBitmapString(reportStr, 4, 380);
 }
+    
+//--------------------------------------------------------------
+void testApp::exit(){
+        
+}
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
 	bLearnBakground = true;
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs &touch){
-
+void testApp::touchMoved(ofTouchEventArgs & touch){
+        
 }
-
+    
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
-
+void testApp::touchUp(ofTouchEventArgs & touch){
+        
 }
-
+    
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
-
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
+        
 }
-
+    
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
-
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+        
 }
-
+    
+//--------------------------------------------------------------
+void testApp::lostFocus(){
+        
+}
+    
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+        
+}
+    
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+        
+}
+    
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+        
+}
