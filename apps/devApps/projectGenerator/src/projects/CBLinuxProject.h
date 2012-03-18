@@ -38,8 +38,6 @@ public:
 	void addInclude(string includeName);
 	void addLibrary(string libraryName);
 
-	void addAddon(ofAddon & addon);
-
 	string getName();
 	string getPath();
 
