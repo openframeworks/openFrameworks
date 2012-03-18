@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <set>
 
 #include "ofMain.h"
 #include "pugixml.hpp"
@@ -18,16 +19,10 @@ public:
     
     virtual ~baseProject(){};
     
-    void setup(string _target){
-        target = _target;
-        templatePath = ofFilePath::join(getOFRoot(),"scripts/" + target + "/template/");
-        setup(); // call the inherited class setup(), now that target is set. 
-    }
+    void setup(string _target);
     
     bool create(string path);
-    bool save(){
-        return saveProjectFile();
-    }
+    bool save();
     
     // this shouldn't be called by anyone.  call "create(...), save" etc
 private:
@@ -46,17 +41,7 @@ public:
     virtual void addInclude(string includeName) = 0;
     virtual void addLibrary(string libraryName) = 0;
 
-	void addAddon(ofAddon & addon){
-        for(int i=0;i<(int)addon.includePaths.size();i++){
-            addInclude(addon.includePaths[i]);
-        }
-        for(int i=0;i<(int)addon.libs.size();i++){
-            addLibrary(addon.libs[i]);
-        }
-        for(int i=0;i< addon.srcFiles.size(); i++){
-            addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-        }
-    }
+	void addAddon(ofAddon & addon);
 
     string getName() { return projectName;};
 	string getPath() { return projectDir; };
@@ -68,7 +53,11 @@ public:
     string projectName;
     string templatePath;
     string target;
+
+private:
     
+    set<ofAddon> addons;
+    void parseAddons();
 };
 
 

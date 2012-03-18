@@ -8,29 +8,36 @@
 #define GRID_HEIGHT 16
 #define LENGTH		2 * 8
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiPhoneApp{
 	
-public:
-	void setup();
-	void update();
-	void draw();
+    public:
+        void setup();
+        void update();
+        void draw();
+        void exit();
+    
+        void touchDown(ofTouchEventArgs & touch);
+        void touchMoved(ofTouchEventArgs & touch);
+        void touchUp(ofTouchEventArgs & touch);
+        void touchDoubleTap(ofTouchEventArgs & touch);
+        void touchCancelled(ofTouchEventArgs & touch);
 	
-	void touchDown(ofTouchEventArgs &touch);
-	void touchMoved(ofTouchEventArgs &touch);
-	void touchUp(ofTouchEventArgs &touch);
-	void touchDoubleTap(ofTouchEventArgs &touch);
-	void touchCancelled(ofTouchEventArgs &touch);
+        void lostFocus();
+        void gotFocus();
+        void gotMemoryWarning();
+        void deviceOrientationChanged(int newOrientation);
 	
-	ofVbo	vbo;
-	ofVec3f pos[GRID_WIDTH*GRID_HEIGHT*LENGTH];
-	ofVec3f center;
+        ofVbo vbo;
+        ofVec3f pos[GRID_WIDTH*GRID_HEIGHT*LENGTH];
+        ofVec3f center;
 
-	float   restLength;
-	int		total;
-	int		space;
-	int		count;
-	bool	bPause;
-	int		zoom, zoomTarget;
+        float restLength;
+        int total;
+        int space;
+        int count;
+        bool bPause;
+        int zoom;
+        int zoomTarget;
 };
 
 

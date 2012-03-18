@@ -12,26 +12,64 @@
 
 string CBLinuxProject::LOG_NAME = "CBLinuxProject";
 
-
-
-
-
-
-
 void CBLinuxProject::setup() {
-	if(target=="linux")
-		templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/linux");
-	else
-		templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/linux64");
+	templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/"+target);
 }
 
 bool CBLinuxProject::createProjectFile(){
-    ofFile project(projectDir + projectName + ".cbp");
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.cbp"),project.path(), false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"), false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),ofFilePath::join(projectDir,"Makefile"), false, true);
+	ofDirectory dir(projectDir);
+	if(!dir.exists()) dir.create(true);
+
+    ofFile project(ofFilePath::join(projectDir, projectName + ".cbp"));
+    string src =  ofFilePath::join(templatePath,"emptyExample_" + target + ".cbp");
+    string dst = project.path();
+    bool ret;
+
+    if(!project.exists()){
+		ret = ofFile::copyFromTo(src,dst);
+		if(!ret){
+			ofLogError(LOG_NAME) << "error copying cbp template from " << src << " to " << dst;
+			return false;
+		}else{
+			findandreplaceInTexfile(dst, "emptyExample", projectName);
+		}
+    }
+
+    ofFile workspace(ofFilePath::join(projectDir, projectName + ".workspace"));
+    if(!workspace.exists()){
+		src = ofFilePath::join(templatePath,"emptyExample_" + target + ".workspace");
+		dst = workspace.path();
+		ret = ofFile::copyFromTo(src,dst);
+		if(!ret){
+			ofLogError(LOG_NAME) << "error copying workspace template from "<< src << " to " << dst;
+			return false;
+		}else{
+			findandreplaceInTexfile(dst, "emptyExample", projectName);
+		}
+    }
+
+    ofFile makefile(ofFilePath::join(projectDir,"Makefile"));
+    if(!makefile.exists()){
+		src = ofFilePath::join(templatePath,"Makefile");
+		dst = makefile.path();
+		ret = ofFile::copyFromTo(src,dst);
+		if(!ret){
+			ofLogError(LOG_NAME) << "error copying Makefile template from " << src << " to " << dst;
+			return false;
+		}
+    }
+
     ofFile config(ofFilePath::join(projectDir,"config.make"));
-    if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),config.path(), false, true);
+    if(!config.exists()){
+    	src = ofFilePath::join(templatePath,"config.make");
+    	dst = config.path();
+    	ret = ofFile::copyFromTo(src,dst);
+    	if(!ret){
+    		ofLogError(LOG_NAME) << "error copying config.make template from " << src << " to " << dst;
+    		return false;
+    	}
+    }
+
     
     // handle the relative roots. 
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
@@ -43,16 +81,14 @@ bool CBLinuxProject::createProjectFile(){
         findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
     }
     
-    
-    
-    
     return true;
 }
+
 bool CBLinuxProject::loadProjectFile(){
     
     //project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
     
-    ofFile project(projectDir + projectName + ".cbp");
+    ofFile project(ofFilePath::join(projectDir , projectName + ".cbp"));
 	if(!project.exists()){
 		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
 		return false;
@@ -72,7 +108,7 @@ bool CBLinuxProject::saveProjectFile(){
             ofLogError(LOG_NAME) << "can't set title";
         }
     }
-    doc.save_file((projectDir + projectName + ".cbp").c_str());
+    return doc.save_file((projectDir + projectName + ".cbp").c_str());
 
 }
 
@@ -95,8 +131,6 @@ void CBLinuxProject::addInclude(string includeName){
 void CBLinuxProject::addLibrary(string libraryName){
     //appendValue(doc, "Add", "library", libraryName);
 }
-
-
 
 string CBLinuxProject::getName(){
 	return projectName;

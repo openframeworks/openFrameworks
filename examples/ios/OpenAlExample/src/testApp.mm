@@ -10,8 +10,7 @@ void testApp::setup(){
 	
 	ofSetFrameRate(60);
 	
-	for(int i=0;i<10;i++)
-	{
+	for(int i = 0; i < 10; i++){
 		synth[i].loadSound("synth.caf");
 	}
 	
@@ -19,8 +18,7 @@ void testApp::setup(){
 	ofxOpenALSoundPlayer::ofxALSoundSetReferenceDistance(10);
 	ofxOpenALSoundPlayer::ofxALSoundSetMaxDistance(500);
 	ofxOpenALSoundPlayer::ofxALSoundSetListenerGain(5.0);
-	for(int i=0;i<5;i++)
-	{
+	for(int i = 0; i < 5; i++){
 		audioLoc[i].set(-1,-1);
 		audioSize[i]=0;
 	}
@@ -30,10 +28,10 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	for(int i=0;i<5;i++)
-	{
-		if(audioSize[i]>0 && audioSize[i]<ofGetHeight())
+	for(int i = 0; i < 5; i++){
+		if(audioSize[i]>0 && audioSize[i]<ofGetHeight()){
 			audioSize[i]+=3;
+        }
 	}
 }
 
@@ -43,15 +41,14 @@ void testApp::draw(){
 	ofSetColor(50,50,200);
 	ofCircle(ofGetWidth()/2, ofGetHeight()/2, 4);
 	
-	for(int i=0;i<5;i++)
-	{
+	for(int i = 0; i < 5; i++){
 		ofSetColor(150+31*i,150+31*i,150+31*i);
 		ofCircle(audioLoc[i].x, audioLoc[i].y, audioSize[i]);
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::exit() {
+void testApp::exit(){
 
 }
 
@@ -61,8 +58,9 @@ void testApp::touchDown(ofTouchEventArgs & touch){
 	audioSize[touch.id]=1;
 	
 	lastSoundPlayed++;
-	if(lastSoundPlayed>=10)
+	if(lastSoundPlayed>=10){
 		lastSoundPlayed=0;
+    }
 	
 	printf("%f %f  \n", touch.y / ofGetHeight(), touch.y);
 	synth[lastSoundPlayed].play();
@@ -88,6 +86,11 @@ void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 }
 
 //--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
+}
+
+//--------------------------------------------------------------
 void testApp::lostFocus(){
 
 }
@@ -106,10 +109,3 @@ void testApp::gotMemoryWarning(){
 void testApp::deviceOrientationChanged(int newOrientation){
 
 }
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
-}
-

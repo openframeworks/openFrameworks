@@ -584,6 +584,7 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 	if( bRelativeToData ) pathDst = ofToDataPath(pathDst);
 
 	if( !ofFile::doesFileExist(pathSrc, bRelativeToData) ){
+		ofLog(OF_LOG_ERROR, "ofFile::copyFromTo source file/folder doesn't exist");
 		return false;
 	}
 

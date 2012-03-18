@@ -37,7 +37,7 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
 	ofxOscMessage m;
 	m.setAddress( "/mouse/button" );
 	m.addStringArg( "down" );
@@ -45,7 +45,7 @@ void testApp::touchDown(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 	ofxOscMessage m;
 	m.setAddress( "/mouse/position" );
 	m.addIntArg( touch.x );
@@ -54,7 +54,7 @@ void testApp::touchMoved(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 	ofxOscMessage m;
 	m.setAddress( "/mouse/button" );
 	m.addStringArg( "up" );
@@ -62,8 +62,13 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
@@ -85,10 +90,3 @@ void testApp::gotMemoryWarning(){
 void testApp::deviceOrientationChanged(int newOrientation){
 
 }
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
-}
-
