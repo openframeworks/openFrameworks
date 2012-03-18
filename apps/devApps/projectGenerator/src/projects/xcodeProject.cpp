@@ -181,6 +181,7 @@ bool xcodeProject::createProjectFile(){
     }else{
         ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir, true, true);
     }
 
     // this is for xcode 4 sceme issues. but I'm not sure this is right. 
