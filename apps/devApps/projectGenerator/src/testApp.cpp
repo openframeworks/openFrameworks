@@ -22,7 +22,7 @@ void testApp::setup(){
         project->create(projectPath);
         vector < string > addons;
         parseAddonsDotMake(project->getPath() + "addons.make", addons);
-        for (int i = 0; i < addons.size(); i++){
+        for (int i = 0; i < (int)addons.size(); i++){
             ofAddon addon;
             addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
             project->addAddon(addon);
@@ -117,7 +117,7 @@ void testApp::generateExamplesCB(bool & pressed){
 		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
 	}
 
-	for(int i = 0; i < targetsToMake.size(); i++){
+	for(int i = 0; i < (int)targetsToMake.size(); i++){
 		setupForTarget(targetsToMake[i]);
 		generateExamples();
 	}
@@ -131,7 +131,7 @@ void testApp::generateExamples(){
     
     dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
 
-    for (int i = 0; i < dir.size(); i++){
+    for (int i = 0; i < (int)dir.size(); i++){
         
 		if( target == "ios" ){
 			if( dir.getName(i) != "ios" ) continue;
@@ -142,12 +142,12 @@ void testApp::generateExamples(){
         ofDirectory subdir;
         subdir.listDir(dir.getPath(i));
         
-        for (int j = 0; j < subdir.size(); j++){
+        for (int j = 0; j < (int)subdir.size(); j++){
             project->setup(target);
             project->create(subdir.getPath(j));
             vector < string > addons;
             parseAddonsDotMake(project->getPath() + "addons.make", addons);
-            for (int i = 0; i < addons.size(); i++){
+            for (int i = 0; i < (int)addons.size(); i++){
                 ofAddon addon;
                 addon.pathToOF = getOFRelPath(subdir.getPath(j));
                 addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
@@ -164,20 +164,21 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
     
     project->setup(target);
-    project->create(res.filePath);
-    vector<string> addonsToggles = panelAddons.getControlNames();
-	for (int i = 0; i < addonsToggles.size(); i++){
-		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
-		if(toggle){
-			ofAddon addon;
-            addon.pathToOF = getOFRelPath(res.filePath);
-			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
-			printf("adding %s addons \n", addonsToggles[i].c_str());
-            project->addAddon(addon);
-            
+    if(project->create(res.filePath)){
+		vector<string> addonsToggles = panelAddons.getControlNames();
+		for (int i = 0; i < (int) addonsToggles.size(); i++){
+			ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+			if(toggle){
+				ofAddon addon;
+				addon.pathToOF = getOFRelPath(res.filePath);
+				addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
+				printf("adding %s addons \n", addonsToggles[i].c_str());
+				project->addAddon(addon);
+
+			}
 		}
-	}
-    project->save();
+		project->save();
+    }
     
     return res;
 }
@@ -190,7 +191,7 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
     project->setup(target);
 	project->create(res.filePath);
 	vector<string> addonsToggles = panelAddons.getControlNames();
-	for (int i = 0; i < addonsToggles.size(); i++){
+	for (int i = 0; i < (int)addonsToggles.size(); i++){
 		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
 		if(toggle){
 			ofAddon addon;
