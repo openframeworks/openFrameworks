@@ -1158,7 +1158,11 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 		if(textString[c] == '\n'){
 
 			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
-			sx = x;
+			if(mode == OF_BITMAPMODE_SIMPLE) {
+				sx = x;
+			} else {
+				sx = 0;
+			}
 
 			//glRasterPos2f(x,y + (int)yOffset);
 		} else if (textString[c] >= 32){
