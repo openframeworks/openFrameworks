@@ -55,8 +55,6 @@
 	ofSetDataPathRoot( path );
 	//-----
 	
-	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_PORTRAIT);
-	
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
 	[[UIApplication sharedApplication] setStatusBarHidden:(iPhoneGetOFWindow()->windowMode == OF_FULLSCREEN) animated:YES];
 	
