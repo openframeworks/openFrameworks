@@ -181,9 +181,23 @@ bool xcodeProject::createProjectFile(){
     }else{
         ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
+		
+		ofDirectory binDirectory(ofFilePath::join(projectDir, "bin"));
+		if (!binDirectory.exists()){
+			ofDirectory dataDirectory(ofFilePath::join(projectDir, "bin/data"));
+			dataDirectory.create(true);							 
+		}
+		if(binDirectory.exists()){
+			ofDirectory dataDirectory(ofFilePath::join(binDirectory.path(), "data"));
+			if (!dataDirectory.exists()){
+				dataDirectory.create(false);
+			}
+		}
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default.png"),projectDir + "/bin/data/Default.png", true, true);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon.png"),projectDir + "/bin/data/Icon.png", true, true);
     }
 
-    // this is for xcode 4 sceme issues. but I'm not sure this is right. 
+    // this is for xcode 4 scheme issues. but I'm not sure this is right. 
     
     saveWorkspaceXML();
     saveScheme();
