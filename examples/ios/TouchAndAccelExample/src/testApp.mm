@@ -4,6 +4,7 @@
 void testApp::setup(){	
 	ofBackground(225, 225, 225);
 	ofSetCircleResolution(80);
+    ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	// register touch events
 	ofxRegisterMultitouch(this);
@@ -31,7 +32,7 @@ void testApp::update() {
 	for(int i=0; i < balls.size(); i++){
 		balls[i].update();
 	}
-	printf("x = %f   y = %f \n", ofxAccelerometer.getForce().x, ofxAccelerometer.getForce().y);
+    ofLog(OF_LOG_VERBOSE, "x = %f, y = %f", ofxAccelerometer.getForce().x, ofxAccelerometer.getForce().y);
 }
 
 //--------------------------------------------------------------
@@ -58,54 +59,58 @@ void testApp::draw() {
 }
 
 //--------------------------------------------------------------
-void testApp::exit() {
+void testApp::exit(){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(int x, int y, int id){
-	printf("touch %i down at (%i,%i)\n", id, x,y);
-	balls[id].moveTo(x, y);
-	balls[id].bDragged = true;
+void testApp::touchDown(ofTouchEventArgs & touch){
+    ofLog(OF_LOG_VERBOSE, "touch %d down at (%d,%d)", touch.id, touch.x, touch.y);
+	balls[touch.id].moveTo(touch.x, touch.y);
+	balls[touch.id].bDragged = true;
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(int x, int y, int id){
-	printf("touch %i moved at (%i,%i)\n", id, x, y);
-	balls[id].moveTo(x, y);
-	balls[id].bDragged = true;	
+void testApp::touchMoved(ofTouchEventArgs & touch){
+    ofLog(OF_LOG_VERBOSE, "touch %d moved at (%d,%d)", touch.id, touch.x, touch.y);
+	balls[touch.id].moveTo(touch.x, touch.y);
+	balls[touch.id].bDragged = true;	
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(int x, int y, int id){
-	balls[id].bDragged = false;
-	printf("touch %i up at (%i,%i)\n", id, x, y);
+void testApp::touchUp(ofTouchEventArgs & touch){
+    ofLog(OF_LOG_VERBOSE, "touch %d up at (%d,%d)", touch.id, touch.x, touch.y);
+	balls[touch.id].bDragged = false;
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(int x, int y, int id){
-	printf("touch %i double tap at (%i,%i)\n", id, x, y);
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
+    ofLog(OF_LOG_VERBOSE, "touch %d double tap at (%d,%d)", touch.id, touch.x, touch.y);
 }
 
 //--------------------------------------------------------------
-void testApp::lostFocus() {
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::gotFocus() {
+void testApp::lostFocus(){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::gotMemoryWarning() {
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
 }
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
-}
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
+    
 }
 
 //--------------------------------------------------------------

@@ -89,7 +89,6 @@ class ofMatrix3x3 {
     ofMatrix3x3 inverse(const ofMatrix3x3& A);
 
 
-
     /**
     * Add two matrices
     */
@@ -110,11 +109,22 @@ class ofMatrix3x3 {
     */
     ofMatrix3x3 operator*(float scalar);
 
-
+  /**
+   * Multiply a matrix by a matrix this = this*B (in that order)
+   */
 	void operator*=(const ofMatrix3x3& B);
 
+  /**
+   * Multiply a matrix by a matrix entry by entry (i.e. a*a, b*b, c*c...)
+   This is referred to as an entrywise, Hadamard, or Schur product
+   */
+    ofMatrix3x3 entrywiseTimes(const ofMatrix3x3& A);
+
+  /**
+   * Multiply a matrix by a scalar (multiples all entries by scalar)
+   */
     void operator*=(float scalar);
-	
+
 	friend ostream& operator<<(ostream& os, const ofMatrix3x3& M);
 	friend istream& operator>>(istream& is, ofMatrix3x3& M);
 

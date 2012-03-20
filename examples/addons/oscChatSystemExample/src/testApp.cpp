@@ -51,7 +51,7 @@ void testApp::update(){
 			string incomingHost = m.getRemoteIp();
 			//See if incoming host is a new one:
 			if(std::find(knownClients.begin(), knownClients.end(), incomingHost)
-					== knownClients.end()){
+			   == knownClients.end()){
 				knownClients.push_back(incomingHost); //add new host to list
 			}
 			// get the first argument (we're only sending one) as a string
@@ -114,7 +114,7 @@ void testApp::draw(){
 	//Display some information about the client on the screen with the font you loaded
 
 	string debug = "Chat client\nSending messages to " + string(clientDestination) + ":"
-			+ ofToString(clientSendPort);
+				   + ofToString(clientSendPort);
 	string instructions = "type to create a new message.\nhit RETURN to send!";
 
 	titleFont.drawString(debug, 10, 37);
@@ -156,7 +156,7 @@ void testApp::keyPressed(int key){
 			if(clientTyping.size() > 0){
 				clientTyping.erase(clientTyping.end() - 1);
 			}
-		};
+		}
 	}
 	// hit Return, time to send the osc message
 	else{
@@ -252,6 +252,6 @@ void testApp::broadcastReceivedMessage(string chatmessage){
 		m.setRemoteEndpoint(knownClients[i], serverRecvPort + 1);
 		serverSender.sendMessage(m);
 		ofLogVerbose("Server broadcast message " + m.getArgAsString(0) + " to " + m.getRemoteIp()
-					+ ":" + ofToString(m.getRemotePort()));
+					 + ":" + ofToString(m.getRemotePort()));
 	}
 }

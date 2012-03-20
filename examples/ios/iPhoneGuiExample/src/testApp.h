@@ -4,24 +4,28 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiPhoneApp{
 	
-public:
+    public:
+        void setup();
+        void update();
+        void draw();
+        void exit();
+    
+        void touchDown(ofTouchEventArgs & touch);
+        void touchMoved(ofTouchEventArgs & touch);
+        void touchUp(ofTouchEventArgs & touch);
+        void touchDoubleTap(ofTouchEventArgs & touch);
+        void touchCancelled(ofTouchEventArgs & touch);
 	
-	float lengthRatio;
-	int numPoints;
-	bool bFill;
-
-	
-	void setup();
-	void update();
-	void draw();
-	
-	void touchDown(ofTouchEventArgs &touch);
-	void touchMoved(ofTouchEventArgs &touch);
-	void touchUp(ofTouchEventArgs &touch);
-	void touchDoubleTap(ofTouchEventArgs &touch);
-	void touchCancelled(ofTouchEventArgs &touch);
+        void lostFocus();
+        void gotFocus();
+        void gotMemoryWarning();
+        void deviceOrientationChanged(int newOrientation);
+    
+        float lengthRatio;
+        int numPoints;
+        bool bFill;
 
 };
 
