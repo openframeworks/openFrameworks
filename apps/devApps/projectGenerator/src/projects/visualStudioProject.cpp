@@ -7,62 +7,68 @@
 string visualStudioProject::LOG_NAME = "visualStudioProjectFile";
 
 
-void visualStudioProject::setup(string _ofRoot){
-    ofRoot = _ofRoot;
-    templatePath = ofFilePath::join(getOFRoot(),"scripts/vs2010/template");
+
+void visualStudioProject::setup() {
+
 }
 
-bool visualStudioProject::load(string path){
-	projectDir = ofFilePath::addLeadingSlash(path);
-	projectName = ofFilePath::getFileName(path);
-	ofFile project(projectDir + projectName + ".vcxproj");
+bool visualStudioProject::createProjectFile(){
+    
+    ofFile project(projectDir + projectName + ".vcxproj");
+    ofFile user(projectDir + projectName + ".vcxproj.user");
+    ofFile solution(projectDir + projectName + ".sln");
+    
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path(),false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user.path(), false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution.path(), false, true);
+
+    findandreplaceInTexfile(solution.path(),"emptyExample_vs2010",projectName);
+    findandreplaceInTexfile(project.path(),"emptyExample",projectName);
+    
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
+    if (relRoot != "../../../"){
+        
+        string relRootWindows = relRoot;
+        // let's make it windows friendly:
+        for(int i = 0; i < relRootWindows.length(); i++) { 
+            if( relRootWindows[i] == '/' ) 
+                relRootWindows[i] = '\\'; 
+        } 
+        
+        // sln has windows paths: 
+        findandreplaceInTexfile(solution.path(), "..\\..\\..\\", relRootWindows);
+        
+        // vcx has unixy paths: 
+        //..\..\..\libs
+        findandreplaceInTexfile(project.path(), "../../../", relRoot);
+    }
+
+    return true;
+}
+
+    
+bool visualStudioProject::loadProjectFile(){
+    
+    ofFile project(projectDir + projectName + ".vcxproj");
 	if(!project.exists()){
-		ofLogError(LOG_NAME) << "error loading" << path << "doesn't exist";
+		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
 		return false;
 	}
-
 	pugi::xml_parse_result result = doc.load(project);
-
     bLoaded = result.status==pugi::status_ok;
     return bLoaded;
-}  
-
-
-bool visualStudioProject::save(string fileName){
-    return doc.save_file(ofToDataPath(fileName).c_str());
-}  
-
-bool visualStudioProject::create(string path){
-	projectDir = ofFilePath::addTrailingSlash(path);
-	ofLogVerbose(LOG_NAME) << "project dir:" << projectDir;
-	projectName = ofFilePath::getFileName(path);
-	ofLogVerbose(LOG_NAME) << "project name:" << projectName;
-	ofFile project(projectDir + projectName + ".vcxproj");
-	if(!project.exists()){
-		ofLogVerbose(LOG_NAME) << "creating non existent project";
-		ofDirectory dir(projectDir);
-		dir.create(true);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path());
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),ofFilePath::join(projectDir, projectName + ".vcxproj.user"));
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),ofFilePath::join(projectDir, projectName + ".sln"));
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
-		project.open(ofFilePath::join(projectDir , projectName + ".vcxproj"));
-		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".sln"),"emptyExample",projectName);
-	}
-
-	pugi::xml_parse_result result = doc.load(project);
-	if(result.status==pugi::status_ok){
-		//TODO: change project name in xml and save
-		//doc.save_file((projectDir + projectName + ".cbp").c_str());
-		bLoaded = true;
-	}else{
-		bLoaded = false;
-	}
-	return bLoaded;
 }
 
+
+bool visualStudioProject::saveProjectFile(){    
+    doc.save_file((projectDir + projectName + ".vcxproj").c_str());
+
+}
+
+
 void visualStudioProject::addSrc(string srcFile, string folder){
+    
+    // TODO: no folder love here...
     
     fixSlashOrder(srcFile);
     
@@ -155,25 +161,3 @@ void visualStudioProject::addLibrary(string libraryName){
 
 
 }
-
-
-void visualStudioProject::addAddon(ofAddon & addon){
-	for(int i=0;i<(int)addon.includePaths.size();i++){
-		addInclude(addon.includePaths[i]);
-	}
-	for(int i=0;i<(int)addon.libs.size();i++){
-		addLibrary(addon.libs[i]);
-	}
-	for(int i=0;i<(int)addon.srcFiles.size();i++){
-		addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-	}
-}
-
-string visualStudioProject::getName(){
-	return projectName;
-}
-
-string visualStudioProject::getPath(){
-	return projectDir;
-}
-

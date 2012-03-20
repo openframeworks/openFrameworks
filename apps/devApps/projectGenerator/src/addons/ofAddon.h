@@ -16,7 +16,6 @@ class ofAddon {
 public:
 	
     ofAddon();
-	
     
 	void fromFS(string path, string platform);
 	void fromXML(string installXmlName);
@@ -34,6 +33,10 @@ public:
     
     
     string pathToOF;
+
+    bool operator <(const ofAddon & addon) const{
+    	return addon.name < name;
+    }
 
 };
 

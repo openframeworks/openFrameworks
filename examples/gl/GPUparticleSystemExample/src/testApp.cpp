@@ -1,21 +1,3 @@
-/*  of Detroit DevCon 2012
- *  date: 2012/02/26 10:00:00
- *
- *  summary:Example of how to use GPU for data processing. The data it«s going to be stored
- *          on the color channels of the FBO«s textures. In this case we are going to use just
- *          RED and GREEN channels on two textures. One for the position and the other one for
- *          the velocity. For updating the informacion of those textures we are going to use 
- *          two FBO«s for each type of information. This pair of FBO will pass the information 
- *          from one to other in a techninc call PingPong.
- *          After updating this information, we are going to use the textures allocated on GPU memory
- *          for moving some vertex and then multiplied them in order to make little frames that hold 
- *          a texture of a spark of light.
- *
- *
- *  author: Patricio Gonzalez Vivo
- *  author_site: http://patriciogonzalezvivo.com
- */
-
 #include "testApp.h"
 
 //--------------------------------------------------------------
@@ -57,7 +39,7 @@ void testApp::setup(){
     posPingPong.allocate(textureRes, textureRes,GL_RGB32F);
     posPingPong.src->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
     posPingPong.dst->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
-    delete pos;    // Delete the array
+    delete [] pos;    // Delete the array
     
     
     // 2. Making arrays of float pixels with velocity information and the load it to a texture
@@ -71,7 +53,7 @@ void testApp::setup(){
     velPingPong.allocate(textureRes, textureRes,GL_RGB32F);
     velPingPong.src->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
     velPingPong.dst->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
-    delete vel; // Delete the array
+    delete [] vel; // Delete the array
     
     // Loading and setings of the variables of the textures of the particles
     sparkImg.loadImage("spark.png");

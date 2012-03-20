@@ -40,6 +40,8 @@
 // use for checking if stuff has been initialized
 #define NOT_INITIALIZED			-1000000
 
+static bool bAppCreated = false;
+
 static ofAppiPhoneWindow *_instance = NULL;
 
 ofAppiPhoneWindow* ofAppiPhoneWindow::getInstance() {
@@ -59,6 +61,8 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	timeNow = 0.0;
 	timeThen = 0.0;
 	bEnableSetupScreen = true;
+    
+    orientation = OF_ORIENTATION_DEFAULT;
 	
 	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
 	windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
@@ -93,11 +97,31 @@ void ofAppiPhoneWindow::initializeWindow() {
 void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	UIApplicationMain(nil, nil, nil, @"ofxiPhoneAppDelegate");		// this will run the infinite loop checking all events
-	[pool release];	
+    if (bAppCreated) {                                          // app already created, only reset values.
+        nFrameCount = 0;
+        lastFrameTime = 0;
+        fps = frameRate = 60.0f;
+        timeNow = 0.0;
+        timeThen = 0.0;
+        
+        windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);        // new OF app created, it could be a different window and screen size, so reset.
+        windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+        screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+    } else {                                                    // app not yet created, created it!
+        startAppWithDelegate( "ofxiPhoneAppDelegate" );
+    }
 }
 
+void ofAppiPhoneWindow::startAppWithDelegate(string appDelegateClassName) {
+    if( bAppCreated )
+        return;
+    
+    bAppCreated = true;
+    
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    UIApplicationMain(nil, nil, nil, ofxStringToNSString(appDelegateClassName));
+    [pool release];
+}
 
 
 
@@ -118,8 +142,8 @@ void setWindowShape(int w, int h) {
 // return cached pos, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 	if(windowPos.x == NOT_INITIALIZED) {
-		CGPoint p = [[[UIApplication sharedApplication] keyWindow] bounds].origin;
-		windowPos.set(p.x, p.y, 0);
+		CGRect frame = [ofxiPhoneGetGLView() frame];
+		windowPos.set(frame.origin.x, frame.origin.y, 0);
 	}
 	return windowPos;
 }
@@ -128,8 +152,8 @@ ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 // return cached size, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowSize() {
 	if(windowSize.x == NOT_INITIALIZED) {
-		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;
-		windowSize.set(s.width, s.height, 0);
+        CGRect frame = [ofxiPhoneGetGLView() frame];
+		windowSize.set(frame.size.width, frame.size.height, 0);
 
 		if(retinaEnabled)
 			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
@@ -155,18 +179,18 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 
 int ofAppiPhoneWindow::getWidth(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return (int)getScreenSize().x;
+		return (int)getWindowSize().x;
 	}
 	
-	return (int)getScreenSize().y;
+	return (int)getWindowSize().y;
 }
 
 int ofAppiPhoneWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return (int)getScreenSize().y;
+		return (int)getWindowSize().y;
 	}
 	
-	return (int)getScreenSize().x;
+	return (int)getWindowSize().x;
 }
 
 int	ofAppiPhoneWindow::getWindowMode() {
@@ -179,7 +203,7 @@ float ofAppiPhoneWindow::getFrameRate() {
 
 /******** Other stuff ************/
 void ofAppiPhoneWindow::setFrameRate(float targetRate) {
-	[ofxiPhoneGetAppDelegate() setFrameRate:targetRate];
+	[ofxiPhoneGetViewController() setFrameRate:targetRate];
 }
 
 int	ofAppiPhoneWindow::getFrameNum() {
@@ -309,55 +333,54 @@ bool ofAppiPhoneWindow::isRetinaSupported()
 }
 
 void ofAppiPhoneWindow::timerLoop() {
-	static ofEventArgs voidEventArgs;
-	
-	ofGetAppPtr()->update();
-		
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents().update, voidEventArgs);
-	#endif
-	
-	[ofxiPhoneGetAppDelegate() lockGL];
-
-	[ofxiPhoneGetGLView() startRender];
-
-	//we do this as ofGetWidth() now accounts for rotation 
-	//so we just make our viewport across the whole screen
-	glViewport( 0, 0, getScreenSize().x, getScreenSize().y );
-
-	float * bgPtr = ofBgColorPtr();
-	bool bClearAuto = ofbClearBg();
-	if ( bClearAuto == true){
-		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	
-	if(bEnableSetupScreen) {
-		ofSetupScreen();
-	}
-	
-	ofGetAppPtr()->draw();
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents().draw, voidEventArgs );
-	#endif
-	
-	[ofxiPhoneGetGLView() finishRender];
-	
-	[ofxiPhoneGetAppDelegate() unlockGL];
-
-	
-	
-	
-	timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;
-  	// --------------
-	
-	nFrameCount++;		// increase the overall frame count
+    ofBaseApp* appPtr = ofGetAppPtr();
+    if( !appPtr )
+        return;
+    
+    static ofEventArgs voidEventArgs;
+    
+    appPtr->update();
+    
+#ifdef OF_USING_POCO
+    ofNotifyEvent(ofEvents().update, voidEventArgs);
+#endif
+    
+    [ofxiPhoneGetViewController() lockGL];
+    [ofxiPhoneGetGLView() startRender];
+    
+    //we do this as ofGetWidth() now accounts for rotation 
+    //so we just make our viewport across the whole screen
+    glViewport(0, 0, getWindowSize().x, getWindowSize().y);
+    
+    float * bgPtr = ofBgColorPtr();
+    bool bClearAuto = ofbClearBg();
+    if ( bClearAuto == true){
+        glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    
+    if(bEnableSetupScreen) {
+        ofSetupScreen();
+    }
+    
+    appPtr->draw();
+#ifdef OF_USING_POCO
+    ofNotifyEvent(ofEvents().draw, voidEventArgs);
+#endif
+    
+    [ofxiPhoneGetGLView() finishRender];
+    [ofxiPhoneGetViewController() unlockGL];
+    
+    timeNow = ofGetElapsedTimef();
+    double diff = timeNow-timeThen;
+    if( diff  > 0.00001 ){
+        fps			= 1.0 / diff;
+        frameRate	*= 0.9f;
+        frameRate	+= 0.1f*fps;
+    }
+    lastFrameTime	= diff;
+    timeThen		= timeNow;
+    // --------------
+    
+    nFrameCount++;		// increase the overall frame count
 }

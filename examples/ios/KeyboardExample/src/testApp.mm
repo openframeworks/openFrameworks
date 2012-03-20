@@ -40,7 +40,7 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
 	
 	if (touch.id == 1){
 		
@@ -55,18 +55,23 @@ void testApp::touchDown(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 	
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
@@ -86,13 +91,6 @@ void testApp::gotMemoryWarning(){
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
-}
-
-
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
+    
 }
 

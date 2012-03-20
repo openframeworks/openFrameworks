@@ -21,22 +21,22 @@ public:
 		Linux64
 	};
 
-    CBLinuxProject(Arch arch);
-    CBLinuxProject();
+   
+    void setup();
 
-    void setArch(Arch arch);
-	
-    void setup(string ofRoot= "../../../");
+    bool createProjectFile();
+    bool loadProjectFile();
+    bool saveProjectFile();
 
+    /*
 	bool load(string path);
 	bool create(string path);
 	bool save(string path){return true;}
-
+     */
+    
 	void addSrc(string srcName, string folder);
 	void addInclude(string includeName);
 	void addLibrary(string libraryName);
-
-	void addAddon(ofAddon & addon);
 
 	string getName();
 	string getPath();
@@ -48,9 +48,7 @@ private:
     //void parseAddons();
 
 	pugi::xml_document doc;
-	string projectDir, projectName;
 	vector<ofAddon> addons;
-	string ofRoot;
 	Arch arch;
 };
 
