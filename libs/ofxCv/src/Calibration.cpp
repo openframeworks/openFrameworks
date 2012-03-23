@@ -233,12 +233,12 @@ namespace ofxCv {
 		}
 		return calibrate();
 	}
-	void Calibration::undistort(Mat img) {
+	void Calibration::undistort(Mat img, int interpolationMode) {
 		img.copyTo(undistortBuffer);
-		undistort(undistortBuffer, img);
+		undistort(undistortBuffer, img, interpolationMode);
 	}
-	void Calibration::undistort(Mat src, Mat dst) {
-		remap(src, dst, undistortMapX, undistortMapY, INTER_LINEAR);
+	void Calibration::undistort(Mat src, Mat dst, int interpolationMode) {
+		remap(src, dst, undistortMapX, undistortMapY, interpolationMode);
 	}
 	
 	ofVec2f Calibration::undistort(ofVec2f& src) const {
