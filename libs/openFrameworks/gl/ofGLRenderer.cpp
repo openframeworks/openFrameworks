@@ -264,11 +264,19 @@ void ofGLRenderer::popView() {
 	// done like this cause i was getting GL_STACK_UNDERFLOW
 	// should ofPush/PopMatrix work the same way, what if it's mixed with glPush/PopMatrix
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(projectionStack.top().getPtr());
+	if(!projectionStack.empty()){
+		glLoadMatrixf(projectionStack.top().getPtr());
+		projectionStack.pop();
+	}else{
+		ofLogError() << "popView: couldn't pop projection matrix, stack empty. probably wrong anidated push/popView";
+	}
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(modelViewStack.top().getPtr());
-	projectionStack.pop();
-	modelViewStack.pop();
+	if(!modelViewStack.empty()){
+		glLoadMatrixf(modelViewStack.top().getPtr());
+		modelViewStack.pop();
+	}else{
+		ofLogError() << "popView: couldn't pop modelView matrix, stack empty. probably wrong anidated push/popView";
+	}
 }
 
 //----------------------------------------------------------
