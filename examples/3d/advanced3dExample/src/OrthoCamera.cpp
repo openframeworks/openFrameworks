@@ -1,28 +1,22 @@
-/*
- *  OrthoCamera.cpp
- *  advanced3dExample
- *
- *  Created by Elliot Woods on 19/01/2011.
- *  Copyright 2011 Kimchi and Chips. All rights reserved.
- *
- */
+#include "orthoCamera.h"
 
-#include "OrthoCamera.h"
+// Ortho camera is a custom
+//	camera we've created in
+//  this example
+//
+// We inherit from ofCamera
 
-OrthoCamera::OrthoCamera()
-{
+orthoCamera::orthoCamera(){
 	enableOrtho();
 	scale = 1;
 }
 
-void OrthoCamera::begin(ofRectangle rect)
-{
+void orthoCamera::begin(ofRectangle rect){
 	ofCamera::begin(rect);
 	
-	//////////////////////////////
-	// CALCULATE ASPECT RATIO
-	//////////////////////////////
-	//
+	//--
+	// Calculate aspect ratio
+
 	float vw = ofGetViewportWidth();
 	float vh = ofGetViewportHeight();
 	
@@ -31,27 +25,29 @@ void OrthoCamera::begin(ofRectangle rect)
 	
 	float scalex, scaley;
 	
-	if (ar > 1.0f)
-	{
+	if (ar > 1.0f){
 		//wide
 		scalex = scale * ar;
 		scaley = scale;
-	} else {
+	}else{
 		//tall
 		scalex = scale;
 		scaley = scale / ar;
 	}
-	//
-	//////////////////////////////
 	
-	//////////////////////////////
-	// SETUP PROJECTION
-	//////////////////////////////
 	//
+	//--
+	
+	
+	
+	//--
+	// Setup projection
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-scalex, scalex, -scaley, scaley, -20 * scale, 20 * scale);
 	glMatrixMode(GL_MODELVIEW);
+
 	//
-	//////////////////////////////
+	//--
 }
