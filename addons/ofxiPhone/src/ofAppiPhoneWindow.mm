@@ -61,6 +61,8 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	timeNow = 0.0;
 	timeThen = 0.0;
 	bEnableSetupScreen = true;
+    
+    orientation = OF_ORIENTATION_DEFAULT;
 	
 	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
 	windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
@@ -95,14 +97,17 @@ void ofAppiPhoneWindow::initializeWindow() {
 void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
-    if (bAppCreated) {   // app already created, only reset values.
+    if (bAppCreated) {                                          // app already created, only reset values.
         nFrameCount = 0;
         lastFrameTime = 0;
         fps = frameRate = 60.0f;
         timeNow = 0.0;
         timeThen = 0.0;
-    }
-    else {                // app not yet created, created it!
+        
+        windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);        // new OF app created, it could be a different window and screen size, so reset.
+        windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+        screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+    } else {                                                    // app not yet created, created it!
         startAppWithDelegate( "ofxiPhoneAppDelegate" );
     }
 }
@@ -137,8 +142,8 @@ void setWindowShape(int w, int h) {
 // return cached pos, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 	if(windowPos.x == NOT_INITIALIZED) {
-		CGPoint p = [[[UIApplication sharedApplication] keyWindow] bounds].origin;
-		windowPos.set(p.x, p.y, 0);
+		CGRect frame = [ofxiPhoneGetGLView() frame];
+		windowPos.set(frame.origin.x, frame.origin.y, 0);
 	}
 	return windowPos;
 }
@@ -147,8 +152,8 @@ ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 // return cached size, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowSize() {
 	if(windowSize.x == NOT_INITIALIZED) {
-		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;
-		windowSize.set(s.width, s.height, 0);
+        CGRect frame = [ofxiPhoneGetGLView() frame];
+		windowSize.set(frame.size.width, frame.size.height, 0);
 
 		if(retinaEnabled)
 			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
@@ -174,18 +179,18 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 
 int ofAppiPhoneWindow::getWidth(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return (int)getScreenSize().x;
+		return (int)getWindowSize().x;
 	}
 	
-	return (int)getScreenSize().y;
+	return (int)getWindowSize().y;
 }
 
 int ofAppiPhoneWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return (int)getScreenSize().y;
+		return (int)getWindowSize().y;
 	}
 	
-	return (int)getScreenSize().x;
+	return (int)getWindowSize().x;
 }
 
 int	ofAppiPhoneWindow::getWindowMode() {
@@ -345,7 +350,7 @@ void ofAppiPhoneWindow::timerLoop() {
     
     //we do this as ofGetWidth() now accounts for rotation 
     //so we just make our viewport across the whole screen
-    glViewport( 0, 0, getScreenSize().x, getScreenSize().y );
+    glViewport(0, 0, getWindowSize().x, getWindowSize().y);
     
     float * bgPtr = ofBgColorPtr();
     bool bClearAuto = ofbClearBg();
