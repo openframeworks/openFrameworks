@@ -40,6 +40,7 @@ class ofxAssimpModelLoader{
 
         // Scale the model to the screen automatically.
         void           setScaleNomalization(bool normalize);
+        void		   setNormalizationFactor(float factor);
 
         // This changes when you load a different model, may be 0.
         unsigned int   getAnimationCount();
@@ -133,4 +134,5 @@ class ofxAssimpModelLoader{
         vector <ofxAssimpMeshHelper> modelMeshes;
 
         bool bUsingTextures, bUsingNormals, bUsingColors, bUsingMaterials;
+        float normalizeFactor;
 };
