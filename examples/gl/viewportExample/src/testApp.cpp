@@ -34,36 +34,38 @@ void testApp::draw(){
 
 	//--
 	// 2d view
-	
+
 	drawViewportOutline(viewport2D);
-	
+
 	// keep a copy of your viewport and transform matrices for later
 	ofPushView();
-	
+
 	// tell OpenGL to change your viewport. note that your transform matrices will now need setting up
-	ofViewport(viewport2D); 
-	
+	ofViewport(viewport2D);
+
 	// setup transform matrices for normal oF-style usage, i.e.
 	//  0,0=left,top
 	//  ofGetViewportWidth(),ofGetViewportHeight()=right,bottom
 	ofSetupScreen();
-	
+
 	ofNoFill();
 	ofEnableSmoothing();
-	for (int x = 0; x < 1000; x+=20)
-		for (int y = 0; y < 1000; y+=20)
-			ofCircle(x, y, sin( (x + y) / 100.0f + ofGetElapsedTimef()) * 5.0f);
-	
+	for(int x = 0; x < 1000; x += 20){
+		for(int y = 0; y < 1000; y += 20){
+			ofCircle(x, y, sin((x + y) / 100.0f + ofGetElapsedTimef()) * 5.0f);
+		}
+	}
+
 	// restore the old viewport (now full view and oF coords)
 	ofPopView();
 	//--
-	
-	
+
+
 	//--
 	// 3d view
 
 	drawViewportOutline(viewport3D);
-	
+
 	// note the camera accepts the viewport as an argument
 	// this is so that the camera can be aware of which viewport
 	// it is acting on
@@ -72,30 +74,30 @@ void testApp::draw(){
 	camera.begin(viewport3D);
 	ofDrawGrid(100);
 	camera.end();
-	//--	
-	
-	
+	//--
+
+
 	ofDrawBitmapString("Press [space] to randomize viewports", 20, 20);
 }
 
-		   
+
 //--------------------------------------------------------------
 void testApp::randomize(ofRectangle & viewport){
 	// utlitly function to randomise a rectangle
-	viewport.x = ofRandom( ofGetWidth() * 2.0f / 3.0f );
-	viewport.y = ofRandom( ofGetHeight() * 2.0f / 3.0f );
-	viewport.width = 100 + ofRandom( ofGetWidth() - viewport.x - 100);
-	viewport.height = 100 + ofRandom( ofGetHeight() - viewport.y - 100);
+	viewport.x = ofRandom(ofGetWidth() * 2.0f / 3.0f);
+	viewport.y = ofRandom(ofGetHeight() * 2.0f / 3.0f);
+	viewport.width = 100 + ofRandom(ofGetWidth() - viewport.x - 100);
+	viewport.height = 100 + ofRandom(ofGetHeight() - viewport.y - 100);
 }
 
 //--------------------------------------------------------------
-void testApp::randomizeViewports(){ 
+void testApp::randomizeViewports(){
 	randomize(viewport2D);
 	randomize(viewport3D);
 }
 
 //--------------------------------------------------------------
-void testApp::drawViewportOutline(const ofRectangle & viewport){ 
+void testApp::drawViewportOutline(const ofRectangle & viewport){
 	ofPushStyle();
 	ofFill();
 	ofSetColor(100);
@@ -111,8 +113,9 @@ void testApp::drawViewportOutline(const ofRectangle & viewport){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	if (key == ' ')
+	if(key == ' '){
 		randomizeViewports();
+	}
 }
 
 //--------------------------------------------------------------
@@ -151,6 +154,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }

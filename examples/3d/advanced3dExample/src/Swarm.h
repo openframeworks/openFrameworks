@@ -6,25 +6,24 @@
 
 // This 'swarm' object demonstrates a simple particle system
 //  with 'simple harmonic motion'
-class swarm : public ofNode
-{
-	struct particle{
+class swarm : public ofNode {
+	struct particle {
 		ofVec3f position;
 		ofVec3f velocity;
 		ofColor color;
 	};
-	
+
 	public:
 		swarm();
 		void init(int nParticles, float positionDispersion, float velocityDispersion);
 		void customDraw();
 		ofLight light;
-	
+
 	protected:
 		// we call this update function ourselves
 		//  at the beginning of customDraw
 		void update();
-		
+
 		// objects
-		vector<particle> particles;	
+		vector<particle>particles;
 };

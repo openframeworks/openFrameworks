@@ -8,8 +8,7 @@
 //
 // We inherit from ofNode
 
-class grid : public ofNode
-{
+class grid : public ofNode {
 	public:
-		void	customDraw();
+		void    customDraw();
 };

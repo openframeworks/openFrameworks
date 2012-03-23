@@ -19,20 +19,20 @@
 
 #define N_CAMERAS 4
 
-class testApp : public ofBaseApp{
+class testApp : public ofBaseApp {
 
 	public:
 		void setup();
 		void update();
 		void draw();
-	
+
 		void setupViewports();
 		void drawScene(int iCameraDraw);
 		void updateMouseRay();
-	
-		void keyPressed  (int key);
+
+		void keyPressed(int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
@@ -41,20 +41,20 @@ class testApp : public ofBaseApp{
 		//cameras (all these inherit from ofCamera)
 		ofEasyCam camEasyCam;
 		orthoCamera camFront;
-		orthoCamera	camTop;
-		orthoCamera	camLeft;
-	
+		orthoCamera camTop;
+		orthoCamera camLeft;
+
 		//cameras have parent?
 		bool bCamParent;
 
 		//camera pointers
 		ofCamera * cameras[N_CAMERAS];
 		int iMainCamera;
-	
+
 		//viewports
 		ofRectangle viewMain;
-		ofRectangle viewGrid[N_CAMERAS];	
-	
+		ofRectangle viewGrid[N_CAMERAS];
+
 		//my custom node
 		swarm nodeSwarm;
 		grid nodeGrid;

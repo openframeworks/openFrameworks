@@ -8,8 +8,7 @@
 //
 // We inherit from ofCamera
 
-class orthoCamera : public ofCamera
-{
+class orthoCamera : public ofCamera {
 	public:
 		orthoCamera();
 		void begin(ofRectangle rect = ofGetWindowRect());
