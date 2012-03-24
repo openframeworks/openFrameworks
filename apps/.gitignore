@@ -4,3 +4,6 @@
 # ignore bin folders' contents, except data folder therein
 /devApps/*/bin/*
 !/devApps/*/bin/data/
+
+# don't ignore the .gitignore file
+!.gitignore
