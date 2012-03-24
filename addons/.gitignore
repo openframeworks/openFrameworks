@@ -1,4 +1,5 @@
 !ofAddons.h
+!.project
 !ofx3DModelLoader
 !ofx3DModelLoader/**
 !ofxAccelerometer
@@ -32,3 +33,6 @@
 !ofxGui/*/**
 ofxAndroid/ofAndroidLib/bin
 ofxAndroid/ofAndroidLib/gen
+
+# don't ignore the .gitignore file
+!.gitignore
