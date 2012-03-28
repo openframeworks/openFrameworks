@@ -101,8 +101,34 @@
 	
 - (void)layoutSubviews{
     NSLog(@"layoutSubviews");
-    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
+    
+    UIScreen *currentScreen;
+    currentScreen = self.window.screen;
+    if(!currentScreen){
+        currentScreen = [UIScreen mainScreen];
+    }
+    
+    if(ofxiPhoneGetOFWindow()->isRetinaSupported()){
+        if([currentScreen respondsToSelector:@selector(scale)]){
+            if(touchScaleFactor != [currentScreen scale]){
+                touchScaleFactor = [currentScreen scale];
+                [self setContentScaleFactor:touchScaleFactor];
+            }
+        } else {
+            if(touchScaleFactor != 1){
+                touchScaleFactor = 1;
+                [self setContentScaleFactor:touchScaleFactor];
+            }
+        }
+    } else {
+        if(touchScaleFactor != 1){
+            touchScaleFactor = 1;
+            [self setContentScaleFactor:touchScaleFactor];
+        }
+    }
+
     [renderer startRender];
+    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
     [renderer finishRender];
 }
 
