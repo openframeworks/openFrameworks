@@ -48,6 +48,8 @@ public:
 	
 	virtual void		hideCursor() {};
 	virtual void		showCursor() {};
+    
+    virtual void        resetDimensions();
 	
 	virtual void		setWindowPosition(int x, int y) {};
 	virtual void		setWindowShape(int w, int h) {};
