@@ -98,7 +98,6 @@ examples/*/*/Release_arm7
 examples/*/*/test link
 examples/*/*/obj
 .csettings
-paths.make
 !examples/android/*/.cproject
 !examples/android/*/.project
 !examples/android/*/.settings
