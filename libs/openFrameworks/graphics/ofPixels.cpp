@@ -473,7 +473,7 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 	}
 
 	// otherwise, we will need to do some new allocaiton.
-    dst.allocate(height,width,getImageType());
+	dst.allocate(height,width,getImageType());
     
 	int strideSrc = width * channels;
 	int strideDst = dst.width * channels;
