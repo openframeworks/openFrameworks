@@ -1,41 +1,29 @@
-/*
- *  Swarm.h
- *  advanced3dExample
- *
- *  Created by Elliot Woods on 19/01/2011.
- *  Copyright 2011 Kimchi and Chips. All rights reserved.
- *
- */
-
+#pragma once
 #include "ofMain.h"
 
-#define SPRING_CONSTANT 0.5
+#define SPRING_CONSTANT 0.1f
+#define MAX_VELOCITY 30.0f
 
-class Swarm : public ofNode
-{
-public:
-	Swarm();
-	void	init(int _nParticles, float positionDispersion, float velocityDispersion);
-	
-	
-	void	customDraw();
-	
-	//light
-	ofLight		light;
-	
-protected:
-	
-	//we call this update function ourselves
-	//at the beginning of customDraw
-	void	update();
-	
-	//useful variables
-	int			nParticles;
-	float		timeLastUpdate;
-	
-	//objects
-	ofVec3f		*positions;
-	ofVec3f		*velocities;
-	ofColor		*colors;	
-	
+// This 'swarm' object demonstrates a simple particle system
+//  with 'simple harmonic motion'
+class swarm : public ofNode {
+	struct particle {
+		ofVec3f position;
+		ofVec3f velocity;
+		ofColor color;
+	};
+
+	public:
+		swarm();
+		void init(int nParticles, float positionDispersion, float velocityDispersion);
+		void customDraw();
+		ofLight light;
+
+	protected:
+		// we call this update function ourselves
+		//  at the beginning of customDraw
+		void update();
+
+		// objects
+		vector<particle>particles;
 };
