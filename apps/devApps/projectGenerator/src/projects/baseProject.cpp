@@ -101,12 +101,15 @@ void baseProject::addAddon(ofAddon & addon){
 	addons.insert(addon);
 
     for(int i=0;i<(int)addon.includePaths.size();i++){
+        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
         addInclude(addon.includePaths[i]);
     }
     for(int i=0;i<(int)addon.libs.size();i++){
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
         addLibrary(addon.libs[i]);
     }
     for(int i=0;i<(int)addon.srcFiles.size(); i++){
+        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
         addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
     }
 }
