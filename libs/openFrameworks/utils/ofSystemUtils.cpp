@@ -279,8 +279,6 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
 
-	// TODO pc file choose dialog is now mega broken, please fix!
-
 	if (bFolderSelection == false){
 
         OPENFILENAME ofn;
@@ -290,22 +288,20 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
+#ifdef __MINGW32_VERSION
 		ofn.lpstrFilter = "All\0";
 		ofn.lpstrFile = szFileName;
+#else // VS2010
+		ofn.lpstrFilter = LPCWSTR("All\0");
+		ofn.lpstrFile = LPWSTR(szFileName);
+#endif
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
 
 		if(GetOpenFileName(&ofn)) {
 			results.filePath = string(szFileName);
-			cout << szFileName << endl;
-			cout << results.filePath << endl;
-			//MessageBox(NULL, szFileName ,"File Chosen", MB_OK);
-			// TODO: name conversion, please!!
 		}
-
-
-
 
 	} else {
 
