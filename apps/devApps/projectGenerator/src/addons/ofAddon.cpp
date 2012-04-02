@@ -24,12 +24,12 @@ void ofAddon::fromFS(string path, string platform){
     string filePath = path + "/src";
     string ofRootPath = ofFilePath::addTrailingSlash(getOFRoot()); //we need to add a trailing slash for the erase to work properly
 
-    ofLogVerbose() << "in fromFS, trying src " << filePath << endl;
+    ofLogVerbose() << "in fromFS, trying src " << filePath;
     getFilesRecursively(filePath, srcFiles);
 
     for(int i=0;i<(int)srcFiles.size();i++){
     	srcFiles[i].erase (srcFiles[i].begin(), srcFiles[i].begin()+ofRootPath.length());
-		ofLogVerbose() << " srcFiles " << srcFiles[i] << endl;
+		ofLogVerbose() << " srcFiles " << srcFiles[i];
     	int init = 0;
 #ifdef TARGET_WIN32
     	int end = srcFiles[i].rfind("\\");
@@ -51,7 +51,7 @@ void ofAddon::fromFS(string path, string platform){
     // I need to add libFiles to srcFiles
     for (int i = 0; i < (int)libFiles.size(); i++){
     	libFiles[i].erase (libFiles[i].begin(), libFiles[i].begin()+ofRootPath.length());
-		ofLogVerbose() << " libFiles " << libFiles[i] << endl;
+		ofLogVerbose() << " libFiles " << libFiles[i];
     	int init = 0;
 #ifdef TARGET_WIN32
     	int end = libFiles[i].rfind("\\");
@@ -84,7 +84,7 @@ void ofAddon::fromFS(string path, string platform){
     // get every folder in addon/src and addon/libs
 
     vector < string > libFolders;
-    ofLogVerbose() << "trying get folders recursively " << (path + "/libs") << endl;
+    ofLogVerbose() << "trying get folders recursively " << (path + "/libs");
     getFoldersRecursively(path + "/libs", libFolders, platform);
 
     vector < string > srcFolders;
@@ -101,7 +101,6 @@ void ofAddon::fromFS(string path, string platform){
         srcFolders[i] = pathToOF + srcFolders[i];
         paths.push_back(srcFolders[i]);
     }
-
 
     paths.sort();
     paths.unique();
