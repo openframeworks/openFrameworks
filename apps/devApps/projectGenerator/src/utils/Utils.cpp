@@ -110,9 +110,11 @@ bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attri
     }
 }
 
-pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue){
+pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool addMultiple){
 
-    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue)){
+
+
+    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue) || addMultiple == true){
         // otherwise, add it please:
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s]", tag.c_str(), attribute.c_str());
@@ -231,7 +233,14 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
             libsorderMake >> libsorderMakeBuff;
             while(!libsorderMakeBuff.isLastLine() && libsorderMakeBuff.size() > 0){
                 string line = libsorderMakeBuff.getNextLine();
-                libLibs.push_back(path + "/lib" + line + ".a");
+               if (ofFile::doesFileExist(ofFilePath::join(path , line))){
+
+                    libLibs.push_back(ofFilePath::join(path , line) );
+                } else {
+                    libLibs.push_back(line);        // this might be something like ws2_32 or other libs no in this project
+                }
+
+                 printf("adding: %s \n", line.c_str());
             }
 
 
