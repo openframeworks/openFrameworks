@@ -69,9 +69,7 @@ bool CBWinProject::saveProjectFile(){
             ofLogError(LOG_NAME) << "can't set title";
         }
     }
-    doc.save_file((projectDir + projectName + ".cbp").c_str());
-
-
+    return doc.save_file((projectDir + projectName + ".cbp").c_str());
 }
 
 void CBWinProject::addSrc(string srcName, string folder){
