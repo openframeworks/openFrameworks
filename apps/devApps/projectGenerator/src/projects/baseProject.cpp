@@ -18,11 +18,11 @@ void baseProject::setup(string _target){
 
 
 bool baseProject::create(string path){
-    
+
     projectDir = ofFilePath::addTrailingSlash(path);
     projectName = ofFilePath::getFileName(path);
     bool bDoesDirExist = false;
-    
+
     ofDirectory project(projectDir);    // this is a directory, really?
     if(project.exists()){
         bDoesDirExist = true;
@@ -30,37 +30,41 @@ bool baseProject::create(string path){
         ofDirectory project(projectDir);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),ofFilePath::join(projectDir,"src"));
         ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),ofFilePath::join(projectDir,"bin"));
-    } 
-    
+    }
+
     // if overwrite then ask for permission...
-    
+
     bool ret = createProjectFile();
     if(!ret) return false;
 
     ret = loadProjectFile();
     if(!ret) return false;
-    
+
     if (bDoesDirExist){
         vector < string > fileNames;
         getFilesRecursively(ofFilePath::join(projectDir , "src"), fileNames);
-        
+
         for (int i = 0; i < (int)fileNames.size(); i++){
-            
+
             fileNames[i].erase(fileNames[i].begin(), fileNames[i].begin() + projectDir.length());
-            
+
             string first, last;
-            splitFromLast(fileNames[i], "/", first, last);  
+#ifdef TARGET_WIN32
+            splitFromLast(fileNames[i], "\\", first, last);
+#else
+            splitFromLast(fileNames[i], "/", first, last);
+#endif
             if (fileNames[i] != "src/testApp.cpp" &&
                 fileNames[i] != "src/testApp.h" &&
-                fileNames[i] != "src/main.cpp" && 
+                fileNames[i] != "src/main.cpp" &&
                 fileNames[i] != "src/testApp.mm" &&
                 fileNames[i] != "src/main.mm"){
                 addSrc(fileNames[i], first);
             }
         }
-		#ifdef TARGET_LINUX
+#ifdef TARGET_LINUX
     		parseAddons();
-		#endif
+#endif
     }
     return true;
 }

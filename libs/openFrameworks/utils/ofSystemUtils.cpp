@@ -17,10 +17,10 @@
 #endif
 
 #ifdef TARGET_OSX
-	// ofSystemUtils.cpp is configured to build as 
+	// ofSystemUtils.cpp is configured to build as
 	// objective-c++ so as able to use NSAutoreleasePool.
 	// This is done with this compiler flag
-	//		-x objective-c++ 
+	//		-x objective-c++
 	// http://www.yakyak.org/viewtopic.php?p=1475838&sid=1e9dcb5c9fd652a6695ac00c5e957822#p1475838
 
 	#include <Carbon/Carbon.h>
@@ -145,7 +145,7 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#ifdef TARGET_OSX
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];  // The StandardAlert requires a NSAutoreleasePool to avoid memory leaks
-	
+
 		CFStringRef msgStrRef = CFStringCreateWithCString(NULL, errorMessage.c_str(), kCFStringEncodingASCII);
 		DialogRef theItem;
 		DialogItemIndex itemIndex;
@@ -260,7 +260,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 
 		char fileUrl[kBufferSize];
 		Boolean bool1 = CFStringGetCString(cfString,fileUrl,kBufferSize,kCFStringEncodingMacRoman);
-			
+
 		//char fileName[kBufferSize];
 		//Boolean bool2 = CFStringGetCString(reply.saveFileName,fileName,kBufferSize,kCFStringEncodingMacRoman);
 
@@ -279,29 +279,29 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
 
-	// TODO pc file choose dialog is now mega broken, please fix!
-
 	if (bFolderSelection == false){
 
-		wchar_t szFileName[MAX_PATH] = L"";
-		OPENFILENAMEW ofn;
+        OPENFILENAME ofn;
+		char szFileName[MAX_PATH];
+
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
-		ofn.lpstrFilter = L"All Files (*.*)\0*.*\0";
+#ifdef __MINGW32_VERSION
+		ofn.lpstrFilter = "All\0";
 		ofn.lpstrFile = szFileName;
+#else // VS2010
+		ofn.lpstrFilter = LPCWSTR("All\0");
+		ofn.lpstrFile = LPWSTR(szFileName);
+#endif
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
 
-		if(GetOpenFileNameW(&ofn)) {
-			results.filePath = convertWideToNarrow(szFileName);
-			// TODO: name conversion, please!!
+		if(GetOpenFileName(&ofn)) {
+			results.filePath = string(szFileName);
 		}
-
-
-
 
 	} else {
 

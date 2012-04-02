@@ -188,11 +188,11 @@ void ofAppNoWindow::exitApp(){
 
 	ofLog(OF_LOG_VERBOSE,"No Window OF app is being terminated!");
 
+
 #if defined TARGET_OSX || defined TARGET_LINUX
     // this doesn't exist on windows and gives linking errors, so commented out.
 	reset_terminal_mode();
 #endif
-
 
 	OF_EXIT_APP(0);
 }
