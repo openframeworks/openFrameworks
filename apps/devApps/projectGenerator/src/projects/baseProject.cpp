@@ -65,6 +65,34 @@ bool baseProject::create(string path){
 #ifdef TARGET_LINUX
     		parseAddons();
 #endif
+
+
+// //
+        // get a unique list of the paths that are needed for the includes.
+        list < string > paths;
+        vector < string > includePaths;
+        for (int i = 0; i < (int)fileNames.size(); i++){
+            size_t found;
+    #ifdef TARGET_WIN32
+            found = fileNames[i].find_last_of("\\");
+    #else
+            found = fileNames[i].find_last_of("/");
+    #endif
+            paths.push_back(fileNames[i].substr(0,found));
+        }
+
+        paths.sort();
+        paths.unique();
+        for (list<string>::iterator it=paths.begin(); it!=paths.end(); ++it){
+            includePaths.push_back(*it);
+        }
+
+        for (int i = 0; i < includePaths.size(); i++){
+            addInclude(includePaths[i]);
+        }
+
+
+
     }
     return true;
 }
