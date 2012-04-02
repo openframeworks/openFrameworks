@@ -116,7 +116,7 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
         // otherwise, add it please:
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s]", tag.c_str(), attribute.c_str());
-        cout << xpathExpression << endl;
+        //cout << xpathExpression << endl;
         pugi::xpath_node_set add = doc.select_nodes(xpathExpression);
         pugi::xml_node node = add[add.size()-1].node();
         pugi::xml_node nodeAdded = node.parent().append_copy(node);
@@ -204,9 +204,12 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
 
+#ifdef TARGET_WIN32
+        vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
+#else
+        vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+#endif
         if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
-
-            vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
 
             if(platform!=""){
                 bool platformFound = false;
@@ -236,23 +239,18 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
 
             ofFile temp(dir.getFile(i));
 
-
-
             if (temp.isDirectory()){
                 //getLibsRecursively(dir.getPath(i), folderNames);
                 getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
 
             } else {
 
-
                 //string ext = ofFilePath::getFileExt(temp.getFile(i));
                 string ext;
                 string first;
                 splitFromLast(dir.getPath(i), ".", first, ext);
 
-
-                vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
+                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
 
                     if(platform!=""){
                         bool platformFound = false;
