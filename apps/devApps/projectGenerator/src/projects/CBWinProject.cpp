@@ -81,11 +81,12 @@ void CBWinProject::addSrc(string srcName, string folder){
 }
 
 void CBWinProject::addInclude(string includeName){
-    cout << "adding include " << includeName << endl;
+    ofLogNotice() << "adding include " << includeName;
     appendValue(doc, "Add", "directory", includeName);
 }
 
 void CBWinProject::addLibrary(string libraryName){
+    ofLogNotice() << "adding library " << libraryName;
     appendValue(doc, "Add", "library", libraryName);
 }
 
