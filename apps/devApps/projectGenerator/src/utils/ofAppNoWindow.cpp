@@ -22,11 +22,11 @@ void reset_terminal_mode()
 void set_conio_terminal_mode()
 {
     struct termios new_termios;
-	
+
     /* take two copies - one for now, one for later */
     tcgetattr(0, &orig_termios);
     memcpy(&new_termios, &orig_termios, sizeof(new_termios));
-	
+
     /* register cleanup handler, and set the new terminal mode */
     atexit(reset_terminal_mode);
 	// setup new_termios for raw keyboard input
@@ -167,9 +167,9 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		lastFrameTime	= diff;
 		timeThen		= timeNow;
 		// --------------
-		
+
 		nFrameCount++;		// increase the overall frame count
-		
+
 	}
 }
 
@@ -187,8 +187,9 @@ void ofAppNoWindow::exitApp(){
 //	#endif
 
 	ofLog(OF_LOG_VERBOSE,"No Window OF app is being terminated!");
-
+#if defined TARGET_OSX || defined TARGET_LINUX
 	reset_terminal_mode();
+#endif
 	OF_EXIT_APP(0);
 }
 
