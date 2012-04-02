@@ -128,8 +128,11 @@ void testApp::generateExamplesCB(bool & pressed){
 
 void testApp::generateExamples(){
     ofDirectory dir;
+    string examplesPath = ofFilePath::join(getOFRoot(),"examples");
 
-    dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
+    ofLogNotice() << "Generating examples in folder: " << examplesPath;
+
+    dir.listDir(examplesPath);
 
     for (int i = 0; i < (int)dir.size(); i++){
 
@@ -143,7 +146,11 @@ void testApp::generateExamples(){
         }
 
         ofDirectory subdir;
-        subdir.listDir(dir.getPath(i));
+        string examplesPath = dir.getPath(i);
+
+        ofLogNotice() << "Generating example in folder: " << examplesPath;
+
+        subdir.listDir(examplesPath);
 
         for (int j = 0; j < (int)subdir.size(); j++){
 
