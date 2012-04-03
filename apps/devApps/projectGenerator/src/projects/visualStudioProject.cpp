@@ -21,6 +21,7 @@ bool visualStudioProject::createProjectFile(){
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution.path(), false, true);
 
     findandreplaceInTexfile(solution.path(),"emptyExample_vs2010",projectName);
+    findandreplaceInTexfile(user.path(),"emptyExample_vs2010",projectName);
     findandreplaceInTexfile(project.path(),"emptyExample",projectName);
 
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
