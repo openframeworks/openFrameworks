@@ -110,11 +110,21 @@ bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attri
     }
 }
 
-pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool addMultiple){
+pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool overwriteMultiple){
 
+    if (overwriteMultiple == true){
+        // find the existing node...
+        char xpathExpression[1024];
+        sprintf(xpathExpression, "//%s[@%s='%s']", tag.c_str(), attribute.c_str(), newValue.c_str());
+        pugi::xpath_node node = doc.select_single_node(xpathExpression);
+        if(node.node().attribute(attribute.c_str()).value() != ""){ // for some reason we get nulls here?
+            // ...delete the existing node
+            //cout << node.node().name() << ": " << " " << node.node().attribute(attribute.c_str()).value() << endl;
+            node.node().parent().remove_child(node.node());
+        }
+    }
 
-
-    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue) || addMultiple == true){
+    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue)){
         // otherwise, add it please:
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s]", tag.c_str(), attribute.c_str());
