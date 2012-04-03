@@ -70,7 +70,7 @@ void ofAddon::fromFS(string path, string platform){
     for (int i = 0; i < (int)libs.size(); i++){
 
         // does libs[] have any path ? let's fix if so.
-        #ifdef TARGET_WIN32
+#ifdef TARGET_WIN32
     	int end = libs[i].rfind("\\");
 #else
         int end = libs[i].rfind("/");

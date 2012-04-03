@@ -7,7 +7,6 @@ libopencv_imgproc220.a
 libopencv_video220.a
 libopencv_highgui220.a
 libopencv_ml220.a
-libopencv_legacy220.a
 libopencv_core220.a
 libopencv_lapack.a
 libopencv_flann220.a
