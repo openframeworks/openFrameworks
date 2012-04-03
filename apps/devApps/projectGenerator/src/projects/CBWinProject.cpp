@@ -85,7 +85,7 @@ void CBWinProject::addInclude(string includeName){
     appendValue(doc, "Add", "directory", includeName);
 }
 
-void CBWinProject::addLibrary(string libraryName){
+void CBWinProject::addLibrary(string libraryName, LibType libType){
     ofLogNotice() << "adding library " << libraryName;
     appendValue(doc, "Add", "library", libraryName, true);
     // overwriteMultiple for a lib if it's there (so libsorder.make will work)

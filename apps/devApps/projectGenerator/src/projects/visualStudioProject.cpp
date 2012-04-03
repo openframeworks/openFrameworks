@@ -6,10 +6,8 @@
 
 string visualStudioProject::LOG_NAME = "visualStudioProjectFile";
 
-
-
 void visualStudioProject::setup() {
-
+    ;
 }
 
 bool visualStudioProject::createProjectFile(){
@@ -104,7 +102,8 @@ void visualStudioProject::addInclude(string includeName){
     }
     //appendValue(doc, "Add", "directory", includeName);
 }
-void visualStudioProject::addLibrary(string libraryName){
+
+void visualStudioProject::addLibrary(string libraryName, LibType libType){
 
 
     fixSlashOrder(libraryName);
@@ -140,6 +139,12 @@ void visualStudioProject::addLibrary(string libraryName){
     source = doc.select_nodes("//Link/AdditionalDependencies");
     int platformCounter = 0;
     for (pugi::xpath_node_set::const_iterator it = source.begin(); it != source.end(); ++it){
+
+        // still ghetto, but getting better
+        // TODO: iterate by <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BUILD TYPE|SOME PLATFORM'">
+        // instead of making the weak assumption that VS projects do Debug|Win32 then Release|Win32
+        if(libType != platformCounter) continue;
+
         pugi::xpath_node node = *it;
         string includes = node.node().first_child().value();
         vector < string > strings = ofSplitString(includes, ";");
@@ -150,39 +155,6 @@ void visualStudioProject::addLibrary(string libraryName){
             }
         }
 
-        // ok everything about this next bit is totally ghetto:
-        // FIRST, using a weak assumption that VS projects do Debug|Win32 then Release|Win32
-        // TODO: iterate by <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BUILD TYPE|SOME PLATFORM'">
-        // and SECOND making the assumtion that debug libs end in d.lib, both because
-        // you might have a lib called libodd.lib/liboddd.lib
-        // and because many libraries don't even compile with the d at the end;
-        // I can see two ways around this:
-        // 1) check the sizes of the lib files and make two seperate lib lists
-        // 2) do a full string compare on the lib names and make two seperate lib lists
-        // ... but for now I'm going to commit this terrible hack:
-
-        if (platformCounter == 0){
-
-            // add debug libraries...
-
-            //cout << platformCounter << " " << libName << " " << ofSplitString(libName, "d.lib").size() << endl;
-            if(ofSplitString(libName, "d.lib").size() == 1){
-                // ... it's not a debug lib
-                bAdd = false;
-            }
-        }else{
-
-            // add release libs
-
-            //cout << platformCounter << " " << libName << " " << ofSplitString(libName, "d.lib").size() << endl;
-            if(ofSplitString(libName, "d.lib").size() > 1){
-                // ... it's a debug lib
-                bAdd = false;
-            }
-        }
-
-        // end ghetto ;-)
-
         if (bAdd == true){
             strings.push_back(libName);
             string libsNew = unsplitString(strings, ";");
@@ -192,5 +164,84 @@ void visualStudioProject::addLibrary(string libraryName){
         platformCounter++;
     }
 
+}
 
+void visualStudioProject::addAddon(ofAddon & addon){
+    for(int i=0;i<(int)addons.size();i++){
+		if(addons[i].name==addon.name) return;
+	}
+
+	addons.push_back(addon);
+
+    for(int i=0;i<(int)addon.includePaths.size();i++){
+        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
+        addInclude(addon.includePaths[i]);
+    }
+
+    // divide libs into debug and release libs
+    // the most reliable would be to have seperate
+    // folders for debug and release libs
+    // i'm gonna start with a ghetto approach of just
+    // looking for duplicate names except for a d.lib
+    // at the end -> this is not great as many
+    // libs compile with the d somewhere in the middle of the name...
+
+    vector <string> debugLibs;
+    vector <string> releaseLibs;
+
+    for(int i=0;i<(int)addon.libs.size();i++){
+
+        // check that this isn't already a debug lib
+        bool alreadyDone = false;
+        for(int k=0;k<(int)debugLibs.size();k++){
+            if(addon.libs[i] == debugLibs[k]){
+                alreadyDone = true;
+            }
+        }
+        if(alreadyDone) continue;
+
+        size_t found = 0;
+        // get the full lib name
+        found = addon.libs[i].find_last_of("\\");
+        string libName = addon.libs[i].substr(found+1);
+        cout << libName << endl;
+        // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
+        found = libName.find_last_of(".");
+        string firstPart = libName.substr(0,found);
+        cout << firstPart << endl;
+        int debugLibIndex = -1; // assume there is no debug lib
+        for(int j=0;j<(int)addon.libs.size();j++){
+            if(addon.libs[i] == addon.libs[j]) continue; // don't do it to yourself
+            if(ofIsStringInString(addon.libs[j], firstPart)){
+                // assume that if the first part of a name is
+                // in another name then we have a debug/release pair
+                cout << "Found match" << addon.libs[i] << " " << addon.libs[j] << endl;
+                debugLibIndex = j;
+                break;
+            }
+        }
+        if(debugLibIndex != -1){
+            // add debug and release libs to appropriate vectors
+            debugLibs.push_back(addon.libs[debugLibIndex]);
+        }else{
+            // there's only one lib (either debug or release) so add to both vectors and hope for the best ;-)
+            debugLibs.push_back(addon.libs[i]);
+        }
+        releaseLibs.push_back(addon.libs[i]);
+    }
+
+    for(int i=0;i<(int)debugLibs.size();i++){
+        ofLogVerbose() << "adding addon debug libs: " << debugLibs[i];
+        addLibrary(debugLibs[i], DEBUG_LIB);
+    }
+
+    for(int i=0;i<(int)releaseLibs.size();i++){
+        ofLogVerbose() << "adding addon release libs: " << releaseLibs[i];
+        addLibrary(releaseLibs[i], RELEASE_LIB);
+    }
+
+    for(int i=0;i<(int)addon.srcFiles.size(); i++){
+        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+    }
 }
