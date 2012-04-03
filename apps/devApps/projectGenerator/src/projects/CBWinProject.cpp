@@ -88,11 +88,8 @@ void CBWinProject::addInclude(string includeName){
 void CBWinProject::addLibrary(string libraryName){
     ofLogNotice() << "adding library " << libraryName;
     appendValue(doc, "Add", "library", libraryName, true);
-    // addMultiple for a lib if it's there (so libsorder.make will work)
+    // overwriteMultiple for a lib if it's there (so libsorder.make will work)
     // this is because we might need to say libosc, then ws2_32
-    // on win cb this seems to work -- we might wan to alter apeanValue to move the order (delete the node, then make a new one)
-    // for now, it makes two... which works but isn't great.
-
 }
 
 void CBWinProject::addAddon(ofAddon & addon){
