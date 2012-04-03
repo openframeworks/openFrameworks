@@ -93,28 +93,24 @@ void CBWinProject::addLibrary(string libraryName, LibType libType){
 }
 
 void CBWinProject::addAddon(ofAddon & addon){
-	for(int i=0;i<(int)addons.size();i++){
+    for(int i=0;i<(int)addons.size();i++){
 		if(addons[i].name==addon.name) return;
 	}
 
 	addons.push_back(addon);
 
-	for(int i=0;i<(int)addon.includePaths.size();i++){
-		addInclude(addon.includePaths[i]);
-	}
-
-	for(int i=0;i<(int)addon.libs.size();i++){
-		addLibrary(addon.libs[i]);
-	}
-
-	for(int i=0;i<(int)addon.srcFiles.size();i++){
-		addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-	}
-
-	ofFile addonsmake(projectDir+"addons.make",ofFile::WriteOnly);
-	for(int i=0;i<(int)addons.size();i++){
-		addonsmake << addons[i].name << endl;
-	}
+    for(int i=0;i<(int)addon.includePaths.size();i++){
+        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
+        addInclude(addon.includePaths[i]);
+    }
+    for(int i=0;i<(int)addon.libs.size();i++){
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        addLibrary(addon.libs[i]);
+    }
+    for(int i=0;i<(int)addon.srcFiles.size(); i++){
+        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+    }
 }
 
 string CBWinProject::getName(){
