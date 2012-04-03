@@ -277,18 +277,18 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
                 
                 
                 
-                if (platformFound == true){
-                    //string ext = ofFilePath::getFileExt(temp.getFile(i));
-                    string ext;
-                    string first;
-                    splitFromLast(dir.getPath(i), ".", first, ext);
-                    
-                    if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
-                        libLibs.push_back(dir.getPath(i));
-                    } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-                        libFiles.push_back(dir.getPath(i));
-                    }
+               
+                //string ext = ofFilePath::getFileExt(temp.getFile(i));
+                string ext;
+                string first;
+                splitFromLast(dir.getPath(i), ".", first, ext);
+                
+                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
+                    if (platformFound) libLibs.push_back(dir.getPath(i));
+                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+                    libFiles.push_back(dir.getPath(i));
                 }
+                
             }
         }
         
