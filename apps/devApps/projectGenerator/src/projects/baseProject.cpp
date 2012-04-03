@@ -8,16 +8,15 @@
 
 #include "baseProject.h"
 
-
-
 void baseProject::setup(string _target){
     target = _target;
     templatePath = ofFilePath::join(getOFRoot(),"scripts/" + target + "/template/");
     setup(); // call the inherited class setup(), now that target is set.
 }
 
-
 bool baseProject::create(string path){
+
+    addons.clear();
 
     projectDir = ofFilePath::addTrailingSlash(path);
     projectName = ofFilePath::getFileName(path);
@@ -65,9 +64,6 @@ bool baseProject::create(string path){
 #ifdef TARGET_LINUX
     		parseAddons();
 #endif
-
-
-// //
         // get a unique list of the paths that are needed for the includes.
         list < string > paths;
         vector < string > includePaths;
@@ -90,28 +86,8 @@ bool baseProject::create(string path){
         for (int i = 0; i < includePaths.size(); i++){
             addInclude(includePaths[i]);
         }
-
-
-
     }
     return true;
-}
-
-void baseProject::addAddon(ofAddon & addon){
-	addons.insert(addon);
-
-    for(int i=0;i<(int)addon.includePaths.size();i++){
-        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
-        addInclude(addon.includePaths[i]);
-    }
-    for(int i=0;i<(int)addon.libs.size();i++){
-        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
-        addLibrary(addon.libs[i]);
-    }
-    for(int i=0;i<(int)addon.srcFiles.size(); i++){
-        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
-        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-    }
 }
 
 bool baseProject::save(){

@@ -150,6 +150,7 @@ void getFilesRecursively(const string & path, vector < string > & fileNames){
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
         ofFile temp(dir.getFile(i));
+        if (dir.getName(i) == ".svn") continue; // ignore svn
         if (temp.isFile()){
             fileNames.push_back(dir.getPath(i));
         } else if (temp.isDirectory()){
