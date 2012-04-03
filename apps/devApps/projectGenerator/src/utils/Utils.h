@@ -25,7 +25,7 @@ void findandreplaceInTexfile (string fileName, string tFind, string tReplace );
 
 
 bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attribute, string newValue);
-pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue);
+pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool addMultiple = false);
 
 
 

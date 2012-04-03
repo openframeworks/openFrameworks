@@ -58,15 +58,29 @@ void ofAddon::fromFS(string path, string platform){
 #else
         int end = libFiles[i].rfind("/");
 #endif
-    	string folder = libFiles[i].substr(init,end);
-    	libFiles[i] = pathToOF + libFiles[i];
-        srcFiles.push_back(libFiles[i]);
-    	filesToFolders[libFiles[i]] = folder;
+        if (end > 0){
+            string folder = libFiles[i].substr(init,end);
+            libFiles[i] = pathToOF + libFiles[i];
+            srcFiles.push_back(libFiles[i]);
+            filesToFolders[libFiles[i]] = folder;
+        }
+
     }
 
     for (int i = 0; i < (int)libs.size(); i++){
-    	libs[i].erase (libs[i].begin(), libs[i].begin()+ofRootPath.length());
-    	libs[i] = pathToOF + libs[i];
+
+        // does libs[] have any path ? let's fix if so.
+        #ifdef TARGET_WIN32
+    	int end = libs[i].rfind("\\");
+#else
+        int end = libs[i].rfind("/");
+#endif
+        if (end > 0){
+
+            libs[i].erase (libs[i].begin(), libs[i].begin()+ofRootPath.length());
+            libs[i] = pathToOF + libs[i];
+        }
+
     }
 
     // get a unique list of the paths that are needed for the includes.
