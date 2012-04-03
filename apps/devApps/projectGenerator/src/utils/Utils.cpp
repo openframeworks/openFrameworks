@@ -117,9 +117,9 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s='%s']", tag.c_str(), attribute.c_str(), newValue.c_str());
         pugi::xpath_node node = doc.select_single_node(xpathExpression);
-        if(node.node().attribute(attribute.c_str()).value() != ""){ // for some reason we get nulls here?
+        if(string(node.node().attribute(attribute.c_str()).value()).size() > 0){ // for some reason we get nulls here?
             // ...delete the existing node
-            //cout << node.node().name() << ": " << " " << node.node().attribute(attribute.c_str()).value() << endl;
+            cout << "DELETING: " << node.node().name() << ": " << " " << node.node().attribute(attribute.c_str()).value() << endl;
             node.node().parent().remove_child(node.node());
         }
     }
@@ -211,7 +211,6 @@ void getFoldersRecursively(const string & path, vector < string > & folderNames,
 
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
 
-
     ofDirectory dir;
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
@@ -290,41 +289,6 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
             }
         }
     }
-   //folderNames.push_back(path);
-
-
-
-//    DirectoryIterator end;
-//        for (DirectoryIterator it(path); it != end; ++it){
-//            if (!it->isDirectory()){
-//            	string ext = ofFilePath::getFileExt(it->path());
-//            	vector<string> splittedPath = ofSplitString(ofFilePath::getEnclosingDirectory(it->path()),"/");
-//
-//                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
-//
-//                	if(platform!=""){
-//                		bool platformFound = false;
-//                		for(int i=0;i<(int)splittedPath.size();i++){
-//                			if(splittedPath[i]==platform){
-//                				platformFound = true;
-//                				break;
-//                			}
-//                		}
-//                		if(!platformFound){
-//                			continue;
-//                		}
-//                	}
-//                    libLibs.push_back(it->path());
-//                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-//                    libFiles.push_back(it->path());
-//                }
-//            }
-//
-//            if (it->isDirectory()){
-//                getLibsRecursively(it->path(), libFiles, libLibs, platform);
-//            }
-//        }
-
 }
 
 
