@@ -174,6 +174,9 @@ bool xcodeProject::createProjectFile(){
                        ofFilePath::join(xcodeProject, "project.pbxproj"), true, true);
             
     
+    
+    
+    
     ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir, true, true);
     
     if( target == "osx" ){

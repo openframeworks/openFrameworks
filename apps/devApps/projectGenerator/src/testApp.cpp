@@ -166,6 +166,7 @@ void testApp::generateExamples(){
                 ofAddon addon;
                 addon.pathToOF = getOFRelPath(subdir.getPath(j));
                 addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
+                printf("-----> adding %s \n", addons[i].c_str() );
                 project->addAddon(addon);
             }
             project->save();
