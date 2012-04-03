@@ -43,10 +43,14 @@ void ofAddon::fromFS(string path, string platform){
 
     string libsPath = path + "/libs";
     vector < string > libFiles;
-    vector < string > libLibs;
+    
+    cout << libs.size() << " libs size + platform =  " << platform << endl;
+    
     if (ofDirectory::doesDirectoryExist(libsPath)){
         getLibsRecursively(libsPath, libFiles, libs, platform);
     }
+    
+    cout << libs.size() << " libs size " << endl;
 
     // I need to add libFiles to srcFiles
     for (int i = 0; i < (int)libFiles.size(); i++){
@@ -70,7 +74,7 @@ void ofAddon::fromFS(string path, string platform){
     for (int i = 0; i < (int)libs.size(); i++){
 
         // does libs[] have any path ? let's fix if so.
-        #ifdef TARGET_WIN32
+#ifdef TARGET_WIN32
     	int end = libs[i].rfind("\\");
 #else
         int end = libs[i].rfind("/");

@@ -202,84 +202,100 @@ void getFoldersRecursively(const string & path, vector < string > & folderNames,
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
 
 
-    ofDirectory dir;
-    dir.listDir(path);
-    for (int i = 0; i < dir.size(); i++){
-
+   
+    
+    if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
+        
+        bool platformFound = false;
+        
 #ifdef TARGET_WIN32
-        vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
+        vector<string> splittedPath = ofSplitString(path,"\\");
 #else
-        vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+        vector<string> splittedPath = ofSplitString(path,"/");
 #endif
-        if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
-
-            if(platform!=""){
-                bool platformFound = false;
-                for(int j=0;j<(int)splittedPath.size();j++){
-                    if(splittedPath[j]==platform){
-                        platformFound = true;
-                        break;
-                    }
-                }
-                if(!platformFound){
-                    continue;
+        
+        
+        if(platform!=""){
+            for(int j=0;j<(int)splittedPath.size();j++){
+                if(splittedPath[j]==platform){
+                    platformFound = true;
+                   // break;
                 }
             }
-
-
+        }
+        
+        
+        if (platformFound == true){
             vector < string > libsInOrder;
             ofFile libsorderMake(ofFilePath::join(path, "libsorder.make"));
             ofBuffer libsorderMakeBuff;
             libsorderMake >> libsorderMakeBuff;
             while(!libsorderMakeBuff.isLastLine() && libsorderMakeBuff.size() > 0){
                 string line = libsorderMakeBuff.getNextLine();
-               if (ofFile::doesFileExist(ofFilePath::join(path , line))){
-
+                if (ofFile::doesFileExist(ofFilePath::join(path , line))){
+                    
                     libLibs.push_back(ofFilePath::join(path , line) );
                 } else {
                     libLibs.push_back(line);        // this might be something like ws2_32 or other libs no in this project
                 }
-
-                 printf("adding: %s \n", line.c_str());
             }
-
-
-        } else {
+        }
+        
+    } else {
+        
+        
+        ofDirectory dir;
+        dir.listDir(path);
+        
+        
+        for (int i = 0; i < dir.size(); i++){
+            
+            #ifdef TARGET_WIN32
+                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
+            #else
+                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+            #endif
 
             ofFile temp(dir.getFile(i));
-
+            
             if (temp.isDirectory()){
                 //getLibsRecursively(dir.getPath(i), folderNames);
                 getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
-
+                
             } else {
-
-                //string ext = ofFilePath::getFileExt(temp.getFile(i));
-                string ext;
-                string first;
-                splitFromLast(dir.getPath(i), ".", first, ext);
-
-                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
-
-                    if(platform!=""){
-                        bool platformFound = false;
-                        for(int j=0;j<(int)splittedPath.size();j++){
-                            if(splittedPath[j]==platform){
-                                platformFound = true;
-                                break;
-                            }
-                        }
-                        if(!platformFound){
-                            continue;
+                
+                
+                bool platformFound = false;
+                
+                if(platform!=""){
+                    for(int j=0;j<(int)splittedPath.size();j++){
+                        if(splittedPath[j]==platform){
+                            platformFound = true;
                         }
                     }
-                    libLibs.push_back(dir.getPath(i));
-                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-                    libFiles.push_back(dir.getPath(i));
+                }
+                
+                
+                
+                if (platformFound == true){
+                    //string ext = ofFilePath::getFileExt(temp.getFile(i));
+                    string ext;
+                    string first;
+                    splitFromLast(dir.getPath(i), ".", first, ext);
+                    
+                    if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
+                        libLibs.push_back(dir.getPath(i));
+                    } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+                        libFiles.push_back(dir.getPath(i));
+                    }
                 }
             }
         }
+        
     }
+    
+    
+          
    //folderNames.push_back(path);
 
 
@@ -403,8 +419,6 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 	addonsmake >> addonsmakebuff;
 	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
         string line = addonsmakebuff.getNextLine();
-        cout <<line <<endl;
-
 		if(line!=""){
 			addons.push_back(line);
 		}
