@@ -51,7 +51,7 @@ void ofSerial::enumerateWin32Ports(){
              break;
          }
 
-         if (SetupDiGetDeviceRegistryProperty(hDevInfo,
+         if (SetupDiGetDeviceRegistryPropertyA(hDevInfo,
              &DeviceInterfaceData,
              SPDRP_FRIENDLYNAME,
              &dataType,
