@@ -11,42 +11,55 @@ public:
 	ofWindowManager();
 	~ofWindowManager();
 	
-	virtual void init() = 0;
-	ofWindow* createWindow(int x=0, int y=0, int width=800, int height=600);
-	virtual void processEvents()=0;
-	virtual void postDraw(){};
-	void initializeWindow();
+	ofWindow* createWindow(int w=800, int h=600);
+	ofWindow* createWindow(int x, int y, int width, int height);
 	
+	void initializeWindow();
 	void setupOpenGL(int w, int h, int screenMode);
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	
 	void update();
 	void draw();
+	
 	ofWindow* getLastCreatedWindow();
 	ofWindow* getMainWindow();
 	
 	void setFrameRate(float targetRate);
-
 	void setActiveWindow(ofWindow* win);
 	
 	ofPoint	getWindowPosition();
 	ofPoint	getWindowSize();
-	//ofPoint	getScreenSize(){return ofPoint(); }
 	
 	int		getWidth();
 	int		getHeight();
-
-protected:
-	void addWindow(ofWindow* win);
-	virtual ofWindow* createSystemWindow() = 0;
-
+	
+	//would like to have these functions private. but don't know how...
+	void glfwWindowFocus(GLFWwindow glfwWin, int action);
+	void glfwWindowSize(GLFWwindow glfwWin, int w, int h);
+	int glfwWindowClose(GLFWwindow glfwWin);
+	void glfwWindowRefresh(GLFWwindow glfwWin);	
+	void glfwWindowIconify(GLFWwindow glfwWin, int action);
+	void glfwMouseButton(GLFWwindow glfwWin, int button, int action);	
+	void glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY);	
+	void glfwCursorEnter(GLFWwindow glfwWin, int action);	
+	void glfwScroll(GLFWwindow glfwWin, double deltaX, double deltaY);	
+	void glfwKey(GLFWwindow glfwWin, int key, int action);	
+	void glfwChar(GLFWwindow glfwWin, int key);
+	
 private:
+	ofWindow* getWindowByGlfw(GLFWwindow win);
+	void initializeGLFW();
+	void addWindow(ofWindow* win);
+	
 	ofWindowList windows;
 	ofWindow* mainWindow;
 	ofWindow* activeWindow;
 };
 
 
+/* OF C-STYLE FUNCTIONS */
 ofWindowManager* ofGetWindowManager();
-ofWindow* ofCreateWindow(int x=0, int y=0, int width=800, int height=600);
+ofWindow* ofCreateWindow(int x, int y, int width, int height);
+ofWindow* ofCreateWindow(int width=800, int height=600);
 ofWindow* ofGetMainWindow();
 ofWindow* ofGetLastCreatedWindow();

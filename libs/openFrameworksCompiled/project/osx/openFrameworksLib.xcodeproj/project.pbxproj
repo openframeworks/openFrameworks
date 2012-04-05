@@ -129,12 +129,8 @@
 		E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
 		FA23B644150F7FB600E6C3E1 /* ofWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA23B638150F7FB600E6C3E1 /* ofWindow.cpp */; };
 		FA23B645150F7FB600E6C3E1 /* ofWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B639150F7FB600E6C3E1 /* ofWindow.h */; };
-		FA23B646150F7FB600E6C3E1 /* ofWindowCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B63A150F7FB600E6C3E1 /* ofWindowCocoa.h */; };
-		FA23B647150F7FB600E6C3E1 /* ofWindowCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA23B63B150F7FB600E6C3E1 /* ofWindowCocoa.mm */; };
 		FA23B648150F7FB600E6C3E1 /* ofWindowManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */; };
 		FA23B649150F7FB600E6C3E1 /* ofWindowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */; };
-		FA23B64A150F7FB600E6C3E1 /* ofWindowManagerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B63E150F7FB600E6C3E1 /* ofWindowManagerCocoa.h */; };
-		FA23B64B150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA23B63F150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -277,12 +273,8 @@
 		E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTrueTypeFont.h; path = ../../../openFrameworks/graphics/ofTrueTypeFont.h; sourceTree = SOURCE_ROOT; };
 		FA23B638150F7FB600E6C3E1 /* ofWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindow.cpp; sourceTree = "<group>"; };
 		FA23B639150F7FB600E6C3E1 /* ofWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindow.h; sourceTree = "<group>"; };
-		FA23B63A150F7FB600E6C3E1 /* ofWindowCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowCocoa.h; sourceTree = "<group>"; };
-		FA23B63B150F7FB600E6C3E1 /* ofWindowCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowCocoa.mm; sourceTree = "<group>"; };
 		FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindowManager.cpp; sourceTree = "<group>"; };
 		FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManager.h; sourceTree = "<group>"; };
-		FA23B63E150F7FB600E6C3E1 /* ofWindowManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManagerCocoa.h; sourceTree = "<group>"; };
-		FA23B63F150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowManagerCocoa.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -570,12 +562,8 @@
 			children = (
 				FA23B638150F7FB600E6C3E1 /* ofWindow.cpp */,
 				FA23B639150F7FB600E6C3E1 /* ofWindow.h */,
-				FA23B63A150F7FB600E6C3E1 /* ofWindowCocoa.h */,
-				FA23B63B150F7FB600E6C3E1 /* ofWindowCocoa.mm */,
 				FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */,
 				FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */,
-				FA23B63E150F7FB600E6C3E1 /* ofWindowManagerCocoa.h */,
-				FA23B63F150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm */,
 			);
 			path = window;
 			sourceTree = "<group>";
@@ -643,9 +631,7 @@
 				E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */,
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
 				FA23B645150F7FB600E6C3E1 /* ofWindow.h in Headers */,
-				FA23B646150F7FB600E6C3E1 /* ofWindowCocoa.h in Headers */,
 				FA23B649150F7FB600E6C3E1 /* ofWindowManager.h in Headers */,
-				FA23B64A150F7FB600E6C3E1 /* ofWindowManagerCocoa.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,9 +740,7 @@
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
 				FA23B644150F7FB600E6C3E1 /* ofWindow.cpp in Sources */,
-				FA23B647150F7FB600E6C3E1 /* ofWindowCocoa.mm in Sources */,
 				FA23B648150F7FB600E6C3E1 /* ofWindowManager.cpp in Sources */,
-				FA23B64B150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -770,6 +754,7 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_GLFW = "\"../../../../libs/glfw/include\"";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -783,7 +768,10 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
+				LIB_GLFW = "\"../../../../libs/glfw/lib/osx/libglfw.a\"";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
+				OF_CORE_HEADERS = "$(HEADER_OF) $(HEADER_POCO) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW)";
+				OF_CORE_LIBS = "$(LIB_POCOFOUNDATION) $(LIB_POCONET) $(LIB_POCOXML) $(LIB_POCOUTIL) $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO) $(LIB_GLFW)";
 				OTHER_LDFLAGS = (
 					"$(LIB_POCOFOUNDATION)",
 					"$(LIB_POCONET)",

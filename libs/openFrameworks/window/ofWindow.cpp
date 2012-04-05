@@ -12,20 +12,41 @@
 #include "ofWindow.h"
 #include "ofWindowManager.h"
 
+
+/********** ofWindowDefinitions *****************/
+
 int ofWindow::lastWindowID = 0;
 
-ofWindow::ofWindow():isFocused(false){
+ofWindow::ofWindow():isFocused(false),isInitialized(false),title("ofTestApp"){
 	id = lastWindowID;
 	lastWindowID++;
+	width = 800;
+	height = 600;
 };
 
 ofWindow::~ofWindow(){
 
 };
 
+void ofWindow::initializeWindow(){
+	window = glfwOpenWindow( width, height, GLFW_WINDOWED, title.c_str(), NULL );
+	glfwSwapInterval( 1 );
+	
+	isInitialized = true;
+	setWindowPositionAndShape(x, y, width, height);
+}
+
 void ofWindow::addListener(ofWindowListener* listener)
 {
 	listeners.push_back(listener);
+}
+
+GLFWwindow ofWindow::getGlfwWindow(){
+	return window;
+}
+
+void ofWindow::enableContext(){
+	glfwMakeContextCurrent(window);	
 }
 
 void ofWindow::setup()
@@ -59,7 +80,6 @@ void ofWindow::draw(ofEventArgs& e)
 
 void ofWindow::draw()
 {
-	enableContext();
 	ofGetWindowManager()->setActiveWindow(this);
 
 	float * bgPtr = ofBgColorPtr();
@@ -69,44 +89,28 @@ void ofWindow::draw()
 	//ofGetCurrentRenderer()->setupScreenPerspective(800, 600);
 	ofSetupScreenPerspective(width, height, OF_ORIENTATION_DEFAULT);
 
+#ifdef OF_USING_POCO
+	ofEventArgs e;
+	ofNotifyEvent(events.draw, e);
+#endif
+	
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->draw(this);
 		++it;
 	}
 
-	postDraw();
 }
 
-void ofWindow::moved(int _x, int _y){
-	if(x == _x && y == _y)
-		return;
-	previousShape.x = x;
-	previousShape.y = y;
-	x = _x;
-	y = _y;
-};
-
-void ofWindow::resized(int w, int h){
-	if(width == w && height == h)
-		return;
-	if (w<=0) w = 1;
-	if (h<=0) h = 1;
-	previousShape.width = width;
-	previousShape.height = height;
-	width = w;
-	height = h;
-};
-
-void ofWindow::focused(){
+void ofWindow::windowFocused(){
 	isFocused = true;
 };
 
-void ofWindow::unfocused(){
+void ofWindow::windowUnfocused(){
 	isFocused = false;
 };
 
-void ofWindow::closed(){};
+void ofWindow::windowClosed(){};
 
 ofPoint	ofWindow::getWindowPosition() {return ofPoint(x, y); }
 ofPoint	ofWindow::getWindowSize(){return ofPoint(width, height); }
@@ -124,4 +128,65 @@ void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h){
 		setWindowPosition(_x, _y);
 		setWindowShape(_x, _y);
 	}
+}
+
+void ofWindow::setWindowPosition(int x, int y){
+	glfwSetWindowPos(window, x, y);
+}
+
+void ofWindow::setWindowPosition(ofPoint pos){
+	setWindowPosition(pos.x, pos.y);
+}
+
+void ofWindow::setWindowShape(int w, int h){
+	glfwSetWindowSize(window, w, h);
+}
+
+void ofWindow::windowResized(int w, int h){
+	if(width == w && height == h)
+		return;
+	if (w<=0) w = 1;
+	if (h<=0) h = 1;
+	previousShape.width = width;
+	previousShape.height = height;
+	width = w;
+	height = h;
+	
+	ofNotifyWindowResized(width, height);
+	
+	#ifdef OF_USING_POCO
+	ofResizeEventArgs e;
+	e.width = width;
+	e.height = height;
+	ofNotifyEvent(events.windowResized, e);
+	#endif
+	
+	draw();
+}
+
+void ofWindow::windowMoved(int _x, int _y){
+	if(x == _x && y == _y)
+		return;
+	previousShape.x = x;
+	previousShape.y = y;
+	x = _x;
+	y = _y;
+	
+	/*
+	#ifdef OF_USING_POCO
+	e.width = width;
+	e.height = height;
+	ofNotifyEvent(events.windowResized, e);
+	#endif
+	*/
+}
+
+void ofWindow::setTitle(string t){
+	if (isInitialized)
+		glfwSetWindowTitle(window, t.c_str());
+	title = t;
+}
+
+string ofWindow::getTitle(){
+	return title;
 }

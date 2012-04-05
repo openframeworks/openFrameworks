@@ -2,6 +2,7 @@
 
 #include <ofBaseApp.h>
 #include "ofAppBaseWindow.h"
+#include <GL/glfw3.h>
 
 class ofWindow;
 
@@ -67,6 +68,11 @@ public:
 		windowMoved(x, y);
 	}
 	virtual void windowMoved(int x, int y) {};
+	
+	virtual void windowResized(int w, int h, ofWindow* f) {
+		windowResized(w, h);
+	}
+	virtual void windowResized(int w, int h) {};
 
 	//MOUSE
 	virtual void mouseMoved(int x, int y, ofWindow* f) {
@@ -88,8 +94,8 @@ public:
 	virtual void mouseReleased(int x, int y, int btn) {}
 	virtual void mouseReleased() {};
 
-	virtual void dragEvent(ofDragInfo info){}
 	virtual void dragEvent(ofDragInfo info, ofWindow* f){dragEvent(info);}
+	virtual void dragEvent(ofDragInfo info){}
 
 	bool isUpdated;
 };
@@ -175,16 +181,15 @@ public:
 	ofWindow();
 	~ofWindow();  
     
-	virtual void enableContext() = 0;
-	virtual void initializeWindow() = 0;
+	void enableContext();
+	void initializeWindow();
 	
+	void setWindowPositionAndShape(ofRectangle rect);
 	void setWindowPositionAndShape(int x, int y, int width, int height); 
 
 	void addListener(ofWindowListener* listener);
 
 	void setup();
-
-	virtual void processEvents() = 0;
 
 	void update(ofEventArgs& e);
 	void update();
@@ -192,29 +197,39 @@ public:
 	void draw();
 	
 	ofPoint	getWindowPosition();
+	void setWindowPosition(int x, int y);
+	void setWindowPosition(ofPoint pos);
+	
 	ofPoint	getWindowSize();
+	void setWindowShape(int x, int y);
 	
 	int getWidth();
 	int getHeight();
-	//ofPoint	getScreenSize();
-
-	void moved(int x, int y);
-	void resized(int width, int height);
-	void focused();
-	void unfocused();
-	void closed();
+	
+	void setTitle(string title);
+	string getTitle();
 	
 	ofWindowEvents events;
 	
 	static int lastWindowID;
 	
-protected:
-	virtual void postDraw(){};
-	bool isInitialized;
-	int id;
-	
 private:
+	GLFWwindow getGlfwWindow();
+
+	void windowMoved(int x, int y);
+	void windowFocused();
+	void windowUnfocused();
+	void windowClosed();
+	void windowResized(int w, int h);
+	
 	ofWindowListenerList listeners;
 	ofRectangle previousShape;
 	bool isFocused;
+	string title;
+	GLFWwindow window;
+	
+	bool isInitialized;
+	int id;
+	
+	friend class ofWindowManager;
 };
