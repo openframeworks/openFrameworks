@@ -191,14 +191,7 @@ void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	
 	//run the main loop
 	while (true) {
-		//process window events
-		ofWindowList::iterator it = windows.begin();
-		while(it != windows.end()){
-			it++;
-		}
-		glfwSwapBuffers();
 		glfwPollEvents();
-		
 		update();
 		draw();
 	}

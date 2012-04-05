@@ -30,7 +30,6 @@ ofWindow::~ofWindow(){
 
 void ofWindow::initializeWindow(){
 	window = glfwOpenWindow( width, height, GLFW_WINDOWED, title.c_str(), NULL );
-	glfwSwapInterval( 1 );
 	
 	isInitialized = true;
 	setWindowPositionAndShape(x, y, width, height);
@@ -69,6 +68,12 @@ void ofWindow::update(ofEventArgs& e)
 void ofWindow::update()
 {
 	ofGetWindowManager()->setActiveWindow(this);
+	
+#ifdef OF_USING_POCO
+	ofEventArgs e;
+	ofNotifyEvent(events.update, e);
+#endif
+	
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->update(this);
@@ -102,7 +107,7 @@ void ofWindow::draw()
 		(*it)->draw(this);
 		++it;
 	}
-
+	glfwSwapBuffers();
 }
 
 void ofWindow::windowFocused(){
