@@ -186,7 +186,7 @@ void ofWindowManager::initializeWindow()
 
 void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	//wrap the base app to a window listener
-	mainWindow->addListener(new ofWindowToOfBaseApp(appPtr));
+	mainWindow->addListener(appPtr);
 	appPtr->setup();
 	
 	//run the main loop

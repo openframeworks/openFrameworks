@@ -6,7 +6,7 @@ int i = 0;
 void testApp::setup(){
 	ofSetBackgroundColor(255, 100, 100);
 	ofGetMainWindow()->setWindowShape(600, 600);
-	/*ofCreateWindow(500, 500, 200, 200);
+	ofCreateWindow(500, 500, 200, 200)->addListener(this);
 	/*ofCreateWindow(300, 400, 100, 100);
 	ofCreateWindow(600, 600, 100, 100);
 	ofGetMainWindow()->setWindowPosition(200, 200);*/

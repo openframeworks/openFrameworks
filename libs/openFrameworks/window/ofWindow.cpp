@@ -40,6 +40,9 @@ void ofWindow::addListener(ofWindowListener* listener)
 {
 	listeners.push_back(listener);
 }
+void ofWindow::addListener(ofBaseApp* app){
+	addListener(new ofWindowToOfBaseApp(app));
+}	
 
 GLFWwindow ofWindow::getGlfwWindow(){
 	return window;

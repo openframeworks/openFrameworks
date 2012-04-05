@@ -188,6 +188,7 @@ public:
 	void setWindowPositionAndShape(int x, int y, int width, int height); 
 
 	void addListener(ofWindowListener* listener);
+	void addListener(ofBaseApp* app);
 
 	void setup();
 
