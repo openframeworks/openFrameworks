@@ -25,7 +25,8 @@ ofWindow::ofWindow():isFocused(false),isInitialized(false),title("ofTestApp"){
 };
 
 ofWindow::~ofWindow(){
-
+	ofRemoveListener(ofEvents().update, this, &ofWindow::update);
+	ofRemoveListener(ofEvents().draw, this, &ofWindow::draw);
 };
 
 void ofWindow::initializeWindow(){
@@ -39,6 +40,7 @@ void ofWindow::addListener(ofWindowListener* listener)
 {
 	listeners.push_back(listener);
 }
+
 void ofWindow::addListener(ofBaseApp* app){
 	addListener(new ofWindowToOfBaseApp(app));
 }	
@@ -110,6 +112,10 @@ void ofWindow::draw()
 	glfwSwapBuffers();
 }
 
+void ofWindow::destroy(){
+	glfwCloseWindow(window);
+}
+
 void ofWindow::windowFocused(){
 	isFocused = true;
 };
@@ -118,7 +124,9 @@ void ofWindow::windowUnfocused(){
 	isFocused = false;
 };
 
-void ofWindow::windowClosed(){};
+void ofWindow::windowClosed(){
+	ofLogNotice("WINDOW WAS CLOSED, TRIGGER SOME EVENTS AND THINGS!");
+};
 
 ofPoint	ofWindow::getWindowPosition() {return ofPoint(x, y); }
 ofPoint	ofWindow::getWindowSize(){return ofPoint(width, height); }

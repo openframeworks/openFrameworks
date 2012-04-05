@@ -138,6 +138,39 @@ void ofWindowManager::addWindow(ofWindow* win) {
 	windows.push_back(ofWindowPtr(win));
 }
 
+void ofWindowManager::deleteWindow(ofWindow* win){
+	win->destroy();
+}
+
+void ofWindowManager::removeWindow(ofWindow* win){
+	ofWindowList::iterator it=windows.begin();
+	while(it!=windows.end()) {
+		if((*it).get() == win) {
+			windows.erase(it);
+			break;
+		}
+		++it;
+	}
+	if(windows.size()==0)
+		ofExit();
+}
+
+void ofWindowManager::deleteWindow(int id){
+	deleteWindow(getWindowById(id));
+}
+
+ofWindow* ofWindowManager::getWindowById(int id){
+	ofWindowList::iterator it = windows.begin();
+	while (it != windows.end()) {
+		if((*it)->id == id)
+			return (*it).get();
+		++it;
+	}
+	ofLogWarning("ofWindowManager::getWindowById - ID was not found, returning mainWindow instead");
+	return mainWindow;
+}
+
+
 ofWindow* ofWindowManager::getWindowByGlfw(GLFWwindow win){
 	ofWindowList::iterator it = windows.begin();
 	while (it != windows.end()) {
@@ -145,6 +178,7 @@ ofWindow* ofWindowManager::getWindowByGlfw(GLFWwindow win){
 			return (*it).get();
 		++it;
 	}
+	ofLogWarning("ofWindowManager::getWindowById - GLFWwindow was not found, returning mainWindow instead");
 	return mainWindow;
 }
 
@@ -167,7 +201,7 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
 
 void ofWindowManager::initializeWindow()
 {
-	//define all callbacks
+	//define all callbacks now, so there won't happen anything before OF is fully initialized
 	glfwSetErrorCallback(&glfwErrorCallback);
 	glfwSetWindowSizeCallback(&glfwWindowSizeCallback);
 	glfwSetWindowCloseCallback(&glfwWindowCloseCallback);
@@ -185,7 +219,6 @@ void ofWindowManager::initializeWindow()
 }
 
 void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
-	//wrap the base app to a window listener
 	mainWindow->addListener(appPtr);
 	appPtr->setup();
 	
@@ -293,7 +326,8 @@ void ofWindowManager::glfwWindowSize(GLFWwindow glfwWin, int w, int h){
 }
 int ofWindowManager::glfwWindowClose(GLFWwindow glfwWin){
 	ofWindow* win = getWindowByGlfw(glfwWin);
-	return 0;
+	removeWindow(win);
+	return 1;
 }
 void ofWindowManager::glfwWindowRefresh(GLFWwindow glfwWin){
 	ofWindow* win = getWindowByGlfw(glfwWin);

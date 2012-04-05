@@ -13,6 +13,8 @@ public:
 	
 	ofWindow* createWindow(int w=800, int h=600);
 	ofWindow* createWindow(int x, int y, int width, int height);
+	void deleteWindow(ofWindow* win);
+	void deleteWindow(int id);
 	
 	void initializeWindow();
 	void setupOpenGL(int w, int h, int screenMode);
@@ -23,6 +25,7 @@ public:
 	
 	ofWindow* getLastCreatedWindow();
 	ofWindow* getMainWindow();
+	ofWindow* getWindowById(int id);
 	
 	void setFrameRate(float targetRate);
 	void setActiveWindow(ofWindow* win);
@@ -50,6 +53,7 @@ private:
 	ofWindow* getWindowByGlfw(GLFWwindow win);
 	void initializeGLFW();
 	void addWindow(ofWindow* win);
+	void removeWindow(ofWindow* win);
 	
 	ofWindowList windows;
 	ofWindow* mainWindow;

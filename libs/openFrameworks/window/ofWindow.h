@@ -209,13 +209,15 @@ public:
 	
 	void setTitle(string title);
 	string getTitle();
-	
+		
 	ofWindowEvents events;
 	
 	static int lastWindowID;
 	
 private:
 	GLFWwindow getGlfwWindow();
+	
+	void destroy();
 
 	void windowMoved(int x, int y);
 	void windowFocused();
