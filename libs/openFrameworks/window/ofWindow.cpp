@@ -71,10 +71,8 @@ void ofWindow::update()
 {
 	ofGetWindowManager()->setActiveWindow(this);
 	
-#ifdef OF_USING_POCO
 	ofEventArgs e;
 	ofNotifyEvent(events.update, e);
-#endif
 	
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
@@ -99,17 +97,16 @@ void ofWindow::draw()
 	//ofGetCurrentRenderer()->setupScreenPerspective(800, 600);
 	ofSetupScreenPerspective(width, height, OF_ORIENTATION_DEFAULT);
 
-#ifdef OF_USING_POCO
 	ofEventArgs e;
 	ofNotifyEvent(events.draw, e);
-#endif
 	
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->draw(this);
 		++it;
 	}
-	glfwSwapBuffers();
+	
+	glfwSwapBuffers(); 
 }
 
 void ofWindow::destroy(){
@@ -128,8 +125,13 @@ void ofWindow::windowClosed(){
 	ofLogNotice("WINDOW WAS CLOSED, TRIGGER SOME EVENTS AND THINGS!");
 };
 
-ofPoint	ofWindow::getWindowPosition() {return ofPoint(x, y); }
-ofPoint	ofWindow::getWindowSize(){return ofPoint(width, height); }
+ofPoint	ofWindow::getWindowPosition() {
+	return ofPoint(x, y); 
+}
+
+ofPoint	ofWindow::getWindowSize(){
+	return ofPoint(width, height);
+}
 
 int ofWindow::getWidth(){return width;}
 int ofWindow::getHeight(){return height;}
@@ -170,14 +172,13 @@ void ofWindow::windowResized(int w, int h){
 	
 	ofNotifyWindowResized(width, height);
 	
-	#ifdef OF_USING_POCO
 	ofResizeEventArgs e;
 	e.width = width;
 	e.height = height;
 	ofNotifyEvent(events.windowResized, e);
-	#endif
 	
 	draw();
+	
 }
 
 void ofWindow::windowMoved(int _x, int _y){

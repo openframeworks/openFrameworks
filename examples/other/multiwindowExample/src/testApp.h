@@ -2,6 +2,12 @@
 
 #include "ofMain.h"
 
+class windowRenderer: public ofWindowListener{
+	void draw(){
+		ofRect(100, 100, 20, 20);
+	}
+};
+
 class testApp : public ofBaseApp{
 
 	public:
