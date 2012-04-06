@@ -865,7 +865,7 @@ void ofImage_<PixelType>::update(){
 		} else if(pixels.getNumChannels() == 4) {
 			type = GL_RGBA;
 		}
-		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getWidth() || type != tex.getTextureData().glTypeInternal)
+		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getHeight() || type != tex.getTextureData().glTypeInternal)
 		{
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
 		}
