@@ -22,6 +22,10 @@ addons/**
 #see apps/.gitignore
 apps/*
 
+# debug and release folders
+Debug*/
+Release*/
+
 #codeblocks OF lib files
 libs/openFrameworksCompiled/project/*/*.depend
 libs/openFrameworksCompiled/project/*/*.layout
@@ -34,27 +38,9 @@ libs/openFrameworksCompiled/project/*/*.layout
 *.opensdf
 *.suo
 
-#eclipse build folders
-#Mac OS X
-addons/Debug Mac OS X
-addons/Release Mac OS X
-libs/openFrameworks/Debug Mac OS X
-libs/openFrameworks/Release Mac OS X
-
 #Linux
-addons/Debug Linux
-addons/Release Linux
-libs/openFrameworks/Debug Linux
-libs/openFrameworks/Release Linux
 *.pyc
 
 #Android
-addons/Debug Android
-addons/Release Android
-libs/openFrameworks/Debug Android
-libs/openFrameworks/Release Android
-libs/openFrameworks/Release
-libs/openFrameworks/Debug
-libs/openFrameworks/Release_arm7
 .csettings
 
