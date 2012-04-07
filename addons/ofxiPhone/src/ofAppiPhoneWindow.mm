@@ -64,9 +64,7 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
     
     orientation = OF_ORIENTATION_DEFAULT;
 	
-	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
-	windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
-	screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+	resetDimensions();
 	
 	depthEnabled=false;
 	antiAliasingEnabled=false;
@@ -104,9 +102,7 @@ void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
         timeNow = 0.0;
         timeThen = 0.0;
         
-        windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);        // new OF app created, it could be a different window and screen size, so reset.
-        windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
-        screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+        resetDimensions();          // new OF app created, it could be a different window and screen size, so reset.
     } else {                                                    // app not yet created, created it!
         startAppWithDelegate( "ofxiPhoneAppDelegate" );
     }
@@ -123,7 +119,11 @@ void ofAppiPhoneWindow::startAppWithDelegate(string appDelegateClassName) {
     [pool release];
 }
 
-
+void ofAppiPhoneWindow::resetDimensions() {
+	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
+	windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+	screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+}
 
 /******** Set Window properties ************/
 
@@ -155,9 +155,15 @@ ofPoint	ofAppiPhoneWindow::getWindowSize() {
         CGRect frame = [ofxiPhoneGetGLView() frame];
 		windowSize.set(frame.size.width, frame.size.height, 0);
 
-		if(retinaEnabled)
-			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-				windowSize*=[[UIScreen mainScreen] scale];
+		if(retinaEnabled){
+            UIScreen * currentScreen = ofxiPhoneGetGLView().window.screen;  // current screen is the screen that GLView is attached to.
+            if(!currentScreen){                                             // if GLView is not attached, assume to be main device screen.
+                currentScreen = [UIScreen mainScreen];
+            }
+			if ([currentScreen respondsToSelector:@selector(scale)]){
+				windowSize *= [currentScreen scale];
+            }
+        }
 	}
 
 	return windowSize;
@@ -167,12 +173,18 @@ ofPoint	ofAppiPhoneWindow::getWindowSize() {
 // return cached size, read if nessecary
 ofPoint	ofAppiPhoneWindow::getScreenSize() {
 	if(screenSize.x == NOT_INITIALIZED) {
-		CGSize s = [[UIScreen mainScreen] bounds].size;
+        UIScreen * currentScreen = ofxiPhoneGetGLView().window.screen;  // current screen is the screen that GLView is attached to.
+        if(!currentScreen){                                             // if GLView is not attached, assume to be main device screen.
+            currentScreen = [UIScreen mainScreen];
+        }
+		CGSize s = [currentScreen bounds].size;
 		screenSize.set(s.width, s.height, 0);
 		
-		if(retinaEnabled)
-			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-				screenSize*=[[UIScreen mainScreen] scale];
+		if(retinaEnabled){
+			if ([currentScreen respondsToSelector:@selector(scale)]){
+				screenSize *= [currentScreen scale];
+            }
+        }
 	}
 	return screenSize;
 }

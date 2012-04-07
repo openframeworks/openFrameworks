@@ -61,10 +61,8 @@ bool visualStudioProject::loadProjectFile(){
 
 
 bool visualStudioProject::saveProjectFile(){    
-    doc.save_file((projectDir + projectName + ".vcxproj").c_str());
-
+    return doc.save_file((projectDir + projectName + ".vcxproj").c_str());
 }
-
 
 void visualStudioProject::addSrc(string srcFile, string folder){
     

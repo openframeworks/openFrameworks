@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="emptyExample" />
+		<Option title="projectGenerator" />
 		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
@@ -67,6 +67,13 @@
 			<Add directory="..\..\..\libs\poco\include" />
 			<Add directory="..\..\..\libs\tess2\include" />
 			<Add directory="..\..\..\libs\cairo\include\cairo" />
+			<Add directory="src\pugixmlLib\src" />
+			<Add directory="src\addons" />
+			<Add directory="src\projects" />
+			<Add directory="src\utils" />
+			<Add directory="..\..\..\addons\ofxXmlSettings\libs" />
+			<Add directory="..\..\..\addons\ofxXmlSettings\src" />
+			<Add directory="..\..\..\addons\ofxGui\src" />
 		</Compiler>
 		<Linker>
 			<Add library="..\..\..\libs\FreeImage\lib\win_cb\FreeImage.lib" />
@@ -109,15 +116,53 @@
 			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
 			<Mode after="always" />
 		</ExtraCommands>
+		<Unit filename="..\..\..\addons\ofxGui\src\ofOscParameter.h" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofParameter.h" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxBaseGui.h" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxButton.cpp" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxButton.h" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxGui.h" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxPanel.cpp" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxPanel.h" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxSlider.cpp" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxSlider.h" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
+		<Unit filename="..\..\..\addons\ofxGui\src\ofxToggle.h" />
+		<Unit filename="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
+		<Unit filename="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
+		<Unit filename="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
+		<Unit filename="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
+		<Unit filename="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp" />
+		<Unit filename="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
+		<Unit filename="src\addons\ofAddon.cpp" />
+		<Unit filename="src\addons\ofAddon.h" />
 		<Unit filename="src\main.cpp">
 			<Option virtualFolder="src" />
 		</Unit>
+		<Unit filename="src\projects\CBLinuxProject.cpp" />
+		<Unit filename="src\projects\CBLinuxProject.h" />
+		<Unit filename="src\projects\CBWinProject.cpp" />
+		<Unit filename="src\projects\CBWinProject.h" />
+		<Unit filename="src\projects\baseProject.cpp" />
+		<Unit filename="src\projects\baseProject.h" />
+		<Unit filename="src\projects\visualStudioProject.cpp" />
+		<Unit filename="src\projects\visualStudioProject.h" />
+		<Unit filename="src\projects\xcodeProject.cpp" />
+		<Unit filename="src\projects\xcodeProject.h" />
+		<Unit filename="src\pugixmlLib\src\pugiconfig.hpp" />
+		<Unit filename="src\pugixmlLib\src\pugixml.cpp" />
+		<Unit filename="src\pugixmlLib\src\pugixml.hpp" />
 		<Unit filename="src\testApp.cpp">
 			<Option virtualFolder="src" />
 		</Unit>
 		<Unit filename="src\testApp.h">
 			<Option virtualFolder="src" />
 		</Unit>
+		<Unit filename="src\utils\Utils.cpp" />
+		<Unit filename="src\utils\Utils.h" />
+		<Unit filename="src\utils\ofAppNoWindow.cpp" />
+		<Unit filename="src\utils\ofAppNoWindow.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
