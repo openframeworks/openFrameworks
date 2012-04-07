@@ -1,7 +1,4 @@
 */.metadata
-android/*/Debug
-android/*/Release
-android/*/Release_arm7
 android/*/test link
 android/*/bin
 android/*/obj
@@ -43,15 +40,7 @@ Android.mk
 /*/*/*.vcxproj
 /*/*/*.vcxproj.user
 
-#MacOS
-/*/*/Debug Mac OS X
-/*/*/Release Mac OS X
-
 # linux
-/*/*/Debug Linux
-/*/*/Release Linux
-/*/*/Debug Linux64
-/*/*/Release Linux64
 /*/*/Makefile
 /*/*/config.make
 
@@ -61,11 +50,6 @@ Android.mk
 /*/*/.settings
 
 #Android
-/*/*/Debug Android
-/*/*/Release Android
-/*/*/Debug
-/*/*/Release
-/*/*/Release_arm7
 /*/*/test link
 /*/*/obj
 !/android/*/.cproject
