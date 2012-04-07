@@ -17,21 +17,25 @@ ofAddon::ofAddon(){
 }
 
 void ofAddon::fromFS(string path, string platform){
-	
+
     clear();
 	name = ofFilePath::getFileName(path);
 
     string filePath = path + "/src";
     string ofRootPath = ofFilePath::addTrailingSlash(getOFRoot()); //we need to add a trailing slash for the erase to work properly
-    
-    ofLogVerbose() << "in fromFS, trying src " << filePath << endl;
+
+    ofLogVerbose() << "in fromFS, trying src " << filePath;
     getFilesRecursively(filePath, srcFiles);
 
     for(int i=0;i<(int)srcFiles.size();i++){
     	srcFiles[i].erase (srcFiles[i].begin(), srcFiles[i].begin()+ofRootPath.length());
-		ofLogVerbose() << " srcFiles " << srcFiles[i] << endl; 
+		ofLogVerbose() << " srcFiles " << srcFiles[i];
     	int init = 0;
-    	int end = srcFiles[i].rfind("/");
+#ifdef TARGET_WIN32
+    	int end = srcFiles[i].rfind("\\");
+#else
+        int end = srcFiles[i].rfind("/");
+#endif
     	string folder = srcFiles[i].substr(init,end);
     	srcFiles[i] = pathToOF + srcFiles[i];
     	filesToFolders[srcFiles[i]] = folder;
@@ -39,59 +43,83 @@ void ofAddon::fromFS(string path, string platform){
 
     string libsPath = path + "/libs";
     vector < string > libFiles;
-    vector < string > libLibs;
+    
+    cout << libs.size() << " libs size + platform =  " << platform << endl;
+    
     if (ofDirectory::doesDirectoryExist(libsPath)){
         getLibsRecursively(libsPath, libFiles, libs, platform);
     }
+    
+    cout << libs.size() << " libs size " << endl;
 
     // I need to add libFiles to srcFiles
     for (int i = 0; i < (int)libFiles.size(); i++){
     	libFiles[i].erase (libFiles[i].begin(), libFiles[i].begin()+ofRootPath.length());
-		ofLogVerbose() << " libFiles " << libFiles[i] << endl; 
+		ofLogVerbose() << " libFiles " << libFiles[i];
     	int init = 0;
-    	int end = libFiles[i].rfind("/");
-    	string folder = libFiles[i].substr(init,end);
-    	libFiles[i] = pathToOF + libFiles[i];
-        srcFiles.push_back(libFiles[i]);
-    	filesToFolders[libFiles[i]] = folder;
+#ifdef TARGET_WIN32
+    	int end = libFiles[i].rfind("\\");
+#else
+        int end = libFiles[i].rfind("/");
+#endif
+        if (end > 0){
+            string folder = libFiles[i].substr(init,end);
+            libFiles[i] = pathToOF + libFiles[i];
+            srcFiles.push_back(libFiles[i]);
+            filesToFolders[libFiles[i]] = folder;
+        }
+
     }
 
     for (int i = 0; i < (int)libs.size(); i++){
-    	libs[i].erase (libs[i].begin(), libs[i].begin()+ofRootPath.length());
-    	libs[i] = pathToOF + libs[i];
+
+        // does libs[] have any path ? let's fix if so.
+#ifdef TARGET_WIN32
+    	int end = libs[i].rfind("\\");
+#else
+        int end = libs[i].rfind("/");
+#endif
+        if (end > 0){
+
+            libs[i].erase (libs[i].begin(), libs[i].begin()+ofRootPath.length());
+            libs[i] = pathToOF + libs[i];
+        }
+
     }
 
-    
     // get a unique list of the paths that are needed for the includes.
     list < string > paths;
     for (int i = 0; i < (int)srcFiles.size(); i++){
         size_t found;
+#ifdef TARGET_WIN32
+    	found = srcFiles[i].find_last_of("\\");
+#else
         found = srcFiles[i].find_last_of("/");
+#endif
         paths.push_back(srcFiles[i].substr(0,found));
     }
-    
+
     // get every folder in addon/src and addon/libs
-    
+
     vector < string > libFolders;
-    ofLogVerbose() << "trying get folders recursively " << (path + "/libs") << endl;
+    ofLogVerbose() << "trying get folders recursively " << (path + "/libs");
     getFoldersRecursively(path + "/libs", libFolders, platform);
-    
+
     vector < string > srcFolders;
     getFoldersRecursively(path + "/src", srcFolders, platform);
-    
+
     for (int i = 0; i < libFolders.size(); i++){
         libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+ofRootPath.length());
         libFolders[i] = pathToOF + libFolders[i];
         paths.push_back(libFolders[i]);
     }
-    
+
     for (int i = 0; i < srcFolders.size(); i++){
         srcFolders[i].erase (srcFolders[i].begin(), srcFolders[i].begin()+ofRootPath.length());
         srcFolders[i] = pathToOF + srcFolders[i];
         paths.push_back(srcFolders[i]);
     }
-    
-    
+
     paths.sort();
     paths.unique();
     for (list<string>::iterator it=paths.begin(); it!=paths.end(); ++it){

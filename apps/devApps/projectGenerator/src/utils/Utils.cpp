@@ -38,35 +38,35 @@ using namespace Poco;
 #include "ofUtils.h"
 
 
-void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) { 
-	size_t uPos = 0; 
-	size_t uFindLen = tFind.length(); 
+void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) {
+	size_t uPos = 0;
+	size_t uFindLen = tFind.length();
 	size_t uReplaceLen = tReplace.length();
-    
+
 	if( uFindLen == 0 ){
 		return;
 	}
-    
+
 	for( ;(uPos = tInput.find( tFind, uPos )) != std::string::npos; ){
 		tInput.replace( uPos, uFindLen, tReplace );
 		uPos += uReplaceLen;
-	}	
-    
+	}
+
 }
 
 
 std::string LoadFileAsString(const std::string & fn)
 {
     std::ifstream fin(fn.c_str());
-    
+
     if(!fin)
     {
         // throw exception
     }
-    
+
     std::ostringstream oss;
     oss << fin.rdbuf();
-    
+
     return oss.str();
 }
 
@@ -76,22 +76,22 @@ void findandreplaceInTexfile (string fileName, std::string tFind, std::string tR
 		std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
 		ifile.seekg(0,std::ios_base::end);
 		long s=ifile.tellg();
-		//cout << "size of s is " << s << endl; 
+		//cout << "size of s is " << s << endl;
 		char *buffer=new char[s];
 		ifile.seekg(0);
 		ifile.read(buffer,s);
 		ifile.close();
-		
+
 		std::string txt(buffer,s);
 		delete[] buffer;
-		
+
 		findandreplace(txt, tFind, tReplace);
-		
+
 		std::ofstream ofile(ofToDataPath(fileName).c_str());
 		ofile.write(txt.c_str(),txt.size());
 		//return 0;
    } else {
-       ; // some error checking here would be good. 
+       ; // some error checking here would be good.
    }
 }
 
@@ -110,13 +110,15 @@ bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attri
     }
 }
 
-pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue){
+pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool addMultiple){
 
-    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue)){
+
+
+    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue) || addMultiple == true){
         // otherwise, add it please:
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s]", tag.c_str(), attribute.c_str());
-        cout << xpathExpression << endl;
+        //cout << xpathExpression << endl;
         pugi::xpath_node_set add = doc.select_nodes(xpathExpression);
         pugi::xml_node node = add[add.size()-1].node();
         pugi::xml_node nodeAdded = node.parent().append_copy(node);
@@ -130,11 +132,11 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
 
 // todo -- this doesn't use ofToDataPath -- so it's broken a bit.  can we fix?
 void getFilesRecursively(const string & path, vector < string > & fileNames){
-    
+
     ofDirectory dir;
-    
+
     ofLogVerbose() << "in getFilesRecursively "<< path << endl;
-    
+
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
         ofFile temp(dir.getFile(i));
@@ -143,24 +145,24 @@ void getFilesRecursively(const string & path, vector < string > & fileNames){
         } else if (temp.isDirectory()){
             getFilesRecursively(dir.getPath(i), fileNames);
         }
-    }    
+    }
     //folderNames.push_back(path);
 
 }
 
-static vector <string> platforms; 
+static vector <string> platforms;
 bool isFolderNotCurrentPlatform(string folderName, string platform){
 	if( platforms.size() == 0 ){
 		platforms.push_back("osx");
 		platforms.push_back("win_cb");
 		platforms.push_back("vs2010");
 		platforms.push_back("ios");
-		platforms.push_back("linux");		
+		platforms.push_back("linux");
 		platforms.push_back("linux64");
 		platforms.push_back("android");
 		platforms.push_back("iphone");
 	}
-		
+
 	for(int i = 0; i < platforms.size(); i++){
 		if( folderName == platforms[i] && folderName != platform ){
 			return true;
@@ -191,52 +193,70 @@ void getFoldersRecursively(const string & path, vector < string > & folderNames,
         if (temp.isDirectory() && isFolderNotCurrentPlatform(temp.getFileName(), platform) == false ){
             getFoldersRecursively(dir.getPath(i), folderNames, platform);
         }
-    }    
+    }
     folderNames.push_back(path);
 }
 
 
 
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
-       
+
+
+   
     
-    ofDirectory dir;
-    dir.listDir(path);
-    for (int i = 0; i < dir.size(); i++){
+    if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
         
-        if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
-            
-            vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-            
-            if(platform!=""){
-                bool platformFound = false;
-                for(int j=0;j<(int)splittedPath.size();j++){
-                    if(splittedPath[j]==platform){
-                        platformFound = true;
-                        break;
-                    }
-                }
-                if(!platformFound){
-                    continue;
+        bool platformFound = false;
+        
+#ifdef TARGET_WIN32
+        vector<string> splittedPath = ofSplitString(path,"\\");
+#else
+        vector<string> splittedPath = ofSplitString(path,"/");
+#endif
+        
+        
+        if(platform!=""){
+            for(int j=0;j<(int)splittedPath.size();j++){
+                if(splittedPath[j]==platform){
+                    platformFound = true;
+                   // break;
                 }
             }
-            
-            
+        }
+        
+        
+        if (platformFound == true){
             vector < string > libsInOrder;
             ofFile libsorderMake(ofFilePath::join(path, "libsorder.make"));
             ofBuffer libsorderMakeBuff;
             libsorderMake >> libsorderMakeBuff;
             while(!libsorderMakeBuff.isLastLine() && libsorderMakeBuff.size() > 0){
                 string line = libsorderMakeBuff.getNextLine();
-                libLibs.push_back(path + "/lib" + line + ".a");
+                if (ofFile::doesFileExist(ofFilePath::join(path , line))){
+                    
+                    libLibs.push_back(ofFilePath::join(path , line) );
+                } else {
+                    libLibs.push_back(line);        // this might be something like ws2_32 or other libs no in this project
+                }
             }
-            
-            
-        } else {
+        }
         
+    } else {
+        
+        
+        ofDirectory dir;
+        dir.listDir(path);
+        
+        
+        for (int i = 0; i < dir.size(); i++){
+            
+            #ifdef TARGET_WIN32
+                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
+            #else
+                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+            #endif
+
             ofFile temp(dir.getFile(i));
-            
-            
             
             if (temp.isDirectory()){
                 //getLibsRecursively(dir.getPath(i), folderNames);
@@ -245,38 +265,41 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
             } else {
                 
                 
+                bool platformFound = false;
+                
+                if(platform!=""){
+                    for(int j=0;j<(int)splittedPath.size();j++){
+                        if(splittedPath[j]==platform){
+                            platformFound = true;
+                        }
+                    }
+                }
+                
+                
+                
+               
                 //string ext = ofFilePath::getFileExt(temp.getFile(i));
                 string ext;
                 string first;
                 splitFromLast(dir.getPath(i), ".", first, ext);
                 
-                
-                vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
-                    
-                    if(platform!=""){
-                        bool platformFound = false;
-                        for(int j=0;j<(int)splittedPath.size();j++){
-                            if(splittedPath[j]==platform){
-                                platformFound = true;
-                                break;
-                            }
-                        }
-                        if(!platformFound){
-                            continue;
-                        }
-                    }
-                    libLibs.push_back(dir.getPath(i));
+                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
+                    if (platformFound) libLibs.push_back(dir.getPath(i));
                 } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
                     libFiles.push_back(dir.getPath(i));
                 }
+                
             }
         }
-    }    
+        
+    }
+    
+    
+          
    //folderNames.push_back(path);
-    
-    
-    
+
+
+
 //    DirectoryIterator end;
 //        for (DirectoryIterator it(path); it != end; ++it){
 //            if (!it->isDirectory()){
@@ -347,7 +370,7 @@ string getOFRelPath(string from){
     path.parse( getOFRoot() );
     path.makeAbsolute();
 
-    
+
 	string relPath;
 	if (path.toString() == base.toString()){
 		// do something.
@@ -355,7 +378,7 @@ string getOFRelPath(string from){
 
 	int maxx = MAX(base.depth(), path.depth());
 	for (int i = 0; i <= maxx; i++){
-        
+
 		bool bRunOut = false;
 		bool bChanged = false;
 		if (i <= base.depth() && i <= path.depth()){
@@ -367,8 +390,8 @@ string getOFRelPath(string from){
 		} else {
 			bRunOut = true;
 		}
-        
-        
+
+
 		if (bRunOut == true || bChanged == true){
             for (int j = i; j <= base.depth(); j++){
 				relPath += "../";
@@ -379,14 +402,14 @@ string getOFRelPath(string from){
 			break;
 		}
 	}
-    
-    ofLogVerbose() << " returning path " << relPath << endl; 
-    
+
+    ofLogVerbose() << " returning path " << relPath << endl;
+
     return relPath;
 }
 
 void parseAddonsDotMake(string path, vector < string > & addons){
-    
+
     addons.clear();
 	ofFile addonsmake(path);
 	if(!addonsmake.exists()){
@@ -396,8 +419,6 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 	addonsmake >> addonsmakebuff;
 	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
         string line = addonsmakebuff.getNextLine();
-        cout <<line <<endl;
-		
 		if(line!=""){
 			addons.push_back(line);
 		}
@@ -423,7 +444,6 @@ bool askOFRoot(){
 string getOFRootFromConfig(){
 	if(!checkConfigExists()) return "";
 	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::ReadOnly);
-	string filePath;
-	configFile >> filePath;
+	string filePath = configFile.readToBuffer();
 	return filePath;
 }
