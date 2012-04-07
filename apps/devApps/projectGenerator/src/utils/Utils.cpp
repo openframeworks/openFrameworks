@@ -211,19 +211,14 @@ void getFoldersRecursively(const string & path, vector < string > & folderNames,
 
 
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
-
-<<<<<<< HEAD
-
-   
+    
+    
+    
     
     if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
         
-    bool platformFound = false;
-
-    ofDirectory dir;
-    dir.listDir(path);
-    for (int i = 0; i < dir.size(); i++){
-
+        bool platformFound = false;
+        
 #ifdef TARGET_WIN32
         vector<string> splittedPath = ofSplitString(path,"\\");
 #else
@@ -235,7 +230,7 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
             for(int j=0;j<(int)splittedPath.size();j++){
                 if(splittedPath[j]==platform){
                     platformFound = true;
-                   // break;
+                    // break;
                 }
             }
         }
@@ -266,12 +261,12 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
         
         for (int i = 0; i < dir.size(); i++){
             
-            #ifdef TARGET_WIN32
-                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
-            #else
-                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-            #endif
-
+#ifdef TARGET_WIN32
+            vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
+#else
+            vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+#endif
+            
             ofFile temp(dir.getFile(i));
             
             if (temp.isDirectory()){
@@ -293,7 +288,7 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
                 
                 
                 
-               
+                
                 //string ext = ofFilePath::getFileExt(temp.getFile(i));
                 string ext;
                 string first;
@@ -309,6 +304,44 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
         }
         
     }
+    
+    
+    
+    //folderNames.push_back(path);
+    
+    
+    
+    //    DirectoryIterator end;
+    //        for (DirectoryIterator it(path); it != end; ++it){
+    //            if (!it->isDirectory()){
+    //            	string ext = ofFilePath::getFileExt(it->path());
+    //            	vector<string> splittedPath = ofSplitString(ofFilePath::getEnclosingDirectory(it->path()),"/");
+    //
+    //                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
+    //
+    //                	if(platform!=""){
+    //                		bool platformFound = false;
+    //                		for(int i=0;i<(int)splittedPath.size();i++){
+    //                			if(splittedPath[i]==platform){
+    //                				platformFound = true;
+    //                				break;
+    //                			}
+    //                		}
+    //                		if(!platformFound){
+    //                			continue;
+    //                		}
+    //                	}
+    //                    libLibs.push_back(it->path());
+    //                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+    //                    libFiles.push_back(it->path());
+    //                }
+    //            }
+    //
+    //            if (it->isDirectory()){
+    //                getLibsRecursively(it->path(), libFiles, libLibs, platform);
+    //            }
+    //        }
+    
 }
 
 
