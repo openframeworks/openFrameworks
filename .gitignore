@@ -7,34 +7,16 @@ openFrameworksDebug.a
 openFrameworksUniversal.a
 *.app/
 
-#rule to avoid non-official addons going into git
-#see addons/.gitignore
-addons/**
-
 #xcode files
 *.pbxuser
 *.perspectivev3
-examples/*/*/*.xcodeproj
-examples/*/*/Project.xcconfig
-examples/*/*/openFrameworks-Info.plist
-examples/*/*/ofxiphone-Info.plist
-examples/*/*/iPhone_Prefix.pch
-examples/*/*/*/*/Default.png
-examples/*/*/*/*/Icon.png
+xcuserdata
+project.xcworkspace
+.DS_Store
 
-#codeblocks files
-examples/*/*/*.layout
-examples/*/*/*.depend
-examples/*/*/bin/clickToLaunch*
-examples/*/*/bin/libs
-examples/*/*/obj
-examples/*/*/*.cbp
-examples/*/*/*.workspace
-
-#vs files
-examples/*/*/*.sln
-examples/*/*/*.vcxproj
-examples/*/*/*.vcxproj.user
+#rule to avoid non-official addons going into git
+#see addons/.gitignore
+addons/**
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
@@ -58,29 +40,13 @@ addons/Debug Mac OS X
 addons/Release Mac OS X
 libs/openFrameworks/Debug Mac OS X
 libs/openFrameworks/Release Mac OS X
-examples/*/*/Debug Mac OS X
-examples/*/*/Release Mac OS X
-xcuserdata
-project.xcworkspace
-.DS_Store
 
 #Linux
 addons/Debug Linux
 addons/Release Linux
 libs/openFrameworks/Debug Linux
 libs/openFrameworks/Release Linux
-examples/*/*/Debug Linux
-examples/*/*/Release Linux
-examples/*/*/Debug Linux64
-examples/*/*/Release Linux64
-examples/*/*/Makefile
-examples/*/*/config.make
 *.pyc
-
-#eclipse
-examples/*/*/.cproject
-examples/*/*/.project
-examples/*/*/.settings
 
 #Android
 addons/Debug Android
@@ -90,14 +56,5 @@ libs/openFrameworks/Release Android
 libs/openFrameworks/Release
 libs/openFrameworks/Debug
 libs/openFrameworks/Release_arm7
-examples/*/*/Debug Android
-examples/*/*/Release Android
-examples/*/*/Debug
-examples/*/*/Release
-examples/*/*/Release_arm7
-examples/*/*/test link
-examples/*/*/obj
 .csettings
-!examples/android/*/.cproject
-!examples/android/*/.project
-!examples/android/*/.settings
+
