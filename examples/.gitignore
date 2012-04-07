@@ -19,3 +19,55 @@ Application.mk
 Android.mk
 */*/bin/*
 !*/*/bin/data/
+
+#xcode files
+/*/*/*.xcodeproj
+/*/*/Project.xcconfig
+/*/*/openFrameworks-Info.plist
+/*/*/ofxiphone-Info.plist
+/*/*/iPhone_Prefix.pch
+/*/*/*/*/Default.png
+/*/*/*/*/Icon.png
+
+#codeblocks files
+/*/*/*.layout
+/*/*/*.depend
+/*/*/bin/clickToLaunch*
+/*/*/bin/libs
+/*/*/obj
+/*/*/*.cbp
+/*/*/*.workspace
+
+#vs files
+/*/*/*.sln
+/*/*/*.vcxproj
+/*/*/*.vcxproj.user
+
+#MacOS
+/*/*/Debug Mac OS X
+/*/*/Release Mac OS X
+
+# linux
+/*/*/Debug Linux
+/*/*/Release Linux
+/*/*/Debug Linux64
+/*/*/Release Linux64
+/*/*/Makefile
+/*/*/config.make
+
+#eclipse
+/*/*/.cproject
+/*/*/.project
+/*/*/.settings
+
+#Android
+/*/*/Debug Android
+/*/*/Release Android
+/*/*/Debug
+/*/*/Release
+/*/*/Release_arm7
+/*/*/test link
+/*/*/obj
+!/android/*/.cproject
+!/android/*/.project
+!/android/*/.settings
