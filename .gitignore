@@ -16,7 +16,7 @@ project.xcworkspace
 
 #rule to avoid non-official addons going into git
 #see addons/.gitignore
-addons/**
+addons/*
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
