@@ -84,7 +84,6 @@
       </DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\cairo\lib\vs2010;..\..\..\libs\cairo\lib\vs2010;..\..\..\libs\glew\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;..\..\..\libs\tess2\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
