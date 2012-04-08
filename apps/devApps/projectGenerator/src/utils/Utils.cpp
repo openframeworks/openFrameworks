@@ -19,6 +19,12 @@
 #include <fstream>
 #include <string>
 
+#include "Poco/HMACEngine.h"
+#include "Poco/MD5Engine.h"
+using Poco::DigestEngine;
+using Poco::HMACEngine;
+using Poco::MD5Engine;
+
 
 
 #ifdef TARGET_WIN32
@@ -36,6 +42,23 @@
 using namespace Poco;
 
 #include "ofUtils.h"
+
+
+string generateUUID(string input){
+
+    std::string passphrase("openFrameworks"); // HMAC needs a passphrase
+
+    HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
+    hmac.update(input);
+
+    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
+    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+
+    return digestString;
+}
+
+
+
 
 
 void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) {

@@ -12,14 +12,22 @@ void visualStudioProject::setup() {
 
 bool visualStudioProject::createProjectFile(){
 
-    ofFile project(projectDir + projectName + ".vcxproj");
-    ofFile user(projectDir + projectName + ".vcxproj.user");
-    ofFile solution(projectDir + projectName + ".sln");
+    ofFile project(ofFilePath::join(projectDir,projectName + ".vcxproj"));
+    ofFile user(ofFilePath::join(projectDir,projectName + ".vcxproj.user"));
+    ofFile solution(ofFilePath::join(projectDir,projectName + ".sln"));
+	ofFile filters(ofFilePath::join(projectDir, projectName + ".vcxproj.filters"));
 
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path(),false, true);
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user.path(), false, true);
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution.path(), false, true);
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.filters"),filters.path(), false, true);
 
+	ofFile filterFile(filters.path());
+	string temp = filterFile.readToBuffer();
+	pugi::xml_parse_result result = filterXmlDoc.load(temp.c_str());
+	if (result.status==pugi::status_ok) ofLogVerbose() << "loaded filter ";
+	else ofLogVerbose() << "problem loading filter ";
+	
     findandreplaceInTexfile(solution.path(),"emptyExample_vs2010",projectName);
     findandreplaceInTexfile(user.path(),"emptyExample_vs2010",projectName);
     findandreplaceInTexfile(project.path(),"emptyExample",projectName);
@@ -60,10 +68,58 @@ bool visualStudioProject::loadProjectFile(){
 
 
 bool visualStudioProject::saveProjectFile(){
+
+	ofFile filters(projectDir + projectName + ".vcxproj.filters");
+	filterXmlDoc.save_file(filters.path().c_str());
+
+
     return doc.save_file((projectDir + projectName + ".vcxproj").c_str());
 }
 
+
+void visualStudioProject::appendFilter(string folderName){
+
+	string uuid = generateUUID(folderName);
+	cout << folderName << " -- testing " << endl;
+
+	string tag = "//ItemGroup[Filter]/Filter[@Include=\"" + folderName + "\"]";
+	 pugi::xpath_node_set set = filterXmlDoc.select_nodes(tag.c_str());
+	 if (set.size() > 0){
+		 cout << folderName << " -- have this " << endl;
+
+		//pugi::xml_node node = set[0].node();
+	 } else {
+
+		 cout << folderName << " -- making " << endl;
+
+		 pugi::xml_node node = filterXmlDoc.select_single_node("//ItemGroup[Filter]/Filter").node().parent();
+		 pugi::xml_node nodeAdded = node.append_child("Filter");
+		 nodeAdded.append_attribute("Include").set_value(folderName.c_str());
+		 pugi::xml_node nodeAdded2 = nodeAdded.append_child("UniqueIdentifier");
+
+		 uuid.insert(8,"-");
+		 uuid.insert(8+4+1,"-");
+		 uuid.insert(8+4+4+2,"-");
+		 uuid.insert(8+4+4+4+3,"-");
+		 
+		 //d8376475-7454-4a24-b08a-aac121d3ad6f
+
+		 string uuidAltered = "{" + uuid + "}";
+		 nodeAdded2.append_child(pugi::node_pcdata).set_value(uuidAltered.c_str());
+	 }
+}
+
 void visualStudioProject::addSrc(string srcFile, string folder){
+
+
+	vector < string > folderSubNames = ofSplitString(folder, "\\");
+	string folderName = "";
+	for (int i = 0; i < folderSubNames.size(); i++){
+		if (i != 0) folderName += "\\";
+		folderName += folderSubNames[i];
+		printf("calling -- %s, %i \n", folderName.c_str(), i);
+		appendFilter(folderName);
+	}
 
     // TODO: no folder love here...
 
@@ -71,10 +127,26 @@ void visualStudioProject::addSrc(string srcFile, string folder){
 
     if (ofIsStringInString(srcFile, ".h") || ofIsStringInString(srcFile, ".hpp")){
         appendValue(doc, "ClInclude", "Include", srcFile);
+
+		pugi::xml_node node = filterXmlDoc.select_single_node("//ItemGroup[ClInclude]").node();
+		pugi::xml_node nodeAdded = node.append_child("ClInclude");
+		nodeAdded.append_attribute("Include").set_value(srcFile.c_str());
+		nodeAdded.append_child("Filter").append_child(pugi::node_pcdata).set_value(folder.c_str());
+
     } else {
         appendValue(doc, "ClCompile", "Include", srcFile);
+
+		pugi::xml_node node = filterXmlDoc.select_single_node("//ItemGroup[ClCompile]").node();
+		pugi::xml_node nodeAdded = node.append_child("ClCompile");
+		nodeAdded.append_attribute("Include").set_value(srcFile.c_str());
+		nodeAdded.append_child("Filter").append_child(pugi::node_pcdata).set_value(folder.c_str());
+
     }
 
+	cout << "------------------------------------ " << endl;
+	filterXmlDoc.print(std::cout);
+	cout << "------------------------------------ " << endl;
+	
 }
 
 void visualStudioProject::addInclude(string includeName){
