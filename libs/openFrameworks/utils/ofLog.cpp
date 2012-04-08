@@ -181,33 +181,39 @@ void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel){
 
 string ofGetLogLevelName(ofLogLevel level){
 	switch(level){
-	case OF_LOG_VERBOSE:
-		return "OF_LOG_VERBOSE";
-		break;
-	case OF_LOG_NOTICE:
-		return "OF_LOG_NOTICE";
-		break;
-	case OF_LOG_WARNING:
-		return "OF_LOG_WARNING";
-		break;
-	case OF_LOG_ERROR:
-		return "OF_LOG_ERROR";
-		break;
-	case OF_LOG_FATAL_ERROR:
-		return "OF_LOG_FATAL_ERROR";
-		break;
-	case OF_LOG_SILENT:
-		return "OF_LOG_SILENT";
-		break;
-	default:
-		return "";
+		case OF_LOG_VERBOSE:
+			return "verbose";
+			break;
+		case OF_LOG_NOTICE:
+			return "notice";
+			break;
+		case OF_LOG_WARNING:
+			return "warning";
+			break;
+		case OF_LOG_ERROR:
+			return "error";
+			break;
+		case OF_LOG_FATAL_ERROR:
+			return "fatal error";
+			break;
+		case OF_LOG_SILENT:
+			return "silent";
+			break;
+		default:
+			return "";
 	}
 }
 
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
-	if(level<OF_LOG_ERROR) cout << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
-	else cerr << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
-}
+	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
+	ostream& out = level < OF_LOG_ERROR ? cout : cerr;
+	out << "[";
+	// only print the module name if it's not "OF"
+	if(module != "OF") {
+		out << module << ":";
+	}
+	out << ofGetLogLevelName(level) << "] " << message << endl;
+}	
 
 void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
 	va_list args;
