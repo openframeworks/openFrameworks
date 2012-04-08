@@ -206,7 +206,7 @@ string ofGetLogLevelName(ofLogLevel level){
 
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
 	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
-	ostream& out = level < OF_LOG_ERROR ? cout : cerr;
+	ostream& out = cout;//level < OF_LOG_ERROR ? cout : cerr;
 	out << "[";
 	// only print the module name if it's not "OF"
 	if(module != "OF") {
@@ -225,17 +225,14 @@ void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, con
 void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-	if(logLevel<OF_LOG_ERROR){
-		printf("%s: ", module.c_str());
-		printf("%s: ", ofGetLogLevelName(logLevel).c_str());
-		vprintf( format, args );
-		printf("\n");
-	}else{
-		fprintf(stderr,"%s: ", module.c_str());
-		fprintf(stderr,"%s: ", ofGetLogLevelName(logLevel).c_str());
-		vfprintf( stderr, format, args );
-		fprintf(stderr,"\n");
+	FILE* out = stdout;//logLevel < OF_LOG_ERROR ? stdout : stderr;
+	fprintf(out, "[");
+	if(module != "OF") {
+		fprintf(out, "%s:", module.c_str());
 	}
+	fprintf(out, "%s] ", ofGetLogLevelName(logLevel).c_str());
+	vfprintf(out, format, args);
+	fprintf(out, "\n");
 }
 
 ofFileLoggerChannel::ofFileLoggerChannel(){
