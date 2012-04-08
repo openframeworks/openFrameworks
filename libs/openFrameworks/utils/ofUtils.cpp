@@ -678,7 +678,7 @@ string ofSystem(string command){
 	 ret = _popen(command.c_str(),"r");
 #else 
 	ret = popen(command.c_str(),"r");
-#endif;
+#endif
 	
 	string strret;
 	char c;

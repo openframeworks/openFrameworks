@@ -19,7 +19,8 @@ examples/*/*/Project.xcconfig
 examples/*/*/openFrameworks-Info.plist
 examples/*/*/ofxiphone-Info.plist
 examples/*/*/iPhone_Prefix.pch
-
+examples/*/*/*/*/Default.png
+examples/*/*/*/*/Icon.png
 
 #codeblocks files
 examples/*/*/*.layout
@@ -35,9 +36,9 @@ examples/*/*/*.sln
 examples/*/*/*.vcxproj
 examples/*/*/*.vcxproj.user
 
-#rule to avoid non-official examples going into git
-#see examples/.gitignore
-apps/**
+#rule to avoid non-official apps going into git
+#see apps/.gitignore
+apps/*
 
 #codeblocks OF lib files
 libs/openFrameworksCompiled/project/*/*.depend

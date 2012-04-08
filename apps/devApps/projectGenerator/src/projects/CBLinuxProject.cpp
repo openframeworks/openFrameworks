@@ -12,150 +12,145 @@
 
 string CBLinuxProject::LOG_NAME = "CBLinuxProject";
 
-
-
-CBLinuxProject::CBLinuxProject() {
-	arch = Linux;
+void CBLinuxProject::setup() {
+	templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/"+target);
 }
 
-CBLinuxProject::CBLinuxProject(Arch _arch){
-	arch = _arch;
+bool CBLinuxProject::createProjectFile(){
+	ofDirectory dir(projectDir);
+	if(!dir.exists()) dir.create(true);
+
+    ofFile project(ofFilePath::join(projectDir, projectName + ".cbp"));
+    string src =  ofFilePath::join(templatePath,"emptyExample_" + target + ".cbp");
+    string dst = project.path();
+    bool ret;
+
+    if(!project.exists()){
+		ret = ofFile::copyFromTo(src,dst);
+		if(!ret){
+			ofLogError(LOG_NAME) << "error copying cbp template from " << src << " to " << dst;
+			return false;
+		}else{
+			findandreplaceInTexfile(dst, "emptyExample", projectName);
+		}
+    }
+
+    ofFile workspace(ofFilePath::join(projectDir, projectName + ".workspace"));
+    if(!workspace.exists()){
+		src = ofFilePath::join(templatePath,"emptyExample_" + target + ".workspace");
+		dst = workspace.path();
+		ret = ofFile::copyFromTo(src,dst);
+		if(!ret){
+			ofLogError(LOG_NAME) << "error copying workspace template from "<< src << " to " << dst;
+			return false;
+		}else{
+			findandreplaceInTexfile(dst, "emptyExample", projectName);
+		}
+    }
+
+    ofFile makefile(ofFilePath::join(projectDir,"Makefile"));
+    if(!makefile.exists()){
+		src = ofFilePath::join(templatePath,"Makefile");
+		dst = makefile.path();
+		ret = ofFile::copyFromTo(src,dst);
+		if(!ret){
+			ofLogError(LOG_NAME) << "error copying Makefile template from " << src << " to " << dst;
+			return false;
+		}
+    }
+
+    ofFile config(ofFilePath::join(projectDir,"config.make"));
+    if(!config.exists()){
+    	src = ofFilePath::join(templatePath,"config.make");
+    	dst = config.path();
+    	ret = ofFile::copyFromTo(src,dst);
+    	if(!ret){
+    		ofLogError(LOG_NAME) << "error copying config.make template from " << src << " to " << dst;
+    		return false;
+    	}
+    }
+
+
+    // handle the relative roots.
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
+    if (relRoot != "../../../"){
+        string relPath2 = relRoot;
+        relPath2.erase(relPath2.end()-1);
+        findandreplaceInTexfile(projectDir + "config.make", "../../..", relPath2);
+        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "../../../", relRoot);
+        findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
+    }
+
+    return true;
 }
 
-void CBLinuxProject::setArch(Arch _arch){
-	arch = _arch;
-}
+bool CBLinuxProject::loadProjectFile(){
 
-void CBLinuxProject::setup(string _ofRoot) {
-	if(arch==Linux)
-		templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/linux");
-	else
-		templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/linux64");
+    //project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
 
-    ofRoot = _ofRoot;
-}
-
-//void CBLinuxProject::parseAddons(){
-//	addons.clear();
-//	ofFile addonsmake(projectDir+"addons.make");
-//	if(!addonsmake.exists()){
-//		addonsmake.create();
-//		addonsmake.open(projectDir+"addons.make");
-//	}
-//	ofBuffer addonsmakebuff;
-//	addonsmake >> addonsmakebuff;
-//	while(!addonsmakebuff.isLastLine()){
-//		string line = addonsmakebuff.getNextLine();
-//		if(line!=""){
-//			//addons.push_back(ofAddon(getOFRoot()+"/addons/"+line,"linux"));
-//		}
-//	}
-//}
-
-
-bool CBLinuxProject::load(string path){
-	projectDir = ofFilePath::addLeadingSlash(path);
-	projectName = ofFilePath::getFileName(path);
-	ofFile project(projectDir + projectName + ".cbp");
+    ofFile project(ofFilePath::join(projectDir , projectName + ".cbp"));
 	if(!project.exists()){
-		ofLogError(LOG_NAME) << "error loading" << path << "doesn't exist";
+		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
 		return false;
 	}
-	//parseAddons();
 	pugi::xml_parse_result result = doc.load(project);
 	bLoaded =result.status==pugi::status_ok;
 	return bLoaded;
 }
 
-bool CBLinuxProject::create(string path){
-	projectDir = ofFilePath::addTrailingSlash(path);
-	ofLogVerbose(LOG_NAME) << "project dir:" << projectDir;
-	projectName = ofFilePath::getFileName(path);
-	ofLogVerbose(LOG_NAME) << "project name:" << projectName;
-	ofFile project(ofFilePath::join(projectDir, projectName + ".cbp"));
-	if(!project.exists()){
-		ofLogVerbose(LOG_NAME) << "creating non existent project";
-		ofDirectory dir(projectDir);
-		dir.create(true);
 
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.cbp"),project.path());
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),projectDir);
+bool CBLinuxProject::saveProjectFile(){
 
-		ofFile config(ofFilePath::join(projectDir,"config.make"));
-		if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),projectDir);
-
-		ofDirectory src(ofFilePath::join(projectDir,"src"));
-		if(!src.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-
-		ofDirectory bin(ofFilePath::join(projectDir,"bin"));
-		if(!bin.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
-
-		project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
-		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
-	}
-	
-    //parseAddons();
-	
-    pugi::xml_parse_result result = doc.load(project);
-	if(result.status==pugi::status_ok){
-        pugi::xpath_node_set title = doc.select_nodes("//Option[@title]");
-        if(!title.empty()){
-        	if(!title[0].node().attribute("title").set_value(projectName.c_str())){
-        		ofLogError(LOG_NAME) << "cannot set title";
-        		bLoaded = false;
-        		return bLoaded;
-        	}
-            doc.save_file((projectDir + projectName + ".cbp").c_str());
+   findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
+   pugi::xpath_node_set title = doc.select_nodes("//Option[@title]");
+   if(!title.empty()){
+        if(!title[0].node().attribute("title").set_value(projectName.c_str())){
+            ofLogError(LOG_NAME) << "can't set title";
         }
-		bLoaded = true;
-	}else{
-		bLoaded = false;
-	}
-	return bLoaded;
+    }
+    return doc.save_file((projectDir + projectName + ".cbp").c_str());
+
 }
+
+
+
+
 
 void CBLinuxProject::addSrc(string srcName, string folder){
 	pugi::xml_node node = appendValue(doc, "Unit", "filename", srcName);
 	if(!node.empty()){
 		node.child("Option").attribute("virtualFolder").set_value(folder.c_str());
 	}
-    doc.save_file((projectDir + projectName + ".cbp").c_str());
+
 }
 
 void CBLinuxProject::addInclude(string includeName){
     //appendValue(doc, "Add", "directory", includeName);
 }
 
-void CBLinuxProject::addLibrary(string libraryName){
+void CBLinuxProject::addLibrary(string libraryName, LibType libType){
     //appendValue(doc, "Add", "library", libraryName);
 }
 
-
 void CBLinuxProject::addAddon(ofAddon & addon){
-
-	/*for(int i=0;i<addon.includePaths.size();i++){
-		addInclude(addon.includePaths[i]);
-	}
-
-	for(int i=0;i<addon.libs.size();i++){
-		addLibrary(addon.libs[i]);
-	}*/
-
-	for(int i=0;i<(int)addons.size();i++){
+    for(int i=0;i<(int)addons.size();i++){
 		if(addons[i].name==addon.name) return;
 	}
 
 	addons.push_back(addon);
 
-	for(int i=0;i<(int)addon.srcFiles.size();i++){
-		addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-	}
-
-	ofFile addonsmake(projectDir+"addons.make",ofFile::WriteOnly);
-	for(int i=0;i<(int)addons.size();i++){
-		addonsmake << addons[i].name << endl;
-	}
+    for(int i=0;i<(int)addon.includePaths.size();i++){
+        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
+        addInclude(addon.includePaths[i]);
+    }
+    for(int i=0;i<(int)addon.libs.size();i++){
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        addLibrary(addon.libs[i]);
+    }
+    for(int i=0;i<(int)addon.srcFiles.size(); i++){
+        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+    }
 }
 
 string CBLinuxProject::getName(){

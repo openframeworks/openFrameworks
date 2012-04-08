@@ -26,8 +26,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	char tempStr[255];
-
 	// draw the background colors:
 	float widthDiv = ofGetWidth() / 3.0f;
 	ofSetHexColor(0xeeeeee);
@@ -44,7 +42,7 @@ void testApp::draw(){
 	font.drawString("synth !!", 50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play\npct done: %f\nspeed: %f\npan: %f", synth.getPosition(),  synth.getSpeed(), synth.getPan());
+	string tempStr = "click to play\npct done: "+ofToString(synth.getPosition())+"\nspeed: " + ofToString(synth.getSpeed()) + "\npan: " + ofToString(synth.getPan()) ;
 	ofDrawBitmapString(tempStr, 50,ofGetHeight()-50);
 
 
@@ -55,7 +53,7 @@ void testApp::draw(){
 	font.drawString("beats !!", widthDiv+50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click and drag\npct done: %f\nspeed: %f", beats.getPosition(),  beats.getSpeed());
+	tempStr = "click and drag\npct done: "+ofToString(beats.getPosition())+"\nspeed: " +ofToString(beats.getSpeed());
 	ofDrawBitmapString(tempStr, widthDiv+50,ofGetHeight()-50);
 
 	//---------------------------------- vocals:
@@ -64,7 +62,7 @@ void testApp::draw(){
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play (multiplay)\npct done: %f\nspeed: %f", vocals.getPosition(),  vocals.getSpeed());
+	tempStr = "click to play (multiplay)\npct done: "+ofToString(vocals.getPosition())+"\nspeed: " + ofToString(vocals.getSpeed());	
 	ofDrawBitmapString(tempStr, widthDiv*2+50,ofGetHeight()-50);
 
 

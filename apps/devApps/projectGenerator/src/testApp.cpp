@@ -2,14 +2,10 @@
 #include "Utils.h"
 #include <stdio.h>
 
-
-
-
-
-
-
 //--------------------------------------------------------------
 void testApp::setup(){
+    ofSetLogLevel(OF_LOG_VERBOSE);
+	project = NULL;
 
 	while(!checkConfigExists()){
 		askOFRoot();
@@ -17,48 +13,26 @@ void testApp::setup(){
 
 	setOFRoot(getOFRootFromConfig());
 
-    switch(ofGetTargetPlatform()){
-    case OF_TARGET_OSX:
-    	project = new xcodeProject;
-    	platform = "osx";
-    	break;
-    case OF_TARGET_WINGCC:
-    	project = new CBWinProject;
-    	platform = "wincb";
-    	break;
-    case OF_TARGET_WINVS:
-    	project = new visualStudioProject;
-    	platform = "vs2010";
-    	break;
-    case OF_TARGET_IPHONE:
-    	break;
-    case OF_TARGET_ANDROID:
-    	break;
-    case OF_TARGET_LINUX:
-    	project = new CBLinuxProject;
-    	platform = "linux";
-    	break;
-    case OF_TARGET_LINUX64:
-    	project = new CBLinuxProject;
-    	platform = "linux64";
-    	break;
-    }
+	int targ = ofGetTargetPlatform();
+	//plat = OF_TARGET_IPHONE;
+
+    setupForTarget(targ);
 
     if(projectPath!=""){
-        project->setup(getOFRelPath(projectPath));
+        project->setup(target);
         project->create(projectPath);
         vector < string > addons;
         parseAddonsDotMake(project->getPath() + "addons.make", addons);
-        for (int i = 0; i < addons.size(); i++){
+        for (int i = 0; i < (int)addons.size(); i++){
             ofAddon addon;
-            addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
+            addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
             project->addAddon(addon);
         }
-        project->save(projectPath);
+        project->save();
         std::exit(0);
     }
 
-    panelAddons.setup("addons");
+    panelAddons.setup();
     ofDirectory addons(ofFilePath::join(getOFRoot(),"addons"));
     addons.listDir();
     for(int i=0;i<(int)addons.size();i++){
@@ -80,35 +54,122 @@ void testApp::setup(){
     createAndOpen.addListener(this,&testApp::createAndOpenPressed);
     changeOFRoot.addListener(this,&testApp::changeOFRootPressed);
 
+	examplesPanel.setup("generate examples", "examples.xml", 400, 10);
+	examplesPanel.add(generateButton.setup("<--Generate"));
+	examplesPanel.add(wincbToggle.setup("win CB projects",false));
+	examplesPanel.add(winvsToggle.setup("win VS projects", false));
+	examplesPanel.add(linuxcbToggle.setup("linux CB projects",false));
+	examplesPanel.add(osxToggle.setup("osx projects",false));
+	examplesPanel.add(iosToggle.setup("ios projects",false));
+
+	generateButton.addListener(this,&testApp::generateExamplesCB);
+
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
+	ofSetFrameRate(60);
+}
+
+void testApp::setupForTarget(int targ){
+
+    if(project){
+		delete project;
+	}
+
+    switch(targ){
+        case OF_TARGET_OSX:
+            project = new xcodeProject;
+            target = "osx";
+            break;
+    case OF_TARGET_WINGCC:
+            project = new CBWinProject;
+            target = "win_cb";
+            break;
+    case OF_TARGET_WINVS:
+            project = new visualStudioProject;
+            target = "vs2010";
+            break;
+    case OF_TARGET_IPHONE:
+            project = new xcodeProject();
+            target = "ios";
+            break;
+    case OF_TARGET_ANDROID:
+            break;
+    case OF_TARGET_LINUX:
+            project = new CBLinuxProject;
+            target = "linux";
+            break;
+    case OF_TARGET_LINUX64:
+            project = new CBLinuxProject;
+            target = "linux64";
+            break;
+    }
+}
+
+void testApp::generateExamplesCB(bool & pressed){
+
+	vector <int> targetsToMake;
+	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
+	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
+	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
+	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
+	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
+
+	if( targetsToMake.size() == 0 ){
+		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
+	}
+
+	for(int i = 0; i < (int)targetsToMake.size(); i++){
+		setupForTarget(targetsToMake[i]);
+		generateExamples();
+	}
+
+	int target = ofGetTargetPlatform();
+    setupForTarget(target);
 }
 
 void testApp::generateExamples(){
-    
     ofDirectory dir;
-    
-    dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
+    string examplesPath = ofFilePath::join(getOFRoot(),"examples");
 
-    for (int i = 0; i < dir.size(); i++){
-        
-        if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
-        
+    ofLogNotice() << "Generating examples in folder: " << examplesPath;
+
+    dir.listDir(examplesPath);
+
+    for (int i = 0; i < (int)dir.size(); i++){
+
+        // don't check subdirectories that aren't directories! (eg., .gitignore etc)
+        if(!dir.getFile(i).isDirectory()) continue;
+
+		if( target == "ios" ){
+			if( dir.getName(i) != "ios" ) continue;
+		}else{
+			if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
+        }
+
         ofDirectory subdir;
-        subdir.listDir(dir.getPath(i));
-        
-        for (int j = 0; j < subdir.size(); j++){
-            project->setup();
+        string examplesPath = dir.getPath(i);
+
+        ofLogNotice() << "Generating example in folder: " << examplesPath;
+
+        subdir.listDir(examplesPath);
+
+        for (int j = 0; j < (int)subdir.size(); j++){
+
+            // don't create projects that aren't directories! (eg., .gitkeep etc)
+            if(!subdir.getFile(j).isDirectory()) continue;
+
+            project->setup(target);
             project->create(subdir.getPath(j));
             vector < string > addons;
             parseAddonsDotMake(project->getPath() + "addons.make", addons);
-            for (int i = 0; i < addons.size(); i++){
+            for (int i = 0; i < (int)addons.size(); i++){
                 ofAddon addon;
                 addon.pathToOF = getOFRelPath(subdir.getPath(j));
-                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
+                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
+                printf("-----> adding %s \n", addons[i].c_str() );
                 project->addAddon(addon);
             }
-            project->save(subdir.getPath(j));
+            project->save();
         }
     }
 }
@@ -117,23 +178,24 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
     ofFileDialogResult res = ofSystemSaveDialog("newProjectName", "choose a folder for a new OF project :)");
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
-    
-    project->setup(getOFRelPath(res.filePath));
-    project->create(res.filePath);
-    vector<string> addonsToggles = panelAddons.getControlNames();
-	for (int i = 0; i < addonsToggles.size(); i++){
-		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
-		if(toggle){
-			ofAddon addon;
-            addon.pathToOF = getOFRelPath(res.filePath);
-			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
-			printf("adding %s addons \n", addonsToggles[i].c_str());
-            project->addAddon(addon);
-            
+
+    project->setup(target);
+    if(project->create(res.filePath)){
+		vector<string> addonsToggles = panelAddons.getControlNames();
+		for (int i = 0; i < (int) addonsToggles.size(); i++){
+			ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+			if(toggle){
+				ofAddon addon;
+				addon.pathToOF = getOFRelPath(res.filePath);
+				addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
+				printf("adding %s addons \n", addonsToggles[i].c_str());
+				project->addAddon(addon);
+
+			}
 		}
-	}
-    project->save(res.filePath);
-    
+		project->save();
+    }
+
     return res;
 }
 
@@ -142,21 +204,21 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
-    project->setup(getOFRelPath(res.filePath));
+    project->setup(target);
 	project->create(res.filePath);
 	vector<string> addonsToggles = panelAddons.getControlNames();
-	for (int i = 0; i < addonsToggles.size(); i++){
+	for (int i = 0; i < (int)addonsToggles.size(); i++){
 		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
 		if(toggle){
 			ofAddon addon;
 			addon.pathToOF = getOFRelPath(res.filePath);
-			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
+			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
 			printf("adding %s addons \n", addonsToggles[i].c_str());
 			project->addAddon(addon);
 
 		}
 	}
-	project->save(res.filePath);
+	project->save();
 
 	return res;
 }
@@ -193,17 +255,18 @@ void testApp::changeOFRootPressed(bool & pressed){
 //--------------------------------------------------------------
 void testApp::update(){
 
-    
-   
+
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
+
     //ofBackgroundGradient(ofColor::gray,ofColor::black);
-	
+
     panelAddons.draw();
 	panelOptions.draw();
+	examplesPanel.draw();
 
 	ofSetColor(0,0,0,100);
 	ofRect(ofGetWidth()-410,10,400,100);
@@ -217,18 +280,18 @@ void testApp::draw(){
 void testApp::keyPressed(int key){
 
     if (key == 'm'){
-        
+
         printf("generating examples \n");
         generateExamples();
         printf("finished generating examples \n");
-        
+
     }
-    
+
     if (key == ' '){
         makeNewProjectViaDialog();
     }
-    
-    
+
+
 }
 
 //--------------------------------------------------------------
@@ -267,6 +330,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }

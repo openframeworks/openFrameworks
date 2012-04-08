@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1523268715234F230024FE1C /* ofxiPhoneExternalDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1523268515234F230024FE1C /* ofxiPhoneExternalDisplay.mm */; };
+		1523268815234F230024FE1C /* ofxiPhoneExternalDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1523268615234F230024FE1C /* ofxiPhoneExternalDisplay.h */; };
+		15585A1C150B8B6D0056FB7A /* ofxiPhoneViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15585A1A150B8B6D0056FB7A /* ofxiPhoneViewController.h */; };
+		15585A1D150B8B6D0056FB7A /* ofxiPhoneViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15585A1B150B8B6D0056FB7A /* ofxiPhoneViewController.mm */; };
 		5315964913D88B370044EAFE /* ofxiPhoneSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5315964713D88B370044EAFE /* ofxiPhoneSoundStream.mm */; };
 		5315964A13D88B370044EAFE /* ofxiPhoneSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5315964813D88B370044EAFE /* ofxiPhoneSoundStream.h */; };
 		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
@@ -177,6 +181,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1523268515234F230024FE1C /* ofxiPhoneExternalDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneExternalDisplay.mm; sourceTree = "<group>"; };
+		1523268615234F230024FE1C /* ofxiPhoneExternalDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneExternalDisplay.h; sourceTree = "<group>"; };
+		15585A1A150B8B6D0056FB7A /* ofxiPhoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneViewController.h; sourceTree = "<group>"; };
+		15585A1B150B8B6D0056FB7A /* ofxiPhoneViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneViewController.mm; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -521,6 +529,10 @@
 				BB24E03310DA7C6100E9C588 /* ofxiPhoneApp.h */,
 				BB24E03410DA7C6100E9C588 /* ofxiPhoneAppDelegate.h */,
 				BB24E03510DA7C6100E9C588 /* ofxiPhoneAppDelegate.mm */,
+				1523268515234F230024FE1C /* ofxiPhoneExternalDisplay.mm */,
+				1523268615234F230024FE1C /* ofxiPhoneExternalDisplay.h */,
+				15585A1A150B8B6D0056FB7A /* ofxiPhoneViewController.h */,
+				15585A1B150B8B6D0056FB7A /* ofxiPhoneViewController.mm */,
 				BB24E03610DA7C6100E9C588 /* ofxiPhoneCoreLocation.h */,
 				BB24E03710DA7C6100E9C588 /* ofxiPhoneCoreLocation.mm */,
 				BB24E03810DA7C6100E9C588 /* ofxiPhoneExtras.mm */,
@@ -847,6 +859,8 @@
 				5315964A13D88B370044EAFE /* ofxiPhoneSoundStream.h in Headers */,
 				772C25191469274B00DDAAE6 /* ofOpenALSoundPlayer.h in Headers */,
 				772C251D146927A500DDAAE6 /* ofFmodSoundPlayer.h in Headers */,
+				15585A1C150B8B6D0056FB7A /* ofxiPhoneViewController.h in Headers */,
+				1523268815234F230024FE1C /* ofxiPhoneExternalDisplay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -968,6 +982,8 @@
 				5315964913D88B370044EAFE /* ofxiPhoneSoundStream.mm in Sources */,
 				772C25181469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp in Sources */,
 				772C251C146927A500DDAAE6 /* ofFmodSoundPlayer.cpp in Sources */,
+				15585A1D150B8B6D0056FB7A /* ofxiPhoneViewController.mm in Sources */,
+				1523268715234F230024FE1C /* ofxiPhoneExternalDisplay.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1026,7 +1042,12 @@
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				SDKROOT = iphoneos;
+				WARNING_CFLAGS = (
+					"-Wno-non-virtual-dtor",
+					"-Wno-overloaded-virtual",
+				);
 			};
 			name = Debug;
 		};
@@ -1035,7 +1056,12 @@
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				SDKROOT = iphoneos;
+				WARNING_CFLAGS = (
+					"-Wno-non-virtual-dtor",
+					"-Wno-overloaded-virtual",
+				);
 			};
 			name = Release;
 		};
