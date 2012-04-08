@@ -80,18 +80,15 @@ bool visualStudioProject::saveProjectFile(){
 void visualStudioProject::appendFilter(string folderName){
 
 	string uuid = generateUUID(folderName);
-	cout << folderName << " -- testing " << endl;
-
+	
 	string tag = "//ItemGroup[Filter]/Filter[@Include=\"" + folderName + "\"]";
 	 pugi::xpath_node_set set = filterXmlDoc.select_nodes(tag.c_str());
 	 if (set.size() > 0){
-		 cout << folderName << " -- have this " << endl;
-
+		
 		//pugi::xml_node node = set[0].node();
 	 } else {
 
-		 cout << folderName << " -- making " << endl;
-
+		
 		 pugi::xml_node node = filterXmlDoc.select_single_node("//ItemGroup[Filter]/Filter").node().parent();
 		 pugi::xml_node nodeAdded = node.append_child("Filter");
 		 nodeAdded.append_attribute("Include").set_value(folderName.c_str());
@@ -117,7 +114,6 @@ void visualStudioProject::addSrc(string srcFile, string folder){
 	for (int i = 0; i < folderSubNames.size(); i++){
 		if (i != 0) folderName += "\\";
 		folderName += folderSubNames[i];
-		printf("calling -- %s, %i \n", folderName.c_str(), i);
 		appendFilter(folderName);
 	}
 
@@ -143,9 +139,7 @@ void visualStudioProject::addSrc(string srcFile, string folder){
 
     }
 
-	cout << "------------------------------------ " << endl;
-	filterXmlDoc.print(std::cout);
-	cout << "------------------------------------ " << endl;
+	
 	
 }
 
@@ -156,7 +150,6 @@ void visualStudioProject::addInclude(string includeName){
 
     pugi::xpath_node_set source = doc.select_nodes("//ClCompile/AdditionalIncludeDirectories");
     for (pugi::xpath_node_set::const_iterator it = source.begin(); it != source.end(); ++it){
-        //printf("here ?? \n");
         pugi::xpath_node node = *it;
         string includes = node.node().first_child().value();
         vector < string > strings = ofSplitString(includes, ";");
@@ -203,7 +196,6 @@ void visualStudioProject::addLibrary(string libraryName, LibType libType){
         if (bAdd == true){
             strings.push_back(libFolder);
             string libPathsNew = unsplitString(strings, ";");
-            cout << libPathsNew << endl;
             node.node().first_child().set_value(libPathsNew.c_str());
         }
     }
@@ -231,7 +223,6 @@ void visualStudioProject::addLibrary(string libraryName, LibType libType){
         if (bAdd == true){
             strings.push_back(libName);
             string libsNew = unsplitString(strings, ";");
-            cout << libsNew << endl;
             node.node().first_child().set_value(libsNew.c_str());
         }
         platformCounter++;
@@ -277,18 +268,15 @@ void visualStudioProject::addAddon(ofAddon & addon){
         // get the full lib name
         found = addon.libs[i].find_last_of("\\");
         string libName = addon.libs[i].substr(found+1);
-        cout << libName << endl;
         // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
         found = libName.find_last_of(".");
         string firstPart = libName.substr(0,found);
-        cout << firstPart << endl;
         int debugLibIndex = -1; // assume there is no debug lib
         for(int j=0;j<(int)addon.libs.size();j++){
             if(addon.libs[i] == addon.libs[j]) continue; // don't do it to yourself
             if(ofIsStringInString(addon.libs[j], firstPart)){
                 // assume that if the first part of a name is
                 // in another name then we have a debug/release pair
-                cout << "Found match" << addon.libs[i] << " " << addon.libs[j] << endl;
                 debugLibIndex = j;
                 break;
             }
