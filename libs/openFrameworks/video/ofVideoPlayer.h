@@ -59,8 +59,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofTexture &			getTextureReference();
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
-		void				draw(const ofPoint & p);
-		void				draw(const ofRectangle & r);
+		void				draw(const ofPoint & point);
+		void				draw(const ofRectangle & rect);
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
