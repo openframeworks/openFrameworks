@@ -121,14 +121,15 @@ class ofTexture : public ofBaseDraws {
 	void resetAnchor(); //resets the anchor to (0, 0)
 
 	void draw(const ofRectangle & r);
-	void draw(const ofPoint & p, float w, float h);
-	void draw(float x, float y, float w, float h);
-	void draw(float x, float y, float z, float w, float h);
-	void draw(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(const ofPoint & p);
+	void draw(const ofPoint & p, float w, float h);
 	void draw(float x, float y);
 	void draw(float x, float y, float z);
+	void draw(float x, float y, float w, float h);
+	void draw(float x, float y, float z, float w, float h);
 	void draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4);
+	
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 	void readToPixels(ofPixels & pixels);
 	void readToPixels(ofShortPixels & pixels);

@@ -179,10 +179,11 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void draw(float x, float y, float z);
 		void draw(float x, float y, float w, float h);
 		void draw(float x, float y, float z, float w, float h);
-		void draw(float x, float y, float w, float h, float sx, float sy);
-		void draw(float x, float y, float z, float w, float h, float sx, float sy);
-		void draw(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
-		void draw(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+		
+		void drawSubsection(float x, float y, float w, float h, float sx, float sy);
+		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy);
+		void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
+		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 		float 				getHeight();
 		float 				getWidth();

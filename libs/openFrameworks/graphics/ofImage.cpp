@@ -710,14 +710,14 @@ void ofImage_<PixelType>::draw(const ofPoint & _p, float _w, float _h){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h, float _sx, float _sy){
-	draw(_x,_y,0,_w,_h,_sx,_sy,_w,_h);
+void ofImage_<PixelType>::drawSubsection(float _x, float _y, float _w, float _h, float _sx, float _sy){
+	drawSubsection(_x,_y,0,_w,_h,_sx,_sy,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h, float _sx, float _sy, float _sw, float _sh){
-	draw(_x,_y,0,_w,_h,_sx,_sy,_sw,_sh);
+void ofImage_<PixelType>::drawSubsection(float _x, float _y, float _w, float _h, float _sx, float _sy, float _sw, float _sh){
+	drawSubsection(_x,_y,0,_w,_h,_sx,_sy,_sw,_sh);
 }
 
 //------------------------------------
@@ -729,18 +729,18 @@ void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h){
-	draw(_x,_y,_z,_w,_h,0,0,_w,_h);
+	drawSubsection(_x,_y,_z,_w,_h,0,0,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h, float _sx, float _sy){
-	draw(_x,_y,_z,_w,_h,_sx,_sy,_w,_h);
+void ofImage_<PixelType>::drawSubsection(float _x, float _y, float _z, float _w, float _h, float _sx, float _sy){
+	drawSubsection(_x,_y,_z,_w,_h,_sx,_sy,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h, float _sx, float _sy, float _sw, float _sh){
+void ofImage_<PixelType>::drawSubsection(float _x, float _y, float _z, float _w, float _h, float _sx, float _sy, float _sw, float _sh){
 	ofGetCurrentRenderer()->draw(*this,_x,_y,_z,_w,_h,_sx,_sy,_sw,_sh);
 }
 
