@@ -107,6 +107,8 @@ void testApp::setupForTarget(int targ){
 
 void testApp::generateExamplesCB(bool & pressed){
 
+	if (pressed == false) return; // don't do this again on the mouseup. 
+
 	vector <int> targetsToMake;
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
 	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
@@ -173,6 +175,7 @@ void testApp::generateExamples(){
                 project->addAddon(addon);
             }
             project->save();
+			
         }
     }
 }
