@@ -907,12 +907,13 @@ int ofDirectory::listDir(){
 			ofRemove(files, extensionFilter);
 		}
 
-		// TODO: if(ofCheckLogLevel(OF_LOG_VERBOSE)) {
-		for(int i = 0; i < (int)size(); i++) {
-			ofLog(OF_LOG_VERBOSE, "\t" + getName(i));
+		// TODO: 
+		if(ofGetLogLevel() == OF_LOG_VERBOSE) {
+			for(int i = 0; i < (int)size(); i++) {
+				ofLog(OF_LOG_VERBOSE, "\t" + getName(i));
+			}
+			ofLog(OF_LOG_VERBOSE, "ofDirectoryLister::listDirectory() listed " + ofToString(size()) + " files in " + originalDirectory);
 		}
-		ofLog(OF_LOG_VERBOSE, "ofDirectoryLister::listDirectory() listed " + ofToString(size()) + " files in " + originalDirectory);
-		// }
 	} else {
 		ofLog(OF_LOG_ERROR, "ofDirectoryLister::listDirectory() error opening directory " + originalDirectory);
 	}
