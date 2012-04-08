@@ -24,11 +24,7 @@ some additional things that might be useful to try in the future:
 
 // we are going to use POCO for computing the MD5 Hash of file names and paths, etc:
 
-#include "Poco/HMACEngine.h"
-#include "Poco/MD5Engine.h"
-using Poco::DigestEngine;
-using Poco::HMACEngine;
-using Poco::MD5Engine;
+
 
 // to add things to the xcode project file, we need some template XML around
 // these are common things we'll want to add
@@ -269,24 +265,6 @@ bool xcodeProject::findArrayForUUID(string UUID, pugi::xml_node & nodeMe){
     }
     return false;
 }
-
-
-
-string generateUUID(string input){
-
-    std::string passphrase("openFrameworks"); // HMAC needs a passphrase
-
-    HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
-    hmac.update(input);
-
-    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
-    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
-
-    return digestString;
-
-
-}
-
 
 
 
