@@ -230,14 +230,14 @@ void ofVideoGrabber::draw(float _x, float _y){
 	tex.draw(_x, _y);
 }
 
-//----------------------------------------------------------
-void ofVideoGrabber::draw(const ofPoint & p){
-	tex.draw(p);
+//------------------------------------
+void ofVideoGrabber::draw(const ofPoint & point){
+	tex.draw(point);
 }
 
-//----------------------------------------------------------
-void ofVideoGrabber::draw(const ofRectangle & r){
-	tex.draw(r);
+//------------------------------------
+void ofVideoGrabber::draw(const ofRectangle & rect) {
+	tex.draw(rect);
 }
 
 //----------------------------------------------------------

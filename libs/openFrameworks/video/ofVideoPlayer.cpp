@@ -304,13 +304,13 @@ void ofVideoPlayer::draw(float _x, float _y){
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(const ofPoint & p){
-	getTextureReference().draw(p);
+void ofVideoPlayer::draw(const ofPoint & point){
+	tex.draw(point);
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(const ofRectangle & r){
-	getTextureReference().draw(r);
+void ofVideoPlayer::draw(const ofRectangle & rect) {
+	tex.draw(rect);
 }
 
 //------------------------------------

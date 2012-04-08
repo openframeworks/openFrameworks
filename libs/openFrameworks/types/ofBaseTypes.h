@@ -36,22 +36,16 @@ typedef ofPixels& ofPixelsRef;
 class ofBaseDraws{
 public:
 	virtual ~ofBaseDraws(){}
-	virtual void draw(float x,float y)=0;
-	virtual void draw(float x,float y,float w, float h)=0;
-	
-	virtual void draw(const ofPoint & point){
-		draw( point.x, point.y);
-	}
-	
-	virtual void draw(const ofRectangle & rect){
-		draw(rect.x, rect.y, rect.width, rect.height); 
-	}
+	virtual void draw(float x, float y)=0;
+	virtual void draw(float x, float y, float w, float h)=0;
+	virtual void draw(const ofPoint & point)=0;
+	virtual void draw(const ofRectangle & rect)=0;
 	
 	virtual float getHeight()=0;
 	virtual float getWidth()=0;
 	
 	virtual void setAnchorPercent(float xPct, float yPct){};
-    virtual void setAnchorPoint(float x, float y){};
+	virtual void setAnchorPoint(float x, float y){};
 	virtual void resetAnchor(){};
 	
 };

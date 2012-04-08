@@ -172,8 +172,8 @@ class ofImage_ : public ofBaseImage_<PixelType>{
         void				resetAnchor();								// resets the anchor to (0, 0)
 
 		// draw:
-		void draw(const ofRectangle & r);
-		void draw(const ofPoint & p);
+		void draw(const ofPoint & point);
+		void draw(const ofRectangle & rect);
 		void draw(const ofPoint & p, float w, float h);
 		void draw(float x, float y);
 		void draw(float x, float y, float z);
