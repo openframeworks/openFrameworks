@@ -186,7 +186,7 @@ void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, flo
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h,sx,sy,sw,sh);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -198,7 +198,7 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h,sx,sy,sw,sh);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -210,7 +210,7 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h,sx,sy,sw,sh);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}

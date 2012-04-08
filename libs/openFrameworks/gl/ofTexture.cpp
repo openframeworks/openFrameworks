@@ -922,11 +922,11 @@ void ofTexture::draw(float x, float y, float w, float h){
 
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float z, float w, float h){
-	draw(x, y, z, w, h, 0, 0, w, h);
+	drawSubsection(x, y, z, w, h, 0, 0, w, h);
 }
 
 //----------------------------------------------------------
-void ofTexture::draw(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
 	
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
