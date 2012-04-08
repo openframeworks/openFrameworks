@@ -5,8 +5,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openframeworksLib", "..\..\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "projectGenerator", "projectGenerator.vcxproj", "{D46BBF4D-8E03-4A97-9E1D-587E88F0F1A8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emptyExample_vs2010", "..\..\..\scripts\vs2010\template\emptyExample_vs2010.vcxproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
