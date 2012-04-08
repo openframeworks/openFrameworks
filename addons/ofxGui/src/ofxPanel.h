@@ -20,6 +20,9 @@ public:
 	virtual void loadFromXml(ofxXmlSettings& xml);
 	
 	void add(ofxBaseGui * element);
+	void add(ofxParameter<float> & parameter);
+	void add(ofxParameter<int> & parameter);
+	void add(ofxParameter<bool> & parameter);
 	
 	void clear();
 	

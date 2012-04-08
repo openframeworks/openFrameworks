@@ -3,10 +3,9 @@
 #include "ofMain.h"
 
 class testApp : public ofBaseApp {
-	
 	public:
 		void reset();
-
+		
 		void setup();
 		void update();
 		void draw();

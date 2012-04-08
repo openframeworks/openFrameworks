@@ -1,3 +1,4 @@
+#include "ofConstants.h"
 #include "ofFbo.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
@@ -96,7 +97,6 @@
 	#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_OES
 	#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_OES
 	#define GL_COLOR_ATTACHMENT0							GL_COLOR_ATTACHMENT0_OES
-
 #endif
 
 
@@ -193,7 +193,8 @@ fboTextures(0),
 depthBuffer(0),
 stencilBuffer(0),
 savedFramebuffer(0),
-defaultTextureIndex(0)
+defaultTextureIndex(0),
+bIsAllocated(false)
 {
 
 }
@@ -201,6 +202,7 @@ defaultTextureIndex(0)
 ofFbo::ofFbo(const ofFbo & mom){
 	settings = mom.settings;
 	isBound = mom.isBound;
+	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
 	retainFB(fbo);
@@ -230,6 +232,7 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
 	settings = mom.settings;
 	isBound = mom.isBound;
+	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
 	retainFB(fbo);
@@ -304,6 +307,7 @@ void ofFbo::destroy() {
 	colorBuffers.clear();
 
 	isBound = 0;
+	bIsAllocated = false;
 }
 
 static GLboolean CheckExtension( const char *extName ){
@@ -372,7 +376,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.numSamples		= numSamples;
 	settings.useDepth		= true;
 	settings.useStencil		= true;
-	
+
 	allocate(settings);
 }
 
@@ -536,9 +540,15 @@ void ofFbo::allocate(Settings _settings) {
 
 	// check everything is ok with this fbo
 	checkStatus();
-	
+
 	// unbind it
 	unbind();
+
+	bIsAllocated = true;
+}
+
+bool ofFbo::isAllocated(){
+	return bIsAllocated;
 }
 
 /*  removed by now, was crashing on draw
@@ -548,14 +558,14 @@ void ofFbo::allocateForShadow( int width, int height )
 //#ifndef TARGET_OPENGLES
 	int old;
 	glGetIntegerv( GL_FRAMEBUFFER_BINDING, &old );
-	
+
 	settings.width = width;
 	settings.height = height;
-	
+
 	glGenTextures(1, &depthBuffer);
 	retainRB(depthBuffer);
 	glBindTexture(GL_TEXTURE_2D, depthBuffer);
-	
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 #ifndef TARGET_OPENGLES
@@ -567,21 +577,21 @@ void ofFbo::allocateForShadow( int width, int height )
 #endif
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0 );
 	glBindTexture( GL_TEXTURE_2D, 0 );
-	
+
 	glGenFramebuffers( 1, &fbo );
 	retainFB(fbo);
 	glBindFramebuffer( GL_FRAMEBUFFER, fbo );
-	
+
 #ifndef TARGET_OPENGLES
 	glDrawBuffer( GL_NONE );
 	glReadBuffer( GL_NONE );
 #endif
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthBuffer, 0);
-	
+
 	if( glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE )
 		printf("Can't use FBOs !\n");
-	
+
 	glBindFramebuffer( GL_FRAMEBUFFER, old );
 }*/
 
@@ -665,16 +675,59 @@ void ofFbo::unbind() {
 	}
 }
 
-
 int ofFbo::getNumTextures() {
 	return textures.size();
 }
+
+//TODO: Should we also check against card's max attachments or can we assume that's taken care of in texture setup? Still need to figure out MSAA in conjunction with MRT
+void ofFbo::setActiveDrawBuffer(int i){
+#ifndef TARGET_OPENGLES
+    if (i < getNumTextures()){
+        GLenum e = GL_COLOR_ATTACHMENT0 + i;
+        glDrawBuffer(e);
+    }else{
+        ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+    }
+	#endif
+}
+
+void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
+	#ifndef TARGET_OPENGLES
+    vector<GLenum> attachments;
+    for(int i=0; i < ids.size(); i++){
+      int id = ids[i];
+        if (id < getNumTextures()){
+            GLenum e = GL_COLOR_ATTACHMENT0 + id;
+            attachments.push_back(e);
+        }else{
+            ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(id) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+        }
+    }
+    glDrawBuffers(attachments.size(),&attachments[0]);
+	#endif
+}
+
+void ofFbo::activateAllDrawBuffers(){
+	#ifndef TARGET_OPENGLES
+    vector<GLenum> attachments;
+    for(int i=0; i < getNumTextures(); i++){
+        if (i < getNumTextures()){
+            GLenum e = GL_COLOR_ATTACHMENT0 + i;
+            attachments.push_back(e);
+        }else{
+            ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+        }
+    }
+    glDrawBuffers(attachments.size(),&attachments[0]);
+	#endif
+}
+
 
 void ofFbo::setDefaultTextureIndex(int defaultTexture)
 {
 	defaultTextureIndex = defaultTexture;
 }
-	
+
 int ofFbo::getDefaultTextureIndex()
 {
 	return defaultTextureIndex;

@@ -22,10 +22,12 @@ void testApp::setup(){
 	ring.loadSound("ring.wav");
 }
 
+//--------------------------------------------------------------
 void testApp::exit(){
 	ringButton.removeListener(this,&testApp::ringButtonPressed);
 }
 
+//--------------------------------------------------------------
 void testApp::ringButtonPressed(bool & pressed){
 	if(pressed) ring.play();
 }

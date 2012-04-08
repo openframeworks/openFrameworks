@@ -215,7 +215,7 @@ ofFile::ofFile(){
 
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(string path,Mode mode, bool binary){
-	open(path,mode);
+	open(path,mode,binary);
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -303,7 +303,7 @@ void ofFile::close(){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::create(){
 	bool success = false;
-	
+
 	if( myFile.path() != "" ){
 		try{
 			success = myFile.createFile();
@@ -312,7 +312,7 @@ bool ofFile::create(){
 			return false;
 		}
 	}
-	
+
 	return success;
 }
 
@@ -320,7 +320,7 @@ bool ofFile::create(){
 ofBuffer ofFile::readToBuffer(){
 	if( myFile.path() == "" || myFile.exists() == false ){
 		return ofBuffer();
-	} 
+	}
 
 	return ofBuffer(*this);
 }
@@ -329,7 +329,7 @@ ofBuffer ofFile::readToBuffer(){
 bool ofFile::writeFromBuffer(ofBuffer & buffer){
 	if( myFile.path() == "" ){
 		return false;
-	} 
+	}
 	if( !isWriteMode() ){
 		ofLog(OF_LOG_ERROR,"ofFile: trying to a file opened as read only");
 	}
@@ -413,7 +413,7 @@ bool ofFile::isLink() const{
 bool ofFile::isDirectory() const{
 	return myFile.isDirectory();
 }
-		
+
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isDevice() const{
 	return myFile.isDevice();
@@ -445,26 +445,26 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 		ofLog(OF_LOG_ERROR,"ofFile::copyTo: trying to copy a non existing file");
 		return false;
 	}
-	
+
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
-			ofFile::removeFile(path);
+	if( ofFile::doesFileExist(path,bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(path,bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::copyTo dest file already exists, use bool overwrite to overwrite dest file");
 			return false;
 		}
-	}		
-	
+	}
+
 	try{
 		myFile.copyTo(path);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofFile::copyTo - unable to copy");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -473,26 +473,26 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 	if( path.empty() || !myFile.exists() ){
 		return false;
 	}
-	
+
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
-			ofFile::removeFile(path);
+	if( ofFile::doesFileExist(path,bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(path,bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::moveTo dest file already exists, use bool overwrite to overwrite dest file");
 			return false;
 		}
-	}	
-		
+	}
+
 	try{
 		myFile.moveTo(path);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofFile::moveTo - unable to move");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -501,26 +501,26 @@ bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
 	if( path.empty() || !myFile.exists() ){
 		return false;
 	}
-	
+
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
-			ofFile::removeFile(path);
+	if( ofFile::doesFileExist(path,bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(path,bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::renameTo dest file already exists, use bool overwrite to overwrite dest file");
 			return false;
 		}
 	}
-		
+
 	try{
 		myFile.renameTo(path);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofFile::renameTo - unable to rename");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -529,14 +529,14 @@ bool ofFile::remove(bool recursive){
 	if( myFile.path().empty() || !myFile.exists() ){
 		return false;
 	}
-	
+
 	try{
 		myFile.remove(recursive);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofFile::remove - unable to remove file/folder");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -583,13 +583,14 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 	if( bRelativeToData ) pathSrc = ofToDataPath(pathSrc);
 	if( bRelativeToData ) pathDst = ofToDataPath(pathDst);
 
-	if( !ofFile::doesFileExist(pathSrc) ){
+	if( !ofFile::doesFileExist(pathSrc, bRelativeToData) ){
+		ofLog(OF_LOG_ERROR, "ofFile::copyFromTo source file/folder doesn't exist");
 		return false;
 	}
 
-	if( overwrite ){
-		if( ofFile::doesFileExist(pathDst) ){
-			ofFile::removeFile(pathDst);
+	if( ofFile::doesFileExist(pathDst, bRelativeToData) ){
+        if( overwrite ){
+            ofFile::removeFile(pathDst, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::copyFromTo destination file/folder exists, use bool overwrite if you want to overwrite destination file/folder");
 			return false;
@@ -612,13 +613,13 @@ bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bo
 	if( bRelativeToData ) pathSrc = ofToDataPath(pathSrc);
 	if( bRelativeToData ) pathDst = ofToDataPath(pathDst);
 
-	if( !ofFile::doesFileExist(pathSrc) ){
+	if( !ofFile::doesFileExist(pathSrc, bRelativeToData) ){
 		return false;
 	}
 
-	if( overwrite ){
-		if( ofFile::doesFileExist(pathDst) ){
-			ofFile::removeFile(pathDst);
+	if(  ofFile::doesFileExist(pathDst, bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(pathDst, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::moveFromTo destination file/folder exists, use bool overwrite if you want to overwrite destination file/folder");
 			return false;
@@ -713,7 +714,7 @@ void ofDirectory::close(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::create(bool recursive){
-	
+
 	if( myDir.path() != "" ){
 		try{
 			if( recursive ) myDir.createDirectories();
@@ -723,7 +724,7 @@ bool ofDirectory::create(bool recursive){
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -772,26 +773,26 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 	if( myDir.path().empty() || !myDir.exists() ){
 		return false;
 	}
-	
+
 	if( bRelativeToData ){
-		path = ofToDataPath(path);
+		path = ofToDataPath(path, bRelativeToData);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
-			ofDirectory::removeDirectory(path, true);
+	if( ofDirectory::doesDirectoryExist(path, bRelativeToData) ){
+		if( overwrite ){
+			ofDirectory::removeDirectory(path, true, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::copyTo dest folder already exists, use bool overwrite to overwrite dest folder");
 			return false;
 		}
-	}	
-	
+	}
+
 	try{
 		myDir.copyTo(path);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofDirectory::copyTo - unable to copy");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -800,26 +801,26 @@ bool ofDirectory::moveTo(string path,  bool bRelativeToData, bool overwrite){
 	if( myDir.path().empty() || !myDir.exists() ){
 		return false;
 	}
-	
+
 	if( bRelativeToData ){
-		path = ofToDataPath(path);
+		path = ofToDataPath(path, bRelativeToData);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
-			ofDirectory::removeDirectory(path, true);
+	if( ofDirectory::doesDirectoryExist(path, bRelativeToData) ){
+		if( overwrite ){
+			ofDirectory::removeDirectory(path, true, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::moveTo dest folder already exists, use bool overwrite to overwrite dest folder");
 			return false;
 		}
 	}
-	
+
 	try{
 		myDir.moveTo(path);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofDirectory::moveTo - unable to move");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -828,26 +829,26 @@ bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
 	if( myDir.path().empty() || !myDir.exists() ){
 		return false;
 	}
-	
+
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
-			ofDirectory::removeDirectory(path, true);
+	if( ofDirectory::doesDirectoryExist(path, bRelativeToData) ){
+		if( overwrite ){
+			ofDirectory::removeDirectory(path, true, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::renameTo dest folder already exists, use bool overwrite to overwrite dest folder");
 			return false;
 		}
-	}	
-	
+	}
+
 	try{
 		myDir.renameTo(path);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofDirectory::renameTo - unable to rename");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -856,14 +857,14 @@ bool ofDirectory::remove(bool recursive){
 	if( path().empty() || !myDir.exists() ){
 		return false;
 	}
-	
+
 	try{
 		myDir.remove(recursive);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofDirectory::remove - unable to remove file/folder");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -1152,7 +1153,7 @@ string ofFilePath::getFileName(string filePath, bool bRelativeToData){
 	if( bRelativeToData ) filePath = ofToDataPath(filePath);
 
 	string fileName;
-	
+
 	Path myPath(filePath);
 	try{
 		fileName = myPath.getFileName();
@@ -1171,7 +1172,7 @@ string ofFilePath::getBaseName(string filePath){
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 	if( bRelativeToData ) filePath = ofToDataPath(filePath);
-	
+
 	Path myPath(filePath);
 
 	return myPath.parent().toString();
@@ -1192,7 +1193,7 @@ bool ofFilePath::isAbsolute(string path) {
 	Path p(path);
 	return p.isAbsolute();
  }
- 
+
  //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
 #ifdef TARGET_OSX
@@ -1242,7 +1243,9 @@ string ofFilePath::getUserHomeDir(){
 
 	return pw->pw_dir;
 #else
-	ofLogError() << "getUserHomeDir() not implemented";
+    // getenv will return any Environent Variable on Windows
+    // USERPROFILE is the key on Windows 7 but it might be HOME
+    // in other flavours of windows...need to check XP and NT...
+	return string(getenv("USERPROFILE"));
 #endif
-	return "";
 }

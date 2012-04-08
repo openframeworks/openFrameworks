@@ -106,7 +106,7 @@ bool ofxUDPManager::BindMcast(char *pMcast, unsigned short usPort)
 	// bind to port
 	if (!Bind(usPort))
 	{
-		printf("can't bind to port \n");
+		ofLog(OF_LOG_WARNING, "can't bind to port \n");
 		return false;
 	}
 
@@ -120,7 +120,7 @@ bool ofxUDPManager::BindMcast(char *pMcast, unsigned short usPort)
 		ofxNetworkCheckError();
 		return false;
 	}
-	printf("here ? \n");
+
 	// multicast bind successful
 	return true;
 }

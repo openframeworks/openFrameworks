@@ -24,8 +24,11 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
-        void generateExamples();
+ 
+		void setupForTarget(int targ);
+        void generateExamplesCB(bool & pressed); //stupid as its a button 
+		void generateExamples();
+		
         ofFileDialogResult makeNewProjectViaDialog();
         ofFileDialogResult updateProjectViaDialog();
 
@@ -37,9 +40,12 @@ class testApp : public ofBaseApp{
 		baseProject * project;
     
         string projectPath;
-        string platform;
+        string target;
 
         ofxPanel panelAddons, panelOptions;
         ofxButton createProject, updateProject, createAndOpen, changeOFRoot;
 
+		ofxPanel examplesPanel;
+		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle;
+		ofxButton generateButton;
 };

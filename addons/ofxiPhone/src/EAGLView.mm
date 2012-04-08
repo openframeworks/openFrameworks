@@ -31,7 +31,7 @@
 
 
 #import "ofMain.h"
-#import  "ofxiPhoneExtras.h"
+#import "ofxiPhoneExtras.h"
 
 #import "EAGLView.h"
 
@@ -41,19 +41,17 @@
 @implementation EAGLView
 
 // You must implement this method
-+ (Class) layerClass
-{
++ (Class) layerClass {
 	return [CAEAGLLayer class];
 }
 
-- (id) initWithFrame:(CGRect)frame
-{
-	return [self initWithFrame:frame andDepth:false andAA:false andNumSamples:0 andRetina:false];
-}
+- (id) initWithFrame:(CGRect)frame 
+            andDepth:(bool)depth 
+               andAA:(bool)fsaaEnabled 
+       andNumSamples:(int)samples 
+           andRetina:(bool)retinaEnabled{
 
-- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andNumSamples:(int)samples andRetina:(bool)retinaEnabled
-{
-	if((self = [super initWithFrame:frame])) {
+	if((self = [super initWithFrame:frame])){
         // Get the layer
         CAEAGLLayer *eaglLayer = (CAEAGLLayer *)super.layer;
 		
@@ -62,11 +60,9 @@
 										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		
 		touchScaleFactor=1;
-		if(retinaEnabled)
-		{
-			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
-				if ([[UIScreen mainScreen] scale] > 1)
-				{
+		if(retinaEnabled){
+			if([[UIScreen mainScreen] respondsToSelector:@selector(scale)]){
+				if ([[UIScreen mainScreen] scale] > 1){
 					[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 					touchScaleFactor=[[UIScreen mainScreen] scale];
 				}
@@ -76,17 +72,16 @@
 		// TODO: add initSettings to override ES2Renderer even if available
         renderer = [[ES2Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andFSAASamples:samples andRetina:retinaEnabled];
 		
-        if (!renderer) {
+        if(!renderer){
             renderer = [[ES1Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andFSAASamples:samples andRetina:retinaEnabled];
 			
-            if (!renderer) {
+            if(!renderer){
 				[self release];
 				return nil;
 			}
         }
 		
 		[[self context] renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
-		
 		
 		self.multipleTouchEnabled = true;
 		self.opaque = true;
@@ -96,46 +91,65 @@
 	return self;
 }
 
-- (void)startRender
- {
+- (void)startRender{
     [renderer startRender];
- }
+}
 	
-- (void)finishRender
-{
+- (void)finishRender{
     [renderer finishRender];
 }
 	
-	
-- (void)layoutSubviews
-{
-		NSLog(@"layoutSubviews");
-	    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
-	    [renderer startRender];
-	    [renderer finishRender];
+- (void)layoutSubviews{
+    NSLog(@"layoutSubviews");
+    
+    UIScreen *currentScreen;
+    currentScreen = self.window.screen;
+    if(!currentScreen){
+        currentScreen = [UIScreen mainScreen];
+    }
+    
+    if(ofxiPhoneGetOFWindow()->isRetinaSupported()){
+        if([currentScreen respondsToSelector:@selector(scale)]){
+            if(touchScaleFactor != [currentScreen scale]){
+                touchScaleFactor = [currentScreen scale];
+                [self setContentScaleFactor:touchScaleFactor];
+            }
+        } else {
+            if(touchScaleFactor != 1){
+                touchScaleFactor = 1;
+                [self setContentScaleFactor:touchScaleFactor];
+            }
+        }
+    } else {
+        if(touchScaleFactor != 1){
+            touchScaleFactor = 1;
+            [self setContentScaleFactor:touchScaleFactor];
+        }
+    }
+
+    [renderer startRender];
+    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
+    [renderer finishRender];
 }
 
-
-- (void) dealloc
-{
+- (void) dealloc{
     [renderer release];
 	[activeTouches release];
 	[super dealloc];
 }
 
--(EAGLContext*) context
-{
+-(EAGLContext*) context{
 	return [renderer context];
 }
 
-
 /******************* TOUCH EVENTS ********************/
 //------------------------------------------------------
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesBegan:(NSSet *)touches 
+           withEvent:(UIEvent *)event{
 	
 	for(UITouch *touch in touches) {
 		int touchIndex = 0;
-		while([[activeTouches allValues] containsObject:[NSNumber numberWithInt:touchIndex]]) {
+		while([[activeTouches allValues] containsObject:[NSNumber numberWithInt:touchIndex]]){
 			touchIndex++;
 		}
 		
@@ -153,22 +167,21 @@
 		}
 		
 		ofTouchEventArgs touchArgs;
+        touchArgs.numTouches = [[event touchesForView:self] count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
 		if([touch tapCount] == 2) ofNotifyEvent(ofEvents().touchDoubleTap,touchArgs);	// send doubletap
 		ofNotifyEvent(ofEvents().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
-	}
-	
+	}	
 }
 
 //------------------------------------------------------
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	//	NSLog(@"touchesMoved: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
+- (void)touchesMoved:(NSSet *)touches 
+           withEvent:(UIEvent *)event{
 	
-	for(UITouch *touch in touches) {
+	for(UITouch *touch in touches){
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
-		//		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
@@ -187,13 +200,13 @@
 		touchArgs.id = touchIndex;
 		ofNotifyEvent(ofEvents().touchMoved, touchArgs);
 	}
-	
 }
 
 //------------------------------------------------------
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	//	NSLog(@"touchesEnded: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
-	for(UITouch *touch in touches) {
+- (void)touchesEnded:(NSSet *)touches 
+           withEvent:(UIEvent *)event{
+
+	for(UITouch *touch in touches){
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
 		[activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
@@ -219,10 +232,10 @@
 }
 
 //------------------------------------------------------
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesCancelled:(NSSet *)touches 
+               withEvent:(UIEvent *)event{
 	
-	
-	for(UITouch *touch in touches) {
+	for(UITouch *touch in touches){
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
 		CGPoint touchPoint = [touch locationInView:self];
