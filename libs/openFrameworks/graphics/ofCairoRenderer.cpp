@@ -372,7 +372,15 @@ void ofCairoRenderer::draw(ofSubPath & path){
 
 //--------------------------------------------
 void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	ofPixelsRef pix = img.getPixelsRef();
+	ofPixelsRef raw = img.getPixelsRef();
+	bool shouldCrop = sx != 0 || sy != 0 || sw != w || sh != h;
+	ofPixels cropped;
+	if(shouldCrop) {
+		cropped.allocate(sw, sh, raw.getImageType());
+		raw.cropTo(cropped, sx, sy, sw, sh);
+	}
+	ofPixelsRef pix = shouldCrop ? cropped : raw;
+	
 	pushMatrix();
 	translate(x,y,z);
 	scale(w/pix.getWidth(),h/pix.getHeight());
