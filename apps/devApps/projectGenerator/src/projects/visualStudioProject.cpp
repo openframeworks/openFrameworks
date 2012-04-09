@@ -12,25 +12,25 @@ void visualStudioProject::setup() {
 
 bool visualStudioProject::createProjectFile(){
 
-    ofFile project(ofFilePath::join(projectDir,projectName + ".vcxproj"));
-    ofFile user(ofFilePath::join(projectDir,projectName + ".vcxproj.user"));
-    ofFile solution(ofFilePath::join(projectDir,projectName + ".sln"));
-	ofFile filters(ofFilePath::join(projectDir, projectName + ".vcxproj.filters"));
+    string project = ofFilePath::join(projectDir,projectName + ".vcxproj");
+    string user = ofFilePath::join(projectDir,projectName + ".vcxproj.user");
+    string solution = ofFilePath::join(projectDir,projectName + ".sln");
+	string filters = ofFilePath::join(projectDir, projectName + ".vcxproj.filters");
 
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path(),false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user.path(), false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution.path(), false, true);
-	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.filters"),filters.path(), false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project,false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user, false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution, false, true);
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.filters"),filters, false, true);
 
-	ofFile filterFile(filters.path());
+	ofFile filterFile(filters);
 	string temp = filterFile.readToBuffer();
 	pugi::xml_parse_result result = filterXmlDoc.load(temp.c_str());
 	if (result.status==pugi::status_ok) ofLogVerbose() << "loaded filter ";
 	else ofLogVerbose() << "problem loading filter ";
 	
-    findandreplaceInTexfile(solution.path(),"emptyExample_vs2010",projectName);
-    findandreplaceInTexfile(user.path(),"emptyExample_vs2010",projectName);
-    findandreplaceInTexfile(project.path(),"emptyExample",projectName);
+    findandreplaceInTexfile(solution,"emptyExample_vs2010",projectName);
+    findandreplaceInTexfile(user,"emptyExample_vs2010",projectName);
+    findandreplaceInTexfile(project,"emptyExample",projectName);
 
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     if (relRoot != "../../../"){
@@ -43,11 +43,11 @@ bool visualStudioProject::createProjectFile(){
         }
 
         // sln has windows paths:
-        findandreplaceInTexfile(solution.path(), "..\\..\\..\\", relRootWindows);
+        findandreplaceInTexfile(solution, "..\\..\\..\\", relRootWindows);
 
         // vcx has unixy paths:
         //..\..\..\libs
-        findandreplaceInTexfile(project.path(), "../../../", relRoot);
+        findandreplaceInTexfile(project, "../../../", relRoot);
     }
 
     return true;
@@ -69,8 +69,8 @@ bool visualStudioProject::loadProjectFile(){
 
 bool visualStudioProject::saveProjectFile(){
 
-	ofFile filters(projectDir + projectName + ".vcxproj.filters");
-	filterXmlDoc.save_file(filters.path().c_str());
+	string filters = projectDir + projectName + ".vcxproj.filters";
+	filterXmlDoc.save_file(filters.c_str());
 
 
     return doc.save_file((projectDir + projectName + ".vcxproj").c_str());
