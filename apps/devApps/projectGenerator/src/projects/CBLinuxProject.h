@@ -48,8 +48,6 @@ public:
 private:
 
     //void parseAddons();
-
-	pugi::xml_document doc;
 	Arch arch;
 };
 

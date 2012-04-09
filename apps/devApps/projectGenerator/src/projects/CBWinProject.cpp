@@ -18,11 +18,13 @@ void CBWinProject::setup() {
 
 bool CBWinProject::createProjectFile(){
 
-    ofFile project(projectDir + projectName + ".cbp");
-    ofFile workspace(projectDir + projectName + ".workspace");
-
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project.path(), false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),workspace.path(), false, true);
+    string project = projectDir + projectName + ".cbp";
+    string workspace = projectDir + projectName + ".workspace";
+	
+    
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project, false, true);
+	
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),workspace, false, true);
 
     //let's do some renaming:
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
@@ -36,11 +38,11 @@ bool CBWinProject::createProjectFile(){
                 relRootWindows[i] = '\\';
         }
 
-        findandreplaceInTexfile(workspace.path(), "../../../", relRoot);
-        findandreplaceInTexfile(project.path(), "../../../", relRoot);
+        findandreplaceInTexfile(workspace, "../../../", relRoot);
+        findandreplaceInTexfile(project, "../../../", relRoot);
 
-        findandreplaceInTexfile(workspace.path(), "..\\..\\..\\", relRootWindows);
-        findandreplaceInTexfile(project.path(), "..\\..\\..\\", relRootWindows);
+        findandreplaceInTexfile(workspace, "..\\..\\..\\", relRootWindows);
+        findandreplaceInTexfile(project, "..\\..\\..\\", relRootWindows);
     }
 
     return true;
