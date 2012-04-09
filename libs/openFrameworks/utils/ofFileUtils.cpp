@@ -534,6 +534,7 @@ bool ofFile::remove(bool recursive){
 		myFile.remove(recursive);
 	}catch (Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofFile::remove - unable to remove file/folder");
+		ofLog(OF_LOG_ERROR, "ofFile::remove - " + except.displayText());
 		return false;
 	}
 
@@ -587,8 +588,8 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 		ofLog(OF_LOG_ERROR, "ofFile::copyFromTo source file/folder doesn't exist");
 		return false;
 	}
-
-	if( ofFile::doesFileExist(pathDst, bRelativeToData) ){
+	bool bDoesFileExist = ofFile::doesFileExist(pathDst, bRelativeToData);
+	if( bDoesFileExist ){
         if( overwrite ){
             ofFile::removeFile(pathDst, bRelativeToData);
 		}else{
@@ -652,6 +653,7 @@ bool ofFile::removeFile(string path, bool bRelativeToData){
 		file.remove();
 	}catch( Poco::Exception &except){
 		ofLog(OF_LOG_ERROR, "removeFile - file could not be deleted");
+		ofLog(OF_LOG_ERROR, "removeFile - " + except.displayText());
 		return false;
 	}
 	return true;
