@@ -387,7 +387,7 @@ void ofxCvImage::draw(const ofRectangle & rect){
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::updateTexture(){
-	if( bUseTexture ) {
+	if( bAllocated &&  bUseTexture ) {
 		if( bTextureDirty ) {
 			if(tex.getWidth() != width || tex.getHeight() != height) {
 				//ROI was changed
@@ -863,7 +863,7 @@ unsigned char*  ofxCvImage::getPixels(){
 
 //--------------------------------------------------------------------------------
 ofPixelsRef ofxCvImage::getPixelsRef(){
-	if(bPixelsDirty) {
+	if(bAllocated && bPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsImage();
 
 		//Note this possible introduces a bug where pixels doesn't contain the current image.
