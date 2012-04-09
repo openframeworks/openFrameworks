@@ -1,18 +1,9 @@
-*.mode*
-build/
-obj/
-*.o
+
+# OF-specific ignore patterns
+
 openFrameworks.a
 openFrameworksDebug.a
 openFrameworksUniversal.a
-*.app/
-
-#xcode files
-*.pbxuser
-*.perspectivev3
-xcuserdata
-project.xcworkspace
-.DS_Store
 
 #rule to avoid non-official addons going into git
 #see addons/.gitignore
@@ -22,24 +13,59 @@ addons/*
 #see apps/.gitignore
 apps/*
 
-# debug and release folders
+#also, see examples/.gitignore
+
+# Some general ignore patterns
+
+build/
+obj/
+*.o
 Debug*/
 Release*/
+*.mode*
+*.app/
+*.pyc
 
-#codeblocks OF lib files
-libs/openFrameworksCompiled/project/*/*.depend
-libs/openFrameworksCompiled/project/*/*.layout
+# IDE-specific ignore patterns
 
-#linux temporary files
-*~
+#XCode
+*.pbxuser
+*.perspectivev3
+xcuserdata
+project.xcworkspace
 
-#vs2010 user files
+#Code::Blocks
+*.depend
+*.layout
+
+#Visual Studio
 *.sdf
 *.opensdf
 *.suo
+ipch/
+
+#Eclipse
+.metadata
+local.properties
+.externalToolBuilders
+
+# OS-specific ignore patterns
 
 #Linux
-*.pyc
+*~
+# KDE
+.directory
+
+#OSX
+.DS_Store
+# Thumbnails
+._*
+
+#Windows
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
 
 #Android
 .csettings

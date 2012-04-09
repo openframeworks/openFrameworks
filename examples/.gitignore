@@ -1,11 +1,5 @@
-*/.metadata
 android/*/test link
-android/*/bin
-android/*/obj
 android/*/gen
-android/*/local.properties
-android/*/.settings
-android/*/.externalToolBuilders
 android/*/res/raw
 libOFAndroidApp.so
 libOFAndroidApp_neon.so
@@ -14,10 +8,13 @@ gdb.setup
 libneondetection.so
 Application.mk
 Android.mk
+
 */*/bin/*
 !*/*/bin/data/
 
-#xcode files
+# IDE-specific ignore patterns
+
+#XCode
 /*/*/*.xcodeproj
 /*/*/Project.xcconfig
 /*/*/openFrameworks-Info.plist
@@ -26,32 +23,29 @@ Android.mk
 /*/*/*/*/Default.png
 /*/*/*/*/Icon.png
 
-#codeblocks files
-/*/*/*.layout
-/*/*/*.depend
-/*/*/bin/clickToLaunch*
-/*/*/bin/libs
-/*/*/obj
+#Code::Blocks
 /*/*/*.cbp
 /*/*/*.workspace
 
-#vs files
+#Visual Studio
 /*/*/*.sln
 /*/*/*.vcxproj
 /*/*/*.vcxproj.user
+/*/*/*.vcxproj.filters
 
-# linux
+#Eclipse
+/*/*/.cproject
+/*/*/.project
+/*/*/.settings/
+
+# OS-specific ignore patterns
+
+#Linux
 /*/*/Makefile
 /*/*/config.make
 
-#eclipse
-/*/*/.cproject
-/*/*/.project
-/*/*/.settings
-
 #Android
 /*/*/test link
-/*/*/obj
 !/android/*/.cproject
 !/android/*/.project
 !/android/*/.settings
