@@ -740,9 +740,12 @@ void ofImage_<PixelType>::draw(float x, float y, float z){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::allocate(int w, int h, ofImageType type){
-
-	pixels.allocate(w, h, type);
+void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
+	
+	if (width == w && height == h && newType == type){
+		return;
+	}
+	pixels.allocate(w, h, newType);
 
 	// take care of texture allocation --
 	if (pixels.isAllocated() && bUseTexture){
