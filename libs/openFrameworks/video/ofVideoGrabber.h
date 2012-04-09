@@ -62,8 +62,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				setUseTexture(bool bUse);
 		void				draw(float x, float y, float w, float h);
 		void				draw(float x, float y);
-		void				draw(const ofPoint & point);
-		void				draw(const ofRectangle & rect);
+		using ofBaseDraws::draw;
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
