@@ -751,8 +751,11 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
-
-	update();
+	
+	width	= pixels.getWidth();
+	height	= pixels.getHeight();
+	bpp		= pixels.getBitsPerPixel();
+	type	= pixels.getImageType();
 }
 
 
@@ -874,11 +877,6 @@ void ofImage_<PixelType>::update(){
 		}
 		tex.loadData(pixels);
 	}
-
-	width	= pixels.getWidth();
-	height	= pixels.getHeight();
-	bpp		= pixels.getBitsPerPixel();
-	type	= pixels.getImageType();
 }
 
 //------------------------------------
