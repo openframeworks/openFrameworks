@@ -570,6 +570,7 @@ bool ofFile::remove(bool recursive){
 	}
 	catch(Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "ofFile::remove - unable to remove file/folder");
+		ofLog(OF_LOG_ERROR, "ofFile::remove - " + except.displayText());
 		return false;
 	}
 
@@ -703,6 +704,7 @@ bool ofFile::removeFile(string path, bool bRelativeToData){
 	}
 	catch(Poco::Exception & except){
 		ofLog(OF_LOG_ERROR, "removeFile - file could not be deleted");
+		ofLog(OF_LOG_ERROR, "removeFile - " + except.displayText());
 		return false;
 	}
 	return true;
