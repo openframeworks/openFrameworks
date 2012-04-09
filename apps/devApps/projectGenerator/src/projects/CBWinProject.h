@@ -36,9 +36,6 @@ public:
 
 private:
 
-
-	pugi::xml_document doc;
-	string ofRoot;
 };
 
 #endif /* CBLINUXPROJECT_H_ */
