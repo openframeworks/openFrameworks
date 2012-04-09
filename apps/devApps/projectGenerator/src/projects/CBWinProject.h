@@ -15,19 +15,17 @@
 
 class CBWinProject: public baseProject  {
 public:
-	
-    
-    //
+
     void setup();
-    
+
     bool createProjectFile();
     bool loadProjectFile();
     bool saveProjectFile();
 
-    
+
 	void addSrc(string srcName, string folder);
 	void addInclude(string includeName);
-	void addLibrary(string libraryName);
+	void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
 
 	void addAddon(ofAddon & addon);
 
@@ -37,10 +35,9 @@ public:
 	static string LOG_NAME;
 
 private:
-	
-    
+
+
 	pugi::xml_document doc;
-	vector<ofAddon> addons;
 	string ofRoot;
 };
 

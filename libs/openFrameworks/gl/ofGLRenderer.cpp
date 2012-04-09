@@ -182,11 +182,11 @@ void ofGLRenderer::draw(ofPath & shape){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h){
+void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -194,11 +194,11 @@ void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, flo
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h){
+void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -206,11 +206,11 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h){
+void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -264,11 +264,19 @@ void ofGLRenderer::popView() {
 	// done like this cause i was getting GL_STACK_UNDERFLOW
 	// should ofPush/PopMatrix work the same way, what if it's mixed with glPush/PopMatrix
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(projectionStack.top().getPtr());
+	if(!projectionStack.empty()){
+		glLoadMatrixf(projectionStack.top().getPtr());
+		projectionStack.pop();
+	}else{
+		ofLogError() << "popView: couldn't pop projection matrix, stack empty. probably wrong anidated push/popView";
+	}
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(modelViewStack.top().getPtr());
-	projectionStack.pop();
-	modelViewStack.pop();
+	if(!modelViewStack.empty()){
+		glLoadMatrixf(modelViewStack.top().getPtr());
+		modelViewStack.pop();
+	}else{
+		ofLogError() << "popView: couldn't pop modelView matrix, stack empty. probably wrong anidated push/popView";
+	}
 }
 
 //----------------------------------------------------------

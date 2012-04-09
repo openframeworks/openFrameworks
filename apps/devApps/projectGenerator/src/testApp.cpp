@@ -4,8 +4,9 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+    ofSetLogLevel(OF_LOG_VERBOSE);
 	project = NULL;
-	
+
 	while(!checkConfigExists()){
 		askOFRoot();
 	}
@@ -14,7 +15,7 @@ void testApp::setup(){
 
 	int targ = ofGetTargetPlatform();
 	//plat = OF_TARGET_IPHONE;
-	
+
     setupForTarget(targ);
 
     if(projectPath!=""){
@@ -52,7 +53,7 @@ void testApp::setup(){
     updateProject.addListener(this,&testApp::updateProjectPressed);
     createAndOpen.addListener(this,&testApp::createAndOpenPressed);
     changeOFRoot.addListener(this,&testApp::changeOFRootPressed);
-	
+
 	examplesPanel.setup("generate examples", "examples.xml", 400, 10);
 	examplesPanel.add(generateButton.setup("<--Generate"));
 	examplesPanel.add(wincbToggle.setup("win CB projects",false));
@@ -60,7 +61,7 @@ void testApp::setup(){
 	examplesPanel.add(linuxcbToggle.setup("linux CB projects",false));
 	examplesPanel.add(osxToggle.setup("osx projects",false));
 	examplesPanel.add(iosToggle.setup("ios projects",false));
-	
+
 	generateButton.addListener(this,&testApp::generateExamplesCB);
 
     ofSetVerticalSync(true);
@@ -69,11 +70,11 @@ void testApp::setup(){
 }
 
 void testApp::setupForTarget(int targ){
-	
+
     if(project){
 		delete project;
 	}
-	
+
     switch(targ){
         case OF_TARGET_OSX:
             project = new xcodeProject;
@@ -89,7 +90,7 @@ void testApp::setupForTarget(int targ){
             break;
     case OF_TARGET_IPHONE:
             project = new xcodeProject();
-            target = "ios";		
+            target = "ios";
             break;
     case OF_TARGET_ANDROID:
             break;
@@ -106,13 +107,15 @@ void testApp::setupForTarget(int targ){
 
 void testApp::generateExamplesCB(bool & pressed){
 
+	if (pressed == false) return; // don't do this again on the mouseup. 
+
 	vector <int> targetsToMake;
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
 	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
-	
+
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
 	}
@@ -121,28 +124,46 @@ void testApp::generateExamplesCB(bool & pressed){
 		setupForTarget(targetsToMake[i]);
 		generateExamples();
 	}
-	
-	int target = ofGetTargetPlatform();	
+
+	int target = ofGetTargetPlatform();
     setupForTarget(target);
 }
 
 void testApp::generateExamples(){
     ofDirectory dir;
-    
-    dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
+    string examplesPath = ofFilePath::join(getOFRoot(),"examples");
+
+	ofLogNotice() << "Generating examples (from: " << examplesPath << ")";
+	
+    dir.listDir(examplesPath);
 
     for (int i = 0; i < (int)dir.size(); i++){
-        
+
+        // don't check subdirectories that aren't directories! (eg., .gitignore etc)
+        if(!dir.getFile(i).isDirectory()) continue;
+
 		if( target == "ios" ){
 			if( dir.getName(i) != "ios" ) continue;
 		}else{
 			if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
         }
-		
+
         ofDirectory subdir;
-        subdir.listDir(dir.getPath(i));
-        
+        string examplesPath = dir.getPath(i);
+
+		ofLogNotice() << "Generating examples in folder: " << examplesPath;
+		
+        subdir.listDir(examplesPath);
+
         for (int j = 0; j < (int)subdir.size(); j++){
+
+            // don't create projects that aren't directories! (eg., .gitkeep etc)
+            if(!subdir.getFile(j).isDirectory()) continue;
+
+			ofLogNotice() << "------------------------------------------------";
+			ofLogNotice() << "Generating example: " << subdir.getPath(j);
+			ofLogNotice() << "------------------------------------------------";
+  
             project->setup(target);
             project->create(subdir.getPath(j));
             vector < string > addons;
@@ -154,6 +175,7 @@ void testApp::generateExamples(){
                 project->addAddon(addon);
             }
             project->save();
+			
         }
     }
 }
@@ -162,7 +184,7 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
     ofFileDialogResult res = ofSystemSaveDialog("newProjectName", "choose a folder for a new OF project :)");
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
-    
+
     project->setup(target);
     if(project->create(res.filePath)){
 		vector<string> addonsToggles = panelAddons.getControlNames();
@@ -179,7 +201,7 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
 		}
 		project->save();
     }
-    
+
     return res;
 }
 
@@ -239,19 +261,19 @@ void testApp::changeOFRootPressed(bool & pressed){
 //--------------------------------------------------------------
 void testApp::update(){
 
-    
-   
+
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
+
     //ofBackgroundGradient(ofColor::gray,ofColor::black);
-	
+
     panelAddons.draw();
 	panelOptions.draw();
 	examplesPanel.draw();
-	
+
 	ofSetColor(0,0,0,100);
 	ofRect(ofGetWidth()-410,10,400,100);
 
@@ -264,18 +286,18 @@ void testApp::draw(){
 void testApp::keyPressed(int key){
 
     if (key == 'm'){
-        
+
         printf("generating examples \n");
         generateExamples();
         printf("finished generating examples \n");
-        
+
     }
-    
+
     if (key == ' '){
         makeNewProjectViaDialog();
     }
-    
-    
+
+
 }
 
 //--------------------------------------------------------------
@@ -314,6 +336,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }
