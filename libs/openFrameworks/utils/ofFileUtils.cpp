@@ -1320,11 +1320,12 @@ string ofFilePath::getCurrentExeDir(){
 
 string ofFilePath::getUserHomeDir(){
 	#ifndef TARGET_WIN32
-		struct passwd * pw = getpwuid(getuid());
-
+			struct passwd * pw = getpwuid(getuid());
 		return pw->pw_dir;
 	#else
-		ofLogError() << "getUserHomeDir() not implemented";
+		// getenv will return any Environent Variable on Windows
+		// USERPROFILE is the key on Windows 7 but it might be HOME
+		// in other flavours of windows...need to check XP and NT...
+		return string(getenv("USERPROFILE"));
 	#endif
-	return "";
 }

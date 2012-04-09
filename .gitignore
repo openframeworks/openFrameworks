@@ -35,6 +35,7 @@ examples/*/*/*.workspace
 examples/*/*/*.sln
 examples/*/*/*.vcxproj
 examples/*/*/*.vcxproj.user
+examples/*/*/*.vcxproj.filters
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
