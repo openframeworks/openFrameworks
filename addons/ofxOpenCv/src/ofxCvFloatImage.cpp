@@ -484,9 +484,7 @@ float*  ofxCvFloatImage::getPixelsAsFloats(){
 ofFloatPixels &	ofxCvFloatImage::getFloatPixelsRef(){
 	if( !bAllocated ){
 		ofLog(OF_LOG_WARNING, "in getPixelsAsFloats, image is not allocated");		
-	}
-	
-	if(bFloatPixelsDirty) {
+	} else if(bFloatPixelsDirty) {
         if(  cvImage->width*cvImage->depth/8 == cvImage->widthStep ){
         	floatPixels.setFromExternalPixels((float*)cvImage->imageData,width,height,1);
         }else{
@@ -510,9 +508,7 @@ float*  ofxCvFloatImage::getRoiPixelsAsFloats(){
 ofFloatPixels &	ofxCvFloatImage::getRoiFloatPixelsRef(){
 	if( !bAllocated ){
 		ofLog(OF_LOG_WARNING, "in getRoiFloatPixelsRef, image is not allocated");		
-	}
-	
-	if(bFloatPixelsDirty) {
+	} else if(bFloatPixelsDirty) {
 		ofRectangle roi = getROI();
 		float * roi_ptr = (float*)cvImage->imageData + ((int)(roi.y)*cvImage->widthStep/(cvImage->depth/8)) + (int)roi.x;
 		floatPixels.setFromAlignedPixels(roi_ptr,roi.width,roi.height,cvImage->nChannels,cvImage->widthStep);
