@@ -2,12 +2,11 @@
 
 //--------------------------------------------------------------
 void testApp::setup() {
-    
     ofBackgroundHex(0xc5c9b2);
     
     bTimerReached = false;
-    startTime     = ofGetElapsedTimeMillis();  // get the start time
-    endTime       = (int)ofRandom(1000, 5000); // in milliseconds
+    startTime = ofGetElapsedTimeMillis();  // get the start time
+    endTime = (int)ofRandom(1000, 5000); // in milliseconds
 }
 
 //--------------------------------------------------------------
@@ -18,9 +17,7 @@ void testApp::update() {
 void testApp::draw(){
 
     float barWidth = 500;
-    
-   
-    
+		
     // update the timer this frame
     float timer = ofGetElapsedTimeMillis() - startTime;
     
@@ -43,7 +40,7 @@ void testApp::draw(){
     ofSetColor(20);
     ofDrawBitmapString(ofToString(pct*100, 0)+"%", ((ofGetWidth()-barWidth)/2)+barWidth+10, (ofGetHeight()/2)+20);
     
-    // the timer was readched :)
+    // the timer was reached :)
     if(bTimerReached) {
         ofSetColor(20);
         ofDrawBitmapString("Timer Reached!", (ofGetWidth()-100)/2, (ofGetHeight()/2)+70);
@@ -64,8 +61,8 @@ void testApp::draw(){
 void testApp::keyPressed(int key) {
     if(key == ' ') {
         bTimerReached = false;                     // reset the timer
-        startTime     = ofGetElapsedTimeMillis();  // get the start time
-        endTime       = (int)ofRandom(1000, 5000); // in milliseconds
+        startTime = ofGetElapsedTimeMillis();  // get the start time
+        endTime = (int)ofRandom(1000, 5000); // in milliseconds
     }
 }
 
@@ -79,4 +76,34 @@ void testApp::mousePressed(int x, int y, int button) {
 //--------------------------------------------------------------
 void testApp::gotMessage(ofMessage msg){
     cout << "Got the message: " + msg.message << endl;
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
 }

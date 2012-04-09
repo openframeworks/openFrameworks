@@ -16,7 +16,7 @@ void testApp::setup(){
 	
 	//our center point is defined here.
 	center= ofPoint((ofGetWidth()-LEFT_MARGIN)*0.5f +LEFT_MARGIN, 
-					(ofGetHeight()-TOP_MARGIN)*0.5f + TOP_MARGIN);
+									(ofGetHeight()-TOP_MARGIN)*0.5f + TOP_MARGIN);
 	
 	bScaleMouse=false;
 	
@@ -37,7 +37,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-
+	
 	for (int i=0; i<horizontalOscilators.size(); i++) {
 		horizontalOscilators[i].update();
 	}
@@ -54,16 +54,16 @@ void testApp::draw(){
 	
 	//The following is just to print the instructions to the screen.
 	ofSetColor(80);
-	ofDrawBitmapString("Click here to add horizontal oscilators.", LEFT_MARGIN +100, TOP_MARGIN-5 );
+	ofDrawBitmapString("Click here to add horizontal oscillators.", LEFT_MARGIN +100, TOP_MARGIN-5 );
 	
-	ofDrawBitmapString("Click and drag\nover an\noscilator to\nmodify it's\nspeed and\namplitude", 15,25);
-	ofDrawBitmapString("Click in this area and drag upwards/downwards to scale up/down.\nPress spacebar to delete all the oscilators.", LEFT_MARGIN + 200, ofGetHeight()-40);
+	ofDrawBitmapString("Click and drag\nover an\noscillator to\nmodify it's\nspeed and\namplitude", 15,25);
+	ofDrawBitmapString("Click in this area and drag upwards/downwards to scale up/down.\nPress spacebar to delete all the oscillators.", LEFT_MARGIN + 200, ofGetHeight()-40);
 	
 	//All this bunch is to print the vertical text
 	ofPushMatrix();
 	ofTranslate(LEFT_MARGIN -5,  ofGetHeight() - 100, 0);
 	ofRotate(-90, 0, 0, 1);
-	ofDrawBitmapString("Click here to add vertical oscilators.",  0, 0 );
+	ofDrawBitmapString("Click here to add vertical oscillators.",  0, 0 );
 	ofPopMatrix();
 	
 	
@@ -86,15 +86,15 @@ void testApp::draw(){
 	float horWave = 0;
 	float vertWave = 0;
 	
-	//here we go through all the horizontal oscilators
+	//here we go through all the horizontal oscillators
 	for (int i=0; i<horizontalOscilators.size(); i++) {
 		ofSetColor(255, 127+i, 0,150);
-		horizontalOscilators[i].draw(); //we draw each oscilator
+		horizontalOscilators[i].draw(); //we draw each oscillator
 		horWave += horizontalOscilators[i].waveSin;
-		//THIS IS IMPORTANT. Here we are adding together all the current sine values of each oscilator.
-																	  // This is what is creates all the crazy motion that we get.
+		//THIS IS IMPORTANT. Here we are adding together all the current sine values of each oscillator.
+		// This is what is creates all the crazy motion that we get.
 	}
-	//the same as above but for vertical oscilators
+	//the same as above but for vertical oscillators
 	for (int i=0; i<verticalOscilators.size(); i++) {
 		ofSetColor(0, 127+i, 255, 150);
 		verticalOscilators[i].draw();
@@ -115,7 +115,7 @@ void testApp::draw(){
 	
 	
 	
-	ofMesh wave; // declaring a new ofMesh object with which we're drawing the motion path created by summing the vertical and horizontal oscilators
+	ofMesh wave; // declaring a new ofMesh object with which we're drawing the motion path created by summing the vertical and horizontal oscillators
 	wave.setMode(OF_PRIMITIVE_LINE_STRIP);
 	for (int i=0; i<TAIL_LENGTH; i++) {
 		wave.addColor(ofFloatColor(0.1f,0.1f,0.1f, 0.5f + 0.5f * i/float(TAIL_LENGTH) ));
@@ -155,12 +155,12 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-	if (key == ' ') {//when the spacebar is pressed the vectors that contain all the oscilators are cleared.
+	if (key == ' ') {//when the spacebar is pressed the vectors that contain all the oscillators are cleared.
 		horizontalOscilators.clear();
 		verticalOscilators.clear();
 	}
@@ -168,13 +168,13 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-	if (selectedOscilator>-1) {//when an oscilator is clicked and dragged it's speed (freq) and amplitude are changed.
-								//the following lines do so.
+	if (selectedOscilator>-1) {//when an oscillator is clicked and dragged it's speed (freq) and amplitude are changed.
+		//the following lines do so.
 		if(bSelectedOscHor==true){
 			horizontalOscilators[selectedOscilator].freq += 0.1f * (ofGetPreviousMouseX() - ofGetMouseX())/ float(ofGetWidth());
 			horizontalOscilators[selectedOscilator].amplitude += ofGetMouseY() - ofGetPreviousMouseY();	
@@ -189,16 +189,16 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
+	
 	if (y< TOP_MARGIN && x>LEFT_MARGIN) {
-		for (int i = 0; i < horizontalOscilators.size(); i++) {//this goes through the horizontal oscilators checking if anyone has been clicked over.
+		for (int i = 0; i < horizontalOscilators.size(); i++) {//this goes through the horizontal oscillators checking if anyone has been clicked over.
 			if(horizontalOscilators[i].checkOver(x, y)){
 				setPressedOscilator(i, true);
 				break;
 			}
 		}
-		if (!bSelectedOscHor) {//in case that no oscilator was clicked then create a new one at the position of the mouse.
-			horizontalOscilators.push_back(oscilator());
+		if (!bSelectedOscHor) {//in case that no oscillator was clicked then create a new one at the position of the mouse.
+			horizontalOscilators.push_back(oscillator());
 			horizontalOscilators.back().setup(x, y);
 		}
 	}else if(y>TOP_MARGIN && x<LEFT_MARGIN){
@@ -209,7 +209,7 @@ void testApp::mousePressed(int x, int y, int button){
 			}
 		}
 		if (!bSelectedOscVert) {
-			verticalOscilators.push_back(oscilator());
+			verticalOscilators.push_back(oscillator());
 			verticalOscilators.back().setup(x, y);
 		}
 	}else {
@@ -224,8 +224,23 @@ void testApp::setPressedOscilator(int index, bool isHorizontal){
 }
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-		bScaleMouse=false;
+	bScaleMouse=false;
 	selectedOscilator=-1;
 	bSelectedOscHor=false;
 	bSelectedOscVert=false;
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+	
 }
