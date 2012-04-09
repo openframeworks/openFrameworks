@@ -7,7 +7,7 @@
 
 /devApps/*/.cproject
 /devApps/*/.project
-/devApps/*/.settings
+/devApps/*/.settings/
 
 # don't ignore the .gitignore file
 !.gitignore
