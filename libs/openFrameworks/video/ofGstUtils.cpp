@@ -193,7 +193,7 @@ bool ofGstUtils::startPipeline(){
 
 	setSpeed(1.0);
 
-	ofAddListener(ofEvents.update,this,&ofGstUtils::update);
+	ofAddListener(ofEvents().update,this,&ofGstUtils::update);
 
 	return true;
 }
@@ -350,10 +350,10 @@ void ofGstUtils::close(){
 	}
 
 	bLoaded = false;
-	ofRemoveListener(ofEvents.update,this,&ofGstUtils::update);
+	ofRemoveListener(ofEvents().update,this,&ofGstUtils::update);
 }
 
-string getName(GstState state){
+static string getName(GstState state){
 	switch(state){
 	case   GST_STATE_VOID_PENDING:
 		return "void pending";
@@ -388,7 +388,7 @@ void ofGstUtils::gstHandleMessage(){
 				gint pctBuffered;
 				gst_message_parse_buffering(msg,&pctBuffered);
 				ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
-				if(isStream && !bLoaded && appsink){
+				if(isStream && appsink){
 					appsink->on_stream_prepared();
 				}
 				if(pctBuffered<100){
@@ -518,6 +518,27 @@ void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;
 }
 
+unsigned long ofGstUtils::getMinLatencyNanos(){
+	GstClockTime minlat, maxlat;
+	GstQuery * q = gst_query_new_latency();
+	if (gst_element_query (gstPipeline, q)) {
+		 gboolean live;
+		 gst_query_parse_latency (q, &live, &minlat, &maxlat);
+	}
+	gst_query_unref (q);
+	return minlat;
+}
+
+unsigned long ofGstUtils::getMaxLatencyNanos(){
+	GstClockTime minlat, maxlat;
+	GstQuery * q = gst_query_new_latency();
+	if (gst_element_query (gstPipeline, q)) {
+		 gboolean live;
+		 gst_query_parse_latency (q, &live, &minlat, &maxlat);
+	}
+	gst_query_unref (q);
+	return maxlat;
+}
 
 
 
@@ -688,4 +709,5 @@ void ofGstVideoUtils::eos_cb(){
 	ofEventArgs args;
 	ofNotifyEvent(eosEvent,args);
 }
+
 #endif

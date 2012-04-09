@@ -25,7 +25,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildArguments</key>
-					<value>-C ../openFrameworksCompiled/project/linux</value>
+					<value>-C ../openFrameworksCompiled/project/linux  -j</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>

@@ -20,12 +20,8 @@
 //========================================================================
 // static variables:
 
-ofPtr<ofBaseApp>				OFSAptr;
-bool 						bMousePressed;
-bool						bRightButton;
-int							width, height;
-
-static ofPtr<ofAppBaseWindow> window;
+static ofPtr<ofBaseApp>				OFSAptr;
+static ofPtr<ofAppBaseWindow> 		window;
 
 
 //========================================================================
