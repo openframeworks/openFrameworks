@@ -907,21 +907,6 @@ void ofTexture::setCompression(ofTexCompression compression){
 }
 
 //------------------------------------
-void ofTexture::draw(const ofPoint & point) {
-	draw(point.x, point.y);
-}
-
-//------------------------------------
-void ofTexture::draw(const ofRectangle & rect){
-	draw(rect.x, rect.y, rect.width, rect.height); 
-}
-
-//------------------------------------
-void ofTexture::draw(const ofPoint & p, float w, float h){
-	draw(p.x,p.y,p.z,w,h);
-}
-
-//------------------------------------
 void ofTexture::draw(float x, float y){
 	draw(x,y,0,getWidth(),getHeight());
 }

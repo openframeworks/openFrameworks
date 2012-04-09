@@ -304,16 +304,6 @@ void ofVideoPlayer::draw(float _x, float _y){
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(const ofPoint & point){
-	tex.draw(point);
-}
-
-//------------------------------------
-void ofVideoPlayer::draw(const ofRectangle & rect) {
-	tex.draw(rect);
-}
-
-//------------------------------------
 int ofVideoPlayer::getTotalNumFrames(){
 	if( player != NULL ){
 		return player->getTotalNumFrames();

@@ -698,24 +698,6 @@ void ofImage_<PixelType>::resetAnchor(){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(const ofPoint & point) {
-	draw(point.x, point.y);
-}
-
-//------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::draw(const ofRectangle & rect){
-	draw(rect.x, rect.y, rect.width, rect.height); 
-}
-
-//------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::draw(const ofPoint & p, float w, float h){
-	draw(p.x,p.y,p.z,w,h);
-}
-
-//------------------------------------
-template<typename PixelType>
 void ofImage_<PixelType>::draw(float x, float y){
 	draw(x,y,0,getWidth(),getHeight());
 }
