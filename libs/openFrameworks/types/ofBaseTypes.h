@@ -36,22 +36,23 @@ typedef ofPixels& ofPixelsRef;
 class ofBaseDraws{
 public:
 	virtual ~ofBaseDraws(){}
-	virtual void draw(float x,float y)=0;
-	virtual void draw(float x,float y,float w, float h)=0;
-	
-	virtual void draw(const ofPoint & point){
-		draw( point.x, point.y);
+	virtual void draw(float x, float y)=0;
+	virtual void draw(float x, float y, float w, float h)=0;
+	virtual void draw(const ofPoint & point) {
+		draw(point.x, point.y);
 	}
-	
-	virtual void draw(const ofRectangle & rect){
-		draw(rect.x, rect.y, rect.width, rect.height); 
+	virtual void draw(const ofRectangle & rect) {
+		draw(rect.x, rect.y, rect.width, rect.height);
+	}
+	virtual void draw(const ofPoint & point, float w, float h) {
+		draw(point.x, point.y, w, h);
 	}
 	
 	virtual float getHeight()=0;
 	virtual float getWidth()=0;
 	
 	virtual void setAnchorPercent(float xPct, float yPct){};
-    virtual void setAnchorPoint(float x, float y){};
+	virtual void setAnchorPoint(float x, float y){};
 	virtual void resetAnchor(){};
 	
 };
@@ -281,9 +282,9 @@ public:
 	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
-	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
-	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h)=0;
-	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 
 	//--------------------------------------------
 	// transformations

@@ -24,12 +24,16 @@ void ofAddon::fromFS(string path, string platform){
     string filePath = path + "/src";
     string ofRootPath = ofFilePath::addTrailingSlash(getOFRoot()); //we need to add a trailing slash for the erase to work properly
 
-    ofLogVerbose() << "in fromFS, trying src " << filePath;
+    //ofLogVerbose() << "in fromFS, trying src " << filePath;
+
+
+	ofSetLogLevel(OF_LOG_NOTICE);
     getFilesRecursively(filePath, srcFiles);
+	ofSetLogLevel(OF_LOG_VERBOSE);
 
     for(int i=0;i<(int)srcFiles.size();i++){
     	srcFiles[i].erase (srcFiles[i].begin(), srcFiles[i].begin()+ofRootPath.length());
-		ofLogVerbose() << " srcFiles " << srcFiles[i];
+		//ofLogVerbose() << " srcFiles " << srcFiles[i];
     	int init = 0;
 #ifdef TARGET_WIN32
     	int end = srcFiles[i].rfind("\\");
@@ -44,18 +48,18 @@ void ofAddon::fromFS(string path, string platform){
     string libsPath = path + "/libs";
     vector < string > libFiles;
     
-    cout << libs.size() << " libs size + platform =  " << platform << endl;
     
+	ofSetLogLevel(OF_LOG_NOTICE);
     if (ofDirectory::doesDirectoryExist(libsPath)){
         getLibsRecursively(libsPath, libFiles, libs, platform);
     }
-    
-    cout << libs.size() << " libs size " << endl;
+    ofSetLogLevel(OF_LOG_VERBOSE);
 
+    
     // I need to add libFiles to srcFiles
     for (int i = 0; i < (int)libFiles.size(); i++){
     	libFiles[i].erase (libFiles[i].begin(), libFiles[i].begin()+ofRootPath.length());
-		ofLogVerbose() << " libFiles " << libFiles[i];
+		//ofLogVerbose() << " libFiles " << libFiles[i];
     	int init = 0;
 #ifdef TARGET_WIN32
     	int end = libFiles[i].rfind("\\");
@@ -103,10 +107,13 @@ void ofAddon::fromFS(string path, string platform){
 
     vector < string > libFolders;
     ofLogVerbose() << "trying get folders recursively " << (path + "/libs");
-    getFoldersRecursively(path + "/libs", libFolders, platform);
 
+	// the dirList verbosity is crazy, so I'm setting this off for now. 
+	ofSetLogLevel(OF_LOG_NOTICE);
+    getFoldersRecursively(path + "/libs", libFolders, platform);
     vector < string > srcFolders;
     getFoldersRecursively(path + "/src", srcFolders, platform);
+	ofSetLogLevel(OF_LOG_VERBOSE);
 
     for (int i = 0; i < libFolders.size(); i++){
         libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+ofRootPath.length());

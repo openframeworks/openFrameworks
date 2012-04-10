@@ -70,8 +70,8 @@ bool CBLinuxProject::createProjectFile(){
     	}
     }
 
-    
-    // handle the relative roots. 
+
+    // handle the relative roots.
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     if (relRoot != "../../../"){
         string relPath2 = relRoot;
@@ -80,14 +80,14 @@ bool CBLinuxProject::createProjectFile(){
         findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "../../../", relRoot);
         findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
     }
-    
+
     return true;
 }
 
 bool CBLinuxProject::loadProjectFile(){
-    
+
     //project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
-    
+
     ofFile project(ofFilePath::join(projectDir , projectName + ".cbp"));
 	if(!project.exists()){
 		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
@@ -100,7 +100,7 @@ bool CBLinuxProject::loadProjectFile(){
 
 
 bool CBLinuxProject::saveProjectFile(){
-    
+
    findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
    pugi::xpath_node_set title = doc.select_nodes("//Option[@title]");
    if(!title.empty()){
@@ -121,15 +121,36 @@ void CBLinuxProject::addSrc(string srcName, string folder){
 	if(!node.empty()){
 		node.child("Option").attribute("virtualFolder").set_value(folder.c_str());
 	}
-    
+
 }
 
 void CBLinuxProject::addInclude(string includeName){
     //appendValue(doc, "Add", "directory", includeName);
 }
 
-void CBLinuxProject::addLibrary(string libraryName){
+void CBLinuxProject::addLibrary(string libraryName, LibType libType){
     //appendValue(doc, "Add", "library", libraryName);
+}
+
+void CBLinuxProject::addAddon(ofAddon & addon){
+    for(int i=0;i<(int)addons.size();i++){
+		if(addons[i].name==addon.name) return;
+	}
+
+	addons.push_back(addon);
+
+    for(int i=0;i<(int)addon.includePaths.size();i++){
+        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
+        addInclude(addon.includePaths[i]);
+    }
+    for(int i=0;i<(int)addon.libs.size();i++){
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        addLibrary(addon.libs[i]);
+    }
+    for(int i=0;i<(int)addon.srcFiles.size(); i++){
+        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+    }
 }
 
 string CBLinuxProject::getName(){

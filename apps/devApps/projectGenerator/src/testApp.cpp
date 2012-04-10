@@ -107,6 +107,8 @@ void testApp::setupForTarget(int targ){
 
 void testApp::generateExamplesCB(bool & pressed){
 
+	if (pressed == false) return; // don't do this again on the mouseup. 
+
 	vector <int> targetsToMake;
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
 	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
@@ -131,8 +133,8 @@ void testApp::generateExamples(){
     ofDirectory dir;
     string examplesPath = ofFilePath::join(getOFRoot(),"examples");
 
-    ofLogNotice() << "Generating examples in folder: " << examplesPath;
-
+	ofLogNotice() << "Generating examples (from: " << examplesPath << ")";
+	
     dir.listDir(examplesPath);
 
     for (int i = 0; i < (int)dir.size(); i++){
@@ -149,8 +151,8 @@ void testApp::generateExamples(){
         ofDirectory subdir;
         string examplesPath = dir.getPath(i);
 
-        ofLogNotice() << "Generating example in folder: " << examplesPath;
-
+		ofLogNotice() << "Generating examples in folder: " << examplesPath;
+		
         subdir.listDir(examplesPath);
 
         for (int j = 0; j < (int)subdir.size(); j++){
@@ -158,6 +160,10 @@ void testApp::generateExamples(){
             // don't create projects that aren't directories! (eg., .gitkeep etc)
             if(!subdir.getFile(j).isDirectory()) continue;
 
+			ofLogNotice() << "------------------------------------------------";
+			ofLogNotice() << "Generating example: " << subdir.getPath(j);
+			ofLogNotice() << "------------------------------------------------";
+  
             project->setup(target);
             project->create(subdir.getPath(j));
             vector < string > addons;
@@ -166,10 +172,10 @@ void testApp::generateExamples(){
                 ofAddon addon;
                 addon.pathToOF = getOFRelPath(subdir.getPath(j));
                 addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
-                printf("-----> adding %s \n", addons[i].c_str() );
                 project->addAddon(addon);
             }
             project->save();
+			
         }
     }
 }
