@@ -746,16 +746,22 @@ void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, flo
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::allocate(int w, int h, ofImageType type){
-
-	pixels.allocate(w, h, type);
+void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
+	
+	if (width == w && height == h && newType == type){
+		return;
+	}
+	pixels.allocate(w, h, newType);
 
 	// take care of texture allocation --
 	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
-
-	update();
+	
+	width	= pixels.getWidth();
+	height	= pixels.getHeight();
+	bpp		= pixels.getBitsPerPixel();
+	type	= pixels.getImageType();
 }
 
 
@@ -871,17 +877,12 @@ void ofImage_<PixelType>::update(){
 		} else if(pixels.getNumChannels() == 4) {
 			type = GL_RGBA;
 		}
-		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getWidth() || type != tex.getTextureData().glTypeInternal)
+		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getHeight() || type != tex.getTextureData().glTypeInternal)
 		{
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
 		}
 		tex.loadData(pixels);
 	}
-
-	width	= pixels.getWidth();
-	height	= pixels.getHeight();
-	bpp		= pixels.getBitsPerPixel();
-	type	= pixels.getImageType();
 }
 
 //------------------------------------
