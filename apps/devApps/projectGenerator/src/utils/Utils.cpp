@@ -95,23 +95,13 @@ std::string LoadFileAsString(const std::string & fn)
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    if( ofFile::doesFileExist(fileName) ){
-		//printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
-		std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
-		ifile.seekg(0,std::ios_base::end);
-		long s=ifile.tellg();
-		//cout << "size of s is " << s << endl;
-		char *buffer=new char[s];
-		ifile.seekg(0);
-		ifile.read(buffer,s);
-		ifile.close();
-
-		std::string txt(buffer,s);
-		delete[] buffer;
-
-		findandreplace(txt, tFind, tReplace);
-
-		std::ofstream ofile(ofToDataPath(fileName).c_str());
-		ofile.write(txt.c_str(),txt.size());
+	   
+	   string wholeFile = ofBufferFromFile(fileName, false);
+	   findandreplace(wholeFile, tFind, tReplace);
+	   ofBuffer output;
+	   output.set(wholeFile.c_str(), strlen(wholeFile.c_str()));
+	   ofBufferToFile(fileName, output, false);
+	  
 		//return 0;
    } else {
        ; // some error checking here would be good.
