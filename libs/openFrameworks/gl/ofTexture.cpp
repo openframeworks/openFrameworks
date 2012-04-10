@@ -923,7 +923,7 @@ void ofTexture::draw(float x, float y, float w, float h){
 
 //------------------------------------
 void ofTexture::draw(float x, float y, float z, float w, float h){
-	drawSubsection(x,y,z,w,h,0,0,w,h);
+	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
 }
 
 //------------------------------------
