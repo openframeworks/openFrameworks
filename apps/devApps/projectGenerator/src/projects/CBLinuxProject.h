@@ -21,7 +21,7 @@ public:
 		Linux64
 	};
 
-   
+
     void setup();
 
     bool createProjectFile();
@@ -33,12 +33,12 @@ public:
 	bool create(string path);
 	bool save(string path){return true;}
      */
-    
+
 	void addSrc(string srcName, string folder);
 	void addInclude(string includeName);
-	void addLibrary(string libraryName);
+	void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
 
-	void addAddon(ofAddon & addon);
+    void addAddon(ofAddon & addon);
 
 	string getName();
 	string getPath();
@@ -46,11 +46,8 @@ public:
 	static string LOG_NAME;
 
 private:
-	
-    //void parseAddons();
 
-	pugi::xml_document doc;
-	vector<ofAddon> addons;
+    //void parseAddons();
 	Arch arch;
 };
 

@@ -17,3 +17,8 @@ gdb.setup
 libneondetection.so
 Application.mk
 Android.mk
+*/*/bin/*
+!*/*/bin/data
+!*/*/bin/data/*
+!*/*/bin/data/**
+!*/*/bin/data/**/*

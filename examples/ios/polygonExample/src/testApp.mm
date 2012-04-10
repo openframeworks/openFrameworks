@@ -30,7 +30,7 @@ void testApp::setup(){
 	curveVertices[6].x = 345;
 	curveVertices[6].y = 279;
 	
-	for (int i = 0; i < nCurveVertexes; i++){
+	for(int i = 0; i < nCurveVertexes; i++){
 		curveVertices[i].bOver 			= false;
 		curveVertices[i].bBeingDragged 	= false;
 		curveVertices[i].radius = 4;
@@ -413,7 +413,12 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::exit(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
 		for (int i = 0; i < nCurveVertexes; i++){
 			float diffx = touch.x/appIphoneScale - curveVertices[i].x;
@@ -429,7 +434,7 @@ void testApp::touchDown(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
 		for (int i = 0; i < nCurveVertexes; i++){
 		if (curveVertices[i].bBeingDragged == true){
@@ -441,7 +446,7 @@ void testApp::touchMoved(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
 		for (int i = 0; i < nCurveVertexes; i++){
 			curveVertices[i].bBeingDragged = false;	
@@ -450,11 +455,31 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs &touch){
+void testApp::touchCancelled(ofTouchEventArgs & touch){
 
+}
+
+//--------------------------------------------------------------
+void testApp::lostFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+    
 }

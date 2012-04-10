@@ -54,21 +54,21 @@ public:
 		 }
 	}
 
-	void draw(ofImage & img, float x, float y, float z, float w, float h){
+	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(img,x,y,z,w,h);
+			 renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		 }
 	}
 	
-	void draw(ofFloatImage & img, float x, float y, float z, float w, float h){
+	void draw(ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->draw(img,x,y,z,w,h);
+			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 	
-	void draw(ofShortImage & img, float x, float y, float z, float w, float h){
+	void draw(ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->draw(img,x,y,z,w,h);
+			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 	
