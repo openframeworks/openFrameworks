@@ -883,6 +883,11 @@ void ofImage_<PixelType>::update(){
 		}
 		tex.loadData(pixels);
 	}
+	
+	width	= pixels.getWidth();
+	height	= pixels.getHeight();
+	bpp		= pixels.getBitsPerPixel();
+	type	= pixels.getImageType();
 }
 
 //------------------------------------
