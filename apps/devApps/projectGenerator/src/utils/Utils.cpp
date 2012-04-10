@@ -19,6 +19,12 @@
 #include <fstream>
 #include <string>
 
+#include "Poco/HMACEngine.h"
+#include "Poco/MD5Engine.h"
+using Poco::DigestEngine;
+using Poco::HMACEngine;
+using Poco::MD5Engine;
+
 
 
 #ifdef TARGET_WIN32
@@ -36,6 +42,23 @@
 using namespace Poco;
 
 #include "ofUtils.h"
+
+
+string generateUUID(string input){
+
+    std::string passphrase("openFrameworks"); // HMAC needs a passphrase
+
+    HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
+    hmac.update(input);
+
+    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
+    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+
+    return digestString;
+}
+
+
+
 
 
 void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) {
@@ -72,23 +95,32 @@ std::string LoadFileAsString(const std::string & fn)
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    if( ofFile::doesFileExist(fileName) ){
-		//printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
-		std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
-		ifile.seekg(0,std::ios_base::end);
-		long s=ifile.tellg();
-		//cout << "size of s is " << s << endl;
-		char *buffer=new char[s];
-		ifile.seekg(0);
-		ifile.read(buffer,s);
-		ifile.close();
+	
+	    std::ifstream t(ofToDataPath(fileName).c_str());
+	    std::stringstream buffer;
+	    buffer << t.rdbuf();
+		string bufferStr = buffer.str();
+		t.close();
+	    findandreplace(bufferStr, tFind, tReplace);
+		ofstream myfile;
+        myfile.open (ofToDataPath(fileName).c_str());
+        myfile << bufferStr;
+		myfile.close();
 
-		std::string txt(buffer,s);
-		delete[] buffer;
-
-		findandreplace(txt, tFind, tReplace);
-
-		std::ofstream ofile(ofToDataPath(fileName).c_str());
-		ofile.write(txt.c_str(),txt.size());
+	/*
+	std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
+	ifile.seekg(0,std::ios_base::end);
+	long s=ifile.tellg();
+	char *buffer=new char[s];
+ 	ifile.seekg(0);
+	ifile.read(buffer,s);
+	ifile.close();
+	std::string txt(buffer,s);
+	delete[] buffer;
+	findandreplace(txt, tFind, tReplace);
+	std::ofstream ofile(ofToDataPath(fileName).c_str());
+	ofile.write(txt.c_str(),txt.size());
+	*/  
 		//return 0;
    } else {
        ; // some error checking here would be good.
@@ -110,11 +142,21 @@ bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attri
     }
 }
 
-pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool addMultiple){
+pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool overwriteMultiple){
 
+    if (overwriteMultiple == true){
+        // find the existing node...
+        char xpathExpression[1024];
+        sprintf(xpathExpression, "//%s[@%s='%s']", tag.c_str(), attribute.c_str(), newValue.c_str());
+        pugi::xpath_node node = doc.select_single_node(xpathExpression);
+        if(string(node.node().attribute(attribute.c_str()).value()).size() > 0){ // for some reason we get nulls here?
+            // ...delete the existing node
+            cout << "DELETING: " << node.node().name() << ": " << " " << node.node().attribute(attribute.c_str()).value() << endl;
+            node.node().parent().remove_child(node.node());
+        }
+    }
 
-
-    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue) || addMultiple == true){
+    if (!doesTagAndAttributeExist(doc, tag, attribute, newValue)){
         // otherwise, add it please:
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s]", tag.c_str(), attribute.c_str());
@@ -135,11 +177,12 @@ void getFilesRecursively(const string & path, vector < string > & fileNames){
 
     ofDirectory dir;
 
-    ofLogVerbose() << "in getFilesRecursively "<< path << endl;
+    //ofLogVerbose() << "in getFilesRecursively "<< path << endl;
 
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
         ofFile temp(dir.getFile(i));
+        if (dir.getName(i) == ".svn") continue; // ignore svn
         if (temp.isFile()){
             fileNames.push_back(dir.getPath(i));
         } else if (temp.isDirectory()){
@@ -200,9 +243,9 @@ void getFoldersRecursively(const string & path, vector < string > & folderNames,
 
 
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
-
-
-   
+    
+    
+    
     
     if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
         
@@ -219,7 +262,7 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
             for(int j=0;j<(int)splittedPath.size();j++){
                 if(splittedPath[j]==platform){
                     platformFound = true;
-                   // break;
+                    // break;
                 }
             }
         }
@@ -250,12 +293,12 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
         
         for (int i = 0; i < dir.size(); i++){
             
-            #ifdef TARGET_WIN32
-                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
-            #else
-                        vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-            #endif
-
+#ifdef TARGET_WIN32
+            vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
+#else
+            vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+#endif
+            
             ofFile temp(dir.getFile(i));
             
             if (temp.isDirectory()){
@@ -277,7 +320,7 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
                 
                 
                 
-               
+                
                 //string ext = ofFilePath::getFileExt(temp.getFile(i));
                 string ext;
                 string first;
@@ -295,42 +338,42 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
     }
     
     
-          
-   //folderNames.push_back(path);
-
-
-
-//    DirectoryIterator end;
-//        for (DirectoryIterator it(path); it != end; ++it){
-//            if (!it->isDirectory()){
-//            	string ext = ofFilePath::getFileExt(it->path());
-//            	vector<string> splittedPath = ofSplitString(ofFilePath::getEnclosingDirectory(it->path()),"/");
-//
-//                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
-//
-//                	if(platform!=""){
-//                		bool platformFound = false;
-//                		for(int i=0;i<(int)splittedPath.size();i++){
-//                			if(splittedPath[i]==platform){
-//                				platformFound = true;
-//                				break;
-//                			}
-//                		}
-//                		if(!platformFound){
-//                			continue;
-//                		}
-//                	}
-//                    libLibs.push_back(it->path());
-//                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-//                    libFiles.push_back(it->path());
-//                }
-//            }
-//
-//            if (it->isDirectory()){
-//                getLibsRecursively(it->path(), libFiles, libLibs, platform);
-//            }
-//        }
-
+    
+    //folderNames.push_back(path);
+    
+    
+    
+    //    DirectoryIterator end;
+    //        for (DirectoryIterator it(path); it != end; ++it){
+    //            if (!it->isDirectory()){
+    //            	string ext = ofFilePath::getFileExt(it->path());
+    //            	vector<string> splittedPath = ofSplitString(ofFilePath::getEnclosingDirectory(it->path()),"/");
+    //
+    //                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
+    //
+    //                	if(platform!=""){
+    //                		bool platformFound = false;
+    //                		for(int i=0;i<(int)splittedPath.size();i++){
+    //                			if(splittedPath[i]==platform){
+    //                				platformFound = true;
+    //                				break;
+    //                			}
+    //                		}
+    //                		if(!platformFound){
+    //                			continue;
+    //                		}
+    //                	}
+    //                    libLibs.push_back(it->path());
+    //                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+    //                    libFiles.push_back(it->path());
+    //                }
+    //            }
+    //
+    //            if (it->isDirectory()){
+    //                getLibsRecursively(it->path(), libFiles, libLibs, platform);
+    //            }
+    //        }
+    
 }
 
 

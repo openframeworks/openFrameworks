@@ -15,12 +15,11 @@
 #include "ofMain.h"
 
 
+string generateUUID(string input);
 
 string getOFRoot();
 void setOFRoot(string path);
-
 void findandreplace( std::string& tInput, std::string tFind, std::string tReplace );
-
 void findandreplaceInTexfile (string fileName, string tFind, string tReplace );
 
 
