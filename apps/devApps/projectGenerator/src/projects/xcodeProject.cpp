@@ -136,22 +136,30 @@ void xcodeProject::setup(){
 
 
 void xcodeProject::saveScheme(){
-    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/");
-    dir.create(true);
-    string schemeTo = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + ".xcscheme";
-    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample.xcscheme", schemeTo);
-    cout << "trying to copy " << projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/emptyExample.xcscheme" << " ------ > " << schemeTo <<endl;
-    findandreplaceInTexfile(schemeTo, "emptyExample", projectName);
+	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
+    ofDirectory::removeDirectory(schemeFolder, true);
+	ofDirectory::createDirectory(schemeFolder, false, true);
+    
+	string schemeToD = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Debug.xcscheme";
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample Debug.xcscheme", schemeToD);
+
+	string schemeToR = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Release.xcscheme";
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample Release.xcscheme", schemeToR);
+	
+    findandreplaceInTexfile(schemeToD, "emptyExample", projectName);
+    findandreplaceInTexfile(schemeToR, "emptyExample", projectName);
+	
+	//TODO: do we still need this?
     string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
     ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
 }
 
 
 void xcodeProject::saveWorkspaceXML(){
-    string xcodeProjectWorkspace = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/contents.xcworkspacedata";
-    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/");
-    dir.create(true);
-    cout << "trying copy " << templatePath + "emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata" << " -----> " << xcodeProjectWorkspace <<endl;
+	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
+	ofDirectory::removeDirectory(workspaceFolder, true);
+	ofDirectory::createDirectory(workspaceFolder, false, true);
+	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
 }
