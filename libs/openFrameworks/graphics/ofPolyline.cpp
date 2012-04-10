@@ -419,37 +419,39 @@ ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
 	
 	// precompute weights and normalization
 	vector<float> weights;
-	weights.resize(smoothingSize+1);
-	float weightSum = 0;
-	weights[0] = 1; // center weight
+	weights.resize(smoothingSize);
 	// side weights
-	for(int i = 1; i <= smoothingSize; i++) {
+	for(int i = 1; i < smoothingSize; i++) {
 		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
 		weights[i] = curWeight;
-		weightSum += curWeight;
 	}
-	float weightNormalization = 1 / (1 + 2 * weightSum);
 	
 	// make a copy of this polyline
 	ofPolyline result = *this;
 	
-	int begin = 0, end = n;
-	// in the case of an open polyline, only smooth the center
-	if(!isClosed()) {
-		begin += (smoothingSize + 1);
-		end -= (smoothingSize + 1);
-	}
-	
-	// use weights to make weighted averages of neighbors
-	for(int i = begin; i < end; i++) {
-		for(int j = 1; j <= smoothingSize; j++) {
-			int leftPosition = (n + i - j) % n;
-			int rightPosition = (i + j) % n;
-			const ofPoint& left = points[leftPosition];
-			const ofPoint& right = points[rightPosition];
-			result[i] += (left + right) * weights[j];
+	for(int i = 0; i < n; i++) {
+		float sum = 1; // center weight
+		for(int j = 1; j < smoothingSize; j++) {
+			ofVec2f cur;
+			int leftPosition = i - j;
+			int rightPosition = i + j;
+			if(leftPosition < 0 && bClosed) {
+				leftPosition += n;
+			}
+			if(leftPosition >= 0) {
+				cur += points[leftPosition];
+				sum += weights[j];
+			}
+			if(rightPosition >= n && bClosed) {
+				rightPosition -= n;
+			}
+			if(rightPosition < n) {
+				cur += points[rightPosition];
+				sum += weights[j];
+			}
+			result[i] += cur * weights[j];
 		}
-		result[i] *= weightNormalization;
+		result[i] /= sum;
 	}
 	
 	return result;
