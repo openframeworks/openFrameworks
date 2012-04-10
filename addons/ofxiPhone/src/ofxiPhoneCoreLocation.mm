@@ -60,6 +60,16 @@ void ofxiPhoneCoreLocation::stopLocation()
 }
 
 //--------------------------------------------------------------
+bool ofxiPhoneCoreLocation::startMonitoringSignificantLocationChanges() {
+  return [coreLoc startMonitoringSignificantLocationChanges];
+}
+
+//--------------------------------------------------------------
+void ofxiPhoneCoreLocation::stopMonitoringSignificantLocationChanges() {
+  [coreLoc stopMonitoringSignificantLocationChanges];
+}
+
+//--------------------------------------------------------------
 
 double ofxiPhoneCoreLocation::getLatitude()
 {
@@ -131,6 +141,8 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 {
 	return [coreLoc headingAccuracy];
 }
+
+
 
 //--------------------------------------------------------------
 
@@ -214,9 +226,24 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 
 //--------------------------------------------------------------
 
-- (void) stopLocation
-{
+- (void) stopLocation {
 	[locationManager stopUpdatingLocation];
+}
+
+//--------------------------------------------------------------
+
+- (bool) startMonitoringSignificantLocationChanges {
+    if ([CLLocationManager locationServicesEnabled]) {
+		[locationManager startMonitoringSignificantLocationChanges];
+		return true;
+	}
+    return false;
+}
+
+//--------------------------------------------------------------
+
+- (void) stopMonitoringSignificantLocationChanges {
+  [locationManager stopMonitoringSignificantLocationChanges];
 }
 
 //--------------------------------------------------------------

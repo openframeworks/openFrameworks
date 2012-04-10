@@ -16,30 +16,36 @@ class testApp : public ofxiPhoneApp{
 		void setup();
 		void update();
 		void draw();
-		
-		void touchDown(ofTouchEventArgs &touch);
-		void touchMoved(ofTouchEventArgs &touch);
-		void touchUp(ofTouchEventArgs &touch);
-		void touchDoubleTap(ofTouchEventArgs &touch);
-		void touchCancelled(ofTouchEventArgs &touch);
+        void exit();
+    
+        void touchDown(ofTouchEventArgs & touch);
+        void touchMoved(ofTouchEventArgs & touch);
+        void touchUp(ofTouchEventArgs & touch);
+        void touchDoubleTap(ofTouchEventArgs & touch);
+        void touchCancelled(ofTouchEventArgs & touch);
+	
+        void lostFocus();
+        void gotFocus();
+        void gotMemoryWarning();
+        void deviceOrientationChanged(int newOrientation);
 
-
-		ofVideoGrabber 		vidGrabber;
-		ofVideoPlayer 		vidPlayer;
+		ofVideoGrabber vidGrabber;
+		ofVideoPlayer vidPlayer;
 
 		ofTexture tex;
 
-        ofxCvColorImage			colorImg;
+        ofxCvColorImage	colorImg;
 
-        ofxCvGrayscaleImage 	grayImage;
-		ofxCvGrayscaleImage 	grayBg;
-		ofxCvGrayscaleImage 	grayDiff;
+        ofxCvGrayscaleImage grayImage;
+		ofxCvGrayscaleImage grayBg;
+		ofxCvGrayscaleImage grayDiff;
 		
-		float capW, capH;
+        float capW;
+        float capH;
 
-        ofxCvContourFinder 	contourFinder;
+        ofxCvContourFinder contourFinder;
 
-		int 				threshold;
-		bool				bLearnBakground;
+		int threshold;
+		bool bLearnBakground;
 
 };

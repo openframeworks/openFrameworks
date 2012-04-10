@@ -19,7 +19,8 @@ examples/*/*/Project.xcconfig
 examples/*/*/openFrameworks-Info.plist
 examples/*/*/ofxiphone-Info.plist
 examples/*/*/iPhone_Prefix.pch
-
+examples/*/*/*/*/Default.png
+examples/*/*/*/*/Icon.png
 
 #codeblocks files
 examples/*/*/*.layout
@@ -34,6 +35,7 @@ examples/*/*/*.workspace
 examples/*/*/*.sln
 examples/*/*/*.vcxproj
 examples/*/*/*.vcxproj.user
+examples/*/*/*.vcxproj.filters
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore

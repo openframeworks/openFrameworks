@@ -35,16 +35,24 @@
 #import "ofxiPhoneViewController.h"
 
 @interface ofxiPhoneAppDelegate : NSObject <UIApplicationDelegate> {
-    //
+    NSInteger currentScreenIndex;
 }
 
 @property (nonatomic, retain) UIWindow *window;
+@property (nonatomic, retain) UIWindow *externalWindow;
 @property (nonatomic, retain) ofxiPhoneViewController *glViewController;
+@property (readonly,  assign) NSInteger currentScreenIndex;
 
 -(BOOL) application:(UIApplication*)application 
       handleOpenURL:(NSURL*)url;
 
 -(void) receivedRotate:(NSNotification*)notification;
+
+-(BOOL) createExternalWindowWithPreferredMode;
+-(BOOL) createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
+-(BOOL) destroyExternalWindow;
+-(BOOL) displayOnScreenWithIndex:(NSInteger)screenIndex 
+              andScreenModeIndex:(NSInteger)screenModeIndex;
 
 @end
 
