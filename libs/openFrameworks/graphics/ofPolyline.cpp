@@ -413,35 +413,40 @@ ofRectangle ofPolyline::getBoundingBox(){
 
 //----------------------------------------------------------
 ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
-	ofPolyline & polyline = *this;
-	ofPolyline result = polyline;
-	
-	if(!polyline.isClosed()) {
-		ofLog( OF_LOG_ERROR, "ofSmooth() currently only supports closed ofPolylines." );
-		return polyline;
-	}
+	int n = size();
+	smoothingSize = ofClamp(smoothingSize, 0, n);
+	smoothingShape = ofClamp(smoothingShape, 0, 1);
 	
 	// precompute weights and normalization
 	vector<float> weights;
 	weights.resize(smoothingSize+1);
 	float weightSum = 0;
-	weights[0]=1; // center weight
+	weights[0] = 1; // center weight
 	// side weights
 	for(int i = 1; i <= smoothingSize; i++) {
 		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
-		weights[i]=curWeight;
+		weights[i] = curWeight;
 		weightSum += curWeight;
 	}
 	float weightNormalization = 1 / (1 + 2 * weightSum);
 	
+	// make a copy of this polyline
+	ofPolyline result = *this;
+	
+	int begin = 0, end = n;
+	// in the case of an open polyline, only smooth the center
+	if(!isClosed()) {
+		begin += (smoothingSize + 1);
+		end -= (smoothingSize + 1);
+	}
+	
 	// use weights to make weighted averages of neighbors
-	int n = polyline.size();
-	for(int i = 0; i < n; i++) {
+	for(int i = begin; i < end; i++) {
 		for(int j = 1; j <= smoothingSize; j++) {
 			int leftPosition = (n + i - j) % n;
 			int rightPosition = (i + j) % n;
-			const ofPoint& left = polyline[leftPosition];
-			const ofPoint& right = polyline[rightPosition];
+			const ofPoint& left = points[leftPosition];
+			const ofPoint& right = points[rightPosition];
 			result[i] += (left + right) * weights[j];
 		}
 		result[i] *= weightNormalization;
