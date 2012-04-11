@@ -1010,6 +1010,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Debug";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -1033,6 +1034,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Release";
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
