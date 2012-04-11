@@ -208,7 +208,11 @@ void visualStudioProject::addLibrary(string libraryName, LibType libType){
         // still ghetto, but getting better
         // TODO: iterate by <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BUILD TYPE|SOME PLATFORM'">
         // instead of making the weak assumption that VS projects do Debug|Win32 then Release|Win32
-        if(libType != platformCounter) continue;
+        
+		if(libType != platformCounter){
+			platformCounter++;
+			continue;
+		}
 
         pugi::xpath_node node = *it;
         string includes = node.node().first_child().value();
@@ -225,7 +229,8 @@ void visualStudioProject::addLibrary(string libraryName, LibType libType){
             string libsNew = unsplitString(strings, ";");
             node.node().first_child().set_value(libsNew.c_str());
         }
-        platformCounter++;
+		platformCounter++;
+        
     }
 
 }
@@ -285,10 +290,10 @@ void visualStudioProject::addAddon(ofAddon & addon){
             // add debug and release libs to appropriate vectors
             debugLibs.push_back(addon.libs[debugLibIndex]);
         }else{
-            // there's only one lib (either debug or release) so add to both vectors and hope for the best ;-)
+			// there's only one lib (either debug or release) so add to both vectors and hope for the best ;-)
             debugLibs.push_back(addon.libs[i]);
         }
-        releaseLibs.push_back(addon.libs[i]);
+		releaseLibs.push_back(addon.libs[i]);
     }
 
     for(int i=0;i<(int)debugLibs.size();i++){
