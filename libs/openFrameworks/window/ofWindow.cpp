@@ -30,10 +30,16 @@ ofWindow::~ofWindow(){
 };
 
 void ofWindow::initializeWindow(){
+	if(width == 0)
+		width = 200;
+	if(height == 0)
+		height = 200;
 	window = glfwOpenWindow( width, height, GLFW_WINDOWED, title.c_str(), NULL );
 	
 	isInitialized = true;
-	setWindowPositionAndShape(x, y, width, height);
+	setWindowPosition(x, y);
+		
+	glfwSwapBuffers();
 }
 
 void ofWindow::addListener(ofWindowListener* listener)
@@ -144,7 +150,7 @@ void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h){
 		height = h;
 	}else{
 		setWindowPosition(_x, _y);
-		setWindowShape(_x, _y);
+		setWindowShape(w, h);
 	}
 }
 
