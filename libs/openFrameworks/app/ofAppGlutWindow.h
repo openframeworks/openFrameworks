@@ -69,7 +69,7 @@ public:
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
 	
-	bool bDoubleBuffered; 
+	
 		 
 };
 

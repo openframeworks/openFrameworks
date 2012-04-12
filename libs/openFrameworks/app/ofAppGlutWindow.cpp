@@ -28,6 +28,7 @@ static int			nFramesForFPS;
 static int			nFrameCount;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
+static bool			bDoubleBuffered; 
 
 
 static bool			bFrameRateSet;
@@ -578,11 +579,15 @@ void ofAppGlutWindow::display(void){
         if (nFramesSinceWindowResized < 3){
         	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
         } else {
-            if (nFrameCount < 3 || nFramesSinceWindowResized < 3)    glutSwapBuffers();
+            if ( (nFrameCount < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
             else                                                     glFlush();
         }
     } else {
-        glutSwapBuffers();
+        if(bDoubleBuffered){
+			glutSwapBuffers();
+		} else{
+			glFlush();
+		}
     }
     #else
 		if (bClearAuto == false){
@@ -591,7 +596,11 @@ void ofAppGlutWindow::display(void){
 				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 			}
 		}
-        glutSwapBuffers();
+		if(bDoubleBuffered){
+			glutSwapBuffers();
+		} else{
+			glFlush();
+		}
     #endif
 
     nFramesSinceWindowResized++;
