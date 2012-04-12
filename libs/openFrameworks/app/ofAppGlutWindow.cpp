@@ -209,6 +209,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	lastFrameTime		= 0.0;
 	displayString		= "";
 	orientation			= OF_ORIENTATION_DEFAULT;
+	bDoubleBuffered = true; // LIA
 
 }
 
@@ -219,6 +220,13 @@ ofAppGlutWindow::ofAppGlutWindow(){
  void ofAppGlutWindow::setGlutDisplayString(string displayStr){
 	displayString = displayStr;
  }
+
+
+void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
+	bDoubleBuffered = _bDoubleBuffered;
+}
+
+
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
@@ -231,7 +239,11 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	if( displayString != ""){
 		glutInitDisplayString( displayString.c_str() );
 	}else{
-		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		if(bDoubleBuffered){  
+			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		}else{
+			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
+		}
 	}
 
 	windowMode = screenMode;

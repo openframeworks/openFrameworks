@@ -16,6 +16,9 @@ public:
 	~ofAppGlutWindow(){}
 
 	void setupOpenGL(int w, int h, int screenMode);
+	
+	void setDoubleBuffering(bool _bDoubleBuffered); 
+	
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 	
@@ -65,6 +68,8 @@ public:
 	static void entry_cb(int state);
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
+	
+	bool bDoubleBuffered; 
 		 
 };
 
