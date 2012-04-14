@@ -901,27 +901,48 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
 	unbind();
 }
 
+//----------------------------------------------------------
 void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
 }
 
-//----------------------------------------------------------
-void ofTexture::draw(const ofRectangle & r){
-	draw(r.x, r.y, 0.0f, r.width, r.height);
+//------------------------------------
+void ofTexture::draw(float x, float y){
+	draw(x,y,0,getWidth(),getHeight());
 }
 
-//----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p, float w, float h){
-	draw(p.x, p.y, p.z, w, h);
+//------------------------------------
+void ofTexture::draw(float x, float y, float z){
+	draw(x,y,z,getWidth(),getHeight());
 }
 
-//----------------------------------------------------------
+//------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
-	draw(x, y, 0.0f, w, h);
+	draw(x,y,0,w,h);
+}
+
+//------------------------------------
+void ofTexture::draw(float x, float y, float z, float w, float h){
+	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
+}
+
+//------------------------------------
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
+	drawSubsection(x,y,0,w,h,sx,sy,w,h);
+}
+
+//------------------------------------
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
+}
+
+//------------------------------------
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
+	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
 //----------------------------------------------------------
-void ofTexture::draw(float x, float y, float z, float w, float h){
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
 	
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
@@ -990,10 +1011,13 @@ void ofTexture::draw(float x, float y, float z, float w, float h){
 	}
 	// -------------------------------------------------
 	
-	GLfloat tx0 = 0+offsetw;
-	GLfloat ty0 = 0+offseth;
-	GLfloat tx1 = texData.tex_t - offsetw;
-	GLfloat ty1 = texData.tex_u - offseth;
+	ofPoint topLeft = getCoordFromPoint(sx, sy);
+	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
+	
+	GLfloat tx0 = topLeft.x + offsetw;
+	GLfloat ty0 = topLeft.y + offseth;
+	GLfloat tx1 = bottomRight.x - offsetw;
+	GLfloat ty1 = bottomRight.y - offseth;
 	
 	glPushMatrix(); 
 	
@@ -1027,7 +1051,7 @@ void ofTexture::draw(float x, float y, float z, float w, float h){
 
 // ROGER
 //----------------------------------------------------------
-void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
+void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4){
 	
 	// Enable alpha channel if has one
 	bool blending = ofGetStyle().blendingMode;
@@ -1097,22 +1121,6 @@ void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
 	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {
 		ofDisableAlphaBlending();
 	}
-}
-
-
-//----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p){
-	draw(p.x, p.y, p.z, texData.width, texData.height);
-}
-
-//----------------------------------------------------------
-void ofTexture::draw(float x, float y){
-	draw(x, y, 0.0f, texData.width, texData.height);
-}
-
-//----------------------------------------------------------
-void ofTexture::draw(float x, float y, float z){
-	draw(x, y, z, texData.width, texData.height);
 }
 
 //----------------------------------------------------------
