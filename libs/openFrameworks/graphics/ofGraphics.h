@@ -20,33 +20,6 @@ ofPtr<ofGLRenderer> ofGetGLRenderer();
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
 void ofEndSaveScreenAsPDF();
 
-//opengl specifics
-
-//set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
-bool ofGetUsingArbTex();
-void ofEnableArbTex();
-void ofDisableArbTex();
-
-
-bool ofGetUsingNormalizedTexCoords();
-void ofEnableNormalizedTexCoords();
-void ofDisableNormalizedTexCoords();
-
-
-//***** add global functions to override texture settings
-void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
-bool ofGetUsingCustomTextureWrap();
-void ofRestoreTextureWrap();
-
-void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
-bool ofGetUsingCustomMinMagFilters();
-void ofRestoreMinMagFilters();
-//*****
-
-//end opengl specifics
-
-
-
 
 // transformations
 // push and pop all matrices and viewport
@@ -59,7 +32,7 @@ void ofPopView();
 void ofViewport(ofRectangle viewport);
 void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
 void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
+void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = -1);
 ofRectangle ofGetCurrentViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
@@ -154,6 +127,7 @@ void ofBackground(int r, int g, int b, int a=255);
 void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
 void ofBackgroundHex(int hexColor, int alpha = 255);
+void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode = OF_GRADIENT_CIRCULAR);
 
 void ofSetBackgroundColor(int r, int g, int b, int a=255);
 void ofSetBackgroundColor(int brightness, int alpha = 255);
@@ -239,12 +213,18 @@ void ofBox(float x, float y, float size);
 void ofBox(const ofPoint& position, float size);
 void ofBox(float size);
 
+void ofCone(float x, float y, float z, float radius, float height);
+void ofCone(float x, float y, float radius, float height);
+void ofCone(const ofPoint& position, float radius, float height);
+void ofCone(float radius, float height);
 
 // bitmapped type
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 void ofDrawBitmapString(string textString, const ofPoint & p);
 void ofDrawBitmapString(string textString, float x, float y);
 void ofDrawBitmapString(string textString, float x, float y, float z);
+void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
 // end primitives

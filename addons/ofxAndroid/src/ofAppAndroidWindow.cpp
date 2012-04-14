@@ -365,16 +365,16 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		while(!touchEventArgsQueue.empty()){
 			switch(touchEventArgsQueue.front().type){
 			case ofTouchEventArgs::down:
-				ofNotifyEvent(ofEvents.touchDown,touchEventArgsQueue.front());
+				ofNotifyEvent(ofEvents().touchDown,touchEventArgsQueue.front());
 				break;
 			case ofTouchEventArgs::up:
-				ofNotifyEvent(ofEvents.touchUp,touchEventArgsQueue.front());
+				ofNotifyEvent(ofEvents().touchUp,touchEventArgsQueue.front());
 				break;
 			case ofTouchEventArgs::move:
-				ofNotifyEvent(ofEvents.touchMoved,touchEventArgsQueue.front());
+				ofNotifyEvent(ofEvents().touchMoved,touchEventArgsQueue.front());
 				break;
 			case ofTouchEventArgs::doubleTap:
-				ofNotifyEvent(ofEvents.touchDoubleTap,touchEventArgsQueue.front());
+				ofNotifyEvent(ofEvents().touchDoubleTap,touchEventArgsQueue.front());
 				break;
 			}
 			touchEventArgsQueue.pop();
@@ -430,7 +430,7 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id
 	touch.pressure = pressure;
 	touch.type = ofTouchEventArgs::down;
 	if(threadedTouchEvents){
-		ofNotifyEvent(ofEvents.touchDown,touch);
+		ofNotifyEvent(ofEvents().touchDown,touch);
 	}else{
 		mutex.lock();
 		touchEventArgsQueue.push(touch);
@@ -448,7 +448,7 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,j
 	touch.pressure = pressure;
 	touch.type = ofTouchEventArgs::up;
 	if(threadedTouchEvents){
-		ofNotifyEvent(ofEvents.touchUp,touch);
+		ofNotifyEvent(ofEvents().touchUp,touch);
 	}else{
 		mutex.lock();
 		touchEventArgsQueue.push(touch);
@@ -467,7 +467,7 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 	touch.pressure = pressure;
 	touch.type = ofTouchEventArgs::move;
 	if(threadedTouchEvents){
-		ofNotifyEvent(ofEvents.touchMoved,touch);
+		ofNotifyEvent(ofEvents().touchMoved,touch);
 	}else{
 		mutex.lock();
 		touchEventArgsQueue.push(touch);
@@ -485,7 +485,7 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 	touch.pressure = pressure;
 	touch.type = ofTouchEventArgs::doubleTap;
 	if(threadedTouchEvents){
-		ofNotifyEvent(ofEvents.touchDoubleTap,touch);
+		ofNotifyEvent(ofEvents().touchDoubleTap,touch);
 	}else{
 		mutex.lock();
 		touchEventArgsQueue.push(touch);

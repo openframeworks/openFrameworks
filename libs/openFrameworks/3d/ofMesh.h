@@ -114,13 +114,27 @@ public:
 	bool hasNormals();
 	bool hasTexCoords();
 	bool hasIndices();
-
-	friend std::ostream& operator<<(std::ostream& os, ofMesh& data);
 	
 	void drawVertices();
 	void drawWireframe();
 	void drawFaces();
 	void draw();
+
+	void load(string path);
+	void save(string path, bool useBinary = false);
+    
+    void enableColors();
+    void enableTextures();
+    void enableNormals();
+    
+    void disableColors();
+    void disableTextures();
+    void disableNormals();
+    
+    bool usingColors();
+    bool usingTextures();
+    bool usingNormals();
+    
 
 protected:
 	virtual void draw(ofPolyRenderMode renderType);
@@ -135,38 +149,10 @@ private:
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
 	string name;
+    
+    bool useColors;
+    bool useTextures;
+    bool useNormals;
 	
 //	ofMaterial *mat;
 };
-
-
-inline std::ostream& operator<<(std::ostream& os, ofMesh data) {
-
-	//TODO: update when ofMesh/primitives has been worked out
-	os << "Vertices" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-	
-	os << "Normals" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumNormals(); ++i) {
-		os << data.getNormal(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-		
-	os << "TexCoords" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumTexCoords(); ++i) {
-		os << data.getTexCoord(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-		
-	os << "Colors" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-
-	return os;
-}
-

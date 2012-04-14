@@ -14,38 +14,31 @@ addons/**
 #xcode files
 *.pbxuser
 *.perspectivev3
-apps/examples/*/*.xcodeproj
-apps/examples/*/Project.xcconfig
-apps/examples/*/openFrameworks-Info.plist
-apps/addonsExamples/*/*.xcodeproj
-apps/addonsExamples/*/Project.xcconfig
-apps/addonsExamples/*/openFrameworks-Info.plist
-
-apps/iphoneAddonsExamples/*/*.xcodeproj
-apps/iphoneAddonsExamples/*/Project.xcconfig
-apps/iPhoneAddonsExamples/*/ofxiphone-Info.plist
-apps/iPhoneAddonsExamples/*/iPhone_Prefix.pch
-
-apps/iphoneExamples/*/*.xcodeproj
-apps/iphoneExamples/*/Project.xcconfig
-apps/iPhoneExamples/*/ofxiphone-Info.plist
-apps/iPhoneExamples/*/iPhone_Prefix.pch
-
+examples/*/*/*.xcodeproj
+examples/*/*/Project.xcconfig
+examples/*/*/openFrameworks-Info.plist
+examples/*/*/ofxiphone-Info.plist
+examples/*/*/iPhone_Prefix.pch
+examples/*/*/*/*/Default.png
+examples/*/*/*/*/Icon.png
 
 #codeblocks files
-apps/*/*/*.layout
-apps/*/*/*.depend
-apps/*/*/bin/clickToLaunch*
-apps/*/*/bin/libs
-apps/*/*/obj
-apps/examples/*/*.cbp
-apps/examples/*/*.workspace
-apps/addonsExamples/*/*.cbp
-apps/addonsExamples/*/*.workspace
+examples/*/*/*.layout
+examples/*/*/*.depend
+examples/*/*/bin/clickToLaunch*
+examples/*/*/bin/libs
+examples/*/*/obj
+examples/*/*/*.cbp
+examples/*/*/*.workspace
+
+#vs files
+examples/*/*/*.sln
+examples/*/*/*.vcxproj
+examples/*/*/*.vcxproj.user
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
-apps/**
+apps/*
 
 #codeblocks OF lib files
 libs/openFrameworksCompiled/project/*/*.depend
@@ -65,8 +58,8 @@ addons/Debug Mac OS X
 addons/Release Mac OS X
 libs/openFrameworks/Debug Mac OS X
 libs/openFrameworks/Release Mac OS X
-apps/*/*/Debug Mac OS X
-apps/*/*/Release Mac OS X
+examples/*/*/Debug Mac OS X
+examples/*/*/Release Mac OS X
 xcuserdata
 project.xcworkspace
 .DS_Store
@@ -76,15 +69,18 @@ addons/Debug Linux
 addons/Release Linux
 libs/openFrameworks/Debug Linux
 libs/openFrameworks/Release Linux
-apps/*/*/Debug Linux
-apps/*/*/Release Linux
-apps/*/*/Debug Linux64
-apps/*/*/Release Linux64
-apps/examples/*/Makefile
-apps/examples/*/config.make
-apps/addonsExamples/*/Makefile
-apps/addonsExamples/*/config.make
+examples/*/*/Debug Linux
+examples/*/*/Release Linux
+examples/*/*/Debug Linux64
+examples/*/*/Release Linux64
+examples/*/*/Makefile
+examples/*/*/config.make
 *.pyc
+
+#eclipse
+examples/*/*/.cproject
+examples/*/*/.project
+examples/*/*/.settings
 
 #Android
 addons/Debug Android
@@ -94,13 +90,15 @@ libs/openFrameworks/Release Android
 libs/openFrameworks/Release
 libs/openFrameworks/Debug
 libs/openFrameworks/Release_arm7
-apps/*/*/Debug Android
-apps/*/*/Release Android
-apps/*/*/Debug
-apps/*/*/Release
-apps/*/*/Release_arm7
-apps/*/*/test link
-apps/*/*/obj
-apps/*/*/bin
+examples/*/*/Debug Android
+examples/*/*/Release Android
+examples/*/*/Debug
+examples/*/*/Release
+examples/*/*/Release_arm7
+examples/*/*/test link
+examples/*/*/obj
 .csettings
 paths.make
+!examples/android/*/.cproject
+!examples/android/*/.project
+!examples/android/*/.settings

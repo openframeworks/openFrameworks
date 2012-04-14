@@ -15,9 +15,9 @@ void testApp::demo3_setup() {
 	s.height			= kFBOHeight;
 	s.numColorbuffers	= 4;
 	s.numSamples		= useMSAA ? ofFbo::maxSamples() : 0;
-	fbo.setup(s);
+	fbo.allocate(s);
 	
-	shader.setup("", "shaders/mrt_frag.glsl");	// omit vertex shader
+	shader.load("", "shaders/mrt_frag.glsl");	// omit vertex shader
 }
 
 
@@ -45,7 +45,7 @@ void testApp::demo3_draw() {
 	// draw fbo textures to screen
 	glColor3f(1, 1, 1);
 	for(int i=0; i<fbo.getNumTextures(); i++) {
-		fbo.getTexture(i).draw(kPreviewX(i), kPreviewY(1), kPreviewWidth, kPreviewHeight);
+		fbo.getTextureReference(i).draw(kPreviewX(i), kPreviewY(1), kPreviewWidth, kPreviewHeight);
 	}
 	
 	glColor3f(0, 0, 0);

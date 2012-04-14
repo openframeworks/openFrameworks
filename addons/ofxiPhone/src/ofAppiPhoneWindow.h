@@ -44,9 +44,12 @@ public:
 	virtual void		setupOpenGL(int w, int h, int screenMode);
 	virtual void		initializeWindow();
 	virtual void		runAppViaInfiniteLoop(ofBaseApp * appPtr);
+    virtual void        startAppWithDelegate(string appDelegateClassName);
 	
 	virtual void		hideCursor() {};
 	virtual void		showCursor() {};
+    
+    virtual void        resetDimensions();
 	
 	virtual void		setWindowPosition(int x, int y) {};
 	virtual void		setWindowShape(int w, int h) {};

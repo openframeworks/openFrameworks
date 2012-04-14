@@ -425,3 +425,23 @@ bool ofxAndroidSoundPlayer::getIsPaused(){
 	return env->CallBooleanMethod(javaSoundPlayer,javaPausedMethod);
 
 }
+
+float ofxAndroidSoundPlayer::getVolume(){
+	if(!javaSoundPlayer){
+		ofLogError() << "cannot get volume on an unloaded sound player";
+		return 0;
+	}
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return 0;
+	}
+
+	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"getVolume","(V)F");
+	if(!javaVolumeMethod){
+		ofLog(OF_LOG_ERROR,"Failed to get the java getVolume for SoundPlayer");
+		return 0;
+	}
+
+	return env->CallFloatMethod(javaSoundPlayer,javaVolumeMethod);
+}

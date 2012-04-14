@@ -19,9 +19,8 @@ public:
 	void setCurrentFBO(ofFbo * fbo);
 
 	void update();
-
-	void draw(ofMesh & vertexData);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType);
+	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
+	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
@@ -74,6 +73,7 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setCircleResolution(int res);
+	void setSphereResolution(int res);
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
@@ -110,6 +110,7 @@ public:
 	void drawRectangle(float x, float y, float z, float w, float h);
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 	void drawCircle(float x, float y, float z, float radius);
+	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
@@ -129,6 +130,8 @@ private:
 	vector<ofPoint> triPoints;
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
+	
+	ofMesh sphereMesh;
 
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
