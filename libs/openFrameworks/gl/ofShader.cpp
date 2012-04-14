@@ -409,6 +409,12 @@ void ofShader::setUniform4fv(const char* name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
+void ofShader::setUniformMatrix4f(const char* name, const ofMatrix4x4 & m) {
+	if(bLoaded)
+		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, m.getPtr());
+}
+
+//--------------------------------------------------------------
 void ofShader::setAttribute1s(GLint location, short v1) {
 	if(bLoaded)
 		glVertexAttrib1s(location, v1);
