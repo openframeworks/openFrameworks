@@ -387,7 +387,9 @@ void ofxCvImage::draw(const ofRectangle & rect){
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::updateTexture(){
-	if( bUseTexture ) {
+	if(!bAllocated) {
+		ofLog(OF_LOG_WARNING, "in updateTexture, image is not allocated");	
+	} else if(bUseTexture ) {
 		if( bTextureDirty ) {
 			if(tex.getWidth() != width || tex.getHeight() != height) {
 				//ROI was changed
@@ -863,7 +865,9 @@ unsigned char*  ofxCvImage::getPixels(){
 
 //--------------------------------------------------------------------------------
 ofPixelsRef ofxCvImage::getPixelsRef(){
-	if(bPixelsDirty) {
+	if(!bAllocated) {
+		ofLog(OF_LOG_WARNING, "in getPixelsRef, image is not allocated");	
+	} else if(bRoiPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsImage();
 
 		//Note this possible introduces a bug where pixels doesn't contain the current image.
@@ -888,7 +892,9 @@ unsigned char*  ofxCvImage::getRoiPixels(){
 
 //--------------------------------------------------------------------------------
 ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
-	if(bRoiPixelsDirty) {
+	if(!bAllocated) {
+		ofLog(OF_LOG_WARNING, "in getRoiPixelsRef, image is not allocated");	
+	} else if(bRoiPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsRoiImage();
 		ofRectangle roi = getROI();
 		unsigned char * roi_ptr = (unsigned char*)cv8bit->imageData + ((int)(roi.y)*cv8bit->widthStep + (int)roi.x * cv8bit->nChannels);
