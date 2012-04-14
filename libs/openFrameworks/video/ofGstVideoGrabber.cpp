@@ -291,6 +291,9 @@ static void add_video_format (ofGstDevice &webcam_device,
 			if(new_framerate > curr_framerate) {
 				ofLog(OF_LOG_VERBOSE,"higher framerate replacing existing format\n");
 				webcam_device.video_formats[i] = video_format;
+			}else if(webcam_device.video_formats[i].mimetype != "video/x-raw-yuv" && webcam_device.video_formats[i].mimetype != "video/x-raw-rgb" && new_framerate == curr_framerate){
+				ofLog(OF_LOG_VERBOSE,"non compressed format with same framerate, replacing existing format\n");
+				webcam_device.video_formats[i] = video_format;
 			}else{
 				ofLog(OF_LOG_VERBOSE,"already added, skipping\n");
 			}
@@ -394,7 +397,7 @@ static void get_device_data (ofGstDevice &webcam_device, int desired_framerate)
 
 	// TODO: try to lower seconds,
     // Start the pipeline and wait for max. 10 seconds for it to start up
-	gst_element_set_state (pipeline, GST_STATE_PLAYING);
+	gst_element_set_state (pipeline, GST_STATE_READY);
 	GstStateChangeReturn ret = gst_element_get_state (pipeline, NULL, NULL, 10 * GST_SECOND);
 
 	// Check if any error messages were posted on the bus
@@ -508,16 +511,16 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 
 	const char * decodebin = "";
 	if(format.mimetype == "video/x-raw-bayer")
-		decodebin = "bayer2rgb !";
+		decodebin = "! bayer2rgb ";
 	else if(format.mimetype != "video/x-raw-yuv" && format.mimetype != "video/x-raw-rgb")
-		decodebin = "decodebin2 !";
+		decodebin = "! decodebin2 ";
 
-	const char * scale = "ffmpegcolorspace ";
-	if( w!=format.width || h!=format.height )	scale = "ffvideoscale method=2 !";
+	const char * scale = "! ffmpegcolorspace ";
+	if( w!=format.width || h!=format.height )	scale = "! ffvideoscale method=2 ";
 
 
-	string format_str_pipeline = string("%s name=video_source device=%s ! ") +
-								 "%s,width=%d,height=%d,framerate=%d/%d ! " +
+	string format_str_pipeline = "%s name=video_source device=%s ! "
+								 "%s,width=%d,height=%d,framerate=%d/%d "
 								 "%s %s ";
 
 	gchar* pipeline_string =g_strdup_printf (
@@ -529,8 +532,7 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 				      format.height,
 				      format.choosen_framerate.numerator,
 				      format.choosen_framerate.denominator,
-				      decodebin, scale,
-				      w,h);
+				      decodebin, scale);
 
 	int bpp;
 	switch(internalPixelFormat){

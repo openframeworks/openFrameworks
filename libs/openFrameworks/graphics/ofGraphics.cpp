@@ -38,10 +38,6 @@
 #endif
 
 
-//----------------------------------------------------------
-// static
-static bool		bUsingArbTex		= true;
-static bool		bUsingNormalizedTexCoords = false;
 
 //style stuff - new in 006
 static ofStyle currentStyle;
@@ -130,101 +126,6 @@ void ofEndSaveScreenAsPDF(){
 }
 
 #endif
-
-// opengl specifics
-
-bool ofGetUsingNormalizedTexCoords(){
-	return bUsingNormalizedTexCoords;
-}
-
-void ofEnableNormalizedTexCoords(){
-	bUsingNormalizedTexCoords = true;
-}
-
-void ofDisableNormalizedTexCoords(){
-	bUsingNormalizedTexCoords = false;
-}
-
-
-
-//***** add global functions to override texture settings
-//----------------------------------------------------------
-static bool bUseCustomTextureWrap = false;
-
-//----------------------------------------------------------
-void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT){
-	bUseCustomTextureWrap = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
-#ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	};
-#endif
-	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, wrapS);
-	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, wrapT);
-}
-
-//----------------------------------------------------------
-bool ofGetUsingCustomTextureWrap(){
-	return bUseCustomTextureWrap;
-}
-
-//----------------------------------------------------------
-void ofRestoreTextureWrap(){
-	bUseCustomTextureWrap = false;
-}
-
-
-
-static bool bUseCustomMinMagFilters = false;
-//----------------------------------------------------------
-void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
-	bUseCustomMinMagFilters = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
-#ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	};
-#endif
-	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
-}
-
-//----------------------------------------------------------
-bool ofGetUsingCustomMinMagFilters(){
-	return bUseCustomMinMagFilters;
-}
-
-//----------------------------------------------------------
-void ofRestoreMinMagFilters(){
-	bUseCustomMinMagFilters = false;
-}
-
-//***** global functions to override texture settings
-
-
-//----------------------------------------------------------
-bool ofGetUsingArbTex(){
-	return bUsingArbTex;
-}
-
-//----------------------------------------------------------
-void ofEnableArbTex(){
-	bUsingArbTex = true;
-}
-
-//----------------------------------------------------------
-void ofDisableArbTex(){
-	bUsingArbTex = false;
-}
-
-//end opengl specifics
-
-
-
-
-
-
 
 
 
@@ -428,6 +329,58 @@ void ofBackground(int r, int g, int b, int a){
 }
 
 //----------------------------------------------------------
+void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
+	float w = ofGetWidth(), h = ofGetHeight();
+	ofMesh mesh;
+	mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	if(mode == OF_GRADIENT_CIRCULAR) {
+		// this could be optimized by building a single mesh once, then copying
+		// it and just adding the colors whenever the function is called.
+		ofVec2f center(w / 2, h / 2);
+		mesh.addVertex(center);
+		mesh.addColor(start);
+		int n = 32; // circular gradient resolution
+		float angleBisector = TWO_PI / (n * 2);
+		float smallRadius = ofDist(0, 0, w / 2, h / 2);
+		float bigRadius = smallRadius / cos(angleBisector);
+		for(int i = 0; i <= n; i++) {
+			float theta = i * TWO_PI / n;
+			mesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
+			mesh.addColor(end);
+		}
+	} else if(mode == OF_GRADIENT_LINEAR) {
+		mesh.addVertex(ofVec2f(0, 0));
+		mesh.addVertex(ofVec2f(w, 0));
+		mesh.addVertex(ofVec2f(w, h));
+		mesh.addVertex(ofVec2f(0, h));
+		mesh.addColor(start);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+	} else if(mode == OF_GRADIENT_BAR) {
+		mesh.addVertex(ofVec2f(w / 2, h / 2));
+		mesh.addVertex(ofVec2f(0, h / 2));
+		mesh.addVertex(ofVec2f(0, 0));
+		mesh.addVertex(ofVec2f(w, 0));
+		mesh.addVertex(ofVec2f(w, h / 2));
+		mesh.addVertex(ofVec2f(w, h));
+		mesh.addVertex(ofVec2f(0, h));
+		mesh.addVertex(ofVec2f(0, h / 2));
+		mesh.addColor(start);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+		mesh.addColor(start);
+	}
+	glDepthMask(false);
+	mesh.draw();
+	glDepthMask(true);
+}
+
+//----------------------------------------------------------
 void ofSetBackgroundColor(int brightness, int alpha){
 	ofSetBackgroundColor(brightness, brightness, brightness, alpha);
 }
@@ -504,13 +457,14 @@ void ofSetCurveResolution(int res){
 
 //----------------------------------------
 void ofSetSphereResolution(int res){
+	renderer->setSphereResolution(res);
 	currentStyle.sphereResolution = res;
 }
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	currentStyle.circleResolution = res;
 	renderer->setCircleResolution(res);
+	currentStyle.circleResolution = res;
 }
 
 //----------------------------------------------------------
@@ -908,7 +862,10 @@ void ofEndShape(bool bClose){
 
 //----------------------------------------
 void ofSphere(float x, float y, float z, float radius){
-	ofSphere(ofPoint(x, y, z), radius);
+	ofPushMatrix();
+	ofTranslate(x, y, z);
+	ofSphere(radius);
+	ofPopMatrix();
 }
 
 //----------------------------------------
@@ -918,33 +875,22 @@ void ofSphere(float x, float y, float radius){
 
 //----------------------------------------
 void ofSphere(const ofPoint& position, float radius){
-	ofPushMatrix();
-	ofTranslate(position);
-	ofSphere(radius);
-	ofPopMatrix();
+	ofSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------
 void ofSphere(float radius){
-	// TODO: add an implementation using ofMesh
-#ifndef TARGET_OPENGLES
-	// this needs to be swapped out with non-glut code
-	// for good references see cinder's implementation from paul bourke:
-	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
-	// void drawSphere( const Vec3f &center, float radius, int segments )
-	// and processing's implementation of icospheres:
-	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
-	// public void sphere(float r)
-	
+	renderer->drawSphere(0,0,0,radius);
+	/*
 	ofPushMatrix();
 	ofRotateX(90);
-	if(ofGetStyle().bFill){
+	if(ofGetStyle().bFill) {
 		glutSolidSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	} else {
 		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	}
 	ofPopMatrix();
-#endif
+	 */
 }
 
 //----------------------------------------
@@ -1022,7 +968,7 @@ void ofBox(float size){
 		};
 		vertexData.addIndices(indices,36);
 		vertexData.setMode(OF_PRIMITIVE_TRIANGLES);
-		renderer->draw(vertexData);
+		renderer->draw(vertexData,vertexData.usingColors(),vertexData.usingTextures(),vertexData.usingNormals());
 	} else {
 		ofVec3f vertices[] = {
 			ofVec3f(+h,+h,+h),
@@ -1057,12 +1003,46 @@ void ofBox(float size){
 		vertexData.addIndices(indices,24);
 
 		vertexData.setMode(OF_PRIMITIVE_LINES);
-		renderer->draw(vertexData);
+		renderer->draw(vertexData, vertexData.usingColors(),vertexData.usingTextures(),vertexData.usingNormals());
 	}
 
 
 	ofPopMatrix();
 }
+
+//----------------------------------------
+void ofCone(float x, float y, float z, float radius, float height) {
+	ofCone(ofPoint(x, y, z), radius, height);
+}
+
+//----------------------------------------
+void ofCone(float x, float y, float radius, float height) {
+	ofCone(x, y, 0, radius, height);
+}
+
+//----------------------------------------
+void ofCone(const ofPoint& position, float radius, float height) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofCone(radius, height);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+void ofCone(float radius, float height) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	// see ofSphere above
+	
+	if(ofGetStyle().bFill) {
+		glutSolidCone(radius, height, currentStyle.circleResolution, 1);
+	} else {
+		glutWireCone(radius, height, currentStyle.circleResolution, 1);
+	}
+#endif
+}
+
 
 // end 3d primitives
 //--------------------------------------------------
@@ -1081,6 +1061,49 @@ void ofDrawBitmapString(string textString, float x, float y){
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
 	renderer->drawString(textString,x,y,z,currentStyle.drawBitmapMode);
+}
+//--------------------------------------------------
+void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background, const ofColor& foreground) {
+	ofDrawBitmapStringHighlight(text, position.x, position.y, background, foreground);
+}
+//--------------------------------------------------
+void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
+	vector<string> lines = ofSplitString(text, "\n");
+	int textLength = 0;
+	for(int i = 0; i < lines.size(); i++) {
+		// tabs are not rendered
+		int tabs = count(lines[i].begin(), lines[i].end(), '\t');
+		int curLength = lines[i].length() - tabs;
+		if(curLength > textLength) {
+			textLength = curLength;
+		}
+	}
+	
+	int padding = 4;
+	int fontSize = 8;
+	float leading = 1.7;
+	int height = lines.size() * fontSize * leading - 1;
+	int width = textLength * fontSize;
+	
+	ofPushStyle();
+	glDepthMask(false);
+	ofSetColor(background);
+	ofFill();
+	ofPushMatrix();
+	ofTranslate(x, y, 0);
+	if(currentStyle.drawBitmapMode == OF_BITMAPMODE_MODEL) {
+		ofScale(1, -1, 0);
+	}
+	ofTranslate(-(padding), -(padding + fontSize + 2));
+	ofRect(0, 0, width + 2 * padding, height + 2 * padding);
+	ofPopMatrix();
+	ofSetColor(foreground);
+	ofNoFill();
+	ofPushMatrix();
+	ofDrawBitmapString(text, x, y);
+	ofPopMatrix();
+	glDepthMask(true);
+	ofPopStyle();
 }
 
 

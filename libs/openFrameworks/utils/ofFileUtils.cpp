@@ -1,5 +1,15 @@
 #include "ofFileUtils.h"
+#ifndef TARGET_WIN32
+#include <pwd.h>
+#endif
+
 #include "ofUtils.h"
+
+
+#ifdef TARGET_OSX
+    #include <mach-o/dyld.h>	/* _NSGetExecutablePath */
+    #include <limits.h>		/* PATH_MAX */
+#endif
 
 
 //------------------------------------------------------------------------------------------------------------
@@ -11,6 +21,7 @@
 //--------------------------------------------------
 ofBuffer::ofBuffer(){
 	nextLinePos = 0;
+	buffer.resize(1);
 }
 
 //--------------------------------------------------
@@ -74,7 +85,7 @@ void ofBuffer::set(const char * _buffer, int _size){
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.clear();
+	buffer.resize(1);
 	nextLinePos = 0;
 }
 
@@ -204,7 +215,7 @@ ofFile::ofFile(){
 
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(string path,Mode mode, bool binary){
-	open(path,mode);
+	open(path,mode,binary);
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -438,9 +449,9 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
-			ofFile::removeFile(path);
+	if( ofFile::doesFileExist(path,bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(path,bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::copyTo dest file already exists, use bool overwrite to overwrite dest file");
 			return false;
@@ -466,9 +477,9 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
-			ofFile::removeFile(path);
+	if( ofFile::doesFileExist(path,bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(path,bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::moveTo dest file already exists, use bool overwrite to overwrite dest file");
 			return false;
@@ -494,9 +505,9 @@ bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
-			ofFile::removeFile(path);
+	if( ofFile::doesFileExist(path,bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(path,bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::renameTo dest file already exists, use bool overwrite to overwrite dest file");
 			return false;
@@ -572,13 +583,14 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 	if( bRelativeToData ) pathSrc = ofToDataPath(pathSrc);
 	if( bRelativeToData ) pathDst = ofToDataPath(pathDst);
 
-	if( !ofFile::doesFileExist(pathSrc) ){
+	if( !ofFile::doesFileExist(pathSrc, bRelativeToData) ){
+		ofLog(OF_LOG_ERROR, "ofFile::copyFromTo source file/folder doesn't exist");
 		return false;
 	}
 
-	if( overwrite ){
-		if( ofFile::doesFileExist(pathDst) ){
-			ofFile::removeFile(pathDst);
+	if( ofFile::doesFileExist(pathDst, bRelativeToData) ){
+        if( overwrite ){
+            ofFile::removeFile(pathDst, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::copyFromTo destination file/folder exists, use bool overwrite if you want to overwrite destination file/folder");
 			return false;
@@ -601,13 +613,13 @@ bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bo
 	if( bRelativeToData ) pathSrc = ofToDataPath(pathSrc);
 	if( bRelativeToData ) pathDst = ofToDataPath(pathDst);
 
-	if( !ofFile::doesFileExist(pathSrc) ){
+	if( !ofFile::doesFileExist(pathSrc, bRelativeToData) ){
 		return false;
 	}
 
-	if( overwrite ){
-		if( ofFile::doesFileExist(pathDst) ){
-			ofFile::removeFile(pathDst);
+	if(  ofFile::doesFileExist(pathDst, bRelativeToData) ){
+		if( overwrite ){
+			ofFile::removeFile(pathDst, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::moveFromTo destination file/folder exists, use bool overwrite if you want to overwrite destination file/folder");
 			return false;
@@ -763,11 +775,11 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 	}
 	
 	if( bRelativeToData ){
-		path = ofToDataPath(path);
+		path = ofToDataPath(path, bRelativeToData);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
-			ofDirectory::removeDirectory(path, true);
+	if( ofDirectory::doesDirectoryExist(path, bRelativeToData) ){
+		if( overwrite ){
+			ofDirectory::removeDirectory(path, true, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::copyTo dest folder already exists, use bool overwrite to overwrite dest folder");
 			return false;
@@ -791,11 +803,11 @@ bool ofDirectory::moveTo(string path,  bool bRelativeToData, bool overwrite){
 	}
 	
 	if( bRelativeToData ){
-		path = ofToDataPath(path);
+		path = ofToDataPath(path, bRelativeToData);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
-			ofDirectory::removeDirectory(path, true);
+	if( ofDirectory::doesDirectoryExist(path, bRelativeToData) ){
+		if( overwrite ){
+			ofDirectory::removeDirectory(path, true, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::moveTo dest folder already exists, use bool overwrite to overwrite dest folder");
 			return false;
@@ -821,9 +833,9 @@ bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
-			ofDirectory::removeDirectory(path, true);
+	if( ofDirectory::doesDirectoryExist(path, bRelativeToData) ){
+		if( overwrite ){
+			ofDirectory::removeDirectory(path, true, bRelativeToData);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::renameTo dest folder already exists, use bool overwrite to overwrite dest folder");
 			return false;
@@ -1184,6 +1196,54 @@ bool ofFilePath::isAbsolute(string path) {
  
  //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
+#ifdef TARGET_OSX
+    char pathOSX[FILENAME_MAX];
+    uint32_t size = sizeof(pathOSX);
+    if (_NSGetExecutablePath(pathOSX, &size) != 0)
+        ofLogError() << "buffer too small; need size " <<  size;
+    string pathOSXStr = string(pathOSX);
+    string pathWithoutApp;
+    size_t found = pathOSXStr.find_last_of("/");
+    pathWithoutApp = pathOSXStr.substr(0,found);
+    return pathWithoutApp;
+#else
 	return Path::current();
+#endif
 }
 
+string ofFilePath::join(string path1,string path2){
+	return removeTrailingSlash(path1) + addLeadingSlash(path2);
+}
+
+string ofFilePath::getCurrentExePath(){
+#if defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+	char buff[FILENAME_MAX];
+	readlink("/proc/self/exe",buff,FILENAME_MAX);
+	cout << buff << endl;
+	return buff;
+#elif defined(TARGET_OSX)
+	char path[FILENAME_MAX];
+	uint32_t size = sizeof(path);
+	if (_NSGetExecutablePath(path, &size) == 0)
+        ofLogError() << "buffer too small; need size " <<  size;
+	return path;
+#elif defined(TARGET_WIN32)
+	ofLogError() << "getCurrentExePath() not implemented";
+#endif
+	return "";
+}
+
+string ofFilePath::getCurrentExeDir(){
+	return getEnclosingDirectory(getCurrentExePath(),false);
+}
+
+string ofFilePath::getUserHomeDir(){
+#ifndef TARGET_WIN32
+	struct passwd *pw = getpwuid(getuid());
+
+	return pw->pw_dir;
+#else
+	ofLogError() << "getUserHomeDir() not implemented";
+#endif
+	return "";
+}

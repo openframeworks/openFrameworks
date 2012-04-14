@@ -140,7 +140,7 @@ void ofSoundPlayer::setPosition(float pct){
 	if( player != NULL ){
 		player->setPosition(pct);
 	}
-} 
+}
 
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPositionMS(int ms){
@@ -154,7 +154,7 @@ float ofSoundPlayer::getPosition(){
 	if( player != NULL ){
 		return player->getPosition();
 	} else {
-		return 0; 
+		return 0;
 	}
 }
 
@@ -172,7 +172,7 @@ bool ofSoundPlayer::getIsPlaying(){
 	if( player != NULL ){
 		return player->getIsPlaying();
 	} else {
-		return false; 
+		return false;
 	}
 }
 
@@ -181,7 +181,7 @@ float ofSoundPlayer::getSpeed(){
 	if( player != NULL ){
 		return player->getSpeed();
 	} else {
-		return 0; 
+		return 0;
 	}
 }
 
@@ -190,6 +190,13 @@ float ofSoundPlayer::getPan(){
 	if( player != NULL ){
 		return player->getPan();
 	} else {
-		return 0; 
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------
+float ofSoundPlayer::getVolume(){
+	if( player != NULL ){
+		return player->getVolume();
 	}
 }

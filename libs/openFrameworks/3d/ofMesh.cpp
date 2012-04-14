@@ -9,6 +9,10 @@ ofMesh::ofMesh(){
 	bNormalsChanged = false;
 	bTexCoordsChanged = false;
 	bIndicesChanged = false;
+    useColors = true;
+    useTextures = true;
+    useNormals = true;
+
 }
 
 //--------------------------------------------------------------
@@ -23,17 +27,27 @@ ofMesh::~ofMesh(){
 
 //--------------------------------------------------------------
 void ofMesh::clear(){
-	bVertsChanged = true;
-	bColorsChanged = true;
-	bNormalsChanged = true;
-	bTexCoordsChanged = true;
-	bIndicesChanged = true;
-	
-	vertices.clear();
-	colors.clear();
-	normals.clear();
-	texCoords.clear();
-	indices.clear();
+	if(!vertices.empty()){
+		bVertsChanged = true;
+		vertices.clear();
+	}
+	if(!colors.empty()){
+		bColorsChanged = true;
+		colors.clear();
+	}
+	if(!normals.empty()){
+		bNormalsChanged = true;
+		normals.clear();
+	}
+	if(!texCoords.empty()){
+		bTexCoordsChanged = true;
+		texCoords.clear();
+	}
+	if(!indices.empty()){
+		bIndicesChanged = true;
+		indices.clear();
+	}
+
 }
 
 //--------------------------------------------------------------
@@ -215,6 +229,57 @@ void ofMesh::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType ind
     addIndex(index1);
     addIndex(index2);
     addIndex(index3);
+}
+
+//REMOVERS
+//--------------------------------------------------------------
+void ofMesh::removeVertex(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove vertex out of range of this mesh. Taking no action.");
+  }else{
+    vertices.erase(vertices.begin() + index);
+    bVertsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeNormal(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove normal out of range of this mesh. Taking no action.");
+  }else{
+    normals.erase(normals.begin() + index);
+    bNormalsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeColor(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove color out of range of this mesh. Taking no action.");
+  }else{
+    colors.erase(colors.begin() + index);
+    bColorsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeTexCoord(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove texCoord out of range of this mesh. Taking no action.");
+  }else{
+    texCoords.erase(texCoords.begin() + index);
+    bTexCoordsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeIndex(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove index out of range of this mesh. Taking no action.");
+  }else{
+    indices.erase(indices.begin() + index);
+    bIndicesChanged = true;
+  }
 }
 
 
@@ -468,12 +533,12 @@ ofVec3f ofMesh::getCentroid() const {
 		return ofPoint(0, 0, 0);
 	}
 
-	ofVec3f runningAverage = vertices[0];
-	for(unsigned long int v = 1; v < (unsigned long int)vertices.size(); v++){
-		unsigned long int contributingVertexCount = v + 1;
-		runningAverage = runningAverage * float(v) / float(contributingVertexCount) + vertices[v] * 1.0 / float(contributingVertexCount);
+	ofVec3f sum;
+	for(unsigned int i = 0; i < vertices.size(); i++) {
+		sum += vertices[i];
 	}
-	return runningAverage;
+	sum /= vertices.size();
+	return sum;
 }
 
 //SETTERS
@@ -583,6 +648,383 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
-	ofGetCurrentRenderer()->draw(*this,renderType);
+	ofGetCurrentRenderer()->draw(*this,renderType,useColors,useTextures,useNormals);
 }
 
+//--------------------------------------------------------------
+void ofMesh::enableColors(){
+    useColors = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::enableTextures(){
+    useTextures = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::enableNormals(){
+    useNormals = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::disableColors(){
+    useColors = false;
+}
+
+//--------------------------------------------------------------
+void ofMesh::disableTextures(){
+    useTextures = false;
+}
+
+//--------------------------------------------------------------
+void ofMesh::disableNormals(){
+    useNormals = false;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingColors(){
+    return useColors;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingTextures(){
+    return useTextures;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingNormals(){
+    return useNormals;
+}
+
+
+//--------------------------------------------------------------
+void ofMesh::load(string path){
+	ofFile is(path, ofFile::ReadOnly);
+	ofMesh& data = *this;
+
+	string line;
+	string error;
+	ofBuffer buffer(is);
+	ofMesh backup = data;
+
+	int orderVertices=-1;
+	int orderIndices=-1;
+	int orderNormals=-1;
+
+	int vertexCoordsFound=0;
+	int colorCompsFound=0;
+	int texCoordsFound=0;
+	int normalsCoordsFound=0;
+
+	int currentVertex = 0;
+	int currentNormal = 0;
+	int currentFace = 0;
+
+	enum State{
+		Header,
+		VertexDef,
+		NormalDef,
+		FaceDef,
+		Vertices,
+		Normals,
+		Faces
+	};
+
+	data.clear();
+	State state = Header;
+
+	int lineNum = 0;
+
+	line = buffer.getFirstLine();
+	lineNum++;
+	if(line!="ply"){
+		error = "wrong format, expecting 'ply'";
+		goto clean;
+	}
+
+	line = buffer.getNextLine();
+	lineNum++;
+	if(line!="format ascii 1.0"){
+		error = "wrong format, expecting 'format ascii 1.0'";
+		goto clean;
+	}
+
+	while(!buffer.isLastLine()){
+		line = buffer.getNextLine();
+		lineNum++;
+		if(line.find("comment")==0){
+			continue;
+		}
+
+		if((state==Header || state==NormalDef || state==FaceDef) && line.find("element vertex")==0){
+			state = VertexDef;
+			orderVertices = MAX(orderIndices, orderNormals)+1;
+			data.getVertices().resize(ofToInt(line.substr(15)));
+			continue;
+		}
+
+		if((state==Header || state==VertexDef || state==FaceDef) && line.find("element normal")==0){
+			state = NormalDef;
+			orderNormals = MAX(orderIndices, orderVertices)+1;
+			data.getNormals().resize(ofToInt(line.substr(15)));
+			continue;
+		}
+
+		if((state==Header || state==NormalDef || state==VertexDef) && line.find("element face")==0){
+			state = FaceDef;
+			orderIndices = MAX(orderVertices, orderNormals)+1;
+			data.getIndices().resize(ofToInt(line.substr(13))*3);
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property float x")==0 || line.find("property float y")==0 || line.find("property float z")==0)){
+			vertexCoordsFound++;
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b")==0 || line.find("property float a")==0)){
+			colorCompsFound++;
+			data.getColors().resize(data.getVertices().size());
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property float u")==0 || line.find("property float v")==0)){
+			texCoordsFound++;
+			data.getTexCoords().resize(data.getVertices().size());
+			continue;
+		}
+
+		if(state==NormalDef && (line.find("property float x")==0 || line.find("property float y")==0 || line.find("property float z")==0)){
+			normalsCoordsFound++;
+			continue;
+		}
+
+		if(state==FaceDef && line.find("property list")!=0 && line!="end_header"){
+			error = "wrong face definition";
+			goto clean;
+		}
+
+		if(line=="end_header"){
+			if(data.hasColors() && colorCompsFound!=3 && colorCompsFound!=4){
+				error =  "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
+				goto clean;
+			}
+			if(data.hasNormals() && colorCompsFound!=3 && colorCompsFound!=4){
+				error = "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
+				goto clean;
+			}
+			if(!data.hasVertices()){
+				ofLogWarning() << "mesh without vertices";
+			}
+			if(orderVertices==-1) orderVertices=9999;
+			if(orderNormals==-1) orderNormals=9999;
+			if(orderIndices==-1) orderIndices=9999;
+
+			if(orderVertices<orderNormals && orderVertices<orderIndices){
+				state = Vertices;
+			}else if(orderNormals<orderVertices && orderNormals<orderIndices){
+				state = Normals;
+			}else if(orderIndices<orderVertices && orderIndices<orderNormals){
+				state = Faces;
+			}
+			continue;
+		}
+
+		if(state==Vertices){
+			stringstream sline;
+			sline.str(line);
+			ofVec3f v;
+			sline >> v.x;
+			sline >> v.y;
+			if(vertexCoordsFound>2) sline >> v.z;
+			data.getVertices()[currentVertex] = v;
+
+			if(colorCompsFound>0){
+				ofColor c;
+				sline >> c.r;
+				sline >> c.g;
+				sline >> c.b;
+				if(colorCompsFound>3) sline >> c.a;
+				data.getColors()[currentVertex] = c;
+			}
+
+			if(texCoordsFound>0){
+				ofVec2f uv;
+				sline >> uv.x;
+				sline >> uv.y;
+				data.getTexCoords()[currentVertex] = uv;
+			}
+			currentVertex++;
+			if(currentVertex==data.getNumVertices()){
+				if(orderNormals<orderIndices){
+					state = Normals;
+				}else{
+					state = Faces;
+				}
+			}
+			continue;
+		}
+
+		if(state==Normals){
+			stringstream sline;
+			sline.str(line);
+			ofVec3f v;
+			sline >> v.x;
+			sline >> v.y;
+			sline >> v.z;
+			data.getNormals()[currentNormal] = v;
+
+			currentNormal++;
+			if(currentNormal==data.getNumNormals()){
+				if(orderVertices<orderIndices){
+					state = Vertices;
+				}else{
+					state = Faces;
+				}
+			}
+			continue;
+		}
+
+		if(state==Faces){
+			stringstream sline;
+			sline.str(line);
+			int numV;
+			sline >> numV;
+			if(numV!=3){
+				error = "face not a triangle";
+				goto clean;
+			}
+			int i;
+			sline >> i;
+			data.getIndices()[currentFace*3] = i;
+			sline >> i;
+			data.getIndices()[currentFace*3+1] = i;
+			sline >> i;
+			data.getIndices()[currentFace*3+2] = i;
+
+			currentFace++;
+			if(currentFace==data.getNumIndices()/3){
+				if(orderVertices<orderNormals){
+					state = Vertices;
+				}else{
+					state = Normals;
+				}
+			}
+			continue;
+		}
+	}
+
+
+	return;
+	clean:
+	ofLogError() << lineNum << ":" << error;
+	ofLogError() << "\"" << line << "\"";
+	data = backup;
+}
+
+void ofMesh::save(string path, bool useBinary){
+	ofFile os(path, ofFile::WriteOnly);
+	ofMesh& data = *this;
+
+	os << "ply" << endl;
+	if(useBinary) {
+		os << "format binary_little_endian 1.0" << endl;
+	} else {
+		os << "format ascii 1.0" << endl;
+	}
+
+	if(data.getNumVertices()){
+		os << "element vertex " << data.getNumVertices() << endl;
+		os << "property float x" << endl;
+		os << "property float y" << endl;
+		os << "property float z" << endl;
+		if(data.getNumColors()){
+			os << "property uchar red" << endl;
+			os << "property uchar green" << endl;
+			os << "property uchar blue" << endl;
+			os << "property uchar alpha" << endl;
+		}
+		if(data.getNumTexCoords()){
+			os << "property float u" << endl;
+			os << "property float v" << endl;
+		}
+		if(data.getNumNormals()){
+			os << "property float nx" << endl;
+			os << "property float ny" << endl;
+			os << "property float nz" << endl;
+		}
+	}
+
+	unsigned char faceSize = 3;
+	if(data.getNumIndices()){
+		os << "element face " << data.getNumIndices() / faceSize << endl;
+		os << "property list uchar int vertex_indices" << endl;
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
+		os << "element face " << data.getNumVertices() / faceSize << endl;
+		os << "property list uchar int vertex_indices" << endl;
+	}
+
+	os << "end_header" << endl;
+
+	for(int i = 0; i < data.getNumVertices(); i++){
+		if(useBinary) {
+			os.write((char*) &data.getVertices()[i], sizeof(ofVec3f));
+		} else {
+			os << data.getVertex(i).x << " " << data.getVertex(i).y << " " << data.getVertex(i).z;
+		}
+		if(data.getNumColors()){
+			// VCG lib / MeshLab don't support float colors, so we have to cast
+			ofColor cur = data.getColors()[i];
+			if(useBinary) {
+				os.write((char*) &cur, sizeof(ofColor));
+			} else {
+				os << " " << (int) cur.r << " " << (int) cur.g << " " << (int) cur.b << " " << (int) cur.a;
+			}
+		}
+		if(data.getNumTexCoords()){
+			if(useBinary) {
+				os.write((char*) &data.getTexCoords()[i], sizeof(ofVec2f));
+			} else {
+				os << " " << data.getTexCoord(i).x << " " << data.getTexCoord(i).y;
+			}
+		}
+		if(data.getNumNormals()){
+			if(useBinary) {
+				os.write((char*) &data.getNormals()[i], sizeof(ofVec3f));
+			} else {
+				os << " " << data.getNormal(i).x << " " << data.getNormal(i).y << " " << data.getNormal(i).z;
+			}
+		}
+		if(!useBinary) {
+			os << endl;
+		}
+	}
+
+	if(data.getNumIndices()) {
+		for(int i = 0; i < data.getNumIndices(); i += faceSize) {
+			if(useBinary) {
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				for(int j = 0; j < faceSize; j++) {
+					int curIndex = data.getIndex(i + j);
+					os.write((char*) &curIndex, sizeof(int));
+				}
+			} else {
+				os << (int) faceSize << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
+			}
+		}
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
+		for(int i = 0; i < data.getNumVertices(); i += faceSize) {
+			int indices[] = {i, i + 1, i + 2};
+			if(useBinary) {
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				for(int j = 0; j < faceSize; j++) {
+					os.write((char*) &indices[j], sizeof(int));
+				}
+			} else {
+				os << (int) faceSize << " " << indices[0] << " " << indices[1] << " " << indices[2] << endl;
+			}
+		}
+	}
+
+	//TODO: add index generation for other OF_PRIMITIVE cases
+}
