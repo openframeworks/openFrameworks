@@ -29,5 +29,6 @@
 #include "ofxCv/ContourFinder.h"
 #include "ofxCv/Tracker.h"
 #include "ofxCv/RunningBackground.h"
+#include "ofxCv/Flow.h"
 
 // <3 kyle
