@@ -10,7 +10,6 @@ namespace ofxCv {
 		this->cameraMatrix = cameraMatrix;
 		this->imageSize = imageSize;
 		this->sensorSize = sensorSize;
-		
 		calibrationMatrixValues(cameraMatrix, imageSize, sensorSize.width, sensorSize.height,
 														fov.x, fov.y, focalLength, principalPoint, aspectRatio);
 
@@ -67,17 +66,17 @@ namespace ofxCv {
 	}
 	
 	Calibration::Calibration() :
+		patternType(CHESSBOARD),
 		patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
 		subpixelSize(cv::Size(11,11)),
 		fillFrame(true),
-		_isReady(false),
-		reprojectionError(0.0)
-	{
+		ready(false),
+		reprojectionError(0) {
 		
 	}
 	
 	void Calibration::save(string filename, bool absolute) const {
-		if(!_isReady){
+		if(!ready){
 			ofLog(OF_LOG_ERROR, "Calibration::save() failed, because your calibration isn't ready yet!");
 		}
 		FileStorage fs(ofToDataPath(filename, absolute), FileStorage::WRITE);
@@ -93,11 +92,7 @@ namespace ofxCv {
 		fs << "reprojectionError" << reprojectionError;
 		fs << "features" << "[";
 		for(int i = 0; i < imagePoints.size(); i++) {
-			fs << "{:" << "points" << "[:"; 
-			for( int j = 0; j < imagePoints[i].size(); j++ ){
-				fs << imagePoints[i][j].x << imagePoints[i][j].y;
-			}
-			fs << "]" << "}";
+			fs << "[:" << imagePoints[i] << "]";
 		}
 		fs << "]";
 	}
@@ -107,7 +102,6 @@ namespace ofxCv {
 		FileStorage fs(ofToDataPath(filename, absolute), FileStorage::READ);
 		cv::Size imageSize, sensorSize;
 		Mat cameraMatrix;
-		FileNode features;
 		fs["cameraMatrix"] >> cameraMatrix;
 		fs["imageSize_width"] >> imageSize.width;
 		fs["imageSize_height"] >> imageSize.height;
@@ -115,23 +109,18 @@ namespace ofxCv {
 		fs["sensorSize_height"] >> sensorSize.height;
 		fs["distCoeffs"] >> distCoeffs;
 		fs["reprojectionError"] >> reprojectionError;
-		vector<float> points;		
-		features = fs["features"];
-		int idx = 0;
-
+		FileNode features = fs["features"];
 		for(FileNodeIterator it = features.begin(); it != features.end(); it++) {
-			idx++;
-			(*it)["points"] >> points;
-			vector<Point2f> featureset;
-			for(int i = 0; i < points.size(); i+=2){
-				featureset.push_back(Point2f(points[i], points[i+1]));
-			}
-			imagePoints.push_back(featureset); // technique 1
+			vector<Point2f> cur;
+			(*it) >> cur;
+			imagePoints.push_back(cur);
 		}
 		addedImageSize = imageSize;
-		
 		distortedIntrinsics.setup(cameraMatrix, imageSize, sensorSize);
 		updateUndistortion();
+	}
+	void Calibration::setPatternType(CalibrationPattern patternType) {
+		this->patternType = patternType;
 	}
 	void Calibration::setPatternSize(int xCount, int yCount) {
 		patternSize = cv::Size(xCount, yCount);
@@ -160,29 +149,33 @@ namespace ofxCv {
 			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your patternSize is wrong or the image has poor lighting?");
 		return found;
 	}
-	bool Calibration::findBoard(Mat img, vector<Point2f> &pointBuf, bool refine) {
-		// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
-		int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
-		bool found = findChessboardCorners(img, patternSize, pointBuf, chessFlags);
-		
-		// improve corner accuracy
-		if(found) {
-			if(img.type() != CV_8UC1) {
-				cvtColor(img, grayMat, CV_RGB2GRAY);
-			} else {
-				grayMat = img;
+	bool Calibration::findBoard(Mat img, vector<Point2f>& pointBuf, bool refine) {
+		bool found;
+		if(patternType == CHESSBOARD) {
+			// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
+			int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
+			found = findChessboardCorners(img, patternSize, pointBuf, chessFlags);
+			
+			// improve corner accuracy
+			if(found) {
+				if(img.type() != CV_8UC1) {
+					cvtColor(img, grayMat, CV_RGB2GRAY);
+				} else {
+					grayMat = img;
+				}
+				
+				if(refine) {
+					// the 11x11 dictates the smallest image space square size allowed
+					// in other words, if your smallest square is 11x11 pixels, then set this to 11x11
+					cornerSubPix(grayMat, pointBuf, subpixelSize,  cv::Size(-1,-1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
+				}
 			}
-			
-			// the subpixelSize dictates the smallest image space square size allowed
-			// in other words, if your smallest square is 11x11 pixels, then set this to 11x11
-			cornerSubPix(grayMat, pointBuf, subpixelSize,  cv::Size(-1,-1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
-			
-			return true;
 		} else {
-			return false;
+			int flags = (patternType == CIRCLES_GRID ? CALIB_CB_SYMMETRIC_GRID : CALIB_CB_ASYMMETRIC_GRID); // + CALIB_CB_CLUSTERING
+			found = findCirclesGrid(img, patternSize, pointBuf, flags);
 		}
+		return found;
 	}
-	
 	bool Calibration::clean(float minReprojectionError) {
 		int removed = 0;
 		for(int i = size() - 1; i >= 0; i--) {
@@ -213,9 +206,9 @@ namespace ofxCv {
 		float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
 		ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
 
-		_isReady = checkRange(cameraMatrix) && checkRange(distCoeffs);
+		ready = checkRange(cameraMatrix) && checkRange(distCoeffs);
 	
-		if(!_isReady) {
+		if(!ready) {
 			ofLog(OF_LOG_ERROR, "Calibration::calibrate() failed to calibrate the camera");
 		}
 		
@@ -223,11 +216,11 @@ namespace ofxCv {
 		updateReprojectionError();
 		updateUndistortion();
 		
-		return _isReady;
+		return ready;
 	}
 	
 	bool Calibration::isReady(){
-		return _isReady;
+		return ready;
 	}
 	
 	bool Calibration::calibrateFromDirectory(string directory) {
@@ -242,44 +235,33 @@ namespace ofxCv {
 		}
 		return calibrate();
 	}
-	void Calibration::undistort(Mat img) {
+	void Calibration::undistort(Mat img, int interpolationMode) {
 		img.copyTo(undistortBuffer);
-		undistort(undistortBuffer, img);
+		undistort(undistortBuffer, img, interpolationMode);
 	}
-	void Calibration::undistort(Mat src, Mat dst) {
-		remap(src, dst, undistortMapX, undistortMapY, INTER_LINEAR);
+	void Calibration::undistort(Mat src, Mat dst, int interpolationMode) {
+		remap(src, dst, undistortMapX, undistortMapY, interpolationMode);
 	}
 	
-	ofVec2f Calibration::undistort(ofVec2f &src)
-	{
+	ofVec2f Calibration::undistort(ofVec2f& src) const {
 		ofVec2f dst;
-		
 		Mat matSrc = Mat(1, 1, CV_32FC2, &src.x);
 		Mat matDst = Mat(1, 1, CV_32FC2, &dst.x);;
-		
 		undistortPoints(matSrc, matDst, distortedIntrinsics.getCameraMatrix(), distCoeffs);
-		
 		return dst;
-		
 	}
 	
-	void Calibration::undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst)
-	{
-		int nPoints = src.size();
-		
-		if (dst.size() != nPoints)
-			dst.resize(src.size());
-		
-		Mat matSrc = Mat(nPoints, 1, CV_32FC2, &src[0].x);
-		Mat matDst = Mat(nPoints, 1, CV_32FC2, &dst[0].x);
-		
+	void Calibration::undistort(vector<ofVec2f>& src, vector<ofVec2f>& dst) const {
+		int n = src.size();
+		dst.resize(n);
+		Mat matSrc = Mat(n, 1, CV_32FC2, &src[0].x);
+		Mat matDst = Mat(n, 1, CV_32FC2, &dst[0].x);
 		undistortPoints(matSrc, matDst, distortedIntrinsics.getCameraMatrix(), distCoeffs);
-		
 	}
 	
 	bool Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
 		//if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
-		if(!_isReady) {
+		if(!ready) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
 			return false;
 		}
@@ -337,6 +319,28 @@ namespace ofxCv {
 		}
 		ofPopStyle();
 	}
+	// this won't work until undistort() is in pixel coordinates
+	/*
+	void Calibration::drawUndistortion() const {
+		vector<ofVec2f> src, dst;
+		cv::Point2i divisions(32, 24);
+		for(int y = 0; y < divisions.y; y++) {
+			for(int x = 0; x < divisions.x; x++) {
+				src.push_back(ofVec2f(
+					ofMap(x, -1, divisions.x, 0, addedImageSize.width),
+					ofMap(y, -1, divisions.y, 0, addedImageSize.height)));
+			}
+		}
+		undistort(src, dst);
+		ofMesh mesh;
+		mesh.setMode(OF_PRIMITIVE_LINES);
+		for(int i = 0; i < src.size(); i++) {
+			mesh.addVertex(src[i]);
+			mesh.addVertex(dst[i]);
+		}
+		mesh.draw();
+	}
+	*/
 	void Calibration::draw3d() const {
 		for(int i = 0; i < size(); i++) {
 			draw3d(i);
@@ -372,7 +376,7 @@ namespace ofxCv {
 		ofPopStyle();
 	}
 	void Calibration::updateObjectPoints() {
-		vector<Point3f> points = createObjectPoints(patternSize, squareSize, CHESSBOARD);
+		vector<Point3f> points = createObjectPoints(patternSize, squareSize, patternType);
 		objectPoints.resize(imagePoints.size(), points);
 	}
 	void Calibration::updateReprojectionError() {

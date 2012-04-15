@@ -14,9 +14,16 @@ void testApp::setup() {
 	FileStorage settings(ofToDataPath("settings.yml"), FileStorage::READ);
 	if(settings.isOpened()) {
 		int xCount = settings["xCount"], yCount = settings["yCount"];
-		float squareSize = settings["squareSize"];
 		calibration.setPatternSize(xCount, yCount);
+		float squareSize = settings["squareSize"];
 		calibration.setSquareSize(squareSize);
+		CalibrationPattern patternType;
+		switch(settings["patternType"]) {
+			case 0: patternType = CHESSBOARD; break;
+			case 1: patternType = CIRCLES_GRID; break;
+			case 2: patternType = ASYMMETRIC_CIRCLES_GRID; break;
+		}
+		calibration.setPatternType(patternType);
 	}
 	
 	imitate(undistorted, cam);
