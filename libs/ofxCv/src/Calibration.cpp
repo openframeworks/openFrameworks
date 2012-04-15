@@ -141,7 +141,7 @@ namespace ofxCv {
 		vector<Point2f> pointBuf;
 		
 		// find corners
-		bool found = findBoard(img, pointBuf, true);
+		bool found = findBoard(img, pointBuf);
 		
 		if (found)
 			imagePoints.push_back(pointBuf);
@@ -170,10 +170,13 @@ namespace ofxCv {
 					cornerSubPix(grayMat, pointBuf, subpixelSize,  cv::Size(-1,-1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
 				}
 			}
-		} else {
+		}
+#ifdef USING_OPENCV_2_3
+		else {
 			int flags = (patternType == CIRCLES_GRID ? CALIB_CB_SYMMETRIC_GRID : CALIB_CB_ASYMMETRIC_GRID); // + CALIB_CB_CLUSTERING
 			found = findCirclesGrid(img, patternSize, pointBuf, flags);
 		}
+#endif
 		return found;
 	}
 	bool Calibration::clean(float minReprojectionError) {

@@ -35,7 +35,6 @@ for example in examples:
 		#linux
 		targetDir = "{0}/".format(example, targetProjectName)
 		emptyDir = "example-empty"
-		print "copy " + sourceMakefile + " in " + targetDir
 		shutil.copy(sourceMakefile, targetDir)
 		shutil.copy(sourceConfigs, targetDir)
 		shutil.copy(sourceAddons, targetDir)
