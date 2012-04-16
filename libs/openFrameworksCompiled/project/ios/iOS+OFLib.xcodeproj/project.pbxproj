@@ -203,7 +203,7 @@
 		772C251B146927A400DDAAE6 /* ofFmodSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFmodSoundPlayer.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphonesimulator_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24E01D10DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
 		BB24E01E10DA7C6100E9C588 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		BB24E01F10DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
@@ -391,7 +391,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -881,7 +881,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Debug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -889,7 +889,7 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -993,7 +993,7 @@
 		BB24DED310DA7A3F00E9C588 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				EXECUTABLE_PREFIX = lib;
@@ -1005,8 +1005,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
 					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/iphone\"",
-					"\"$(SRCROOT)/../../../poco/lib/iphone\"",
+					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
+					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Debug";
@@ -1017,7 +1017,7 @@
 		BB24DED410DA7A3F00E9C588 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1029,8 +1029,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
 					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/iphone\"",
-					"\"$(SRCROOT)/../../../poco/lib/iphone\"",
+					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
+					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Release";
@@ -1079,7 +1079,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
