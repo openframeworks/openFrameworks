@@ -323,7 +323,7 @@ void ofGstUtils::setPosition(float pct){
 }
 
 void ofGstUtils::setVolume(int volume){
-	gdouble gvolume = CLAMP(volume,0,10);
+	gdouble gvolume = CLAMP(volume,0,10)/10.;
 	g_object_set(G_OBJECT(gstPipeline), "volume", gvolume, (void*)NULL);
 }
 
