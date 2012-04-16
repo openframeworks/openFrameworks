@@ -30,6 +30,8 @@
 #ifndef INCLUDED_OSCRECEIVEDELEMENTS_H
 #define INCLUDED_OSCRECEIVEDELEMENTS_H
 
+#include <cstddef>
+
 #include "OscTypes.h"
 #include "OscException.h"
 
