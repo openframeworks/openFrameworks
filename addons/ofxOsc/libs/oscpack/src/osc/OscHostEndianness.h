@@ -37,12 +37,14 @@
     please let me know! I've tried a few things which don't work.
 */
 
+#define OSC_HOST_LITTLE_ENDIAN
+
 #if defined(OSC_HOST_LITTLE_ENDIAN) || defined(OSC_HOST_BIG_ENDIAN)
 
 // you can define one of the above symbols from the command line
 // then you don't have to edit this file.
 
-#elif defined(__WIN32__) || defined(WIN32)
+#elif defined(__WIN32__) || defined(WIN32) || defined(WINCE)
 
 // assume that __WIN32__ is only defined on little endian systems
 
@@ -52,19 +54,22 @@
 #elif defined(__APPLE__)
 
 #if defined(__LITTLE_ENDIAN__)
+
 #define OSC_HOST_LITTLE_ENDIAN 1
 #undef OSC_HOST_BIG_ENDIAN
-#else
+
+#elif defined(__BIG_ENDIAN__)
+
 #define OSC_HOST_BIG_ENDIAN 1
 #undef OSC_HOST_LITTLE_ENDIAN
+
 #endif
 
-#else
+#endif
 
-//#error please edit OSCHostEndianness.h to configure endianness
-// assume LITTLE_ENDIAN for everthing else
-#define OSC_HOST_LITTLE_ENDIAN 1
-#undef OSC_HOST_BIG_ENDIAN
+#if !defined(OSC_HOST_LITTLE_ENDIAN) && !defined(OSC_HOST_BIG_ENDIAN)
+
+#error please edit OSCHostEndianness.h to configure endianness
 
 #endif
 
