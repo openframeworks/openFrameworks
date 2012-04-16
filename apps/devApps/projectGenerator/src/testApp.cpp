@@ -13,6 +13,8 @@ void testApp::setup(){
 
 	setOFRoot(getOFRootFromConfig());
 
+	setupDrawableOFPath();
+	
 	int targ = ofGetTargetPlatform();
 	//plat = OF_TARGET_IPHONE;
 
@@ -253,7 +255,12 @@ void testApp::createAndOpenPressed(bool & pressed){
 }
 
 void testApp::changeOFRootPressed(bool & pressed){
-	if(!pressed) askOFRoot();
+	if(!pressed){
+		askOFRoot();
+		cout << getOFRootFromConfig()<<endl;
+		setOFRoot(getOFRootFromConfig());
+		setupDrawableOFPath();
+	}
 }
 
 
@@ -275,11 +282,12 @@ void testApp::draw(){
 	examplesPanel.draw();
 
 	ofSetColor(0,0,0,100);
-	ofRect(ofGetWidth()-410,10,400,100);
+
+	ofRect(ofPathRect);
 
     /*ofDrawBitmapString("press 'm' to make all files\npress ' ' to make a specific file", ofPoint(30,30));*/
 	ofSetColor(255);
-    ofDrawBitmapString("OF path: " + getOFRoot(), ofPoint(ofGetWidth() - 390,30));
+    ofDrawBitmapString(drawableOfPath, ofPathDrawPoint);
 }
 
 //--------------------------------------------------------------
@@ -327,7 +335,7 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-
+	setupDrawableOFPath();
 }
 
 //--------------------------------------------------------------
@@ -337,5 +345,46 @@ void testApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){
+
+}
+
+//--------------------------------------------------------------
+void testApp::setupDrawableOFPath(){
+	vector<string> subdirs = ofSplitString("OF path: " + getOFRoot(), "/");
+	int textLength = 0;
+	int padding = 5;
+	string path = "";
+	int lines=1;
+	int fontSize = 8;
+	float leading = 1.7;
+	
+	ofPathRect.x = padding;
+	ofPathRect.y = padding;
+	ofPathDrawPoint.x = padding*2;
+	ofPathDrawPoint.y = padding*2 + fontSize * leading;
+	
+	for(int i = 0; i < subdirs.size(); i++) {
+		if (i > 0 && i<subdirs.size()-1) {
+			subdirs[i] += "/";
+		}
+		if(textLength + subdirs[i].length()*fontSize < ofGetWidth()-padding){
+			textLength += subdirs[i].length()*fontSize;
+			path += subdirs[i];
+		}else {
+			path += "\n";
+			textLength = 0;
+			lines++;
+		}
+	}
+	ofPathRect.width = textLength + padding*2;
+	if (lines > 1){
+		ofPathRect.width = ofGetWidth() - padding*2;
+	}
+	ofPathRect.height = lines * fontSize * leading + (padding*2);
+	
+	drawableOfPath = path;
+	
+	panelAddons.setPosition(panelAddons.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
+	examplesPanel.setPosition(examplesPanel.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
 
 }
