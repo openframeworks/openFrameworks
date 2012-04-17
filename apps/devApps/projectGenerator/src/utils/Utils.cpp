@@ -19,6 +19,12 @@
 #include <fstream>
 #include <string>
 
+#include "Poco/HMACEngine.h"
+#include "Poco/MD5Engine.h"
+using Poco::DigestEngine;
+using Poco::HMACEngine;
+using Poco::MD5Engine;
+
 
 
 #ifdef TARGET_WIN32
@@ -38,60 +44,86 @@ using namespace Poco;
 #include "ofUtils.h"
 
 
-void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) { 
-	size_t uPos = 0; 
-	size_t uFindLen = tFind.length(); 
+string generateUUID(string input){
+
+    std::string passphrase("openFrameworks"); // HMAC needs a passphrase
+
+    HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
+    hmac.update(input);
+
+    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
+    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+
+    return digestString;
+}
+
+
+
+
+
+void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) {
+	size_t uPos = 0;
+	size_t uFindLen = tFind.length();
 	size_t uReplaceLen = tReplace.length();
-    
+
 	if( uFindLen == 0 ){
 		return;
 	}
-    
+
 	for( ;(uPos = tInput.find( tFind, uPos )) != std::string::npos; ){
 		tInput.replace( uPos, uFindLen, tReplace );
 		uPos += uReplaceLen;
-	}	
-    
+	}
+
 }
 
 
 std::string LoadFileAsString(const std::string & fn)
 {
     std::ifstream fin(fn.c_str());
-    
+
     if(!fin)
     {
         // throw exception
     }
-    
+
     std::ostringstream oss;
     oss << fin.rdbuf();
-    
+
     return oss.str();
 }
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    if( ofFile::doesFileExist(fileName) ){
-		//printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
-		std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
-		ifile.seekg(0,std::ios_base::end);
-		long s=ifile.tellg();
-		//cout << "size of s is " << s << endl; 
-		char *buffer=new char[s];
-		ifile.seekg(0);
-		ifile.read(buffer,s);
-		ifile.close();
-		
-		std::string txt(buffer,s);
-		delete[] buffer;
-		
-		findandreplace(txt, tFind, tReplace);
-		
-		std::ofstream ofile(ofToDataPath(fileName).c_str());
-		ofile.write(txt.c_str(),txt.size());
+	
+	    std::ifstream t(ofToDataPath(fileName).c_str());
+	    std::stringstream buffer;
+	    buffer << t.rdbuf();
+		string bufferStr = buffer.str();
+		t.close();
+	    findandreplace(bufferStr, tFind, tReplace);
+		ofstream myfile;
+        myfile.open (ofToDataPath(fileName).c_str());
+        myfile << bufferStr;
+		myfile.close();
+
+	/*
+	std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
+	ifile.seekg(0,std::ios_base::end);
+	long s=ifile.tellg();
+	char *buffer=new char[s];
+ 	ifile.seekg(0);
+	ifile.read(buffer,s);
+	ifile.close();
+	std::string txt(buffer,s);
+	delete[] buffer;
+	findandreplace(txt, tFind, tReplace);
+	std::ofstream ofile(ofToDataPath(fileName).c_str());
+	ofile.write(txt.c_str(),txt.size());
+	*/  
 		//return 0;
    } else {
-       ; // some error checking here would be good. 
+       ; // some error checking here would be good.
    }
 }
 
@@ -101,7 +133,7 @@ void findandreplaceInTexfile (string fileName, std::string tFind, std::string tR
 bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attribute, string newValue){
     char xpathExpressionExists[1024];
     sprintf(xpathExpressionExists, "//%s[@%s='%s']", tag.c_str(), attribute.c_str(), newValue.c_str());
-    cout <<xpathExpressionExists <<endl;
+    //cout <<xpathExpressionExists <<endl;
     pugi::xpath_node_set set = doc.select_nodes(xpathExpressionExists);
     if (set.size() != 0){
         return true;
@@ -110,12 +142,25 @@ bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attri
     }
 }
 
-pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue){
+pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue, bool overwriteMultiple){
+
+    if (overwriteMultiple == true){
+        // find the existing node...
+        char xpathExpression[1024];
+        sprintf(xpathExpression, "//%s[@%s='%s']", tag.c_str(), attribute.c_str(), newValue.c_str());
+        pugi::xpath_node node = doc.select_single_node(xpathExpression);
+        if(string(node.node().attribute(attribute.c_str()).value()).size() > 0){ // for some reason we get nulls here?
+            // ...delete the existing node
+            cout << "DELETING: " << node.node().name() << ": " << " " << node.node().attribute(attribute.c_str()).value() << endl;
+            node.node().parent().remove_child(node.node());
+        }
+    }
 
     if (!doesTagAndAttributeExist(doc, tag, attribute, newValue)){
         // otherwise, add it please:
         char xpathExpression[1024];
         sprintf(xpathExpression, "//%s[@%s]", tag.c_str(), attribute.c_str());
+        //cout << xpathExpression << endl;
         pugi::xpath_node_set add = doc.select_nodes(xpathExpression);
         pugi::xml_node node = add[add.size()-1].node();
         pugi::xml_node nodeAdded = node.parent().append_copy(node);
@@ -129,37 +174,38 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
 
 // todo -- this doesn't use ofToDataPath -- so it's broken a bit.  can we fix?
 void getFilesRecursively(const string & path, vector < string > & fileNames){
-    
+
     ofDirectory dir;
-    
-    cout << "in getFilesRecursively "<< path << endl;
-    
+
+    //ofLogVerbose() << "in getFilesRecursively "<< path << endl;
+
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
         ofFile temp(dir.getFile(i));
+        if (dir.getName(i) == ".svn") continue; // ignore svn
         if (temp.isFile()){
             fileNames.push_back(dir.getPath(i));
         } else if (temp.isDirectory()){
             getFilesRecursively(dir.getPath(i), fileNames);
         }
-    }    
+    }
     //folderNames.push_back(path);
 
 }
 
-static vector <string> platforms; 
+static vector <string> platforms;
 bool isFolderNotCurrentPlatform(string folderName, string platform){
 	if( platforms.size() == 0 ){
 		platforms.push_back("osx");
 		platforms.push_back("win_cb");
 		platforms.push_back("vs2010");
 		platforms.push_back("ios");
-		platforms.push_back("linux");		
+		platforms.push_back("linux");
 		platforms.push_back("linux64");
 		platforms.push_back("android");
 		platforms.push_back("iphone");
 	}
-		
+
 	for(int i = 0; i < platforms.size(); i++){
 		if( folderName == platforms[i] && folderName != platform ){
 			return true;
@@ -190,87 +236,144 @@ void getFoldersRecursively(const string & path, vector < string > & folderNames,
         if (temp.isDirectory() && isFolderNotCurrentPlatform(temp.getFileName(), platform) == false ){
             getFoldersRecursively(dir.getPath(i), folderNames, platform);
         }
-    }    
+    }
     folderNames.push_back(path);
 }
 
 
 
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
-       
     
-    ofDirectory dir;
-    dir.listDir(path);
-    for (int i = 0; i < dir.size(); i++){
-        ofFile temp(dir.getFile(i));
-        if (temp.isDirectory()){
-            //getLibsRecursively(dir.getPath(i), folderNames);
-            getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
-            
-        } else {
-            
-            //string ext = ofFilePath::getFileExt(temp.getFile(i));
-            string ext;
-            string first;
-            splitFromLast(dir.getPath(i), ".", first, ext);
-            
-            
-            vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-            if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
-                
-                if(platform!=""){
-                    bool platformFound = false;
-                    for(int i=0;i<(int)splittedPath.size();i++){
-                        if(splittedPath[i]==platform){
-                            platformFound = true;
-                            break;
-                        }
-                    }
-                    if(!platformFound){
-                        continue;
-                    }
+    
+    
+    
+    if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
+        
+        bool platformFound = false;
+        
+#ifdef TARGET_WIN32
+        vector<string> splittedPath = ofSplitString(path,"\\");
+#else
+        vector<string> splittedPath = ofSplitString(path,"/");
+#endif
+        
+        
+        if(platform!=""){
+            for(int j=0;j<(int)splittedPath.size();j++){
+                if(splittedPath[j]==platform){
+                    platformFound = true;
+                    // break;
                 }
-                libLibs.push_back(dir.getPath(i));
-            } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-                libFiles.push_back(dir.getPath(i));
             }
         }
-    }    
-   //folderNames.push_back(path);
+        
+        
+        if (platformFound == true){
+            vector < string > libsInOrder;
+            ofFile libsorderMake(ofFilePath::join(path, "libsorder.make"));
+            ofBuffer libsorderMakeBuff;
+            libsorderMake >> libsorderMakeBuff;
+            while(!libsorderMakeBuff.isLastLine() && libsorderMakeBuff.size() > 0){
+                string line = libsorderMakeBuff.getNextLine();
+                if (ofFile::doesFileExist(ofFilePath::join(path , line))){
+                    
+                    libLibs.push_back(ofFilePath::join(path , line) );
+                } else {
+                    libLibs.push_back(line);        // this might be something like ws2_32 or other libs no in this project
+                }
+            }
+        }
+        
+    } else {
+        
+        
+        ofDirectory dir;
+        dir.listDir(path);
+        
+        
+        for (int i = 0; i < dir.size(); i++){
+            
+#ifdef TARGET_WIN32
+            vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
+#else
+            vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
+#endif
+            
+            ofFile temp(dir.getFile(i));
+            
+            if (temp.isDirectory()){
+                //getLibsRecursively(dir.getPath(i), folderNames);
+                getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
+                
+            } else {
+                
+                
+                bool platformFound = false;
+                
+                if(platform!=""){
+                    for(int j=0;j<(int)splittedPath.size();j++){
+                        if(splittedPath[j]==platform){
+                            platformFound = true;
+                        }
+                    }
+                }
+                
+                
+                
+                
+                //string ext = ofFilePath::getFileExt(temp.getFile(i));
+                string ext;
+                string first;
+                splitFromLast(dir.getPath(i), ".", first, ext);
+                
+                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
+                    if (platformFound) libLibs.push_back(dir.getPath(i));
+                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+                    libFiles.push_back(dir.getPath(i));
+                }
+                
+            }
+        }
+        
+    }
     
     
     
-//    DirectoryIterator end;
-//        for (DirectoryIterator it(path); it != end; ++it){
-//            if (!it->isDirectory()){
-//            	string ext = ofFilePath::getFileExt(it->path());
-//            	vector<string> splittedPath = ofSplitString(ofFilePath::getEnclosingDirectory(it->path()),"/");
-//
-//                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
-//
-//                	if(platform!=""){
-//                		bool platformFound = false;
-//                		for(int i=0;i<(int)splittedPath.size();i++){
-//                			if(splittedPath[i]==platform){
-//                				platformFound = true;
-//                				break;
-//                			}
-//                		}
-//                		if(!platformFound){
-//                			continue;
-//                		}
-//                	}
-//                    libLibs.push_back(it->path());
-//                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-//                    libFiles.push_back(it->path());
-//                }
-//            }
-//
-//            if (it->isDirectory()){
-//                getLibsRecursively(it->path(), libFiles, libLibs, platform);
-//            }
-//        }
-
+    //folderNames.push_back(path);
+    
+    
+    
+    //    DirectoryIterator end;
+    //        for (DirectoryIterator it(path); it != end; ++it){
+    //            if (!it->isDirectory()){
+    //            	string ext = ofFilePath::getFileExt(it->path());
+    //            	vector<string> splittedPath = ofSplitString(ofFilePath::getEnclosingDirectory(it->path()),"/");
+    //
+    //                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
+    //
+    //                	if(platform!=""){
+    //                		bool platformFound = false;
+    //                		for(int i=0;i<(int)splittedPath.size();i++){
+    //                			if(splittedPath[i]==platform){
+    //                				platformFound = true;
+    //                				break;
+    //                			}
+    //                		}
+    //                		if(!platformFound){
+    //                			continue;
+    //                		}
+    //                	}
+    //                    libLibs.push_back(it->path());
+    //                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+    //                    libFiles.push_back(it->path());
+    //                }
+    //            }
+    //
+    //            if (it->isDirectory()){
+    //                getLibsRecursively(it->path(), libFiles, libLibs, platform);
+    //            }
+    //        }
+    
 }
 
 
@@ -302,6 +405,7 @@ void setOFRoot(string path){
 }
 
 string getOFRelPath(string from){
+	from = ofFilePath::removeTrailingSlash(from);
     Poco::Path base(true);
     base.parse(from);
 
@@ -309,7 +413,7 @@ string getOFRelPath(string from){
     path.parse( getOFRoot() );
     path.makeAbsolute();
 
-    
+
 	string relPath;
 	if (path.toString() == base.toString()){
 		// do something.
@@ -317,7 +421,7 @@ string getOFRelPath(string from){
 
 	int maxx = MAX(base.depth(), path.depth());
 	for (int i = 0; i <= maxx; i++){
-        
+
 		bool bRunOut = false;
 		bool bChanged = false;
 		if (i <= base.depth() && i <= path.depth()){
@@ -329,8 +433,8 @@ string getOFRelPath(string from){
 		} else {
 			bRunOut = true;
 		}
-        
-        
+
+
 		if (bRunOut == true || bChanged == true){
             for (int j = i; j <= base.depth(); j++){
 				relPath += "../";
@@ -341,14 +445,14 @@ string getOFRelPath(string from){
 			break;
 		}
 	}
-    
-    ofLogVerbose() << " returning path " << relPath << endl; 
-    
+
+    ofLogVerbose() << " returning path " << relPath << endl;
+
     return relPath;
 }
 
 void parseAddonsDotMake(string path, vector < string > & addons){
-    
+
     addons.clear();
 	ofFile addonsmake(path);
 	if(!addonsmake.exists()){
@@ -358,8 +462,6 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 	addonsmake >> addonsmakebuff;
 	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
         string line = addonsmakebuff.getNextLine();
-        cout <<line <<endl;
-		
 		if(line!=""){
 			addons.push_back(line);
 		}
@@ -385,7 +487,6 @@ bool askOFRoot(){
 string getOFRootFromConfig(){
 	if(!checkConfigExists()) return "";
 	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::ReadOnly);
-	string filePath;
-	configFile >> filePath;
+	string filePath = configFile.readToBuffer();
 	return filePath;
 }

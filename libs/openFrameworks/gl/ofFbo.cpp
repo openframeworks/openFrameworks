@@ -193,7 +193,8 @@ fboTextures(0),
 depthBuffer(0),
 stencilBuffer(0),
 savedFramebuffer(0),
-defaultTextureIndex(0)
+defaultTextureIndex(0),
+bIsAllocated(false)
 {
 
 }
@@ -201,6 +202,7 @@ defaultTextureIndex(0)
 ofFbo::ofFbo(const ofFbo & mom){
 	settings = mom.settings;
 	isBound = mom.isBound;
+	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
 	retainFB(fbo);
@@ -230,6 +232,7 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
 	settings = mom.settings;
 	isBound = mom.isBound;
+	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
 	retainFB(fbo);
@@ -304,6 +307,7 @@ void ofFbo::destroy() {
 	colorBuffers.clear();
 
 	isBound = 0;
+	bIsAllocated = false;
 }
 
 static GLboolean CheckExtension( const char *extName ){
@@ -539,6 +543,12 @@ void ofFbo::allocate(Settings _settings) {
 
 	// unbind it
 	unbind();
+
+	bIsAllocated = true;
+}
+
+bool ofFbo::isAllocated(){
+	return bIsAllocated;
 }
 
 /*  removed by now, was crashing on draw

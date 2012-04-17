@@ -8,57 +8,109 @@
 
 #include "baseProject.h"
 
-
-
+void baseProject::setup(string _target){
+    target = _target;
+    templatePath = ofFilePath::join(getOFRoot(),"scripts/" + target + "/template/");
+    setup(); // call the inherited class setup(), now that target is set.
+}
 
 bool baseProject::create(string path){
-    
+
+    addons.clear();
+
     projectDir = ofFilePath::addTrailingSlash(path);
     projectName = ofFilePath::getFileName(path);
     bool bDoesDirExist = false;
-    
+
     ofDirectory project(projectDir);    // this is a directory, really?
     if(project.exists()){
         bDoesDirExist = true;
-    }
-    
-    if (!bDoesDirExist){
+    }else{
         ofDirectory project(projectDir);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),ofFilePath::join(projectDir,"src"));
         ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),ofFilePath::join(projectDir,"bin"));
-    } 
-    
+    }
+
     // if overwrite then ask for permission...
-    
-    createProjectFile();
-    loadProjectFile();
-    
+
+    bool ret = createProjectFile();
+    if(!ret) return false;
+
+    ret = loadProjectFile();
+    if(!ret) return false;
+
     if (bDoesDirExist){
-        
         vector < string > fileNames;
-        getFilesRecursively(projectDir + "src", fileNames);
-        
-        for (int i = 0; i < fileNames.size(); i++){
-            
-            // TODO: this can fail, if your OF directory is in some bad place like: 
-            // /home/src/openframeworks/....
-            // where it would pick up in the word src first. 
-            // so let's make this much smarter!
-            
+        getFilesRecursively(ofFilePath::join(projectDir , "src"), fileNames);
+
+        for (int i = 0; i < (int)fileNames.size(); i++){
+
+            fileNames[i].erase(fileNames[i].begin(), fileNames[i].begin() + projectDir.length());
+
             string first, last;
-            splitFromFirst(fileNames[i],projectName, first, last);  
-            // last is now something like " /src/main.cpp"
-            // drop the trailing slash;
-            last.erase(last.begin());
-            string fileName = last;
-            splitFromLast(fileName, "/", first, last);  
-            if (fileName != "src/testApp.cpp" &&
-                fileName != "src/testApp.h" &&
-                fileName != "src/main.cpp" && 
-                fileName != "src/testApp.mm" &&
-                fileName != "src/main.mm"){
-                addSrc(fileName, first);
+#ifdef TARGET_WIN32
+            splitFromLast(fileNames[i], "\\", first, last);
+#else
+            splitFromLast(fileNames[i], "/", first, last);
+#endif
+            if (fileNames[i] != "src/testApp.cpp" &&
+                fileNames[i] != "src/testApp.h" &&
+                fileNames[i] != "src/main.cpp" &&
+                fileNames[i] != "src/testApp.mm" &&
+                fileNames[i] != "src/main.mm"){
+                addSrc(fileNames[i], first);
             }
         }
+#ifdef TARGET_LINUX
+    		parseAddons();
+#endif
+        // get a unique list of the paths that are needed for the includes.
+        list < string > paths;
+        vector < string > includePaths;
+        for (int i = 0; i < (int)fileNames.size(); i++){
+            size_t found;
+    #ifdef TARGET_WIN32
+            found = fileNames[i].find_last_of("\\");
+    #else
+            found = fileNames[i].find_last_of("/");
+    #endif
+            paths.push_back(fileNames[i].substr(0,found));
+        }
+
+        paths.sort();
+        paths.unique();
+        for (list<string>::iterator it=paths.begin(); it!=paths.end(); ++it){
+            includePaths.push_back(*it);
+        }
+
+        for (int i = 0; i < includePaths.size(); i++){
+            addInclude(includePaths[i]);
+        }
     }
+    return true;
+}
+
+bool baseProject::save(){
+	#ifdef TARGET_LINUX
+		ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"),ofFile::WriteOnly);
+		set<ofAddon>::iterator it;
+		for(it=addons.begin();it!=addons.end();it++){
+			addonsMake << it->name << endl;
+		}
+	#endif
+	return saveProjectFile();
+}
+
+void baseProject::parseAddons(){
+	ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"));
+	ofBuffer addonsMakeMem;
+	addonsMake >> addonsMakeMem;
+	while(!addonsMakeMem.isLastLine()){
+		ofAddon addon;
+		cout << projectDir << endl;
+		addon.pathToOF = getOFRelPath(projectDir);
+		cout << addon.pathToOF << endl;
+		addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsMakeMem.getNextLine()),target);
+		addAddon(addon);
+	}
 }

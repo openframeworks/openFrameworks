@@ -7,17 +7,20 @@
 
 #include "ofGstVideoPlayer.h"
 #include <gst/video/video.h>
+#include <gst/audio/multichannel.h>
 
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
 	internalPixelFormat			= OF_PIXELS_RGB;
 	bIsStream					= false;
+	bIsAllocated				= false;
+	threadAppSink				= false;
 	videoUtils.setSinkListener(this);
 }
 
 ofGstVideoPlayer::~ofGstVideoPlayer(){
-	cout << "deleting video player" << endl;
+	close();
 }
 
 void ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
@@ -26,7 +29,9 @@ void ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 
 bool ofGstVideoPlayer::loadMovie(string name){
 	close();
-	if( name.find( "://",0 ) == string::npos){
+	if( name.find( "file://",0 ) != string::npos){
+		bIsStream		= false;
+	}else if( name.find( "://",0 ) == string::npos){
 		name 			= "file://"+ofToDataPath(name,true);
 		bIsStream		= false;
 	}else{
@@ -41,7 +46,13 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
 	// create the oF appsink for video rgb without sync to clock
-	GstElement * gstSink = gst_element_factory_make("appsink", "sink");
+	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
+
+	gst_base_sink_set_sync(GST_BASE_SINK(gstSink), true);
+	gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink), 8);
+	gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
+	gst_base_sink_set_max_lateness  (GST_BASE_SINK(gstSink), -1);
+
 	int bpp;
 	string mime;
 	switch(internalPixelFormat){
@@ -66,39 +77,61 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
 										"bpp", G_TYPE_INT, bpp,
-										//"depth", G_TYPE_INT, 24,
-										/*"endianness",G_TYPE_INT,4321,
+										"depth", G_TYPE_INT, 24,
+										"endianness",G_TYPE_INT,4321,
 										"red_mask",G_TYPE_INT,0xff0000,
 										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,*/
+										"blue_mask",G_TYPE_INT,0x0000ff,
+										"alpha_mask",G_TYPE_INT,0x000000ff,
 
 
 										NULL);
 	gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
 	gst_caps_unref(caps);
-	gst_base_sink_set_sync(GST_BASE_SINK(gstSink), false);
-	gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
 
-	g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,(void*)NULL);
+	if(threadAppSink){
+		GstElement * appQueue = gst_element_factory_make("queue","appsink_queue");
+		g_object_set(G_OBJECT(appQueue), "leaky", 0, "silent", 1, (void*)NULL);
+		GstElement* appBin = gst_bin_new("app_bin");
+		gst_bin_add(GST_BIN(appBin), appQueue);
+		GstPad* appQueuePad = gst_element_get_static_pad(appQueue, "sink");
+		GstPad* ghostPad = gst_ghost_pad_new("app_bin_sink", appQueuePad);
+		gst_object_unref(appQueuePad);
+		gst_element_add_pad(appBin, ghostPad);
 
+		gst_bin_add_many(GST_BIN(appBin), gstSink, NULL);
+		gst_element_link_many(appQueue, gstSink, NULL);
 
-	GstElement *audioSink = gst_element_factory_make("gconfaudiosink", NULL);
+		g_object_set (G_OBJECT(gstPipeline),"video-sink",appBin,(void*)NULL);
+	}else{
+		g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,(void*)NULL);
+	}
+
+#ifdef TARGET_WIN32
+	GstElement *audioSink = gst_element_factory_make("directsoundsink", NULL);
 	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
 
+#endif
+
+
 	videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
-	if(!bIsStream) return allocate();
+	if(!bIsStream) return allocate(bpp);
 	else return true;
 }
 
+void ofGstVideoPlayer::setThreadAppSink(bool threaded){
+	threadAppSink = threaded;
+}
 
-bool ofGstVideoPlayer::allocate(){
+
+bool ofGstVideoPlayer::allocate(int bpp){
 	if(bIsAllocated) return true;
 
 	guint64 durationNanos = videoUtils.getDurationNanos();
 
 	nFrames		  = 0;
 	if(GstPad* pad = gst_element_get_static_pad(videoUtils.getSink(), "sink")){
-		int width,height,bpp=24;
+		int width,height;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
 			if(!videoUtils.allocate(width,height,bpp)) return false;
 		}else{
@@ -129,7 +162,7 @@ bool ofGstVideoPlayer::allocate(){
 }
 
 void ofGstVideoPlayer::on_stream_prepared(){
-	if(!bIsAllocated) allocate();
+	if(!bIsAllocated) allocate(24);
 }
 
 int	ofGstVideoPlayer::getCurrentFrame(){
