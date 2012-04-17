@@ -27,7 +27,7 @@ LIB_POCONET_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoNet.a"
 LIB_POCOUTIL_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoUtil.a"
 LIB_POCOXML_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoXML.a"
 LIB_TESS_IPHONE = "$(OF_PATH)/libs/tess2/lib/ios/tess2.a"
-LIB_GLU_IPHONE = "$(OF_PATH)/libs/glu/lib/ios/glu-iphone.a"
+LIB_GLU_IPHONE = "$(OF_PATH)/libs/glu/lib/ios/glu-ios.a"
 
 MISC_FLAGS = "-ObjC"
 
