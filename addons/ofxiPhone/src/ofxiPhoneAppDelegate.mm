@@ -31,15 +31,21 @@
 
 #import "ofxiPhoneAppDelegate.h"
 #import "ofxiPhoneExtras.h"
+#import "ofxiPhoneExternalDisplay.h"
 
 @implementation ofxiPhoneAppDelegate
 
 @synthesize window;
+@synthesize externalWindow;
 @synthesize glViewController;
+@synthesize currentScreenIndex;
 
 -(void) applicationDidFinishLaunching:(UIApplication *)application {    
-	self.window = [[[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]] autorelease];
+	
+    self.window = [[[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]] autorelease];
 	[self.window makeKeyAndVisible];
+    
+    currentScreenIndex = 0;
     
 	//----- DAMIAN
 	// set data path root for ofToDataPath()
@@ -55,17 +61,30 @@
 	ofSetDataPathRoot( path );
 	//-----
 	
-	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_PORTRAIT);
-	
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
 	[[UIApplication sharedApplication] setStatusBarHidden:(iPhoneGetOFWindow()->windowMode == OF_FULLSCREEN) animated:YES];
 	
     // Listen to did rotate event
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    [[NSNotificationCenter defaultCenter] addObserver: self 
-                                             selector: @selector(receivedRotate:) 
-                                                 name: UIDeviceOrientationDidChangeNotification 
-                                               object: nil];
+
+    NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver: self 
+               selector: @selector(receivedRotate:) 
+                   name: UIDeviceOrientationDidChangeNotification 
+                 object: nil];
+    
+    [center addObserver:self 
+               selector:@selector(handleScreenConnectNotification:)
+                   name:UIScreenDidConnectNotification object:nil];
+    
+    [center addObserver:self 
+               selector:@selector(handleScreenDisconnectNotification:)
+                   name:UIScreenDidDisconnectNotification object:nil];
+
+    [center addObserver:self 
+               selector:@selector(handleScreenModeDidChangeNotification:)
+                   name:UIScreenDidDisconnectNotification object:nil];
     
     /**
      *  check if app delegate is being extended.
@@ -75,10 +94,19 @@
     NSString *appDelegateClassName;
     appDelegateClassName = [[self class] description];
     if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended. 
-        ofxiPhoneViewController *viewController;
-        viewController = [[[ofxiPhoneViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds] 
-                                                                     app:ofGetAppPtr()] autorelease];
-        [self.window insertSubview:viewController.view atIndex:0];  // make sure it is the bottom most view.
+        self.glViewController = [[[ofxiPhoneViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds] 
+                                                                            app:ofGetAppPtr()] autorelease];
+        [self.window insertSubview:self.glViewController.view atIndex:0]; // make sure it is the bottom most view.
+    }
+    
+    /**
+     *  check if external display is connected.
+     *  if so, create an external window for it.
+     */
+    
+    if([[UIScreen screens] count] > 1){
+        [self createExternalWindowWithPreferredMode]; // create external window as soon as external screen is connected to prevent unwanted mirroring.
+        ofxiPhoneExternalDisplay::alertExternalDisplayConnected(); // alert any OF apps listening for a new external device.
     }
 }
 
@@ -128,6 +156,136 @@
 	const char * response = [urlData UTF8String];
 	ofxiPhoneAlerts.launchedWithURL(response);
 	return YES;
+}
+
+/**
+ *
+ *  Below are methods that manage the external display.
+ *  The code is based on Apple programming guidelines from the link below,
+ *  http://developer.apple.com/library/ios/#documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/CreatingWindows/CreatingWindows.html
+ *
+ */
+
+- (void)handleScreenConnectNotification:(NSNotification*)aNotification {
+    [self createExternalWindowWithPreferredMode]; // create external window as soon as external screen is connected to prevent unwanted mirroring.
+    ofxiPhoneExternalDisplay::alertExternalDisplayConnected(); // alert any OF apps listening for a new external device.
+}
+
+- (void)handleScreenDisconnectNotification:(NSNotification*)aNotification {
+    [self destroyExternalWindow];
+    ofxiPhoneExternalDisplay::alertExternalDisplayDisconnected();
+}
+
+- (void)handleScreenModeDidChangeNotification:(NSNotification*)aNotification {
+    //
+}
+
+//-------------------------------------------------------------------------------------------
+-(BOOL) createExternalWindowWithPreferredMode {
+    if([[UIScreen screens] count] == 1){
+        return NO;
+    }
+    
+    UIScreen * externalScreen;
+    externalScreen = [[UIScreen screens] objectAtIndex:1];
+    
+    externalScreen.currentMode = externalScreen.preferredMode;
+    
+    NSInteger w = externalScreen.currentMode.size.width;
+    NSInteger h = externalScreen.currentMode.size.height;
+    
+    CGRect externalScreenFrame;
+    externalScreenFrame = CGRectZero;
+    externalScreenFrame.size = CGSizeMake(w, h);
+    
+    self.externalWindow = [[[UIWindow alloc] initWithFrame:externalScreenFrame] autorelease];
+    self.externalWindow.screen = externalScreen;
+    self.externalWindow.clipsToBounds = YES;
+    self.externalWindow.hidden = NO;
+    
+    return YES;
+}
+
+//-------------------------------------------------------------------------------------------
+-(BOOL) createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex {
+    if([[UIScreen screens] count] == 1){
+        return NO;
+    }
+    
+    UIScreen * externalScreen;
+    externalScreen = [[UIScreen screens] objectAtIndex:1];
+    
+    if(screenModeIndex < 0){
+        screenModeIndex = 0;
+    }
+    
+    if(screenModeIndex > [[externalScreen availableModes] count] - 1) {
+        screenModeIndex = [[externalScreen availableModes] count] - 1;
+    }
+    
+    externalScreen.currentMode = [[externalScreen availableModes] objectAtIndex:screenModeIndex];
+    
+    NSInteger w = externalScreen.currentMode.size.width;
+    NSInteger h = externalScreen.currentMode.size.height;
+    
+    CGRect externalScreenFrame;
+    externalScreenFrame = CGRectZero;
+    externalScreenFrame.size = CGSizeMake(w, h);
+    
+    self.externalWindow = [[[UIWindow alloc] initWithFrame:externalScreenFrame] autorelease];
+    self.externalWindow.screen = externalScreen;
+    self.externalWindow.clipsToBounds = YES;
+    self.externalWindow.hidden = NO;
+    
+    return YES;
+}
+
+//-------------------------------------------------------------------------------------------
+-(BOOL) destroyExternalWindow {
+    if(!self.externalWindow){
+        return NO;
+    }
+    
+    self.externalWindow = nil;
+    [self displayOnScreenWithIndex:0 andScreenModeIndex:0];
+    
+    return YES;
+}
+
+//-------------------------------------------------------------------------------------------
+-(BOOL) displayOnScreenWithIndex:(NSInteger)screenIndex 
+              andScreenModeIndex:(NSInteger)screenModeIndex {
+    
+    if(screenIndex < 0 || screenIndex > [[UIScreen screens] count]-1){
+        return NO; // invalid screen index.
+    }
+    
+    if(currentScreenIndex != screenIndex){
+        currentScreenIndex = screenIndex;
+    } else {
+        return NO; // already displaying on this screen.
+    }
+    
+    if(screenIndex > 0){ // display on external screen.
+        
+        [self createExternalWindowWithScreenModeIndex:screenModeIndex];
+
+        self.glViewController.glView.frame = self.externalWindow.screen.bounds;
+        [self.externalWindow insertSubview:self.glViewController.view atIndex:0];
+        [self.externalWindow makeKeyAndVisible];
+        
+    } else { // display back on device screen.
+
+        self.glViewController.glView.frame = [UIScreen mainScreen].bounds;
+        [self.window insertSubview:self.glViewController.view atIndex:0];
+        [self.window makeKeyAndVisible];
+    }
+    
+    ofxiPhoneGetOFWindow()->resetDimensions();
+    
+    ofxiPhoneExternalDisplay::alertExternalDisplayChanged();
+    
+    return YES;
 }
 
 @end

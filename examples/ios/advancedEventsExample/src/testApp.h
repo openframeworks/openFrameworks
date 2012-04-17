@@ -6,31 +6,37 @@
 
 #include "eventsObject.h"
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiPhoneApp{
+    
+    public:
+        void setup();
+        void update();
+        void draw();
+    
+        void exit();
+    
+        void touchDown(ofTouchEventArgs & touch);
+        void touchMoved(ofTouchEventArgs & touch);
+        void touchUp(ofTouchEventArgs & touch);
+        void touchDoubleTap(ofTouchEventArgs & touch);
+        void touchCancelled(ofTouchEventArgs & touch);
 	
-public:
-	void setup();
-	void update();
-	void draw();
+        void lostFocus();
+        void gotFocus();
+        void gotMemoryWarning();
+        void deviceOrientationChanged(int newOrientation);
 	
-	void touchDown(ofTouchEventArgs &touch);
-	void touchMoved(ofTouchEventArgs &touch);
-	void touchUp(ofTouchEventArgs &touch);
-	void touchDoubleTap(ofTouchEventArgs &touch);
-	void touchCancelled(ofTouchEventArgs &touch);
+        //method that will receive events from ofxEventsAddon
+        void newFloat(float & f);
+        void newInt(int & i);
 	
-	//method that will receive events from ofxEventsAddon
-	void newFloat(float & f);
-	void newInt(int & i);
-	
-	eventsObject evObject;
-	ofEventArgs	 voidEventArgs;
+        eventsObject evObject;
+        ofEventArgs	voidEventArgs;
 
-	string floatMsg;
-	string intMsg;
-	string expireMsg;
+        string floatMsg;
+        string intMsg;
+        string expireMsg;
 	
-	bool enabled;
-	
+        bool enabled;
 };
 

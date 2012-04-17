@@ -16,6 +16,7 @@ public:
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
+	bool isAllocated();
 
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);
@@ -85,6 +86,7 @@ private:
 
 	Settings 			settings;
 	int					isBound;
+	bool				bIsAllocated;
 
 	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
 	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)

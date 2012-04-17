@@ -304,16 +304,6 @@ void ofVideoPlayer::draw(float _x, float _y){
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(const ofPoint & p){
-	getTextureReference().draw(p);
-}
-
-//------------------------------------
-void ofVideoPlayer::draw(const ofRectangle & r){
-	getTextureReference().draw(r);
-}
-
-//------------------------------------
 int ofVideoPlayer::getTotalNumFrames(){
 	if( player != NULL ){
 		return player->getTotalNumFrames();

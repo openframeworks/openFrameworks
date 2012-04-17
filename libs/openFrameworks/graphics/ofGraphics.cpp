@@ -1074,10 +1074,6 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 		// tabs are not rendered
 		int tabs = count(lines[i].begin(), lines[i].end(), '\t');
 		int curLength = lines[i].length() - tabs;
-		// after the first line, everything is indented with one space
-		if(i > 0) {
-			curLength++;
-		}
 		if(curLength > textLength) {
 			textLength = curLength;
 		}
@@ -1093,12 +1089,18 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 	glDepthMask(false);
 	ofSetColor(background);
 	ofFill();
-	ofRect(x, y, width + 2 * padding, height + 2 * padding);
+	ofPushMatrix();
+	ofTranslate(x, y, 0);
+	if(currentStyle.drawBitmapMode == OF_BITMAPMODE_MODEL) {
+		ofScale(1, -1, 0);
+	}
+	ofTranslate(-(padding), -(padding + fontSize + 2));
+	ofRect(0, 0, width + 2 * padding, height + 2 * padding);
+	ofPopMatrix();
 	ofSetColor(foreground);
 	ofNoFill();
 	ofPushMatrix();
-	ofTranslate(padding, padding);
-	ofDrawBitmapString(text, x + 1, y + fontSize + 2);
+	ofDrawBitmapString(text, x, y);
 	ofPopMatrix();
 	glDepthMask(true);
 	ofPopStyle();

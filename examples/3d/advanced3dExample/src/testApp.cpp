@@ -1,21 +1,14 @@
 #include "testApp.h"
 
-///////////////////////////////////////////////////
-///////////////////////////////////////////////
-///////////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////
+//--------------------------------------------------------------
 //
 //
 // ADVANCED 3D EXAMPLE
 //		ofNode3d, ofCamera, ofEasyCam
 //
 //
-///////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////////
-///////////////////////////////////////////////
-///////////////////////////////////////////////////
+//--------------------------------------------------------------
+
 //
 // SUGGESTED EXERCISES
 //
@@ -33,94 +26,96 @@
 //
 // 7. Understand how the 'frustrum preview' works
 //
-///////////////////////////////////////////////////
 
 
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	
+
 	ofSetVerticalSync(true);
 	ofBackground(70, 70, 70);
 	ofEnableSmoothing();
 	glEnable(GL_DEPTH_TEST);
-	
-	
-	/////////////////////
-	// SETUP CAMERAS
-	/////////////////////	
-	//
+
+
+	//--
+	// Setup cameras
+
 	iMainCamera = 0;
 	bCamParent = false;
-	
+
 	// user camera
 	camEasyCam.setTarget(nodeSwarm);
 	camEasyCam.setDistance(100);
 	cameras[0] = &camEasyCam;
 
-	
+
 	// front
 	camFront.scale = 20;
 	cameras[1] = &camFront;
-	
+
 	// top
 	camTop.scale = 20;
 	camTop.tilt(-90);
 	cameras[2] = &camTop;
-	
+
 	// left
 	camLeft.scale = 20;
 	camLeft.pan(-90);
 	cameras[3] = &camLeft;
-	
-	
-	/////////////////////
-	// DEFINE VIEWPORTS
-	/////////////////////	
+
 	//
+	//--
+
+
+
+	//--
+	// Define viewports
+
 	setupViewports();
+
 	//
-	/////////////////////	
-	
-	
-	
-	/////////////////////
-	// SETUP SWARM
-	/////////////////////	
+	//--
+
+
+
+
+	//--
+	// Setup swarm
+
+	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
+	nodeSwarm.init(100, 50, 10);
+
 	//
-	nodeSwarm.init(100, 50, 20);
-	//
-	/////////////////////	
-	
+	//--
 }
 
 //--------------------------------------------------------------
-
-void testApp::setupViewports()
-{
+void testApp::setupViewports(){
 	//call here whenever we resize the window
-	
-	/////////////////////
-	// DEFINE VIEWPORTS
-	/////////////////////	
-	//
-	float xOffset = ofGetWidth()/3;
-	float yOffset = ofGetHeight()/N_CAMERAS;
-	
+
+
+	//--
+	// Define viewports
+
+	float xOffset = ofGetWidth() / 3;
+	float yOffset = ofGetHeight() / N_CAMERAS;
+
 	viewMain.x = xOffset;
 	viewMain.y = 0;
 	viewMain.width = xOffset * 2;
 	viewMain.height = ofGetHeight();
-	
-	for (int i=0; i<N_CAMERAS; i++) {
-		
+
+	for(int i = 0; i < N_CAMERAS; i++){
+
 		viewGrid[i].x = 0;
 		viewGrid[i].y = yOffset * i;
 		viewGrid[i].width = xOffset;
 		viewGrid[i].height = yOffset;
 	}
+
 	//
-	/////////////////////	
+	//--
 }
 
 //--------------------------------------------------------------
@@ -131,95 +126,94 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
+
 	ofDrawBitmapString("test", 10, 10);
-	
-	//////////////////////////
-	// BACKGROUND HIGHLIGHT
-	//////////////////////////
-	//
+
+
+	//--
+	// Highlight background of selected camera
+
 	glDisable(GL_DEPTH_TEST);
 	ofPushStyle();
 	ofSetColor(100, 100, 100);
 	ofRect(viewGrid[iMainCamera]);
 	ofPopStyle();
 	glEnable(GL_DEPTH_TEST);
+
 	//
-	//////////////////////////
-	
-	
-	
-	//////////////////////////
-	// DRAW ALL VIEWPORTS
-	//////////////////////////
-	//
-	
-	//draw main viewport
+	//--
+
+
+
+	//--
+	// Draw all viewports
+
+	// draw main viewport
 	cameras[iMainCamera]->begin(viewMain);
 	drawScene(iMainCamera);
-	
-	//calculate mouse ray whilst this camera is active
+
+	// calculate mouse ray whilst this camera is active
 	updateMouseRay();
-	
+
 	cameras[iMainCamera]->end();
-	
-	//draw side viewports
-	for (int i=0; i<N_CAMERAS; i++)
-	{
+
+	// draw side viewports
+	for(int i = 0; i < N_CAMERAS; i++){
 		cameras[i]->begin(viewGrid[i]);
 		drawScene(i);
 		cameras[i]->end();
 	}
-	
+
 	//
-	//////////////////////////
-	
-	
-	
-	//////////////////////////
-	// DRAW STUFF ON TOP
-	//////////////////////////
-	//
+	//--
+
+
+
+	//--
+	// Draw annotations (text, gui, etc)
+
 	ofPushStyle();
 	glDepthFunc(GL_ALWAYS); // draw on top of everything
-	
-	//draw some labels
+
+	// draw some labels
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("Press keys 1-4 to select a camera for main view", viewMain.x + 20, 30);
-	ofDrawBitmapString("Camera selected: " + ofToString(iMainCamera+1), viewMain.x + 20, 50);
+	ofDrawBitmapString("Camera selected: " + ofToString(iMainCamera + 1), viewMain.x + 20, 50);
 	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
 	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
-	
-	ofDrawBitmapString("EasyCam",	viewGrid[0].x + 20, viewGrid[0].y + 30);
-	ofDrawBitmapString("Front",		viewGrid[1].x + 20, viewGrid[1].y + 30);
-	ofDrawBitmapString("Top",		viewGrid[2].x + 20, viewGrid[2].y + 30);
-	ofDrawBitmapString("Left",		viewGrid[3].x + 20, viewGrid[3].y + 30);
 
-	//draw outlines on views
+	ofDrawBitmapString("EasyCam",   viewGrid[0].x + 20, viewGrid[0].y + 30);
+	ofDrawBitmapString("Front",     viewGrid[1].x + 20, viewGrid[1].y + 30);
+	ofDrawBitmapString("Top",       viewGrid[2].x + 20, viewGrid[2].y + 30);
+	ofDrawBitmapString("Left",      viewGrid[3].x + 20, viewGrid[3].y + 30);
+
+	// draw outlines on views
 	ofSetLineWidth(5);
 	ofNoFill();
 	ofSetColor(255, 255, 255);
 	//
-	for (int i=0; i<N_CAMERAS; i++)
+	for(int i = 0; i < N_CAMERAS; i++){
 		ofRect(viewGrid[i]);
+	}
 	//
 	ofRect(viewMain);
-	
+
+	// restore the GL depth function
 	glDepthFunc(GL_LESS);
 	ofPopStyle();
+
 	//
-	//////////////////////////
+	//--
 }
 
-void testApp::drawScene(int iCameraDraw){	
-	
+void testApp::drawScene(int iCameraDraw){
+
 	nodeSwarm.draw();
 	nodeGrid.draw();
-	
-	//////////////////////////////////
-	// DRAW EASYCAM FRUSTUM PREVIEW
-	//////////////////////////////////
-	//
+
+	//--
+	// Draw frustum preview for ofEasyCam camera
+
 	// This code draws our camera in
 	//	the scene (reddy/pink lines)
 	//
@@ -230,38 +224,54 @@ void testApp::drawScene(int iCameraDraw){
 	// Often we refer to the volume
 	//	which can be seen by the
 	//	camera as 'the view frustum'.
-	//
-	
-	
-	//let's not draw the camera
-	//if we're looking through it
-	if (iCameraDraw != 0)
-	{
+
+
+	// First check if we're already drawing the view through the easycam
+	// If so, don't draw the frustum preview.
+	if(iCameraDraw != 0){
+
 		ofPushStyle();
-				
-		//in 'camera space' this frustum
-		//is defined by a box with bounds
-		//-1->1 in each axis
+		ofPushMatrix();
+
+		//--
+		// Create transform for box->frustum
+
+		// In 'camera space' the bounds of
+		//  the view are defined by a box
+		//  with bounds -1->1 in each axis
 		//
-		//to convert from camera to world
-		//space, we multiply by the inverse
-		//matrix of the camera
+		// To convert from camera to world
+		//  space, we multiply by the inverse
+		//  camera matrix of the camera, i.e
+		//  inverse of the ViewProjection
+		//  matrix.
 		//
-		//by applying this transformation
-		//our box in camera space is
-		//transformed into a frustum in
-		//world space.
-		
+		// By applying this transformation
+		//  our box in camera space is
+		//  transformed into a frustum in
+		//  world space.
+		//
+
+		// The camera's matricies are dependant on
+		//  the aspect ratio of the viewport.
+		//  (Which is why we use the viewport as
+		//  an argument when we begin the camera.
+		//
+		// If this camera is fullscreen we'll use
+		//   viewMain, else we'll use viewGrid[0]
+		ofRectangle boundsToUse;
+		if(iMainCamera == 0){
+			boundsToUse = viewMain;
+		}
+		else{
+			boundsToUse = viewGrid[0];
+		}
+
+		// Now lets get the inverse ViewProjection
+		//  for the camera
 		ofMatrix4x4 inverseCameraMatrix;
-		
-		//the camera's matricies are dependant on
-		//the aspect ratio of the viewport
-		//so we must send the viewport if it's not
-		//the same as fullscreen
-		//
-		//watch the aspect ratio of preview camera
-		inverseCameraMatrix.makeInvertOf(camEasyCam.getModelViewProjectionMatrix( (iMainCamera == 0 ? viewMain : viewGrid[0]) ));
-		
+		inverseCameraMatrix.makeInvertOf(camEasyCam.getModelViewProjectionMatrix(boundsToUse));
+
 		// By default, we can say
 		//	'we are drawing in world space'
 		//
@@ -276,120 +286,92 @@ void testApp::drawScene(int iCameraDraw){
 		//	we have to apply the camera->world
 		//	transformation.
 		//
-		ofPushMatrix();
+
+		// This syntax is a little messy.
+		// What it's saying is, send the data
+		//  from the inverseCameraMatrix object
+		//  to OpenGL, and apply that matrix to
+		//  the current OpenGL transform
 		glMultMatrixf(inverseCameraMatrix.getPtr());
-		
-		
-		ofSetColor(255, 100, 100);
-		
-		//////////////////////
-		// DRAW WIREFRAME BOX
+
 		//
-		// xy plane at z=-1 in camera sapce
-		// (small rectangle at camera position)
+		//--
+
+
+
+		//--
+		// Draw box in camera space
+		// (i.e. frustum in world space)
+
+		ofNoFill();
+		// i.e. a box -1, -1, -1 to +1, +1, +1
+		ofBox(0, 0, 0, 2.0f);
 		//
-		glBegin(GL_LINE_LOOP);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(1, 1, -1);
-			glVertex3f(1, -1, -1);
-		glEnd();
-		
-		
-		// xy plane at z=1 in camera space
-		// (generally invisible because so far away)
-		//
-		glBegin(GL_LINE_LOOP);
-			glVertex3f(-1, -1, 1);
-			glVertex3f(-1, 1, 1);
-			glVertex3f(1, 1, 1);
-			glVertex3f(1, -1, 1);
-		glEnd();
-		
-		// connecting lines between above 2 planes
-		// (these are the long lines)
-		//
-		glBegin(GL_LINES);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(-1, 1, 1);
-			
-			glVertex3f(1, 1, -1);
-			glVertex3f(1, 1, 1);
-		
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, -1, 1);
-			
-			glVertex3f(1, -1, -1);
-			glVertex3f(1, -1, 1);
-		glEnd();
-		//
-		//////////////////////
+		//--
 
 		ofPopStyle();
 		ofPopMatrix();
 	}
-	
-	//
-	//////////////////////////////////
 
-	
-	
-	//////////////////////////////////
-	// DRAW RAY
-	//////////////////////////////////
 	//
-	//draw if we've got camEasyCam selected
-	//and we're not looking through it
-	if (iMainCamera == 0 && iCameraDraw != 0)
-	{
+	//--
+
+
+
+	//--
+	// Draw mouse ray
+
+	// Draw the ray if ofEasyCam is in main view,
+	//  and we're not currently drawing in that view
+	if(iMainCamera == 0 && iCameraDraw != 0){
 		ofPushStyle();
 		ofSetColor(100, 100, 255);
 		ofLine(ray[0], ray[1]);
 		ofPopStyle();
 	}
+
 	//
-	//////////////////////////////////
+	//--
 }
 
 //--------------------------------------------------------------
-
-void testApp::updateMouseRay()
-{
-	
-	//define ray in screen space
+void testApp::updateMouseRay(){
+	// Define ray in screen space
 	ray[0] = ofVec3f(ofGetMouseX(), ofGetMouseY(), -1);
 	ray[1] = ofVec3f(ofGetMouseX(), ofGetMouseY(), 1);
-	
-	//transform ray into world space
+
+	// Transform ray into world space
 	ray[0] = cameras[iMainCamera]->screenToWorld(ray[0], viewMain);
 	ray[1] = cameras[iMainCamera]->screenToWorld(ray[1], viewMain);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	
-	if (key >= '1' && key <= '4')
+
+	if(key >= '1' && key <= '4'){
 		iMainCamera = key - '1';
-	
-	if (key == 'f')
+	}
+
+	if(key == 'f'){
 		ofToggleFullscreen();
-	
-	if (key == 'p')
-		if (bCamParent)
-		{
+	}
+
+	if(key == 'p'){
+		if(bCamParent){
 			camFront.clearParent();
 			camTop.clearParent();
 			camLeft.clearParent();
-			
+
 			bCamParent = false;
-		} else {
+		}
+		else{
 			camFront.setParent(nodeSwarm.light);
 			camTop.setParent(nodeSwarm.light);
 			camLeft.setParent(nodeSwarm.light);
-			
+
 			bCamParent = true;
 		}
-	
+	}
 }
 
 //--------------------------------------------------------------
@@ -397,7 +379,7 @@ void testApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void testApp::mouseMoved(int x, int y){
 }
 
 //--------------------------------------------------------------
