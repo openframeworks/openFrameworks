@@ -1,10 +1,8 @@
 /***********************************************************************
  * Software License Agreement (BSD License)
  *
- * Copyright 2008-2009  Marius Muja (mariusm@cs.ubc.ca). All rights reserved.
- * Copyright 2008-2009  David G. Lowe (lowe@cs.ubc.ca). All rights reserved.
- *
- * THE BSD LICENSE
+ * Copyright 2008-2011  Marius Muja (mariusm@cs.ubc.ca). All rights reserved.
+ * Copyright 2008-2011  David G. Lowe (lowe@cs.ubc.ca). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,64 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *************************************************************************/
 
-#ifndef OPENCV_FLANN_OBJECT_FACTORY_H_
-#define OPENCV_FLANN_OBJECT_FACTORY_H_
 
-#include <map>
+#ifndef OPENCV_FLANN_CONFIG_H_
+#define OPENCV_FLANN_CONFIG_H_
 
-namespace cvflann
-{
+#ifdef FLANN_VERSION_
+#undef FLANN_VERSION_
+#endif
+#define FLANN_VERSION_ "1.6.10"
 
-class CreatorNotFound
-{
-};
-
-template<typename BaseClass,
-         typename UniqueIdType,
-         typename ObjectCreator = BaseClass* (*)()>
-class ObjectFactory
-{
-    typedef ObjectFactory<BaseClass,UniqueIdType,ObjectCreator> ThisClass;
-    typedef std::map<UniqueIdType, ObjectCreator> ObjectRegistry;
-
-    // singleton class, private constructor
-    ObjectFactory() {}
-
-public:
-
-    bool subscribe(UniqueIdType id, ObjectCreator creator)
-    {
-        if (object_registry.find(id) != object_registry.end()) return false;
-
-        object_registry[id] = creator;
-        return true;
-    }
-
-    bool unregister(UniqueIdType id)
-    {
-        return object_registry.erase(id) == 1;
-    }
-
-    ObjectCreator create(UniqueIdType id)
-    {
-        typename ObjectRegistry::const_iterator iter = object_registry.find(id);
-
-        if (iter == object_registry.end()) {
-            throw CreatorNotFound();
-        }
-
-        return iter->second;
-    }
-
-    static ThisClass& instance()
-    {
-        static ThisClass the_factory;
-        return the_factory;
-    }
-private:
-    ObjectRegistry object_registry;
-};
-
-}
-
-#endif /* OPENCV_FLANN_OBJECT_FACTORY_H_ */
+#endif /* OPENCV_FLANN_CONFIG_H_ */
