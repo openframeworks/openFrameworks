@@ -1,7 +1,7 @@
 //
 // NamedMutex.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/NamedMutex.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NamedMutex.h#2 $
 //
 // Library: Foundation
 // Package: Processes
@@ -48,6 +48,8 @@
 #include "Poco/NamedMutex_WIN32U.h"
 #elif defined(POCO_OS_FAMILY_WINDOWS)
 #include "Poco/NamedMutex_WIN32.h"
+#elif defined(POCO_ANDROID)
+#include "Poco/NamedMutex_Android.h"
 #elif defined(POCO_OS_FAMILY_UNIX)
 #include "Poco/NamedMutex_UNIX.h"
 #else

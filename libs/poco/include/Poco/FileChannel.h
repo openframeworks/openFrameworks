@@ -1,7 +1,7 @@
 //
 // FileChannel.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/FileChannel.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FileChannel.h#2 $
 //
 // Library: Foundation
 // Package: Logging
@@ -140,7 +140,7 @@ class Foundation_API FileChannel: public Channel
 	///   * local:      Rotation strategy is based on local time.
 	///
 	/// Archived log files can be compressed using the gzip compression
-	/// method. Compressing can be controlled with the "compression"
+	/// method. Compressing can be controlled with the "compress"
 	/// property. The following values for the "compress" property
 	/// are supported:
 	///
