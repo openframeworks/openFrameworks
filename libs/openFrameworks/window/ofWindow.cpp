@@ -30,11 +30,6 @@ ofWindow::~ofWindow(){
 };
 
 void ofWindow::initializeWindow(){
-    if(width <= 0)
-        width = 10;
-    if(height <= 0)
-        height = 10;
-
     ofLogNotice("CREATING WINDOW AT "+ofToString(x)+"/"+ofToString(y)+" SIZE "+ofToString(width)+" x "+ofToString(height));
 
 	window = glfwOpenWindow( width, height, GLFW_WINDOWED, title.c_str(), NULL );
@@ -164,10 +159,6 @@ void ofWindow::setWindowPosition(ofPoint pos){
 }
 
 void ofWindow::setWindowShape(int w, int h){
-    if(w<=0)
-        w = 10;
-    if(h<=0)
-        h = 10;
 	glfwSetWindowSize(window, w, h);
 }
 
