@@ -30,8 +30,15 @@ ofWindow::~ofWindow(){
 };
 
 void ofWindow::initializeWindow(){
+    if(width <= 0)
+        width = 10;
+    if(height <= 0)
+        height = 10;
+
+    ofLogNotice("CREATING WINDOW AT "+ofToString(x)+"/"+ofToString(y)+" SIZE "+ofToString(width)+" x "+ofToString(height));
+
 	window = glfwOpenWindow( width, height, GLFW_WINDOWED, title.c_str(), NULL );
-	
+
 	isInitialized = true;
 	setWindowPositionAndShape(x, y, width, height);
 }
@@ -43,14 +50,14 @@ void ofWindow::addListener(ofWindowListener* listener)
 
 void ofWindow::addListener(ofBaseApp* app){
 	addListener(new ofWindowToOfBaseApp(app));
-}	
+}
 
 GLFWwindow ofWindow::getGlfwWindow(){
 	return window;
 }
 
 void ofWindow::enableContext(){
-	glfwMakeContextCurrent(window);	
+	glfwMakeContextCurrent(window);
 }
 
 void ofWindow::setup()
@@ -70,10 +77,10 @@ void ofWindow::update(ofEventArgs& e)
 void ofWindow::update()
 {
 	ofGetWindowManager()->setActiveWindow(this);
-	
+
 	ofEventArgs e;
 	ofNotifyEvent(events.update, e);
-	
+
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->update(this);
@@ -99,14 +106,14 @@ void ofWindow::draw()
 
 	ofEventArgs e;
 	ofNotifyEvent(events.draw, e);
-	
+
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->draw(this);
 		++it;
 	}
-	
-	glfwSwapBuffers(); 
+
+	glfwSwapBuffers();
 }
 
 void ofWindow::destroy(){
@@ -126,7 +133,7 @@ void ofWindow::windowClosed(){
 };
 
 ofPoint	ofWindow::getWindowPosition() {
-	return ofPoint(x, y); 
+	return ofPoint(x, y);
 }
 
 ofPoint	ofWindow::getWindowSize(){
@@ -144,7 +151,7 @@ void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h){
 		height = h;
 	}else{
 		setWindowPosition(_x, _y);
-		setWindowShape(_x, _y);
+		setWindowShape(w, h);
 	}
 }
 
@@ -157,28 +164,31 @@ void ofWindow::setWindowPosition(ofPoint pos){
 }
 
 void ofWindow::setWindowShape(int w, int h){
+    if(w<=0)
+        w = 10;
+    if(h<=0)
+        h = 10;
 	glfwSetWindowSize(window, w, h);
 }
 
 void ofWindow::windowResized(int w, int h){
 	if(width == w && height == h)
 		return;
-	if (w<=0) w = 1;
-	if (h<=0) h = 1;
+
 	previousShape.width = width;
 	previousShape.height = height;
 	width = w;
 	height = h;
-	
+
 	ofNotifyWindowResized(width, height);
-	
+
 	ofResizeEventArgs e;
 	e.width = width;
 	e.height = height;
 	ofNotifyEvent(events.windowResized, e);
-	
+
 	draw();
-	
+
 }
 
 void ofWindow::windowMoved(int _x, int _y){
@@ -188,7 +198,7 @@ void ofWindow::windowMoved(int _x, int _y){
 	previousShape.y = y;
 	x = _x;
 	y = _y;
-	
+
 	/*
 	#ifdef OF_USING_POCO
 	e.width = width;
