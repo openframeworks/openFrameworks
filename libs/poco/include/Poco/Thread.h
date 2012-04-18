@@ -1,7 +1,7 @@
 //
 // Thread.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Thread.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Thread.h#3 $
 //
 // Library: Foundation
 // Package: Threading
@@ -50,6 +50,8 @@
 #else
 #include "Poco/Thread_WIN32.h"
 #endif
+#elif defined(POCO_VXWORKS)
+#include "Poco/Thread_VX.h"
 #else
 #include "Poco/Thread_POSIX.h"
 #endif
@@ -105,7 +107,7 @@ public:
 		/// Returns the name of the thread.
 
 	std::string getName() const;
-		/// Returns teh name of the thread.
+		/// Returns the name of the thread.
 
 	void setName(const std::string& name);
 		/// Sets the name of the thread.
