@@ -30,9 +30,13 @@ Release*/
 
 #XCode
 *.pbxuser
+*.perspective
 *.perspectivev3
+*.mode1v3
+*.mode2v3
+#XCode 4
 xcuserdata
-project.xcworkspace
+*.xcworkspace
 
 #Code::Blocks
 *.depend
@@ -58,6 +62,8 @@ local.properties
 
 #OSX
 .DS_Store
+*.swp
+*~.nib
 # Thumbnails
 ._*
 
