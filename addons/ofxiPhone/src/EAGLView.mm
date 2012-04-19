@@ -81,8 +81,6 @@
 			}
         }
 		
-		[[self context] renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
-		
 		self.multipleTouchEnabled = true;
 		self.opaque = true;
 		activeTouches = [[NSMutableDictionary alloc] init];
