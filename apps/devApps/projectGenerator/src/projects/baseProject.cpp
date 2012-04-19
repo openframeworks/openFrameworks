@@ -90,14 +90,42 @@ bool baseProject::create(string path){
     return true;
 }
 
-bool baseProject::save(){
-#ifdef TARGET_LINUX // should this be ifdef'ed? what if you want to make linux CB on a windows machine?
-    ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"),ofFile::WriteOnly);
-    for(int i = 0; i < addons.size(); i++){
-        addonsMake << addons[i].name << endl;
+bool baseProject::save(bool createMakeFile){
+
+    // only save an addons.make file if requested on ANY platform
+    // this way we don't thrash the git repo for our examples, but
+    // we do make the addons.make file for any new projects...that
+    // way it can be distributed and re-used by others with the PG
+
+    if(createMakeFile){
+        ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"), ofFile::WriteOnly);
+        for(int i = 0; i < addons.size(); i++){
+            addonsMake << addons[i].name << endl;
+        }
     }
-#endif
+
 	return saveProjectFile();
+}
+
+void baseProject::addAddon(ofAddon & addon){
+    for(int i=0;i<(int)addons.size();i++){
+		if(addons[i].name==addon.name) return;
+	}
+
+	addons.push_back(addon);
+
+    for(int i=0;i<(int)addon.includePaths.size();i++){
+        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
+        addInclude(addon.includePaths[i]);
+    }
+    for(int i=0;i<(int)addon.libs.size();i++){
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        addLibrary(addon.libs[i]);
+    }
+    for(int i=0;i<(int)addon.srcFiles.size(); i++){
+        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+    }
 }
 
 void baseProject::parseAddons(){
