@@ -889,7 +889,7 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -993,7 +993,7 @@
 		BB24DED310DA7A3F00E9C588 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				EXECUTABLE_PREFIX = lib;
@@ -1005,11 +1005,12 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
 					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/iphone\"",
-					"\"$(SRCROOT)/../../../poco/lib/iphone\"",
+					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
+					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Debug";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1017,7 +1018,7 @@
 		BB24DED410DA7A3F00E9C588 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1029,11 +1030,12 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
 					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/iphone\"",
-					"\"$(SRCROOT)/../../../poco/lib/iphone\"",
+					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
+					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Release";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
@@ -1044,8 +1046,12 @@
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
 				SDKROOT = iphoneos;
+				SYMROOT = "$(SRCROOT)/../../lib/ios/";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1058,8 +1064,12 @@
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
 				SDKROOT = iphoneos;
+				SYMROOT = "$(SRCROOT)/../../lib/ios/";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1079,7 +1089,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,

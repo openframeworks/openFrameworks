@@ -52,6 +52,9 @@ void ofAddon::fromFS(string path, string platform){
 	ofSetLogLevel(OF_LOG_NOTICE);
     if (ofDirectory::doesDirectoryExist(libsPath)){
         getLibsRecursively(libsPath, libFiles, libs, platform);
+		if( platform == "ios" ){
+			getLibsRecursively(libsPath, libFiles, libs, "osx");		
+		}
     }
     ofSetLogLevel(OF_LOG_VERBOSE);
 

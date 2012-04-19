@@ -34,6 +34,7 @@ public:
 
 	string srcUUID;
 	string addonUUID;
+	string resourcesUUID;
 	string buildPhaseUUID;
 
     pugi::xml_node findOrMakeFolderSet( pugi::xml_node nodeToAddTo, vector < string > & folders, string pathForHash);

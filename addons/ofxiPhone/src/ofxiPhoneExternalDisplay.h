@@ -9,6 +9,8 @@
 
 #import "ofMain.h"
 
+#ifdef __IPHONE_4_3
+
 struct ofxiPhoneExternalDisplayMode{
     int width;
     int height;
@@ -48,3 +50,5 @@ public:
     virtual void externalDisplayChanged(){}
     
 };
+
+#endif
