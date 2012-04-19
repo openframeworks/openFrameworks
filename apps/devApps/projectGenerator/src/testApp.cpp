@@ -14,7 +14,7 @@ void testApp::setup(){
 	setOFRoot(getOFRootFromConfig());
 
 	setupDrawableOFPath();
-	
+
 	int targ = ofGetTargetPlatform();
 	//plat = OF_TARGET_IPHONE;
 
@@ -30,7 +30,7 @@ void testApp::setup(){
             addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
             project->addAddon(addon);
         }
-        project->save();
+        project->save(false);
         std::exit(0);
     }
 
@@ -109,7 +109,7 @@ void testApp::setupForTarget(int targ){
 
 void testApp::generateExamplesCB(bool & pressed){
 
-	if (pressed == false) return; // don't do this again on the mouseup. 
+	if (pressed == false) return; // don't do this again on the mouseup.
 
 	vector <int> targetsToMake;
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
@@ -136,7 +136,7 @@ void testApp::generateExamples(){
     string examplesPath = ofFilePath::join(getOFRoot(),"examples");
 
 	ofLogNotice() << "Generating examples (from: " << examplesPath << ")";
-	
+
     dir.listDir(examplesPath);
 
     for (int i = 0; i < (int)dir.size(); i++){
@@ -154,7 +154,7 @@ void testApp::generateExamples(){
         string examplesPath = dir.getPath(i);
 
 		ofLogNotice() << "Generating examples in folder: " << examplesPath;
-		
+
         subdir.listDir(examplesPath);
 
         for (int j = 0; j < (int)subdir.size(); j++){
@@ -165,7 +165,7 @@ void testApp::generateExamples(){
 			ofLogNotice() << "------------------------------------------------";
 			ofLogNotice() << "Generating example: " << subdir.getPath(j);
 			ofLogNotice() << "------------------------------------------------";
-  
+
             project->setup(target);
             project->create(subdir.getPath(j));
             vector < string > addons;
@@ -176,8 +176,8 @@ void testApp::generateExamples(){
                 addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
                 project->addAddon(addon);
             }
-            project->save();
-			
+            project->save(false);
+
         }
     }
 }
@@ -201,7 +201,7 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
 
 			}
 		}
-		project->save();
+		project->save(true);
     }
 
     return res;
@@ -226,7 +226,7 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 
 		}
 	}
-	project->save();
+	project->save(true);
 
 	return res;
 }
@@ -357,12 +357,12 @@ void testApp::setupDrawableOFPath(){
 	int lines=1;
 	int fontSize = 8;
 	float leading = 1.7;
-	
+
 	ofPathRect.x = padding;
 	ofPathRect.y = padding;
 	ofPathDrawPoint.x = padding*2;
 	ofPathDrawPoint.y = padding*2 + fontSize * leading;
-	
+
 	for(int i = 0; i < subdirs.size(); i++) {
 		if (i > 0 && i<subdirs.size()-1) {
 			subdirs[i] += "/";
@@ -381,9 +381,9 @@ void testApp::setupDrawableOFPath(){
 		ofPathRect.width = ofGetWidth() - padding*2;
 	}
 	ofPathRect.height = lines * fontSize * leading + (padding*2);
-	
+
 	drawableOfPath = path;
-	
+
 	panelAddons.setPosition(panelAddons.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
 	examplesPanel.setPosition(examplesPanel.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
 
