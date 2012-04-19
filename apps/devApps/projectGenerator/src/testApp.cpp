@@ -187,23 +187,36 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
-    project->setup(target);
-    if(project->create(res.filePath)){
-		vector<string> addonsToggles = panelAddons.getControlNames();
-		for (int i = 0; i < (int) addonsToggles.size(); i++){
-			ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
-			if(toggle){
-				ofAddon addon;
-				addon.pathToOF = getOFRelPath(res.filePath);
-				addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
-				printf("adding %s addons \n", addonsToggles[i].c_str());
-				project->addAddon(addon);
+    vector <int> targetsToMake;
+	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
+	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
+	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
+	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
+	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
 
-			}
-		}
-		project->save(true);
-    }
+	if( targetsToMake.size() == 0 ){
+		cout << "Error: makeNewProjectViaDialog - must specifiy a project to generate " <<endl;
+	}
 
+	for(int i = 0; i < (int)targetsToMake.size(); i++){
+		setupForTarget(targetsToMake[i]);
+        project->setup(target);
+        if(project->create(res.filePath)){
+            vector<string> addonsToggles = panelAddons.getControlNames();
+            for (int i = 0; i < (int) addonsToggles.size(); i++){
+                ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+                if(toggle){
+                    ofAddon addon;
+                    addon.pathToOF = getOFRelPath(res.filePath);
+                    addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
+                    printf("adding %s addons \n", addonsToggles[i].c_str());
+                    project->addAddon(addon);
+
+                }
+            }
+            project->save(true);
+        }
+	}
     return res;
 }
 
@@ -212,21 +225,38 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
-    project->setup(target);
-	project->create(res.filePath);
-	vector<string> addonsToggles = panelAddons.getControlNames();
-	for (int i = 0; i < (int)addonsToggles.size(); i++){
-		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
-		if(toggle){
-			ofAddon addon;
-			addon.pathToOF = getOFRelPath(res.filePath);
-			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
-			printf("adding %s addons \n", addonsToggles[i].c_str());
-			project->addAddon(addon);
+    vector <int> targetsToMake;
+	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
+	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
+	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
+	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
+	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
 
-		}
+	if( targetsToMake.size() == 0 ){
+		cout << "Error: updateProjectViaDialog - must specifiy a project to generate " <<endl;
 	}
-	project->save(true);
+
+	for(int i = 0; i < (int)targetsToMake.size(); i++){
+		setupForTarget(targetsToMake[i]);
+        project->setup(target);
+        project->create(res.filePath);
+        vector<string> addonsToggles = panelAddons.getControlNames();
+        for (int i = 0; i < (int)addonsToggles.size(); i++){
+            ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+            // TODO: make this remove existing addons that are unchecked????
+            // probably requires a more complex logic chain: loadProject
+            // (ticks the addons) and then you can untick etc???
+            if(toggle){
+                ofAddon addon;
+                addon.pathToOF = getOFRelPath(res.filePath);
+                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
+                printf("adding %s addons \n", addonsToggles[i].c_str());
+                project->addAddon(addon);
+
+            }
+        }
+        project->save(true);
+	}
 
 	return res;
 }
