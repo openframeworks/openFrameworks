@@ -91,13 +91,12 @@ bool baseProject::create(string path){
 }
 
 bool baseProject::save(){
-	#ifdef TARGET_LINUX
-		ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"),ofFile::WriteOnly);
-		set<ofAddon>::iterator it;
-		for(it=addons.begin();it!=addons.end();it++){
-			addonsMake << it->name << endl;
-		}
-	#endif
+#ifdef TARGET_LINUX // should this be ifdef'ed? what if you want to make linux CB on a windows machine?
+    ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"),ofFile::WriteOnly);
+    for(int i = 0; i < addons.size(); i++){
+        addonsMake << addons[i].name << endl;
+    }
+#endif
 	return saveProjectFile();
 }
 
