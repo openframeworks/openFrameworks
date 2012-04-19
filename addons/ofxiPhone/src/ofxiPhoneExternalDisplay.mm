@@ -8,6 +8,8 @@
 #include "ofxiPhoneExternalDisplay.h"
 #include "ofxiPhoneAppDelegate.h"
 
+#ifdef __IPHONE_4_3
+
 //-----------------------------------------------------------------------------------------
 static vector<ofxiPhoneExternalDisplay *> externalDisplayListeners;
 
@@ -180,3 +182,5 @@ ofxiPhoneExternalDisplay::~ofxiPhoneExternalDisplay(){
         }
     }
 }
+
+#endif
