@@ -10,12 +10,14 @@
 #include "ofCamera.h"
 #include "ofLog.h"
 
-
+//----------------------------------------
 ofCamera::ofCamera() :
 isOrtho(false),
 fov(60),
 nearClip(0),
 farClip(0),
+lensOffset(0.0f, 0.0f),
+forceAspectRatio(false),
 isActive(false)
 {
 }
@@ -23,10 +25,6 @@ isActive(false)
 //----------------------------------------
 void ofCamera::setFov(float f) {
 	fov = f;
-}
-
-float ofCamera::getFov(){
-	return fov;
 }
 
 //----------------------------------------
@@ -40,7 +38,23 @@ void ofCamera::setFarClip(float f) {
 }
 
 //----------------------------------------
-void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist){
+void ofCamera::setLensOffset(const ofVec2f & lensOffset){
+	this->lensOffset = lensOffset;
+}
+
+//----------------------------------------
+void ofCamera::setAspectRatio(float aspectRatio){
+	this->aspectRatio = aspectRatio;
+	setForceAspectRatio(true);
+}
+
+//----------------------------------------
+void ofCamera::setForceAspectRatio(bool forceAspectRatio){
+	this->forceAspectRatio = forceAspectRatio;
+}
+
+//----------------------------------------
+void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
 	float viewW = ofGetViewportWidth();
 	float viewH = ofGetViewportHeight();
 
@@ -56,6 +70,8 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 	setFov(fov);
 	setNearClip(nearDist);
 	setFarClip(farDist);
+	setLensOffset(lensOffset);
+	setForceAspectRatio(false);
 
 	setPosition(eyeX,eyeY,dist);
 	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
@@ -64,6 +80,30 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 	if(vFlip){
 		setScale(1,-1,1);
 	}
+}
+
+//----------------------------------------
+void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight){
+	ofVec3f bottomEdge = bottomRight - bottomLeft; // plane x axis
+	ofVec3f leftEdge = topLeft - bottomLeft; // plane y axis
+	ofVec3f bottomEdgeNorm = bottomEdge.normalized();
+	ofVec3f leftEdgeNorm = leftEdge.normalized();
+	ofVec3f bottomLeftToCam = this->getPosition() - bottomLeft;
+	
+	ofVec3f cameraLookVector = leftEdgeNorm.getCrossed(bottomEdgeNorm);
+	
+	ofVec3f cameraUpVector = bottomEdgeNorm.getCrossed(cameraLookVector);
+	
+	this->lookAt(cameraLookVector + this->getPosition(), cameraUpVector);
+
+	//lensoffset
+	ofVec2f lensOffset;
+	lensOffset.x = -bottomLeftToCam.dot(bottomEdgeNorm) * 2.0f / bottomEdge.length() + 1.0f;
+	lensOffset.y = -bottomLeftToCam.dot(leftEdgeNorm) * 2.0f / leftEdge.length() + 1.0f;
+	setLensOffset(lensOffset);
+	setAspectRatio( bottomEdge.length() / leftEdge.length() );
+	float distanceAlongOpticalAxis = abs(bottomLeftToCam.dot(cameraLookVector));
+	setFov(2.0f * RAD_TO_DEG * atan( (leftEdge.length() / 2.0f) / distanceAlongOpticalAxis));
 }
 
 //----------------------------------------
@@ -89,7 +129,7 @@ float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
 //----------------------------------------
 void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
-	isActive = true;
+	isActive = true;  
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
@@ -109,7 +149,9 @@ void ofCamera::begin(ofRectangle viewport) {
 		glLoadMatrixf(ortho.getPtr());
 #endif
 	} else {
-		gluPerspective(fov, viewport.width/viewport.height, nearClip, farClip);
+		ofTranslate(-lensOffset.x, -lensOffset.y);
+		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
+		gluPerspective(fov, aspect, nearClip, farClip);
 	}
 
 	glMatrixMode(GL_MODELVIEW);
