@@ -100,9 +100,9 @@ public:
 			 renderers[i]->viewport(x,y,width,height,invertY);
 		 }
 	 }
-	 void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){
+	 void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f)){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setupScreenPerspective(width,height,orientation,vFlip,fov,nearDist,farDist);
+			 renderers[i]->setupScreenPerspective(width,height,orientation,vFlip,fov,nearDist,farDist,lensOffset);
 		 }
 	 }
 	 void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){

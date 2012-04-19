@@ -341,7 +341,7 @@ ofHandednessType ofGLRenderer::getCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 

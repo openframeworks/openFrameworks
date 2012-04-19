@@ -659,7 +659,7 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	cairo_clip(cr);
 };
 
-void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
+void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
 	if(!b3D) return;
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
@@ -679,6 +679,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 	if(farDist == 0) farDist = dist * 10.0f;
 
 	projection.makePerspectiveMatrix(fov,aspect,nearDist,farDist);
+	projection.glTranslate(lensOffset.x, lensOffset.y, 0.0f);
 	modelView.makeLookAtViewMatrix(ofVec3f(eyeX,eyeY,dist),ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
 
 
