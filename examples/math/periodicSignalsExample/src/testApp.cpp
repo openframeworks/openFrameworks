@@ -10,39 +10,48 @@ void testApp::setup(){
 	y[0] = 60*2;
 	radius = 3;
 	rightMargin = 190;
-
-	gui.setup();
-	gui.add(yFactor.setup("yFactor (px)",20,0,30));
-	gui.add(speed.setup("x speed (px/s)",30,1,200));
-	gui.add(freq.setup("frequency (hz)",1,0,10));
-	gui.add(showPos.setup("time/pos",true));
-
-	speed.addListener(this,&testApp::speedChanged);
-
-
+	
+	showPos = false;
+	
+	yFactor.setup(130, 20, 100, 20,0,30,20,false, false);
+	yFactor.setLabelString("y amnt");
+	
+	speed.setup(130, 45, 100, 20,1,200,30,false, false);
+	speed.setLabelString("x speed (px/s)");
+	
+	freq.setup(130, 70, 100, 20,0,10,1,false, false);
+	freq.setLabelString("frequency (hz)");
+	
 	ofSetVerticalSync(true);
-	//ofBackground(0);
 	ofEnableAlphaBlending();
 	ofSetColor(20);
-	//ofSetLineWidth(1.5);
+	
+	preSpeed = speed.getValue();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
+
+	//if the speed has changed we need to clear the lines.
+	if( speed.getValue() != preSpeed ){
+		speedChanged();
+	}
+	preSpeed = speed.getValue();
+
 	t = ofGetElapsedTimef();
 	if(trail[0].size()==0){
 		initTime = t;
 	}
 	t = t - initTime;
 
-	x = int(t*speed)%(ofGetWidth()-rightMargin);
-	y[1] = 60*3+ofNoise(t*freq)*yFactor;
-	y[2] = 60*4+ofSignedNoise(t*freq)*yFactor;
-	y[3] = 60*5+ofRandom(-1,1)*yFactor; // random can't be dependent on time or frequency
-	y[4] = 60*6+sin(t*freq*TWO_PI)*yFactor;
-	y[5] = 60*7+(sin(t*freq*TWO_PI)+1)*.5*yFactor;
-	y[6] = 60*8+fmod(t*freq,1)*yFactor;
-	y[7] = 60*9+(fmod(t*freq,1)*2-1)*yFactor;
+	x = int(t*speed.getValue())%(ofGetWidth()-rightMargin);
+	y[1] = 60*3+ofNoise(t*freq.getValue())*yFactor.getValue();
+	y[2] = 60*4+ofSignedNoise(t*freq.getValue())*yFactor.getValue();
+	y[3] = 60*5+ofRandom(-1,1)*yFactor.getValue(); // random can't be dependent on time or frequency
+	y[4] = 60*6+sin(t*freq.getValue()*TWO_PI)*yFactor.getValue();
+	y[5] = 60*7+(sin(t*freq.getValue()*TWO_PI)+1)*.5*yFactor.getValue();
+	y[6] = 60*8+fmod(t*freq.getValue(),1)*yFactor.getValue();
+	y[7] = 60*9+(fmod(t*freq.getValue(),1)*2-1)*yFactor.getValue();
 
 	for(int i=0;i<(int)trail.size();i++){
 		if(x<prevX){
@@ -58,15 +67,16 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofBackgroundGradient(ofColor(240),ofColor(230),OF_GRADIENT_BAR);
+
+	ofBackgroundGradient(ofColor(240),ofColor(210),OF_GRADIENT_BAR);
 
 	ofSetColor(170);
-	for(int i=0;i<(ofGetWidth()-rightMargin)/speed;i++){
-		ofLine(i*speed,0,i*speed,ofGetHeight());
+	for(int i=0;i<(ofGetWidth()-rightMargin)/speed.getValue();i++){
+		ofLine(i*speed.getValue(),120,i*speed.getValue(),ofGetHeight());
 		if(showPos)
-			ofDrawBitmapString(ofToString(i)+"s",i*speed,ofGetHeight()-20);
+			ofDrawBitmapString(ofToString(i)+"s",i*speed.getValue(),ofGetHeight()-20);
 		else
-			ofDrawBitmapString(ofToString(i*speed,0)+"p",i*speed,ofGetHeight()-20);
+			ofDrawBitmapString(ofToString(i*speed.getValue(),0)+"p",i*speed.getValue(),ofGetHeight()-20);
 	}
 
 	ofSetColor(20);
@@ -98,12 +108,10 @@ void testApp::draw(){
 	ofDrawBitmapString("t:" + ofToString(t,2),ofGetWidth()-80,35);
 	ofDrawBitmapString("x:" + ofToString(x,2),ofGetWidth()-80,50);
 
-	ofSetColor(255);
-	gui.draw();
 }
 
 //--------------------------------------------------------------
-void testApp::speedChanged(int & speed){
+void testApp::speedChanged(){
 	for(int i=0;i<trail.size();i++){
 		trail[i].clear();
 	}
