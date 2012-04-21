@@ -61,6 +61,7 @@ void testApp::setup(){
 	examplesPanel.add(wincbToggle.setup("win CB projects",false));
 	examplesPanel.add(winvsToggle.setup("win VS projects", false));
 	examplesPanel.add(linuxcbToggle.setup("linux CB projects",false));
+	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",false));
 	examplesPanel.add(osxToggle.setup("osx projects",false));
 	examplesPanel.add(iosToggle.setup("ios projects",false));
 
@@ -117,6 +118,7 @@ void testApp::generateExamplesCB(bool & pressed){
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
+	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;

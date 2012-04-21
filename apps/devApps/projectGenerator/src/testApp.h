@@ -52,6 +52,6 @@ class testApp : public ofBaseApp{
         ofxButton createProject, updateProject, createAndOpen, changeOFRoot;
 
 		ofxPanel examplesPanel;
-		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle;
+		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle, linux64cbToggle;
 		ofxButton generateButton;
 };
