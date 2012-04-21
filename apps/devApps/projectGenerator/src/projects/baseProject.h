@@ -27,7 +27,7 @@ public:
     void setup(string _target);
 
     bool create(string path);
-    bool save();
+    bool save(bool createMakeFile);
 
     // this shouldn't be called by anyone.  call "create(...), save" etc
 private:
@@ -46,7 +46,7 @@ public:
     virtual void addInclude(string includeName) = 0;
     virtual void addLibrary(string libraryName, LibType libType = RELEASE_LIB) = 0;
 
-	virtual void addAddon(ofAddon & addon) = 0;
+	virtual void addAddon(ofAddon & addon);
 
     string getName() { return projectName;};
 	string getPath() { return projectDir; };
