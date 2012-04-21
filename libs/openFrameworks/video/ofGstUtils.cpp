@@ -630,7 +630,7 @@ void ofGstVideoUtils::update(){
 				bHavePixelsChanged = bBackPixelsChanged;
 				if (bHavePixelsChanged){
 					bBackPixelsChanged=false;
-					pixels.swapPixels(backPixels);
+					pixels.swap(backPixels);
 					if(prevBuffer) gst_buffer_unref (prevBuffer);
 					prevBuffer = buffer;
 				}
