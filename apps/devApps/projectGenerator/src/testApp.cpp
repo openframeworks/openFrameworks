@@ -4,7 +4,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    //ofSetLogLevel(OF_LOG_NOTICE);
 	project = NULL;
 
 	while(!checkConfigExists()){
@@ -21,6 +21,7 @@ void testApp::setup(){
     setupForTarget(targ);
 
     if(projectPath!=""){
+    	setupForTarget(ofGetTargetPlatform());
         project->setup(target);
         project->create(projectPath);
         vector < string > addons;
@@ -195,9 +196,11 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
+	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: makeNewProjectViaDialog - must specifiy a project to generate " <<endl;
+		ofSystemAlertDialog("Error: makeNewProjectViaDialog - must specifiy a project platform to generate");
 	}
 
 	for(int i = 0; i < (int)targetsToMake.size(); i++){
@@ -233,9 +236,11 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
+	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: updateProjectViaDialog - must specifiy a project to generate " <<endl;
+		ofSystemAlertDialog("Error: updateProjectViaDialog - must specifiy a project platform to generate");
 	}
 
 	for(int i = 0; i < (int)targetsToMake.size(); i++){
