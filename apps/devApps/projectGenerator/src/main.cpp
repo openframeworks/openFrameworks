@@ -17,7 +17,8 @@ int main(  int argc, char *argv[]  ){
 		ofAppNoWindow window;
 		ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
 		testApp * app = new testApp;
-		app->projectPath = ofFilePath::getAbsolutePath(argv[argc-1],false);
+		app->projectPath = ofFilePath::removeTrailingSlash(ofFilePath::getPathForDirectory(ofFilePath::getAbsolutePath(argv[argc-1],false)));
+		cout << app->projectPath << endl;
 		cout << argv[0] << endl;
 		ofRunApp( app );
 	}

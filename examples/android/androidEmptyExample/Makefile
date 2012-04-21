@@ -39,6 +39,7 @@ endif
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 	NDK_PLATFORM = android-8
+	GCC_VERSION = 4.4.3
 else
 	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
 endif
@@ -61,12 +62,14 @@ ifneq ($(ARCH),android)
 else
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 		LIBSPATH =android/armeabi-v7a
+	    ABI = armeabi-v7a
 	else
 		LIBSPATH =android/armeabi
+	    ABI = armeabi
 	endif
 	#NDK_ROOT = $(shell cat $(OF_ROOT)/libs/openFrameworksCompiled/project/android/ndk_path.make)
 	#SDK_ROOT = $(shell cat $(OF_ROOT)/libs/openFrameworksCompiled/project/android/sdk_path.make)
-	TOOLCHAIN=arm-linux-androideabi-4.4.3
+	TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
 	CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
@@ -74,7 +77,8 @@ else
 	AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 	SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
-	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include"
+	
+	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/" 
 	CFLAGS += -DANDROID
 endif
 
@@ -119,7 +123,7 @@ LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | g
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
-CFLAGS += -Wall -fexceptions
+CFLAGS += -Wall -frtti -fexceptions
 CFLAGS += -I.
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
@@ -127,8 +131,8 @@ CFLAGS += $(CORE_INCLUDE_FLAGS)
 
 
 ifeq ($(ARCH),android)
-	LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi"
-	SYSTEMLIBS += -lstdc++ -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc
+	LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -frtti -fexceptions -Wl,-dynamic-linker -Wl,--gc-sections -Wl,-z,nocopyreloc -Wl,--no-undefined -Wl,-rpath-link=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/lib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)" -L"$(NDK_ROOT)/sources/crystax/libs/$(ABI)"
+	SYSTEMLIBS += -lgnustl_static -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc 
 else
 	LDFLAGS = -Wl,-rpath=./libs
 	SYSTEMLIBS += $(shell pkg-config  jack glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)

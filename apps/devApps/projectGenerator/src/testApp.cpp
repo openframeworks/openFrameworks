@@ -4,7 +4,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    //ofSetLogLevel(OF_LOG_NOTICE);
 	project = NULL;
 
 	while(!checkConfigExists()){
@@ -14,13 +14,14 @@ void testApp::setup(){
 	setOFRoot(getOFRootFromConfig());
 
 	setupDrawableOFPath();
-	
+
 	int targ = ofGetTargetPlatform();
 	//plat = OF_TARGET_IPHONE;
 
     setupForTarget(targ);
 
     if(projectPath!=""){
+    	setupForTarget(ofGetTargetPlatform());
         project->setup(target);
         project->create(projectPath);
         vector < string > addons;
@@ -30,7 +31,7 @@ void testApp::setup(){
             addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
             project->addAddon(addon);
         }
-        project->save();
+        project->save(false);
         std::exit(0);
     }
 
@@ -61,6 +62,7 @@ void testApp::setup(){
 	examplesPanel.add(wincbToggle.setup("win CB projects",false));
 	examplesPanel.add(winvsToggle.setup("win VS projects", false));
 	examplesPanel.add(linuxcbToggle.setup("linux CB projects",false));
+	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",false));
 	examplesPanel.add(osxToggle.setup("osx projects",false));
 	examplesPanel.add(iosToggle.setup("ios projects",false));
 
@@ -109,7 +111,7 @@ void testApp::setupForTarget(int targ){
 
 void testApp::generateExamplesCB(bool & pressed){
 
-	if (pressed == false) return; // don't do this again on the mouseup. 
+	if (pressed == false) return; // don't do this again on the mouseup.
 
 	vector <int> targetsToMake;
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
@@ -117,6 +119,7 @@ void testApp::generateExamplesCB(bool & pressed){
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
+	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
@@ -136,7 +139,7 @@ void testApp::generateExamples(){
     string examplesPath = ofFilePath::join(getOFRoot(),"examples");
 
 	ofLogNotice() << "Generating examples (from: " << examplesPath << ")";
-	
+
     dir.listDir(examplesPath);
 
     for (int i = 0; i < (int)dir.size(); i++){
@@ -154,7 +157,7 @@ void testApp::generateExamples(){
         string examplesPath = dir.getPath(i);
 
 		ofLogNotice() << "Generating examples in folder: " << examplesPath;
-		
+
         subdir.listDir(examplesPath);
 
         for (int j = 0; j < (int)subdir.size(); j++){
@@ -165,7 +168,7 @@ void testApp::generateExamples(){
 			ofLogNotice() << "------------------------------------------------";
 			ofLogNotice() << "Generating example: " << subdir.getPath(j);
 			ofLogNotice() << "------------------------------------------------";
-  
+
             project->setup(target);
             project->create(subdir.getPath(j));
             vector < string > addons;
@@ -176,8 +179,8 @@ void testApp::generateExamples(){
                 addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
                 project->addAddon(addon);
             }
-            project->save();
-			
+            project->save(false);
+
         }
     }
 }
@@ -187,23 +190,38 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
-    project->setup(target);
-    if(project->create(res.filePath)){
-		vector<string> addonsToggles = panelAddons.getControlNames();
-		for (int i = 0; i < (int) addonsToggles.size(); i++){
-			ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
-			if(toggle){
-				ofAddon addon;
-				addon.pathToOF = getOFRelPath(res.filePath);
-				addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
-				printf("adding %s addons \n", addonsToggles[i].c_str());
-				project->addAddon(addon);
+    vector <int> targetsToMake;
+	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
+	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
+	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
+	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
+	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
+	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 
-			}
-		}
-		project->save();
-    }
+	if( targetsToMake.size() == 0 ){
+		cout << "Error: makeNewProjectViaDialog - must specifiy a project to generate " <<endl;
+		ofSystemAlertDialog("Error: makeNewProjectViaDialog - must specifiy a project platform to generate");
+	}
 
+	for(int i = 0; i < (int)targetsToMake.size(); i++){
+		setupForTarget(targetsToMake[i]);
+        project->setup(target);
+        if(project->create(res.filePath)){
+            vector<string> addonsToggles = panelAddons.getControlNames();
+            for (int i = 0; i < (int) addonsToggles.size(); i++){
+                ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+                if(toggle){
+                    ofAddon addon;
+                    addon.pathToOF = getOFRelPath(res.filePath);
+                    addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
+                    printf("adding %s addons \n", addonsToggles[i].c_str());
+                    project->addAddon(addon);
+
+                }
+            }
+            project->save(true);
+        }
+	}
     return res;
 }
 
@@ -212,21 +230,40 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
-    project->setup(target);
-	project->create(res.filePath);
-	vector<string> addonsToggles = panelAddons.getControlNames();
-	for (int i = 0; i < (int)addonsToggles.size(); i++){
-		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
-		if(toggle){
-			ofAddon addon;
-			addon.pathToOF = getOFRelPath(res.filePath);
-			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
-			printf("adding %s addons \n", addonsToggles[i].c_str());
-			project->addAddon(addon);
+    vector <int> targetsToMake;
+	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
+	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
+	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
+	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
+	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
+	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 
-		}
+	if( targetsToMake.size() == 0 ){
+		cout << "Error: updateProjectViaDialog - must specifiy a project to generate " <<endl;
+		ofSystemAlertDialog("Error: updateProjectViaDialog - must specifiy a project platform to generate");
 	}
-	project->save();
+
+	for(int i = 0; i < (int)targetsToMake.size(); i++){
+		setupForTarget(targetsToMake[i]);
+        project->setup(target);
+        project->create(res.filePath);
+        vector<string> addonsToggles = panelAddons.getControlNames();
+        for (int i = 0; i < (int)addonsToggles.size(); i++){
+            ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+            // TODO: make this remove existing addons that are unchecked????
+            // probably requires a more complex logic chain: loadProject
+            // (ticks the addons) and then you can untick etc???
+            if(toggle){
+                ofAddon addon;
+                addon.pathToOF = getOFRelPath(res.filePath);
+                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
+                printf("adding %s addons \n", addonsToggles[i].c_str());
+                project->addAddon(addon);
+
+            }
+        }
+        project->save(true);
+	}
 
 	return res;
 }
@@ -357,12 +394,12 @@ void testApp::setupDrawableOFPath(){
 	int lines=1;
 	int fontSize = 8;
 	float leading = 1.7;
-	
+
 	ofPathRect.x = padding;
 	ofPathRect.y = padding;
 	ofPathDrawPoint.x = padding*2;
 	ofPathDrawPoint.y = padding*2 + fontSize * leading;
-	
+
 	for(int i = 0; i < subdirs.size(); i++) {
 		if (i > 0 && i<subdirs.size()-1) {
 			subdirs[i] += "/";
@@ -381,9 +418,9 @@ void testApp::setupDrawableOFPath(){
 		ofPathRect.width = ofGetWidth() - padding*2;
 	}
 	ofPathRect.height = lines * fontSize * leading + (padding*2);
-	
+
 	drawableOfPath = path;
-	
+
 	panelAddons.setPosition(panelAddons.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
 	examplesPanel.setPosition(examplesPanel.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
 
