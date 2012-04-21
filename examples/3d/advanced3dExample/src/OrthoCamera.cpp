@@ -1,4 +1,4 @@
-#include "orthoCamera.h"
+#include "OrthoCamera.h"
 
 // Ortho camera is a custom
 //	camera we've created in
