@@ -1,4 +1,4 @@
-#include "grid.h"
+#include "Grid.h"
 
 // grid is a custom 3D
 //  object that we've
