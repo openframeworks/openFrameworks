@@ -114,7 +114,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::swapPixels(ofPixels_<PixelType> & pix){
+void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
 	std::swap(pixels,pix.pixels);
 	std::swap(width, pix.width);
 	std::swap(height,pix.height);
