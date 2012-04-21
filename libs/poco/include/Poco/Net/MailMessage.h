@@ -1,7 +1,7 @@
 //
 // MailMessage.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/MailMessage.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/MailMessage.h#2 $
 //
 // Library: Net
 // Package: Mail
@@ -174,7 +174,6 @@ public:
 		/// must not contain any non-ASCII characters.
 		/// To include non-ASCII characters in the part name or filename, 
 		/// use RFC 2047 word encoding (see encodeWord()).
-
 
 	void addContent(PartSource* pSource, ContentTransferEncoding encoding = ENCODING_QUOTED_PRINTABLE);
 		/// Adds a part to the mail message by calling

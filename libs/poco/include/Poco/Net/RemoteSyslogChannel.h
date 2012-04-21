@@ -1,7 +1,7 @@
 //
 // RemoteSyslogChannel.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/RemoteSyslogChannel.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/RemoteSyslogChannel.h#2 $
 //
 // Library: Net
 // Package: Logging
@@ -53,11 +53,10 @@ namespace Net {
 
 class Net_API RemoteSyslogChannel: public Poco::Channel
 	/// This Channel implements remote syslog logging over UDP according
-	/// to the syslog Working Group Internet Draft:
-	/// "The syslog Protocol" <http://www.ietf.org/internet-drafts/draft-ietf-syslog-protocol-17.txt>, 
-	/// and "Transmission of syslog messages over UDP" <http://www.ietf.org/internet-drafts/draft-ietf-syslog-transport-udp-07.txt>.
+	/// to RFC 5424 "The Syslog Protocol" 
+	/// and RFC 5426 "Transmission of syslog messages over UDP".
 	///
-	/// In addition, RemoteSyslogChannel also supports the "old" BSD syslog
+	/// In addition, RemoteSyslogListener also supports the "old" BSD syslog
 	/// protocol, as described in RFC 3164.
 {
 public:
@@ -132,7 +131,7 @@ public:
 		///     * name:      The name used to identify the source of log messages.
 		///     * facility:  The facility added to each log message. See the Facility enumeration for a list of supported values.
 		///                  The LOG_ prefix can be omitted and values are case insensitive (e.g. a facility value "mail" is recognized as SYSLOG_MAIL)
-		///     * format:    "bsd" (RFC 3164 format) or "new" (default)
+		///     * format:    "bsd"/"rfc3164" (RFC 3164 format) or "new"/"rfc5424" (default)
 		///     * loghost:   The target IP address or host name where log messages are sent. Optionally, a port number (separated
 		///                  by a colon) can also be specified.
 		///     * host:      (optional) Host name included in syslog messages. If not specified, the host's real domain name or

@@ -1,7 +1,7 @@
 //
 // MediaType.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/MediaType.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/MediaType.h#2 $
 //
 // Library: Net
 // Package: Messages
@@ -123,6 +123,27 @@ public:
 
 	bool matches(const std::string& type) const;
 		/// Returns true iff the type matches the given type.
+		/// Matching is case insensitive.
+
+	bool matchesRange(const MediaType& mediaType) const;
+		/// Returns true if the type and subtype match
+		/// the type and subtype of the given media type.
+		/// If the MIME type is a range of types it matches
+		/// any media type withing the range (e.g. "image/*" matches
+		/// any image media type, "*/*" matches anything).
+		/// Matching is case insensitive.
+
+	bool matchesRange(const std::string& type, const std::string& subType) const;
+		/// Returns true if the type and subtype match
+		/// the given type and subtype.
+		/// If the MIME type is a range of types it matches
+		/// any media type withing the range (e.g. "image/*" matches
+		/// any image media type, "*/*" matches anything).
+		/// Matching is case insensitive.
+
+	bool matchesRange(const std::string& type) const;
+		/// Returns true if the type matches the given type or
+		/// the type is a range of types denoted by "*".
 		/// Matching is case insensitive.
 
 protected:

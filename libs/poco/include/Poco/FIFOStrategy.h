@@ -1,7 +1,7 @@
 //
 // FIFOStrategy.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/FIFOStrategy.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FIFOStrategy.h#3 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the FIFOStrategy template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -40,124 +40,38 @@
 #define Foundation_FIFOStrategy_INCLUDED
 
 
-#include "Poco/NotificationStrategy.h"
-#include <map>
-#include <list>
-#include <memory>
+#include "Poco/DefaultStrategy.h"
 
 
 namespace Poco {
 
 
-template <class TArgs, class TDelegate, class TCompare> 
-class FIFOStrategy: public NotificationStrategy<TArgs, TDelegate>
+//@ deprecated
+template <class TArgs, class TDelegate> 
+class FIFOStrategy: public DefaultStrategy<TArgs, TDelegate>
+	/// Note: As of release 1.4.2, DefaultStrategy already 
+	/// implements FIFO behavior, so this class is provided
+	/// for backwards compatibility only.
 {
 public:
-	typedef std::list<TDelegate*>                    Delegates;
-	typedef typename Delegates::iterator             Iterator;
-	typedef typename Delegates::const_iterator       ConstIterator;
-	typedef std::map<TDelegate*, Iterator, TCompare> DelegateIndex;
-	typedef typename DelegateIndex::iterator         IndexIterator;
-	typedef typename DelegateIndex::const_iterator   ConstIndexIterator;
-
 	FIFOStrategy()
 	{
 	}
 
-	FIFOStrategy(const FIFOStrategy& s)
+	FIFOStrategy(const FIFOStrategy& s):
+		DefaultStrategy<TArgs, TDelegate>(s)
 	{
-		operator = (s);
 	}
 
 	~FIFOStrategy()
 	{
-		clear();
-	}
-
-	void notify(const void* sender, TArgs& arguments)
-	{
-		std::vector<Iterator> delMe;
-		Iterator it    = _observers.begin();
-		Iterator itEnd = _observers.end();
-
-		for (; it != itEnd; ++it)
-		{
-			if (!(*it)->notify(sender, arguments))
-			{
-				// schedule for deletion
-				delMe.push_back(it);
-			}
-		}
-		
-		while (!delMe.empty())
-		{
-			typename std::vector<Iterator>::iterator vit = delMe.end();
-			--vit;
-			delete **vit;
-			_observers.erase(*vit);
-			delMe.pop_back();
-		}
-	}
-
-	void add(const TDelegate& delegate)
-	{
-		IndexIterator it = _observerIndex.find(const_cast<TDelegate*>(&delegate));
-		if (it != _observerIndex.end())
-		{
-			delete *it->second;
-			_observers.erase(it->second);
-			_observerIndex.erase(it);
-		}
-		std::auto_ptr<TDelegate> pDelegate(delegate.clone());
-		_observers.push_back(pDelegate.get());
-		bool tmp = _observerIndex.insert(std::make_pair(pDelegate.get(), --_observers.end())).second;
-		poco_assert (tmp);
-		pDelegate.release();
-	}
-
-	void remove(const TDelegate& delegate)
-	{
-		IndexIterator it = _observerIndex.find(const_cast<TDelegate*>(&delegate));
-
-		if (it != _observerIndex.end())
-		{
-			delete *it->second;
-			_observers.erase(it->second);
-			_observerIndex.erase(it);
-		}
 	}
 
 	FIFOStrategy& operator = (const FIFOStrategy& s)
 	{
-		if (this != &s)
-		{
-			for (ConstIterator it = s._observers.begin(); it != s._observers.end(); ++it)
-			{
-				add(**it);
-			}
-		}
+		DefaultStrategy<TArgs, TDelegate>::operator = (s);
 		return *this;
 	}
-
-	void clear()
-	{
-		for (Iterator it = _observers.begin(); it != _observers.end(); ++it)
-		{
-			delete *it;
-		}
-
-		_observers.clear();
-		_observerIndex.clear();
-	}
-
-	bool empty() const
-	{
-		return _observers.empty();
-	}
-
-protected:
-	Delegates     _observers;     /// Stores the delegates in the order they were added.
-	DelegateIndex _observerIndex; /// For faster lookup when add/remove is used.
 };
 
 

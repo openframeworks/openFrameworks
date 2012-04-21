@@ -1,7 +1,7 @@
 //
 // FunctionPriorityDelegate.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/FunctionPriorityDelegate.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FunctionPriorityDelegate.h#5 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the FunctionPriorityDelegate template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -42,6 +42,7 @@
 
 #include "Poco/Foundation.h"
 #include "Poco/AbstractPriorityDelegate.h"
+#include "Poco/Mutex.h"
 
 
 namespace Poco {
@@ -49,20 +50,20 @@ namespace Poco {
 
 template <class TArgs, bool useSender = true, bool senderIsConst = true> 
 class FunctionPriorityDelegate: public AbstractPriorityDelegate<TArgs>
-	/// Wraps a C style function (or a C++ static fucntion) to be used as
-	/// a priority delegate
+	/// Wraps a freestanding function or static member function 
+	/// for use as a PriorityDelegate.
 {
 public:
 	typedef void (*NotifyMethod)(const void*, TArgs&);
 
 	FunctionPriorityDelegate(NotifyMethod method, int prio):
-		AbstractPriorityDelegate<TArgs>(*reinterpret_cast<void**>(&method), prio),
+		AbstractPriorityDelegate<TArgs>(prio),
 		_receiverMethod(method)
 	{
 	}
 	
 	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
-		AbstractPriorityDelegate<TArgs>(delegate._pTarget, delegate._priority),
+		AbstractPriorityDelegate<TArgs>(delegate),
 		_receiverMethod(delegate._receiverMethod)
 	{
 	}
@@ -84,17 +85,35 @@ public:
 
 	bool notify(const void* sender, TArgs& arguments)
 	{
-		(*_receiverMethod)(sender, arguments);
-		return true; // per default the delegate never expires
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(sender, arguments);
+			return true;
+		}
+		else return false;
 	}
 
-	AbstractPriorityDelegate<TArgs>* clone() const
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
+		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<TArgs>* clone() const
 	{
 		return new FunctionPriorityDelegate(*this);
 	}
 
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
 protected:
 	NotifyMethod _receiverMethod;
+	Mutex _mutex;
 
 private:
 	FunctionPriorityDelegate();
@@ -108,13 +127,13 @@ public:
 	typedef void (*NotifyMethod)(void*, TArgs&);
 
 	FunctionPriorityDelegate(NotifyMethod method, int prio):
-		AbstractPriorityDelegate<TArgs>(*reinterpret_cast<void**>(&method), prio),
+		AbstractPriorityDelegate<TArgs>(prio),
 		_receiverMethod(method)
 	{
 	}
 	
 	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
-		AbstractPriorityDelegate<TArgs>(delegate._pTarget, delegate._priority),
+		AbstractPriorityDelegate<TArgs>(delegate),
 		_receiverMethod(delegate._receiverMethod)
 	{
 	}
@@ -136,17 +155,35 @@ public:
 
 	bool notify(const void* sender, TArgs& arguments)
 	{
-		(*_receiverMethod)(const_cast<void*>(sender), arguments);
-		return true; // per default the delegate never expires
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(const_cast<void*>(sender), arguments);
+			return true;
+		}
+		else return false;
 	}
 
-	AbstractPriorityDelegate<TArgs>* clone() const
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
+		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<TArgs>* clone() const
 	{
 		return new FunctionPriorityDelegate(*this);
 	}
 
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
 protected:
 	NotifyMethod _receiverMethod;
+	Mutex _mutex;
 
 private:
 	FunctionPriorityDelegate();
@@ -160,13 +197,13 @@ public:
 	typedef void (*NotifyMethod)(TArgs&);
 
 	FunctionPriorityDelegate(NotifyMethod method, int prio):
-		AbstractPriorityDelegate<TArgs>(*reinterpret_cast<void**>(&method), prio),
+		AbstractPriorityDelegate<TArgs>(prio),
 		_receiverMethod(method)
 	{
 	}
 	
 	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
-		AbstractPriorityDelegate<TArgs>(delegate._pTarget, delegate._priority),
+		AbstractPriorityDelegate<TArgs>(delegate),
 		_receiverMethod(delegate._receiverMethod)
 	{
 	}
@@ -188,17 +225,35 @@ public:
 
 	bool notify(const void* sender, TArgs& arguments)
 	{
-		(*_receiverMethod)(arguments);
-		return true; // per default the delegate never expires
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(arguments);
+			return true;
+		}
+		else return false;
 	}
 
-	AbstractPriorityDelegate<TArgs>* clone() const
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
+		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<TArgs>* clone() const
 	{
 		return new FunctionPriorityDelegate(*this);
 	}
 
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
 protected:
 	NotifyMethod _receiverMethod;
+	Mutex _mutex;
 
 private:
 	FunctionPriorityDelegate();
