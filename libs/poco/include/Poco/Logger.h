@@ -1,7 +1,7 @@
 //
 // Logger.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Logger.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Logger.h#5 $
 //
 // Library: Foundation
 // Package: Logging
@@ -113,6 +113,10 @@ public:
 		
 	void setLevel(int level);
 		/// Sets the Logger's log level.
+		///
+		/// See Message::Priority for valid log levels.
+		/// Setting the log level to zero turns off
+		/// logging for that Logger.
 		
 	int getLevel() const;
 		/// Returns the Logger's log level.
@@ -121,6 +125,7 @@ public:
 		/// Sets the Logger's log level using a symbolic value.
 		///
 		/// Valid values are:
+		///   - none (turns off logging)
 		///   - fatal
 		///   - critical
 		///   - error
@@ -335,6 +340,10 @@ public:
 		/// returns the result. To include a dollar sign in the result string,
 		/// specify two dollar signs ($$) in the format string.
 
+	static void formatDump(std::string& message, const void* buffer, std::size_t length);
+		/// Creates a hex-dump of the given buffer and appends it to the
+		/// given message string.
+		
 	static void setLevel(const std::string& name, int level);
 		/// Sets the given log level on all loggers that are
 		/// descendants of the Logger with the given name.
@@ -390,6 +399,23 @@ public:
 		/// Fills the given vector with the names
 		/// of all currently defined loggers.
 		
+	static int parseLevel(const std::string& level);
+		/// Parses a symbolic log level from a string and
+		/// returns the resulting numeric level.
+		///
+		/// Valid symbolic levels are:
+		///   - none (turns off logging)
+		///   - fatal
+		///   - critical
+		///   - error
+		///   - warning
+		///   - notice
+		///   - information
+		///   - debug
+		///   - trace
+		///
+		/// The level is not case sensitive.
+		
 	static const std::string ROOT; /// The name of the root logger ("").	
 		
 protected:
@@ -402,7 +428,6 @@ protected:
 	void log(const std::string& text, Message::Priority prio, const char* file, int line);
 
 	static std::string format(const std::string& fmt, int argc, std::string argv[]);
-	static void formatDump(std::string& message, const void* buffer, std::size_t length);
 	static Logger& parent(const std::string& name);
 	static void add(Logger* pLogger);
 	static Logger* find(const std::string& name);

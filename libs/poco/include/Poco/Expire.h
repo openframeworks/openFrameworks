@@ -1,7 +1,7 @@
 //
 // Expire.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Expire.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Expire.h#3 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the Expire template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -51,11 +51,10 @@ namespace Poco {
 template <class TArgs>
 class Expire: public AbstractDelegate<TArgs>
 	/// Decorator for AbstractDelegate adding automatic 
-	/// expiring of registrations to AbstractDelegates.
+	/// expiration of registrations to AbstractDelegate's.
 {
 public:
 	Expire(const AbstractDelegate<TArgs>& p, Timestamp::TimeDiff expireMillisecs):
-		AbstractDelegate<TArgs>(p),
 		_pDelegate(p.clone()), 
 		_expire(expireMillisecs*1000)
 	{
@@ -71,7 +70,7 @@ public:
 
 	~Expire()
 	{
-		destroy();
+		delete _pDelegate;
 	}
 	
 	Expire& operator = (const Expire& expire)
@@ -95,20 +94,24 @@ public:
 			return false;
 	}
 
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		return other.equals(*_pDelegate);
+	}
+
 	AbstractDelegate<TArgs>* clone() const
 	{
 		return new Expire(*this);
 	}
-
-	void destroy()
+	
+	void disable()
 	{
-		delete this->_pDelegate;
-		this->_pDelegate = 0;
+		_pDelegate->disable();
 	}
 
-	const AbstractDelegate<TArgs>& getDelegate() const
+	const AbstractDelegate<TArgs>* unwrap() const
 	{
-		return *this->_pDelegate;
+		return this->_pDelegate;
 	}
 
 protected:

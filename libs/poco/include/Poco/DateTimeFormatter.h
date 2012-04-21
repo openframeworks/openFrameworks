@@ -1,7 +1,7 @@
 //
 // DateTimeFormatter.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/DateTimeFormatter.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/DateTimeFormatter.h#2 $
 //
 // Library: Foundation
 // Package: DateTime
@@ -92,10 +92,11 @@ public:
 		///   * %A - AM/PM
 		///   * %M - minute (00 .. 59)
 		///   * %S - second (00 .. 59)
+		///   * %s - seconds and microseconds (equivalent to %S.%F)
 		///   * %i - millisecond (000 .. 999)
 		///   * %c - centisecond (0 .. 9)
 		///   * %F - fractional seconds/microseconds (000000 - 999999)
-		///   * %z - time zone differential in ISO 8601 format (Z or +NN.NN).
+		///   * %z - time zone differential in ISO 8601 format (Z or +NN.NN)
 		///   * %Z - time zone differential in RFC format (GMT or +NNNN)
 		///   * %% - percent sign
 		///

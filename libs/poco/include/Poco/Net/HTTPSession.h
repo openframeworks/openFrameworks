@@ -1,7 +1,7 @@
 //
 // HTTPSession.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPSession.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPSession.h#2 $
 //
 // Library: Net
 // Package: HTTP
@@ -82,7 +82,7 @@ public:
 	bool connected() const;
 		/// Returns true if the underlying socket is connected.
 
-	void abort();
+	virtual void abort();
 		/// Aborts a session in progress by shutting down
 		/// and closing the underlying socket.
 		

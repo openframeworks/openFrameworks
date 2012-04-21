@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxGui.h"
 
 //--------------------------------------------------------------
 // OF logging example
@@ -34,12 +33,9 @@ class testApp : public ofBaseApp {
 		int elapsedTime;
 		int triggerOne;
 		int triggerTwo;
-
-		// Stuff for the GUI (see guiExample for more on this)
-		ofxPanel gui;
-		ofxToggle verboseLevel;
-		ofxToggle logToFile;
-
+		
+		bool verboseLevel;
+		bool logToFile;
 		bool currentVerboseLevel;
 		bool currentLogToFile;
 

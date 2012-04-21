@@ -1,7 +1,7 @@
 //
 // PatternFormatter.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/PatternFormatter.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/PatternFormatter.h#2 $
 //
 // Library: Foundation
 // Package: Logging
@@ -88,8 +88,9 @@ class Foundation_API PatternFormatter: public Formatter
 	///   * %i - message date/time millisecond (000 .. 999)
 	///   * %c - message date/time centisecond (0 .. 9)
 	///   * %F - message date/time fractional seconds/microseconds (000000 - 999999)
-	///   * %z - time zone differential in ISO 8601 format (Z or +NN.NN).
+	///   * %z - time zone differential in ISO 8601 format (Z or +NN.NN)
 	///   * %Z - time zone differential in RFC format (GMT or +NNNN)
+	///   * %E - epoch time (UTC, seconds since midnight, January 1, 1970)
 	///   * %[name] - the value of the message parameter with the given name
 	///   * %% - percent sign
 
