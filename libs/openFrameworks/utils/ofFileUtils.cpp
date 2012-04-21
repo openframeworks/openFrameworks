@@ -1301,7 +1301,6 @@ string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
 		readlink("/proc/self/exe", buff, FILENAME_MAX);
-		cout << buff << endl;
 		return buff;
 	#elif defined(TARGET_OSX)
 		char path[FILENAME_MAX];
