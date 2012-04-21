@@ -1,7 +1,7 @@
 //
 // TaskManager.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/TaskManager.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/TaskManager.h#2 $
 //
 // Library: Foundation
 // Package: Tasks
@@ -96,6 +96,12 @@ public:
 	void joinAll();
 		/// Waits for the completion of all the threads
 		/// in the TaskManager's thread pool.
+		///
+		/// Note: joinAll() will wait for ALL tasks in the
+		/// TaskManager's ThreadPool to complete. If the
+		/// ThreadPool has threads created by other
+		/// facilities, these threads must also complete
+		/// before joinAll() can return.
 
 	TaskList taskList() const;
 		/// Returns a copy of the internal task list.

@@ -1,7 +1,7 @@
 //
 // Config.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Config.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Config.h#3 $
 //
 // Library: Foundation
 // Package: Core
@@ -60,9 +60,15 @@
 // #define POCO_NO_SHAREDMEMORY
 
 
+// Define if no <locale> header is available (such as on WinCE)
+// #define POCO_NO_LOCALE
+
+
 // Define to desired default thread stack size
 // Zero means OS default
+#ifndef POCO_THREAD_STACK_SIZE
 #define POCO_THREAD_STACK_SIZE 0
+#endif
 
 
 // Define to override system-provided

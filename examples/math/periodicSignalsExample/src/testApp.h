@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxGui.h"
+#include "ofxSimpleSlider.h"
 
 class testApp : public ofBaseApp{
 
@@ -20,16 +20,19 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		void speedChanged(int & speed);
+		void speedChanged();
 
 		vector<ofPolyline> trail;
 		int x, prevX;
 		vector<int> y;
-		ofxPanel gui;
-		ofxIntSlider yFactor;
-		ofxIntSlider speed;
-		ofxIntSlider freq;
-		ofxToggle showPos;
+	
+	
+		float preSpeed;
+
+		ofxSimpleSlider yFactor;
+		ofxSimpleSlider speed;
+		ofxSimpleSlider freq;
+		bool showPos;
 		float radius,initTime,t;
 		int rightMargin;
 };

@@ -21,7 +21,6 @@ public:
 		Linux64
 	};
 
-
     void setup();
 
     bool createProjectFile();
@@ -32,7 +31,6 @@ public:
 
 private:
 
-    //void parseAddons();
 	Arch arch;
 };
 

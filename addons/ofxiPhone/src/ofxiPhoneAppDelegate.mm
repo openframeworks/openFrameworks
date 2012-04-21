@@ -99,6 +99,8 @@
         [self.window insertSubview:self.glViewController.view atIndex:0]; // make sure it is the bottom most view.
     }
     
+	#ifdef __IPHONE_4_3
+
     /**
      *  check if external display is connected.
      *  if so, create an external window for it.
@@ -108,6 +110,8 @@
         [self createExternalWindowWithPreferredMode]; // create external window as soon as external screen is connected to prevent unwanted mirroring.
         ofxiPhoneExternalDisplay::alertExternalDisplayConnected(); // alert any OF apps listening for a new external device.
     }
+	
+	#endif
 }
 
 
@@ -158,6 +162,8 @@
 	return YES;
 }
 
+#ifdef __IPHONE_4_3
+
 /**
  *
  *  Below are methods that manage the external display.
@@ -205,6 +211,7 @@
     
     return YES;
 }
+
 
 //-------------------------------------------------------------------------------------------
 -(BOOL) createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex {
@@ -287,5 +294,7 @@
     
     return YES;
 }
+
+#endif
 
 @end
