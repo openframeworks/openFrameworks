@@ -149,6 +149,8 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 	{
 		if ( arg->IsInt32() )
 			ofMessage->addIntArg( arg->AsInt32Unchecked() );
+		else if ( arg->IsInt64() )
+			ofMessage->addInt64Arg( arg->AsInt64Unchecked() );
 		else if ( arg->IsFloat() )
 			ofMessage->addFloatArg( arg->AsFloatUnchecked() );
 		else if ( arg->IsString() )

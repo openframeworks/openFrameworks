@@ -13,9 +13,9 @@
 #include "ofMain.h"
 
 // Custom objects for this example
-#include "swarm.h"
-#include "grid.h"
-#include "orthoCamera.h"
+#include "Swarm.h"
+#include "Grid.h"
+#include "OrthoCamera.h"
 
 #define N_CAMERAS 4
 

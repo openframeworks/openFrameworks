@@ -1,7 +1,7 @@
 //
 // AbstractPriorityDelegate.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/AbstractPriorityDelegate.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractPriorityDelegate.h#3 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the AbstractPriorityDelegate template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -41,27 +41,26 @@
 
 
 #include "Poco/Foundation.h"
+#include "Poco/AbstractDelegate.h"
 
 
 namespace Poco {
 
 
 template <class TArgs> 
-class AbstractPriorityDelegate
-	/// Interface for PriorityDelegate and PriorityExpire.
-	/// Very similar to AbstractDelegate but having two separate files (no inheritance)
-	/// allows to have compile-time checks when registering an observer
-	/// instead of run-time checks.
+class AbstractPriorityDelegate: public AbstractDelegate<TArgs>
+	/// Base class for PriorityDelegate and PriorityExpire.
+	///
+	/// Extends AbstractDelegate with a priority value.
 {
 public:
-	AbstractPriorityDelegate(void* pTarget, int prio):
-		_pTarget(pTarget),
+	AbstractPriorityDelegate(int prio):
 		_priority(prio)
 	{
 	}
 
 	AbstractPriorityDelegate(const AbstractPriorityDelegate& del):
-		_pTarget(del._pTarget),
+		AbstractDelegate<TArgs>(del),
 		_priority(del._priority)
 	{
 	}
@@ -70,36 +69,13 @@ public:
 	{
 	}
 
-	virtual bool notify(const void* sender, TArgs & arguments) = 0;
-		/// Returns false, if the Delegate is no longer valid, thus indicating an expire
-
-	virtual AbstractPriorityDelegate* clone() const = 0;
-		// Returns a deep-copy of the object.
-
-	bool operator < (const AbstractPriorityDelegate<TArgs>& other) const
-		/// Operator used for comparing AbstractPriorityDelegates in a collection.
-	{
-		if (_priority == other._priority)
-		{
-			return _pTarget < other._pTarget;
-		}
-
-		return (_priority < other._priority);
-	}
-
-	void* target() const
-	{
-		return _pTarget;
-	}
-
 	int priority() const
 	{
 		return _priority;
 	}
 
 protected:
-	void* _pTarget;
-	int   _priority;
+	int _priority;
 };
 
 

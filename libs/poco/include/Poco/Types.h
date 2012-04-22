@@ -1,7 +1,7 @@
 //
 // Types.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Types.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Types.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -204,6 +204,18 @@ namespace Poco {
 		typedef signed long long   Int64;
 		typedef unsigned long long UInt64;
 	#endif
+	#define POCO_HAVE_INT64 1
+#elif defined(_DIAB_TOOL)
+	typedef signed char        Int8;
+	typedef unsigned char      UInt8;
+	typedef signed short       Int16;
+	typedef unsigned short     UInt16;
+	typedef signed int         Int32;
+	typedef unsigned int       UInt32;
+	typedef signed long        IntPtr;
+	typedef unsigned long      UIntPtr;
+	typedef signed long long   Int64;
+	typedef unsigned long long UInt64;
 	#define POCO_HAVE_INT64 1
 #endif
 

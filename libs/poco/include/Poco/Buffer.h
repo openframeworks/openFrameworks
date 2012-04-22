@@ -1,7 +1,7 @@
 //
 // Buffer.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Buffer.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Buffer.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -41,6 +41,7 @@
 
 
 #include "Poco/Foundation.h"
+#include <cstring>
 #include <cstddef>
 
 
@@ -68,6 +69,23 @@ public:
 		/// Destroys the Buffer.
 	{
 		delete [] _ptr;
+	}
+	
+	void resize(std::size_t newSize, bool preserveContent = true)
+		/// Resizes the buffer. If preserveContent is true,
+		/// the content of the old buffer is copied over to the
+		/// new buffer. NewSize can be larger or smaller than
+		/// the current size, but it must not be 0.
+	{
+		T* ptr = new T[newSize];
+		if (preserveContent)
+		{
+			std::size_t n = newSize > _size ? _size : newSize;
+			std::memcpy(ptr, _ptr, n);
+		}
+		delete [] _ptr;
+		_ptr  = ptr;
+		_size = newSize;
 	}
 	
 	std::size_t size() const

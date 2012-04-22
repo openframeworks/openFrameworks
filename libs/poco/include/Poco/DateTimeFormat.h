@@ -1,7 +1,7 @@
 //
 // DateTimeFormat.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/DateTimeFormat.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/DateTimeFormat.h#2 $
 //
 // Library: Foundation
 // Package: DateTime
@@ -58,6 +58,14 @@ public:
 		/// Examples: 
 		///   2005-01-01T12:00:00+01:00
 		///   2005-01-01T11:00:00Z
+
+	static const std::string ISO8601_FRAC_FORMAT;
+		/// The date/time format defined in the ISO 8601 standard,
+		/// with fractional seconds.
+		///
+		/// Examples: 
+		///   2005-01-01T12:00:00.000000+01:00
+		///   2005-01-01T11:00:00.000000Z
 	
 	static const std::string RFC822_FORMAT;
 		/// The date/time format defined in RFC 822 (obsoleted by RFC 1123).

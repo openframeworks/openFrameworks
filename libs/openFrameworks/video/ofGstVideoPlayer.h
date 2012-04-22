@@ -53,11 +53,12 @@ public:
 	float 			getWidth();
 
 	void setFrameByFrame(bool frameByFrame);
+	void setThreadAppSink(bool threaded);
 
 	ofGstVideoUtils * getGstVideoUtils();
 
 protected:
-	bool	allocate();
+	bool	allocate(int bpp);
 	void	on_stream_prepared();
 
 	// return true to set the message as attended so upstream doesn't try to process it
@@ -69,5 +70,6 @@ private:
 	int 				fps_n, fps_d;
 	bool				bIsStream;
 	bool				bIsAllocated;
+	bool				threadAppSink;
 	ofGstVideoUtils		videoUtils;
 };

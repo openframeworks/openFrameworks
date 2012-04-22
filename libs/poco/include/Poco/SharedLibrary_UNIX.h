@@ -1,7 +1,7 @@
 //
 // SharedLibrary_UNIX.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/SharedLibrary_UNIX.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/SharedLibrary_UNIX.h#2 $
 //
 // Library: Foundation
 // Package: SharedLibrary
@@ -50,9 +50,15 @@ namespace Poco {
 class Foundation_API SharedLibraryImpl
 {
 protected:
+	enum Flags
+	{
+		SHLIB_GLOBAL_IMPL = 1,
+		SHLIB_LOCAL_IMPL  = 2  
+	};
+
 	SharedLibraryImpl();
 	~SharedLibraryImpl();
-	void loadImpl(const std::string& path);
+	void loadImpl(const std::string& path, int flags);
 	void unloadImpl();
 	bool isLoadedImpl() const;
 	void* findSymbolImpl(const std::string& name);

@@ -127,31 +127,41 @@ void xcodeProject::setup(){
 		srcUUID			= "E4B69E1C0A3A1BDC003C02F2";
 		addonUUID		= "BB4B014C10F69532006C3DED";
 		buildPhaseUUID	= "E4B69E200A3A1BDC003C02F2";
+		resourcesUUID	= "";
 	}else{
 		srcUUID			= "E4D8936A11527B74007E1F53";
 		addonUUID		= "BB16F26B0F2B646B00518274";
 		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
+		resourcesUUID   = "BB24DD8F10DA77E000E9C588";
 	}
 }
 
 
 void xcodeProject::saveScheme(){
-    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/");
-    dir.create(true);
-    string schemeTo = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + ".xcscheme";
-    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample.xcscheme", schemeTo);
-    cout << "trying to copy " << projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/emptyExample.xcscheme" << " ------ > " << schemeTo <<endl;
-    findandreplaceInTexfile(schemeTo, "emptyExample", projectName);
+	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
+    ofDirectory::removeDirectory(schemeFolder, true);
+	ofDirectory::createDirectory(schemeFolder, false, true);
+    
+	string schemeToD = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Debug.xcscheme";
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample Debug.xcscheme", schemeToD);
+
+	string schemeToR = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Release.xcscheme";
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample Release.xcscheme", schemeToR);
+	
+    findandreplaceInTexfile(schemeToD, "emptyExample", projectName);
+    findandreplaceInTexfile(schemeToR, "emptyExample", projectName);
+	
+	//TODO: do we still need this?
     string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
     ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
 }
 
 
 void xcodeProject::saveWorkspaceXML(){
-    string xcodeProjectWorkspace = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/contents.xcworkspacedata";
-    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/");
-    dir.create(true);
-    cout << "trying copy " << templatePath + "emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata" << " -----> " << xcodeProjectWorkspace <<endl;
+	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
+	ofDirectory::removeDirectory(workspaceFolder, true);
+	ofDirectory::createDirectory(workspaceFolder, false, true);
+	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
 }
@@ -162,10 +172,12 @@ bool xcodeProject::createProjectFile(){
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-    ofDirectory xcodeDir(xcodeProject);
-    xcodeDir.create(true);
-
-
+    ofDirectory::removeDirectory(xcodeProject, true);
+   
+	ofDirectory xcodeDir(xcodeProject);
+	xcodeDir.create(true);
+	xcodeDir.close();
+	
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj/project.pbxproj"),
                        ofFilePath::join(xcodeProject, "project.pbxproj"), true, true);
 
@@ -405,8 +417,9 @@ void xcodeProject::addSrc(string srcFile, string folder){
         fileKind = "sourcecode.cpp.objcpp";
     }
     if(ext == "xib"){
-		fileKind = "file";
-        addToBuild	= true;
+		fileKind = "file.xib";
+        addToBuild	= false;
+        addToResources = true;		
     }
     if (folder == "src"){
         bAddFolder = false;
@@ -459,8 +472,21 @@ void xcodeProject::addSrc(string srcFile, string folder){
     //-----------------------------------------------------------------
 
 
-    if (addToResources == true){
-        // no idea where resources go
+    if (addToResources == true && resourcesUUID != ""){
+		
+        string resUUID = generateUUID(srcFile + "-build");
+        string pbxbuildfile = string(PBXBuildFile);
+        findandreplace( pbxbuildfile, "FILEUUID", UUID);
+        findandreplace( pbxbuildfile, "BUILDUUID", resUUID);
+        fileRefDoc.load_buffer(pbxbuildfile.c_str(), strlen(pbxbuildfile.c_str()));
+        doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child().next_sibling());   // UUID FIRST
+        doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child());                  // DICT SECOND
+
+        // add it to the build array.
+        pugi::xml_node array;
+        findArrayForUUID(resourcesUUID, array);    // this is the build array (all build refs get added here)
+        array.append_child("string").append_child(pugi::node_pcdata).set_value(resUUID.c_str());
+		
     }
 
 
