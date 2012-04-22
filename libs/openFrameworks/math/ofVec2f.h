@@ -7,6 +7,8 @@ class ofVec4f;
 class ofVec2f {
 public:
 	float x, y;
+    
+    static const int DIM = 2;
 	
 	ofVec2f( float _x=0.f, float _y=0.f );
     ofVec2f( const ofVec3f& vec );
@@ -204,6 +206,12 @@ public:
     
     // use getRotated
     ofVec2f rotated( float angle, const ofVec2f& pivot ) const;    
+    
+    // return all zero vector
+    static ofVec2f zero() { return ofVec2f(0, 0); }
+
+    // return all one vector
+    static ofVec2f one() { return ofVec2f(1, 1); }
 };
 
 
