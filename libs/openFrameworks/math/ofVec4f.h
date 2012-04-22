@@ -144,6 +144,13 @@ public:
 	
     // use getMiddle
     ofVec4f 	middled( const ofVec4f& pnt ) const;    
+    
+    // return all zero vector
+    static ofVec4f zero() { return ofVec4f(0, 0, 0, 0); }
+    
+    // return all one vector
+    static ofVec4f one() { return ofVec4f(1, 1, 1, 1); }
+
 };
 
 

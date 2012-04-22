@@ -206,6 +206,12 @@ public:
     
     // use getRotated
     ofVec2f rotated( float angle, const ofVec2f& pivot ) const;    
+    
+    // return all zero vector
+    static ofVec2f zero() { return ofVec2f(0, 0); }
+
+    // return all one vector
+    static ofVec2f one() { return ofVec2f(1, 1); }
 };
 
 
