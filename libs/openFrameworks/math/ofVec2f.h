@@ -7,6 +7,8 @@ class ofVec4f;
 class ofVec2f {
 public:
 	float x, y;
+    
+    static const int DIM = 2;
 	
 	ofVec2f( float _x=0.f, float _y=0.f );
     ofVec2f( const ofVec3f& vec );

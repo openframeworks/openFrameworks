@@ -10,6 +10,8 @@
 class ofVec3f {
 public:
 	float x,y,z;
+    
+    static const int DIM = 3;
 	
 	ofVec3f( float _x=0.f, float _y=0.f, float _z=0.f );
 	
