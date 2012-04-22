@@ -10,6 +10,8 @@
 class ofVec3f {
 public:
 	float x,y,z;
+    
+    static const int DIM = 3;
 	
 	ofVec3f( float _x=0.f, float _y=0.f, float _z=0.f );
 	
@@ -226,6 +228,12 @@ public:
     ofVec3f 	rotated( float angle,
 						const ofVec3f& pivot,
 						const ofVec3f& axis ) const;    
+
+    // return all zero vector
+    static ofVec3f zero() { return ofVec3f(0, 0, 0); }
+    
+    // return all one vector
+    static ofVec3f one() { return ofVec3f(1, 1, 1); }
 };
 
 

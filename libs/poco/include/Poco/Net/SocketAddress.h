@@ -1,7 +1,7 @@
 //
 // SocketAddress.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/SocketAddress.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SocketAddress.h#2 $
 //
 // Library: Net
 // Package: NetCore
@@ -129,6 +129,9 @@ public:
 	IPAddress::Family family() const;
 		/// Returns the address family of the host's address.
 		
+	bool operator == (const SocketAddress& addr) const;
+	bool operator != (const SocketAddress& addr) const;
+			
 	enum
 	{
 		MAX_ADDRESS_LENGTH = 
@@ -162,6 +165,18 @@ inline void swap(SocketAddress& a1, SocketAddress& a2)
 inline IPAddress::Family SocketAddress::family() const
 {
 	return host().family();
+}
+
+
+inline 	bool SocketAddress::operator == (const SocketAddress& addr) const
+{
+	return host() == addr.host() && port() == addr.port();
+}
+
+
+inline bool SocketAddress::operator != (const SocketAddress& addr) const
+{
+	return host() != addr.host() || port() != addr.port();
 }
 
 

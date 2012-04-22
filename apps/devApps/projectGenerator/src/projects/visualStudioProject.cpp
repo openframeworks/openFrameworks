@@ -27,7 +27,7 @@ bool visualStudioProject::createProjectFile(){
 	pugi::xml_parse_result result = filterXmlDoc.load(temp.c_str());
 	if (result.status==pugi::status_ok) ofLogVerbose() << "loaded filter ";
 	else ofLogVerbose() << "problem loading filter ";
-	
+
     findandreplaceInTexfile(solution,"emptyExample_vs2010",projectName);
     findandreplaceInTexfile(user,"emptyExample_vs2010",projectName);
     findandreplaceInTexfile(project,"emptyExample",projectName);
@@ -80,15 +80,15 @@ bool visualStudioProject::saveProjectFile(){
 void visualStudioProject::appendFilter(string folderName){
 
 	string uuid = generateUUID(folderName);
-	
+
 	string tag = "//ItemGroup[Filter]/Filter[@Include=\"" + folderName + "\"]";
 	 pugi::xpath_node_set set = filterXmlDoc.select_nodes(tag.c_str());
 	 if (set.size() > 0){
-		
+
 		//pugi::xml_node node = set[0].node();
 	 } else {
 
-		
+
 		 pugi::xml_node node = filterXmlDoc.select_single_node("//ItemGroup[Filter]/Filter").node().parent();
 		 pugi::xml_node nodeAdded = node.append_child("Filter");
 		 nodeAdded.append_attribute("Include").set_value(folderName.c_str());
@@ -98,7 +98,7 @@ void visualStudioProject::appendFilter(string folderName){
 		 uuid.insert(8+4+1,"-");
 		 uuid.insert(8+4+4+2,"-");
 		 uuid.insert(8+4+4+4+3,"-");
-		 
+
 		 //d8376475-7454-4a24-b08a-aac121d3ad6f
 
 		 string uuidAltered = "{" + uuid + "}";
@@ -139,8 +139,8 @@ void visualStudioProject::addSrc(string srcFile, string folder){
 
     }
 
-	
-	
+
+
 }
 
 void visualStudioProject::addInclude(string includeName){
@@ -208,7 +208,11 @@ void visualStudioProject::addLibrary(string libraryName, LibType libType){
         // still ghetto, but getting better
         // TODO: iterate by <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BUILD TYPE|SOME PLATFORM'">
         // instead of making the weak assumption that VS projects do Debug|Win32 then Release|Win32
-        if(libType != platformCounter) continue;
+
+		if(libType != platformCounter){
+			platformCounter++;
+			continue;
+		}
 
         pugi::xpath_node node = *it;
         string includes = node.node().first_child().value();
@@ -225,7 +229,8 @@ void visualStudioProject::addLibrary(string libraryName, LibType libType){
             string libsNew = unsplitString(strings, ";");
             node.node().first_child().set_value(libsNew.c_str());
         }
-        platformCounter++;
+		platformCounter++;
+
     }
 
 }
@@ -285,10 +290,10 @@ void visualStudioProject::addAddon(ofAddon & addon){
             // add debug and release libs to appropriate vectors
             debugLibs.push_back(addon.libs[debugLibIndex]);
         }else{
-            // there's only one lib (either debug or release) so add to both vectors and hope for the best ;-)
+			// there's only one lib (either debug or release) so add to both vectors and hope for the best ;-)
             debugLibs.push_back(addon.libs[i]);
         }
-        releaseLibs.push_back(addon.libs[i]);
+		releaseLibs.push_back(addon.libs[i]);
     }
 
     for(int i=0;i<(int)debugLibs.size();i++){

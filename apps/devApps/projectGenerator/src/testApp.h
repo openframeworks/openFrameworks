@@ -36,16 +36,22 @@ class testApp : public ofBaseApp{
         void updateProjectPressed(bool & pressed);
         void createAndOpenPressed(bool & pressed);
         void changeOFRootPressed(bool & pressed);
-
+		
+		void setupDrawableOFPath();
+		
 		baseProject * project;
     
         string projectPath;
         string target;
+	
+		string drawableOfPath;
+		ofRectangle ofPathRect;
+		ofPoint ofPathDrawPoint;
 
         ofxPanel panelAddons, panelOptions;
         ofxButton createProject, updateProject, createAndOpen, changeOFRoot;
 
 		ofxPanel examplesPanel;
-		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle;
+		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle, linux64cbToggle;
 		ofxButton generateButton;
 };

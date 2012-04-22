@@ -20,10 +20,10 @@ bool CBWinProject::createProjectFile(){
 
     string project = projectDir + projectName + ".cbp";
     string workspace = projectDir + projectName + ".workspace";
-	
-    
+
+
 	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project, false, true);
-	
+
 	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),workspace, false, true);
 
     //let's do some renaming:
@@ -92,27 +92,6 @@ void CBWinProject::addLibrary(string libraryName, LibType libType){
     appendValue(doc, "Add", "library", libraryName, true);
     // overwriteMultiple for a lib if it's there (so libsorder.make will work)
     // this is because we might need to say libosc, then ws2_32
-}
-
-void CBWinProject::addAddon(ofAddon & addon){
-    for(int i=0;i<(int)addons.size();i++){
-		if(addons[i].name==addon.name) return;
-	}
-
-	addons.push_back(addon);
-
-    for(int i=0;i<(int)addon.includePaths.size();i++){
-        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
-        addInclude(addon.includePaths[i]);
-    }
-    for(int i=0;i<(int)addon.libs.size();i++){
-        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
-        addLibrary(addon.libs[i]);
-    }
-    for(int i=0;i<(int)addon.srcFiles.size(); i++){
-        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
-        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-    }
 }
 
 string CBWinProject::getName(){
