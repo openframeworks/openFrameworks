@@ -158,6 +158,17 @@ bool ofGstUtils::startPipeline(){
 	bPaused 			= true;
 	speed 				= 1.0f;
 
+
+	if(gst_element_set_state (GST_ELEMENT(gstPipeline), GST_STATE_READY) ==	GST_STATE_CHANGE_FAILURE) {
+		ofLog(OF_LOG_ERROR, "GStreamer: unable to set pipeline to ready\n");
+
+		return false;
+	}
+	if(gst_element_get_state (GST_ELEMENT(gstPipeline), NULL, NULL, 10 * GST_SECOND)==GST_STATE_CHANGE_FAILURE){
+		ofLog(OF_LOG_ERROR, "GStreamer: unable to get pipeline to ready\n");
+		return false;
+	}
+
 	// pause the pipeline
 	if(gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED) ==	GST_STATE_CHANGE_FAILURE) {
 		ofLog(OF_LOG_ERROR, "GStreamer: unable to set pipeline to paused\n");
@@ -169,6 +180,7 @@ bool ofGstUtils::startPipeline(){
 	if(!isStream){
 		GstState state = GST_STATE_PAUSED;
 		if(gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND)==GST_STATE_CHANGE_FAILURE){
+			ofLog(OF_LOG_ERROR, "GStreamer: unable to get pipeline to paused\n");
 			return false;
 		}
 		bPlaying = true;
@@ -382,6 +394,7 @@ void ofGstUtils::close(){
 	}
 	if(bLoaded){
 		gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+		gst_element_get_state(gstPipeline,NULL,NULL,2*GST_SECOND);
 		// gst_object_unref(gstSink); this crashes, why??
 		gst_object_unref(gstPipeline);
 	}
