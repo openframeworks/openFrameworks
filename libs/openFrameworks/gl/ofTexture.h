@@ -11,6 +11,27 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix);
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
 ofImageType ofGetImageTypeFromGLType(int glType);
 
+//set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
+bool ofGetUsingArbTex();
+void ofEnableArbTex();
+void ofDisableArbTex();
+
+
+bool ofGetUsingNormalizedTexCoords();
+void ofEnableNormalizedTexCoords();
+void ofDisableNormalizedTexCoords();
+
+
+//***** add global functions to override texture settings
+void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
+bool ofGetUsingCustomTextureWrap();
+void ofRestoreTextureWrap();
+
+void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
+bool ofGetUsingCustomMinMagFilters();
+void ofRestoreMinMagFilters();
+//*****
+
 //Sosolimited: texture compression
 enum ofTexCompression
 {
@@ -33,6 +54,7 @@ public:
 		glType = GL_RGB;
 		pixelType = GL_UNSIGNED_BYTE;
 		
+
 		tex_t = 0;
 		tex_u = 0;
 		tex_w = 0;
@@ -47,7 +69,7 @@ public:
 
 	unsigned int textureID;
 	int textureTarget;
-	int glTypeInternal; // internalFormat, e.g., GL_RGB8. should be named glInternalFormat
+	int glTypeInternal; // internalFormat, e.g., GL_RGB8.
 	int glType; // format, e.g., GL_RGB. should be named glFormat
 	int pixelType;  // type, e.g., GL_UNSIGNED_BYTE. should be named glType
 	
@@ -80,14 +102,15 @@ class ofTexture : public ofBaseDraws {
 	virtual void allocate(const ofTextureData & textureData);
 	virtual void allocate(int w, int h, int glInternalFormat); //uses the currently set OF texture type - default ARB texture
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofPixels& pix);
 	void clear();
 
-	void loadData(float* data, int w, int h, int glFormat);
-	void loadData(unsigned char* data, int w, int h, int glFormat);
-	void loadData(unsigned short* data, int w, int h, int glFormat);
-	void loadData(ofPixels & pix);		
-	void loadData(ofShortPixels & pix);
-	void loadData(ofFloatPixels & pix);
+	void loadData(const unsigned char* const data, int w, int h, int glFormat);
+	void loadData(const unsigned short* data, int w, int h, int glFormat);
+	void loadData(const float* data, int w, int h, int glFormat);
+	void loadData(const ofPixels & pix);		
+	void loadData(const ofShortPixels & pix);
+	void loadData(const ofFloatPixels & pix);
 	
 	void loadScreenData(int x, int y, int w, int h);
 
@@ -97,14 +120,17 @@ class ofTexture : public ofBaseDraws {
 	void setAnchorPoint(float x, float y); //set the anchor point in pixels
 	void resetAnchor(); //resets the anchor to (0, 0)
 
-	void draw(const ofRectangle & r);
-	void draw(const ofPoint & p, float w, float h);
-	void draw(float x, float y, float w, float h);
-	void draw(float x, float y, float z, float w, float h);
-	void draw(const ofPoint & p);
+	using ofBaseDraws::draw;
+	void draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4);
 	void draw(float x, float y);
 	void draw(float x, float y, float z);
-	void draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4);
+	void draw(float x, float y, float w, float h);
+	void draw(float x, float y, float z, float w, float h);
+	
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy);
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy);
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 	void readToPixels(ofPixels & pixels);
 	void readToPixels(ofShortPixels & pixels);
@@ -128,7 +154,8 @@ class ofTexture : public ofBaseDraws {
 	bool bAllocated();
 	bool isAllocated();
 
-	ofTextureData getTextureData();
+	ofTextureData& getTextureData();
+	const ofTextureData& getTextureData() const;
 
 	// reference to the actual textureData inside the smart pointer
 	// for backwards compatibility

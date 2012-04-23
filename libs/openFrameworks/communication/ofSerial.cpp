@@ -51,7 +51,7 @@ void ofSerial::enumerateWin32Ports(){
              break;
          }
 
-         if (SetupDiGetDeviceRegistryProperty(hDevInfo,
+         if (SetupDiGetDeviceRegistryPropertyA(hDevInfo,
              &DeviceInterfaceData,
              SPDRP_FRIENDLYNAME,
              &dataType,
@@ -115,6 +115,7 @@ ofSerial::ofSerial(){
 	#endif
 	//---------------------------------------------
 	bVerbose = false;
+	bInited = false;
 }
 
 //----------------------------------------------------------------
@@ -208,7 +209,7 @@ void ofSerial::buildDeviceList(){
 	#ifdef TARGET_WIN32
 	//---------------------------------------------
 	enumerateWin32Ports();
-	printf("ofSerial: listing devices (%i total)\n", nPorts);
+	ofLogNotice() << "ofSerial: listing devices (" << nPorts << " total)";
 	for (int i = 0; i < nPorts; i++){
 		//NOTE: we give the short port name for both as that is what the user should pass and the short name is more friendly
 		devices.push_back(ofSerialDeviceInfo(string(portNamesShort[i]), string(portNamesShort[i]), i));
@@ -232,7 +233,7 @@ void ofSerial::buildDeviceList(){
 void ofSerial::listDevices(){
 	buildDeviceList();
 	for(int k = 0; k < (int)devices.size(); k++){
-		printf("[%i] = %s \n", devices[k].getDeviceID(), devices[k].getDeviceName().c_str() );
+		ofLogNotice() << "[" << devices[k].getDeviceID() << "] = "<< devices[k].getDeviceName().c_str();
 	}
 }
 
@@ -352,7 +353,7 @@ bool ofSerial::setup(string portName, int baud){
 
 			default:	cfsetispeed(&options,B9600);
 						cfsetospeed(&options,B9600);
-						ofLog(OF_LOG_ERROR,"ofSerialInit: cannot set %i baud setting baud to 9600\n", baud);
+						ofLog(OF_LOG_ERROR,"ofSerialInit: cannot set %i baud setting baud to 9600", baud);
 						break;
 		}
 

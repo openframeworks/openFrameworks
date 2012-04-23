@@ -31,23 +31,55 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 		if(getNumIndices()){
 			vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
 		}
+		vboNumIndices = getNumIndices();
+		vboNumVerts = getNumVertices();
+		vboNumColors = getNumColors();
+		vboNumTexCoords = getNumTexCoords();
+		vboNumNormals = getNumNormals();
 	}
 
 	if(haveVertsChanged()){
-		vbo.updateVertexData(getVerticesPointer(),getNumVertices());
+		if(vboNumVerts<getNumVertices()){
+			vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
+			vboNumVerts = getNumVertices();
+		}else{
+			vbo.updateVertexData(getVerticesPointer(),getNumVertices());
+		}
 	}
 	if(haveColorsChanged()){
-		vbo.updateColorData(getColorsPointer(),getNumColors());
+		if(vboNumColors<getNumColors()){
+			vbo.setColorData(getColorsPointer(),getNumColors(),usage);
+			vboNumColors = getNumColors();
+		}else{
+			vbo.updateColorData(getColorsPointer(),getNumColors());
+
+		}
 	}
 	if(haveNormalsChanged()){
-		vbo.updateNormalData(getNormalsPointer(),getNumNormals());
+		if(vboNumNormals<getNumNormals()){
+			vbo.updateNormalData(getNormalsPointer(),getNumNormals());
+			vboNumNormals = getNumNormals();
+		}else{
+			vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
+		}
 	}
 	if(haveTexCoordsChanged()){
-		vbo.updateTexCoordData(getTexCoordsPointer(),getNumTexCoords());
+		if(vboNumTexCoords<getNumTexCoords()){
+			vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
+			vboNumTexCoords = getNumTexCoords();
+		}else{
+			vbo.updateTexCoordData(getTexCoordsPointer(),getNumTexCoords());
+		}
 	}
 	if(haveIndicesChanged()){
-		vbo.updateIndexData(getIndexPointer(),getNumIndices());
+		if(vboNumIndices<getNumIndices()){
+			vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
+			vboNumIndices = getNumIndices();
+		}else{
+			vbo.updateIndexData(getIndexPointer(),getNumIndices());
+		}
 	}
+
 
 	GLuint mode = ofGetGLPrimitiveMode(getMode());
 #ifndef TARGET_OPENGLES
@@ -76,5 +108,6 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 		}
 	}
 #endif
+
 
 }

@@ -1,7 +1,7 @@
 //
 // AbstractObserver.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/AbstractObserver.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractObserver.h#2 $
 //
 // Library: Foundation
 // Package: Notifications
@@ -62,6 +62,7 @@ public:
 	virtual bool equals(const AbstractObserver& observer) const = 0;
 	virtual bool accepts(Notification* pNf) const = 0;
 	virtual AbstractObserver* clone() const = 0;
+	virtual void disable() = 0;
 };
 
 

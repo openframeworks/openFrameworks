@@ -1,7 +1,7 @@
 //
 // Foundation.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Foundation.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Foundation.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -118,6 +118,8 @@
 	#include "Poco/Platform_WIN32.h"
 #elif defined(__VMS)
 	#include "Poco/Platform_VMS.h"
+#elif defined(POCO_VXWORKS)
+	#include "Poco/Platform_VX.h"
 #elif defined(POCO_OS_FAMILY_UNIX)
 	#include "Poco/Platform_POSIX.h"
 #endif
