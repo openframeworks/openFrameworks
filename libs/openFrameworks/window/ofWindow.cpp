@@ -17,7 +17,7 @@
 
 int ofWindow::lastWindowID = 0;
 
-ofWindow::ofWindow():isFocused(false),isInitialized(false),title("ofTestApp"){
+ofWindow::ofWindow():mouseX(0),mouseY(0),oldMouseX(0),oldMouseY(0),isFocused(false),title("ofTestApp"),isInitialized(false){
 	id = lastWindowID;
 	lastWindowID++;
 	width = 800;
@@ -115,6 +115,13 @@ void ofWindow::destroy(){
 	glfwCloseWindow(window);
 }
 
+//USER INTERACTION EVENTS
+void ofWindow::mouseMoved(int mouseX, int mouseY)
+{
+	ofNotifyMouseMoved(mouseX, mouseY);
+}
+
+//WINDOW SPECIFIC EVENT
 void ofWindow::windowFocused(){
 	isFocused = true;
 };
@@ -208,3 +215,4 @@ void ofWindow::setTitle(string t){
 string ofWindow::getTitle(){
 	return title;
 }
+

@@ -340,6 +340,7 @@ void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action
 }
 void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY){
 	ofWindow* win = getWindowByGlfw(glfwWin);
+	win->mouseMoved(mouseX, mouseY);
 }
 void ofWindowManager::glfwCursorEnter(GLFWwindow glfwWin, int action){
 	ofWindow* win = getWindowByGlfw(glfwWin);

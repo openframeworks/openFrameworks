@@ -209,11 +209,16 @@ public:
 	
 	void setTitle(string title);
 	string getTitle();
-		
+
+	void mouseMoved(int mouseX, int mouseY);
+
 	ofWindowEvents events;
 	
 	static int lastWindowID;
-	
+
+	int mouseX, mouseY;
+	int oldMouseX, oldMouseY;
+
 private:
 	GLFWwindow getGlfwWindow();
 	
@@ -233,6 +238,8 @@ private:
 	
 	bool isInitialized;
 	int id;
+
+	std::map<int, bool> buttonStates;
 	
 	friend class ofWindowManager;
 };

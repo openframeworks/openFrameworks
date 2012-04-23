@@ -20,9 +20,12 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofSetColor(255, 0, 0);
-	ofRect(i%ofGetWidth(), 100, 100, 100);
+	ofSetColor(50, 0, 0);
+	ofRect(i%ofGetWidth(), 100, 10, 10);
 	i++;
+
+	ofSetColor(255, 0, 0);
+	ofRect(ofGetMouseX(), ofGetMouseY(), 50, 50);
 }
 
 //--------------------------------------------------------------
