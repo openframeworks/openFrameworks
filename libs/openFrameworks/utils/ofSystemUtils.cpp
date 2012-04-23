@@ -512,7 +512,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	initGTK();
-	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, "enter text");
+	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, question.c_str() );
 	GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	GtkWidget* textbox = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(textbox),text.c_str());
@@ -522,6 +522,25 @@ string ofSystemTextBoxDialog(string question, string text){
 		text = gtk_entry_get_text(GTK_ENTRY(textbox));
 	}
 	startGTK(dialog);
+#endif
+	
+#ifdef TARGET_OSX
+	// create alert dialog
+	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+	[alert addButtonWithTitle:@"OK"];
+	[alert addButtonWithTitle:@"Cancel"];
+	[alert setMessageText:[NSString stringWithCString:question.c_str() 
+											 encoding:NSUTF8StringEncoding]];
+	// create text field
+	NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
+	[label setStringValue:[NSString stringWithCString:text.c_str()
+											 encoding:NSUTF8StringEncoding]];
+	// add text field to alert dialog
+	[alert setAccessoryView:label];
+	NSInteger returnCode = [alert runModal];
+	// if OK was clicked, assign value to text
+	if ( returnCode == NSAlertFirstButtonReturn )
+		text = [[label stringValue] UTF8String];
 #endif
 
 	return text;
