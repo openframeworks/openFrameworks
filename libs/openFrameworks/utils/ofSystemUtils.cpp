@@ -508,6 +508,31 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	return results;
 }
+// Step 4: the Window Procedure
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    cout << msg << endl;
+    switch(msg)
+    {
+        case WM_CLOSE:
+            DestroyWindow(hwnd);
+        break;
+        case WM_DESTROY:
+            PostQuitMessage(0);
+        break;
+        default:
+            return DefWindowProc(hwnd, msg, wParam, lParam);
+    }
+    return 0;
+}
+
+// Step 4: the Window Procedure
+INT_PTR CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+
+    return 1;
+}
+
 
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
@@ -523,13 +548,13 @@ string ofSystemTextBoxDialog(string question, string text){
 	}
 	startGTK(dialog);
 #endif
-	
+
 #ifdef TARGET_OSX
 	// create alert dialog
 	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
 	[alert addButtonWithTitle:@"OK"];
 	[alert addButtonWithTitle:@"Cancel"];
-	[alert setMessageText:[NSString stringWithCString:question.c_str() 
+	[alert setMessageText:[NSString stringWithCString:question.c_str()
 											 encoding:NSUTF8StringEncoding]];
 	// create text field
 	NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
@@ -541,6 +566,68 @@ string ofSystemTextBoxDialog(string question, string text){
 	// if OK was clicked, assign value to text
 	if ( returnCode == NSAlertFirstButtonReturn )
 		text = [[label stringValue] UTF8String];
+#endif
+
+#ifdef TARGET_WIN32
+    // we need to convert error message to a wide char message.
+    // first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
+
+    WNDCLASSEX wc;
+    MSG Msg;
+    const char g_szClassName[] = "myWindowClass";
+    //Step 1: Registering the Window Class
+    wc.cbSize        = sizeof(WNDCLASSEX);
+    wc.style         = 0;
+    wc.lpfnWndProc   = WndProc;
+    wc.cbClsExtra    = 0;
+    wc.cbWndExtra    = 0;
+    wc.hInstance     = GetModuleHandle(0);
+    wc.lpszClassName = g_szClassName;
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    wc.lpszMenuName  = NULL;
+    wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+    wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
+    if(!RegisterClassEx(&wc))
+    {
+        MessageBox(NULL, "Window Registration Failed!", "Error!",
+            MB_ICONEXCLAMATION | MB_OK);
+        return text;
+    }
+    HWND dialog = CreateWindowEx(        WS_EX_CLIENTEDGE,
+        g_szClassName,
+        question.c_str(),
+        WS_OVERLAPPEDWINDOW | WS_CHILD,
+        CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
+        WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0), NULL);
+
+    if(dialog == NULL)
+    {
+        MessageBox(NULL, "Window Creation Failed!", "Error!",
+            MB_ICONEXCLAMATION | MB_OK);
+        return text;
+    }
+
+    HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", text.c_str(),
+        WS_CHILD | WS_VISIBLE,
+        10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+
+
+    HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "Ok",
+        WS_CHILD | WS_VISIBLE,
+        10, 60, 60, 30, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+
+    HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "Cancel",
+        WS_CHILD | WS_VISIBLE,
+        80, 60, 60, 30, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+    //EnableWindow(dialog, FALSE);
+    ShowWindow(dialog, SW_SHOWNORMAL);
+    UpdateWindow(dialog);
+    //EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
+    while(true)
+    {
+        WaitForSingleObject(dialog,10);
+    }
 #endif
 
 	return text;
