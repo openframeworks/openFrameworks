@@ -512,14 +512,15 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	initGTK();
-	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK, "enter text");
+	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, "enter text");
 	GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	GtkWidget* textbox = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(textbox),text.c_str());
 	gtk_container_add (GTK_CONTAINER (content_area), textbox);
 	gtk_widget_show_all (dialog);
-	gtk_dialog_run (GTK_DIALOG (dialog));
-	text = gtk_entry_get_text(GTK_ENTRY(textbox));
+	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
+		text = gtk_entry_get_text(GTK_ENTRY(textbox));
+	}
 	startGTK(dialog);
 #endif
 
