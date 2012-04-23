@@ -14,7 +14,7 @@ public:
     static const int DIM = 3;
 	
 	ofVec3f();
-	ofVec3f( float _x, float _y, float _z=0.0f );
+	ofVec3f( float _x, float _y, float _z );
 	/// assigns scalar to x, y, and z
 	explicit ofVec3f( float _scalar );
 	
