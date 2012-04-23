@@ -3,6 +3,7 @@
 #include <ofBaseApp.h>
 #include "ofAppBaseWindow.h"
 #include <GL/glfw3.h>
+#include <map>
 
 class ofWindow;
 
