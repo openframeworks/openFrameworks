@@ -1,7 +1,7 @@
 //
 // AbstractConfiguration.h
 //
-// $Id: //poco/1.4/Util/include/Poco/Util/AbstractConfiguration.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/AbstractConfiguration.h#2 $
 //
 // Library: Util
 // Package: Configuration
@@ -259,6 +259,12 @@ public:
 		/// Removes the property with the given key.
 		///
 		/// Does nothing if the key does not exist.
+		
+	void enableEvents(bool enable = true);
+		/// Enables (or disables) events.
+		
+	bool eventsEnabled() const;
+		/// Returns true iff events are enabled.
 	
 protected:
 	virtual bool getRaw(const std::string& key, std::string& value) const = 0;
@@ -299,6 +305,7 @@ private:
 	AbstractConfiguration& operator = (const AbstractConfiguration&);
 
 	mutable int _depth;
+	bool        _eventsEnabled;
 	mutable Poco::FastMutex _mutex;
 	
 	friend class LayeredConfiguration;

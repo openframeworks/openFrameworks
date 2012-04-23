@@ -11,6 +11,7 @@
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
+#include "ofMatrix4x4.h"
 #include <map>
 
 
@@ -64,6 +65,8 @@ public:
 	void setUniform3fv(const char* name, float* v, int count = 1);
 	void setUniform4fv(const char* name, float* v, int count = 1);
 	
+	void setUniformMatrix4f(const char* name, const ofMatrix4x4 & m);
+
 	// set attributes that vary per vertex (look up the location before glBegin)
 	GLint getAttributeLocation(const char* name);
 	
@@ -107,14 +110,14 @@ private:
 	GLint getUniformLocation(const char* name);
 	
 	void checkProgramInfoLog(GLuint program);
-	bool checkShaderLinkStatus(GLuint shader, GLenum type);
+	bool checkProgramLinkStatus(GLuint program);
 	void checkShaderInfoLog(GLuint shader, GLenum type);
 	
 	static string nameForType(GLenum type);
 	
 	void checkAndCreateProgram();
 	
-	bool bLoaded;
+	bool bLoaded; 
 };
 
 #endif

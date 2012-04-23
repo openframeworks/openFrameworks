@@ -21,8 +21,8 @@ public:
 	void playCode(string morseCode);
 	
 	
-	ofFmodSoundPlayer dotPlayer;
-	ofFmodSoundPlayer dashPlayer;
+	ofSoundPlayer dotPlayer;
+	ofSoundPlayer dashPlayer;
 	
 	int currentSoundIndex;
 	

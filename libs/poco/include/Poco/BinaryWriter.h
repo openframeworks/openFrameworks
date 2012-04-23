@@ -1,7 +1,7 @@
 //
 // BinaryWriter.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/BinaryWriter.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/BinaryWriter.h#2 $
 //
 // Library: Foundation
 // Package: Streams
@@ -111,7 +111,7 @@ public:
 	template <typename T>
 	BinaryWriter& operator << (const std::vector<T>& value)
 	{
-		Poco::UInt32 size(value.size());
+		Poco::UInt32 size(static_cast<Poco::UInt32>(value.size()));
 
 		*this << size;
 		for (typename std::vector<T>::const_iterator it = value.begin(); it != value.end(); ++it)

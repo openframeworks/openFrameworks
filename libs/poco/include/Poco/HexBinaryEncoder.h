@@ -1,7 +1,7 @@
 //
 // HexBinaryEncoder.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/HexBinaryEncoder.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/HexBinaryEncoder.h#2 $
 //
 // Library: Foundation
 // Package: Streams
@@ -56,6 +56,11 @@ class Foundation_API HexBinaryEncoderBuf: public UnbufferedStreamBuf
 	/// consisting of two hexadecimal digits ([0-9a-fA-F]) representing the octet code.
 	/// See also: XML Schema Part 2: Datatypes (http://www.w3.org/TR/xmlschema-2/),
 	/// section 3.2.15.
+	///
+	/// Note: The characters are directly written
+	/// to the ostream's streambuf, thus bypassing
+	/// the ostream. The ostream's state is therefore
+	/// not updated to match the buffer's state.
 {
 public:
 	HexBinaryEncoderBuf(std::ostream& ostr);
@@ -84,7 +89,7 @@ private:
 	int _pos;
 	int _lineLength;
 	int _uppercase;
-	std::ostream& _ostr;
+	std::streambuf& _buf;
 };
 
 
@@ -116,6 +121,11 @@ class Foundation_API HexBinaryEncoder: public HexBinaryEncoderIOS, public std::o
 	/// consisting of two hexadecimal digits ([0-9a-fA-F]) representing the octet code.
 	/// See also: XML Schema Part 2: Datatypes (http://www.w3.org/TR/xmlschema-2/),
 	/// section 3.2.15.
+	///
+	/// Note: The characters are directly written
+	/// to the ostream's streambuf, thus bypassing
+	/// the ostream. The ostream's state is therefore
+	/// not updated to match the buffer's state.
 {
 public:
 	HexBinaryEncoder(std::ostream& ostr);

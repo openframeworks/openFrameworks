@@ -484,15 +484,15 @@ inline istream& operator>>(istream& is, ofMatrix4x4& M) {
 	is >> M._mat[1][2]; is.ignore(2);
 	is >> M._mat[1][3]; is.ignore(1);
 	
-	is >> M._mat[1][0]; is.ignore(2); 
-	is >> M._mat[1][1]; is.ignore(2);
-	is >> M._mat[1][2]; is.ignore(2);
-	is >> M._mat[1][3]; is.ignore(1);
+	is >> M._mat[2][0]; is.ignore(2); 
+	is >> M._mat[2][1]; is.ignore(2);
+	is >> M._mat[2][2]; is.ignore(2);
+	is >> M._mat[2][3]; is.ignore(1);
 	
-	is >> M._mat[1][0]; is.ignore(2); 
-	is >> M._mat[1][1]; is.ignore(2);
-	is >> M._mat[1][2]; is.ignore(2);
-	is >> M._mat[1][3];
+	is >> M._mat[3][0]; is.ignore(2); 
+	is >> M._mat[3][1]; is.ignore(2);
+	is >> M._mat[3][2]; is.ignore(2);
+	is >> M._mat[3][3];
 	return is;
 }
 
