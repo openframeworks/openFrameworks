@@ -110,14 +110,14 @@ private:
 	GLint getUniformLocation(const char* name);
 	
 	void checkProgramInfoLog(GLuint program);
-	bool checkShaderLinkStatus(GLuint shader, GLenum type);
+	bool checkProgramLinkStatus(GLuint program);
 	void checkShaderInfoLog(GLuint shader, GLenum type);
 	
 	static string nameForType(GLenum type);
 	
 	void checkAndCreateProgram();
 	
-	bool bLoaded;
+	bool bLoaded; 
 };
 
 #endif
