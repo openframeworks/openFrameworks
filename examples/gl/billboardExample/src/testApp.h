@@ -24,15 +24,13 @@ class testApp : public ofBaseApp {
 		float zoom, zoomTarget;
 		
 		// billboard particles
-		float billboardSize[NUM_BILLBOARDS];
-		float billboardSizeTarget[NUM_BILLBOARDS];
+	    float billboardSizeTarget[NUM_BILLBOARDS];
 		
 		ofShader billboardShader;
 		ofImage texture;
-		ofVbo billboardVbo;
-		ofVec3f billboardVerts[NUM_BILLBOARDS];
+		
+		ofVboMesh billboards;
 		ofVec3f billboardVels[NUM_BILLBOARDS];
-		ofFloatColor billboardColor[NUM_BILLBOARDS];
 };
 
 
