@@ -43,6 +43,9 @@ Android.mk
 #Linux
 /*/*/Makefile
 /*/*/config.make
+# Leave Android files in until project generation works
+!/android/*/Makefile
+!/android/*/config.make
 
 #Android
 /*/*/test link
