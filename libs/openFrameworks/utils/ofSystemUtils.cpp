@@ -512,15 +512,14 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 #ifdef TARGET_WIN32
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    cout << msg << endl;
     switch(msg)
     {
-        case WM_CLOSE:
+        /*case WM_CLOSE:
             DestroyWindow(hwnd);
         break;
         case WM_DESTROY:
             PostQuitMessage(0);
-        break;
+        break;*/
         default:
             return DefWindowProc(hwnd, msg, wParam, lParam);
     }
@@ -590,8 +589,6 @@ string ofSystemTextBoxDialog(string question, string text){
         return text;
     }
 
-    //HWND hwnd = CreateWindowEx(0, ("WndClass"), ("Dialog"), WS_CAPTION | WS_VISIBLE | WS_POPUP | WS_SYSMENU, 0, 0, 413, 100, 0, 0, hInst, 0);
-    //HWND dialog = CreateWindowEx(WS_EX_CLIENTEDGE, ("WndClass"), ("Dialog"), WS_CAPTION | WS_VISIBLE | WS_POPUP , 0, 0, 413, 100, WindowFromDC(wglGetCurrentDC()), 0, GetModuleHandle(0), 0);
     HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
         g_szClassName,
         question.c_str(),
@@ -619,66 +616,65 @@ string ofSystemTextBoxDialog(string question, string text){
     HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "Cancel",
         WS_CHILD | WS_VISIBLE,
         80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(NULL), NULL);
-    //EnableWindow(dialog, FALSE);
-    HWND hwndPreInitFocus = GetFocus();
-    HWND hwndFocus = GetNextDlgTabItem( dialog, 0, FALSE );
-    if (SendMessageA( dialog, WM_INITDIALOG, (WPARAM)hwndFocus, 0 )){
 
-        hwndFocus = GetNextDlgTabItem( dialog, 0, FALSE);
-        if( hwndFocus )
-             SetFocus( hwndFocus );
-    } else {
-             /* If the dlgproc has returned FALSE (indicating handling of keyboard focus)
-               but the focus has not changed, set the focus where we expect it. */
-            if ((GetFocus() == hwndPreInitFocus) &&
-                (GetWindowLongW( dialog, GWL_STYLE ) & WS_VISIBLE))
-            {
-                 hwndFocus = GetNextDlgTabItem( dialog, 0, FALSE);
-                 if( hwndFocus )
-                     SetFocus( hwndFocus );
-            }
-         }
+    SetFocus( hEdit );
+
     ShowWindow(dialog, SW_SHOWNORMAL);
     bool bFirstEmpty;
-    for (;;)
-     {
-         if (!PeekMessageW( &Msg, 0, 0, 0, PM_REMOVE ))
-         {
-             if (bFirstEmpty)
-             {
-                 /* ShowWindow the first time the queue goes empty */
+    while (true){
+         if (!PeekMessageW( &Msg, 0, 0, 0, PM_REMOVE )){
+             if (bFirstEmpty){
+                 // ShowWindow the first time the queue goes empty
                  ShowWindow( dialog, SW_SHOWNORMAL );
                  bFirstEmpty = FALSE;
              }
-             if (!(GetWindowLongW( dialog, GWL_STYLE ) & DS_NOIDLEMSG))
-            {
-                 /* No message present -> send ENTERIDLE and wait */
+             if (!(GetWindowLongW( dialog, GWL_STYLE ) & DS_NOIDLEMSG)){
+                 // No message present -> send ENTERIDLE and wait
                  SendMessageW( WindowFromDC(wglGetCurrentDC()), WM_ENTERIDLE, MSGF_DIALOGBOX, (LPARAM)dialog );
              }
              GetMessageW( &Msg, 0, 0, 0 );
          }
 
-         if (Msg.message == WM_QUIT)
-         {
+         if (Msg.message == WM_QUIT){
              PostQuitMessage( Msg.wParam );
-             if (!IsWindow( dialog )) return text;
+             if (!IsWindow( dialog )){
+                EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+                return text;
+             }
              break;
          }
-         if (!IsWindow( dialog )) return text;
-             TranslateMessage( &Msg );
-             DispatchMessageW( &Msg );
-         if (!IsWindow( dialog )) return text;
 
-         if (bFirstEmpty && Msg.message == WM_TIMER)
-         {
+         if (!IsWindow( dialog )){
+            EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+            return text;
+         }
+
+         TranslateMessage( &Msg );
+         DispatchMessageW( &Msg );
+
+         if((Msg.hwnd == okButton && Msg.message==WM_LBUTTONUP) || (Msg.message==WM_KEYUP && Msg.wParam==13)){
+             break;
+         }else if((Msg.hwnd == cancelButton && Msg.message==WM_LBUTTONUP) ||  (Msg.message==WM_KEYUP && Msg.wParam==27)){
+             EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+             DestroyWindow(dialog);
+             return text;
+         }
+
+         if (!IsWindow( dialog )){
+            EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+            return text;
+         }
+
+         if (bFirstEmpty && Msg.message == WM_TIMER){
              ShowWindow( dialog, SW_SHOWNORMAL );
              bFirstEmpty = FALSE;
          }
      }
      char buf[16384];
-     GetDlgItemTextA( hEdit, -1, buf, 16384 );
+     GetDlgItemTextA( dialog, 101, buf, 16384 );
      text = buf;
-    /*UpdateWindow(dialog);*/
+     DestroyWindow(dialog);
+     EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
 #endif
 
 	return text;
