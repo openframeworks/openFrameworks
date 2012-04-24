@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-		
 	ofBackground(54, 54, 54, 255);
 	
 	//old OF default is 96 - but this results in fonts looking larger than in other programs. 
