@@ -12,9 +12,6 @@ CircleApp :: ~CircleApp () {
 
 //--------------------------------------------------------------
 void CircleApp::setup() {
-	ofRegisterTouchEvents(this);
-	ofxAccelerometer.setup();
-	ofxiPhoneAlerts.addListener(this);
 	ofBackground(127);
     
     int fontSize = 8;
@@ -52,8 +49,7 @@ void CircleApp::draw() {
 
 //--------------------------------------------------------------
 void CircleApp::exit() {
-    ofUnregisterTouchEvents(this);
-    ofxiPhoneAlerts.removeListener(this);
+    //
 }
 
 //--------------------------------------------------------------
