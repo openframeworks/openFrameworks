@@ -70,8 +70,17 @@
 }
 
 - (void) setupApp {
-    ofRegisterTouchEvents((ofxiPhoneApp*)ofGetAppPtr());
-    ofGetAppPtr()->setup();
+    ofxiPhoneApp * app;
+    app = (ofxiPhoneApp *)ofGetAppPtr();
+    
+    ofRegisterTouchEvents(app);
+    ofxiPhoneAlerts.addListener(app);
+    app->setup();
+    
+    // @julapy - 24/04/2012
+    // not sure what the below is supposed to do.
+    // it doesn't reach setup() or update().
+    // might be some redundant code but will have to double check.
     
 #ifdef OF_USING_POCO
     static ofEventArgs voidEventArgs;
@@ -103,11 +112,14 @@
     ofxiPhoneGetAppDelegate().glViewController = nil;
     
     //------------------------------------------------------------------- destroy app.
-    ofBaseApp *app;
-    app = ofGetAppPtr();
+    ofxiPhoneApp * app;
+    app = (ofxiPhoneApp *)ofGetAppPtr();
     
-    if (app)
+    if (app) {
+        ofUnregisterTouchEvents(app);
+        ofxiPhoneAlerts.removeListener(app);
         app->exit();
+    }
     
     ofSetAppPtr(ofPtr<ofBaseApp>((app=NULL)));
     
