@@ -160,8 +160,8 @@
 -(void)listDevices{
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	int i=0;
-	for (AVCaptureDevice *device in devices){
-		 cout<<"Device "<<i<<": "<<ofxNSStringToString(device.localizedName)<<endl;
+	for (AVCaptureDevice * captureDevice in devices){
+		 cout<<"Device "<<i<<": "<<ofxNSStringToString(captureDevice.localizedName)<<endl;
 		i++;
     }
 }
