@@ -210,8 +210,6 @@ public:
 	void setTitle(string title);
 	string getTitle();
 
-	void mouseMoved(int mouseX, int mouseY);
-
 	ofWindowEvents events;
 	
 	static int lastWindowID;
@@ -224,11 +222,19 @@ private:
 	
 	void destroy();
 
+	void mouseMoved(int mouseX, int mouseY);
+	void mouseDragged(int mouseX, int mouseY, int button);
+	void mousePressed(int button);
+	void mousePressed(int mouseX, int mouseY, int button);
+	void mouseReleased(int button);
+	void mouseReleased(int mouseX, int mouseY, int button);
+
 	void windowMoved(int x, int y);
 	void windowFocused();
 	void windowUnfocused();
 	void windowClosed();
 	void windowResized(int w, int h);
+	
 	
 	ofWindowListenerList listeners;
 	ofRectangle previousShape;

@@ -337,6 +337,11 @@ void ofWindowManager::glfwWindowIconify(GLFWwindow glfwWin, int action){
 }
 void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action){
 	ofWindow* win = getWindowByGlfw(glfwWin);
+	if(action == GLFW_PRESS){
+		win->mousePressed(button);
+	}else{
+		win->mouseReleased(button);
+	}
 }
 void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY){
 	ofWindow* win = getWindowByGlfw(glfwWin);
