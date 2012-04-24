@@ -508,7 +508,8 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	return results;
 }
-// Step 4: the Window Procedure
+
+#ifdef TARGET_WIN32
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     cout << msg << endl;
@@ -525,13 +526,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
-
-// Step 4: the Window Procedure
-INT_PTR CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-
-    return 1;
-}
+#endif
 
 
 string ofSystemTextBoxDialog(string question, string text){
@@ -577,13 +572,13 @@ string ofSystemTextBoxDialog(string question, string text){
     const char g_szClassName[] = "myWindowClass";
     //Step 1: Registering the Window Class
     wc.cbSize        = sizeof(WNDCLASSEX);
-    wc.style         = 0;
+    wc.style         = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc   = WndProc;
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = 0;
     wc.hInstance     = GetModuleHandle(0);
     wc.lpszClassName = g_szClassName;
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
     wc.lpszMenuName  = NULL;
     wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
     wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
@@ -594,12 +589,15 @@ string ofSystemTextBoxDialog(string question, string text){
             MB_ICONEXCLAMATION | MB_OK);
         return text;
     }
-    HWND dialog = CreateWindowEx(        WS_EX_CLIENTEDGE,
+
+    //HWND hwnd = CreateWindowEx(0, ("WndClass"), ("Dialog"), WS_CAPTION | WS_VISIBLE | WS_POPUP | WS_SYSMENU, 0, 0, 413, 100, 0, 0, hInst, 0);
+    //HWND dialog = CreateWindowEx(WS_EX_CLIENTEDGE, ("WndClass"), ("Dialog"), WS_CAPTION | WS_VISIBLE | WS_POPUP , 0, 0, 413, 100, WindowFromDC(wglGetCurrentDC()), 0, GetModuleHandle(0), 0);
+    HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
         g_szClassName,
         question.c_str(),
-        WS_OVERLAPPEDWINDOW | WS_CHILD,
+        WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
         CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
-        WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0), NULL);
+        WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0),NULL);
 
     if(dialog == NULL)
     {
@@ -608,26 +606,79 @@ string ofSystemTextBoxDialog(string question, string text){
         return text;
     }
 
+    EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
     HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", text.c_str(),
-        WS_CHILD | WS_VISIBLE,
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP,
         10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
 
 
-    HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "Ok",
-        WS_CHILD | WS_VISIBLE,
-        10, 60, 60, 30, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+    HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "OK",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+        10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(NULL), NULL);
 
     HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "Cancel",
         WS_CHILD | WS_VISIBLE,
-        80, 60, 60, 30, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+        80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(NULL), NULL);
     //EnableWindow(dialog, FALSE);
+    HWND hwndPreInitFocus = GetFocus();
+    HWND hwndFocus = GetNextDlgTabItem( dialog, 0, FALSE );
+    if (SendMessageA( dialog, WM_INITDIALOG, (WPARAM)hwndFocus, 0 )){
+
+        hwndFocus = GetNextDlgTabItem( dialog, 0, FALSE);
+        if( hwndFocus )
+             SetFocus( hwndFocus );
+    } else {
+             /* If the dlgproc has returned FALSE (indicating handling of keyboard focus)
+               but the focus has not changed, set the focus where we expect it. */
+            if ((GetFocus() == hwndPreInitFocus) &&
+                (GetWindowLongW( dialog, GWL_STYLE ) & WS_VISIBLE))
+            {
+                 hwndFocus = GetNextDlgTabItem( dialog, 0, FALSE);
+                 if( hwndFocus )
+                     SetFocus( hwndFocus );
+            }
+         }
     ShowWindow(dialog, SW_SHOWNORMAL);
-    UpdateWindow(dialog);
-    //EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
-    while(true)
-    {
-        WaitForSingleObject(dialog,10);
-    }
+    bool bFirstEmpty;
+    for (;;)
+     {
+         if (!PeekMessageW( &Msg, 0, 0, 0, PM_REMOVE ))
+         {
+             if (bFirstEmpty)
+             {
+                 /* ShowWindow the first time the queue goes empty */
+                 ShowWindow( dialog, SW_SHOWNORMAL );
+                 bFirstEmpty = FALSE;
+             }
+             if (!(GetWindowLongW( dialog, GWL_STYLE ) & DS_NOIDLEMSG))
+            {
+                 /* No message present -> send ENTERIDLE and wait */
+                 SendMessageW( WindowFromDC(wglGetCurrentDC()), WM_ENTERIDLE, MSGF_DIALOGBOX, (LPARAM)dialog );
+             }
+             GetMessageW( &Msg, 0, 0, 0 );
+         }
+
+         if (Msg.message == WM_QUIT)
+         {
+             PostQuitMessage( Msg.wParam );
+             if (!IsWindow( dialog )) return text;
+             break;
+         }
+         if (!IsWindow( dialog )) return text;
+             TranslateMessage( &Msg );
+             DispatchMessageW( &Msg );
+         if (!IsWindow( dialog )) return text;
+
+         if (bFirstEmpty && Msg.message == WM_TIMER)
+         {
+             ShowWindow( dialog, SW_SHOWNORMAL );
+             bFirstEmpty = FALSE;
+         }
+     }
+     char buf[16384];
+     GetDlgItemTextA( hEdit, -1, buf, 16384 );
+     text = buf;
+    /*UpdateWindow(dialog);*/
 #endif
 
 	return text;
