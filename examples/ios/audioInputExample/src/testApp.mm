@@ -6,9 +6,6 @@ void testApp::setup(){
 	// IMPORTANT!!! if your sound doesn't work in the simulator - read this post - which requires you set the input stream to 24bit!!
 	//	http://www.cocos2d-iphone.org/forum/topic/4159
 
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 
 	ofBackground(255, 255, 255);
