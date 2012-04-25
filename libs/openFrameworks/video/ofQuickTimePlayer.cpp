@@ -94,7 +94,11 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 	ofQuickTimePlayer * ofvp = (ofQuickTimePlayer *)refCon;
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-		convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels.getPixels(), ofvp->width, ofvp->height);
+        if (pixelFormat == OF_PIXELS_RGBA) {
+            convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels.getPixels(), ofvp->width, ofvp->height, 4);
+        } else {
+            convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels.getPixels(), ofvp->width, ofvp->height, 3);
+        }
 	#endif
 
 	ofvp->bHavePixelsChanged = true;
@@ -115,6 +119,7 @@ ofQuickTimePlayer::ofQuickTimePlayer (){
     	moviePtr	 				= NULL;
     	allocated 					= false;
         offscreenGWorld				= NULL;
+        pixelFormat                 = OF_PIXELS_RGB;
 	//--------------------------------------------------------------
 	#endif
 	//--------------------------------------------------------------
@@ -236,6 +241,11 @@ void ofQuickTimePlayer::closeMovie(){
 
 }
 
+//---------------------------------------------------------------------------
+void ofQuickTimePlayer::setPixelFormat(ofPixelFormat pxFormat){
+    pixelFormat = pxFormat;
+}
+
 
 //--------------------------------------
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
@@ -248,12 +258,22 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 	movieRect.bottom 		= height;
 	movieRect.right 		= width;
 	offscreenGWorldPixels = new unsigned char[4 * width * height + 32];
-	pixels.allocate(width,height,OF_IMAGE_COLOR);
+    if (pixelFormat == OF_PIXELS_RGBA) {
+        pixels.allocate(width, height, OF_IMAGE_COLOR_ALPHA);
+    } 
+    else {
+        pixels.allocate(width, height, OF_IMAGE_COLOR);
+    }
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
 		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
 	#else
-		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels.getPixels()), 3 * width);
+        if (pixelFormat == OF_PIXELS_RGBA) {
+            QTNewGWorldFromPtr (&(offscreenGWorld), k32RGBAPixelFormat, &(movieRect), NULL, NULL, 0, (pixels.getPixels()), 4 * width);
+        }
+        else {
+            QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels.getPixels()), 3 * width);
+        }
 	#endif
 
 	LockPixels(GetGWorldPixMap(offscreenGWorld));
@@ -346,7 +366,11 @@ bool ofQuickTimePlayer::loadMovie(string name){
 		MoviesTask(moviePtr,0);
 
 		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-			convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height);
+            if (pixelFormat == OF_PIXELS_RGBA) {
+                convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height, 4);
+            } else {
+                convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height, 3);
+            }
 		#endif
 
 		bStarted 				= false;
@@ -390,7 +414,11 @@ void ofQuickTimePlayer::start(){
 		// get some pixels in there right away:
 		MoviesTask(moviePtr,0);
 		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-			convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height);
+            if (pixelFormat == OF_PIXELS_RGBA) {
+                convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height, 4);
+            } else {
+                convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height, 3);
+            }
 		#endif
 		bHavePixelsChanged = true;
 
