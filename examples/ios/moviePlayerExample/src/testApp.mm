@@ -8,9 +8,6 @@ void testApp::setup(){
 	ofSetFrameRate(30);
 	ofBackground(225, 225, 225);
 
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	ofBackground(255,255,255);
     
 	fingerMovie.loadMovie("hands.m4v");

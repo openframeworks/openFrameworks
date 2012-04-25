@@ -337,6 +337,11 @@ void ofWindowManager::glfwWindowIconify(GLFWwindow glfwWin, int action){
 }
 void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action){
 	ofWindow* win = getWindowByGlfw(glfwWin);
+	if(action == GLFW_PRESS){
+		win->mousePressed(button);
+	}else{
+		win->mouseReleased(button);
+	}
 }
 void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY){
 	ofWindow* win = getWindowByGlfw(glfwWin);
@@ -345,8 +350,9 @@ void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY){
 void ofWindowManager::glfwCursorEnter(GLFWwindow glfwWin, int action){
 	ofWindow* win = getWindowByGlfw(glfwWin);
 }
-void ofWindowManager::glfwScroll(GLFWwindow glfwWin, double deltaX, double deltaY){
+void ofWindowManager::glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY){
 	ofWindow* win = getWindowByGlfw(glfwWin);
+	win->scrolled(deltaX, deltaY);
 }
 void ofWindowManager::glfwKey(GLFWwindow glfwWin, int key, int action){
 	ofWindow* win = getWindowByGlfw(glfwWin);
