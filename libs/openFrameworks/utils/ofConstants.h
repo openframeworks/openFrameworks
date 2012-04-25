@@ -148,6 +148,7 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_ANDROID
+#include <typeinfo>
 	#include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES

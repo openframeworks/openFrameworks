@@ -71,7 +71,7 @@ UIWindow *ofxiPhoneGetUIWindow() {
 
 //--------------------------------------------------------------
 EAGLView *ofxiPhoneGetGLView() {
-	return [ofxiPhoneGetAppDelegate() getGLView];
+	return [ofxiPhoneGetViewController() glView];
 }
 
 
@@ -86,6 +86,10 @@ ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
 }
 
+//--------------------------------------------------------------
+ofxiPhoneViewController *ofxiPhoneGetViewController() {
+	return [ofxiPhoneGetAppDelegate() glViewController];
+}
 
 //--------------------------------------------------------------
 void ofxiPhoneSendGLViewToFront() {
@@ -126,13 +130,13 @@ void ofxiPhoneDisableIdleTimer() {
 
 //--------------------------------------------------------------
 void ofxiPhoneLockGLContext() {
-	[ofxiPhoneGetAppDelegate() lockGL];
+	[ofxiPhoneGetViewController() lockGL];
 }
 
 
 //--------------------------------------------------------------
 void ofxiPhoneUnlockGLContext() {
-	[ofxiPhoneGetAppDelegate() unlockGL];
+	[ofxiPhoneGetViewController() unlockGL];
 }
 
 

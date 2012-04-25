@@ -2,14 +2,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	//If you want a landscape oreintation 
 	//iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
@@ -33,23 +27,28 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
@@ -69,12 +68,6 @@ void testApp::gotMemoryWarning(){
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
-
-}
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
 
 }
 

@@ -98,7 +98,8 @@ void testApp::draw() {
     
     // draw where we are in the sequence
     float x = 0;
-    for(int i=frameIndex; i<MIN(images.size(), frameIndex+5); i++) {
+    for(int offset = 0; offset < 5; offset++) {
+			int i = (frameIndex + offset) % images.size();
         ofSetColor(255);
         images[i].draw(200+x, ofGetHeight()-40, 40, 40);
         x += 40;

@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-
 	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 	
 	ofBackground(255,255,255);	
@@ -65,12 +62,17 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::exit(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
 		letter = ofMap(touch.x, 10.0, ofGetWidth(), 33, 126, true);
 		testChar = testFont.getCharacterAsPoints(letter);
@@ -78,17 +80,36 @@ void testApp::touchMoved(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
+void testApp::touchCancelled(ofTouchEventArgs & touch){
 
 }
 
+//--------------------------------------------------------------
+void testApp::lostFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+    
+}

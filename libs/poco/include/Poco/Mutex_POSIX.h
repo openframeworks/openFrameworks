@@ -1,7 +1,7 @@
 //
 // Mutex_POSIX.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Mutex_POSIX.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Mutex_POSIX.h#2 $
 //
 // Library: Foundation
 // Package: Threading
@@ -92,7 +92,6 @@ inline bool MutexImpl::tryLockImpl()
 		return false;
 	else
 		throw SystemException("cannot lock mutex");
-
 }
 
 

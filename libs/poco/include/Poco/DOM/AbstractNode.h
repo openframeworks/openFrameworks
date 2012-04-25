@@ -1,7 +1,7 @@
 //
 // AbstractNode.h
 //
-// $Id: //poco/1.4/XML/include/Poco/DOM/AbstractNode.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/AbstractNode.h#2 $
 //
 // Library: XML
 // Package: DOM
@@ -93,6 +93,8 @@ public:
 
 	// Extensions
 	XMLString innerText() const;
+	Node* getNodeByPath(const XMLString& path) const;
+	Node* getNodeByPathNS(const XMLString& path, const NSMap& nsMap) const;
 
 	virtual void autoRelease();
 

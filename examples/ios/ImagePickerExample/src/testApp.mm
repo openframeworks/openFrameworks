@@ -2,14 +2,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	cameraPixels = NULL; 
 	camera = new ofxiPhoneImagePicker();
@@ -59,7 +53,7 @@ void testApp::exit() {
 
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
 	
 	if(touch.id == 1){
 		camera->openCamera();
@@ -69,7 +63,7 @@ void testApp::touchDown(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 	if(touch.id == 0){
 		imgPos.x=touch.x;
 		imgPos.y=touch.y;
@@ -77,33 +71,39 @@ void testApp::touchMoved(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){	
+void testApp::touchUp(ofTouchEventArgs & touch){	
+    
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
+    
 }
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
+}
+
 
 //--------------------------------------------------------------
 void testApp::lostFocus() {
+    
 }
 
 //--------------------------------------------------------------
 void testApp::gotFocus() {
+    
 }
 
 //--------------------------------------------------------------
 void testApp::gotMemoryWarning() {
+    
 }
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
+    
 }
 
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
-}
 
