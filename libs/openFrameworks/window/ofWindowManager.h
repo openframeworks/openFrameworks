@@ -45,7 +45,7 @@ public:
 	void glfwMouseButton(GLFWwindow glfwWin, int button, int action);	
 	void glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY);	
 	void glfwCursorEnter(GLFWwindow glfwWin, int action);	
-	void glfwScroll(GLFWwindow glfwWin, double deltaX, double deltaY);	
+	void glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY);
 	void glfwKey(GLFWwindow glfwWin, int key, int action);	
 	void glfwChar(GLFWwindow glfwWin, int key);
 	

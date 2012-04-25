@@ -126,6 +126,16 @@ void ofWindow::mouseDragged(int mouseX, int mouseY, int button) {
 		++it;
 	}
 }
+
+void ofWindow::scrolled(float deltaX, float deltaY){
+	//ofNotifyMouseDragged(mouseX, mouseY, button);
+	ofWindowListenerList::iterator it=listeners.begin();
+	while(it!=listeners.end()) {
+		(*it)->scrolled(deltaX, deltaY, this);
+		++it;
+	}
+}
+
 //WINDOW SPECIFIC EVENT
 void ofWindow::windowFocused() {
 	isFocused = true;

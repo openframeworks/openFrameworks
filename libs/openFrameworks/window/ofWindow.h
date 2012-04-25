@@ -3,6 +3,7 @@
 #include <ofBaseApp.h>
 #include "ofAppBaseWindow.h"
 #include <GL/glfw3.h>
+#include <map>
 
 class ofWindow;
 
@@ -93,6 +94,11 @@ public:
 	}
 	virtual void mouseReleased(int x, int y, int btn) {}
 	virtual void mouseReleased() {};
+
+	virtual void scrolled(float deltaX, float deltaY, ofWindow* win){
+		scrolled(deltaX, deltaY);
+	}
+	virtual void scrolled(float deltaX, float deltaY){};
 
 	virtual void dragEvent(ofDragInfo info, ofWindow* f){dragEvent(info);}
 	virtual void dragEvent(ofDragInfo info){}
@@ -228,6 +234,8 @@ private:
 	void mousePressed(int mouseX, int mouseY, int button);
 	void mouseReleased(int button);
 	void mouseReleased(int mouseX, int mouseY, int button);
+
+	void scrolled(float deltaX, float deltaY);
 
 	void windowMoved(int x, int y);
 	void windowFocused();
