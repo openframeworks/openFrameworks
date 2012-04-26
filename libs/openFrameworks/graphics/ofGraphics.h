@@ -197,6 +197,11 @@ void ofRect(const ofRectangle & r);
 void ofRect(const ofPoint & p,float w,float h);
 void ofRect(float x,float y,float z,float w,float h);
 
+void ofRoundedRect(const ofRectangle & b,float r);
+void ofRoundedRect(const ofPoint & p,float w,float h,float r);
+void ofRoundedRect(float x,float y,float w,float h,float r);
+void ofRoundedRect(float x,float y,float z,float w,float h,float r);
+
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 
