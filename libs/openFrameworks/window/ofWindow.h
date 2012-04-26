@@ -5,6 +5,8 @@
 #include <GL/glfw3.h>
 #include <map>
 
+#define OF_MAX_NUM_KEYS 512
+
 class ofWindow;
 
 class ofWindowEvents
@@ -213,6 +215,8 @@ public:
 	int getWidth();
 	int getHeight();
 	
+	bool isKeyPressed(int key);
+	
 	void setTitle(string title);
 	string getTitle();
 
@@ -256,7 +260,7 @@ private:
 	bool isInitialized;
 	int id;
 
-	std::map<int, bool> buttonStates;
+	bool keyState[OF_MAX_NUM_KEYS];
 	
 	friend class ofWindowManager;
 };

@@ -17,6 +17,9 @@ ofWindow::ofWindow():mouseX(0),mouseY(0),oldMouseX(0),oldMouseY(0),isFocused(fal
 	lastWindowID++;
 	width = 800;
 	height = 600;
+	for(unsigned int i=0;i<OF_MAX_NUM_KEYS;i++){
+		keyState[i] = false;
+	}
 };
 ofWindow::~ofWindow() {
 	ofRemoveListener(ofEvents().update, this, &ofWindow::update);
@@ -137,6 +140,8 @@ void ofWindow::scrolled(float deltaX, float deltaY){
 }
 
 void ofWindow::keyPressed(int key){
+	if(key<OF_MAX_NUM_KEYS)
+		keyState[key] = true;
 	ofNotifyKeyPressed(key);
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
@@ -146,6 +151,8 @@ void ofWindow::keyPressed(int key){
 }
 
 void ofWindow::keyReleased(int key){
+	if(key<OF_MAX_NUM_KEYS)
+		keyState[key] = false;
 	ofNotifyKeyReleased(key);
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
@@ -153,6 +160,11 @@ void ofWindow::keyReleased(int key){
 		++it;
 	}
 }
+
+bool ofWindow::isKeyPressed(int key){
+	return keyState[key];
+}
+
 
 //WINDOW SPECIFIC EVENT
 void ofWindow::windowFocused() {
@@ -224,13 +236,13 @@ void ofWindow::windowMoved(int _x, int _y) {
 	previousShape.y = y;
 	x = _x;
 	y = _y;
-	/*
-	#ifdef OF_USING_POCO
-	e.width = width;
-	e.height = height;
-	ofNotifyEvent(events.windowResized, e);
-	#endif
-	*/
+
+	ofWindowListenerList::iterator it=listeners.begin();
+	while(it!=listeners.end()) {
+		(*it)->windowMoved(x, y, this);
+		++it;
+	}
+	
 }
 void ofWindow::setTitle(string t) {
 	if (isInitialized)
