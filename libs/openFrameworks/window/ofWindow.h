@@ -235,6 +235,9 @@ private:
 	void mouseReleased(int button);
 	void mouseReleased(int mouseX, int mouseY, int button);
 
+	void keyPressed(int key);
+	void keyReleased(int key);
+	
 	void scrolled(float deltaX, float deltaY);
 
 	void windowMoved(int x, int y);

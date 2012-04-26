@@ -136,6 +136,24 @@ void ofWindow::scrolled(float deltaX, float deltaY){
 	}
 }
 
+void ofWindow::keyPressed(int key){
+	ofNotifyKeyPressed(key);
+	ofWindowListenerList::iterator it=listeners.begin();
+	while(it!=listeners.end()) {
+		(*it)->keyPressed(key, this);
+		++it;
+	}
+}
+
+void ofWindow::keyReleased(int key){
+	ofNotifyKeyReleased(key);
+	ofWindowListenerList::iterator it=listeners.begin();
+	while(it!=listeners.end()) {
+		(*it)->keyReleased(key, this);
+		++it;
+	}
+}
+
 //WINDOW SPECIFIC EVENT
 void ofWindow::windowFocused() {
 	isFocused = true;
@@ -190,6 +208,13 @@ void ofWindow::windowResized(int w, int h) {
 	e.width = width;
 	e.height = height;
 	ofNotifyEvent(events.windowResized, e);
+	
+	ofWindowListenerList::iterator it=listeners.begin();
+	while(it!=listeners.end()) {
+		(*it)->windowResized(width, height, this);
+		++it;
+	}
+	
 	draw();
 }
 void ofWindow::windowMoved(int _x, int _y) {

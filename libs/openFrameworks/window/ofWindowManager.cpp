@@ -354,8 +354,80 @@ void ofWindowManager::glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY)
 	ofWindow* win = getWindowByGlfw(glfwWin);
 	win->scrolled(deltaX, deltaY);
 }
+
+
 void ofWindowManager::glfwKey(GLFWwindow glfwWin, int key, int action){
 	ofWindow* win = getWindowByGlfw(glfwWin);
+	
+	//TODO: I'm sure there is some way to do this more efficient than a case statement (Philip)
+	switch(key){ 
+		case GLFW_KEY_ENTER:
+			key = OF_KEY_RETURN;break;
+		case GLFW_KEY_ESC:
+			key = OF_KEY_ESC;break;
+		case GLFW_KEY_LEFT_CONTROL:
+		case GLFW_KEY_RIGHT_CONTROL:
+			key = OF_KEY_CTRL;break;
+		case GLFW_KEY_RIGHT_ALT:
+		case GLFW_KEY_LEFT_ALT:
+			key = OF_KEY_ALT;break;
+		case GLFW_KEY_RIGHT_SHIFT:
+		case GLFW_KEY_LEFT_SHIFT:
+			key = OF_KEY_SHIFT;break;
+		case GLFW_KEY_BACKSPACE:
+			key = OF_KEY_BACKSPACE;break;
+		case GLFW_KEY_DELETE:
+			key = OF_KEY_DEL;break;
+		case GLFW_KEY_F1:
+			key = OF_KEY_F1;break;
+		case GLFW_KEY_F2:
+			key = OF_KEY_F2;break;
+		case GLFW_KEY_F3:
+			key = OF_KEY_F3;break;
+		case GLFW_KEY_F4:
+			key = OF_KEY_F4;break;
+		case GLFW_KEY_F5:
+			key = OF_KEY_F5;break;
+		case GLFW_KEY_F6:
+			key = OF_KEY_F6;break;
+		case GLFW_KEY_F7:
+			key = OF_KEY_F7;break;
+		case GLFW_KEY_F8:
+			key = OF_KEY_F8;break;
+		case GLFW_KEY_F9:
+			key = OF_KEY_F9;break;
+		case GLFW_KEY_F10:
+			key = OF_KEY_F10;break;
+		case GLFW_KEY_F11:
+			key = OF_KEY_F11;break;
+		case GLFW_KEY_F12:
+			key = OF_KEY_F12;break;
+		case GLFW_KEY_LEFT:
+			key = OF_KEY_LEFT;break;
+		case GLFW_KEY_RIGHT:
+			key = OF_KEY_RIGHT;break;
+		case GLFW_KEY_DOWN:
+			key = OF_KEY_DOWN;break;
+		case GLFW_KEY_UP:
+			key = OF_KEY_UP;break;
+		case GLFW_KEY_PAGEUP:
+			key = OF_KEY_PAGE_UP;break;
+		case GLFW_KEY_PAGEDOWN:
+			key = OF_KEY_PAGE_DOWN;break;
+		case GLFW_KEY_HOME:
+			key = OF_KEY_HOME;break;
+		case GLFW_KEY_END:
+			key = OF_KEY_END;break;
+		case GLFW_KEY_INSERT:
+			key = OF_KEY_INSERT;break;
+	}
+	
+	if(action == GLFW_RELEASE)
+		win->keyReleased(key);
+	else
+		win->keyPressed(key);
+	
+	
 }
 void ofWindowManager::glfwChar(GLFWwindow glfwWin, int key){
 	ofWindow* win = getWindowByGlfw(glfwWin);
