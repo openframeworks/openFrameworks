@@ -366,6 +366,25 @@ void testApp::draw(){
 	glPopMatrix();
 
 	//-------------------------------------
+
+	//------(j)--------------------------------------
+	// 
+	// 		ofRoundedRect
+	//
+
+	glPushMatrix();
+
+	ofSetPolyMode(OF_POLY_WINDING_ODD);
+	ofSetLineWidth(1.5);
+	ofEnableSmoothing();
+	ofNoFill();
+	ofSetHexColor(0x000000);
+	ofRoundedRect(630,520,80,60,9);
+	ofDisableSmoothing();
+
+	glPopMatrix();
+
+	//-------------------------------------
 	
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(a) star\nwinding rule odd", 20,210);
@@ -394,7 +413,8 @@ void testApp::draw(){
 	
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(i) ofNextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
-	
+
+	ofDrawBitmapString("(j) ofRoundedRect\nrectangles with rounded corners", 600, 620);
 }
 
 //--------------------------------------------------------------
