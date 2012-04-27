@@ -737,26 +737,26 @@ void ofRect(float x,float y,float z,float w,float h){
 }
 
 //----------------------------------------------------------
-void ofRoundedRect(const ofRectangle & b,float r){
+void ofRectRounded(const ofRectangle & b,float r){
 	ofRoundedRect(b.x, b.y, 0.0f, b.width, b.height, r);
 }
 
 //----------------------------------------------------------
-void ofRoundedRect(const ofPoint & p,float w,float h,float r){
+void ofRectRounded(const ofPoint & p,float w,float h,float r){
 	ofRoundedRect(p.x, p.y, p.z, w, h, r);
 }
 
 //----------------------------------------------------------
-void ofRoundedRect(float x,float y,float w,float h,float r){
+void ofRectRounded(float x,float y,float w,float h,float r){
 	ofRoundedRect(x, y, 0.0f, w, h, r);
 }
 
 //----------------------------------------------------------
-void ofRoundedRect(float x,float y,float z,float w,float h,float r){
+void ofRectRounded(float x,float y,float z,float w,float h,float r){
 	float x2 = x + w;
 	float y2 = y + h;
 
-	if (r > w || r > h){
+	if (r > w || r > h || r < 0.4){
 		ofRect(x, y, z, w, h);
 		return;
 	}

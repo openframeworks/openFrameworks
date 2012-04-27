@@ -176,10 +176,10 @@ void ofRect(const ofRectangle & r);
 void ofRect(const ofPoint & p,float w,float h);
 void ofRect(float x,float y,float z,float w,float h);
 
-void ofRoundedRect(const ofRectangle & b,float r);
-void ofRoundedRect(const ofPoint & p,float w,float h,float r);
-void ofRoundedRect(float x,float y,float w,float h,float r);
-void ofRoundedRect(float x,float y,float z,float w,float h,float r);
+void ofRectRounded(const ofRectangle & b,float r);
+void ofRectRounded(const ofPoint & p,float w,float h,float r);
+void ofRectRounded(float x,float y,float w,float h,float r);
+void ofRectRounded(float x,float y,float z,float w,float h,float r);
 
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
