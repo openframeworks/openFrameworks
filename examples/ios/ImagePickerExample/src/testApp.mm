@@ -2,13 +2,13 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
+    ofBackground(0);
+    
+    ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	
-	cameraPixels = NULL; 
-	camera = new ofxiPhoneImagePicker();
-	camera->setMaxDimension(480); //otherwise we will have enormous images
-	imgPos.x=ofGetWidth()/2;
+    camera = NULL;
+	
+    imgPos.x=ofGetWidth()/2;
 	imgPos.y=ofGetHeight()/2;
 	
 	photo.loadImage("images/instructions.png");
@@ -16,35 +16,31 @@ void testApp::setup(){
 
 
 //--------------------------------------------------------------
-void testApp::update()
-{
-	if(camera->imageUpdated){
-		
-		// the pixels seem to be flipped, so let's unflip them: 
-		if (cameraPixels == NULL){
-			// first time, let's get memory based on how big the image is: 
-			cameraPixels = new unsigned char [camera->width * camera->height*4];
-		}
-		// now, lets flip the image vertically:
-		for (int i = 0; i < camera->height; i++){
-			memcpy(cameraPixels+(camera->height-i-1)*camera->width*4, camera->pixels+i*camera->width*4, camera->width*4);
-		}
-		
-		// finally, set the image from pixels...
-		photo.setFromPixels(cameraPixels,camera->width, camera->height, OF_IMAGE_COLOR_ALPHA);
-		
-		imgPos.x=ofGetWidth()/2;
-		imgPos.y=ofGetHeight()/2;
-		
-		camera->imageUpdated=false;
-	}
-	
+void testApp::update(){
+    if(camera) {
+        if(camera->imageUpdated){
+            
+            int cameraW = camera->width;
+            int cameraH = camera->height;
+            unsigned const char * cameraPixels = camera->pixels;
+            
+            photo.setFromPixels(cameraPixels, cameraW, cameraH, OF_IMAGE_COLOR_ALPHA);
+            
+            imgPos.x = ofGetWidth()/2;
+            imgPos.y = ofGetHeight()/2;
+            
+            camera->close();
+            delete camera;
+            camera = NULL;
+        }
+    }
 }
 
 //--------------------------------------------------------------
-void testApp::draw()
-{
-	photo.draw(imgPos.x-photo.width/2,imgPos.y-photo.height/2);
+void testApp::draw(){
+    int x = imgPos.x - photo.width / 2;
+    int y = imgPos.y - photo.height / 2;
+	photo.draw(x, y);
 }
 
 //--------------------------------------------------------------
@@ -54,9 +50,15 @@ void testApp::exit() {
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
-	
 	if(touch.id == 1){
-		camera->openCamera();
+		
+        if(!camera) {
+            camera = new ofxiPhoneImagePicker();
+            camera->setMaxDimension(MAX(ofGetWidth(), ofGetHeight())); // max the photo taken at the size of the screen.
+            camera->openCamera();
+//            camera->showCameraOverlay();
+        }
+        
 		imgPos.x=ofGetWidth()/2;
 		imgPos.y=ofGetHeight()/2;
 	}
@@ -85,7 +87,6 @@ void testApp::touchCancelled(ofTouchEventArgs & touch){
     
 }
 
-
 //--------------------------------------------------------------
 void testApp::lostFocus() {
     
@@ -105,5 +106,3 @@ void testApp::gotMemoryWarning() {
 void testApp::deviceOrientationChanged(int newOrientation){
     
 }
-
-
