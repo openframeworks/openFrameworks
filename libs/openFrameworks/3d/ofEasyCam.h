@@ -26,37 +26,64 @@ public:
 	// it is a normalized value between 0-1
 	void setDrag(float drag);
 	float getDrag() const;
-	
+	// the translation key is the key used to switch between rotation and translation.
+	// translation happens only when the key is pressed.
+	void setTranslationKey(char key);
+	char getTranslationKey();
+	//--
 	void mouseDragged(ofMouseEventArgs& mouse);
 	void mouseMoved(ofMouseEventArgs& mouse);
 	void mousePressed(ofMouseEventArgs& mouse);
 	void mouseReleased(ofMouseEventArgs& mouse);
+	void keyPressed(ofKeyEventArgs& key);
+	void keyReleased(ofKeyEventArgs& key);
 
+	
 	// enable or disable mouse input to navigate
 	void enableMouseInput();
 	void disableMouseInput();
 	bool getMouseInputEnabled();
-
+	
+	
+	
 private:
 	void setDistance(float distance, bool save);
 
 	ofNode target;
 	
+	bool bApplyInertia;
+	bool bDoTranslate;
+	bool doRotate;
+	
+	float xRot;
+	float yRot;
+	float zRot;
+	
+	float moveX;
+	float moveY;
+	float moveZ;
+	
+	ofVec2f mouseVel;
+	
+	void updateRotation();
+	void updateTranslation();
+	
+	char doTranslationKey;
+	
 	float drag;
-	float zoomSpeed;
 	bool bMouseInputEnabled;
-
-	ofVec3f mousePosViewPrev;
-	ofVec3f mousePosScreenPrev;
-	int lastFrame;
 	
 	unsigned long lastTap;
-	bool mousePressedPrev[2];
 
 	bool bDistanceSet;
 	float lastDistance;
-	float distanceScaleVelocity;
+		
+	ofQuaternion curRot;  
+	//a place to store the mouse position so we can measure incremental change  
+    ofVec2f lastMouse;
+	//slows down the rotation 1 = 1 degree per pixel
+	float sensitivity;
+	float sensitivityZ;
+
 	
-	ofQuaternion rotation;
-	ofVec3f translation;
 };
