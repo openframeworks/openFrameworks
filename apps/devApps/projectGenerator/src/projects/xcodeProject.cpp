@@ -403,24 +403,29 @@ void xcodeProject::addSrc(string srcFile, string folder){
         fileKind = "sourcecode.cpp.cpp";
         addToResources = false;
     }
-    if( ext == "c" ){
+    else if( ext == "c" ){
         fileKind = "sourcecode.c.c";
         addToResources = false;
     }
-    if(ext == "h" || ext == "hpp"){
+    else if(ext == "h" || ext == "hpp"){
         fileKind = "sourcecode.c.h";
         addToBuild = false;
         addToResources = false;
     }
-    if(ext == "mm" || ext == "m"){
+    else if(ext == "mm" || ext == "m"){
         addToResources = false;
         fileKind = "sourcecode.cpp.objcpp";
     }
-    if(ext == "xib"){
+    else if(ext == "xib"){
 		fileKind = "file.xib";
         addToBuild	= false;
         addToResources = true;		
-    }
+    }else if( target == "ios" ){
+		fileKind = "file";	
+        addToBuild	= false;
+        addToResources = true;				
+	}
+	
     if (folder == "src"){
         bAddFolder = false;
     }
