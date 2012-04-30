@@ -119,6 +119,8 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 		
 		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame]; 
+        [(AVFoundationVideoPlayer *)videoPlayer updateFrameTimeDifference];
+        
 		/*Lock the image buffer*/
 		CVPixelBufferLockBaseAddress(imageBuffer,0); 
 		
@@ -225,7 +227,7 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 			videoTexture.allocate(width, height, internalGLFormat);
 		}
 		
-		videoTexture.loadData(getPixels(), width, height, internalGLFormat);
+		videoTexture.loadData((unsigned char *)imageBuffer, width, height, internalGLFormat);
 		
 		// unlock the image buffer
 		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
