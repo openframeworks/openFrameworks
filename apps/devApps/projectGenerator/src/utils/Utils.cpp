@@ -330,11 +330,17 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
                     if (platformFound){
 						libLibs.push_back(dir.getPath(i));
 						
+						//TODO: THEO hack
 						if( platform == "ios" ){ //this is so we can add the osx libs for the simulator builds
+							
 							string currentPath = dir.getPath(i);
-							ofStringReplace(currentPath, "ios", "osx");
-							if( ofFile::doesFileExist(currentPath) ){
-								libLibs.push_back(currentPath);
+							
+							//TODO: THEO double hack this is why we need install.xml - custom ignore ofxOpenCv 
+							if( currentPath.find("ofxOpenCv") == string::npos ){
+								ofStringReplace(currentPath, "ios", "osx");
+								if( ofFile::doesFileExist(currentPath) ){
+									libLibs.push_back(currentPath);
+								}
 							}
 						}
 					}
