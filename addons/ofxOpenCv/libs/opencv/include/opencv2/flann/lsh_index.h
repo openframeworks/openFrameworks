@@ -56,6 +56,10 @@ namespace cvflann
 
 struct LshIndexParams : public IndexParams
 {
+    LshIndexParams(){
+        
+    }
+    
     LshIndexParams(unsigned int table_number, unsigned int key_size, unsigned int multi_probe_level)
     {
         (* this)["algorithm"] = FLANN_INDEX_LSH;
