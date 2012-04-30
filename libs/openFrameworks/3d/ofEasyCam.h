@@ -53,7 +53,9 @@ private:
 	
 	bool bApplyInertia;
 	bool bDoTranslate;
-	bool doRotate;
+	bool bDoRotate;
+	
+	bool bInsideArcball;
 	
 	float xRot;
 	float yRot;
