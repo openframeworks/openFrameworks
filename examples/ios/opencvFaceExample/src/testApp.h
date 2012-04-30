@@ -5,9 +5,12 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
-
 //ON IPHONE NOTE INCLUDE THIS BEFORE ANYTHING ELSE
 #include "ofxOpenCv.h"
+
+
+//UNCOMMENT TO USE CAMERA. CAMERA ONLY WORKS ON DEVICE NOT SIMULATOR
+//#define USE_CAMERA
 
 class testApp : public ofxiPhoneApp{
 	
@@ -31,7 +34,10 @@ class testApp : public ofxiPhoneApp{
 
 		ofImage img;
 				
-		ofVideoGrabber grabber;
+		#ifdef USE_CAMERA
+			ofVideoGrabber grabber;
+		#endif
+		
 		ofTexture tex;
 		unsigned char * pix;
 		
