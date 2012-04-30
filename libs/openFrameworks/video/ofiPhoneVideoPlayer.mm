@@ -222,11 +222,10 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 				
 			width	= widthIn; 
 			height	= heightIn;
-
-			videoTexture.allocate(width, height, GL_RGBA);
+			videoTexture.allocate(width, height, internalGLFormat);
 		}
 		
-		videoTexture.loadData(bufferPixels, width, height, GL_BGRA);
+		videoTexture.loadData(getPixels(), width, height, internalGLFormat);
 		
 		// unlock the image buffer
 		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
