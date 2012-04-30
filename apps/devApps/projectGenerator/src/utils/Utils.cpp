@@ -327,7 +327,17 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
                 splitFromLast(dir.getPath(i), ".", first, ext);
                 
                 if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
-                    if (platformFound) libLibs.push_back(dir.getPath(i));
+                    if (platformFound){
+						libLibs.push_back(dir.getPath(i));
+						
+						if( platform == "ios" ){ //this is so we can add the osx libs for the simulator builds
+							string currentPath = dir.getPath(i);
+							ofStringReplace(currentPath, "ios", "osx");
+							if( ofFile::doesFileExist(currentPath) ){
+								libLibs.push_back(currentPath);
+							}
+						}
+					}
                 } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
                     libFiles.push_back(dir.getPath(i));
                 }
