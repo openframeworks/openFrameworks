@@ -19,9 +19,9 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	ofBackground(50);
+	ofBackground(90);
 	randomizeViewports();
-
+	ofEnableSmoothing();
 }
 
 //--------------------------------------------------------------
@@ -48,8 +48,8 @@ void testApp::draw(){
 	//  ofGetViewportWidth(),ofGetViewportHeight()=right,bottom
 	ofSetupScreen();
 
-	ofNoFill();
-	ofEnableSmoothing();
+	ofFill();
+	ofSetColor(220);
 	for(int x = 0; x < 1000; x += 20){
 		for(int y = 0; y < 1000; y += 20){
 			ofCircle(x, y, sin((x + y) / 100.0f + ofGetElapsedTimef()) * 5.0f);
@@ -100,11 +100,11 @@ void testApp::randomizeViewports(){
 void testApp::drawViewportOutline(const ofRectangle & viewport){
 	ofPushStyle();
 	ofFill();
-	ofSetColor(100);
+	ofSetColor(50);
 	ofSetLineWidth(0);
 	ofRect(viewport);
 	ofNoFill();
-	ofSetColor(255);
+	ofSetColor(25);
 	ofSetLineWidth(1.0f);
 	ofRect(viewport);
 	ofPopStyle();
