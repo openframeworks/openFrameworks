@@ -185,6 +185,19 @@ bool xcodeProject::createProjectFile(){
 
     if( target == "osx" ){
         ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir, true, true);
+		
+		ofDirectory binDirectory(ofFilePath::join(projectDir, "bin"));
+		if (!binDirectory.exists()){
+			ofDirectory dataDirectory(ofFilePath::join(projectDir, "bin/data"));
+			dataDirectory.create(true);
+		}
+		if(binDirectory.exists()){
+			ofDirectory dataDirectory(ofFilePath::join(binDirectory.path(), "data"));
+			if (!dataDirectory.exists()){
+				dataDirectory.create(false);
+			}
+		}
+
     }else{
         ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
