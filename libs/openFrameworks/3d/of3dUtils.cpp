@@ -23,19 +23,17 @@ void ofDrawAxis(float size) {
 //--------------------------------------------------------------
 void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 	
-	ofColor c = ofGetStyle().color;
-	if (c == ofColor::white)
-		c = ofColor(255,0,0);
+	ofColor c(255,0,0);
 	
 	ofPushStyle();
 	
 	if (x) {
-		c.setHue(0.0f);
+		c.setHsb(0.0f, 200.0f, 255.0f);
 		ofSetColor(c);
 		ofDrawGridPlane(scale, ticks, labels);
 	}
 	if (y) {
-		c.setHue(255.0f / 3.0f);
+		c.setHsb(255.0f / 3.0f, 200.0f, 255.0f);
 		ofSetColor(c);
 		ofPushMatrix();
 		ofRotate(90, 0, 0, -1);
@@ -43,7 +41,7 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 		ofPopMatrix();
 	}
 	if (z) {
-		c.setHue(255.0f * 2.0f / 3.0f);
+		c.setHsb(255.0f * 2.0f / 3.0f, 200.0f, 255.0f);
 		ofSetColor(c);
 		ofPushMatrix();
 		ofRotate(90, 0, 1, 0);
@@ -78,11 +76,11 @@ void ofDrawGridPlane(float scale, float ticks, bool labels) {
 		{
 			//major major
 			if (fabs(yz) == scale || yz == 0)
-				ofSetLineWidth(4);
+				ofSetLineWidth(2);
 			
 			//major
 			else if (yz / major == floor(yz / major) )
-				ofSetLineWidth(2);
+				ofSetLineWidth(1.5);
 			
 			//minor
 			else

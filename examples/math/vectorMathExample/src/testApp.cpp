@@ -2,32 +2,34 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-     nPts = 0;
-     rotateAmount.set(0,0,1);
-     speedOfRotation = 0.5f;
+	ofSetVerticalSync(true);
 
-     ofBackground(255,255,255);
+	nPts = 0;
+	rotateAmount.set(0,0,1);
+	speedOfRotation = 0.5f;
 
-     ofVec3f center(ofGetWidth()/2, ofGetHeight()/2, 0);
+	ofBackground(255,255,255);
 
-     xAxisMin.set(-100,0,0);
-     xAxisMax.set(100,0,0);
-     yAxisMin.set(0,-100,0);
-     yAxisMax.set(0,100,0);
-     zAxisMin.set(0,0,-100);
-     zAxisMax.set(0,0,100);
+	ofVec3f center(ofGetWidth()/2, ofGetHeight()/2, 0);
 
-     xAxisMin += center;
-     xAxisMax += center;
-     yAxisMin += center;
-     yAxisMax += center;
-     zAxisMin += center;
-     zAxisMax += center;
+	xAxisMin.set(-100,0,0);
+	xAxisMax.set(100,0,0);
+	yAxisMin.set(0,-100,0);
+	yAxisMax.set(0,100,0);
+	zAxisMin.set(0,0,-100);
+	zAxisMax.set(0,0,100);
 
-     bDrawnAnything = false;        // added this cause theo saw this example
-                                    // and was like "how do I tell zach that a rotating
-                                    // cross is not that interesting ??"  before realizing
-                                    // that one should draw :)
+	xAxisMin += center;
+	xAxisMax += center;
+	yAxisMin += center;
+	yAxisMax += center;
+	zAxisMin += center;
+	zAxisMax += center;
+
+	bDrawnAnything = false;        // added this cause theo saw this example
+								// and was like "how do I tell zach that a rotating
+								// cross is not that interesting ??"  before realizing
+								// that one should draw :)
 
 }
 

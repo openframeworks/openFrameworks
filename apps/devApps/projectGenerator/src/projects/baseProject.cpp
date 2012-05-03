@@ -61,6 +61,25 @@ bool baseProject::create(string path){
                 addSrc(fileNames[i], first);
             }
         }
+		
+//		if( target == "ios" ){
+//			getFilesRecursively(ofFilePath::join(projectDir , "bin/data"), fileNames);
+//
+//	        for (int i = 0; i < (int)fileNames.size(); i++){
+//				fileNames[i].erase(fileNames[i].begin(), fileNames[i].begin() + projectDir.length());
+//
+//				string first, last;
+//				splitFromLast(fileNames[i], "/", first, last);
+//				if (fileNames[i] != "Default.png" &&
+//					fileNames[i] != "src/testApp.h" &&
+//					fileNames[i] != "src/main.cpp" &&
+//					fileNames[i] != "src/testApp.mm" &&
+//					fileNames[i] != "src/main.mm"){
+//					addSrc(fileNames[i], first);
+//				}
+//			}
+//		}
+		
 #ifdef TARGET_LINUX
     		parseAddons();
 #endif

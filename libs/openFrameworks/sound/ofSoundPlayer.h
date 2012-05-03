@@ -75,6 +75,7 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		float getPan();
 		float getVolume();
 
+		bool isLoaded(); 		
 
 	protected:
 

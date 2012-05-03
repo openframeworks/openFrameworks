@@ -1,6 +1,12 @@
 #ifndef OFX_CV_CONSTANTS_H
 #define OFX_CV_CONSTANTS_H
 
+#ifdef MIN 
+	#undef MIN
+#endif 
+#ifdef MAX 
+	#undef MAX 
+#endif 
 
 #include "cv.h"
 #include <vector>
