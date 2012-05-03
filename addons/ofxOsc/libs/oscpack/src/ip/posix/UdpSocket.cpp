@@ -115,6 +115,12 @@ public:
 		// enable multiple listeners for a single port on same network interface
 		int reuse = 1; // int on posix
 		setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+
+		#ifdef __APPLE__
+			// needed also for OS X - enable multiple listeners for a single port on same network interface
+			int reusePort = 1; // int on posix
+			setsockopt(socket_, SOL_SOCKET, SO_REUSEPORT, &reusePort, sizeof(reusePort));
+		#endif
 		
 		memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
         sendToAddr_.sin_family = AF_INET;
