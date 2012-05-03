@@ -454,6 +454,11 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 }
 
 //------------------------------------------------------------
+bool ofOpenALSoundPlayer::isLoaded(){
+	return bLoadedOk;
+}
+
+//------------------------------------------------------------
 void ofOpenALSoundPlayer::threadedFunction(){
 	vector<vector<short> > multibuffer;
 	multibuffer.resize(channels);

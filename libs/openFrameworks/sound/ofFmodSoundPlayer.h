@@ -59,6 +59,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		float getSpeed();
 		float getPan();
 		float getVolume();
+		bool isLoaded();
 
 		static void initializeFmod();
 		static void closeFmod();

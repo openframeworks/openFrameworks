@@ -6,9 +6,6 @@ MyGuiView * myGuiViewController;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-		
 	//NOTE WE WON'T RECEIVE TOUCH EVENTS INSIDE OUR APP WHEN THERE IS A VIEW ON TOP OF THE OF VIEW
 
 	lengthRatio	= 0.5;
