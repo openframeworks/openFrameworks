@@ -84,10 +84,27 @@ string ofToString(const T& value){
 	return out.str();
 }
 
+/// like sprintf "%4f" format, in this example precision=4
 template <class T>
 string ofToString(const T& value, int precision){
 	ostringstream out;
 	out << fixed << setprecision(precision) << value;
+	return out.str();
+}
+
+/// like sprintf "% 4d" or "% 4f" format, in this example width=4, fill=' '
+template <class T>
+string ofToString(const T& value, int width, char fill ){
+	ostringstream out;
+	out << fixed << setfill(fill) << setw(width) << value;
+	return out.str();
+}
+
+/// like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
+template <class T>
+string ofToString(const T& value, int precision, int width, char fill=' ' ){
+	ostringstream out;
+	out << fixed << setfill(fill) << setw(width) << setprecision(precision) << value;
 	return out.str();
 }
 
