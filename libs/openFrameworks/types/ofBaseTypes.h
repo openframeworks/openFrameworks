@@ -177,7 +177,7 @@ public:
 //----------------------------------------------------------
 // ofBaseVideoDraws
 //----------------------------------------------------------
-class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexture{
+class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseImage{
 public:
 	virtual ~ofBaseVideoDraws(){}
 };
