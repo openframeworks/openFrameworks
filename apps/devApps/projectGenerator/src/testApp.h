@@ -54,4 +54,7 @@ class testApp : public ofBaseApp{
 		ofxPanel examplesPanel;
 		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle, linux64cbToggle;
 		ofxButton generateButton;
+
+		vector <int> targetsToMake;
+		bool buildAllExamples;
 };
