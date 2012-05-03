@@ -102,7 +102,7 @@ string ofToString(const T& value, int width, char fill ){
 
 /// like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
 template <class T>
-string ofToString(const T& value, int precision, int width, char fill=' ' ){
+string ofToString(const T& value, int precision, int width, char fill ){
 	ostringstream out;
 	out << fixed << setfill(fill) << setw(width) << setprecision(precision) << value;
 	return out.str();
