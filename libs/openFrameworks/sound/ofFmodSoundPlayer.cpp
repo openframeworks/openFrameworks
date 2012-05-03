@@ -217,6 +217,7 @@ void ofFmodSoundPlayer::unloadSound(){
 	if (bLoadedOk){
 		stop();						// try to stop the sound
 		if(!isStreaming)FMOD_Sound_Release(sound);
+		bLoadedOk = false;
 	}
 }
 
@@ -243,6 +244,11 @@ float ofFmodSoundPlayer::getPan(){
 //------------------------------------------------------------
 float ofFmodSoundPlayer::getVolume(){
 	return volume;
+}
+
+//------------------------------------------------------------
+bool ofFmodSoundPlayer::isLoaded(){
+	return bLoadedOk;
 }
 
 //------------------------------------------------------------
