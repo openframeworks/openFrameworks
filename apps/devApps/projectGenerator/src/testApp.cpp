@@ -20,18 +20,24 @@ void testApp::setup(){
 
     setupForTarget(targ);
 
-    if(projectPath!=""){
-    	setupForTarget(ofGetTargetPlatform());
-        project->setup(target);
-        project->create(projectPath);
-        vector < string > addons;
-        parseAddonsDotMake(project->getPath() + "addons.make", addons);
-        for (int i = 0; i < (int)addons.size(); i++){
-            ofAddon addon;
-            addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
-            project->addAddon(addon);
-        }
-        project->save(false);
+    if(projectPath!="" || buildAllExamples){
+    	for(int i = 0; i < (int)targetsToMake.size(); i++){
+			setupForTarget(targetsToMake[i]);
+			if(buildAllExamples){
+				generateExamples();
+			}else{
+				project->setup(target);
+				project->create(projectPath);
+				vector < string > addons;
+				parseAddonsDotMake(project->getPath() + "addons.make", addons);
+				for (int i = 0; i < (int)addons.size(); i++){
+					ofAddon addon;
+					addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
+					project->addAddon(addon);
+				}
+				project->save(false);
+			}
+    	}
         std::exit(0);
     }
 
@@ -59,12 +65,12 @@ void testApp::setup(){
 
 	examplesPanel.setup("generate examples", "examples.xml", 400, 10);
 	examplesPanel.add(generateButton.setup("<--Generate"));
-	examplesPanel.add(wincbToggle.setup("win CB projects",false));
-	examplesPanel.add(winvsToggle.setup("win VS projects", false));
-	examplesPanel.add(linuxcbToggle.setup("linux CB projects",false));
-	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",false));
-	examplesPanel.add(osxToggle.setup("osx projects",false));
-	examplesPanel.add(iosToggle.setup("ios projects",false));
+	examplesPanel.add(wincbToggle.setup("win CB projects",ofGetTargetPlatform()==OF_TARGET_WINGCC));
+	examplesPanel.add(winvsToggle.setup("win VS projects", ofGetTargetPlatform()==OF_TARGET_WINVS));
+	examplesPanel.add(linuxcbToggle.setup("linux CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX));
+	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX64));
+	examplesPanel.add(osxToggle.setup("osx projects",ofGetTargetPlatform()==OF_TARGET_OSX));
+	examplesPanel.add(iosToggle.setup("ios projects",ofGetTargetPlatform()==OF_TARGET_IPHONE));
 
 	generateButton.addListener(this,&testApp::generateExamplesCB);
 
@@ -113,7 +119,7 @@ void testApp::generateExamplesCB(bool & pressed){
 
 	if (pressed == false) return; // don't do this again on the mouseup.
 
-	vector <int> targetsToMake;
+	targetsToMake.clear();
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
 	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
