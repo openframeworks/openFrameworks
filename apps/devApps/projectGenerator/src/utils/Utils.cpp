@@ -487,6 +487,6 @@ bool askOFRoot(){
 string getOFRootFromConfig(){
 	if(!checkConfigExists()) return "";
 	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::ReadOnly);
-	string filePath = configFile.readToBuffer();
-	return filePath;
+	ofBuffer filePath = configFile.readToBuffer();
+	return filePath.getFirstLine();
 }
