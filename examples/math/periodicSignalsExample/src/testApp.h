@@ -23,8 +23,8 @@ class testApp : public ofBaseApp{
 		void speedChanged();
 
 		vector<ofPolyline> trail;
-		int x, prevX;
-		vector<int> y;
+		float x, prevX;
+		vector<float> y;
 	
 	
 		float preSpeed;
