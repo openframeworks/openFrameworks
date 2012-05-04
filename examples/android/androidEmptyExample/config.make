@@ -10,7 +10,7 @@ OF_ROOT = ../../..
 # for example search paths like:
 # USER_CFLAGS = -I src/objects
 
-USER_CFLAGS = -Isrc/ofxShapeBatchRenderer -Isrc/ofxXmlSettings/src -Isrc/ofxXmlSettings/libs -Isrc/SpriteSheet -Isrc/SpriteSheet/Textures
+USER_CFLAGS = 
 
 
 # USER_LDFLAGS allows to pass custom flags to the linker
