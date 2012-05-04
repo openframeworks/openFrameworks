@@ -1,2 +1,0 @@
-ofxAndroid
-ofxAccelerometer
