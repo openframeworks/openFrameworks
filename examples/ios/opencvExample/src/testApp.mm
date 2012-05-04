@@ -1,7 +1,5 @@
 #include "testApp.h"
 
-//warning video player doesn't currently work - use live video only
-//#define _USE_LIVE_VIDEO
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -14,25 +12,15 @@ void testApp::setup(){
 		vidGrabber.initGrabber(capW, capH);
 		capW = vidGrabber.getWidth();
 		capH = vidGrabber.getHeight();
-		
-		colorImg.allocate(capW,capH);
-		grayImage.allocate(capW,capH);
-		grayBg.allocate(capW,capH);
-		grayDiff.allocate(capW,capH);		
-	#else
-	
-		capW = 320;
-		capH = 240;
-	
-		vidPlayer.loadMovie("fingers.m4v");
+    #else	
+        vidPlayer.loadMovie("fingers.m4v");
 		vidPlayer.play();
-						
-		colorImg.allocate(capW,capH);
-		grayImage.allocate(capW,capH);
-		grayBg.allocate(capW,capH);
-		grayDiff.allocate(capW,capH);		
 	#endif
-	
+
+    colorImg.allocate(capW,capH);
+    grayImage.allocate(capW,capH);
+    grayBg.allocate(capW,capH);
+    grayDiff.allocate(capW,capH);	
 
 	bLearnBakground = true;
 	threshold = 80;
@@ -51,9 +39,11 @@ void testApp::update(){
 	   bNewFrame = vidGrabber.isFrameNew();
     #else
         vidPlayer.update();
-        bNewFrame = vidPlayer.isFrameNew();
-	#endif
+        bNewFrame = vidPlayer.isFrameNew();    
+    #endif
 
+
+    
 	if (bNewFrame){
 	
 		#ifdef _USE_LIVE_VIDEO
@@ -112,7 +102,7 @@ void testApp::draw(){
 
 	ofSetHexColor(0xffffff);
 	char reportStr[1024];
-	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
+	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
 	ofDrawBitmapString(reportStr, 4, 380);
 }
     
