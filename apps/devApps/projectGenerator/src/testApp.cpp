@@ -41,6 +41,8 @@ void testApp::setup(){
         std::exit(0);
     }
 
+
+#ifndef COMMAND_LINE_ONLY
     panelAddons.setup();
     ofDirectory addons(ofFilePath::join(getOFRoot(),"addons"));
     addons.listDir();
@@ -77,6 +79,9 @@ void testApp::setup(){
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
 	ofSetFrameRate(60);
+#else
+	std::exit(0);
+#endif
 }
 
 void testApp::setupForTarget(int targ){
@@ -117,6 +122,7 @@ void testApp::setupForTarget(int targ){
 
 void testApp::generateExamplesCB(bool & pressed){
 
+#ifndef COMMAND_LINE_ONLY
 	if (pressed == false) return; // don't do this again on the mouseup.
 
 	targetsToMake.clear();
@@ -138,6 +144,8 @@ void testApp::generateExamplesCB(bool & pressed){
 
 	int target = ofGetTargetPlatform();
     setupForTarget(target);
+#endif
+
 }
 
 void testApp::generateExamples(){
@@ -192,6 +200,8 @@ void testApp::generateExamples(){
 }
 
 ofFileDialogResult testApp::makeNewProjectViaDialog(){
+
+#ifndef COMMAND_LINE_ONLY
     ofFileDialogResult res = ofSystemSaveDialog("newProjectName", "choose a folder for a new OF project :)");
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
@@ -229,9 +239,13 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
         }
 	}
     return res;
+#endif
+
 }
 
 ofFileDialogResult testApp::updateProjectViaDialog(){
+
+#ifndef COMMAND_LINE_ONLY
     ofFileDialogResult res = ofSystemLoadDialog("choose a folder to update an OF project :)",true);
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
@@ -272,6 +286,8 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 	}
 
 	return res;
+#endif
+
 }
 
 void testApp::createProjectPressed(bool & pressed){
@@ -318,6 +334,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
+#ifndef COMMAND_LINE_ONLY
     //ofBackgroundGradient(ofColor::gray,ofColor::black);
 
     panelAddons.draw();
@@ -331,6 +348,8 @@ void testApp::draw(){
     /*ofDrawBitmapString("press 'm' to make all files\npress ' ' to make a specific file", ofPoint(30,30));*/
 	ofSetColor(255);
     ofDrawBitmapString(drawableOfPath, ofPathDrawPoint);
+#endif
+
 }
 
 //--------------------------------------------------------------
@@ -393,6 +412,8 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 
 //--------------------------------------------------------------
 void testApp::setupDrawableOFPath(){
+
+#ifndef COMMAND_LINE_ONLY
 	vector<string> subdirs = ofSplitString("OF path: " + getOFRoot(), "/");
 	int textLength = 0;
 	int padding = 5;
@@ -429,5 +450,7 @@ void testApp::setupDrawableOFPath(){
 
 	panelAddons.setPosition(panelAddons.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
 	examplesPanel.setPosition(examplesPanel.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
+#endif
+
 
 }
