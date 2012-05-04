@@ -1,12 +1,17 @@
 #pragma once
 
+//#define COMMAND_LINE_ONLY
+
 #include "ofMain.h"
 #include "CBLinuxProject.h"
 #include "CBWinProject.h"
 #include "visualStudioProject.h"
 #include "xcodeProject.h"
 #include <Poco/Path.h>
+
+#ifndef COMMAND_LINE_ONLY
 #include "ofxGui.h"
+#endif
 
 class testApp : public ofBaseApp{
 
@@ -43,7 +48,10 @@ class testApp : public ofBaseApp{
     
         string projectPath;
         string target;
-	
+		vector <int> targetsToMake;
+		bool buildAllExamples;
+
+#ifndef COMMAND_LINE_ONLY
 		string drawableOfPath;
 		ofRectangle ofPathRect;
 		ofPoint ofPathDrawPoint;
@@ -54,7 +62,5 @@ class testApp : public ofBaseApp{
 		ofxPanel examplesPanel;
 		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle, linux64cbToggle;
 		ofxButton generateButton;
-
-		vector <int> targetsToMake;
-		bool buildAllExamples;
+#endif
 };
