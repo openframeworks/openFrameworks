@@ -448,7 +448,7 @@ if [ "$platform" = "all" ]; then
     mv * $packageroot/..
     #rm -Rf $packageroot
 else
-    of_root=$(echo ~/.ofprojectgenerator/config)
+    of_root=$(cat ~/.ofprojectgenerator/config)
     echo $packageroot > ~/.ofprojectgenerator/config
     createPackage $platform $version $packageroot
     echo $of_root > ~/.ofprojectgenerator/config
