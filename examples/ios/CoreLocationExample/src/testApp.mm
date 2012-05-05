@@ -4,15 +4,9 @@
 void testApp::setup(){
 	ofBackground(225, 225, 225);
 
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
-		
 	coreLocation = new ofxiPhoneCoreLocation();
 	hasCompass = coreLocation->startHeading();
 	hasGPS = coreLocation->startLocation();
@@ -49,61 +43,67 @@ void testApp::draw(){
 	arrowImg.draw(160, 220);	
 
 	ofSetColor(54);
-	ofDrawBitmapString("LAT: ", 8, ofGetHeight()-8);
-	ofDrawBitmapString("LON: ", ofGetWidth()-108, ofGetHeight()-8);
+	ofDrawBitmapString("LAT: ", 8, ofGetHeight() - 8);
+	ofDrawBitmapString("LON: ", ofGetWidth() - 108, ofGetHeight() - 8);
 
 	if(hasGPS){
 		cout<<coreLocation->getLatitude()<<" | "<< coreLocation->getLatitude() <<endl;
 		
 		ofSetHexColor(0x009d88);
-		ofDrawBitmapString(ofToString(coreLocation->getLatitude()), 8 + 33, ofGetHeight()-8);
+		ofDrawBitmapString(ofToString(coreLocation->getLatitude()), 8 + 33, ofGetHeight() - 8);
 
 		ofSetHexColor(0x0f7941d);
-		ofDrawBitmapString(ofToString(coreLocation->getLongitude()), (ofGetWidth()-108) + 33, ofGetHeight()-8);
+		ofDrawBitmapString(ofToString(coreLocation->getLongitude()), (ofGetWidth() - 108) + 33, ofGetHeight() - 8);
 		
 	}
 }
 
 //--------------------------------------------------------------
 void testApp::exit(){
+
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
+
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
+
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
+
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
+
 }
 
 //--------------------------------------------------------------
-void testApp::lostFocus() {
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::gotFocus() {
+void testApp::lostFocus(){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::gotMemoryWarning() {
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
 }
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
+    
 }
-
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
-}
-

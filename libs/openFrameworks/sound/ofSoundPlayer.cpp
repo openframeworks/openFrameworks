@@ -177,6 +177,15 @@ bool ofSoundPlayer::getIsPlaying(){
 }
 
 //--------------------------------------------------------------------
+bool ofSoundPlayer::isLoaded(){
+	if( player != NULL ){
+		return player->isLoaded();
+	} else {
+		return false; 
+	}
+}
+
+//--------------------------------------------------------------------
 float ofSoundPlayer::getSpeed(){
 	if( player != NULL ){
 		return player->getSpeed();

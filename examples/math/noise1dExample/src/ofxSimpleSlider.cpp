@@ -6,11 +6,6 @@
 
 #include "ofxSimpleSlider.h"
 
-//----------------------------------------------------
-ofxSimpleSlider::ofxSimpleSlider(){
-	setup (20.0,20.0, 255.0,16.0, 0.0,255.0, 0.5, false, true);
-}
-
 //-----------------------------------------------------------------------------------------------------------------------
 void ofxSimpleSlider::setup (float inx, float iny, float inw, float inh, float loVal, float hiVal, float initialValue, bool bVert, bool bDrawNum){
 	x = inx;

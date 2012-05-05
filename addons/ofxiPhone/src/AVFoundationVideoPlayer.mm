@@ -559,8 +559,12 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 {
 	// try to get video
 	CVImageBufferRef image_buffer = CMSampleBufferGetImageBuffer(buffer);
-	last_returned_frame_presentation_timestamp_s = presentation_timestamp_s;
 	return image_buffer;
+}
+
+-(void)updateFrameTimeDifference
+{
+    last_returned_frame_presentation_timestamp_s = presentation_timestamp_s;
 }
 
 - (pair<UIImage*,CGImageRef>)getCopyOfCurrentFrame

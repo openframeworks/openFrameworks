@@ -93,8 +93,7 @@ void testApp::draw() {
     ofDisableLighting();
     
     ofSetColor(255, 255, 255);
-    ofDrawBitmapString("Draw Wireframe (w) : "+ofToString(bDrawWireframe, 0),
-                       20, 20);
+    ofDrawBitmapString("Draw Wireframe (w) : "+ofToString(bDrawWireframe, 0), 20, 20);
     
 }
 

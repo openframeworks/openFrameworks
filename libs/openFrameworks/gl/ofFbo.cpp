@@ -193,7 +193,8 @@ fboTextures(0),
 depthBuffer(0),
 stencilBuffer(0),
 savedFramebuffer(0),
-defaultTextureIndex(0)
+defaultTextureIndex(0),
+bIsAllocated(false)
 {
 
 }
@@ -201,6 +202,7 @@ defaultTextureIndex(0)
 ofFbo::ofFbo(const ofFbo & mom){
 	settings = mom.settings;
 	isBound = mom.isBound;
+	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
 	retainFB(fbo);
@@ -230,6 +232,7 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
 	settings = mom.settings;
 	isBound = mom.isBound;
+	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
 	retainFB(fbo);
@@ -304,6 +307,7 @@ void ofFbo::destroy() {
 	colorBuffers.clear();
 
 	isBound = 0;
+	bIsAllocated = false;
 }
 
 static GLboolean CheckExtension( const char *extName ){
@@ -370,9 +374,15 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.height			= height;
 	settings.internalformat	= internalformat;
 	settings.numSamples		= numSamples;
+    
+#ifdef TARGET_OS_IPHONE
+	settings.useDepth		= false;
+	settings.useStencil		= false;
+#else    
 	settings.useDepth		= true;
 	settings.useStencil		= true;
-
+#endif 
+    
 	allocate(settings);
 }
 
@@ -539,6 +549,12 @@ void ofFbo::allocate(Settings _settings) {
 
 	// unbind it
 	unbind();
+
+	bIsAllocated = true;
+}
+
+bool ofFbo::isAllocated(){
+	return bIsAllocated;
 }
 
 /*  removed by now, was crashing on draw
@@ -631,7 +647,11 @@ void ofFbo::begin(bool setupScreen) {
 	}
 	ofViewport(0, 0, getWidth(), getHeight(), false);
 	if(setupScreen){
-		ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
+        ofOrientation orient = ofGetOrientation();
+#ifdef TARGET_OF_IPHONE
+        orient = OF_ORIENTATION_DEFAULT;
+#endif
+		ofSetupScreenPerspective(getWidth(), getHeight(), orient, false);
 	}
 	bind();
 }
@@ -723,13 +743,20 @@ int ofFbo::getDefaultTextureIndex()
 	return defaultTextureIndex;
 }
 
-ofTexture& ofFbo::getTextureReference() {
+ofTexture& ofFbo::getTextureReference(){
 	return getTextureReference(defaultTextureIndex);
 }
 
 ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
 	updateTexture(attachmentPoint);
-	return textures[attachmentPoint];
+	ofTexture & ref = textures[attachmentPoint];
+
+    if( ref.texData.textureTarget == GL_TEXTURE_2D ){
+        ref.texData.tex_t = ofMap(ref.getWidth(), 0, ofNextPow2(ref.getWidth()), 0, 1, true);
+        ref.texData.tex_u = ofMap(ref.getHeight(), 0, ofNextPow2(ref.getHeight()), 0, 1, true);
+    }  
+    
+    return ref;
 }
 void ofFbo::setAnchorPercent(float xPct, float yPct){
 	getTextureReference().setAnchorPercent(xPct, yPct);
@@ -822,7 +849,7 @@ void ofFbo::draw(float x, float y) {
 
 
 void ofFbo::draw(float x, float y, float width, float height) {
-	getTextureReference().draw(x, y, width, height);
+    getTextureReference().draw(x, y, width, height);
 }
 
 

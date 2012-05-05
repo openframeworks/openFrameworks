@@ -13,24 +13,18 @@
 #include "ofAddon.h"
 #include "baseProject.h"
 
-class CBWinProject: public baseProject  {
+class CBWinProject: virtual public baseProject  {
 public:
-	
-    
-    //
-    void setup(string ofRoot= "../../../");
-    
-    CBWinProject();
 
-	bool load(string path);
-	bool create(string path);
-	bool save(string path){return true;}
+    void setup();
+
+    bool createProjectFile();
+    bool loadProjectFile();
+    bool saveProjectFile();
 
 	void addSrc(string srcName, string folder);
 	void addInclude(string includeName);
-	void addLibrary(string libraryName);
-
-	void addAddon(ofAddon & addon);
+	void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
 
 	string getName();
 	string getPath();
@@ -38,12 +32,7 @@ public:
 	static string LOG_NAME;
 
 private:
-	
-    
-	pugi::xml_document doc;
-	string projectDir, projectName;
-	vector<ofAddon> addons;
-	string ofRoot;
+
 };
 
 #endif /* CBLINUXPROJECT_H_ */

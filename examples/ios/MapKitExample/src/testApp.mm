@@ -10,14 +10,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	// dump lots of info to console (useful for debugging)
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -108,68 +102,78 @@ void testApp::draw() {
 	
 }
 
-void testApp::regionWillChange(bool animated) {
+//--------------------------------------------------------------
+void testApp::exit(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::regionWillChange(bool animated){
 	printf("testApp::regionWillChange | animated: %i\n", animated);
 }
 
-void testApp::regionDidChange(bool animated) {
+//--------------------------------------------------------------
+void testApp::regionDidChange(bool animated){
 	printf("testApp::regionDidChange | animated: %i\n", animated);
 }
 
-void testApp::willStartLoadingMap() {
+//--------------------------------------------------------------
+void testApp::willStartLoadingMap(){
 	printf("testApp::willStartLoadingMap\n");
 }
 
-void testApp::didFinishLoadingMap() {
+//--------------------------------------------------------------
+void testApp::didFinishLoadingMap(){
 	printf("testApp::didFinishLoadingMap\n");
 }
 
-void testApp::errorLoadingMap(string errorDescription) {
+//--------------------------------------------------------------
+void testApp::errorLoadingMap(string errorDescription){
 	printf("testApp::errorLoadingMap : %s\n", errorDescription.c_str());
 }
 
 //--------------------------------------------------------------
-void testApp::exit() {
-}
-
-
-//--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
-}
-
-
-//--------------------------------------------------------------
-void testApp::lostFocus() {
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::gotFocus() {
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::gotMemoryWarning() {
+void testApp::lostFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
 }
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
-}
-
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
+    
 }
 

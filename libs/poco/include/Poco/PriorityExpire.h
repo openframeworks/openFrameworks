@@ -1,7 +1,7 @@
 //
 // PriorityExpire.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/PriorityExpire.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/PriorityExpire.h#3 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the PriorityExpire template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -56,14 +56,14 @@ class PriorityExpire: public AbstractPriorityDelegate<TArgs>
 public:
 	PriorityExpire(const AbstractPriorityDelegate<TArgs>& p, Timestamp::TimeDiff expireMilliSec):
 		AbstractPriorityDelegate<TArgs>(p),
-		_pDelegate(p.clone()), 
+		_pDelegate(static_cast<AbstractPriorityDelegate<TArgs>*>(p.clone())), 
 		_expire(expireMilliSec*1000)
 	{
 	}
 	
 	PriorityExpire(const PriorityExpire& expire):
 		AbstractPriorityDelegate<TArgs>(expire),
-		_pDelegate(expire._pDelegate->clone()),
+		_pDelegate(static_cast<AbstractPriorityDelegate<TArgs>*>(expire._pDelegate->clone())),
 		_expire(expire._expire),
 		_creationTime(expire._creationTime)
 	{
@@ -71,7 +71,7 @@ public:
 
 	~PriorityExpire()
 	{
-		destroy();
+		delete _pDelegate;
 	}
 	
 	PriorityExpire& operator = (const PriorityExpire& expire)
@@ -95,20 +95,24 @@ public:
 			return false;
 	}
 
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		return other.equals(*_pDelegate);
+	}
+
 	AbstractPriorityDelegate<TArgs>* clone() const
 	{
 		return new PriorityExpire(*this);
 	}
 
-	void destroy()
+	void disable()
 	{
-		delete this->_pDelegate;
-		this->_pDelegate = 0;
+		_pDelegate->disable();
 	}
 
-	const AbstractPriorityDelegate<TArgs>& getDelegate() const
+	const AbstractPriorityDelegate<TArgs>* unwrap() const
 	{
-		return *this->_pDelegate;
+		return this->_pDelegate;
 	}
 
 protected:

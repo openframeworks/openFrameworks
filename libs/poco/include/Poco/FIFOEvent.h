@@ -1,7 +1,7 @@
 //
 // FIFOEvent.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/FIFOEvent.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FIFOEvent.h#2 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the FIFOEvent template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -43,16 +43,16 @@
 #include "Poco/AbstractEvent.h"
 #include "Poco/FIFOStrategy.h"
 #include "Poco/AbstractDelegate.h"
-#include "Poco/CompareFunctions.h"
 
 
 namespace Poco {
 
 
+//@ deprecated
 template <class TArgs, class TMutex = FastMutex> 
 class FIFOEvent: public AbstractEvent < 
 	TArgs, 
-	FIFOStrategy<TArgs, AbstractDelegate<TArgs>, p_less<AbstractDelegate<TArgs> > >,
+	FIFOStrategy<TArgs, AbstractDelegate<TArgs> >,
 	AbstractDelegate<TArgs>,
 	TMutex
 >
@@ -60,15 +60,9 @@ class FIFOEvent: public AbstractEvent <
 	/// that delegates are invoked in the order they were added to
 	/// the event.
 	///
-	/// Note that one object can only register one method to a FIFOEvent.
-	/// Subsequent registrations will overwrite the existing delegate.
-	/// For example:
-	///     FIFOEvent<int> tmp;
-	///     MyClass myObject;
-	///     tmp += delegate(&myObject, &MyClass::myMethod1);
-	///     tmp += delegate(&myObject, &MyClass::myMethod2);
-	///
-	/// The second registration will overwrite the first one.
+	/// Note that as of release 1.4.2, this is the default behavior
+	/// implemented by BasicEvent, so this class is provided
+	/// for backwards compatibility only.
 {
 public:
 	FIFOEvent()

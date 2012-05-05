@@ -217,7 +217,7 @@ void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
 void reloadTextures(){
 	ofUpdateBitmapCharacterTexture();
 	ofReloadAllImageTextures();
-	//ofReloadAllFontTextures();
+	ofReloadAllFontTextures();
 	ofResumeVideoGrabbers();
 }
 

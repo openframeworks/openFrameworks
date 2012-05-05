@@ -3,8 +3,8 @@
 #include "ofConstants.h"
 #include "ofTypes.h"
 
-#include "poco/Thread.h"
-#include "poco/Runnable.h"
+#include "Poco/Thread.h"
+#include "Poco/Runnable.h"
 
 /// a thread base class with a built in mutex
 ///

@@ -182,11 +182,11 @@ void ofGLRenderer::draw(ofPath & shape){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h){
+void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -194,11 +194,11 @@ void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, flo
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h){
+void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -206,11 +206,11 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h){
+void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.draw(x,y,z,w,h);
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
@@ -264,11 +264,19 @@ void ofGLRenderer::popView() {
 	// done like this cause i was getting GL_STACK_UNDERFLOW
 	// should ofPush/PopMatrix work the same way, what if it's mixed with glPush/PopMatrix
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(projectionStack.top().getPtr());
+	if(!projectionStack.empty()){
+		glLoadMatrixf(projectionStack.top().getPtr());
+		projectionStack.pop();
+	}else{
+		ofLogError() << "popView: couldn't pop projection matrix, stack empty. probably wrong anidated push/popView";
+	}
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(modelViewStack.top().getPtr());
-	projectionStack.pop();
-	modelViewStack.pop();
+	if(!modelViewStack.empty()){
+		glLoadMatrixf(modelViewStack.top().getPtr());
+		modelViewStack.pop();
+	}else{
+		ofLogError() << "popView: couldn't pop modelView matrix, stack empty. probably wrong anidated push/popView";
+	}
 }
 
 //----------------------------------------------------------
@@ -427,6 +435,9 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation ori
 	if(vFlip) {
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
+
+	if(nearDist == -1) nearDist = 0;
+	if(farDist == -1) farDist = 10000;
 	
 	glOrtho(0, viewW, 0, viewH, nearDist, farDist);
 
@@ -1155,7 +1166,11 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 		if(textString[c] == '\n'){
 
 			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
-			sx = x;
+			if(mode == OF_BITMAPMODE_SIMPLE) {
+				sx = x;
+			} else {
+				sx = 0;
+			}
 
 			//glRasterPos2f(x,y + (int)yOffset);
 		} else if (textString[c] >= 32){

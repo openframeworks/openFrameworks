@@ -6,9 +6,6 @@ MyGuiView * myGuiViewController;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-		
 	//NOTE WE WON'T RECEIVE TOUCH EVENTS INSIDE OUR APP WHEN THERE IS A VIEW ON TOP OF THE OF VIEW
 
 	lengthRatio	= 0.5;
@@ -60,31 +57,55 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::exit(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs & touch){
 
 	//IF THE VIEW IS HIDDEN LETS BRING IT BACK!
 	if( myGuiViewController.view.hidden ){
 		myGuiViewController.view.hidden = NO;
 	}
-	
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
-
-}
-
-//--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
-}
-
-//--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
+void testApp::touchUp(ofTouchEventArgs & touch){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 }
 
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+
+}
+
+//--------------------------------------------------------------
+void testApp::lostFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+    
+}

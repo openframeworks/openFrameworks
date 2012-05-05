@@ -2,16 +2,13 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 
 	counter = 0.0;
-	spin	= 0.0;
-	spinPct	= 0.0;
-	mouseX  = 263;
-	mouseY  = 267;
+	spin = 0.0;
+	spinPct = 0.0;
+	mouseX = 263;
+	mouseY = 267;
 	bFirstMouseMove = true;
 	ofSetCircleResolution(40);
 	ofBackground(0, 0, 0);
@@ -37,7 +34,7 @@ void testApp::update(){
 
 	//update the spin -which is storing the
 	//total rotation- by spinPct
-	spin	+= spinPct;
+	spin += spinPct;
 }
 
 //--------------------------------------------------------------
@@ -54,7 +51,7 @@ void testApp::draw(){
 
 		//Lets get a unique height for our 'wave'
 		//using sine
-		float height = sin( counter + k);
+		float height = sin(counter + k);
 
 		//sine produces -1 to 1 values
 		//lets add 1 to make sure the height
@@ -74,7 +71,7 @@ void testApp::draw(){
 		//rect has a unique height otherwise
 		//they would all be moving up and down
 		//at the same time
-		k+=0.7;
+		k += 0.7;
 	}
 
 	//This is doing it again but for a different color
@@ -82,23 +79,24 @@ void testApp::draw(){
 	k = 0;
 	for(int i = 0; i < ofGetWidth(); i+= 50)
 	{
-		ofRect(i+5, ofGetHeight(), 50, -50 * (sin(1.4*counter-k)+1.0));
-		k+=0.4;
+		ofRect(i+5, ofGetHeight(), 50, -50 * (sin(1.4 * counter - k) + 1.0));
+		k += 0.4;
 	}
 
 	//Lets stop the blending!
 	ofDisableAlphaBlending();
 
-	if(ofGetWidth()>480) // then we are running retina
+	if(ofGetWidth() > 480){ // then we are running retina
 		glScalef(2, 2, 0);
+    }
 
 	//---------------------------
 	// a bunch of lines
 
 	for (int i = 0; i < 20; i++){
 		//Lets make a cheesy sunset
-		ofSetColor(255-i*10, 255-i*20, 0);
-		ofLine(0,  i*4 , ofGetWidth(), i*4);
+		ofSetColor(255 - i * 10, 255 - i * 20, 0);
+		ofLine(0, i * 4, ofGetWidth(), i * 4);
 	}
 
 	ofScale(0.5, 0.5, 1);
@@ -170,8 +168,8 @@ void testApp::draw(){
 		//-1 to 1 results the total width in
 		//this case will be double what we
 		//specify. So 400 by 300.
-		x =  200.0  * sin(xPct);
-		y =  150.0  * cos(yPct);
+		x = 200.0 * sin(xPct);
+		y = 150.0 * cos(yPct);
 
 		//We add the position we want them to be osicalting around
 		//and draw the rects as small 2 pixel by 2 pixel squares
@@ -184,56 +182,79 @@ void testApp::draw(){
 	// because it is using glDrawPixels which varies in
 	// speed from system to system.  try using ofTrueTypeFont
 	// if this bitMap type slows you down.
-	ofSetColor(0xFFFFFF);
+	ofSetColor(255);
 	ofDrawBitmapString("this is a Lissajous curve", 190, 500);
 	ofDrawBitmapString("move mouse to spin me", 670, 500);
+}
+
+//--------------------------------------------------------------
+void testApp::exit(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
-
-}
-
-//--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 	
 	if( touch.id ==  0){
-	//update spinPct by the distance the mouse
-	//moved in x and y. We use abs so it always
-	//spins in the same direction
+        //update spinPct by the distance the mouse
+        //moved in x and y. We use abs so it always
+        //spins in the same direction
 
-	// we use the "bFirstMouseMove" flag so that we calculate only
-	// after we have the first prevMY and prevMX stored;
+        // we use the "bFirstMouseMove" flag so that we calculate only
+        // after we have the first prevMY and prevMX stored;
 
-	if (bFirstMouseMove == false){
-		spinPct += (float)fabs( touch.y - prevMY ) * 0.03;
-		spinPct += (float)fabs( touch.x - prevMX ) * 0.03;
-	}else{
-		bFirstMouseMove = false;
-		//turn the flag off
-	}
+        if (bFirstMouseMove == false){
+            spinPct += (float)fabs(touch.y - prevMY) * 0.03;
+            spinPct += (float)fabs(touch.x - prevMX) * 0.03;
+        }else{
+            bFirstMouseMove = false;
+            //turn the flag off
+        }
 
-	//store the x and y
-	//so we can get the prev value
-	//next time the mouse is moved
-	prevMY = touch.y;
-	prevMX = touch.x;
-
+        //store the x and y
+        //so we can get the prev value
+        //next time the mouse is moved
+        prevMY = touch.y;
+        prevMX = touch.x;
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 	
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs &touch){
+void testApp::touchCancelled(ofTouchEventArgs & touch){
 
+}
+
+//--------------------------------------------------------------
+void testApp::lostFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
+}
+
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+    
 }
