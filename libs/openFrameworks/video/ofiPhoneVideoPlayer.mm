@@ -8,6 +8,10 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	pixelsTmp = NULL;
 	
 	videoWasStopped=false;
+
+    bUpdatePixels = false;
+    bFrameNew = false;
+    frameCount = -1;
 	
 	width = 0;
 	height = 0;
@@ -103,7 +107,7 @@ void ofiPhoneVideoPlayer::stop() {
 
 bool ofiPhoneVideoPlayer::isFrameNew() {
 	if(videoPlayer != NULL) {
-		return [(AVFoundationVideoPlayer *)videoPlayer hasNewFrame];
+		return bFrameNew;
 	}	
 	return false;
 }
@@ -114,6 +118,10 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 
 	if(videoPlayer != NULL && isPlaying())
 	{
+        if(!bUpdatePixels) { // if pixels have not changed, return the already calculated pixels.
+            return pixels;
+        }
+        
 		CGImageRef currentFrameRef;
 		
 		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -187,6 +195,8 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 			CGImageRelease(currentFrameRef);
 		}
 		
+        bUpdatePixels = false;
+        
 		return pixels;
 	}
 	
@@ -199,38 +209,43 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 	if(videoPlayer != NULL)
 	{
 		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame]; 
-
 		CVPixelBufferLockBaseAddress(imageBuffer,0); 
+        size_t widthIn = CVPixelBufferGetWidth(imageBuffer);
+        size_t heightIn = CVPixelBufferGetHeight(imageBuffer);
+		CVPixelBufferUnlockBaseAddress(imageBuffer,0); // unlock the image buffer
 
-		uint8_t *bufferPixels = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
+        int maxTextureSize = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+        
+        if((int)widthIn > maxTextureSize || (int)heightIn > maxTextureSize) {
+            ofLog(OF_LOG_WARNING, "ofiPhoneVideoPlayer::getTexture() - video image is bigger then supported texture size");
+        }
 		
-		if(width != min(size_t(1024),CVPixelBufferGetWidth(imageBuffer))) {
+        widthIn = min(size_t(maxTextureSize), widthIn);
+        heightIn = min(size_t(maxTextureSize), heightIn);
+        
+		if((width != widthIn) || (height != heightIn)) {
 			
-			if(videoTexture.bAllocated())
+			if(videoTexture.bAllocated()) {
 				videoTexture.clear();
+            }
 				
-			int widthIn = min(size_t(1024),CVPixelBufferGetWidth(imageBuffer)); 
-			int heightIn = min(size_t(1024),CVPixelBufferGetHeight(imageBuffer));
-			
-			if( width==0 && widthIn != 0  && pixels == NULL) {
+			if(width == 0 && widthIn != 0 && pixels == NULL) {
 								
-				if(internalGLFormat == GL_RGB)
-					pixels = (GLubyte *) malloc(widthIn * heightIn * 3);
-				else
-					pixels = (GLubyte *) malloc(widthIn * heightIn * 4);
-				
-				pixelsTmp	= (GLubyte *) malloc(widthIn * heightIn * 4);
+				if(internalGLFormat == GL_RGB) {
+					pixels = (GLubyte *)malloc(widthIn * heightIn * 3);
+                } else {
+					pixels = (GLubyte *)malloc(widthIn * heightIn * 4);
+                }
+				pixelsTmp = (GLubyte *)malloc(widthIn * heightIn * 4);
 			}				
 				
-			width	= widthIn; 
-			height	= heightIn;
+			width = widthIn; 
+			height = heightIn;
 			videoTexture.allocate(width, height, internalGLFormat);
 		}
 		
-		videoTexture.loadData((unsigned char *)imageBuffer, width, height, internalGLFormat);
-		
-		// unlock the image buffer
-		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+		videoTexture.loadData(getPixels(), width, height, internalGLFormat);
 		
 		return &videoTexture;
 	}
@@ -290,11 +305,38 @@ bool ofiPhoneVideoPlayer::isPlaying() {
 }
 
 void ofiPhoneVideoPlayer::update() {
-	if(videoPlayer != NULL) {
-		float t = ofGetElapsedTimef();
-		[(AVFoundationVideoPlayer *)videoPlayer updateWithElapsedTime:(t-lastUpdateTime)*playbackSpeed];
-		lastUpdateTime=t;
-	}
+    
+    bFrameNew = false; // default.
+    
+    if(videoPlayer == NULL) {
+        return;
+    }
+    
+    if(frameCount == ofGetFrameNum()) {
+        /**
+         *  the player has already been updated on this frame.
+         *  this is to prevent update being called multiple times on the same frame.
+         */
+        return;
+    } else {
+        frameCount = ofGetFrameNum();
+    }
+    
+    float t = ofGetElapsedTimef();
+    [(AVFoundationVideoPlayer *)videoPlayer updateWithElapsedTime:(t-lastUpdateTime)*playbackSpeed];
+    lastUpdateTime=t;
+    
+    bFrameNew = [(AVFoundationVideoPlayer *)videoPlayer hasNewFrame]; // check for new frame staright after the call to update.
+    
+    if(bFrameNew) {
+        /**
+         *  mark pixels to be updated.
+         *  pixels are then only updated if the getPixels() method is called,
+         *  internally or externally to this class.
+         *  this ensures the pixels are updated only once per frame.
+         */
+        bUpdatePixels = true;
+    }
 }
 
 float ofiPhoneVideoPlayer::getPosition() {

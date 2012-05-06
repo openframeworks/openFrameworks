@@ -69,6 +69,10 @@ protected:
 	int width;
 	int height;
 	float playbackSpeed;
+    
+    bool bFrameNew;
+    bool bUpdatePixels;
+    int frameCount;
 	
 	int vol;
 		
