@@ -1,5 +1,8 @@
 COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 
+NDK_PLATFORM = android-8
+GCC_VERSION = 4.4.3
+
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	LIBSPATH = android/armeabi-v7a
 	ABI = armeabi-v7a
@@ -21,7 +24,7 @@ CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_
 AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
-CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include"
+CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/" 
 CFLAGS += -DANDROID
 
 INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android

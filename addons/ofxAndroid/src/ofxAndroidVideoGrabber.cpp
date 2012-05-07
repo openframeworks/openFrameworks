@@ -178,6 +178,7 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	bGrabberInited = true;
 
 	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: Camera initialized correctly");
+	paused = false;
 	return true;
 }
 
