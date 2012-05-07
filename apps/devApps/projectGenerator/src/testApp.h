@@ -1,6 +1,6 @@
 #pragma once
 
-//#define COMMAND_LINE_ONLY
+#define COMMAND_LINE_ONLY
 
 #include "ofMain.h"
 #include "CBLinuxProject.h"
@@ -29,11 +29,11 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
- 
+
 		void setupForTarget(int targ);
-        void generateExamplesCB(bool & pressed); //stupid as its a button 
+        void generateExamplesCB(bool & pressed); //stupid as its a button
 		void generateExamples();
-		
+
         ofFileDialogResult makeNewProjectViaDialog();
         ofFileDialogResult updateProjectViaDialog();
 
@@ -41,11 +41,11 @@ class testApp : public ofBaseApp{
         void updateProjectPressed(bool & pressed);
         void createAndOpenPressed(bool & pressed);
         void changeOFRootPressed(bool & pressed);
-		
+
 		void setupDrawableOFPath();
-		
+
 		baseProject * project;
-    
+
         string projectPath;
         string target;
 		vector <int> targetsToMake;

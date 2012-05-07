@@ -13,7 +13,7 @@
 #include <list>
 
 ofAddon::ofAddon(){
-    pathToOF = "../../..";
+    pathToOF = "../../../";
 }
 
 void ofAddon::fromFS(string path, string platform){
@@ -47,15 +47,15 @@ void ofAddon::fromFS(string path, string platform){
 
     string libsPath = path + "/libs";
     vector < string > libFiles;
-    
-    
+
+
 	//ofSetLogLevel(OF_LOG_NOTICE);
     if (ofDirectory::doesDirectoryExist(libsPath)){
         getLibsRecursively(libsPath, libFiles, libs, platform);
     }
     //ofSetLogLevel(OF_LOG_VERBOSE);
 
-    
+
     // I need to add libFiles to srcFiles
     for (int i = 0; i < (int)libFiles.size(); i++){
     	libFiles[i].erase (libFiles[i].begin(), libFiles[i].begin()+ofRootPath.length());
@@ -108,7 +108,7 @@ void ofAddon::fromFS(string path, string platform){
     vector < string > libFolders;
     ofLogVerbose() << "trying get folders recursively " << (path + "/libs");
 
-	// the dirList verbosity is crazy, so I'm setting this off for now. 
+	// the dirList verbosity is crazy, so I'm setting this off for now.
 	//ofSetLogLevel(OF_LOG_NOTICE);
     getFoldersRecursively(path + "/libs", libFolders, platform);
     vector < string > srcFolders;
