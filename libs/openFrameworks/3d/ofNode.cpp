@@ -216,17 +216,19 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
-	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());
-	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();
-	ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();
-	ofVec3f yaxis = zaxis.getCrossed(xaxis);
-	
-	ofMatrix4x4 m;
-	m._mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
-	m._mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
-	m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
-	
-	setGlobalOrientation(m.getRotate());
+	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());	
+	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();	
+	if (zaxis.length() > 0) {
+		ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();	
+		ofVec3f yaxis = zaxis.getCrossed(xaxis);
+		
+		ofMatrix4x4 m;
+		m._mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
+		m._mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
+		m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
+		
+		setGlobalOrientation(m.getRotate());
+	}
 }
 
 //----------------------------------------

@@ -35,15 +35,15 @@ public:
 	void mouseMoved(ofMouseEventArgs& mouse);
 	void mousePressed(ofMouseEventArgs& mouse);
 	void mouseReleased(ofMouseEventArgs& mouse);
-	void keyPressed(ofKeyEventArgs& key);
-	void keyReleased(ofKeyEventArgs& key);
 
-	
 	// enable or disable mouse input to navigate
 	void enableMouseInput();
 	void disableMouseInput();
 	bool getMouseInputEnabled();
 	
+	void enableMouseMiddleButton();
+	void disableMouseMiddleButton();
+	bool getMouseMiddleButtonEnabled();
 	
 	
 private:
@@ -51,11 +51,19 @@ private:
 
 	ofNode target;
 	
+	
+	bool bEnableMouseMiddleButton;
 	bool bApplyInertia;
 	bool bDoTranslate;
 	bool bDoRotate;
-	
+	bool bValidClick;
 	bool bInsideArcball;
+	bool bMouseInputEnabled;
+	bool bDistanceSet;
+
+	float lastDistance;
+
+	float drag;
 	
 	float xRot;
 	float yRot;
@@ -65,27 +73,26 @@ private:
 	float moveY;
 	float moveZ;
 	
+	float sensitivityXY;
+	float sensitivityZ;
+	float sensitivityRot;
+	
+	float rotationFactor;
+
+	ofVec2f mouse;
+	ofVec2f lastMouse;
 	ofVec2f mouseVel;
 	
 	void updateRotation();
 	void updateTranslation();
+	void update(ofEventArgs & args);
+	void updateMouse();
 	
 	char doTranslationKey;
 	
-	float drag;
-	bool bMouseInputEnabled;
-	
 	unsigned long lastTap;
-
-	bool bDistanceSet;
-	float lastDistance;
 		
 	ofQuaternion curRot;  
-	//a place to store the mouse position so we can measure incremental change  
-    ofVec2f lastMouse;
-	//slows down the rotation 1 = 1 degree per pixel
-	float sensitivity;
-	float sensitivityZ;
-
-	
+    
+	ofRectangle viewport;// having the  viewport saved localy will make it easier for all the needed maths dealing with viewport.
 };
