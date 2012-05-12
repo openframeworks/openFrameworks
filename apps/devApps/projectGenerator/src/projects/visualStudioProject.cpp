@@ -79,6 +79,9 @@ bool visualStudioProject::saveProjectFile(){
 
 void visualStudioProject::appendFilter(string folderName){
 
+    
+    fixSlashOrder(folderName);
+    
 	string uuid = generateUUID(folderName);
 
 	string tag = "//ItemGroup[Filter]/Filter[@Include=\"" + folderName + "\"]";
@@ -108,6 +111,8 @@ void visualStudioProject::appendFilter(string folderName){
 
 void visualStudioProject::addSrc(string srcFile, string folder){
 
+    fixSlashOrder(folder);
+    fixSlashOrder(srcFile);
 
 	vector < string > folderSubNames = ofSplitString(folder, "\\");
 	string folderName = "";
@@ -116,10 +121,6 @@ void visualStudioProject::addSrc(string srcFile, string folder){
 		folderName += folderSubNames[i];
 		appendFilter(folderName);
 	}
-
-    // TODO: no folder love here...
-
-    fixSlashOrder(srcFile);
 
     if (ofIsStringInString(srcFile, ".h") || ofIsStringInString(srcFile, ".hpp")){
         appendValue(doc, "ClInclude", "Include", srcFile);
