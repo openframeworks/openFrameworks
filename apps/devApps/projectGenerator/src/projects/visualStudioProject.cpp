@@ -272,7 +272,16 @@ void visualStudioProject::addAddon(ofAddon & addon){
 
         size_t found = 0;
         // get the full lib name
-        found = addon.libs[i].find_last_of("\\");
+        
+    
+#ifdef TARGET_WIN32
+    	found = addon.libs[i].find_last_of("\\");
+#else
+        found = addon.libs[i].find_last_of("/");
+#endif
+        
+        
+        
         string libName = addon.libs[i].substr(found+1);
         // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
         found = libName.find_last_of(".");
