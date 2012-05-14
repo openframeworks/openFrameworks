@@ -246,10 +246,9 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
     __android_log_print(ANDROID_LOG_INFO,"OF",("app name: " + appname).c_str());
     if(appname!=""){
 		string resources_name = ofToLower(appname + "resources.zip");
-		__android_log_print(ANDROID_LOG_INFO,"OF",("uncompressing " + resources_name).c_str());
 		ofFile resources(resources_name);
-		__android_log_print(ANDROID_LOG_INFO,"OF",("uncompressing " + resources.getAbsolutePath()).c_str());
 		if(resources.exists()){
+			__android_log_print(ANDROID_LOG_DEBUG,"OF",("uncompressing " + resources.getAbsolutePath()).c_str());
 			unzFile zip = unzOpen(resources.getAbsolutePath().c_str());
 			char current_dir[1000];
 			getcwd(current_dir,1000);

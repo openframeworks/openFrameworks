@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -16,7 +17,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -50,6 +57,23 @@ public class OFAndroid {
         	// to a folder in the sdcard
 	        Field[] files = raw.getDeclaredFields();
 	        
+	        boolean copydata = false;
+
+	        SharedPreferences preferences = ofActivity.getPreferences(Context.MODE_PRIVATE);
+	        long lastInstalled = preferences.getLong("installed", 0);
+	        
+	        PackageManager pm = ofActivity.getPackageManager();
+	        ApplicationInfo appInfo = pm.getApplicationInfo(packageName, 0);
+	        String appFile = appInfo.sourceDir;
+	        long installed = new File(appFile).lastModified();
+	        if(installed>lastInstalled){
+	        	Editor editor = preferences.edit();
+	        	editor.putLong("installed", installed);
+	        	editor.commit();
+	        	copydata = true;
+	        }
+	        
+
 	        dataPath="";
     		try{
     			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -65,42 +89,44 @@ public class OFAndroid {
 					Log.e("OF","error creating dir " + dataPath,e);
 				}
 				
-    			for(int i=0; i<files.length; i++){
-    	        	int fileId;
-    	        	String fileName="";
-    				
-    				InputStream from=null;
-    				File toFile=null;
-    				FileOutputStream to=null;
-    	        	try {
-    					fileId = files[i].getInt(null);
-    					String resName = ofActivity.getResources().getText(fileId).toString();
-    					fileName = resName.substring(resName.lastIndexOf("/"));
-    					
-    					from = ofActivity.getResources().openRawResource(fileId);
-    					//toFile = new File(Environment.getExternalStorageDirectory() + "/" + appName + "/" +fileName);
-    					Log.i("OF","copying file " + fileName + " to " + dataPath);
-    					toFile = new File(dataPath + "/" + fileName);
-    					to = new FileOutputStream(toFile);
-    					byte[] buffer = new byte[4096];
-    					int bytesRead;
-    					
-    					while ((bytesRead = from.read(buffer)) != -1)
-    					    to.write(buffer, 0, bytesRead); // write
-    				} catch (Exception e) {
-    					Log.e("OF","error copying file",e);
-    				} finally {
-    					if (from != null)
-    					  try {
-    					    from.close();
-    					  } catch (IOException e) { }
-    					  
-    			        if (to != null)
-    			          try {
-    			            to.close();
-    			          } catch (IOException e) { }
-    				}
-    	        }
+				if(copydata){
+	    			for(int i=0; i<files.length; i++){
+	    	        	int fileId;
+	    	        	String fileName="";
+	    				
+	    				InputStream from=null;
+	    				File toFile=null;
+	    				FileOutputStream to=null;
+	    	        	try {
+	    					fileId = files[i].getInt(null);
+	    					String resName = ofActivity.getResources().getText(fileId).toString();
+	    					fileName = resName.substring(resName.lastIndexOf("/"));
+	    					
+	    					from = ofActivity.getResources().openRawResource(fileId);
+	    					//toFile = new File(Environment.getExternalStorageDirectory() + "/" + appName + "/" +fileName);
+	    					Log.i("OF","copying file " + fileName + " to " + dataPath);
+	    					toFile = new File(dataPath + "/" + fileName);
+	    					to = new FileOutputStream(toFile);
+	    					byte[] buffer = new byte[4096];
+	    					int bytesRead;
+	    					
+	    					while ((bytesRead = from.read(buffer)) != -1)
+	    					    to.write(buffer, 0, bytesRead); // write
+	    				} catch (Exception e) {
+	    					Log.e("OF","error copying file",e);
+	    				} finally {
+	    					if (from != null)
+	    					  try {
+	    					    from.close();
+	    					  } catch (IOException e) { }
+	    					  
+	    			        if (to != null)
+	    			          try {
+	    			            to.close();
+	    			          } catch (IOException e) { }
+	    				}
+	    	        }
+				}
     		}catch(Exception e){
     			Log.e("OF","couldn't move app resources to data directory " + dataPath);
     			e.printStackTrace();
@@ -116,7 +142,12 @@ public class OFAndroid {
 			} 
 			OFAndroid.setAppDataDir(dataPath,app_name);
 	        
-        } catch (ClassNotFoundException e1) { }
+        } catch (ClassNotFoundException e1) { 
+        	
+        } catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         OFAndroid.ofActivity = ofActivity;
 
@@ -373,6 +404,13 @@ public class OFAndroid {
 		
 		return canSaveExternal;
 	}
+	
+	public static void onActivityResult(int requestCode, int resultCode,Intent intent){
+
+		for(OFAndroidObject object : OFAndroidObject.ofObjects){
+			object.onActivityResult(requestCode,resultCode,intent);
+		}
+	}
 
 	// native methods to call OF c++ callbacks
     public static native void setAppDataDir(String data_dir,String app_name);
@@ -519,6 +557,10 @@ public class OFAndroid {
 	public static void unlockScreenSleep(){
 		if(wl==null) return;
 		wl.release();
+	}
+	
+	public static String getRandomUUID(){
+		return UUID.randomUUID().toString();
 	}
 	
     

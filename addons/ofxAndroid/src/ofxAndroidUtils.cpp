@@ -223,3 +223,23 @@ bool ofxAndroidCheckSDCardMounted(){
 
 }
 
+string ofxAndroidRandomUUID(){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return false;
+	}
+
+
+	jmethodID randomUUID = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getRandomUUID","()Ljava/lang/String;");
+	if(!randomUUID){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid randomUUID method");
+		return "";
+	}
+	jstring str = (jstring)	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,randomUUID);
+
+	jboolean isCopy;
+	return ofGetJNIEnv()->GetStringUTFChars(str,&isCopy);
+}
+
