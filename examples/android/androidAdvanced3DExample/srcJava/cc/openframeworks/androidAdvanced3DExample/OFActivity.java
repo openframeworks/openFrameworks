@@ -1,4 +1,4 @@
-package cc.openframeworks.androidAdvanced3DExample;
+package cc.openframeworks.spelltower;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ public class OFActivity extends Activity{
 
 	@Override
     public void onCreate(Bundle savedInstanceState)
-    {
+    { 
         super.onCreate(savedInstanceState);
         String packageName = getPackageName();
 
