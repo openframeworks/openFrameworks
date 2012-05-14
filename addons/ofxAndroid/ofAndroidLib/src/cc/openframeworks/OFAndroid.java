@@ -20,7 +20,6 @@ import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.os.PowerManager;
