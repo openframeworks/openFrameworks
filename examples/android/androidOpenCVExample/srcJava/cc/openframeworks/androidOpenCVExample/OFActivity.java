@@ -1,4 +1,4 @@
-package cc.openframeworks.androidOpenCVExample;
+package cc.openframeworks.spelltower;
 
 import android.app.Activity;
 import android.os.Bundle;
