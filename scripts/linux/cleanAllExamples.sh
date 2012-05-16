@@ -20,6 +20,7 @@ do
         rm -rf *.backup 2> /dev/null
         rm -rf *.depend 2> /dev/null
         rm *~ 2> /dev/null
+        cd ..
         echo "-----------------------------------------------------------------"
         echo ""
     done
