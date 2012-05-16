@@ -1,0 +1,57 @@
+#
+# This list is used by git-shortlog to fix a few botched name translations
+# in the git archive, either because the author's full name was messed up
+# and/or not always written the same way, making contributions from the
+# same person appearing not to be so.
+#
+# See man git shortlog for details
+# git log --format="%aN <%aE>" | sort -u | less is useful to collect names
+
+Arturo Castro <arturo@0457777e-be4a-0410-a59e-cd2fa5f2afb7>
+Arturo Castro <arturo@5aee0c02-c622-0410-bcf2-d8652e674aa7>
+Arturo Castro <arturo@adcd5791-1b6c-4787-a4a6-ffef2f616413>
+Arturo Castro <arturo@arturo-laptop.(none)>
+Arturo Castro <arturo@arturo-VirtualBox.(none)>
+Arturo Castro <arturo@openframeworks.cc>
+Arturo Castro <arturo@reactable.com>
+Arturo Castro <arturo@openframeworks.cc> arturoc <=>
+Arturo Castro <arturo@a.local>
+Arturo Castro <arturo@openframeworks.cc>
+Arturo Castro <arturo@openframeworks.cc> arturo castro <=>
+Arturo Castro <arturocastro@arturo.local>
+Arturo Castro <arturocastro@MacBook-Pro-de-arturo-castro.local>
+Arturo Castro <arturo@.(none)>
+Christopher Baker <info@christopherbaker.net>
+Christoph Buchner <bilderbuchi@phononoia.at>
+Damian <damian@frey.NOSPAMco.nz>
+Elliot Woods <elliot.woods@gmail.com>
+Golan Levin <Golan@.(none)>
+Jake Pyne <jakepyne@gmail.com>
+James George <james@jamesgeorge.org>
+Jason Van Cleave <jvcleave@gmail.com>
+Jesus Gollonet <jesusgollonet@jesus-gollonet-bailens-MacBook-Pro.local>
+Jonathan Brodsky <jonbro5556@jonathan-brodskys-macbook-pro-44.local>
+Jonathan Brodsky <jonbro5556@new-host-3.home>
+Jonathan Brodsky <jonbro5556@new-host.home>
+Jonathan Brodsky <jon@walltowall.com>
+Kyle McDonald <kyle@kylemcdonald.net>
+Lukasz Karluk <julapy@googlemail.com>
+Matthew Gingold <m@gingold.com.au>
+Mehmet Akten <Memo@Memos-MacBook-Pro-17.local>
+Mehmet Akten <memo@Memos-MacBook-Pro.local>
+Mehmet Akten <memo@Memos-Mac-Pro-3.local>
+Mehmet Akten <memo@memo.tv>
+Mehmet Akten <Memo@MSA-MacBook-Pro-III.local>
+Reactable <reactable@reactable-desktop.(none)>
+Theodore Watson <theo@openframeworks.cc>
+Theodore Watson <theo@0457777e-be4a-0410-a59e-cd2fa5f2afb7>
+Theodore Watson <theo@5aee0c02-c622-0410-bcf2-d8652e674aa7>
+Theodore Watson <theo@theos-MacBook-Pro.local>
+Todd Vanderlin <todd@vanderlin.cc>
+Zach Gage <zachstfj@gmail.com>
+Zach Gage <zgage@optonline.net>
+Zachary Lieberman <zach@openframeworks.cc>
+Zachary Lieberman <zach@openframeworks.cc> zach@eyebeam.org <Owner@Owner-PC.(none)>
+Zachary Lieberman <zach@eyebeam.org>
+Zachary Lieberman <zach@zach-liebermans-macbook-pro-2.local>
+Zachary Lieberman <zach@zach-liebermans-macbook-pro-3.local>
