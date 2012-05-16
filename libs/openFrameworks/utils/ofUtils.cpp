@@ -194,17 +194,23 @@ void ofDisableDataPath(){
 
 //--------------------------------------------------
 //use ofSetDataPathRoot() to override this
+static string & dataPathRoot(){
 #if defined TARGET_OSX
-	static string dataPathRoot = "../../../data/";
+	static string * dataPathRoot = new string("../../../data/");
 #elif defined TARGET_ANDROID
-	static string dataPathRoot = "sdcard/";
+	static string * dataPathRoot = new string("sdcard/");
 #elif defined(TARGET_LINUX)
-	static string dataPathRoot = ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
+	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 #else
-	static string dataPathRoot = "data/";
+	static string * dataPathRoot = new string("data/");
 #endif
+	return *dataPathRoot;
+}
 
-static bool isDataPathSet = false;
+static bool & isDataPathSet(){
+	static bool * dataPathSet = new bool(false);
+	return * dataPathSet;
+}
 
 //--------------------------------------------------
 void ofSetDataPathRoot(string newRoot){
@@ -242,22 +248,22 @@ void ofSetDataPathRoot(string newRoot){
 		#endif
 	#endif
 	
-	dataPathRoot = newRoot;
-	isDataPathSet = true;
+	dataPathRoot() = newRoot;
+	isDataPathSet() = true;
 }
 
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
 	
-	if (!isDataPathSet)
-		ofSetDataPathRoot(dataPathRoot);
+	if (!isDataPathSet())
+		ofSetDataPathRoot(dataPathRoot());
 	
 	if( enableDataPath ){
 
 		//check if absolute path has been passed or if data path has already been applied
 		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot.length()) != dataPathRoot)){
-			path = dataPathRoot+path;
+		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot().length()) != dataPathRoot())){
+			path = dataPathRoot()+path;
 		}
 
 		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){

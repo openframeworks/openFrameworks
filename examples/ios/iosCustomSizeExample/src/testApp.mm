@@ -1,18 +1,10 @@
 #include "testApp.h"
 
-//NOTE: in this example testApp ( this class ) is not used. 
-//      look inside Apps/ to see the native iOS implementation
-
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
 	
-	// initialize the accelerometer
+    // initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	ofBackground(70);
 }
@@ -91,8 +83,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::exit(){
-    ofUnregisterTouchEvents(this);
-    ofxiPhoneAlerts.removeListener(this);
+    //
 }
 
 //--------------------------------------------------------------

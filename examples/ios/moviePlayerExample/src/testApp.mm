@@ -8,9 +8,6 @@ void testApp::setup(){
 	ofSetFrameRate(30);
 	ofBackground(225, 225, 225);
 
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	ofBackground(255,255,255);
     
 	fingerMovie.loadMovie("hands.m4v");
@@ -27,7 +24,6 @@ void testApp::draw(){
 	
 	ofSetColor(54);
 	ofDrawBitmapString("movieplayer example\ntouch screen to restart movie", 13, 20);
-
 	ofDrawBitmapString("pixel access", 13, 260);
 
 
@@ -70,7 +66,7 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
-		fingerMovie.loadMovie("fingers.m4v");
+		fingerMovie.loadMovie("hands.m4v");
 		fingerMovie.play();
 	}
 }

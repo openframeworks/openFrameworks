@@ -10,14 +10,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	// dump lots of info to console (useful for debugging)
 	ofSetLogLevel(OF_LOG_VERBOSE);

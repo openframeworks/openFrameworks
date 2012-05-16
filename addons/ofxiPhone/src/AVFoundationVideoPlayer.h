@@ -82,6 +82,8 @@ using namespace std;
 - (pair<UIImage*,CGImageRef>)getCopyOfCurrentFrame;
 - (CVImageBufferRef)getCurrentFrame;
 
+- (void)updateFrameTimeDifference;
+
 - (void)audioCallbackWithQueue:(AudioQueueRef)queue output:(AudioQueueBufferRef)output_buffer;
 
 /// return the current video time (on-screen time)

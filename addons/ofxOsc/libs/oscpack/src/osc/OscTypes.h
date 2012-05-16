@@ -125,8 +125,9 @@ extern MessageTerminator EndMessage;
 struct NilType{
 };
 
-extern NilType Nil;
-
+#ifndef _OBJC_OBJC_H_
+	extern NilType Nil;
+#endif 
 
 struct InfinitumType{
 };
