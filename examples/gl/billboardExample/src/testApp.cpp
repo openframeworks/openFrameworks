@@ -8,22 +8,28 @@ void testApp::setup() {
 	zoom = -500;
 	zoomTarget = 200;
 	
+	billboards.getVertices().resize(NUM_BILLBOARDS);
+	billboards.getColors().resize(NUM_BILLBOARDS);
+	billboards.getNormals().resize(NUM_BILLBOARDS,0);
+	
 	// ------------------------- billboard particles
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
 		
 		billboardVels[i].set(ofRandomf(), -1.0, ofRandomf());
-		billboardVerts[i].set(ofRandom(-500, 500), 
+		billboards.getVertices()[i].set(ofRandom(-500, 500), 
 													ofRandom(-500, 500), 
 													ofRandom(-500, 500));
 		
-		billboardColor[i].set(ofColor::fromHsb(ofRandom(96, 160), 255, 255));
+		billboards.getColors()[i].set(ofColor::fromHsb(ofRandom(96, 160), 255, 255));
+	    billboardSizeTarget[i] = ofRandom(4, 64);
 		
-		billboardSize[i] = 0;
-		billboardSizeTarget[i] = ofRandom(4, 64);
 	}
 	
-	billboardVbo.setVertexData(billboardVerts, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	billboardVbo.setColorData(billboardColor, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
+	
+	billboards.setUsage( GL_DYNAMIC_DRAW );
+	billboards.setMode(OF_PRIMITIVE_POINTS);
+	//billboardVbo.setVertexData(billboardVerts, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
+	//billboardVbo.setColorData(billboardColor, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
 	
 	// load the bilboard shader 
 	// this is used to change the
@@ -33,6 +39,7 @@ void testApp::setup() {
 	// we need to disable ARB textures in order to use normalized texcoords
 	ofDisableArbTex();
 	texture.loadImage("dot.png");
+	ofEnableAlphaBlending();
 }
 
 //--------------------------------------------------------------
@@ -44,15 +51,15 @@ void testApp::update() {
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
 		
 		// noise 
-		ofVec3f vec(ofSignedNoise(t, billboardVerts[i].y/div, billboardVerts[i].z/div),
-								ofSignedNoise(billboardVerts[i].x/div, t, billboardVerts[i].z/div),
-								ofSignedNoise(billboardVerts[i].x/div, billboardVerts[i].y/div, t));
+		ofVec3f vec(ofSignedNoise(t, billboards.getVertex(i).y/div, billboards.getVertex(i).z/div),
+								ofSignedNoise(billboards.getVertex(i).x/div, t, billboards.getVertex(i).z/div),
+								ofSignedNoise(billboards.getVertex(i).x/div, billboards.getVertex(i).y/div, t));
 		
 		vec *= 10 * ofGetLastFrameTime();
 		billboardVels[i] += vec;
-		billboardVerts[i] += billboardVels[i]; 
+		billboards.getVertices()[i] += billboardVels[i]; 
 		billboardVels[i] *= 0.94f; 
-		billboardSize[i] = 12 + billboardSizeTarget[i] * ofNoise(t + i);
+    	billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i] * ofNoise(t+i),0,0));
 	}
 	
 	
@@ -73,7 +80,6 @@ void testApp::draw() {
 	info += "Particle Count: "+ofToString(NUM_BILLBOARDS);
 	ofDrawBitmapStringHighlight(info, 30, 30);
 	
-	ofEnableAlphaBlending();
 	ofSetColor(255);
 	
 	ofPushMatrix();
@@ -85,16 +91,10 @@ void testApp::draw() {
 	// bind the shader so that wee can change the
 	// size of the points via the vert shader
 	billboardShader.begin();
-	billboardShader.setUniform1fv("pointSize", billboardSize, NUM_BILLBOARDS); 
 	
 	ofEnablePointSprites();
 	texture.getTextureReference().bind();
-	billboardVbo.bind();
-	billboardVbo.setVertexData(billboardVerts, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	//billboardVbo.setColorData(billboardColor, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	billboardVbo.draw(GL_POINTS, 0, NUM_BILLBOARDS);
-	
-	billboardVbo.unbind();
+	billboards.draw();
 	texture.getTextureReference().unbind();
 	ofDisablePointSprites();
 	

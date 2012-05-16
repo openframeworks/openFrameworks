@@ -88,6 +88,8 @@ public:
 	float   getVolume();
     
 	float	getPan();
+
+    bool    isLoaded();
 	
 	// IPHONE EXTRA FUNCTIONS
 	static void	vibrate();

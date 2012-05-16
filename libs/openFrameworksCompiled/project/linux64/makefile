@@ -33,7 +33,7 @@ else
 ifeq ($(ARCH),armv7l)
 	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
 else
-	COMPILER_OPTIMIZATION = -march=atom -mtune=atom -finline-functions -funroll-all-loops  -O3
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -O3
 endif
 endif
 

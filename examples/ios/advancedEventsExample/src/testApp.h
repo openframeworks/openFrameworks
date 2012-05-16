@@ -31,11 +31,9 @@ class testApp : public ofxiPhoneApp{
         void newInt(int & i);
 	
         eventsObject evObject;
-        ofEventArgs	voidEventArgs;
 
         string floatMsg;
         string intMsg;
-        string expireMsg;
 	
         bool enabled;
 };

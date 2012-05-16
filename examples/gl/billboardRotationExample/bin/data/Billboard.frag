@@ -28,5 +28,4 @@ void main (void) {
 	
 	
 	gl_FragColor = texture2D(tex, newcoords) * gl_Color;
-	gl_FragDepth = gl_FragCoord.z;
 }
