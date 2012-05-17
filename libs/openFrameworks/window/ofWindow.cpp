@@ -208,6 +208,13 @@ void ofWindow::setWindowPosition(ofPoint pos) {
 void ofWindow::setWindowShape(int w, int h) {
 	glfwSetWindowSize(window, w, h);
 }
+
+void ofWindow::setWidth(int w){
+	glfwSetWindowSize(window, w, height);
+}
+void ofWindow::setHeight(int h){
+	glfwSetWindowSize(window, width, h);
+}
 void ofWindow::windowResized(int w, int h) {
 	if(width == w && height == h)
 		return;

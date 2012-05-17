@@ -211,6 +211,8 @@ public:
 	
 	ofPoint	getWindowSize();
 	void setWindowShape(int x, int y);
+	void setWidth(int w);
+	void setHeight(int h);
 	
 	int getWidth();
 	int getHeight();
