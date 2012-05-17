@@ -188,6 +188,20 @@ int ofWindow::getWidth() {
 int ofWindow::getHeight() {
 	return height;
 }
+int ofWindow::getX(){
+	return x;
+}
+int ofWindow::getY(){
+	return y;
+}
+
+int ofWindow::setX(int _x){
+	setWindowPosition(_x, y);
+}
+int ofWindow::setY(int _y){
+	setWindowPosition(x, _y);
+}
+
 void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h) {
 	if (!isInitialized) {
 		x = _x;

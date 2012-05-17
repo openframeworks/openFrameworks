@@ -217,6 +217,11 @@ public:
 	int getWidth();
 	int getHeight();
 	
+	int getX();
+	int getY();
+	int setX(int x);
+	int setY(int y);
+	
 	bool isKeyPressed(int key);
 	
 	void setTitle(string title);
