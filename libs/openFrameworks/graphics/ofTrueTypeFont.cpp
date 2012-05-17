@@ -160,16 +160,21 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	#include <set>
-	static set<ofTrueTypeFont*> all_fonts;
+	static set<ofTrueTypeFont*> & all_fonts(){
+		static set<ofTrueTypeFont*> *all_fonts = new set<ofTrueTypeFont*>;
+		return *all_fonts;
+	}
+
 	void ofUnloadAllFontTextures(){
 		set<ofTrueTypeFont*>::iterator it;
-		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+		for(it=all_fonts().begin();it!=all_fonts().end();it++){
 			(*it)->unloadTextures();
 		}
 	}
+
 	void ofReloadAllFontTextures(){
 		set<ofTrueTypeFont*>::iterator it;
-		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+		for(it=all_fonts().begin();it!=all_fonts().end();it++){
 			(*it)->reloadTextures();
 		}
 	}
@@ -186,7 +191,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
 	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-		all_fonts.insert(this);
+		all_fonts().insert(this);
 	#endif
 	//cps				= NULL;
 	letterSpacing = 1;
@@ -210,7 +215,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 	}
 
 	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-		all_fonts.erase(this);
+		all_fonts().erase(this);
 	#endif
 }
 
@@ -222,13 +227,11 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, makeContours, simplifyAmt, dpi);
+	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 }
 
 //-----------------------------------------------------------
 bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
-
-	bMakeContours = makeContours;
 
 	//------------------------------------------------
 	if (bLoadedOk == true){
@@ -248,7 +251,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	bAntiAliased 		= _bAntiAliased;
 	bFullCharacterSet 	= _bFullCharacterSet;
 	fontSize			= _fontSize;
-	makeContours 		= _makeContours;
+	bMakeContours 		= _makeContours;
 	simplifyAmt			= _simplifyAmt;
 	dpi 				= _dpi;
 

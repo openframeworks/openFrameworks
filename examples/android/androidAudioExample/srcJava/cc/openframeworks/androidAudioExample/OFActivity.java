@@ -1,4 +1,4 @@
-package cc.openframeworks.androidAudioExample;
+package cc.openframeworks.spelltower;
 
 import android.app.Activity;
 import android.os.Bundle;

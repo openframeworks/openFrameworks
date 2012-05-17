@@ -32,6 +32,7 @@ INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 
 LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)"
 SYSTEMLIBS +=  -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/libgnustl_static.a
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 
 
 

@@ -33,6 +33,7 @@ endif
 LDFLAGS = -Wl,-rpath=./libs
 SYSTEMLIBS += $(shell pkg-config jack glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev cairo --libs)
 SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
