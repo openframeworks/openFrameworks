@@ -79,6 +79,9 @@ bool visualStudioProject::saveProjectFile(){
 
 void visualStudioProject::appendFilter(string folderName){
 
+    
+    fixSlashOrder(folderName);
+    
 	string uuid = generateUUID(folderName);
 
 	string tag = "//ItemGroup[Filter]/Filter[@Include=\"" + folderName + "\"]";
@@ -108,6 +111,8 @@ void visualStudioProject::appendFilter(string folderName){
 
 void visualStudioProject::addSrc(string srcFile, string folder){
 
+    fixSlashOrder(folder);
+    fixSlashOrder(srcFile);
 
 	vector < string > folderSubNames = ofSplitString(folder, "\\");
 	string folderName = "";
@@ -116,10 +121,6 @@ void visualStudioProject::addSrc(string srcFile, string folder){
 		folderName += folderSubNames[i];
 		appendFilter(folderName);
 	}
-
-    // TODO: no folder love here...
-
-    fixSlashOrder(srcFile);
 
     if (ofIsStringInString(srcFile, ".h") || ofIsStringInString(srcFile, ".hpp")){
         appendValue(doc, "ClInclude", "Include", srcFile);
@@ -271,7 +272,16 @@ void visualStudioProject::addAddon(ofAddon & addon){
 
         size_t found = 0;
         // get the full lib name
-        found = addon.libs[i].find_last_of("\\");
+        
+    
+#ifdef TARGET_WIN32
+    	found = addon.libs[i].find_last_of("\\");
+#else
+        found = addon.libs[i].find_last_of("/");
+#endif
+        
+        
+        
         string libName = addon.libs[i].substr(found+1);
         // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
         found = libName.find_last_of(".");
