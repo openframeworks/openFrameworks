@@ -31,11 +31,12 @@ public:
 	void setTranslationKey(char key);
 	char getTranslationKey();
 	//--
+	/*
 	void mouseDragged(ofMouseEventArgs& mouse);
 	void mouseMoved(ofMouseEventArgs& mouse);
 	void mousePressed(ofMouseEventArgs& mouse);
 	void mouseReleased(ofMouseEventArgs& mouse);
-
+//*/
 	// enable or disable mouse input to navigate
 	void enableMouseInput();
 	void disableMouseInput();
