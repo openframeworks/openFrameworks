@@ -461,6 +461,7 @@ extern "C" {
 #define GLFW_VERSION_UNAVAILABLE  0x00070007
 #define GLFW_PLATFORM_ERROR       0x00070008
 #define GLFW_WINDOW_NOT_ACTIVE    0x00070009
+#define GLFW_FORMAT_UNAVAILABLE   0x0007000A
 
 /* Gamma ramps */
 #define GLFW_GAMMA_RAMP_SIZE      256
@@ -573,6 +574,10 @@ GLFWAPI void glfwSetScrollCallback(GLFWscrollfun cbfun);
 GLFWAPI int glfwGetJoystickParam(int joy, int param);
 GLFWAPI int glfwGetJoystickPos(int joy, float* pos, int numaxes);
 GLFWAPI int glfwGetJoystickButtons(int joy, unsigned char* buttons, int numbuttons);
+
+/* Clipboard */
+GLFWAPI void glfwSetClipboardString(GLFWwindow window, const char* string);
+GLFWAPI const char* glfwGetClipboardString(GLFWwindow window);
 
 /* Time */
 GLFWAPI double glfwGetTime(void);
