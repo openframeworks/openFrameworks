@@ -257,7 +257,12 @@ void ofWindow::windowMoved(int _x, int _y) {
 	previousShape.y = y;
 	x = _x;
 	y = _y;
-
+	
+	ofMoveEventArgs e;
+	e.x = x;
+	e.y = y;
+	ofNotifyEvent(events.windowMoved, e);
+	
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->windowMoved(x, y, this);

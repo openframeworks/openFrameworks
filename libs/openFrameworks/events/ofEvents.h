@@ -88,6 +88,12 @@ class ofDragInfo{
 			int width;
 			int height;
 		};
+
+		class ofMoveEventArgs : public ofEventArgs {
+		public:
+			int x;
+			int y;
+		};
 		
 		class ofMessage : public ofEventArgs{
 			public:

@@ -4,37 +4,9 @@
 #include "ofAppBaseWindow.h"
 #include <GL/glfw3.h>
 #include <map>
+#include "ofWindowEvents.h"
 
 #define OF_MAX_NUM_KEYS 512
-
-class ofWindow;
-
-class ofWindowEvents
-{
-public:
-	ofEvent<ofEventArgs> 		setup;
-	ofEvent<ofEventArgs> 		update;
-	ofEvent<ofEventArgs> 		draw;
-	ofEvent<ofEventArgs> 		exit;
-	ofEvent<ofResizeEventArgs> 	windowResized;
-
-	ofEvent<ofKeyEventArgs> 	keyPressed;
-	ofEvent<ofKeyEventArgs> 	keyReleased;
-
-	ofEvent<ofMouseEventArgs> 	mouseMoved;
-	ofEvent<ofMouseEventArgs> 	mouseDragged;
-	ofEvent<ofMouseEventArgs> 	mousePressed;
-	ofEvent<ofMouseEventArgs> 	mouseReleased;
-
-	ofEvent<ofTouchEventArgs>	touchDown;
-	ofEvent<ofTouchEventArgs>	touchUp;
-	ofEvent<ofTouchEventArgs>	touchMoved;
-	ofEvent<ofTouchEventArgs>	touchDoubleTap;
-	ofEvent<ofTouchEventArgs>	touchCancelled;
-
-	ofEvent<ofMessage>			messageEvent;
-	ofEvent<ofDragInfo>			fileDragEvent;
-};
 
 /*****************
 / WINDOW LISTENER
