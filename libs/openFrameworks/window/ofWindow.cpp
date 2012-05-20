@@ -32,7 +32,24 @@ void ofWindow::initializeWindow() {
 	setWindowPositionAndShape(x, y, width, height);
 }
 void ofWindow::addListener(ofWindowListener* listener) {
+#ifdef OF_USING_POCO
+	ofAddListener(events.update, listener, &ofWindowListener::update);
+	ofAddListener(events.draw, listener, &ofWindowListener::draw);
+	
+	ofAddListener(events.mouseMoved, listener, &ofWindowListener::mouseMoved);
+	ofAddListener(events.mousePressed, listener, &ofWindowListener::mousePressed);
+	ofAddListener(events.mouseDragged, listener, &ofWindowListener::mouseDragged);
+	ofAddListener(events.mouseReleased, listener, &ofWindowListener::mouseReleased);
+	
+	ofAddListener(events.keyPressed, listener, &ofWindowListener::keyPressed);
+	ofAddListener(events.keyReleased, listener, &ofWindowListener::keyReleased);
+
+	ofAddListener(events.windowResized, listener, &ofWindowListener::windowResized);
+	ofAddListener(events.windowMoved, listener, &ofWindowListener::windowMoved);
+#endif
+#ifndef OF_USING_POCO
 	listeners.push_back(listener);
+#endif
 }
 void ofWindow::addListener(ofBaseApp* app) {
 	addListener(new ofWindowToOfBaseApp(app));
@@ -54,13 +71,18 @@ void ofWindow::update(ofEventArgs& e) {
 }
 void ofWindow::update() {
 	ofGetWindowManager()->setActiveWindow(this);
-	ofEventArgs e;
+#ifdef OF_USING_POCO
+	ofWindowEventArgs e;
+	e.window = this;
 	ofNotifyEvent(events.update, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->update(this);
 		++it;
 	}
+#endif
 }
 void ofWindow::draw(ofEventArgs& e) {
 	draw();
@@ -72,13 +94,19 @@ void ofWindow::draw() {
 	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 	//ofGetCurrentRenderer()->setupScreenPerspective(800, 600);
 	ofSetupScreenPerspective(width, height, OF_ORIENTATION_DEFAULT);
-	ofEventArgs e;
+
+#ifdef OF_USING_POCO
+	ofWindowEventArgs e;
+	e.window = this;
 	ofNotifyEvent(events.draw, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->draw(this);
 		++it;
 	}
+#endif
 	glfwSwapBuffers();
 }
 void ofWindow::destroy() {
@@ -89,11 +117,19 @@ void ofWindow::mouseMoved(int mX, int mY) {
 	mouseX = mX;
 	mouseY = mY;
 	ofNotifyMouseMoved(mouseX, mouseY);
+#ifdef OF_USING_POCO	
+	ofMouseEventArgs e;
+	e.x = mX;
+	e.y = mY;
+	ofNotifyEvent(events.mouseMoved, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->mouseMoved(mouseX, mouseY, this);
 		++it;
 	}
+#endif
 }
 void ofWindow::mousePressed(int button) {
 	mousePressed(mouseX, mouseY, button);
@@ -102,11 +138,21 @@ void ofWindow::mousePressed(int mX, int mY, int button) {
 	mouseX = mX;
 	mouseY = mY;
 	ofNotifyMousePressed(mouseX, mouseY, button);
+
+#ifdef OF_USING_POCO
+	ofMouseEventArgs e;
+	e.x = mX;
+	e.y = mY;
+	e.button = button;
+	ofNotifyEvent(events.mousePressed, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->mousePressed(mouseX, mouseY, button, this);
 		++it;
 	}
+#endif
 }
 void ofWindow::mouseReleased(int button) {
 	mouseReleased(mouseX, mouseY, button);
@@ -115,50 +161,89 @@ void ofWindow::mouseReleased(int mX, int mY, int button) {
 	mouseX = mX;
 	mouseY = mY;
 	ofNotifyMouseReleased(mouseX, mouseY, button);
+
+#ifdef OF_USING_POCO
+	ofMouseEventArgs e;
+	e.x = mX;
+	e.y = mY;
+	e.button = button;
+	ofNotifyEvent(events.mouseReleased, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->mouseReleased(mouseX, mouseY, button, this);
 		++it;
 	}
+#endif
 }
-void ofWindow::mouseDragged(int mouseX, int mouseY, int button) {
+void ofWindow::mouseDragged(int mX, int mY, int button) {
+	mouseX = mX;
+	mouseY = mY;
+	
 	ofNotifyMouseDragged(mouseX, mouseY, button);
+	
+#ifdef OF_USING_POCO
+	ofMouseEventArgs e;
+	e.x = mouseX;
+	e.y = mouseY;
+	e.button = button;
+	ofNotifyEvent(events.mouseDragged, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->mouseDragged(mouseX, mouseY, button, this);
 		++it;
 	}
+#endif
 }
 
 void ofWindow::scrolled(float deltaX, float deltaY){
 	//ofNotifyMouseDragged(mouseX, mouseY, button);
-	ofWindowListenerList::iterator it=listeners.begin();
+	/*ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->scrolled(deltaX, deltaY, this);
 		++it;
-	}
+	}*/
 }
 
 void ofWindow::keyPressed(int key){
 	if(key<OF_MAX_NUM_KEYS)
 		keyState[key] = true;
 	ofNotifyKeyPressed(key);
+
+#ifdef OF_USING_POCO
+	ofKeyEventArgs e;
+	e.key = key;
+	ofNotifyEvent(events.keyPressed, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->keyPressed(key, this);
 		++it;
 	}
+#endif
 }
 
 void ofWindow::keyReleased(int key){
 	if(key<OF_MAX_NUM_KEYS)
 		keyState[key] = false;
 	ofNotifyKeyReleased(key);
+	
+#ifdef OF_USING_POCO
+	ofKeyEventArgs e;
+	e.key = key;
+	ofNotifyEvent(events.keyReleased, e);
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->keyReleased(key, this);
 		++it;
 	}
+#endif
 }
 
 bool ofWindow::isKeyPressed(int key){
@@ -237,17 +322,20 @@ void ofWindow::windowResized(int w, int h) {
 	width = w;
 	height = h;
 	ofNotifyWindowResized(width, height);
+
+#ifdef OF_USING_POCO
 	ofResizeEventArgs e;
 	e.width = width;
 	e.height = height;
 	ofNotifyEvent(events.windowResized, e);
-	
+#endif
+#ifndef OF_USING_POCO
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->windowResized(width, height, this);
 		++it;
 	}
-	
+#endif
 	draw();
 }
 void ofWindow::windowMoved(int _x, int _y) {
@@ -257,18 +345,21 @@ void ofWindow::windowMoved(int _x, int _y) {
 	previousShape.y = y;
 	x = _x;
 	y = _y;
-	
+
+#ifdef OF_USING_POCO
 	ofMoveEventArgs e;
 	e.x = x;
 	e.y = y;
 	ofNotifyEvent(events.windowMoved, e);
+#endif
+#ifndef OF_USING_POCO
 	
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
 		(*it)->windowMoved(x, y, this);
 		++it;
 	}
-	
+#endif
 }
 void ofWindow::setTitle(string t) {
 	if (isInitialized)

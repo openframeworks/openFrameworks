@@ -4,7 +4,6 @@
 #include "ofAppBaseWindow.h"
 #include <GL/glfw3.h>
 #include <map>
-#include "ofWindowEvents.h"
 
 #define OF_MAX_NUM_KEYS 512
 
@@ -22,30 +21,49 @@ public:
 	virtual void update(ofWindow* f) {
 		update();
 	}
+	virtual void update(ofWindowEventArgs& f) {
+		update(f.window);
+	}
 	virtual void update() {};
+	
 	virtual void draw(ofWindow* f) {
 		draw();
 	}
-	virtual void draw() {};
-	virtual void keyPressed(int key, ofWindow* f) {
-		keyPressed(key);
+	virtual void draw(ofWindowEventArgs& e) {
+		draw(e.window);
 	}
+	virtual void draw() {};
 
 	//KEY
 	virtual void keyPressed(int key) {};
 	virtual void keyReleased(int key, ofWindow* f) {
 		keyReleased(key);
 	}
+	virtual void keyReleased(ofKeyEventArgs& e) {
+		keyReleased(e.key, e.window);
+	}
 	virtual void keyReleased(int key) {};
-
+	virtual void keyPressed(int key, ofWindow* f) {
+		keyPressed(key);
+	}
+	virtual void keyPressed(ofKeyEventArgs& e) {
+		keyPressed(e.key, e.window);
+	}
+	
 	//WINDOW
 	virtual void windowMoved(int x, int y, ofWindow* f) {
 		windowMoved(x, y);
+	}
+	virtual void windowMoved(ofMoveEventArgs& e) {
+		windowMoved(e.x, e.y, e.window);
 	}
 	virtual void windowMoved(int x, int y) {};
 	
 	virtual void windowResized(int w, int h, ofWindow* f) {
 		windowResized(w, h);
+	}
+	virtual void windowResized(ofResizeEventArgs& e) {
+		windowMoved(e.width, e.height, e.window);
 	}
 	virtual void windowResized(int w, int h) {};
 
@@ -53,22 +71,37 @@ public:
 	virtual void mouseMoved(int x, int y, ofWindow* f) {
 		mouseMoved(x, y);
 	}
+	virtual void mouseMoved(ofMouseEventArgs& e){
+		mouseMoved(e.x, e.y, e.window);
+	}
 	virtual void mouseMoved(int x, int y) {};
 	virtual void mouseDragged(int x, int y, int button,  ofWindow* f) {
 		mouseDragged(x, y, button);
 	}
+	virtual void mouseDragged(ofMouseEventArgs& e){
+		mouseDragged(e.x, e.y, e.button, e.window);
+	}
 	virtual void mouseDragged(int x, int y, int button) {};
 	virtual void mousePressed(int x, int y, int btn, ofWindow* f) {
 		mousePressed(x, y, btn);
+	}
+	virtual void mousePressed(ofMouseEventArgs& e){
+		mousePressed(e.x, e.y, e.button, e.window);
 	}
 	virtual void mousePressed(int x, int y, int btn) {};
 	virtual void mouseReleased(int x, int y, int btn, ofWindow* f) {
 		mouseReleased(x, y, btn);
 		mouseReleased();
 	}
+	virtual void mouseReleased(ofMouseEventArgs& e){
+		mouseReleased(e.x, e.y, e.button, e.window);
+	}
 	virtual void mouseReleased(int x, int y, int btn) {}
 	virtual void mouseReleased() {};
-
+	
+	virtual void scrolled(ofScrollEventArgs& e){
+		scrolled(e.deltaX, e.deltaY, e.window);
+	}
 	virtual void scrolled(float deltaX, float deltaY, ofWindow* win){
 		scrolled(deltaX, deltaY);
 	}

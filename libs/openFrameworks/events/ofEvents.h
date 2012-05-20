@@ -3,6 +3,8 @@
 #include "ofConstants.h"
 #include "ofPoint.h"
 
+class ofWindow;
+
 //-------------------------- mouse/key query
 bool		ofGetMousePressed(int button=-1); //by default any button
 bool		ofGetKeyPressed(int key=-1); //by default any key
@@ -22,6 +24,7 @@ class ofDragInfo{
 	public:
 		vector <string> files;
 		ofPoint position;
+		ofWindow* window;
 };
 
 //-----------------------------------------------
@@ -37,21 +40,32 @@ class ofDragInfo{
 
 		class ofEventArgs{};
 
+		class ofWindowEventArgs{
+		public:
+			ofWindow* window;
+		};
+
 		class ofEntryEventArgs : public ofEventArgs {
 		public:
 			int state;
 		};
 
-		class ofKeyEventArgs : public ofEventArgs {
+		class ofKeyEventArgs : public ofWindowEventArgs {
 		  public:
 			int key;
 		};
 
-		class ofMouseEventArgs : public ofEventArgs {
+		class ofMouseEventArgs : public ofWindowEventArgs {
 		  public:
 			int x;
 			int y;
 			int button;
+		};
+
+		class ofScrollEventArgs: public ofWindowEventArgs{
+		public:
+			float deltaX;
+			float deltaY;
 		};
 
 		class ofTouchEventArgs : public ofEventArgs {
@@ -83,13 +97,13 @@ class ofDragInfo{
 			int nChannels;
 		};
 
-		class ofResizeEventArgs : public ofEventArgs {
+		class ofResizeEventArgs : public ofWindowEventArgs {
 		  public:
 			int width;
 			int height;
 		};
 
-		class ofMoveEventArgs : public ofEventArgs {
+		class ofMoveEventArgs : public ofWindowEventArgs {
 		public:
 			int x;
 			int y;
@@ -252,6 +266,33 @@ class ofDragInfo{
 	void ofUnregisterDragEvents(ListenerClass * listener){
 		ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent);
 	}	
+
+	class ofWindowEvents
+	{
+	public:
+		ofEvent<ofWindowEventArgs> 	setup;
+		ofEvent<ofWindowEventArgs> 	update;
+		ofEvent<ofWindowEventArgs> 	draw;
+		ofEvent<ofResizeEventArgs> 	windowResized;
+		ofEvent<ofMoveEventArgs> 	windowMoved;
+		
+		ofEvent<ofKeyEventArgs> 	keyPressed;
+		ofEvent<ofKeyEventArgs> 	keyReleased;
+		
+		ofEvent<ofMouseEventArgs> 	mouseMoved;
+		ofEvent<ofMouseEventArgs> 	mouseDragged;
+		ofEvent<ofMouseEventArgs> 	mousePressed;
+		ofEvent<ofMouseEventArgs> 	mouseReleased;
+		
+		ofEvent<ofTouchEventArgs>	touchDown;
+		ofEvent<ofTouchEventArgs>	touchUp;
+		ofEvent<ofTouchEventArgs>	touchMoved;
+		ofEvent<ofTouchEventArgs>	touchDoubleTap;
+		ofEvent<ofTouchEventArgs>	touchCancelled;
+		
+		ofEvent<ofMessage>			messageEvent;
+		ofEvent<ofDragInfo>			fileDragEvent;
+	};
 
 #endif
 

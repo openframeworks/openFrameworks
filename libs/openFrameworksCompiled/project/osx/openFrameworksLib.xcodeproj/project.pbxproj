@@ -131,8 +131,6 @@
 		FA23B645150F7FB600E6C3E1 /* ofWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B639150F7FB600E6C3E1 /* ofWindow.h */; };
 		FA23B648150F7FB600E6C3E1 /* ofWindowManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */; };
 		FA23B649150F7FB600E6C3E1 /* ofWindowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */; };
-		FA4F3D0F1567AA8E00D82DD0 /* ofWindowEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = FA4F3D0D1567AA8E00D82DD0 /* ofWindowEvents.h */; };
-		FA4F3D101567AA8E00D82DD0 /* ofWindowEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA4F3D0E1567AA8E00D82DD0 /* ofWindowEvents.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -277,8 +275,6 @@
 		FA23B639150F7FB600E6C3E1 /* ofWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindow.h; sourceTree = "<group>"; };
 		FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindowManager.cpp; sourceTree = "<group>"; };
 		FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManager.h; sourceTree = "<group>"; };
-		FA4F3D0D1567AA8E00D82DD0 /* ofWindowEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowEvents.h; sourceTree = "<group>"; };
-		FA4F3D0E1567AA8E00D82DD0 /* ofWindowEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindowEvents.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -568,8 +564,6 @@
 				FA23B639150F7FB600E6C3E1 /* ofWindow.h */,
 				FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */,
 				FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */,
-				FA4F3D0D1567AA8E00D82DD0 /* ofWindowEvents.h */,
-				FA4F3D0E1567AA8E00D82DD0 /* ofWindowEvents.cpp */,
 			);
 			path = window;
 			sourceTree = "<group>";
@@ -638,7 +632,6 @@
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
 				FA23B645150F7FB600E6C3E1 /* ofWindow.h in Headers */,
 				FA23B649150F7FB600E6C3E1 /* ofWindowManager.h in Headers */,
-				FA4F3D0F1567AA8E00D82DD0 /* ofWindowEvents.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,7 +741,6 @@
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
 				FA23B644150F7FB600E6C3E1 /* ofWindow.cpp in Sources */,
 				FA23B648150F7FB600E6C3E1 /* ofWindowManager.cpp in Sources */,
-				FA4F3D101567AA8E00D82DD0 /* ofWindowEvents.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
