@@ -198,6 +198,8 @@ public:
 	
 	void setTitle(string title);
 	string getTitle();
+	
+	void close();
 
 	ofWindowEvents events;
 	

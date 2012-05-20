@@ -278,3 +278,7 @@ void ofWindow::setTitle(string t) {
 string ofWindow::getTitle() {
 	return title;
 }
+
+void ofWindow::close(){
+	ofGetWindowManager()->deleteWindow(this);
+}
