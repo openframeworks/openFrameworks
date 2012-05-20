@@ -275,6 +275,7 @@ class ofDragInfo{
 		ofEvent<ofWindowEventArgs> 	draw;
 		ofEvent<ofResizeEventArgs> 	windowResized;
 		ofEvent<ofMoveEventArgs> 	windowMoved;
+		ofEvent<ofWindowEventArgs> 	windowClosed;
 		
 		ofEvent<ofKeyEventArgs> 	keyPressed;
 		ofEvent<ofKeyEventArgs> 	keyReleased;

@@ -17,6 +17,7 @@ ofWindow::ofWindow():mouseX(0),mouseY(0),oldMouseX(0),oldMouseY(0),isFocused(fal
 	lastWindowID++;
 	width = 800;
 	height = 600;
+	window = NULL;
 	for(unsigned int i=0;i<OF_MAX_NUM_KEYS;i++){
 		keyState[i] = false;
 	}
@@ -46,6 +47,7 @@ void ofWindow::addListener(ofWindowListener* listener) {
 
 	ofAddListener(events.windowResized, listener, &ofWindowListener::windowResized);
 	ofAddListener(events.windowMoved, listener, &ofWindowListener::windowMoved);
+	ofAddListener(events.windowClosed, listener, &ofWindowListener::windowClosed);
 #endif
 #ifndef OF_USING_POCO
 	listeners.push_back(listener);
@@ -112,7 +114,9 @@ void ofWindow::draw() {
 void ofWindow::destroy() {
 	ofRemoveListener(ofEvents().update, this, &ofWindow::update);
 	ofRemoveListener(ofEvents().draw, this, &ofWindow::draw);
+	//getWindowPosition();
 	glfwCloseWindow(window);
+	window = NULL;
 }
 //USER INTERACTION EVENTS
 void ofWindow::mouseMoved(int mX, int mY) {
@@ -123,6 +127,7 @@ void ofWindow::mouseMoved(int mX, int mY) {
 	ofMouseEventArgs e;
 	e.x = mX;
 	e.y = mY;
+	e.window = this;
 	ofNotifyEvent(events.mouseMoved, e);
 #endif
 #ifndef OF_USING_POCO
@@ -146,6 +151,7 @@ void ofWindow::mousePressed(int mX, int mY, int button) {
 	e.x = mX;
 	e.y = mY;
 	e.button = button;
+	e.window = this;
 	ofNotifyEvent(events.mousePressed, e);
 #endif
 #ifndef OF_USING_POCO
@@ -169,6 +175,7 @@ void ofWindow::mouseReleased(int mX, int mY, int button) {
 	e.x = mX;
 	e.y = mY;
 	e.button = button;
+	e.window = this;
 	ofNotifyEvent(events.mouseReleased, e);
 #endif
 #ifndef OF_USING_POCO
@@ -190,6 +197,7 @@ void ofWindow::mouseDragged(int mX, int mY, int button) {
 	e.x = mouseX;
 	e.y = mouseY;
 	e.button = button;
+	e.window = this;
 	ofNotifyEvent(events.mouseDragged, e);
 #endif
 #ifndef OF_USING_POCO
@@ -218,6 +226,7 @@ void ofWindow::keyPressed(int key){
 #ifdef OF_USING_POCO
 	ofKeyEventArgs e;
 	e.key = key;
+	e.window = this;
 	ofNotifyEvent(events.keyPressed, e);
 #endif
 #ifndef OF_USING_POCO
@@ -237,6 +246,7 @@ void ofWindow::keyReleased(int key){
 #ifdef OF_USING_POCO
 	ofKeyEventArgs e;
 	e.key = key;
+	e.window = this;
 	ofNotifyEvent(events.keyReleased, e);
 #endif
 #ifndef OF_USING_POCO
@@ -261,10 +271,23 @@ void ofWindow::windowUnfocused() {
 	isFocused = false;
 };
 void ofWindow::windowClosed() {
-	ofLogNotice("WINDOW WAS CLOSED, TRIGGER SOME EVENTS AND THINGS!");
+	window = NULL;
+#ifdef OF_USING_POCO
+	ofWindowEventArgs e;
+	e.window = this;
+	ofNotifyEvent(events.windowClosed, e);
+#endif
+#ifndef OF_USING_POCO
+	ofWindowListenerList::iterator it=listeners.begin();
+	while(it!=listeners.end()) {
+		(*it)->windowClosed(this);
+		++it;
+	}
+#endif
 };
 ofPoint	ofWindow::getWindowPosition() {
-	glfwGetWindowPos(window, &x, &y);
+	if(window != NULL)
+		glfwGetWindowPos(window, &x, &y);
 	return ofPoint(x, y);
 }
 ofPoint	ofWindow::getWindowSize() {
@@ -375,4 +398,8 @@ string ofWindow::getTitle() {
 
 void ofWindow::close(){
 	ofGetWindowManager()->deleteWindow(this);
+}
+
+bool ofWindow::isClosed(){
+	return window == NULL;
 }

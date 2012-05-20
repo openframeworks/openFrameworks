@@ -143,9 +143,11 @@ void ofWindowManager::deleteWindow(ofWindow* win){
 }
 
 void ofWindowManager::removeWindow(ofWindow* win){
+	
 	ofWindowList::iterator it=windows.begin();
 	while(it!=windows.end()) {
 		if((*it).get() == win) {
+			win->windowClosed();
 			windows.erase(it);
 			break;
 		}

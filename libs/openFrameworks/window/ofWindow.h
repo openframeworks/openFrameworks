@@ -66,6 +66,9 @@ public:
 		windowResized(e.width, e.height, e.window);
 	}
 	virtual void windowResized(int w, int h) {};
+	virtual void windowClosed(ofWindowEventArgs& e){windowClosed(e.window);}
+	virtual void windowClosed(ofWindow* window){windowClosed();}
+	virtual void windowClosed(){}
 
 	//MOUSE
 	virtual void mouseMoved(int x, int y, ofWindow* f) {
@@ -228,6 +231,7 @@ public:
 	int setY(int y);
 	
 	bool isKeyPressed(int key);
+	bool isClosed();
 	
 	void setTitle(string title);
 	string getTitle();
