@@ -428,7 +428,7 @@ void ofFbo::allocate(Settings _settings) {
             #ifndef TARGET_OPENGLES
    
                 GLuint attachment;
-                depthBufferTex.texData.textureTarget = settings.TextureTarget;
+                depthBufferTex.texData.textureTarget = settings.textureTarget;
 
                 if( settings.useStencil ){
                     attachment = GL_DEPTH_STENCIL_ATTACHMENT;
