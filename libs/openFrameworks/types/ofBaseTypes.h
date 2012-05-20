@@ -114,7 +114,7 @@ public:
 // ofBaseImage
 //----------------------------------------------------------
 template<typename T>
-class ofBaseImage_: public ofAbstractImage, public ofBaseHasPixels_<T>{
+class ofBaseImage_: public ofAbstractImage, virtual public ofBaseHasPixels_<T>{
 public:
 	virtual ~ofBaseImage_<T>(){};
 };
@@ -166,7 +166,7 @@ class ofBaseSoundOutput{
 //----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
-class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{
+class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
