@@ -63,7 +63,7 @@ public:
 		windowResized(w, h);
 	}
 	virtual void windowResized(ofResizeEventArgs& e) {
-		windowMoved(e.width, e.height, e.window);
+		windowResized(e.width, e.height, e.window);
 	}
 	virtual void windowResized(int w, int h) {};
 
@@ -189,7 +189,7 @@ typedef std::vector<ofWindowListener*> ofWindowListenerList;
 / WINDOW
 *******************/
 
-class ofWindow: public ofAppBaseWindow, protected ofRectangle{
+class ofWindow: public ofAppBaseWindow{
 public:
 	ofWindow();
 	~ofWindow();  
@@ -264,7 +264,6 @@ private:
 	void windowClosed();
 	void windowResized(int w, int h);
 	
-	
 	ofWindowListenerList listeners;
 	ofRectangle previousShape;
 	bool isFocused;
@@ -273,6 +272,10 @@ private:
 	
 	bool isInitialized;
 	int id;
+	int width;
+	int height;
+	int x;
+	int y;
 
 	bool keyState[OF_MAX_NUM_KEYS];
 	

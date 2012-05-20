@@ -86,6 +86,8 @@ protected:
 
 	int				fontSize;
 	bool			bMakeContours;
+	float 			simplifyAmt;
+	int 			dpi;
 
 	void 			drawChar(int c, float x, float y);
 	void			drawCharAsShape(int c, float x, float y);

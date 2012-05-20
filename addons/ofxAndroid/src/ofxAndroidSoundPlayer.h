@@ -29,8 +29,10 @@ public:
 	float getPan();
 	bool getIsPaused();
 	float getVolume();
+	bool isLoaded();
 
 private:
 	jobject javaSoundPlayer;
 	jclass javaClass;
+	bool bIsLoaded;
 };

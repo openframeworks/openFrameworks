@@ -110,6 +110,8 @@ void ofWindow::draw() {
 	glfwSwapBuffers();
 }
 void ofWindow::destroy() {
+	ofRemoveListener(ofEvents().update, this, &ofWindow::update);
+	ofRemoveListener(ofEvents().draw, this, &ofWindow::draw);
 	glfwCloseWindow(window);
 }
 //USER INTERACTION EVENTS
@@ -262,6 +264,7 @@ void ofWindow::windowClosed() {
 	ofLogNotice("WINDOW WAS CLOSED, TRIGGER SOME EVENTS AND THINGS!");
 };
 ofPoint	ofWindow::getWindowPosition() {
+	glfwGetWindowPos(window, &x, &y);
 	return ofPoint(x, y);
 }
 ofPoint	ofWindow::getWindowSize() {
@@ -274,10 +277,10 @@ int ofWindow::getHeight() {
 	return height;
 }
 int ofWindow::getX(){
-	return x;
+	return getWindowPosition().x;
 }
 int ofWindow::getY(){
-	return y;
+	return getWindowPosition().y;
 }
 
 int ofWindow::setX(int _x){
