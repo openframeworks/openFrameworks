@@ -16,7 +16,6 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 
     bUpdatePixels = false;
     bFrameNew = false;
-    frameCount = -1;
 	
 	width = 0;
 	height = 0;
@@ -429,16 +428,6 @@ void ofiPhoneVideoPlayer::update() {
     
     if(videoPlayer == NULL) {
         return;
-    }
-    
-    if(frameCount == ofGetFrameNum()) {
-        /**
-         *  the player has already been updated on this frame.
-         *  this is to prevent update being called multiple times on the same frame.
-         */
-        return;
-    } else {
-        frameCount = ofGetFrameNum();
     }
     
     float t = ofGetElapsedTimef();
