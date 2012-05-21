@@ -2,7 +2,7 @@
 <CodeLite_Project Name="openframeworksLib" InternalType="">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="openFrameworks">
@@ -26,16 +26,10 @@
       <File Name="../../../../openFrameworks/sound/ofRtAudioSoundStream.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="window">
-      <File Name="../../../../openFrameworks/window/ofWindowCocoa.h"/>
-      <File Name="../../../../openFrameworks/window/ofWindowManager.cpp"/>
       <File Name="../../../../openFrameworks/window/ofWindow.cpp"/>
       <File Name="../../../../openFrameworks/window/ofWindow.h"/>
+      <File Name="../../../../openFrameworks/window/ofWindowManager.cpp"/>
       <File Name="../../../../openFrameworks/window/ofWindowManager.h"/>
-      <File Name="../../../../openFrameworks/window/ofWindowManagerCocoa.h"/>
-      <File Name="../../../../openFrameworks/window/ofWindowManagerX11.h"/>
-      <File Name="../../../../openFrameworks/window/ofWindowManagerX11.cpp"/>
-      <File Name="../../../../openFrameworks/window/ofWindowX11.h"/>
-      <File Name="../../../../openFrameworks/window/ofWindowX11.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="graphics">
       <File Name="../../../../openFrameworks/graphics/ofPath.cpp"/>
@@ -179,6 +173,8 @@
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -198,6 +194,7 @@
       <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
+      
       
       ]]>
       </Environment>
@@ -235,9 +232,7 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[
-      
-      ]]>
+        <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -253,7 +248,7 @@
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+        <WorkingDirectory>$(WorkspacePath)/../</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
@@ -266,6 +261,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>
