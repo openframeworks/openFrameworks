@@ -258,54 +258,53 @@ void visualStudioProject::addAddon(ofAddon & addon){
 
     vector <string> debugLibs;
     vector <string> releaseLibs;
-
-    for(int i=0;i<(int)addon.libs.size();i++){
-
-        // check that this isn't already a debug lib
-        bool alreadyDone = false;
-        for(int k=0;k<(int)debugLibs.size();k++){
-            if(addon.libs[i] == debugLibs[k]){
-                alreadyDone = true;
-            }
-        }
-        if(alreadyDone) continue;
-
-        size_t found = 0;
-        // get the full lib name
-        
     
-#ifdef TARGET_WIN32
+    // this is just the addon libs as a short string (no .lib .a or path)
+    vector <string> shortNames; 
+    // note, they are in the same order of the addons.libs
+
+    int found;
+    
+    for(int i=0;i<(int)addon.libs.size();i++){
+#ifdef TAfRGET_WIN32
     	found = addon.libs[i].find_last_of("\\");
 #else
         found = addon.libs[i].find_last_of("/");
 #endif
-        
-        
-        
         string libName = addon.libs[i].substr(found+1);
-        // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
         found = libName.find_last_of(".");
         string firstPart = libName.substr(0,found);
-        int debugLibIndex = -1; // assume there is no debug lib
-        for(int j=0;j<(int)addon.libs.size();j++){
-            if(addon.libs[i] == addon.libs[j]) continue; // don't do it to yourself
-            if(ofIsStringInString(addon.libs[j], firstPart)){
-                // assume that if the first part of a name is
-                // in another name then we have a debug/release pair
-                debugLibIndex = j;
-                break;
-            }
-        }
-        if(debugLibIndex != -1){
-            // add debug and release libs to appropriate vectors
-            debugLibs.push_back(addon.libs[debugLibIndex]);
-        }else{
-			// there's only one lib (either debug or release) so add to both vectors and hope for the best ;-)
-            debugLibs.push_back(addon.libs[i]);
-        }
-		releaseLibs.push_back(addon.libs[i]);
+        shortNames.push_back(firstPart);
     }
+        
 
+    for (int i = 0; i < shortNames.size(); i++){
+        
+        // by convention, debug libs will have a "d" at the end, and match up to one that doesn't have a d. 
+        // check if I am a release or debug, by seeing if I have a d at the end, and if someone has my characters, but with
+        bool bHaveDAtEnd = shortNames[i][shortNames[i].size()-1] == 'd' ? true : false;
+        
+        bool bAmDebug = false;
+        if (bHaveDAtEnd){
+            for (int j = 0; j < shortNames.size(); j++){
+                if (j != i){
+                    if (ofIsStringInString(shortNames[i], shortNames[j]) && shortNames[j].size() == (shortNames[i].size()-1)){
+                        bAmDebug = true;
+                    }
+                }
+            }
+            
+        }
+        
+        if (bAmDebug == true){
+            debugLibs.push_back(addon.libs[i]);
+        } else {
+            releaseLibs.push_back(addon.libs[i]);
+        }
+        
+    }
+         
+         
     for(int i=0;i<(int)debugLibs.size();i++){
         ofLogVerbose() << "adding addon debug libs: " << debugLibs[i];
         addLibrary(debugLibs[i], DEBUG_LIB);
