@@ -72,7 +72,6 @@ protected:
     
     bool bFrameNew;
     bool bUpdatePixels;
-    int frameCount;
 	
 	int vol;
 		
