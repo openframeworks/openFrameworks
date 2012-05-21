@@ -258,10 +258,6 @@ void visualStudioProject::addAddon(ofAddon & addon){
 
     vector <string> debugLibs;
     vector <string> releaseLibs;
-    
-    // this is just the addon libs as a short string (no .lib .a or path)
-    vector <string> shortNames; 
-    // note, they are in the same order of the addons.libs
 
     vector <string> possibleReleaseOrDebugOnlyLibs;
 
@@ -277,6 +273,7 @@ void visualStudioProject::addAddon(ofAddon & addon){
 #endif
 
         string libName = addon.libs[i].substr(found+1);
+        // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
         found = libName.find_last_of(".");
         string firstPart = libName.substr(0,found);
 
@@ -307,7 +304,6 @@ void visualStudioProject::addAddon(ofAddon & addon){
                 }
                 // keep searching...
             }
-            
         }
     }
 
@@ -318,8 +314,7 @@ void visualStudioProject::addAddon(ofAddon & addon){
             releaseLibs.push_back(possibleReleaseOrDebugOnlyLibs[i]);
          }
     }
-         
-         
+
     for(int i=0;i<(int)debugLibs.size();i++){
         ofLogVerbose() << "adding addon debug libs: " << debugLibs[i];
         addLibrary(debugLibs[i], DEBUG_LIB);
