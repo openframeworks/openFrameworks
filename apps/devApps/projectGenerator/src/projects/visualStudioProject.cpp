@@ -79,9 +79,9 @@ bool visualStudioProject::saveProjectFile(){
 
 void visualStudioProject::appendFilter(string folderName){
 
-    
+
     fixSlashOrder(folderName);
-    
+
 	string uuid = generateUUID(folderName);
 
 	string tag = "//ItemGroup[Filter]/Filter[@Include=\"" + folderName + "\"]";
@@ -263,17 +263,33 @@ void visualStudioProject::addAddon(ofAddon & addon){
     vector <string> shortNames; 
     // note, they are in the same order of the addons.libs
 
+<<<<<<< HEAD
     int found;
     
     for(int i=0;i<(int)addon.libs.size();i++){
 #ifdef TAfRGET_WIN32
+=======
+    vector <string> possibleReleaseOrDebugOnlyLibs;
+
+    for(int i = 0; i < addon.libs.size(); i++){
+
+        size_t found = 0;
+
+        // get the full lib name
+#ifdef TARGET_WIN32
+>>>>>>> Changed method for sorting Release and Debug libs. Fixes issue #1268
     	found = addon.libs[i].find_last_of("\\");
 #else
         found = addon.libs[i].find_last_of("/");
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> Changed method for sorting Release and Debug libs. Fixes issue #1268
         string libName = addon.libs[i].substr(found+1);
         found = libName.find_last_of(".");
         string firstPart = libName.substr(0,found);
+<<<<<<< HEAD
         shortNames.push_back(firstPart);
     }
         
@@ -292,9 +308,39 @@ void visualStudioProject::addAddon(ofAddon & addon){
                         bAmDebug = true;
                     }
                 }
+=======
+
+        // check this lib name against every other lib name
+        for(int j = 0; j < addon.libs.size(); j++){
+            // check if this lib name is contained within another lib name and is not the same name
+            if(ofIsStringInString(addon.libs[j], firstPart) && addon.libs[i] != addon.libs[j]){
+                // if it is then add respecitive libs to debug and release
+                if(!isInVector(addon.libs[j], debugLibs)){
+                    //cout << "adding to DEBUG " << addon.libs[j] << endl;
+                    debugLibs.push_back(addon.libs[j]);
+                }
+                if(!isInVector(addon.libs[i], releaseLibs)){
+                    //cout << "adding to RELEASE " << addon.libs[i] << endl;
+                    releaseLibs.push_back(addon.libs[i]);
+                }
+                // stop searching
+                break;
+            }else{
+                // if we only have a release or only have a debug lib
+                // we'll want to add it to both releaseLibs and debugLibs
+                // NB: all debug libs will get added to this vector,
+                // but we catch that once all pairs have been added
+                // since we cannot guarantee the order of parsing libs
+                // although this is innefficient it fixes issues on linux
+                if(!isInVector(addon.libs[i], possibleReleaseOrDebugOnlyLibs)){
+                    possibleReleaseOrDebugOnlyLibs.push_back(addon.libs[i]);
+                }
+                // keep searching...
+>>>>>>> Changed method for sorting Release and Debug libs. Fixes issue #1268
             }
             
         }
+<<<<<<< HEAD
         
         if (bAmDebug == true){
             debugLibs.push_back(addon.libs[i]);
@@ -302,6 +348,16 @@ void visualStudioProject::addAddon(ofAddon & addon){
             releaseLibs.push_back(addon.libs[i]);
         }
         
+=======
+    }
+
+    for(int i=0;i<(int)possibleReleaseOrDebugOnlyLibs.size();i++){
+         if(!isInVector(possibleReleaseOrDebugOnlyLibs[i], debugLibs) && !isInVector(possibleReleaseOrDebugOnlyLibs[i], releaseLibs)){
+            ofLogVerbose() << "RELEASE ONLY LIBS FOUND " << possibleReleaseOrDebugOnlyLibs[i] << endl;
+            debugLibs.push_back(possibleReleaseOrDebugOnlyLibs[i]);
+            releaseLibs.push_back(possibleReleaseOrDebugOnlyLibs[i]);
+         }
+>>>>>>> Changed method for sorting Release and Debug libs. Fixes issue #1268
     }
          
          
