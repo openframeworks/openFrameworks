@@ -282,6 +282,7 @@ void visualStudioProject::addAddon(ofAddon & addon){
         
         // by convention, debug libs will have a "d" at the end, and match up to one that doesn't have a d. 
         // check if I am a release or debug, by seeing if I have a d at the end, and if someone has my characters, but with
+        // a size that's exactly -1 of my size (ie,  they = me - 'd');
         bool bHaveDAtEnd = shortNames[i][shortNames[i].size()-1] == 'd' ? true : false;
         
         bool bAmDebug = false;
