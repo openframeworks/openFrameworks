@@ -79,9 +79,9 @@ bool visualStudioProject::saveProjectFile(){
 
 void visualStudioProject::appendFilter(string folderName){
 
-    
+
     fixSlashOrder(folderName);
-    
+
 	string uuid = generateUUID(folderName);
 
 	string tag = "//ItemGroup[Filter]/Filter[@Include=\"" + folderName + "\"]";
@@ -259,51 +259,60 @@ void visualStudioProject::addAddon(ofAddon & addon){
     vector <string> debugLibs;
     vector <string> releaseLibs;
 
-    for(int i=0;i<(int)addon.libs.size();i++){
+    vector <string> possibleReleaseOrDebugOnlyLibs;
 
-        // check that this isn't already a debug lib
-        bool alreadyDone = false;
-        for(int k=0;k<(int)debugLibs.size();k++){
-            if(addon.libs[i] == debugLibs[k]){
-                alreadyDone = true;
-            }
-        }
-        if(alreadyDone) continue;
+    for(int i = 0; i < addon.libs.size(); i++){
 
         size_t found = 0;
+
         // get the full lib name
-        
-    
 #ifdef TARGET_WIN32
     	found = addon.libs[i].find_last_of("\\");
 #else
         found = addon.libs[i].find_last_of("/");
 #endif
-        
-        
-        
+
         string libName = addon.libs[i].substr(found+1);
         // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
         found = libName.find_last_of(".");
         string firstPart = libName.substr(0,found);
-        int debugLibIndex = -1; // assume there is no debug lib
-        for(int j=0;j<(int)addon.libs.size();j++){
-            if(addon.libs[i] == addon.libs[j]) continue; // don't do it to yourself
-            if(ofIsStringInString(addon.libs[j], firstPart)){
-                // assume that if the first part of a name is
-                // in another name then we have a debug/release pair
-                debugLibIndex = j;
+
+        // check this lib name against every other lib name
+        for(int j = 0; j < addon.libs.size(); j++){
+            // check if this lib name is contained within another lib name and is not the same name
+            if(ofIsStringInString(addon.libs[j], firstPart) && addon.libs[i] != addon.libs[j]){
+                // if it is then add respecitive libs to debug and release
+                if(!isInVector(addon.libs[j], debugLibs)){
+                    //cout << "adding to DEBUG " << addon.libs[j] << endl;
+                    debugLibs.push_back(addon.libs[j]);
+                }
+                if(!isInVector(addon.libs[i], releaseLibs)){
+                    //cout << "adding to RELEASE " << addon.libs[i] << endl;
+                    releaseLibs.push_back(addon.libs[i]);
+                }
+                // stop searching
                 break;
+            }else{
+                // if we only have a release or only have a debug lib
+                // we'll want to add it to both releaseLibs and debugLibs
+                // NB: all debug libs will get added to this vector,
+                // but we catch that once all pairs have been added
+                // since we cannot guarantee the order of parsing libs
+                // although this is innefficient it fixes issues on linux
+                if(!isInVector(addon.libs[i], possibleReleaseOrDebugOnlyLibs)){
+                    possibleReleaseOrDebugOnlyLibs.push_back(addon.libs[i]);
+                }
+                // keep searching...
             }
         }
-        if(debugLibIndex != -1){
-            // add debug and release libs to appropriate vectors
-            debugLibs.push_back(addon.libs[debugLibIndex]);
-        }else{
-			// there's only one lib (either debug or release) so add to both vectors and hope for the best ;-)
-            debugLibs.push_back(addon.libs[i]);
-        }
-		releaseLibs.push_back(addon.libs[i]);
+    }
+
+    for(int i=0;i<(int)possibleReleaseOrDebugOnlyLibs.size();i++){
+         if(!isInVector(possibleReleaseOrDebugOnlyLibs[i], debugLibs) && !isInVector(possibleReleaseOrDebugOnlyLibs[i], releaseLibs)){
+            ofLogVerbose() << "RELEASE ONLY LIBS FOUND " << possibleReleaseOrDebugOnlyLibs[i] << endl;
+            debugLibs.push_back(possibleReleaseOrDebugOnlyLibs[i]);
+            releaseLibs.push_back(possibleReleaseOrDebugOnlyLibs[i]);
+         }
     }
 
     for(int i=0;i<(int)debugLibs.size();i++){
