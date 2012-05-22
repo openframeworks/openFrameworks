@@ -738,17 +738,17 @@ void ofRect(float x,float y,float z,float w,float h){
 
 //----------------------------------------------------------
 void ofRectRounded(const ofRectangle & b,float r){
-	ofRoundedRect(b.x, b.y, 0.0f, b.width, b.height, r);
+	ofRectRounded(b.x, b.y, 0.0f, b.width, b.height, r);
 }
 
 //----------------------------------------------------------
 void ofRectRounded(const ofPoint & p,float w,float h,float r){
-	ofRoundedRect(p.x, p.y, p.z, w, h, r);
+	ofRectRounded(p.x, p.y, p.z, w, h, r);
 }
 
 //----------------------------------------------------------
 void ofRectRounded(float x,float y,float w,float h,float r){
-	ofRoundedRect(x, y, 0.0f, w, h, r);
+	ofRectRounded(x, y, 0.0f, w, h, r);
 }
 
 //----------------------------------------------------------
