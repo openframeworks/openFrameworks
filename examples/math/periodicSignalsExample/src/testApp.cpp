@@ -33,7 +33,12 @@ void testApp::setup(){
 void testApp::update(){
 
 	//if the speed has changed we need to clear the lines.
-	if( speed.getValue() != preSpeed ){
+    // we can't test for float equality or non-equality 
+    // (speed.getValue() != preSpeed)
+    // so we look at the change and if the change is greater then a certain
+    // amount we clear. 
+    
+	if( fabs(speed.getValue() - preSpeed) > 0.00001f ){
 		speedChanged();
 	}
 	preSpeed = speed.getValue();
