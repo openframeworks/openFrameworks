@@ -17,7 +17,7 @@ USER_CFLAGS = $(addprefix -I, $(shell find src -type d))
 # for example libraries like:
 # USER_LDFLAGS = libs/libawesomelib.a
 
-USER_LDFLAGS =
+USER_LDFLAGS = -lGLU
 
 
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
