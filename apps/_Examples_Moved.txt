@@ -1,0 +1,20 @@
+From 0071 onwards examples are now located in the root of OF at examples/
+This folder will remain as a place to work on your own apps. 
+Just remember projects in apps/ still need to be two levels deep. 
+
+So: 
+
+apps/
+  mySoundApp/ 
+
+will not work
+
+
+apps/
+  soundApps/
+      mySoundApp/ 
+  miscApps/
+  experiments/
+
+will work 
+
