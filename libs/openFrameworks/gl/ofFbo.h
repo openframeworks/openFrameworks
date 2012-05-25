@@ -2,7 +2,13 @@
 
 #include "ofTexture.h"
 
-//#ifndef TARGET_OPENGLES
+#ifdef TARGET_OPENGLES
+
+	#define GL_DEPTH24_STENCIL8								GL_DEPTH24_STENCIL8_OES
+	#define GL_DEPTH_COMPONENT16							GL_DEPTH_COMPONENT16_OES
+	#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
+	#define GL_DEPTH_COMPONENT32							GL_DEPTH_COMPONENT32_OES
+#endif
 
 class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
@@ -70,10 +76,10 @@ public:
 		int		numColorbuffers;		// how many color buffers to create
 		bool	useDepth;				// whether to use depth buffer or not
 		bool	useStencil;				// whether to use stencil buffer or not
-		bool	depthAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
+		bool	depthStencilAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
 		GLenum	textureTarget;			// GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE_ARB
 		GLint	internalformat;			// GL_RGBA, GL_RGBA16F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB etc.
-		GLint	depthInternalFormat; 	// GL_DEPTH_COMPONENT(16/24/32)
+		GLint	depthStencilInternalFormat; 	// GL_DEPTH_COMPONENT(16/24/32)
 		int		wrapModeHorizontal;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
 		int		wrapModeVertical;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
 		int		minFilter;				// GL_NEAREST, GL_LINEAR etc.
@@ -86,7 +92,6 @@ private:
 
 	Settings 			settings;
 	int					isBound;
-	bool				bIsAllocated;
 
 	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
 	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)
@@ -107,16 +112,17 @@ private:
 	bool				dirty;
 
 	int 				defaultTextureIndex; //used for getTextureReference
+	bool				bIsAllocated;
 
 	void destroy();
 
 	bool checkStatus();
 	void createAndAttachTexture(GLenum attachmentPoint);
 	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
+	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum attachment);
 
 	// if using MSAA, we will have rendered into a colorbuffer, not directly into the texture
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
 	void updateTexture(int attachmentPoint);
 };
 
-//#endif
