@@ -1,2 +1,3 @@
 rm -r ../../libs/fmodex
-rm ../../export/libfmodex*
+rm ../../export/linux/libfmodex*
+rm ../../export/linux64/libfmodex*
