@@ -442,7 +442,7 @@ void ofFbo::allocate(Settings _settings) {
 		}
 		depthAttachment = GL_DEPTH_ATTACHMENT;
 		depthFormat = GL_DEPTH_COMPONENT;
-	}else{
+	}else if(settings.useStencil){
 		depthAttachment = GL_STENCIL_ATTACHMENT;
 		settings.depthStencilInternalFormat = GL_STENCIL_INDEX;
 		depthFormat = GL_STENCIL_INDEX;
@@ -454,7 +454,7 @@ void ofFbo::allocate(Settings _settings) {
 			stencilBuffer = depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
 		}else if(settings.useDepth){
 			depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
-		}else{
+		}else if(settings.useStencil){
 			stencilBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
 		}
 	}else{
@@ -571,8 +571,6 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 	depthBufferTex.texData.bFlipTexture = false;
 	depthBufferTex.texData.tex_w = settings.width;
 	depthBufferTex.texData.tex_h = settings.height;
-	depthBufferTex.texData.tex_t = 1.0f;
-	depthBufferTex.texData.tex_u = 1.0f;
 	depthBufferTex.texData.width = settings.width;
 	depthBufferTex.texData.height = settings.height;
 
