@@ -571,6 +571,8 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 	depthBufferTex.texData.bFlipTexture = false;
 	depthBufferTex.texData.tex_w = settings.width;
 	depthBufferTex.texData.tex_h = settings.height;
+	depthBufferTex.texData.tex_t = target==GL_TEXTURE_2D?1.0f:settings.width;
+	depthBufferTex.texData.tex_u = target==GL_TEXTURE_2D?1.0f:settings.height;
 	depthBufferTex.texData.width = settings.width;
 	depthBufferTex.texData.height = settings.height;
 
