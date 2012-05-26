@@ -25,7 +25,6 @@
 #ifndef TARGET_OPENGLES
 	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
 	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
-	#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_EXT
 
 	/*#define glGenFramebuffers								glGenFramebuffersEXT
 	#define glGenRenderbuffers								glGenRenderbuffersEXT
@@ -393,7 +392,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.useStencil		= true;
     
 	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect. 	
-    textureTarget			= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;    
+    	settings.textureTarget		= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;    
 #endif 
     
 	allocate(settings);
