@@ -109,7 +109,9 @@
 	#ifdef GL_DEPTH_COMPONENT32_OES 
         #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
     #endif
-    #define GL_UNSIGNED_INT                                 GL_UNSIGNED_INT_OES    
+	#ifdef TARGET_OF_IPHONE
+    	#define GL_UNSIGNED_INT                                 GL_UNSIGNED_INT_OES
+	#endif
 #endif
 
 
@@ -388,13 +390,14 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.internalformat	= internalformat;
 	settings.numSamples		= numSamples;
     
-#ifdef TARGET_OS_IPHONE
+#ifdef TARGET_OPENGLES
 	settings.useDepth		= false;
 	settings.useStencil		= false;
+	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect.
+    settings.textureTarget	= GL_TEXTURE_2D;
 #else    
 	settings.useDepth		= true;
 	settings.useStencil		= true;
-    
 	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect. 	
     settings.textureTarget	= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;    
 #endif 
