@@ -198,14 +198,9 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofImageType type){
 template<typename PixelType>
 void ofPixels_<PixelType>::swapRgb(){
 	if (channels >= 3){
-		int sizePixels		= width*height;
-		int cnt				= 0;
-		PixelType * pixels_ptr = pixels;
-
-		while (cnt < sizePixels){
-			std::swap(pixels_ptr[0],pixels_ptr[2]);
-			cnt++;
-			pixels_ptr+=channels;
+		int sizePixels = width*height*channels;
+		for (int i=0; i< sizePixels; i+=channels){
+			std::swap(pixels[i],pixels[i+2]);
 		}
 	}
 }
