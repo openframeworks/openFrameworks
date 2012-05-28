@@ -153,6 +153,8 @@ namespace ofxCv {
 		return Mat(img.getHeight(), img.getWidth(), getCvImageType(img), img.getPixels(), 0);
 	}
 	Mat toCv(ofBaseHasPixels& img);
+	Mat toCv(ofBaseVideoGrabber& img);
+	Mat toCv(ofBaseVideoPlayer& img);
 	Mat toCv(ofMesh& mesh);
 	Point2f toCv(ofVec2f vec);
 	Point3f toCv(ofVec3f vec);

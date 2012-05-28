@@ -206,6 +206,13 @@ cv::name(xMat, yMat, resultMat);\
 		fillPoly(dstMat, ppt, npt, 1, Scalar(255));
 	}
 	
+	template <class S, class D>
+	void resize(S& src, D& dst, int interpolation = INTER_LINEAR) { // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		resize(srcMat, dstMat, dstMat.size(), 0, 0, interpolation);
+	}
+	
 	// older wrappers, need to be templated..	
 	// for contourArea()/arcLength(), see ofPolyline::getArea()/getPerimiter()
 	// not sure if these three need to be templated. convexHull returning an
@@ -225,7 +232,6 @@ cv::name(xMat, yMat, resultMat);\
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
 	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
 	//void convolve(ofImage& img, FloatImage& kernel);
-	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
 	
 }

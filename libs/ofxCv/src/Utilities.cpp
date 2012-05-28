@@ -14,6 +14,14 @@ namespace ofxCv {
 		return toCv(img.getPixelsRef());
 	}
 	
+	Mat toCv(ofBaseVideoGrabber& img) {
+		return toCv(img.getPixelsRef());
+	}
+	
+	Mat toCv(ofBaseVideoPlayer& img) {
+		return toCv(img.getPixelsRef());
+	}
+	
 	Point2f toCv(ofVec2f vec) {
 		return Point2f(vec.x, vec.y);
 	}
