@@ -36,22 +36,23 @@ typedef ofPixels& ofPixelsRef;
 class ofBaseDraws{
 public:
 	virtual ~ofBaseDraws(){}
-	virtual void draw(float x,float y)=0;
-	virtual void draw(float x,float y,float w, float h)=0;
-	
-	virtual void draw(const ofPoint & point){
-		draw( point.x, point.y);
+	virtual void draw(float x, float y)=0;
+	virtual void draw(float x, float y, float w, float h)=0;
+	virtual void draw(const ofPoint & point) {
+		draw(point.x, point.y);
 	}
-	
-	virtual void draw(const ofRectangle & rect){
-		draw(rect.x, rect.y, rect.width, rect.height); 
+	virtual void draw(const ofRectangle & rect) {
+		draw(rect.x, rect.y, rect.width, rect.height);
+	}
+	virtual void draw(const ofPoint & point, float w, float h) {
+		draw(point.x, point.y, w, h);
 	}
 	
 	virtual float getHeight()=0;
 	virtual float getWidth()=0;
 	
 	virtual void setAnchorPercent(float xPct, float yPct){};
-    virtual void setAnchorPoint(float x, float y){};
+	virtual void setAnchorPoint(float x, float y){};
 	virtual void resetAnchor(){};
 	
 };
@@ -113,7 +114,7 @@ public:
 // ofBaseImage
 //----------------------------------------------------------
 template<typename T>
-class ofBaseImage_: public ofAbstractImage, public ofBaseHasPixels_<T>{
+class ofBaseImage_: public ofAbstractImage, virtual public ofBaseHasPixels_<T>{
 public:
 	virtual ~ofBaseImage_<T>(){};
 };
@@ -165,7 +166,7 @@ class ofBaseSoundOutput{
 //----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
-class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{
+class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
@@ -176,7 +177,7 @@ public:
 //----------------------------------------------------------
 // ofBaseVideoDraws
 //----------------------------------------------------------
-class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexture{
+class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseImage{
 public:
 	virtual ~ofBaseVideoDraws(){}
 };
@@ -278,12 +279,12 @@ public:
 
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofPath & shape)=0;
-	virtual void draw(ofMesh & vertexData)=0;
-	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
+	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
+	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
-	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
-	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h)=0;
-	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 
 	//--------------------------------------------
 	// transformations
@@ -329,6 +330,7 @@ public:
 	virtual void setBlendMode(ofBlendMode blendMode)=0;
 	virtual void setLineSmoothing(bool smooth)=0;
 	virtual void setCircleResolution(int res){};
+	virtual void setSphereResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
 
@@ -359,6 +361,7 @@ public:
 	virtual void drawRectangle(float x, float y, float z, float w, float h)=0;
 	virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)=0;
 	virtual void drawCircle(float x, float y, float z, float radius)=0;
+	virtual void drawSphere(float x, float y, float z, float radius)=0;
 	virtual void drawEllipse(float x, float y, float z, float width, float height)=0;
 	virtual void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode)=0;
 

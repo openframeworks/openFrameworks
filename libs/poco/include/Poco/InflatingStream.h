@@ -1,7 +1,7 @@
 //
 // InflatingStream.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/InflatingStream.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/InflatingStream.h#2 $
 //
 // Library: Foundation
 // Package: Streams
@@ -199,7 +199,7 @@ class Foundation_API InflatingInputStream: public InflatingIOS, public std::istr
 	///     std::ifstream istr("data.gz", std::ios::binary);
 	///     InflatingInputStream inflater(istr, InflatingStreamBuf::STREAM_GZIP);
 	///     std::string data;
-	///     istr >> data;
+	///     inflater >> data;
 	///
 	/// The underlying input stream can contain more than one gzip/deflate stream.
 	/// After a gzip/deflate stream has been processed, reset() can be called

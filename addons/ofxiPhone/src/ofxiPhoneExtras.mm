@@ -34,12 +34,11 @@
 
 //--------------------------------------------------------------
 ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
-	if([[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPhone"])
-		return OFXIPHONE_DEVICE_IPHONE;
-	else if([[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPod"])
-		return OFXIPHONE_DEVICE_IPODTOUCH;
-	else
-		return OFXIPHONE_DEVICE_IPAD;
+    NSString * dev = [[[UIDevice currentDevice] model] lowercaseString];    
+    if( [dev hasPrefix:@"iphone"] ) return OFXIPHONE_DEVICE_IPHONE;
+    if( [dev hasPrefix:@"ipad"] ) return OFXIPHONE_DEVICE_IPAD;
+    if( [dev hasPrefix:@"ipod"] ) return OFXIPHONE_DEVICE_IPODTOUCH;
+    return OFXIPHONE_UNKNOWN_DEVICE;   //this would need to be declared 
 }
 
 
@@ -71,7 +70,7 @@ UIWindow *ofxiPhoneGetUIWindow() {
 
 //--------------------------------------------------------------
 EAGLView *ofxiPhoneGetGLView() {
-	return [ofxiPhoneGetAppDelegate() getGLView];
+	return [ofxiPhoneGetViewController() glView];
 }
 
 
@@ -86,6 +85,10 @@ ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
 }
 
+//--------------------------------------------------------------
+ofxiPhoneViewController *ofxiPhoneGetViewController() {
+	return [ofxiPhoneGetAppDelegate() glViewController];
+}
 
 //--------------------------------------------------------------
 void ofxiPhoneSendGLViewToFront() {
@@ -101,7 +104,7 @@ void ofxiPhoneSendGLViewToBack() {
 
 //--------------------------------------------------------------
 void ofxiPhoneSetGLViewTransparent(bool b) {
-	ofxiPhoneGetGLView().opaque = !b;
+	ofxiPhoneGetGLView().layer.opaque = !b;
 }
 
 
@@ -126,13 +129,13 @@ void ofxiPhoneDisableIdleTimer() {
 
 //--------------------------------------------------------------
 void ofxiPhoneLockGLContext() {
-	[ofxiPhoneGetAppDelegate() lockGL];
+	[ofxiPhoneGetViewController() lockGL];
 }
 
 
 //--------------------------------------------------------------
 void ofxiPhoneUnlockGLContext() {
-	[ofxiPhoneGetAppDelegate() unlockGL];
+	[ofxiPhoneGetViewController() unlockGL];
 }
 
 
@@ -145,7 +148,7 @@ void ofxiPhoneEnableLoopInThread() {
 
 //--------------------------------------------------------------
 void ofxiPhoneSetOrientation(ofOrientation orientation) {
-	ofxiPhoneGetOFWindow()->setOrientation(orientation);
+	if (orientation != OF_ORIENTATION_UNKNOWN) ofxiPhoneGetOFWindow()->setOrientation(orientation);
 }
 
 
@@ -446,8 +449,17 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 
 void ofxiPhoneScreenGrab(id delegate) {
 	CGRect rect = [[UIScreen mainScreen] bounds];
-	int width = rect.size.width;
-	int height =  rect.size.height;
+	
+	//fix from: http://forum.openframeworks.cc/index.php/topic,6092.15.html
+	//TODO: look and see if we need to take rotation into account 
+	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] == YES){
+		float f_scale = [[UIScreen mainScreen] scale];
+		rect.size.width *= f_scale;
+		rect.size.height *= f_scale;
+	}
+
+	int width  = rect.size.width;
+	int height = rect.size.height;	
 	
 	NSInteger myDataLength = width * height * 4;
 	GLubyte *buffer = (GLubyte *) malloc(myDataLength);

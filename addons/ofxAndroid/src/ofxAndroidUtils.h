@@ -15,6 +15,7 @@
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();
+jobject ofGetOFActivityObject();
 
 //void ofRunApp( ofxAndroidApp * app);
 
@@ -37,6 +38,8 @@ bool ofxAndroidIsMobileOnline();
 
 string ofxAndroidGetStringRes(string id);
 
+string ofxAndroidRandomUUID();
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();
@@ -52,6 +55,7 @@ void  ofUpdateBitmapCharacterTexture();
 void ofxAndroidSoundStreamPause();
 void ofxAndroidSoundStreamResume();
 
+bool ofxAndroidCheckSDCardMounted();
 
 //this is just to fix a problem with undefined symbols
 inline void ofFixSoundStreamInclude(){
@@ -71,6 +75,6 @@ inline void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setViewItemChecked method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
 }
 #endif /* OFANDROIDUTILS_H_ */

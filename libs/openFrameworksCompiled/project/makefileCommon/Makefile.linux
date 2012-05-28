@@ -1,0 +1,54 @@
+
+ifeq ($(ARCH),armv7l)
+	LIBSPATH=linuxarmv7l
+	COMPILER_OPTIMIZATION=$(LINUX_ARM7_COMPILER_OPTIMIZATIONS)
+else
+	ifeq ($(ARCH),x86_64)
+		LIBSPATH=linux64
+		COMPILER_OPTIMIZATION=$(USER_COMPILER_OPTIMIZATION)
+	else
+		LIBSPATH=linux
+		COMPILER_OPTIMIZATION=$(USER_COMPILER_OPTIMIZATION)
+	endif
+endif
+
+INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include
+INCLUDES_FLAGS += $(shell pkg-config gl glew glu gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev cairo --cflags)
+
+#check if gtk exists and add it
+GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+ifeq ($(GTK),0)
+	CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
+	SYSTEMLIBS += $(shell pkg-config gtk+-2.0 --libs)
+endif
+
+#check if mpg123 exists and add it
+MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+ifeq ($(MPG123),0)
+	CFLAGS += -DOF_USING_MPG123
+	SYSTEMLIBS += -lmpg123
+endif
+
+
+LDFLAGS = -Wl,-rpath=./libs
+SYSTEMLIBS += $(shell pkg-config jack glu glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev cairo zlib --libs)
+SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
+
+ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+	TARGET_NAME = Debug
+	BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
+endif
+
+ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
+ifeq ($(MAKECMDGOALS),)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif

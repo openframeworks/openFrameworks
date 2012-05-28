@@ -1,7 +1,7 @@
 //
 // ElementsByTagNameList.h
 //
-// $Id: //poco/1.4/XML/include/Poco/DOM/ElementsByTagNameList.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/ElementsByTagNameList.h#2 $
 //
 // Library: XML
 // Package: DOM
@@ -69,6 +69,7 @@ protected:
 	XMLString   _name;
 	mutable unsigned long _count;
 	
+	friend class AbstractContainerNode;
 	friend class Element;
 	friend class Document;
 };
@@ -95,6 +96,7 @@ protected:
 	XMLString   _namespaceURI;
 	mutable unsigned long _count;
 	
+	friend class AbstractContainerNode;
 	friend class Element;
 	friend class Document;
 };

@@ -38,10 +38,6 @@
 #endif
 
 
-//----------------------------------------------------------
-// static
-static bool		bUsingArbTex		= true;
-static bool		bUsingNormalizedTexCoords = false;
 
 //style stuff - new in 006
 static ofStyle currentStyle;
@@ -65,6 +61,7 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 	shape.setUseShapeColor(false);
 
 	ofSetStyle(currentStyle);
+	ofBackground(currentStyle.bgColor);
 }
 
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
@@ -130,113 +127,18 @@ void ofEndSaveScreenAsPDF(){
 
 #endif
 
-// opengl specifics
-
-bool ofGetUsingNormalizedTexCoords() {
-	return bUsingNormalizedTexCoords;
-}
-
-void ofEnableNormalizedTexCoords() {
-	bUsingNormalizedTexCoords = true;
-}
-
-void ofDisableNormalizedTexCoords() {
-	bUsingNormalizedTexCoords = false;
-}
-
-
-
-//***** add global functions to override texture settings
-//----------------------------------------------------------
-static bool bUseCustomTextureWrap = false;
-
-//----------------------------------------------------------
-void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT) {
-	bUseCustomTextureWrap = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
-#ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	};
-#endif
-	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, wrapS);
-	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, wrapT);
-}
-
-//----------------------------------------------------------
-bool ofGetUsingCustomTextureWrap() {
-	return bUseCustomTextureWrap;
-}
-
-//----------------------------------------------------------
-void ofRestoreTextureWrap() {
-	bUseCustomTextureWrap = false;
-}
-
-
-
-static bool bUseCustomMinMagFilters = false;
-//----------------------------------------------------------
-void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter) {
-	bUseCustomMinMagFilters = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
-#ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	};
-#endif
-	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
-}
-
-//----------------------------------------------------------
-bool ofGetUsingCustomMinMagFilters() {
-	return bUseCustomMinMagFilters;
-}
-
-//----------------------------------------------------------
-void ofRestoreMinMagFilters() {
-	bUseCustomMinMagFilters = false;
-}
-
-//***** global functions to override texture settings
-
-
-//----------------------------------------------------------
-bool ofGetUsingArbTex(){
-	return bUsingArbTex;
-}
-
-//----------------------------------------------------------
-void ofEnableArbTex(){
-	bUsingArbTex = true;
-}
-
-//----------------------------------------------------------
-void ofDisableArbTex(){
-	bUsingArbTex = false;
-}
-
-//end opengl specifics
-
-
-
-
-
-
-
 
 
 //----------------------------------------------------------
 // transformation matrix related functions
 
 //----------------------------------------------------------
-void ofPushView() {
+void ofPushView(){
 	renderer->pushView();
 }
 
 //----------------------------------------------------------
-void ofPopView() {
+void ofPopView(){
 	renderer->popView();
 }
 
@@ -246,7 +148,7 @@ void ofViewport(ofRectangle viewport){
 }
 
 //----------------------------------------------------------
-void ofViewport(float x, float y, float width, float height, bool invertY) {
+void ofViewport(float x, float y, float width, float height, bool invertY){
 	renderer->viewport(x,y,width,height,invertY);
 }
 
@@ -282,22 +184,22 @@ int ofOrientationToDegrees(ofOrientation orientation){
 }
 
 //----------------------------------------------------------
-void ofSetCoordHandedness(ofHandednessType handedness) {
+void ofSetCoordHandedness(ofHandednessType handedness){
 	renderer->setCoordHandedness(handedness);
 }
 
 //----------------------------------------------------------
-ofHandednessType ofGetCoordHandedness() {
+ofHandednessType ofGetCoordHandedness(){
 	return renderer->getCoordHandedness();
 }
 
 //----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
 	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
-void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
+void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
 	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
 }
 
@@ -376,17 +278,17 @@ void ofRotate(float degrees){
 // background functions
 
 //----------------------------------------------------------
-void ofClear(float r, float g, float b, float a) {
+void ofClear(float r, float g, float b, float a){
 	renderer->clear(r,g,b,a);
 }
 
 //----------------------------------------------------------
-void ofClear(float brightness, float a) {
+void ofClear(float brightness, float a){
 	renderer->clear(brightness, brightness, brightness, a);
 }
 
 //----------------------------------------------------------
-void ofClearAlpha() {
+void ofClearAlpha(){
 	renderer->clearAlpha();
 }	
 
@@ -406,7 +308,7 @@ float * ofBgColorPtr(){
 }
 
 //----------------------------------------------------------
-void ofBackground(int brightness, int alpha) {
+void ofBackground(int brightness, int alpha){
 	ofBackground(brightness, brightness, brightness, alpha);
 }
 
@@ -424,6 +326,78 @@ void ofBackgroundHex(int hexColor, int alpha){
 void ofBackground(int r, int g, int b, int a){
 	currentStyle.bgColor.set(r,g,b,a);
 	renderer->background(r,g,b,a);
+}
+
+//----------------------------------------------------------
+void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
+	float w = ofGetWidth(), h = ofGetHeight();
+	ofMesh mesh;
+	mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	if(mode == OF_GRADIENT_CIRCULAR) {
+		// this could be optimized by building a single mesh once, then copying
+		// it and just adding the colors whenever the function is called.
+		ofVec2f center(w / 2, h / 2);
+		mesh.addVertex(center);
+		mesh.addColor(start);
+		int n = 32; // circular gradient resolution
+		float angleBisector = TWO_PI / (n * 2);
+		float smallRadius = ofDist(0, 0, w / 2, h / 2);
+		float bigRadius = smallRadius / cos(angleBisector);
+		for(int i = 0; i <= n; i++) {
+			float theta = i * TWO_PI / n;
+			mesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
+			mesh.addColor(end);
+		}
+	} else if(mode == OF_GRADIENT_LINEAR) {
+		mesh.addVertex(ofVec2f(0, 0));
+		mesh.addVertex(ofVec2f(w, 0));
+		mesh.addVertex(ofVec2f(w, h));
+		mesh.addVertex(ofVec2f(0, h));
+		mesh.addColor(start);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+	} else if(mode == OF_GRADIENT_BAR) {
+		mesh.addVertex(ofVec2f(w / 2, h / 2));
+		mesh.addVertex(ofVec2f(0, h / 2));
+		mesh.addVertex(ofVec2f(0, 0));
+		mesh.addVertex(ofVec2f(w, 0));
+		mesh.addVertex(ofVec2f(w, h / 2));
+		mesh.addVertex(ofVec2f(w, h));
+		mesh.addVertex(ofVec2f(0, h));
+		mesh.addVertex(ofVec2f(0, h / 2));
+		mesh.addColor(start);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+		mesh.addColor(start);
+	}
+	glDepthMask(false);
+	mesh.draw();
+	glDepthMask(true);
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColor(int brightness, int alpha){
+	ofSetBackgroundColor(brightness, brightness, brightness, alpha);
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColor(const ofColor & c){
+	ofSetBackgroundColor ( c.r, c.g, c.b, c.a);
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColorHex(int hexColor, int alpha){
+	ofSetBackgroundColor ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, alpha);
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColor(int r, int g, int b, int a){
+	currentStyle.bgColor.set(r,g,b,a);
 }
 
 // end background functions
@@ -482,14 +456,15 @@ void ofSetCurveResolution(int res){
 }
 
 //----------------------------------------
-void ofSetSphereResolution(int res) {
+void ofSetSphereResolution(int res){
+	renderer->setSphereResolution(res);
 	currentStyle.sphereResolution = res;
 }
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	currentStyle.circleResolution = res;
 	renderer->setCircleResolution(res);
+	currentStyle.circleResolution = res;
 }
 
 //----------------------------------------------------------
@@ -550,18 +525,17 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 }
 
 //----------------------------------------------------------
-void ofEnablePointSprites() {
+void ofEnablePointSprites(){
 	renderer->enablePointSprites();
 }
 
 //----------------------------------------------------------
-void ofDisablePointSprites() {
+void ofDisablePointSprites(){
 	renderer->disablePointSprites();
 }
 
 //----------------------------------------------------------
-void ofDisableBlendMode()
-{
+void ofDisableBlendMode(){
     glDisable(GL_BLEND);
 	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
 }
@@ -597,7 +571,7 @@ void ofSetPolyMode(ofPolyWindingMode mode){
 }
 
 //----------------------------------------
-void ofSetDrawBitmapMode(ofDrawBitmapMode mode) {
+void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
 
@@ -607,7 +581,7 @@ void ofSetStyle(ofStyle style){
 	ofSetColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
 
 	//bg color
-	ofBackground(style.bgColor);
+	ofSetBackgroundColor(style.bgColor);
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
@@ -640,7 +614,7 @@ void ofSetStyle(ofStyle style){
 	}
 
 	//blending
-	ofEnableBlendMode(currentStyle.blendingMode);
+	ofEnableBlendMode(style.blendingMode);
 	
 	//bitmap draw mode
 	ofSetDrawBitmapMode(style.drawBitmapMode);
@@ -773,12 +747,30 @@ void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x
 	shape.draw();
 }
 
+//----------------------------------------------------------
+void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	shape.clear();
+	shape.curveTo(x0,y0,z0);
+	shape.curveTo(x1,y1,z1);
+	shape.curveTo(x2,y2,z2);
+	shape.curveTo(x3,y3,z3);
+	shape.draw();
+}
+
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
 	shape.clear();
 	shape.moveTo(x0,y0);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
+	shape.draw();
+}
+
+//----------------------------------------------------------
+void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	shape.clear();
+	shape.moveTo(x0,y0,z0);
+	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 	shape.draw();
 }
 
@@ -793,8 +785,14 @@ void ofVertex(float x, float y){
 
 }
 
+//----------------------------------------------------------
+void ofVertex(float x, float y, float z){
+	shape.lineTo(x,y,z);
+
+}
+
 //---------------------------------------------------
-void ofVertex(ofPoint & p) {
+void ofVertex(ofPoint & p){
 	shape.lineTo(p);
 }
 
@@ -818,13 +816,22 @@ void ofCurveVertexes( const vector <ofPoint> & curvePoints){
 }
 
 //---------------------------------------------------
-void ofCurveVertex(ofPoint & p) {
+void ofCurveVertex(ofPoint & p){
 	shape.curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
+}
+
+void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
+	shape.bezierTo(p1, p2, p3);
+}
+
+//---------------------------------------------------
+void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
 //----------------------------------------------------------
@@ -854,35 +861,27 @@ void ofEndShape(bool bClose){
 // 3d primitives
 
 //----------------------------------------
-void ofSphere(float x, float y, float z, float radius) {
-	ofSphere(ofPoint(x, y, z), radius);
-}
-
-//----------------------------------------
-void ofSphere(float x, float y, float radius) {
-	ofSphere(x, y, 0, radius);
-}
-
-//----------------------------------------
-void ofSphere(const ofPoint& position, float radius) {
+void ofSphere(float x, float y, float z, float radius){
 	ofPushMatrix();
-	ofTranslate(position);
+	ofTranslate(x, y, z);
 	ofSphere(radius);
 	ofPopMatrix();
 }
 
 //----------------------------------------
-void ofSphere(float radius) {
-	// TODO: add an implementation using ofMesh
-#ifndef TARGET_OPENGLES
-	// this needs to be swapped out with non-glut code
-	// for good references see cinder's implementation from paul bourke:
-	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
-	// void drawSphere( const Vec3f &center, float radius, int segments )
-	// and processing's implementation of icospheres:
-	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
-	// public void sphere(float r)
-	
+void ofSphere(float x, float y, float radius){
+	ofSphere(x, y, 0, radius);
+}
+
+//----------------------------------------
+void ofSphere(const ofPoint& position, float radius){
+	ofSphere(position.x,position.y,position.z,radius);
+}
+
+//----------------------------------------
+void ofSphere(float radius){
+	renderer->drawSphere(0,0,0,radius);
+	/*
 	ofPushMatrix();
 	ofRotateX(90);
 	if(ofGetStyle().bFill) {
@@ -891,21 +890,21 @@ void ofSphere(float radius) {
 		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	}
 	ofPopMatrix();
-#endif
+	 */
 }
 
 //----------------------------------------
-void ofBox(float x, float y, float z, float size) {
+void ofBox(float x, float y, float z, float size){
 	ofBox(ofPoint(x, y, z), size);
 }
 
 //----------------------------------------
-void ofBox(float x, float y, float size) {
+void ofBox(float x, float y, float size){
 	ofBox(x, y, 0, size);
 }
 
 //----------------------------------------
-void ofBox(const ofPoint& position, float size) {
+void ofBox(const ofPoint& position, float size){
 	ofPushMatrix();
 	ofTranslate(position);
 	ofBox(size);
@@ -913,16 +912,16 @@ void ofBox(const ofPoint& position, float size) {
 }
 
 //----------------------------------------
-void ofBox(float size) {
+void ofBox(float size){
 	ofPushMatrix();
-	if(ofGetCoordHandedness() == OF_LEFT_HANDED) {
+	if(ofGetCoordHandedness() == OF_LEFT_HANDED){
 		ofScale(1, 1, -1);
 	}
 
 	float h = size * .5;
 	
 	vertexData.clear();
-	if(ofGetStyle().bFill) {
+	if(ofGetStyle().bFill){
 		ofVec3f vertices[] = {
 			ofVec3f(+h,-h,+h), ofVec3f(+h,-h,-h), ofVec3f(+h,+h,-h), ofVec3f(+h,+h,+h),
 			ofVec3f(+h,+h,+h), ofVec3f(+h,+h,-h), ofVec3f(-h,+h,-h), ofVec3f(-h,+h,+h),
@@ -969,7 +968,7 @@ void ofBox(float size) {
 		};
 		vertexData.addIndices(indices,36);
 		vertexData.setMode(OF_PRIMITIVE_TRIANGLES);
-		renderer->draw(vertexData);
+		renderer->draw(vertexData,vertexData.usingColors(),vertexData.usingTextures(),vertexData.usingNormals());
 	} else {
 		ofVec3f vertices[] = {
 			ofVec3f(+h,+h,+h),
@@ -1004,12 +1003,46 @@ void ofBox(float size) {
 		vertexData.addIndices(indices,24);
 
 		vertexData.setMode(OF_PRIMITIVE_LINES);
-		renderer->draw(vertexData);
+		renderer->draw(vertexData, vertexData.usingColors(),vertexData.usingTextures(),vertexData.usingNormals());
 	}
 
 
 	ofPopMatrix();
 }
+
+//----------------------------------------
+void ofCone(float x, float y, float z, float radius, float height) {
+	ofCone(ofPoint(x, y, z), radius, height);
+}
+
+//----------------------------------------
+void ofCone(float x, float y, float radius, float height) {
+	ofCone(x, y, 0, radius, height);
+}
+
+//----------------------------------------
+void ofCone(const ofPoint& position, float radius, float height) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofCone(radius, height);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+void ofCone(float radius, float height) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	// see ofSphere above
+	
+	if(ofGetStyle().bFill) {
+		glutSolidCone(radius, height, currentStyle.circleResolution, 1);
+	} else {
+		glutWireCone(radius, height, currentStyle.circleResolution, 1);
+	}
+#endif
+}
+
 
 // end 3d primitives
 //--------------------------------------------------
@@ -1028,6 +1061,49 @@ void ofDrawBitmapString(string textString, float x, float y){
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
 	renderer->drawString(textString,x,y,z,currentStyle.drawBitmapMode);
+}
+//--------------------------------------------------
+void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background, const ofColor& foreground) {
+	ofDrawBitmapStringHighlight(text, position.x, position.y, background, foreground);
+}
+//--------------------------------------------------
+void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
+	vector<string> lines = ofSplitString(text, "\n");
+	int textLength = 0;
+	for(int i = 0; i < lines.size(); i++) {
+		// tabs are not rendered
+		int tabs = count(lines[i].begin(), lines[i].end(), '\t');
+		int curLength = lines[i].length() - tabs;
+		if(curLength > textLength) {
+			textLength = curLength;
+		}
+	}
+	
+	int padding = 4;
+	int fontSize = 8;
+	float leading = 1.7;
+	int height = lines.size() * fontSize * leading - 1;
+	int width = textLength * fontSize;
+	
+	ofPushStyle();
+	glDepthMask(false);
+	ofSetColor(background);
+	ofFill();
+	ofPushMatrix();
+	ofTranslate(x, y, 0);
+	if(currentStyle.drawBitmapMode == OF_BITMAPMODE_MODEL) {
+		ofScale(1, -1, 0);
+	}
+	ofTranslate(-(padding), -(padding + fontSize + 2));
+	ofRect(0, 0, width + 2 * padding, height + 2 * padding);
+	ofPopMatrix();
+	ofSetColor(foreground);
+	ofNoFill();
+	ofPushMatrix();
+	ofDrawBitmapString(text, x, y);
+	ofPopMatrix();
+	glDepthMask(true);
+	ofPopStyle();
 }
 
 

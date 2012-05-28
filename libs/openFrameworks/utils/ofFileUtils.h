@@ -72,7 +72,12 @@ public:
 
 	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);
 	static string getCurrentWorkingDirectory();
+	static string join(string path1,string path2);
 	
+	static string getCurrentExePath();
+	static string getCurrentExeDir();
+
+	static string getUserHomeDir();
 };
 
 class ofFile: public fstream{
@@ -222,6 +227,7 @@ public:
 	int listDir(string path);
 	int listDir();
 
+	string getOriginalDirectory();
 	string getName(unsigned int position); // e.g., "image.png"
 	string getPath(unsigned int position);
 	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);

@@ -25,7 +25,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildArguments</key>
-					<value>-C ../openFrameworksCompiled/project/linux</value>
+					<value>-C ../openFrameworksCompiled/project/linux64 -j</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>
@@ -78,4 +78,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>linux64</name>
+			<type>2</type>
+			<location>/home/arturo/Desktop/openFrameworks/libs/openFrameworksCompiled/project/linux64</location>
+		</link>
+	</linkedResources>
 </projectDescription>

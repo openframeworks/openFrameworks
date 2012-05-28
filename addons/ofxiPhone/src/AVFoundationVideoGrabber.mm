@@ -160,8 +160,8 @@
 -(void)listDevices{
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	int i=0;
-	for (AVCaptureDevice *device in devices){
-		 cout<<"Device "<<i<<": "<<ofxNSStringToString(device.localizedName)<<endl;
+	for (AVCaptureDevice * captureDevice in devices){
+		 cout<<"Device "<<i<<": "<<ofxNSStringToString(captureDevice.localizedName)<<endl;
 		i++;
     }
 }
@@ -324,24 +324,29 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	spriteContext = CGBitmapContextCreate(pixelsTmp, width, height, CGImageGetBitsPerComponent(ref), width * 4, CGImageGetColorSpace(ref), kCGImageAlphaPremultipliedLast);
 	
 	if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait) {
-			transform = CGAffineTransformMakeTranslation(0.0, height);
-			transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
+        transform = CGAffineTransformMakeTranslation(0.0, height);
+        transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
 			
-			CGContextConcatCTM(spriteContext, transform);
-			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
+        CGContextConcatCTM(spriteContext, transform);
+        CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
 	}
 	else if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown) {
-		ofLog(OF_LOG_WARNING, "upsidedown orientation not supported at this time"); // TODO support this
+        transform = CGAffineTransformMakeTranslation(width, 0.0);
+        transform = CGAffineTransformRotate(transform, M_PI / 2.0);
+        
+        CGContextConcatCTM(spriteContext, transform);
+        CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
 	}
 	else if(ofxiPhoneGetOrientation() == UIDeviceOrientationLandscapeLeft) {
+		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
+	}
+	else { // landscape RIGHT
 		transform = CGAffineTransformMakeTranslation(width, height);
 		transform = CGAffineTransformScale(transform, -1.0, -1.0);
 		
 		CGContextConcatCTM(spriteContext, transform);
 		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
-	}
-	else // landscape RIGHT
-		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
+    }
 	
 	CGContextRelease(spriteContext);
 	

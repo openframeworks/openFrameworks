@@ -50,10 +50,15 @@ bool ofxiPhoneImagePicker::openCamera(int camera)
 }
 #ifdef __IPHONE_3_1
 //----------------------------------------------------------------
-bool ofxiPhoneImagePicker::showCameraOverlay()
-{
+bool ofxiPhoneImagePicker::showCameraOverlay() {
 	return [imagePicker showCameraOverlay];
 }
+
+//----------------------------------------------------------------
+bool ofxiPhoneImagePicker::showCameraOverlayWithCustomView(UIView * view) {
+    return [imagePicker showCameraOverlayWithCustomView:view];
+}
+
 //----------------------------------------------------------------
 void ofxiPhoneImagePicker::hideCameraOverlay()
 {
@@ -70,6 +75,12 @@ bool ofxiPhoneImagePicker::openSavedPhotos()
 {
 	return [imagePicker openSavedPhotos];
 }
+
+//----------------------------------------------------------------
+void ofxiPhoneImagePicker::close() {
+    [imagePicker close];
+}
+
 //----------------------------------------------------------------
 int ofxiPhoneImagePicker::getOrientation()
 {
@@ -136,15 +147,9 @@ void ofxiPhoneImagePicker::loadPixels()
 		
 		CGContextDrawImage(photoContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), photo);
 		
-		/*int numBytesPerRow = width * bpp;
-		for(int y=0; y<height; y++) {
-			memcpy(pixels + (numBytesPerRow * y), photoData + (numBytesPerRow * (height - 1 - y)), numBytesPerRow);
-		}*/
-		
 		memcpy(pixels, photoData, width*height*4);
 		
 		CGContextRelease(photoContext);
-		CGImageRelease(photo);
 		free(photoData);
 	}
 	
@@ -167,222 +172,257 @@ void ofxiPhoneImagePicker::saveImage()
 {
 	if(self = [super init])
 	{
-		photoLibraryIsAvailable = false;
-		savedPhotosIsAvailable = false;
-		cameraIsAvailable = false;
+        photoLibraryIsAvailable = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
+        cameraIsAvailable       = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+        savedPhotosIsAvailable  = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
+        
+        CGSize screenSize = [UIScreen mainScreen].bounds.size;
 		
 		_imagePicker = [[UIImagePickerController alloc] init];
+        _imagePicker.delegate = self;
+        
+        if([UIScreen mainScreen].bounds.size.width == 768 &&    // check if its an ipad.
+           [UIScreen mainScreen].bounds.size.height == 1024) {  // this is not future proof!
+            /**
+             *  on the ipad, the image picker view needs to be rotated to match the orientation
+             *  of the device, otherwise the camera image is not straight.
+             */
+            UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+            if(orientation == UIInterfaceOrientationLandscapeLeft) {
+                _imagePicker.view.transform = CGAffineTransformMakeRotation(-PI*0.5);
+            } else if(orientation == UIInterfaceOrientationLandscapeRight) {
+                _imagePicker.view.transform = CGAffineTransformMakeRotation(PI*0.5);
+            } else if(orientation == UIInterfaceOrientationPortraitUpsideDown) {
+                _imagePicker.view.transform = CGAffineTransformMakeRotation(PI);
+            }
+        }
 	
-		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;		
-										
-		overlay = [[OverlayView alloc]
-				   initWithFrame:CGRectMake(0, 0, s.width, s.height) andDelegate:_imagePicker];
-		
-		_imagePicker.delegate = self;
-		
 		cppPixelLoader = _picker;
-		
-		
-		if( [ UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypePhotoLibrary ]== YES )
-		{
-			photoLibraryIsAvailable = true;
-		}
-		
-		if( [ UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera ]== YES )
-		{
-			cameraIsAvailable = true;
-		}
-		
-		if( [ UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeSavedPhotosAlbum ]== YES )
-		{
-			savedPhotosIsAvailable = true;
-		}
-		
-		_image = [UIImage alloc];
 	}
 	return self;
 }
-//--------------------------------------------------------------
 
-- (void)dealloc 
-{ 
+//--------------------------------------------------------------
+- (void)dealloc { 
+
+    _imagePicker.delegate = nil;
+    _imagePicker.cameraOverlayView = nil;
+	[_imagePicker.view removeFromSuperview];
 	[_imagePicker release];
 	
-	//[_image	release];
+    if(_image) {
+        [_image release];
+        _image = nil;
+    }
+    
+    if(overlay) {
+        overlay.delegate = nil;
+        [overlay release];
+        overlay = nil;
+    }
+    
+    cppPixelLoader = NULL;
 	
 	[super dealloc];
 }
 
 //----------------------------------------------------------------
-
-
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
-{	
-	[_image initWithCGImage: [self scaleAndRotateImage:image].CGImage];
-	[_imagePicker.view removeFromSuperview];
-	[_imagePicker dismissModalViewControllerAnimated:NO];
+- (void) imagePickerController:(UIImagePickerController *)picker 
+         didFinishPickingImage:(UIImage *)image 
+                   editingInfo:(NSDictionary *)editingInfo {
+    
+    _image = [[self scaleAndRotateImage:image] retain];
 	cppPixelLoader->loadPixels();
 }
-
 
 #ifdef __IPHONE_3_1
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-	[_image initWithCGImage: [self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]].CGImage];
-	[_imagePicker.view removeFromSuperview];
-	[_imagePicker dismissModalViewControllerAnimated:NO];
+- (void) imagePickerController:(UIImagePickerController *)picker 
+ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
+    _image = [[self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]] retain];
 	cppPixelLoader->loadPixels();
 }
 
-
 //--------------------------------------------------------------
-- (void) takePicture
-{
+- (void) takePicture {
 	[_imagePicker takePicture];
 }
 #endif
+
 //--------------------------------------------------------------
-- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker
-{
-	[_imagePicker.view removeFromSuperview];
-	[_imagePicker dismissModalViewControllerAnimated:NO];
+- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+	[self close];
 }
+
 //--------------------------------------------------------------
-- (void) saveImageToPhotoAlbum
-{
+- (void) saveImageToPhotoAlbum {
 	UIImageWriteToSavedPhotosAlbum(_image, nil, nil, nil);
 	printf("saved!");
 }
+
 //--------------------------------------------------------------
-- (bool) openCamera:(int)camera
-{
-	if(cameraIsAvailable)
-	{		
+- (BOOL) openCamera:(int)camera {
+	if(cameraIsAvailable) {		
 		_imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-		
-		if(camera==0)
+		if(camera == 0) {
 			_imagePicker.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-		else {
-			if([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
+        } else {
+			if([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront]) {
 				_imagePicker.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-			else
+            } else {
 				_imagePicker.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+            }
 		}
 
 		[[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
 		
 		return true;
-	}
-	else
-	{
+	} else {
 		return false;
 	}
 }
+
 #ifdef __IPHONE_3_1
-//--------------------------------------------------------------
-- (bool) showCameraOverlay
-{
-	if(cameraIsAvailable)
-	{
-		[_imagePicker init]; //needs this to refresh the camera.
-		_imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-		_imagePicker.showsCameraControls = NO;
-		_imagePicker.wantsFullScreenLayout = YES;
-		_imagePicker.cameraViewTransform = CGAffineTransformScale(_imagePicker.cameraViewTransform,1,1.12412);
-		_imagePicker.cameraOverlayView = overlay;
-		//[self presentModalViewController:_imagePicker animated:NO];
-		[[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
-		
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+//-------------------------------------------------------------- overlay
+- (BOOL) showCameraOverlay {
+	[self showCameraOverlayWithCustomView:nil];
 }
+
 //--------------------------------------------------------------
-- (void) hideCameraOverlay
-{
-	[_imagePicker.view removeFromSuperview];
+- (BOOL) showCameraOverlayWithCustomView:(UIView *)overlayView {
+    
+    if(!cameraIsAvailable) {
+        return NO;
+    }
+    
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    
+    BOOL isOverlayView = YES;
+    isOverlayView = isOverlayView && (overlayView != nil);
+    if(isOverlayView) {
+        isOverlayView = isOverlayView && [[overlayView class] isSubclassOfClass:[OverlayView class]];
+    }
+    
+    if(isOverlayView) {
+        overlay = (OverlayView *)overlayView;
+    } else {
+        
+        CGSize screenSize = [UIScreen mainScreen].bounds.size;
+        int screenW = screenSize.width;
+        int screenH = screenSize.height;
+        if(UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+            screenW = screenSize.height;
+            screenH = screenSize.width;
+        }
+        
+        CGRect overlayFrame = CGRectMake(0, 0, screenW, screenH);
+        overlay = [[OverlayView alloc] initWithFrame:overlayFrame];
+    }
+    overlay.delegate = _imagePicker;
+    
+    if([UIScreen mainScreen].bounds.size.width != 768 &&    // check if its NOT an ipad.
+       [UIScreen mainScreen].bounds.size.height != 1024) {  // this is not future proof!
+        /**
+         *  only do this for iphone, not ipad.
+         */
+        overlay.center = CGPointMake(screenSize.width * 0.5, screenSize.height * 0.5);
+        UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+        if(orientation == UIInterfaceOrientationLandscapeLeft) {
+            overlay.transform = CGAffineTransformMakeRotation(-PI * 0.5);
+        } else if(orientation == UIInterfaceOrientationLandscapeRight) {
+            overlay.transform = CGAffineTransformMakeRotation(PI * 0.5);
+        } else if(orientation == UIInterfaceOrientationPortraitUpsideDown) {
+            overlay.transform = CGAffineTransformMakeRotation(PI);
+        }
+    }
+    
+    float cameraAspectRatio = 3.0f / 4.0f;  // all iOS devices have more or less an aspect 4:3 aspect ratio.
+    float screenAspectRatio = screenSize.width / screenSize.height;
+    float scale = cameraAspectRatio / screenAspectRatio;    // 1.12412 on iPhone.
+    CGAffineTransform cameraViewTransform = CGAffineTransformMakeScale(scale, scale);
+    
+    _imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    _imagePicker.showsCameraControls = NO;
+    _imagePicker.wantsFullScreenLayout = YES;
+    _imagePicker.cameraViewTransform = cameraViewTransform;
+    _imagePicker.cameraOverlayView = overlay;
+    [[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
+    
+    return YES;
+}
+
+//--------------------------------------------------------------
+- (void) hideCameraOverlay {
 	_imagePicker.showsCameraControls = YES;
 	_imagePicker.wantsFullScreenLayout = NO;
 	_imagePicker.cameraViewTransform = CGAffineTransformScale(_imagePicker.cameraViewTransform, 1, 1);
 	_imagePicker.cameraOverlayView = nil;
+    
+    if(overlay) {
+        overlay.delegate = nil;
+        [overlay release];
+        overlay = nil;
+    }
 }
 #endif
 //--------------------------------------------------------------
-- (bool) openLibrary
-{
-	if(photoLibraryIsAvailable)
-	{
+- (BOOL) openLibrary {
+	if(photoLibraryIsAvailable) {
 		_imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 		[[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
-		
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	
+        return true;
+	} 
+    return false;
 }
 //--------------------------------------------------------------
-- (bool) openSavedPhotos
-{
-	if(savedPhotosIsAvailable)
-	{
+- (BOOL) openSavedPhotos {
+	if(savedPhotosIsAvailable) {
 		_imagePicker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
 		[[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
 		
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 //--------------------------------------------------------------
-- (UIImage *) getUIImage
-{
+- (void)close {
+	[_imagePicker.view removeFromSuperview];
+}
+
+//--------------------------------------------------------------
+- (UIImage *) getUIImage {
 	return _image;
 }
 //--------------------------------------------------------------
-- (bool) isCameraAvailable
-{
+- (BOOL) isCameraAvailable {
 	return cameraIsAvailable;
 }
 //--------------------------------------------------------------
-- (bool) isPhotoLibraryAvailable
-{
+- (BOOL) isPhotoLibraryAvailable {
 	return photoLibraryIsAvailable;
 }
 //--------------------------------------------------------------
-- (bool) isSavedPhotosAvailable
-{
+- (BOOL) isSavedPhotosAvailable {
 	return savedPhotosIsAvailable;
 }
 
 //--------------------------------------------------------------
-- (CGImageRef) getCGImage;
-{
+- (CGImageRef) getCGImage {
 	return _image.CGImage;
 }
 //--------------------------------------------------------------
-- (UIImageOrientation) getImageOrientation;
-{
+- (UIImageOrientation) getImageOrientation {
 	return _image.imageOrientation;
 }
 //--------------------------------------------------------------
-- (void) setMaxDimension:(int)mDimension 
-{
+- (void) setMaxDimension:(int)mDimension {
 	maxDimension = mDimension;
 }
 
 //--------------------------------------------------------------
-
-- (UIImage *)scaleAndRotateImage:(UIImage *)image 
-{	
+- (UIImage *)scaleAndRotateImage:(UIImage *)image {	
 	//scaleAndRotateImage code from Yoshimasa Niwa :: http://niw.at/en
 	
 	CGImageRef imgRef = image.CGImage;
@@ -474,39 +514,46 @@ void ofxiPhoneImagePicker::saveImage()
 }
 @end
 
+//----------------------------------------------------------- overlay.
 @implementation OverlayView
-- (id)initWithFrame:(CGRect)frame andDelegate:(UIImagePickerController *)del{
+
+@synthesize delegate;
+
+- (id)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
-        //clear the background color of the overlay
-        self.opaque = NO;
-        self.backgroundColor = [UIColor clearColor];
-		
-        //load an image to show in the overlay. uncomment this if you want to show an image like crosshairs, etc
-        //UIImage *searcher = [UIImage imageNamed:@"searcher.png"];
-        //UIImageView *searcherView = [[UIImageView alloc] 
-		//							 initWithImage:searcher];
-        //searcherView.frame = CGRectMake(30, 100, 260, 200);
-        //[self addSubview:searcherView];
-        //[searcherView release];
-		
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        [button setTitle:@"" forState:UIControlStateNormal];
-		
-		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;		
-				
-        button.frame = CGRectMake(0, 0, s.height, s.width); // change these numbers to move the location of the button.
-		button.opaque = NO;
-		
-		[button addTarget:self action:@selector(takePhoto:) forControlEvents:UIControlEventTouchUpInside];
-		
-        [self addSubview:button];
-		_del = del;
+        [self initUI];
     }
     return self;
 }
 
-- (void) takePhoto:(id) sender
-{
-	[_del takePicture];
+/**
+ *
+ * override initUI if you'd like to create your own custom UI.
+ *
+ */
+- (void)initUI {
+
+    self.opaque = NO;
+    self.backgroundColor = [UIColor clearColor];
+    
+    int buttonW = 70;
+    int buttonH = 40;
+    int buttonX = self.frame.size.width - buttonW - 10;
+    int buttonY = (self.frame.size.height - buttonH) * 0.5;
+    
+    UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    button.frame = CGRectMake(buttonX, buttonY, buttonW, buttonH);
+    button.alpha = 0.7;
+    [button setTitle:@"SNAP" forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(takePhoto:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self addSubview:button];
 }
+
+- (void)takePhoto:(id)sender {
+    if([delegate respondsToSelector:@selector(takePicture)]) {
+        [delegate takePicture];
+    }	
+}
+
 @end

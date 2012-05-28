@@ -52,6 +52,8 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
+	void	setThreadedEvents(bool threadedEvents);
+
 };
 
 #endif /* OFAPPANDROIDWINDOW_H_ */

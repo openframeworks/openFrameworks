@@ -1,7 +1,7 @@
 //
 // AbstractEvent.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/AbstractEvent.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractEvent.h#3 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Definition of the AbstractEvent class.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -53,28 +53,31 @@ namespace Poco {
 
 template <class TArgs, class TStrategy, class TDelegate, class TMutex = FastMutex> 
 class AbstractEvent
-	/// An AbstractEvent is the super-class of all events. 
+	/// An AbstractEvent is the base class of all events. 
 	/// It works similar to the way C# handles notifications (aka events in C#).
-	/// Events can be used to send information to a set of observers
-	/// which are registered at the event. The type of the data is specified with
+	///
+	/// Events can be used to send information to a set of delegates
+	/// which are registered with the event. The type of the data is specified with
 	/// the template parameter TArgs. The TStrategy parameter must be a subclass 
 	/// of NotificationStrategy. The parameter TDelegate can either be a subclass of AbstractDelegate
-	/// or of PriorityAbstractDelegate. 
+	/// or of AbstractPriorityDelegate. 
 	///
 	/// Note that AbstractEvent should never be used directly. One ought to use
 	/// one of its subclasses which set the TStrategy and TDelegate template parameters
 	/// to fixed values. For most use-cases the BasicEvent template will be sufficient:
+	///
 	///     #include "Poco/BasicEvent.h"
 	///     #include "Poco/Delegate.h"
 	///
-	/// If one requires delegates to be called in the order they registered, use FIFOEvent:
-	///     #include "Poco/FIFOEvent.h"
-	///     #include "Poco/Delegate.h"
+	/// Note that as of release 1.4.2, the behavior of BasicEvent equals that of FIFOEvent,
+	/// so the FIFOEvent class is no longer necessary and provided for backwards compatibility
+	/// only.
 	///
-	/// Both FIFOEvent and BasicEvent work with a standard delegate. They allow one object to register
-	/// exactly one delegate at an event. In contrast, a PriorityDelegate comes with an attached priority value
-	/// and allows one object to register for one priority value one delegate. Note that PriorityDelegates
+	/// BasicEvent works with a standard delegate. They allow one object to register
+	/// onr or more delegates with an event. In contrast, a PriorityDelegate comes with an attached priority value
+	/// and allows one object to register for one priority value one or more delegates. Note that PriorityDelegates
 	/// only work with PriorityEvents:
+	///
 	///     #include "Poco/PriorityEvent.h"
 	///     #include "Poco/PriorityDelegate.h"
 	///
@@ -83,32 +86,43 @@ class AbstractEvent
 	///     class MyData
 	///     {
 	///     public:
-	///         Poco::BasicEvent<int> AgeChanged;
+	///         Poco::BasicEvent<int> dataChanged;
 	///         
 	///         MyData();
 	///         ...
+	///         void setData(int i);
+	///         ...
+	///     private:
+	///         int _data;
 	///     };
 	///
-	/// Throwing the event can be done either by the events notify() or notifyAsync() method:
+	/// Firing the event is done either by calling the event's notify() or notifyAsync() method:
 	///
+	///     void MyData::setData(int i)
+	///     {
+	///         this->_data = i;
+	///         dataChanged.notify(this, this->_data);
+	///     }
 	///
 	/// Alternatively, instead of notify(), operator () can be used.
 	///
-	///     void MyData::setAge(int i)
+	///     void MyData::setData(int i)
 	///     {
-	///         this->_age = i;
-	///         AgeChanged(this, this->_age);
+	///         this->_data = i;
+	///         dataChanged(this, this->_data);
 	///     }
 	///
-	/// Note that notify and notifyAsync do not catch exceptions, i.e. in case a delegate 
-	/// throws an exception, the notify is immediately aborted and the exception is thrown
+	/// Note that operator (), notify() and notifyAsync() do not catch exceptions, i.e. in case a  
+	/// delegate throws an exception, notifying is immediately aborted and the exception is propagated
 	/// back to the caller.
 	///
-	/// Delegates can register methods at the event. In the case of a BasicEvent or FIFOEvent
+	/// Delegates can register methods at the event. In the case of a BasicEvent
 	/// the Delegate template is used, in case of an PriorityEvent a PriorityDelegate is used.
-	/// Mixing of observers, e.g. using a PriorityDelegate with a BasicEvent is not possible and 
-	/// checked for during compile time.
-	/// Events require the observers to follow one of the following method signature:
+	/// Mixing of delegates, e.g. using a PriorityDelegate with a BasicEvent is not allowed and
+	/// can lead to compile-time and/or run-time errors. The standalone delegate() functions
+	/// can be used to construct Delegate objects.
+	///
+	/// Events require the observers to have one of the following method signatures:
 	///
 	///     void onEvent(const void* pSender, TArgs& args);
 	///     void onEvent(TArgs& args);
@@ -117,7 +131,7 @@ class AbstractEvent
 	///     static void onEvent(TArgs& args);
 	///
 	/// For performance reasons arguments are always sent by reference. This also allows observers
-	/// to modify the sent argument. To prevent that, use <const TArg> as template
+	/// to modify the event argument. To prevent that, use <[const TArg]> as template
 	/// parameter. A non-conformant method signature leads to compile errors.
 	///
 	/// Assuming that the observer meets the method signature requirement, it can register
@@ -134,13 +148,13 @@ class AbstractEvent
 	///         
 	///     MyController::MyController()
 	///     {
-	///         _data.AgeChanged += delegate(this, &MyController::onDataChanged);
+	///         _data.dataChanged += delegate(this, &MyController::onDataChanged);
 	///     }
 	///
 	/// In some cases it might be desirable to work with automatically expiring registrations. Simply add
 	/// to delegate as 3rd parameter a expireValue (in milliseconds):
 	///
-	///     _data.DataChanged += delegate(this, &MyController::onDataChanged, 1000);
+	///     _data.dataChanged += delegate(this, &MyController::onDataChanged, 1000);
 	///
 	/// This will add a delegate to the event which will automatically be removed in 1000 millisecs.
 	///
@@ -149,13 +163,12 @@ class AbstractEvent
 	///
 	///     MyController::~MyController()
 	///     {
-	///         _data.DataChanged -= delegate(this, &MyController::onDataChanged);
+	///         _data.dataChanged -= delegate(this, &MyController::onDataChanged);
 	///     }
 	///
-	/// Working with PriorityDelegates as similar to working with BasicEvent/FIFOEvent.Instead of ''delegate''
-	/// simply use ''priorityDelegate''.
-	///
-	/// For further examples refer to the event testsuites.
+	/// Working with PriorityDelegate's as similar to working with BasicEvent.
+	/// Instead of delegate(), the priorityDelegate() function must be used
+	/// to create the PriorityDelegate.
 {
 public:
 	AbstractEvent(): 
@@ -176,58 +189,56 @@ public:
 	}
 
 	void operator += (const TDelegate& aDelegate)
-		/// Adds a delegate to the event. If the observer is equal to an
-		/// already existing one (determined by the < operator),
-		/// it will simply replace the existing observer.
-		/// This behavior is determined by the TStrategy. Current implementations
-		/// (DefaultStrategy, FIFOStrategy) follow that guideline but future ones
-		/// can deviate.
+		/// Adds a delegate to the event. 
+		///
+		/// Exact behavior is determined by the TStrategy.
 	{
 		typename TMutex::ScopedLock lock(_mutex);
 		_strategy.add(aDelegate);
 	}
 	
 	void operator -= (const TDelegate& aDelegate)
-		/// Removes a delegate from the event. If the delegate is equal to an
-		/// already existing one is determined by the < operator.
-		/// If the observer is not found, the unregister will be ignored
+		/// Removes a delegate from the event.
+		///
+		/// If the delegate is not found, this function does nothing.
 	{
 		typename TMutex::ScopedLock lock(_mutex);
 		_strategy.remove(aDelegate);
 	}
 	
 	void operator () (const void* pSender, TArgs& args)
+		/// Shortcut for notify(pSender, args);
 	{
 		notify(pSender, args);
+	}
+	
+	void operator () (TArgs& args)
+		/// Shortcut for notify(args).
+	{
+		notify(0, args);
 	}
 
 	void notify(const void* pSender, TArgs& args)
 		/// Sends a notification to all registered delegates. The order is 
 		/// determined by the TStrategy. This method is blocking. While executing,
-		/// other objects can change the list of delegates. These changes don't
+		/// the list of delegates may be modified. These changes don't
 		/// influence the current active notifications but are activated with
-		/// the next notify. If one of the delegates throws an exception, the notify
-		/// method is immediately aborted and the exception is reported to the caller.
+		/// the next notify. If a delegate is removed during a notify(), the
+		/// delegate will no longer be invoked (unless it has already been
+		/// invoked prior to removal). If one of the delegates throws an exception, 
+		/// the notify method is immediately aborted and the exception is propagated
+		/// to the caller.
 	{
-		SharedPtr<TStrategy> ptrStrat;
-		bool enabled = false;
+		Poco::ScopedLockWithUnlock<TMutex> lock(_mutex);
 		
-		{
-			typename TMutex::ScopedLock lock(_mutex);
-			enabled = _enabled;
-			if (_enabled)
-			{
-				// thread-safeness: 
-				// copy should be faster and safer than blocking until
-				// execution ends
-				ptrStrat = new TStrategy(_strategy);
-			}
-		}
-
-		if (enabled)
-		{
-			ptrStrat->notify(pSender, args);
-		}
+		if (!_enabled) return;
+		
+		// thread-safeness: 
+		// copy should be faster and safer than blocking until
+		// execution ends
+		TStrategy strategy(_strategy);
+		lock.unlock();
+		strategy.notify(pSender, args);
 	}
 
 	ActiveResult<TArgs> notifyAsync(const void* pSender, const TArgs& args)
@@ -237,11 +248,12 @@ public:
 		/// Call activeResult.wait() to wait until the notification has ended.
 		/// While executing, other objects can change the delegate list. These changes don't
 		/// influence the current active notifications but are activated with
-		/// the next notify. If one of the delegates throws an exception, the execution
-		/// is aborted and the exception is reported to the caller.
+		/// the next notify. If a delegate is removed during a notify(), the
+		/// delegate will no longer be invoked (unless it has already been
+		/// invoked prior to removal). If one of the delegates throws an exception, 
+		/// the execution is aborted and the exception is propagated to the caller.
 	{
 		NotifyAsyncParams params(pSender, args);
-
 		{
 			typename TMutex::ScopedLock lock(_mutex);
 
@@ -254,7 +266,6 @@ public:
 			params.ptrStrat = SharedPtr<TStrategy>(new TStrategy(_strategy));
 			params.enabled  = _enabled;
 		}
-
 		ActiveResult<TArgs> result = _executeAsync(params);
 		return result;
 	}
@@ -303,7 +314,7 @@ protected:
 		bool        enabled;
 		
 		NotifyAsyncParams(const void* pSend, const TArgs& a):ptrStrat(), pSender(pSend), args(a), enabled(true)
-			/// default constructor reduces the need for TArgs to have an empty constructor, only copy constructor is needed.
+			/// Default constructor reduces the need for TArgs to have an empty constructor, only copy constructor is needed.
 		{
 		}
 	};

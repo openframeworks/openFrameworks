@@ -1,6 +1,5 @@
 #include "ofFmodSoundPlayer.h"
 
-#ifdef OF_SOUND_PLAYER_FMOD
 
 #include "ofUtils.h"
 
@@ -133,7 +132,7 @@ float * ofFmodSoundGetSpectrum(int nBands){
 ofFmodSoundPlayer::ofFmodSoundPlayer(){
 	bLoop 			= false;
 	bLoadedOk 		= false;
-	pan 			= 0.5f;
+	pan 			= 0;
 	volume 			= 1.0f;
 	internalFreq 	= 44100;
 	speed 			= 1;
@@ -218,6 +217,7 @@ void ofFmodSoundPlayer::unloadSound(){
 	if (bLoadedOk){
 		stop();						// try to stop the sound
 		if(!isStreaming)FMOD_Sound_Release(sound);
+		bLoadedOk = false;
 	}
 }
 
@@ -242,6 +242,16 @@ float ofFmodSoundPlayer::getPan(){
 }
 
 //------------------------------------------------------------
+float ofFmodSoundPlayer::getVolume(){
+	return volume;
+}
+
+//------------------------------------------------------------
+bool ofFmodSoundPlayer::isLoaded(){
+	return bLoadedOk;
+}
+
+//------------------------------------------------------------
 void ofFmodSoundPlayer::setVolume(float vol){
 	if (getIsPlaying() == true){
 		FMOD_Channel_SetVolume(channel, vol);
@@ -257,6 +267,12 @@ void ofFmodSoundPlayer::setPosition(float pct){
 	}
 }
 
+void ofFmodSoundPlayer::setPositionMS(int ms) {
+	if (getIsPlaying() == true){
+		FMOD_Channel_SetPosition(channel, ms, FMOD_TIMEUNIT_MS);
+	}
+}
+
 //------------------------------------------------------------
 float ofFmodSoundPlayer::getPosition(){
 	if (getIsPlaying() == true){
@@ -269,6 +285,19 @@ float ofFmodSoundPlayer::getPosition(){
 			pct = sampleImAt / (float)length;
 		}
 		return pct;
+	} else {
+		return 0;
+	}
+}
+
+//------------------------------------------------------------
+int ofFmodSoundPlayer::getPositionMS(){
+	if (getIsPlaying() == true){
+		unsigned int sampleImAt;
+
+		FMOD_Channel_GetPosition(channel, &sampleImAt, FMOD_TIMEUNIT_MS);
+
+		return sampleImAt;
 	} else {
 		return 0;
 	}
@@ -350,4 +379,3 @@ void ofFmodSoundPlayer::stop(){
 	FMOD_Channel_Stop(channel);
 }
 
-#endif

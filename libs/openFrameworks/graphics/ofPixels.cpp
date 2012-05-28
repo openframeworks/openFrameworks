@@ -98,6 +98,10 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, in
 
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride) {
+	if(width*channels==stride){
+		setFromPixels(newPixels,width,height,channels);
+		return;
+	}
 	allocate(width, height, channels);
 	int dstStride = width * getBytesPerPixel();
 	const unsigned char* src = (unsigned char*) newPixels;
@@ -107,6 +111,16 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 		src += stride;
 		dst += dstStride;
 	}
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
+	std::swap(pixels,pix.pixels);
+	std::swap(width, pix.width);
+	std::swap(height,pix.height);
+	std::swap(channels,pix.channels);
+	std::swap(pixelsOwner, pix.pixelsOwner);
+	std::swap(bAllocated, pix.bAllocated);
 }
 
 template<typename PixelType>
@@ -441,6 +455,68 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations){
+	if (bAllocated == false){
+		return;
+	}
+
+	if(&dst == this){
+		rotate90(nClockwiseRotations);
+		return;
+	}
+
+	// first, figure out which type of rotation we have
+	int rotation = nClockwiseRotations;
+	while (rotation < 0){
+		rotation+=4;
+	}
+	rotation %= 4;
+
+	// if it's 0, just make a copy.  if it's 2, do it by a mirror operation.
+	if (rotation == 0) {
+		dst = *this;
+		return;
+		// do nothing!
+	} else if (rotation == 2) {
+		mirrorTo(dst, true, true);
+		return;
+	}
+
+	// otherwise, we will need to do some new allocaiton.
+	dst.allocate(height,width,getImageType());
+    
+	int strideSrc = width * channels;
+	int strideDst = dst.width * channels;
+
+	if(rotation == 1){
+		PixelType * srcPixels = pixels;
+		for (int i = 0; i < height; i++){
+			PixelType * dstPixels = dst.getPixels() + (strideDst - channels*(i+1));
+			for (int j = 0; j < width; j++){
+				for (int k = 0; k < channels; k++){
+					dstPixels[k] = srcPixels[k];
+				}
+				srcPixels += channels;
+				dstPixels += strideDst;
+			}
+		}
+	} else if(rotation == 3){
+		PixelType * dstPixels = dst.pixels;
+		for (int i = 0; i < dst.height; i++){
+			PixelType * srcPixels = pixels + (strideSrc - channels*(i+1));
+			for (int j = 0; j < dst.width; j++){
+				for (int k = 0; k < channels; k++){
+					dstPixels[k] = srcPixels[k];
+				}
+				srcPixels += strideSrc;
+				dstPixels += channels;
+			}
+		}
+	}
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 
 
@@ -464,42 +540,13 @@ void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 		return;
 	}
 
-	// otherwise, we will need to do some new allocaiton.
-	int bytesPerPixel = channels;
-	PixelType * oldPixels = pixels;
-	int newWidth = height;
-	int newHeight = width;
-	PixelType * newPixels = new PixelType[newWidth*newHeight*bytesPerPixel];
-
-	if(rotation == 1){
-		for (int i = 0; i < width; i++){
-			for (int j = 0; j < height; j++){
-
-				int pixela = (j*width + i);
-				int pixelb = ((i) * newWidth + (height - j - 1));
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
-				}
-
-			}
-		}
-	} else if(rotation == 3){
-		for (int i = 0; i < width; i++){
-			for (int j = 0; j < height; j++){
-
-				int pixela = (j*width + i);
-				int pixelb = ((width-i-1) * newWidth + j);
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
-				}
-			}
-		}
-	}
-
+	ofPixels_<PixelType> newPixels;
+	rotate90To(newPixels,nClockwiseRotations);
 	delete [] pixels;
-	pixels = newPixels;
-	width = newWidth;
-	height = newHeight;
+	pixels = newPixels.pixels;
+	width = newPixels.width;
+	height = newPixels.height;
+	newPixels.pixelsOwner = false;
 
 }
 
@@ -537,6 +584,45 @@ void ofPixels_<PixelType>::mirror(bool vertically, bool horizontal){
 		// I couldn't think of a good way to do this in place.  I'm sure there is.
 		mirror(true, false);
 		mirror(false, true);
+	}
+
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal){
+	if(&dst == this){
+		mirror(vertically,horizontal);
+		return;
+	}
+
+	if (!vertically && !horizontal){
+		dst = *this;
+		return;
+	}
+
+	int bytesPerPixel = channels;
+
+	if (! (vertically && horizontal)){
+		int wToDo = horizontal ? width/2 : width;
+		int hToDo = vertically ? height/2 : height;
+
+		for (int i = 0; i < wToDo; i++){
+			for (int j = 0; j < hToDo; j++){
+
+				int pixelb = (vertically ? (height - j - 1) : j) * width + (horizontal ? (width - i - 1) : i);
+				int pixela = j*width + i;
+				for (int k = 0; k < bytesPerPixel; k++){
+					dst[pixela*bytesPerPixel + k] = pixels[pixelb*bytesPerPixel + k];
+					dst[pixelb*bytesPerPixel + k] = pixels[pixela*bytesPerPixel + k];
+
+				}
+			}
+		}
+	} else {
+		// I couldn't think of a good way to do this in place.  I'm sure there is.
+		mirrorTo(dst,true, false);
+		dst.mirror(false, true);
 	}
 
 }
@@ -616,6 +702,9 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
 //----------------------------------------------------------------------
 template<typename PixelType>
 bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMethod interpMethod){
+	if(&dst == this){
+		return true;
+	}
 
 	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel()) return false;
 
@@ -739,6 +828,13 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 	return true;
 }
 
+template class ofPixels_<char>;
 template class ofPixels_<unsigned char>;
-template class ofPixels_<float>;
+template class ofPixels_<short>;
 template class ofPixels_<unsigned short>;
+template class ofPixels_<int>;
+template class ofPixels_<unsigned int>;
+template class ofPixels_<long>;
+template class ofPixels_<unsigned long>;
+template class ofPixels_<float>;
+template class ofPixels_<double>;
