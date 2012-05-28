@@ -1,4 +1,4 @@
-package cc.openframeworks.spelltower;
+package cc.openframeworks.androidFontExample;
 
 import android.app.Activity;
 import android.os.Bundle;
