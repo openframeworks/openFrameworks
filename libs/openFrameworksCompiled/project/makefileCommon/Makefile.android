@@ -39,14 +39,14 @@ LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
 	TARGET = libs/armeabi/libOFAndroidApp.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
 	TARGET = libs/armeabi/libOFAndroidApp.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
@@ -54,6 +54,7 @@ ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	TARGET_NAME = Release_arm7
 	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
 	TARGET = libs/armeabi-v7a/libOFAndroidApp.so
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM7)
 endif
 
@@ -61,16 +62,9 @@ ifeq ($(findstring Release_neon,$(MAKECMDGOALS)),Release_neon)
 	TARGET_NAME = Release_neon
 	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	TARGET = libs/armeabi-v7a/libOFAndroidApp_neon.so
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_NEON)
 	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/android/armeabi-neon/libopenFrameworks.a
-endif
-	
-ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
-	TARGET_NAME = Debug
-	LDFLAGS += -Wl,--entry=main,--fix-cortex-a8
-	BIN_NAME = $(APPNAME)
-	TARGET = obj/$(BIN_NAME)
-	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
 ifeq ($(MAKECMDGOALS),AndroidInstall)
@@ -90,7 +84,6 @@ TestLinkAndroid: $(TARGET) afterDebugAndroid
 
 AndroidDebug:
 	$(MAKE) DebugAndroid
-	$(MAKE) TestLinkAndroid
 
 AndroidRelease:
 	$(MAKE) ReleaseAndroid
@@ -104,7 +97,6 @@ CleanAndroid:
 	rm -Rf obj
 	rm -f libs/armeabi-v7a/libOFAndroidApp.so
 	rm -f libs/armeabi/libOFAndroidApp.so
-	rm -f obj/$(APPNAME)
 	
 	
 afterDebugAndroid:$(TARGET)
