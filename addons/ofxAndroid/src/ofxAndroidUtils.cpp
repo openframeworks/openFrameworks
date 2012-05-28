@@ -122,7 +122,7 @@ int ofxAndroidProgressBox(string msg){
 		return -1;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
-	string ret = ofGetJNIEnv()->CallStaticIntMethod(javaClass,progressBox,jMsg);
+	int ret = ofGetJNIEnv()->CallStaticIntMethod(javaClass,progressBox,jMsg);
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
 	return ret;
 }
