@@ -24,6 +24,7 @@ extern "C"{
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
+static bool firstLoad=true;
 
 
 static int  sWindowWidth  = 480;
@@ -308,6 +309,10 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
+	if(firstLoad){
+		firstLoad=false;
+		return;
+	}
 	if(!surfaceDestroyed){
 		ofUnloadAllFontTextures();
 		ofPauseVideoGrabbers();
