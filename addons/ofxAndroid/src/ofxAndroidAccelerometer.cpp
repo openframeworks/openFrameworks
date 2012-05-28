@@ -13,7 +13,7 @@
 extern "C"{
 void
 Java_cc_openframeworks_OFAndroidAccelerometer_updateAccelerometer( JNIEnv*  env, jobject  thiz, jfloat x, jfloat y, jfloat z ){
-	ofxAccelerometer.update(x,y,z);
+	ofxAccelerometer.update(-x,-y,-z);
 }
 }
 
@@ -27,7 +27,7 @@ void ofxAccelerometerHandler::setup(){
 		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
 		return;
 	}
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroid");
+	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
@@ -39,7 +39,7 @@ void ofxAccelerometerHandler::setup(){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid.setupAccelerometer method");
 		return;
 	}
-	env->CallStaticObjectMethod(javaClass,setupAccelerometer);
+	env->CallStaticVoidMethod(javaClass,setupAccelerometer);
 }
 
 void ofxAccelerometerHandler::exit(){

@@ -1,39 +1,32 @@
 #include "ofColor.h"
 #include "ofConstants.h"
 
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::gray = ofColor( 128,128,128 );
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray(limit() / 2, limit() / 2, limit() / 2);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white(limit(), limit(), limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::red(limit(), 0, 0);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::green(0, limit(), 0);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::blue(0, 0, limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::cyan(0, limit(), limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::magenta(limit(), 0, limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yellow(limit(), limit(), 0);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::black(0, 0, 0);
 
 template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::white = ofColor( 255,255,255 );
+float ofColor_<PixelType>::limit() {
+	return numeric_limits<PixelType>::max();
+}
 
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::red = ofColor( 255,0,0 );
-
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::green = ofColor( 0,255,0 );
-
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::blue = ofColor( 0,0,255 );
-
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::cyan = ofColor( 0,255,255 );
-
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::magenta = ofColor( 255,0,255 );
-
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::yellow = ofColor( 255,255,0 );
-
-template<typename PixelType>
-const ofColor_<PixelType> ofColor_<PixelType>::black = ofColor( 0,0,0 );
+template<>
+float ofColor_<float>::limit() {
+	return 1.f;
+}
 
 template<typename PixelType>
 ofColor_<PixelType>::ofColor_ (){
-	r = 255.0f;
-	g = 255.0f;
-	b = 255.0f;
-	a = 255.0f;
+	r = limit();
+	g = limit();
+	b = limit();
+	a = limit();
 }
 
 template<typename PixelType>
@@ -121,29 +114,33 @@ void ofColor_<PixelType>::setHex (int hexColor, float alpha){
 
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::clamp (){
-	r = CLAMP(r, 0.0f, 255.f);
-	g = CLAMP(g, 0.0f, 255.f);
-	b = CLAMP(b, 0.0f, 255.f);
-	a = CLAMP(a, 0.0f, 255.f);
+	r = CLAMP(r, 0.0f, limit());
+	g = CLAMP(g, 0.0f, limit());
+	b = CLAMP(b, 0.0f, limit());
+	a = CLAMP(a, 0.0f, limit());
 	return *this;
 }
 
 
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::invert() {
-	r = 255.f - r;
-	g = 255.f - g;
-	b = 255.f - b;
+	r = limit() - r;
+	g = limit() - g;
+	b = limit() - b;
 	return *this;
 }
 
 
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::normalize() {
-	float brightness = getBrightness();
-	r = 255.f * (r / brightness);
-	g = 255.f * (g / brightness);
-	b = 255.f * (b / brightness);
+	float brightness = getBrightness(); 
+    // avoid division by 0
+    if ( brightness > 0 ) 
+    {
+        r = limit() * (r / brightness);
+        g = limit() * (g / brightness);
+        b = limit() * (b / brightness);
+    }
 	return *this;
 }
 
@@ -252,7 +249,7 @@ void ofColor_<PixelType>::getHsb(float& hue, float& saturation, float& brightnes
 	if(max == min) { // grays
 		hue = 0.f;
 		saturation = 0.f;
-		brightness = 255.f * max;
+		brightness = max;
 		return;
 	}
 	
@@ -266,8 +263,8 @@ void ofColor_<PixelType>::getHsb(float& hue, float& saturation, float& brightnes
 	} else {
 		hueSixth = 4.f + (r - g) / (max - min);
 	}
-	hue = 255.f * hueSixth / 6.f;
-	saturation = 255.f * (max - min) / max;
+	hue = limit() * hueSixth / 6.f;
+	saturation = limit() * (max - min) / max;
 	brightness = max;
 }
 
@@ -276,7 +273,7 @@ template<typename PixelType>
 void ofColor_<PixelType>::setHue (float hue) {
 	float oldHue, saturation, brightness;
 	getHsb(oldHue, saturation, brightness);
-	setHsb(hue, saturation, brightness);
+	setHsb(hue, saturation, brightness, a );
 }
 
 
@@ -284,7 +281,7 @@ template<typename PixelType>
 void ofColor_<PixelType>::setSaturation (float saturation) {
 	float hue, oldSaturation, brightness;
 	getHsb(hue, oldSaturation, brightness);
-	setHsb(hue, saturation, brightness);
+	setHsb(hue, saturation, brightness, a );
 }
 
 
@@ -292,30 +289,21 @@ template<typename PixelType>
 void ofColor_<PixelType>::setBrightness (float brightness) {
 	float hue, saturation, oldBrightness;
 	getHsb(hue, saturation, oldBrightness);
-	setHsb(hue, saturation, brightness);
+	setHsb(hue, saturation, brightness, a );
 }
 
 
 template<typename PixelType>
-void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
-	a = alpha;
-	setHsb(hue, saturation, brightness);
-}
-
-/*
-	setHsb() breaks the "always override alpha" model because it's needed by setHue(),
-	setSaturation(), and setBrightness() -- which shouldn't modify the alpha.
-*/
-
-template<typename PixelType>
-void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness) {
+void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha ) {
+	saturation = ofClamp(saturation, 0, limit());
+	brightness = ofClamp(brightness, 0, limit());
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays
 		set(brightness);
 	} else {
-		float hueSix = hue * 6. / 255.;
-		float saturationNorm = saturation / 255.;
+		float hueSix = hue * 6. / limit();
+		float saturationNorm = saturation / limit();
 		int hueSixCategory = (int) floorf(hueSix);
 		float hueSixRemainder = hueSix - hueSixCategory;
 		unsigned char pv = (unsigned char) ((1.f - saturationNorm) * brightness);
@@ -354,6 +342,9 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness) 
 				break;
 		}
 	}
+    
+    // finally assign the alpha
+    a = alpha;
 }
 
 
@@ -381,7 +372,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator = (float const & val){
 	r = val;
 	g = val;
 	b = val;
-	a = 255.0f;
+	a = limit();
 	return *this;
 }
 
@@ -464,7 +455,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator -= (float const & val){
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator * (ofColor_<PixelType> const & color) const{
-	return ofColor_<PixelType>( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f));
+	return ofColor_<PixelType>( r*(color.r/limit()), g*(color.g/limit()), b*(color.b/limit()));
 }
 
 
@@ -477,9 +468,9 @@ ofColor_<PixelType> ofColor_<PixelType>::operator * (float const & val) const{
 
 template<typename PixelType>
 ofColor_<PixelType> & ofColor_<PixelType>::operator *= (ofColor_<PixelType> const & color){
-	r *= (color.r/255.0f);
-	g *= (color.g/255.0f);
-	b *= (color.b/255.0f);
+	r *= (color.r/limit());
+	g *= (color.g/limit());
+	b *= (color.b/limit());
 	return *this;
 }
 
@@ -496,7 +487,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator *= (float const & val){
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator / (ofColor_<PixelType> const & color) const{
-	return ofColor_<PixelType>( color.r!=0.0f ? r/(color.r/255.0f) : r , color.g!=0.0f ? g/(color.g/255.0f) : g, color.b!=0.0f ? b/(color.b/255.0f) : b );
+	return ofColor_<PixelType>( color.r!=0.0f ? r/(color.r/limit()) : r , color.g!=0.0f ? g/(color.g/limit()) : g, color.b!=0.0f ? b/(color.b/limit()) : b );
 }
 
 
@@ -511,9 +502,9 @@ ofColor_<PixelType> ofColor_<PixelType>::operator / (float const & val) const{
 
 template<typename PixelType>
 ofColor_<PixelType> & ofColor_<PixelType>::operator /= (ofColor_<PixelType> const & color){
-	if (color.r!=0.0f) r /= (color.r/255.0f);
-	if (color.g!=0.0f) g /= (color.g/255.0f);
-	if (color.b!=0.0f) b /= (color.b/255.0f);
+	if (color.r!=0.0f) r /= (color.r/limit());
+	if (color.g!=0.0f) g /= (color.g/limit());
+	if (color.b!=0.0f) b /= (color.b/limit());
 	return *this;
 }
 
@@ -566,6 +557,13 @@ PixelType & ofColor_<PixelType>::operator [] (int n){
 	}
 }
 
+template class ofColor_<char>;
 template class ofColor_<unsigned char>;
-template class ofColor_<float>;
+template class ofColor_<short>;
 template class ofColor_<unsigned short>;
+template class ofColor_<int>;
+template class ofColor_<unsigned int>;
+template class ofColor_<long>;
+template class ofColor_<unsigned long>;
+template class ofColor_<float>;
+template class ofColor_<double>;

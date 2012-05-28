@@ -1,12 +1,9 @@
-/***********************************************************************
- 
- ofxiPhone.h
+/* -----------------------------------------------------------------------
+ ofxiPhoneExtras.h
  
  Contains core functionality for iPhone / iPod Touch
  Any .cpp files that include this needs to be renamed to .mm (to support Objective C++)
-
- 
- /***********************************************************************
+ -----------------------------------------------------------------------
  
  Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
  *** The Mega Super Awesome Visuals Company ***
@@ -35,7 +32,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
+ * ----------------------------------------------------------------------- */ 
 
 #pragma once
 
@@ -55,7 +52,8 @@
 enum ofxiPhoneDeviceType {
 	OFXIPHONE_DEVICE_IPHONE,
 	OFXIPHONE_DEVICE_IPODTOUCH,
-	OFXIPHONE_DEVICE_IPAD
+	OFXIPHONE_DEVICE_IPAD,
+    OFXIPHONE_UNKNOWN_DEVICE
 };
 
 
@@ -104,6 +102,8 @@ ofAppiPhoneWindow* ofxiPhoneGetOFWindow();
 // return application delegate
 ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate();
 
+// return iphone view controller.
+ofxiPhoneViewController *ofxiPhoneGetViewController();
 
 // brings the OpenGL view to the front of any other UIViews
 // the OpenGL view will receive touchXXXXX events, but other UIViews will not
@@ -201,6 +201,7 @@ string ofxiPhoneGetDocumentsDirectory();
 #define iPhoneGetGLView ofxiPhoneGetGLView
 #define iPhoneGetOFWindow ofxiPhoneGetOFWindow
 #define iPhoneGetAppDelegate ofxiPhoneGetAppDelegate
+#define iPhoneGetViewController ofxiPhoneGetViewController
 #define iPhoneSendGLViewToFront ofxiPhoneSendGLViewToFront
 #define iPhoneSendGLViewToBack ofxiPhoneSendGLViewToBack
 #define iPhoneSetGLViewTransparent ofxiPhoneSetGLViewTransparent

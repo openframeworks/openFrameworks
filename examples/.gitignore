@@ -1,0 +1,54 @@
+android/*/test link
+android/*/gen
+android/*/res/raw
+libOFAndroidApp.so
+libOFAndroidApp_neon.so
+gdbserver
+gdb.setup
+libneondetection.so
+Application.mk
+Android.mk
+
+*/*/bin/*
+!*/*/bin/data/
+
+# IDE-specific ignore patterns
+
+#XCode
+/*/*/*.xcodeproj
+/*/*/Project.xcconfig
+/*/*/openFrameworks-Info.plist
+/*/*/ofxiphone-Info.plist
+/*/*/iPhone_Prefix.pch
+/*/*/*/*/Default.png
+/*/*/*/*/Icon.png
+
+#Code::Blocks
+/*/*/*.cbp
+/*/*/*.workspace
+
+#Visual Studio
+/*/*/*.sln
+/*/*/*.vcxproj
+/*/*/*.vcxproj.user
+/*/*/*.vcxproj.filters
+
+#Eclipse
+/*/*/.cproject
+/*/*/.project
+/*/*/.settings/
+
+# OS-specific ignore patterns
+
+#Linux
+/*/*/Makefile
+/*/*/config.make
+# Leave Android files in until project generation works
+!/android/*/Makefile
+!/android/*/config.make
+
+#Android
+/*/*/test link
+!/android/*/.cproject
+!/android/*/.project
+!/android/*/.settings

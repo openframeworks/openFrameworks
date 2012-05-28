@@ -1,7 +1,7 @@
 //
 // NamedEvent.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/NamedEvent.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NamedEvent.h#2 $
 //
 // Library: Foundation
 // Package: Processes
@@ -47,6 +47,8 @@
 #include "Poco/NamedEvent_WIN32U.h"
 #elif defined(POCO_OS_FAMILY_WINDOWS)
 #include "Poco/NamedEvent_WIN32.h"
+#elif defined(POCO_ANDROID)
+#include "Poco/NamedEvent_Android.h"
 #elif defined(POCO_OS_FAMILY_UNIX)
 #include "Poco/NamedEvent_UNIX.h"
 #else

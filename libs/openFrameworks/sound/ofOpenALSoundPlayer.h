@@ -62,12 +62,17 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		void setLoop(bool bLp);
 		void setMultiPlay(bool bMp);
 		void setPosition(float pct); // 0 = start, 1 = end;
+		void setPositionMS(int ms);
+
 
 		float getPosition();
+		int getPositionMS();
 		bool getIsPlaying();
 		float getSpeed();
 		float getPan();
+        float getVolume();
 		bool getIsPaused();
+		bool isLoaded();
 
 		static void initialize();
 		static void close();

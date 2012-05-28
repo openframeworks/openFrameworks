@@ -9,24 +9,13 @@
 #include "Poco/DateTimeFormatter.h"
 
 #include <cctype> // for toupper
-#include <algorithm>
 
 
 
 #ifdef TARGET_WIN32
-	#include <algorithm> // for std::replace
 	#ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
     #endif
-#endif
-
-
-#ifdef TARGET_ANDROID
-// this is needed to be able to use poco 1.3,
-// will go away as soon as i compile poco 1.4
-namespace Poco{
-const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-};
 #endif
 
 
@@ -205,15 +194,23 @@ void ofDisableDataPath(){
 
 //--------------------------------------------------
 //use ofSetDataPathRoot() to override this
+static string & dataPathRoot(){
 #if defined TARGET_OSX
-	static string dataPathRoot = "../../../data/";
+	static string * dataPathRoot = new string("../../../data/");
 #elif defined TARGET_ANDROID
-	static string dataPathRoot = "sdcard/";
+	static string * dataPathRoot = new string("sdcard/");
+#elif defined(TARGET_LINUX)
+	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 #else
-	static string dataPathRoot = "data/";
+	static string * dataPathRoot = new string("data/");
 #endif
+	return *dataPathRoot;
+}
 
-static bool isDataPathSet = false;
+static bool & isDataPathSet(){
+	static bool * dataPathSet = new bool(false);
+	return * dataPathSet;
+}
 
 //--------------------------------------------------
 void ofSetDataPathRoot(string newRoot){
@@ -251,22 +248,22 @@ void ofSetDataPathRoot(string newRoot){
 		#endif
 	#endif
 	
-	dataPathRoot = newRoot;
-	isDataPathSet = true;
+	dataPathRoot() = newRoot;
+	isDataPathSet() = true;
 }
 
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
 	
-	if (!isDataPathSet)
-		ofSetDataPathRoot(dataPathRoot);
+	if (!isDataPathSet())
+		ofSetDataPathRoot(dataPathRoot());
 	
 	if( enableDataPath ){
 
 		//check if absolute path has been passed or if data path has already been applied
 		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot.length()) != dataPathRoot)){
-			path = dataPathRoot+path;
+		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot().length()) != dataPathRoot())){
+			path = dataPathRoot()+path;
 		}
 
 		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
@@ -680,3 +677,49 @@ void ofSaveFrame(bool bUseViewport){
 	saveImageCounter++;
 }
 
+//--------------------------------------------------
+string ofSystem(string command){
+	FILE * ret = NULL;
+#ifdef TARGET_WIN32
+	 ret = _popen(command.c_str(),"r");
+#else 
+	ret = popen(command.c_str(),"r");
+#endif
+	
+	string strret;
+	char c;
+
+	if (ret == NULL){
+		ofLogError() << "ofSystem: error opening return file";
+	}else{
+		do {
+		      c = fgetc (ret);
+		      strret += c;
+		} while (c != EOF);
+		fclose (ret);
+	}
+
+	return strret;
+}
+
+//--------------------------------------------------
+ofTargetPlatform ofGetTargetPlatform(){
+#ifdef TARGET_LINUX
+	if(ofSystem("uname -m").find("x86_64")==0)
+		return OF_TARGET_LINUX64;
+	else
+		return OF_TARGET_LINUX;
+#elif defined(TARGET_OSX)
+	return OF_TARGET_OSX;
+#elif defined(TARGET_WIN32)
+	#if (_MSC_VER)
+		return OF_TARGET_WINVS;
+	#else
+		return OF_TARGET_WINGCC;
+	#endif
+#elif defined(TARGET_ANDROID)
+	return OF_TARGET_ANDROID;
+#elif defined(TARGET_OF_IPHONE)
+	return OF_TARGET_IPHONE;
+#endif
+}

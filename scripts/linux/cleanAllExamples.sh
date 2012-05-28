@@ -1,26 +1,28 @@
 #!/bin/bash
 
 #careful...
+cd ../../examples
 
-cd ../../apps/examples
-
-for example in $( ls . )
+for category in $( ls . )
 do
-echo "-----------------------------------------------------------------"
-echo "cleaning " + $example
-cd $example
-rm -rf obj
-rm -rf *.layout
-rm -rf *.backup
-rm -rf *.depend
-rm *~
-cd bin
-rm -rf libs
-rm -rf *.sh
-rm $example
-rm $example"_debug"
-cd ../
-cd ../
-echo "-----------------------------------------------------------------"
-echo ""
+    if [ "$category" = "android" -o "$category" = "ios" ]; then
+            continue
+    fi
+    cd $category
+    for example in $( ls . )
+    do
+        echo "-----------------------------------------------------------------"
+        echo "cleaning " + $example
+        cd $example
+	make clean
+        rm -rf obj 2> /dev/null
+        rm -rf *.layout 2> /dev/null
+        rm -rf *.backup 2> /dev/null
+        rm -rf *.depend 2> /dev/null
+        rm *~ 2> /dev/null
+        cd ..
+        echo "-----------------------------------------------------------------"
+        echo ""
+    done
+    cd ..
 done

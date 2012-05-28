@@ -30,6 +30,7 @@ void ofx3DModelLoader::loadModel(string modelName, float scale){
 	string ext = getExtension( modelName );
 	if( ext == "3ds" || ext == "3DS" ){	
 		model = new model3DS();
+        ofLog(OF_LOG_VERBOSE, "ofx3DModelLoader: Loading Model " + modelName);
 		model->loadModel( modelName.c_str(), scale);
 	}
 	
@@ -73,7 +74,6 @@ void ofx3DModelLoader::setRotation(int which, float angle, float rot_x, float ro
 
 //-------------------------------------------
 void ofx3DModelLoader::draw(){
-
     glPushMatrix();
         glTranslatef(pos.x, pos.y, pos.z);
         glScalef(scale.x, scale.y, scale.z);
@@ -82,8 +82,10 @@ void ofx3DModelLoader::draw(){
         }
 
         glShadeModel(GL_SMOOTH);
-		if( model->hasTexture)glEnable(GL_TEXTURE_2D);
-            model->draw();
-        if( model->hasTexture)glDisable(GL_TEXTURE_2D);
+		if( model->hasTexture)
+			glEnable(GL_TEXTURE_2D);
+        model->draw();
+        if( model->hasTexture)
+			glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 }

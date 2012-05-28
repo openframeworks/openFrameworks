@@ -28,6 +28,7 @@ static int			nFramesForFPS;
 static int			nFrameCount;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
+static bool			bDoubleBuffered; 
 
 
 static bool			bFrameRateSet;
@@ -209,6 +210,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	lastFrameTime		= 0.0;
 	displayString		= "";
 	orientation			= OF_ORIENTATION_DEFAULT;
+	bDoubleBuffered = true; // LIA
 
 }
 
@@ -219,6 +221,13 @@ ofAppGlutWindow::ofAppGlutWindow(){
  void ofAppGlutWindow::setGlutDisplayString(string displayStr){
 	displayString = displayStr;
  }
+
+
+void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
+	bDoubleBuffered = _bDoubleBuffered;
+}
+
+
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
@@ -231,7 +240,11 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	if( displayString != ""){
 		glutInitDisplayString( displayString.c_str() );
 	}else{
-		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		if(bDoubleBuffered){  
+			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		}else{
+			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
+		}
 	}
 
 	windowMode = screenMode;
@@ -295,6 +308,7 @@ void ofAppGlutWindow::initializeWindow(){
     glutSpecialUpFunc(special_key_up_cb);
 
     glutReshapeFunc(resize_cb);
+	glutEntryFunc(entry_cb);
 
 #ifdef TARGET_OSX
 	glutDragEventFunc(dragEvent);
@@ -402,12 +416,20 @@ void ofAppGlutWindow::setWindowShape(int w, int h){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::hideCursor(){
-	glutSetCursor(GLUT_CURSOR_NONE);
+	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
+		 CGDisplayHideCursor(NULL);
+	#else
+		glutSetCursor(GLUT_CURSOR_NONE);
+	#endif
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::showCursor(){
-	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
+		 CGDisplayShowCursor(NULL);
+	#else
+		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+	#endif
 }
 
 //------------------------------------------------------------
@@ -497,6 +519,15 @@ void ofAppGlutWindow::display(void){
 
 				#ifdef TARGET_OSX
 					SetSystemUIMode(kUIModeAllHidden,NULL);
+					#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
+						if( nFrameCount <= 10 ){  //is this long enough? too long? 
+							ProcessSerialNumber psn;							
+							OSErr err = GetCurrentProcess( &psn );
+							if ( err == noErr ){
+								SetFrontProcess( &psn );
+							}
+						}
+					#endif
 				#endif
 
 			}else if( windowMode == OF_WINDOW ){
@@ -548,11 +579,15 @@ void ofAppGlutWindow::display(void){
         if (nFramesSinceWindowResized < 3){
         	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
         } else {
-            if (nFrameCount < 3 || nFramesSinceWindowResized < 3)    glutSwapBuffers();
+            if ( (nFrameCount < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
             else                                                     glFlush();
         }
     } else {
-        glutSwapBuffers();
+        if(bDoubleBuffered){
+			glutSwapBuffers();
+		} else{
+			glFlush();
+		}
     }
     #else
 		if (bClearAuto == false){
@@ -561,7 +596,11 @@ void ofAppGlutWindow::display(void){
 				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 			}
 		}
-        glutSwapBuffers();
+		if(bDoubleBuffered){
+			glutSwapBuffers();
+		} else{
+			glFlush();
+		}
     #endif
 
     nFramesSinceWindowResized++;
@@ -729,4 +768,10 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 	ofNotifyWindowResized(w, h);
 
 	nFramesSinceWindowResized = 0;
+}
+
+void ofAppGlutWindow::entry_cb( int state ) {
+	
+	ofNotifyWindowEntry( state );
+	
 }

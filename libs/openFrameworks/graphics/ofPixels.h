@@ -41,6 +41,7 @@ public:
 	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
 	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
+	void swap(ofPixels_<PixelType> & pix);
 
 	//From ofPixelsUtils
 	// crop to a new width and height, this reallocates memory.
@@ -51,6 +52,8 @@ public:
 
 	// crop to a new width and height, this reallocates memory.
 	void rotate90(int nClockwiseRotations);
+	void rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations);
+	void mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal);
 	void mirror(bool vertically, bool horizontal);
 	bool resize(int dstWidth, int dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);	
 	bool resizeTo(ofPixels_<PixelType> & dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);

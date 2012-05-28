@@ -1,7 +1,7 @@
 //
 // AbstractDelegate.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/AbstractDelegate.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractDelegate.h#4 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the AbstractDelegate template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -48,20 +48,15 @@ namespace Poco {
 
 template <class TArgs> 
 class AbstractDelegate
-	/// Interface for Delegate and Expire
-	/// Very similar to AbstractPriorityDelegate but having two separate files (no inheritance)
-	/// allows one to have compile-time checks when registering an observer
-	/// instead of run-time checks.
+	/// Base class for Delegate and Expire.
 {
 public:
-	AbstractDelegate(void* pTarget): _pTarget(pTarget)
+	AbstractDelegate()
 	{
-		poco_assert_dbg (_pTarget != 0);
 	}
 
-	AbstractDelegate(const AbstractDelegate& del): _pTarget(del._pTarget)
+	AbstractDelegate(const AbstractDelegate& del)
 	{
-		poco_assert_dbg (_pTarget != 0);
 	}
 
 	virtual ~AbstractDelegate() 
@@ -69,24 +64,25 @@ public:
 	}
 
 	virtual bool notify(const void* sender, TArgs& arguments) = 0;
-		/// Returns false, if the Delegate is no longer valid, thus indicating an expire.
+		/// Invokes the delegate's callback function.
+		/// Returns true if successful, or false if the delegate
+		/// has been disabled or has expired.
+
+	virtual bool equals(const AbstractDelegate& other) const = 0;
+		/// Compares the AbstractDelegate with the other one for equality.
 
 	virtual AbstractDelegate* clone() const = 0;
-		/// Returns a deep-copy of the AbstractDelegate
+		/// Returns a deep copy of the AbstractDelegate.
 
-	bool operator < (const AbstractDelegate<TArgs>& other) const
-		/// For comparing AbstractDelegates in a collection.
+	virtual void disable() = 0;
+		/// Disables the delegate, which is done prior to removal.
+		
+	virtual const AbstractDelegate* unwrap() const
+		/// Returns the unwrapped delegate. Must be overridden by decorators
+		/// like Expire.
 	{
-		return _pTarget < other._pTarget;
+		return this;
 	}
-
-	void* target() const
-	{
-		return _pTarget;
-	}
-
-protected:
-	void* _pTarget;
 };
 
 

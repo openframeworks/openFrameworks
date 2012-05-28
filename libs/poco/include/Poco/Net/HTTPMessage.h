@@ -1,7 +1,7 @@
 //
 // HTTPMessage.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPMessage.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPMessage.h#3 $
 //
 // Library: Net
 // Package: HTTP
@@ -65,16 +65,35 @@ public:
 	const std::string& getVersion() const;
 		/// Returns the HTTP version for this message.
 		
-	void setContentLength(int length);
+	void setContentLength(std::streamsize length);
 		/// Sets the Content-Length header.
 		///
 		/// If length is UNKNOWN_CONTENT_LENGTH, removes
 		/// the Content-Length header.
 		
-	int getContentLength() const;
+	std::streamsize getContentLength() const;
 		/// Returns the content length for this message,
 		/// which may be UNKNOWN_CONTENT_LENGTH if
 		/// no Content-Length header is present.
+
+#if defined(POCO_HAVE_INT64)	
+	void setContentLength64(Poco::Int64 length);
+		/// Sets the Content-Length header.
+		///
+		/// If length is UNKNOWN_CONTENT_LENGTH, removes
+		/// the Content-Length header.
+		///
+		/// In contrast to setContentLength(), this method takes
+		/// a 64-bit integer as content length.
+
+	Poco::Int64 getContentLength64() const;
+		/// Returns the content length for this message,
+		/// which may be UNKNOWN_CONTENT_LENGTH if
+		/// no Content-Length header is present.
+		///
+		/// In contrast to getContentLength(), this method
+		/// always returns a 64-bit integer for content length.
+#endif // defined(POCO_HAVE_INT64)
 
 	void setTransferEncoding(const std::string& transferEncoding);
 		/// Sets the transfer encoding for this message.

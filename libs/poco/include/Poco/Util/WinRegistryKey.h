@@ -1,7 +1,7 @@
 //
 // WinRegistryKey.h
 //
-// $Id: //poco/1.4/Util/include/Poco/Util/WinRegistryKey.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/WinRegistryKey.h#2 $
 //
 // Library: Util
 // Package: Windows
@@ -67,7 +67,7 @@ public:
 		REGT_DWORD = 4
 	};
 
-	WinRegistryKey(const std::string& key, bool readOnly = false);
+	WinRegistryKey(const std::string& key, bool readOnly = false, REGSAM extraSam = 0);
 		/// Creates the WinRegistryKey.
 		///
 		/// The key must start with one of the root key names
@@ -76,13 +76,19 @@ public:
 		/// If readOnly is true, then only read access to the registry
 		/// is available and any attempt to write to the registry will
 		/// result in an exception.
+		///
+		/// extraSam is used to pass extra flags (in addition to KEY_READ and KEY_WRITE)
+		/// to the samDesired argument of RegOpenKeyEx() or RegCreateKeyEx().
 
-	WinRegistryKey(HKEY hRootKey, const std::string& subKey, bool readOnly = false);
+	WinRegistryKey(HKEY hRootKey, const std::string& subKey, bool readOnly = false, REGSAM extraSam = 0);
 		/// Creates the WinRegistryKey.
 		///
 		/// If readOnly is true, then only read access to the registry
 		/// is available and any attempt to write to the registry will
 		/// result in an exception.
+		///
+		/// extraSam is used to pass extra flags (in addition to KEY_READ and KEY_WRITE)
+		/// to the samDesired argument of RegOpenKeyEx() or RegCreateKeyEx().
 
 	~WinRegistryKey();
 		/// Destroys the WinRegistryKey.
@@ -162,6 +168,7 @@ private:
 	std::string _subKey;
 	HKEY        _hKey;
 	bool        _readOnly;
+	REGSAM      _extraSam;
 };
 
 

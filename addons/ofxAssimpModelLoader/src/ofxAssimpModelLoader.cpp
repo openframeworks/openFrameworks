@@ -138,7 +138,7 @@ ofxAssimpModelLoader::ofxAssimpModelLoader(){
 
 //------------------------------------------
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
-
+	normalizeFactor = ofGetWidth() / 2.0;
 
     // if we have a model loaded, unload the fucker.
     if(scene != NULL){
@@ -187,6 +187,8 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
 
 //-------------------------------------------
 bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
+	normalizeFactor = ofGetWidth() / 2.0;
+
 	// only ever give us triangles.
 	aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
 	aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
@@ -227,6 +229,11 @@ void ofxAssimpModelLoader::createEmptyModel(){
 	scene = new aiScene;
 }
 
+
+void ofxAssimpModelLoader::setNormalizationFactor(float factor){
+	normalizeFactor = factor;
+}
+
 //-------------------------------------------
 void ofxAssimpModelLoader::calculateDimensions(){
 	if(!scene) return;
@@ -242,7 +249,7 @@ void ofxAssimpModelLoader::calculateDimensions(){
 	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
 	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
 	normalizedScale = 1.f / normalizedScale;
-	normalizedScale *= ofGetWidth() / 2.0;
+	normalizedScale *= normalizeFactor;
 }
 
 //-------------------------------------------
@@ -1007,6 +1014,49 @@ float ofxAssimpModelLoader::getNormalizedScale(){
 //-------------------------------------------
 ofPoint ofxAssimpModelLoader::getScale(){
 	return scale;
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getSceneMin(bool bScaled ){
+	ofPoint sceneMin(scene_min.x, scene_min.y, scene_min.z);
+	if( bScaled ){
+		return sceneMin * scale;
+	}else{
+		return sceneMin;
+	}
+}
+
+//-------------------------------------------
+ofPoint	ofxAssimpModelLoader::getSceneMax(bool bScaled ){
+	ofPoint sceneMax(scene_max.x, scene_max.y, scene_max.z);
+	if( bScaled ){
+		return sceneMax * scale;
+	}else{
+		return sceneMax;
+	}
+}
+
+//-------------------------------------------
+int ofxAssimpModelLoader::getNumRotations(){
+	return rotAngle.size();
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getRotationAxis(int which){
+	if(rotAxis.size() > which){
+		return rotAxis[which];
+	}else{
+		return ofPoint();
+	}
+}
+
+//-------------------------------------------
+float ofxAssimpModelLoader::getRotationAngle(int which){
+	if(rotAngle.size() > which){
+		return rotAngle[which];
+	}else{
+		return 0.0;
+	}
 }
 
 //-------------------------------------------

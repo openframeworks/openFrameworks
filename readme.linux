@@ -63,24 +63,36 @@ Also if you have problems or manage to install oF in any other distribution
 please post in the forums so we can add it to the next release.
 
 
-c) createProjects.py
+c) projectGenerator
 --------------------
 
-this is a python script that will make your life easier when creating
-projects or adding addons to existing ones.
+this is an openFrameworks application that will make your life easier when 
+creating projects or adding addons to existing ones.
+
+you'll need to compile it before being able to use it. in a terminal:
+
+    cd OF_ROOT/scripts/projectGenerator
+    make
+    
+then copy the application to /usr/bin so you can use it from anywhere:
+
+    sudo cp bin/projectGenerator /usr/bin
 
 to create a new openFrameworks project, or update an already existing from a 
 console do:
 
-    cd OF_ROOT    (wherever you have uncompressed OF)
-    scripts/linux/createProjects.py project_path
+    cd OF_ROOT/apps    (wherever you have uncompressed OF)
+    projectGenerator myApps/projectName
 
 to add addons to a project just add the name of the addon to the addons.make 
-file in the root folder of the project
+file in the root folder of the project and run the projectGenerator again passing
+the path to update the codeblocks project
+
 
 d) wizard
----------
-you can also install a codeblocks wizard to create new projects, check the
+---------- 	  	
+you can also install a codeblocks wizard to create new projects, check the	
+
 instructions in scripts/linux/codeblocks_wizard
 
 
