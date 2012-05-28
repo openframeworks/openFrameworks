@@ -31,7 +31,7 @@ INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 
 
 LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)"
-SYSTEMLIBS +=  -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/libgnustl_static.a
+SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/libgnustl_static.a -lgcc 
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 
 
@@ -152,11 +152,11 @@ AndroidInstall:
 	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
 	if [ -d bin/classes ]; then rm -r bin/classes; fi
-	if [ -d bin/classes.dex ]; then rm bin/classes.dex; fi
-	if [ -d bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
-	if [ -d bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
-	if [ -d bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
-	if [ -d bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
+	if [ -f bin/classes.dex ]; then rm bin/classes.dex; fi
+	if [ -f bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
+	if [ -f bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
+	if [ -f bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
+	if [ -f bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
