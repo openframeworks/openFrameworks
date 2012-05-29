@@ -205,16 +205,6 @@ cv::name(xMat, yMat, resultMat);\
 		warpPerspective(srcMat, dstMat, transform, dstMat.size(), flags);
 	}
 	
-	// kind of obscure, draws filled polygons on the CPU
-	template <class D>
-	void fillPoly(vector<cv::Point>& points, D& dst) {
-		cv::Mat dstMat = toCv(dst);
-		const cv::Point* ppt[1] = { &(points[0]) };
-		int npt[] = { points.size() };
-		dstMat.setTo(Scalar(0));
-		fillPoly(dstMat, ppt, npt, 1, Scalar(255));
-	}
-	
 	template <class S, class D>
 	void resize(S& src, D& dst, int interpolation = INTER_LINEAR) { // also: INTER_NEAREST, INTER_AREA, INTER_CUBIC, INTER_LANCZOS4
 		Mat srcMat = toCv(src), dstMat = toCv(dst);
@@ -226,11 +216,31 @@ cv::name(xMat, yMat, resultMat);\
 	cv::RotatedRect minAreaRect(const ofPolyline& polyline);
 	cv::RotatedRect fitEllipse(const ofPolyline& polyline);
 	
+	// kind of obscure function, draws filled polygons on the CPU
+	template <class D>
+	void fillPoly(vector<cv::Point>& points, D& dst) {
+		cv::Mat dstMat = toCv(dst);
+		const cv::Point* ppt[1] = { &(points[0]) };
+		int npt[] = { points.size() };
+		dstMat.setTo(Scalar(0));
+		fillPoly(dstMat, ppt, npt, 1, Scalar(255));
+	}
+	
+	// if you're doing the same rotation multiple times, it's better to precompute
+	// the displacement and use remap.
+	template <class S, class D>
+	void rotate(S& src, D& dst, double angle, ofColor fill = ofColor::black, int interpolation = INTER_LINEAR) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		Point2f center(srcMat.rows / 2, srcMat.cols / 2);
+		Mat rotationMatrix = getRotationMatrix2D(center, angle, 1);
+		warpAffine(srcMat, dstMat, rotationMatrix, srcMat.size(), interpolation, BORDER_CONSTANT, toCv(fill));
+	}
+	
 	// older wrappers, need to be templated..	
 	// not sure if these three need to be templated. convexHull returning an
 	// ofPolyline when given an ofPolyline is the key factor...
 	
-	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
 	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
 	void autothreshold(ofImage& original, ofImage& thresh, bool invert = false);
 	void autothreshold(ofImage& original, bool invert = false);

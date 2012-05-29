@@ -32,20 +32,6 @@ namespace ofxCv {
 		return fitEllipse(Mat(toCv(polyline)));
 	}	
 	
-	// if you're doing the same rotation multiple times,
-	// it's better to precompute the displacement and use remap
-	// fill should be an ofColor, and we need a function to convert ofColor to cv::Scalar
-	void rotate(ofImage& original, ofImage& rotated, double angle, unsigned char fill, int interpolation) {
-		imitate(rotated, original);
-		
-		Mat originalMat = toCv(original);
-		Mat rotatedMat = toCv(rotated);
-		
-		Point2f center(originalMat.rows / 2, originalMat.cols / 2);
-		Mat rotationMatrix = getRotationMatrix2D(center, angle, 1);
-		warpAffine(originalMat, rotatedMat, rotationMatrix, originalMat.size(), interpolation, BORDER_CONSTANT, Scalar(fill));
-	}
-	
 	void autothreshold(ofImage& original, ofImage& thresh, bool invert) {
 		imitate(thresh, original);
 		

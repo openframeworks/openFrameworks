@@ -163,7 +163,7 @@ namespace ofxCv {
 	Point3f toCv(ofVec3f vec);
 	cv::Rect toCv(ofRectangle rect);
 	vector<cv::Point2f> toCv(const ofPolyline& polyline);
-	Scalar toCv(ofColor color); // might need more for other color types?
+	Scalar toCv(ofColor color);
 	
 	// toOf functions
 	ofVec2f toOf(Point2f point);
