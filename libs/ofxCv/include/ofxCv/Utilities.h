@@ -155,11 +155,6 @@ namespace ofxCv {
 	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
 		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getPixels(), 0);
 	}
-	/*
-	template <class T> inline Mat toCv(ofImage_<T>& img) {
-		return Mat(img.getHeight(), img.getWidth(), getCvImageType(img), img.getPixels(), 0);
-	}
-	*/
 	template <class T> inline Mat toCv(ofBaseHasPixels_<T>& img) {
 		return toCv(img.getPixelsRef());
 	}

@@ -17,18 +17,18 @@ namespace ofxCv {
 		return ofColor(result[0], result[1], result[2], color.a);
 	}	
 	
-	ofPolyline convexHull(ofPolyline& polyline) {
+	ofPolyline convexHull(const ofPolyline& polyline) {
 		vector<cv::Point2f> contour = toCv(polyline);
 		vector<cv::Point2f> hull;
 		convexHull(Mat(contour), hull);
 		return toOf(hull);
 	}
 	
-	cv::RotatedRect minAreaRect(ofPolyline& polyline) {
+	cv::RotatedRect minAreaRect(const ofPolyline& polyline) {
 		return minAreaRect(Mat(toCv(polyline)));
 	}
 	
-	cv::RotatedRect fitEllipse(ofPolyline& polyline) {
+	cv::RotatedRect fitEllipse(const ofPolyline& polyline) {
 		return fitEllipse(Mat(toCv(polyline)));
 	}	
 	

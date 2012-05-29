@@ -2,6 +2,13 @@
  wrappers provide an easy-to-use interface to OpenCv functions when using data
  from openFrameworks.
  
+ useful functions from this file:
+ - max, min
+ - multiply, divide, add, subtract
+ - absdiff
+ - bitwise_and, bitwise_or, bitwise_xor
+ - lerp
+ 
  in ofxOpenCv, these were methods of ofxCvImage. for completeness, we need:
  ROI methods (set, get, reset)
  pixel manipulation (set, +, -, *, /)
@@ -213,13 +220,14 @@ cv::name(xMat, yMat, resultMat);\
 		resize(srcMat, dstMat, dstMat.size(), 0, 0, interpolation);
 	}
 	
+	// for contourArea() and arcLength(), see ofPolyline::getArea() and getPerimiter()
+	ofPolyline convexHull(const ofPolyline& polyline);
+	cv::RotatedRect minAreaRect(const ofPolyline& polyline);
+	cv::RotatedRect fitEllipse(const ofPolyline& polyline);
+	
 	// older wrappers, need to be templated..	
-	// for contourArea()/arcLength(), see ofPolyline::getArea()/getPerimiter()
 	// not sure if these three need to be templated. convexHull returning an
 	// ofPolyline when given an ofPolyline is the key factor...
-	ofPolyline convexHull(ofPolyline& polyline);
-	cv::RotatedRect minAreaRect(ofPolyline& polyline);
-	cv::RotatedRect fitEllipse(ofPolyline& polyline);
 	
 	void invert(ofImage& img);
 	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
