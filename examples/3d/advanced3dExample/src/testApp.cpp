@@ -48,6 +48,7 @@ void testApp::setup(){
 	camEasyCam.setTarget(nodeSwarm);
 	camEasyCam.setDistance(100);
 	cameras[0] = &camEasyCam;
+	camEasyCam.enableMouseMiddleButton();
 
 
 	// front
@@ -148,10 +149,6 @@ void testApp::draw(){
 	//--
 	// Draw all viewports
 
-	// draw main viewport
-	cameras[iMainCamera]->begin(viewMain);
-	drawScene(iMainCamera);
-
 	// calculate mouse ray whilst this camera is active
 	updateMouseRay();
 
@@ -164,6 +161,10 @@ void testApp::draw(){
 		cameras[i]->end();
 	}
 
+	// draw main viewport
+	cameras[iMainCamera]->begin(viewMain);
+	drawScene(iMainCamera);
+	
 	//
 	//--
 

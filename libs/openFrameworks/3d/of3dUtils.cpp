@@ -127,3 +127,43 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	ofCone(headSize, headSize);	
 	ofPopMatrix();
 }
+//--------------------------------------------------------------
+void ofDrawRotationAxes(float radius, float stripWidth, int circleRes){
+	
+	ofMesh axisXMesh;
+	axisXMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	ofMesh axisYMesh;
+	axisYMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	ofMesh axisZMesh;
+	axisZMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	for (int j = 0; j<=circleRes; j++) {
+		float x = cos(TWO_PI * j/circleRes);
+		float y = sin(TWO_PI * j/circleRes);
+		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
+		axisXMesh.addVertex(ofVec3f(x*radius, y*radius, -stripWidth));
+		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
+		axisXMesh.addVertex(ofVec3f(x*radius, y*radius,  stripWidth));
+		
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addVertex(ofVec3f(x*radius, -stripWidth, y*radius));
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addVertex(ofVec3f(x*radius,  stripWidth, y*radius));
+		
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
+		axisZMesh.addVertex(ofVec3f(-stripWidth, x*radius, y*radius));
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
+		axisZMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
+	}
+	
+	glEnable(GL_DEPTH_TEST);
+	axisXMesh.draw();
+	axisYMesh.draw();
+	axisZMesh.draw();
+	ofDrawAxis(radius);
+	glDisable(GL_DEPTH_TEST);
+	
+}
+
