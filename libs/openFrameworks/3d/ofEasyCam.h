@@ -26,37 +26,74 @@ public:
 	// it is a normalized value between 0-1
 	void setDrag(float drag);
 	float getDrag() const;
-	
+	// the translation key is the key used to switch between rotation and translation.
+	// translation happens only when the key is pressed.
+	void setTranslationKey(char key);
+	char getTranslationKey();
+	//--
+	/*
 	void mouseDragged(ofMouseEventArgs& mouse);
 	void mouseMoved(ofMouseEventArgs& mouse);
 	void mousePressed(ofMouseEventArgs& mouse);
 	void mouseReleased(ofMouseEventArgs& mouse);
-
+//*/
 	// enable or disable mouse input to navigate
 	void enableMouseInput();
 	void disableMouseInput();
 	bool getMouseInputEnabled();
-
+	
+	void enableMouseMiddleButton();
+	void disableMouseMiddleButton();
+	bool getMouseMiddleButtonEnabled();
+	
+	
 private:
 	void setDistance(float distance, bool save);
 
 	ofNode target;
 	
-	float drag;
-	float zoomSpeed;
+	
+	bool bEnableMouseMiddleButton;
+	bool bApplyInertia;
+	bool bDoTranslate;
+	bool bDoRotate;
+	bool bValidClick;
+	bool bInsideArcball;
 	bool bMouseInputEnabled;
+	bool bDistanceSet;
 
-	ofVec3f mousePosViewPrev;
-	ofVec3f mousePosScreenPrev;
-	int lastFrame;
+	float lastDistance;
+
+	float drag;
+	
+	float xRot;
+	float yRot;
+	float zRot;
+	
+	float moveX;
+	float moveY;
+	float moveZ;
+	
+	float sensitivityXY;
+	float sensitivityZ;
+	float sensitivityRot;
+	
+	float rotationFactor;
+
+	ofVec2f mouse;
+	ofVec2f lastMouse;
+	ofVec2f mouseVel;
+	
+	void updateRotation();
+	void updateTranslation();
+	void update(ofEventArgs & args);
+	void updateMouse();
+	
+	char doTranslationKey;
 	
 	unsigned long lastTap;
-	bool mousePressedPrev[2];
-
-	bool bDistanceSet;
-	float lastDistance;
-	float distanceScaleVelocity;
-	
-	ofQuaternion rotation;
-	ofVec3f translation;
+		
+	ofQuaternion curRot;  
+    
+	ofRectangle viewport;// having the  viewport saved localy will make it easier for all the needed maths dealing with viewport.
 };
