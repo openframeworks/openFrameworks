@@ -47,15 +47,7 @@ namespace ofxCv {
 	void autothreshold(ofImage& img, bool invert) {
 		autothreshold(img, img, invert);
 	}
-	/*
-	 void threshold(FloatImage& img, float value, bool invert) {
-	 threshold(img, img, value, invert);
-	 }
-	 
-	 void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert) {
-	 threshold(original.toCv(), thresh.toCv(), value, 1, invert ? THRESH_BINARY_INV : THRESH_BINARY);
-	 }
-	 
+	/*	 
 	 void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result) {
 	 imitate(search, source);
 	 imitate(result, source);
