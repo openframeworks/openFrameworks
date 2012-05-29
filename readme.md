@@ -136,6 +136,14 @@ This will add every element of `a` and `b`, then multiply the results by 10, and
 
 Available matrix expressions include mathematical operators `+`, `-`, `/` (per element division), `*` (matrix multiplication), `.mul()` (per-element multiplication). As well as comparison operators `!=`, `==`, `<`, `>`, `>=`, `<=` (useful for thresholding). Binary operators `&`, `|`, `^`, `~`. And a few others like `abs()`, `min()`, and `max()`. For the complete listing see the OpenCv documention or `mat.hpp`.
 
+# Code Style
+
+ofxCv tries to have a consistent code style. It's most similar to the K&R variant used for Java, and the indentation is primarily determined by XCode's auto-indent feature.
+
+Multiline comments are used for anything beyond two lines.
+
+Case statements have a `default:` fall-through with the last case.
+
 - - --
 
 *ofxCv was developed with support from [Yamaguchi Center for Arts and Media](http://ycam.jp/).*
