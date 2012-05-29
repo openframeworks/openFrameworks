@@ -27,10 +27,13 @@ public:
     ofRectangle(float px, float py, float w, float h);
     ofRectangle(const ofPoint& p, float w, float h);
     ofRectangle(const ofRectangle & rect);
+    ofRectangle(const ofPoint& p0, const ofPoint& p1);
 
     void set(float px, float py, float w, float h);
     void set(const ofPoint& p, float w, float h);
     void set(const ofRectangle& rect);
+    void set(const ofPoint& p0, const ofPoint& p1);
+
     void setFromCenter(float px, float py, float w, float h);
     void setFromCenter(const ofPoint& p, float w, float h);
 

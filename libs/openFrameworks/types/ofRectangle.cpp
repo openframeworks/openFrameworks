@@ -1,8 +1,8 @@
 #include "ofRectangle.h"
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(){ 
-	x = y = width = height = 0.0f; 
+ofRectangle::ofRectangle(){
+    set(0,0,0,0);
 }
 
 //----------------------------------------------------------
@@ -10,26 +10,22 @@ ofRectangle::~ ofRectangle(){}
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(float px, float py, float w, float h){
-	x      = px;
-	y      = py;
-	width  = w;
-	height = h;
+	set(px,py,w,h);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const ofPoint& p, float w, float h){
-	x      = p.x;
-	y      = p.y;
-	width  = w;
-	height = h;
+    set(p,w,h);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const ofRectangle& rect){
-	x      = rect.x;
-	y      = rect.y;
-	width  = rect.width;
-	height = rect.height;
+    set(rect);
+}
+
+//----------------------------------------------------------
+ofRectangle::ofRectangle(const ofPoint& p0, const ofPoint& p1) {
+    set(p0,p1);
 }
 
 //----------------------------------------------------------
@@ -51,11 +47,34 @@ void ofRectangle::set(const ofRectangle& rect){
 }
 
 //----------------------------------------------------------
+void ofRectangle::set(const ofPoint& p0, const ofPoint& p1) {
+    float x0,y0,x1,y1;
+    
+    if(p0.x < p1.x) {
+        x0 = p0.x;
+        x1 = p1.x;
+    } else {
+        x0 = p1.x;
+        x0 = p0.x;
+    }
+
+    if(p0.y < p1.y) {
+        y0 = p0.y;
+        y1 = p1.y;
+    } else {
+        y0 = p1.y;
+        y1 = p0.y;
+    }
+
+    float w = x1 - x0;
+    float h = y1 - y0;
+
+    set(x0,y0,w,h);
+}
+
+//----------------------------------------------------------
 void ofRectangle::setFromCenter(float px, float py, float w, float h){
-	x		= px - w*0.5f;
-	y		= py - h*0.5f;
-	width	= w;
-	height	= h;
+    set(px - w*0.5f, py - h*0.5f, w, h);
 }
 
 //----------------------------------------------------------
@@ -279,10 +298,7 @@ float ofRectangle::getMaxY() const {
 
 //----------------------------------------------------------
 ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
-    x = rect.x;
-    y = rect.y;
-    width = rect.width;
-    height = rect.height;
+    set(rect);
 	return *this;
 }
 
