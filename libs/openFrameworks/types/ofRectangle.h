@@ -71,7 +71,8 @@ public:
     
     ofPolyline getAsPolyline() const;
     
-    float getArea() const;  
+    float getArea() const;
+    float getPerimeter() const;
     
     bool isEmpty() const;     // are width/height == 0.0f
     bool isPositive() const;  // are width/height >= 0.0f

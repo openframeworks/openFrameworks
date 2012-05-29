@@ -252,8 +252,12 @@ ofPolyline ofRectangle::getAsPolyline() const {
 
 //----------------------------------------------------------
 float ofRectangle::getArea() const {
-    // negative areas imply a negative width or height
-    return width * height;
+    return fabs(width) * fabs(height);
+}
+
+//----------------------------------------------------------
+float ofRectangle::getPerimeter() const {
+    return 2.0f * fabs(width) + 2.0f * fabs(height);
 }
 
 //----------------------------------------------------------
