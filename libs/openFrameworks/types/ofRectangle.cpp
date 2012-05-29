@@ -1,99 +1,336 @@
 #include "ofRectangle.h"
 
-ofRectangle::ofRectangle (){ 
+//----------------------------------------------------------
+ofRectangle::ofRectangle(){ 
 	x = y = width = height = 0.0f; 
 }
 
-ofRectangle::~ ofRectangle (){}
+//----------------------------------------------------------
+ofRectangle::~ ofRectangle(){}
 
-ofRectangle::ofRectangle (float _x, float _y, float _w, float _h){
-	x = _x;
-	y = _y;
-	width = _w;
-	height = _h;
+//----------------------------------------------------------
+ofRectangle::ofRectangle(float px, float py, float w, float h){
+	x      = px;
+	y      = py;
+	width  = w;
+	height = h;
 }
 
-ofRectangle::ofRectangle (ofPoint pos, float _w, float _h){
-	x = pos.x;
-	y = pos.y;
-	width = _w;
-	height = _h;
+//----------------------------------------------------------
+ofRectangle::ofRectangle(const ofPoint& p, float w, float h){
+	x      = p.x;
+	y      = p.y;
+	width  = w;
+	height = h;
 }
 
-
-ofRectangle::ofRectangle (ofRectangle const & r){
-	x = r.x;
-	y = r.y;
-	width = r.width;
-	height = r.height;
+//----------------------------------------------------------
+ofRectangle::ofRectangle(const ofRectangle& rect){
+	x      = rect.x;
+	y      = rect.y;
+	width  = rect.width;
+	height = rect.height;
 }
 
-void ofRectangle::set (float px, float py, float w, float h){
+//----------------------------------------------------------
+void ofRectangle::set(float px, float py, float w, float h){
 	x		= px;
 	y		= py;
 	width	= w;
 	height	= h;
 }
 
-void ofRectangle::set (ofPoint pos, float w, float h){
-	x		= pos.x;
-	y		= pos.y;
-	width	= w;
-	height	= h;
+//----------------------------------------------------------
+void ofRectangle::set(const ofPoint& p, float w, float h){
+    set(p.x, p.y, w, h);
 }
 
-void ofRectangle::set (ofRectangle const & rect){
-	x		= rect.x;
-	y		= rect.y;
-	width	= rect.width;
-	height	= rect.height;
+//----------------------------------------------------------
+void ofRectangle::set(const ofRectangle& rect){
+    set(rect.x, rect.y, rect.width, rect.height);
 }
 
-void ofRectangle::setFromCenter (float px, float py, float w, float h){
+//----------------------------------------------------------
+void ofRectangle::setFromCenter(float px, float py, float w, float h){
 	x		= px - w*0.5f;
 	y		= py - h*0.5f;
 	width	= w;
 	height	= h;
 }
 
-void ofRectangle::setFromCenter (ofPoint pos, float w, float h){
-	x		= pos.x - w*0.5f;
-	y		= pos.y - h*0.5f;
-	width	= w;
-	height	= h;
+//----------------------------------------------------------
+void ofRectangle::setFromCenter(const ofPoint& p, float w, float h){
+    setFromCenter(p.x, p.y, w, h);
 }
 
-ofPoint ofRectangle::getCenter (){
+//----------------------------------------------------------
+ofPoint ofRectangle::getCenter() const {
 	return ofPoint(x + width * 0.5f, y + height * 0.5f, 0);
 }
 
-bool ofRectangle::inside (ofPoint p){
-	return inside(p.x, p.y);
+//----------------------------------------------------------
+void ofRectangle::translate(float px, float py) {
+    x += px;
+    y += py;
 }
 
-bool ofRectangle::inside (float px, float py){
-	return px > x && py > y && px < x + width && py < y + height;
+//----------------------------------------------------------
+void ofRectangle::translate(const ofPoint& p) {
+    translate(p.x,p.y);
 }
 
-ofRectangle & ofRectangle::operator = (ofRectangle const & rect){
-	x = rect.x;
-	y = rect.y;
-	width = rect.width;
-	height = rect.height;
+//----------------------------------------------------------
+void ofRectangle::scale(float sX, float sY) {
+    width  *= sX;
+    height *= sY;
+}
+
+//----------------------------------------------------------
+void ofRectangle::scale(const ofPoint& s) {
+    scale(s.x,s.y);
+}
+
+//----------------------------------------------------------
+bool ofRectangle::inside(float px, float py) const {
+	return inside(ofPoint(px,py));
+}
+
+//----------------------------------------------------------
+bool ofRectangle::inside(const ofPoint& p) const {
+    return p.x > getMinX() && p.y > getMinY() && 
+           p.x < getMaxX() && p.y < getMaxY();
+}
+
+//----------------------------------------------------------
+bool ofRectangle::inside(float px, float py, float w, float h) const {
+    return inside(ofRectangle(px,py,w,h));
+}
+
+//----------------------------------------------------------
+bool ofRectangle::inside(const ofPoint& p, float w, float h) const  {
+    return inside(ofRectangle(p,w,h));
+}
+
+//----------------------------------------------------------
+bool ofRectangle::inside(const ofRectangle& rect) const {
+    return inside(rect.getMinX(),rect.getMinY()) &&
+           inside(rect.getMaxX(),rect.getMaxY());
+}
+
+//----------------------------------------------------------
+bool ofRectangle::intersects(float px, float py, float w, float h) const  {
+    return intersects(ofRectangle(px, py, w, h));
+}
+
+//----------------------------------------------------------
+bool ofRectangle::intersects(const ofPoint& p, float w, float h) const {
+    return intersects(ofRectangle(p, w, h));
+}
+
+//----------------------------------------------------------
+bool ofRectangle::intersects(const ofRectangle& rect) const {
+    return (getMinX() < rect.getMaxX() && getMaxX() > rect.getMinX() &&
+            getMinY() < rect.getMaxY() && getMaxY() > rect.getMinY());
+}
+
+//----------------------------------------------------------
+void ofRectangle::add(float px, float py){
+    add(ofPoint(px,py));
+}
+
+//----------------------------------------------------------
+void ofRectangle::add(const ofPoint& p){
+    float x0 = MIN(getMinX(),p.x);
+    float x1 = MAX(getMaxX(),p.y);
+    float y0 = MIN(getMinY(),p.y);
+    float y1 = MAX(getMaxY(),p.y);
+    float w = x1 - x0;
+    float h = y1 - y0;
+    set(x0,y0,w,h);
+}
+
+//----------------------------------------------------------
+void ofRectangle::add(float px, float py, float w, float h) {
+    add(ofRectangle(px,py,w,h));
+}
+
+//----------------------------------------------------------
+void ofRectangle::add(const ofPoint& p, float w, float h) {
+    add(ofRectangle(p, w, h));
+}
+
+//----------------------------------------------------------
+void ofRectangle::add(const ofRectangle& rect){
+    float x0 = MIN(getMinX(),rect.getMinX());
+    float x1 = MAX(getMaxX(),rect.getMaxX());
+    float y0 = MIN(getMinY(),rect.getMinY());
+    float y1 = MAX(getMaxY(),rect.getMaxY());
+    float w = x1 - x0;
+    float h = y1 - y0;
+    set(x0,y0,w,h);
+}
+
+//----------------------------------------------------------
+void ofRectangle::add(const ofPolyline& poly) {
+    add(poly.getBoundingBox());
+}
+
+//----------------------------------------------------------
+ofRectangle ofRectangle::getIntersection(float px, float py, float w, float h) const {
+    return getIntersection(ofRectangle(px,py,w,h));
+}
+
+//----------------------------------------------------------
+ofRectangle ofRectangle::getIntersection(const ofPoint& p, float w, float h) const {
+    return getIntersection(ofRectangle(p,w,h));
+}
+
+//----------------------------------------------------------
+ofRectangle ofRectangle::getIntersection(const ofRectangle& rect) const {
+
+    float x0 = MAX(getMinX(),rect.getMinX());
+    float x1 = MIN(getMaxX(),rect.getMaxX());
+    
+    float w = x1 - x0;
+    if(w < 0) return ofRectangle(0,0,0,0); // short circuit if needed
+    
+    float y0 = MAX(getMinY(),rect.getMinY());
+    float y1 = MIN(getMaxY(),rect.getMaxY());
+    
+    float h = y1 - y0;
+    if(h < 0) return ofRectangle(0,0,0,0);  // short circuit if needed
+    
+    return ofRectangle(x0,y0,w,h);
+}
+
+//----------------------------------------------------------
+ofRectangle ofRectangle::getUnion(float px, float py, float w, float h) const {
+    return getUnion(ofRectangle(px,py,w,h));
+}
+
+//----------------------------------------------------------
+ofRectangle ofRectangle::getUnion(const ofPoint& p, float w, float h) const {
+    return getUnion(ofRectangle(p,w,h));
+}
+
+//----------------------------------------------------------
+ofRectangle ofRectangle::getUnion(const ofRectangle& rect) const {
+    ofRectangle united = *this;
+    united.add(rect);
+    return united;
+}
+
+//----------------------------------------------------------
+ofPolyline ofRectangle::getAsPolyline() const {
+    ofPolyline polyline;
+    polyline.addVertex(getMin());
+    polyline.addVertex(getMaxX(),getMinY());
+    polyline.addVertex(getMax());
+    polyline.addVertex(getMinX(),getMaxY());
+    polyline.close();
+    return polyline;
+}
+
+//----------------------------------------------------------
+float ofRectangle::getArea() const {
+    // negative areas imply a negative width or height
+    return width * height;
+}
+
+//----------------------------------------------------------
+bool ofRectangle::isEmpty() const {
+    return width == 0.0f && height == 0.0f;
+}
+
+//----------------------------------------------------------
+bool ofRectangle::isPositive() const {
+    return width >= 0.0f && height >= 0.0f;
+}
+
+//----------------------------------------------------------
+ofPoint ofRectangle::getMin() const {
+    return ofPoint(getMinX(),getMinY());
+}
+
+//----------------------------------------------------------
+ofPoint ofRectangle::getMax() const {
+    return ofPoint(getMaxX(),getMaxY());
+}
+
+//----------------------------------------------------------
+float ofRectangle::getMinX() const {
+    return MIN(x, x + width);  // - width
+}
+
+//----------------------------------------------------------
+float ofRectangle::getMaxX() const {
+    return MAX(x, x + width);  // - width
+}
+
+//----------------------------------------------------------
+float ofRectangle::getMinY() const{
+    return MIN(y, y + height);  // - height
+}
+
+//----------------------------------------------------------
+float ofRectangle::getMaxY() const {
+    return MAX(y, y + height);  // - height
+}
+
+//----------------------------------------------------------
+ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
+    x = rect.x;
+    y = rect.y;
+    width = rect.width;
+    height = rect.height;
 	return *this;
 }
 
-ofRectangle & ofRectangle::operator + (const ofPoint & point){
-	x += point.x;
-	y += point.y;
+
+//----------------------------------------------------------
+ofRectangle& ofRectangle::operator + (const ofPoint& point){
+    add(point);
 	return *this;
 }
 
-bool ofRectangle::operator == (ofRectangle const & r){
-	return (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height);
+//----------------------------------------------------------
+ofRectangle& ofRectangle::operator + (const ofRectangle& rect) {
+    add(rect);
+	return *this;
 }
 
-bool ofRectangle::operator != (ofRectangle const & r){
-	return (x != r.x) || (y != r.y) || (width != r.width) || (height != r.height);
+//----------------------------------------------------------
+ofRectangle& ofRectangle::operator + (const ofPolyline& poly) {
+    add(poly);
+	return *this;
 }
 
+//----------------------------------------------------------
+bool ofRectangle::operator == (const ofRectangle& rect) const {
+	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
+}
+
+//----------------------------------------------------------
+bool ofRectangle::operator != (const ofRectangle& rect) const {
+	return (x != rect.x) || (y != rect.y) || (width != rect.width) || (height != rect.height);
+}
+
+//----------------------------------------------------------
+float ofRectangle::getX() const {
+    return x;
+}
+
+//----------------------------------------------------------
+float ofRectangle::getY() const {
+    return y;
+}
+
+//----------------------------------------------------------
+float ofRectangle::getWidth() const {
+    return width;
+}
+
+//----------------------------------------------------------
+float ofRectangle::getHeight() const {
+    return height;
+}
