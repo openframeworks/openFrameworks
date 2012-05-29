@@ -144,6 +144,8 @@ Multiline comments are used for anything beyond two lines.
 
 Case statements have a `default:` fall-through with the last case.
 
+When two or three similar variables are initialized, commas are used instead of multiple lines. For example `Mat srcMat = toCv(src), dstMat = toCv(dst);`. This style was inherited from reading Jason Saragih's FaceTracker.
+
 - - --
 
 *ofxCv was developed with support from [Yamaguchi Center for Arts and Media](http://ycam.jp/).*

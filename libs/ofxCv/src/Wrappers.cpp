@@ -32,11 +32,6 @@ namespace ofxCv {
 		return fitEllipse(Mat(toCv(polyline)));
 	}	
 	
-	void invert(ofImage& img) {
-		Mat imgMat = toCv(img);
-		bitwise_not(imgMat, imgMat);
-	}
-	
 	// if you're doing the same rotation multiple times,
 	// it's better to precompute the displacement and use remap
 	// fill should be an ofColor, and we need a function to convert ofColor to cv::Scalar

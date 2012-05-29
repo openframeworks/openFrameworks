@@ -9,6 +9,8 @@
  - bitwise_and, bitwise_or, bitwise_xor
  - lerp
  
+ many of the functions have in-place and non-in-place variations
+ 
  in ofxOpenCv, these were methods of ofxCvImage. for completeness, we need:
  ROI methods (set, get, reset)
  pixel manipulation (set, +, -, *, /)
@@ -42,8 +44,7 @@ template <class X, class Y, class Result>\
 void name(X& x, Y& y, Result& result) {\
 imitate(y, x);\
 imitate(result, x);\
-Mat xMat = toCv(x);\
-Mat yMat = toCv(y);\
+Mat xMat = toCv(x), yMat = toCv(y);\
 Mat resultMat = toCv(result);\
 cv::name(xMat, yMat, resultMat);\
 }
@@ -58,12 +59,21 @@ cv::name(xMat, yMat, resultMat);\
 	wrapThree(bitwise_or);
 	wrapThree(bitwise_xor);
 	
+	// inverting non-floating point images is a just a bitwise not operation
+	template <class S, class D> void invert(S& src, D& dst) {
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		bitwise_not(srcMat, dstMat);
+	}
+	
+	template <class SD> void invert(SD& srcDst) {
+		ofxCv::invert(srcDst, srcDst);
+	}
+	
 	// also useful for taking the average/mixing two images
 	template <class X, class Y, class R>
 	void lerp(X& x, Y& y, R& result, float amt = .5) {
 		imitate(result, x);
-		Mat xMat = toCv(x);
-		Mat yMat = toCv(y);
+		Mat xMat = toCv(x), yMat = toCv(y);
 		Mat resultMat = toCv(result);
 		if(yMat.cols == 0) {
 			copy(x, result);
@@ -78,8 +88,7 @@ cv::name(xMat, yMat, resultMat);\
 	template <class S, class D>
 	void normalize(S& src, D& dst) {
 		imitate(dst, src);
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		cv::normalize(srcMat, dstMat, 0, getMaxVal(getDepth(dst)), NORM_MINMAX);
 	}
 	
@@ -93,8 +102,7 @@ cv::name(xMat, yMat, resultMat);\
 	template <class S, class D>
 	void threshold(S& src, D& dst, float thresholdValue, bool invert = false) {
 		imitate(dst, src);
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		int thresholdType = invert ? THRESH_BINARY_INV : THRESH_BINARY;
 		float maxVal = getMaxVal(dstMat);
 		cv::threshold(srcMat, dstMat, thresholdValue, maxVal, thresholdType);
@@ -113,8 +121,7 @@ cv::name(xMat, yMat, resultMat);\
 		// cvtColor allocates Mat for you, but we need this to handle ofImage etc.
 		int targetChannels = getTargetChannelsFromCode(code);
 		imitate(dst, src, getCvImageType(targetChannels, getDepth(src)));
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		cvtColor(srcMat, dstMat, code);
 	}
 	// ...or single colors.
@@ -128,8 +135,7 @@ cv::name(xMat, yMat, resultMat);\
 	void blur(S& src, D& dst, int size) {
 		imitate(dst, src);
 		size = forceOdd(size);
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		cv::GaussianBlur(srcMat, dstMat, cv::Size(size, size), 0, 0);
 	}
 	
@@ -144,8 +150,7 @@ cv::name(xMat, yMat, resultMat);\
 	void medianBlur(S& src, D& dst, int size) {
 		imitate(dst, src);
 		size = forceOdd(size);
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		cv::medianBlur(srcMat, dstMat, size);
 	}
 	
@@ -159,16 +164,14 @@ cv::name(xMat, yMat, resultMat);\
 	template <class S, class D>
 	void Canny(S& src, D& dst, double threshold1, double threshold2, int apertureSize=3, bool L2gradient=false) {
 		imitate(dst, src, CV_8UC1);
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		cv::Canny(srcMat, dstMat, threshold1, threshold2, apertureSize, L2gradient);
 	}	
 	
 	// dst does not imitate src
 	template <class S, class D>
 	void warpPerspective(S& src, D& dst, vector<Point2f>& dstPoints, int flags = INTER_LINEAR) {
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		int w = srcMat.cols;
 		int h = srcMat.rows;
 		vector<Point2f> srcPoints(4);
@@ -183,8 +186,7 @@ cv::name(xMat, yMat, resultMat);\
 	// dst does not imitate src
 	template <class S, class D>
 	void unwarpPerspective(S& src, D& dst, vector<Point2f>& srcPoints, int flags = INTER_LINEAR) {
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		int w = dstMat.cols;
 		int h = dstMat.rows;
 		vector<Point2f> dstPoints(4);
@@ -199,11 +201,11 @@ cv::name(xMat, yMat, resultMat);\
 	// dst does not imitate src
 	template <class S, class D>
 	void warpPerspective(S& src, D& dst, Mat& transform, int flags = INTER_LINEAR) {
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		warpPerspective(srcMat, dstMat, transform, dstMat.size(), flags);
 	}
 	
+	// kind of obscure, draws filled polygons on the CPU
 	template <class D>
 	void fillPoly(vector<cv::Point>& points, D& dst) {
 		cv::Mat dstMat = toCv(dst);
@@ -214,9 +216,8 @@ cv::name(xMat, yMat, resultMat);\
 	}
 	
 	template <class S, class D>
-	void resize(S& src, D& dst, int interpolation = INTER_LINEAR) { // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+	void resize(S& src, D& dst, int interpolation = INTER_LINEAR) { // also: INTER_NEAREST, INTER_AREA, INTER_CUBIC, INTER_LANCZOS4
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		resize(srcMat, dstMat, dstMat.size(), 0, 0, interpolation);
 	}
 	
@@ -229,7 +230,6 @@ cv::name(xMat, yMat, resultMat);\
 	// not sure if these three need to be templated. convexHull returning an
 	// ofPolyline when given an ofPolyline is the key factor...
 	
-	void invert(ofImage& img);
 	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
 	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
 	void autothreshold(ofImage& original, ofImage& thresh, bool invert = false);
