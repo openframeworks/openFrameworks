@@ -139,6 +139,7 @@ void 	ofSetBackgroundAuto(bool bManual);		// default is true
 
 void ofClear(float r, float g, float b, float a=0);
 void ofClear(float brightness, float a=0);
+void ofClear(const ofColor & c);
 void ofClearAlpha();
 
 // OF's access to settings (bgAuto, origin, corner mode):
