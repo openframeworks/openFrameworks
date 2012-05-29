@@ -2,7 +2,7 @@
 #include "ofxCv/Utilities.h"
 
 namespace ofxCv {
-
+	
 	using namespace cv;
 	
 	void loadImage(Mat& mat, string filename) {
@@ -210,7 +210,7 @@ namespace ofxCv {
 		float leading = 1.7;
 		int height = lines.size() * fontSize * leading - 1;
 		int width = textLength * fontSize;
-	
+		
 		glPushAttrib(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
 		ofPushStyle();
@@ -226,5 +226,21 @@ namespace ofxCv {
 		ofPopStyle();
 		glPopAttrib();
 	}
-
+	
+	float weightedAverageAngle(const vector<Vec4i>& lines) {
+		float angleSum = 0;
+		ofVec2f start, end;
+		float weights = 0;
+		for(int i = 0; i < lines.size(); i++) {
+			start.set(lines[i][0], lines[i][1]);
+			end.set(lines[i][2], lines[i][3]);
+			ofVec2f diff = end - start;
+			float length = diff.length();
+			float weight = length * length;
+			float angle = atan2f(diff.y, diff.x);
+			angleSum += angle * weight;
+			weights += weight;
+		}
+		return angleSum / weights;
+	}
 }

@@ -1,7 +1,7 @@
 /*
  helpers offer new, commonly-needed functionality that is not present in OpenCv
  or openFrameworks.
-*/
+ */
 
 #pragma once
 
@@ -9,9 +9,9 @@
 #include "ofMain.h"
 
 namespace ofxCv {
-
+	
 	using namespace cv;
-
+	
 	void loadImage(Mat& mat, string filename);
 	void saveImage(Mat mat, string filename);
 	void loadMat(Mat& mat, string filename);
@@ -53,11 +53,11 @@ namespace ofxCv {
 		Point3_<T> v1(lineEnd1 - lineStart1), v2(lineEnd2 - lineStart2);
 		T v1v1 = v1.dot(v1), v2v2 = v2.dot(v2), v1v2 = v1.dot(v2), v2v1 = v2.dot(v1);
 		Mat_<T> lambda = (1. / (v1v1 * v2v2 - v1v2 * v1v2))
-			* ((Mat_<T>(2, 2) << v2v2, v1v2, v2v1, v1v1)
+		* ((Mat_<T>(2, 2) << v2v2, v1v2, v2v1, v1v1)
 			 * (Mat_<T>(2, 1) << v1.dot(lineStart2 - lineStart1), v2.dot(lineStart1 - lineStart2)));
 		return (1./2) * ((lineStart1 + v1 * lambda(0)) + (lineStart2 + v2 * lambda(1)));
 	}
-
+	
 	// (nearest point on a line) to the given point
 	template <class T>
 	Point3_<T> intersectPointLine(Point3_<T> point, Point3_<T> lineStart, Point3_<T> lineEnd) {
@@ -65,7 +65,7 @@ namespace ofxCv {
 		T u = (point - lineStart).dot(ray) / ray.dot(ray);
 		return lineStart + u * ray;
 	}
-
+	
 	// (nearest point on a ray) to the given point
 	template <class T>
 	Point3_<T> intersectPointRay(Point3_<T> point, Point3_<T> ray) {
@@ -105,5 +105,33 @@ namespace ofxCv {
 		for(int i=0;i<n;i++){int j=q[i];if(!p[j+ib3]&&!p[j+ic3]&&!p[j+ic2]&&p[j+ib1]&&p[j+ia2]){p[j]=0;}}
 		for(int i=0;i<n;i++){int j=q[i];if(!p[j+ic2]&&!p[j+ic1]&&!p[j+ib1]&&p[j+ia2]&&p[j+ib3]){p[j]=0;}}
 		for(int i=0;i<n;i++){int j=q[i];if(!p[j+ib1]&&!p[j+ia1]&&!p[j+ia2]&&p[j+ic2]&&p[j+ib3]){p[j]=0;}}
+	}
+	
+	// given a vector of lines, this function will find the average angle
+	float weightedAverageAngle(const vector<Vec4i>& lines);
+	
+	// finds the average angle of hough lines, unrotates by that amount and
+	// returns the average rotation. you can supply your own thresholded image
+	// for hough lines, or let it run canny detection for you.
+	template <class S, class T, class D>
+	float autorotate(S& src, D& dst, float threshold1 = 50, threshold2 = 200) {
+		Mat thresh = ofxCv::Canny(src, threshold1, threshold2);
+		autorotate(src, thresh, dst);
+	}
+	template <class S, class T, class D>
+	float autorotate(S& src, T& thresh, D& dst) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src), threshMat = toCv(thresh);
+		vector<Vec4i> lines;
+		double distanceResolution = 1;
+		double angleResolution = CV_PI / 180;
+		// these three values are just heuristics that have worked for me
+		int voteThreshold = 10;
+		double minLineLength = (srcMat.rows + srcMat.cols) / 8;
+		double maxLineGap = 3;
+		HoughLinesP(threshMat, lines, distanceResolution, angleResolution, voteThreshold, minLineLength, maxLineGap);
+		float rotationAmount = ofRadToDeg(weightedAverageAngle(lines));
+		rotate(src, dst, rotationAmount);
+		return rotationAmount;
 	}
 }

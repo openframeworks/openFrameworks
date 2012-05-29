@@ -1,6 +1,7 @@
 /*
  wrappers provide an easy-to-use interface to OpenCv functions when using data
- from openFrameworks.
+ from openFrameworks. they don't implement anything novel, they just wrap OpenCv
+ functions in a very direct way.
  
  useful functions from this file:
  - max, min
@@ -161,6 +162,7 @@ cv::name(xMat, yMat, resultMat);\
 	}
 	
 	// Canny edge detection assumes your input and output are grayscale 8-bit
+	// example thresholds might be 0,30 or 50,200
 	template <class S, class D>
 	void Canny(S& src, D& dst, double threshold1, double threshold2, int apertureSize=3, bool L2gradient=false) {
 		imitate(dst, src, CV_8UC1);
@@ -238,18 +240,11 @@ cv::name(xMat, yMat, resultMat);\
 	}
 	
 	// older wrappers, need to be templated..	
-	// not sure if these three need to be templated. convexHull returning an
-	// ofPolyline when given an ofPolyline is the key factor...
-	
-	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
 	void autothreshold(ofImage& original, ofImage& thresh, bool invert = false);
 	void autothreshold(ofImage& original, bool invert = false);
-	//void threshold(FloatImage& img, float value, bool invert = false);
-	//void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert = false);
 	//void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result);
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
 	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
 	//void convolve(ofImage& img, FloatImage& kernel);
-	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
-	
+	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);	
 }

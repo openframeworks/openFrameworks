@@ -47,6 +47,7 @@ namespace ofxCv {
 	void autothreshold(ofImage& img, bool invert) {
 		autothreshold(img, img, invert);
 	}
+	
 	/*	 
 	 void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result) {
 	 imitate(search, source);
@@ -63,50 +64,7 @@ namespace ofxCv {
 	 
 	 matchTemplate(search, sourceMat, result, CV_TM_CCOEFF_NORMED);
 	 }
-	 */
-	
-	float weightedAverageAngle(const vector<Vec4i>& lines) {
-		float angleSum = 0;
-		ofVec2f start, end;
-		float weights = 0;
-		for(int i = 0; i < lines.size(); i++) {
-			start.set(lines[i][0], lines[i][1]);
-			end.set(lines[i][2], lines[i][3]);
-			ofVec2f diff = end - start;
-			float length = diff.length();
-			float weight = length * length;
-			float angle = atan2f(diff.y, diff.x);
-			angleSum += angle * weight;
-			weights += weight;
-		}
-		return angleSum / weights;
-	}
-	
-	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation) {
-		imitate(output, original);
-		
-		Mat originalMat = toCv(original);
-		Mat threshMat = toCv(thresh);
-		Mat outputMat = toCv(output);
-		vector<Vec4i> lines;
-		
-		double distanceResolution = 1;
-		double angleResolution = CV_PI / 180;
-		int voteThreshold = 10;
-		double minLineLength = (originalMat.rows + originalMat.cols) / 8;
-		double maxLineGap = 3;
-		HoughLinesP(threshMat, lines, distanceResolution, angleResolution, voteThreshold, minLineLength, maxLineGap);
-		
-		float rotationAmount = ofRadToDeg(weightedAverageAngle(lines));
-		
-		rotate(original, output, rotationAmount);
-		
-		if(rotation != NULL) {
-			*rotation = rotationAmount;
-		}
-	}
-	
-	/*
+	 
 	 // only works with single channel kernels
 	 void convolve(ofImage& source, FloatImage& kernel, ofImage& destination) {
 	 imitate(destination, source);
