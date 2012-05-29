@@ -114,8 +114,9 @@ namespace ofxCv {
 	// returns the average rotation. you can supply your own thresholded image
 	// for hough lines, or let it run canny detection for you.
 	template <class S, class T, class D>
-	float autorotate(S& src, D& dst, float threshold1 = 50, threshold2 = 200) {
-		Mat thresh = ofxCv::Canny(src, threshold1, threshold2);
+	float autorotate(S& src, D& dst, float threshold1 = 50, float threshold2 = 200) {
+		Mat thresh;
+		ofxCv::Canny(src, thresh, threshold1, threshold2);
 		autorotate(src, thresh, dst);
 	}
 	template <class S, class T, class D>
