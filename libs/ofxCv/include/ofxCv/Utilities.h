@@ -99,8 +99,6 @@ namespace ofxCv {
 	inline void allocate(Mat& img, int width, int height, int cvType) {
 		img.create(height, width, cvType);
 	}
-	inline void allocate(ofVideoPlayer& img, int width, int height, int cvType) {}
-	inline void allocate(ofVideoGrabber& img, int width, int height, int cvType) {}
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
