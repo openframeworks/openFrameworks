@@ -13,6 +13,7 @@ key:
 + = added
 - = subtracted
 / = modified
+---------------------------------------------------------------
 
 The main focus for 0071 was to add new examples to better show the features added in 007. 
 0071 is mainly an 'examples + bug fixes' release, with some additional, much needed, updating to the mobile releases ( iOS and Android ). 
@@ -89,11 +90,6 @@ sound:
 + ofSoundStream allow for different input and output devices. 
 
 For a full list of commits for 0071 see: https://gist.github.com/2836647
-
-
----------------------------------------------------------------
-
-0071 is in currently progress on the develop branch in GitHub.
 
 ---------------------------------------------------------------
 
