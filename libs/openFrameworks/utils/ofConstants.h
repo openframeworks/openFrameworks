@@ -20,6 +20,22 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUX,
 	OF_TARGET_LINUX64
 };
+
+// Cross-platform deprecation warning
+#ifdef __GNUC__
+	// clang also has this defined.
+	#define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated(message)))
+	#define OF_DEPRECATED(func) func __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+	#define OF_DEPRECATED_MSG(message, func) __declspec(deprecated(message)) func
+	#define OF_DEPRECATED(func) __declspec(deprecated) func
+#else
+	//TODO: What to do with Android, iOS?
+	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
+	#define OF_DEPRECATED_MSG(message, func) func
+	#define OF_DEPRECATED(func) func
+#endif
+
 //-------------------------------
 //  find the system type --------
 //-------------------------------
