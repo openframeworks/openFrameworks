@@ -213,7 +213,8 @@ void ofEasyCam::updateMouse(){
 			}
 		}
 		lastTap = curTap;
-		lastMouse = ofVec2f(ofGetPreviousMouseX(),ofGetPreviousMouseY());
+		//lastMouse = ofVec2f(ofGetPreviousMouseX(),ofGetPreviousMouseY()); //this was causing the camera to have a tiny "random" rotation when clicked.
+		lastMouse = mouse;
 		bValidClick = true;
 		bApplyInertia = false;
 	}
