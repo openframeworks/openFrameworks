@@ -4,13 +4,13 @@
 void testApp::setup() {
 	ofBackground(0, 0, 0);
 	
-	cameraRotation = 0;
+	cameraRotation.set(0);
 	zoom = -500;
 	zoomTarget = 200;
 	
 	billboards.getVertices().resize(NUM_BILLBOARDS);
 	billboards.getColors().resize(NUM_BILLBOARDS);
-	billboards.getNormals().resize(NUM_BILLBOARDS,0);
+	billboards.getNormals().resize(NUM_BILLBOARDS,ofVec3f(0));
 	
 	// ------------------------- billboard particles
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
