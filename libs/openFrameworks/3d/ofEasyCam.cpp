@@ -52,7 +52,7 @@ void ofEasyCam::begin(ofRectangle viewport){
 			// float dt = ofGetLastFrameTime();
 			
 			ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - viewport.width/2 - viewport.x, viewport.height/2 - (ofGetMouseY() - viewport.y), 0);
-			ofVec2f mouseVelScreen = (mousePosScreen - mousePosScreenPrev).lengthSquared();
+			ofVec2f mouseVelScreen = ofVec2f((mousePosScreen - mousePosScreenPrev).lengthSquared());
 			
 			ofVec3f targetPos =  target.getGlobalPosition();
 			ofVec3f mousePosXYZ = ofVec3f(mousePosScreen.x, mousePosScreen.y, targetPos.z);

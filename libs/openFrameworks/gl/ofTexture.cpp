@@ -787,7 +787,7 @@ void ofTexture::setAnchorPoint(float x, float y){
 
 //----------------------------------------------------------
 void ofTexture::resetAnchor(){
-	anchor       = 0;
+	anchor.set( 0 );
 	bAnchorIsPct = false;
 }
 
