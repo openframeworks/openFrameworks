@@ -415,7 +415,11 @@ function createPackage {
     #create compressed package
     cd $pkg_ofroot/..
     mkdir -p openFrameworks/apps/myApps 
-    cp -r openFrameworks/examples/empty/emptyExample openFrameworks/apps/myApps 
+    if [ "$pkg_platform" = "android" ]; then
+        cp -r openFrameworks/examples/android/androidEmptyExample openFrameworks/apps/myApps 
+    elif [ "$pkg_platform" = "ios" ]; then
+        cp -r openFrameworks/examples/ios/emptyExample openFrameworks/apps/myApps 
+    fi
     echo "From 0071 onwards examples are now located in the root of OF at examples/" > openFrameworks/apps/_ExamplesMoved.txt
     echo "This folder will remain as a place to work on your own apps." >> openFrameworks/apps/_ExamplesMoved.txt
     echo "Just remember projects in apps/ still need to be two levels deep." >> openFrameworks/apps/_ExamplesMoved.txt 
