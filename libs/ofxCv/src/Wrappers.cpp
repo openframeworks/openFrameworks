@@ -84,10 +84,4 @@ namespace ofxCv {
 	 return findMaxLocation(img.toCv());
 	 }
 	 */
-	
-	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation) {
-		ofImageType sourceType = source.getPixelsRef().getImageType();
-		destination.allocate(source.getWidth() * xScale, source.getHeight() * yScale, sourceType);
-		resize(source, destination, interpolation);
-	}
 }

@@ -228,6 +228,13 @@ cv::name(xMat, yMat, resultMat);\
 		resize(srcMat, dstMat, dstMat.size(), 0, 0, interpolation);
 	}
 	
+	template <class S, class D>
+	void resize(S& src, D& dst, float xScale, float yScale, int interpolation = INTER_LINEAR) { // also: INTER_NEAREST, INTER_AREA, INTER_CUBIC, INTER_LANCZOS4
+		allocate(dst, getWidth(src) * xScale, getHeight(src) * yScale, getCvImageType(src));
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		resize(src, dst, interpolation);
+	}
+	
 	// for contourArea() and arcLength(), see ofPolyline::getArea() and getPerimiter()
 	ofPolyline convexHull(const ofPolyline& polyline);
 	cv::RotatedRect minAreaRect(const ofPolyline& polyline);
@@ -259,5 +266,4 @@ cv::name(xMat, yMat, resultMat);\
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
 	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
 	//void convolve(ofImage& img, FloatImage& kernel);
-	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);	
 }
