@@ -26,10 +26,14 @@ void testApp::update() {
 }
 
 void testApp::draw() {
+	ofPushMatrix();
 	bayer.draw(0, 0);
 	ofTranslate(rgb.getWidth(), 0);
 	rgb.draw(0, 0);
 	ofTranslate(bayer.getWidth(), 0);
+	ofPopMatrix();
+	
+	drawHighlightString("use the up/down keys: " + ofToString(bayerType), 10, 10);
 }
 
 void testApp::keyPressed(int key) {

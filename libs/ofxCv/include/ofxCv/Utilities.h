@@ -96,6 +96,9 @@ namespace ofxCv {
 	inline void allocate(Mat& img, int width, int height, int cvType) {
 		img.create(height, width, cvType);
 	}
+	// ofVideoPlayer/Grabber can't be allocated, so we assume we don't need to do anything
+	inline void allocate(ofVideoPlayer& img, int width, int height, int cvType) {}
+	inline void allocate(ofVideoGrabber& img, int width, int height, int cvType) {}
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
@@ -106,8 +109,6 @@ namespace ofxCv {
 		int mw = getWidth(mirror), mh = getHeight(mirror);
 		int ow = getWidth(original), oh = getHeight(original);
 		int mt = getCvImageType(mirror);
-		// this check is done here rather than inside allocate() so that we can run
-		// imitate() on things that can't be allocated, but already match.
 		if(mw != ow || mh != oh || mt != originalCvImageType) {
 			allocate(mirror, ow, oh, originalCvImageType);
 		}

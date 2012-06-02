@@ -31,6 +31,7 @@ void testApp::setup() {
 	imitate(diff, cam);
 	
 	lastTime = 0;
+	
 	active = true;
 }
 
