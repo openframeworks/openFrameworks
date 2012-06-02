@@ -1,16 +1,22 @@
 /*
  wrappers provide an easy-to-use interface to OpenCv functions when using data
  from openFrameworks. they don't implement anything novel, they just wrap OpenCv
- functions in a very direct way.
+ functions in a very direct way. many of the functions have in-place and
+ not-in-place variations.
  
- useful functions from this file:
- - max, min
- - multiply, divide, add, subtract
- - absdiff
+ high level image operations:
+ - Canny (edge detection), medianBlur, blur (gaussian), convertColor
+ 
+ low level image manipulation and comparison:
+ - threshold, normalize, invert, lerp
  - bitwise_and, bitwise_or, bitwise_xor
- - lerp
+ - max, min, multiply, divide, add, subtract, absdiff
  
- many of the functions have in-place and non-in-place variations
+ image transformation:
+ - rotate, resize, warpPerspective
+ 
+ point set/ofPolyline functions:
+ - convexHull, minAreaRect, fitEllipse, unwarpPerspective, warpPerspective
  
  in ofxOpenCv, these were methods of ofxCvImage. for completeness, we need:
  ROI methods (set, get, reset)
@@ -260,10 +266,4 @@ cv::name(xMat, yMat, resultMat);\
 		Mat rotationMatrix = getRotationMatrix2D(center, angle, 1);
 		warpAffine(srcMat, dstMat, rotationMatrix, srcMat.size(), interpolation, BORDER_CONSTANT, toCv(fill));
 	}
-	
-	// older wrappers, need to be templated...
-	//void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result);
-	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
-	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
-	//void convolve(ofImage& img, FloatImage& kernel);
 }
