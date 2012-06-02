@@ -5,16 +5,6 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	void loadMat(Mat& mat, string filename) {
-		FileStorage fs(ofToDataPath(filename), FileStorage::READ);
-		fs["Mat"] >> mat;
-	}
-	
-	void saveMat(Mat mat, string filename) {
-		FileStorage fs(ofToDataPath(filename), FileStorage::WRITE);
-		fs << "Mat" << mat;
-	}
-	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation) {
 		Mat rot3x3;
 		if(rotation.rows == 3 && rotation.cols == 3) {

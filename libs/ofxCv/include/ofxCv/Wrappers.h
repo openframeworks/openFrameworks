@@ -18,6 +18,9 @@
  point set/ofPolyline functions:
  - convexHull, minAreaRect, fitEllipse, unwarpPerspective, warpPerspective
  
+ utility wrappers:
+ - load and save Mat
+ 
  */
 
 #pragma once
@@ -29,6 +32,9 @@
 namespace ofxCv {
 	
 	using namespace cv;
+	
+	void loadMat(Mat& mat, string filename);
+	void saveMat(Mat mat, string filename);
 	
 	// wrapThree are based on functions that operate on three Mat objects.
 	// the first two are inputs, and the third is an output. for example,

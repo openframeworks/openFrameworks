@@ -4,6 +4,16 @@ namespace ofxCv {
 
 	using namespace cv;
 	
+	void loadMat(Mat& mat, string filename) {
+		FileStorage fs(ofToDataPath(filename), FileStorage::READ);
+		fs["Mat"] >> mat;
+	}
+	
+	void saveMat(Mat mat, string filename) {
+		FileStorage fs(ofToDataPath(filename), FileStorage::WRITE);
+		fs << "Mat" << mat;
+	}
+	
 	Vec3b convertColor(Vec3b color, int code) {
 		Mat_<Vec3b> mat(1, 1, CV_8UC3);
 		mat(0, 0) = color;

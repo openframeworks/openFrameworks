@@ -1,6 +1,6 @@
 /*
- helpers offer new, commonly-needed functionality that is not present in OpenCv
- or openFrameworks.
+ helpers offer new, commonly-needed functionality that is not quite present in
+ OpenCv or openFrameworks.
  */
 
 #pragma once
@@ -11,9 +11,6 @@
 namespace ofxCv {
 	
 	using namespace cv;
-	
-	void loadMat(Mat& mat, string filename);
-	void saveMat(Mat mat, string filename);
 	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
 	void applyMatrix(const ofMatrix4x4& matrix);
@@ -166,13 +163,6 @@ namespace ofxCv {
 		return ray * (point.dot(ray) / ray.dot(ray));
 	}
 	
-	static const ofColor cyanPrint = ofColor::fromHex(0x00abec);
-	static const ofColor magentaPrint = ofColor::fromHex(0xec008c);
-	static const ofColor yellowPrint = ofColor::fromHex(0xffee00);
-	
-	void drawHighlightString(string text, ofPoint position, ofColor background = ofColor::black, ofColor foreground = ofColor::white);
-	void drawHighlightString(string text, int x, int y, ofColor background = ofColor::black, ofColor foreground = ofColor::white);
-	
 	// morphological thinning, also called skeletonization, strangely missing from opencv
 	// here is a description of the algorithm http://homepages.inf.ed.ac.uk/rbf/HIPR2/thin.htm
 	template <class T>
@@ -230,4 +220,11 @@ namespace ofxCv {
 		rotate(src, dst, rotationAmount);
 		return rotationAmount;
 	}
+	
+	static const ofColor cyanPrint = ofColor::fromHex(0x00abec);
+	static const ofColor magentaPrint = ofColor::fromHex(0xec008c);
+	static const ofColor yellowPrint = ofColor::fromHex(0xffee00);
+	
+	void drawHighlightString(string text, ofPoint position, ofColor background = ofColor::black, ofColor foreground = ofColor::white);
+	void drawHighlightString(string text, int x, int y, ofColor background = ofColor::black, ofColor foreground = ofColor::white);
 }
