@@ -21,27 +21,123 @@ namespace ofxCv {
 	void drawMat(Mat& mat, float x, float y);
 	void drawMat(Mat& mat, float x, float y, float width, float height);
 	
-	//ofVec2f findMaxLocation(FloatImage& img);
-	ofVec2f findMaxLocation(Mat& mat);
+	template <class T>
+	ofVec2f findMaxLocation(T& img) {
+		Mat mat = toCv(img);
+		double minVal, maxVal;
+		cv::Point minLoc, maxLoc;
+		minMaxLoc(mat, &minVal, &maxVal, &minLoc, &maxLoc);
+		return ofVec2f(maxLoc.x, maxLoc.y);
+	}
 	
-	void getBoundingBox(ofImage& img, ofRectangle& box, int thresh = 1, bool invert = false);
+	template <class T>
+	Mat meanCols(T& img) {
+		Mat mat = toCv(img);
+		Mat colMat(mat.cols, 1, mat.type());
+		for(int i = 0; i < mat.cols; i++) {
+			colMat.row(i) = mean(mat.col(i));
+		}	
+		return colMat;
+	}
+	
+	template <class T>
+	Mat meanRows(T& img) {
+		Mat mat = toCv(img);
+		Mat rowMat(mat.rows, 1, mat.type());
+		for(int i = 0; i < mat.rows; i++) {
+			rowMat.row(i) = mean(mat.row(i));
+		}
+		return rowMat;
+	}
+	
+	template <class T>
+	Mat sumCols(T& img) {
+		Mat mat = toCv(img);
+		Mat colMat(mat.cols, 1, CV_32FC1);
+		for(int i = 0; i < mat.cols; i++) {
+			colMat.row(i) = sum(mat.col(i));
+		}	
+		return colMat;
+	}
+	
+	template <class T>
+	Mat sumRows(T& img) {
+		Mat mat = toCv(img);
+		Mat rowMat(mat.rows, 1, CV_32FC1);
+		for(int i = 0; i < mat.rows; i++) {
+			rowMat.row(i) = sum(mat.row(i));
+		}
+		return rowMat;
+	}
+	
+	template <class T>
+	Mat minCols(T& img) {
+		Mat mat = toCv(img);
+		Mat colMat(mat.cols, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.cols; i++) {
+			minMaxLoc(mat.col(i), &minVal, &maxVal); 
+			colMat.row(i) = minVal;
+		}	
+		return colMat;
+	}
+	
+	template <class T>
+	Mat minRows(T& img) {
+		Mat mat = toCv(img);
+		Mat rowMat(mat.rows, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.rows; i++) {
+			minMaxLoc(mat.row(i), &minVal, &maxVal); 
+			rowMat.row(i) = minVal;
+		}
+		return rowMat;
+	}
+	
+	template <class T>
+	Mat maxCols(T& img) {
+		Mat mat = toCv(img);
+		Mat colMat(mat.cols, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.cols; i++) {
+			minMaxLoc(mat.col(i), &minVal, &maxVal); 
+			colMat.row(i) = maxVal;
+		}	
+		return colMat;
+	}
+	
+	template <class T>
+	Mat maxRows(T& img) {
+		Mat mat = toCv(img);
+		Mat rowMat(mat.rows, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.rows; i++) {
+			minMaxLoc(mat.row(i), &minVal, &maxVal); 
+			rowMat.row(i) = maxVal;
+		}
+		return rowMat;
+	}
+	
 	int findFirst(const Mat& arr, unsigned char target);
 	int findLast(const Mat& arr, unsigned char target);
 	
-	// sometimes you want a different datatype returned than the one you pass in
-	// but the same number of channels. with mean and sum, you *probably* want floating point.
-	// it's kind of weird that mean returns the same datatype as the input, but sum/min/max
-	// all return floating point. there should be an optional type argument for the
-	// desired return format.
-	Mat meanCols(const Mat& mat);
-	Mat meanRows(const Mat& mat);
-	Mat sumCols(const Mat& mat);
-	Mat sumRows(const Mat& mat);
-	
-	Mat minCols(const Mat& mat);
-	Mat minRows(const Mat& mat);
-	Mat maxCols(const Mat& mat);
-	Mat maxRows(const Mat& mat);
+	template <class T>
+	void getBoundingBox(T& img, ofRectangle& box, int thresh, bool invert) {
+		Mat mat = toCv(img);
+		int flags = (invert ? THRESH_BINARY_INV : THRESH_BINARY);
+		
+		Mat rowMat = meanRows(mat);
+		threshold(rowMat, rowMat, thresh, 255, flags);
+		box.y = findFirst(rowMat, 255);
+		box.height = findLast(rowMat, 255);
+		box.height -= box.y;
+		
+		Mat colMat = meanCols(mat);
+		threshold(colMat, colMat, thresh, 255, flags);
+		box.x = findFirst(colMat, 255);
+		box.width = findLast(colMat, 255);
+		box.width -= box.x;
+	}
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines);
 	
@@ -117,6 +213,7 @@ namespace ofxCv {
 		ofxCv::Canny(src, thresh, threshold1, threshold2);
 		autorotate(src, thresh, dst);
 	}
+	
 	template <class S, class T, class D>
 	float autorotate(S& src, T& thresh, D& dst) {
 		imitate(dst, src);

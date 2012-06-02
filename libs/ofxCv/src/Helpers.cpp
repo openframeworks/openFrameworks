@@ -59,30 +59,6 @@ namespace ofxCv {
 		glMultMatrixf((GLfloat*) matrix.getPtr());
 	}
 	
-	ofVec2f findMaxLocation(Mat& mat) {
-		double minVal, maxVal;
-		cv::Point minLoc, maxLoc;
-		minMaxLoc(mat, &minVal, &maxVal, &minLoc, &maxLoc);
-		return ofVec2f(maxLoc.x, maxLoc.y);
-	}
-	
-	void getBoundingBox(ofImage& img, ofRectangle& box, int thresh, bool invert) {
-		Mat mat = toCv(img);
-		int flags = (invert ? THRESH_BINARY_INV : THRESH_BINARY);
-		
-		Mat rowMat = meanRows(mat);
-		threshold(rowMat, rowMat, thresh, 255, flags);
-		box.y = findFirst(rowMat, 255);
-		box.height = findLast(rowMat, 255);
-		box.height -= box.y;
-		
-		Mat colMat = meanCols(mat);
-		threshold(colMat, colMat, thresh, 255, flags);
-		box.x = findFirst(colMat, 255);
-		box.width = findLast(colMat, 255);
-		box.width -= box.x;
-	}
-	
 	int forceOdd(int x) {
 		return (x / 2) * 2 + 1;
 	}
@@ -103,78 +79,6 @@ namespace ofxCv {
 			}
 		}
 		return 0;
-	}
-	
-	Mat meanCols(const Mat& mat) {
-		Mat colMat(mat.cols, 1, mat.type());
-		for(int i = 0; i < mat.cols; i++) {
-			colMat.row(i) = mean(mat.col(i));
-		}	
-		return colMat;
-	}
-	
-	Mat meanRows(const Mat& mat) {
-		Mat rowMat(mat.rows, 1, mat.type());
-		for(int i = 0; i < mat.rows; i++) {
-			rowMat.row(i) = mean(mat.row(i));
-		}
-		return rowMat;
-	}
-	
-	Mat sumCols(const Mat& mat) {
-		Mat colMat(mat.cols, 1, CV_32FC1);
-		for(int i = 0; i < mat.cols; i++) {
-			colMat.row(i) = sum(mat.col(i));
-		}	
-		return colMat;
-	}
-	
-	Mat sumRows(const Mat& mat) {
-		Mat rowMat(mat.rows, 1, CV_32FC1);
-		for(int i = 0; i < mat.rows; i++) {
-			rowMat.row(i) = sum(mat.row(i));
-		}
-		return rowMat;
-	}
-	
-	Mat minCols(const Mat& mat) {
-		Mat colMat(mat.cols, 1, CV_32FC1);
-		double minVal, maxVal;
-		for(int i = 0; i < mat.cols; i++) {
-			minMaxLoc(mat.col(i), &minVal, &maxVal); 
-			colMat.row(i) = minVal;
-		}	
-		return colMat;
-	}
-	
-	Mat minRows(const Mat& mat) {
-		Mat rowMat(mat.rows, 1, CV_32FC1);
-		double minVal, maxVal;
-		for(int i = 0; i < mat.rows; i++) {
-			minMaxLoc(mat.row(i), &minVal, &maxVal); 
-			rowMat.row(i) = minVal;
-		}
-		return rowMat;
-	}
-	
-	Mat maxCols(const Mat& mat) {
-		Mat colMat(mat.cols, 1, CV_32FC1);
-		double minVal, maxVal;
-		for(int i = 0; i < mat.cols; i++) {
-			minMaxLoc(mat.col(i), &minVal, &maxVal); 
-			colMat.row(i) = maxVal;
-		}	
-		return colMat;
-	}
-	
-	Mat maxRows(const Mat& mat) {
-		Mat rowMat(mat.rows, 1, CV_32FC1);
-		double minVal, maxVal;
-		for(int i = 0; i < mat.rows; i++) {
-			minMaxLoc(mat.row(i), &minVal, &maxVal); 
-			rowMat.row(i) = maxVal;
-		}
-		return rowMat;
 	}
 	
 	void drawHighlightString(string text, ofPoint position, ofColor background, ofColor foreground) {
