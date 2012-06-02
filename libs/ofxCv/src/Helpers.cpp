@@ -81,6 +81,23 @@ namespace ofxCv {
 		return 0;
 	}
 	
+	float weightedAverageAngle(const vector<Vec4i>& lines) {
+		float angleSum = 0;
+		ofVec2f start, end;
+		float weights = 0;
+		for(int i = 0; i < lines.size(); i++) {
+			start.set(lines[i][0], lines[i][1]);
+			end.set(lines[i][2], lines[i][3]);
+			ofVec2f diff = end - start;
+			float length = diff.length();
+			float weight = length * length;
+			float angle = atan2f(diff.y, diff.x);
+			angleSum += angle * weight;
+			weights += weight;
+		}
+		return angleSum / weights;
+	}
+	
 	void drawHighlightString(string text, ofPoint position, ofColor background, ofColor foreground) {
 		drawHighlightString(text, position.x, position.y, background, foreground);
 	}
@@ -121,22 +138,5 @@ namespace ofxCv {
 		ofPopMatrix();
 		ofPopStyle();
 		glPopAttrib();
-	}
-	
-	float weightedAverageAngle(const vector<Vec4i>& lines) {
-		float angleSum = 0;
-		ofVec2f start, end;
-		float weights = 0;
-		for(int i = 0; i < lines.size(); i++) {
-			start.set(lines[i][0], lines[i][1]);
-			end.set(lines[i][2], lines[i][3]);
-			ofVec2f diff = end - start;
-			float length = diff.length();
-			float weight = length * length;
-			float angle = atan2f(diff.y, diff.x);
-			angleSum += angle * weight;
-			weights += weight;
-		}
-		return angleSum / weights;
 	}
 }
