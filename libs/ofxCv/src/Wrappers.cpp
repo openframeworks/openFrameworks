@@ -30,22 +30,6 @@ namespace ofxCv {
 	
 	cv::RotatedRect fitEllipse(const ofPolyline& polyline) {
 		return fitEllipse(Mat(toCv(polyline)));
-	}	
-	
-	void autothreshold(ofImage& original, ofImage& thresh, bool invert) {
-		imitate(thresh, original);
-		
-		Mat originalMat = toCv(original);
-		Mat threshMat = toCv(thresh);
-		
-		// this might only work on grayscale atm...
-		// THRESH_OTSU takes 4x as long as normal thresholding
-		int flags = THRESH_OTSU | (invert ? THRESH_BINARY_INV : THRESH_BINARY);
-		threshold(originalMat, threshMat, 0, 255, flags);
-	}
-	
-	void autothreshold(ofImage& img, bool invert) {
-		autothreshold(img, img, invert);
 	}
 	
 	/*	 

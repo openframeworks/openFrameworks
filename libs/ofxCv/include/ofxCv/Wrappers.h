@@ -115,6 +115,21 @@ cv::name(xMat, yMat, resultMat);\
 		ofxCv::threshold(srcDst, srcDst, thresholdValue, invert);
 	}
 	
+	// automatic threshold (grayscale 8-bit only) out of place
+	template <class S, class D>
+	void threshold(S& src, D& dst, bool invert = false) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		int flags = THRESH_OTSU | (invert ? THRESH_BINARY_INV : THRESH_BINARY);
+		threshold(src, dst, 0, 255, flags);
+	}
+	
+	// automatic threshold (grayscale 8-bit only) in place
+	template <class SD>
+	void threshold(SD& srcDst, bool invert = false) {
+		ofxCv::threshold(srcDst, srcDst, invert);
+	}
+	
 	// CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
 	// you can convert whole images...
 	template <class S, class D>
@@ -239,9 +254,7 @@ cv::name(xMat, yMat, resultMat);\
 		warpAffine(srcMat, dstMat, rotationMatrix, srcMat.size(), interpolation, BORDER_CONSTANT, toCv(fill));
 	}
 	
-	// older wrappers, need to be templated..	
-	void autothreshold(ofImage& original, ofImage& thresh, bool invert = false);
-	void autothreshold(ofImage& original, bool invert = false);
+	// older wrappers, need to be templated...
 	//void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result);
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
 	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
