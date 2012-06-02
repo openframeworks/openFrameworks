@@ -18,13 +18,6 @@
  point set/ofPolyline functions:
  - convexHull, minAreaRect, fitEllipse, unwarpPerspective, warpPerspective
  
- in ofxOpenCv, these were methods of ofxCvImage. for completeness, we need:
- ROI methods (set, get, reset)
- pixel manipulation (set, +, -, *, /)
- filtering (erode, dilate, blur, gaussian, invert, stretch contrast, range)
- transform (resize, mirror, translate, rotate, scale, abritrary combo)
- undistort, remap
- count nonzero pixels
  */
 
 #pragma once

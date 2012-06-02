@@ -23,6 +23,6 @@
 #include "ofxCv/Tracker.h" // object tracking
 #include "ofxCv/ContourFinder.h" // contour finding and tracking
 #include "ofxCv/RunningBackground.h" // background subtraction
-#include "ofxCv/Flow.h" // optical flow
+#include "ofxCv/Flow.h" // optical flow, from james george
 
 // <3 kyle

@@ -1,10 +1,3 @@
-/*
- *  Flow.h
- *  FlowExample
- *
- *  Created by James George on 12/20/11.
- */
-
 #pragma once
 
 #include "ofxCv.h"
@@ -18,7 +11,7 @@ namespace ofxCv {
 	public:
 		Flow();
 		~Flow();
-			
+		
 		//call these functions to calculate flow on sequential images.
 		//After this call the flow field will be populated and
 		//subsequent calls to getFlow() will be updated
@@ -26,7 +19,7 @@ namespace ofxCv {
 		//call with two contiguous images
 		void calcOpticalFlow(ofBaseHasPixels& lastImage, ofBaseHasPixels& currentImage);
 		void calcOpticalFlow(ofPixelsRef lastImage, ofPixelsRef currentImage);
-
+		
 		//call with subsequent images to do running optical flow. 
 		//the Flow class internally stores the last image for convenience
 		void calcOpticalFlow(ofBaseHasPixels& nextImage);
@@ -36,7 +29,7 @@ namespace ofxCv {
 		void draw(float x, float y);
 		void draw(float x, float y, float width, float height);
 		void draw(ofRectangle rect);
-
+		
 	protected:
 		ofImage last, curr;
 		bool hasFlow;
@@ -46,7 +39,7 @@ namespace ofxCv {
 		//specific drawing implementation
 		virtual void drawFlow(ofRectangle r) = 0;
 	};
-
+	
 	//there are two implementations of Flow
 	//use Farneback for a dense flow field, 
 	//use PyrLK for specific features
@@ -68,12 +61,12 @@ namespace ofxCv {
 		void setMaxLevel(int maxLevel);
 		void setMaxFeatures(int maxFeatures);
 		void setQualityLevel(float qualityLevel);
-				
+		
 		//returns tracking features for this image
 		vector<ofPoint> getFeatures();
 		
 	protected:
-
+		
 		void drawFlow(ofRectangle r);
 		void calcFlow();
 		
@@ -96,7 +89,7 @@ namespace ofxCv {
 		
 		FlowFarneback();
 		~FlowFarneback();
-
+		
 		//see http://opencv.willowgarage.com/documentation/cpp/motion_analysis_and_object_tracking.html
 		//for a description of these parameters
 		
@@ -129,5 +122,5 @@ namespace ofxCv {
 		float polySigma;
 		bool farnebackGaussian;
 	};
-
+	
 }
