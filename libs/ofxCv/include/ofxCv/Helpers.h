@@ -12,8 +12,6 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	void loadImage(Mat& mat, string filename);
-	void saveImage(Mat mat, string filename);
 	void loadMat(Mat& mat, string filename);
 	void saveMat(Mat mat, string filename);
 	

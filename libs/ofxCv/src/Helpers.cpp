@@ -5,14 +5,6 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	void loadImage(Mat& mat, string filename) {
-		mat = imread(ofToDataPath(filename));
-	}
-	
-	void saveImage(Mat mat, string filename) {
-		imwrite(ofToDataPath(filename), mat);
-	}
-	
 	void loadMat(Mat& mat, string filename) {
 		FileStorage fs(ofToDataPath(filename), FileStorage::READ);
 		fs["Mat"] >> mat;
