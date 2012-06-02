@@ -126,7 +126,7 @@ cv::name(xMat, yMat, resultMat);\
 		imitate(dst, src);
 		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		int flags = THRESH_OTSU | (invert ? THRESH_BINARY_INV : THRESH_BINARY);
-		threshold(src, dst, 0, 255, flags);
+		threshold(srcMat, dstMat, 0, 255, flags);
 	}
 	
 	// automatic threshold (grayscale 8-bit only) in place

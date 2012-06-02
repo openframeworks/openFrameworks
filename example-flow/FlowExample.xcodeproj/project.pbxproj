@@ -17,6 +17,37 @@
 		271783FE15742BE400F4E6CB /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 271783F515742BE400F4E6CB /* Utilities.cpp */; };
 		271783FF15742BE400F4E6CB /* Wrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 271783F615742BE400F4E6CB /* Wrappers.cpp */; };
 		27384286153B4D3800614C7B /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2738421E153B4D3700614C7B /* opencv.a */; };
+		27A104A7157AD69D00073092 /* guiBaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1046C157AD69D00073092 /* guiBaseObject.cpp */; };
+		27A104A8157AD69D00073092 /* guiCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1046E157AD69D00073092 /* guiCallback.cpp */; };
+		27A104A9157AD69D00073092 /* guiCallbackValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10470157AD69D00073092 /* guiCallbackValue.cpp */; };
+		27A104AA157AD69D00073092 /* guiColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10472157AD69D00073092 /* guiColor.cpp */; };
+		27A104AB157AD69D00073092 /* guiTextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10476157AD69D00073092 /* guiTextBase.cpp */; };
+		27A104AC157AD69D00073092 /* guiType2DSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10478157AD69D00073092 /* guiType2DSlider.cpp */; };
+		27A104AD157AD69D00073092 /* guiTypeButtonSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1047A157AD69D00073092 /* guiTypeButtonSlider.cpp */; };
+		27A104AE157AD69D00073092 /* guiTypeChartPlotter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1047C157AD69D00073092 /* guiTypeChartPlotter.cpp */; };
+		27A104AF157AD69D00073092 /* guiTypeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1047E157AD69D00073092 /* guiTypeCustom.cpp */; };
+		27A104B0157AD69D00073092 /* guiTypeDrawable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10480157AD69D00073092 /* guiTypeDrawable.cpp */; };
+		27A104B1157AD69D00073092 /* guiTypeFileLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10482157AD69D00073092 /* guiTypeFileLister.cpp */; };
+		27A104B2157AD69D00073092 /* guiTypeLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10484157AD69D00073092 /* guiTypeLabel.cpp */; };
+		27A104B3157AD69D00073092 /* guiTypeLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10486157AD69D00073092 /* guiTypeLogger.cpp */; };
+		27A104B4157AD69D00073092 /* guiTypeMultiToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10488157AD69D00073092 /* guiTypeMultiToggle.cpp */; };
+		27A104B5157AD69D00073092 /* guiTypePanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1048A157AD69D00073092 /* guiTypePanel.cpp */; };
+		27A104B6157AD69D00073092 /* guiTypeSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1048C157AD69D00073092 /* guiTypeSlider.cpp */; };
+		27A104B7157AD69D00073092 /* guiTypeText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1048E157AD69D00073092 /* guiTypeText.cpp */; };
+		27A104B8157AD69D00073092 /* guiTypeTextDropDown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10490157AD69D00073092 /* guiTypeTextDropDown.cpp */; };
+		27A104B9157AD69D00073092 /* guiTypeTextInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10492157AD69D00073092 /* guiTypeTextInput.cpp */; };
+		27A104BA157AD69D00073092 /* guiTypeToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10494157AD69D00073092 /* guiTypeToggle.cpp */; };
+		27A104BB157AD69D00073092 /* guiTypeVairableLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10496157AD69D00073092 /* guiTypeVairableLister.cpp */; };
+		27A104BC157AD69D00073092 /* guiTypeVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A10498157AD69D00073092 /* guiTypeVideo.cpp */; };
+		27A104BD157AD69D00073092 /* guiValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1049A157AD69D00073092 /* guiValue.cpp */; };
+		27A104BE157AD69D00073092 /* ofxControlPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A1049F157AD69D00073092 /* ofxControlPanel.cpp */; };
+		27A104BF157AD69D00073092 /* simpleColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A104A1157AD69D00073092 /* simpleColor.cpp */; };
+		27A104C0157AD69D00073092 /* simpleFileLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A104A3157AD69D00073092 /* simpleFileLister.cpp */; };
+		27A104C1157AD69D00073092 /* simpleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A104A5157AD69D00073092 /* simpleLogger.cpp */; };
+		27A104CB157AD6B100073092 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A104C4157AD6B100073092 /* tinyxml.cpp */; };
+		27A104CC157AD6B100073092 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A104C6157AD6B100073092 /* tinyxmlerror.cpp */; };
+		27A104CD157AD6B100073092 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A104C7157AD6B100073092 /* tinyxmlparser.cpp */; };
+		27A104CE157AD6B100073092 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A104C9157AD6B100073092 /* ofxXmlSettings.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -153,6 +184,189 @@
 		273841D7153B4D3700614C7B /* background_segm.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = background_segm.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/video/background_segm.hpp; sourceTree = SOURCE_ROOT; };
 		273841D8153B4D3700614C7B /* tracking.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tracking.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/video/tracking.hpp; sourceTree = SOURCE_ROOT; };
 		2738421E153B4D3700614C7B /* opencv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = opencv.a; path = ../../../addons/ofxOpenCv/libs/opencv/lib/osx/opencv.a; sourceTree = SOURCE_ROOT; };
+		27A1039A157AD69C00073092 /* COMMIT_EDITMSG */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COMMIT_EDITMSG; path = ../../ofxControlPanel/.git/COMMIT_EDITMSG; sourceTree = SOURCE_ROOT; };
+		27A1039B157AD69C00073092 /* config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = config; path = ../../ofxControlPanel/.git/config; sourceTree = SOURCE_ROOT; };
+		27A1039C157AD69C00073092 /* description */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = description; path = ../../ofxControlPanel/.git/description; sourceTree = SOURCE_ROOT; };
+		27A1039D157AD69C00073092 /* FETCH_HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = FETCH_HEAD; path = ../../ofxControlPanel/.git/FETCH_HEAD; sourceTree = SOURCE_ROOT; };
+		27A1039E157AD69C00073092 /* HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HEAD; path = ../../ofxControlPanel/.git/HEAD; sourceTree = SOURCE_ROOT; };
+		27A103A0157AD69C00073092 /* applypatch-msg.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "applypatch-msg.sample"; path = "../../ofxControlPanel/.git/hooks/applypatch-msg.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A1157AD69C00073092 /* commit-msg.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "commit-msg.sample"; path = "../../ofxControlPanel/.git/hooks/commit-msg.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A2157AD69C00073092 /* post-commit.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "post-commit.sample"; path = "../../ofxControlPanel/.git/hooks/post-commit.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A3157AD69C00073092 /* post-receive.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "post-receive.sample"; path = "../../ofxControlPanel/.git/hooks/post-receive.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A4157AD69C00073092 /* post-update.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "post-update.sample"; path = "../../ofxControlPanel/.git/hooks/post-update.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A5157AD69C00073092 /* pre-applypatch.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "pre-applypatch.sample"; path = "../../ofxControlPanel/.git/hooks/pre-applypatch.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A6157AD69C00073092 /* pre-commit.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "pre-commit.sample"; path = "../../ofxControlPanel/.git/hooks/pre-commit.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A7157AD69C00073092 /* pre-rebase.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "pre-rebase.sample"; path = "../../ofxControlPanel/.git/hooks/pre-rebase.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A8157AD69C00073092 /* prepare-commit-msg.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "prepare-commit-msg.sample"; path = "../../ofxControlPanel/.git/hooks/prepare-commit-msg.sample"; sourceTree = SOURCE_ROOT; };
+		27A103A9157AD69C00073092 /* update.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = update.sample; path = ../../ofxControlPanel/.git/hooks/update.sample; sourceTree = SOURCE_ROOT; };
+		27A103AA157AD69C00073092 /* index */ = {isa = PBXFileReference; lastKnownFileType = file; name = index; path = ../../ofxControlPanel/.git/index; sourceTree = SOURCE_ROOT; };
+		27A103AC157AD69C00073092 /* exclude */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = exclude; path = ../../ofxControlPanel/.git/info/exclude; sourceTree = SOURCE_ROOT; };
+		27A103AE157AD69C00073092 /* HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HEAD; path = ../../ofxControlPanel/.git/logs/HEAD; sourceTree = SOURCE_ROOT; };
+		27A103B1157AD69C00073092 /* master */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = master; path = ../../ofxControlPanel/.git/logs/refs/heads/master; sourceTree = SOURCE_ROOT; };
+		27A103B2157AD69C00073092 /* noexample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = noexample; path = ../../ofxControlPanel/.git/logs/refs/heads/noexample; sourceTree = SOURCE_ROOT; };
+		27A103B5157AD69C00073092 /* master */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = master; path = ../../ofxControlPanel/.git/logs/refs/remotes/origin/master; sourceTree = SOURCE_ROOT; };
+		27A103B8157AD69C00073092 /* b64e46af8f1f0b4ae369ef66961fb97e0b24dc */ = {isa = PBXFileReference; lastKnownFileType = file; name = b64e46af8f1f0b4ae369ef66961fb97e0b24dc; path = ../../ofxControlPanel/.git/objects/03/b64e46af8f1f0b4ae369ef66961fb97e0b24dc; sourceTree = SOURCE_ROOT; };
+		27A103BA157AD69C00073092 /* 70f2ee2836c91e31311acb77b306885f0b6468 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 70f2ee2836c91e31311acb77b306885f0b6468; path = ../../ofxControlPanel/.git/objects/07/70f2ee2836c91e31311acb77b306885f0b6468; sourceTree = SOURCE_ROOT; };
+		27A103BC157AD69C00073092 /* 999b120f1eb25d6a8c4508e7c94cb305c6250a */ = {isa = PBXFileReference; lastKnownFileType = file; name = 999b120f1eb25d6a8c4508e7c94cb305c6250a; path = ../../ofxControlPanel/.git/objects/09/999b120f1eb25d6a8c4508e7c94cb305c6250a; sourceTree = SOURCE_ROOT; };
+		27A103BE157AD69C00073092 /* 311a9016ac8650717c483f3f1b6505cc18d823 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 311a9016ac8650717c483f3f1b6505cc18d823; path = ../../ofxControlPanel/.git/objects/0b/311a9016ac8650717c483f3f1b6505cc18d823; sourceTree = SOURCE_ROOT; };
+		27A103BF157AD69C00073092 /* 5b16cb3114262ce3ae28939aaa4fdf6923f8a1 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 5b16cb3114262ce3ae28939aaa4fdf6923f8a1; path = ../../ofxControlPanel/.git/objects/0b/5b16cb3114262ce3ae28939aaa4fdf6923f8a1; sourceTree = SOURCE_ROOT; };
+		27A103C1157AD69C00073092 /* f578211d75b679f800c94244622e96b9e8ea1c */ = {isa = PBXFileReference; lastKnownFileType = file; name = f578211d75b679f800c94244622e96b9e8ea1c; path = ../../ofxControlPanel/.git/objects/0c/f578211d75b679f800c94244622e96b9e8ea1c; sourceTree = SOURCE_ROOT; };
+		27A103C3157AD69C00073092 /* e31bdfd90152a7e90341edb490ec83c8204edd */ = {isa = PBXFileReference; lastKnownFileType = file; name = e31bdfd90152a7e90341edb490ec83c8204edd; path = ../../ofxControlPanel/.git/objects/11/e31bdfd90152a7e90341edb490ec83c8204edd; sourceTree = SOURCE_ROOT; };
+		27A103C5157AD69C00073092 /* c7babb6698556829df06996b5363f95226306d */ = {isa = PBXFileReference; lastKnownFileType = file; name = c7babb6698556829df06996b5363f95226306d; path = ../../ofxControlPanel/.git/objects/12/c7babb6698556829df06996b5363f95226306d; sourceTree = SOURCE_ROOT; };
+		27A103C7157AD69C00073092 /* a6e47636e3b4b75047665a89cb0deaa10b9b3b */ = {isa = PBXFileReference; lastKnownFileType = file; name = a6e47636e3b4b75047665a89cb0deaa10b9b3b; path = ../../ofxControlPanel/.git/objects/1a/a6e47636e3b4b75047665a89cb0deaa10b9b3b; sourceTree = SOURCE_ROOT; };
+		27A103C9157AD69C00073092 /* 15b5d1547301c0a13f3050a2521158a6776217 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 15b5d1547301c0a13f3050a2521158a6776217; path = ../../ofxControlPanel/.git/objects/1d/15b5d1547301c0a13f3050a2521158a6776217; sourceTree = SOURCE_ROOT; };
+		27A103CB157AD69C00073092 /* 4330afd56d003087fb82d21bfa73e862b242fc */ = {isa = PBXFileReference; lastKnownFileType = file; name = 4330afd56d003087fb82d21bfa73e862b242fc; path = ../../ofxControlPanel/.git/objects/22/4330afd56d003087fb82d21bfa73e862b242fc; sourceTree = SOURCE_ROOT; };
+		27A103CD157AD69C00073092 /* c960f4a69df1c424f13229683a7334d1e4769b */ = {isa = PBXFileReference; lastKnownFileType = file; name = c960f4a69df1c424f13229683a7334d1e4769b; path = ../../ofxControlPanel/.git/objects/23/c960f4a69df1c424f13229683a7334d1e4769b; sourceTree = SOURCE_ROOT; };
+		27A103CF157AD69C00073092 /* 618e4015f8bab67d56e8e75eb6aa0be2c31ed9 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 618e4015f8bab67d56e8e75eb6aa0be2c31ed9; path = ../../ofxControlPanel/.git/objects/26/618e4015f8bab67d56e8e75eb6aa0be2c31ed9; sourceTree = SOURCE_ROOT; };
+		27A103D1157AD69C00073092 /* 4e364cfbf513271f0bc43a44083cf00a27e7eb */ = {isa = PBXFileReference; lastKnownFileType = file; name = 4e364cfbf513271f0bc43a44083cf00a27e7eb; path = ../../ofxControlPanel/.git/objects/29/4e364cfbf513271f0bc43a44083cf00a27e7eb; sourceTree = SOURCE_ROOT; };
+		27A103D3157AD69C00073092 /* 776ee6bd7e131ef680f48e8b2fb61a727fb548 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 776ee6bd7e131ef680f48e8b2fb61a727fb548; path = ../../ofxControlPanel/.git/objects/37/776ee6bd7e131ef680f48e8b2fb61a727fb548; sourceTree = SOURCE_ROOT; };
+		27A103D4157AD69C00073092 /* 9e81eacc575059f9e33cbffa2e753ed1f57fd2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 9e81eacc575059f9e33cbffa2e753ed1f57fd2; path = ../../ofxControlPanel/.git/objects/37/9e81eacc575059f9e33cbffa2e753ed1f57fd2; sourceTree = SOURCE_ROOT; };
+		27A103D6157AD69C00073092 /* d225d728eafc6f76ea4abdcdcca2cfbca918c2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = d225d728eafc6f76ea4abdcdcca2cfbca918c2; path = ../../ofxControlPanel/.git/objects/3b/d225d728eafc6f76ea4abdcdcca2cfbca918c2; sourceTree = SOURCE_ROOT; };
+		27A103D8157AD69C00073092 /* 3b20279dc5959a2a43272fea20d433a2ab2fec */ = {isa = PBXFileReference; lastKnownFileType = file; name = 3b20279dc5959a2a43272fea20d433a2ab2fec; path = ../../ofxControlPanel/.git/objects/41/3b20279dc5959a2a43272fea20d433a2ab2fec; sourceTree = SOURCE_ROOT; };
+		27A103DA157AD69C00073092 /* 38a38282133b5d2033b10e207c3fc253cae8bf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 38a38282133b5d2033b10e207c3fc253cae8bf; path = ../../ofxControlPanel/.git/objects/42/38a38282133b5d2033b10e207c3fc253cae8bf; sourceTree = SOURCE_ROOT; };
+		27A103DC157AD69C00073092 /* 6d6a573141d51891d165589222efafda826695 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 6d6a573141d51891d165589222efafda826695; path = ../../ofxControlPanel/.git/objects/4d/6d6a573141d51891d165589222efafda826695; sourceTree = SOURCE_ROOT; };
+		27A103DE157AD69C00073092 /* ae3ba97bbfeef65b6421c8b71a41e007396e46 */ = {isa = PBXFileReference; lastKnownFileType = file; name = ae3ba97bbfeef65b6421c8b71a41e007396e46; path = ../../ofxControlPanel/.git/objects/53/ae3ba97bbfeef65b6421c8b71a41e007396e46; sourceTree = SOURCE_ROOT; };
+		27A103E0157AD69C00073092 /* 2f6bbcc16dc368936920d08311f08a91212566 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 2f6bbcc16dc368936920d08311f08a91212566; path = ../../ofxControlPanel/.git/objects/54/2f6bbcc16dc368936920d08311f08a91212566; sourceTree = SOURCE_ROOT; };
+		27A103E2157AD69C00073092 /* 06f13305edb6775160c25adabf42c1d911b997 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 06f13305edb6775160c25adabf42c1d911b997; path = ../../ofxControlPanel/.git/objects/55/06f13305edb6775160c25adabf42c1d911b997; sourceTree = SOURCE_ROOT; };
+		27A103E4157AD69C00073092 /* 8643ef0f378d556dfff7c6ccbbf0b195a7ca5a */ = {isa = PBXFileReference; lastKnownFileType = file; name = 8643ef0f378d556dfff7c6ccbbf0b195a7ca5a; path = ../../ofxControlPanel/.git/objects/57/8643ef0f378d556dfff7c6ccbbf0b195a7ca5a; sourceTree = SOURCE_ROOT; };
+		27A103E6157AD69C00073092 /* a877b91dadc96fad59ec3d7e661188b56a1d3f */ = {isa = PBXFileReference; lastKnownFileType = file; name = a877b91dadc96fad59ec3d7e661188b56a1d3f; path = ../../ofxControlPanel/.git/objects/58/a877b91dadc96fad59ec3d7e661188b56a1d3f; sourceTree = SOURCE_ROOT; };
+		27A103E8157AD69C00073092 /* 083b71e398035130e4b46fda555af1d5d3e3cc */ = {isa = PBXFileReference; lastKnownFileType = file; name = 083b71e398035130e4b46fda555af1d5d3e3cc; path = ../../ofxControlPanel/.git/objects/5b/083b71e398035130e4b46fda555af1d5d3e3cc; sourceTree = SOURCE_ROOT; };
+		27A103E9157AD69C00073092 /* 6f916eb1b98b394ef452556530cf5972535374 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 6f916eb1b98b394ef452556530cf5972535374; path = ../../ofxControlPanel/.git/objects/5b/6f916eb1b98b394ef452556530cf5972535374; sourceTree = SOURCE_ROOT; };
+		27A103EB157AD69C00073092 /* 9115d1889e431b8eee3b984fb87f633c2be3ab */ = {isa = PBXFileReference; lastKnownFileType = file; name = 9115d1889e431b8eee3b984fb87f633c2be3ab; path = ../../ofxControlPanel/.git/objects/5e/9115d1889e431b8eee3b984fb87f633c2be3ab; sourceTree = SOURCE_ROOT; };
+		27A103ED157AD69C00073092 /* f41dee26abc17020eba7e0b95e2e48a7b0edc4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = f41dee26abc17020eba7e0b95e2e48a7b0edc4; path = ../../ofxControlPanel/.git/objects/5f/f41dee26abc17020eba7e0b95e2e48a7b0edc4; sourceTree = SOURCE_ROOT; };
+		27A103EF157AD69C00073092 /* 630f2991badded8652a99c44c16dd466302733 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 630f2991badded8652a99c44c16dd466302733; path = ../../ofxControlPanel/.git/objects/61/630f2991badded8652a99c44c16dd466302733; sourceTree = SOURCE_ROOT; };
+		27A103F1157AD69C00073092 /* c67bba6811bd14d045c013d94936ad77f6620a */ = {isa = PBXFileReference; lastKnownFileType = file; name = c67bba6811bd14d045c013d94936ad77f6620a; path = ../../ofxControlPanel/.git/objects/67/c67bba6811bd14d045c013d94936ad77f6620a; sourceTree = SOURCE_ROOT; };
+		27A103F3157AD69C00073092 /* 36f80b6f1043ab2622f8a5c48ead89064b9d8a */ = {isa = PBXFileReference; lastKnownFileType = file; name = 36f80b6f1043ab2622f8a5c48ead89064b9d8a; path = ../../ofxControlPanel/.git/objects/68/36f80b6f1043ab2622f8a5c48ead89064b9d8a; sourceTree = SOURCE_ROOT; };
+		27A103F5157AD69C00073092 /* 98be0c306b3de3c10f6a02fda0dd59a70e2bbf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 98be0c306b3de3c10f6a02fda0dd59a70e2bbf; path = ../../ofxControlPanel/.git/objects/6d/98be0c306b3de3c10f6a02fda0dd59a70e2bbf; sourceTree = SOURCE_ROOT; };
+		27A103F7157AD69C00073092 /* 0191ec2ecbe40f012b1290219fcc7e0812758c */ = {isa = PBXFileReference; lastKnownFileType = file; name = 0191ec2ecbe40f012b1290219fcc7e0812758c; path = ../../ofxControlPanel/.git/objects/72/0191ec2ecbe40f012b1290219fcc7e0812758c; sourceTree = SOURCE_ROOT; };
+		27A103F8157AD69C00073092 /* 2cc42f46252447adc3f17ee505aa2e151ba92e */ = {isa = PBXFileReference; lastKnownFileType = file; name = 2cc42f46252447adc3f17ee505aa2e151ba92e; path = ../../ofxControlPanel/.git/objects/72/2cc42f46252447adc3f17ee505aa2e151ba92e; sourceTree = SOURCE_ROOT; };
+		27A103FA157AD69C00073092 /* a7f9d361af28d2f8c25145587b434a6b968b79 */ = {isa = PBXFileReference; lastKnownFileType = file; name = a7f9d361af28d2f8c25145587b434a6b968b79; path = ../../ofxControlPanel/.git/objects/76/a7f9d361af28d2f8c25145587b434a6b968b79; sourceTree = SOURCE_ROOT; };
+		27A103FB157AD69C00073092 /* e6be0f82e599eace294257680bf5c085ac993c */ = {isa = PBXFileReference; lastKnownFileType = file; name = e6be0f82e599eace294257680bf5c085ac993c; path = ../../ofxControlPanel/.git/objects/76/e6be0f82e599eace294257680bf5c085ac993c; sourceTree = SOURCE_ROOT; };
+		27A103FD157AD69C00073092 /* a8625e06df898157e2db73f26613d733255f5c */ = {isa = PBXFileReference; lastKnownFileType = file; name = a8625e06df898157e2db73f26613d733255f5c; path = ../../ofxControlPanel/.git/objects/77/a8625e06df898157e2db73f26613d733255f5c; sourceTree = SOURCE_ROOT; };
+		27A103FE157AD69C00073092 /* b520c7ec74c34a00b71061b3cca9559c4e1d51 */ = {isa = PBXFileReference; lastKnownFileType = file; name = b520c7ec74c34a00b71061b3cca9559c4e1d51; path = ../../ofxControlPanel/.git/objects/77/b520c7ec74c34a00b71061b3cca9559c4e1d51; sourceTree = SOURCE_ROOT; };
+		27A10400157AD69C00073092 /* b5a295eec9d8d2bf2d6921ed2fa33299f8a672 */ = {isa = PBXFileReference; lastKnownFileType = file; name = b5a295eec9d8d2bf2d6921ed2fa33299f8a672; path = ../../ofxControlPanel/.git/objects/78/b5a295eec9d8d2bf2d6921ed2fa33299f8a672; sourceTree = SOURCE_ROOT; };
+		27A10402157AD69C00073092 /* 957c7c593e1809596de0c222deaab31b39c860 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 957c7c593e1809596de0c222deaab31b39c860; path = ../../ofxControlPanel/.git/objects/7a/957c7c593e1809596de0c222deaab31b39c860; sourceTree = SOURCE_ROOT; };
+		27A10404157AD69C00073092 /* e51dfc9fef89409ff72f00fd2d7ce2e5f0c628 */ = {isa = PBXFileReference; lastKnownFileType = file; name = e51dfc9fef89409ff72f00fd2d7ce2e5f0c628; path = ../../ofxControlPanel/.git/objects/85/e51dfc9fef89409ff72f00fd2d7ce2e5f0c628; sourceTree = SOURCE_ROOT; };
+		27A10406157AD69C00073092 /* 47af1a2ae58e146de378ea50bd96351dab998b */ = {isa = PBXFileReference; lastKnownFileType = file; name = 47af1a2ae58e146de378ea50bd96351dab998b; path = ../../ofxControlPanel/.git/objects/87/47af1a2ae58e146de378ea50bd96351dab998b; sourceTree = SOURCE_ROOT; };
+		27A10408157AD69C00073092 /* cf5750cd76b0298eee8bd9cdec854e92b7e9cb */ = {isa = PBXFileReference; lastKnownFileType = file; name = cf5750cd76b0298eee8bd9cdec854e92b7e9cb; path = ../../ofxControlPanel/.git/objects/89/cf5750cd76b0298eee8bd9cdec854e92b7e9cb; sourceTree = SOURCE_ROOT; };
+		27A1040A157AD69C00073092 /* b469571f4c7e76a0b734551e3fc5754d9e5961 */ = {isa = PBXFileReference; lastKnownFileType = file; name = b469571f4c7e76a0b734551e3fc5754d9e5961; path = ../../ofxControlPanel/.git/objects/8c/b469571f4c7e76a0b734551e3fc5754d9e5961; sourceTree = SOURCE_ROOT; };
+		27A1040C157AD69C00073092 /* 1e409ecd185c85d7f24299aee663e36605923c */ = {isa = PBXFileReference; lastKnownFileType = file; name = 1e409ecd185c85d7f24299aee663e36605923c; path = ../../ofxControlPanel/.git/objects/90/1e409ecd185c85d7f24299aee663e36605923c; sourceTree = SOURCE_ROOT; };
+		27A1040E157AD69C00073092 /* 6bdb4ac65507ad83a263e256f11f4b8ffa3c6a */ = {isa = PBXFileReference; lastKnownFileType = file; name = 6bdb4ac65507ad83a263e256f11f4b8ffa3c6a; path = ../../ofxControlPanel/.git/objects/91/6bdb4ac65507ad83a263e256f11f4b8ffa3c6a; sourceTree = SOURCE_ROOT; };
+		27A10410157AD69C00073092 /* 066fac7d63327e231d6ca5319c53525a4684ef */ = {isa = PBXFileReference; lastKnownFileType = file; name = 066fac7d63327e231d6ca5319c53525a4684ef; path = ../../ofxControlPanel/.git/objects/93/066fac7d63327e231d6ca5319c53525a4684ef; sourceTree = SOURCE_ROOT; };
+		27A10412157AD69C00073092 /* 160f113e613c52ba60d41fa817619bd167b85c */ = {isa = PBXFileReference; lastKnownFileType = file; name = 160f113e613c52ba60d41fa817619bd167b85c; path = ../../ofxControlPanel/.git/objects/9b/160f113e613c52ba60d41fa817619bd167b85c; sourceTree = SOURCE_ROOT; };
+		27A10414157AD69C00073092 /* 381850b358505888399e244ca353bf28cc79cd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 381850b358505888399e244ca353bf28cc79cd; path = ../../ofxControlPanel/.git/objects/9c/381850b358505888399e244ca353bf28cc79cd; sourceTree = SOURCE_ROOT; };
+		27A10416157AD69C00073092 /* 54fe1b19358fa8b6cf6c84e84101ca50b8e6ec */ = {isa = PBXFileReference; lastKnownFileType = file; name = 54fe1b19358fa8b6cf6c84e84101ca50b8e6ec; path = ../../ofxControlPanel/.git/objects/a4/54fe1b19358fa8b6cf6c84e84101ca50b8e6ec; sourceTree = SOURCE_ROOT; };
+		27A10418157AD69C00073092 /* 825388d8567ed97fd51156406b866c66dfda33 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 825388d8567ed97fd51156406b866c66dfda33; path = ../../ofxControlPanel/.git/objects/a5/825388d8567ed97fd51156406b866c66dfda33; sourceTree = SOURCE_ROOT; };
+		27A1041A157AD69C00073092 /* 180966c2f4a37c019ff9eecb0beb3a189a20d7 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 180966c2f4a37c019ff9eecb0beb3a189a20d7; path = ../../ofxControlPanel/.git/objects/a6/180966c2f4a37c019ff9eecb0beb3a189a20d7; sourceTree = SOURCE_ROOT; };
+		27A1041C157AD69C00073092 /* 0448b1936e20e6e8e01fec7444d8a0fc62c0b8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 0448b1936e20e6e8e01fec7444d8a0fc62c0b8; path = ../../ofxControlPanel/.git/objects/a7/0448b1936e20e6e8e01fec7444d8a0fc62c0b8; sourceTree = SOURCE_ROOT; };
+		27A1041E157AD69C00073092 /* 5944e44c40ab6df1e078d971106fc43dd0f251 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 5944e44c40ab6df1e078d971106fc43dd0f251; path = ../../ofxControlPanel/.git/objects/a8/5944e44c40ab6df1e078d971106fc43dd0f251; sourceTree = SOURCE_ROOT; };
+		27A10420157AD69C00073092 /* cf237c6fbdfadb45753dc8183837c213c6e87a */ = {isa = PBXFileReference; lastKnownFileType = file; name = cf237c6fbdfadb45753dc8183837c213c6e87a; path = ../../ofxControlPanel/.git/objects/af/cf237c6fbdfadb45753dc8183837c213c6e87a; sourceTree = SOURCE_ROOT; };
+		27A10422157AD69C00073092 /* 08a164049f31098643b0758134c7379ccef855 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 08a164049f31098643b0758134c7379ccef855; path = ../../ofxControlPanel/.git/objects/b0/08a164049f31098643b0758134c7379ccef855; sourceTree = SOURCE_ROOT; };
+		27A10424157AD69D00073092 /* 0c3a5dd8ca3bba1c2ea4379439748be2019d91 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 0c3a5dd8ca3bba1c2ea4379439748be2019d91; path = ../../ofxControlPanel/.git/objects/b1/0c3a5dd8ca3bba1c2ea4379439748be2019d91; sourceTree = SOURCE_ROOT; };
+		27A10426157AD69D00073092 /* 4306eefb3d16eb27aaee99ccfaf58fdd57a7ce */ = {isa = PBXFileReference; lastKnownFileType = file; name = 4306eefb3d16eb27aaee99ccfaf58fdd57a7ce; path = ../../ofxControlPanel/.git/objects/b2/4306eefb3d16eb27aaee99ccfaf58fdd57a7ce; sourceTree = SOURCE_ROOT; };
+		27A10427157AD69D00073092 /* afecb1c079799a9a9dc6f4c728a80b49550c61 */ = {isa = PBXFileReference; lastKnownFileType = file; name = afecb1c079799a9a9dc6f4c728a80b49550c61; path = ../../ofxControlPanel/.git/objects/b2/afecb1c079799a9a9dc6f4c728a80b49550c61; sourceTree = SOURCE_ROOT; };
+		27A10428157AD69D00073092 /* b0bffd67ec41dd0bd3b31ea0993599b1fb33ea */ = {isa = PBXFileReference; lastKnownFileType = file; name = b0bffd67ec41dd0bd3b31ea0993599b1fb33ea; path = ../../ofxControlPanel/.git/objects/b2/b0bffd67ec41dd0bd3b31ea0993599b1fb33ea; sourceTree = SOURCE_ROOT; };
+		27A1042A157AD69D00073092 /* 416d771c46dd0ed0ff063ed32bd43b55b94129 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 416d771c46dd0ed0ff063ed32bd43b55b94129; path = ../../ofxControlPanel/.git/objects/b4/416d771c46dd0ed0ff063ed32bd43b55b94129; sourceTree = SOURCE_ROOT; };
+		27A1042C157AD69D00073092 /* 5024d2a60acb96674279f1b13d6c298d85f3d3 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 5024d2a60acb96674279f1b13d6c298d85f3d3; path = ../../ofxControlPanel/.git/objects/b7/5024d2a60acb96674279f1b13d6c298d85f3d3; sourceTree = SOURCE_ROOT; };
+		27A1042E157AD69D00073092 /* d2065352e2cefabb155bce99f1df8ce6326da4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = d2065352e2cefabb155bce99f1df8ce6326da4; path = ../../ofxControlPanel/.git/objects/bf/d2065352e2cefabb155bce99f1df8ce6326da4; sourceTree = SOURCE_ROOT; };
+		27A10430157AD69D00073092 /* d1cc2b09d22c24c36355a2fd3c519726ebd7ae */ = {isa = PBXFileReference; lastKnownFileType = file; name = d1cc2b09d22c24c36355a2fd3c519726ebd7ae; path = ../../ofxControlPanel/.git/objects/c0/d1cc2b09d22c24c36355a2fd3c519726ebd7ae; sourceTree = SOURCE_ROOT; };
+		27A10432157AD69D00073092 /* ba4131db75c97b8ea735d02d51554d75cbee7b */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ba4131db75c97b8ea735d02d51554d75cbee7b; path = ../../ofxControlPanel/.git/objects/c5/ba4131db75c97b8ea735d02d51554d75cbee7b; sourceTree = SOURCE_ROOT; };
+		27A10434157AD69D00073092 /* 82ceee17d827efc68b26330a6236598cd31bb9 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 82ceee17d827efc68b26330a6236598cd31bb9; path = ../../ofxControlPanel/.git/objects/c9/82ceee17d827efc68b26330a6236598cd31bb9; sourceTree = SOURCE_ROOT; };
+		27A10435157AD69D00073092 /* d4287d3e3a9931cbd924e5d7c48db66e1a9457 */ = {isa = PBXFileReference; lastKnownFileType = file; name = d4287d3e3a9931cbd924e5d7c48db66e1a9457; path = ../../ofxControlPanel/.git/objects/c9/d4287d3e3a9931cbd924e5d7c48db66e1a9457; sourceTree = SOURCE_ROOT; };
+		27A10437157AD69D00073092 /* 269c341a9c49356cb235803dadaf38360ffd05 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 269c341a9c49356cb235803dadaf38360ffd05; path = ../../ofxControlPanel/.git/objects/ca/269c341a9c49356cb235803dadaf38360ffd05; sourceTree = SOURCE_ROOT; };
+		27A10439157AD69D00073092 /* f703e53c50ca7833124e4892e223bddec8fb26 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = f703e53c50ca7833124e4892e223bddec8fb26; path = ../../ofxControlPanel/.git/objects/cd/f703e53c50ca7833124e4892e223bddec8fb26; sourceTree = SOURCE_ROOT; };
+		27A1043B157AD69D00073092 /* 48f96fc4cc54f9db452043ab4fdda56d6dddc2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 48f96fc4cc54f9db452043ab4fdda56d6dddc2; path = ../../ofxControlPanel/.git/objects/ce/48f96fc4cc54f9db452043ab4fdda56d6dddc2; sourceTree = SOURCE_ROOT; };
+		27A1043D157AD69D00073092 /* 359d6947f5a94f851fb1fd90448112e5344654 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 359d6947f5a94f851fb1fd90448112e5344654; path = ../../ofxControlPanel/.git/objects/cf/359d6947f5a94f851fb1fd90448112e5344654; sourceTree = SOURCE_ROOT; };
+		27A1043E157AD69D00073092 /* 446f7993687a15b3a7323b77f963fead2986ce */ = {isa = PBXFileReference; lastKnownFileType = file; name = 446f7993687a15b3a7323b77f963fead2986ce; path = ../../ofxControlPanel/.git/objects/cf/446f7993687a15b3a7323b77f963fead2986ce; sourceTree = SOURCE_ROOT; };
+		27A10440157AD69D00073092 /* 3869c7ba48e81d84499164c91b29d14fb4f533 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 3869c7ba48e81d84499164c91b29d14fb4f533; path = ../../ofxControlPanel/.git/objects/d0/3869c7ba48e81d84499164c91b29d14fb4f533; sourceTree = SOURCE_ROOT; };
+		27A10442157AD69D00073092 /* dc7e40ff23b171005dfcaa11f3d0cf340392af */ = {isa = PBXFileReference; lastKnownFileType = file; name = dc7e40ff23b171005dfcaa11f3d0cf340392af; path = ../../ofxControlPanel/.git/objects/d3/dc7e40ff23b171005dfcaa11f3d0cf340392af; sourceTree = SOURCE_ROOT; };
+		27A10444157AD69D00073092 /* 1da37afa445ecb45a3cc8061fcbde1a4916f3f */ = {isa = PBXFileReference; lastKnownFileType = file; name = 1da37afa445ecb45a3cc8061fcbde1a4916f3f; path = ../../ofxControlPanel/.git/objects/d4/1da37afa445ecb45a3cc8061fcbde1a4916f3f; sourceTree = SOURCE_ROOT; };
+		27A10446157AD69D00073092 /* 811e2bf68cc44dbbf43acf5db0ee109f33e3ac */ = {isa = PBXFileReference; lastKnownFileType = file; name = 811e2bf68cc44dbbf43acf5db0ee109f33e3ac; path = ../../ofxControlPanel/.git/objects/dc/811e2bf68cc44dbbf43acf5db0ee109f33e3ac; sourceTree = SOURCE_ROOT; };
+		27A10448157AD69D00073092 /* 45599e4a6acd73103a8fa9b9981ef2cb8b2d40 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 45599e4a6acd73103a8fa9b9981ef2cb8b2d40; path = ../../ofxControlPanel/.git/objects/e0/45599e4a6acd73103a8fa9b9981ef2cb8b2d40; sourceTree = SOURCE_ROOT; };
+		27A1044A157AD69D00073092 /* 105a87a749003fdc7194168ecc40d1e167ff99 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 105a87a749003fdc7194168ecc40d1e167ff99; path = ../../ofxControlPanel/.git/objects/e5/105a87a749003fdc7194168ecc40d1e167ff99; sourceTree = SOURCE_ROOT; };
+		27A1044C157AD69D00073092 /* 3d4a9c6684c7c6ac3f0c30a1d776312ecf5b36 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 3d4a9c6684c7c6ac3f0c30a1d776312ecf5b36; path = ../../ofxControlPanel/.git/objects/eb/3d4a9c6684c7c6ac3f0c30a1d776312ecf5b36; sourceTree = SOURCE_ROOT; };
+		27A1044E157AD69D00073092 /* ecca36e9aa1a434f3919598c17b7a49739c6a2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = ecca36e9aa1a434f3919598c17b7a49739c6a2; path = ../../ofxControlPanel/.git/objects/ef/ecca36e9aa1a434f3919598c17b7a49739c6a2; sourceTree = SOURCE_ROOT; };
+		27A10450157AD69D00073092 /* 3e4d0a5d536a7b8d82227b73e7077a513ce12b */ = {isa = PBXFileReference; lastKnownFileType = file; name = 3e4d0a5d536a7b8d82227b73e7077a513ce12b; path = ../../ofxControlPanel/.git/objects/f3/3e4d0a5d536a7b8d82227b73e7077a513ce12b; sourceTree = SOURCE_ROOT; };
+		27A10452157AD69D00073092 /* d5ca0b53ef6114d6c52075ea22bb4ea2f140bd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = d5ca0b53ef6114d6c52075ea22bb4ea2f140bd; path = ../../ofxControlPanel/.git/objects/f5/d5ca0b53ef6114d6c52075ea22bb4ea2f140bd; sourceTree = SOURCE_ROOT; };
+		27A10454157AD69D00073092 /* 8ae03cc9f1a1949f379b4d225d0d526275f10c */ = {isa = PBXFileReference; lastKnownFileType = file; name = 8ae03cc9f1a1949f379b4d225d0d526275f10c; path = ../../ofxControlPanel/.git/objects/f8/8ae03cc9f1a1949f379b4d225d0d526275f10c; sourceTree = SOURCE_ROOT; };
+		27A10455157AD69D00073092 /* d09ccfa37002c913c2ecd2546353b5a106e897 */ = {isa = PBXFileReference; lastKnownFileType = file; name = d09ccfa37002c913c2ecd2546353b5a106e897; path = ../../ofxControlPanel/.git/objects/f8/d09ccfa37002c913c2ecd2546353b5a106e897; sourceTree = SOURCE_ROOT; };
+		27A10457157AD69D00073092 /* 4b5b6ef3907954b174989f338f84e6716d8443 */ = {isa = PBXFileReference; lastKnownFileType = file; name = 4b5b6ef3907954b174989f338f84e6716d8443; path = ../../ofxControlPanel/.git/objects/f9/4b5b6ef3907954b174989f338f84e6716d8443; sourceTree = SOURCE_ROOT; };
+		27A10459157AD69D00073092 /* 61c1aafacea3a2eb3a82107e1492c4fb725d1a */ = {isa = PBXFileReference; lastKnownFileType = file; name = 61c1aafacea3a2eb3a82107e1492c4fb725d1a; path = ../../ofxControlPanel/.git/objects/fe/61c1aafacea3a2eb3a82107e1492c4fb725d1a; sourceTree = SOURCE_ROOT; };
+		27A1045C157AD69D00073092 /* pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.idx */ = {isa = PBXFileReference; lastKnownFileType = file; name = "pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.idx"; path = "../../ofxControlPanel/.git/objects/pack/pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.idx"; sourceTree = SOURCE_ROOT; };
+		27A1045D157AD69D00073092 /* pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.pack */ = {isa = PBXFileReference; lastKnownFileType = file; name = "pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.pack"; path = "../../ofxControlPanel/.git/objects/pack/pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.pack"; sourceTree = SOURCE_ROOT; };
+		27A1045E157AD69D00073092 /* ORIG_HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ORIG_HEAD; path = ../../ofxControlPanel/.git/ORIG_HEAD; sourceTree = SOURCE_ROOT; };
+		27A1045F157AD69D00073092 /* packed-refs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "packed-refs"; path = "../../ofxControlPanel/.git/packed-refs"; sourceTree = SOURCE_ROOT; };
+		27A10462157AD69D00073092 /* master */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = master; path = ../../ofxControlPanel/.git/refs/heads/master; sourceTree = SOURCE_ROOT; };
+		27A10463157AD69D00073092 /* noexample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = noexample; path = ../../ofxControlPanel/.git/refs/heads/noexample; sourceTree = SOURCE_ROOT; };
+		27A10466157AD69D00073092 /* HEAD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HEAD; path = ../../ofxControlPanel/.git/refs/remotes/origin/HEAD; sourceTree = SOURCE_ROOT; };
+		27A10467157AD69D00073092 /* master */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = master; path = ../../ofxControlPanel/.git/refs/remotes/origin/master; sourceTree = SOURCE_ROOT; };
+		27A10469157AD69D00073092 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .gitignore; path = ../../ofxControlPanel/.gitignore; sourceTree = SOURCE_ROOT; };
+		27A1046A157AD69D00073092 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.markdown; path = ../../ofxControlPanel/README.markdown; sourceTree = SOURCE_ROOT; };
+		27A1046C157AD69D00073092 /* guiBaseObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiBaseObject.cpp; path = ../../ofxControlPanel/src/guiBaseObject.cpp; sourceTree = SOURCE_ROOT; };
+		27A1046D157AD69D00073092 /* guiBaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiBaseObject.h; path = ../../ofxControlPanel/src/guiBaseObject.h; sourceTree = SOURCE_ROOT; };
+		27A1046E157AD69D00073092 /* guiCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiCallback.cpp; path = ../../ofxControlPanel/src/guiCallback.cpp; sourceTree = SOURCE_ROOT; };
+		27A1046F157AD69D00073092 /* guiCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiCallback.h; path = ../../ofxControlPanel/src/guiCallback.h; sourceTree = SOURCE_ROOT; };
+		27A10470157AD69D00073092 /* guiCallbackValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiCallbackValue.cpp; path = ../../ofxControlPanel/src/guiCallbackValue.cpp; sourceTree = SOURCE_ROOT; };
+		27A10471157AD69D00073092 /* guiCallbackValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiCallbackValue.h; path = ../../ofxControlPanel/src/guiCallbackValue.h; sourceTree = SOURCE_ROOT; };
+		27A10472157AD69D00073092 /* guiColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiColor.cpp; path = ../../ofxControlPanel/src/guiColor.cpp; sourceTree = SOURCE_ROOT; };
+		27A10473157AD69D00073092 /* guiColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiColor.h; path = ../../ofxControlPanel/src/guiColor.h; sourceTree = SOURCE_ROOT; };
+		27A10474157AD69D00073092 /* guiCustomImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiCustomImpl.h; path = ../../ofxControlPanel/src/guiCustomImpl.h; sourceTree = SOURCE_ROOT; };
+		27A10475157AD69D00073092 /* guiIncludes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiIncludes.h; path = ../../ofxControlPanel/src/guiIncludes.h; sourceTree = SOURCE_ROOT; };
+		27A10476157AD69D00073092 /* guiTextBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTextBase.cpp; path = ../../ofxControlPanel/src/guiTextBase.cpp; sourceTree = SOURCE_ROOT; };
+		27A10477157AD69D00073092 /* guiTextBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTextBase.h; path = ../../ofxControlPanel/src/guiTextBase.h; sourceTree = SOURCE_ROOT; };
+		27A10478157AD69D00073092 /* guiType2DSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiType2DSlider.cpp; path = ../../ofxControlPanel/src/guiType2DSlider.cpp; sourceTree = SOURCE_ROOT; };
+		27A10479157AD69D00073092 /* guiType2DSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiType2DSlider.h; path = ../../ofxControlPanel/src/guiType2DSlider.h; sourceTree = SOURCE_ROOT; };
+		27A1047A157AD69D00073092 /* guiTypeButtonSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeButtonSlider.cpp; path = ../../ofxControlPanel/src/guiTypeButtonSlider.cpp; sourceTree = SOURCE_ROOT; };
+		27A1047B157AD69D00073092 /* guiTypeButtonSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeButtonSlider.h; path = ../../ofxControlPanel/src/guiTypeButtonSlider.h; sourceTree = SOURCE_ROOT; };
+		27A1047C157AD69D00073092 /* guiTypeChartPlotter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeChartPlotter.cpp; path = ../../ofxControlPanel/src/guiTypeChartPlotter.cpp; sourceTree = SOURCE_ROOT; };
+		27A1047D157AD69D00073092 /* guiTypeChartPlotter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeChartPlotter.h; path = ../../ofxControlPanel/src/guiTypeChartPlotter.h; sourceTree = SOURCE_ROOT; };
+		27A1047E157AD69D00073092 /* guiTypeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeCustom.cpp; path = ../../ofxControlPanel/src/guiTypeCustom.cpp; sourceTree = SOURCE_ROOT; };
+		27A1047F157AD69D00073092 /* guiTypeCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeCustom.h; path = ../../ofxControlPanel/src/guiTypeCustom.h; sourceTree = SOURCE_ROOT; };
+		27A10480157AD69D00073092 /* guiTypeDrawable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeDrawable.cpp; path = ../../ofxControlPanel/src/guiTypeDrawable.cpp; sourceTree = SOURCE_ROOT; };
+		27A10481157AD69D00073092 /* guiTypeDrawable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeDrawable.h; path = ../../ofxControlPanel/src/guiTypeDrawable.h; sourceTree = SOURCE_ROOT; };
+		27A10482157AD69D00073092 /* guiTypeFileLister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeFileLister.cpp; path = ../../ofxControlPanel/src/guiTypeFileLister.cpp; sourceTree = SOURCE_ROOT; };
+		27A10483157AD69D00073092 /* guiTypeFileLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeFileLister.h; path = ../../ofxControlPanel/src/guiTypeFileLister.h; sourceTree = SOURCE_ROOT; };
+		27A10484157AD69D00073092 /* guiTypeLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeLabel.cpp; path = ../../ofxControlPanel/src/guiTypeLabel.cpp; sourceTree = SOURCE_ROOT; };
+		27A10485157AD69D00073092 /* guiTypeLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeLabel.h; path = ../../ofxControlPanel/src/guiTypeLabel.h; sourceTree = SOURCE_ROOT; };
+		27A10486157AD69D00073092 /* guiTypeLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeLogger.cpp; path = ../../ofxControlPanel/src/guiTypeLogger.cpp; sourceTree = SOURCE_ROOT; };
+		27A10487157AD69D00073092 /* guiTypeLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeLogger.h; path = ../../ofxControlPanel/src/guiTypeLogger.h; sourceTree = SOURCE_ROOT; };
+		27A10488157AD69D00073092 /* guiTypeMultiToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeMultiToggle.cpp; path = ../../ofxControlPanel/src/guiTypeMultiToggle.cpp; sourceTree = SOURCE_ROOT; };
+		27A10489157AD69D00073092 /* guiTypeMultiToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeMultiToggle.h; path = ../../ofxControlPanel/src/guiTypeMultiToggle.h; sourceTree = SOURCE_ROOT; };
+		27A1048A157AD69D00073092 /* guiTypePanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypePanel.cpp; path = ../../ofxControlPanel/src/guiTypePanel.cpp; sourceTree = SOURCE_ROOT; };
+		27A1048B157AD69D00073092 /* guiTypePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypePanel.h; path = ../../ofxControlPanel/src/guiTypePanel.h; sourceTree = SOURCE_ROOT; };
+		27A1048C157AD69D00073092 /* guiTypeSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeSlider.cpp; path = ../../ofxControlPanel/src/guiTypeSlider.cpp; sourceTree = SOURCE_ROOT; };
+		27A1048D157AD69D00073092 /* guiTypeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeSlider.h; path = ../../ofxControlPanel/src/guiTypeSlider.h; sourceTree = SOURCE_ROOT; };
+		27A1048E157AD69D00073092 /* guiTypeText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeText.cpp; path = ../../ofxControlPanel/src/guiTypeText.cpp; sourceTree = SOURCE_ROOT; };
+		27A1048F157AD69D00073092 /* guiTypeText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeText.h; path = ../../ofxControlPanel/src/guiTypeText.h; sourceTree = SOURCE_ROOT; };
+		27A10490157AD69D00073092 /* guiTypeTextDropDown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeTextDropDown.cpp; path = ../../ofxControlPanel/src/guiTypeTextDropDown.cpp; sourceTree = SOURCE_ROOT; };
+		27A10491157AD69D00073092 /* guiTypeTextDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeTextDropDown.h; path = ../../ofxControlPanel/src/guiTypeTextDropDown.h; sourceTree = SOURCE_ROOT; };
+		27A10492157AD69D00073092 /* guiTypeTextInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeTextInput.cpp; path = ../../ofxControlPanel/src/guiTypeTextInput.cpp; sourceTree = SOURCE_ROOT; };
+		27A10493157AD69D00073092 /* guiTypeTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeTextInput.h; path = ../../ofxControlPanel/src/guiTypeTextInput.h; sourceTree = SOURCE_ROOT; };
+		27A10494157AD69D00073092 /* guiTypeToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeToggle.cpp; path = ../../ofxControlPanel/src/guiTypeToggle.cpp; sourceTree = SOURCE_ROOT; };
+		27A10495157AD69D00073092 /* guiTypeToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeToggle.h; path = ../../ofxControlPanel/src/guiTypeToggle.h; sourceTree = SOURCE_ROOT; };
+		27A10496157AD69D00073092 /* guiTypeVairableLister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeVairableLister.cpp; path = ../../ofxControlPanel/src/guiTypeVairableLister.cpp; sourceTree = SOURCE_ROOT; };
+		27A10497157AD69D00073092 /* guiTypeVairableLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeVairableLister.h; path = ../../ofxControlPanel/src/guiTypeVairableLister.h; sourceTree = SOURCE_ROOT; };
+		27A10498157AD69D00073092 /* guiTypeVideo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiTypeVideo.cpp; path = ../../ofxControlPanel/src/guiTypeVideo.cpp; sourceTree = SOURCE_ROOT; };
+		27A10499157AD69D00073092 /* guiTypeVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiTypeVideo.h; path = ../../ofxControlPanel/src/guiTypeVideo.h; sourceTree = SOURCE_ROOT; };
+		27A1049A157AD69D00073092 /* guiValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = guiValue.cpp; path = ../../ofxControlPanel/src/guiValue.cpp; sourceTree = SOURCE_ROOT; };
+		27A1049B157AD69D00073092 /* guiValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiValue.h; path = ../../ofxControlPanel/src/guiValue.h; sourceTree = SOURCE_ROOT; };
+		27A1049C157AD69D00073092 /* guiVariablePointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiVariablePointer.h; path = ../../ofxControlPanel/src/guiVariablePointer.h; sourceTree = SOURCE_ROOT; };
+		27A1049D157AD69D00073092 /* guiXmlValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guiXmlValue.h; path = ../../ofxControlPanel/src/guiXmlValue.h; sourceTree = SOURCE_ROOT; };
+		27A1049E157AD69D00073092 /* ofxAutoControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxAutoControlPanel.h; path = ../../ofxControlPanel/src/ofxAutoControlPanel.h; sourceTree = SOURCE_ROOT; };
+		27A1049F157AD69D00073092 /* ofxControlPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxControlPanel.cpp; path = ../../ofxControlPanel/src/ofxControlPanel.cpp; sourceTree = SOURCE_ROOT; };
+		27A104A0157AD69D00073092 /* ofxControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxControlPanel.h; path = ../../ofxControlPanel/src/ofxControlPanel.h; sourceTree = SOURCE_ROOT; };
+		27A104A1157AD69D00073092 /* simpleColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simpleColor.cpp; path = ../../ofxControlPanel/src/simpleColor.cpp; sourceTree = SOURCE_ROOT; };
+		27A104A2157AD69D00073092 /* simpleColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = simpleColor.h; path = ../../ofxControlPanel/src/simpleColor.h; sourceTree = SOURCE_ROOT; };
+		27A104A3157AD69D00073092 /* simpleFileLister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simpleFileLister.cpp; path = ../../ofxControlPanel/src/simpleFileLister.cpp; sourceTree = SOURCE_ROOT; };
+		27A104A4157AD69D00073092 /* simpleFileLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = simpleFileLister.h; path = ../../ofxControlPanel/src/simpleFileLister.h; sourceTree = SOURCE_ROOT; };
+		27A104A5157AD69D00073092 /* simpleLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simpleLogger.cpp; path = ../../ofxControlPanel/src/simpleLogger.cpp; sourceTree = SOURCE_ROOT; };
+		27A104A6157AD69D00073092 /* simpleLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = simpleLogger.h; path = ../../ofxControlPanel/src/simpleLogger.h; sourceTree = SOURCE_ROOT; };
+		27A104C4157AD6B100073092 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../ofxXmlSettings/libs/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
+		27A104C5157AD6B100073092 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../ofxXmlSettings/libs/tinyxml.h; sourceTree = SOURCE_ROOT; };
+		27A104C6157AD6B100073092 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../ofxXmlSettings/libs/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
+		27A104C7157AD6B100073092 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../ofxXmlSettings/libs/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
+		27A104C9157AD6B100073092 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxXmlSettings.cpp; path = ../../ofxXmlSettings/src/ofxXmlSettings.cpp; sourceTree = SOURCE_ROOT; };
+		27A104CA157AD6B100073092 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxXmlSettings.h; path = ../../ofxXmlSettings/src/ofxXmlSettings.h; sourceTree = SOURCE_ROOT; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -510,9 +724,1065 @@
 			path = ../../../addons/ofxOpenCv/libs/opencv/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
+		27A10398157AD69C00073092 /* ofxControlPanel */ = {
+			isa = PBXGroup;
+			children = (
+				27A10399157AD69C00073092 /* .git */,
+				27A10469157AD69D00073092 /* .gitignore */,
+				27A1046A157AD69D00073092 /* README.markdown */,
+				27A1046B157AD69D00073092 /* src */,
+			);
+			name = ofxControlPanel;
+			path = ../../ofxControlPanel;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10399157AD69C00073092 /* .git */ = {
+			isa = PBXGroup;
+			children = (
+				27A1039A157AD69C00073092 /* COMMIT_EDITMSG */,
+				27A1039B157AD69C00073092 /* config */,
+				27A1039C157AD69C00073092 /* description */,
+				27A1039D157AD69C00073092 /* FETCH_HEAD */,
+				27A1039E157AD69C00073092 /* HEAD */,
+				27A1039F157AD69C00073092 /* hooks */,
+				27A103AA157AD69C00073092 /* index */,
+				27A103AB157AD69C00073092 /* info */,
+				27A103AD157AD69C00073092 /* logs */,
+				27A103B6157AD69C00073092 /* objects */,
+				27A1045E157AD69D00073092 /* ORIG_HEAD */,
+				27A1045F157AD69D00073092 /* packed-refs */,
+				27A10460157AD69D00073092 /* refs */,
+			);
+			name = .git;
+			path = ../../ofxControlPanel/.git;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1039F157AD69C00073092 /* hooks */ = {
+			isa = PBXGroup;
+			children = (
+				27A103A0157AD69C00073092 /* applypatch-msg.sample */,
+				27A103A1157AD69C00073092 /* commit-msg.sample */,
+				27A103A2157AD69C00073092 /* post-commit.sample */,
+				27A103A3157AD69C00073092 /* post-receive.sample */,
+				27A103A4157AD69C00073092 /* post-update.sample */,
+				27A103A5157AD69C00073092 /* pre-applypatch.sample */,
+				27A103A6157AD69C00073092 /* pre-commit.sample */,
+				27A103A7157AD69C00073092 /* pre-rebase.sample */,
+				27A103A8157AD69C00073092 /* prepare-commit-msg.sample */,
+				27A103A9157AD69C00073092 /* update.sample */,
+			);
+			name = hooks;
+			path = ../../ofxControlPanel/.git/hooks;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103AB157AD69C00073092 /* info */ = {
+			isa = PBXGroup;
+			children = (
+				27A103AC157AD69C00073092 /* exclude */,
+			);
+			name = info;
+			path = ../../ofxControlPanel/.git/info;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103AD157AD69C00073092 /* logs */ = {
+			isa = PBXGroup;
+			children = (
+				27A103AE157AD69C00073092 /* HEAD */,
+				27A103AF157AD69C00073092 /* refs */,
+			);
+			name = logs;
+			path = ../../ofxControlPanel/.git/logs;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103AF157AD69C00073092 /* refs */ = {
+			isa = PBXGroup;
+			children = (
+				27A103B0157AD69C00073092 /* heads */,
+				27A103B3157AD69C00073092 /* remotes */,
+			);
+			name = refs;
+			path = ../../ofxControlPanel/.git/logs/refs;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103B0157AD69C00073092 /* heads */ = {
+			isa = PBXGroup;
+			children = (
+				27A103B1157AD69C00073092 /* master */,
+				27A103B2157AD69C00073092 /* noexample */,
+			);
+			name = heads;
+			path = ../../ofxControlPanel/.git/logs/refs/heads;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103B3157AD69C00073092 /* remotes */ = {
+			isa = PBXGroup;
+			children = (
+				27A103B4157AD69C00073092 /* origin */,
+			);
+			name = remotes;
+			path = ../../ofxControlPanel/.git/logs/refs/remotes;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103B4157AD69C00073092 /* origin */ = {
+			isa = PBXGroup;
+			children = (
+				27A103B5157AD69C00073092 /* master */,
+			);
+			name = origin;
+			path = ../../ofxControlPanel/.git/logs/refs/remotes/origin;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103B6157AD69C00073092 /* objects */ = {
+			isa = PBXGroup;
+			children = (
+				27A103B7157AD69C00073092 /* 03 */,
+				27A103B9157AD69C00073092 /* 07 */,
+				27A103BB157AD69C00073092 /* 09 */,
+				27A103BD157AD69C00073092 /* 0b */,
+				27A103C0157AD69C00073092 /* 0c */,
+				27A103C2157AD69C00073092 /* 11 */,
+				27A103C4157AD69C00073092 /* 12 */,
+				27A103C6157AD69C00073092 /* 1a */,
+				27A103C8157AD69C00073092 /* 1d */,
+				27A103CA157AD69C00073092 /* 22 */,
+				27A103CC157AD69C00073092 /* 23 */,
+				27A103CE157AD69C00073092 /* 26 */,
+				27A103D0157AD69C00073092 /* 29 */,
+				27A103D2157AD69C00073092 /* 37 */,
+				27A103D5157AD69C00073092 /* 3b */,
+				27A103D7157AD69C00073092 /* 41 */,
+				27A103D9157AD69C00073092 /* 42 */,
+				27A103DB157AD69C00073092 /* 4d */,
+				27A103DD157AD69C00073092 /* 53 */,
+				27A103DF157AD69C00073092 /* 54 */,
+				27A103E1157AD69C00073092 /* 55 */,
+				27A103E3157AD69C00073092 /* 57 */,
+				27A103E5157AD69C00073092 /* 58 */,
+				27A103E7157AD69C00073092 /* 5b */,
+				27A103EA157AD69C00073092 /* 5e */,
+				27A103EC157AD69C00073092 /* 5f */,
+				27A103EE157AD69C00073092 /* 61 */,
+				27A103F0157AD69C00073092 /* 67 */,
+				27A103F2157AD69C00073092 /* 68 */,
+				27A103F4157AD69C00073092 /* 6d */,
+				27A103F6157AD69C00073092 /* 72 */,
+				27A103F9157AD69C00073092 /* 76 */,
+				27A103FC157AD69C00073092 /* 77 */,
+				27A103FF157AD69C00073092 /* 78 */,
+				27A10401157AD69C00073092 /* 7a */,
+				27A10403157AD69C00073092 /* 85 */,
+				27A10405157AD69C00073092 /* 87 */,
+				27A10407157AD69C00073092 /* 89 */,
+				27A10409157AD69C00073092 /* 8c */,
+				27A1040B157AD69C00073092 /* 90 */,
+				27A1040D157AD69C00073092 /* 91 */,
+				27A1040F157AD69C00073092 /* 93 */,
+				27A10411157AD69C00073092 /* 9b */,
+				27A10413157AD69C00073092 /* 9c */,
+				27A10415157AD69C00073092 /* a4 */,
+				27A10417157AD69C00073092 /* a5 */,
+				27A10419157AD69C00073092 /* a6 */,
+				27A1041B157AD69C00073092 /* a7 */,
+				27A1041D157AD69C00073092 /* a8 */,
+				27A1041F157AD69C00073092 /* af */,
+				27A10421157AD69C00073092 /* b0 */,
+				27A10423157AD69D00073092 /* b1 */,
+				27A10425157AD69D00073092 /* b2 */,
+				27A10429157AD69D00073092 /* b4 */,
+				27A1042B157AD69D00073092 /* b7 */,
+				27A1042D157AD69D00073092 /* bf */,
+				27A1042F157AD69D00073092 /* c0 */,
+				27A10431157AD69D00073092 /* c5 */,
+				27A10433157AD69D00073092 /* c9 */,
+				27A10436157AD69D00073092 /* ca */,
+				27A10438157AD69D00073092 /* cd */,
+				27A1043A157AD69D00073092 /* ce */,
+				27A1043C157AD69D00073092 /* cf */,
+				27A1043F157AD69D00073092 /* d0 */,
+				27A10441157AD69D00073092 /* d3 */,
+				27A10443157AD69D00073092 /* d4 */,
+				27A10445157AD69D00073092 /* dc */,
+				27A10447157AD69D00073092 /* e0 */,
+				27A10449157AD69D00073092 /* e5 */,
+				27A1044B157AD69D00073092 /* eb */,
+				27A1044D157AD69D00073092 /* ef */,
+				27A1044F157AD69D00073092 /* f3 */,
+				27A10451157AD69D00073092 /* f5 */,
+				27A10453157AD69D00073092 /* f8 */,
+				27A10456157AD69D00073092 /* f9 */,
+				27A10458157AD69D00073092 /* fe */,
+				27A1045A157AD69D00073092 /* info */,
+				27A1045B157AD69D00073092 /* pack */,
+			);
+			name = objects;
+			path = ../../ofxControlPanel/.git/objects;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103B7157AD69C00073092 /* 03 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103B8157AD69C00073092 /* b64e46af8f1f0b4ae369ef66961fb97e0b24dc */,
+			);
+			name = 03;
+			path = ../../ofxControlPanel/.git/objects/03;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103B9157AD69C00073092 /* 07 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103BA157AD69C00073092 /* 70f2ee2836c91e31311acb77b306885f0b6468 */,
+			);
+			name = 07;
+			path = ../../ofxControlPanel/.git/objects/07;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103BB157AD69C00073092 /* 09 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103BC157AD69C00073092 /* 999b120f1eb25d6a8c4508e7c94cb305c6250a */,
+			);
+			name = 09;
+			path = ../../ofxControlPanel/.git/objects/09;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103BD157AD69C00073092 /* 0b */ = {
+			isa = PBXGroup;
+			children = (
+				27A103BE157AD69C00073092 /* 311a9016ac8650717c483f3f1b6505cc18d823 */,
+				27A103BF157AD69C00073092 /* 5b16cb3114262ce3ae28939aaa4fdf6923f8a1 */,
+			);
+			name = 0b;
+			path = ../../ofxControlPanel/.git/objects/0b;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103C0157AD69C00073092 /* 0c */ = {
+			isa = PBXGroup;
+			children = (
+				27A103C1157AD69C00073092 /* f578211d75b679f800c94244622e96b9e8ea1c */,
+			);
+			name = 0c;
+			path = ../../ofxControlPanel/.git/objects/0c;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103C2157AD69C00073092 /* 11 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103C3157AD69C00073092 /* e31bdfd90152a7e90341edb490ec83c8204edd */,
+			);
+			name = 11;
+			path = ../../ofxControlPanel/.git/objects/11;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103C4157AD69C00073092 /* 12 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103C5157AD69C00073092 /* c7babb6698556829df06996b5363f95226306d */,
+			);
+			name = 12;
+			path = ../../ofxControlPanel/.git/objects/12;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103C6157AD69C00073092 /* 1a */ = {
+			isa = PBXGroup;
+			children = (
+				27A103C7157AD69C00073092 /* a6e47636e3b4b75047665a89cb0deaa10b9b3b */,
+			);
+			name = 1a;
+			path = ../../ofxControlPanel/.git/objects/1a;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103C8157AD69C00073092 /* 1d */ = {
+			isa = PBXGroup;
+			children = (
+				27A103C9157AD69C00073092 /* 15b5d1547301c0a13f3050a2521158a6776217 */,
+			);
+			name = 1d;
+			path = ../../ofxControlPanel/.git/objects/1d;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103CA157AD69C00073092 /* 22 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103CB157AD69C00073092 /* 4330afd56d003087fb82d21bfa73e862b242fc */,
+			);
+			name = 22;
+			path = ../../ofxControlPanel/.git/objects/22;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103CC157AD69C00073092 /* 23 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103CD157AD69C00073092 /* c960f4a69df1c424f13229683a7334d1e4769b */,
+			);
+			name = 23;
+			path = ../../ofxControlPanel/.git/objects/23;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103CE157AD69C00073092 /* 26 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103CF157AD69C00073092 /* 618e4015f8bab67d56e8e75eb6aa0be2c31ed9 */,
+			);
+			name = 26;
+			path = ../../ofxControlPanel/.git/objects/26;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103D0157AD69C00073092 /* 29 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103D1157AD69C00073092 /* 4e364cfbf513271f0bc43a44083cf00a27e7eb */,
+			);
+			name = 29;
+			path = ../../ofxControlPanel/.git/objects/29;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103D2157AD69C00073092 /* 37 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103D3157AD69C00073092 /* 776ee6bd7e131ef680f48e8b2fb61a727fb548 */,
+				27A103D4157AD69C00073092 /* 9e81eacc575059f9e33cbffa2e753ed1f57fd2 */,
+			);
+			name = 37;
+			path = ../../ofxControlPanel/.git/objects/37;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103D5157AD69C00073092 /* 3b */ = {
+			isa = PBXGroup;
+			children = (
+				27A103D6157AD69C00073092 /* d225d728eafc6f76ea4abdcdcca2cfbca918c2 */,
+			);
+			name = 3b;
+			path = ../../ofxControlPanel/.git/objects/3b;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103D7157AD69C00073092 /* 41 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103D8157AD69C00073092 /* 3b20279dc5959a2a43272fea20d433a2ab2fec */,
+			);
+			name = 41;
+			path = ../../ofxControlPanel/.git/objects/41;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103D9157AD69C00073092 /* 42 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103DA157AD69C00073092 /* 38a38282133b5d2033b10e207c3fc253cae8bf */,
+			);
+			name = 42;
+			path = ../../ofxControlPanel/.git/objects/42;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103DB157AD69C00073092 /* 4d */ = {
+			isa = PBXGroup;
+			children = (
+				27A103DC157AD69C00073092 /* 6d6a573141d51891d165589222efafda826695 */,
+			);
+			name = 4d;
+			path = ../../ofxControlPanel/.git/objects/4d;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103DD157AD69C00073092 /* 53 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103DE157AD69C00073092 /* ae3ba97bbfeef65b6421c8b71a41e007396e46 */,
+			);
+			name = 53;
+			path = ../../ofxControlPanel/.git/objects/53;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103DF157AD69C00073092 /* 54 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103E0157AD69C00073092 /* 2f6bbcc16dc368936920d08311f08a91212566 */,
+			);
+			name = 54;
+			path = ../../ofxControlPanel/.git/objects/54;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103E1157AD69C00073092 /* 55 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103E2157AD69C00073092 /* 06f13305edb6775160c25adabf42c1d911b997 */,
+			);
+			name = 55;
+			path = ../../ofxControlPanel/.git/objects/55;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103E3157AD69C00073092 /* 57 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103E4157AD69C00073092 /* 8643ef0f378d556dfff7c6ccbbf0b195a7ca5a */,
+			);
+			name = 57;
+			path = ../../ofxControlPanel/.git/objects/57;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103E5157AD69C00073092 /* 58 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103E6157AD69C00073092 /* a877b91dadc96fad59ec3d7e661188b56a1d3f */,
+			);
+			name = 58;
+			path = ../../ofxControlPanel/.git/objects/58;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103E7157AD69C00073092 /* 5b */ = {
+			isa = PBXGroup;
+			children = (
+				27A103E8157AD69C00073092 /* 083b71e398035130e4b46fda555af1d5d3e3cc */,
+				27A103E9157AD69C00073092 /* 6f916eb1b98b394ef452556530cf5972535374 */,
+			);
+			name = 5b;
+			path = ../../ofxControlPanel/.git/objects/5b;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103EA157AD69C00073092 /* 5e */ = {
+			isa = PBXGroup;
+			children = (
+				27A103EB157AD69C00073092 /* 9115d1889e431b8eee3b984fb87f633c2be3ab */,
+			);
+			name = 5e;
+			path = ../../ofxControlPanel/.git/objects/5e;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103EC157AD69C00073092 /* 5f */ = {
+			isa = PBXGroup;
+			children = (
+				27A103ED157AD69C00073092 /* f41dee26abc17020eba7e0b95e2e48a7b0edc4 */,
+			);
+			name = 5f;
+			path = ../../ofxControlPanel/.git/objects/5f;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103EE157AD69C00073092 /* 61 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103EF157AD69C00073092 /* 630f2991badded8652a99c44c16dd466302733 */,
+			);
+			name = 61;
+			path = ../../ofxControlPanel/.git/objects/61;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103F0157AD69C00073092 /* 67 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103F1157AD69C00073092 /* c67bba6811bd14d045c013d94936ad77f6620a */,
+			);
+			name = 67;
+			path = ../../ofxControlPanel/.git/objects/67;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103F2157AD69C00073092 /* 68 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103F3157AD69C00073092 /* 36f80b6f1043ab2622f8a5c48ead89064b9d8a */,
+			);
+			name = 68;
+			path = ../../ofxControlPanel/.git/objects/68;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103F4157AD69C00073092 /* 6d */ = {
+			isa = PBXGroup;
+			children = (
+				27A103F5157AD69C00073092 /* 98be0c306b3de3c10f6a02fda0dd59a70e2bbf */,
+			);
+			name = 6d;
+			path = ../../ofxControlPanel/.git/objects/6d;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103F6157AD69C00073092 /* 72 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103F7157AD69C00073092 /* 0191ec2ecbe40f012b1290219fcc7e0812758c */,
+				27A103F8157AD69C00073092 /* 2cc42f46252447adc3f17ee505aa2e151ba92e */,
+			);
+			name = 72;
+			path = ../../ofxControlPanel/.git/objects/72;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103F9157AD69C00073092 /* 76 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103FA157AD69C00073092 /* a7f9d361af28d2f8c25145587b434a6b968b79 */,
+				27A103FB157AD69C00073092 /* e6be0f82e599eace294257680bf5c085ac993c */,
+			);
+			name = 76;
+			path = ../../ofxControlPanel/.git/objects/76;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103FC157AD69C00073092 /* 77 */ = {
+			isa = PBXGroup;
+			children = (
+				27A103FD157AD69C00073092 /* a8625e06df898157e2db73f26613d733255f5c */,
+				27A103FE157AD69C00073092 /* b520c7ec74c34a00b71061b3cca9559c4e1d51 */,
+			);
+			name = 77;
+			path = ../../ofxControlPanel/.git/objects/77;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A103FF157AD69C00073092 /* 78 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10400157AD69C00073092 /* b5a295eec9d8d2bf2d6921ed2fa33299f8a672 */,
+			);
+			name = 78;
+			path = ../../ofxControlPanel/.git/objects/78;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10401157AD69C00073092 /* 7a */ = {
+			isa = PBXGroup;
+			children = (
+				27A10402157AD69C00073092 /* 957c7c593e1809596de0c222deaab31b39c860 */,
+			);
+			name = 7a;
+			path = ../../ofxControlPanel/.git/objects/7a;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10403157AD69C00073092 /* 85 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10404157AD69C00073092 /* e51dfc9fef89409ff72f00fd2d7ce2e5f0c628 */,
+			);
+			name = 85;
+			path = ../../ofxControlPanel/.git/objects/85;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10405157AD69C00073092 /* 87 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10406157AD69C00073092 /* 47af1a2ae58e146de378ea50bd96351dab998b */,
+			);
+			name = 87;
+			path = ../../ofxControlPanel/.git/objects/87;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10407157AD69C00073092 /* 89 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10408157AD69C00073092 /* cf5750cd76b0298eee8bd9cdec854e92b7e9cb */,
+			);
+			name = 89;
+			path = ../../ofxControlPanel/.git/objects/89;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10409157AD69C00073092 /* 8c */ = {
+			isa = PBXGroup;
+			children = (
+				27A1040A157AD69C00073092 /* b469571f4c7e76a0b734551e3fc5754d9e5961 */,
+			);
+			name = 8c;
+			path = ../../ofxControlPanel/.git/objects/8c;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1040B157AD69C00073092 /* 90 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1040C157AD69C00073092 /* 1e409ecd185c85d7f24299aee663e36605923c */,
+			);
+			name = 90;
+			path = ../../ofxControlPanel/.git/objects/90;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1040D157AD69C00073092 /* 91 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1040E157AD69C00073092 /* 6bdb4ac65507ad83a263e256f11f4b8ffa3c6a */,
+			);
+			name = 91;
+			path = ../../ofxControlPanel/.git/objects/91;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1040F157AD69C00073092 /* 93 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10410157AD69C00073092 /* 066fac7d63327e231d6ca5319c53525a4684ef */,
+			);
+			name = 93;
+			path = ../../ofxControlPanel/.git/objects/93;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10411157AD69C00073092 /* 9b */ = {
+			isa = PBXGroup;
+			children = (
+				27A10412157AD69C00073092 /* 160f113e613c52ba60d41fa817619bd167b85c */,
+			);
+			name = 9b;
+			path = ../../ofxControlPanel/.git/objects/9b;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10413157AD69C00073092 /* 9c */ = {
+			isa = PBXGroup;
+			children = (
+				27A10414157AD69C00073092 /* 381850b358505888399e244ca353bf28cc79cd */,
+			);
+			name = 9c;
+			path = ../../ofxControlPanel/.git/objects/9c;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10415157AD69C00073092 /* a4 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10416157AD69C00073092 /* 54fe1b19358fa8b6cf6c84e84101ca50b8e6ec */,
+			);
+			name = a4;
+			path = ../../ofxControlPanel/.git/objects/a4;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10417157AD69C00073092 /* a5 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10418157AD69C00073092 /* 825388d8567ed97fd51156406b866c66dfda33 */,
+			);
+			name = a5;
+			path = ../../ofxControlPanel/.git/objects/a5;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10419157AD69C00073092 /* a6 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1041A157AD69C00073092 /* 180966c2f4a37c019ff9eecb0beb3a189a20d7 */,
+			);
+			name = a6;
+			path = ../../ofxControlPanel/.git/objects/a6;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1041B157AD69C00073092 /* a7 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1041C157AD69C00073092 /* 0448b1936e20e6e8e01fec7444d8a0fc62c0b8 */,
+			);
+			name = a7;
+			path = ../../ofxControlPanel/.git/objects/a7;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1041D157AD69C00073092 /* a8 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1041E157AD69C00073092 /* 5944e44c40ab6df1e078d971106fc43dd0f251 */,
+			);
+			name = a8;
+			path = ../../ofxControlPanel/.git/objects/a8;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1041F157AD69C00073092 /* af */ = {
+			isa = PBXGroup;
+			children = (
+				27A10420157AD69C00073092 /* cf237c6fbdfadb45753dc8183837c213c6e87a */,
+			);
+			name = af;
+			path = ../../ofxControlPanel/.git/objects/af;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10421157AD69C00073092 /* b0 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10422157AD69C00073092 /* 08a164049f31098643b0758134c7379ccef855 */,
+			);
+			name = b0;
+			path = ../../ofxControlPanel/.git/objects/b0;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10423157AD69D00073092 /* b1 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10424157AD69D00073092 /* 0c3a5dd8ca3bba1c2ea4379439748be2019d91 */,
+			);
+			name = b1;
+			path = ../../ofxControlPanel/.git/objects/b1;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10425157AD69D00073092 /* b2 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10426157AD69D00073092 /* 4306eefb3d16eb27aaee99ccfaf58fdd57a7ce */,
+				27A10427157AD69D00073092 /* afecb1c079799a9a9dc6f4c728a80b49550c61 */,
+				27A10428157AD69D00073092 /* b0bffd67ec41dd0bd3b31ea0993599b1fb33ea */,
+			);
+			name = b2;
+			path = ../../ofxControlPanel/.git/objects/b2;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10429157AD69D00073092 /* b4 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1042A157AD69D00073092 /* 416d771c46dd0ed0ff063ed32bd43b55b94129 */,
+			);
+			name = b4;
+			path = ../../ofxControlPanel/.git/objects/b4;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1042B157AD69D00073092 /* b7 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1042C157AD69D00073092 /* 5024d2a60acb96674279f1b13d6c298d85f3d3 */,
+			);
+			name = b7;
+			path = ../../ofxControlPanel/.git/objects/b7;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1042D157AD69D00073092 /* bf */ = {
+			isa = PBXGroup;
+			children = (
+				27A1042E157AD69D00073092 /* d2065352e2cefabb155bce99f1df8ce6326da4 */,
+			);
+			name = bf;
+			path = ../../ofxControlPanel/.git/objects/bf;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1042F157AD69D00073092 /* c0 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10430157AD69D00073092 /* d1cc2b09d22c24c36355a2fd3c519726ebd7ae */,
+			);
+			name = c0;
+			path = ../../ofxControlPanel/.git/objects/c0;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10431157AD69D00073092 /* c5 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10432157AD69D00073092 /* ba4131db75c97b8ea735d02d51554d75cbee7b */,
+			);
+			name = c5;
+			path = ../../ofxControlPanel/.git/objects/c5;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10433157AD69D00073092 /* c9 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10434157AD69D00073092 /* 82ceee17d827efc68b26330a6236598cd31bb9 */,
+				27A10435157AD69D00073092 /* d4287d3e3a9931cbd924e5d7c48db66e1a9457 */,
+			);
+			name = c9;
+			path = ../../ofxControlPanel/.git/objects/c9;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10436157AD69D00073092 /* ca */ = {
+			isa = PBXGroup;
+			children = (
+				27A10437157AD69D00073092 /* 269c341a9c49356cb235803dadaf38360ffd05 */,
+			);
+			name = ca;
+			path = ../../ofxControlPanel/.git/objects/ca;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10438157AD69D00073092 /* cd */ = {
+			isa = PBXGroup;
+			children = (
+				27A10439157AD69D00073092 /* f703e53c50ca7833124e4892e223bddec8fb26 */,
+			);
+			name = cd;
+			path = ../../ofxControlPanel/.git/objects/cd;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1043A157AD69D00073092 /* ce */ = {
+			isa = PBXGroup;
+			children = (
+				27A1043B157AD69D00073092 /* 48f96fc4cc54f9db452043ab4fdda56d6dddc2 */,
+			);
+			name = ce;
+			path = ../../ofxControlPanel/.git/objects/ce;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1043C157AD69D00073092 /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				27A1043D157AD69D00073092 /* 359d6947f5a94f851fb1fd90448112e5344654 */,
+				27A1043E157AD69D00073092 /* 446f7993687a15b3a7323b77f963fead2986ce */,
+			);
+			name = cf;
+			path = ../../ofxControlPanel/.git/objects/cf;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1043F157AD69D00073092 /* d0 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10440157AD69D00073092 /* 3869c7ba48e81d84499164c91b29d14fb4f533 */,
+			);
+			name = d0;
+			path = ../../ofxControlPanel/.git/objects/d0;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10441157AD69D00073092 /* d3 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10442157AD69D00073092 /* dc7e40ff23b171005dfcaa11f3d0cf340392af */,
+			);
+			name = d3;
+			path = ../../ofxControlPanel/.git/objects/d3;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10443157AD69D00073092 /* d4 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10444157AD69D00073092 /* 1da37afa445ecb45a3cc8061fcbde1a4916f3f */,
+			);
+			name = d4;
+			path = ../../ofxControlPanel/.git/objects/d4;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10445157AD69D00073092 /* dc */ = {
+			isa = PBXGroup;
+			children = (
+				27A10446157AD69D00073092 /* 811e2bf68cc44dbbf43acf5db0ee109f33e3ac */,
+			);
+			name = dc;
+			path = ../../ofxControlPanel/.git/objects/dc;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10447157AD69D00073092 /* e0 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10448157AD69D00073092 /* 45599e4a6acd73103a8fa9b9981ef2cb8b2d40 */,
+			);
+			name = e0;
+			path = ../../ofxControlPanel/.git/objects/e0;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10449157AD69D00073092 /* e5 */ = {
+			isa = PBXGroup;
+			children = (
+				27A1044A157AD69D00073092 /* 105a87a749003fdc7194168ecc40d1e167ff99 */,
+			);
+			name = e5;
+			path = ../../ofxControlPanel/.git/objects/e5;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1044B157AD69D00073092 /* eb */ = {
+			isa = PBXGroup;
+			children = (
+				27A1044C157AD69D00073092 /* 3d4a9c6684c7c6ac3f0c30a1d776312ecf5b36 */,
+			);
+			name = eb;
+			path = ../../ofxControlPanel/.git/objects/eb;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1044D157AD69D00073092 /* ef */ = {
+			isa = PBXGroup;
+			children = (
+				27A1044E157AD69D00073092 /* ecca36e9aa1a434f3919598c17b7a49739c6a2 */,
+			);
+			name = ef;
+			path = ../../ofxControlPanel/.git/objects/ef;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1044F157AD69D00073092 /* f3 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10450157AD69D00073092 /* 3e4d0a5d536a7b8d82227b73e7077a513ce12b */,
+			);
+			name = f3;
+			path = ../../ofxControlPanel/.git/objects/f3;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10451157AD69D00073092 /* f5 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10452157AD69D00073092 /* d5ca0b53ef6114d6c52075ea22bb4ea2f140bd */,
+			);
+			name = f5;
+			path = ../../ofxControlPanel/.git/objects/f5;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10453157AD69D00073092 /* f8 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10454157AD69D00073092 /* 8ae03cc9f1a1949f379b4d225d0d526275f10c */,
+				27A10455157AD69D00073092 /* d09ccfa37002c913c2ecd2546353b5a106e897 */,
+			);
+			name = f8;
+			path = ../../ofxControlPanel/.git/objects/f8;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10456157AD69D00073092 /* f9 */ = {
+			isa = PBXGroup;
+			children = (
+				27A10457157AD69D00073092 /* 4b5b6ef3907954b174989f338f84e6716d8443 */,
+			);
+			name = f9;
+			path = ../../ofxControlPanel/.git/objects/f9;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10458157AD69D00073092 /* fe */ = {
+			isa = PBXGroup;
+			children = (
+				27A10459157AD69D00073092 /* 61c1aafacea3a2eb3a82107e1492c4fb725d1a */,
+			);
+			name = fe;
+			path = ../../ofxControlPanel/.git/objects/fe;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1045A157AD69D00073092 /* info */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = info;
+			path = ../../ofxControlPanel/.git/objects/info;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1045B157AD69D00073092 /* pack */ = {
+			isa = PBXGroup;
+			children = (
+				27A1045C157AD69D00073092 /* pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.idx */,
+				27A1045D157AD69D00073092 /* pack-c079d36850f58f5851cfe6a9b3435bb6a6780672.pack */,
+			);
+			name = pack;
+			path = ../../ofxControlPanel/.git/objects/pack;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10460157AD69D00073092 /* refs */ = {
+			isa = PBXGroup;
+			children = (
+				27A10461157AD69D00073092 /* heads */,
+				27A10464157AD69D00073092 /* remotes */,
+				27A10468157AD69D00073092 /* tags */,
+			);
+			name = refs;
+			path = ../../ofxControlPanel/.git/refs;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10461157AD69D00073092 /* heads */ = {
+			isa = PBXGroup;
+			children = (
+				27A10462157AD69D00073092 /* master */,
+				27A10463157AD69D00073092 /* noexample */,
+			);
+			name = heads;
+			path = ../../ofxControlPanel/.git/refs/heads;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10464157AD69D00073092 /* remotes */ = {
+			isa = PBXGroup;
+			children = (
+				27A10465157AD69D00073092 /* origin */,
+			);
+			name = remotes;
+			path = ../../ofxControlPanel/.git/refs/remotes;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10465157AD69D00073092 /* origin */ = {
+			isa = PBXGroup;
+			children = (
+				27A10466157AD69D00073092 /* HEAD */,
+				27A10467157AD69D00073092 /* master */,
+			);
+			name = origin;
+			path = ../../ofxControlPanel/.git/refs/remotes/origin;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A10468157AD69D00073092 /* tags */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = tags;
+			path = ../../ofxControlPanel/.git/refs/tags;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A1046B157AD69D00073092 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				27A1046C157AD69D00073092 /* guiBaseObject.cpp */,
+				27A1046D157AD69D00073092 /* guiBaseObject.h */,
+				27A1046E157AD69D00073092 /* guiCallback.cpp */,
+				27A1046F157AD69D00073092 /* guiCallback.h */,
+				27A10470157AD69D00073092 /* guiCallbackValue.cpp */,
+				27A10471157AD69D00073092 /* guiCallbackValue.h */,
+				27A10472157AD69D00073092 /* guiColor.cpp */,
+				27A10473157AD69D00073092 /* guiColor.h */,
+				27A10474157AD69D00073092 /* guiCustomImpl.h */,
+				27A10475157AD69D00073092 /* guiIncludes.h */,
+				27A10476157AD69D00073092 /* guiTextBase.cpp */,
+				27A10477157AD69D00073092 /* guiTextBase.h */,
+				27A10478157AD69D00073092 /* guiType2DSlider.cpp */,
+				27A10479157AD69D00073092 /* guiType2DSlider.h */,
+				27A1047A157AD69D00073092 /* guiTypeButtonSlider.cpp */,
+				27A1047B157AD69D00073092 /* guiTypeButtonSlider.h */,
+				27A1047C157AD69D00073092 /* guiTypeChartPlotter.cpp */,
+				27A1047D157AD69D00073092 /* guiTypeChartPlotter.h */,
+				27A1047E157AD69D00073092 /* guiTypeCustom.cpp */,
+				27A1047F157AD69D00073092 /* guiTypeCustom.h */,
+				27A10480157AD69D00073092 /* guiTypeDrawable.cpp */,
+				27A10481157AD69D00073092 /* guiTypeDrawable.h */,
+				27A10482157AD69D00073092 /* guiTypeFileLister.cpp */,
+				27A10483157AD69D00073092 /* guiTypeFileLister.h */,
+				27A10484157AD69D00073092 /* guiTypeLabel.cpp */,
+				27A10485157AD69D00073092 /* guiTypeLabel.h */,
+				27A10486157AD69D00073092 /* guiTypeLogger.cpp */,
+				27A10487157AD69D00073092 /* guiTypeLogger.h */,
+				27A10488157AD69D00073092 /* guiTypeMultiToggle.cpp */,
+				27A10489157AD69D00073092 /* guiTypeMultiToggle.h */,
+				27A1048A157AD69D00073092 /* guiTypePanel.cpp */,
+				27A1048B157AD69D00073092 /* guiTypePanel.h */,
+				27A1048C157AD69D00073092 /* guiTypeSlider.cpp */,
+				27A1048D157AD69D00073092 /* guiTypeSlider.h */,
+				27A1048E157AD69D00073092 /* guiTypeText.cpp */,
+				27A1048F157AD69D00073092 /* guiTypeText.h */,
+				27A10490157AD69D00073092 /* guiTypeTextDropDown.cpp */,
+				27A10491157AD69D00073092 /* guiTypeTextDropDown.h */,
+				27A10492157AD69D00073092 /* guiTypeTextInput.cpp */,
+				27A10493157AD69D00073092 /* guiTypeTextInput.h */,
+				27A10494157AD69D00073092 /* guiTypeToggle.cpp */,
+				27A10495157AD69D00073092 /* guiTypeToggle.h */,
+				27A10496157AD69D00073092 /* guiTypeVairableLister.cpp */,
+				27A10497157AD69D00073092 /* guiTypeVairableLister.h */,
+				27A10498157AD69D00073092 /* guiTypeVideo.cpp */,
+				27A10499157AD69D00073092 /* guiTypeVideo.h */,
+				27A1049A157AD69D00073092 /* guiValue.cpp */,
+				27A1049B157AD69D00073092 /* guiValue.h */,
+				27A1049C157AD69D00073092 /* guiVariablePointer.h */,
+				27A1049D157AD69D00073092 /* guiXmlValue.h */,
+				27A1049E157AD69D00073092 /* ofxAutoControlPanel.h */,
+				27A1049F157AD69D00073092 /* ofxControlPanel.cpp */,
+				27A104A0157AD69D00073092 /* ofxControlPanel.h */,
+				27A104A1157AD69D00073092 /* simpleColor.cpp */,
+				27A104A2157AD69D00073092 /* simpleColor.h */,
+				27A104A3157AD69D00073092 /* simpleFileLister.cpp */,
+				27A104A4157AD69D00073092 /* simpleFileLister.h */,
+				27A104A5157AD69D00073092 /* simpleLogger.cpp */,
+				27A104A6157AD69D00073092 /* simpleLogger.h */,
+			);
+			name = src;
+			path = ../../ofxControlPanel/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A104C2157AD6B100073092 /* ofxXmlSettings */ = {
+			isa = PBXGroup;
+			children = (
+				27A104C3157AD6B100073092 /* libs */,
+				27A104C8157AD6B100073092 /* src */,
+			);
+			name = ofxXmlSettings;
+			path = ../../ofxXmlSettings;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A104C3157AD6B100073092 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				27A104C4157AD6B100073092 /* tinyxml.cpp */,
+				27A104C5157AD6B100073092 /* tinyxml.h */,
+				27A104C6157AD6B100073092 /* tinyxmlerror.cpp */,
+				27A104C7157AD6B100073092 /* tinyxmlparser.cpp */,
+			);
+			name = libs;
+			path = ../../ofxXmlSettings/libs;
+			sourceTree = SOURCE_ROOT;
+		};
+		27A104C8157AD6B100073092 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				27A104C9157AD6B100073092 /* ofxXmlSettings.cpp */,
+				27A104CA157AD6B100073092 /* ofxXmlSettings.h */,
+			);
+			name = src;
+			path = ../../ofxXmlSettings/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				27A104C2157AD6B100073092 /* ofxXmlSettings */,
+				27A10398157AD69C00073092 /* ofxControlPanel */,
 				2705B337143D6DA300F2A09E /* ofxCv */,
 			);
 			name = addons;
@@ -688,6 +1958,37 @@
 				271783FD15742BE400F4E6CB /* Tracker.cpp in Sources */,
 				271783FE15742BE400F4E6CB /* Utilities.cpp in Sources */,
 				271783FF15742BE400F4E6CB /* Wrappers.cpp in Sources */,
+				27A104A7157AD69D00073092 /* guiBaseObject.cpp in Sources */,
+				27A104A8157AD69D00073092 /* guiCallback.cpp in Sources */,
+				27A104A9157AD69D00073092 /* guiCallbackValue.cpp in Sources */,
+				27A104AA157AD69D00073092 /* guiColor.cpp in Sources */,
+				27A104AB157AD69D00073092 /* guiTextBase.cpp in Sources */,
+				27A104AC157AD69D00073092 /* guiType2DSlider.cpp in Sources */,
+				27A104AD157AD69D00073092 /* guiTypeButtonSlider.cpp in Sources */,
+				27A104AE157AD69D00073092 /* guiTypeChartPlotter.cpp in Sources */,
+				27A104AF157AD69D00073092 /* guiTypeCustom.cpp in Sources */,
+				27A104B0157AD69D00073092 /* guiTypeDrawable.cpp in Sources */,
+				27A104B1157AD69D00073092 /* guiTypeFileLister.cpp in Sources */,
+				27A104B2157AD69D00073092 /* guiTypeLabel.cpp in Sources */,
+				27A104B3157AD69D00073092 /* guiTypeLogger.cpp in Sources */,
+				27A104B4157AD69D00073092 /* guiTypeMultiToggle.cpp in Sources */,
+				27A104B5157AD69D00073092 /* guiTypePanel.cpp in Sources */,
+				27A104B6157AD69D00073092 /* guiTypeSlider.cpp in Sources */,
+				27A104B7157AD69D00073092 /* guiTypeText.cpp in Sources */,
+				27A104B8157AD69D00073092 /* guiTypeTextDropDown.cpp in Sources */,
+				27A104B9157AD69D00073092 /* guiTypeTextInput.cpp in Sources */,
+				27A104BA157AD69D00073092 /* guiTypeToggle.cpp in Sources */,
+				27A104BB157AD69D00073092 /* guiTypeVairableLister.cpp in Sources */,
+				27A104BC157AD69D00073092 /* guiTypeVideo.cpp in Sources */,
+				27A104BD157AD69D00073092 /* guiValue.cpp in Sources */,
+				27A104BE157AD69D00073092 /* ofxControlPanel.cpp in Sources */,
+				27A104BF157AD69D00073092 /* simpleColor.cpp in Sources */,
+				27A104C0157AD69D00073092 /* simpleFileLister.cpp in Sources */,
+				27A104C1157AD69D00073092 /* simpleLogger.cpp in Sources */,
+				27A104CB157AD6B100073092 /* tinyxml.cpp in Sources */,
+				27A104CC157AD6B100073092 /* tinyxmlerror.cpp in Sources */,
+				27A104CD157AD6B100073092 /* tinyxmlparser.cpp in Sources */,
+				27A104CE157AD6B100073092 /* ofxXmlSettings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

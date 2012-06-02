@@ -24,7 +24,7 @@ void testApp::update() {
 		copy(cam, previous);
 		
 		// this is the key line: get the average of each column
-		columnMean = meanCols(toCv(diff));
+		columnMean = meanCols(diff);
 	}
 }
 
