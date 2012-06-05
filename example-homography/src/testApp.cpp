@@ -6,9 +6,9 @@ using namespace cv;
 void testApp::setup() {
 	//ofSetVerticalSync(true);
 	
-	depth.loadImage("depth.png");
-	color.loadImage("color.png");
-	imitate(warpedColor, color);
+	left.loadImage("left.jpg");
+	right.loadImage("right.jpg");
+	imitate(warpedColor, right);
 	
 	movingPoint = false;
 	saveMatrix = false;
@@ -24,11 +24,11 @@ void testApp::setup() {
 }
 
 void testApp::update() {
-	if(depthPoints.size() > 4) {
+	if(leftPoints.size() >= 4) {
 		vector<Point2f> srcPoints, dstPoints;
-		for(int i = 0; i < depthPoints.size(); i++) {
-			srcPoints.push_back(Point2f(colorPoints[i].x - depth.getWidth(), colorPoints[i].y));
-			dstPoints.push_back(Point2f(depthPoints[i].x, depthPoints[i].y));
+		for(int i = 0; i < leftPoints.size(); i++) {
+			srcPoints.push_back(Point2f(rightPoints[i].x - left.getWidth(), rightPoints[i].y));
+			dstPoints.push_back(Point2f(leftPoints[i].x, leftPoints[i].y));
 		}
 		
 		// generate a homography from the two sets of points
@@ -45,7 +45,7 @@ void testApp::update() {
 	if(homographyReady) {
 		// this is how you warp one ofImage into another ofImage given the homography matrix
 		// CV INTER NN is 113 fps, CV_INTER_LINEAR is 93 fps
-		warpPerspective(color, warpedColor, homography, CV_INTER_LINEAR);
+		warpPerspective(right, warpedColor, homography, CV_INTER_LINEAR);
 		warpedColor.update();
 	}
 }
@@ -61,8 +61,8 @@ void drawPoints(vector<ofVec2f>& points) {
 void testApp::draw() {
 	
 	ofSetColor(255);
-	depth.draw(0, 0);
-	color.draw(depth.getWidth(), 0);
+	left.draw(0, 0);
+	right.draw(left.getWidth(), 0);
 	if(homographyReady) {
 		ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
 		ofSetColor(255, 128);
@@ -71,12 +71,12 @@ void testApp::draw() {
 	}
 	
 	ofSetColor(ofColor::red);
-	drawPoints(depthPoints);
+	drawPoints(leftPoints);
 	ofSetColor(ofColor::blue);
-	drawPoints(colorPoints);
+	drawPoints(rightPoints);
 	ofSetColor(128);
-	for(int i = 0; i < depthPoints.size(); i++) {
-		ofLine(depthPoints[i], colorPoints[i]);
+	for(int i = 0; i < leftPoints.size(); i++) {
+		ofLine(leftPoints[i], rightPoints[i]);
 	}
 	
 	ofSetColor(255);
@@ -96,13 +96,13 @@ bool testApp::movePoint(vector<ofVec2f>& points, ofVec2f point) {
 
 void testApp::mousePressed(int x, int y, int button) {
 	ofVec2f cur(x, y);
-	ofVec2f colorOffset(depth.getWidth(), 0);
-	if(!movePoint(depthPoints, cur) && !movePoint(colorPoints, cur)) {
-		if(x > depth.getWidth()) {
-			cur -= colorOffset;
+	ofVec2f rightOffset(left.getWidth(), 0);
+	if(!movePoint(leftPoints, cur) && !movePoint(rightPoints, cur)) {
+		if(x > left.getWidth()) {
+			cur -= rightOffset;
 		}
-		depthPoints.push_back(cur);
-		colorPoints.push_back(cur + colorOffset);
+		leftPoints.push_back(cur);
+		rightPoints.push_back(cur + rightOffset);
 	}
 }
 

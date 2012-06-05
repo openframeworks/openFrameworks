@@ -14,8 +14,8 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void keyPressed(int key);
 	
-	ofImage depth, color, warpedColor;
-	vector<ofVec2f> depthPoints, colorPoints;
+	ofImage left, right, warpedColor;
+	vector<ofVec2f> leftPoints, rightPoints;
 	bool movingPoint;
 	ofVec2f* curPoint;
 	bool saveMatrix;
