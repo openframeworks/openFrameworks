@@ -4,7 +4,7 @@ using namespace ofxCv;
 using namespace cv;
 
 void testApp::setup() {
-	//ofSetVerticalSync(true);
+	ofSetVerticalSync(true);
 	
 	left.loadImage("left.jpg");
 	right.loadImage("right.jpg");
