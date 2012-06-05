@@ -623,9 +623,19 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
                 final int pointerId = event.getPointerId(pointerIndex);
                 switch((action & MotionEvent.ACTION_MASK)){
                 case MotionEvent.ACTION_MOVE:
+                {
+                	for(int j=0; j<event.getPointerCount(); j++)
+                	{
+                		for(int i=0; i<event.getHistorySize(); i++)
+                		{
+                			int ptr = event.getPointerId(j);
+                			OFAndroid.onTouchMoved(ptr, event.getHistoricalX(ptr, i), event.getHistoricalY(ptr, i), event.getHistoricalPressure(ptr, i));                		
+                		}
+                	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
 	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
 	            	}
+                }
 	            	break;
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_UP:

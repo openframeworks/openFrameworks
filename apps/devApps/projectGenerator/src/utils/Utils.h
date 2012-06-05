@@ -46,5 +46,16 @@ bool checkConfigExists();
 bool askOFRoot();
 string getOFRootFromConfig();
 
+template <class T>
+inline bool isInVector(T item, vector<T> & vec){
+    bool bIsInVector = false;
+    for(int i=0;i<vec.size();i++){
+        if(vec[i] == item){
+            bIsInVector = true;
+            break;
+        }
+    }
+    return bIsInVector;
+}
 
 #endif /* UTILS_H_ */

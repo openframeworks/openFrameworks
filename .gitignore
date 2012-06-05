@@ -25,6 +25,7 @@ Release*/
 *.mode*
 *.app/
 *.pyc
+.svn/
 
 # IDE-specific ignore patterns
 
