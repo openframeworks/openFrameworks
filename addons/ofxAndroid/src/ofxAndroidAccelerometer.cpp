@@ -13,7 +13,7 @@
 extern "C"{
 void
 Java_cc_openframeworks_OFAndroidAccelerometer_updateAccelerometer( JNIEnv*  env, jobject  thiz, jfloat x, jfloat y, jfloat z ){
-	ofxAccelerometer.update(x,y,z);
+	ofxAccelerometer.update(-x,-y,-z);
 }
 }
 

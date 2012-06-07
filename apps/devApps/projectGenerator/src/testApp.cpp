@@ -19,22 +19,28 @@ void testApp::setup(){
 	//plat = OF_TARGET_IPHONE;
 
     setupForTarget(targ);
-
-    if(projectPath!=""){
-    	setupForTarget(ofGetTargetPlatform());
-        project->setup(target);
-        project->create(projectPath);
-        vector < string > addons;
-        parseAddonsDotMake(project->getPath() + "addons.make", addons);
-        for (int i = 0; i < (int)addons.size(); i++){
-            ofAddon addon;
-            addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
-            project->addAddon(addon);
-        }
-        project->save(false);
+    if(projectPath!="" || buildAllExamples){
+    	for(int i = 0; i < (int)targetsToMake.size(); i++){
+			setupForTarget(targetsToMake[i]);
+			if(buildAllExamples){
+				generateExamples();
+			}else{
+				project->setup(target);
+				project->create(projectPath);
+				vector < string > addons;
+				parseAddonsDotMake(project->getPath() + "addons.make", addons);
+				for (int i = 0; i < (int)addons.size(); i++){
+					ofAddon addon;
+					addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),target);
+					project->addAddon(addon);
+				}
+				project->save(false);
+			}
+    	}
         std::exit(0);
     }
 
+#ifndef COMMAND_LINE_ONLY
     panelAddons.setup();
     ofDirectory addons(ofFilePath::join(getOFRoot(),"addons"));
     addons.listDir();
@@ -59,18 +65,21 @@ void testApp::setup(){
 
 	examplesPanel.setup("generate examples", "examples.xml", 400, 10);
 	examplesPanel.add(generateButton.setup("<--Generate"));
-	examplesPanel.add(wincbToggle.setup("win CB projects",false));
-	examplesPanel.add(winvsToggle.setup("win VS projects", false));
-	examplesPanel.add(linuxcbToggle.setup("linux CB projects",false));
-	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",false));
-	examplesPanel.add(osxToggle.setup("osx projects",false));
-	examplesPanel.add(iosToggle.setup("ios projects",false));
+	examplesPanel.add(wincbToggle.setup("win CB projects",ofGetTargetPlatform()==OF_TARGET_WINGCC));
+	examplesPanel.add(winvsToggle.setup("win VS projects", ofGetTargetPlatform()==OF_TARGET_WINVS));
+	examplesPanel.add(linuxcbToggle.setup("linux CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX));
+	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX64));
+	examplesPanel.add(osxToggle.setup("osx projects",ofGetTargetPlatform()==OF_TARGET_OSX));
+	examplesPanel.add(iosToggle.setup("ios projects",ofGetTargetPlatform()==OF_TARGET_IPHONE));
 
 	generateButton.addListener(this,&testApp::generateExamplesCB);
 
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
 	ofSetFrameRate(60);
+#else
+	std::exit(0);
+#endif
 }
 
 void testApp::setupForTarget(int targ){
@@ -111,9 +120,10 @@ void testApp::setupForTarget(int targ){
 
 void testApp::generateExamplesCB(bool & pressed){
 
+#ifndef COMMAND_LINE_ONLY
 	if (pressed == false) return; // don't do this again on the mouseup.
 
-	vector <int> targetsToMake;
+	targetsToMake.clear();
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
 	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
@@ -132,6 +142,8 @@ void testApp::generateExamplesCB(bool & pressed){
 
 	int target = ofGetTargetPlatform();
     setupForTarget(target);
+#endif
+
 }
 
 void testApp::generateExamples(){
@@ -186,6 +198,8 @@ void testApp::generateExamples(){
 }
 
 ofFileDialogResult testApp::makeNewProjectViaDialog(){
+
+#ifndef COMMAND_LINE_ONLY
     ofFileDialogResult res = ofSystemSaveDialog("newProjectName", "choose a folder for a new OF project :)");
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
@@ -223,9 +237,13 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
         }
 	}
     return res;
+#endif
+
 }
 
 ofFileDialogResult testApp::updateProjectViaDialog(){
+
+#ifndef COMMAND_LINE_ONLY
     ofFileDialogResult res = ofSystemLoadDialog("choose a folder to update an OF project :)",true);
     if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
@@ -266,6 +284,8 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 	}
 
 	return res;
+#endif
+
 }
 
 void testApp::createProjectPressed(bool & pressed){
@@ -312,6 +332,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
+#ifndef COMMAND_LINE_ONLY
     //ofBackgroundGradient(ofColor::gray,ofColor::black);
 
     panelAddons.draw();
@@ -325,6 +346,8 @@ void testApp::draw(){
     /*ofDrawBitmapString("press 'm' to make all files\npress ' ' to make a specific file", ofPoint(30,30));*/
 	ofSetColor(255);
     ofDrawBitmapString(drawableOfPath, ofPathDrawPoint);
+#endif
+
 }
 
 //--------------------------------------------------------------
@@ -387,6 +410,8 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 
 //--------------------------------------------------------------
 void testApp::setupDrawableOFPath(){
+
+#ifndef COMMAND_LINE_ONLY
 	vector<string> subdirs = ofSplitString("OF path: " + getOFRoot(), "/");
 	int textLength = 0;
 	int padding = 5;
@@ -423,5 +448,7 @@ void testApp::setupDrawableOFPath(){
 
 	panelAddons.setPosition(panelAddons.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
 	examplesPanel.setPosition(examplesPanel.getPosition().x, ofPathRect.y + ofPathRect.height + padding);
+#endif
+
 
 }

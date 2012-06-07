@@ -1,5 +1,8 @@
 COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 
+NDK_PLATFORM = android-8
+GCC_VERSION = 4.4.3
+
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	LIBSPATH = android/armeabi-v7a
 	ABI = armeabi-v7a
@@ -21,28 +24,29 @@ CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_
 AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
-CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include"
+CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/" 
 CFLAGS += -DANDROID
 
 INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 
 
 LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)"
-SYSTEMLIBS +=  -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/libgnustl_static.a
+SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/libgnustl_static.a -lgcc 
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 
 
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
 	TARGET = libs/armeabi/libOFAndroidApp.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
 	TARGET = libs/armeabi/libOFAndroidApp.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
@@ -50,6 +54,7 @@ ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	TARGET_NAME = Release_arm7
 	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
 	TARGET = libs/armeabi-v7a/libOFAndroidApp.so
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM7)
 endif
 
@@ -57,16 +62,9 @@ ifeq ($(findstring Release_neon,$(MAKECMDGOALS)),Release_neon)
 	TARGET_NAME = Release_neon
 	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	TARGET = libs/armeabi-v7a/libOFAndroidApp_neon.so
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_NEON)
 	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/android/armeabi-neon/libopenFrameworks.a
-endif
-	
-ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
-	TARGET_NAME = Debug
-	LDFLAGS += -Wl,--entry=main,--fix-cortex-a8
-	BIN_NAME = $(APPNAME)
-	TARGET = obj/$(BIN_NAME)
-	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
 ifeq ($(MAKECMDGOALS),AndroidInstall)
@@ -86,7 +84,6 @@ TestLinkAndroid: $(TARGET) afterDebugAndroid
 
 AndroidDebug:
 	$(MAKE) DebugAndroid
-	$(MAKE) TestLinkAndroid
 
 AndroidRelease:
 	$(MAKE) ReleaseAndroid
@@ -100,7 +97,6 @@ CleanAndroid:
 	rm -Rf obj
 	rm -f libs/armeabi-v7a/libOFAndroidApp.so
 	rm -f libs/armeabi/libOFAndroidApp.so
-	rm -f obj/$(APPNAME)
 	
 	
 afterDebugAndroid:$(TARGET)
@@ -156,11 +152,11 @@ AndroidInstall:
 	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
 	if [ -d bin/classes ]; then rm -r bin/classes; fi
-	if [ -d bin/classes.dex ]; then rm bin/classes.dex; fi
-	if [ -d bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
-	if [ -d bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
-	if [ -d bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
-	if [ -d bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
+	if [ -f bin/classes.dex ]; then rm bin/classes.dex; fi
+	if [ -f bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
+	if [ -f bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
+	if [ -f bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
+	if [ -f bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then

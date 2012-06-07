@@ -8,6 +8,7 @@ ofThread::ofThread(){
    threadRunning = false;
    verbose = false;
    thread.setName("Thread "+ofToString(thread.id()));
+   blocking = true;
 } 
 
 //------------------------------------------------- 
