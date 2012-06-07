@@ -1,21 +1,28 @@
 package cc.openframeworks;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.util.Log;
 
 public class OFAndroidSoundPlayer extends OFAndroidObject{
 	OFAndroidSoundPlayer(){
 		pan = 0.5f;
-		volume = 1;
+		volume = leftVolume = rightVolume = 1;
 		player = new MediaPlayer();
 		bIsLoaded = false;
 	}
 	
 	void loadSound(String fileName, boolean stream){
 		try {
-			player.setDataSource(fileName);
-			player.prepare();
-			bIsLoaded = true;
+			if(!multiPlay){
+				player.setDataSource(fileName);
+				player.prepare();
+				bIsLoaded = true;
+			}else{
+				fileID = pool.load(fileName, 1);
+			}
+			this.fileName = fileName;
 		} catch (Exception e) {
 			Log.e("OF","couldn't load " + fileName,e);
 		} 
@@ -23,14 +30,25 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void unloadSound(){
 		player.release();
+		fileName = null;
+		fileID = 0;
+		bIsLoaded = false;
 	}
 	
 	void play(){
-		if(getIsPlaying()) setPosition(0);
-		player.start();
+		if(!multiPlay){
+			if(getIsPlaying()) setPosition(0);	
+			player.start();
+		}else{
+			pool.play(fileID,leftVolume,rightVolume,1,loop?-1:0,speed);
+		}
 	}
 	void stop(){
-		player.stop();
+		if(!multiPlay){
+			player.stop();
+		}else{
+			pool.autoPause();
+		}
 	}
 	
 	void setVolume(float vol){
@@ -41,9 +59,9 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
         float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
         float cosAngle = (float) Math.cos(angle);
         float sinAngle = (float) Math.sin(angle);
-        float leftVol  = (float)((cosAngle - sinAngle) * 0.7071067811865475); // multiplied by sqrt(2)/2
-        float rightVol = (float)((cosAngle + sinAngle) * 0.7071067811865475); // multiplied by sqrt(2)/2
-		player.setVolume(leftVol*vol, rightVol*vol);
+        leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+        rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		if(!multiPlay) player.setVolume(leftVolume, rightVolume);
 	}
 	
 	float getVolume(){
@@ -56,45 +74,69 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	void setSpeed(float spd){
+		speed = spd;
 	}
 	
 	void setPaused(boolean bP){
-		if(bP)
-			player.pause();
-		else
-			player.start();
+		if(!multiPlay){
+			if(bP)
+				player.pause();
+			else
+				player.start();
+		}else{
+			if(bP){
+				pool.autoPause();
+			}else{
+				pool.autoResume();
+			}
+		}
 	}
 	
 	void setLoop(boolean bLp){
-		player.setLooping(bLp);
+		if(!multiPlay){
+			player.setLooping(bLp);
+		}
+		loop = bLp;
 	}
 	
 	void setMultiPlay(boolean bMp){
-		;
+		if(bMp){
+			if(fileName!=null) fileID = pool.load(fileName, 1);
+		}
+		multiPlay = bMp;
 	}
 	
 	void setPosition(float pct){
-		player.seekTo((int) (player.getDuration()*pct)); // 0 = start, 1 = end;
+		if(!multiPlay) player.seekTo((int) (player.getDuration()*pct)); // 0 = start, 1 = end;
 	}
 	
 	void setPositionMS(int ms){
-		player.seekTo(ms); // 0 = start, 1 = end;
+		if(!multiPlay) player.seekTo(ms); // 0 = start, 1 = end;
 	}
 	
 	float getPosition(){
-		return ((float)player.getCurrentPosition())/(float)player.getDuration();
+		if(!multiPlay)
+			return ((float)player.getCurrentPosition())/(float)player.getDuration();
+		else
+			return 0;
 	}
 	
 	int getPositionMS(){
-		return player.getCurrentPosition();
+		if(!multiPlay)
+			return player.getCurrentPosition();
+		else
+			return 0;
 	}
 	
 	boolean getIsPlaying(){
-		return player.isPlaying();
+		if(!multiPlay)
+			return player.isPlaying();
+		else
+			return true;
 	}
 	
 	float getSpeed(){
-		return 1;
+		return speed;
 	}
 	
 	float getPan(){
@@ -122,8 +164,14 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	
 	private MediaPlayer player;
+	private static SoundPool pool = new SoundPool(100, AudioManager.STREAM_MUSIC, 0);
 	private float pan;
 	private float volume;
 	private boolean bIsLoaded;
-
+	private boolean multiPlay;
+	private String fileName;
+	private int fileID;
+	private float leftVolume, rightVolume;
+	private boolean loop;
+	private float speed;
 }
