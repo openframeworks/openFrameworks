@@ -1,14 +1,5 @@
-*/.metadata
-android/*/Debug
-android/*/Release
-android/*/Release_arm7
 android/*/test link
-android/*/bin
-android/*/obj
 android/*/gen
-android/*/local.properties
-android/*/.settings
-android/*/.externalToolBuilders
 android/*/res/raw
 libOFAndroidApp.so
 libOFAndroidApp_neon.so
@@ -17,8 +8,47 @@ gdb.setup
 libneondetection.so
 Application.mk
 Android.mk
+
 */*/bin/*
-!*/*/bin/data
-!*/*/bin/data/*
-!*/*/bin/data/**
-!*/*/bin/data/**/*
+!*/*/bin/data/
+
+# IDE-specific ignore patterns
+
+#XCode
+/*/*/*.xcodeproj
+/*/*/Project.xcconfig
+/*/*/openFrameworks-Info.plist
+/*/*/ofxiphone-Info.plist
+/*/*/iPhone_Prefix.pch
+/*/*/*/*/Default.png
+/*/*/*/*/Icon.png
+
+#Code::Blocks
+/*/*/*.cbp
+/*/*/*.workspace
+
+#Visual Studio
+/*/*/*.sln
+/*/*/*.vcxproj
+/*/*/*.vcxproj.user
+/*/*/*.vcxproj.filters
+
+#Eclipse
+/*/*/.cproject
+/*/*/.project
+/*/*/.settings/
+
+# OS-specific ignore patterns
+
+#Linux
+/*/*/Makefile
+/*/*/config.make
+# Leave Android files in until project generation works
+!/android/*/Makefile
+!/android/*/config.make
+
+#Android
+/*/*/test link
+!/android/*/.cproject
+!/android/*/.project
+!/android/*/.settings

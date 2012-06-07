@@ -38,6 +38,8 @@ bool ofxAndroidIsMobileOnline();
 
 string ofxAndroidGetStringRes(string id);
 
+string ofxAndroidRandomUUID();
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();

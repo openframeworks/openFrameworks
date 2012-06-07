@@ -8,7 +8,7 @@ void testApp::setup(){
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	grabber.initGrabber(320,240);
 
-	one_second_time = ofGetSystemTime();
+	one_second_time = ofGetElapsedTimeMillis();
 	camera_fps = 0;
 	frames_one_sec = 0;
 }
@@ -18,10 +18,10 @@ void testApp::update(){
 	grabber.update();
 	if(grabber.isFrameNew()){
 		frames_one_sec++;
-		if( ofGetSystemTime() - one_second_time >= 1000){
+		if( ofGetElapsedTimeMillis() - one_second_time >= 1000){
 			camera_fps = frames_one_sec;
 			frames_one_sec = 0;
-			one_second_time = ofGetSystemTime();
+			one_second_time = ofGetElapsedTimeMillis();
 		}
 	}
 }
