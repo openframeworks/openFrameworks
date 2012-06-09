@@ -514,7 +514,6 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	return results;
 }
-<<<<<<< HEAD
 
 #ifdef TARGET_WIN32
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -684,7 +683,9 @@ string ofSystemTextBoxDialog(string question, string text){
      EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
 #endif
 
+#ifdef TARGET_ANDROID
+     text = ofxAndroidAlertTextBox(question,text);
+#endif
+
 	return text;
 }
-=======
->>>>>>> 33dd7cb0044ce93dff1cc9dcc43d14dc98d51bf8
