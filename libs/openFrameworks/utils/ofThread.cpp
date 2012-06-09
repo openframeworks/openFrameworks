@@ -2,6 +2,10 @@
 
 #include "ofLog.h"
 #include "ofUtils.h"
+#ifdef TARGET_ANDROID
+#include <jni.h>
+#include "ofxAndroidUtils.h"
+#endif
 
 //------------------------------------------------- 
 ofThread::ofThread(){ 
@@ -176,10 +180,17 @@ void ofThread::threadedFunction(){
 void ofThread::run(){
 	
 	ofLogVerbose(thread.name()) << "started";
-	
+#ifdef TARGET_ANDROID
+	JNIEnv * env;
+	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,NULL);
+#endif
 	// user function
 	threadedFunction();
 	
+#ifdef TARGET_ANDROID
+	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
+#endif
+
 	threadRunning = false;
 	ofLogVerbose(thread.name()) << "stopped";
 }
