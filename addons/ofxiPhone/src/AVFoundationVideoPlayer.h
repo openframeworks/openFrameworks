@@ -1,101 +1,87 @@
+//
+//  AVVideoPlayer.h
+//  iOS+OFLib
+//
+//  Created by lukasz karluk on 21/05/12.
+//
 
-
+#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
-#import <AudioToolbox/AudioToolbox.h>
-#import <UIKit/UIKit.h>
-#include "ofMain.h"
 
+@class AVPlayer;
+@class AVAsset;
+@class AVAssetReader;
+@class AVAssetReaderOutput;
 
-static NSString* const VIDEO_FRAME_EXTRACTOR_PAUSED = @"paused";
-static NSString* const VIDEO_FRAME_EXTRACTOR_PROGRESS = @"progress";
-static NSString* const VIDEO_FRAME_EXTRACTOR_MIDPOINT = @"midpoint";
-
-
-@protocol AVFoundationVideoPlayerStatusListener
-
-- (void)AVFoundationVideoPlayerStatusChanged:(NSString*)message withArgument:(float)argument;
+//---------------------------------------------------------- video player view.
+@interface AVFoundationVideoPlayerView : UIView {
+    //
+}
+@property (nonatomic, retain) AVPlayer * player;
 
 @end
 
-#include <vector>
-using namespace std;
+//---------------------------------------------------------- video player delegate.
+@protocol AVFoundationVideoPlayerDelegate <NSObject>
+- (void)playerReady;
+- (void)playerDidProgress;
+- (void)playerDidFinishPlayingVideo;
+@end
 
-#define NUM_AUDIO_BUFFERS 6
-
-@interface AVFoundationVideoPlayer: NSObject {
-
-	AVURLAsset* asset;
-	AVAssetReader* asset_reader;
-	AVAssetReaderOutput* asset_reader_video_output;
-	AVAssetReaderOutput* asset_reader_audio_output;
-	
-	CMSampleBufferRef buffer;
-	Float64 presentation_timestamp_s;
-	Float64 last_returned_frame_presentation_timestamp_s;
-	
-	Float64 video_duration;
-	
-	AudioQueueBufferRef	audio_buffer[NUM_AUDIO_BUFFERS];
-	AudioQueueRef		audio_queue;
-	CMSampleBufferRef	audio_from_avasset_buffer;
-	UInt32				audio_from_avasset_samples_given_out;
-	ofMutex			audio_mutex;
-	bool				audio_finished;
-	int					audio_n_channels;
-	
-	float audio_lag;
-	bool paused;
-	bool finished;
-	bool told_midpoint;
-	bool initialised;
-
-	bool playOnLoad;
-	bool bDoAudio;
-	
-	float current_video_time;
-	float vol;
-	
-	vector<UIViewController<AVFoundationVideoPlayerStatusListener>*> status_listeners;
-	
+//---------------------------------------------------------- video player.
+@interface AVFoundationVideoPlayer : NSObject {
+    id<AVFoundationVideoPlayerDelegate> delegate;
 }
 
-- (id)initWithURL:(NSURL*)url;
-- (id)initWithPath:(NSString*)path;
-- (id)initWithURL:(NSURL*)url;
-- (void)dealloc;
+@property (nonatomic, assign) id delegate;
+@property (nonatomic, retain) UIView * playerView;
+@property (nonatomic, retain) AVPlayer * player;
+@property (nonatomic, retain) AVAsset * asset;
+@property (nonatomic, retain) AVAssetReader * assetReader;
+@property (nonatomic, retain) AVAssetReaderOutput * assetReaderVideoOutput;
 
-- (void)addStatusListener:(UIViewController<AVFoundationVideoPlayerStatusListener>*) listener;
+- (BOOL)loadWithFile:(NSString*)file;
+- (BOOL)loadWithPath:(NSString*)path;
+- (BOOL)loadWithURL:(NSURL*)url;
+- (void)unloadVideo;
+
+- (void)setVideoPosition:(CGPoint)position;
+- (void)setVideoSize:(CGSize)size;
+
+- (void)update;
 
 - (void)play;
 - (void)pause;
-- (bool)isFinished;
-- (bool)isPaused;
-- (bool)isInErrorState;
-- (bool)canPlay;
-- (void)setVolume:(float)volume;
+- (void)togglePlayPause;
 
-- (void)updateWithElapsedTime:(float)elapsed;
-- (bool)hasNewFrame;
-/// return the current frame. caller is responsible for both UIImage and CGImageRef. 
-/// in addition, caller must destroy UIImage before CGImageRef.
-- (pair<UIImage*,CGImageRef>)getCopyOfCurrentFrame;
+- (void)seekToStart;
+- (void)seekToTime:(CMTime)time;
+- (void)seekToTime:(CMTime)time withTolerance:(CMTime)tolerance;
+
+- (BOOL)isReady;
+- (BOOL)isPlaying;
+- (BOOL)isNewFrame;
+- (BOOL)isFinished;
+
 - (CVImageBufferRef)getCurrentFrame;
 
-- (void)updateFrameTimeDifference;
-
-- (void)audioCallbackWithQueue:(AudioQueueRef)queue output:(AudioQueueBufferRef)output_buffer;
-
-/// return the current video time (on-screen time)
-- (float)getVideoTime;
-- (float)getVideoPosition;
-- (Float64)getDuration;
-
-- (void)continueInit;
-
+- (NSInteger)getWidth;
+- (NSInteger)getHeight;
+- (CMTime)getCurrentTime;
+- (double)getCurrentTimeInSec;
+- (CMTime)getDuration;
+- (double)getDurationInSec;
+- (void)setPosition:(float)position;
+- (float)getPosition;
+- (void)setVolume:(float)volume;
+- (float)getVolume;
+- (void)setLoop:(BOOL)bLoop;
+- (BOOL)getLoop;
+- (void)setSpeed:(float)speed;
+- (float)getSpeed;
+- (void)setAutoplay:(BOOL)bAutoplay;
+- (BOOL)getAutoplay;
+- (void)setWillBeUpdatedExternally:(BOOL)value;
 
 @end
-
-
-
-

@@ -163,6 +163,31 @@ void ofxAndroidOkCancelBox(string msg){
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
 }
 
+
+string ofxAndroidAlertTextBox(string question, string text){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return "";
+	}
+
+	jmethodID alertTextBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertTextBox","(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+	if(!alertTextBox){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertTextBox method");
+		return "";
+	}
+	jstring jQuestion = ofGetJNIEnv()->NewStringUTF(question.c_str());
+	jstring jMsg = ofGetJNIEnv()->NewStringUTF(text.c_str());
+	jstring jResult = (jstring)ofGetJNIEnv()->CallStaticObjectMethod(javaClass,alertTextBox,jQuestion,jMsg);
+	jboolean isCopy;
+	string res = ofGetJNIEnv()->GetStringUTFChars(jResult,&isCopy);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jQuestion);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jResult);
+	return res;
+}
+
 void ofxAndroidToast(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
