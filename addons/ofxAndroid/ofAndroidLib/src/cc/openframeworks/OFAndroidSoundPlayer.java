@@ -11,6 +11,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		volume = leftVolume = rightVolume = 1;
 		player = new MediaPlayer();
 		bIsLoaded = false;
+		fileID = -1;
 	}
 	
 	void loadSound(String fileName, boolean stream){
@@ -101,7 +102,12 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void setMultiPlay(boolean bMp){
 		if(bMp){
-			if(fileName!=null) fileID = pool.load(fileName, 1);
+			if(fileName!=null){
+				fileID = pool.load(fileName, 1);
+			}
+			player.release();
+		}else{
+			if(fileID!=-1) pool.unload(fileID);
 		}
 		multiPlay = bMp;
 	}
@@ -164,7 +170,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	
 	private MediaPlayer player;
-	private static SoundPool pool = new SoundPool(100, AudioManager.STREAM_MUSIC, 0);
+	private SoundPool pool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0);
 	private float pan;
 	private float volume;
 	private boolean bIsLoaded;
