@@ -122,7 +122,7 @@ cv::name(xMat, yMat, resultMat);\
 	
 	// automatic threshold (grayscale 8-bit only) out of place
 	template <class S, class D>
-	void threshold(S& src, D& dst, bool invert = false) {
+	void autothreshold(S& src, D& dst, bool invert = false) {
 		imitate(dst, src);
 		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		int flags = THRESH_OTSU | (invert ? THRESH_BINARY_INV : THRESH_BINARY);
@@ -131,8 +131,8 @@ cv::name(xMat, yMat, resultMat);\
 	
 	// automatic threshold (grayscale 8-bit only) in place
 	template <class SD>
-	void threshold(SD& srcDst, bool invert = false) {
-		ofxCv::threshold(srcDst, srcDst, invert);
+	void autothreshold(SD& srcDst, bool invert = false) {
+		ofxCv::autothreshold(srcDst, srcDst, invert);
 	}
 	
 	// CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
