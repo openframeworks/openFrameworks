@@ -17,7 +17,8 @@ ofThread::ofThread(){
 
 //------------------------------------------------- 
 ofThread::~ofThread(){ 
-   stopThread(true);
+	stopThread(true);
+	waitForThread();
 } 
 
 //------------------------------------------------- 
@@ -113,7 +114,7 @@ void ofThread::stopThread(bool close){
 	if(thread.isRunning()) {
 		threadRunning = false;
 		if(close && thread.isRunning()){
-			thread.tryJoin(0);
+			thread.tryJoin(0); 
 		}
 	}
 }
