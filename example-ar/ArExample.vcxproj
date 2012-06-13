@@ -98,28 +98,28 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\libs\ofxCv\src\Calibration.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\ContourFinder.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\Distance.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\Flow.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\Helpers.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\RunningBackground.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\Tracker.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\Utilities.cpp" />
-    <ClCompile Include="..\libs\ofxCv\src\Wrappers.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Calibration.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\ContourFinder.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Distance.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Flow.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Helpers.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\RunningBackground.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Tracker.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Utilities.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\testApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\Calibration.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\ContourFinder.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\Distance.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\Flow.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\Helpers.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\RunningBackground.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\Tracker.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\Utilities.h" />
-    <ClInclude Include="..\libs\ofxCv\include\ofxCv\Wrappers.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Calibration.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\ContourFinder.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Distance.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Flow.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Helpers.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\RunningBackground.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Tracker.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Utilities.h" />
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Wrappers.h" />
     <ClInclude Include="..\src\ofxCv.h" />
     <ClInclude Include="src\testApp.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv\cv.h" />
