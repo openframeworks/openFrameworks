@@ -288,6 +288,11 @@ void ofClear(float brightness, float a){
 }
 
 //----------------------------------------------------------
+void ofClear(const ofColor & c){
+	renderer->clear(c.r, c.g, c.b, c.a);
+}
+
+//----------------------------------------------------------
 void ofClearAlpha(){
 	renderer->clearAlpha();
 }	

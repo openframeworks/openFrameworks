@@ -1,1 +1,3 @@
 *
+# don't ignore the .gitignore file
+!.gitignore
