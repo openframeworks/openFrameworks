@@ -8,6 +8,10 @@ example-pulse/
 *.DS_*
 *.xcworkspacedata
 
+*.opensdf
+*.sdf
+*.ipch
+
 .svn/
 obj/
 bin/

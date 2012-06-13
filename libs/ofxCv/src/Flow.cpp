@@ -1,4 +1,4 @@
-#include "Flow.h"
+#include "ofxCv/Flow.h"
 
 namespace ofxCv {
 	
