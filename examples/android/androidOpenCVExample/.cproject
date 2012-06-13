@@ -21,7 +21,7 @@
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.base.162935411.1572145179.138335921.1123643126." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.base.1838711512" name="cdt.managedbuild.toolchain.gnu.base" superClass="cdt.managedbuild.toolchain.gnu.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.1722585073" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<builder cleanBuildTarget="CleanDebug" id="cdt.managedbuild.target.gnu.builder.base.783193491" incrementalBuildTarget="AndroidDebug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+							<builder cleanBuildTarget="CleanAndroid" id="cdt.managedbuild.target.gnu.builder.base.783193491" incrementalBuildTarget="AndroidDebug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.603240629" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.563190826" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.582352049" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -99,7 +99,9 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="androidOpenCVExample.null.908477058" name="androidOpenCVExample"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/androidOpenCVExample"/>
+	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 		<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">

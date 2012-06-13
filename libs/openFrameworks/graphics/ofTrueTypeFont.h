@@ -86,7 +86,6 @@ protected:
 
 	int				fontSize;
 	bool			bMakeContours;
-	bool 			makeContours;
 	float 			simplifyAmt;
 	int 			dpi;
 

@@ -87,10 +87,10 @@
 			<Add library="..\..\..\libs\fmodex\lib\win_cb\libfmodex.a" />
 			<Add library="..\..\..\libs\glew\lib\win_cb\glew32s.lib" />
 			<Add library="..\..\..\libs\glu\lib\win_cb\glu32.lib" />
-			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoNetmt.a" />
-			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoUtilmt.a" />
-			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoXMLmt.a" />
-			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoFoundationmt.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoNet.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoUtil.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoXML.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoFoundation.a" />
 			<Add library="..\..\..\libs\tess2\lib\win_cb\libtess2.a" />
 			<Add library="opengl32" />
 			<Add library="gdi32" />

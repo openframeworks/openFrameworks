@@ -14,6 +14,7 @@ void testApp::setup(){
 		capH = vidGrabber.getHeight();
     #else	
         vidPlayer.loadMovie("fingers.m4v");
+        vidPlayer.setLoopState(OF_LOOP_NORMAL);
 		vidPlayer.play();
 	#endif
 
