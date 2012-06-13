@@ -2,6 +2,11 @@
 
 #include "ofMath.h"
 
+// vs2010 support (this should be added to the OF core)
+#if (_MSC_VER)
+#include <stdint.h>
+#endif
+
 namespace ofxCv {
 	
 	using namespace cv;

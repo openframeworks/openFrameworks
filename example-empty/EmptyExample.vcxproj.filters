@@ -401,5 +401,8 @@
     <ClInclude Include="..\libs\ofxCv\include\ofxCv\Wrappers.h">
       <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxCv.h">
+      <Filter>addons\ofxCv\src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

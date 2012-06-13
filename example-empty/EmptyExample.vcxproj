@@ -120,6 +120,7 @@
     <ClInclude Include="..\libs\ofxCv\include\ofxCv\Tracker.h" />
     <ClInclude Include="..\libs\ofxCv\include\ofxCv\Utilities.h" />
     <ClInclude Include="..\libs\ofxCv\include\ofxCv\Wrappers.h" />
+    <ClInclude Include="..\src\ofxCv.h" />
     <ClInclude Include="src\testApp.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv\cv.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv\cv.hpp" />
