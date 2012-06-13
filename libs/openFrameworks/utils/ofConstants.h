@@ -34,7 +34,6 @@ enum ofTargetPlatform{
 	#define OF_DEPRECATED_MSG(message, func) __declspec(deprecated(message)) func
 	#define OF_DEPRECATED(func) __declspec(deprecated) func
 #else
-	//TODO: What to do with Android?
 	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
 	#define OF_DEPRECATED_MSG(message, func) func
 	#define OF_DEPRECATED(func) func

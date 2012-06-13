@@ -3,13 +3,15 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	OF_DEPRECATED_MSG("old string. Don't use", string oldstring);
-//	(Un)comment these to trigger deprecation warnings
+	
+//	(Un)comment the following lines to trigger the respective deprecation warnings
 //	Note that only usage triggers warning, just declaration does not!
-	deprecatedFunction();
-	T1 t1object = 5;
-	oldstring = "bla";
-	oldvar3 = 5;
-	oldClass bla;
+
+//	deprecatedFunction();
+//	T1 t1object = 5;
+//	oldstring = "bla";
+//	oldvar3 = 5;
+//	oldClass bla;
 }
 
 //--------------------------------------------------------------
