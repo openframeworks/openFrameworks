@@ -21,7 +21,7 @@ void testApp::setup(){
     updateRender.load("shaders/render.vert","shaders/render.frag","shaders/render.geom");
     
     // Seting the textures where the information ( position and velocity ) will be
-    textureRes = (int) sqrt(numParticles);
+    textureRes = (int)sqrt((float)numParticles);
     numParticles = textureRes * textureRes;
     
     // 1. Making arrays of float pixels with position information

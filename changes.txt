@@ -13,10 +13,83 @@ key:
 + = added
 - = subtracted
 / = modified
-
 ---------------------------------------------------------------
 
-0071 is in currently progress on the develop branch in GitHub.
+The main focus for 0071 was to add new examples to better show the features added in 007. 
+0071 is mainly an 'examples + bug fixes' release, with some additional, much needed, updating to the mobile releases ( iOS and Android ). 
+
+Critical changes ( might need to update your projects to fix )
+* ofEvents -> ofEvents() singleton - this means that projects which register calls using "ofEvents." will need to replace these with "ofEvents()." (note the parentheses).
+* OF Examples now are found in the "examples/" folder in the root of the OF folder. The "apps/" is still included but is kept empty as a place to put your OF apps and experiments. 
+* ofShader checkProgramLinkStatus() replaces checkShaderLinkStatus()
+* Because of the project generator (see below) some addons have been standardized, and we've added "addons.make" to each project file that uses addons.  Prior to this release, addons.make was only used on linux / android platforms.  As we develop the project generator, we'll work to document these changes. 
+
+Project generator
+A significant amount of the work which went into 0071 was in the development of a Project Generator. The Project Generator can make project files for all the OF platforms and it was critical to have this in order to increase the number of examples we could include with the release. The Project Generator is also able to add addons to existing projects, making the task of adding addons much faster than the current manual approach. Going forward, the Project Generator will be included with the new releases and be a key tool for generating, modifying and updating your OF projects. Currently, the Project Generator is in our github repository (https://github.com/openframeworks/openFrameworks) in apps/devApps/. 
+
+core:
++ loads of new examples! 96 examples now come with the desktop releases of OF. For a full list see: https://gist.github.com/2836913
+platform specific: 
++ android support for front camera
++ android support for ofSoundPlayer
++ new iOS examples showing how to mix OF with Native Apps
+/ android compatibility  with ndk r7+ and lots of bugfixes
+/ loads of iOS bugfixes - including retina issue, FBO issues, native GUI fixes, video fixes. 
+/ XCode fix to avoid constant rebuild of projects
+/ Some MacOS 10.7 fixes ( ofShowCursor / HideCursor ) 
+/ Better compatiblity with XCode 4
+/ linux: createProjects.py script dropped in favor of command line version of the projectGenerator
+
+utils: 
++ implemented getUserHomeDir() for Windows
+/ ofSystemSaveFileDialog fix for linux
+/ ofFile and ofDirectory fixes for overwrite failing. 
+/ ofThread now uses Poco::Thread
+/ bugfix for ofFile::copyFromTo
+/ makefiles now are modular + ensure compatibility with future versions
+
+addons: 
++ OSC allows multiple binds to the same port and support for multicast / unicast 
+/ Loads of ofxOpenCV fixes to prevent crashing when images are not allocated or the wrong size
+library changes: 
+/ OpenCv library in the ofxOpenCv addon updated to version 2.3.1 
+/ Poco library updated to version 1.4.3
+
+3d: 
++ ofDrawGrid() for showing an multi-axis xyz grid, ofDrawGridPlane() for a single plane
++ ofDrawArrow() for lines with arrow heads (using ofCone())
++ ofCone() for draw cone primitives
++ 3D versions of ofCurve(), ofBezier(), ofVertex() and ofBezierVertex().
++ ofMesh now allows you to explicitly enable/disable colors/textures/normals before drawing using ofMesh::[enable/disable][Colors/Textures/Normals]()
++ ofxAssimpModelLoader utility methods 
+/ faster ofSphere() without GLUT dependancies. 
+
+math: 
++ ofQuaternion::normalize()
++ ofTexture/ofImage::drawSubsection() for drawing portions of images
++ ofBackgroundGradient() for gradient app backgrounds, with OF_GRADIENT_CIRCULAR, OF_GRADIENT_LINEAR, OF_GRADIENT_BAR
++ ofPolyline::getCentroid2D() and ofPolyline::getArea()
+/  fix mismatch between * and *= operators for ofMatrix3x3. Implemented separate hadamard/schur product ofMatrix3x3::entrywiseTimes()
+/ modify ofMatrix4x4::getRotate() method to operate on a scale-invariant version of the matrix
+Graphics: 
+/ ofColor fixes for HSB color wrapping 
+/ ofPixels optimizations for swapRGB() and mirror() and rotate()
+/ ofPolyline::getSmoothed() works with open and closed lines
+
+app: 
++ ofAppGlutWindow::setDoubleBuffering() gets rid of flickering when drawing without clearing. use this in your main.cpp instead of just saying ofSetBackgroundAuto(false)
+
+openGL: 
++ ofFbo added option to have the depth/stencil buffer as a texture
+/ ofFbo lots of fixes for iOS and POT textures
+
+communication: 
+/ ofSerial bugfixes 
+
+sound: 
++ ofSoundStream allow for different input and output devices. 
+
+For a full list of commits for 0071 see: https://gist.github.com/2836647
 
 ---------------------------------------------------------------
 

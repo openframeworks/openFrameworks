@@ -19,7 +19,6 @@ void testApp::setup(){
 	//plat = OF_TARGET_IPHONE;
 
     setupForTarget(targ);
-
     if(projectPath!="" || buildAllExamples){
     	for(int i = 0; i < (int)targetsToMake.size(); i++){
 			setupForTarget(targetsToMake[i]);
@@ -40,7 +39,6 @@ void testApp::setup(){
     	}
         std::exit(0);
     }
-
 
 #ifndef COMMAND_LINE_ONLY
     panelAddons.setup();
