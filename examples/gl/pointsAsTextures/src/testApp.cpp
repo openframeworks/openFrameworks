@@ -112,7 +112,7 @@ void testApp::addPoint(float x, float y, float z) {
 	
 	// we are passing the size in as a normal x position
 	float size = ofRandom(5, 50);
-	sizes.push_back(size);
+	sizes.push_back(ofVec3f(size));
 }
 
 //--------------------------------------------------------------
