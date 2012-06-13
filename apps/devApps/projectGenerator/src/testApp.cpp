@@ -4,7 +4,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    //ofSetLogLevel(OF_LOG_VERBOSE);
+    //ofSetLogLevel(OF_LOG_NOTICE);
 	project = NULL;
 
 	while(!checkConfigExists()){
