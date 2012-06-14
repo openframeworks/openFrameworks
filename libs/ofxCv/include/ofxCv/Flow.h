@@ -29,7 +29,9 @@ namespace ofxCv {
 		void draw(float x, float y);
 		void draw(float x, float y, float width, float height);
 		void draw(ofRectangle rect);
-		
+		int  getWidth();
+        int  getHeight();
+        
 	protected:
 		ofImage last, curr;
 		bool hasFlow;
@@ -65,6 +67,10 @@ namespace ofxCv {
 		//returns tracking features for this image
 		vector<ofPoint> getFeatures();
 		
+        // size of flow
+        int getWidth();
+        int getHeight();
+        
 	protected:
 		
 		void drawFlow(ofRectangle r);
@@ -108,6 +114,10 @@ namespace ofxCv {
 		ofVec2f getTotalFlowInRegion(ofRectangle region);
 		ofVec2f getAverageFlowInRegion(ofRectangle region);
 		
+        // size of flow
+        int getWidth();
+        int getHeight();
+        
 	protected:
 		cv::Mat flow;
 		
