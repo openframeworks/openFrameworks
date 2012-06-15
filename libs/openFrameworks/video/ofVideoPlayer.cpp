@@ -165,6 +165,12 @@ void ofVideoPlayer::setVolume(int volume){
 	}
 }
 
+//--------------------------------------------------------
+void ofVideoPlayer::setBalance(float balance){
+	if( player != NULL ){
+		player->setBalance(balance);
+	}
+}
 
 //--------------------------------------------------------
 void ofVideoPlayer::setLoopState(ofLoopType state){
