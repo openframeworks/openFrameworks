@@ -68,6 +68,9 @@ namespace ofxCv {
 			drawFlow(rect);
 		}
 	}
+    int Flow::getWidth()  { return 0; }
+    int Flow::getHeight() { return 0; }
+    
 	
 #pragma mark PYRLK IMPLEMENTATION
 	FlowPyrLK::FlowPyrLK(){
@@ -117,6 +120,13 @@ namespace ofxCv {
 												 );
 	}
 	
+    int FlowPyrLK::getWidth() {
+        return last.getWidth();
+    }
+    int FlowPyrLK::getHeight() {
+        return last.getHeight();
+    }
+    
 	vector<ofPoint> FlowPyrLK::getFeatures(){
 		return toOf(prevPts).getVertices();
 	}
@@ -205,6 +215,13 @@ namespace ofxCv {
 		return ofVec2f(sc[1], sc[0]);
 	}
 	
+    int FlowFarneback::getWidth() {
+        return flow.cols;
+    }
+    int FlowFarneback::getHeight() {
+        return flow.rows;
+    }
+    
 	void FlowFarneback::drawFlow(ofRectangle rect){
 		ofVec2f offset(rect.x,rect.y);
 		ofVec2f scale(rect.width/flow.cols, rect.height/flow.rows);
@@ -217,4 +234,3 @@ namespace ofxCv {
 		}
 	}
 }
-
