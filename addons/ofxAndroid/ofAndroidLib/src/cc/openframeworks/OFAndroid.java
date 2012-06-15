@@ -25,10 +25,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.PowerManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -36,14 +40,17 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class OFAndroid {
 	
 	public OFAndroid(String packageName, Activity ofActivity){
+		ofActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
 		OFAndroid.packageName = packageName;
 		OFAndroidObject.setActivity(ofActivity);
@@ -364,34 +371,6 @@ public class OFAndroid {
 		}
 	}
 	
-	static public void okCancelBox(String msg){
-		final String alertMsg = msg;
-		ofActivity.runOnUiThread(new Runnable(){
-			public void run() {
-				new AlertDialog.Builder(ofActivity)  
-					.setMessage(alertMsg)  
-					.setTitle("OF")  
-					.setCancelable(false)  
-					.setNeutralButton(android.R.string.ok,  
-							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){
-							OFAndroid.okPressed();
-						}
-	
-				  	})
-				  	.setNegativeButton(android.R.string.cancel,
-
-							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){
-							OFAndroid.cancelPressed();
-						}
-				  	})
-				  	.show();    
-				
-			}  
-		});
-	}
-	
 	static public boolean checkSDCardMounted(){
 		boolean canSaveExternal = false;
 
@@ -526,6 +505,82 @@ public class OFAndroid {
 		});
 	}
 	
+	static public void okCancelBox(String msg){
+		final String alertMsg = msg;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle("OF")  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.okPressed();
+						}
+	
+				  	})
+				  	.setNegativeButton(android.R.string.cancel,
+
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.cancelPressed();
+						}
+				  	})
+				  	.show();    
+				
+			}  
+		});
+	}
+
+    private static String textBoxResult="";
+	public static String alertTextBox(String question, String text){  
+		final String alertQuestion = question;
+		final String alertMsg = text;
+		Looper.prepare();
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };
+	    textBoxResult=text;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				final EditText input = new EditText(ofActivity); 
+				new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle(alertQuestion)  
+					.setCancelable(true)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							textBoxResult = input.getText().toString();
+							OFAndroid.okPressed();
+							handler.sendMessage(handler.obtainMessage());
+						}
+	
+				  	})  
+				  	.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.cancelPressed();
+							handler.sendMessage(handler.obtainMessage());
+						}
+				  	})
+				  	.setView(input)
+				  	.show();  
+			}  
+		});
+		
+		// loop till a runtime exception is triggered.
+	    try { Looper.loop(); }
+	    catch(RuntimeException e2) {}
+	    
+	    return textBoxResult;
+
+	}
+	
 	public static void toast(String msg){  
 		if(msg=="") return;
 		final String alertMsg = msg;
@@ -564,7 +619,7 @@ public class OFAndroid {
 	}
 	
     
-    private OFGLSurfaceView mGLView;
+    private static OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
     private static OFAndroidGPS gps;
     private static Activity ofActivity;
@@ -593,7 +648,7 @@ public class OFAndroid {
 
 
 
-	public View getGLContentView() {
+	public static SurfaceView getGLContentView() {
         return mGLView;
 	}
 	
