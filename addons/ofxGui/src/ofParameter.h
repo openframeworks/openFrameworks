@@ -63,13 +63,13 @@ private:
 
 		Value(ParameterType v)
 		:value(v)
-		,min(numeric_limits<ParameterType>::min())
+		,min(-numeric_limits<ParameterType>::max())
 		,max(numeric_limits<ParameterType>::max()){};
 
 		Value(string name, ParameterType v)
 		:name(name)
 		,value(v)
-		,min(numeric_limits<ParameterType>::min())
+		,min(-numeric_limits<ParameterType>::max())
 		,max(numeric_limits<ParameterType>::max()){};
 
 		Value(string name, ParameterType v, ParameterType min, ParameterType max)
