@@ -99,6 +99,11 @@ void ofRectangle::translate(const ofPoint& p) {
 }
 
 //----------------------------------------------------------
+void ofRectangle::scale(float s) {
+    scale(s,s);
+}
+
+//----------------------------------------------------------
 void ofRectangle::scale(float sX, float sY) {
     width  *= sX;
     height *= sY;
@@ -108,6 +113,36 @@ void ofRectangle::scale(float sX, float sY) {
 void ofRectangle::scale(const ofPoint& s) {
     scale(s.x,s.y);
 }
+
+//----------------------------------------------------------
+void ofRectangle::scaleFromCenter(float s) {
+    scaleFromCenter(s,s);
+}
+
+//----------------------------------------------------------
+void ofRectangle::scaleFromCenter(float sX, float sY) {
+    scaleFromCenter(ofPoint(sX,sY));
+}
+
+//----------------------------------------------------------
+void ofRectangle::scaleFromCenter(const ofPoint& s) {
+    if(s.x == 1.0f && s.y == 1.0f) return;
+  
+    canonicalize(); // will canonicalize
+
+    float newWidth  = width  * s.x;
+    float newHeight = height * s.y;
+
+    ofPoint center = getCenter();
+    
+    x = center.x - newWidth / 2.0f; 
+    y = center.y - newHeight / 2.0f; 
+    
+    width  = newWidth;
+    height = newHeight;
+
+}
+
 
 //----------------------------------------------------------
 bool ofRectangle::inside(float px, float py) const {
@@ -153,12 +188,12 @@ bool ofRectangle::intersects(const ofRectangle& rect) const {
 }
 
 //----------------------------------------------------------
-void ofRectangle::add(float px, float py){
-    add(ofPoint(px,py));
+void ofRectangle::growToInclude(float px, float py){
+    growToInclude(ofPoint(px,py));
 }
 
 //----------------------------------------------------------
-void ofRectangle::add(const ofPoint& p){
+void ofRectangle::growToInclude(const ofPoint& p){
     float x0 = MIN(getMinX(),p.x);
     float x1 = MAX(getMaxX(),p.y);
     float y0 = MIN(getMinY(),p.y);
@@ -169,17 +204,17 @@ void ofRectangle::add(const ofPoint& p){
 }
 
 //----------------------------------------------------------
-void ofRectangle::add(float px, float py, float w, float h) {
-    add(ofRectangle(px,py,w,h));
+void ofRectangle::growToInclude(float px, float py, float w, float h) {
+    growToInclude(ofRectangle(px,py,w,h));
 }
 
 //----------------------------------------------------------
-void ofRectangle::add(const ofPoint& p, float w, float h) {
-    add(ofRectangle(p, w, h));
+void ofRectangle::growToInclude(const ofPoint& p, float w, float h) {
+    growToInclude(ofRectangle(p, w, h));
 }
 
 //----------------------------------------------------------
-void ofRectangle::add(const ofRectangle& rect){
+void ofRectangle::growToInclude(const ofRectangle& rect){
     float x0 = MIN(getMinX(),rect.getMinX());
     float x1 = MAX(getMaxX(),rect.getMaxX());
     float y0 = MIN(getMinY(),rect.getMinY());
@@ -190,8 +225,8 @@ void ofRectangle::add(const ofRectangle& rect){
 }
 
 //----------------------------------------------------------
-void ofRectangle::add(const ofPolyline& poly) {
-    add(poly.getBoundingBox());
+void ofRectangle::growToInclude(const ofPolyline& poly) {
+    growToInclude(poly.getBoundingBox());
 }
 
 //----------------------------------------------------------
@@ -211,13 +246,13 @@ ofRectangle ofRectangle::getIntersection(const ofRectangle& rect) const {
     float x1 = MIN(getMaxX(),rect.getMaxX());
     
     float w = x1 - x0;
-    if(w < 0) return ofRectangle(0,0,0,0); // short circuit if needed
+    if(w < 0.0f) return ofRectangle(0,0,0,0); // short circuit if needed
     
     float y0 = MAX(getMinY(),rect.getMinY());
     float y1 = MIN(getMaxY(),rect.getMaxY());
     
     float h = y1 - y0;
-    if(h < 0) return ofRectangle(0,0,0,0);  // short circuit if needed
+    if(h < 0.0f) return ofRectangle(0,0,0,0);  // short circuit if needed
     
     return ofRectangle(x0,y0,w,h);
 }
@@ -235,8 +270,33 @@ ofRectangle ofRectangle::getUnion(const ofPoint& p, float w, float h) const {
 //----------------------------------------------------------
 ofRectangle ofRectangle::getUnion(const ofRectangle& rect) const {
     ofRectangle united = *this;
-    united.add(rect);
+    united.growToInclude(rect);
     return united;
+}
+
+//----------------------------------------------------------
+void ofRectangle::canonicalize() {
+    if(width < 0.0f) {
+        x += width;
+        width = -1.0 * width;
+    } 
+    
+    if(height < 0.0f) {
+        y += height;
+        height = -1.0 * height;
+    }
+}
+
+//----------------------------------------------------------
+ofRectangle ofRectangle::getCanonicalized() const {
+    ofRectangle canRect(*this); // copy it
+    canRect.canonicalize();
+    return canRect;
+}
+
+//----------------------------------------------------------
+bool ofRectangle::isCanonicalized() const {
+    return width >= 0.0f && height >= 0.0f;
 }
 
 //----------------------------------------------------------
@@ -263,11 +323,6 @@ float ofRectangle::getPerimeter() const {
 //----------------------------------------------------------
 bool ofRectangle::isEmpty() const {
     return width == 0.0f && height == 0.0f;
-}
-
-//----------------------------------------------------------
-bool ofRectangle::isPositive() const {
-    return width >= 0.0f && height >= 0.0f;
 }
 
 //----------------------------------------------------------
@@ -306,22 +361,10 @@ ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
 	return *this;
 }
 
-
 //----------------------------------------------------------
-ofRectangle& ofRectangle::operator + (const ofPoint& point){
-    add(point);
-	return *this;
-}
-
-//----------------------------------------------------------
-ofRectangle& ofRectangle::operator + (const ofRectangle& rect) {
-    add(rect);
-	return *this;
-}
-
-//----------------------------------------------------------
-ofRectangle& ofRectangle::operator + (const ofPolyline& poly) {
-    add(poly);
+ofRectangle & ofRectangle::operator + (const ofPoint & point){
+	x += point.x;
+	y += point.y;
 	return *this;
 }
 

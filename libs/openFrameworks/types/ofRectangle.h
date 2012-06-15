@@ -41,8 +41,13 @@ public:
 
     void translate(float px, float py);
     void translate(const ofPoint& p);
+
+    void scale(float s);
     void scale(float sX, float sY);
     void scale(const ofPoint& s);
+    void scaleFromCenter(float s);
+    void scaleFromCenter(float sX, float sY);
+    void scaleFromCenter(const ofPoint& s);
     
     bool inside(float px, float py) const;
     bool inside(const ofPoint& p) const;
@@ -54,12 +59,12 @@ public:
     bool intersects(const ofPoint& p, float w, float h) const;
     bool intersects(const ofRectangle & rect) const;
     
-    void add(float px, float py);
-    void add(const ofPoint& p);
-    void add(float px, float py, float w, float h);
-    void add(const ofPoint&, float w, float h);
-    void add(const ofRectangle& rect);
-    void add(const ofPolyline& poly);
+    void growToInclude(float px, float py);
+    void growToInclude(const ofPoint& p);
+    void growToInclude(float px, float py, float w, float h);
+    void growToInclude(const ofPoint&, float w, float h);
+    void growToInclude(const ofRectangle& rect);
+    void growToInclude(const ofPolyline& poly);
 
     ofRectangle getIntersection(float px, float py, float w, float h) const;
     ofRectangle getIntersection(const ofPoint& p, float w, float h) const;
@@ -69,13 +74,16 @@ public:
     ofRectangle getUnion(const ofPoint& p, float w, float h) const;
     ofRectangle getUnion(const ofRectangle& rect) const;
     
+    void canonicalize();
+    ofRectangle getCanonicalized() const;
+    bool isCanonicalized() const;  // are width/height >= 0.0f
+    
     ofPolyline getAsPolyline() const;
     
     float getArea() const;
     float getPerimeter() const;
     
     bool isEmpty() const;     // are width/height == 0.0f
-    bool isPositive() const;  // are width/height >= 0.0f
     
     ofPoint getMin() const;
     ofPoint getMax() const;
@@ -87,8 +95,6 @@ public:
     
     ofRectangle & operator = (const ofRectangle& rect);
     ofRectangle & operator + (const ofPoint& p);
-    ofRectangle & operator + (const ofRectangle& rect);
-    ofRectangle & operator + (const ofPolyline& poly);
 
     bool operator == (const ofRectangle& rect) const;
     bool operator != (const ofRectangle& rect) const;
