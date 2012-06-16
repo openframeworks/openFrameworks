@@ -380,17 +380,16 @@ ofPoint ofPolyline::getCentroid2D() const{
 }
 
 //----------------------------------------------------------
-ofRectangle ofPolyline::getBoundingBox(){
-	ofPolyline & polyline = *this;
+ofRectangle ofPolyline::getBoundingBox() const {
 
 	ofRectangle box;
-	int n = polyline.size();
+	int n = size();
 	if(n > 0) {
-		const ofPoint& first = polyline[0];
+		const ofPoint& first = (*this)[0];
 		// inititally, use width and height as max x and max y
 		box.set(first.x, first.y, first.x, first.y);
 		for(int i = 0; i < n; i++) {
-			const ofPoint& cur = polyline[i];
+			const ofPoint& cur = (*this)[i];
 			if(cur.x < box.x) {
 				box.x = cur.x;
 			}
