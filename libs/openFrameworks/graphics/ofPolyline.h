@@ -7,6 +7,8 @@
 // ofPolyline
 // A line composed of straight line segments.
 
+class ofRectangle;
+
 class ofPolyline {
 public:
 	ofPolyline();
@@ -87,7 +89,7 @@ public:
 	ofPolyline getResampledByCount(int count);
 
 	// get the bounding box of a polyline
-	ofRectangle getBoundingBox();
+	ofRectangle getBoundingBox() const;
 	
 	// find the closest point 'target' on a polyline
 	// optionally pass a pointer to/address of an unsigned int to get the index of the closest vertex
