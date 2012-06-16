@@ -50,22 +50,11 @@ void ofRectangle::set(const ofRectangle& rect){
 void ofRectangle::set(const ofPoint& p0, const ofPoint& p1) {
     float x0,y0,x1,y1;
     
-    if(p0.x < p1.x) {
-        x0 = p0.x;
-        x1 = p1.x;
-    } else {
-        x0 = p1.x;
-        x0 = p0.x;
-    }
-
-    if(p0.y < p1.y) {
-        y0 = p0.y;
-        y1 = p1.y;
-    } else {
-        y0 = p1.y;
-        y1 = p0.y;
-    }
-
+    x0 = MIN(p0.x, p1.x);
+    x1 = MAX(p0.x, p1.x);
+    y0 = MIN(p0.y, p1.y);
+    y1 = MAX(p0.y, p1.y);
+    
     float w = x1 - x0;
     float h = y1 - y0;
 
@@ -195,7 +184,7 @@ void ofRectangle::growToInclude(float px, float py){
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const ofPoint& p){
     float x0 = MIN(getMinX(),p.x);
-    float x1 = MAX(getMaxX(),p.y);
+    float x1 = MAX(getMaxX(),p.x);
     float y0 = MIN(getMinY(),p.y);
     float y1 = MAX(getMaxY(),p.y);
     float w = x1 - x0;
