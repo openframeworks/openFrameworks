@@ -74,7 +74,7 @@ namespace ofxCv {
 			case CV_32S: return numeric_limits<int32_t>::max();
 				
 			case CV_32F: return 1;
-			case CV_64F: return 1;
+			case CV_64F: default: return 1;
 		}
 	}
 	
