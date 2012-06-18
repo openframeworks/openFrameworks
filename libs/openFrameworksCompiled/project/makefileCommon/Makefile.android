@@ -72,7 +72,7 @@ ifeq ($(MAKECMDGOALS),AndroidInstall)
 endif
 
 
-DebugAndroid: $(TARGET)
+DebugAndroid: $(TARGET) afterDebugAndroid
 
 ReleaseAndroid: $(TARGET)
 
@@ -152,14 +152,21 @@ AndroidInstall:
 	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
 	if [ -d bin/classes ]; then rm -r bin/classes; fi
+	if [ -d bin/res ]; then rm -r bin/res; fi
 	if [ -f bin/classes.dex ]; then rm bin/classes.dex; fi
+	if [ -f bin/classes.dex.d ]; then rm bin/classes.dex.d; fi
 	if [ -f bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
+	if [ -f bin/OFActivity.ap_.d ]; then rm bin/OFActivity.ap_.d; fi
 	if [ -f bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
 	if [ -f bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
+	if [ -f bin/OFActivity-debug-unaligned.apk.d ]; then rm bin/OFActivity-debug-unaligned.apk.d; fi
 	if [ -f bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
+	if [ -f bin/build.prop ]; then rm bin/build.prop; fi
+	if [ -f bin/jarlist.cache ]; then rm bin/jarlist.cache; fi
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
+	$(SDK_ROOT)/platform-tools/adb uninstall $(PKGNAME)
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
 	#fi
 	$(SDK_ROOT)/platform-tools/adb shell am start -a android.intent.action.MAIN -n $(PKGNAME)/$(PKGNAME).OFActivity
