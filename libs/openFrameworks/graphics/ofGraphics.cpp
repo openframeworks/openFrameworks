@@ -741,6 +741,43 @@ void ofRect(float x,float y,float z,float w,float h){
 	renderer->drawRectangle(x,y,z,w,h);
 }
 
+//----------------------------------------------------------
+void ofRectRounded(const ofRectangle & b,float r){
+	ofRectRounded(b.x, b.y, 0.0f, b.width, b.height, r);
+}
+
+//----------------------------------------------------------
+void ofRectRounded(const ofPoint & p,float w,float h,float r){
+	ofRectRounded(p.x, p.y, p.z, w, h, r);
+}
+
+//----------------------------------------------------------
+void ofRectRounded(float x,float y,float w,float h,float r){
+	ofRectRounded(x, y, 0.0f, w, h, r);
+}
+
+//----------------------------------------------------------
+void ofRectRounded(float x,float y,float z,float w,float h,float r){
+	float x2 = x + w;
+	float y2 = y + h;
+
+	if (r > w || r > h || r < 0.4){
+		ofRect(x, y, z, w, h);
+		return;
+	}
+
+	shape.clear();
+	shape.lineTo(x+r, y);
+	shape.bezierTo(x,y, x,y+r, x,y+r);
+	shape.lineTo(x, y2-r);
+	shape.bezierTo(x,y2, x+r,y2, x+r,y2);
+	shape.lineTo(x2-r, y2);
+	shape.bezierTo(x2,y2, x2,y2-r, x2,y2-r);
+	shape.lineTo(x2, y+r);
+	shape.bezierTo(x2,y, x2-r,y, x2-r,y);
+	shape.lineTo(x+r, y);
+	shape.draw();
+}
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
