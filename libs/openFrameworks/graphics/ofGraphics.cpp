@@ -761,7 +761,7 @@ void ofRectRounded(float x,float y,float z,float w,float h,float r){
 	float x2 = x + w;
 	float y2 = y + h;
 
-	if (r > w || r > h || r < 0.4){
+	if (r > w || r > h || r <= 0){
 		ofRect(x, y, z, w, h);
 		return;
 	}
