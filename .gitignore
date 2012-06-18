@@ -77,3 +77,6 @@ Desktop.ini
 #Android
 .csettings
 
+# Miscellaneous
+.mailmap
+
