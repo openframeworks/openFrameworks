@@ -74,6 +74,7 @@ NSString * const kCurrentItemKey	= @"currentItem";
 @synthesize delegate;
 @synthesize playerView;
 @synthesize player = _player;
+@synthesize playerItem;
 @synthesize asset;
 @synthesize assetReader;
 @synthesize assetReaderVideoOutput;
@@ -127,19 +128,18 @@ static const NSString * ItemStatusContext;
 
 - (void)dealloc {
     
-    [self.playerView removeFromSuperview];
-    self.playerView = nil;
-    
     [(AVFoundationVideoPlayerView *)self.playerView setPlayer:nil];
     [self.playerView removeFromSuperview];
     self.playerView = nil;
     
-    if(_player.currentItem) {
+    if(self.playerItem != nil) {
         NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter removeObserver:self 
                                       name:AVPlayerItemDidPlayToEndTimeNotification 
-                                    object:_player.currentItem];
-        [_player.currentItem removeObserver:self forKeyPath:kStatusKey];
+                                    object:self.playerItem];
+        [self.playerItem removeObserver:self forKeyPath:kStatusKey];
+        
+        self.playerItem = nil;
     }
     
     [self removeTimeObserverFromPlayer];
@@ -235,20 +235,20 @@ static const NSString * ItemStatusContext;
                 self.playerView.frame = playerViewFrame;
                 
                 //------------------------------------------------------------ create player item.
-                AVPlayerItem * playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
+                self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
                 
-                [playerItem addObserver:self 
-                             forKeyPath:kStatusKey
-                                options:0 
-                                context:&ItemStatusContext];
+                [self.playerItem addObserver:self 
+                                  forKeyPath:kStatusKey
+                                     options:0 
+                                     context:&ItemStatusContext];
                 
                 NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
                 [notificationCenter addObserver:self
                                        selector:@selector(playerItemDidReachEnd)
                                            name:AVPlayerItemDidPlayToEndTimeNotification
-                                         object:playerItem];
+                                         object:self.playerItem];
                 
-                [_player replaceCurrentItemWithPlayerItem:playerItem];
+                [_player replaceCurrentItemWithPlayerItem:self.playerItem];
                 
                 [self addTimeObserverToPlayer];
             }
@@ -321,13 +321,14 @@ static const NSString * ItemStatusContext;
     videoWidth = 0;
     videoHeight = 0;
     
-    if(_player.currentItem) {
-        [_player.currentItem removeObserver:self forKeyPath:kStatusKey];
+    if(self.playerItem != nil) {
+        [self.playerItem removeObserver:self forKeyPath:kStatusKey];
         
         NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter removeObserver:self 
                                       name:AVPlayerItemDidPlayToEndTimeNotification 
-                                    object:_player.currentItem];
+                                    object:self.playerItem];
+        self.playerItem = nil;
     }
     
     [self.assetReader cancelReading];
@@ -619,7 +620,7 @@ static const NSString * ItemStatusContext;
     AVMutableAudioMix * audioMix = [AVMutableAudioMix audioMix];
     [audioMix setInputParameters:allAudioParams];
         
-    [_player.currentItem setAudioMix:audioMix];
+    [self.playerItem setAudioMix:audioMix];
 }
 
 - (float)getVolume {

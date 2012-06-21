@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 @class AVPlayer;
+@class AVPlayerItem;
 @class AVAsset;
 @class AVAssetReader;
 @class AVAssetReaderOutput;
@@ -37,6 +38,7 @@
 @property (nonatomic, assign) id delegate;
 @property (nonatomic, retain) UIView * playerView;
 @property (nonatomic, retain) AVPlayer * player;
+@property (nonatomic, retain) AVPlayerItem * playerItem;
 @property (nonatomic, retain) AVAsset * asset;
 @property (nonatomic, retain) AVAssetReader * assetReader;
 @property (nonatomic, retain) AVAssetReaderOutput * assetReaderVideoOutput;
