@@ -51,13 +51,8 @@
 }
 
 - (void)finishRender {
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
 	
 	if(fsaaEnabled) {
-		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
-		glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
-		glResolveMultisampleFramebufferAPPLE();
-		
 		if(depthEnabled) {
 			GLenum attachments[] = {GL_COLOR_ATTACHMENT0_OES, GL_DEPTH_ATTACHMENT_OES};
 			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, attachments);
@@ -65,8 +60,13 @@
 			GLenum attachments[] = {GL_COLOR_ATTACHMENT0_OES};
 			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 1, attachments);
 		}
+        
+		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
+		glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
+		glResolveMultisampleFramebufferAPPLE();
 	}
 	
+    glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
     [context presentRenderbuffer:GL_RENDERBUFFER_OES];
 	
 	if(fsaaEnabled) {
