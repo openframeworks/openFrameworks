@@ -36,12 +36,11 @@
 #include "ofxiPhoneMapKitDelegate.h"
 
 ofxiPhoneMapKit::ofxiPhoneMapKit() {
-	mapView		= NULL;
+	mapView = nil;
 }
 
 ofxiPhoneMapKit::~ofxiPhoneMapKit() {
-	[mapView release];
-	[mapView.delegate release];
+	close();
 }
 
 
@@ -50,19 +49,24 @@ void ofxiPhoneMapKit::open() {
 	if(!mapView) {
 		ofLog(OF_LOG_VERBOSE, "   alloc MKMapView");
 		mapView	= [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, ofGetWidth(), ofGetHeight())];
-		mapView.delegate	= NULL;
+		mapView.delegate = nil;
+        [ofxiPhoneGetUIWindow() addSubview:mapView];
 	}
-	[ofxiPhoneGetUIWindow() addSubview:mapView];
 }
 
 
 void ofxiPhoneMapKit::close() {
 	ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKit::close()");
-	[[mapView superview] removeFromSuperview];
+    if(mapView) {
+        mapView.delegate = nil;
+        [mapView removeFromSuperview];
+        [mapView release];
+        mapView = nil;
+    }
 }
 
 bool ofxiPhoneMapKit::isOpen() {
-	return ([mapView superview] != nil);
+    return (mapView != nil);
 }
 
 
@@ -179,7 +183,7 @@ MKCoordinateSpan ofxiPhoneMapKit::makeMKCoordinateSpan(double latitudeDelta, dou
 void ofxiPhoneMapKit::addListener(ofxiPhoneMapKitListener* o) {
 	ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKit::addListener()");
 	
-	if(mapView.delegate == NULL) mapView.delegate = [[ofxiPhoneMapKitDelegate alloc] initWithMapKit:this];
+	if(mapView.delegate == nil) mapView.delegate = [[ofxiPhoneMapKitDelegate alloc] initWithMapKit:this];
 	listeners.push_back(o);
 }
 
