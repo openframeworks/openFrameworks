@@ -6,6 +6,7 @@ void testApp::setup(){
 	ofSetVerticalSync(true);
 	
 	gui.setup("panel"); // most of the time you don't need a name
+	gui.add(fpsSlider.setup("FPS", 60.0));
 	gui.add(filled.setup("bFill", true));
 	gui.add(radius.setup( "radius", 140, 10, 300 ));
 	gui.add(r.setup( "red", 100.0f, 0, 255 ));

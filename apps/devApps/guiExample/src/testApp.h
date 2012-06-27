@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxFpsSlider.h"
 
 class testApp : public ofBaseApp{
 	
@@ -32,6 +33,7 @@ public:
 	ofxToggle filled;
 	ofxButton twoCircles;
 	ofxButton ringButton;
+	ofxFpsSlider fpsSlider;
 
 	ofxPanel gui;
 
