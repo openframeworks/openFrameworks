@@ -12,7 +12,7 @@ public:
 	ofVideoGrabber cam;
 	ofImage gray, graySmall;
 	
-	ofxCv::CascadeClassifier classifier;
+	cv::CascadeClassifier classifier;
 	vector<cv::Rect> objects;
 	float scaleFactor;
 };

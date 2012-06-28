@@ -25,9 +25,12 @@ void testApp::update() {
 	if(cam.isFrameNew()) {
 		convertColor(cam, gray, CV_RGB2GRAY);
 		resize(gray, graySmall);
+		Mat graySmallMat = toCv(graySmall);
+		if(ofGetMousePressed()) {
+			equalizeHist(graySmallMat, graySmallMat);
+		}
 		graySmall.update();
 		
-		Mat graySmallMat = toCv(graySmall);
 		classifier.detectMultiScale(graySmallMat, objects, 1.06, 1,
 			//CascadeClassifier::DO_CANNY_PRUNING |
 			//CascadeClassifier::FIND_BIGGEST_OBJECT |
@@ -37,7 +40,11 @@ void testApp::update() {
 }
 
 void testApp::draw() {
-	cam.draw(0, 0);
+	if(ofGetKeyPressed()) {
+		graySmall.draw(0, 0, 640, 480);
+	} else {
+		cam.draw(0, 0);
+	}
 	
 	ofNoFill();
 	
