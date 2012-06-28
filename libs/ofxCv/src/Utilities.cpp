@@ -2,6 +2,11 @@
 
 #include "ofMath.h"
 
+// vs2010 support (this should be added to the OF core)
+#if (_MSC_VER)
+#include <stdint.h>
+#endif
+
 namespace ofxCv {
 	
 	using namespace cv;
@@ -69,7 +74,7 @@ namespace ofxCv {
 			case CV_32S: return numeric_limits<int32_t>::max();
 				
 			case CV_32F: return 1;
-			case CV_64F: return 1;
+			case CV_64F: default: return 1;
 		}
 	}
 	

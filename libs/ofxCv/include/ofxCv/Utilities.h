@@ -185,4 +185,9 @@ namespace ofxCv {
 	void toOf(Mat mat, ofPixels_<T>& pixels) {
 		pixels.setFromExternalPixels(mat.ptr<T>(), mat.cols, mat.rows, mat.channels());
 	}
+	template <class T>
+	void toOf(Mat mat, ofImage_<T>& img) {
+		imitate(img, mat);
+		toOf(mat, img.getPixelsRef());
+	}
 }
