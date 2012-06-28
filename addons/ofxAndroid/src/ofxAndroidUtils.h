@@ -26,6 +26,7 @@ void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);
 void ofxAndroidDismissProgressBox(int id);
 void ofxAndroidOkCancelBox(string msg);
+string ofxAndroidAlertTextBox(string question, string text);
 
 void ofxAndroidToast(string msg);
 

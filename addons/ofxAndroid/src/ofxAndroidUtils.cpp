@@ -66,6 +66,8 @@ string ofxAndroidGetStringRes(string id){
 	jstring jId = ofGetJNIEnv()->NewStringUTF(id.c_str());
 	jstring str = (jstring)	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,getStringRes,jId);
 
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jId);
+
 	jboolean isCopy;
 	return ofGetJNIEnv()->GetStringUTFChars(str,&isCopy);
 
@@ -102,6 +104,7 @@ void ofxAndroidAlertBox(string msg){
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,alertBox,jMsg);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
 }
 
 
@@ -119,7 +122,9 @@ int ofxAndroidProgressBox(string msg){
 		return -1;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
-	return ofGetJNIEnv()->CallStaticIntMethod(javaClass,progressBox,jMsg);
+	int ret = ofGetJNIEnv()->CallStaticIntMethod(javaClass,progressBox,jMsg);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
+	return ret;
 }
 
 void ofxAndroidDismissProgressBox(int id){
@@ -155,6 +160,32 @@ void ofxAndroidOkCancelBox(string msg){
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,okCancelBox,jMsg);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
+}
+
+
+string ofxAndroidAlertTextBox(string question, string text){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return "";
+	}
+
+	jmethodID alertTextBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertTextBox","(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+	if(!alertTextBox){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertTextBox method");
+		return "";
+	}
+	jstring jQuestion = ofGetJNIEnv()->NewStringUTF(question.c_str());
+	jstring jMsg = ofGetJNIEnv()->NewStringUTF(text.c_str());
+	jstring jResult = (jstring)ofGetJNIEnv()->CallStaticObjectMethod(javaClass,alertTextBox,jQuestion,jMsg);
+	jboolean isCopy;
+	string res = ofGetJNIEnv()->GetStringUTFChars(jResult,&isCopy);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jQuestion);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jResult);
+	return res;
 }
 
 void ofxAndroidToast(string msg){
@@ -172,6 +203,7 @@ void ofxAndroidToast(string msg){
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,toast,jMsg);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
 }
 
 void ofxAndroidLockScreenSleep(){

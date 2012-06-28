@@ -1,4 +1,4 @@
-package cc.openframeworks.spelltower;
+package cc.openframeworks.androidAdvanced3DExample;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -10,7 +10,9 @@ public:
     
     static const int DIM = 2;
 	
-	ofVec2f( float _x=0.f, float _y=0.f );
+	ofVec2f();
+	explicit ofVec2f( float _scalar );
+	ofVec2f( float _x, float _y );
     ofVec2f( const ofVec3f& vec );
     ofVec2f( const ofVec4f& vec );
 	
@@ -32,6 +34,7 @@ public:
 	
     // Getters and Setters.
     //
+	void set( float _scalar );
     void set( float _x, float _y );
     void set( const ofVec2f& vec );
 	
@@ -235,13 +238,18 @@ ofVec2f operator/( float f, const ofVec2f& vec );
 // Implementation
 /////////////////
 
-
+inline ofVec2f::ofVec2f(): x(0), y(0) {};
+inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {};
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
-
 
 // Getters and Setters.
 //
 //
+inline void ofVec2f::set( float _scalar ) {
+	x = _scalar;
+	y = _scalar;
+}
+
 inline void ofVec2f::set( float _x, float _y ) {
 	x = _x;
 	y = _y;

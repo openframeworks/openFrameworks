@@ -25,6 +25,7 @@ Release*/
 *.mode*
 *.app/
 *.pyc
+.svn/
 
 # IDE-specific ignore patterns
 
@@ -75,4 +76,7 @@ Desktop.ini
 
 #Android
 .csettings
+
+# Miscellaneous
+.mailmap
 

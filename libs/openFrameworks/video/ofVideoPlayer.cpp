@@ -25,10 +25,12 @@ void ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
-	if( player == NULL ){
-		setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
-		player->setPixelFormat(internalPixelFormat);
-	}
+	#ifndef TARGET_ANDROID
+		if( player == NULL ){
+			setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+			player->setPixelFormat(internalPixelFormat);
+		}
+	#endif
 	
 	bool bOk = player->loadMovie(name);
 	width	 = player->getWidth();
@@ -276,6 +278,9 @@ void ofVideoPlayer::setPaused(bool _bPause){
 //------------------------------------
 void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
+	if(bUse && width!=0 && height!=0 && !tex.isAllocated()){
+		tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+	}
 }
 
 //----------------------------------------------------------

@@ -89,6 +89,13 @@ file in the root folder of the project and run the projectGenerator again passin
 the path to update the codeblocks project
 
 
+d) wizard
+---------- 	  	
+you can also install a codeblocks wizard to create new projects, check the	
+
+instructions in scripts/linux/codeblocks_wizard
+
+
 e) codeblocks
 -------------
 
