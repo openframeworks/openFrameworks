@@ -40,8 +40,7 @@ public:
 	
     void setPaused(bool bPause);
     void setPosition(float pct);
-    void setVolume(int volume);
-    void setVolume(float volume);
+    void setVolume(float volume); // 0..1
     void setLoopState(ofLoopType state);
     void setSpeed(float speed);
     void setFrame(int frame);  // frame 0 = first frame...
