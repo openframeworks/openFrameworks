@@ -1,14 +1,10 @@
 #include "ofxLabel.h"
 
 ofxLabel* ofxLabel::setup(string labelName, string _label, float width, float height) {
-    name = labelName;
-    label = _label;
-    b.x  = 0;
-    b.y  = 0;
+    name     = labelName;
+    label    = _label;
     b.width  = width;
     b.height = height;
-    currentFrame = 0;
-    bGuiActive = false;
     return this;
 }
 
