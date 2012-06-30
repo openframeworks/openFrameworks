@@ -23,6 +23,7 @@ public:
 	void gotMessage(ofMessage msg);		
 
 	void ringButtonPressed(bool & pressed);
+	void maxFpsChange(float & max);
 
 	bool bHide;
 

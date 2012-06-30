@@ -7,6 +7,7 @@ void testApp::setup(){
 	
 	gui.setup("panel"); // most of the time you don't need a name
 	gui.add(fpsSlider.setup("FPS", 60.0));
+	fpsSlider.getMax().addListener(this, &testApp::maxFpsChange);
 	gui.add(filled.setup("bFill", true));
 	gui.add(radius.setup( "radius", 140, 10, 300 ));
 	gui.add(r.setup( "red", 100.0f, 0, 255 ));
@@ -31,6 +32,11 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::ringButtonPressed(bool & pressed){
 	if(pressed) ring.play();
+}
+
+//--------------------------------------------------------------
+void testApp::maxFpsChange(float & max){
+	cout << "Max FPS: " << max << endl;
 }
 
 //--------------------------------------------------------------
