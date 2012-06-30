@@ -23,6 +23,7 @@ public:
 	void gotMessage(ofMessage msg);		
 
 	void ringButtonPressed(bool & pressed);
+	void maxFpsChange(float & max);
 
 	bool bHide;
 
@@ -32,6 +33,7 @@ public:
 	ofxToggle filled;
 	ofxButton twoCircles;
 	ofxButton ringButton;
+	ofxFpsSlider fpsSlider;
 
 	ofxPanel gui;
 

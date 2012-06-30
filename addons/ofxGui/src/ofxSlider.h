@@ -8,7 +8,7 @@ class ofxSlider : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:	
-	ofxSlider(){}
+	ofxSlider() : autoMin(false), autoMax(false) {}
 	ofxSlider(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
@@ -30,6 +30,17 @@ public:
 		value.removeListener(listener,method);
 	}
 
+	virtual ofxParameter<Type> getMin() { return min; }
+	virtual void setMin(Type v) { min = v; }
+
+	virtual ofxParameter<Type> getMax() { return max; }
+	virtual void setMax(Type v) { max = v; }
+
+	virtual ofxParameter<bool> getAutoMin() { return autoMin; }
+	virtual void setAutoMin(bool v) { autoMin = v; }
+
+	virtual ofxParameter<bool> getAutoMax() { return autoMax; }
+	virtual void setAutoMax(bool v) { autoMax = v; }
 
 	double operator=(Type v);
 	operator Type & ();
@@ -39,8 +50,9 @@ public:
 	ofxParameter<Type> value;
 
 protected:
-	Type min, max;
-	
+	ofxParameter<Type> min, max;
+	ofxParameter<bool> autoMin, autoMax;
+
 	void setValue(float mx, float my, bool bCheck);
 };
 
