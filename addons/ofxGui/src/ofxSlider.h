@@ -30,6 +30,12 @@ public:
 		value.removeListener(listener,method);
 	}
 
+	virtual ofxParameter<Type> getMin() { return min; }
+	virtual void setMin(Type v) { min = v; }
+
+	virtual ofxParameter<Type> getMax() { return max; }
+	virtual void setMax(Type v) { max = v; }
+
 	virtual ofxParameter<bool> getAutoMin() { return autoMin; }
 	virtual void setAutoMin(bool v) { autoMin = v; }
 
@@ -44,7 +50,7 @@ public:
 	ofxParameter<Type> value;
 
 protected:
-	Type min, max;
+	ofxParameter<Type> min, max;
 	ofxParameter<bool> autoMin, autoMax;
 
 	void setValue(float mx, float my, bool bCheck);

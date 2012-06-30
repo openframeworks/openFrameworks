@@ -77,9 +77,9 @@ ofxSlider<Type>::operator Type & (){
 template<typename Type>
 void ofxSlider<Type>::draw(){
     if (autoMin && value < min)
-        min = value;
+        setMin(value);
     if (autoMax && value > max)
-        max = value;
+        setMax(value);
 
 	ofPushStyle();
 	ofPushMatrix();
