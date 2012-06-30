@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofParameter.h"
 #include "ofxBaseGui.h"
 
 class ofxLabel: public ofxBaseGui {
@@ -24,7 +23,7 @@ public:
     string getLabel()            { return label; }
 
     string operator=(string v) { label = v; return v; }
-    operator string & () { return label; }
+    operator string & ()       { return label; }
 
 protected:
     string label;
