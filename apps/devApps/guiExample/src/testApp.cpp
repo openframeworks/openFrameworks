@@ -14,7 +14,7 @@ void testApp::setup(){
 	gui.add(circleResolution.setup("circle res", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
-	gui.add(status.setup("Status", "s:save l:load h:hide"));
+	gui.add(status.setup("Status", ""));
 	
 	ringButton.addListener(this,&testApp::ringButtonPressed);
 
@@ -71,11 +71,9 @@ void testApp::keyPressed(int key){
 	}
 	if(key == 's') {
 		gui.saveToFile("settings.xml");
-		status = "Saved settings.xml";
 	}
 	if(key == 'l') {
 		gui.loadFromFile("settings.xml");
-		status = "Loaded settings.xml";
 	}
 }
 
@@ -105,7 +103,7 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-	
+    status = "Size: " + ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------
