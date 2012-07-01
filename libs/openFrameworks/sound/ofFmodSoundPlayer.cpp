@@ -132,7 +132,7 @@ float * ofFmodSoundGetSpectrum(int nBands){
 ofFmodSoundPlayer::ofFmodSoundPlayer(){
 	bLoop 			= false;
 	bLoadedOk 		= false;
-	pan 			= 0;
+	pan 			= 0.5; // range for oF is 0..1, will be mapped to -1..1 for fmod in setPan()
 	volume 			= 1.0f;
 	internalFreq 	= 44100;
 	speed 			= 1;
@@ -305,10 +305,12 @@ int ofFmodSoundPlayer::getPositionMS(){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setPan(float p){
+	// fmod range is -1 to 1
+	pan = p;
+	p = ofMap(p, 0, 1, -1, 1 );
 	if (getIsPlaying() == true){
 		FMOD_Channel_SetPan(channel,p);
 	}
-	pan = p;
 }
 
 
@@ -362,7 +364,7 @@ void ofFmodSoundPlayer::play(){
 
 	FMOD_Channel_GetFrequency(channel, &internalFreq);
 	FMOD_Channel_SetVolume(channel,volume);
-	FMOD_Channel_SetPan(channel,pan);
+	setPan(pan);
 	FMOD_Channel_SetFrequency(channel, internalFreq * speed);
 	FMOD_Channel_SetMode(channel,  (bLoop == true) ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 
