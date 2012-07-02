@@ -32,6 +32,7 @@ public:
 	ofxToggle filled;
 	ofxButton twoCircles;
 	ofxButton ringButton;
+	ofxLabel status;
 
 	ofxPanel gui;
 
