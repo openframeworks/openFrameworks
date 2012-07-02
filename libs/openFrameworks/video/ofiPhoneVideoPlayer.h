@@ -56,8 +56,12 @@ public:
     void setPixelFormat(ofPixelFormat pixelFormat);
     
 	void * getAVFoundationVideoPlayer();
-	
+    
+    void setTextureCache(bool bOn);
+    
 protected:
+    
+    void updatePixelsToRGB();
 	
 	void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
 	
@@ -65,12 +69,13 @@ protected:
     bool bResetPixels;
     bool bResetTexture;
     bool bUpdatePixels;
+    bool bUpdatePixelsToRgb;
     bool bUpdateTexture;
     bool bTextureCacheSupported;
     bool bTextureHack;
 	
-	GLubyte * pixels;
-    GLubyte *pixelsTmp;
+	GLubyte * pixelsRGB;
+    GLubyte * pixelsRGBA;
     GLint internalGLFormat;
 	ofTexture videoTexture;
 };
