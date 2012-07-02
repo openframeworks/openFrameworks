@@ -4,6 +4,8 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofSetVerticalSync(true);
+
+	grabScreenshot(); // initialise the image
 	
 	gui.setup("panel"); // most of the time you don't need a name
 	gui.add(filled.setup("bFill", true));
@@ -14,8 +16,10 @@ void testApp::setup(){
 	gui.add(circleResolution.setup("circle res", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
+	gui.add(screenshotGui.setup("Screenshot", &screenshotImage));
 	
 	ringButton.addListener(this,&testApp::ringButtonPressed);
+	screenshotGui.addListener(this,&testApp::grabScreenshot);
 
 	bHide = true;
 
@@ -25,11 +29,17 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::exit(){
 	ringButton.removeListener(this,&testApp::ringButtonPressed);
+	screenshotGui.removeListener(this,&testApp::grabScreenshot);
 }
 
 //--------------------------------------------------------------
 void testApp::ringButtonPressed(bool & pressed){
 	if(pressed) ring.play();
+}
+
+//--------------------------------------------------------------
+void testApp::grabScreenshot(){
+	screenshotImage.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
 }
 
 //--------------------------------------------------------------
@@ -73,6 +83,9 @@ void testApp::keyPressed(int key){
 	}
 	if(key == 'l') {
 		gui.loadFromFile("settings.xml");
+	}
+	if(key == 'g') {
+		grabScreenshot();
 	}
 }
 
