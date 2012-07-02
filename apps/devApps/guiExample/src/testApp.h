@@ -24,7 +24,7 @@ public:
 
 	void ringButtonPressed(bool & pressed);
 	void grabScreenshot();
-	void grabScreenshot(bool & pressed) { if (pressed) grabScreenshot(); };
+	void grabScreenshot(bool & pressed) { cout << "Pressed: "<< pressed<<endl; if (pressed) grabScreenshot(); };
 
 	bool bHide;
 

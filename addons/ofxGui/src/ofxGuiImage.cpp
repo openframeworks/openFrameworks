@@ -5,9 +5,11 @@ ofxGuiImage * ofxGuiImage::setup(string _name, ofImage* _imgPtr, bool _showName,
 	showName = _showName;
 	b.width  = width;
 	b.height = _imgPtr->height*(width/_imgPtr->width);
+	imgPtr   = _imgPtr;
 	if (showName)
 	    b.height += defaultHeight;
-	imgPtr   = _imgPtr;
+
+	ofRegisterMouseEvents(this);
 	return this;
 }
 
@@ -17,6 +19,8 @@ ofxGuiImage * ofxGuiImage::setup(string _name, ofImage* _imgPtr, bool _showName,
 	b.width  = width;
 	b.height = height;
 	imgPtr   = _imgPtr;
+
+	ofRegisterMouseEvents(this);
 	return this;
 }
 
@@ -31,6 +35,7 @@ void ofxGuiImage::mouseDragged(ofMouseEventArgs & args){
 }
 
 void ofxGuiImage::mouseReleased(ofMouseEventArgs & args){
+    setValue(args.x, args.y, false);
     bGuiActive = false;
 }
 
