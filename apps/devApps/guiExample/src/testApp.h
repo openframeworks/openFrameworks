@@ -36,6 +36,7 @@ public:
 	ofxButton ringButton;
 	ofImage screenshotImage;
 	ofxGuiImage screenshotGui;
+	ofxLabel status;
 
 	ofxPanel gui;
 

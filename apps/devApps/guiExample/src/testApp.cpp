@@ -17,6 +17,7 @@ void testApp::setup(){
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenshotGui.setup("Screenshot", &screenshotImage));
+	gui.add(status.setup("Status", ""));
 	
 	ringButton.addListener(this,&testApp::ringButtonPressed);
 	screenshotGui.addListener(this,&testApp::grabScreenshot);
@@ -115,7 +116,7 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-	
+    status = "Size: " + ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

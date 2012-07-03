@@ -5,3 +5,4 @@
 #include "ofxPanel.h"
 #include "ofxButton.h"
 #include "ofxGuiImage.h"
+#include "ofxLabel.h"
