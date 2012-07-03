@@ -9,9 +9,9 @@ public:
     virtual ~ofxGuiImage(){}
 
     // Set size explicitly (includes name if showName is true).
-    ofxGuiImage * setup(string _name, ofBaseDraws* _imgPtr, bool _showName, float width, float height );
+    ofxGuiImage * setup(string _name, ofBaseDraws& img, bool _showName, float width, float height );
     // Set width, scale height based on img and showName to preserve aspect.
-    ofxGuiImage * setup(string _name, ofBaseDraws* _imgPtr, bool _showName = true, float width = defaultWidth );
+    ofxGuiImage * setup(string _name, ofBaseDraws& img, bool _showName = true, float width = defaultWidth );
 
 	virtual void mouseMoved(ofMouseEventArgs & args);
 	virtual void mousePressed(ofMouseEventArgs & args);

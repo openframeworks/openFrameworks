@@ -16,7 +16,7 @@ void testApp::setup(){
 	gui.add(circleResolution.setup("circle res", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
-	gui.add(screenshotGui.setup("Screenshot", &screenshotImage));
+	gui.add(screenshotGui.setup("Screenshot", screenshotImage));
 	gui.add(status.setup("Status", ""));
 	
 	ringButton.addListener(this,&testApp::ringButtonPressed);

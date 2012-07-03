@@ -1,11 +1,11 @@
 #include "ofxGuiImage.h"
 
-ofxGuiImage * ofxGuiImage::setup(string _name, ofBaseDraws* _imgPtr, bool _showName, float width ) {
+ofxGuiImage * ofxGuiImage::setup(string _name, ofBaseDraws& img, bool _showName, float width ) {
 	name     = _name;
 	showName = _showName;
 	b.width  = width;
-	b.height = _imgPtr->getHeight()*(width/_imgPtr->getWidth());
-	imgPtr   = _imgPtr;
+	imgPtr   = &img;
+	b.height = imgPtr->getHeight()*(width/imgPtr->getWidth());
 	if (showName)
 	    b.height += defaultHeight;
 
@@ -13,12 +13,12 @@ ofxGuiImage * ofxGuiImage::setup(string _name, ofBaseDraws* _imgPtr, bool _showN
 	return this;
 }
 
-ofxGuiImage * ofxGuiImage::setup(string _name, ofBaseDraws* _imgPtr, bool _showName, float width, float height ) {
+ofxGuiImage * ofxGuiImage::setup(string _name, ofBaseDraws& img, bool _showName, float width, float height ) {
 	name     = _name;
 	showName = _showName;
 	b.width  = width;
 	b.height = height;
-	imgPtr   = _imgPtr;
+	imgPtr   = &img;
 
 	ofRegisterMouseEvents(this);
 	return this;
