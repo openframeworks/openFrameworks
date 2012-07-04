@@ -21,21 +21,9 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
     bUpdateTexture = false;
     bTextureHack = false;
     bTextureCacheSupported = false;
-    /**
-     *  texture cache is disabled for now.
-     *  it does work for ios5 and up,
-     *  but crashes on io4 and down.
-     *  i've made CoreVideo.framework optional which is supposed to weak-link the framework,
-     *  but still no cigar.
-     *
-     *  the below is supposed to check if CVOpenGLESTextureCache is supported,
-     *  but for some reason, its always returning true on ios4
-     *
 #ifdef __IPHONE_5_0    
     bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
-#endif
-     *
-     */
+#endif    
 }
 
 //----------------------------------------
@@ -666,11 +654,4 @@ void ofiPhoneVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
 //----------------------------------------
 void * ofiPhoneVideoPlayer::getAVFoundationVideoPlayer() {
     return videoPlayer;
-}
-
-//----------------------------------------
-void ofiPhoneVideoPlayer::setTextureCache(bool bOn) {
-#ifdef __IPHONE_5_0    
-    bTextureCacheSupported = bOn;
-#endif
 }
