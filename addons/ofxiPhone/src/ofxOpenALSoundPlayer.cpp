@@ -173,7 +173,7 @@ void ofxOpenALSoundPlayer::setPan(float _pan) {
 		cerr<<"error, cannot set pan on mp3s in openAL"<<endl;
 	else {
 		float locX = ofMap(_pan, 0, 1, -1, 1);
-		setLocation(locX, location.x, location.y);
+		setLocation(locX, location.y, location.z);
 	}
 	pan = _pan;
 }
