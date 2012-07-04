@@ -32,7 +32,7 @@ void ofOpenALSoundUpdate(){
 ofOpenALSoundPlayer::ofOpenALSoundPlayer(){
 	bLoop 			= false;
 	bLoadedOk 		= false;
-	pan 			= 0.5f;
+	pan 			= 0.5f; // range for oF is 0..1, openAl range is -1..1, will be mapped in setPan
 	volume 			= 1.0f;
 	internalFreq 	= 44100;
 	speed 			= 1;
@@ -662,7 +662,7 @@ int ofOpenALSoundPlayer::getPositionMS(){
 void ofOpenALSoundPlayer::setPan(float p){
 	if(sources.empty()) return;
 	pan = p;
-	p=p*2-1;
+	p= ofMap(p, 0, 1, -1, 1);
 	if(channels==1){
 		float pos[3] = {p,0,0};
 		alSourcefv(sources[sources.size()-1],AL_POSITION,pos);

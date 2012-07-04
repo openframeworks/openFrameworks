@@ -39,7 +39,7 @@ ofxOpenALSoundPlayer::ofxOpenALSoundPlayer() {
 
 	volume = 1.0f;
 	pitch = 1.0f;
-	pan = 1.0f;
+	pan = 0.5f;
 	stopped=true;
 	bPaused=false;
 	
@@ -172,9 +172,10 @@ void ofxOpenALSoundPlayer::setPan(float _pan) {
 	if(iAmAnMp3)
 		cerr<<"error, cannot set pan on mp3s in openAL"<<endl;
 	else {
-		pan = _pan*2 - 1.0f;
-		setLocation(pan, 0, 0);
+		float locX = ofMap(_pan, 0, 1, -1, 1);
+		setLocation(locX, location.y, location.z);
 	}
+	pan = _pan;
 }
 
 //--------------------------------------------------------------
@@ -498,7 +499,7 @@ void ofxOpenALSoundPlayer::setLocation(float x, float y, float z) {
 	else
 	{
 		location.set(x,y,z);
-		pan = (x+1.0)/2; // this is where im compensating for the scale of oF... (pan in oF is 0-1.0, in ofxAL it's -1.0 to 1.0)
+		pan = ofMap(x,-1,1,0,1); // assuming x is -1..1, map to oF pan 0..1
 		SoundEngine_SetEffectLocation(myPrimedId, x, y, z);
 	}
 }
