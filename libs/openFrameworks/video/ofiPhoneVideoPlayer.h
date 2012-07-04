@@ -57,8 +57,6 @@ public:
     
 	void * getAVFoundationVideoPlayer();
     
-    void setTextureCache(bool bOn);
-    
 protected:
     
     void updatePixelsToRGB();
