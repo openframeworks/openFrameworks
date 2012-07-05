@@ -44,8 +44,7 @@ void testApp::setup(){
 	// note this could affect performance quite seriously
 	
 	// add OpenGL View main window.
-    [ofxiPhoneGetGLView() removeFromSuperview];
-    [ofxiPhoneGetUIWindow() addSubview:ofxiPhoneGetGLView()];
+    ofxiPhoneSendGLViewToFront();
 	
 	// OpenGL View is now in front of mapview, but it isn't transparent, so we can't see the map
 	// Make the map transparent so we can see the mapview in undrawn areas
