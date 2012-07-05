@@ -9,32 +9,21 @@ CVOpenGLESTextureRef _videoTextureRef = NULL;
 
 ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	videoPlayer = NULL;
-	pixels = NULL;
-	pixelsTmp = NULL;
+	pixelsRGB = NULL;
+	pixelsRGBA = NULL;
     internalGLFormat = GL_RGB;
 	
     bFrameNew = false;
     bResetPixels = false;
     bResetTexture = false;
     bUpdatePixels = false;
+    bUpdatePixelsToRgb = false;
     bUpdateTexture = false;
     bTextureHack = false;
     bTextureCacheSupported = false;
-    /**
-     *  texture cache is disabled for now.
-     *  it does work for ios5 and up,
-     *  but crashes on io4 and down.
-     *  i've made CoreVideo.framework optional which is supposed to weak-link the framework,
-     *  but still no cigar.
-     *
-     *  the below is supposed to check if CVOpenGLESTextureCache is supported,
-     *  but for some reason, its always returning true on ios4
-     *
 #ifdef __IPHONE_5_0    
     bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
-#endif
-     *
-     */
+#endif    
 }
 
 //----------------------------------------
@@ -56,6 +45,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
     bResetPixels = true;
     bResetTexture = true;
     bUpdatePixels = true;
+    bUpdatePixelsToRgb = true;
     bUpdateTexture = true;
     
 #ifdef __IPHONE_5_0
@@ -78,14 +68,14 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
 void ofiPhoneVideoPlayer::close() {
 	if(videoPlayer != NULL) {
 		
-		if(pixelsTmp != NULL) {
-			free(pixelsTmp);
-			pixelsTmp = NULL;
+		if(pixelsRGBA != NULL) {
+			free(pixelsRGBA);
+			pixelsRGBA = NULL;
 		}
         
-		if(pixels != NULL) {
-			free(pixels);
-			pixels = NULL;
+		if(pixelsRGB != NULL) {
+			free(pixelsRGB);
+			pixelsRGB = NULL;
 		}
         
         if(!bTextureHack) {
@@ -118,6 +108,7 @@ void ofiPhoneVideoPlayer::close() {
     bResetPixels = false;
     bResetTexture = false;
     bUpdatePixels = false;
+    bUpdatePixelsToRgb = false;
     bUpdateTexture = false;
 }
 
@@ -141,6 +132,7 @@ void ofiPhoneVideoPlayer::update() {
          *  this ensures the pixels are updated only once per frame.
          */
         bUpdatePixels = true;
+        bUpdatePixelsToRgb = true;
         bUpdateTexture = true;
     }
 }
@@ -178,7 +170,12 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 	if(isLoaded())
 	{
         if(!bUpdatePixels) { // if pixels have not changed, return the already calculated pixels.
-            return pixels;
+            if(internalGLFormat == GL_RGB) {
+                updatePixelsToRGB();
+                return pixelsRGB;
+            }  else if(internalGLFormat == GL_RGBA || internalGLFormat == GL_BGRA) {
+                return pixelsRGBA;
+            }
         }
         
 		CGImageRef currentFrameRef;
@@ -221,23 +218,18 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 		
 		if(bResetPixels) {
             
-            if(pixelsTmp != NULL) {
-                free(pixelsTmp);
-                pixelsTmp = NULL;
+            if(pixelsRGBA != NULL) {
+                free(pixelsRGBA);
+                pixelsRGBA = NULL;
             }
             
-            if(pixels != NULL) {
-                free(pixels);
-                pixels = NULL;
+            if(pixelsRGB != NULL) {
+                free(pixelsRGB);
+                pixelsRGB = NULL;
             }
-            
-			if(internalGLFormat == GL_RGB) {
-				pixels = (GLubyte *) malloc(width * height * 3);
-            } else {
-				pixels = (GLubyte *) malloc(width * height * 4);
-            }
-			
-			pixelsTmp = (GLubyte *) malloc(width * height * 4);
+
+            pixelsRGBA = (GLubyte *) malloc(width * height * 4);
+            pixelsRGB  = (GLubyte *) malloc(width * height * 3);
             
             bResetPixels = false;
 		}
@@ -245,7 +237,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 		[pool drain];
 		
         CGContextRef spriteContext;
-        spriteContext = CGBitmapContextCreate(pixelsTmp, 
+        spriteContext = CGBitmapContextCreate(pixelsRGBA, 
                                               width, 
                                               height, 
                                               CGImageGetBitsPerComponent(currentFrameRef), 
@@ -260,25 +252,45 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
         CGContextRelease(spriteContext);
         
         if(internalGLFormat == GL_RGB) {
-            unsigned int *isrc4 = (unsigned int *)pixelsTmp;
-            unsigned int *idst3 = (unsigned int *)pixels;
-            unsigned int *ilast4 = &isrc4[width*height-1];
-            while (isrc4 < ilast4){
-                *(idst3++) = *(isrc4++);
-                idst3 = (unsigned int *) (((unsigned char *) idst3) - 1);
-            }
+            updatePixelsToRGB();
         } else if(internalGLFormat == GL_RGBA || internalGLFormat == GL_BGRA) {
-            memcpy(pixels, pixelsTmp, width*height*4);
+            // pixels are already 4 channel. 
+            // return pixelsRaw instead of pixels (further down).
         }
         
         CGImageRelease(currentFrameRef);
 		
         bUpdatePixels = false;
         
-		return pixels;
+        if(internalGLFormat == GL_RGB) {
+            return pixelsRGB;
+        }  else if(internalGLFormat == GL_RGBA || internalGLFormat == GL_BGRA) {
+            return pixelsRGBA;
+        }
+        
+        return NULL;
 	}
 	
 	return NULL;
+}
+
+void ofiPhoneVideoPlayer::updatePixelsToRGB () {
+    if(!bUpdatePixelsToRgb) {
+        return;
+    }
+    
+    int width = [(AVFoundationVideoPlayer *)videoPlayer getWidth];
+    int height = [(AVFoundationVideoPlayer *)videoPlayer getHeight];
+
+    unsigned int *isrc4 = (unsigned int *)pixelsRGBA;
+    unsigned int *idst3 = (unsigned int *)pixelsRGB;
+    unsigned int *ilast4 = &isrc4[width*height-1];
+    while (isrc4 < ilast4){
+        *(idst3++) = *(isrc4++);
+        idst3 = (unsigned int *) (((unsigned char *) idst3) - 1);
+    }
+    
+    bUpdatePixelsToRgb = false;
 }
 
 //----------------------------------------
@@ -417,13 +429,16 @@ ofTexture * ofiPhoneVideoPlayer::getTexture() {
             
             videoTexture.allocate([(AVFoundationVideoPlayer *)videoPlayer getWidth], 
                                   [(AVFoundationVideoPlayer *)videoPlayer getHeight], 
-                                  internalGLFormat);
+                                  GL_RGBA);
         }
         
+        GLint internalGLFormatCopy = internalGLFormat;
+        internalGLFormat = GL_RGBA;
         videoTexture.loadData(getPixels(), 
                               [(AVFoundationVideoPlayer *)videoPlayer getWidth], 
                               [(AVFoundationVideoPlayer *)videoPlayer getHeight], 
                               internalGLFormat);
+        internalGLFormat = internalGLFormatCopy;
     }
     
     CVPixelBufferUnlockBaseAddress(imageBuffer,0); // unlock the image buffer
