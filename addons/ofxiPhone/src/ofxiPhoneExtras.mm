@@ -69,8 +69,8 @@ UIWindow *ofxiPhoneGetUIWindow() {
 
 
 //--------------------------------------------------------------
-ofxiOS_EAGLView *ofxiPhoneGetGLView() {
-	return [ofxiOS_EAGLView getInstance];
+ofxiOSEAGLView *ofxiPhoneGetGLView() {
+	return [ofxiOSEAGLView getInstance];
 }
 
 //--------------------------------------------------------------

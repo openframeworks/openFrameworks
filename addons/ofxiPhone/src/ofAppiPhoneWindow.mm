@@ -34,7 +34,7 @@
 #import <UIKit/UIKit.h>
 
 #import "ofMain.h"
-#import "ofxiOS_EAGLView.h"
+#import "ofxiOSEAGLView.h"
 
 // use for checking if stuff has been initialized
 #define NOT_INITIALIZED			-1000000
@@ -131,7 +131,7 @@ void setWindowShape(int w, int h) {
 // return cached pos, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 	if(windowPos.x == NOT_INITIALIZED) {
-		CGRect frame = [[ofxiOS_EAGLView getInstance] frame];
+		CGRect frame = [[ofxiOSEAGLView getInstance] frame];
 		windowPos.set(frame.origin.x, frame.origin.y, 0);
 	}
 	return windowPos;
@@ -141,11 +141,11 @@ ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 // return cached size, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowSize() {
 	if(windowSize.x == NOT_INITIALIZED) {
-        CGRect frame = [[ofxiOS_EAGLView getInstance] frame];
+        CGRect frame = [[ofxiOSEAGLView getInstance] frame];
 		windowSize.set(frame.size.width, frame.size.height, 0);
 
 		if(retinaEnabled){
-            UIScreen * currentScreen = [ofxiOS_EAGLView getInstance].window.screen;  // current screen is the screen that GLView is attached to.
+            UIScreen * currentScreen = [ofxiOSEAGLView getInstance].window.screen;  // current screen is the screen that GLView is attached to.
             if(!currentScreen){                                             // if GLView is not attached, assume to be main device screen.
                 currentScreen = [UIScreen mainScreen];
             }
@@ -162,7 +162,7 @@ ofPoint	ofAppiPhoneWindow::getWindowSize() {
 // return cached size, read if nessecary
 ofPoint	ofAppiPhoneWindow::getScreenSize() {
 	if(screenSize.x == NOT_INITIALIZED) {
-        UIScreen * currentScreen = [ofxiOS_EAGLView getInstance].window.screen; // current screen is the screen that GLView is attached to.
+        UIScreen * currentScreen = [ofxiOSEAGLView getInstance].window.screen; // current screen is the screen that GLView is attached to.
         if(!currentScreen){                                                     // if GLView is not attached, assume to be main device screen.
             currentScreen = [UIScreen mainScreen];
         }
@@ -199,20 +199,20 @@ int	ofAppiPhoneWindow::getWindowMode() {
 }
 
 float ofAppiPhoneWindow::getFrameRate() {
-	return [[ofxiOS_EAGLView getInstance] getFrameRate];
+	return [[ofxiOSEAGLView getInstance] getFrameRate];
 }
 
 /******** Other stuff ************/
 void ofAppiPhoneWindow::setFrameRate(float targetRate) {
-	[[ofxiOS_EAGLView getInstance] setAnimationFrameRate:targetRate];
+	[[ofxiOSEAGLView getInstance] setAnimationFrameRate:targetRate];
 }
 
 int	ofAppiPhoneWindow::getFrameNum() {
-	return [[ofxiOS_EAGLView getInstance] getFrameNum];
+	return [[ofxiOSEAGLView getInstance] getFrameNum];
 }
 
 double ofAppiPhoneWindow::getLastFrameTime() {
-	return [[ofxiOS_EAGLView getInstance] getLastFrameTime];
+	return [[ofxiOSEAGLView getInstance] getLastFrameTime];
 }
 
 void ofAppiPhoneWindow::setWindowTitle(string title) {
@@ -338,5 +338,5 @@ bool ofAppiPhoneWindow::isRetinaSupported()
 }
 
 void ofAppiPhoneWindow::timerLoop() {
-    // all the timerLoop logic has been moved into [ofxiOS_EAGLView drawView]
+    // all the timerLoop logic has been moved into [ofxiOSEAGLView drawView]
 }

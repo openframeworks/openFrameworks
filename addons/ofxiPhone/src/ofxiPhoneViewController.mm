@@ -6,7 +6,7 @@
 #import "ofxiPhoneViewController.h"
 
 #import "ofBaseApp.h"
-#import "ofxiOS_EAGLView.h"
+#import "ofxiOSEAGLView.h"
 
 @implementation ofxiPhoneViewController
 
@@ -15,7 +15,7 @@
 - (id)initWithFrame:(CGRect)frame app:(ofBaseApp *)app {
 
     if((self = [super init])) {
-        self.glView = [[[ofxiOS_EAGLView alloc] initWithFrame:frame andApp:app] autorelease];
+        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
         [self.view addSubview:self.glView];
         [self.glView setup];
     }

@@ -6,11 +6,11 @@
 #import <UIKit/UIKit.h>
 
 class ofBaseApp;
-@class ofxiOS_EAGLView;
+@class ofxiOSEAGLView;
 
 @interface ofxiPhoneViewController : UIViewController
 
-@property (nonatomic, retain) ofxiOS_EAGLView * glView;
+@property (nonatomic, retain) ofxiOSEAGLView * glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofBaseApp *)app;
 

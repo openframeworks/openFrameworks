@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		15175D9C15A5370E0072B8DF /* ofxiOS_EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 15175D9A15A5370E0072B8DF /* ofxiOS_EAGLView.h */; };
-		15175D9D15A5370E0072B8DF /* ofxiOS_EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15175D9B15A5370E0072B8DF /* ofxiOS_EAGLView.mm */; };
+		15175D9C15A5370E0072B8DF /* ofxiOSEAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 15175D9A15A5370E0072B8DF /* ofxiOSEAGLView.h */; };
+		15175D9D15A5370E0072B8DF /* ofxiOSEAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15175D9B15A5370E0072B8DF /* ofxiOSEAGLView.mm */; };
 		1523268715234F230024FE1C /* ofxiPhoneExternalDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1523268515234F230024FE1C /* ofxiPhoneExternalDisplay.mm */; };
 		1523268815234F230024FE1C /* ofxiPhoneExternalDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1523268615234F230024FE1C /* ofxiPhoneExternalDisplay.h */; };
 		154E6B44158096A90083C642 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 154E6B43158096A90083C642 /* AVFoundationVideoPlayer.m */; };
@@ -183,14 +183,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		15175D9A15A5370E0072B8DF /* ofxiOS_EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS_EAGLView.h; sourceTree = "<group>"; };
-		15175D9B15A5370E0072B8DF /* ofxiOS_EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOS_EAGLView.mm; sourceTree = "<group>"; };
+		15175D9A15A5370E0072B8DF /* ofxiOSEAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSEAGLView.h; sourceTree = "<group>"; };
+		15175D9B15A5370E0072B8DF /* ofxiOSEAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSEAGLView.mm; sourceTree = "<group>"; };
 		1523268515234F230024FE1C /* ofxiPhoneExternalDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneExternalDisplay.mm; sourceTree = "<group>"; };
 		1523268615234F230024FE1C /* ofxiPhoneExternalDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneExternalDisplay.h; sourceTree = "<group>"; };
 		154E6B43158096A90083C642 /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15585A1A150B8B6D0056FB7A /* ofxiPhoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneViewController.h; sourceTree = "<group>"; };
 		15585A1B150B8B6D0056FB7A /* ofxiPhoneViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneViewController.mm; sourceTree = "<group>"; };
-		15BC775215A5C31F00772525 /* ofxiOS_Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOS_Extensions.h; sourceTree = "<group>"; };
+		15BC775215A5C31F00772525 /* ofxiOSExtensions.h */ = {isa = PBXFileReference; path = ofxiOSExtensions.h; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -514,8 +514,8 @@
 				E485F8B213632A7300E939D3 /* AVFoundationVideoGrabber.h */,
 				E485F8C513632B6600E939D3 /* AVFoundationVideoPlayer.h */,
 				154E6B43158096A90083C642 /* AVFoundationVideoPlayer.m */,
-				15175D9A15A5370E0072B8DF /* ofxiOS_EAGLView.h */,
-				15175D9B15A5370E0072B8DF /* ofxiOS_EAGLView.mm */,
+				15175D9A15A5370E0072B8DF /* ofxiOSEAGLView.h */,
+				15175D9B15A5370E0072B8DF /* ofxiOSEAGLView.mm */,
 				BB24E02910DA7C6100E9C588 /* EAGLView.h */,
 				BB24E02A10DA7C6100E9C588 /* EAGLView.m */,
 				BB3140C511BB098A0019348E /* ESRenderer.h */,
@@ -552,7 +552,7 @@
 				BB24E03F10DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.h */,
 				BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */,
 				BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */,
-				15BC775215A5C31F00772525 /* ofxiOS_Extensions.h */,
+				15BC775215A5C31F00772525 /* ofxiOSExtensions.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -869,7 +869,7 @@
 				772C251D146927A500DDAAE6 /* ofFmodSoundPlayer.h in Headers */,
 				15585A1C150B8B6D0056FB7A /* ofxiPhoneViewController.h in Headers */,
 				1523268815234F230024FE1C /* ofxiPhoneExternalDisplay.h in Headers */,
-				15175D9C15A5370E0072B8DF /* ofxiOS_EAGLView.h in Headers */,
+				15175D9C15A5370E0072B8DF /* ofxiOSEAGLView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -993,7 +993,7 @@
 				15585A1D150B8B6D0056FB7A /* ofxiPhoneViewController.mm in Sources */,
 				1523268715234F230024FE1C /* ofxiPhoneExternalDisplay.mm in Sources */,
 				154E6B44158096A90083C642 /* AVFoundationVideoPlayer.m in Sources */,
-				15175D9D15A5370E0072B8DF /* ofxiOS_EAGLView.mm in Sources */,
+				15175D9D15A5370E0072B8DF /* ofxiOSEAGLView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
