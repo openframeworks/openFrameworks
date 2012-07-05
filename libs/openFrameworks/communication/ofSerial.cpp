@@ -114,7 +114,7 @@ ofSerial::ofSerial(){
 	//---------------------------------------------
 	#endif
 	//---------------------------------------------
-	bVerbose = false;
+	bVerbose = true;
 	bInited = false;
 }
 
@@ -368,7 +368,7 @@ bool ofSerial::setup(string portName, int baud){
 		tcsetattr(fd,TCSANOW,&options);
 
 		bInited = true;
-		ofLog(OF_LOG_NOTICE,"sucess in opening serial connection");
+		ofLog(OF_LOG_NOTICE,"success in opening serial connection");
 
 	    return true;
 	//---------------------------------------------
@@ -459,9 +459,9 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 			ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port, errno %i (%s)", errno, strerror(errno));
 			return OF_SERIAL_ERROR;
 		}
-
-		ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", numWritten);
-
+        if (bVerbose) {
+            ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", numWritten);
+        }
 	    return numWritten;
     #endif
     //---------------------------------------------
@@ -473,7 +473,9 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
 			 return OF_SERIAL_ERROR;
 		}
-		ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", (int)written);
+        if (bVerbose) {
+            ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", (int)written);
+        }
 		return (int)written;
 	#else
 		return 0;
@@ -537,7 +539,10 @@ bool ofSerial::writeByte(unsigned char singleByte){
 			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port, errno %i (%s)", errno, strerror(errno));
 			 return OF_SERIAL_ERROR;
 		}
-		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
+    
+        if (bVerbose) {
+            ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
+        }
 
 
 		return (numWritten > 0 ? true : false);
@@ -551,8 +556,9 @@ bool ofSerial::writeByte(unsigned char singleByte){
 			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
 			 return OF_SERIAL_ERROR;;
 		}
-
-		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
+        if (bVerbose) {
+            ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
+        }
 
 		return ((int)written > 0 ? true : false);
 	#endif
