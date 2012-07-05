@@ -69,10 +69,14 @@ UIWindow *ofxiPhoneGetUIWindow() {
 
 
 //--------------------------------------------------------------
-EAGLView *ofxiPhoneGetGLView() {
-	return [ofxiPhoneGetViewController() glView];
+ofxiOS_EAGLView *ofxiPhoneGetGLView() {
+	return [ofxiOS_EAGLView getInstance];
 }
 
+//--------------------------------------------------------------
+UIView * ofxiPhoneGetGLParentView() {
+	return ofxiPhoneGetGLView().superview;
+}
 
 //--------------------------------------------------------------
 ofAppiPhoneWindow* ofxiPhoneGetOFWindow() {
@@ -92,13 +96,13 @@ ofxiPhoneViewController *ofxiPhoneGetViewController() {
 
 //--------------------------------------------------------------
 void ofxiPhoneSendGLViewToFront() {
-	[ofxiPhoneGetUIWindow() bringSubviewToFront:iPhoneGetGLView()];
+	[ofxiPhoneGetGLView().superview bringSubviewToFront:ofxiPhoneGetGLView()];
 }
 
 
 //--------------------------------------------------------------
 void ofxiPhoneSendGLViewToBack() {
-	[ofxiPhoneGetUIWindow() sendSubviewToBack:iPhoneGetGLView()];
+	[ofxiPhoneGetGLView().superview sendSubviewToBack:ofxiPhoneGetGLView()];
 }
 
 
@@ -129,13 +133,13 @@ void ofxiPhoneDisableIdleTimer() {
 
 //--------------------------------------------------------------
 void ofxiPhoneLockGLContext() {
-	[ofxiPhoneGetViewController() lockGL];
+	[ofxiPhoneGetGLView() lockGL];
 }
 
 
 //--------------------------------------------------------------
 void ofxiPhoneUnlockGLContext() {
-	[ofxiPhoneGetViewController() unlockGL];
+	[ofxiPhoneGetGLView() unlockGL];
 }
 
 
