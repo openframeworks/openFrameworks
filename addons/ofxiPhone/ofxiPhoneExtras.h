@@ -41,7 +41,7 @@
 #import "ofxiPhone.h"
 #import "ofAppiPhoneWindow.h"
 #import "ofxiPhoneAppDelegate.h"
-#import "ofxiOS_EAGLView.h"
+#import "ofxiOSEAGLView.h"
 #import "ofxiPhoneKeyboard.h"
 #import "ofxiPhoneCoreLocation.h"
 #import "ofxiPhoneImagePicker.h"
@@ -94,7 +94,7 @@ string ofxiPhoneGetDeviceRevision();
 UIWindow *ofxiPhoneGetUIWindow();
 
 // return openglview
-ofxiOS_EAGLView *ofxiPhoneGetGLView();
+ofxiOSEAGLView *ofxiPhoneGetGLView();
 
 // return opengl parent view
 UIView * ofxiPhoneGetGLParentView();
