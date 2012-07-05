@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15175D9C15A5370E0072B8DF /* ofxiOS_EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 15175D9A15A5370E0072B8DF /* ofxiOS_EAGLView.h */; };
+		15175D9D15A5370E0072B8DF /* ofxiOS_EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15175D9B15A5370E0072B8DF /* ofxiOS_EAGLView.mm */; };
 		1523268715234F230024FE1C /* ofxiPhoneExternalDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1523268515234F230024FE1C /* ofxiPhoneExternalDisplay.mm */; };
 		1523268815234F230024FE1C /* ofxiPhoneExternalDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1523268615234F230024FE1C /* ofxiPhoneExternalDisplay.h */; };
 		154E6B44158096A90083C642 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 154E6B43158096A90083C642 /* AVFoundationVideoPlayer.m */; };
@@ -46,7 +48,7 @@
 		BB24E0D110DA9F4D00E9C588 /* ofAppiPhoneWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02E10DA7C6100E9C588 /* ofAppiPhoneWindow.mm */; };
 		BB24E0D210DA9F4D00E9C588 /* ofxiPhoneImagePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03A10DA7C6100E9C588 /* ofxiPhoneImagePicker.mm */; };
 		BB24E0D410DA9F4F00E9C588 /* ofxiPhoneKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03C10DA7C6100E9C588 /* ofxiPhoneKeyboard.mm */; };
-		BB24E0D510DA9F4F00E9C588 /* EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02A10DA7C6100E9C588 /* EAGLView.mm */; };
+		BB24E0D510DA9F4F00E9C588 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02A10DA7C6100E9C588 /* EAGLView.m */; };
 		BB24E0D610DA9F5000E9C588 /* ofxiPhoneCoreLocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03710DA7C6100E9C588 /* ofxiPhoneCoreLocation.mm */; };
 		BB24E0D710DA9F5100E9C588 /* ofxiPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02610DA7C6100E9C588 /* ofxiPhone.h */; };
 		BB24E0D810DA9F5200E9C588 /* ofAppiPhoneWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02D10DA7C6100E9C588 /* ofAppiPhoneWindow.h */; };
@@ -59,9 +61,9 @@
 		BB24E0E210DA9F5C00E9C588 /* ofxiPhoneMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */; };
 		BB24E0E310DA9F5D00E9C588 /* ofxiPhoneAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03110DA7C6100E9C588 /* ofxiPhoneAlerts.mm */; };
 		BB3140C011BB09220019348E /* ES1Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140BC11BB09220019348E /* ES1Renderer.h */; };
-		BB3140C111BB09220019348E /* ES1Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB3140BD11BB09220019348E /* ES1Renderer.mm */; };
+		BB3140C111BB09220019348E /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BB3140BD11BB09220019348E /* ES1Renderer.m */; };
 		BB3140C211BB09220019348E /* ES2Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140BE11BB09220019348E /* ES2Renderer.h */; };
-		BB3140C311BB09220019348E /* ES2Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB3140BF11BB09220019348E /* ES2Renderer.mm */; };
+		BB3140C311BB09220019348E /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BB3140BF11BB09220019348E /* ES2Renderer.m */; };
 		BB3140C611BB098A0019348E /* ESRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140C511BB098A0019348E /* ESRenderer.h */; };
 		E47DBCDF12E2777F0019AE15 /* SoundEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = E47DBCDB12E2777F0019AE15 /* SoundEngine.h */; };
 		E47DBCE012E2777F0019AE15 /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47DBCDC12E2777F0019AE15 /* SoundEngine.cpp */; };
@@ -181,11 +183,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		15175D9A15A5370E0072B8DF /* ofxiOS_EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS_EAGLView.h; sourceTree = "<group>"; };
+		15175D9B15A5370E0072B8DF /* ofxiOS_EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOS_EAGLView.mm; sourceTree = "<group>"; };
 		1523268515234F230024FE1C /* ofxiPhoneExternalDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneExternalDisplay.mm; sourceTree = "<group>"; };
 		1523268615234F230024FE1C /* ofxiPhoneExternalDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneExternalDisplay.h; sourceTree = "<group>"; };
 		154E6B43158096A90083C642 /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15585A1A150B8B6D0056FB7A /* ofxiPhoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneViewController.h; sourceTree = "<group>"; };
 		15585A1B150B8B6D0056FB7A /* ofxiPhoneViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneViewController.mm; sourceTree = "<group>"; };
+		15BC775215A5C31F00772525 /* ofxiOS_Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOS_Extensions.h; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -215,7 +220,7 @@
 		BB24E02610DA7C6100E9C588 /* ofxiPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhone.h; sourceTree = "<group>"; };
 		BB24E02710DA7C6100E9C588 /* ofxiPhoneExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneExtras.h; sourceTree = "<group>"; };
 		BB24E02910DA7C6100E9C588 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
-		BB24E02A10DA7C6100E9C588 /* EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAGLView.mm; sourceTree = "<group>"; };
+		BB24E02A10DA7C6100E9C588 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		BB24E02D10DA7C6100E9C588 /* ofAppiPhoneWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppiPhoneWindow.h; sourceTree = "<group>"; };
 		BB24E02E10DA7C6100E9C588 /* ofAppiPhoneWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAppiPhoneWindow.mm; sourceTree = "<group>"; };
 		BB24E02F10DA7C6100E9C588 /* ofxiPhoneAccelerometer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneAccelerometer.mm; sourceTree = "<group>"; };
@@ -238,9 +243,9 @@
 		BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneMapKitDelegate.mm; sourceTree = "<group>"; };
 		BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitListener.h; sourceTree = "<group>"; };
 		BB3140BC11BB09220019348E /* ES1Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES1Renderer.h; sourceTree = "<group>"; };
-		BB3140BD11BB09220019348E /* ES1Renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ES1Renderer.mm; sourceTree = "<group>"; };
+		BB3140BD11BB09220019348E /* ES1Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES1Renderer.m; sourceTree = "<group>"; };
 		BB3140BE11BB09220019348E /* ES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES2Renderer.h; sourceTree = "<group>"; };
-		BB3140BF11BB09220019348E /* ES2Renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ES2Renderer.mm; sourceTree = "<group>"; };
+		BB3140BF11BB09220019348E /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
 		BB3140C511BB098A0019348E /* ESRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESRenderer.h; sourceTree = "<group>"; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -509,19 +514,21 @@
 				E485F8B213632A7300E939D3 /* AVFoundationVideoGrabber.h */,
 				E485F8C513632B6600E939D3 /* AVFoundationVideoPlayer.h */,
 				154E6B43158096A90083C642 /* AVFoundationVideoPlayer.m */,
+				15175D9A15A5370E0072B8DF /* ofxiOS_EAGLView.h */,
+				15175D9B15A5370E0072B8DF /* ofxiOS_EAGLView.mm */,
 				BB24E02910DA7C6100E9C588 /* EAGLView.h */,
-				BB24E02A10DA7C6100E9C588 /* EAGLView.mm */,
+				BB24E02A10DA7C6100E9C588 /* EAGLView.m */,
 				BB3140C511BB098A0019348E /* ESRenderer.h */,
 				BB3140BC11BB09220019348E /* ES1Renderer.h */,
-				BB3140BD11BB09220019348E /* ES1Renderer.mm */,
+				BB3140BD11BB09220019348E /* ES1Renderer.m */,
 				BB3140BE11BB09220019348E /* ES2Renderer.h */,
-				BB3140BF11BB09220019348E /* ES2Renderer.mm */,
+				BB3140BF11BB09220019348E /* ES2Renderer.m */,
 				E47DBCDB12E2777F0019AE15 /* SoundEngine.h */,
 				E47DBCDC12E2777F0019AE15 /* SoundEngine.cpp */,
 				E47DBCDD12E2777F0019AE15 /* ofxOpenALSoundPlayer.h */,
 				E47DBCDE12E2777F0019AE15 /* ofxOpenALSoundPlayer.cpp */,
-				BB24E02E10DA7C6100E9C588 /* ofAppiPhoneWindow.mm */,
 				BB24E02D10DA7C6100E9C588 /* ofAppiPhoneWindow.h */,
+				BB24E02E10DA7C6100E9C588 /* ofAppiPhoneWindow.mm */,
 				BB24E02F10DA7C6100E9C588 /* ofxiPhoneAccelerometer.mm */,
 				BB24E03010DA7C6100E9C588 /* ofxiPhoneAlerts.h */,
 				BB24E03110DA7C6100E9C588 /* ofxiPhoneAlerts.mm */,
@@ -545,6 +552,7 @@
 				BB24E03F10DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.h */,
 				BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */,
 				BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */,
+				15BC775215A5C31F00772525 /* ofxiOS_Extensions.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -861,6 +869,7 @@
 				772C251D146927A500DDAAE6 /* ofFmodSoundPlayer.h in Headers */,
 				15585A1C150B8B6D0056FB7A /* ofxiPhoneViewController.h in Headers */,
 				1523268815234F230024FE1C /* ofxiPhoneExternalDisplay.h in Headers */,
+				15175D9C15A5370E0072B8DF /* ofxiOS_EAGLView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -919,14 +928,14 @@
 				BB24E0D110DA9F4D00E9C588 /* ofAppiPhoneWindow.mm in Sources */,
 				BB24E0D210DA9F4D00E9C588 /* ofxiPhoneImagePicker.mm in Sources */,
 				BB24E0D410DA9F4F00E9C588 /* ofxiPhoneKeyboard.mm in Sources */,
-				BB24E0D510DA9F4F00E9C588 /* EAGLView.mm in Sources */,
+				BB24E0D510DA9F4F00E9C588 /* EAGLView.m in Sources */,
 				BB24E0D610DA9F5000E9C588 /* ofxiPhoneCoreLocation.mm in Sources */,
 				BB24E0D910DA9F5400E9C588 /* ofxiPhoneMapKitDelegate.mm in Sources */,
 				BB24E0DB10DA9F5600E9C588 /* ofxiPhoneAppDelegate.mm in Sources */,
 				BB24E0DD10DA9F5800E9C588 /* ofxiPhoneAccelerometer.mm in Sources */,
 				BB24E0E310DA9F5D00E9C588 /* ofxiPhoneAlerts.mm in Sources */,
-				BB3140C111BB09220019348E /* ES1Renderer.mm in Sources */,
-				BB3140C311BB09220019348E /* ES2Renderer.mm in Sources */,
+				BB3140C111BB09220019348E /* ES1Renderer.m in Sources */,
+				BB3140C311BB09220019348E /* ES2Renderer.m in Sources */,
 				E47DBCE012E2777F0019AE15 /* SoundEngine.cpp in Sources */,
 				E47DBCE212E2777F0019AE15 /* ofxOpenALSoundPlayer.cpp in Sources */,
 				E485F70E1360A90000E939D3 /* of3dUtils.cpp in Sources */,
@@ -984,6 +993,7 @@
 				15585A1D150B8B6D0056FB7A /* ofxiPhoneViewController.mm in Sources */,
 				1523268715234F230024FE1C /* ofxiPhoneExternalDisplay.mm in Sources */,
 				154E6B44158096A90083C642 /* AVFoundationVideoPlayer.m in Sources */,
+				15175D9D15A5370E0072B8DF /* ofxiOS_EAGLView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
