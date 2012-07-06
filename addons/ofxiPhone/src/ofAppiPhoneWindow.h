@@ -33,7 +33,6 @@
 #pragma once
 
 #import "ofAppBaseWindow.h"
-#import "glu.h"
 
 class ofAppiPhoneWindow : public ofAppBaseWindow{
 public:
@@ -75,6 +74,7 @@ public:
 	
 	virtual void		enableSetupScreen();
 	virtual void		disableSetupScreen();
+    virtual bool        isSetupScreenEnabled();
 	
 	void				setOrientation(ofOrientation orientation);
 	ofOrientation		getOrientation();
@@ -100,11 +100,7 @@ protected:
 	ofPoint				windowSize;
 	ofPoint				windowPos;
 	
-	double				timeNow, timeThen, fps, lastFrameTime;
-//	int					nFramesForFPS;
-	int					nFrameCount;
 	bool				bEnableSetupScreen;
-	float				frameRate;
 	ofOrientation		orientation;
 	
 	bool depthEnabled;
