@@ -118,7 +118,14 @@
 		NSString *reqSysVer = @"3.1";
 		NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
 		if([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) {
-			displayLinkSupported = YES;
+            /**
+             *  enabling display link support doesn't play nice with UIKit interaction.
+             *  gl framerate runs at full 60 fps but touch events slow down considerably.
+             *  here is a potential solution (but for another day),
+             *  http://stackoverflow.com/questions/5944050/cadisplaylink-opengl-rendering-breaks-uiscrollview-behaviour/5956119#5956119
+             *  for now, displayLinkSupported is disabled.
+             */
+//			displayLinkSupported = YES;
         }
 	}
 	
