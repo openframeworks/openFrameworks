@@ -17,15 +17,15 @@ void testApp::setup() {
 	video.loadMovie("hands.m4v");
 	video.play();
     
+    controls = [[VideoPlayerControls alloc] init];
+    controls.delegate = [[VideoPlayerControlsDelegateForOF alloc] initWithApp:this];
+    [ofxiPhoneGetGLParentView() addSubview:controls.view];
+    
     AVFoundationVideoPlayer * avVideoPlayer;
     avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
     [avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
-    [ofxiPhoneGetViewController().view insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
+    [ofxiPhoneGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
     avVideoPlayer.playerView.hidden = YES;
-    
-    controls = [[VideoPlayerControls alloc] init];
-    controls.delegate = [[VideoPlayerControlsDelegateForOF alloc] initWithApp:this];
-    [ofxiPhoneGetViewController().view addSubview:controls.view];
 }
 
 //--------------------------------------------------------------
@@ -124,7 +124,7 @@ void testApp::loadPressed() {
     AVFoundationVideoPlayer * avVideoPlayer;
     avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
     [avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
-    [ofxiPhoneGetViewController().view insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
+    [ofxiPhoneGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
     avVideoPlayer.playerView.hidden = YES;
     
     [controls setLoad:YES];

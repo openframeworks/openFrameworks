@@ -114,7 +114,6 @@ ofSerial::ofSerial(){
 	//---------------------------------------------
 	#endif
 	//---------------------------------------------
-	bVerbose = false;
 	bInited = false;
 }
 
@@ -142,7 +141,6 @@ ofSerial::~ofSerial(){
 	#endif
 	//---------------------------------------------
 
-	bVerbose = false;
 	bInited = false;
 }
 
@@ -368,7 +366,7 @@ bool ofSerial::setup(string portName, int baud){
 		tcsetattr(fd,TCSANOW,&options);
 
 		bInited = true;
-		ofLog(OF_LOG_NOTICE,"sucess in opening serial connection");
+		ofLog(OF_LOG_NOTICE,"success in opening serial connection");
 
 	    return true;
 	//---------------------------------------------
