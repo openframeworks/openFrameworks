@@ -104,13 +104,13 @@ namespace ofxCv {
 	// it's like allocate(), but uses the size and type of the original as a reference
 	// like allocate(), the image being allocated is the first argument	
 	
-	// this version copies size, but manually specifies image type
-	template <class M, class O> void imitate(M& mirror, O& original, int originalCvImageType) {
+	// this version copies size, but manually specifies mirror's image type
+	template <class M, class O> void imitate(M& mirror, O& original, int mirrorCvImageType) {
 		int mw = getWidth(mirror), mh = getHeight(mirror);
 		int ow = getWidth(original), oh = getHeight(original);
 		int mt = getCvImageType(mirror);
-		if(mw != ow || mh != oh || mt != originalCvImageType) {
-			allocate(mirror, ow, oh, originalCvImageType);
+		if(mw != ow || mh != oh || mt != mirrorCvImageType) {
+			allocate(mirror, ow, oh, mirrorCvImageType);
 		}
 	}
 	
