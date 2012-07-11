@@ -181,6 +181,24 @@ cv::name(xMat, yMat, resultMat);\
 		ofxCv::medianBlur(srcDst, srcDst, size);
 	}
 	
+	// histogram equalization, adds support for color images
+	template <class S, class D>
+	void equalizeHist(S& src, D& dst) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		if(srcMat.channels() > 1) {
+			vector<Mat> srcEach, dstEach;
+			split(srcMat, srcEach);
+			split(dstMat, dstEach);
+			for(int i = 0; i < srcEach.size(); i++) {
+				cv::equalizeHist(srcEach[i], dstEach[i]);
+			}
+			cv::merge(dstEach, dstMat);
+		} else {
+			cv::equalizeHist(srcMat, dstMat);
+		}
+	}
+	
 	// Canny edge detection assumes your input and output are grayscale 8-bit
 	// example thresholds might be 0,30 or 50,200
 	template <class S, class D>
