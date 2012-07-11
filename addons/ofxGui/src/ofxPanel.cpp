@@ -33,6 +33,41 @@ ofxPanel * ofxPanel::setup(string collectionName, string _filename, float x, flo
 	return this;
 }
 
+
+ofxPanel * ofxPanel::setup(const ofxParameterGroup & parameters, string collectionName, string _filename, float x, float y){
+
+	name = collectionName;
+	b.x = x;
+	b.y = y;
+	header = defaultHeight;
+	spacing  = 1;
+	b.width = defaultWidth;
+	b.height = header + spacing; // weird to start out with something arbitrary like this
+	filename = _filename;
+
+	for(int i=0;i<parameters.size();i++){
+		if(parameters.getType(i)==typeid(ofxParameter<int>).name()){
+			ofxParameter<int> p = parameters.getInt(i);
+			add(p);
+		}else if(parameters.getType(i)==typeid(ofxParameter<float>).name()){
+			ofxParameter<float> p = parameters.getFloat(i);
+			add(p);
+		}else if(parameters.getType(i)==typeid(ofxParameter<bool>).name()){
+			ofxParameter<bool> p = parameters.getBool(i);
+			add(p);
+		}else if(parameters.getType(i)==typeid(ofxParameterGroup).name()){
+			ofxParameterGroup p = parameters.getGroup(i);
+			ofxPanel * panel = new ofxPanel;
+			panel->setup(p);
+			add(panel);
+		}
+	}
+
+	ofRegisterMouseEvents(this);
+
+	return this;
+}
+
 void ofxPanel::saveToXml(ofxXmlSettings& xml) {
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->saveToXml(xml);
