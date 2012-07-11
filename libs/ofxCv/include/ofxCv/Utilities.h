@@ -24,6 +24,9 @@ namespace ofxCv {
 	template <class T> inline int getHeight(T& src) {return src.getHeight();}
 	inline int getWidth(Mat& src) {return src.cols;}
 	inline int getHeight(Mat& src) {return src.rows;}
+	template <class T> inline bool getAllocated(T& src) {
+		return getWidth(src) > 0 && getHeight(src) > 0;
+	}
 	
 	// depth
 	inline int getDepth(Mat& mat) {
@@ -62,11 +65,11 @@ namespace ofxCv {
 	}
 	
 	// image type
-	inline int getCvImageType(int channels, int depth = CV_8U) {
-		return CV_MAKETYPE(depth, channels);
+	inline int getCvImageType(int channels, int cvDepth = CV_8U) {
+		return CV_MAKETYPE(cvDepth, channels);
 	}
-	inline int getCvImageType(ofImageType imageType, int depth = CV_8U) {
-		return CV_MAKETYPE(depth, getChannels(imageType));
+	inline int getCvImageType(ofImageType imageType, int cvDepth = CV_8U) {
+		return CV_MAKETYPE(cvDepth, getChannels(imageType));
 	}
 	template <class T> inline int getCvImageType(T& img) {
 		return CV_MAKETYPE(getDepth(img), getChannels(img));
@@ -120,26 +123,35 @@ namespace ofxCv {
 	}
 	
 	// maximum possible values for that depth or matrix
-	float getMaxVal(int depth);
+	float getMaxVal(int cvDepth);
 	float getMaxVal(const Mat& mat);
 	int getTargetChannelsFromCode(int conversionCode);
 	
 	// cross-toolkit, cross-bitdepth copying
-	// should this do conversion? or should be handle conversion in convertColor?
-	// or convert that handles color or bitdepth?
 	template <class S, class D>
-	void copy(S& src, D& dst) {
-		imitate(dst, src);
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
+	void copy(S& src, D& dst, int dstDepth) {
+		imitate(dst, src, getCvImageType(getChannels(src), dstDepth));
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		if(srcMat.type() == dstMat.type()) {
 			srcMat.copyTo(dstMat);
 		} else {
-			// because of imitate(), this doesn't actually happen right now. instead,
-			// we should be checking to see if the dst is allocated before imitate()
 			double alpha = getMaxVal(dstMat) / getMaxVal(srcMat);
 			srcMat.convertTo(dstMat, dstMat.depth(), alpha);
 		}
+	}
+	
+	// most of the time you want the destination to be the same as the source. but
+	// sometimes your destination is a different depth, and copy() will notice and
+	// do the conversion for you.
+	template <class S, class D>
+	void copy(S& src, D& dst) {
+		int dstDepth;
+		if(getAllocated(dst)) {
+			dstDepth = getDepth(dst);
+		} else {
+			dstDepth = getDepth(src);
+		}
+		copy(src, dst, dstDepth);
 	}
 	
 	// toCv functions

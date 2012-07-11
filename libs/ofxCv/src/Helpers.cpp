@@ -28,7 +28,7 @@ namespace ofxCv {
 		int glType;
 		Mat buffer;
 		if(mat.depth() != CV_8U) {
-			mat.convertTo(buffer, CV_8U);
+			copy(mat, buffer, CV_8U);
 		} else {
 			buffer = mat;
 		}

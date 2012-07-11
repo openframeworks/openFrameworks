@@ -64,8 +64,8 @@ namespace ofxCv {
 		return polyline;
 	}
 	
-	float getMaxVal(int depth) {
-		switch(depth) {
+	float getMaxVal(int cvDepth) {
+		switch(cvDepth) {
 			case CV_8U: return numeric_limits<uint8_t>::max();
 			case CV_16U: return numeric_limits<uint16_t>::max();
 				
