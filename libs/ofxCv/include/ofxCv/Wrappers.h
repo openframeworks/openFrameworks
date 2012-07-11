@@ -199,6 +199,12 @@ cv::name(xMat, yMat, resultMat);\
 		}
 	}
 	
+	// in-place histogram equalization
+	template <class SD>
+	void equalizeHist(SD& srcDst) {
+		equalizeHist(srcDst, srcDst);
+	}
+	
 	// Canny edge detection assumes your input and output are grayscale 8-bit
 	// example thresholds might be 0,30 or 50,200
 	template <class S, class D>
