@@ -6,6 +6,7 @@
 #include "ofxSlider.h"
 #include "ofxButton.h"
 #include "ofxToggle.h"
+#include "ofxParameterGroup.h"
 
 
 class ofxPanel : public ofxBaseGui{
@@ -15,6 +16,7 @@ public:
 	virtual ~ofxPanel();
 	
 	ofxPanel * setup(string collectionName="", string _filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel * setup(const ofxParameterGroup & parameters, string collectionName="", string _filename="settings.xml", float x = 10, float y = 10);
 	
 	virtual void saveToXml(ofxXmlSettings& xml);
 	virtual void loadFromXml(ofxXmlSettings& xml);

@@ -6,6 +6,9 @@
 class ofxAbstractParameter{
 public:
 	virtual ~ofxAbstractParameter(){};
+	virtual string getName() const = 0;
+	virtual void setName(string name) = 0;
+	virtual string toString() const = 0;
 
 };
 
@@ -15,6 +18,7 @@ public:
 	ofxParameter();
 	ofxParameter(ParameterType v);
 	ofxParameter(string name, ParameterType v);
+	ofxParameter(string name, ParameterType v, ParameterType min, ParameterType max);
 	virtual ~ofxParameter(){};
 
 	ParameterType operator=(ParameterType v);
@@ -25,7 +29,7 @@ public:
 	virtual void setValue(ParameterType v);
 
 	void setName(string name);
-	string getName();
+	string getName() const;
 
 	void setMin(ParameterType min);
 	ParameterType getMin();
@@ -35,6 +39,8 @@ public:
 
 	ofxParameter<ParameterType> & set(string name, ParameterType value);
 	ofxParameter<ParameterType> & set(string name, ParameterType value, ParameterType min, ParameterType max);
+
+	string toString() const;
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
@@ -74,8 +80,8 @@ private:
 		,min(min)
 		,max(max){};
 
-		ParameterType value;
 		string name;
+		ParameterType value;
 		ParameterType min, max;
 		ofEvent<ParameterType> changedE;
 	};
@@ -95,6 +101,11 @@ ofxParameter<ParameterType>::ofxParameter(ParameterType v)
 template<typename ParameterType>
 ofxParameter<ParameterType>::ofxParameter(string name, ParameterType v)
 :obj(ofPtr<Value>(new Value(name, v))){}
+
+template<typename ParameterType>
+ofxParameter<ParameterType>::ofxParameter(string name, ParameterType v, ParameterType min, ParameterType max)
+:obj(ofPtr<Value>(new Value(name, v, min, max))){}
+
 
 template<typename ParameterType>
 ParameterType ofxParameter<ParameterType>::operator=(ParameterType v){
@@ -165,6 +176,11 @@ void ofxParameter<ParameterType>::setName(string _name){
 }
 
 template<typename ParameterType>
-string ofxParameter<ParameterType>::getName(){
+string ofxParameter<ParameterType>::getName() const{
 	return obj->name;
+}
+
+template<typename ParameterType>
+string ofxParameter<ParameterType>::toString() const{
+	return ofToString(obj->value);
 }
