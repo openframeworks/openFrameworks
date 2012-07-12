@@ -1,10 +1,10 @@
 #include "ofxToggle.h"
 
-ofxToggle::ofxToggle(string toggleName, ofxParameter<bool> _bVal, float width, float height){
+ofxToggle::ofxToggle(string toggleName, ofParameter<bool> _bVal, float width, float height){
 	setup(toggleName,_bVal,defaultWidth,height);
 }
 
-ofxToggle * ofxToggle::setup(string toggleName, ofxParameter<bool> _bVal, float width, float height){
+ofxToggle * ofxToggle::setup(string toggleName, ofParameter<bool> _bVal, float width, float height){
 	name = toggleName;
 	b.x = 0;
 	b.y = 0;
@@ -32,26 +32,6 @@ void ofxToggle::mouseDragged(ofMouseEventArgs & args){
 
 void ofxToggle::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
-}
-
-void ofxToggle::saveToXml(ofxXmlSettings& xml) {
-	string xmlName = name;
-	ofStringReplace(xmlName," ","_");
-	ofStringReplace(xmlName,",","_");
-	ofStringReplace(xmlName,"(","_");
-	ofStringReplace(xmlName,")","_");
-	ofStringReplace(xmlName,"/","_");
-	xml.setValue(xmlName, value);
-}
-
-void ofxToggle::loadFromXml(ofxXmlSettings& xml) {
-	string xmlName = name;
-	ofStringReplace(xmlName," ","_");
-	ofStringReplace(xmlName,",","_");
-	ofStringReplace(xmlName,"(","_");
-	ofStringReplace(xmlName,")","_");
-	ofStringReplace(xmlName,"/","_");
-	value = xml.getValue(xmlName, value);
 }
 
 void ofxToggle::draw(){
@@ -118,4 +98,8 @@ void ofxToggle::setValue(float mx, float my, bool bCheck){
 	if( bGuiActive ){
 		value = !value;
 	}
+}
+
+ofAbstractParameter & ofxToggle::getParameter(){
+	return value;
 }

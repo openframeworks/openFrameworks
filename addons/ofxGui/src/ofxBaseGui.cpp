@@ -13,6 +13,7 @@ const int ofxBaseGui::defaultHeight = 16;
 ofxBaseGui::ofxBaseGui(){
 	bGuiActive = false;
 	currentFrame = 0;
+	serializer = new ofxXmlSettings;
 }
 
 ofxBaseGui::~ofxBaseGui(){
@@ -20,16 +21,28 @@ ofxBaseGui::~ofxBaseGui(){
 }
 
 void ofxBaseGui::saveToFile(string filename) {
-	ofxXmlSettings xml;
-	xml.loadFile(filename);
-	saveToXml(xml);
-	xml.saveFile(filename);
+	serializer->load(filename);
+	saveTo(*serializer);
+	serializer->save(filename);
 }
 
 void ofxBaseGui::loadFromFile(string filename) {
-	ofxXmlSettings xml;
-	xml.loadFile(filename);
-	loadFromXml(xml);
+	serializer->load(filename);
+	loadFrom(*serializer);
+}
+
+
+void ofxBaseGui::saveTo(ofBaseFileSerializer& serializer){
+	serializer.serialize(getParameter());
+}
+
+void ofxBaseGui::loadFrom(ofBaseFileSerializer& serializer){
+	serializer.deserialize(getParameter());
+}
+
+
+void ofxBaseGui::setDefaultSerializer(ofBaseFileSerializer& _serializer){
+	serializer = &_serializer;
 }
 
 string ofxBaseGui::getName(){

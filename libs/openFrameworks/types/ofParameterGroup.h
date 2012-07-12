@@ -1,0 +1,84 @@
+/*
+ * ofxParameterGroup.h
+ *
+ *  Created on: 10/07/2012
+ *      Author: arturo
+ */
+
+#ifndef OFXPARAMETERGROUP_H_
+#define OFXPARAMETERGROUP_H_
+
+#include <map>
+#include "Poco/Any.h"
+#include "ofConstants.h"
+#include "ofParameter.h"
+#include "ofLog.h"
+
+class ofParameterGroup: public ofAbstractParameter {
+public:
+	void add(ofAbstractParameter & param);
+
+
+	ofParameter<bool> getBool(string name) const;
+	ofParameter<int> getInt(string name) const;
+	ofParameter<float> getFloat(string name) const;
+	ofParameter<char> getChar(string name) const;
+	ofParameter<string> getString(string name)	 const;
+	ofParameter<ofPoint> getPoint(string name)	 const;
+	ofParameter<ofVec2f> getVec2f(string name) const;
+	ofParameter<ofVec3f> getVec3f(string name) const;
+	ofParameterGroup getGroup(string name) const;
+
+
+	ofParameter<bool> getBool(int pos) const;
+	ofParameter<int> getInt(int pos) const;
+	ofParameter<float> getFloat(int pos) const;
+	ofParameter<char> getChar(int pos) const;
+	ofParameter<string> getString(int pos)	 const;
+	ofParameter<ofPoint> getPoint(int pos)	 const;
+	ofParameter<ofVec2f> getVec2f(int pos) const;
+	ofParameter<ofVec3f> getVec3f(int pos) const;
+	ofParameterGroup getGroup(int pos) const;
+
+	ofAbstractParameter & get(string name) const;
+	ofAbstractParameter & get(int pos) const;
+
+	ofAbstractParameter & operator[](string name) const;
+	ofAbstractParameter & operator[](int pos) const;
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> get(string name) const;
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> get(int pos) const;
+
+	int size() const;
+	string getName(int position) const;
+	string getType(int position) const;
+
+	friend ostream& operator<<(ostream& os, const ofParameterGroup& group);
+
+	string getName() const;
+	void setName(string name);
+	string toString() const;
+
+	bool contains(string name);
+
+private:
+	map<string,int> parametersIndex;
+	vector<ofAbstractParameter*> parameters;
+	string name;
+};
+
+
+template<typename ParameterType>
+ofParameter<ParameterType> ofParameterGroup::get(string name) const{
+	return static_cast<ofParameter<ParameterType>& >(get(name));
+}
+
+template<typename ParameterType>
+ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
+	return static_cast<ofParameter<ParameterType>& >(get(pos));
+}
+
+#endif /* OFXPARAMETERGROUP_H_ */

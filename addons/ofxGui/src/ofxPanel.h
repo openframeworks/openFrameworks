@@ -6,7 +6,7 @@
 #include "ofxSlider.h"
 #include "ofxButton.h"
 #include "ofxToggle.h"
-#include "ofxParameterGroup.h"
+#include "ofParameterGroup.h"
 
 
 class ofxPanel : public ofxBaseGui{
@@ -16,15 +16,12 @@ public:
 	virtual ~ofxPanel();
 	
 	ofxPanel * setup(string collectionName="", string _filename="settings.xml", float x = 10, float y = 10);
-	ofxPanel * setup(const ofxParameterGroup & parameters, string collectionName="", string _filename="settings.xml", float x = 10, float y = 10);
-	
-	virtual void saveToXml(ofxXmlSettings& xml);
-	virtual void loadFromXml(ofxXmlSettings& xml);
+	ofxPanel * setup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
 	
 	void add(ofxBaseGui * element);
-	void add(ofxParameter<float> & parameter);
-	void add(ofxParameter<int> & parameter);
-	void add(ofxParameter<bool> & parameter);
+	void add(ofParameter<float> & parameter);
+	void add(ofParameter<int> & parameter);
+	void add(ofParameter<bool> & parameter);
 	
 	void clear();
 	
@@ -46,6 +43,9 @@ public:
 	ofxBaseGui * getControl(string name);
 	ofxBaseGui * getControl(int num);
 
+
+	ofAbstractParameter & getParameter();
+
 protected:
 	void setValue(float mx, float my, bool bCheck);
 
@@ -58,6 +58,7 @@ private:
 	float spacing;
 	float header;
 	vector <ofxBaseGui *> collection;
+	ofParameterGroup parameters;
 	
 	string filename;
 	ofRectangle loadBox, saveBox;

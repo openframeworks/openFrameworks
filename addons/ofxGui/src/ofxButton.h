@@ -14,9 +14,8 @@ public:
 	virtual void mouseMoved(ofMouseEventArgs & args);
 	virtual void mousePressed(ofMouseEventArgs & args);
 	virtual void mouseDragged(ofMouseEventArgs & args);
-	
 
-	virtual void saveToXml(ofxXmlSettings& xml) {} // does't make sense to save buttons;
-	virtual void loadFromXml(ofxXmlSettings& xml) {}
+	virtual void saveTo(ofBaseSerializer& serializer){};
+	virtual void loadFrom(ofBaseSerializer& serializer){};
 
 };

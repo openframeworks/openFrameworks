@@ -10,14 +10,14 @@ OF_ROOT = ../../..
 # for example search paths like:
 # USER_CFLAGS = -I src/objects
 
-USER_CFLAGS = 
+USER_CFLAGS = $(shell pkg-config jsoncpp --cflags)
 
 
 # USER_LDFLAGS allows to pass custom flags to the linker
 # for example libraries like:
 # USER_LDFLAGS = libs/libawesomelib.a
 
-USER_LDFLAGS =
+USER_LDFLAGS = $(shell pkg-config jsoncpp --libs)
 
 
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"

@@ -2,9 +2,15 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	parameters.add(ofxParameter<float>("size",10,0,100));
-	parameters.add(ofxParameter<int>("number",2,1,5));
-	gui.setup(parameters);
+	renderer.setup();
+	bool useJson = false;
+	if(useJson){
+		gui.setDefaultSerializer(json);
+		gui.setup(renderer.parameters,"settings.json");
+	}else{
+		gui.setup(renderer.parameters,"settings.xml");
+	}
+	ofEnableAlphaBlending();
 }
 
 //--------------------------------------------------------------
@@ -14,12 +20,22 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	gui.draw();
-	ofCircle(ofGetWidth()*0.5, ofGetHeight()*0.5, parameters.getFloat("size"));
+	renderer.draw();
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+	if(key=='s'){
+		settings.serialize(renderer.parameters);
+		settings.saveFile("settings.xml");
+	}
+	if(key=='o'){
+		cout << renderer.parameters;
+	}
+	if(key=='j'){
+		json.serialize(renderer.parameters);
+		json.save("settings.json");
+	}
 }
 
 //--------------------------------------------------------------

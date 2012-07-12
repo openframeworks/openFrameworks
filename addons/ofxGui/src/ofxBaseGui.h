@@ -2,6 +2,8 @@
 
 #include "ofxXmlSettings.h"
 #include "ofConstants.h"
+#include "ofBaseTypes.h"
+#include "ofParameter.h"
 
 
 class ofxBaseGui{
@@ -21,8 +23,10 @@ public:
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	
-	virtual void saveToXml(ofxXmlSettings& xml) = 0;
-	virtual void loadFromXml(ofxXmlSettings& xml) = 0;
+	void setDefaultSerializer(ofBaseFileSerializer& serializer);
+
+	virtual void saveTo(ofBaseFileSerializer& serializer);
+	virtual void loadFrom(ofBaseFileSerializer& serializer);
 	
 	string getName();
 	void setName(string name);
@@ -38,11 +42,14 @@ public:
 	float getWidth();
 	float getHeight();
 
+	virtual ofAbstractParameter & getParameter() = 0;
+
 protected:
 	string name;
 	unsigned long currentFrame;			
 	ofRectangle b;
 	bool bGuiActive;
+	ofBaseFileSerializer * serializer;
 
 	static const ofColor headerBackgroundColor;
 	static const ofColor backgroundColor;
