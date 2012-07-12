@@ -3,29 +3,55 @@
 #include "ofEvents.h"
 #include "ofTypes.h"
 
-class ofxAbstractParameter{
-public:
-	virtual ~ofxAbstractParameter(){};
-	virtual string getName() const = 0;
-	virtual void setName(string name) = 0;
-	virtual string toString() const = 0;
+template<typename ParameterType>
+class ofParameter;
 
+class ofAbstractParameter{
+public:
+	virtual ~ofAbstractParameter(){};
+	virtual string getName() const { return ""; }
+	virtual void setName(string name) {}
+	virtual string toString() const { return ""; }
+	virtual void fromString(string str) {  }
+	virtual string type() const{ return typeid(*this).name(); }
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> & cast(){
+		return static_cast<ofParameter<ParameterType> &>(*this);
+	}
+
+	template<typename ParameterType>
+	const ofParameter<ParameterType> & cast() const{
+		return static_cast<const ofParameter<ParameterType> &>(*this);
+	}
+
+	friend ostream& operator<<(ostream& os, const ofAbstractParameter& p){
+		os << p.toString();
+		return os;
+	}
+
+	friend istream& operator>>(istream& is, ofAbstractParameter& p){
+		string str;
+		is >> str;
+		p.fromString(str);
+		return is;
+	}
 };
 
 template<typename ParameterType>
-class ofxParameter: public ofxAbstractParameter{
+class ofParameter: public ofAbstractParameter{
 public:
-	ofxParameter();
-	ofxParameter(ParameterType v);
-	ofxParameter(string name, ParameterType v);
-	ofxParameter(string name, ParameterType v, ParameterType min, ParameterType max);
-	virtual ~ofxParameter(){};
+	ofParameter();
+	ofParameter(ParameterType v);
+	ofParameter(string name, ParameterType v);
+	ofParameter(string name, ParameterType v, ParameterType min, ParameterType max);
+	virtual ~ofParameter(){};
 
 	ParameterType operator=(ParameterType v);
 	operator const ParameterType & () const;
 	operator ParameterType & ();
 
-	virtual ParameterType getValue();
+	virtual ParameterType getValue() const;
 	virtual void setValue(ParameterType v);
 
 	void setName(string name);
@@ -37,10 +63,11 @@ public:
 	void setMax(ParameterType max);
 	ParameterType getMax();
 
-	ofxParameter<ParameterType> & set(string name, ParameterType value);
-	ofxParameter<ParameterType> & set(string name, ParameterType value, ParameterType min, ParameterType max);
+	ofParameter<ParameterType> & set(string name, ParameterType value);
+	ofParameter<ParameterType> & set(string name, ParameterType value, ParameterType min, ParameterType max);
 
 	string toString() const;
+	void fromString(string str);
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
@@ -90,31 +117,31 @@ private:
 
 
 template<typename ParameterType>
-ofxParameter<ParameterType>::ofxParameter(){
+ofParameter<ParameterType>::ofParameter(){
 	obj = ofPtr<Value>(new Value);
 }
 
 template<typename ParameterType>
-ofxParameter<ParameterType>::ofxParameter(ParameterType v)
+ofParameter<ParameterType>::ofParameter(ParameterType v)
 :obj(ofPtr<Value>(new Value(v))){}
 
 template<typename ParameterType>
-ofxParameter<ParameterType>::ofxParameter(string name, ParameterType v)
+ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
 :obj(ofPtr<Value>(new Value(name, v))){}
 
 template<typename ParameterType>
-ofxParameter<ParameterType>::ofxParameter(string name, ParameterType v, ParameterType min, ParameterType max)
+ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
 :obj(ofPtr<Value>(new Value(name, v, min, max))){}
 
 
 template<typename ParameterType>
-ParameterType ofxParameter<ParameterType>::operator=(ParameterType v){
+ParameterType ofParameter<ParameterType>::operator=(ParameterType v){
 	setValue(v);
 	return obj->value;
 }
 
 template<typename ParameterType>
-ofxParameter<ParameterType> & ofxParameter<ParameterType>::set(string name, ParameterType value, ParameterType min, ParameterType max){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, ParameterType value, ParameterType min, ParameterType max){
 	setName(name);
 	setValue(value);
 	setMin(min);
@@ -123,64 +150,72 @@ ofxParameter<ParameterType> & ofxParameter<ParameterType>::set(string name, Para
 }
 
 template<typename ParameterType>
-ofxParameter<ParameterType> & ofxParameter<ParameterType>::set(string name, ParameterType value){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, ParameterType value){
 	setName(name);
 	setValue(value);
 	return *this;
 }
 
 template<typename ParameterType>
-ParameterType ofxParameter<ParameterType>::getValue(){
+ParameterType ofParameter<ParameterType>::getValue() const{
 	return obj->value;
 }
 
 template<typename ParameterType>
-void ofxParameter<ParameterType>::setValue(ParameterType v){
+void ofParameter<ParameterType>::setValue(ParameterType v){
 	obj->value = v;
 	ofNotifyEvent(obj->changedE,v,this);
 }
 
 template<typename ParameterType>
-void ofxParameter<ParameterType>::setMin(ParameterType min){
+void ofParameter<ParameterType>::setMin(ParameterType min){
 	obj->min = min;
 }
 
 template<typename ParameterType>
-ParameterType ofxParameter<ParameterType>::getMin(){
+ParameterType ofParameter<ParameterType>::getMin(){
 	return obj->min;
 }
 
 template<typename ParameterType>
-void ofxParameter<ParameterType>::setMax(ParameterType max){
+void ofParameter<ParameterType>::setMax(ParameterType max){
 	obj->max = max;
 }
 
 template<typename ParameterType>
-ParameterType ofxParameter<ParameterType>::getMax(){
+ParameterType ofParameter<ParameterType>::getMax(){
 	return obj->max;
 }
 
 template<typename ParameterType>
-ofxParameter<ParameterType>::operator ParameterType & (){
+ofParameter<ParameterType>::operator ParameterType & (){
 	return obj->value;
 }
 
 template<typename ParameterType>
-ofxParameter<ParameterType>::operator const ParameterType & () const{
+ofParameter<ParameterType>::operator const ParameterType & () const{
 	return obj->value;
 }
 
 template<typename ParameterType>
-void ofxParameter<ParameterType>::setName(string _name){
+void ofParameter<ParameterType>::setName(string _name){
 	obj->name = _name;
 }
 
 template<typename ParameterType>
-string ofxParameter<ParameterType>::getName() const{
+string ofParameter<ParameterType>::getName() const{
 	return obj->name;
 }
 
 template<typename ParameterType>
-string ofxParameter<ParameterType>::toString() const{
+string ofParameter<ParameterType>::toString() const{
 	return ofToString(obj->value);
+}
+
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::fromString(string str){
+	stringstream sstr;
+	sstr.str() = str;
+	sstr >> obj->value;
 }

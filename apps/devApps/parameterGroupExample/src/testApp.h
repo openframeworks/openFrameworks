@@ -2,7 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "ofxParameterGroup.h"
+#include "CirclesRenderer.h"
+#include "ofxJSONElement.h"
 
 class testApp : public ofBaseApp{
 
@@ -21,7 +22,8 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofxParameterGroup parameters;
 		ofxPanel gui;
-
+		ofxXmlSettings settings;
+		CirclesRenderer renderer;
+		ofxJSONElement json;
 };

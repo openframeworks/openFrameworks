@@ -26,3 +26,6 @@ void ofxLabel::draw() {
     ofPopStyle();
 }
 
+ofAbstractParameter & ofxLabel::getParameter(){
+	return label;
+}

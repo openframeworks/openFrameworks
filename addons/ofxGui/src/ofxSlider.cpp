@@ -1,12 +1,12 @@
 #include "ofxSlider.h"
 
 template<typename Type>
-ofxSlider<Type>::ofxSlider(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width, float height){
+ofxSlider<Type>::ofxSlider(string sliderName, ofParameter<Type> _val, Type _min, Type _max, float width, float height){
 	setup(sliderName,_val,_min,_max,width,height);
 }
 
 template<typename Type>
-ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width, float height){
+ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _val, Type _min, Type _max, float width, float height){
 	name = sliderName;
 	value = _val;
 	min = _min;
@@ -39,28 +39,6 @@ void ofxSlider<Type>::mouseDragged(ofMouseEventArgs & args){
 template<typename Type>
 void ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
-}
-
-template<typename Type>
-void ofxSlider<Type>::saveToXml(ofxXmlSettings& xml) {
-	string xmlName = name;
-	ofStringReplace(xmlName," ","_");
-	ofStringReplace(xmlName,",","_");
-	ofStringReplace(xmlName,"(","_");
-	ofStringReplace(xmlName,")","_");
-	ofStringReplace(xmlName,"/","_");
-	xml.setValue(xmlName, value);
-}
-
-template<typename Type>
-void ofxSlider<Type>::loadFromXml(ofxXmlSettings& xml) {
-	string xmlName = name;
-	ofStringReplace(xmlName," ","_");
-	ofStringReplace(xmlName,",","_");
-	ofStringReplace(xmlName,"(","_");
-	ofStringReplace(xmlName,")","_");
-	ofStringReplace(xmlName,"/","_");
-	value = xml.getValue(xmlName, value);
 }
 
 template<typename Type>
@@ -116,6 +94,11 @@ void ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
 	if( bGuiActive ){
 		value = ofMap(mx, b.x, b.x + b.width, min, max, true);
 	}
+}
+
+template<typename Type>
+ofAbstractParameter & ofxSlider<Type>::getParameter(){
+	return value;
 }
 
 

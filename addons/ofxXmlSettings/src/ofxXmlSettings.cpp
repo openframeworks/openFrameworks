@@ -98,6 +98,16 @@ bool ofxXmlSettings::saveFile(){
 }
 
 //---------------------------------------------------------
+bool ofxXmlSettings::load(string path){
+	return loadFile(path);
+}
+
+//---------------------------------------------------------
+bool ofxXmlSettings::save(string path){
+	return saveFile(path);
+}
+
+//---------------------------------------------------------
 void ofxXmlSettings::clearTagContents(const string& tag, int which){
 	//we check it first to see if it exists
 	//otherwise setValue will make a new empty tag
@@ -399,6 +409,54 @@ int ofxXmlSettings::addValue(const string& tag, const string& value){
 int ofxXmlSettings::addTag(const string& tag){
 	int tagID = writeTag(tag, "", -1) -1;
 	return tagID;
+}
+
+void ofxXmlSettings::serialize(const ofAbstractParameter & parameter){
+	string name = parameter.getName();
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
+		if(!tagExists(name)) addTag(name);
+		pushTag(name);
+		for(int i=0;i<group.size();i++){
+			serialize(group.get(i));
+		}
+		popTag();
+	}else{
+		string value = parameter.toString();
+		if(!tagExists(name))
+			addValue(name,value);
+		else
+			setValue(name,value);
+	}
+}
+
+void ofxXmlSettings::deserialize(ofAbstractParameter & parameter){
+	string name = parameter.getName();
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
+		if(tagExists(name)){
+			pushTag(name);
+			for(int i=0;i<group.size();i++){
+				deserialize(group.get(i));
+			}
+			popTag();
+		}
+	}else{
+		if(tagExists(name)){
+			if(parameter.type()==typeid(ofParameter<int>).name()){
+				parameter.cast<int>().setValue(getValue(name,0));
+			}else if(parameter.type()==typeid(ofParameter<float>).name()){
+				parameter.cast<float>().setValue(getValue(name,0.0f));
+			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
+				parameter.cast<bool>().setValue(getValue(name,false));
+			}else if(parameter.type()==typeid(ofParameter<string>).name()){
+				parameter.cast<string>().setValue(getValue(name,""));
+			}else{
+				parameter.fromString(getValue(name,""));
+			}
+		}
+	}
+
 }
 
 /*******************

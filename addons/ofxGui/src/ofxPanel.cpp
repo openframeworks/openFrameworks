@@ -20,6 +20,7 @@ ofxPanel::~ofxPanel(){
 
 ofxPanel * ofxPanel::setup(string collectionName, string _filename, float x, float y){
 	name = collectionName;
+	this->parameters.setName(name);
 	b.x = x;
 	b.y = y;
 	header = defaultHeight;
@@ -34,9 +35,10 @@ ofxPanel * ofxPanel::setup(string collectionName, string _filename, float x, flo
 }
 
 
-ofxPanel * ofxPanel::setup(const ofxParameterGroup & parameters, string collectionName, string _filename, float x, float y){
+ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, string _filename, float x, float y){
 
-	name = collectionName;
+	name = parameters.getName();
+	this->parameters.setName(name);
 	b.x = x;
 	b.y = y;
 	header = defaultHeight;
@@ -46,20 +48,23 @@ ofxPanel * ofxPanel::setup(const ofxParameterGroup & parameters, string collecti
 	filename = _filename;
 
 	for(int i=0;i<parameters.size();i++){
-		if(parameters.getType(i)==typeid(ofxParameter<int>).name()){
-			ofxParameter<int> p = parameters.getInt(i);
+		string type = parameters.getType(i);
+		if(type==typeid(ofParameter<int>).name()){
+			ofParameter<int> p = parameters.getInt(i);
 			add(p);
-		}else if(parameters.getType(i)==typeid(ofxParameter<float>).name()){
-			ofxParameter<float> p = parameters.getFloat(i);
+		}else if(type==typeid(ofParameter<float>).name()){
+			ofParameter<float> p = parameters.getFloat(i);
 			add(p);
-		}else if(parameters.getType(i)==typeid(ofxParameter<bool>).name()){
-			ofxParameter<bool> p = parameters.getBool(i);
+		}else if(type==typeid(ofParameter<bool>).name()){
+			ofParameter<bool> p = parameters.getBool(i);
 			add(p);
-		}else if(parameters.getType(i)==typeid(ofxParameterGroup).name()){
-			ofxParameterGroup p = parameters.getGroup(i);
+		}else if(type==typeid(ofParameterGroup).name()){
+			ofParameterGroup p = parameters.getGroup(i);
 			ofxPanel * panel = new ofxPanel;
 			panel->setup(p);
 			add(panel);
+		}else{
+			ofLogError() << "ofxPanel; can't add control of type " << type;
 		}
 	}
 
@@ -68,17 +73,7 @@ ofxPanel * ofxPanel::setup(const ofxParameterGroup & parameters, string collecti
 	return this;
 }
 
-void ofxPanel::saveToXml(ofxXmlSettings& xml) {
-	for(int i = 0; i < (int)collection.size(); i++){
-		collection[i]->saveToXml(xml);
-	}
-}
 
-void ofxPanel::loadFromXml(ofxXmlSettings& xml) {
-	for(int i = 0; i < (int)collection.size(); i++){
-		collection[i]->loadFromXml(xml);
-	}
-}
 
 void ofxPanel::add(ofxBaseGui * element){
 	collection.push_back( element );
@@ -94,17 +89,19 @@ void ofxPanel::add(ofxBaseGui * element){
 	if(subpanel!=NULL){
 		subpanel->filename = filename;
 	}
+
+	parameters.add(element->getParameter());
 }
 
-void ofxPanel::add(ofxParameter<float> & parameter){
+void ofxPanel::add(ofParameter<float> & parameter){
 	add(new ofxFloatSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
 }
 
-void ofxPanel::add(ofxParameter<int> & parameter){
+void ofxPanel::add(ofParameter<int> & parameter){
 	add(new ofxIntSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
 }
 
-void ofxPanel::add(ofxParameter<bool> & parameter){
+void ofxPanel::add(ofParameter<bool> & parameter){
 	add(new ofxToggle(parameter.getName(),parameter));
 }
 
@@ -276,4 +273,8 @@ ofxBaseGui * ofxPanel::getControl(int num){
 		return collection[num];
 	else
 		return NULL;
+}
+
+ofAbstractParameter & ofxPanel::getParameter(){
+	return parameters;
 }

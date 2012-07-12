@@ -6,17 +6,14 @@
 class ofxToggle : public ofxBaseGui{
 public:
 	ofxToggle(){};
-	ofxToggle(string toggleName, ofxParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
-	ofxToggle * setup(string toggleName, ofxParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle(string toggleName, ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle * setup(string toggleName, ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	
 
 	virtual void mouseMoved(ofMouseEventArgs & args);
 	virtual void mousePressed(ofMouseEventArgs & args);
 	virtual void mouseDragged(ofMouseEventArgs & args);
 	virtual void mouseReleased(ofMouseEventArgs & args);
-	
-	virtual void saveToXml(ofxXmlSettings& xml) ;
-	virtual void loadFromXml(ofxXmlSettings& xml);
 	
 	void draw();
 
@@ -34,9 +31,11 @@ public:
 	bool operator=(bool v);
 	operator bool & ();
 
-	ofxParameter<bool> value;
+	ofAbstractParameter & getParameter();
+
 protected:
 	ofRectangle checkboxRect;
+	ofParameter<bool> value;
 	
 	void setValue(float mx, float my, bool bCheck);
 	
