@@ -51,13 +51,11 @@ public:
 //     ofAddListener(addon.newIntEvent, this, &Class::method)
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*, ArgumentsType&)){
-    event -= Poco::delegate(listener, listenerMethod);
     event += Poco::delegate(listener, listenerMethod);
 }
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
-    event -= Poco::delegate(listener, listenerMethod);
     event += Poco::delegate(listener, listenerMethod);
 }
 
@@ -108,6 +106,14 @@ static void ofNotifyEvent(EventType & event, const ArgumentsType & args, SenderT
 template <class EventType,typename ArgumentsType>
 static void ofNotifyEvent(EventType & event, const ArgumentsType & args){
 	event.notify(NULL,args);
+}
+
+inline void ofNotifyEvent(ofEvent<void> & event, void * sender){
+	event.notify(sender);
+}
+
+inline void ofNotifyEvent(ofEvent<void> & event){
+	event.notify(NULL);
 }
 
 #endif
