@@ -29,6 +29,7 @@
 
 #include "ofxOscSender.h"
 #include "ofUtils.h"
+#include "ofParameterGroup.h"
 
 
 #include "UdpSocket.h"
@@ -85,6 +86,48 @@ void ofxOscSender::sendMessage( ofxOscMessage& message )
 	p << osc::EndBundle;
 
 	socket->Send( p.Data(), p.Size() );
+}
+
+void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		ofxOscBundle bundle;
+		appendParameter(bundle,parameter,"/");
+		sendBundle(bundle);
+	}else{
+		ofxOscMessage msg;
+		appendParameter(msg,parameter,"");
+		sendMessage(msg);
+	}
+}
+
+
+void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, string address){
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		ofxOscBundle bundle;
+		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
+		for(int i=0;i<group.size();i++){
+			const ofAbstractParameter & p = group[i];
+			appendParameter(bundle,p,address+group.getName()+"/");
+		}
+		_bundle.addBundle(bundle);
+	}else{
+		ofxOscMessage msg;
+		appendParameter(msg,parameter,address);
+		_bundle.addMessage(msg);
+	}
+}
+
+void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address){
+	msg.setAddress(address+parameter.getName());
+	if(parameter.type()==typeid(ofParameter<int>).name()){
+		msg.addIntArg(parameter.cast<int>());
+	}else if(parameter.type()==typeid(ofParameter<float>).name()){
+		msg.addFloatArg(parameter.cast<float>());
+	}else if(parameter.type()==typeid(ofParameter<bool>).name()){
+		msg.addIntArg(parameter.cast<bool>());
+	}else{
+		msg.addStringArg(parameter.cast<string>());
+	}
 }
 
 void ofxOscSender::appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p )

@@ -46,6 +46,7 @@ class UdpTransmitSocket;
 
 #include "ofxOscBundle.h"
 #include "ofxOscMessage.h"
+#include "ofParameter.h"
 
 
 class ofxOscSender
@@ -61,6 +62,8 @@ public:
 	void sendMessage( ofxOscMessage& message );
 	/// send the given bundle
 	void sendBundle( ofxOscBundle& bundle );
+	/// creates a message using an ofParameter
+	void sendParameter( const ofAbstractParameter & parameter);
 
 private:
 	void shutdown();
@@ -68,6 +71,8 @@ private:
 	// helper methods for constructing messages
 	void appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p );
 	void appendMessage( ofxOscMessage& message, osc::OutboundPacketStream& p );
+	void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, string address);
+	void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address);
 
 	UdpTransmitSocket* socket;
 };
