@@ -6,14 +6,25 @@
 template<typename ParameterType>
 class ofParameter;
 
+class ofParameterGroup;
+
 class ofAbstractParameter{
 public:
+	ofAbstractParameter(){ parent = NULL; };
 	virtual ~ofAbstractParameter(){};
 	virtual string getName() const { return ""; }
 	virtual void setName(string name) {}
 	virtual string toString() const { return ""; }
 	virtual void fromString(string str) {  }
 	virtual string type() const{ return typeid(*this).name(); }
+
+	void setParent(ofParameterGroup * _parent){
+		parent = _parent;
+	}
+
+	ofParameterGroup * getParent(){
+		return parent;
+	}
 
 	template<typename ParameterType>
 	ofParameter<ParameterType> & cast(){
@@ -36,6 +47,8 @@ public:
 		p.fromString(str);
 		return is;
 	}
+private:
+	ofParameterGroup * parent;
 };
 
 template<typename ParameterType>
