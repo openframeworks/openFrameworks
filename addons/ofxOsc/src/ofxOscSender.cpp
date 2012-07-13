@@ -90,12 +90,23 @@ void ofxOscSender::sendMessage( ofxOscMessage& message )
 
 void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 	if(parameter.type()==typeid(ofParameterGroup).name()){
+		string address = "/";
+		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		for(int i=0;i<(int)hierarchy.size()-1;i++){
+			address+=hierarchy[i] + "/";
+		}
 		ofxOscBundle bundle;
-		appendParameter(bundle,parameter,"/");
+		appendParameter(bundle,parameter,address);
 		sendBundle(bundle);
 	}else{
+		string address = "";
+		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		for(int i=0;i<(int)hierarchy.size()-1;i++){
+			address+= "/" + hierarchy[i];
+		}
+		if(address.length()) address += "/";
 		ofxOscMessage msg;
-		appendParameter(msg,parameter,"");
+		appendParameter(msg,parameter,address);
 		sendMessage(msg);
 	}
 }

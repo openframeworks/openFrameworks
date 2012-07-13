@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxOscSender.h"
+#include "ofxOscParameterSync.h"
 #include "ofxGui.h"
 
 class testApp : public ofBaseApp{
@@ -21,10 +21,11 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofxOscSender sender;
+		ofxOscParameterSync sync;
 
 		ofParameter<float> size;
 		ofParameter<int> number;
+		ofParameter<bool> check;
 		ofParameterGroup parameters,colors;
 		ofParameter<int> r,g,b,a;
 		ofxPanel gui;

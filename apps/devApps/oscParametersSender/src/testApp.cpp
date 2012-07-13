@@ -2,10 +2,10 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	sender.setup("localhost",6666);
 	parameters.setName("parameters");
 	parameters.add(size.set("size",10,1,100));
 	parameters.add(number.set("number",10,1,100));
+	parameters.add(check.set("check",false));
 	colors.setName("colors");
 	colors.add(r.set("r",127,0,255));
 	colors.add(g.set("g",127,0,255));
@@ -13,12 +13,14 @@ void testApp::setup(){
 	colors.add(a.set("a",127,0,255));
 	parameters.add(colors);
 	gui.setup(parameters);
+	// by now needs to pass the gui parameter groups since the panel internally creates it's own group
+	sync.setup((ofParameterGroup&)gui.getParameter(),6667,"localhost",6666);
 	ofSetVerticalSync(true);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	sender.sendParameter(parameters);
+	sync.update();
 }
 
 //--------------------------------------------------------------

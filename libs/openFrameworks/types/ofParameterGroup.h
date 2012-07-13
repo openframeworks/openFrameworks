@@ -11,8 +11,8 @@
 #include <map>
 #include "Poco/Any.h"
 #include "ofConstants.h"
-#include "ofParameter.h"
 #include "ofLog.h"
+#include "ofParameter.h"
 
 class ofParameterGroup: public ofAbstractParameter {
 public:
@@ -63,6 +63,10 @@ public:
 	string toString() const;
 
 	bool contains(string name);
+
+	void notifyParameterChanged(ofAbstractParameter & param);
+
+	ofEvent<ofAbstractParameter> parameterChangedE;
 
 private:
 	map<string,int> parametersIndex;
