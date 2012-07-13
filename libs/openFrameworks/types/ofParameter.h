@@ -10,21 +10,18 @@ class ofParameterGroup;
 
 class ofAbstractParameter{
 public:
-	ofAbstractParameter(){ parent = NULL; };
-	virtual ~ofAbstractParameter(){};
-	virtual string getName() const { return ""; }
-	virtual void setName(string name) {}
-	virtual string toString() const { return ""; }
-	virtual void fromString(string str) {  }
-	virtual string type() const{ return typeid(*this).name(); }
+	ofAbstractParameter();
+	virtual ~ofAbstractParameter();
+	virtual string getName() const;
+	virtual void setName(string name);
+	virtual string toString() const;
+	virtual void fromString(string str);
+	virtual string type() const;
 
-	void setParent(ofParameterGroup * _parent){
-		parent = _parent;
-	}
-
-	ofParameterGroup * getParent(){
-		return parent;
-	}
+	void setParent(ofParameterGroup * _parent);
+	const ofParameterGroup * getParent() const;
+	ofParameterGroup * getParent();
+	vector<string> getGroupHierarchyNames() const;
 
 	template<typename ParameterType>
 	ofParameter<ParameterType> & cast(){
@@ -36,17 +33,12 @@ public:
 		return static_cast<const ofParameter<ParameterType> &>(*this);
 	}
 
-	friend ostream& operator<<(ostream& os, const ofAbstractParameter& p){
-		os << p.toString();
-		return os;
-	}
+	friend ostream& operator<<(ostream& os, const ofAbstractParameter& p);
+	friend istream& operator>>(istream& is, ofAbstractParameter& p);
 
-	friend istream& operator>>(istream& is, ofAbstractParameter& p){
-		string str;
-		is >> str;
-		p.fromString(str);
-		return is;
-	}
+protected:
+	void notifyParent();
+
 private:
 	ofParameterGroup * parent;
 };
@@ -105,25 +97,30 @@ public:
 private:
 	class Value{
 	public:
-		Value(){};
+		Value()
+		:bInNotify(false){};
 
 		Value(ParameterType v)
-		:value(v){}
+		:value(v)
+		,bInNotify(false){}
 
 		Value(string name, ParameterType v)
 		:name(name)
-		,value(v){}
+		,value(v)
+		,bInNotify(false){}
 
 		Value(string name, ParameterType v, ParameterType min, ParameterType max)
 		:name(name)
 		,value(v)
 		,min(min)
-		,max(max){};
+		,max(max)
+		,bInNotify(false){};
 
 		string name;
 		ParameterType value;
 		ParameterType min, max;
 		ofEvent<ParameterType> changedE;
+		bool bInNotify;
 	};
 	ofPtr<Value> obj;
 };
@@ -176,8 +173,12 @@ ParameterType ofParameter<ParameterType>::getValue() const{
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::setValue(ParameterType v){
+	if(obj->bInNotify) return;
+	obj->bInNotify = true;
 	obj->value = v;
 	ofNotifyEvent(obj->changedE,v,this);
+	notifyParent();
+	obj->bInNotify = false;
 }
 
 template<typename ParameterType>

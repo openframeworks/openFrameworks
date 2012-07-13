@@ -113,7 +113,8 @@ DWORD WINAPI
 #else
 void*
 #endif
-		ofxOscReceiver::startThread( void* receiverInstance )
+
+ofxOscReceiver::startThread( void* receiverInstance )
 {
 	// cast the instance
 	ofxOscReceiver* instance = (ofxOscReceiver*)receiverInstance;

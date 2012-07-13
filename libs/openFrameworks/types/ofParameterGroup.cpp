@@ -1,5 +1,6 @@
 #include "ofParameterGroup.h"
 #include "ofUtils.h"
+#include "ofParameter.h"
 
 void ofParameterGroup::add(ofAbstractParameter & param){
 	parameters.push_back(&param);
@@ -157,4 +158,9 @@ ostream& operator<<(ostream& os, const ofParameterGroup& group) {
 
 bool ofParameterGroup::contains(string name){
 	return parametersIndex.find(name)!=parametersIndex.end();
+}
+
+void ofParameterGroup::notifyParameterChanged(ofAbstractParameter & param){
+	ofNotifyEvent(parameterChangedE,param);
+	if(getParent()) getParent()->notifyParameterChanged(param);
 }

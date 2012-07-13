@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "ofxOsc.h"
+#include "ofxOscParameterSync.h"
 
 class testApp : public ofBaseApp{
 
@@ -20,11 +20,12 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
-		ofxOscReceiver receiver;
+
+		ofxOscParameterSync sync;
 
 		ofParameter<float> size;
 		ofParameter<int> number;
+		ofParameter<bool> check;
 		ofParameterGroup parameters,colors;
 		ofParameter<int> r,g,b,a;
 		ofxPanel gui;
