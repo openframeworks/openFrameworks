@@ -88,7 +88,7 @@ static void ofRemoveListener(EventType & event, ListenerClass  * listener, void 
 // or in case there's no sender:
 //	ofNotifyEvent(addon.newIntEvent, intArgument)
 
-template <class EventType,typename ArgumentsType, typename SenderType>
+template <class EventType, typename ArgumentsType, typename SenderType>
 static void ofNotifyEvent(EventType & event, ArgumentsType & args, SenderType * sender){
 	event.notify(sender,args);
 }
@@ -98,5 +98,14 @@ static void ofNotifyEvent(EventType & event, ArgumentsType & args){
 	event.notify(NULL,args);
 }
 
+template <class EventType, typename ArgumentsType, typename SenderType>
+static void ofNotifyEvent(EventType & event, const ArgumentsType & args, SenderType * sender){
+	event.notify(sender,args);
+}
+
+template <class EventType,typename ArgumentsType>
+static void ofNotifyEvent(EventType & event, const ArgumentsType & args){
+	event.notify(NULL,args);
+}
 
 #endif
