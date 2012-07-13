@@ -6,28 +6,28 @@
 
 #ifdef OF_USING_POCO
 
-#include "Poco/FIFOEvent.h"
+#include "Poco/BasicEvent.h"
 #include "Poco/Delegate.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 //-----------------------------------------
-// define ofEvent as a poco FIFOEvent
+// define ofEvent as a poco BasicEvent
 // to create your own events use:
 // ofEvent<argType> myEvent
 
 template <typename ArgumentsType>
-class ofEvent: public Poco::FIFOEvent<ArgumentsType> {
+class ofEvent: public Poco::BasicEvent<ArgumentsType> {
 public:
 
-	ofEvent():Poco::FIFOEvent<ArgumentsType>(){
+	ofEvent():Poco::BasicEvent<ArgumentsType>(){
 
 	}
 
 	// allow copy of events, by copying everything except the mutex
 	ofEvent(const ofEvent<ArgumentsType> & mom)
-	:Poco::FIFOEvent<ArgumentsType>()
+	:Poco::BasicEvent<ArgumentsType>()
 	{
 		this->_enabled = mom._enabled;
 	}
@@ -50,12 +50,22 @@ public:
 // ie:
 //     ofAddListener(addon.newIntEvent, this, &Class::method)
 template <class EventType,typename ArgumentsType, class ListenerClass>
-static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*, ArgumentsType&)){
+void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*, ArgumentsType&)){
     event += Poco::delegate(listener, listenerMethod);
 }
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
-static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
+void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
+    event += Poco::delegate(listener, listenerMethod);
+}
+
+template <class ListenerClass>
+void ofAddListener(ofEvent<void> & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*)){
+    event += Poco::delegate(listener, listenerMethod);
+}
+
+template <class ListenerClass>
+void ofAddListener(ofEvent<void> & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)()){
     event += Poco::delegate(listener, listenerMethod);
 }
 
@@ -70,12 +80,22 @@ static void ofAddListener(EventType & event, ListenerClass  * listener, void (Li
 //     ofAddListener(addon.newIntEvent, this, &Class::method)
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
-static void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*, ArgumentsType&)){
+void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*, ArgumentsType&)){
     event -= Poco::delegate(listener, listenerMethod);
 }
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
-static void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
+void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
+    event -= Poco::delegate(listener, listenerMethod);
+}
+
+template <class ListenerClass>
+void ofRemoveListener(ofEvent<void> & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*)){
+    event -= Poco::delegate(listener, listenerMethod);
+}
+
+template <class ListenerClass>
+void ofRemoveListener(ofEvent<void> & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)()){
     event -= Poco::delegate(listener, listenerMethod);
 }
 
@@ -88,14 +108,22 @@ static void ofRemoveListener(EventType & event, ListenerClass  * listener, void 
 // or in case there's no sender:
 //	ofNotifyEvent(addon.newIntEvent, intArgument)
 
-template <class EventType,typename ArgumentsType, typename SenderType>
-static void ofNotifyEvent(EventType & event, ArgumentsType & args, SenderType * sender){
+template <class EventType,typename ArgumentsType>
+void ofNotifyEvent(EventType & event, ArgumentsType & args, void * sender){
 	event.notify(sender,args);
 }
 
 template <class EventType,typename ArgumentsType>
-static void ofNotifyEvent(EventType & event, ArgumentsType & args){
+void ofNotifyEvent(EventType & event, ArgumentsType & args){
 	event.notify(NULL,args);
+}
+
+inline void ofNotifyEvent(ofEvent<void> & event, void * sender){
+	event.notify(sender);
+}
+
+inline void ofNotifyEvent(ofEvent<void> & event){
+	event.notify(NULL);
 }
 
 
