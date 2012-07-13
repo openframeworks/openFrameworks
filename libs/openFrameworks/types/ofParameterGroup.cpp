@@ -4,6 +4,7 @@
 void ofParameterGroup::add(ofAbstractParameter & param){
 	parameters.push_back(&param);
 	parametersIndex[param.getName()] = parameters.size()-1;
+	param.setParent(this);
 }
 
 ofParameter<bool> ofParameterGroup::getBool(string name) const	{
