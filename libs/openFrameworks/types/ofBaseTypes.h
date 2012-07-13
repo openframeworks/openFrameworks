@@ -16,7 +16,8 @@
 #include "ofColor.h"
 #include "ofMesh.h"
 #include "ofPixels.h"
-#include "ofParameter.h"
+
+class ofAbstractParameter;
 
 template<typename T>
 class ofImage_;
