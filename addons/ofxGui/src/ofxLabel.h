@@ -11,7 +11,7 @@ public:
     // error: no matching function for call to ‘ofxLabel::setup(const char [7], const char [1])’
     // note:   no known conversion for argument 2 from ‘const char [1]’ to ‘ofxParameter<std::basic_string<char> >’
     ofxLabel * setup(string labelName, string _label, float width = defaultWidth, float height = defaultHeight);
-    ofxLabel * setup(string labelName, ofxParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel * setup(string labelName, ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual void mouseMoved(ofMouseEventArgs & args){}
@@ -39,6 +39,8 @@ public:
     string operator=(string v) { label = v; return v; }
     operator string & ()       { return label; }
 
+    ofAbstractParameter & getParameter();
+
 protected:
-    ofxParameter<string> label;
+    ofParameter<string> label;
 };
