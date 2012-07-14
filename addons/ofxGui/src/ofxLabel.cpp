@@ -1,6 +1,6 @@
 #include "ofxLabel.h"
 
-ofxLabel* ofxLabel::setup(string labelName, ofxParameter<string> _label, float width, float height) {
+ofxLabel* ofxLabel::setup(string labelName, ofParameter<string> _label, float width, float height) {
     name     = labelName;
     label    = _label;
     b.width  = width;
