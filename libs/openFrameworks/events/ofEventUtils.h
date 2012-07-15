@@ -108,11 +108,11 @@ static void ofNotifyEvent(EventType & event, const ArgumentsType & args){
 	event.notify(NULL,args);
 }
 
-inline void ofNotifyEvent(ofEvent<void> & event, void * sender){
+inline void ofNotifyVoidEvent(ofEvent<void> & event, void * sender){
 	event.notify(sender);
 }
 
-inline void ofNotifyEvent(ofEvent<void> & event){
+inline void ofNotifyVoidEvent(ofEvent<void> & event){
 	event.notify(NULL);
 }
 
