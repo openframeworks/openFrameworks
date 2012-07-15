@@ -343,7 +343,6 @@ public:
 	virtual void setHexColor( int hexColor ){}; // hex, like web 0xFF0033;
 
 	// bg color
-	virtual ofFloatColor & getBgColor()=0;
 	virtual bool bClearBg(){return true;};
 	virtual void background(const ofColor & c){};
 	virtual void background(float brightness){};

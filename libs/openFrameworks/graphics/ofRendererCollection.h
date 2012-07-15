@@ -247,14 +247,6 @@ public:
 	 }; // hex, like web 0xFF0033;
 
 	// bg color
-	ofFloatColor & getBgColor(){
-		 if(renderers.size()){
-			 return renderers[0]->getBgColor();
-		 }else{
-			 static ofFloatColor c;
-			 return c;
-		 }
-	}
 
 	bool bClearBg(){
 		 if(renderers.size()){
