@@ -32,11 +32,22 @@
 #import <UIKit/UIKit.h>
 #import "ESRenderer.h"
 
+@protocol EAGLViewDelegate <NSObject>
+@optional
+- (void)glViewAnimationStarted;
+- (void)glViewAnimationStopped;
+- (void)glViewDraw;
+- (void)glViewResized;
+@end
+
 // This class wraps the CAEAGLLayer from CoreAnimation into a convenient UIView subclass.
 // The view content is basically an EAGL surface you render your OpenGL scene into.
 // Note that setting the view non-opaque will only work if the EAGL surface has an alpha channel.
 @interface EAGLView : UIView
 {
+@public
+    id<EAGLViewDelegate> delegate;
+    
 @protected
     id <ESRenderer> renderer;
 	int touchScaleFactor;
@@ -59,6 +70,7 @@
     NSLock * glLock;
 }
 
+@property (nonatomic, assign) id delegate;
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;
 @property (nonatomic) float animationFrameInterval;
 @property (nonatomic) float animationFrameRate;
@@ -78,6 +90,8 @@
 
 - (void) startRender;
 - (void) finishRender;
+
+- (void) destroy;
 
 - (EAGLContext *) context;
 
