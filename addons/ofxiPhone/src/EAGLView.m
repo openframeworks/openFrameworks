@@ -37,12 +37,15 @@
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
 
-@interface EAGLView()
+@interface EAGLView() {
+    BOOL bInit;
+}
 - (void) drawView:(id)sender;
 @end
 
 @implementation EAGLView
 
+@synthesize delegate;
 @synthesize animating;
 @dynamic animationFrameInterval;
 @dynamic animationFrameRate;
@@ -127,14 +130,27 @@
              */
 //			displayLinkSupported = YES;
         }
+        
+        bInit = YES;
 	}
 	
 	return self;
 }
 
-- (void) dealloc{
+- (void) destroy {
+    if(!bInit) {
+        return;
+    }
+
+    [self stopAnimation];
     [renderer release];
     [glLock release];
+    
+    bInit = NO;
+}
+
+- (void) dealloc{
+    [self destroy];
 	[super dealloc];
 }
 
@@ -143,7 +159,9 @@
 }
 
 - (void) drawView {
-    NSLog(@"[EAGLView drawView] - this method need to be extended.");
+    if([self.delegate respondsToSelector:@selector(glViewDraw)]) {
+        [self.delegate glViewDraw];
+    }
 }
 
 - (void)startRender {
@@ -185,6 +203,10 @@
     [renderer startRender];
     [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
     [renderer finishRender];
+    
+    if([self.delegate respondsToSelector:@selector(glViewResized)]) {
+        [self.delegate glViewResized];
+    }
 }
 
 
@@ -247,6 +269,10 @@
         }
 		
 		animating = YES;
+        
+        if([self.delegate respondsToSelector:@selector(glViewAnimationStarted)]) {
+            [self.delegate glViewAnimationStarted];
+        }
 	}
 }
 
@@ -261,6 +287,10 @@
 		}
 		
 		animating = NO;
+        
+        if([self.delegate respondsToSelector:@selector(glViewAnimationStopped)]) {
+            [self.delegate glViewAnimationStopped];
+        }
 	}
 }
 
