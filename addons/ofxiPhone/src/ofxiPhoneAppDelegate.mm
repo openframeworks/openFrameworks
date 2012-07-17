@@ -29,6 +29,7 @@
  *
  * ***********************************************************************/ 
 
+#import "ofMain.h"
 #import "ofxiPhoneAppDelegate.h"
 #import "ofxiPhoneExtras.h"
 #import "ofxiPhoneExternalDisplay.h"
@@ -96,7 +97,7 @@
     if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended. 
         self.glViewController = [[[ofxiPhoneViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds] 
                                                                             app:ofGetAppPtr()] autorelease];
-        [self.window insertSubview:self.glViewController.view atIndex:0]; // make sure it is the bottom most view.
+        self.window.rootViewController = self.glViewController;
     }
     
 	#ifdef __IPHONE_4_3
@@ -131,20 +132,20 @@
 }
 
 -(void) applicationWillResignActive:(UIApplication *)application {
-    [ofxiPhoneGetViewController() stopAnimation];
+    [ofxiPhoneGetGLView() stopAnimation];
 	
 	ofxiPhoneAlerts.lostFocus();
 }
 
 -(void) applicationDidBecomeActive:(UIApplication *)application {
-    [ofxiPhoneGetViewController() startAnimation];
+    [ofxiPhoneGetGLView() startAnimation];
 	
 	ofxiPhoneAlerts.gotFocus();
 }
 
 
 -(void) applicationWillTerminate:(UIApplication *)application {
-    [ofxiPhoneGetViewController() stopAnimation];
+    [ofxiPhoneGetGLView() stopAnimation];
 	
     // stop listening for orientation change notifications
     [[NSNotificationCenter defaultCenter] removeObserver: self];

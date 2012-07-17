@@ -183,10 +183,10 @@ function createPackage {
     #remove previously created package 
     cd $pkg_ofroot/..
 	#if [ $runOSXSLScript = 1 ]; then
-	#	rm -Rf of_preRelease_v${pkg_version}_osxSL*
+	#	rm -Rf of_v${pkg_version}_osxSL*
 	#else
-	    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}.*
-		rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}_*
+	    rm -Rf of_v${pkg_version}_${pkg_platform}.*
+		rm -Rf of_v${pkg_version}_${pkg_platform}_*
     #fi
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
@@ -414,17 +414,43 @@ function createPackage {
 
     #create compressed package
     cd $pkg_ofroot/..
+    mkdir -p openFrameworks/apps/myApps 
+    if [ "$pkg_platform" = "android" ]; then
+        cp -r openFrameworks/examples/android/androidEmptyExample openFrameworks/apps/myApps 
+    elif [ "$pkg_platform" = "ios" ]; then
+        cp -r openFrameworks/examples/ios/emptyExample openFrameworks/apps/myApps 
+    fi
+    echo "From 0071 onwards examples are now located in the root of OF at examples/" > openFrameworks/apps/_ExamplesMoved.txt
+    echo "This folder will remain as a place to work on your own apps." >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "Just remember projects in apps/ still need to be two levels deep." >> openFrameworks/apps/_ExamplesMoved.txt 
+    echo "" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "So: " >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "apps/" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "  mySoundApp/ " >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "will not work" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "apps/" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "  soundApps/" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "      mySoundApp/ " >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "  miscApps/" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "  experiments/" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "" >> openFrameworks/apps/_ExamplesMoved.txt
+    echo "will work " >> openFrameworks/apps/_ExamplesMoved.txt
+    
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ]; then
-        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
-        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
-        tar czf of_preRelease_v${pkg_version}_${pkg_platform}.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}
-        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
+        mkdir of_v${pkg_version}_${pkg_platform}_release
+        mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
+        tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
+        rm -Rf of_v${pkg_version}_${pkg_platform}_release
     else
-        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
-        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
-        zip -r of_preRelease_v${pkg_version}_${pkg_platform}.zip of_preRelease_v${pkg_version}_${pkg_platform} > /dev/null
-        mv of_preRelease_v${pkg_version}_${pkg_platform} of_preRelease_v${pkg_version}_${pkg_platform}        
-        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
+        mkdir of_v${pkg_version}_${pkg_platform}_release
+        mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
+        zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
+        mv of_v${pkg_version}_${pkg_platform}_release of_v${pkg_version}_${pkg_platform}_release        
+        rm -Rf of_v${pkg_version}_${pkg_platform}_release
     fi
 }
 
@@ -433,18 +459,18 @@ if [ "$platform" = "all" ]; then
     for eachplatform in win_cb linux linux64 vs2008 vs2010 osx 
     do
         cd $packageroot
-        mkdir of_preRelease_v${version}_${eachplatform}
-        cp -R addons apps export libs other scripts of_preRelease_v${version}_${eachplatform}
-        cd of_preRelease_v${version}_${eachplatform}
+        mkdir of_v${version}_${eachplatform}
+        cp -R addons apps export libs other scripts of_v${version}_${eachplatform}
+        cd of_v${version}_${eachplatform}
         createPackage $eachplatform $2 $PWD
     done
     
     cd $packageroot
     echo dir: $PWD
-    mkdir of_preRelease_v${version}_all
-    mv addons apps export libs other scripts $packageroot/of_preRelease_v${version}_all
-    tar czf of_preRelease_v$version_all_FAT.tar.gz of_preRelease_v${version}_all
-    rm -Rf of_preRelease_v${version}_all
+    mkdir of_v${version}_all
+    mv addons apps export libs other scripts $packageroot/of_v${version}_all
+    tar czf of_v$version_all_FAT.tar.gz of_v${version}_all
+    rm -Rf of_v${version}_all
     mv * $packageroot/..
     #rm -Rf $packageroot
 else

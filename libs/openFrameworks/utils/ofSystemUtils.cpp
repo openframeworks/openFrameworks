@@ -282,25 +282,31 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 	if (bFolderSelection == false){
 
         OPENFILENAME ofn;
-		char szFileName[MAX_PATH];
 
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
 #ifdef __MINGW32_VERSION
+		char szFileName[MAX_PATH];
 		ofn.lpstrFilter = "All\0";
 		ofn.lpstrFile = szFileName;
 #else // VS2010
-		ofn.lpstrFilter = LPCWSTR("All\0");
-		ofn.lpstrFile = LPWSTR(szFileName);
+		wchar_t szFileName[MAX_PATH] = L"";
+		ofn.lpstrFilter = L"All\0";
+		ofn.lpstrFile = szFileName;
 #endif
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
 
 		if(GetOpenFileName(&ofn)) {
+#ifdef __MINGW32_VERSION
 			results.filePath = string(szFileName);
+#else
+			results.filePath = convertWideToNarrow(szFileName);
+#endif
+
 		}
 
 	} else {
@@ -508,4 +514,3 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	return results;
 }
-

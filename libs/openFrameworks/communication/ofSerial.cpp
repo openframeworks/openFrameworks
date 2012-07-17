@@ -114,7 +114,6 @@ ofSerial::ofSerial(){
 	//---------------------------------------------
 	#endif
 	//---------------------------------------------
-	bVerbose = false;
 	bInited = false;
 }
 
@@ -142,7 +141,6 @@ ofSerial::~ofSerial(){
 	#endif
 	//---------------------------------------------
 
-	bVerbose = false;
 	bInited = false;
 }
 
@@ -350,6 +348,9 @@ bool ofSerial::setup(string portName, int baud){
 		   case 115200: cfsetispeed(&options,B115200);
 						cfsetospeed(&options,B115200);
 						break;
+		   case 230400: cfsetispeed(&options,B230400);
+						cfsetospeed(&options,B230400);
+						break;
 
 			default:	cfsetispeed(&options,B9600);
 						cfsetospeed(&options,B9600);
@@ -365,7 +366,7 @@ bool ofSerial::setup(string portName, int baud){
 		tcsetattr(fd,TCSANOW,&options);
 
 		bInited = true;
-		ofLog(OF_LOG_NOTICE,"sucess in opening serial connection");
+		ofLog(OF_LOG_NOTICE,"success in opening serial connection");
 
 	    return true;
 	//---------------------------------------------
