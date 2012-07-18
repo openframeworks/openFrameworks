@@ -107,7 +107,7 @@
     [self launchApp:new testApp() withFrame:appFrame andTitle:@"long"];
 }
 
-- (void)launchApp:(ofBaseApp *)app 
+- (void)launchApp:(ofxiPhoneApp *)app 
         withFrame:(CGRect)frame 
          andTitle:(NSString *)title
 {
