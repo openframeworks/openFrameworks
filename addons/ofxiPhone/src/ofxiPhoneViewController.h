@@ -5,13 +5,13 @@
 
 #import <UIKit/UIKit.h>
 
-class ofBaseApp;
+class ofxiPhoneApp;
 @class ofxiOSEAGLView;
 
 @interface ofxiPhoneViewController : UIViewController
 
 @property (nonatomic, retain) ofxiOSEAGLView * glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofBaseApp *)app;
+- (id)initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app;
 
 @end

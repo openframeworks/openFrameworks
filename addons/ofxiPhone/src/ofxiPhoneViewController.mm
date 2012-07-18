@@ -12,7 +12,7 @@
 
 @synthesize glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofBaseApp *)app {
+- (id)initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app {
 
     if((self = [super init])) {
         self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
