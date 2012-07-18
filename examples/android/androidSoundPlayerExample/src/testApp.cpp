@@ -10,7 +10,7 @@ void testApp::setup(){
 	beats.setVolume(0.75f);
 	vocals.setVolume(0.5f);
 	font.loadFont("Sudbury_Basin_3D.ttf", 32);
-	beats.setMultiPlay(false);  no multiplay in android yet
+	beats.setMultiPlay(false);
 	vocals.setMultiPlay(true);
 }
 
