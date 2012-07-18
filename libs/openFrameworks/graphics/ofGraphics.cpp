@@ -308,11 +308,6 @@ bool ofbClearBg(){
 }
 
 //----------------------------------------------------------
-float * ofBgColorPtr(){
-	return &renderer->getBgColor().r;
-}
-
-//----------------------------------------------------------
 void ofBackground(int brightness, int alpha){
 	ofBackground(brightness, brightness, brightness, alpha);
 }
@@ -383,6 +378,11 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 	glDepthMask(false);
 	mesh.draw();
 	glDepthMask(true);
+}
+
+//----------------------------------------------------------
+ofColor ofGetBackgroundColor(){
+	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------

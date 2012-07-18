@@ -122,12 +122,13 @@ void ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_COR
 // background
 
 // bg color
-float * ofBgColorPtr();
 void ofBackground(int r, int g, int b, int a=255);
 void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
 void ofBackgroundHex(int hexColor, int alpha = 255);
 void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode = OF_GRADIENT_CIRCULAR);
+
+ofColor ofGetBackgroundColor();
 
 void ofSetBackgroundColor(int r, int g, int b, int a=255);
 void ofSetBackgroundColor(int brightness, int alpha = 255);
