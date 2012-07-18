@@ -2,6 +2,7 @@
 
 #include "ofEvents.h"
 #include "ofTypes.h"
+#include "ofUtils.h"
 
 template<typename ParameterType>
 class ofParameter;
