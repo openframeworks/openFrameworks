@@ -70,10 +70,10 @@
 
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
     
-    [center addObserver: self 
-               selector: @selector(receivedRotate:) 
-                   name: UIDeviceOrientationDidChangeNotification 
-                 object: nil];
+    [center addObserver:self 
+               selector:@selector(receivedRotate:) 
+                   name:UIDeviceOrientationDidChangeNotification 
+                 object:nil];
     
     [center addObserver:self 
                selector:@selector(handleScreenConnectNotification:)
@@ -96,7 +96,7 @@
     appDelegateClassName = [[self class] description];
     if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended. 
         self.glViewController = [[[ofxiPhoneViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds] 
-                                                                            app:ofGetAppPtr()] autorelease];
+                                                                            app:(ofxiPhoneApp *)ofGetAppPtr()] autorelease];
         self.window.rootViewController = self.glViewController;
     }
     
@@ -274,19 +274,23 @@
         return NO; // already displaying on this screen.
     }
     
+    ofxiOSEAGLView * glView = ofxiPhoneGetGLView();
+    
     if(screenIndex > 0){ // display on external screen.
         
         [self createExternalWindowWithScreenModeIndex:screenModeIndex];
 
-        self.glViewController.glView.frame = self.externalWindow.screen.bounds;
-        [self.externalWindow insertSubview:self.glViewController.view atIndex:0];
+        glView.frame = self.externalWindow.screen.bounds;
+        [self.externalWindow insertSubview:glView atIndex:0];
         [self.externalWindow makeKeyAndVisible];
         
     } else { // display back on device screen.
 
-        self.glViewController.glView.frame = [UIScreen mainScreen].bounds;
-        [self.window insertSubview:self.glViewController.view atIndex:0];
-        [self.window makeKeyAndVisible];
+        if(self.glViewController != nil) {
+            glView.frame = [UIScreen mainScreen].bounds;
+            [self.glViewController.view insertSubview:glView atIndex:0];
+            [self.window makeKeyAndVisible];
+        }
     }
     
     ofxiPhoneGetOFWindow()->resetDimensions();
