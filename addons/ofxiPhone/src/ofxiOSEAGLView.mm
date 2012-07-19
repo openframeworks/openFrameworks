@@ -14,6 +14,11 @@
 
 static ofxiOSEAGLView * _instanceRef = nil;
 
+@interface ofxiOSEAGLView() {
+    BOOL bInit;
+}
+@end
+
 @implementation ofxiOSEAGLView
 
 @synthesize lastFrameTime;
@@ -24,7 +29,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     return _instanceRef;
 }
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofBaseApp *)appPtr {
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
     self = [self initWithFrame:frame 
                       andDepth:ofAppiPhoneWindow::getInstance()->isDepthEnabled()
                          andAA:ofAppiPhoneWindow::getInstance()->isAntiAliasingEnabled()
@@ -47,10 +52,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
         if(app != ofGetAppPtr()) {              // check if already running.
             ofRunApp(ofPtr<ofBaseApp>(app));    // this case occurs when app is created in main().
         }
-        ofRegisterTouchEvents((ofxiPhoneApp *)app);
-        ofxiPhoneAlerts.addListener((ofxiPhoneApp *)app);
+        ofRegisterTouchEvents(app);
+        ofxiPhoneAlerts.addListener(app);
         
         ofUpdateBitmapCharacterTexture();
+        
+        bInit = YES;
     }
     
     return self;
@@ -67,16 +74,27 @@ static ofxiOSEAGLView * _instanceRef = nil;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-- (void)dealloc {
+- (void)destroy {
+    if(!bInit) {
+        return;
+    }
+    
     [activeTouches release];
     
-    ofUnregisterTouchEvents((ofxiPhoneApp *)app);
-    ofxiPhoneAlerts.removeListener((ofxiPhoneApp *)app);
+    ofUnregisterTouchEvents(app);
+    ofxiPhoneAlerts.removeListener(app);
     app->exit();
     ofSetAppPtr(ofPtr<ofBaseApp>((app=NULL)));
     
     _instanceRef = nil;
     
+    bInit = NO;
+    
+    [super destroy];
+}
+
+- (void)dealloc {
+    [self destroy];
     [super dealloc];
 }
 
@@ -126,6 +144,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
     timeThen		= timeNow;
     
     nFrameCount++;
+    
+    //------------------------------------------ 
+    
+    [super drawView];   // alert delegates that a new frame has been drawn.
 }
 
 //------------------------------------------------------

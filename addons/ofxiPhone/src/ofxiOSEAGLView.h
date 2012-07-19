@@ -8,13 +8,13 @@
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
 
-class ofBaseApp;
+class ofxiPhoneApp;
 
 @interface ofxiOSEAGLView : EAGLView {
 
 @protected
     NSMutableDictionary	* activeTouches;
-    ofBaseApp * app;
+    ofxiPhoneApp * app;
     
 	double timeNow;
     double timeThen;
@@ -30,7 +30,8 @@ class ofBaseApp;
 
 + (ofxiOSEAGLView *) getInstance;
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofBaseApp *)app;
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)app;
 - (void)setup;
+- (void)destroy;
 
 @end
