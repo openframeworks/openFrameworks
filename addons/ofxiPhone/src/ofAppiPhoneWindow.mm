@@ -59,8 +59,6 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
     
     orientation = OF_ORIENTATION_DEFAULT;
 	
-	resetDimensions();
-	
 	depthEnabled=false;
 	antiAliasingEnabled=false;
 	retinaEnabled=false;
@@ -90,11 +88,11 @@ void ofAppiPhoneWindow::initializeWindow() {
 void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
-    if (bAppCreated) {                                          // app already created, only reset values.
-        resetDimensions();          // new OF app created, it could be a different window and screen size, so reset.
-    } else {                                                    // app not yet created, created it!
-        startAppWithDelegate( "ofxiPhoneAppDelegate" );
+    if (bAppCreated) {  // app already created, do nothing.
+        return;
     }
+    
+    startAppWithDelegate( "ofxiPhoneAppDelegate" );
 }
 
 void ofAppiPhoneWindow::startAppWithDelegate(string appDelegateClassName) {
@@ -108,12 +106,6 @@ void ofAppiPhoneWindow::startAppWithDelegate(string appDelegateClassName) {
     [pool release];
 }
 
-void ofAppiPhoneWindow::resetDimensions() {
-	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
-	windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
-	screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
-}
-
 /******** Set Window properties ************/
 
 void setWindowPosition(int x, int y) {
@@ -124,65 +116,24 @@ void setWindowShape(int w, int h) {
 	// DO NOTHING, you're not really allowed to play with window for now
 }
 
-
-
 /******** Get Window/Screen properties ************/
 
-// return cached pos, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowPosition() {
-	if(windowPos.x == NOT_INITIALIZED) {
-		CGRect frame = [[ofxiOSEAGLView getInstance] frame];
-		windowPos.set(frame.origin.x, frame.origin.y, 0);
-	}
-	return windowPos;
+	return *[[ofxiOSEAGLView getInstance] getWindowPosition];
 }
 
-
-// return cached size, read if nessecary
 ofPoint	ofAppiPhoneWindow::getWindowSize() {
-	if(windowSize.x == NOT_INITIALIZED) {
-        CGRect frame = [[ofxiOSEAGLView getInstance] frame];
-		windowSize.set(frame.size.width, frame.size.height, 0);
-
-		if(retinaEnabled){
-            UIScreen * currentScreen = [ofxiOSEAGLView getInstance].window.screen;  // current screen is the screen that GLView is attached to.
-            if(!currentScreen){                                             // if GLView is not attached, assume to be main device screen.
-                currentScreen = [UIScreen mainScreen];
-            }
-			if ([currentScreen respondsToSelector:@selector(scale)]){
-				windowSize *= [currentScreen scale];
-            }
-        }
-	}
-
-	return windowSize;
+	return *[[ofxiOSEAGLView getInstance] getWindowSize];
 }
 
-
-// return cached size, read if nessecary
 ofPoint	ofAppiPhoneWindow::getScreenSize() {
-	if(screenSize.x == NOT_INITIALIZED) {
-        UIScreen * currentScreen = [ofxiOSEAGLView getInstance].window.screen; // current screen is the screen that GLView is attached to.
-        if(!currentScreen){                                                     // if GLView is not attached, assume to be main device screen.
-            currentScreen = [UIScreen mainScreen];
-        }
-		CGSize s = [currentScreen bounds].size;
-		screenSize.set(s.width, s.height, 0);
-		
-		if(retinaEnabled){
-			if ([currentScreen respondsToSelector:@selector(scale)]){
-				screenSize *= [currentScreen scale];
-            }
-        }
-	}
-	return screenSize;
+	return *[[ofxiOSEAGLView getInstance] getScreenSize];
 }
 
 int ofAppiPhoneWindow::getWidth(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return (int)getWindowSize().x;
 	}
-	
 	return (int)getWindowSize().y;
 }
 
@@ -190,7 +141,6 @@ int ofAppiPhoneWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return (int)getWindowSize().y;
 	}
-	
 	return (int)getWindowSize().x;
 }
 
@@ -263,10 +213,6 @@ void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
 	}
 	
 	this->orientation = orientation;
-	windowSize.x = NOT_INITIALIZED;
-	screenSize.x = NOT_INITIALIZED;
-	getScreenSize();
-	getWindowSize();
 }
 
 
