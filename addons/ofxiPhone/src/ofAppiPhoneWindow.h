@@ -48,8 +48,6 @@ public:
 	virtual void		hideCursor() {};
 	virtual void		showCursor() {};
     
-    virtual void        resetDimensions();
-	
 	virtual void		setWindowPosition(int x, int y) {};
 	virtual void		setWindowShape(int w, int h) {};
 	
@@ -95,13 +93,9 @@ public:
 	static ofAppiPhoneWindow* getInstance();
 	
 protected:
-	// cache these, they're not gonne change during duration of app
-	ofPoint				screenSize;
-	ofPoint				windowSize;
-	ofPoint				windowPos;
-	
-	bool				bEnableSetupScreen;
-	ofOrientation		orientation;
+
+	bool bEnableSetupScreen;
+	ofOrientation orientation;
 	
 	bool depthEnabled;
 	bool antiAliasingEnabled;
