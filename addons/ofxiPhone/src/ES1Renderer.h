@@ -32,4 +32,7 @@
 - (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
 - (EAGLContext*) context;
 
+- (NSInteger)getWidth;
+- (NSInteger)getHeight;
+
 @end
