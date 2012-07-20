@@ -50,7 +50,7 @@
     
 @protected
     id <ESRenderer> renderer;
-	int touchScaleFactor;
+	int scaleFactor;
     
     BOOL bUseDepth;
     BOOL bUseFSAA;
@@ -94,5 +94,13 @@
 - (void) destroy;
 
 - (EAGLContext *) context;
+
+- (GLint) getWidth;
+- (GLint) getHeight;
+
+- (void) notifyAnimationStarted;
+- (void) notifyAnimationStopped;
+- (void) notifyDraw;
+- (void) notifyResized;
 
 @end
