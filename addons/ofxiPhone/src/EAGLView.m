@@ -74,12 +74,12 @@
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		
-		touchScaleFactor=1;
+		scaleFactor = 1;
 		if(bUseRetina){
 			if([[UIScreen mainScreen] respondsToSelector:@selector(scale)]){
 				if ([[UIScreen mainScreen] scale] > 1){
 					[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
-					touchScaleFactor=[[UIScreen mainScreen] scale];
+					scaleFactor = [[UIScreen mainScreen] scale];
 				} else {
                     bUseRetina = false;
                 }
@@ -159,9 +159,7 @@
 }
 
 - (void) drawView {
-    if([self.delegate respondsToSelector:@selector(glViewDraw)]) {
-        [self.delegate glViewDraw];
-    }
+    [self notifyDraw];
 }
 
 - (void)startRender {
@@ -183,20 +181,20 @@
     
     if(bUseRetina){
         if([currentScreen respondsToSelector:@selector(scale)]){
-            if(touchScaleFactor != [currentScreen scale]){
-                touchScaleFactor = [currentScreen scale];
-                [self setContentScaleFactor:touchScaleFactor];
+            if(scaleFactor != [currentScreen scale]){
+                scaleFactor = [currentScreen scale];
+                [self setContentScaleFactor:scaleFactor];
             }
         } else {
-            if(touchScaleFactor != 1){
-                touchScaleFactor = 1;
-                [self setContentScaleFactor:touchScaleFactor];
+            if(scaleFactor != 1){
+                scaleFactor = 1;
+                [self setContentScaleFactor:scaleFactor];
             }
         }
     } else {
-        if(touchScaleFactor != 1){
-            touchScaleFactor = 1;
-            [self setContentScaleFactor:touchScaleFactor];
+        if(scaleFactor != 1){
+            scaleFactor = 1;
+            [self setContentScaleFactor:scaleFactor];
         }
     }
 
@@ -204,9 +202,7 @@
     [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
     [renderer finishRender];
     
-    if([self.delegate respondsToSelector:@selector(glViewResized)]) {
-        [self.delegate glViewResized];
-    }
+    [self notifyResized];
 }
 
 
@@ -270,9 +266,7 @@
 		
 		animating = YES;
         
-        if([self.delegate respondsToSelector:@selector(glViewAnimationStarted)]) {
-            [self.delegate glViewAnimationStarted];
-        }
+        [self notifyAnimationStarted];
 	}
 }
 
@@ -288,14 +282,47 @@
 		
 		animating = NO;
         
-        if([self.delegate respondsToSelector:@selector(glViewAnimationStopped)]) {
-            [self.delegate glViewAnimationStopped];
-        }
+        [self notifyAnimationStopped];
 	}
 }
 
+//------------------------------------------------------------------- getters.
 -(EAGLContext*) context{
 	return [renderer context];
 }
+
+- (GLint)getWidth {
+    return [renderer getWidth];
+} 
+
+- (GLint)getHeight {
+    return [renderer getHeight];
+}
+
+//------------------------------------------------------------------- notify.
+- (void) notifyAnimationStarted {
+    if([self.delegate respondsToSelector:@selector(glViewAnimationStarted)]) {
+        [self.delegate glViewAnimationStarted];
+    }
+}
+
+- (void) notifyAnimationStopped {
+    if([self.delegate respondsToSelector:@selector(glViewAnimationStopped)]) {
+        [self.delegate glViewAnimationStopped];
+    }
+}
+
+- (void) notifyDraw {
+    if([self.delegate respondsToSelector:@selector(glViewDraw)]) {
+        [self.delegate glViewDraw];
+    }
+}
+
+- (void) notifyResized {
+    if([self.delegate respondsToSelector:@selector(glViewResized)]) {
+        [self.delegate glViewResized];
+    }
+}
+
 
 @end
