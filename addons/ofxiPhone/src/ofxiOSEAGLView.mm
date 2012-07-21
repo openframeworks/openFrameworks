@@ -17,6 +17,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 @interface ofxiOSEAGLView() {
     BOOL bInit;
 }
+- (void)updateDimensions;
 @end
 
 @implementation ofxiOSEAGLView
@@ -24,6 +25,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
 @synthesize lastFrameTime;
 @synthesize nFrameCount;
 @synthesize frameRate;
+@synthesize screenSize;
+@synthesize windowSize;
+@synthesize windowPos;
 
 + (ofxiOSEAGLView *) getInstance {
     return _instanceRef;
@@ -48,6 +52,11 @@ static ofxiOSEAGLView * _instanceRef = nil;
         fps = frameRate = 60.0f;
         timeNow = 0.0;
         timeThen = 0.0;
+        
+        screenSize = new ofVec3f();
+        windowSize = new ofVec3f();
+        windowPos = new ofVec3f();
+        [self updateDimensions];
         
         if(app != ofGetAppPtr()) {              // check if already running.
             ofRunApp(ofPtr<ofBaseApp>(app));    // this case occurs when app is created in main().
@@ -81,6 +90,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     [activeTouches release];
     
+    delete screenSize;
+    screenSize = NULL;
+    delete windowSize;
+    windowSize = NULL;
+    delete windowPos;
+    windowPos = NULL;
+    
     ofUnregisterTouchEvents(app);
     ofxiPhoneAlerts.removeListener(app);
     app->exit();
@@ -98,6 +114,28 @@ static ofxiOSEAGLView * _instanceRef = nil;
     [super dealloc];
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self updateDimensions];
+    [super notifyResized];
+}
+
+- (void)updateDimensions {
+    windowPos->set(self.frame.origin.x * scaleFactor, self.frame.origin.y * scaleFactor, 0);
+    windowSize->set(self.frame.size.width * scaleFactor, self.frame.size.height * scaleFactor, 0);
+    
+    UIScreen * currentScreen = self.window.screen;  // current screen is the screen that GLView is attached to.
+    if(!currentScreen) {                            // if GLView is not attached, assume to be main device screen.
+        currentScreen = [UIScreen mainScreen];
+    }
+    screenSize->set(currentScreen.bounds.size.width * scaleFactor, currentScreen.bounds.size.height * scaleFactor, 0);
+}
+
+- (void)notifyResized {
+    // blank this.
+    // we want to notifyResized at the end of layoutSubviews.
+}
+
 - (void) drawView {
     
     ofNotifyUpdate();
@@ -106,10 +144,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     [self lockGL];
     [self startRender];
-    
-    //we do this as ofGetWidth() now accounts for rotation 
-    //so we just make our viewport across the whole screen
-    glViewport(0, 0, self.frame.size.width, self.frame.size.height);
+
+    glViewport(0, 0, windowSize->x, windowSize->y);
     
     float * bgPtr = ofBgColorPtr();
     bool bClearAuto = ofbClearBg();
@@ -147,12 +183,23 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     //------------------------------------------ 
     
-    [super drawView];   // alert delegates that a new frame has been drawn.
+    [super notifyDraw];   // alerts delegate that a new frame has been drawn.
+}
+
+- (void)notifyDraw {
+    // blank this.
+    // we want to notifyDraw at the end of drawView.
 }
 
 //------------------------------------------------------
 - (void)touchesBegan:(NSSet *)touches 
            withEvent:(UIEvent *)event{
+    
+    if(!bInit) {
+        // if the glView is destroyed which also includes the OF app,
+        // we no longer need to pass on these touch events.
+        return; 
+    }
 	
 	for(UITouch *touch in touches) {
 		int touchIndex = 0;
@@ -164,8 +211,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
-		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y*=touchScaleFactor;
+		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y *= scaleFactor;
 		
 		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
 		
@@ -186,14 +233,20 @@ static ofxiOSEAGLView * _instanceRef = nil;
 //------------------------------------------------------
 - (void)touchesMoved:(NSSet *)touches 
            withEvent:(UIEvent *)event{
+    
+    if(!bInit) {
+        // if the glView is destroyed which also includes the OF app,
+        // we no longer need to pass on these touch events.
+        return; 
+    }
 	
 	for(UITouch *touch in touches){
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
-		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y*=touchScaleFactor;
+		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y *= scaleFactor;
 		
 		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
 		
@@ -213,6 +266,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)touchesEnded:(NSSet *)touches 
            withEvent:(UIEvent *)event{
     
+    if(!bInit) {
+        // if the glView is destroyed which also includes the OF app,
+        // we no longer need to pass on these touch events.
+        return; 
+    }
+    
 	for(UITouch *touch in touches){
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
@@ -220,8 +279,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
-		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y*=touchScaleFactor;
+		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y *= scaleFactor;
 		
 		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
 		
@@ -241,14 +300,20 @@ static ofxiOSEAGLView * _instanceRef = nil;
 //------------------------------------------------------
 - (void)touchesCancelled:(NSSet *)touches 
                withEvent:(UIEvent *)event{
+    
+    if(!bInit) {
+        // if the glView is destroyed which also includes the OF app,
+        // we no longer need to pass on these touch events.
+        return; 
+    }
 	
 	for(UITouch *touch in touches){
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
-		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y*=touchScaleFactor;
+		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y *= scaleFactor;
 		
 		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
 		
