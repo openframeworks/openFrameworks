@@ -26,6 +26,8 @@ void testApp::draw(){
 
 	ofSetColor(255, 0, 0);
 	ofRect(ofGetMouseX(), ofGetMouseY(), 50, 50);
+	
+	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
 }
 
 //--------------------------------------------------------------

@@ -305,6 +305,11 @@ void ofWindowManager::setFrameRate(float targetRate){
 	
 }
 
+float ofWindowManager::getFrameRate()
+{
+	return frameRate;
+}
+
 void ofWindowManager::setActiveWindow(ofWindow* win)
 {
 	activeWindow = win;

@@ -28,6 +28,7 @@ public:
 	ofWindow* getWindowById(int id);
 	
 	void setFrameRate(float targetRate);
+	float getFrameRate();
 	void setActiveWindow(ofWindow* win);
 	
 	ofPoint	getWindowPosition();
