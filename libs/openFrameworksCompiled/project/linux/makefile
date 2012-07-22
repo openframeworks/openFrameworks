@@ -29,9 +29,10 @@ endif
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
 	NDK_PLATFORM = android-8
+	GCC_VERSION = 4.4.3
 else
 ifeq ($(ARCH),armv7l)
-	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=hard -mfpu=vfp
+	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
 else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
 endif
@@ -63,23 +64,34 @@ ifneq ($(ARCH),android)
 		endif
 	endif
 else
-	LIBSPATH = android
+    ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
+	    LIBSPATH = android/armeabi-v7a
+	    ABI = armeabi-v7a
+    else
+        ifeq ($(MAKECMDGOALS),Release_neonAndroid)
+            LIBSPATH = android/armeabi-v7a
+        	ABI = armeabi-v7a
+        else
+        	LIBSPATH = android/armeabi
+	        ABI = armeabi
+        endif
+    endif
 	#NDK_ROOT = $(shell cat ndk_path.make)
-	TOOLCHAIN=arm-linux-androideabi-4.4.3
+	TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
 	CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
 	CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 	AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 	SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
-	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums 
-	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include"
+	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -frtti -fexceptions
+	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/"
 	CFLAGS += -DANDROID
 endif
 
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
 ifeq ($(ARCH),android)
-	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofVideoPlayer.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofOpenALSoundPlayer.cpp)
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofOpenALSoundPlayer.cpp)
 else
 	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
 endif
@@ -93,11 +105,7 @@ ifeq ($(ARCH),android)
 	INCLUDES_FLAGS += -I../../../glu/include_android
  	INCLUDES_FLAGS += -I../../../../addons/ofxAndroid/src
 else
-    ifeq ($(ARCH),armv7l)
-        INCLUDES_FLAGS += -I../../../glu/include_android
-    else
-     	INCLUDES_FLAGS += -I../../../glu/include
-    endif
+ 	INCLUDES_FLAGS += -I../../../glu/include
 endif
 
 CFLAGS += -Wall -fexceptions

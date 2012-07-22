@@ -1083,12 +1083,11 @@ class OpenALObject
 				
 		OSStatus UnloadEffect(UInt32 inEffectID)
 		{
-			// [FIXED] SoundEngineEffect should be deleted before remove from the map
-			SoundEngineEffect *theEffect = mEffectsMap->Get(inEffectID);
+			mEffectsMap->Remove(inEffectID); //remove pointer from structure first
+			SoundEngineEffect *theEffect = mEffectsMap->Get(inEffectID); //then delete
 			if (theEffect){
 				delete theEffect;
 			}
-			mEffectsMap->Remove(inEffectID);
 			return 0;
 		}
 

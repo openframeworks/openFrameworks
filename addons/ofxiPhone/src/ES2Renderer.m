@@ -304,4 +304,12 @@ enum {
     [super dealloc];
 }
 
+- (NSInteger)getWidth {
+    return backingWidth;
+} 
+
+- (NSInteger)getHeight {
+    return backingHeight;
+}
+
 @end

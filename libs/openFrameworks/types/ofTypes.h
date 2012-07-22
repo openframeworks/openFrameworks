@@ -141,6 +141,16 @@ public:
 		ofPtr(const std::tr1::weak_ptr<Tp1>& __r)
 	: std::tr1::shared_ptr<T>(__r) { }
 
+	// tgfrerer: extends ofPtr facade to allow dynamic_pointer_cast, pt.1
+#if (_MSC_VER)
+	template<typename Tp1>
+	ofPtr(const ofPtr<Tp1>& __r, std::tr1::_Dynamic_tag)
+	: std::tr1::shared_ptr<T>(__r, std::tr1::_Dynamic_tag()) { }
+#else
+	template<typename Tp1>
+	ofPtr(const ofPtr<Tp1>& __r, std::tr1::__dynamic_cast_tag)
+	: std::tr1::shared_ptr<T>(__r, std::tr1::__dynamic_cast_tag()) { }
+#endif
 	  /*template<typename Tp1, typename Del>
 		explicit
 		ofPtr(const std::tr1::unique_ptr<Tp1, Del>&) = delete;
@@ -150,3 +160,16 @@ public:
 		ofPtr(std::tr1::unique_ptr<Tp1, Del>&& __r)
 	: std::tr1::shared_ptr<T>(std::move(__r)) { }*/
 };
+
+// tgfrerer: extends ofPtr facade to allow dynamic_pointer_cast, pt. 2
+#if (_MSC_VER)
+template<typename _Tp, typename _Tp1>
+ofPtr<_Tp>
+	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)
+{ return ofPtr<_Tp>(__r, std::tr1::_Dynamic_tag()); }
+#else
+template<typename _Tp, typename _Tp1>
+ofPtr<_Tp>
+	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)
+{ return ofPtr<_Tp>(__r, std::tr1::__dynamic_cast_tag()); }
+#endif
