@@ -23,6 +23,8 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 
 
+		void drawButton(const string& s, int x, int y, int w, int h, bool isToggled);
+
 		ofVideoGrabber grabber;
 		ofxCvGrayscaleImage gray, bg;//, diff;
 		ofxCvHaarFinder faceFinder;
@@ -33,6 +35,20 @@ class testApp : public ofBaseApp{
 		int one_second_time;
 		int camera_fps;
 		int frames_one_sec;
+		int threshold;
+
+
+		// TODO: replace this code with ofxGui when it supports big buttons
+		bool minusOn;
+		bool plusOn;
+
+		int minusX;
+		int plusX;
+		int minusY;
+		int plusY;
+
+		int buttonWidth;
+		int buttonHeight;
 
 };
 
