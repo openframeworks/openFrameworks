@@ -50,7 +50,7 @@ void ofxiPhoneMapKit::open() {
 		ofLog(OF_LOG_VERBOSE, "   alloc MKMapView");
 		mapView	= [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, ofGetWidth(), ofGetHeight())];
 		mapView.delegate = nil;
-        [ofxiPhoneGetUIWindow() addSubview:mapView];
+        [ofxiPhoneGetGLParentView() addSubview:mapView];
 	}
 }
 

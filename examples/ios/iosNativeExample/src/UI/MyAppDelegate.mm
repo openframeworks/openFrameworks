@@ -26,7 +26,7 @@
      *
      **/
     
-    self.navigationController = [[UINavigationController alloc] init];
+    self.navigationController = [[[UINavigationController alloc] init] autorelease];
     [self.window setRootViewController:self.navigationController];
     
     [self.navigationController pushViewController:[[[MyAppViewController alloc] init] autorelease]

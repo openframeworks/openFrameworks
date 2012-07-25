@@ -15,7 +15,7 @@ void testApp::setup(){
 
 	//Our Gui setup
 	myGuiViewController	= [[MyGuiView alloc] initWithNibName:@"MyGuiView" bundle:nil];
-	[ofxiPhoneGetUIWindow() addSubview:myGuiViewController.view];
+	[ofxiPhoneGetGLParentView() addSubview:myGuiViewController.view];
 
 	ofBackground(255,255,255);
 }
