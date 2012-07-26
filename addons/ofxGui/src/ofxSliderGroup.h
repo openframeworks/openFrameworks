@@ -3,6 +3,7 @@
 #include "ofParameter.h"
 #include "ofxSlider.h"
 
+/*
 class ofxSliderGroup<class VecType> {
 public:
 	ofxSliderGroup() : count(VecType.DIM) {
@@ -15,3 +16,4 @@ protected:
 	vector<ofxSlider> sliders;
 	 const int count;
 };
+*/
