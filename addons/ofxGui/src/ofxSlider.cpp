@@ -1,16 +1,14 @@
 #include "ofxSlider.h"
 
 template<typename Type>
-ofxSlider<Type>::ofxSlider(string sliderName, ofParameter<Type> _val, Type _min, Type _max, float width, float height){
-	setup(sliderName,_val,_min,_max,width,height);
+ofxSlider<Type>::ofxSlider(string sliderName, ofParameter<Type> _val, float width, float height){
+	setup(sliderName,_val,width,height);
 }
 
 template<typename Type>
-ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _val, Type _min, Type _max, float width, float height){
+ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _val, float width, float height){
 	name = sliderName;
 	value = _val;
-	min = _min;
-	max = _max;
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -63,7 +61,7 @@ void ofxSlider<Type>::draw(){
 	ofRect(b);
 
 	ofTranslate(b.x, b.y);
-	float valAsPct = ofMap( value, min, max, 0, b.width-2, true );
+	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
 	ofEnableAlphaBlending();
 	ofSetColor(fillColor);
 	ofRect(1, 1, valAsPct, b.height-2);
@@ -92,7 +90,7 @@ void ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
 		}
 	}
 	if( bGuiActive ){
-		value = ofMap(mx, b.x, b.x + b.width, min, max, true);
+		value = ofMap(mx, b.x, b.x + b.width, value.getMin(), value.getMax(), true);
 	}
 }
 
