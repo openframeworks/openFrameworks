@@ -1,19 +1,25 @@
 #pragma once
 
-#include "ofParameter.h"
+#include "ofxBaseGroup.h"
 #include "ofxSlider.h"
 
-/*
-class ofxSliderGroup<class VecType> {
+template<typename Type>
+class ofxSliderGroup : public ofxBaseGroup {
 public:
-	ofxSliderGroup() : count(VecType.DIM) {
-		sliders.resize(count);
-		for (int i=0; i<count; i++) {
-			sliders[i];
-		}
-	}
+	ofxSliderGroup() : ofxBaseGroup("", "", 0, 0) {}
+    
 protected:
-	vector<ofxSlider> sliders;
-	 const int count;
+    vector<ofParameter<Type> > subParameters;
 };
-*/
+
+template<class VecType>
+class ofxVecSlider : public ofxSliderGroup<float> {
+public:
+    ofxVecSlider(string controlName, ofParameter<VecType> value, float width = defaultWidth, float height = defaultHeight);
+    
+    ofxVecSlider * setup(string controlName, ofParameter<VecType> value, float width = defaultWidth, float height = defaultHeight);
+protected:
+    void changeSlider(const void * parameter, float & value);
+    void changeValue(VecType & value);
+    ofParameter<VecType> value;
+};

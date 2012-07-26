@@ -1,5 +1,6 @@
 #include "ofxBaseGroup.h"
 #include "ofxPanel.h"
+#include "ofxSliderGroup.h"
 
 ofxBaseGroup::ofxBaseGroup(string collectionName, string filename, float x, float y){
     this->setup(collectionName, filename, x, y);
@@ -67,19 +68,28 @@ void ofxBaseGroup::add(const ofParameterGroup & parameters){
 		string type = parameters.getType(i);
 		if(type==typeid(ofParameter<int>).name()){
 			ofParameter<int> p = parameters.getInt(i);
-			add(p);
+			this->add(p);
 		}else if(type==typeid(ofParameter<float>).name()){
 			ofParameter<float> p = parameters.getFloat(i);
-			add(p);
+			this->add(p);
 		}else if(type==typeid(ofParameter<bool>).name()){
 			ofParameter<bool> p = parameters.getBool(i);
-			add(p);
-		}else if(type==typeid(ofParameterGroup).name()){
+			this->add(p);
+		}else if(type==typeid(ofParameter<ofVec2f>).name()){
+            ofParameter<ofVec2f> p = parameters.getVec2f(i);
+            this->add(p);
+        }else if(type==typeid(ofParameter<ofVec3f>).name()){
+            ofParameter<ofVec3f> p = parameters.getVec3f(i);
+            this->add(p);
+        }else if(type==typeid(ofParameter<ofVec4f>).name()){
+            ofParameter<ofVec4f> p = parameters.getVec4f(i);
+            this->add(p);
+        }else if(type==typeid(ofParameterGroup).name()){
 			ofParameterGroup p = parameters.getGroup(i);
 			ofxPanel * panel = new ofxPanel(p);
-			add(panel);
+			this->add(panel);
 		}else{
-			ofLogError() << "ofxPanel; can't add control of type " << type;
+			ofLogError() << "ofxBaseGroup; can't add control of type " << type;
 		}
 	}
 
@@ -95,6 +105,18 @@ void ofxBaseGroup::add(ofParameter<int> & parameter){
 
 void ofxBaseGroup::add(ofParameter<bool> & parameter){
 	add(new ofxToggle(parameter.getName(),parameter));
+}
+
+void ofxBaseGroup::add(ofParameter<ofVec2f> & parameter){
+	add(new ofxVecSlider<ofVec2f>(parameter.getName(),parameter));
+}
+
+void ofxBaseGroup::add(ofParameter<ofVec3f> & parameter){
+	add(new ofxVecSlider<ofVec3f>(parameter.getName(),parameter));
+}
+
+void ofxBaseGroup::add(ofParameter<ofVec4f> & parameter){
+	add(new ofxVecSlider<ofVec4f>(parameter.getName(),parameter));
 }
 
 void ofxBaseGroup::clear(){
