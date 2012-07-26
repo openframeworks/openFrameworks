@@ -27,6 +27,7 @@ public:
 	ofParameter<ofPoint> getPoint(string name)	 const;
 	ofParameter<ofVec2f> getVec2f(string name) const;
 	ofParameter<ofVec3f> getVec3f(string name) const;
+	ofParameter<ofVec4f> getVec4f(string name) const;
 	ofParameterGroup getGroup(string name) const;
 
 
@@ -38,6 +39,7 @@ public:
 	ofParameter<ofPoint> getPoint(int pos)	 const;
 	ofParameter<ofVec2f> getVec2f(int pos) const;
 	ofParameter<ofVec3f> getVec3f(int pos) const;
+	ofParameter<ofVec4f> getVec4f(int pos) const;
 	ofParameterGroup getGroup(int pos) const;
 
 	ofAbstractParameter & get(string name) const;
