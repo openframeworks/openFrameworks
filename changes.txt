@@ -1,3 +1,4 @@
+ofVec*f::lengthSquared() is deprecated. Use ofVec*f::squareLength() instead.
 ofVideoGrabber::grabFrame() is deprecated. Use ofVideoGrabber::update() instead.
 ofVideoPlayer::idleMovie() is deprecated. Use ofVideoPlayer::update() instead
 
