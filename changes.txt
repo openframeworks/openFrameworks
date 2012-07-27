@@ -1,3 +1,4 @@
+ofVideoGrabber::grabFrame() is deprecated. Use ofVideoGrabber::update() instead.
 ofVideoPlayer::idleMovie() is deprecated. Use ofVideoPlayer::update() instead
 
 ---------------------------------------------------------------

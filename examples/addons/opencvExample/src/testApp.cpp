@@ -27,7 +27,7 @@ void testApp::update(){
     bool bNewFrame = false;
 
 	#ifdef _USE_LIVE_VIDEO
-       vidGrabber.grabFrame();
+       vidGrabber.update();
 	   bNewFrame = vidGrabber.isFrameNew();
     #else
         vidPlayer.update();
