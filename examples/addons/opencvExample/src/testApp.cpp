@@ -30,7 +30,7 @@ void testApp::update(){
        vidGrabber.grabFrame();
 	   bNewFrame = vidGrabber.isFrameNew();
     #else
-        vidPlayer.idleMovie();
+        vidPlayer.update();
         bNewFrame = vidPlayer.isFrameNew();
 	#endif
 

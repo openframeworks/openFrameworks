@@ -36,8 +36,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				closeMovie();
 		void 				close();
 
-		void				update();			//same as idleMovie
-		void 				idleMovie();		// rename to updateMovie?
+		void				update();
+		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead", void idleMovie());
 		void 				play();
 		void 				stop();
 
