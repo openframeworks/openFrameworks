@@ -1,3 +1,5 @@
+ofVideoPlayer::idleMovie() is deprecated. Use ofVideoPlayer::update() instead
+
 ---------------------------------------------------------------
 	  .oooo.     .oooo.    ooooooooo   .o  
 	 d8P'`Y8b   d8P'`Y8b  d"""""""8' o888  
