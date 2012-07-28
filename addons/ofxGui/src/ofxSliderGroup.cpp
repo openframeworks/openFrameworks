@@ -18,7 +18,7 @@ ofxVecSlider<VecType> * ofxVecSlider<VecType>::setup(string controlName, ofParam
     
     this->value = value;
     this->value.addListener(this, & ofxVecSlider::changeValue);
-    
+
     VecType val = value;
     VecType min = value.getMin();
     VecType max = value.getMax();
@@ -28,17 +28,34 @@ ofxVecSlider<VecType> * ofxVecSlider<VecType>::setup(string controlName, ofParam
         this->add(new ofxSlider<float>(names[i], subParameters.back()));
         subParameters.back().addListener(this, & ofxVecSlider::changeSlider);
     }
+    
+    this->sliderChanging = false;
 }
 
 template<class VecType>
 void ofxVecSlider<VecType>::changeSlider(const void * parameter, float & value){
-    VecType data;
+    if (this->sliderChanging){
+        cout << "feedback loop" << endl;
+        return;
+    }
+    
+    this->sliderChanging = true;
+    
+    cout << "{" << endl;
+    VecType data = this->value;
     for (int i=0; i<VecType::DIM; i++){
         if (parameter == & this->subParameters[i]) {
             data[i] = value;
+            cout << "match found at" << i << endl;
+            break;
         }
     }
-    this->value = data;
+    cout << this->value << "->" << data << endl;
+    this->value.setValue(data);
+    cout << "..." << this->value << " [" << data << ", " << value << "]" << endl;
+    cout << "}" << endl;
+    
+    this->sliderChanging = false;
 }
 
 template<class VecType>
