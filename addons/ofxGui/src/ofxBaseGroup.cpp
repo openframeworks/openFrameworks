@@ -96,11 +96,11 @@ void ofxBaseGroup::add(const ofParameterGroup & parameters){
 }
 
 void ofxBaseGroup::add(ofParameter<float> & parameter){
-	add(new ofxFloatSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
+	add(new ofxFloatSlider(parameter.getName(),parameter));
 }
 
 void ofxBaseGroup::add(ofParameter<int> & parameter){
-	add(new ofxIntSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
+	add(new ofxIntSlider(parameter.getName(),parameter));
 }
 
 void ofxBaseGroup::add(ofParameter<bool> & parameter){
