@@ -17,7 +17,7 @@
 class ofParameterGroup: public ofAbstractParameter {
 public:
 	void add(ofAbstractParameter & param);
-
+    void clear();
 
 	ofParameter<bool> getBool(string name) const;
 	ofParameter<int> getInt(string name) const;

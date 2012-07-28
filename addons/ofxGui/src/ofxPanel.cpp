@@ -11,9 +11,11 @@ ofImage ofxPanel::loadIcon;
 ofImage ofxPanel::saveIcon;
 
 ofxPanel::ofxPanel(string collectionName, string filename, float x, float y) : ofxBaseGroup(collectionName, filename, x, y){
+	this->registerMouseEvents();
 }
 
 ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y) : ofxBaseGroup(parameters, filename, x, y){
+	this->registerMouseEvents();
 }
 
 void ofxPanel::draw(){
@@ -60,6 +62,11 @@ void ofxPanel::draw(){
 
 	ofPopMatrix();
 	ofPopStyle();
+}
+
+void ofxPanel::mouseReleased(ofMouseEventArgs & args){
+    this->bGrabbed = false;
+    ofxBaseGroup::mouseReleased(args);
 }
 
 void ofxPanel::setValue(float mx, float my, bool bCheck){

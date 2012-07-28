@@ -34,26 +34,29 @@ ofxVecSlider<VecType> * ofxVecSlider<VecType>::setup(string controlName, ofParam
 
 template<class VecType>
 void ofxVecSlider<VecType>::changeSlider(const void * parameter, float & value){
+    
+    const bool debug = true;
+    
     if (this->sliderChanging){
-        cout << "feedback loop" << endl;
+        if (debug) cout << "feedback loop" << endl;
         return;
     }
     
     this->sliderChanging = true;
     
-    cout << "{" << endl;
+    if (debug) cout << "{" << endl;
     VecType data = this->value;
     for (int i=0; i<VecType::DIM; i++){
         if (parameter == & this->subParameters[i]) {
             data[i] = value;
-            cout << "match found at" << i << endl;
+            if (debug) cout << "match found at" << i << endl;
             break;
         }
     }
-    cout << this->value << "->" << data << endl;
+    if (debug) cout << this->value << "->" << data << endl;
     this->value.setValue(data);
-    cout << "..." << this->value << " [" << data << ", " << value << "]" << endl;
-    cout << "}" << endl;
+    if (debug) cout << "..." << this->value << " [" << data << ", " << value << "]" << endl;
+    if (debug) cout << "}" << endl;
     
     this->sliderChanging = false;
 }
