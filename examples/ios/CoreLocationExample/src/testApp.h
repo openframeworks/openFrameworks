@@ -4,32 +4,33 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiPhoneApp{
 	
-public:
-	void setup();
-	void update();
-	void draw();
+    public:
+        void setup();
+        void update();
+        void draw();
+    
+        void exit();
 
-	void touchDown(ofTouchEventArgs &touch);
-	void touchMoved(ofTouchEventArgs &touch);
-	void touchUp(ofTouchEventArgs &touch);
-	void touchDoubleTap(ofTouchEventArgs &touch);
-	void touchCancelled(ofTouchEventArgs &touch);
+        void touchDown(ofTouchEventArgs & touch);
+        void touchMoved(ofTouchEventArgs & touch);
+        void touchUp(ofTouchEventArgs & touch);
+        void touchDoubleTap(ofTouchEventArgs & touch);
+        void touchCancelled(ofTouchEventArgs & touch);
 	
-	void exit();
-	void lostFocus();
-	void gotFocus();
-	void gotMemoryWarning();
-	void deviceOrientationChanged(int newOrientation);
+        void lostFocus();
+        void gotFocus();
+        void gotMemoryWarning();
+        void deviceOrientationChanged(int newOrientation);
 	
-	ofxiPhoneCoreLocation * coreLocation;
+        ofxiPhoneCoreLocation * coreLocation;
 	
-	float heading;
+        float heading;
 	
-	bool hasCompass;
-	bool hasGPS;
+        bool hasCompass;
+        bool hasGPS;
 	
-	ofImage arrowImg;
-	ofImage compassImg;
+        ofImage arrowImg;
+        ofImage compassImg;
 };

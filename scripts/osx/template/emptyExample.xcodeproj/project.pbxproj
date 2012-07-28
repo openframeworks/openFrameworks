@@ -425,8 +425,8 @@
                     <string>YES</string>
                     <key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
                     <string>NO</string>
-                    <key>GCC_MODEL_TUNING</key>
-                    <string>G5</string>
+					<key>GCC_OPTIMIZATION_LEVEL</key>
+                    <string>0</string>
                     <key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
                     <string>NO</string>
                     <key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
@@ -445,6 +445,7 @@
                     <array>
                         <string>-D__MACOSX_CORE__</string>
                         <string>-lpthread</string>
+                        <string>-mtune=native</string>						
                     </array>
                 </dict>
                 <key>isa</key>
@@ -474,9 +475,7 @@
                     <string>YES</string>
                     <key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
                     <string>NO</string>
-                    <key>GCC_MODEL_TUNING</key>
-                    <string>G5</string>
-                    <key>GCC_OPTIMIZATION_LEVEL</key>
+					<key>GCC_OPTIMIZATION_LEVEL</key>
                     <string>3</string>
                     <key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
                     <string>NO</string>
@@ -498,6 +497,7 @@
                     <array>
                         <string>-D__MACOSX_CORE__</string>
                         <string>-lpthread</string>
+						<string>-mtune=native</string>
                     </array>
                 </dict>
                 <key>isa</key>
@@ -620,7 +620,7 @@
                     <key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
                     <string>YES</string>
                     <key>GCC_MODEL_TUNING</key>
-                    <string>G4</string>
+                    <string>NONE</string>
                     <key>GCC_PRECOMPILE_PREFIX_HEADER</key>
                     <string>YES</string>
                     <key>GCC_PREFIX_HEADER</key>
@@ -722,9 +722,9 @@
                     <key>GCC_ENABLE_FIX_AND_CONTINUE</key>
                     <string>NO</string>
                     <key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-                    <string>NO</string>
+                    <string>YES</string>
                     <key>GCC_MODEL_TUNING</key>
-                    <string>G4</string>
+                    <string>NONE</string>
                     <key>GCC_PRECOMPILE_PREFIX_HEADER</key>
                     <string>YES</string>
                     <key>GCC_PREFIX_HEADER</key>

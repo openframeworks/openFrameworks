@@ -1,34 +1,26 @@
 #include "testApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){	 
-
+void testApp::setup(){
 	ofSetVerticalSync(true);
-
+	
 	bSendSerialMessage = false;
-	ofBackground(255,255,255);	
-	ofSetLogLevel(OF_LOG_NOTICE);
-
-	//----------------------------------- 
+	ofBackground(255);	
+	ofSetLogLevel(OF_LOG_VERBOSE);
+	
 	font.loadFont("DIN.otf", 64);
-			
+	
 	serial.listDevices();
 	vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
 	
-	//----------------------------------- note:
-	// < this should be set
-	// to whatever com port
-	// your serial device is
-	// connected to.
+	// this should be set to whatever com port your serial device is connected to.
 	// (ie, COM4 on a pc, /dev/tty.... on linux, /dev/tty... on a mac)
-	// arduino users check in arduino app....
-		
+	// arduino users check in arduino app....		
 	serial.setup(0, 9600); //open the first device
-
-	//serial.setup("COM4");  						  // windows example
+	//serial.setup("COM4"); // windows example
 	//serial.setup("/dev/tty.usbserial-A4001JEC",9600); // mac osx example
-	//serial.setup("/dev/ttyUSB0", 9600);			  //linux example
-
+	//serial.setup("/dev/ttyUSB0", 9600); //linux example
+	
 	nTimesRead = 0;
 	nBytesRead = 0;
 	readTime = 0;
@@ -50,13 +42,13 @@ void testApp::update(){
 		// otherwise, we may have a "lag" if we don't read fast enough
 		// or just read three every time. now, we will be sure to 
 		// read as much as we can in groups of three...
-
+		
 		nTimesRead = 0;
 		nBytesRead = 0;
 		int nRead  = 0;  // a temp variable to keep count per read
 		
 		unsigned char bytesReturned[3];
-
+		
 		memset(bytesReadString, 0, 4);
 		memset(bytesReturned, 0, 3);
 		
@@ -64,7 +56,7 @@ void testApp::update(){
 			nTimesRead++;	
 			nBytesRead = nRead;
 		};
-
+		
 		memcpy(bytesReadString, bytesReturned, 3);
 		
 		bSendSerialMessage = false;
@@ -74,17 +66,18 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
-	char tempStr[1024];
-	sprintf(tempStr, "click to test serial:\nnBytes read %i\nnTimes read %i\nread: %s\n(at time %0.3f)", nBytesRead, nTimesRead, bytesReadString, readTime);
-	
 	if (nBytesRead > 0 && ((ofGetElapsedTimef() - readTime) < 0.5f)){
-		ofSetHexColor(0x000000);
+		ofSetColor(0);
 	} else {
-		ofSetHexColor(0xdddddd);
+		ofSetColor(220);
 	}
-	font.drawString(tempStr, 50,100);
-
+	string msg;
+	msg += "click to test serial:\n";
+	msg += "nBytes read " + ofToString(nBytesRead) + "\n";
+	msg += "nTimes read " + ofToString(nTimesRead) + "\n";
+	msg += "read: " + ofToString(bytesReadString) + "\n";
+	msg += "(at time " + ofToString(readTime, 3) + ")";
+	font.drawString(msg, 50, 100);
 }
 
 //--------------------------------------------------------------
@@ -98,7 +91,7 @@ void testApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void testApp::mouseMoved(int x, int y){
 	
 }
 
@@ -114,21 +107,21 @@ void testApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::gotMessage(ofMessage msg){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
-
+	
 }
 

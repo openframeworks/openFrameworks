@@ -113,7 +113,7 @@
 			<key>isa</key>
 			<string>PBXNativeTarget</string>
 			<key>name</key>
-			<string>iPhoneEmptyExample</string>
+			<string>emptyExample</string>
 			<key>productName</key>
 			<string>iPhone</string>
 			<key>productReference</key>
@@ -130,7 +130,7 @@
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>path</key>
-			<string>iPhoneEmptyExample.app</string>
+			<string>emptyExample.app</string>
 			<key>sourceTree</key>
 			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
@@ -725,7 +725,7 @@
 			<key>name</key>
 			<string>CoreOF.xcconfig</string>
 			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/iphone/CoreOF.xcconfig</string>
+			<string>../../../libs/openFrameworksCompiled/project/ios/CoreOF.xcconfig</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -823,9 +823,9 @@
 			<key>lastKnownFileType</key>
 			<string>wrapper.pb-project</string>
 			<key>name</key>
-			<string>iPhone+OF Lib.xcodeproj</string>
+			<string>iOS+OFLib.xcodeproj</string>
 			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj</string>
+			<string>../../../libs/openFrameworksCompiled/project/ios/iOS+OFLib.xcodeproj</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>

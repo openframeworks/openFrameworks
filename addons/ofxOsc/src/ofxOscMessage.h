@@ -70,6 +70,7 @@ public:
 	/// (eg for an int argument, getArgType(index)==OF_TYPE_INT32
 	/// or getArgTypeName(index)=="int32")
 	int32_t getArgAsInt32( int index ) const;
+	uint64_t getArgAsInt64( int index ) const;
 	float getArgAsFloat( int index ) const;
 	string getArgAsString( int index ) const;
 
@@ -78,6 +79,7 @@ public:
 	/// host and port of the remote endpoint
 	void setRemoteEndpoint( string host, int port ) { remote_host = host; remote_port = port; }
 	void addIntArg( int32_t argument );
+	void addInt64Arg( uint64_t argument );
 	void addFloatArg( float argument );
 	void addStringArg( string argument );
 

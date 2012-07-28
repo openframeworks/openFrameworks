@@ -11,9 +11,9 @@
 #include "ofConstants.h"
 #include "pugixml.hpp"
 #include "ofAddon.h"
-#include "baseProject.h"
+#include "CBWinProject.h"
 
-class CBLinuxProject: public baseProject {
+class CBLinuxProject: public CBWinProject {
 public:
 
 	enum Arch{
@@ -21,36 +21,16 @@ public:
 		Linux64
 	};
 
-    CBLinuxProject(Arch arch);
-    CBLinuxProject();
+    void setup();
 
-    void setArch(Arch arch);
-	
-    void setup(string ofRoot= "../../../");
-
-	bool load(string path);
-	bool create(string path);
-	bool save(string path){return true;}
-
-	void addSrc(string srcName, string folder);
-	void addInclude(string includeName);
-	void addLibrary(string libraryName);
-
-	void addAddon(ofAddon & addon);
-
-	string getName();
-	string getPath();
+    bool createProjectFile();
+    void addInclude(string includeName){};
+    void addLibrary(string libraryName, LibType libType = RELEASE_LIB){};
 
 	static string LOG_NAME;
 
 private:
-	
-    //void parseAddons();
 
-	pugi::xml_document doc;
-	string projectDir, projectName;
-	vector<ofAddon> addons;
-	string ofRoot;
 	Arch arch;
 };
 

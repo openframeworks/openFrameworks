@@ -1,0 +1,37 @@
+HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
+HEADER_OFXIPHONE = "$(OF_PATH)/addons/ofxiPhone/**"
+HEADER_OFXMULTITOUCH = "$(OF_PATH)/addons/ofxMultiTouch/**"
+HEADER_OFXACCELEROMETER = "$(OF_PATH)/addons/ofxAccelerometer/**"
+HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
+HEADER_FREETYPE2 = "$(OF_PATH)/libs/freetype/include/freetype2"
+HEADER_POCO = "$(OF_PATH)/libs/poco/include"
+HEADER_FMODEX = "$(OF_PATH)/libs/fmodex/include"
+HEADER_GLEW = "$(OF_PATH)/libs/glew/include"
+HEADER_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/include"
+HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
+HEADER_CAIRO = "$(OF_PATH)/libs/cairo/include/cairo"
+HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
+HEADER_GLU = "$(OF_PATH)/libs/glu/include_ios"
+
+LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
+LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/ios/freetype.a"
+LIB_GLEW = "$(OF_PATH)/libs/glew/lib/osx/glew.a"
+LIB_RTAUDIO = "$(OF_PATH)/libs/rtAudio/lib/osx/rtAudio.a"
+LIB_TESS = "$(OF_PATH)/libs/tess2/lib/osx/tess2.a"
+LIB_CAIRO = "$(OF_PATH)/libs/cairo/lib/osx/cairo.a"
+LIB_GLU = "$(OF_PATH)/libs/glu/lib/ios/glu.a"
+
+LIB_FREEIMAGE_IPHONE = "$(OF_PATH)/libs/FreeImage/lib/ios/freeimage.a"
+LIB_POCODATA_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoData.a"
+LIB_POCOFOUNDATION_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoFoundation.a"
+LIB_POCONET_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoNet.a"
+LIB_POCOUTIL_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoUtil.a"
+LIB_POCOXML_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoXML.a"
+LIB_POCOZIP_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoZip.a"
+LIB_TESS_IPHONE = "$(OF_PATH)/libs/tess2/lib/ios/tess2.a"
+LIB_GLU_IPHONE = "$(OF_PATH)/libs/glu/lib/ios/glu-ios.a"
+
+MISC_FLAGS = "-ObjC"
+
+OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_FREETYPE) $(LIB_FREEIMAGE) $(LIB_FREEIMAGE_IPHONE) $(LIB_GLEW) $(LIB_CAIRO) $(LIB_POCOFOUNDATION_IPHONE) $(LIB_POCODATA_IPHONE) $(LIB_POCONET_IPHONE) $(LIB_POCOXML_IPHONE) $(LIB_POCOZIP_IPHONE) $(LIB_POCOUTIL_IPHONE) $(LIB_TESS_IPHONE) $(LIB_GLEW_IPHONE) $(LIB_CAIRO_IPHONE) $(LIB_FMODEX_IPHONE) $(LIB_RTAUDIO_IPHONE) $(LIB_GLU) $(LIB_GLU_IPHONE)
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIPHONE) $(HEADER_OFXMULTITOUCH) $(HEADER_OFXACCELEROMETER) $(HEADER_POCO) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLU)

@@ -2,7 +2,7 @@
 
 //-------------------------------
 #define OF_VERSION	7
-#define OF_VERSION_MINOR 0
+#define OF_VERSION_MINOR 1
 //-------------------------------
 
 enum ofLoopType{
@@ -148,6 +148,7 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_ANDROID
+#include <typeinfo>
 	#include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES

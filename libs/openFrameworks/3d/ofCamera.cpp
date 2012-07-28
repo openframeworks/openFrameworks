@@ -41,9 +41,6 @@ void ofCamera::setFarClip(float f) {
 
 //----------------------------------------
 void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist){
-	float width = ofGetWidth();
-	float height = ofGetHeight();
-
 	float viewW = ofGetViewportWidth();
 	float viewH = ofGetViewportHeight();
 

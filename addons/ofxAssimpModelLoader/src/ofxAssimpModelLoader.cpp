@@ -1017,6 +1017,49 @@ ofPoint ofxAssimpModelLoader::getScale(){
 }
 
 //-------------------------------------------
+ofPoint ofxAssimpModelLoader::getSceneMin(bool bScaled ){
+	ofPoint sceneMin(scene_min.x, scene_min.y, scene_min.z);
+	if( bScaled ){
+		return sceneMin * scale;
+	}else{
+		return sceneMin;
+	}
+}
+
+//-------------------------------------------
+ofPoint	ofxAssimpModelLoader::getSceneMax(bool bScaled ){
+	ofPoint sceneMax(scene_max.x, scene_max.y, scene_max.z);
+	if( bScaled ){
+		return sceneMax * scale;
+	}else{
+		return sceneMax;
+	}
+}
+
+//-------------------------------------------
+int ofxAssimpModelLoader::getNumRotations(){
+	return rotAngle.size();
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getRotationAxis(int which){
+	if(rotAxis.size() > which){
+		return rotAxis[which];
+	}else{
+		return ofPoint();
+	}
+}
+
+//-------------------------------------------
+float ofxAssimpModelLoader::getRotationAngle(int which){
+	if(rotAngle.size() > which){
+		return rotAngle[which];
+	}else{
+		return 0.0;
+	}
+}
+
+//-------------------------------------------
 const aiScene* ofxAssimpModelLoader::getAssimpScene(){
 	return scene;
 }

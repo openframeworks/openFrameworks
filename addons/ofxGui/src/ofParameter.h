@@ -3,8 +3,14 @@
 #include "ofEvents.h"
 #include "ofTypes.h"
 
+class ofxAbstractParameter{
+public:
+	virtual ~ofxAbstractParameter(){};
+
+};
+
 template<typename ParameterType>
-class ofxParameter{
+class ofxParameter: public ofxAbstractParameter{
 public:
 	ofxParameter();
 	ofxParameter(ParameterType v);
@@ -12,6 +18,7 @@ public:
 	virtual ~ofxParameter(){};
 
 	ParameterType operator=(ParameterType v);
+	operator const ParameterType & () const;
 	operator ParameterType & ();
 
 	virtual ParameterType getValue();
@@ -19,6 +26,15 @@ public:
 
 	void setName(string name);
 	string getName();
+
+	void setMin(ParameterType min);
+	ParameterType getMin();
+
+	void setMax(ParameterType max);
+	ParameterType getMax();
+
+	ofxParameter<ParameterType> & set(string name, ParameterType value);
+	ofxParameter<ParameterType> & set(string name, ParameterType value, ParameterType min, ParameterType max);
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
@@ -46,18 +62,26 @@ private:
 		Value(){};
 
 		Value(ParameterType v)
-		:value(v){};
+		:value(v){}
 
 		Value(string name, ParameterType v)
 		:name(name)
-		,value(v){};
+		,value(v){}
+
+		Value(string name, ParameterType v, ParameterType min, ParameterType max)
+		:name(name)
+		,value(v)
+		,min(min)
+		,max(max){};
 
 		ParameterType value;
 		string name;
+		ParameterType min, max;
 		ofEvent<ParameterType> changedE;
 	};
 	ofPtr<Value> obj;
 };
+
 
 template<typename ParameterType>
 ofxParameter<ParameterType>::ofxParameter(){
@@ -79,18 +103,59 @@ ParameterType ofxParameter<ParameterType>::operator=(ParameterType v){
 }
 
 template<typename ParameterType>
+ofxParameter<ParameterType> & ofxParameter<ParameterType>::set(string name, ParameterType value, ParameterType min, ParameterType max){
+	setName(name);
+	setValue(value);
+	setMin(min);
+	setMax(max);
+	return *this;
+}
+
+template<typename ParameterType>
+ofxParameter<ParameterType> & ofxParameter<ParameterType>::set(string name, ParameterType value){
+	setName(name);
+	setValue(value);
+	return *this;
+}
+
+template<typename ParameterType>
 ParameterType ofxParameter<ParameterType>::getValue(){
 	return obj->value;
 }
 
 template<typename ParameterType>
 void ofxParameter<ParameterType>::setValue(ParameterType v){
-	ofNotifyEvent(obj->changedE,v,this);
 	obj->value = v;
+	ofNotifyEvent(obj->changedE,v,this);
+}
+
+template<typename ParameterType>
+void ofxParameter<ParameterType>::setMin(ParameterType min){
+	obj->min = min;
+}
+
+template<typename ParameterType>
+ParameterType ofxParameter<ParameterType>::getMin(){
+	return obj->min;
+}
+
+template<typename ParameterType>
+void ofxParameter<ParameterType>::setMax(ParameterType max){
+	obj->max = max;
+}
+
+template<typename ParameterType>
+ParameterType ofxParameter<ParameterType>::getMax(){
+	return obj->max;
 }
 
 template<typename ParameterType>
 ofxParameter<ParameterType>::operator ParameterType & (){
+	return obj->value;
+}
+
+template<typename ParameterType>
+ofxParameter<ParameterType>::operator const ParameterType & () const{
 	return obj->value;
 }
 

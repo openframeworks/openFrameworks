@@ -32,7 +32,7 @@ void ofOpenALSoundUpdate(){
 ofOpenALSoundPlayer::ofOpenALSoundPlayer(){
 	bLoop 			= false;
 	bLoadedOk 		= false;
-	pan 			= 0.5f;
+	pan 			= 0.0f; // range for oF is -1 to 1,
 	volume 			= 1.0f;
 	internalFreq 	= 44100;
 	speed 			= 1;
@@ -218,7 +218,7 @@ bool ofOpenALSoundPlayer::sfStream(string path,vector<short> & buffer,vector<flo
 			fftAuxBuffer.resize(samples_read);
 			buffer.resize(samples_read);
 			setPosition(0);
-			if(!bLoop) stopThread(false);
+			if(!bLoop) stopThread();
 			stream_samples_read = 0;
 			stream_end = true;
 		}
@@ -233,7 +233,7 @@ bool ofOpenALSoundPlayer::sfStream(string path,vector<short> & buffer,vector<flo
 			fftAuxBuffer.resize(frames_read*channels);
 			buffer.resize(frames_read*channels);
 			setPosition(0);
-			if(!bLoop) stopThread(false);
+			if(!bLoop) stopThread();
 			stream_samples_read = 0;
 			stream_end = true;
 		}
@@ -283,7 +283,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(string path,vector<short> & buffer,vector
 		setPosition(0);
 		buffer.resize(done/2);
 		fftAuxBuffer.resize(done/2);
-		if(!bLoop) stopThread(false);
+		if(!bLoop) stopThread();
 		stream_end = true;
 	}
 
@@ -451,6 +451,11 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 		}
 	}
 
+}
+
+//------------------------------------------------------------
+bool ofOpenALSoundPlayer::isLoaded(){
+	return bLoadedOk;
 }
 
 //------------------------------------------------------------
@@ -656,8 +661,8 @@ int ofOpenALSoundPlayer::getPositionMS(){
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPan(float p){
 	if(sources.empty()) return;
-	pan = p;
-	p=p*2-1;
+	p = ofClamp(p, -1, 1);
+	pan = p;	
 	if(channels==1){
 		float pos[3] = {p,0,0};
 		alSourcefv(sources[sources.size()-1],AL_POSITION,pos);

@@ -13,71 +13,69 @@ public:
 	
 	ofiPhoneVideoPlayer();
 	~ofiPhoneVideoPlayer();
+    
+    bool loadMovie(string name);
+    void close();
+    void update();
 	
-	bool loadMovie(string name);
-	void setPixelFormat(ofPixelFormat PixelFormat);
-	void close();
+    void play();
+    void stop();
 	
-	void play();
-	void stop();
+    bool isFrameNew();
+    unsigned char * getPixels();
+    ofPixelsRef	getPixelsRef();
+    ofTexture *	getTexture();
 	
-	bool isFrameNew();
-	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
-	ofTexture * getTexture();
+    float getWidth();
+    float getHeight();
 	
-	float getWidth();
-	float getHeight();
+    bool isPaused();
+    bool isLoaded();
+    bool isPlaying();
 	
-	bool isPaused();
-	bool isLoaded();
-	bool isPlaying();
+    float getPosition();
+    float getSpeed();
+    float getDuration();
+    bool getIsMovieDone();
 	
-	void update();
+    void setPaused(bool bPause);
+    void setPosition(float pct);
+    void setVolume(int volume);
+    void setVolume(float volume);
+    void setLoopState(ofLoopType state);
+    void setSpeed(float speed);
+    void setFrame(int frame);  // frame 0 = first frame...
 	
-	float getPosition();
-	float getDuration();
-	bool getIsMovieDone();
-	void setPaused(bool bPause);
+    int	getCurrentFrame();
+    int	getTotalNumFrames();
+    int	getLoopState();
 	
-	void setVolume(int volume);
-	
-	/*should implement! (but cannot on iphone)
-	float getSpeed();
-	void setPosition(float pct);
-	void setLoopState(int state);
-	void setSpeed(float speed);
-	void setFrame(int frame);  // frame 0 = first frame...
-	
-	int getCurrentFrame();
-	int getTotalNumFrames();
-	int getLoopState();
-	
-	void firstFrame();
-	void nextFrame();
-	void previousFrame();*/
-	
+    void firstFrame();
+    void nextFrame();
+    void previousFrame();
+    void setPixelFormat(ofPixelFormat pixelFormat);
+    
+	void * getAVFoundationVideoPlayer();
+    
 protected:
-	
-	void initWithPath(string path);
-	void updateCurrentFrameRef();
+    
+    void updatePixelsToRGB();
 	
 	void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
 	
-	string videoPath;	
-	bool videoWasStopped;
-	int width;
-	int height;
-	float playbackSpeed;
+    bool bFrameNew;
+    bool bResetPixels;
+    bool bResetTexture;
+    bool bUpdatePixels;
+    bool bUpdatePixelsToRgb;
+    bool bUpdateTexture;
+    bool bTextureCacheSupported;
+    bool bTextureHack;
 	
-	int vol;
-		
-	GLubyte * pixels;
+	GLubyte * pixelsRGB;
+    GLubyte * pixelsRGBA;
+    GLint internalGLFormat;
 	ofTexture videoTexture;
-	
-	float lastUpdateTime;
-	GLint internalGLFormat;
-	GLubyte *pixelsTmp;
 };
 
 #endif

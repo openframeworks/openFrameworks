@@ -252,17 +252,48 @@ void testApp::renderLinearSignedNoiseDemo(){
 	ofPopMatrix();
 }
 
+// In case you're wondering, the simpleSliders get their mouse info through event handlers. 
+//--------------------------------------------------------------
+void testApp::keyPressed(int key){
 
+}
 
 //--------------------------------------------------------------
-// In case you're wondering, the simpleSliders get their mouse info through event handlers. 
-// 
-void testApp::mouseMoved(int x, int y ){}
-void testApp::mouseDragged(int x, int y, int button){}
-void testApp::mousePressed(int x, int y, int button){}
-void testApp::mouseReleased(int x, int y, int button){}
-void testApp::windowResized(int w, int h){}
-void testApp::gotMessage(ofMessage msg){}
-void testApp::dragEvent(ofDragInfo dragInfo){}
-void testApp::keyPressed(int key){}
-void testApp::keyReleased(int key){}
+void testApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

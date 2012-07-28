@@ -1,5 +1,6 @@
 #include "testApp.h"
 
+//--------------------------------------------------------------
 void testApp::setup() {
 	threshold = 32;
 	
@@ -13,6 +14,7 @@ void testApp::setup() {
 	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 }
 
+//--------------------------------------------------------------
 void testApp::update() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
@@ -54,6 +56,7 @@ void testApp::update() {
 	}
 }
 
+//--------------------------------------------------------------
 void drawWithNormals(const ofPolyline& polyline) {
 	for(int i=0; i< (int) polyline.size(); i++ ) {
 		bool repeatNext = i == polyline.size() - 1;
@@ -76,9 +79,9 @@ void drawWithNormals(const ofPolyline& polyline) {
 	}
 }
 
+//--------------------------------------------------------------
 void testApp::draw() {
 	ofBackground(0);
-	
 	
 	ofSetColor(255);
 	cvImgGrayscale.draw(0, 0);
@@ -110,25 +113,47 @@ void testApp::draw() {
 	ofDrawBitmapString("Hold down any key to invert the thresholding.", 10, 60);
 }
 
-void testApp::keyPressed(int key) {
+//--------------------------------------------------------------
+void testApp::keyPressed(int key){
+
 }
 
-void testApp::keyReleased(int key) {
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
 }
 
-void testApp::mouseMoved(int x, int y) {
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y){
+
 }
 
-void testApp::mouseDragged(int x, int y, int button) {
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
 	threshold = x;
 }
 
-void testApp::mousePressed(int x, int y, int button) {
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
+
 }
 
-void testApp::mouseReleased(int x, int y, int button) {
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
 }
 
-void testApp::windowResized(int w, int h) {
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

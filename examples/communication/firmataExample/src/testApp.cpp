@@ -119,6 +119,8 @@ void testApp::updateArduino(){
 // digital pin event handler, called whenever a digital pin value has changed
 // note: if an analog pin has been set as a digital pin, it will be handled
 // by the digitalPinChanged function rather than the analogPinChanged function.
+
+//--------------------------------------------------------------
 void testApp::digitalPinChanged(const int & pinNum) {
     // do something with the digital input. here we're simply going to print the pin number and
     // value to the screen each time it changes
@@ -126,6 +128,8 @@ void testApp::digitalPinChanged(const int & pinNum) {
 }
 
 // analog pin event handler, called whenever an analog pin value has changed
+
+//--------------------------------------------------------------
 void testApp::analogPinChanged(const int & pinNum) {
     // do something with the analog input. here we're simply going to print the pin number and
     // value to the screen each time it changes

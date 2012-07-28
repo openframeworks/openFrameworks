@@ -25,7 +25,7 @@ public:
 	bool 	setPipelineWithSink(GstElement * pipeline, GstElement * sink, bool isStream=false);
 
 	void 	play();
-	void 	stop(){setPaused(true);}
+	void 	stop();
 	void 	setPaused(bool bPause);
 	bool 	isPaused(){return bPaused;}
 	bool 	isLoaded(){return bLoaded;}
@@ -55,11 +55,11 @@ public:
 
 	void setSinkListener(ofGstAppSink * appsink);
 
-protected:
 	// callbacks to get called from gstreamer
 	virtual GstFlowReturn preroll_cb(GstBuffer * buffer);
 	virtual GstFlowReturn buffer_cb(GstBuffer * buffer);
 	virtual void 		  eos_cb();
+protected:
 
 private:
 	void 				gstHandleMessage();
@@ -85,9 +85,9 @@ private:
 	bool				isStream;
 
 	// the gst callbacks need to be friended to be able to call us
-	friend GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data);
-	friend GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data);
-	friend void on_eos_from_source (GstAppSink * elt, void * data);
+	//friend GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data);
+	//friend GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data);
+	//friend void on_eos_from_source (GstAppSink * elt, void * data);
 
 };
 
@@ -138,6 +138,7 @@ private:
 	bool			bHavePixelsChanged;
 	bool			bBackPixelsChanged;
 	ofMutex			mutex;
+	GstBuffer * 	buffer, *prevBuffer;
 };
 
 

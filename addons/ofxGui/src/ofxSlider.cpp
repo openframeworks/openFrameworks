@@ -15,7 +15,7 @@ ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofxParameter<Type> _v
 	b.y = 0;
 	b.width = width;
 	b.height = height;
-	currentFrame = 0;
+	currentFrame = ofGetFrameNum();
 	bGuiActive = false;
 
 	ofRegisterMouseEvents(this);
