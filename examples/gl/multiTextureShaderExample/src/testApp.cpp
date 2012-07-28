@@ -1,10 +1,3 @@
-/*  of Detroit DevCon 2012
-    date: 2012/02/24 10:00:00
-    summary: simple example how to mix tree textures into one using a RGB mask with shaders
-    author: Patricio Gonzalez Vivo
-    author_site: http://patriciogonzalezvivo.com
-*/
-
 #include "testApp.h"
 
 #define STRINGIFY(A) #A

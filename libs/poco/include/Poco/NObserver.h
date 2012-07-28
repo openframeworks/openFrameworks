@@ -1,7 +1,7 @@
 //
 // NObserver.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/NObserver.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NObserver.h#2 $
 //
 // Library: Foundation
 // Package: Notifications
@@ -42,6 +42,7 @@
 
 #include "Poco/Foundation.h"
 #include "Poco/AbstractObserver.h"
+#include "Poco/Mutex.h"
 
 
 namespace Poco {
@@ -96,11 +97,16 @@ public:
 	
 	void notify(Notification* pNf) const
 	{
-		N* pCastNf = dynamic_cast<N*>(pNf);
-		if (pCastNf)
+		Poco::Mutex::ScopedLock lock(_mutex);
+
+		if (_pObject)
 		{
-			NotificationPtr ptr(pCastNf, true);
-			(_pObject->*_method)(ptr);
+			N* pCastNf = dynamic_cast<N*>(pNf);
+			if (pCastNf)
+			{
+				NotificationPtr ptr(pCastNf, true);
+				(_pObject->*_method)(ptr);
+			}
 		}
 	}
 	
@@ -120,11 +126,19 @@ public:
 		return new NObserver(*this);
 	}
 	
+	void disable()
+	{
+		Poco::Mutex::ScopedLock lock(_mutex);
+		
+		_pObject = 0;
+	}
+
 private:
 	NObserver();
 
 	C*       _pObject;
 	Callback _method;
+	mutable Poco::Mutex _mutex;
 };
 
 

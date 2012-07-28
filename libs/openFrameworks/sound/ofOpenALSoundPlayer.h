@@ -56,7 +56,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		void stop();
 
 		void setVolume(float vol);
-		void setPan(float vol);
+		void setPan(float vol); // -1 to 1
 		void setSpeed(float spd);
 		void setPaused(bool bP);
 		void setLoop(bool bLp);
@@ -72,6 +72,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		float getPan();
         float getVolume();
 		bool getIsPaused();
+		bool isLoaded();
 
 		static void initialize();
 		static void close();

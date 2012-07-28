@@ -41,7 +41,7 @@
 #import "ofxiPhone.h"
 #import "ofAppiPhoneWindow.h"
 #import "ofxiPhoneAppDelegate.h"
-#import "EAGLView.h"
+#import "ofxiOSEAGLView.h"
 #import "ofxiPhoneKeyboard.h"
 #import "ofxiPhoneCoreLocation.h"
 #import "ofxiPhoneImagePicker.h"
@@ -52,7 +52,8 @@
 enum ofxiPhoneDeviceType {
 	OFXIPHONE_DEVICE_IPHONE,
 	OFXIPHONE_DEVICE_IPODTOUCH,
-	OFXIPHONE_DEVICE_IPAD
+	OFXIPHONE_DEVICE_IPAD,
+    OFXIPHONE_UNKNOWN_DEVICE
 };
 
 
@@ -93,7 +94,10 @@ string ofxiPhoneGetDeviceRevision();
 UIWindow *ofxiPhoneGetUIWindow();
 
 // return openglview
-EAGLView *ofxiPhoneGetGLView();
+ofxiOSEAGLView *ofxiPhoneGetGLView();
+
+// return opengl parent view
+UIView * ofxiPhoneGetGLParentView();
 
 // return OpenFrameworks iPhone Window
 ofAppiPhoneWindow* ofxiPhoneGetOFWindow();
@@ -101,6 +105,8 @@ ofAppiPhoneWindow* ofxiPhoneGetOFWindow();
 // return application delegate
 ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate();
 
+// return iphone view controller.
+ofxiPhoneViewController *ofxiPhoneGetViewController();
 
 // brings the OpenGL view to the front of any other UIViews
 // the OpenGL view will receive touchXXXXX events, but other UIViews will not
@@ -198,6 +204,7 @@ string ofxiPhoneGetDocumentsDirectory();
 #define iPhoneGetGLView ofxiPhoneGetGLView
 #define iPhoneGetOFWindow ofxiPhoneGetOFWindow
 #define iPhoneGetAppDelegate ofxiPhoneGetAppDelegate
+#define iPhoneGetViewController ofxiPhoneGetViewController
 #define iPhoneSendGLViewToFront ofxiPhoneSendGLViewToFront
 #define iPhoneSendGLViewToBack ofxiPhoneSendGLViewToBack
 #define iPhoneSetGLViewTransparent ofxiPhoneSetGLViewTransparent

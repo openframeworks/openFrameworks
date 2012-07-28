@@ -2,14 +2,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 	
@@ -29,13 +23,13 @@ void testApp::draw(){
 
 	sprintf (timeString, "time: %0.2i:%0.2i:%0.2i \nelapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
 	
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);
 	
 	ofSetColor(255,122,220);
 	vagRounded.drawString(eventString, 100,200);
 	
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	vagRounded.drawString(timeString, 98,98);
 	
 	ofSetColor(255,122,220);
@@ -48,23 +42,28 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
+void testApp::touchDown(ofTouchEventArgs & touch){
 	sprintf(eventString, "touchDown = (%2.0f, %2.0f - id %i)", touch.x, touch.y, touch.id);
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
+void testApp::touchMoved(ofTouchEventArgs & touch){
 	sprintf(eventString, "touchMoved = (%2.0f, %2.0f - id %i)", touch.x, touch.y, touch.id);
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
+void testApp::touchUp(ofTouchEventArgs & touch){
 	sprintf(eventString, "touchUp = (%2.0f, %2.0f - id %i)",touch.x, touch.y, touch.id);
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
 	sprintf(eventString, "doubleTap at (%2.0f, %2.0f)",touch.x, touch.y);
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
@@ -85,11 +84,5 @@ void testApp::gotMemoryWarning(){
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
 	sprintf(eventString, "alert - orientation change to %i", newOrientation);
-}
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs& args){
-
 }
 

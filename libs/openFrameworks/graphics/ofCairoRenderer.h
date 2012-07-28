@@ -33,9 +33,9 @@ public:
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
-	void draw(ofImage & img, float x, float y, float z, float w, float h);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h);
+	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 	bool rendersPathPrimitives(){
 		return true;

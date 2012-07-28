@@ -1,7 +1,7 @@
 //
 // RWLock.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/RWLock.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/RWLock.h#3 $
 //
 // Library: Foundation
 // Package: Threading
@@ -50,6 +50,10 @@
 #else
 #include "Poco/RWLock_WIN32.h"
 #endif
+#elif defined(POCO_ANDROID)
+#include "Poco/RWLock_Android.h"
+#elif defined(POCO_VXWORKS)
+#include "Poco/RWLock_VX.h"
 #else
 #include "Poco/RWLock_POSIX.h"
 #endif

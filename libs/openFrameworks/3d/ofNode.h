@@ -111,7 +111,6 @@ public:
 	void rotate(float degrees, const ofVec3f& v);	// rotate around arbitrary axis by angle
 	void rotate(float degrees, float vx, float vy, float vz);
 	
-	// TODO: immplement these
 	void rotateAround(const ofQuaternion& q, const ofVec3f& point);	// rotate by quaternion around point
 	void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);	// rotate around arbitrary axis by angle around point
 	

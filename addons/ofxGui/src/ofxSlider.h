@@ -8,6 +8,8 @@ class ofxSlider : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:	
+	ofxSlider(){}
+	ofxSlider(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
 	virtual void mouseMoved(ofMouseEventArgs & args);
@@ -20,12 +22,12 @@ public:
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
-		ofAddListener(value.changedE,listener,method);
+		value.addListener(listener,method);
 	}
 
 	template<class ListenerClass>
 	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
-		ofRemoveListener(value.changedE,listener,method);
+		value.removeListener(listener,method);
 	}
 
 

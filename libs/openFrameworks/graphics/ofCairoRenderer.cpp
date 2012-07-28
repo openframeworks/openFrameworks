@@ -371,8 +371,16 @@ void ofCairoRenderer::draw(ofSubPath & path){
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h){
-	ofPixelsRef pix = img.getPixelsRef();
+void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	ofPixelsRef raw = img.getPixelsRef();
+	bool shouldCrop = sx != 0 || sy != 0 || sw != w || sh != h;
+	ofPixels cropped;
+	if(shouldCrop) {
+		cropped.allocate(sw, sh, raw.getImageType());
+		raw.cropTo(cropped, sx, sy, sw, sh);
+	}
+	ofPixelsRef pix = shouldCrop ? cropped : raw;
+	
 	pushMatrix();
 	translate(x,y,z);
 	scale(w/pix.getWidth(),h/pix.getHeight());
@@ -447,15 +455,15 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h){
+void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	ofImage tmp = image;
-	draw(tmp,x,y,z,w,h);
+	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h){
+void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	ofImage tmp = image;
-	draw(tmp,x,y,z,w,h);
+	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------

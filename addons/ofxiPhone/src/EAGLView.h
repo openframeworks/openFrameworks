@@ -30,27 +30,69 @@
  * ***********************************************************************/ 
 
 #import <UIKit/UIKit.h>
-#import <QuartzCore/QuartzCore.h>
-
 #import "ESRenderer.h"
 
-#include "ofxiPhone.h"
+@protocol EAGLViewDelegate <NSObject>
+@optional
+- (void)glViewAnimationStarted;
+- (void)glViewAnimationStopped;
+- (void)glViewDraw;
+- (void)glViewResized;
+@end
 
 // This class wraps the CAEAGLLayer from CoreAnimation into a convenient UIView subclass.
 // The view content is basically an EAGL surface you render your OpenGL scene into.
 // Note that setting the view non-opaque will only work if the EAGL surface has an alpha channel.
 @interface EAGLView : UIView
 {
-@private
+@public
+    id<EAGLViewDelegate> delegate;
+    
+@protected
     id <ESRenderer> renderer;
-	NSMutableDictionary		*activeTouches;
 	int touchScaleFactor;
+    
+    BOOL bUseDepth;
+    BOOL bUseFSAA;
+    BOOL bUseRetina;
+    NSInteger fsaaSamples;
+    
+	BOOL animating;
+	BOOL displayLinkSupported;
+	float animationFrameInterval;
+	// Use of the CADisplayLink class is the preferred method for controlling your animation timing.
+	// CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
+	// The NSTimer class is used only as fallback when running on a pre 3.1 device where CADisplayLink
+	// isn't available.
+	id displayLink;
+    NSTimer * animationTimer;
+    
+    NSLock * glLock;
 }
+
+@property (nonatomic, assign) id delegate;
+@property (readonly, nonatomic, getter=isAnimating) BOOL animating;
+@property (nonatomic) float animationFrameInterval;
+@property (nonatomic) float animationFrameRate;
+
+- (id) initWithFrame:(CGRect)frame 
+            andDepth:(bool)depth 
+               andAA:(bool)fsaaEnabled 
+       andNumSamples:(int)samples 
+           andRetina:(bool)retinaEnabled;
+
+- (void) startAnimation;
+- (void) stopAnimation;
+- (void) drawView;
+
+- (void) lockGL;
+- (void) unlockGL;
 
 - (void) startRender;
 - (void) finishRender;
-- (EAGLContext*) context;
-- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andNumSamples:(int)samples andRetina:(bool)retinaEnabled;
 
+- (void) destroy;
+
+- (EAGLContext *) context;
 
 @end

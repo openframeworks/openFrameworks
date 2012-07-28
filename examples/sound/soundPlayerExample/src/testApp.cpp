@@ -26,8 +26,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	char tempStr[255];
-
 	// draw the background colors:
 	float widthDiv = ofGetWidth() / 3.0f;
 	ofSetHexColor(0xeeeeee);
@@ -44,7 +42,7 @@ void testApp::draw(){
 	font.drawString("synth !!", 50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play\npct done: %f\nspeed: %f\npan: %f", synth.getPosition(),  synth.getSpeed(), synth.getPan());
+	string tempStr = "click to play\npct done: "+ofToString(synth.getPosition())+"\nspeed: " + ofToString(synth.getSpeed()) + "\npan: " + ofToString(synth.getPan()) ;
 	ofDrawBitmapString(tempStr, 50,ofGetHeight()-50);
 
 
@@ -55,7 +53,7 @@ void testApp::draw(){
 	font.drawString("beats !!", widthDiv+50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click and drag\npct done: %f\nspeed: %f", beats.getPosition(),  beats.getSpeed());
+	tempStr = "click and drag\npct done: "+ofToString(beats.getPosition())+"\nspeed: " +ofToString(beats.getSpeed());
 	ofDrawBitmapString(tempStr, widthDiv+50,ofGetHeight()-50);
 
 	//---------------------------------- vocals:
@@ -64,7 +62,7 @@ void testApp::draw(){
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play (multiplay)\npct done: %f\nspeed: %f", vocals.getPosition(),  vocals.getSpeed());
+	tempStr = "click to play (multiplay)\npct done: "+ofToString(vocals.getPosition())+"\nspeed: " + ofToString(vocals.getSpeed());	
 	ofDrawBitmapString(tempStr, widthDiv*2+50,ofGetHeight()-50);
 
 
@@ -99,16 +97,16 @@ void testApp::mouseDragged(int x, int y, int button){
 void testApp::mousePressed(int x, int y, int button){
 	float widthStep = ofGetWidth() / 3.0f;
 	if (x < widthStep){
-		float pct = x / widthStep;
 		synth.play();
 		synth.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*10);
-		synth.setPan(pct);
+		synth.setPan(ofMap(x, 0, widthStep, -1, 1, true));
 	} else if (x >= widthStep && x < widthStep*2){
 		beats.play();
 	} else {
 		vocals.play();
 		vocals.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*3);
-		vocals.setPan((float)(x - widthStep*2) / (float)widthStep);
+		//map x within the last third of window to -1 to 1 ( for left / right panning )
+		vocals.setPan( ofMap(x, widthStep*2, widthStep*3, -1, 1, true) );
 	}
 }
 

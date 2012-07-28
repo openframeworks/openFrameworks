@@ -32,7 +32,7 @@ void ofPopView();
 void ofViewport(ofRectangle viewport);
 void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
 void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
+void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = -1);
 ofRectangle ofGetCurrentViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
@@ -139,6 +139,7 @@ void 	ofSetBackgroundAuto(bool bManual);		// default is true
 
 void ofClear(float r, float g, float b, float a=0);
 void ofClear(float brightness, float a=0);
+void ofClear(const ofColor & c);
 void ofClearAlpha();
 
 // OF's access to settings (bgAuto, origin, corner mode):
@@ -175,6 +176,11 @@ void ofRect(float x1,float y1,float w,float h);
 void ofRect(const ofRectangle & r);
 void ofRect(const ofPoint & p,float w,float h);
 void ofRect(float x,float y,float z,float w,float h);
+
+void ofRectRounded(const ofRectangle & b,float r);
+void ofRectRounded(const ofPoint & p,float w,float h,float r);
+void ofRectRounded(float x,float y,float w,float h,float r);
+void ofRectRounded(float x,float y,float z,float w,float h,float r);
 
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);

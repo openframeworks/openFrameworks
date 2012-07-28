@@ -1,8 +1,6 @@
 
 
 #import "ESRenderer.h"
-#include "ofMain.h"
-
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 
@@ -28,6 +26,8 @@
 
 - (void) startRender;
 - (void) finishRender;
+- (void)destroyFramebuffer;
+- (BOOL)createFramebuffer:(CAEAGLLayer *)layer;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 - (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
 - (EAGLContext*) context;

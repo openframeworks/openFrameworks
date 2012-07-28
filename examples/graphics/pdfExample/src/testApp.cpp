@@ -13,9 +13,9 @@ void testApp::setup(){
 	font.loadFont("frabk.ttf", 24, true, false, true);
 	
 	dropZoneRects.assign(3, ofRectangle());
+
 	images.assign(3, ofImage());
-	
-	images[0].loadImage("http://www.openframeworks.cc/storage/logos/DSC09316.jpg");
+	images[0].loadImage("DSC09316.jpeg");
 	
 	for(int k = 0; k < dropZoneRects.size(); k++){
 		dropZoneRects[k] = ofRectangle(32 + k * 310, 200, 300, 200);

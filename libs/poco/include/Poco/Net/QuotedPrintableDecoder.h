@@ -1,7 +1,7 @@
 //
 // QuotedPrintableDecoder.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/QuotedPrintableDecoder.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/QuotedPrintableDecoder.h#2 $
 //
 // Library: Net
 // Package: Messages
@@ -52,6 +52,12 @@ namespace Net {
 class Net_API QuotedPrintableDecoderBuf: public Poco::UnbufferedStreamBuf
 	/// This streambuf decodes all quoted-printable (see RFC 2045) 
 	/// encoded data read from the istream connected to it.
+	///
+	/// Note: For performance reasons, the characters 
+	/// are read directly from the given istream's 
+	/// underlying streambuf, so the state
+	/// of the istream will not reflect that of
+	/// its streambuf.
 {
 public:
 	QuotedPrintableDecoderBuf(std::istream& istr);
@@ -60,7 +66,7 @@ public:
 private:
 	int readFromDevice();
 
-	std::istream& _istr;
+	std::streambuf& _buf;
 };
 
 
@@ -83,6 +89,12 @@ protected:
 class Net_API QuotedPrintableDecoder: public QuotedPrintableDecoderIOS, public std::istream
 	/// This istream decodes all quoted-printable (see RFC 2045)
 	/// encoded data read from the istream connected to it.
+	///
+	/// Note: For performance reasons, the characters 
+	/// are read directly from the given istream's 
+	/// underlying streambuf, so the state
+	/// of the istream will not reflect that of
+	/// its streambuf.
 {
 public:
 	QuotedPrintableDecoder(std::istream& istr);
