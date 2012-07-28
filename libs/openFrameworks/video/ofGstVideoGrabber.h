@@ -9,6 +9,7 @@ struct ofGstFramerate{
 
 struct ofGstVideoFormat{
   string mimetype;
+  unsigned int 	 fourcc;
   int    width;
   int    height;
   vector<ofGstFramerate> framerates;

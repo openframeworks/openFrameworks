@@ -1,7 +1,7 @@
 //
 // HexBinaryDecoder.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/HexBinaryDecoder.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/HexBinaryDecoder.h#2 $
 //
 // Library: Foundation
 // Package: Streams
@@ -55,6 +55,12 @@ class Foundation_API HexBinaryDecoderBuf: public UnbufferedStreamBuf
 	/// consisting of two hexadecimal digits ([0-9a-fA-F]) representing the octet code.
 	/// See also: XML Schema Part 2: Datatypes (http://www.w3.org/TR/xmlschema-2/),
 	/// section 3.2.15.
+	///
+	/// Note: For performance reasons, the characters 
+	/// are read directly from the given istream's 
+	/// underlying streambuf, so the state
+	/// of the istream will not reflect that of
+	/// its streambuf.
 {
 public:
 	HexBinaryDecoderBuf(std::istream& istr);
@@ -64,7 +70,7 @@ private:
 	int readFromDevice();
 	int readOne();
 
-	std::istream& _istr;
+	std::streambuf& _buf;
 };
 
 
@@ -91,6 +97,12 @@ class Foundation_API HexBinaryDecoder: public HexBinaryDecoderIOS, public std::i
 	/// consisting of two hexadecimal digits ([0-9a-fA-F]) representing the octet code.
 	/// See also: XML Schema Part 2: Datatypes (http://www.w3.org/TR/xmlschema-2/),
 	/// section 3.2.15.
+	///
+	/// Note: For performance reasons, the characters 
+	/// are read directly from the given istream's 
+	/// underlying streambuf, so the state
+	/// of the istream will not reflect that of
+	/// its streambuf.
 {
 public:
 	HexBinaryDecoder(std::istream& istr);

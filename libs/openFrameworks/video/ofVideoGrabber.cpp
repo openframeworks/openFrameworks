@@ -231,16 +231,6 @@ void ofVideoGrabber::draw(float _x, float _y){
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::draw(const ofPoint & p){
-	tex.draw(p);
-}
-
-//----------------------------------------------------------
-void ofVideoGrabber::draw(const ofRectangle & r){
-	tex.draw(r);
-}
-
-//----------------------------------------------------------
 float ofVideoGrabber::getHeight(){
 	if(	grabber != NULL ){
 		height = grabber->getHeight();

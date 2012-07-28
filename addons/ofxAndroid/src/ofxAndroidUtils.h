@@ -26,6 +26,7 @@ void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);
 void ofxAndroidDismissProgressBox(int id);
 void ofxAndroidOkCancelBox(string msg);
+string ofxAndroidAlertTextBox(string question, string text);
 
 void ofxAndroidToast(string msg);
 
@@ -37,6 +38,8 @@ bool ofxAndroidIsWifiOnline();
 bool ofxAndroidIsMobileOnline();
 
 string ofxAndroidGetStringRes(string id);
+
+string ofxAndroidRandomUUID();
 
 //-------------------------------------
 // this functions are only for internal use

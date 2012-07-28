@@ -1,7 +1,7 @@
 //
 // AsyncChannel.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/AsyncChannel.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/AsyncChannel.h#2 $
 //
 // Library: Foundation
 // Package: Logging
@@ -75,7 +75,7 @@ public:
 
 	void open();
 		/// Opens the channel and creates the 
-		/// background ;ogging thread.
+		/// background logging thread.
 		
 	void close();
 		/// Closes the channel and stops the background

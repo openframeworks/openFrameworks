@@ -103,7 +103,7 @@ void ofSoundPlayer::setVolume(float vol){
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPan(float pan){
 	if( player != NULL ){
-		player->setPan(pan);
+		player->setPan(CLAMP(pan,-1.0f,1.0f));
 	}
 }
 
@@ -173,6 +173,15 @@ bool ofSoundPlayer::getIsPlaying(){
 		return player->getIsPlaying();
 	} else {
 		return false;
+	}
+}
+
+//--------------------------------------------------------------------
+bool ofSoundPlayer::isLoaded(){
+	if( player != NULL ){
+		return player->isLoaded();
+	} else {
+		return false; 
 	}
 }
 

@@ -698,58 +698,70 @@ void ofImage_<PixelType>::resetAnchor(){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(const ofRectangle & _r){
-	ofGetCurrentRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
-}
-
-//------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::draw(const ofPoint & _p, float _w, float _h){
-	ofGetCurrentRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
-}
-
-//------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h){
-	ofGetCurrentRenderer()->draw(*this,_x,_y,0,_w,_h);
-}
-
-//------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h){
-	ofGetCurrentRenderer()->draw(*this,_x,_y,_z,_w,_h);
-}
-
-//------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::draw(const ofPoint & p){
-	draw(p.x,p.y,p.z,pixels.getWidth(),pixels.getHeight());
-}
-
-//------------------------------------
-template<typename PixelType>
 void ofImage_<PixelType>::draw(float x, float y){
-	draw(x,y,0.0f,pixels.getWidth(),pixels.getHeight());
+	draw(x,y,0,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float x, float y, float z){
-	draw(x,y,z,pixels.getWidth(),pixels.getHeight());
+	draw(x,y,z,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::allocate(int w, int h, ofImageType type){
+void ofImage_<PixelType>::draw(float x, float y, float w, float h){
+	draw(x,y,0,w,h);
+}
 
-	pixels.allocate(w, h, type);
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::draw(float x, float y, float z, float w, float h){
+	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy){
+	drawSubsection(x,y,0,w,h,sx,sy,w,h);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
+	drawSubsection(x,y,z,w,h,sx,sy,w,h);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	ofGetCurrentRenderer()->draw(*this,x,y,z,w,h,sx,sy,sw,sh);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
+	
+	if (width == w && height == h && newType == type){
+		return;
+	}
+	pixels.allocate(w, h, newType);
 
 	// take care of texture allocation --
 	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
-
-	update();
+	
+	width	= pixels.getWidth();
+	height	= pixels.getHeight();
+	bpp		= pixels.getBitsPerPixel();
+	type	= pixels.getImageType();
 }
 
 
@@ -865,13 +877,13 @@ void ofImage_<PixelType>::update(){
 		} else if(pixels.getNumChannels() == 4) {
 			type = GL_RGBA;
 		}
-		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getWidth() || type != tex.getTextureData().glTypeInternal)
+		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getHeight() || type != tex.getTextureData().glTypeInternal)
 		{
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
 		}
 		tex.loadData(pixels);
 	}
-
+	
 	width	= pixels.getWidth();
 	height	= pixels.getHeight();
 	bpp		= pixels.getBitsPerPixel();
@@ -896,23 +908,23 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
-	int screenHeight =	ofGetViewportHeight(); // if we are in a FBO or other viewport, this fails: ofGetHeight();
-	_y = screenHeight - _y;
-	_y -= _h; // top, bottom issues
-
+    int sw = ofGetViewportWidth();
+    int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
+    
 	if (!((width == _w) && (height == _h))){
 		resize(_w, _h);
 	}
 
 	#ifndef TARGET_OPENGLES
-		glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
-	#endif
-		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glReadPixels(_x, _y, _w, _h, ofGetGlInternalFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
-	#ifndef TARGET_OPENGLES
-		glPopClientAttrib();
-	#endif
-
+    
+    _y = sh - _y;
+    _y -= _h; // top, bottom issues
+    
+    glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(_x, _y, _w, _h, ofGetGlInternalFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
+    glPopClientAttrib();
+    
 	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
 	PixelType * tempLineOfPix = new PixelType[sizeOfOneLineOfPixels];
 	PixelType * linea;
@@ -925,6 +937,119 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 		memcpy(lineb, tempLineOfPix, sizeOfOneLineOfPixels);
 	}
 	delete [] tempLineOfPix;
+	
+    #else
+    
+    int numPixels   = width*height;
+    if( numPixels == 0 ){
+        ofLog(OF_LOG_ERROR, "grabScreen width or height is 0 - returning");
+        return;
+    }
+    
+    int numRGBA         = numPixels*4;
+    GLubyte *bufferRGBA = (GLubyte *) malloc(numRGBA);
+
+    if(ofGetOrientation() == OF_ORIENTATION_DEFAULT) {
+        
+        _y = sh - _y;   // screen is flipped vertically.
+        _y -= _h;
+        
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        
+        for(int y = 0; y < _h; y++){  
+            for(int x = 0; x < _w; x++){
+                
+                int i = y * _w * 3 + x * 3;
+                int j = (_h-1-y) * _w * 4 + x * 4;  // rotate 90.
+                
+                pixels.getPixels()[i]   = bufferRGBA[j];
+                pixels.getPixels()[i+1] = bufferRGBA[j+1];
+                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+            }
+        }
+    }
+    else if(ofGetOrientation() == OF_ORIENTATION_180) {
+        
+        _x = sw - _x;   // screen is flipped horizontally.
+        _x -= _w;
+        
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        
+        for(int y = 0; y < _h; y++){  
+            for(int x = 0; x < _w; x++){
+                
+                int i = y * _w * 3 + x * 3;
+                int j = y * _w * 4 + (_w-1-x) * 4;  // rotate 90.
+                
+                pixels.getPixels()[i]   = bufferRGBA[j];
+                pixels.getPixels()[i+1] = bufferRGBA[j+1];
+                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+            }
+        }
+    }
+    else if(ofGetOrientation() == OF_ORIENTATION_90_RIGHT) {
+        
+        int tempW = _w;     // swap width and height.
+        _w = _h;
+        _h = tempW;
+        
+        int tempY = _y;     // swap x and y.
+        _y = _x;
+        _x = tempY;
+        
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        
+        for(int y = 0; y < _h; y++){  
+            for(int x = 0; x < _w; x++){
+                
+                int i = x * _h * 3 + y * 3;
+                int j = y * _w * 4 + x * 4;
+                
+                pixels.getPixels()[i]   = bufferRGBA[j];
+                pixels.getPixels()[i+1] = bufferRGBA[j+1];
+                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+            }
+        }
+    }
+    else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
+        
+        int tempW = _w; // swap width and height.
+        _w = _h;
+        _h = tempW;
+        
+        int tempY = _y; // swap x and y.
+        _y = _x;
+        _x = tempY;
+        
+        _x = sw - _x;   // screen is flipped horizontally.
+        _x -= _w;
+        
+        _y = sh - _y;   // screen is flipped vertically.
+        _y -= _h;
+        
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        
+        for(int y = 0; y < _h; y++){  
+            for(int x = 0; x < _w; x++){
+                
+                int i = x * _h * 3 + y * 3;
+                int j = (_h-1-y) * _w * 4 + (_w-1-x) * 4;
+                
+                pixels.getPixels()[i]   = bufferRGBA[j];
+                pixels.getPixels()[i+1] = bufferRGBA[j+1];
+                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+            }
+        }
+    }
+    
+    free(bufferRGBA);    
+    
+    #endif
+
 	update();
 }
 

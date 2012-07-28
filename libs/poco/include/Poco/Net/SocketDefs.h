@@ -1,7 +1,7 @@
 //
 // SocketDefs.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/SocketDefs.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SocketDefs.h#5 $
 //
 // Library: Net
 // Package: NetCore
@@ -47,6 +47,7 @@
 #define POCO_INVALID_SOCKET  INVALID_SOCKET
 #define poco_socket_t        SOCKET
 #define poco_socklen_t       int
+#define poco_ioctl_request_t int
 #define poco_closesocket(s)  closesocket(s)
 #define POCO_EINTR           WSAEINTR
 #define POCO_EACCES          WSAEACCES
@@ -88,6 +89,60 @@
 #define POCO_TRY_AGAIN       WSATRY_AGAIN
 #define POCO_NO_RECOVERY     WSANO_RECOVERY
 #define POCO_NO_DATA         WSANO_DATA
+#elif defined(POCO_VXWORKS)
+#include <hostLib.h>
+#include <ifLib.h>
+#include <inetLib.h>
+#include <ioLib.h>
+#include <resolvLib.h>
+#include <types.h>
+#include <socket.h>
+#include <netinet/tcp.h>
+#define POCO_INVALID_SOCKET  -1
+#define poco_socket_t        int
+#define poco_socklen_t       int
+#define poco_ioctl_request_t int
+#define poco_closesocket(s)  ::close(s)
+#define POCO_EINTR           EINTR
+#define POCO_EACCES          EACCES
+#define POCO_EFAULT          EFAULT
+#define POCO_EINVAL          EINVAL
+#define POCO_EMFILE          EMFILE
+#define POCO_EAGAIN          EAGAIN
+#define POCO_EWOULDBLOCK     EWOULDBLOCK
+#define POCO_EINPROGRESS     EINPROGRESS
+#define POCO_EALREADY        EALREADY
+#define POCO_ENOTSOCK        ENOTSOCK
+#define POCO_EDESTADDRREQ    EDESTADDRREQ
+#define POCO_EMSGSIZE        EMSGSIZE
+#define POCO_EPROTOTYPE      EPROTOTYPE
+#define POCO_ENOPROTOOPT     ENOPROTOOPT
+#define POCO_EPROTONOSUPPORT EPROTONOSUPPORT
+#define POCO_ESOCKTNOSUPPORT ESOCKTNOSUPPORT
+#define POCO_ENOTSUP         ENOTSUP
+#define POCO_EPFNOSUPPORT    EPFNOSUPPORT
+#define POCO_EAFNOSUPPORT    EAFNOSUPPORT
+#define POCO_EADDRINUSE      EADDRINUSE
+#define POCO_EADDRNOTAVAIL   EADDRNOTAVAIL
+#define POCO_ENETDOWN        ENETDOWN
+#define POCO_ENETUNREACH     ENETUNREACH
+#define POCO_ENETRESET       ENETRESET
+#define POCO_ECONNABORTED    ECONNABORTED
+#define POCO_ECONNRESET      ECONNRESET
+#define POCO_ENOBUFS         ENOBUFS
+#define POCO_EISCONN         EISCONN
+#define POCO_ENOTCONN        ENOTCONN
+#define POCO_ESHUTDOWN       ESHUTDOWN
+#define POCO_ETIMEDOUT       ETIMEDOUT
+#define POCO_ECONNREFUSED    ECONNREFUSED
+#define POCO_EHOSTDOWN       EHOSTDOWN
+#define POCO_EHOSTUNREACH    EHOSTUNREACH
+#define POCO_ESYSNOTREADY    -4
+#define POCO_ENOTINIT        -5
+#define POCO_HOST_NOT_FOUND  HOST_NOT_FOUND
+#define POCO_TRY_AGAIN       TRY_AGAIN
+#define POCO_NO_RECOVERY     NO_RECOVERY
+#define POCO_NO_DATA         NO_DATA
 #elif defined(POCO_OS_FAMILY_UNIX) || defined(POCO_OS_FAMILY_VMS)
 #include <unistd.h>
 #include <errno.h>
@@ -115,6 +170,11 @@
 #define POCO_INVALID_SOCKET  -1
 #define poco_socket_t        int
 #define poco_socklen_t       socklen_t
+#if defined(POCO_OS_FAMILY_BSD)
+#define poco_ioctl_request_t unsigned long
+#else
+#define poco_ioctl_request_t int
+#endif
 #define poco_closesocket(s)  ::close(s)
 #define POCO_EINTR           EINTR
 #define POCO_EACCES          EACCES
@@ -176,8 +236,20 @@
 #endif
 
 
+#if POCO_OS != POCO_OS_VXWORKS
+#define POCO_HAVE_ADDRINFO   1
+#endif
+
+
 #if (POCO_OS == POCO_OS_HPUX) || (POCO_OS == POCO_OS_SOLARIS) || (POCO_OS == POCO_OS_WINDOWS_CE)
 #define POCO_BROKEN_TIMEOUTS 1
+#endif
+
+
+#if defined(POCO_HAVE_ADDRINFO)
+#if !defined(AI_ADDRCONFIG)
+#define AI_ADDRCONFIG 0
+#endif
 #endif
 
 

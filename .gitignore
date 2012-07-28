@@ -1,103 +1,82 @@
-*.mode*
-build/
-obj/
-*.o
+
+# OF-specific ignore patterns
+
 openFrameworks.a
 openFrameworksDebug.a
 openFrameworksUniversal.a
-*.app/
 
 #rule to avoid non-official addons going into git
 #see addons/.gitignore
-addons/**
+addons/*
 
-#xcode files
+#rule to avoid non-official apps going into git
+#see apps/.gitignore
+apps/*
+
+#also, see examples/.gitignore
+
+# Some general ignore patterns
+
+build/
+obj/
+*.o
+Debug*/
+Release*/
+*.mode*
+*.app/
+*.pyc
+.svn/
+
+# IDE-specific ignore patterns
+
+#XCode
 *.pbxuser
+*.perspective
 *.perspectivev3
-examples/*/*/*.xcodeproj
-examples/*/*/Project.xcconfig
-examples/*/*/openFrameworks-Info.plist
-examples/*/*/ofxiphone-Info.plist
-examples/*/*/iPhone_Prefix.pch
+*.mode1v3
+*.mode2v3
+#XCode 4
+xcuserdata
+*.xcworkspace
 
+#Code::Blocks
+*.depend
+*.layout
 
-#codeblocks files
-examples/*/*/*.layout
-examples/*/*/*.depend
-examples/*/*/bin/clickToLaunch*
-examples/*/*/bin/libs
-examples/*/*/obj
-examples/*/*/*.cbp
-examples/*/*/*.workspace
-
-#vs files
-examples/*/*/*.sln
-examples/*/*/*.vcxproj
-examples/*/*/*.vcxproj.user
-
-#rule to avoid non-official examples going into git
-#see examples/.gitignore
-apps/**
-
-#codeblocks OF lib files
-libs/openFrameworksCompiled/project/*/*.depend
-libs/openFrameworksCompiled/project/*/*.layout
-
-#linux temporary files
-*~
-
-#vs2010 user files
+#Visual Studio
 *.sdf
 *.opensdf
 *.suo
+ipch/
 
-#eclipse build folders
-#Mac OS X
-addons/Debug Mac OS X
-addons/Release Mac OS X
-libs/openFrameworks/Debug Mac OS X
-libs/openFrameworks/Release Mac OS X
-examples/*/*/Debug Mac OS X
-examples/*/*/Release Mac OS X
-xcuserdata
-project.xcworkspace
-.DS_Store
+#Eclipse
+.metadata
+local.properties
+.externalToolBuilders
+
+# OS-specific ignore patterns
 
 #Linux
-addons/Debug Linux
-addons/Release Linux
-libs/openFrameworks/Debug Linux
-libs/openFrameworks/Release Linux
-examples/*/*/Debug Linux
-examples/*/*/Release Linux
-examples/*/*/Debug Linux64
-examples/*/*/Release Linux64
-examples/*/*/Makefile
-examples/*/*/config.make
-*.pyc
+*~
+# KDE
+.directory
 
-#eclipse
-examples/*/*/.cproject
-examples/*/*/.project
-examples/*/*/.settings
+#OSX
+.DS_Store
+*.swp
+*~.nib
+# Thumbnails
+._*
+
+#Windows
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
 
 #Android
-addons/Debug Android
-addons/Release Android
-libs/openFrameworks/Debug Android
-libs/openFrameworks/Release Android
-libs/openFrameworks/Release
-libs/openFrameworks/Debug
-libs/openFrameworks/Release_arm7
-examples/*/*/Debug Android
-examples/*/*/Release Android
-examples/*/*/Debug
-examples/*/*/Release
-examples/*/*/Release_arm7
-examples/*/*/test link
-examples/*/*/obj
 .csettings
-paths.make
-!examples/android/*/.cproject
-!examples/android/*/.project
-!examples/android/*/.settings
+
+# Miscellaneous
+.mailmap
+

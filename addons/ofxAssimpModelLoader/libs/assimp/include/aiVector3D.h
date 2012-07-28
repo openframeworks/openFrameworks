@@ -46,26 +46,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <math.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
-#include "./Compiler/pushpack1.h"
+//#include "./Compiler/pushpack1.h"
 
 struct aiMatrix3x3;
 struct aiMatrix4x4;
 
 // ---------------------------------------------------------------------------
 /** Represents a three-dimensional vector. */
-struct aiVector3D
+class aiVector3D
 {
-#ifdef __cplusplus
+public:
+
+//#ifdef __cplusplus
 	aiVector3D () : x(0.0f), y(0.0f), z(0.0f) {}
 	aiVector3D (float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 	aiVector3D (float _xyz) : x(_xyz), y(_xyz), z(_xyz) {}
 	aiVector3D (const aiVector3D& o) : x(o.x), y(o.y), z(o.z) {}
 
-public:
 
 	// combined operators
 	const aiVector3D& operator += (const aiVector3D& o);
@@ -113,17 +114,17 @@ public:
 	 *  @param o Second factor */
 	const aiVector3D SymMul(const aiVector3D& o);
 
-#endif // __cplusplus
+//#endif // __cplusplus
 
 	float x, y, z;	
-} PACK_STRUCT;
+} ;//PACK_STRUCT;
 
-#include "./Compiler/poppack1.h"
+//#include "./Compiler/poppack1.h"
 
-#ifdef __cplusplus
-} // end extern "C"
+//#ifdef __cplusplus
+//} // end extern "C"
 
 
-#endif // __cplusplus
+//#endif // __cplusplus
 
 #endif // AI_VECTOR3D_H_INC

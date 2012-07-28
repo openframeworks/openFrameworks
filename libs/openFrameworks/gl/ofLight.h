@@ -41,6 +41,7 @@ public:
 	virtual ~ofLight();
 	void destroy();
 	
+    void setup();
 	void enable();
 	void disable();
 	bool getIsEnabled() const;
@@ -51,11 +52,16 @@ public:
 	void setSpotlight( float spotCutOff=45.f, float exponent=0.f );
 	bool getIsSpotlight();
 	void setSpotlightCutOff( float spotCutOff );
+    float getSpotlightCutOff();
 	void setSpotConcentration( float exponent );
+    float getSpotConcentration();
 	
 	void setPointLight();
 	bool getIsPointLight();
-	void setAttenuation( float constant=2.f, float linear=1.f, float quadratic=0.5f );
+	void setAttenuation( float constant=1.f, float linear=0.f, float quadratic=0.f );
+    float getAttenuationConstant();
+    float getAttenuationLinear();
+    float getAttenuationQuadratic();
 	
 	int getType();
 	
@@ -69,13 +75,7 @@ public:
 	
 	int getLightID() const;
 
-	void customDraw() {
-		ofPushMatrix();
-		ofTranslate(getPosition());
-		ofBox(10);
-		ofDrawAxis(20);
-		ofPopMatrix();
-	}
+	void customDraw();
 	
 	
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
@@ -84,6 +84,10 @@ private:
 	ofFloatColor ambientColor;
 	ofFloatColor diffuseColor;
 	ofFloatColor specularColor;
+    
+    float attenuation_constant;
+    float attenuation_linear;
+    float attenuation_quadratic;
 
 	ofLightType lightType;
 	
@@ -91,6 +95,8 @@ private:
 	int isEnabled;
 	bool isDirectional;
 	bool isSpotlight;
+    float spotCutOff;
+    float exponent;
 	
 	// update opengl light 
 	virtual void onPositionChanged();

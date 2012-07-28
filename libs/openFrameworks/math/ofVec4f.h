@@ -7,14 +7,18 @@ class ofVec3f;
 class ofVec4f {
 public:
 	float x, y, z, w;
+    
+    static const int DIM = 4;
 	
-	ofVec4f( float _x=0.f, float _y=0.f, float _z=0.f, float _w=0.f );
-	
+	ofVec4f();
+	explicit ofVec4f( float _scalar );
+	ofVec4f( float _x, float _y, float _z, float _w );
 	ofVec4f( const ofVec2f& vec);
 	ofVec4f( const ofVec3f& vec);
 	
     // Getters and Setters.
     //
+	void set( float _scalar );
     void set( float _x, float _y, float _z, float _w );
     void set( const ofVec4f& vec );
 	
@@ -142,6 +146,13 @@ public:
 	
     // use getMiddle
     ofVec4f 	middled( const ofVec4f& pnt ) const;    
+    
+    // return all zero vector
+    static ofVec4f zero() { return ofVec4f(0, 0, 0, 0); }
+    
+    // return all one vector
+    static ofVec4f one() { return ofVec4f(1, 1, 1, 1); }
+
 };
 
 
@@ -165,6 +176,8 @@ ofVec4f operator/( float f, const ofVec4f& vec );
 // Implementation
 /////////////////
 
+inline ofVec4f::ofVec4f(): x(0), y(0), z(0), w(0) {};
+inline ofVec4f::ofVec4f(float _s): x(_s), y(_s), z(_s), w(_s) {};
 inline ofVec4f::ofVec4f( float _x,
 						float _y,
 						float _z,

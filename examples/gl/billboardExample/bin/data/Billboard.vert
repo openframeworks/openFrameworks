@@ -1,4 +1,3 @@
-uniform float pointSize;
 
 void main() {
 	gl_TexCoord[0] = gl_MultiTexCoord0;
@@ -7,7 +6,7 @@ void main() {
 	float dist = sqrt(eyeCoord.x*eyeCoord.x + eyeCoord.y*eyeCoord.y + eyeCoord.z*eyeCoord.z);
 	float att	 = 600.0 / dist;
 	
-	gl_PointSize = pointSize * att;
+	gl_PointSize = gl_Normal.x * att;
 	gl_FrontColor = gl_Color;
 }
 

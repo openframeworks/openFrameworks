@@ -1,5 +1,9 @@
 #include "ofxToggle.h"
 
+ofxToggle::ofxToggle(string toggleName, ofxParameter<bool> _bVal, float width, float height){
+	setup(toggleName,_bVal,defaultWidth,height);
+}
+
 ofxToggle * ofxToggle::setup(string toggleName, ofxParameter<bool> _bVal, float width, float height){
 	name = toggleName;
 	b.x = 0;
@@ -33,12 +37,20 @@ void ofxToggle::mouseReleased(ofMouseEventArgs & args){
 void ofxToggle::saveToXml(ofxXmlSettings& xml) {
 	string xmlName = name;
 	ofStringReplace(xmlName," ","_");
+	ofStringReplace(xmlName,",","_");
+	ofStringReplace(xmlName,"(","_");
+	ofStringReplace(xmlName,")","_");
+	ofStringReplace(xmlName,"/","_");
 	xml.setValue(xmlName, value);
 }
 
 void ofxToggle::loadFromXml(ofxXmlSettings& xml) {
 	string xmlName = name;
 	ofStringReplace(xmlName," ","_");
+	ofStringReplace(xmlName,",","_");
+	ofStringReplace(xmlName,"(","_");
+	ofStringReplace(xmlName,")","_");
+	ofStringReplace(xmlName,"/","_");
 	value = xml.getValue(xmlName, value);
 }
 
@@ -69,8 +81,8 @@ void ofxToggle::draw(){
 	ofSetColor(textColor);
 	ofTranslate(0, b.height / 2 + 4);
 	ofDrawBitmapString(name, textPadding + checkboxRect.width, 0);
-	string valStr = value ? "true" : "false";
-	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
+	//string valStr = value ? "true" : "false";
+	//ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 
 	ofPopMatrix();
 	ofPopStyle();

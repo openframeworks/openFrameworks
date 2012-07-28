@@ -12,84 +12,66 @@
 
 string CBWinProject::LOG_NAME = "CBWinProject";
 
-
-void CBWinProject::setup(string _ofRoot){
-    ofRoot = _ofRoot;
-    templatePath = ofFilePath::join(getOFRoot(),"scripts/win_cb/template");
+void CBWinProject::setup() {
+    ;
 }
 
-CBWinProject::CBWinProject() {
+bool CBWinProject::createProjectFile(){
 
+    string project = projectDir + projectName + ".cbp";
+    string workspace = projectDir + projectName + ".workspace";
+
+
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project, false, true);
+
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),workspace, false, true);
+
+    //let's do some renaming:
+    string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
+
+    if (relRoot != "../../../"){
+
+        string relRootWindows = relRoot;
+        // let's make it windows friendly:
+        for(int i = 0; i < relRootWindows.length(); i++) {
+            if( relRootWindows[i] == '/' )
+                relRootWindows[i] = '\\';
+        }
+
+        findandreplaceInTexfile(workspace, "../../../", relRoot);
+        findandreplaceInTexfile(project, "../../../", relRoot);
+
+        findandreplaceInTexfile(workspace, "..\\..\\..\\", relRootWindows);
+        findandreplaceInTexfile(project, "..\\..\\..\\", relRootWindows);
+    }
+
+    return true;
 }
 
-//void CBWinProject::parseAddons(){
-//	addons.clear();
-//	ofFile addonsmake(projectDir+"addons.make");
-//	if(!addonsmake.exists()){
-//		addonsmake.create();
-//		addonsmake.open(projectDir+"addons.make");
-//	}
-//	ofBuffer addonsmakebuff;
-//	addonsmake >> addonsmakebuff;
-//	while(!addonsmakebuff.isLastLine()){
-//		string line = addonsmakebuff.getNextLine();
-//		if(line!=""){
-//			//addons.push_back(ofAddon(getOFRoot()+"/addons/"+line,"win_cb"));
-//		}
-//	}
-//}
+bool CBWinProject::loadProjectFile(){
 
+    //project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
 
-bool CBWinProject::load(string path){
-	projectDir = ofFilePath::addLeadingSlash(path);
-	projectName = ofFilePath::getFileName(path);
-	ofFile project(projectDir + projectName + ".cbp");
+    ofFile project(projectDir + projectName + ".cbp");
 	if(!project.exists()){
-		ofLogError(LOG_NAME) << "error loading" << path << "doesn't exist";
+		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
 		return false;
 	}
-	//parseAddons();
 	pugi::xml_parse_result result = doc.load(project);
-	bLoaded = result.status==pugi::status_ok;
+	bLoaded =result.status==pugi::status_ok;
 	return bLoaded;
 }
 
-bool CBWinProject::create(string path){
-	projectDir = ofFilePath::addTrailingSlash(path);
-	ofLogVerbose(LOG_NAME) << "project dir:" << projectDir;
-	projectName = ofFilePath::getFileName(path);
-	ofLogVerbose(LOG_NAME) << "project name:" << projectName;
-	ofFile project(projectDir + projectName + ".cbp");
-	if(!project.exists()){
-		ofLogVerbose(LOG_NAME) << "creating non existent project";
-		ofDirectory dir(projectDir);
-		dir.create(true);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_win_cb.cbp"),project.path());
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_win_cb.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
-		project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
-		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
-	}
-	
-    //parseAddons();
-	
-    pugi::xml_parse_result result = doc.load(project);
-	if(result.status==pugi::status_ok){
-        pugi::xpath_node_set title = doc.select_nodes("//Option[@title]");
-        if(!title.empty()){
-        	if(!title[0].node().attribute("title").set_value(projectName.c_str())){
-        		ofLogError(LOG_NAME) << "cannot set title";
-        		bLoaded = false;
-        		return bLoaded;
-        	}
-            doc.save_file((projectDir + projectName + ".cbp").c_str());
+bool CBWinProject::saveProjectFile(){
+
+    findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
+    pugi::xpath_node_set title = doc.select_nodes("//Option[@title]");
+    if(!title.empty()){
+        if(!title[0].node().attribute("title").set_value(projectName.c_str())){
+            ofLogError(LOG_NAME) << "can't set title";
         }
-        bLoaded = true;
-	}else{
-		bLoaded = false;
-	}
-	return bLoaded;
+    }
+    return doc.save_file((projectDir + projectName + ".cbp").c_str());
 }
 
 void CBWinProject::addSrc(string srcName, string folder){
@@ -101,37 +83,15 @@ void CBWinProject::addSrc(string srcName, string folder){
 }
 
 void CBWinProject::addInclude(string includeName){
+    ofLogNotice() << "adding include " << includeName;
     appendValue(doc, "Add", "directory", includeName);
 }
 
-void CBWinProject::addLibrary(string libraryName){
-    appendValue(doc, "Add", "library", libraryName);
-}
-
-
-void CBWinProject::addAddon(ofAddon & addon){
-	for(int i=0;i<(int)addons.size();i++){
-		if(addons[i].name==addon.name) return;
-	}
-
-	addons.push_back(addon);
-
-	for(int i=0;i<(int)addon.includePaths.size();i++){
-		addInclude(addon.includePaths[i]);
-	}
-
-	for(int i=0;i<(int)addon.libs.size();i++){
-		addLibrary(addon.libs[i]);
-	}
-
-	for(int i=0;i<(int)addon.srcFiles.size();i++){
-		addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
-	}
-
-	ofFile addonsmake(projectDir+"addons.make",ofFile::WriteOnly);
-	for(int i=0;i<(int)addons.size();i++){
-		addonsmake << addons[i].name << endl;
-	}
+void CBWinProject::addLibrary(string libraryName, LibType libType){
+    ofLogNotice() << "adding library " << libraryName;
+    appendValue(doc, "Add", "library", libraryName, true);
+    // overwriteMultiple for a lib if it's there (so libsorder.make will work)
+    // this is because we might need to say libosc, then ws2_32
 }
 
 string CBWinProject::getName(){
