@@ -21,8 +21,6 @@ ofxBaseGroup * ofxBaseGroup::setup(string collectionName, string filename, float
     this->clear();
 	this->filename = filename;
     
-	ofRegisterMouseEvents(this);
-    
 	return this;
 }
 
@@ -159,7 +157,6 @@ void ofxBaseGroup::mouseDragged(ofMouseEventArgs & args){
 
 void ofxBaseGroup::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
-	bGrabbed = false;
 	for(int k = 0; k < (int)collection.size(); k++){
 		ofMouseEventArgs a = args;
 		a.x -= b.x;
@@ -224,27 +221,20 @@ ofxBaseGui * ofxBaseGroup::getControl(string name){
 	return NULL;
 }
 
+void ofxBaseGroup::registerMouseEvents(){
+    ofRegisterMouseEvents(this);
+}
 void ofxBaseGroup::setValue(float mx, float my, bool bCheck){
     
 	if( ofGetFrameNum() - currentFrame > 1 ){
-		bGrabbed = false;
 		bGuiActive = false;
 		return;
 	}
+    
 	if( bCheck ){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
-            
-			if( my > b.y && my <= b.y + header ){
-				bGrabbed = true;
-				grabPt.set(mx-b.x, my-b.y);
-			} else{
-				bGrabbed = false;
-			}
         }
-	} else if( bGrabbed ){
-		b.x = mx - grabPt.x;
-		b.y = my - grabPt.y;
 	}
 }
 

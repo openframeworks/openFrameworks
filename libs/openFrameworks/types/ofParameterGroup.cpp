@@ -8,6 +8,11 @@ void ofParameterGroup::add(ofAbstractParameter & param){
 	param.setParent(this);
 }
 
+void ofParameterGroup::clear(){
+    this->parameters.clear();
+    this->parametersIndex.clear();
+}
+
 ofParameter<bool> ofParameterGroup::getBool(string name) const	{
 	return get<bool>(name);
 }

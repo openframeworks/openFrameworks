@@ -43,6 +43,7 @@ public:
 protected:
     ofxBaseGroup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
 	ofxBaseGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
+    void registerMouseEvents();
     virtual void setValue(float mx, float my, bool bCheck);
     
 	float spacing;
@@ -50,9 +51,6 @@ protected:
 	
     template<class ControlType>
 	ControlType getControlType(string name);
-    
-    ofPoint grabPt;
-	bool bGrabbed;
 
 	vector <ofxBaseGui *> collection;
 	ofParameterGroup parameters;
