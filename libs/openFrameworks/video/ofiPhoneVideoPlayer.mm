@@ -552,18 +552,16 @@ void ofiPhoneVideoPlayer::setPosition(float pct) {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::setVolume(int volume) {
-    float vol = (float)volume / 100.0;
-    setVolume(vol);
-}
-
 void ofiPhoneVideoPlayer::setVolume(float volume) {
     if(videoPlayer == NULL) {
         return;
     }
-    
-    float vol = ofClamp(volume, 0, 1);
-    [((AVFoundationVideoPlayer *)videoPlayer) setVolume:vol];    
+	if ( volume > 1.0f ){
+		ofLogWarning("ofiPhoneVideoPlayer") << "*** the range of setVolume changed with oF0072 from int [0..100] to float [0..1].";
+		ofLogWarning("ofiPhoneVideoPlayer") << "*** limiting input volume " << volume << " to 1.0f.";
+		volume = 1.0f;
+	}
+    [((AVFoundationVideoPlayer *)videoPlayer) setVolume:volume];    
 }
 
 //----------------------------------------
