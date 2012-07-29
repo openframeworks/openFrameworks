@@ -47,14 +47,13 @@ void closeQuicktime(){
 
 
 //----------------------------------------
-void convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int w, int h){
+void convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int w, int h, int bpp){
 
 	// ok for macs?
 	// ok for intel macs?
 
 	int * rgbaPtr 			= (int *) gWorldPixels;
-	pix24 * rgbPtr 			= (pix24 *) rgbPixels;
-		unsigned char * rgbaStart;
+    unsigned char * rgbaStart;
 
 	//	putting in the boolean, so we can work on
 	//	0,0 in top right...
@@ -73,24 +72,44 @@ void convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int 
 	if (!bFlipVertically){
 		//----- argb->rgb
 		for (int i = 0; i < h; i++){
-			pix24 * rgbPtr 			= (pix24 *) rgbPixels + ((i) * w);
-			for (int j = 0; j < w; j++){
-				rgbaStart = (unsigned char *)rgbaPtr;
-				memcpy (rgbPtr, rgbaStart+1, sizeof(pix24));
-				rgbPtr++;
-				rgbaPtr++;
-			}
+            if (bpp == 3) {
+                pix24 * rgbPtr = (pix24 *) rgbPixels + ((i) * w);
+                for (int j = 0; j < w; j++){
+                    rgbaStart = (unsigned char *)rgbaPtr;
+                    memcpy (rgbPtr, rgbaStart+1, sizeof(pix24));
+                    rgbPtr++;
+                    rgbaPtr++;
+                }
+            } else {
+                pix32 * rgbPtr = (pix32 *) rgbPixels + ((i) * w);
+                for (int j = 0; j < w; j++){
+                    rgbaStart = (unsigned char *)rgbaPtr;
+                    memcpy (rgbPtr, rgbaStart+1, sizeof(pix32));    
+                    rgbPtr++;
+                    rgbaPtr++;
+                }
+            }
 		}
 	} else {
 		//----- flip while argb->rgb
 		for (int i = 0; i < h; i++){
-			pix24 * rgbPtr 			= (pix24 *) rgbPixels + ((h-i-1) * w);
-			for (int j = 0; j < w; j++){
-				rgbaStart = (unsigned char *)rgbaPtr;
-				memcpy (rgbPtr, rgbaStart+1, sizeof(pix24));
-				rgbPtr++;
-				rgbaPtr++;
-			}
+            if (bpp == 3) {
+                pix24 * rgbPtr = (pix24 *) rgbPixels + ((h-i-1) * w);
+                for (int j = 0; j < w; j++){
+                    rgbaStart = (unsigned char *)rgbaPtr;
+                    memcpy (rgbPtr, rgbaStart+1, sizeof(pix24));    
+                    rgbPtr++;
+                    rgbaPtr++;
+                }
+            } else {
+                pix32 * rgbPtr = (pix32 *) rgbPixels + ((h-i-1) * w);
+                for (int j = 0; j < w; j++){
+                    rgbaStart = (unsigned char *)rgbaPtr;
+                    memcpy (rgbPtr, rgbaStart+1, sizeof(pix32));
+                    rgbPtr++;
+                    rgbaPtr++;
+                }
+            }
 		}
 	}
 }

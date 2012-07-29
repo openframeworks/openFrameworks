@@ -16,50 +16,51 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		ofQuickTimePlayer();
 		~ofQuickTimePlayer();
 
-		 bool			loadMovie(string name);
-		 void			closeMovie();	
-		 void			close();
-		 void			update();
+		bool			loadMovie(string name);
+		void			closeMovie();	
+		void			close();
+		void			update();
 
-		 void			play();
-		 void			stop();
-		 
-		 void			clearMemory();
-	
-		 bool 			isFrameNew();
-		 unsigned char * 	getPixels();
-		 ofPixelsRef		getPixelsRef();
-		 const ofPixels&	getPixelsRef() const;
+		void			play();
+		void			stop();
 		
-		 float 			getWidth();
-		 float 			getHeight();
+		void			clearMemory();
+	
+		bool 			isFrameNew();
+		unsigned char * getPixels();
+		ofPixelsRef		getPixelsRef();
+		const ofPixels&	getPixelsRef() const;
+		
+		float 			getWidth();
+		float 			getHeight();
 
-		 bool			isPaused();
-		 bool			isLoaded();
-		 bool			isPlaying();		 
+		bool			isPaused();
+		bool			isLoaded();
+		bool			isPlaying();		 
 
-		 float 			getPosition();
-		 float 			getDuration();
-		 int			getTotalNumFrames();
-		 float			getSpeed();
-		 bool			getIsMovieDone();
+		float 			getPosition();
+		float 			getDuration();
+		int             getTotalNumFrames();
+		float			getSpeed();
+		bool			getIsMovieDone();
 
-		 void 			setPosition(float pct);
-		 void 			setVolume(int volume);
-		 void 			setLoopState(ofLoopType state);
-		 void   		setSpeed(float speed);
-		 void			setFrame(int frame);  // frame 0 = first frame...
-		 void 			setPaused(bool bPause);
+		void 			setPosition(float pct);
+		void 			setVolume(int volume);
+		void 			setLoopState(ofLoopType state);
+		void            setSpeed(float speed);
+		void			setFrame(int frame);  // frame 0 = first frame...
+		void 			setPaused(bool bPause);
 
-		 int			getCurrentFrame();
+		int             getCurrentFrame();
 
-		 void			firstFrame();
-		 void			nextFrame();
-		 void			previousFrame();
-		 
-		bool 				bHavePixelsChanged;
-		 
-		 
+		void			firstFrame();
+		void			nextFrame();
+		void			previousFrame();
+		
+        void			setPixelFormat(ofPixelFormat pxFormat);
+
+        bool 			bHavePixelsChanged;
+    		 
 		
 	protected:
 		void createImgMemAndGWorld();
@@ -68,6 +69,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		ofPixels		 	pixels;
 		int					width, height;
 		bool				bLoaded;
+        ofPixelFormat       pixelFormat;
 
 		//these are public because the ofQuickTimePlayer implementation has some callback functions that need access
 		//todo - fix this
@@ -75,7 +77,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		int					nFrames;				// number of frames
 		bool				allocated;				// so we know to free pixels or not
 
-		ofLoopType					currentLoopState;
+		ofLoopType			currentLoopState;
 		bool 				bStarted;
 		bool 				bPlaying;
 		bool 				bPaused;
@@ -96,8 +98,3 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		//--------------------------------------
 
 };
-
-
-
-
-
