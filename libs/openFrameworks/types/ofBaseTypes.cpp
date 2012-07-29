@@ -80,7 +80,7 @@ void ofBaseVideoPlayer::setPosition(float pct){
 }
 
 //---------------------------------------------------------------------------
-void ofBaseVideoPlayer::setVolume(int volume){
+void ofBaseVideoPlayer::setVolume(float volume){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setVolume not implemented");
 }
 

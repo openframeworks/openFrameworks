@@ -38,7 +38,7 @@ public:
 	bool  	getIsMovieDone();
 
 	void 	setPosition(float pct);
-	void 	setVolume(int volume);
+	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
 	int		getLoopState();
 	void 	setSpeed(float speed);
