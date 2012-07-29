@@ -51,6 +51,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
+        void 				setBalance(float balance);
 		void 				setLoopState(ofLoopType state);
 		int					getLoopState();
 		void   				setSpeed(float speed);

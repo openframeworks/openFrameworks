@@ -85,6 +85,11 @@ void ofBaseVideoPlayer::setVolume(int volume){
 }
 
 //---------------------------------------------------------------------------
+void ofBaseVideoPlayer::setBalance(float balance){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setBalance not implemented");
+}
+
+//---------------------------------------------------------------------------
 void ofBaseVideoPlayer::setLoopState(ofLoopType state){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setLoopState not implemented");
 }
