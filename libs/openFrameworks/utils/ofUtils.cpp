@@ -302,7 +302,7 @@ string ofToHex(const string& value) {
 	int numBytes = value.size();
 	for(int i = 0; i < numBytes; i++) {
 		// print each byte as a 2-character wide hex value
-		out << setfill('0') << setw(2) << hex << (unsigned int) value[i];
+		out << setfill('0') << setw(2) << hex << (unsigned int) ((unsigned char)value[i]);
 	}
 	return out.str();
 }
