@@ -18,4 +18,7 @@
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 - (EAGLContext*) context;
 
+- (NSInteger)getWidth;
+- (NSInteger)getHeight;
+
 @end
