@@ -8,6 +8,11 @@
 #import "ofBaseApp.h"
 #import "ofxiOSEAGLView.h"
 
+@interface ofxiPhoneViewController() <EAGLViewDelegate> {
+    //
+}
+@end
+
 @implementation ofxiPhoneViewController
 
 @synthesize glView;
@@ -16,6 +21,7 @@
 
     if((self = [super init])) {
         self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
+        self.glView.delegate = self;
         [self.view addSubview:self.glView];
         [self.glView setup];
     }
@@ -26,6 +32,7 @@
 - (void) dealloc {
     [self.glView stopAnimation];
     [self.glView removeFromSuperview];
+    self.glView.delegate = nil;
     self.glView = nil;
     
     [super dealloc];
