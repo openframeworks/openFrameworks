@@ -24,15 +24,10 @@ extern "C"{
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
-static bool firstLoad=true;
 
 
 static int  sWindowWidth  = 480;
 static int  sWindowHeight = 800;
-/*static int  sDemoStopped  = 0;
-static long sTimeOffset   = 0;
-static int  sTimeOffsetInit = 0;
-static long sTimeStopped  = 0;*/
 
 static bool bSetupScreen = true;
 
@@ -311,10 +306,6 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
-	if(firstLoad){
-		firstLoad=false;
-		return;
-	}
 	if(!surfaceDestroyed){
 		ofUnloadAllFontTextures();
 		ofPauseVideoGrabbers();
@@ -324,6 +315,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		androidApp->reloadTextures();
 	}
 	ofSetStyle(ofGetStyle());
+	ofSetOrientation(ofGetOrientation());
 	surfaceDestroyed = false;
 
 }
@@ -386,6 +378,9 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 				break;
 			case ofTouchEventArgs::doubleTap:
 				ofNotifyEvent(ofEvents().touchDoubleTap,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::cancel:
+				ofNotifyEvent(ofEvents().touchCancelled,touchEventArgsQueue.front());
 				break;
 			}
 			touchEventArgsQueue.pop();
