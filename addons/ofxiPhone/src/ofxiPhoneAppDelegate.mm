@@ -293,8 +293,6 @@
         }
     }
     
-    ofxiPhoneGetOFWindow()->resetDimensions();
-    
     ofxiPhoneExternalDisplay::alertExternalDisplayChanged();
     
     return YES;

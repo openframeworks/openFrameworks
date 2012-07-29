@@ -36,13 +36,21 @@ bool ofVideoPlayer::loadMovie(string name){
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 	
-	if( bOk && bUseTexture ){
-		if(width!=0 && height!=0) {
-			tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
-		}
-	}
+	if( bOk){
+        moviePath = name;
+        if(bUseTexture ){
+            if(width!=0 && height!=0) {
+                tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+            }
+        }
+    }
 	
 	return bOk;
+}
+
+//---------------------------------------------------------------------------
+string ofVideoPlayer::getMoviePath(){
+    return moviePath;	
 }
 
 //---------------------------------------------------------------------------
