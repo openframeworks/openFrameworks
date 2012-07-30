@@ -21,17 +21,14 @@ void ofSoundShutdown();
 #ifdef OF_SOUND_PLAYER_QUICKTIME
 #include "ofQuicktimeSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer
-#endif
 
-#ifdef OF_SOUND_PLAYER_FMOD
+#elif defined( OF_SOUND_PLAYER_FMOD )
 #include "ofFmodSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer
-#endif
 
-#ifdef OF_SOUND_PLAYER_OPENAL
+#elif defined( OF_SOUND_PLAYER_OPENAL )
 #include "ofOpenALSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
-#endif
 
 #ifdef TARGET_OF_IOS
 #include "ofxiOSSoundPlayer.h"
@@ -39,9 +36,8 @@ void ofSoundShutdown();
 #endif
 
 #ifdef TARGET_ANDROID
-#include "ofxAndroidSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
 inline void ofSoundShutdown(){}
+#endif
 #endif
 
 #ifdef TARGET_LINUX_ARM

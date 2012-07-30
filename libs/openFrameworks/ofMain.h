@@ -70,6 +70,9 @@
 // audio
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#include "ofSoundFile.h"
+#include "ofSoundBuffer.h"
+#include "ofBasicSoundPlayer.h"
 
 //--------------------------
 // video
