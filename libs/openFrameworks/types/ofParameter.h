@@ -95,6 +95,9 @@ public:
 		ofRemoveListener(obj->changedE,listener,method);
 	}
 
+	void enableEvents();
+	void disableEvents();
+
 private:
 	class Value{
 	public:
@@ -103,12 +106,12 @@ private:
 
 		Value(ParameterType v)
 		:value(v)
-		,bInNotify(false){}
+		,bInNotify(false){};
 
 		Value(string name, ParameterType v)
 		:name(name)
 		,value(v)
-		,bInNotify(false){}
+		,bInNotify(false){};
 
 		Value(string name, ParameterType v, ParameterType min, ParameterType max)
 		:name(name)
@@ -124,25 +127,32 @@ private:
 		bool bInNotify;
 	};
 	ofPtr<Value> obj;
+	void (ofParameter<ParameterType>::*setMethod)(ParameterType v);
+
+	void eventsSetValue(ParameterType v);
+	void noEventsSetValue(ParameterType v);
 };
 
 
 template<typename ParameterType>
-ofParameter<ParameterType>::ofParameter(){
-	obj = ofPtr<Value>(new Value);
-}
+ofParameter<ParameterType>::ofParameter()
+:obj(new Value)
+,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(ParameterType v)
-:obj(ofPtr<Value>(new Value(v))){}
+:obj(ofPtr<Value>(new Value(v)))
+,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
-:obj(ofPtr<Value>(new Value(name, v))){}
+:obj(ofPtr<Value>(new Value(name, v)))
+,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
-:obj(ofPtr<Value>(new Value(name, v, min, max))){}
+:obj(ofPtr<Value>(new Value(name, v, min, max)))
+,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 
 template<typename ParameterType>
@@ -173,13 +183,24 @@ ParameterType ofParameter<ParameterType>::getValue() const{
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::setValue(ParameterType v){
+void ofParameter<ParameterType>::eventsSetValue(ParameterType v){
 	if(obj->bInNotify) return;
 	obj->bInNotify = true;
 	obj->value = v;
 	ofNotifyEvent(obj->changedE,v,this);
 	notifyParent();
 	obj->bInNotify = false;
+}
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::noEventsSetValue(ParameterType v){
+	obj->value = v;
+}
+
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::setValue(ParameterType v){
+	(this->*setMethod)(v);
 }
 
 template<typename ParameterType>
@@ -233,4 +254,15 @@ void ofParameter<ParameterType>::fromString(string str){
 	stringstream sstr;
 	sstr.str() = str;
 	sstr >> obj->value;
+}
+
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::enableEvents(){
+	obj->setMethod = &ofParameter<ParameterType>::eventsSetValue;
+}
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::disableEvents(){
+	obj->setMethod = &ofParameter<ParameterType>::noEventsSetValue;
 }
