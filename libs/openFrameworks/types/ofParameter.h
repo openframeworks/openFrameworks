@@ -259,10 +259,10 @@ void ofParameter<ParameterType>::fromString(string str){
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::enableEvents(){
-	obj->setMethod = &ofParameter<ParameterType>::eventsSetValue;
+	setMethod = &ofParameter<ParameterType>::eventsSetValue;
 }
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::disableEvents(){
-	obj->setMethod = &ofParameter<ParameterType>::noEventsSetValue;
+	setMethod = &ofParameter<ParameterType>::noEventsSetValue;
 }
