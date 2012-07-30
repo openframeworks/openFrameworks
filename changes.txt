@@ -1,7 +1,10 @@
-ofVec*f::lengthSquared() is deprecated. Use ofVec*f::squareLength() instead.
-ofVideoGrabber::grabFrame() is deprecated. Use ofVideoGrabber::update() instead.
-ofVideoPlayer::idleMovie() is deprecated. Use ofVideoPlayer::update() instead
-Remove long-ago deprecated ofxDirList, ofxThread and ofxVectorMath.
+Deprecations:
+/ ofVec*f::lengthSquared() has been deprecated and will be removed in a future release. Use ofVec*f::squareLength() instead.
+/ ofVideoGrabber::grabFrame() has been deprecated and will be removed in a future release. Use ofVideoGrabber::update() instead.
+/ ofVideoPlayer::idleMovie() has been deprecated and will be removed in a future release. Use ofVideoPlayer::update() instead.
+
+Removals: 
+- ofxDirList, ofxThread and ofxVectorMath have been deprecated previously, and have been removed from OF. Their functionality has been migrated to core OF.
 
 ---------------------------------------------------------------
 	  .oooo.     .oooo.    ooooooooo   .o  
