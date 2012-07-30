@@ -156,7 +156,7 @@ ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterT
 
 
 template<typename ParameterType>
-ParameterType ofParameter<ParameterType>::operator=(ParameterType v){
+inline ParameterType ofParameter<ParameterType>::operator=(ParameterType v){
 	setValue(v);
 	return obj->value;
 }
@@ -178,12 +178,12 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, Parame
 }
 
 template<typename ParameterType>
-ParameterType ofParameter<ParameterType>::getValue() const{
+inline ParameterType ofParameter<ParameterType>::getValue() const{
 	return obj->value;
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::eventsSetValue(ParameterType v){
+inline void ofParameter<ParameterType>::eventsSetValue(ParameterType v){
 	if(obj->bInNotify) return;
 	obj->bInNotify = true;
 	obj->value = v;
@@ -193,13 +193,13 @@ void ofParameter<ParameterType>::eventsSetValue(ParameterType v){
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::noEventsSetValue(ParameterType v){
+inline void ofParameter<ParameterType>::noEventsSetValue(ParameterType v){
 	obj->value = v;
 }
 
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::setValue(ParameterType v){
+inline void ofParameter<ParameterType>::setValue(ParameterType v){
 	(this->*setMethod)(v);
 }
 
@@ -224,12 +224,12 @@ ParameterType ofParameter<ParameterType>::getMax(){
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType>::operator ParameterType & (){
+inline ofParameter<ParameterType>::operator ParameterType & (){
 	return obj->value;
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType>::operator const ParameterType & () const{
+inline ofParameter<ParameterType>::operator const ParameterType & () const{
 	return obj->value;
 }
 
