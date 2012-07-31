@@ -10,147 +10,12 @@
 ofImage ofxPanel::loadIcon;
 ofImage ofxPanel::saveIcon;
 
-ofxPanel::ofxPanel(){
-	bGuiActive = false;
-	bGrabbed = false;
+ofxPanel::ofxPanel(string collectionName, string filename, float x, float y) : ofxBaseGroup(collectionName, filename, x, y){
+	this->registerMouseEvents();
 }
 
-ofxPanel::~ofxPanel(){
-}
-
-ofxPanel * ofxPanel::setup(string collectionName, string _filename, float x, float y){
-	name = collectionName;
-	this->parameters.setName(name);
-	b.x = x;
-	b.y = y;
-	header = defaultHeight;
-	spacing  = 1;
-	b.width = defaultWidth;
-	b.height = header + spacing; // weird to start out with something arbitrary like this
-	filename = _filename;
-
-	ofRegisterMouseEvents(this);
-
-	return this;
-}
-
-
-ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, string _filename, float x, float y){
-
-	name = parameters.getName();
-	this->parameters.setName(name);
-	b.x = x;
-	b.y = y;
-	header = defaultHeight;
-	spacing  = 1;
-	b.width = defaultWidth;
-	b.height = header + spacing; // weird to start out with something arbitrary like this
-	filename = _filename;
-
-	for(int i=0;i<parameters.size();i++){
-		string type = parameters.getType(i);
-		if(type==typeid(ofParameter<int>).name()){
-			ofParameter<int> p = parameters.getInt(i);
-			add(p);
-		}else if(type==typeid(ofParameter<float>).name()){
-			ofParameter<float> p = parameters.getFloat(i);
-			add(p);
-		}else if(type==typeid(ofParameter<bool>).name()){
-			ofParameter<bool> p = parameters.getBool(i);
-			add(p);
-		}else if(type==typeid(ofParameterGroup).name()){
-			ofParameterGroup p = parameters.getGroup(i);
-			ofxPanel * panel = new ofxPanel;
-			panel->setup(p);
-			add(panel);
-		}else{
-			ofLogError() << "ofxPanel; can't add control of type " << type;
-		}
-	}
-
-	ofRegisterMouseEvents(this);
-
-	return this;
-}
-
-
-
-void ofxPanel::add(ofxBaseGui * element){
-	collection.push_back( element );
-
-	element->setPosition(0, b.height);
-
-	b.height += element->getHeight() + spacing;
-	if(b.width<element->getWidth()) b.width = element->getWidth();
-
-	ofUnregisterMouseEvents(element);
-
-	ofxPanel * subpanel = dynamic_cast<ofxPanel*>(element);
-	if(subpanel!=NULL){
-		subpanel->filename = filename;
-	}
-
-	parameters.add(element->getParameter());
-}
-
-void ofxPanel::add(ofParameter<float> & parameter){
-	add(new ofxFloatSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
-}
-
-void ofxPanel::add(ofParameter<int> & parameter){
-	add(new ofxIntSlider(parameter.getName(),parameter,parameter.getMin(),parameter.getMax()));
-}
-
-void ofxPanel::add(ofParameter<bool> & parameter){
-	add(new ofxToggle(parameter.getName(),parameter));
-}
-
-void ofxPanel::clear(){
-	collection.clear();
-}
-
-void ofxPanel::mouseMoved(ofMouseEventArgs & args){
-	ofMouseEventArgs a = args;
-	a.x -= b.x;
-	a.y -= b.y;
-	for(int i = 0; i < (int)collection.size(); i++){
-		collection[i]->mouseMoved(a);
-	}
-}
-
-void ofxPanel::mousePressed(ofMouseEventArgs & args){
-	setValue(args.x, args.y, true);
-	if( bGuiActive ){
-		ofMouseEventArgs a = args;
-		a.x -= b.x;
-		a.y -= b.y;
-		for(int i = 0; i < (int)collection.size(); i++){
-			collection[i]->mousePressed(a);
-		}
-	}
-}
-
-void ofxPanel::mouseDragged(ofMouseEventArgs & args){
-	setValue(args.x, args.y, false);
-	if( bGuiActive ){
-		ofMouseEventArgs a = args;
-		a.x -= b.x;
-		a.y -= b.y;
-		for(int i = 0; i < (int)collection.size(); i++){
-			collection[i]->mouseDragged(a);
-		}
-	}
-}
-
-void ofxPanel::mouseReleased(ofMouseEventArgs & args){
-	bGuiActive = false;
-	bGrabbed = false;
-	for(int k = 0; k < (int)collection.size(); k++){
-		ofMouseEventArgs a = args;
-		a.x -= b.x;
-		a.y -= b.y;
-		collection[k]->mouseReleased(a);
-	}
+ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y) : ofxBaseGroup(parameters, filename, x, y){
+	this->registerMouseEvents();
 }
 
 void ofxPanel::draw(){
@@ -199,37 +64,9 @@ void ofxPanel::draw(){
 	ofPopStyle();
 }
 
-vector<string> ofxPanel::getControlNames(){
-	vector<string> names;
-	for(int i=0; i<(int)collection.size(); i++){
-		names.push_back(collection[i]->getName());
-	}
-	return names;
-}
-
-ofxIntSlider ofxPanel::getIntSlider(string name){
-	return getControlType<ofxIntSlider>(name);
-}
-
-ofxFloatSlider ofxPanel::getFloatSlider(string name){
-	return getControlType<ofxFloatSlider>(name);
-}
-
-ofxToggle ofxPanel::getToggle(string name){
-	return getControlType<ofxToggle>(name);
-}
-
-ofxButton ofxPanel::getButton(string name){
-	return getControlType<ofxButton>(name);
-}
-
-ofxBaseGui * ofxPanel::getControl(string name){
-	for(int i=0; i<(int)collection.size(); i++){
-		if(collection[i]->getName()==name){
-			return collection[i];
-		}
-	}
-	return NULL;
+void ofxPanel::mouseReleased(ofMouseEventArgs & args){
+    this->bGrabbed = false;
+    ofxBaseGroup::mouseReleased(args);
 }
 
 void ofxPanel::setValue(float mx, float my, bool bCheck){
@@ -261,20 +98,4 @@ void ofxPanel::setValue(float mx, float my, bool bCheck){
 		b.x = mx - grabPt.x;
 		b.y = my - grabPt.y;
 	}
-}
-
-
-int ofxPanel::getNumControls(){
-	return collection.size();
-}
-
-ofxBaseGui * ofxPanel::getControl(int num){
-	if(num<(int)collection.size())
-		return collection[num];
-	else
-		return NULL;
-}
-
-ofAbstractParameter & ofxPanel::getParameter(){
-	return parameters;
 }
