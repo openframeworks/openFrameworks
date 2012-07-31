@@ -8,6 +8,11 @@ void ofParameterGroup::add(ofAbstractParameter & param){
 	param.setParent(this);
 }
 
+void ofParameterGroup::clear(){
+    this->parameters.clear();
+    this->parametersIndex.clear();
+}
+
 ofParameter<bool> ofParameterGroup::getBool(string name) const	{
 	return get<bool>(name);
 }
@@ -38,6 +43,10 @@ ofParameter<ofVec2f> ofParameterGroup::getVec2f(string name) const{
 
 ofParameter<ofVec3f> ofParameterGroup::getVec3f(string name) const{
 	return get<ofVec3f>(name);
+}
+
+ofParameter<ofVec4f> ofParameterGroup::getVec4f(string name) const{
+	return get<ofVec4f>(name);
 }
 
 ofParameterGroup ofParameterGroup::getGroup(string name) const{
@@ -74,6 +83,10 @@ ofParameter<ofVec2f> ofParameterGroup::getVec2f(int pos) const{
 
 ofParameter<ofVec3f> ofParameterGroup::getVec3f(int pos) const{
 	return get<ofVec3f>(pos);
+}
+
+ofParameter<ofVec4f> ofParameterGroup::getVec4f(int pos) const{
+	return get<ofVec4f>(pos);
 }
 
 ofParameterGroup ofParameterGroup::getGroup(int pos) const{
