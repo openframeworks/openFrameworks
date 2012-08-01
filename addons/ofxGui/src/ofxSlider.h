@@ -29,7 +29,7 @@ public:
 
 
 	double operator=(Type v);
-	operator Type & ();
+	operator const Type & ();
 
 	void draw();
 	

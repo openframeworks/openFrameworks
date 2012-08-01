@@ -37,7 +37,7 @@ public:
     }
 
     string operator=(string v) { label = v; return v; }
-    operator string & ()       { return label; }
+    operator const string & ()       { return label; }
 
     ofAbstractParameter & getParameter();
 
