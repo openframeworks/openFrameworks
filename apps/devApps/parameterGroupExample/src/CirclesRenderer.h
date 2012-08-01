@@ -22,9 +22,11 @@ public:
 	ofParameterGroup parameters;
 	ofParameter<float> size;
 	ofParameter<int> number;
+	ofParameter<ofVec2f> position;
 
-	ofParameterGroup color;
-	ofParameter<int> r,g,b,a;
+	ofParameter<ofColor> color;
+
+	ofReadOnlyParameter<int,CirclesRenderer> frameNum;
 };
 
 #endif /* CIRCLESRENDERER_H_ */
