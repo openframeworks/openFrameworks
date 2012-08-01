@@ -73,7 +73,7 @@ bool ofxToggle::operator=(bool v){
 	return v;
 }
 
-ofxToggle::operator bool & (){
+ofxToggle::operator const bool & (){
 	return value;
 }
 

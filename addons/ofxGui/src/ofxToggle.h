@@ -29,7 +29,7 @@ public:
 
 
 	bool operator=(bool v);
-	operator bool & ();
+	operator const bool & ();
 
 	ofAbstractParameter & getParameter();
 

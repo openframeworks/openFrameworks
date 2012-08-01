@@ -46,7 +46,7 @@ double ofxSlider<Type>::operator=(Type v){
 }
 
 template<typename Type>
-ofxSlider<Type>::operator Type & (){
+ofxSlider<Type>::operator const Type & (){
 	return value;
 }
 
@@ -69,7 +69,34 @@ void ofxSlider<Type>::draw(){
 	ofTranslate(0, b.height / 2 + 4);
 	ofSetColor(textColor);
 	ofDrawBitmapString(name, textPadding, 0);
-	string valStr = ofToString(value.getValue());
+	string valStr = ofToString(value.get());
+	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
+
+	ofPopMatrix();
+	ofPopStyle();
+}
+
+
+template<>
+void ofxSlider<unsigned char>::draw(){
+	ofPushStyle();
+	ofPushMatrix();
+
+	currentFrame = ofGetFrameNum();
+	ofFill();
+	ofSetColor(thisBackgroundColor);
+	ofRect(b);
+
+	ofTranslate(b.x, b.y);
+	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
+	ofEnableAlphaBlending();
+	ofSetColor(thisFillColor);
+	ofRect(1, 1, valAsPct, b.height-2);
+
+	ofTranslate(0, b.height / 2 + 4);
+	ofSetColor(thisTextColor);
+	ofDrawBitmapString(name, textPadding, 0);
+	string valStr = ofToString((int)value.get());
 	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 
 	ofPopMatrix();
@@ -101,4 +128,10 @@ ofAbstractParameter & ofxSlider<Type>::getParameter(){
 
 
 template class ofxSlider<int>;
+template class ofxSlider<unsigned int>;
 template class ofxSlider<float>;
+template class ofxSlider<double>;
+template class ofxSlider<signed char>;
+template class ofxSlider<unsigned char>;
+template class ofxSlider<unsigned short>;
+template class ofxSlider<short>;
