@@ -9,8 +9,8 @@ void ofParameterGroup::add(ofAbstractParameter & param){
 }
 
 void ofParameterGroup::clear(){
-    this->parameters.clear();
-    this->parametersIndex.clear();
+    parameters.clear();
+    parametersIndex.clear();
 }
 
 ofParameter<bool> ofParameterGroup::getBool(string name) const	{
@@ -47,6 +47,18 @@ ofParameter<ofVec3f> ofParameterGroup::getVec3f(string name) const{
 
 ofParameter<ofVec4f> ofParameterGroup::getVec4f(string name) const{
 	return get<ofVec4f>(name);
+}
+
+ofParameter<ofColor> ofParameterGroup::getColor(string name) const{
+	return get<ofColor>(name);
+}
+
+ofParameter<ofShortColor> ofParameterGroup::getShortColor(string name) const{
+	return get<ofShortColor>(name);
+}
+
+ofParameter<ofFloatColor> ofParameterGroup::getFloatColor(string name) const{
+	return get<ofFloatColor>(name);
 }
 
 ofParameterGroup ofParameterGroup::getGroup(string name) const{
@@ -89,6 +101,19 @@ ofParameter<ofVec4f> ofParameterGroup::getVec4f(int pos) const{
 	return get<ofVec4f>(pos);
 }
 
+ofParameter<ofColor> ofParameterGroup::getColor(int pos) const{
+	return get<ofColor>(pos);
+}
+
+ofParameter<ofShortColor> ofParameterGroup::getShortColor(int pos) const{
+	return get<ofShortColor>(pos);
+}
+
+ofParameter<ofFloatColor> ofParameterGroup::getFloatColor(int pos) const{
+	return get<ofFloatColor>(pos);
+}
+
+
 ofParameterGroup ofParameterGroup::getGroup(int pos) const{
 	if(pos>=size()){
 		return ofParameterGroup();
@@ -118,6 +143,12 @@ string ofParameterGroup::getName(int position) const{
 string ofParameterGroup::getType(int position) const{
 	if(position>=size()) return "";
 	else return parameters[position]->type();
+}
+
+
+int ofParameterGroup::getPosition(string name) const{
+	if(parametersIndex.find(name)!=parametersIndex.end()) return parametersIndex.find(name)->second;
+	return -1;
 }
 
 string ofParameterGroup::getName() const{
@@ -176,4 +207,20 @@ bool ofParameterGroup::contains(string name){
 void ofParameterGroup::notifyParameterChanged(ofAbstractParameter & param){
 	ofNotifyEvent(parameterChangedE,param);
 	if(getParent()) getParent()->notifyParameterChanged(param);
+}
+
+ofAbstractParameter & ofParameterGroup::back(){
+	return *parameters.back();
+}
+
+ofAbstractParameter & ofParameterGroup::front(){
+	return *parameters.front();
+}
+
+const ofAbstractParameter & ofParameterGroup::back() const{
+	return *parameters.back();
+}
+
+const ofAbstractParameter & ofParameterGroup::front() const{
+	return *parameters.front();
 }
