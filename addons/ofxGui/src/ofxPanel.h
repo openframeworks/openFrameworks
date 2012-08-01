@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ofxBaseGroup.h"
+#include "ofxGuiGroup.h"
 
-class ofxBaseGroup;
+class ofxGuiGroup;
 
-class ofxPanel : public ofxBaseGroup {
+class ofxPanel : public ofxGuiGroup {
 public:
     ofxPanel(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
 	ofxPanel(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
