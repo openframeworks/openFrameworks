@@ -22,6 +22,8 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+		void frameNumChanged(int & frame);
+
 		ofxPanel gui;
 		ofxXmlSettings settings;
 		CirclesRenderer renderer;

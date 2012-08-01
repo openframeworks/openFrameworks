@@ -11,6 +11,11 @@ void testApp::setup(){
 		gui.setup(renderer.parameters,"settings.xml");
 	}
 	ofEnableAlphaBlending();
+	renderer.frameNum.addListener(this,&testApp::frameNumChanged);
+}
+
+void testApp::frameNumChanged(int & frame){
+	cout << frame << endl;
 }
 
 //--------------------------------------------------------------
@@ -36,6 +41,7 @@ void testApp::keyPressed(int key){
 		json.serialize(renderer.parameters);
 		json.save("settings.json");
 	}
+	if(key=='r') renderer.color = ofColor(127);
 }
 
 //--------------------------------------------------------------
