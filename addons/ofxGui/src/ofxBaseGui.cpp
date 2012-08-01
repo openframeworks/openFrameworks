@@ -14,6 +14,11 @@ ofxBaseGui::ofxBaseGui(){
 	bGuiActive = false;
 	currentFrame = 0;
 	serializer = new ofxXmlSettings;
+
+	thisHeaderBackgroundColor=headerBackgroundColor;
+	thisBackgroundColor=backgroundColor;
+	thisTextColor=textColor;
+	thisFillColor=fillColor;
 }
 
 ofxBaseGui::~ofxBaseGui(){
@@ -89,6 +94,38 @@ float ofxBaseGui::getWidth(){
 
 float ofxBaseGui::getHeight(){
 	return b.height;
+}
+
+ofColor ofxBaseGui::getHeaderBackgroundColor(){
+	return thisHeaderBackgroundColor;
+}
+
+ofColor ofxBaseGui::getBackgroundColor(){
+	return thisBackgroundColor;
+}
+
+ofColor ofxBaseGui::getTextColor(){
+	return thisTextColor;
+}
+
+ofColor ofxBaseGui::getFillColor(){
+	return thisFillColor;
+}
+
+void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
+	thisHeaderBackgroundColor = color;
+}
+
+void ofxBaseGui::setBackgroundColor(const ofColor & color){
+	thisBackgroundColor = color;
+}
+
+void ofxBaseGui::setTextColor(const ofColor & color){
+	thisTextColor = color;
+}
+
+void ofxBaseGui::setFillColor(const ofColor & color){
+	thisFillColor = color;
 }
 
 string ofxBaseGui::saveStencilToHex(ofImage& img) {

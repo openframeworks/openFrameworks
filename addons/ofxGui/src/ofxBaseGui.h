@@ -42,7 +42,18 @@ public:
 	float getWidth();
 	float getHeight();
 
+	ofColor getHeaderBackgroundColor();
+	ofColor getBackgroundColor();
+	ofColor getTextColor();
+	ofColor getFillColor();
+
+	void setHeaderBackgroundColor(const ofColor & color);
+	void setBackgroundColor(const ofColor & color);
+	void setTextColor(const ofColor & color);
+	void setFillColor(const ofColor & color);
+
 	virtual ofAbstractParameter & getParameter() = 0;
+
 
 protected:
 	string name;
@@ -55,6 +66,11 @@ protected:
 	static const ofColor backgroundColor;
 	static const ofColor textColor;
 	static const ofColor fillColor;
+
+	ofColor thisHeaderBackgroundColor;
+	ofColor thisBackgroundColor;
+	ofColor thisTextColor;
+	ofColor thisFillColor;
 
 	static const int textPadding;
 	static const int defaultWidth;
