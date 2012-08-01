@@ -138,11 +138,11 @@ void ofxJSONElement::serialize(const ofAbstractParameter & parameter){
 		Value & v = *this;
 		string type = parameter.type();
 		if(type==typeid(ofParameter<int>).name()){
-			v[parameter.getName()] = parameter.cast<int>().getValue();
+			v[parameter.getName()] = parameter.cast<int>().get();
 		}else if(type==typeid(ofParameter<float>).name()){
-			v[parameter.getName()] = parameter.cast<float>().getValue();
+			v[parameter.getName()] = parameter.cast<float>().get();
 		}else if(type==typeid(ofParameter<bool>).name()){
-			v[parameter.getName()] = parameter.cast<bool>().getValue();
+			v[parameter.getName()] = parameter.cast<bool>().get();
 		}else{
 			v[parameter.getName()] = parameter.toString();
 		}
@@ -157,23 +157,23 @@ void ofxJSONElement::deserialize(ofAbstractParameter & parameter){
 		break;
 	case intValue:      ///< signed integer value
 		if(parameter.type()==typeid(ofParameter<int>).name()){
-			parameter.cast<int>().setValue(value.asInt());
+			parameter.cast<int>() = value.asInt();
 		}
 		break;
 	case uintValue:     ///< unsigned integer value
 		if(parameter.type()==typeid(ofParameter<unsigned int>).name()){
-			parameter.cast<unsigned int>().setValue(value.asUInt());
+			parameter.cast<unsigned int>() = value.asUInt();
 		}
 		break;
 	case realValue:     ///< double value
 		if(parameter.type()==typeid(ofParameter<float>).name()){
-			parameter.cast<float>().setValue(value.asDouble());
+			parameter.cast<float>() = value.asDouble();
 		}
 		break;
 
 	case stringValue:   ///< UTF-8 string value
 		if(parameter.type()==typeid(ofParameter<string>).name()){
-			parameter.cast<string>().setValue(value.asString());
+			parameter.cast<string>() = value.asString();
 		}else{
 			parameter.fromString(value.asString());
 		}
@@ -181,7 +181,7 @@ void ofxJSONElement::deserialize(ofAbstractParameter & parameter){
 
 	case booleanValue:  ///< bool value
 		if(parameter.type()==typeid(ofParameter<bool>).name()){
-			parameter.cast<bool>().setValue(value.asBool());
+			parameter.cast<bool>() = value.asBool();
 		}
 		break;
 
