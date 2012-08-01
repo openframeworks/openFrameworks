@@ -18,7 +18,7 @@ void testApp::setup() {
 void testApp::update() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
-	cam.grabFrame();
+	cam.update();
 	if(cam.isFrameNew()) {
 		cam.update();
 		cvImgColor.setFromPixels(cam.getPixels(), camWidth, camHeight);
