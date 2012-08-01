@@ -4,11 +4,11 @@
 #include "ofxSlider.h"
 #include "ofxButton.h"
 
-class ofxBaseGroup : public ofxBaseGui {
+class ofxGuiGroup : public ofxBaseGui {
 public:	    
-    virtual ~ofxBaseGroup() {}
-    ofxBaseGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
-	ofxBaseGroup * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
+    virtual ~ofxGuiGroup() {}
+    ofxGuiGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
     
 	void add(ofxBaseGui * element);
     void add(const ofParameterGroup & parameters);
@@ -18,6 +18,9 @@ public:
     void add(ofParameter<ofVec2f> & parameter);
     void add(ofParameter<ofVec3f> & parameter);
     void add(ofParameter<ofVec4f> & parameter);
+    void add(ofParameter<ofColor> & parameter);
+    void add(ofParameter<ofShortColor> & parameter);
+    void add(ofParameter<ofFloatColor> & parameter);
 	
 	void clear();
 	
@@ -41,8 +44,8 @@ public:
     
 	ofAbstractParameter & getParameter();
 protected:
-    ofxBaseGroup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
-	ofxBaseGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
+    ofxGuiGroup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
     void registerMouseEvents();
     virtual void setValue(float mx, float my, bool bCheck);
     
@@ -59,7 +62,7 @@ protected:
 };
 
 template<class ControlType>
-ControlType ofxBaseGroup::getControlType(string name){
+ControlType ofxGuiGroup::getControlType(string name){
 	ControlType * control = dynamic_cast<ControlType*>(getControl(name));
 	if(control) return *control;
 	else return ControlType();
