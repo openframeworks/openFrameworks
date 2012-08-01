@@ -19,7 +19,7 @@ void testApp::update(){
 	
 	ofBackground(100,100,100);
 	
-	vidGrabber.grabFrame();
+	vidGrabber.update();
 	
 	if (vidGrabber.isFrameNew()){
 		int totalPixels = camWidth*camHeight*3;

@@ -211,7 +211,7 @@ public:
     ofVec3f perpendiculared( const ofVec3f& vec ) const;
 	
     // squareLength
-    float lengthSquared() const;
+    OF_DEPRECATED_MSG("Use ofVec3f::squareLength() instead.", float lengthSquared() const);
     
     // use getMapped
     ofVec3f  mapped( const ofVec3f& origin,
