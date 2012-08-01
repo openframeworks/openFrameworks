@@ -444,13 +444,13 @@ void ofxXmlSettings::deserialize(ofAbstractParameter & parameter){
 	}else{
 		if(tagExists(name)){
 			if(parameter.type()==typeid(ofParameter<int>).name()){
-				parameter.cast<int>().setValue(getValue(name,0));
+				parameter.cast<int>() = getValue(name,0);
 			}else if(parameter.type()==typeid(ofParameter<float>).name()){
-				parameter.cast<float>().setValue(getValue(name,0.0f));
+				parameter.cast<float>() = getValue(name,0.0f);
 			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
-				parameter.cast<bool>().setValue(getValue(name,false));
+				parameter.cast<bool>() = getValue(name,false);
 			}else if(parameter.type()==typeid(ofParameter<string>).name()){
-				parameter.cast<string>().setValue(getValue(name,""));
+				parameter.cast<string>() = getValue(name,"");
 			}else{
 				parameter.fromString(getValue(name,""));
 			}
