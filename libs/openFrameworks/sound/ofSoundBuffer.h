@@ -13,6 +13,7 @@
 class ofSoundBuffer {
 public:
 	ofSoundBuffer();
+	ofSoundBuffer(short * shortBuffer, unsigned int length, int channels, int samplerate);
 
 	enum InterpolationAlgorithm{
 		Linear,
@@ -44,6 +45,9 @@ public:
 	ofSoundBuffer & operator*=(float value);
 
 	void stereoPan(float left, float right);
+
+
+	void copyFrom(short * shortBuffer, unsigned int length, int channels, int samplerate);
 
 	void copyTo(ofSoundBuffer & soundBuffer, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop=false) const;
 	void addTo(ofSoundBuffer & soundBuffer, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop=false) const;

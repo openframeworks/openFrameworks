@@ -7,6 +7,7 @@
 
 #include "ofSoundBuffer.h"
 #include "ofSoundUtils.h"
+#include <limits>
 
 #if !defined(TARGET_ANDROID) && !defined(TARGET_IPHONE)
 ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundBuffer::Hermite;
@@ -17,6 +18,20 @@ ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundB
 ofSoundBuffer::ofSoundBuffer() {
 	channels=1;
 	samplerate=0;
+}
+
+ofSoundBuffer::ofSoundBuffer(short * shortBuffer, unsigned int length, int _channels, int _samplerate){
+	copyFrom(shortBuffer,length,_channels,_samplerate);
+}
+
+
+void ofSoundBuffer::copyFrom(short * shortBuffer, unsigned int length, int _channels, int _samplerate){
+	channels = _channels;
+	samplerate = _samplerate;
+	buffer.resize(length*channels);
+	for(unsigned int i=0;i<size();i++){
+		buffer[i] = shortBuffer[i]/float(numeric_limits<short>::max());
+	}
 }
 
 vector<float> & ofSoundBuffer::getBuffer(){
@@ -152,7 +167,7 @@ void ofSoundBuffer::copyTo(float * out, unsigned int bufferSize, unsigned int ou
 				}
 			}
 		}
-		if(!loop){
+		if(!loop || size()==0){
 			for(unsigned int i=0;i<(bufferSize-(this->bufferSize()-fromSample))*outChannels;i++){
 				out[i] = 0;
 			}
@@ -360,7 +375,7 @@ void ofSoundBuffer::resampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin,
 
 void ofSoundBuffer::resample(float speed, InterpolationAlgorithm algorithm){
 	ofSoundBuffer resampled;
-	resampleTo(resampled,0,bufferSize()*speed,false,algorithm);
+	resampleTo(resampled,0,bufferSize()/speed,speed,false,algorithm);
 	*this = resampled;
 }
 
