@@ -412,7 +412,7 @@ void ofFbo::allocate(Settings _settings) {
 
 	if(_settings.width == 0) _settings.width = ofGetWidth();
 	if(_settings.height == 0) _settings.height = ofGetHeight();
-	if(_settings.numSamples > maxSamples()) {
+	if(_settings.numSamples > maxSamples() && maxSamples() > -1) {
 		ofLogWarning() << "clamping numSamples (" << _settings.numSamples << ") to maxSamples (" << maxSamples() << ")";
 		_settings.numSamples = maxSamples();
 	}
