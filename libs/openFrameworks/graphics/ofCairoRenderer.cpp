@@ -27,23 +27,35 @@ ofCairoRenderer::ofCairoRenderer(){
 	surface = NULL;
 	cr = NULL;
 	bBackgroundAuto = true;
+	rectMode = OF_RECTMODE_CORNER;
+	bSmoothHinted = false;
+	page = 0;
+	multiPage = false;
+	bFilled = OF_FILLED;
+	b3D = false;
 }
 
 ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3D_, ofRectangle _viewport){
+void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
 	if( _viewport.width == 0 || _viewport.height == 0 ){
 		_viewport.set(0, 0, ofGetWidth(), ofGetHeight());
 	}
 	
+	filename = _filename;
+	type = _type;
+
 	switch(type){
 	case PDF:
 		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
 		break;
 	case SVG:
 		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		break;
+	case PNG:
+		surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height);
 		break;
 	}
 
@@ -58,6 +70,9 @@ void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3
 void ofCairoRenderer::close(){
 	if(surface){
 		cairo_surface_flush(surface);
+		if(type==PNG){
+			cairo_surface_write_to_png(surface,ofToDataPath(filename).c_str());
+		}
 		cairo_surface_finish(surface);
 		cairo_surface_destroy(surface);
 		surface = NULL;
@@ -118,8 +133,8 @@ void ofCairoRenderer::draw(ofPath & shape){
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getFillColor() * ofGetStyle().color;
-			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+			ofColor c = shape.getStrokeColor() * ofGetStyle().color;
+			c.a = shape.getStrokeColor().a/255. * ofGetStyle().color.a;
 			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		}
 		cairo_set_line_width( cr, shape.getStrokeWidth() );
