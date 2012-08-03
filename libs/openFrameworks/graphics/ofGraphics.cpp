@@ -61,7 +61,6 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 	shape.setUseShapeColor(false);
 
 	ofSetStyle(currentStyle);
-	ofBackground(currentStyle.bgColor);
 }
 
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
@@ -84,8 +83,13 @@ ofPtr<ofGLRenderer> ofGetGLRenderer(){
 //-----------------------------------------------------------------------------------
 #include "ofCairoRenderer.h"
 #include "ofGLRenderer.h"
+#include "ofPixels.h"
+#include "ofTexture.h"
 
 static ofPtr<ofCairoRenderer> cairoScreenshot;
+static ofPtr<ofCairoRenderer> cairoGLBackend;
+static ofPixels pixelsCairoGLBackend;
+static ofTexture textureCairoGLBackend;
 static ofPtr<ofBaseRenderer> storedRenderer;
 static ofPtr<ofRendererCollection> rendererCollection;
 static bool bScreenShotStarted = false;
@@ -122,6 +126,41 @@ void ofEndSaveScreenAsPDF(){
 		}
 		
 		bScreenShotStarted = false;
+	}
+}
+
+
+void ofEnableCairoGLBackend(bool b3d){
+	storedRenderer = ofGetCurrentRenderer();
+
+	if(!cairoGLBackend){
+		cairoGLBackend = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
+		cairoGLBackend->setupMemoryOnly(false,b3d);
+	}
+	if(ofGetWidth()!=textureCairoGLBackend.getWidth() || ofGetHeight()!=textureCairoGLBackend.getHeight()){
+		textureCairoGLBackend.allocate(ofGetWidth(),ofGetHeight(),GL_RGBA);
+	}
+
+	ofSetCurrentRenderer(cairoGLBackend);
+	if(ofbClearBg()){
+		ofClear(ofGetStyle().bgColor);
+	}
+}
+
+void ofDisableCairoGLBackend(){
+	if(cairoGLBackend && storedRenderer){
+		cairoGLBackend->update();
+
+		ofSetCurrentRenderer(storedRenderer);
+		storedRenderer.reset();
+
+		ofBlendMode currentBlendMode = ofGetStyle().blendingMode;
+		ofEnableAlphaBlending();
+		cairoGLBackend->getImageSurfacePixels(pixelsCairoGLBackend);
+		pixelsCairoGLBackend.swapRgb();
+		textureCairoGLBackend.loadData(pixelsCairoGLBackend);
+		textureCairoGLBackend.draw(0,0);
+		ofEnableBlendMode(currentBlendMode);
 	}
 }
 

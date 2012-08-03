@@ -20,6 +20,9 @@ ofPtr<ofGLRenderer> ofGetGLRenderer();
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
 void ofEndSaveScreenAsPDF();
 
+void ofEnableCairoGLBackend(bool b3d=false);
+void ofDisableCairoGLBackend();
+
 
 // transformations
 // push and pop all matrices and viewport
