@@ -45,7 +45,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				listDevices();
 		bool				isFrameNew();
 		void				update();
-		void				grabFrame();
+		OF_DEPRECATED_MSG("Use ofVideoGrabber::update() instead.", void grabFrame());
 		void				close();	
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
 		bool				initGrabber(int w, int h, bool bTexture);
