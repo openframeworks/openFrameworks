@@ -85,6 +85,7 @@ ofPtr<ofGLRenderer> ofGetGLRenderer(){
 #include "ofGLRenderer.h"
 #include "ofPixels.h"
 #include "ofTexture.h"
+#include "ofPBO.h"
 
 static ofPtr<ofCairoRenderer> cairoScreenshot;
 static ofPtr<ofCairoRenderer> cairoGLBackend;
@@ -137,8 +138,12 @@ void ofEnableCairoGLBackend(bool b3d){
 		cairoGLBackend = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
 		cairoGLBackend->setupMemoryOnly(false,b3d);
 	}
-	if(ofGetWidth()!=textureCairoGLBackend.getWidth() || ofGetHeight()!=textureCairoGLBackend.getHeight()){
+	if(ofGetWidth()!=int(textureCairoGLBackend.getWidth()) || ofGetHeight()!=int(textureCairoGLBackend.getHeight())){
+		cairoGLBackend->close();
+		cairoGLBackend->setupMemoryOnly(false,b3d);
+
 		textureCairoGLBackend.allocate(ofGetWidth(),ofGetHeight(),GL_RGBA);
+		textureCairoGLBackend.texData.glType = GL_BGRA;
 	}
 
 	ofSetCurrentRenderer(cairoGLBackend);
@@ -153,14 +158,15 @@ void ofDisableCairoGLBackend(){
 
 		ofSetCurrentRenderer(storedRenderer);
 		storedRenderer.reset();
-
-		ofBlendMode currentBlendMode = ofGetStyle().blendingMode;
-		ofEnableAlphaBlending();
+		ofColor c = ofGetStyle().color;
+		ofSetColor(255,255);
+		//ofBlendMode currentBlendMode = ofGetStyle().blendingMode;
+		//ofEnableAlphaBlending();
 		cairoGLBackend->getImageSurfacePixels(pixelsCairoGLBackend);
-		pixelsCairoGLBackend.swapRgb();
-		textureCairoGLBackend.loadData(pixelsCairoGLBackend);
+		textureCairoGLBackend.loadData(pixelsCairoGLBackend.getPixels(),pixelsCairoGLBackend.getWidth(),pixelsCairoGLBackend.getHeight(),GL_BGRA);
 		textureCairoGLBackend.draw(0,0);
-		ofEnableBlendMode(currentBlendMode);
+		//ofEnableBlendMode(currentBlendMode);
+		ofSetColor(c);
 	}
 }
 
