@@ -31,7 +31,6 @@ ofxAndroidSoundPlayer::ofxAndroidSoundPlayer(){
 	}
 
 	javaSoundPlayer = (jobject)env->NewGlobalRef(javaSoundPlayer);
-	ofLogNotice() << "ofxAndroidSoundPlayer created correctly";
 }
 
 //------------------------------------------------------------
