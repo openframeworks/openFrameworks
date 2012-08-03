@@ -47,6 +47,17 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	filename = _filename;
 	type = _type;
 
+	if(type == FROM_FILE_EXTENSION){
+		string ext = ofFilePath::getFileExt(filename);
+		if(ofToLower(ext)=="svg"){
+			type = SVG;
+		}else if(ofToLower(ext)=="png"){
+			type = PNG;
+		}else{  //use pdf as default
+			type = PDF;
+		}
+	}
+
 	switch(type){
 	case PDF:
 		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
@@ -55,16 +66,22 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
 		break;
 	case PNG:
+	case PIXELS:
 		surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height);
 		break;
 	}
 
 	cr = cairo_create(surface);
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
 	viewportRect = _viewport;
 	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
+}
+
+void ofCairoRenderer::setupMemoryOnly(bool multiPage_, bool b3D_, ofRectangle _viewport){
+	setup("",PIXELS,multiPage_,b3D_,_viewport);
 }
 
 void ofCairoRenderer::close(){
@@ -1132,4 +1149,14 @@ cairo_matrix_t * ofCairoRenderer::getCairoMatrix(){
 
 void ofCairoRenderer::setCairoMatrix(){
 	cairo_set_matrix(cr,&tmpMatrix);
+}
+
+void ofCairoRenderer::getImageSurfacePixels(ofPixels & pixels){
+	if(type==PNG || type==PIXELS){
+		int width = cairo_image_surface_get_width(surface);
+		int height = cairo_image_surface_get_height(surface);
+		pixels.setFromPixels(cairo_image_surface_get_data(surface),width,height,4);
+	}else{
+		ofLogError() << "ofCairoRenderer: can only get pixels from image (PNG) surface";
+	}
 }
