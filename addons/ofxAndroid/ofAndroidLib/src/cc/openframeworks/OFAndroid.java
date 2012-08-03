@@ -1,10 +1,13 @@
 package cc.openframeworks;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,9 +18,14 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender.SendIntentException;
+import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
@@ -28,12 +36,16 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -43,6 +55,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -488,6 +501,15 @@ public class OFAndroid {
 		gps.stopGPS();
 	}
 	
+	/**
+	 * Grab a screenshot next frame
+	 */
+	public static void screenGrab() {
+		
+		getScreenGrab = true;
+		
+	}
+	
 	public static void alertBox(String msg){  
 		final String alertMsg = msg;
 		ofActivity.runOnUiThread(new Runnable(){
@@ -630,6 +652,11 @@ public class OFAndroid {
 	private static String packageName;
 	private static String dataPath;
 	private static PowerManager.WakeLock wl;
+
+	/**
+	 * Set to true to grab a screenshot next chance you get. 
+	 */
+	public static boolean getScreenGrab;
 
     public static native boolean hasNeon();
 	 
@@ -835,7 +862,6 @@ class OFGLSurfaceView extends GLSurfaceView{
 }
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
-	
 	public OFAndroidWindow(int w, int h){ 
 		this.w = w;
 		this.h = h;
@@ -871,9 +897,68 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
     	if(setup)
     		OFAndroid.render();
-    }
+    	
+    	// take screenshot
+    	if (OFAndroid.getScreenGrab)
+    	{
+    		OFAndroid.getScreenGrab = false;
 
-    static boolean initialized;
-    static boolean setup;
-    int w,h;
+    		int[] bufferData = new int[w*h];
+    		int[] bufferFlipped = new int[w*h];
+    		IntBuffer buffer = IntBuffer.wrap(bufferData);
+    		gl.glReadPixels(0, 0, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+
+    		// flip pixels vertically
+    		for(int y = 0; y < h; y++) {
+    			for(int x = 0; x < w; x++) {
+    				bufferFlipped[(int)((h - 1 - y) * w + x)] =
+    						convertBGRToRGB(bufferData[(int)(y * w + x)]);
+    			}
+    		}
+
+    		Bitmap bitmap = Bitmap.createBitmap(bufferFlipped, w, h, Bitmap.Config.ARGB_8888);
+    		ContentValues values = new ContentValues();
+    		
+    		values.put(Images.Media.MIME_TYPE, "image/jpeg");
+    		Context context = OFAndroid.getContext();
+    		Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+    				values);
+    		OutputStream outputStream = null;
+    		
+    		// take pixels, compress as jpeg, send to gallery
+    		try
+    		{
+    			try {
+    				outputStream = context.getContentResolver().openOutputStream(uri);
+    				bitmap.compress(CompressFormat.JPEG, 85, outputStream);
+
+    			} catch (FileNotFoundException e) {
+    				Log.e("OF", "File not found: " + e.toString());
+    			}
+    			finally
+    			{
+    				if (outputStream != null)
+    				{
+    					outputStream.close();
+    				}
+    			}
+    		}
+    		catch (IOException e)
+    		{
+    			Log.e("OF", "Error closing outputStream: " + e.toString());
+    		}
+    		
+    		// tell device that there's a new image to look for
+    		context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
+    	}
+    }
+    
+    private int convertBGRToRGB(int i) {
+		int ret = ((i & 0xff) << 16) | (i & 0xff00) | ((i & 0xff0000) >> 16) | (i & 0xff000000);
+		return ret;
+	}
+
+	private static boolean initialized;
+    private static boolean setup;
+    private int w,h;
 }

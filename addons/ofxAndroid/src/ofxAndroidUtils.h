@@ -78,4 +78,7 @@ inline void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
 }
+
+void ofxAndroidScreenGrab();
+
 #endif /* OFANDROIDUTILS_H_ */
