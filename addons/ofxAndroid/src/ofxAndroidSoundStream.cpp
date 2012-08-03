@@ -34,6 +34,10 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	inChannels = 0;
 
 	isPaused = false;
+	sampleRate = 44100;
+	requestedBufferSize = 256;
+	totalOutRequestedBufferSize = totalInRequestedBufferSize = 0;
+	tickCount = 0;
 	headphonesConnected = false;
 }
 
@@ -186,15 +190,6 @@ int ofxAndroidSoundStream::getNumOutputChannels(){
 
 
 void ofxAndroidSoundStream::pause(){
-/*
-	ofLogVerbose("ofxAndroidSoundStream") << "pause: releasing buffers";
-	if(in_buffer)
-		ofGetJNIEnv()->ReleasePrimitiveArrayCritical(jInArray,in_buffer,0);
-	if(out_buffer)
-		ofGetJNIEnv()->ReleasePrimitiveArrayCritical(jOutArray,out_buffer,0);
-	in_buffer = NULL;
-	out_buffer = NULL;
-*/
 	isPaused = true;
 }
 
@@ -280,6 +275,7 @@ int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thi
 	if(!out_buffer) return 1;
 
 	// Call the ofApp soundOutput() Callback so that 'out_float_buffer' gets filled
+	memset(out_float_buffer, 0, bufferSize * numChannels * sizeof(float));
 	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,0,tickCount);
 
 	// Convert from 4 byte floats to 16-bit integers (Android PCM format)
