@@ -40,8 +40,7 @@ public:
 	
     void setPaused(bool bPause);
     void setPosition(float pct);
-    void setVolume(int volume);
-    void setVolume(float volume);
+    void setVolume(float volume); // 0..1
     void setLoopState(ofLoopType state);
     void setSpeed(float speed);
     void setFrame(int frame);  // frame 0 = first frame...
@@ -56,8 +55,10 @@ public:
     void setPixelFormat(ofPixelFormat pixelFormat);
     
 	void * getAVFoundationVideoPlayer();
-	
+    
 protected:
+    
+    void updatePixelsToRGB();
 	
 	void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
 	
@@ -65,12 +66,13 @@ protected:
     bool bResetPixels;
     bool bResetTexture;
     bool bUpdatePixels;
+    bool bUpdatePixelsToRgb;
     bool bUpdateTexture;
     bool bTextureCacheSupported;
     bool bTextureHack;
 	
-	GLubyte * pixels;
-    GLubyte *pixelsTmp;
+	GLubyte * pixelsRGB;
+    GLubyte * pixelsRGBA;
     GLint internalGLFormat;
 	ofTexture videoTexture;
 };

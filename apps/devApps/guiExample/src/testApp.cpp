@@ -14,6 +14,7 @@ void testApp::setup(){
 	gui.add(circleResolution.setup("circle res", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
+	gui.add(status.setup("Status", ""));
 	
 	ringButton.addListener(this,&testApp::ringButtonPressed);
 
@@ -102,7 +103,7 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-	
+    status = "Size: " + ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

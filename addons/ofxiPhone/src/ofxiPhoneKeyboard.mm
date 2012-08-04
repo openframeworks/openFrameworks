@@ -301,7 +301,7 @@ void ofxiPhoneKeyboard::updateOrientation()
 //--------------------------------------------------------------
 - (void) showText
 {
-	[ofxiPhoneGetUIWindow() addSubview:_textField];
+	[ofxiPhoneGetGLParentView() addSubview:_textField];
 }
 
 //--------------------------------------------------------------
