@@ -244,6 +244,11 @@ float ofRectangle::getPerimeter() const {
 }
 
 //----------------------------------------------------------
+float ofRectangle::getAspectRatio() const {
+    return fabs(width) / fabs(height);
+}
+
+//----------------------------------------------------------
 bool ofRectangle::isEmpty() const {
     return width == 0.0f && height == 0.0f;
 }
