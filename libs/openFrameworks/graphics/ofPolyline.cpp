@@ -13,6 +13,17 @@ ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 }
 
 //----------------------------------------------------------
+ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
+    ofPolyline polyline;
+    polyline.addVertex(rect.getMin());
+    polyline.addVertex(rect.getMaxX(),rect.getMinY());
+    polyline.addVertex(rect.getMax());
+    polyline.addVertex(rect.getMinX(),rect.getMaxY());
+    polyline.close();
+    return polyline;
+}
+
+//----------------------------------------------------------
 void ofPolyline::clear() {
 	bClosed=false;
 	points.clear();

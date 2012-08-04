@@ -214,11 +214,6 @@ void ofRectangle::growToInclude(const ofRectangle& rect){
 }
 
 //----------------------------------------------------------
-void ofRectangle::growToInclude(const ofPolyline& poly) {
-    growToInclude(poly.getBoundingBox());
-}
-
-//----------------------------------------------------------
 ofRectangle ofRectangle::getIntersection(float px, float py, float w, float h) const {
     return getIntersection(ofRectangle(px,py,w,h));
 }
@@ -286,17 +281,6 @@ ofRectangle ofRectangle::getCanonicalized() const {
 //----------------------------------------------------------
 bool ofRectangle::isCanonicalized() const {
     return width >= 0.0f && height >= 0.0f;
-}
-
-//----------------------------------------------------------
-ofPolyline ofRectangle::getAsPolyline() const {
-    ofPolyline polyline;
-    polyline.addVertex(getMin());
-    polyline.addVertex(getMaxX(),getMinY());
-    polyline.addVertex(getMax());
-    polyline.addVertex(getMinX(),getMaxY());
-    polyline.close();
-    return polyline;
 }
 
 //----------------------------------------------------------

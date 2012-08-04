@@ -14,6 +14,8 @@ public:
 	ofPolyline();
 	ofPolyline(const vector<ofPoint>& verts);
 
+    static ofPolyline fromRectangle(const ofRectangle& rect);
+
 	/// remove all the points
 	void clear();
 
