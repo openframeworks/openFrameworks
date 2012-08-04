@@ -867,27 +867,17 @@ ofImage_<PixelType> & ofImage_<PixelType>::operator=(ofPixels_<PixelType> & pixe
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::update(){
-
+	width = pixels.getWidth();
+	height = pixels.getHeight();
+	bpp = pixels.getBitsPerPixel();
+	type = pixels.getImageType();
 	if (pixels.isAllocated() && bUseTexture){
-		GLint type = GL_RGB;
-		if(pixels.getNumChannels() == 1) {
-			type = GL_LUMINANCE;
-		} else if(pixels.getNumChannels() == 3) {
-			type = GL_RGB;
-		} else if(pixels.getNumChannels() == 4) {
-			type = GL_RGBA;
-		}
-		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getHeight() || type != tex.getTextureData().glTypeInternal)
-		{
-			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
+		int glTypeInternal = ofGetGlInternalFormat(pixels);
+		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glTypeInternal != glTypeInternal){
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), glTypeInternal);
 		}
 		tex.loadData(pixels);
 	}
-	
-	width	= pixels.getWidth();
-	height	= pixels.getHeight();
-	bpp		= pixels.getBitsPerPixel();
-	type	= pixels.getImageType();
 }
 
 //------------------------------------
