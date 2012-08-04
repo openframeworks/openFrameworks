@@ -1,7 +1,6 @@
 
 
 #import "ESRenderer.h"
-
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
@@ -31,6 +30,9 @@
 - (void) finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 - (EAGLContext*) context;
+
+- (NSInteger)getWidth;
+- (NSInteger)getHeight;
 
 @end
 

@@ -8,7 +8,7 @@
 
 @implementation CircleAppViewController
 
-- (id) initWithFrame:(CGRect)frame app:(ofBaseApp*)app {
+- (id) initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app {
 
     ofxiPhoneGetOFWindow()->setOrientation( OF_ORIENTATION_DEFAULT );   //-- default portait orientation.    
     

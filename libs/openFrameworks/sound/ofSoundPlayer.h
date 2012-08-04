@@ -60,7 +60,7 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		void stop();
 
 		void setVolume(float vol);
-		void setPan(float vol);
+		void setPan(float vol); // -1 to 1 
 		void setSpeed(float spd);
 		void setPaused(bool bP);
 		void setLoop(bool bLp);

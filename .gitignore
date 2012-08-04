@@ -76,4 +76,8 @@ Desktop.ini
 
 #Android
 .csettings
+/libs/openFrameworksCompiled/project/android/paths.make
+
+# Miscellaneous
+.mailmap
 

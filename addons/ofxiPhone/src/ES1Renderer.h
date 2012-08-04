@@ -1,8 +1,6 @@
 
 
 #import "ESRenderer.h"
-#include "ofMain.h"
-
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 
@@ -33,5 +31,8 @@
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 - (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
 - (EAGLContext*) context;
+
+- (NSInteger)getWidth;
+- (NSInteger)getHeight;
 
 @end
