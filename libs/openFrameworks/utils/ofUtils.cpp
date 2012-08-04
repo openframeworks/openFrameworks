@@ -43,23 +43,24 @@ static unsigned long startTime = ofGetSystemTime();   //  better at the first fr
 static unsigned long startTimeMicros = ofGetSystemTimeMicros();
 
 //--------------------------------------
-int ofGetElapsedTimeMillis(){
-	return (int)(ofGetSystemTime() - startTime);
+unsigned long ofGetElapsedTimeMillis(){
+	return ofGetSystemTime() - startTime;
 }
 
 //--------------------------------------
 unsigned long ofGetElapsedTimeMicros(){
-	return (int)(ofGetSystemTimeMicros() - startTimeMicros);
+	return ofGetSystemTimeMicros() - startTimeMicros;
 }
 
 //--------------------------------------
 float ofGetElapsedTimef(){
-	return ((float) ((int)(ofGetSystemTime() - startTime)) / 1000.0f);
+	return ofGetElapsedTimeMicros() / 1000000.0f;
 }
 
 //--------------------------------------
 void ofResetElapsedTimeCounter(){
 	startTime = ofGetSystemTime();
+	startTimeMicros = ofGetSystemTimeMicros();
 }
 
 //=======================================
