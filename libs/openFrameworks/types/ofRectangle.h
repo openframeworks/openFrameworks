@@ -67,6 +67,8 @@ public:
     float getArea() const;
     float getPerimeter() const;
     
+    float getAspectRatio() const;
+    
     bool isEmpty() const;     // are width/height == 0.0f
     
     ofPoint getMin() const;
