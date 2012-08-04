@@ -31,6 +31,8 @@ void testApp::exit() {
 //--------------------------------------------------------------
 void testApp::touchDown(int x, int y, int id){
 	ofLog(OF_LOG_NOTICE,"touch %i down at (%i,%i)\n", id, x,y);
+	//toggle the touched state of the ball
+	balls[id].touched = true;
 	balls[id].moveTo(x, y);
 }
 
@@ -43,5 +45,7 @@ void testApp::touchMoved(int x, int y, int id){
 //--------------------------------------------------------------
 void testApp::touchUp(int x, int y, int id){
 	ofLog(OF_LOG_NOTICE,"touch %i up at (%i,%i)\n", id, x, y);
+	//toggles off the touched state of the ball
+	balls[id].touched = false;
 }
 
