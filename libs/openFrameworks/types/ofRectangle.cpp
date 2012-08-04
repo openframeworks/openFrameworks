@@ -145,29 +145,9 @@ bool ofRectangle::inside(const ofPoint& p) const {
 }
 
 //----------------------------------------------------------
-bool ofRectangle::inside(float px, float py, float w, float h) const {
-    return inside(ofRectangle(px,py,w,h));
-}
-
-//----------------------------------------------------------
-bool ofRectangle::inside(const ofPoint& p, float w, float h) const  {
-    return inside(ofRectangle(p,w,h));
-}
-
-//----------------------------------------------------------
 bool ofRectangle::inside(const ofRectangle& rect) const {
     return inside(rect.getMinX(),rect.getMinY()) &&
            inside(rect.getMaxX(),rect.getMaxY());
-}
-
-//----------------------------------------------------------
-bool ofRectangle::intersects(float px, float py, float w, float h) const  {
-    return intersects(ofRectangle(px, py, w, h));
-}
-
-//----------------------------------------------------------
-bool ofRectangle::intersects(const ofPoint& p, float w, float h) const {
-    return intersects(ofRectangle(p, w, h));
 }
 
 //----------------------------------------------------------
@@ -193,16 +173,6 @@ void ofRectangle::growToInclude(const ofPoint& p){
 }
 
 //----------------------------------------------------------
-void ofRectangle::growToInclude(float px, float py, float w, float h) {
-    growToInclude(ofRectangle(px,py,w,h));
-}
-
-//----------------------------------------------------------
-void ofRectangle::growToInclude(const ofPoint& p, float w, float h) {
-    growToInclude(ofRectangle(p, w, h));
-}
-
-//----------------------------------------------------------
 void ofRectangle::growToInclude(const ofRectangle& rect){
     float x0 = MIN(getMinX(),rect.getMinX());
     float x1 = MAX(getMaxX(),rect.getMaxX());
@@ -211,16 +181,6 @@ void ofRectangle::growToInclude(const ofRectangle& rect){
     float w = x1 - x0;
     float h = y1 - y0;
     set(x0,y0,w,h);
-}
-
-//----------------------------------------------------------
-ofRectangle ofRectangle::getIntersection(float px, float py, float w, float h) const {
-    return getIntersection(ofRectangle(px,py,w,h));
-}
-
-//----------------------------------------------------------
-ofRectangle ofRectangle::getIntersection(const ofPoint& p, float w, float h) const {
-    return getIntersection(ofRectangle(p,w,h));
 }
 
 //----------------------------------------------------------
@@ -239,16 +199,6 @@ ofRectangle ofRectangle::getIntersection(const ofRectangle& rect) const {
     if(h < 0.0f) return ofRectangle(0,0,0,0);  // short circuit if needed
     
     return ofRectangle(x0,y0,w,h);
-}
-
-//----------------------------------------------------------
-ofRectangle ofRectangle::getUnion(float px, float py, float w, float h) const {
-    return getUnion(ofRectangle(px,py,w,h));
-}
-
-//----------------------------------------------------------
-ofRectangle ofRectangle::getUnion(const ofPoint& p, float w, float h) const {
-    return getUnion(ofRectangle(p,w,h));
 }
 
 //----------------------------------------------------------
