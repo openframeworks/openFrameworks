@@ -64,7 +64,6 @@ public:
     void growToInclude(float px, float py, float w, float h);
     void growToInclude(const ofPoint&, float w, float h);
     void growToInclude(const ofRectangle& rect);
-    void growToInclude(const ofPolyline& poly);
 
     ofRectangle getIntersection(float px, float py, float w, float h) const;
     ofRectangle getIntersection(const ofPoint& p, float w, float h) const;
@@ -77,8 +76,6 @@ public:
     void canonicalize();
     ofRectangle getCanonicalized() const;
     bool isCanonicalized() const;  // are width/height >= 0.0f
-    
-    ofPolyline getAsPolyline() const;
     
     float getArea() const;
     float getPerimeter() const;
