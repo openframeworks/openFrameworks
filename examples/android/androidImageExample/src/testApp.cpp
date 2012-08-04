@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	image.loadImage("bikers.jpg");
+	image.loadImage("images/bikers.jpg");
 	ofBackground(255,255,255);
 	ofSetColor(255,255,255);
 }
