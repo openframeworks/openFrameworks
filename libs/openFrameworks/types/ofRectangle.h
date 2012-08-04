@@ -51,26 +51,16 @@ public:
     
     bool inside(float px, float py) const;
     bool inside(const ofPoint& p) const;
-    bool inside(float px, float py, float w, float h) const;
-    bool inside(const ofPoint& p, float w, float h) const;
     bool inside(const ofRectangle & rect) const;
 
-    bool intersects(float px, float py, float w, float h) const;
-    bool intersects(const ofPoint& p, float w, float h) const;
     bool intersects(const ofRectangle & rect) const;
     
     void growToInclude(float px, float py);
     void growToInclude(const ofPoint& p);
-    void growToInclude(float px, float py, float w, float h);
-    void growToInclude(const ofPoint&, float w, float h);
     void growToInclude(const ofRectangle& rect);
 
-    ofRectangle getIntersection(float px, float py, float w, float h) const;
-    ofRectangle getIntersection(const ofPoint& p, float w, float h) const;
     ofRectangle getIntersection(const ofRectangle& rect) const;
 
-    ofRectangle getUnion(float px, float py, float w, float h) const;
-    ofRectangle getUnion(const ofPoint& p, float w, float h) const;
     ofRectangle getUnion(const ofRectangle& rect) const;
     
     void canonicalize();
