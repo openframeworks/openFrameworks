@@ -10,9 +10,6 @@
 #pragma once
 
 #include "ofPoint.h"
-#include "ofPolyline.h"
-
-class ofPolyline;
 
 //----------------------------------------------------------
 // ofRectangle
