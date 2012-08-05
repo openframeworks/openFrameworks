@@ -42,7 +42,7 @@ public class OFActivity extends Activity{
 	} else {
 	    return super.onKeyDown(keyCode, event);
 	}
-
+    }
     
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -51,7 +51,7 @@ public class OFActivity extends Activity{
 	} else {
 	    return super.onKeyUp(keyCode, event);
 	}
-
+    }
 
 
 	OFAndroid ofApp;
