@@ -441,10 +441,10 @@ void ofFbo::allocate(Settings _settings) {
         ofLogWarning() << "ofFbo::Settings depthStencilAsTexture is not available for iOS" << endl;
     }
 #endif
-
-	GLenum depthAttachment;
-	GLint depthPixelType;
-	GLint depthFormat;
+    
+	GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
+	GLint depthPixelType = GL_UNSIGNED_SHORT;
+	GLint depthFormat = GL_DEPTH_COMPONENT;
 
 	if( settings.useDepth && settings.useStencil ){
 		depthFormat = GL_DEPTH_STENCIL;
