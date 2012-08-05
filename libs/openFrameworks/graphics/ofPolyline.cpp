@@ -13,6 +13,17 @@ ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 }
 
 //----------------------------------------------------------
+ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
+    ofPolyline polyline;
+    polyline.addVertex(rect.getMin());
+    polyline.addVertex(rect.getMaxX(),rect.getMinY());
+    polyline.addVertex(rect.getMax());
+    polyline.addVertex(rect.getMinX(),rect.getMaxY());
+    polyline.close();
+    return polyline;
+}
+
+//----------------------------------------------------------
 void ofPolyline::clear() {
 	bClosed=false;
 	points.clear();
@@ -380,17 +391,16 @@ ofPoint ofPolyline::getCentroid2D() const{
 }
 
 //----------------------------------------------------------
-ofRectangle ofPolyline::getBoundingBox(){
-	ofPolyline & polyline = *this;
+ofRectangle ofPolyline::getBoundingBox() const {
 
 	ofRectangle box;
-	int n = polyline.size();
+	int n = size();
 	if(n > 0) {
-		const ofPoint& first = polyline[0];
+		const ofPoint& first = (*this)[0];
 		// inititally, use width and height as max x and max y
 		box.set(first.x, first.y, first.x, first.y);
 		for(int i = 0; i < n; i++) {
-			const ofPoint& cur = polyline[i];
+			const ofPoint& cur = (*this)[i];
 			if(cur.x < box.x) {
 				box.x = cur.x;
 			}
