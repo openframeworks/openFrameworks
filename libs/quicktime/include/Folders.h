@@ -143,43 +143,43 @@ enum {
     kVolumeRootFolderType       = FOUR_CHAR_CODE('root'),       /* root folder of a volume */
     kChewableItemsFolderType    = FOUR_CHAR_CODE('flnt'),       /* items deleted at boot */
     kApplicationSupportFolderType = FOUR_CHAR_CODE('asup'),     /* third-party items and folders */
-    kTextEncodingsFolderType    = FOUR_CHAR_CODE('tex'),       /* encoding tables */
+    kTextEncodingsFolderType    = FOUR_CHAR_CODE('tex '),       /* encoding tables */
     kStationeryFolderType       = FOUR_CHAR_CODE('odst'),       /* stationery */
     kOpenDocFolderType          = FOUR_CHAR_CODE('odod'),       /* OpenDoc root */
     kOpenDocShellPlugInsFolderType = FOUR_CHAR_CODE('odsp'),    /* OpenDoc Shell Plug-Ins in OpenDoc folder */
     kEditorsFolderType          = FOUR_CHAR_CODE('oded'),       /* OpenDoc editors in MacOS Folder */
-    kOpenDocEditorsFolderType   = FOUR_CHAR_CODE('odf'),       /* OpenDoc subfolder of Editors folder */
+    kOpenDocEditorsFolderType   = FOUR_CHAR_CODE('odf '),       /* OpenDoc subfolder of Editors folder */
     kOpenDocLibrariesFolderType = FOUR_CHAR_CODE('odlb'),       /* OpenDoc libraries folder */
-    kGenEditorsFolderType       = FOUR_CHAR_CODE('edi'),       /* CKH general editors folder at root level of Sys folder */
-    kHelpFolderType             = FOUR_CHAR_CODE('hlp'),       /* CKH help folder currently at root of system folder */
-    kInternetPlugInFolderType   = FOUR_CHAR_CODE('net'),       /* CKH internet plug ins for browsers and stuff */
-    kModemScriptsFolderType     = FOUR_CHAR_CODE('mod'),       /* CKH modem scripts, get 'em OUT of the Extensions folder */
+    kGenEditorsFolderType       = FOUR_CHAR_CODE('edi '),       /* CKH general editors folder at root level of Sys folder */
+    kHelpFolderType             = FOUR_CHAR_CODE('hlp '),       /* CKH help folder currently at root of system folder */
+    kInternetPlugInFolderType   = FOUR_CHAR_CODE('net '),       /* CKH internet plug ins for browsers and stuff */
+    kModemScriptsFolderType     = FOUR_CHAR_CODE('mod '),       /* CKH modem scripts, get 'em OUT of the Extensions folder */
     kPrinterDescriptionFolderType = FOUR_CHAR_CODE('ppdf'),     /* CKH new folder at root of System folder for printer descs. */
-    kPrinterDriverFolderType    = FOUR_CHAR_CODE('prd'),       /* CKH new folder at root of System folder for printer drivers */
-    kScriptingAdditionsFolderType = FOUR_CHAR_CODE('scr'),     /* CKH at root of system folder */
-    kSharedLibrariesFolderType  = FOUR_CHAR_CODE('lib'),       /* CKH for general shared libs. */
+    kPrinterDriverFolderType    = FOUR_CHAR_CODE('prd '),       /* CKH new folder at root of System folder for printer drivers */
+    kScriptingAdditionsFolderType = FOUR_CHAR_CODE('scr '),     /* CKH at root of system folder */
+    kSharedLibrariesFolderType  = FOUR_CHAR_CODE('lib '),       /* CKH for general shared libs. */
     kVoicesFolderType           = FOUR_CHAR_CODE('fvoc'),       /* CKH macintalk can live here */
     kControlStripModulesFolderType = FOUR_CHAR_CODE('sdev'),    /* CKH for control strip modules */
-    kAssistantsFolderType       = FOUR_CHAR_CODE('ast'),       /* SJF for Assistants (MacOS Setup Assistant, etc) */
-    kUtilitiesFolderType        = FOUR_CHAR_CODE('uti'),       /* SJF for Utilities folder */
-    kAppleExtrasFolderType      = FOUR_CHAR_CODE('aex'),       /* SJF for Apple Extras folder */
+    kAssistantsFolderType       = FOUR_CHAR_CODE('ast '),       /* SJF for Assistants (MacOS Setup Assistant, etc) */
+    kUtilitiesFolderType        = FOUR_CHAR_CODE('uti '),       /* SJF for Utilities folder */
+    kAppleExtrasFolderType      = FOUR_CHAR_CODE('aex '),       /* SJF for Apple Extras folder */
     kContextualMenuItemsFolderType = FOUR_CHAR_CODE('cmnu'),    /* SJF for Contextual Menu items */
-    kMacOSReadMesFolderType     = FOUR_CHAR_CODE('mor'),       /* SJF for MacOS ReadMes folder */
+    kMacOSReadMesFolderType     = FOUR_CHAR_CODE('mor '),       /* SJF for MacOS ReadMes folder */
     kALMModulesFolderType       = FOUR_CHAR_CODE('walk'),       /* EAS for Location Manager Module files except type 'thng' (within kExtensionFolderType) */
     kALMPreferencesFolderType   = FOUR_CHAR_CODE('trip'),       /* EAS for Location Manager Preferences (within kPreferencesFolderType; contains kALMLocationsFolderType) */
     kALMLocationsFolderType     = FOUR_CHAR_CODE('fall'),       /* EAS for Location Manager Locations (within kALMPreferencesFolderType) */
     kColorSyncProfilesFolderType = FOUR_CHAR_CODE('prof'),      /* for ColorSync(tm) Profiles */
     kThemesFolderType           = FOUR_CHAR_CODE('thme'),       /* for Theme data files */
     kFavoritesFolderType        = FOUR_CHAR_CODE('favs'),       /* Favorties folder for Navigation Services */
-    kInternetFolderType         = FOUR_CHAR_CODE('int'),       /* Internet folder (root level of startup volume) */
+    kInternetFolderType         = FOUR_CHAR_CODE('int '),       /* Internet folder (root level of startup volume) */
     kAppearanceFolderType       = FOUR_CHAR_CODE('appr'),       /* Appearance folder (root of system folder) */
     kSoundSetsFolderType        = FOUR_CHAR_CODE('snds'),       /* Sound Sets folder (in Appearance folder) */
-    kDesktopPicturesFolderType  = FOUR_CHAR_CODE('dtp'),       /* Desktop Pictures folder (in Appearance folder) */
+    kDesktopPicturesFolderType  = FOUR_CHAR_CODE('dtp '),       /* Desktop Pictures folder (in Appearance folder) */
     kInternetSearchSitesFolderType = FOUR_CHAR_CODE('issf'),    /* Internet Search Sites folder */
     kFindSupportFolderType      = FOUR_CHAR_CODE('fnds'),       /* Find support folder */
     kFindByContentFolderType    = FOUR_CHAR_CODE('fbcf'),       /* Find by content folder */
     kInstallerLogsFolderType    = FOUR_CHAR_CODE('ilgf'),       /* Installer Logs folder */
-    kScriptsFolderType          = FOUR_CHAR_CODE('scr'),       /* Scripts folder */
+    kScriptsFolderType          = FOUR_CHAR_CODE('scr '),       /* Scripts folder */
     kFolderActionsFolderType    = FOUR_CHAR_CODE('fasf'),       /* Folder Actions Scripts folder */
     kLauncherItemsFolderType    = FOUR_CHAR_CODE('laun'),       /* Launcher Items folder */
     kRecentApplicationsFolderType = FOUR_CHAR_CODE('rapp'),     /* Recent Applications folder */
@@ -194,7 +194,7 @@ enum {
 };
 
 enum {
-    kLocalesFolderType          = FOUR_CHAR_CODE('loc'),       /* PKE for Locales folder */
+    kLocalesFolderType          = FOUR_CHAR_CODE('loc '),       /* PKE for Locales folder */
     kFindByContentPluginsFolderType = FOUR_CHAR_CODE('fbcp')    /* Find By Content Plug-ins */
 };
 
