@@ -692,7 +692,10 @@ public class OFAndroid {
         {
         	int unicodeChar = event.getUnicodeChar();
         	onKeyDown(unicodeChar);
-        	return true;
+
+        	// return false to let Android handle certain keys
+    		// like the back and menu keys
+        	return false;
         }
 	}
 	
@@ -713,7 +716,10 @@ public class OFAndroid {
         {
     		int unicodeChar = event.getUnicodeChar();
     		onKeyDown(unicodeChar);
-        	return true;
+    		
+    		// return false to let Android handle certain keys
+    		// like the back and menu keys
+        	return false;
         }
 	}
 }
