@@ -31,7 +31,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 		
-		int nCurveVertexes;
+		int nCurveVertices;
 		draggableVertex curveVertices[7];
 		draggableVertex bezierVertices[4];
 };
