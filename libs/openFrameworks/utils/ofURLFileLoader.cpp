@@ -2,7 +2,9 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
+#include "Poco/Net/HTTPSession.h"
 #include "Poco/Net/HTTPClientSession.h"
+#include "Poco/Net/HTTPSClientSession.h"
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPResponse.h"
 #include "Poco/StreamCopier.h"
@@ -11,18 +13,14 @@
 #include "Poco/Exception.h"
 #include "Poco/URIStreamOpener.h"
 #include "Poco/Net/HTTPStreamFactory.h"
+#include "Poco/Net/HTTPSStreamFactory.h"
+#include "Poco/Net/SSLManager.h"
+#include "Poco/Net/KeyConsoleHandler.h"
+#include "Poco/Net/ConsoleCertificateHandler.h"
 
-using Poco::Net::HTTPClientSession;
-using Poco::Net::HTTPRequest;
-using Poco::Net::HTTPResponse;
-using Poco::Net::HTTPMessage;
-using Poco::Net::HTTPStreamFactory;
+using namespace Poco::Net;
 
-using Poco::StreamCopier;
-using Poco::Path;
-using Poco::URI;
-using Poco::URIStreamOpener;
-using Poco::Exception;
+using namespace Poco;
 
 #include "ofConstants.h"
 
@@ -34,6 +32,11 @@ ofURLFileLoader::ofURLFileLoader() {
 	if(!factoryLoaded){
 		try {
 			HTTPStreamFactory::registerFactory();
+			HTTPSStreamFactory::registerFactory();
+			SharedPtr<PrivateKeyPassphraseHandler> pConsoleHandler = new KeyConsoleHandler(false);
+			SharedPtr<InvalidCertificateHandler> pInvalidCertHandler = new ConsoleCertificateHandler(true);
+			Context::Ptr pContext = new Context(Context::CLIENT_USE, "", Context::VERIFY_NONE);
+			SSLManager::instance().initializeClient(pConsoleHandler, pInvalidCertHandler, pContext);
 			factoryLoaded = true;
 		}
 		catch (Poco::SystemException PS) {
@@ -146,25 +149,37 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
 
-		HTTPClientSession session(uri.getHost(), uri.getPort());
 		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
-		session.setTimeout(Poco::Timespan(20,0));
-		session.sendRequest(req);
 		HTTPResponse res;
-		istream& rs = session.receiveResponse(res);
+		ofPtr<HTTPSession> session;
+		istream * rs;
+		if(uri.getScheme()=="https"){
+			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
+			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
+			httpsSession->setTimeout(Poco::Timespan(20,0));
+			httpsSession->sendRequest(req);
+			rs = &httpsSession->receiveResponse(res);
+			session = ofPtr<HTTPSession>(httpsSession);
+		}else{
+			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
+			httpSession->setTimeout(Poco::Timespan(20,0));
+			httpSession->sendRequest(req);
+			rs = &httpSession->receiveResponse(res);
+			session = ofPtr<HTTPSession>(httpSession);
+		}
 		if(!request.saveTo){
-			return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
+			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
 		}else{
 			ofFile saveTo(request.name,ofFile::WriteOnly,true);
 			char aux_buffer[1024];
-			rs.read(aux_buffer, 1024);
-			std::streamsize n = rs.gcount();
+			rs->read(aux_buffer, 1024);
+			std::streamsize n = rs->gcount();
 			while (n > 0){
 				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
 				saveTo.write(aux_buffer,n);
-				if (rs){
-					rs.read(aux_buffer, 1024);
-					n = rs.gcount();
+				if (rs->good()){
+					rs->read(aux_buffer, 1024);
+					n = rs->gcount();
 				}
 				else n = 0;
 			}
