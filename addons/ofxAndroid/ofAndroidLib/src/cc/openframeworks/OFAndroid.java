@@ -682,9 +682,18 @@ public class OFAndroid {
            	}
         }
 		
-		int unicodeChar = event.getUnicodeChar(0);
-		onKeyDown(unicodeChar);
-		return true;
+        if (KeyEvent.isModifierKey(keyCode)) {
+        	/* Android sends a shift keycode (for instance),
+        	   then the key that goes with the shift. We don't need the first
+        	   keycode, that info is in event.getMetaState() anyway */
+        	return false;
+        }
+        else
+        {
+        	int unicodeChar = event.getUnicodeChar();
+        	onKeyDown(unicodeChar);
+        	return true;
+        }
 	}
 	
 	/**
@@ -694,9 +703,18 @@ public class OFAndroid {
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
 	public static boolean keyUp(int keyCode, KeyEvent event) {
-		int unicodeChar = event.getUnicodeChar(0);
-		onKeyDown(unicodeChar);
-		return true;
+        if (KeyEvent.isModifierKey(keyCode)) {
+        	/* Android sends a shift keycode (for instance),
+        	   then the key that goes with the shift. We don't need the first
+        	   keycode, that info is in event.getMetaState() anyway */
+        	return false;
+        }
+        else
+        {
+    		int unicodeChar = event.getUnicodeChar();
+    		onKeyDown(unicodeChar);
+        	return true;
+        }
 	}
 }
 
