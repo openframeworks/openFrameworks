@@ -15,13 +15,13 @@ public:
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
 	
-	virtual void loadSound(string fileName, bool stream = false) = 0;
+	virtual bool loadSound(string fileName, bool stream = false) = 0;
 	virtual void unloadSound() = 0;
 	virtual void play() = 0;
 	virtual void stop() = 0;
 	
 	virtual void setVolume(float vol) = 0;
-	virtual void setPan(float vol) = 0;
+	virtual void setPan(float vol) = 0; // -1 = left, 1 = right
 	virtual void setSpeed(float spd) = 0;
 	virtual void setPaused(bool bP) = 0;
 	virtual void setLoop(bool bLp) = 0;

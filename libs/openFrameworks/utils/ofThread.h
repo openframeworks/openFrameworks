@@ -51,13 +51,7 @@ class ofThread : protected Poco::Runnable{
 		void unlock();
 		
 		/// stop the thread
-		///
-		/// set close to true if you want the thread to exit immediately
-		///
-		/// set close to false if you want to signal the thread to exit but not
-		/// have it stop immediately, you will need to wait for it to finish
-		/// manually by calling waitForThread()
-		void stopThread(bool close = true);
+		void stopThread();
 		
 		/// wait for the thread to exit
 		///

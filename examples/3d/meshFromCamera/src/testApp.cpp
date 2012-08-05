@@ -59,7 +59,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	//grab a new frame
-	vidGrabber.grabFrame();
+	vidGrabber.update();
 	
 	//update the mesh if we have a new frame
 	if (vidGrabber.isFrameNew()){

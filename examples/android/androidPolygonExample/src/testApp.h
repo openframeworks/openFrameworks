@@ -27,7 +27,7 @@ public:
 	void touchDoubleTap(ofTouchEventArgs &touch);
 	void touchCancelled(ofTouchEventArgs &touch);
 
-	int nCurveVertexes;
+	int nCurveVertices;
 	draggableVertex curveVertices[7];
 	draggableVertex bezierVertices[4];
 

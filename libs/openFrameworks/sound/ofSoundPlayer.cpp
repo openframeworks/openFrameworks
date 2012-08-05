@@ -66,9 +66,9 @@ ofPtr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 }
 
 //--------------------------------------------------------------------
-void ofSoundPlayer::loadSound(string fileName, bool stream){
+bool ofSoundPlayer::loadSound(string fileName, bool stream){
 	if( player != NULL ){
-		player->loadSound(fileName, stream);
+		return player->loadSound(fileName, stream);
 	}
 }
 
@@ -103,7 +103,7 @@ void ofSoundPlayer::setVolume(float vol){
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPan(float pan){
 	if( player != NULL ){
-		player->setPan(pan);
+		player->setPan(CLAMP(pan,-1.0f,1.0f));
 	}
 }
 
@@ -207,5 +207,7 @@ float ofSoundPlayer::getPan(){
 float ofSoundPlayer::getVolume(){
 	if( player != NULL ){
 		return player->getVolume();
+	} else {
+		return 0;
 	}
 }

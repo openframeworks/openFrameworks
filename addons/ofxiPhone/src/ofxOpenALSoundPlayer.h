@@ -64,7 +64,7 @@ public:
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
 	
-	void	loadSound(string fileName, bool stream=false);
+	bool	loadSound(string fileName, bool stream=false);
 	void	unloadSound();
 
 	void	play();
@@ -101,7 +101,7 @@ public:
 	static void	ofxALSoundSetReferenceDistance(float dist); // sets the distance after which attenuation is applied
 	static void	ofxALSoundSetMaxDistance(float dist); // sets the maximum distance for which attenuation is applied
 	
-	void	setLocation(float x, float y, float z);
+	void	setLocation(float x, float y, float z); // x -1..1 gets mapped to pan -1..1
 	
 	bool	update(); // can this be called at a different time? maybe should be a static function
 
@@ -122,7 +122,7 @@ protected: //internal
 	
 	bool    prime();
 	void	updateInternalsForNewPrime();
-	void	loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce);
+	bool	loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce);
 	void	unloadAllBackgroundMusic();
 	void	startBackgroundMusic();
 	void	stopBackgroundMusic(bool stopNow);

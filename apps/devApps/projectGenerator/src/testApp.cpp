@@ -195,6 +195,8 @@ void testApp::generateExamples(){
 
         }
     }
+    ofLogNotice() << " ";
+    ofLogNotice() << "Finished generating examples for " << target;
 }
 
 ofFileDialogResult testApp::makeNewProjectViaDialog(){

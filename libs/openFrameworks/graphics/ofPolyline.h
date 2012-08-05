@@ -7,10 +7,14 @@
 // ofPolyline
 // A line composed of straight line segments.
 
+class ofRectangle;
+
 class ofPolyline {
 public:
 	ofPolyline();
 	ofPolyline(const vector<ofPoint>& verts);
+
+    static ofPolyline fromRectangle(const ofRectangle& rect);
 
 	/// remove all the points
 	void clear();
@@ -18,8 +22,10 @@ public:
 	/// add a vertex
 	void addVertex( const ofPoint& p );
 	void addVertex( float x, float y, float z=0 );
-	void addVertexes( const vector<ofPoint>& verts );
-	void addVertexes(const ofPoint* verts, int numverts);
+	void addVertices( const vector<ofPoint>& verts );
+	OF_DEPRECATED_MSG("Use ofPolyline::addVertices instead", void addVertexes( const vector<ofPoint>& verts ));
+	void addVertices(const ofPoint* verts, int numverts);
+	OF_DEPRECATED_MSG("Use ofPolyline::addVertices instead",void addVertexes(const ofPoint* verts, int numverts));
 
 	// adds a straight line to the polyline
 	void lineTo(const ofPoint & to ){ addVertex(to); }
@@ -87,7 +93,7 @@ public:
 	ofPolyline getResampledByCount(int count);
 
 	// get the bounding box of a polyline
-	ofRectangle getBoundingBox();
+	ofRectangle getBoundingBox() const;
 	
 	// find the closest point 'target' on a polyline
 	// optionally pass a pointer to/address of an unsigned int to get the index of the closest vertex
