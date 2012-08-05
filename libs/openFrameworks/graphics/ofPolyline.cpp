@@ -9,7 +9,7 @@ ofPolyline::ofPolyline(){
 //----------------------------------------------------------
 ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 	clear();
-	addVertexes(verts);
+	addVertices(verts);
 }
 
 //----------------------------------------------------------
@@ -33,17 +33,27 @@ void ofPolyline::addVertex(float x, float y, float z) {
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+void ofPolyline::addVertices(const vector<ofPoint>& verts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
 	bHasChanged=true;
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+	addVertices(verts);
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertices(const ofPoint* verts, int numverts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts, verts + numverts );
 	bHasChanged=true;
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+	addVertices(verts, numverts);
 }
 
 //----------------------------------------------------------

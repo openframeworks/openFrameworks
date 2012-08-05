@@ -129,7 +129,7 @@ void testApp::draw(){
 	//--------------------
 	//--------------------
 	// advanced shapes
-	// these shapes can have an unlmited number of vertexes
+	// these shapes can have an unlmited number of vertices
 
 
 
