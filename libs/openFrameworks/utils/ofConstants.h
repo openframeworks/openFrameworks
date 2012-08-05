@@ -88,8 +88,7 @@ enum ofTargetPlatform{
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
-		typedef unsigned __int64  uint64_t;		// allow us to use uint64_t
-		#pragma warning(disable : 4996)     // disable all deprecation warnings
+		#include <stdint.h>
 		#pragma warning(disable : 4068)     // unknown pragmas
 		#pragma warning(disable : 4101)     // unreferenced local variable
 		#pragma	warning(disable : 4312)		// type cast conversion (in qt vp)
