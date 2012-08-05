@@ -39,7 +39,7 @@ void testApp::update() {
 		for(int i = 0; i < contourFinder.blobs.size(); i++) {
 			ofPolyline cur;
 			// add all the current vertices to cur polyline
-			cur.addVertexes(contourFinder.blobs[i].pts);
+			cur.addVertices(contourFinder.blobs[i].pts);
 			cur.setClosed(true);
 			
 			// add the cur polyline to all these vector<ofPolyline>
