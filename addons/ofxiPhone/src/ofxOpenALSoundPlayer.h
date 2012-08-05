@@ -64,7 +64,7 @@ public:
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
 	
-	void	loadSound(string fileName, bool stream=false);
+	bool	loadSound(string fileName, bool stream=false);
 	void	unloadSound();
 
 	void	play();
@@ -122,7 +122,7 @@ protected: //internal
 	
 	bool    prime();
 	void	updateInternalsForNewPrime();
-	void	loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce);
+	bool	loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce);
 	void	unloadAllBackgroundMusic();
 	void	startBackgroundMusic();
 	void	stopBackgroundMusic(bool stopNow);
