@@ -1,5 +1,6 @@
+#include <cfloat>
 #include "ofRectangle.h"
-
+ 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(){
     set(0,0,0,0);
