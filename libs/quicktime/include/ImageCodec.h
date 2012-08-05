@@ -900,7 +900,7 @@ enum {
     kParameterUsagePercent      = FOUR_CHAR_CODE('pcnt'),
     kParameterUsageSeconds      = FOUR_CHAR_CODE('secs'),
     kParameterUsageMilliseconds = FOUR_CHAR_CODE('msec'),
-    kParameterUsageMicroseconds = FOUR_CHAR_CODE('µsec'),
+    kParameterUsageMicroseconds = FOUR_CHAR_CODE('usec'),
     kParameterUsage3by3Matrix   = FOUR_CHAR_CODE('3by3'),
     kParameterUsageCircularDegrees = FOUR_CHAR_CODE('degc'),
     kParameterUsageCircularRadians = FOUR_CHAR_CODE('radc')
