@@ -246,11 +246,19 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 }
 
 void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures, bool useNormals){
-	if(primitive.getNumVertices()==0) return;
+	if(primitive.getNumVertices() == 0){
+		return;
+	}
+	if(primitive.getNumIndices() == 0){
+		ofMesh indexedMesh = primitive;
+		indexedMesh.setupIndicesAuto();
+		draw(indexedMesh, useColors, useTextures, useNormals);
+		return;
+	}
+	
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());
 	cairo_new_path(cr);
-	//if(indices.getNumIndices()){
 
 		int i = 1;
 		ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
