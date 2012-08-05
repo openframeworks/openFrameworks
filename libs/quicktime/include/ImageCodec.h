@@ -918,12 +918,12 @@ enum {
 
 /* atoms that help to fill in data within the info window */
 enum {
-    kParameterInfoLongName      = FOUR_CHAR_CODE('©nam'),
-    kParameterInfoCopyright     = FOUR_CHAR_CODE('©cpy'),
-    kParameterInfoDescription   = FOUR_CHAR_CODE('©inf'),
-    kParameterInfoWindowTitle   = FOUR_CHAR_CODE('©wnt'),
-    kParameterInfoPicture       = FOUR_CHAR_CODE('©pix'),
-    kParameterInfoManufacturer  = FOUR_CHAR_CODE('©man'),
+    kParameterInfoLongName      = FOUR_CHAR_CODE(' nam'),
+    kParameterInfoCopyright     = FOUR_CHAR_CODE(' cpy'),
+    kParameterInfoDescription   = FOUR_CHAR_CODE(' inf'),
+    kParameterInfoWindowTitle   = FOUR_CHAR_CODE(' wnt'),
+    kParameterInfoPicture       = FOUR_CHAR_CODE(' pix'),
+    kParameterInfoManufacturer  = FOUR_CHAR_CODE(' man'),
     kParameterInfoIDs           = 1
 };
 
