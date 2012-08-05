@@ -489,18 +489,29 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 }
 
 void ofTexture::allocate(const ofTextureData & textureData){
+	if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
+		ofLogError() << "ofTexture::allocate - the ofTextureData structure passed must be set with a width and height.";
+		return;
+	}
+
 	texData = textureData;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if (!(texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle))
+	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle ){
+		texData.tex_t = texData.width;
+		texData.tex_u = texData.height;
+		texData.tex_w = texData.width;
+		texData.tex_h = texData.height;		
+	}else
 #endif
 	{
 		//otherwise we need to calculate the next power of 2 for the requested dimensions
 		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(texData.tex_w);
-		texData.tex_h = ofNextPow2(texData.tex_h);
-		texData.tex_t = 1.0f;
-		texData.tex_u = 1.0f;
+		texData.tex_w = ofNextPow2(texData.width);
+		texData.tex_h = ofNextPow2(texData.height);
+		texData.tex_t = texData.width / texData.tex_w;
+		texData.tex_u = texData.height / texData.tex_h;
+
 		texData.textureTarget = GL_TEXTURE_2D;
 	}
 
@@ -522,7 +533,6 @@ void ofTexture::allocate(const ofTextureData & textureData){
 #else
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, texData.pixelType, 0);
 #endif
-
 
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
