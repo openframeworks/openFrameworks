@@ -1888,7 +1888,7 @@ enum {
     kQTPhotoshopLayerOpacity    = FOUR_CHAR_CODE('lopa'),       /* UInt8, 0 = transparent .. 255 = opaque */
     kQTPhotoshopLayerClipping   = FOUR_CHAR_CODE('lclp'),       /* UInt8, 0 = base, 1 = non-base */
     kQTPhotoshopLayerFlags      = FOUR_CHAR_CODE('lflg'),       /* UInt8 */
-    kQTPhotoshopLayerName       = FOUR_CHAR_CODE('©lnm'),       /* Text */
+    kQTPhotoshopLayerName       = FOUR_CHAR_CODE(' lnm'),       /* Text */
     kQTPhotoshopLayerUnicodeName = FOUR_CHAR_CODE('luni')       /* Unicode characters, not terminated */
 };
 
