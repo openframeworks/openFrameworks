@@ -593,9 +593,9 @@ RestoreMixedModeState           (MixedModeStateRecord * stateStorage,
 
 
 /* * * * * * * * * * * * * * * 
- * STACK_UPP_TYPE    - used in typedefs to create ≈UPP type
- * REGISTER_UPP_TYPE - used in typedefs to create ≈UPP type
- * TVECTOR_UPP_TYPE  - used in typedefs to create ≈UPP type
+ * STACK_UPP_TYPE    - used in typedefs to create ~UPP type
+ * REGISTER_UPP_TYPE - used in typedefs to create ~UPP type
+ * TVECTOR_UPP_TYPE  - used in typedefs to create ~UPP type
  *
  *  Example:
  *
@@ -633,7 +633,7 @@ RestoreMixedModeState           (MixedModeStateRecord * stateStorage,
 
 
 /* * * * * * * * * * * * * * * 
- * CALL_≈_PARAMETER_UPP  - used in Call≈Proc macros
+ * CALL_~_PARAMETER_UPP  - used in Call~Proc macros
  *
  *  Example:
  *

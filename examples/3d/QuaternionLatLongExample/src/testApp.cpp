@@ -85,7 +85,6 @@ void testApp::draw(){
 		ofLine(ofVec3f(0,0,0), worldPoint);
 
 		//set the bitmap text mode billboard so the points show up correctly in 3d
-		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 		ofDrawBitmapString(cities[i].name, worldPoint );
 	}
 	
