@@ -48,7 +48,6 @@ void testApp::draw(){
 
 	//---------------------------------- synth:
 	if (synth.getIsPlaying()) ofSetHexColor(0xFF0000);
-	else if ( !synth.isLoaded() ) ofSetHexColor(0x0000ff);
 	else ofSetHexColor(0x000000);
 	font.drawString("synth !!", 50,50);
 	
@@ -60,7 +59,6 @@ void testApp::draw(){
 
 	//---------------------------------- beats:
 	if (beats.getIsPlaying()) ofSetHexColor(0xFF0000);
-	else if ( !beats.isLoaded() ) ofSetHexColor(0x0000ff);
 	else ofSetHexColor(0x000000);
 	font.drawString("beats !!", widthDiv+50,50);
 
@@ -70,7 +68,6 @@ void testApp::draw(){
 
 	//---------------------------------- vocals:
 	if (vocals.getIsPlaying()) ofSetHexColor(0xFF0000);
-	else if ( !vocals.isLoaded() ) ofSetHexColor(0x0000ff);
 	else ofSetHexColor(0x000000);
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
@@ -102,23 +99,6 @@ void testApp::touchDown(ofTouchEventArgs & touch){
 			vocals.setPan((float)touch.x / (float)ofGetWidth());	
 		}
 	}
-	// second finger
-	if ( touch.id == 1 )
-	{
-		float widthStep = ofGetWidth() / 3.0f;
-		if (touch.x < widthStep){
-			ofLogNotice() << "unloading synth, playing " << synth.getIsPlaying() << ", pos " << synth.getPosition();
-			synth.unloadSound();
-		} else if (touch.x >= widthStep && touch.x < widthStep*2){
-			ofLogNotice() << "unloading beats, playing " << beats.getIsPlaying() << ", pos " << beats.getPosition();
-			beats.unloadSound();
-		} else {
-			ofLogNotice() << "unloading vocals, playing " << vocals.getIsPlaying() << ", pos " << vocals.getPosition();
-			vocals.stop();
-			vocals.unloadSound();
-		}
-		
-	}
 }
 
 //--------------------------------------------------------------
@@ -136,14 +116,11 @@ void testApp::touchMoved(ofTouchEventArgs & touch){
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs & touch){
 	
-	
-	
 }
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){
-	beats.stop();  
-	beats.unloadSound();  
+
 }
 
 //--------------------------------------------------------------
