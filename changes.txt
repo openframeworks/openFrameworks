@@ -1,3 +1,5 @@
++ Deprecation mechanism: Compile-time warnings tell you if you are using legacy/old functions. Alternatives are mentioned where appropriate.
+
 Deprecations:
 / ofVec*f::lengthSquared() has been deprecated and will be removed in a future release. Use ofVec*f::squareLength() instead.
 / ofVideoGrabber::grabFrame() has been deprecated and will be removed in a future release. Use ofVideoGrabber::update() instead.
