@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ofPoint.h"
+#include "ofLog.h"
 
 //----------------------------------------------------------
 // ofRectangle
@@ -46,6 +47,8 @@ public:
     void scaleFromCenter(float sX, float sY);
     void scaleFromCenter(const ofPoint& s);
     
+    ofRectangle scaleIntoMe(const ofRectangle& toBeScaled) const;
+    
     bool inside(float px, float py) const;
     bool inside(const ofPoint& p) const;
     bool inside(const ofRectangle & rect) const;
@@ -66,7 +69,6 @@ public:
     
     float getArea() const;
     float getPerimeter() const;
-    
     float getAspectRatio() const;
     
     bool isEmpty() const;     // are width/height == 0.0f

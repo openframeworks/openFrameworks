@@ -132,6 +132,31 @@ void ofRectangle::scaleFromCenter(const ofPoint& s) {
 
 }
 
+//----------------------------------------------------------
+ofRectangle ofRectangle::scaleIntoMe(const ofRectangle& toBeScaled) const {
+
+    ofRectangle result;
+
+    // make sure we are dealing with non-zero rects, else divide by zero
+    if(width  == 0.0f || height == 0.0f) {
+		ofLogWarning() << "Destination rectangle had 0 width or 0 height.";
+        return result;
+    } else if(toBeScaled.getWidth()  == 0.0f || toBeScaled.getHeight() == 0.0f) {
+		ofLogWarning() << "Source rectangle had 0 width or 0 height.";
+        return result;
+    }
+    
+    // find the scaling factor, fabs for -w and/or -h
+    float resultScale = MIN(fabs(width)  / fabs(toBeScaled.getWidth()),
+                            fabs(height) / fabs(toBeScaled.getHeight()));
+    
+    // set the rect from cetner with scaled w/h
+    result.setFromCenter(getCenter(),
+                         toBeScaled.getWidth()  * resultScale,
+                         toBeScaled.getHeight() * resultScale);
+    
+    return result;
+}
 
 //----------------------------------------------------------
 bool ofRectangle::inside(float px, float py) const {
