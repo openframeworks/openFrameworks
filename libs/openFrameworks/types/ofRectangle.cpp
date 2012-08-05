@@ -138,11 +138,9 @@ ofRectangle ofRectangle::scaleIntoMe(const ofRectangle& toBeScaled) const {
     ofRectangle result;
 
     // make sure we are dealing with non-zero rects, else divide by zero
-    if(width  == 0.0f || height == 0.0f) {
-        ofLogWarning() << "Destination rectangle had 0 width or 0 height.";
-        return result;
-    } else if(toBeScaled.getWidth()  == 0.0f || toBeScaled.getHeight() == 0.0f) {
-        ofLogWarning() << "Source rectangle had 0 width or 0 height.";
+    if(fabs(toBeScaled.getWidth())  < FLT_EPSILON ||
+       fabs(toBeScaled.getHeight()) < FLT_EPSILON) {
+        ofLogWarning() << "ofRectangle: Source rectangle had 0 width or 0 height. Avoiding divide by zero.";
         return result;
     }
     
