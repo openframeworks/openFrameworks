@@ -125,7 +125,7 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 		unsigned char* src = (unsigned char*) pixels;
 		unsigned char* dst = bmpBits;
 		for(int i = 0; i < (int)height; i++) {
-			memcpy(dst, src, dstStride);
+			memcpy(dst, src, srcStride);
 			src += srcStride;
 			dst += dstStride;
 		}
