@@ -580,56 +580,20 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	}
 }
 
-
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum  attachment){
-	glGenTextures(1, &depthBufferTex.texData.textureID);
-	//retainRB(depthBuffer);
-	glBindTexture(target, depthBufferTex.texData.textureID);
-
-	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-#ifndef TARGET_OPENGLES
-	glTexParameterf( target, GL_TEXTURE_WRAP_S, GL_CLAMP );
-	glTexParameterf( target, GL_TEXTURE_WRAP_T, GL_CLAMP );
-#else
-	glTexParameterf( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameterf( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-#endif
-
-	int textureW = settings.width;
-	int textureH = settings.height;
 	
-	//we have to do all the power-of-two calculations are self. 
-	//most of below should be done in ofTexture - so this is all a bit of a hack for now. 
-	if( target == GL_TEXTURE_2D ){
-		textureW = ofNextPow2(textureW);
-		textureH = ofNextPow2(textureH);
-	}
-
-	glTexImage2D( target, 0, internalformat, textureW, textureH, 0, format, type, 0 );
-	glBindTexture( target, 0 );
-
 	// allocate depthBufferTex as depth buffer;
 	depthBufferTex.texData.glTypeInternal = internalformat;
 	depthBufferTex.texData.glType = format;
 	depthBufferTex.texData.pixelType = type;
 	depthBufferTex.texData.textureTarget = target;
 	depthBufferTex.texData.bFlipTexture = false;
-
-	depthBufferTex.texData.tex_w	= textureW;
-	depthBufferTex.texData.tex_h	= textureH;      
-	depthBufferTex.texData.width	= settings.width;
-	depthBufferTex.texData.height	= settings.height;
-
-	if( target == GL_TEXTURE_2D ){
-		depthBufferTex.texData.tex_t = ofMap(settings.width, 0, depthBufferTex.texData.tex_w, 0, 1, true);
-		depthBufferTex.texData.tex_u = ofMap(settings.height, 0, depthBufferTex.texData.tex_h, 0, 1, true);
-	}else{
-		depthBufferTex.texData.tex_t = textureW;
-		depthBufferTex.texData.tex_u = textureH;
-	}		
-
-	depthBufferTex.texData.bAllocated = true;
+	depthBufferTex.texData.width = settings.width;
+	depthBufferTex.texData.height = settings.height;
+	
+	//TODO: a bit of a hack for now as we don't know 100% what will be overridden by ofTexture::allocate( ofTextureData & data ); 
+	//but at the moment it seems to work well and resulted in some fixes for the ofTexture::allocate method 
+	depthBufferTex.allocate(depthBufferTex.texData);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
 }
