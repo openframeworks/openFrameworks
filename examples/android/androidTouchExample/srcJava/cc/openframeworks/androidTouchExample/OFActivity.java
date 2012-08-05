@@ -37,19 +37,26 @@ public class OFActivity extends Activity{
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        OFAndroid.onKeyDown(keyCode);
-        return super.onKeyDown(keyCode, event);
+	if (OFAndroid.keyDown(keyCode, event)) {
+	    return true;
+	} else {
+	    return super.onKeyDown(keyCode, event);
+	}
+
+        else
+        {
+        	return super.onKeyDown(keyCode, event);
+        }
     }
     
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)) {
-            if( OFAndroid.onBackPressed() ) return true;
-            else return super.onKeyUp(keyCode, event);
+        if (OFAndroid.keyUp(keyCode, event)) {
+	    return true;
+	} else {
+	    return super.onKeyUp(keyCode, event);
+	}er.onKeyUp(keyCode, event);
         }
-        
-        OFAndroid.onKeyUp(keyCode);
-        return super.onKeyUp(keyCode, event);
     }
 
 
