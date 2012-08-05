@@ -38,6 +38,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -665,6 +666,37 @@ public class OFAndroid {
         mGLView.setOnTouchListener(gestureListener.touchListener);
 	}
 	
+	/**
+	 * 
+	 * @param keyCode
+	 * @param event
+	 * @return true to say we handled this, false to tell Android to handle it
+	 */
+	public boolean keyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)) {
+            if( onBackPressed() ) {
+            	return true;
+           	} else {
+           		// let the Android system handle the back button
+           		return false;
+           	}
+        }
+		
+		int unicodeChar = event.getUnicodeChar(0);
+		onKeyDown(unicodeChar);
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param keyCode
+	 * @param event
+	 * @return true to say we handled this, false to tell Android to handle it
+	 */
+	public void keyUp(int keyCode, KeyEvent event) {
+		int unicodeChar = event.getUnicodeChar(0);
+		onKeyDown(unicodeChar);
+	}
 }
 
 class OFGestureListener extends SimpleOnGestureListener implements OnClickListener {
