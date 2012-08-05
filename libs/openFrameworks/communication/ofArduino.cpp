@@ -120,14 +120,12 @@ bool ofArduino::connect(string device, int baud){
 // the preferred method is to listen for the EInitialized event in your application
 bool ofArduino::isArduinoReady(){	
 	if(bUseDelay) {
-        if (_initialized || (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH) {
-            initPins();
-            connected = true;
-            return connected;
-        }
-	} else {
-		return connected;
-    }
+		if (_initialized || (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH) {
+			initPins();
+			connected = true;
+		}
+	}
+	return connected;
 }
 
 void  ofArduino::setUseDelay(bool bDelay){

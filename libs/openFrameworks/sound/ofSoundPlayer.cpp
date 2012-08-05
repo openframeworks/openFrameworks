@@ -207,5 +207,7 @@ float ofSoundPlayer::getPan(){
 float ofSoundPlayer::getVolume(){
 	if( player != NULL ){
 		return player->getVolume();
+	} else {
+		return 0;
 	}
 }
