@@ -672,7 +672,7 @@ public class OFAndroid {
 	 * @param event
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
-	public boolean keyDown(int keyCode, KeyEvent event) {
+	public static boolean keyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)) {
             if( onBackPressed() ) {
             	return true;
@@ -693,9 +693,10 @@ public class OFAndroid {
 	 * @param event
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
-	public void keyUp(int keyCode, KeyEvent event) {
+	public static boolean keyUp(int keyCode, KeyEvent event) {
 		int unicodeChar = event.getUnicodeChar(0);
 		onKeyDown(unicodeChar);
+		return true;
 	}
 }
 
