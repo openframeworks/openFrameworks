@@ -1,9 +1,12 @@
 + Deprecation mechanism: Compile-time warnings tell you if you are using legacy/old functions. Alternatives are mentioned where appropriate.
 
-Deprecations:
-/ ofVec*f::lengthSquared() has been deprecated and will be removed in a future release. Use ofVec*f::squareLength() instead.
-/ ofVideoGrabber::grabFrame() has been deprecated and will be removed in a future release. Use ofVideoGrabber::update() instead.
-/ ofVideoPlayer::idleMovie() has been deprecated and will be removed in a future release. Use ofVideoPlayer::update() instead.
+Deprecations (will be removed in a future release):
+/ ofVec*f::lengthSquared() has been deprecated. Use ofVec*f::squareLength() instead.
+/ ofVideoGrabber::grabFrame() has been deprecated. Use ofVideoGrabber::update() instead.
+/ ofVideoPlayer::idleMovie() has been deprecated. Use ofVideoPlayer::update() instead.
+/ ofPolyline::addVertexes has been deprecated. Use ofPolyline::addVertices instead.
+/ ofGraphics: ofVertexes has been deprecated. Use ofVertices instead.
+/ ofGraphics: ofCurveVertexes has been deprecated. Use ofCurveVertices instead.
 
 Removals: 
 - ofxDirList, ofxThread and ofxVectorMath have been deprecated previously, and have been removed from OF. Their functionality has been migrated to core OF.
