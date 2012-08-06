@@ -51,8 +51,12 @@
 		15594FCA15C56D1E00727FF2 /* ofxiPhoneMapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBB15C56D1E00727FF2 /* ofxiPhoneMapKit.h */; };
 		15594FCB15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBC15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h */; };
 		15594FCC15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBD15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h */; };
-		5315964913D88B370044EAFE /* ofxiPhoneSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5315964713D88B370044EAFE /* ofxiPhoneSoundStream.mm */; };
-		5315964A13D88B370044EAFE /* ofxiPhoneSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5315964813D88B370044EAFE /* ofxiPhoneSoundStream.h */; };
+		1594366415CF5F420087B684 /* ofiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366015CF5F420087B684 /* ofiPhoneVideoGrabber.mm */; };
+		1594366515CF5F420087B684 /* ofiPhoneVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofiPhoneVideoPlayer.mm */; };
+		1594366615CF5F420087B684 /* ofiPhoneVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366215CF5F420087B684 /* ofiPhoneVideoGrabber.h */; };
+		1594366715CF5F420087B684 /* ofiPhoneVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366315CF5F420087B684 /* ofiPhoneVideoPlayer.h */; };
+		1594366A15CF5F650087B684 /* ofxiPhoneSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366815CF5F650087B684 /* ofxiPhoneSoundStream.mm */; };
+		1594366B15CF5F650087B684 /* ofxiPhoneSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366915CF5F650087B684 /* ofxiPhoneSoundStream.h */; };
 		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
 		53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338D12DF8F5000C622CE /* CoreAudio.framework */; };
 		53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338F12DF8F5000C622CE /* CoreMedia.framework */; };
@@ -168,10 +172,6 @@
 		E485F77D1360A90000E939D3 /* ofURLFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6F31360A90000E939D3 /* ofURLFileLoader.h */; };
 		E485F77E1360A90000E939D3 /* ofUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F6F41360A90000E939D3 /* ofUtils.cpp */; };
 		E485F77F1360A90000E939D3 /* ofUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6F51360A90000E939D3 /* ofUtils.h */; };
-		E485F7881360A90000E939D3 /* ofiPhoneVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6FF1360A90000E939D3 /* ofiPhoneVideoGrabber.h */; };
-		E485F7891360A90000E939D3 /* ofiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E485F7001360A90000E939D3 /* ofiPhoneVideoGrabber.mm */; };
-		E485F78A1360A90000E939D3 /* ofiPhoneVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F7011360A90000E939D3 /* ofiPhoneVideoPlayer.h */; };
-		E485F78B1360A90000E939D3 /* ofiPhoneVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E485F7021360A90000E939D3 /* ofiPhoneVideoPlayer.mm */; };
 		E485F7921360A90000E939D3 /* ofVideoGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F7091360A90000E939D3 /* ofVideoGrabber.cpp */; };
 		E485F7931360A90000E939D3 /* ofVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F70A1360A90000E939D3 /* ofVideoGrabber.h */; };
 		E485F7941360A90000E939D3 /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F70B1360A90000E939D3 /* ofVideoPlayer.cpp */; };
@@ -227,12 +227,16 @@
 		15594FBB15C56D1E00727FF2 /* ofxiPhoneMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKit.h; sourceTree = "<group>"; };
 		15594FBC15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitDelegate.h; sourceTree = "<group>"; };
 		15594FBD15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitListener.h; sourceTree = "<group>"; };
+		1594366015CF5F420087B684 /* ofiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofiPhoneVideoGrabber.mm; sourceTree = "<group>"; };
+		1594366115CF5F420087B684 /* ofiPhoneVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofiPhoneVideoPlayer.mm; sourceTree = "<group>"; };
+		1594366215CF5F420087B684 /* ofiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofiPhoneVideoGrabber.h; sourceTree = "<group>"; };
+		1594366315CF5F420087B684 /* ofiPhoneVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofiPhoneVideoPlayer.h; sourceTree = "<group>"; };
+		1594366815CF5F650087B684 /* ofxiPhoneSoundStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneSoundStream.mm; sourceTree = "<group>"; };
+		1594366915CF5F650087B684 /* ofxiPhoneSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneSoundStream.h; sourceTree = "<group>"; };
 		15BC775215A5C31F00772525 /* ofxiOSExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOSExtensions.h; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		5315964713D88B370044EAFE /* ofxiPhoneSoundStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneSoundStream.mm; sourceTree = "<group>"; };
-		5315964813D88B370044EAFE /* ofxiPhoneSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneSoundStream.h; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53DA338912DF8F4500C622CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		53DA338D12DF8F5000C622CE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -353,10 +357,6 @@
 		E485F6F31360A90000E939D3 /* ofURLFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofURLFileLoader.h; path = ../../../openFrameworks/utils/ofURLFileLoader.h; sourceTree = SOURCE_ROOT; };
 		E485F6F41360A90000E939D3 /* ofUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofUtils.cpp; path = ../../../openFrameworks/utils/ofUtils.cpp; sourceTree = SOURCE_ROOT; };
 		E485F6F51360A90000E939D3 /* ofUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofUtils.h; path = ../../../openFrameworks/utils/ofUtils.h; sourceTree = SOURCE_ROOT; };
-		E485F6FF1360A90000E939D3 /* ofiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofiPhoneVideoGrabber.h; path = ../../../openFrameworks/video/ofiPhoneVideoGrabber.h; sourceTree = SOURCE_ROOT; };
-		E485F7001360A90000E939D3 /* ofiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofiPhoneVideoGrabber.mm; path = ../../../openFrameworks/video/ofiPhoneVideoGrabber.mm; sourceTree = SOURCE_ROOT; };
-		E485F7011360A90000E939D3 /* ofiPhoneVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofiPhoneVideoPlayer.h; path = ../../../openFrameworks/video/ofiPhoneVideoPlayer.h; sourceTree = SOURCE_ROOT; };
-		E485F7021360A90000E939D3 /* ofiPhoneVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofiPhoneVideoPlayer.mm; path = ../../../openFrameworks/video/ofiPhoneVideoPlayer.mm; sourceTree = SOURCE_ROOT; };
 		E485F7091360A90000E939D3 /* ofVideoGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVideoGrabber.cpp; path = ../../../openFrameworks/video/ofVideoGrabber.cpp; sourceTree = SOURCE_ROOT; };
 		E485F70A1360A90000E939D3 /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoGrabber.h; path = ../../../openFrameworks/video/ofVideoGrabber.h; sourceTree = SOURCE_ROOT; };
 		E485F70B1360A90000E939D3 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVideoPlayer.cpp; path = ../../../openFrameworks/video/ofVideoPlayer.cpp; sourceTree = SOURCE_ROOT; };
@@ -433,6 +433,8 @@
 				15594F9715C56B8700727FF2 /* ofxOpenALSoundPlayer.cpp */,
 				15594F9A15C56B8700727FF2 /* SoundEngine.h */,
 				15594F9815C56B8700727FF2 /* SoundEngine.cpp */,
+				1594366915CF5F650087B684 /* ofxiPhoneSoundStream.h */,
+				1594366815CF5F650087B684 /* ofxiPhoneSoundStream.mm */,
 			);
 			path = sound;
 			sourceTree = "<group>";
@@ -466,6 +468,10 @@
 				15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */,
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
+				1594366315CF5F420087B684 /* ofiPhoneVideoPlayer.h */,
+				1594366115CF5F420087B684 /* ofiPhoneVideoPlayer.mm */,
+				1594366215CF5F420087B684 /* ofiPhoneVideoGrabber.h */,
+				1594366015CF5F420087B684 /* ofiPhoneVideoGrabber.mm */,
 			);
 			path = video;
 			sourceTree = "<group>";
@@ -745,8 +751,6 @@
 				E485F6DA1360A90000E939D3 /* ofSoundPlayer.h */,
 				E485F6DB1360A90000E939D3 /* ofSoundStream.cpp */,
 				E485F6DC1360A90000E939D3 /* ofSoundStream.h */,
-				5315964713D88B370044EAFE /* ofxiPhoneSoundStream.mm */,
-				5315964813D88B370044EAFE /* ofxiPhoneSoundStream.h */,
 			);
 			name = sound;
 			path = ../../../openFrameworks/sound;
@@ -794,10 +798,6 @@
 		E485F6F61360A90000E939D3 /* video */ = {
 			isa = PBXGroup;
 			children = (
-				E485F6FF1360A90000E939D3 /* ofiPhoneVideoGrabber.h */,
-				E485F7001360A90000E939D3 /* ofiPhoneVideoGrabber.mm */,
-				E485F7011360A90000E939D3 /* ofiPhoneVideoPlayer.h */,
-				E485F7021360A90000E939D3 /* ofiPhoneVideoPlayer.mm */,
 				E485F7091360A90000E939D3 /* ofVideoGrabber.cpp */,
 				E485F70A1360A90000E939D3 /* ofVideoGrabber.h */,
 				E485F70B1360A90000E939D3 /* ofVideoPlayer.cpp */,
@@ -888,14 +888,11 @@
 				E485F77B1360A90000E939D3 /* ofThread.h in Headers */,
 				E485F77D1360A90000E939D3 /* ofURLFileLoader.h in Headers */,
 				E485F77F1360A90000E939D3 /* ofUtils.h in Headers */,
-				E485F7881360A90000E939D3 /* ofiPhoneVideoGrabber.h in Headers */,
-				E485F78A1360A90000E939D3 /* ofiPhoneVideoPlayer.h in Headers */,
 				E485F7931360A90000E939D3 /* ofVideoGrabber.h in Headers */,
 				E485F7951360A90000E939D3 /* ofVideoPlayer.h in Headers */,
 				E485F7961360A90000E939D3 /* ofMain.h in Headers */,
 				E485F81A1363242200E939D3 /* ofxMultiTouch.h in Headers */,
 				E485F81B1363242200E939D3 /* ofxMultiTouchListener.h in Headers */,
-				5315964A13D88B370044EAFE /* ofxiPhoneSoundStream.h in Headers */,
 				772C25191469274B00DDAAE6 /* ofOpenALSoundPlayer.h in Headers */,
 				772C251D146927A500DDAAE6 /* ofFmodSoundPlayer.h in Headers */,
 				15594F0F15C55AC900727FF2 /* EAGLView.h in Headers */,
@@ -922,6 +919,9 @@
 				15594FCA15C56D1E00727FF2 /* ofxiPhoneMapKit.h in Headers */,
 				15594FCB15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h in Headers */,
 				15594FCC15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h in Headers */,
+				1594366615CF5F420087B684 /* ofiPhoneVideoGrabber.h in Headers */,
+				1594366715CF5F420087B684 /* ofiPhoneVideoPlayer.h in Headers */,
+				1594366B15CF5F650087B684 /* ofxiPhoneSoundStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1018,12 +1018,9 @@
 				E485F77A1360A90000E939D3 /* ofThread.cpp in Sources */,
 				E485F77C1360A90000E939D3 /* ofURLFileLoader.cpp in Sources */,
 				E485F77E1360A90000E939D3 /* ofUtils.cpp in Sources */,
-				E485F7891360A90000E939D3 /* ofiPhoneVideoGrabber.mm in Sources */,
-				E485F78B1360A90000E939D3 /* ofiPhoneVideoPlayer.mm in Sources */,
 				E485F7921360A90000E939D3 /* ofVideoGrabber.cpp in Sources */,
 				E485F7941360A90000E939D3 /* ofVideoPlayer.cpp in Sources */,
 				E485F8191363242200E939D3 /* ofxMultiTouch.cpp in Sources */,
-				5315964913D88B370044EAFE /* ofxiPhoneSoundStream.mm in Sources */,
 				772C25181469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp in Sources */,
 				772C251C146927A500DDAAE6 /* ofFmodSoundPlayer.cpp in Sources */,
 				15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */,
@@ -1046,6 +1043,9 @@
 				15594FC215C56D1E00727FF2 /* ofxiPhoneKeyboard.mm in Sources */,
 				15594FC315C56D1E00727FF2 /* ofxiPhoneMapKit.mm in Sources */,
 				15594FC415C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.mm in Sources */,
+				1594366415CF5F420087B684 /* ofiPhoneVideoGrabber.mm in Sources */,
+				1594366515CF5F420087B684 /* ofiPhoneVideoPlayer.mm in Sources */,
+				1594366A15CF5F650087B684 /* ofxiPhoneSoundStream.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
