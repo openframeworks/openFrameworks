@@ -898,7 +898,6 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
-    int sw = ofGetViewportWidth();
     int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
     
 	if (!((width == _w) && (height == _h))){
@@ -930,6 +929,7 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	
     #else
     
+    int sw = ofGetViewportWidth();
     int numPixels   = width*height;
     if( numPixels == 0 ){
         ofLog(OF_LOG_ERROR, "grabScreen width or height is 0 - returning");
