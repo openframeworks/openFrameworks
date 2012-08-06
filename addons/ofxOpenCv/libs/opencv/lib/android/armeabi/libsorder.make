@@ -1,7 +1,6 @@
 libopencv_legacy.a 
 libopencv_calib3d.a
 libopencv_features2d.a 
-libopencv_haartraining_engine.a
 libopencv_objdetect.a 
 libopencv_imgproc.a
 libopencv_video.a  
