@@ -69,6 +69,9 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	case PIXELS:
 		surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height);
 		break;
+	case FROM_FILE_EXTENSION:
+		ofLogFatalError("ofCairoRenderer") << "Type not determined from file extension!";
+		break;
 	}
 
 	cr = cairo_create(surface);
