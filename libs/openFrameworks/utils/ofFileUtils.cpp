@@ -1300,7 +1300,9 @@ string ofFilePath::join(string path1, string path2){
 string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
-		readlink("/proc/self/exe", buff, FILENAME_MAX);
+		if (readlink("/proc/self/exe", buff, FILENAME_MAX) == -1){
+			ofLogError("ofFilePath") << "readlink failed with error " << errno;
+		}
 		return buff;
 	#elif defined(TARGET_OSX)
 		char path[FILENAME_MAX];
