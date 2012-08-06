@@ -1087,7 +1087,6 @@ void ofCairoRenderer::drawSphere(float x, float y, float z, float radius) {
 	int n = ofGetStyle().sphereResolution * 2;
 	float ndiv2=(float)n/2;
 	int cindex = 0;
-	int stripVerts = (ndiv2*((n+1)*2));
 	
 	if(sphereVerts.size() < 1) {
 		// double check to make sure that setSphereResolution has been called at least once //
