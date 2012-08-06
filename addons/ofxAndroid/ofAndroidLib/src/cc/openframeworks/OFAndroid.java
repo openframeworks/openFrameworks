@@ -410,6 +410,9 @@ public class OFAndroid {
     public static native void onTouchDoubleTap(int id,float x,float y,float pressure);
     public static native void onTouchUp(int id,float x,float y,float pressure);
     public static native void onTouchMoved(int id,float x,float y,float pressure);
+    public static native void onTouchCancelled(int id,float x,float y);
+    
+    public static native void onSwipe(int id, int swipeDir);
     
     public static native void onKeyDown(int keyCode);
     public static native void onKeyUp(int keyCode);
@@ -679,13 +682,15 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
                 switch((action & MotionEvent.ACTION_MASK)){
                 case MotionEvent.ACTION_MOVE:
                 {
-                	for(int j=0; j<event.getPointerCount(); j++)
-                	{
-                		for(int i=0; i<event.getHistorySize(); i++)
-                		{
-                			int ptr = event.getPointerId(j);
-                			OFAndroid.onTouchMoved(ptr, event.getHistoricalX(ptr, i), event.getHistoricalY(ptr, i), event.getHistoricalPressure(ptr, i));                		
-                		}
+            		for(int i=0; i<event.getHistorySize(); i++)
+            		{
+            			try{
+		                	for(int j=0; j<event.getPointerCount(); j++)
+		                	{
+	                			int ptr = event.getPointerId(j);
+	                			OFAndroid.onTouchMoved(ptr, event.getHistoricalX(ptr, i), event.getHistoricalY(ptr, i), event.getHistoricalPressure(ptr, i));                		
+	                		}
+            			}catch(IllegalArgumentException e){}
                 	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
 	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
@@ -701,7 +706,7 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
                 	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
                 	break;
                 case MotionEvent.ACTION_CANCEL:
-                	//TODO: cancelled
+                	OFAndroid.onTouchCancelled(pointerId,event.getX(),event.getY());
                 	break;
                 }
                 return gestureDetector.onTouchEvent(event);
@@ -712,9 +717,6 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	
 	public void onClick(View view) {
 	}
-
-    private GestureDetector gestureDetector;
-    View.OnTouchListener touchListener;
 
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
@@ -744,8 +746,38 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	}
 
 	@Override
-	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,float arg3) {
-		return super.onFling(arg0, arg1, arg2, arg3);
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		/*boolean res = super.onFling(e1, e2, velocityX, velocityY);
+		Log.i("OF","onFLing" + res);
+		return res;*/
+		
+		final float xDistance = Math.abs(e1.getX() - e2.getX());
+		final float yDistance = Math.abs(e1.getY() - e2.getY());
+
+		if(xDistance > this.swipe_Max_Distance || yDistance > this.swipe_Max_Distance)
+			return false;
+
+		velocityX = Math.abs(velocityX);
+		velocityY = Math.abs(velocityY);
+        boolean result = false;
+
+        if(velocityX > this.swipe_Min_Velocity && xDistance > this.swipe_Min_Distance){
+        	if(e1.getX() > e2.getX()) // right to left
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_LEFT);
+        	else
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_RIGHT);
+   
+        	result = true;
+        }else if(velocityY > this.swipe_Min_Velocity && yDistance > this.swipe_Min_Distance){
+        	if(e1.getY() > e2.getY()) // bottom to up 
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_UP);
+        	else
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_DOWN);
+   
+        	result = true;
+        }
+
+        return result;
 	}
 
 	@Override
@@ -765,6 +797,16 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	public boolean onSingleTapUp(MotionEvent event) {
 		return super.onSingleTapUp(event);
 	}
+
+    private GestureDetector gestureDetector;
+    View.OnTouchListener touchListener;
+    public static int swipe_Min_Distance = 100;
+    public static int swipe_Max_Distance = 350;
+    public static int swipe_Min_Velocity = 100;
+    public final static int SWIPE_UP    = 1;
+    public final static int SWIPE_DOWN  = 2;
+    public final static int SWIPE_LEFT  = 3;
+    public final static int SWIPE_RIGHT = 4;
 }
 
 
@@ -815,6 +857,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         	initialized = true;
         	setup = true;
         	android.os.Process.setThreadPriority(8);
+        	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.1);
+        	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
         	
         	/*if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
         	else Log.i("OF","ETC not supported");*/

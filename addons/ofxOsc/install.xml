@@ -22,6 +22,40 @@
 			<file>../../../addons/ofxOsc/src/ofxOscSender.cpp</file>
 			<file>../../../addons/ofxOsc/src/ofxOscSender.h</file>
 			</folder>
+      
+			<folder name="addons/ofxOsc/libs/oscpack/src/ip">
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/IpEndpointName.cpp</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/IpEndpointName.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/NetworkingUtils.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/PacketListener.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/TimerListener.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/UdpSocket.h</file>
+			</folder>
+      
+			<folder name="addons/ofxOsc/libs/oscpack/src/ip/posix">
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/posix/NetworkingUtils.cpp</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/posix/UdpSocket.cpp</file>
+      </folder>
+      
+			<folder name="addons/ofxOsc/libs/oscpack/src/ip/win32">
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/win32/NetworkingUtilsWin.cpp</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/ip/win32/UdpSocketWin.cpp</file>
+      </folder>
+      
+			<folder name="addons/ofxOsc/libs/oscpack/src/osc">
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/MessageMappingOscPacketListener.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscException.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscHostEndianness.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.cpp</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscPacketListener.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.cpp</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.cpp</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.h</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.cpp</file>
+      <file>../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h</file>
+      </folder>
 		</src>
 
 		<include>
@@ -31,13 +65,6 @@
 		</include>
 		
 		<link>
-			<lib os="win_cb" compiler="codeblocks">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a</lib>
-			<lib os="win_vs2008" compiler="visualstudio">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.lib</lib>
-			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.a</lib>
-			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux64/liboscpack.a</lib>
-			<lib os="mac"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/osx/osc.a</lib>
-			<lib os="iphone"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/iphone/osc.a</lib>
-			<lib os="iphone"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/osx/osc.a</lib>
 		</link>
 
 	</add>

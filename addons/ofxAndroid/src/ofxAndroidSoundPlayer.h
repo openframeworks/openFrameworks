@@ -34,5 +34,4 @@ public:
 private:
 	jobject javaSoundPlayer;
 	jclass javaClass;
-	bool bIsLoaded;
 };

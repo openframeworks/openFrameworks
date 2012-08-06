@@ -20,9 +20,13 @@ public:
 
 	enum Type{
 		PDF,
-		SVG
+		SVG,
+		PNG,
+		PIXELS,
+		FROM_FILE_EXTENSION
 	};
-	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
+	void setup(string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
+	void setupMemoryOnly(bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
 
 	void update();
@@ -120,7 +124,7 @@ public:
 	// cairo specifics
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
-
+	void getImageSurfacePixels(ofPixels & pixels);
 
 private:
 	cairo_matrix_t * getCairoMatrix();
@@ -156,4 +160,6 @@ private:
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
+
+	string filename;
 };

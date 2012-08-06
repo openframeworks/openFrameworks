@@ -193,12 +193,14 @@ void ofBeginShape();
 void ofVertex(float x, float y);
 void ofVertex(float x, float y, float z);
 void ofVertex(ofPoint & p);
-void ofVertexes(const vector <ofPoint> & polyPoints);
+void ofVertices(const vector <ofPoint> & polyPoints);
+OF_DEPRECATED_MSG("Use ofVertices instead.", void ofVertexes(const vector <ofPoint> & polyPoints));
 
 
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(ofPoint & p);
-void ofCurveVertexes(const vector <ofPoint> & curvePoints);
+void ofCurveVertices(const vector <ofPoint> & curvePoints);
+OF_DEPRECATED_MSG("Use ofCurveVertices instead.", void ofCurveVertexes(const vector <ofPoint> & curvePoints));
 
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);

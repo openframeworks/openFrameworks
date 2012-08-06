@@ -13,7 +13,11 @@
 
 
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
-	include paths.make
+	ifeq ($(wildcard paths.make),)
+    $(error Android paths.make file does not exist. Create it from paths.make.default)
+	else
+		include paths.make
+	endif
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
