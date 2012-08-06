@@ -1168,6 +1168,7 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 			break;
 		default:
 			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
+			break;
 	}
 	
 	putBmpIntoPixels(convertedBmp, pix, false);
