@@ -24,15 +24,10 @@ extern "C"{
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
-static bool firstLoad=true;
 
 
 static int  sWindowWidth  = 480;
 static int  sWindowHeight = 800;
-/*static int  sDemoStopped  = 0;
-static long sTimeOffset   = 0;
-static int  sTimeOffsetInit = 0;
-static long sTimeStopped  = 0;*/
 
 static bool bSetupScreen = true;
 
@@ -311,10 +306,6 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
-	if(firstLoad){
-		firstLoad=false;
-		return;
-	}
 	if(!surfaceDestroyed){
 		ofUnloadAllFontTextures();
 		ofPauseVideoGrabbers();
@@ -324,6 +315,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		androidApp->reloadTextures();
 	}
 	ofSetStyle(ofGetStyle());
+	ofSetOrientation(ofGetOrientation());
 	surfaceDestroyed = false;
 
 }
@@ -386,6 +378,9 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 				break;
 			case ofTouchEventArgs::doubleTap:
 				ofNotifyEvent(ofEvents().touchDoubleTap,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::cancel:
+				ofNotifyEvent(ofEvents().touchCancelled,touchEventArgsQueue.front());
 				break;
 			}
 			touchEventArgsQueue.pop();
@@ -468,6 +463,23 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,j
 }
 
 void
+Java_cc_openframeworks_OFAndroid_onTouchCancelled(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y){
+	ofTouchEventArgs touch;
+	touch.id = id;
+	touch.x = x;
+	touch.y = y;
+	touch.pressure = 0;
+	touch.type = ofTouchEventArgs::cancel;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents().touchCancelled,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
+}
+
+void
 Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
 	ofTouchEventArgs touch;
 	touch.id = id;
@@ -501,6 +513,13 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 		mutex.lock();
 		touchEventArgsQueue.push(touch);
 		mutex.unlock();
+	}
+}
+
+void
+Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir){
+	if(androidApp){
+		androidApp->swipe((ofxAndroidSwipeDir)swipeDir,id);
 	}
 }
 

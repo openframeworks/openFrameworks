@@ -27,17 +27,37 @@ ofCairoRenderer::ofCairoRenderer(){
 	surface = NULL;
 	cr = NULL;
 	bBackgroundAuto = true;
+	rectMode = OF_RECTMODE_CORNER;
+	bSmoothHinted = false;
+	page = 0;
+	multiPage = false;
+	bFilled = OF_FILLED;
+	b3D = false;
 }
 
 ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3D_, ofRectangle _viewport){
+void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
 	if( _viewport.width == 0 || _viewport.height == 0 ){
 		_viewport.set(0, 0, ofGetWidth(), ofGetHeight());
 	}
 	
+	filename = _filename;
+	type = _type;
+
+	if(type == FROM_FILE_EXTENSION){
+		string ext = ofFilePath::getFileExt(filename);
+		if(ofToLower(ext)=="svg"){
+			type = SVG;
+		}else if(ofToLower(ext)=="png"){
+			type = PNG;
+		}else{  //use pdf as default
+			type = PDF;
+		}
+	}
+
 	switch(type){
 	case PDF:
 		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
@@ -45,9 +65,14 @@ void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3
 	case SVG:
 		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
 		break;
+	case PNG:
+	case PIXELS:
+		surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height);
+		break;
 	}
 
 	cr = cairo_create(surface);
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
 	viewportRect = _viewport;
 	viewport(viewportRect);
 	page = 0;
@@ -55,9 +80,16 @@ void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3
 	multiPage = multiPage_;
 }
 
+void ofCairoRenderer::setupMemoryOnly(bool multiPage_, bool b3D_, ofRectangle _viewport){
+	setup("",PIXELS,multiPage_,b3D_,_viewport);
+}
+
 void ofCairoRenderer::close(){
 	if(surface){
 		cairo_surface_flush(surface);
+		if(type==PNG){
+			cairo_surface_write_to_png(surface,ofToDataPath(filename).c_str());
+		}
 		cairo_surface_finish(surface);
 		cairo_surface_destroy(surface);
 		surface = NULL;
@@ -118,8 +150,8 @@ void ofCairoRenderer::draw(ofPath & shape){
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getFillColor() * ofGetStyle().color;
-			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+			ofColor c = shape.getStrokeColor() * ofGetStyle().color;
+			c.a = shape.getStrokeColor().a/255. * ofGetStyle().color.a;
 			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		}
 		cairo_set_line_width( cr, shape.getStrokeWidth() );
@@ -214,11 +246,19 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 }
 
 void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures, bool useNormals){
-	if(primitive.getNumVertices()==0) return;
+	if(primitive.getNumVertices() == 0){
+		return;
+	}
+	if(primitive.getNumIndices() == 0){
+		ofMesh indexedMesh = primitive;
+		indexedMesh.setupIndicesAuto();
+		draw(indexedMesh, useColors, useTextures, useNormals);
+		return;
+	}
+	
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());
 	cairo_new_path(cr);
-	//if(indices.getNumIndices()){
 
 		int i = 1;
 		ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
@@ -1117,4 +1157,14 @@ cairo_matrix_t * ofCairoRenderer::getCairoMatrix(){
 
 void ofCairoRenderer::setCairoMatrix(){
 	cairo_set_matrix(cr,&tmpMatrix);
+}
+
+void ofCairoRenderer::getImageSurfacePixels(ofPixels & pixels){
+	if(type==PNG || type==PIXELS){
+		int width = cairo_image_surface_get_width(surface);
+		int height = cairo_image_surface_get_height(surface);
+		pixels.setFromPixels(cairo_image_surface_get_data(surface),width,height,4);
+	}else{
+		ofLogError() << "ofCairoRenderer: can only get pixels from image (PNG) surface";
+	}
 }
