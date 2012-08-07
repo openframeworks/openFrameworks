@@ -72,6 +72,9 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	case FROM_FILE_EXTENSION:
 		ofLogFatalError("ofCairoRenderer") << "Type not determined from file extension!";
 		break;
+	default:
+		ofLogError("ofCairoRenderer") << "Unknown type encountered!";
+		break;
 	}
 
 	cr = cairo_create(surface);
