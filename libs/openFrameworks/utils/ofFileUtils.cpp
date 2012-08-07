@@ -1207,9 +1207,9 @@ string ofFilePath::removeExt(string filename){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getPathForDirectory(string path){
-/*	 if a trailing slash is missing from a path, this will clean it up
-	 if it's a windows-style \ path it will add a \
-	 if it's a unix-style / path it will add a /*/
+	// if a trailing slash is missing from a path, this will clean it up
+	// if it's a windows-style \ path it will add a \
+	// if it's a unix-style / path it will add a /
 	return Path::forDirectory(path).toString();
 }
 
