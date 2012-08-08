@@ -418,6 +418,13 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		return;
 	}
 
+	if(format==OF_IMAGE_FORMAT_JPEG && pix.getNumChannels()==4){
+		ofPixels pix3 = pix;
+		pix3.setNumChannels(3);
+		saveImage(pix3,buffer,format,qualityLevel);
+		return;
+	}
+
 	#ifdef TARGET_LITTLE_ENDIAN
 	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
@@ -452,6 +459,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		   }else{
 				FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
 		   }
+
 		   /*
 
 		  NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
