@@ -440,8 +440,83 @@ bool ofSerial::setup(string portName, int baud){
 }
 
 
-//----------------------------------------------------------------
-int ofSerial::writeBytes(unsigned char * buffer, int length){
+ofBuffer ofSerial::readBytes(int length){
+
+    ofBuffer buffer;
+    buffer.resize(length);
+    
+	if (!bInited){
+		ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
+		return OF_SERIAL_ERROR;
+	}
+    
+	//---------------------------------------------
+#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+    int nRead = read(fd, &buffer.getBinaryBuffer()[0], length);
+    if(nRead < 0){
+        if ( errno == EAGAIN )
+            return OF_SERIAL_NO_DATA;
+
+        ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port, errno %i (%s)", errno, strerror(errno));
+        return OF_SERIAL_ERROR;
+    }
+    
+#endif
+    //---------------------------------------------
+    
+    //---------------------------------------------
+#ifdef TARGET_WIN32
+    DWORD nRead = 0;
+    if (!ReadFile(hComm,&buffer.getBinaryBuffer()[0],length,&nRead,0)){
+        ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port");
+        //return OF_SERIAL_ERROR;
+    }
+    
+    //return 1; // is ok! this is standard
+#endif
+	//---------------------------------------------
+    
+    return buffer;
+    
+}
+
+int ofSerial::readBytes(ofBuffer &buffer, int length){
+    
+	if (!bInited){
+		ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
+		return OF_SERIAL_ERROR;
+	}
+    
+    char buf[length];
+    
+	//---------------------------------------------
+#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+    int nRead = read(fd, &buffer.getBinaryBuffer()[0], length);
+    if(nRead < 0){
+        if ( errno == EAGAIN )
+            return OF_SERIAL_NO_DATA;
+        ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port, errno %i (%s)", errno, strerror(errno));
+        return OF_SERIAL_ERROR;
+    }
+    
+    return (length == nRead);
+#endif
+    //---------------------------------------------
+    
+    //---------------------------------------------
+#ifdef TARGET_WIN32
+    DWORD nRead = 0;
+    if (!ReadFile(hComm,&buffer.getBinaryBuffer()[0],length,&nRead,0)){
+        ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port");
+        return OF_SERIAL_ERROR;
+    }
+    
+    return (length == nRead);
+#endif
+	//---------------------------------------------
+}
+
+int ofSerial::writeBytes(ofBuffer &buffer){
 
 	if (!bInited){
 		ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
@@ -450,7 +525,7 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-	    int numWritten = write(fd, buffer, length);
+	    int numWritten = write(fd, buffer.getBinaryBuffer(), length);
 		if(numWritten <= 0){
 			if ( errno == EAGAIN )
 				return 0;
@@ -460,19 +535,19 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 
 		ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", numWritten);
 
-	    return numWritten;
+	    return (numWritten == (int) buffer.size);
     #endif
     //---------------------------------------------
 
     //---------------------------------------------
 	#ifdef TARGET_WIN32
 		DWORD written;
-		if(!WriteFile(hComm, buffer, length, &written,0)){
+		if(!WriteFile(hComm, buffer.getBinaryBuffer(), length, &written,0)){
 			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
 			 return OF_SERIAL_ERROR;
 		}
 		ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", (int)written);
-		return (int)written;
+		return (numWritten == (int) buffer.size);
 	#else
 		return 0;
 	#endif
@@ -481,80 +556,9 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 }
 
 //----------------------------------------------------------------
-int ofSerial::readBytes(unsigned char * buffer, int length){
-
-	if (!bInited){
-		ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
-		return OF_SERIAL_ERROR;
-	}
-
-	//---------------------------------------------
-	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-		int nRead = read(fd, buffer, length);
-		if(nRead < 0){
-			if ( errno == EAGAIN )
-				return OF_SERIAL_NO_DATA;
-			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port, errno %i (%s)", errno, strerror(errno));
-			return OF_SERIAL_ERROR;
-		}
-		return nRead;
-    #endif
-    //---------------------------------------------
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
-		DWORD nRead = 0;
-		if (!ReadFile(hComm,buffer,length,&nRead,0)){
-			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port");
-			return OF_SERIAL_ERROR;
-		}
-		return (int)nRead;
-	#endif
-	//---------------------------------------------
-}
-
-//----------------------------------------------------------------
 bool ofSerial::writeByte(unsigned char singleByte){
-
-	if (!bInited){
-		ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
-		//return OF_SERIAL_ERROR; // this looks wrong.
-		return false;
-	}
-
-	unsigned char tmpByte[1];
-	tmpByte[0] = singleByte;
-
-	//---------------------------------------------
-	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-	    int numWritten = 0;
-	    numWritten = write(fd, tmpByte, 1);
-		if(numWritten <= 0 ){
-			if ( errno == EAGAIN )
-				return 0;
-			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port, errno %i (%s)", errno, strerror(errno));
-			 return OF_SERIAL_ERROR;
-		}
-		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
-
-
-		return (numWritten > 0 ? true : false);
-    #endif
-    //---------------------------------------------
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
-		DWORD written = 0;
-		if(!WriteFile(hComm, tmpByte, 1, &written,0)){
-			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
-			 return OF_SERIAL_ERROR;;
-		}
-
-		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
-
-		return ((int)written > 0 ? true : false);
-	#endif
-	//---------------------------------------------
+	ofBuffer b(singleByte);
+	return writeBytes(b);
 
 }
 
@@ -566,34 +570,7 @@ int ofSerial::readByte(){
 		return OF_SERIAL_ERROR;
 	}
 
-	unsigned char tmpByte[1];
-	memset(tmpByte, 0, 1);
-
-	//---------------------------------------------
-	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-		int nRead = read(fd, tmpByte, 1);
-		if(nRead < 0){
-			if ( errno == EAGAIN )
-				return OF_SERIAL_NO_DATA;
-			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port, errno %i (%s)", errno, strerror(errno));
-            return OF_SERIAL_ERROR;
-		}
-		if(nRead == 0)
-			return OF_SERIAL_NO_DATA;
-    #endif
-    //---------------------------------------------
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
-		DWORD nRead;
-		if (!ReadFile(hComm, tmpByte, 1, &nRead, 0)){
-			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port");
-			return OF_SERIAL_ERROR;
-		}
-	#endif
-	//---------------------------------------------
-
-	return (int)(tmpByte[0]);
+	return (int)(readBytes().getBinaryBuffer()[0]);
 }
 
 
