@@ -7,8 +7,7 @@
 #include "ofImage.h"
 
 //-----------------------------------------------------------------------------------
-void
-helper_quadratic_to (cairo_t *cr,
+static void helper_quadratic_to (cairo_t *cr,
                      double x1, double y1,
                      double x2, double y2)
 {
@@ -20,6 +19,11 @@ helper_quadratic_to (cairo_t *cr,
                   2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
                   2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
                   y1, y2);
+}
+
+_cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char *data, unsigned int length){
+	((ofCairoRenderer*)closure)->streamBuffer.append((const char*)data,length);
+	return CAIRO_STATUS_SUCCESS;
 }
 
 ofCairoRenderer::ofCairoRenderer(){
@@ -46,28 +50,37 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	
 	filename = _filename;
 	type = _type;
+	streamBuffer.clear();
 
 	if(type == FROM_FILE_EXTENSION){
 		string ext = ofFilePath::getFileExt(filename);
 		if(ofToLower(ext)=="svg"){
 			type = SVG;
-		}else if(ofToLower(ext)=="png"){
-			type = PNG;
-		}else{  //use pdf as default
+		}else if(ofToLower(ext)=="pdf"){
 			type = PDF;
+		}else{ // default to image
+			type = IMAGE;
 		}
 	}
 
 	switch(type){
 	case PDF:
-		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		if(filename==""){
+			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+		}else{
+			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		}
 		break;
 	case SVG:
-		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		if(filename==""){
+			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+		}else{
+			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		}
 		break;
-	case PNG:
-	case PIXELS:
-		surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height);
+	case IMAGE:
+		imageBuffer.allocate(_viewport.width, _viewport.height, 4);
+		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
 	}
 
@@ -80,15 +93,21 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	multiPage = multiPage_;
 }
 
-void ofCairoRenderer::setupMemoryOnly(bool multiPage_, bool b3D_, ofRectangle _viewport){
-	setup("",PIXELS,multiPage_,b3D_,_viewport);
+void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
+	setup("",_type,multiPage_,b3D_,_viewport);
+}
+
+void ofCairoRenderer::flush(){
+	if(surface){
+		cairo_surface_flush(surface);
+	}
 }
 
 void ofCairoRenderer::close(){
 	if(surface){
 		cairo_surface_flush(surface);
-		if(type==PNG){
-			cairo_surface_write_to_png(surface,ofToDataPath(filename).c_str());
+		if(type==IMAGE && filename!=""){
+			ofSaveImage(imageBuffer,filename);
 		}
 		cairo_surface_finish(surface);
 		cairo_surface_destroy(surface);
@@ -101,6 +120,7 @@ void ofCairoRenderer::close(){
 }
 
 void ofCairoRenderer::update(){
+	if(!surface || !cr)
 	cairo_surface_flush(surface);
 	if(page==0 || !multiPage){
 		page=1;
@@ -112,7 +132,43 @@ void ofCairoRenderer::update(){
 			cairo_copy_page(cr);
 		}
 	}
-	ofSetStyle(ofGetStyle());
+	setStyle(ofGetStyle());
+}
+
+void ofCairoRenderer::setStyle(const ofStyle & style){
+	//color
+	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+
+	//bg color
+	//setBackgroundColor(style.bgColor);
+
+	//circle resolution - don't worry it only recalculates the display list if the res has changed
+	setCircleResolution(style.circleResolution);
+
+	setSphereResolution(style.sphereResolution);
+
+	//setCurveResolution(style.curveResolution);
+
+	//line width - finally!
+	setLineWidth(style.lineWidth);
+
+	//rect mode: corner/center
+	setRectMode(style.rectMode);
+
+	//poly mode: winding type
+	//setPolyMode(style.polyMode);
+
+	//fill
+	setFillMode(style.bFill?OF_FILLED:OF_OUTLINE);
+
+	//smoothing
+	//setSmoothingEnabled(style.smoothing);
+
+	//blending
+	setBlendMode(style.blendingMode);
+
+	//bitmap draw mode
+	//setDrawBitmapMode(style.drawBitmapMode);
 }
 
 void ofCairoRenderer::draw(ofPath & shape){
@@ -1159,12 +1215,16 @@ void ofCairoRenderer::setCairoMatrix(){
 	cairo_set_matrix(cr,&tmpMatrix);
 }
 
-void ofCairoRenderer::getImageSurfacePixels(ofPixels & pixels){
-	if(type==PNG || type==PIXELS){
-		int width = cairo_image_surface_get_width(surface);
-		int height = cairo_image_surface_get_height(surface);
-		pixels.setFromPixels(cairo_image_surface_get_data(surface),width,height,4);
-	}else{
-		ofLogError() << "ofCairoRenderer: can only get pixels from image (PNG) surface";
+ofPixels & ofCairoRenderer::getImageSurfacePixels(){
+	if(type!=IMAGE){
+		ofLogError() << "ofCairoRenderer: can only get pixels from image surface";
 	}
+	return imageBuffer;
+}
+
+ofBuffer & ofCairoRenderer::getContentBuffer(){
+	if(filename!="" || (type!=SVG && type!=PDF)){
+		ofLogError() << "ofCairoRenderer: can only get buffer from memory allocated renderer for svg or pdf";
+	}
+	return streamBuffer;
 }
