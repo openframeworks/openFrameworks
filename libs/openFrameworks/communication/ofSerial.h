@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofTypes.h"
+#include "ofFileUtils.h"
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
 	#include <termios.h>
@@ -43,8 +44,10 @@ class ofSerial {
 			bool			setup(int deviceNumber, int baudrate);
 
 
-			int 			readBytes(unsigned char * buffer, int length);
-			int 			writeBytes(unsigned char * buffer, int length);
+            int 			readBytes(ofBuffer &buffer, int length);
+            ofBuffer        readBytes(int length);
+    
+			int 			writeBytes(ofBuffer &buffer);
 			bool			writeByte(unsigned char singleByte);
 			int             readByte();  // returns -1 on no read or error...
 			void			flush(bool flushIn = true, bool flushOut = true);
