@@ -147,6 +147,7 @@ ofBuffer::operator string() const {
 //--------------------------------------------------
 ofBuffer & ofBuffer::operator=(const string & text){
 	set(text);
+	return *this;
 }
 
 //--------------------------------------------------
