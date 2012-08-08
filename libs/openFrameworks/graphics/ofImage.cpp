@@ -221,7 +221,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
-	int width, height, bpp;
 	bool bLoaded = false;
 	FIBITMAP* bmp = NULL;
 	FIMEMORY* hmem = NULL;
@@ -252,8 +251,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
-	} else {
-		width = height = bpp = 0;
 	}
 
 	if (bmp != NULL){
