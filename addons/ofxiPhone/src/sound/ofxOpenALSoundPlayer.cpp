@@ -80,7 +80,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
+bool ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();
@@ -90,7 +90,7 @@ void ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
 		iAmAnMp3=true;
 	
 	if(iAmAnMp3) {
-		loadBackgroundMusic(fileName, false, true);
+		bLoadedOk = loadBackgroundMusic(fileName, false, true);
 		setLoop(bLoop);
 		isStreaming=true;
 	}
@@ -113,6 +113,7 @@ void ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
 		soundPlayerLock.unlock();
 	}
 	
+	return bLoadedOk;
 }
 
 //--------------------------------------------------------------
@@ -120,6 +121,9 @@ void ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
 void ofxOpenALSoundPlayer::unloadSound() {
 	if(bLoadedOk)
 	{
+		if ( getIsPlaying() )
+			stop();
+		
 		bLoadedOk=false;
 		if(iAmAnMp3)
 			unloadAllBackgroundMusic();
@@ -131,6 +135,10 @@ void ofxOpenALSoundPlayer::unloadSound() {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::play() {
+	
+	if ( !bLoadedOk ) 
+		return;
+	
 	if(iAmAnMp3)
 		SoundEngine_StartBackgroundMusic();
 	else
@@ -147,6 +155,9 @@ void ofxOpenALSoundPlayer::play() {
 
 void ofxOpenALSoundPlayer::stop() {
 
+	if ( !bLoadedOk )
+		return;
+	
 	if(iAmAnMp3)
 		SoundEngine_StopBackgroundMusic(false);
 	else
@@ -158,6 +169,9 @@ void ofxOpenALSoundPlayer::stop() {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setVolume(float _vol) {
+	if ( !bLoadedOk )
+		return;
+
 	volume = _vol;
 	
 	if(iAmAnMp3)
@@ -169,6 +183,10 @@ void ofxOpenALSoundPlayer::setVolume(float _vol) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPan(float _pan) {
+	
+	if ( !bLoadedOk )
+		return;
+	
 	if(iAmAnMp3)
 		cerr<<"error, cannot set pan on mp3s in openAL"<<endl;
 	else {
@@ -181,6 +199,10 @@ void ofxOpenALSoundPlayer::setPan(float _pan) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPitch(float _pitch) {
+	
+	if ( !bLoadedOk ) 
+		return;
+
 	if(iAmAnMp3)
 		cerr<<"error, cannot set pitch on mp3s in openAL"<<endl;
 	else {
@@ -192,6 +214,10 @@ void ofxOpenALSoundPlayer::setPitch(float _pitch) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPaused(bool bP) {
+	
+	if ( !bLoadedOk )
+		return;
+	
 	if(iAmAnMp3)
 		cerr<<"error, cannot set pause on mp3s in openAL"<<endl; // TODO
 	else {
@@ -208,6 +234,9 @@ void ofxOpenALSoundPlayer::setPaused(bool bP) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setLoop(bool bLp) {
+	if ( !bLoadedOk )
+		return;
+	
 	bLoop = bLp;
 	
 	if(iAmAnMp3)
@@ -219,6 +248,9 @@ void ofxOpenALSoundPlayer::setLoop(bool bLp) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setMultiPlay(bool bMp) { 
+	if ( !bLoadedOk )
+		return;
+	
 	if(iAmAnMp3)
 		cerr<<"error, cannot set multiplay on mp3s in openAL"<<endl;
 	else
@@ -228,6 +260,9 @@ void ofxOpenALSoundPlayer::setMultiPlay(bool bMp) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPosition(float pct) {
+	if ( !bLoadedOk ) 
+		return;
+
 	if(iAmAnMp3)
 		cerr<<"error, cannot set position on mp3s in openAL"<<endl;
 	else
@@ -237,6 +272,9 @@ void ofxOpenALSoundPlayer::setPosition(float pct) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPositionMS(int ms){
+	if ( !bLoadedOk ) 
+		return;
+
 	if(iAmAnMp3)
 		cerr<<"error, cannot set position on mp3s in openAL"<<endl;
 	else
@@ -246,6 +284,9 @@ void ofxOpenALSoundPlayer::setPositionMS(int ms){
 //--------------------------------------------------------------
 
 float ofxOpenALSoundPlayer::getPosition() {
+	if ( !bLoadedOk ) 
+		return 0;
+
 	if(iAmAnMp3)
 	{
 		cerr<<"error, cannot get position on mp3s in openAL"<<endl;
@@ -259,6 +300,9 @@ float ofxOpenALSoundPlayer::getPosition() {
 //--------------------------------------------------------------
 
 int ofxOpenALSoundPlayer::getPositionMS() {
+	if ( !bLoadedOk ) 
+		return 0;
+
 	if(iAmAnMp3)
 	{
 		cerr<<"error, cannot get position on mp3s in openAL"<<endl;
@@ -272,6 +316,9 @@ int ofxOpenALSoundPlayer::getPositionMS() {
 //--------------------------------------------------------------
 
 bool ofxOpenALSoundPlayer::getIsPlaying() {
+	if ( !bLoadedOk ) 
+		return false;
+
 	if(iAmAnMp3)
 		stopped = SoundEngine_getBackgroundMusicStopped();
 	
@@ -363,8 +410,8 @@ float * ofxALSoundGetSpectrum(){
 void ofxALSoundSetVolume(float vol){
 	if(!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	
-	SoundEngine_SetMasterVolume((Float32)vol);
+	if ( SoundEngineInitialized )
+		SoundEngine_SetMasterVolume((Float32)vol);
 }
 
 //--------------------------------------------------------------
@@ -422,7 +469,7 @@ bool ofxOpenALSoundPlayer::prime() {
 
 //--------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce) {
+bool ofxOpenALSoundPlayer::loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce) {
 	myId = 0;
 	
 	if(!mp3Loaded) {
@@ -445,6 +492,8 @@ void ofxOpenALSoundPlayer::loadBackgroundMusic(string fileName, bool queue, bool
 	else {
 		cerr<<"more than one mp3 cannot be loaded at the same time"<<endl;
 	}
+	
+	return bLoadedOk;
 }
 
 //--------------------------------------------------------------
@@ -494,6 +543,10 @@ void ofxOpenALSoundPlayer::vibrate() {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setLocation(float x, float y, float z) { 
+	
+	if ( !bLoadedOk )
+		return;
+
 	if(iAmAnMp3)
 		cerr<<"error, cannot set location on mp3s in openAL"<<endl;
 	else
@@ -511,29 +564,44 @@ void ofxOpenALSoundPlayer::setLocation(float x, float y, float z) {
 // beyond ofSoundPlayer static -----------------------------------------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetListenerLocation(float x, float y, float z){	
-	SoundEngine_SetListenerPosition(x, y, z);
+	if(!SoundEngineInitialized)
+		ofxOpenALSoundPlayer::initializeSoundEngine();
+	if ( SoundEngineInitialized )
+		SoundEngine_SetListenerPosition(x, y, z);
 }
 
 //--------------------------------------------------------------
 void ofxOpenALSoundPlayer::ofxALSoundSetListenerVelocity(float x, float y, float z){
-	SoundEngine_SetListenerVelocity(x, y, z); //deprecated
+	if(!SoundEngineInitialized)
+		ofxOpenALSoundPlayer::initializeSoundEngine();
+	if ( SoundEngineInitialized )
+		SoundEngine_SetListenerVelocity(x, y, z); //deprecated
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetListenerGain(float gain) {
-	SoundEngine_SetListenerGain(gain);
+	if(!SoundEngineInitialized)
+		ofxOpenALSoundPlayer::initializeSoundEngine();
+	if ( SoundEngineInitialized )
+		SoundEngine_SetListenerGain(gain);
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetReferenceDistance(float dist) {
-	SoundEngine_SetReferenceDistance(dist);
+	if(!SoundEngineInitialized)
+		ofxOpenALSoundPlayer::initializeSoundEngine();
+	if ( SoundEngineInitialized )
+		SoundEngine_SetReferenceDistance(dist);
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetMaxDistance(float dist) {
-	SoundEngine_SetMaxDistance(dist);
+	if(!SoundEngineInitialized)
+		ofxOpenALSoundPlayer::initializeSoundEngine();
+	if ( SoundEngineInitialized )
+		SoundEngine_SetMaxDistance(dist);
 }
 

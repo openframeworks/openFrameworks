@@ -55,7 +55,7 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
 		ofPtr<ofBaseSoundPlayer> getPlayer();
 
-		void loadSound(string fileName, bool stream = false);
+		bool loadSound(string fileName, bool stream = false);
 		void unloadSound();
 		void play();
 		void stop();

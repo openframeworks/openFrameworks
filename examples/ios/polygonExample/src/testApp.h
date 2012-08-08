@@ -34,7 +34,7 @@ class testApp : public ofxiPhoneApp{
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
 
-        int nCurveVertexes;
+        int nCurveVertices;
         draggableVertex curveVertices[7];
         draggableVertex bezierVertices[4];
 

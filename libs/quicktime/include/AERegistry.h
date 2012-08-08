@@ -817,7 +817,7 @@ enum {
 enum {
                                                                 /* Suite code */
     kAEInternetSuite            = FOUR_CHAR_CODE('gurl'),
-    kAEISWebStarSuite           = FOUR_CHAR_CODE('WWW½')
+    kAEISWebStarSuite           = FOUR_CHAR_CODE('WWW ')
 };
 
 enum {
