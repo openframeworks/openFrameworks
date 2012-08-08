@@ -72,7 +72,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
     vidGrabber.grabFrame();
-    fingerMovie.idleMovie();
+    fingerMovie.update();
         
     // This just 
     maskFbo.begin();

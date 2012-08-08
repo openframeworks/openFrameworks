@@ -31,12 +31,13 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofPtr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
+	    string				getMoviePath();
 		void				setPixelFormat(ofPixelFormat pixelFormat);
 		void 				closeMovie();
 		void 				close();
 
-		void				update();			//same as idleMovie
-		void 				idleMovie();		// rename to updateMovie?
+		void				update();
+		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead", void idleMovie());
 		void 				play();
 		void 				stop();
 
@@ -49,7 +50,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				getIsMovieDone();
 
 		void 				setPosition(float pct);
-		void 				setVolume(int volume);
+		void 				setVolume(float volume); // 0..1
 		void 				setLoopState(ofLoopType state);
 		int					getLoopState();
 		void   				setSpeed(float speed);
@@ -94,6 +95,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
 		ofPixelFormat internalPixelFormat;
+	    string moviePath;
 };
 
 

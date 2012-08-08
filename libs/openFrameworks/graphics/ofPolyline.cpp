@@ -9,7 +9,18 @@ ofPolyline::ofPolyline(){
 //----------------------------------------------------------
 ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 	clear();
-	addVertexes(verts);
+	addVertices(verts);
+}
+
+//----------------------------------------------------------
+ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
+    ofPolyline polyline;
+    polyline.addVertex(rect.getMin());
+    polyline.addVertex(rect.getMaxX(),rect.getMinY());
+    polyline.addVertex(rect.getMax());
+    polyline.addVertex(rect.getMinX(),rect.getMaxY());
+    polyline.close();
+    return polyline;
 }
 
 //----------------------------------------------------------
@@ -33,17 +44,27 @@ void ofPolyline::addVertex(float x, float y, float z) {
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+void ofPolyline::addVertices(const vector<ofPoint>& verts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
 	bHasChanged=true;
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+	addVertices(verts);
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertices(const ofPoint* verts, int numverts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts, verts + numverts );
 	bHasChanged=true;
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+	addVertices(verts, numverts);
 }
 
 //----------------------------------------------------------
@@ -380,17 +401,16 @@ ofPoint ofPolyline::getCentroid2D() const{
 }
 
 //----------------------------------------------------------
-ofRectangle ofPolyline::getBoundingBox(){
-	ofPolyline & polyline = *this;
+ofRectangle ofPolyline::getBoundingBox() const {
 
 	ofRectangle box;
-	int n = polyline.size();
+	int n = size();
 	if(n > 0) {
-		const ofPoint& first = polyline[0];
+		const ofPoint& first = (*this)[0];
 		// inititally, use width and height as max x and max y
 		box.set(first.x, first.y, first.x, first.y);
 		for(int i = 0; i < n; i++) {
-			const ofPoint& cur = polyline[i];
+			const ofPoint& cur = (*this)[i];
 			if(cur.x < box.x) {
 				box.x = cur.x;
 			}
