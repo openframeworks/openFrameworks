@@ -37,7 +37,7 @@ ofBasicSoundPlayer::~ofBasicSoundPlayer() {
 
 
 
-void ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
+bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 	ofLogNotice() << "loading " << fileName;
 	if(!initialized){
 		mixer.setup(bufferSize,channels,samplerate);
@@ -49,6 +49,7 @@ void ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 	mixer.addSoundOutput(*this,volume);
 	ofLogNotice() << "opening file ";
 	bIsLoaded = soundFile.open(fileName);
+	if(!bIsLoaded) return false;
 	if(!_stream){
 		ofLogNotice() << "reading whole file ";
 		soundFile.readTo(buffer);
@@ -57,8 +58,8 @@ void ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 		buffer.resize(bufferSize*channels,0);
 	}
 
-	ofLogNotice() << "finish loading " << fileName;
 	streaming = _stream;
+	return true;
 }
 
 void ofBasicSoundPlayer::unloadSound(){
