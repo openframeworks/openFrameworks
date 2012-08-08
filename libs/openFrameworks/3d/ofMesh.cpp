@@ -202,7 +202,7 @@ void ofMesh::addTexCoords(const ofVec2f* tCoords, int amt){
 }
 
 //--------------------------------------------------------------
-ofIndexType ofMesh::getIndex(int i) const{
+ofIndexType ofMesh::getIndex(ofIndexType i) const{
 	return indices[i];
 }
 
@@ -290,22 +290,22 @@ ofPrimitiveMode ofMesh::getMode() const{
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getVertex(int i) const{
+ofVec3f ofMesh::getVertex(ofIndexType i) const{
 	return vertices[i];
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getNormal(int i) const{
+ofVec3f ofMesh::getNormal(ofIndexType i) const{
 	return normals[i];
 }
 
 //--------------------------------------------------------------
-ofFloatColor ofMesh::getColor(int i) const{
+ofFloatColor ofMesh::getColor(ofIndexType i) const{
 	return colors[i];
 }
 
 //--------------------------------------------------------------
-ofVec2f ofMesh::getTexCoord(int i) const{
+ofVec2f ofMesh::getTexCoord(ofIndexType i) const{
 	return texCoords[i];
 }
 
@@ -549,33 +549,33 @@ void ofMesh::setMode(ofPrimitiveMode m){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setVertex(int index, const ofVec3f& v){
+void ofMesh::setVertex(ofIndexType index, const ofVec3f& v){
 	vertices[index] = v;
 	bVertsChanged = true;
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setNormal(int index, const ofVec3f& n){
+void ofMesh::setNormal(ofIndexType index, const ofVec3f& n){
 	normals[index] = n;
 	bNormalsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setColor(int index, const ofFloatColor& c){
+void ofMesh::setColor(ofIndexType index, const ofFloatColor& c){
 	colors[index] = c;
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setTexCoord(int index, const ofVec2f& t){
+void ofMesh::setTexCoord(ofIndexType index, const ofVec2f& t){
 	texCoords[index] = t;
 	bTexCoordsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setIndex(int i, ofIndexType  val){
-	indices[i] = val;
+void ofMesh::setIndex(ofIndexType index, ofIndexType  val){
+	indices[index] = val;
 	bIndicesChanged = true;
 }
 
