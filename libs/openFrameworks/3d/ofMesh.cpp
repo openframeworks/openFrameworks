@@ -233,7 +233,7 @@ void ofMesh::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType ind
 
 //REMOVERS
 //--------------------------------------------------------------
-void ofMesh::removeVertex(int index){
+void ofMesh::removeVertex(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove vertex out of range of this mesh. Taking no action.");
   }else{
@@ -243,7 +243,7 @@ void ofMesh::removeVertex(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeNormal(int index){
+void ofMesh::removeNormal(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove normal out of range of this mesh. Taking no action.");
   }else{
@@ -253,7 +253,7 @@ void ofMesh::removeNormal(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeColor(int index){
+void ofMesh::removeColor(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove color out of range of this mesh. Taking no action.");
   }else{
@@ -263,7 +263,7 @@ void ofMesh::removeColor(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeTexCoord(int index){
+void ofMesh::removeTexCoord(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove texCoord out of range of this mesh. Taking no action.");
   }else{
@@ -273,7 +273,7 @@ void ofMesh::removeTexCoord(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeIndex(int index){
+void ofMesh::removeIndex(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove index out of range of this mesh. Taking no action.");
   }else{
