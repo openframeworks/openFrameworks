@@ -99,13 +99,12 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+  //hitting any key swaps the camera view
+  usecamera = !usecamera;
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-	//hitting any key swaps the camera view
-    usecamera = !usecamera;
 }
 
 //--------------------------------------------------------------
@@ -113,7 +112,7 @@ void testApp::mouseMoved(int x, int y ){
 	//if we are using the camera, the mouse moving should rotate it around the whole sculpture
     if(usecamera){
         float rotateAmount = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 360);
-		ofVec3f furthestPoint = points[0];
+	ofVec3f furthestPoint = points.size() > 0 ? points[0] : ofVec3f(x, y, 0);
         ofVec3f directionToFurthestPoint = (furthestPoint - center);
         ofVec3f directionToFurthestPointRotated = directionToFurthestPoint.rotated(rotateAmount, ofVec3f(0,1,0));
         camera.setPosition(center + directionToFurthestPointRotated);
