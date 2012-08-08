@@ -25,8 +25,13 @@ ofBuffer::ofBuffer(){
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const char * buffer, int size){
+ofBuffer::ofBuffer(const char * buffer, unsigned int size){
 	set(buffer, size);
+}
+
+//--------------------------------------------------
+ofBuffer::ofBuffer(const string & text){
+	set(text);
 }
 
 //--------------------------------------------------
@@ -81,11 +86,21 @@ bool ofBuffer::writeTo(ostream & stream) const {
 }
 
 //--------------------------------------------------
-void ofBuffer::set(const char * _buffer, int _size){
-	clear();
-	buffer.resize(_size + 1);
-	memcpy(getBinaryBuffer(), _buffer, _size);
-	buffer[_size] = 0;
+void ofBuffer::set(const char * _buffer, unsigned int _size){
+	buffer.assign(_buffer,_buffer+_size);
+	buffer.resize(buffer.size()+1);
+	buffer.back() = 0;
+}
+
+//--------------------------------------------------
+void ofBuffer::set(const string & text){
+	set(text.c_str(),text.size());
+}
+
+//--------------------------------------------------
+void ofBuffer::append(const char * _buffer, unsigned int _size){
+	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
+	buffer.back() = 0;
 }
 
 //--------------------------------------------------
@@ -124,8 +139,14 @@ string ofBuffer::getText() const {
 	return &buffer[0];
 }
 
+//--------------------------------------------------
 ofBuffer::operator string() const {
 	return getText();
+}
+
+//--------------------------------------------------
+ofBuffer & ofBuffer::operator=(const string & text){
+	set(text);
 }
 
 //--------------------------------------------------

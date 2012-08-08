@@ -1051,6 +1051,12 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	bool hasViewport = false;
 
 	ofRectangle rViewport;
+	
+#ifdef TARGET_OPENGLES
+	if(mode == OF_BITMAPMODE_MODEL_BILLBOARD) {
+		mode = OF_BITMAPMODE_SIMPLE;
+	}
+#endif
 
 	switch (mode) {
 

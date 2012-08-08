@@ -193,7 +193,7 @@ public:
     ofVec2f perpendiculared() const;
 	
     // squareLength
-    float lengthSquared() const;
+    OF_DEPRECATED_MSG("Use ofVec2f::squareLength() instead.", float lengthSquared() const);
 	
     // getInterpolated
     ofVec2f interpolated( const ofVec2f& pnt, float p ) const;

@@ -58,8 +58,6 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int  requestedBufferSize;
 		int  totalOutRequestedBufferSize;
 		int  totalInRequestedBufferSize;
-		// JNI I/O interfacing arrays
-		jshortArray jInArray, jOutArray;
 
 		bool isPaused;
 

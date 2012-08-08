@@ -461,7 +461,7 @@ void ofQuickTimePlayer::stop(){
 }
 
 //--------------------------------------------------------
-void ofQuickTimePlayer::setVolume(int volume){
+void ofQuickTimePlayer::setVolume(float volume){
 	if( !isLoaded() ){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
@@ -471,7 +471,7 @@ void ofQuickTimePlayer::setVolume(int volume){
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
 
-	SetMovieVolume(moviePtr, volume);
+	SetMovieVolume(moviePtr, volume*255);
 
 	//--------------------------------------
 	#endif

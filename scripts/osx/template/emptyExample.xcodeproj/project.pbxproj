@@ -430,7 +430,7 @@
                     <key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
                     <string>NO</string>
                     <key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-                    <string>NO</string>
+                    <string>YES</string>
                     <key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
                     <string>NO</string>
                     <key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
@@ -482,7 +482,7 @@
                     <key>GCC_UNROLL_LOOPS</key>
                     <string>YES</string>
                     <key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-                    <string>NO</string>
+                    <string>YES</string>
                     <key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
                     <string>NO</string>
                     <key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
