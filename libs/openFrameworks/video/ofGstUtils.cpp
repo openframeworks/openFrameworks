@@ -500,11 +500,6 @@ void ofGstUtils::gstHandleMessage(){
 						gint64 pos;
 						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
 
-						float loopSpeed;
-						if(pos>0)
-							loopSpeed=-speed;
-						else
-							loopSpeed=speed;
 						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
 											speed,
 											format,
