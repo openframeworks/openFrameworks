@@ -195,7 +195,7 @@ void ofWindowManager::initializeGLFW(){
 void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
 	initializeGLFW();
 	
-	glfwOpenWindowHint(GLFW_DEPTH_BITS, 16);
+	glfwWindowHint(GLFW_DEPTH_BITS, 16);
 	
 	mainWindow = createWindow(w, h);
 	activeWindow = mainWindow;
@@ -211,7 +211,7 @@ void ofWindowManager::initializeWindow()
 	glfwSetWindowFocusCallback(&glfwWindowFocusCallback);
 	glfwSetWindowIconifyCallback(&glfwWindowIconifyCallback);
 	glfwSetMouseButtonCallback(&glfwMouseButtonCallback);
-	glfwSetMousePosCallback(&glfwMousePosCallback);
+	glfwSetCursorPosCallback(&glfwMousePosCallback);
 	glfwSetCursorEnterCallback(&glfwCursorEnterCallback);
 	glfwSetScrollCallback(&glfwScrollCallback);
 	glfwSetKeyCallback(&glfwKeyCallback);

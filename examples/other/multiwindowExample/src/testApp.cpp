@@ -7,10 +7,11 @@ void testApp::setup(){
 	ofSetBackgroundColor(255, 100, 100);
 	ofGetMainWindow()->setWindowShape(600, 600);
 	ofCreateWindow(500, 500, 200, 200)->addListener(new windowRenderer);
-
-	/*ofCreateWindow(300, 400, 100, 100);
+	/*
+	ofCreateWindow(300, 400, 100, 100);
 	ofCreateWindow(600, 600, 100, 100);
-	ofGetMainWindow()->setWindowPosition(200, 200);*/
+	ofGetMainWindow()->setWindowPosition(200, 200);
+	 * */
 }
 
 //--------------------------------------------------------------
@@ -27,6 +28,7 @@ void testApp::draw(){
 	ofSetColor(255, 0, 0);
 	ofRect(ofGetMouseX(), ofGetMouseY(), 50, 50);
 	
+	ofSetColor(0);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
 }
 

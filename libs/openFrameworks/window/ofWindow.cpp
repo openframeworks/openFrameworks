@@ -28,7 +28,7 @@ ofWindow::~ofWindow() {
 };
 void ofWindow::initializeWindow() {
 	ofLogNotice("CREATING WINDOW AT "+ofToString(x)+"/"+ofToString(y)+" SIZE "+ofToString(width)+" x "+ofToString(height));
-	window = glfwOpenWindow( width, height, GLFW_WINDOWED, title.c_str(), NULL );
+	window = glfwCreateWindow( width, height, GLFW_WINDOWED, title.c_str(), NULL );
 	isInitialized = true;
 	setWindowPositionAndShape(x, y, width, height);
 }
@@ -109,13 +109,13 @@ void ofWindow::draw() {
 		++it;
 	}
 #endif
-	glfwSwapBuffers();
+	glfwSwapBuffers(window);
 }
 void ofWindow::destroy() {
 	ofRemoveListener(ofEvents().update, this, &ofWindow::update);
 	ofRemoveListener(ofEvents().draw, this, &ofWindow::draw);
 	//getWindowPosition();
-	glfwCloseWindow(window);
+	glfwDestroyWindow(window);
 	window = NULL;
 }
 //USER INTERACTION EVENTS
