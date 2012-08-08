@@ -1028,7 +1028,7 @@ void ofCairoRenderer::setSphereResolution(int res) {
 	float radius = 1.f; // normalize the verts //
 	
 	int i, j;
-	float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
+	float j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
 	cte3 = (theta2)/n;
 	cte1 = (phi2-phi1)/ndiv2;
 	dosdivn = 2*unodivn;
@@ -1061,7 +1061,6 @@ void ofCairoRenderer::setSphereResolution(int res) {
 		p2.y = radius * e2.y;
 		
 		idivn=0;
-		jdivn=j1divn;
 		j1divn+=dosdivn;
 		for (i=0;i<=n;i++) {
 			t3 += cte3;
