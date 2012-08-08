@@ -14,7 +14,7 @@
 
 /********** GLFW CALLBACKS **********************************************************/
 
-void glfwErrorCallback(int type, const char* err){
+void glfwErrorCallback(int type, const char * err){
 	ofLog(OF_LOG_ERROR, err);
 }
 
@@ -66,28 +66,28 @@ void glfwCharCallback(GLFWwindow glfwWin, int character){
 
 /********* C STYLE FUNCTION DEFINTIONS ************************************************/
 
-ofWindowManager* windowManager = NULL;
+ofWindowManager * windowManager = NULL;
 
-ofWindowManager* ofGetWindowManager() {
-	if(windowManager == NULL) {
+ofWindowManager * ofGetWindowManager(){
+	if(windowManager == NULL){
 		windowManager = new ofWindowManager();
 	}
 	return windowManager;
 }
 
-ofWindow* ofCreateWindow(int x, int y, int width, int height){
+ofWindow * ofCreateWindow(int x, int y, int width, int height){
 	return ofGetWindowManager()->createWindow(x, y, width, height);
 }
 
-ofWindow* ofCreateWindow(int width, int height){
+ofWindow * ofCreateWindow(int width, int height){
 	return ofCreateWindow(0, 0, width, height);
 }
 
-ofWindow* ofGetMainWindow(){
+ofWindow * ofGetMainWindow(){
 	return ofGetWindowManager()->getMainWindow();
 }
 
-ofWindow* ofGetLastCreatedWindow(){
+ofWindow * ofGetLastCreatedWindow(){
 	return ofGetWindowManager()->getLastCreatedWindow();
 }
 
@@ -95,38 +95,37 @@ ofWindow* ofGetLastCreatedWindow(){
 
 /********** ofWindowManager DEFINITIONS ******************************************/
 
-static float		timeNow, timeThen, fps;
-static int			nFramesForFPS;
-static int			nFrameCount;
-static bool			bFrameRateSet;
-static int 			millisForFrame;
-static int 			prevMillis;
-static int 			diffMillis;
-static float 		frameRate;
-static double		lastFrameTime;
+static float timeNow, timeThen, fps;
+static int nFramesForFPS;
+static int nFrameCount;
+static bool bFrameRateSet;
+static int millisForFrame;
+static int prevMillis;
+static int diffMillis;
+static float frameRate;
+static double lastFrameTime;
 
-ofWindowManager::ofWindowManager() {
-	timeNow				= 0;
-	timeThen			= 0;
-	fps					= 60.0; //give a realistic starting value - win32 issues
-	frameRate			= 60.0;
-	millisForFrame		= 0;
-	prevMillis			= 0;
-	diffMillis			= 0;
+ofWindowManager::ofWindowManager(){
+	timeNow = 0;
+	timeThen = 0;
+	fps = 60.0;                 //give a realistic starting value - win32 issues
+	frameRate = 60.0;
+	millisForFrame = 0;
+	prevMillis = 0;
+	diffMillis = 0;
 	setFrameRate(60);
-};
+}
 
-ofWindowManager::~ofWindowManager() {
+ofWindowManager::~ofWindowManager(){
 	glfwTerminate();
-};
+}
 
-ofWindow* ofWindowManager::createWindow(int w, int h){
+ofWindow * ofWindowManager::createWindow(int w, int h){
 	return createWindow(0, 0, w, h);
 }
 
-ofWindow* ofWindowManager::createWindow(int x, int y, int width, int height)
-{
-	ofWindow* win = new ofWindow();
+ofWindow * ofWindowManager::createWindow(int x, int y, int width, int height){
+	ofWindow * win = new ofWindow();
 	win->setWindowPositionAndShape(x, y, width, height);
 	addWindow(win);
 	win->initializeWindow();
@@ -134,38 +133,40 @@ ofWindow* ofWindowManager::createWindow(int x, int y, int width, int height)
 	return win;
 }
 
-void ofWindowManager::addWindow(ofWindow* win) {
+void ofWindowManager::addWindow(ofWindow * win){
 	windows.push_back(ofWindowPtr(win));
 }
 
-void ofWindowManager::deleteWindow(ofWindow* win){
+void ofWindowManager::deleteWindow(ofWindow * win){
 	win->destroy();
 }
 
-void ofWindowManager::removeWindow(ofWindow* win){
-	
-	ofWindowList::iterator it=windows.begin();
-	while(it!=windows.end()) {
-		if((*it).get() == win) {
+void ofWindowManager::removeWindow(ofWindow * win){
+
+	ofWindowList::iterator it = windows.begin();
+	while(it != windows.end()){
+		if((*it).get() == win){
 			win->windowClosed();
 			windows.erase(it);
 			break;
 		}
 		++it;
 	}
-	if(windows.size()==0)
+	if(windows.size() == 0){
 		ofExit();
+	}
 }
 
 void ofWindowManager::deleteWindow(int id){
 	deleteWindow(getWindowById(id));
 }
 
-ofWindow* ofWindowManager::getWindowById(int id){
+ofWindow * ofWindowManager::getWindowById(int id){
 	ofWindowList::iterator it = windows.begin();
-	while (it != windows.end()) {
-		if((*it)->id == id)
+	while(it != windows.end()){
+		if((*it)->id == id){
 			return (*it).get();
+		}
 		++it;
 	}
 	ofLogWarning("ofWindowManager::getWindowById - ID was not found, returning mainWindow instead");
@@ -173,11 +174,12 @@ ofWindow* ofWindowManager::getWindowById(int id){
 }
 
 
-ofWindow* ofWindowManager::getWindowByGlfw(GLFWwindow win){
+ofWindow * ofWindowManager::getWindowByGlfw(GLFWwindow win){
 	ofWindowList::iterator it = windows.begin();
-	while (it != windows.end()) {
-		if((*it)->getGlfwWindow() == win)
+	while(it != windows.end()){
+		if((*it)->getGlfwWindow() == win){
 			return (*it).get();
+		}
 		++it;
 	}
 	ofLogWarning("ofWindowManager::getWindowById - GLFWwindow was not found, returning mainWindow instead");
@@ -185,24 +187,22 @@ ofWindow* ofWindowManager::getWindowByGlfw(GLFWwindow win){
 }
 
 void ofWindowManager::initializeGLFW(){
-	if( !glfwInit() )
-    {
-        ofLogError("Failed to initialize GLFW");
-        ofExit(0);
-    }
+	if(!glfwInit()){
+		ofLogError("Failed to initialize GLFW");
+		ofExit(0);
+	}
 }
 
-void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
+void ofWindowManager::setupOpenGL(int w, int h, int screenMode){
 	initializeGLFW();
-	
+
 	glfwWindowHint(GLFW_DEPTH_BITS, 16);
-	
+
 	mainWindow = createWindow(w, h);
 	activeWindow = mainWindow;
 }
 
-void ofWindowManager::initializeWindow()
-{
+void ofWindowManager::initializeWindow(){
 	//define all callbacks now, so there won't happen anything before OF is fully initialized
 	glfwSetErrorCallback(&glfwErrorCallback);
 	glfwSetWindowSizeCallback(&glfwWindowSizeCallback);
@@ -216,57 +216,58 @@ void ofWindowManager::initializeWindow()
 	glfwSetScrollCallback(&glfwScrollCallback);
 	glfwSetKeyCallback(&glfwKeyCallback);
 	glfwSetCharCallback(&glfwCharCallback);
-	
+
 	mainWindow->setup();
 }
 
-void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
+void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	mainWindow->addListener(appPtr);
 	appPtr->setup();
-	
+
 	//run the main loop
-	while (true) {
+	while(true){
 		glfwPollEvents();
 		update();
 		draw();
 	}
 }
 
-void ofWindowManager::update() {
+void ofWindowManager::update(){
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-	if (nFrameCount != 0 && bFrameRateSet == true) {
+	if(nFrameCount != 0 && bFrameRateSet == true){
 		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
-		if (diffMillis > millisForFrame) {
-			; // we do nothing, we are already slower than target frame
-		} else {
+		if(diffMillis > millisForFrame){
+			// we do nothing, we are already slower than target frame
+		}
+		else{
 			int waitMillis = millisForFrame - diffMillis;
-#ifdef TARGET_WIN32
-			Sleep(waitMillis);         //windows sleep in milliseconds
-#else
-			usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
-#endif
+			#ifdef TARGET_WIN32
+				Sleep(waitMillis);     //windows sleep in milliseconds
+			#else
+				usleep(waitMillis * 1000); //mac sleep in microseconds - cooler :)
+			#endif
 		}
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-										   // -------------- fps calculation:
-										   // theo - now moved from display to idle_cb
-										   // discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
+	                                       // -------------- fps calculation:
+	                                       // theo - now moved from display to idle_cb
+	                                       // discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
 	//
 	//
 	// theo - please don't mess with this without letting me know.
 	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
 	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
 	timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ) {
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
+	double diff = timeNow - timeThen;
+	if(diff  > 0.00001){
+		fps = 1.0 / diff;
+		frameRate *= 0.9f;
+		frameRate += 0.1f * fps;
 	}
-	lastFrameTime	= diff;
-	timeThen		= timeNow;
-	
+	lastFrameTime = diff;
+	timeThen = timeNow;
+
 	// --------------
 	ofNotifyUpdate();
 }
@@ -275,167 +276,229 @@ void ofWindowManager::draw(){
 	ofNotifyDraw();
 }
 
-ofWindow* ofWindowManager::getLastCreatedWindow()
-{
+ofWindow * ofWindowManager::getLastCreatedWindow(){
 	return windows.back().get();
 }
 
 
-ofWindow* ofWindowManager::getMainWindow()
-{
+ofWindow * ofWindowManager::getMainWindow(){
 	return mainWindow;
 }
 
 void ofWindowManager::setFrameRate(float targetRate){
 	// given this FPS, what is the amount of millis per frame
 	// that should elapse?
-	
+
 	// --- > f / s
-	
-	if (targetRate == 0){
+
+	if(targetRate == 0){
 		bFrameRateSet = false;
 		return;
 	}
-	
-	bFrameRateSet 			= true;
-	float durationOfFrame 	= 1.0f / (float)targetRate;
-	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-	
-	frameRate				= targetRate;
-	
+
+	bFrameRateSet = true;
+	float durationOfFrame = 1.0f / (float)targetRate;
+	millisForFrame = (int)(1000.0f * durationOfFrame);
+
+	frameRate = targetRate;
+
 }
 
-float ofWindowManager::getFrameRate()
-{
+float ofWindowManager::getFrameRate(){
 	return frameRate;
 }
 
-void ofWindowManager::setActiveWindow(ofWindow* win)
-{
+void ofWindowManager::setActiveWindow(ofWindow * win){
 	activeWindow = win;
 	activeWindow->enableContext();
 }
 
-ofPoint	ofWindowManager::getWindowPosition() {return activeWindow->getWindowPosition(); }
-ofPoint	ofWindowManager::getWindowSize(){return activeWindow->getWindowSize(); }
+ofPoint ofWindowManager::getWindowPosition(){
+	return activeWindow->getWindowPosition();
+}
+ofPoint ofWindowManager::getWindowSize(){
+	return activeWindow->getWindowSize();
+}
 
 //this is used by ofGetWidth and now determines the window width based on orientation
-int	ofWindowManager::getWidth(){ return activeWindow->getWidth(); }
-int	ofWindowManager::getHeight(){ return activeWindow->getHeight(); }
+int ofWindowManager::getWidth(){
+	return activeWindow->getWidth();
+}
+int ofWindowManager::getHeight(){
+	return activeWindow->getHeight();
+}
 
 ////GLFW CALLBACKS
 void ofWindowManager::glfwWindowFocus(GLFWwindow glfwWin, int action){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 }
 void ofWindowManager::glfwWindowSize(GLFWwindow glfwWin, int w, int h){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 	win->windowResized(w, h);
 }
 int ofWindowManager::glfwWindowClose(GLFWwindow glfwWin){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 	removeWindow(win);
 	return 1;
 }
 void ofWindowManager::glfwWindowRefresh(GLFWwindow glfwWin){
-	ofWindow* win = getWindowByGlfw(glfwWin);
-}	
+	ofWindow * win = getWindowByGlfw(glfwWin);
+}
 void ofWindowManager::glfwWindowIconify(GLFWwindow glfwWin, int action){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 }
 void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 	if(action == GLFW_PRESS){
 		win->mousePressed(button);
-	}else{
+	}
+	else{
 		win->mouseReleased(button);
 	}
 }
 void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 	win->mouseMoved(mouseX, mouseY);
 }
 void ofWindowManager::glfwCursorEnter(GLFWwindow glfwWin, int action){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 }
 void ofWindowManager::glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 	win->scrolled(deltaX, deltaY);
 }
 
 
 void ofWindowManager::glfwKey(GLFWwindow glfwWin, int key, int action){
-	ofWindow* win = getWindowByGlfw(glfwWin);
-	
+	ofWindow * win = getWindowByGlfw(glfwWin);
+
 	//TODO: I'm sure there is some way to do this more efficient than a case statement (Philip)
-	switch(key){ 
-		case GLFW_KEY_ENTER:
-			key = OF_KEY_RETURN;break;
-		case GLFW_KEY_ESC:
-			key = OF_KEY_ESC;break;
-		case GLFW_KEY_LEFT_CONTROL:
-		case GLFW_KEY_RIGHT_CONTROL:
-			key = OF_KEY_CTRL;break;
-		case GLFW_KEY_RIGHT_ALT:
-		case GLFW_KEY_LEFT_ALT:
-			key = OF_KEY_ALT;break;
-		case GLFW_KEY_RIGHT_SHIFT:
-		case GLFW_KEY_LEFT_SHIFT:
-			key = OF_KEY_SHIFT;break;
-		case GLFW_KEY_BACKSPACE:
-			key = OF_KEY_BACKSPACE;break;
-		case GLFW_KEY_DELETE:
-			key = OF_KEY_DEL;break;
-		case GLFW_KEY_F1:
-			key = OF_KEY_F1;break;
-		case GLFW_KEY_F2:
-			key = OF_KEY_F2;break;
-		case GLFW_KEY_F3:
-			key = OF_KEY_F3;break;
-		case GLFW_KEY_F4:
-			key = OF_KEY_F4;break;
-		case GLFW_KEY_F5:
-			key = OF_KEY_F5;break;
-		case GLFW_KEY_F6:
-			key = OF_KEY_F6;break;
-		case GLFW_KEY_F7:
-			key = OF_KEY_F7;break;
-		case GLFW_KEY_F8:
-			key = OF_KEY_F8;break;
-		case GLFW_KEY_F9:
-			key = OF_KEY_F9;break;
-		case GLFW_KEY_F10:
-			key = OF_KEY_F10;break;
-		case GLFW_KEY_F11:
-			key = OF_KEY_F11;break;
-		case GLFW_KEY_F12:
-			key = OF_KEY_F12;break;
-		case GLFW_KEY_LEFT:
-			key = OF_KEY_LEFT;break;
-		case GLFW_KEY_RIGHT:
-			key = OF_KEY_RIGHT;break;
-		case GLFW_KEY_DOWN:
-			key = OF_KEY_DOWN;break;
-		case GLFW_KEY_UP:
-			key = OF_KEY_UP;break;
-		case GLFW_KEY_PAGEUP:
-			key = OF_KEY_PAGE_UP;break;
-		case GLFW_KEY_PAGEDOWN:
-			key = OF_KEY_PAGE_DOWN;break;
-		case GLFW_KEY_HOME:
-			key = OF_KEY_HOME;break;
-		case GLFW_KEY_END:
-			key = OF_KEY_END;break;
-		case GLFW_KEY_INSERT:
-			key = OF_KEY_INSERT;break;
+	switch(key){
+	 case GLFW_KEY_ENTER:
+		 key = OF_KEY_RETURN;
+		 break;
+
+	 case GLFW_KEY_ESC:
+		 key = OF_KEY_ESC;
+		 break;
+
+	 case GLFW_KEY_LEFT_CONTROL:
+	 case GLFW_KEY_RIGHT_CONTROL:
+		 key = OF_KEY_CTRL;
+		 break;
+
+	 case GLFW_KEY_RIGHT_ALT:
+	 case GLFW_KEY_LEFT_ALT:
+		 key = OF_KEY_ALT;
+		 break;
+
+	 case GLFW_KEY_RIGHT_SHIFT:
+	 case GLFW_KEY_LEFT_SHIFT:
+		 key = OF_KEY_SHIFT;
+		 break;
+
+	 case GLFW_KEY_BACKSPACE:
+		 key = OF_KEY_BACKSPACE;
+		 break;
+
+	 case GLFW_KEY_DELETE:
+		 key = OF_KEY_DEL;
+		 break;
+
+	 case GLFW_KEY_F1:
+		 key = OF_KEY_F1;
+		 break;
+
+	 case GLFW_KEY_F2:
+		 key = OF_KEY_F2;
+		 break;
+
+	 case GLFW_KEY_F3:
+		 key = OF_KEY_F3;
+		 break;
+
+	 case GLFW_KEY_F4:
+		 key = OF_KEY_F4;
+		 break;
+
+	 case GLFW_KEY_F5:
+		 key = OF_KEY_F5;
+		 break;
+
+	 case GLFW_KEY_F6:
+		 key = OF_KEY_F6;
+		 break;
+
+	 case GLFW_KEY_F7:
+		 key = OF_KEY_F7;
+		 break;
+
+	 case GLFW_KEY_F8:
+		 key = OF_KEY_F8;
+		 break;
+
+	 case GLFW_KEY_F9:
+		 key = OF_KEY_F9;
+		 break;
+
+	 case GLFW_KEY_F10:
+		 key = OF_KEY_F10;
+		 break;
+
+	 case GLFW_KEY_F11:
+		 key = OF_KEY_F11;
+		 break;
+
+	 case GLFW_KEY_F12:
+		 key = OF_KEY_F12;
+		 break;
+
+	 case GLFW_KEY_LEFT:
+		 key = OF_KEY_LEFT;
+		 break;
+
+	 case GLFW_KEY_RIGHT:
+		 key = OF_KEY_RIGHT;
+		 break;
+
+	 case GLFW_KEY_DOWN:
+		 key = OF_KEY_DOWN;
+		 break;
+
+	 case GLFW_KEY_UP:
+		 key = OF_KEY_UP;
+		 break;
+
+	 case GLFW_KEY_PAGEUP:
+		 key = OF_KEY_PAGE_UP;
+		 break;
+
+	 case GLFW_KEY_PAGEDOWN:
+		 key = OF_KEY_PAGE_DOWN;
+		 break;
+
+	 case GLFW_KEY_HOME:
+		 key = OF_KEY_HOME;
+		 break;
+
+	 case GLFW_KEY_END:
+		 key = OF_KEY_END;
+		 break;
+
+	 case GLFW_KEY_INSERT:
+		 key = OF_KEY_INSERT;
+		 break;
 	}
-	
-	if(action == GLFW_RELEASE)
+
+	if(action == GLFW_RELEASE){
 		win->keyReleased(key);
-	else
+	}
+	else{
 		win->keyPressed(key);
-	
-	
+	}
+
+
 }
 void ofWindowManager::glfwChar(GLFWwindow glfwWin, int key){
-	ofWindow* win = getWindowByGlfw(glfwWin);
+	ofWindow * win = getWindowByGlfw(glfwWin);
 }
