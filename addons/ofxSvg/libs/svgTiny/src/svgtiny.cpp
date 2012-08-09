@@ -14,7 +14,7 @@
 #include <string.h>
 //#include <libxml/parser.h>
 //#include <libxml/debugXML.h>
-#include "/Users/joshua.noble/code/OF/0071_osx/addons/ofxXmlSettings/libs/tinyxml.h"
+#include "tinyxml.h"
 #include "svgtiny.h"
 #include "svgtiny_internal.h"
 
@@ -1004,9 +1004,9 @@ void svgtiny_parse_paint_attributes(const Poco::XML::Element *node,
         
         //const char *name = (const char *) attr->Name();
 		//const char *content = (const char *) attr->Value();
-        
-        const char *name = (const char *) map->item(i)->localName().c_str();
-		const char *content = (const char *) map->item(i)->getNodeValue().c_str();
+        attr = (Poco::XML::Attr*) map->item(i);
+        const char *name = (const char *) attr->localName().c_str();
+		const char *content = (const char *) attr->getNodeValue().c_str();
         
 		if (strcmp(name, "fill") == 0)
 			svgtiny_parse_color(content, &state->fill, state);

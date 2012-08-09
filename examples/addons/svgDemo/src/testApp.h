@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofSVG.h"
+#include "ofxSVG.h"
 
 class testApp : public ofBaseApp{
     
@@ -20,6 +20,6 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    ofSVG svg;
+    ofxSVG svg;
     
 };
