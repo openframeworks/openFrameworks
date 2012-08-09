@@ -88,13 +88,8 @@ bool ofxXmlSettings::loadFile(const string& xmlFile){
 //---------------------------------------------------------
 bool ofxXmlSettings::saveFile(const string& xmlFile){
 
-	//string fullXmlFile = ofToDataPath(xmlFile);
-	//return doc.SaveFile(fullXmlFile);
-
-	Poco::XML::XMLWriter writer(xmlFile);
-	// blah
-	writer.endDocument();
-
+	string fullXmlFile = ofToDataPath(xmlFile);
+	return doc.SaveFile(fullXmlFile);
 }
 
 //---------------------------------------------------------
