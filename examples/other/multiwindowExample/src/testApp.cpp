@@ -7,11 +7,12 @@ void testApp::setup(){
 	ofSetBackgroundColor(255, 100, 100);
 	ofGetMainWindow()->setWindowShape(600, 600);
 	ofCreateWindow(500, 500, 200, 200)->addListener(new windowRenderer);
+	
 	/*
 	ofCreateWindow(300, 400, 100, 100);
 	ofCreateWindow(600, 600, 100, 100);
 	ofGetMainWindow()->setWindowPosition(200, 200);
-	 * */
+	*/
 	 
 	textPos.set(ofGetWidth()*.5, ofGetHeight()*.5);	
 	 
@@ -24,14 +25,15 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	
 	ofSetColor(50, 0, 0);
-	//ofRect(i%ofGetWidth(), 100, 10, 10);
+	ofRect(i%ofGetWidth(), 100, 10, 10);
 	i++;
 
 	ofSetColor(255, 0, 0);
 	ofRect(ofGetMouseX(), ofGetMouseY(), 50, 50);
 	
-	ofSetColor(0);
+	ofSetColor(255);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
 	
 	ofDrawBitmapString("SCROLL TO MOVE ME", textPos);
