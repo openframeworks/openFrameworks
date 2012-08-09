@@ -10,7 +10,7 @@ void testApp::setup(){
 	ofBackground(255,255,255);	
 	ofSetFrameRate(60);
 	
-	nCurveVertexes = 7;
+	nCurveVertices = 7;
 	
 	curveVertices[0].x = 326;
 	curveVertices[0].y = 209;
@@ -27,7 +27,7 @@ void testApp::setup(){
 	curveVertices[6].x = 345;
 	curveVertices[6].y = 279;
 	
-	for(int i = 0; i < nCurveVertexes; i++){
+	for(int i = 0; i < nCurveVertices; i++){
 		curveVertices[i].bOver 			= false;
 		curveVertices[i].bBeingDragged 	= false;
 		curveVertices[i].radius = 4;
@@ -180,7 +180,7 @@ void testApp::draw(){
 	ofSetHexColor(0x2bdbe6);
 	ofBeginShape();
 	
-		for (int i = 0; i < nCurveVertexes; i++){
+		for (int i = 0; i < nCurveVertices; i++){
 			
 			
 			// sorry about all the if/states here, but to do catmull rom curves
@@ -188,13 +188,13 @@ void testApp::draw(){
 			// goes through them.
 			
 			// for i == 0, we just call the vertex twice
-			// for i == nCurveVertexes-1 (last point) we call vertex 0 twice
+			// for i == nCurveVertices-1 (last point) we call vertex 0 twice
 			// otherwise just normal ofCurveVertex call
 			
 			if (i == 0){
 				ofCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
 				ofCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
-			} else if (i == nCurveVertexes-1){
+			} else if (i == nCurveVertices-1){
 				ofCurveVertex(curveVertices[i].x, curveVertices[i].y);
 				ofCurveVertex(curveVertices[0].x, curveVertices[0].y);	// to draw a curve from pt 6 to pt 0
 				ofCurveVertex(curveVertices[0].x, curveVertices[0].y);	// we duplicate the first point twice
@@ -211,14 +211,14 @@ void testApp::draw(){
 		ofNoFill();
 		ofSetColor(0,0,0,40);
 		ofBeginShape();
-			for (int i = 0; i < nCurveVertexes; i++){
+			for (int i = 0; i < nCurveVertices; i++){
 				ofVertex(curveVertices[i].x, curveVertices[i].y);
 			}
 		ofEndShape(true);
 		
 		
 		ofSetColor(0,0,0,80);
-		for (int i = 0; i < nCurveVertexes; i++){
+		for (int i = 0; i < nCurveVertices; i++){
 			if (curveVertices[i].bOver == true) ofFill();
 			else ofNoFill();
 			ofCircle(curveVertices[i].x, curveVertices[i].y,4);
@@ -232,7 +232,7 @@ void testApp::draw(){
 	// 		ofBezierVertex
 	// 
 	// 		with ofBezierVertex we can draw a curve from the current vertex
-	//		through the the next three vertexes we pass in.
+	//		through the the next three vertices we pass in.
 	//		(two control points and the final bezier point)
 	//		
 	
@@ -417,7 +417,7 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
-		for (int i = 0; i < nCurveVertexes; i++){
+		for (int i = 0; i < nCurveVertices; i++){
 			float diffx = touch.x/appIphoneScale - curveVertices[i].x;
 			float diffy = touch.y/appIphoneScale - curveVertices[i].y;
 			float dist = sqrt(diffx*diffx + diffy*diffy);
@@ -433,7 +433,7 @@ void testApp::touchDown(ofTouchEventArgs & touch){
 //--------------------------------------------------------------
 void testApp::touchMoved(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
-		for (int i = 0; i < nCurveVertexes; i++){
+		for (int i = 0; i < nCurveVertices; i++){
 		if (curveVertices[i].bBeingDragged == true){
 			curveVertices[i].x = touch.x/appIphoneScale;
 			curveVertices[i].y = touch.y/appIphoneScale;
@@ -445,7 +445,7 @@ void testApp::touchMoved(ofTouchEventArgs & touch){
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
-		for (int i = 0; i < nCurveVertexes; i++){
+		for (int i = 0; i < nCurveVertices; i++){
 			curveVertices[i].bBeingDragged = false;	
 		}
 	}

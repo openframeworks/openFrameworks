@@ -8,27 +8,30 @@ import android.util.Log;
 
 public class OFAndroidSoundPlayer extends OFAndroidObject{
 	OFAndroidSoundPlayer(){
-		pan = 0.5f;
+		pan = 0.f;
 		volume = leftVolume = rightVolume = 1;
 		bIsLoaded = false;
-		fileID = -1;
+		bIsPlaying = false;
+		loop = false;
+		soundID = -1;
+		streamID = -1;
 	}
 	
 	void loadSound(String fileName, boolean stream){
 		try {
-			if(!multiPlay){
+			if(stream){
 				if(player!=null) unloadSound();
 				player = new MediaPlayer();
 				player.setDataSource(fileName);
 				player.prepare();
 			}else{
-				if(pool!=null) unloadSound();
-				pool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0);
-				fileID = pool.load(fileName, 1);
+				if(soundID!=-1) unloadSound();
+				soundID = pool.load(fileName, 1);
 			}
 			setVolume(volume);
 			bIsLoaded = true;
 			this.fileName = fileName;
+			this.stream = stream;
 		} catch (Exception e) {
 			Log.e("OF","couldn't load " + fileName,e);
 		} 
@@ -40,32 +43,35 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 			player = null;
 		}
 
-		if(pool!=null){
-			pool.release();
-			pool = null;	
+		if(soundID!=-1){
+			pool.unload(soundID);
 		}
 		fileName = null;
-		fileID = 0;
+		soundID = -1;
+		streamID = -1;
 		bIsLoaded = false;
+		bIsPlaying = false;
 	}
 	
 	void play(){
-		if(!multiPlay){
+		if(stream){
 			if(player==null) return;
 			if(getIsPlaying()) setPosition(0);	
 			player.start();
 		}else{
-			if(pool==null) return;
-			pool.play(fileID,leftVolume,rightVolume,1,loop?-1:0,speed);
+			if(!multiPlay)
+				pool.stop(streamID);
+			streamID = pool.play(soundID,leftVolume,rightVolume,1,loop?-1:0,speed);
+			bIsPlaying = true;
 		}
 	}
 	void stop(){
-		if(!multiPlay){
+		if(stream){
 			if(player==null) return;
 			player.stop();
-		}else{
-			if(pool==null) return;
-			pool.autoPause();
+		}else if(streamID!=-1){
+			pool.stop(streamID);
+			bIsPlaying = false;
 		}
 	}
 	
@@ -79,7 +85,11 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
         float sinAngle = FloatMath.sin(angle);
         leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
         rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
-		if(!multiPlay && player!=null) player.setVolume(leftVolume, rightVolume);
+		if(stream){
+			if(player!=null) player.setVolume(leftVolume, rightVolume);
+		}else if(streamID!=-1){
+			pool.setVolume(streamID, leftVolume, rightVolume);
+		}
 	}
 	
 	float getVolume(){
@@ -92,29 +102,35 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	void setSpeed(float spd){
+		if(spd<0.5) spd = 0.5f;
+		if(spd>2) spd=2;
 		speed = spd;
+		if(!stream && streamID!=-1) pool.setRate(streamID, spd);
 	}
 	
 	void setPaused(boolean bP){
-		if(!multiPlay){
+		if(stream){
 			if(player==null) return;
 			if(bP)
 				player.pause();
 			else
 				player.start();
-		}else{
-			if(pool==null) return;
+		}else if(streamID!=-1){
 			if(bP){
-				pool.autoPause();
+				pool.pause(streamID);
 			}else{
-				pool.autoResume();
+				pool.resume(streamID);
 			}
+			bIsPlaying = !bP;
 		}
 	}
 	
 	void setLoop(boolean bLp){
-		if(!multiPlay && player!=null){
-			player.setLooping(bLp);
+		if(stream){
+			if(player!=null)
+				player.setLooping(bLp);
+		}else{
+			if(streamID!=-1) pool.setLoop(streamID, -1);
 		}
 		loop = bLp;
 	}
@@ -122,7 +138,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	void setMultiPlay(boolean bMp){
 		if(multiPlay==bMp) return;
 		multiPlay = bMp;
-		if(fileName!=null && fileName!=null){
+		if(fileName!=null){
 			String currFileName = fileName;
 			unloadSound();
 			loadSound(currFileName, !bMp);
@@ -130,32 +146,32 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	void setPosition(float pct){
-		if(!multiPlay && player!=null) player.seekTo((int) (player.getDuration()*pct)); // 0 = start, 1 = end;
+		if(stream && player!=null) player.seekTo((int) (player.getDuration()*pct)); // 0 = start, 1 = end;
 	}
 	
 	void setPositionMS(int ms){
-		if(!multiPlay && player!=null) player.seekTo(ms); // 0 = start, 1 = end;
+		if(stream && player!=null) player.seekTo(ms); // 0 = start, 1 = end;
 	}
 	
 	float getPosition(){
-		if(!multiPlay && player!=null)
+		if(stream && player!=null)
 			return ((float)player.getCurrentPosition())/(float)player.getDuration();
 		else
 			return 0;
 	}
 	
 	int getPositionMS(){
-		if(!multiPlay && player!=null)
+		if(stream && player!=null)
 			return player.getCurrentPosition();
 		else
 			return 0;
 	}
 	
 	boolean getIsPlaying(){
-		if(!multiPlay)
+		if(stream)
 			return player!=null && player.isPlaying();
 		else
-			return pool!=null;
+			return bIsPlaying;
 	}
 	
 	float getSpeed(){
@@ -194,14 +210,16 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	
 	private MediaPlayer player;
-	private SoundPool pool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0);
+	private static SoundPool pool = new SoundPool(128, AudioManager.STREAM_MUSIC, 0);
 	private float pan;
 	private float volume;
 	private boolean bIsLoaded;
+	private boolean bIsPlaying;
 	private boolean multiPlay;
 	private String fileName;
-	private int fileID;
+	private int soundID, streamID;
 	private float leftVolume, rightVolume;
 	private boolean loop;
 	private float speed;
+	private boolean stream;
 }
