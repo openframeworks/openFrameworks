@@ -287,6 +287,8 @@ class ofWindow : public ofAppBaseWindow {
 		void windowUnfocused();
 		void windowClosed();
 		void windowResized(int w, int h);
+		
+		void updateMouse(int x, int y);
 
 		ofWindowListenerList listeners;
 		ofRectangle previousShape;

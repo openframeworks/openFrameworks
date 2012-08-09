@@ -126,8 +126,7 @@ void ofWindow::destroy(){
 }
 //USER INTERACTION EVENTS
 void ofWindow::mouseMoved(int mX, int mY){
-	mouseX = mX;
-	mouseY = mY;
+	updateMouse(mX, mY);
 	ofNotifyMouseMoved(mouseX, mouseY);
 	#ifdef OF_USING_POCO
 		ofMouseEventArgs e;
@@ -148,8 +147,7 @@ void ofWindow::mousePressed(int button){
 	mousePressed(mouseX, mouseY, button);
 }
 void ofWindow::mousePressed(int mX, int mY, int button){
-	mouseX = mX;
-	mouseY = mY;
+	updateMouse(mX, mY);
 	ofNotifyMousePressed(mouseX, mouseY, button);
 
 	#ifdef OF_USING_POCO
@@ -172,8 +170,7 @@ void ofWindow::mouseReleased(int button){
 	mouseReleased(mouseX, mouseY, button);
 }
 void ofWindow::mouseReleased(int mX, int mY, int button){
-	mouseX = mX;
-	mouseY = mY;
+	updateMouse(mX, mY);
 	ofNotifyMouseReleased(mouseX, mouseY, button);
 
 	#ifdef OF_USING_POCO
@@ -193,8 +190,7 @@ void ofWindow::mouseReleased(int mX, int mY, int button){
 	#endif
 }
 void ofWindow::mouseDragged(int mX, int mY, int button){
-	mouseX = mX;
-	mouseY = mY;
+	updateMouse(mX, mY);
 
 	ofNotifyMouseDragged(mouseX, mouseY, button);
 
@@ -216,12 +212,21 @@ void ofWindow::mouseDragged(int mX, int mY, int button){
 }
 
 void ofWindow::scrolled(float deltaX, float deltaY){
-	//ofNotifyMouseDragged(mouseX, mouseY, button);
-	/*ofWindowListenerList::iterator it=listeners.begin();
-	while(it!=listeners.end()) {
-	    (*it)->scrolled(deltaX, deltaY, this);
-	    ++it;
-	}*/
+	ofNotifyScrolled(deltaX, deltaY);
+	#ifdef OF_USING_POCO
+		ofScrollEventArgs e;
+		e.deltaX = deltaX;
+		e.deltaY = deltaY;
+		e.window = this;
+		ofNotifyEvent(events.scrolled, e);
+	#endif
+	#ifndef OF_USING_POCO
+		ofWindowListenerList::iterator it = listeners.begin();
+		while(it != listeners.end()){
+			(*it)->scrolled(deltaX, deltaY, this);
+			++it;
+		}
+	#endif
 }
 
 void ofWindow::keyPressed(int key){
@@ -415,4 +420,11 @@ void ofWindow::close(){
 
 bool ofWindow::isClosed(){
 	return window == NULL;
+}
+void ofWindow::updateMouse(int x, int y)
+{
+	oldMouseX = mouseX;
+	oldMouseY = mouseY;
+	mouseX = x;
+	mouseY = y;	
 }

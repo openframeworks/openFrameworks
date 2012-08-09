@@ -76,3 +76,7 @@ void testApp::gotMessage(ofMessage msg){
 void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
+void testApp::scrolled(float dx, float dy)
+{
+	ofLogNotice() << dx << "- " << dy;
+}

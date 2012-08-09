@@ -273,6 +273,20 @@ void ofNotifyMouseMoved(int x, int y){
 }
 
 //------------------------------------------
+void ofNotifyScrolled(float dx, float dy){
+	static ofScrollEventArgs scrollEventArgs;
+	ofBaseApp * ofAppPtr = ofGetAppPtr();
+	if(ofAppPtr){
+		ofAppPtr->scrolled(dx, dy);
+	}
+	#ifdef OF_USING_POCO
+		scrollEventArgs.deltaX	= dx;
+		scrollEventArgs.deltaY	= dy;
+		ofNotifyEvent( ofEvents().scrolled, scrollEventArgs );
+	#endif
+}
+
+//------------------------------------------
 void ofNotifyExit(){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	if(ofAppPtr){

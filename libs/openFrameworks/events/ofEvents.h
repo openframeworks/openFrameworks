@@ -138,6 +138,7 @@ class ofDragInfo{
 		ofEvent<ofMouseEventArgs> 	mouseDragged;
 		ofEvent<ofMouseEventArgs> 	mousePressed;
 		ofEvent<ofMouseEventArgs> 	mouseReleased;
+		ofEvent<ofScrollEventArgs> 	scrolled;
 
 		ofEvent<ofAudioEventArgs> 	audioReceived;
 		ofEvent<ofAudioEventArgs> 	audioRequested;
@@ -284,6 +285,7 @@ class ofDragInfo{
 		ofEvent<ofMouseEventArgs> 	mouseDragged;
 		ofEvent<ofMouseEventArgs> 	mousePressed;
 		ofEvent<ofMouseEventArgs> 	mouseReleased;
+		ofEvent<ofScrollEventArgs> 	scrolled;
 		
 		ofEvent<ofTouchEventArgs>	touchDown;
 		ofEvent<ofTouchEventArgs>	touchUp;
@@ -309,6 +311,7 @@ void ofNotifyMousePressed(int x, int y, int button);
 void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
+void ofNotifyScrolled(float dx, float dy);
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
