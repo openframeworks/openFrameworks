@@ -310,6 +310,7 @@ float ofWindowManager::getFrameRate(){
 
 void ofWindowManager::setActiveWindow(ofWindow * win){
 	activeWindow = win;
+	ofSetMouseValues(activeWindow->mouseX, activeWindow->mouseY, activeWindow->previousMouseX, activeWindow->previousMouseY);
 	activeWindow->enableContext();
 }
 

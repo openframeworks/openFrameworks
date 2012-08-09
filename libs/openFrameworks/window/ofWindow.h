@@ -263,7 +263,7 @@ class ofWindow : public ofAppBaseWindow {
 		static int lastWindowID;
 
 		int mouseX, mouseY;
-		int oldMouseX, oldMouseY;
+		int previousMouseX, previousMouseY;
 
 	private:
 		GLFWwindow getGlfwWindow();

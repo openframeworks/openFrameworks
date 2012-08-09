@@ -15,6 +15,9 @@ int			ofGetMouseY();
 int			ofGetPreviousMouseX();
 int			ofGetPreviousMouseY();
 
+void		ofSetMouseValues(int currentX, int currentY, int prevX, int prevY);
+
+
 void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
 void		exitApp(); 

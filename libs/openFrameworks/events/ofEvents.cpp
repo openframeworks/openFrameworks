@@ -358,3 +358,12 @@ void ofNotifyWindowEntry( int state ) {
 #endif
 	
 }
+
+//------------------------------------------
+//Todo: This is a little bit of a hack to provide the correct ofGetMouseX and ofGetMouseY to multiwindow but still keeping the glutWindow functional
+void ofSetMouseValues(int currentX, int currentY, int prevX, int prevY){
+	currentMouseX = currentX;
+	currentMouseY = currentY;
+	previousMouseX = prevX;
+	previousMouseY = prevY;
+}

@@ -14,8 +14,8 @@
 int ofWindow::lastWindowID = 0;
 ofWindow::ofWindow() : mouseX(0),
 	mouseY(0),
-	oldMouseX(0),
-	oldMouseY(0),
+	previousMouseX(0),
+	previousMouseY(0),
 	isFocused(false),
 	title("ofTestApp"),
 	isInitialized(false){
@@ -423,8 +423,8 @@ bool ofWindow::isClosed(){
 }
 void ofWindow::updateMouse(int x, int y)
 {
-	oldMouseX = mouseX;
-	oldMouseY = mouseY;
+	previousMouseX = mouseX;
+	previousMouseY = mouseY;
 	mouseX = x;
 	mouseY = y;	
 }
