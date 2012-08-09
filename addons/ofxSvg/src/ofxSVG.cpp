@@ -115,7 +115,7 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape){
 		}
 		else{
 			//cout << "error\n" << endl;
-			ofLog("SVG parse error");
+			ofLogError() << "SVG parse error";
 			i += 1;
 		}
 	}
