@@ -114,6 +114,7 @@ ofWindowManager::ofWindowManager(){
 	prevMillis = 0;
 	diffMillis = 0;
 	setFrameRate(60);
+	nFrameCount = 0;
 }
 
 ofWindowManager::~ofWindowManager(){
@@ -267,7 +268,7 @@ void ofWindowManager::update(){
 	}
 	lastFrameTime = diff;
 	timeThen = timeNow;
-
+	nFrameCount++;
 	// --------------
 	ofNotifyUpdate();
 }
@@ -502,4 +503,9 @@ void ofWindowManager::glfwKey(GLFWwindow glfwWin, int key, int action){
 }
 void ofWindowManager::glfwChar(GLFWwindow glfwWin, int key){
 	ofWindow * win = getWindowByGlfw(glfwWin);
+}
+
+int ofWindowManager::getFrameNum()
+{
+	return nFrameCount;
 }

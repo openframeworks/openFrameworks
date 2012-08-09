@@ -29,6 +29,7 @@ class ofWindowManager : public ofAppBaseWindow {
 
 		void setFrameRate(float targetRate);
 		float getFrameRate();
+		int getFrameNum();
 		void setActiveWindow(ofWindow * win);
 
 		ofPoint getWindowPosition();

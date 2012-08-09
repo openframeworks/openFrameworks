@@ -34,8 +34,8 @@ void testApp::draw(){
 	ofRect(ofGetMouseX(), ofGetMouseY(), 50, 50);
 	
 	ofSetColor(255);
+
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
-	
 	ofDrawBitmapString("SCROLL TO MOVE ME", textPos);
 }
 
