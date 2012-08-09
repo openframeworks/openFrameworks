@@ -488,6 +488,7 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_RGB24, pix.getWidth(), pix.getHeight(), stride);
 		break;
 	case OF_IMAGE_UNDEFINED:
+	default:
 		ofLog(OF_LOG_ERROR,"ofCairoRenderer: trying to render undefined type image");
 		popMatrix();
 		return;
