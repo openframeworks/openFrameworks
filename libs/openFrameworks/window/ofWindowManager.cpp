@@ -331,7 +331,7 @@ int ofWindowManager::getHeight(){
 
 ////GLFW CALLBACKS
 void ofWindowManager::glfwWindowFocus(GLFWwindow glfwWin, int action){
-	ofWindow * win = getWindowByGlfw(glfwWin);
+	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
 void ofWindowManager::glfwWindowSize(GLFWwindow glfwWin, int w, int h){
 	ofWindow * win = getWindowByGlfw(glfwWin);
@@ -343,10 +343,10 @@ int ofWindowManager::glfwWindowClose(GLFWwindow glfwWin){
 	return 1;
 }
 void ofWindowManager::glfwWindowRefresh(GLFWwindow glfwWin){
-	ofWindow * win = getWindowByGlfw(glfwWin);
+	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
 void ofWindowManager::glfwWindowIconify(GLFWwindow glfwWin, int action){
-	ofWindow * win = getWindowByGlfw(glfwWin);
+	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
 void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action){
 	ofWindow * win = getWindowByGlfw(glfwWin);
@@ -362,11 +362,11 @@ void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY){
 	win->mouseMoved(mouseX, mouseY);
 }
 void ofWindowManager::glfwCursorEnter(GLFWwindow glfwWin, int action){
-	ofWindow * win = getWindowByGlfw(glfwWin);
+	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
 void ofWindowManager::glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY){
 	ofWindow * win = getWindowByGlfw(glfwWin);
-	win->scrolled(deltaX, deltaY);
+	win->scrolled(-deltaX, -deltaY);
 }
 
 

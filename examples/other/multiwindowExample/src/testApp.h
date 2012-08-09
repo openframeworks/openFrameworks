@@ -26,4 +26,5 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		void scrolled(float dx, float dy);
 		
+		ofVec2f textPos;
 };

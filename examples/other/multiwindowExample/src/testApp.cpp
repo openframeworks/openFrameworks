@@ -12,6 +12,9 @@ void testApp::setup(){
 	ofCreateWindow(600, 600, 100, 100);
 	ofGetMainWindow()->setWindowPosition(200, 200);
 	 * */
+	 
+	textPos.set(ofGetWidth()*.5, ofGetHeight()*.5);	
+	 
 }
 
 //--------------------------------------------------------------
@@ -22,7 +25,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	ofSetColor(50, 0, 0);
-	ofRect(i%ofGetWidth(), 100, 10, 10);
+	//ofRect(i%ofGetWidth(), 100, 10, 10);
 	i++;
 
 	ofSetColor(255, 0, 0);
@@ -30,6 +33,8 @@ void testApp::draw(){
 	
 	ofSetColor(0);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
+	
+	ofDrawBitmapString("SCROLL TO MOVE ME", textPos);
 }
 
 //--------------------------------------------------------------
@@ -76,7 +81,9 @@ void testApp::gotMessage(ofMessage msg){
 void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
+
 void testApp::scrolled(float dx, float dy)
 {
-	ofLogNotice() << dx << "- " << dy;
+	textPos.x += dx;
+	textPos.y += dy;
 }

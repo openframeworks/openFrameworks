@@ -346,19 +346,28 @@ void ofWindow::setWindowPosition(ofPoint pos){
 	setWindowPosition(pos.x, pos.y);
 }
 void ofWindow::setWindowShape(int w, int h){
+	previousShape.width = width;
+	previousShape.height = height;
+	width = w;
+	height = h;
 	glfwSetWindowSize(window, w, h);
 }
 
 void ofWindow::setWidth(int w){
+	previousShape.width = width;
+	width = w;
 	glfwSetWindowSize(window, w, height);
 }
 void ofWindow::setHeight(int h){
+	previousShape.height = height;
+	height = h;
 	glfwSetWindowSize(window, width, h);
 }
 void ofWindow::windowResized(int w, int h){
 	if(width == w && height == h){
 		return;
 	}
+	
 	previousShape.width = width;
 	previousShape.height = height;
 	width = w;
