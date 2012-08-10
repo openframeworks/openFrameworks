@@ -10,6 +10,7 @@
 #include <string.h>
 #include "svgtiny.h"
 #include "svgtiny_internal.h"
+#include <stdio.h>
 
 #undef GRADIENT_DEBUG
 
