@@ -67,3 +67,9 @@ ofPoint 	ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 ofPoint 	ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 ofPoint 	ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 
+float 		ofCosineInterpolate(float y1, float y2, float pct);
+float 		ofCubicInterpolate(float y0, float y1, float y2, float y3, float pct);
+float		ofCatmullRomInterpolate(float y0, float y1, float y2, float y3, float pct);
+float 		ofHermiteInterpolate(float y0, float y1, float y2, float y3, float pct);
+float 		ofHermiteInterpolate(float y0, float y1, float y2, float y3, float pct, float tension, float bias);
+
