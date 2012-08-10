@@ -125,7 +125,7 @@ void ofExitCallback(){
 	//------------------------
 
 	// try to close quicktime, for non-linux systems:
-	#if defined( TARGET_OSX ) || defined( TARGET_WIN32 )
+	#if defined( OF_VIDEO_CAPTURE_QUICKTIME ) || defined( OF_VIDEO_PLAYER_QUICKTIME)
 	closeQuicktime();
 	#endif
 
