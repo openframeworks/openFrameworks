@@ -36,13 +36,21 @@ bool ofVideoPlayer::loadMovie(string name){
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 	
-	if( bOk && bUseTexture ){
-		if(width!=0 && height!=0) {
-			tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
-		}
-	}
+	if( bOk){
+        moviePath = name;
+        if(bUseTexture ){
+            if(width!=0 && height!=0) {
+                tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+            }
+        }
+    }
 	
 	return bOk;
+}
+
+//---------------------------------------------------------------------------
+string ofVideoPlayer::getMoviePath(){
+    return moviePath;	
 }
 
 //---------------------------------------------------------------------------
@@ -161,8 +169,13 @@ void ofVideoPlayer::stop(){
 }
 
 //--------------------------------------------------------
-void ofVideoPlayer::setVolume(int volume){
+void ofVideoPlayer::setVolume(float volume){
 	if( player != NULL ){
+		if ( volume > 1.0f ){
+			ofLogWarning("ofVideoPlayer") << "*** the range of setVolume changed with oF0072 from int [0..100] to float [0..1].";
+			ofLogWarning("ofVideoPlayer") << "*** limiting input volume " << volume << " to 1.0f.";
+			volume = 1.0f;
+		}
 		player->setVolume(volume);
 	}
 }

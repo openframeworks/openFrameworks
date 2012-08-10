@@ -125,7 +125,7 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 		unsigned char* src = (unsigned char*) pixels;
 		unsigned char* dst = bmpBits;
 		for(int i = 0; i < (int)height; i++) {
-			memcpy(dst, src, dstStride);
+			memcpy(dst, src, srcStride);
 			src += srcStride;
 			dst += dstStride;
 		}
@@ -418,6 +418,13 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		return;
 	}
 
+	if(format==OF_IMAGE_FORMAT_JPEG && pix.getNumChannels()==4){
+		ofPixels pix3 = pix;
+		pix3.setNumChannels(3);
+		saveImage(pix3,buffer,format,qualityLevel);
+		return;
+	}
+
 	#ifdef TARGET_LITTLE_ENDIAN
 	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
@@ -452,6 +459,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		   }else{
 				FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
 		   }
+
 		   /*
 
 		  NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
@@ -867,27 +875,17 @@ ofImage_<PixelType> & ofImage_<PixelType>::operator=(ofPixels_<PixelType> & pixe
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::update(){
-
+	width = pixels.getWidth();
+	height = pixels.getHeight();
+	bpp = pixels.getBitsPerPixel();
+	type = pixels.getImageType();
 	if (pixels.isAllocated() && bUseTexture){
-		GLint type = GL_RGB;
-		if(pixels.getNumChannels() == 1) {
-			type = GL_LUMINANCE;
-		} else if(pixels.getNumChannels() == 3) {
-			type = GL_RGB;
-		} else if(pixels.getNumChannels() == 4) {
-			type = GL_RGBA;
-		}
-		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getHeight() || type != tex.getTextureData().glTypeInternal)
-		{
-			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
+		int glTypeInternal = ofGetGlInternalFormat(pixels);
+		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glTypeInternal != glTypeInternal){
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), glTypeInternal);
 		}
 		tex.loadData(pixels);
 	}
-	
-	width	= pixels.getWidth();
-	height	= pixels.getHeight();
-	bpp		= pixels.getBitsPerPixel();
-	type	= pixels.getImageType();
 }
 
 //------------------------------------

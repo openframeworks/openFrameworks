@@ -370,7 +370,7 @@ function createPackage {
 	fi
 
 	#delete eclipse project
-	rm $(find . -name .*project)
+	#rm $(find . -name .*project)
 
 	#download and copy OF compiled
 	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}

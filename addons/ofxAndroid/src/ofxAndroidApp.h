@@ -12,6 +12,14 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 
+
+enum ofxAndroidSwipeDir{
+	OFX_ANDROID_SWIPE_UP    = 1,
+	OFX_ANDROID_SWIPE_DOWN  = 2,
+	OFX_ANDROID_SWIPE_LEFT  = 3,
+	OFX_ANDROID_SWIPE_RIGHT = 4
+};
+
 class ofxAndroidApp: public ofBaseApp{
 public:
 	virtual void pause(){};
@@ -39,6 +47,9 @@ public:
 	};
 	virtual void touchCancelled(ofTouchEventArgs & touch){
 		touchCancelled(touch.x, touch.y, touch.id);
+	}
+	virtual void swipe(ofxAndroidSwipeDir swipeDir, int id){
+
 	}
 
 	virtual bool backPressed(){

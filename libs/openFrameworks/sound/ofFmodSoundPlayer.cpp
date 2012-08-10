@@ -170,7 +170,7 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-void ofFmodSoundPlayer::loadSound(string fileName, bool stream){
+bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 
 	fileName = ofToDataPath(fileName);
 
@@ -210,6 +210,7 @@ void ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 		isStreaming = stream;
 	}
 
+	return bLoadedOk;
 }
 
 //------------------------------------------------------------

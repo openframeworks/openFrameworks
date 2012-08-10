@@ -27,7 +27,7 @@ void testApp::setup(){
 void testApp::update(){
 	
 	
-	vidGrabber.grabFrame();
+	vidGrabber.update();
 	
 }
 
