@@ -49,6 +49,10 @@ void testApp::keyPressed  (int key){
 	// use alt-tab to navigate to the settings
 	// window. we are working on a fix for this...
 	
+	// Video settings no longer works in 10.7
+	// You'll need to compile with the 10.6 SDK for this
+    // For Xcode 4.4 and greater, see this forum post on instructions on installing the SDK
+    // http://forum.openframeworks.cc/index.php?topic=10343        
 	if (key == 's' || key == 'S'){
 		vidGrabber.videoSettings();
 	}
