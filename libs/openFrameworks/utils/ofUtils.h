@@ -14,7 +14,7 @@ int 	ofNextPow2(int input);
 
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
-int		ofGetElapsedTimeMillis();
+unsigned long ofGetElapsedTimeMillis();
 unsigned long ofGetElapsedTimeMicros();
 int 	ofGetFrameNum();
 

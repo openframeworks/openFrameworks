@@ -136,7 +136,7 @@ public:
     ofVec4f limited(float max) const;
 	
     // squareLength
-    float lengthSquared() const;
+    OF_DEPRECATED_MSG("Use ofVec4f::squareLength() instead.", float lengthSquared() const);
 	
     // use squareDistance
     float  distanceSquared( const ofVec4f& pnt ) const;

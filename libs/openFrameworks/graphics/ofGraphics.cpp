@@ -839,10 +839,15 @@ void ofVertex(ofPoint & p){
 }
 
 //----------------------------------------------------------
-void ofVertexes( const vector <ofPoint> & polyPoints ){
+void ofVertices( const vector <ofPoint> & polyPoints ){
 	for( int k = 0; k < (int)polyPoints.size(); k++){
 		shape.lineTo(polyPoints[k]);
 	}
+}
+
+//----------------------------------------------------------
+void ofVertexes( const vector <ofPoint> & polyPoints ){
+	ofVertices(polyPoints);
 }
 
 //---------------------------------------------------
@@ -851,10 +856,15 @@ void ofCurveVertex(float x, float y){
 }
 
 //----------------------------------------------------------
-void ofCurveVertexes( const vector <ofPoint> & curvePoints){
+void ofCurveVertices( const vector <ofPoint> & curvePoints){
 	for( int k = 0; k < (int)curvePoints.size(); k++){
 		shape.curveTo(curvePoints[k]);
 	}
+}
+
+//----------------------------------------------------------
+void ofCurveVertexes( const vector <ofPoint> & curvePoints){
+	ofCurveVertices(curvePoints);
 }
 
 //---------------------------------------------------

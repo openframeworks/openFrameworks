@@ -4,18 +4,6 @@
 
 //------------------------------------------------------------
 ofxAndroidSoundPlayer::ofxAndroidSoundPlayer(){
-	javaSoundPlayer = NULL;
-
-}
-
-//------------------------------------------------------------
-ofxAndroidSoundPlayer::~ofxAndroidSoundPlayer(){
-
-}
-
-
-//------------------------------------------------------------
-void ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
 		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
@@ -29,32 +17,48 @@ void ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 		return;
 	}
 
-	if(!javaSoundPlayer){
 
-		jmethodID constructor = env->GetMethodID(javaClass,"<init>","()V");
-		if(!constructor){
-			ofLog(OF_LOG_ERROR,"Failed to get the java constructor for SoundPlayer");
-			return;
-		}
-
-		javaSoundPlayer = env->NewObject(javaClass,constructor);
-		if(!javaSoundPlayer){
-			ofLog(OF_LOG_ERROR,"Failed to create java SoundPlayer");
-			return;
-		}
-
-		javaSoundPlayer = (jobject)env->NewGlobalRef(javaSoundPlayer);
+	jmethodID constructor = env->GetMethodID(javaClass,"<init>","()V");
+	if(!constructor){
+		ofLog(OF_LOG_ERROR,"Failed to get the java constructor for SoundPlayer");
+		return;
 	}
 
+	javaSoundPlayer = env->NewObject(javaClass,constructor);
+	if(!javaSoundPlayer){
+		ofLog(OF_LOG_ERROR,"Failed to create java SoundPlayer");
+		return;
+	}
+
+	javaSoundPlayer = (jobject)env->NewGlobalRef(javaSoundPlayer);
+}
+
+//------------------------------------------------------------
+ofxAndroidSoundPlayer::~ofxAndroidSoundPlayer(){
+	JNIEnv *env = ofGetJNIEnv();
+	if(javaSoundPlayer) env->DeleteGlobalRef(javaSoundPlayer);
+	if(javaClass) env->DeleteGlobalRef(javaClass);
+}
+
+
+//------------------------------------------------------------
+bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
+	if(!javaSoundPlayer){
+		ofLogError() << "cannot load sound, java soundPlayer object not created";
+		return false;
+	}
+
+	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaLoadMethod = env->GetMethodID(javaClass,"loadSound","(Ljava/lang/String;Z)V");
 	if(!javaLoadMethod){
 		ofLog(OF_LOG_ERROR,"Failed to get the java loadSound for SoundPlayer");
-		return;
+		return false;
 	}
 
 	jstring javaFileName = ofGetJNIEnv()->NewStringUTF(ofToDataPath(fileName,true).c_str());
 	env->CallVoidMethod(javaSoundPlayer,javaLoadMethod,javaFileName,stream);
 	env->DeleteLocalRef((jobject)javaFileName);
+	return true;
 }
 
 //------------------------------------------------------------

@@ -88,6 +88,8 @@ public:
 	void setChannel(int channel, const ofPixels_<PixelType> channelPixels);
 
 	ofImageType getImageType() const;
+	void setImageType(ofImageType imageType);
+	void setNumChannels(int numChannels);
 
 	int size() const;
 
