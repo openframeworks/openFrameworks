@@ -5,7 +5,7 @@
 // This example shows how to use the OS X platform specific ofQTKitPlayer on its own
 // without the cross platform ofVideoPlayer wrapper
 // Apps you write in this way won't be cross platform,
-// but can be speedier for HD size video and interactive scrubbing
+// but can be speedier for HD videos 
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -15,29 +15,29 @@ void testApp::setup(){
 
 	//# 1 Videos with alpha ---------------------------
 	// support alpha channel, but the pixel format must be enabled prior to loading!
-	// Turning and alpha will increase performance if it's not needed
+	// Turning off alpha will increase performance if it's not needed
 	fingerMovie.setPixelFormat(OF_PIXELS_RGBA);
 
 
 	//# 2 Decode Modes. ---------------------------
 	// If you don't need access to pixels and aren't using the ofQTKitPlayer inside of an ofVideoPlayer
-	// You can use QTKit's internal texture management system which is considerbly faster.
+	// You can use QTKit's internal texture management system which is streamlined.
 
-	//fastest, but no pixel access allowed
+	//Texture only is fastest, but no pixel access allowed
 	//ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_TEXTURE_ONLY;
 
-	//still faster than PIXEL_ONLY and manual upload, and pixels and texture area vailable
+	//pixels and texture together is faster than PIXEL_ONLY and manually upload textures.
 	ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
 	
     fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
 
 
 	//# 3 Synchronous scrubbing ---------------------------
-	// In many cases you want to be certain a call to movie.setFrame(x) and then a call to movie.update() will result in certainty
-	// that immediate calls to movie.getPixels() or movie.draw() will contain frame x. This however is very slow to guarentuee,
-	// and QTKit naturally wants to update on it's own time, one or two frames later.
+	// In many cases you want to be certain a call to movie.setFrame(x) and then a call to movie.update() will result in
+	// immediate calls to movie.getPixels() or movie.draw() containing frame x. This is slow to guarentuee,
+	// and QTKit naturally wants to update on its own time, a few moments later.
 	// If you are working in a way where this small delay is acceptable, then disabling synchronous scrubbing will
-	// speed things up considerably
+	// speed things up
 	// Note that this can be turned on and off freely without having to reload the video
 	fingerMovie.setSynchronousScrubbing(false);
 
