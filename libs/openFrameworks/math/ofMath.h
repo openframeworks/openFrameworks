@@ -96,7 +96,8 @@ Type ofCosineInterpolate(Type y1, Type y2, float pct){
 //--------------------------------------------------
 template<typename Type>
 Type ofCubicInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
-	float a0,a1,a2,a3,pct2;
+	Type a0,a1,a2,a3;
+	float pct2;
 
 	pct2 = pct*pct;
 	a0 = y3 - y2 - y0 + y1;
@@ -111,9 +112,8 @@ Type ofCubicInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 //--------------------------------------------------
 template<typename Type>
 Type ofCatmullRomInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
-	float a0,a1,a2,a3,pct2;
-
-	pct2 = pct*pct;
+	Type a0,a1,a2,a3;
+	float pct2 = pct*pct;
 	a0 = -0.5*y0 + 1.5*y1 - 1.5*y2 + 0.5*y3;
 	a1 = y0 - 2.5*y1 + 2*y2 - 0.5*y3;
 	a2 = -0.5*y0 + 0.5*y2;
@@ -126,33 +126,42 @@ Type ofCatmullRomInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 // laurent de soras
 //--------------------------------------------------
 template<typename Type>
-Type ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
-	const float c = (y2 - y0) * 0.5f;
-	const float v = y1 - y2;
-	const float w = c + v;
-	const float a = w + v + (y3 - y1) * 0.5f;
-	const float b_neg = w + a;
+inline Type ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
+	float pct2 = pct*pct;
+	float pct3 = pct2*pct;
 
-	return ((((a * pct) - b_neg) * pct + c) * pct + y1);
+	return 0.5f * ( ( 2.0f * y1 ) +
+	( -y0 + y2 ) * pct +
+	( 2.0f * y0 - 5.0f * y1 + 4 * y2 - y3 ) * pct2 +
+	( -y0 + 3.0f * y1 - 3.0f * y2 + y3 ) * pct3 );
+
+	/*const Type c = (y2 - y0) * 0.5f;
+	const Type v = y1 - y2;
+	const Type w = c + v;
+	const Type a = w + v + (y3 - y1) * 0.5f;
+	const Type b_neg = w + a;
+
+	return ((((a * pct) - b_neg) * pct + c) * pct + y1);*/
 }
 
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
 Type ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias){
-	float m0,m1,mu2,mu3;
-	float a0,a1,a2,a3;
+	float pct2,pct3;
+	Type m0,m1;
+	Type a0,a1,a2,a3;
 
-	mu2 = pct * pct;
-	mu3 = mu2 * pct;
+	pct2 = pct * pct;
+	pct3 = pct2 * pct;
 	m0  = (y1-y0)*(1+bias)*(1-tension)/2;
 	m0 += (y2-y1)*(1-bias)*(1-tension)/2;
 	m1  = (y2-y1)*(1+bias)*(1-tension)/2;
 	m1 += (y3-y2)*(1-bias)*(1-tension)/2;
-	a0 =  2*mu3 - 3*mu2 + 1;
-	a1 =    mu3 - 2*mu2 + pct;
-	a2 =    mu3 -   mu2;
-	a3 = -2*mu3 + 3*mu2;
+	a0 =  Type(2*pct3 - 3*pct2 + 1);
+	a1 =  Type(pct3 - 2*pct2 + pct);
+	a2 =  Type(pct3 -   pct2);
+	a3 =  Type(-2*pct3 + 3*pct2);
 
    return(a0*y1+a1*m0+a2*m1+a3*y2);
 }
