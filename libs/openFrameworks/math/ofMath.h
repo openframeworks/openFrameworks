@@ -105,7 +105,7 @@ Type ofCubicInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 	a2 = y2 - y0;
 	a3 = y1;
 
-	return(a0*pct*pct2+a1*pct+a2*pct+a3);
+	return(a0*pct*pct2+a1*pct2+a2*pct+a3);
 }
 
 // from http://paulbourke.net/miscellaneous/interpolation/
@@ -118,8 +118,7 @@ Type ofCatmullRomInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 	a1 = y0 - 2.5*y1 + 2*y2 - 0.5*y3;
 	a2 = -0.5*y0 + 0.5*y2;
 	a3 = y1;
-
-	return(a0*pct*pct2+a1*pct+a2*pct+a3);
+	return(a0*pct*pct2 + a1*pct2 + a2*pct +a3);
 }
 
 // from http://musicdsp.org/showArchiveComment.php?ArchiveID=93
@@ -127,21 +126,13 @@ Type ofCatmullRomInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 //--------------------------------------------------
 template<typename Type>
 inline Type ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
-	float pct2 = pct*pct;
-	float pct3 = pct2*pct;
-
-	return 0.5f * ( ( 2.0f * y1 ) +
-	( -y0 + y2 ) * pct +
-	( 2.0f * y0 - 5.0f * y1 + 4 * y2 - y3 ) * pct2 +
-	( -y0 + 3.0f * y1 - 3.0f * y2 + y3 ) * pct3 );
-
-	/*const Type c = (y2 - y0) * 0.5f;
+	const Type c = (y2 - y0) * 0.5f;
 	const Type v = y1 - y2;
 	const Type w = c + v;
 	const Type a = w + v + (y3 - y1) * 0.5f;
 	const Type b_neg = w + a;
 
-	return ((((a * pct) - b_neg) * pct + c) * pct + y1);*/
+	return ((((a * pct) - b_neg) * pct + c) * pct + y1);
 }
 
 // from http://paulbourke.net/miscellaneous/interpolation/
