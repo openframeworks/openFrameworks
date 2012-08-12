@@ -463,11 +463,13 @@ void ofxiPhoneScreenGrab(id delegate) {
 	
 	//fix from: http://forum.openframeworks.cc/index.php/topic,6092.15.html
 	//TODO: look and see if we need to take rotation into account 
-	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] == YES){
-		float f_scale = [[UIScreen mainScreen] scale];
-		rect.size.width *= f_scale;
-		rect.size.height *= f_scale;
-	}
+    if(ofxiPhoneGetOFWindow()->isRetinaSupported()) {
+        if([[UIScreen mainScreen] respondsToSelector:@selector(scale)] == YES){
+            float f_scale = [[UIScreen mainScreen] scale];
+            rect.size.width *= f_scale;
+            rect.size.height *= f_scale;
+        }
+    }
 
 	int width  = rect.size.width;
 	int height = rect.size.height;	
