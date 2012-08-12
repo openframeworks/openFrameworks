@@ -157,7 +157,7 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		initGTK();
-		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, errorMessage.c_str());
+		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", errorMessage.c_str());
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		startGTK(dialog);
 	#endif

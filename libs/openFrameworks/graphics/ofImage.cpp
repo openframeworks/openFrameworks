@@ -221,7 +221,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
-	int width, height, bpp;
 	bool bLoaded = false;
 	FIBITMAP* bmp = NULL;
 	FIMEMORY* hmem = NULL;
@@ -252,8 +251,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
-	} else {
-		width = height = bpp = 0;
 	}
 
 	if (bmp != NULL){
@@ -906,7 +903,6 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
-    int sw = ofGetViewportWidth();
     int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
     
 	if (!((width == _w) && (height == _h))){
@@ -938,6 +934,7 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	
     #else
     
+    int sw = ofGetViewportWidth();
     int numPixels   = width*height;
     if( numPixels == 0 ){
         ofLog(OF_LOG_ERROR, "grabScreen width or height is 0 - returning");
@@ -1176,6 +1173,7 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 			break;
 		default:
 			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
+			break;
 	}
 	
 	putBmpIntoPixels(convertedBmp, pix, false);
