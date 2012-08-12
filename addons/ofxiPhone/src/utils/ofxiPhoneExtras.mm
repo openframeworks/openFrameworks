@@ -413,6 +413,11 @@ string ofxiPhoneGetDocumentsDirectory()
 	return ofxNSStringToString([paths objectAtIndex:0]) + "/";
 }
 
+//--------------------------------------------------------------
+
+void ofxiPhoneLaunchBrowser(string url) {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
+}
 
 /******************** ofxiPhoneScreenGrab *********************/
 
