@@ -1122,7 +1122,7 @@ void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofC
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
 	vector<string> lines = ofSplitString(text, "\n");
 	int textLength = 0;
-	for(int i = 0; i < lines.size(); i++) {
+	for(unsigned int i = 0; i < lines.size(); i++) {
 		// tabs are not rendered
 		int tabs = count(lines[i].begin(), lines[i].end(), '\t');
 		int curLength = lines[i].length() - tabs;

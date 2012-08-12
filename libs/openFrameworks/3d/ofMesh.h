@@ -25,44 +25,44 @@ public:
 
 	void setupIndicesAuto();
 	
-	ofVec3f getVertex(int i) const;
+	ofVec3f getVertex(ofIndexType i) const;
 	void addVertex(const ofVec3f& v);
 	void addVertices(const vector<ofVec3f>& verts);
 	void addVertices(const ofVec3f* verts, int amt);
-	void removeVertex(int index);
-	void setVertex(int index, const ofVec3f& v);
+	void removeVertex(ofIndexType index);
+	void setVertex(ofIndexType index, const ofVec3f& v);
 	void clearVertices();
 	
-	ofVec3f getNormal(int i) const;
+	ofVec3f getNormal(ofIndexType i) const;
 	void addNormal(const ofVec3f& n);
 	void addNormals(const vector<ofVec3f>& norms);
 	void addNormals(const ofVec3f* norms, int amt);
-	void removeNormal(int index);
-	void setNormal(int index, const ofVec3f& n);
+	void removeNormal(ofIndexType index);
+	void setNormal(ofIndexType index, const ofVec3f& n);
 	void clearNormals();
 	
-	ofFloatColor getColor(int i) const;
+	ofFloatColor getColor(ofIndexType i) const;
 	void addColor(const ofFloatColor& c);
 	void addColors(const vector<ofFloatColor>& cols);
 	void addColors(const ofFloatColor* cols, int amt);
-	void removeColor(int index);
-	void setColor(int index, const ofFloatColor& c);
+	void removeColor(ofIndexType index);
+	void setColor(ofIndexType index, const ofFloatColor& c);
 	void clearColors();
 	
-	ofVec2f getTexCoord(int i) const;
+	ofVec2f getTexCoord(ofIndexType i) const;
 	void addTexCoord(const ofVec2f& t);
 	void addTexCoords(const vector<ofVec2f>& tCoords);
 	void addTexCoords(const ofVec2f* tCoords, int amt);
-	void removeTexCoord(int index);
-	void setTexCoord(int index, const ofVec2f& t);
+	void removeTexCoord(ofIndexType index);
+	void setTexCoord(ofIndexType index, const ofVec2f& t);
 	void clearTexCoords();
 	
-	ofIndexType getIndex(int i) const;
+	ofIndexType getIndex(ofIndexType i) const;
 	void addIndex(ofIndexType i);
 	void addIndices(const vector<ofIndexType>& inds);
 	void addIndices(const ofIndexType* inds, int amt);
-	void removeIndex(int i);
-	void setIndex(int i, ofIndexType val);
+	void removeIndex(ofIndexType index);
+	void setIndex(ofIndexType index, ofIndexType val);
 	void clearIndices();
 	
     void addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3);
