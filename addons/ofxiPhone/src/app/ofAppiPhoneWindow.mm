@@ -58,10 +58,13 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	bEnableSetupScreen = true;
     
     orientation = OF_ORIENTATION_DEFAULT;
-	
-	depthEnabled=false;
-	antiAliasingEnabled=false;
-	retinaEnabled=false;
+
+	bRetinaEnabled = false;
+    bRetinaSupportedOnDevice = false;
+    bRetinaSupportedOnDeviceChecked = false;
+	bDepthEnabled = false;
+	bAntiAliasingEnabled = false;
+    antiAliasingSamples = 0;
 }
 
 /******** Initialization methods ************/
@@ -247,42 +250,85 @@ void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
 	}
 }
 
-void ofAppiPhoneWindow::enableRetinaSupport()
-{
-	retinaEnabled = true;
+//-------------------------------------------------------- retina.
+bool ofAppiPhoneWindow::enableRetina() {
+    if(isRetinaSupportedOnDevice()) {
+        bRetinaEnabled = true;
+    }
+    return bRetinaEnabled;
 }
 
-void ofAppiPhoneWindow::enableDepthBuffer()
-{
-	depthEnabled = true;
+bool ofAppiPhoneWindow::disableRetina() {
+    return (bRetinaEnabled = false);
 }
 
-void ofAppiPhoneWindow::enableAntiAliasing(int samples)
-{
-	antiAliasingEnabled = true;
+bool ofAppiPhoneWindow::isRetinaEnabled() {
+    return bRetinaEnabled;
+}
+
+bool ofAppiPhoneWindow::isRetinaSupportedOnDevice() {
+    if(bRetinaSupportedOnDeviceChecked) {
+        return bRetinaSupportedOnDevice;
+    }
+    
+    bRetinaSupportedOnDeviceChecked = true;
+    
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    if([[UIScreen mainScreen] respondsToSelector:@selector(scale)]){
+        if ([[UIScreen mainScreen] scale] > 1){
+            bRetinaSupportedOnDevice = true;
+        }
+    }
+    [pool release];
+    
+    return bRetinaSupportedOnDevice;
+}
+
+//-------------------------------------------------------- depth buffer.
+bool ofAppiPhoneWindow::enableDepthBuffer() {
+    return (bDepthEnabled = true);
+}
+
+bool ofAppiPhoneWindow::disableDepthBuffer() {
+    return (bDepthEnabled = false);
+}
+
+bool ofAppiPhoneWindow::isDepthBufferEnabled() {
+    return bDepthEnabled;
+}
+
+//-------------------------------------------------------- anti aliasing.
+bool ofAppiPhoneWindow::enableAntiAliasing(int samples) {
 	antiAliasingSamples = samples;
+    return (bAntiAliasingEnabled = true);
 }
 
-bool ofAppiPhoneWindow::isDepthEnabled()
-{
-	return depthEnabled;
+bool ofAppiPhoneWindow::disableAntiAliasing() {
+    return (bAntiAliasingEnabled = false);
 }
 
-bool ofAppiPhoneWindow::isAntiAliasingEnabled()
-{
-	return antiAliasingEnabled;
+bool ofAppiPhoneWindow::isAntiAliasingEnabled() {
+    return bAntiAliasingEnabled;
 }
 
-int ofAppiPhoneWindow::getAntiAliasingSampleCount()
-{
-	return antiAliasingSamples;
+int	ofAppiPhoneWindow::getAntiAliasingSampleCount() {
+    return antiAliasingSamples;
 }
 
-bool ofAppiPhoneWindow::isRetinaSupported()
-{
-	return retinaEnabled;
+//-------------------------------------------------------- deprecated.
+void ofAppiPhoneWindow::enableRetinaSupport() {
+	enableRetina();
 }
 
+bool ofAppiPhoneWindow::isRetinaSupported() {
+	return isRetinaEnabled();
+}
+
+bool ofAppiPhoneWindow::isDepthEnabled() {
+	return isDepthBufferEnabled();
+}
+
+//-------------------------------------------------------- timer loop.
 void ofAppiPhoneWindow::timerLoop() {
     // all the timerLoop logic has been moved into [ofxiOSEAGLView drawView]
 }
