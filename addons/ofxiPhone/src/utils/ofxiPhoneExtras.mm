@@ -434,8 +434,10 @@ void ofxiPhoneLaunchBrowser(string url) {
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
 	ofLog(OF_LOG_VERBOSE, "Save finished");
-	[image release];		// release image
-	if( [delegate respondsToSelector: @selector(saveComplete)]) [delegate performSelector:@selector(saveComplete)];
+
+	if([delegate respondsToSelector: @selector(saveComplete)]) {
+        [delegate performSelector:@selector(saveComplete)];
+    }
 	
 	[self release];
 }
@@ -461,11 +463,13 @@ void ofxiPhoneScreenGrab(id delegate) {
 	
 	//fix from: http://forum.openframeworks.cc/index.php/topic,6092.15.html
 	//TODO: look and see if we need to take rotation into account 
-	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] == YES){
-		float f_scale = [[UIScreen mainScreen] scale];
-		rect.size.width *= f_scale;
-		rect.size.height *= f_scale;
-	}
+    if(ofxiPhoneGetOFWindow()->isRetinaSupported()) {
+        if([[UIScreen mainScreen] respondsToSelector:@selector(scale)] == YES){
+            float f_scale = [[UIScreen mainScreen] scale];
+            rect.size.width *= f_scale;
+            rect.size.height *= f_scale;
+        }
+    }
 
 	int width  = rect.size.width;
 	int height = rect.size.height;	
@@ -487,13 +491,16 @@ void ofxiPhoneScreenGrab(id delegate) {
 	
 	CGColorSpaceRelease(colorSpaceRef);
 	CGDataProviderRelease(provider);
-	
-	UIImage *image = [[UIImage alloc] initWithCGImage:imageRef];
-	CGImageRelease(imageRef);
-	
+    
+    UIImage * image = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    
+    NSData * imageData = UIImagePNGRepresentation(image);
+    UIImage * imageLossless = [UIImage imageWithData:imageData];
+    
 	SaveDelegate *saveDelegate = [SaveDelegate new];
 	saveDelegate.delegate = delegate;
-	UIImageWriteToSavedPhotosAlbum(image, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+	UIImageWriteToSavedPhotosAlbum(imageLossless, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 
 
