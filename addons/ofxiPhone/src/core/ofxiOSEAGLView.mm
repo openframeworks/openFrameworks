@@ -35,10 +35,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
     self = [self initWithFrame:frame 
-                      andDepth:ofAppiPhoneWindow::getInstance()->isDepthEnabled()
+                      andDepth:ofAppiPhoneWindow::getInstance()->isDepthBufferEnabled()
                          andAA:ofAppiPhoneWindow::getInstance()->isAntiAliasingEnabled()
                  andNumSamples:ofAppiPhoneWindow::getInstance()->getAntiAliasingSampleCount()
-                     andRetina:ofAppiPhoneWindow::getInstance()->isRetinaSupported()];
+                     andRetina:ofAppiPhoneWindow::getInstance()->isRetinaEnabled()];
     
     if(self) {
         
