@@ -434,8 +434,10 @@ void ofxiPhoneLaunchBrowser(string url) {
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
 	ofLog(OF_LOG_VERBOSE, "Save finished");
-	[image release];		// release image
-	if( [delegate respondsToSelector: @selector(saveComplete)]) [delegate performSelector:@selector(saveComplete)];
+
+	if([delegate respondsToSelector: @selector(saveComplete)]) {
+        [delegate performSelector:@selector(saveComplete)];
+    }
 	
 	[self release];
 }
@@ -487,13 +489,16 @@ void ofxiPhoneScreenGrab(id delegate) {
 	
 	CGColorSpaceRelease(colorSpaceRef);
 	CGDataProviderRelease(provider);
-	
-	UIImage *image = [[UIImage alloc] initWithCGImage:imageRef];
-	CGImageRelease(imageRef);
-	
+    
+    UIImage * image = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    
+    NSData * imageData = UIImagePNGRepresentation(image);
+    UIImage * imageLossless = [UIImage imageWithData:imageData];
+    
 	SaveDelegate *saveDelegate = [SaveDelegate new];
 	saveDelegate.delegate = delegate;
-	UIImageWriteToSavedPhotosAlbum(image, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+	UIImageWriteToSavedPhotosAlbum(imageLossless, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 
 
