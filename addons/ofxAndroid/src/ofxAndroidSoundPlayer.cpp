@@ -42,22 +42,23 @@ ofxAndroidSoundPlayer::~ofxAndroidSoundPlayer(){
 
 
 //------------------------------------------------------------
-void ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
+bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 	if(!javaSoundPlayer){
 		ofLogError() << "cannot load sound, java soundPlayer object not created";
-		return;
+		return false;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaLoadMethod = env->GetMethodID(javaClass,"loadSound","(Ljava/lang/String;Z)V");
 	if(!javaLoadMethod){
 		ofLog(OF_LOG_ERROR,"Failed to get the java loadSound for SoundPlayer");
-		return;
+		return false;
 	}
 
 	jstring javaFileName = ofGetJNIEnv()->NewStringUTF(ofToDataPath(fileName,true).c_str());
 	env->CallVoidMethod(javaSoundPlayer,javaLoadMethod,javaFileName,stream);
 	env->DeleteLocalRef((jobject)javaFileName);
+	return true;
 }
 
 //------------------------------------------------------------
