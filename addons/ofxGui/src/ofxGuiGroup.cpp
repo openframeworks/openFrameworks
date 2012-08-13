@@ -3,10 +3,14 @@
 #include "ofxSliderGroup.h"
 
 ofxGuiGroup::ofxGuiGroup(string collectionName, string filename, float x, float y){
+	minimized = false;
+	parent = NULL;
     setup(collectionName, filename, x, y);
 }
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, string filename, float x, float y){
+	minimized = false;
+	parent = NULL;
     setup(parameters, filename, x, y);
 }
 
@@ -18,6 +22,7 @@ ofxGuiGroup * ofxGuiGroup::setup(string collectionName, string filename, float x
 	header = defaultHeight;
 	spacing  = 1;
 	b.width = defaultWidth;
+	b.height = spacing;
     this->clear();
 	this->filename = filename;
     
@@ -33,11 +38,48 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	header = defaultHeight;
 	spacing  = 1;
 	b.width = defaultWidth;
+	b.height = spacing;
     clear();
 	filename = _filename;
     
-    add(_parameters);
-    
+	for(int i=0;i<_parameters.size();i++){
+		string type = _parameters.getType(i);
+		if(type==typeid(ofParameter<int>).name()){
+			ofParameter<int> p = _parameters.getInt(i);
+			add(p);
+		}else if(type==typeid(ofParameter<float>).name()){
+			ofParameter<float> p = _parameters.getFloat(i);
+			add(p);
+		}else if(type==typeid(ofParameter<bool>).name()){
+			ofParameter<bool> p = _parameters.getBool(i);
+			add(p);
+		}else if(type==typeid(ofParameter<ofVec2f>).name()){
+			ofParameter<ofVec2f> p = _parameters.getVec2f(i);
+			add(p);
+		}else if(type==typeid(ofParameter<ofVec3f>).name()){
+			ofParameter<ofVec3f> p = _parameters.getVec3f(i);
+			add(p);
+		}else if(type==typeid(ofParameter<ofVec4f>).name()){
+			ofParameter<ofVec4f> p = _parameters.getVec4f(i);
+			add(p);
+		}else if(type==typeid(ofParameter<ofColor>).name()){
+			ofParameter<ofColor> p = _parameters.getColor(i);
+			add(p);
+		}else if(type==typeid(ofParameter<ofShortColor>).name()){
+			ofParameter<ofShortColor> p = _parameters.getShortColor(i);
+			add(p);
+		}else if(type==typeid(ofParameter<ofFloatColor>).name()){
+			ofParameter<ofFloatColor> p = _parameters.getFloatColor(i);
+			add(p);
+		}else if(type==typeid(ofParameterGroup).name()){
+			ofParameterGroup p = _parameters.getGroup(i);
+			ofxGuiGroup * panel = new ofxGuiGroup(p);
+			add(panel);
+		}else{
+			ofLogError() << "ofxBaseGroup; can't add control of type " << type;
+		}
+	}
+
 	ofRegisterMouseEvents(this);
     
 	return this;
@@ -56,50 +98,16 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	ofxPanel * subpanel = dynamic_cast<ofxPanel*>(element);
 	if(subpanel!=NULL){
 		subpanel->filename = filename;
+		subpanel->parent = this;
 	}
     
 	parameters.add(element->getParameter());
 }
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
-    for(int i=0;i<parameters.size();i++){
-		string type = parameters.getType(i);
-		if(type==typeid(ofParameter<int>).name()){
-			ofParameter<int> p = parameters.getInt(i);
-			add(p);
-		}else if(type==typeid(ofParameter<float>).name()){
-			ofParameter<float> p = parameters.getFloat(i);
-			add(p);
-		}else if(type==typeid(ofParameter<bool>).name()){
-			ofParameter<bool> p = parameters.getBool(i);
-			add(p);
-		}else if(type==typeid(ofParameter<ofVec2f>).name()){
-            ofParameter<ofVec2f> p = parameters.getVec2f(i);
-            add(p);
-        }else if(type==typeid(ofParameter<ofVec3f>).name()){
-            ofParameter<ofVec3f> p = parameters.getVec3f(i);
-            add(p);
-        }else if(type==typeid(ofParameter<ofVec4f>).name()){
-            ofParameter<ofVec4f> p = parameters.getVec4f(i);
-            add(p);
-        }else if(type==typeid(ofParameter<ofColor>).name()){
-            ofParameter<ofColor> p = parameters.getColor(i);
-            add(p);
-        }else if(type==typeid(ofParameter<ofShortColor>).name()){
-            ofParameter<ofShortColor> p = parameters.getShortColor(i);
-            add(p);
-        }else if(type==typeid(ofParameter<ofFloatColor>).name()){
-            ofParameter<ofFloatColor> p = parameters.getFloatColor(i);
-            add(p);
-        }else if(type==typeid(ofParameterGroup).name()){
-			ofParameterGroup p = parameters.getGroup(i);
-			ofxPanel * panel = new ofxPanel(p);
-			add(panel);
-		}else{
-			ofLogError() << "ofxBaseGroup; can't add control of type " << type;
-		}
-	}
-
+	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
+	panel->parent = this;
+	add(panel);
 }
 
 void ofxGuiGroup::add(ofParameter<float> & parameter){
@@ -200,9 +208,16 @@ void ofxGuiGroup::draw(){
     
 	ofSetColor(textColor);
 	ofDrawBitmapString(name, textPadding, header / 2 + 4);
+	if(minimized){
+		ofDrawBitmapString("+", b.width-textPadding-8, header / 2 + 4);
+	}else{
+		ofDrawBitmapString("-", b.width-textPadding-8, header / 2 + 4);
+	}
     
-	for(int i = 0; i < (int)collection.size(); i++){
-		collection[i]->draw();
+	if(!minimized){
+		for(int i = 0; i < (int)collection.size(); i++){
+			collection[i]->draw();
+		}
 	}
     
 	ofPopMatrix();
@@ -245,17 +260,40 @@ ofxBaseGui * ofxGuiGroup::getControl(string name){
 void ofxGuiGroup::registerMouseEvents(){
     ofRegisterMouseEvents(this);
 }
+
 void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
     
 	if( ofGetFrameNum() - currentFrame > 1 ){
 		bGuiActive = false;
 		return;
 	}
-    
+
+	ofRectangle minButton(b.x+b.width-textPadding-10,b.y,10,header);
+	if(minButton.inside(mx,my)){
+		minimized = !minimized;
+		if(minimized){
+			b.height = header + spacing;
+		}else{
+			for(int i=0;i<collection.size();i++){
+				b.height += collection[i]->getHeight() + spacing;
+			}
+		}
+		if(parent) parent->sizeChangedCB();
+	}
+
 	if( bCheck ){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
         }
+	}
+
+}
+
+void ofxGuiGroup::sizeChangedCB(){
+	float y = header + spacing;
+	for(int i=0;i<collection.size();i++){
+		collection[i]->setPosition(collection[i]->getPosition().x,y);
+		y += collection[i]->getHeight();
 	}
 }
 

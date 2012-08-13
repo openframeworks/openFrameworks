@@ -48,6 +48,7 @@ protected:
 	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
     void registerMouseEvents();
     virtual void setValue(float mx, float my, bool bCheck);
+    void sizeChangedCB();
     
 	float spacing;
 	float header;
@@ -59,6 +60,9 @@ protected:
 	ofParameterGroup parameters;
 	
 	string filename;
+	bool minimized;
+
+	ofxGuiGroup * parent;
 };
 
 template<class ControlType>
