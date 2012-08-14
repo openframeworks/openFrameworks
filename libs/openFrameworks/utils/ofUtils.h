@@ -132,6 +132,7 @@ string ofHexToString(const string& stringHexString);
 int ofToInt(const string& intString);
 char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
+double ofToDouble(const string& doubleString);
 bool ofToBool(const string& boolString);
 
 template <class T>
