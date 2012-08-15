@@ -227,6 +227,7 @@ void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	//run the main loop
 	while(true){
+		//glfwWaitEvents();
 		glfwPollEvents();
 		update();
 		draw();

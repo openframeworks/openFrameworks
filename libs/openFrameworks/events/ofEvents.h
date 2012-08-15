@@ -43,7 +43,7 @@ class ofDragInfo{
 
 		class ofEventArgs{};
 
-		class ofWindowEventArgs{
+		class ofWindowEventArgs: public ofEventArgs{
 		public:
 			ofWindow* window;
 		};

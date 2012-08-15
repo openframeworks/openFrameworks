@@ -15,7 +15,8 @@ void testApp::setup(){
 	*/
 	 
 	textPos.set(ofGetWidth()*.5, ofGetHeight()*.5);	
-	 
+	
+	ofSetVerticalSync(true);
 }
 
 //--------------------------------------------------------------
