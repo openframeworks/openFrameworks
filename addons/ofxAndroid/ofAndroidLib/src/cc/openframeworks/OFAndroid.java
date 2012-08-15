@@ -50,6 +50,38 @@ import android.widget.Toast;
 
 public class OFAndroid {
 	
+	// List based on http://bit.ly/NpkL4Q
+	private final String[] mExternalStorageDirectories = new String[] { 
+			"/mnt/sdcard-ext", 
+			"/mnt/sdcard/external_sd", 
+			"/sdcard/sd", 
+			"/mnt/external_sd", 
+			"/emmc",  
+			"/mnt/sdcard/bpemmctest", 
+			"/mnt/sdcard/_ExternalSD",  
+			"/mnt/Removable/MicroSD", 
+			"/Removable/MicroSD" };
+	
+	private String getRealExternalStorageDirectory()
+	{				
+		// Standard way to get the external storage directory
+		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+		
+		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
+		for(int i = 0; i < mExternalStorageDirectories.length; i++)
+		{
+			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);	
+			File SDCardDir = new File(mExternalStorageDirectories[i]);		
+	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {				
+	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
+				break;
+	    	}	    	
+		}
+		
+		Log.i("OF", "Using storage location: " + externalPath);
+		return externalPath;		
+	}
+	
 	public OFAndroid(String packageName, Activity ofActivity){
 		ofActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
@@ -84,7 +116,8 @@ public class OFAndroid {
 
 	        dataPath="";
     		try{
-    			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    			//dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    			dataPath = getRealExternalStorageDirectory();
     			dataPath += "/"+packageName;
     			Log.i("OF","creating app directory: " + dataPath);
 				try{
