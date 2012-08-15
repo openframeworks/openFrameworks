@@ -84,7 +84,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         //        % get the end time of the current frame  
         curTime = [_movie frameEndTime:curTime];
         numFrames++;
-        if (QTTimeCompare(curTime, endTime) == NSOrderedSame){
+//        NSLog(@" num frames %ld current time %f", numFrames, 1.0*curTime.timeValue/curTime.timeScale);
+        if (QTTimeCompare(curTime, endTime) == NSOrderedSame ||
+            QTTimeCompare(curTime, [_movie frameEndTime:curTime])  == NSOrderedSame ){ //this will happen for audio files since they have no frames.
             break;
         }
     }
@@ -388,21 +390,27 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		return;
 	}
 	
-	CVPixelBufferLockBaseAddress(_latestPixelFrame, 0);
-	unsigned char* pix = CVPixelBufferGetBaseAddress(_latestPixelFrame);
-	
-    
 	//NOTE:
 	//CoreVideo works on ARGB, and openFrameworks is RGBA so we need to swizzle the buffer 
 	//before we return it to an openFrameworks app.
 	//this is a bit tricky since CV pixel buffer's bytes per row are not always the same as movieWidth*4.  
 	//We have to use the BPR given by CV for the input buffer, and the movie size for the output buffer
 	int x,y, cvbpp, outbpp, cvbpr, outbpr, width, height;
-    //    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld ", 
-    //          CVPixelBufferGetWidth(_latestPixelFrame), 
-    //          CVPixelBufferGetHeight(_latestPixelFrame), 
-    //          CVPixelBufferGetBytesPerRow(_latestPixelFrame));
+//    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
+//          CVPixelBufferGetWidth(_latestPixelFrame), 
+//          CVPixelBufferGetHeight(_latestPixelFrame), 
+//          CVPixelBufferGetBytesPerRow(_latestPixelFrame),
+//          (NSInteger)movieSize.width, (NSInteger)movieSize.height);
+    if((NSInteger)movieSize.width != CVPixelBufferGetWidth(_latestPixelFrame) ||
+       (NSInteger)movieSize.height != CVPixelBufferGetHeight(_latestPixelFrame)){
+        NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. Ths is most likely caused by a non-square pixel video format such as HDV.",
+              CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
+        return;
+    }
     
+    CVPixelBufferLockBaseAddress(_latestPixelFrame, 0);
+	unsigned char* pix = CVPixelBufferGetBaseAddress(_latestPixelFrame);
+	//TODO replace with apple vImage framework
 	cvbpr = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
     cvbpp = cvbpr/CVPixelBufferGetWidth(_latestPixelFrame);
     outbpp = (allowAlpha ? 4 : 3);
@@ -475,11 +483,13 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (void) setVolume:(float) volume
 {
+    NSLog(@" set volume %f", volume);
 	[_movie setVolume:volume];
 }
 
 - (float) volume
 {
+    [_movie stop];
 	return [_movie volume];
 }
 
