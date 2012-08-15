@@ -97,7 +97,7 @@ bool ofQTKitPlayer::isPaused() {
 }
 
 void ofQTKitPlayer::stop() {
-	pause();
+	setPaused(true);
 }
 
 bool ofQTKitPlayer::isPlaying(){
@@ -111,8 +111,6 @@ void ofQTKitPlayer::firstFrame(){
     [moviePlayer gotoBeginning];
     
     [pool release];
-    
-
 }
 
 void ofQTKitPlayer::nextFrame(){
@@ -149,8 +147,10 @@ void ofQTKitPlayer::play(){
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
-	speed = 1.0;
-	[moviePlayer setRate:speed];
+    if(speed == 0.0){
+    	speed = 1.0; //default to full speed if something specific isn't set
+    }
+    [moviePlayer setRate:speed];
 	
 	[pool release];
 }
@@ -208,7 +208,11 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 		   [moviePlayer pixels:pixels.getPixels()];
 		   bHavePixelsChanged = false;
 	   }
-	}	   
+	}
+    else{
+        ofLogError("ofQTKitPlayer") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef";
+    }
+
 	return pixels;	   
 }
 
@@ -234,7 +238,7 @@ void ofQTKitPlayer::setPosition(float pct) {
 	[pool release];
 }
 
-void ofQTKitPlayer::setVolume(int volume) {
+void ofQTKitPlayer::setVolume(float volume) {
 	if(moviePlayer == NULL) return;
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
@@ -293,11 +297,11 @@ void ofQTKitPlayer::setLoopState(bool loops) {
 	[pool release];
 }
 
-void ofQTKitPlayer::setLoopState(int ofLoopState) {
-	if(ofLoopState == OF_LOOP_NONE){
+void ofQTKitPlayer::setLoopState(ofLoopType state) {
+	if(state == OF_LOOP_NONE){
 		setLoopState(false);
 	}
-	else if(ofLoopState == OF_LOOP_NORMAL){
+	else if(state == OF_LOOP_NORMAL){
 		setLoopState(true);
 	}
 	

@@ -58,10 +58,10 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 
 		void                setPaused(bool bPaused);
 		void                setPosition(float pct);
-		void                setVolume(int volume);
+		void                setVolume(float volume);
 		void                setBalance(float balance);
 		void                setLoopState(bool loops);
-		void                setLoopState(int ofLoopState);
+		void                setLoopState(ofLoopType state);
 		void                setSpeed(float speed);
 		void                setFrame(int frame); // frame 0 = first frame...
 		void                setPixelFormat(ofPixelFormat pixelFormat);
