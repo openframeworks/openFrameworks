@@ -51,7 +51,7 @@ import android.widget.Toast;
 public class OFAndroid {
 	
 	// List based on http://bit.ly/NpkL4Q
-	private final String[] mExternalStorageDirectories = new String[] { 
+	static public final String[] mExternalStorageDirectories = new String[] { 
 			"/mnt/sdcard-ext", 
 			"/mnt/sdcard/external_sd", 
 			"/sdcard/sd", 
@@ -62,7 +62,7 @@ public class OFAndroid {
 			"/mnt/Removable/MicroSD", 
 			"/Removable/MicroSD" };
 	
-	private String getRealExternalStorageDirectory()
+	static public String getRealExternalStorageDirectory()
 	{				
 		// Standard way to get the external storage directory
 		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -118,7 +118,7 @@ public class OFAndroid {
     		try{
     			//dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
     			dataPath = getRealExternalStorageDirectory();
-    			dataPath += "/"+packageName;
+    			dataPath += "/Android/data/"+packageName;
     			Log.i("OF","creating app directory: " + dataPath);
 				try{
 					
