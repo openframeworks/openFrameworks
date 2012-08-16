@@ -117,19 +117,19 @@ namespace ofxCv {
 		}
 		void setPersistence(unsigned int persistence);
 		void setMaximumDistance(float maximumDistance);
-		vector<unsigned int>& track(const vector<T>& objects);
+		virtual vector<unsigned int>& track(const vector<T>& objects);
 		
 		// organized in the order received by track()
-		vector<unsigned int>& getCurrentLabels();
-		vector<unsigned int>& getPreviousLabels();
-		vector<unsigned int>& getNewLabels();
-		vector<unsigned int>& getDeadLabels();
+		const vector<unsigned int>& getCurrentLabels() const;
+		const vector<unsigned int>& getPreviousLabels() const;
+		const vector<unsigned int>& getNewLabels() const;
+		const vector<unsigned int>& getDeadLabels() const;
 		unsigned int getLabelFromIndex(unsigned int i) const;
 		
 		// organized by label
 		int getIndexFromLabel(unsigned int label) const;
-		T& getPrevious(unsigned int label) const;
-		T& getCurrent(unsigned int label) const;
+		const T& getPrevious(unsigned int label) const;
+		const T& getCurrent(unsigned int label) const;
 		bool existsCurrent(unsigned int label) const;
 		bool existsPrevious(unsigned int label) const;
 		int getAge(unsigned int label) const;
@@ -230,22 +230,22 @@ namespace ofxCv {
 	}
 	
 	template <class T>
-	vector<unsigned int>& Tracker<T>::getCurrentLabels() {
+	const vector<unsigned int>& Tracker<T>::getCurrentLabels() const {
 		return currentLabels;
 	}
 	
 	template <class T>
-	vector<unsigned int>& Tracker<T>::getPreviousLabels() {
+	const vector<unsigned int>& Tracker<T>::getPreviousLabels() const {
 		return previousLabels;
 	}
 	
 	template <class T>
-	vector<unsigned int>& Tracker<T>::getNewLabels() {
+	const vector<unsigned int>& Tracker<T>::getNewLabels() const {
 		return newLabels;
 	}
 	
 	template <class T>
-	vector<unsigned int>& Tracker<T>::getDeadLabels() {
+	const vector<unsigned int>& Tracker<T>::getDeadLabels() const {
 		return deadLabels;
 	}
 
@@ -260,12 +260,12 @@ namespace ofxCv {
 	}
 	
 	template <class T>
-	T& Tracker<T>::getPrevious(unsigned int label) const {
+	const T& Tracker<T>::getPrevious(unsigned int label) const {
 		return previousLabelMap.find(label)->second->object;
 	}
 	
 	template <class T>
-	T& Tracker<T>::getCurrent(unsigned int label) const {
+	const T& Tracker<T>::getCurrent(unsigned int label) const {
 		return currentLabelMap.find(label)->second->object;
 	}
 	
