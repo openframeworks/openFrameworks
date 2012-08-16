@@ -1,5 +1,9 @@
 #include "ofxCv/Tracker.h"
 
+#include "ofxCv/Utilities.h"
+#include "ofRectangle.h"
+#include "ofVec2f.h"
+
 namespace ofxCv {
 	
 	float trackingDistance(const cv::Rect& a, const cv::Rect& b) {
@@ -16,6 +20,14 @@ namespace ofxCv {
 		float dx = a.x - b.x;
 		float dy = a.y - b.y;
 		return sqrtf(dx * dx + dy * dy);
+	}
+	
+	float trackingDistance(const ofRectangle& a, const ofRectangle& b) {
+		return trackingDistance(toCv(a), toCv(b));
+	}
+	
+	float trackingDistance(const ofVec2f& a, const ofVec2f& b) {
+		return trackingDistance(toCv(a), toCv(b));
 	}
 	
 }

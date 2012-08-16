@@ -25,6 +25,21 @@
  (like a line of points 5 pixels apart moving up and to the right 5 pixels). it
  also fails to model the data, so two objects might be swapped if they cross
  paths quickly.
+ 
+ usually you don't just want to know the labels of tracked objects, but you also
+ want to maintain a collection of your own objects that are paired with those
+ tracked/labeled objects. use the TrackerFollower extension for this: create
+ your own MyFollower extending Follower, and create TrackerFollower<MyFollower>.
+
+ for example:
+  class MyFollower : public ofxCv::PointFollower { ... }
+	ofxCv::PointTrackerFollower<MyFollower> tracker;
+	
+ then whenever you call tracker.track(), the tracker will maintain a list of
+ MyFollower objects internally: when a new label is created, it will call
+ MyFollower::setup(), when an old label is updated MyFollower::update(),
+ then when a label has been lost it will switch to MyFollower::kill(). when
+ MyFollower::getDead() is true, the MyFollower object will be removed. 
  */
 
 #pragma once
@@ -286,4 +301,76 @@ namespace ofxCv {
 	
 	typedef Tracker<cv::Rect> RectTracker;
 	typedef Tracker<cv::Point2f> PointTracker;
+	
+	template <class T>
+	class Follower {
+	protected:
+		bool dead;
+		unsigned int label;
+	public:
+		Follower()
+		:dead(false)
+		,label(0) {}
+		
+		virtual void setup(const T& track) {}
+		virtual void update(const T& track) {}
+		virtual void kill() {
+			dead = true;
+		}
+		
+		void setLabel(unsigned int label) {
+			this->label = label;
+		}
+		unsigned int getLabel() const {
+			return label;
+		}
+		bool getDead() const {
+			return dead;
+		}
+	};
+	
+	typedef Follower<cv::Rect> RectFollower;
+	typedef Follower<cv::Point2f> PointFollower;
+	
+	template <class T, class F>
+	class TrackerFollower : public Tracker<T> {
+	protected:
+		vector<unsigned int> labels;
+		vector<F> followers;
+	public:
+		vector<unsigned int>& track(const vector<T>& objects) {
+			Tracker<T>::track(objects);
+			// kill missing, update old
+			for(int i = 0; i < labels.size(); i++) {
+				unsigned int curLabel = labels[i];
+				F& curFollower = followers[i];
+				if(!Tracker<T>::existsCurrent(curLabel)) {
+					curFollower.kill();
+				} else {
+					curFollower.update(Tracker<T>::getCurrent(curLabel));
+				}
+			}
+			// add new
+			for(int i = 0; i < Tracker<T>::newLabels.size(); i++) {
+				unsigned int curLabel = Tracker<T>::newLabels[i];
+				labels.push_back(curLabel);
+				followers.push_back(F());
+				followers.back().setup(Tracker<T>::getCurrent(curLabel));
+				followers.back().setLabel(curLabel);
+			}
+			// remove dead
+			for(int i = labels.size() - 1; i >= 0; i--) {
+				if(followers[i].getDead()) {
+					followers.erase(followers.begin() + i);
+					labels.erase(labels.begin() + i);
+				}
+			}
+		}
+		vector<F>& getFollowers() {
+			return followers;
+		}
+	};
+	
+	template <class F> class RectTrackerFollower : public TrackerFollower<cv::Rect, F> {};
+	template <class F> class PointTrackerFollower : public TrackerFollower<cv::Point2f, F> {};
 }

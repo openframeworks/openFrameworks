@@ -58,8 +58,8 @@ void testApp::draw() {
 				ofSeedRandom(label << 24);
 				ofSetColor(ofColor::fromHsb(ofRandom(255), 255, 255));
 				// get the tracked object (cv::Rect) at current and previous position
-				cv::Rect& previous = tracker.getPrevious(label);
-				cv::Rect& current = tracker.getCurrent(label);
+				const cv::Rect& previous = tracker.getPrevious(label);
+				const cv::Rect& current = tracker.getCurrent(label);
 				// get the centers of the rectangles
 				ofVec2f previousPosition(previous.x + previous.width / 2, previous.y + previous.height / 2);
 				ofVec2f currentPosition(current.x + current.width / 2, current.y + current.height / 2);
@@ -69,10 +69,10 @@ void testApp::draw() {
 	}
 	
 	// this chunk of code visualizes the creation and destruction of labels
-	vector<unsigned int>& currentLabels = tracker.getCurrentLabels();
-	vector<unsigned int>& previousLabels = tracker.getPreviousLabels();
-	vector<unsigned int>& newLabels = tracker.getNewLabels();
-	vector<unsigned int>& deadLabels = tracker.getDeadLabels();
+	const vector<unsigned int>& currentLabels = tracker.getCurrentLabels();
+	const vector<unsigned int>& previousLabels = tracker.getPreviousLabels();
+	const vector<unsigned int>& newLabels = tracker.getNewLabels();
+	const vector<unsigned int>& deadLabels = tracker.getDeadLabels();
 	ofSetColor(cyanPrint);
 	for(int i = 0; i < currentLabels.size(); i++) {
 		int j = currentLabels[i];

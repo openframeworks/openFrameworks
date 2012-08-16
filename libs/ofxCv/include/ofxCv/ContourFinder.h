@@ -44,8 +44,9 @@ namespace ofxCv {
 			findContours(toCv(img));
 		}
 		void findContours(cv::Mat img);
-		vector<vector<cv::Point> >& getContours();
-		vector<ofPolyline>& getPolylines();
+		const vector<vector<cv::Point> >& getContours() const;
+		const vector<ofPolyline>& getPolylines() const;
+		const vector<cv::Rect>& getBoundingRects() const;
 		
 		unsigned int size() const;
 		vector<cv::Point>& getContour(unsigned int i);
@@ -102,7 +103,7 @@ namespace ofxCv {
 		vector<ofPolyline> polylines;
 		
 		RectTracker tracker;
-		vector<cv::Rect> boundingBoxes;
+		vector<cv::Rect> boundingRects;
 	};	
 	
 }

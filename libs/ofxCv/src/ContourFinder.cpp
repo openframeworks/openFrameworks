@@ -80,21 +80,25 @@ namespace ofxCv {
 		}
 		
 		// generate bounding boxes from the contours
-		boundingBoxes.clear();
+		boundingRects.clear();
 		for(int i = 0; i < size(); i++) {
-			boundingBoxes.push_back(boundingRect(Mat(contours[i])));
+			boundingRects.push_back(boundingRect(Mat(contours[i])));
 		}
 		
 		// track bounding boxes
-		tracker.track(boundingBoxes);
+		tracker.track(boundingRects);
 	}
 	
-	vector<vector<cv::Point> >& ContourFinder::getContours() {
+	const vector<vector<cv::Point> >& ContourFinder::getContours() const {
 		return contours;
 	}
 	
-	vector<ofPolyline>& ContourFinder::getPolylines() {
+	const vector<ofPolyline>& ContourFinder::getPolylines() const {
 		return polylines;
+	}
+	
+	const vector<cv::Rect>& ContourFinder::getBoundingRects() const {
+		return boundingRects;
 	}
 	
 	unsigned int ContourFinder::size() const {
@@ -110,7 +114,7 @@ namespace ofxCv {
 	}
 	
 	cv::Rect ContourFinder::getBoundingRect(unsigned int i) const {
-		return boundingBoxes[i];
+		return boundingRects[i];
 	}
 	
 	cv::Point2f ContourFinder::getCenter(unsigned int i) const {
