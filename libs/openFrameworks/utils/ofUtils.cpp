@@ -374,7 +374,13 @@ float ofToFloat(const string& floatString) {
 	cur >> x;
 	return x;
 }
-
+//----------------------------------------
+double ofToDouble(const string& doubleString){
+	double x = 0;
+	istringstream cur(doubleString);
+	cur >> x;
+	return x;
+}
 //----------------------------------------
 bool ofToBool(const string& boolString) {
 	static const string trueString = "true";
