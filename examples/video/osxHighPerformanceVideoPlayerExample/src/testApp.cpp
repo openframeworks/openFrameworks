@@ -28,9 +28,10 @@ void testApp::setup(){
 
 	//pixels and texture together is faster than PIXEL_ONLY and manually upload textures.
 	ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
-	
-    fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
 
+    // You can even load URLs!
+    //fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
+    fingerMovie.loadMovie("http://labs.silentlycrashing.net/fingers.mov", decodeMode);
 
 	//# 3 Synchronous scrubbing ---------------------------
 	// In many cases you want to be certain a call to movie.setFrame(x) and then a call to movie.update() will result in
@@ -54,45 +55,45 @@ void testApp::draw(){
 
 	ofSetHexColor(0xFFFFFF);
 
+    if (fingerMovie.isLoaded()) {
+        fingerMovie.draw(20, 20);
+        if(fingerMovie.getDecodeMode() != OF_QTKIT_DECODE_TEXTURE_ONLY){ //pixel access will not work in this mode
+            ofSetHexColor(0x000000);
+            unsigned char * pixels = fingerMovie.getPixels();
+            // let's move through the "RGB" char array
+            // using the red pixel to control the size of a circle.
+            for(int i = 4; i < 320; i += 8){
+                for(int j = 4; j < 240; j += 8){
+                    unsigned char r = pixels[(j * 320 + i) * 3];
+                    float val = 1 - ((float)r / 255.0f);
+                    ofCircle(400 + i, 20 + j, 10 * val);
+                }
+            }
+        }
+    }
 
+    ofSetHexColor(0x000000);
+    ofDrawBitmapString("press f to change", 20, 320);
+    if(frameByframe){
+        ofSetHexColor(0xCCCCCC);
+    }
+    ofDrawBitmapString("mouse speed position", 20, 340);
+    if(!frameByframe){
+        ofSetHexColor(0xCCCCCC);
+    }
+    else{ofSetHexColor(0x000000);
+    }
+    ofDrawBitmapString("keys <- -> frame by frame ", 190, 340);
+    ofSetHexColor(0x000000);
 
-	fingerMovie.draw(20, 20);
-	if(fingerMovie.getDecodeMode() != OF_QTKIT_DECODE_TEXTURE_ONLY){ //pixel access will not work in this mode
-		ofSetHexColor(0x000000);
-		unsigned char * pixels = fingerMovie.getPixels();
-		// let's move through the "RGB" char array
-		// using the red pixel to control the size of a circle.
-		for(int i = 4; i < 320; i += 8){
-			for(int j = 4; j < 240; j += 8){
-				unsigned char r = pixels[(j * 320 + i) * 3];
-				float val = 1 - ((float)r / 255.0f);
-				ofCircle(400 + i, 20 + j, 10 * val);
-			}
-		}
-	}
+    ofDrawBitmapString("frame: " + ofToString(fingerMovie.getCurrentFrame()) + "/" + ofToString(fingerMovie.getTotalNumFrames()), 20, 380);
+    ofDrawBitmapString("duration: " + ofToString(fingerMovie.getPosition() * fingerMovie.getDuration(), 2) + "/" + ofToString(fingerMovie.getDuration(), 2), 20, 400);
+    ofDrawBitmapString("speed: " + ofToString(fingerMovie.getSpeed(), 2), 20, 420);
 
-	ofSetHexColor(0x000000);
-	ofDrawBitmapString("press f to change", 20, 320);
-	if(frameByframe){
-		ofSetHexColor(0xCCCCCC);
-	}
-	ofDrawBitmapString("mouse speed position", 20, 340);
-	if(!frameByframe){
-		ofSetHexColor(0xCCCCCC);
-	}
-	else{ofSetHexColor(0x000000);
-	}
-	ofDrawBitmapString("keys <- -> frame by frame ", 190, 340);
-	ofSetHexColor(0x000000);
-
-	ofDrawBitmapString("frame: " + ofToString(fingerMovie.getCurrentFrame()) + "/" + ofToString(fingerMovie.getTotalNumFrames()), 20, 380);
-	ofDrawBitmapString("duration: " + ofToString(fingerMovie.getPosition() * fingerMovie.getDuration(), 2) + "/" + ofToString(fingerMovie.getDuration(), 2), 20, 400);
-	ofDrawBitmapString("speed: " + ofToString(fingerMovie.getSpeed(), 2), 20, 420);
-
-	if(fingerMovie.getIsMovieDone()){
-		ofSetHexColor(0xFF0000);
-		ofDrawBitmapString("end of movie", 20, 440);
-	}
+    if(fingerMovie.getIsMovieDone()){
+        ofSetHexColor(0xFF0000);
+        ofDrawBitmapString("end of movie", 20, 440);
+    }
 }
 
 //--------------------------------------------------------------
