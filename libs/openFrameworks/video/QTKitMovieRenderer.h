@@ -53,7 +53,7 @@
 - (NSDictionary *)pixelBufferAttributes;
 
 - (void)draw:(NSRect)drawRect;
-- (BOOL)loadMovie:(NSString *)moviePath allowTexture:(BOOL) useTexture allowPixels:(BOOL)usePixels;
+- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels;
 - (BOOL)update;
 
 - (void)bindTexture;

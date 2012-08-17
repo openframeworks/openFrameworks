@@ -33,12 +33,20 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
     
 	bool useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
 	bool usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
-	
+
+    bool isURL = false;
+    if (movieFilePath.substr(0, 7) == "http://" || movieFilePath.substr(0,7) == "rtsp://") {
+        isURL = true;
+    }
+    else {
+        movieFilePath = ofToDataPath(movieFilePath, false);
+    }
+
 	moviePlayer = [[QTKitMovieRenderer alloc] init];
 	
-	movieFilePath = ofToDataPath(movieFilePath, false);
-	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding] 
-							 allowTexture:useTexture 
+	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding]
+                                pathIsURL:isURL
+							 allowTexture:useTexture
 							  allowPixels:usePixels];
 
 	if(success){
