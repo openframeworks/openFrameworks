@@ -369,8 +369,6 @@ ofFloatColor ofLight::getSpecularColor() const {
 
 //----------------------------------------
 void ofLight::customDraw() {
-    ofPushMatrix();
-    glMultMatrixf(getGlobalTransformMatrix().getPtr());
     if(getIsPointLight()) {
         ofSphere( 0,0,0, 10);
     } else if (getIsSpotlight()) {
@@ -381,7 +379,6 @@ void ofLight::customDraw() {
         ofBox(10);
     }
     ofDrawAxis(20);
-    ofPopMatrix();
 }
 
 
