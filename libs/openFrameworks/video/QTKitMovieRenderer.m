@@ -38,9 +38,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             nil];
 }
 
-- (BOOL) loadMovie:(NSString*)moviePath allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels
+- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels
 {
-    if(![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
+    // if the path is local, make sure the file exists before proceeding
+    if (!isURL && ![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
     {
 		NSLog(@"No movie file found at %@", moviePath);
 		return NO;
@@ -49,10 +50,20 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//create visual context
 	useTexture = doUseTexture;
 	usePixels = doUsePixels;
-	
+
+    // build the movie URL
+    NSString *movieURL;
+    NSString *protocol = [[moviePath substringToIndex:7] lowercaseString];
+    if ([protocol isEqualToString:@"http://"] || [protocol isEqualToString:@"rtsp://"]) {
+        movieURL = [NSURL URLWithString:moviePath];
+    }
+    else {
+        movieURL = [NSURL fileURLWithPath:[moviePath stringByStandardizingPath]];
+    }
+
 	NSError* error;
 	NSMutableDictionary* movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                            [NSURL fileURLWithPath:[moviePath stringByStandardizingPath]], QTMovieURLAttribute,
+                                            movieURL, QTMovieURLAttribute,
                                             [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
                                             nil];
     
