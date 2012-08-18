@@ -306,9 +306,9 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 		float saturationNorm = saturation / limit();
 		int hueSixCategory = (int) floorf(hueSix);
 		float hueSixRemainder = hueSix - hueSixCategory;
-		unsigned char pv = (unsigned char) ((1.f - saturationNorm) * brightness);
-		unsigned char qv = (unsigned char) ((1.f - saturationNorm * hueSixRemainder) * brightness);
-		unsigned char tv = (unsigned char) ((1.f - saturationNorm * (1.f - hueSixRemainder)) * brightness);
+		PixelType pv = (PixelType) ((1.f - saturationNorm) * brightness);
+		PixelType qv = (PixelType) ((1.f - saturationNorm * hueSixRemainder) * brightness);
+		PixelType tv = (PixelType) ((1.f - saturationNorm * (1.f - hueSixRemainder)) * brightness);
 		switch(hueSixCategory) {
 			case 0: // r
 				r = brightness;
