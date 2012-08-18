@@ -559,11 +559,22 @@ Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz,
 void
 Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jobject  thiz ){
 	if(androidApp) androidApp->okPressed();
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
 	if(androidApp) androidApp->cancelPressed();
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().cancelPressed,yes);
+}
+
+void
+Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, jboolean connected){
+	if(androidApp) androidApp->networkConnected(connected);
+	bool bConnected = (bool)connected;
+	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
 }
 
