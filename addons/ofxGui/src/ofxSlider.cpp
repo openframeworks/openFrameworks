@@ -1,4 +1,5 @@
 #include "ofxSlider.h"
+#include "ofGraphics.h"
 
 template<typename Type>
 ofxSlider<Type>::ofxSlider(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width, float height){
