@@ -46,7 +46,11 @@ public:
 	bool isLoaded();
 	float getVolume();
 
-	ofEvent<ofSoundBuffer> resampledBufferE;
+	ofSoundBuffer & getCurrentBuffer();
+
+	static void setMaxSoundsTotal(int max);
+	static void setMaxSoundsPerPlayer(int max);
+	void setMaxSounds(int max);
 
 private:
 	void audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount);
@@ -57,6 +61,9 @@ private:
 	static int samplerate;
 	static int bufferSize;
 	static int channels;
+	static int maxSoundsTotal;
+	static int maxSoundsPerPlayer;
+	int maxSounds;
 	float volume;
 	ofSoundBuffer buffer, resampledBuffer;
 	ofSoundFile soundFile;

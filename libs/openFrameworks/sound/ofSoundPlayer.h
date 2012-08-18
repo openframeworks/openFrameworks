@@ -34,15 +34,17 @@ void ofSoundShutdown();
 #include "ofxOpenALSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer
 
+#elif defined(TARGET_ANDROID)
+#include "ofxAndroidSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
+
 #else
-/*#include "ofxAndroidSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer*/
 #include "ofBasicSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofBasicSoundPlayer
+#endif
 
 #ifdef TARGET_ANDROID
 inline void ofSoundShutdown(){}
-#endif
 #endif
 
 //---------------------------------------------

@@ -15,6 +15,9 @@ bool ofBasicSoundPlayer::initialized = false;
 int ofBasicSoundPlayer::samplerate = 44100;
 int ofBasicSoundPlayer::bufferSize = 256;
 int ofBasicSoundPlayer::channels = 2;
+int ofBasicSoundPlayer::maxSoundsTotal=128;
+int ofBasicSoundPlayer::maxSoundsPerPlayer=16;
+
 
 ofBasicSoundPlayer::ofBasicSoundPlayer() {
 	volume = 1;
@@ -29,6 +32,7 @@ ofBasicSoundPlayer::ofBasicSoundPlayer() {
 	volumesLeft.resize(1,1);
 	volumesRight.resize(1,1);
 	pan = 0;
+	maxSounds = maxSoundsPerPlayer;
 }
 
 ofBasicSoundPlayer::~ofBasicSoundPlayer() {
@@ -73,7 +77,7 @@ void ofBasicSoundPlayer::unloadSound(){
 void ofBasicSoundPlayer::play(){
 	if(!multiplay || !isPlaying){
 		positions.back() = 0;
-	}else{
+	}else if(maxSounds>(int)positions.size()){
 		positions.push_back(0);
 		relativeSpeed.push_back(speed*(double(soundFile.getSampleRate())/double(samplerate)));
 		float left,right;
@@ -205,3 +209,15 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 		}
 	}
 }
+
+ofSoundBuffer & ofBasicSoundPlayer::getCurrentBuffer(){
+	if(streaming){
+		return buffer;
+	}else{
+		return resampledBuffer;
+	}
+}
+
+static void setMaxSoundsTotal(int max);
+static void setMaxSoundsPerPlayer(int max);
+void setMaxSounds(int max);
