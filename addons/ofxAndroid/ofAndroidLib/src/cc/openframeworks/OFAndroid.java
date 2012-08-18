@@ -15,9 +15,11 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
@@ -30,9 +32,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.PowerManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -44,8 +43,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class OFAndroid {
@@ -211,11 +213,12 @@ public class OFAndroid {
 		Log.i("OF","onResume");
 		enableTouchEvents();
         mGLView.onResume();
-        onResume();
 
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onResume();
 		}
+		
+        onResume();
 		
 		if(wl!=null) lockScreenSleep();
 	}
@@ -343,6 +346,31 @@ public class OFAndroid {
 		}
 	}
 	
+	static public void monitorNetworkState(){
+		BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+
+		    @Override
+		    public void onReceive(Context context, Intent intent) {
+		    	String action = intent.getAction();
+		    	if(!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) return;
+		    	
+	    		boolean noConnectivity =
+	                    intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+
+                if (noConnectivity) {
+                    networkConnected(false);
+                } else {
+                	networkConnected(true);
+                }
+		        Log.w("Network Listener", "Network Type Changed");
+		    }
+		};
+
+		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+		ofActivity.registerReceiver(networkStateReceiver, filter);
+		networkConnected(isOnline());
+	}
+	
 	
 	static Map<Integer,ProgressDialog> progressDialogs = new HashMap<Integer, ProgressDialog>();
 	static int lastProgressID=0;
@@ -353,6 +381,7 @@ public class OFAndroid {
 			public void run() {
 				ProgressDialog d = new ProgressDialog(ofActivity);
 				d.setMessage(finmsg);
+				d.setCancelable(false);
 				d.show();
 				progressDialogs.put(id,d);
 			}
@@ -361,14 +390,15 @@ public class OFAndroid {
 	}
 	
 	static public void dismissProgressBox(int id){
+		final int dId = id;
 		final ProgressDialog d = progressDialogs.get(id);
 		if(d!=null){
 			ofActivity.runOnUiThread(new Runnable(){
 				public void run() {
 					d.dismiss();
+					progressDialogs.remove(dId);
 				}
 			});
-			progressDialogs.remove(id);
 		}
 	}
 	
@@ -424,6 +454,8 @@ public class OFAndroid {
     
     public static native void okPressed();
     public static native void cancelPressed();
+    
+    public static native void networkConnected(boolean conected);
     
 
     // static methods to be called from OF c++ code
@@ -491,6 +523,17 @@ public class OFAndroid {
 	
 	public static void alertBox(String msg){  
 		final String alertMsg = msg;
+		/*try{
+			Looper.prepare();
+		}catch(Exception e){
+			
+		}
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };*/
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				new AlertDialog.Builder(ofActivity)  
@@ -501,67 +544,102 @@ public class OFAndroid {
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
 							OFAndroid.okPressed();
+							//handler.sendMessage(handler.obtainMessage());
 						}
 	
 				  	})  
 				  	.show();
 			}  
 		});
+		// loop till a runtime exception is triggered.
+	    /*try { Looper.loop(); }
+	    catch(RuntimeException e2) {}*/
+	    //alert.dismiss();
 	}
 	
-	static public void okCancelBox(String msg){
-		final String alertMsg = msg;
+	
+	
+	static public void positiveNegativeBox(String msg,final int positiveButton, final int negativeButton){
+		final String alertMsg = msg; 
+		/*try{
+			Looper.prepare();
+		}catch(Exception e){
+			
+		}
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };*/
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				new AlertDialog.Builder(ofActivity)  
 					.setMessage(alertMsg)  
 					.setTitle("OF")  
 					.setCancelable(false)  
-					.setNeutralButton(android.R.string.ok,  
+					.setNeutralButton(positiveButton,  
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
 							OFAndroid.okPressed();
+							//handler.sendMessage(handler.obtainMessage());
 						}
 	
 				  	})
-				  	.setNegativeButton(android.R.string.cancel,
+				  	.setNegativeButton(negativeButton,
 
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
 							OFAndroid.cancelPressed();
+							//handler.sendMessage(handler.obtainMessage());
 						}
 				  	})
 				  	.show();    
 				
 			}  
 		});
+		// loop till a runtime exception is triggered.
+	    /*try { Looper.loop(); }
+	    catch(RuntimeException e2) {}*/
+	}
+	
+	public static void okCancelBox(String msg){
+		positiveNegativeBox(msg,android.R.string.ok,android.R.string.cancel);
+	}
+	
+	public static void yesNoBox(String msg){
+		positiveNegativeBox(msg,android.R.string.yes,android.R.string.no);
 	}
 
     private static String textBoxResult="";
-	public static String alertTextBox(String question, String text){  
+	public static void alertTextBox(String question, String text){  
 		final String alertQuestion = question;
 		final String alertMsg = text;
-		Looper.prepare();
+		/*try{
+			Looper.prepare();
+		}catch(Exception e){
+			
+		}
 		final Handler handler = new Handler() {
 	        @Override
 	        public void handleMessage(Message mesg) {
 	            throw new RuntimeException();
 	        } 
-	    };
+	    };*/
 	    textBoxResult=text;
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				final EditText input = new EditText(ofActivity); 
-				new AlertDialog.Builder(ofActivity)  
+					new AlertDialog.Builder(ofActivity)  
 					.setMessage(alertMsg)  
 					.setTitle(alertQuestion)  
-					.setCancelable(true)  
+					.setCancelable(false)  
 					.setNeutralButton(android.R.string.ok,  
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
 							textBoxResult = input.getText().toString();
 							OFAndroid.okPressed();
-							handler.sendMessage(handler.obtainMessage());
+							//handler.sendMessage(handler.obtainMessage());
 						}
 	
 				  	})  
@@ -569,7 +647,7 @@ public class OFAndroid {
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
 							OFAndroid.cancelPressed();
-							handler.sendMessage(handler.obtainMessage());
+							//handler.sendMessage(handler.obtainMessage());
 						}
 				  	})
 				  	.setView(input)
@@ -578,11 +656,62 @@ public class OFAndroid {
 		});
 		
 		// loop till a runtime exception is triggered.
-	    try { Looper.loop(); }
-	    catch(RuntimeException e2) {}
+	    /*try { Looper.loop(); }
+	    catch(RuntimeException e2) {}*/
+	    //alert.dismiss();
+	}
+	
+	public static String getLastTextBoxResult(){
+		return textBoxResult;
+	}
+	
+	private static boolean alertListResult;
+	public static boolean alertListBox(String title, String[] list){  
+		final String[] alertList = list;
+		final String alertTitle = title;
+		/*Looper.prepare();
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };*/
+	    alertListResult=false;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				final ListView listView = new ListView(ofActivity); 
+				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_1, alertList);
+				listView.setAdapter(adapter);
+				new AlertDialog.Builder(ofActivity)   
+					.setTitle(alertTitle)  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							alertListResult = true;
+							//OFAndroid.okPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+	
+				  	})  
+				  	/*.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							alertListResult = false;
+							OFAndroid.cancelPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+				  	})*/
+				  	.setView(listView)
+				  	.show();  
+			}  
+		});
+		
+		// loop till a runtime exception is triggered.
+	    //try { Looper.loop(); }
+	    //catch(RuntimeException e2) {}
 	    
-	    return textBoxResult;
-
+	    return alertListResult;
 	}
 	
 	public static void toast(String msg){  
@@ -811,21 +940,21 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 		final float xDistance = Math.abs(e1.getX() - e2.getX());
 		final float yDistance = Math.abs(e1.getY() - e2.getY());
 
-		if(xDistance > this.swipe_Max_Distance || yDistance > this.swipe_Max_Distance)
+		if(xDistance > OFGestureListener.swipe_Max_Distance || yDistance > OFGestureListener.swipe_Max_Distance)
 			return false;
 
 		velocityX = Math.abs(velocityX);
 		velocityY = Math.abs(velocityY);
         boolean result = false;
 
-        if(velocityX > this.swipe_Min_Velocity && xDistance > this.swipe_Min_Distance){
+        if(velocityX > OFGestureListener.swipe_Min_Velocity && xDistance > OFGestureListener.swipe_Min_Distance){
         	if(e1.getX() > e2.getX()) // right to left
         		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_LEFT);
         	else
         		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_RIGHT);
    
         	result = true;
-        }else if(velocityY > this.swipe_Min_Velocity && yDistance > this.swipe_Min_Distance){
+        }else if(velocityY > OFGestureListener.swipe_Min_Velocity && yDistance > OFGestureListener.swipe_Min_Distance){
         	if(e1.getY() > e2.getY()) // bottom to up 
         		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_UP);
         	else
