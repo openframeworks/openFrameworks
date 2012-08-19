@@ -133,6 +133,7 @@
 		E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */; };
 		E703369715D4B03E009A3FDE /* QTKitMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E703369115D4B03E009A3FDE /* QTKitMovieRenderer.h */; };
 		E703369815D4B03E009A3FDE /* QTKitMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = E703369215D4B03E009A3FDE /* QTKitMovieRenderer.m */; };
+		E7F985E315E0DC6A003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985E115E0DC54003869B5 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -279,6 +280,7 @@
 		E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofQTKitPlayer.mm; sourceTree = "<group>"; };
 		E703369115D4B03E009A3FDE /* QTKitMovieRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTKitMovieRenderer.h; sourceTree = "<group>"; };
 		E703369215D4B03E009A3FDE /* QTKitMovieRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QTKitMovieRenderer.m; sourceTree = "<group>"; };
+		E7F985E115E0DC54003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -286,6 +288,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7F985E315E0DC6A003869B5 /* Accelerate.framework in Frameworks */,
 				E4B27C2810CBEBAB00536013 /* AGL.framework in Frameworks */,
 				E4B27C2910CBEBAB00536013 /* ApplicationServices.framework in Frameworks */,
 				E4B27C2A10CBEBAB00536013 /* AudioToolbox.framework in Frameworks */,
@@ -331,6 +334,7 @@
 		E45BE5980E8CC70C009D7055 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E7F985E115E0DC54003869B5 /* Accelerate.framework */,
 				E703368B15D4AF1A009A3FDE /* QTKit.framework */,
 				E703368915D4AF13009A3FDE /* CoreVideo.framework */,
 				BBAB23BC13894D2600AA2426 /* GLUT.framework */,
@@ -754,7 +758,10 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/System/Library/Frameworks,
+				);
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -795,7 +802,10 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/System/Library/Frameworks,
+				);
 				GCC_FAST_MATH = YES;
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (

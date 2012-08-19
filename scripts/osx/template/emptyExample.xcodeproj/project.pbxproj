@@ -38,6 +38,7 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>E7F985F515E0DE99003869B5</string>
 				<string>E4C2424410CC5A17004149E2</string>
 				<string>E4C2424510CC5A17004149E2</string>
 				<string>E4C2424610CC5A17004149E2</string>
@@ -527,6 +528,7 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
+				<string>E7F985F815E0DEA3003869B5</string>
 				<string>E7E077E815D3B6510020DFD4</string>
 				<string>E4EB6799138ADC1D00A09F29</string>
 				<string>E4328149138ABC9F0047C5CB</string>
@@ -1105,6 +1107,26 @@
 		<dict>
 			<key>fileRef</key>
 			<string>E7E077E715D3B6510020DFD4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>E7F985F515E0DE99003869B5</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Accelerate.framework</string>
+			<key>path</key>
+			<string>/System/Library/Frameworks/Accelerate.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;absolute&gt;</string>
+		</dict>
+		<key>E7F985F815E0DEA3003869B5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>E7F985F515E0DE99003869B5</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>

@@ -376,25 +376,16 @@ float ofQTKitPlayer::getHeight() {
 }
 
 void ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
-    cout << "Setting pixel format to " << newPixelFormat << " current pixel format " << pixelFormat << endl;
+    if(newPixelFormat != OF_PIXELS_RGB && newPixelFormat != OF_PIXELS_RGBA) {
+        ofLogError("ofQTKitPlayer::setPixelFormat -- Pixel format " + ofToString(newPixelFormat) + " is not supported");
+        return;
+    }
+
     if(newPixelFormat != pixelFormat){
-        if(newPixelFormat == OF_PIXELS_RGB){
-            pixelFormat = OF_PIXELS_RGB;
-            //if we already have a movie loaded we need to reallocate the pixels
-            if(isLoaded()){
-                loadMovie(moviePath, decodeMode);
-            }
-        }
-        else if(newPixelFormat == OF_PIXELS_RGBA){
-            pixelFormat = OF_PIXELS_RGBA;
-            //if we already have a movie loaded we need to reallocate the pixels
-            if(isLoaded()){
-                loadMovie(moviePath, decodeMode);
-            }			
-        }
-        else {
-            ofLogError("ofQTKitPlayer::setPixelFormat -- Pixel format " + ofToString(newPixelFormat) + " is not supported");
-			setPixelFormat(OF_PIXELS_RGBA);
+        pixelFormat = newPixelFormat;
+        //if we already have a movie loaded we need to reallocate the pixels
+        if(isLoaded()){
+            loadMovie(moviePath, decodeMode);
         }
     }
 }
