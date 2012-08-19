@@ -3,15 +3,6 @@
 #import <QTKit/QTKit.h>
 #import <QuickTime/QuickTime.h>
 
-static inline void argb_to_rgb(unsigned char* src, unsigned char* dst, int numPix)
-{
-	for(int i = 0; i < numPix; i++){
-		memcpy(dst, src+1, 3);
-		src+=4;
-		dst+=3;
-	}	
-}
-
 @interface QTKitVideoGrabber : QTCaptureVideoPreviewOutput
 {
     QTCaptureSession *session;
@@ -44,7 +35,7 @@ static inline void argb_to_rgb(unsigned char* src, unsigned char* dst, int numPi
 @property(nonatomic, retain) QTCaptureDeviceInput* audioDeviceInput;
 @property(nonatomic, retain) QTCaptureMovieFileOutput *captureMovieFileOutput;
 @property(nonatomic, readonly) BOOL isRunning;
-@property(readonly) ofPixels& pixels;
+@property(readonly) ofPixelsRef pixels;
 @property(readonly) BOOL isFrameNew;
 @property(readonly) BOOL isRecording;
 @property(readonly) BOOL isRecordReady;
@@ -170,8 +161,8 @@ static inline void argb_to_rgb(unsigned char* src, unsigned char* dst, int numPi
 		isRecordReady = NO;
 		isRecording = NO;
 		
-		[self setPixelBufferAttributes: [NSDictionary dictionaryWithObjectsAndKeys: 
-										 [NSNumber numberWithInt: kCVPixelFormatType_32ARGB], kCVPixelBufferPixelFormatTypeKey,
+		[self setPixelBufferAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+										 [NSNumber numberWithInt: kCVPixelFormatType_24RGB], kCVPixelBufferPixelFormatTypeKey,
 										 [NSNumber numberWithInt:width], kCVPixelBufferWidthKey, 
 										 [NSNumber numberWithInt:height], kCVPixelBufferHeightKey, 
 										 [NSNumber numberWithBool:YES], kCVPixelBufferOpenGLCompatibilityKey,
@@ -211,7 +202,7 @@ static inline void argb_to_rgb(unsigned char* src, unsigned char* dst, int numPi
 		while ((audioConnection = [audioConnectionEnumerator nextObject])) {
 			if(verbose) ofLogVerbose("Audio Input Format: %s\n", [[[audioConnection formatDescription] localizedFormatSummary] cStringUsingEncoding:NSUTF8StringEncoding]);
 		}   
-		
+
 		[self startSession];
 	}
 	return self;
@@ -244,13 +235,13 @@ static inline void argb_to_rgb(unsigned char* src, unsigned char* dst, int numPi
 		videoDeviceID = -1;		
 		[self setVideoDeviceID:_videoDeviceID];
 		
-		// if we're using audio add an audio device										[added by gameover]
+		// if we're using audio add an audio device									
 		if (self.useAudio) {
 			audioDeviceID = -1;
 			[self setAudioDeviceID:_audioDeviceID];
 		}
 		
-		// give us some info about the 'native format' of our device/s					[added by gameover]
+		// give us some info about the 'native format' of our device/s
 		NSEnumerator *videoConnectionEnumerator = [[videoDeviceInput connections] objectEnumerator];
 		QTCaptureConnection *videoConnection;
 		
@@ -485,42 +476,35 @@ static inline void argb_to_rgb(unsigned char* src, unsigned char* dst, int numPi
 		 withSampleBuffer:(QTSampleBuffer *)sampleBuffer 
 		   fromConnection:(QTCaptureConnection *)connection
 {
-	CVImageBufferRef toRelease;	
-	@synchronized(self){
-		toRelease = cvFrame;
-		CVBufferRetain(videoFrame);
-		cvFrame = videoFrame;
-		hasNewFrame = YES;
-		if(toRelease != NULL){
-			CVBufferRelease(toRelease);
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    @synchronized(self){        
+        if(cvFrame != NULL){
+			CVBufferRelease(cvFrame);
 		}
-	}	
+		cvFrame = videoFrame;
+		CVBufferRetain(cvFrame);
+		hasNewFrame = YES;
+	}
+    
+    [pool release];
 }
 
 - (void) update
 {
 	@synchronized(self){
-		if(hasNewFrame){
-			CVPixelBufferLockBaseAddress(cvFrame, 0);
-			unsigned char* src = (unsigned char*)CVPixelBufferGetBaseAddress(cvFrame);
-			
-			//I wish this weren't necessary, but
-			//in my tests the only performant & reliabile
-			//pixel format for QTCapture is k32ARGBPixelFormat, 
-			//to my knowledge there is only RGBA format
-			//available to gl textures
-			
-			//convert pixels from ARGB to RGB			
-			argb_to_rgb(src, pixels.getPixels(), width*height);
-			CVPixelBufferUnlockBaseAddress(cvFrame, 0);
-            
-			hasNewFrame = NO;
-			isFrameNew = YES;
-		}
-		else{
-			isFrameNew = NO;
-		}
-	}	
+        if(hasNewFrame){            
+            CVPixelBufferLockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
+            memcpy(pixels.getPixels(),CVPixelBufferGetBaseAddress(cvFrame),pixels.getWidth()*pixels.getHeight()*3);
+            CVPixelBufferUnlockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
+
+            hasNewFrame = NO;
+            isFrameNew = YES;
+        }
+        else{
+            isFrameNew = NO;
+        }
+    }
 }
 
 - (void) stop
@@ -709,7 +693,9 @@ void ofQTKitGrabber::stopRecording(){
 
 void ofQTKitGrabber::update(){ 
     if(confirmInit()){
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		[grabber update];
+        [pool release];
 	} 
 }
 
