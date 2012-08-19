@@ -50,7 +50,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	useTexture = doUseTexture;
 	usePixels = doUsePixels;
 	useAlpha = doUseAlpha;
-    NSLog(@"use alpha? %d", (useAlpha ? 1 : 0));
+    
 	NSError* error;
 	NSMutableDictionary* movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                             [NSURL fileURLWithPath:[moviePath stringByStandardizingPath]], QTMovieURLAttribute,
@@ -410,73 +410,22 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     
     CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
     if(self.useAlpha){
-        NSLog(@"using alpha");
-        int x,y, srcbpp, outbpp, srcbpr, outbpr, width, height;
-        srcbpr = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
-        srcbpp = srcbpr/CVPixelBufferGetWidth(_latestPixelFrame);
-        outbpp = 4;
-        outbpr = outbpp * movieSize.width;
-        width = movieSize.width;
-        height = movieSize.height;
-        unsigned char* pix = CVPixelBufferGetBaseAddress(_latestPixelFrame);
-        for(y = 0; y < movieSize.height; y++){
-            for(x = 0; x < movieSize.width; x++){
-                //copy out the rgb
-                memcpy(outbuf+(y*outbpr + x*outbpp), pix + (y*srcbpr+x*srcbpp+1), 3);
-                //swizzle in the alpha.
-                outbuf[(y*outbpr + x*outbpp)+3] = pix[y*srcbpr+x*srcbpp];
-            }
+        vImage_Buffer src = { CVPixelBufferGetBaseAddress(_latestPixelFrame),
+            				  CVPixelBufferGetHeight(_latestPixelFrame),
+            				  CVPixelBufferGetWidth(_latestPixelFrame),
+                              CVPixelBufferGetBytesPerRow(_latestPixelFrame)
+        					};
+        vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, movieSize.width*4 };
+		uint8_t permuteMap[4] = { 1, 2, 3, 0 }; //swizzle the alpha around to the end to make ARGB -> RGBA
+        vImage_Error err = vImagePermuteChannels_ARGB8888(&src, &dest, permuteMap, 0);
+        if(err != kvImageNoError){
+            NSLog(@"Error in Pixel Copy vImage_error %ld", err);
         }
     }
     else {
-        NSLog(@"copying bpr %ld height %ld",CVPixelBufferGetBytesPerRow(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame) );
 	    memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), CVPixelBufferGetBytesPerRow(_latestPixelFrame)*CVPixelBufferGetHeight(_latestPixelFrame));
     }
     CVPixelBufferUnlockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
-
-    /*
-    outbpp = (allowAlpha ? 4 : 3);
-    outbpr = outbpp * movieSize.width;
-    CVPixelBufferLockBaseAddress(_latestPixelFrame, 0);
-    vImage_Buffer src = { CVPixelBufferGetBaseAddress(_latestPixelFrame), movieSize.height, movieSize.width, CVPixelBufferGetBytesPerRow(_latestPixelFrame) };
-    vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, outbpr };
-    vImage_Error err;
-    if(allowAlpha){
-        err = vImageConvert_ARGB8888toRGBA888(&src,&dest,0);
-    }
-    else{
-	    err = vImageConvert_ARGB8888toRGB888(&src,&dest,0);
-    }
-    CVPixelBufferUnlockBaseAddress(_latestPixelFrame, 0);
-    
-    if(err != kvImageNoError){
-        NSLog(@"Error in Pixel Copy vImage_error %ld", err);
-    }
-    */
-    
-    /*
-
-	unsigned char* pix = CVPixelBufferGetBaseAddress(_latestPixelFrame);
-	//TODO replace with apple vImage framework
-	cvbpr = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
-    cvbpp = cvbpr/CVPixelBufferGetWidth(_latestPixelFrame);
-    outbpp = (allowAlpha ? 4 : 3);
-    outbpr = outbpp * movieSize.width;
-	width = movieSize.width;
-	height = movieSize.height;
-	for(y = 0; y < movieSize.height; y++){
-		for(x = 0; x < movieSize.width; x++){
-			//copy out the rgb
-			memcpy(outbuf+(y*outbpr + x*outbpp), pix + (y*cvbpr+x*cvbpp+1), 3);
-			//swizzle in the alpha.
-            if(outbpp == 4){
-				outbuf[(y*outbpr + x*outbpp)+3] = pix[y*cvbpr+x*cvbpp];
-            }
-		}
-	}
-	*/
-    
-
 }
 
 - (BOOL) textureAllocated
@@ -531,7 +480,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (void) setVolume:(float) volume
 {
-    NSLog(@" set volume %f", volume);
 	[_movie setVolume:volume];
 }
 
