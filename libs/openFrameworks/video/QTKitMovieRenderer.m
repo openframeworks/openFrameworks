@@ -1,5 +1,6 @@
 
 #import "QTKitMovieRenderer.h"
+#import <Accelerate/Accelerate.h>
 
 //secret methods!
 @interface QTMovie (QTFrom763)
@@ -22,7 +23,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 @synthesize movieSize;
 @synthesize useTexture;
 @synthesize usePixels;
-@synthesize allowAlpha;
+@synthesize useAlpha;
 @synthesize frameCount;
 @synthesize justSetFrame;
 @synthesize synchronousScrub;
@@ -32,13 +33,12 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     return [NSDictionary dictionaryWithObjectsAndKeys:
             //if we have a texture, make the pixel buffer OpenGL compatible
             [NSNumber numberWithBool:self.useTexture], (NSString*)kCVPixelBufferOpenGLCompatibilityKey, 
-            //in general this shouldn't be forced. but in order to ensure we get good pixels use this one
-            [NSNumber numberWithInt: kCVPixelFormatType_32ARGB], (NSString*)kCVPixelBufferPixelFormatTypeKey, 
-            //specifying width and height can't hurt since we know
+            //sorry for the ternary operator but it makes this way simpler
+            [NSNumber numberWithInt: self.useAlpha ? kCVPixelFormatType_32ARGB : kCVPixelFormatType_24RGB], (NSString*)kCVPixelBufferPixelFormatTypeKey,
             nil];
 }
 
-- (BOOL) loadMovie:(NSString*)moviePath allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels
+- (BOOL) loadMovie:(NSString*)moviePath allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
 {
     if(![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
     {
@@ -49,7 +49,8 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//create visual context
 	useTexture = doUseTexture;
 	usePixels = doUsePixels;
-	
+	useAlpha = doUseAlpha;
+    NSLog(@"use alpha? %d", (useAlpha ? 1 : 0));
 	NSError* error;
 	NSMutableDictionary* movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                             [NSURL fileURLWithPath:[moviePath stringByStandardizingPath]], QTMovieURLAttribute,
@@ -395,7 +396,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//before we return it to an openFrameworks app.
 	//this is a bit tricky since CV pixel buffer's bytes per row are not always the same as movieWidth*4.  
 	//We have to use the BPR given by CV for the input buffer, and the movie size for the output buffer
-	int x,y, cvbpp, outbpp, cvbpr, outbpr, width, height;
 //    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
 //          CVPixelBufferGetWidth(_latestPixelFrame), 
 //          CVPixelBufferGetHeight(_latestPixelFrame), 
@@ -408,7 +408,54 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         return;
     }
     
+    CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
+    if(self.useAlpha){
+        NSLog(@"using alpha");
+        int x,y, srcbpp, outbpp, srcbpr, outbpr, width, height;
+        srcbpr = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
+        srcbpp = srcbpr/CVPixelBufferGetWidth(_latestPixelFrame);
+        outbpp = 4;
+        outbpr = outbpp * movieSize.width;
+        width = movieSize.width;
+        height = movieSize.height;
+        unsigned char* pix = CVPixelBufferGetBaseAddress(_latestPixelFrame);
+        for(y = 0; y < movieSize.height; y++){
+            for(x = 0; x < movieSize.width; x++){
+                //copy out the rgb
+                memcpy(outbuf+(y*outbpr + x*outbpp), pix + (y*srcbpr+x*srcbpp+1), 3);
+                //swizzle in the alpha.
+                outbuf[(y*outbpr + x*outbpp)+3] = pix[y*srcbpr+x*srcbpp];
+            }
+        }
+    }
+    else {
+        NSLog(@"copying bpr %ld height %ld",CVPixelBufferGetBytesPerRow(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame) );
+	    memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), CVPixelBufferGetBytesPerRow(_latestPixelFrame)*CVPixelBufferGetHeight(_latestPixelFrame));
+    }
+    CVPixelBufferUnlockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
+
+    /*
+    outbpp = (allowAlpha ? 4 : 3);
+    outbpr = outbpp * movieSize.width;
     CVPixelBufferLockBaseAddress(_latestPixelFrame, 0);
+    vImage_Buffer src = { CVPixelBufferGetBaseAddress(_latestPixelFrame), movieSize.height, movieSize.width, CVPixelBufferGetBytesPerRow(_latestPixelFrame) };
+    vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, outbpr };
+    vImage_Error err;
+    if(allowAlpha){
+        err = vImageConvert_ARGB8888toRGBA888(&src,&dest,0);
+    }
+    else{
+	    err = vImageConvert_ARGB8888toRGB888(&src,&dest,0);
+    }
+    CVPixelBufferUnlockBaseAddress(_latestPixelFrame, 0);
+    
+    if(err != kvImageNoError){
+        NSLog(@"Error in Pixel Copy vImage_error %ld", err);
+    }
+    */
+    
+    /*
+
 	unsigned char* pix = CVPixelBufferGetBaseAddress(_latestPixelFrame);
 	//TODO replace with apple vImage framework
 	cvbpr = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
@@ -427,8 +474,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             }
 		}
 	}
-	
-	CVPixelBufferUnlockBaseAddress(_latestPixelFrame, 0);	
+	*/
+    
+
 }
 
 - (BOOL) textureAllocated

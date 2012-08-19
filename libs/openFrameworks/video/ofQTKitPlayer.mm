@@ -20,7 +20,7 @@ bool ofQTKitPlayer::loadMovie(string path){
 }
 
 bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
-	if(mode < 0 || mode > 2){
+	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
 		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Error, invalid mode specified for");
 		return false;
 	}
@@ -28,21 +28,23 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(moviePlayer != NULL){
 		close(); //auto released 
 	}
-	decodeMode = mode;
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    decodeMode = mode;
 	bool useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
 	bool usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
-	
+	bool useAlpha = (pixelFormat == OF_PIXELS_RGBA);
 	moviePlayer = [[QTKitMovieRenderer alloc] init];
-	
+    
 	movieFilePath = ofToDataPath(movieFilePath, false);
-	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding] 
+	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding]
 							 allowTexture:useTexture 
-							  allowPixels:usePixels];
+							  allowPixels:usePixels
+                               allowAlpha:useAlpha];
 
 	if(success){
         reallocatePixels();
+        moviePath = movieFilePath;
 		duration = moviePlayer.duration;
         setLoopState(OF_LOOP_NONE);
 	}
@@ -374,14 +376,21 @@ float ofQTKitPlayer::getHeight() {
 }
 
 void ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
+    cout << "Setting pixel format to " << newPixelFormat << " current pixel format " << pixelFormat << endl;
     if(newPixelFormat != pixelFormat){
         if(newPixelFormat == OF_PIXELS_RGB){
             pixelFormat = OF_PIXELS_RGB;
-            reallocatePixels();
+            //if we already have a movie loaded we need to reallocate the pixels
+            if(isLoaded()){
+                loadMovie(moviePath, decodeMode);
+            }
         }
         else if(newPixelFormat == OF_PIXELS_RGBA){
             pixelFormat = OF_PIXELS_RGBA;
-            reallocatePixels();
+            //if we already have a movie loaded we need to reallocate the pixels
+            if(isLoaded()){
+                loadMovie(moviePath, decodeMode);
+            }			
         }
         else {
             ofLogError("ofQTKitPlayer::setPixelFormat -- Pixel format " + ofToString(newPixelFormat) + " is not supported");
@@ -408,15 +417,11 @@ bool ofQTKitPlayer::getSynchronousScrubbing(){
 
 
 void ofQTKitPlayer::reallocatePixels(){
-    if(moviePlayer != nil){
-        if(pixelFormat == OF_PIXELS_RGBA){
-            moviePlayer.allowAlpha = true;
-            pixels.allocate(moviePlayer.movieSize.width, moviePlayer.movieSize.height, OF_IMAGE_COLOR_ALPHA);   
-        }
-        else {
-            moviePlayer.allowAlpha = false;
-            pixels.allocate(moviePlayer.movieSize.width, moviePlayer.movieSize.height, OF_IMAGE_COLOR);
-        }
+    if(pixelFormat == OF_PIXELS_RGBA){
+        pixels.allocate(moviePlayer.movieSize.width, moviePlayer.movieSize.height, OF_IMAGE_COLOR_ALPHA);
+    }
+    else {
+        pixels.allocate(moviePlayer.movieSize.width, moviePlayer.movieSize.height, OF_IMAGE_COLOR);
     }
 }
 

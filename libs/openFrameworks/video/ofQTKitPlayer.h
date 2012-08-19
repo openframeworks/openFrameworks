@@ -96,6 +96,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		float duration;
 		float speed;
 		ofQTKitDecodeMode decodeMode;
+	    string moviePath;
 
 		//pulls texture data from the movie renderer into our ofTexture
 		void updateTexture();
