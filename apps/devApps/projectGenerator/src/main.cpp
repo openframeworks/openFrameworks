@@ -18,6 +18,7 @@ int main(  int argc, char *argv[]  ){
 		ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
 		testApp * app = new testApp;
 		app->buildAllExamples = false;
+		app->projectPath = "";
 		for(int i=1;i<argc;i++){
 			string arg = argv[i];
 			if(arg.find("--")==0){
@@ -73,6 +74,11 @@ int main(  int argc, char *argv[]  ){
 			}else{
 				app->projectPath = ofFilePath::removeTrailingSlash(ofFilePath::getPathForDirectory(ofFilePath::getAbsolutePath(arg,false)));
 			}
+		}
+
+		if (!(app->buildAllExamples) && app->projectPath.empty()){
+			cout << "Error: No target project given. Either run projectGenerator with the --allexamples option or supply a target project folder path. Run \'projectGenerator help\' for details." << endl;
+			std::exit(1);
 		}
 
 		if(app->targetsToMake.empty())
