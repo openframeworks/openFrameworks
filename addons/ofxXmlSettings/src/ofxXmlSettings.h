@@ -3,9 +3,24 @@
 
 #include "ofMain.h"
 #include <string.h>
-#include "tinyxml.h"
+#include <Poco/DOM/Document.h>
+#include <Poco/DOM/Element.h>
+#include <Poco/DOM/DOMParser.h>
+
+#include <Poco/XML/XMLString.h>  
+#include <Poco/DOM/DOMParser.h>
+#include <Poco/DOM/DOMWriter.h>
+#include <Poco/DOM/Document.h>
+#include <Poco/DOM/Attr.h>
+#include <Poco/DOM/Node.h>
+#include <Poco/DOM/NodeIterator.h>
+#include <Poco/DOM/NodeFilter.h>
+#include <Poco/DOM/NamedNodeMap.h>  
+#include <Poco/DOM/ChildNodesList.h>
+
 
 using namespace std;
+using namespace Poco::XML;
 
 /*
 	Q: what is the which = 0 argument?
@@ -141,25 +156,36 @@ class ofxXmlSettings{
 		bool	loadFromBuffer( string buffer );
 		void	copyXmlToString(string & str);
 
-		TiXmlDocument 	doc;
+		//TiXmlDocument 	doc;
+        Poco::XML::Document& getDocument() const;
+        Poco::XML::Document& getDocument();
+    
 		bool 			bDocLoaded;
 
 	protected:
+    
+        Poco::XML::Document *document;
+        Element *currentElement;
+        Poco::XML::DOMParser parser;
 
-		TiXmlHandle     storedHandle;
+    ofFile file;
+    
+    Element* getElement(const string& tag, const int which);
+    
+		//TiXmlHandle     storedHandle;
 		int             level;
 
 
 		int 	writeTag(const string&  tag, const string& valueString, int which = 0);
-		bool 	readTag(const string&  tag, TiXmlHandle& valHandle, int which = 0);	// max 1024 chars...
+		bool 	readTag(const string&  tag, Node** node, int which = 0);	// max 1024 chars...
 
 
 		int		writeAttribute(const string& tag, const string& attribute, const string& valueString, int which = 0);
 
-        TiXmlElement* getElementForAttribute(const string& tag, int which);
-        bool readIntAttribute(const string& tag, const string& attribute, int& valueString, int which);
-        bool readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which);
-        bool readStringAttribute(const string& tag, const string& attribute, string& outValue, int which);
+        //TiXmlElement* getElementForAttribute(const string& tag, int which);
+        //bool readIntAttribute(const string& tag, const string& attribute, int& valueString, int which);
+        //bool readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which);
+        //bool readStringAttribute(const string& tag, const string& attribute, string& outValue, int which);
 };
 
 #endif
