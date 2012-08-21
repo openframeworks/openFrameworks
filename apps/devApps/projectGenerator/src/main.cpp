@@ -56,19 +56,19 @@ int main(  int argc, char *argv[]  ){
 					cout << "--linux: generate linux project files" << endl;
 					cout << "--linux64: generate linux 64bits project files" << endl;
 					cout << "--ios: generate iOS project files" << endl;
-					cout << "--allplatforms: generate all platforms project files" << endl;
-					cout << "--allexamples: generate all examples project files" << endl;
+					cout << "--allplatforms: generate project files for all platforms" << endl;
+					cout << "--allexamples: generate project files for all examples. [pathToExample] is not needed in this case." << endl;
 					cout << endl;
 					cout << "default: create project files for current platform for selected path" << endl;
 					cout << "running over existing example updates project files for selected platforms" << endl;
 					cout << "without parameters, shows gui" << endl;
 					std::exit(0);
 				}else{
-					cout << "Unknown argument --" << arg << ". Run \'projectGenerator help\' for details. Aborting." << endl;
+					cout << "Error: Unknown argument --" << arg << ". Run \'projectGenerator help\' for details. Aborting." << endl;
 					std::exit(1);
 				}
 			}else if(arg.find("-", 0, 1)==0){
-				cout << "Unknown argument " << arg << ". Run \'projectGenerator help\' for details. Aborting." << endl;
+				cout << "Error: Unknown argument " << arg << ". Run \'projectGenerator help\' for details. Aborting." << endl;
 				std::exit(1);
 			}else{
 				app->projectPath = ofFilePath::removeTrailingSlash(ofFilePath::getPathForDirectory(ofFilePath::getAbsolutePath(arg,false)));
