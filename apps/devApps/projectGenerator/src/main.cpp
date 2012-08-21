@@ -63,7 +63,13 @@ int main(  int argc, char *argv[]  ){
 					cout << "running over existing example updates project files for selected platforms" << endl;
 					cout << "without parameters, shows gui" << endl;
 					std::exit(0);
+				}else{
+					cout << "Unknown argument --" << arg << ". Run \'projectGenerator help\' for details. Aborting." << endl;
+					std::exit(1);
 				}
+			}else if(arg.find("-", 0, 1)==0){
+				cout << "Unknown argument " << arg << ". Run \'projectGenerator help\' for details. Aborting." << endl;
+				std::exit(1);
 			}else{
 				app->projectPath = ofFilePath::removeTrailingSlash(ofFilePath::getPathForDirectory(ofFilePath::getAbsolutePath(arg,false)));
 			}
