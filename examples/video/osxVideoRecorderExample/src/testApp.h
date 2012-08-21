@@ -25,6 +25,8 @@ class testApp : public ofBaseApp{
     
     	ofVideoPlayer recordedVideoPlayback;
     
+		void videoSaved(ofVideoSavedEventArgs& e);
+	
     	vector<string> videoDevices;
 	    vector<string> audioDevices;
     
