@@ -10,6 +10,14 @@
 	@class QTKitVideoGrabber;
 #endif
 
+class ofQTKitGrabber; //quick forward declare for the event reference
+class ofVideoSavedEventArgs : public ofEventArgs {
+  public:
+	string videoPath;
+	ofQTKitGrabber* grabber;
+	string error; //"" if there is no error
+};
+
 class ofQTKitGrabber : public ofBaseVideoGrabber {
 	public:
 		ofQTKitGrabber();
@@ -62,6 +70,7 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 	    bool			hasPreview();
 		void            videoSettings();
 
+		ofEvent<ofVideoSavedEventArgs> videoSavedEvent;
 	protected:
 
 		bool confirmInit();
@@ -87,4 +96,5 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 			void * grabber;
 		#endif
 };
+
 
