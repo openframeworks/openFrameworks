@@ -31,6 +31,9 @@ INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 
 
 LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)"
+ifneq ($(shell uname),MINGW32_NT-6.1)
+	LDFLAGS += -fuse-ld=gold
+endif
 SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)/libgnustl_static.a -lgcc
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 #LIB_STATIC += $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libsndfile.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libcommon.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgsm.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libg72x.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libFLAC.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libreplaygain_synthesis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libreplaygain_analysis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgrabbag.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgrabbag.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgetopt.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libutf8.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbisfile.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbisenc.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libogg.a
