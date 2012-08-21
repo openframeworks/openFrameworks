@@ -7,6 +7,7 @@
 #include <Poco/DOM/Element.h>
 #include <Poco/DOM/DOMParser.h>
 
+#include <Poco/SAX/SAXException.h>
 #include <Poco/XML/XMLString.h>  
 #include <Poco/DOM/DOMParser.h>
 #include <Poco/DOM/DOMWriter.h>
@@ -177,9 +178,10 @@ class ofxXmlSettings{
 
 
 		int 	writeTag(const string&  tag, const string& valueString, int which = 0);
-		bool 	readTag(const string&  tag, Node** node, int which = 0);	// max 1024 chars...
+		bool 	readTag(const string&  tag, Element** node, int which = 0);	// max 1024 chars...
 
 
+        string cachedFilename;
 		int		writeAttribute(const string& tag, const string& attribute, const string& valueString, int which = 0);
 
         //TiXmlElement* getElementForAttribute(const string& tag, int which);
