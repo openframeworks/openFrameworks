@@ -77,17 +77,26 @@ void ofxXmlSettings::clear(){
 //---------------------------------------------------------
 bool ofxXmlSettings::loadFile(const string& xmlFile){
 
-	string fullXmlFile = ofToDataPath(xmlFile);
+	cachedFilename = ofToDataPath(xmlFile);
 
 	bool loadOkay = true;// = doc.LoadFile(fullXmlFile);
-
-    ofFile file;
-    file.open(fullXmlFile);
     
+    file.open(cachedFilename); 
     ofBuffer buff = file.readToBuffer();
     
-    // read the buffer into document
-    document = parser.parseString(buff.getText());
+    string xml = buff.getText();
+    
+    try {
+        // read the buffer into document
+        document = parser.parseString(xml);
+    } catch ( Poco::XML::SAXParseException &e) {
+        
+        stringstream sstream;
+        sstream << e.name() << " " << e.getLineNumber();
+        
+        ofLog(OF_LOG_ERROR, sstream.str());
+        return false;
+    }
     
 	//theo removed bool check as it would
 	//return false if the file exists but was
@@ -95,7 +104,10 @@ bool ofxXmlSettings::loadFile(const string& xmlFile){
 
     //our push pop level should be set to 0!
 	level = 0;
+    currentElement = document->documentElement(); // now we're at the root
 
+    file.close();
+    
 	return loadOkay;
 }
 
@@ -109,7 +121,6 @@ bool ofxXmlSettings::saveFile(const string& xmlFile){
     Poco::XML::DOMWriter writer;
     writer.writeNode( stream, document );
     
-    //ofFile file(xmlFile);
     file.open(xmlFile);
     
     if(!file.exists()) {
@@ -144,12 +155,14 @@ bool ofxXmlSettings::saveFile(){
     
     ofBuffer buffer(stream.str().c_str(), stream.str().size());
     
+    file.open(cachedFilename);
+    
     if(!file.writeFromBuffer(buffer)) {
         ofLog(OF_LOG_ERROR, " can't write to xml file " );
         return false;
     }
     
-    //file.close(); // do we just keep the file open?
+    file.close(); // do we just keep the file open?
     return true;
 
 }
@@ -219,9 +232,9 @@ int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which){
 	return defaultValue;*/
     
     if (tag.find(':') != string::npos || tag.find('/') != string::npos){
-		Node* node;
-        if (readTag(tag, &node, which)){
-            return ofToInt(node->nodeValue());
+		Element* element;
+        if (readTag(tag, &element, which)){
+            return ofToInt(element->innerText());
         }
 	}
     return defaultValue;
@@ -233,9 +246,9 @@ double ofxXmlSettings::getValue(const string& tag, double defaultValue, int whic
     
     // is it a path using either tinyXML : for legacy or Poco / for the present
     if (tag.find(':') != string::npos || tag.find('/') != string::npos){
-		Node* node;
-        if (readTag(tag, &node, which)){
-            return ofToFloat(node->nodeValue());
+		Element* element;
+        if (readTag(tag, &element, which)){
+            return ofToFloat(element->innerText());
         }
 	}
     return defaultValue;
@@ -257,16 +270,16 @@ string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, i
 	return defaultValue;*/
  
     if (tag.find(':') != string::npos || tag.find('/') != string::npos){
-		Node* node;
-        if (readTag(tag, &node, which)){
-            return node->nodeValue();
+		Element* element;
+        if (readTag(tag, &element, which)){
+            return element->innerText();
         }
         return defaultValue;
 	}
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readTag(const string&  tag, Node** node, int which){
+bool ofxXmlSettings::readTag(const string&  tag, Element** node, int which){
 
     ////////// from POCO documentation
     /*
@@ -294,19 +307,23 @@ bool ofxXmlSettings::readTag(const string&  tag, Node** node, int which){
 	valHandle = tagHandle.Child( 0 );
     return (valHandle.ToText() != NULL);*/
     
-    string copy = tag;
+    /*string copy = "/" + tag;
     
     // if there's pre0072 style ':' (not proper xpath but is how tinyXml works) get rid of them
     if(copy.find(':') != string::npos) {
         replace( copy.begin(), copy.end(), ':', '/');
     }
     
-    // now the selector
-    stringstream stream;
-    stream << "[" << which << "]";
-    copy.append(stream.str());
+    if(which != 0) {
+        // now the selector
+        stringstream stream;
+        stream << "[" << which << "]";
+        copy.append(stream.str());
+    }
     
-    *node = currentElement->getNodeByPath(copy);
+    *node = currentElement->getNodeByPath(copy);*/
+    
+    *node = getElement(tag, which);
     
     if(node) {
         return true;
@@ -345,7 +362,7 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
         replace( copy.begin(), copy.end(), ':', '/');
     }
     
-    tagCount = count( copy.begin(), copy.end(), '/');
+    tagCount = count( copy.begin(), copy.end(), '/') + 1;
     
     // now the index selector
     stringstream stream;
@@ -435,7 +452,7 @@ bool ofxXmlSettings::tagExists(const string& tag, int which){
 
 	return found;*/
     
-    Node* node;
+    Element* node;
     if (readTag(tag, &node, which)){
         return true;
     }
@@ -469,7 +486,13 @@ int ofxXmlSettings::getNumTags(const string&  tag){
 
 	return count;*/
     
-    return currentElement->getElementsByTagName(tag)->length();
+    string copy = tag;
+    
+    if(copy.find(":") != string::npos) {
+        replace( copy.begin(), copy.end(), ':', '/');
+    }
+    
+    return currentElement->getElementsByTagName(copy)->length();
 }
 
 
@@ -1048,5 +1071,6 @@ Element* ofxXmlSettings::getElement(const string& tag, const int which)
     }
     
     return (Element*) currentElement->getNodeByPath(copy); // we know this'll always be a node
+    
 }
 
