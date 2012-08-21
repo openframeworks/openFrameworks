@@ -396,19 +396,24 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//before we return it to an openFrameworks app.
 	//this is a bit tricky since CV pixel buffer's bytes per row are not always the same as movieWidth*4.  
 	//We have to use the BPR given by CV for the input buffer, and the movie size for the output buffer
+    //Helpful debugging please leave in
 //    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
-//          CVPixelBufferGetWidth(_latestPixelFrame), 
+//          CVPixelBufferGetWidth(_latestPixelFrame),
 //          CVPixelBufferGetHeight(_latestPixelFrame), 
 //          CVPixelBufferGetBytesPerRow(_latestPixelFrame),
 //          (NSInteger)movieSize.width, (NSInteger)movieSize.height);
     if((NSInteger)movieSize.width != CVPixelBufferGetWidth(_latestPixelFrame) ||
        (NSInteger)movieSize.height != CVPixelBufferGetHeight(_latestPixelFrame)){
-        NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. Ths is most likely caused by a non-square pixel video format such as HDV.",
+        NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. Ths is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
               CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
         return;
     }
     
     CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
+    //If we are using alpha, the ofQTKitPlayer class will have allocated a buffer of size
+    //movieSize.width * movieSize.height * 4
+    //CoreVieo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
+    //so we need to swap the alpha around using a vImage permutation 
     if(self.useAlpha){
         vImage_Buffer src = { CVPixelBufferGetBaseAddress(_latestPixelFrame),
             				  CVPixelBufferGetHeight(_latestPixelFrame),
@@ -422,8 +427,26 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             NSLog(@"Error in Pixel Copy vImage_error %ld", err);
         }
     }
+    //If we are are doing RGB, then we will have request RGB pixels from the video player
+    //and the ofQTKitPlayer will have created a buffer of size movieSize.width * movieSize.height * 3
+    //so we can just copy them straight into the outbuffer
     else {
-	    memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), CVPixelBufferGetBytesPerRow(_latestPixelFrame)*CVPixelBufferGetHeight(_latestPixelFrame));
+        size_t dstBytesPerRow = movieSize.width * 3;
+        if (CVPixelBufferGetBytesPerRow(_latestPixelFrame) == dstBytesPerRow) {
+        	memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), dstBytesPerRow*CVPixelBufferGetHeight(_latestPixelFrame));
+        }
+        else {
+            unsigned char *dst = outbuf;
+            unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(_latestPixelFrame);
+            size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
+            size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
+            int y;
+            for(y = 0; y < movieSize.height; y++){
+                memcpy(dst, src, copyBytesPerRow);
+                dst += dstBytesPerRow;
+                src += srcBytesPerRow;
+            }
+        }
     }
     CVPixelBufferUnlockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
 }

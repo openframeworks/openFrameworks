@@ -494,8 +494,22 @@
 {
 	@synchronized(self){
         if(hasNewFrame){            
+            size_t dstBytesPerRow = pixels.getWidth() * 3;
             CVPixelBufferLockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
-            memcpy(pixels.getPixels(),CVPixelBufferGetBaseAddress(cvFrame),pixels.getWidth()*pixels.getHeight()*3);
+            if (CVPixelBufferGetBytesPerRow(cvFrame) == dstBytesPerRow) {
+                memcpy(pixels.getPixels(), CVPixelBufferGetBaseAddress(cvFrame), pixels.getHeight() * dstBytesPerRow);
+            }
+            else {
+                unsigned char *dst = pixels.getPixels();
+                unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(cvFrame);
+                size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(cvFrame);
+                size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
+                for (int y = 0; y < pixels.getHeight(); y++){
+                    memcpy(dst, src, copyBytesPerRow);
+                    dst += dstBytesPerRow;
+                    src += srcBytesPerRow;
+                }
+            }
             CVPixelBufferUnlockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
 
             hasNewFrame = NO;
