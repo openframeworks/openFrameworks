@@ -15,7 +15,9 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		ofQTKitGrabber();
 		~ofQTKitGrabber();
 
-		bool            initGrabber(int w, int h);
+	    bool            initGrabber(int w, int h);
+	    //initGrabberNoPreview if you want to only use this grabber for recording
+	    bool            initGrabberWithoutPreview();
 		bool            isFrameNew();
 		void            update();
 		float           getWidth();
@@ -23,11 +25,12 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		unsigned char * getPixels();
 		ofPixelsRef     getPixelsRef();
 		void            setVerbose(bool bTalkToMe);
-		void            setUseTexture(bool bUse);
 
-		// [added by gameover]
-		void            initRecording();
-		bool            initGrabberWithoutPreview(); // used to init with no preview/textures etc
+		void            listDevices(); // would be better if this returned a vector of devices too, but requires updating base class
+		vector <string> & listAudioDevices();
+		vector <string> & listVideoDevices();
+
+		bool            initRecording();
 		vector <string> & listVideoCodecs();
 		vector <string> & listAudioCodecs();
 		void            setVideoCodec(string videoCodecIDString);
@@ -36,11 +39,8 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		void            startRecording(string filePath);
 		void            stopRecording();
 		bool            isRecording();
+	    bool            isRecordingReady();
 		bool            isReady();
-
-		void            listDevices(); // would be better if this returned a vector of devices too, but requires updating base class
-		vector <string> & listAudioDevices();
-		vector <string> & listVideoDevices();
 
 		void            close();
 
@@ -59,14 +59,15 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		void            setDesiredFrameRate(int framerate){ ofLog(OF_LOG_WARNING, "ofQTKitGrabber -- Cannot specify framerate."); }
 		void            setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat   getPixelFormat();
-
+	    bool			hasPreview();
 		void            videoSettings();
 
 	protected:
 
 		bool confirmInit();
 		ofPixelFormat pixelFormat;
-
+	    ofPixels pixels;
+    
 		vector <string>  videoDeviceVec;
 		vector <string>  audioDeviceVec;
 		vector <string>  videoCodecsVec;
@@ -79,7 +80,7 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 
 		bool isInited;
 		bool bUseAudio;
-
+	    bool bPreview;
 		#ifdef __OBJC__
 			QTKitVideoGrabber * grabber; //only obj-c needs to know the type of this protected var
 		#else
