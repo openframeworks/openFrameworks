@@ -10,11 +10,10 @@
 	@class QTKitVideoGrabber;
 #endif
 
-class ofQTKitGrabber; //quick forward declare for the event reference
 class ofVideoSavedEventArgs : public ofEventArgs {
   public:
 	string videoPath;
-	ofQTKitGrabber* grabber;
+	ofBaseVideoGrabber* grabber;
 	string error; //"" if there is no error
 };
 

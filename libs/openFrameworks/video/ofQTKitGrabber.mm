@@ -27,11 +27,9 @@
 	ofQTKitGrabber* grabber;
 	
     BOOL hasNewFrame;
-    BOOL isRunning;
     BOOL isFrameNew;
     BOOL isRecording;
     BOOL isRecordReady;
-    BOOL verbose;
     BOOL useAudio;
 }
 
@@ -47,7 +45,6 @@
 @property(readonly) BOOL isFrameNew;
 @property(readonly) BOOL isRecording;
 @property(readonly) BOOL isRecordReady;
-@property(nonatomic, readwrite) BOOL verbose;
 @property(nonatomic, readwrite) BOOL useAudio;
 @property(nonatomic, readwrite) ofQTKitGrabber* grabber; //for event reference setting
 
@@ -111,7 +108,6 @@
 @synthesize isFrameNew;
 @synthesize isRecording;
 @synthesize isRecordReady;
-@synthesize verbose;
 @synthesize useAudio;
 @synthesize grabber;
 
@@ -135,7 +131,6 @@
 			return index;
 		}
 	}
-	
 	return -1;
 }
 
@@ -144,7 +139,6 @@
 	NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
 							 arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
 	
-	NSLog(@"ofQTKitGrabber listing video devices");
 	[self enumerateArray:videoDevices];
 	
 	return videoDevices;
@@ -155,7 +149,6 @@
 {
 	NSArray* audioDevices = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
 	
-	NSLog(@"ofQTKitGrabber listing audio devices");
 	[self enumerateArray:audioDevices];
 	
 	return audioDevices;
@@ -194,7 +187,6 @@
                                      forKey:(NSString*)kCVPixelBufferWidthKey];
             [pixelBufferAttributes setValue:[NSNumber numberWithInt:height]
                                      forKey:(NSString*)kCVPixelBufferHeightKey];
-            cout << "Setting width and height to " << width << " " << height << endl;
         }
         
         if(pixelBufferAttributes.count > 0){
@@ -572,6 +564,20 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 	return self.session && self.session.isRunning;
 }
 
+- (void) dealloc
+{
+	if(self.isRunning){
+		[self stop];
+	}
+	
+	if(cvFrame != NULL){
+		CVPixelBufferRelease(cvFrame);
+		cvFrame = NULL;
+	}
+
+	[super dealloc];
+}
+
 @end
 
 //C++ Wrapper class:
@@ -874,9 +880,7 @@ void ofQTKitGrabber::setUseAudio(bool _bUseAudio){
 }
 
 void ofQTKitGrabber::setVerbose(bool bTalkToMe){
-	if(confirmInit()){
-		grabber.verbose = bTalkToMe;
-	}
+	//Now handled by ofLogVerbose()
 }
 
 void ofQTKitGrabber::videoSettings(){
