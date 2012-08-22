@@ -331,11 +331,7 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer & resBuffer, unsigned int sa
 			b=buffer[intPosition+j];
 			c=buffer[intPosition+j+channels];
 			d=buffer[intPosition+j+channels*2];
-			*resBufferPtr = ofHermiteInterpolate(remainder,a,b,c,d);
-			if(abs(*resBufferPtr)>1){
-				cout << *resBufferPtr << " at " << intPosition+j << "/" << buffer.size()  << " / " << to<< " At " << speed <<  endl;
-			}
-			resBufferPtr++;
+			*resBufferPtr++ = ofHermiteInterpolate(remainder,a,b,c,d);
 		}
 		position += increment;
 		intPosition = position;
