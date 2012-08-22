@@ -234,6 +234,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         NSError* nsError = nil;        
         if(self.usePixels){
             //pull the frame
+			
             NSDictionary *dict = [NSDictionary 
                                   dictionaryWithObjectsAndKeys:QTMovieFrameImageTypeCVPixelBufferRef, QTMovieFrameImageType, 
                                   [NSValue valueWithSize:movieSize], QTMovieFrameImageSize,
@@ -256,9 +257,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             CVPixelBufferRetain(theImage);
             
             //DEBUG timecode
-            CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
-            CFDictionaryRef timeDictionary = CVBufferGetAttachment (theImage, kCVBufferMovieTimeKey, &mode);
-            //            NSLog(@"Image One current movie time: %f incoming frame time: %f", 1.0*_movie.currentTime.timeValue/_movie.currentTime.timeScale, [[(NSDictionary*)timeDictionary valueForKey:@"TimeValue"] floatValue] / [[(NSDictionary*)timeDictionary valueForKey:@"TimeScale"] floatValue]);
+//            CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
+//            CFDictionaryRef timeDictionary = CVBufferGetAttachment (theImage, kCVBufferMovieTimeKey, &mode);
+//                        NSLog(@"Image One current movie time: %f incoming frame time: %f", 1.0*_movie.currentTime.timeValue/_movie.currentTime.timeScale, [[(NSDictionary*)timeDictionary valueForKey:@"TimeValue"] floatValue] / [[(NSDictionary*)timeDictionary valueForKey:@"TimeScale"] floatValue]);
             
    			if(self.useTexture){
                 if(_latestTextureFrame != NULL){
@@ -270,7 +271,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
                 OSErr err = CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, _latestPixelFrame, NULL, &_latestTextureFrame);
                 if(err != noErr){
                     NSLog(@"Error creating OpenGL texture %d ", err);
-                    
                     return NO;
                 }
             }
@@ -290,7 +290,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
                 NSLog(@"Error pulling CVOpenGLTextureRef image %@", nsError);
                 return NO;
             }
-            
             
             if(_latestTextureFrame != NULL){
                 CVOpenGLTextureRelease(_latestTextureFrame);
@@ -324,8 +323,8 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		}
 		
         //DEBUG timecode
-        CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
-        CFDictionaryRef timeDictionary = CVBufferGetAttachment (_latestPixelFrame, kCVBufferMovieTimeKey, &mode);
+//        CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
+//        CFDictionaryRef timeDictionary = CVBufferGetAttachment (_latestPixelFrame, kCVBufferMovieTimeKey, &mode);
 //        NSLog(@"movie time: %f incoming frame time: %f", 1.0*_movie.currentTime.timeValue/_movie.currentTime.timeScale, [[(NSDictionary*)timeDictionary valueForKey:@"TimeValue"] floatValue] / [[(NSDictionary*)timeDictionary valueForKey:@"TimeScale"] floatValue]);
         
 		//if we are using a texture, create one from the texture cache
@@ -415,11 +414,12 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     //CoreVieo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
     //so we need to swap the alpha around using a vImage permutation 
     if(self.useAlpha){
-        vImage_Buffer src = { CVPixelBufferGetBaseAddress(_latestPixelFrame),
-            				  CVPixelBufferGetHeight(_latestPixelFrame),
-            				  CVPixelBufferGetWidth(_latestPixelFrame),
-                              CVPixelBufferGetBytesPerRow(_latestPixelFrame)
-        					};
+        vImage_Buffer src = {
+			CVPixelBufferGetBaseAddress(_latestPixelFrame),
+            CVPixelBufferGetHeight(_latestPixelFrame),
+            CVPixelBufferGetWidth(_latestPixelFrame),
+            CVPixelBufferGetBytesPerRow(_latestPixelFrame)
+		};
         vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, movieSize.width*4 };
 		uint8_t permuteMap[4] = { 1, 2, 3, 0 }; //swizzle the alpha around to the end to make ARGB -> RGBA
         vImage_Error err = vImagePermuteChannels_ARGB8888(&src, &dest, permuteMap, 0);
@@ -431,22 +431,39 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     //and the ofQTKitPlayer will have created a buffer of size movieSize.width * movieSize.height * 3
     //so we can just copy them straight into the outbuffer
     else {
-        size_t dstBytesPerRow = movieSize.width * 3;
-        if (CVPixelBufferGetBytesPerRow(_latestPixelFrame) == dstBytesPerRow) {
-        	memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), dstBytesPerRow*CVPixelBufferGetHeight(_latestPixelFrame));
-        }
-        else {
-            unsigned char *dst = outbuf;
-            unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(_latestPixelFrame);
-            size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
-            size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
-            int y;
-            for(y = 0; y < movieSize.height; y++){
-                memcpy(dst, src, copyBytesPerRow);
-                dst += dstBytesPerRow;
-                src += srcBytesPerRow;
-            }
-        }
+		//NSLog(@"incoming frame is %ld RGBA is %ld RGB is %ld",  CVPixelBufferGetPixelFormatType(_latestPixelFrame), kCVPixelFormatType_32ARGB, kCVPixelFormatType_24RGB);
+		//with frameImageAtTime: on sycnrhonouse scrub mode the frames come in 32ARGB even if we have 24RGB enforce, so prep for this case
+		if(CVPixelBufferGetPixelFormatType(_latestPixelFrame) == kCVPixelFormatType_32ARGB){
+			vImage_Buffer src = {
+				CVPixelBufferGetBaseAddress(_latestPixelFrame),
+				CVPixelBufferGetHeight(_latestPixelFrame),
+				CVPixelBufferGetWidth(_latestPixelFrame),
+				CVPixelBufferGetBytesPerRow(_latestPixelFrame)
+			};
+			vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, movieSize.width*3 };
+			vImageConvert_ARGB8888toRGB888(&src, &dest, 0);
+		}
+		else{
+			if (CVPixelBufferGetPixelFormatType(_latestPixelFrame) != kCVPixelFormatType_24RGB){
+				NSLog(@"QTKitMovieRenderer - Frame pixelformat not kCVPixelFormatType_24RGB: %d, instead %ld",kCVPixelFormatType_24RGB,CVPixelBufferGetPixelFormatType(_latestPixelFrame));
+			}
+			size_t dstBytesPerRow = movieSize.width * 3;
+			if (CVPixelBufferGetBytesPerRow(_latestPixelFrame) == dstBytesPerRow) {
+				memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), dstBytesPerRow*CVPixelBufferGetHeight(_latestPixelFrame));
+			}
+			else {
+				unsigned char *dst = outbuf;
+				unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(_latestPixelFrame);
+				size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
+				size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
+				int y;
+				for(y = 0; y < movieSize.height; y++){
+					memcpy(dst, src, copyBytesPerRow);
+					dst += dstBytesPerRow;
+					src += srcBytesPerRow;
+				}
+			}
+		}
     }
     CVPixelBufferUnlockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
 }
@@ -492,7 +509,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (void) setRate:(float) rate
 {
-    
 	[_movie setRate:rate];
 }
 
@@ -508,7 +524,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (float) volume
 {
-    [_movie stop];
 	return [_movie volume];
 }
 

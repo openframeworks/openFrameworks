@@ -6,6 +6,8 @@ ofQTKitPlayer::ofQTKitPlayer() {
 	bNewFrame = false;
 	duration = 0;
     speed = 0;
+	//default this to true so the player update behavior matches ofQuicktimePlayer
+	bSynchronousScrubbing = true;
     //ofQTKitPlayer supports RGB and RGBA
     pixelFormat = OF_PIXELS_RGB;
 }
@@ -41,8 +43,9 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 							 allowTexture:useTexture 
 							  allowPixels:usePixels
                                allowAlpha:useAlpha];
-
+	
 	if(success){
+		moviePlayer.synchronousScrub = bSynchronousScrubbing;
         reallocatePixels();
         moviePath = movieFilePath;
 		duration = moviePlayer.duration;
@@ -111,24 +114,31 @@ void ofQTKitPlayer::firstFrame(){
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
     [moviePlayer gotoBeginning];
-    
+	
     [pool release];
+	if(bSynchronousScrubbing){
+		update();
+	}
+
 }
 
 void ofQTKitPlayer::nextFrame(){
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     [moviePlayer stepForward];
-    
+
     [pool release];
-    
+	if(bSynchronousScrubbing){
+		update();
+	}
+
 }
 
 void ofQTKitPlayer::previousFrame(){
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     [moviePlayer stepBackward];
-    
+	bNewFrame = bHavePixelsChanged = bSynchronousScrubbing;
     [pool release];
     
 }
@@ -238,6 +248,10 @@ void ofQTKitPlayer::setPosition(float pct) {
 	moviePlayer.position = pct;
 	
 	[pool release];
+	
+	if(bSynchronousScrubbing){
+		update();
+	}
 }
 
 void ofQTKitPlayer::setVolume(float volume) {
@@ -264,11 +278,11 @@ void ofQTKitPlayer::setFrame(int frame) {
 	if(moviePlayer == NULL) return;
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
 	moviePlayer.frame = frame % moviePlayer.frameCount;
-	
 	[pool release];
-	
+	if(bSynchronousScrubbing){
+		update();
+	}
 }
 
 int ofQTKitPlayer::getCurrentFrame() {
@@ -395,17 +409,15 @@ ofQTKitDecodeMode ofQTKitPlayer::getDecodeMode(){
 }
 
 void ofQTKitPlayer::setSynchronousScrubbing(bool synchronous){
+	bSynchronousScrubbing = synchronous;
 	if(moviePlayer != nil){
         moviePlayer.synchronousScrub = synchronous;
     }
 }
 
 bool ofQTKitPlayer::getSynchronousScrubbing(){
-	if(moviePlayer != nil){
-        return moviePlayer.synchronousScrub;
-    }
+	return 	bSynchronousScrubbing;
 }
-
 
 void ofQTKitPlayer::reallocatePixels(){
     if(pixelFormat == OF_PIXELS_RGBA){
