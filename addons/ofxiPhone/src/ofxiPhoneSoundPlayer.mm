@@ -51,10 +51,10 @@ float * ofSoundGetSpectrum(int nBands){
 ofSoundPlayer::ofSoundPlayer(){
 }
 
-ofSoundPlayer::~ofSoundPlayer(){
-}
+//ofSoundPlayer::~ofSoundPlayer(){
+//}
 
-
+#ifdef OF_SOUND_PLAYER_FMOD
 //---------------------------------------
 // this should only be called once
 void ofSoundPlayer::initializeFmod(){
@@ -64,6 +64,7 @@ void ofSoundPlayer::initializeFmod(){
 //---------------------------------------
 void ofSoundPlayer::closeFmod(){
 }
+#endif
 
 //------------------------------------------------------------
 void ofSoundPlayer::loadSound(string fileName, bool stream){
@@ -86,6 +87,10 @@ float ofSoundPlayer::getSpeed(){
 //------------------------------------------------------------
 float ofSoundPlayer::getPan(){
 	return 0;
+}
+
+//------------------------------------------------------------
+float ofSoundPlayer::getVolume(){
 }
 
 //------------------------------------------------------------

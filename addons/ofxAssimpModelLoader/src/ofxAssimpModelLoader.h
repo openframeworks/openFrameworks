@@ -40,6 +40,7 @@ class ofxAssimpModelLoader{
 
         // Scale the model to the screen automatically.
         void           setScaleNomalization(bool normalize);
+        void		   setNormalizationFactor(float factor);
 
         // This changes when you load a different model, may be 0.
         unsigned int   getAnimationCount();
@@ -84,6 +85,13 @@ class ofxAssimpModelLoader{
 		ofPoint        getSceneCenter();
 		float          getNormalizedScale();
 		ofPoint        getScale();
+
+		ofPoint			getSceneMin(bool bScaled = false);
+		ofPoint			getSceneMax(bool bScaled = false);
+						
+		int				getNumRotations();	// returns the no. of applied rotations
+		ofPoint			getRotationAxis(int which); // gets each rotation axis
+		float			getRotationAngle(int which); //gets each rotation angle
 
         void 		   calculateDimensions();
 
@@ -133,4 +141,5 @@ class ofxAssimpModelLoader{
         vector <ofxAssimpMeshHelper> modelMeshes;
 
         bool bUsingTextures, bUsingNormals, bUsingColors, bUsingMaterials;
+        float normalizeFactor;
 };

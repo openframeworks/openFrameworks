@@ -43,12 +43,12 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 	UInt32 category = kAudioSessionCategory_AmbientSound;
 	OSStatus result = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(category), &category);
 	if ( result != noErr ) 
-		NSLog(@"!!couldn't AudioSessionSetProperty( category ): OSStatus %i", result);
+		NSLog(@"!!couldn't AudioSessionSetProperty( category ): OSStatus %i", (int)result);
 	
 	UInt32 one = 1;
 	result = AudioSessionSetProperty( kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof(one), &one );
 	if ( result != noErr )
-		NSLog(@"!!couldn't AudioSessionSetProperty( override mix with others ): OSStatus %i", result );
+		NSLog(@"!!couldn't AudioSessionSetProperty( override mix with others ): OSStatus %i", (int)result );
 	AudioSessionSetActive(true);
 	//--------
 	
@@ -98,7 +98,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 	}
 	else
 	{
-		NSLog(@"asset reader is [%x] %@ %i", asset_reader, asset_reader, [asset_reader retainCount] );
+		NSLog(@"asset reader is [%@] %@ %i", asset_reader, asset_reader, [asset_reader retainCount] );
 		
 		if ( [video_tracks count] == 0 )
 		{
@@ -183,7 +183,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 				input_format.mBytesPerFrame = 2*input_format.mChannelsPerFrame;
 				input_format.mBytesPerPacket = input_format.mBytesPerFrame*input_format.mFramesPerPacket;
 				input_format.mBitsPerChannel = 16;
-				NSLog(@"calling AudioQueueNewOutput with self %x", self );
+				NSLog(@"calling AudioQueueNewOutput with self %@", self );
 				OSStatus error = AudioQueueNewOutput (
 										&input_format,
 										audioCallback,
@@ -503,7 +503,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 				OSStatus status = AudioQueueStart( audio_queue, NULL );
 				if ( status != noErr )
 				{
-					NSLog(@"error calling AudioQueueStart: %i", status );
+					NSLog(@"error calling AudioQueueStart: %i", (int)status );
 				}
 				
 			}
@@ -530,7 +530,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 			OSStatus status = AudioQueuePause( audio_queue );
 			if ( status != noErr )
 			{
-				NSLog(@"error calling AudioQueuePause: %i", status );
+				NSLog(@"error calling AudioQueuePause: %i", (int)status );
 			}
 		}
 	}
@@ -559,8 +559,12 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 {
 	// try to get video
 	CVImageBufferRef image_buffer = CMSampleBufferGetImageBuffer(buffer);
-	last_returned_frame_presentation_timestamp_s = presentation_timestamp_s;
 	return image_buffer;
+}
+
+-(void)updateFrameTimeDifference
+{
+    last_returned_frame_presentation_timestamp_s = presentation_timestamp_s;
 }
 
 - (pair<UIImage*,CGImageRef>)getCopyOfCurrentFrame
@@ -614,7 +618,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 		status = AudioQueueStop( audio_queue, true );
 		status = AudioQueueDispose( audio_queue, true );
 		if (status != noErr )
-			NSLog(@"error calling AudioQueueStop: %i");
+			NSLog(@"error calling AudioQueueStop: %i", (int)status);
 	}
 	
 	[asset release];

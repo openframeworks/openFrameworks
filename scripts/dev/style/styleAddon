@@ -1,0 +1,49 @@
+#! /bin/bash
+#
+# this script runs the OF styler on the src dir of a given addon
+#
+# 2012 Dan Wilcox <danomatika@gmail.com> for openFrameworks
+#
+
+# exit this script on an error
+#set -e
+
+# get the current working dir
+WD=$(dirname $0)
+
+###
+
+function printUsage() {
+	echo
+	echo "Usage:"
+	echo "	styleAddon dirname"
+	echo
+	echo "Example:"
+	echo "	styleAddon ofxXmlSettings"
+	echo
+}
+
+###
+
+# move to this scripts dir
+cd $WD
+
+# got any options?
+if [ ! -n "$1" ]; then
+	printUsage
+	exit 1
+fi
+
+# recurse through a dir
+if [ -d "../../../addons/$1" ]; then
+
+	# run styler
+	./ofStyler ../../../addons/$1/src h
+	./ofStyler ../../../addons/$1/src cpp
+
+else
+	echo
+	echo "ERROR: addon $1 not found"
+	printUsage
+	exit 1
+fi

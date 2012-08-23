@@ -1,7 +1,7 @@
 //
 // NotificationCenter.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/NotificationCenter.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NotificationCenter.h#2 $
 //
 // Library: Foundation
 // Package: Notifications
@@ -144,7 +144,7 @@ public:
 		/// NotificationCenter.
 
 private:
-	typedef Poco::SharedPtr<AbstractObserver> AbstractObserverPtr;
+	typedef SharedPtr<AbstractObserver> AbstractObserverPtr;
 	typedef std::vector<AbstractObserverPtr> ObserverList;
 
 	ObserverList  _observers;

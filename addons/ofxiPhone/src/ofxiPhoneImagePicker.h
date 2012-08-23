@@ -24,14 +24,14 @@ public:
 	virtual void loadPixels() = 0;
 };
 
+//----------------------------------------------------------- overlay.
 @interface OverlayView : UIView
-{
-	UIImagePickerController * _del;
-}
-- (id)initWithFrame:(CGRect)frame andDelegate:(UIImagePickerController *)del;
-- (void) takePhoto:(id) sender;
+@property (nonatomic, retain) id delegate;
+- (void)initUI;
+- (void)takePhoto:(id)sender;
 @end
 
+//-----------------------------------------------------------
 @interface ofxiPhoneImagePickerDelegate : NSObject <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 {
 
@@ -63,17 +63,19 @@ public:
 
 - (UIImageOrientation) getImageOrientation;
 
-- (bool) openLibrary;
-- (bool) openCamera:(int)camera;
+- (BOOL) openLibrary;
+- (BOOL) openCamera:(int)camera;
 #ifdef __IPHONE_3_1
-- (bool) showCameraOverlay;
+- (BOOL) showCameraOverlay;
+- (BOOL) showCameraOverlayWithCustomView:(UIView *)overlayView;
 - (void) hideCameraOverlay;
 #endif
-- (bool) openSavedPhotos;
+- (BOOL) openSavedPhotos;
+- (void) close;
 
-- (bool) isCameraAvailable;
-- (bool) isPhotoLibraryAvailable;
-- (bool) isSavedPhotosAvailable;
+- (BOOL) isCameraAvailable;
+- (BOOL) isPhotoLibraryAvailable;
+- (BOOL) isSavedPhotosAvailable;
 //- (bool) wasNewImagePicked;
 
 - (void) saveImageToPhotoAlbum;
@@ -96,12 +98,14 @@ public:
 	
 	bool openCamera(int camera=0); // 0 for rear, 1 for front
 	bool openLibrary();
-	
+    
 #ifdef __IPHONE_3_1
 	bool showCameraOverlay();
+    bool showCameraOverlayWithCustomView(UIView * view);
 	void hideCameraOverlay();
 #endif
 	bool openSavedPhotos();
+    void close();
 	
 	bool cameraIsAvailable; //variables to see if specific functions are available for a specific device.
 	bool photoLibraryIsAvailable;

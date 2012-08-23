@@ -26,22 +26,14 @@ public:
 	}
 
 	// allow copy of events, by copying everything except the mutex
-	ofEvent(const ofEvent<ArgumentsType> & mom):Poco::FIFOEvent<ArgumentsType>(){
-		mom._mutex.lock();
-		this->_mutex.lock();
-		this->_strategy = mom._strategy;
-		this->_mutex.unlock();
-		mom._mutex.unlock();
+	ofEvent(const ofEvent<ArgumentsType> & mom)
+	:Poco::FIFOEvent<ArgumentsType>()
+	{
 		this->_enabled = mom._enabled;
 	}
 
 	ofEvent<ArgumentsType> & operator=(const ofEvent<ArgumentsType> & mom){
 		if(&mom == this) return *this;
-		mom._mutex.lock();
-		this->_mutex.lock();
-		this->_strategy = mom._strategy;
-		this->_mutex.unlock();
-		mom._mutex.unlock();
 		this->_enabled = mom._enabled;
 		return *this;
 	}

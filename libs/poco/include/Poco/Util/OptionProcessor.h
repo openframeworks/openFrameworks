@@ -1,7 +1,7 @@
 //
 // OptionProcessor.h
 //
-// $Id: //poco/1.4/Util/include/Poco/Util/OptionProcessor.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/OptionProcessor.h#2 $
 //
 // Library: Util
 // Package: Options
@@ -58,7 +58,7 @@ class Util_API OptionProcessor
 	/// The process() method takes an argument from the command line.
 	/// If that argument starts with an option prefix, the argument
 	/// is further processed. Otherwise, the argument is ignored and
-	/// false is ignored. The argument must match one of the options
+	/// false is returned. The argument must match one of the options
 	/// given in the OptionSet that is passed to the OptionProcessor
 	/// with the constructor. If an option is part of a group, at most
 	/// one option of the group can be passed to the OptionProcessor.
@@ -82,6 +82,16 @@ class Util_API OptionProcessor
 	/// a (partial) long option name.
 	/// If the special option '--' is encountered in Unix mode, all following
 	/// options are ignored.
+	///
+	/// Option arguments can be specified in three ways. If a Unix short option
+	/// ("-o") is given, the argument directly follows the option name, without
+	/// any delimiting character or space ("-ovalue"). In default option mode, or if a
+	/// Unix long option ("--option") is given, the option argument is 
+	/// delimited from the option name with either an equal sign ('=') or
+	/// a colon (':'), as in "--option=value" or "/option:value". Finally,
+	/// a required option argument can be specified on the command line after the
+	/// option, delimited with a space, as in "--option value" or "-o value".
+	/// The latter only works for required option arguments, not optional ones.
 {
 public:
 	OptionProcessor(const OptionSet& options);
@@ -130,6 +140,7 @@ private:
 	bool _ignore;
 	std::set<std::string> _groups;
 	std::set<std::string> _specifiedOptions;
+	std::string _deferredOption;
 };
 
 

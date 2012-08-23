@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGui.h"
 
 class testApp : public ofBaseApp{
 	
@@ -9,6 +10,8 @@ public:
 	void update();
 	void draw();
 	
+	void exit();
+
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void mouseMoved(int x, int y );
@@ -18,6 +21,20 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);		
-	
+
+	void ringButtonPressed(bool & pressed);
+
+	bool bHide;
+
+	ofxFloatSlider radius;
+	ofxIntSlider r, g, b;
+	ofxIntSlider circleResolution;
+	ofxToggle filled;
+	ofxButton twoCircles;
+	ofxButton ringButton;
+
+	ofxPanel gui;
+
+	ofSoundPlayer ring;
 };
 

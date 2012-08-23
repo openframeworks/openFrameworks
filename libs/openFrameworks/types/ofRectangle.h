@@ -24,6 +24,7 @@ class ofRectangle {
 		ofRectangle ();
 		virtual ~ ofRectangle ();
 		ofRectangle (float _x, float _y, float _w, float _h);
+		ofRectangle (ofPoint pos, float w, float h);
 		ofRectangle (ofRectangle const & r);
 		
 		void set (float px, float py, float w, float h);

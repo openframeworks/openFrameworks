@@ -18,7 +18,7 @@ void ofxAndroidGPS::startGPS(){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid.setupGPS method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(OFAndroid,setupGPS);
+	ofGetJNIEnv()->CallStaticVoidMethod(OFAndroid,setupGPS);
 }
 
 void ofxAndroidGPS::stopGPS(){
@@ -34,7 +34,7 @@ void ofxAndroidGPS::stopGPS(){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid.stopGPS method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(OFAndroid,stopGPS);
+	ofGetJNIEnv()->CallStaticVoidMethod(OFAndroid,stopGPS);
 }
 
 extern "C"{

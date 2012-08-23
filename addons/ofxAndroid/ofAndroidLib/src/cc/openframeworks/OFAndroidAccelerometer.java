@@ -27,18 +27,18 @@ public class OFAndroidAccelerometer extends OFAndroidObject {
     }
 
 	@Override
-	protected void pause() {
+	protected void appPause() {
 		sensorManager.unregisterListener(sensorListener);
 		
 	}
 
 	@Override
-	protected void resume() {
+	protected void appResume() {
 		sensorManager.registerListener(sensorListener, accelerometer, SensorManager.SENSOR_DELAY_GAME);   
 	}
 
 	@Override
-	protected void stop() {
+	protected void appStop() {
 		sensorManager.unregisterListener(sensorListener);
 	}
 	

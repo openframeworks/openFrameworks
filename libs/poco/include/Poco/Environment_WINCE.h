@@ -1,7 +1,7 @@
 //
 // Environment_WINCE.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Environment_WINCE.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Environment_WINCE.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -55,6 +55,7 @@ public:
 	static bool hasImpl(const std::string& name);	
 	static void setImpl(const std::string& name, const std::string& value);
 	static std::string osNameImpl();	
+	static std::string osDisplayNameImpl();
 	static std::string osVersionImpl();
 	static std::string osArchitectureImpl();
 	static std::string nodeNameImpl();

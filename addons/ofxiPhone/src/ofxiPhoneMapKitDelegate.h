@@ -35,7 +35,7 @@
 
 class ofxiPhoneMapKit;
 
-@interface ofxiPhoneMapKitDelegate : NSObject {
+@interface ofxiPhoneMapKitDelegate : NSObject <MKMapViewDelegate> {
 	ofxiPhoneMapKit*					mapKit;
 }
 
