@@ -10,7 +10,6 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
-//import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.Log;
@@ -111,7 +110,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		targetFps = _targetFps;
 		Log.i("OF","camera settings: " + width + "x" + height);
 		
-		buffer = new byte[width*height*2];
+		// it actually needs (width*height) * 3/2
+		int bufferSize = width * height;
+		bufferSize  = bufferSize * ImageFormat.getBitsPerPixel(config.getPreviewFormat()) / 8;
+		buffer = new byte[bufferSize];
 		
 		orientationListener = new OrientationListener(OFAndroid.getContext());
 		orientationListener.enable();
@@ -203,15 +205,14 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		
 	}
 
-	void setPreview() throws IOException 
-    {
-        if (Build.VERSION.SDK_INT >= 11/*Build.VERSION_CODES.HONEYCOMB*/)
-        {
-        	try {
-	        	Class cls = Class.forName("android.graphics.SurfaceTexture");
-	        	Constructor c = cls.getConstructor(Integer.TYPE);
-	        	Method setPreviewTextureMethod = Camera.class.getMethod("setPreviewTexture", cls);
-				setPreviewTextureMethod.invoke(camera, c.newInstance(10));
+	void setPreview() throws IOException {
+		// 11 == Build.VERSION_CODES.HONEYCOMB
+		if (Build.VERSION.SDK_INT >= 11){
+			try {
+				Class surfTextClass = Class.forName("android.graphics.SurfaceTexture");
+	        	Constructor surfTextConstructor = surfTextClass.getConstructor(Integer.TYPE);
+				Method setPreviewTextureMethod = Camera.class.getMethod("setPreviewTexture", surfTextClass);
+				setPreviewTextureMethod.invoke(camera, surfTextConstructor.newInstance(10));
 			} catch (SecurityException e) {
 				Log.e("OF","security exception, check permissions to acces to the camera", e);
 			} catch (NoSuchMethodException e) {
@@ -219,11 +220,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			} catch (Exception e) {
 				Log.e("OF","error calling setPreviewTexture",e);
 			}
-            //camera.setPreviewTexture( new SurfaceTexture(10) );
-        } else {
-            camera.setPreviewDisplay(null);
-        }
-    }
+			// camera.setPreviewTexture( new SurfaceTexture(10) );
+		} else {
+			camera.setPreviewDisplay(null);
+		}
+	}
 
 	public void run() {
 		thread.setPriority(Thread.MAX_PRIORITY);
@@ -250,13 +251,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		//camera.addCallbackBuffer(buffer);
 		//camera.setPreviewCallbackWithBuffer(this);
 
-		// EZ
 		try {
-            setPreview();
-        } catch (IOException e) {
-            Log.e("OF", "setPreviewDisplay/setPreviewTexture fails:", e);
-        }
-		//
+			setPreview();
+		} catch (IOException e) {
+			Log.e("OF", "setPreviewDisplay/setPreviewTexture fails", e);
+		}
+
 		try{
 			camera.startPreview();
 			previewStarted = true;
