@@ -113,7 +113,7 @@ namespace ofxCv {
 		float leading = 1.7;
 		int height = lines.size() * fontSize * leading - 1;
 		int width = textLength * fontSize;
-		
+		/**
 		glPushAttrib(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
 		ofPushStyle();
@@ -128,5 +128,7 @@ namespace ofxCv {
 		ofPopMatrix();
 		ofPopStyle();
 		glPopAttrib();
+         
+         */
 	}
 }

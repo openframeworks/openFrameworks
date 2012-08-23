@@ -53,7 +53,7 @@ namespace ofxCv {
 		float fy = cameraMatrix.at<double>(1, 1);
 		float cx = principalPoint.x;
 		float cy = principalPoint.y;
-		glFrustum(
+		glFrustumf(
 			nearDist * (-cx) / fx, nearDist * (w - cx) / fx,
 			nearDist * (cy - h) / fy, nearDist * (cy) / fy,
 			nearDist, farDist);
