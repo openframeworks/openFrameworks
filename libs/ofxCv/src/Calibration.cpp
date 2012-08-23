@@ -53,7 +53,13 @@ namespace ofxCv {
 		float fy = cameraMatrix.at<double>(1, 1);
 		float cx = principalPoint.x;
 		float cy = principalPoint.y;
+		
+// Macro required for OpenGLES as it using different function name for frustrum
+#ifdef TARGET_OPENGLES
 		glFrustumf(
+#else
+		glFrustum(
+#endif
 			nearDist * (-cx) / fx, nearDist * (w - cx) / fx,
 			nearDist * (cy - h) / fy, nearDist * (cy) / fy,
 			nearDist, farDist);

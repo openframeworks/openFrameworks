@@ -113,7 +113,11 @@ namespace ofxCv {
 		float leading = 1.7;
 		int height = lines.size() * fontSize * leading - 1;
 		int width = textLength * fontSize;
-		/**
+		
+#ifdef TARGET_OPENGLES
+		// This needs to be refactored to support OpenGLES
+		// Else it will work correctly
+#else
 		glPushAttrib(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
 		ofPushStyle();
@@ -128,7 +132,7 @@ namespace ofxCv {
 		ofPopMatrix();
 		ofPopStyle();
 		glPopAttrib();
+#endif         
          
-         */
 	}
 }

@@ -127,7 +127,7 @@ namespace ofxCv {
 	float getMaxVal(const Mat& mat);
 	int getTargetChannelsFromCode(int conversionCode);
     
-    // toCv functions
+	// toCv functions
 	// for conversion functions, the signature reveals the behavior:
 	// 1       Type& argument // creates a shallow copy of the data
 	// 2 const Type& argument // creates a deep copy of the data
