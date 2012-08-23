@@ -132,11 +132,10 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
         return false;
     }
     
-	if(status == GL_TRUE)
-		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader compiled.");
-	
-	else if (status == GL_FALSE) {
-		ofLog(OF_LOG_ERROR, nameForType(type) + " shader failed to compile");
+	if(status == GL_TRUE) {
+		ofLogVerbose("ofShader") << nameForType(type) << " shader compiled.";
+	} else if (status == GL_FALSE) {
+		ofLogError("ofShader") <<  nameForType(type) << " shader failed to compile.";
 		checkShaderInfoLog(shader, type);
 		return false;
 	}
@@ -181,10 +180,10 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
         ofLogError("ofShader") << "OpenGL generated error " << err << " trying to get the program link status. Does your video card support shader programs?";
         return false;
     }
-	if(status == GL_TRUE)
-		ofLog(OF_LOG_VERBOSE, "Program linked.");
-	else if (status == GL_FALSE) {
-		ofLog(OF_LOG_ERROR, "Program failed to link.");
+	if(status == GL_TRUE) {
+		ofLogVerbose("ofShader") << "Program linked.";
+	} else if (status == GL_FALSE) {
+		ofLogError("ofShader") << "Program failed to link.";
 		checkProgramInfoLog(program);
 		return false;
 	}
@@ -232,28 +231,28 @@ void ofShader::checkAndCreateProgram() {
 
 //--------------------------------------------------------------
 bool ofShader::linkProgram() {
-		if(shaders.empty()) {
-			ofLogError("ofShader") << "Trying to link GLSL program, but no shaders created yet.";
-		} else {
-			checkAndCreateProgram();
-			
-			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-				GLuint shader = it->second;
-				if(shader) {
-					ofLogVerbose("ofShader") << "Attaching shader of type " << nameForType(it->first) << ".";
-					glAttachShader(program, shader);
-				}
-			}
-			
-			glLinkProgram(program);
-            
-            checkProgramLinkStatus(program);
+    if(shaders.empty()) {
+        ofLogError("ofShader") << "Trying to link GLSL program, but no shaders created yet.";
+    } else {
+        checkAndCreateProgram();
+        
+        for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+            GLuint shader = it->second;
+            if(shader) {
+                ofLogVerbose("ofShader") << "Attaching shader of type " << nameForType(it->first) << ".";
+                glAttachShader(program, shader);
+            }
+        }
+        
+        glLinkProgram(program);
+        
+        checkProgramLinkStatus(program);
 
-            // bLoaded means we have loaded shaders onto the graphics card;
-            // it doesn't necessarily mean that these shaders have compiled and linked successfully.
-			bLoaded = true;
-		}
-		return bLoaded;
+        // bLoaded means we have loaded shaders onto the graphics card;
+        // it doesn't necessarily mean that these shaders have compiled and linked successfully.
+        bLoaded = true;
+    }
+    return bLoaded;
 }
 
 //--------------------------------------------------------------
