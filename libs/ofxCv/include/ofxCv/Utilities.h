@@ -126,6 +126,30 @@ namespace ofxCv {
 	float getMaxVal(int cvDepth);
 	float getMaxVal(const Mat& mat);
 	int getTargetChannelsFromCode(int conversionCode);
+    
+    // toCv functions
+	// for conversion functions, the signature reveals the behavior:
+	// 1       Type& argument // creates a shallow copy of the data
+	// 2 const Type& argument // creates a deep copy of the data
+	// 3       Type  argument // creates a deep copy of the data
+	// style 1 is used when possible (for Mat conversion). style 2 is used when
+	// dealing with a lot of data that can't/shouldn't be shallow copied. style 3
+	// is used for small objects where the compiler can optimize the copying if
+	// necessary. the reference is avoided to make inline toCv/toOf use easier.
+	
+	Mat toCv(Mat& mat);
+	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
+		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getPixels(), 0);
+	}
+	template <class T> inline Mat toCv(ofBaseHasPixels_<T>& img) {
+		return toCv(img.getPixelsRef());
+	}
+	Mat toCv(ofMesh& mesh);
+	Point2f toCv(ofVec2f vec);
+	Point3f toCv(ofVec3f vec);
+	cv::Rect toCv(ofRectangle rect);
+	vector<cv::Point2f> toCv(const ofPolyline& polyline);
+	Scalar toCv(ofColor color);
 	
 	// cross-toolkit, cross-bitdepth copying
 	template <class S, class D>
@@ -153,30 +177,7 @@ namespace ofxCv {
 		}
 		copy(src, dst, dstDepth);
 	}
-	
-	// toCv functions
-	// for conversion functions, the signature reveals the behavior:
-	// 1       Type& argument // creates a shallow copy of the data
-	// 2 const Type& argument // creates a deep copy of the data
-	// 3       Type  argument // creates a deep copy of the data
-	// style 1 is used when possible (for Mat conversion). style 2 is used when
-	// dealing with a lot of data that can't/shouldn't be shallow copied. style 3
-	// is used for small objects where the compiler can optimize the copying if
-	// necessary. the reference is avoided to make inline toCv/toOf use easier.
-	
-	Mat toCv(Mat& mat);
-	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
-		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getPixels(), 0);
-	}
-	template <class T> inline Mat toCv(ofBaseHasPixels_<T>& img) {
-		return toCv(img.getPixelsRef());
-	}
-	Mat toCv(ofMesh& mesh);
-	Point2f toCv(ofVec2f vec);
-	Point3f toCv(ofVec3f vec);
-	cv::Rect toCv(ofRectangle rect);
-	vector<cv::Point2f> toCv(const ofPolyline& polyline);
-	Scalar toCv(ofColor color);
+		
 	
 	// toOf functions
 	ofVec2f toOf(Point2f point);
