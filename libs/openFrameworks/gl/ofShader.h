@@ -14,6 +14,17 @@
 #include "ofMatrix4x4.h"
 #include <map>
 
+struct ofShaderVariableDef {
+    string name;      
+    GLint  location;  // attribute / uniform location (via getUniformLocation(name))
+    GLuint index;     // attribute / uniform index - used for queries to glGetActiveAttrib/glGetActiveUniform
+    GLint  size;      // attribute / uniform variable size (usually 1, more for array types)
+    GLenum type;      // attribute / uniform variable data type (i.e. GL_FLOAT, etc)
+    bool   isBuiltIn; // has gl_ prefix (convenience)
+};
+
+typedef ofShaderVariableDef ofShaderUniform;
+typedef ofShaderVariableDef ofShaderAttribute;
 
 class ofShader {
 public:
@@ -85,8 +96,11 @@ public:
 	void setAttribute3d(GLint location, double v1, double v2, double v3);
 	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4);
 	
-	void printActiveUniforms();
-	void printActiveAttributes();
+    vector<ofShaderUniform>   getActiveUniforms();
+    vector<ofShaderAttribute> getActiveAttributes();
+    
+	string printActiveUniforms();
+	string printActiveAttributes();
 	
 
 	// advanced use

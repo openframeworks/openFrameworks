@@ -504,49 +504,121 @@ GLint ofShader::getUniformLocation(const char* name) {
 }
 
 //--------------------------------------------------------------
-void ofShader::printActiveUniforms() {
+vector<ofShaderUniform> ofShader::getActiveUniforms() {
+
+    vector<ofShaderUniform> activeUniforms;
+    
 	GLint numUniforms = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
-	cout << numUniforms << " uniforms:" << endl;
-	
 	GLint uniformMaxLength = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformMaxLength);
 	
 	GLint count = -1;
 	GLenum type = 0;
+    GLsizei length;
 	GLchar* uniformName = new GLchar[uniformMaxLength];
 	for(GLint i = 0; i < numUniforms; i++) {
-		GLsizei length;
-		glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
-		cout << " [" << i << "] ";
-		for(int j = 0; j < length; j++)
-			cout << uniformName[j];
-		cout << " @ index " << getUniformLocation(uniformName) << endl;
+        glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
+        GLenum err = glGetError();
+        if(err == GL_NO_ERROR) {
+            ofShaderUniform uniformVar;
+            string name(uniformName,length);
+            uniformVar.name = name;
+            uniformVar.location = getUniformLocation(name.c_str());
+            uniformVar.index = i;
+            uniformVar.size = count;
+            uniformVar.type = type;
+            uniformVar.isBuiltIn = (uniformVar.name.length() > 3 && uniformVar.name.substr(0,3) == "gl_");
+            // add it
+            activeUniforms.push_back(uniformVar);
+        } else {
+            const GLubyte* errString = gluErrorString(err);
+            if(errString != NULL) {
+                ofLogError("ofShader") << "Error reading uniform variable code " << err << " : " << errString << ".";
+            } else {
+                ofLogError("ofShader") << "Error reading uniform variable code " << err << " : unknown error type.";
+            }
+        }
+        
 	}
 	delete [] uniformName;
+    
+    return activeUniforms;
 }
 
 //--------------------------------------------------------------
-void ofShader::printActiveAttributes() {
+vector<ofShaderAttribute> ofShader::getActiveAttributes() {
+
+    vector<ofShaderAttribute> activeAttributes;
+    
 	GLint numAttributes = 0;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttributes);
-	cout << numAttributes << " attributes:" << endl;
-	
 	GLint attributeMaxLength = 0;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attributeMaxLength);
 	
 	GLint count = -1;
 	GLenum type = 0;
+    GLsizei length;
 	GLchar* attributeName = new GLchar[attributeMaxLength];
 	for(GLint i = 0; i < numAttributes; i++) {
-		GLsizei length;
-		glGetActiveAttrib(program, i, attributeMaxLength, &length, &count, &type, attributeName);
-		cout << " [" << i << "] ";
-		for(int j = 0; j < length; j++)
-			cout <<attributeName[j];
-		cout << " @ index " << getAttributeLocation(attributeName) << endl;
+        glGetActiveUniform(program, i, attributeMaxLength, &length, &count, &type, attributeName);
+        GLenum err = glGetError();
+        if(err == GL_NO_ERROR) {
+            ofShaderAttribute attributeVar;
+            string name(attributeName,length);
+            attributeVar.name = name;
+            attributeVar.location = getUniformLocation(name.c_str());
+            attributeVar.index = i;
+            attributeVar.size = count;
+            attributeVar.type = type;
+            attributeVar.isBuiltIn = (attributeVar.name.length() > 3 && attributeVar.name.substr(0,3) == "gl_");
+            // add it
+            activeAttributes.push_back(attributeVar);
+        } else {
+            const GLubyte* errString = gluErrorString(err);
+            if(errString != NULL) {
+                ofLogError("ofShader") << "Error reading attribute variable code " << err << " : " << errString << ".";
+            } else {
+                ofLogError("ofShader") << "Error reading attribute variable code " << err << " : unknown error type.";
+            }
+        }
+        
 	}
 	delete [] attributeName;
+    
+    return activeAttributes;
+}
+
+//--------------------------------------------------------------
+string ofShader::printActiveUniforms() {
+    vector<ofShaderUniform> activeUniforms = getActiveUniforms();
+    stringstream ss;
+    ss << activeUniforms.size() << " uniforms:" << endl;
+    for(size_t i = 0; i < activeUniforms.size(); i++) {
+        ofShaderUniform& value = activeUniforms[i];
+        ss << " [" << value.index << "] ";
+        ss << value.name << " @ index ";
+        ss << value.location << endl;
+    }
+
+    cout << ss.str(); // to the console
+    return ss.str();
+}
+
+//--------------------------------------------------------------
+string ofShader::printActiveAttributes() {
+    vector<ofShaderAttribute> activeAttributes = getActiveAttributes();
+    stringstream ss;
+    ss << activeAttributes.size() << " attributes:" << endl;
+    for(size_t i = 0; i < activeAttributes.size(); i++) {
+        ofShaderUniform& value = activeAttributes[i];
+        ss << " [" << value.index << "] ";
+        ss << value.name << " @ index ";
+        ss << value.location << endl;
+    }
+    
+    cout << ss.str(); // to the console
+    return ss.str();
 }
 
 //--------------------------------------------------------------
