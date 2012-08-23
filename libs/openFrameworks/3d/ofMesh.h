@@ -25,7 +25,7 @@ public:
 
 	void setupIndicesAuto();
 	
-	ofVec3f getVertex(int i);
+	ofVec3f getVertex(int i) const;
 	void addVertex(const ofVec3f& v);
 	void addVertices(const vector<ofVec3f>& verts);
 	void addVertices(const ofVec3f* verts, int amt);
@@ -33,7 +33,7 @@ public:
 	void setVertex(int index, const ofVec3f& v);
 	void clearVertices();
 	
-	ofVec3f getNormal(int i);
+	ofVec3f getNormal(int i) const;
 	void addNormal(const ofVec3f& n);
 	void addNormals(const vector<ofVec3f>& norms);
 	void addNormals(const ofVec3f* norms, int amt);
@@ -41,7 +41,7 @@ public:
 	void setNormal(int index, const ofVec3f& n);
 	void clearNormals();
 	
-	ofFloatColor getColor(int i);
+	ofFloatColor getColor(int i) const;
 	void addColor(const ofFloatColor& c);
 	void addColors(const vector<ofFloatColor>& cols);
 	void addColors(const ofFloatColor* cols, int amt);
@@ -49,7 +49,7 @@ public:
 	void setColor(int index, const ofFloatColor& c);
 	void clearColors();
 	
-	ofVec2f getTexCoord(int i);
+	ofVec2f getTexCoord(int i) const;
 	void addTexCoord(const ofVec2f& t);
 	void addTexCoords(const vector<ofVec2f>& tCoords);
 	void addTexCoords(const ofVec2f* tCoords, int amt);
@@ -57,7 +57,7 @@ public:
 	void setTexCoord(int index, const ofVec2f& t);
 	void clearTexCoords();
 	
-	ofIndexType getIndex(int i);
+	ofIndexType getIndex(int i) const;
 	void addIndex(ofIndexType i);
 	void addIndices(const vector<ofIndexType>& inds);
 	void addIndices(const ofIndexType* inds, int amt);
@@ -91,10 +91,18 @@ public:
 	vector<ofVec2f> & getTexCoords();
 	vector<ofIndexType> & getIndices();
 
+	const vector<ofVec3f> & getVertices() const;
+	const vector<ofFloatColor> & getColors() const;
+	const vector<ofVec3f> & getNormals() const;
+	const vector<ofVec2f> & getTexCoords() const;
+	const vector<ofIndexType> & getIndices() const;
+
 	vector<int>& getFace(int faceId);
 	
+	ofVec3f getCentroid() const;
+
 	void setName(string name_);
-	
+
 	bool haveVertsChanged();
 	bool haveColorsChanged();
 	bool haveNormalsChanged();
@@ -106,13 +114,27 @@ public:
 	bool hasNormals();
 	bool hasTexCoords();
 	bool hasIndices();
-
-	friend std::ostream& operator<<(std::ostream& os, ofMesh& data);
 	
 	void drawVertices();
 	void drawWireframe();
 	void drawFaces();
 	void draw();
+
+	void load(string path);
+	void save(string path, bool useBinary = false);
+    
+    void enableColors();
+    void enableTextures();
+    void enableNormals();
+    
+    void disableColors();
+    void disableTextures();
+    void disableNormals();
+    
+    bool usingColors();
+    bool usingTextures();
+    bool usingNormals();
+    
 
 protected:
 	virtual void draw(ofPolyRenderMode renderType);
@@ -127,38 +149,10 @@ private:
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
 	string name;
+    
+    bool useColors;
+    bool useTextures;
+    bool useNormals;
 	
 //	ofMaterial *mat;
 };
-
-
-inline std::ostream& operator<<(std::ostream& os, ofMesh data) {
-
-	//TODO: update when ofMesh/primitives has been worked out
-	os << "Vertices" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-	
-	os << "Normals" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumNormals(); ++i) {
-		os << data.getNormal(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-		
-	os << "TexCoords" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumTexCoords(); ++i) {
-		os << data.getTexCoord(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-		
-	os << "Colors" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-
-	return os;
-}
-

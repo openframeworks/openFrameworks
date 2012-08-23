@@ -39,24 +39,26 @@ void ofSoundShutdown();
 #endif
 
 #ifdef TARGET_ANDROID
+#include "ofxAndroidSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
 inline void ofSoundShutdown(){}
 #endif
 
 //---------------------------------------------
 class ofSoundPlayer : public ofBaseSoundPlayer {
-	
+
 	public:
-		
+
 		ofSoundPlayer();
-		
+
 		void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
 		ofPtr<ofBaseSoundPlayer> getPlayer();
-		
+
 		void loadSound(string fileName, bool stream = false);
 		void unloadSound();
 		void play();
 		void stop();
-		
+
 		void setVolume(float vol);
 		void setPan(float vol);
 		void setSpeed(float spd);
@@ -64,17 +66,21 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		void setLoop(bool bLp);
 		void setMultiPlay(bool bMp);
 		void setPosition(float pct); // 0 = start, 1 = end;
-		
+		void setPositionMS(int ms);
+		int getPositionMS();
+
 		float getPosition();
 		bool getIsPlaying();
 		float getSpeed();
 		float getPan();
-		
-		
+		float getVolume();
+
+		bool isLoaded(); 		
+
 	protected:
-		
+
 		ofPtr<ofBaseSoundPlayer> player;
-	
-	
+
+
 };
 

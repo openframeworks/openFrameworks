@@ -32,29 +32,29 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-
-#import "EAGLView.h"
-#import "ofAppiPhoneWindow.h"
+#import "ofxiPhoneViewController.h"
 
 @interface ofxiPhoneAppDelegate : NSObject <UIApplicationDelegate> {
-	NSTimer				*animationTimer;
-    BOOL				animating;
-    BOOL				displayLinkSupported;
-    float				animationFrameInterval;
-    id					displayLink;
-	
-	EAGLView			*glView;
-
-	NSLock				*glLock;
+    NSInteger currentScreenIndex;
 }
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url;
--(void) receivedRotate:(NSNotification*)notification;
--(void) setFrameRate:(float)frameRate;
--(EAGLView*) getGLView;
+@property (nonatomic, retain) UIWindow *window;
+@property (nonatomic, retain) UIWindow *externalWindow;
+@property (nonatomic, retain) ofxiPhoneViewController *glViewController;
+@property (readonly,  assign) NSInteger currentScreenIndex;
 
--(void)lockGL;
--(void)unlockGL;
+-(BOOL) application:(UIApplication*)application 
+      handleOpenURL:(NSURL*)url;
+
+-(void) receivedRotate:(NSNotification*)notification;
+
+#ifdef __IPHONE_4_3
+-(BOOL) createExternalWindowWithPreferredMode;
+-(BOOL) createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
+-(BOOL) destroyExternalWindow;
+-(BOOL) displayOnScreenWithIndex:(NSInteger)screenIndex 
+              andScreenModeIndex:(NSInteger)screenModeIndex;
+#endif
 
 @end
 

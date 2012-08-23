@@ -1,7 +1,7 @@
 //
 // WinService.h
 //
-// $Id: //poco/1.4/Util/include/Poco/Util/WinService.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/WinService.h#2 $
 //
 // Library: Util
 // Package: Windows
@@ -128,8 +128,18 @@ public:
 		
 	Startup getStartup() const;
 		/// Returns the startup mode for the service.
+		
+	void setDescription(const std::string& description);
+		/// Sets the service description in the registry.
+		
+	std::string getDescription() const;
+		/// Returns the service description from the registry.
 
 	static const int STARTUP_TIMEOUT;
+
+protected:
+	static const std::string REGISTRY_KEY;
+	static const std::string REGISTRY_DESCRIPTION;
 
 private:
 	void open() const;

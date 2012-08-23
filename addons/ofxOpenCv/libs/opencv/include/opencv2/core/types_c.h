@@ -72,8 +72,8 @@
 
   #if (_MSC_VER >= 1400 && defined _M_X64) || (__GNUC__ >= 4 && defined __x86_64__)
     #if defined WIN32
-		#include <intrin.h>
-	#endif
+    #include <intrin.h>
+  #endif
     #include <emmintrin.h>
   #endif
 
@@ -145,9 +145,13 @@
 #if defined _MSC_VER || defined __BORLANDC__
 typedef __int64 int64;
 typedef unsigned __int64 uint64;
+#define CV_BIG_INT(n)   n##I64
+#define CV_BIG_UINT(n)  n##UI64
 #else
 typedef int64_t int64;
 typedef uint64_t uint64;
+#define CV_BIG_INT(n)   n##LL
+#define CV_BIG_UINT(n)  n##ULL
 #endif
 
 #ifndef HAVE_IPL
@@ -247,7 +251,8 @@ enum {
  CV_StsAssert=                 -215, /* assertion failed */    
  CV_GpuNotSupported=           -216,  
  CV_GpuApiCallError=           -217, 
- CV_GpuNppCallError=           -218  
+ CV_GpuNppCallError=           -218,
+ CV_GpuCufftCallError=         -219
 };
 
 /****************************************************************************************\
@@ -259,8 +264,8 @@ enum {
 
 #define CV_SWAP(a,b,t) ((t) = (a), (a) = (b), (b) = (t))
 
-#ifndef CV_MIN
-#define CV_MIN(a,b)  ((a) > (b) ? (b) : (a))
+#ifndef MIN
+#define MIN(a,b)  ((a) > (b) ? (b) : (a))
 #endif
 
 #ifndef MAX
@@ -375,6 +380,8 @@ CV_INLINE int cvIsInf( double value )
 
 typedef uint64 CvRNG;
 
+#define CV_RNG_COEFF 4164903690U
+
 CV_INLINE CvRNG cvRNG( int64 seed CV_DEFAULT(-1))
 {
     CvRNG rng = seed ? (uint64)seed : (uint64)(int64)-1;
@@ -385,7 +392,7 @@ CV_INLINE CvRNG cvRNG( int64 seed CV_DEFAULT(-1))
 CV_INLINE unsigned cvRandInt( CvRNG* rng )
 {
     uint64 temp = *rng;
-    temp = (uint64)(unsigned)temp*4164903690U + (temp >> 32);
+    temp = (uint64)(unsigned)temp*CV_RNG_COEFF + (temp >> 32);
     *rng = temp;
     return (unsigned)temp;
 }
@@ -786,7 +793,7 @@ CV_INLINE int cvIplDepth( int type )
 #define CV_TYPE_NAME_MATND    "opencv-nd-matrix"
 
 #define CV_MAX_DIM            32
-#define CV_MAX_DIM_HEAP       (1 << 16)
+#define CV_MAX_DIM_HEAP       1024
 
 typedef struct CvMatND
 {
@@ -1362,8 +1369,8 @@ CvSet;
      o   Two pointers to the starting and ending vertices
          (vtx[0] and vtx[1] respectively).
 
-	 A graph may be oriented or not. In the latter case, edges between
-	 vertex i to vertex j are not distinguished during search operations.
+   A graph may be oriented or not. In the latter case, edges between
+   vertex i to vertex j are not distinguished during search operations.
 
      o   Two pointers to next edges for the starting and ending vertices, where
          next[0] points to the next edge in the vtx[0] adjacency list and
@@ -1860,6 +1867,8 @@ typedef struct CvModuleInfo
     CvPluginFuncInfo* func_tab;
 }
 CvModuleInfo;
+
+enum { CV_PARAM_TYPE_INT=0, CV_PARAM_TYPE_REAL=1, CV_PARAM_TYPE_STRING=2, CV_PARAM_TYPE_MAT=3 };
 
 #endif /*_CXCORE_TYPES_H_*/
 

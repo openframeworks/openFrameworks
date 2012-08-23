@@ -31,14 +31,14 @@ public:
 	int			particleCount;
 	ofVec2f		particlePos[NUM_PARTICLES];
 	ofVec2f		particleVel[NUM_PARTICLES];
-	ofColor		particleColor[NUM_PARTICLES];
+	ofFloatColor		particleColor[NUM_PARTICLES];
 	float		particleTime[NUM_PARTICLES];
 	ofVbo		particleVbo;
 	
 	// the stars
 	ofVbo		ptsVbo;
 	ofVec3f		pts[NUM_PTS];
-	ofColor		color[NUM_PTS];
+	ofFloatColor		color[NUM_PTS];
 	float	    fadeSpeed[NUM_PTS];
 	bool		fadeFlip[NUM_PTS];
 	
@@ -46,7 +46,7 @@ public:
 	int			wormDrawMode;
 	ofVbo		wormVbo;
 	ofVec3f		worm[WORM_LEN];
-	ofColor		wormColor[WORM_LEN];
+	ofFloatColor		wormColor[WORM_LEN];
 	
 };
 

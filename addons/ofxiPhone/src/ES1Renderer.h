@@ -28,6 +28,8 @@
 
 - (void) startRender;
 - (void) finishRender;
+- (void)destroyFramebuffer;
+- (BOOL)createFramebuffer:(CAEAGLLayer *)layer;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 - (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
 - (EAGLContext*) context;

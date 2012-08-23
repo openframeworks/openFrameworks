@@ -21,6 +21,8 @@
 	int						_y;
 	int						_w;
 	int						_h;
+	int						_xOriginal;
+	int						_yOriginal;
 	int						fieldLength;
 }
 - (id) init: (int)x y:(int)y width:(int)w height:(int)h;

@@ -1,0 +1,21 @@
+#! /bin/bash
+#
+# this script runs the OF styler on the core
+#
+# 2012 Dan Wilcox <danomatika@gmail.com> for openFrameworks
+#
+
+# exit this script on an error
+#set -e
+
+# get the current working dir
+WD=$(dirname $0)
+
+###
+
+# move to this scripts dir
+cd $WD
+
+# run styler
+./ofStyler -a core_header.txt ../../../libs/openFrameworks h
+./ofStyler -a core_header.txt ../../../libs/openFrameworks cpp

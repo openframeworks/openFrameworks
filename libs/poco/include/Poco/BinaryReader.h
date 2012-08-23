@@ -1,7 +1,7 @@
 //
 // BinaryReader.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/BinaryReader.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/BinaryReader.h#3 $
 //
 // Library: Foundation
 // Package: Streams
@@ -109,8 +109,9 @@ public:
 		T elem;
 
 		*this >> size;
+		if (!good()) return *this;
 		value.reserve(size);
-		while (this->good() && size > 0)
+		while (this->good() && size-- > 0)
 		{
 			*this >> elem;
 			value.push_back(elem);

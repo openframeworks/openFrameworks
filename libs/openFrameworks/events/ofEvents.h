@@ -37,6 +37,11 @@ class ofDragInfo{
 
 		class ofEventArgs{};
 
+		class ofEntryEventArgs : public ofEventArgs {
+		public:
+			int state;
+		};
+
 		class ofKeyEventArgs : public ofEventArgs {
 		  public:
 			int key;
@@ -51,6 +56,14 @@ class ofDragInfo{
 
 		class ofTouchEventArgs : public ofEventArgs {
 		  public:
+			enum Type{
+				down,
+				up,
+				move,
+				doubleTap,
+				cancel
+			} type;
+
 			int id;
 			int time;
 			float x, y;
@@ -94,6 +107,8 @@ class ofDragInfo{
 		ofEvent<ofEventArgs> 		update;
 		ofEvent<ofEventArgs> 		draw;
 		ofEvent<ofEventArgs> 		exit;
+		
+		ofEvent<ofEntryEventArgs>	windowEntered;
 		ofEvent<ofResizeEventArgs> 	windowResized;
 
 		ofEvent<ofKeyEventArgs> 	keyPressed;
@@ -164,72 +179,72 @@ class ofDragInfo{
 	void ofSendMessage(ofMessage msg);
 	void ofSendMessage(string messageString);
 
-	extern ofCoreEvents ofEvents;
+	ofCoreEvents & ofEvents();
 
 	template<class ListenerClass>
 	void ofRegisterMouseEvents(ListenerClass * listener){
-		ofAddListener(ofEvents.mouseDragged,listener,&ListenerClass::mouseDragged);
-		ofAddListener(ofEvents.mouseMoved,listener,&ListenerClass::mouseMoved);
-		ofAddListener(ofEvents.mousePressed,listener,&ListenerClass::mousePressed);
-		ofAddListener(ofEvents.mouseReleased,listener,&ListenerClass::mouseReleased);
+		ofAddListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged);
+		ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved);
+		ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed);
+		ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased);
 	}
 
 	template<class ListenerClass>
 	void ofRegisterKeyEvents(ListenerClass * listener){
-		ofAddListener(ofEvents.keyPressed, listener, &ListenerClass::keyPressed);
-		ofAddListener(ofEvents.keyReleased, listener, &ListenerClass::keyReleased);
+		ofAddListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed);
+		ofAddListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased);
 	}
 
 	template<class ListenerClass>
 	void ofRegisterTouchEvents(ListenerClass * listener){
-		ofAddListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
-		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
-		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
-		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
-		ofAddListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
+		ofAddListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
+		ofAddListener(ofEvents().touchDown, listener, &ListenerClass::touchDown);
+		ofAddListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved);
+		ofAddListener(ofEvents().touchUp, listener, &ListenerClass::touchUp);
+		ofAddListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
 	template<class ListenerClass>
 	void ofRegisterGetMessages(ListenerClass * listener){
-		ofAddListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+		ofAddListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage);
 	}
 
 	template<class ListenerClass>
 	void ofRegisterDragEvents(ListenerClass * listener){
-		ofAddListener(ofEvents.fileDragEvent, listener, &ListenerClass::dragEvent);
+		ofAddListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent);
 	}
 
 	template<class ListenerClass>
 	void ofUnregisterMouseEvents(ListenerClass * listener){
-		ofRemoveListener(ofEvents.mouseDragged,listener,&ListenerClass::mouseDragged);
-		ofRemoveListener(ofEvents.mouseMoved,listener,&ListenerClass::mouseMoved);
-		ofRemoveListener(ofEvents.mousePressed,listener,&ListenerClass::mousePressed);
-		ofRemoveListener(ofEvents.mouseReleased,listener,&ListenerClass::mouseReleased);
+		ofRemoveListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged);
+		ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved);
+		ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed);
+		ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased);
 	}
 
 	template<class ListenerClass>
 	void ofUnregisterKeyEvents(ListenerClass * listener){
-		ofRemoveListener(ofEvents.keyPressed, listener, &ListenerClass::keyPressed);
-		ofRemoveListener(ofEvents.keyReleased, listener, &ListenerClass::keyReleased);
+		ofRemoveListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed);
+		ofRemoveListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased);
 	}
 
 	template<class ListenerClass>
 	void ofUnregisterTouchEvents(ListenerClass * listener){
-		ofRemoveListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
-		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
-		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
-		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
-		ofRemoveListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
+		ofRemoveListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
+		ofRemoveListener(ofEvents().touchDown, listener, &ListenerClass::touchDown);
+		ofRemoveListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved);
+		ofRemoveListener(ofEvents().touchUp, listener, &ListenerClass::touchUp);
+		ofRemoveListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
 	template<class ListenerClass>
 	void ofUnregisterGetMessages(ListenerClass * listener){
-		ofRemoveListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+		ofRemoveListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage);
 	}
 	
 	template<class ListenerClass>
 	void ofUnregisterDragEvents(ListenerClass * listener){
-		ofRemoveListener(ofEvents.fileDragEvent, listener, &ListenerClass::dragEvent);
+		ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent);
 	}	
 
 #endif
@@ -249,5 +264,6 @@ void ofNotifyMouseMoved(int x, int y);
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
+void ofNotifyWindowEntry(int state);
 
 void ofNotifyDragEvent(ofDragInfo info);

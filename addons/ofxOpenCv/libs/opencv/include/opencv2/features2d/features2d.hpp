@@ -44,7 +44,7 @@
 #define __OPENCV_FEATURES_2D_HPP__
 
 #include "opencv2/core/core.hpp"
-#include "opencv2/flann/flann.hpp"
+#include "opencv2/flann/miniflann.hpp"
 
 #ifdef __cplusplus
 #include <limits>
@@ -55,10 +55,12 @@ extern "C" {
 typedef struct CvSURFPoint
 {
     CvPoint2D32f pt;
-    int laplacian;
-    int size;
-    float dir;
-    float hessian;
+
+    int          laplacian;
+    int          size;
+    float        dir;
+    float        hessian;
+
 } CvSURFPoint;
 
 CV_INLINE CvSURFPoint cvSURFPoint( CvPoint2D32f pt, int laplacian,
@@ -66,21 +68,25 @@ CV_INLINE CvSURFPoint cvSURFPoint( CvPoint2D32f pt, int laplacian,
                                    float hessian CV_DEFAULT(0))
 {
     CvSURFPoint kp;
-    kp.pt = pt;
+
+    kp.pt        = pt;
     kp.laplacian = laplacian;
-    kp.size = size;
-    kp.dir = dir;
-    kp.hessian = hessian;
+    kp.size      = size;
+    kp.dir       = dir;
+    kp.hessian   = hessian;
+
     return kp;
 }
 
 typedef struct CvSURFParams
 {
-    int extended;
+    int    extended;
+    int    upright;
     double hessianThreshold;
 
-    int nOctaves;
-    int nOctaveLayers;
+    int    nOctaves;
+    int    nOctaveLayers;
+
 } CvSURFParams;
 
 CVAPI(CvSURFParams) cvSURFParams( double hessianThreshold, int extended CV_DEFAULT(0) );
@@ -231,6 +237,9 @@ public:
             float _response=0, int _octave=0, int _class_id=-1)
             : pt(x, y), size(_size), angle(_angle),
             response(_response), octave(_octave), class_id(_class_id) {}
+    
+    size_t hash() const;
+    
     //! converts vector of keypoints to vector of points
     static void convert(const std::vector<KeyPoint>& keypoints,
                         CV_OUT std::vector<Point2f>& points2f,
@@ -246,23 +255,52 @@ public:
     static float overlap(const KeyPoint& kp1, const KeyPoint& kp2);
 
     CV_PROP_RW Point2f pt; //!< coordinates of the keypoints
-    CV_PROP_RW float size; //!< diameter of the meaningfull keypoint neighborhood
+    CV_PROP_RW float size; //!< diameter of the meaningful keypoint neighborhood
     CV_PROP_RW float angle; //!< computed orientation of the keypoint (-1 if not applicable)
     CV_PROP_RW float response; //!< the response by which the most strong keypoints have been selected. Can be used for the further sorting or subsampling
     CV_PROP_RW int octave; //!< octave (pyramid layer) from which the keypoint has been extracted
     CV_PROP_RW int class_id; //!< object class (if the keypoints need to be clustered by an object they belong to) 
 };
-
+    
 //! writes vector of keypoints to the file storage
 CV_EXPORTS void write(FileStorage& fs, const string& name, const vector<KeyPoint>& keypoints);
 //! reads vector of keypoints from the specified file storage node
 CV_EXPORTS void read(const FileNode& node, CV_OUT vector<KeyPoint>& keypoints);    
+
+/*
+ * A class filters a vector of keypoints.
+ * Because now it is difficult to provide a convenient interface for all usage scenarios of the keypoints filter class,
+ * it has only 4 needed by now static methods.
+ */
+class CV_EXPORTS KeyPointsFilter
+{
+public:
+    KeyPointsFilter(){}
+
+    /*
+     * Remove keypoints within borderPixels of an image edge.
+     */
+    static void runByImageBorder( vector<KeyPoint>& keypoints, Size imageSize, int borderSize );
+    /*
+     * Remove keypoints of sizes out of range.
+     */
+    static void runByKeypointSize( vector<KeyPoint>& keypoints, float minSize, float maxSize=std::numeric_limits<float>::max() );
+    /*
+     * Remove keypoints from some image by mask for pixels of this image.
+     */
+    static void runByPixelsMask( vector<KeyPoint>& keypoints, const Mat& mask );
+    /*
+     * Remove duplicated keypoints.
+     */
+    static void removeDuplicated( vector<KeyPoint>& keypoints );
+};
 
 /*!
  SIFT implementation.
  
  The class implements SIFT algorithm by D. Lowe.
 */
+
 class CV_EXPORTS SIFT
 {
 public:
@@ -271,17 +309,19 @@ public:
         static const int DEFAULT_NOCTAVES = 4;
         static const int DEFAULT_NOCTAVE_LAYERS = 3;
         static const int DEFAULT_FIRST_OCTAVE = -1;
-        enum{ FIRST_ANGLE = 0, AVERAGE_ANGLE = 1 };
+        enum { FIRST_ANGLE = 0, AVERAGE_ANGLE = 1 };
 
         CommonParams();
-        CommonParams( int _nOctaves, int _nOctaveLayers, int _firstOctave, int _angleMode );
-        int nOctaves, nOctaveLayers, firstOctave;
-        int angleMode;
+        CommonParams( int _nOctaves, int _nOctaveLayers, int /*_firstOctave*/, int /*_angleMode*/ );
+        CommonParams( int _nOctaves, int _nOctaveLayers );
+        int nOctaves, nOctaveLayers;
+        int firstOctave; // it is not used now (firstOctave == 0 always)
+        int angleMode;   // it is not used now
     };
 
     struct CV_EXPORTS DetectorParams
     {
-        static double GET_DEFAULT_THRESHOLD() { return 0.04 / SIFT::CommonParams::DEFAULT_NOCTAVE_LAYERS / 2.0; }
+        static double GET_DEFAULT_THRESHOLD() { return 0.04; }
         static double GET_DEFAULT_EDGE_THRESHOLD() { return 10.0; }
 
         DetectorParams();
@@ -296,9 +336,10 @@ public:
         static const int DESCRIPTOR_SIZE = 128;
 
         DescriptorParams();
-        DescriptorParams( double _magnification, bool _isNormalize, bool _recalculateAngles );
+        DescriptorParams( double _magnification, bool /*_isNormalize*/, bool _recalculateAngles );
+        DescriptorParams( bool _recalculateAngles );
         double magnification;
-        bool isNormalize;
+        bool isNormalize; // it is not used now (true always)
         bool recalculateAngles;
     };
 
@@ -321,7 +362,7 @@ public:
           const DescriptorParams& _descriptorParams = DescriptorParams() );
 
     //! returns the descriptor size in floats (128)
-    int descriptorSize() const { return DescriptorParams::DESCRIPTOR_SIZE; }
+    int descriptorSize() const;
     //! finds the keypoints using SIFT algorithm
     void operator()(const Mat& img, const Mat& mask,
                     vector<KeyPoint>& keypoints) const;
@@ -332,9 +373,10 @@ public:
                     Mat& descriptors,
                     bool useProvidedKeypoints=false) const;
 
-    CommonParams getCommonParams () const { return commParams; }
-    DetectorParams getDetectorParams () const { return detectorParams; }
-    DescriptorParams getDescriptorParams () const { return descriptorParams; }
+    CommonParams getCommonParams () const;
+    DetectorParams getDetectorParams () const;
+    DescriptorParams getDescriptorParams () const;
+
 protected:
     CommonParams commParams;
     DetectorParams detectorParams;
@@ -354,7 +396,7 @@ public:
     CV_WRAP SURF();
     //! the full constructor taking all the necessary parameters
     CV_WRAP SURF(double _hessianThreshold, int _nOctaves=4,
-         int _nOctaveLayers=2, bool _extended=false);
+         int _nOctaveLayers=2, bool _extended=false, bool _upright=false);
 
     //! returns the descriptor size in float's (64 or 128)
     CV_WRAP int descriptorSize() const;
@@ -366,6 +408,159 @@ public:
                     CV_OUT vector<KeyPoint>& keypoints,
                     CV_OUT vector<float>& descriptors,
                     bool useProvidedKeypoints=false) const;
+};
+
+/*!
+ ORB implementation.
+*/
+class CV_EXPORTS ORB
+{
+public:
+
+  /** the size of the signature in bytes */
+  enum { kBytes = 32 };
+
+  struct CV_EXPORTS CommonParams
+  {
+    enum { DEFAULT_N_LEVELS = 3, DEFAULT_FIRST_LEVEL = 0};
+
+    /** default constructor */
+    CommonParams(float scale_factor = 1.2f, unsigned int n_levels = DEFAULT_N_LEVELS, int edge_threshold = 31,
+                 unsigned int first_level = DEFAULT_FIRST_LEVEL) :
+      scale_factor_(scale_factor), n_levels_(n_levels), first_level_(first_level >= n_levels ? 0 : first_level),
+      edge_threshold_(edge_threshold)
+    {
+      // No other patch size is supported right now
+      patch_size_ = 31;
+    }
+    void read(const FileNode& fn);
+    void write(FileStorage& fs) const;
+
+    /** Coefficient by which we divide the dimensions from one scale pyramid level to the next */
+    float scale_factor_;
+    /** The number of levels in the scale pyramid */
+    unsigned int n_levels_;
+    /** The level at which the image is given
+     * if 1, that means we will also look at the image scale_factor_ times bigger
+     */
+    unsigned int first_level_;
+    /** How far from the boundary the points should be */
+    int edge_threshold_;
+
+    friend class ORB;
+  protected:
+    /** The size of the patch that will be used for orientation and comparisons */
+    int patch_size_;
+  };
+
+  /** Constructor
+   * @param n_features the number of desired features
+   * @param detector_params parameters to use
+   */
+  ORB(size_t n_features = 500, const CommonParams & detector_params = CommonParams());
+
+  /** destructor to empty the patterns */
+  ~ORB();
+
+  /** returns the descriptor size in bytes */
+  int descriptorSize() const;
+
+  /** Compute the ORB features and descriptors on an image
+   * @param img the image to compute the features and descriptors on
+   * @param mask the mask to apply
+   * @param keypoints the resulting keypoints
+   */
+  void
+  operator()(const cv::Mat &image, const cv::Mat &mask, std::vector<cv::KeyPoint> & keypoints);
+
+  /** Compute the ORB features and descriptors on an image
+   * @param img the image to compute the features and descriptors on
+   * @param mask the mask to apply
+   * @param keypoints the resulting keypoints
+   * @param descriptors the resulting descriptors
+   * @param useProvidedKeypoints if true, the keypoints are used as an input
+   */
+  void
+  operator()(const cv::Mat &image, const cv::Mat &mask, std::vector<cv::KeyPoint> & keypoints, cv::Mat & descriptors,
+             bool useProvidedKeypoints = false);
+
+private:
+  /** The size of the patch used when comparing regions in the patterns */
+  static const int kKernelWidth = 5;
+
+  /** Compute the ORB features and descriptors on an image
+   * @param image the image to compute the features and descriptors on
+   * @param mask the mask to apply
+   * @param keypoints the resulting keypoints
+   * @param descriptors the resulting descriptors
+   * @param do_keypoints if true, the keypoints are computed, otherwise used as an input
+   * @param do_descriptors if true, also computes the descriptors
+   */
+  void
+  operator()(const cv::Mat &image, const cv::Mat &mask, std::vector<cv::KeyPoint> & keypoints, cv::Mat & descriptors,
+             bool do_keypoints, bool do_descriptors);
+
+  /** Compute the ORB keypoints on an image
+   * @param image_pyramid the image pyramid to compute the features and descriptors on
+   * @param mask_pyramid the masks to apply at every level
+   * @param keypoints the resulting keypoints, clustered per level
+   */
+  void computeKeyPoints(const std::vector<cv::Mat>& image_pyramid, const std::vector<cv::Mat>& mask_pyramid,
+                        std::vector<std::vector<cv::KeyPoint> >& keypoints) const;
+
+  /** Compute the ORB keypoint orientations
+   * @param image the image to compute the features and descriptors on
+   * @param integral_image the integral image of the image (can be empty, but the computation will be slower)
+   * @param level the scale at which we compute the orientation
+   * @param keypoints the resulting keypoints
+   */
+  void
+  computeOrientation(const cv::Mat& image, const cv::Mat& integral_image, unsigned int level,
+                     std::vector<cv::KeyPoint>& keypoints) const;
+
+  /** Compute the ORB descriptors
+   * @param image the image to compute the features and descriptors on
+   * @param integral_image the integral image of the image (can be empty, but the computation will be slower)
+   * @param level the scale at which we compute the orientation
+   * @param keypoints the keypoints to use
+   * @param descriptors the resulting descriptors
+   */
+  void
+  computeDescriptors(const cv::Mat& image, const cv::Mat& integral_image, unsigned int level,
+                     std::vector<cv::KeyPoint>& keypoints, cv::Mat & descriptors) const;
+
+  /** Compute the integral image and upadte the cached values
+   * @param image the image to compute the features and descriptors on
+   * @param level the scale at which we compute the orientation
+   * @param descriptors the resulting descriptors
+   */
+  void computeIntegralImage(const cv::Mat & image, unsigned int level, cv::Mat &integral_image);
+
+  /** Parameters tuning ORB */
+  CommonParams params_;
+
+  /** size of the half patch used for orientation computation, see Rosin - 1999 - Measuring Corner Properties */
+  int half_patch_size_;
+
+  /** pre-computed offsets used for the Harris verification, one vector per scale */
+  std::vector<std::vector<int> > orientation_horizontal_offsets_;
+  std::vector<std::vector<int> > orientation_vertical_offsets_;
+
+  /** The steps of the integral images for each scale */
+  std::vector<size_t> integral_image_steps_;
+
+  /** The number of desired features per scale */
+  std::vector<size_t> n_features_per_level_;
+
+  /** The overall number of desired features */
+  size_t n_features_;
+
+  /** the end of a row in a circular patch */
+  std::vector<int> u_max_;
+
+  /** The patterns for each level (the patterns are the same, but not their offset */
+  class OrbPatterns;
+  std::vector<OrbPatterns*> patterns_;
 };
 
 /*!
@@ -518,6 +713,7 @@ public:
     virtual int operator()(const Mat& img, Point2f kpt, vector<float>& signature) const;
     virtual int operator()(const Mat& patch, vector<float>& signature) const;
     virtual void clear();
+    virtual bool empty() const;
     void setVerbose(bool verbose);
     
     int getClassCount() const;
@@ -571,54 +767,6 @@ protected:
     vector<float> posteriors;
 };
 
-
-class CV_EXPORTS PlanarObjectDetector
-{
-public:
-    PlanarObjectDetector();
-    PlanarObjectDetector(const FileNode& node);
-    PlanarObjectDetector(const vector<Mat>& pyr, int _npoints=300,
-                         int _patchSize=FernClassifier::PATCH_SIZE,
-                         int _nstructs=FernClassifier::DEFAULT_STRUCTS,
-                         int _structSize=FernClassifier::DEFAULT_STRUCT_SIZE,
-                         int _nviews=FernClassifier::DEFAULT_VIEWS,
-                         const LDetector& detector=LDetector(),
-                         const PatchGenerator& patchGenerator=PatchGenerator());
-    virtual ~PlanarObjectDetector();
-    virtual void train(const vector<Mat>& pyr, int _npoints=300,
-                       int _patchSize=FernClassifier::PATCH_SIZE,
-                       int _nstructs=FernClassifier::DEFAULT_STRUCTS,
-                       int _structSize=FernClassifier::DEFAULT_STRUCT_SIZE,
-                       int _nviews=FernClassifier::DEFAULT_VIEWS,
-                       const LDetector& detector=LDetector(),
-                       const PatchGenerator& patchGenerator=PatchGenerator());
-    virtual void train(const vector<Mat>& pyr, const vector<KeyPoint>& keypoints,
-                       int _patchSize=FernClassifier::PATCH_SIZE,
-                       int _nstructs=FernClassifier::DEFAULT_STRUCTS,
-                       int _structSize=FernClassifier::DEFAULT_STRUCT_SIZE,
-                       int _nviews=FernClassifier::DEFAULT_VIEWS,
-                       const LDetector& detector=LDetector(),
-                       const PatchGenerator& patchGenerator=PatchGenerator());
-    Rect getModelROI() const;
-    vector<KeyPoint> getModelPoints() const;
-    const LDetector& getDetector() const;
-    const FernClassifier& getClassifier() const;
-    void setVerbose(bool verbose);
-    
-    void read(const FileNode& node);
-    void write(FileStorage& fs, const String& name=String()) const;
-    bool operator()(const Mat& image, CV_OUT Mat& H, CV_OUT vector<Point2f>& corners) const;
-    bool operator()(const vector<Mat>& pyr, const vector<KeyPoint>& keypoints,
-                                       CV_OUT Mat& H, CV_OUT vector<Point2f>& corners,
-                                       CV_OUT vector<int>* pairs=0) const;
-    
-protected:
-    bool verbose;
-    Rect modelROI;
-    vector<KeyPoint> modelPoints;
-    LDetector ldetector;
-    FernClassifier fernClassifier;
-};
 
 /****************************************************************************************\
 *                                 Calonder Classifier                                    *
@@ -1129,6 +1277,8 @@ public:
     // GetPCAFilename: get default PCA filename
     static string GetPCAFilename () { return "pca.yml"; }
 
+    virtual bool empty() const { return m_train_feature_count <= 0 ? true : false; }
+
 protected:
     CvSize m_patch_size; // patch size
     int m_pose_count; // the number of poses for each descriptor
@@ -1255,11 +1405,15 @@ public:
     // Read detector object from a file node.
     virtual void write( FileStorage& ) const;
 
+    // Return true if detector object is empty
+    virtual bool empty() const;
+
     // Create feature detector by detector name.
     static Ptr<FeatureDetector> create( const string& detectorType );
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const = 0;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const = 0;
+
     /*
      * Remove keypoints that are not in the mask.
      * Helper function, useful when wrapping a library call for keypoint detection that
@@ -1276,7 +1430,7 @@ public:
     virtual void write( FileStorage& fs ) const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
     int threshold;
     bool nonmaxSuppression;
@@ -1309,9 +1463,9 @@ public:
     virtual void write( FileStorage& fs ) const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
-	
-	Params params;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+
+    Params params;
 };
 
 class CV_EXPORTS MserFeatureDetector : public FeatureDetector
@@ -1324,7 +1478,7 @@ public:
     virtual void write( FileStorage& fs ) const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
     MSER mser;
 };
@@ -1339,7 +1493,7 @@ public:
     virtual void write( FileStorage& fs ) const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
     StarDetector star;
 };
@@ -1358,7 +1512,7 @@ public:
     virtual void write( FileStorage& fs ) const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
     SIFT sift;
 };
@@ -1366,14 +1520,91 @@ protected:
 class CV_EXPORTS SurfFeatureDetector : public FeatureDetector
 {
 public:
-    SurfFeatureDetector( double hessianThreshold=400., int octaves=3, int octaveLayers=4 );
+    SurfFeatureDetector( double hessianThreshold=400., int octaves=3, int octaveLayers=4, bool upright=false );
     virtual void read( const FileNode& fn );
     virtual void write( FileStorage& fs ) const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
     SURF surf;
+};
+
+/** Feature detector for the ORB feature
+ * Basically fast followed by a Harris check
+ */
+class CV_EXPORTS OrbFeatureDetector : public cv::FeatureDetector
+{
+public:
+  /** Default constructor
+   * @param n_features the number of desired features
+   * @param params parameters to use
+   */
+  OrbFeatureDetector(size_t n_features = 700, ORB::CommonParams params = ORB::CommonParams());
+
+  virtual void read(const cv::FileNode&);
+  virtual void write(cv::FileStorage&) const;
+
+protected:
+  virtual void
+  detectImpl(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask = cv::Mat()) const;
+private:
+  /** the ORB object we use for the computations */
+  mutable ORB orb_;
+  /** The parameters used */
+  ORB::CommonParams params_;
+  /** the number of features that need to be retrieved */
+  unsigned int n_features_;
+};
+
+class CV_EXPORTS SimpleBlobDetector : public cv::FeatureDetector
+{
+public:
+  struct CV_EXPORTS Params
+  {
+      Params();
+      float thresholdStep;
+      float minThreshold;
+      float maxThreshold;
+      size_t minRepeatability;
+      float minDistBetweenBlobs;
+
+      bool filterByColor;
+      uchar blobColor;
+
+      bool filterByArea;
+      float minArea, maxArea;
+
+      bool filterByCircularity;
+      float minCircularity, maxCircularity;
+
+      bool filterByInertia;
+      float minInertiaRatio, maxInertiaRatio;
+
+      bool filterByConvexity;
+      float minConvexity, maxConvexity;
+
+      void read( const FileNode& fn );
+      void write( FileStorage& fs ) const;
+  };
+
+  SimpleBlobDetector(const SimpleBlobDetector::Params &parameters = SimpleBlobDetector::Params());
+
+  virtual void read( const FileNode& fn );
+  virtual void write( FileStorage& fs ) const;
+
+protected:
+  struct CV_EXPORTS Center
+  {
+      Point2d location;
+      double radius;
+      double confidence;
+  };
+
+  virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+  virtual void findBlobs(const cv::Mat &image, const cv::Mat &binaryImage, std::vector<Center> &centers) const;
+
+  Params params;
 };
 
 class CV_EXPORTS DenseFeatureDetector : public FeatureDetector
@@ -1393,16 +1624,20 @@ public:
 
         bool varyXyStepWithScale;
         bool varyImgBoundWithScale;
+
+        void read( const FileNode& fn );
+        void write( FileStorage& fs ) const;
     };
 
     DenseFeatureDetector( const DenseFeatureDetector::Params& params=DenseFeatureDetector::Params() );
     
-	// TODO implement read/write
+    virtual void read( const FileNode& fn );
+    virtual void write( FileStorage& fs ) const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
-	Params params;
+    Params params;
 };
 
 /*
@@ -1423,9 +1658,10 @@ public:
                                 int gridRows=4, int gridCols=4 );
     
     // TODO implement read/write
+    virtual bool empty() const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
     Ptr<FeatureDetector> detector;
     int maxTotalKeypoints;
@@ -1440,15 +1676,17 @@ protected:
 class CV_EXPORTS PyramidAdaptedFeatureDetector : public FeatureDetector
 {
 public:
-    PyramidAdaptedFeatureDetector( const Ptr<FeatureDetector>& detector, int levels=2 );
+    // maxLevel - The 0-based index of the last pyramid layer
+    PyramidAdaptedFeatureDetector( const Ptr<FeatureDetector>& detector, int maxLevel=2 );
     
     // TODO implement read/write
+    virtual bool empty() const;
 
 protected:
-	virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
+    virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
     Ptr<FeatureDetector> detector;
-    int levels;
+    int maxLevel;
 };
 
 /** \brief A feature detector parameter adjuster, this is used by the DynamicAdaptedFeatureDetector
@@ -1460,20 +1698,22 @@ public:
 	/** pure virtual interface
 	 */
     virtual ~AdjusterAdapter() {}
-	/** too few features were detected so, adjust the detector params accordingly
-	 * \param min the minimum number of desired features
-	 * \param n_detected the number previously detected
-	 */
-	virtual void tooFew(int min, int n_detected) = 0;
-	/** too many features were detected so, adjust the detector params accordingly
-	 * \param max the maximum number of desired features
-	 * \param n_detected the number previously detected
-	 */
-	virtual void tooMany(int max, int n_detected) = 0;
-	/** are params maxed out or still valid?
-	 * \return false if the parameters can't be adjusted any more
-	 */
-	virtual bool good() const = 0;
+    /** too few features were detected so, adjust the detector params accordingly
+     * \param min the minimum number of desired features
+     * \param n_detected the number previously detected
+     */
+    virtual void tooFew(int min, int n_detected) = 0;
+    /** too many features were detected so, adjust the detector params accordingly
+     * \param max the maximum number of desired features
+     * \param n_detected the number previously detected
+     */
+    virtual void tooMany(int max, int n_detected) = 0;
+    /** are params maxed out or still valid?
+     * \return false if the parameters can't be adjusted any more
+     */
+    virtual bool good() const = 0;
+
+    virtual Ptr<AdjusterAdapter> clone() const = 0;
 
     static Ptr<AdjusterAdapter> create( const string& detectorType );
 };
@@ -1494,41 +1734,50 @@ class CV_EXPORTS DynamicAdaptedFeatureDetector: public FeatureDetector
 public:
 
     /** \param adjaster an AdjusterAdapter that will do the detection and parameter adjustment
-	 * \param max_features the maximum desired number of features
-	 * \param max_iters the maximum number of times to try to adjust the feature detector params
-	 * 			for the FastAdjuster this can be high, but with Star or Surf this can get time consuming
-     * \param min_features the minimum desired features
-	 */
+     *  \param max_features the maximum desired number of features
+     *  \param max_iters the maximum number of times to try to adjust the feature detector params
+     * 			for the FastAdjuster this can be high, but with Star or Surf this can get time consuming
+     *  \param min_features the minimum desired features
+     */
     DynamicAdaptedFeatureDetector( const Ptr<AdjusterAdapter>& adjaster, int min_features=400, int max_features=500, int max_iters=5 );
+
+    virtual bool empty() const;
 
 protected:
     virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
 private:
-	int escape_iters_;
-	int min_features_, max_features_;
-	Ptr<AdjusterAdapter> adjuster_;
+	DynamicAdaptedFeatureDetector& operator=(const DynamicAdaptedFeatureDetector&);
+	DynamicAdaptedFeatureDetector(const DynamicAdaptedFeatureDetector&);
+
+    int escape_iters_;
+    int min_features_, max_features_;
+    const Ptr<AdjusterAdapter> adjuster_;
 };
 
 /**\brief an adjust for the FAST detector. This will basically decrement or increment the
- * threshhold by 1
+ * threshold by 1
  */
 class CV_EXPORTS FastAdjuster: public AdjusterAdapter
 {
 public:
-	/**\param init_thresh the initial threshhold to start with, default = 20
-	 * \param nonmax whether to use non max or not for fast feature detection
-	 */
-	FastAdjuster(int init_thresh = 20, bool nonmax = true);
-	virtual void tooFew(int min, int n_detected);
-	virtual void tooMany(int max, int n_detected);
-	virtual bool good() const;
+    /**\param init_thresh the initial threshold to start with, default = 20
+     * \param nonmax whether to use non max or not for fast feature detection
+     */
+    FastAdjuster(int init_thresh=20, bool nonmax=true, int min_thresh=1, int max_thresh=200);
+
+    virtual void tooFew(int min, int n_detected);
+    virtual void tooMany(int max, int n_detected);
+    virtual bool good() const;
+
+    virtual Ptr<AdjusterAdapter> clone() const;
 
 protected:
     virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
-	int thresh_;
-	bool nonmax_;
+    int thresh_;
+    bool nonmax_;
+    int init_thresh_, min_thresh_, max_thresh_;
 };
 
 
@@ -1538,30 +1787,36 @@ protected:
 class CV_EXPORTS StarAdjuster: public AdjusterAdapter
 {
 public:
-	StarAdjuster(double initial_thresh = 30.0);
-	virtual void tooFew(int min, int n_detected);
-	virtual void tooMany(int max, int n_detected);
-	virtual bool good() const;
+    StarAdjuster(double initial_thresh=30.0, double min_thresh=2., double max_thresh=200.);
+
+    virtual void tooFew(int min, int n_detected);
+    virtual void tooMany(int max, int n_detected);
+    virtual bool good() const;
+
+    virtual Ptr<AdjusterAdapter> clone() const;
 
 protected:
     virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
-	double thresh_;
-	CvStarDetectorParams params_; //todo use these instead of thresh_
+    double thresh_, init_thresh_, min_thresh_, max_thresh_;
+    CvStarDetectorParams params_; //todo use these instead of thresh_
 };
 
 class CV_EXPORTS SurfAdjuster: public AdjusterAdapter
 {
 public:
-    SurfAdjuster();
-	virtual void tooFew(int min, int n_detected);
-	virtual void tooMany(int max, int n_detected);
-	virtual bool good() const;
+    SurfAdjuster( double initial_thresh=400.f, double min_thresh=2, double max_thresh=1000 );
+
+    virtual void tooFew(int min, int n_detected);
+    virtual void tooMany(int max, int n_detected);
+    virtual bool good() const;
+
+    virtual Ptr<AdjusterAdapter> clone() const;
 
 protected:
     virtual void detectImpl( const Mat& image, vector<KeyPoint>& keypoints, const Mat& mask=Mat() ) const;
 
-	double thresh_;
+    double thresh_, init_thresh_, min_thresh_, max_thresh_;
 };
 
 CV_EXPORTS Mat windowedMatchingMask( const vector<KeyPoint>& keypoints1, const vector<KeyPoint>& keypoints2,
@@ -1608,10 +1863,12 @@ public:
     virtual int descriptorSize() const = 0;
     virtual int descriptorType() const = 0;
 
+    virtual bool empty() const;
+
     static Ptr<DescriptorExtractor> create( const string& descriptorExtractorType );
 
 protected:
-	virtual void computeImpl( const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors ) const = 0;
+    virtual void computeImpl( const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors ) const = 0;
 
     /*
      * Remove keypoints within borderPixels of an image edge.
@@ -1652,7 +1909,7 @@ protected:
 class CV_EXPORTS SurfDescriptorExtractor : public DescriptorExtractor
 {
 public:
-    SurfDescriptorExtractor( int nOctaves=4, int nOctaveLayers=2, bool extended=false );
+    SurfDescriptorExtractor( int nOctaves=4, int nOctaveLayers=2, bool extended=false, bool upright=false );
 
     virtual void read( const FileNode &fn );
     virtual void write( FileStorage &fs ) const;
@@ -1661,9 +1918,43 @@ public:
     virtual int descriptorType() const;
 
 protected:
-	virtual void computeImpl( const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors ) const;
+    virtual void computeImpl( const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors ) const;
 
     SURF surf;
+};
+
+/** The descriptor extractor for the ORB descriptor
+ * There are two ways to speed up its computation:
+ * - if you know the step size of the integral image, use setStepSize so that offsets are precomputed and cached
+ * - if you know the integral image, use setIntegralImage so that it is not recomputed. This calls
+ * setStepSize automatically
+ */
+class CV_EXPORTS OrbDescriptorExtractor : public cv::DescriptorExtractor
+{
+public:
+  /** default constructor
+   * @param params parameters to use
+   */
+  OrbDescriptorExtractor(ORB::CommonParams params = ORB::CommonParams());
+
+  /** destructor */
+  ~OrbDescriptorExtractor()
+  {
+  }
+
+  virtual int descriptorSize() const;
+  virtual int descriptorType() const;
+
+  virtual void read(const cv::FileNode&);
+  virtual void write(cv::FileStorage&) const;
+
+protected:
+  void computeImpl(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors) const;
+private:
+  /** the ORB object we use for the computations */
+  mutable ORB orb_;
+  /** The parameters used */
+  ORB::CommonParams params_;
 };
 
 /*
@@ -1681,8 +1972,10 @@ public:
     virtual int descriptorSize() const { return classifier_.classes(); }
     virtual int descriptorType() const { return DataType<T>::type; }
 
+    virtual bool empty() const;
+
 protected:
-	virtual void computeImpl( const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors ) const;
+    virtual void computeImpl( const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors ) const;
 
     RTreeClassifier classifier_;
     static const int BORDER_SIZE = 16;
@@ -1700,7 +1993,7 @@ void CalonderDescriptorExtractor<T>::computeImpl( const cv::Mat& image,
                                               cv::Mat& descriptors) const
 {
     // Cannot compute descriptors for keypoints on the image border.
-    removeBorderKeypoints(keypoints, image.size(), BORDER_SIZE);
+    KeyPointsFilter::runByImageBorder(keypoints, image.size(), BORDER_SIZE);
 
     /// @todo Check 16-byte aligned
     descriptors.create(keypoints.size(), classifier_.classes(), cv::DataType<T>::type);
@@ -1723,6 +2016,12 @@ template<typename T>
 void CalonderDescriptorExtractor<T>::write( FileStorage& ) const
 {}
 
+template<typename T>
+bool CalonderDescriptorExtractor<T>::empty() const
+{
+    return classifier_.trees_.empty();
+}
+
 /*
  * OpponentColorDescriptorExtractor
  *
@@ -1743,6 +2042,8 @@ public:
     virtual int descriptorSize() const;
     virtual int descriptorType() const;
 
+    virtual bool empty() const;
+
 protected:
 	virtual void computeImpl( const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors ) const;
 
@@ -1761,13 +2062,16 @@ public:
     // bytes is a length of descriptor in bytes. It can be equal 16, 32 or 64 bytes.
     BriefDescriptorExtractor( int bytes = 32 );
 
+    virtual void read( const FileNode& );
+    virtual void write( FileStorage& ) const;
+
     virtual int descriptorSize() const;
     virtual int descriptorType() const;
 
     /// @todo read and write for brief
 
 protected:
-	virtual void computeImpl(const Mat& image, std::vector<KeyPoint>& keypoints, Mat& descriptors) const;
+    virtual void computeImpl(const Mat& image, std::vector<KeyPoint>& keypoints, Mat& descriptors) const;
 
     typedef void(*PixelTestFn)(const Mat&, const std::vector<KeyPoint>&, Mat&);
 
@@ -1791,6 +2095,27 @@ template<> struct Accumulator<short>  { typedef float Type; };
 
 /*
  * Squared Euclidean distance functor
+ */
+template<class T>
+struct CV_EXPORTS SL2
+{
+    typedef T ValueType;
+    typedef typename Accumulator<T>::Type ResultType;
+
+    ResultType operator()( const T* a, const T* b, int size ) const
+    {
+        ResultType result = ResultType();
+        for( int i = 0; i < size; i++ )
+        {
+            ResultType diff = (ResultType)(a[i] - b[i]);
+            result += diff*diff;
+        }
+        return result;
+    }
+};
+
+/*
+ * Euclidean distance functor
  */
 template<class T>
 struct CV_EXPORTS L2
@@ -1925,7 +2250,7 @@ public:
     /*
      * Return true if there are not train descriptors in collection.
      */
-	bool empty() const;
+    virtual bool empty() const;
     /*
      * Return true if the matcher supports mask in match methods.
      */
@@ -1935,7 +2260,7 @@ public:
      * Train matcher (e.g. train flann index).
      * In all methods to match the method train() is run every time before matching.
      * Some descriptor matchers (e.g. BruteForceMatcher) have empty implementation
-     * of this method, other matchers realy train their inner structures
+     * of this method, other matchers really train their inner structures
      * (e.g. FlannBasedMatcher trains flann::Index). So nonempty implementation
      * of train() should check the class object state and do traing/retraining
      * only if the state requires that (e.g. FlannBasedMatcher trains flann::Index
@@ -2076,8 +2401,9 @@ Ptr<DescriptorMatcher> BruteForceMatcher<Distance>::clone( bool emptyTrainData )
     BruteForceMatcher* matcher = new BruteForceMatcher(distance);
     if( !emptyTrainData )
     {
-        transform( trainDescCollection.begin(), trainDescCollection.end(),
-                   matcher->trainDescCollection.begin(), clone_op );
+        matcher->trainDescCollection.resize(trainDescCollection.size());
+        std::transform( trainDescCollection.begin(), trainDescCollection.end(),
+                        matcher->trainDescCollection.begin(), clone_op );
     }
     return matcher;
 }
@@ -2100,77 +2426,77 @@ template<class Distance>
 inline void BruteForceMatcher<Distance>::commonKnnMatchImpl( BruteForceMatcher<Distance>& matcher,
                           const Mat& queryDescriptors, vector<vector<DMatch> >& matches, int knn,
                           const vector<Mat>& masks, bool compactResult )
- {
-     typedef typename Distance::ValueType ValueType;
-     typedef typename Distance::ResultType DistanceType;
-	 CV_DbgAssert( !queryDescriptors.empty() );
-     CV_Assert( DataType<ValueType>::type == queryDescriptors.type() );
+{
+    typedef typename Distance::ValueType ValueType;
+    typedef typename Distance::ResultType DistanceType;
+    CV_DbgAssert( !queryDescriptors.empty() );
+    CV_Assert( DataType<ValueType>::type == queryDescriptors.type() );
      
-     int dimension = queryDescriptors.cols;
-     matches.reserve(queryDescriptors.rows);
+    int dimension = queryDescriptors.cols;
+    matches.reserve(queryDescriptors.rows);
 
-     size_t imgCount = matcher.trainDescCollection.size();
-     vector<Mat> allDists( imgCount ); // distances between one query descriptor and all train descriptors
-     for( size_t i = 0; i < imgCount; i++ )
+    size_t imgCount = matcher.trainDescCollection.size();
+    vector<Mat> allDists( imgCount ); // distances between one query descriptor and all train descriptors
+    for( size_t i = 0; i < imgCount; i++ )
         allDists[i] = Mat( 1, matcher.trainDescCollection[i].rows, DataType<DistanceType>::type );
 
-     for( int qIdx = 0; qIdx < queryDescriptors.rows; qIdx++ )
-     {
-         if( matcher.isMaskedOut( masks, qIdx ) )
-         {
-             if( !compactResult ) // push empty vector
-                 matches.push_back( vector<DMatch>() );
-         }
-         else
-         {
-             // 1. compute distances between i-th query descriptor and all train descriptors
-             for( size_t iIdx = 0; iIdx < imgCount; iIdx++ )
-             {
-                 CV_Assert( DataType<ValueType>::type == matcher.trainDescCollection[iIdx].type() ||  matcher.trainDescCollection[iIdx].empty() );
-				 CV_Assert( queryDescriptors.cols == matcher.trainDescCollection[iIdx].cols || 
-				            matcher.trainDescCollection[iIdx].empty() );
+    for( int qIdx = 0; qIdx < queryDescriptors.rows; qIdx++ )
+    {
+        if( matcher.isMaskedOut( masks, qIdx ) )
+        {
+            if( !compactResult ) // push empty vector
+                matches.push_back( vector<DMatch>() );
+        }
+        else
+        {
+            // 1. compute distances between i-th query descriptor and all train descriptors
+            for( size_t iIdx = 0; iIdx < imgCount; iIdx++ )
+            {
+                CV_Assert( DataType<ValueType>::type == matcher.trainDescCollection[iIdx].type() ||  matcher.trainDescCollection[iIdx].empty() );
+                CV_Assert( queryDescriptors.cols == matcher.trainDescCollection[iIdx].cols ||
+                           matcher.trainDescCollection[iIdx].empty() );
 
-                 const ValueType* d1 = (const ValueType*)(queryDescriptors.data + queryDescriptors.step*qIdx);
-                 allDists[iIdx].setTo( Scalar::all(std::numeric_limits<DistanceType>::max()) );
-                 for( int tIdx = 0; tIdx < matcher.trainDescCollection[iIdx].rows; tIdx++ )
-                 {
-                     if( masks.empty() || matcher.isPossibleMatch(masks[iIdx], qIdx, tIdx) )
-                     {
-                         const ValueType* d2 = (const ValueType*)(matcher.trainDescCollection[iIdx].data +
-                                                                  matcher.trainDescCollection[iIdx].step*tIdx);
-                         allDists[iIdx].at<DistanceType>(0, tIdx) = matcher.distance(d1, d2, dimension);
-                     }
-                 }
-             }
+                const ValueType* d1 = (const ValueType*)(queryDescriptors.data + queryDescriptors.step*qIdx);
+                allDists[iIdx].setTo( Scalar::all(std::numeric_limits<DistanceType>::max()) );
+                for( int tIdx = 0; tIdx < matcher.trainDescCollection[iIdx].rows; tIdx++ )
+                {
+                    if( masks.empty() || matcher.isPossibleMatch(masks[iIdx], qIdx, tIdx) )
+                    {
+                        const ValueType* d2 = (const ValueType*)(matcher.trainDescCollection[iIdx].data +
+                                                                 matcher.trainDescCollection[iIdx].step*tIdx);
+                        allDists[iIdx].at<DistanceType>(0, tIdx) = matcher.distance(d1, d2, dimension);
+                    }
+                }
+            }
 
-             // 2. choose k nearest matches for query[i]
-             matches.push_back( vector<DMatch>() );
-             vector<vector<DMatch> >::reverse_iterator curMatches = matches.rbegin();
-             for( int k = 0; k < knn; k++ )
-             {
-                 DMatch bestMatch;
-                 bestMatch.distance = std::numeric_limits<float>::max();
-                 for( size_t iIdx = 0; iIdx < imgCount; iIdx++ )
-                 {
-					 if( !allDists[iIdx].empty() )
-					 {
-						 double minVal;
-						 Point minLoc;
-						 minMaxLoc( allDists[iIdx], &minVal, 0, &minLoc, 0 );
-						 if( minVal < bestMatch.distance )
-							 bestMatch = DMatch( qIdx, minLoc.x, (int)iIdx, (float)minVal );
-					 }
-                 }
-                 if( bestMatch.trainIdx == -1 )
-                     break;
+            // 2. choose k nearest matches for query[i]
+            matches.push_back( vector<DMatch>() );
+            vector<vector<DMatch> >::reverse_iterator curMatches = matches.rbegin();
+            for( int k = 0; k < knn; k++ )
+            {
+                DMatch bestMatch;
+                bestMatch.distance = std::numeric_limits<float>::max();
+                for( size_t iIdx = 0; iIdx < imgCount; iIdx++ )
+                {
+                    if( !allDists[iIdx].empty() )
+                    {
+                        double minVal;
+                        Point minLoc;
+                        minMaxLoc( allDists[iIdx], &minVal, 0, &minLoc, 0 );
+                        if( minVal < bestMatch.distance )
+                            bestMatch = DMatch( qIdx, minLoc.x, (int)iIdx, (float)minVal );
+                    }
+                }
+                if( bestMatch.trainIdx == -1 )
+                    break;
 
-                 allDists[bestMatch.imgIdx].at<DistanceType>(0, bestMatch.trainIdx) = std::numeric_limits<DistanceType>::max();
-                 curMatches->push_back( bestMatch );
-             }
-             //TODO should already be sorted at this point?
-             std::sort( curMatches->begin(), curMatches->end() );
-         }
-     }
+                allDists[bestMatch.imgIdx].at<DistanceType>(0, bestMatch.trainIdx) = std::numeric_limits<DistanceType>::max();
+                curMatches->push_back( bestMatch );
+            }
+            //TODO should already be sorted at this point?
+            std::sort( curMatches->begin(), curMatches->end() );
+        }
+    }
 }
 
 template<class Distance>
@@ -2244,6 +2570,11 @@ public:
 
     virtual void add( const vector<Mat>& descriptors );
     virtual void clear();
+
+    // Reads matcher object from a file node
+    virtual void read( const FileNode& );
+    // Writes matcher object to a file storage
+    virtual void write( FileStorage& ) const;
 
     virtual void train();
     virtual bool isMaskSupported() const;
@@ -2367,6 +2698,9 @@ public:
     // Writes matcher object to a file storage
     virtual void write( FileStorage& ) const;
 
+    // Return true if matching object is empty (e.g. feature detector or descriptor matcher are empty)
+    virtual bool empty() const;
+
     // Clone the matcher. If emptyTrainData is false the method create deep copy of the object, i.e. copies
     // both parameters and train data. If emptyTrainData is true the method create object copy with current parameters
     // but with empty train data.
@@ -2474,6 +2808,8 @@ public:
     virtual void read( const FileNode &fn );
     virtual void write( FileStorage& fs ) const;
 
+    virtual bool empty() const;
+
     virtual Ptr<GenericDescriptorMatcher> clone( bool emptyTrainData=false ) const;
 
 protected:
@@ -2541,6 +2877,7 @@ public:
 
     virtual void read( const FileNode &fn );
     virtual void write( FileStorage& fs ) const;
+    virtual bool empty() const;
     
     virtual Ptr<GenericDescriptorMatcher> clone( bool emptyTrainData=false ) const;
 
@@ -2587,6 +2924,7 @@ public:
 
     virtual void read( const FileNode& fn );
     virtual void write( FileStorage& fs ) const;
+    virtual bool empty() const;
 
     virtual Ptr<GenericDescriptorMatcher> clone( bool emptyTrainData=false ) const;
 
@@ -2621,7 +2959,7 @@ struct CV_EXPORTS DrawMatchesFlags
 };
 
 // Draw keypoints.
-CV_EXPORTS void drawKeypoints( const Mat& image, const vector<KeyPoint>& keypoints, Mat& outImg,
+CV_EXPORTS void drawKeypoints( const Mat& image, const vector<KeyPoint>& keypoints, Mat& outImage,
                                const Scalar& color=Scalar::all(-1), int flags=DrawMatchesFlags::DEFAULT );
 
 // Draws matches of keypints from two images on output image.
@@ -2649,7 +2987,9 @@ CV_EXPORTS void evaluateFeatureDetector( const Mat& img1, const Mat& img2, const
 CV_EXPORTS void computeRecallPrecisionCurve( const vector<vector<DMatch> >& matches1to2,
                                              const vector<vector<uchar> >& correctMatches1to2Mask,
                                              vector<Point2f>& recallPrecisionCurve );
+
 CV_EXPORTS float getRecall( const vector<Point2f>& recallPrecisionCurve, float l_precision );
+CV_EXPORTS int getNearestPoint( const vector<Point2f>& recallPrecisionCurve, float l_precision );
 
 CV_EXPORTS void evaluateGenericDescriptorMatcher( const Mat& img1, const Mat& img2, const Mat& H1to2,
                                                   vector<KeyPoint>& keypoints1, vector<KeyPoint>& keypoints2,
