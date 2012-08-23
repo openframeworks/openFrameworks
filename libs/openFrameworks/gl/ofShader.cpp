@@ -35,7 +35,7 @@ static void releaseShader(GLuint program, GLuint id){
 			getShaderIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofShader: releasing id not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofShader") << "Releasing id not found. This shouldn't be happening. Releasing anyway.";
 		glDetachShader(program, id);
 		glDeleteShader(id);
 	}
@@ -60,7 +60,7 @@ static void releaseProgram(GLuint id){
 			getProgramIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofShader: releasing program not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofShader") << "Releasing program not found. This shouldn't be happening. Releasing anyway.";
 		glDeleteProgram(id);
 	}
 }
@@ -99,7 +99,7 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getText());
 	} else {
-		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
+		ofLogError("ofShader") << "Could not load shader of type " << nameForType(type) << " from file " << filename << ".";
 		return false;
 	}
 }
@@ -113,7 +113,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	// create shader
 	GLuint shader = glCreateShader(type);
 	if(shader == 0) {
-		ofLog(OF_LOG_ERROR, "Failed creating shader of type " + nameForType(type));
+		ofLogError("ofShader") << "Failed creating shader of type " << nameForType(type) << ".";
 		return false;
 	}
 	
@@ -128,7 +128,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
     GLuint err = glGetError();
     if (err != GL_NO_ERROR){
-        ofLog( OF_LOG_ERROR, "OpenGL generated error " + ofToString(err) + " trying to get the compile status for " + nameForType(type) + " shader. Does your video card support this?" );
+        ofLogError("ofShader") << "OpenGL generated error " << err << " trying to get the compile status for " << nameForType(type) << " shader. Does your video card support this?";
         return false;
     }
     
@@ -178,7 +178,7 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
     GLuint err = glGetError();
     if (err != GL_NO_ERROR){
-        ofLog( OF_LOG_ERROR, "OpenGL generated error "+ofToString(err)+" trying to get the program link status. Does your video card support shader programs?" );
+        ofLogError("ofShader") << "OpenGL generated error " << err << " trying to get the program link status. Does your video card support shader programs?";
         return false;
     }
 	if(status == GL_TRUE)
@@ -198,7 +198,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type) {
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(OF_LOG_ERROR, nameForType(type) + " shader reports:\n" + infoBuffer);
+		ofLogError("ofShader") << nameForType(type) << " shader reports: " << endl << infoBuffer;
 		delete [] infoBuffer;
 	}
 }
@@ -210,8 +210,7 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer);
-		string msg = "Shader program reports:\n";
-		ofLog(OF_LOG_ERROR, msg + infoBuffer);
+		ofLogError("ofShader") << "Shader program reports: " << endl << infoBuffer;
 		delete [] infoBuffer;
 	}
 }
@@ -220,26 +219,28 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 void ofShader::checkAndCreateProgram() {
 	if(GL_ARB_shader_objects) {
 		if(program == 0) {
-			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
+            ofLogVerbose("ofShader") << "Creating GLSL Program.";
 			program = glCreateProgram();
 			retainProgram(program);
 		}
 	} else {
-		ofLog(OF_LOG_ERROR, "Sorry, it looks like you can't run 'ARB_shader_objects'.\nPlease check the capabilites of your graphics card.\nhttp://www.ozone3d.net/gpu_caps_viewer/");
+        ofLogError("ofShader") << "Sorry, it looks like you can't run 'ARB_shader_objects'." << endl
+                               << "Please check the capabilites of your graphics card." << endl
+                               << "http://www.ozone3d.net/gpu_caps_viewer/.";
 	}
 }
 
 //--------------------------------------------------------------
 bool ofShader::linkProgram() {
 		if(shaders.empty()) {
-			ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
+			ofLogError("ofShader") << "Trying to link GLSL program, but no shaders created yet.";
 		} else {
 			checkAndCreateProgram();
 			
 			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 				GLuint shader = it->second;
 				if(shader) {
-					ofLog(OF_LOG_VERBOSE, "Attaching shader of type " + nameForType(it->first));
+					ofLogVerbose("ofShader") << "Attaching shader of type " << nameForType(it->first) << ".";
 					glAttachShader(program, shader);
 				}
 			}
@@ -261,7 +262,7 @@ void ofShader::unload() {
 		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 			GLuint shader = it->second;
 			if(shader) {
-				ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
+				ofLogVerbose("ofShader") << "Detaching and deleting shader of type " + nameForType(it->first) << ".";
 				releaseShader(program,shader);
 			}
 		}
