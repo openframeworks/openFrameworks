@@ -21,6 +21,7 @@ ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 //--------------------------------------------------------------------
 void ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 	internalPixelFormat = pixelFormat;
+    //TODO: we need to behave appropriately if the video player is already set by updating it's internal format as well
 }
 
 //---------------------------------------------------------------------------
