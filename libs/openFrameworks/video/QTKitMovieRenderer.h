@@ -25,7 +25,7 @@
 	BOOL frameUpdated;
 	BOOL useTexture;
 	BOOL usePixels;
-	BOOL allowAlpha;
+	BOOL useAlpha;
 	BOOL synchronousScrub;
 	BOOL justSetFrame;
 }
@@ -33,7 +33,7 @@
 @property (nonatomic, readonly) NSSize movieSize;
 @property (nonatomic, readonly) BOOL useTexture;
 @property (nonatomic, readonly) BOOL usePixels;
-@property (nonatomic, readwrite) BOOL allowAlpha;
+@property (nonatomic, readonly) BOOL useAlpha;
 @property (nonatomic, readonly) NSTimeInterval duration; //duration in seconds
 @property (nonatomic, readonly) NSInteger frameCount;  //total frames
 @property (nonatomic, readonly) BOOL isFinished;  //returns true if the movie is not looping and over
@@ -53,7 +53,7 @@
 - (NSDictionary *)pixelBufferAttributes;
 
 - (void)draw:(NSRect)drawRect;
-- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels;
+- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
 - (BOOL)update;
 
 - (void)bindTexture;

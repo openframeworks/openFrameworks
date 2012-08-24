@@ -96,7 +96,8 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		float duration;
 		float speed;
 		ofQTKitDecodeMode decodeMode;
-
+	    string moviePath;
+		bool bSynchronousScrubbing;
 		//pulls texture data from the movie renderer into our ofTexture
 		void updateTexture();
 		void reallocatePixels();
