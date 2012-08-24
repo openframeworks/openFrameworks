@@ -800,6 +800,10 @@ bool ofxXmlSettings::loadFromBuffer( string buffer )
 
 }
     
+string ofxXmlSettings::getValueByPath(const string& path) { 
+    return getElement(path)->innerText(); 
+}
+
 //---------------------------------------------------------
 void ofxXmlSettings::copyXmlToString(string & str)
 {
@@ -814,6 +818,16 @@ void ofxXmlSettings::copyXmlToString(string & str)
 
     str = stream.str();
     
+}
+
+void ofxXmlSettings::setValueByPath(const string& path, const string& value) { 
+    Element *element = getElement(path);
+    Text* newText = document->createTextNode(path);
+    if(element->hasChildNodes()) {
+        element->replaceChild(element->firstChild(), (Node*) newText);
+    } else {
+        element->appendChild((Node*) newText);
+    }
 }
     
 Element* ofxXmlSettings::getElement(const string& tag, const int which, bool useFirstTagForIndex)
