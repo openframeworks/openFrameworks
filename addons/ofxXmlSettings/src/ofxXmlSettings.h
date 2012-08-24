@@ -136,8 +136,6 @@ class ofxXmlSettings{
 		//already exists - returns an index which can then be used to
 		//modify the tag by passing it as the last argument to setValue
 
-		//-- important - this only works for top level tags
-		//   to put multiple tags inside other tags - use pushTag() and popTag()
 		int 	addValue(const string&  tag, int            value);
 		int 	addValue(const string&  tag, double         value);
 		int 	addValue(const string&  tag, const string& 	value);
@@ -190,6 +188,9 @@ class ofxXmlSettings{
         Poco::XML::Document& getDocument();
     
 		bool 			bDocLoaded;
+        
+        string          getValueByPath(const string& path);
+        void            setValueByPath(const string& path, const string& value);
 
 	protected:
     
