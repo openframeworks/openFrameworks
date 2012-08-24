@@ -3,10 +3,12 @@
 
 #include "ofMain.h"
 #include <string.h>
+#include <numeric>
 #include <Poco/DOM/Document.h>
 #include <Poco/DOM/Element.h>
 #include <Poco/DOM/DOMParser.h>
 
+#include <Poco/DOM/DOMException.h>
 #include <Poco/SAX/SAXException.h>
 #include <Poco/XML/XMLString.h>  
 #include <Poco/DOM/DOMParser.h>
@@ -22,6 +24,22 @@
 
 using namespace std;
 using namespace Poco::XML;
+
+/*
+ 
+ addTag() adds a tag by tag + which or by path with an optional value
+ setValue() sets a value by tag + which or by path if the tag is present
+ getValue() gets a value by tag + which or by path if the tag is present
+ clearTagContents() clears the value of a tag AND any children
+ removeTag() removes a tag by tag + which or by path
+ tagExists() tells whether a tag exists by tag + which or by path
+ 
+ addAttribute() adds an attribute to a tag by tag + which or by path
+ removeAttribute() removes an attribute from a tag by tag + which or by path
+ setAttribute() sets an attribute on a tag if that tag exists by tag + which or by path
+ clearTagAttributes() removes all attibutes from a tag by tag + which or by path
+ 
+ */
 
 /*
 	Q: what is the which = 0 argument?
@@ -83,6 +101,10 @@ class ofxXmlSettings{
 		int 	getValue(const string&  tag, int            defaultValue, int which = 0);
 		double 	getValue(const string&  tag, double         defaultValue, int which = 0);
 		string 	getValue(const string&  tag, const string& 	defaultValue, int which = 0);
+    
+        int 	getPathValue(const string&  tag, int            defaultValue);
+        double 	getPathValue(const string&  tag, double         defaultValue);
+        string 	getPathValue(const string&  tag, const string& 	defaultValue);
 
 		int 	setValue(const string&  tag, int            value, int which = 0);
 		int 	setValue(const string&  tag, double         value, int which = 0);
@@ -116,12 +138,16 @@ class ofxXmlSettings{
 
 		//-- important - this only works for top level tags
 		//   to put multiple tags inside other tags - use pushTag() and popTag()
-
 		int 	addValue(const string&  tag, int            value);
 		int 	addValue(const string&  tag, double         value);
 		int 	addValue(const string&  tag, const string& 	value);
+    
+        int     addTag( const string& tag) { return addTagByPath(tag); }
 
-		int		addTag(const string& tag); //adds an empty tag at the current level
+		int		addTagByPath(const string& tag); //adds an empty tag at the current level
+        int 	addTagByPath(const string&  tag, int            value);
+        int 	addTagByPath(const string&  tag, double         value);
+        int 	addTagByPath(const string&  tag, const string& 	value);
 
 
         // Attribute-related methods
@@ -132,6 +158,8 @@ class ofxXmlSettings{
 		int		addAttribute(const string& tag, const string& attribute, int value);
 		int		addAttribute(const string& tag, const string& attribute, double value);
 		int		addAttribute(const string& tag, const string& attribute, const string& value);
+    
+        int		addAttributeByPath(const string& path, const string& value);
 
 		void	removeAttribute(const string& tag, const string& attribute, int which = 0);
 		void	clearTagAttributes(const string& tag, int which = 0);
@@ -169,20 +197,19 @@ class ofxXmlSettings{
         Element *currentElement;
         Poco::XML::DOMParser parser;
 
-    ofFile file;
+        ofFile file;
     
-    Element* getElement(const string& tag, const int which);
+        Element* getElement(const string& tag, const int which, bool useFirstTagForIndex = false);
+        Element* getElement(const string& path);
     
-		//TiXmlHandle     storedHandle;
+        int getSiblingCount(Element *element, const string tag);
 		int             level;
 
-
-		int 	writeTag(const string&  tag, const string& valueString, int which = 0);
-		bool 	readTag(const string&  tag, Element** node, int which = 0);	// max 1024 chars...
-
+		int writeTag(const string&  tag, const string& valueString, int which = 0);
 
         string cachedFilename;
-		int		writeAttribute(const string& tag, const string& attribute, const string& valueString, int which = 0);
+		int writeAttribute(const string& tag, const string& attribute, const string& valueString, int which = 0);
+        string DOMErrorMessage(short msg);
 
         //TiXmlElement* getElementForAttribute(const string& tag, int which);
         //bool readIntAttribute(const string& tag, const string& attribute, int& valueString, int which);
