@@ -35,27 +35,24 @@ static vector<string> tokenize(const string & str, const string & delim)
 //----------------------------------------
 ofxXmlSettings::ofxXmlSettings()
 {
-	level			= 0;
-	//we do this so that we have a valid handle
-	//without the need for loadFile
-	//storedHandle   = TiXmlHandle(&doc);
-    
-    
+	level			= 0;    
 }
 
 //----------------------------------------
 ofxXmlSettings::ofxXmlSettings(const string& xmlFile)
 {
 	level			= 0;
-	//we do this so that we have a valid handle
-	//without the need for loadFile
-	//storedHandle   = TiXmlHandle(&doc);
 	loadFile(xmlFile);
 }
 
 //---------------------------------------------------------
 ofxXmlSettings::~ofxXmlSettings()
 {
+    if(currentElement)
+        currentElement->release();
+    
+    if(document)
+        document->release();
 }
 
 //---------------------------------------------------------
@@ -64,13 +61,7 @@ void ofxXmlSettings::setVerbose(bool _verbose){
 
 //---------------------------------------------------------
 void ofxXmlSettings::clear(){
-	//we clear from our root level
-	//this is usually the document
-	//but if we are pushed  - it could
-	//be all the tags inside of the pushed
-	//node - including the node itself!
-
-	//storedHandle.ToNode()->Clear();
+    
     currentElement->release();
 }
 
@@ -121,7 +112,7 @@ bool ofxXmlSettings::saveFile(const string& xmlFile){
     Poco::XML::DOMWriter writer;
     writer.writeNode( stream, document );
     
-    file.open(xmlFile);
+    file.open(xmlFile, ofFile::ReadWrite);
     
     if(!file.exists()) {
         
@@ -155,7 +146,7 @@ bool ofxXmlSettings::saveFile(){
     
     ofBuffer buffer(stream.str().c_str(), stream.str().size());
     
-    file.open(cachedFilename);
+    file.open(cachedFilename, ofFile::ReadWrite);
     
     if(!file.writeFromBuffer(buffer)) {
         ofLog(OF_LOG_ERROR, " can't write to xml file " );
@@ -169,71 +160,32 @@ bool ofxXmlSettings::saveFile(){
 
 //---------------------------------------------------------
 void ofxXmlSettings::clearTagContents(const string& tag, int which){
-	//we check it first to see if it exists
-	//otherwise setValue will make a new empty tag
-	//if( tagExists(tag, which) )setValue(tag, "", which);
-    
+
     // this expects that we have
     // <X><Y/><Y/><Y/></X>
     // but Poco doesn't care about this, so we could have <X><Y/><Z/><Y/></X>
     // but when 'which' == 2 we need the 2nd Y, not 2nd thing in the list
     NodeList *list = currentElement->getElementsByTagName(tag);
-    list->item(which)->setNodeValue("");
+    list->item(which)->removeChild(list->item(which));
     
 }
 
 //---------------------------------------------------------
 void ofxXmlSettings::removeTag(const string& tag, int which){
     
-    NodeList *list = currentElement->getElementsByTagName(tag);
-    int i = 0;
-    while(i < list->length()) {
-        currentElement->removeChild(list->item(i));
-        i++;
+    Element *element = getElement(tag, which);
+    
+    if(element) {
+        element->parentNode()->removeChild(element);
     }
-
-	/*vector<string> tokens = tokenize(tag,":");
-
-	//no tags so we return
-	if( tokens.size() == 0 ) return;
-
-	//grab the handle from the level we are at
-	//normally this is the doc but could be a pushed node
-	TiXmlHandle tagHandle = storedHandle;
-
-	if(which < 0) which = 0;
-
-	for(int x=0;x<(int)tokens.size();x++){
-
-		//we only support multi tags
-		//with same name at root level
-		if(x > 0) which = 0;
-
-		TiXmlHandle isRealHandle = tagHandle.ChildElement( tokens.at(x), which);
-
-		if ( !isRealHandle.ToNode() ) break;
-		else{
-			if (x == (int)tokens.size()-1){
-				//if we are at the last tag and it exists
-				//we use its parent to remove it - haha
-				tagHandle.ToNode()->RemoveChild( isRealHandle.ToNode() );
-			}
-			tagHandle = isRealHandle;
-		}
-	}*/
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which){
-    /*TiXmlHandle valHandle(NULL);
-	if (readTag(tag, valHandle, which)){
-		return ofToInt(valHandle.ToText()->Value());
-	}
-	return defaultValue;*/
-    
+
     if (tag.find(':') != string::npos || tag.find('/') != string::npos){
-		Element* element;
-        if (readTag(tag, &element, which)){
+		Element* element = getElement(tag, which, true);
+        if (element){
             return ofToInt(element->innerText());
         }
 	}
@@ -246,32 +198,21 @@ double ofxXmlSettings::getValue(const string& tag, double defaultValue, int whic
     
     // is it a path using either tinyXML : for legacy or Poco / for the present
     if (tag.find(':') != string::npos || tag.find('/') != string::npos){
-		Element* element;
-        if (readTag(tag, &element, which)){
+		Element* element = getElement(tag, which, true);
+        if (element){
             return ofToFloat(element->innerText());
         }
 	}
     return defaultValue;
     
-    // maybe not use this, but it's much much faster for non-path
-    /*NodeList *list = currentElement->getElementsByTagName(tag);
-    if(list->length() < which) {
-        return (double) list->item(which)->nodeValue(); // can't do ofToInt
-    }
-    return defaultValue;*/
 }
 
 //---------------------------------------------------------
 string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, int which){
-    /*TiXmlHandle valHandle(NULL);
-	if (readTag(tag, valHandle, which)){
-		return valHandle.ToText()->ValueStr();
-	}
-	return defaultValue;*/
  
     if (tag.find(':') != string::npos || tag.find('/') != string::npos){
-		Element* element;
-        if (readTag(tag, &element, which)){
+		Element* element = getElement(tag, which, true);
+        if (element){
             return element->innerText();
         }
         return defaultValue;
@@ -279,105 +220,60 @@ string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, i
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readTag(const string&  tag, Element** node, int which){
-
-    ////////// from POCO documentation
-    /*
-     Only simple XPath expressions are supported. These are the slash notation for specifying paths to elements, and the square bracket expression for finding elements by their index, by attribute value, or finding attributes by names.
-     The slash at the beginning is optional, the evaluation always starts at this element. A double-slash at the beginning recursively searches the entire subtree for the first element.
-     Examples:
-     elem1/elem2/elem3
-     /elem1/elem2/elem3
-     /elem1/elem2[1]
-     /elem1/elem2[@attr1]
-     /elem1/elem2[@attr1='value']
-     //elem2[@attr1='value']
-     //[@attr1='value']
-     */
+int ofxXmlSettings::getPathValue(const string& path, int defaultValue){
     
-	
-
-	/*TiXmlHandle tagHandle = storedHandle;
-	for(int x=0;x<(int)tokens.size();x++){
-		if(x == 0)tagHandle = tagHandle.ChildElement(tokens.at(x), which);
-		else tagHandle = tagHandle.FirstChildElement( tokens.at(x) );
-	}
-
-	// once we've walked, let's get that value...
-	valHandle = tagHandle.Child( 0 );
-    return (valHandle.ToText() != NULL);*/
     
-    /*string copy = "/" + tag;
-    
-    // if there's pre0072 style ':' (not proper xpath but is how tinyXml works) get rid of them
-    if(copy.find(':') != string::npos) {
-        replace( copy.begin(), copy.end(), ':', '/');
+    Element* element = (Element*) currentElement->getNodeByPath(path);
+    if (element){
+        return ofToInt(element->innerText());
     }
+    return defaultValue;
     
-    if(which != 0) {
-        // now the selector
-        stringstream stream;
-        stream << "[" << which << "]";
-        copy.append(stream.str());
+}
+
+//---------------------------------------------------------
+double ofxXmlSettings::getPathValue(const string& path, double defaultValue){
+    
+    Element* element = (Element*) currentElement->getNodeByPath(path);
+    if (element){
+        return ofToFloat(element->innerText());
     }
+    return defaultValue;
+}
+
+//---------------------------------------------------------
+string ofxXmlSettings::getPathValue(const string& path, const string& defaultValue){
     
-    *node = currentElement->getNodeByPath(copy);*/
-    
-    *node = getElement(tag, which);
-    
-    if(node) {
-        return true;
+    Element* element = (Element*) currentElement->getNodeByPath(path);
+    if (element){
+        return element->innerText();
     }
-    
-    return false;
+    return defaultValue;
+
 }
 
 
 //---------------------------------------------------------
 bool ofxXmlSettings::pushTag(const string&  tag, int which){
-
-	/*int pos = tag.find(":");
-
-    // Either find the tag specified, or the first tag if colon-seperated.
-    string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
-
-	//we only allow to push one tag at a time.
-	TiXmlHandle isRealHandle = storedHandle.ChildElement(tagToFind, which);
-
-	if( isRealHandle.ToNode() ){
-		storedHandle = isRealHandle;
-		level++;
-		return true;
-	}else{
-        ofLog( OF_LOG_ERROR, "pushTag - <" + tag + "> tag not found");
-	}
-
-	return false;*/
     
-    string copy = tag;
     int tagCount;
     
     // if there's pre0072 style ':' (not proper xpath but is how tinyXml works) get rid of them
-    if(copy.find(":") != string::npos) {
-        replace( copy.begin(), copy.end(), ':', '/');
+    if(tag.find(":") != string::npos) {
+        tagCount = count( tag.begin(), tag.end(), '/') + 1;
+    } else if(tag.find("/") != string::npos) {
+        tagCount = count( tag.begin(), tag.end(), '/') + 1;
     }
-    
-    tagCount = count( copy.begin(), copy.end(), '/') + 1;
-    
-    // now the index selector
-    stringstream stream;
-    stream << "[" << which << "]";
-    copy.append(stream.str());
 
     // so we can bail from errors
     Element *cache = currentElement;
-    currentElement = (Element*) currentElement->getNodeByPath(copy);
+    currentElement = getElement(tag, which);
     
     if(currentElement) {
         level += tagCount;
         return true;
     } else {
-        currentElement = cache;
+        currentElement = cache; // back out safely
         ofLog( OF_LOG_ERROR, "pushTag - <" + tag + "> tag not found");
 	}
     
@@ -386,17 +282,8 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::popTag(){
-
-	/*if(level >= 1){
-		//TiXmlHandle parent( (storedHandle.ToNode() )->Parent() );
-		//storedHandle = parent;
-	}else{
-		storedHandle = TiXmlHandle(&doc);
-		level = 0;
-	}
-
-	return level;*/
+int ofxXmlSettings::popTag()
+{
     
     if(currentElement->parentNode()->nodeType() == Node::ELEMENT_NODE) {
         currentElement = (Element*) currentElement->parentNode(); // we already know it's an element, so this is oK
@@ -420,71 +307,16 @@ int ofxXmlSettings::getPushLevel(){
 //---------------------------------------------------------
 bool ofxXmlSettings::tagExists(const string& tag, int which){
 
-	/*vector<string> tokens = tokenize(tag,":");
-
-	bool found = false;
-
-	//grab the handle from the level we are at
-	//normally this is the doc but could be a pushed node
-	TiXmlHandle tagHandle = storedHandle;
-
-	if(which < 0) which = 0;
-
-	for(int x=0;x<(int)tokens.size();x++){
-
-		//we only support multi tags
-		//with same name at root level
-		if(x > 0) which = 0;
-
-		TiXmlHandle isRealHandle = tagHandle.ChildElement( tokens.at(x), which);
-
-		//as soon as we find a tag that doesn't exist
-		//we return false;
-		if ( !isRealHandle.ToNode() ){
-			found = false;
-			break;
-		}
-		else{
-			found = true;
-			tagHandle = isRealHandle;
-		}
-	}
-
-	return found;*/
-    
-    Element* node;
-    if (readTag(tag, &node, which)){
+    Element* element = getElement(tag, which, true);
+    if (element){
         return true;
     }
-    
     return false;
 }
 
 
 //---------------------------------------------------------
 int ofxXmlSettings::getNumTags(const string&  tag){
-	//this only works for tags at the current root level
-
-	/*int pos = tag.find(":");
-
-    // Either find the tag specified, or the first tag if colon-seperated.
-    string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
-
-	//grab the handle from the level we are at
-	//normally this is the doc but could be a pushed node
-	TiXmlHandle tagHandle = storedHandle;
-
-	int count = 0;
-
-	//ripped from tinyXML as doing this ourselves once is a LOT! faster
-	//than having this called n number of times in a while loop - we go from n*n iterations to n iterations
-
-	TiXmlElement* child = ( storedHandle.FirstChildElement( tagToFind ) ).ToElement();
-	for (count = 0; child; child = child->NextSiblingElement( tagToFind ), ++count){
-		//nothing
-	}
-
-	return count;*/
     
     string copy = tag;
     
@@ -498,201 +330,254 @@ int ofxXmlSettings::getNumTags(const string&  tag){
 
 
 //---------------------------------------------------------
-int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int which){
-
-	/*vector<string> tokens = tokenize(tag,":");
-
-	// allocate on the stack
-    vector<TiXmlElement> elements;
-    elements.reserve(tokens.size());
-	for(int x=0;x<(int)tokens.size();x++)
-        elements.push_back(tokens.at(x));
-
-
-	TiXmlText Value(valueStr);
-
-	// search our way up - do these tags exist?
-	// find the first that DOESNT exist, then move backwards...
-	TiXmlHandle tagHandle = storedHandle;
-
-	bool addNewTag = false;
-	if(which == -1)addNewTag = true;
-
-	for(int x=0;x<(int)tokens.size();x++){
-
-		if( x > 0 ){
-			//multi tags of same name
-			//only for the root level
-			which = 0;
-			addNewTag = false;
-		}
-
-		TiXmlHandle isRealHandle = tagHandle.ChildElement( tokens.at(x), which);
-
-		if ( !isRealHandle.ToNode() ||  addNewTag){
-
-			for(int i=(int)tokens.size()-1;i>=x;i--){
-				if (i == (int)tokens.size()-1){
-					elements[i].InsertEndChild(Value);
-				} else {
-					elements[i].InsertEndChild(elements[i+1]);
-				}
-			}
-
-			tagHandle.ToNode()->InsertEndChild(elements[x]);
-
-			break;
-
-		} else {
-			 tagHandle = isRealHandle;
-			 if (x == (int)tokens.size()-1){
-				// what we want to change : TiXmlHandle valHandle = tagHandle.Child( 0 );
-				tagHandle.ToNode()->Clear();
-				tagHandle.ToNode()->InsertEndChild(Value);
-			}
-		}
-	}
-
-
-	//lets count how many tags with our name exist so we can return an index
-
-	//ripped from tinyXML as doing this ourselves once is a LOT! faster
-	//than having this called n number of times in a while loop - we go from n*n iterations to n iterations
-	int numSameTags;
-	TiXmlElement* child = ( storedHandle.FirstChildElement( tokens.at(0) ) ).ToElement();
-	for (numSameTags = 0; child; child = child->NextSiblingElement( tokens.at(0) ), ++numSameTags){
-		//nothing
-	}
-
-	return numSameTags;*/
+int ofxXmlSettings::writeTag(const string& tag, const string& valueStr, int which)
+{
     
+    // we need to handle 3 distinct situations:
+    // A: writeTag("1/2/3", "blah") where none exist, so write <1><2><3>blah</1></2></3>
+    // B: writeTag("1/2/3/4", "blah") where <1><2> exist, so write <3><4>blah</4></3> - this is the ugliest and should be done with a path going forward, please.
+    // C: writeTag("3", "blah") so write <3>blah</3>
     
-    Element *element = getElement(tag, which);
+    vector<string> tokens;
+    bool needsTokenizing = false;
     
-    if(!element) { // if it doesn't exist
-        
-        vector<string> tokens;
-        
-        if(tag.find(':') != string::npos) {
-            tokens = tokenize(tag, ":");
-        }
-        
-        if(tag.find('/') != string::npos) {
-            tokens = tokenize(tag, "/");
-        }
-        
-        for(int i = 0; i < tokens.size(); i++) {
-            Element *newElement = document->createElement(tokens.at(i));
-            currentElement->appendChild(newElement);
-            currentElement = newElement;
-            
-        }
-    } else {
-    
-        // need to walk these back up? ugh.
-        Element *newElement = document->createElement(tag);
-        newElement->setNodeValue(valueStr);
-        element->appendChild(newElement);
+    if(tag.find(':') != string::npos) {
+        tokens = tokenize(tag, ":");
+    } else if(tag.find('/') != string::npos) {
+        tokens = tokenize(tag, "/");
     }
     
-    return 0;
+    // is this a tokenized tag?
+    if(tokens.size() > 1) 
+    {
+        // don't 'push' down into the new nodes
+        Element *element = currentElement;
+        
+        // find the last existing tag
+        int lastExistingTag = tokens.size();
+        
+        // can't use reverse_iterator b/c accumulate doesn't like it
+        for(vector<string>::iterator it = tokens.end(); it != tokens.begin(); it--) 
+        {
+            Element *testElement = getElement(accumulate(tokens.begin(), it, string("")), which);
+            if(testElement) {
+                lastExistingTag--;
+                element = testElement;
+                break;
+            }
+        }
+        
+        // create all the tags that don't exist
+        for(int i = lastExistingTag; i < tokens.size(); i++)
+        {
+            Element *newElement = document->createElement(tokens.at(i));
+            element->appendChild(newElement);
+            element = newElement;
+        }
+        
+        
+        if(valueStr != "") 
+        {
+            Text *text = document->createTextNode(valueStr);
+            try {
+                element->appendChild( (Node*) text);
+            } catch ( DOMException &e ) {
+                stringstream sstream;
+                sstream << " cannot set node value " << DOMErrorMessage(e.code());
+                ofLog(OF_LOG_ERROR, sstream.str());
+            }
+        }
+        
+        return getSiblingCount(element, tag);
+        
+    } else {
     
+        // get last tag in the tag list
+        Element *newElement = document->createElement(tag);
+        
+        if(valueStr != "") {
+            Text *text = document->createTextNode(valueStr);
+            try {
+                newElement->appendChild( (Node*) text);
+            } catch ( DOMException &e ) {
+                stringstream sstream;
+                sstream << " cannot set node value " << DOMErrorMessage(e.code());
+                ofLog(OF_LOG_ERROR, sstream.str());
+            }
+        }
+        
+        currentElement->appendChild(newElement);
+        
+        return getSiblingCount(newElement, tag);
+    }
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::setValue(const string& tag, int value, int which){
-	int tagID = writeTag(tag, ofToString(value).c_str(), which) -1;
-	return tagID;
+    Element *element = getElement(tag, which);
+    
+    if(!element) {
+        ofLog(OF_LOG_WARNING, " setValue of " + tag + " failed because tag doesn't exist");
+        return -1;
+    }
+    
+    if(element->firstChild()->nodeType() == Node::TEXT_NODE) {
+        Text *node = document->createTextNode(ofToString(value));
+        element->replaceChild( (Node*) node, element->firstChild()); // swap out
+    }
+    
+    return getSiblingCount(element, tag);
+    
+    // this is the current way that the implementation is done, which seems wrong
+    /*
+     return writeTag(tag, value, which);
+    */
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::setValue(const string& tag, double value, int which){
-	int tagID = writeTag(tag, ofToString(value).c_str(), which) -1;
-	return tagID;
+    Element *element = getElement(tag, which);
+    
+    if(!element) {
+        ofLog(OF_LOG_WARNING, " setValue of " + tag + " failed because tag doesn't exist");
+        return -1;
+    }
+    
+    if(element->firstChild()->nodeType() == Node::TEXT_NODE) {
+        Text *node = document->createTextNode(ofToString(value));
+        element->replaceChild( (Node*) node, element->firstChild()); // swap out
+    }
+    
+    return getSiblingCount(element, tag);
+    
+    // this is the current way that the implementation is done, which seems wrong
+    /*
+     return writeTag(tag, value, which);
+     */
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::setValue(const string& tag, const string& value, int which){
-	int tagID = writeTag(tag, value, which) -1;
-	return tagID;
+    Element *element = getElement(tag, which);
+    
+    if(!element) {
+        ofLog(OF_LOG_WARNING, " setValue of " + tag + " failed because tag doesn't exist");
+        return -1;
+    }
+    
+    if(element->firstChild()->nodeType() == Node::TEXT_NODE) {
+        Text *node = document->createTextNode(value);
+        element->replaceChild( (Node*) node, element->firstChild()); // swap out
+    }
+    
+    return getSiblingCount(element, tag);
+    
+    // this is the current way that the implementation is done, which seems wrong
+    /*
+     return writeTag(tag, value, which);
+     */
 }
 
+int ofxXmlSettings::getSiblingCount(Element *element, const string tag) {
+    vector<string> tokens;
+    bool needTokenize = false;
+    if(tag.find(':') != string::npos) {
+        tokens = tokenize(tag, ":");
+        needTokenize = true;
+    } else if(tag.find('/') != string::npos) {
+        tokens = tokenize(tag, "/");
+        needTokenize = true;
+    } 
+    
+    Element *parent = (Element*) element->parentNode();
+    if(needTokenize) {
+        return parent->getElementsByTagName(tokens[tokens.size()-1])->length(); // return just the same tags
+    } else {
+        return parent->getElementsByTagName(tag)->length(); // return just the same tags
+    }
+}
+
+// to be deprecated
 //---------------------------------------------------------
 int ofxXmlSettings::addValue(const string& tag, int value){
-	int tagID = writeTag(tag, ofToString(value).c_str(), -1) -1;
-	return tagID;
+    return addTagByPath(tag, value) - 1;
 }
 
+// to be deprecated
 //---------------------------------------------------------
 int ofxXmlSettings::addValue(const string&  tag, double value){
-	int tagID = writeTag(tag, ofToString(value).c_str(), -1) -1;
-	return tagID;
+	return addTagByPath(tag, value) - 1;
 }
 
+// to be deprecated
 //---------------------------------------------------------
 int ofxXmlSettings::addValue(const string& tag, const string& value){
-	int tagID = writeTag(tag, value, -1) -1;
-	return tagID;
+	return addTagByPath(tag, value) - 1;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addTag(const string& tag){
-	int tagID = writeTag(tag, "", -1) -1;
-	return tagID;
+int ofxXmlSettings::addTagByPath(const string& tag){
+    
+	return writeTag(tag, "", -1) - 1;
 }
 
-/*******************
-* Attribute addons *
-*******************/
+//---------------------------------------------------------
+int ofxXmlSettings::addTagByPath(const string& tag, int value){
+	return writeTag(tag, ofToString(value), -1) - 1;
+}
+
+//---------------------------------------------------------
+int ofxXmlSettings::addTagByPath(const string&  tag, double value){
+	return writeTag(tag, ofToString(value), -1) - 1;
+}
+
+//---------------------------------------------------------
+int ofxXmlSettings::addTagByPath(const string& tag, const string& value){
+	return writeTag(tag, value) - 1;
+}
+
+//---------------------------------------------------------
+// now attributes
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int value, int which){
-	int tagID = writeAttribute(tag, attribute, ofToString(value).c_str(), which) -1;
-	return tagID;
+	return writeAttribute(tag, attribute, ofToString(value), which);
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int value){
-	return addAttribute(tag,attribute,value,-1);
+	return writeAttribute(tag, attribute, ofToString(value), 0);
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, double value, int which){
-	int tagID = writeAttribute(tag, attribute, ofToString(value).c_str(), which) -1;
-	return tagID;
+	return writeAttribute(tag, attribute, ofToString(value), which);
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, double value){
-	return addAttribute(tag,attribute,value,-1);
+	return writeAttribute(tag, attribute, ofToString(value), 0);
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, const string& value, int which){
-	int tagID = writeAttribute(tag, attribute, value, which) -1;
-	return tagID;
+	return writeAttribute(tag, attribute, value, which);
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, const string& value){
-	return addAttribute(tag,attribute,value,-1);
+	return writeAttribute(tag, attribute, value, 0);
+}
+
+//---------------------------------------------------------
+int ofxXmlSettings::addAttributeByPath(const string& path, const string& value){
+    Element *element = getElement(path);
+	//return writeAttribute(tag, attribute, value, which);
 }
 
 //---------------------------------------------------------
 void ofxXmlSettings::removeAttribute(const string& tag, const string& attribute, int which){
-	/*vector<string> tokens = tokenize(tag,":");
-	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < (int)tokens.size(); x++) {
-		if (x == 0)
-			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
-		else
-			tagHandle = tagHandle.FirstChildElement(tokens.at(x));
-	}
-
-	if (tagHandle.ToElement()) {
-		TiXmlElement* elem = tagHandle.ToElement();
-		elem->RemoveAttribute(attribute);
-	}*/
     
     Element *element = getElement(tag, which);
     
@@ -704,12 +589,7 @@ void ofxXmlSettings::removeAttribute(const string& tag, const string& attribute,
 
 //---------------------------------------------------------
 void ofxXmlSettings::clearTagAttributes(const string& tag, int which){
-	/*vector<string> names;
-    getAttributeNames( tag, names, which );
-	for (vector<string>::iterator i = names.begin(); i != names.end(); i++)
-		removeAttribute(tag, *i, which);*/
-    
-    
+
     Element *element = getElement(tag, which);
     NamedNodeMap *map = element->attributes();
     
@@ -722,29 +602,6 @@ void ofxXmlSettings::clearTagAttributes(const string& tag, int which){
 
 //---------------------------------------------------------
 int ofxXmlSettings::getNumAttributes(const string& tag, int which){
-	/*vector<string> tokens = tokenize(tag,":");
-	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < (int)tokens.size(); x++) {
-		if (x == 0)
-			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
-		else
-			tagHandle = tagHandle.FirstChildElement(tokens.at(x));
-	}
-
-	if (tagHandle.ToElement()) {
-		TiXmlElement* elem = tagHandle.ToElement();
-
-		// Do stuff with the element here
-		TiXmlAttribute* first = elem->FirstAttribute();
-		if (first) {
-			int count = 1;
-			for (TiXmlAttribute* curr = first; curr != elem->LastAttribute(); curr = curr->Next())
-				count++;
-			return count;
-		}
-	}
-	return 0;*/
-    
     
     Element *element = getElement(tag, which);
     
@@ -758,25 +615,6 @@ int ofxXmlSettings::getNumAttributes(const string& tag, int which){
 
 //---------------------------------------------------------
 bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute, int which){
-	/*vector<string> tokens = tokenize(tag,":");
-	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < (int)tokens.size(); x++) {
-		if (x == 0)
-			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
-		else
-			tagHandle = tagHandle.FirstChildElement(tokens.at(x));
-	}
-
-	if (tagHandle.ToElement()) {
-		TiXmlElement* elem = tagHandle.ToElement();
-
-		// Do stuff with the element here
-		for (TiXmlAttribute* a = elem->FirstAttribute(); a; a = a->Next()) {
-			if (a->Name() == attribute)
-				return true;
-		}
-	}
-	return false;*/
     
     Element *element = getElement(tag, which);
     
@@ -789,23 +627,6 @@ bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute,
 
 //---------------------------------------------------------
 bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNames, int which){
-	/*vector<string> tokens = tokenize(tag,":");
-	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < (int)tokens.size(); x++) {
-		if (x == 0)
-			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
-		else
-			tagHandle = tagHandle.FirstChildElement(tokens.at(x));
-	}
-
-	if (tagHandle.ToElement()) {
-		TiXmlElement* elem = tagHandle.ToElement();
-
-		// Do stuff with the element here
-		for (TiXmlAttribute* a = elem->FirstAttribute(); a; a = a->Next())
-			outNames.push_back( string(a->Name()) );
-	}
-	return !outNames.empty();*/
     
     Element *element = getElement(tag, which);
     
@@ -822,8 +643,6 @@ bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNam
 //---------------------------------------------------------
 int ofxXmlSettings::getAttribute(const string& tag, const string& attribute, int defaultValue, int which){
     int value = defaultValue;
-	//readIntAttribute(tag, attribute, value, which);
-    
    Element *element = getElement(tag, which);
     
     if(element) {
@@ -837,9 +656,6 @@ int ofxXmlSettings::getAttribute(const string& tag, const string& attribute, int
 double ofxXmlSettings::getAttribute(const string& tag, const string& attribute, double defaultValue, int which){
     
     double value = defaultValue;
-    /*
-	readDoubleAttribute(tag, attribute, value, which);
-	return value;*/
     Element *element = getElement(tag, which);
     
     if(element) {
@@ -851,10 +667,7 @@ double ofxXmlSettings::getAttribute(const string& tag, const string& attribute, 
 
 //---------------------------------------------------------
 string ofxXmlSettings::getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which){
-    /*
-	readStringAttribute(tag, attribute, value, which);
-	return value;*/
-    
+
     string value = defaultValue;
     Element *element = getElement(tag, which);
     
@@ -866,124 +679,21 @@ string ofxXmlSettings::getAttribute(const string& tag, const string& attribute, 
 
 //---------------------------------------------------------
 int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, int value, int which){
-	char valueStr[255];
-	sprintf(valueStr, "%i", value);
-	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
-	return tagID;
+	return writeAttribute(tag, attribute, ofToString(value), which);
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, double value, int which){
-	char valueStr[255];
-	sprintf(valueStr, "%lf", value);
-	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
-	return tagID;
+	return writeAttribute(tag, attribute, ofToString(value), which);
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, const string& value, int which){
-	int tagID = writeAttribute(tag, attribute, value, which) -1;
-	return tagID;
+	return writeAttribute(tag, attribute, value, which);
 }
-
-//---------------------------------------------------------
-/*TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int which){
-	vector<string> tokens = tokenize(tag,":");
-	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < (int)tokens.size(); x++) {
-		if (x == 0)
-			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
-		else
-			tagHandle = tagHandle.FirstChildElement(tokens.at(x));
-	}
-    return tagHandle.ToElement();
-}*/
-
-//---------------------------------------------------------
-/*bool ofxXmlSettings::readIntAttribute(const string& tag, const string& attribute, int& outValue, int which){
-
-    TiXmlElement* elem = getElementForAttribute(tag, which);
-    if (elem)
-        return (elem->QueryIntAttribute(attribute, &outValue) == TIXML_SUCCESS);
-    return false;
-    
-    Element *element = getElement(const string& tag, const int which);
-    
-    if(element) {
-        outValue = element->getAttribute(attribute);
-        return true;
-    }
-    return false;
-}
-
-//---------------------------------------------------------
-bool ofxXmlSettings::readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which){
-
-    TiXmlElement* elem = getElementForAttribute(tag, which);
-    if (elem)
-        return (elem->QueryDoubleAttribute(attribute, &outValue) == TIXML_SUCCESS);
-    return false;
-    
-    Element *element = getElement(const string& tag, const int which);
-    
-    if(element) {
-        outValue = element->getAttribute(attribute);
-        return true;
-    }
-    return false;
-}
-
-//---------------------------------------------------------
-bool ofxXmlSettings::readStringAttribute(const string& tag, const string& attribute, string& outValue, int which){
-
-    TiXmlElement* elem = getElementForAttribute(tag, which);
-    if (elem)
-    {
-        const string* value = elem->Attribute(attribute);
-        if (value)
-        {
-            outValue = *value;
-            return true;
-        }
-    }
-    return false;
-    
-    Element *element = getElement(const string& tag, const int which);
-    
-    if(element) {
-        outValue = element->getAttribute(attribute);
-        return true;
-    }
-    return false;
-}*/
 
 //---------------------------------------------------------
 int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, const string& valueString, int which){
-	/*vector<string> tokens = tokenize(tag,":");
-	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < (int)tokens.size(); x++) {
-		if (x == 0)
-			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
-		else
-			tagHandle = tagHandle.FirstChildElement(tokens.at(x));
-	}
-
-	int ret = 0;
-	if (tagHandle.ToElement()) {
-		TiXmlElement* elem = tagHandle.ToElement();
-		elem->SetAttribute(attribute, valueString);
-
-        // Do we really need this?  We could just ignore this and remove the 'addAttribute' functions...
-		// Now, just get the ID.
-		int numSameTags;
-		TiXmlElement* child = ( storedHandle.FirstChildElement( tokens.at(0) ) ).ToElement();
-		for (numSameTags = 0; child; child = child->NextSiblingElement( tokens.at(0) ), ++numSameTags) {
-			// nothing
-		}
-		ret = numSameTags;
-	}
-	return ret;*/
-    
     
     Element* element = getElement(tag, which);
     
@@ -992,13 +702,11 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
     
     if(!element) { // if it doesn't exist
         
-        vector<string> tokens;
+        /*vector<string> tokens;
         
         if(tag.find(':') != string::npos) {
             tokens = tokenize(tag, ":");
-        }
-        
-        if(tag.find('/') != string::npos) {
+        } else if(tag.find('/') != string::npos) {
             tokens = tokenize(tag, "/");
         }
         
@@ -1006,13 +714,66 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
             Element *newElement = document->createElement(tokens.at(i));
             currentElement->appendChild(newElement);
             currentElement = newElement;
+        }*/
+        
+        vector<string> tokens;
+        bool needsTokenizing = false;
+        
+        if(tag.find(':') != string::npos) {
+            tokens = tokenize(tag, ":");
+        } else if(tag.find('/') != string::npos) {
+            tokens = tokenize(tag, "/");
+        }
+        
+        // is this a tokenized tag?
+        if(tokens.size() > 1) 
+        {
+            // don't 'push' down into the new nodes
+            element = currentElement;
             
+            // find the last existing tag
+            int lastExistingTag = tokens.size();
+            
+            // can't use reverse_iterator b/c accumulate doesn't like it
+            for(vector<string>::iterator it = tokens.end(); it != tokens.begin(); it--) 
+            {
+                string empty = "";
+                string concat = accumulate(tokens.begin(), it, std::string());
+                Element *testElement = getElement(concat, which);
+                if(testElement) {
+                    lastExistingTag--;
+                    element = testElement;
+                    break;
+                }
+            }
+            
+            // create all the tags that don't exist
+            for(int i = lastExistingTag; i < lastExistingTag; i++)
+            {
+                Element *newElement = document->createElement(tokens.at(i));
+                element->appendChild(newElement);
+                element = newElement;
+            }
+            
+            
+            if(valueString != "") 
+            {
+                Text *text = document->createTextNode(valueString);
+                try {
+                    element->appendChild( (Node*) text);
+                } catch ( DOMException &e ) {
+                    stringstream sstream;
+                    sstream << " cannot set node value " << DOMErrorMessage(e.code());
+                    ofLog(OF_LOG_ERROR, sstream.str());
+                }
+            }
         }
     }
     
     element->attributes()->setNamedItem(attr);
     currentElement = element;
     
+    return getSiblingCount(element, tag);
 }
 
 //---------------------------------------------------------
@@ -1055,7 +816,7 @@ void ofxXmlSettings::copyXmlToString(string & str)
     
 }
     
-Element* ofxXmlSettings::getElement(const string& tag, const int which)
+Element* ofxXmlSettings::getElement(const string& tag, const int which, bool useFirstTagForIndex)
 {
     string copy = tag;
     
@@ -1064,13 +825,91 @@ Element* ofxXmlSettings::getElement(const string& tag, const int which)
     }
     
     if(which != 0) {
-        // now the selector
-        stringstream stream;
-        stream << "[" << which << "]";
-        copy.append(stream.str());
+        
+        if(!useFirstTagForIndex){
+        
+            // now the selector
+            stringstream stream;
+            stream << "[" << which << "]";
+            copy.append(stream.str());
+        } else {
+            
+            vector<string> tokens = tokenize(copy, "/");
+            stringstream sstream;
+            sstream << tokens[0] << "[" << which << "]";
+            for( int i = 1; i < tokens.size(); i++) {
+                sstream << tokens[i];
+            }
+            copy = sstream.str();
+            
+        }
     }
     
     return (Element*) currentElement->getNodeByPath(copy); // we know this'll always be a node
+    
+}
+
+Element* ofxXmlSettings::getElement(const string& path)
+{
+    string copy = path;
+    // does it have an attribute?
+    int ind = copy.find("[@");
+    if(ind != string::npos) {
+        copy = path.substr(0, ind);
+    }
+    return (Element*) currentElement->getNodeByPath(copy); // we know this'll always be a node
+    
+}
+
+string ofxXmlSettings::DOMErrorMessage(short msg)
+{
+    switch(msg) {
+        case 1:            
+            return "INDEX_SIZE_ERR";
+            break;/// index or size is negative or greater than allowed value
+        case 2:
+            return "DOMSTRING_SIZE_ERR";          /// the specified range of text does not fit into a DOMString (not used)
+            break;
+        case 3:
+            return "HIERARCHY_REQUEST_ERR";       /// a node is inserted somewhere it doesn't belong
+            break;
+        case 4:
+            return "WRONG_DOCUMENT_ERR";          /// a node is used in a different document than the one that created it
+            break;
+        case 5:
+            return "INVALID_CHARACTER_ERR";       /// an invalid character is specified (not used)
+            break;
+        case 6:
+            return "NO_DATA_ALLOWED_ERR";         /// data is specified for a node which does not support data
+            break;
+        case 7:
+            return "NO_MODIFICATION_ALLOWED_ERR"; /// an attempt is made to modify an object where modifications are not allowed
+            break;
+        case 8:
+            return "NOT_FOUND_ERR";               /// an attempt was made to reference a node in a context where it does not exist
+            break;
+        case 9:
+            return "NOT_SUPPORTED_ERR";           /// the implementation does not support the type of object requested
+            break;
+        case 10:
+            return "INUSE_ATTRIBUTE_ERR";         /// an attempt is made to add an attribute that is already in use elsewhere
+            break;
+        case 11:
+            return "INVALID_STATE_ERR";           /// a parameter or an operation is not supported by the underlying object
+            break;
+        case 12:
+            return "SYNTAX_ERR";                  /// an invalid or illegal string is specified
+            break;
+        case 13:
+            return "INVALID_MODIFICATION_ERR";    /// an attempt is made to modify the type of the underlying object
+            break;
+        case 14:
+            return "NAMESPACE_ERR";               /// an attempt is made to create or change an object in a way which is incorrect with regard to namespaces
+            break;
+        case 15:
+            return "INVALID_ACCESS_ERR";          /// an attempt is made to use an object that is not or is no longer usable
+            break;
+    }
     
 }
 
