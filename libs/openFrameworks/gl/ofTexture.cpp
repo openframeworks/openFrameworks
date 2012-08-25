@@ -610,9 +610,9 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	
 	//------------------------ likely, we are uploading continuous data
-	GLint prevAlignment;
+	/*GLint prevAlignment;
 	glGetIntegerv(GL_UNPACK_ALIGNMENT, &prevAlignment);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);*/
 	
 	
 	//Sosolimited: texture compression
@@ -699,7 +699,7 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 		
 	}
 	//------------------------ back to normal.
-	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 	
 	texData.bFlipTexture = false;
 	
