@@ -570,6 +570,26 @@ void ofDisableSmoothing(){
 }
 
 //----------------------------------------------------------
+void ofBeginScissor(ofRectangle &r){
+    renderer->beginScissor(r);
+}
+
+//----------------------------------------------------------
+void ofBeginScissor(ofPoint &p, float w, float h){
+    renderer->beginScissor(p, w, h);   
+}
+
+//----------------------------------------------------------
+void ofBeginScissor(float x, float y, float w, float h){
+    renderer->beginScissor(x, y, w, h);
+}
+
+//----------------------------------------------------------
+void ofEndScissor(){
+    renderer->endScissor();
+}
+
+//----------------------------------------------------------
 void ofSetPolyMode(ofPolyWindingMode mode){
 	shape.setPolyWindingMode(mode);
 	currentStyle.polyMode = mode;

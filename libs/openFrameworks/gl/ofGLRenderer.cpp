@@ -678,6 +678,37 @@ void ofGLRenderer::rotate(float degrees){
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::beginScissor(ofRectangle &r) {
+    beginScissor(r.x, r.y, r.width, r.height);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::beginScissor(ofPoint &p, float w, float h) {
+    beginScissor(p.x, p.y, w, h);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::beginScissor(float x, float y, float w, float h) {
+    glEnable(GL_SCISSOR_TEST);
+    float flipY = ofGetHeight()-y;
+    if(currentFbo) flipY = y+h;
+    
+    if(ofGetRectMode()==OF_RECTMODE_CORNER) {
+        glScissor(x, flipY-h, w, h);
+    }
+    else if(ofGetRectMode()==OF_RECTMODE_CENTER) {
+        glScissor(x-(w/2), flipY-(h/2), w, h);
+    }
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::endScissor() {
+    glDisable(GL_SCISSOR_TEST);
+}
+
+
+
+//----------------------------------------------------------
 void ofGLRenderer::setColor(const ofColor & color){
 	setColor(color.r,color.g,color.b,color.a);
 }

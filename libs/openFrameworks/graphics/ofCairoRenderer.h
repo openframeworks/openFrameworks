@@ -85,7 +85,13 @@ public:
 	void rotateY(float degrees);
 	void rotateZ(float degrees);
 	void rotate(float degrees);
-
+    
+    // scissor
+    void beginScissor(ofRectangle &r);
+    void beginScissor(ofPoint &p, float w, float h);
+    void beginScissor(float x, float y, float w, float h);
+    void endScissor();
+    
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();

@@ -726,6 +726,65 @@ void ofCairoRenderer::rotate(float degrees){
 	rotateZ(degrees);
 }
 
+//----------------------------------------------------------
+void ofCairoRenderer::beginScissor(ofRectangle &r) {
+    beginScissor(r.x, r.y, r.width, r.height);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::beginScissor(ofPoint &p, float w, float h) {
+    beginScissor(p.x, p.y, w, h);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::beginScissor(float x, float y, float w, float h) {
+
+    //cairo_rectangle(cr, intersect.x, intersect.y, intersect.width, intersect.height);
+    //cairo_rectangle(getCairoContext(), x, y, w, h);
+    /*glEnable(GL_SCISSOR_TEST);
+    float flipY = ofGetHeight()-y;
+    if(currentFbo) flipY = y+h;
+    
+    if(ofGetRectMode()==OF_RECTMODE_CORNER) {
+        glScissor(x, flipY-h, w, h);
+    }
+    else if(ofGetRectMode()==OF_RECTMODE_CENTER) {
+        glScissor(x-(w/2), flipY-(h/2), w, h);
+    }
+     _surface (cairo_t         *cr,
+     cairo_surface_t *surface,
+     double           surface_x,
+     double           surface_y);
+
+     cairo_reset_clip(cr);
+     cairo_new_path(cr);
+     cairo_move_to(cr,viewportRect.x,viewportRect.y);
+     cairo_line_to(cr,viewportRect.x+viewportRect.width,viewportRect.y);
+     cairo_line_to(cr,viewportRect.x+viewportRect.width,viewportRect.y+viewportRect.height);
+     cairo_line_to(cr,viewportRect.x,viewportRect.y+viewportRect.height);
+     
+     
+     */
+    //cairo_set_source_surface(getCairoContext(), getCairoSurface(), 1, 1);
+    //cairo_arc(getCairoContext(), x, y, w, 0, 2*M_PI);
+   
+    
+  //  cairo_mask_surface(getCairoContext(),
+  //                     getCairoSurface(),
+  //                     0, 0);
+    
+  
+    }
+
+//----------------------------------------------------------
+void ofCairoRenderer::endScissor() {
+    
+    cairo_set_source_surface(getCairoContext(), getCairoSurface(), 1, 1);
+    cairo_arc(cr, 0, 0, 10, 0, 2*M_PI);
+    cairo_clip(cr);
+    cairo_paint(cr);
+
+}
 
 void ofCairoRenderer::setupScreen(){
 	if(!surface || !cr) return;

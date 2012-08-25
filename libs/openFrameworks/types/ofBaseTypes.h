@@ -333,7 +333,12 @@ public:
 	virtual void setSphereResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
+    virtual void beginScissor(ofRectangle &r){};
+    virtual void beginScissor(ofPoint &p, float w, float h){};
+    virtual void beginScissor(float x, float y, float w, float h){};
+    virtual void endScissor(){};
 
+    
 	// color options
 	virtual void setColor(int r, int g, int b){}; // 0-255
 	virtual void setColor(int r, int g, int b, int a){}; // 0-255

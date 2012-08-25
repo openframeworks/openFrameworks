@@ -105,6 +105,12 @@ void ofDisableAlphaBlending();
 void ofEnableSmoothing();
 void ofDisableSmoothing();
 
+// scissor
+void ofBeginScissor(ofRectangle &r);
+void ofBeginScissor(ofPoint &p, float w, float h);
+void ofBeginScissor(float x, float y, float w, float h);
+void ofEndScissor();
+
 // drawing style - combines color, fill, blending and smoothing
 ofStyle ofGetStyle();
 void ofSetStyle(ofStyle style);
