@@ -23,6 +23,8 @@ public:
 	void gotMessage(ofMessage msg);		
 
 	void ringButtonPressed(bool & pressed);
+	void grabScreenshot();
+	void grabScreenshot(bool & pressed) { if (pressed) grabScreenshot(); };
 
 	bool bHide;
 
@@ -32,6 +34,8 @@ public:
 	ofxToggle filled;
 	ofxButton twoCircles;
 	ofxButton ringButton;
+	ofImage screenshotImage;
+	ofxGuiImage screenshotGui;
 	ofxLabel status;
 
 	ofxPanel gui;
