@@ -1,0 +1,76 @@
+#! /bin/bash
+#
+# This script runs the OF styler on all of OF: core, examples, official addons
+# and developer apps are formatted correctly
+#
+# 2012 Christoph Buchner for openFrameworks
+
+
+# get the current working dir
+WD=$(dirname $0)
+# move to this scripts dir
+cd $WD
+
+# OIFS="$IFS" # preserve default separator characters
+# IFS=$'\n' # set IFS to newline to handle spaces in paths
+
+echo "Style script for all of OF"
+echo
+#---------------------------------------------------
+echo
+echo "Running styler on OF core"
+echo
+ ./styleOFCore
+#---------------------------------------------------
+echo
+echo "Running styler on official addons"
+echo
+
+list_of_official_addons=`grep -o "!ofx.*" ../../../addons/.gitignore | grep -o "ofx.*"`
+
+for i in $list_of_official_addons; do
+	echo "Found addon $i"
+	./styleAddon $i
+done
+#---------------------------------------------------
+echo
+echo "Running styler on examples"
+echo
+
+# find all src folders in examples. maxdepth to exclude false-positives in
+# android examples
+src_dir_list=`find ../../../examples/ -maxdepth 3 -name "src" -type d`
+for exampledir in $src_dir_list; do
+	echo "Found example src directory $exampledir"
+	./ofStyler $exampledir cpp
+	./ofStyler $exampledir h
+done
+
+#---------------------------------------------------
+echo
+echo "Running styler on apps/devApps"
+echo
+
+src_devApps_list=`find ../../../apps/devApps/ -maxdepth 2 -name "src" -type d`
+for dev in $src_devApps_list; do
+	echo "Found devApps src directory $dev"
+	./ofStyler $dev cpp
+	./ofStyler $dev h
+done
+
+# IFS="$OIFS"
+
+farewell="
+Finished styling all of openFrameworks!
+
+Please commit these whitespace-only changes in a separate commit.
+Be sure to mention 'code style' in the commit message, for example
+'Formatting pass to ensure code style conformance'.
+
+When using git, you can ignore whitespace changes in relevant commands
+by using the '-w' option. 
+On Github, the same can be accomplished by appending '?w=!' to any URL.
+
+"
+echo "$farewell"
+
