@@ -45,7 +45,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
                                allowAlpha:useAlpha];
 	
 	if(success){
-		moviePlayer.synchronousScrub = bSynchronousScrubbing;
+		moviePlayer.synchronousUpdate = bSynchronousScrubbing;
         reallocatePixels();
         moviePath = movieFilePath;
 		duration = moviePlayer.duration;
@@ -116,10 +116,6 @@ void ofQTKitPlayer::firstFrame(){
     [moviePlayer gotoBeginning];
 	
     [pool release];
-	if(bSynchronousScrubbing){
-		update();
-	}
-
 }
 
 void ofQTKitPlayer::nextFrame(){
@@ -128,10 +124,6 @@ void ofQTKitPlayer::nextFrame(){
     [moviePlayer stepForward];
 
     [pool release];
-	if(bSynchronousScrubbing){
-		update();
-	}
-
 }
 
 void ofQTKitPlayer::previousFrame(){
@@ -147,7 +139,7 @@ void ofQTKitPlayer::setSpeed(float rate){
 	if(moviePlayer == NULL) return;
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    
+
 	speed = rate;
 	[moviePlayer setRate:rate];
 
@@ -279,10 +271,8 @@ void ofQTKitPlayer::setFrame(int frame) {
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	moviePlayer.frame = frame % moviePlayer.frameCount;
+
 	[pool release];
-	if(bSynchronousScrubbing){
-		update();
-	}
 }
 
 int ofQTKitPlayer::getCurrentFrame() {
@@ -411,7 +401,7 @@ ofQTKitDecodeMode ofQTKitPlayer::getDecodeMode(){
 void ofQTKitPlayer::setSynchronousScrubbing(bool synchronous){
 	bSynchronousScrubbing = synchronous;
 	if(moviePlayer != nil){
-        moviePlayer.synchronousScrub = synchronous;
+        moviePlayer.synchronousUpdate = synchronous;
     }
 }
 
