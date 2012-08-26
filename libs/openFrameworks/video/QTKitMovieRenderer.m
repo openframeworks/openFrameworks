@@ -2,12 +2,34 @@
 #import "QTKitMovieRenderer.h"
 #import <Accelerate/Accelerate.h>
 
-//secret methods!
+//secret selectors!
 @interface QTMovie (QTFrom763)
 - (QTTime)frameStartTime: (QTTime)atTime;
 - (QTTime)frameEndTime: (QTTime)atTime;
 - (QTTime)keyframeStartTime:(QTTime)atTime;
 @end
+
+//--------------------------------------------------------------
+//This method is called whenever a new frame comes in from the visual context
+//it's called on the back thread so locking is performed in Renderer class
+static void frameAvailable(QTVisualContextRef _visualContext, const CVTimeStamp *frameTime, void *refCon)
+{
+
+	NSAutoreleasePool	*pool		= [[NSAutoreleasePool alloc] init];
+	CVImageBufferRef	currentFrame;
+	OSStatus			err;
+	QTKitMovieRenderer		*renderer	= (QTKitMovieRenderer *)refCon;
+	
+	if ((err = QTVisualContextCopyImageForTime(_visualContext, NULL, frameTime, &currentFrame)) == kCVReturnSuccess) {
+		[renderer frameAvailable:currentFrame];
+	}
+	else{
+		[renderer frameFailed];
+	}
+	
+	[pool release];
+}
+
 
 struct OpenGLTextureCoordinates
 {
@@ -26,7 +48,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 @synthesize useAlpha;
 @synthesize frameCount;
 @synthesize justSetFrame;
-@synthesize synchronousScrub;
+@synthesize synchronousUpdate;
 
 - (NSDictionary*) pixelBufferAttributes
 {
@@ -37,6 +59,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             [NSNumber numberWithInt: self.useAlpha ? kCVPixelFormatType_32ARGB : kCVPixelFormatType_24RGB], (NSString*)kCVPixelBufferPixelFormatTypeKey,
             nil];
 }
+
 
 - (BOOL) loadMovie:(NSString*)moviePath allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
 {
@@ -90,6 +113,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             QTTimeCompare(curTime, [_movie frameEndTime:curTime])  == NSOrderedSame ){ //this will happen for audio files since they have no frames.
             break;
         }
+
     }
     
 	frameCount = numFrames;
@@ -140,6 +164,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	
 	[_movie setVisualContext:_visualContext];
 	
+	QTVisualContextSetImageAvailableCallback(_visualContext, frameAvailable, self);
+	synchronousUpdateLock = [[NSCondition alloc] init];
+	
 	self.volume = 1.0;
 	self.loops = YES;
 	
@@ -174,6 +201,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		_textureCache = NULL;
 	}
 	
+	if(synchronousUpdateLock != nil){
+		[synchronousUpdateLock release];
+		synchronousUpdateLock = nil;
+	}
     
 	[super dealloc];
 }
@@ -217,153 +248,89 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	
 }
 
-
-- (BOOL) update
-{    
-    
-    if (_visualContext == NULL){
-        return NO;
-    }
-    
-	//SYNCHRONOUS SCRUB FIX NORMAL BEHAVIOR below -----
-    //This is to help with synchronous updates from setting frames, 
-    //so we are guarenteed to get the most recent frame if we have just set it explicitly
-    if(self.justSetFrame && self.synchronousScrub){
-        
-        self.justSetFrame = NO; 
-        NSError* nsError = nil;        
-        if(self.usePixels){
-            //pull the frame
+- (void)frameAvailable:(CVImageBufferRef)image
+{
+	@synchronized(self){
+				
+		if(self.usePixels){
+			if(_latestPixelFrame != NULL){
+				CVPixelBufferRelease(_latestPixelFrame);
+				_latestPixelFrame = NULL;
+			}
+			_latestPixelFrame = image;
 			
-            NSDictionary *dict = [NSDictionary 
-                                  dictionaryWithObjectsAndKeys:QTMovieFrameImageTypeCVPixelBufferRef, QTMovieFrameImageType, 
-                                  [NSValue valueWithSize:movieSize], QTMovieFrameImageSize,
-                                  [NSNumber numberWithBool:YES], QTMovieFrameImageSessionMode,
-                                  [NSNumber numberWithBool:YES], QTMovieFrameImageHighQuality,
-                                  nil];
-            CVPixelBufferRef theImage = (CVPixelBufferRef)[_movie frameImageAtTime:_movie.currentTime withAttributes:dict error:&nsError];
-            OSType pixelType = CVPixelBufferGetPixelFormatType(theImage);
-            if(theImage == NULL || nsError != nil){
-                //                NSLog(@"Error pulling frame image %@", nsError);
-                return NO;
-            }
-            
-            if(_latestPixelFrame != NULL){
-                CVPixelBufferRelease(_latestPixelFrame);
-            }
-            
-            //frames from frameImageAtTime are auto-released retain it!
-            _latestPixelFrame = theImage;
-            CVPixelBufferRetain(theImage);
-            
-            //DEBUG timecode
-//            CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
-//            CFDictionaryRef timeDictionary = CVBufferGetAttachment (theImage, kCVBufferMovieTimeKey, &mode);
-//                        NSLog(@"Image One current movie time: %f incoming frame time: %f", 1.0*_movie.currentTime.timeValue/_movie.currentTime.timeScale, [[(NSDictionary*)timeDictionary valueForKey:@"TimeValue"] floatValue] / [[(NSDictionary*)timeDictionary valueForKey:@"TimeScale"] floatValue]);
-            
-   			if(self.useTexture){
-                if(_latestTextureFrame != NULL){
-                    CVOpenGLTextureRelease(_latestTextureFrame);
-                    _latestTextureFrame = NULL;
-                    CVOpenGLTextureCacheFlush(_textureCache, 0);	
-                }
-                
-                OSErr err = CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, _latestPixelFrame, NULL, &_latestTextureFrame);
-                if(err != noErr){
-                    NSLog(@"Error creating OpenGL texture %d ", err);
-                    return NO;
-                }
-            }
-        }
-        //just get the texture
-        else if(self.useTexture){
-            NSDictionary *dict = [NSDictionary 
-                                  dictionaryWithObjectsAndKeys:QTMovieFrameImageTypeCVOpenGLTextureRef, QTMovieFrameImageType, 
-                                  [NSValue valueWithSize:movieSize], QTMovieFrameImageSize,
-                                  [NSNumber numberWithBool:YES], QTMovieFrameImageSessionMode,
-                                  [NSNumber numberWithBool:YES], QTMovieFrameImageHighQuality,
-                                  [NSValue valueWithPointer:CGLGetCurrentContext()], QTMovieFrameImageOpenGLContext,
-                                  [NSValue valueWithPointer:CGLGetPixelFormat(CGLGetCurrentContext())], QTMovieFrameImagePixelFormat,
-                                  nil];
-            CVOpenGLTextureRef theImage = (CVOpenGLTextureRef)[_movie frameImageAtTime:_movie.currentTime withAttributes:dict error:&nsError];
-            if(theImage == NULL || nsError != nil){
-                NSLog(@"Error pulling CVOpenGLTextureRef image %@", nsError);
-                return NO;
-            }
-            
-            if(_latestTextureFrame != NULL){
-                CVOpenGLTextureRelease(_latestTextureFrame);
-            }
-            _latestTextureFrame = theImage;
-            
-            //frames from frameImageAtTime are auto-released retain it!
-            CVOpenGLTextureRetain(_latestTextureFrame);
-        }
-        QTVisualContextTask(_visualContext);	
-        return YES;
-    }
-    
-    //NORMAL BEHAVIOR below -----
-    if (!QTVisualContextIsNewImageAvailable(_visualContext, NULL)){
-		return NO;
-	}
-    
-	QTVisualContextTask(_visualContext);	
-	if(self.usePixels){
-		if(_latestPixelFrame != NULL){
-			CVPixelBufferRelease(_latestPixelFrame);
-			_latestPixelFrame = NULL;
+			//DEBUG timecode
+			//        CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
+			//        CFDictionaryRef timeDictionary = CVBufferGetAttachment (_latestPixelFrame, kCVBufferMovieTimeKey, &mode);
+			//        NSLog(@"movie time: %f incoming frame time: %f", 1.0*_movie.currentTime.timeValue/_movie.currentTime.timeScale, [[(NSDictionary*)timeDictionary valueForKey:@"TimeValue"] floatValue] / [[(NSDictionary*)timeDictionary valueForKey:@"TimeScale"] floatValue]);
+			
+			//if we are using a texture, create one from the texture cache
+			if(self.useTexture){
+				if(_latestTextureFrame != NULL){
+					CVOpenGLTextureRelease(_latestTextureFrame);
+					_latestTextureFrame = NULL;
+					CVOpenGLTextureCacheFlush(_textureCache, 0);
+				}
+				
+				OSErr err = CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, _latestPixelFrame, NULL, &_latestTextureFrame);
+				
+				if(err != noErr){
+					NSLog(@"Error creating OpenGL texture %d", err);
+				}
+			}
 		}
-		
-		OSStatus error = QTVisualContextCopyImageForTime(_visualContext, NULL, NULL, &_latestPixelFrame);	
-        
-		if (error != noErr) {
-			CVPixelBufferRelease(_latestPixelFrame);
-			return NO;
-		}
-		
-        //DEBUG timecode
-//        CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
-//        CFDictionaryRef timeDictionary = CVBufferGetAttachment (_latestPixelFrame, kCVBufferMovieTimeKey, &mode);
-//        NSLog(@"movie time: %f incoming frame time: %f", 1.0*_movie.currentTime.timeValue/_movie.currentTime.timeScale, [[(NSDictionary*)timeDictionary valueForKey:@"TimeValue"] floatValue] / [[(NSDictionary*)timeDictionary valueForKey:@"TimeScale"] floatValue]);
-        
-		//if we are using a texture, create one from the texture cache
-		if(self.useTexture){
+		//just get the texture
+		else if(self.useTexture){
 			if(_latestTextureFrame != NULL){
 				CVOpenGLTextureRelease(_latestTextureFrame);
 				_latestTextureFrame = NULL;
-				CVOpenGLTextureCacheFlush(_textureCache, 0);	
 			}
-			
-			OSErr err = CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, _latestPixelFrame, NULL, &_latestTextureFrame);
-			if(err != noErr){
-				NSLog(@"Error creating OpenGL texture %d", err);
-				return NO;
-			}
+			_latestTextureFrame = image;
 		}
+		frameIsNew = YES;
+
 	}
-	//just get the texture
-	else if(self.useTexture){
-		if(_latestTextureFrame != NULL){
-			CVOpenGLTextureRelease(_latestTextureFrame);
-			_latestTextureFrame = NULL;
+	
+	if(self.justSetFrame){
+		CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
+		NSDictionary* timeDictionary = (NSDictionary*)CVBufferGetAttachment (image, kCVBufferMovieTimeKey, &mode);
+		QTTime frameTime = QTMakeTime([[timeDictionary valueForKey:@"TimeValue"] longLongValue],
+									  [[timeDictionary valueForKey:@"TimeScale"] longValue]);
+		QTTime correctedFrameTime = [_movie frameEndTime:frameTime];
+//		NSLog(@"incoming frame time: %lld and movie time is %lld", correctedFrameTime.timeValue, self.timeValue);
+		//Incoming frames will often be earlier times than requested. So we have to signal
+		//the waiting thread to try the MovieTask() again to get another frame.
+		if(correctedFrameTime.timeValue >= self.timeValue){
+//			NSLog(@"Time is good ");
+			justSetFrame = NO;
 		}
-		
-		OSStatus error = QTVisualContextCopyImageForTime(_visualContext, NULL, NULL, &_latestTextureFrame);	
-		if (error != noErr) {
-			CVOpenGLTextureRelease(_latestTextureFrame);
-			return NO;
-		}
+		//signal to the waiting thread that the pixels are updated
+		[synchronousUpdateLock lock];
+		[synchronousUpdateLock signal];
+		[synchronousUpdateLock unlock];
 	}
-    
-	return YES;
+
+	QTVisualContextTask(_visualContext);
+}
+
+- (void)frameFailed
+{
+	NSLog(@"QTRenderer -- Error failed to get frame on callback");
+}
+
+- (BOOL) update
+{
+   	BOOL newFrame = frameIsNew;
+	frameIsNew = false;
+	return newFrame;
+
 }
 
 - (void) stepForward
 {
     if(_movie){
         [_movie stepForward];
-        self.justSetFrame = YES;
+		[self synchronizeUpdate];
     }
 }
 
@@ -371,7 +338,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 {
     if(_movie){
         [_movie stepBackward];
-        self.justSetFrame = YES;
+		[self synchronizeUpdate];
     }
 }
 
@@ -379,93 +346,96 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 {
 	if(_movie){
     	[_movie gotoBeginning];
-        self.justSetFrame = YES;
+		[self synchronizeUpdate];
     }
 }
 
 //writes out the pixels in RGB or RGBA format to outbuf
 - (void) pixels:(unsigned char*) outbuf
 {
-	if(!self.usePixels || _latestPixelFrame == NULL){
-		return;
-	}
-	
-	//NOTE:
-	//CoreVideo works on ARGB, and openFrameworks is RGBA so we need to swizzle the buffer 
-	//before we return it to an openFrameworks app.
-	//this is a bit tricky since CV pixel buffer's bytes per row are not always the same as movieWidth*4.  
-	//We have to use the BPR given by CV for the input buffer, and the movie size for the output buffer
-    //Helpful debugging please leave in
-//    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
-//          CVPixelBufferGetWidth(_latestPixelFrame),
-//          CVPixelBufferGetHeight(_latestPixelFrame), 
-//          CVPixelBufferGetBytesPerRow(_latestPixelFrame),
-//          (NSInteger)movieSize.width, (NSInteger)movieSize.height);
-    if((NSInteger)movieSize.width != CVPixelBufferGetWidth(_latestPixelFrame) ||
-       (NSInteger)movieSize.height != CVPixelBufferGetHeight(_latestPixelFrame)){
-        NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. Ths is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
-              CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
-        return;
-    }
-    
-    CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
-    //If we are using alpha, the ofQTKitPlayer class will have allocated a buffer of size
-    //movieSize.width * movieSize.height * 4
-    //CoreVieo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
-    //so we need to swap the alpha around using a vImage permutation 
-    if(self.useAlpha){
-        vImage_Buffer src = {
-			CVPixelBufferGetBaseAddress(_latestPixelFrame),
-            CVPixelBufferGetHeight(_latestPixelFrame),
-            CVPixelBufferGetWidth(_latestPixelFrame),
-            CVPixelBufferGetBytesPerRow(_latestPixelFrame)
-		};
-        vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, movieSize.width*4 };
-		uint8_t permuteMap[4] = { 1, 2, 3, 0 }; //swizzle the alpha around to the end to make ARGB -> RGBA
-        vImage_Error err = vImagePermuteChannels_ARGB8888(&src, &dest, permuteMap, 0);
-        if(err != kvImageNoError){
-            NSLog(@"Error in Pixel Copy vImage_error %ld", err);
-        }
-    }
-    //If we are are doing RGB, then we will have request RGB pixels from the video player
-    //and the ofQTKitPlayer will have created a buffer of size movieSize.width * movieSize.height * 3
-    //so we can just copy them straight into the outbuffer
-    else {
-		//NSLog(@"incoming frame is %ld RGBA is %ld RGB is %ld",  CVPixelBufferGetPixelFormatType(_latestPixelFrame), kCVPixelFormatType_32ARGB, kCVPixelFormatType_24RGB);
-		//with frameImageAtTime: on sycnrhonouse scrub mode the frames come in 32ARGB even if we have 24RGB enforce, so prep for this case
-		if(CVPixelBufferGetPixelFormatType(_latestPixelFrame) == kCVPixelFormatType_32ARGB){
+	@synchronized(self){
+		if(!self.usePixels || _latestPixelFrame == NULL){
+			return;
+		}
+		
+		//NOTE:
+		//CoreVideo works on ARGB, and openFrameworks is RGBA so we need to swizzle the buffer 
+		//before we return it to an openFrameworks app.
+		//this is a bit tricky since CV pixel buffer's bytes per row are not always the same as movieWidth*4.  
+		//We have to use the BPR given by CV for the input buffer, and the movie size for the output buffer
+		//Helpful debugging please leave in
+	//    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
+	//          CVPixelBufferGetWidth(_latestPixelFrame),
+	//          CVPixelBufferGetHeight(_latestPixelFrame), 
+	//          CVPixelBufferGetBytesPerRow(_latestPixelFrame),
+	//          (NSInteger)movieSize.width, (NSInteger)movieSize.height);
+		if((NSInteger)movieSize.width != CVPixelBufferGetWidth(_latestPixelFrame) ||
+		   (NSInteger)movieSize.height != CVPixelBufferGetHeight(_latestPixelFrame)){
+			NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. Ths is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
+				  CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
+			return;
+		}
+		
+		CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
+		//If we are using alpha, the ofQTKitPlayer class will have allocated a buffer of size
+		//movieSize.width * movieSize.height * 4
+		//CoreVieo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
+		//so we need to swap the alpha around using a vImage permutation 
+		if(self.useAlpha){
 			vImage_Buffer src = {
 				CVPixelBufferGetBaseAddress(_latestPixelFrame),
 				CVPixelBufferGetHeight(_latestPixelFrame),
 				CVPixelBufferGetWidth(_latestPixelFrame),
 				CVPixelBufferGetBytesPerRow(_latestPixelFrame)
 			};
-			vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, movieSize.width*3 };
-			vImageConvert_ARGB8888toRGB888(&src, &dest, 0);
+			vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, movieSize.width*4 };
+			uint8_t permuteMap[4] = { 1, 2, 3, 0 }; //swizzle the alpha around to the end to make ARGB -> RGBA
+			vImage_Error err = vImagePermuteChannels_ARGB8888(&src, &dest, permuteMap, 0);
+			if(err != kvImageNoError){
+				NSLog(@"Error in Pixel Copy vImage_error %ld", err);
+			}
 		}
-		else{
-			if (CVPixelBufferGetPixelFormatType(_latestPixelFrame) != kCVPixelFormatType_24RGB){
-				NSLog(@"QTKitMovieRenderer - Frame pixelformat not kCVPixelFormatType_24RGB: %d, instead %ld",kCVPixelFormatType_24RGB,CVPixelBufferGetPixelFormatType(_latestPixelFrame));
+		//If we are are doing RGB, then we will have request RGB pixels from the video player
+		//and the ofQTKitPlayer will have created a buffer of size movieSize.width * movieSize.height * 3
+		//so we can just copy them straight into the outbuffer
+		else {
+			//NSLog(@"incoming frame is %ld RGBA is %ld RGB is %ld",  CVPixelBufferGetPixelFormatType(_latestPixelFrame), kCVPixelFormatType_32ARGB, kCVPixelFormatType_24RGB);
+			//with frameImageAtTime: on sycnrhonouse scrub mode the frames come in 32ARGB even if we have 24RGB enforce, so prep for this case
+			//NOTE: with frameImageAtTime removed this probably won't happen, but it doesn't hurt to leave it in
+			if(CVPixelBufferGetPixelFormatType(_latestPixelFrame) == kCVPixelFormatType_32ARGB){
+				vImage_Buffer src = {
+					CVPixelBufferGetBaseAddress(_latestPixelFrame),
+					CVPixelBufferGetHeight(_latestPixelFrame),
+					CVPixelBufferGetWidth(_latestPixelFrame),
+					CVPixelBufferGetBytesPerRow(_latestPixelFrame)
+				};
+				vImage_Buffer dest = { outbuf, movieSize.height, movieSize.width, movieSize.width*3 };
+				vImageConvert_ARGB8888toRGB888(&src, &dest, 0);
 			}
-			size_t dstBytesPerRow = movieSize.width * 3;
-			if (CVPixelBufferGetBytesPerRow(_latestPixelFrame) == dstBytesPerRow) {
-				memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), dstBytesPerRow*CVPixelBufferGetHeight(_latestPixelFrame));
-			}
-			else {
-				unsigned char *dst = outbuf;
-				unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(_latestPixelFrame);
-				size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
-				size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
-				int y;
-				for(y = 0; y < movieSize.height; y++){
-					memcpy(dst, src, copyBytesPerRow);
-					dst += dstBytesPerRow;
-					src += srcBytesPerRow;
+			else{
+				if (CVPixelBufferGetPixelFormatType(_latestPixelFrame) != kCVPixelFormatType_24RGB){
+					NSLog(@"QTKitMovieRenderer - Frame pixelformat not kCVPixelFormatType_24RGB: %d, instead %ld",kCVPixelFormatType_24RGB,CVPixelBufferGetPixelFormatType(_latestPixelFrame));
+				}
+				size_t dstBytesPerRow = movieSize.width * 3;
+				if (CVPixelBufferGetBytesPerRow(_latestPixelFrame) == dstBytesPerRow) {
+					memcpy(outbuf, CVPixelBufferGetBaseAddress(_latestPixelFrame), dstBytesPerRow*CVPixelBufferGetHeight(_latestPixelFrame));
+				}
+				else {
+					unsigned char *dst = outbuf;
+					unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(_latestPixelFrame);
+					size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
+					size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
+					int y;
+					for(y = 0; y < movieSize.height; y++){
+						memcpy(dst, src, copyBytesPerRow);
+						dst += dstBytesPerRow;
+						src += srcBytesPerRow;
+					}
 				}
 			}
 		}
-    }
-    CVPixelBufferUnlockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
+		CVPixelBufferUnlockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
+	}
 }
 
 - (BOOL) textureAllocated
@@ -475,7 +445,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (GLuint) textureID
 {
-	return CVOpenGLTextureGetName(_latestTextureFrame);
+	@synchronized(self){
+		return CVOpenGLTextureGetName(_latestTextureFrame);
+	}
 }
 
 - (GLenum) textureTarget
@@ -509,6 +481,13 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (void) setRate:(float) rate
 {
+	if(self.synchronousUpdate && self.justSetFrame){
+		//in case we are in the middle of waiting for an update signal that thread to end
+		[synchronousUpdateLock lock];
+		self.justSetFrame = NO;
+		[synchronousUpdateLock signal];
+		[synchronousUpdateLock unlock];
+	}
 	[_movie setRate:rate];
 }
 
@@ -533,9 +512,29 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 }
 
 - (void) setPosition:(CGFloat) position
+
 {
-	_movie.currentTime = QTMakeTime(position*movieDuration.timeValue, movieDuration.timeScale);
-    self.justSetFrame = YES;
+    QTTime t = QTMakeTime(position*movieDuration.timeValue, movieDuration.timeScale);
+	QTTime startTime =[_movie frameStartTime:t];
+	QTTime endTime =[_movie frameEndTime:t];
+	if(QTTimeCompare(startTime, _movie.currentTime) != NSOrderedSame){
+		_movie.currentTime = startTime;
+		[self synchronizeUpdate];
+	}
+}
+
+- (void) setFrame:(NSInteger) frame
+{
+    QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
+	QTTime startTime =[_movie frameStartTime:t];
+	QTTime endTime =[_movie frameEndTime:t];
+	if(QTTimeCompare(startTime, _movie.currentTime) != NSOrderedSame){
+		_movie.currentTime = startTime;
+//		printf("\n\n");
+//		//		NSLog(@"set time to %f", 1.0*_movie.currentTime.timeValue / _movie.currentTime.timeScale);
+//		NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
+		[self synchronizeUpdate];
+	}
 }
 
 - (CGFloat) position
@@ -543,11 +542,42 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	return 1.0*_movie.currentTime.timeValue / movieDuration.timeValue;		
 }
 
-- (void) setFrame:(NSInteger) frame
-{	
-    _movie.currentTime = QTMakeTime(frame*frameStep, movieDuration.timeScale);
-    //    NSLog(@"	set time to %f", 1.0*_movie.currentTime.timeValue / _movie.currentTime.timeScale);    
-    self.justSetFrame = YES;
+- (CGFloat) time
+{
+	return 1.0*_movie.currentTime.timeValue / _movie.currentTime.timeScale;
+}
+
+- (long long) timeValue
+{
+	return _movie.currentTime.timeValue;
+}
+
+//This thread will guarentuee that the current frame is in memory
+//before proceeding. If something goes weird, it has 1.0 second timeout
+//that it will print a warning and proceed.
+//It works by bockign with a condition, which is signaled
+//in the frameAvailable callback when the time matches the requested time
+- (void) synchronizeUpdate
+{
+	if(!self.synchronousUpdate){
+		return;
+	}
+
+	self.justSetFrame = YES;
+	int numTries = 0;
+	while(self.justSetFrame && numTries++ < 10){
+		[synchronousUpdateLock lock];
+		
+		QTVisualContextTask(_visualContext);
+		MoviesTask([_movie quickTimeMovie], 0);
+		
+		if(![synchronousUpdateLock waitUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]]){
+			NSLog(@"synchronizeUpdate timed out in QTMovieRenderer");
+			self.justSetFrame = NO;
+		}
+		
+		[synchronousUpdateLock unlock];
+	}
 }
 
 - (NSInteger) frame
