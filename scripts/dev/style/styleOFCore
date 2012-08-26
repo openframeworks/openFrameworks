@@ -17,5 +17,6 @@ WD=$(dirname $0)
 cd $WD
 
 # run styler
-./ofStyler -a core_header.txt ../../../libs/openFrameworks h
-./ofStyler -a core_header.txt ../../../libs/openFrameworks cpp
+./ofStyler ../../../libs/openFrameworks h
+./ofStyler ../../../libs/openFrameworks cpp
+# add option '-a core_header.txt' to add a license header to every file
