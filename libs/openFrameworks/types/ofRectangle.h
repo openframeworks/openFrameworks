@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofLog.h"
 
@@ -47,7 +48,8 @@ public:
     void scaleFromCenter(float sX, float sY);
     void scaleFromCenter(const ofPoint& s);
     
-    ofRectangle scaleIntoMe(const ofRectangle& toBeScaled) const;
+    ofRectangle scaleToMe(const ofRectangle& toBeScaled,
+                          ofRectScaleMode rectScaleMode = OF_RECTSCALEMODE_FIT) const;
     
     bool inside(float px, float py) const;
     bool inside(const ofPoint& p) const;
