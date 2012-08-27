@@ -30,6 +30,8 @@
       <File Name="../../../../openFrameworks/window/ofWindow.h"/>
       <File Name="../../../../openFrameworks/window/ofWindowManager.cpp"/>
       <File Name="../../../../openFrameworks/window/ofWindowManager.h"/>
+      <File Name="../../../../openFrameworks/window/ofDisplay.h"/>
+      <File Name="../../../../openFrameworks/window/ofDisplay.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="graphics">
       <File Name="../../../../openFrameworks/graphics/ofPath.cpp"/>
@@ -193,7 +195,8 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -230,6 +233,7 @@
       <General OutputFile="" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
+      
       
       ]]>
       </Environment>
