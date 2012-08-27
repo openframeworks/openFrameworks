@@ -6,6 +6,11 @@ ofxSlider<Type>::ofxSlider(string sliderName, ofParameter<Type> _val, float widt
 }
 
 template<typename Type>
+ofxSlider<Type>::ofxSlider(string sliderName, Type _val, Type _min, Type _max, float width, float height){
+	setup(sliderName,_val,_min,_max,width,height);
+}
+
+template<typename Type>
 ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _val, float width, float height){
 	name = sliderName;
 	value = _val;
@@ -18,6 +23,12 @@ ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _va
 
 	ofRegisterMouseEvents(this);
 	return this;
+}
+
+template<typename Type>
+ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, Type _val, Type _min, Type _max, float width, float height){
+	ofParameter<Type> v(sliderName,_val,_min,_max);
+	return setup(sliderName,v,width,height);
 }
 
 template<typename Type>
