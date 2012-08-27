@@ -69,7 +69,7 @@ Be sure to mention 'code style' in the commit message, for example
 
 When using git, you can ignore whitespace changes in relevant commands
 by using the '-w' option. 
-On Github, the same can be accomplished by appending '?w=!' to any URL.
+On Github, the same can be accomplished by appending '?w=1' to any URL.
 
 "
 echo "$farewell"
