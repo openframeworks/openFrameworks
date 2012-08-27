@@ -148,7 +148,9 @@ ofRectangle ofRectangle::scaleToMe(const ofRectangle& toBeScaled, ofRectScaleMod
                              toBeScaled.getHeight()); // keep original height
         return result;
     }
-        
+
+    float _x  = getX();
+    float _y  = getY();
     float w  = getWidth();
     float h  = getHeight();
     float fw = toBeScaled.getWidth();
@@ -176,10 +178,10 @@ ofRectangle ofRectangle::scaleToMe(const ofRectangle& toBeScaled, ofRectScaleMod
                           fabs(h) / fabs(fh));
     }
 
-    result.set(( w - fw * resultScale ) * 0.5f,
-               ( h - fh * resultScale ) * 0.5f,
-               ( fw * resultScale ),
-               ( fh * resultScale ));
+    result.set(_x + ( w - fw * resultScale ) * 0.5f,
+               _y + ( h - fh * resultScale ) * 0.5f,
+                        ( fw * resultScale ),
+                        ( fh * resultScale ));
     
     return result;
 }
