@@ -77,8 +77,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
     // build the movie URL
     NSString *movieURL;
-    NSString *protocol = [[moviePath substringToIndex:7] lowercaseString];
-    if ([protocol isEqualToString:@"http://"] || [protocol isEqualToString:@"rtsp://"]) {
+    if (isURL) {
         movieURL = [NSURL URLWithString:moviePath];
     }
     else {
