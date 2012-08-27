@@ -43,7 +43,7 @@ int ofSoundBuffer::getNumChannels() const{
 }
 
 unsigned long ofSoundBuffer::getDuration() const{
-	return bufferSize()*1000/samplerate;
+	return float(bufferSize()*1000)/float(samplerate);
 }
 
 int ofSoundBuffer::getSampleRate() const{
