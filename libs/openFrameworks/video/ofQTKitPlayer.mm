@@ -114,7 +114,7 @@ void ofQTKitPlayer::firstFrame(){
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
     [moviePlayer gotoBeginning];
-	
+	if(bSynchronousScrubbing) update();
     [pool release];
 }
 
@@ -122,7 +122,7 @@ void ofQTKitPlayer::nextFrame(){
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     [moviePlayer stepForward];
-
+	if(bSynchronousScrubbing) update();
     [pool release];
 }
 
@@ -130,7 +130,8 @@ void ofQTKitPlayer::previousFrame(){
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     [moviePlayer stepBackward];
-	bNewFrame = bHavePixelsChanged = bSynchronousScrubbing;
+	if(bSynchronousScrubbing) update();
+	
     [pool release];
     
 }
@@ -209,6 +210,7 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 	if(moviePlayer != NULL && moviePlayer.usePixels) {
 	   //don't get the pixels every frame if it hasn't updated
 	   if(bHavePixelsChanged){
+		   cout << "pixels changed" << endl;
 		   [moviePlayer pixels:pixels.getPixels()];
 		   bHavePixelsChanged = false;
 	   }
@@ -238,6 +240,7 @@ void ofQTKitPlayer::setPosition(float pct) {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
 	moviePlayer.position = pct;
+	if(bSynchronousScrubbing) update();
 	
 	[pool release];
 	
@@ -271,7 +274,8 @@ void ofQTKitPlayer::setFrame(int frame) {
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	moviePlayer.frame = frame % moviePlayer.frameCount;
-
+	if(bSynchronousScrubbing) update();
+	
 	[pool release];
 }
 

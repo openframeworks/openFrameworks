@@ -512,22 +512,35 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 }
 
 - (void) setPosition:(CGFloat) position
-
 {
+	float oldRate = self.rate;
+	if(self.rate != 0){
+		_movie.rate = 0;
+	}
+
     QTTime t = QTMakeTime(position*movieDuration.timeValue, movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
-	QTTime endTime =[_movie frameEndTime:t];
+//	QTTime endTime =[_movie frameEndTime:t];
 	if(QTTimeCompare(startTime, _movie.currentTime) != NSOrderedSame){
 		_movie.currentTime = startTime;
 		[self synchronizeUpdate];
 	}
+	
+	if(oldRate != 0){
+		self.rate = oldRate;
+	}
+	
 }
 
 - (void) setFrame:(NSInteger) frame
 {
+	float oldRate = self.rate;
+	if(self.rate != 0){
+		_movie.rate = 0;
+	}
     QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
-	QTTime endTime =[_movie frameEndTime:t];
+//	QTTime endTime =[_movie frameEndTime:t];
 	if(QTTimeCompare(startTime, _movie.currentTime) != NSOrderedSame){
 		_movie.currentTime = startTime;
 //		printf("\n\n");
@@ -535,6 +548,11 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 //		NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
 		[self synchronizeUpdate];
 	}
+
+	if(oldRate != 0){
+		self.rate = oldRate;
+	}
+
 }
 
 - (CGFloat) position
