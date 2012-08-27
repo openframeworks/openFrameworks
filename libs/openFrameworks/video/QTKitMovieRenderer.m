@@ -568,7 +568,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (CGFloat) position
 {
-	return 1.0*_movie.currentTime.timeValue / movieDuration.timeValue;		
+    return [self time] / [self duration];
 }
 
 - (CGFloat) time
