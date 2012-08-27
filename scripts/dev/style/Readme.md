@@ -5,6 +5,10 @@ https://github.com/openframeworks/openFrameworks/wiki/oF-code-style
 
 The formatter used is `uncrustify`: http://uncrustify.sourceforge.net/
 
+The minimum version of `uncrustify` is 0.58.
+If an earlier version is used, certain code segments may be formatted incorrectly.
+E.g., 0.58 corrects a formatting edgecase with the `tok_split_gte` flag.
+
 Install it to your standard path for the scripts to work:
 
 * Mac OSX
