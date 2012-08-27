@@ -10,7 +10,9 @@ class ofxSlider : public ofxBaseGui{
 public:	
 	ofxSlider(){}
 	ofxSlider(string sliderName, ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider(string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(string sliderName, ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider* setup(string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
 	virtual void mouseMoved(ofMouseEventArgs & args);
 	virtual void mousePressed(ofMouseEventArgs & args);
