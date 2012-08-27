@@ -166,6 +166,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	
 	QTVisualContextSetImageAvailableCallback(_visualContext, frameAvailable, self);
 	synchronousUpdateLock = [[NSCondition alloc] init];
+	[self setFrame:0];
 	
 	self.volume = 1.0;
 	self.loops = YES;
@@ -288,7 +289,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 			_latestTextureFrame = image;
 		}
 		frameIsNew = YES;
-
 	}
 	
 	if(self.justSetFrame){
