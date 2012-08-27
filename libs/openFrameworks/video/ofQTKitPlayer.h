@@ -69,8 +69,9 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		ofQTKitDecodeMode   getDecodeMode();
 
 		//Enabling synchronous scrubbing ensures that any call to setFrame, setPosition or jump to position
-		//followed by an update will result in the pixels from the desired frame being loaded into the video player
-		//Turn off synchronous scrubbing will give a speed boost, but won't guarentuee instantly updating frames
+		//will result in the pixels from the desired frame being loaded into the video player
+		//Turn off synchronous scrubbing will give a speed boost, but won't guarentuee
+		//frames are immediately available when scrubbing manually
 		void                setSynchronousScrubbing(bool synchronous);
 		bool                getSynchronousScrubbing();
 
