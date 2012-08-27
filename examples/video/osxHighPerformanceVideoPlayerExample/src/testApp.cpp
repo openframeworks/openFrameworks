@@ -1,12 +1,11 @@
 #include "testApp.h"
 
 //High performance OS X Video Playback example
-//---------------------------
+//--------------------------------------------------------------
 // This example shows how to use the OS X platform specific ofQTKitPlayer on its own
 // without the cross platform ofVideoPlayer wrapper
 // Apps you write in this way won't be cross platform,
-// but can be speedier for HD videos 
-
+// but can be faster for HD videos 
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255, 255, 255);
@@ -19,19 +18,20 @@ void testApp::setup(){
 	fingerMovie.setPixelFormat(OF_PIXELS_RGBA);
 
 
-	//# 2 Decode Modes. ---------------------------
+	//# 2 Decode Modes. -------------------------------
 	// If you don't need access to pixels and aren't using the ofQTKitPlayer inside of an ofVideoPlayer
 	// You can use QTKit's internal texture management system which is streamlined.
 
 	//Texture only is fastest, but no pixel access allowed
-	//ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_TEXTURE_ONLY;
+	ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_TEXTURE_ONLY;
 
 	//pixels and texture together is faster than PIXEL_ONLY and manually upload textures.
-	ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
+	//ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
+	
+    fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
 
     // You can even load URLs!
-    //fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
-    fingerMovie.loadMovie("http://labs.silentlycrashing.net/fingers.mov", decodeMode);
+    //fingerMovie.loadMovie("http://labs.silentlycrashing.net/fingers.mov", decodeMode);
 
 	//# 3 Synchronous scrubbing ---------------------------
 	// In many cases you want to be certain a call to movie.setFrame(x) and then a call to movie.update() will result in

@@ -26,8 +26,11 @@
 	BOOL useTexture;
 	BOOL usePixels;
 	BOOL useAlpha;
-	BOOL synchronousScrub;
+	BOOL synchronousUpdate;
 	BOOL justSetFrame;
+	BOOL frameIsNew;
+	MovieDrawingCompleteUPP myDrawCompleteProc;
+	NSCondition* synchronousUpdateLock;
 }
 
 @property (nonatomic, readonly) NSSize movieSize;
@@ -37,11 +40,13 @@
 @property (nonatomic, readonly) NSTimeInterval duration; //duration in seconds
 @property (nonatomic, readonly) NSInteger frameCount;  //total frames
 @property (nonatomic, readonly) BOOL isFinished;  //returns true if the movie is not looping and over
-@property (nonatomic, readwrite) BOOL justSetFrame;
-@property (nonatomic, readwrite) BOOL synchronousScrub;
+@property (readwrite) BOOL justSetFrame;
+@property (nonatomic, readwrite) BOOL synchronousUpdate;
 
 @property (nonatomic, readwrite) float rate;
 @property (nonatomic, readwrite) float volume;
+@property (nonatomic, readonly) CGFloat time;
+@property (nonatomic, readonly) long long timeValue;
 @property (nonatomic, readwrite) CGFloat position;  //set and get frame position by percent
 @property (nonatomic, readwrite) NSInteger frame;  //set and get frame position by percent
 @property (nonatomic, readwrite) BOOL loops;  //set and get loopstate
@@ -66,5 +71,11 @@
 - (void)stepForward;
 - (void)stepBackward;
 - (void)gotoBeginning;
+
+
+- (void)frameAvailable:(CVImageBufferRef)image;
+- (void)frameFailed;
+//when synchronous update is turned on
+- (void)synchronizeUpdate;
 
 @end
