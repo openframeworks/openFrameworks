@@ -134,25 +134,52 @@ void ofRectangle::scaleFromCenter(const ofPoint& s) {
 }
 
 //----------------------------------------------------------
-ofRectangle ofRectangle::scaleIntoMe(const ofRectangle& toBeScaled) const {
+ofRectangle ofRectangle::scaleToMe(const ofRectangle& toBeScaled, ofRectScaleMode rectScaleMode) const {
 
     ofRectangle result;
 
+    // the easy case shortcuts
+    if(rectScaleMode == OF_RECTSCALEMODE_STRETCH) {
+        result.set(*this);
+        return result;
+    } else if(rectScaleMode == OF_RECTSCALEMODE_CENTER) {
+        result.setFromCenter(getCenter(), // take a new center
+                             toBeScaled.getWidth(), // keep original width
+                             toBeScaled.getHeight()); // keep original height
+        return result;
+    }
+        
+    float w  = getWidth();
+    float h  = getHeight();
+    float fw = toBeScaled.getWidth();
+    float fh = toBeScaled.getHeight();
+
     // make sure we are dealing with non-zero rects, else divide by zero
-    if(fabs(toBeScaled.getWidth())  < FLT_EPSILON ||
-       fabs(toBeScaled.getHeight()) < FLT_EPSILON) {
-        ofLogWarning() << "ofRectangle: Source rectangle had 0 width or 0 height. Avoiding divide by zero.";
+    if(fabs(fw) < FLT_EPSILON ||
+       fabs(fh) < FLT_EPSILON) {
+        ofLogWarning("ofRectangle") << "Source rectangle had 0 width or 0 height. Avoiding divide by zero.";
         return result;
     }
     
-    // find the scaling factor, fabs for -w and/or -h
-    float resultScale = MIN(fabs(width)  / fabs(toBeScaled.getWidth()),
-                            fabs(height) / fabs(toBeScaled.getHeight()));
+    float resultScale;
     
-    // set the rect from cetner with scaled w/h
-    result.setFromCenter(getCenter(),
-                         toBeScaled.getWidth()  * resultScale,
-                         toBeScaled.getHeight() * resultScale);
+    // modifiy the result scale if needed
+    if(rectScaleMode == OF_RECTSCALEMODE_FILL) {
+        resultScale = MAX(fabs(w) / fabs(fw),
+                          fabs(h) / fabs(fh));
+    } else if(rectScaleMode == OF_RECTSCALEMODE_FIT) {
+        resultScale = MIN(fabs(w) / fabs(fw),
+                          fabs(h) / fabs(fh));
+    } else {
+        ofLogWarning("ofRectangle") << "Encountered unknown ofRectScaleMode.  Using OF_RECTSCALEMODE_FIT.";
+        resultScale = MIN(fabs(w) / fabs(fw),
+                          fabs(h) / fabs(fh));
+    }
+
+    result.set(( w - fw * resultScale ) * 0.5f,
+               ( h - fh * resultScale ) * 0.5f,
+               ( fw * resultScale ),
+               ( fh * resultScale ));
     
     return result;
 }

@@ -362,6 +362,27 @@ enum ofRectMode{
  	OF_RECTMODE_CENTER=1
 };
 
+enum ofRectScaleMode{
+    // fits the SUBJECT rect INSIDE the TARGET rect.
+    // Preserves SUBJECTS's aspect ratio.
+    // Final Subject's Area <= Target's Area.
+    // Subject's Center == Target's Center
+    OF_RECTSCALEMODE_FIT     = 0,
+    // FILLS the TARGET rect with the SUBJECT rect.
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area >= Target's Area.
+    // Subject's Center == Target's Center
+    OF_RECTSCALEMODE_FILL    = 1,
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area is Unchanged
+    // Subject's Center == Target's Center
+    OF_RECTSCALEMODE_CENTER  = 2, // centers the subject
+    // Can CHANGE the SUBJECT's aspect ratio.
+    // Subject's Area == Target's Area
+    // Subject's Center == Target's Center
+ 	OF_RECTSCALEMODE_STRETCH = 3, // simply matches the target dims
+};
+
 enum ofImageType{
 	OF_IMAGE_GRAYSCALE		= 0x00,
  	OF_IMAGE_COLOR			= 0x01,
