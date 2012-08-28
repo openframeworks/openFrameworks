@@ -65,7 +65,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                setSpeed(float speed);
 		void                setFrame(int frame); // frame 0 = first frame...
 		void                setPixelFormat(ofPixelFormat pixelFormat);
-
+		ofPixelFormat       getPixelFormat();
 		ofQTKitDecodeMode   getDecodeMode();
 
 		//Enabling synchronous scrubbing ensures that any call to setFrame, setPosition or jump to position
