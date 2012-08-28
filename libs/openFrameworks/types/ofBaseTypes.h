@@ -262,7 +262,7 @@ public:
 	virtual void				nextFrame();
 	virtual void				previousFrame();
 	virtual void				setPixelFormat(ofPixelFormat pixelFormat);
-	
+	virtual ofPixelFormat 		getPixelFormat();
 };
 
 //----------------------------------------------------------

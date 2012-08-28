@@ -11,6 +11,7 @@ ofVideoPlayer::ofVideoPlayer (){
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer){
 	player = newPlayer;
+	internalPixelFormat = player->getPixelFormat();
 }
 
 //---------------------------------------------------------------------------
@@ -21,7 +22,9 @@ ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 //--------------------------------------------------------------------
 void ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 	internalPixelFormat = pixelFormat;
-    //TODO: we need to behave appropriately if the video player is already set by updating it's internal format as well
+	if( player != NULL ){
+		player->setPixelFormat(internalPixelFormat);
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -36,7 +39,7 @@ bool ofVideoPlayer::loadMovie(string name){
 	bool bOk = player->loadMovie(name);
 	width	 = player->getWidth();
 	height	 = player->getHeight();
-	
+
 	if( bOk){
         moviePath = name;
         if(bUseTexture ){
@@ -125,7 +128,7 @@ void ofVideoPlayer::update(){
 					
 						if(tex.bAllocated())
 							tex.clear();
-					
+
 						tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
 						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 					}
