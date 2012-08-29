@@ -33,7 +33,7 @@ endif
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
 	NDK_PLATFORM = android-8
-	GCC_VERSION = 4.6
+	GCC_VERSION = 4.4.3
 else
 ifeq ($(ARCH),armv7l)
 	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
