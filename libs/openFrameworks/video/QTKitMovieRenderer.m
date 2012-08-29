@@ -110,6 +110,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
     if (sync) {
         if ([self initMovie:_movie]) {
+            [self countFrames:_movie];
             state = QTKitStateReady;
             return YES;
         }
