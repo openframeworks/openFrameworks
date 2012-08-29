@@ -87,7 +87,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		NSLog(@"Error Loading Movie: %@", error);
 		return NO;
 	}
-    
+    lastMovieTime = QTMakeTime(0,1);
 	movieSize = [[_movie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
     //	NSLog(@"movie size %f %f", movieSize.width, movieSize.height);
 	
@@ -264,7 +264,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 			//        CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
 			//        CFDictionaryRef timeDictionary = CVBufferGetAttachment (_latestPixelFrame, kCVBufferMovieTimeKey, &mode);
 			//        NSLog(@"movie time: %f incoming frame time: %f", 1.0*_movie.currentTime.timeValue/_movie.currentTime.timeScale, [[(NSDictionary*)timeDictionary valueForKey:@"TimeValue"] floatValue] / [[(NSDictionary*)timeDictionary valueForKey:@"TimeScale"] floatValue]);
-			
 			//if we are using a texture, create one from the texture cache
 			if(self.useTexture){
 				if(_latestTextureFrame != NULL){
@@ -290,12 +289,15 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		}
 		frameIsNew = YES;
 	}
-	
+
+	CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
+	NSDictionary* timeDictionary = (NSDictionary*)CVBufferGetAttachment (image, kCVBufferMovieTimeKey, &mode);
+	QTTime frameTime = QTMakeTime([[timeDictionary valueForKey:@"TimeValue"] longLongValue],
+								  [[timeDictionary valueForKey:@"TimeScale"] longValue]);
+
+//	lastMovieTime = (1.0*frameTime.timeValue)/frameTime.timeScale;
+	lastMovieTime = frameTime;
 	if(self.justSetFrame){
-		CVAttachmentMode mode = kCVAttachmentMode_ShouldPropagate;
-		NSDictionary* timeDictionary = (NSDictionary*)CVBufferGetAttachment (image, kCVBufferMovieTimeKey, &mode);
-		QTTime frameTime = QTMakeTime([[timeDictionary valueForKey:@"TimeValue"] longLongValue],
-									  [[timeDictionary valueForKey:@"TimeScale"] longValue]);
 		QTTime correctedFrameTime = [_movie frameEndTime:frameTime];
 //		NSLog(@"incoming frame time: %lld and movie time is %lld", correctedFrameTime.timeValue, self.timeValue);
 		//Incoming frames will often be earlier times than requested. So we have to signal
@@ -557,12 +559,14 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (CGFloat) position
 {
-	return 1.0*_movie.currentTime.timeValue / movieDuration.timeValue;		
+	return 1.0*lastMovieTime.timeValue / movieDuration.timeValue;
+//	return 1.0*_movie.currentTime.timeValue / movieDuration.timeValue;
 }
 
 - (CGFloat) time
 {
-	return 1.0*_movie.currentTime.timeValue / _movie.currentTime.timeScale;
+	//return lastMovieTime;
+	return 1.0*lastMovieTime.timeValue / lastMovieTime.timeScale;
 }
 
 - (long long) timeValue
