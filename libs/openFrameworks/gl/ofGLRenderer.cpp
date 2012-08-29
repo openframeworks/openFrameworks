@@ -1153,7 +1153,13 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			glScalef(2/rViewport.width, 2/rViewport.height, 1);
 
 			glTranslatef(dScreenX, dScreenY, 0);
-			glScalef(1, -1, 1);
+            
+            if(currentFbo == NULL) {
+                glScalef(1, -1, 1);
+            } else {
+                glScalef(1,  1, 1); // invert when rendering inside an fbo
+            }
+            
 #endif
 			break;
 
