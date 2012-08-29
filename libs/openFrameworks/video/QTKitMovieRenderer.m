@@ -42,6 +42,7 @@ struct OpenGLTextureCoordinates
 typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 @implementation QTKitMovieRenderer
+
 @synthesize movieSize;
 @synthesize useTexture;
 @synthesize usePixels;
@@ -60,7 +61,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             nil];
 }
 
-- (BOOL) loadMovie:(NSString*)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
+- (BOOL) loadMovie:(NSString*)moviePath synchronously:(BOOL)sync pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
 {
     // if the path is local, make sure the file exists before proceeding
     if (!isURL && ![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
@@ -69,11 +70,12 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		return NO;
 	}
 	
+    state = QTKitStateLoading;
+
 	//create visual context
 	useTexture = doUseTexture;
 	usePixels = doUsePixels;
 	useAlpha = doUseAlpha;
-    
 
     // build the movie URL
     NSString *movieURL;
@@ -85,71 +87,107 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     }
 
 	NSError* error;
-	NSMutableDictionary* movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                            movieURL, QTMovieURLAttribute,
-                                            [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
-                                            nil];
+	NSMutableDictionary* movieAttributes = [NSMutableDictionary dictionaryWithObject:movieURL
+                                                                              forKey:QTMovieURLAttribute];
+    if (sync) {
+        [movieAttributes setObject:[NSNumber numberWithBool:NO]
+                            forKey:QTMovieOpenAsyncOKAttribute];
+    }
+    else {
+        [movieAttributes setObject:[NSNumber numberWithBool:YES]
+                            forKey:QTMovieOpenAsyncRequiredAttribute];
+        [movieAttributes setObject:[NSNumber numberWithBool:YES]
+                            forKey:QTMovieOpenForPlaybackAttribute];
+    }
     
 	_movie = [[QTMovie alloc] initWithAttributes:movieAttributes 
-										   error: &error];
-	
-	if(error || _movie == NULL){
+										   error:&error];
+
+	if (error || _movie == NULL) {
 		NSLog(@"Error Loading Movie: %@", error);
 		return NO;
 	}
-    
-	movieSize = [[_movie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
-    //	NSLog(@"movie size %f %f", movieSize.width, movieSize.height);
-	
-	movieDuration = [_movie duration];
-    
-	[_movie gotoBeginning];
-    
-    [_movie gotoEnd];
-    QTTime endTime = [_movie currentTime];
-    
-    [_movie gotoBeginning];
-    QTTime curTime = [_movie currentTime];
-    
-    long numFrames = 0;
-    while (true)
-    {
-        int time = curTime.timeValue;
-        //        % get the end time of the current frame  
-        curTime = [_movie frameEndTime:curTime];
-        numFrames++;
-//        NSLog(@" num frames %ld current time %f", numFrames, 1.0*curTime.timeValue/curTime.timeScale);
-        if (QTTimeCompare(curTime, endTime) == NSOrderedSame ||
-            QTTimeCompare(curTime, [_movie frameEndTime:curTime])  == NSOrderedSame ){ //this will happen for audio files since they have no frames.
-            break;
+
+    if (sync) {
+        if ([self initMovie:_movie]) {
+            state = QTKitStateReady;
+            return YES;
         }
+        return NO;
+    }
+    else {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(loadStateChanged:)
+                                                     name:QTMovieLoadStateDidChangeNotification
+                                                   object:_movie];
+        return YES;
+    }
+}
+
+- (void)loadStateChanged:(NSNotification *)notification
+{
+    QTMovie *movie = (QTMovie *)[notification object];
+    if (movie == nil) return;
+
+    NSInteger loadState = [[movie attributeForKey:QTMovieLoadStateAttribute] longValue];
+
+    if (loadState == QTMovieLoadStateError) {
+        // an error occurred while loading the movie
+        NSError *error = [movie attributeForKey:
+                          QTMovieLoadStateErrorAttribute];
+        NSLog(@"Error Loading Async Movie: %@", error);
 
     }
+
+    if ((loadState >= QTMovieLoadStateLoaded) && state != QTKitStateLoaded) {
+        if ([self initMovie:movie]) {
+            state = QTKitStateLoaded;
+        }
+    }
+
+    if ((loadState >= QTMovieLoadStatePlayable)) {
+    }
+
+    if ((loadState >= QTMovieLoadStatePlaythroughOK && state != QTKitStateReady)) {
+        if ([self countFrames:movie]) {
+            state = QTKitStateReady;
+        }
+    }
+}
+
+- (BOOL)isReady
+{
+    return (state == QTKitStateReady);
+}
+
+- (BOOL)initMovie:(QTMovie *)movie
+{
+    movieSize = [[movie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
+    //	NSLog(@"movie size %f %f", movieSize.width, movieSize.height);
+
+	movieDuration = [movie duration];
+
+	[movie gotoBeginning];
     
-	frameCount = numFrames;
-    frameStep = 1.0*movieDuration.timeValue/numFrames;
-    
-    
-	//NSLog(@" movie has %d frames and frame step %d", frameCount, frameStep);
-	
+
 	//if we are using pixels, make the visual context
 	//a pixel buffer context with ARGB textures
 	if(self.usePixels){
-		
+
 		NSMutableDictionary *ctxAttributes = [NSMutableDictionary dictionaryWithObject:[self pixelBufferAttributes]
 																				forKey:(NSString*)kQTVisualContextPixelBufferAttributesKey];
-		
+
 		OSStatus err = QTPixelBufferContextCreate(kCFAllocatorDefault, (CFDictionaryRef)ctxAttributes, &_visualContext);
 		if(err){
 			NSLog(@"error %ld creating OpenPixelBufferContext", err);
 			return NO;
 		}
-        
+
 		// if we also have a texture, create a texture cache for it
 		if(self.useTexture){
-			//create a texture cache			
-			err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL, 
-											 CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()), 
+			//create a texture cache
+			err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL,
+											 CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()),
 											 (CFDictionaryRef)ctxAttributes, &_textureCache);
 			if(err){
 				NSLog(@"error %ld creating CVOpenGLTextureCacheCreate", err);
@@ -161,7 +199,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	else if(self.useTexture){
 		OSStatus err = QTOpenGLTextureContextCreate(kCFAllocatorDefault,
 													CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()),
-													(CFDictionaryRef)NULL, &_visualContext);	
+													(CFDictionaryRef)NULL, &_visualContext);
 		if(err){
 			NSLog(@"error %ld creating QTOpenGLTextureContextCreate", err);
 			return NO;
@@ -171,22 +209,49 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		NSLog(@"Error - QTKitMovieRenderer - Must specify either Pixels or Texture as rendering strategy");
 		return NO;
 	}
-	
-	[_movie setVisualContext:_visualContext];
-	
+
+	[movie setVisualContext:_visualContext];
+
 	QTVisualContextSetImageAvailableCallback(_visualContext, frameAvailable, self);
 	synchronousUpdateLock = [[NSCondition alloc] init];
 	[self setFrame:0];
-	
+
 	self.volume = 1.0;
 	self.loops = YES;
 	
 	return YES;
 }
 
+- (BOOL)countFrames:(QTMovie *)movie
+{
+    [movie gotoEnd];
+    QTTime endTime = [movie currentTime];
+
+    [movie gotoBeginning];
+    QTTime curTime = [movie currentTime];
+
+    long numFrames = 0;
+    while (true)
+    {
+        curTime = [movie frameEndTime:curTime];
+        numFrames++;
+        if (QTTimeCompare(curTime, endTime) == NSOrderedSame ||
+            QTTimeCompare(curTime, [movie frameEndTime:curTime])  == NSOrderedSame ){ //this will happen for audio files since they have no frames.
+            break;
+        }
+
+    }
+
+	frameCount = numFrames;
+    frameStep = 1.0*movieDuration.timeValue/numFrames;
+
+    return YES;
+}
+
 - (void) dealloc
 {
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
 	if(_latestTextureFrame != NULL){
 		CVOpenGLTextureRelease(_latestTextureFrame);
 		_latestTextureFrame = NULL;

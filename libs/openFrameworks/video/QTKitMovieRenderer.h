@@ -7,6 +7,12 @@
 #import <QTKit/QTKit.h>
 #import <OpenGL/OpenGL.h>
 
+enum QTKitMovieState
+{
+    QTKitStateLoading = 0,
+    QTKitStateLoaded,
+    QTKitStateReady
+};
 
 @interface QTKitMovieRenderer : NSObject
 {
@@ -21,7 +27,8 @@
 	QTTime movieDuration;
 	NSInteger frameCount;
 	double frameStep;
-    
+
+    enum QTKitMovieState state;
 	BOOL frameUpdated;
 	BOOL useTexture;
 	BOOL usePixels;
@@ -58,7 +65,7 @@
 - (NSDictionary *)pixelBufferAttributes;
 
 - (void)draw:(NSRect)drawRect;
-- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
+- (BOOL)loadMovie:(NSString *)moviePath synchronously:(BOOL)sync pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
 - (BOOL)update;
 
 - (void)bindTexture;
@@ -72,7 +79,7 @@
 - (void)stepBackward;
 - (void)gotoBeginning;
 
-
+- (BOOL)isReady;
 - (void)frameAvailable:(CVImageBufferRef)image;
 - (void)frameFailed;
 //when synchronous update is turned on

@@ -3,6 +3,7 @@
 
 ofQTKitPlayer::ofQTKitPlayer() {
 	moviePlayer = NULL;
+    bReady = false;
 	bNewFrame = false;
 	duration = 0;
     speed = 0;
@@ -18,10 +19,14 @@ ofQTKitPlayer::~ofQTKitPlayer() {
 }
 
 bool ofQTKitPlayer::loadMovie(string path){
-	return loadMovie(path, OF_QTKIT_DECODE_PIXELS_ONLY);
+	return loadMovie(path, OF_QTKIT_DECODE_PIXELS_ONLY, false);
 }
 
 bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
+    return loadMovie(movieFilePath, mode, false);
+}
+
+bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode, bool async) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
 		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Error, invalid mode specified for");
 		return false;
@@ -47,6 +52,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 
 	moviePlayer = [[QTKitMovieRenderer alloc] init];
 	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding]
+                            synchronously:!async
 								pathIsURL:isURL
 							 allowTexture:useTexture 
 							  allowPixels:usePixels
@@ -54,9 +60,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	
 	if(success){
 		moviePlayer.synchronousUpdate = bSynchronousScrubbing;
-        reallocatePixels();
         moviePath = movieFilePath;
-		duration = moviePlayer.duration;
         setLoopState(OF_LOOP_NONE);
 	}
 	else {
@@ -76,6 +80,10 @@ void ofQTKitPlayer::closeMovie() {
 
 bool ofQTKitPlayer::isLoaded() {
 	return moviePlayer != NULL;
+}
+
+bool ofQTKitPlayer::isReady() {
+	return isLoaded() && bReady;
 }
 
 void ofQTKitPlayer::close() {
@@ -176,10 +184,20 @@ void ofQTKitPlayer::update() {
 	if(moviePlayer == NULL) return;
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	bNewFrame = [moviePlayer update];
-	if (bNewFrame) {
-		bHavePixelsChanged = true;
-	}
+    if (bReady) {
+        bNewFrame = [moviePlayer update];
+        if (bNewFrame) {
+            bHavePixelsChanged = true;
+        }
+    }
+    else {
+        if ([moviePlayer isReady]) {
+            reallocatePixels();
+            duration = moviePlayer.duration;
+
+            bReady = true;
+        }
+    }
     [pool release];
 }
 
