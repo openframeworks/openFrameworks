@@ -96,8 +96,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     else {
         [movieAttributes setObject:[NSNumber numberWithBool:YES]
                             forKey:QTMovieOpenAsyncRequiredAttribute];
-        [movieAttributes setObject:[NSNumber numberWithBool:YES]
-                            forKey:QTMovieOpenForPlaybackAttribute];
+        // TODO: Sometimes this works, and sometimes it doesn't, WHY?!
+//        [movieAttributes setObject:[NSNumber numberWithBool:YES]
+//                            forKey:QTMovieOpenForPlaybackAttribute];
     }
     
 	_movie = [[QTMovie alloc] initWithAttributes:movieAttributes 
