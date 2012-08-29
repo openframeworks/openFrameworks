@@ -21,7 +21,7 @@
 	QTTime movieDuration;
 	NSInteger frameCount;
 	double frameStep;
-    
+    QTTime lastMovieTime;
 	BOOL frameUpdated;
 	BOOL useTexture;
 	BOOL usePixels;
