@@ -196,6 +196,10 @@ void ofQTKitPlayer::update() {
             duration = moviePlayer.duration;
 
             bReady = true;
+            ofVideoReadyEventArgs readyEvent;
+            readyEvent.player = this;
+            readyEvent.error = "";
+            ofNotifyEvent(videoReadyEvent, readyEvent, this);
         }
     }
     [pool release];

@@ -17,6 +17,13 @@ enum ofQTKitDecodeMode {
 };
 
 
+class ofVideoReadyEventArgs : public ofEventArgs {
+public:
+	ofBaseVideoPlayer* player;
+	string error; //"" if there is no error
+};
+
+
 class ofQTKitPlayer  : public ofBaseVideoPlayer {
 	public:
 
@@ -92,6 +99,8 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                firstFrame();
 		void                nextFrame();
 		void                previousFrame();
+
+        ofEvent<ofVideoReadyEventArgs> videoReadyEvent;
 
 	protected:
         bool bReady;
