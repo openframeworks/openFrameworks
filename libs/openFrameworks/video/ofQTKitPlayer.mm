@@ -422,6 +422,10 @@ void ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
     }
 }
 
+ofPixelFormat ofQTKitPlayer::getPixelFormat(){
+	return pixelFormat;
+}
+
 ofQTKitDecodeMode ofQTKitPlayer::getDecodeMode(){
     return decodeMode;
 }

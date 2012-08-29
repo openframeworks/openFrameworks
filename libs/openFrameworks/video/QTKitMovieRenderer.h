@@ -27,7 +27,7 @@ enum QTKitMovieState
 	QTTime movieDuration;
 	NSInteger frameCount;
 	double frameStep;
-
+    QTTime lastMovieTime;
     enum QTKitMovieState state;
 	BOOL frameUpdated;
 	BOOL useTexture;

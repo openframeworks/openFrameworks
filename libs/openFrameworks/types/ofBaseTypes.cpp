@@ -135,3 +135,8 @@ void ofBaseVideoPlayer::previousFrame(){
 void ofBaseVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setPixelFormat not implemented");
 }
+//---------------------------------------------------------------------------
+ofPixelFormat ofBaseVideoPlayer::getPixelFormat(){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setPixelFormat not implemented");
+	return ofPixelFormat();
+}
