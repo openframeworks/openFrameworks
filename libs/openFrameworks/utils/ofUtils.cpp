@@ -204,15 +204,25 @@ string defaultDataPath(){
 #else
 	return string("data/");
 #endif
-	
 }
 
 //--------------------------------------------------
-//use ofSetDataPathRoot() to override this
+static Poco::Path & defaultWorkingDirectory(){
+	static Poco::Path defaultWorkingDirectory;
+	return defaultWorkingDirectory;
+}
+
+//--------------------------------------------------
 static Poco::Path & dataPathRoot(){
 	static Poco::Path dataPathRoot(defaultDataPath());
-	dataPathRoot.makeAbsolute();
 	return dataPathRoot;
+}
+
+//--------------------------------------------------
+Poco::Path getWorkingDir(){
+	char charWorkingDir[MAXPATHLEN];
+	getcwd(charWorkingDir, MAXPATHLEN);
+	return Poco::Path(charWorkingDir);	
 }
 
 //--------------------------------------------------
@@ -232,6 +242,9 @@ void ofSetWorkingDirectoryToDefault(){
 		}
 	#endif
 #endif
+
+	defaultWorkingDirectory() = getWorkingDir();
+	defaultWorkingDirectory().makeAbsolute();
 }
 	
 //--------------------------------------------------
@@ -244,14 +257,18 @@ string ofToDataPath(string path, bool makeAbsolute){
 	if (!enableDataPath)
 		return path;
 	
+	if (defaultWorkingDirectory().toString() != getWorkingDir().toString()) {
+		chdir(defaultWorkingDirectory().toString().c_str());
+	}
+	
 	Poco::Path inputPath(dataPathRoot());
 	inputPath.resolve(path);
 	
 	if (makeAbsolute) {
-		inputPath.makeAbsolute();
+		return inputPath.absolute().toString();
+	} else {
+		return inputPath.toString();
 	}
-	
-	return inputPath.toString();
 }
 
 //----------------------------------------
