@@ -224,26 +224,9 @@ void ofSetWorkingDirectoryToDefault(){
 		uint32_t size = sizeof(path);
 		
 		if (_NSGetExecutablePath(path, &size) == 0){
-			//printf("executable path is %s\n", path);
-			string pathStr = string(path);
-			
-			//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
-			//checked with spaces too!
-			
-			vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
-			
-			newPath = "";
-			
-			for(int i = 0; i < pathBrokenUp.size()-1; i++){
-				newPath += pathBrokenUp[i];
-				newPath += "/";
-			}
-			
-			//cout << newPath << endl;   // some sanity checks here
-			//system( "pwd" );
-			
-			chdir ( newPath.c_str() );
-			//system("pwd");
+			Poco::Path classPath(path);
+			classPath.makeParent();
+			chdir( classPath.toString().c_str() );
 		}else{
 			ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
 		}
