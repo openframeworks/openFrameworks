@@ -261,13 +261,18 @@ string ofToDataPath(string path, bool makeAbsolute){
 	
 	if( enableDataPath ){
 
+		#ifndef TARGET_WIN32
+			bool isAbsolute = path.substr(0,1) == "/";
+		#else
+			bool isAbsolute = path.substr(1,1) == ":";
+		#endif
+
 		//check if absolute path has been passed or if data path has already been applied
-		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot().length()) != dataPathRoot())){
+		if( !isAbsolute && (path.length()==0 || path.substr(0,dataPathRoot().length()) != dataPathRoot())) {
 			path = dataPathRoot()+path;
 		}
 
-		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
+		if( (makeAbsolute && !isAbsolute) || path.length()==0 ){
 			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 
 			#ifndef TARGET_WIN32
@@ -280,8 +285,6 @@ string ofToDataPath(string path, bool makeAbsolute){
 				char currDir[1024];
 				path = "\\"+path;
 				path = _getcwd(currDir, 1024)+path;
-				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-
 
 			#endif
 
@@ -292,6 +295,11 @@ string ofToDataPath(string path, bool makeAbsolute){
 		}
 
 	}
+
+	#ifdef TARGET_WIN32
+		std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
+	#endif
+
 	return path;
 }
 
