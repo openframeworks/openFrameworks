@@ -582,7 +582,7 @@ string ofSystemTextBoxDialog(string question, string text){
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = 0;
     wc.hInstance     = GetModuleHandle(0);
-    wc.lpszClassName = g_szClassName;
+    wc.lpszClassName = (LPCWSTR)g_szClassName;
     wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
     wc.lpszMenuName  = NULL;
     wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
@@ -590,36 +590,36 @@ string ofSystemTextBoxDialog(string question, string text){
     wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
     if(!RegisterClassEx(&wc))
     {
-        MessageBox(NULL, "Window Registration Failed!", "Error!",
+        MessageBox(NULL, (LPCWSTR)"Window Registration Failed!", (LPCWSTR)"Error!",
             MB_ICONEXCLAMATION | MB_OK);
         return text;
     }
 
     HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
-        g_szClassName,
-        question.c_str(),
+        (LPCWSTR)g_szClassName,
+        (LPCWSTR)question.c_str(),
         WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
         CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
         WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0),NULL);
 
     if(dialog == NULL)
     {
-        MessageBox(NULL, "Window Creation Failed!", "Error!",
+        MessageBox(NULL,(LPCWSTR)"Window Creation Failed!", (LPCWSTR)"Error!",
             MB_ICONEXCLAMATION | MB_OK);
         return text;
     }
 
     EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
-    HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", text.c_str(),
+    HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, (LPCWSTR)"EDIT", (LPCWSTR)text.c_str(),
         WS_CHILD | WS_VISIBLE | WS_TABSTOP,
         10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
 
 
-    HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "OK",
+    HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, (LPCWSTR)"BUTTON", (LPCWSTR)"OK",
         WS_CHILD | WS_VISIBLE | WS_TABSTOP,
         10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(NULL), NULL);
 
-    HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "Cancel",
+    HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, (LPCWSTR)"BUTTON", (LPCWSTR)"Cancel",
         WS_CHILD | WS_VISIBLE,
         80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(NULL), NULL);
 
