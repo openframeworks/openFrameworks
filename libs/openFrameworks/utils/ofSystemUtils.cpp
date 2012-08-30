@@ -157,7 +157,7 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		initGTK();
-		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, errorMessage.c_str());
+		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", errorMessage.c_str());
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		startGTK(dialog);
 	#endif
@@ -513,4 +513,179 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	}
 
 	return results;
+}
+
+#ifdef TARGET_WIN32
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch(msg)
+    {
+        /*case WM_CLOSE:
+            DestroyWindow(hwnd);
+        break;
+        case WM_DESTROY:
+            PostQuitMessage(0);
+        break;*/
+        default:
+            return DefWindowProc(hwnd, msg, wParam, lParam);
+    }
+    return 0;
+}
+#endif
+
+
+string ofSystemTextBoxDialog(string question, string text){
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+	initGTK();
+	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, question.c_str() );
+	GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	GtkWidget* textbox = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(textbox),text.c_str());
+	gtk_container_add (GTK_CONTAINER (content_area), textbox);
+	gtk_widget_show_all (dialog);
+	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
+		text = gtk_entry_get_text(GTK_ENTRY(textbox));
+	}
+	startGTK(dialog);
+#endif
+
+#ifdef TARGET_OSX
+	// create alert dialog
+	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+	[alert addButtonWithTitle:@"OK"];
+	[alert addButtonWithTitle:@"Cancel"];
+	[alert setMessageText:[NSString stringWithCString:question.c_str()
+											 encoding:NSUTF8StringEncoding]];
+	// create text field
+	NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
+	[label setStringValue:[NSString stringWithCString:text.c_str()
+											 encoding:NSUTF8StringEncoding]];
+	// add text field to alert dialog
+	[alert setAccessoryView:label];
+	NSInteger returnCode = [alert runModal];
+	// if OK was clicked, assign value to text
+	if ( returnCode == NSAlertFirstButtonReturn )
+		text = [[label stringValue] UTF8String];
+#endif
+
+#ifdef TARGET_WIN32
+    // we need to convert error message to a wide char message.
+    // first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
+
+    WNDCLASSEX wc;
+    MSG Msg;
+    const char g_szClassName[] = "myWindowClass";
+    //Step 1: Registering the Window Class
+    wc.cbSize        = sizeof(WNDCLASSEX);
+    wc.style         = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc   = WndProc;
+    wc.cbClsExtra    = 0;
+    wc.cbWndExtra    = 0;
+    wc.hInstance     = GetModuleHandle(0);
+    wc.lpszClassName = g_szClassName;
+    wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
+    wc.lpszMenuName  = NULL;
+    wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+    wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
+    if(!RegisterClassEx(&wc))
+    {
+        MessageBox(NULL, "Window Registration Failed!", "Error!",
+            MB_ICONEXCLAMATION | MB_OK);
+        return text;
+    }
+
+    HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
+        g_szClassName,
+        question.c_str(),
+        WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
+        CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
+        WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0),NULL);
+
+    if(dialog == NULL)
+    {
+        MessageBox(NULL, "Window Creation Failed!", "Error!",
+            MB_ICONEXCLAMATION | MB_OK);
+        return text;
+    }
+
+    EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
+    HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", text.c_str(),
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+        10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+
+
+    HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "OK",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+        10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(NULL), NULL);
+
+    HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON", "Cancel",
+        WS_CHILD | WS_VISIBLE,
+        80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(NULL), NULL);
+
+    SetFocus( hEdit );
+
+    ShowWindow(dialog, SW_SHOWNORMAL);
+    bool bFirstEmpty;
+    while (true){
+         if (!PeekMessageW( &Msg, 0, 0, 0, PM_REMOVE )){
+             if (bFirstEmpty){
+                 // ShowWindow the first time the queue goes empty
+                 ShowWindow( dialog, SW_SHOWNORMAL );
+                 bFirstEmpty = FALSE;
+             }
+             if (!(GetWindowLongW( dialog, GWL_STYLE ) & DS_NOIDLEMSG)){
+                 // No message present -> send ENTERIDLE and wait
+                 SendMessageW( WindowFromDC(wglGetCurrentDC()), WM_ENTERIDLE, MSGF_DIALOGBOX, (LPARAM)dialog );
+             }
+             GetMessageW( &Msg, 0, 0, 0 );
+         }
+
+         if (Msg.message == WM_QUIT){
+             PostQuitMessage( Msg.wParam );
+             if (!IsWindow( dialog )){
+                EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+                return text;
+             }
+             break;
+         }
+
+         if (!IsWindow( dialog )){
+            EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+            return text;
+         }
+
+         TranslateMessage( &Msg );
+         DispatchMessageW( &Msg );
+
+         if((Msg.hwnd == okButton && Msg.message==WM_LBUTTONUP) || (Msg.message==WM_KEYUP && Msg.wParam==13)){
+             break;
+         }else if((Msg.hwnd == cancelButton && Msg.message==WM_LBUTTONUP) ||  (Msg.message==WM_KEYUP && Msg.wParam==27)){
+             EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+             DestroyWindow(dialog);
+             return text;
+         }
+
+         if (!IsWindow( dialog )){
+            EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+            return text;
+         }
+
+         if (bFirstEmpty && Msg.message == WM_TIMER){
+             ShowWindow( dialog, SW_SHOWNORMAL );
+             bFirstEmpty = FALSE;
+         }
+     }
+     char buf[16384];
+     GetDlgItemTextA( dialog, 101, buf, 16384 );
+     text = buf;
+     DestroyWindow(dialog);
+     EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
+#endif
+
+#ifdef TARGET_ANDROID
+     text = ofxAndroidAlertTextBox(question,text);
+#endif
+
+	return text;
 }

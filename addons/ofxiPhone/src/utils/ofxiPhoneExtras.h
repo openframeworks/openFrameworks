@@ -192,6 +192,9 @@ NSString * ofxStringToNSString(string s);
 // It returns the path to the folder which your app has read/write access to.
 string ofxiPhoneGetDocumentsDirectory();
 
+// opens url in safari.
+void ofxiPhoneLaunchBrowser(string url);
+
 //-------------------------------------------------------------------------------
 // backwards compatibility
 //

@@ -2,6 +2,19 @@
 #include "ofMath.h"
 
 
+static ofImageType getImageTypeFromChannels(int channels){
+	switch(channels){
+	case 1:
+		return OF_IMAGE_GRAYSCALE;
+	case 3:
+		return OF_IMAGE_COLOR;
+	case 4:
+		return OF_IMAGE_COLOR_ALPHA;
+	default:
+		return OF_IMAGE_UNDEFINED;
+	}
+}
+
 template<typename PixelType>
 ofPixels_<PixelType>::ofPixels_(){
 	bAllocated = false;
@@ -327,16 +340,40 @@ int ofPixels_<PixelType>::getNumChannels() const{
 
 template<typename PixelType>
 ofImageType ofPixels_<PixelType>::getImageType() const{
-	switch(getNumChannels()){
-	case 1:
-		return OF_IMAGE_GRAYSCALE;
-	case 3:
-		return OF_IMAGE_COLOR;
-	case 4:
-		return OF_IMAGE_COLOR_ALPHA;
-	default:
-		return OF_IMAGE_UNDEFINED;
+	return getImageTypeFromChannels(getNumChannels());
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setImageType(ofImageType imageType){
+	if(!isAllocated() || imageType==getImageType()) return;
+	ofPixels_<PixelType> dst;
+	dst.allocate(width,height,imageType);
+	PixelType * dstPtr = &dst[0];
+	PixelType * srcPtr = &pixels[0];
+	int diffNumChannels = 0;
+	if(dst.getNumChannels()<getNumChannels()){
+		diffNumChannels = getNumChannels()-dst.getNumChannels();
 	}
+	for(int i=0;i<width*height;i++){
+		const PixelType & gray = *srcPtr;
+		for(int j=0;j<dst.getNumChannels();j++){
+			if(j<getNumChannels()){
+				*dstPtr++ =  *srcPtr++;
+			}else if(j<3){
+				*dstPtr++ = gray;
+			}else{
+				*dstPtr++ = ofColor_<PixelType>::limit();
+			}
+		}
+		srcPtr+=diffNumChannels;
+	}
+	swap(dst);
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setNumChannels(int numChannels){
+	if(!isAllocated() || numChannels==getNumChannels()) return;
+	setImageType(getImageTypeFromChannels(numChannels));
 }
 
 template<typename PixelType>

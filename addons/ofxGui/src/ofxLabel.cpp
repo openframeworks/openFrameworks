@@ -1,4 +1,5 @@
 #include "ofxLabel.h"
+#include "ofGraphics.h"
 
 ofxLabel* ofxLabel::setup(string labelName, ofxParameter<string> _label, float width, float height) {
     name     = labelName;

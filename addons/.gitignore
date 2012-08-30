@@ -17,6 +17,7 @@ ofxAndroid/ofAndroidLib/bin
 ofxAndroid/ofAndroidLib/gen
 !ofxAssimpModelLoader
 !ofxGui
+!ofxSvg
 
 # don't ignore the .gitignore file
 !.gitignore

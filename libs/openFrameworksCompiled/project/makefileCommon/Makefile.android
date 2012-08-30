@@ -1,7 +1,7 @@
 COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 
 NDK_PLATFORM = android-8
-GCC_VERSION = 4.4.3
+GCC_VERSION = 4.6
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	LIBSPATH = android/armeabi-v7a
@@ -16,7 +16,7 @@ else
     endif
 endif
 
-TOOLCHAIN=arm-linux-androideabi-4.4.3
+TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 ANDROID_PREFIX=arm-linux-androideabi-
 CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
@@ -24,29 +24,30 @@ CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_
 AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
-CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/" 
+CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)/include"
 CFLAGS += -DANDROID
 
 INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 
 
-LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)"
-SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/libgnustl_static.a -lgcc 
+LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)"
+SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)/libgnustl_static.a -lgcc
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
+#LIB_STATIC += $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libsndfile.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libcommon.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgsm.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libg72x.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libFLAC.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libreplaygain_synthesis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libreplaygain_analysis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgrabbag.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgrabbag.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgetopt.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libutf8.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbisfile.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbisenc.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libogg.a
 
 
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
 	TARGET = libs/armeabi/libOFAndroidApp.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined -fuse-ld=gold
 	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
 	TARGET = libs/armeabi/libOFAndroidApp.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined -fuse-ld=gold
 	USER_LIBS = $(USER_LIBS_ARM)
 endif
 
@@ -54,7 +55,7 @@ ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	TARGET_NAME = Release_arm7
 	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
 	TARGET = libs/armeabi-v7a/libOFAndroidApp.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined -fuse-ld=gold
 	USER_LIBS = $(USER_LIBS_ARM7)
 endif
 
@@ -62,7 +63,7 @@ ifeq ($(findstring Release_neon,$(MAKECMDGOALS)),Release_neon)
 	TARGET_NAME = Release_neon
 	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	TARGET = libs/armeabi-v7a/libOFAndroidApp_neon.so
-	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
+	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined -fuse-ld=gold
 	USER_LIBS = $(USER_LIBS_NEON)
 	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/android/armeabi-neon/libopenFrameworks.a
 endif
@@ -102,7 +103,7 @@ CleanAndroid:
 afterDebugAndroid:$(TARGET)
 	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
 	
-	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi
+	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi
 	
 	#create gdb.setup for armeabi
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
@@ -120,7 +121,7 @@ afterReleaseAndroid:$(TARGET)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	
 	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
-	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi-v7a
+	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a
 	
 	#create gdb.setup for armeabi-v7a
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
@@ -150,7 +151,11 @@ AndroidInstall:
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
+	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	else \
+	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	fi
 	if [ -d bin/classes ]; then rm -r bin/classes; fi
 	if [ -d bin/res ]; then rm -r bin/res; fi
 	if [ -f bin/classes.dex ]; then rm bin/classes.dex; fi
@@ -163,7 +168,11 @@ AndroidInstall:
 	if [ -f bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
 	if [ -f bin/build.prop ]; then rm bin/build.prop; fi
 	if [ -f bin/jarlist.cache ]; then rm bin/jarlist.cache; fi
-	ant debug
+	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	$(ANT_BIN)/ant debug; \
+	else \
+	ant debug; \
+	fi
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
 	$(SDK_ROOT)/platform-tools/adb uninstall $(PKGNAME)
