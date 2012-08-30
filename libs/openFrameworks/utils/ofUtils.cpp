@@ -194,105 +194,81 @@ void ofDisableDataPath(){
 }
 
 //--------------------------------------------------
-//use ofSetDataPathRoot() to override this
-static string & dataPathRoot(){
+string defaultDataPath(){
 #if defined TARGET_OSX
-	static string * dataPathRoot = new string("../../../data/");
+	return string("../../../data/");
 #elif defined TARGET_ANDROID
-	static string * dataPathRoot = new string("sdcard/");
+	return string("sdcard/");
 #elif defined(TARGET_LINUX)
-	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
+	return string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 #else
-	static string * dataPathRoot = new string("data/");
+	return string("data/");
 #endif
-	return *dataPathRoot;
-}
-
-static bool & isDataPathSet(){
-	static bool * dataPathSet = new bool(false);
-	return * dataPathSet;
+	
 }
 
 //--------------------------------------------------
-void ofSetDataPathRoot(string newRoot){
-	string newPath = "";
+//use ofSetDataPathRoot() to override this
+static Poco::Path & dataPathRoot(){
+	static Poco::Path dataPathRoot(defaultDataPath());
+	dataPathRoot.makeAbsolute();
+	return dataPathRoot;
+}
 
-	#ifdef TARGET_OSX
-		#ifndef TARGET_OF_IPHONE
-			char path[MAXPATHLEN];
-			uint32_t size = sizeof(path);
-
-			if (_NSGetExecutablePath(path, &size) == 0){
-				//printf("executable path is %s\n", path);
-				string pathStr = string(path);
-
-				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
-				//checked with spaces too!
-
-				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
-
-				newPath = "";
-
-				for(int i = 0; i < pathBrokenUp.size()-1; i++){
-					newPath += pathBrokenUp[i];
-					newPath += "/";
-				}
-
-				//cout << newPath << endl;   // some sanity checks here
-				//system( "pwd" );
-
-				chdir ( newPath.c_str() );
-				//system("pwd");
-			}else{
-				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
+//--------------------------------------------------
+void ofSetWorkingDirectoryToDefault(){
+#ifdef TARGET_OSX
+	#ifndef TARGET_OF_IPHONE
+		string newPath = "";
+		char path[MAXPATHLEN];
+		uint32_t size = sizeof(path);
+		
+		if (_NSGetExecutablePath(path, &size) == 0){
+			//printf("executable path is %s\n", path);
+			string pathStr = string(path);
+			
+			//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
+			//checked with spaces too!
+			
+			vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
+			
+			newPath = "";
+			
+			for(int i = 0; i < pathBrokenUp.size()-1; i++){
+				newPath += pathBrokenUp[i];
+				newPath += "/";
 			}
-		#endif
+			
+			//cout << newPath << endl;   // some sanity checks here
+			//system( "pwd" );
+			
+			chdir ( newPath.c_str() );
+			//system("pwd");
+		}else{
+			ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
+		}
 	#endif
+#endif
+}
 	
-	dataPathRoot() = newRoot;
-	isDataPathSet() = true;
+//--------------------------------------------------
+void ofSetDataPathRoot(string newRoot){
+	dataPathRoot() = Poco::Path(newRoot);
 }
 
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
+	if (!enableDataPath)
+		return path;
 	
-	if (!isDataPathSet())
-		ofSetDataPathRoot(dataPathRoot());
+	Poco::Path inputPath(dataPathRoot());
+	inputPath.resolve(path);
 	
-	if( enableDataPath ){
-
-		//check if absolute path has been passed or if data path has already been applied
-		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot().length()) != dataPathRoot())){
-			path = dataPathRoot()+path;
-		}
-
-		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
-			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
-
-			#ifndef TARGET_WIN32
-				char currDir[1024];
-				path = "/"+path;
-                path = getcwd(currDir, 1024)+path;
-
-			#else
-
-				char currDir[1024];
-				path = "\\"+path;
-				path = _getcwd(currDir, 1024)+path;
-				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-
-
-			#endif
-
-
-			#else
-				//do we need iphone specific code here?
-			#endif
-		}
-
+	if (makeAbsolute) {
+		inputPath.makeAbsolute();
 	}
-	return path;
+	
+	return inputPath.toString();
 }
 
 //----------------------------------------
