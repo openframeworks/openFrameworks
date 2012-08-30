@@ -89,7 +89,7 @@ else
 	AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 	SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -frtti -fexceptions
-	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/"
+	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)/include"
 	CFLAGS += -DANDROID
 endif
 

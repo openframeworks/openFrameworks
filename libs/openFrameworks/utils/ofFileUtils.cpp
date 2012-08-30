@@ -25,8 +25,13 @@ ofBuffer::ofBuffer(){
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const char * buffer, int size){
+ofBuffer::ofBuffer(const char * buffer, unsigned int size){
 	set(buffer, size);
+}
+
+//--------------------------------------------------
+ofBuffer::ofBuffer(const string & text){
+	set(text);
 }
 
 //--------------------------------------------------
@@ -81,11 +86,21 @@ bool ofBuffer::writeTo(ostream & stream) const {
 }
 
 //--------------------------------------------------
-void ofBuffer::set(const char * _buffer, int _size){
-	clear();
-	buffer.resize(_size + 1);
-	memcpy(getBinaryBuffer(), _buffer, _size);
-	buffer[_size] = 0;
+void ofBuffer::set(const char * _buffer, unsigned int _size){
+	buffer.assign(_buffer,_buffer+_size);
+	buffer.resize(buffer.size()+1);
+	buffer.back() = 0;
+}
+
+//--------------------------------------------------
+void ofBuffer::set(const string & text){
+	set(text.c_str(),text.size());
+}
+
+//--------------------------------------------------
+void ofBuffer::append(const char * _buffer, unsigned int _size){
+	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
+	buffer.back() = 0;
 }
 
 //--------------------------------------------------
@@ -124,8 +139,15 @@ string ofBuffer::getText() const {
 	return &buffer[0];
 }
 
+//--------------------------------------------------
 ofBuffer::operator string() const {
 	return getText();
+}
+
+//--------------------------------------------------
+ofBuffer & ofBuffer::operator=(const string & text){
+	set(text);
+	return *this;
 }
 
 //--------------------------------------------------
@@ -1208,8 +1230,8 @@ string ofFilePath::removeExt(string filename){
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getPathForDirectory(string path){
 	// if a trailing slash is missing from a path, this will clean it up
-	// if it's a windows-style \ path it will add a \
-	// if it's a unix-style / path it will add a /
+	// if it's a windows-style "\" path it will add a "\"
+	// if it's a unix-style "/" path it will add a "/"
 	return Path::forDirectory(path).toString();
 }
 
@@ -1300,7 +1322,9 @@ string ofFilePath::join(string path1, string path2){
 string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
-		readlink("/proc/self/exe", buff, FILENAME_MAX);
+		if (readlink("/proc/self/exe", buff, FILENAME_MAX) == -1){
+			ofLogError("ofFilePath") << "readlink failed with error " << errno;
+		}
 		return buff;
 	#elif defined(TARGET_OSX)
 		char path[FILENAME_MAX];
