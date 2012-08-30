@@ -33,8 +33,8 @@ void ofBaseVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 ofPixelFormat ofBaseVideoGrabber::getPixelFormat(){
-	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
-	return ofPixelFormat();
+	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::getPixelFormat not implemented");
+	return OF_PIXELS_RGB;
 }
 
 //---------------------------------------------------------------------------
@@ -137,6 +137,6 @@ void ofBaseVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 }
 //---------------------------------------------------------------------------
 ofPixelFormat ofBaseVideoPlayer::getPixelFormat(){
-	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setPixelFormat not implemented");
-	return ofPixelFormat();
+	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::getPixelFormat not implemented");
+	return OF_PIXELS_RGB;
 }
