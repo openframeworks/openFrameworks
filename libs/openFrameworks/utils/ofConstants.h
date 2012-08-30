@@ -380,7 +380,7 @@ enum ofRectScaleMode{
     // Can CHANGE the SUBJECT's aspect ratio.
     // Subject's Area == Target's Area
     // Subject's Center == Target's Center
- 	OF_RECTSCALEMODE_STRETCH = 3, // simply matches the target dims
+ 	OF_RECTSCALEMODE_STRETCH_TO_FILL = 3, // simply matches the target dims
 };
 
 enum ofImageType{
