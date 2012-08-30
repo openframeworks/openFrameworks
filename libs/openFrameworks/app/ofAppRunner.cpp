@@ -74,7 +74,8 @@ void ofRunApp(ofBaseApp * OFSA){
 
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
-
+	ofSetWorkingDirectoryToDefault();
+	
 	window->runAppViaInfiniteLoop(OFSAptr.get());
 }
 
