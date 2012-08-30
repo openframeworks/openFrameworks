@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 
 
-#ifndef TARGET_LINUX
+#if !defined(TARGET_LINUX) && !defined(MAC_OS_X_VERSION_10_7)
 
 //---------------------------------
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
