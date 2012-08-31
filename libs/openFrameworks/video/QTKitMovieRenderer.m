@@ -63,6 +63,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (BOOL) loadMovie:(NSString*)moviePath synchronously:(BOOL)sync pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
 {
+    // save the vars in case we need to call loadMovie again
+    _path = moviePath;
+    _pathIsURL = isURL;
+
     // if the path is local, make sure the file exists before proceeding
     if (!isURL && ![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
     {
@@ -96,9 +100,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     else {
         [movieAttributes setObject:[NSNumber numberWithBool:YES]
                             forKey:QTMovieOpenAsyncRequiredAttribute];
-        // TODO: Sometimes this works, and sometimes it doesn't, WHY?!
-//        [movieAttributes setObject:[NSNumber numberWithBool:YES]
-//                            forKey:QTMovieOpenForPlaybackAttribute];
     }
     
 	_movie = [[QTMovie alloc] initWithAttributes:movieAttributes 
@@ -137,8 +138,13 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         // an error occurred while loading the movie
         NSError *error = [movie attributeForKey:
                           QTMovieLoadStateErrorAttribute];
-        NSLog(@"Error Loading Async Movie: %@", error);
-
+        NSLog(@"Error loading async movie: %@", error);
+        NSLog(@"Trying to load movie synchronously");
+        [self loadMovie:_path
+          synchronously:YES
+              pathIsURL:_pathIsURL
+           allowTexture:useTexture allowPixels:usePixels
+             allowAlpha:useAlpha];
     }
 
     if ((loadState >= QTMovieLoadStateLoaded) && state != QTKitStateLoaded) {

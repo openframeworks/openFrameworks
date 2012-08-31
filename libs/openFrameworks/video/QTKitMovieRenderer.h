@@ -22,13 +22,16 @@ enum QTKitMovieState
 	CVOpenGLTextureCacheRef _textureCache;
 	CVOpenGLTextureRef _latestTextureFrame;
 	CVPixelBufferRef _latestPixelFrame;
-    
+
+    enum QTKitMovieState state;
+    NSString * _path;
+    BOOL _pathIsURL;
+
 	NSSize movieSize;
 	QTTime movieDuration;
 	NSInteger frameCount;
 	double frameStep;
     QTTime lastMovieTime;
-    enum QTKitMovieState state;
 	BOOL frameUpdated;
 	BOOL useTexture;
 	BOOL usePixels;

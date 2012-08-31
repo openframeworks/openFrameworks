@@ -20,8 +20,8 @@ void testApp::setup(){
 
     // Load a local file or a URL
     // Set the 3rd parameter to TRUE for asynchronous loading
-    fingerMovie.loadMovie("movies/fingers.mov", decodeMode, false);
-    //fingerMovie.loadMovie("http://labs.silentlycrashing.net/fingers.mov", decodeMode, true);
+    //fingerMovie.loadMovie("movies/fingers.mov", decodeMode, false);
+    fingerMovie.loadMovie("http://labs.silentlycrashing.net/fingers.mov", decodeMode, true);
 
     // You can use this event to be notified when the video is ready for playback
     ofAddListener(fingerMovie.videoReadyEvent, this, &testApp::videoReady);
