@@ -161,7 +161,7 @@ static void releaseFB(GLuint id){
 			glDeleteFramebuffers(1, &id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofFbo: releasing id not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofFbo") << "releasing id not found, this shouldn't be happening releasing anyway";
 		glDeleteFramebuffers(1, &id);
 	}
 }
@@ -189,7 +189,7 @@ static void releaseRB(GLuint id){
 			glDeleteRenderbuffers(1, &id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofFbo: releasing id not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofFbo") << "releasing id not found, this shouldn't be happening releasing anyway";
 		glDeleteRenderbuffers(1, &id);
 	}
 }
@@ -353,30 +353,29 @@ static GLboolean CheckExtension( const char *extName ){
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	if(CheckExtension("GL_EXT_framebuffer_object")){
-		ofLog(OF_LOG_VERBOSE,"FBO supported");
+		ofLogVerbose("ofFbo") << "FBO supported";
 	}else{
-		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+        ofLogError("ofFbo") << "FBO not supported by this graphics card";
 		return false;
 	}
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
 
-	ofLog(OF_LOG_NOTICE, string("ofFbo::checkGLSupport()\n") +
-		  "maxColorAttachments: " + ofToString(_maxColorAttachments) + "\n" +
-		  "maxDrawBuffers: " + ofToString(_maxDrawBuffers) + "\n" +
-		  "maxSamples: " + ofToString(_maxSamples)
-		  );
+	ofLogVerbose("ofFbo") << "checkGLSupport()"
+                          << "maxColorAttachments: " << _maxColorAttachments
+                          << "maxDrawBuffers: " << _maxDrawBuffers
+                          << "maxSamples: " << _maxSamples;
 #else
 
 	if(CheckExtension("GL_OES_framebuffer_object")){
-		ofLog(OF_LOG_VERBOSE,"FBO supported");
+		ofLogVerbose("ofFbo") << "FBO supported";
 	}else{
-		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+		ofLogError("ofFbo") << "FBO not supported by this graphics card";
 		return false;
 	}
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
-	ofLog(OF_LOG_VERBOSE,extensions);
+	ofLogVerbose("ofFbo") << extensions;
 #endif
 
 	return true;
@@ -413,7 +412,7 @@ void ofFbo::allocate(Settings _settings) {
 	if(_settings.width == 0) _settings.width = ofGetWidth();
 	if(_settings.height == 0) _settings.height = ofGetHeight();
 	if(_settings.numSamples > maxSamples() && maxSamples() > -1) {
-		ofLogWarning() << "clamping numSamples (" << _settings.numSamples << ") to maxSamples (" << maxSamples() << ")";
+		ofLogWarning("ofFbo") << "clamping numSamples (" << _settings.numSamples << ") to maxSamples (" << maxSamples() << ")";
 		_settings.numSamples = maxSamples();
 	}
 	settings = _settings;
@@ -426,7 +425,7 @@ void ofFbo::allocate(Settings _settings) {
 	bind();
 
 	if(settings.depthStencilAsTexture && settings.numSamples){
-		ofLogWarning() << "multisampling not supported with depth as texture, setting 0 samples";
+		ofLogWarning("ofFbo") << "multisampling not supported with depth as texture, setting 0 samples";
 		settings.numSamples = 0;
 	}
 
@@ -438,7 +437,7 @@ void ofFbo::allocate(Settings _settings) {
 	}
     if( settings.depthStencilAsTexture ){
         settings.depthStencilAsTexture = false;
-        ofLogWarning() << "ofFbo::Settings depthStencilAsTexture is not available for iOS" << endl;
+        ofLogWarning("ofFbo") << "ofFbo::Settings depthStencilAsTexture is not available for iOS" << endl;
     }
 #endif
     
@@ -517,7 +516,7 @@ void ofFbo::allocate(Settings _settings) {
 	#else
 		fboTextures = fbo;
 		if(settings.numSamples){
-			ofLog(OF_LOG_WARNING,"ofFbo: multisampling not supported in opengles");
+			ofLogWarning("ofFbo") << "multisampling not supported in opengles";
 		}
 	#endif
 
@@ -655,7 +654,7 @@ void ofFbo::setActiveDrawBuffer(int i){
         GLenum e = GL_COLOR_ATTACHMENT0 + i;
         glDrawBuffer(e);
     }else{
-        ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+        ofLogWarning("ofFbo") << "trying to activate texture " << i << " for drawing that is out of the range (0->" << getNumTextures() << ") of allocated textures for this fbo.";
     }
 	#endif
 }
@@ -669,7 +668,7 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
             GLenum e = GL_COLOR_ATTACHMENT0 + id;
             attachments.push_back(e);
         }else{
-            ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(id) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+            ofLogWarning("ofFbo") << "trying to activate texture " << id << " for drawing that is out of the range (0->" << getNumTextures() << ") of allocated textures for this fbo.";
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
@@ -684,7 +683,7 @@ void ofFbo::activateAllDrawBuffers(){
             GLenum e = GL_COLOR_ATTACHMENT0 + i;
             attachments.push_back(e);
         }else{
-            ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+            ofLogWarning("ofFbo") << "trying to activate texture " << i << " for drawing that is out of the range (0->" << getNumTextures() << ") of allocated textures for this fbo.";
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
@@ -834,37 +833,36 @@ bool ofFbo::checkStatus() {
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	switch(status) {
 		case GL_FRAMEBUFFER_COMPLETE:
-			ofLog(OF_LOG_NOTICE, "FRAMEBUFFER_COMPLETE - OK");
+			ofLogVerbose("ofFbo") << "FRAMEBUFFER_COMPLETE - OK";
 			return true;
-
 		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_DIMENSIONS");
+			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_FORMATS");
+			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_FORMATS";
 			break;
 		case GL_FRAMEBUFFER_UNSUPPORTED:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_UNSUPPORTED");
+			ofLogError("ofFbo") << "FRAMEBUFFER_UNSUPPORTED";
 			break;
 #ifndef TARGET_OPENGLES
 		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
+			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-			ofLog(OF_LOG_ERROR, "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
+			ofLogError("ofFbo") << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
 			break;
 #endif
 		default:
-			ofLog(OF_LOG_ERROR, "UNKNOWN ERROR");
+			ofLogError("ofFbo") << "UNKNOWN ERROR";
 			break;
 
 	}
@@ -874,7 +872,7 @@ bool ofFbo::checkStatus() {
 
 ofTexture & ofFbo::getDepthTexture(){
 	if(!settings.depthStencilAsTexture){
-		ofLogError() << "fbo not allocated with depthAsTexture";
+		ofLogError("ofFbo") << "fbo not allocated with depthAsTexture";
 	}
 	return depthBufferTex;
 }

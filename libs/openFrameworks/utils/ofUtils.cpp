@@ -13,8 +13,9 @@
 
 
 #ifdef TARGET_WIN32
-	#ifndef _MSC_VER
+    #ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
+	#include <sys/param.h> // for MAXPATHLEN
     #endif
 #endif
 
@@ -36,6 +37,10 @@
 		#include <direct.h>
 	#endif
 
+#endif
+
+#ifndef MAXPATHLEN
+	#define MAXPATHLEN 1024
 #endif
 
 static bool enableDataPath = true;
@@ -341,10 +346,14 @@ char ofHexToChar(const string& charHexString) {
 
 //----------------------------------------
 float ofHexToFloat(const string& floatHexString) {
-	int x = 0;
+	union intFloatUnion {
+		int x;
+		float f;
+	} myUnion;
+	myUnion.x = 0;
 	istringstream cur(floatHexString);
-	cur >> hex >> x;
-	return *((float*) &x);
+	cur >> hex >> myUnion.x;
+	return myUnion.f;
 }
 
 //----------------------------------------
@@ -437,15 +446,13 @@ char ofBinaryToChar(const string& value) {
 float ofBinaryToFloat(const string& value) {
 	const int floatSize = sizeof(float) * 8;
 	bitset<floatSize> binaryString(value);
-	unsigned long result = binaryString.to_ulong();
-	// this line means:
-	// 1 take the address of the unsigned long
-	// 2 pretend it is the address of a float
-	// 3 then use it as a float
-	// this is a bit-for-bit 'typecast'
-	return *((float*) &result);
+	union ulongFloatUnion {
+			unsigned long result;
+			float f;
+	} myUFUnion;
+	myUFUnion.result = binaryString.to_ulong();
+	return myUFUnion.f;
 }
-
 //----------------------------------------
 string ofBinaryToString(const string& value) {
 	ostringstream out;
