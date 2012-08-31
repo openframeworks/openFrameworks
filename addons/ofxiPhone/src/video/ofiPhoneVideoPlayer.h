@@ -13,10 +13,13 @@ public:
 	
 	ofiPhoneVideoPlayer();
 	~ofiPhoneVideoPlayer();
-    
+	    
     bool loadMovie(string name);
     void close();
     void update();
+	
+	bool			setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat 	getPixelFormat();
 	
     void play();
     void stop();
@@ -52,7 +55,6 @@ public:
     void firstFrame();
     void nextFrame();
     void previousFrame();
-    void setPixelFormat(ofPixelFormat pixelFormat);
     
 	void * getAVFoundationVideoPlayer();
     
@@ -74,6 +76,7 @@ protected:
 	GLubyte * pixelsRGB;
     GLubyte * pixelsRGBA;
     GLint internalGLFormat;
+	ofPixelFormat internalPixelFormat;
 	ofTexture videoTexture;
 };
 

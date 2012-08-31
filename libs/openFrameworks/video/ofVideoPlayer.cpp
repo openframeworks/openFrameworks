@@ -11,7 +11,8 @@ ofVideoPlayer::ofVideoPlayer (){
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer){
 	player = newPlayer;
-	internalPixelFormat = player->getPixelFormat();
+	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
+											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }
 
 //---------------------------------------------------------------------------
@@ -19,12 +20,36 @@ ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 	return player;
 }
 
+//we only set pixel format on the player if it exists. 
+//if the movie is already loaded then we can't update the format.
+//also if the format is not supported we get the format from the player instead.
 //--------------------------------------------------------------------
-void ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
-	internalPixelFormat = pixelFormat;
+bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 	if( player != NULL ){
-		player->setPixelFormat(internalPixelFormat);
+		if( player->isLoaded() ){
+			ofLogWarning("ofVideoPlayer") << "setPixelFormat - can't be called on a movie that is already loaded ";
+			internalPixelFormat = player->getPixelFormat(); 
+			return false;
+		}else{
+			if( player->setPixelFormat(pixelFormat) ){		
+				internalPixelFormat = player->getPixelFormat();  //we do this as either way we want the players format
+			}else{
+				internalPixelFormat = player->getPixelFormat();  //we do this as either way we want the players format
+				return false; 					
+			}
+		}
+	}else{
+		internalPixelFormat = pixelFormat;	
 	}
+	return true;
+}
+
+//---------------------------------------------------------------------------
+ofPixelFormat ofVideoPlayer::getPixelFormat(){
+	if( player != NULL ){
+		internalPixelFormat = player->getPixelFormat();
+	}
+	return internalPixelFormat;
 }
 
 //---------------------------------------------------------------------------
@@ -119,8 +144,11 @@ void ofVideoPlayer::update(){
 			
 			if(playerTex == NULL){
 				unsigned char *pxls = player->getPixels();
-
-				if(width==0 || height==0) {
+				
+				bool bDiffPixFormat = ( tex.bAllocated() && tex.texData.glTypeInternal != ofGetGLTypeFromPixelFormat(internalPixelFormat) );
+				
+				//TODO: we might be able to do something smarter here for not re-allocating movies of the same size and type. 
+				if(width==0 || height==0 || bDiffPixFormat ){ //added a check if the pixel format and the texture don't match
 					if(player->getWidth() != 0 && player->getHeight() != 0) {
 						
 						width = player->getWidth();
