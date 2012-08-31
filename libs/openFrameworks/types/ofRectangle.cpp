@@ -139,7 +139,7 @@ ofRectangle ofRectangle::scaleToMe(const ofRectangle& toBeScaled, ofRectScaleMod
     ofRectangle result;
 
     // the easy case shortcuts
-    if(rectScaleMode == OF_RECTSCALEMODE_STRETCH) {
+    if(rectScaleMode == OF_RECTSCALEMODE_STRETCH_TO_FILL) {
         result.set(*this);
         return result;
     } else if(rectScaleMode == OF_RECTSCALEMODE_CENTER) {
