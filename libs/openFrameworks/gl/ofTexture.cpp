@@ -337,7 +337,7 @@ ofTexture::ofTexture(const ofTexture & mom){
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture & mom){
-	if(!texData.bExternalTextureID){
+	if(!texData.bUseExternalTextureID){
 		release(texData.textureID);
 	}
 	anchor = mom.anchor;
@@ -377,17 +377,17 @@ const ofTextureData& ofTexture::getTextureData() const {
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
-	if(!texData.bExternalTextureID){
+	if(!texData.bUseExternalTextureID){
 		release(texData.textureID);
 	}
 }
 
 //----------------------------------------------------------
 void ofTexture::clear(){
-	if(!texData.bExternalTextureID){
+	if(!texData.bUseExternalTextureID){
 		release(texData.textureID);
 	}
-	texData.bExternalTextureID = false;
+	texData.bUseExternalTextureID = false;
 	texData.textureID  = 0;
 	texData.bAllocated = false;
 }
@@ -397,7 +397,7 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 	clear();
 	texData.textureID = externTexID;
 	texData.bAllocated = true;
-	texData.bExternalTextureID = true;
+	texData.bUseExternalTextureID = true;
 }
 
 //----------------------------------------------------------
