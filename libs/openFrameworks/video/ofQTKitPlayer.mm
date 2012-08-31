@@ -425,8 +425,9 @@ void ofQTKitPlayer::reallocatePixels(){
 void ofQTKitPlayer::updateTexture(){
 	if(moviePlayer.textureAllocated){
 	   ofTextureData& data = tex.getTextureData();
-		data.bAllocated = true;
-		data.textureID = moviePlayer.textureID;
+	   		
+		tex.setUseExternalTextureID(moviePlayer.textureID); 
+		
 		data.textureTarget = moviePlayer.textureTarget;
 		data.width = getWidth();
 		data.height = getHeight();
