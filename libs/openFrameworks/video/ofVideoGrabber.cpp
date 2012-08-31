@@ -17,6 +17,7 @@
 ofVideoGrabber::ofVideoGrabber(){
 	bUseTexture			= false;
 	bInitialized		= false;
+	grabberRunning		= false;
 	RequestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
 	desiredFramerate 	= -1;
@@ -62,17 +63,17 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		grabber->setDeviceID(RequestedDeviceID);
 	}
 
-	grabber->setPixelFormat(internalPixelFormat);
+	setPixelFormat(internalPixelFormat); //this safely handles checks for supported format
 
 	if( desiredFramerate!=-1 ){
 		grabber->setDesiredFrameRate(desiredFramerate);
 	}
 
-	bool bOk = grabber->initGrabber(w, h);
-	width	 = (int)grabber->getWidth();
-	height	 = (int)grabber->getHeight();
+	grabberRunning	= grabber->initGrabber(w, h);
+	width			= (int)grabber->getWidth();
+	height			= (int)grabber->getHeight();
 
-	if( bOk && bUseTexture ){
+	if( grabberRunning && bUseTexture ){
 		if(internalPixelFormat == OF_PIXELS_RGB)
 			tex.allocate(width, height, GL_RGB);
 		else if(internalPixelFormat == OF_PIXELS_RGBA)
@@ -87,16 +88,33 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 #endif
 	}
 
-	return bOk;
+	return grabberRunning;
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
-	internalPixelFormat = pixelFormat;
+bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
+	internalPixelFormat = pixelFormat;	
+	if( grabber != NULL ){
+		if( grabberRunning ){
+			ofLogWarning("ofVideoGrabber") << "setPixelFormat - can't be called while the grabber is running ";
+			internalPixelFormat = grabber->getPixelFormat(); 
+			return false;
+		}else{
+			if( !grabber->setPixelFormat(internalPixelFormat) ){
+				internalPixelFormat = grabber->getPixelFormat();
+				return false; 	
+			}
+		}
+	}
+	return true;
 }
 
+//---------------------------------------------------------------------------
 ofPixelFormat ofVideoGrabber::getPixelFormat(){
-	return grabber->getPixelFormat();
+	if( grabber != NULL ){
+		internalPixelFormat = grabber->getPixelFormat();
+	}
+	return internalPixelFormat;
 }
 
 //--------------------------------------------------------------------
@@ -188,6 +206,7 @@ void ofVideoGrabber::close(){
 	if(	grabber != NULL ){
 		grabber->close();
 		bInitialized=false;
+		grabberRunning = false;
 	}
 	tex.clear();
 }
