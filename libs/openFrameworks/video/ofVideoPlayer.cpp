@@ -31,9 +31,11 @@ bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 			internalPixelFormat = player->getPixelFormat(); 
 			return false;
 		}else{
-			if( !player->setPixelFormat(pixelFormat) ){
-				internalPixelFormat = player->getPixelFormat();
-				return false; 	
+			if( player->setPixelFormat(pixelFormat) ){		
+				internalPixelFormat = player->getPixelFormat();  //we do this as either way we want the players format
+			}else{
+				internalPixelFormat = player->getPixelFormat();  //we do this as either way we want the players format
+				return false; 					
 			}
 		}
 	}else{
