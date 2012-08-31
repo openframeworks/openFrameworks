@@ -268,23 +268,25 @@ string ofToDataPath(string path, bool makeAbsolute){
 	Poco::Path inputPath(path);
 	Poco::Path outputPath;
 	
-	if (!inputPath.isAbsolute()) {
-		// here we check whether path already refers to the data folder by looking for common elements
-		// if the path begins with the full contents of dataPathRoot
-		// we compare inputPath.toString() rather that the input var path ensure common formatting against dataPathRoot.toString() to
-		
-		// strip trailing slash from datapath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-		string strippedDataPath = dataPath.toString();
-		strippedDataPath.resize(strippedDataPath.length() - 1);
-		
-		if (inputPath.toString().find(strippedDataPath) != 0) {
-			// inputPath doesn't contain data path already, so we add it
-			outputPath = dataPath;
-			outputPath.resolve(inputPath);
-		} else {
-			// inputPath does contain data path already, no need to change
-			outputPath = inputPath;
-		}
+	if (inputPath.isAbsolute()) {
+		return path;
+	}
+	
+	// here we check whether path already refers to the data folder by looking for common elements
+	// if the path begins with the full contents of dataPathRoot
+	// we compare inputPath.toString() rather that the input var path ensure common formatting against dataPathRoot.toString() to
+	
+	// strip trailing slash from datapath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
+	string strippedDataPath = dataPath.toString();
+	strippedDataPath.resize(strippedDataPath.length() - 1);
+	
+	if (inputPath.toString().find(strippedDataPath) != 0) {
+		// inputPath doesn't contain data path already, so we add it
+		outputPath = dataPath;
+		outputPath.resolve(inputPath);
+	} else {
+		// inputPath does contain data path already, no need to change
+		outputPath = inputPath;
 	}
 	
 	if (makeAbsolute) {
