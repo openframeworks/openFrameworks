@@ -65,7 +65,7 @@ public:
 		bFlipTexture = false;
 		compressionType = OF_COMPRESS_NONE;
 		bAllocated = false;
-		bExternalTextureID = false;
+		bUseExternalTextureID = false;
 	}
 
 	unsigned int textureID;
@@ -83,7 +83,7 @@ public:
 	bool bFlipTexture;
 	ofTexCompression compressionType;
 	bool bAllocated;
-	bool bExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
+	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
