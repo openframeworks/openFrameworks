@@ -291,7 +291,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 	
 	// finally, if we do want an absolute path and we don't already have one
 	if (makeAbsolute) {
-		// then we perform it here
+		// then we return the absolute form of the path
 		return outputPath.absolute().toString();
 	} else {
 		// or output the relative path
