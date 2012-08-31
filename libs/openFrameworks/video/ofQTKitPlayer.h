@@ -20,7 +20,6 @@ enum ofQTKitDecodeMode {
 class ofVideoReadyEventArgs : public ofEventArgs {
 public:
 	ofBaseVideoPlayer* player;
-	string error; //"" if there is no error
 };
 
 
