@@ -82,6 +82,12 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		imageBuffer.allocate(_viewport.width, _viewport.height, 4);
 		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
+	case FROM_FILE_EXTENSION:
+		ofLogFatalError("ofCairoRenderer") << "Type not determined from file extension!";
+		break;
+	default:
+		ofLogError("ofCairoRenderer") << "Unknown type encountered!";
+		break;
 	}
 
 	cr = cairo_create(surface);
@@ -538,6 +544,7 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_RGB24, pix.getWidth(), pix.getHeight(), stride);
 		break;
 	case OF_IMAGE_UNDEFINED:
+	default:
 		ofLog(OF_LOG_ERROR,"ofCairoRenderer: trying to render undefined type image");
 		popMatrix();
 		return;
@@ -1078,7 +1085,7 @@ void ofCairoRenderer::setSphereResolution(int res) {
 	float radius = 1.f; // normalize the verts //
 	
 	int i, j;
-	float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
+	float j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
 	cte3 = (theta2)/n;
 	cte1 = (phi2-phi1)/ndiv2;
 	dosdivn = 2*unodivn;
@@ -1111,7 +1118,6 @@ void ofCairoRenderer::setSphereResolution(int res) {
 		p2.y = radius * e2.y;
 		
 		idivn=0;
-		jdivn=j1divn;
 		j1divn+=dosdivn;
 		for (i=0;i<=n;i++) {
 			t3 += cte3;
@@ -1140,7 +1146,6 @@ void ofCairoRenderer::drawSphere(float x, float y, float z, float radius) {
 	int n = ofGetStyle().sphereResolution * 2;
 	float ndiv2=(float)n/2;
 	int cindex = 0;
-	int stripVerts = (ndiv2*((n+1)*2));
 	
 	if(sphereVerts.size() < 1) {
 		// double check to make sure that setSphereResolution has been called at least once //
