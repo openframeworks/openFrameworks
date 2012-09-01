@@ -25,6 +25,9 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		void					update();
 		bool					isFrameNew();
 
+		bool					setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat			getPixelFormat();
+
 		unsigned char			* getPixels();
 		ofPixelsRef		 		getPixelsRef();
 		

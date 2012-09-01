@@ -37,9 +37,12 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		bool 				loadMovie(string name);
 	    string				getMoviePath();
-		void				setPixelFormat(ofPixelFormat pixelFormat);
+
+		bool				setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat		getPixelFormat(); 
+		
 		void 				closeMovie();
-		void 				close();
+		void 				close();		
 
 		void				update();
 		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead", void idleMovie());

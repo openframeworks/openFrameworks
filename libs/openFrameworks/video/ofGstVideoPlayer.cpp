@@ -23,8 +23,13 @@ ofGstVideoPlayer::~ofGstVideoPlayer(){
 	close();
 }
 
-void ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
+bool ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	return true;
+}
+
+ofPixelFormat ofGstVideoPlayer::getPixelFormat(){
+	return internalPixelFormat;
 }
 
 bool ofGstVideoPlayer::loadMovie(string name){
