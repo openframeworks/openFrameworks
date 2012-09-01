@@ -2,9 +2,7 @@
 #include "ofUtils.h"
 
 #ifndef TARGET_LINUX
-//--------------------------------------------------------------
 #ifdef  OF_VIDEO_PLAYER_QUICKTIME
-//--------------------------------------------------------------
 
 bool  	createMovieFromPath(char * path, Movie &movie);
 bool 	createMovieFromPath(char * path, Movie &movie){
@@ -100,11 +98,6 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 	ofvp->bHavePixelsChanged = true;
 	return noErr;
 }
-
-//--------------------------------------------------------------
-#endif
-//--------------------------------------------------------------
-
 
 //---------------------------------------------------------------------------
 ofQuickTimePlayer::ofQuickTimePlayer (){
@@ -669,6 +662,22 @@ int ofQuickTimePlayer::getCurrentFrame(){
 
 }
 
+//---------------------------------------------------------------------------
+bool ofQuickTimePlayer::setPixelFormat(ofPixelFormat pixelFormat){
+	//note as we only support RGB we are just confirming that this pixel format is supported
+	if( pixelFormat == OF_PIXELS_RGB ){
+		return true;
+	}
+	ofLogWarning("ofQuickTimePlayer") << "requested pixel format not supported" << endl;
+	return false;
+}
+
+//---------------------------------------------------------------------------
+ofPixelFormat ofQuickTimePlayer::getPixelFormat(){
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	return OF_PIXELS_RGB;
+}
+
 
 //---------------------------------------------------------------------------
 bool ofQuickTimePlayer::getIsMovieDone(){
@@ -839,6 +848,8 @@ bool ofQuickTimePlayer::isLoaded(){
 bool ofQuickTimePlayer::isPlaying(){
 	return bPlaying;
 }
+
+#endif
 
 #endif
 
