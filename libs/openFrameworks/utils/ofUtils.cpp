@@ -278,7 +278,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
 	string strippedDataPath = dataPath.toString();
 	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-	strippedDataPath.resize(strippedDataPath.length() - 1);
+	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
 	
 	if (inputPath.toString().find(strippedDataPath) != 0) {
 		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
