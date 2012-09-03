@@ -278,7 +278,6 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		return false;
 	}
 
-	FT_Select_Charmap(face,FT_ENCODING_UNICODE);
 
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
 	lineHeight = fontSize * 1.43f;
