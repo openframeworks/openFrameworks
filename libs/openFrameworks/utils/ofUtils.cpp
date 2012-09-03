@@ -467,22 +467,6 @@ string ofBinaryToString(const string& value) {
 }
 
 //--------------------------------------------------
-string ofUTF8ToISO8859_1(const string & utf8){
-	string ansi;
-	for(unsigned int i=0;i<utf8.length();i++){
-		if((unsigned char)utf8[i]==0xC3){
-			ansi+=ofToString((unsigned char)(((unsigned char)utf8[++i])+0x40));
-		}else if((unsigned char)utf8[i]==0xC2){
-			ansi+=ofToString((unsigned char)utf8[++i]);
-		}else{
-			ansi.resize(ansi.size()+1);
-			ansi[ansi.size()-1]=utf8[i];
-		}
-	}
-	return ansi;
-}
-
-//--------------------------------------------------
 vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty, bool trim) {
 	vector<string> result;
 	if (delimiter.empty()) {
