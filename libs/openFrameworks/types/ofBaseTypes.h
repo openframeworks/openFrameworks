@@ -203,13 +203,14 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual float	getHeight() = 0;
 	virtual float	getWidth() = 0;
 	
+	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat getPixelFormat() = 0;
+
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
 	virtual void setDeviceID(int _deviceID);
 	virtual void setDesiredFrameRate(int framerate);
 	virtual void videoSettings();
-	virtual void setPixelFormat(ofPixelFormat pixelFormat);
-	virtual ofPixelFormat getPixelFormat();
 	
 };
 
@@ -241,6 +242,9 @@ public:
 	virtual bool				isLoaded() = 0;
 	virtual bool				isPlaying() = 0;
 	
+	virtual bool				setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat 		getPixelFormat() = 0;
+		
 	//should implement!
 	virtual float 				getPosition();
 	virtual float 				getSpeed();
@@ -261,8 +265,6 @@ public:
 	virtual void				firstFrame();
 	virtual void				nextFrame();
 	virtual void				previousFrame();
-	virtual void				setPixelFormat(ofPixelFormat pixelFormat);
-	
 };
 
 //----------------------------------------------------------
