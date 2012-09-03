@@ -11,6 +11,9 @@
 
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "Poco/TextConverter.h"
+#include "Poco/UTF8Encoding.h"
+#include "Poco/Latin1Encoding.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -617,7 +620,11 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 //-----------------------------------------------------------
 vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
-	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8) str = ofUTF8ToISO8859_1(str);
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin1Encoding()).convert(str,o);
+		str=o;
+	}
 
 	vector<ofTTFCharacter> shapes;
 
@@ -765,7 +772,11 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	texAtlas.draw(0,0);*/
 
-	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8) c = ofUTF8ToISO8859_1(c);
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin1Encoding()).convert(c,o);
+		c=o;
+	}
 
     if (!bLoadedOk){
     	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
@@ -874,7 +885,11 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		return;
 	}
 
-	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8) c = ofUTF8ToISO8859_1(c);
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin1Encoding()).convert(c,o);
+		c=o;
+	}
 
 	GLint		index	= 0;
 	GLfloat		X		= 0;
