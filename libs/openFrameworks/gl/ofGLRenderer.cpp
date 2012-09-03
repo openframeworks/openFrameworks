@@ -363,7 +363,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 		
 	ofMatrix4x4 persp;
 	persp.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
-	ofLoadMatrix( &persp );
+	loadMatrix( persp );
 	//gluPerspective(fov, aspect, nearDist, farDist);
 
 
@@ -372,7 +372,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 	
 	ofMatrix4x4 lookAt;
 	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
-	ofLoadMatrix( &lookAt );
+	loadMatrix( lookAt );
 	//gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
 
 	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
@@ -693,8 +693,8 @@ void ofGLRenderer::loadIdentityMatrix (void){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::loadMatrix (const ofMatrix4x4 *m){
-	loadMatrix( m->getPtr() );
+void ofGLRenderer::loadMatrix (const ofMatrix4x4 & m){
+	loadMatrix( m.getPtr() );
 }
 
 //----------------------------------------------------------
@@ -703,8 +703,8 @@ void ofGLRenderer::loadMatrix (const float *m){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::multMatrix (const ofMatrix4x4 *m){
-	multMatrix( m->getPtr() );
+void ofGLRenderer::multMatrix (const ofMatrix4x4 & m){
+	multMatrix( m.getPtr() );
 }
 
 //----------------------------------------------------------
