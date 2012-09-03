@@ -68,11 +68,11 @@ void ofInitFreeImage(bool deinit=false){
 	// need a new bool to avoid c++ "deinitialization order fiasco":
 	// http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.15
 	static bool	* bFreeImageInited = new bool(false);
-	if(!bFreeImageInited && !deinit){
+	if(!*bFreeImageInited && !deinit){
 		FreeImage_Initialise();
 		*bFreeImageInited = true;
 	}
-	if(bFreeImageInited && deinit){
+	if(*bFreeImageInited && deinit){
 		FreeImage_DeInitialise();
 	}
 }

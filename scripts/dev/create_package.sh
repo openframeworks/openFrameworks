@@ -1,3 +1,4 @@
+#!/bin/bash
 # $1 -> platform: win_cb, linux, linux64, vs2008, osx, osxSL, ios, all
 # $2 -> version number: 006
 
@@ -30,8 +31,8 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
-REPO=/home/arturo/Desktop/openFrameworks
-REPO_ALIAS=/home/arturo/Desktop/openFrameworks
+REPO=https://github.com/openframeworks/openFrameworks
+REPO_ALIAS=upstreamhttps
 BRANCH=develop
 
 libsnotinmac="unicap gstappsink glu quicktime videoInput"
@@ -214,7 +215,6 @@ function createPackage {
 		rm -Rf events
 		rm -Rf gl
 		rm -Rf graphics
-		rm -Rf ios
 		rm -Rf math
 		rm -Rf sound
 		rm -Rf utils
