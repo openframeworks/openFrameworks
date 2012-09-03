@@ -469,11 +469,11 @@ string ofBinaryToString(const string& value) {
 //--------------------------------------------------
 string ofUTF8ToISO8859_1(const string & utf8){
 	string ansi;
-	for(int i=0;i<(int)utf8.length();i++){
-		if(utf8[i]==-61){
-			ansi+=ofToString((unsigned char)(((unsigned char)utf8[++i])+64));
-		}else if(utf8[i]==-62){
-			ansi+=ofToString(utf8[++i]);
+	for(unsigned int i=0;i<utf8.length();i++){
+		if((unsigned char)utf8[i]==0xC3){
+			ansi+=ofToString((unsigned char)(((unsigned char)utf8[++i])+0x40));
+		}else if((unsigned char)utf8[i]==0xC2){
+			ansi+=ofToString((unsigned char)utf8[++i]);
 		}else{
 			ansi+=ofToString(utf8[i]);
 		}
