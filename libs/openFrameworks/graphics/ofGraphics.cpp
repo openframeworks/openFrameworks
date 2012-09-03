@@ -276,7 +276,7 @@ void ofLoadIdentityMatrix (void){
 }
 
 //----------------------------------------------------------
-void ofLoadMatrix (const ofMatrix4x4 *m){
+void ofLoadMatrix (const ofMatrix4x4 & m){
 	renderer->loadMatrix(m);
 }
 
@@ -286,7 +286,7 @@ void ofLoadMatrix (const float *m){
 }
 
 //----------------------------------------------------------
-void ofMultMatrix (const ofMatrix4x4 *m){
+void ofMultMatrix (const ofMatrix4x4 & m){
 	renderer->multMatrix(m);
 }
 

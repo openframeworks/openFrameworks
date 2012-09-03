@@ -320,9 +320,9 @@ public:
 	virtual void rotateZ(float degrees){};
 	virtual void rotate(float degrees){};
 	virtual void loadIdentityMatrix (void){};
-	virtual void loadMatrix (const ofMatrix4x4 *m){};
+	virtual void loadMatrix (const ofMatrix4x4 & m){};
 	virtual void loadMatrix (const float *m){};
-	virtual void multMatrix (const ofMatrix4x4 *m){};
+	virtual void multMatrix (const ofMatrix4x4 & m){};
 	virtual void multMatrix (const float *m){};
 	
 	// screen coordinate things / default gl values
