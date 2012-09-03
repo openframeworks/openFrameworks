@@ -70,6 +70,9 @@ public:
 	void bind();
 	void unbind();
 
+	ofTextEncoding getEncoding() const;
+	void setEncoding(ofTextEncoding encoding);
+
 protected:
 	bool			bLoadedOk;
 	bool 			bAntiAliased;
@@ -109,6 +112,7 @@ private:
 	GLboolean blend_enabled;
 	GLboolean texture_2d_enabled;
 #endif
+	ofTextEncoding encoding;
 	void		unloadTextures();
 	void		reloadTextures();
 };

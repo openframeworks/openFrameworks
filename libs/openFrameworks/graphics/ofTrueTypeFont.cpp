@@ -205,6 +205,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	//visibleBorder	= 2;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
+	encoding = OF_ENCODING_UTF8;
 }
 
 //------------------------------------------------------------------
@@ -502,6 +503,14 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	return true;
 }
 
+ofTextEncoding ofTrueTypeFont::getEncoding() const {
+	return encoding;
+}
+
+void ofTrueTypeFont::setEncoding(ofTextEncoding _encoding) {
+	encoding = _encoding;
+}
+
 //-----------------------------------------------------------
 bool ofTrueTypeFont::isLoaded() {
 	return bLoadedOk;
@@ -608,7 +617,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 //-----------------------------------------------------------
 vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
-	if(bFullCharacterSet) str = ofUTF8ToISO8859_1(str);
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8) str = ofUTF8ToISO8859_1(str);
 
 	vector<ofTTFCharacter> shapes;
 
@@ -756,7 +765,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	texAtlas.draw(0,0);*/
 
-	if(bFullCharacterSet) c = ofUTF8ToISO8859_1(c);
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8) c = ofUTF8ToISO8859_1(c);
 
     if (!bLoadedOk){
     	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
@@ -865,7 +874,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		return;
 	}
 
-	if(bFullCharacterSet) c = ofUTF8ToISO8859_1(c);
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8) c = ofUTF8ToISO8859_1(c);
 
 	GLint		index	= 0;
 	GLfloat		X		= 0;
