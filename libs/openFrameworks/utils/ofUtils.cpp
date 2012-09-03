@@ -13,8 +13,9 @@
 
 
 #ifdef TARGET_WIN32
-	#ifndef _MSC_VER
+    #ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
+	#include <sys/param.h> // for MAXPATHLEN
     #endif
 #endif
 
@@ -36,6 +37,10 @@
 		#include <direct.h>
 	#endif
 
+#endif
+
+#ifndef MAXPATHLEN
+	#define MAXPATHLEN 1024
 #endif
 
 static bool enableDataPath = true;
