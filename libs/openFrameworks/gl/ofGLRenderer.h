@@ -64,7 +64,12 @@ public:
 	void rotateY(float degrees);
 	void rotateZ(float degrees);
 	void rotate(float degrees);
-
+	void loadIdentityMatrix (void);
+	void loadMatrix (const ofMatrix4x4 *m);
+	void loadMatrix (const float *m);
+	void multMatrix (const ofMatrix4x4 *m);
+	void multMatrix (const float *m);
+	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();

@@ -52,6 +52,11 @@ void ofRotateX(float degrees);
 void ofRotateY(float degrees);
 void ofRotateZ(float degrees);
 void ofRotate(float degrees);
+void ofLoadIdentityMatrix (void);
+void ofLoadMatrix (const ofMatrix4x4 *m);   // Andreas: I've included both a ofMatrix4x4* and a float* version here,
+void ofLoadMatrix (const float *m);			// ideally we would always use ofMatrix4x4, but in a lot of temporary 
+void ofMultMatrix (const ofMatrix4x4 *m);	// ofMatrix4x4 objects when interacting with non-OF code
+void ofMultMatrix (const float *m);
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();
