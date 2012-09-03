@@ -114,6 +114,12 @@ protected:
 	ofReadOnlyParameter<ParameterType,Friend> & operator-=(const ParameterType & v);
 	ofReadOnlyParameter<ParameterType,Friend> & operator*=(const ParameterType & v);
 	ofReadOnlyParameter<ParameterType,Friend> & operator/=(const ParameterType & v);
+	ofReadOnlyParameter<ParameterType,Friend> & operator%=(const ParameterType & v);
+	ofReadOnlyParameter<ParameterType,Friend> & operator&=(const ParameterType & v);
+	ofReadOnlyParameter<ParameterType,Friend> & operator|=(const ParameterType & v);
+	ofReadOnlyParameter<ParameterType,Friend> & operator^=(const ParameterType & v);
+	ofReadOnlyParameter<ParameterType,Friend> & operator<<=(const ParameterType & v);
+	ofReadOnlyParameter<ParameterType,Friend> & operator>>=(const ParameterType & v);
 
 
 	virtual ofReadOnlyParameter<ParameterType,Friend> & set(ParameterType v);
@@ -354,6 +360,47 @@ ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Fr
 	return *this;
 }
 
+template<typename ParameterType,typename Friend>
+ofReadOnlyParameter<ParameterType,Friend> & operator%=(const ParameterType & v){
+	obj->value%=v;
+	set(obj->value);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+ofReadOnlyParameter<ParameterType,Friend> & operator&=(const ParameterType & v){
+	obj->value&=v;
+	set(obj->value);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+ofReadOnlyParameter<ParameterType,Friend> & operator|=(const ParameterType & v){
+	obj->value|=v;
+	set(obj->value);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+ofReadOnlyParameter<ParameterType,Friend> & operator^=(const ParameterType & v){
+	obj->value^=v;
+	set(obj->value);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+ofReadOnlyParameter<ParameterType,Friend> & operator<<=(const ParameterType & v){
+	obj->value<<=v;
+	set(obj->value);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+ofReadOnlyParameter<ParameterType,Friend> & operator>>=(const ParameterType & v){
+	obj->value>>=v;
+	set(obj->value);
+	return *this;
+}
 
 template<typename ParameterType>
 class ofParameter: public ofReadOnlyParameter<ParameterType,ofAbstractParameter>{
