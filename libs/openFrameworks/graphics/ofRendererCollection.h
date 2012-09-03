@@ -197,6 +197,37 @@ public:
 		 }
 	 }
 
+	void loadIdentityMatrix (void){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadIdentityMatrix();
+		}
+	}
+	
+	void loadMatrix (const ofMatrix4x4 & m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadMatrix( m );
+		}
+	}
+	
+	void loadMatrix (const float * m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadMatrix( m );
+		}
+	}
+	
+	void multMatrix (const ofMatrix4x4 & m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->multMatrix( m );
+		}
+	}
+	
+	void multMatrix (const float * m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->multMatrix( m );
+		}
+	}
+	
+	
 	// screen coordinate things / default gl values
 	 void setupGraphicDefaults(){
 		 for(int i=0;i<(int)renderers.size();i++){
