@@ -204,6 +204,7 @@ public:
 
 	bool exists() const;
 	string path() const;
+	string getAbsolutePath() const;
 
 	bool canRead() const;
 	bool canWrite() const;
