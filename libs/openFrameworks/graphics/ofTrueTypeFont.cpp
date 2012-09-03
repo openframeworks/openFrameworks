@@ -300,6 +300,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 	long areaSum=0;
 
+
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){
 
@@ -752,6 +753,8 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	texAtlas.draw(0,0);*/
 
+	c = ofUTF8ToISO8859_1(c);
+
     if (!bLoadedOk){
     	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
     	return;
@@ -858,6 +861,8 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : contours not created for this font - call loadFont with makeContours set to true");
 		return;
 	}
+
+	c = ofUTF8ToISO8859_1(c);
 
 	GLint		index	= 0;
 	GLfloat		X		= 0;

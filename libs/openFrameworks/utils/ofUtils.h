@@ -173,6 +173,8 @@ char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
 
+string ofUTF8ToISO8859_1(const string & utf8);
+
 string 	ofGetVersionInfo();
 
 void	ofSaveScreen(string filename);
