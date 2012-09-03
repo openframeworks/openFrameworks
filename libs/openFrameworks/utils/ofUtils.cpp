@@ -475,7 +475,8 @@ string ofUTF8ToISO8859_1(const string & utf8){
 		}else if((unsigned char)utf8[i]==0xC2){
 			ansi+=ofToString((unsigned char)utf8[++i]);
 		}else{
-			ansi+=ofToString(utf8[i]);
+			ansi.resize(ansi.size()+1);
+			ansi[ansi.size()-1]=utf8[i];
 		}
 	}
 	return ansi;
