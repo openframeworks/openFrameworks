@@ -609,7 +609,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 //-----------------------------------------------------------
 vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
-	str = ofUTF8ToISO8859_1(str);
+	if(bFullCharacterSet) str = ofUTF8ToISO8859_1(str);
 
 	vector<ofTTFCharacter> shapes;
 
@@ -757,7 +757,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	texAtlas.draw(0,0);*/
 
-	c = ofUTF8ToISO8859_1(c);
+	if(bFullCharacterSet) c = ofUTF8ToISO8859_1(c);
 
     if (!bLoadedOk){
     	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
@@ -866,7 +866,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		return;
 	}
 
-	c = ofUTF8ToISO8859_1(c);
+	if(bFullCharacterSet) c = ofUTF8ToISO8859_1(c);
 
 	GLint		index	= 0;
 	GLfloat		X		= 0;
