@@ -1,6 +1,8 @@
 
 #include "ofQTKitPlayer.h"
 
+#include "Poco/String.h"
+
 ofQTKitPlayer::ofQTKitPlayer() {
 	moviePlayer = NULL;
 	bNewFrame = false;
@@ -38,7 +40,9 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	bool useAlpha = (pixelFormat == OF_PIXELS_RGBA);
 
     bool isURL = false;
-    if (movieFilePath.substr(0, 7) == "http://" || movieFilePath.substr(0,7) == "rtsp://") {
+    if (Poco::icompare(movieFilePath.substr(0,7), "http://")  == 0 ||
+        Poco::icompare(movieFilePath.substr(0,8), "https://") == 0 ||
+        Poco::icompare(movieFilePath.substr(0,7), "rtsp://")  == 0) {
         isURL = true;
     }
     else {
