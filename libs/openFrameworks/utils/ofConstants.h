@@ -544,5 +544,5 @@ enum ofDrawBitmapMode{
 
 enum ofTextEncoding{
 	OF_ENCODING_UTF8,
-	OF_ENCODING_ISO88591
+	OF_ENCODING_ISO_8859_15
 };

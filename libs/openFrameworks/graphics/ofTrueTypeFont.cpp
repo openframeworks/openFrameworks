@@ -14,6 +14,7 @@
 #include "Poco/TextConverter.h"
 #include "Poco/UTF8Encoding.h"
 #include "Poco/Latin1Encoding.h"
+#include "Poco/Latin9Encoding.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -291,7 +292,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	//ofLog(OF_LOG_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
-	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
+	nCharacters = (bFullCharacterSet ? 256 : 128) - NUM_CHARACTER_TO_START;
 
 	//--------------- initialize character info and textures
 	cps.resize(nCharacters);
@@ -310,7 +311,9 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	for (int i = 0 ; i < nCharacters; i++){
 
 		//------------------------------------------ anti aliased or not:
-		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT );
+		int glyph = (unsigned char)(i+NUM_CHARACTER_TO_START);
+		if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
+		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), FT_LOAD_DEFAULT );
         if(err){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error with FT_Load_Glyph %i: FT_Error = %d", i, err);
                         
@@ -622,7 +625,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
-		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin1Encoding()).convert(str,o);
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(str,o);
 		str=o;
 	}
 
@@ -768,13 +771,13 @@ float ofTrueTypeFont::stringHeight(string c) {
 //=====================================================================
 void ofTrueTypeFont::drawString(string c, float x, float y) {
 
-    /*glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texAtlas.draw(0,0);*/
+	texAtlas.draw(0,0);
 
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
-		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin1Encoding()).convert(c,o);
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
 		c=o;
 	}
 
@@ -887,7 +890,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
-		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin1Encoding()).convert(c,o);
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
 		c=o;
 	}
 
