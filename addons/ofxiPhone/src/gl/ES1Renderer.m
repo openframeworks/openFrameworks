@@ -17,6 +17,7 @@
 		fsaaEnabled = fsaa;
 		fsaaSamples = samples;
 		retinaEnabled = retina;
+        bResize = false;
 				
         context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 		NSLog(@"Creating OpenGL ES1 Renderer");
@@ -67,6 +68,15 @@
 	}
 	
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
+    if(bResize) {
+        /**
+         *  when resizing glView there is a visual glitch
+         *  which shows the screen distorted for a split second.
+         *  the below fixes it.
+         */
+        glClear(GL_COLOR_BUFFER_BIT);
+        bResize = false;
+    }
     [context presentRenderbuffer:GL_RENDERBUFFER_OES];
 	
 	if(fsaaEnabled) {
@@ -77,6 +87,7 @@
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer {	
 	[self destroyFramebuffer];
 	[self createFramebuffer:layer];
+    bResize = true;
 }
 
 - (BOOL)createFramebuffer:(CAEAGLLayer *)layer {
