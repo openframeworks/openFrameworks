@@ -771,9 +771,9 @@ float ofTrueTypeFont::stringHeight(string c) {
 //=====================================================================
 void ofTrueTypeFont::drawString(string c, float x, float y) {
 
-    glEnable(GL_BLEND);
+    /*glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texAtlas.draw(0,0);
+	texAtlas.draw(0,0);*/
 
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
