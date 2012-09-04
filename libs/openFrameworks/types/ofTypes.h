@@ -140,7 +140,7 @@ public:
 	: std::shared_ptr<T>(__r) { }
 
 	  template<typename Tp1>
-		ofPtr(const std::tr1::shared_ptr<Tp1>& __r)
+		ofPtr(const std::shared_ptr<Tp1>& __r)
 	: std::shared_ptr<T>(__r) { }
 
 	  /*ofPtr(ofPtr&& __r)
