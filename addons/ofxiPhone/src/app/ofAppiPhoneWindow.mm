@@ -34,7 +34,6 @@
 #import <UIKit/UIKit.h>
 
 #import "ofMain.h"
-#import "ofxiPhoneAppDelegate.h"
 #import "ofxiOSEAGLView.h"
 
 // use for checking if stuff has been initialized
