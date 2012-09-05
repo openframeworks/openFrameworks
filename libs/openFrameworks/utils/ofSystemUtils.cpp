@@ -828,7 +828,7 @@ string ofSystemTextBoxDialog(string question, string text){
 #endif
 
 #ifdef TARGET_ANDROID
-     text = ofxAndroidAlertTextBox(question,text);
+     ofxAndroidAlertTextBox(question,text);
 #endif
 
 	return text;
