@@ -61,6 +61,11 @@
     [self.glView stopAnimation];
 }
 
+//-------------------------------------------------------------- orientation.
+- (UIInterfaceOrientation) getInterfaceOrientation {
+    return currentInterfaceOrientation;
+}
+
 - (void)rotateToInterfaceOrientationPortrait {
     [self rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:NO duration:0];
 }

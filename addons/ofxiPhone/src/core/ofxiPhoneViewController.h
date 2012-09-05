@@ -14,6 +14,7 @@ class ofxiPhoneApp;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app;
 
+- (UIInterfaceOrientation) getInterfaceOrientation;
 - (void)rotateToInterfaceOrientationPortrait;
 - (void)rotateToInterfaceOrientationPortraitUpsideDown;
 - (void)rotateToInterfaceOrientationLandscapeLeft;
