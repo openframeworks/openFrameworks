@@ -1,14 +1,5 @@
 #include "testApp.h"
-#include "ofGui.h"
 
-bool bHide = true;
-
-ofSlider radius;
-ofSlider r, g, b;
-ofSlider circleResolution;
-ofToggle filled;
-
-ofPanel gui;
 	
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -20,27 +11,51 @@ void testApp::setup(){
 	gui.add(r.setup( "red", 100.0f, 0, 255 ));
 	gui.add(g.setup( "green", 100.0f, 0, 255 ));
 	gui.add(b.setup( "blue", 140.0f, 0, 255 ));
-	gui.add(circleResolution.setup("circle res", 5, 3, 90, true));
+	gui.add(circleResolution.setup("circle res", 5, 3, 90));
+	gui.add(twoCircles.setup("twoCircles"));
+	gui.add(ringButton.setup("ring"));
+	gui.add(status.setup("Status", ""));
 	
+	ringButton.addListener(this,&testApp::ringButtonPressed);
+
+	bHide = true;
+
+	ring.loadSound("ring.wav");
+}
+
+//--------------------------------------------------------------
+void testApp::exit(){
+	ringButton.removeListener(this,&testApp::ringButtonPressed);
+}
+
+//--------------------------------------------------------------
+void testApp::ringButtonPressed(bool & pressed){
+	if(pressed) ring.play();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	
+	ofSetCircleResolution(circleResolution);
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
-	if( filled.getValue() ){
+
+    ofBackgroundGradient(ofColor::white, ofColor::gray);
+    
+	if( filled ){
 		ofFill();
 	}else{
 		ofNoFill();
 	}
-	
-	ofSetCircleResolution(circleResolution.getValue());
-	ofSetColor(r.getValue(), g.getValue(), b.getValue());
-	ofCircle(ofGetWidth()/2, ofGetHeight()/2, radius.getValue() );
+
+	ofSetColor(r, g, b);
+	if(twoCircles){
+		ofCircle(ofGetWidth()/2-radius*.5, ofGetHeight()/2, radius );
+		ofCircle(ofGetWidth()/2+radius*.5, ofGetHeight()/2, radius );
+	}else{
+		ofCircle(ofGetWidth()/2, ofGetHeight()/2, radius );
+	}
 	
 	// auto draw?
 	// should the gui control hiding?
@@ -88,7 +103,7 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-	
+    status = "Size: " + ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

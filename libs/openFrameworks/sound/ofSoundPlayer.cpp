@@ -66,10 +66,11 @@ ofPtr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 }
 
 //--------------------------------------------------------------------
-void ofSoundPlayer::loadSound(string fileName, bool stream){
+bool ofSoundPlayer::loadSound(string fileName, bool stream){
 	if( player != NULL ){
-		player->loadSound(fileName, stream);
+		return player->loadSound(fileName, stream);
 	}
+	return false;
 }
 
 //--------------------------------------------------------------------
@@ -103,7 +104,7 @@ void ofSoundPlayer::setVolume(float vol){
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPan(float pan){
 	if( player != NULL ){
-		player->setPan(pan);
+		player->setPan(CLAMP(pan,-1.0f,1.0f));
 	}
 }
 
@@ -140,14 +141,30 @@ void ofSoundPlayer::setPosition(float pct){
 	if( player != NULL ){
 		player->setPosition(pct);
 	}
-} 
+}
+
+//--------------------------------------------------------------------
+void ofSoundPlayer::setPositionMS(int ms){
+	if( player != NULL ){
+		player->setPositionMS(ms);
+	}
+}
 
 //--------------------------------------------------------------------
 float ofSoundPlayer::getPosition(){
 	if( player != NULL ){
 		return player->getPosition();
 	} else {
-		return 0; 
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------
+int ofSoundPlayer::getPositionMS(){
+	if( player != NULL ){
+		return player->getPositionMS();
+	} else {
+		return 0;
 	}
 }
 
@@ -155,6 +172,15 @@ float ofSoundPlayer::getPosition(){
 bool ofSoundPlayer::getIsPlaying(){
 	if( player != NULL ){
 		return player->getIsPlaying();
+	} else {
+		return false;
+	}
+}
+
+//--------------------------------------------------------------------
+bool ofSoundPlayer::isLoaded(){
+	if( player != NULL ){
+		return player->isLoaded();
 	} else {
 		return false; 
 	}
@@ -165,7 +191,7 @@ float ofSoundPlayer::getSpeed(){
 	if( player != NULL ){
 		return player->getSpeed();
 	} else {
-		return 0; 
+		return 0;
 	}
 }
 
@@ -174,6 +200,15 @@ float ofSoundPlayer::getPan(){
 	if( player != NULL ){
 		return player->getPan();
 	} else {
-		return 0; 
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------
+float ofSoundPlayer::getVolume(){
+	if( player != NULL ){
+		return player->getVolume();
+	} else {
+		return 0;
 	}
 }

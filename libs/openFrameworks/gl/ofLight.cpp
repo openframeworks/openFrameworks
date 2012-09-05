@@ -124,7 +124,13 @@ static void release(ofLight & light){
 ofLight::ofLight(){
 	glIndex			= -1;
 	isEnabled		= false;
+    setAmbientColor(ofColor(0,0,0));
+    setDiffuseColor(ofColor(255,255,255));
+    setSpecularColor(ofColor(255,255,255));
 	setPointLight();
+    
+    // assume default attenuation factors //
+    setAttenuation(1.f,0.f,0.f);
 }
 
 //----------------------------------------
@@ -168,8 +174,8 @@ ofLight & ofLight::operator=(const ofLight & mom){
 }
 
 //----------------------------------------
-void ofLight::enable() {
-	if(glIndex==-1){
+void ofLight::setup() {
+    if(glIndex==-1){
 		bool bLightFound = false;
 		// search for the first free block
 		for(int i=0; i<OF_MAX_LIGHTS; i++) {
@@ -183,8 +189,28 @@ void ofLight::enable() {
 		if( !bLightFound ){
 			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
 		}
+        if(bLightFound) {
+            // run this the first time, since it was not found before //
+            onPositionChanged();
+            setAmbientColor( getAmbientColor() );
+            setDiffuseColor( getDiffuseColor() );
+            setSpecularColor( getSpecularColor() );
+            setAttenuation( getAttenuationConstant(), getAttenuationLinear(), getAttenuationQuadratic() );
+            if(getIsSpotlight()) {
+                setSpotlightCutOff(getSpotlightCutOff());
+                setSpotConcentration(getSpotConcentration());
+            }
+            if(getIsSpotlight() || getIsDirectional()) {
+                onOrientationChanged();
+            }
+        }
 	}
-	
+}
+
+//----------------------------------------
+void ofLight::enable() {
+    setup();
+    onPositionChanged(); // update the position // 
 	ofEnableLighting();
 	glEnable(GL_LIGHT0 + glIndex);
 }
@@ -234,12 +260,30 @@ bool ofLight::getIsSpotlight() {
 
 //----------------------------------------
 void ofLight::setSpotlightCutOff( float spotCutOff ) {
-	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_CUTOFF, CLAMP(spotCutOff, 0, 90) );
+    this->spotCutOff = CLAMP(spotCutOff, 0, 90);
+	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_CUTOFF, this->spotCutOff );
+}
+
+//----------------------------------------
+float ofLight::getSpotlightCutOff() {
+    if(!getIsSpotlight()) {
+        ofLog(OF_LOG_WARNING, "ofLight :: getSpotlightCutOff : this light is not a spot light");
+    }
+    return spotCutOff;
 }
 
 //----------------------------------------
 void ofLight::setSpotConcentration( float exponent ) {
-	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_EXPONENT, exponent);
+    this->exponent = CLAMP(exponent, 0, 128);
+	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_EXPONENT, this->exponent);
+}
+
+//----------------------------------------
+float ofLight::getSpotConcentration() {
+    if(!getIsSpotlight()) {
+        ofLog(OF_LOG_WARNING, "ofLight :: getSpotConcentration : this light is not a spot light");
+    }
+    return exponent;
 }
 
 //----------------------------------------
@@ -256,9 +300,30 @@ bool ofLight::getIsPointLight() {
 
 //----------------------------------------
 void ofLight::setAttenuation( float constant, float linear, float quadratic ) {
-	glLightf(GL_LIGHT0 + glIndex, GL_CONSTANT_ATTENUATION, constant);
-	glLightf(GL_LIGHT0 + glIndex, GL_LINEAR_ATTENUATION, linear);
-	glLightf(GL_LIGHT0 + glIndex, GL_QUADRATIC_ATTENUATION, quadratic);
+    // falloff = 0 -> 1, 0 being least amount of fallof, 1.0 being most //
+    attenuation_constant    = constant;
+    attenuation_linear      = linear; 
+    attenuation_quadratic   = quadratic;
+    
+    if(glIndex==-1) return;
+	glLightf(GL_LIGHT0 + glIndex, GL_CONSTANT_ATTENUATION, attenuation_constant);
+	glLightf(GL_LIGHT0 + glIndex, GL_LINEAR_ATTENUATION, attenuation_linear);
+	glLightf(GL_LIGHT0 + glIndex, GL_QUADRATIC_ATTENUATION, attenuation_quadratic);
+}
+
+//----------------------------------------
+float ofLight::getAttenuationConstant() {
+    return attenuation_constant;
+}
+
+//----------------------------------------
+float ofLight::getAttenuationLinear() {
+    return attenuation_linear;
+}
+
+//----------------------------------------
+float ofLight::getAttenuationQuadratic() {
+    return attenuation_quadratic;
 }
 
 //----------------------------------------
@@ -268,22 +333,22 @@ int ofLight::getType() {
 
 //----------------------------------------
 void ofLight::setAmbientColor(const ofFloatColor& c) {
-	if(glIndex==-1) return;
 	ambientColor = c;
+    if(glIndex==-1) return;
 	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, &ambientColor.r);
 }
 
 //----------------------------------------
 void ofLight::setDiffuseColor(const ofFloatColor& c) {
-	if(glIndex==-1) return;
 	diffuseColor = c;
+    if(glIndex==-1) return;
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
 }
 
 //----------------------------------------
 void ofLight::setSpecularColor(const ofFloatColor& c) {
-	if(glIndex==-1) return;
 	specularColor = c;
+    if(glIndex==-1) return;
 	glLightfv(GL_LIGHT0 + glIndex, GL_SPECULAR, &specularColor.r);
 }
 
@@ -300,6 +365,20 @@ ofFloatColor ofLight::getDiffuseColor() const {
 //----------------------------------------
 ofFloatColor ofLight::getSpecularColor() const {
 	return specularColor;
+}
+
+//----------------------------------------
+void ofLight::customDraw() {
+    if(getIsPointLight()) {
+        ofSphere( 0,0,0, 10);
+    } else if (getIsSpotlight()) {
+        float coneHeight = (sin(spotCutOff*DEG_TO_RAD) * 30.f) + 1;
+        float coneRadius = (cos(spotCutOff*DEG_TO_RAD) * 30.f) + 8;
+        ofCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
+    } else {
+        ofBox(10);
+    }
+    ofDrawAxis(20);
 }
 
 

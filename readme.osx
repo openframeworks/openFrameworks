@@ -17,9 +17,11 @@ Creating a new openFrameworks project:
 --------------------------------------------------------------------------------
 The easiest way to create a new openFrameworks project is to copy one that's similar to what you want to do. 
 
+OF Examples follow the app directory structure pattern (e.g. apps/categoryName/appName) and are grouped by topic/addon.
+
 For example:
 
-- Copy an example folder like: apps/examples/emptyExample/ and rename the copy to apps/examples/myApp/
+- Copy an example folder like: examples/empty/emptyExample/ and rename the copy to apps/examples/myApp/
 
 - Inside the myApp/ folder rename the .xcodeproj file to myApp.xcodeproj
 

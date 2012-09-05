@@ -1,7 +1,7 @@
 //
 // IPAddress.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/IPAddress.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/IPAddress.h#2 $
 //
 // Library: Net
 // Package: NetCore
@@ -9,7 +9,7 @@
 //
 // Definition of the IPAddress class.
 //
-// Copyright (c) 2005-2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2005-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -109,6 +109,13 @@ public:
 		/// A pointer to a in_addr or a in6_addr structure may be 
 		/// passed.
 
+	IPAddress(const void* addr, poco_socklen_t length, Poco::UInt32 scope);
+		/// Creates an IPAddress from a native internet address.
+		/// A pointer to a in_addr or a in6_addr structure may be 
+		/// passed. Additionally, for an IPv6 address, a scope ID
+		/// may be specified. The scope ID will be ignored if an IPv4
+		/// address is specified.
+
 	~IPAddress();
 		/// Destroys the IPAddress.
 
@@ -120,7 +127,12 @@ public:
 		
 	Family family() const;
 		/// Returns the address family (IPv4 or IPv6) of the address.
-		
+
+	Poco::UInt32 scope() const;
+		/// Returns the IPv6 scope identifier of the address. Returns 0 if
+		/// the address is an IPv4 address, or the address is an
+		/// IPv6 address but does not have a scope identifier.
+
 	std::string toString() const;
 		/// Returns a string containing a representation of the address
 		/// in presentation format.
@@ -148,6 +160,12 @@ public:
 		/// hexadecimal values of the six high-order 16-bit pieces of the address, 
         /// and the 'd's are the decimal values of the four low-order 8-bit pieces of the 
         /// standard IPv4 representation address. Example: ::FFFF:192.168.1.120
+        ///
+        /// If an IPv6 address contains a non-zero scope identifier, it is added
+        /// to the string, delimited by a percent character. On Windows platforms,
+        /// the numeric value (which specifies an interface index) is directly
+        /// appended. On Unix platforms, the name of the interface corresponding
+        /// to the index (interpretation of the scope identifier) is added.
 	
 	bool isWildcard() const;
 		/// Returns true iff the address is a wildcard (all zero)

@@ -1,7 +1,7 @@
 //
 // DynamicAnyHolder.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/DynamicAnyHolder.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/DynamicAnyHolder.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -126,11 +126,15 @@ protected:
 		poco_static_assert (std::numeric_limits<T>::is_signed);
 
 		if (std::numeric_limits<F>::is_integer)
+		{
 			checkUpperLimit(from, to); 
+			checkLowerLimit(from, to);
+		}
 		else
+		{
 			checkUpperLimitFloat(from, to); 
-
-		checkLowerLimit(from, to);
+			checkLowerLimitFloat(from, to);
+		}
 		to = static_cast<T>(from);
 	}
 
@@ -225,6 +229,13 @@ private:
 	{
 		if (from > std::numeric_limits<T>::max())
 			throw RangeException("Value too large.");
+	}
+
+	template <typename F, typename T>
+	void checkLowerLimitFloat(const F& from, T&) const
+	{
+		if (from < -std::numeric_limits<T>::max())
+			throw RangeException("Value too small.");
 	}
 
 	template <typename F, typename T>

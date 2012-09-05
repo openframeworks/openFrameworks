@@ -4,7 +4,7 @@ ofxThreadedImageLoader::ofxThreadedImageLoader()
 :ofThread()
 {
 	num_loading = 0;
-	ofAddListener(ofEvents.update, this, &ofxThreadedImageLoader::update);
+	ofAddListener(ofEvents().update, this, &ofxThreadedImageLoader::update);
 	ofRegisterURLNotification(this);
 }
 

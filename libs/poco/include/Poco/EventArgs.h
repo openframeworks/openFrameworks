@@ -1,7 +1,7 @@
 //
 // EventArgs.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/EventArgs.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/EventArgs.h#2 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Definition of EventArgs.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -49,7 +49,8 @@ namespace Poco {
 class Foundation_API EventArgs
 	/// The purpose of the EventArgs class is to be used as parameter
 	/// when one doesn't want to send any data.
-	/// One can use EventArgs as a super-class for one's own event arguments
+	///
+	/// One can use EventArgs as a base class for one's own event arguments
 	/// but with the arguments being a template parameter this is not
 	/// necessary.
 {

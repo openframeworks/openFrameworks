@@ -4,8 +4,8 @@
 # make Debug:  makes the application with debug symbols
 # make Release: makes the app with optimizations
 # make: the same as make Release
-# make cleanDebug: cleans the Debug target
-# make cleanRelease: cleans the Release target
+# make CleanDebug: cleans the Debug target
+# make CleanRelease: cleans the Release target
 # make clean: cleans everything
 #
 # edit the following  vars to customize the makefile
@@ -22,12 +22,22 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	endif
 endif
 
+ifndef ARCH
+	ARCH = $(shell uname -m)
+endif
+
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
 	NDK_PLATFORM = android-8
+	GCC_VERSION = 4.4.3
+else
+ifeq ($(ARCH),armv7l)
+	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
 else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
 endif
+endif
+
 USER_CFLAGS = 
 
 
@@ -47,26 +57,41 @@ ifneq ($(ARCH),android)
 	ifeq ($(ARCH),x86_64)
 		LIBSPATH=linux64
 	else
-		LIBSPATH=linux
+		ifeq ($(ARCH),armv7l)
+			LIBSPATH=linuxarmv7l
+		else
+			LIBSPATH=linux
+		endif
 	endif
 else
-	LIBSPATH = android
+    ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
+	    LIBSPATH = android/armeabi-v7a
+	    ABI = armeabi-v7a
+    else
+        ifeq ($(MAKECMDGOALS),Release_neonAndroid)
+            LIBSPATH = android/armeabi-v7a
+        	ABI = armeabi-v7a
+        else
+        	LIBSPATH = android/armeabi
+	        ABI = armeabi
+        endif
+    endif
 	#NDK_ROOT = $(shell cat ndk_path.make)
-	TOOLCHAIN=arm-linux-androideabi-4.4.3
+	TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
 	CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
 	CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 	AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 	SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
-	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums 
-	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include"
+	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -frtti -fexceptions
+	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/"
 	CFLAGS += -DANDROID
 endif
 
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
 ifeq ($(ARCH),android)
-	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofVideoPlayer.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofSoundPlayer.cpp | grep -v ofOpenALSoundPlayer.cpp)
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofOpenALSoundPlayer.cpp)
 else
 	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
 endif
@@ -129,24 +154,16 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif
 
-ifeq ($(MAKECMDGOALS),cleanAndroid)
+ifeq ($(MAKECMDGOALS),CleanAndroid)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
 endif
 
-ifeq ($(MAKECMDGOALS),cleanDebug)
-	TARGET_NAME = Debug
-endif
-
-ifeq ($(MAKECMDGOALS),cleanRelease)
-	TARGET_NAME = Release
-endif
-
-CLEANTARGET = $(addprefix clean,$(TARGET_NAME))
+CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 OBJ_OUTPUT = obj/$(TARGET_NAME)/
 DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
-.PHONY: all Debug Release after clean cleanDebug cleanRelease help DebugAndroid ReleaseAndroid Release_arm7Android cleanAndroid
+.PHONY: all Debug Release after clean CleanDebug CleanRelease help DebugAndroid ReleaseAndroid Release_arm7Android CleanAndroid
 
 Release: $(TARGET) 
 
@@ -158,6 +175,8 @@ ReleaseAndroid: $(TARGET)
 
 Release_arm7Android: $(TARGET)
 
+Release_neonAndroid: $(TARGET)
+
 all: 
 	$(MAKE) Debug
 	$(MAKE) Release
@@ -166,6 +185,7 @@ android:
 	$(MAKE) DebugAndroid
 	$(MAKE) ReleaseAndroid
 	$(MAKE) Release_arm7Android
+	$(MAKE) Release_neonAndroid
 
 #This rule does the compilation
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 
@@ -175,12 +195,12 @@ $(OBJ_OUTPUT)%.o: ../../../%.cpp
 
 $(TARGET) : $(OBJS) 
 	echo "creating " $(TARGET)
+	mkdir -p $(@D)
 	$(AR) -r "$@" $(OBJS)
 
 -include $(DEPFILES)
 
-#.PHONY: clean cleanDebug cleanRelease
-	
+#.PHONY: clean CleanDebug CleanRelease
 clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
@@ -189,7 +209,7 @@ $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
 	
-cleanAndroid:
+CleanAndroid:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 
@@ -204,7 +224,7 @@ help:
 	@echo "make Release:		builds the library with optimizations"
 	@echo "make:			= make Release"
 	@echo "make all:		= make Debug + make Release"
-	@echo "make cleanDebug:	cleans the Debug target"
-	@echo "make cleanRelease:	cleans the Release target"
+	@echo "make CleanDebug:	cleans the Debug target"
+	@echo "make CleanRelease:	cleans the Release target"
 	@echo "make clean:		cleans everything"
 	@echo

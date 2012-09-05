@@ -1,7 +1,7 @@
 //
 // SignalHandler.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/SignalHandler.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/SignalHandler.h#2 $
 //
 // Library: Foundation
 // Package: Threading
@@ -43,7 +43,7 @@
 #include "Poco/Foundation.h"
 
 
-#if defined(POCO_OS_FAMILY_UNIX)
+#if defined(POCO_OS_FAMILY_UNIX) && !defined(POCO_VXWORKS)
 
 
 #include <vector>

@@ -25,7 +25,7 @@ static bool paused=true;
 static jclass getJavaClass(){
 	JNIEnv *env = ofGetJNIEnv();
 
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
 
 	if(javaClass==NULL){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroidVideoGrabber java class");
@@ -162,7 +162,7 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return false;
 
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
 
 	jobject camera = getCamera(env, javaClass, cameraId);
 	jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(III)V");
@@ -178,11 +178,11 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	bGrabberInited = true;
 
 	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: Camera initialized correctly");
+	paused = false;
 	return true;
 }
 
 void ofxAndroidVideoGrabber::videoSettings(){
-
 }
 
 unsigned char * ofxAndroidVideoGrabber::getPixels(){
@@ -199,6 +199,35 @@ void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
 void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return;
+
+	jclass javaClass = getJavaClass();
+
+	jobject camera = getCamera(env, javaClass, cameraId);
+	jmethodID javasetDeviceID = env->GetMethodID(javaClass,"setDeviceID","(I)V");
+	if(camera && javasetDeviceID){
+		env->CallVoidMethod(camera,javasetDeviceID,_deviceID);
+	}else{
+		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber setDeviceID method");
+		return;
+	}
+}
+
+bool ofxAndroidVideoGrabber::setAutoFocus(bool autofocus){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return false;
+
+	jclass javaClass = getJavaClass();
+
+	jobject camera = getCamera(env, javaClass, cameraId);
+	jmethodID javasetAutoFocus = env->GetMethodID(javaClass,"setAutoFocus","(Z)Z");
+	if(camera && javasetAutoFocus){
+		return env->CallBooleanMethod(camera,javasetAutoFocus,autofocus);
+	}else{
+		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber setAutoFocus method");
+		return false;
+	}
 }
 
 void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){

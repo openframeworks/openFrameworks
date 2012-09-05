@@ -36,6 +36,7 @@ typedef enum _ofxOscArgType
 {
 	OFXOSC_TYPE_NONE,
 	OFXOSC_TYPE_INT32,
+	OFXOSC_TYPE_INT64,
 	OFXOSC_TYPE_FLOAT,
 	OFXOSC_TYPE_STRING,
 	OFXOSC_TYPE_BLOB,
@@ -71,8 +72,8 @@ subclasses for each possible argument type
 */
 
 #if defined TARGET_WIN32 && defined _MSC_VER
-// required because MSVC isn't ANSI-C compliant
-typedef long int32_t;
+	// required because MSVC isn't ANSI-C compliant
+	typedef long int32_t;
 #endif
 
 class ofxOscArgInt32 : public ofxOscArg
@@ -92,6 +93,25 @@ public:
 
 private:
 	int32_t value;
+};
+
+class ofxOscArgInt64 : public ofxOscArg
+{
+public:
+	ofxOscArgInt64( uint64_t _value ) { value = _value; }
+	~ofxOscArgInt64() {};
+
+	/// return the type of this argument
+	ofxOscArgType getType() { return OFXOSC_TYPE_INT64; }
+	string getTypeName() { return "int64"; }
+
+	/// return value
+	uint64_t get() const { return value; }
+	/// set value
+	void set( uint64_t _value ) { value = _value; }
+
+private:
+	uint64_t value;
 };
 
 class ofxOscArgFloat : public ofxOscArg

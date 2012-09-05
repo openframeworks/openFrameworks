@@ -57,9 +57,8 @@ float		ofSignedNoise(float x, float y);
 float		ofSignedNoise(float x, float y, float z);
 float		ofSignedNoise(float x, float y, float z, float w);
 
-
-bool 		ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
-bool 		ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
+bool        ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
+bool        ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
 
 bool 		ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection);
 

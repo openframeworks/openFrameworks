@@ -41,20 +41,23 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 
 	private:
 		long unsigned long	tickCount;
-		int					sampleRate;
+		int			sampleRate;
+		// pointers to OF audio callback classes
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
 		
 		ofxAndroidCircBuffer<float> input_buffer;
 
-
+		// 16-bits integers buffers used for Android PCM data
 		short * out_buffer, * in_buffer;
+		// 32-bits float buffers used by OF audio callbacks
 		float * out_float_buffer, * in_float_buffer;
+		// I/O buffers sizes/channels
 		int outBufferSize, outChannels, inBufferSize, inChannels;
+		//
 		int  requestedBufferSize;
 		int  totalOutRequestedBufferSize;
 		int  totalInRequestedBufferSize;
-		jshortArray jInArray, jOutArray;
 
 		bool isPaused;
 

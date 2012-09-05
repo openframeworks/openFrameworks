@@ -50,24 +50,29 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		ofOpenALSoundPlayer();
 		virtual ~ofOpenALSoundPlayer();
 
-		void loadSound(string fileName, bool stream = false);
+		bool loadSound(string fileName, bool stream = false);
 		void unloadSound();
 		void play();
 		void stop();
 
 		void setVolume(float vol);
-		void setPan(float vol);
+		void setPan(float vol); // -1 to 1
 		void setSpeed(float spd);
 		void setPaused(bool bP);
 		void setLoop(bool bLp);
 		void setMultiPlay(bool bMp);
 		void setPosition(float pct); // 0 = start, 1 = end;
+		void setPositionMS(int ms);
+
 
 		float getPosition();
+		int getPositionMS();
 		bool getIsPlaying();
 		float getSpeed();
 		float getPan();
+        float getVolume();
 		bool getIsPaused();
+		bool isLoaded();
 
 		static void initialize();
 		static void close();
@@ -96,8 +101,8 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		bool mpg123Stream(string path,vector<short> & buffer,vector<float> & fftAuxBuffer);
 #endif
 
-		void readFile(string fileName,vector<short> & buffer);
-		void stream(string fileName, vector<short> & buffer);
+		bool readFile(string fileName,vector<short> & buffer);
+		bool stream(string fileName, vector<short> & buffer);
 
 		bool isStreaming;
 		bool bMultiPlay;

@@ -5,7 +5,6 @@
 //--------------------------
 ofxTCPClient::ofxTCPClient(){
 
-	verbose		= false;
 	connected	= false;
 	messageSize = 0;
 	port		= 0;
@@ -26,17 +25,17 @@ ofxTCPClient::~ofxTCPClient(){
 
 //--------------------------
 void ofxTCPClient::setVerbose(bool _verbose){
-	verbose = _verbose;
+    ofLog(OF_LOG_WARNING, "ofxTCPClient: setVerbose is deprecated replaced for OF_LOG_WARNING and OF_LOG_ERROR");
 }
 
 //--------------------------
 bool ofxTCPClient::setup(string ip, int _port, bool blocking){
 
 	if( !TCPClient.Create() ){
-		if(verbose)printf("ofxTCPClient: Create() failed\n");
+		ofLog(OF_LOG_ERROR, "ofxTCPClient: Create() failed");
 		return false;
 	}else if( !TCPClient.Connect((char *)ip.c_str(), _port) ){
-		if(verbose)printf("ofxTCPClient: Connect(%s, %i) failed\n", ip.c_str(), _port);
+		ofLog(OF_LOG_ERROR, "ofxTCPClient: Connect(" + ip + ofToString( _port) + ") failed");
 		TCPClient.Close(); //we free the connection
 		return false;
 	}
@@ -75,7 +74,7 @@ bool ofxTCPClient::close(){
 	if( connected ){
 
 		if( !TCPClient.Close() ){
-			if(verbose)printf("ofxTCPClient: Close() failed\n");
+			ofLog(OF_LOG_ERROR, "ofxTCPClient: Close() failed");
 			return false;
 		}else{
 			connected = false;
@@ -102,18 +101,18 @@ bool ofxTCPClient::send(string message){
 	// if sending from here and receiving from receiveRaw or
 	// other applications
 	if(!connected){
-		if(verbose)printf("ofxTCPClient: trying to send while not connected\n");
+		ofLog(OF_LOG_WARNING, "ofxTCPClient: trying to send while not connected");
 		return false;
 	}
 	message = partialPrevMsg + message + messageDelimiter;
 	message += (char)0; //for flash
 	int ret = TCPClient.SendAll( message.c_str(), message.length() );
 	if( ret == 0 ){
-		if(verbose)printf("ofxTCPClient: other side disconnected\n");
+		ofLog(OF_LOG_WARNING, "ofxTCPClient: other side disconnected");
 		close();
 		return false;
 	}else if(ret<0){
-		if(verbose)printf("ofxTCPClient: sendAll() failed\n");
+		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendAll() failed");
 		return false;
 	}else if(ret<(int)message.length()){
 		// in case of partial send, store the
@@ -133,7 +132,7 @@ bool ofxTCPClient::sendRaw(string message){
 	if( message.length() == 0) return false;
 
 	if( !TCPClient.SendAll(message.c_str(), message.length()) ){
-		if(verbose)printf("ofxTCPClient: sendRawBytes() failed\n");
+		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendRawBytes() failed");
 		close();
 		return false;
 	}else{
@@ -146,7 +145,7 @@ bool ofxTCPClient::sendRawBytes(const char* rawBytes, const int numBytes){
 	if( numBytes <= 0) return false;
 
 	if( !TCPClient.SendAll(rawBytes, numBytes) ){
-		if(verbose)printf("ofxTCPClient: sendRawBytes() failed\n");
+		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendRawBytes() failed");
 		close();
 		return false;
 	}else{

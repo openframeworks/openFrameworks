@@ -1,7 +1,7 @@
 //
 // Application.h
 //
-// $Id: //poco/1.4/Util/include/Poco/Util/Application.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/Application.h#4 $
 //
 // Library: Util
 // Package: Application
@@ -50,6 +50,9 @@
 #include "Poco/Timestamp.h"
 #include "Poco/Timespan.h"
 #include "Poco/AutoPtr.h"
+#if defined(POCO_VXWORKS)
+#include <cstdarg>
+#endif
 #include <vector>
 #include <typeinfo>
 
@@ -210,7 +213,7 @@ public:
 		///
 		/// Returns the number of configuration files loaded, which may be zero.
 		///
-		/// This method must not be called before initialize(argc, argv)
+		/// This method must not be called before init(argc, argv)
 		/// has been called.
 
 	void loadConfiguration(const std::string& path, int priority = PRIO_DEFAULT);
@@ -225,7 +228,6 @@ public:
 		///
 		/// The configuration will be added to the application's 
 		/// LayeredConfiguration with the given priority.
-		///
 
 	template <class C> C& getSubsystem() const;
 		/// Returns a reference to the subsystem of the class
@@ -386,6 +388,10 @@ private:
 	Poco::Timestamp _startTime;
 	bool            _stopOptionsProcessing;
 
+#if defined(POCO_OS_FAMILY_UNIX) && !defined(POCO_VXWORKS)
+	std::string _workingDirAtLaunch;
+#endif
+
 	static Application* _pInstance;
 	
 	friend class LoggingSubsystem;
@@ -471,6 +477,33 @@ inline Poco::Timespan Application::uptime() const
 		try									\
 		{									\
 			pApp->init(argc, argv);			\
+		}									\
+		catch (Poco::Exception& exc)		\
+		{									\
+			pApp->logger().log(exc);		\
+			return Poco::Util::Application::EXIT_CONFIG;\
+		}									\
+		return pApp->run();					\
+	}
+#elif defined(POCO_VXWORKS)
+	#define POCO_APP_MAIN(App) \
+	int pocoAppMain(const char* appName, ...) \
+	{ \
+		std::vector<std::string> args; \
+		args.push_back(std::string(appName)); \
+		va_list vargs; \
+		va_start(vargs, appName); \
+		const char* arg = va_arg(vargs, const char*); \
+		while (arg) \
+		{ \
+			args.push_back(std::string(arg)); \
+			arg = va_arg(vargs, const char*); \
+		} \
+		va_end(vargs); \
+		Poco::AutoPtr<App> pApp = new App;	\
+		try									\
+		{									\
+			pApp->init(args);			\
 		}									\
 		catch (Poco::Exception& exc)		\
 		{									\

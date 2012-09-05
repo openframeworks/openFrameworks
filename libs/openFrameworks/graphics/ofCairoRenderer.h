@@ -20,22 +20,26 @@ public:
 
 	enum Type{
 		PDF,
-		SVG
+		SVG,
+		IMAGE,
+		FROM_FILE_EXTENSION
 	};
-	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
+	void setup(string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
+	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
+	void flush();
 
 	void update();
 
 	void draw(ofPath & shape);
 	void draw(ofSubPath & path);
 	void draw(ofPolyline & poly);
-	void draw(ofMesh & vertexData);
-	void draw(ofMesh & vertexData, ofPolyRenderMode mode);
+	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
+	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
-	void draw(ofImage & img, float x, float y, float z, float w, float h);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h);
+	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 	bool rendersPathPrimitives(){
 		return true;
@@ -68,6 +72,7 @@ public:
 	void setLineWidth(float lineWidth);
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
+	void setSphereResolution(int res);
 
 	//our openGL wrappers
 	void pushMatrix();
@@ -112,18 +117,22 @@ public:
 	void drawRectangle(float x, float y, float z, float w, float h);
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 	void drawCircle(float x, float y, float z, float radius);
+	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
 	// cairo specifics
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
-
+	ofPixels & getImageSurfacePixels();
+	ofBuffer & getContentBuffer();
 
 private:
+	void setStyle(const ofStyle & style);
 	cairo_matrix_t * getCairoMatrix();
 	void setCairoMatrix();
 	ofVec3f transform(ofVec3f vec);
+	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 
 	deque<ofPoint> curvePoints;
 	cairo_t * cr;
@@ -147,9 +156,15 @@ private:
 	stack<ofMatrix4x4> projectionStack;
 	stack<ofMatrix4x4> modelViewStack;
 	stack<ofRectangle> viewportStack;
-
+	
+	vector<ofPoint> sphereVerts;
+	vector<ofPoint> spherePoints;
 
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
+
+	string filename;
+	ofBuffer streamBuffer;
+	ofPixels imageBuffer;
 };

@@ -117,10 +117,17 @@ void ofURLFileLoader::threadedFunction() {
 
 			if(response.status!=-1){
 				lock();
-		    	ofLog(OF_LOG_VERBOSE,"got request " + requests.front().name);
-				responses.push(response);
-				requests.pop_front();
-		    	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
+				// double-check that the request hasn't been removed from the queue
+				if( (requests.size()==0) || (requests.front().getID()!=request.getID()) ){
+					// this request has been removed from the queue
+					ofLog(OF_LOG_VERBOSE,"request " + requests.front().name + " is missing from the queue, must have been removed/cancelled" );
+				}
+				else{
+					ofLog(OF_LOG_VERBOSE,"got response to request " + requests.front().name + " status "+ofToString(response.status) );
+					responses.push(response);
+					requests.pop_front();
+					ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
+				}
 				unlock();
 			}else{
 		    	ofLog(OF_LOG_VERBOSE,"failed getting request " + requests.front().name);
@@ -181,7 +188,7 @@ void ofURLFileLoader::update(ofEventArgs & args){
 		unlock();
 		ofNotifyEvent(ofURLResponseEvent,response);
 	}else{
-		ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
+		ofRemoveListener(ofEvents().update,this,&ofURLFileLoader::update);
 		unlock();
 	}
 

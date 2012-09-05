@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd  ../../apps/examples/
+cd  ../../examples/basicExamples/
 for example in $( ls )
 do
 echo "-----------------------------------------------------------------"

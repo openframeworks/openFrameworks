@@ -7,8 +7,12 @@ class ofVec4f;
 class ofVec2f {
 public:
 	float x, y;
+    
+    static const int DIM = 2;
 	
-	ofVec2f( float _x=0.f, float _y=0.f );
+	ofVec2f();
+	explicit ofVec2f( float _scalar );
+	ofVec2f( float _x, float _y );
     ofVec2f( const ofVec3f& vec );
     ofVec2f( const ofVec4f& vec );
 	
@@ -30,6 +34,7 @@ public:
 	
     // Getters and Setters.
     //
+	void set( float _scalar );
     void set( float _x, float _y );
     void set( const ofVec2f& vec );
 	
@@ -37,13 +42,15 @@ public:
     //
     bool operator==( const ofVec2f& vec ) const;
     bool operator!=( const ofVec2f& vec ) const;
-    bool match( const ofVec2f& vec, float tollerance=0.0001 ) const;
+    bool match( const ofVec2f& vec, float tolerance=0.0001 ) const;
     /**
 	 * Checks if vectors look in the same direction.
-	 * Tollerance is specified in degree.
+	 * Tolerance is specified in degree.
 	 */
-    bool align( const ofVec2f& vec, float tollerance=0.0001 ) const;
-    bool alignRad( const ofVec2f& vec, float tollerance=0.0001 ) const;
+    bool isAligned( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool isAlignedRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool align( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool alignRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
 	
 	
     // Overloading for any type to any type
@@ -186,7 +193,7 @@ public:
     ofVec2f perpendiculared() const;
 	
     // squareLength
-    float lengthSquared() const;
+    OF_DEPRECATED_MSG("Use ofVec2f::squareLength() instead.", float lengthSquared() const);
 	
     // getInterpolated
     ofVec2f interpolated( const ofVec2f& pnt, float p ) const;
@@ -202,6 +209,12 @@ public:
     
     // use getRotated
     ofVec2f rotated( float angle, const ofVec2f& pivot ) const;    
+    
+    // return all zero vector
+    static ofVec2f zero() { return ofVec2f(0, 0); }
+
+    // return all one vector
+    static ofVec2f one() { return ofVec2f(1, 1); }
 };
 
 
@@ -225,13 +238,18 @@ ofVec2f operator/( float f, const ofVec2f& vec );
 // Implementation
 /////////////////
 
-
+inline ofVec2f::ofVec2f(): x(0), y(0) {};
+inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {};
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
-
 
 // Getters and Setters.
 //
 //
+inline void ofVec2f::set( float _scalar ) {
+	x = _scalar;
+	y = _scalar;
+}
+
 inline void ofVec2f::set( float _x, float _y ) {
 	x = _x;
 	y = _y;
@@ -254,21 +272,27 @@ inline bool ofVec2f::operator!=( const ofVec2f& vec ) const {
 	return (x != vec.x) || (y != vec.y);
 }
 
-inline bool ofVec2f::match( const ofVec2f& vec, float tollerance ) const {
-	return (fabs(x - vec.x) < tollerance)
-	&& (fabs(y - vec.y) < tollerance);
+inline bool ofVec2f::match( const ofVec2f& vec, float tolerance ) const {
+	return (fabs(x - vec.x) < tolerance)
+	&& (fabs(y - vec.y) < tolerance);
 }
 
 /**
  * Checks if vectors look in the same direction.
- * Tollerance is specified in degree.
+ * Tolerance is specified in degree.
  */
-inline bool ofVec2f::align( const ofVec2f& vec, float tollerance ) const {
-	return  fabs( this->angle( vec ) ) < tollerance;
+inline bool ofVec2f::isAligned( const ofVec2f& vec, float tolerance ) const { 
+	return  fabs( this->angle( vec ) ) < tolerance;
+}
+inline bool ofVec2f::align( const ofVec2f& vec, float tolerance ) const {
+    return isAligned( vec, tolerance );
 }
 
-inline bool ofVec2f::alignRad( const ofVec2f& vec, float tollerance ) const {
-	return  fabs( this->angleRad( vec ) ) < tollerance;
+inline bool ofVec2f::isAlignedRad( const ofVec2f& vec, float tolerance ) const {
+	return  fabs( this->angleRad( vec ) ) < tolerance;
+}
+inline bool ofVec2f::alignRad( const ofVec2f& vec, float tolerance ) const {
+    return isAlignedRad( vec, tolerance );
 }
 
 

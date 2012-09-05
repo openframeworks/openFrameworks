@@ -10,8 +10,13 @@
 class ofVec3f {
 public:
 	float x,y,z;
+    
+    static const int DIM = 3;
 	
-	ofVec3f( float _x=0.f, float _y=0.f, float _z=0.f );
+	ofVec3f();
+	ofVec3f( float _x, float _y, float _z=0 );
+	/// assigns scalar to x, y, and z
+	explicit ofVec3f( float _scalar );
 	
     ofVec3f( const ofVec2f& vec );
     ofVec3f( const ofVec4f& vec );
@@ -36,17 +41,20 @@ public:
     //
     void set( float _x, float _y, float _z = 0 );
     void set( const ofVec3f& vec );
+	void set( float _scalar );
 	
     // Check similarity/equality.
     //
     bool operator==( const ofVec3f& vec ) const;
     bool operator!=( const ofVec3f& vec ) const;
-    bool match( const ofVec3f& vec, float tollerance=0.0001 ) const;
+    bool match( const ofVec3f& vec, float tolerance=0.0001 ) const;
     /**
 	 * Checks if vectors look in the same direction.
 	 */
-    bool align( const ofVec3f& vec, float tollerance=0.0001 ) const;
-    bool alignRad( const ofVec3f& vec, float tollerance=0.0001 ) const;
+    bool isAligned( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool align( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool isAlignedRad( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool alignRad( const ofVec3f& vec, float tolerance=0.0001 ) const;
 	
 	
     // Operator overloading for ofVec3f
@@ -203,7 +211,7 @@ public:
     ofVec3f perpendiculared( const ofVec3f& vec ) const;
 	
     // squareLength
-    float lengthSquared() const;
+    OF_DEPRECATED_MSG("Use ofVec3f::squareLength() instead.", float lengthSquared() const);
     
     // use getMapped
     ofVec3f  mapped( const ofVec3f& origin,
@@ -224,6 +232,12 @@ public:
     ofVec3f 	rotated( float angle,
 						const ofVec3f& pivot,
 						const ofVec3f& axis ) const;    
+
+    // return all zero vector
+    static ofVec3f zero() { return ofVec3f(0, 0, 0); }
+    
+    // return all one vector
+    static ofVec3f one() { return ofVec3f(1, 1, 1); }
 };
 
 
@@ -245,12 +259,20 @@ ofVec3f operator/( float f, const ofVec3f& vec );
 
 inline ofVec3f::ofVec3f( const ofVec2f& vec ):x(vec.x), y(vec.y), z(0) {}
 inline ofVec3f::ofVec3f( const ofVec4f& vec ):x(vec.x), y(vec.y), z(vec.z) {}
+inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {};
+inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {};
 inline ofVec3f::ofVec3f( float _x, float _y, float _z ):x(_x), y(_y), z(_z) {}
 
 
 // Getters and Setters.
 //
 //
+inline void ofVec3f::set( float _scalar ) {
+	x = _scalar;
+	y = _scalar;
+	z = _scalar;
+}
+
 inline void ofVec3f::set( float _x, float _y, float _z ) {
 	x = _x;
 	y = _y;
@@ -275,23 +297,29 @@ inline bool ofVec3f::operator!=( const ofVec3f& vec ) const {
 	return (x != vec.x) || (y != vec.y) || (z != vec.z);
 }
 
-inline bool ofVec3f::match( const ofVec3f& vec, float tollerance ) const{
-	return (fabs(x - vec.x) < tollerance)
-	&& (fabs(y - vec.y) < tollerance)
-	&& (fabs(z - vec.z) < tollerance);
+inline bool ofVec3f::match( const ofVec3f& vec, float tolerance ) const{
+	return (fabs(x - vec.x) < tolerance)
+	&& (fabs(y - vec.y) < tolerance)
+	&& (fabs(z - vec.z) < tolerance);
 }
 
 /**
  * Checks if vectors look in the same direction.
  */
-inline bool ofVec3f::align( const ofVec3f& vec, float tollerance ) const {
+inline bool ofVec3f::isAligned( const ofVec3f& vec, float tolerance ) const {
 	float angle = this->angle( vec );
-	return  angle < tollerance;
+	return  angle < tolerance;
+}
+inline bool ofVec3f::align( const ofVec3f& vec, float tolerance ) const {
+    return isAligned( vec, tolerance );
 }
 
-inline bool ofVec3f::alignRad( const ofVec3f& vec, float tollerance ) const {
+inline bool ofVec3f::isAlignedRad( const ofVec3f& vec, float tolerance ) const {
 	float angle = this->angleRad( vec );
-	return  angle < tollerance;
+	return  angle < tolerance;
+}
+inline bool ofVec3f::alignRad( const ofVec3f& vec, float tolerance ) const {
+    return isAlignedRad( vec, tolerance );
 }
 
 

@@ -3,7 +3,11 @@
 #include <ofUtils.h>
 #include <map>
 
-static ofLogLevel currentLogLevel =  OF_LOG_WARNING;
+static ofLogLevel currentLogLevel =  OF_LOG_NOTICE;
+
+bool ofLog::bAutoSpace = false;
+string ofLog::padding = "";
+
 static map<string,ofLogLevel> & getModules(){
 	static map<string,ofLogLevel> * modules = new map<string,ofLogLevel>;
 	return *modules;
@@ -71,6 +75,17 @@ ofLog::ofLog(ofLogLevel logLevel, const char* format, ...){
 		va_end( args );
 	}
 	bPrinted = true;
+}
+
+//--------------------------------------------------
+void ofLog::setAutoSpace(bool autoSpace) {
+	bAutoSpace = autoSpace;
+	if(bAutoSpace) {
+		padding = " ";
+	}
+	else {
+		padding = "";
+	}
 }
 
 //-------------------------------------------------------
@@ -166,33 +181,39 @@ void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel){
 
 string ofGetLogLevelName(ofLogLevel level){
 	switch(level){
-	case OF_LOG_VERBOSE:
-		return "OF_VERBOSE";
-		break;
-	case OF_LOG_NOTICE:
-		return "OF_LOG_NOTICE";
-		break;
-	case OF_LOG_WARNING:
-		return "OF_LOG_WARNING";
-		break;
-	case OF_LOG_ERROR:
-		return "OF_LOG_ERROR";
-		break;
-	case OF_LOG_FATAL_ERROR:
-		return "OF_LOG_FATAL_ERROR";
-		break;
-	case OF_LOG_SILENT:
-		return "OF_LOG_SILENT";
-		break;
-	default:
-		return "";
+		case OF_LOG_VERBOSE:
+			return "verbose";
+			break;
+		case OF_LOG_NOTICE:
+			return "notice";
+			break;
+		case OF_LOG_WARNING:
+			return "warning";
+			break;
+		case OF_LOG_ERROR:
+			return "error";
+			break;
+		case OF_LOG_FATAL_ERROR:
+			return "fatal error";
+			break;
+		case OF_LOG_SILENT:
+			return "silent";
+			break;
+		default:
+			return "";
 	}
 }
 
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
-	if(level<OF_LOG_ERROR) cout << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
-	else cerr << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
-}
+	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
+	ostream& out = level < OF_LOG_ERROR ? cout : cerr;
+	out << "[";
+	// only print the module name if it's not "OF"
+	if(module != "OF") {
+		out << module << ":";
+	}
+	out << ofGetLogLevelName(level) << "] " << message << endl;
+}	
 
 void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
 	va_list args;
@@ -204,17 +225,14 @@ void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, con
 void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-	if(logLevel<OF_LOG_ERROR){
-		printf("%s: ", module.c_str());
-		printf("%s: ", ofGetLogLevelName(logLevel).c_str());
-		vprintf( format, args );
-		printf("\n");
-	}else{
-		fprintf(stderr,"%s: ", module.c_str());
-		fprintf(stderr,"%s: ", ofGetLogLevelName(logLevel).c_str());
-		vfprintf( stderr, format, args );
-		fprintf(stderr,"\n");
+	FILE* out = logLevel < OF_LOG_ERROR ? stdout : stderr;
+	fprintf(out, "[");
+	if(module != "OF") {
+		fprintf(out, "%s:", module.c_str());
 	}
+	fprintf(out, "%s] ", ofGetLogLevelName(logLevel).c_str());
+	vfprintf(out, format, args);
+	fprintf(out, "\n");
 }
 
 ofFileLoggerChannel::ofFileLoggerChannel(){
