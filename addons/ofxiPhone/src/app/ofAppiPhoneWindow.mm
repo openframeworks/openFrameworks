@@ -135,17 +135,11 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 }
 
 int ofAppiPhoneWindow::getWidth(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return (int)getWindowSize().x;
-	}
-	return (int)getWindowSize().y;
+	return (int)getWindowSize().x;
 }
 
 int ofAppiPhoneWindow::getHeight(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return (int)getWindowSize().y;
-	}
-	return (int)getWindowSize().x;
+	return (int)getWindowSize().y;
 }
 
 int	ofAppiPhoneWindow::getWindowMode() {
@@ -199,52 +193,13 @@ bool ofAppiPhoneWindow::isSetupScreenEnabled() {
 }
 
 void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
-
-    ofxiPhoneAppDelegate * appDelegate;
-    appDelegate = (ofxiPhoneAppDelegate *)[UIApplication sharedApplication].delegate;
-
     /**
-     *  because setOrientation is called from inside an OF app which runs on a different
-     *  thread to UIKit, we must call performSelectorOnMainThread as UIKit runs on the
-     *  main thread.
+     *  orientation is now being set using ofxiPhoneSetOrientation()
+     *  which now rotates and resizes the glView inside ofxiPhoneViewController.
+     *  as far as OF is concerned, the orientation is always OF_ORIENTATION_DEFAULT.
      */
-    
-	switch (orientation) {
-		case OF_ORIENTATION_DEFAULT:
-            [appDelegate.glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationPortrait) withObject:nil waitUntilDone:NO];
-			break;
-		case OF_ORIENTATION_180:
-            [appDelegate.glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationPortraitUpsideDown) withObject:nil waitUntilDone:NO];
-			break;
-		case OF_ORIENTATION_90_RIGHT:
-            [appDelegate.glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationLandscapeLeft) withObject:nil waitUntilDone:NO];
-			break;
-		case OF_ORIENTATION_90_LEFT:
-            [appDelegate.glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationLandscapeRight) withObject:nil waitUntilDone:NO];
-            break;
-        case OF_ORIENTATION_UNKNOWN:
-            return;
-	}
-    
-//	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::setOrientation: " + ofToString(orientation));
-//	switch (orientation) {
-//		case OF_ORIENTATION_DEFAULT:
-//			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait];
-//			break;
-//		case OF_ORIENTATION_180:
-//			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown];
-//			break;
-//		case OF_ORIENTATION_90_RIGHT:
-//			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];
-//			break;
-//		case OF_ORIENTATION_90_LEFT:
-//			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];			
-//            break;
-//	}
-//	
-//	this->orientation = orientation;
+    ofLog(OF_LOG_NOTICE, "Please use ofxiPhoneSetOrientation() instead when setting orientation on iOS.");
 }
-
 
 ofOrientation ofAppiPhoneWindow::getOrientation() {
 	return orientation;
