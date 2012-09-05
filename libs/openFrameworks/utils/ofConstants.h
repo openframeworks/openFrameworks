@@ -368,6 +368,21 @@ enum ofAspectRatioMode {
     OF_ASPECT_RATIO_KEEP              = 1,
     OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
 };
+
+enum ofAlignVert {
+    OF_ALIGN_VERT_IGNORE   = 0x0000,
+    OF_ALIGN_VERT_TOP      = 0x0010,
+    OF_ALIGN_VERT_BOTTOM   = 0x0020,
+    OF_ALIGN_VERT_CENTER   = 0x0040,
+};
+
+enum ofAlignHorz {
+    OF_ALIGN_HORZ_IGNORE   = 0x0000,
+    OF_ALIGN_HORZ_LEFT     = 0x0001,
+    OF_ALIGN_HORZ_RIGHT    = 0x0002,
+    OF_ALIGN_HORZ_CENTER   = 0x0004,
+};
+
 enum ofRectMode{
 	OF_RECTMODE_CORNER=0,
  	OF_RECTMODE_CENTER=1
