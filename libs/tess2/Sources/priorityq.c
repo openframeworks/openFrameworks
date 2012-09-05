@@ -410,7 +410,7 @@ int pqInit( TESSalloc* alloc, PriorityQ *pq )
 	p = pq->order;
 	r = p + pq->size - 1;
 	for( i = p; i < r; ++i ) {
-		assert( LEQ( **(i+1), **i ));
+		if(! LEQ( **(i+1), **i )) return 0;
 	}
 #endif
 

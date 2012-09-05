@@ -126,6 +126,12 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	// check compile status
 	GLint status = GL_FALSE;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    GLuint err = glGetError();
+    if (err != GL_NO_ERROR){
+        ofLog( OF_LOG_ERROR, "OpenGL generated error " + ofToString(err) + " trying to get the compile status for " + nameForType(type) + " shader. Does your video card support this?" );
+        return false;
+    }
+    
 	if(status == GL_TRUE)
 		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader compiled.");
 	
@@ -167,14 +173,19 @@ int ofShader::getGeometryMaxOutputCount() {
 }
 
 //--------------------------------------------------------------
-bool ofShader::checkShaderLinkStatus(GLuint shader, GLenum type) {
+bool ofShader::checkProgramLinkStatus(GLuint program) {
 	GLint status;
-	glGetProgramiv(shader, GL_LINK_STATUS, &status);
+	glGetProgramiv(program, GL_LINK_STATUS, &status);
+    GLuint err = glGetError();
+    if (err != GL_NO_ERROR){
+        ofLog( OF_LOG_ERROR, "OpenGL generated error "+ofToString(err)+" trying to get the program link status. Does your video card support shader programs?" );
+        return false;
+    }
 	if(status == GL_TRUE)
-		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader linked.");
+		ofLog(OF_LOG_VERBOSE, "Program linked.");
 	else if (status == GL_FALSE) {
-		ofLog(OF_LOG_ERROR, nameForType(type) + " shader failed to link.");
-		checkShaderInfoLog(shader, type);
+		ofLog(OF_LOG_ERROR, "Program failed to link.");
+		checkProgramInfoLog(program);
 		return false;
 	}
 	return true;
@@ -234,16 +245,11 @@ bool ofShader::linkProgram() {
 			}
 			
 			glLinkProgram(program);
+            
+            checkProgramLinkStatus(program);
 
-			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-				GLuint shader = it->second;
-				if(shader) {
-					checkShaderLinkStatus(shader, it->first);
-				}
-			}
-			
-			checkProgramInfoLog(program);
-			
+            // bLoaded means we have loaded shaders onto the graphics card;
+            // it doesn't necessarily mean that these shaders have compiled and linked successfully.
 			bLoaded = true;
 		}
 		return bLoaded;
@@ -285,6 +291,18 @@ void ofShader::end() {
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const char* name, ofBaseHasTexture& img, int textureLocation) {
 	setUniformTexture(name, img.getTextureReference(), textureLocation);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniformTexture(const char* name, int textureTarget, GLint textureID, int textureLocation){
+	if(bLoaded) {
+		glActiveTexture(GL_TEXTURE0 + textureLocation);
+		glEnable(textureTarget);
+		glBindTexture(textureTarget, textureID);
+		glDisable(textureTarget);
+		setUniform1i(name, textureLocation);
+		glActiveTexture(GL_TEXTURE0);
+	}
 }
 
 //--------------------------------------------------------------
@@ -394,6 +412,12 @@ void ofShader::setUniform3fv(const char* name, float* v, int count) {
 void ofShader::setUniform4fv(const char* name, float* v, int count) {
 	if(bLoaded)
 		glUniform4fv(getUniformLocation(name), count, v);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniformMatrix4f(const char* name, const ofMatrix4x4 & m) {
+	if(bLoaded)
+		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, m.getPtr());
 }
 
 //--------------------------------------------------------------

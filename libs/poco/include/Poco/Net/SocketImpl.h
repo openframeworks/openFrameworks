@@ -1,7 +1,7 @@
 //
 // SocketImpl.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/SocketImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SocketImpl.h#4 $
 //
 // Library: Net
 // Package: Sockets
@@ -105,6 +105,23 @@ public:
 		///
 		/// If reuseAddress is true, sets the SO_REUSEADDR
 		/// socket option.
+		
+	virtual void bind6(const SocketAddress& address, bool reuseAddress = false, bool ipV6Only = false);
+		/// Bind a local IPv6 address to the socket.
+		///
+		/// This is usually only done when establishing a server
+		/// socket. TCP clients should not bind a socket to a
+		/// specific address.
+		///
+		/// If reuseAddress is true, sets the SO_REUSEADDR
+		/// socket option.
+		///
+		/// The given address must be an IPv6 address. The
+		/// IPPROTO_IPV6/IPV6_V6ONLY option is set on the socket
+		/// according to the ipV6Only parameter.
+		///
+		/// If the library has not been built with IPv6 support,
+		/// a Poco::NotImplementedException will be thrown.
 		
 	virtual void listen(int backlog = 64);
 		/// Puts the socket into listening state.
@@ -349,10 +366,10 @@ public:
 		/// Returns the socket descriptor for the 
 		/// underlying native socket.
 	
-	void ioctl(int request, int& arg);
+	void ioctl(poco_ioctl_request_t request, int& arg);
 		/// A wrapper for the ioctl system call.
 
-	void ioctl(int request, void* arg);
+	void ioctl(poco_ioctl_request_t request, void* arg);
 		/// A wrapper for the ioctl system call.
 	
 	bool initialized() const;
@@ -394,7 +411,7 @@ protected:
 		/// except for raw sockets.
 
 	void reset(poco_socket_t fd = POCO_INVALID_SOCKET);
-		/// Allows subclasses to set the socket manually, iff no valid socket is set yet!
+		/// Allows subclasses to set the socket manually, iff no valid socket is set yet.
 	
 	static int lastError();
 		/// Returns the last error code.

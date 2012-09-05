@@ -1,103 +1,83 @@
-*.mode*
-build/
-obj/
-*.o
+
+# OF-specific ignore patterns
+
 openFrameworks.a
 openFrameworksDebug.a
 openFrameworksUniversal.a
-*.app/
 
 #rule to avoid non-official addons going into git
 #see addons/.gitignore
-addons
-
-#xcode files
-*.pbxuser
-*.perspectivev3
-apps/examples/*/*.xcodeproj
-apps/examples/*/Project.xcconfig
-apps/examples/*/openFrameworks-Info.plist
-apps/addonsExamples/*/*.xcodeproj
-apps/addonsExamples/*/Project.xcconfig
-apps/addonsExamples/*/openFrameworks-Info.plist
-
-apps/iphoneAddonsExamples/*/*.xcodeproj
-apps/iphoneAddonsExamples/*/Project.xcconfig
-apps/iPhoneAddonsExamples/*/ofxiphone-Info.plist
-apps/iPhoneAddonsExamples/*/iPhone_Prefix.pch
-
-apps/iphoneExamples/*/*.xcodeproj
-apps/iphoneExamples/*/Project.xcconfig
-apps/iPhoneExamples/*/ofxiphone-Info.plist
-apps/iPhoneExamples/*/iPhone_Prefix.pch
-
-
-#codeblocks files
-apps/*/*/*.layout
-apps/*/*/*.depend
-apps/*/*/bin/clickToLaunch*
-apps/*/*/bin/libs
-apps/*/*/obj
-apps/examples/*/*.cbp
-apps/examples/*/*.workspace
-apps/addonsExamples/*/*.cbp
-apps/addonsExamples/*/*.workspace
+addons/*
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
-apps
+apps/*
 
-#codeblocks OF lib files
-libs/openFrameworksCompiled/project/*/*.depend
-libs/openFrameworksCompiled/project/*/*.layout
+#also, see examples/.gitignore
 
-#linux temporary files
-*~
+# Some general ignore patterns
 
-#vs2010 user files
+build/
+obj/
+*.o
+Debug*/
+Release*/
+*.mode*
+*.app/
+*.pyc
+.svn/
+
+# IDE-specific ignore patterns
+
+#XCode
+*.pbxuser
+*.perspective
+*.perspectivev3
+*.mode1v3
+*.mode2v3
+#XCode 4
+xcuserdata
+*.xcworkspace
+
+#Code::Blocks
+*.depend
+*.layout
+
+#Visual Studio
 *.sdf
 *.opensdf
 *.suo
+ipch/
 
-#eclipse build folders
-#Mac OS X
-addons/Debug Mac OS X
-addons/Release Mac OS X
-libs/openFrameworks/Debug Mac OS X
-libs/openFrameworks/Release Mac OS X
-apps/*/*/Debug Mac OS X
-apps/*/*/Release Mac OS X
-xcuserdata
-project.xcworkspace
-.DS_Store
+#Eclipse
+.metadata
+local.properties
+.externalToolBuilders
+
+# OS-specific ignore patterns
 
 #Linux
-addons/Debug Linux
-addons/Release Linux
-libs/openFrameworks/Debug Linux
-libs/openFrameworks/Release Linux
-apps/*/*/Debug Linux
-apps/*/*/Release Linux
-apps/*/*/Debug Linux64
-apps/*/*/Release Linux64
-apps/examples/*/Makefile
-apps/examples/*/config.make
-apps/addonsExamples/*/Makefile
-apps/addonsExamples/*/config.make
-*.pyc
+*~
+# KDE
+.directory
 
+#OSX
+.DS_Store
+*.swp
+*~.nib
+# Thumbnails
+._*
 
+#Windows
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
 
-/apps/examples/emptyExample/emptyExample.xcodeproj/project.pbxproj
-/apps/examples/eventsExample/eventsExample.xcodeproj/project.pbxproj
-/apps/addonsExamples/ofxCvHaarFinderExample/ofxCvHaarFinderExample.xcodeproj/project.pbxproj
-/apps/addonsExamples/opencvExample/opencvExample.xcodeproj/project.pbxproj
-/apps/examples/polygonExample/polygonExample.xcodeproj/project.pbxproj
-/apps/examples/imageLoaderExample/imageLoaderExample.xcodeproj/project.pbxproj
-/apps/examples/graphicsExample/graphicsExample.xcodeproj/project.pbxproj
-/apps/examples/fontsExample/fontsExample.xcodeproj/project.pbxproj
-/apps/examples/advancedEventsExample/advancedEventsExample.xcodeproj/project.pbxproj
-/apps/devApps/memo3DCameraTestingExample/basic3dExample.xcodeproj/project.pbxproj
-/apps/devApps/_DeployExamples/deployExamples.xcodeproj/project.pbxproj
-/apps/addonsExamples/xmlSettingsExample/xmlSettingsExample.xcodeproj/project.pbxproj
-/apps/addonsExamples/threadedImageLoaderExample/threadedImageLoaderExample.xcodeproj/project.pbxproj
+#Android
+.csettings
+/libs/openFrameworksCompiled/project/android/paths.make
+
+# Miscellaneous
+.mailmap
+

@@ -20,12 +20,8 @@
 //========================================================================
 // static variables:
 
-ofPtr<ofBaseApp>				OFSAptr;
-bool 						bMousePressed;
-bool						bRightButton;
-int							width, height;
-
-static ofPtr<ofAppBaseWindow> window;
+static ofPtr<ofBaseApp>				OFSAptr;
+static ofPtr<ofAppBaseWindow> 		window;
 
 
 //========================================================================
@@ -129,7 +125,7 @@ void ofExitCallback(){
 	//------------------------
 
 	// try to close quicktime, for non-linux systems:
-	#if defined( TARGET_OSX ) || defined( TARGET_WIN32 )
+	#if defined( OF_VIDEO_CAPTURE_QUICKTIME ) || defined( OF_VIDEO_PLAYER_QUICKTIME)
 	closeQuicktime();
 	#endif
 

@@ -74,20 +74,20 @@ public class OFAndroidGPS extends OFAndroidObject implements LocationListener {
 	private boolean started;
 
 	@Override
-	protected void pause() {
+	protected void appPause() {
 		boolean wasstarted = started;
 		stopGPS();
 		started = wasstarted;
 	}
 
 	@Override
-	protected void resume() {
+	protected void appResume() {
 		if(started)
 			startGPS();
 	}
 
 	@Override
-	protected void stop() {
+	protected void appStop() {
 		boolean wasstarted = started;
 		stopGPS();
 		started = wasstarted;

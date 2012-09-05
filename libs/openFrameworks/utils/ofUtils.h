@@ -14,7 +14,7 @@ int 	ofNextPow2(int input);
 
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
-int		ofGetElapsedTimeMillis();
+unsigned long ofGetElapsedTimeMillis();
 unsigned long ofGetElapsedTimeMicros();
 int 	ofGetFrameNum();
 
@@ -58,6 +58,10 @@ template<class T>
 void ofSort(vector<T>& values) {
 	sort(values.begin(), values.end());
 }
+template<class T, class BoolFunction>
+void ofSort(vector<T>& values, BoolFunction compare) {
+	sort(values.begin(), values.end(), compare);
+}
 
 template <class T>
 unsigned int ofFind(const vector<T>& values, const T& target) {
@@ -80,10 +84,27 @@ string ofToString(const T& value){
 	return out.str();
 }
 
+/// like sprintf "%4f" format, in this example precision=4
 template <class T>
 string ofToString(const T& value, int precision){
 	ostringstream out;
 	out << fixed << setprecision(precision) << value;
+	return out.str();
+}
+
+/// like sprintf "% 4d" or "% 4f" format, in this example width=4, fill=' '
+template <class T>
+string ofToString(const T& value, int width, char fill ){
+	ostringstream out;
+	out << fixed << setfill(fill) << setw(width) << value;
+	return out.str();
+}
+
+/// like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
+template <class T>
+string ofToString(const T& value, int precision, int width, char fill ){
+	ostringstream out;
+	out << fixed << setfill(fill) << setw(width) << setprecision(precision) << value;
 	return out.str();
 }
 
@@ -169,5 +190,9 @@ string ofToUpper(const string & src);
 
 string ofVAArgsToString(const char * format, ...);
 string ofVAArgsToString(const char * format, va_list args);
+
+string ofSystem(string command);
+
+ofTargetPlatform ofGetTargetPlatform();
 
 

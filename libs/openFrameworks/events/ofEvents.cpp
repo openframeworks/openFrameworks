@@ -7,7 +7,11 @@
 
 // core events instance & arguments
 #ifdef OF_USING_POCO
-	ofCoreEvents ofEvents;
+	ofCoreEvents & ofEvents(){
+		static ofCoreEvents * events = new ofCoreEvents;
+		return *events;
+	}
+
 	ofEventArgs voidEventArgs;
 #endif
 
@@ -73,7 +77,7 @@ void ofNotifySetup(){
 		ofAppPtr->setup();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.setup, voidEventArgs );
+		ofNotifyEvent( ofEvents().setup, voidEventArgs );
 	#endif
 }
 
@@ -87,7 +91,7 @@ void ofNotifyUpdate(){
 		ofAppPtr->update();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.update, voidEventArgs );
+		ofNotifyEvent( ofEvents().update, voidEventArgs );
 	#endif
 }
 
@@ -99,7 +103,7 @@ void ofNotifyDraw(){
 		ofAppPtr->draw();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.draw, voidEventArgs );
+		ofNotifyEvent( ofEvents().draw, voidEventArgs );
 	#endif
 }
 
@@ -116,7 +120,7 @@ void ofNotifyKeyPressed(int key){
 	
 	#ifdef OF_USING_POCO
 		keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
+		ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
 	#endif
 	
 	
@@ -140,7 +144,7 @@ void ofNotifyKeyReleased(int key){
 	
 	#ifdef OF_USING_POCO
 		keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
+		ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
 	#endif
 }
 
@@ -148,7 +152,17 @@ void ofNotifyKeyReleased(int key){
 void ofNotifyMousePressed(int x, int y, int button){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
-	
+    if( bPreMouseNotSet ){
+		previousMouseX	= x;
+		previousMouseY	= y;
+		bPreMouseNotSet	= false;
+	}else{
+		previousMouseX = currentMouseX;
+		previousMouseY = currentMouseY;
+	}
+    
+	currentMouseX = x;
+	currentMouseY = y;
 	pressedMouseButtons.insert(button);
 
 	if(ofAppPtr){
@@ -161,7 +175,7 @@ void ofNotifyMousePressed(int x, int y, int button){
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
 		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEvents.mousePressed, mouseEventArgs );
+		ofNotifyEvent( ofEvents().mousePressed, mouseEventArgs );
 	#endif
 }
 
@@ -194,7 +208,7 @@ void ofNotifyMouseReleased(int x, int y, int button){
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
 		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEvents.mouseReleased, mouseEventArgs );
+		ofNotifyEvent( ofEvents().mouseReleased, mouseEventArgs );
 	#endif
 }
 
@@ -225,7 +239,7 @@ void ofNotifyMouseDragged(int x, int y, int button){
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
 		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEvents.mouseDragged, mouseEventArgs );
+		ofNotifyEvent( ofEvents().mouseDragged, mouseEventArgs );
 	#endif
 }
 
@@ -254,7 +268,7 @@ void ofNotifyMouseMoved(int x, int y){
 	#ifdef OF_USING_POCO
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
-		ofNotifyEvent( ofEvents.mouseMoved, mouseEventArgs );
+		ofNotifyEvent( ofEvents().mouseMoved, mouseEventArgs );
 	#endif
 }
 
@@ -265,7 +279,7 @@ void ofNotifyExit(){
 		ofAppPtr->exit();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.exit, voidEventArgs );
+		ofNotifyEvent( ofEvents().exit, voidEventArgs );
 	#endif
 }
 
@@ -281,7 +295,7 @@ void ofNotifyWindowResized(int width, int height){
 	#ifdef OF_USING_POCO
 		resizeEventArgs.width	= width;
 		resizeEventArgs.height	= height;
-		ofNotifyEvent( ofEvents.windowResized, resizeEventArgs );
+		ofNotifyEvent( ofEvents().windowResized, resizeEventArgs );
 	#endif
 }
 
@@ -293,7 +307,7 @@ void ofNotifyDragEvent(ofDragInfo info){
 	}
 	
 	#ifdef OF_USING_POCO
-		ofNotifyEvent(ofEvents.fileDragEvent, info);
+		ofNotifyEvent(ofEvents().fileDragEvent, info);
 	#endif
 }
 
@@ -305,7 +319,7 @@ void ofSendMessage(ofMessage msg){
 	}
 	
 	#ifdef OF_USING_POCO
-		ofNotifyEvent(ofEvents.messageEvent, msg);
+		ofNotifyEvent(ofEvents().messageEvent, msg);
 	#endif
 }
 
@@ -313,4 +327,20 @@ void ofSendMessage(ofMessage msg){
 void ofSendMessage(string messageString){
 	ofMessage msg(messageString);
 	ofSendMessage(msg);
+}
+
+void ofNotifyWindowEntry( int state ) {
+	
+	static ofEntryEventArgs entryArgs;
+
+	ofBaseApp * ofAppPtr = ofGetAppPtr();
+	if(ofAppPtr){
+		ofAppPtr->windowEntry(state);
+	}
+	
+#ifdef OF_USING_POCO
+	entryArgs.state = state;
+	ofNotifyEvent(ofEvents().windowEntered, entryArgs);
+#endif
+	
 }

@@ -2,7 +2,7 @@
 
 //-------------------------------
 #define OF_VERSION	7
-#define OF_VERSION_MINOR 0
+#define OF_VERSION_MINOR 1
 //-------------------------------
 
 enum ofLoopType{
@@ -10,6 +10,35 @@ enum ofLoopType{
 	OF_LOOP_PALINDROME=0x02,
 	OF_LOOP_NORMAL=0x03
 };
+
+enum ofTargetPlatform{
+	OF_TARGET_OSX,
+	OF_TARGET_WINGCC,
+	OF_TARGET_WINVS,
+	OF_TARGET_IPHONE,
+	OF_TARGET_ANDROID,
+	OF_TARGET_LINUX,
+	OF_TARGET_LINUX64
+};
+
+// Cross-platform deprecation warning
+#ifdef __GNUC__
+	// clang also has this defined. deprecated(message) is only for gcc>=4.5
+	#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 5)
+        #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated(message)))
+    #else
+        #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
+    #endif
+	#define OF_DEPRECATED(func) func __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+	#define OF_DEPRECATED_MSG(message, func) __declspec(deprecated(message)) func
+	#define OF_DEPRECATED(func) __declspec(deprecated) func
+#else
+	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
+	#define OF_DEPRECATED_MSG(message, func) func
+	#define OF_DEPRECATED(func) func
+#endif
+
 //-------------------------------
 //  find the system type --------
 //-------------------------------
@@ -22,7 +51,7 @@ enum ofLoopType{
 #elif defined( __APPLE_CC__)
 	#include <TargetConditionals.h>
 
-	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
 		#define TARGET_OPENGLES
 	#else
@@ -59,8 +88,7 @@ enum ofLoopType{
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
-		typedef unsigned __int64  uint64_t;		// allow us to use uint64_t
-		#pragma warning(disable : 4996)     // disable all deprecation warnings
+		#include <stdint.h>
 		#pragma warning(disable : 4068)     // unknown pragmas
 		#pragma warning(disable : 4101)     // unreferenced local variable
 		#pragma	warning(disable : 4312)		// type cast conversion (in qt vp)
@@ -138,8 +166,10 @@ enum ofLoopType{
 #endif
 
 #ifdef TARGET_ANDROID
+	#include <typeinfo>
 	#include <unistd.h>
 	#include <GLES/gl.h>
+	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
 
 	#define TARGET_LITTLE_ENDIAN
@@ -174,8 +204,12 @@ typedef TESSindex ofIndexType;
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
 	#elif defined(TARGET_OSX)
-
-		#define OF_VIDEO_CAPTURE_QUICKTIME
+		//on 10.6 and below we can use the old grabber
+		#ifndef MAC_OS_X_VERSION_10_7
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#else
+			#define OF_VIDEO_CAPTURE_QTKIT
+        #endif
 
 	#elif defined (TARGET_WIN32)
 
@@ -211,6 +245,8 @@ typedef TESSindex ofIndexType;
 	#else
 		#ifdef TARGET_OF_IPHONE
 			#define OF_VIDEO_PLAYER_IPHONE
+        #elif defined(TARGET_OSX)
+			#define OF_VIDEO_PLAYER_QTKIT
 		#elif !defined(TARGET_ANDROID)
 			#define OF_VIDEO_PLAYER_QUICKTIME
 		#endif
@@ -269,6 +305,7 @@ typedef ofBaseApp ofSimpleApp;
 #include <sstream>  //for ostringsream
 #include <iomanip>  //for setprecision
 #include <fstream>
+#include <algorithm>
 using namespace std;
 
 #ifndef PI
@@ -363,11 +400,18 @@ enum ofBlendMode{
 //this is done to match the iPhone defaults 
 //we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
 enum ofOrientation{
-	OF_ORIENTATION_UNKNOWN = 0,
 	OF_ORIENTATION_DEFAULT = 1,	
 	OF_ORIENTATION_180 = 2,
-	OF_ORIENTATION_90_RIGHT = 3,
-	OF_ORIENTATION_90_LEFT = 4,
+    OF_ORIENTATION_90_LEFT = 3,
+	OF_ORIENTATION_90_RIGHT = 4,
+    OF_ORIENTATION_UNKNOWN = 5
+};
+
+// gradient modes when using ofBackgroundGradient
+enum ofGradientMode {
+	OF_GRADIENT_LINEAR = 0,
+	OF_GRADIENT_CIRCULAR,
+	OF_GRADIENT_BAR
 };
 
 // these are straight out of glu, but renamed and included here

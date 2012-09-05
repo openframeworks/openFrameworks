@@ -136,6 +136,8 @@ public:
     // Spherical Linear Interpolation.
     // As t goes from 0 to 1, the Quat object goes from "from" to "to".
     void slerp(float t, const ofQuaternion& from, const ofQuaternion& to);
+
+    inline void normalize();
 };
 
 
@@ -459,4 +461,13 @@ ofVec3f ofQuaternion::operator*(const ofVec3f& v) const {
     uv *= (2.0f * _v.w);
     uuv *= 2.0f;
     return v + uv + uuv;
+}
+
+void ofQuaternion::normalize(){
+	float len = _v.w*_v.w + _v.x*_v.x + _v.y*_v.y + _v.z*_v.z;
+	float factor = 1.0f / sqrt(len);
+	_v.x *= factor;
+	_v.y *= factor;
+	_v.z *= factor;
+	_v.w *= factor;
 }

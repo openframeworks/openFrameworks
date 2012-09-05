@@ -61,7 +61,7 @@ void ofxCvHaarFinder::setup(string haarFile) {
 	#endif
 
 	if (!cascade)
-		printf("Could not load Haar cascade: %s\n", haarFile.c_str());
+        ofLog(OF_LOG_ERROR, "ofxCvHaarFinder:setup: Could not load Haar cascade " + haarFile );
 }
 
 

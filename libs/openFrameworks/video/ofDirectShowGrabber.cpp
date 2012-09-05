@@ -73,7 +73,7 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 			}
 
 
-			pixels.allocate(width, height, 24);
+			pixels.allocate(width, height, 3);
 			return true;
 		} else {
 			ofLog(OF_LOG_ERROR, "error allocating a video device");

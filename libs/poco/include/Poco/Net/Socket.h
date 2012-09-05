@@ -1,7 +1,7 @@
 //
 // Socket.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/Socket.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/Socket.h#2 $
 //
 // Library: Net
 // Package: Sockets
@@ -601,16 +601,6 @@ inline bool Socket::secure() const
 inline bool Socket::supportsIPv4()
 {
 	return true;
-}
-	
-	
-inline bool Socket::supportsIPv6()
-{
-#if defined(POCO_HAVE_IPv6)
-	return true;
-#else
-	return false;
-#endif
 }
 
 

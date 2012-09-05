@@ -327,7 +327,7 @@ static bool		bBitmapTexturePrepared = false;
 ofTexture		glesBitmappedFontTexture;
 unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 //---------------------------------------------------------------------
 void ofUpdateBitmapCharacterTexture(){
 	bBitmapTexturePrepared = false;
@@ -445,7 +445,7 @@ void ofDrawBitmapCharacterStart(int stringLength){
 	// which discards pixels unless their alpha is 1.0f
 	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_EQUAL, 1.0f);
+	glAlphaFunc(GL_GREATER, 0);
 #endif
 
 	glEnableClientState(GL_VERTEX_ARRAY);		

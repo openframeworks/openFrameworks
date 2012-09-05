@@ -1,7 +1,7 @@
 //
 // SharedLibrary_WIN32.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/SharedLibrary_WIN32.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/SharedLibrary_WIN32.h#2 $
 //
 // Library: Foundation
 // Package: SharedLibrary
@@ -52,7 +52,7 @@ class Foundation_API SharedLibraryImpl
 protected:
 	SharedLibraryImpl();
 	~SharedLibraryImpl();
-	void loadImpl(const std::string& path);
+	void loadImpl(const std::string& path, int flags);
 	void unloadImpl();
 	bool isLoadedImpl() const;
 	void* findSymbolImpl(const std::string& name);

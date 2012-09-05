@@ -1,7 +1,7 @@
 //
 // FunctionDelegate.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/FunctionDelegate.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FunctionDelegate.h#4 $
 //
 // Library: Foundation
 // Package: Events
@@ -9,7 +9,7 @@
 //
 // Implementation of the FunctionDelegate template.
 //
-// Copyright (c) 2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2011, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -42,6 +42,7 @@
 
 #include "Poco/Foundation.h"
 #include "Poco/AbstractDelegate.h"
+#include "Poco/Mutex.h"
 
 
 namespace Poco {
@@ -49,14 +50,13 @@ namespace Poco {
 
 template <class TArgs, bool hasSender = true, bool senderIsConst = true> 
 class FunctionDelegate: public AbstractDelegate<TArgs>
-	/// Wraps a C style function (or a C++ static function) to be used as
-	/// a delegate
+	/// Wraps a freestanding function or static member function 
+	/// for use as a Delegate.
 {
 public:
 	typedef void (*NotifyMethod)(const void*, TArgs&);
 
 	FunctionDelegate(NotifyMethod method):
-		AbstractDelegate<TArgs>(*reinterpret_cast<void**>(&method)),
 		_receiverMethod(method)
 	{
 	}
@@ -83,17 +83,35 @@ public:
 
 	bool notify(const void* sender, TArgs& arguments)
 	{
-		(*_receiverMethod)(sender, arguments);
-		return true; // a "standard" delegate never expires
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(sender, arguments);
+			return true;
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
+		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
 	}
 
 	AbstractDelegate<TArgs>* clone() const
 	{
 		return new FunctionDelegate(*this);
 	}
+	
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
 
 protected:
 	NotifyMethod _receiverMethod;
+	Mutex _mutex;
 
 private:
 	FunctionDelegate();
@@ -107,7 +125,6 @@ public:
 	typedef void (*NotifyMethod)(void*, TArgs&);
 
 	FunctionDelegate(NotifyMethod method):
-		AbstractDelegate<TArgs>(*reinterpret_cast<void**>(&method)),
 		_receiverMethod(method)
 	{
 	}
@@ -134,8 +151,19 @@ public:
 
 	bool notify(const void* sender, TArgs& arguments)
 	{
-		(*_receiverMethod)(const_cast<void*>(sender), arguments);
-		return true; // a "standard" delegate never expires
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(const_cast<void*>(sender), arguments);
+			return true;
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
+		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
 	}
 
 	AbstractDelegate<TArgs>* clone() const
@@ -143,8 +171,15 @@ public:
 		return new FunctionDelegate(*this);
 	}
 
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
 protected:
 	NotifyMethod _receiverMethod;
+	Mutex _mutex;
 
 private:
 	FunctionDelegate();
@@ -158,7 +193,6 @@ public:
 	typedef void (*NotifyMethod)(TArgs&);
 
 	FunctionDelegate(NotifyMethod method):
-		AbstractDelegate<TArgs>(*reinterpret_cast<void**>(&method)),
 		_receiverMethod(method)
 	{
 	}
@@ -185,8 +219,19 @@ public:
 
 	bool notify(const void* sender, TArgs& arguments)
 	{
-		(*_receiverMethod)(arguments);
-		return true; // a "standard" delegate never expires
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(arguments);
+			return true; 
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<TArgs>& other) const
+	{
+		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
+		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
 	}
 
 	AbstractDelegate<TArgs>* clone() const
@@ -194,8 +239,15 @@ public:
 		return new FunctionDelegate(*this);
 	}
 
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
 protected:
 	NotifyMethod _receiverMethod;
+	Mutex _mutex;
 
 private:
 	FunctionDelegate();

@@ -9,7 +9,18 @@ ofPolyline::ofPolyline(){
 //----------------------------------------------------------
 ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 	clear();
-	addVertexes(verts);
+	addVertices(verts);
+}
+
+//----------------------------------------------------------
+ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
+    ofPolyline polyline;
+    polyline.addVertex(rect.getMin());
+    polyline.addVertex(rect.getMaxX(),rect.getMinY());
+    polyline.addVertex(rect.getMax());
+    polyline.addVertex(rect.getMinX(),rect.getMaxY());
+    polyline.close();
+    return polyline;
 }
 
 //----------------------------------------------------------
@@ -33,17 +44,27 @@ void ofPolyline::addVertex(float x, float y, float z) {
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+void ofPolyline::addVertices(const vector<ofPoint>& verts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
 	bHasChanged=true;
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+	addVertices(verts);
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertices(const ofPoint* verts, int numverts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts, verts + numverts );
 	bHasChanged=true;
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+	addVertices(verts, numverts);
 }
 
 //----------------------------------------------------------
@@ -105,7 +126,7 @@ void ofPolyline::setCircleResolution(int res){
 		circlePoints.resize(res);
 
 		float angle = 0.0f;
-		float angleAdder = M_TWO_PI / (float)res;
+		const float angleAdder = M_TWO_PI / (float)res;
 		for (int i = 0; i < res; i++){
 			circlePoints[i].x = cos(angle);
 			circlePoints[i].y = sin(angle);
@@ -113,6 +134,21 @@ void ofPolyline::setCircleResolution(int res){
 			angle += angleAdder;
 		}
 	}
+}
+
+//----------------------------------------------------------
+// wraps any radian angle -FLT_MAX to +FLT_MAX into 0->2PI range.
+// TODO, make angle treatment consistent across all functions
+// should always be radians?  or should this take degrees?
+// used internally, so perhaps not as important
+float ofPolyline::wrapAngle(float angleRadians) {
+    if(angleRadians < 0) {
+        return -1.0f * (angleRadians + M_TWO_PI) * floor(angleRadians/M_TWO_PI);
+    } else if(angleRadians > M_TWO_PI) {
+        return         (angleRadians - M_TWO_PI) * floor(angleRadians/M_TWO_PI);
+    } else {
+        return angleRadians;
+    }
 }
 
 //----------------------------------------------------------
@@ -203,7 +239,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 			t 	=  (float)i / (float)(curveResolution-1);
 			t2 	= t * t;
 			t3 	= t2 * t;
-
+            
 			x = 0.5f * ( ( 2.0f * x1 ) +
 			( -x0 + x2 ) * t +
 			( 2.0f * x0 - 5.0f * x1 + 4 * x2 - x3 ) * t2 +
@@ -226,36 +262,102 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 }
 
 //----------------------------------------------------------
-void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution){
-	if(curveResolution==1) curveResolution=2;
-	curveVertices.clear();
-	setCircleResolution(curveResolution);
-	points.reserve(points.size()+curveResolution);
+void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int curveResolution){
+    
+    if(curveResolution<=1) curveResolution=2;
+    setCircleResolution(curveResolution);
+    points.reserve(points.size()+curveResolution);
 
-	float size = (angleEnd - angleBegin)/360.0f;
-	float begin = angleBegin/360.0f;
+    const float epsilon = 0.0001f;
+    
+    const int nCirclePoints = (int)circlePoints.size();
+    float segmentArcSize  = M_TWO_PI / (float)nCirclePoints;
+    
+    // convert angles to radians and wrap them into the range 0-M_TWO_PI and 
+    float angleBeginRad = wrapAngle(ofDegToRad(angleBegin));
+    float angleEndRad =   wrapAngle(ofDegToRad(angleEnd));
 
-	if(size<1){
-		const int segments = curveResolution*size;
-		float angle,sinus,cosinus;
-		float segment_size = PI*2.0*size/(float)segments;
-		angle=-(PI*2.0*begin);
-		for( int i=0; i<segments; i++){
-			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y));
-			angle-=segment_size ;
-		}
-		angle=-(PI*2.0*begin);
-		sinus = sin(angle);
-		cosinus = cos(angle);
-		points.push_back(ofPoint(radiusX*sinus+center.x,radiusY*cosinus+center.y));
-	}else{
-		for(int i=0;i<(int)circlePoints.size();i++){
-			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z));
-		}
-		points.push_back(ofPoint(radiusX*circlePoints[0].x+center.x,radiusY*circlePoints[0].y+center.y,center.z));
-	}
+    while(angleBeginRad >= angleEndRad) angleEndRad += M_TWO_PI;
+
+    // determine the directional angle delta
+    float d = clockwise ? angleEndRad - angleBeginRad : angleBeginRad - angleEndRad;
+    // find the shortest angle delta, clockwise delta direction yeilds POSITIVE values
+    float deltaAngle = atan2(sin(d),cos(d));
+    
+    // establish the remaining angle that we have to work through
+    float remainingAngle = deltaAngle;
+    
+    // if the delta angle is in the CCW direction OR the start and stop angles are 
+    // effectively the same adjust the remaining angle to be a be a full rotation
+    if(deltaAngle < 0 || abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
+    
+    ofPoint radii(radiusX,radiusY);
+    ofPoint point;
+    
+    int currentLUTIndex = 0;
+    bool isFirstPoint = true; // special case for the first point
+    
+    while(remainingAngle > 0) {
+        if(isFirstPoint) {
+            // TODO: should this be the exact point on the circle or
+            // should it be an intersecting point on the line that connects two
+            // surrounding LUT points?
+            //
+            // get the EXACT first point requested (for points that 
+            // don't fall precisely on a LUT entry)
+            point = ofPoint(cos(angleBeginRad),sin(angleBeginRad));
+            // set up the get any in between points from the LUT
+            float ratio = angleBeginRad / M_TWO_PI * (float)nCirclePoints;
+            currentLUTIndex = clockwise ? (int)ceil(ratio) : (int)floor(ratio);
+            float lutAngleAtIndex = currentLUTIndex * segmentArcSize;
+            // the angle between the beginning angle and the next angle in the LUT table
+            float d = clockwise ? (lutAngleAtIndex - angleBeginRad) : (angleBeginRad - lutAngleAtIndex);
+            float firstPointDelta = atan2(sin(d),cos(d)); // negative is in the clockwise direction
+            
+            // if the are "equal", get the next one CCW
+            if(abs(firstPointDelta) < epsilon) {
+                currentLUTIndex = clockwise ? (currentLUTIndex + 1) : (currentLUTIndex - 1);
+                firstPointDelta = segmentArcSize; // we start at the next lut point
+            }
+            
+            // start counting from the offset
+            remainingAngle -= firstPointDelta;
+            isFirstPoint = false;
+        } else {
+            point = ofPoint(circlePoints[currentLUTIndex].x,circlePoints[currentLUTIndex].y);
+            if(clockwise) {
+                currentLUTIndex++; // go to the next LUT point
+                remainingAngle -= segmentArcSize; // account for next point 
+                // if the angle overshoots, then the while loop will fail next time
+            } else {
+                currentLUTIndex--; // go to the next LUT point
+                remainingAngle -= segmentArcSize; // account for next point 
+                // if the angle overshoots, then the while loop will fail next time
+            }
+        }
+        
+        // keep the current lut index in range
+        if(clockwise) {
+            currentLUTIndex = currentLUTIndex % nCirclePoints;
+        } else {
+            if(currentLUTIndex < 0) currentLUTIndex = nCirclePoints + currentLUTIndex;
+        }
+        
+        // add the point to the poly line
+        point = point * radii + center;
+        points.push_back(point);
+        
+        // if the next LUT point moves us past the end angle then 
+        // add a a point a the exact end angle and call it finished 
+        if(remainingAngle < epsilon) {
+            point = ofPoint(cos(angleEndRad),sin(angleEndRad));
+            point = point * radii + center;
+            points.push_back(point);
+            remainingAngle = 0; // call it finished, the next while loop test will fail
+        }
+    }    
+    
 }
-
 
 //----------------------------------------------------------
 float ofPolyline::getPerimeter() const {
@@ -271,17 +373,44 @@ float ofPolyline::getPerimeter() const {
 }
 
 //----------------------------------------------------------
-ofRectangle ofPolyline::getBoundingBox(){
-	ofPolyline & polyline = *this;
+float ofPolyline::getArea() const{
+	if(points.size()<2) return 0;
+
+	float area = 0;
+	for(int i=0;i<(int)points.size()-1;i++){
+		area += points[i].x * points[i+1].y - points[i+1].x * points[i].y;
+	}
+	area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
+	return 0.5*area;
+}
+
+//----------------------------------------------------------
+ofPoint ofPolyline::getCentroid2D() const{
+	ofPoint centroid;
+	for(int i=0;i<(int)points.size()-1;i++){
+		centroid.x += (points[i].x + points[i+1].x) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+		centroid.y += (points[i].y + points[i+1].y) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+	}
+	centroid.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+	centroid.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+
+	float area = getArea();
+	centroid.x /= (6*area);
+	centroid.y /= (6*area);
+	return centroid;
+}
+
+//----------------------------------------------------------
+ofRectangle ofPolyline::getBoundingBox() const {
 
 	ofRectangle box;
-	int n = polyline.size();
+	int n = size();
 	if(n > 0) {
-		const ofPoint& first = polyline[0];
+		const ofPoint& first = (*this)[0];
 		// inititally, use width and height as max x and max y
 		box.set(first.x, first.y, first.x, first.y);
 		for(int i = 0; i < n; i++) {
-			const ofPoint& cur = polyline[i];
+			const ofPoint& cur = (*this)[i];
 			if(cur.x < box.x) {
 				box.x = cur.x;
 			}
@@ -304,38 +433,45 @@ ofRectangle ofPolyline::getBoundingBox(){
 
 //----------------------------------------------------------
 ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
-	ofPolyline & polyline = *this;
-	ofPolyline result = polyline;
-	
-	if(!polyline.isClosed()) {
-		ofLog( OF_LOG_ERROR, "ofSmooth() currently only supports closed ofPolylines." );
-		return polyline;
-	}
+	int n = size();
+	smoothingSize = ofClamp(smoothingSize, 0, n);
+	smoothingShape = ofClamp(smoothingShape, 0, 1);
 	
 	// precompute weights and normalization
 	vector<float> weights;
-	weights.resize(smoothingSize+1);
-	float weightSum = 0;
-	weights[0]=1; // center weight
+	weights.resize(smoothingSize);
 	// side weights
-	for(int i = 1; i <= smoothingSize; i++) {
+	for(int i = 1; i < smoothingSize; i++) {
 		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
-		weights[i]=curWeight;
-		weightSum += curWeight;
+		weights[i] = curWeight;
 	}
-	float weightNormalization = 1 / (1 + 2 * weightSum);
 	
-	// use weights to make weighted averages of neighbors
-	int n = polyline.size();
+	// make a copy of this polyline
+	ofPolyline result = *this;
+	
 	for(int i = 0; i < n; i++) {
-		for(int j = 1; j <= smoothingSize; j++) {
-			int leftPosition = (n + i - j) % n;
-			int rightPosition = (i + j) % n;
-			const ofPoint& left = polyline[leftPosition];
-			const ofPoint& right = polyline[rightPosition];
-			result[i] += (left + right) * weights[j];
+		float sum = 1; // center weight
+		for(int j = 1; j < smoothingSize; j++) {
+			ofVec2f cur;
+			int leftPosition = i - j;
+			int rightPosition = i + j;
+			if(leftPosition < 0 && bClosed) {
+				leftPosition += n;
+			}
+			if(leftPosition >= 0) {
+				cur += points[leftPosition];
+				sum += weights[j];
+			}
+			if(rightPosition >= n && bClosed) {
+				rightPosition -= n;
+			}
+			if(rightPosition < n) {
+				cur += points[rightPosition];
+				sum += weights[j];
+			}
+			result[i] += cur * weights[j];
 		}
-		result[i] *= weightNormalization;
+		result[i] /= sum;
 	}
 	
 	return result;
@@ -462,8 +598,51 @@ ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearest
 	return nearestPoint;
 }
 
+//--------------------------------------------------
+bool ofPolyline::inside(const ofPoint & p, const ofPolyline & polyline){
+	return ofPolyline::inside(p.x,p.y,polyline);
+}
 
+//--------------------------------------------------
+bool ofPolyline::inside(float x, float y, const ofPolyline & polyline){
+	int counter = 0;
+	int i;
+	double xinters;
+	ofPoint p1,p2;
+    
+	int N = polyline.size();
+    
+	p1 = polyline[0];
+	for (i=1;i<=N;i++) {
+		p2 = polyline[i % N];
+		if (y > MIN(p1.y,p2.y)) {
+            if (y <= MAX(p1.y,p2.y)) {
+                if (x <= MAX(p1.x,p2.x)) {
+                    if (p1.y != p2.y) {
+                        xinters = (y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
+                        if (p1.x == p2.x || x <= xinters)
+                            counter++;
+                    }
+                }
+            }
+		}
+		p1 = p2;
+	}
+    
+	if (counter % 2 == 0) return false;
+	else return true;
+}
 
+//--------------------------------------------------
+bool ofPolyline::inside(float x, float y){
+    return ofPolyline::inside(x, y, *this);
+
+}
+
+//--------------------------------------------------
+bool ofPolyline::inside(const ofPoint & p){
+    return ofPolyline::inside(p, *this);
+}
 
 //This is for polygon/contour simplification - we use it to reduce the number of points needed in
 //representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp
