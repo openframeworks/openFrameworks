@@ -2,7 +2,8 @@
 #include "ofRectangle.h"
  
 //----------------------------------------------------------
-ofRectangle::ofRectangle(){
+ofRectangle::ofRectangle() : x(position.x), y(position.y)
+{
     set(0,0,0,0);
 }
 
@@ -10,22 +11,26 @@ ofRectangle::ofRectangle(){
 ofRectangle::~ ofRectangle(){}
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(float px, float py, float w, float h){
+ofRectangle::ofRectangle(float px, float py, float w, float h) : x(position.x), y(position.y)
+{
 	set(px,py,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofPoint& p, float w, float h){
+ofRectangle::ofRectangle(const ofPoint& p, float w, float h) : x(position.x), y(position.y)
+{
     set(p,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofRectangle& rect){
+ofRectangle::ofRectangle(const ofRectangle& rect) : x(position.x), y(position.y)
+{
     set(rect);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofPoint& p0, const ofPoint& p1) {
+ofRectangle::ofRectangle(const ofPoint& p0, const ofPoint& p1) : x(position.x), y(position.y)
+{
     set(p0,p1);
 }
 
@@ -63,6 +68,37 @@ void ofRectangle::set(const ofPoint& p0, const ofPoint& p1) {
 }
 
 //----------------------------------------------------------
+void ofRectangle::setX(float px) {
+    x = px;
+}
+
+//----------------------------------------------------------
+void ofRectangle::setY(float py) {
+    y = py;
+}
+
+//----------------------------------------------------------
+void ofRectangle::setWidth(float w) {
+    width = w;
+}
+
+//----------------------------------------------------------
+void ofRectangle::setHeight(float h) {
+    height = h;
+}
+
+//----------------------------------------------------------
+void ofRectangle::setPosition(float px, float py) {
+    position.x = px;
+    position.y = py;
+}
+
+//----------------------------------------------------------
+void ofRectangle::setPosition(const ofPoint& p) {
+    position = p;
+}
+
+//----------------------------------------------------------
 void ofRectangle::setFromCenter(float px, float py, float w, float h){
     set(px - w*0.5f, py - h*0.5f, w, h);
 }
@@ -73,35 +109,52 @@ void ofRectangle::setFromCenter(const ofPoint& p, float w, float h){
 }
 
 //----------------------------------------------------------
-ofPoint ofRectangle::getCenter() const {
-	return ofPoint(x + width * 0.5f, y + height * 0.5f, 0);
+void ofRectangle::translate(float dx, float dy) {
+    translateX(dx);
+    translateY(dy);
 }
 
 //----------------------------------------------------------
-void ofRectangle::translate(float px, float py) {
-    x += px;
-    y += py;
+void ofRectangle::translate(const ofPoint& dp) {
+    translateX(dp.x);
+    translateY(dp.y);
 }
 
 //----------------------------------------------------------
-void ofRectangle::translate(const ofPoint& p) {
-    translate(p.x,p.y);
+void ofRectangle::translateX(float dx) {
+    x += dx;
+}
+
+//----------------------------------------------------------
+void ofRectangle::translateY(float dy) {
+    y += dy;
 }
 
 //----------------------------------------------------------
 void ofRectangle::scale(float s) {
-    scale(s,s);
+    scaleWidth(s);
+    scaleHeight(s);
 }
 
 //----------------------------------------------------------
 void ofRectangle::scale(float sX, float sY) {
-    width  *= sX;
-    height *= sY;
+    scaleWidth(sX);
+    scaleHeight(sY);
 }
 
 //----------------------------------------------------------
 void ofRectangle::scale(const ofPoint& s) {
-    scale(s.x,s.y);
+    scaleWidth(s.x);
+    scaleHeight(s.y);
+}
+
+//----------------------------------------------------------
+void ofRectangle::scaleWidth(float  sX) {
+    width  *= sX;
+}
+//----------------------------------------------------------
+void ofRectangle::scaleHeight(float sY) {
+    height *= sY;
 }
 
 //----------------------------------------------------------
@@ -116,7 +169,7 @@ void ofRectangle::scaleFromCenter(float sX, float sY) {
 
 //----------------------------------------------------------
 void ofRectangle::scaleFromCenter(const ofPoint& s) {
-    if(s.x == 1.0f && s.y == 1.0f) return;
+    if(s.x == 1.0f && s.y == 1.0f) return; // nothing to do
   
     canonicalize(); // will canonicalize
 
@@ -125,65 +178,201 @@ void ofRectangle::scaleFromCenter(const ofPoint& s) {
 
     ofPoint center = getCenter();
     
-    x = center.x - newWidth / 2.0f; 
+    x = center.x - newWidth  / 2.0f;
     y = center.y - newHeight / 2.0f; 
     
     width  = newWidth;
     height = newHeight;
+}
+
+//----------------------------------------------------------
+void ofRectangle::scaleTo(const ofRectangle& targetRect,
+                          ofRectScaleMode rectScaleMode) {
+    
+    if(rectScaleMode == OF_RECTSCALEMODE_FIT) {
+        scaleTo(targetRect,
+                OF_ASPECT_RATIO_KEEP,
+                OF_ALIGN_HORZ_CENTER,
+                OF_ALIGN_VERT_CENTER);
+    } else if(rectScaleMode == OF_RECTSCALEMODE_FILL) {
+        scaleTo(targetRect,
+                OF_ASPECT_RATIO_KEEP_BY_EXPANDING,
+                OF_ALIGN_HORZ_CENTER,
+                OF_ALIGN_VERT_CENTER);
+    } else if(rectScaleMode == OF_RECTSCALEMODE_CENTER) {
+        alignTo(targetRect,
+                OF_ALIGN_HORZ_CENTER,
+                OF_ALIGN_VERT_CENTER);
+    } else if(rectScaleMode == OF_RECTSCALEMODE_STRETCH_TO_FILL) {
+        scaleTo(targetRect,
+                OF_ASPECT_RATIO_IGNORE,
+                OF_ALIGN_HORZ_CENTER,
+                OF_ALIGN_VERT_CENTER);
+    } else {
+        scaleTo(targetRect,
+                OF_ASPECT_RATIO_KEEP);
+    }
+}
+
+//----------------------------------------------------------
+void ofRectangle::scaleTo(const ofRectangle& targetRect,
+                          ofAspectRatioMode subjectAspectRatioMode,
+                          ofAlignHorz sharedHorzAnchor,
+                          ofAlignVert sharedVertAnchor) {
+    scaleTo(targetRect,
+            subjectAspectRatioMode,
+            sharedHorzAnchor,
+            sharedVertAnchor,
+            sharedHorzAnchor,
+            sharedVertAnchor);
+}
+
+//----------------------------------------------------------
+void ofRectangle::scaleTo(const ofRectangle& targetRect,
+                                 ofAspectRatioMode aspectRatioMode,
+                                 ofAlignHorz modelHorzAnchor,
+                                 ofAlignVert modelVertAnchor,
+                                 ofAlignHorz thisHorzAnchor,
+                                 ofAlignVert thisVertAnchor) {
+
+    canonicalize(); // make w/h positive
+    
+    float tw = targetRect.getWidth();    // target width
+    float th = targetRect.getHeight();   // target height
+    float sw = getWidth();   // subject width
+    float sh = getHeight();  // subject height
+
+    if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING ||
+       aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
+        if(fabs(sw) >= FLT_EPSILON || fabs(sh) >= FLT_EPSILON) {
+            float wRatio = fabs(tw) / fabs(sw);
+            float hRatio = fabs(th) / fabs(sh);
+            if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
+                scale(MAX(wRatio,hRatio));
+            } else if(aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
+                scale(MIN(wRatio,hRatio));
+            }
+        } else {
+            ofLogWarning("ofRectangle") << "scaleTo: this rectangle has 0 width or 0 height. No scaling applied to avoid divide by zero.";
+        }
+    } else if(aspectRatioMode == OF_ASPECT_RATIO_IGNORE) {
+        width  = tw;
+        height = th;
+    } else {
+        ofLogWarning("ofRectangle") << "scaleTo: Unknown ofAspectRatioMode = " << aspectRatioMode << ". Using OF_ASPECT_RATIO_IGNORE.";
+        width  = tw;
+        height = th;
+    }
+
+    // now align if anchors are not ignored.
+    alignTo(targetRect,
+            modelHorzAnchor,
+            modelVertAnchor,
+            thisHorzAnchor,
+            thisVertAnchor);
 
 }
 
 //----------------------------------------------------------
-ofRectangle ofRectangle::scaleToMe(const ofRectangle& toBeScaled, ofRectScaleMode rectScaleMode) const {
+void ofRectangle::alignToHorz(const float& targetX,
+                              ofAlignHorz thisHorzAnchor) {
 
-    ofRectangle result;
-
-    // the easy case shortcuts
-    if(rectScaleMode == OF_RECTSCALEMODE_STRETCH_TO_FILL) {
-        result.set(*this);
-        return result;
-    } else if(rectScaleMode == OF_RECTSCALEMODE_CENTER) {
-        result.setFromCenter(getCenter(), // take a new center
-                             toBeScaled.getWidth(), // keep original width
-                             toBeScaled.getHeight()); // keep original height
-        return result;
-    }
-
-    float _x  = getX();
-    float _y  = getY();
-    float w  = getWidth();
-    float h  = getHeight();
-    float fw = toBeScaled.getWidth();
-    float fh = toBeScaled.getHeight();
-
-    // make sure we are dealing with non-zero rects, else divide by zero
-    if(fabs(fw) < FLT_EPSILON ||
-       fabs(fh) < FLT_EPSILON) {
-        ofLogWarning("ofRectangle") << "Source rectangle had 0 width or 0 height. Avoiding divide by zero.";
-        return result;
-    }
-    
-    float resultScale;
-    
-    // modifiy the result scale if needed
-    if(rectScaleMode == OF_RECTSCALEMODE_FILL) {
-        resultScale = MAX(fabs(w) / fabs(fw),
-                          fabs(h) / fabs(fh));
-    } else if(rectScaleMode == OF_RECTSCALEMODE_FIT) {
-        resultScale = MIN(fabs(w) / fabs(fw),
-                          fabs(h) / fabs(fh));
+    if(thisHorzAnchor != OF_ALIGN_HORZ_IGNORE) {
+        translateX(targetX - getHorzAnchor(thisHorzAnchor));
     } else {
-        ofLogWarning("ofRectangle") << "Encountered unknown ofRectScaleMode.  Using OF_RECTSCALEMODE_FIT.";
-        resultScale = MIN(fabs(w) / fabs(fw),
-                          fabs(h) / fabs(fh));
+        ofLogVerbose("ofRectangle") << "alignToHorz: thisHorzAnchor == OF_ALIGN_HORZ_IGNORE. No alignment applied.";
     }
+}
 
-    result.set(_x + ( w - fw * resultScale ) * 0.5f,
-               _y + ( h - fh * resultScale ) * 0.5f,
-                        ( fw * resultScale ),
-                        ( fh * resultScale ));
+//----------------------------------------------------------
+void ofRectangle::alignToHorz(const ofRectangle& targetRect,
+                              ofAlignHorz sharedAnchor) {
+    alignToHorz(targetRect, sharedAnchor, sharedAnchor);
+}
+
+//----------------------------------------------------------
+void ofRectangle::alignToHorz(const ofRectangle& targetRect,
+                              ofAlignHorz targetHorzAnchor,
+                              ofAlignHorz thisHorzAnchor) {
     
-    return result;
+    if(targetHorzAnchor != OF_ALIGN_HORZ_IGNORE &&
+       thisHorzAnchor   != OF_ALIGN_HORZ_IGNORE) {
+        alignToHorz(targetRect.getHorzAnchor(targetHorzAnchor),thisHorzAnchor);
+    } else {
+        if(targetHorzAnchor == OF_ALIGN_HORZ_IGNORE) {
+            ofLogVerbose("ofRectangle") << "alignToHorz: targetHorzAnchor == OF_ALIGN_HORZ_IGNORE. No alignment applied.";
+        } else {
+            ofLogVerbose("ofRectangle") << "alignToHorz: thisHorzAnchor == OF_ALIGN_HORZ_IGNORE. No alignment applied.";
+        }
+    }
+    
+}
+
+//----------------------------------------------------------
+void ofRectangle::alignToVert(const float& targetY,
+                              ofAlignVert thisVertAnchor) {
+
+    if(thisVertAnchor != OF_ALIGN_VERT_IGNORE) {
+        translateY(targetY - getVertAnchor(thisVertAnchor));
+    } else {
+        ofLogVerbose("ofRectangle") << "alignToVert: thisVertAnchor == OF_ALIGN_VERT_IGNORE. No alignment applied.";
+    }
+}
+
+//----------------------------------------------------------
+void ofRectangle::alignToVert(const ofRectangle& targetRect,
+                              ofAlignVert sharedAnchor) {
+    alignToVert(targetRect,sharedAnchor,sharedAnchor);
+}
+
+//----------------------------------------------------------
+void ofRectangle::alignToVert(const ofRectangle& targetRect,
+                              ofAlignVert targetVertAnchor,
+                              ofAlignVert thisVertAnchor) {
+
+    if(targetVertAnchor != OF_ALIGN_VERT_IGNORE &&
+       thisVertAnchor   != OF_ALIGN_VERT_IGNORE) {
+        alignToVert(targetRect.getVertAnchor(targetVertAnchor),thisVertAnchor);
+    } else {
+        if(targetVertAnchor == OF_ALIGN_VERT_IGNORE) {
+            ofLogVerbose("ofRectangle") << "alignToVert: targetVertAnchor == OF_ALIGN_VERT_IGNORE. No alignment applied.";
+        } else {
+            ofLogVerbose("ofRectangle") << "alignToVert: thisVertAnchor == OF_ALIGN_VERT_IGNORE. No alignment applied.";
+        }
+        
+    }
+}
+
+//----------------------------------------------------------
+void ofRectangle::alignTo(const ofPoint& targetPoint,
+                          ofAlignHorz thisHorzAnchor,
+                          ofAlignVert thisVertAnchor) {
+
+    alignToHorz(targetPoint.x, thisHorzAnchor);
+    alignToVert(targetPoint.y, thisVertAnchor);
+}
+
+
+//----------------------------------------------------------
+void ofRectangle::alignTo(const ofRectangle& targetRect,
+                          ofAlignHorz sharedHorzAnchor,
+                          ofAlignVert sharedVertAnchor) {
+    alignTo(targetRect,
+            sharedHorzAnchor,
+            sharedVertAnchor,
+            sharedHorzAnchor,
+            sharedVertAnchor);
+}
+
+//----------------------------------------------------------
+void ofRectangle::alignTo(const ofRectangle& targetRect,
+                                 ofAlignHorz targetHorzAnchor,
+                                 ofAlignVert targetVertAnchor,
+                                 ofAlignHorz thisHorzAnchor,
+                                 ofAlignVert thisVertAnchor) {
+
+    alignToHorz(targetRect,targetHorzAnchor,thisHorzAnchor);
+    alignToVert(targetRect,targetVertAnchor,thisVertAnchor);
 }
 
 //----------------------------------------------------------
@@ -276,9 +465,13 @@ void ofRectangle::canonicalize() {
 
 //----------------------------------------------------------
 ofRectangle ofRectangle::getCanonicalized() const {
-    ofRectangle canRect(*this); // copy it
-    canRect.canonicalize();
-    return canRect;
+    if(isCanonicalized()) {
+        return *this;
+    } else {
+        ofRectangle canRect(*this); // copy it
+        canRect.canonicalize();
+        return canRect;
+    }
 }
 
 //----------------------------------------------------------
@@ -337,26 +530,79 @@ float ofRectangle::getMaxY() const {
 }
 
 //----------------------------------------------------------
-ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
-    set(rect);
-	return *this;
+float ofRectangle::getLeft() const {
+    return getMinX();
 }
 
 //----------------------------------------------------------
-ofRectangle & ofRectangle::operator + (const ofPoint & point){
-	x += point.x;
-	y += point.y;
-	return *this;
+float ofRectangle::getRight() const {
+    return getMaxX();
 }
 
 //----------------------------------------------------------
-bool ofRectangle::operator == (const ofRectangle& rect) const {
-	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
+float ofRectangle::getTop() const {
+    return getMinY();
+}
+
+//----------------------------------------------------------
+float ofRectangle::getBottom() const {
+    return getMaxY();
+}
+
+//----------------------------------------------------------
+float ofRectangle::getHorzAnchor(ofAlignHorz anchor) const {
+    switch (anchor) {
+        case OF_ALIGN_HORZ_IGNORE:
+            ofLogError("ofRectangle") << "getHorzAnchor: Unable to get anchor for OF_ALIGN_HORZ_IGNORE.  Returning 0.";
+            return 0.0f;
+        case OF_ALIGN_HORZ_LEFT:
+            return getLeft();
+        case OF_ALIGN_HORZ_RIGHT:
+            return getRight();
+        case OF_ALIGN_HORZ_CENTER:
+            return getCenter().x;
+        default:
+            ofLogError("ofRectangle") << "getHorzAnchor: Unknown ofAlignHorz = " << anchor << ". Returning 0.0";
+            return 0.0f;
+    }
+}
+
+//----------------------------------------------------------
+float ofRectangle::getVertAnchor(ofAlignVert anchor) const {
+    switch (anchor) {
+        case OF_ALIGN_VERT_IGNORE:
+            ofLogError("ofRectangle") << "getVertAnchor: Unable to get anchor for OF_ALIGN_VERT_IGNORE.  Returning 0.0";
+            return 0.0f;
+        case OF_ALIGN_VERT_TOP:
+            return getTop();
+        case OF_ALIGN_VERT_BOTTOM:
+            return getBottom();
+        case OF_ALIGN_VERT_CENTER:
+            return getCenter().y;
+        default:
+            ofLogError("ofRectangle") << "getVertAnchor: Unknown ofAlignVert = " << anchor << ". Returning 0.0";
+            return 0.0f;
+    }
 }
 
 //----------------------------------------------------------
 bool ofRectangle::operator != (const ofRectangle& rect) const {
 	return (x != rect.x) || (y != rect.y) || (width != rect.width) || (height != rect.height);
+}
+
+//----------------------------------------------------------
+ofPoint ofRectangle::getPosition() const {
+    return position;
+}
+
+//----------------------------------------------------------
+ofPoint& ofRectangle::getPositionRef() {
+    return position;
+}
+
+//----------------------------------------------------------
+ofPoint ofRectangle::getCenter() const {
+	return ofPoint(x + width * 0.5f, y + height * 0.5f, 0);
 }
 
 //----------------------------------------------------------
@@ -378,3 +624,22 @@ float ofRectangle::getWidth() const {
 float ofRectangle::getHeight() const {
     return height;
 }
+
+//----------------------------------------------------------
+ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
+    set(rect);
+	return *this;
+}
+
+//----------------------------------------------------------
+ofRectangle & ofRectangle::operator + (const ofPoint & point){
+	x += point.x;
+	y += point.y;
+	return *this;
+}
+
+//----------------------------------------------------------
+bool ofRectangle::operator == (const ofRectangle& rect) const {
+	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
+}
+
