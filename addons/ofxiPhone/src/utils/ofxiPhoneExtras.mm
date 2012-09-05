@@ -152,15 +152,47 @@ void ofxiPhoneEnableLoopInThread() {
 
 //--------------------------------------------------------------
 void ofxiPhoneSetOrientation(ofOrientation orientation) {
-	if (orientation != OF_ORIENTATION_UNKNOWN) ofxiPhoneGetOFWindow()->setOrientation(orientation);
+    ofxiPhoneViewController * glViewController = ofxiPhoneGetViewController();
+	switch (orientation) {
+		case OF_ORIENTATION_DEFAULT:
+            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationPortrait) withObject:nil waitUntilDone:NO];
+			break;
+		case OF_ORIENTATION_180:
+            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationPortraitUpsideDown) withObject:nil waitUntilDone:NO];
+			break;
+		case OF_ORIENTATION_90_RIGHT:
+            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationLandscapeLeft) withObject:nil waitUntilDone:NO];
+			break;
+		case OF_ORIENTATION_90_LEFT:
+            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationLandscapeRight) withObject:nil waitUntilDone:NO];
+            break;
+        case OF_ORIENTATION_UNKNOWN:
+            return;
+	}
 }
-
 
 //--------------------------------------------------------------
-UIDeviceOrientation ofxiPhoneGetOrientation() {
-	return (UIDeviceOrientation)ofxiPhoneGetOFWindow()->getOrientation();
+ofOrientation ofxiPhoneGetOrientation() {
+	ofxiPhoneViewController * glViewController = ofxiPhoneGetViewController();
+    UIInterfaceOrientation orientation = [glViewController getInterfaceOrientation];
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            return OF_ORIENTATION_DEFAULT;
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            return OF_ORIENTATION_180;
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            return OF_ORIENTATION_90_RIGHT;
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            return OF_ORIENTATION_90_LEFT;
+            break;
+        default:
+            return OF_ORIENTATION_UNKNOWN;
+            break;
+    }
 }
-
 
 //--------------------------------------------------------------
 bool ofxiPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {

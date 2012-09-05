@@ -152,8 +152,7 @@ void ofxiPhoneEnableLoopInThread();
 
 // set orientation of device (affects statusbar, opengl viewport, touch positions)
 void ofxiPhoneSetOrientation(ofOrientation orientation);
-UIDeviceOrientation ofxiPhoneGetOrientation();
-
+ofOrientation ofxiPhoneGetOrientation();
 
 //void iPhoneEnableMultitouch();
 
