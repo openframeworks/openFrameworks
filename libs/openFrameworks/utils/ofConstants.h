@@ -363,6 +363,11 @@ enum ofWindowMode{
  	OF_GAME_MODE	= 2
 };
 
+enum ofAspectRatioMode {
+    OF_ASPECT_RATIO_IGNORE            = 0,
+    OF_ASPECT_RATIO_KEEP              = 1,
+    OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
+};
 enum ofRectMode{
 	OF_RECTMODE_CORNER=0,
  	OF_RECTMODE_CENTER=1
