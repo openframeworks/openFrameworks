@@ -6,9 +6,6 @@ void testApp::setup(){
 
 	ofSetFrameRate(30);
 
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	grabber.initGrabber(480, 360, OF_PIXELS_BGRA);
 	tex.allocate(grabber.getWidth(), grabber.getHeight(), GL_RGB);
 	

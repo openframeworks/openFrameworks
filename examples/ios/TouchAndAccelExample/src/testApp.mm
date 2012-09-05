@@ -6,14 +6,8 @@ void testApp::setup(){
 	ofSetCircleResolution(80);
     ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	// register touch events
-	ofxRegisterMultitouch(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	balls.assign(10, Ball());
 	

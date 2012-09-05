@@ -65,6 +65,7 @@ public:
 		bFlipTexture = false;
 		compressionType = OF_COMPRESS_NONE;
 		bAllocated = false;
+		bUseExternalTextureID = false;
 	}
 
 	unsigned int textureID;
@@ -82,6 +83,7 @@ public:
 	bool bFlipTexture;
 	ofTexCompression compressionType;
 	bool bAllocated;
+	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
@@ -105,6 +107,9 @@ class ofTexture : public ofBaseDraws {
 	virtual void allocate(const ofPixels& pix);
 	void clear();
 
+	void setUseExternalTextureID(GLuint externTexID); //allows you to point ofTexture's texture id to an externally allocated id. 
+													  //its up to you to set the rest of the textData params manually. 
+
 	void loadData(const unsigned char* const data, int w, int h, int glFormat);
 	void loadData(const unsigned short* data, int w, int h, int glFormat);
 	void loadData(const float* data, int w, int h, int glFormat);
@@ -120,14 +125,17 @@ class ofTexture : public ofBaseDraws {
 	void setAnchorPoint(float x, float y); //set the anchor point in pixels
 	void resetAnchor(); //resets the anchor to (0, 0)
 
-	void draw(const ofRectangle & r);
-	void draw(const ofPoint & p, float w, float h);
-	void draw(float x, float y, float w, float h);
-	void draw(float x, float y, float z, float w, float h);
-	void draw(const ofPoint & p);
+	using ofBaseDraws::draw;
+	void draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4);
 	void draw(float x, float y);
 	void draw(float x, float y, float z);
-	void draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4);
+	void draw(float x, float y, float w, float h);
+	void draw(float x, float y, float z, float w, float h);
+	
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy);
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy);
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 	void readToPixels(ofPixels & pixels);
 	void readToPixels(ofShortPixels & pixels);

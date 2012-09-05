@@ -98,7 +98,7 @@ void testApp::draw(){
 
 	ofNoFill();
 	ofBeginShape();
-	ofVertexes(boxTrail);
+	ofVertices(boxTrail);
 	ofEndShape(false);
 	
 	ofFill();

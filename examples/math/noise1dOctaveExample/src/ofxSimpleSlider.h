@@ -12,9 +12,7 @@
 class ofxSimpleSlider {
 
 	public:
-	
-		ofxSimpleSlider();
-		
+			
 		void	setup (float inx, float iny, float inw, float inh, float loVal, float hiVal, float initialPercent, bool bVert, bool bDrawNum);
 		
 		void	draw(ofEventArgs& event);

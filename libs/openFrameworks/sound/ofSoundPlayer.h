@@ -54,13 +54,13 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
 		ofPtr<ofBaseSoundPlayer> getPlayer();
 
-		void loadSound(string fileName, bool stream = false);
+		bool loadSound(string fileName, bool stream = false);
 		void unloadSound();
 		void play();
 		void stop();
 
 		void setVolume(float vol);
-		void setPan(float vol);
+		void setPan(float vol); // -1 to 1 
 		void setSpeed(float spd);
 		void setPaused(bool bP);
 		void setLoop(bool bLp);
@@ -75,6 +75,7 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		float getPan();
 		float getVolume();
 
+		bool isLoaded(); 		
 
 	protected:
 

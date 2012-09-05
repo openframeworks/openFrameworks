@@ -1,7 +1,7 @@
 //
 // DialogSocket.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/DialogSocket.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/DialogSocket.h#2 $
 //
 // Library: Net
 // Package: Sockets
@@ -84,6 +84,9 @@ public:
 		/// from another socket. The SocketImpl must be
 		/// a StreamSocketImpl, otherwise an InvalidArgumentException
 		/// will be thrown.
+
+	DialogSocket(const DialogSocket& socket);
+		/// Creates the DialogSocket as copy of another dialog socket.
 
 	~DialogSocket();
 		/// Destroys the DialogSocket.

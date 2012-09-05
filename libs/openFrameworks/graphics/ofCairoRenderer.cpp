@@ -7,8 +7,7 @@
 #include "ofImage.h"
 
 //-----------------------------------------------------------------------------------
-void
-helper_quadratic_to (cairo_t *cr,
+static void helper_quadratic_to (cairo_t *cr,
                      double x1, double y1,
                      double x2, double y2)
 {
@@ -22,32 +21,77 @@ helper_quadratic_to (cairo_t *cr,
                   y1, y2);
 }
 
+_cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char *data, unsigned int length){
+	((ofCairoRenderer*)closure)->streamBuffer.append((const char*)data,length);
+	return CAIRO_STATUS_SUCCESS;
+}
+
 ofCairoRenderer::ofCairoRenderer(){
 	type = PDF;
 	surface = NULL;
 	cr = NULL;
 	bBackgroundAuto = true;
+	rectMode = OF_RECTMODE_CORNER;
+	bSmoothHinted = false;
+	page = 0;
+	multiPage = false;
+	bFilled = OF_FILLED;
+	b3D = false;
 }
 
 ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3D_, ofRectangle _viewport){
+void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
 	if( _viewport.width == 0 || _viewport.height == 0 ){
 		_viewport.set(0, 0, ofGetWidth(), ofGetHeight());
 	}
 	
+	filename = _filename;
+	type = _type;
+	streamBuffer.clear();
+
+	if(type == FROM_FILE_EXTENSION){
+		string ext = ofFilePath::getFileExt(filename);
+		if(ofToLower(ext)=="svg"){
+			type = SVG;
+		}else if(ofToLower(ext)=="pdf"){
+			type = PDF;
+		}else{ // default to image
+			type = IMAGE;
+		}
+	}
+
 	switch(type){
 	case PDF:
-		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		if(filename==""){
+			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+		}else{
+			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		}
 		break;
 	case SVG:
-		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		if(filename==""){
+			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+		}else{
+			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+		}
+		break;
+	case IMAGE:
+		imageBuffer.allocate(_viewport.width, _viewport.height, 4);
+		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
+		break;
+	case FROM_FILE_EXTENSION:
+		ofLogFatalError("ofCairoRenderer") << "Type not determined from file extension!";
+		break;
+	default:
+		ofLogError("ofCairoRenderer") << "Unknown type encountered!";
 		break;
 	}
 
 	cr = cairo_create(surface);
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
 	viewportRect = _viewport;
 	viewport(viewportRect);
 	page = 0;
@@ -55,9 +99,22 @@ void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3
 	multiPage = multiPage_;
 }
 
+void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
+	setup("",_type,multiPage_,b3D_,_viewport);
+}
+
+void ofCairoRenderer::flush(){
+	if(surface){
+		cairo_surface_flush(surface);
+	}
+}
+
 void ofCairoRenderer::close(){
 	if(surface){
 		cairo_surface_flush(surface);
+		if(type==IMAGE && filename!=""){
+			ofSaveImage(imageBuffer,filename);
+		}
 		cairo_surface_finish(surface);
 		cairo_surface_destroy(surface);
 		surface = NULL;
@@ -69,6 +126,7 @@ void ofCairoRenderer::close(){
 }
 
 void ofCairoRenderer::update(){
+	if(!surface || !cr)
 	cairo_surface_flush(surface);
 	if(page==0 || !multiPage){
 		page=1;
@@ -80,7 +138,43 @@ void ofCairoRenderer::update(){
 			cairo_copy_page(cr);
 		}
 	}
-	ofSetStyle(ofGetStyle());
+	setStyle(ofGetStyle());
+}
+
+void ofCairoRenderer::setStyle(const ofStyle & style){
+	//color
+	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+
+	//bg color
+	//setBackgroundColor(style.bgColor);
+
+	//circle resolution - don't worry it only recalculates the display list if the res has changed
+	setCircleResolution(style.circleResolution);
+
+	setSphereResolution(style.sphereResolution);
+
+	//setCurveResolution(style.curveResolution);
+
+	//line width - finally!
+	setLineWidth(style.lineWidth);
+
+	//rect mode: corner/center
+	setRectMode(style.rectMode);
+
+	//poly mode: winding type
+	//setPolyMode(style.polyMode);
+
+	//fill
+	setFillMode(style.bFill?OF_FILLED:OF_OUTLINE);
+
+	//smoothing
+	//setSmoothingEnabled(style.smoothing);
+
+	//blending
+	setBlendMode(style.blendingMode);
+
+	//bitmap draw mode
+	//setDrawBitmapMode(style.drawBitmapMode);
 }
 
 void ofCairoRenderer::draw(ofPath & shape){
@@ -118,8 +212,8 @@ void ofCairoRenderer::draw(ofPath & shape){
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getFillColor() * ofGetStyle().color;
-			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+			ofColor c = shape.getStrokeColor() * ofGetStyle().color;
+			c.a = shape.getStrokeColor().a/255. * ofGetStyle().color.a;
 			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		}
 		cairo_set_line_width( cr, shape.getStrokeWidth() );
@@ -214,11 +308,19 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 }
 
 void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures, bool useNormals){
-	if(primitive.getNumVertices()==0) return;
+	if(primitive.getNumVertices() == 0){
+		return;
+	}
+	if(primitive.getNumIndices() == 0){
+		ofMesh indexedMesh = primitive;
+		indexedMesh.setupIndicesAuto();
+		draw(indexedMesh, useColors, useTextures, useNormals);
+		return;
+	}
+	
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());
 	cairo_new_path(cr);
-	//if(indices.getNumIndices()){
 
 		int i = 1;
 		ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
@@ -371,8 +473,16 @@ void ofCairoRenderer::draw(ofSubPath & path){
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h){
-	ofPixelsRef pix = img.getPixelsRef();
+void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	ofPixelsRef raw = img.getPixelsRef();
+	bool shouldCrop = sx != 0 || sy != 0 || sw != w || sh != h;
+	ofPixels cropped;
+	if(shouldCrop) {
+		cropped.allocate(sw, sh, raw.getImageType());
+		raw.cropTo(cropped, sx, sy, sw, sh);
+	}
+	ofPixelsRef pix = shouldCrop ? cropped : raw;
+	
 	pushMatrix();
 	translate(x,y,z);
 	scale(w/pix.getWidth(),h/pix.getHeight());
@@ -434,6 +544,7 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_RGB24, pix.getWidth(), pix.getHeight(), stride);
 		break;
 	case OF_IMAGE_UNDEFINED:
+	default:
 		ofLog(OF_LOG_ERROR,"ofCairoRenderer: trying to render undefined type image");
 		popMatrix();
 		return;
@@ -447,15 +558,15 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h){
+void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	ofImage tmp = image;
-	draw(tmp,x,y,z,w,h);
+	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h){
+void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	ofImage tmp = image;
-	draw(tmp,x,y,z,w,h);
+	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
@@ -974,7 +1085,7 @@ void ofCairoRenderer::setSphereResolution(int res) {
 	float radius = 1.f; // normalize the verts //
 	
 	int i, j;
-	float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
+	float j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
 	cte3 = (theta2)/n;
 	cte1 = (phi2-phi1)/ndiv2;
 	dosdivn = 2*unodivn;
@@ -1007,7 +1118,6 @@ void ofCairoRenderer::setSphereResolution(int res) {
 		p2.y = radius * e2.y;
 		
 		idivn=0;
-		jdivn=j1divn;
 		j1divn+=dosdivn;
 		for (i=0;i<=n;i++) {
 			t3 += cte3;
@@ -1036,7 +1146,6 @@ void ofCairoRenderer::drawSphere(float x, float y, float z, float radius) {
 	int n = ofGetStyle().sphereResolution * 2;
 	float ndiv2=(float)n/2;
 	int cindex = 0;
-	int stripVerts = (ndiv2*((n+1)*2));
 	
 	if(sphereVerts.size() < 1) {
 		// double check to make sure that setSphereResolution has been called at least once //
@@ -1109,4 +1218,18 @@ cairo_matrix_t * ofCairoRenderer::getCairoMatrix(){
 
 void ofCairoRenderer::setCairoMatrix(){
 	cairo_set_matrix(cr,&tmpMatrix);
+}
+
+ofPixels & ofCairoRenderer::getImageSurfacePixels(){
+	if(type!=IMAGE){
+		ofLogError() << "ofCairoRenderer: can only get pixels from image surface";
+	}
+	return imageBuffer;
+}
+
+ofBuffer & ofCairoRenderer::getContentBuffer(){
+	if(filename!="" || (type!=SVG && type!=PDF)){
+		ofLogError() << "ofCairoRenderer: can only get buffer from memory allocated renderer for svg or pdf";
+	}
+	return streamBuffer;
 }

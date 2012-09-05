@@ -4,15 +4,9 @@
 void testApp::setup(){
 	ofBackground(225, 225, 225);
 
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
-		
 	coreLocation = new ofxiPhoneCoreLocation();
 	hasCompass = coreLocation->startHeading();
 	hasGPS = coreLocation->startLocation();

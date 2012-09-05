@@ -1,7 +1,7 @@
 //
 // Process_WIN32U.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Process_WIN32U.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Process_WIN32U.h#2 $
 //
 // Library: Foundation
 // Package: Processes
@@ -59,8 +59,9 @@ public:
 	~ProcessHandleImpl();
 	
 	UInt32 id() const;
+	HANDLE process() const;
 	int wait() const;
-	
+
 private:
 	HANDLE _hProcess;
 	UInt32 _pid;
@@ -79,6 +80,7 @@ public:
 	static PIDImpl idImpl();
 	static void timesImpl(long& userTime, long& kernelTime);
 	static ProcessHandleImpl* launchImpl(const std::string& command, const ArgsImpl& args, Pipe* inPipe, Pipe* outPipe, Pipe* errPipe);		
+	static void killImpl(const ProcessHandleImpl& handle);
 	static void killImpl(PIDImpl pid);
 	static void requestTerminationImpl(PIDImpl pid);
 	static std::string terminationEventName(PIDImpl pid);

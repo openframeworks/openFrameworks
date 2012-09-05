@@ -20,10 +20,14 @@ public:
 
 	enum Type{
 		PDF,
-		SVG
+		SVG,
+		IMAGE,
+		FROM_FILE_EXTENSION
 	};
-	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
+	void setup(string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
+	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
+	void flush();
 
 	void update();
 
@@ -33,9 +37,9 @@ public:
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
-	void draw(ofImage & img, float x, float y, float z, float w, float h);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h);
+	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 	bool rendersPathPrimitives(){
 		return true;
@@ -120,12 +124,15 @@ public:
 	// cairo specifics
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
-
+	ofPixels & getImageSurfacePixels();
+	ofBuffer & getContentBuffer();
 
 private:
+	void setStyle(const ofStyle & style);
 	cairo_matrix_t * getCairoMatrix();
 	void setCairoMatrix();
 	ofVec3f transform(ofVec3f vec);
+	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 
 	deque<ofPoint> curvePoints;
 	cairo_t * cr;
@@ -156,4 +163,8 @@ private:
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
+
+	string filename;
+	ofBuffer streamBuffer;
+	ofPixels imageBuffer;
 };

@@ -8,7 +8,7 @@ set OLDDIR=%CD%
 
 call "C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
 
-for /d %%X in (..\..\apps\*) do ( 
+for /d %%X in (..\..\examples\*) do ( 
 
 cd %%X
 

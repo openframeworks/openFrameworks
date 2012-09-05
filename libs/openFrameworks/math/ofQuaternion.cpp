@@ -77,7 +77,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 	ofVec3f sourceVector = from;
 	ofVec3f targetVector = to;
 
-	float fromLen2 = from.lengthSquared();
+	float fromLen2 = from.squareLength();
 	float fromLen;
 	// normalize only when necessary, epsilon test
 	if ((fromLen2 < 1.0 - 1e-7) || (fromLen2 > 1.0 + 1e-7)) {
@@ -85,7 +85,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		sourceVector /= fromLen;
 	} else fromLen = 1.0;
 
-	float toLen2 = to.lengthSquared();
+	float toLen2 = to.squareLength();
 	// normalize only when necessary, epsilon test
 	if ((toLen2 < 1.0 - 1e-7) || (toLen2 > 1.0 + 1e-7)) {
 		float toLen;

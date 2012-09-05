@@ -9,20 +9,20 @@
 
 
 // this example uses code from glew and from Brian Paul
-// 
+//
 /*
  * Copyright (C) 1999-2002  Brian Paul   All Rights Reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
@@ -46,10 +46,10 @@ print_extension_list(char *ext)
     const int indent = 4;
     const int max = 79;
     int width, i, j;
-    
+
     if (!ext || !ext[0])
         return;
-    
+
     width = indent;
     printf(indentString);
     i = j = 0;
@@ -90,7 +90,7 @@ print_extension_list(char *ext)
 static void
 print_limits(void)
 {
-    
+
     static const struct token_name openglLimits[] = {
         { 1, GL_MAX_ATTRIB_STACK_DEPTH, "GL_MAX_ATTRIB_STACK_DEPTH" },
         { 1, GL_MAX_CLIENT_ATTRIB_STACK_DEPTH, "GL_MAX_CLIENT_ATTRIB_STACK_DEPTH" },
@@ -135,7 +135,7 @@ print_limits(void)
 }
 
 void printShaderLimits(){
-    
+
     static const struct token_name lll[] = {
         { 1, GL_MAX_VERTEX_ATTRIBS, "GL_MAX_VERTEX_ATTRIBS" },
         { 1, GL_MAX_VERTEX_UNIFORM_COMPONENTS, "GL_MAX_VERTEX_UNIFORM_COMPONENTS" },
@@ -144,7 +144,7 @@ void printShaderLimits(){
         { 1, GL_MAX_TEXTURE_IMAGE_UNITS, "GL_MAX_TEXTURE_IMAGE_UNITS" },
         { 0, (GLenum) 0, NULL }
     };
-    
+
     GLint i, max[2];
     printf("Shader limits:\n");
     for (i = 0; lll[i].count; i++) {
@@ -160,28 +160,28 @@ void printShaderLimits(){
 
 
 void printGLInfo(){
-    
+
     char *version = NULL;
     char *vendor = NULL;
     char *renderer = NULL;
     char *extensions = NULL;
     int   glutVersion;
-    
+
     //glutVersion = glutGet(0x01FC);
     version =     (char*)glGetString(GL_VERSION);
     vendor =      (char*)glGetString(GL_VENDOR);
     renderer =    (char*)glGetString(GL_RENDERER);
-    
+
     printf("version=%s\nvendor=%s\nrenderer=%s\n",
            version,vendor,renderer);
-    
+
 }
 
 
 //--------------------------------------------------------------
 void testApp::setup(){
 
-    
+
     info.version = (char*)glGetString(GL_VERSION);
     info.vendor = (char*)glGetString(GL_VENDOR);
     info.renderer = (char*)glGetString(GL_RENDERER);
@@ -189,19 +189,19 @@ void testApp::setup(){
     info.bShadersSupported = false;
     info.bPointSpritesSupported = false;
 
-    
+
     if(glewIsSupported("GL_VERSION_1_4  GL_ARB_point_sprite")) {
         info.bPointSpritesSupported = true;
     }
-    
+
     if(glewIsSupported("GL_ARB_vertex_buffer_object")) {
         info.bVboSupported = true;
     }
-    
+
     if(glewIsSupported("GL_ARB_vertex_shader")) {
         info.bShadersSupported = true;
     }
-    
+
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &info.maxTextureSize);
     glGetIntegerv(GL_MAX_VIEWPORT_DIMS, info.maxDimensions);
     glGetIntegerv(GL_MAX_LIGHTS, &info.maxLights);
@@ -217,12 +217,12 @@ void testApp::update(){
 void testApp::draw(){
 
     string output = "";
-    
+
     string pointSprites = ((info.bPointSpritesSupported == true) ? "yes" : "no");
     string shaders = ((info.bShadersSupported == true) ? "yes" : "no");
     string vbo = ((info.bVboSupported == true) ? "yes" : "no");
-    
-    
+
+
     output += "opengl version: " + info.version + "\n";
     output += "vendor: " + info.vendor + "\n";
     output += "renderer: " + info.renderer + "\n";
@@ -234,75 +234,81 @@ void testApp::draw(){
     output += "max texture size: " + ofToString(info.maxTextureSize) + "\n";
     output += "max viewport dimensions: " + ofToString(info.maxDimensions[0]) + "," +  ofToString(info.maxDimensions[1]) + "\n";
     output += "max lights: " + ofToString(info.maxLights) + "\n";
-    
-    
-    
+
+
+
     ofDrawBitmapStringHighlight(output, ofPoint(20,20));
     ofDrawBitmapStringHighlight("press ' ' to load full report", ofPoint(20,220), ofColor::magenta, ofColor::white);
-    
+
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
     if (key == ' '){
-        
-        // todo: rewrite this with ofLog: 
-        
+
+        // todo: rewrite this with ofLog:
+
         FILE *fp;
-        
-        
+
+
         if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
             printf("Cannot open file.\n");
             return;
         }
-        
-                
+
+
         printf("-------------------------------------------------\n");
         printf("opengl info\n");
         printf("-------------------------------------------------\n");
-        
+
         printGLInfo();
-        
+
         printf("-------------------------------------------------\n");
         printf("opengl limits\n");
         printf("-------------------------------------------------\n");
-        
-        
+
+
         print_limits();
-        
+
         printf("-------------------------------------------------\n");
         printf("shader limits\n");
         printf("-------------------------------------------------\n");
-        
+
         printShaderLimits();
-        
-        
+
+
         printf("-------------------------------------------------\n");
         printf("available extensions\n");
         printf("-------------------------------------------------\n");
-        
+
         const GLubyte * strExt;
-        strExt = glGetString (GL_EXTENSIONS); 
-        
+        strExt = glGetString (GL_EXTENSIONS);
+
         //cout << "extensions: " << strExt << endl;
         print_extension_list((char *)strExt);
-        
-        
-        //isShade = gluCheckExtension ((const GLubyte*)"GL_ARB_shading_language_100", strExt); 
-        
+
+
+        //isShade = gluCheckExtension ((const GLubyte*)"GL_ARB_shading_language_100", strExt);
+
         printf("-------------------------------------------------\n");
         printf("opengl calls available\n");
         printf("-------------------------------------------------\n");
-        
-        
+
+
         printGlewInfo();
-        
+
         fclose(fp);
-        
+
+        #ifdef TARGET_WIN32
+        string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
+        #else
         string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
+        #endif
+
+
         system(command.c_str());
-        
+
     }
 }
 
@@ -342,6 +348,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }

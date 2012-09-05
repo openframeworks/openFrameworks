@@ -26,6 +26,10 @@ void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);
 void ofxAndroidDismissProgressBox(int id);
 void ofxAndroidOkCancelBox(string msg);
+void ofxAndroidYesNoBox(string msg);
+void ofxAndroidAlertTextBox(string question, string text);
+string ofxAndroidGetTextBoxResult();
+bool ofxAndroidAlertListBox(string title, const vector<string> & list);
 
 void ofxAndroidToast(string msg);
 
@@ -37,6 +41,10 @@ bool ofxAndroidIsWifiOnline();
 bool ofxAndroidIsMobileOnline();
 
 string ofxAndroidGetStringRes(string id);
+
+string ofxAndroidRandomUUID();
+
+void ofxAndroidMonitorNetworkState();
 
 //-------------------------------------
 // this functions are only for internal use
@@ -75,4 +83,13 @@ inline void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
 }
+
+class ofxAndroidEventsClass{
+public:
+	ofEvent<bool> okPressed;
+	ofEvent<bool> cancelPressed;
+	ofEvent<bool> networkConnected;
+};
+
+ofxAndroidEventsClass & ofxAndroidEvents();
 #endif /* OFANDROIDUTILS_H_ */

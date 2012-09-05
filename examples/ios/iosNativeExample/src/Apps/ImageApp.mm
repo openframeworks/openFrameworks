@@ -12,9 +12,6 @@ ImageApp :: ~ImageApp () {
 
 //--------------------------------------------------------------
 void ImageApp::setup() {	
-	ofRegisterTouchEvents(this);
-	ofxAccelerometer.setup();
-	ofxiPhoneAlerts.addListener(this);
 	ofBackground(127);
     
     int fontSize = 8;
@@ -53,8 +50,7 @@ void ImageApp::draw() {
 
 //--------------------------------------------------------------
 void ImageApp::exit() {
-    ofUnregisterTouchEvents(this);
-    ofxiPhoneAlerts.removeListener(this);
+    //
 }
 
 //--------------------------------------------------------------
