@@ -8,7 +8,7 @@ cd ..\..\libs\openFrameworksCompiled\project\win_cb\
 cd ../../../../scripts/win_cb
 
 
-for /d %%X in (..\..\apps\*) do ( 
+for /d %%X in (..\..\examples\*) do ( 
 cd %%X
 echo compiling all folders in: %%X
 	for /d %%Y in (*) do ( 

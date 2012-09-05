@@ -1,7 +1,7 @@
 //
 // Path.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Path.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Path.h#3 $
 //
 // Library: Foundation
 // Package: Filesystem
@@ -209,7 +209,7 @@ public:
 		/// Returns true iff the path references a file
 		/// (the filename part is not empty).
 	
-	void setNode(const std::string& node);
+	Path& setNode(const std::string& node);
 		/// Sets the node name.
 		/// Setting a non-empty node automatically makes
 		/// the path an absolute one.
@@ -217,7 +217,7 @@ public:
 	const std::string& getNode() const;
 		/// Returns the node name.
 		
-	void setDevice(const std::string& device);
+	Path& setDevice(const std::string& device);
 		/// Sets the device name.
 		/// Setting a non-empty device automatically makes
 		/// the path an absolute one.
@@ -236,19 +236,22 @@ public:
 		/// Returns the n'th directory in the directory list.
 		/// If n == depth(), returns the filename.
 		
-	void pushDirectory(const std::string& dir);
+	Path& pushDirectory(const std::string& dir);
 		/// Adds a directory to the directory list.
 		
-	void popDirectory();
+	Path& popDirectory();
 		/// Removes the last directory from the directory list.
 		
-	void setFileName(const std::string& name);
+	Path& popFrontDirectory();
+		/// Removes the first directory from the directory list.
+		
+	Path& setFileName(const std::string& name);
 		/// Sets the filename.
 		
 	const std::string& getFileName() const;
 		/// Returns the filename.
 
-	void setBaseName(const std::string& name);
+	Path& setBaseName(const std::string& name);
 		/// Sets the basename part of the filename and
 		/// does not change the extension.
 
@@ -256,7 +259,7 @@ public:
 		/// Returns the basename (the filename sans
 		/// extension) of the path.
 
-	void setExtension(const std::string& extension);
+	Path& setExtension(const std::string& extension);
 		/// Sets the filename extension.
 				
 	std::string getExtension() const;
@@ -265,7 +268,7 @@ public:
 	const std::string& version() const;
 		/// Returns the file version. VMS only.
 		
-	void clear();
+	Path& clear();
 		/// Clears all components.
 
 	Path parent() const;

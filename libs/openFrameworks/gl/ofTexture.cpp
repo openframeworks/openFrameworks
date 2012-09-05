@@ -184,38 +184,6 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	}
 }
 
-static bool ofCheckGLTypesEqual(int type1, int type2){
-#ifndef TARGET_OPENGLES
-	if(type1==GL_LUMINANCE || type1==GL_LUMINANCE8){
-		if(type2==GL_LUMINANCE || type2==GL_LUMINANCE8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else if(type1==GL_RGB || type1==GL_RGB8){
-		if(type2==GL_RGB || type2==GL_RGB8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else if(type1==GL_RGBA || type1==GL_RGBA8){
-		if(type2==GL_RGBA || type2==GL_RGBA8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else
-#endif
-		return type1==type2;
-}
-
-
 ofImageType ofGetImageTypeFromGLType(int glType){
 	switch(glType){
 	case GL_LUMINANCE:
@@ -369,7 +337,9 @@ ofTexture::ofTexture(const ofTexture & mom){
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture & mom){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
@@ -407,14 +377,27 @@ const ofTextureData& ofTexture::getTextureData() const {
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
 }
 
 //----------------------------------------------------------
 void ofTexture::clear(){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
+	texData.bUseExternalTextureID = false;
 	texData.textureID  = 0;
 	texData.bAllocated = false;
+}
+
+//----------------------------------------------------------
+void ofTexture::setUseExternalTextureID(GLuint externTexID){
+	clear();
+	texData.textureID = externTexID;
+	texData.bAllocated = true;
+	texData.bUseExternalTextureID = true;
 }
 
 //----------------------------------------------------------
@@ -489,18 +472,29 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 }
 
 void ofTexture::allocate(const ofTextureData & textureData){
+	if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
+		ofLogError() << "ofTexture::allocate - the ofTextureData structure passed must be set with a width and height.";
+		return;
+	}
+
 	texData = textureData;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if (!(texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle))
+	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle ){
+		texData.tex_t = texData.width;
+		texData.tex_u = texData.height;
+		texData.tex_w = texData.width;
+		texData.tex_h = texData.height;		
+	}else
 #endif
 	{
 		//otherwise we need to calculate the next power of 2 for the requested dimensions
 		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(texData.tex_w);
-		texData.tex_h = ofNextPow2(texData.tex_h);
-		texData.tex_t = 1.0f;
-		texData.tex_u = 1.0f;
+		texData.tex_w = ofNextPow2(texData.width);
+		texData.tex_h = ofNextPow2(texData.height);
+		texData.tex_t = texData.width / texData.tex_w;
+		texData.tex_u = texData.height / texData.tex_h;
+
 		texData.textureTarget = GL_TEXTURE_2D;
 	}
 
@@ -522,7 +516,6 @@ void ofTexture::allocate(const ofTextureData & textureData){
 #else
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, texData.pixelType, 0);
 #endif
-
 
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -787,7 +780,7 @@ void ofTexture::setAnchorPoint(float x, float y){
 
 //----------------------------------------------------------
 void ofTexture::resetAnchor(){
-	anchor       = 0;
+	anchor.set( 0 );
 	bAnchorIsPct = false;
 }
 
@@ -901,27 +894,48 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
 	unbind();
 }
 
+//----------------------------------------------------------
 void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
 }
 
-//----------------------------------------------------------
-void ofTexture::draw(const ofRectangle & r){
-	draw(r.x, r.y, 0.0f, r.width, r.height);
+//------------------------------------
+void ofTexture::draw(float x, float y){
+	draw(x,y,0,getWidth(),getHeight());
 }
 
-//----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p, float w, float h){
-	draw(p.x, p.y, p.z, w, h);
+//------------------------------------
+void ofTexture::draw(float x, float y, float z){
+	draw(x,y,z,getWidth(),getHeight());
 }
 
-//----------------------------------------------------------
+//------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
-	draw(x, y, 0.0f, w, h);
+	draw(x,y,0,w,h);
+}
+
+//------------------------------------
+void ofTexture::draw(float x, float y, float z, float w, float h){
+	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
+}
+
+//------------------------------------
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
+	drawSubsection(x,y,0,w,h,sx,sy,w,h);
+}
+
+//------------------------------------
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
+}
+
+//------------------------------------
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
+	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
 //----------------------------------------------------------
-void ofTexture::draw(float x, float y, float z, float w, float h){
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
 	
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
@@ -990,10 +1004,13 @@ void ofTexture::draw(float x, float y, float z, float w, float h){
 	}
 	// -------------------------------------------------
 	
-	GLfloat tx0 = 0+offsetw;
-	GLfloat ty0 = 0+offseth;
-	GLfloat tx1 = texData.tex_t - offsetw;
-	GLfloat ty1 = texData.tex_u - offseth;
+	ofPoint topLeft = getCoordFromPoint(sx, sy);
+	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
+	
+	GLfloat tx0 = topLeft.x + offsetw;
+	GLfloat ty0 = topLeft.y + offseth;
+	GLfloat tx1 = bottomRight.x - offsetw;
+	GLfloat ty1 = bottomRight.y - offseth;
 	
 	glPushMatrix(); 
 	
@@ -1027,7 +1044,7 @@ void ofTexture::draw(float x, float y, float z, float w, float h){
 
 // ROGER
 //----------------------------------------------------------
-void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
+void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4){
 	
 	// Enable alpha channel if has one
 	bool blending = ofGetStyle().blendingMode;
@@ -1097,22 +1114,6 @@ void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
 	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {
 		ofDisableAlphaBlending();
 	}
-}
-
-
-//----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p){
-	draw(p.x, p.y, p.z, texData.width, texData.height);
-}
-
-//----------------------------------------------------------
-void ofTexture::draw(float x, float y){
-	draw(x, y, 0.0f, texData.width, texData.height);
-}
-
-//----------------------------------------------------------
-void ofTexture::draw(float x, float y, float z){
-	draw(x, y, z, texData.width, texData.height);
 }
 
 //----------------------------------------------------------

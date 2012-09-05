@@ -10,14 +10,11 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
+    
+    ofBackground(0, 0);
+    
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
 	
 	// dump lots of info to console (useful for debugging)
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -46,8 +43,8 @@ void testApp::setup(){
 	// do some hardcode OPTIONAL stuff to render the opengl view ONTOP of the map view
 	// note this could affect performance quite seriously
 	
-	// send the OpenGL View to the front (on top of the mapview)
-	ofxiPhoneSendGLViewToFront();
+	// add OpenGL View main window.
+    ofxiPhoneSendGLViewToFront();
 	
 	// OpenGL View is now in front of mapview, but it isn't transparent, so we can't see the map
 	// Make the map transparent so we can see the mapview in undrawn areas
@@ -56,10 +53,6 @@ void testApp::setup(){
 	// Now that the OpenGL view is in front of the mapview, it will receive all the touch events, so we cannot interact with the map
 	// So disable interaction with the OpenGL view (testApp::touchXXXXX will not be called)
 	ofxiPhoneSetGLViewUserInteraction(false);
-
-	// When user is interacting with the map, the OpenGL update & draw will freeze
-	// To remedy this, run the update & draw in a separate thread
-	ofxiPhoneEnableLoopInThread();
 }
 
 

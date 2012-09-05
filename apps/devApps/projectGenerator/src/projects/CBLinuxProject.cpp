@@ -70,8 +70,8 @@ bool CBLinuxProject::createProjectFile(){
     	}
     }
 
-    
-    // handle the relative roots. 
+
+    // handle the relative roots.
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
     if (relRoot != "../../../"){
         string relPath2 = relRoot;
@@ -80,62 +80,6 @@ bool CBLinuxProject::createProjectFile(){
         findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"), "../../../", relRoot);
         findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".cbp"), "../../../", relRoot);
     }
-    
+
     return true;
-}
-
-bool CBLinuxProject::loadProjectFile(){
-    
-    //project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
-    
-    ofFile project(ofFilePath::join(projectDir , projectName + ".cbp"));
-	if(!project.exists()){
-		ofLogError(LOG_NAME) << "error loading" << project.path() << "doesn't exist";
-		return false;
-	}
-	pugi::xml_parse_result result = doc.load(project);
-	bLoaded =result.status==pugi::status_ok;
-	return bLoaded;
-}
-
-
-bool CBLinuxProject::saveProjectFile(){
-    
-   findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
-   pugi::xpath_node_set title = doc.select_nodes("//Option[@title]");
-   if(!title.empty()){
-        if(!title[0].node().attribute("title").set_value(projectName.c_str())){
-            ofLogError(LOG_NAME) << "can't set title";
-        }
-    }
-    return doc.save_file((projectDir + projectName + ".cbp").c_str());
-
-}
-
-
-
-
-
-void CBLinuxProject::addSrc(string srcName, string folder){
-	pugi::xml_node node = appendValue(doc, "Unit", "filename", srcName);
-	if(!node.empty()){
-		node.child("Option").attribute("virtualFolder").set_value(folder.c_str());
-	}
-    
-}
-
-void CBLinuxProject::addInclude(string includeName){
-    //appendValue(doc, "Add", "directory", includeName);
-}
-
-void CBLinuxProject::addLibrary(string libraryName){
-    //appendValue(doc, "Add", "library", libraryName);
-}
-
-string CBLinuxProject::getName(){
-	return projectName;
-}
-
-string CBLinuxProject::getPath(){
-	return projectDir;
 }

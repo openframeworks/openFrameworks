@@ -3,7 +3,6 @@
 	<name>androidTouchExample</name>
 	<comment></comment>
 	<projects>
-		<project>addons</project>
 		<project>libs</project>
 		<project>openFrameworks</project>
 	</projects>
@@ -85,11 +84,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>ofAndroidLib_src</name>
-			<type>2</type>
-			<locationURI>_android_ofAndroidLib_4b0f72cd/src</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

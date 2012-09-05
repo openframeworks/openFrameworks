@@ -44,6 +44,7 @@
 #define __OPENCV_OBJDETECT_HPP__
 
 #include "opencv2/core/core.hpp"
+#include "opencv2/features2d/features2d.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,7 +65,7 @@ extern "C" {
 
 typedef struct CvHaarFeature
 {
-    int  tilted;
+    int tilted;
     struct
     {
         CvRect r;
@@ -124,9 +125,18 @@ CVAPI(void) cvReleaseHaarClassifierCascade( CvHaarClassifierCascade** cascade );
 #define CV_HAAR_FIND_BIGGEST_OBJECT 4
 #define CV_HAAR_DO_ROUGH_SEARCH     8
 
+//CVAPI(CvSeq*) cvHaarDetectObjectsForROC( const CvArr* image,
+//                     CvHaarClassifierCascade* cascade, CvMemStorage* storage,
+//                     CvSeq** rejectLevels, CvSeq** levelWeightds,
+//                     double scale_factor CV_DEFAULT(1.1),
+//                     int min_neighbors CV_DEFAULT(3), int flags CV_DEFAULT(0),
+//                     CvSize min_size CV_DEFAULT(cvSize(0,0)), CvSize max_size CV_DEFAULT(cvSize(0,0)),
+//                     bool outputRejectLevels = false );
+
+
 CVAPI(CvSeq*) cvHaarDetectObjects( const CvArr* image,
-                     CvHaarClassifierCascade* cascade,
-                     CvMemStorage* storage, double scale_factor CV_DEFAULT(1.1),
+                     CvHaarClassifierCascade* cascade, CvMemStorage* storage, 
+                     double scale_factor CV_DEFAULT(1.1),
                      int min_neighbors CV_DEFAULT(3), int flags CV_DEFAULT(0),
                      CvSize min_size CV_DEFAULT(cvSize(0,0)), CvSize max_size CV_DEFAULT(cvSize(0,0)));
 
@@ -150,9 +160,9 @@ CVAPI(int) cvRunHaarClassifierCascade( const CvHaarClassifierCascade* cascade,
 // (x, y) - coordinate in level l
 typedef struct
 {
-    unsigned int x;
-    unsigned int y;
-    unsigned int l;
+    int x;
+    int y;
+    int l;
 } CvLSVMFilterPosition;
 
 // DataType: STRUCT filterObject
@@ -169,16 +179,12 @@ typedef struct
 //                   used formula H[(j * sizeX + i) * p + k], where
 //                   k - component of feature vector in cell (i, j)
 // END OF FILTER DESCRIPTION
-// xp              - auxillary parameter for internal use
-//                   size of row in feature vectors 
-//                   (yp = (int) (p / xp); p = xp * yp)
 typedef struct{
     CvLSVMFilterPosition V;
     float fineFunction[4];
-    unsigned int sizeX;
-    unsigned int sizeY;
-    unsigned int p;
-    unsigned int xp;
+    int sizeX;
+    int sizeY;
+    int numFeatures;
     float *H;
 } CvLSVMFilterObject;
 
@@ -246,7 +252,8 @@ CVAPI(void) cvReleaseLatentSvmDetector(CvLatentSvmDetector** detector);
 // CvSeq* cvLatentSvmDetectObjects(const IplImage* image, 
 //									CvLatentSvmDetector* detector, 
 //									CvMemStorage* storage, 
-//									float overlap_threshold = 0.5f);
+//									float overlap_threshold = 0.5f,
+//                                  int numThreads = -1);
 // INPUT
 // image				- image to detect objects in
 // detector				- Latent SVM detector in internal representation
@@ -260,24 +267,40 @@ CVAPI(void) cvReleaseLatentSvmDetector(CvLatentSvmDetector** detector);
 CVAPI(CvSeq*) cvLatentSvmDetectObjects(IplImage* image, 
 								CvLatentSvmDetector* detector, 
 								CvMemStorage* storage, 
-								float overlap_threshold CV_DEFAULT(0.5f));
+								float overlap_threshold CV_DEFAULT(0.5f),
+                                int numThreads CV_DEFAULT(-1));
 
 #ifdef __cplusplus
 }
+
+CV_EXPORTS CvSeq* cvHaarDetectObjectsForROC( const CvArr* image,
+                     CvHaarClassifierCascade* cascade, CvMemStorage* storage,
+                     std::vector<int>& rejectLevels, std::vector<double>& levelWeightds,
+                     double scale_factor CV_DEFAULT(1.1),
+                     int min_neighbors CV_DEFAULT(3), int flags CV_DEFAULT(0),
+                     CvSize min_size CV_DEFAULT(cvSize(0,0)), CvSize max_size CV_DEFAULT(cvSize(0,0)),
+                     bool outputRejectLevels = false );
 
 namespace cv
 {
 	
 ///////////////////////////// Object Detection ////////////////////////////
 
-CV_EXPORTS_W void groupRectangles(vector<Rect>& rectList, int groupThreshold, double eps=0.2);
-CV_EXPORTS_W void groupRectangles(vector<Rect>& rectList, CV_OUT vector<int>& weights, int groupThreshold, double eps=0.2);
+CV_EXPORTS void groupRectangles(CV_OUT CV_IN_OUT vector<Rect>& rectList, int groupThreshold, double eps=0.2);
+CV_EXPORTS_W void groupRectangles(CV_OUT CV_IN_OUT vector<Rect>& rectList, CV_OUT vector<int>& weights, int groupThreshold, double eps=0.2);
+CV_EXPORTS void groupRectangles( vector<Rect>& rectList, int groupThreshold, double eps, vector<int>* weights, vector<double>* levelWeights );
+CV_EXPORTS void groupRectangles(vector<Rect>& rectList, vector<int>& rejectLevels, 
+                                vector<double>& levelWeights, int groupThreshold, double eps=0.2);
+CV_EXPORTS void groupRectangles_meanshift(vector<Rect>& rectList, vector<double>& foundWeights, vector<double>& foundScales, 
+										  double detectThreshold = 0.0, Size winDetSize = Size(64, 128));
+
         
 class CV_EXPORTS FeatureEvaluator
 {
 public:    
     enum { HAAR = 0, LBP = 1 };
     virtual ~FeatureEvaluator();
+
     virtual bool read(const FileNode& node);
     virtual Ptr<FeatureEvaluator> clone() const;
     virtual int getFeatureType() const;
@@ -292,69 +315,123 @@ public:
 };
 
 template<> CV_EXPORTS void Ptr<CvHaarClassifierCascade>::delete_obj();
-   
+
+enum
+{
+	CASCADE_DO_CANNY_PRUNING=1,
+	CASCADE_SCALE_IMAGE=2,
+	CASCADE_FIND_BIGGEST_OBJECT=4,
+	CASCADE_DO_ROUGH_SEARCH=8
+};
+
 class CV_EXPORTS_W CascadeClassifier
 {
 public:
-    struct CV_EXPORTS DTreeNode
-    {
-        int featureIdx;
-        float threshold; // for ordered features only
-        int left;
-        int right;
-    };
+    CV_WRAP CascadeClassifier();
+    CV_WRAP CascadeClassifier( const string& filename );
+    virtual ~CascadeClassifier();
     
-    struct CV_EXPORTS DTree
-    {
-        int nodeCount;
-    };
-    
-    struct CV_EXPORTS Stage
-    {
-        int first;
-        int ntrees;
-        float threshold;
-    };
-    
+    CV_WRAP virtual bool empty() const;
+    CV_WRAP bool load( const string& filename );
+    virtual bool read( const FileNode& node );
+    CV_WRAP virtual void detectMultiScale( const Mat& image,
+                                   CV_OUT vector<Rect>& objects,
+                                   double scaleFactor=1.1,
+                                   int minNeighbors=3, int flags=0,
+                                   Size minSize=Size(),
+                                   Size maxSize=Size() );
+
+    CV_WRAP virtual void detectMultiScale( const Mat& image,
+                                   CV_OUT vector<Rect>& objects,
+                                   vector<int>& rejectLevels,
+                                   vector<double>& levelWeights,
+                                   double scaleFactor=1.1,
+                                   int minNeighbors=3, int flags=0,
+                                   Size minSize=Size(),
+                                   Size maxSize=Size(),
+                                   bool outputRejectLevels=false );
+
+
+    bool isOldFormatCascade() const;
+    virtual Size getOriginalWindowSize() const;
+    int getFeatureType() const;
+    bool setImage( const Mat& );
+
+protected:
+    //virtual bool detectSingleScale( const Mat& image, int stripCount, Size processingRectSize,
+    //                                int stripSize, int yStep, double factor, vector<Rect>& candidates );
+
+    virtual bool detectSingleScale( const Mat& image, int stripCount, Size processingRectSize,
+                                    int stripSize, int yStep, double factor, vector<Rect>& candidates,
+                                    vector<int>& rejectLevels, vector<double>& levelWeights, bool outputRejectLevels=false);
+
+protected:
     enum { BOOST = 0 };
     enum { DO_CANNY_PRUNING = 1, SCALE_IMAGE = 2,
            FIND_BIGGEST_OBJECT = 4, DO_ROUGH_SEARCH = 8 };
 
-    CV_WRAP CascadeClassifier();
-    CV_WRAP CascadeClassifier(const string& filename);
-    ~CascadeClassifier();
-    
-    CV_WRAP bool empty() const;
-    CV_WRAP bool load(const string& filename);
-    bool read(const FileNode& node);
-    CV_WRAP void detectMultiScale( const Mat& image,
-                           CV_OUT vector<Rect>& objects,
-                           double scaleFactor=1.1,
-                           int minNeighbors=3, int flags=0,
-                           Size minSize=Size(),
-                           Size maxSize=Size());
- 
+    friend struct CascadeClassifierInvoker;
+
+    template<class FEval>
+    friend int predictOrdered( CascadeClassifier& cascade, Ptr<FeatureEvaluator> &featureEvaluator, double& weight);
+
+    template<class FEval>
+    friend int predictCategorical( CascadeClassifier& cascade, Ptr<FeatureEvaluator> &featureEvaluator, double& weight);
+
+    template<class FEval>
+    friend int predictOrderedStump( CascadeClassifier& cascade, Ptr<FeatureEvaluator> &featureEvaluator, double& weight);
+
+    template<class FEval>
+    friend int predictCategoricalStump( CascadeClassifier& cascade, Ptr<FeatureEvaluator> &featureEvaluator, double& weight);
+
     bool setImage( Ptr<FeatureEvaluator>&, const Mat& );
-    int runAt( Ptr<FeatureEvaluator>&, Point );
+    virtual int runAt( Ptr<FeatureEvaluator>&, Point, double& weight );
 
-    bool is_stump_based;
+    class Data
+    {
+    public:
+        struct CV_EXPORTS DTreeNode
+        {
+            int featureIdx;
+            float threshold; // for ordered features only
+            int left;
+            int right;
+        };
 
-    int stageType;
-    int featureType;
-    int ncategories;
-    Size origWinSize;
-    
-    vector<Stage> stages;
-    vector<DTree> classifiers;
-    vector<DTreeNode> nodes;
-    vector<float> leaves;
-    vector<int> subsets;
+        struct CV_EXPORTS DTree
+        {
+            int nodeCount;
+        };
 
-    Ptr<FeatureEvaluator> feval;
+        struct CV_EXPORTS Stage
+        {
+            int first;
+            int ntrees;
+            float threshold;
+        };
+
+        bool read(const FileNode &node);
+
+        bool isStumpBased;
+
+        int stageType;
+        int featureType;
+        int ncategories;
+        Size origWinSize;
+
+        vector<Stage> stages;
+        vector<DTree> classifiers;
+        vector<DTreeNode> nodes;
+        vector<float> leaves;
+        vector<int> subsets;
+    };
+
+    Data data;
+    Ptr<FeatureEvaluator> featureEvaluator;
     Ptr<CvHaarClassifierCascade> oldCascade;
 };
 
-
+    
 //////////////// HOG (Histogram-of-Oriented-Gradients) Descriptor and Object Detector //////////////
 
 struct CV_EXPORTS_W HOGDescriptor
@@ -396,7 +473,7 @@ public:
     CV_WRAP bool checkDetectorSize() const;
     CV_WRAP double getWinSigma() const;
     
-    CV_WRAP virtual void setSVMDetector(const vector<float>& _svmdetector);
+    CV_WRAP virtual void setSVMDetector(InputArray _svmdetector);
     
     virtual bool read(FileNode& fn);
     virtual void write(FileStorage& fs, const String& objname) const;
@@ -404,23 +481,38 @@ public:
     CV_WRAP virtual bool load(const String& filename, const String& objname=String());
     CV_WRAP virtual void save(const String& filename, const String& objname=String()) const;
     virtual void copyTo(HOGDescriptor& c) const;
-    
+
     CV_WRAP virtual void compute(const Mat& img,
                          CV_OUT vector<float>& descriptors,
                          Size winStride=Size(), Size padding=Size(),
                          const vector<Point>& locations=vector<Point>()) const;
+	//with found weights output
+    CV_WRAP virtual void detect(const Mat& img, CV_OUT vector<Point>& foundLocations, 
+						vector<double>& weights,
+                        double hitThreshold=0, Size winStride=Size(), 
+						Size padding=Size(),
+                        const vector<Point>& searchLocations=vector<Point>()) const;
+	//without found weights output
     CV_WRAP virtual void detect(const Mat& img, CV_OUT vector<Point>& foundLocations,
                         double hitThreshold=0, Size winStride=Size(),
                         Size padding=Size(),
                         const vector<Point>& searchLocations=vector<Point>()) const;
-    CV_WRAP virtual void detectMultiScale(const Mat& img, CV_OUT vector<Rect>& foundLocations,
-                                  double hitThreshold=0, Size winStride=Size(),
-                                  Size padding=Size(), double scale=1.05,
-                                  int groupThreshold=2) const;
+	//with result weights output
+    CV_WRAP virtual void detectMultiScale(const Mat& img, CV_OUT vector<Rect>& foundLocations, 
+								  vector<double>& foundWeights, double hitThreshold=0, 
+								  Size winStride=Size(), Size padding=Size(), double scale=1.05, 
+								  double finalThreshold=2.0,bool useMeanshiftGrouping = false) const;
+	//without found weights output
+	CV_WRAP virtual void detectMultiScale(const Mat& img, CV_OUT vector<Rect>& foundLocations, 
+								  double hitThreshold=0, Size winStride=Size(),
+                                  Size padding=Size(), double scale=1.05, 
+								  double finalThreshold=2.0, bool useMeanshiftGrouping = false) const;
+
     CV_WRAP virtual void computeGradient(const Mat& img, CV_OUT Mat& grad, CV_OUT Mat& angleOfs,
                                  Size paddingTL=Size(), Size paddingBR=Size()) const;
     
-    static vector<float> getDefaultPeopleDetector();
+    CV_WRAP static vector<float> getDefaultPeopleDetector();
+	CV_WRAP static vector<float> getDaimlerPeopleDetector();
     
     CV_PROP Size winSize;
     CV_PROP Size blockSize;
@@ -436,9 +528,80 @@ public:
     CV_PROP int nlevels;
 };
 
-	
+/****************************************************************************************\
+*                                Planar Object Detection                                 *
+\****************************************************************************************/
+
+class CV_EXPORTS PlanarObjectDetector
+{
+public:
+    PlanarObjectDetector();
+    PlanarObjectDetector(const FileNode& node);
+    PlanarObjectDetector(const vector<Mat>& pyr, int _npoints=300,
+                         int _patchSize=FernClassifier::PATCH_SIZE,
+                         int _nstructs=FernClassifier::DEFAULT_STRUCTS,
+                         int _structSize=FernClassifier::DEFAULT_STRUCT_SIZE,
+                         int _nviews=FernClassifier::DEFAULT_VIEWS,
+                         const LDetector& detector=LDetector(),
+                         const PatchGenerator& patchGenerator=PatchGenerator());
+    virtual ~PlanarObjectDetector();
+    virtual void train(const vector<Mat>& pyr, int _npoints=300,
+                       int _patchSize=FernClassifier::PATCH_SIZE,
+                       int _nstructs=FernClassifier::DEFAULT_STRUCTS,
+                       int _structSize=FernClassifier::DEFAULT_STRUCT_SIZE,
+                       int _nviews=FernClassifier::DEFAULT_VIEWS,
+                       const LDetector& detector=LDetector(),
+                       const PatchGenerator& patchGenerator=PatchGenerator());
+    virtual void train(const vector<Mat>& pyr, const vector<KeyPoint>& keypoints,
+                       int _patchSize=FernClassifier::PATCH_SIZE,
+                       int _nstructs=FernClassifier::DEFAULT_STRUCTS,
+                       int _structSize=FernClassifier::DEFAULT_STRUCT_SIZE,
+                       int _nviews=FernClassifier::DEFAULT_VIEWS,
+                       const LDetector& detector=LDetector(),
+                       const PatchGenerator& patchGenerator=PatchGenerator());
+    Rect getModelROI() const;
+    vector<KeyPoint> getModelPoints() const;
+    const LDetector& getDetector() const;
+    const FernClassifier& getClassifier() const;
+    void setVerbose(bool verbose);
+
+    void read(const FileNode& node);
+    void write(FileStorage& fs, const String& name=String()) const;
+    bool operator()(const Mat& image, CV_OUT Mat& H, CV_OUT vector<Point2f>& corners) const;
+    bool operator()(const vector<Mat>& pyr, const vector<KeyPoint>& keypoints,
+                                       CV_OUT Mat& H, CV_OUT vector<Point2f>& corners,
+                                       CV_OUT vector<int>* pairs=0) const;
+
+protected:
+    bool verbose;
+    Rect modelROI;
+    vector<KeyPoint> modelPoints;
+    LDetector ldetector;
+    FernClassifier fernClassifier;
+};
+
+struct CV_EXPORTS DataMatrixCode {
+  char msg[4]; //TODO std::string
+  Mat original;
+  Point corners[4]; //TODO vector
+};
+
+CV_EXPORTS void findDataMatrix(const Mat& image, std::vector<DataMatrixCode>& codes);
+CV_EXPORTS  void drawDataMatrixCodes(const std::vector<DataMatrixCode>& codes, Mat& drawImage);
 }
 
+/****************************************************************************************\
+*                                Datamatrix                                              *
+\****************************************************************************************/
+
+struct CV_EXPORTS CvDataMatrixCode {
+  char msg[4];
+  CvMat *original;
+  CvMat *corners;
+};
+
+#include <deque>
+CV_EXPORTS std::deque<CvDataMatrixCode> cvFindDataMatrix(CvMat *im);
 #endif
 
 #endif

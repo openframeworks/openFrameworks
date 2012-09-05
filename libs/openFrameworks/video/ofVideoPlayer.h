@@ -15,6 +15,11 @@
 	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_QTKIT
+	#include "ofQTKitPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
+#endif
+
 #ifdef OF_VIDEO_PLAYER_IPHONE
 	#include "ofiPhoneVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer
@@ -31,12 +36,16 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofPtr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
-		void				setPixelFormat(ofPixelFormat pixelFormat);
-		void 				closeMovie();
-		void 				close();
+	    string				getMoviePath();
 
-		void				update();			//same as idleMovie
-		void 				idleMovie();		// rename to updateMovie?
+		bool				setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat		getPixelFormat(); 
+		
+		void 				closeMovie();
+		void 				close();		
+
+		void				update();
+		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead", void idleMovie());
 		void 				play();
 		void 				stop();
 
@@ -49,7 +58,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				getIsMovieDone();
 
 		void 				setPosition(float pct);
-		void 				setVolume(int volume);
+		void 				setVolume(float volume); // 0..1
 		void 				setLoopState(ofLoopType state);
 		int					getLoopState();
 		void   				setSpeed(float speed);
@@ -59,8 +68,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofTexture &			getTextureReference();
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
-		void				draw(const ofPoint & p);
-		void				draw(const ofRectangle & r);
+		using ofBaseDraws::draw;
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -95,6 +103,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
 		ofPixelFormat internalPixelFormat;
+	    string moviePath;
 };
 
 

@@ -1,7 +1,7 @@
 //
 // Observer.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Observer.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Observer.h#2 $
 //
 // Library: Foundation
 // Package: Notifications
@@ -42,6 +42,7 @@
 
 #include "Poco/Foundation.h"
 #include "Poco/AbstractObserver.h"
+#include "Poco/Mutex.h"
 
 
 namespace Poco {
@@ -94,11 +95,16 @@ public:
 	
 	void notify(Notification* pNf) const
 	{
-		N* pCastNf = dynamic_cast<N*>(pNf);
-		if (pCastNf)
+		Poco::Mutex::ScopedLock lock(_mutex);
+
+		if (_pObject)
 		{
-			pCastNf->duplicate();
-			(_pObject->*_method)(pCastNf);
+			N* pCastNf = dynamic_cast<N*>(pNf);
+			if (pCastNf)
+			{
+				pCastNf->duplicate();
+				(_pObject->*_method)(pCastNf);
+			}
 		}
 	}
 	
@@ -118,11 +124,19 @@ public:
 		return new Observer(*this);
 	}
 	
+	void disable()
+	{
+		Poco::Mutex::ScopedLock lock(_mutex);
+		
+		_pObject = 0;
+	}
+	
 private:
 	Observer();
 
 	C*       _pObject;
 	Callback _method;
+	mutable Poco::Mutex _mutex;
 };
 
 

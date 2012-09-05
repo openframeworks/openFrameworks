@@ -10,7 +10,9 @@ public:
 	~ofGstVideoPlayer();
 
 	/// needs to be called before loadMovie
-	void 	setPixelFormat(ofPixelFormat pixelFormat);
+	bool 	setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat	getPixelFormat();
+	
 	bool 	loadMovie(string uri);
 
 	void 	update();
@@ -38,7 +40,7 @@ public:
 	bool  	getIsMovieDone();
 
 	void 	setPosition(float pct);
-	void 	setVolume(int volume);
+	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
 	int		getLoopState();
 	void 	setSpeed(float speed);
@@ -53,11 +55,12 @@ public:
 	float 			getWidth();
 
 	void setFrameByFrame(bool frameByFrame);
+	void setThreadAppSink(bool threaded);
 
 	ofGstVideoUtils * getGstVideoUtils();
 
 protected:
-	bool	allocate();
+	bool	allocate(int bpp);
 	void	on_stream_prepared();
 
 	// return true to set the message as attended so upstream doesn't try to process it
@@ -69,5 +72,6 @@ private:
 	int 				fps_n, fps_d;
 	bool				bIsStream;
 	bool				bIsAllocated;
+	bool				threadAppSink;
 	ofGstVideoUtils		videoUtils;
 };

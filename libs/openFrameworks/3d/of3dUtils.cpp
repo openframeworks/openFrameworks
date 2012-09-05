@@ -23,19 +23,17 @@ void ofDrawAxis(float size) {
 //--------------------------------------------------------------
 void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 	
-	ofColor c = ofGetStyle().color;
-	if (c == ofColor::white)
-		c = ofColor(255,0,0);
+	ofColor c(255,0,0);
 	
 	ofPushStyle();
 	
 	if (x) {
-		c.setHue(0.0f);
+		c.setHsb(0.0f, 200.0f, 255.0f);
 		ofSetColor(c);
 		ofDrawGridPlane(scale, ticks, labels);
 	}
 	if (y) {
-		c.setHue(255.0f / 3.0f);
+		c.setHsb(255.0f / 3.0f, 200.0f, 255.0f);
 		ofSetColor(c);
 		ofPushMatrix();
 		ofRotate(90, 0, 0, -1);
@@ -43,7 +41,7 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 		ofPopMatrix();
 	}
 	if (z) {
-		c.setHue(255.0f * 2.0f / 3.0f);
+		c.setHsb(255.0f * 2.0f / 3.0f, 200.0f, 255.0f);
 		ofSetColor(c);
 		ofPushMatrix();
 		ofRotate(90, 0, 1, 0);
@@ -78,11 +76,11 @@ void ofDrawGridPlane(float scale, float ticks, bool labels) {
 		{
 			//major major
 			if (fabs(yz) == scale || yz == 0)
-				ofSetLineWidth(4);
+				ofSetLineWidth(2);
 			
 			//major
 			else if (yz / major == floor(yz / major) )
-				ofSetLineWidth(2);
+				ofSetLineWidth(1.5);
 			
 			//minor
 			else
@@ -129,3 +127,43 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	ofCone(headSize, headSize);	
 	ofPopMatrix();
 }
+//--------------------------------------------------------------
+void ofDrawRotationAxes(float radius, float stripWidth, int circleRes){
+	
+	ofMesh axisXMesh;
+	axisXMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	ofMesh axisYMesh;
+	axisYMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	ofMesh axisZMesh;
+	axisZMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	for (int j = 0; j<=circleRes; j++) {
+		float x = cos(TWO_PI * j/circleRes);
+		float y = sin(TWO_PI * j/circleRes);
+		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
+		axisXMesh.addVertex(ofVec3f(x*radius, y*radius, -stripWidth));
+		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
+		axisXMesh.addVertex(ofVec3f(x*radius, y*radius,  stripWidth));
+		
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addVertex(ofVec3f(x*radius, -stripWidth, y*radius));
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addVertex(ofVec3f(x*radius,  stripWidth, y*radius));
+		
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
+		axisZMesh.addVertex(ofVec3f(-stripWidth, x*radius, y*radius));
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
+		axisZMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
+	}
+	
+	glEnable(GL_DEPTH_TEST);
+	axisXMesh.draw();
+	axisYMesh.draw();
+	axisZMesh.draw();
+	ofDrawAxis(radius);
+	glDisable(GL_DEPTH_TEST);
+	
+}
+

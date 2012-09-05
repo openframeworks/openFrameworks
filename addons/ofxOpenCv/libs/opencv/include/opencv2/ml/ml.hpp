@@ -41,70 +41,8 @@
 #ifndef __OPENCV_ML_HPP__
 #define __OPENCV_ML_HPP__
 
-// disable deprecation warning which appears in VisualStudio 8.0
-#if _MSC_VER >= 1400
-#pragma warning( disable : 4996 )
-#endif
-
-#ifndef SKIP_INCLUDES
-
-  #include "opencv2/core/core.hpp"
-  #include <limits.h>
-
-  #if defined WIN32 || defined _WIN32
-    #include <windows.h>
-  #endif
-
-#else // SKIP_INCLUDES
-
-  #if defined WIN32 || defined _WIN32
-    #define CV_CDECL __cdecl
-    #define CV_STDCALL __stdcall
-  #else
-    #define CV_CDECL
-    #define CV_STDCALL
-  #endif
-
-  #ifndef CV_EXTERN_C
-    #ifdef __cplusplus
-      #define CV_EXTERN_C extern "C"
-      #define CV_DEFAULT(val) = val
-    #else
-      #define CV_EXTERN_C
-      #define CV_DEFAULT(val)
-    #endif
-  #endif
-
-  #ifndef CV_EXTERN_C_FUNCPTR
-    #ifdef __cplusplus
-      #define CV_EXTERN_C_FUNCPTR(x) extern "C" { typedef x; }
-    #else
-      #define CV_EXTERN_C_FUNCPTR(x) typedef x
-    #endif
-  #endif
-
-  #ifndef CV_INLINE
-    #if defined __cplusplus
-      #define CV_INLINE inline
-    #elif (defined WIN32 || defined _WIN32) && !defined __GNUC__
-      #define CV_INLINE __inline
-    #else
-      #define CV_INLINE static
-    #endif
-  #endif /* CV_INLINE */
-
-  #if (defined WIN32 || defined _WIN32) && defined CVAPI_EXPORTS
-    #define CV_EXPORTS __declspec(dllexport)
-  #else
-    #define CV_EXPORTS
-  #endif
-
-  #ifndef CVAPI
-    #define CVAPI(rettype) CV_EXTERN_C CV_EXPORTS rettype CV_CDECL
-  #endif
-
-#endif // SKIP_INCLUDES
-
+#include "opencv2/core/core.hpp"
+#include <limits.h>
 
 #ifdef __cplusplus
 
@@ -156,7 +94,7 @@ CV_INLINE CvParamLattice cvParamLattice( double min_val, double max_val,
                                          double log_step )
 {
     CvParamLattice pl;
-    pl.min_val = CV_MIN( min_val, max_val );
+    pl.min_val = MIN( min_val, max_val );
     pl.max_val = MAX( min_val, max_val );
     pl.step = MAX( log_step, 1. );
     return pl;
@@ -324,9 +262,7 @@ public:
     int get_var_count() const;
     int get_sample_count() const;
     bool is_regression() const;
-
-protected:
-
+    
     virtual float write_results( int k, int k1, int start, int end,
         const float* neighbor_responses, const float* dist, CvMat* _results,
         CvMat* _neighbor_responses, CvMat* _dist, Cv32suf* sort_buf ) const;
@@ -334,6 +270,7 @@ protected:
     virtual void find_neighbors_direct( const CvMat* _samples, int k, int start, int end,
         float* neighbor_responses, const float** neighbors, float* dist ) const;
 
+protected:
 
     int max_k, var_count;
     int total;
@@ -544,7 +481,8 @@ public:
         bool balanced=false );
 
     virtual float predict( const CvMat* sample, bool returnDFVal=false ) const;
-
+    virtual float predict( const CvMat* samples, CvMat* results ) const;
+    
 #ifndef SWIG
     CV_WRAP CvSVM( const cv::Mat& trainData, const cv::Mat& responses,
           const cv::Mat& varIdx=cv::Mat(), const cv::Mat& sampleIdx=cv::Mat(),
@@ -564,7 +502,7 @@ public:
                             CvParamGrid coeffGrid  = CvSVM::get_default_grid(CvSVM::COEF),
                             CvParamGrid degreeGrid = CvSVM::get_default_grid(CvSVM::DEGREE),
                             bool balanced=false);
-    CV_WRAP virtual float predict( const cv::Mat& sample, bool returnDFVal=false ) const;    
+    CV_WRAP virtual float predict( const cv::Mat& sample, bool returnDFVal=false ) const;
 #endif
     
     CV_WRAP virtual int get_support_vector_count() const;
@@ -614,19 +552,11 @@ protected:
 
 struct CV_EXPORTS_W_MAP CvEMParams
 {
-    CvEMParams() : nclusters(10), cov_mat_type(1/*CvEM::COV_MAT_DIAGONAL*/),
-        start_step(0/*CvEM::START_AUTO_STEP*/), probs(0), weights(0), means(0), covs(0)
-    {
-        term_crit=cvTermCriteria( CV_TERMCRIT_ITER+CV_TERMCRIT_EPS, 100, FLT_EPSILON );
-    }
-
-    CvEMParams( int _nclusters, int _cov_mat_type=1/*CvEM::COV_MAT_DIAGONAL*/,
-                int _start_step=0/*CvEM::START_AUTO_STEP*/,
-                CvTermCriteria _term_crit=cvTermCriteria(CV_TERMCRIT_ITER+CV_TERMCRIT_EPS, 100, FLT_EPSILON),
-                const CvMat* _probs=0, const CvMat* _weights=0, const CvMat* _means=0, const CvMat** _covs=0 ) :
-                nclusters(_nclusters), cov_mat_type(_cov_mat_type), start_step(_start_step),
-                probs(_probs), weights(_weights), means(_means), covs(_covs), term_crit(_term_crit)
-    {}
+    CvEMParams();
+    CvEMParams( int nclusters, int cov_mat_type=1/*CvEM::COV_MAT_DIAGONAL*/,
+                int start_step=0/*CvEM::START_AUTO_STEP*/,
+                CvTermCriteria term_crit=cvTermCriteria(CV_TERMCRIT_ITER+CV_TERMCRIT_EPS, 100, FLT_EPSILON),
+                const CvMat* probs=0, const CvMat* weights=0, const CvMat* means=0, const CvMat** covs=0 );
 
     CV_PROP_RW int nclusters;
     CV_PROP_RW int cov_mat_type;
@@ -671,6 +601,7 @@ public:
                                 CV_OUT cv::Mat* labels=0 );
     
     CV_WRAP virtual float predict( const cv::Mat& sample, CV_OUT cv::Mat* probs=0 ) const;
+    CV_WRAP virtual double calcLikelihood( const cv::Mat &sample ) const;
     
     CV_WRAP int  getNClusters() const;
     CV_WRAP cv::Mat  getMeans()     const;
@@ -678,7 +609,8 @@ public:
     CV_WRAP cv::Mat  getWeights()   const;
     CV_WRAP cv::Mat  getProbs()     const;
     
-    CV_WRAP inline double getLikelihood() const { return log_likelihood;     };
+    CV_WRAP inline double getLikelihood() const { return log_likelihood; }
+    CV_WRAP inline double getLikelihoodDelta() const { return log_likelihood_delta; }
 #endif
     
     CV_WRAP virtual void clear();
@@ -689,11 +621,18 @@ public:
     const CvMat*  get_weights()   const;
     const CvMat*  get_probs()     const;
 
-    inline double         get_log_likelihood     () const { return log_likelihood;     };
+    inline double get_log_likelihood() const { return log_likelihood; }
+    inline double get_log_likelihood_delta() const { return log_likelihood_delta; }
     
 //    inline const CvMat *  get_log_weight_div_det () const { return log_weight_div_det; };
 //    inline const CvMat *  get_inv_eigen_values   () const { return inv_eigen_values;   };
 //    inline const CvMat ** get_cov_rotate_mats    () const { return cov_rotate_mats;    };
+
+    virtual void read( CvFileStorage* fs, CvFileNode* node );
+    virtual void write( CvFileStorage* fs, const char* name ) const;
+
+    virtual void write_params( CvFileStorage* fs ) const;
+    virtual void read_params( CvFileStorage* fs, CvFileNode* node );
 
 protected:
 
@@ -707,6 +646,7 @@ protected:
                          const CvMat* means );
     CvEMParams params;
     double log_likelihood;
+    double log_likelihood_delta;
 
     CvMat* means;
     CvMat** covs;
@@ -796,23 +736,12 @@ struct CV_EXPORTS_W_MAP CvDTreeParams
     CV_PROP_RW float regression_accuracy;
     const float* priors;
 
-    CvDTreeParams() : max_categories(10), max_depth(INT_MAX), min_sample_count(10),
-        cv_folds(10), use_surrogates(true), use_1se_rule(true),
-        truncate_pruned_tree(true), regression_accuracy(0.01f), priors(0)
-    {}
-
-    CvDTreeParams( int _max_depth, int _min_sample_count,
-                   float _regression_accuracy, bool _use_surrogates,
-                   int _max_categories, int _cv_folds,
-                   bool _use_1se_rule, bool _truncate_pruned_tree,
-                   const float* _priors ) :
-        max_categories(_max_categories), max_depth(_max_depth),
-        min_sample_count(_min_sample_count), cv_folds (_cv_folds),
-        use_surrogates(_use_surrogates), use_1se_rule(_use_1se_rule),
-        truncate_pruned_tree(_truncate_pruned_tree),
-        regression_accuracy(_regression_accuracy),
-        priors(_priors)
-    {}
+    CvDTreeParams();
+    CvDTreeParams( int max_depth, int min_sample_count,
+                   float regression_accuracy, bool use_surrogates,
+                   int max_categories, int cv_folds,
+                   bool use_1se_rule, bool truncate_pruned_tree,
+                   const float* priors );
 };
 
 
@@ -1068,26 +997,12 @@ struct CV_EXPORTS_W_MAP CvRTParams : public CvDTreeParams
     CV_PROP_RW int nactive_vars;
     CV_PROP_RW CvTermCriteria term_crit;
 
-    CvRTParams() : CvDTreeParams( 5, 10, 0, false, 10, 0, false, false, 0 ),
-        calc_var_importance(false), nactive_vars(0)
-    {
-        term_crit = cvTermCriteria( CV_TERMCRIT_ITER+CV_TERMCRIT_EPS, 50, 0.1 );
-    }
-
-    CvRTParams( int _max_depth, int _min_sample_count,
-                float _regression_accuracy, bool _use_surrogates,
-                int _max_categories, const float* _priors, bool _calc_var_importance,
-                int _nactive_vars, int max_num_of_trees_in_the_forest,
-                float forest_accuracy, int termcrit_type ) :
-        CvDTreeParams( _max_depth, _min_sample_count, _regression_accuracy,
-                       _use_surrogates, _max_categories, 0,
-                       false, false, _priors ),
-        calc_var_importance(_calc_var_importance),
-        nactive_vars(_nactive_vars)
-    {
-        term_crit = cvTermCriteria(termcrit_type,
-            max_num_of_trees_in_the_forest, forest_accuracy);
-    }
+    CvRTParams();
+    CvRTParams( int max_depth, int min_sample_count,
+                float regression_accuracy, bool use_surrogates,
+                int max_categories, const float* priors, bool calc_var_importance,
+                int nactive_vars, int max_num_of_trees_in_the_forest,
+                float forest_accuracy, int termcrit_type );
 };
 
 
@@ -1623,7 +1538,7 @@ public:
     // Response value prediction
     //
     // API
-    // virtual float predict( const CvMat* sample, const CvMat* missing=0,
+    // virtual float predict_serial( const CvMat* sample, const CvMat* missing=0,
              CvMat* weak_responses=0, CvSlice slice = CV_WHOLE_SEQ,
              int k=-1 ) const;
     
@@ -1646,12 +1561,44 @@ public:
     // RESULT
     // Predicted value.
     */
+    virtual float predict_serial( const CvMat* sample, const CvMat* missing=0,
+            CvMat* weakResponses=0, CvSlice slice = CV_WHOLE_SEQ,
+            int k=-1 ) const;
+            
+    /*
+    // Response value prediction.
+    // Parallel version (in the case of TBB existence)
+    //
+    // API
+    // virtual float predict( const CvMat* sample, const CvMat* missing=0,
+             CvMat* weak_responses=0, CvSlice slice = CV_WHOLE_SEQ,
+             int k=-1 ) const;
+    
+    // INPUT
+    // sample         - input sample of the same type as in the training set.
+    // missing        - missing values mask. missing=0 if there are no
+    //                   missing values in sample vector.
+    // weak_responses  - predictions of all of the trees.
+    //                   not implemented (!)
+    // slice           - part of the ensemble used for prediction.
+    //                   slice = CV_WHOLE_SEQ when all trees are used.
+    // k               - number of ensemble used.
+    //                   k is in {-1,0,1,..,<count of output classes-1>}.
+    //                   in the case of classification problem 
+    //                   <count of output classes-1> ensembles are built.
+    //                   If k = -1 ordinary prediction is the result,
+    //                   otherwise function gives the prediction of the
+    //                   k-th ensemble only.
+    // OUTPUT
+    // RESULT
+    // Predicted value.
+    */        
     virtual float predict( const CvMat* sample, const CvMat* missing=0,
             CvMat* weakResponses=0, CvSlice slice = CV_WHOLE_SEQ,
             int k=-1 ) const;
 
     /*
-    // Delete all temporary data.
+    // Deletes all the data.
     //
     // API
     // virtual void clear();
@@ -1659,7 +1606,7 @@ public:
     // INPUT
     // OUTPUT
     // delete data, weak, orig_response, sum_response,
-    //        weak_eval, ubsample_train, subsample_test,
+    //        weak_eval, subsample_train, subsample_test,
     //        sample_idx, missing, lass_labels
     // delta = 0.0
     // RESULT
@@ -1675,7 +1622,7 @@ public:
     //
     // INPUT
     // data  - dataset
-    // type  - defines which error is to compute^ train (CV_TRAIN_ERROR) or
+    // type  - defines which error is to compute: train (CV_TRAIN_ERROR) or
     //         test (CV_TEST_ERROR).
     // OUTPUT
     // resp  - vector of predicitons
@@ -1684,7 +1631,6 @@ public:
     */
     virtual float calc_error( CvMLData* _data, int type,
             std::vector<float> *resp = 0 );
-
 
     /*
     // 
@@ -1894,6 +1840,7 @@ protected:
     // RESULT
     */
     virtual void read_params( CvFileStorage* fs, CvFileNode* fnode );
+	int get_len(const CvMat* mat) const;
 
     
     CvDTreeTrainData* data;
@@ -1903,7 +1850,6 @@ protected:
     CvMat* orig_response;
     CvMat* sum_response;
     CvMat* sum_response_tmp;
-    CvMat* weak_eval;
     CvMat* sample_idx;
     CvMat* subsample_train;
     CvMat* subsample_test;
@@ -2002,6 +1948,8 @@ public:
             (unsigned)layer <= (unsigned)layer_sizes->cols ? weights[layer] : 0;
     }
 
+    virtual void calc_activ_func_deriv( CvMat* xf, CvMat* deriv, const double* bias ) const;
+
 protected:
 
     virtual bool prepare_to_train( const CvMat* _inputs, const CvMat* _outputs,
@@ -2015,7 +1963,6 @@ protected:
     virtual int train_rprop( CvVectors _ivecs, CvVectors _ovecs, const double* _sw );
 
     virtual void calc_activ_func( CvMat* xf, const double* bias ) const;
-    virtual void calc_activ_func_deriv( CvMat* xf, CvMat* deriv, const double* bias ) const;
     virtual void set_activ_func( int _activ_func=SIGMOID_SYM,
                                  double _f_param1=0, double _f_param2=0 );
     virtual void init_weights();
@@ -2081,10 +2028,9 @@ CVAPI(void) cvCreateTestSet( int type, CvMat** samples,
 
 struct CV_EXPORTS CvTrainTestSplit
 {
-public:
     CvTrainTestSplit();
-    CvTrainTestSplit( int _train_sample_count, bool _mix = true);
-    CvTrainTestSplit( float _train_sample_portion, bool _mix = true);
+    CvTrainTestSplit( int train_sample_count, bool mix = true);
+    CvTrainTestSplit( float train_sample_portion, bool mix = true);
 
     union
     {
@@ -2093,14 +2039,7 @@ public:
     } train_sample_part;
     int train_sample_part_mode;
 
-    union
-    {
-        int *count;
-        float *portion;
-    } *class_part;
-    int class_part_mode;
-
-    bool mix;    
+    bool mix;
 };
 
 class CV_EXPORTS CvMLData
@@ -2112,28 +2051,26 @@ public:
     // returns:
     // 0 - OK  
     // 1 - file can not be opened or is not correct
-    int read_csv(const char* filename);
+    int read_csv( const char* filename );
 
-    const CvMat* get_values(){ return values; };
-
+    const CvMat* get_values() const;
     const CvMat* get_responses();
-
-    const CvMat* get_missing(){ return missing; };
+    const CvMat* get_missing() const;
 
     void set_response_idx( int idx ); // old response become predictors, new response_idx = idx
                                       // if idx < 0 there will be no response
-    int get_response_idx() { return response_idx; }
+    int get_response_idx() const;
 
-    const CvMat* get_train_sample_idx() { return train_sample_idx; };
-    const CvMat* get_test_sample_idx() { return test_sample_idx; };
+    void set_train_test_split( const CvTrainTestSplit * spl );
+    const CvMat* get_train_sample_idx() const;
+    const CvMat* get_test_sample_idx() const;
     void mix_train_and_test_idx();
-    void set_train_test_split( const CvTrainTestSplit * spl);
     
     const CvMat* get_var_idx();
     void chahge_var_idx( int vi, bool state ); // state == true to set vi-variable as predictor
 
     const CvMat* get_var_types();
-    int get_var_type( int var_idx ) { return var_types->data.ptr[var_idx]; };
+    int get_var_type( int var_idx ) const;
     // following 2 methods enable to change vars type
     // use these methods to assign CV_VAR_CATEGORICAL type for categorical variable
     // with numerical labels; in the other cases var types are correctly determined automatically
@@ -2143,11 +2080,13 @@ public:
     void change_var_type( int var_idx, int type); // type in { CV_VAR_ORDERED, CV_VAR_CATEGORICAL }    
  
     void set_delimiter( char ch );
-    char get_delimiter() { return delimiter; };
+    char get_delimiter() const;
 
     void set_miss_ch( char ch );
-    char get_miss_ch() { return miss_ch; };
+    char get_miss_ch() const;
     
+    const std::map<std::string, int>& get_class_labels_map() const;
+
 protected:
     virtual void clear();
 
@@ -2173,7 +2112,7 @@ protected:
     bool mix;
    
     int total_class_count;
-    std::map<std::string, int> *class_map;
+    std::map<std::string, int> class_map;
 
     CvMat* train_sample_idx;
     CvMat* test_sample_idx;

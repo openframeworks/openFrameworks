@@ -9,6 +9,7 @@ struct ofGstFramerate{
 
 struct ofGstVideoFormat{
   string mimetype;
+  unsigned int 	 fourcc;
   int    width;
   int    height;
   vector<ofGstFramerate> framerates;
@@ -34,7 +35,9 @@ public:
 	~ofGstVideoGrabber();
 
 	/// needs to be called before initGrabber
-	void setPixelFormat(ofPixelFormat pixelFormat);
+	bool setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat	getPixelFormat();
+	
 	void videoSettings(){};//TODO: what is this??
 
 	void listDevices();

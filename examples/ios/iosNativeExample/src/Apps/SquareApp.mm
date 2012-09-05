@@ -12,9 +12,6 @@ SquareApp :: ~SquareApp () {
 
 //--------------------------------------------------------------
 void SquareApp::setup() {	
-	ofRegisterTouchEvents(this);
-	ofxAccelerometer.setup();
-	ofxiPhoneAlerts.addListener(this);
 	ofBackground(127);
     
     int fontSize = 8;
@@ -55,8 +52,7 @@ void SquareApp::draw() {
 
 //--------------------------------------------------------------
 void SquareApp::exit() {
-    ofUnregisterTouchEvents(this);
-    ofxiPhoneAlerts.removeListener(this);
+    //
 }
 
 //--------------------------------------------------------------

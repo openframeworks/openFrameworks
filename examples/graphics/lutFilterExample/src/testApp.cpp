@@ -28,7 +28,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	vidGrabber.grabFrame();
+	vidGrabber.update();
 	
 	if (doLUT) {
 		if (vidGrabber.isFrameNew()){

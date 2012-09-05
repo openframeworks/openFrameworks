@@ -41,6 +41,7 @@ public:
 	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
 	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
+	void swap(ofPixels_<PixelType> & pix);
 
 	//From ofPixelsUtils
 	// crop to a new width and height, this reallocates memory.
@@ -87,6 +88,8 @@ public:
 	void setChannel(int channel, const ofPixels_<PixelType> channelPixels);
 
 	ofImageType getImageType() const;
+	void setImageType(ofImageType imageType);
+	void setNumChannels(int numChannels);
 
 	int size() const;
 

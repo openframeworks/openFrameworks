@@ -10,10 +10,8 @@ void testApp::setup(){
 	triggerOne = 0;
 	triggerTwo = 0;
 
-	// GUI setup stuff
-	gui.setup("logging controls");
-	gui.add(verboseLevel.setup("verbose logging", false));
-	gui.add(logToFile.setup("log to file", false));
+	verboseLevel = false;
+	logToFile = false;
 
 	// Bools for tracking changed conditions
 	currentVerboseLevel = false;
@@ -72,12 +70,25 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	gui.draw();
+	
+	string verboseStr = "[ ]";
+	if( verboseLevel ) verboseStr = "[x]";
+
+	string logStr = "[ ]";
+	if( logToFile ) logStr = "[x]";
+	
+	ofSetColor(20);
+	ofDrawBitmapString("Key Controls:\nv: Set verbose log "+verboseStr+"\nf: Set log to file "+logStr+"\n ", 20, 30);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+	if( key == 'v' ){
+		verboseLevel = !verboseLevel;
+	}
+	if( key == 'f' ){
+		logToFile = !logToFile;
+	}
 }
 
 //--------------------------------------------------------------

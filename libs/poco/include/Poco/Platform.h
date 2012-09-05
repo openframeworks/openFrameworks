@@ -1,7 +1,7 @@
 //
 // Platform.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Platform.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Platform.h#4 $
 //
 // Library: Foundation
 // Package: Core
@@ -117,6 +117,9 @@
 #elif defined(__VMS)
 	#define POCO_OS_FAMILY_VMS 1
 	#define POCO_OS POCO_OS_VMS
+#elif defined(POCO_VXWORKS)
+  #define POCO_OS_FAMILY_UNIX 1
+  #define POCO_OS POCO_OS_VXWORKS
 #endif
 
 
@@ -136,6 +139,7 @@
 #define POCO_ARCH_M68K    0x0b
 #define POCO_ARCH_S390    0x0c
 #define POCO_ARCH_SH      0x0d
+#define POCO_ARCH_NIOS2   0x0e
 
 
 #if defined(__ALPHA) || defined(__alpha) || defined(__alpha__) || defined(_M_ALPHA)
@@ -161,7 +165,7 @@
 	#define POCO_ARCH POCO_ARCH_HPPA
 	#define POCO_ARCH_BIG_ENDIAN 1
 #elif defined(__PPC) || defined(__POWERPC__) || defined(__powerpc) || defined(__PPC__) || \
-      defined(__powerpc__) || defined(__ppc__) || defined(_ARCH_PPC) || defined(_M_PPC)
+      defined(__powerpc__) || defined(__ppc__) || defined(__ppc) || defined(_ARCH_PPC) || defined(_M_PPC)
 	#define POCO_ARCH POCO_ARCH_PPC
 	#define POCO_ARCH_BIG_ENDIAN 1
 #elif defined(_POWER) || defined(_ARCH_PWR) || defined(_ARCH_PWR2) || defined(_ARCH_PWR3) || \
@@ -184,13 +188,21 @@
 #elif defined(__s390__)
 	#define POCO_ARCH POCO_ARCH_S390
 	#define POCO_ARCH_BIG_ENDIAN 1
-#elif defined(__sh__)
+#elif defined(__sh__) || defined(__sh)
 	#define POCO_ARCH POCO_ARCH_SH
 	#if defined(__LITTLE_ENDIAN__)
 		#define POCO_ARCH_LITTLE_ENDIAN 1
 	#else
 		#define POCO_ARCH_BIG_ENDIAN 1
 	#endif
+#elif defined (nios2) || defined(__nios2) || defined(__nios2__)
+    #define POCO_ARCH POCO_ARCH_NIOS2
+    #if defined(__nios2_little_endian) || defined(nios2_little_endian) || defined(__nios2_little_endian__)
+		#define POCO_ARCH_LITTLE_ENDIAN 1
+	#else
+		#define POCO_ARCH_BIG_ENDIAN 1
+	#endif
+
 #endif
 
 

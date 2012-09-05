@@ -2,15 +2,9 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
-	//iPhoneAlerts will be sent to this.
-	ofxiPhoneAlerts.addListener(this);
-		
 	keyboard = new ofxiPhoneKeyboard(0,52,320,32);
 	keyboard->setVisible(true);
 	keyboard->setBgColor(255, 255, 255, 255);

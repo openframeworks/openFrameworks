@@ -1,7 +1,7 @@
 //
 // Node.h
 //
-// $Id: //poco/1.4/XML/include/Poco/DOM/Node.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/Node.h#2 $
 //
 // Library: XML
 // Package: DOM
@@ -43,6 +43,7 @@
 #include "Poco/XML/XML.h"
 #include "Poco/DOM/EventTarget.h"
 #include "Poco/XML/XMLString.h"
+#include "Poco/SAX/NamespaceSupport.h"
 
 
 namespace Poco {
@@ -229,11 +230,62 @@ public:
 		/// Returns whether this node (if it is an element) has any attributes.
 		
 	// Extensions
+	typedef Poco::XML::NamespaceSupport NSMap;
+
 	virtual XMLString innerText() const = 0;
 		/// Returns a string containing the concatenated values of the node
 		/// and all its child nodes. 
 		///
 		/// This method is not part of the W3C Document Object Model.
+		
+	virtual Node* getNodeByPath(const XMLString& path) const = 0;
+		/// Searches a node (element or attribute) based on a simplified XPath 
+		/// expression.
+		///
+		/// Only simple XPath expressions are supported. These are the slash
+		/// notation for specifying paths to elements, and the square bracket
+		/// expression for finding elements by their index, by attribute value, 
+		/// or finding attributes by names.
+		///
+		/// The slash at the beginning is optional, the evaluation always starts
+		/// at this element. A double-slash at the beginning recursively searches 
+		/// the entire subtree for the first element.
+		///
+		/// Examples:
+		///     elem1/elem2/elem3
+		///     /elem1/elem2/elem3
+		///     /elem1/elem2[1]
+		///     /elem1/elem2[@attr1]
+		///     /elem1/elem2[@attr1='value']
+		///     //elem2[@attr1='value']
+		///     //[@attr1='value']
+		///
+		/// This method is an extension to the W3C Document Object Model.
+
+	virtual Node* getNodeByPathNS(const XMLString& path, const NSMap& nsMap) const = 0;
+		/// Searches a node (element or attribute) based on a simplified XPath 
+		/// expression. The given NSMap must contain mappings from namespace
+		/// prefixes to namespace URIs for all namespace prefixes used in 
+		/// the path expression.
+		///
+		/// Only simple XPath expressions are supported. These are the slash
+		/// notation for specifying paths to elements, and the square bracket
+		/// expression for finding elements by their index, by attribute value, 
+		/// or finding attributes by names.
+		///
+		/// The slash at the beginning is optional, the evaluation always starts
+		/// at this element. A double-slash at the beginning recursively searches 
+		/// the entire subtree for the first element.
+		///
+		/// Examples:
+		///     /ns1:elem1/ns2:elem2/ns2:elem3
+		///     /ns1:elem1/ns2:elem2[1]
+		///     /ns1:elem1/ns2:elem2[@attr1]
+		///     /ns1:elem1/ns2:elem2[@attr1='value']
+		///     //ns2:elem2[@ns1:attr1='value']
+		///     //[@ns1:attr1='value']
+		///
+		/// This method is an extension to the W3C Document Object Model.
 
 protected:
 	virtual ~Node();

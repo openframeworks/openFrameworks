@@ -6,8 +6,6 @@
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
 	#include "ofQtUtils.h"
-#endif
-
 
 class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
@@ -25,6 +23,9 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 void			stop();
 		 
 		 void			clearMemory();
+		 
+		bool            setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat   getPixelFormat();		 
 	
 		 bool 			isFrameNew();
 		 unsigned char * 	getPixels();
@@ -45,7 +46,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 bool			getIsMovieDone();
 
 		 void 			setPosition(float pct);
-		 void 			setVolume(int volume);
+		 void 			setVolume(float volume);
 		 void 			setLoopState(ofLoopType state);
 		 void   		setSpeed(float speed);
 		 void			setFrame(int frame);  // frame 0 = first frame...
@@ -82,20 +83,16 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		bool 				bIsFrameNew;			// if we are new
 		float				speed;		
 		
-		//--------------------------------------
-		#ifdef OF_VIDEO_PLAYER_QUICKTIME
-		//--------------------------------------
-			MovieDrawingCompleteUPP myDrawCompleteProc;
-			MovieController  	thePlayer;
-			GWorldPtr 			offscreenGWorld;
-			Movie 			 	moviePtr;
-			unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
-			void				qtGetFrameCount(Movie & movForcount);
-		//--------------------------------------
-		#endif
-		//--------------------------------------
+		MovieDrawingCompleteUPP myDrawCompleteProc;
+		MovieController  	thePlayer;
+		GWorldPtr 			offscreenGWorld;
+		Movie 			 	moviePtr;
+		unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
+		void				qtGetFrameCount(Movie & movForcount);
 
 };
+
+#endif
 
 
 

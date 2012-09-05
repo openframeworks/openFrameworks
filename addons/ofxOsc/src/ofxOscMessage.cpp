@@ -102,6 +102,25 @@ int32_t ofxOscMessage::getArgAsInt32( int index ) const
         return ((ofxOscArgInt32*)args[index])->get();
 }
 
+uint64_t ofxOscMessage::getArgAsInt64( int index ) const
+{
+	if ( getArgType(index) != OFXOSC_TYPE_INT64 )
+	{
+	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+        {
+	    	ofLog(OF_LOG_WARNING, "ofxOscMessage:getArgAsInt64: converting int64 to float for argument %i", index );
+            return ((ofxOscArgFloat*)args[index])->get();
+        }
+        else
+        {
+        	ofLog(OF_LOG_ERROR, "ofxOscMessage:getArgAsInt64: argument %i is not a number", index );
+            return 0;
+        }
+	}
+	else
+        return ((ofxOscArgInt64*)args[index])->get();
+}
+
 
 float ofxOscMessage::getArgAsFloat( int index ) const
 {
@@ -166,6 +185,13 @@ void ofxOscMessage::addIntArg( int32_t argument )
 	args.push_back( new ofxOscArgInt32( argument ) );
 }
 
+void ofxOscMessage::addInt64Arg( uint64_t argument )
+{
+
+	args.push_back( new ofxOscArgInt64( argument ) );
+}
+
+
 void ofxOscMessage::addFloatArg( float argument )
 {
 	args.push_back( new ofxOscArgFloat( argument ) );
@@ -198,6 +224,8 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 		ofxOscArgType argType = other.getArgType( i );
 		if ( argType == OFXOSC_TYPE_INT32 )
 			args.push_back( new ofxOscArgInt32( other.getArgAsInt32( i ) ) );
+		else if ( argType == OFXOSC_TYPE_INT64 )
+			args.push_back( new ofxOscArgInt64( other.getArgAsInt64( i ) ) );
 		else if ( argType == OFXOSC_TYPE_FLOAT )
 			args.push_back( new ofxOscArgFloat( other.getArgAsFloat( i ) ) );
 		else if ( argType == OFXOSC_TYPE_STRING )

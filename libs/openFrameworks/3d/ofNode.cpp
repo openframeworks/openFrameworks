@@ -10,7 +10,6 @@ ofNode::ofNode() :
 	setScale(1);
 }
 
-
 //----------------------------------------
 void ofNode::setParent(ofNode& parent) {
 	this->parent = &parent;
@@ -26,7 +25,6 @@ ofNode* ofNode::getParent() const {
 	return parent;
 }
 
-
 //----------------------------------------
 void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
 	localTransformMatrix = m44;
@@ -39,12 +37,10 @@ void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
 	onScaleChanged();
 }
 
-
 //----------------------------------------
 void ofNode::setPosition(float px, float py, float pz) {
 	setPosition(ofVec3f(px, py, pz));
 }
-
 
 //----------------------------------------
 void ofNode::setPosition(const ofVec3f& p) {
@@ -52,7 +48,6 @@ void ofNode::setPosition(const ofVec3f& p) {
 	localTransformMatrix.setTranslation(position);
 	onPositionChanged();
 }
-
 
 //----------------------------------------
 void ofNode::setGlobalPosition(float px, float py, float pz) {
@@ -68,31 +63,25 @@ void ofNode::setGlobalPosition(const ofVec3f& p) {
 	}
 }
 
-
-
 //----------------------------------------
 ofVec3f ofNode::getPosition() const {
 	return position;
 }
-
 
 //----------------------------------------
 float ofNode::getX() const {
 	return position.x;
 }
 
-
 //----------------------------------------
 float ofNode::getY() const {
 	return position.y;
 }
 
-
 //----------------------------------------
 float ofNode::getZ() const {
 	return position.z;
 }
-
 
 //----------------------------------------
 void ofNode::setOrientation(const ofQuaternion& q) {
@@ -100,7 +89,6 @@ void ofNode::setOrientation(const ofQuaternion& q) {
 	createMatrix();
 	onOrientationChanged();
 }
-
 
 //----------------------------------------
 void ofNode::setOrientation(const ofVec3f& eulerAngles) {
@@ -118,30 +106,25 @@ void ofNode::setGlobalOrientation(const ofQuaternion& q) {
 	}
 }
 
-
 //----------------------------------------
 ofQuaternion ofNode::getOrientationQuat() const {
 	return orientation;
 }
-
 
 //----------------------------------------
 ofVec3f ofNode::getOrientationEuler() const {
     return orientation.getEuler();
 }
 
-
 //----------------------------------------
 void ofNode::setScale(float s) {
 	setScale(s, s, s);
 }
 
-
 //----------------------------------------
 void ofNode::setScale(float sx, float sy, float sz) {
 	setScale(ofVec3f(sx, sy, sz));
 }
-
 
 //----------------------------------------
 void ofNode::setScale(const ofVec3f& s) {
@@ -149,7 +132,6 @@ void ofNode::setScale(const ofVec3f& s) {
 	createMatrix();
 	onScaleChanged();
 }
-
 
 //----------------------------------------
 ofVec3f ofNode::getScale() const {
@@ -161,7 +143,6 @@ void ofNode::move(float x, float y, float z) {
 	move(ofVec3f(x, y, z));
 }
 
-
 //----------------------------------------
 void ofNode::move(const ofVec3f& offset) {
 	position += offset;
@@ -169,42 +150,35 @@ void ofNode::move(const ofVec3f& offset) {
 	onPositionChanged();
 }
 
-
 //----------------------------------------
 void ofNode::truck(float amount) {
 	move(getXAxis() * amount);
 }
-
 
 //----------------------------------------
 void ofNode::boom(float amount) {
 	move(getYAxis() * amount);
 }
 
-
 //----------------------------------------
 void ofNode::dolly(float amount) {
 	move(getZAxis() * amount);
 }
-
 
 //----------------------------------------
 void ofNode::tilt(float degrees) {
 	rotate(degrees, getXAxis());
 }
 
-
 //----------------------------------------
 void ofNode::pan(float degrees) {
 	rotate(degrees, getYAxis());
 }
 
-
 //----------------------------------------
 void ofNode::roll(float degrees) {
 	rotate(degrees, getZAxis());
 }
-
 
 //----------------------------------------
 void ofNode::rotate(const ofQuaternion& q) {
@@ -217,7 +191,6 @@ void ofNode::rotate(float degrees, const ofVec3f& v) {
 	rotate(ofQuaternion(degrees, v));
 }
 
-
 //----------------------------------------
 void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 	rotate(ofQuaternion(degrees, ofVec3f(vx, vy, vz)));
@@ -225,38 +198,40 @@ void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 
 //----------------------------------------
 void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
-	ofLog(OF_LOG_VERBOSE, "ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) not implemented yet");
-	ofMatrix4x4 m = getLocalTransformMatrix();
+	//	ofLog(OF_LOG_VERBOSE, "ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) not implemented yet");
+	//	ofMatrix4x4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
 	
-	onOrientationChanged();
+	setGlobalPosition((getGlobalPosition() - point)* q + point); 
+	
+//	onOrientationChanged();
 	onPositionChanged();
 }
 
-
 //----------------------------------------
 void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point) {
-	ofLog(OF_LOG_VERBOSE, "ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point) not implemented yet");
+	rotateAround(ofQuaternion(degrees, axis), point);
 }
-
-
 
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
-	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());
-	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();
-	ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();
-	ofVec3f yaxis = zaxis.getCrossed(xaxis);
-	
-	ofMatrix4x4 m;
-	m._mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
-	m._mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
-	m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
-	
-	setGlobalOrientation(m.getRotate());
+	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());	
+	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();	
+	if (zaxis.length() > 0) {
+		ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();	
+		ofVec3f yaxis = zaxis.getCrossed(xaxis);
+		
+		ofMatrix4x4 m;
+		m._mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
+		m._mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
+		m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
+		
+		setGlobalOrientation(m.getRotate());
+	}
 }
 
+//----------------------------------------
 void ofNode::lookAt(ofNode& lookAtNode, const ofVec3f& upVector) {
 	lookAt(lookAtNode.getGlobalPosition(), upVector);
 }
@@ -266,12 +241,10 @@ ofVec3f ofNode::getXAxis() const {
 	return axis[0];
 }
 
-
 //----------------------------------------
 ofVec3f ofNode::getYAxis() const {
 	return axis[1];
 }
-
 
 //----------------------------------------
 ofVec3f ofNode::getZAxis() const {
@@ -293,24 +266,20 @@ ofVec3f ofNode::getUpDir() const {
 	return getYAxis();
 }
 
-
 //----------------------------------------
 float ofNode::getPitch() const {
 	return getOrientationEuler().x;
 }
-
 
 //----------------------------------------
 float ofNode::getHeading() const {
 	return getOrientationEuler().y;
 }
 
-
 //----------------------------------------
 float ofNode::getRoll() const {
 	return getOrientationEuler().z;
 }
-
 
 //----------------------------------------
 const ofMatrix4x4& ofNode::getLocalTransformMatrix() const {
@@ -338,7 +307,6 @@ ofQuaternion ofNode::getGlobalOrientation() const {
 //	return 
 //}
 
-
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
 	ofMatrix4x4 m;
@@ -350,16 +318,6 @@ void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f&
 	p += centerPoint;
 	setPosition(p);
 	
-	// find upvector for lookat
-	//	ofVec3f u((p-centerPoint).getCrossed(ofVec3f(0, 0, 1)).getNormalized());
-	//	if(u.lengthSquared() > 0) {	// if it exists
-	//		
-	//	} else {
-	//		//		u.set(0, <#float _y#>, <#float _z#>)
-	//	}
-	//	
-	//	
-	//	
 	lookAt(centerPoint);//, v - centerPoint);
 }
 
@@ -367,7 +325,6 @@ void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f&
 void ofNode::orbit(float longitude, float latitude, float radius, ofNode& centerNode) {
 	orbit(longitude, latitude, radius, centerNode.getGlobalPosition());
 }
-
 
 //----------------------------------------
 void ofNode::resetTransform() {
@@ -381,7 +338,6 @@ void ofNode::draw() {
 	customDraw();
 	restoreTransformGL();
 }
-
 
 //----------------------------------------
 void ofNode::transformGL() const {

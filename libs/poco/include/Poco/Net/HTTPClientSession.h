@@ -1,7 +1,7 @@
 //
 // HTTPClientSession.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPClientSession.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPClientSession.h#4 $
 //
 // Library: Net
 // Package: HTTPClient
@@ -169,6 +169,14 @@ public:
 		/// the request body. The stream is valid until
 		/// receiveResponse() is called or the session
 		/// is destroyed.
+		///
+		/// In case a network or server failure happens
+		/// while writing the request body to the returned stream,
+		/// the stream state will change to bad or fail. In this
+		/// case, reset() should be called if the session will
+		/// be reused and persistent connections are enabled
+		/// to ensure a new connection will be set up
+		/// for the next request.
 		
 	virtual std::istream& receiveResponse(HTTPResponse& response);
 		/// Receives the header for the response to the previous 
@@ -178,12 +186,33 @@ public:
 		/// the response body. The stream is valid until
 		/// sendRequest() is called or the session is
 		/// destroyed.
+		///
+		/// It must be ensured that the response stream
+		/// is fully consumed before sending a new request
+		/// and persistent connections are enabled. Otherwise,
+		/// the unread part of the response body may be treated as 
+		/// part of the next request's response header, resulting
+		/// in a Poco::Net::MessageException being thrown.
+		///
+		/// In case a network or server failure happens
+		/// while reading the response body from the returned stream,
+		/// the stream state will change to bad or fail. In this
+		/// case, reset() should be called if the session will
+		/// be reused and persistent connections are enabled
+		/// to ensure a new connection will be set up
+		/// for the next request.
 		
 	void reset();
 		/// Resets the session and closes the socket.
 		///
 		/// The next request will initiate a new connection,
 		/// even if persistent connections are enabled.
+		///
+		/// This should be called whenever something went
+		/// wrong when sending a request (e.g., sendRequest()
+		/// or receiveResponse() throws an exception, or
+		/// the request or response stream changes into
+		/// fail or bad state, but not eof state).
 		
 	virtual bool secure() const;
 		/// Return true iff the session uses SSL or TLS,
@@ -242,6 +271,14 @@ protected:
 	void proxyAuthenticateImpl(HTTPRequest& request);
 		/// Sets the proxy credentials (Proxy-Authorization header), if
 		/// proxy username and password have been set.
+		
+	StreamSocket proxyConnect();
+		/// Sends a CONNECT request to the proxy server and returns
+		/// a StreamSocket for the resulting connection.
+		
+	void proxyTunnel();
+		/// Calls proxyConnect() and attaches the resulting StreamSocket
+		/// to the HTTPClientSession.
 
 private:
 	std::string     _host;
@@ -260,6 +297,8 @@ private:
 	
 	HTTPClientSession(const HTTPClientSession&);
 	HTTPClientSession& operator = (const HTTPClientSession&);
+
+	friend class WebSocket;
 };
 
 

@@ -12,9 +12,6 @@ TriangleApp :: ~TriangleApp () {
 
 //--------------------------------------------------------------
 void TriangleApp::setup() {	
-	ofRegisterTouchEvents(this);
-	ofxAccelerometer.setup();
-	ofxiPhoneAlerts.addListener(this);
 	ofBackground(127);
     
     int fontSize = 8;
@@ -53,8 +50,7 @@ void TriangleApp::draw() {
 
 //--------------------------------------------------------------
 void TriangleApp::exit() {
-    ofUnregisterTouchEvents(this);
-    ofxiPhoneAlerts.removeListener(this);
+    //
 }
 
 //--------------------------------------------------------------

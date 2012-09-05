@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.app.Activity;
+import android.content.Intent;
 
 
 public abstract class OFAndroidObject {
@@ -37,6 +38,10 @@ public abstract class OFAndroidObject {
     }
     public void release(){
     	ofObjects.remove(this);
+    }
+    
+    public void onActivityResult(int requestCode, int resultCode,Intent intent){
+    	
     }
     
     abstract protected void appPause();

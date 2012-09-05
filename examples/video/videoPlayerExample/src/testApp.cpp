@@ -6,13 +6,16 @@ void testApp::setup(){
 
 	frameByframe = false;
 
+	// Uncomment this to show movies with alpha channels
+	//fingerMovie.setPixelFormat(OF_PIXELS_RGBA);
+
 	fingerMovie.loadMovie("movies/fingers.mov");
 	fingerMovie.play();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    fingerMovie.idleMovie();
+    fingerMovie.update();
 }
 
 //--------------------------------------------------------------

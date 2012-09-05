@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -14,13 +15,21 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.os.PowerManager;
@@ -28,16 +37,55 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class OFAndroid {
 	
+	// List based on http://bit.ly/NpkL4Q
+	private final String[] mExternalStorageDirectories = new String[] { 
+			"/mnt/sdcard-ext", 
+			"/mnt/sdcard/external_sd", 
+			"/sdcard/sd", 
+			"/mnt/external_sd", 
+			"/emmc",  
+			"/mnt/sdcard/bpemmctest", 
+			"/mnt/sdcard/_ExternalSD",  
+			"/mnt/Removable/MicroSD", 
+			"/Removable/MicroSD" };
+	
+	private String getRealExternalStorageDirectory()
+	{				
+		// Standard way to get the external storage directory
+		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+		
+		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
+		for(int i = 0; i < mExternalStorageDirectories.length; i++)
+		{
+			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);	
+			File SDCardDir = new File(mExternalStorageDirectories[i]);		
+	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {				
+	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
+				break;
+	    	}	    	
+		}
+		
+		Log.i("OF", "Using storage location: " + externalPath);
+		return externalPath;		
+	}
+	
 	public OFAndroid(String packageName, Activity ofActivity){
+		ofActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
 		OFAndroid.packageName = packageName;
 		OFAndroidObject.setActivity(ofActivity);
@@ -51,9 +99,27 @@ public class OFAndroid {
         	// to a folder in the sdcard
 	        Field[] files = raw.getDeclaredFields();
 	        
+	        boolean copydata = false;
+
+	        SharedPreferences preferences = ofActivity.getPreferences(Context.MODE_PRIVATE);
+	        long lastInstalled = preferences.getLong("installed", 0);
+	        
+	        PackageManager pm = ofActivity.getPackageManager();
+	        ApplicationInfo appInfo = pm.getApplicationInfo(packageName, 0);
+	        String appFile = appInfo.sourceDir;
+	        long installed = new File(appFile).lastModified();
+	        if(installed>lastInstalled){
+	        	Editor editor = preferences.edit();
+	        	editor.putLong("installed", installed);
+	        	editor.commit();
+	        	copydata = true;
+	        }
+	        
+
 	        dataPath="";
     		try{
-    			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    			//dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    			dataPath = getRealExternalStorageDirectory();
     			dataPath += "/"+packageName;
     			Log.i("OF","creating app directory: " + dataPath);
 				try{
@@ -66,42 +132,44 @@ public class OFAndroid {
 					Log.e("OF","error creating dir " + dataPath,e);
 				}
 				
-    			for(int i=0; i<files.length; i++){
-    	        	int fileId;
-    	        	String fileName="";
-    				
-    				InputStream from=null;
-    				File toFile=null;
-    				FileOutputStream to=null;
-    	        	try {
-    					fileId = files[i].getInt(null);
-    					String resName = ofActivity.getResources().getText(fileId).toString();
-    					fileName = resName.substring(resName.lastIndexOf("/"));
-    					
-    					from = ofActivity.getResources().openRawResource(fileId);
-    					//toFile = new File(Environment.getExternalStorageDirectory() + "/" + appName + "/" +fileName);
-    					Log.i("OF","copying file " + fileName + " to " + dataPath);
-    					toFile = new File(dataPath + "/" + fileName);
-    					to = new FileOutputStream(toFile);
-    					byte[] buffer = new byte[4096];
-    					int bytesRead;
-    					
-    					while ((bytesRead = from.read(buffer)) != -1)
-    					    to.write(buffer, 0, bytesRead); // write
-    				} catch (Exception e) {
-    					Log.e("OF","error copying file",e);
-    				} finally {
-    					if (from != null)
-    					  try {
-    					    from.close();
-    					  } catch (IOException e) { }
-    					  
-    			        if (to != null)
-    			          try {
-    			            to.close();
-    			          } catch (IOException e) { }
-    				}
-    	        }
+				if(copydata){
+	    			for(int i=0; i<files.length; i++){
+	    	        	int fileId;
+	    	        	String fileName="";
+	    				
+	    				InputStream from=null;
+	    				File toFile=null;
+	    				FileOutputStream to=null;
+	    	        	try {
+	    					fileId = files[i].getInt(null);
+	    					String resName = ofActivity.getResources().getText(fileId).toString();
+	    					fileName = resName.substring(resName.lastIndexOf("/"));
+	    					
+	    					from = ofActivity.getResources().openRawResource(fileId);
+	    					//toFile = new File(Environment.getExternalStorageDirectory() + "/" + appName + "/" +fileName);
+	    					Log.i("OF","copying file " + fileName + " to " + dataPath);
+	    					toFile = new File(dataPath + "/" + fileName);
+	    					to = new FileOutputStream(toFile);
+	    					byte[] buffer = new byte[4096];
+	    					int bytesRead;
+	    					
+	    					while ((bytesRead = from.read(buffer)) != -1)
+	    					    to.write(buffer, 0, bytesRead); // write
+	    				} catch (Exception e) {
+	    					Log.e("OF","error copying file",e);
+	    				} finally {
+	    					if (from != null)
+	    					  try {
+	    					    from.close();
+	    					  } catch (IOException e) { }
+	    					  
+	    			        if (to != null)
+	    			          try {
+	    			            to.close();
+	    			          } catch (IOException e) { }
+	    				}
+	    	        }
+				}
     		}catch(Exception e){
     			Log.e("OF","couldn't move app resources to data directory " + dataPath);
     			e.printStackTrace();
@@ -117,7 +185,12 @@ public class OFAndroid {
 			} 
 			OFAndroid.setAppDataDir(dataPath,app_name);
 	        
-        } catch (ClassNotFoundException e1) { }
+        } catch (ClassNotFoundException e1) { 
+        	
+        } catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         OFAndroid.ofActivity = ofActivity;
 
@@ -173,11 +246,12 @@ public class OFAndroid {
 		Log.i("OF","onResume");
 		enableTouchEvents();
         mGLView.onResume();
-        onResume();
 
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onResume();
 		}
+		
+        onResume();
 		
 		if(wl!=null) lockScreenSleep();
 	}
@@ -305,6 +379,31 @@ public class OFAndroid {
 		}
 	}
 	
+	static public void monitorNetworkState(){
+		BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+
+		    @Override
+		    public void onReceive(Context context, Intent intent) {
+		    	String action = intent.getAction();
+		    	if(!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) return;
+		    	
+	    		boolean noConnectivity =
+	                    intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+
+                if (noConnectivity) {
+                    networkConnected(false);
+                } else {
+                	networkConnected(true);
+                }
+		        Log.w("Network Listener", "Network Type Changed");
+		    }
+		};
+
+		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+		ofActivity.registerReceiver(networkStateReceiver, filter);
+		networkConnected(isOnline());
+	}
+	
 	
 	static Map<Integer,ProgressDialog> progressDialogs = new HashMap<Integer, ProgressDialog>();
 	static int lastProgressID=0;
@@ -315,6 +414,7 @@ public class OFAndroid {
 			public void run() {
 				ProgressDialog d = new ProgressDialog(ofActivity);
 				d.setMessage(finmsg);
+				d.setCancelable(false);
 				d.show();
 				progressDialogs.put(id,d);
 			}
@@ -323,43 +423,16 @@ public class OFAndroid {
 	}
 	
 	static public void dismissProgressBox(int id){
+		final int dId = id;
 		final ProgressDialog d = progressDialogs.get(id);
 		if(d!=null){
 			ofActivity.runOnUiThread(new Runnable(){
 				public void run() {
 					d.dismiss();
+					progressDialogs.remove(dId);
 				}
 			});
-			progressDialogs.remove(id);
 		}
-	}
-	
-	static public void okCancelBox(String msg){
-		final String alertMsg = msg;
-		ofActivity.runOnUiThread(new Runnable(){
-			public void run() {
-				new AlertDialog.Builder(ofActivity)  
-					.setMessage(alertMsg)  
-					.setTitle("OF")  
-					.setCancelable(false)  
-					.setNeutralButton(android.R.string.ok,  
-							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){
-							OFAndroid.okPressed();
-						}
-	
-				  	})
-				  	.setNegativeButton(android.R.string.cancel,
-
-							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){
-							OFAndroid.cancelPressed();
-						}
-				  	})
-				  	.show();    
-				
-			}  
-		});
 	}
 	
 	static public boolean checkSDCardMounted(){
@@ -373,6 +446,13 @@ public class OFAndroid {
 			canSaveExternal = false;
 		
 		return canSaveExternal;
+	}
+	
+	public static void onActivityResult(int requestCode, int resultCode,Intent intent){
+
+		for(OFAndroidObject object : OFAndroidObject.ofObjects){
+			object.onActivityResult(requestCode,resultCode,intent);
+		}
 	}
 
 	// native methods to call OF c++ callbacks
@@ -394,6 +474,9 @@ public class OFAndroid {
     public static native void onTouchDoubleTap(int id,float x,float y,float pressure);
     public static native void onTouchUp(int id,float x,float y,float pressure);
     public static native void onTouchMoved(int id,float x,float y,float pressure);
+    public static native void onTouchCancelled(int id,float x,float y);
+    
+    public static native void onSwipe(int id, int swipeDir);
     
     public static native void onKeyDown(int keyCode);
     public static native void onKeyUp(int keyCode);
@@ -404,6 +487,8 @@ public class OFAndroid {
     
     public static native void okPressed();
     public static native void cancelPressed();
+    
+    public static native void networkConnected(boolean conected);
     
 
     // static methods to be called from OF c++ code
@@ -471,6 +556,17 @@ public class OFAndroid {
 	
 	public static void alertBox(String msg){  
 		final String alertMsg = msg;
+		/*try{
+			Looper.prepare();
+		}catch(Exception e){
+			
+		}
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };*/
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				new AlertDialog.Builder(ofActivity)  
@@ -481,12 +577,174 @@ public class OFAndroid {
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
 							OFAndroid.okPressed();
+							//handler.sendMessage(handler.obtainMessage());
 						}
 	
 				  	})  
 				  	.show();
 			}  
 		});
+		// loop till a runtime exception is triggered.
+	    /*try { Looper.loop(); }
+	    catch(RuntimeException e2) {}*/
+	    //alert.dismiss();
+	}
+	
+	
+	
+	static public void positiveNegativeBox(String msg,final int positiveButton, final int negativeButton){
+		final String alertMsg = msg; 
+		/*try{
+			Looper.prepare();
+		}catch(Exception e){
+			
+		}
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };*/
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle("OF")  
+					.setCancelable(false)  
+					.setNeutralButton(positiveButton,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.okPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+	
+				  	})
+				  	.setNegativeButton(negativeButton,
+
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.cancelPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+				  	})
+				  	.show();    
+				
+			}  
+		});
+		// loop till a runtime exception is triggered.
+	    /*try { Looper.loop(); }
+	    catch(RuntimeException e2) {}*/
+	}
+	
+	public static void okCancelBox(String msg){
+		positiveNegativeBox(msg,android.R.string.ok,android.R.string.cancel);
+	}
+	
+	public static void yesNoBox(String msg){
+		positiveNegativeBox(msg,android.R.string.yes,android.R.string.no);
+	}
+
+    private static String textBoxResult="";
+	public static void alertTextBox(String question, String text){  
+		final String alertQuestion = question;
+		final String alertMsg = text;
+		/*try{
+			Looper.prepare();
+		}catch(Exception e){
+			
+		}
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };*/
+	    textBoxResult=text;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				final EditText input = new EditText(ofActivity); 
+					new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle(alertQuestion)  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							textBoxResult = input.getText().toString();
+							OFAndroid.okPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+	
+				  	})  
+				  	.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.cancelPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+				  	})
+				  	.setView(input)
+				  	.show();  
+			}  
+		});
+		
+		// loop till a runtime exception is triggered.
+	    /*try { Looper.loop(); }
+	    catch(RuntimeException e2) {}*/
+	    //alert.dismiss();
+	}
+	
+	public static String getLastTextBoxResult(){
+		return textBoxResult;
+	}
+	
+	private static boolean alertListResult;
+	public static boolean alertListBox(String title, String[] list){  
+		final String[] alertList = list;
+		final String alertTitle = title;
+		/*Looper.prepare();
+		final Handler handler = new Handler() {
+	        @Override
+	        public void handleMessage(Message mesg) {
+	            throw new RuntimeException();
+	        } 
+	    };*/
+	    alertListResult=false;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				final ListView listView = new ListView(ofActivity); 
+				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_1, alertList);
+				listView.setAdapter(adapter);
+				new AlertDialog.Builder(ofActivity)   
+					.setTitle(alertTitle)  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							alertListResult = true;
+							//OFAndroid.okPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+	
+				  	})  
+				  	/*.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							alertListResult = false;
+							OFAndroid.cancelPressed();
+							//handler.sendMessage(handler.obtainMessage());
+						}
+				  	})*/
+				  	.setView(listView)
+				  	.show();  
+			}  
+		});
+		
+		// loop till a runtime exception is triggered.
+	    //try { Looper.loop(); }
+	    //catch(RuntimeException e2) {}
+	    
+	    return alertListResult;
 	}
 	
 	public static void toast(String msg){  
@@ -522,8 +780,12 @@ public class OFAndroid {
 		wl.release();
 	}
 	
+	public static String getRandomUUID(){
+		return UUID.randomUUID().toString();
+	}
+	
     
-    private OFGLSurfaceView mGLView;
+    private static OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
     private static OFAndroidGPS gps;
     private static Activity ofActivity;
@@ -552,7 +814,7 @@ public class OFAndroid {
 
 
 
-	public View getGLContentView() {
+	public static SurfaceView getGLContentView() {
         return mGLView;
 	}
 	
@@ -566,6 +828,62 @@ public class OFAndroid {
         mGLView.setOnTouchListener(gestureListener.touchListener);
 	}
 	
+	/**
+	 * 
+	 * @param keyCode
+	 * @param event
+	 * @return true to say we handled this, false to tell Android to handle it
+	 */
+	public static boolean keyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)) {
+            if( onBackPressed() ) {
+            	return true;
+           	} else {
+           		// let the Android system handle the back button
+           		return false;
+           	}
+        }
+		
+        if (KeyEvent.isModifierKey(keyCode)) {
+        	/* Android sends a shift keycode (for instance),
+        	   then the key that goes with the shift. We don't need the first
+        	   keycode, that info is in event.getMetaState() anyway */
+        	return false;
+        }
+        else
+        {
+        	int unicodeChar = event.getUnicodeChar();
+        	onKeyDown(unicodeChar);
+
+        	// return false to let Android handle certain keys
+    		// like the back and menu keys
+        	return false;
+        }
+	}
+	
+	/**
+	 * 
+	 * @param keyCode
+	 * @param event
+	 * @return true to say we handled this, false to tell Android to handle it
+	 */
+	public static boolean keyUp(int keyCode, KeyEvent event) {
+        if (KeyEvent.isModifierKey(keyCode)) {
+        	/* Android sends a shift keycode (for instance),
+        	   then the key that goes with the shift. We don't need the first
+        	   keycode, that info is in event.getMetaState() anyway */
+        	return false;
+        }
+        else
+        {
+    		int unicodeChar = event.getUnicodeChar();
+    		onKeyUp(unicodeChar);
+    		
+    		// return false to let Android handle certain keys
+    		// like the back and menu keys
+        	return false;
+        }
+	}
 }
 
 class OFGestureListener extends SimpleOnGestureListener implements OnClickListener {
@@ -582,9 +900,21 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
                 final int pointerId = event.getPointerId(pointerIndex);
                 switch((action & MotionEvent.ACTION_MASK)){
                 case MotionEvent.ACTION_MOVE:
+                {
+            		for(int i=0; i<event.getHistorySize(); i++)
+            		{
+            			try{
+		                	for(int j=0; j<event.getPointerCount(); j++)
+		                	{
+	                			int ptr = event.getPointerId(j);
+	                			OFAndroid.onTouchMoved(ptr, event.getHistoricalX(ptr, i), event.getHistoricalY(ptr, i), event.getHistoricalPressure(ptr, i));                		
+	                		}
+            			}catch(IllegalArgumentException e){}
+                	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
 	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
 	            	}
+                }
 	            	break;
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_UP:
@@ -595,7 +925,7 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
                 	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
                 	break;
                 case MotionEvent.ACTION_CANCEL:
-                	//TODO: cancelled
+                	OFAndroid.onTouchCancelled(pointerId,event.getX(),event.getY());
                 	break;
                 }
                 return gestureDetector.onTouchEvent(event);
@@ -606,9 +936,6 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	
 	public void onClick(View view) {
 	}
-
-    private GestureDetector gestureDetector;
-    View.OnTouchListener touchListener;
 
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
@@ -638,8 +965,38 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	}
 
 	@Override
-	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,float arg3) {
-		return super.onFling(arg0, arg1, arg2, arg3);
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		/*boolean res = super.onFling(e1, e2, velocityX, velocityY);
+		Log.i("OF","onFLing" + res);
+		return res;*/
+		
+		final float xDistance = Math.abs(e1.getX() - e2.getX());
+		final float yDistance = Math.abs(e1.getY() - e2.getY());
+
+		if(xDistance > OFGestureListener.swipe_Max_Distance || yDistance > OFGestureListener.swipe_Max_Distance)
+			return false;
+
+		velocityX = Math.abs(velocityX);
+		velocityY = Math.abs(velocityY);
+        boolean result = false;
+
+        if(velocityX > OFGestureListener.swipe_Min_Velocity && xDistance > OFGestureListener.swipe_Min_Distance){
+        	if(e1.getX() > e2.getX()) // right to left
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_LEFT);
+        	else
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_RIGHT);
+   
+        	result = true;
+        }else if(velocityY > OFGestureListener.swipe_Min_Velocity && yDistance > OFGestureListener.swipe_Min_Distance){
+        	if(e1.getY() > e2.getY()) // bottom to up 
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_UP);
+        	else
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_DOWN);
+   
+        	result = true;
+        }
+
+        return result;
 	}
 
 	@Override
@@ -659,6 +1016,16 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	public boolean onSingleTapUp(MotionEvent event) {
 		return super.onSingleTapUp(event);
 	}
+
+    private GestureDetector gestureDetector;
+    View.OnTouchListener touchListener;
+    public static int swipe_Min_Distance = 100;
+    public static int swipe_Max_Distance = 350;
+    public static int swipe_Min_Velocity = 100;
+    public final static int SWIPE_UP    = 1;
+    public final static int SWIPE_DOWN  = 2;
+    public final static int SWIPE_LEFT  = 3;
+    public final static int SWIPE_RIGHT = 4;
 }
 
 
@@ -709,6 +1076,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         	initialized = true;
         	setup = true;
         	android.os.Process.setThreadPriority(8);
+        	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.1);
+        	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
         	
         	/*if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
         	else Log.i("OF","ETC not supported");*/

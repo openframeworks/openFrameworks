@@ -23,7 +23,6 @@ class testApp : public ofxiPhoneApp{
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
 	
-        unsigned char * cameraPixels;	// the camera image needs to be flipped, so we'll use this memory for that. 
         ofxiPhoneImagePicker * camera;
         ofImage	photo;
         ofPoint imgPos;
