@@ -137,7 +137,7 @@ public:
     
     ofPoint getMin() const;
     ofPoint getMax() const;
-        
+    
     float getMinX() const;
     float getMaxX() const;
     float getMinY() const;
@@ -147,6 +147,11 @@ public:
     float getRight()  const;
     float getTop()    const;
     float getBottom() const;
+    
+    ofPoint getTopLeft() const;
+    ofPoint getTopRight() const;
+    ofPoint getBottomLeft() const;
+    ofPoint getBottomRight() const;
     
     float getHorzAnchor(ofAlignHorz anchor) const;
     float getVertAnchor(ofAlignVert anchor) const;
