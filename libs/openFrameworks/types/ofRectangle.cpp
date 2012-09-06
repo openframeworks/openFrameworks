@@ -393,9 +393,33 @@ bool ofRectangle::inside(const ofRectangle& rect) const {
 }
 
 //----------------------------------------------------------
+bool ofRectangle::inside(const ofPoint& p0, const ofPoint& p1) const {
+    // check to see if a line segment is inside the rectangle
+    return inside(p0) && inside(p1);
+}
+
+//----------------------------------------------------------
 bool ofRectangle::intersects(const ofRectangle& rect) const {
     return (getMinX() < rect.getMaxX() && getMaxX() > rect.getMinX() &&
             getMinY() < rect.getMaxY() && getMaxY() > rect.getMinY());
+}
+
+//----------------------------------------------------------
+bool ofRectangle::intersects(const ofPoint& p0, const ofPoint& p1) const {
+    // check for a line intersection
+    ofPoint p;
+    
+    ofPoint topLeft     = getTopLeft();
+    ofPoint topRight    = getTopRight();
+    ofPoint bottomRight = getBottomRight();
+    ofPoint bottomLeft  = getBottomLeft();
+    
+    return inside(p0) || // check end inside
+           inside(p1) || // check end inside
+           ofLineSegmentIntersection(p0, p1, topLeft,     topRight,    p) || // cross top
+           ofLineSegmentIntersection(p0, p1, topRight,    bottomRight, p) || // cross right
+           ofLineSegmentIntersection(p0, p1, bottomRight, bottomLeft,  p) || // cross bottom
+           ofLineSegmentIntersection(p0, p1, bottomLeft,  topLeft,     p);   // cross left
 }
 
 //----------------------------------------------------------
@@ -423,6 +447,12 @@ void ofRectangle::growToInclude(const ofRectangle& rect){
     float w = x1 - x0;
     float h = y1 - y0;
     set(x0,y0,w,h);
+}
+
+//----------------------------------------------------------
+void ofRectangle::growToInclude(const ofPoint& p0, const ofPoint& p1) {
+    growToInclude(p0);
+    growToInclude(p1);
 }
 
 //----------------------------------------------------------
