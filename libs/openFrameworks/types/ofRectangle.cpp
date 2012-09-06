@@ -550,6 +550,26 @@ float ofRectangle::getBottom() const {
 }
 
 //----------------------------------------------------------
+ofPoint ofRectangle::getTopLeft() const {
+    return getMin();
+}
+
+//----------------------------------------------------------
+ofPoint ofRectangle::getTopRight() const {
+    return ofPoint(getRight(),getTop());
+}
+
+//----------------------------------------------------------
+ofPoint ofRectangle::getBottomLeft() const {
+    return ofPoint(getLeft(),getBottom());
+}
+
+//----------------------------------------------------------
+ofPoint ofRectangle::getBottomRight() const {
+    return getMax();
+}
+
+//----------------------------------------------------------
 float ofRectangle::getHorzAnchor(ofAlignHorz anchor) const {
     switch (anchor) {
         case OF_ALIGN_HORZ_IGNORE:
