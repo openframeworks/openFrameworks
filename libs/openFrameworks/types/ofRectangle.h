@@ -25,7 +25,7 @@ public:
     virtual ~ ofRectangle ();
     ofRectangle(float px, float py, float w, float h);
     ofRectangle(const ofPoint& p, float w, float h);
-    ofRectangle(const ofRectangle & rect);
+    ofRectangle(const ofRectangle& rect);
     ofRectangle(const ofPoint& p0, const ofPoint& p1);
 
     void set(float px, float py, float w, float h);
@@ -113,10 +113,10 @@ public:
 
     bool inside(float px, float py) const;
     bool inside(const ofPoint& p) const;
-    bool inside(const ofRectangle & rect) const;
+    bool inside(const ofRectangle& rect) const;
     bool inside(const ofPoint& p0, const ofPoint& p1) const;
 
-    bool intersects(const ofRectangle & rect) const;
+    bool intersects(const ofRectangle& rect) const;
     bool intersects(const ofPoint& p0, const ofPoint& p1) const;
     
     void growToInclude(float px, float py);
@@ -169,8 +169,8 @@ public:
     float getWidth() const;
     float getHeight() const;
 
-    ofRectangle & operator = (const ofRectangle& rect);
-    ofRectangle & operator + (const ofPoint& p);
+    ofRectangle& operator = (const ofRectangle& rect);
+    ofRectangle& operator + (const ofPoint& p);
     
     bool operator == (const ofRectangle& rect) const;
     bool operator != (const ofRectangle& rect) const;
