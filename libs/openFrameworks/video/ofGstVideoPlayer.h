@@ -10,7 +10,9 @@ public:
 	~ofGstVideoPlayer();
 
 	/// needs to be called before loadMovie
-	void 	setPixelFormat(ofPixelFormat pixelFormat);
+	bool 	setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat	getPixelFormat();
+	
 	bool 	loadMovie(string uri);
 
 	void 	update();

@@ -53,8 +53,8 @@ void ofiPhoneVideoGrabber::setDesiredFrameRate(int framerate) {
 	grabber->setCaptureRate(framerate);
 }
 
-void ofiPhoneVideoGrabber::setPixelFormat(ofPixelFormat internalPixelFormat) {
-	grabber->setPixelFormat(internalPixelFormat);
+bool ofiPhoneVideoGrabber::setPixelFormat(ofPixelFormat internalPixelFormat) {
+	return grabber->setPixelFormat(internalPixelFormat);
 }
 
 

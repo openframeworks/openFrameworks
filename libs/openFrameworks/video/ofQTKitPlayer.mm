@@ -377,10 +377,10 @@ float ofQTKitPlayer::getHeight() {
 	return moviePlayer.movieSize.height;
 }
 
-void ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
+bool ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
     if(newPixelFormat != OF_PIXELS_RGB && newPixelFormat != OF_PIXELS_RGBA) {
-        ofLogError("ofQTKitPlayer::setPixelFormat -- Pixel format " + ofToString(newPixelFormat) + " is not supported");
-        return;
+        ofLogWarning("ofQTKitPlayer") << "setPixelFormat -- Pixel format " << ofToString(newPixelFormat) << " is not supported";
+        return false;
     }
 
     if(newPixelFormat != pixelFormat){
@@ -389,7 +389,8 @@ void ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
         if(isLoaded()){
             loadMovie(moviePath, decodeMode);
         }
-    }
+    }	
+	return true;
 }
 
 ofPixelFormat ofQTKitPlayer::getPixelFormat(){
@@ -425,8 +426,9 @@ void ofQTKitPlayer::reallocatePixels(){
 void ofQTKitPlayer::updateTexture(){
 	if(moviePlayer.textureAllocated){
 	   ofTextureData& data = tex.getTextureData();
-		data.bAllocated = true;
-		data.textureID = moviePlayer.textureID;
+	   		
+		tex.setUseExternalTextureID(moviePlayer.textureID); 
+		
 		data.textureTarget = moviePlayer.textureTarget;
 		data.width = getWidth();
 		data.height = getHeight();
