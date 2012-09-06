@@ -114,12 +114,15 @@ public:
     bool inside(float px, float py) const;
     bool inside(const ofPoint& p) const;
     bool inside(const ofRectangle & rect) const;
+    bool inside(const ofPoint& p0, const ofPoint& p1) const;
 
     bool intersects(const ofRectangle & rect) const;
+    bool intersects(const ofPoint& p0, const ofPoint& p1) const;
     
     void growToInclude(float px, float py);
     void growToInclude(const ofPoint& p);
     void growToInclude(const ofRectangle& rect);
+    void growToInclude(const ofPoint& p0, const ofPoint& p1);
 
     ofRectangle getIntersection(const ofRectangle& rect) const;
 
