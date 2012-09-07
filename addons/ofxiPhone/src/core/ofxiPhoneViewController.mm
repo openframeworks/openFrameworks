@@ -66,25 +66,24 @@
     return currentInterfaceOrientation;
 }
 
-- (void)rotateToInterfaceOrientationPortrait {
-    [self rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:NO duration:0];
+- (void)rotateToInterfaceOrientationPortrait:(BOOL)animated; {
+    [self rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:animated];
 }
 
-- (void)rotateToInterfaceOrientationPortraitUpsideDown {
-    [self rotateToInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown animated:NO duration:0];
+- (void)rotateToInterfaceOrientationPortraitUpsideDown:(BOOL)animated; {
+    [self rotateToInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown animated:animated];
 }
 
-- (void)rotateToInterfaceOrientationLandscapeLeft {
-    [self rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeLeft animated:NO duration:0];
+- (void)rotateToInterfaceOrientationLandscapeLeft:(BOOL)animated; {
+    [self rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeLeft animated:animated];
 }
 
-- (void)rotateToInterfaceOrientationLandscapeRight {
-    [self rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight animated:NO duration:0];
+- (void)rotateToInterfaceOrientationLandscapeRight:(BOOL)animated; {
+    [self rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight animated:animated];
 }
 
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
-                            animated:(BOOL)animated
-                            duration:(NSTimeInterval)duration {
+                            animated:(BOOL)animated {
     
     if(currentInterfaceOrientation == interfaceOrientation) {
         return;
@@ -112,6 +111,7 @@
     }
     
     if(animated) {
+        NSTimeInterval duration = 0.3;
         [UIView animateWithDuration:duration animations:^{
             self.glView.transform = rotate;
             self.glView.bounds = CGRectMake(0, 0, glViewSize.width, glViewSize.height);
