@@ -151,20 +151,20 @@ void ofxiPhoneEnableLoopInThread() {
 
 
 //--------------------------------------------------------------
-void ofxiPhoneSetOrientation(ofOrientation orientation) {
+void ofxiPhoneSetOrientation(ofOrientation orientation, bool bAnimated) {
     ofxiPhoneViewController * glViewController = ofxiPhoneGetViewController();
 	switch (orientation) {
 		case OF_ORIENTATION_DEFAULT:
-            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationPortrait) withObject:nil waitUntilDone:NO];
+            [glViewController rotateToInterfaceOrientationPortrait:bAnimated];
 			break;
 		case OF_ORIENTATION_180:
-            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationPortraitUpsideDown) withObject:nil waitUntilDone:NO];
+            [glViewController rotateToInterfaceOrientationPortraitUpsideDown:bAnimated];
 			break;
 		case OF_ORIENTATION_90_RIGHT:
-            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationLandscapeLeft) withObject:nil waitUntilDone:NO];
+            [glViewController rotateToInterfaceOrientationLandscapeLeft:bAnimated];
 			break;
 		case OF_ORIENTATION_90_LEFT:
-            [glViewController performSelectorOnMainThread:@selector(rotateToInterfaceOrientationLandscapeRight) withObject:nil waitUntilDone:NO];
+            [glViewController rotateToInterfaceOrientationLandscapeRight:bAnimated];
             break;
         case OF_ORIENTATION_UNKNOWN:
             return;
