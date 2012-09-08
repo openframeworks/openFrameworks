@@ -287,7 +287,7 @@ string ofReadOnlyParameter<ParameterType,Friend>::toString() const{
 template<typename ParameterType,typename Friend>
 void ofReadOnlyParameter<ParameterType,Friend>::fromString(string str){
 	stringstream sstr;
-	sstr.str() = str;
+	sstr << str;
 	sstr >> obj->value;
 }
 
