@@ -25,9 +25,11 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		void close();
 		
 		long unsigned long getTickCount();		
-				
+
 		int getNumInputChannels();
 		int getNumOutputChannels();
+		int getSampleRate();
+		int getBufferSize();
 
 		int androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
