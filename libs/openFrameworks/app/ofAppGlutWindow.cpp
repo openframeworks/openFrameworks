@@ -23,7 +23,8 @@
 
 static int			windowMode;
 static bool			bNewScreenMode;
-static float		timeNow, timeThen, fps;
+static unsigned long		timeNow, timeThen, oneSec;
+static float		fps;
 static int			nFramesForFPS;
 static int			nFrameCount;
 static int			buttonInUse;
@@ -32,13 +33,13 @@ static bool			bDoubleBuffered;
 
 
 static bool			bFrameRateSet;
-static int 			millisForFrame;
-static int 			prevMillis;
-static int 			diffMillis;
+static unsigned long 			microsForFrame;
+static unsigned long 			prevMicros;
+static unsigned long 			diffMicros;
 
 static float 		frameRate;
 
-static double		lastFrameTime;
+static unsigned long lastFrameTime;
 
 static int			requestedWidth;
 static int			requestedHeight;
@@ -200,9 +201,9 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	buttonInUse			= 0;
 	bEnableSetupScreen	= true;
 	bFrameRateSet		= false;
-	millisForFrame		= 0;
-	prevMillis			= 0;
-	diffMillis			= 0;
+	microsForFrame		= 0;
+	prevMicros			= 0;
+	diffMicros			= 0;
 	requestedWidth		= 0;
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
@@ -343,7 +344,7 @@ float ofAppGlutWindow::getFrameRate(){
 
 //------------------------------------------------------------
 double ofAppGlutWindow::getLastFrameTime(){
-	return lastFrameTime;
+	return double(lastFrameTime)*0.000001;
 }
 
 //------------------------------------------------------------
@@ -445,9 +446,7 @@ void ofAppGlutWindow::setFrameRate(float targetRate){
 	}
 
 	bFrameRateSet 			= true;
-	float durationOfFrame 	= 1.0f / (float)targetRate;
-	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-
+	microsForFrame 	= 1000000.0 / (double)targetRate;
 	frameRate				= targetRate;
 
 }
@@ -700,19 +699,20 @@ void ofAppGlutWindow::idle_cb(void) {
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
 
 	if (nFrameCount != 0 && bFrameRateSet == true){
-		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
-		if (diffMillis > millisForFrame){
+		diffMicros = ofGetElapsedTimeMicros() - prevMicros;
+		if (diffMicros > microsForFrame){
 			; // we do nothing, we are already slower than target frame
 		} else {
-			int waitMillis = millisForFrame - diffMillis;
+			int waitMicros = microsForFrame - diffMicros;
 			#ifdef TARGET_WIN32
-				Sleep(waitMillis);         //windows sleep in milliseconds
+				Sleep(waitMicros*.001);         //windows sleep in milliseconds
 			#else
-				usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
+				usleep(waitMicros);   //mac sleep in microseconds - cooler :)
 			#endif
 		}
 	}
-	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
+	timeNow = ofGetElapsedTimeMicros(); // you have to measure here
+	prevMicros = timeNow;
 
     // -------------- fps calculation:
 	// theo - now moved from display to idle_cb
@@ -723,15 +723,15 @@ void ofAppGlutWindow::idle_cb(void) {
 	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
 	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
 
-	timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;
+	double oneSecDiff = (timeNow-oneSec)*0.000001;
+	frameRate = nFramesForFPS/oneSecDiff;
+	if( oneSecDiff  >= 1 ){
+		oneSec	= timeNow;
+		nFramesForFPS = 0;
+	}
+	lastFrameTime = timeNow-timeThen;
+	timeThen	  = timeNow;
+	nFramesForFPS++;
   	// --------------
 
 	ofNotifyUpdate();
