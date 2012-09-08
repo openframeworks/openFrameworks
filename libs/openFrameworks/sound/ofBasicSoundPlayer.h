@@ -47,10 +47,13 @@ public:
 	float getVolume();
 
 	ofSoundBuffer & getCurrentBuffer();
+	static ofSoundStream & getSoundStream();
 
 	static void setMaxSoundsTotal(int max);
 	static void setMaxSoundsPerPlayer(int max);
 	void setMaxSounds(int max);
+
+	ofEvent<ofSoundBuffer> newBufferE;
 
 private:
 	void audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount);

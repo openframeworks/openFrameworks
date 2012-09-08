@@ -189,6 +189,7 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 		if(streaming){
 			soundFile.readTo(buffer,bufferSize);
 			buffer.stereoPan(volumesLeft.back(),volumesRight.back());
+			newBufferE.notify(this,buffer);
 			buffer.copyTo(output,bufferSize,channels,0);
 		}else{
 			for(int i=0;i<(int)positions.size();i++){
@@ -198,7 +199,7 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 					buffer.resampleTo(resampledBuffer,positions[i],bufferSize,relativeSpeed[i],loop);
 				}
 				resampledBuffer.stereoPan(volumesLeft[i],volumesRight[i]);
-				//resampledBufferE.notify(this,resampledBuffer);
+				newBufferE.notify(this,resampledBuffer);
 				resampledBuffer.addTo(output,bufferSize,channels,0,loop);
 			}
 			updatePositions(bufferSize);
@@ -218,6 +219,18 @@ ofSoundBuffer & ofBasicSoundPlayer::getCurrentBuffer(){
 	}
 }
 
-static void setMaxSoundsTotal(int max);
-static void setMaxSoundsPerPlayer(int max);
-void setMaxSounds(int max);
+ofSoundStream & ofBasicSoundPlayer::getSoundStream(){
+	return stream;
+}
+
+void ofBasicSoundPlayer::setMaxSoundsTotal(int max){
+	maxSoundsTotal = max;
+}
+
+void ofBasicSoundPlayer::setMaxSoundsPerPlayer(int max){
+	maxSoundsPerPlayer = max;
+}
+
+void ofBasicSoundPlayer::setMaxSounds(int max){
+	maxSounds = max;
+}
