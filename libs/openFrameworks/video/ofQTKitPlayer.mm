@@ -1,8 +1,11 @@
 
 #include "ofQTKitPlayer.h"
 
+#include "Poco/String.h"
+
 ofQTKitPlayer::ofQTKitPlayer() {
 	moviePlayer = NULL;
+    bReady = false;
 	bNewFrame = false;
 	duration = 0;
     speed = 0;
@@ -18,10 +21,14 @@ ofQTKitPlayer::~ofQTKitPlayer() {
 }
 
 bool ofQTKitPlayer::loadMovie(string path){
-	return loadMovie(path, OF_QTKIT_DECODE_PIXELS_ONLY);
+	return loadMovie(path, OF_QTKIT_DECODE_PIXELS_ONLY, false);
 }
 
 bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
+    return loadMovie(movieFilePath, mode, false);
+}
+
+bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode, bool async) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
 		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Error, invalid mode specified for");
 		return false;
@@ -36,19 +43,28 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	bool useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
 	bool usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
 	bool useAlpha = (pixelFormat == OF_PIXELS_RGBA);
+
+    bool isURL = false;
+    if (Poco::icompare(movieFilePath.substr(0,7), "http://")  == 0 ||
+        Poco::icompare(movieFilePath.substr(0,8), "https://") == 0 ||
+        Poco::icompare(movieFilePath.substr(0,7), "rtsp://")  == 0) {
+        isURL = true;
+    }
+    else {
+        movieFilePath = ofToDataPath(movieFilePath, false);
+    }
+
 	moviePlayer = [[QTKitMovieRenderer alloc] init];
-    
-	movieFilePath = ofToDataPath(movieFilePath, false);
 	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding]
+                            synchronously:!async
+								pathIsURL:isURL
 							 allowTexture:useTexture 
 							  allowPixels:usePixels
                                allowAlpha:useAlpha];
 	
 	if(success){
 		moviePlayer.synchronousUpdate = bSynchronousScrubbing;
-        reallocatePixels();
         moviePath = movieFilePath;
-		duration = moviePlayer.duration;
         setLoopState(OF_LOOP_NONE);
 	}
 	else {
@@ -68,6 +84,10 @@ void ofQTKitPlayer::closeMovie() {
 
 bool ofQTKitPlayer::isLoaded() {
 	return moviePlayer != NULL;
+}
+
+bool ofQTKitPlayer::isReady() {
+	return isLoaded() && bReady;
 }
 
 void ofQTKitPlayer::close() {
@@ -168,10 +188,23 @@ void ofQTKitPlayer::update() {
 	if(moviePlayer == NULL) return;
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	bNewFrame = [moviePlayer update];
-	if (bNewFrame) {
-		bHavePixelsChanged = true;
-	}
+    if (bReady) {
+        bNewFrame = [moviePlayer update];
+        if (bNewFrame) {
+            bHavePixelsChanged = true;
+        }
+    }
+    else {
+        if ([moviePlayer isReady]) {
+            reallocatePixels();
+            duration = moviePlayer.duration;
+
+            bReady = true;
+            ofVideoReadyEventArgs readyEvent;
+            readyEvent.player = this;
+            ofNotifyEvent(videoReadyEvent, readyEvent, this);
+        }
+    }
     [pool release];
 }
 

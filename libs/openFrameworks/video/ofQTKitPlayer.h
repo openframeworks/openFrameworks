@@ -17,14 +17,21 @@ enum ofQTKitDecodeMode {
 };
 
 
+class ofVideoReadyEventArgs : public ofEventArgs {
+public:
+	ofBaseVideoPlayer* player;
+};
+
+
 class ofQTKitPlayer  : public ofBaseVideoPlayer {
 	public:
 
 		ofQTKitPlayer();
 		virtual ~ofQTKitPlayer();
 
-		bool                loadMovie(string path); //default mode is PIXELS_ONLY
+		bool                loadMovie(string path); //default mode is PIXELS_ONLY, synchronously
 		bool                loadMovie(string path, ofQTKitDecodeMode mode);
+        bool                loadMovie(string path, ofQTKitDecodeMode mode, bool async);
 
 		void                closeMovie();
 		void                close();
@@ -86,6 +93,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 
 		bool                isPaused();
 		bool                isLoaded();
+        bool                isReady();
 		bool                isPlaying();
 
 
@@ -93,7 +101,10 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                nextFrame();
 		void                previousFrame();
 
+        ofEvent<ofVideoReadyEventArgs> videoReadyEvent;
+
 	protected:
+        bool bReady;
 		bool bNewFrame;
 		bool bHavePixelsChanged;
 		float duration;
