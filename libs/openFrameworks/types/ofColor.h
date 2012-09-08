@@ -91,13 +91,28 @@ class ofColor_{
 		}
 
 		friend istream& operator>>(istream& is, ofColor_<PixelType>& color) {
-			is >> color.r;
-			is.ignore(2);
-			is >> color.g;
-			is.ignore(2);
-			is >> color.b;
-			is.ignore(2);
-			is >> color.a;
+			if(sizeof(PixelType) == 1) {
+				int component;
+				is >> component;
+				color.r = component;
+				is.ignore(2);
+				is >> component;
+				color.g = component;
+				is.ignore(2);
+				is >> component;
+				color.b = component;
+				is.ignore(2);
+				is >> component;
+				color.a = component;
+			}else{
+				is >> color.r;
+				is.ignore(2);
+				is >> color.g;
+				is.ignore(2);
+				is >> color.b;
+				is.ignore(2);
+				is >> color.a;
+			}
 			return is;
 		}
 				
