@@ -137,3 +137,34 @@ long unsigned long ofSoundStream::getTickCount(){
 	return 0;
 }
 
+//------------------------------------------------------------
+int ofSoundStream::getNumInputChannels(){
+	if( soundStream ){
+		return soundStream->getNumInputChannels();
+	}
+	return 0;
+}
+
+//------------------------------------------------------------
+int ofSoundStream::getNumOutputChannels(){
+	if( soundStream ){
+		return soundStream->getNumOutputChannels();
+	}
+	return 0;
+}
+
+//------------------------------------------------------------
+int ofSoundStream::getSampleRate(){
+	if( soundStream ){
+		return soundStream->getSampleRate();
+	}
+	return 0;
+}
+
+//------------------------------------------------------------
+int ofSoundStream::getBufferSize(){
+	if( soundStream ){
+		return soundStream->getBufferSize();
+	}
+	return 0;
+}

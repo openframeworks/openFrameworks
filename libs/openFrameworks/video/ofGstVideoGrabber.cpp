@@ -497,8 +497,13 @@ ofGstVideoGrabber::~ofGstVideoGrabber(){
 	close();
 }
 
-void ofGstVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+bool ofGstVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	return true;
+}
+
+ofPixelFormat ofGstVideoGrabber::getPixelFormat(){
+	return internalPixelFormat;
 }
 
 void ofGstVideoGrabber::setVerbose(bool bVerbose){

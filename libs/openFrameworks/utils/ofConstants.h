@@ -204,8 +204,12 @@ typedef TESSindex ofIndexType;
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
 	#elif defined(TARGET_OSX)
-
-		#define OF_VIDEO_CAPTURE_QUICKTIME
+		//on 10.6 and below we can use the old grabber
+		#ifndef MAC_OS_X_VERSION_10_7
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#else
+			#define OF_VIDEO_CAPTURE_QTKIT
+        #endif
 
 	#elif defined (TARGET_WIN32)
 
@@ -241,6 +245,8 @@ typedef TESSindex ofIndexType;
 	#else
 		#ifdef TARGET_OF_IPHONE
 			#define OF_VIDEO_PLAYER_IPHONE
+        #elif defined(TARGET_OSX)
+			#define OF_VIDEO_PLAYER_QTKIT
 		#elif !defined(TARGET_ANDROID)
 			#define OF_VIDEO_PLAYER_QUICKTIME
 		#endif

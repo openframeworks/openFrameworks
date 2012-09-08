@@ -242,8 +242,9 @@ float ofxAndroidVideoGrabber::getWidth(){
 	return pixels.getWidth();
 }
 
-void ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	return true;
 }
 
 ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat(){
