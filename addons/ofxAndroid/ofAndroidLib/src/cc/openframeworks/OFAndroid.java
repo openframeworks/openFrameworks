@@ -877,7 +877,7 @@ public class OFAndroid {
         else
         {
     		int unicodeChar = event.getUnicodeChar();
-    		onKeyDown(unicodeChar);
+    		onKeyUp(unicodeChar);
     		
     		// return false to let Android handle certain keys
     		// like the back and menu keys
