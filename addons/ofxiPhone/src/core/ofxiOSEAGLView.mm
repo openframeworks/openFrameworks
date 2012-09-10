@@ -122,7 +122,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (void)updateDimensions {
     windowPos->set(self.frame.origin.x * scaleFactor, self.frame.origin.y * scaleFactor, 0);
-    windowSize->set(self.frame.size.width * scaleFactor, self.frame.size.height * scaleFactor, 0);
+    windowSize->set(self.bounds.size.width * scaleFactor, self.bounds.size.height * scaleFactor, 0);
     
     UIScreen * currentScreen = self.window.screen;  // current screen is the screen that GLView is attached to.
     if(!currentScreen) {                            // if GLView is not attached, assume to be main device screen.

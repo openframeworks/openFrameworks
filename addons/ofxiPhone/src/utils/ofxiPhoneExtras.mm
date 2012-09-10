@@ -151,16 +151,48 @@ void ofxiPhoneEnableLoopInThread() {
 
 
 //--------------------------------------------------------------
-void ofxiPhoneSetOrientation(ofOrientation orientation) {
-	if (orientation != OF_ORIENTATION_UNKNOWN) ofxiPhoneGetOFWindow()->setOrientation(orientation);
+void ofxiPhoneSetOrientation(ofOrientation orientation, bool bAnimated) {
+    ofxiPhoneViewController * glViewController = ofxiPhoneGetViewController();
+	switch (orientation) {
+		case OF_ORIENTATION_DEFAULT:
+            [glViewController rotateToInterfaceOrientationPortrait:bAnimated];
+			break;
+		case OF_ORIENTATION_180:
+            [glViewController rotateToInterfaceOrientationPortraitUpsideDown:bAnimated];
+			break;
+		case OF_ORIENTATION_90_RIGHT:
+            [glViewController rotateToInterfaceOrientationLandscapeLeft:bAnimated];
+			break;
+		case OF_ORIENTATION_90_LEFT:
+            [glViewController rotateToInterfaceOrientationLandscapeRight:bAnimated];
+            break;
+        case OF_ORIENTATION_UNKNOWN:
+            return;
+	}
 }
-
 
 //--------------------------------------------------------------
-UIDeviceOrientation ofxiPhoneGetOrientation() {
-	return (UIDeviceOrientation)ofxiPhoneGetOFWindow()->getOrientation();
+ofOrientation ofxiPhoneGetOrientation() {
+	ofxiPhoneViewController * glViewController = ofxiPhoneGetViewController();
+    UIInterfaceOrientation orientation = [glViewController getInterfaceOrientation];
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            return OF_ORIENTATION_DEFAULT;
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            return OF_ORIENTATION_180;
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            return OF_ORIENTATION_90_RIGHT;
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            return OF_ORIENTATION_90_LEFT;
+            break;
+        default:
+            return OF_ORIENTATION_UNKNOWN;
+            break;
+    }
 }
-
 
 //--------------------------------------------------------------
 bool ofxiPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
