@@ -92,8 +92,6 @@
     
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
     
-    NSLog(@"interfaceOrientation = %i", self.interfaceOrientation);
-    
     CGPoint center;
     if(UIInterfaceOrientationIsLandscape(actualInterfaceOrientation)) {
         center.x = screenSize.height * 0.5;
@@ -154,8 +152,6 @@
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation 
                                          duration:(NSTimeInterval)duration {
 
-    actualInterfaceOrientation = toInterfaceOrientation;
-    
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
     
     CGPoint center;
@@ -169,6 +165,12 @@
     
     self.glView.center = center;
     self.glView.transform = CGAffineTransformMakeRotation(0);
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation 
+                                duration:(NSTimeInterval)duration {
+    
+    actualInterfaceOrientation = toInterfaceOrientation;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
