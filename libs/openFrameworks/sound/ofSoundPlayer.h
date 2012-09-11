@@ -44,6 +44,11 @@ void ofSoundShutdown();
 inline void ofSoundShutdown(){}
 #endif
 
+#ifdef TARGET_QNX
+#include "ofxQNXSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxQNXSoundPlayer
+#endif
+
 //---------------------------------------------
 class ofSoundPlayer : public ofBaseSoundPlayer {
 

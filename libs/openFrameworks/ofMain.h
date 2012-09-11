@@ -25,7 +25,7 @@
 
 //--------------------------
 // communication
-#if !defined( TARGET_OF_IPHONE ) & !defined(TARGET_ANDROID)
+#if !defined( TARGET_OF_IPHONE ) & !defined(TARGET_ANDROID) & !defined(TARGET_QNX)
 	#include "ofSerial.h"
 	#include "ofArduino.h"
 #endif

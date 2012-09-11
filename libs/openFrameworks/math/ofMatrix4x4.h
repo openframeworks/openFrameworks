@@ -422,7 +422,7 @@ public:
 
 inline bool ofMatrix4x4::isNaN() const {
 	
-#if (_MSC_VER) || defined (TARGET_ANDROID)
+#if (_MSC_VER) || defined (TARGET_ANDROID) || defined (TARGET_QNX)
 #ifndef isnan
 #define isnan(a) ((a) != (a))
 #endif
