@@ -52,7 +52,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 		duration = moviePlayer.duration;
 
         setLoopState(currentLoopState);
-        setSpeed(speed);
+        setSpeed(1.0f);
 
 	}
 	else {
