@@ -10,6 +10,7 @@ ofQTKitPlayer::ofQTKitPlayer() {
 	bSynchronousScrubbing = true;
     //ofQTKitPlayer supports RGB and RGBA
     pixelFormat = OF_PIXELS_RGB;
+    currentLoopState = OF_LOOP_NORMAL;
 }
 
 
@@ -49,7 +50,8 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
         reallocatePixels();
         moviePath = movieFilePath;
 		duration = moviePlayer.duration;
-        setLoopState(OF_LOOP_NORMAL);
+
+        setLoopState(currentLoopState);
 	}
 	else {
 		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
@@ -305,6 +307,7 @@ void ofQTKitPlayer::setLoopState(ofLoopType state) {
 	
     [pool release];
 
+    currentLoopState = state;
 }
 
 bool ofQTKitPlayer::getMovieLoopState(){
