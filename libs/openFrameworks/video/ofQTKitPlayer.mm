@@ -49,7 +49,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
         reallocatePixels();
         moviePath = movieFilePath;
 		duration = moviePlayer.duration;
-        setLoopState(OF_LOOP_NONE);
+        setLoopState(OF_LOOP_NORMAL);
 	}
 	else {
 		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Loading file " + movieFilePath + " failed");
