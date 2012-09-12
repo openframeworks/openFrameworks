@@ -68,11 +68,11 @@ void ofInitFreeImage(bool deinit=false){
 	// need a new bool to avoid c++ "deinitialization order fiasco":
 	// http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.15
 	static bool	* bFreeImageInited = new bool(false);
-	if(!bFreeImageInited && !deinit){
+	if(!*bFreeImageInited && !deinit){
 		FreeImage_Initialise();
 		*bFreeImageInited = true;
 	}
-	if(bFreeImageInited && deinit){
+	if(*bFreeImageInited && deinit){
 		FreeImage_DeInitialise();
 	}
 }
@@ -221,7 +221,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
-	int width, height, bpp;
 	bool bLoaded = false;
 	FIBITMAP* bmp = NULL;
 	FIMEMORY* hmem = NULL;
@@ -252,8 +251,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
-	} else {
-		width = height = bpp = 0;
 	}
 
 	if (bmp != NULL){
@@ -418,6 +415,13 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		return;
 	}
 
+	if(format==OF_IMAGE_FORMAT_JPEG && pix.getNumChannels()==4){
+		ofPixels pix3 = pix;
+		pix3.setNumChannels(3);
+		saveImage(pix3,buffer,format,qualityLevel);
+		return;
+	}
+
 	#ifdef TARGET_LITTLE_ENDIAN
 	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
@@ -452,6 +456,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		   }else{
 				FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
 		   }
+
 		   /*
 
 		  NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
@@ -898,7 +903,6 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
-    int sw = ofGetViewportWidth();
     int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
     
 	if (!((width == _w) && (height == _h))){
@@ -930,6 +934,7 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	
     #else
     
+    int sw = ofGetViewportWidth();
     int numPixels   = width*height;
     if( numPixels == 0 ){
         ofLog(OF_LOG_ERROR, "grabScreen width or height is 0 - returning");
@@ -1168,6 +1173,7 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 			break;
 		default:
 			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
+			break;
 	}
 	
 	putBmpIntoPixels(convertedBmp, pix, false);

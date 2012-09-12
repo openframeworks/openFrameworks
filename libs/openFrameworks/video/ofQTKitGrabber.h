@@ -64,7 +64,7 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		int             getAudioDeviceID();
 
 		void            setDesiredFrameRate(int framerate){ ofLog(OF_LOG_WARNING, "ofQTKitGrabber -- Cannot specify framerate."); }
-		void            setPixelFormat(ofPixelFormat pixelFormat);
+		bool            setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat   getPixelFormat();
 	    bool			hasPreview();
 		void            videoSettings();

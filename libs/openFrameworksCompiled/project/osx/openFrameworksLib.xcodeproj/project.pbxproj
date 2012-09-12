@@ -36,6 +36,8 @@
 		DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
 		DACFA8E9132D09E8008D4B7A /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
 		DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
+		E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */; };
+		E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */; };
 		E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
 		E4B27C1810CBEB9D00536013 /* ofAppGlutWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */; };
 		E4B27C1910CBEB9D00536013 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
@@ -166,6 +168,8 @@
 		DACFA8D7132D09E8008D4B7A /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = gl/ofVbo.h; sourceTree = "<group>"; };
 		DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVboMesh.cpp; path = gl/ofVboMesh.cpp; sourceTree = "<group>"; };
 		DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVboMesh.h; path = gl/ofVboMesh.h; sourceTree = "<group>"; };
+		E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimePlayer.cpp; path = ../../../openFrameworks/video/ofQuickTimePlayer.cpp; sourceTree = SOURCE_ROOT; };
+		E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQuickTimePlayer.h; path = ../../../openFrameworks/video/ofQuickTimePlayer.h; sourceTree = SOURCE_ROOT; };
 		E432815E138ABFDD0047C5CB /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		E432815F138AC0470047C5CB /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		E4328160138AC04A0047C5CB /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -419,6 +423,8 @@
 				E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */,
 				E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */,
 				E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */,
+				E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */,
+				E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */,
 				E4B27AD610CBE92A00536013 /* ofQtUtils.cpp */,
 				E4B27AD710CBE92A00536013 /* ofQtUtils.h */,
 				E703368E15D4B03E009A3FDE /* ofQTKitGrabber.mm */,
@@ -636,6 +642,7 @@
 				E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */,
 				E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */,
 				E703369715D4B03E009A3FDE /* QTKitMovieRenderer.h in Headers */,
+				E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,6 +753,7 @@
 				E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */,
 				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
 				E703369815D4B03E009A3FDE /* QTKitMovieRenderer.m in Sources */,
+				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -791,7 +799,6 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
-				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -836,7 +843,6 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
-				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
@@ -847,7 +853,6 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/debug/";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
-				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -858,7 +863,6 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/release/";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release";
-				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};

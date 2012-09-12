@@ -500,11 +500,6 @@ void ofGstUtils::gstHandleMessage(){
 						gint64 pos;
 						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
 
-						float loopSpeed;
-						if(pos>0)
-							loopSpeed=-speed;
-						else
-							loopSpeed=speed;
 						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
 											speed,
 											format,
@@ -657,7 +652,6 @@ void ofGstVideoUtils::update(){
 			else buffer = gst_app_sink_pull_buffer (GST_APP_SINK (getSink()));
 
 			if(buffer){
-				guint size = GST_BUFFER_SIZE (buffer);
 				if(pixels.isAllocated()){
 					if(prevBuffer) gst_buffer_unref (prevBuffer);
 					//memcpy (pixels.getPixels(), GST_BUFFER_DATA (buffer), size);
