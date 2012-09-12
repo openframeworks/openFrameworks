@@ -192,10 +192,6 @@ void ofQTKitPlayer::unbind(){
 	tex.unbind();
 }
 
-void ofQTKitPlayer::draw(ofRectangle drawRect){
-	draw(drawRect.x, drawRect.y, drawRect.width, drawRect.height);
-}
-
 void ofQTKitPlayer::draw(float x, float y) {
 	draw(x,y, moviePlayer.movieSize.width, moviePlayer.movieSize.height);
 }
