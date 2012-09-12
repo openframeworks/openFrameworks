@@ -77,7 +77,6 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                setSynchronousScrubbing(bool synchronous);
 		bool                getSynchronousScrubbing();
 
-		void                draw(ofRectangle drawRect);
 		void                draw(float x, float y, float w, float h);
 		void                draw(float x, float y);
 
