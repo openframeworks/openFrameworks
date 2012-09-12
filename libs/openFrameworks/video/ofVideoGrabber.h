@@ -54,7 +54,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				close();	
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
 		bool				initGrabber(int w, int h, bool bTexture);
-		void				setPixelFormat(ofPixelFormat pixelFormat);
+		
+		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat 		getPixelFormat();
 		
 		void				videoSettings();
@@ -91,6 +92,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		bool bInitialized;
 		ofPtr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
+		
+		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
 		
 		ofPixelFormat internalPixelFormat;
 		int desiredFramerate;

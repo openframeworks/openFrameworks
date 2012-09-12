@@ -6,6 +6,8 @@
 #include "ofxSlider.h"
 #include "ofxButton.h"
 #include "ofxToggle.h"
+#include "ofRectangle.h"
+#include "ofImage.h"
 
 
 class ofxPanel : public ofxBaseGui{
