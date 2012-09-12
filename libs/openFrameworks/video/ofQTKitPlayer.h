@@ -92,6 +92,9 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                previousFrame();
 
 	protected:
+    
+        ofLoopType currentLoopState;
+
 		bool bNewFrame;
 		bool bHavePixelsChanged;
 		float duration;
