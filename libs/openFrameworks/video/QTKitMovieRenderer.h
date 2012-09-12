@@ -50,6 +50,7 @@
 @property (nonatomic, readwrite) CGFloat position;  //set and get frame position by percent
 @property (nonatomic, readwrite) NSInteger frame;  //set and get frame position by percent
 @property (nonatomic, readwrite) BOOL loops;  //set and get loopstate
+@property (nonatomic, readwrite) BOOL palindrome;  //set and get palindrome state
 
 @property (nonatomic, readonly) BOOL textureAllocated;
 @property (nonatomic, readonly) GLuint textureID;
