@@ -5,7 +5,7 @@ ofQTKitPlayer::ofQTKitPlayer() {
 	moviePlayer = NULL;
 	bNewFrame = false;
 	duration = 0;
-    speed = 0;
+    speed = 1;
 	//default this to true so the player update behavior matches ofQuicktimePlayer
 	bSynchronousScrubbing = true;
     //ofQTKitPlayer supports RGB and RGBA
@@ -52,6 +52,8 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 		duration = moviePlayer.duration;
 
         setLoopState(currentLoopState);
+        setSpeed(speed);
+
 	}
 	else {
 		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
@@ -322,17 +324,8 @@ bool ofQTKitPlayer::getMovieLoopState(){
 	return loops;
 }
 
-float ofQTKitPlayer::getSpeed()
-{
-	if(moviePlayer == NULL) return 0;
-	
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
-	float rate = moviePlayer.rate;
-	
-	[pool release];
-	
-	return rate;
+float ofQTKitPlayer::getSpeed(){
+	return speed;
 }
 
 float ofQTKitPlayer::getDuration(){
