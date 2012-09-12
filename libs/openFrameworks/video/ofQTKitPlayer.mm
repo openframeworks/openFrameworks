@@ -23,7 +23,7 @@ bool ofQTKitPlayer::loadMovie(string path){
 
 bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
-		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Error, invalid mode specified for");
+		ofLogError("ofQTKitPlayer") << "Invalid ofQTKitDecodeMode mode specified while loading movie.";
 		return false;
 	}
 	
@@ -52,7 +52,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
         setLoopState(OF_LOOP_NORMAL);
 	}
 	else {
-		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Loading file " + movieFilePath + " failed");
+		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
 		[moviePlayer release];
 		moviePlayer = NULL;
 	}
@@ -210,7 +210,7 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 	   }
 	}
     else{
-        ofLogError("ofQTKitPlayer") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef";
+        ofLogError("ofQTKitPlayer") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
     }
 
 	return pixels;	   
@@ -374,7 +374,7 @@ float ofQTKitPlayer::getHeight() {
 
 bool ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
     if(newPixelFormat != OF_PIXELS_RGB && newPixelFormat != OF_PIXELS_RGBA) {
-        ofLogWarning("ofQTKitPlayer") << "setPixelFormat -- Pixel format " << ofToString(newPixelFormat) << " is not supported";
+        ofLogWarning("ofQTKitPlayer") << "Pixel format " << newPixelFormat << " is not supported.";
         return false;
     }
 
