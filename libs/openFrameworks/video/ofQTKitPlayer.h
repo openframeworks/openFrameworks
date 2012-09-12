@@ -5,7 +5,7 @@
 #include "ofMain.h"
 
 #ifdef __OBJC__
- #import "QTKitMovieRenderer.h"
+ #import "ofQTKitMovieRenderer.h"
 #endif
 
 //different modes for the video player to run in
