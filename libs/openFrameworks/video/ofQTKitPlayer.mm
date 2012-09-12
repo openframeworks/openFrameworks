@@ -287,25 +287,24 @@ int ofQTKitPlayer::getTotalNumFrames() {
 	return moviePlayer.frameCount;
 }
 
-void ofQTKitPlayer::setLoopState(bool loops) {
+void ofQTKitPlayer::setLoopState(ofLoopType state) {
 	if(moviePlayer == NULL) return;
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
-	moviePlayer.loops = loops;
-	
-	[pool release];
-}
-
-void ofQTKitPlayer::setLoopState(ofLoopType state) {
+    
 	if(state == OF_LOOP_NONE){
-		setLoopState(false);
-	}
-	else if(state == OF_LOOP_NORMAL){
-		setLoopState(true);
-	}
+        moviePlayer.loops = false;
+        moviePlayer.palindrome = false;
+	} else if(state == OF_LOOP_NORMAL){
+        moviePlayer.loops = true;
+        moviePlayer.palindrome = false;
+	} else if(state == OF_LOOP_PALINDROME) {
+        moviePlayer.loops = false;
+        moviePlayer.palindrome = true;
+    }
 	
-	//TODO: support OF_LOOP_PALINDROME
+    [pool release];
+
 }
 
 bool ofQTKitPlayer::getMovieLoopState(){
