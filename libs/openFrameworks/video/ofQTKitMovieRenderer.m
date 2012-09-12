@@ -1,5 +1,5 @@
 
-#import "QTKitMovieRenderer.h"
+#import "ofQTKitMovieRenderer.h"
 #import <Accelerate/Accelerate.h>
 
 //secret selectors!
