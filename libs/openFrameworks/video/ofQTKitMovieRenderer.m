@@ -1,5 +1,5 @@
 
-#import "QTKitMovieRenderer.h"
+#import "ofQTKitMovieRenderer.h"
 #import <Accelerate/Accelerate.h>
 
 //secret selectors!
@@ -180,6 +180,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	
 	self.volume = 1.0;
 	self.loops = YES;
+    self.palindrome = NO;
 	
 	return YES;
 }
@@ -633,9 +634,20 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	return [[_movie attributeForKey:QTMovieLoopsAttribute] boolValue];
 }
 
+- (void) setPalindrome:(BOOL)palindrome
+{
+	[_movie setAttribute:[NSNumber numberWithBool:palindrome]
+				  forKey:QTMovieLoopsBackAndForthAttribute];
+}
+
+- (BOOL) palindrome
+{
+	return [[_movie attributeForKey:QTMovieLoopsBackAndForthAttribute] boolValue];
+}
+
 - (BOOL) isFinished
 {
-	return !self.loops && _movie.currentTime.timeValue == movieDuration.timeValue;
+	return !self.loops && !self.palindrome && _movie.currentTime.timeValue == movieDuration.timeValue;
 }
 
 @end
