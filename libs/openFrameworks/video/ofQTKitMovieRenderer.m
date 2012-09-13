@@ -1,5 +1,5 @@
 
-#import "QTKitMovieRenderer.h"
+#import "ofQTKitMovieRenderer.h"
 #import <Accelerate/Accelerate.h>
 
 //secret selectors!
@@ -60,10 +60,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             nil];
 }
 
-
-- (BOOL) loadMovie:(NSString*)moviePath allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
+- (BOOL) loadMovie:(NSString*)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
 {
-    if(![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
+    // if the path is local, make sure the file exists before proceeding
+    if (!isURL && ![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
     {
 		NSLog(@"No movie file found at %@", moviePath);
 		return NO;
@@ -74,9 +74,19 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	usePixels = doUsePixels;
 	useAlpha = doUseAlpha;
     
+
+    // build the movie URL
+    NSString *movieURL;
+    if (isURL) {
+        movieURL = [NSURL URLWithString:moviePath];
+    }
+    else {
+        movieURL = [NSURL fileURLWithPath:[moviePath stringByStandardizingPath]];
+    }
+
 	NSError* error;
 	NSMutableDictionary* movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                            [NSURL fileURLWithPath:[moviePath stringByStandardizingPath]], QTMovieURLAttribute,
+                                            movieURL, QTMovieURLAttribute,
                                             [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
                                             nil];
     
@@ -170,6 +180,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	
 	self.volume = 1.0;
 	self.loops = YES;
+    self.palindrome = NO;
 	
 	return YES;
 }
@@ -623,9 +634,20 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	return [[_movie attributeForKey:QTMovieLoopsAttribute] boolValue];
 }
 
+- (void) setPalindrome:(BOOL)palindrome
+{
+	[_movie setAttribute:[NSNumber numberWithBool:palindrome]
+				  forKey:QTMovieLoopsBackAndForthAttribute];
+}
+
+- (BOOL) palindrome
+{
+	return [[_movie attributeForKey:QTMovieLoopsBackAndForthAttribute] boolValue];
+}
+
 - (BOOL) isFinished
 {
-	return !self.loops && _movie.currentTime.timeValue == movieDuration.timeValue;
+	return !self.loops && !self.palindrome && _movie.currentTime.timeValue == movieDuration.timeValue;
 }
 
 @end
