@@ -50,6 +50,7 @@
 @property (nonatomic, readwrite) CGFloat position;  //set and get frame position by percent
 @property (nonatomic, readwrite) NSInteger frame;  //set and get frame position by percent
 @property (nonatomic, readwrite) BOOL loops;  //set and get loopstate
+@property (nonatomic, readwrite) BOOL palindrome;  //set and get palindrome state
 
 @property (nonatomic, readonly) BOOL textureAllocated;
 @property (nonatomic, readonly) GLuint textureID;
@@ -58,7 +59,7 @@
 - (NSDictionary *)pixelBufferAttributes;
 
 - (void)draw:(NSRect)drawRect;
-- (BOOL)loadMovie:(NSString *)moviePath allowTexture:(BOOL) useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
+- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
 - (BOOL)update;
 
 - (void)bindTexture;
