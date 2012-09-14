@@ -9,9 +9,6 @@
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
 
-#define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
-
-
 void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
 ofPtr<ofGLRenderer> ofGetGLRenderer();
