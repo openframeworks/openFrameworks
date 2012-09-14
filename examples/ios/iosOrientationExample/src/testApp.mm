@@ -29,22 +29,19 @@ void testApp::draw(){
     
 	ofSetColor(ofColor::magenta);
     ofPushMatrix();
-    {
-        ofTranslate(p1.x, p1.y);
-        ofRotate(45);
-        ofLine(0, 0, 0, -10);
-        ofRotate(90);
-        ofLine(0, 0, 0, -10);
-    }
+    ofTranslate(p1.x, p1.y);
+    ofRotate(45);
+    ofLine(0, 0, 0, -10);
+    ofRotate(90);
+    ofLine(0, 0, 0, -10);
     ofPopMatrix();
+    
     ofPushMatrix();
-    {
-        ofTranslate(p2.x, p2.y);
-        ofRotate(-45);
-        ofLine(0, 0, 0, -10);
-        ofRotate(-90);
-        ofLine(0, 0, 0, -10);
-    }
+    ofTranslate(p2.x, p2.y);
+    ofRotate(-45);
+    ofLine(0, 0, 0, -10);
+    ofRotate(-90);
+    ofLine(0, 0, 0, -10);
     ofPopMatrix();
     ofLine( p1.x, p1.y, p2.x, p2.y);
     ofDrawBitmapString(ofToString(ofGetWidth()), ofGetWidth()*0.5-10, ofGetHeight()-20);
@@ -56,22 +53,19 @@ void testApp::draw(){
     
     ofSetColor(ofColor::green);
     ofPushMatrix();
-    {
-        ofTranslate(p1.x, p1.y);
-        ofRotate(-135);
-        ofLine(0, 0, 0, -10);
-        ofRotate(-90);
-        ofLine(0, 0, 0, -10);
-    }
+    ofTranslate(p1.x, p1.y);
+    ofRotate(-135);
+    ofLine(0, 0, 0, -10);
+    ofRotate(-90);
+    ofLine(0, 0, 0, -10);
     ofPopMatrix();
+
     ofPushMatrix();
-    {
-        ofTranslate(p2.x, p2.y);
-        ofRotate(-45);
-        ofLine(0, 0, 0, -10);
-        ofRotate(-270);
-        ofLine(0, 0, 0, -10);
-    }
+    ofTranslate(p2.x, p2.y);
+    ofRotate(-45);
+    ofLine(0, 0, 0, -10);
+    ofRotate(-270);
+    ofLine(0, 0, 0, -10);
     ofPopMatrix();
     ofLine( p1.x, p1.y, p2.x, p2.y);
     ofDrawBitmapString(ofToString(ofGetHeight()), ofGetWidth()-40, ofGetHeight()*0.5-5);
