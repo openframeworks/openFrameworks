@@ -5,7 +5,7 @@
 #include "ofMain.h"
 
 #ifdef __OBJC__
- #import "QTKitMovieRenderer.h"
+ #import "ofQTKitMovieRenderer.h"
 #endif
 
 //different modes for the video player to run in
@@ -60,7 +60,6 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                setPosition(float pct);
 		void                setVolume(float volume);
 		void                setBalance(float balance);
-		void                setLoopState(bool loops);
 		void                setLoopState(ofLoopType state);
 		void                setSpeed(float speed);
 		void                setFrame(int frame); // frame 0 = first frame...
@@ -77,7 +76,6 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                setSynchronousScrubbing(bool synchronous);
 		bool                getSynchronousScrubbing();
 
-		void                draw(ofRectangle drawRect);
 		void                draw(float x, float y, float w, float h);
 		void                draw(float x, float y);
 
@@ -94,6 +92,9 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                previousFrame();
 
 	protected:
+    
+        ofLoopType currentLoopState;
+
 		bool bNewFrame;
 		bool bHavePixelsChanged;
 		float duration;
