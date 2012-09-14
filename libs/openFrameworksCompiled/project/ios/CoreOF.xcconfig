@@ -1,5 +1,5 @@
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
-HEADER_OFXIPHONE = "$(OF_PATH)/addons/ofxiPhone/**"
+HEADER_OFXIOS = "$(OF_PATH)/addons/ofxiOS/**"
 HEADER_OFXMULTITOUCH = "$(OF_PATH)/addons/ofxMultiTouch/**"
 HEADER_OFXACCELEROMETER = "$(OF_PATH)/addons/ofxAccelerometer/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
