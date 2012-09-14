@@ -202,30 +202,6 @@ void ofxiPhoneKeyboard::updateOrientation()
 		_xOriginal = x;
 		_yOriginal = y;
 		
-		switch (ofxiPhoneGetOrientation()) 
-		{
-            // TODO: Move all these positions transformations to setFrame
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
-				_x = ofGetWidth() - _xOriginal - _w; 
-				_y = ofGetHeight() - _yOriginal;
-				break;
-				
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-				_x = ofGetWidth() - _xOriginal - _w; 
-				_y = ofGetHeight() - _yOriginal;
-				break;
-				
-			case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
-				 _x = ofGetWidth() - _xOriginal - _w; 
-				 _y = ofGetHeight() - _yOriginal;
-				 break;
-				
-			case OFXIPHONE_ORIENTATION_PORTRAIT:
-                _x = _xOriginal;
-				_y = _h;
-				break;
-		}
-		
 		[self setFrame:CGRectMake(_x,_y,_w,_h)];
 		
 		[_textField setDelegate:self];
@@ -242,30 +218,6 @@ void ofxiPhoneKeyboard::updateOrientation()
 - (void) updateOrientation
 {
 	_textField.transform = CGAffineTransformMakeRotation(0.0f);
-	
-	switch (ofxiPhoneGetOrientation()) 
-	{
-        // TODO: Move all these positions transformations to setFrame
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
-			_x = ofGetWidth() - _xOriginal - _w; 
-			_y = ofGetHeight() - _yOriginal;
-			break;
-			
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-			_x = ofGetWidth() - _xOriginal - _w; 
-			_y = ofGetHeight() - _yOriginal;
-			break;
-			
-		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
-			_x = ofGetWidth() - _xOriginal - _w; 
-			_y = ofGetHeight() - _yOriginal;
-			break;
-			
-		case OFXIPHONE_ORIENTATION_PORTRAIT:
-            _x = _xOriginal;
-			_y = _h;
-			break;
-	}
 	
 	[self setFrame:CGRectMake(_x,_y,_w,_h)];
 	
@@ -358,44 +310,13 @@ void ofxiPhoneKeyboard::updateOrientation()
 //--------------------------------------------------------------
 - (void) setFrame: (CGRect) rect
 {
-	
-	CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;		
-	
     int x, y, w, h;
     
-	switch (ofxiPhoneGetOrientation()) 
-	{
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
-            _textField.transform = CGAffineTransformMakeRotation(M_PI_2);
-            x = rect.origin.y-rect.size.height;
-            y = s.height-rect.size.width-rect.origin.x;
-            w = rect.size.height;
-            h = rect.size.width;
-			break;
-			
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-            _textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
-            x = s.width-rect.origin.y;
-            y = rect.origin.x;
-            w = rect.size.height;
-            h = rect.size.width;
-			break;
-			
-		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
-			_textField.transform = CGAffineTransformMakeRotation(M_PI);
-            x = rect.origin.x;
-            y = rect.origin.y-rect.size.height;
-            w = rect.size.width;
-            h = rect.size.height;
-            break;
-			
-		case OFXIPHONE_ORIENTATION_PORTRAIT:
-            x = rect.origin.x;
-            y = rect.origin.y-rect.size.height;
-            w = rect.size.width;
-            h = rect.size.height;
-			break;
-	}
+    x = 0;
+    y = 0;
+    w = rect.size.width;
+    h = rect.size.height;
+    
     [_textField setFrame: CGRectMake(x,y,w,h)];
 }
 
