@@ -361,14 +361,22 @@ void ofSetVerticalSync(bool bSync){
 	//--------------------------------------
 	#ifdef TARGET_LINUX
 	//--------------------------------------
-		//if (GLEW_GLX_SGI_swap_control)
+		void (*swapIntervalExt)(Display *,GLXDrawable, int)  = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+		if(swapIntervalExt){
+			Display *dpy = glXGetCurrentDisplay();
+			GLXDrawable drawable = glXGetCurrentDrawable();
+			if (drawable) {
+				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+				return;
+			}
+		}
 		void (*swapInterval)(int)  = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
 		if(!swapInterval)
 			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
 
 		if(swapInterval)
 			swapInterval(bSync ? 1 : 0);
-		//glXSwapIntervalSGI(bSync ? 1 : 0);
+
 	//--------------------------------------
 	#endif
 	//--------------------------------------

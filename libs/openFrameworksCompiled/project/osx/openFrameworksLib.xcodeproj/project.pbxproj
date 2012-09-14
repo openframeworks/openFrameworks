@@ -133,9 +133,9 @@
 		E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703368E15D4B03E009A3FDE /* ofQTKitGrabber.mm */; };
 		E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */; };
 		E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */; };
-		E703369715D4B03E009A3FDE /* QTKitMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E703369115D4B03E009A3FDE /* QTKitMovieRenderer.h */; };
-		E703369815D4B03E009A3FDE /* QTKitMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = E703369215D4B03E009A3FDE /* QTKitMovieRenderer.m */; };
 		E7F985E315E0DC6A003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985E115E0DC54003869B5 /* Accelerate.framework */; };
+		FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */; };
+		FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -282,9 +282,9 @@
 		E703368E15D4B03E009A3FDE /* ofQTKitGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofQTKitGrabber.mm; sourceTree = "<group>"; };
 		E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitPlayer.h; sourceTree = "<group>"; };
 		E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofQTKitPlayer.mm; sourceTree = "<group>"; };
-		E703369115D4B03E009A3FDE /* QTKitMovieRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTKitMovieRenderer.h; sourceTree = "<group>"; };
-		E703369215D4B03E009A3FDE /* QTKitMovieRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QTKitMovieRenderer.m; sourceTree = "<group>"; };
 		E7F985E115E0DC54003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitMovieRenderer.h; sourceTree = "<group>"; };
+		FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofQTKitMovieRenderer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -431,8 +431,8 @@
 				E703368D15D4B03E009A3FDE /* ofQTKitGrabber.h */,
 				E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */,
 				E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */,
-				E703369215D4B03E009A3FDE /* QTKitMovieRenderer.m */,
-				E703369115D4B03E009A3FDE /* QTKitMovieRenderer.h */,
+				FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */,
+				FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */,
 			);
 			name = video;
 			path = ../../../openFrameworks/video;
@@ -641,8 +641,8 @@
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
 				E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */,
 				E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */,
-				E703369715D4B03E009A3FDE /* QTKitMovieRenderer.h in Headers */,
 				E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */,
+				FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -752,8 +752,8 @@
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
 				E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */,
 				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
-				E703369815D4B03E009A3FDE /* QTKitMovieRenderer.m in Sources */,
 				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
+				FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
