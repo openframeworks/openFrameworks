@@ -17,7 +17,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
 @interface ofxiOSEAGLView() {
     BOOL bInit;
 }
-- (void)updateDimensions;
 @end
 
 @implementation ofxiOSEAGLView

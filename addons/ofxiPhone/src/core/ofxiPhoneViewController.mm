@@ -133,6 +133,8 @@
     }
     
     currentInterfaceOrientation = interfaceOrientation;
+    
+    [self.glView updateDimensions];
 }
 
 - (float)rotationForOrinetation:(UIInterfaceOrientation)interfaceOrientation {
