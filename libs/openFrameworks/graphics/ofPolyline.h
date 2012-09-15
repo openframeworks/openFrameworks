@@ -38,49 +38,49 @@ public:
 	// the last vertex finished a straight line will
 	// be created to join both
     
-    void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int curveResolution = 20);
+    void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution = 20);
     
-	void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20) {
-        arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  curveResolution);
+	void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
+        arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  circleResolution);
     }
-	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
-		arc(ofPoint(x, y), radiusX, radiusY, angleBegin, angleEnd, true, curveResolution);
+	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+		arc(ofPoint(x, y), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
-	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
-		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, curveResolution);
+	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
-    void arcNegative(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20) {
-        arc(center, radiusX, radiusY, angleBegin, angleEnd, false, curveResolution);
+    void arcNegative(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
+        arc(center, radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
-	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
-        arc(ofPoint(x,y), radiusX, radiusY, angleBegin, angleEnd, false, curveResolution);
+	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+        arc(ofPoint(x,y), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
-	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
-		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, curveResolution);
+	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
     
     
 	// catmull-rom curve
-	void curveTo( const ofPoint & to, int curveResolution=16 );
-	void curveTo(float x, float y, float z=0,  int curveResolution=16 ){
+	void curveTo( const ofPoint & to, int curveResolution = 20 );
+	void curveTo(float x, float y, float z = 0,  int curveResolution = 20 ){
 		curveTo(ofPoint(x,y,z),curveResolution);
 	}
 
 	/// cubic bezier
-	void bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution = 16);
-	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution=16){
+	void bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution = 20);
+	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
 		bezierTo(ofPoint(cx1,cy1),ofPoint(cx2,cy2),ofPoint(x,y),curveResolution);
 	}
-	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution=16){
+	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20){
 		bezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z),curveResolution);
 	}
 
 	/// quadratic bezier (lower resolution than cubic)
-	void quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution=16);
-	void quadBezierTo(  const ofPoint & p1, const ofPoint & p2,const ofPoint & p3,  int curveResolution=16 ){
+	void quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20);
+	void quadBezierTo(  const ofPoint & p1, const ofPoint & p2,const ofPoint & p3,  int curveResolution = 20 ){
 		quadBezierTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z,curveResolution);
 	}
-	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution=16){
+	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
 		quadBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
 	}
 
@@ -107,7 +107,7 @@ public:
     bool inside(float x, float y);
     bool inside(const ofPoint & p);
 
-	void simplify(float tolerance=0.3);
+	void simplify(float tolerance=0.3f);
 
 	/// points vector access
 	size_t size() const;
