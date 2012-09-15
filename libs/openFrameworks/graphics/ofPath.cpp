@@ -75,9 +75,9 @@ ofPath::ofPath(){
 	strokeWidth = 0;
 	bFill = true;
 	windingMode = OF_POLY_WINDING_ODD;
-	prevCurveRes = 16;
-	curveResolution = 16;
-	arcResolution = 20;
+	prevCurveRes = 20;
+	curveResolution = 20;
+	circleResolution = 20;
 	mode = PATHS;
 	bNeedsTessellation = false;
 	hasChanged = false;
@@ -494,18 +494,28 @@ void ofPath::setCurveResolution(int _curveResolution){
 }
 
 //----------------------------------------------------------
-int ofPath::getCurveResolution(){
+int ofPath::getCurveResolution() const {
 	return curveResolution;
 }
 
 //----------------------------------------------------------
-void ofPath::setArcResolution(int res){
-	arcResolution = res;
+void ofPath::setCircleResolution(int res){
+	circleResolution = res;
 }
 
 //----------------------------------------------------------
-int ofPath::getArcResolution(){
-	return arcResolution;
+int ofPath::getCircleResolution() const {
+	return circleResolution;
+}
+
+//----------------------------------------------------------
+void ofPath::setArcResolution(int res){
+	circleResolution = res;
+}
+
+//----------------------------------------------------------
+int ofPath::getArcResolution() const {
+	return circleResolution;
 }
 
 //----------------------------------------------------------
@@ -514,7 +524,7 @@ void ofPath::setUseShapeColor(bool useColor){
 }
 
 //----------------------------------------------------------
-bool ofPath::getUseShapeColor(){
+bool ofPath::getUseShapeColor() const {
 	return bUseShapeColor;
 }
 

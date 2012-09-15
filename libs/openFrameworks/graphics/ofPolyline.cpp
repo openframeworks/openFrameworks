@@ -262,15 +262,15 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 }
 
 //----------------------------------------------------------
-void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int curveResolution){
+void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution){
     
-    if(curveResolution<=1) curveResolution=2;
-    setCircleResolution(curveResolution);
-    points.reserve(points.size()+curveResolution);
+    if(circleResolution<=1) circleResolution=2;
+    setCircleResolution(circleResolution);
+    points.reserve(points.size()+circleResolution);
 
     const float epsilon = 0.0001f;
     
-    const int nCirclePoints = (int)circlePoints.size();
+    const size_t nCirclePoints = circlePoints.size();
     float segmentArcSize  = M_TWO_PI / (float)nCirclePoints;
     
     // convert angles to radians and wrap them into the range 0-M_TWO_PI and 
