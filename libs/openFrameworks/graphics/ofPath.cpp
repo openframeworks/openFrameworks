@@ -225,7 +225,7 @@ void ofPath::arc(const ofPoint & centre, float radiusX, float radiusY, float ang
 		lastPath().addCommand(ofSubPath::Command(ofSubPath::Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
 		hasChanged = true;
 	}else{
-		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,arcResolution);
+		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
 		bNeedsTessellation = true;
 	}
 }
@@ -246,7 +246,7 @@ void ofPath::arcNegative(const ofPoint & centre, float radiusX, float radiusY, f
 		lastPath().addCommand(ofSubPath::Command(ofSubPath::Command::arcNegative,centre,radiusX,radiusY,angleBegin,angleEnd));
 		hasChanged = true;
 	}else{
-		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,arcResolution);
+		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
 		bNeedsTessellation = true;
 	}
 }
@@ -379,10 +379,10 @@ void ofPath::generatePolylinesFromPaths(){
 					polylines[j].quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 					break;
 				case ofSubPath::Command::arc:
-					polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, arcResolution);
+					polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
 					break;
                 case ofSubPath::Command::arcNegative:
-                    polylines[j].arcNegative(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, arcResolution);
+                    polylines[j].arcNegative(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
                     break;
 				}
 			}
