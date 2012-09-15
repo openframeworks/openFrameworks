@@ -742,17 +742,17 @@ void ofRect(float x,float y,float z,float w,float h){
 }
 
 //----------------------------------------------------------
-void ofRectRounded(const ofRectangle & b,float r){
+void ofRectRounded(const ofRectangle & b, float r){
 	ofRectRounded(b.x, b.y, 0.0f, b.width, b.height, r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(const ofPoint & p,float w,float h,float r){
+void ofRectRounded(const ofPoint & p, float w, float h, float r){
 	ofRectRounded(p.x, p.y, p.z, w, h, r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(float x,float y,float w,float h,float r){
+void ofRectRounded(float x, float y, float w, float h, float r){
 	ofRectRounded(x, y, 0.0f, w, h, r);
 }
 
@@ -781,7 +781,8 @@ void ofRectRounded(float x,float y,float z,float w,float h,float r){
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	shape.clear();
+    shape.setCurveResolution(currentStyle.curveResolution);
+    shape.clear();
 	shape.curveTo(x0,y0);
 	shape.curveTo(x1,y1);
 	shape.curveTo(x2,y2);
@@ -791,6 +792,7 @@ void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.curveTo(x0,y0,z0);
 	shape.curveTo(x1,y1,z1);
@@ -802,6 +804,7 @@ void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
@@ -810,6 +813,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0,z0);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
@@ -824,13 +828,11 @@ void ofBeginShape(){
 //----------------------------------------------------------
 void ofVertex(float x, float y){
 	shape.lineTo(x,y);
-
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y, float z){
 	shape.lineTo(x,y,z);
-
 }
 
 //---------------------------------------------------
@@ -852,11 +854,13 @@ void ofVertexes( const vector <ofPoint> & polyPoints ){
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-	shape.curveTo(x,y);
+    shape.setCurveResolution(currentStyle.curveResolution);
+    shape.curveTo(x,y);
 }
 
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofPoint> & curvePoints){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	for( int k = 0; k < (int)curvePoints.size(); k++){
 		shape.curveTo(curvePoints[k]);
 	}
@@ -869,20 +873,24 @@ void ofCurveVertexes( const vector <ofPoint> & curvePoints){
 
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
 void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(p1, p2, p3);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
