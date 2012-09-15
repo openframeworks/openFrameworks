@@ -153,7 +153,7 @@ void ofPath::curveTo(const ofPoint & p){
 		lastPath().addCommand(ofSubPath::Command(ofSubPath::Command::curveTo,p));
 		hasChanged = true;
 	}else{
-		lastPolyline().curveTo(p);
+		lastPolyline().curveTo(p,curveResolution);
 		bNeedsTessellation = true;
 	}
 }
@@ -174,7 +174,7 @@ void ofPath::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & 
 		lastPath().addCommand(ofSubPath::Command(ofSubPath::Command::bezierTo,p,cp1,cp2));
 		hasChanged = true;
 	}else{
-		lastPolyline().bezierTo(cp1,cp2,p);
+		lastPolyline().bezierTo(cp1,cp2,p,curveResolution);
 		bNeedsTessellation = true;
 	}
 }
@@ -195,7 +195,7 @@ void ofPath::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoin
 		lastPath().addCommand(ofSubPath::Command(ofSubPath::Command::quadBezierTo,p,cp1,cp2));
 		hasChanged = true;
 	}else{
-		lastPolyline().quadBezierTo(cp1,cp2,p);
+		lastPolyline().quadBezierTo(cp1,cp2,p,curveResolution);
 		bNeedsTessellation = true;
 	}
 }
