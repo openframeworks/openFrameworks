@@ -50,7 +50,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		float               getPosition();
 		float               getPositionInSeconds();
 		float               getSpeed();
-		bool                getMovieLoopState();
+		ofLoopType          getLoopState();
 		float               getDuration();
 		bool                getIsMovieDone();
 		int                 getTotalNumFrames();
@@ -69,12 +69,12 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		
 		ofQTKitDecodeMode   getDecodeMode();
 
-		//Enabling synchronous scrubbing ensures that any call to setFrame, setPosition or jump to position
+		//Enabling synchronous seeking ensures that any call to setFrame, setPosition or jump to position
 		//will result in the pixels from the desired frame being loaded into the video player
-		//Turn off synchronous scrubbing will give a speed boost, but won't guarentuee
-		//frames are immediately available when scrubbing manually
-		void                setSynchronousScrubbing(bool synchronous);
-		bool                getSynchronousScrubbing();
+		//Turn off synchronous seeking will give a speed boost, but won't guarentuee
+		//frames are immediately available when seeking manually
+		void                setSynchronousSeeking(bool synchronous);
+		bool                getSynchronousSeeking();
 
 		void                draw(float x, float y, float w, float h);
 		void                draw(float x, float y);
@@ -101,7 +101,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		float speed;
 		ofQTKitDecodeMode decodeMode;
 	    string moviePath;
-		bool bSynchronousScrubbing;
+		bool bSynchronousSeek;
 		//pulls texture data from the movie renderer into our ofTexture
 		void updateTexture();
 		void reallocatePixels();

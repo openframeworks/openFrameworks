@@ -26,11 +26,10 @@
 	BOOL useTexture;
 	BOOL usePixels;
 	BOOL useAlpha;
-	BOOL synchronousUpdate;
+	BOOL synchronousSeek;
 	BOOL justSetFrame;
 	BOOL frameIsNew;
-	MovieDrawingCompleteUPP myDrawCompleteProc;
-	NSCondition* synchronousUpdateLock;
+	NSCondition* synchronousSeekLock;
 }
 
 @property (nonatomic, readonly) NSSize movieSize;
@@ -40,8 +39,8 @@
 @property (nonatomic, readonly) NSTimeInterval duration; //duration in seconds
 @property (nonatomic, readonly) NSInteger frameCount;  //total frames
 @property (nonatomic, readonly) BOOL isFinished;  //returns true if the movie is not looping and over
-@property (readwrite) BOOL justSetFrame;
-@property (nonatomic, readwrite) BOOL synchronousUpdate;
+@property (readwrite) BOOL justSetFrame; //this needs to be set *before* calls to _movie.setTime to allow synchronous seeking
+@property (nonatomic, readwrite) BOOL synchronousSeek;
 
 @property (nonatomic, readwrite) float rate;
 @property (nonatomic, readwrite) float volume;
@@ -76,7 +75,7 @@
 
 - (void)frameAvailable:(CVImageBufferRef)image;
 - (void)frameFailed;
-//when synchronous update is turned on
-- (void)synchronizeUpdate;
+
+- (void)synchronizeSeek;
 
 @end
