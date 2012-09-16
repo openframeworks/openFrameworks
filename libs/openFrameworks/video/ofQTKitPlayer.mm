@@ -6,6 +6,7 @@
 ofQTKitPlayer::ofQTKitPlayer() {
 	moviePlayer = NULL;
 	bNewFrame = false;
+    bPaused = true;
 	duration = 0;
     speed = 0;
 	//default this to true so the player update behavior matches ofQuicktimePlayer
@@ -65,7 +66,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 		duration = moviePlayer.duration;
 
         setLoopState(currentLoopState);
-        setSpeed(0.0f);
+        setSpeed(1.0f);
 	}
 	else {
 		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
@@ -87,34 +88,38 @@ bool ofQTKitPlayer::isLoaded() {
 }
 
 void ofQTKitPlayer::close() {
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
 	if(moviePlayer != NULL){
+        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 		[moviePlayer release];
 		moviePlayer = NULL;
+        [pool release];
 	}
 	
 	pixels.clear();
-	
 	duration = 0;
-
-	[pool release];	
 }
 
-void ofQTKitPlayer::setPaused(bool bPaused){
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+void ofQTKitPlayer::setPaused(bool _bPaused){
 	
-	if(bPaused){
-		[moviePlayer setRate:0.0];
+    bPaused = _bPaused;
+    
+    if(isPlaying() == true) {
+        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
+        if (bPaused == true) {
+            [moviePlayer setRate:0.0];
+        } else {
+            [moviePlayer setRate:speed];
+        }
+
+        [pool release];
     }
-    else{
-        [moviePlayer setRate:speed];
-    }
-	[pool release];	
+    
 }
 
 bool ofQTKitPlayer::isPaused() {
-	return getSpeed() == 0.0;
+	return bPaused;
 }
 
 void ofQTKitPlayer::stop() {
@@ -154,23 +159,23 @@ void ofQTKitPlayer::previousFrame(){
 
 void ofQTKitPlayer::setSpeed(float rate){
 	if(moviePlayer == NULL) return;
-	
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-	speed = rate;
-	[moviePlayer setRate:rate];
+    speed = rate;
 
-	[pool release];	
+    if(isPlaying()) {
+        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+        [moviePlayer setRate:rate];
+        [pool release];
+    }
 }
 
-void ofQTKitPlayer::play(){	
+void ofQTKitPlayer::play(){
 	if(moviePlayer == NULL) return;
-
+    
+    bPaused = false;
+    
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
-    if(speed == 0.0){
-    	speed = 1.0; //default to full speed if something specific isn't set
-    }
     [moviePlayer setRate:speed];
 	
 	[pool release];
