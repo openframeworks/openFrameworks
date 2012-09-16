@@ -67,6 +67,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 
         setLoopState(currentLoopState);
         setSpeed(1.0f);
+		firstFrame(); //will load the first frame
 	}
 	else {
 		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
