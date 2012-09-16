@@ -26,21 +26,19 @@ void testApp::setup(){
 	ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_TEXTURE_ONLY;
 
 	//pixels and texture together is faster than PIXEL_ONLY and manually upload textures.
-	//ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
+//	ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
 	
-    fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
-
+	fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
     // You can even load URLs!
     //fingerMovie.loadMovie("http://labs.silentlycrashing.net/fingers.mov", decodeMode);
-
-	//# 3 Synchronous scrubbing ---------------------------
+	//# 3 Synchronous seeking ---------------------------
 	// In many cases you want to be certain a call to movie.setFrame(x) and then a call to movie.update() will result in
 	// immediate calls to movie.getPixels() or movie.draw() containing frame x. This is slow to guarentuee,
 	// and QTKit naturally wants to update on its own time, a few moments later.
-	// If you are working in a way where this small delay is acceptable, then disabling synchronous scrubbing will
+	// If you are working in a way where this small delay is acceptable, then disabling synchronous seeking will
 	// speed things up
 	// Note that this can be turned on and off freely without having to reload the video
-	fingerMovie.setSynchronousScrubbing(false);
+	fingerMovie.setSynchronousSeeking(true);
 
 	fingerMovie.play();
 }
