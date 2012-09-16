@@ -117,7 +117,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         //        % get the end time of the current frame  
         curTime = [_movie frameEndTime:curTime];
         numFrames++;
-//        NSLog(@" num frames %ld, %lld/%ld current time %f", numFrames,curTime.timeValue,curTime.timeScale, 1.0*curTime.timeValue/curTime.timeScale);
+//        NSLog(@" num frames %ld, %lld/%ld , dif %lld, current time %f", numFrames,curTime.timeValue,curTime.timeScale, curTime.timeValue - time, 1.0*curTime.timeValue/curTime.timeScale);
         if (QTTimeCompare(curTime, endTime) == NSOrderedSame ||
             QTTimeCompare(curTime, [_movie frameEndTime:curTime])  == NSOrderedSame ){ //this will happen for audio files since they have no frames.
             break;
@@ -127,7 +127,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     
 	frameCount = numFrames;
     frameStep = 1.0*movieDuration.timeValue/numFrames;
-    
     
 	//NSLog(@" movie has %d frames and frame step %d", frameCount, frameStep);
 	
@@ -175,12 +174,11 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	
 	QTVisualContextSetImageAvailableCallback(_visualContext, frameAvailable, self);
 	synchronousSeekLock = [[NSCondition alloc] init];
-	[self setFrame:0];
 	
 	self.volume = 1.0;
 	self.loops = YES;
     self.palindrome = NO;
-	
+
 	return YES;
 }
 
@@ -561,7 +559,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	if(self.rate != 0){
 		_movie.rate = 0;
 	}
-    QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
+    QTTime t = QTMakeTime(ceil(frame*frameStep), movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
 	QTTime endTime =[_movie frameEndTime:t];
 //	NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
