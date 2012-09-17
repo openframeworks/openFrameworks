@@ -175,6 +175,12 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	QTVisualContextSetImageAvailableCallback(_visualContext, frameAvailable, self);
 	synchronousSeekLock = [[NSCondition alloc] init];
 	
+	//borrowed from WebCore:
+	// http://opensource.apple.com/source/WebCore/WebCore-1298/platform/graphics/win/QTMovie.cpp
+	hasVideo = (NULL != GetMovieIndTrackType([_movie quickTimeMovie], 1, VisualMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly));
+	hasAudio = (NULL != GetMovieIndTrackType([_movie quickTimeMovie], 1, AudioMediaCharacteristic,  movieTrackCharacteristic | movieTrackEnabledOnly));
+//	NSLog(@"has video? %@ has audio? %@", (hasVideo ? @"YES" : @"NO"), (hasAudio ? @"YES" : @"NO") );
+	loadedFirstFrame = NO;
 	self.volume = 1.0;
 	self.loops = YES;
     self.palindrome = NO;
@@ -379,12 +385,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 			return;
 		}
 		
-		//NOTE:
-		//CoreVideo works on ARGB, and openFrameworks is RGBA so we need to swizzle the buffer 
-		//before we return it to an openFrameworks app.
-		//this is a bit tricky since CV pixel buffer's bytes per row are not always the same as movieWidth*4.  
-		//We have to use the BPR given by CV for the input buffer, and the movie size for the output buffer
-		//Helpful debugging please leave in
 	//    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
 	//          CVPixelBufferGetWidth(_latestPixelFrame),
 	//          CVPixelBufferGetHeight(_latestPixelFrame), 
@@ -602,7 +602,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 //in the frameAvailable callback when the time matches the requested time
 - (void) synchronizeSeek
 {
-	if(!self.synchronousSeek){
+	if(!self.synchronousSeek || !hasVideo){
 		self.justSetFrame = NO;
 		return;
 	}
@@ -615,7 +615,8 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	}
 
 	//no synchronous seeking for images or audio files!
-	if(self.frameCount < 2){
+	//except on the first frame.
+	if(self.frameCount < 2 && loadedFirstFrame){
 		self.justSetFrame = NO;
 		return;		
 	}
@@ -634,6 +635,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		
 		[synchronousSeekLock unlock];
 	}
+	loadedFirstFrame = true;
 }
 
 - (NSInteger) frame
