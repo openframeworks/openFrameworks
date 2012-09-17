@@ -413,7 +413,7 @@ float ofSoundBuffer::getRMSAmplitude(){
 	for(unsigned int i=0;i<size();i++){
 		rmsAmplitude += abs(buffer[i]);
 	}
-	rmsAmplitude /= size();
+	rmsAmplitude /= float(size());
 	return rmsAmplitude;
 }
 
@@ -423,7 +423,7 @@ float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
 	for(unsigned int i=0;i<bufferSize();i++){
 		rmsAmplitude += abs(buffer[i*getNumChannels()+channel]);
 	}
-	rmsAmplitude /= bufferSize();
+	rmsAmplitude /= float(bufferSize());
 	return rmsAmplitude;
 }
 
