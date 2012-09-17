@@ -1,7 +1,3 @@
-#include "ofURLFileLoader.h"
-#include "ofAppRunner.h"
-#include "ofUtils.h"
-
 #include "Poco/Net/HTTPSession.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPSClientSession.h"
@@ -17,6 +13,10 @@
 #include "Poco/Net/SSLManager.h"
 #include "Poco/Net/KeyConsoleHandler.h"
 #include "Poco/Net/ConsoleCertificateHandler.h"
+
+#include "ofURLFileLoader.h"
+#include "ofAppRunner.h"
+#include "ofUtils.h"
 
 using namespace Poco::Net;
 
