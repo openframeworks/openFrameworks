@@ -6,8 +6,10 @@
  */
 
 #include "ofGstVideoPlayer.h"
+#include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/audio/multichannel.h>
+#include <gst/app/gstappsink.h>
 
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
@@ -23,8 +25,13 @@ ofGstVideoPlayer::~ofGstVideoPlayer(){
 	close();
 }
 
-void ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
+bool ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	return true;
+}
+
+ofPixelFormat ofGstVideoPlayer::getPixelFormat(){
+	return internalPixelFormat;
 }
 
 bool ofGstVideoPlayer::loadMovie(string name){

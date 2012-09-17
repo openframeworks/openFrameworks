@@ -60,60 +60,20 @@ bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=false);
 //--------------------------------------------------
 class ofFilePath{
 public:
-		
-	static string getFileExt(string filename);
-	static string removeExt(string filename);
-	static string addLeadingSlash(string path);
-	static string addTrailingSlash(string path);
-	static string removeTrailingSlash(string path);
-	static string getPathForDirectory(string path);
-	static string getAbsolutePath(string path, bool bRelativeToData = true);
+	ofFilePath();
+	ofFilePath(string filePath);
 
-	static bool isAbsolute(string path);
-	
-	static string getFileName(string filePath, bool bRelativeToData = true);	
-	static string getBaseName(string filePath); // filename without extension
-
-	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);
-	static string getCurrentWorkingDirectory();
-	static string join(string path1,string path2);
-	
-	static string getCurrentExePath();
-	static string getCurrentExeDir();
-
-	static string getUserHomeDir();
-};
-
-class ofFile: public fstream{
-
-public:
-	
-	enum Mode{
-		Reference,
-		ReadOnly,
-		WriteOnly,
-		ReadWrite,
-		Append
-	};
-
-	ofFile();
-	ofFile(string filePath, Mode mode=ReadOnly, bool binary=false);
-	ofFile(const ofFile & mom);
-	ofFile & operator= (const ofFile & mom);
-	~ofFile();
-
-	bool open(string path, Mode mode=ReadOnly, bool binary=false);
-	bool changeMode(Mode mode, bool binary=false); // reopens a file to the same path with a different mode;
+	bool open(string path);
 	void close();
-	bool create();
-	
+	bool createFile();
+	bool createDirectory(bool recursive = false);
 	bool exists() const;
 	string path() const;
-	
+
 	string getExtension() const;
 	string getFileName() const;
 	string getBaseName() const; // filename without extension
-	string getEnclosingDirectory() const;
+	ofFilePath getEnclosingDirectory() const;
 	string getAbsolutePath() const;
 
 	bool canRead() const;
@@ -129,14 +89,14 @@ public:
 	void setWriteable(bool writeable);
 	void setReadOnly(bool readable);
 	void setExecutable(bool executable);
-	
+
 	//these all work for files and directories
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool renameTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	
-	
-	//be careful! this deletes a file or folder :) 
+
+
+	//be careful! this deletes a file or folder :)
 	bool remove(bool recursive=false);
 
 	uint64_t getSize() const;
@@ -144,13 +104,69 @@ public:
 	//if you want access to a few other things
 	Poco::File & getPocoFile();
 
+	// allows to use ofFilePath as a string
+	operator string() const;
+
 	//this allows to compare files by their paths, also provides sorting and use as key in stl containers
-	bool operator==(const ofFile & file) const;
-	bool operator!=(const ofFile & file) const;
-	bool operator<(const ofFile & file) const;
-	bool operator<=(const ofFile & file) const;
-	bool operator>(const ofFile & file) const;
-	bool operator>=(const ofFile & file) const;
+	bool operator==(const ofFilePath & path) const;
+	bool operator!=(const ofFilePath & path) const;
+	bool operator<(const ofFilePath & path) const;
+	bool operator<=(const ofFilePath & path) const;
+	bool operator>(const ofFilePath & path) const;
+	bool operator>=(const ofFilePath & path) const;
+
+	ofFilePath operator+(const ofFilePath & path) const;
+	ofFilePath & operator+=(const ofFilePath & path);
+
+
+	static string getFileExt(string filename);
+	static string removeExt(string filename);
+	static string addLeadingSlash(string path);
+	static string addTrailingSlash(string path);
+	static string removeTrailingSlash(string path);
+	static string getPathForDirectory(string path);
+	static string getAbsolutePath(string path, bool bRelativeToData = true);
+
+	static bool isAbsolute(string path);
+	
+	static string getFileName(string filePath, bool bRelativeToData = true);	
+	static string getBaseName(string filePath); // filename without extension
+
+	static ofFilePath getEnclosingDirectory(string filePath, bool bRelativeToData = true);
+	static ofFilePath getCurrentWorkingDirectory();
+	static ofFilePath join(string path1,string path2);
+	
+	static ofFilePath getCurrentExePath();
+	static ofFilePath getCurrentExeDir();
+
+	static ofFilePath getUserHomeDir();
+
+private:
+	Poco::File myFile;
+};
+
+class ofFile: public fstream, public ofFilePath{
+
+public:
+	
+	enum Mode{
+		Reference,
+		ReadOnly,
+		WriteOnly,
+		ReadWrite,
+		Append
+	};
+
+	ofFile();
+	ofFile(string filePath, Mode mode=ReadOnly, bool binary=true);
+	ofFile(const ofFile & mom);
+	ofFile & operator= (const ofFile & mom);
+	~ofFile();
+
+	bool open(string path, Mode mode=ReadOnly, bool binary=true);
+	bool changeMode(Mode mode, bool binary=false); // reopens a file to the same path with a different mode;
+	void close();
+	bool create();
 
 
 	//------------------
@@ -188,11 +204,10 @@ private:
 	bool isWriteMode();
 	bool openStream(Mode _mode, bool binary);
 	void copyFrom(const ofFile & mom);
-	Poco::File myFile;
 	Mode mode;
 };
 
-class ofDirectory{
+class ofDirectory: public ofFilePath{
 
 public:
 	ofDirectory();
@@ -201,28 +216,6 @@ public:
 	void open(string path);
 	void close();
 	bool create(bool recursive = false);
-
-	bool exists() const;
-	string path() const;
-
-	bool canRead() const;
-	bool canWrite() const;
-	bool canExecute() const;
-	
-	bool isDirectory() const;
-	bool isHidden() const;
-
-	void setWriteable(bool writeable);
-	void setReadOnly(bool readable);
-	void setExecutable(bool executable);
-	void setShowHidden(bool showHidden);
-
-	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool renameTo(string path, bool bRelativeToData = true, bool overwrite = false);
-
-	//be careful! this deletes a file or folder :)
-	bool remove(bool recursive);
 
 	//-------------------
 	// dirList operations
@@ -247,20 +240,6 @@ public:
 	unsigned int size();
 	int numFiles(); // numFiles is deprecated, use size()
 
-
-
-	//if you want access to a few other things
-	Poco::File & getPocoFile();
-
-	//this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
-	bool operator==(const ofDirectory & dir);
-	bool operator!=(const ofDirectory & dir);
-	bool operator<(const ofDirectory & dir);
-	bool operator<=(const ofDirectory & dir);
-	bool operator>(const ofDirectory & dir);
-	bool operator>=(const ofDirectory & dir);
-
-
 	//-------
 	//static helpers
 	//-------
@@ -272,7 +251,6 @@ public:
 
 
 private:
-	Poco::File myDir;
 	string originalDirectory;
 	vector <string> extensions;
 	vector <ofFile> files;

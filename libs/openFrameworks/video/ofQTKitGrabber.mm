@@ -803,16 +803,23 @@ void ofQTKitGrabber::listDevices(){
     listVideoDevices();
 }
 
-void ofQTKitGrabber::setPixelFormat(ofPixelFormat pixelFormat){
-	if(pixelFormat != OF_PIXELS_RGB){
-        ofLogWarning("ofQTKitGrabber") << " Only supports pixel format OF_PIXELS_RGB" << endl;
-    }
+//---------------------------------------------------------------------------
+bool ofQTKitGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	//note as we only support RGB we are just confirming that this pixel format is supported
+	if( pixelFormat == OF_PIXELS_RGB ){
+		return true;
+	}
+	ofLogWarning("ofQTKitGrabber") << "requested pixel format not supported" << endl;	
+	return false;
 }
 
+//---------------------------------------------------------------------------
 ofPixelFormat ofQTKitGrabber::getPixelFormat(){
-    return OF_PIXELS_RGB;
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	return OF_PIXELS_RGB;
 }
 
+//---------------------------------------------------------------------------
 vector<string>& ofQTKitGrabber::listVideoDevices(){
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];

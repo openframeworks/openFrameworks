@@ -284,7 +284,7 @@ void ofFile::copyFrom(const ofFile & mom){
 			new_mode = ReadOnly;
 			ofLog(OF_LOG_WARNING, "ofFile: trying to copy a write file, opening copy as read only");
 		}
-		open(mom.myFile.path(), new_mode);
+		open(path(), new_mode);
 	}
 }
 
@@ -319,10 +319,10 @@ bool ofFile::openStream(Mode _mode, bool binary){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::open(string _path, Mode _mode, bool binary){
+bool ofFile::open(string path, Mode mode, bool binary){
 	close();
-	myFile = File(ofToDataPath(_path));
-	return openStream(_mode, binary);
+	ofFilePath::open(path);
+	return openStream(mode, binary);
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -330,7 +330,7 @@ bool ofFile::changeMode(Mode _mode, bool binary){
 	if(_mode != mode){
 		string _path = path();
 		close();
-		myFile = File(_path);
+		ofFilePath::open(_path);
 		return openStream(_mode, binary);
 	}
 	else{
@@ -345,30 +345,18 @@ bool ofFile::isWriteMode(){
 
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
-	myFile = File();
+	ofFilePath::close();
 	fstream::close();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::create(){
-	bool success = false;
-
-	if(myFile.path() != ""){
-		try{
-			success = myFile.createFile();
-		}
-		catch(Poco::Exception & except){
-			ofLog(OF_LOG_ERROR, "ofFile::copyTo - unable to copy");
-			return false;
-		}
-	}
-
-	return success;
+	return ofFilePath::createFile();
 }
 
 //------------------------------------------------------------------------------------------------------------
 ofBuffer ofFile::readToBuffer(){
-	if(myFile.path() == "" || myFile.exists() == false){
+	if(path() == "" || exists() == false){
 		return ofBuffer();
 	}
 
@@ -377,7 +365,7 @@ ofBuffer ofFile::readToBuffer(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::writeFromBuffer(ofBuffer & buffer){
-	if(myFile.path() == ""){
+	if(path() == ""){
 		return false;
 	}
 	if(!isWriteMode()){
@@ -394,245 +382,6 @@ filebuf *ofFile::getFileBuffer() const {
 
 
 //-- poco wrappers
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::exists() const {
-	if(path().empty()){
-		return false;
-	}
-	try{
-		return myFile.exists();
-	}
-	catch(...){
-		return false;
-	}
-}
-
-//------------------------------------------------------------------------------------------------------------
-string ofFile::path() const {
-	return myFile.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-string ofFile::getExtension() const {
-	return ofFilePath::getFileExt(path());
-}
-
-//------------------------------------------------------------------------------------------------------------
-string ofFile::getFileName() const {
-	return ofFilePath::getFileName(path());
-}
-
-//------------------------------------------------------------------------------------------------------------
-string ofFile::getBaseName() const {
-	return ofFilePath::removeExt(ofFilePath::getFileName(path()));
-}
-
-//------------------------------------------------------------------------------------------------------------
-string ofFile::getEnclosingDirectory() const {
-	return ofFilePath::getEnclosingDirectory(path());
-}
-
-//------------------------------------------------------------------------------------------------------------
-string ofFile::getAbsolutePath() const {
-	return ofFilePath::getAbsolutePath(path());
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::canRead() const {
-	return myFile.canRead();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::canWrite() const {
-	return myFile.canWrite();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::canExecute() const {
-	return myFile.canExecute();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::isFile() const {
-	return myFile.isFile();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::isLink() const {
-	return myFile.isLink();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::isDirectory() const {
-	return myFile.isDirectory();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::isDevice() const {
-	return myFile.isDevice();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::isHidden() const {
-	return myFile.isHidden();
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofFile::setWriteable(bool flag = true){
-	myFile.setWriteable(flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofFile::setReadOnly(bool flag = true){
-	myFile.setReadOnly(flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofFile::setExecutable(bool flag = true){
-	myFile.setExecutable(flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
-	if(path.empty() || !myFile.exists()){
-		ofLog(OF_LOG_ERROR, "ofFile::copyTo: trying to copy a non existing file");
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
-		}
-		else{
-			ofLog(OF_LOG_WARNING, "ofFile::copyTo dest file already exists, use bool overwrite to overwrite dest file");
-		}
-	}
-
-	try{
-		myFile.copyTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofFile::copyTo - unable to copy");
-		return false;
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
-	if(path.empty() || !myFile.exists()){
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
-		}
-		else{
-			ofLog(OF_LOG_WARNING, "ofFile::moveTo dest file already exists, use bool overwrite to overwrite dest file");
-		}
-	}
-
-	try{
-		myFile.moveTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofFile::moveTo - unable to move");
-		return false;
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
-	if(path.empty() || !myFile.exists()){
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
-		}
-		else{
-			ofLog(OF_LOG_WARNING, "ofFile::renameTo dest file already exists, use bool overwrite to overwrite dest file");
-			return false;
-		}
-	}
-
-	try{
-		myFile.renameTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofFile::renameTo - unable to rename");
-		return false;
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::remove(bool recursive){
-	if(myFile.path().empty() || !myFile.exists()){
-		return false;
-	}
-
-	try{
-		myFile.remove(recursive);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofFile::remove - unable to remove file/folder");
-		ofLog(OF_LOG_ERROR, "ofFile::remove - " + except.displayText());
-		return false;
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-uint64_t ofFile::getSize() const {
-	return myFile.getSize();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::operator==(const ofFile & file) const {
-	return path() == file.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::operator!=(const ofFile & file) const {
-	return path() != file.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::operator<(const ofFile & file) const {
-	return path() < file.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::operator<=(const ofFile & file) const {
-	return path() <= file.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::operator>(const ofFile & file) const {
-	return path() > file.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofFile::operator>=(const ofFile & file) const {
-	return path() >= file.path();
-}
 
 //------------------------------------------------------------------------------------------------------------
 // ofFile Static Methods
@@ -732,10 +481,6 @@ bool ofFile::removeFile(string path, bool bRelativeToData){
 	return true;
 }
 
-Poco::File & ofFile::getPocoFile(){
-	return myFile;
-}
-
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 // -- ofDirectory
@@ -778,178 +523,21 @@ ofDirectory::ofDirectory(string path){
 void ofDirectory::open(string path){
 	path = ofFilePath::getPathForDirectory(path);
 	originalDirectory = path;
-	files.clear();
-	myDir = File(ofToDataPath(path));
+	close();
+	ofFilePath::open(path);
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::close(){
-	myDir = File();
+	ofFilePath::close();
+	files.clear();
+	extensions.clear();
+	originalDirectory = "";
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::create(bool recursive){
-
-	if(myDir.path() != ""){
-		try{
-			if(recursive){
-				myDir.createDirectories();
-			}
-			else{myDir.createDirectory();
-			}
-		}
-		catch(Poco::Exception & except){
-			ofLog(OF_LOG_ERROR, "ofDirectory::create - unable to create directory");
-			return false;
-		}
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::exists() const {
-	return myDir.exists();
-}
-
-//------------------------------------------------------------------------------------------------------------
-string ofDirectory::path() const {
-	return myDir.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::isHidden() const {
-	return myDir.isHidden();
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofDirectory::setWriteable(bool flag = true){
-	myDir.setWriteable(flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofDirectory::setReadOnly(bool flag = true){
-	myDir.setReadOnly(flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofDirectory::setExecutable(bool flag = true){
-	myDir.setExecutable(flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofDirectory::setShowHidden(bool showHidden){
-	this->showHidden = showHidden;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::isDirectory() const {
-	return myDir.isDirectory();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.path().empty() || !myDir.exists()){
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path, bRelativeToData);
-	}
-	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
-		if(overwrite){
-			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
-			ofLog(OF_LOG_WARNING, "ofDirectory::copyTo dest folder already exists, use bool overwrite to overwrite dest folder");
-		}
-	}
-
-	try{
-		myDir.copyTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofDirectory::copyTo - unable to copy");
-		return false;
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::moveTo(string path,  bool bRelativeToData, bool overwrite){
-	if(myDir.path().empty() || !myDir.exists()){
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path, bRelativeToData);
-	}
-	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
-		if(overwrite){
-			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
-			ofLog(OF_LOG_WARNING, "ofDirectory::moveTo dest folder already exists, use bool overwrite to overwrite dest folder");
-		}
-	}
-
-	try{
-		myDir.moveTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofDirectory::moveTo - unable to move");
-		return false;
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.path().empty() || !myDir.exists()){
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
-		if(overwrite){
-			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
-			ofLog(OF_LOG_WARNING, "ofDirectory::renameTo dest folder already exists, use bool overwrite to overwrite dest folder");
-			return false;
-		}
-	}
-
-	try{
-		myDir.renameTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofDirectory::renameTo - unable to rename");
-		return false;
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::remove(bool recursive){
-	if(path().empty() || !myDir.exists()){
-		return false;
-	}
-
-	try{
-		myDir.remove(recursive);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "ofDirectory::remove - unable to remove file/folder");
-		return false;
-	}
-
-	return true;
+	return ofFilePath::createDirectory(recursive);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -969,12 +557,12 @@ int ofDirectory::listDir(string directory){
 //------------------------------------------------------------------------------------------------------------
 int ofDirectory::listDir(){
 	Path base(path());
-	if(!path().empty() && myDir.exists()){
+	if(!path().empty() && exists()){
 		// File::list(vector<File>) is broken on windows as of march 23, 2011...
 		// so we need to use File::list(vector<string>) and build a vector<File>
 		// in the future the following can be replaced width: cur.list(files);
 		vector<string>fileStrings;
-		myDir.list(fileStrings);
+		getPocoFile().list(fileStrings);
 		for(int i = 0; i < (int)fileStrings.size(); i++){
 			Path curPath(originalDirectory);
 			curPath.setFileName(fileStrings[i]);
@@ -1137,40 +725,6 @@ bool ofDirectory::isDirectoryEmpty(string dirPath, bool bRelativeToData){
 	return false;
 }
 
-//------------------------------------------------------------------------------------------------------------
-Poco::File & ofDirectory::getPocoFile(){
-	return myDir;
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator==(const ofDirectory & dir){
-	return path() == dir.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator!=(const ofDirectory & dir){
-	return path() != dir.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator<(const ofDirectory & dir){
-	return path() < dir.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator<=(const ofDirectory & dir){
-	return path() <= dir.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator>(const ofDirectory & dir){
-	return path() > dir.path();
-}
-
-//------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator>=(const ofDirectory & dir){
-	return path() >= dir.path();
-}
 
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
@@ -1178,6 +732,327 @@ bool ofDirectory::operator>=(const ofDirectory & dir){
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------------------------------------
+ofFilePath::ofFilePath(){
+
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofFilePath::ofFilePath(string filePath)
+:myFile(filePath)
+{
+
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::open(string path){
+	myFile = File(ofToDataPath(path));
+	return true;
+}
+
+
+void ofFilePath::close(){
+	myFile = File();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::createFile(){
+	bool success = false;
+
+	if(myFile.path() != ""){
+		try{
+			success = myFile.createFile();
+		}
+		catch(Poco::Exception & except){
+			ofLog(OF_LOG_ERROR, "ofFile::copyTo - unable to copy");
+			return false;
+		}
+	}
+
+	return success;
+}
+
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::createDirectory(bool recursive){
+	if(path() != ""){
+		try{
+			if(recursive){
+				myFile.createDirectories();
+			}else{
+				myFile.createDirectory();
+			}
+		}
+		catch(Poco::Exception & except){
+			ofLog(OF_LOG_ERROR, "ofDirectory::create - unable to create directory");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::exists() const {
+	if(path().empty()){
+		return false;
+	}
+	try{
+		return myFile.exists();
+	}
+	catch(...){
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::path() const {
+	return myFile.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::getExtension() const {
+	return ofFilePath::getFileExt(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::getFileName() const {
+	return ofFilePath::getFileName(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::getBaseName() const {
+	return ofFilePath::removeExt(ofFilePath::getFileName(path()));
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofFilePath ofFilePath::getEnclosingDirectory() const {
+	return Path(path()).parent().toString();
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::getAbsolutePath() const {
+	return Path(path()).makeAbsolute().toString();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::canRead() const {
+	return myFile.canRead();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::canWrite() const {
+	return myFile.canWrite();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::canExecute() const {
+	return myFile.canExecute();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::isFile() const {
+	return myFile.isFile();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::isLink() const {
+	return myFile.isLink();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::isDirectory() const {
+	return myFile.isDirectory();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::isDevice() const {
+	return myFile.isDevice();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::isHidden() const {
+	return myFile.isHidden();
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofFilePath::setWriteable(bool flag = true){
+	myFile.setWriteable(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofFilePath::setReadOnly(bool flag = true){
+	myFile.setReadOnly(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofFilePath::setExecutable(bool flag = true){
+	myFile.setExecutable(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::copyTo(string path, bool bRelativeToData, bool overwrite){
+	if(path.empty() || !myFile.exists()){
+		ofLog(OF_LOG_ERROR, "ofFile::copyTo: trying to copy a non existing file");
+		return false;
+	}
+
+	if(bRelativeToData){
+		path = ofToDataPath(path);
+	}
+	if(ofFile::doesFileExist(path, bRelativeToData)){
+		if(overwrite){
+			ofFile::removeFile(path, bRelativeToData);
+		}
+		else{
+			ofLog(OF_LOG_WARNING, "ofFile::copyTo dest file already exists, use bool overwrite to overwrite dest file");
+		}
+	}
+
+	try{
+		myFile.copyTo(path);
+	}
+	catch(Poco::Exception & except){
+		ofLog(OF_LOG_ERROR, "ofFile::copyTo - unable to copy");
+		return false;
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::moveTo(string path, bool bRelativeToData, bool overwrite){
+	if(path.empty() || !myFile.exists()){
+		return false;
+	}
+
+	if(bRelativeToData){
+		path = ofToDataPath(path);
+	}
+	if(ofFile::doesFileExist(path, bRelativeToData)){
+		if(overwrite){
+			ofFile::removeFile(path, bRelativeToData);
+		}
+		else{
+			ofLog(OF_LOG_WARNING, "ofFile::moveTo dest file already exists, use bool overwrite to overwrite dest file");
+		}
+	}
+
+	try{
+		myFile.moveTo(path);
+	}
+	catch(Poco::Exception & except){
+		ofLog(OF_LOG_ERROR, "ofFile::moveTo - unable to move");
+		return false;
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::renameTo(string path, bool bRelativeToData, bool overwrite){
+	if(path.empty() || !myFile.exists()){
+		return false;
+	}
+
+	if(bRelativeToData){
+		path = ofToDataPath(path);
+	}
+	if(ofFile::doesFileExist(path, bRelativeToData)){
+		if(overwrite){
+			ofFile::removeFile(path, bRelativeToData);
+		}
+		else{
+			ofLog(OF_LOG_WARNING, "ofFile::renameTo dest file already exists, use bool overwrite to overwrite dest file");
+			return false;
+		}
+	}
+
+	try{
+		myFile.renameTo(path);
+	}
+	catch(Poco::Exception & except){
+		ofLog(OF_LOG_ERROR, "ofFile::renameTo - unable to rename");
+		return false;
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::remove(bool recursive){
+	if(myFile.path().empty() || !myFile.exists()){
+		return false;
+	}
+
+	try{
+		myFile.remove(recursive);
+	}
+	catch(Poco::Exception & except){
+		ofLog(OF_LOG_ERROR, "ofFile::remove - unable to remove file/folder");
+		ofLog(OF_LOG_ERROR, "ofFile::remove - " + except.displayText());
+		return false;
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------------------------------------------
+uint64_t ofFilePath::getSize() const {
+	return myFile.getSize();
+}
+
+
+//------------------------------------------------------------------------------------------------------------
+Poco::File & ofFilePath::getPocoFile(){
+	return myFile;
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofFilePath::operator string() const{
+	return getAbsolutePath();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::operator==(const ofFilePath & path) const {
+	return getAbsolutePath() == path.getAbsolutePath();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::operator!=(const ofFilePath & path) const {
+	return getAbsolutePath() != path.getAbsolutePath();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::operator<(const ofFilePath & path) const {
+	return getAbsolutePath() < path.getAbsolutePath();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::operator<=(const ofFilePath & path) const {
+	return getAbsolutePath() <= path.getAbsolutePath();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::operator>(const ofFilePath & path) const {
+	return getAbsolutePath() > path.getAbsolutePath();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::operator>=(const ofFilePath & path) const {
+	return getAbsolutePath() >= path.getAbsolutePath();
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofFilePath ofFilePath::operator+(const ofFilePath & _path) const{
+	return ofFilePath::join(path(),_path.path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofFilePath & ofFilePath::operator+=(const ofFilePath & _path){
+	open(ofFilePath::join(path(),_path.path()));
+	return *this;
+}
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addLeadingSlash(string path){
@@ -1269,7 +1144,7 @@ string ofFilePath::getBaseName(string filePath){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
+ofFilePath ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
@@ -1298,7 +1173,7 @@ bool ofFilePath::isAbsolute(string path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getCurrentWorkingDirectory(){
+ofFilePath ofFilePath::getCurrentWorkingDirectory(){
 	#ifdef TARGET_OSX
 		char pathOSX[FILENAME_MAX];
 		uint32_t size = sizeof(pathOSX);
@@ -1315,42 +1190,42 @@ string ofFilePath::getCurrentWorkingDirectory(){
 	#endif
 }
 
-string ofFilePath::join(string path1, string path2){
+ofFilePath ofFilePath::join(string path1, string path2){
 	return removeTrailingSlash(path1) + addLeadingSlash(path2);
 }
 
-string ofFilePath::getCurrentExePath(){
+ofFilePath ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
 		if (readlink("/proc/self/exe", buff, FILENAME_MAX) == -1){
 			ofLogError("ofFilePath") << "readlink failed with error " << errno;
 		}
-		return buff;
+		return string(buff);
 	#elif defined(TARGET_OSX)
 		char path[FILENAME_MAX];
 		uint32_t size = sizeof(path);
 		if(_NSGetExecutablePath(path, &size) == 0){
 			ofLogError() << "buffer too small; need size " <<  size;
 		}
-		return path;
+		return ofFilePath(path);
 	#elif defined(TARGET_WIN32)
 		ofLogError() << "getCurrentExePath() not implemented";
 	#endif
-	return "";
+	return ofFilePath();
 }
 
-string ofFilePath::getCurrentExeDir(){
+ofFilePath ofFilePath::getCurrentExeDir(){
 	return getEnclosingDirectory(getCurrentExePath(), false);
 }
 
-string ofFilePath::getUserHomeDir(){
+ofFilePath ofFilePath::getUserHomeDir(){
 	#ifndef TARGET_WIN32
 			struct passwd * pw = getpwuid(getuid());
-		return pw->pw_dir;
+		return ofFilePath(pw->pw_dir);
 	#else
 		// getenv will return any Environent Variable on Windows
 		// USERPROFILE is the key on Windows 7 but it might be HOME
 		// in other flavours of windows...need to check XP and NT...
-		return string(getenv("USERPROFILE"));
+		return ofFilePath(string(getenv("USERPROFILE")));
 	#endif
 }
