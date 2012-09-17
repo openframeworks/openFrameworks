@@ -29,6 +29,9 @@
 	BOOL synchronousSeek;
 	BOOL justSetFrame;
 	BOOL frameIsNew;
+	BOOL hasVideo;
+	BOOL hasAudio;
+	BOOL loadedFirstFrame;
 	NSCondition* synchronousSeekLock;
 }
 
@@ -41,6 +44,7 @@
 @property (nonatomic, readonly) BOOL isFinished;  //returns true if the movie is not looping and over
 @property (readwrite) BOOL justSetFrame; //this needs to be set *before* calls to _movie.setTime to allow synchronous seeking
 @property (nonatomic, readwrite) BOOL synchronousSeek;
+
 
 @property (nonatomic, readwrite) float rate;
 @property (nonatomic, readwrite) float volume;
