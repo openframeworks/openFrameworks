@@ -209,7 +209,6 @@ void ofQTKitPlayer::idleMovie() {
 //--------------------------------------------------------------------
 void ofQTKitPlayer::update() {
 	if(!isLoaded()) return;
-
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	bNewFrame = [moviePlayer update];
 	if (bNewFrame) {
@@ -287,14 +286,13 @@ ofTexture* ofQTKitPlayer::getTexture() {
 		updateTexture();
         texPtr = &tex;
 	} else {
-        ofLogWarning("ofQTKitPlayer") << "Texture not allocated. Returning NULL ofTexture pointer.  Check ofQTKitDecodeMode.";
         texPtr = NULL;
     }
     
     [pool release];
 
     return texPtr;
-
+    
 }
 
 //--------------------------------------------------------------------
