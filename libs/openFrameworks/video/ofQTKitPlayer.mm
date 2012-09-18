@@ -470,7 +470,7 @@ float ofQTKitPlayer::getHeight() {
     float h = 0.0f;
     
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    h = moviePlayer.movieSize.width;
+    h = moviePlayer.movieSize.height;
 	[pool release];
 
     return h;
