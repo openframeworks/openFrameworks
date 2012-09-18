@@ -3,57 +3,61 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
-    //This example shows how to use the OS X specific
-    //video grabber to record video and audio synced to disk
+    // This example shows how to use the OS X specific
+    // video grabber to record synced video and audio to disk.
+    
+    ofEnableAlphaBlending();
+    ofEnableSmoothing();
     
     ofSetFrameRate(30);
     ofSetVerticalSync(true);
     
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    //create a new recorder objects
+    // 1. Create a new recorder object.  ofPtr will manage this
+    // pointer for us, so no need to delete later.
     vidRecorder = ofPtr<ofQTKitGrabber>( new ofQTKitGrabber() );
-    //make this our internal grabber
+    
+    // 2. Set our video grabber to use this source.
     vidGrabber.setGrabber(vidRecorder);
     
+    // 3. Make lists of our audio and video devices.
     videoDevices = vidRecorder->listVideoDevices();
     audioDevices = vidRecorder->listAudioDevices();
     
-    //optionally add audio to the recording stream
-//    vidRecorder->setAudioDeviceID(2);
-    vidRecorder->setUseAudio(true);
+    // 3a. Optionally add audio to the recording stream.
+    // vidRecorder->setAudioDeviceID(2);
+    // vidRecorder->setUseAudio(true);
     
-	//register for events so we'll know when videos finish saving
+	// 4. Register for events so we'll know when videos finish saving.
 	ofAddListener(vidRecorder->videoSavedEvent, this, &testApp::videoSaved);
 	
-	//use this to report all the available video codecs on your system
-//	vector<string> videoCodecs = vidRecorder->listVideoCodecs();
-//	for(int i = 0; i < videoCodecs(); i++){
-//		cout << videoCodecs[i] << endl;
-//	}
+    // 4a.  If you would like to list available video codecs on your system,
+    // uncomment the following code.
+    // vector<string> videoCodecs = vidRecorder->listVideoCodecs();
+    // for(size_t i = 0; i < videoCodecs.size(); i++){
+    //     ofLogVerbose("Available Video Codecs") << videoCodecs[i];
+    // }
 	
-	//you can set a custom codec if you want like this, it'll change how the final video is saved
-//	vidRecorder->setVideoCodec("QTCompressionOptionsJPEGVideo");
-//	vidRecorder->setVideoCodec(videoCodecs[2]);
+	// 4b. You can set a custom / non-default codec in the following ways if desired.
+    // vidRecorder->setVideoCodec("QTCompressionOptionsJPEGVideo");
+    // vidRecorder->setVideoCodec(videoCodecs[2]);
 	
+    // 5. Initialize the grabber.
+    vidGrabber.initGrabber(1280,720);
 
-    //optionally remove preview
-	//if you don't need to show the video on screen
-	//or are seeingglitchy recordings this may help
-	previewPixels = true;
-    if(previewPixels){
-        vidGrabber.initGrabber(640, 480);
-    }
-    else{
-        //passing -1 let's use default the width and height to the native camera resolution
-        vidRecorder->initGrabberWithoutPreview();
-    }
-	
-	//need to set up recording for this grabber
-	//call this once after you've initialized the grabber
-	vidRecorder->initRecording();
+    // If desired, you can disable the preview video.  This can
+    // help help speed up recording and remove recording glitches.
+    // vidRecorder->initGrabberWithoutPreview();
+    
+    // 6. Initialize recording on the grabber.  Call initRecording()
+    // once after you've initialized the grabber.
+    vidRecorder->initRecording();
 
-
+    // 7. If you'd like to launch the newly created video in Quicktime
+    // you can enable it here.
+    bLaunchInQuicktime = true;
+    
 }
 
 
@@ -63,6 +67,7 @@ void testApp::update(){
 	ofBackground(60,60,60);
 	
 	vidGrabber.update();
+    
     if(recordedVideoPlayback.isLoaded()){
         recordedVideoPlayback.update();
     }
@@ -70,36 +75,63 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    ofRectangle previewWindow(20,20,640,480);
+    ofRectangle playbackWindow(20+640,20,640,480);
+
+    // draw the background boxes
+    ofPushStyle();
+    ofSetColor(0);
+    ofFill();
+    ofRect(previewWindow);
+    ofRect(playbackWindow);
+    ofPopStyle();
+    
+    // draw the preview if available
 	if(vidRecorder->hasPreview()){
-		vidGrabber.draw(20,20);
-    }
-	else{
+        ofPushStyle();
+        ofFill();
+        ofSetColor(255);
+        // fit it into the preview window, but use the correct aspect ratio
+        ofRectangle videoGrabberRect(0,0,vidGrabber.getWidth(),vidGrabber.getHeight());
+        ofRectangle previewDrawRectangle = previewWindow.scaleIntoMe(videoGrabberRect);
+        vidGrabber.draw(previewDrawRectangle);
+        ofPopStyle();
+    } else{
 		ofPushStyle();
-		//x out to show there is no video preview
-		ofSetLineWidth(4);
+		// x out to show there is no video preview
+        ofSetColor(255);
+		ofSetLineWidth(3);
 		ofLine(20, 20, 640+20, 480+20);
 		ofLine(20+640, 20, 20, 480+20);
 		ofPopStyle();
 	}
-    //no pixels to draw
+    
+    // draw the playback video
+    if(recordedVideoPlayback.isLoaded()){
+        ofPushStyle();
+        ofFill();
+        ofSetColor(255);
+        // fit it into the preview window, but use the correct aspect ratio
+        ofRectangle recordedRect(ofRectangle(0,0,recordedVideoPlayback.getWidth(),recordedVideoPlayback.getHeight()));
+        recordedRect = playbackWindow.scaleIntoMe(recordedRect);
+        recordedVideoPlayback.draw(recordedRect);
+        ofPopStyle();
+    }
+
     ofPushStyle();
     ofNoFill();
-    ofSetLineWidth(4);
+    ofSetLineWidth(3);
     if(vidRecorder->isRecording()){
         //make a nice flashy red record color
         int flashRed = powf(1 - (sin(ofGetElapsedTimef()*10)*.5+.5),2)*255;
 		ofSetColor(255, 255-flashRed, 255-flashRed);
     }
     else{
-    	ofSetColor(0);
+    	ofSetColor(255,80);
     }
-    ofRect(20,20,640,480);
+    ofRect(previewWindow);
     ofPopStyle();
     
-    ofRect(20+640,20,640,480);
-    if(recordedVideoPlayback.isLoaded()){
-        recordedVideoPlayback.draw(20+640, 20);
-    }
     
     //draw instructions
     ofPushStyle();
@@ -170,13 +202,18 @@ void testApp::keyReleased(int key){
 //--------------------------------------------------------------
 void testApp::videoSaved(ofVideoSavedEventArgs& e){
 	// the ofQTKitGrabber sends a message with the file name when the video is done
-	if(e.error == ""){
+	if(e.error.empty()){
 	    recordedVideoPlayback.loadMovie(e.videoPath);
     	recordedVideoPlayback.setLoopState(OF_LOOP_NORMAL);
 	    recordedVideoPlayback.play();
+        
+        if(bLaunchInQuicktime) {
+            ofSystem("open " + e.videoPath);
+        }
+        
 	}
 	else {
-		ofLogError("videoSaved") << "Video save error " << e.error << endl;
+		ofLogError("videoSaved") << "Video save error " << e.error;
 	}
 }
 
