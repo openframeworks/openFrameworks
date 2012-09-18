@@ -510,7 +510,7 @@ void ofQTKitPlayer::setSynchronousSeeking(bool synchronous){
     
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-    if(moviePlayer != nil){
+    if(isLoaded()){
         moviePlayer.synchronousSeek = synchronous;
     }
 	
