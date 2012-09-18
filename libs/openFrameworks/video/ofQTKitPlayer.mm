@@ -406,7 +406,7 @@ ofLoopType ofQTKitPlayer::getLoopState(){
     	state = OF_LOOP_PALINDROME;
 	}
 	else{
-		ofLogError("ofQTKitPlayer") << "Invalid loop state " << state << "." << endl;
+		ofLogError("ofQTKitPlayer") << "Invalid loop state " << state << ".";
 	}
 	
 	[pool release];
