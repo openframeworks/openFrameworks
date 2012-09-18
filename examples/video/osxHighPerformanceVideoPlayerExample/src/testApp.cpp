@@ -26,10 +26,10 @@ void testApp::setup(){
     // available when using the cross-platform ofVideoPlayer.
 
 	// Texture only is fastest, but no pixel access allowed.
-	ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_TEXTURE_ONLY;
+	// ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_TEXTURE_ONLY;
 
 	// Pixels and texture together is faster than PIXEL_ONLY and manually uploaded textures.
-    // ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
+    ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
 	
 	fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
 
@@ -65,11 +65,15 @@ void testApp::draw(){
         if(fingerMovie.getDecodeMode() != OF_QTKIT_DECODE_TEXTURE_ONLY){ //pixel access will not work in this mode
             ofSetHexColor(0x000000);
             unsigned char * pixels = fingerMovie.getPixels();
-            // let's move through the "RGB" char array
+            ofPixelsRef pixelsRef = fingerMovie.getPixelsRef();
+            
+            // let's move through the "RGB(A)" char array
             // using the red pixel to control the size of a circle.
+
             for(int i = 4; i < 320; i += 8){
                 for(int j = 4; j < 240; j += 8){
-                    unsigned char r = pixels[(j * 320 + i) * 3];
+                    int pixelArrayIndex = pixelsRef.getPixelIndex(i,j);
+                    unsigned char r = pixels[(j * 320 + i) * pixelsRef.getNumChannels()];
                     float val = 1 - ((float)r / 255.0f);
                     ofCircle(400 + i, 20 + j, 10 * val);
                 }
