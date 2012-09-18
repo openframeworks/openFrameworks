@@ -809,7 +809,7 @@ bool ofQTKitGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	if( pixelFormat == OF_PIXELS_RGB ){
 		return true;
 	}
-	ofLogWarning("ofQTKitGrabber") << "requested pixel format not supported" << endl;	
+	ofLogWarning("ofQTKitGrabber") << "requested pixel format not supported." << endl;
 	return false;
 }
 
@@ -872,7 +872,7 @@ unsigned char* ofQTKitGrabber::getPixels(){
 
 ofPixelsRef ofQTKitGrabber::getPixelsRef(){
 	if(!confirmInit() || !pixels.isAllocated()){
-	    ofLogError("ofQTKitGrabber") << "Error asking for pixels on unitialized grabber";
+	    ofLogError("ofQTKitGrabber") << "Error asking for pixels on unitialized grabber.";
 	}
 	return pixels;
 }
@@ -928,7 +928,7 @@ float ofQTKitGrabber::getWidth(){
 		  
 bool ofQTKitGrabber::confirmInit(){
 	if(!isInited){
-		ofLogError("ofQTKitGrabber") << "Calling method on non intialized video grabber";
+		ofLogError("ofQTKitGrabber") << "Calling method on unintialized video grabber.";
 	}
 	return isInited;
 }
