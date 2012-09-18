@@ -178,9 +178,11 @@ void testApp::keyPressed(int key){
         if(vidRecorder->isRecording()){
             vidRecorder->stopRecording();
         }
-        //otherwise start a new recording.
-        //Also we have to close the current video or we wont be able to write over it
         else {
+            // otherwise start a new recording.
+            // before starting, make sure that the video file
+            // is already in use by us (i.e. being played), or else
+            // we won't be able to record over it.
             if(recordedVideoPlayback.isLoaded()){
                 recordedVideoPlayback.close();
             }
@@ -201,53 +203,37 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::videoSaved(ofVideoSavedEventArgs& e){
-	// the ofQTKitGrabber sends a message with the file name when the video is done
+	// the ofQTKitGrabber sends a message with the file name and any errors when the video is done recording
 	if(e.error.empty()){
 	    recordedVideoPlayback.loadMovie(e.videoPath);
-    	recordedVideoPlayback.setLoopState(OF_LOOP_NORMAL);
 	    recordedVideoPlayback.play();
         
         if(bLaunchInQuicktime) {
             ofSystem("open " + e.videoPath);
         }
-        
 	}
 	else {
-		ofLogError("videoSaved") << "Video save error " << e.error;
+		ofLogError("videoSavedEvent") << "Video save error: " << e.error;
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-	
-}
+void testApp::mouseMoved(int x, int y ){}
 
 //--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
-	
-}
+void testApp::mouseDragged(int x, int y, int button){}
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
-	
-}
+void testApp::mousePressed(int x, int y, int button){}
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
-
-}
+void testApp::mouseReleased(int x, int y, int button){}
 
 //--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
-
-}
+void testApp::windowResized(int w, int h){}
 
 //--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
-
-}
+void testApp::gotMessage(ofMessage msg){}
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
+void testApp::dragEvent(ofDragInfo dragInfo){}
