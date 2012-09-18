@@ -10,7 +10,7 @@
 #endif
 
 // ofQTKitDecodeMode allows for highly efficient decoding of video
-// pixel data.  Options are available for direct-to-screen/textre rendering
+// pixel data.  Options are available for direct-to-screen/texture rendering
 // as well as more traditional CPU/RAM pixel-based rendering.
 
 enum ofQTKitDecodeMode {
@@ -21,7 +21,7 @@ enum ofQTKitDecodeMode {
 	OF_QTKIT_DECODE_TEXTURE_ONLY,
     // OF_QTKIT_DECODE_TEXTURE_ONLY: This is the fastest mode, but doesn't
     // allow direct pixel access because video rendering skips the CPU and RAM.
-    // Pixels ARE avaialble to texture / fragment shaders though.
+    // Pixels ARE available to texture / fragment shaders though.
     
 	OF_QTKIT_DECODE_PIXELS_AND_TEXTURE
     // OF_QTKIT_DECODE_PIXELS_AND_TEXTURE: This mode combines both
@@ -87,12 +87,12 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		
 		ofQTKitDecodeMode   getDecodeMode();
 
-        // Enabling syunchronous seeing ensures that any call to
+        // Enabling synchronous seeing ensures that any call to
         // setFrame(), setPosition() or jump(), will result in pixels
         // from the desired frame are loaded correctly.
     
-        // Disabling syunchronous seeking will result in a speed boost
-        // during playback, but won't garuntee that frames are available
+        // Disabling synchronous seeking will result in a speed boost
+        // during playback, but won't guarantee that frames are available
         // when seeking frames manually (i.e. asynchronously).
     
         void                setSynchronousSeeking(bool synchronous);
