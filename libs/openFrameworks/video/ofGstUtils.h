@@ -40,7 +40,7 @@ public:
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	int		getLoopState(){return loopMode;}
+	ofLoopType	getLoopState(){return loopMode;}
 	void 	setSpeed(float speed);
 
 	void 	setFrameByFrame(bool bFrameByFrame);
