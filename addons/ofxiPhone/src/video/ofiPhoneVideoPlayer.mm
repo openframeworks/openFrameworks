@@ -632,7 +632,7 @@ int	ofiPhoneVideoPlayer::getTotalNumFrames() {
 }
 
 //----------------------------------------
-int	ofiPhoneVideoPlayer::getLoopState() {
+ofLoopType	ofiPhoneVideoPlayer::getLoopState() {
     if(videoPlayer == NULL) {
         return OF_LOOP_NONE;
     }
