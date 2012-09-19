@@ -128,7 +128,7 @@ ofLight::ofLight(){
     setDiffuseColor(ofColor(255,255,255));
     setSpecularColor(ofColor(255,255,255));
 	setPointLight();
-    
+
     // assume default attenuation factors //
     setAttenuation(1.f,0.f,0.f);
 }
@@ -210,7 +210,7 @@ void ofLight::setup() {
 //----------------------------------------
 void ofLight::enable() {
     setup();
-    onPositionChanged(); // update the position // 
+    onPositionChanged(); // update the position //
 	ofEnableLighting();
 	glEnable(GL_LIGHT0 + glIndex);
 }
@@ -302,9 +302,9 @@ bool ofLight::getIsPointLight() {
 void ofLight::setAttenuation( float constant, float linear, float quadratic ) {
     // falloff = 0 -> 1, 0 being least amount of fallof, 1.0 being most //
     attenuation_constant    = constant;
-    attenuation_linear      = linear; 
+    attenuation_linear      = linear;
     attenuation_quadratic   = quadratic;
-    
+
     if(glIndex==-1) return;
 	glLightf(GL_LIGHT0 + glIndex, GL_CONSTANT_ATTENUATION, attenuation_constant);
 	glLightf(GL_LIGHT0 + glIndex, GL_LINEAR_ATTENUATION, attenuation_linear);
@@ -387,7 +387,7 @@ void ofLight::onPositionChanged() {
 	if(glIndex==-1) return;
 	// if we are a positional light and not directional, update light position
 	if(isDirectional == false) {
-		GLfloat cc[] = {getPosition().x, getPosition().y, getPosition().z, 1};
+		GLfloat cc[] = {getGlobalPosition().x, getGlobalPosition().y, getGlobalPosition().z, 1};
 		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
 	}
 }
