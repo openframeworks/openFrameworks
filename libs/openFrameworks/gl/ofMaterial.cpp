@@ -63,14 +63,14 @@ void ofMaterial::begin() {
 	glGetMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,&prev_specular.r);
 	glGetMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,&prev_ambient.r);
 	glGetMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,&prev_emissive.r);
-	glGetMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
+	glGetMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &prev_shininess);
 
     // Material colors and properties
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
 }
 
 void ofMaterial::end() {
@@ -79,6 +79,6 @@ void ofMaterial::end() {
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &prev_specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &prev_ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &prev_emissive.r);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, prev_shininess);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &prev_shininess);
 }
 
