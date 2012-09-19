@@ -2,15 +2,19 @@
 
 #include "ofConstants.h"
 #ifndef TARGET_ANDROID
-#include <gst/gst.h>
-#include <gst/app/gstappsink.h>
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTypes.h"
 #include "ofEvents.h"
 
+#define GST_DISABLE_DEPRECATED
+#include <gst/gstpad.h>
+
 class ofGstAppSink;
+typedef struct _GstElement GstElement;
+typedef struct _GstBuffer GstBuffer;
+typedef struct _GstMessage GstMessage;
 
 //-------------------------------------------------
 //----------------------------------------- ofGstUtils
@@ -34,13 +38,13 @@ public:
 	float	getPosition();
 	float 	getSpeed();
 	float 	getDuration();
-	guint64 getDurationNanos();
+	int64_t  getDurationNanos();
 	bool  	getIsMovieDone();
 
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	int		getLoopState(){return loopMode;}
+	ofLoopType	getLoopState(){return loopMode;}
 	void 	setSpeed(float speed);
 
 	void 	setFrameByFrame(bool bFrameByFrame);
@@ -80,7 +84,7 @@ private:
 	bool				posChangingPaused;
 	int					pipelineState;
 	float				speed;
-	gint64				durationNanos;
+	int64_t				durationNanos;
 	bool				isAppSink;
 	bool				isStream;
 
