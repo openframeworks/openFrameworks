@@ -6,8 +6,10 @@
  */
 
 #include "ofGstVideoPlayer.h"
+#include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/audio/multichannel.h>
+#include <gst/app/gstappsink.h>
 
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
@@ -271,7 +273,7 @@ void ofGstVideoPlayer::setLoopState(ofLoopType state){
 	videoUtils.setLoopState(state);
 }
 
-int	ofGstVideoPlayer::getLoopState(){
+ofLoopType ofGstVideoPlayer::getLoopState(){
 	return videoUtils.getLoopState();
 }
 

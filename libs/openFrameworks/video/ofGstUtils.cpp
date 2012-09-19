@@ -1,12 +1,14 @@
 #include "ofGstUtils.h"
 #ifndef TARGET_ANDROID
 #include "ofUtils.h"
+#include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
 
 #include <glib-object.h>
 #include <glib.h>
 #include <algorithm>
+
 
 
 
@@ -283,7 +285,7 @@ float ofGstUtils::getDuration(){
 	return (float)getDurationNanos()/(float)GST_SECOND;
 }
 
-guint64 ofGstUtils::getDurationNanos(){
+int64_t ofGstUtils::getDurationNanos(){
 	GstFormat format = GST_FORMAT_TIME;
 
 	if(!gst_element_query_duration(getPipeline(),&format,&durationNanos))
