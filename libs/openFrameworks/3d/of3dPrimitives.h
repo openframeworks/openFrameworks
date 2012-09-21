@@ -32,6 +32,8 @@ public:
     void setTexCoords( float u1, float v1, float u2, float v2 );
     // apply to a specific mesh //
     void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
+    // useful when creating a new model, since it uses normalized tex coords //
+    void normalizeAndApplySavedTexCoords( int meshIndex );
     
     void addMesh( ofMesh& mesh);
     void addTexture( ofTexture& tex );
@@ -159,6 +161,7 @@ protected:
 
 ofMesh      ofGetPlaneMesh(float width, float height, int columns, int rows);
 ofMesh      ofGetSphereMesh(float radius, int res );
+ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
 //ofBoxPrimitive      ofGetBox( float width, float height, float depth, int res_width, int res_height );
 

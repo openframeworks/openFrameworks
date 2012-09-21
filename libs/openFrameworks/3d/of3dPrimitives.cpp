@@ -141,6 +141,19 @@ void of3dModel::setResolution( int resX, int resY, int resZ ) {
     _resolution.set( resX, resY, resZ );
 }
 
+//----------------------------------------------------------
+void of3dModel::normalizeAndApplySavedTexCoords( int meshIndex ) {
+    if(meshIndex >= _texCoords.size() || meshIndex < 0) {
+        ofLog(OF_LOG_ERROR, "of3dModel :: setTexCoords : meshindex "+ofToString(meshIndex,0)+" out of bounds.");
+        return;
+    }
+    ofVec4f tcoords = getTexCoord(0);
+    // when a new mesh is created, it uses normalized tex coords, we need to reset them
+    // but save the ones used previously //
+    _texCoords[meshIndex].set(0,0,1,1);
+    setTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+}
+
 // applies to all the meshes evenly //
 //----------------------------------------------------------
 void of3dModel::setTexCoords( float u1, float v1, float u2, float v2 ) {
@@ -172,11 +185,12 @@ void of3dModel::setTexCoords( int meshindex, float u1, float v1, float u2, float
         ofVec2f tcoord = _meshes[meshindex].getTexCoord(j);
         tcoord.x = ofMap(tcoord.x, prevTcoord.x, prevTcoord.z, u1, u2);
         tcoord.y = ofMap(tcoord.y, prevTcoord.y, prevTcoord.w, v1, v2);
+        
         _meshes[meshindex].setTexCoord(j, tcoord);
     }
     
     _texCoords[meshindex].set(u1, v1, u2, v2);
-    cout << endl;
+    
 }
 
 
@@ -317,6 +331,9 @@ void ofPlanePrimitive::resizeToTexture( ofTexture& inTexture ) {
         setTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
     else
         setTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
+    
+    ofVec4f tcoords = getTexCoord(0);
+    setTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 //--------------------------------------------------------------
@@ -330,6 +347,9 @@ void ofPlanePrimitive::setResolution(int resX, int resY, int resZ) {
     _meshes.clear();
     ofMesh mesh = ofGetPlaneMesh( getWidth(), getHeight(), resX, resY );
     addMesh( mesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
 }
 
 //--------------------------------------------------------------
@@ -497,6 +517,8 @@ void ofSpherePrimitive::setResolution(int resX, int resY, int resZ) {
     _meshes.clear();
     ofMesh sphereMesh = ofGetSphereMesh( getRadius(), resX );
     addMesh( sphereMesh );
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
 }
 
 //----------------------------------------------------------
@@ -511,38 +533,36 @@ float ofSpherePrimitive::getRadius() {
 }
 
 
-
-
-
-
 // based on code by Michael Broutin for the ogre-procedural library //
 // http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
 // For the latest info, see http://code.google.com/p/ogre-procedural/ //
+// NO texture coords or normals
+// use ofGetIcoSphere(radius, 0) // 0 iterations will return Icosahedron //
 //----------------------------------------------------------
-ofMesh ofGetIcoSphereMesh(float radius, int iterations) {
+ofMesh ofGetIcosahedronMesh(float radius) {
+    ofMesh mesh;
     
     const float sqrt5 = sqrt(5.0f);
     const float phi = (1.0f + sqrt5) * 0.5f;
     
-    vector<ofVec3f> vertices;
-    
     /// Step 1 : Generate icosahedron
     float invnorm = 1/sqrt(phi*phi+1);
     
-    vertices.push_back(invnorm*ofVec3f(-1,  phi, 0));//0
-    vertices.push_back(invnorm*ofVec3f( 1,  phi, 0));//1
-    vertices.push_back(invnorm*ofVec3f(0,   1,  -phi));//2
-    vertices.push_back(invnorm*ofVec3f(0,   1,   phi));//3
-    vertices.push_back(invnorm*ofVec3f(-phi,0,  -1));//4
-    vertices.push_back(invnorm*ofVec3f(-phi,0,   1));//5
-    vertices.push_back(invnorm*ofVec3f( phi,0,  -1));//6
-    vertices.push_back(invnorm*ofVec3f( phi,0,   1));//7
-    vertices.push_back(invnorm*ofVec3f(0,   -1, -phi));//8
-    vertices.push_back(invnorm*ofVec3f(0,   -1,  phi));//9
-    vertices.push_back(invnorm*ofVec3f(-1,  -phi,0));//10
-    vertices.push_back(invnorm*ofVec3f( 1,  -phi,0));//11
+    mesh.addVertex(invnorm*ofVec3f(-1,  phi, 0));//0
+    mesh.addVertex(invnorm*ofVec3f( 1,  phi, 0));//1
+    mesh.addVertex(invnorm*ofVec3f(0,   1,  -phi));//2
+    mesh.addVertex(invnorm*ofVec3f(0,   1,   phi));//3
+    mesh.addVertex(invnorm*ofVec3f(-phi,0,  -1));//4
+    mesh.addVertex(invnorm*ofVec3f(-phi,0,   1));//5
+    mesh.addVertex(invnorm*ofVec3f( phi,0,  -1));//6
+    mesh.addVertex(invnorm*ofVec3f( phi,0,   1));//7
+    mesh.addVertex(invnorm*ofVec3f(0,   -1, -phi));//8
+    mesh.addVertex(invnorm*ofVec3f(0,   -1,  phi));//9
+    mesh.addVertex(invnorm*ofVec3f(-1,  -phi,0));//10
+    mesh.addVertex(invnorm*ofVec3f( 1,  -phi,0));//11
     
-    int firstFaces[] = {0,1,2,
+    int firstFaces[] = {
+        0,1,2,
         0,3,1,
         0,4,5,
         1,7,6,
@@ -563,14 +583,37 @@ ofMesh ofGetIcoSphereMesh(float radius, int iterations) {
         10,8,11,
         10,11,9
     };
-    vector<int> faces(firstFaces, firstFaces + sizeof(firstFaces)/sizeof(*firstFaces));
-    int size = 60;
+    
+    for(int i = 0; i < mesh.getNumVertices(); i++) {
+        mesh.setVertex(i, mesh.getVertex(i) * radius);
+    }
+    
+    for(int i = 0; i < 60; i+=3) {
+        mesh.addTriangle(firstFaces[i], firstFaces[i+1], firstFaces[i+2]);
+    }
+    
+    return mesh;
+}
+
+
+
+// based on code by Michael Broutin for the ogre-procedural library //
+// http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
+// For the latest info, see http://code.google.com/p/ogre-procedural/ //
+//----------------------------------------------------------
+ofMesh ofGetIcoSphereMesh(float radius, int iterations) {
+    
+    ofMesh icosahedron = ofGetIcosahedronMesh( 1.f );
+    vector<ofVec3f> vertices = icosahedron.getVertices();
+    vector<ofIndexType> faces = icosahedron.getIndices();
+    
+    int size = faces.size();
     
     /// Step 2 : tessellate
     for (unsigned short iteration = 0; iteration < iterations; iteration++)
     {
         size*=4;
-        std::vector<int> newFaces;
+        vector<ofIndexType> newFaces;
         newFaces.clear();
         //newFaces.resize(size);
         for (int i=0; i<size/12; i++)
@@ -733,6 +776,9 @@ void ofIcoSpherePrimitive::setResolution( int resX, int resY, int resZ ) {
     // store the number of iterations in the resolution //
     ofMesh sphereMesh = ofGetIcoSphereMesh( getRadius(), getResolution().x );
     addMesh( sphereMesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
 }
 
 //----------------------------------------------------------
