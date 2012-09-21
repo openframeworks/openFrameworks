@@ -422,7 +422,7 @@ void  ofSetRectMode(ofRectMode mode){
 
 //----------------------------------------------------------
 ofRectMode ofGetRectMode(){
-	return 	renderer->getRectMode();
+    return currentStyle.rectMode;
 }
 
 //----------------------------------------------------------
@@ -444,7 +444,7 @@ void ofFill(){
 // Returns OF_FILLED or OF_OUTLINE
 //----------------------------------------------------------
 ofFillFlag ofGetFill(){
-	return renderer->getFillMode();
+    return currentStyle.bFill ? OF_FILLED : OF_OUTLINE;
 }
 
 //----------------------------------------------------------
