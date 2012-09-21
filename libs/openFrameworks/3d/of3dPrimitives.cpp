@@ -21,12 +21,6 @@ of3dModel::~of3dModel() {
 void of3dModel::addMesh( ofMesh& mesh) {
     _meshes.push_back(mesh);
 }
-void of3dModel::addTexture( ofTexture& tex ) {
-    _textures.push_back( tex );
-}
-void of3dModel::addTexCoords( ofVec4f& tCoords ) {
-    _texCoords.push_back(tCoords);
-}
 
 
 // GETTERS //
@@ -62,22 +56,22 @@ int of3dModel::getNumTextures() {
 }
 //----------------------------------------------------------
 ofTexture* of3dModel::getTexturePtr(int texIndex) {
-    if(texIndex < 0 || texIndex >= _textures.size() ) {
+    if( _textures.find(texIndex) == _textures.end() ) {
         ofLog(OF_LOG_ERROR, "of3dModel :: getTexturePtr()") << " : Mesh index "<<texIndex<<" out of bounds, returning NULL";
         return NULL;
     }
-    return& _textures[texIndex];
+    return& _textures.find(texIndex)->second;
 }
 //----------------------------------------------------------
 ofTexture& of3dModel::getTexture( int texIndex) {
-    if(texIndex < 0 || texIndex >= _textures.size() ) {
-        ofLog(OF_LOG_ERROR, "of3dModel :: getTexture()") << " : Mesh index "<<texIndex<<" out of bounds, returning";
+    if( _textures.find(texIndex) == _textures.end() ) {
+        ofLog(OF_LOG_ERROR, "of3dModel :: getTexture()") << " : texIndex "<<texIndex<<" out of bounds, returning";
         return;
     }
     return _textures[ texIndex ];
 }
 //----------------------------------------------------------
-vector<ofTexture>& of3dModel::getTextures() {
+map<int, ofTexture>& of3dModel::getTextures() {
     return _textures;
 }
 
@@ -88,8 +82,8 @@ int of3dModel::getNumTexcoords() {
 
 //----------------------------------------------------------
 ofVec4f* of3dModel::getTexCoordPtr( int texCoordIndex ) {
-    if(texCoordIndex < 0 || texCoordIndex >= _texCoords.size() ) {
-        ofLog(OF_LOG_ERROR, "of3dModel :: getTexturePtr()") << " : Mesh index "<<texCoordIndex<<" out of bounds, returning NULL";
+    if( _texCoords.find(texCoordIndex) == _texCoords.end() ) {
+        ofLog(OF_LOG_ERROR, "of3dModel :: getTexCoordPtr()") << " : texCoordIndex "<<texCoordIndex<<" out of bounds, returning NULL";
         return NULL;
     }
     return&_texCoords[texCoordIndex];
@@ -97,15 +91,15 @@ ofVec4f* of3dModel::getTexCoordPtr( int texCoordIndex ) {
 
 //----------------------------------------------------------
 ofVec4f& of3dModel::getTexCoord( int texCoordIndex ) {
-    if(texCoordIndex < 0 || texCoordIndex >= _texCoords.size() ) {
-        ofLog(OF_LOG_ERROR, "of3dModel :: getTexturePtr()") << " : Mesh index "<<texCoordIndex<<" out of bounds, returning";
+    if( _texCoords.find(texCoordIndex) == _texCoords.end() ) {
+        ofLog(OF_LOG_ERROR, "of3dModel :: getTexCoord()") << " : texCoordIndex "<<texCoordIndex<<" out of bounds, returning";
         return;
     }
     return _texCoords[texCoordIndex];
 }
 
 //----------------------------------------------------------
-vector<ofVec4f>& of3dModel::getTexCoords() {
+map<int, ofVec4f>& of3dModel::getTexCoords() {
     return _texCoords;
 }
 
@@ -158,14 +152,6 @@ void of3dModel::normalizeAndApplySavedTexCoords( int meshIndex ) {
 //----------------------------------------------------------
 void of3dModel::setTexCoords( float u1, float v1, float u2, float v2 ) {
     
-    if(_texCoords.size() == 0) {
-        _texCoords.resize(_meshes.size());
-        for(int i = 0; i < _texCoords.size(); i++) {
-            // tex coords have not been set, assuming normalized //
-            _texCoords[i].set(0, 0, 1, 1);
-        }
-    }
-    
     for(int i = 0; i < _meshes.size(); i++) {
         setTexCoords(i, u1, v1, u2, v2);
     }
@@ -174,12 +160,13 @@ void of3dModel::setTexCoords( float u1, float v1, float u2, float v2 ) {
 // apply to a specific mesh //
 //----------------------------------------------------------
 void of3dModel::setTexCoords( int meshindex, float u1, float v1, float u2, float v2 ) {
-    if(meshindex >= _texCoords.size() || meshindex < 0) {
-        ofLog(OF_LOG_ERROR, "of3dModel :: setTexCoords : meshindex "+ofToString(meshindex,0)+" out of bounds.");
-        return;
+    
+    if( _texCoords.find(meshindex) == _texCoords.end() ) {
+        ofLog(OF_LOG_VERBOSE, "of3dModel :: setTexCoords : adding normalized tex coords for mesh index "+ofToString(meshindex,0));
+        _texCoords[meshindex] = ofVec4f(0,0,1,1);
     }
     
-    ofVec4f prevTcoord = _texCoords[meshindex];
+    ofVec4f prevTcoord = getTexCoord( meshindex );
     
     for(int j = 0; j < _meshes[meshindex].getNumTexCoords(); j++ ) {
         ofVec2f tcoord = _meshes[meshindex].getTexCoord(j);
@@ -203,8 +190,8 @@ void of3dModel::removeMesh( int index ) {
 
 //----------------------------------------------------------
 void of3dModel::removeTexture( int index ) {
-    if(index > 0 && index < _textures.size())
-        _textures.erase( _textures.begin()+index );
+    if( _textures.find(index) != _textures.end() )
+        _textures.erase( index );
 }
 
 //----------------------------------------------------------

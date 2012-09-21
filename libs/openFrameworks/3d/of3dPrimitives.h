@@ -11,7 +11,7 @@
 #include "ofRectangle.h"
 #include "ofNode.h"
 #include "ofTexture.h"
-
+#include <map>
 
 enum of3dPrimitiveType {
 	OF_3D_PRIMITIVE_PLANE,
@@ -32,12 +32,14 @@ public:
     void setTexCoords( float u1, float v1, float u2, float v2 );
     // apply to a specific mesh //
     void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
+    
+    //void setTexCoordsFromTexture( ofTexture& texture );
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords( int meshIndex );
     
     void addMesh( ofMesh& mesh);
-    void addTexture( ofTexture& tex );
-    void addTexCoords( ofVec4f& tCoords );
+    //void addTexture( ofTexture& tex );
+    //void addTexCoords( ofVec4f& tCoords );
     
     int getNumMeshes();
     ofMesh* getMeshPtr(int meshIndex);
@@ -47,12 +49,12 @@ public:
     int getNumTextures();
     ofTexture* getTexturePtr(int texIndex);
     ofTexture& getTexture( int texIndex);
-    vector<ofTexture>& getTextures();
+    map<int, ofTexture>& getTextures();
     
     int getNumTexcoords();
     ofVec4f* getTexCoordPtr( int texCoordIndex );
     ofVec4f& getTexCoord( int texCoordIndex );
-    vector<ofVec4f>& getTexCoords();
+    map<int, ofVec4f>& getTexCoords();
     
     ofVec3f getScale();
     bool hasScaling();
@@ -74,8 +76,10 @@ public:
     
 protected:
     vector<ofMesh>      _meshes;
-    vector<ofTexture>   _textures;
-    vector<ofVec4f> _texCoords;
+    //vector<ofTexture>   _textures;
+    map<int, ofVec4f>   _texCoords;
+    map<int, ofTexture> _textures;
+    
     ofVec3f _scale;
     ofVec3f _resolution;
 };
