@@ -92,8 +92,8 @@ ofVec4f* of3dModel::getTexCoordPtr( int texCoordIndex ) {
 //----------------------------------------------------------
 ofVec4f& of3dModel::getTexCoord( int texCoordIndex ) {
     if( _texCoords.find(texCoordIndex) == _texCoords.end() ) {
-        ofLog(OF_LOG_ERROR, "of3dModel :: getTexCoord()") << " : texCoordIndex "<<texCoordIndex<<" out of bounds, returning";
-        return;
+        ofLog(OF_LOG_WARNING, "of3dModel :: getTexCoord()") << " : texCoordIndex "<<texCoordIndex<<" not found, setting normalized tex coords";
+        _texCoords[texCoordIndex] = ofVec4f(0,0,1,1);
     }
     return _texCoords[texCoordIndex];
 }
@@ -137,11 +137,7 @@ void of3dModel::setResolution( int resX, int resY, int resZ ) {
 
 //----------------------------------------------------------
 void of3dModel::normalizeAndApplySavedTexCoords( int meshIndex ) {
-    if(meshIndex >= _texCoords.size() || meshIndex < 0) {
-        ofLog(OF_LOG_ERROR, "of3dModel :: setTexCoords : meshindex "+ofToString(meshIndex,0)+" out of bounds.");
-        return;
-    }
-    ofVec4f tcoords = getTexCoord(0);
+    ofVec4f tcoords = getTexCoord(meshIndex);
     // when a new mesh is created, it uses normalized tex coords, we need to reset them
     // but save the ones used previously //
     _texCoords[meshIndex].set(0,0,1,1);
@@ -161,10 +157,10 @@ void of3dModel::setTexCoords( float u1, float v1, float u2, float v2 ) {
 //----------------------------------------------------------
 void of3dModel::setTexCoords( int meshindex, float u1, float v1, float u2, float v2 ) {
     
-    if( _texCoords.find(meshindex) == _texCoords.end() ) {
-        ofLog(OF_LOG_VERBOSE, "of3dModel :: setTexCoords : adding normalized tex coords for mesh index "+ofToString(meshindex,0));
-        _texCoords[meshindex] = ofVec4f(0,0,1,1);
-    }
+    //if( _texCoords.find(meshindex) == _texCoords.end() ) {
+    //    ofLog(OF_LOG_VERBOSE, "of3dModel :: setTexCoords : adding normalized tex coords for mesh index "+ofToString(meshindex,0));
+    //    _texCoords[meshindex] = ofVec4f(0,0,1,1);
+    //}
     
     ofVec4f prevTcoord = getTexCoord( meshindex );
     
@@ -179,6 +175,20 @@ void of3dModel::setTexCoords( int meshindex, float u1, float v1, float u2, float
     _texCoords[meshindex].set(u1, v1, u2, v2);
     
 }
+
+//----------------------------------------------------------
+void of3dModel::setTexCoordsFromTexture( ofTexture& inTexture, int tCoordsIndex ) {
+    bool bNormalized = (inTexture.getTextureData().textureTarget!=GL_TEXTURE_RECTANGLE_ARB);
+    ofTextureData& tdata = inTexture.getTextureData();
+    if(bNormalized)
+        setTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
+    else
+        setTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
+    
+    ofVec4f tcoords = getTexCoord(tCoordsIndex);
+    setTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+}
+
 
 
 // REMOVE //
@@ -225,6 +235,32 @@ void of3dModel::draw() {
 //--------------------------------------------------------------
 void of3dModel::draw(ofPolyRenderMode renderType) {
     ofGetCurrentRenderer()->draw(*this, renderType);
+}
+
+//--------------------------------------------------------------
+void of3dModel::drawNormals(float scale) {
+    if(hasScaling()) {
+        glPushMatrix();
+        glScalef(getScale().x, getScale().y, getScale().z);
+    }
+    for(int j = 0; j < getNumMeshes(); j++) {
+        vector<ofVec3f> normals = getMesh(j).getNormals();
+        vector<ofVec3f> vertices = getMesh(j).getVertices();
+        ofVec3f normal;
+        ofVec3f vert;
+        glBegin(GL_LINES);
+        for(int i = 0; i < normals.size(); i++) {
+            vert = vertices[i];
+            normal = normals[i].normalized();
+            glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
+            normal *= scale;
+            glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
+        }
+        glEnd();
+    }
+    if(hasScaling()) {
+        glPopMatrix();
+    }
 }
 
 
@@ -310,17 +346,7 @@ void ofPlanePrimitive::setDimensions( float width, float height ) {
 //--------------------------------------------------------------
 void ofPlanePrimitive::resizeToTexture( ofTexture& inTexture ) {
     setDimensions(inTexture.getWidth(), inTexture.getHeight());
-    
-    bool bNormalized = (inTexture.getTextureData().textureTarget!=GL_TEXTURE_RECTANGLE_ARB);
-    ofTextureData& tdata = inTexture.getTextureData();
-    
-    if(bNormalized)
-        setTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
-    else
-        setTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
-    
-    ofVec4f tcoords = getTexCoord(0);
-    setTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+    setTexCoordsFromTexture( inTexture );
 }
 
 //--------------------------------------------------------------
@@ -783,6 +809,74 @@ float ofIcoSpherePrimitive::getRadius() {
 
 
 
+
+
+// Cylinder Mesh
+//----------------------------------------------------------
+ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, bool bCapped, int numCapSegments ) {
+    ofMesh mesh;
+    mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+    
+    
+    int rSegs   = radiusSegments;
+    int hSegs   = heightSegments;
+    int capSegs = numCapSegments;
+    if(hSegs < 2) hSegs = 2;
+    if(capSegs < 2) capSegs = 2;
+    
+    if(bCapped) {
+        hSegs = hSegs + capSegs * 2;
+    }
+    
+    float angleIncRadius = (TWO_PI/((float)radiusSegments-1.f));
+    float heightInc = height/(float)heightSegments;
+    float halfH = height*.5f;
+    float capHInc = radius/((float)capSegs);
+    
+    ofVec3f vert;
+    ofVec2f tcoord;
+    
+    for(int iy = 0; iy < hSegs-1; iy++) {
+        for(int ix = 0; ix < radiusSegments; ix++) {
+            
+            vert.x = cos((float)ix*angleIncRadius) * radius;
+            
+            if(bCapped && iy < capSegs) {
+                vert.z = sin((float)ix*angleIncRadius) * ((float)iy/(float)capSegs * radius);
+                vert.y = -halfH;
+            } else if(bCapped && iy > heightSegments+capSegs) {
+                float newRad = ofMap((float)iy, hSegs-capSegs, hSegs, 0.0f, 1.0);
+                vert.z = sin((float)ix*angleIncRadius) * ((float)iy);
+                vert.y = halfH;
+            } else {
+                //vert.x = cos((float)ix*angleIncRadius) * radius;
+                vert.y = heightInc*(float)iy - halfH;
+                vert.z = sin((float)ix*angleIncRadius) * radius;
+            }
+            
+            tcoord.x = (float)ix/((float)radiusSegments-1.f);
+            tcoord.y = (float)iy/((float)hSegs-1.f);
+            
+            mesh.addTexCoord(tcoord);
+            mesh.addVertex( vert );
+            
+            if(bCapped && iy < capSegs) {
+                vert.z = sin((float)ix*angleIncRadius) * (((float)iy+1.f)*capHInc);
+            } else if(bCapped && iy > heightSegments+capSegs) {
+                
+            } else {
+                vert.y = vert.y + heightInc;
+                
+            }
+            tcoord.y = ((float)iy+1.f)/((float)hSegs-1.f);
+            
+            mesh.addTexCoord(tcoord);
+            mesh.addVertex(vert);
+        }
+    }
+    
+    return mesh;
+}
 
 
 
