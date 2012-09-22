@@ -32,8 +32,10 @@ public:
     void setTexCoords( float u1, float v1, float u2, float v2 );
     // apply to a specific mesh //
     void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
-    
-    //void setTexCoordsFromTexture( ofTexture& texture );
+    // does not store texture. Creates tex coords from texture, if texture is
+    // non-arb, then it will create normalized tex coords //
+    // defaults to index 0 
+    void setTexCoordsFromTexture( ofTexture& inTexture, int tCoordsIndex=0 );
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords( int meshIndex );
     
@@ -73,6 +75,7 @@ public:
     void drawFaces();
     void draw();
     void draw(ofPolyRenderMode renderType);
+    void drawNormals( float scale );
     
 protected:
     vector<ofMesh>      _meshes;
@@ -168,6 +171,7 @@ ofMesh      ofGetSphereMesh(float radius, int res );
 ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
 //ofBoxPrimitive      ofGetBox( float width, float height, float depth, int res_width, int res_height );
+ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, bool bCapped = true, int numCapSegments=2 );
 
 
 
