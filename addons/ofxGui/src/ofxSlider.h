@@ -19,6 +19,8 @@ public:
 	virtual void mouseDragged(ofMouseEventArgs & args);
 	virtual void mouseReleased(ofMouseEventArgs & args);
 
+	void setUpdateOnReleaseOnly(bool bUpdateOnReleaseOnly);
+
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
 		value.addListener(listener,method);
@@ -40,7 +42,7 @@ public:
 
 protected:
 	ofParameter<Type> value;
-
+	bool bUpdateOnReleaseOnly;
 	void setValue(float mx, float my, bool bCheck);
 };
 
