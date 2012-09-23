@@ -45,9 +45,11 @@ public:
 	float getPan();
 	bool isLoaded();
 	float getVolume();
+	unsigned long getDurationMS();
 
 	ofSoundBuffer & getCurrentBuffer();
-	static ofSoundStream & getSoundStream();
+	static ofPtr<ofBaseSoundStream> getSoundStream();
+	static void setSoundStream(ofPtr<ofBaseSoundStream> stream);
 
 	static void setMaxSoundsTotal(int max);
 	static void setMaxSoundsPerPlayer(int max);
@@ -58,7 +60,7 @@ public:
 private:
 	void audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount);
 	void updatePositions(int bufferSize);
-	static ofSoundStream stream;
+	static ofPtr<ofBaseSoundStream> stream;
 	static ofSoundMixer mixer;
 	static bool initialized;
 	static int samplerate;
