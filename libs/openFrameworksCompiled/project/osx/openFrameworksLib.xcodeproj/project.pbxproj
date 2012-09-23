@@ -36,6 +36,16 @@
 		DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
 		DACFA8E9132D09E8008D4B7A /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
 		DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
+		DAF685901603E12100860B68 /* ofBaseSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF685861603E12100860B68 /* ofBaseSoundStream.cpp */; };
+		DAF685911603E12100860B68 /* ofBasicSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF685871603E12100860B68 /* ofBasicSoundPlayer.cpp */; };
+		DAF685921603E12100860B68 /* ofBasicSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = DAF685881603E12100860B68 /* ofBasicSoundPlayer.h */; };
+		DAF685931603E12100860B68 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF685891603E12100860B68 /* ofSoundBuffer.cpp */; };
+		DAF685941603E12100860B68 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = DAF6858A1603E12100860B68 /* ofSoundBuffer.h */; };
+		DAF685951603E12100860B68 /* ofSoundFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF6858B1603E12100860B68 /* ofSoundFile.cpp */; };
+		DAF685961603E12100860B68 /* ofSoundMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF6858C1603E12100860B68 /* ofSoundMixer.cpp */; };
+		DAF685971603E12100860B68 /* ofSoundMixer.h in Headers */ = {isa = PBXBuildFile; fileRef = DAF6858D1603E12100860B68 /* ofSoundMixer.h */; };
+		DAF685981603E12100860B68 /* ofSoundUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF6858E1603E12100860B68 /* ofSoundUtils.cpp */; };
+		DAF685991603E12100860B68 /* ofSoundUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DAF6858F1603E12100860B68 /* ofSoundUtils.h */; };
 		E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */; };
 		E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */; };
 		E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
@@ -168,6 +178,16 @@
 		DACFA8D7132D09E8008D4B7A /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = gl/ofVbo.h; sourceTree = "<group>"; };
 		DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVboMesh.cpp; path = gl/ofVboMesh.cpp; sourceTree = "<group>"; };
 		DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVboMesh.h; path = gl/ofVboMesh.h; sourceTree = "<group>"; };
+		DAF685861603E12100860B68 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
+		DAF685871603E12100860B68 /* ofBasicSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBasicSoundPlayer.cpp; sourceTree = "<group>"; };
+		DAF685881603E12100860B68 /* ofBasicSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBasicSoundPlayer.h; sourceTree = "<group>"; };
+		DAF685891603E12100860B68 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
+		DAF6858A1603E12100860B68 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
+		DAF6858B1603E12100860B68 /* ofSoundFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundFile.cpp; sourceTree = "<group>"; };
+		DAF6858C1603E12100860B68 /* ofSoundMixer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundMixer.cpp; sourceTree = "<group>"; };
+		DAF6858D1603E12100860B68 /* ofSoundMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundMixer.h; sourceTree = "<group>"; };
+		DAF6858E1603E12100860B68 /* ofSoundUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUtils.cpp; sourceTree = "<group>"; };
+		DAF6858F1603E12100860B68 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
 		E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimePlayer.cpp; path = ../../../openFrameworks/video/ofQuickTimePlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQuickTimePlayer.h; path = ../../../openFrameworks/video/ofQuickTimePlayer.h; sourceTree = SOURCE_ROOT; };
 		E432815E138ABFDD0047C5CB /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
@@ -472,6 +492,16 @@
 		E4F3BA7B12F4C4C9002D19BB /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				DAF685861603E12100860B68 /* ofBaseSoundStream.cpp */,
+				DAF685871603E12100860B68 /* ofBasicSoundPlayer.cpp */,
+				DAF685881603E12100860B68 /* ofBasicSoundPlayer.h */,
+				DAF685891603E12100860B68 /* ofSoundBuffer.cpp */,
+				DAF6858A1603E12100860B68 /* ofSoundBuffer.h */,
+				DAF6858B1603E12100860B68 /* ofSoundFile.cpp */,
+				DAF6858C1603E12100860B68 /* ofSoundMixer.cpp */,
+				DAF6858D1603E12100860B68 /* ofSoundMixer.h */,
+				DAF6858E1603E12100860B68 /* ofSoundUtils.cpp */,
+				DAF6858F1603E12100860B68 /* ofSoundUtils.h */,
 				772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */,
 				772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */,
 				E4F3BA7C12F4C4C9002D19BB /* ofBaseSoundPlayer.cpp */,
@@ -643,6 +673,10 @@
 				E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */,
 				E703369715D4B03E009A3FDE /* QTKitMovieRenderer.h in Headers */,
 				E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */,
+				DAF685921603E12100860B68 /* ofBasicSoundPlayer.h in Headers */,
+				DAF685941603E12100860B68 /* ofSoundBuffer.h in Headers */,
+				DAF685971603E12100860B68 /* ofSoundMixer.h in Headers */,
+				DAF685991603E12100860B68 /* ofSoundUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,7 +707,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -754,6 +787,12 @@
 				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
 				E703369815D4B03E009A3FDE /* QTKitMovieRenderer.m in Sources */,
 				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
+				DAF685901603E12100860B68 /* ofBaseSoundStream.cpp in Sources */,
+				DAF685911603E12100860B68 /* ofBasicSoundPlayer.cpp in Sources */,
+				DAF685931603E12100860B68 /* ofSoundBuffer.cpp in Sources */,
+				DAF685951603E12100860B68 /* ofSoundFile.cpp in Sources */,
+				DAF685961603E12100860B68 /* ofSoundMixer.cpp in Sources */,
+				DAF685981603E12100860B68 /* ofSoundUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
