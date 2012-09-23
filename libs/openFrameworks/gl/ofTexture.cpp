@@ -192,6 +192,11 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 		return OF_IMAGE_COLOR;
 	case GL_RGBA:
 		return OF_IMAGE_COLOR_ALPHA;
+	case GL_DEPTH_COMPONENT32:
+	case GL_DEPTH_COMPONENT16:
+	case GL_DEPTH_COMPONENT24:
+	case GL_DEPTH_COMPONENT:
+		return OF_IMAGE_GRAYSCALE;
 	}
 	return OF_IMAGE_UNDEFINED;
 }
