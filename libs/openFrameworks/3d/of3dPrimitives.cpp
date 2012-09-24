@@ -106,30 +106,53 @@ map<int, ofVec4f>& of3dModel::getTexCoords() {
 
 
 //----------------------------------------------------------
-ofVec3f of3dModel::getScale() {
-    return _scale;
-}
+//ofVec3f of3dModel::getScale() {
+//    return _scale;
+//}
 //----------------------------------------------------------
 bool of3dModel::hasScaling() {
-    return (_scale.x != 1.f || _scale.y != 1.f || _scale.z != 1.f);
+    ofVec3f scale = getScale();
+    return (scale.x != 1.f || scale.y != 1.f || scale.z != 1.f);
+}
+//----------------------------------------------------------
+bool of3dModel::hasNormalsEnabled() {
+    for(int i = 0; i < getNumMeshes(); i++) {
+        if(getMesh(i).hasNormals()) return true;
+    }
+    return false;
 }
 //----------------------------------------------------------
 ofVec3f of3dModel::getResolution() const {
     return _resolution;
 }
 
+//----------------------------------------------------------
+void of3dModel::enableNormals() {
+    for(int i = 0; i < getNumMeshes(); i++) {
+        getMesh(i).enableNormals();
+    }
+}
+//----------------------------------------------------------
+void of3dModel::enableTextures() {
+    for(int i = 0; i < getNumMeshes(); i++) {
+        getMesh(i).enableTextures();
+    }
+}
+//----------------------------------------------------------
+void of3dModel::disableNormals() {
+    for(int i = 0; i < getNumMeshes(); i++) {
+        getMesh(i).disableNormals();
+    }
+}
+//----------------------------------------------------------
+void of3dModel::disableTextures() {
+    for(int i = 0; i < getNumMeshes(); i++) {
+        getMesh(i).disableTextures();
+    }
+}
 
 
 // SETTERS //
-//----------------------------------------------------------
-void of3dModel::setScale(float scale) {
-    setScale(scale, scale, scale);
-}
-//----------------------------------------------------------
-void of3dModel::setScale( float scaleX, float scaleY, float scaleZ ) {
-    _scale.set( scaleX, scaleY, scaleZ );
-}
-
 //----------------------------------------------------------
 void of3dModel::setResolution( int resX, int resY, int resZ ) {
     _resolution.set( resX, resY, resZ );
@@ -234,33 +257,42 @@ void of3dModel::draw() {
 
 //--------------------------------------------------------------
 void of3dModel::draw(ofPolyRenderMode renderType) {
+    // ofNode applies all of the tranformations needed, included scale //
+    ofNode::transformGL();
     ofGetCurrentRenderer()->draw(*this, renderType);
+    ofNode::restoreTransformGL();
 }
 
 //--------------------------------------------------------------
 void of3dModel::drawNormals(float scale) {
+    ofNode::transformGL();
     if(hasScaling()) {
         glPushMatrix();
         glScalef(getScale().x, getScale().y, getScale().z);
     }
     for(int j = 0; j < getNumMeshes(); j++) {
-        vector<ofVec3f> normals = getMesh(j).getNormals();
-        vector<ofVec3f> vertices = getMesh(j).getVertices();
-        ofVec3f normal;
-        ofVec3f vert;
-        glBegin(GL_LINES);
-        for(int i = 0; i < normals.size(); i++) {
-            vert = vertices[i];
-            normal = normals[i].normalized();
-            glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
-            normal *= scale;
-            glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
+        if(getMesh(j).usingNormals()) {
+            vector<ofVec3f> normals = getMesh(j).getNormals();
+            vector<ofVec3f> vertices = getMesh(j).getVertices();
+            ofVec3f normal;
+            ofVec3f vert;
+            glBegin(GL_LINES);
+            for(int i = 0; i < normals.size(); i++) {
+                vert = vertices[i];
+                normal = normals[i].normalized();
+                glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
+                normal *= scale;
+                glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
+            }
+            glEnd();
+        } else {
+            ofLog(OF_LOG_WARNING, "of3dModel :: drawNormals()") << " : mesh["<<j<<"] normals are disabled";
         }
-        glEnd();
     }
     if(hasScaling()) {
         glPopMatrix();
     }
+    ofNode::restoreTransformGL();
 }
 
 
