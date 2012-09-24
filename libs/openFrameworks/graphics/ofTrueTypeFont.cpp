@@ -630,7 +630,7 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 
 		  }else if (str[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width * letterSpacing * spaceSize;
+				 X += cps[cy].setWidth * letterSpacing * spaceSize;
 		  } else {
 			  	shapes.push_back(getCharacterAsPoints(str[index]));
 			  	shapes.back().translate(ofPoint(X,Y));
@@ -700,7 +700,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 				xoffset = 0 ; //reset X Pos back to zero
 	      } else if (c[index] == ' ') {
 	     		int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 xoffset += cps[cy].width * letterSpacing * spaceSize;
+				 xoffset += cps[cy].setWidth * letterSpacing * spaceSize;
 				 // zach - this is a bug to fix -- for now, we don't currently deal with ' ' in calculating string bounding box
 		  } else {
                 GLint height	= cps[cy].height;
@@ -778,7 +778,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width * letterSpacing * spaceSize;
+				 X += cps[cy].setWidth * letterSpacing * spaceSize;
 		  } else {
 				drawChar(cy, X, Y);
 				X += cps[cy].setWidth * letterSpacing;
@@ -877,7 +877,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width;
+				 X += cps[cy].setWidth;
 				 //glTranslated(cps[cy].width, 0, 0);
 		  } else {
 				drawCharAsShape(cy, X, Y);
