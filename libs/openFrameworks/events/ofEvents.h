@@ -81,6 +81,8 @@ class ofDragInfo{
 			float* buffer;
 			int bufferSize;
 			int nChannels;
+			int deviceID;
+			long unsigned long tickCount;
 		};
 
 		class ofResizeEventArgs : public ofEventArgs {

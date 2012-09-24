@@ -219,6 +219,15 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != NULL ){
+			
+			static ofAudioEventArgs e;
+			e.buffer = (float*)inputBuffer;
+			e.bufferSize = bufferSize;
+			e.nChannels = nInputChannels;
+			e.deviceID = rtStreamPtr->inDeviceID;
+			e.tickCount = rtStreamPtr->tickCount;
+			ofNotifyEvent(ofEvents().audioReceived, e);
+			
 			rtStreamPtr->soundInputPtr->audioIn((float*)inputBuffer, bufferSize, nInputChannels, rtStreamPtr->inDeviceID, rtStreamPtr->tickCount);
 		}
 		memset(fPtrIn, 0, bufferSize * nInputChannels * sizeof(float));
@@ -226,6 +235,15 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 
 	if (nOutputChannels > 0) {
 		memset(fPtrOut, 0, sizeof(float) * bufferSize * nOutputChannels);
+		
+		static ofAudioEventArgs e;
+		e.buffer = (float*)outputBuffer;
+		e.bufferSize = bufferSize;
+		e.nChannels = nOutputChannels;
+		e.deviceID = rtStreamPtr->outDeviceID;
+		e.tickCount = rtStreamPtr->tickCount;
+		ofNotifyEvent(ofEvents().audioRequested, e);
+		
 		if( rtStreamPtr->soundOutputPtr != NULL ){
 			rtStreamPtr->soundOutputPtr->audioOut((float*)outputBuffer, bufferSize, nOutputChannels, rtStreamPtr->outDeviceID, rtStreamPtr->tickCount);
 		}

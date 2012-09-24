@@ -148,6 +148,15 @@ int ofPASoundStream::paAudioCallback(const void *inputBuffer,
 	instance->tickCount++;
 
 	if (instance->nInputChannels > 0 && instance->soundInputPtr){
+
+		static ofAudioEventArgs e;
+		e.buffer = (float*)fPtrIn;
+		e.bufferSize = bufferSize;
+		e.nChannels = instance->nInputChannels;
+		e.deviceID = instance->deviceID;
+		e.tickCount = instance->tickCount;
+		ofNotifyEvent(ofEvents().audioReceived, e);
+
 		// send incoming data to all the sinks
 		instance->soundInputPtr->audioIn( fPtrIn, bufferSize, instance->nInputChannels, instance->deviceID, instance->tickCount );
 
@@ -157,6 +166,15 @@ int ofPASoundStream::paAudioCallback(const void *inputBuffer,
 
 	if (instance->nOutputChannels > 0) {
 		memset( fPtrOut, 0, sizeof(float)*bufferSize*instance->nOutputChannels );
+
+		static ofAudioEventArgs e;
+		e.buffer = (float*)fPtrOut;
+		e.bufferSize = bufferSize;
+		e.nChannels = instance->nOutputChannels;
+		e.deviceID = instance->deviceID;
+		e.tickCount = instance->tickCount;
+		ofNotifyEvent(ofEvents().audioRequested, e);
+
 		if(instance->soundOutputPtr){
 			instance->soundOutputPtr->audioOut( fPtrOut, bufferSize, instance->nOutputChannels, instance->deviceID, instance->tickCount );
 		}
