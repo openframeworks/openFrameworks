@@ -43,6 +43,15 @@ void ofIcoSphere(float x, float y, float radius);
 void ofIcoSphere(const ofPoint& position, float radius);
 void ofIcoSphere(float radius);
 
+// Cylinder //
+void ofSetCylinderResolution( int radiusSegments, int heightSegments, int capSegments=2 );
+ofVec3f ofGetCylinderResolution();
+void ofCylinder(float x, float y, float radius, float height);
+void ofCylinder(float x, float y, float z, float radius, float height);
+void ofCylinder(const ofPoint& position, float radius, float height);
+void ofCylinder(float radius, float height);
+
+
 void ofBox(float x, float y, float z, float size);
 void ofBox(float x, float y, float size);
 void ofBox(const ofPoint& position, float size);
