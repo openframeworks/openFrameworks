@@ -630,7 +630,7 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 
 		  }else if (str[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width * letterSpacing * spaceSize;
+				 X += cps[cy].setWidth * letterSpacing * spaceSize;
 		  } else {
 			  	shapes.push_back(getCharacterAsPoints(str[index]));
 			  	shapes.back().translate(ofPoint(X,Y));
