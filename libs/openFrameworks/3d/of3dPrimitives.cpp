@@ -813,59 +813,66 @@ float ofIcoSpherePrimitive::getRadius() {
 
 // Cylinder Mesh
 //----------------------------------------------------------
-ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, bool bCapped, int numCapSegments ) {
+ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped ) {
     ofMesh mesh;
     mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
     
-    
-    int rSegs   = radiusSegments;
     int hSegs   = heightSegments;
     int capSegs = numCapSegments;
     if(hSegs < 2) hSegs = 2;
     if(capSegs < 2) capSegs = 2;
+    if(!bCapped) capSegs=1;
     
     if(bCapped) {
-        hSegs = hSegs + capSegs * 2;
+        hSegs = hSegs + (capSegs-1.f) * 2;
     }
     
     float angleIncRadius = (TWO_PI/((float)radiusSegments-1.f));
-    float heightInc = height/(float)heightSegments;
+    float heightInc = height/((float)heightSegments-1.f);
     float halfH = height*.5f;
-    float capHInc = radius/((float)capSegs);
+    float capHInc = radius/((float)capSegs-1.f);
     
+    float newRad;
     ofVec3f vert;
     ofVec2f tcoord;
     
     for(int iy = 0; iy < hSegs-1; iy++) {
         for(int ix = 0; ix < radiusSegments; ix++) {
             
-            vert.x = cos((float)ix*angleIncRadius) * radius;
-            
-            if(bCapped && iy < capSegs) {
-                vert.z = sin((float)ix*angleIncRadius) * ((float)iy/(float)capSegs * radius);
+            if(bCapped && iy < capSegs-1) {
+                newRad = ((float)iy/((float)capSegs-1.f) * radius);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
                 vert.y = -halfH;
-            } else if(bCapped && iy > heightSegments+capSegs) {
-                float newRad = ofMap((float)iy, hSegs-capSegs, hSegs, 0.0f, 1.0);
-                vert.z = sin((float)ix*angleIncRadius) * ((float)iy);
+            } else if(bCapped && iy >= heightSegments+capSegs-2) {
+                newRad = ofMap((float)iy, hSegs-capSegs, hSegs-1, radius, 0.0);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
                 vert.y = halfH;
             } else {
-                //vert.x = cos((float)ix*angleIncRadius) * radius;
-                vert.y = heightInc*(float)iy - halfH;
+                vert.x = cos((float)ix*angleIncRadius) * radius;
+                vert.y = heightInc*((float)iy-(capSegs-1)) - halfH;
                 vert.z = sin((float)ix*angleIncRadius) * radius;
             }
             
-            tcoord.x = (float)ix/((float)radiusSegments-1.f);
+            tcoord.x = (float)ix/((float)radiusSegments);
             tcoord.y = (float)iy/((float)hSegs-1.f);
             
             mesh.addTexCoord(tcoord);
             mesh.addVertex( vert );
             
-            if(bCapped && iy < capSegs) {
-                vert.z = sin((float)ix*angleIncRadius) * (((float)iy+1.f)*capHInc);
-            } else if(bCapped && iy > heightSegments+capSegs) {
-                
+            if(bCapped && iy < capSegs-1) {
+                newRad = (((float)iy+1.f)/((float)capSegs-1.f) * radius);
+                vert.x = cos((float)(ix)*angleIncRadius) * newRad;
+                vert.y = -halfH;
+                vert.z = sin((float)(ix)*angleIncRadius) * newRad;
+            } else if(bCapped && iy >= heightSegments+capSegs-2) {
+                newRad = ofMap((float)iy+1.f, hSegs-capSegs, hSegs-1, radius, 0.0);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
+                vert.y = halfH;
             } else {
-                vert.y = vert.y + heightInc;
+                vert.y += heightInc;
                 
             }
             tcoord.y = ((float)iy+1.f)/((float)hSegs-1.f);
@@ -880,7 +887,56 @@ ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int he
 
 
 
+ofCylinderPrimitive::ofCylinderPrimitive() {
+    set( 60, 80, 6, 3, 2, true );
+}
+ofCylinderPrimitive::ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped ) {
+    set( radius, height, radiusSegments, heightSegments, numCapSegments, bCapped );
+}
+ofCylinderPrimitive::~ofCylinderPrimitive() {}
 
+void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped) {
+    _radius = radius;
+    _height = height;
+    _bCapped = bCapped;
+    setResolution( radiusSegments, heightSegments, numCapSegments );
+    
+}
+void ofCylinderPrimitive::set( float radius, float height ) {
+    _radius = radius;
+    setHeight( height );
+}
+void ofCylinderPrimitive::setRadius( float radius ) {
+    _radius = radius;
+    setResolution(getResolution().x, getResolution().y, getResolution().z);
+}
+void ofCylinderPrimitive::setHeight( float height ) {
+    _height = height;
+    setResolution(getResolution().x, getResolution().y, getResolution().z);
+}
+void ofCylinderPrimitive::setCapped(bool bCapped) {
+    _bCapped = bCapped;
+    setResolution( getResolution().x, getResolution().y, getResolution().z );
+}
+void ofCylinderPrimitive::setResolution( int radiusSegments, int heightSegments, int capSegments ) {
+    of3dModel::setResolution(radiusSegments, heightSegments, capSegments);
+    _meshes.clear();
+    ofMesh mesh = ofGetCylinderMesh( _radius, _height, radiusSegments, heightSegments, capSegments, _bCapped );
+    addMesh( mesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
+}
+
+float ofCylinderPrimitive::getHeight() {
+    return _height;
+}
+float ofCylinderPrimitive::getRadius() {
+    return _radius;
+}
+bool ofCylinderPrimitive::getCapped() {
+    return _bCapped;
+}
 
 
 
