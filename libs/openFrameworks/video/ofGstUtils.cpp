@@ -415,7 +415,13 @@ void ofGstUtils::close(){
 		gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
 		gst_element_get_state(gstPipeline,NULL,NULL,2*GST_SECOND);
 		// gst_object_unref(gstSink); this crashes, why??
+
+		ofEventArgs args;
+		update(args);
+
 		gst_object_unref(gstPipeline);
+		gstPipeline = NULL;
+		gstSink = NULL;
 	}
 
 	bLoaded = false;
