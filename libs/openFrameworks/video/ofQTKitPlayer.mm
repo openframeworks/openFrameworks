@@ -1,15 +1,18 @@
 
 #include "ofQTKitPlayer.h"
 
+#include "Poco/String.h"
+
 ofQTKitPlayer::ofQTKitPlayer() {
 	moviePlayer = NULL;
 	bNewFrame = false;
 	duration = 0;
-    speed = 0;
+    speed = 1;
 	//default this to true so the player update behavior matches ofQuicktimePlayer
 	bSynchronousScrubbing = true;
     //ofQTKitPlayer supports RGB and RGBA
     pixelFormat = OF_PIXELS_RGB;
+    currentLoopState = OF_LOOP_NORMAL;
 }
 
 
@@ -23,7 +26,7 @@ bool ofQTKitPlayer::loadMovie(string path){
 
 bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
-		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Error, invalid mode specified for");
+		ofLogError("ofQTKitPlayer") << "Invalid ofQTKitDecodeMode mode specified while loading movie.";
 		return false;
 	}
 	
@@ -36,10 +39,20 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	bool useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
 	bool usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
 	bool useAlpha = (pixelFormat == OF_PIXELS_RGBA);
+
+    bool isURL = false;
+    if (Poco::icompare(movieFilePath.substr(0,7), "http://")  == 0 ||
+        Poco::icompare(movieFilePath.substr(0,8), "https://") == 0 ||
+        Poco::icompare(movieFilePath.substr(0,7), "rtsp://")  == 0) {
+        isURL = true;
+    }
+    else {
+        movieFilePath = ofToDataPath(movieFilePath, false);
+    }
+
 	moviePlayer = [[QTKitMovieRenderer alloc] init];
-    
-	movieFilePath = ofToDataPath(movieFilePath, false);
 	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding]
+								pathIsURL:isURL
 							 allowTexture:useTexture 
 							  allowPixels:usePixels
                                allowAlpha:useAlpha];
@@ -49,10 +62,13 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
         reallocatePixels();
         moviePath = movieFilePath;
 		duration = moviePlayer.duration;
-        setLoopState(OF_LOOP_NONE);
+
+        setLoopState(currentLoopState);
+        setSpeed(1.0f);
+
 	}
 	else {
-		ofLog(OF_LOG_ERROR, "ofQTKitPlayer -- Loading file " + movieFilePath + " failed");
+		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
 		[moviePlayer release];
 		moviePlayer = NULL;
 	}
@@ -192,10 +208,6 @@ void ofQTKitPlayer::unbind(){
 	tex.unbind();
 }
 
-void ofQTKitPlayer::draw(ofRectangle drawRect){
-	draw(drawRect.x, drawRect.y, drawRect.width, drawRect.height);
-}
-
 void ofQTKitPlayer::draw(float x, float y) {
 	draw(x,y, moviePlayer.movieSize.width, moviePlayer.movieSize.height);
 }
@@ -214,7 +226,7 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 	   }
 	}
     else{
-        ofLogError("ofQTKitPlayer") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef";
+        ofLogError("ofQTKitPlayer") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
     }
 
 	return pixels;	   
@@ -291,25 +303,25 @@ int ofQTKitPlayer::getTotalNumFrames() {
 	return moviePlayer.frameCount;
 }
 
-void ofQTKitPlayer::setLoopState(bool loops) {
+void ofQTKitPlayer::setLoopState(ofLoopType state) {
 	if(moviePlayer == NULL) return;
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
-	moviePlayer.loops = loops;
-	
-	[pool release];
-}
-
-void ofQTKitPlayer::setLoopState(ofLoopType state) {
+    
 	if(state == OF_LOOP_NONE){
-		setLoopState(false);
-	}
-	else if(state == OF_LOOP_NORMAL){
-		setLoopState(true);
-	}
+        moviePlayer.loops = false;
+        moviePlayer.palindrome = false;
+	} else if(state == OF_LOOP_NORMAL){
+        moviePlayer.loops = true;
+        moviePlayer.palindrome = false;
+	} else if(state == OF_LOOP_PALINDROME) {
+        moviePlayer.loops = false;
+        moviePlayer.palindrome = true;
+    }
 	
-	//TODO: support OF_LOOP_PALINDROME
+    [pool release];
+
+    currentLoopState = state;
 }
 
 bool ofQTKitPlayer::getMovieLoopState(){
@@ -324,17 +336,8 @@ bool ofQTKitPlayer::getMovieLoopState(){
 	return loops;
 }
 
-float ofQTKitPlayer::getSpeed()
-{
-	if(moviePlayer == NULL) return 0;
-	
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
-	float rate = moviePlayer.rate;
-	
-	[pool release];
-	
-	return rate;
+float ofQTKitPlayer::getSpeed(){
+	return speed;
 }
 
 float ofQTKitPlayer::getDuration(){
@@ -379,7 +382,7 @@ float ofQTKitPlayer::getHeight() {
 
 bool ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
     if(newPixelFormat != OF_PIXELS_RGB && newPixelFormat != OF_PIXELS_RGBA) {
-        ofLogWarning("ofQTKitPlayer") << "setPixelFormat -- Pixel format " << ofToString(newPixelFormat) << " is not supported";
+        ofLogWarning("ofQTKitPlayer") << "Pixel format " << newPixelFormat << " is not supported.";
         return false;
     }
 
