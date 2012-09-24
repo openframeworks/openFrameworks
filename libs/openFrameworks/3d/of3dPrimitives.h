@@ -137,6 +137,7 @@ public:
     void setResolution( int iterations );
     void setResolution( int resX, int resY, int resZ );
     void setRadius(float radius);
+    
     float getRadius();
     
 protected:
@@ -159,9 +160,25 @@ protected:
 
 class ofCylinderPrimitive : public of3dModel {
 public:
+    ofCylinderPrimitive();
+    ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true );
+    ~ofCylinderPrimitive();
     
+    void set( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped=true );
+    void set( float radius, float height );
+    void setRadius( float radius );
+    void setHeight( float height );
+    void setCapped( bool bCapped );
+    
+    void setResolution( int radiusSegments=7, int heightSegments=3, int capSegments=2 );
+    
+    float getHeight();
+    float getRadius();
+    bool getCapped();
 protected:
-    
+    float _radius;
+    float _height;
+    bool _bCapped;
 };
 
 
@@ -171,7 +188,7 @@ ofMesh      ofGetSphereMesh(float radius, int res );
 ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
 //ofBoxPrimitive      ofGetBox( float width, float height, float depth, int res_width, int res_height );
-ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, bool bCapped = true, int numCapSegments=2 );
+ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true  );
 
 
 
