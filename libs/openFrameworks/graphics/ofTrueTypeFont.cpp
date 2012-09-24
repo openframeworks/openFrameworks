@@ -877,7 +877,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width;
+				 X += cps[cy].setWidth;
 				 //glTranslated(cps[cy].width, 0, 0);
 		  } else {
 				drawCharAsShape(cy, X, Y);
