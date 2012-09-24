@@ -39,9 +39,7 @@ public:
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords( int meshIndex );
     
-    void addMesh( ofMesh& mesh);
-    //void addTexture( ofTexture& tex );
-    //void addTexCoords( ofVec4f& tCoords );
+    void addMesh( ofMesh& mesh );
     
     int getNumMeshes();
     ofMesh* getMeshPtr(int meshIndex);
@@ -58,12 +56,16 @@ public:
     ofVec4f& getTexCoord( int texCoordIndex );
     map<int, ofVec4f>& getTexCoords();
     
-    ofVec3f getScale();
     bool hasScaling();
+    bool hasNormalsEnabled();
     ofVec3f getResolution() const;
     
-    void setScale( float scale );
-    void setScale( float scaleX, float scaleY, float scaleZ );
+    void enableNormals();
+    void enableTextures();
+    
+    void disableNormals();
+    void disableTextures();
+    
     void setResolution( int resX, int resY, int resZ );
     
     void removeMesh( int index );
@@ -79,11 +81,9 @@ public:
     
 protected:
     vector<ofMesh>      _meshes;
-    //vector<ofTexture>   _textures;
     map<int, ofVec4f>   _texCoords;
     map<int, ofTexture> _textures;
     
-    ofVec3f _scale;
     ofVec3f _resolution;
 };
 
