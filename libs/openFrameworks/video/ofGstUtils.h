@@ -2,15 +2,19 @@
 
 #include "ofConstants.h"
 #ifndef TARGET_ANDROID
-#include <gst/gst.h>
-#include <gst/app/gstappsink.h>
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTypes.h"
 #include "ofEvents.h"
 
+#define GST_DISABLE_DEPRECATED
+#include <gst/gstpad.h>
+
 class ofGstAppSink;
+typedef struct _GstElement GstElement;
+typedef struct _GstBuffer GstBuffer;
+typedef struct _GstMessage GstMessage;
 
 //-------------------------------------------------
 //----------------------------------------- ofGstUtils
@@ -34,7 +38,7 @@ public:
 	float	getPosition();
 	float 	getSpeed();
 	float 	getDuration();
-	guint64 getDurationNanos();
+	int64_t  getDurationNanos();
 	bool  	getIsMovieDone();
 
 	void 	setPosition(float pct);
@@ -59,7 +63,11 @@ public:
 	virtual GstFlowReturn preroll_cb(GstBuffer * buffer);
 	virtual GstFlowReturn buffer_cb(GstBuffer * buffer);
 	virtual void 		  eos_cb();
+
+	static void startGstMainLoop();
 protected:
+	ofGstAppSink * 		appsink;
+	bool				isStream;
 
 private:
 	void 				gstHandleMessage();
@@ -75,14 +83,12 @@ private:
 
 	GstElement  *		gstSink;
 	GstElement 	*		gstPipeline;
-	ofGstAppSink * 		appsink;
 
 	bool				posChangingPaused;
 	int					pipelineState;
 	float				speed;
-	gint64				durationNanos;
+	int64_t				durationNanos;
 	bool				isAppSink;
-	bool				isStream;
 
 	// the gst callbacks need to be friended to be able to call us
 	//friend GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data);

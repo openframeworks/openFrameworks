@@ -380,13 +380,18 @@ void AVFoundationVideoGrabber::setDevice(int deviceID) {
 	device = deviceID;
 }
 
-void AVFoundationVideoGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
-	if(PixelFormat == OF_PIXELS_RGB)
+bool AVFoundationVideoGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
+	if(PixelFormat == OF_PIXELS_RGB){
 		internalGlDataType = GL_RGB;
-	else if(PixelFormat == OF_PIXELS_RGBA)
+		return true;
+	}else if(PixelFormat == OF_PIXELS_RGBA){
 		internalGlDataType = GL_RGBA;
-	else if(PixelFormat == OF_PIXELS_BGRA)
+		return true;
+	}else if(PixelFormat == OF_PIXELS_BGRA){
 		internalGlDataType = GL_BGRA;
+		return true;
+	}
+	return false;
 }
 
 ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
