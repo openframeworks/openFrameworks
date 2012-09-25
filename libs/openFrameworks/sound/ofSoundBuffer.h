@@ -27,13 +27,14 @@ public:
 	int getNumChannels() const;
 	unsigned long getDuration() const; // millisecs
 	int getSampleRate() const;
-	unsigned int size() const; // in samples, total size
-	unsigned int bufferSize() const; // in samples per channel
+	unsigned long size() const; // in samples, total size
+	unsigned long bufferSize() const; // in samples per channel
 
 	void resize(unsigned int samples, float val=float());
 	void clear();
 	void swap(ofSoundBuffer & buffer);
 	void set(float value);
+	void set(float * buffer, unsigned int size, unsigned int nChannels);
 
 	void setNumChannels(int channels);
 	void setSampleRate(int rate);

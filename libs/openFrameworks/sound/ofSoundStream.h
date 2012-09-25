@@ -28,7 +28,7 @@ void ofSoundStreamStart();
 void ofSoundStreamClose();
 void ofSoundStreamListDevices();
 
-class ofSoundStream{
+class ofSoundStream: public ofBaseSoundStream{
 	public:
 		ofSoundStream();
 		

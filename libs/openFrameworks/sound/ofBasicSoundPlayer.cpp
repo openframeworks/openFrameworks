@@ -9,7 +9,7 @@
 #include "ofSoundUtils.h"
 #include <float.h>
 
-ofSoundStream ofBasicSoundPlayer::stream;
+ofPtr<ofBaseSoundStream> ofBasicSoundPlayer::stream(new ofSoundStream);
 ofSoundMixer ofBasicSoundPlayer::mixer;
 bool ofBasicSoundPlayer::initialized = false;
 int ofBasicSoundPlayer::samplerate = 44100;
@@ -45,8 +45,8 @@ bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 	ofLogNotice() << "loading " << fileName;
 	if(!initialized){
 		mixer.setup(bufferSize,channels,samplerate);
-		stream.setup(channels,0,samplerate,bufferSize,4);
-		stream.setOutput(&mixer);
+		stream->setup(channels,0,samplerate,bufferSize,4);
+		stream->setOutput(&mixer);
 		initialized = true;
 	}
 	ofLogNotice() << "adding output to mixer ";
@@ -140,7 +140,7 @@ float ofBasicSoundPlayer::getPosition(){
 }
 
 int ofBasicSoundPlayer::getPositionMS(){
-	return buffer.getDuration() * getPosition();
+	return float(positions.back())*1000./buffer.getSampleRate();
 }
 
 bool ofBasicSoundPlayer::getIsPlaying(){
@@ -161,6 +161,10 @@ bool ofBasicSoundPlayer::isLoaded(){
 
 float ofBasicSoundPlayer::getVolume(){
 	return volume;
+}
+
+unsigned long ofBasicSoundPlayer::getDurationMS(){
+	return buffer.getDuration();
 }
 
 void ofBasicSoundPlayer::updatePositions(int bufferSize){
@@ -219,8 +223,13 @@ ofSoundBuffer & ofBasicSoundPlayer::getCurrentBuffer(){
 	}
 }
 
-ofSoundStream & ofBasicSoundPlayer::getSoundStream(){
+ofPtr<ofBaseSoundStream> ofBasicSoundPlayer::getSoundStream(){
 	return stream;
+}
+
+void ofBasicSoundPlayer::setSoundStream(ofPtr<ofBaseSoundStream> _stream){
+	stream = _stream;
+	stream->setOutput(&mixer);
 }
 
 void ofBasicSoundPlayer::setMaxSoundsTotal(int max){

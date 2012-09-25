@@ -58,11 +58,11 @@ void ofSoundBuffer::setSampleRate(int rate){
 	samplerate = rate;
 }
 
-unsigned int ofSoundBuffer::size() const{
+unsigned long ofSoundBuffer::size() const{
 	return buffer.size();
 }
 
-unsigned int ofSoundBuffer::bufferSize() const{
+unsigned long ofSoundBuffer::bufferSize() const{
 	return buffer.size()/channels;
 }
 
@@ -76,6 +76,11 @@ void ofSoundBuffer::clear(){
 
 void ofSoundBuffer::set(float value){
 	buffer.assign(buffer.size(),value);
+}
+
+void ofSoundBuffer::set(float * _buffer, unsigned int size, unsigned int nChannels){
+	buffer.assign(_buffer,_buffer+size*nChannels);
+	setNumChannels(nChannels);
 }
 
 float & ofSoundBuffer::operator[](unsigned int pos){
