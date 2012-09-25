@@ -12,6 +12,7 @@ ofxSlider<Type>::ofxSlider(string sliderName, Type _val, Type _min, Type _max, f
 
 template<typename Type>
 ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _val, float width, float height){
+	bUpdateOnReleaseOnly = false;
 	name = sliderName;
 	value = _val;
 	b.x = 0;
@@ -37,6 +38,9 @@ void ofxSlider<Type>::mouseMoved(ofMouseEventArgs & args){
 
 template<typename Type>
 void ofxSlider<Type>::mousePressed(ofMouseEventArgs & args){
+	if(bUpdateOnReleaseOnly){
+		value.disableEvents();
+	}
 	setValue(args.x, args.y, true);
 }
 
@@ -47,6 +51,10 @@ void ofxSlider<Type>::mouseDragged(ofMouseEventArgs & args){
 
 template<typename Type>
 void ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
+	if(bUpdateOnReleaseOnly){
+		value.enableEvents();
+	}
+	setValue(args.x, args.y, false);
 	bGuiActive = false;
 }
 
@@ -135,6 +143,12 @@ void ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
 template<typename Type>
 ofAbstractParameter & ofxSlider<Type>::getParameter(){
 	return value;
+}
+
+
+template<typename Type>
+void ofxSlider<Type>::setUpdateOnReleaseOnly(bool _bUpdateOnReleaseOnly){
+	bUpdateOnReleaseOnly = _bUpdateOnReleaseOnly;
 }
 
 

@@ -6,7 +6,9 @@
 #include "ofParameterGroup.h"
 
 class ofxGuiGroup : public ofxBaseGui {
-public:	    
+public:
+    ofxGuiGroup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
     virtual ~ofxGuiGroup() {}
     ofxGuiGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
 	ofxGuiGroup * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
@@ -35,18 +37,17 @@ public:
 	vector<string> getControlNames();
 	int getNumControls();
     
-	ofxIntSlider getIntSlider(string name);
-	ofxFloatSlider getFloatSlider(string name);
-	ofxToggle getToggle(string name);
-	ofxButton getButton(string name);
+	ofxIntSlider & getIntSlider(string name);
+	ofxFloatSlider & getFloatSlider(string name);
+	ofxToggle & getToggle(string name);
+	ofxButton & getButton(string name);
+	ofxGuiGroup & getGroup(string name);
     
 	ofxBaseGui * getControl(string name);
 	ofxBaseGui * getControl(int num);
     
 	ofAbstractParameter & getParameter();
 protected:
-    ofxGuiGroup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
-	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
     void registerMouseEvents();
     virtual void setValue(float mx, float my, bool bCheck);
     void sizeChangedCB();
@@ -55,7 +56,7 @@ protected:
 	float header;
 	
     template<class ControlType>
-	ControlType getControlType(string name);
+	ControlType & getControlType(string name);
 
 	vector <ofxBaseGui *> collection;
 	ofParameterGroup parameters;
@@ -67,8 +68,15 @@ protected:
 };
 
 template<class ControlType>
-ControlType ofxGuiGroup::getControlType(string name){
+ControlType & ofxGuiGroup::getControlType(string name){
 	ControlType * control = dynamic_cast<ControlType*>(getControl(name));
-	if(control) return *control;
-	else return ControlType();
+	if(control){
+		return *control;
+	}else{
+		ofLogWarning() << "getControlType " << name << " not found, creating new";
+		control = new ControlType;
+		control->setName(name);
+		add(control);
+		return *control;
+	}
 }

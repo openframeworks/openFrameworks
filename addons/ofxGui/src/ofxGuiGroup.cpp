@@ -233,20 +233,24 @@ vector<string> ofxGuiGroup::getControlNames(){
 	return names;
 }
 
-ofxIntSlider ofxGuiGroup::getIntSlider(string name){
+ofxIntSlider & ofxGuiGroup::getIntSlider(string name){
 	return getControlType<ofxIntSlider>(name);
 }
 
-ofxFloatSlider ofxGuiGroup::getFloatSlider(string name){
+ofxFloatSlider & ofxGuiGroup::getFloatSlider(string name){
 	return getControlType<ofxFloatSlider>(name);
 }
 
-ofxToggle ofxGuiGroup::getToggle(string name){
+ofxToggle & ofxGuiGroup::getToggle(string name){
 	return getControlType<ofxToggle>(name);
 }
 
-ofxButton ofxGuiGroup::getButton(string name){
+ofxButton & ofxGuiGroup::getButton(string name){
 	return getControlType<ofxButton>(name);
+}
+
+ofxGuiGroup & ofxGuiGroup::getGroup(string name){
+	return getControlType<ofxGuiGroup>(name);
 }
 
 ofxBaseGui * ofxGuiGroup::getControl(string name){
