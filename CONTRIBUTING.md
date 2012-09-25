@@ -22,12 +22,12 @@ We love hearing about bugs! It's how we get them fixed.
   A good title explains the core of the problem in about 5-10 words. (It's sometimes easier to write the title after you've written the description.)
     - Examples of bad titles: _problem with ofRectangle_ or _can't set color_
     - Examples of good titles: _ofRectangle crashes if width is 0_ or _ofSetColor doesn't work with ofPath objects_.
-  - In the description, explain
+  - In the description, include the following details:
+    0. relevant system information such as which openFrameworks version, operating system, and IDE you are using,
     1. what you were doing when you noticed the bug,
     2. what you expected to happen,
     3. what actually happened, and
     4. how to make it happen again (ie how to reproduce the bug).
-    5. Relevant system information: Which openFrameworks version, operating system, and IDE you are using.
   - If you can demonstrate the bug in a few lines of code, include this code in the description. 
   But please __don't__ copy and paste your entire testApp file -- if you need to something like that, upload a zip file using a file locker service such as DropBox and provide a link.
 - Someone will be along to review your bug report and assign tags to it.
