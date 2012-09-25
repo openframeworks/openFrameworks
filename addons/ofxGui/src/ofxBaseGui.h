@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofxXmlSettings.h"
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofParameter.h"

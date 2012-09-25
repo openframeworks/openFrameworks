@@ -1,6 +1,7 @@
 #include "ofxGuiGroup.h"
 #include "ofxPanel.h"
 #include "ofxSliderGroup.h"
+#include "ofGraphics.h"
 
 ofxGuiGroup::ofxGuiGroup(string collectionName, string filename, float x, float y){
 	minimized = false;
