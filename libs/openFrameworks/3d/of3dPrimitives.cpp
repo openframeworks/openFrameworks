@@ -264,12 +264,11 @@ void of3dModel::draw(ofPolyRenderMode renderType) {
 }
 
 //--------------------------------------------------------------
-void of3dModel::drawNormals(float scale) {
+void of3dModel::drawNormals(float length) {
     ofNode::transformGL();
-    if(hasScaling()) {
-        glPushMatrix();
-        glScalef(getScale().x, getScale().y, getScale().z);
-    }
+    
+    float fixLength = getScale().length();
+    
     for(int j = 0; j < getNumMeshes(); j++) {
         if(getMesh(j).usingNormals()) {
             vector<ofVec3f> normals = getMesh(j).getNormals();
@@ -280,8 +279,8 @@ void of3dModel::drawNormals(float scale) {
             for(int i = 0; i < normals.size(); i++) {
                 vert = vertices[i];
                 normal = normals[i].normalized();
-                glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
-                normal *= scale;
+                glVertex3f(vert.x, vert.y, vert.z);
+                normal *= length;
                 glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
             }
             glEnd();
@@ -289,9 +288,7 @@ void of3dModel::drawNormals(float scale) {
             ofLog(OF_LOG_WARNING, "of3dModel :: drawNormals()") << " : mesh["<<j<<"] normals are disabled";
         }
     }
-    if(hasScaling()) {
-        glPopMatrix();
-    }
+    
     ofNode::restoreTransformGL();
 }
 

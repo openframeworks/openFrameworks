@@ -77,7 +77,7 @@ public:
     void drawFaces();
     void draw();
     void draw(ofPolyRenderMode renderType);
-    void drawNormals( float scale );
+    void drawNormals( float length );
     
 protected:
     vector<ofMesh>      _meshes;
