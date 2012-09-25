@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxBaseGui.h"
+#include "ofParameter.h"
 
 class ofxLabel: public ofxBaseGui {
 public:
