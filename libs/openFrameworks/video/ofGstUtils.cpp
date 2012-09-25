@@ -270,12 +270,6 @@ void ofGstUtils::stop(){
 	state = GST_STATE_READY;
 	gst_element_set_state (gstPipeline, state);
 	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
-	state = GST_STATE_NULL;
-	gst_element_set_state (gstPipeline, state);
-	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
-	state = GST_STATE_READY;
-	gst_element_set_state (gstPipeline, state);
-	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
 	bPlaying = false;
 	bPaused = true;
 }
@@ -455,7 +449,7 @@ void ofGstUtils::gstHandleMessage(){
 		GstMessage* msg = gst_bus_pop(bus);
 		if(appsink && appsink->on_message(msg)) continue;
 
-		ofLog(OF_LOG_VERBOSE,"GStreamer: Got %s message", GST_MESSAGE_TYPE_NAME(msg));
+		ofLogVerbose() << "GStreamer: Got " << GST_MESSAGE_TYPE_NAME(msg) << " message from " << GST_MESSAGE_SRC_NAME(msg);
 
 		switch (GST_MESSAGE_TYPE (msg)) {
 
@@ -518,6 +512,8 @@ void ofGstUtils::gstHandleMessage(){
 			case GST_MESSAGE_EOS:
 				ofLog(OF_LOG_VERBOSE,"GStreamer: end of the stream.");
 				bIsMovieDone = true;
+				
+				if(appsink && !isAppSink) appsink->on_eos();
 
 				switch(loopMode){
 
