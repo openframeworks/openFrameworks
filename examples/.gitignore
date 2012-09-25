@@ -18,8 +18,8 @@ Android.mk
 /*/*/*.xcodeproj
 /*/*/Project.xcconfig
 /*/*/openFrameworks-Info.plist
-/*/*/ofxiphone-Info.plist
-/*/*/iPhone_Prefix.pch
+/*/*/ofxiOS-Info.plist
+/*/*/iOS_Prefix.pch
 /*/*/*/*/Default.png
 /*/*/*/*/Icon.png
 
