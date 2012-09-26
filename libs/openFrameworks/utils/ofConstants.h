@@ -389,25 +389,28 @@ enum ofRectMode{
  	OF_RECTMODE_CENTER=1
 };
 
-enum ofRectScaleMode{
+enum ofScaleMode{
+    // ofScaleMode can usually be interpreted as a concise combination of
+    // an ofAspectRatioMode, an ofAlignVert and an ofAlignHorz.
+    
     // fits the SUBJECT rect INSIDE the TARGET rect.
     // Preserves SUBJECTS's aspect ratio.
     // Final Subject's Area <= Target's Area.
     // Subject's Center == Target's Center
-    OF_RECTSCALEMODE_FIT     = 0,
+    OF_SCALEMODE_FIT     = 0,
     // FILLS the TARGET rect with the SUBJECT rect.
     // Preserves the SUBJECT's aspect ratio.
     // Subject's Area >= Target's Area.
     // Subject's Center == Target's Center
-    OF_RECTSCALEMODE_FILL    = 1,
+    OF_SCALEMODE_FILL    = 1,
     // Preserves the SUBJECT's aspect ratio.
     // Subject's Area is Unchanged
     // Subject's Center == Target's Center
-    OF_RECTSCALEMODE_CENTER  = 2, // centers the subject
+    OF_SCALEMODE_CENTER  = 2, // centers the subject
     // Can CHANGE the SUBJECT's aspect ratio.
     // Subject's Area == Target's Area
     // Subject's Center == Target's Center
- 	OF_RECTSCALEMODE_STRETCH_TO_FILL = 3, // simply matches the target dims
+ 	OF_SCALEMODE_STRETCH_TO_FILL = 3, // simply matches the target dims
 };
 
 enum ofImageType{

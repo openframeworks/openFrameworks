@@ -10,7 +10,7 @@ void testApp::setup(){
     isAligning = true;
     isRectScaling = false;
     
-    rectScaleMode    = OF_RECTSCALEMODE_FIT;
+    scaleMode    = OF_SCALEMODE_FIT;
     aspectRatioMode  = OF_ASPECT_RATIO_KEEP;
     
     target_hAlign = OF_ALIGN_HORZ_CENTER;
@@ -63,7 +63,7 @@ void testApp::update(){
         }
     } else {
         workingSubjectRect.scaleTo(targetRect,
-                                   rectScaleMode);
+                                   scaleMode);
     }
     
     
@@ -124,7 +124,7 @@ void testApp::draw(){
     ss << "    ofAspectRatioMode (a) = " << (isScaling && !isRectScaling ? getAspectRatioModeString(aspectRatioMode) : "-") << endl;
     ss << "----------------------------------------------------------" << endl;
     ss << " Override Scale/Align (r) = " << (isRectScaling ? "YES" : "NO") << endl;
-    ss << "      ofRectScaleMode (s) = " << (isRectScaling ? getRectScaleModeString(rectScaleMode) : "-") << endl;
+    ss << "      ofScaleMode (s) = " << (isRectScaling ? getScaleModeString(scaleMode) : "-") << endl;
 
     // draw the menu
     ofSetColor(255);
@@ -150,7 +150,7 @@ void testApp::keyPressed(int key){
     } else if(key == 'a' && !isRectScaling && isScaling) {
         aspectRatioMode = getNextAspectRatioMode(aspectRatioMode);
     } else if(key == 's' && isRectScaling) {
-        rectScaleMode = getNextRectScaleMode(rectScaleMode);
+        scaleMode = getNextScaleMode(scaleMode);
     } else if(key == 'S') {
         if(isRectScaling) {
             isScaling = true;
@@ -259,15 +259,15 @@ void testApp::drawVertAlignMark(const ofRectangle& rect, const ofColor& color, o
 }
 
 //--------------------------------------------------------------
-ofRectScaleMode testApp::getNextRectScaleMode(ofRectScaleMode mode) {
-    if(mode == OF_RECTSCALEMODE_FIT) {
-        mode = OF_RECTSCALEMODE_FILL;
-    } else if(mode == OF_RECTSCALEMODE_FILL) {
-        mode = OF_RECTSCALEMODE_CENTER;
-    } else if(mode == OF_RECTSCALEMODE_CENTER) {
-        mode = OF_RECTSCALEMODE_STRETCH_TO_FILL;
-    } else if(mode == OF_RECTSCALEMODE_STRETCH_TO_FILL) {
-        mode = OF_RECTSCALEMODE_FIT;
+ofScaleMode testApp::getNextScaleMode(ofScaleMode mode) {
+    if(mode == OF_SCALEMODE_FIT) {
+        mode = OF_SCALEMODE_FILL;
+    } else if(mode == OF_SCALEMODE_FILL) {
+        mode = OF_SCALEMODE_CENTER;
+    } else if(mode == OF_SCALEMODE_CENTER) {
+        mode = OF_SCALEMODE_STRETCH_TO_FILL;
+    } else if(mode == OF_SCALEMODE_STRETCH_TO_FILL) {
+        mode = OF_SCALEMODE_FIT;
     }
     return mode;
 }
@@ -350,16 +350,16 @@ string testApp::getAspectRatioModeString(ofAspectRatioMode mode) {
 }
 
 //--------------------------------------------------------------
-string testApp::getRectScaleModeString(ofRectScaleMode mode) {
+string testApp::getScaleModeString(ofScaleMode mode) {
     switch (mode) {
-        case OF_RECTSCALEMODE_FIT:
-            return "OF_RECTSCALEMODE_FIT";
-        case OF_RECTSCALEMODE_FILL:
-            return "OF_RECTSCALEMODE_FILL";
-        case OF_RECTSCALEMODE_CENTER:
-            return "OF_RECTSCALEMODE_CENTER";
-        case OF_RECTSCALEMODE_STRETCH_TO_FILL:
-            return "OF_RECTSCALEMODE_STRETCH_TO_FILL";
+        case OF_SCALEMODE_FIT:
+            return "OF_SCALEMODE_FIT";
+        case OF_SCALEMODE_FILL:
+            return "OF_SCALEMODE_FILL";
+        case OF_SCALEMODE_CENTER:
+            return "OF_SCALEMODE_CENTER";
+        case OF_SCALEMODE_STRETCH_TO_FILL:
+            return "OF_SCALEMODE_STRETCH_TO_FILL";
     }
 }
 
