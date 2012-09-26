@@ -95,10 +95,15 @@ void ofxGuiGroup::add(ofxBaseGui * element){
     
 	ofUnregisterMouseEvents(element);
     
-	ofxPanel * subpanel = dynamic_cast<ofxPanel*>(element);
+	/*ofxPanel * subpanel = dynamic_cast<ofxPanel*>(element);
 	if(subpanel!=NULL){
 		subpanel->filename = filename;
 		subpanel->parent = this;
+	}*/
+	ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(element);
+	if(subgroup!=NULL){
+		subgroup->filename = filename;
+		subgroup->parent = this;
 	}
     
 	parameters.add(element->getParameter());
@@ -278,7 +283,7 @@ void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 		if(minimized){
 			b.height = header + spacing;
 		}else{
-			for(int i=0;i<collection.size();i++){
+			for(int i=0;i<(int)collection.size();i++){
 				b.height += collection[i]->getHeight() + spacing;
 			}
 		}
@@ -295,9 +300,9 @@ void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 
 void ofxGuiGroup::sizeChangedCB(){
 	float y = header + spacing;
-	for(int i=0;i<collection.size();i++){
+	for(int i=0;i<(int)collection.size();i++){
 		collection[i]->setPosition(collection[i]->getPosition().x,y);
-		y += collection[i]->getHeight();
+		y += collection[i]->getHeight() + spacing;
 	}
 }
 
