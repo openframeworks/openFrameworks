@@ -182,23 +182,23 @@ void ofRectangle::scaleFromCenter(const ofPoint& s) {
 
 //----------------------------------------------------------
 void ofRectangle::scaleTo(const ofRectangle& targetRect,
-                          ofRectScaleMode rectScaleMode) {
+                          ofScaleMode scaleMode) {
     
-    if(rectScaleMode == OF_RECTSCALEMODE_FIT) {
+    if(scaleMode == OF_SCALEMODE_FIT) {
         scaleTo(targetRect,
                 OF_ASPECT_RATIO_KEEP,
                 OF_ALIGN_HORZ_CENTER,
                 OF_ALIGN_VERT_CENTER);
-    } else if(rectScaleMode == OF_RECTSCALEMODE_FILL) {
+    } else if(scaleMode == OF_SCALEMODE_FILL) {
         scaleTo(targetRect,
                 OF_ASPECT_RATIO_KEEP_BY_EXPANDING,
                 OF_ALIGN_HORZ_CENTER,
                 OF_ALIGN_VERT_CENTER);
-    } else if(rectScaleMode == OF_RECTSCALEMODE_CENTER) {
+    } else if(scaleMode == OF_SCALEMODE_CENTER) {
         alignTo(targetRect,
                 OF_ALIGN_HORZ_CENTER,
                 OF_ALIGN_VERT_CENTER);
-    } else if(rectScaleMode == OF_RECTSCALEMODE_STRETCH_TO_FILL) {
+    } else if(scaleMode == OF_SCALEMODE_STRETCH_TO_FILL) {
         scaleTo(targetRect,
                 OF_ASPECT_RATIO_IGNORE,
                 OF_ALIGN_HORZ_CENTER,

@@ -63,7 +63,7 @@ public:
     void scaleFromCenter(const ofPoint& s);
     
     void scaleTo(const ofRectangle& targetRect,
-                 ofRectScaleMode rectScaleMode = OF_RECTSCALEMODE_FIT);
+                 ofScaleMode scaleMode = OF_SCALEMODE_FIT);
 
     void scaleTo(const ofRectangle& targetRect,
                  ofAspectRatioMode subjectAspectRatioMode = OF_ASPECT_RATIO_KEEP,

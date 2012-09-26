@@ -11,7 +11,7 @@ class testApp : public ofBaseApp{
 
 		void keyPressed  (int key);
   
-    ofRectScaleMode rectScaleMode;
+    ofScaleMode scaleMode;
     
     ofAspectRatioMode aspectRatioMode;
     
@@ -51,7 +51,7 @@ class testApp : public ofBaseApp{
     void drawHorzAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignHorz hAlign);
     void drawVertAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignVert vAlign);
     
-    ofRectScaleMode getNextRectScaleMode(ofRectScaleMode mode);
+    ofScaleMode getNextScaleMode(ofScaleMode mode);
     ofAspectRatioMode getNextAspectRatioMode(ofAspectRatioMode mode);
     ofAlignHorz getNextHorzAlign(ofAlignHorz hAlign);
     ofAlignVert getNextVertAlign(ofAlignVert vAlign);
@@ -60,6 +60,6 @@ class testApp : public ofBaseApp{
     string getVertAlignString(ofAlignVert vAlign);
     
     string getAspectRatioModeString(ofAspectRatioMode mode);
-    string getRectScaleModeString(ofRectScaleMode mode);
+    string getScaleModeString(ofScaleMode mode);
     
 };
