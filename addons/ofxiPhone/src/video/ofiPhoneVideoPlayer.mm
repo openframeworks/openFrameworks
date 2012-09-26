@@ -54,7 +54,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
         if(_videoTextureCache == NULL) {
             CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, 
                                                         NULL, 
-                                                        (__bridge void *)ofxiPhoneGetGLView().context,
+                                                        ofxiPhoneGetGLView().context,
                                                         NULL, 
                                                         &_videoTextureCache);
             if(err) {
