@@ -21,8 +21,8 @@ class ofRectangle {
 	
 public:
 
-    ofRectangle ();
-    virtual ~ ofRectangle ();
+    ofRectangle();
+    virtual ~ofRectangle();
     ofRectangle(float px, float py, float w, float h);
     ofRectangle(const ofPoint& p, float w, float h);
     ofRectangle(const ofRectangle& rect);
