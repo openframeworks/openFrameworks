@@ -128,7 +128,7 @@ ofQuickTimePlayer::~ofQuickTimePlayer(){
 
 	closeMovie();
     clearMemory();
-    
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -158,9 +158,9 @@ void ofQuickTimePlayer::update(){
 		//--------------------------------------------------------------
 		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------------------------------
-			
+
 			// is this necessary on windows with quicktime?
-			#ifdef TARGET_OSX 
+			#ifdef TARGET_OSX
 				// call MoviesTask if we're not on the main thread
 				if ( CFRunLoopGetCurrent() != CFRunLoopGetMain() )
 				{
@@ -185,7 +185,7 @@ void ofQuickTimePlayer::update(){
 	// 		and it was badly named so now, newness happens
 	// 		per-idle not per isNew call
 	// ---------------------------------------------------
-	
+
 	if (bLoaded == true){
 
 		bIsFrameNew = bHavePixelsChanged;
@@ -218,7 +218,7 @@ void ofQuickTimePlayer::closeMovie(){
 		DisposeMovieDrawingCompleteUPP(myDrawCompleteProc);
 
 		moviePtr = NULL;
-        
+
     }
 
    	//--------------------------------------
@@ -244,13 +244,21 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 	pixels.allocate(width,height,OF_IMAGE_COLOR);
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
+		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);
 	#else
 		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels.getPixels()), 3 * width);
 	#endif
 
 	LockPixels(GetGWorldPixMap(offscreenGWorld));
-	SetGWorld (offscreenGWorld, NULL);
+
+    // from : https://github.com/openframeworks/openFrameworks/issues/244
+    // SetGWorld do not seems to be necessary for offscreen rendering of the movie
+    // only SetMovieGWorld should be called
+    // if both are called, the app will crash after a few ofVideoPlayer object have been deleted
+
+	#ifndef TARGET_WIN32
+        SetGWorld (offscreenGWorld, NULL);
+	#endif
 	SetMovieGWorld (moviePtr, offscreenGWorld, nil);
 
 }
@@ -271,6 +279,24 @@ bool ofQuickTimePlayer::loadMovie(string name){
 		initializeQuicktime();			// init quicktime
 		closeMovie();					// if we have a movie open, close it
 		bLoaded 				= false;	// try to load now
+
+
+    // from : https://github.com/openframeworks/openFrameworks/issues/244
+    // http://developer.apple.com/library/mac/#documentation/QuickTime/RM/QTforWindows/QTforWindows/C-Chapter/3BuildingQuickTimeCa.html
+    // Apple's documentation *seems* to state that a Gworld should have been set prior to calling NewMovieFromFile
+    // So I set a dummy Gworld (1x1 pixel) before calling createMovieFromPath
+    // it avoids crash at the creation of objet ofVideoPlayer after a previous ofVideoPlayer have been deleted
+
+	#ifdef TARGET_WIN32
+	if (bDoWeAlreadyHaveAGworld){
+	      pixels.clear();
+         delete [] offscreenGWorldPixels;
+	}
+		width = 1;
+		height = 1;
+        createImgMemAndGWorld();
+	#endif
+
 
 		if( name.substr(0, 7) == "http://" || name.substr(0,7) == "rtsp://" ){
 			if(! createMovieFromURL(name, moviePtr) ) return false;
@@ -405,7 +431,7 @@ void ofQuickTimePlayer::play(){
 
 	bPlaying = true;
 	bPaused = false;
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -421,7 +447,7 @@ void ofQuickTimePlayer::play(){
 		SetMovieRate(moviePtr,  X2Fix(speed));
 		MoviesTask(moviePtr, 0);
 	}
-	
+
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -437,7 +463,7 @@ void ofQuickTimePlayer::stop(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -459,7 +485,7 @@ void ofQuickTimePlayer::setVolume(float volume){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -475,11 +501,11 @@ void ofQuickTimePlayer::setVolume(float volume){
 
 //--------------------------------------------------------
 void ofQuickTimePlayer::setLoopState(ofLoopType state){
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-		
+
 		if( isLoaded() ){
 
 			TimeBase myTimeBase;
@@ -508,7 +534,7 @@ void ofQuickTimePlayer::setLoopState(ofLoopType state){
 					break;
 			}
 			SetTimeBaseFlags(myTimeBase, myFlags);
-			
+
 		}
 
 	//--------------------------------------
@@ -552,7 +578,7 @@ void ofQuickTimePlayer::setFrame(int frame){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -595,7 +621,7 @@ float ofQuickTimePlayer::getDuration(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return 0.0;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -614,7 +640,7 @@ float ofQuickTimePlayer::getPosition(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return 0.0;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -637,7 +663,7 @@ int ofQuickTimePlayer::getCurrentFrame(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return 0;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -674,7 +700,7 @@ bool ofQuickTimePlayer::setPixelFormat(ofPixelFormat pixelFormat){
 
 //---------------------------------------------------------------------------
 ofPixelFormat ofQuickTimePlayer::getPixelFormat(){
-	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable.
 	return OF_PIXELS_RGB;
 }
 
@@ -685,11 +711,11 @@ bool ofQuickTimePlayer::getIsMovieDone(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return false;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-		
+
 		bool bIsMovieDone = (bool)IsMovieDone(moviePtr);
 		return bIsMovieDone;
 
@@ -705,13 +731,13 @@ void ofQuickTimePlayer::firstFrame(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-	
+
 	setFrame(0);
-		
+
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -724,13 +750,13 @@ void ofQuickTimePlayer::nextFrame(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-	
+
 	setFrame(getCurrentFrame() + 1);
-	
+
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -742,13 +768,13 @@ void ofQuickTimePlayer::previousFrame(){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-	
+
 	setFrame(getCurrentFrame() - 1);
-	
+
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -792,7 +818,7 @@ void ofQuickTimePlayer::setPaused(bool _bPause){
 			if (bPaused == true) 	SetMovieRate(moviePtr, X2Fix(0));
 			else 					SetMovieRate(moviePtr, X2Fix(speed));
 		}
-	
+
 	//--------------------------------------
 	#endif
 	//--------------------------------------
