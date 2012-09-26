@@ -278,20 +278,20 @@ void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 		return;
 	}
 
-	ofRectangle minButton(b.x+b.width-textPadding-10,b.y,10,header);
-	if(minButton.inside(mx,my)){
-		minimized = !minimized;
-		if(minimized){
-			b.height = header + spacing;
-		}else{
-			for(int i=0;i<(int)collection.size();i++){
-				b.height += collection[i]->getHeight() + spacing;
-			}
-		}
-		if(parent) parent->sizeChangedCB();
-	}
 
 	if( bCheck ){
+		ofRectangle minButton(b.x+b.width-textPadding-10,b.y,10,header);
+		if(minButton.inside(mx,my)){
+			minimized = !minimized;
+			if(minimized){
+				b.height = header + spacing;
+			}else{
+				for(int i=0;i<(int)collection.size();i++){
+					b.height += collection[i]->getHeight() + spacing;
+				}
+			}
+			if(parent) parent->sizeChangedCB();
+		}
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
         }
