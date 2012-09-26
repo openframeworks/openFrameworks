@@ -287,15 +287,15 @@ bool ofQuickTimePlayer::loadMovie(string name){
     // So I set a dummy Gworld (1x1 pixel) before calling createMovieFromPath
     // it avoids crash at the creation of objet ofVideoPlayer after a previous ofVideoPlayer have been deleted
 
-	#ifdef TARGET_WIN32
-	if (bDoWeAlreadyHaveAGworld){
-	      pixels.clear();
-         delete [] offscreenGWorldPixels;
-	}
-		width = 1;
-		height = 1;
+    #ifdef TARGET_WIN32
+        if (width != 0 && height != 0){
+            pixels.clear();
+            delete [] offscreenGWorldPixels;
+        }
+        width = 1;
+        height = 1;
         createImgMemAndGWorld();
-	#endif
+    #endif
 
 
 		if( name.substr(0, 7) == "http://" || name.substr(0,7) == "rtsp://" ){
