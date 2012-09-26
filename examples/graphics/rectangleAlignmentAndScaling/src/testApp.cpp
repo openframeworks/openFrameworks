@@ -124,7 +124,7 @@ void testApp::draw(){
     ss << "    ofAspectRatioMode (a) = " << (isScaling && !isRectScaling ? getAspectRatioModeString(aspectRatioMode) : "-") << endl;
     ss << "----------------------------------------------------------" << endl;
     ss << " Override Scale/Align (r) = " << (isRectScaling ? "YES" : "NO") << endl;
-    ss << "      ofScaleMode (s) = " << (isRectScaling ? getScaleModeString(scaleMode) : "-") << endl;
+    ss << "          ofScaleMode (s) = " << (isRectScaling ? getScaleModeString(scaleMode) : "-") << endl;
 
     // draw the menu
     ofSetColor(255);
