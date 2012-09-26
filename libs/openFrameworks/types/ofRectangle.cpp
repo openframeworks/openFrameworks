@@ -2,8 +2,7 @@
 #include "ofRectangle.h"
  
 //----------------------------------------------------------
-ofRectangle::ofRectangle() : x(position.x), y(position.y)
-{
+ofRectangle::ofRectangle() : x(position.x), y(position.y) {
     set(0,0,0,0);
 }
 
@@ -11,31 +10,27 @@ ofRectangle::ofRectangle() : x(position.x), y(position.y)
 ofRectangle::~ ofRectangle(){}
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(float px, float py, float w, float h) : x(position.x), y(position.y)
-{
+ofRectangle::ofRectangle(float px, float py, float w, float h) : x(position.x), y(position.y) {
 	set(px,py,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofPoint& p, float w, float h) : x(position.x), y(position.y)
-{
+ofRectangle::ofRectangle(const ofPoint& p, float w, float h) : x(position.x), y(position.y) {
     set(p,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofRectangle& rect) : x(position.x), y(position.y)
-{
+ofRectangle::ofRectangle(const ofRectangle& rect) : x(position.x), y(position.y) {
     set(rect);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofPoint& p0, const ofPoint& p1) : x(position.x), y(position.y)
-{
+ofRectangle::ofRectangle(const ofPoint& p0, const ofPoint& p1) : x(position.x), y(position.y) {
     set(p0,p1);
 }
 
 //----------------------------------------------------------
-void ofRectangle::set(float px, float py, float w, float h){
+void ofRectangle::set(float px, float py, float w, float h) {
 	x		= px;
 	y		= py;
 	width	= w;
@@ -43,7 +38,7 @@ void ofRectangle::set(float px, float py, float w, float h){
 }
 
 //----------------------------------------------------------
-void ofRectangle::set(const ofPoint& p, float w, float h){
+void ofRectangle::set(const ofPoint& p, float w, float h) {
     set(p.x, p.y, w, h);
 }
 
@@ -99,12 +94,12 @@ void ofRectangle::setPosition(const ofPoint& p) {
 }
 
 //----------------------------------------------------------
-void ofRectangle::setFromCenter(float px, float py, float w, float h){
+void ofRectangle::setFromCenter(float px, float py, float w, float h) {
     set(px - w*0.5f, py - h*0.5f, w, h);
 }
 
 //----------------------------------------------------------
-void ofRectangle::setFromCenter(const ofPoint& p, float w, float h){
+void ofRectangle::setFromCenter(const ofPoint& p, float w, float h) {
     setFromCenter(p.x, p.y, w, h);
 }
 
@@ -287,6 +282,7 @@ void ofRectangle::alignToHorz(const float& targetX,
 //----------------------------------------------------------
 void ofRectangle::alignToHorz(const ofRectangle& targetRect,
                               ofAlignHorz sharedAnchor) {
+    
     alignToHorz(targetRect, sharedAnchor, sharedAnchor);
 }
 
@@ -322,6 +318,7 @@ void ofRectangle::alignToVert(const float& targetY,
 //----------------------------------------------------------
 void ofRectangle::alignToVert(const ofRectangle& targetRect,
                               ofAlignVert sharedAnchor) {
+    
     alignToVert(targetRect,sharedAnchor,sharedAnchor);
 }
 
@@ -423,12 +420,12 @@ bool ofRectangle::intersects(const ofPoint& p0, const ofPoint& p1) const {
 }
 
 //----------------------------------------------------------
-void ofRectangle::growToInclude(float px, float py){
+void ofRectangle::growToInclude(float px, float py) {
     growToInclude(ofPoint(px,py));
 }
 
 //----------------------------------------------------------
-void ofRectangle::growToInclude(const ofPoint& p){
+void ofRectangle::growToInclude(const ofPoint& p) {
     float x0 = MIN(getMinX(),p.x);
     float x1 = MAX(getMaxX(),p.x);
     float y0 = MIN(getMinY(),p.y);
@@ -439,7 +436,7 @@ void ofRectangle::growToInclude(const ofPoint& p){
 }
 
 //----------------------------------------------------------
-void ofRectangle::growToInclude(const ofRectangle& rect){
+void ofRectangle::growToInclude(const ofRectangle& rect) {
     float x0 = MIN(getMinX(),rect.getMinX());
     float x1 = MAX(getMaxX(),rect.getMaxX());
     float y0 = MIN(getMinY(),rect.getMinY());
