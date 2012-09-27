@@ -201,7 +201,8 @@ void ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 }
 
 void ofxGuiGroup::draw(){
-	ofPushStyle();
+	bool currentFill = ofGetStyle().bFill;
+	ofColor c = ofGetStyle().color;
 	ofPushMatrix();
     
 	currentFrame = ofGetFrameNum();
@@ -227,7 +228,8 @@ void ofxGuiGroup::draw(){
 	}
     
 	ofPopMatrix();
-	ofPopStyle();
+	ofSetColor(c);
+	if(!currentFill) ofNoFill();
 }
 
 vector<string> ofxGuiGroup::getControlNames(){
@@ -284,19 +286,44 @@ void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 		if(minButton.inside(mx,my)){
 			minimized = !minimized;
 			if(minimized){
-				b.height = header + spacing;
+				minimize();
 			}else{
-				for(int i=0;i<(int)collection.size();i++){
-					b.height += collection[i]->getHeight() + spacing;
-				}
+				maximize();
 			}
-			if(parent) parent->sizeChangedCB();
 		}
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
         }
 	}
 
+}
+
+void ofxGuiGroup::minimize(){
+	minimized=true;
+	b.height = header + spacing;
+	if(parent) parent->sizeChangedCB();
+}
+
+void ofxGuiGroup::maximize(){
+	minimized=false;
+	for(int i=0;i<(int)collection.size();i++){
+		b.height += collection[i]->getHeight() + spacing;
+	}
+	if(parent) parent->sizeChangedCB();
+}
+
+void ofxGuiGroup::minimizeAll(){
+	for(int i=0;i<(int)collection.size();i++){
+		ofxGuiGroup * group = dynamic_cast<ofxGuiGroup*>(collection[i]);
+		if(group)group->minimize();
+	}
+}
+
+void ofxGuiGroup::maximizeAll(){
+	for(int i=0;i<(int)collection.size();i++){
+		ofxGuiGroup * group = dynamic_cast<ofxGuiGroup*>(collection[i]);
+		if(group)group->maximize();
+	}
 }
 
 void ofxGuiGroup::sizeChangedCB(){

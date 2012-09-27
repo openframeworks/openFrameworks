@@ -24,7 +24,12 @@ public:
     void add(ofParameter<ofColor> & parameter);
     void add(ofParameter<ofShortColor> & parameter);
     void add(ofParameter<ofFloatColor> & parameter);
-	
+
+    void minimize();
+    void maximize();
+    void minimizeAll();
+    void maximizeAll();
+
 	void clear();
 	
 	virtual void mouseMoved(ofMouseEventArgs & args);

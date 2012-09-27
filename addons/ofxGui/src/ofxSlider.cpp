@@ -71,7 +71,8 @@ ofxSlider<Type>::operator const Type & (){
 
 template<typename Type>
 void ofxSlider<Type>::draw(){
-	ofPushStyle();
+	bool currentFill = ofGetStyle().bFill;
+	ofColor c = ofGetStyle().color;
 	ofPushMatrix();
 
 	currentFrame = ofGetFrameNum();
@@ -92,7 +93,8 @@ void ofxSlider<Type>::draw(){
 	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 
 	ofPopMatrix();
-	ofPopStyle();
+	ofSetColor(c);
+	if(!currentFill) ofNoFill();
 }
 
 

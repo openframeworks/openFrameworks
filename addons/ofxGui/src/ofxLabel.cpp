@@ -19,7 +19,7 @@ ofxLabel* ofxLabel::setup(string labelName, string _label, float width, float he
 void ofxLabel::draw() {
     currentFrame = ofGetFrameNum();
 
-    ofPushStyle();
+	ofColor c = ofGetStyle().color;
     ofPushMatrix();
 
     ofSetColor(backgroundColor);
@@ -31,7 +31,7 @@ void ofxLabel::draw() {
     ofDrawBitmapString(label, textPadding, 0);
 
     ofPopMatrix();
-    ofPopStyle();
+    ofSetColor(c);
 }
 
 ofAbstractParameter & ofxLabel::getParameter(){
