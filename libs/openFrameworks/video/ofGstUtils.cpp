@@ -749,16 +749,18 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 	if(pixels.isAllocated()){
 		buffer = _buffer;
 		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
 		bBackPixelsChanged=true;
-		ofNotifyEvent(prerollEvent,backPixels);
+		mutex.unlock();
+		ofNotifyEvent(prerollEvent,eventPixels);
 	}else{
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
 		}else{
 			ofLog(OF_LOG_WARNING,"received a preroll without allocation");
 		}
+		mutex.unlock();
 	}
-	mutex.unlock();
 
 
 	/// we don't need the appsink buffer anymore
@@ -782,16 +784,18 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
 	if(pixels.isAllocated()){
 		buffer = _buffer;
 		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
 		bBackPixelsChanged=true;
-		ofNotifyEvent(bufferEvent,backPixels);
+		mutex.unlock();
+		ofNotifyEvent(bufferEvent,eventPixels);
 	}else{
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
 		}else{
 			ofLog(OF_LOG_WARNING,"received a preroll without allocation");
 		}
+		mutex.unlock();
 	}
-	mutex.unlock();
 
 	return ofGstUtils::buffer_cb(buffer);
 }
