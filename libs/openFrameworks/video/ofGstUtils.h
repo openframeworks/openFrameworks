@@ -139,6 +139,7 @@ protected:
 
 	ofPixels		pixels;				// 24 bit: rgb
 	ofPixels		backPixels;
+	ofPixels		eventPixels;
 private:
 	bool			bIsFrameNew;			// if we are new
 	bool			bHavePixelsChanged;
