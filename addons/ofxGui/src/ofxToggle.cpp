@@ -37,7 +37,8 @@ void ofxToggle::mouseReleased(ofMouseEventArgs & args){
 void ofxToggle::draw(){
 	currentFrame = ofGetFrameNum();
 
-	ofPushStyle();
+	bool currentFill = ofGetStyle().bFill;
+	ofColor c = ofGetStyle().color;
 	ofPushMatrix();
 
 	ofSetColor(backgroundColor);
@@ -65,7 +66,8 @@ void ofxToggle::draw(){
 	//ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 
 	ofPopMatrix();
-	ofPopStyle();
+	ofSetColor(c);
+	if(!currentFill) ofNoFill();
 }
 
 bool ofxToggle::operator=(bool v){

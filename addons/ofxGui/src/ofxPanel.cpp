@@ -37,7 +37,9 @@ void ofxPanel::draw(){
 	saveBox.set(loadBox);
 	saveBox.x += loadIcon.getWidth() + iconSpacing;
 
-	ofPushStyle();
+
+	bool currentFill = ofGetStyle().bFill;
+	ofColor c = ofGetStyle().color;
 	ofPushMatrix();
 
 	currentFrame = ofGetFrameNum();
@@ -61,7 +63,8 @@ void ofxPanel::draw(){
 	}
 
 	ofPopMatrix();
-	ofPopStyle();
+	ofSetColor(c);
+	if(!currentFill) ofNoFill();
 }
 
 void ofxPanel::mouseReleased(ofMouseEventArgs & args){
