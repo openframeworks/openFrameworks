@@ -69,7 +69,8 @@ They don't have to be in-depth, just a brief summary of what the commit contains
 
 #### Organising your code
 
-- Remember, _commit early, commit often_ - use commits to isolate small subsets of code. This granularity makes the code easier to deal with if some things has to be modified/isolated/removed from the pull request.
+- Remember, _commit early, commit often_ - use commits to isolate small subsets of code. 
+This granularity makes the code easier to deal with in cases where some things have to be modified/isolated/removed from the pull request.
 - Submit from a dedicated branch on your own repository, which should be only about a single topic or area of openFrameworks. 
 If you have multiple things to submit, make separate branches for each topic and submit multiple pull requests. 
 (This makes it easier to review different parts of your code separately, and get it into the core faster.)
@@ -85,5 +86,5 @@ If you have multiple things to submit, make separate branches for each topic and
   - This description is the first contact most of the core team will have with your code, so you should use it to explain why your pull request is awesome and we should accept it. 
   - Reference any issues or bugs in the [oF issue tracker](github.com/openframeworks/openFrameworks/issues) that are relevant to your pull request using `#issue number` notation, eg to reference issue __1234__ write `#1234`.
   - Mention if the code has been tested and on what platform.
-- Your pull request will be evaluated via the Pull Request Evaluation Procedure (link goes here)
+- Your pull request will be evaluated via the [Pull Request Review Procedure](https://github.com/openframeworks/openFrameworks/wiki/Pull-Request-Review-Procedure)
 
