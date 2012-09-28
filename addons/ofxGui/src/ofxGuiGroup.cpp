@@ -96,11 +96,6 @@ void ofxGuiGroup::add(ofxBaseGui * element){
     
 	ofUnregisterMouseEvents(element);
     
-	/*ofxPanel * subpanel = dynamic_cast<ofxPanel*>(element);
-	if(subpanel!=NULL){
-		subpanel->filename = filename;
-		subpanel->parent = this;
-	}*/
 	ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(element);
 	if(subgroup!=NULL){
 		subgroup->filename = filename;
@@ -332,6 +327,8 @@ void ofxGuiGroup::sizeChangedCB(){
 		collection[i]->setPosition(collection[i]->getPosition().x,y);
 		y += collection[i]->getHeight() + spacing;
 	}
+	b.height = y;
+	if(parent) parent->sizeChangedCB();
 }
 
 
