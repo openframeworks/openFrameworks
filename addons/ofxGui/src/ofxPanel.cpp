@@ -92,9 +92,13 @@ void ofxPanel::setValue(float mx, float my, bool bCheck){
 
 			if(loadBox.inside(mx - b.x, my - b.y)) {
 				loadFromFile(filename);
+				bool yes=true;
+				ofNotifyEvent(loadPressedE,yes,this);
 			}
 			if(saveBox.inside(mx - b.x, my - b.y)) {
 				saveToFile(filename);
+				bool yes=true;
+				ofNotifyEvent(savePressedE,yes,this);
 			}
 		}
 	} else if( bGrabbed ){
