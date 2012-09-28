@@ -8,13 +8,24 @@
 #ifndef OFSOUNDFILE_H_
 #define OFSOUNDFILE_H_
 
+#include "ofConstants.h"
 
-#include <sndfile.h>
+#if defined (TARGET_OSX) || defined (TARGET_WIN32)
+	// libaudiodecoder
+	#define OF_USING_LAD
+#else
+	// libsndfile
+	#define OF_USING_SNDFILE
+#endif
+
+#ifdef OF_USING_SNDFILE
+	#include <sndfile.h>
+#endif
 #ifdef OF_USING_MPG123
 	#include <mpg123.h>
 #endif
-#include "ofConstants.h"
 #include "ofSoundBuffer.h"
+#include "audiodecoder.h"
 
 class ofSoundFile {
 public:
@@ -33,20 +44,33 @@ public:
 	int getSampleRate();
 
 private:
+	
 	bool sfReadFile(ofSoundBuffer & buffer);
 	bool mpg123ReadFile(ofSoundBuffer & buffer);
+	bool ladReadFile(ofSoundBuffer & buffer);
+	
 	bool sfOpen(string path);
 	bool mpg123Open(string path);
+	bool ladOpen(string path);
+	
 
+
+#ifdef OF_USING_SNDFILE
 	// soundfilelib info
 	SNDFILE* sndFile;
 	int subformat;
 	double scale;
 	sf_count_t samples_read;
-
-	// mpg123 info
+#endif
+	
 #ifdef OF_USING_MPG123
+	// mpg123 info
 	mpg123_handle * mp3File;
+	static bool mpg123Inited;
+#endif
+	
+#ifdef OF_USING_LAD
+	AudioDecoder* audioDecoder;
 #endif
 
 
@@ -56,7 +80,6 @@ private:
 	unsigned int samples;
 	int samplerate;
 	string path;
-	static bool mpg123Inited;
 };
 
 #endif /* OFSOUNDFILE_H_ */

@@ -275,7 +275,7 @@ typedef TESSindex ofIndexType;
   #elif defined TARGET_LINUX
   	#define OF_SOUND_PLAYER_OPENAL
   #elif !defined(TARGET_ANDROID)
-  	#define OF_SOUND_PLAYER_FMOD
+  	//#define OF_SOUND_PLAYER_FMOD
   #endif
 #endif
 

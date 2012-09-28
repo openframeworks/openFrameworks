@@ -9,10 +9,17 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
+#ifdef OF_USING_MPG123
 bool ofSoundFile::mpg123Inited = false;
+#endif
 
 ofSoundFile::ofSoundFile() {
+#ifdef OF_USING_SNDFILE
 	sndFile = NULL;
+#endif
+#ifdef OF_USING_LAD
+	audioDecoder = NULL;
+#endif
 #ifdef OF_USING_MPG123
 	mp3File = NULL;
 	if(!mpg123Inited){
@@ -34,12 +41,18 @@ bool ofSoundFile::open(string _path){
 	if(ofFilePath::getFileExt(path)=="mp3"){
 		#ifdef OF_USING_MPG123
 			mpg123Open(path);
+		#elif defined (OF_USING_LAD)
+			ladOpen(path);
 		#else
 			ofLogError() << "mp3 files not supported" << endl;
 			return false;
 		#endif
 	}else{
-		sfOpen(path);
+		#ifdef OF_USING_LAD
+			ladOpen(path);
+		#else
+			sfOpen(path);
+		#endif
 	}
 	duration = float(samples/channels) / float(samplerate);
 	return true;
@@ -78,7 +91,9 @@ bool ofSoundFile::mpg123Open(string path){
 }
 #endif
 
+#ifdef OF_USING_SNDFILE
 bool ofSoundFile::sfOpen(string path){
+
 	SF_INFO sfInfo;
 	ofLogNotice() << "opening descriptor " << path;
 	sndFile = sf_open(path.c_str(),SFM_READ,&sfInfo);
@@ -103,12 +118,21 @@ bool ofSoundFile::sfOpen(string path){
 	samples = sfInfo.frames;
 	samplerate = sfInfo.samplerate;
 }
+#endif
 
 void ofSoundFile::close(){
+#ifdef OF_USING_SNDFILE
 	if(sndFile){
 		sf_close(sndFile);
 		sndFile = NULL;
 	}
+	samples_read = 0;
+#endif
+#ifdef OF_USING_LAD
+	if ( audioDecoder )
+		delete audioDecoder;
+	audioDecoder = NULL;
+#endif
 #ifdef OF_USING_MPG123
 	if(mp3File){
 		mpg123_close(mp3File);
@@ -119,7 +143,6 @@ void ofSoundFile::close(){
 	channels = 1;
 	duration = 0; //in secs
 	samplerate = 0;
-	samples_read = 0;
 	samples = 0;
 }
 
@@ -141,30 +164,50 @@ bool ofSoundFile::readTo(ofSoundBuffer & buffer, unsigned int _samples){
 	buffer.setSampleRate(samplerate);
 	if(_samples!=0){
 		buffer.resize(_samples*channels);
-	}else if(sndFile){
+	}
+#ifdef OF_USING_SNDFILE
+	else if (sndFile){
 		buffer.resize(samples);
 	}
+#endif
+#ifdef OF_USING_LAD
+	else if ( audioDecoder ) {
+		buffer.resize(samples);
+	}
+#endif
 #ifdef OF_USING_MPG123
 	else if(mp3File){
 		buffer.clear();
 	}
 #endif
+	
+#ifdef OF_USING_SNDFILE
 	if(sndFile) return sfReadFile(buffer);
-#ifdef OF_USING_MPG123
-	else if(mp3File) return mpg123ReadFile(buffer);
+#elif defined( OF_USING_MPG123 )
+	if(mp3File) return mpg123ReadFile(buffer);
+#elif defined( OF_USING_LAD )
+	if(audioDecoder) return ladReadFile(buffer);
 #endif
-	else return false;
+	return false;
 }
 
 bool ofSoundFile::seekTo(unsigned int sample){
+#ifdef OF_USING_SNDFILE
 	if(sndFile) sf_seek(sndFile,sample,SEEK_SET);
+#endif
+#ifdef OF_USING_LAD
+	if(audioDecoder) audioDecoder->seek(sample);
+#endif
+	
 #ifdef OF_USING_MPG123
 	else if(mp3File) mpg123_seek(mp3File,sample,SEEK_SET);
 #endif
 	else return false;
+	
 	return true; //TODO: check errors
 }
 
+#ifdef OF_USING_SNDFILE
 bool ofSoundFile::sfReadFile(ofSoundBuffer & buffer){
 	samples_read = sf_read_float (sndFile, &buffer[0], buffer.size());
 	/*if(samples_read<(int)buffer.size()){
@@ -178,6 +221,15 @@ bool ofSoundFile::sfReadFile(ofSoundBuffer & buffer){
 	}
 	return true;
 }
+#endif
+
+#ifdef OF_USING_LAD
+bool ofSoundFile::ladReadFile(ofSoundBuffer &buffer){
+	
+	int samplesRead = audioDecoder->read( buffer.size(), &buffer[0] );
+	return samplesRead;
+}
+#endif
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------

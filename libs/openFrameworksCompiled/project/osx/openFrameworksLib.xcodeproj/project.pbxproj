@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2DD2D9651615DF1F00310CD9 /* ofSoundFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD2D9641615DF1F00310CD9 /* ofSoundFile.h */; };
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
 		772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
@@ -149,6 +150,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2DD2D9641615DF1F00310CD9 /* ofSoundFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundFile.h; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
 		772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
@@ -492,29 +494,30 @@
 		E4F3BA7B12F4C4C9002D19BB /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				E4F3BA7C12F4C4C9002D19BB /* ofBaseSoundPlayer.cpp */,
+				E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */,
 				DAF685861603E12100860B68 /* ofBaseSoundStream.cpp */,
+				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
 				DAF685871603E12100860B68 /* ofBasicSoundPlayer.cpp */,
 				DAF685881603E12100860B68 /* ofBasicSoundPlayer.h */,
+				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
+				E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */,
+				772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */,
+				772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */,
+				E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */,
+				E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */,
 				DAF685891603E12100860B68 /* ofSoundBuffer.cpp */,
 				DAF6858A1603E12100860B68 /* ofSoundBuffer.h */,
 				DAF6858B1603E12100860B68 /* ofSoundFile.cpp */,
+				2DD2D9641615DF1F00310CD9 /* ofSoundFile.h */,
 				DAF6858C1603E12100860B68 /* ofSoundMixer.cpp */,
 				DAF6858D1603E12100860B68 /* ofSoundMixer.h */,
-				DAF6858E1603E12100860B68 /* ofSoundUtils.cpp */,
-				DAF6858F1603E12100860B68 /* ofSoundUtils.h */,
-				772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */,
-				772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */,
-				E4F3BA7C12F4C4C9002D19BB /* ofBaseSoundPlayer.cpp */,
-				E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */,
-				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
-				E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */,
 				E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */,
 				E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */,
-				E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */,
-				E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */,
-				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
 				E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */,
 				E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */,
+				DAF6858E1603E12100860B68 /* ofSoundUtils.cpp */,
+				DAF6858F1603E12100860B68 /* ofSoundUtils.h */,
 			);
 			name = sound;
 			path = ../../../openFrameworks/sound;
@@ -677,6 +680,7 @@
 				DAF685941603E12100860B68 /* ofSoundBuffer.h in Headers */,
 				DAF685971603E12100860B68 /* ofSoundMixer.h in Headers */,
 				DAF685991603E12100860B68 /* ofSoundUtils.h in Headers */,
+				2DD2D9651615DF1F00310CD9 /* ofSoundFile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -707,6 +711,7 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
