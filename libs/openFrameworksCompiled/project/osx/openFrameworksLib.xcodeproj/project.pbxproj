@@ -22,6 +22,7 @@
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
 		2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
+		2DD2D9651615DF1F00310CD9 /* ofSoundFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD2D9641615DF1F00310CD9 /* ofSoundFile.h */; };
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
 		67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
@@ -171,6 +172,7 @@
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
 		2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
+		2DD2D9641615DF1F00310CD9 /* ofSoundFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundFile.h; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
 		67D96B941651AF6D00D5242D /* ofGLUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLUtils.cpp; path = gl/ofGLUtils.cpp; sourceTree = "<group>"; };
@@ -517,13 +519,25 @@
 				E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */,
 				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
 				E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */,
-				E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */,
-				E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */,
+				E4F3BA7C12F4C4C9002D19BB /* ofBaseSoundPlayer.cpp */,
+				DAF685861603E12100860B68 /* ofBaseSoundStream.cpp */,
+				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
+				DAF685871603E12100860B68 /* ofBasicSoundPlayer.cpp */,
+				DAF685881603E12100860B68 /* ofBasicSoundPlayer.h */,
 				E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */,
 				E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */,
-				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
+				DAF685891603E12100860B68 /* ofSoundBuffer.cpp */,
+				DAF6858A1603E12100860B68 /* ofSoundBuffer.h */,
+				DAF6858B1603E12100860B68 /* ofSoundFile.cpp */,
+				2DD2D9641615DF1F00310CD9 /* ofSoundFile.h */,
+				DAF6858C1603E12100860B68 /* ofSoundMixer.cpp */,
+				DAF6858D1603E12100860B68 /* ofSoundMixer.h */,
+				E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */,
+				E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */,
 				E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */,
 				E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */,
+				DAF6858E1603E12100860B68 /* ofSoundUtils.cpp */,
+				DAF6858F1603E12100860B68 /* ofSoundUtils.h */,
 			);
 			name = sound;
 			path = ../../../openFrameworks/sound;
@@ -701,6 +715,11 @@
 				22246D98176C9AA0008A8AF4 /* ofAppGlutWindow.h in Headers */,
 				E495DF7E178896A900994238 /* ofAppNoWindow.h in Headers */,
 				27DEA3121796F578000A9E90 /* ofXml.h in Headers */,
+				DAF685921603E12100860B68 /* ofBasicSoundPlayer.h in Headers */,
+				DAF685941603E12100860B68 /* ofSoundBuffer.h in Headers */,
+				DAF685971603E12100860B68 /* ofSoundMixer.h in Headers */,
+				DAF685991603E12100860B68 /* ofSoundUtils.h in Headers */,
+				2DD2D9651615DF1F00310CD9 /* ofSoundFile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
