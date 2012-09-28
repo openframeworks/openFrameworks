@@ -714,18 +714,35 @@ void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 }
 
 void ofCairoRenderer::rotateZ(float degrees){
-	if(!surface || !cr) return;
-	cairo_matrix_rotate(getCairoMatrix(),degrees*DEG_TO_RAD);
-	setCairoMatrix();
-
-	if(!b3D) return;
-	modelView.glRotate(180,0,0,1);
+    rotate(degrees,0,0,1);
 }
 
 void ofCairoRenderer::rotate(float degrees){
 	rotateZ(degrees);
 }
 
+void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
+    // we can only do Z-axis rotations via cairo.
+    if(vecZ == 1.0f) {
+        if(!surface || !cr) return;
+        
+        cairo_matrix_rotate(getCairoMatrix(),degrees*DEG_TO_RAD);
+        setCairoMatrix();
+
+        if(!b3D) return;
+        modelView.glRotate(180,0,0,1);
+    } else {
+        if(!b3D) return;
+        modelView.glRotate(degrees,vecX,vecY,vecZ);
+    }
+}
+
+void ofCairoRenderer::rotateX(float degrees){
+	rotate(degrees,1,0,0);
+}
+void ofCairoRenderer::rotateY(float degrees){
+	rotate(degrees,0,1,0);
+}
 
 void ofCairoRenderer::setupScreen(){
 	if(!surface || !cr) return;
@@ -923,20 +940,6 @@ ofHandednessType ofCairoRenderer::getCoordHandedness(){
 
 void ofCairoRenderer::setupGraphicDefaults(){
 };
-
-void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
-	if(!b3D) return;
-	modelView.glRotate(degrees,vecX,vecY,vecZ);
-}
-
-void ofCairoRenderer::rotateX(float degrees){
-	if(!b3D) return;
-	rotate(degrees,1,0,0);
-}
-void ofCairoRenderer::rotateY(float degrees){
-	if(!b3D) return;
-	rotate(degrees,0,1,0);
-}
 
 //----------------------------------------------------------
 void ofCairoRenderer::clear(float r, float g, float b, float a) {
