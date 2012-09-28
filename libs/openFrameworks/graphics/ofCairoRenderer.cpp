@@ -722,19 +722,15 @@ void ofCairoRenderer::rotate(float degrees){
 }
 
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
-    // we can only do Z-axis rotations via cairo.
+    // we can only do Z-axis rotations via cairo_matrix_rotate.
     if(vecZ == 1.0f) {
         if(!surface || !cr) return;
-        
         cairo_matrix_rotate(getCairoMatrix(),degrees*DEG_TO_RAD);
         setCairoMatrix();
-
-        if(!b3D) return;
-        modelView.glRotate(180,0,0,1);
-    } else {
-        if(!b3D) return;
-        modelView.glRotate(degrees,vecX,vecY,vecZ);
     }
+    
+    if(!b3D) return;
+    modelView.glRotate(degrees,vecX,vecY,vecZ);
 }
 
 void ofCairoRenderer::rotateX(float degrees){
