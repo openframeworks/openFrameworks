@@ -229,10 +229,13 @@ inline const ParameterType * ofReadOnlyParameter<ParameterType,Friend>::operator
 
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue(ParameterType v){
-	if(obj->bInNotify) return;
+	if(obj->bInNotify) {
+		noEventsSetValue(v);
+		return;
+	}
 	obj->bInNotify = true;
 	obj->value = v;
-	ofNotifyEvent(obj->changedE,v,this);
+	ofNotifyEvent(obj->changedE,obj->value,this);
 	notifyParent();
 	obj->bInNotify = false;
 }
