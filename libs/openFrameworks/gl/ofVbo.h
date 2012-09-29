@@ -72,7 +72,14 @@ public:
 	void drawElements(int drawMode, int amt);
 	void bind();
 	void unbind();
+
 	void clear();
+
+	void clearVertices();
+	void clearNormals();
+	void clearColors();
+	void clearTexCoords();
+	void clearIndices();
 
 private:
 

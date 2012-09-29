@@ -511,31 +511,57 @@ void ofVbo::drawElements(int drawMode, int amt) {
 	}
 }
 
+//--------------------------------------------------------------
 void ofVbo::clear(){
+	clearVertices();
+	clearNormals();
+	clearColors();
+	clearTexCoords();
+	clearIndices();
+}
+
+
+//--------------------------------------------------------------
+void ofVbo::clearVertices(){
 	if(vertId!=0){
 		release(vertId);
 		vertId = 0;
 		bUsingVerts = false;
 	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::clearNormals(){
 	if(normalId!=0){
 		release(normalId);
 		normalId = 0;
 		bUsingNormals = false;
 	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::clearColors(){
 	if(colorId!=0){
 		release(colorId);
 		colorId = 0;
 		bUsingColors = false;
 	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::clearTexCoords(){
 	if(texCoordId!=0){
 		release(texCoordId);
 		texCoordId = 0;
 		bUsingTexCoords = false;
 	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::clearIndices(){
 	if(indexId!=0){
 		release(indexId);
 		indexId = 0;
 		bUsingIndices = false;
 	}
 }
-
