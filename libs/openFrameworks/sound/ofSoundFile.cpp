@@ -31,32 +31,46 @@ ofSoundFile::ofSoundFile() {
 }
 
 ofSoundFile::~ofSoundFile() {
-	// TODO Auto-generated destructor stub
+	close();
 }
 
 
 bool ofSoundFile::open(string _path){
 	path = ofToDataPath(_path);
 
+	bool result = false;
 	if(ofFilePath::getFileExt(path)=="mp3"){
 		#ifdef OF_USING_MPG123
-			mpg123Open(path);
+			result = mpg123Open(path);
 		#elif defined (OF_USING_LAD)
-			ladOpen(path);
+			result = ladOpen(path);
 		#else
 			ofLogError() << "mp3 files not supported" << endl;
-			return false;
 		#endif
 	}else{
 		#ifdef OF_USING_LAD
-			ladOpen(path);
+			result = ladOpen(path);
 		#else
-			sfOpen(path);
+			result = sfOpen(path);
 		#endif
 	}
 	duration = float(samples/channels) / float(samplerate);
-	return true;
+	return result;
 }
+
+#ifdef OF_USING_LAD
+bool ofSoundFile::ladOpen(string path){
+	audioDecoder = new AudioDecoder(ofToDataPath(path));
+	int result = audioDecoder->open();
+	
+	samples = audioDecoder->numSamples();
+	channels = audioDecoder->channels();
+	samplerate = audioDecoder->sampleRate();
+	duration = audioDecoder->duration();
+	
+	return result == AUDIODECODER_OK;
+}
+#endif
 
 
 #ifdef OF_USING_MPG123
@@ -230,6 +244,7 @@ bool ofSoundFile::ladReadFile(ofSoundBuffer &buffer){
 	return samplesRead;
 }
 #endif
+
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
