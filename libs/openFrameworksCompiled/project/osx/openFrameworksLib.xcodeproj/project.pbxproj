@@ -814,6 +814,7 @@
 					"$(inherited)",
 					/System/Library/Frameworks,
 				);
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

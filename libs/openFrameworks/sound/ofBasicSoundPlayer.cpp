@@ -196,6 +196,7 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 			newBufferE.notify(this,buffer);
 			buffer.copyTo(output,bufferSize,channels,0);
 		}else{
+			//assert( resampledBuffer.size() == bufferSize );
 			for(int i=0;i<(int)positions.size();i++){
 				if(abs(relativeSpeed[i] - 1)<FLT_EPSILON){
 					buffer.copyTo(resampledBuffer,bufferSize,channels,positions[i],loop);
