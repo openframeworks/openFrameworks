@@ -30,17 +30,18 @@ void ofSoundShutdown();
 #include "ofOpenALSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
 
-#elif defined( TARGET_OF_IPHONE )
-#include "ofxOpenALSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer
+#elif defined( OF_SOUND_PLAYER_BASIC )
+#include "ofBasicSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofBasicSoundPlayer
 
-#elif defined(TARGET_ANDROID)
+#elif defined( OF_SOUND_PLAYER_ANDROID )
 #include "ofxAndroidSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
 
-#else
-#include "ofBasicSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofBasicSoundPlayer
+#elif defined( OF_SOUND_PLAYER_IPHONE )
+#include "ofxOpenALSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer
+
 #endif
 
 #ifdef TARGET_ANDROID
