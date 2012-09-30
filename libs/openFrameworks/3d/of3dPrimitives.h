@@ -90,10 +90,10 @@ protected:
 class ofPlanePrimitive : public of3dModel {
 public:
     ofPlanePrimitive();
-    ofPlanePrimitive( float width, float height, int columns, int rows );
+    ofPlanePrimitive( float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofPlanePrimitive();
     
-    void set(float width, float height, int columns, int rows );
+    void set(float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void setDimensions( float width, float height );
     void resizeToTexture( ofTexture& inTexture );
     void setWidth( float width );
@@ -153,9 +153,23 @@ protected:
 
 class ofConePrimitive : public of3dModel {
 public:
+    ofConePrimitive();
+    ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
+    ~ofConePrimitive();
+    
+    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
+    void set( float radius, float height );
+    void setResolution( int radiusSegments, int heightSegments );
+    void setResolution( int resX, int resY, int resZ );
+    void setRadius( float radius );
+    void setHeight( float height );
+    
+    float getRadius();
+    float getHeight();
     
 protected:
-    
+    float _radius;
+    float _height;
 };
 
 class ofCylinderPrimitive : public of3dModel {
@@ -183,12 +197,14 @@ protected:
 
 
 
-ofMesh      ofGetPlaneMesh(float width, float height, int columns, int rows);
+ofMesh      ofGetPlaneMesh(float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 ofMesh      ofGetSphereMesh(float radius, int res );
 ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
 //ofBoxPrimitive      ofGetBox( float width, float height, float depth, int res_width, int res_height );
 ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true  );
+ofMesh      ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments );
+ofMesh      ofGetBoxMesh( float width, float height, float depth, int resX, int resY, int resZ );
 
 
 
