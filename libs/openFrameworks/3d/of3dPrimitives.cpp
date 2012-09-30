@@ -295,9 +295,16 @@ void of3dModel::drawNormals(float length) {
 
 // PLANE MESH //
 //--------------------------------------------------------------
-ofMesh ofGetPlaneMesh(float width, float height, int columns, int rows ) {
+ofMesh ofGetPlaneMesh(float width, float height, int columns, int rows, ofPrimitiveMode mode ) {
     ofMesh mesh;
-    mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+    
+    if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
+        ofLog( OF_LOG_WARNING ) << "ofGetPlaneMesh :: mode not supported, setting to OF_PRIMITIVE_TRIANGLES";
+        mode = OF_PRIMITIVE_TRIANGLES;
+    }
+    
+    mesh.setMode(mode);
+    
     ofVec3f vert;
     ofVec3f normal(0, 0, 1); // always facing forward //
     ofVec2f texcoord;
@@ -321,23 +328,39 @@ ofMesh ofGetPlaneMesh(float width, float height, int columns, int rows ) {
             mesh.addNormal(normal);
         }
     }
-    
-    for(int y = 0; y < rows-1; y++) {
-        // even rows //
-        if((y&1)==0) {
-            for(int x = 0; x < columns; x++) {
-                mesh.addIndex( (y) * columns + x );
-                mesh.addIndex( (y+1) * columns + x);
+    if(mode == OF_PRIMITIVE_TRIANGLE_STRIP) {
+        for(int y = 0; y < rows-1; y++) {
+            // even rows //
+            if((y&1)==0) {
+                for(int x = 0; x < columns; x++) {
+                    mesh.addIndex( (y) * columns + x );
+                    mesh.addIndex( (y+1) * columns + x);
+                }
+            } else {
+                for(int x = columns-1; x >0; x--) {
+                    mesh.addIndex( (y+1) * columns + x );
+                    mesh.addIndex( y * columns + x-1 );
+                }
             }
-        } else {
-            for(int x = columns-1; x >0; x--) {
-                mesh.addIndex( (y+1) * columns + x );
-                mesh.addIndex( y * columns + x-1 );
+        }
+        
+        if(rows%2!=0) mesh.addIndex(mesh.getNumVertices()-columns);
+    } else {
+        // Triangles //
+        for(int y = 0; y < rows-1; y++) {
+            for(int x = 0; x < columns-1; x++) {
+                // first triangle //
+                mesh.addIndex((y)*columns + x);
+                mesh.addIndex((y)*columns + x+1);
+                mesh.addIndex((y+1)*columns + x);
+                
+                // second triangle //
+                mesh.addIndex((y)*columns + x+1);
+                mesh.addIndex((y+1)*columns + x+1);
+                mesh.addIndex((y+1)*columns + x);
             }
         }
     }
-    
-    if(rows%2!=0) mesh.addIndex(mesh.getNumVertices()-columns);
     
     return mesh;
 }
@@ -350,20 +373,27 @@ ofPlanePrimitive::ofPlanePrimitive() {
 }
 
 //--------------------------------------------------------------
-ofPlanePrimitive::ofPlanePrimitive(float width, float height, int columns, int rows) {
-    set(width, height, columns, rows);
+ofPlanePrimitive::ofPlanePrimitive(float width, float height, int columns, int rows, ofPrimitiveMode mode) {
+    set(width, height, columns, rows, mode);
 }
 
 //--------------------------------------------------------------
 ofPlanePrimitive::~ofPlanePrimitive() {}
 
 //--------------------------------------------------------------
-void ofPlanePrimitive::set(float width, float height, int columns, int rows) {
-    if(width != _width || height != _height || getResolution().x != rows || getResolution().y != columns) {
-        _width = width;
-        _height = height;
-        setResolution(columns, rows);
-    }
+void ofPlanePrimitive::set(float width, float height, int columns, int rows, ofPrimitiveMode mode) {
+    
+    _width  = width;
+    _height = height;
+    of3dModel::setResolution(columns, rows, 0);
+    
+    _meshes.clear();
+    ofMesh mesh = ofGetPlaneMesh( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
+    addMesh( mesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
+    
 }
 
 //--------------------------------------------------------------
@@ -385,13 +415,13 @@ void ofPlanePrimitive::setResolution( int columns, int rows ) {
 
 //--------------------------------------------------------------
 void ofPlanePrimitive::setResolution(int resX, int resY, int resZ) {
-    of3dModel::setResolution(resX, resY, 0); // no z value //
-    _meshes.clear();
-    ofMesh mesh = ofGetPlaneMesh( getWidth(), getHeight(), resX, resY );
-    addMesh( mesh );
     
-    if(_texCoords.size()>0)
-        normalizeAndApplySavedTexCoords(0);
+    of3dModel::setResolution(resX, resY, 0); // no z value //
+    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP;
+    if(_meshes.size() > 0 ) {
+        mode = _meshes[0].getMode();
+    }
+    set( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
 }
 
 //--------------------------------------------------------------
@@ -970,6 +1000,132 @@ bool ofCylinderPrimitive::getCapped() {
 
 
 
+
+
+
+
+
+// Cone Mesh //
+
+ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments, int capSegments ) {
+    ofMesh mesh;
+    mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+    
+    if(heightSegments < 2) heightSegments = 2;
+    int hSegs   = heightSegments;
+    int capSegs = capSegments;
+    if(capSegs < 2) capSegs = 2;
+    
+    hSegs = hSegs + (capSegs-1);
+
+    
+    float angleIncRadius = (TWO_PI/((float)radiusSegments-1.f));
+    float heightInc = height/((float)heightSegments-1);
+    float halfH = height*.5f;
+    
+    float newRad;
+    ofVec3f vert;
+    ofVec3f normal;
+    ofVec2f tcoord;
+    
+    for(int iy = 0; iy < hSegs-1; iy++) {
+        for(int ix = 0; ix < radiusSegments; ix++) {
+            
+            if( iy >= hSegs-capSegs ) {
+                newRad = ofMap((float)iy, hSegs-capSegs, hSegs-1, radius, 0.0);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
+                vert.y = halfH;
+                normal.set(0, 1, 0);
+            } else {
+                newRad = ofMap((float)iy, 0, hSegs-capSegs, 0.0, radius);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.y = heightInc*((float)iy) - halfH;
+                
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
+            }
+            
+            tcoord.x = (float)ix/((float)radiusSegments);
+            tcoord.y = (float)iy/((float)hSegs-1.f);
+            
+            mesh.addTexCoord(tcoord);
+            mesh.addVertex( vert );
+            
+            if( iy >= hSegs-capSegs ) {
+                newRad = ofMap((float)iy+1.f, hSegs-capSegs, hSegs-1, radius, 0.0);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
+                vert.y = halfH;
+            } else {
+                newRad = ofMap((float)iy+1, 0, hSegs-capSegs, 0.0, radius);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
+                
+                vert.y += heightInc;
+                
+            }
+            tcoord.y = ((float)iy+1.f)/((float)hSegs-1.f);
+            
+            mesh.addTexCoord(tcoord);
+            mesh.addVertex(vert);
+        }
+    }
+    
+    return mesh;
+}
+
+
+
+
+
+// Cone Primitive //
+
+ofConePrimitive::ofConePrimitive() {
+    set( 20, 70, 8, 3, 2 );
+}
+ofConePrimitive::ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments ) {
+    set( radius, height, radiusSegments, heightSegments, capSegments );
+}
+ofConePrimitive::~ofConePrimitive() {}
+
+void ofConePrimitive::set( float radius, float height, int radiusSegments, int heightSegments, int capSegments ) {
+    _radius = radius;
+    _height = height;
+    setResolution( radiusSegments, heightSegments, capSegments );
+}
+void ofConePrimitive::set( float radius, float height ) {
+    _radius = radius;
+    _height = height;
+    setResolution( getResolution().x, getResolution().y, getResolution().z );
+}
+void ofConePrimitive::setResolution( int radiusSegments, int heightSegments ) {
+    setResolution(radiusSegments, heightSegments, getResolution().z);
+}
+void ofConePrimitive::setResolution( int resX, int resY, int resZ ) {
+    of3dModel::setResolution(resX, resY, resZ);
+    _meshes.clear();
+    ofMesh mesh = ofGetConeMesh( getRadius(), getHeight(), resX, resY, resZ );
+    addMesh( mesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
+}
+void ofConePrimitive::setRadius( float radius ) {
+    _radius = radius;
+    setResolution(getResolution().x, getResolution().y, getResolution().z);
+}
+void ofConePrimitive::setHeight(float height) {
+    _height = height;
+    setResolution(getResolution().x, getResolution().y, getResolution().z);
+}
+
+
+float ofConePrimitive::getRadius() {
+    return _radius;
+}
+float ofConePrimitive::getHeight() {
+    return _height;
+}
 
 
 
