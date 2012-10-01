@@ -36,7 +36,8 @@
 // results in all openFrameworks renderers, the results of
 // some method operations that modify x / y / width / height
 // (such as scaling) produce mathematically correct, but
-// visually different for each of the above representation.
+// visually different results for each of the above
+// representations.
 //
 // That said, most `getter` methods return the same results
 // for both "standardized" and "non-standardized" rectangles.
@@ -46,7 +47,7 @@
 //
 // To ensure consistent results, users are encouraged to make
 // sure rectangles are "standardized" before using operations
-// that modify width, height and position x / y.
+// that modify x / y / width / height.
 //
 // "Standardized" rectangles are rectangles whose width >= 0 and
 // height >= 0.  The `void standardize()` method can be used
