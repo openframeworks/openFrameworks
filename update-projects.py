@@ -24,7 +24,7 @@ sourceVcxprojUser = "example-empty/EmptyExample.vcxproj.user"
 # xcode osx
 sourceXcconfig = "example-empty/Project.xcconfig"
 sourcePlist = "example-empty/openFrameworks-Info.plist"
-sourcePbxproj = "example-empty/EmptyExample.xcodeproj/project.pbxproj"
+sourceXcodeproj = "example-empty/ofApp.xcodeproj/"
 
 # linux
 sourceMakefile = "example-empty/Makefile"
@@ -66,13 +66,10 @@ for example in examples:
 		replaceInFile(targetVcxproj, sourceProjectName, targetProjectName)
 
 		# xcode osx
-		targetXcodeproj = "{0}/{1}.xcodeproj".format(example, targetProjectName)
-		targetPbxproj = "{0}/project.pbxproj".format(targetXcodeproj)
+		targetXcodeproj = "{0}/ofApp.xcodeproj".format(example)
 		shutil.copy(sourceXcconfig, example)
 		shutil.copy(sourcePlist, example)
-		if not os.path.exists(targetXcodeproj):
-			os.mkdir(targetXcodeproj)
-		shutil.copy(sourcePbxproj, targetPbxproj)
-		replaceInFile(targetPbxproj, sourceProjectName, targetProjectName)
-		
-		print "Copied into " + targetProjectName + "."
+		try: shutil.rmtree(targetXcodeproj)
+		except: pass
+		shutil.copytree(sourceXcodeproj, targetXcodeproj)
+				print "Copied into " + targetProjectName + "."
