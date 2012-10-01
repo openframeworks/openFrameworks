@@ -1065,7 +1065,7 @@ ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int he
         minTexYNormalized = maxTexYNormalized;
         maxTexYNormalized   = 1.f;
         
-        normal.set(0,-1,0);
+        normal.set(0, 1,0);
         for(int iy = 0; iy < capSegs; iy++) {
             for(int ix = 0; ix < radiusSegments; ix++) {
                 newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
