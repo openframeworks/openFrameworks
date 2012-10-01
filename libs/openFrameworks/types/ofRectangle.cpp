@@ -166,7 +166,7 @@ void ofRectangle::scaleFromCenter(float sX, float sY) {
 void ofRectangle::scaleFromCenter(const ofPoint& s) {
     if(s.x == 1.0f && s.y == 1.0f) return; // nothing to do
   
-    canonicalize(); // will canonicalize
+    standardize(); // make w/h positive
 
     float newWidth  = width  * s.x;
     float newHeight = height * s.y;
@@ -230,7 +230,7 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
                                  ofAlignHorz thisHorzAnchor,
                                  ofAlignVert thisVertAnchor) {
 
-    canonicalize(); // make w/h positive
+    standardize(); // make w/h positive
     
     float tw = targetRect.getWidth();    // target width
     float th = targetRect.getHeight();   // target height
@@ -478,7 +478,7 @@ ofRectangle ofRectangle::getUnion(const ofRectangle& rect) const {
 }
 
 //----------------------------------------------------------
-void ofRectangle::canonicalize() {
+void ofRectangle::standardize() {
     if(width < 0.0f) {
         x += width;
         width = -1.0 * width;
@@ -491,18 +491,18 @@ void ofRectangle::canonicalize() {
 }
 
 //----------------------------------------------------------
-ofRectangle ofRectangle::getCanonicalized() const {
-    if(isCanonicalized()) {
+ofRectangle ofRectangle::getStandardized() const {
+    if(isStandardized()) {
         return *this;
     } else {
         ofRectangle canRect(*this); // copy it
-        canRect.canonicalize();
+        canRect.standardize();
         return canRect;
     }
 }
 
 //----------------------------------------------------------
-bool ofRectangle::isCanonicalized() const {
+bool ofRectangle::isStandardized() const {
     return width >= 0.0f && height >= 0.0f;
 }
 

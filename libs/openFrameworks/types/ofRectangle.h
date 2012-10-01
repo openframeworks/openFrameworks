@@ -128,9 +128,9 @@ public:
 
     ofRectangle getUnion(const ofRectangle& rect) const;
     
-    void canonicalize();
-    ofRectangle getCanonicalized() const;
-    bool isCanonicalized() const;  // are width/height >= 0.0f
+    void standardize();
+    ofRectangle getStandardized() const;
+    bool isStandardized() const;  // are width/height >= 0.0f
     
     float getArea() const;
     float getPerimeter() const;
