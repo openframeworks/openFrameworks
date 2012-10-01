@@ -58,6 +58,12 @@ public:
 	void getChannel(ofSoundBuffer & buffer, int channel) const;
 	void setChannel(const ofSoundBuffer & buffer, int channel);
 
+	float getRMSAmplitude();
+	float getRMSAmplitudeChannel(unsigned int channel);
+	
+	void fillWithNoise();
+	float fillWithTone( float pitchHz, float phase=0 );
+	
 private:
 	void linearResampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin, unsigned int numSamples, float speed, bool loop);
 	void hermiteResampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin, unsigned int numSamples, float speed, bool loop);

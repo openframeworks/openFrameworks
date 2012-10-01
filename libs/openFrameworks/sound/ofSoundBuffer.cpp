@@ -392,3 +392,43 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & buffer, int channel){
 		}
 	}
 }
+
+float ofSoundBuffer::getRMSAmplitude(){
+	float rmsAmplitude  = 0;
+	for(unsigned int i=0;i<size();i++){
+		rmsAmplitude += abs(buffer[i]);
+	}
+	rmsAmplitude /= float(size());
+	return rmsAmplitude;
+}
+
+float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
+	if(channel>getNumChannels()-1) return 0;
+	float rmsAmplitude  = 0;
+	for(unsigned int i=0;i<bufferSize();i++){
+		rmsAmplitude += abs(buffer[i*getNumChannels()+channel]);
+	}
+	rmsAmplitude /= float(bufferSize());
+	return rmsAmplitude;
+}
+
+
+void ofSoundBuffer::fillWithNoise()
+{
+	for ( unsigned i=0; i<size(); i++ ) {
+		buffer[i] = ofRandom(-1, 1);
+	}
+}
+
+float ofSoundBuffer::fillWithTone( float pitchHz, float phase )
+{
+	float step = TWO_PI*(pitchHz/samplerate);
+	for ( unsigned i=0; i<size()/channels; i++ ) {
+		unsigned int base = i*channels;
+		for ( unsigned j=0; j<channels; j++)
+			buffer[base+j] = sinf(phase);
+		phase += step;
+	}
+	return phase;
+	
+}
