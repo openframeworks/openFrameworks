@@ -167,10 +167,6 @@ ofMesh of3dModel::getMeshForIndexes(int meshIndex, int startIndex, int endIndex,
 
 
 //----------------------------------------------------------
-//ofVec3f of3dModel::getScale() {
-//    return _scale;
-//}
-//----------------------------------------------------------
 bool of3dModel::hasScaling() {
     ofVec3f scale = getScale();
     return (scale.x != 1.f || scale.y != 1.f || scale.z != 1.f);
@@ -200,6 +196,12 @@ void of3dModel::enableTextures() {
     }
 }
 //----------------------------------------------------------
+void of3dModel::enableColors() {
+    for(int i = 0; i < getNumMeshes(); i++) {
+        getMesh(i).enableColors();
+    }
+}
+//----------------------------------------------------------
 void of3dModel::disableNormals() {
     for(int i = 0; i < getNumMeshes(); i++) {
         getMesh(i).disableNormals();
@@ -209,6 +211,12 @@ void of3dModel::disableNormals() {
 void of3dModel::disableTextures() {
     for(int i = 0; i < getNumMeshes(); i++) {
         getMesh(i).disableTextures();
+    }
+}
+//----------------------------------------------------------
+void of3dModel::disableColors() {
+    for(int i = 0; i < getNumMeshes(); i++) {
+        getMesh(i).disableColors();
     }
 }
 

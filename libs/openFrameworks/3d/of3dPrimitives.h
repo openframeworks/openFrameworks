@@ -62,9 +62,11 @@ public:
     
     void enableNormals();
     void enableTextures();
+    void enableColors();
     
     void disableNormals();
     void disableTextures();
+    void disableColors();
     
     void setResolution( int resX, int resY, int resZ );
     
