@@ -207,13 +207,14 @@ protected:
 class ofBoxPrimitive : public of3dModel {
 public:
     
-    enum BoxFaces {
-        FRONT,
-        RIGHT,
-        LEFT,
-        BACK,
-        TOP,
-        BOTTOM
+    enum BoxSides {
+        SIDE_FRONT,
+        SIDE_RIGHT,
+        SIDE_LEFT,
+        SIDE_BACK,
+        SIDE_TOP,
+        SIDE_BOTTOM,
+        SIDES_TOTAL
     };
     
     ofBoxPrimitive();
@@ -230,12 +231,12 @@ public:
     
     void resizeToTexture( ofTexture& inTexture );
     
-    vector<ofIndexType> getFaceIndicies( int faceIndex );
-    ofMesh getFaceMesh( int faceIndex );
+    vector<ofIndexType> getSideIndicies( int sideIndex );
+    ofMesh getSideMesh( int sideIndex );
     
     void setResolution( int res ); // same resolution for all sides //
     void setResolution( int resX, int resY, int resZ );
-    void setFaceColor( int faceIndex, ofColor color );
+    void setSideColor( int sideIndex, ofColor color );
     
     float getWidth();
     float getHeight();

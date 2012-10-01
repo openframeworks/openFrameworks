@@ -1609,40 +1609,40 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     int resZ = getResolution().z;
     
     //FRONT, resY, resX
-    _strides[ FRONT ][0] = 0;
-    _strides[ FRONT ][1] = (resY-1)*(resX-1)*6;
-    _verticies[FRONT][0] = 0;
-    _verticies[FRONT][1] = resX * resY;
+    _strides[ SIDE_FRONT ][0] = 0;
+    _strides[ SIDE_FRONT ][1] = (resY-1)*(resX-1)*6;
+    _verticies[SIDE_FRONT][0] = 0;
+    _verticies[SIDE_FRONT][1] = resX * resY;
     
     //RIGHT, resY, resZ
-    _strides[ RIGHT ][0] = _strides[ FRONT ][0] + _strides[ FRONT ][1];
-    _strides[ RIGHT ][1] = (resY-1)*(resZ-1)*6;
-    _verticies[RIGHT][0] = _verticies[FRONT][0] + _verticies[FRONT][1];
-    _verticies[RIGHT][1] = resY * resZ;
+    _strides[ SIDE_RIGHT ][0] = _strides[ SIDE_FRONT ][0] + _strides[ SIDE_FRONT ][1];
+    _strides[ SIDE_RIGHT ][1] = (resY-1)*(resZ-1)*6;
+    _verticies[SIDE_RIGHT][0] = _verticies[SIDE_FRONT][0] + _verticies[SIDE_FRONT][1];
+    _verticies[SIDE_RIGHT][1] = resY * resZ;
     
     //LEFT, resY, resZ
-    _strides[ LEFT ][0] = _strides[ RIGHT ][0] + _strides[ RIGHT ][1];
-    _strides[ LEFT ][1] = (resY-1)*(resZ-1)*6;
-    _verticies[LEFT][0] = _verticies[RIGHT][0] + _verticies[RIGHT][1];
-    _verticies[LEFT][1] = resY * resZ;
+    _strides[ SIDE_LEFT ][0] = _strides[ SIDE_RIGHT ][0] + _strides[ SIDE_RIGHT ][1];
+    _strides[ SIDE_LEFT ][1] = (resY-1)*(resZ-1)*6;
+    _verticies[SIDE_LEFT][0] = _verticies[SIDE_RIGHT][0] + _verticies[SIDE_RIGHT][1];
+    _verticies[SIDE_LEFT][1] = resY * resZ;
     
     //BACK, resY, resX
-    _strides[ BACK ][0] = _strides[ LEFT ][0] + _strides[ LEFT ][1];
-    _strides[ BACK ][1] = (resY-1)*(resX-1)*6;
-    _verticies[BACK][0] = _verticies[LEFT][0] + _verticies[LEFT][1];
-    _verticies[BACK][1] = resY * resX;
+    _strides[ SIDE_BACK ][0] = _strides[ SIDE_LEFT ][0] + _strides[ SIDE_LEFT ][1];
+    _strides[ SIDE_BACK ][1] = (resY-1)*(resX-1)*6;
+    _verticies[SIDE_BACK][0] = _verticies[SIDE_LEFT][0] + _verticies[SIDE_LEFT][1];
+    _verticies[SIDE_BACK][1] = resY * resX;
     
     //TOP, resZ, resX
-    _strides[ TOP ][0] = _strides[ BACK ][0] + _strides[ BACK ][1];
-    _strides[ TOP ][1] = (resZ-1)*(resX-1)*6;
-    _verticies[TOP][0] = _verticies[BACK][0] + _verticies[BACK][1];
-    _verticies[TOP][1] = resZ * resX;
+    _strides[ SIDE_TOP ][0] = _strides[ SIDE_BACK ][0] + _strides[ SIDE_BACK ][1];
+    _strides[ SIDE_TOP ][1] = (resZ-1)*(resX-1)*6;
+    _verticies[SIDE_TOP][0] = _verticies[SIDE_BACK][0] + _verticies[SIDE_BACK][1];
+    _verticies[SIDE_TOP][1] = resZ * resX;
     
     //BOTTOM, resZ, resX
-    _strides[ BOTTOM ][0] = _strides[ TOP ][0]+_strides[ TOP ][1];
-    _strides[ BOTTOM ][1] = (resZ-1)*(resX-1)*6;
-    _verticies[BOTTOM][0] = _verticies[TOP][0] + _verticies[TOP][1];
-    _verticies[BOTTOM][1] = resZ * resX;
+    _strides[ SIDE_BOTTOM ][0] = _strides[ SIDE_TOP ][0]+_strides[ SIDE_TOP ][1];
+    _strides[ SIDE_BOTTOM ][1] = (resZ-1)*(resX-1)*6;
+    _verticies[SIDE_BOTTOM][0] = _verticies[SIDE_TOP][0] + _verticies[SIDE_TOP][1];
+    _verticies[SIDE_BOTTOM][1] = resZ * resX;
     
     _meshes.clear();
     ofMesh mesh = ofGetBoxMesh( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
@@ -1687,37 +1687,28 @@ void ofBoxPrimitive::resizeToTexture( ofTexture& inTexture ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofBoxPrimitive::getFaceIndicies( int faceIndex ) {
-    int resX = getResolution().x;
-    int resY = getResolution().y;
-    int resZ = getResolution().z;
+vector<ofIndexType> ofBoxPrimitive::getSideIndicies( int sideIndex ) {
     
-    if(faceIndex < 0 || faceIndex > 5) {
-        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getFaceIndicies : faceIndex out of bounds, returning FRONT ";
-        faceIndex = FRONT;
+    if(sideIndex < 0 || sideIndex >= SIDES_TOTAL) {
+        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getSideIndicies : faceIndex out of bounds, returning SIDE_FRONT ";
+        sideIndex = SIDE_FRONT;
     }
     
-    vector<ofIndexType> indicies;
-    int startIndex  = _strides[faceIndex][0];
-    int endIndex    = startIndex+_strides[faceIndex][1];
-    
-    indicies.assign( getMesh(0).getIndices().begin()+startIndex, getMesh(0).getIndices().begin()+endIndex );
-    
-    return indicies;
+    return getIndicies(_strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1]);
 }
 
 //--------------------------------------------------------------
-ofMesh ofBoxPrimitive::getFaceMesh( int faceIndex ) {
+ofMesh ofBoxPrimitive::getSideMesh( int sideIndex ) {
     
-    if(faceIndex < 0 || faceIndex > 5) {
+    if(sideIndex < 0 || sideIndex > SIDES_TOTAL) {
         ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getFaceMesh : faceIndex out of bounds, using FRONT ";
-        faceIndex = FRONT;
+        sideIndex = SIDE_FRONT;
     }
-    int startIndex  = _strides[faceIndex][0];
-    int endIndex    = startIndex+_strides[faceIndex][1];
+    int startIndex  = _strides[sideIndex][0];
+    int endIndex    = startIndex+_strides[sideIndex][1];
     
-    int startVertIndex  = _verticies[faceIndex][0];
-    int endVertIndex    = startVertIndex + _verticies[faceIndex][1];
+    int startVertIndex  = _verticies[sideIndex][0];
+    int endVertIndex    = startVertIndex + _verticies[sideIndex][1];
     
     return getMeshForIndexes( 0, startIndex, endIndex, startVertIndex, endVertIndex );
 }
@@ -1734,22 +1725,12 @@ void ofBoxPrimitive::setResolution( int resX, int resY, int resZ ) {
 }
 
 //--------------------------------------------------------------
-void ofBoxPrimitive::setFaceColor( int faceIndex, ofColor color ) {
-    if(faceIndex < 0 || faceIndex > 5) {
-        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: setFaceColor : faceIndex out of bounds, setting FRONT ";
-        faceIndex = FRONT;
+void ofBoxPrimitive::setSideColor( int sideIndex, ofColor color ) {
+    if(sideIndex < 0 || sideIndex >= SIDES_TOTAL) {
+        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: setSideColor : sideIndex out of bounds, setting SIDE_FRONT ";
+        sideIndex = SIDE_FRONT;
     }
-    
-    if(!getMesh().hasColors()) {
-        // no colors for verticies, so we must set them here //
-        getMesh().getColors().resize(getMesh().getNumVertices());
-    }
-    
-    int startIndex  = _strides[faceIndex][0];
-    int endIndex    = startIndex+_strides[faceIndex][1];
-    for(int i = startIndex; i < endIndex; i++) {
-        getMesh().setColor( getMesh().getIndex(i), color);
-    }
+    setColorForIndicies( 0, _strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1], color );
 }
 
 //--------------------------------------------------------------
