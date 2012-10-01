@@ -32,11 +32,17 @@
 //
 // ofRectangle myRect(100,100,-100,-100);
 //
-// While both representations will yeild the same visual
+// While both representations will yield the same visual
 // results in all openFrameworks renderers, the results of
-// various member method operations (such as scaling) will
-// produce mathematically correct, but visually different for
-// each of the above representation.
+// some method operations that modify x / y / width / height
+// (such as scaling) produce mathematically correct, but
+// visually different for each of the above representation.
+//
+// That said, most `getter` methods return the same results
+// for both "standardized" and "non-standardized" rectangles.
+// Simply stated, the user must be aware of the differences
+// between these two visually equal but mathematically different
+// representations.
 //
 // To ensure consistent results, users are encouraged to make
 // sure rectangles are "standardized" before using operations
@@ -44,7 +50,7 @@
 //
 // "Standardized" rectangles are rectangles whose width >= 0 and
 // height >= 0.  The `void standardize()` method can be used
-// to ensure that the rectangle is "standardzed".
+// to ensure that the rectangle is "standardized".
 
 class ofRectangle {
 	
