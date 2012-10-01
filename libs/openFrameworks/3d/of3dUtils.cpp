@@ -1,5 +1,6 @@
 #include "of3dUtils.h"
 #include "ofGraphics.h"
+#include "of3dGraphics.h"
 
 void ofDrawAxis(float size) {
 	ofPushStyle();
