@@ -138,7 +138,7 @@ public:
 
 	// if you extend ofNode and wish to change the way it draws, extend this
 	virtual void customDraw() {
-		ofBox(10);
+		//ofBox(10);
 		ofDrawAxis(20);
 	}
 
