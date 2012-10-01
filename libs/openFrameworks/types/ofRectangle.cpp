@@ -165,9 +165,7 @@ void ofRectangle::scaleFromCenter(float sX, float sY) {
 //----------------------------------------------------------
 void ofRectangle::scaleFromCenter(const ofPoint& s) {
     if(s.x == 1.0f && s.y == 1.0f) return; // nothing to do
-  
-    standardize(); // make w/h positive
-
+    
     float newWidth  = width  * s.x;
     float newHeight = height * s.y;
 
@@ -230,8 +228,6 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
                                  ofAlignHorz thisHorzAnchor,
                                  ofAlignVert thisVertAnchor) {
 
-    standardize(); // make w/h positive
-    
     float tw = targetRect.getWidth();    // target width
     float th = targetRect.getHeight();   // target height
     float sw = getWidth();   // subject width
