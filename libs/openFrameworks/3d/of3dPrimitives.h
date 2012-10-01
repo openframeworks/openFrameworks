@@ -85,6 +85,9 @@ protected:
     map<int, ofTexture> _textures;
     
     ofVec3f _resolution;
+    vector<ofIndexType> getIndicies( int startIndex, int endIndex );
+    void setColorForIndicies(int meshIndex, int startIndex, int endIndex, ofColor color );
+    ofMesh getMeshForIndexes(int meshIndex, int startIndex, int endIndex, int startVertIndex, int endVertIndex );
 };
 
 class ofPlanePrimitive : public of3dModel {
@@ -170,11 +173,6 @@ protected:
 class ofConePrimitive : public of3dModel {
 public:
     
-    enum ConeFaces {
-        FACE_CONE,
-        FACE_CAP
-    };
-    
     ofConePrimitive();
     ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofConePrimitive();
@@ -186,10 +184,13 @@ public:
     void setRadius( float radius );
     void setHeight( float height );
     
-    //void setFaceColor( int faceIndex, ofColor color );
+    void setTopColor( ofColor color );
+    void setCapColor( ofColor color );
     
-    //vector<ofIndexType> getFaceIndicies( int faceIndex );
-    //ofMesh getFaceMesh( int faceIndex );
+    vector<ofIndexType> getTopIndicies();
+    ofMesh getTopMesh();
+    vector<ofIndexType> getCapIndicies();
+    ofMesh getCapMesh();
     
     
     float getRadius();
@@ -199,8 +200,8 @@ protected:
     float _radius;
     float _height;
     
-    //int _strides[2][2];
-    //int _verticies[2][2];
+    int _strides[2][2];
+    int _verticies[2][2];
 };
 
 class ofBoxPrimitive : public of3dModel {

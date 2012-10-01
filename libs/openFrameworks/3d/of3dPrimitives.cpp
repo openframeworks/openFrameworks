@@ -103,6 +103,67 @@ map<int, ofVec4f>& of3dModel::getTexCoords() {
     return _texCoords;
 }
 
+//----------------------------------------------------------
+vector<ofIndexType> of3dModel::getIndicies( int startIndex, int endIndex ) {
+    vector<ofIndexType> indicies;
+    indicies.assign( getMesh().getIndices().begin()+startIndex, getMesh().getIndices().begin()+endIndex );
+    return indicies;
+}
+
+//----------------------------------------------------------
+void of3dModel::setColorForIndicies( int meshIndex, int startIndex, int endIndex, ofColor color ) {
+    if(!getMesh(meshIndex).hasColors()) {
+        // no colors for verticies, so we must set them here //
+        getMesh(meshIndex).getColors().resize(getMesh(meshIndex).getNumVertices());
+    }
+    
+    for(int i = startIndex; i < endIndex; i++) {
+        getMesh(meshIndex).setColor( getMesh(meshIndex).getIndex(i), color);
+    }
+}
+
+//----------------------------------------------------------
+ofMesh of3dModel::getMeshForIndexes(int meshIndex, int startIndex, int endIndex, int startVertIndex, int endVertIndex ) {
+    
+    ofMesh mesh;
+    mesh.setMode( getMesh(meshIndex).getMode() );
+    
+    vector<ofVec3f> verticies;
+    verticies.assign( getMesh(meshIndex).getVertices().begin()+startVertIndex, getMesh(meshIndex).getVertices().begin()+endVertIndex );
+    mesh.addVertices( verticies );
+    
+    if(getMesh(meshIndex).hasColors()) {
+        vector<ofFloatColor> colors;
+        colors.assign( getMesh(meshIndex).getColors().begin()+startVertIndex, getMesh(meshIndex).getColors().begin()+endVertIndex );
+        mesh.addColors( colors );
+        if(getMesh(meshIndex).usingColors()) mesh.enableColors();
+        else mesh.disableColors();
+    }
+    
+    if(getMesh(meshIndex).hasTexCoords()) {
+        vector<ofVec2f> texcoords;
+        texcoords.assign( getMesh(meshIndex).getTexCoords().begin()+startVertIndex, getMesh(meshIndex).getTexCoords().begin()+endVertIndex );
+        mesh.addTexCoords( texcoords );
+        if(getMesh(meshIndex).usingTextures()) mesh.enableTextures();
+        else mesh.disableTextures();
+    }
+    
+    if(getMesh(meshIndex).hasNormals()) {
+        vector<ofVec3f> normals;
+        normals.assign( getMesh(meshIndex).getNormals().begin()+startVertIndex, getMesh(meshIndex).getNormals().begin()+endVertIndex );
+        mesh.addNormals( normals );
+        if(getMesh(meshIndex).usingNormals()) mesh.enableNormals();
+        else mesh.disableNormals();
+    }
+    
+    int offsetIndex = getMesh(meshIndex).getIndex(startIndex);
+    for(int i = startIndex; i < endIndex; i++) {
+        int index = getMesh(meshIndex).getIndex(i) - offsetIndex;
+        mesh.addIndex( index );
+    }
+    
+    return mesh;
+}
 
 
 //----------------------------------------------------------
@@ -1007,7 +1068,7 @@ bool ofCylinderPrimitive::getCapped() {
 
 
 // Cone Mesh //
-
+//--------------------------------------------------------------
 ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
     ofMesh mesh;
     if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
@@ -1132,19 +1193,44 @@ ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int height
 
 
 // Cone Primitive //
-
+//--------------------------------------------------------------
 ofConePrimitive::ofConePrimitive() {
     set( 20, 70, 8, 3, 2 );
 }
+
+//--------------------------------------------------------------
 ofConePrimitive::ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
     set( radius, height, radiusSegments, heightSegments, capSegments, mode );
 }
+
+//--------------------------------------------------------------
 ofConePrimitive::~ofConePrimitive() {}
 
+//--------------------------------------------------------------
 void ofConePrimitive::set( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
     _radius = radius;
     _height = height;
     of3dModel::setResolution(radiusSegments, heightSegments, capSegments);
+    
+    int resX = getResolution().x;
+    int resY = getResolution().y-1;
+    int resZ = getResolution().z-1;
+    
+    int indexStep = 2;
+    if(mode == OF_PRIMITIVE_TRIANGLES) {
+        indexStep = 6;
+        resX = resX-1;
+    }
+    
+    _strides[ 0 ][0] = 0;
+    _strides[ 0 ][1] = (resX)*(resY) * indexStep;
+    _verticies[0][0] = 0;
+    _verticies[0][1] = getResolution().x * getResolution().y;
+    
+    _strides[ 1 ][0] = _strides[ 0 ][0] + _strides[ 0 ][1];
+    _strides[ 1 ][1] = (resX)*(resZ) * indexStep;
+    _verticies[1][0] = _verticies[0][0] + _verticies[0][1];
+    _verticies[1][1] = getResolution().x * getResolution().z;
     
     _meshes.clear();
     ofMesh mesh = ofGetConeMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
@@ -1154,14 +1240,20 @@ void ofConePrimitive::set( float radius, float height, int radiusSegments, int h
         normalizeAndApplySavedTexCoords(0);
     
 }
+
+//--------------------------------------------------------------
 void ofConePrimitive::set( float radius, float height ) {
     _radius = radius;
     _height = height;
     setResolution( getResolution().x, getResolution().y, getResolution().z );
 }
+
+//--------------------------------------------------------------
 void ofConePrimitive::setResolution( int radiusSegments, int heightSegments ) {
     setResolution(radiusSegments, heightSegments, getResolution().z);
 }
+
+//--------------------------------------------------------------
 void ofConePrimitive::setResolution( int resX, int resY, int resZ ) {
     ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP;
     if(_meshes.size() > 0 ) {
@@ -1169,19 +1261,65 @@ void ofConePrimitive::setResolution( int resX, int resY, int resZ ) {
     }
     set( getRadius(), getHeight(), resX, resY, resZ, mode );
 }
+
+//--------------------------------------------------------------
 void ofConePrimitive::setRadius( float radius ) {
     _radius = radius;
     setResolution(getResolution().x, getResolution().y, getResolution().z);
 }
+
+//--------------------------------------------------------------
 void ofConePrimitive::setHeight(float height) {
     _height = height;
     setResolution(getResolution().x, getResolution().y, getResolution().z);
 }
 
+//--------------------------------------------------------------
+void ofConePrimitive::setTopColor( ofColor color ) {
+    setColorForIndicies( 0, _strides[0][0], _strides[0][0]+_strides[0][1], color );
+}
 
+//--------------------------------------------------------------
+void ofConePrimitive::setCapColor( ofColor color ) {
+    setColorForIndicies( 0, _strides[1][0], _strides[1][0]+_strides[1][1], color );
+}
+
+//--------------------------------------------------------------
+vector<ofIndexType> ofConePrimitive::getTopIndicies() {
+    return of3dModel::getIndicies(_strides[0][0], _strides[0][0]+_strides[0][1]);
+}
+
+//--------------------------------------------------------------
+ofMesh ofConePrimitive::getTopMesh() {
+    int startIndex  = _strides[0][0];
+    int endIndex    = startIndex + _strides[0][1];
+    
+    int startVertIndex  = _verticies[0][0];
+    int endVertIndex    = startVertIndex + _verticies[0][1];
+    return getMeshForIndexes( 0, startIndex, endIndex, startVertIndex, endVertIndex );
+}
+
+//--------------------------------------------------------------
+vector<ofIndexType> ofConePrimitive::getCapIndicies() {
+    return of3dModel::getIndicies( _strides[1][0], _strides[1][0] + _strides[1][1] );
+}
+
+//--------------------------------------------------------------
+ofMesh ofConePrimitive::getCapMesh() {
+    int startIndex  = _strides[1][0];
+    int endIndex    = startIndex + _strides[1][1];
+    
+    int startVertIndex  = _verticies[1][0];
+    int endVertIndex    = startVertIndex + _verticies[1][1];
+    return getMeshForIndexes( 0, startIndex, endIndex, startVertIndex, endVertIndex );
+}
+
+//--------------------------------------------------------------
 float ofConePrimitive::getRadius() {
     return _radius;
 }
+
+//--------------------------------------------------------------
 float ofConePrimitive::getHeight() {
     return _height;
 }
@@ -1570,8 +1708,7 @@ vector<ofIndexType> ofBoxPrimitive::getFaceIndicies( int faceIndex ) {
 
 //--------------------------------------------------------------
 ofMesh ofBoxPrimitive::getFaceMesh( int faceIndex ) {
-    ofMesh mesh;
-    mesh.setMode( OF_PRIMITIVE_TRIANGLES );
+    
     if(faceIndex < 0 || faceIndex > 5) {
         ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getFaceMesh : faceIndex out of bounds, using FRONT ";
         faceIndex = FRONT;
@@ -1582,41 +1719,7 @@ ofMesh ofBoxPrimitive::getFaceMesh( int faceIndex ) {
     int startVertIndex  = _verticies[faceIndex][0];
     int endVertIndex    = startVertIndex + _verticies[faceIndex][1];
     
-    vector<ofVec3f> verticies;
-    verticies.assign( getMesh().getVertices().begin()+startVertIndex, getMesh().getVertices().begin()+endVertIndex );
-    mesh.addVertices( verticies );
-    
-    if(getMesh().hasColors()) {
-        vector<ofFloatColor> colors;
-        colors.assign( getMesh().getColors().begin()+startVertIndex, getMesh().getColors().begin()+endVertIndex );
-        mesh.addColors( colors );
-        if(mesh.usingColors()) mesh.enableColors();
-        else mesh.disableColors();
-    }
-    
-    if(getMesh().hasTexCoords()) {
-        vector<ofVec2f> texcoords;
-        texcoords.assign( getMesh().getTexCoords().begin()+startVertIndex, getMesh().getTexCoords().begin()+endVertIndex );
-        mesh.addTexCoords( texcoords );
-        if(mesh.usingTextures()) mesh.enableTextures();
-        else mesh.disableTextures();
-    }
-    
-    if(getMesh().hasNormals()) {
-        vector<ofVec3f> normals;
-        normals.assign( getMesh().getNormals().begin()+startVertIndex, getMesh().getNormals().begin()+endVertIndex );
-        mesh.addNormals( normals );
-        if(mesh.usingNormals()) mesh.enableNormals();
-        else mesh.disableNormals();
-    }
-    
-    int offsetIndex = getMesh().getIndex(startIndex);
-    for(int i = startIndex; i < endIndex; i++) {
-        int index = getMesh().getIndex(i) - offsetIndex;
-        mesh.addIndex( index );
-    }
-    
-    return mesh;
+    return getMeshForIndexes( 0, startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
 //--------------------------------------------------------------
