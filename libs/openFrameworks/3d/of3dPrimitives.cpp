@@ -1130,6 +1130,480 @@ float ofConePrimitive::getHeight() {
 
 
 
+// Box Mesh //
+ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY, int resZ ) {
+    // mesh only available as triangles //
+    ofMesh mesh;
+    mesh.setMode( OF_PRIMITIVE_TRIANGLES );
+    
+    // halves //
+    float halfW = width * .5f;
+    float halfH = height * .5f;
+    float halfD = depth * .5f;
+    
+    ofVec3f vert;
+    ofVec2f texcoord;
+    ofVec3f normal;
+    int vertOffset = 0;
+    
+    ofColor tempColor(255, 255, 255);
+    
+    // TRIANGLES //
+    
+    // Front Face //
+    normal.set(0, 0, 1);
+    // add the vertexes //
+    for(int iy = 0; iy < resY; iy++) {
+        for(int ix = 0; ix < resX; ix++) {
+            
+            // normalized tex coords //
+            texcoord.x = ((float)ix/((float)resX-1.f));
+            texcoord.y = ((float)iy/((float)resY-1.f));
+            
+            vert.x = texcoord.x * width - halfW;
+            vert.y = texcoord.y * height - halfH;
+            vert.z = halfD;
+            
+            mesh.addVertex(vert);
+            mesh.addTexCoord(texcoord);
+            mesh.addNormal(normal);
+            mesh.addColor(tempColor);
+        }
+    }
+    
+    for(int y = 0; y < resY-1; y++) {
+        for(int x = 0; x < resX-1; x++) {
+            // first triangle //
+            mesh.addIndex((y)*resX + x + vertOffset);
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+            
+            // second triangle //
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+        }
+    }
+    
+    vertOffset = mesh.getNumVertices();
+    
+    
+    // Right Side Face //
+    normal.set(1, 0, 0);
+    // add the vertexes //
+    for(int iy = 0; iy < resY; iy++) {
+        for(int ix = 0; ix < resZ; ix++) {
+            
+            // normalized tex coords //
+            texcoord.x = ((float)ix/((float)resZ-1.f));
+            texcoord.y = ((float)iy/((float)resY-1.f));
+            
+            //vert.x = texcoord.x * width - halfW;
+            vert.x = halfW;
+            vert.y = texcoord.y * height - halfH;
+            vert.z = texcoord.x * -depth + halfD;
+            
+            mesh.addVertex(vert);
+            mesh.addTexCoord(texcoord);
+            mesh.addNormal(normal);
+            mesh.addColor(tempColor);
+        }
+    }
+    
+    for(int y = 0; y < resY-1; y++) {
+        for(int x = 0; x < resZ-1; x++) {
+            // first triangle //
+            mesh.addIndex((y)*resZ + x + vertOffset);
+            mesh.addIndex((y)*resZ + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resZ + x + vertOffset);
+            
+            // second triangle //
+            mesh.addIndex((y)*resZ + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resZ + x + vertOffset);
+        }
+    }
+    
+    vertOffset = mesh.getNumVertices();
+    
+    // Left Side Face //
+    normal.set(-1, 0, 0);
+    // add the vertexes //
+    for(int iy = 0; iy < resY; iy++) {
+        for(int ix = 0; ix < resZ; ix++) {
+            
+            // normalized tex coords //
+            texcoord.x = ((float)ix/((float)resZ-1.f));
+            texcoord.y = ((float)iy/((float)resY-1.f));
+            
+            //vert.x = texcoord.x * width - halfW;
+            vert.x = -halfW;
+            vert.y = texcoord.y * height - halfH;
+            vert.z = texcoord.x * depth - halfD;
+            
+            mesh.addVertex(vert);
+            mesh.addTexCoord(texcoord);
+            mesh.addNormal(normal);
+            mesh.addColor(tempColor);
+        }
+    }
+    
+    for(int y = 0; y < resY-1; y++) {
+        for(int x = 0; x < resZ-1; x++) {
+            // first triangle //
+            mesh.addIndex((y)*resZ + x + vertOffset);
+            mesh.addIndex((y)*resZ + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resZ + x + vertOffset);
+            
+            // second triangle //
+            mesh.addIndex((y)*resZ + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resZ + x + vertOffset);
+        }
+    }
+    
+    vertOffset = mesh.getNumVertices();
+    
+    
+    // Back Face //
+    normal.set(0, 0, -1);
+    // add the vertexes //
+    for(int iy = 0; iy < resY; iy++) {
+        for(int ix = 0; ix < resX; ix++) {
+            
+            // normalized tex coords //
+            texcoord.x = ((float)ix/((float)resX-1.f));
+            texcoord.y = ((float)iy/((float)resY-1.f));
+            
+            vert.x = texcoord.x * -width + halfW;
+            vert.y = texcoord.y * height - halfH;
+            vert.z = -halfD;
+            
+            mesh.addVertex(vert);
+            mesh.addTexCoord(texcoord);
+            mesh.addNormal(normal);
+            mesh.addColor(tempColor);
+        }
+    }
+    
+    for(int y = 0; y < resY-1; y++) {
+        for(int x = 0; x < resX-1; x++) {
+            // first triangle //
+            mesh.addIndex((y)*resX + x + vertOffset);
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+            
+            // second triangle //
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+        }
+    }
+    
+    vertOffset = mesh.getNumVertices();
+    
+    
+    
+    // Top Face //
+    normal.set(0, -1, 0);
+    // add the vertexes //
+    for(int iy = 0; iy < resZ; iy++) {
+        for(int ix = 0; ix < resX; ix++) {
+            
+            // normalized tex coords //
+            texcoord.x = ((float)ix/((float)resX-1.f));
+            texcoord.y = ((float)iy/((float)resZ-1.f));
+            
+            vert.x = texcoord.x * width - halfW;
+            //vert.y = texcoord.y * height - halfH;
+            vert.y = -halfH;
+            vert.z = texcoord.y * depth - halfD;
+            
+            mesh.addVertex(vert);
+            mesh.addTexCoord(texcoord);
+            mesh.addNormal(normal);
+            mesh.addColor(tempColor);
+        }
+    }
+    
+    for(int y = 0; y < resZ-1; y++) {
+        for(int x = 0; x < resX-1; x++) {
+            // first triangle //
+            mesh.addIndex((y)*resX + x + vertOffset);
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+            
+            // second triangle //
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+        }
+    }
+    
+    vertOffset = mesh.getNumVertices();
+    
+    
+    // Bottom Face //
+    normal.set(0, 1, 0);
+    // add the vertexes //
+    for(int iy = 0; iy < resZ; iy++) {
+        for(int ix = 0; ix < resX; ix++) {
+            
+            // normalized tex coords //
+            texcoord.x = ((float)ix/((float)resX-1.f));
+            texcoord.y = ((float)iy/((float)resZ-1.f));
+            
+            vert.x = texcoord.x * width - halfW;
+            //vert.y = texcoord.y * height - halfH;
+            vert.y = halfH;
+            vert.z = texcoord.y * -depth + halfD;
+            
+            mesh.addVertex(vert);
+            mesh.addTexCoord(texcoord);
+            mesh.addNormal(normal);
+            mesh.addColor(tempColor);
+        }
+    }
+    
+    for(int y = 0; y < resZ-1; y++) {
+        for(int x = 0; x < resX-1; x++) {
+            // first triangle //
+            mesh.addIndex((y)*resX + x + vertOffset);
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+            
+            // second triangle //
+            mesh.addIndex((y)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x+1 + vertOffset);
+            mesh.addIndex((y+1)*resX + x + vertOffset);
+        }
+    }
+    
+    
+    
+    return mesh;
+}
+
+
+
+
+// BOX PRIMITIVE //
+//--------------------------------------------------------------
+ofBoxPrimitive::ofBoxPrimitive() {
+    set(100, 100, 100, 10, 10, 10);
+}
+
+//--------------------------------------------------------------
+ofBoxPrimitive::ofBoxPrimitive( float width, float height, float depth, int resWidth, int resHeight, int resDepth ) {
+    set(width, height, depth, resWidth, resHeight, resDepth );
+}
+
+//--------------------------------------------------------------
+ofBoxPrimitive::~ofBoxPrimitive() {}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, int resHeight, int resDepth) {
+    
+    _size.x = width;
+    _size.y = height;
+    _size.z = depth;
+    
+    of3dModel::setResolution( resWidth, resHeight, resDepth);
+    
+    int resX = getResolution().x;
+    int resY = getResolution().y;
+    int resZ = getResolution().z;
+    
+    //FRONT, resY, resX
+    _strides[ FRONT ][0] = 0;
+    _strides[ FRONT ][1] = (resY-1)*(resX-1)*6;
+    _verticies[FRONT][0] = 0;
+    _verticies[FRONT][1] = resX * resY;
+    
+    //RIGHT, resY, resZ
+    _strides[ RIGHT ][0] = _strides[ FRONT ][0] + _strides[ FRONT ][1];
+    _strides[ RIGHT ][1] = (resY-1)*(resZ-1)*6;
+    _verticies[RIGHT][0] = _verticies[FRONT][0] + _verticies[FRONT][1];
+    _verticies[RIGHT][1] = resY * resZ;
+    
+    //LEFT, resY, resZ
+    _strides[ LEFT ][0] = _strides[ RIGHT ][0] + _strides[ RIGHT ][1];
+    _strides[ LEFT ][1] = (resY-1)*(resZ-1)*6;
+    _verticies[LEFT][0] = _verticies[RIGHT][0] + _verticies[RIGHT][1];
+    _verticies[LEFT][1] = resY * resZ;
+    
+    //BACK, resY, resX
+    _strides[ BACK ][0] = _strides[ LEFT ][0] + _strides[ LEFT ][1];
+    _strides[ BACK ][1] = (resY-1)*(resX-1)*6;
+    _verticies[BACK][0] = _verticies[LEFT][0] + _verticies[LEFT][1];
+    _verticies[BACK][1] = resY * resX;
+    
+    //TOP, resZ, resX
+    _strides[ TOP ][0] = _strides[ BACK ][0] + _strides[ BACK ][1];
+    _strides[ TOP ][1] = (resZ-1)*(resX-1)*6;
+    _verticies[TOP][0] = _verticies[BACK][0] + _verticies[BACK][1];
+    _verticies[TOP][1] = resZ * resX;
+    
+    //BOTTOM, resZ, resX
+    _strides[ BOTTOM ][0] = _strides[ TOP ][0]+_strides[ TOP ][1];
+    _strides[ BOTTOM ][1] = (resZ-1)*(resX-1)*6;
+    _verticies[BOTTOM][0] = _verticies[TOP][0] + _verticies[TOP][1];
+    _verticies[BOTTOM][1] = resZ * resX;
+    
+    _meshes.clear();
+    ofMesh mesh = ofGetBoxMesh( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
+    addMesh( mesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::set( float width, float height, float depth ) {
+    set( width, height, depth, getResolution().x, getResolution().y, getResolution().z );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::set( float size ) {
+    set( size, size, size );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setWidth( float a_width ) {
+    _size.x = a_width;
+    set( getWidth(), getHeight(), getDepth() );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setHeight( float a_height ) {
+    _size.y = a_height;
+    set( getWidth(), getHeight(), getDepth() );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setDepth( float a_depth ) {
+    _size.z = a_depth;
+    set( getWidth(), getHeight(), getDepth() );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::resizeToTexture( ofTexture& inTexture ) {
+    set(inTexture.getWidth(), inTexture.getHeight(), inTexture.getWidth());
+    setTexCoordsFromTexture( inTexture );
+}
+
+//--------------------------------------------------------------
+vector<ofIndexType> ofBoxPrimitive::getFaceIndicies( int faceIndex ) {
+    int resX = getResolution().x;
+    int resY = getResolution().y;
+    int resZ = getResolution().z;
+    
+    if(faceIndex < 0 || faceIndex > 5) {
+        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getFaceIndicies : faceIndex out of bounds, returning FRONT ";
+        faceIndex = FRONT;
+    }
+    
+    vector<ofIndexType> indicies;
+    int startIndex  = _strides[faceIndex][0];
+    int endIndex    = startIndex+_strides[faceIndex][1];
+    
+    indicies.assign( getMesh(0).getIndices().begin()+startIndex, getMesh(0).getIndices().begin()+endIndex );
+    
+    return indicies;
+}
+
+//--------------------------------------------------------------
+ofMesh ofBoxPrimitive::getFaceMesh( int faceIndex ) {
+    ofMesh mesh;
+    mesh.setMode( OF_PRIMITIVE_TRIANGLES );
+    if(faceIndex < 0 || faceIndex > 5) {
+        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getFaceMesh : faceIndex out of bounds, using FRONT ";
+        faceIndex = FRONT;
+    }
+    int startIndex  = _strides[faceIndex][0];
+    int endIndex    = startIndex+_strides[faceIndex][1];
+    
+    int startVertIndex  = _verticies[faceIndex][0];
+    int endVertIndex    = startVertIndex + _verticies[faceIndex][1];
+    
+    vector<ofVec3f> verticies;
+    verticies.assign( getMesh().getVertices().begin()+startVertIndex, getMesh().getVertices().begin()+endVertIndex );
+    mesh.addVertices( verticies );
+    
+    vector<ofFloatColor> colors;
+    colors.assign( getMesh().getColors().begin()+startVertIndex, getMesh().getColors().begin()+endVertIndex );
+    mesh.addColors( colors );
+    
+    vector<ofVec2f> texcoords;
+    texcoords.assign( getMesh().getTexCoords().begin()+startVertIndex, getMesh().getTexCoords().begin()+endVertIndex );
+    mesh.addTexCoords( texcoords );
+    
+    vector<ofVec3f> normals;
+    normals.assign( getMesh().getNormals().begin()+startVertIndex, getMesh().getNormals().begin()+endVertIndex );
+    mesh.addNormals( normals );
+    
+    int offsetIndex = getMesh().getIndex(startIndex);
+    for(int i = startIndex; i < endIndex; i++) {
+        int index = getMesh().getIndex(i) - offsetIndex;
+        mesh.addIndex( index );
+    }
+    
+    return mesh;
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setResolution( int res ) {
+    setResolution(res, res, res);
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setResolution( int resX, int resY, int resZ ) {
+    of3dModel::setResolution(resX, resY, resZ);
+    set( getWidth(), getHeight(), getDepth() );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setFaceColor( int faceIndex, ofColor color ) {
+    if(faceIndex < 0 || faceIndex > 5) {
+        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: setFaceColor : faceIndex out of bounds, setting FRONT ";
+        faceIndex = FRONT;
+    }
+    
+    int startIndex  = _strides[faceIndex][0];
+    int endIndex    = startIndex+_strides[faceIndex][1];
+    for(int i = startIndex; i < endIndex; i++) {
+        getMesh().setColor( getMesh().getIndex(i), color);
+    }
+}
+
+//--------------------------------------------------------------
+float ofBoxPrimitive::getWidth() {
+    return _size.x;
+}
+
+//--------------------------------------------------------------
+float ofBoxPrimitive::getHeight() {
+    return _size.y;
+}
+
+//--------------------------------------------------------------
+float ofBoxPrimitive::getDepth() {
+    return _size.z;
+}
+
+//--------------------------------------------------------------
+ofVec3f ofBoxPrimitive::getSize() const {
+    return _size;
+}
+
+
+
+
+
+
+
+
+
 
 
 
