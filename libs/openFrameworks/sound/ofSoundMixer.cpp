@@ -6,6 +6,7 @@
  */
 
 #include <float.h>
+#include <assert.h>
 #include "ofSoundMixer.h"
 #include "ofSoundUtils.h"
 
@@ -50,15 +51,21 @@ void ofSoundMixer::setPan(ofBaseSoundOutput & out, float p){
 	}
 }
 
+
 void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount){
+	//memset( output, 0, sizeof(float)*bufferSize*nChannels );
+	assert( bufferSize == buffer.bufferSize() );
+	assert( nChannels == buffer.getNumChannels() );
 	for(int i=0;i<(int)sources.size();i++){
 		buffer.set(0);
+		
 		sources[i]->audioOut(&buffer[0],bufferSize,nChannels,deviceID,tickCount);
 		if(buffer.getNumChannels()==2 && volumes[i]-1<FLT_EPSILON && pans[i]<FLT_EPSILON){
 			buffer.stereoPan(volumesLeft[i],volumesRight[i]);
 		}else if(volumes[i]-1<FLT_EPSILON){
 			buffer *= volumes[i];
 		}
+		
 		for(int j=0;j<(int)buffer.size();j++){
 			output[j] += buffer[j];
 		}

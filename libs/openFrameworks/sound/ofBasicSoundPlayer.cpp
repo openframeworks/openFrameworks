@@ -13,7 +13,7 @@ ofPtr<ofBaseSoundStream> ofBasicSoundPlayer::stream(new ofSoundStream);
 ofSoundMixer ofBasicSoundPlayer::mixer;
 bool ofBasicSoundPlayer::initialized = false;
 int ofBasicSoundPlayer::samplerate = 44100;
-int ofBasicSoundPlayer::bufferSize = 256;
+int ofBasicSoundPlayer::bufferSize = 512;
 int ofBasicSoundPlayer::channels = 2;
 int ofBasicSoundPlayer::maxSoundsTotal=128;
 int ofBasicSoundPlayer::maxSoundsPerPlayer=16;
@@ -42,15 +42,16 @@ ofBasicSoundPlayer::~ofBasicSoundPlayer() {
 
 
 bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
+	
 	ofLogNotice() << "loading " << fileName;
+	
 	if(!initialized){
 		mixer.setup(bufferSize,channels,samplerate);
-		stream->setup(channels,0,samplerate,bufferSize,4);
+		stream->setup( channels, 0, samplerate, bufferSize, 4);
 		stream->setOutput(&mixer);
 		initialized = true;
 	}
-	ofLogNotice() << "adding output to mixer ";
-	mixer.addSoundOutput(*this,volume);
+
 	ofLogNotice() << "opening file ";
 	bIsLoaded = soundFile.open(fileName);
 	if(!bIsLoaded) return false;
@@ -63,6 +64,10 @@ bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 	}
 
 	streaming = _stream;
+	
+	ofLogNotice() << "adding output to mixer ";
+	mixer.addSoundOutput(*this,volume);
+
 	return true;
 }
 
@@ -189,6 +194,8 @@ void ofBasicSoundPlayer::updatePositions(int bufferSize){
 }
 
 void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int deviceID, long unsigned long tickCount){
+	assert(bSize==bufferSize);
+	assert(nChannels==channels);
 	if(isPlaying){
 		if(streaming){
 			soundFile.readTo(buffer,bufferSize);
@@ -208,10 +215,6 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 				resampledBuffer.addTo(output,bufferSize,channels,0,loop);
 			}
 			updatePositions(bufferSize);
-		}
-	}else{
-		for(int i=0;i<bufferSize*nChannels;i++){
-			output[i] = 0;
 		}
 	}
 }

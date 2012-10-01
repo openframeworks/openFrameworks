@@ -238,9 +238,9 @@ bool ofSoundFile::sfReadFile(ofSoundBuffer & buffer){
 #endif
 
 #ifdef OF_USING_LAD
-bool ofSoundFile::ladReadFile(ofSoundBuffer &buffer){
+bool ofSoundFile::ladReadFile(ofSoundBuffer &outBuffer){
 	
-	int samplesRead = audioDecoder->read( buffer.size(), &buffer[0] );
+	int samplesRead = audioDecoder->read( outBuffer.size(), &outBuffer[0] );
 	return samplesRead;
 }
 #endif

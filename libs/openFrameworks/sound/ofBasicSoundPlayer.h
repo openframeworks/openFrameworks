@@ -56,6 +56,8 @@ public:
 	void setMaxSounds(int max);
 
 	ofEvent<ofSoundBuffer> newBufferE;
+	
+	static ofSoundMixer* getMixer() { return &mixer; }
 
 private:
 	void audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount);

@@ -25,11 +25,17 @@ public:
 	vector<float> & getBuffer();
 
 	int getNumChannels() const;
-	unsigned long getDuration() const; // millisecs
+	// millisecs
+	unsigned long getDuration() const;
 	int getSampleRate() const;
-	unsigned long size() const; // in samples, total size
-	unsigned long bufferSize() const; // in samples per channel
+	/// total number of samples (number of frames * number of channels)
+	unsigned long size() const;
 
+	/// the number of frames (ie the number of sets of getNumChannels() samples)
+	unsigned long bufferSize() const;
+	unsigned long getNumFrames() const { return bufferSize(); }
+
+	/// resize this buffer to exactly this many samples. it's up to you make sure samples matches the channel count.
 	void resize(unsigned int samples, float val=float());
 	void clear();
 	void swap(ofSoundBuffer & buffer);
@@ -65,7 +71,7 @@ public:
 
 	float getRMSAmplitude();
 	float getRMSAmplitudeChannel(unsigned int channel);
-
+	
 private:
 	void linearResampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin, unsigned int numSamples, float speed, bool loop);
 	void hermiteResampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin, unsigned int numSamples, float speed, bool loop);

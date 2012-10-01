@@ -80,7 +80,10 @@ static OSStatus playbackCallback(void *inRefCon,
 								 UInt32 inBusNumber, 
 								 UInt32 inNumberFrames, 
 								 AudioBufferList *ioData) {
-	if(soundInputPtr == NULL)
+	
+	//ofLogNotice("ofxiPhoneSoundStream") << " playbackCallback " << (unsigned long long)soundOutputPtr;
+
+	if(soundOutputPtr == NULL)
 		return noErr;
 	
 	for(int i = 0; i < ioData->mNumberBuffers; i++) {
@@ -89,6 +92,9 @@ static OSStatus playbackCallback(void *inRefCon,
 		
 		// check to see if our buffer is big enough to store the data:
 		if(ioData->mBuffers[i].mDataByteSize > MAX_BUFFER_SIZE*2) {
+			ofLogError("ofxiPhoneSoundStream") << "operating system gave us a buffer size of " << ioData->mBuffers[i].mDataByteSize << " but our MAX_BUFFER_SIZE is " << MAX_BUFFER_SIZE*2;
+			ofLogError("ofxiPhoneSoundStream") << " but damian thinks this calculation is dodgy, as it doesn't seem to take into account sample sizes or numbers of channels";
+			ofLogError("ofxiPhoneSoundStream") << " -> setting buffer to 0 and you won't hear anything";
 			int len = ioData->mBuffers[i].mDataByteSize/2;
 			for(int j = 0; j < len; j++) {
 				buffer[j] = 0;
@@ -96,9 +102,19 @@ static OSStatus playbackCallback(void *inRefCon,
 		}
 		else {
 			// get floats from app
+			// @TODO implement tickCount
+			unsigned long long tickCount = 0;
+			static bool first = true;
+			if ( first )
+				ofLogWarning("ofxiPhoneSoundStream") << "using tickCount of 0, this needs to be implemented";
+			first = false;
+			
+			memset( scaleBuffer, 0, sizeof(float)*MAX_BUFFER_SIZE );
 			soundOutputPtr->audioOut(scaleBuffer,
 				ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2),
-				ioData->mBuffers[i].mNumberChannels);
+				ioData->mBuffers[i].mNumberChannels,
+									 0,
+									 tickCount);
 			
 			// truncate to 16bit fixed point data
 			int len = ioData->mBuffers[i].mDataByteSize/2;
@@ -131,14 +147,23 @@ static OSStatus recordingCallback(void *inRefCon,
 	
 	// send data to app
 	if(soundInputPtr != NULL) {
+
 		for(int i = 0; i < ioData->mNumberBuffers; ++i) {
 			short int *buffer = (short int *) ioData->mBuffers[i].mData;
 			for(int j = 0; j < ioData->mBuffers[i].mDataByteSize/2; ++j) {
 				scaleBuffer[j] = (float) buffer[j] / 32767.f;	// convert each sample into a float
 			}
+			
+			// @TODO implement tickCount
+			unsigned long long tickCount = 0;
+			static bool first = true;
+			if ( first )
+				ofLogWarning("ofxiPhoneSoundStream") << "using tickCount of 0, this needs to be implemented";
+			first = false;
+
 			soundInputPtr->audioIn(scaleBuffer,
 				ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2),
-				ioData->mBuffers[i].mNumberChannels);
+				ioData->mBuffers[i].mNumberChannels, 0, tickCount);
 		}
 	}
 	return noErr;

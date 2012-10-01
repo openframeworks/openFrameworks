@@ -10,7 +10,7 @@
 
 #include "ofConstants.h"
 
-#if defined (TARGET_OSX) || defined (TARGET_WIN32)
+#if defined (TARGET_OSX) || defined (TARGET_OF_IPHONE) || defined (TARGET_WIN32)
 	// libaudiodecoder
 	#define OF_USING_LAD
 #else
@@ -24,8 +24,10 @@
 #ifdef OF_USING_MPG123
 	#include <mpg123.h>
 #endif
+#ifdef OF_USING_LAD
+	#include "audiodecoder.h"
+#endif
 #include "ofSoundBuffer.h"
-#include "audiodecoder.h"
 
 class ofSoundFile {
 public:

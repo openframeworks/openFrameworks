@@ -9,7 +9,7 @@
 #include "ofSoundUtils.h"
 #include <limits>
 
-#if !defined(TARGET_ANDROID) && !defined(TARGET_IPHONE)
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IPHONE)
 ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundBuffer::Hermite;
 #else
 ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundBuffer::Linear;
@@ -17,7 +17,7 @@ ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundB
 
 ofSoundBuffer::ofSoundBuffer() {
 	channels=1;
-	samplerate=0;
+	samplerate=44100;
 }
 
 ofSoundBuffer::ofSoundBuffer(short * shortBuffer, unsigned int length, int _channels, int _samplerate){
@@ -431,4 +431,6 @@ float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
 	rmsAmplitude /= float(bufferSize());
 	return rmsAmplitude;
 }
+
+
 
