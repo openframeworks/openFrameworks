@@ -43,7 +43,7 @@ public:
     
     int getNumMeshes();
     ofMesh* getMeshPtr(int meshIndex);
-    ofMesh& getMesh( int meshIndex );
+    ofMesh& getMesh( int meshIndex=0 );
     vector<ofMesh>& getMeshes();
     
     int getNumTextures();
@@ -144,13 +144,6 @@ protected:
     float _radius;
 };
 
-class ofBoxPrimitive : public of3dModel {
-public:
-    
-protected:
-    
-};
-
 class ofConePrimitive : public of3dModel {
 public:
     ofConePrimitive();
@@ -195,13 +188,55 @@ protected:
     bool _bCapped;
 };
 
+class ofBoxPrimitive : public of3dModel {
+public:
+    
+    enum BoxFaces {
+        FRONT,
+        RIGHT,
+        LEFT,
+        BACK,
+        TOP,
+        BOTTOM
+    };
+    
+    ofBoxPrimitive();
+    ofBoxPrimitive( float width, float height, float depth, int resWidth=2, int resHeight=2, int resDepth=2 );
+    ~ofBoxPrimitive();
+    
+    void set( float width, float height, float depth, int resWidth, int resHeight, int resDepth);
+    void set( float width, float height, float depth );
+    void set( float size ); // all sides the same dimensions //
+    
+    void setWidth( float a_width );
+    void setHeight( float a_height );
+    void setDepth( float a_depth );
+    
+    void resizeToTexture( ofTexture& inTexture );
+    
+    vector<ofIndexType> getFaceIndicies( int faceIndex );
+    ofMesh getFaceMesh( int faceIndex );
+    
+    void setResolution( int res ); // same resolution for all sides //
+    void setResolution( int resX, int resY, int resZ );
+    void setFaceColor( int faceIndex, ofColor color );
+    
+    float getWidth();
+    float getHeight();
+    float getDepth();
+    ofVec3f getSize() const;
+protected:
+    ofVec3f _size;
+    // indicies strides for faces //
+    int _strides[6][2];
+    int _verticies[6][2];
+};
 
 
 ofMesh      ofGetPlaneMesh(float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 ofMesh      ofGetSphereMesh(float radius, int res );
 ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
-//ofBoxPrimitive      ofGetBox( float width, float height, float depth, int res_width, int res_height );
 ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true  );
 ofMesh      ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments );
 ofMesh      ofGetBoxMesh( float width, float height, float depth, int resX, int resY, int resZ );
