@@ -3,6 +3,23 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
+    // This example is designed to show all of the different aligning
+    // and scaling functions available in ofRectangle.
+    //
+    // Please run the example and use the keyboard to see the visual
+    // results of each of the alignment and scaling operations.
+    //
+    // The basic premise is to define a subject and target rectangle.
+    // The "subject" (on the left) rectangle will be aligned-to
+    // and scaled-to the "target" (on the right) rectangle based
+    // on the user's input.
+    //
+    // The resulting rectangle (workingSubjectRect in this case),
+    // displayed in the center, is the result of the operations.
+    //
+    // An image is used to further emphasize the effect of various
+    // aspect-ratio preservation modes.
+    
     ofSetFrameRate(30);
     ofEnableAlphaBlending();
 
@@ -10,14 +27,14 @@ void testApp::setup(){
     isAligning = true;
     isRectScaling = false;
     
-    scaleMode    = OF_SCALEMODE_FIT;
-    aspectRatioMode  = OF_ASPECT_RATIO_KEEP;
+    scaleMode       = OF_SCALEMODE_FIT;
+    aspectRatioMode = OF_ASPECT_RATIO_KEEP;
     
-    target_hAlign = OF_ALIGN_HORZ_CENTER;
-    target_vAlign = OF_ALIGN_VERT_CENTER;
+    target_hAlign   = OF_ALIGN_HORZ_CENTER;
+    target_vAlign   = OF_ALIGN_VERT_CENTER;
     
-    subject_hAlign = OF_ALIGN_HORZ_CENTER;
-    subject_vAlign = OF_ALIGN_VERT_CENTER;
+    subject_hAlign  = OF_ALIGN_HORZ_CENTER;
+    subject_vAlign  = OF_ALIGN_VERT_CENTER;
     
     bUseImage = true;
     
@@ -29,14 +46,16 @@ void testApp::setup(){
     makeNewTarget();
     makeNewSubject();
 
-
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     
     workingSubjectRect = subjectRect;
-        
+
+    // read the results of our keyboard input to determine
+    // the correct scaling and / or alignment operation.
+    
     if(!isRectScaling) {
         if(isScaling) {
             if(isAligning) {
@@ -73,7 +92,7 @@ void testApp::update(){
 void testApp::draw(){
     ofBackground(0);
 
-    // draw original subject in corner
+    // draw original subject in lower left-hand corner
     if(!bUseImage) {
         ofFill(); ofSetColor(subjectColor, 80);
         ofRect(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
@@ -81,23 +100,21 @@ void testApp::draw(){
         ofFill(); ofSetColor(255);
         img.draw(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
     }
-    // draw original subject frame in corner
+    // draw original subject frame in lower left-hand corner
     ofNoFill(); ofSetColor(subjectColor, 120);
     ofRect(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
     // draw original subject label
     ofSetColor(255);
     ofDrawBitmapStringHighlight("SUBJECT", 16, ofGetHeight() - 20);
     
-    // draw original target in corner
+    // draw original target in lower right-hand corner
     ofFill(); ofSetColor(targetColor, 80);
     ofRect(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
-    // draw original target frame in corner
+    // draw original target frame in lower right-hand corner
     ofNoFill(); ofSetColor(targetColor, 120);
     ofRect(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
-    // draw original target label
     ofSetColor(255);
-    ofDrawBitmapStringHighlight("TARGET", ofGetWidth() - 65, ofGetHeight() - 20);
-    
+    ofDrawBitmapStringHighlight("TARGET", ofGetWidth() - 65, ofGetHeight() - 20);    
     
     // draw target rectangle in center
     drawAlignRect(targetRect,  targetColor,  target_hAlign,  target_vAlign, false);

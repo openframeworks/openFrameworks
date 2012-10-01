@@ -39,18 +39,25 @@ class testApp : public ofBaseApp{
     /////////////////////////
     // Helper functions below
     
+    // generate a random subject rect
     void makeNewSubject();
+
+    // generate a random target rect
     void makeNewTarget();
     
+    // draw a rectangle with alignment marks, etc
     void drawAlignRect(const ofRectangle& rect,
                        const ofColor& color,
                        ofAlignHorz hAlign,
                        ofAlignVert vAlign,
                        bool useImage);
     
+    // draw visual horizontal anchor marks
     void drawHorzAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignHorz hAlign);
     void drawVertAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignVert vAlign);
     
+    
+    // helper functions for text output
     ofScaleMode getNextScaleMode(ofScaleMode mode);
     ofAspectRatioMode getNextAspectRatioMode(ofAspectRatioMode mode);
     ofAlignHorz getNextHorzAlign(ofAlignHorz hAlign);
