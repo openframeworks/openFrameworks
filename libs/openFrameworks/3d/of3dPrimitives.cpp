@@ -958,7 +958,14 @@ void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, in
     _radius = radius;
     _height = height;
     _bCapped = bCapped;
-    setResolution( radiusSegments, heightSegments, numCapSegments );
+    of3dModel::setResolution( radiusSegments, heightSegments, numCapSegments );
+    
+    _meshes.clear();
+    ofMesh mesh = ofGetCylinderMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped() );
+    addMesh( mesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
     
 }
 void ofCylinderPrimitive::set( float radius, float height ) {
@@ -978,13 +985,7 @@ void ofCylinderPrimitive::setCapped(bool bCapped) {
     setResolution( getResolution().x, getResolution().y, getResolution().z );
 }
 void ofCylinderPrimitive::setResolution( int radiusSegments, int heightSegments, int capSegments ) {
-    of3dModel::setResolution(radiusSegments, heightSegments, capSegments);
-    _meshes.clear();
-    ofMesh mesh = ofGetCylinderMesh( _radius, _height, radiusSegments, heightSegments, capSegments, _bCapped );
-    addMesh( mesh );
-    
-    if(_texCoords.size()>0)
-        normalizeAndApplySavedTexCoords(0);
+    set( getRadius(), getHeight(), radiusSegments, heightSegments, capSegments );
 }
 
 float ofCylinderPrimitive::getHeight() {
@@ -1091,7 +1092,15 @@ ofConePrimitive::~ofConePrimitive() {}
 void ofConePrimitive::set( float radius, float height, int radiusSegments, int heightSegments, int capSegments ) {
     _radius = radius;
     _height = height;
-    setResolution( radiusSegments, heightSegments, capSegments );
+    of3dModel::setResolution(radiusSegments, heightSegments, capSegments);
+    
+    _meshes.clear();
+    ofMesh mesh = ofGetConeMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z );
+    addMesh( mesh );
+    
+    if(_texCoords.size()>0)
+        normalizeAndApplySavedTexCoords(0);
+    
 }
 void ofConePrimitive::set( float radius, float height ) {
     _radius = radius;
@@ -1102,13 +1111,7 @@ void ofConePrimitive::setResolution( int radiusSegments, int heightSegments ) {
     setResolution(radiusSegments, heightSegments, getResolution().z);
 }
 void ofConePrimitive::setResolution( int resX, int resY, int resZ ) {
-    of3dModel::setResolution(resX, resY, resZ);
-    _meshes.clear();
-    ofMesh mesh = ofGetConeMesh( getRadius(), getHeight(), resX, resY, resZ );
-    addMesh( mesh );
-    
-    if(_texCoords.size()>0)
-        normalizeAndApplySavedTexCoords(0);
+    set( getRadius(), getHeight(), resX, resY, resZ );
 }
 void ofConePrimitive::setRadius( float radius ) {
     _radius = radius;

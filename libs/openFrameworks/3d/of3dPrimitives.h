@@ -144,27 +144,6 @@ protected:
     float _radius;
 };
 
-class ofConePrimitive : public of3dModel {
-public:
-    ofConePrimitive();
-    ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
-    ~ofConePrimitive();
-    
-    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
-    void set( float radius, float height );
-    void setResolution( int radiusSegments, int heightSegments );
-    void setResolution( int resX, int resY, int resZ );
-    void setRadius( float radius );
-    void setHeight( float height );
-    
-    float getRadius();
-    float getHeight();
-    
-protected:
-    float _radius;
-    float _height;
-};
-
 class ofCylinderPrimitive : public of3dModel {
 public:
     ofCylinderPrimitive();
@@ -186,6 +165,27 @@ protected:
     float _radius;
     float _height;
     bool _bCapped;
+};
+
+class ofConePrimitive : public of3dModel {
+public:
+    ofConePrimitive();
+    ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
+    ~ofConePrimitive();
+    
+    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
+    void set( float radius, float height );
+    void setResolution( int radiusSegments, int heightSegments );
+    void setResolution( int resX, int resY, int resZ );
+    void setRadius( float radius );
+    void setHeight( float height );
+    
+    float getRadius();
+    float getHeight();
+    
+protected:
+    float _radius;
+    float _height;
 };
 
 class ofBoxPrimitive : public of3dModel {
