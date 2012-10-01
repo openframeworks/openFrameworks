@@ -722,9 +722,10 @@ void ofCairoRenderer::rotate(float degrees){
 }
 
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
+    if(!surface || !cr) return;
+    
     // we can only do Z-axis rotations via cairo_matrix_rotate.
     if(vecZ == 1.0f) {
-        if(!surface || !cr) return;
         cairo_matrix_rotate(getCairoMatrix(),degrees*DEG_TO_RAD);
         setCairoMatrix();
     }
