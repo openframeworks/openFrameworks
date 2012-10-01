@@ -43,8 +43,8 @@
 // that modify width, height and position x / y.
 //
 // "Standardized" rectangles are rectangles whose width >= 0 and
-// height >= 0.  The `void standardize()` (and related)
-// methods are used to ensure that the rectangle is "standardzed".
+// height >= 0.  The `void standardize()` method can be used
+// to ensure that the rectangle is "standardzed".
 
 class ofRectangle {
 	
