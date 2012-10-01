@@ -150,16 +150,27 @@ protected:
 class ofCylinderPrimitive : public of3dModel {
 public:
     ofCylinderPrimitive();
-    ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true );
+    ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofCylinderPrimitive();
     
-    void set( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped=true );
+    void set( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped=true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void set( float radius, float height );
     void setRadius( float radius );
     void setHeight( float height );
     void setCapped( bool bCapped );
     
     void setResolution( int radiusSegments=7, int heightSegments=3, int capSegments=2 );
+    
+    void setTopCapColor( ofColor color );
+    void setCylinderColor( ofColor color );
+    void setBottomCapColor( ofColor color );
+    
+    vector<ofIndexType> getTopCapIndicies();
+    ofMesh getTopCapMesh();
+    vector<ofIndexType> getCylinderIndicies();
+    ofMesh getCylinderMesh();
+    vector<ofIndexType> getBottomCapIndicies();
+    ofMesh getBottomCapMesh();
     
     float getHeight();
     float getRadius();
@@ -168,6 +179,8 @@ protected:
     float _radius;
     float _height;
     bool _bCapped;
+    int _strides[3][2];
+    int _verticies[3][2];
 };
 
 class ofConePrimitive : public of3dModel {
@@ -254,7 +267,7 @@ ofMesh      ofGetPlaneMesh(float width, float height, int columns, int rows, ofP
 ofMesh      ofGetSphereMesh(float radius, int res );
 ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
-ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true  );
+ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP  );
 ofMesh      ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
 ofMesh      ofGetBoxMesh( float width, float height, float depth, int resX, int resY, int resZ );
 
