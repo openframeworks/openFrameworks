@@ -1016,11 +1016,8 @@ ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int height
     mesh.setMode(mode);
     
     if(heightSegments < 2) heightSegments = 2;
-    int hSegs   = heightSegments;
     int capSegs = capSegments;
     if(capSegs < 2) capSegs = 2;
-    
-    hSegs = hSegs + (capSegs-1);
 
     
     float angleIncRadius    = (TWO_PI/((float)radiusSegments-1.f));
@@ -1031,72 +1028,36 @@ ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int height
     ofVec3f vert;
     ofVec3f normal;
     ofVec2f tcoord;
+    ofVec3f up(0,1,0);
     
-    if(mode == OF_PRIMITIVE_TRIANGLE_STRIP) {
-        for(int iy = 0; iy < hSegs-1; iy++) {
-            for(int ix = 0; ix < radiusSegments; ix++) {
-                
-                if( iy >= hSegs-capSegs ) {
-                    newRad = ofMap((float)iy, hSegs-capSegs, hSegs-1, radius, 0.0);
-                    vert.x = cos((float)ix*angleIncRadius) * newRad;
-                    vert.z = sin((float)ix*angleIncRadius) * newRad;
-                    vert.y = halfH;
-                    normal.set(0, 1, 0);
-                } else {
-                    newRad = ofMap((float)iy, 0, hSegs-capSegs, 0.0, radius);
-                    vert.x = cos((float)ix*angleIncRadius) * newRad;
-                    vert.y = heightInc*((float)iy) - halfH;
-                    vert.z = sin((float)ix*angleIncRadius) * newRad;
-                }
-                
-                tcoord.x = (float)ix/((float)radiusSegments);
-                tcoord.y = (float)iy/((float)hSegs-1.f);
-                
-                mesh.addTexCoord(tcoord);
-                mesh.addVertex( vert );
-                
-                if( iy >= hSegs-capSegs ) {
-                    newRad = ofMap((float)iy+1.f, hSegs-capSegs, hSegs-1, radius, 0.0);
-                    vert.x = cos((float)ix*angleIncRadius) * newRad;
-                    vert.z = sin((float)ix*angleIncRadius) * newRad;
-                    vert.y = halfH;
-                } else {
-                    newRad = ofMap((float)iy+1, 0, hSegs-capSegs, 0.0, radius);
-                    vert.x = cos((float)ix*angleIncRadius) * newRad;
-                    vert.z = sin((float)ix*angleIncRadius) * newRad;
-                    
-                    vert.y += heightInc;
-                    
-                }
-                tcoord.y = ((float)iy+1.f)/((float)hSegs-1.f);
-                
-                mesh.addTexCoord(tcoord);
-                mesh.addVertex(vert);
-            }
+        
+    int vertOffset = 0;
+    
+    float maxTexY = heightSegments-1.f + capSegs-1.f;
+    
+    // cone verticies //
+    for(int iy = 0; iy < heightSegments; iy++) {
+        normal.set(1,0,0);
+        for(int ix = 0; ix < radiusSegments; ix++) {
+            
+            newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
+            vert.x = cos((float)ix*angleIncRadius) * newRad;
+            vert.y = heightInc*((float)iy) - halfH;
+            vert.z = sin((float)ix*angleIncRadius) * newRad;
+            
+            tcoord.x = (float)ix/((float)radiusSegments-1.f);
+            tcoord.y = (float)iy/((float)maxTexY);
+            
+            mesh.addTexCoord( tcoord );
+            mesh.addVertex( vert );
+            mesh.addNormal( normal );
+            
+            normal.rotateRad(-angleIncRadius, up);
+            
         }
-    } else {
-        
-        int vertOffset = 0;
-        
-        float maxTexY = heightSegments-1.f + capSegs-1.f;
-        
-        // cone verticies //
-        for(int iy = 0; iy < heightSegments; iy++) {
-            for(int ix = 0; ix < radiusSegments; ix++) {
-                
-                newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
-                vert.x = cos((float)ix*angleIncRadius) * newRad;
-                vert.y = heightInc*((float)iy) - halfH;
-                vert.z = sin((float)ix*angleIncRadius) * newRad;
-                
-                tcoord.x = (float)ix/((float)radiusSegments-1.f);
-                tcoord.y = (float)iy/((float)maxTexY);
-                
-                mesh.addTexCoord(tcoord);
-                mesh.addVertex( vert );
-                
-            }
-        }
+    }
+    
+    if(mode == OF_PRIMITIVE_TRIANGLES) {
         for(int y = 0; y < heightSegments-1; y++) {
             for(int x = 0; x < radiusSegments-1; x++) {
                 // first triangle //
@@ -1110,26 +1071,37 @@ ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int height
                 mesh.addIndex( (y+1)*radiusSegments + x );
             }
         }
-        
-        vertOffset = mesh.getNumVertices();
-        float maxTexYNormalized = (heightSegments-1.f) / maxTexY;
-        // add the cap //
-        for(int iy = 0; iy < capSegs; iy++) {
-            for(int ix = 0; ix < radiusSegments; ix++) {
-                newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
-                vert.x = cos((float)ix*angleIncRadius) * newRad;
-                vert.z = sin((float)ix*angleIncRadius) * newRad;
-                vert.y = halfH;
-                normal.set(0, 1, 0);
-                
-                tcoord.x = (float)ix/((float)radiusSegments-1.f);
-                tcoord.y = ofMap(iy, 0, capSegs-1, maxTexYNormalized, 1.f);
-                
-                mesh.addTexCoord(tcoord);
-                mesh.addVertex( vert );
+    } else {
+        for(int y = 0; y < heightSegments-1; y++) {
+            for(int x = 0; x < radiusSegments; x++) {
+                mesh.addIndex( (y)*radiusSegments + x );
+                mesh.addIndex( (y+1)*radiusSegments + x );
             }
         }
+    }
         
+    vertOffset = mesh.getNumVertices();
+    float maxTexYNormalized = (heightSegments-1.f) / maxTexY;
+    
+    // add the cap //
+    normal.set(0,1,0);
+    for(int iy = 0; iy < capSegs; iy++) {
+        for(int ix = 0; ix < radiusSegments; ix++) {
+            newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
+            vert.x = cos((float)ix*angleIncRadius) * newRad;
+            vert.z = sin((float)ix*angleIncRadius) * newRad;
+            vert.y = halfH;
+            
+            tcoord.x = (float)ix/((float)radiusSegments-1.f);
+            tcoord.y = ofMap(iy, 0, capSegs-1, maxTexYNormalized, 1.f);
+            
+            mesh.addTexCoord( tcoord );
+            mesh.addVertex( vert );
+            mesh.addNormal( normal );
+        }
+    }
+        
+    if(mode == OF_PRIMITIVE_TRIANGLES) {
         for(int y = 0; y < capSegs-1; y++) {
             for(int x = 0; x < radiusSegments-1; x++) {
                 // first triangle //
@@ -1140,6 +1112,13 @@ ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int height
                 // second triangle //
                 mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
                 mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset);
+                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+            }
+        }
+    } else {
+        for(int y = 0; y < capSegs-1; y++) {
+            for(int x = 0; x < radiusSegments; x++) {
+                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
                 mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
             }
         }
