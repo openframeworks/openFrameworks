@@ -169,16 +169,28 @@ protected:
 
 class ofConePrimitive : public of3dModel {
 public:
+    
+    enum ConeFaces {
+        FACE_CONE,
+        FACE_CAP
+    };
+    
     ofConePrimitive();
-    ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
+    ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofConePrimitive();
     
-    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2 );
+    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void set( float radius, float height );
     void setResolution( int radiusSegments, int heightSegments );
     void setResolution( int resX, int resY, int resZ );
     void setRadius( float radius );
     void setHeight( float height );
+    
+    //void setFaceColor( int faceIndex, ofColor color );
+    
+    //vector<ofIndexType> getFaceIndicies( int faceIndex );
+    //ofMesh getFaceMesh( int faceIndex );
+    
     
     float getRadius();
     float getHeight();
@@ -186,6 +198,9 @@ public:
 protected:
     float _radius;
     float _height;
+    
+    //int _strides[2][2];
+    //int _verticies[2][2];
 };
 
 class ofBoxPrimitive : public of3dModel {
@@ -238,7 +253,7 @@ ofMesh      ofGetSphereMesh(float radius, int res );
 ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
 ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true  );
-ofMesh      ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments );
+ofMesh      ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
 ofMesh      ofGetBoxMesh( float width, float height, float depth, int resX, int resY, int resZ );
 
 
