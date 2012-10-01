@@ -433,4 +433,26 @@ float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
 }
 
 
+void ofSoundBuffer::fillWithNoise()
+{
+	for ( unsigned i=0; i<size(); i++ ) {
+		buffer[i] = ofRandom(-1, 1);
+	}
+}
+
+float ofSoundBuffer::fillWithTone( float pitchHz, float phase )
+{
+	float step = TWO_PI*(pitchHz/samplerate);
+	for ( unsigned i=0; i<size()/channels; i++ ) {
+		unsigned int base = i*channels;
+		for ( unsigned j=0; j<channels; j++)
+			buffer[base+j] = sinf(phase);
+		phase += step;
+	}
+	return phase;
+	
+}
+
+
+
 
