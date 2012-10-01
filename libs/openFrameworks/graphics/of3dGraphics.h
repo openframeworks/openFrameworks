@@ -51,13 +51,30 @@ void ofCylinder(float x, float y, float z, float radius, float height);
 void ofCylinder(const ofPoint& position, float radius, float height);
 void ofCylinder(float radius, float height);
 
-
-void ofBox(float x, float y, float z, float size);
-void ofBox(float x, float y, float size);
-void ofBox(const ofPoint& position, float size);
-void ofBox(float size);
-
+// Cone
+void ofSetConeResolution( int radiusSegments, int heightSegments, int capSegments=2);
+ofVec3f ofGetConeResolution();
 void ofCone(float x, float y, float z, float radius, float height);
 void ofCone(float x, float y, float radius, float height);
 void ofCone(const ofPoint& position, float radius, float height);
 void ofCone(float radius, float height);
+
+// Box
+void ofSetBoxResolution( int res );
+void ofSetBoxResolution( int resWidth, int resHeight, int resDepth );
+ofVec3f ofGetBoxResolution();
+void ofBox( float x, float y, float z, float width, float height, float depth);
+void ofBox(float x, float y, float z, float size);
+void ofBox(const ofPoint& position, float width, float height, float depth);
+void ofBox(const ofPoint& position, float size);
+void ofBox(float size);
+void ofBox( float width, float height, float depth );
+
+
+
+
+
+
+
+
+
