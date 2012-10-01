@@ -1210,8 +1210,6 @@ ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY,
     ofVec3f normal;
     int vertOffset = 0;
     
-    ofColor tempColor(255, 255, 255);
-    
     // TRIANGLES //
     
     // Front Face //
@@ -1231,7 +1229,6 @@ ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY,
             mesh.addVertex(vert);
             mesh.addTexCoord(texcoord);
             mesh.addNormal(normal);
-            mesh.addColor(tempColor);
         }
     }
     
@@ -1270,7 +1267,6 @@ ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY,
             mesh.addVertex(vert);
             mesh.addTexCoord(texcoord);
             mesh.addNormal(normal);
-            mesh.addColor(tempColor);
         }
     }
     
@@ -1308,7 +1304,6 @@ ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY,
             mesh.addVertex(vert);
             mesh.addTexCoord(texcoord);
             mesh.addNormal(normal);
-            mesh.addColor(tempColor);
         }
     }
     
@@ -1346,7 +1341,6 @@ ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY,
             mesh.addVertex(vert);
             mesh.addTexCoord(texcoord);
             mesh.addNormal(normal);
-            mesh.addColor(tempColor);
         }
     }
     
@@ -1386,7 +1380,6 @@ ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY,
             mesh.addVertex(vert);
             mesh.addTexCoord(texcoord);
             mesh.addNormal(normal);
-            mesh.addColor(tempColor);
         }
     }
     
@@ -1425,7 +1418,6 @@ ofMesh ofGetBoxMesh( float width, float height, float depth, int resX, int resY,
             mesh.addVertex(vert);
             mesh.addTexCoord(texcoord);
             mesh.addNormal(normal);
-            mesh.addColor(tempColor);
         }
     }
     
@@ -1594,17 +1586,29 @@ ofMesh ofBoxPrimitive::getFaceMesh( int faceIndex ) {
     verticies.assign( getMesh().getVertices().begin()+startVertIndex, getMesh().getVertices().begin()+endVertIndex );
     mesh.addVertices( verticies );
     
-    vector<ofFloatColor> colors;
-    colors.assign( getMesh().getColors().begin()+startVertIndex, getMesh().getColors().begin()+endVertIndex );
-    mesh.addColors( colors );
+    if(getMesh().hasColors()) {
+        vector<ofFloatColor> colors;
+        colors.assign( getMesh().getColors().begin()+startVertIndex, getMesh().getColors().begin()+endVertIndex );
+        mesh.addColors( colors );
+        if(mesh.usingColors()) mesh.enableColors();
+        else mesh.disableColors();
+    }
     
-    vector<ofVec2f> texcoords;
-    texcoords.assign( getMesh().getTexCoords().begin()+startVertIndex, getMesh().getTexCoords().begin()+endVertIndex );
-    mesh.addTexCoords( texcoords );
+    if(getMesh().hasTexCoords()) {
+        vector<ofVec2f> texcoords;
+        texcoords.assign( getMesh().getTexCoords().begin()+startVertIndex, getMesh().getTexCoords().begin()+endVertIndex );
+        mesh.addTexCoords( texcoords );
+        if(mesh.usingTextures()) mesh.enableTextures();
+        else mesh.disableTextures();
+    }
     
-    vector<ofVec3f> normals;
-    normals.assign( getMesh().getNormals().begin()+startVertIndex, getMesh().getNormals().begin()+endVertIndex );
-    mesh.addNormals( normals );
+    if(getMesh().hasNormals()) {
+        vector<ofVec3f> normals;
+        normals.assign( getMesh().getNormals().begin()+startVertIndex, getMesh().getNormals().begin()+endVertIndex );
+        mesh.addNormals( normals );
+        if(mesh.usingNormals()) mesh.enableNormals();
+        else mesh.disableNormals();
+    }
     
     int offsetIndex = getMesh().getIndex(startIndex);
     for(int i = startIndex; i < endIndex; i++) {
@@ -1631,6 +1635,11 @@ void ofBoxPrimitive::setFaceColor( int faceIndex, ofColor color ) {
     if(faceIndex < 0 || faceIndex > 5) {
         ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: setFaceColor : faceIndex out of bounds, setting FRONT ";
         faceIndex = FRONT;
+    }
+    
+    if(!getMesh().hasColors()) {
+        // no colors for verticies, so we must set them here //
+        getMesh().getColors().resize(getMesh().getNumVertices());
     }
     
     int startIndex  = _strides[faceIndex][0];
