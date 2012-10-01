@@ -933,73 +933,180 @@ float ofIcoSpherePrimitive::getRadius() {
 
 // Cylinder Mesh
 //----------------------------------------------------------
-ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped ) {
+ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped, ofPrimitiveMode mode ) {
     ofMesh mesh;
-    mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+    if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
+        mode = OF_PRIMITIVE_TRIANGLE_STRIP;
+    }
+    mesh.setMode(mode);
     
-    int hSegs   = heightSegments;
     int capSegs = numCapSegments;
-    if(hSegs < 2) hSegs = 2;
+    if(heightSegments < 2) heightSegments = 2;
     if(capSegs < 2) capSegs = 2;
     if(!bCapped) capSegs=1;
     
-    if(bCapped) {
-        hSegs = hSegs + (capSegs-1.f) * 2;
-    }
-    
-    float angleIncRadius = (TWO_PI/((float)radiusSegments-1.f));
+    float angleIncRadius = -1.f * (TWO_PI/((float)radiusSegments-1.f));
     float heightInc = height/((float)heightSegments-1.f);
     float halfH = height*.5f;
-    float capHInc = radius/((float)capSegs-1.f);
     
     float newRad;
     ofVec3f vert;
     ofVec2f tcoord;
+    ofVec3f normal;
+    ofVec3f up(0,1,0);
     
-    for(int iy = 0; iy < hSegs-1; iy++) {
+    int vertOffset = 0;
+    
+    float maxTexY           = heightSegments-1.f + (capSegs*2)-2.f;
+    float maxTexYNormalized = (capSegs-1.f) / maxTexY;
+    
+    // add the top cap //
+    if(bCapped) {
+        normal.set(0,-1,0);
+        for(int iy = 0; iy < capSegs; iy++) {
+            for(int ix = 0; ix < radiusSegments; ix++) {
+                newRad = ofMap((float)iy, 0, capSegs-1, 0.0, radius);
+                vert.x = cos((float)ix*angleIncRadius) * newRad;
+                vert.z = sin((float)ix*angleIncRadius) * newRad;
+                vert.y = -halfH;
+                
+                tcoord.x = (float)ix/((float)radiusSegments-1.f);
+                tcoord.y = ofMap(iy, 0, capSegs-1, 0, maxTexYNormalized);
+                
+                mesh.addTexCoord( tcoord );
+                mesh.addVertex( vert );
+                mesh.addNormal( normal );
+            }
+        }
+        
+        if(mode == OF_PRIMITIVE_TRIANGLES) {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments-1; x++) {
+                    // first triangle //
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                    mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                    
+                    // second triangle //
+                    mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
+                    mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset);
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                }
+            }
+        } else {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments; x++) {
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                }
+            }
+        }
+        
+        vertOffset = mesh.getNumVertices();
+        
+    }
+    
+    //maxTexY             = heightSegments-1.f + capSegs-1.f;
+    float minTexYNormalized = 0;
+    if(bCapped) minTexYNormalized = maxTexYNormalized;
+    maxTexYNormalized   = 1.f;
+    if(bCapped) maxTexYNormalized = (heightSegments) / maxTexY;
+    
+    // cylinder verticies //
+    for(int iy = 0; iy < heightSegments; iy++) {
+        normal.set(1,0,0);
         for(int ix = 0; ix < radiusSegments; ix++) {
             
-            if(bCapped && iy < capSegs-1) {
-                newRad = ((float)iy/((float)capSegs-1.f) * radius);
-                vert.x = cos((float)ix*angleIncRadius) * newRad;
-                vert.z = sin((float)ix*angleIncRadius) * newRad;
-                vert.y = -halfH;
-            } else if(bCapped && iy >= heightSegments+capSegs-2) {
-                newRad = ofMap((float)iy, hSegs-capSegs, hSegs-1, radius, 0.0);
-                vert.x = cos((float)ix*angleIncRadius) * newRad;
-                vert.z = sin((float)ix*angleIncRadius) * newRad;
-                vert.y = halfH;
-            } else {
-                vert.x = cos((float)ix*angleIncRadius) * radius;
-                vert.y = heightInc*((float)iy-(capSegs-1)) - halfH;
-                vert.z = sin((float)ix*angleIncRadius) * radius;
-            }
+            //newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
+            vert.x = cos((float)ix*angleIncRadius) * radius;
+            vert.y = heightInc*((float)iy) - halfH;
+            vert.z = sin((float)ix*angleIncRadius) * radius;
             
-            tcoord.x = (float)ix/((float)radiusSegments);
-            tcoord.y = (float)iy/((float)hSegs-1.f);
+            tcoord.x = (float)ix/((float)radiusSegments-1.f);
+            tcoord.y = ofMap(iy, 0, heightSegments-1, minTexYNormalized, maxTexYNormalized );
             
-            mesh.addTexCoord(tcoord);
+            mesh.addTexCoord( tcoord );
             mesh.addVertex( vert );
+            mesh.addNormal( normal );
             
-            if(bCapped && iy < capSegs-1) {
-                newRad = (((float)iy+1.f)/((float)capSegs-1.f) * radius);
-                vert.x = cos((float)(ix)*angleIncRadius) * newRad;
-                vert.y = -halfH;
-                vert.z = sin((float)(ix)*angleIncRadius) * newRad;
-            } else if(bCapped && iy >= heightSegments+capSegs-2) {
-                newRad = ofMap((float)iy+1.f, hSegs-capSegs, hSegs-1, radius, 0.0);
+            normal.rotateRad(-angleIncRadius, up);
+            
+        }
+    }
+    
+    if(mode == OF_PRIMITIVE_TRIANGLES) {
+        for(int y = 0; y < heightSegments-1; y++) {
+            for(int x = 0; x < radiusSegments-1; x++) {
+                // first triangle //
+                mesh.addIndex( (y)*radiusSegments + x + vertOffset);
+                mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset );
+                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset );
+                
+                // second triangle //
+                mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset );
+                mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset );
+                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset );
+            }
+        }
+    } else {
+        for(int y = 0; y < heightSegments-1; y++) {
+            for(int x = 0; x < radiusSegments; x++) {
+                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset );
+            }
+        }
+    }
+    
+    vertOffset = mesh.getNumVertices();
+    
+    // add the bottom cap
+    if(bCapped) {
+        //float minTexYNormalized = 0;
+        minTexYNormalized = maxTexYNormalized;
+        maxTexYNormalized   = 1.f;
+        
+        normal.set(0,-1,0);
+        for(int iy = 0; iy < capSegs; iy++) {
+            for(int ix = 0; ix < radiusSegments; ix++) {
+                newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
                 vert.x = cos((float)ix*angleIncRadius) * newRad;
                 vert.z = sin((float)ix*angleIncRadius) * newRad;
                 vert.y = halfH;
-            } else {
-                vert.y += heightInc;
                 
+                tcoord.x = (float)ix/((float)radiusSegments-1.f);
+                tcoord.y = ofMap(iy, 0, capSegs-1, minTexYNormalized, maxTexYNormalized);
+                
+                mesh.addTexCoord( tcoord );
+                mesh.addVertex( vert );
+                mesh.addNormal( normal );
             }
-            tcoord.y = ((float)iy+1.f)/((float)hSegs-1.f);
-            
-            mesh.addTexCoord(tcoord);
-            mesh.addVertex(vert);
         }
+        
+        if(mode == OF_PRIMITIVE_TRIANGLES) {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments-1; x++) {
+                    // first triangle //
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                    mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                    
+                    // second triangle //
+                    mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
+                    mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset);
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                }
+            }
+        } else {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments; x++) {
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                }
+            }
+        }
+        
+        vertOffset = mesh.getNumVertices();
+        
     }
     
     return mesh;
@@ -1007,54 +1114,161 @@ ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int he
 
 
 
+//--------------------------------------------------------------
 ofCylinderPrimitive::ofCylinderPrimitive() {
     set( 60, 80, 6, 3, 2, true );
 }
-ofCylinderPrimitive::ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped ) {
-    set( radius, height, radiusSegments, heightSegments, numCapSegments, bCapped );
+
+//--------------------------------------------------------------
+ofCylinderPrimitive::ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped, ofPrimitiveMode mode ) {
+    set( radius, height, radiusSegments, heightSegments, numCapSegments, bCapped, mode );
 }
+
+//--------------------------------------------------------------
 ofCylinderPrimitive::~ofCylinderPrimitive() {}
 
-void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped) {
+//--------------------------------------------------------------
+void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped, ofPrimitiveMode mode) {
     _radius = radius;
     _height = height;
     _bCapped = bCapped;
     of3dModel::setResolution( radiusSegments, heightSegments, numCapSegments );
     
+    int resX = getResolution().x;
+    int resY = getResolution().y-1;
+    int resZ = getResolution().z-1;
+    
+    int indexStep = 2;
+    if(mode == OF_PRIMITIVE_TRIANGLES) {
+        indexStep = 6;
+        resX = resX-1;
+    }
+    
+    // 0 -> top cap
+    _strides[0][0] = 0;
+    _strides[0][1] = resX * resZ * indexStep;
+    _verticies[0][0] = 0;
+    _verticies[0][1] = getResolution().x * getResolution().z;
+    
+    // 1 -> cylinder //
+    if(bCapped) {
+        _strides[1][0] = _strides[0][0] + _strides[0][1];
+        _verticies[1][0] = _verticies[0][0] + _verticies[0][1];
+    } else {
+        _strides[1][0] = 0;
+        _verticies[1][0] = 0;
+    }
+    _strides[1][1] = resX * resY * indexStep;
+    _verticies[1][1] = getResolution().x * getResolution().y;
+    
+    // 2 -> bottom cap
+    _strides[2][0] = _strides[1][0] + _strides[1][1];
+    _strides[2][1] = resX * resZ * indexStep;
+    _verticies[2][0] = _verticies[1][0]+_verticies[1][1];
+    _verticies[2][1] = getResolution().x * getResolution().z;
+    
+    
     _meshes.clear();
-    ofMesh mesh = ofGetCylinderMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped() );
+    ofMesh mesh = ofGetCylinderMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
     addMesh( mesh );
     
     if(_texCoords.size()>0)
         normalizeAndApplySavedTexCoords(0);
     
 }
+
+//--------------------------------------------------------------
 void ofCylinderPrimitive::set( float radius, float height ) {
     _radius = radius;
     setHeight( height );
 }
+
+//--------------------------------------------------------------
 void ofCylinderPrimitive::setRadius( float radius ) {
     _radius = radius;
     setResolution(getResolution().x, getResolution().y, getResolution().z);
 }
+
+//--------------------------------------------------------------
 void ofCylinderPrimitive::setHeight( float height ) {
     _height = height;
     setResolution(getResolution().x, getResolution().y, getResolution().z);
 }
+
+//--------------------------------------------------------------
 void ofCylinderPrimitive::setCapped(bool bCapped) {
     _bCapped = bCapped;
     setResolution( getResolution().x, getResolution().y, getResolution().z );
 }
+
+//--------------------------------------------------------------
 void ofCylinderPrimitive::setResolution( int radiusSegments, int heightSegments, int capSegments ) {
-    set( getRadius(), getHeight(), radiusSegments, heightSegments, capSegments );
+    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP;
+    if(_meshes.size() > 0 ) {
+        mode = _meshes[0].getMode();
+    }
+    set( getRadius(), getHeight(), radiusSegments, heightSegments, capSegments, getCapped(), mode );
 }
 
+//--------------------------------------------------------------
+void ofCylinderPrimitive::setTopCapColor( ofColor color ) {
+    setColorForIndicies( 0, _strides[0][0], _strides[0][0]+_strides[0][1], color );
+}
+
+//--------------------------------------------------------------
+void ofCylinderPrimitive::setCylinderColor( ofColor color ) {
+    setColorForIndicies( 0, _strides[1][0], _strides[1][0]+_strides[1][1], color );
+}
+
+//--------------------------------------------------------------
+void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
+    setColorForIndicies( 0, _strides[2][0], _strides[2][0]+_strides[2][1], color );
+}
+
+//--------------------------------------------------------------
+vector<ofIndexType> ofCylinderPrimitive::getTopCapIndicies() {
+    return of3dModel::getIndicies( _strides[0][0], _strides[0][0] + _strides[0][1] );
+}
+
+//--------------------------------------------------------------
+ofMesh ofCylinderPrimitive::getTopCapMesh() {
+    return getMeshForIndexes( 0, _strides[0][0], _strides[0][0]+_strides[0][1],
+                             _verticies[0][0], _verticies[0][0]+_verticies[0][1] );
+}
+
+//--------------------------------------------------------------
+vector<ofIndexType> ofCylinderPrimitive::getCylinderIndicies() {
+    return of3dModel::getIndicies( _strides[1][0], _strides[1][0] + _strides[1][1] );
+}
+
+//--------------------------------------------------------------
+ofMesh ofCylinderPrimitive::getCylinderMesh() {
+    return getMeshForIndexes( 0, _strides[1][0], _strides[1][0]+_strides[1][1],
+                             _verticies[1][0], _verticies[1][0]+_verticies[1][1] );
+}
+
+//--------------------------------------------------------------
+vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndicies() {
+    return of3dModel::getIndicies( _strides[2][0], _strides[2][0] + _strides[2][1] );
+}
+
+//--------------------------------------------------------------
+ofMesh ofCylinderPrimitive::getBottomCapMesh() {
+    return getMeshForIndexes( 0, _strides[2][0], _strides[2][0]+_strides[2][1],
+                             _verticies[2][0], _verticies[2][0]+_verticies[2][1] );
+}
+
+//--------------------------------------------------------------
 float ofCylinderPrimitive::getHeight() {
     return _height;
 }
+
+//--------------------------------------------------------------
 float ofCylinderPrimitive::getRadius() {
     return _radius;
 }
+
+//--------------------------------------------------------------
 bool ofCylinderPrimitive::getCapped() {
     return _bCapped;
 }
@@ -1701,7 +1915,7 @@ vector<ofIndexType> ofBoxPrimitive::getSideIndicies( int sideIndex ) {
 ofMesh ofBoxPrimitive::getSideMesh( int sideIndex ) {
     
     if(sideIndex < 0 || sideIndex > SIDES_TOTAL) {
-        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getFaceMesh : faceIndex out of bounds, using FRONT ";
+        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getSideMesh : faceIndex out of bounds, using SIDE_FRONT ";
         sideIndex = SIDE_FRONT;
     }
     int startIndex  = _strides[sideIndex][0];
