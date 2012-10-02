@@ -92,7 +92,6 @@ ofVec4f* of3dModel::getTexCoordPtr( int texCoordIndex ) {
 //----------------------------------------------------------
 ofVec4f& of3dModel::getTexCoord( int texCoordIndex ) {
     if( _texCoords.find(texCoordIndex) == _texCoords.end() ) {
-        ofLog(OF_LOG_WARNING, "of3dModel :: getTexCoord()") << " : texCoordIndex "<<texCoordIndex<<" not found, setting normalized tex coords";
         _texCoords[texCoordIndex] = ofVec4f(0,0,1,1);
     }
     return _texCoords[texCoordIndex];
@@ -248,11 +247,6 @@ void of3dModel::setTexCoords( float u1, float v1, float u2, float v2 ) {
 // apply to a specific mesh //
 //----------------------------------------------------------
 void of3dModel::setTexCoords( int meshindex, float u1, float v1, float u2, float v2 ) {
-    
-    //if( _texCoords.find(meshindex) == _texCoords.end() ) {
-    //    ofLog(OF_LOG_VERBOSE, "of3dModel :: setTexCoords : adding normalized tex coords for mesh index "+ofToString(meshindex,0));
-    //    _texCoords[meshindex] = ofVec4f(0,0,1,1);
-    //}
     
     ofVec4f prevTcoord = getTexCoord( meshindex );
     
@@ -520,107 +514,74 @@ float ofPlanePrimitive::getHeight() {
 
 
 
-
-
-// Original code by Paul Bourke
-// A more efficient contribution by Federico Dosil
-// Use CCW facet ordering
-// http://paulbourke.net/texture_colour/texturemap/
 //----------------------------------------------------------
-ofMesh ofGetSphereMesh(float radius, int res ) {
+ofMesh ofGetSphereMesh(float radius, int res, ofPrimitiveMode mode ) {
 
-    ofMesh sphereMesh;
+    ofMesh mesh;
     
-    float theta1 = 0.f;
-    float theta2 = TWO_PI;
-    float phi1 = -HALF_PI;
-    float phi2 = HALF_PI;
-    float r = radius; // normalize the verts //
+    float doubleRes = res*2.f;
+    float polarInc = PI/(res); // ringAngle
+    float azimInc = TWO_PI/(doubleRes); // segAngle //
     
-    sphereMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-    
-    int i, j;
-    
-    int n = res * 2;
-    float ndiv2=(float)n/2.f;
-    
-    float jdivn,j1divn,idivn,dosdivn,t1,t2,t3,cost1,cost2,cte1,cte3;
-
-    float unodivn=1.f/(float)(n);
-
-    cte3 = (theta2-theta1)/n;
-    cte1 = (phi2-phi1)/ndiv2;
-    dosdivn = 2 * (1.f/(float)n);
-    ofVec3f e,p,e2,p2;
-    
-    if (n < 0){
-        n = -n;
-        ndiv2 = -ndiv2;
+    if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
+        mode = OF_PRIMITIVE_TRIANGLE_STRIP;
     }
-    if (n < 4) {n = 4; ndiv2=(float)n/2;}
-    if(r <= 0) r = 1;
+    mesh.setMode(mode);
     
-    t2=phi1;
-    cost2=cos(phi1);
-    j1divn=0;
-    
-    ofVec3f vert, normal;
+    ofVec3f vert;
     ofVec2f tcoord;
     
-    for (j=0; j < ndiv2;j++) {
-        t1 = t2;
-        t2 += cte1;
-        t3 = theta1 - cte3;
-        cost1 = cost2;
-        cost2 = cos(t2);
-        e.y = sin(t1);
-        e2.y = sin(t2);
-        p.y = r * e.y;
-        p2.y = r * e2.y;
+    for(float i = 0; i < res+1; i++) {
         
-        idivn=0;
-        jdivn=j1divn;
-        j1divn+=dosdivn;
+        float tr = sin( PI-i * polarInc );
+        float ny = cos( PI-i * polarInc );
         
-        for (i=0;i <= n;i++) {
-            t3 += cte3;
-            e.x = cost1 * cos(t3);
-            e.z = cost1 * sin(t3);
-            p.x = r * e.x;
-            p.z = r * e.z;
+        tcoord.y = i / res;
+        
+        for(float j = 0; j <= doubleRes; j++) {
             
-            // reverse the u coord, so the default is texture mapped left to
-            // right on the outside of a sphere //
-            normal.set( e.x, e.y, e.z );
-            tcoord.set( 1.0-idivn, jdivn );
-            vert.set( p.x, p.y, p.z );
+            float nx = tr * sin(j * azimInc);
+            float nz = tr * cos(j * azimInc);
             
-            sphereMesh.addNormal(normal);
-            sphereMesh.addTexCoord(tcoord);
-            sphereMesh.addVertex(vert);
+            tcoord.x = j / (doubleRes);
             
-            
-            e2.x = cost2 * cos(t3);
-            e2.z = cost2 * sin(t3);
-            p2.x = r * e2.x;
-            p2.z = r * e2.z;
-            
-            normal.set(e2.x, e2.y, e2.z);
-            tcoord.set(1.0-idivn, j1divn);
-            vert.set(p2.x, p2.y, p2.z);
-            
-            sphereMesh.addNormal(normal);
-            sphereMesh.addTexCoord(tcoord);
-            sphereMesh.addVertex(vert);
-            
-            idivn += unodivn;
-            if(idivn > 1) idivn = 1;
-            
-            
+            vert.set(nx, ny, nz);
+            mesh.addNormal(vert);
+            vert *= radius;
+            mesh.addVertex(vert);
+            mesh.addTexCoord(tcoord);
         }
     }
     
-    return sphereMesh;
+    int nr = doubleRes+1;
+    if(mode == OF_PRIMITIVE_TRIANGLES) {
+        for(float iy = 0; iy < res; iy++) {
+            for(float ix = 0; ix < doubleRes; ix++) {
+                
+                // first tri //
+                mesh.addIndex( (iy+0) * (nr) + (ix+0) );
+                mesh.addIndex( (iy+0) * (nr) + (ix+1) );
+                mesh.addIndex( (iy+1) * (nr) + (ix+0) );
+                
+                if(iy < res-1) {
+                    // second tri //
+                    mesh.addIndex( (iy+0) * (nr) + (ix+1) );
+                    mesh.addIndex( (iy+1) * (nr) + (ix+1) );
+                    mesh.addIndex( (iy+1) * (nr) + (ix+0) );
+                }
+            }
+        }
+    } else {
+        for(int y = 0; y < res; y++) {
+            for(int x = 0; x <= doubleRes; x++) {
+                mesh.addIndex( (y)*nr + x );
+                mesh.addIndex( (y+1)*nr + x );
+            }
+        }
+    }
+    
+     
+    return mesh;
 }
 
 // SPHERE PRIMITIVE //
@@ -674,9 +635,36 @@ float ofSpherePrimitive::getRadius() {
 }
 
 
-// based on code by Michael Broutin for the ogre-procedural library //
+
+/*
+ -----------------------------------------------------------------------------
+ This source file is part of ogre-procedural
+ 
+ For the latest info, see http://code.google.com/p/ogre-procedural/
+ 
+ Copyright (c) 2010 Michael Broutin
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ -----------------------------------------------------------------------------
+ */
 // http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
-// For the latest info, see http://code.google.com/p/ogre-procedural/ //
+
 // NO texture coords or normals
 // use ofGetIcoSphere(radius, 0) // 0 iterations will return Icosahedron //
 //----------------------------------------------------------
@@ -877,7 +865,11 @@ ofMesh ofGetIcoSphereMesh(float radius, int iterations) {
     
     return  sphere;
 }
-
+/*
+-----------------------------------------------------------------------------
+// END OGRE
+-----------------------------------------------------------------------------
+*/
 
 
 // ICO SPHERE //
