@@ -369,9 +369,53 @@ enum ofWindowMode{
  	OF_GAME_MODE	= 2
 };
 
+enum ofAspectRatioMode {
+    OF_ASPECT_RATIO_IGNORE            = 0,
+    OF_ASPECT_RATIO_KEEP              = 1,
+    OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
+};
+
+enum ofAlignVert {
+    OF_ALIGN_VERT_IGNORE   = 0x0000,
+    OF_ALIGN_VERT_TOP      = 0x0010,
+    OF_ALIGN_VERT_BOTTOM   = 0x0020,
+    OF_ALIGN_VERT_CENTER   = 0x0040,
+};
+
+enum ofAlignHorz {
+    OF_ALIGN_HORZ_IGNORE   = 0x0000,
+    OF_ALIGN_HORZ_LEFT     = 0x0001,
+    OF_ALIGN_HORZ_RIGHT    = 0x0002,
+    OF_ALIGN_HORZ_CENTER   = 0x0004,
+};
+
 enum ofRectMode{
 	OF_RECTMODE_CORNER=0,
  	OF_RECTMODE_CENTER=1
+};
+
+enum ofScaleMode{
+    // ofScaleMode can usually be interpreted as a concise combination of
+    // an ofAspectRatioMode, an ofAlignVert and an ofAlignHorz.
+    
+    // fits the SUBJECT rect INSIDE the TARGET rect.
+    // Preserves SUBJECTS's aspect ratio.
+    // Final Subject's Area <= Target's Area.
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_FIT     = 0,
+    // FILLS the TARGET rect with the SUBJECT rect.
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area >= Target's Area.
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_FILL    = 1,
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area is Unchanged
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_CENTER  = 2, // centers the subject
+    // Can CHANGE the SUBJECT's aspect ratio.
+    // Subject's Area == Target's Area
+    // Subject's Center == Target's Center
+ 	OF_SCALEMODE_STRETCH_TO_FILL = 3, // simply matches the target dims
 };
 
 enum ofImageType{
