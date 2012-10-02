@@ -171,6 +171,8 @@ static OSStatus recordingCallback(void *inRefCon,
 
 //------------------------------------------------------------------------------
 ofxiPhoneSoundStream::ofxiPhoneSoundStream(){
+	nInputChannels = 0;
+	nOutputChannels = 0;
 }
 
 //------------------------------------------------------------------------------

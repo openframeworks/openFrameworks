@@ -22,16 +22,15 @@
 
 
 class ofSoundStream;
-
 ofSoundStream* ofSoundStreamGetSystemStream();
 
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
-void ofSoundStreamStop();
-void ofSoundStreamStart();
-void ofSoundStreamClose();
-void ofSoundStreamListDevices();
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL));
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers));
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers));
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->stop() instead",void ofSoundStreamStop());
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->start() instead",void ofSoundStreamStart());
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->close() instead",void ofSoundStreamClose());
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->listDevices() instead",void ofSoundStreamListDevices());
 
 class ofSoundStream: public ofBaseSoundStream{
 	public:
