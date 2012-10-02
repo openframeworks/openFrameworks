@@ -266,7 +266,7 @@ protected:
 
 
 ofMesh      ofGetPlaneMesh(float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-ofMesh      ofGetSphereMesh(float radius, int res );
+ofMesh      ofGetSphereMesh(float radius, int res, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
 ofMesh      ofGetIcosahedronMesh(float radius);
 ofMesh      ofGetIcoSphereMesh(float radius, int iterations);
 ofMesh      ofGetCylinderMesh( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP  );
