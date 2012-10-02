@@ -1,0 +1,21 @@
+steps to build:
+
+- requires scons (on OSX, brew install scons)
+
+for osx:
+
+git clone git://github.com/damiannz/libaudiodecoder.git
+cd libuadiodecoder
+scons debug=0 ios=0
+mkdir -p ../openFrameworks/libs/audiodecoder/lib/osx
+cp -r include ../openFrameworks/libs/audiodecoder/
+cp src/.obj/libaudiodecoder.a ../openFrameworks/libs/audiodecoder/lib/osx/libaudiodecoder.a 
+
+for ios:
+
+scons debug=0 ios=1
+mkdir -p ../openFrameworks/libs/audiodecoder/lib/ios
+cp -r include ../openFrameworks/libs/audiodecoder/
+cp src/.obj/libaudiodecoder.a ../openFrameworks/libs/audiodecoder/lib/ios/libaudiodecoder.a 
+
+
