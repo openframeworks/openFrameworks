@@ -3,6 +3,7 @@
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include "ofUtils.h"
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -192,8 +193,36 @@ void ofSystemAlertDialog(string errorMessage){
 //----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
 //---------------------------------------------------------------------
+
+pascal void modernEventProc(NavEventCallbackMessage callBackSelector,
+                            NavCBRecPtr callBackParms, void* callBackUD)
+{
+    switch(callBackSelector)
+    {
+        case kNavCBStart:
+        {
+			string defaultPath = *(string*)callBackUD;
+			if(defaultPath!=""){
+				OSErr err;
+				
+				//  get an FSRef for the starting location
+				FSRef srcRef;
+				FSPathMakeRef((const UInt8*)defaultPath.c_str(), &srcRef, NULL);
+				
+				//  make an AEDesc out of it.
+				AEDesc theDesc;
+				err = AECreateDesc(typeFSRef, &srcRef, sizeof (FSRef), &theDesc);
+				
+				//  set it.
+				err = NavCustomControl ( callBackParms->context, kNavCtlSetLocation, (void*)&theDesc);
+			}
+        }
+			break;
+    }
+}
+
 // Gets a file to open from the user. Caller must release the CFURLRef.
-CFURLRef GetOpenFileFromUser(bool bFolder)
+CFURLRef GetOpenFileFromUser(bool bFolder, string defaultPath)
 {
 	NavDialogCreationOptions dialogOptions;
 	NavDialogRef dialog;
@@ -213,9 +242,9 @@ CFURLRef GetOpenFileFromUser(bool bFolder)
 
 	// Create the dialog
 	if( bFolder ){
-		status = NavCreateChooseFolderDialog(&dialogOptions, NULL, NULL, NULL, &dialog);
+		status = NavCreateChooseFolderDialog(&dialogOptions, &modernEventProc, NULL, &defaultPath, &dialog);
 	}else{
-		status = NavCreateGetFileDialog(&dialogOptions, NULL, NULL, NULL, NULL, NULL, &dialog);
+		status = NavCreateGetFileDialog(&dialogOptions, NULL, &modernEventProc, NULL, NULL, &defaultPath, &dialog);
 	}
 
 	require_noerr( status, CantCreateDialog );
@@ -258,15 +287,16 @@ CantGetNavOptions:
 
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection){
+ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection, string defaultPath){
 
 	ofFileDialogResult results;
+	defaultPath = ofToDataPath(defaultPath);
 
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
-	CFURLRef cfUrl = GetOpenFileFromUser(bFolderSelection);
+	CFURLRef cfUrl = GetOpenFileFromUser(bFolderSelection,defaultPath);
 
 	CFStringRef cfString = NULL;
 
