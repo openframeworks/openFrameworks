@@ -72,6 +72,7 @@ static gboolean closeGTK(GtkWidget *widget){
     gtk_main_quit();
     return (FALSE);
 }
+
 static void initGTK(){
 	int argc=0; char **argv = NULL;
 	gtk_init (&argc, &argv);
@@ -399,8 +400,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
-		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle);
-		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle);
+		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,defaultPath);
+		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,defaultPath);
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
