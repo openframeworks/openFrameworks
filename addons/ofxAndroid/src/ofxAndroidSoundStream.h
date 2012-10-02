@@ -30,6 +30,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+		int getNumBuffers() { return nBuffers; }
 
 		int androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
@@ -55,7 +56,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		// 32-bits float buffers used by OF audio callbacks
 		float * out_float_buffer, * in_float_buffer;
 		// I/O buffers sizes/channels
-		int outBufferSize, outChannels, inBufferSize, inChannels;
+		int outBufferSize, outChannels, inBufferSize, inChannels, int nBuffers;
 		//
 		int  requestedBufferSize;
 		int  totalOutRequestedBufferSize;

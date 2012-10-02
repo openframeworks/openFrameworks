@@ -8,10 +8,13 @@ class ofBaseSoundStream{
 	public:
 		virtual ~ofBaseSoundStream(){}
 		
+		
 		virtual void listDevices() = 0;
 		virtual void setDeviceID(int deviceID) = 0;
 		virtual bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers)=0;
 		virtual bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers)=0;
+		
+		/// set root input/output objects
 		virtual void setInput(ofBaseSoundInput * soundInput) = 0;
 		virtual void setOutput(ofBaseSoundOutput * soundOutput) = 0;
 		
@@ -24,4 +27,5 @@ class ofBaseSoundStream{
 		virtual int getNumOutputChannels() = 0;
 		virtual int getSampleRate() = 0;
 		virtual int getBufferSize() = 0;
+		virtual int getNumBuffers() = 0;
 };

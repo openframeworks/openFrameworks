@@ -18,10 +18,10 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
         void setInDeviceID(int deviceID);
         void setOutDeviceID(int deviceID);
 
-		void setInput(ofBaseSoundInput * soundInput);
-		void setOutput(ofBaseSoundOutput * soundOutput);
 		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+		void setInput(ofBaseSoundInput * soundInput);
+		void setOutput(ofBaseSoundOutput * soundOutput);
 		
 		void start();
 		void stop();
@@ -33,6 +33,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+		int getNumBuffers() { return nBuffers; }
 	
 		
 	private:
@@ -43,6 +44,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int					bufferSize;
 		int					nInputChannels;
 		int					nOutputChannels;
+		int					nBuffers;
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
 		

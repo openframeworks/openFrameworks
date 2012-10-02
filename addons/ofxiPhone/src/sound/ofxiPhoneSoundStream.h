@@ -34,6 +34,7 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+		int getNumBuffers() { return nBuffers; }
 		
 	private:
 		long unsigned long	tickCount;
@@ -41,6 +42,7 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		int					nOutputChannels;
 		int					sampleRate;
 		int                 bufferSize;
+		int 				nBuffers;
 };
 
 

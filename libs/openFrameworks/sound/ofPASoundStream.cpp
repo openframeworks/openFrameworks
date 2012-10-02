@@ -42,9 +42,10 @@ void ofPASoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	soundOutputPtr = soundOutput;
 }
 
-bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
+bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int _nBuffers){
 	nInputChannels 		=  inChannels;
 	nOutputChannels 	=  outChannels;
+	nBuffers			= _nBuffers;
 	bufferSize = ofNextPow2(_bufferSize);	// must be pow2
 	sampleRate = _sampleRate;
 	tickCount			=  0;
@@ -238,6 +239,10 @@ int ofPASoundStream::getSampleRate(){
 
 int ofPASoundStream::getBufferSize(){
 	return bufferSize;
+}
+
+int ofPASoundStream::getNumBuffers(){
+	return nBuffers;
 }
 
 #endif

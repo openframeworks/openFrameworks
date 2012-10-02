@@ -196,7 +196,7 @@ void ofxiPhoneSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 }
 
 //------------------------------------------------------------------------------
-bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
+bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int _nBuffers){
 	
 	nInputChannels = inChannels;
 	nOutputChannels = outChannels;
@@ -206,6 +206,7 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	
 	// nBuffers is always 1  (see CoreAudio AudioBuffer struct)
 	// this may change in the future ...
+	// @TODO: FIFO to implement our own buffering
 	nBuffers = 1;
 	
 	if(isRunning) {

@@ -18,6 +18,8 @@ ofRtAudioSoundStream::ofRtAudioSoundStream(){
     inDeviceID		= -1;
 	soundOutputPtr	= NULL;
 	soundInputPtr	= NULL;
+	nInputChannels = 0;
+	nOutputChannels = 0;
 	tickCount= 0;
 }
 
@@ -78,13 +80,14 @@ void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 }
 
 //------------------------------------------------------------------------------
-bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
+bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int _nBuffers){
 	if( audio != NULL ){
 		close();
 	}
 
 	nInputChannels		= inChannels;
 	nOutputChannels		= outChannels;
+	nBuffers			= _nBuffers;
 
 	sampleRate			=  _sampleRate;
 	tickCount			=  0;

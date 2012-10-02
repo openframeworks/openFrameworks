@@ -32,6 +32,7 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	outChannels = 0;
 	inBufferSize = 0;
 	inChannels = 0;
+	nBuffers = 0;
 
 	isPaused = false;
 	sampleRate = 44100;
@@ -63,7 +64,7 @@ void ofxAndroidSoundStream::setOutput(ofBaseSoundOutput * _soundOutput){
 	soundOutputPtr = _soundOutput;
 }
 
-bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleRate, int bufferSize, int nBuffers){
+bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleRate, int bufferSize, int _nBuffers){
 	if(instance!=NULL && instance!=this){
 		ofLog(OF_LOG_ERROR,"ofxAndroidSoundStream: error, only one instance allowed by now");
 		return false;
@@ -82,6 +83,7 @@ bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleR
 
 	inBufferSize = bufferSize;
 	inChannels = _inChannels;
+	nBuffers = _nBuffers;
 	sampleRate = _sampleRate;
 
 	tickCount = 0;

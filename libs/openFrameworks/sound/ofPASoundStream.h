@@ -31,6 +31,7 @@ class ofPASoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+		int getNumBuffers() { return nBuffers; };
 	
 		
 	private:
@@ -41,6 +42,7 @@ class ofPASoundStream : public ofBaseSoundStream{
 		int					nInputChannels;
 		int					nOutputChannels;
 		int					bufferSize;
+		int					nBuffers;
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
 		

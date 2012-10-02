@@ -20,6 +20,11 @@
 	#define OF_SOUND_STREAM_TYPE ofxiPhoneSoundStream
 #endif 
 
+
+class ofSoundStream;
+
+ofSoundStream* ofSoundStreamGetSystemStream();
+
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
@@ -39,10 +44,16 @@ class ofSoundStream: public ofBaseSoundStream{
 	
 		void setDeviceID(int deviceID);
 
+		bool isSetup();
+		bool setupInput( int nChannels=2, int sampleRate=-1, int bufferSize=-1, int nBuffers=-1 );
+		bool setupOutput( int nChannels=2, int sampleRate=-1, int bufferSize=-1, int nBuffers=-1 );
+
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+
+		/// set root input/output objects
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
-		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		
 		void start();
 		void stop();
@@ -53,6 +64,7 @@ class ofSoundStream: public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+		int getNumBuffers();
 		
 	protected:
 		

@@ -1,8 +1,21 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
 
-ofSoundStream soundStreamInput;
-ofSoundStream soundStreamOutput;	
+
+static const int DEFAULT_SAMPLE_RATE = 44100;
+// default to 512*4=2048 frames or 21.5ms buffer at 44100Hz
+static const int DEFAULT_BUFFER_SIZE = 512;
+static const int DEFAULT_NUM_BUFFERS = 4;
+
+
+ofSoundStream* ofSoundStreamGetSystemStream() {
+	static ofSoundStream* systemStream = new ofSoundStream();
+	return systemStream;
+}
+
+
+
+
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
@@ -19,30 +32,27 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate,
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-	soundStreamOutput.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+	ofSoundStreamGetSystemStream()->setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-	soundStreamOutput.stop();
-	soundStreamInput.stop();
+	ofSoundStreamGetSystemStream()->stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-	soundStreamOutput.start();
-	soundStreamInput.start();
+	ofSoundStreamGetSystemStream()->start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-	soundStreamOutput.close();
-	soundStreamInput.close();
+	ofSoundStreamGetSystemStream()->close();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamListDevices(){
-	soundStreamOutput.listDevices();
+	ofSoundStreamGetSystemStream()->listDevices();
 }
 
 //------------------------------------------------------------
@@ -72,21 +82,32 @@ void ofSoundStream::listDevices(){
 //------------------------------------------------------------
 void ofSoundStream::setDeviceID(int deviceID){
 	if( soundStream ){
+		bool wasSetup = false;
+		int outChannels, inChannels, sampleRate, bufferSize, nBuffers;
+		if (isSetup()){
+			wasSetup = true;
+			outChannels = getNumOutputChannels();
+			inChannels = getNumInputChannels();
+			sampleRate = getSampleRate();
+			bufferSize = getBufferSize();
+			nBuffers = getNumBuffers();
+			close();
+		}
+		
 		soundStream->setDeviceID(deviceID);
-	}	
-}
-
-//------------------------------------------------------------
-bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
-	if( soundStream ){
-		return soundStream->setup(app, outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+		
+		if (wasSetup){
+			setup( outChannels, inChannels, sampleRate, bufferSize, nBuffers );
+		}
 	}
-	return false;
 }
 
 //------------------------------------------------------------
 void ofSoundStream::setInput(ofBaseSoundInput * soundInput){
 	if( soundStream ){
+		if (getNumInputChannels()==0){
+			setupInput();
+		}
 		soundStream->setInput(soundInput);
 	}
 }
@@ -94,14 +115,75 @@ void ofSoundStream::setInput(ofBaseSoundInput * soundInput){
 //------------------------------------------------------------
 void ofSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	if( soundStream ){
+		if (getNumOutputChannels()==0){
+			setupOutput();
+		}
 		soundStream->setOutput(soundOutput);
 	}
 }
 
 //------------------------------------------------------------
+bool ofSoundStream::isSetup(){
+	return getNumInputChannels()!=0 || getNumOutputChannels()!=0;
+}
+
+
+//------------------------------------------------------------
+bool ofSoundStream::setupInput( int nChannels, int sampleRate, int bufferSize, int nBuffers ){
+	if ( isSetup() ){
+		sampleRate = getSampleRate();
+		bufferSize = getBufferSize();
+		nBuffers = getNumBuffers();
+	}else{
+		if (sampleRate == -1){
+			sampleRate = DEFAULT_SAMPLE_RATE;
+		}
+		if (bufferSize==-1){
+			bufferSize = DEFAULT_BUFFER_SIZE;
+		}
+		if (nBuffers==-1){
+			nBuffers = DEFAULT_NUM_BUFFERS;
+		}
+	}
+	return setup( getNumOutputChannels(), nChannels, sampleRate, bufferSize, nBuffers );
+}
+
+//------------------------------------------------------------
+bool ofSoundStream::setupOutput( int nChannels, int sampleRate, int bufferSize, int nBuffers ){
+	if ( isSetup() ){
+		sampleRate = getSampleRate();
+		bufferSize = getBufferSize();
+		nBuffers = getNumBuffers();
+	}else{
+		if (sampleRate == -1){
+			sampleRate = DEFAULT_SAMPLE_RATE;
+		}
+		if (bufferSize==-1){
+			bufferSize = DEFAULT_BUFFER_SIZE;
+		}
+		if (nBuffers==-1){
+			nBuffers = DEFAULT_NUM_BUFFERS;
+		}
+	}
+	return setup( nChannels, getNumInputChannels(), sampleRate, bufferSize, nBuffers );
+}
+
+//------------------------------------------------------------
 bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if( soundStream ){
+		if ( isSetup() )
+			close();
 		return soundStream->setup(outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+	}
+	return false;
+}
+
+//------------------------------------------------------------
+bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
+	if( soundStream ){
+		if ( isSetup() )
+			close();
+		return soundStream->setup(app, outChannels, inChannels, sampleRate, bufferSize, nBuffers);
 	}
 	return false;
 }
@@ -163,6 +245,14 @@ int ofSoundStream::getSampleRate(){
 int ofSoundStream::getBufferSize(){
 	if( soundStream ){
 		return soundStream->getBufferSize();
+	}
+	return 0;
+}
+
+//------------------------------------------------------------
+int ofSoundStream::getNumBuffers(){
+	if( soundStream ){
+		return soundStream->getNumBuffers();
 	}
 	return 0;
 }
