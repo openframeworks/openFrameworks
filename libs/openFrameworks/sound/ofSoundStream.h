@@ -18,6 +18,9 @@
 #elif defined(OF_SOUNDSTREAM_IPHONE)
 	#include "ofxiPhoneSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxiPhoneSoundStream
+#elif defined(OF_SOUNDSTREAM_QNX)
+	#include "ofxQNXSoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofxQNXSoundStream
 #endif 
 
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);

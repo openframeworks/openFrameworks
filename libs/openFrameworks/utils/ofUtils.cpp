@@ -20,7 +20,7 @@
 #endif
 
 
-#if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
+#if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX) || defined(TARGET_QNX)
 	#include <sys/time.h>
 #endif
 
@@ -205,6 +205,8 @@ static string & dataPathRoot(){
 	static string * dataPathRoot = new string("../../../data/");
 #elif defined TARGET_ANDROID
 	static string * dataPathRoot = new string("sdcard/");
+#elif defined TARGET_QNX
+	static string * dataPathRoot = new string("");
 #elif defined(TARGET_LINUX)
 	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 #else
@@ -531,14 +533,22 @@ bool ofIsStringInString(string haystack, string needle){
 //--------------------------------------------------
 string ofToLower(const string & src){
 	string dst(src);
+#if defined TARGET_QNX
+	transform(src.begin(),src.end(),dst.begin(),tolower);
+#else
 	transform(src.begin(),src.end(),dst.begin(),::tolower);
+#endif
 	return dst;
 }
 
 //--------------------------------------------------
 string ofToUpper(const string & src){
 	string dst(src);
+#if defined TARGET_QNX
+	transform(src.begin(),src.end(),dst.begin(),toupper);
+#else
 	transform(src.begin(),src.end(),dst.begin(),::toupper);
+#endif
 	return dst;
 }
 
@@ -728,6 +738,8 @@ ofTargetPlatform ofGetTargetPlatform(){
 	#endif
 #elif defined(TARGET_ANDROID)
 	return OF_TARGET_ANDROID;
+#elif defined(TARGET_QNX)
+	return OF_TARGET_QNX;
 #elif defined(TARGET_OF_IPHONE)
 	return OF_TARGET_IPHONE;
 #endif
