@@ -284,7 +284,7 @@ void ofFile::copyFrom(const ofFile & mom){
 			new_mode = ReadOnly;
 			ofLog(OF_LOG_WARNING, "ofFile: trying to copy a write file, opening copy as read only");
 		}
-		open(path(), new_mode);
+		open(mom.path(), new_mode);
 	}
 }
 
@@ -522,8 +522,8 @@ ofDirectory::ofDirectory(string path){
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(string path){
 	path = ofFilePath::getPathForDirectory(path);
-	originalDirectory = path;
 	close();
+	originalDirectory = path;
 	ofFilePath::open(path);
 }
 
@@ -564,9 +564,8 @@ int ofDirectory::listDir(){
 		vector<string>fileStrings;
 		getPocoFile().list(fileStrings);
 		for(int i = 0; i < (int)fileStrings.size(); i++){
-			Path curPath(originalDirectory);
-			curPath.setFileName(fileStrings[i]);
-			files.push_back(ofFile(curPath.toString(), ofFile::Reference));
+			ofFilePath file = ofFilePath(originalDirectory) + ofFilePath(fileStrings[i]);
+			files.push_back(ofFile(file, ofFile::Reference));
 		}
 
 		if(!showHidden){
@@ -600,8 +599,7 @@ string ofDirectory::getOriginalDirectory(){
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getName(unsigned int position){
-	Path cur(files.at(position).path());
-	return cur.getFileName();
+	return files[position].getFileName();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -659,15 +657,9 @@ bool ofDirectory::removeDirectory(string path, bool deleteIfNotEmpty, bool bRela
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	File file(path);
-	try{
-		file.remove(deleteIfNotEmpty);
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "deleteDirectory - folder could not be deleted");
-		return false;
-	}
-	return true;
+
+	ofDirectory dir(path);
+	return dir.remove(deleteIfNotEmpty);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -675,29 +667,8 @@ bool ofDirectory::createDirectory(string dirPath, bool bRelativeToData, bool rec
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-
-	File file(dirPath);
-	bool success = false;
-	try{
-		if(!recursive){
-			success = file.createDirectory();
-		}
-		else{
-			file.createDirectories();
-			success = true;
-		}
-	}
-	catch(Poco::Exception & except){
-		ofLog(OF_LOG_ERROR, "createDirectory - directory could not be created");
-		return false;
-	}
-
-	if(!success){
-		ofLog(OF_LOG_WARNING, "createDirectory - directory already exists");
-		success = true;
-	}
-
-	return success;
+	ofDirectory dir(dirPath);
+	return dir.create(recursive);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1118,6 +1089,14 @@ string ofFilePath::removeTrailingSlash(string path){
 	return path;
 }
 
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::removeLeadingSlash(string path){
+	if(path.length() > 0 && path[0] == '/'){
+		path = path.substr(1);
+	}
+	return path;
+}
+
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getFileName(string filePath, bool bRelativeToData){
@@ -1190,7 +1169,7 @@ ofFilePath ofFilePath::getCurrentWorkingDirectory(){
 	#endif
 }
 
-ofFilePath ofFilePath::join(string path1, string path2){
+string ofFilePath::join(string path1, string path2){
 	return removeTrailingSlash(path1) + addLeadingSlash(path2);
 }
 

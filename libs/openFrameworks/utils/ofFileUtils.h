@@ -124,6 +124,7 @@ public:
 	static string addLeadingSlash(string path);
 	static string addTrailingSlash(string path);
 	static string removeTrailingSlash(string path);
+	static string removeLeadingSlash(string path);
 	static string getPathForDirectory(string path);
 	static string getAbsolutePath(string path, bool bRelativeToData = true);
 
@@ -134,7 +135,7 @@ public:
 
 	static ofFilePath getEnclosingDirectory(string filePath, bool bRelativeToData = true);
 	static ofFilePath getCurrentWorkingDirectory();
-	static ofFilePath join(string path1,string path2);
+	static string join(string path1,string path2);
 	
 	static ofFilePath getCurrentExePath();
 	static ofFilePath getCurrentExeDir();
