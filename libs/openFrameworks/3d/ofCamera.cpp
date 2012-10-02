@@ -98,20 +98,7 @@ void ofCamera::begin(ofRectangle viewport) {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if(isOrtho) {
-		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
-		//			else
-#ifndef TARGET_OPENGLES
-		glOrtho(0, viewport.width, 0, viewport.height, nearClip, farClip);
-#else
-		ofMatrix4x4 ortho;
-		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
-		glLoadMatrixf(ortho.getPtr());
-#endif
-	} else {
-		gluPerspective(fov, viewport.width/viewport.height, nearClip, farClip);
-	}
-
+	glLoadMatrixf(getProjectionMatrix().getPtr());
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
 	ofViewport(viewport);
@@ -128,9 +115,15 @@ void ofCamera::end() {
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) {
-	ofMatrix4x4 matProjection;
-	matProjection.makePerspectiveMatrix(fov, viewport.width/viewport.height, nearClip, farClip);
-	return matProjection;
+	if(isOrtho) {
+		ofMatrix4x4 ortho;
+		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
+		return ortho;
+	}else{
+		ofMatrix4x4 matProjection;
+		matProjection.makePerspectiveMatrix(fov, viewport.width/viewport.height, nearClip, farClip);
+		return matProjection;
+	}
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewMatrix() {
