@@ -6,6 +6,8 @@
 #include "ofTypes.h"
 
 
+#include <AudioToolbox/AudioToolbox.h>
+
 class ofxiPhoneSoundStream : public ofBaseSoundStream{
 	public:
 		ofxiPhoneSoundStream();
@@ -37,12 +39,40 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		int getNumBuffers() { return nBuffers; }
 		
 	private:
+		
 		long unsigned long	tickCount;
 		int					nInputChannels;
 		int					nOutputChannels;
 		int					sampleRate;
 		int                 nFramesPerBuffer;
 		int 				nBuffers;
+	
+		ofBaseSoundInput *			soundInputPtr;
+		ofBaseSoundOutput *			soundOutputPtr;
+
+		AudioStreamBasicDescription			format, audioFormat;
+		AudioUnit							audioUnit		= NULL;
+		AudioBufferList						inputBufferList;		// input buffer
+
+		// flags to determine whether audio*BuffersChanged methods should be called on the soundInputPtr/soundOutputPtr
+		bool				newBuffersNeededForInput;
+		bool				newBuffersNeededForOutput;
+
+		static OSStatus recordingCallback(void *inRefCon,
+									  AudioUnitRenderActionFlags *ioActionFlags,
+									  const AudioTimeStamp *inTimeStamp,
+									  UInt32 inBusNumber,
+									  UInt32 inNumberFrames,
+									  AudioBufferList *ioData);
+	
+		static OSStatus playbackCallback(void *inRefCon, 
+								   AudioUnitRenderActionFlags *ioActionFlags,
+								   const AudioTimeStamp *inTimeStamp,
+								   UInt32 inBusNumber,
+								   UInt32 inNumberFrames,
+									 AudioBufferList *ioData);
+
+
 };
 
 

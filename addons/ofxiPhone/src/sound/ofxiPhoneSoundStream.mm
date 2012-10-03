@@ -18,16 +18,7 @@
 #include "ofSoundStream.h"
 #include "ofMath.h"
 #include "ofUtils.h"
-#import <AudioToolbox/AudioToolbox.h>
 #import "ofxiPhone.h"
-
-static bool							isSetup			= false;
-static bool							isRunning		= false;
-AudioStreamBasicDescription			format, audioFormat;
-AudioUnit							audioUnit		= NULL;
-AudioBufferList						inputBufferList;		// input buffer
-static ofBaseSoundInput *			soundInputPtr	= NULL;
-static ofBaseSoundOutput *			soundOutputPtr	= NULL;
 
 // intermediate buffer for sample scaling
 #define MAX_BUFFER_SIZE 4096
@@ -74,7 +65,7 @@ static void rioInterruptionListener(void *inClientData, UInt32 inInterruption) {
 		ofLog(OF_LOG_VERBOSE, "ofxiPhoneSoundStream: Audio session resumed");
 }
 
-static OSStatus playbackCallback(void *inRefCon, 
+OSStatus ofxiPhoneSoundStream::playbackCallback(void *inRefCon,
 								 AudioUnitRenderActionFlags *ioActionFlags, 
 								 const AudioTimeStamp *inTimeStamp, 
 								 UInt32 inBusNumber, 
@@ -83,7 +74,9 @@ static OSStatus playbackCallback(void *inRefCon,
 	
 	//ofLogNotice("ofxiPhoneSoundStream") << " playbackCallback " << (unsigned long long)soundOutputPtr;
 
-	if(soundOutputPtr == NULL)
+	ofxiPhoneSoundStream* stream = (ofxiPhoneSoundStream*)inRefCon;
+	
+	if(stream->soundOutputPtr == NULL)
 		return noErr;
 	
 	for(int i = 0; i < ioData->mNumberBuffers; i++) {
@@ -103,18 +96,15 @@ static OSStatus playbackCallback(void *inRefCon,
 		else {
 			// get floats from app
 			// @TODO implement tickCount
-			unsigned long long tickCount = 0;
-			static bool first = true;
-			if ( first )
-				ofLogWarning("ofxiPhoneSoundStream") << "using tickCount of 0, this needs to be implemented";
-			first = false;
-			
 			memset( scaleBuffer, 0, sizeof(float)*MAX_BUFFER_SIZE );
-			soundOutputPtr->audioOut(scaleBuffer,
-				ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2),
-				ioData->mBuffers[i].mNumberChannels,
-									 0,
-									 tickCount);
+			
+			int nFrames = ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2);
+			int nChannels = ioData->mBuffers[i].mNumberChannels;
+			
+			if ( stream->newBuffersNeededForOutput ){
+				stream->soundOutputPtr->audioOutBuffersChanged( nFrames, nChannels, stream->sampleRate );
+			}
+			stream->soundOutputPtr->audioOut(scaleBuffer,nFrames, nChannels, 0, stream->tickCount);
 			
 			// truncate to 16bit fixed point data
 			int len = ioData->mBuffers[i].mDataByteSize/2;
@@ -123,30 +113,34 @@ static OSStatus playbackCallback(void *inRefCon,
 			}
 		}
 	}
+	stream->newBuffersNeededForOutput = false;
+
 	
     return noErr;
 }
 
-static OSStatus recordingCallback(void *inRefCon, 
+OSStatus ofxiPhoneSoundStream::recordingCallback(void *inRefCon, 
                                   AudioUnitRenderActionFlags *ioActionFlags, 
                                   const AudioTimeStamp *inTimeStamp, 
                                   UInt32 inBusNumber, 
                                   UInt32 inNumberFrames, 
 								  AudioBufferList *ioData) {
 	
+	ofxiPhoneSoundStream* stream = (ofxiPhoneSoundStream*)inRefCon;
+
 	// set input buffer params
-	inputBufferList.mBuffers[0].mDataByteSize = 2*inNumberFrames*inputBufferList.mBuffers[0].mNumberChannels;
-	ioData = &inputBufferList;
+	stream->inputBufferList.mBuffers[0].mDataByteSize = 2*inNumberFrames*stream->inputBufferList.mBuffers[0].mNumberChannels;
+	ioData = &(stream->inputBufferList);
 	
     // obtain recorded samples
-	OSStatus status = AudioUnitRender(audioUnit, ioActionFlags, inTimeStamp, 1, inNumberFrames, ioData);
+	OSStatus status = AudioUnitRender(stream->audioUnit, ioActionFlags, inTimeStamp, 1, inNumberFrames, ioData);
     if(checkStatus(status)) {
 		ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't render input audio samples");
 		return status;
 	}
 	
 	// send data to app
-	if(soundInputPtr != NULL) {
+	if(stream->soundInputPtr != NULL) {
 
 		for(int i = 0; i < ioData->mNumberBuffers; ++i) {
 			short int *buffer = (short int *) ioData->mBuffers[i].mData;
@@ -160,11 +154,17 @@ static OSStatus recordingCallback(void *inRefCon,
 			if ( first )
 				ofLogWarning("ofxiPhoneSoundStream") << "using tickCount of 0, this needs to be implemented";
 			first = false;
-
-			soundInputPtr->audioIn(scaleBuffer,
-				ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2),
-				ioData->mBuffers[i].mNumberChannels, 0, tickCount);
+			
+			int nFrames = ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2);
+			int nChannels = ioData->mBuffers[i].mNumberChannels;
+			
+			if ( stream->newBuffersNeededForInput ){
+				stream->soundInputPtr->audioInBuffersChanged( nFrames, nChannels, stream->sampleRate );
+			}
+			stream->soundInputPtr->audioIn(scaleBuffer,	nFrames, nChannels, 0, stream->tickCount);
 		}
+		
+		stream->newBuffersNeededForInput = false;
 	}
 	return noErr;
 }
@@ -173,6 +173,10 @@ static OSStatus recordingCallback(void *inRefCon,
 ofxiPhoneSoundStream::ofxiPhoneSoundStream(){
 	nInputChannels = 0;
 	nOutputChannels = 0;
+	newBuffersNeededForInput = true;
+	newBuffersNeededForOutput = true;
+	soundOutputPtr = NULL;
+	soundInputPtr = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -190,11 +194,13 @@ void ofxiPhoneSoundStream::setDeviceID(int _deviceID){
 //------------------------------------------------------------------------------
 void ofxiPhoneSoundStream::setInput(ofBaseSoundInput * soundInput){
 	soundInputPtr = soundInput;
+	newBuffersNeededForInput = true;
 }
 
 //------------------------------------------------------------------------------
 void ofxiPhoneSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	soundOutputPtr = soundOutput;
+	newBuffersNeededForOutput = true;
 }
 
 //------------------------------------------------------------------------------
@@ -211,21 +217,18 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	// @TODO: FIFO to implement our own buffering
 	nBuffers = 1;
 	
-	if(isRunning) {
-		stop();
-		close();
-	}
-
 	OSStatus status;
 	
 	// initialize and configure the audio session
 	status = AudioSessionInitialize(NULL, NULL, rioInterruptionListener, NULL);
 	if(checkStatus(status)) {
 		ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't initialize audio session");
+		return false;
 	}
 	status = AudioSessionSetActive(true);
 	if(checkStatus(status)) {
 		ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't set audio session active");
+		return false;
 	}
 	
 	Float32 preferredBufferSize = (float) nFramesPerBuffer/sampleRate; 
@@ -252,6 +255,8 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	status = AudioComponentInstanceNew(inputComponent, &audioUnit);
 	if(checkStatus(status)) {
 		ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't create audio unit");
+		close();
+		return false;
 	}
 	
 	// this is supposed to make the audio come out of the speaker rather
@@ -286,6 +291,8 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 									  sizeof(flag));
 		if(checkStatus(status)) {
 			ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't enable audio output");
+			close();
+			return false;
 		}
 		
 		// set output format
@@ -301,11 +308,13 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 									  sizeof(audioFormat));
 		if(checkStatus(status)) {
 			ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't set output format");
+			close();
+			return false;
 		}
 		
 		// set output callback
 		callbackStruct.inputProc = playbackCallback;
-		callbackStruct.inputProcRefCon = NULL;
+		callbackStruct.inputProcRefCon = (void*)this;
 		status = AudioUnitSetProperty(audioUnit, 
 									  kAudioUnitProperty_SetRenderCallback, 
 									  kAudioUnitScope_Global, 
@@ -314,6 +323,8 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 									  sizeof(callbackStruct));
 		if(checkStatus(status)) {
 			ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't set output callback");
+			close();
+			return false;
 		}
 	}
 	
@@ -328,6 +339,8 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 									  sizeof(flag));
 		if(checkStatus(status)) {
 			ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't enable audio input");
+			close();
+			return false;
 		}
 		
 		audioFormat.mChannelsPerFrame	= inChannels;
@@ -343,6 +356,8 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 									  sizeof(audioFormat));
 		if(checkStatus(status)) {
 			ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't enable set input format");
+			close();
+			return false;
 		}
 		
 		// setup input buffer
@@ -355,7 +370,7 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 		
 		// set input callback
 		callbackStruct.inputProc = recordingCallback;
-		callbackStruct.inputProcRefCon = NULL;
+		callbackStruct.inputProcRefCon = (void*)this;
 		status = AudioUnitSetProperty(audioUnit, 
 									  kAudioOutputUnitProperty_SetInputCallback, 
 									  kAudioUnitScope_Global, 
@@ -364,6 +379,8 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 									  sizeof(callbackStruct));
 		if(checkStatus(status)) {
 			ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't set input callback");
+			close();
+			return false;
 		}
 	}
 	
@@ -376,37 +393,32 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	status = AudioUnitInitialize(audioUnit);
 	if(checkStatus(status)) {
 		ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't initialize audio unit");
+		close();
+		return false;
 	}
 	
-	isSetup = true;
-	ofSoundStreamStart();
+	return true;
 }
 
 //------------------------------------------------------------------------------
 bool ofxiPhoneSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers){
 	setInput(app);
 	setOutput(app);
-	setup(outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
+	return setup(outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
 }
 
 //------------------------------------------------------------------------------
 void ofxiPhoneSoundStream::start(){
-	if(isRunning)
-		ofSoundStreamStop();
 	if(audioUnit != NULL) {
 		OSStatus status = AudioOutputUnitStart(audioUnit);
 		checkStatus(status);
-		isRunning = true;
 	}
 }
 
 //------------------------------------------------------------------------------
 void ofxiPhoneSoundStream::stop(){
-	if(isRunning) {
-		OSStatus status = AudioOutputUnitStop(audioUnit);
-		checkStatus(status);
-	}
-	isRunning = false;	
+	OSStatus status = AudioOutputUnitStop(audioUnit);
+	checkStatus(status);
 }
 
 //------------------------------------------------------------------------------

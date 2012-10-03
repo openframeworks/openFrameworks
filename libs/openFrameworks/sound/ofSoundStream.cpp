@@ -195,7 +195,11 @@ bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int n
 		if (isSetup()){
 			close();
 		}
-		return soundStream->setup(outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
+		bool success = soundStream->setup(outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
+		if (success){
+			start();
+		}
+		return success;
 	}
 	return false;
 }
@@ -206,7 +210,11 @@ bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int 
 		if (isSetup()){
 			close();
 		}
-		return soundStream->setup(app, outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
+		bool success = soundStream->setup(app, outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
+		if (success){
+			start();
+		}
+		return success;
 	}
 	return false;
 }
@@ -218,6 +226,7 @@ void ofSoundStream::start(){
 			soundStream->start();
 			started = true;
 		}
+		
 	}
 }
 

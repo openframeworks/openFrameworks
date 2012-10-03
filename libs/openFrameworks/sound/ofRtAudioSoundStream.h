@@ -48,7 +48,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
 	
-		// flags to determine whether onConnect should be called on the soundInputPtr/soundOutputPtr
+		// flags to determine whether audio*BuffersChanged methods should be called on the soundInputPtr/soundOutputPtr
 		bool				newBuffersNeededForInput;
 		bool				newBuffersNeededForOutput;
 		
