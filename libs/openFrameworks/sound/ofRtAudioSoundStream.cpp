@@ -130,7 +130,6 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	try {
 		audio ->openStream( (nOutputChannels>0)?&outputParameters:NULL, (nInputChannels>0)?&inputParameters:NULL, RTAUDIO_FLOAT32,
 							sampleRate, &bufferFrames, &rtAudioCallback, this, &options);
-		audio->startStream();
 	} catch (RtError &error) {
 		error.printMessage();
 		return false;

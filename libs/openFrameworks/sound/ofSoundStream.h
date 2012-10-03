@@ -40,7 +40,6 @@ class ofSoundStream: public ofBaseSoundStream{
 		ofPtr<ofBaseSoundStream> getSoundStream();
 
 		void listDevices();
-	
 		void setDeviceID(int deviceID);
 
 		bool isSetup();
@@ -68,4 +67,7 @@ class ofSoundStream: public ofBaseSoundStream{
 	protected:
 		
 		ofPtr<ofBaseSoundStream> soundStream;
+		bool started;
+		ofBaseSoundInput* inputPtr;
+		ofBaseSoundOutput* outputPtr;
 };

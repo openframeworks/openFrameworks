@@ -49,6 +49,7 @@ void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float p
 			// now setup the mixer using systemStream as output
 			setup( systemStream );
 			systemStream->setOutput(this);
+			systemStream->start();
 		}
 		else{
 			// this is a user-defined mixer, and it has not been setup yet
