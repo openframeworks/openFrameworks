@@ -42,8 +42,8 @@ int ofSoundBuffer::getNumChannels() const{
 	return channels;
 }
 
-unsigned long ofSoundBuffer::getDuration() const{
-	return float(bufferSize()*1000)/float(samplerate);
+unsigned long ofSoundBuffer::getDurationMS() const{
+	return float(getNumFrames()*1000)/float(samplerate);
 }
 
 int ofSoundBuffer::getSampleRate() const{
@@ -62,7 +62,7 @@ unsigned long ofSoundBuffer::size() const{
 	return buffer.size();
 }
 
-unsigned long ofSoundBuffer::bufferSize() const{
+unsigned long ofSoundBuffer::getNumFrames() const{
 	return buffer.size()/channels;
 }
 
@@ -113,7 +113,7 @@ ofSoundBuffer & ofSoundBuffer::operator*=(float value){
 void ofSoundBuffer::stereoPan(float left, float right){
 	if(channels!=2) return;
 	float * bufferPtr = &buffer[0];
-	for(unsigned int i=0;i<bufferSize();i++){
+	for(unsigned int i=0;i<getNumFrames();i++){
 		*bufferPtr++ *= left;
 		*bufferPtr++ *= right;
 	}
@@ -134,7 +134,7 @@ void ofSoundBuffer::addTo(ofSoundBuffer & soundBuffer, unsigned int bufferSize, 
 }
 
 void ofSoundBuffer::copyTo(float * out, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop) const{
-	if(int(this->bufferSize()-fromSample)>=bufferSize){
+	if(int(this->getNumFrames()-fromSample)>=bufferSize){
 		if(channels==(int)outChannels){
 			memcpy(out,&buffer[fromSample*channels],bufferSize*channels*sizeof(float));
 		}else if(channels>(int)outChannels){
@@ -155,10 +155,10 @@ void ofSoundBuffer::copyTo(float * out, unsigned int bufferSize, unsigned int ou
 		}
 	}else{
 		if(channels==(int)outChannels){
-			memcpy(out,&buffer[fromSample*channels],(this->bufferSize()-fromSample)*channels*sizeof(float));
+			memcpy(out,&buffer[fromSample*channels],(this->getNumFrames()-fromSample)*channels*sizeof(float));
 		}else if(channels>(int)outChannels){
 			const float * buffPtr = &buffer[fromSample*channels];
-			for(unsigned int i=0;i<(int)this->bufferSize()-fromSample;i++){
+			for(unsigned int i=0;i<(int)this->getNumFrames()-fromSample;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ =  *buffPtr++;
 				}
@@ -166,25 +166,25 @@ void ofSoundBuffer::copyTo(float * out, unsigned int bufferSize, unsigned int ou
 			}
 		}else{ // we get only the first channel and replicate, possible cases?
 			const float * buffPtr = &buffer[fromSample*channels];
-			for(unsigned int i=0;i<this->bufferSize()-fromSample;i++){
+			for(unsigned int i=0;i<this->getNumFrames()-fromSample;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ =  buffPtr[i];
 				}
 			}
 		}
 		if(!loop || size()==0){
-			for(unsigned int i=0;i<(bufferSize-(this->bufferSize()-fromSample))*outChannels;i++){
+			for(unsigned int i=0;i<(bufferSize-(this->getNumFrames()-fromSample))*outChannels;i++){
 				out[i] = 0;
 			}
 		}else{
-			copyTo(out,(bufferSize-(this->bufferSize()-fromSample)),outChannels,0,loop);
+			copyTo(out,(bufferSize-(this->getNumFrames()-fromSample)),outChannels,0,loop);
 		}
 	}
 }
 
 void ofSoundBuffer::addTo(float * out, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop) const{
 	const float * buffPtr = &buffer[fromSample*channels];
-	if(int(this->bufferSize()-fromSample)>=bufferSize){
+	if(int(this->getNumFrames()-fromSample)>=bufferSize){
 		if(channels==(int)outChannels){
 			for(unsigned int i=0;i<bufferSize*outChannels;i++){
 				out[i] += buffPtr[i];
@@ -205,25 +205,25 @@ void ofSoundBuffer::addTo(float * out, unsigned int bufferSize, unsigned int out
 		}
 	}else{
 		if(channels==(int)outChannels){
-			for(unsigned int i=0;i<(this->bufferSize()-fromSample)*outChannels;i++){
+			for(unsigned int i=0;i<(this->getNumFrames()-fromSample)*outChannels;i++){
 				out[i]+=buffPtr[i];
 			}
 		}else if(channels>(int)outChannels){
-			for(unsigned int i=0;i<this->bufferSize()-fromSample;i++){
+			for(unsigned int i=0;i<this->getNumFrames()-fromSample;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ +=  *buffPtr++;
 				}
 				buffPtr += channels - outChannels;
 			}
 		}else{ // we get only the first channel and replicate, possible cases?
-			for(unsigned int i=0;i<this->bufferSize()-fromSample;i++){
+			for(unsigned int i=0;i<this->getNumFrames()-fromSample;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ +=  buffPtr[i];
 				}
 			}
 		}
 		if(loop){
-			addTo(out,(bufferSize-(this->bufferSize()-fromSample)),outChannels,0,loop);
+			addTo(out,(bufferSize-(this->getNumFrames()-fromSample)),outChannels,0,loop);
 		}
 	}
 }
@@ -245,10 +245,10 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer & resBuffer, unsigned int sam
 
 	if(end<buffer.size()-2*channels){
 		to = numsamples;
-	}else if(sampleBegin+2>bufferSize()){
+	}else if(sampleBegin+2>getNumFrames()){
 		to = 0;
 	}else{
-		to = float(bufferSize()-2-sampleBegin)/speed;
+		to = float(getNumFrames()-2-sampleBegin)/speed;
 	}
 	double remainder = position - intPosition;
 	float * resBufferPtr = &resBuffer[0];
@@ -268,7 +268,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer & resBuffer, unsigned int sam
 	if(end>=buffer.size()-2*channels){
 		to = numsamples-to;
 		if(loop){
-			intPosition %= bufferSize();
+			intPosition %= getNumFrames();
 			for(unsigned int i=0;i<to;i++){
 				intPosition *= channels;
 				for(int j=0;j<channels;j++){
@@ -303,10 +303,10 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer & resBuffer, unsigned int sa
 
 	if(end<buffer.size()-3*channels){
 		to = numsamples;
-	}else if(sampleBegin+3>bufferSize()){
+	}else if(sampleBegin+3>getNumFrames()){
 		to = 0;
 	}else{
-		to = double(bufferSize()-3-sampleBegin)/speed;
+		to = double(getNumFrames()-3-sampleBegin)/speed;
 	}
 	float * resBufferPtr = &resBuffer[0];
 
@@ -380,21 +380,23 @@ void ofSoundBuffer::resampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin,
 
 void ofSoundBuffer::resample(float speed, InterpolationAlgorithm algorithm){
 	ofSoundBuffer resampled;
-	resampleTo(resampled,0,bufferSize()/speed,speed,false,algorithm);
+	resampleTo(resampled,0,getNumFrames()/speed,speed,false,algorithm);
 	*this = resampled;
 }
 
 
-void ofSoundBuffer::getChannel(ofSoundBuffer & buffer, int channel) const{
-	buffer.setNumChannels(1);
-	buffer.setSampleRate(samplerate);
+
+void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int channel) const{
+	targetBuffer.setNumChannels(1);
+	targetBuffer.setSampleRate(samplerate);
 	if(channels==1){
-		copyTo(buffer,size(),1,0);
+		copyTo(targetBuffer,size(),1,0);
 	}else{
-		buffer.resize(bufferSize());
+		// hold samples from only one channel
+		targetBuffer.resize(getNumFrames());
 		const float * bufferPtr = &this->buffer[0];
-		for(unsigned int i=0;i<bufferSize();i++){
-			buffer[i] = *bufferPtr;
+		for(unsigned int i=0;i<getNumFrames();i++){
+			targetBuffer[i] = *bufferPtr;
 			bufferPtr+=channels;
 		}
 	}
@@ -404,9 +406,9 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & buffer, int channel){
 	if(channels==1){
 		buffer.copyTo(*this,buffer.size(),1,0);
 	}else{
-		resize(buffer.bufferSize()*channels);
+		resize(buffer.getNumFrames()*channels);
 		float * bufferPtr = &this->buffer[0];
-		for(unsigned int i=0;i<bufferSize();i++){
+		for(unsigned int i=0;i<getNumFrames();i++){
 			*bufferPtr = buffer[i];
 			bufferPtr+=channels;
 		}
@@ -425,10 +427,10 @@ float ofSoundBuffer::getRMSAmplitude(){
 float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
 	if(channel>getNumChannels()-1) return 0;
 	float rmsAmplitude  = 0;
-	for(unsigned int i=0;i<bufferSize();i++){
+	for(unsigned int i=0;i<getNumFrames();i++){
 		rmsAmplitude += abs(buffer[i*getNumChannels()+channel]);
 	}
-	rmsAmplitude /= float(bufferSize());
+	rmsAmplitude /= float(getNumFrames());
 	return rmsAmplitude;
 }
 

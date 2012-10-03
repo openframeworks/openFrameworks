@@ -137,16 +137,16 @@ void ofBasicSoundPlayer::setMultiPlay(bool bMp){
 }
 
 void ofBasicSoundPlayer::setPosition(float pct){
-	positions.back() = pct*buffer.bufferSize();
+	positions.back() = pct*buffer.getNumFrames();
 }
 
 void ofBasicSoundPlayer::setPositionMS(int ms){
-	setPosition(float(ms)/float(buffer.getDuration()));
+	setPosition(float(ms)/float(buffer.getDurationMS()));
 }
 
 
 float ofBasicSoundPlayer::getPosition(){
-	return float(positions.back())/float(buffer.bufferSize());
+	return float(positions.back())/float(buffer.getNumFrames());
 }
 
 int ofBasicSoundPlayer::getPositionMS(){
@@ -174,17 +174,17 @@ float ofBasicSoundPlayer::getVolume(){
 }
 
 unsigned long ofBasicSoundPlayer::getDurationMS(){
-	return buffer.getDuration();
+	return buffer.getDurationMS();
 }
 
 void ofBasicSoundPlayer::updatePositions(int bufferSize){
 	for(int i=0;i<(int)positions.size();i++){
 		positions[i] += bufferSize*relativeSpeed[i];
 		if(loop){
-			positions[i] %= buffer.bufferSize();
+			positions[i] %= buffer.getNumFrames();
 		}else{
-			positions[i] = ofClamp(positions[i],0,buffer.bufferSize());
-			if(positions[i]==buffer.bufferSize()){
+			positions[i] = ofClamp(positions[i],0,buffer.getNumFrames());
+			if(positions[i]==buffer.getNumFrames()){
 				if(positions.size()>1){
 					positions.erase(positions.begin()+i);
 					relativeSpeed.erase(relativeSpeed.begin()+i);
@@ -195,7 +195,7 @@ void ofBasicSoundPlayer::updatePositions(int bufferSize){
 			}
 		}
 	}
-	if(!loop && positions.size()==1 && positions[0]==buffer.bufferSize()) isPlaying = false;
+	if(!loop && positions.size()==1 && positions[0]==buffer.getNumFrames()) isPlaying = false;
 }
 
 void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int deviceID, long unsigned long tickCount){
@@ -208,8 +208,8 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 			newBufferE.notify(this,buffer);
 			buffer.copyTo(output,bufferSize,channels,0);
 		}else{
-			//assert( resampledBuffer.size() == bufferSize );
 			for(int i=0;i<(int)positions.size();i++){
+				//assert( resampledBuffer.getNumFrames() == bufferSize*relativeSpeed[i] );
 				if(abs(relativeSpeed[i] - 1)<FLT_EPSILON){
 					buffer.copyTo(resampledBuffer,bufferSize,channels,positions[i],loop);
 				}else{

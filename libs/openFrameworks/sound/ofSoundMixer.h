@@ -41,14 +41,21 @@ private:
 		float volumeRight;
 		bool operator==(const ofBaseSoundOutput*otherOutput) const { return otherOutput==sourceOutput; }
 	} ofSoundMixerSource;
-	vector<ofSoundMixerSource> sources;
 
-	// helper method to locate a given source in the vecotr of sources
-	vector<ofSoundMixerSource>::iterator findSource(ofBaseSoundOutput& out);
+	ofSoundMixerSource& getSource( ofBaseSoundOutput& out );
+
 	
+	
+	vector<ofSoundMixerSource> sources;
+	vector<ofSoundMixerSource> sourceAddQueue;
+	vector<ofSoundMixerSource> sourceRemoveQueue;
+
+
 
 	ofSoundBuffer buffer;
 	bool isSetup;
+	
+	ofMutex mutex;
 };
 
 #endif /* OFSOUNDMIXER_H_ */

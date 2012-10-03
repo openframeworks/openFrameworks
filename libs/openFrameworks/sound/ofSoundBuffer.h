@@ -24,26 +24,34 @@ public:
 
 	vector<float> & getBuffer();
 
-	int getNumChannels() const;
-	// millisecs
-	unsigned long getDuration() const;
+	/// sample rate of the audio in this buffer
 	int getSampleRate() const;
-	/// total number of samples (number of frames * number of channels)
-	unsigned long size() const;
+	void setSampleRate(int rate);
+	/// resample by changing the playback speed, keeping the same sampleRate
+	void resample(float speed, InterpolationAlgorithm algorithm=defaultAlgorithm);
+	
+	/// the number of channels per frame
+	int getNumChannels() const;
+	/// set the number of channels. does not resize the underlying buffer.
+	void setNumChannels(int channels);
+	
+	/// the number of frames, ie the number of sets of (getNumChannels()) samples
+	unsigned long getNumFrames() const;
 
-	/// the number of frames (ie the number of sets of getNumChannels() samples)
-	unsigned long bufferSize() const;
-	unsigned long getNumFrames() const { return bufferSize(); }
+	/// the total number of samples in this buffer (==getNumFrames()*getNumChannels())
+	unsigned long size() const;
+	
+	/// duration in milliseconds
+	unsigned long getDurationMS() const;
+
 
 	/// resize this buffer to exactly this many samples. it's up to you make sure samples matches the channel count.
-	void resize(unsigned int samples, float val=float());
+	void resize(unsigned int numSamples, float val=float());
 	void clear();
 	void swap(ofSoundBuffer & buffer);
 	void set(float value);
-	void set(float * buffer, unsigned int size, unsigned int nChannels);
+	void set(float * buffer, unsigned int numSamples, unsigned int nChannels);
 
-	void setNumChannels(int channels);
-	void setSampleRate(int rate);
 
 	float & operator[](unsigned int pos);
 	const float & operator[](unsigned int pos) const;
@@ -63,8 +71,6 @@ public:
 	void addTo(float * out, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop=false) const;
 
 	void resampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin, unsigned int numSamples, float speed, bool loop=false, InterpolationAlgorithm algorithm=defaultAlgorithm);
-
-	void resample(float speed, InterpolationAlgorithm algorithm=defaultAlgorithm);
 
 	void getChannel(ofSoundBuffer & buffer, int channel) const;
 	void setChannel(const ofSoundBuffer & buffer, int channel);

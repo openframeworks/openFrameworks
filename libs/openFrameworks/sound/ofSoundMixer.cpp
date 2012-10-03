@@ -34,6 +34,8 @@ void ofSoundMixer::setup( ofSoundStream* outputStream ){
 
 void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float pan){
 
+	Poco::ScopedLock<ofMutex> scopedMutex(mutex);
+
 	if (!isSetup){
 		if (isSystemMixer()){
 			// this is the system mixer
@@ -73,6 +75,7 @@ void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float p
 
 void ofSoundMixer::removeSoundOutput(ofBaseSoundOutput& out)
 {
+	Poco::ScopedLock<ofMutex> scopedMutex(mutex);
 	vector<ofSoundMixerSource>::iterator it = std::find(sources.begin(), sources.end(), &out);
 	if (it!=sources.end()){
 		sources.erase(it);
@@ -108,8 +111,9 @@ void ofSoundMixer::setPan(ofBaseSoundOutput & out, float p){
 
 void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount){
 	//memset( output, 0, sizeof(float)*bufferSize*nChannels );
-	assert( bufferSize == buffer.bufferSize() );
+	assert( bufferSize == buffer.getNumFrames() );
 	assert( nChannels == buffer.getNumChannels() );
+	mutex.lock();
 	for(int i=0;i<(int)sources.size();i++){
 		buffer.set(0);
 		
@@ -124,5 +128,7 @@ void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int d
 			output[j] += buffer[j];
 		}
 	}
+	mutex.unlock();
 }
+
 
