@@ -119,27 +119,27 @@ void ofSoundBuffer::stereoPan(float left, float right){
 	}
 }
 
-void ofSoundBuffer::copyTo(ofSoundBuffer & soundBuffer, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop) const{
+void ofSoundBuffer::copyTo(ofSoundBuffer & soundBuffer, unsigned int nFrames, unsigned int outChannels,unsigned int fromSample,bool loop) const{
 	soundBuffer.setNumChannels(outChannels);
 	soundBuffer.setSampleRate(samplerate);
-	soundBuffer.resize(bufferSize*outChannels);
-	copyTo(&soundBuffer.getBuffer()[0],bufferSize,outChannels,fromSample,loop);
+	soundBuffer.resize(nFrames*outChannels);
+	copyTo(&soundBuffer.getBuffer()[0],nFrames,outChannels,fromSample,loop);
 }
 
-void ofSoundBuffer::addTo(ofSoundBuffer & soundBuffer, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop) const{
+void ofSoundBuffer::addTo(ofSoundBuffer & soundBuffer, unsigned int nFrames, unsigned int outChannels,unsigned int fromSample,bool loop) const{
 	soundBuffer.setNumChannels(outChannels);
 	soundBuffer.setSampleRate(samplerate);
-	soundBuffer.resize(bufferSize*outChannels);
-	addTo(&soundBuffer.getBuffer()[0],bufferSize,outChannels,fromSample,loop);
+	soundBuffer.resize(nFrames*outChannels);
+	addTo(&soundBuffer.getBuffer()[0],nFrames,outChannels,fromSample,loop);
 }
 
-void ofSoundBuffer::copyTo(float * out, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop) const{
-	if(int(this->getNumFrames()-fromSample)>=bufferSize){
+void ofSoundBuffer::copyTo(float * out, unsigned int nFrames, unsigned int outChannels,unsigned int fromSample,bool loop) const{
+	if(int(this->getNumFrames()-fromSample)>=nFrames){
 		if(channels==(int)outChannels){
-			memcpy(out,&buffer[fromSample*channels],bufferSize*channels*sizeof(float));
+			memcpy(out,&buffer[fromSample*channels],nFrames*channels*sizeof(float));
 		}else if(channels>(int)outChannels){
 			const float * buffPtr = &buffer[fromSample*channels];
-			for(unsigned int i=0;i<bufferSize;i++){
+			for(unsigned int i=0;i<nFrames;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ =  *buffPtr++;
 				}
@@ -147,7 +147,7 @@ void ofSoundBuffer::copyTo(float * out, unsigned int bufferSize, unsigned int ou
 			}
 		}else{ // we get only the first channel and replicate, posible cases?
 			const float * buffPtr = &buffer[fromSample*channels];
-			for(unsigned int i=0;i<bufferSize;i++){
+			for(unsigned int i=0;i<nFrames;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ =  buffPtr[i];
 				}
@@ -173,31 +173,31 @@ void ofSoundBuffer::copyTo(float * out, unsigned int bufferSize, unsigned int ou
 			}
 		}
 		if(!loop || size()==0){
-			for(unsigned int i=0;i<(bufferSize-(this->getNumFrames()-fromSample))*outChannels;i++){
+			for(unsigned int i=0;i<(nFrames-(this->getNumFrames()-fromSample))*outChannels;i++){
 				out[i] = 0;
 			}
 		}else{
-			copyTo(out,(bufferSize-(this->getNumFrames()-fromSample)),outChannels,0,loop);
+			copyTo(out,(nFrames-(this->getNumFrames()-fromSample)),outChannels,0,loop);
 		}
 	}
 }
 
-void ofSoundBuffer::addTo(float * out, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop) const{
+void ofSoundBuffer::addTo(float * out, unsigned int nFrames, unsigned int outChannels,unsigned int fromSample,bool loop) const{
 	const float * buffPtr = &buffer[fromSample*channels];
-	if(int(this->getNumFrames()-fromSample)>=bufferSize){
+	if(int(this->getNumFrames()-fromSample)>=nFrames){
 		if(channels==(int)outChannels){
-			for(unsigned int i=0;i<bufferSize*outChannels;i++){
+			for(unsigned int i=0;i<nFrames*outChannels;i++){
 				out[i] += buffPtr[i];
 			}
 		}else if(channels>(int)outChannels){
-			for(unsigned int i=0;i<bufferSize;i++){
+			for(unsigned int i=0;i<nFrames;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ +=  *buffPtr++;
 				}
 				buffPtr += channels - outChannels;
 			}
 		}else{ // we get only the first channel and replicate, possible cases?
-			for(unsigned int i=0;i<bufferSize;i++){
+			for(unsigned int i=0;i<nFrames;i++){
 				for(unsigned int j=0;j<outChannels;j++){
 					*out++ +=  buffPtr[i];
 				}
@@ -223,7 +223,7 @@ void ofSoundBuffer::addTo(float * out, unsigned int bufferSize, unsigned int out
 			}
 		}
 		if(loop){
-			addTo(out,(bufferSize-(this->getNumFrames()-fromSample)),outChannels,0,loop);
+			addTo(out,(nFrames-(this->getNumFrames()-fromSample)),outChannels,0,loop);
 		}
 	}
 }

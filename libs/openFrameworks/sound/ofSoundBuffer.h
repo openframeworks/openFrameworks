@@ -64,11 +64,11 @@ public:
 
 	void copyFrom(short * shortBuffer, unsigned int length, int channels, int samplerate);
 
-	void copyTo(ofSoundBuffer & soundBuffer, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop=false) const;
-	void addTo(ofSoundBuffer & soundBuffer, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop=false) const;
+	void copyTo(ofSoundBuffer & soundBuffer, unsigned int outNumFrames, unsigned int outNumChannels,unsigned int fromSample,bool loop=false) const;
+	void addTo(ofSoundBuffer & soundBuffer, unsigned int outNumFrames, unsigned int outNumChannels,unsigned int fromSample,bool loop=false) const;
 
-	void copyTo(float * out, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop=false) const;
-	void addTo(float * out, unsigned int bufferSize, unsigned int outChannels,unsigned int fromSample,bool loop=false) const;
+	void copyTo(float * out, unsigned int outNumFrames, unsigned int outNumChannels,unsigned int fromSample,bool loop=false) const;
+	void addTo(float * out, unsigned int outNumFrames, unsigned int outNumChannels,unsigned int fromSample,bool loop=false) const;
 
 	void resampleTo(ofSoundBuffer & buffer, unsigned int sampleBegin, unsigned int numSamples, float speed, bool loop=false, InterpolationAlgorithm algorithm=defaultAlgorithm);
 

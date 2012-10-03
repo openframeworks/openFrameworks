@@ -198,13 +198,13 @@ void ofxiPhoneSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 }
 
 //------------------------------------------------------------------------------
-bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int _nBuffers){
+bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _nFramesPerBuffer, int _nBuffers){
 	
 	nInputChannels = inChannels;
 	nOutputChannels = outChannels;
 	tickCount = 0;
 	sampleRate = _sampleRate;
-	bufferSize = _bufferSize;
+	nFramesPerBuffer = _nFramesPerBuffer;
 	
 	// nBuffers is always 1  (see CoreAudio AudioBuffer struct)
 	// this may change in the future ...
@@ -228,7 +228,7 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 		ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't set audio session active");
 	}
 	
-	Float32 preferredBufferSize = (float) bufferSize/sampleRate; 
+	Float32 preferredBufferSize = (float) nFramesPerBuffer/sampleRate; 
 	
 	
 	status = AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(preferredBufferSize), &preferredBufferSize);
@@ -383,10 +383,10 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 }
 
 //------------------------------------------------------------------------------
-bool ofxiPhoneSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
+bool ofxiPhoneSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers){
 	setInput(app);
 	setOutput(app);
-	setup(outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+	setup(outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
 }
 
 //------------------------------------------------------------------------------
@@ -443,7 +443,7 @@ int ofxiPhoneSoundStream::getSampleRate(){
 
 //------------------------------------------------------------------------------
 int ofxiPhoneSoundStream::getBufferSize(){
-    return bufferSize;
+    return nFramesPerBuffer;
 }
 
 #endif

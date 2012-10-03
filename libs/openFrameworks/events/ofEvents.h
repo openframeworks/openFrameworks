@@ -79,7 +79,7 @@ class ofDragInfo{
 		class ofAudioEventArgs : public ofEventArgs {
 		  public:
 			float* buffer;
-			int bufferSize;
+			int nFrames;
 			int nChannels;
 		};
 

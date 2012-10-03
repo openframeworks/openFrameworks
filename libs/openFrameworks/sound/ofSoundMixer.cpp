@@ -23,11 +23,11 @@ ofSoundMixer::ofSoundMixer() {
 
 
 void ofSoundMixer::setup( ofSoundStream* outputStream ){
-	int bufferSize = outputStream->getBufferSize();
+	int nFrames = outputStream->getBufferSize();
 	int nChannels = outputStream->getNumOutputChannels();
 	buffer.setNumChannels(nChannels);
 	buffer.setSampleRate(outputStream->getSampleRate());
-	buffer.resize(bufferSize*nChannels,0);
+	buffer.resize(nFrames*nChannels,0);
 	isSetup = true;
 }
 
@@ -109,15 +109,15 @@ void ofSoundMixer::setPan(ofBaseSoundOutput & out, float p){
 }
 
 
-void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount){
-	//memset( output, 0, sizeof(float)*bufferSize*nChannels );
-	assert( bufferSize == buffer.getNumFrames() );
+void ofSoundMixer::audioOut(float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount){
+	//memset( output, 0, sizeof(float)*nFrames*nChannels );
+	assert( nFrames == buffer.getNumFrames() );
 	assert( nChannels == buffer.getNumChannels() );
 	mutex.lock();
 	for(int i=0;i<(int)sources.size();i++){
 		buffer.set(0);
 		
-		sources[i].sourceOutput->audioOut(&buffer[0],bufferSize,nChannels,deviceID,tickCount);
+		sources[i].sourceOutput->audioOut(&buffer[0],nFrames,nChannels,deviceID,tickCount);
 		if(buffer.getNumChannels()==2 && sources[i].volume-1<FLT_EPSILON && sources[i].pan<FLT_EPSILON){
 			buffer.stereoPan(sources[i].volumeLeft,sources[i].volumeRight);
 		}else if(sources[i].volume-1<FLT_EPSILON){

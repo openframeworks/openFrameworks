@@ -25,8 +25,8 @@ class ofSoundStream;
 ofSoundStream* ofSoundStreamGetSystemStream();
 
 OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL));
-OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers));
-OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers));
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int nFramesPerBuffer, int nBuffers));
+OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->setup() instead",void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int nFramesPerBuffer, int nBuffers));
 OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->stop() instead",void ofSoundStreamStop());
 OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->start() instead",void ofSoundStreamStart());
 OF_DEPRECATED_MSG("Use ofSoundStreamGetSystemStream()->close() instead",void ofSoundStreamClose());
@@ -43,11 +43,11 @@ class ofSoundStream: public ofBaseSoundStream{
 		void setDeviceID(int deviceID);
 
 		bool isSetup();
-		bool setupInput( int nChannels=2, int sampleRate=-1, int bufferSize=-1, int nBuffers=-1 );
-		bool setupOutput( int nChannels=2, int sampleRate=-1, int bufferSize=-1, int nBuffers=-1 );
+		bool setupInput( int nChannels=2, int sampleRate=-1, int nFramesPerBuffer=-1, int nBuffers=-1 );
+		bool setupOutput( int nChannels=2, int sampleRate=-1, int nFramesPerBuffer=-1, int nBuffers=-1 );
 
-		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers);
+		bool setup(int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers);
 
 		/// set root input/output objects
 		void setInput(ofBaseSoundInput * soundInput);
