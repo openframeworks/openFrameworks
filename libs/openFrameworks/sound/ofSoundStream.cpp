@@ -85,7 +85,7 @@ void ofSoundStream::listDevices(){
 //------------------------------------------------------------
 void ofSoundStream::setDeviceID(int deviceID){
 	if( soundStream ){
-		// tear down the existing stream if necessary, storing parameters
+		// tear down the existing stream if necessary, storing parameters and state
 		bool wasSetup = false;
 		bool wasStarted = started;
 		int outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers;
@@ -108,14 +108,12 @@ void ofSoundStream::setDeviceID(int deviceID){
 		
 		// setup the stream again, if necessary, with the same parameters
 		if (wasSetup){
-			setup( outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers );
-			ofLogNotice("ofSoundStream") << "post: was started: " << wasStarted;
-			if (prevOutputPtr)
+			setupInternal( outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers, wasStarted );
+			if (prevOutputPtr){
 				setOutput(prevOutputPtr);
-			if (prevInputPtr)
+			}
+			if (prevInputPtr){
 				setInput(prevInputPtr);
-			if (wasStarted){
-				start();
 			}
 		}
 	}
@@ -150,7 +148,7 @@ bool ofSoundStream::isSetup(){
 
 
 //------------------------------------------------------------
-bool ofSoundStream::setupInput( int nChannels, int sampleRate, int nFramesPerBuffer, int nBuffers ){
+bool ofSoundStream::setupInput( int nChannels, int sampleRate, int nFramesPerBuffer, int nBuffers){
 	if ( isSetup() ){
 		sampleRate = getSampleRate();
 		nFramesPerBuffer = getBufferSize();
@@ -190,13 +188,24 @@ bool ofSoundStream::setupOutput( int nChannels, int sampleRate, int nFramesPerBu
 }
 
 //------------------------------------------------------------
-bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers){
+bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers ){
+	return setupInternal( outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers, true );
+}
+
+//------------------------------------------------------------
+bool ofSoundStream::setup(ofBaseApp *app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers) {
+	return setupInternal( app, outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers, true );
+}
+
+
+//------------------------------------------------------------
+bool ofSoundStream::setupInternal(int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers, bool autoStart ){
 	if( soundStream ){
 		if (isSetup()){
 			close();
 		}
 		bool success = soundStream->setup(outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
-		if (success){
+		if (success && autoStart){
 			start();
 		}
 		return success;
@@ -205,13 +214,13 @@ bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int n
 }
 
 //------------------------------------------------------------
-bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers){
+bool ofSoundStream::setupInternal(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers, bool autoStart){
 	if( soundStream ){
 		if (isSetup()){
 			close();
 		}
 		bool success = soundStream->setup(app, outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
-		if (success){
+		if (success && autoStart){
 			start();
 		}
 		return success;

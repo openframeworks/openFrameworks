@@ -43,8 +43,8 @@ class ofSoundStream: public ofBaseSoundStream{
 		void setDeviceID(int deviceID);
 
 		bool isSetup();
-		bool setupInput( int nChannels=2, int sampleRate=-1, int nFramesPerBuffer=-1, int nBuffers=-1 );
-		bool setupOutput( int nChannels=2, int sampleRate=-1, int nFramesPerBuffer=-1, int nBuffers=-1 );
+		bool setupInput( int nChannels=2, int sampleRate=-1, int nFramesPerBuffer=-1, int nBuffers=-1);
+		bool setupOutput( int nChannels=2, int sampleRate=-1, int nFramesPerBuffer=-1, int nBuffers=-1);
 
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers);
 		bool setup(int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers);
@@ -65,6 +65,9 @@ class ofSoundStream: public ofBaseSoundStream{
 		int getNumBuffers();
 		
 	protected:
+		bool setupInternal(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers, bool autoStart );
+		bool setupInternal(int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers, bool autoStart );
+
 		
 		ofPtr<ofBaseSoundStream> soundStream;
 		bool started;
