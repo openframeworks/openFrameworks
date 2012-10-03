@@ -23,7 +23,6 @@ public:
 	ofBasicSoundPlayer();
 	virtual ~ofBasicSoundPlayer();
 
-
 	bool loadSound(string fileName, bool stream = false);
 	void unloadSound();
 	void play();
@@ -81,7 +80,7 @@ private:
 	vector<float> relativeSpeed;
 	vector<unsigned int> positions;
 	vector<float> volumesLeft;
-	vector<float> volumesRight;
+	vector<float> volumesRight;	
 };
 
 #endif /* OFBASICSOUNDPLAYER_H_ */

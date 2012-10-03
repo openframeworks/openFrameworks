@@ -24,11 +24,7 @@ ofSoundMixer::ofSoundMixer() {
 
 
 void ofSoundMixer::setup( ofSoundStream* outputStream ){
-	int nFrames = outputStream->getBufferSize();
-	int nChannels = outputStream->getNumOutputChannels();
-	buffer.setNumChannels(nChannels);
-	buffer.setSampleRate(outputStream->getSampleRate());
-	buffer.resize(nFrames*nChannels,0);
+	outputStream->setOutput(this);
 	isSetup = true;
 }
 
@@ -41,18 +37,8 @@ void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float p
 		if (isSystemMixer()){
 			// this is the system mixer
 			ofSoundStream* systemStream = ofSoundStreamGetSystemStream();
-			// setup the system stream if necessary
-			if (!systemStream->isSetup()){
-				bool success = systemStream->setupOutput();
-				if (!success){
-					ofLogError("ofSoundMixer") << "setupOutput() failed on the system sound stream, bailing out";
-					return;
-				}
-			}
 			// now setup the mixer using systemStream as output
 			setup( systemStream );
-			systemStream->setOutput(this);
-			systemStream->start();
 		}
 		else{
 			// this is a user-defined mixer, and it has not been setup yet
@@ -63,14 +49,13 @@ void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float p
 		
 	ofSoundMixerSource source;
 	source.sourceOutput = &out;
-	if(buffer.getNumChannels()==2){
-		float left, right;
-		ofStereoVolumes(volume,pan,left,right);
-		source.volumeLeft = left;
-		source.volumeRight = right;
-	}
 	source.pan = pan;
 	source.volume = volume;
+	float left, right;
+	ofStereoVolumes(volume,pan,left,right);
+	source.volumeLeft = left;
+	source.volumeRight = right;
+
 	sources.push_back(source);
 	
 	if (!tellBuffersChanged && buffer.size()>0){
@@ -125,6 +110,7 @@ void ofSoundMixer::audioOut(float * output, int nFrames, int nChannels, int devi
 		buffer.set(0);
 		
 		sources[i].sourceOutput->audioOut(&buffer[0],nFrames,nChannels,deviceID,tickCount);
+		
 		if(buffer.getNumChannels()==2 && sources[i].volume-1<FLT_EPSILON && sources[i].pan<FLT_EPSILON){
 			buffer.stereoPan(sources[i].volumeLeft,sources[i].volumeRight);
 		}else if(sources[i].volume-1<FLT_EPSILON){

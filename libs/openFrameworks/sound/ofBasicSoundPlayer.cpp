@@ -82,13 +82,18 @@ void ofBasicSoundPlayer::unloadSound(){
 }
 
 void ofBasicSoundPlayer::play(){
+	int pos=0;
+	float relSpeed = speed*(double(soundFile.getSampleRate())/double(playerSampleRate));
+	float left,right;
+	ofStereoVolumes(volume,pan,left,right);
 	if(!multiplay || !isPlaying){
-		positions.back() = 0;
+		positions.back() = pos;
+		relativeSpeed.back() = relSpeed;
+		volumesLeft.back() = left;
+		volumesRight.back() = right;
 	}else if(maxSounds>(int)positions.size()){
-		positions.push_back(0);
-		relativeSpeed.push_back(speed*(double(soundFile.getSampleRate())/double(playerSampleRate)));
-		float left,right;
-		ofStereoVolumes(volume,pan,left,right);
+		positions.push_back(pos);
+		relativeSpeed.push_back(relSpeed);
 		volumesLeft.push_back(left);
 		volumesRight.push_back(right);
 	}
@@ -185,7 +190,9 @@ void ofBasicSoundPlayer::updatePositions(int bufferSize){
 			positions[i] %= buffer.getNumFrames();
 		}else{
 			positions[i] = ofClamp(positions[i],0,buffer.getNumFrames());
+			// finished?
 			if(positions[i]==buffer.getNumFrames()){
+				// yes: remove multiplay instances
 				if(positions.size()>1){
 					positions.erase(positions.begin()+i);
 					relativeSpeed.erase(relativeSpeed.begin()+i);

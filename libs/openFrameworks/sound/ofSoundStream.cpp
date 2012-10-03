@@ -122,6 +122,7 @@ void ofSoundStream::setDeviceID(int deviceID){
 //------------------------------------------------------------
 void ofSoundStream::setInput(ofBaseSoundInput * soundInput){
 	if( soundStream ){
+		// setup the system stream if necessary
 		if (getNumInputChannels()==0){
 			setupInput();
 		}
@@ -150,9 +151,15 @@ bool ofSoundStream::isSetup(){
 //------------------------------------------------------------
 bool ofSoundStream::setupInput( int nChannels, int sampleRate, int nFramesPerBuffer, int nBuffers){
 	if ( isSetup() ){
-		sampleRate = getSampleRate();
-		nFramesPerBuffer = getBufferSize();
-		nBuffers = getNumBuffers();
+		if (sampleRate == -1){
+			sampleRate = getSampleRate();
+		}
+		if (nFramesPerBuffer==-1){
+			nFramesPerBuffer = getBufferSize();
+		}
+		if (nBuffers==-1){
+			nBuffers = getNumBuffers();
+		}
 	}else{
 		if (sampleRate == -1){
 			sampleRate = DEFAULT_SAMPLE_RATE;
@@ -164,15 +171,36 @@ bool ofSoundStream::setupInput( int nChannels, int sampleRate, int nFramesPerBuf
 			nBuffers = DEFAULT_NUM_BUFFERS;
 		}
 	}
-	return setup( getNumOutputChannels(), nChannels, sampleRate, nFramesPerBuffer, nBuffers );
+	// try to be clever about preserving input/output pointers
+
+	ofBaseSoundOutput* prevOutputPtr = outputPtr;
+	ofBaseSoundInput* prevInputPtr = inputPtr;
+	bool success = setup( getNumOutputChannels(), nChannels, sampleRate, nFramesPerBuffer, nBuffers );
+	if ( success ){
+		if (prevOutputPtr){
+			soundStream->setOutput(prevOutputPtr);
+			outputPtr = prevOutputPtr;
+		}
+		if (prevInputPtr){
+			soundStream->setInput(prevInputPtr);
+			inputPtr = prevInputPtr;
+		}
+	}
+	return success;
 }
 
 //------------------------------------------------------------
 bool ofSoundStream::setupOutput( int nChannels, int sampleRate, int nFramesPerBuffer, int nBuffers ){
 	if ( isSetup() ){
-		sampleRate = getSampleRate();
-		nFramesPerBuffer = getBufferSize();
-		nBuffers = getNumBuffers();
+		if (sampleRate == -1){
+			sampleRate = getSampleRate();
+		}
+		if (nFramesPerBuffer==-1){
+			nFramesPerBuffer = getBufferSize();
+		}
+		if (nBuffers==-1){
+			nBuffers = getNumBuffers();
+		}
 	}else{
 		if (sampleRate == -1){
 			sampleRate = DEFAULT_SAMPLE_RATE;
@@ -184,7 +212,21 @@ bool ofSoundStream::setupOutput( int nChannels, int sampleRate, int nFramesPerBu
 			nBuffers = DEFAULT_NUM_BUFFERS;
 		}
 	}
-	return setup( nChannels, getNumInputChannels(), sampleRate, nFramesPerBuffer, nBuffers );
+	// try to be clever about preserving input/output pointers
+	ofBaseSoundOutput* prevOutputPtr = outputPtr;
+	ofBaseSoundInput* prevInputPtr = inputPtr;
+	bool success = setup( nChannels, getNumInputChannels(), sampleRate, nFramesPerBuffer, nBuffers );
+	if ( success ){
+		if (prevOutputPtr){
+			soundStream->setOutput(prevOutputPtr);
+			outputPtr = prevOutputPtr;
+		}
+		if (prevInputPtr){
+			soundStream->setInput(prevInputPtr);
+			inputPtr = prevInputPtr;
+		}
+	}
+	return success;
 }
 
 //------------------------------------------------------------
@@ -254,6 +296,8 @@ void ofSoundStream::close(){
 	if( soundStream ){
 		soundStream->close();
 		started = false;
+		inputPtr = NULL;
+		outputPtr = NULL;
 	}
 }
 
