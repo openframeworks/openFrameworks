@@ -130,6 +130,13 @@ class ofBaseSoundInput{
 	public:
         virtual ~ofBaseSoundInput() {};
     
+		/// called before audioOut() is called for the first time by a new client
+		virtual void buffersChanged( int bufferSize, int nChannels, int sampleRate ){
+			ofLogWarning("ofBaseSoundInput") << "onConnect not implemented, buffer sizes may be mismatched";
+		}
+		
+		// @TODO virtual void audioIn( ofSoundBuffer& outputBuffer, int deviceId, long unsigned long tickCount ){
+
 		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
 			audioIn(input, bufferSize, nChannels);
 		}
@@ -142,12 +149,19 @@ class ofBaseSoundInput{
 };
 
 //----------------------------------------------------------
-// ofBaseHasSoundStream
+// ofBaseSoundOutput
 //----------------------------------------------------------
 class ofBaseSoundOutput{
 
 	public:
         virtual ~ofBaseSoundOutput() {};
+	
+		/// called before audioOut() is called for the first time by a new client
+		virtual void buffersChanged( int bufferSize, int nChannels, int sampleRate ){
+			ofLogWarning("ofBaseSoundOutput") << "onConnect not implemented, buffer sizes may be mismatched";
+		}
+	
+		// @TODO virtual void audioOut( ofSoundBuffer& outputBuffer, int deviceId, long unsigned long tickCount ){
     
 		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
 			audioOut(output, bufferSize, nChannels);

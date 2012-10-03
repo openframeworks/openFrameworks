@@ -19,6 +19,7 @@ ofSoundMixer* ofSoundMixerGetSystemMixer()
 
 ofSoundMixer::ofSoundMixer() {
 	isSetup = false;
+	tellBuffersChanged = false;
 }
 
 
@@ -68,6 +69,9 @@ void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float p
 	source.pan = pan;
 	source.volume = volume;
 	sources.push_back(source);
+	
+	if (!tellBuffersChanged && buffer.size()>0)
+		//@todo source->buffersChanged()
 }
 
 void ofSoundMixer::removeSoundOutput(ofBaseSoundOutput& out)
@@ -110,6 +114,8 @@ void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int d
 	assert( bufferSize == buffer.bufferSize() );
 	assert( nChannels == buffer.getNumChannels() );
 	for(int i=0;i<(int)sources.size();i++){
+		if ( tellBuffersChanged )
+			sources[i].sourceOutput->buffersChanged( buffer.getBufferSize(), buffer.getNumChannels(), buffer.getSampleRate() );
 		buffer.set(0);
 		
 		sources[i].sourceOutput->audioOut(&buffer[0],bufferSize,nChannels,deviceID,tickCount);
@@ -123,5 +129,13 @@ void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int d
 			output[j] += buffer[j];
 		}
 	}
+	tellBuffersChanged = false;
 }
 
+
+void ofSoundMixer::buffersChanged(int bufferSize, int nChannels, int sampleRate){
+	buffer.setNumChannels(nChannels);
+	buffer.setSampleRate(sampleRate);
+	buffer.resize(bufferSize*nChannels,0);
+	tellBuffersChanged = true;
+}

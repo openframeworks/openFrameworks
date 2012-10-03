@@ -47,6 +47,10 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int					nBuffers;
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
+	
+		// flags to determine whether onConnect should be called on the soundInputPtr/soundOutputPtr
+		bool				newBuffersNeededForInput;
+		bool				newBuffersNeededForOutput;
 		
 		static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
 

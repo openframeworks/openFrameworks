@@ -21,6 +21,10 @@ ofRtAudioSoundStream::ofRtAudioSoundStream(){
 	nInputChannels = 0;
 	nOutputChannels = 0;
 	tickCount= 0;
+	newBuffersNeededForOutput = true;
+	newBuffersNeededForInput = true;
+
+
 }
 
 //------------------------------------------------------------------------------
@@ -72,11 +76,14 @@ void ofRtAudioSoundStream::setOutDeviceID(int _deviceID){
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setInput(ofBaseSoundInput * soundInput){
 	soundInputPtr		= soundInput;
+	newBuffersNeededForInput = true;
+
 }
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	soundOutputPtr		= soundOutput;
+	newBuffersNeededForOutput = true;
 }
 
 //------------------------------------------------------------------------------
@@ -232,6 +239,10 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != NULL ){
+			if (rtStreamPtr->newBuffersNeededForInput){
+				rtStreamPtr->soundInputPtr->buffersChanged( bufferSize, nInputChannels, rtStreamPtr->sampleRate );
+				rtStreamPtr->newBuffersNeededForInput=false;
+			}
 			rtStreamPtr->soundInputPtr->audioIn((float*)inputBuffer, bufferSize, nInputChannels, rtStreamPtr->inDeviceID, rtStreamPtr->tickCount);
 		}
 		memset(fPtrIn, 0, bufferSize * nInputChannels * sizeof(float));
@@ -240,6 +251,10 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	if (nOutputChannels > 0) {
 		memset(fPtrOut, 0, sizeof(float) * bufferSize * nOutputChannels);
 		if( rtStreamPtr->soundOutputPtr != NULL ){
+			if (rtStreamPtr->newBuffersNeededForOutput){
+				rtStreamPtr->soundOutputPtr->buffersChanged( bufferSize, nInputChannels, rtStreamPtr->sampleRate );
+				rtStreamPtr->newBuffersNeededForOutput=false;
+			}
 			rtStreamPtr->soundOutputPtr->audioOut((float*)outputBuffer, bufferSize, nOutputChannels, rtStreamPtr->outDeviceID, rtStreamPtr->tickCount);
 		}
 	}
