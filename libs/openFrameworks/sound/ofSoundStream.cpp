@@ -89,8 +89,6 @@ void ofSoundStream::setDeviceID(int deviceID){
 		bool wasSetup = false;
 		bool wasStarted = started;
 		int outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers;
-		ofBaseSoundOutput* prevOutputPtr;
-		ofBaseSoundInput* prevInputPtr;
 		if (isSetup()){
 			wasSetup = true;
 			outChannels = getNumOutputChannels();
@@ -98,8 +96,6 @@ void ofSoundStream::setDeviceID(int deviceID){
 			sampleRate = getSampleRate();
 			nFramesPerBuffer = getBufferSize();
 			nBuffers = getNumBuffers();
-			prevOutputPtr = outputPtr;
-			prevInputPtr = inputPtr;
 			close();
 		}
 		
@@ -107,14 +103,9 @@ void ofSoundStream::setDeviceID(int deviceID){
 		soundStream->setDeviceID(deviceID);
 		
 		// setup the stream again, if necessary, with the same parameters
+		// inputPtr and outputPtr are preserved over this call to setupInternal
 		if (wasSetup){
 			setupInternal( outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers, wasStarted );
-			if (prevOutputPtr){
-				setOutput(prevOutputPtr);
-			}
-			if (prevInputPtr){
-				setInput(prevInputPtr);
-			}
 		}
 	}
 }
@@ -173,19 +164,7 @@ bool ofSoundStream::setupInput( int nChannels, int sampleRate, int nFramesPerBuf
 	}
 	// try to be clever about preserving input/output pointers
 
-	ofBaseSoundOutput* prevOutputPtr = outputPtr;
-	ofBaseSoundInput* prevInputPtr = inputPtr;
 	bool success = setup( getNumOutputChannels(), nChannels, sampleRate, nFramesPerBuffer, nBuffers );
-	if ( success ){
-		if (prevOutputPtr){
-			soundStream->setOutput(prevOutputPtr);
-			outputPtr = prevOutputPtr;
-		}
-		if (prevInputPtr){
-			soundStream->setInput(prevInputPtr);
-			inputPtr = prevInputPtr;
-		}
-	}
 	return success;
 }
 
@@ -212,20 +191,7 @@ bool ofSoundStream::setupOutput( int nChannels, int sampleRate, int nFramesPerBu
 			nBuffers = DEFAULT_NUM_BUFFERS;
 		}
 	}
-	// try to be clever about preserving input/output pointers
-	ofBaseSoundOutput* prevOutputPtr = outputPtr;
-	ofBaseSoundInput* prevInputPtr = inputPtr;
 	bool success = setup( nChannels, getNumInputChannels(), sampleRate, nFramesPerBuffer, nBuffers );
-	if ( success ){
-		if (prevOutputPtr){
-			soundStream->setOutput(prevOutputPtr);
-			outputPtr = prevOutputPtr;
-		}
-		if (prevInputPtr){
-			soundStream->setInput(prevInputPtr);
-			inputPtr = prevInputPtr;
-		}
-	}
 	return success;
 }
 
@@ -246,10 +212,23 @@ bool ofSoundStream::setupInternal(int outChannels, int inChannels, int sampleRat
 		if (isSetup()){
 			close();
 		}
+		ofBaseSoundOutput* prevOutputPtr = outputPtr;
+		ofBaseSoundInput* prevInputPtr = inputPtr;
 		bool success = soundStream->setup(outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers);
-		if (success && autoStart){
-			start();
+		if ( success ){
+			if (prevOutputPtr){
+				soundStream->setOutput(prevOutputPtr);
+				outputPtr = prevOutputPtr;
+			}
+			if (prevInputPtr){
+				soundStream->setInput(prevInputPtr);
+				inputPtr = prevInputPtr;
+			}
+			if (autoStart){
+				start();
+			}
 		}
+		
 		return success;
 	}
 	return false;
@@ -296,8 +275,6 @@ void ofSoundStream::close(){
 	if( soundStream ){
 		soundStream->close();
 		started = false;
-		inputPtr = NULL;
-		outputPtr = NULL;
 	}
 }
 
