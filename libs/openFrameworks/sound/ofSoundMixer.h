@@ -32,8 +32,8 @@ public:
 private:
 	bool isSystemMixer() { return this == ofSoundMixerGetSystemMixer(); }
 
-	void buffersChanged(int bufferSize, int nChannels, int sampleRate);
-	void audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount);
+	void audioOutBuffersChanged(int bufferSize, int nChannels, int sampleRate);
+	void audioOut(float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount);
 
 	typedef struct {
 		ofBaseSoundOutput* sourceOutput;
@@ -43,14 +43,20 @@ private:
 		float volumeRight;
 		bool operator==(const ofBaseSoundOutput*otherOutput) const { return otherOutput==sourceOutput; }
 	} ofSoundMixerSource;
-	vector<ofSoundMixerSource> sources;
 
-	// helper method to locate a given source in the vecotr of sources
-	vector<ofSoundMixerSource>::iterator findSource(ofBaseSoundOutput& out);
+	ofSoundMixerSource& getSource( ofBaseSoundOutput& out );
 	
+	vector<ofSoundMixerSource> sources;
+	vector<ofSoundMixerSource> sourceAddQueue;
+	vector<ofSoundMixerSource> sourceRemoveQueue;
+
+
+
 	ofSoundBuffer buffer;
 	bool tellBuffersChanged;
 	bool isSetup;
+	
+	ofMutex mutex;
 };
 
 #endif /* OFSOUNDMIXER_H_ */

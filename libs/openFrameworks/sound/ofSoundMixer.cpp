@@ -24,16 +24,18 @@ ofSoundMixer::ofSoundMixer() {
 
 
 void ofSoundMixer::setup( ofSoundStream* outputStream ){
-	int bufferSize = outputStream->getBufferSize();
+	int nFrames = outputStream->getBufferSize();
 	int nChannels = outputStream->getNumOutputChannels();
 	buffer.setNumChannels(nChannels);
 	buffer.setSampleRate(outputStream->getSampleRate());
-	buffer.resize(bufferSize*nChannels,0);
+	buffer.resize(nFrames*nChannels,0);
 	isSetup = true;
 }
 
 
 void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float pan){
+
+	Poco::ScopedLock<ofMutex> scopedMutex(mutex);
 
 	if (!isSetup){
 		if (isSystemMixer()){
@@ -50,6 +52,7 @@ void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float p
 			// now setup the mixer using systemStream as output
 			setup( systemStream );
 			systemStream->setOutput(this);
+			systemStream->start();
 		}
 		else{
 			// this is a user-defined mixer, and it has not been setup yet
@@ -70,12 +73,15 @@ void ofSoundMixer::addSoundOutput(ofBaseSoundOutput & out, float volume, float p
 	source.volume = volume;
 	sources.push_back(source);
 	
-	if (!tellBuffersChanged && buffer.size()>0)
+	if (!tellBuffersChanged && buffer.size()>0){
 		//@todo source->buffersChanged()
+		source.sourceOutput->audioOutBuffersChanged( buffer.getNumFrames(), buffer.getNumChannels(), buffer.getSampleRate());
+	}
 }
 
 void ofSoundMixer::removeSoundOutput(ofBaseSoundOutput& out)
 {
+	Poco::ScopedLock<ofMutex> scopedMutex(mutex);
 	vector<ofSoundMixerSource>::iterator it = std::find(sources.begin(), sources.end(), &out);
 	if (it!=sources.end()){
 		sources.erase(it);
@@ -109,16 +115,16 @@ void ofSoundMixer::setPan(ofBaseSoundOutput & out, float p){
 }
 
 
-void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount){
-	//memset( output, 0, sizeof(float)*bufferSize*nChannels );
-	assert( bufferSize == buffer.bufferSize() );
-	assert( nChannels == buffer.getNumChannels() );
+void ofSoundMixer::audioOut(float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount){
+	//memset( output, 0, sizeof(float)*nFrames*nChannels );
+	mutex.lock();
 	for(int i=0;i<(int)sources.size();i++){
-		if ( tellBuffersChanged )
-			sources[i].sourceOutput->buffersChanged( buffer.getBufferSize(), buffer.getNumChannels(), buffer.getSampleRate() );
+		if ( tellBuffersChanged ){
+			sources[i].sourceOutput->audioOutBuffersChanged( buffer.getNumFrames(), buffer.getNumChannels(), buffer.getSampleRate() );
+		}
 		buffer.set(0);
 		
-		sources[i].sourceOutput->audioOut(&buffer[0],bufferSize,nChannels,deviceID,tickCount);
+		sources[i].sourceOutput->audioOut(&buffer[0],nFrames,nChannels,deviceID,tickCount);
 		if(buffer.getNumChannels()==2 && sources[i].volume-1<FLT_EPSILON && sources[i].pan<FLT_EPSILON){
 			buffer.stereoPan(sources[i].volumeLeft,sources[i].volumeRight);
 		}else if(sources[i].volume-1<FLT_EPSILON){
@@ -130,10 +136,11 @@ void ofSoundMixer::audioOut(float * output, int bufferSize, int nChannels, int d
 		}
 	}
 	tellBuffersChanged = false;
+	mutex.unlock();
 }
 
 
-void ofSoundMixer::buffersChanged(int bufferSize, int nChannels, int sampleRate){
+void ofSoundMixer::audioOutBuffersChanged(int bufferSize, int nChannels, int sampleRate){
 	buffer.setNumChannels(nChannels);
 	buffer.setSampleRate(sampleRate);
 	buffer.resize(bufferSize*nChannels,0);

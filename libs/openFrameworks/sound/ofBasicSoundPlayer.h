@@ -56,11 +56,15 @@ public:
 	ofEvent<ofSoundBuffer> newBufferE;
 
 private:
-	void audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount);
-	void updatePositions(int bufferSize);
-	static int samplerate;
+	void audioOutBuffersChanged( int nFrames, int nChannels, int sampleRate );
+	void audioOut(float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount);
+	void updatePositions(int numFrames);
+	
+	/*static int samplerate;
 	static int bufferSize;
-	static int channels;
+	static int channels;*/
+	int playerSampleRate, playerNumFrames, playerNumChannels;
+	
 	static int maxSoundsTotal;
 	static int maxSoundsPerPlayer;
 	int maxSounds;

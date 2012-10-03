@@ -11,8 +11,9 @@ class ofBaseSoundStream{
 		
 		virtual void listDevices() = 0;
 		virtual void setDeviceID(int deviceID) = 0;
-		virtual bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers)=0;
-		virtual bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers)=0;
+		/// setup and start the audio stream
+		virtual bool setup(int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers)=0;
+		virtual bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers)=0;
 		
 		/// set root input/output objects
 		virtual void setInput(ofBaseSoundInput * soundInput) = 0;

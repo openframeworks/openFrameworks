@@ -131,21 +131,21 @@ class ofBaseSoundInput{
         virtual ~ofBaseSoundInput() {};
     
 		/// called before audioOut() is called for the first time by a new client
-		virtual void buffersChanged( int bufferSize, int nChannels, int sampleRate ){
-			ofLogWarning("ofBaseSoundInput") << "onConnect not implemented, buffer sizes may be mismatched";
+		virtual void audioInBuffersChanged( int nFrames, int nChannels, int sampleRate ){
+			ofLogWarning("ofBaseSoundInput") << "audioInBuffersChanged not implemented, buffer sizes may be mismatched";
 		}
 		
 		// @TODO virtual void audioIn( ofSoundBuffer& outputBuffer, int deviceId, long unsigned long tickCount ){
 
-		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
-			audioIn(input, bufferSize, nChannels);
+		virtual void audioIn( float * input, int nFrames, int nChannels, int deviceID, long unsigned long tickCount ){
+			audioIn(input, nFrames, nChannels);
 		}
 
-		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
-			audioReceived(input, bufferSize, nChannels);
+		virtual void audioIn( float * input, int nFrames, int nChannels ){  
+			audioReceived(input, nFrames, nChannels);
 		}
 
-		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+		virtual void audioReceived( float * input, int nFrames, int nChannels ){}
 };
 
 //----------------------------------------------------------
@@ -157,22 +157,22 @@ class ofBaseSoundOutput{
         virtual ~ofBaseSoundOutput() {};
 	
 		/// called before audioOut() is called for the first time by a new client
-		virtual void buffersChanged( int bufferSize, int nChannels, int sampleRate ){
-			ofLogWarning("ofBaseSoundOutput") << "onConnect not implemented, buffer sizes may be mismatched";
+		virtual void audioOutBuffersChanged( int nFrames, int nChannels, int sampleRate ){
+			ofLogWarning("ofBaseSoundOutput") << "audioOutBuffersChanged not implemented, buffer sizes may be mismatched";
 		}
 	
 		// @TODO virtual void audioOut( ofSoundBuffer& outputBuffer, int deviceId, long unsigned long tickCount ){
     
-		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
-			audioOut(output, bufferSize, nChannels);
+		virtual void audioOut( float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount  ){
+			audioOut(output, nFrames, nChannels);
 		}
 
-		virtual void audioOut( float * output, int bufferSize, int nChannels ){
-			audioRequested(output, bufferSize, nChannels);
+		virtual void audioOut( float * output, int nFrames, int nChannels ){
+			audioRequested(output, nFrames, nChannels);
 		}
 
 		//legacy
-		virtual void audioRequested( float * output, int bufferSize, int nChannels ){
+		virtual void audioRequested( float * output, int nFrames, int nChannels ){
 		}
 };
 
