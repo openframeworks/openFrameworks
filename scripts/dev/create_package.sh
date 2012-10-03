@@ -35,11 +35,11 @@ REPO=https://github.com/openframeworks/openFrameworks
 REPO_ALIAS=upstreamhttps
 BRANCH=develop
 
-libsnotinmac="unicap gstappsink glu quicktime videoInput"
-libsnotinlinux="quicktime videoInput glut glu"
-libsnotinwindows="unicap gstappsink"
-libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
-libsnotinios="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
+libsnotinmac="unicap gstappsink glu quicktime videoInput kiss portaudio"
+libsnotinlinux="quicktime videoInput glut glu cairo"
+libsnotinwindows="unicap gstappsink kiss portaudio"
+libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
+libsnotinios="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
 
 if [ ! -d openFrameworks/.git ]; then
     git clone $REPO 
@@ -221,10 +221,16 @@ function createPackage {
 		rm -Rf video
 	fi 
 	
-	#delete drag & drop and glInfo examples in linux, still not working
+	#delete drag & drop examples in linux, still not working
 	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
 	    rm -Rf utils/dragDropExample
-	    rm -Rf gl/glInfoExample
+	    rm -Rf video/osxHighPerformanceVideoPlayerExample
+	    rm -Rf video/osxVideoRecorderExample
+	fi
+	
+	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs2010" ]; then
+	    rm -Rf video/osxHighPerformanceVideoPlayerExample
+	    rm -Rf video/osxVideoRecorderExample
 	fi
     
 	
@@ -247,23 +253,23 @@ function createPackage {
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 vs2010 ios android"
+        otherplatforms="linux linux64 win_cb vs2008 vs2010 ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs2008 vs2010 ios android"
+        otherplatforms="linux linux64 osx vs2008 vs2010 ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2010 ios android"
+        otherplatforms="linux linux64 osx win_cb vs2010 ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "vs2010" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008 ios android"
+        otherplatforms="linux linux64 osx win_cb vs2008 ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 vs2010 android"
+        otherplatforms="linux linux64 win_cb vs2008 vs2010 android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
@@ -307,6 +313,13 @@ function createPackage {
     rm -Rf $otherplatforms
     cd ${pkg_ofroot}/libs/openFrameworksCompiled/project
     rm -Rf $otherplatforms
+    
+    #remove osx in ios from openFrameworksCompiled 
+    #(can't delete by default since it needs to keep things in libs for the simulator)
+    if [ "$pkg_platform" = "ios" ]; then
+	    rm -Rf ${pkg_ofroot}libs/openFrameworksCompiled/lib/osx
+    	rm -Rf ${pkg_ofroot}/libs/openFrameworksCompiled/project/osx
+    fi
 
 	cd ${pkg_ofroot}/libs
 	#delete specific include folders non-android
@@ -369,9 +382,12 @@ function createPackage {
 		rm -Rf ofxiPhone
 	fi
 
-	#delete eclipse project
-	#rm $(find . -name .*project)
-
+	#delete eclipse projects
+	if [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ]  && [ "$pkg_platform" != "android" ]; then
+		cd ${pkg_ofroot}
+		deleteEclipse
+	fi
+	
 	#download and copy OF compiled
 	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
     if [ "$pkg_platform" = "win_cb" ]; then
@@ -411,6 +427,8 @@ function createPackage {
     
     rm readme.*
     mv readme readme.txt
+    
+    rm CONTRIBUTING.md
 
     #create compressed package
     cd $pkg_ofroot/..
