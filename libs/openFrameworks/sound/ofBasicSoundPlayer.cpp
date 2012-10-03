@@ -9,9 +9,6 @@
 #include "ofSoundUtils.h"
 #include <float.h>
 
-ofPtr<ofBaseSoundStream> ofBasicSoundPlayer::stream(new ofSoundStream);
-ofSoundMixer ofBasicSoundPlayer::mixer;
-bool ofBasicSoundPlayer::initialized = false;
 int ofBasicSoundPlayer::samplerate = 44100;
 int ofBasicSoundPlayer::bufferSize = 512;
 int ofBasicSoundPlayer::channels = 2;
@@ -36,7 +33,7 @@ ofBasicSoundPlayer::ofBasicSoundPlayer() {
 }
 
 ofBasicSoundPlayer::~ofBasicSoundPlayer() {
-	// TODO Auto-generated destructor stub
+	unloadSound();
 }
 
 
@@ -45,12 +42,13 @@ bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 	
 	ofLogNotice() << "loading " << fileName;
 	
+	/*
 	if(!initialized){
 		mixer.setup(bufferSize,channels,samplerate);
 		stream->setup( channels, 0, samplerate, bufferSize, 4);
 		stream->setOutput(&mixer);
 		initialized = true;
-	}
+	}*/
 
 	ofLogNotice() << "opening file ";
 	bIsLoaded = soundFile.open(fileName);
@@ -64,9 +62,11 @@ bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 	}
 
 	streaming = _stream;
+	if ( streaming )
+		speed = 1;
 	
 	ofLogNotice() << "adding output to mixer ";
-	mixer.addSoundOutput(*this,volume);
+	ofSoundMixerGetSystemMixer()->addSoundOutput(*this,volume);
 
 	return true;
 }
@@ -77,6 +77,7 @@ void ofBasicSoundPlayer::unloadSound(){
 	isPlaying = false;
 	bIsLoaded = false;
 	positions.resize(1,0);
+	ofSoundMixerGetSystemMixer()->removeSoundOutput(*this);
 }
 
 void ofBasicSoundPlayer::play(){
@@ -109,6 +110,10 @@ void ofBasicSoundPlayer::setPan(float _pan){
 }
 
 void ofBasicSoundPlayer::setSpeed(float spd){
+	if ( streaming && fabsf(spd-1.0f)<FLT_EPSILON ){
+		ofLogWarning("ofBasicSoundPlayer") << "setting speed is not supported on streaming sounds";
+		return;
+	}
 	speed = spd;
 	relativeSpeed.back() = speed*(double(soundFile.getSampleRate())/double(samplerate));
 }
@@ -225,15 +230,6 @@ ofSoundBuffer & ofBasicSoundPlayer::getCurrentBuffer(){
 	}else{
 		return resampledBuffer;
 	}
-}
-
-ofPtr<ofBaseSoundStream> ofBasicSoundPlayer::getSoundStream(){
-	return stream;
-}
-
-void ofBasicSoundPlayer::setSoundStream(ofPtr<ofBaseSoundStream> _stream){
-	stream = _stream;
-	stream->setOutput(&mixer);
 }
 
 void ofBasicSoundPlayer::setMaxSoundsTotal(int max){

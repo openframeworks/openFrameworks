@@ -48,23 +48,16 @@ public:
 	unsigned long getDurationMS();
 
 	ofSoundBuffer & getCurrentBuffer();
-	static ofPtr<ofBaseSoundStream> getSoundStream();
-	static void setSoundStream(ofPtr<ofBaseSoundStream> stream);
 
 	static void setMaxSoundsTotal(int max);
 	static void setMaxSoundsPerPlayer(int max);
 	void setMaxSounds(int max);
 
 	ofEvent<ofSoundBuffer> newBufferE;
-	
-	static ofSoundMixer* getMixer() { return &mixer; }
 
 private:
 	void audioOut(float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount);
 	void updatePositions(int bufferSize);
-	static ofPtr<ofBaseSoundStream> stream;
-	static ofSoundMixer mixer;
-	static bool initialized;
 	static int samplerate;
 	static int bufferSize;
 	static int channels;
