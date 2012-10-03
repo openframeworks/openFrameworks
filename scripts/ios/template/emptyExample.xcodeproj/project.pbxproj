@@ -148,6 +148,8 @@
 				<string>ofxiphone-Info.plist</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
+                <key>VALID_ARCHS</key>
+				<string>armv6 armv7</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -166,6 +168,8 @@
 				<string>ofxiphone-Info.plist</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
+                <key>VALID_ARCHS</key>
+				<string>armv6 armv7</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>

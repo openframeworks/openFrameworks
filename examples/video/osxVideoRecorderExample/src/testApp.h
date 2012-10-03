@@ -30,5 +30,5 @@ class testApp : public ofBaseApp{
     	vector<string> videoDevices;
 	    vector<string> audioDevices;
     
-	    bool previewPixels;
+        bool bLaunchInQuicktime;
 };
