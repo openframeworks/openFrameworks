@@ -8,7 +8,7 @@
 
 
 //------------------------------------------------------------------------------
-int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, unsigned int nFramesPerBuffer,
+int receiveAudioBufferAndCallSimpleApp(void *outputBuf, void *inputBuf, unsigned int nFramesPerBuffer,
            double streamTime, RtAudioStreamStatus status, void *data);
 
 
@@ -95,10 +95,14 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	nInputChannels		= inChannels;
 	nOutputChannels		= outChannels;
 	nBuffers			= _nBuffers;
+	
 
 	sampleRate			=  _sampleRate;
 	tickCount			=  0;
 	nFramesPerBuffer			= ofNextPow2(_bufferSize);	// must be pow2
+
+	inputBuffer.setSampleRate(sampleRate);
+	outputBuffer.setSampleRate(sampleRate);
 
 	try {
 		audio = ofPtr<RtAudio>(new RtAudio());
@@ -217,7 +221,7 @@ int ofRtAudioSoundStream::getBufferSize(){
 }
 
 //------------------------------------------------------------------------------
-int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int nFramesPerBuffer, double streamTime, RtAudioStreamStatus status, void *data){
+int ofRtAudioSoundStream::rtAudioCallback(void *outputBuf, void *inputBuf, unsigned int nFramesPerBuffer, double streamTime, RtAudioStreamStatus status, void *data){
 	ofRtAudioSoundStream * rtStreamPtr = (ofRtAudioSoundStream *)data;
 	
 	if ( status ) std::cout << "Stream over/underflow detected." << std::endl;
@@ -226,8 +230,8 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// 	can be of different formats
 	// 	char, float, etc.
 	// 	we choose float
-	float * fPtrOut = (float *)outputBuffer;
-	float * fPtrIn  = (float *)inputBuffer;
+	float * fPtrOut = (float *)outputBuf;
+	float * fPtrIn  = (float *)inputBuf;
 	// [zach] memset output to zero before output call
 	// this is because of how rtAudio works: duplex w/ one callback
 	// you need to cut in the middle. if the simpleApp
@@ -236,26 +240,39 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	int nInputChannels = rtStreamPtr->getNumInputChannels();
 	int nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
+	
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != NULL ){
 			if (rtStreamPtr->newBuffersNeededForInput){
 				rtStreamPtr->soundInputPtr->audioInBuffersChanged( nFramesPerBuffer, nInputChannels, rtStreamPtr->sampleRate );
 				rtStreamPtr->newBuffersNeededForInput=false;
 			}
-			rtStreamPtr->soundInputPtr->audioIn((float*)inputBuffer, nFramesPerBuffer, nInputChannels, rtStreamPtr->inDeviceID, rtStreamPtr->tickCount);
+			rtStreamPtr->inputBuffer.set( fPtrIn, nFramesPerBuffer, nInputChannels );
+			rtStreamPtr->applySoundStreamOriginInfo(&rtStreamPtr->inputBuffer);
+			rtStreamPtr->soundInputPtr->audioIn(rtStreamPtr->inputBuffer);
+			//rtStreamPtr->soundInputPtr->audioIn(fPtrIn, nFramesPerBuffer, nInputChannels, rtStreamPtr->inDeviceID, rtStreamPtr->tickCount );
 		}
+		// [damian] not sure what this is for? assuming it's for underruns? or for when the sound system becomes broken?
 		memset(fPtrIn, 0, nFramesPerBuffer * nInputChannels * sizeof(float));
 	}
 
 	if (nOutputChannels > 0) {
-		memset(fPtrOut, 0, sizeof(float) * nFramesPerBuffer * nOutputChannels);
 		if( rtStreamPtr->soundOutputPtr != NULL ){
+			// send 
 			if (rtStreamPtr->newBuffersNeededForOutput){
 				rtStreamPtr->soundOutputPtr->audioOutBuffersChanged( nFramesPerBuffer, nOutputChannels, rtStreamPtr->sampleRate );
 				rtStreamPtr->newBuffersNeededForOutput=false;
 			}
-			rtStreamPtr->soundOutputPtr->audioOut((float*)outputBuffer, nFramesPerBuffer, nOutputChannels, rtStreamPtr->outDeviceID, rtStreamPtr->tickCount);
+			if ( rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels()!=nOutputChannels ){
+				rtStreamPtr->outputBuffer.setNumChannels(nOutputChannels);
+				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
+			}
+			rtStreamPtr->applySoundStreamOriginInfo(&rtStreamPtr->outputBuffer);
+			rtStreamPtr->soundOutputPtr->audioOut(rtStreamPtr->outputBuffer);
+			//rtStreamPtr->soundOutputPtr->audioOut(fPtrOut, nFramesPerBuffer, nOutputChannels, rtStreamPtr->outDeviceID, rtStreamPtr->tickCount );
 		}
+		rtStreamPtr->outputBuffer.copyTo(fPtrOut, nFramesPerBuffer, nOutputChannels,0);
+		rtStreamPtr->outputBuffer.set(0);
 	}
 	
 	// increment tick count

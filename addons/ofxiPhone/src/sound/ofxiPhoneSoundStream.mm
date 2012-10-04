@@ -95,26 +95,36 @@ OSStatus ofxiPhoneSoundStream::playbackCallback(void *inRefCon,
 		}
 		else {
 			// get floats from app
-			// @TODO implement tickCount
-			memset( scaleBuffer, 0, sizeof(float)*MAX_BUFFER_SIZE );
+			//memset( scaleBuffer, 0, sizeof(float)*MAX_BUFFER_SIZE );
 			
 			int nFrames = ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2);
 			int nChannels = ioData->mBuffers[i].mNumberChannels;
 			
 			if ( stream->newBuffersNeededForOutput ){
 				stream->soundOutputPtr->audioOutBuffersChanged( nFrames, nChannels, stream->sampleRate );
+				stream->newBuffersNeededForOutput = false;
 			}
-			stream->soundOutputPtr->audioOut(scaleBuffer,nFrames, nChannels, 0, stream->tickCount);
+
+			ofSoundBuffer& outBuffer = stream->outputBuffer;
+			// resize the output buffer if necessary
+			if ( outBuffer.size() != nFrames*nChannels || outBuffer.getNumChannels()!=nChannels ){
+				outBuffer.setNumChannels(nChannels);
+				outBuffer.resize(nChannels*nFrames);
+			}
+			outBuffer.set(0);
+			stream->applySoundStreamOriginInfo(&outBuffer);
+			stream->soundOutputPtr->audioOut(outBuffer);
+			//stream->soundOutputPtr->audioOut(scaleBuffer,nFrames, nChannels, 0, stream->tickCount);
 			
 			// truncate to 16bit fixed point data
-			int len = ioData->mBuffers[i].mDataByteSize/2;
+			int len = outBuffer.size();
 			for(int j = 0; j < len; j++) {
-				buffer[j] = (int) (scaleBuffer[j] * 32767.f);
+				buffer[j] = (int) (outBuffer[j] * 32767.f);
 			}
 		}
 	}
-	stream->newBuffersNeededForOutput = false;
 
+	stream->tickCount++;
 	
     return noErr;
 }
@@ -148,23 +158,22 @@ OSStatus ofxiPhoneSoundStream::recordingCallback(void *inRefCon,
 				scaleBuffer[j] = (float) buffer[j] / 32767.f;	// convert each sample into a float
 			}
 			
-			// @TODO implement tickCount
-			unsigned long long tickCount = 0;
-			static bool first = true;
-			if ( first )
-				ofLogWarning("ofxiPhoneSoundStream") << "using tickCount of 0, this needs to be implemented";
-			first = false;
-			
 			int nFrames = ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2);
 			int nChannels = ioData->mBuffers[i].mNumberChannels;
 			
+			
+			ofSoundBuffer& inBuffer = stream->inputBuffer;
+			
 			if ( stream->newBuffersNeededForInput ){
 				stream->soundInputPtr->audioInBuffersChanged( nFrames, nChannels, stream->sampleRate );
+				stream->newBuffersNeededForInput = false;
 			}
-			stream->soundInputPtr->audioIn(scaleBuffer,	nFrames, nChannels, 0, stream->tickCount);
+			inBuffer.set( scaleBuffer, nFrames, nChannels );
+			stream->applySoundStreamOriginInfo(&inBuffer);
+			stream->soundInputPtr->audioIn(inBuffer);
+	//		stream->soundInputPtr->audioIn(scaleBuffer,	nFrames, nChannels, 0, stream->tickCount);
 		}
 		
-		stream->newBuffersNeededForInput = false;
 	}
 	return noErr;
 }
@@ -177,6 +186,7 @@ ofxiPhoneSoundStream::ofxiPhoneSoundStream(){
 	newBuffersNeededForOutput = true;
 	soundOutputPtr = NULL;
 	soundInputPtr = NULL;
+	audioUnit = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -211,6 +221,10 @@ bool ofxiPhoneSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	tickCount = 0;
 	sampleRate = _sampleRate;
 	nFramesPerBuffer = _nFramesPerBuffer;
+
+	inputBuffer.setSampleRate(sampleRate);	
+	outputBuffer.setSampleRate(sampleRate);
+
 	
 	// nBuffers is always 1  (see CoreAudio AudioBuffer struct)
 	// this may change in the future ...
@@ -425,6 +439,7 @@ void ofxiPhoneSoundStream::stop(){
 void ofxiPhoneSoundStream::close(){
 	if(audioUnit != NULL)
 		AudioUnitUninitialize(audioUnit);
+	audioUnit = NULL;
 	
 	// clear input buffer
 	for(int i = 0; i < inputBufferList.mNumberBuffers; ++i) {

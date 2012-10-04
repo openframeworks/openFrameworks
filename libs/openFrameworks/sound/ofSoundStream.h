@@ -63,6 +63,7 @@ class ofSoundStream: public ofBaseSoundStream{
 		int getSampleRate();
 		int getBufferSize();
 		int getNumBuffers();
+		int getDeviceID();
 		
 	protected:
 		bool setupInternal(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int nFramesPerBuffer, int nBuffers, bool autoStart );

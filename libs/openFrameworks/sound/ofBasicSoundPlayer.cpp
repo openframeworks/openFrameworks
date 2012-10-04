@@ -206,26 +206,30 @@ void ofBasicSoundPlayer::updatePositions(int bufferSize){
 	if(!loop && positions.size()==1 && positions[0]==buffer.getNumFrames()) isPlaying = false;
 }
 
-void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int deviceID, long unsigned long tickCount){
+void ofBasicSoundPlayer::audioOut(ofSoundBuffer& outputBuffer){
+	
+	int nFrames = outputBuffer.getNumFrames();
+	int nChannels = outputBuffer.getNumChannels();
+	
 	if(isPlaying){
 		if(streaming){
-			soundFile.readTo(buffer,bSize);
+			soundFile.readTo(buffer,nFrames);
 			buffer.stereoPan(volumesLeft.back(),volumesRight.back());
 			newBufferE.notify(this,buffer);
-			buffer.copyTo(output,bSize,nChannels,0);
+			buffer.copyTo(outputBuffer,nFrames,nChannels,0);
 		}else{
 			for(int i=0;i<(int)positions.size();i++){
 				//assert( resampledBuffer.getNumFrames() == bufferSize*relativeSpeed[i] );
 				if(abs(relativeSpeed[i] - 1)<FLT_EPSILON){
-					buffer.copyTo(resampledBuffer,bSize,nChannels,positions[i],loop);
+					buffer.copyTo(resampledBuffer,nFrames,nChannels,positions[i],loop);
 				}else{
-					buffer.resampleTo(resampledBuffer,positions[i],bSize,relativeSpeed[i],loop);
+					buffer.resampleTo(resampledBuffer,positions[i],nFrames,relativeSpeed[i],loop);
 				}
 				resampledBuffer.stereoPan(volumesLeft[i],volumesRight[i]);
 				newBufferE.notify(this,resampledBuffer);
-				resampledBuffer.addTo(output,bSize,nChannels,0,loop);
+				resampledBuffer.addTo(outputBuffer,nFrames,nChannels,0,loop);
 			}
-			updatePositions(bSize);
+			updatePositions(nFrames);
 		}
 	}
 }

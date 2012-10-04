@@ -109,7 +109,7 @@ void ofSoundMixer::audioOut(float * output, int nFrames, int nChannels, int devi
 		}
 		buffer.set(0);
 		
-		sources[i].sourceOutput->audioOut(&buffer[0],nFrames,nChannels,deviceID,tickCount);
+		sources[i].sourceOutput->audioOut(buffer);
 		
 		if(buffer.getNumChannels()==2 && sources[i].volume-1<FLT_EPSILON && sources[i].pan<FLT_EPSILON){
 			buffer.stereoPan(sources[i].volumeLeft,sources[i].volumeRight);

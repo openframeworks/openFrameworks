@@ -56,7 +56,7 @@ public:
 
 private:
 	void audioOutBuffersChanged( int nFrames, int nChannels, int sampleRate );
-	void audioOut(float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount);
+	void audioOut(ofSoundBuffer& outputBuffer);
 	void updatePositions(int numFrames);
 	
 	/*static int samplerate;

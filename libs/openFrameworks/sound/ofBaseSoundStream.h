@@ -1,6 +1,7 @@
 #pragma once
 #include "ofConstants.h"
 
+class ofSoundBuffer;
 class ofBaseSoundInput;
 class ofBaseSoundOutput;
 
@@ -29,4 +30,11 @@ class ofBaseSoundStream{
 		virtual int getSampleRate() = 0;
 		virtual int getBufferSize() = 0;
 		virtual int getNumBuffers() = 0;
+		virtual int getDeviceID() = 0;
+	
+	protected:
+	
+		/// set tickCount and deviceID on the buffer
+		void applySoundStreamOriginInfo( ofSoundBuffer* buffer );
+	
 };

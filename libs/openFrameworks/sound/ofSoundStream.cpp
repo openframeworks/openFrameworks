@@ -12,7 +12,7 @@ ofSoundStream* ofSoundStreamGetSystemStream() {
 	static ofSoundStream* systemStream = new ofSoundStream();
 	return systemStream;
 }
-
+ 
 
 
 
@@ -108,6 +108,13 @@ void ofSoundStream::setDeviceID(int deviceID){
 			setupInternal( outChannels, inChannels, sampleRate, nFramesPerBuffer, nBuffers, wasStarted );
 		}
 	}
+}
+
+int ofSoundStream::getDeviceID(){
+	if (soundStream){
+		return soundStream->getDeviceID();
+	}
+	return 0;
 }
 
 //------------------------------------------------------------

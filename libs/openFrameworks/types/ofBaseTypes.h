@@ -15,6 +15,7 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofMesh.h"
+#include "ofSoundBuffer.h"
 #include "ofPixels.h"
 
 template<typename T>
@@ -135,7 +136,11 @@ class ofBaseSoundInput{
 			ofLogWarning("ofBaseSoundInput") << "audioInBuffersChanged not implemented, buffer sizes may be mismatched";
 		}
 		
-		// @TODO virtual void audioIn( ofSoundBuffer& outputBuffer, int deviceId, long unsigned long tickCount ){
+		/// called when some new audio is available, inputBuffer contains the audio.
+		virtual void audioIn( ofSoundBuffer& inputBuffer ){
+			int deviceId=0;
+			audioIn( &inputBuffer[0], inputBuffer.getNumFrames(), inputBuffer.getNumChannels(), deviceId, inputBuffer.getTickCount() );
+		}
 
 		virtual void audioIn( float * input, int nFrames, int nChannels, int deviceID, long unsigned long tickCount ){
 			audioIn(input, nFrames, nChannels);
@@ -161,7 +166,11 @@ class ofBaseSoundOutput{
 			ofLogWarning("ofBaseSoundOutput") << "audioOutBuffersChanged not implemented, buffer sizes may be mismatched";
 		}
 	
-		// @TODO virtual void audioOut( ofSoundBuffer& outputBuffer, int deviceId, long unsigned long tickCount ){
+		/// when called, subclasses should fill outputBuffer with the requested amount of audio, in the requested format.
+		virtual void audioOut( ofSoundBuffer& outputBuffer ){
+			int deviceId=0;
+			audioOut( &outputBuffer[0], outputBuffer.getNumFrames(), outputBuffer.getNumChannels(), deviceId, outputBuffer.getTickCount() );
+		}
     
 		virtual void audioOut( float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount  ){
 			audioOut(output, nFrames, nChannels);

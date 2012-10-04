@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 
+#include "ofSoundBuffer.h"
 #include "ofBaseSoundStream.h"
 #include "ofTypes.h"
 
@@ -34,6 +35,9 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int getSampleRate();
 		int getBufferSize();
 		int getNumBuffers() { return nBuffers; }
+
+		// uh, which? in or out?
+		int getDeviceID() { return outDeviceID; }
 	
 		
 	private:
@@ -47,6 +51,9 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int					nBuffers;
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
+	
+		ofSoundBuffer		outputBuffer;
+		ofSoundBuffer		inputBuffer;
 	
 		// flags to determine whether audio*BuffersChanged methods should be called on the soundInputPtr/soundOutputPtr
 		bool				newBuffersNeededForInput;

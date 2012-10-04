@@ -4,6 +4,7 @@
 
 #include "ofBaseSoundStream.h"
 #include "ofTypes.h"
+#include "ofSoundBuffer.h"
 
 
 #include <AudioToolbox/AudioToolbox.h>
@@ -37,6 +38,7 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		int getSampleRate();
 		int getBufferSize();
 		int getNumBuffers() { return nBuffers; }
+		int getDeviceID() { return 0; }
 		
 	private:
 		
@@ -49,9 +51,12 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 	
 		ofBaseSoundInput *			soundInputPtr;
 		ofBaseSoundOutput *			soundOutputPtr;
+	
+		ofSoundBuffer		inputBuffer;
+		ofSoundBuffer		outputBuffer;
 
 		AudioStreamBasicDescription			format, audioFormat;
-		AudioUnit							audioUnit		= NULL;
+		AudioUnit							audioUnit;
 		AudioBufferList						inputBufferList;		// input buffer
 
 		// flags to determine whether audio*BuffersChanged methods should be called on the soundInputPtr/soundOutputPtr
