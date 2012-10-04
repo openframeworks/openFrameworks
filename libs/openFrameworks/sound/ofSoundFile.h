@@ -37,7 +37,10 @@ public:
 	bool open(string path);
 	void close();
 
+	/// read file to buffer. 
+	/// if samples is 0, resize the buffer to fit the entire file, otherwise just read the requested number of samples.
 	bool readTo(ofSoundBuffer & buffer, unsigned int samples=0);
+	/// seek to the requested sample index
 	bool seekTo(unsigned int sample);
 
 

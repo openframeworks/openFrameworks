@@ -83,22 +83,33 @@ void ofBasicSoundPlayer::play(){
 	float relSpeed = speed*(double(soundFile.getSampleRate())/double(playerSampleRate));
 	float left,right;
 	ofStereoVolumes(volume,pan,left,right);
-	if(!multiplay || !isPlaying){
+
+	if (multiplay) {
+		if(maxSounds>(int)positions.size()){
+			positions.push_back(pos);
+			relativeSpeed.push_back(relSpeed);
+			volumesLeft.push_back(left);
+			volumesRight.push_back(right);
+		}
+	}else{
+		if (streaming) {
+			soundFile.seekTo(pos);
+		}
 		positions.back() = pos;
 		relativeSpeed.back() = relSpeed;
 		volumesLeft.back() = left;
 		volumesRight.back() = right;
-	}else if(maxSounds>(int)positions.size()){
-		positions.push_back(pos);
-		relativeSpeed.push_back(relSpeed);
-		volumesLeft.push_back(left);
-		volumesRight.push_back(right);
 	}
 	isPlaying = true;
 }
 
 void ofBasicSoundPlayer::stop(){
 	isPlaying = false;
+
+	if (streaming){
+		soundFile.seekTo(0);
+	}
+
 }
 
 
@@ -182,6 +193,7 @@ unsigned long ofBasicSoundPlayer::getDurationMS(){
 
 void ofBasicSoundPlayer::updatePositions(int nFrames){
 	for(int i=0;i<(int)positions.size();i++){
+		// update positions
 		positions[i] += nFrames*relativeSpeed[i];
 		if(loop){
 			positions[i] %= buffer.getNumFrames();
@@ -200,7 +212,10 @@ void ofBasicSoundPlayer::updatePositions(int nFrames){
 			}
 		}
 	}
-	if(!loop && positions.size()==1 && positions[0]==buffer.getNumFrames()) isPlaying = false;
+	// finished?
+	if(!loop && positions.size()==1 && positions[0]==buffer.getNumFrames()){
+		isPlaying = false;
+	}
 }
 
 void ofBasicSoundPlayer::audioOut(ofSoundBuffer& outputBuffer){
@@ -210,10 +225,16 @@ void ofBasicSoundPlayer::audioOut(ofSoundBuffer& outputBuffer){
 	
 	if(isPlaying){
 		if(streaming){
-			soundFile.readTo(buffer,nFrames);
-			buffer.stereoPan(volumesLeft.back(),volumesRight.back());
-			newBufferE.notify(this,buffer);
-			buffer.copyTo(outputBuffer,nFrames,nChannels,0);
+			int samplesRead = soundFile.readTo(buffer,nFrames);
+			if ( samplesRead==0 ){
+				isPlaying=false;
+				soundFile.seekTo(0);
+			}
+			else{
+				buffer.stereoPan(volumesLeft.back(),volumesRight.back());
+				newBufferE.notify(this,buffer);
+				buffer.copyTo(outputBuffer);
+			}
 		}else{
 			for(int i=0;i<(int)positions.size();i++){
 				//assert( resampledBuffer.getNumFrames() == bufferSize*relativeSpeed[i] );
@@ -224,7 +245,7 @@ void ofBasicSoundPlayer::audioOut(ofSoundBuffer& outputBuffer){
 				}
 				resampledBuffer.stereoPan(volumesLeft[i],volumesRight[i]);
 				newBufferE.notify(this,resampledBuffer);
-				resampledBuffer.addTo(outputBuffer,nFrames,nChannels,0,loop);
+				resampledBuffer.addTo(outputBuffer,0,loop);
 			}
 			updatePositions(nFrames);
 		}
