@@ -33,7 +33,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int getNumInputChannels();
 		int getNumOutputChannels();
 		int getSampleRate();
-		int getBufferSize();
+		int getNumFramesPerBuffer();
 		int getNumBuffers() { return nBuffers; }
 
 		// uh, which? in or out?

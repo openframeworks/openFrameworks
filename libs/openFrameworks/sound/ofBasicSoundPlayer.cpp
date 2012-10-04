@@ -9,9 +9,6 @@
 #include "ofSoundUtils.h"
 #include <float.h>
 
-/*int ofBasicSoundPlayer::samplerate = 44100;
-int ofBasicSoundPlayer::bufferSize = 512;
-int ofBasicSoundPlayer::channels = 2;*/
 int ofBasicSoundPlayer::maxSoundsTotal=128;
 int ofBasicSoundPlayer::maxSoundsPerPlayer=16;
 
@@ -183,9 +180,9 @@ unsigned long ofBasicSoundPlayer::getDurationMS(){
 	return buffer.getDurationMS();
 }
 
-void ofBasicSoundPlayer::updatePositions(int bufferSize){
+void ofBasicSoundPlayer::updatePositions(int nFrames){
 	for(int i=0;i<(int)positions.size();i++){
-		positions[i] += bufferSize*relativeSpeed[i];
+		positions[i] += nFrames*relativeSpeed[i];
 		if(loop){
 			positions[i] %= buffer.getNumFrames();
 		}else{

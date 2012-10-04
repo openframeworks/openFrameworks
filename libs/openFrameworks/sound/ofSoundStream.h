@@ -61,7 +61,7 @@ class ofSoundStream: public ofBaseSoundStream{
 		int getNumInputChannels();
 		int getNumOutputChannels();
 		int getSampleRate();
-		int getBufferSize();
+		int getNumFramesPerBuffer();
 		int getNumBuffers();
 		int getDeviceID();
 		

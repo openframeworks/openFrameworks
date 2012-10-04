@@ -28,7 +28,7 @@ class ofBaseSoundStream{
 		virtual int getNumInputChannels() = 0;
 		virtual int getNumOutputChannels() = 0;
 		virtual int getSampleRate() = 0;
-		virtual int getBufferSize() = 0;
+		virtual int getNumFramesPerBuffer() = 0;
 		virtual int getNumBuffers() = 0;
 		virtual int getDeviceID() = 0;
 	

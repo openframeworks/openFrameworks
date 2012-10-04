@@ -94,7 +94,7 @@ void ofSoundStream::setDeviceID(int deviceID){
 			outChannels = getNumOutputChannels();
 			inChannels = getNumInputChannels();
 			sampleRate = getSampleRate();
-			nFramesPerBuffer = getBufferSize();
+			nFramesPerBuffer = getNumFramesPerBuffer();
 			nBuffers = getNumBuffers();
 			close();
 		}
@@ -153,7 +153,7 @@ bool ofSoundStream::setupInput( int nChannels, int sampleRate, int nFramesPerBuf
 			sampleRate = getSampleRate();
 		}
 		if (nFramesPerBuffer==-1){
-			nFramesPerBuffer = getBufferSize();
+			nFramesPerBuffer = getNumFramesPerBuffer();
 		}
 		if (nBuffers==-1){
 			nBuffers = getNumBuffers();
@@ -182,7 +182,7 @@ bool ofSoundStream::setupOutput( int nChannels, int sampleRate, int nFramesPerBu
 			sampleRate = getSampleRate();
 		}
 		if (nFramesPerBuffer==-1){
-			nFramesPerBuffer = getBufferSize();
+			nFramesPerBuffer = getNumFramesPerBuffer();
 		}
 		if (nBuffers==-1){
 			nBuffers = getNumBuffers();
@@ -318,9 +318,9 @@ int ofSoundStream::getSampleRate(){
 }
 
 //------------------------------------------------------------
-int ofSoundStream::getBufferSize(){
+int ofSoundStream::getNumFramesPerBuffer(){
 	if( soundStream ){
-		return soundStream->getBufferSize();
+		return soundStream->getNumFramesPerBuffer();
 	}
 	return 0;
 }

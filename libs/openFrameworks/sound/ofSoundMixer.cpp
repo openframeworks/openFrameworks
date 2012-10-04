@@ -126,9 +126,9 @@ void ofSoundMixer::audioOut(float * output, int nFrames, int nChannels, int devi
 }
 
 
-void ofSoundMixer::audioOutBuffersChanged(int bufferSize, int nChannels, int sampleRate){
+void ofSoundMixer::audioOutBuffersChanged(int nFrames, int nChannels, int sampleRate){
 	buffer.setNumChannels(nChannels);
 	buffer.setSampleRate(sampleRate);
-	buffer.resize(bufferSize*nChannels,0);
+	buffer.resize(nFrames*nChannels,0);
 	tellBuffersChanged = true;
 }

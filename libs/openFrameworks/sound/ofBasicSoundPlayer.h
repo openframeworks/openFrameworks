@@ -59,9 +59,6 @@ private:
 	void audioOut(ofSoundBuffer& outputBuffer);
 	void updatePositions(int numFrames);
 	
-	/*static int samplerate;
-	static int bufferSize;
-	static int channels;*/
 	int playerSampleRate, playerNumFrames, playerNumChannels;
 	
 	static int maxSoundsTotal;

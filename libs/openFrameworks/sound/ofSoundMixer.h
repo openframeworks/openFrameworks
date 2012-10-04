@@ -32,7 +32,7 @@ public:
 private:
 	bool isSystemMixer() { return this == ofSoundMixerGetSystemMixer(); }
 
-	void audioOutBuffersChanged(int bufferSize, int nChannels, int sampleRate);
+	void audioOutBuffersChanged(int nFrames, int nChannels, int sampleRate);
 	void audioOut(float * output, int nFrames, int nChannels, int deviceID, long unsigned long tickCount);
 
 	typedef struct {
