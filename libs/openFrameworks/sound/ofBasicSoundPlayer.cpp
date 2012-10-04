@@ -70,21 +70,37 @@ void ofBasicSoundPlayer::unloadSound(){
 }
 
 void ofBasicSoundPlayer::play(){
-	if(!multiplay || !isPlaying){
-		positions.back() = 0;
+	int pos=0;
+	float relSpeed = speed*(double(soundFile.getSampleRate())/double(playerSampleRate));
+	float left,right;
+	ofStereoVolumes(volume,pan,left,right);
+
+	if (multiplay) {
+		if(maxSounds>(int)positions.size()){
+			positions.push_back(pos);
+			relativeSpeed.push_back(relSpeed);
+			volumesLeft.push_back(left);
+			volumesRight.push_back(right);
+		}
 	}else{
-		positions.push_back(0);
-		relativeSpeed.push_back(speed*(double(soundFile.getSampleRate())/double(samplerate)));
-		float left,right;
-		ofStereoVolumes(volume,pan,left,right);
-		volumesLeft.push_back(left);
-		volumesRight.push_back(right);
+		if (streaming) {
+			soundFile.seekTo(pos);
+		}
+		positions.back() = pos;
+		relativeSpeed.back() = relSpeed;
+		volumesLeft.back() = left;
+		volumesRight.back() = right;
 	}
 	isPlaying = true;
 }
 
 void ofBasicSoundPlayer::stop(){
 	isPlaying = false;
+
+	if (streaming){
+		soundFile.seekTo(0);
+	}
+
 }
 
 
@@ -160,7 +176,8 @@ float ofBasicSoundPlayer::getVolume(){
 
 void ofBasicSoundPlayer::updatePositions(int bufferSize){
 	for(int i=0;i<(int)positions.size();i++){
-		positions[i] += bufferSize*relativeSpeed[i];
+		// update positions
+		positions[i] += nFrames*relativeSpeed[i];
 		if(loop){
 			positions[i] %= buffer.bufferSize();
 		}else{
@@ -176,15 +193,25 @@ void ofBasicSoundPlayer::updatePositions(int bufferSize){
 			}
 		}
 	}
-	if(!loop && positions.size()==1 && positions[0]==buffer.bufferSize()) isPlaying = false;
+	// finished?
+	if(!loop && positions.size()==1 && positions[0]==buffer.getNumFrames()){
+		isPlaying = false;
+	}
 }
 
 void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int deviceID, long unsigned long tickCount){
 	if(isPlaying){
 		if(streaming){
-			soundFile.readTo(buffer,bufferSize);
-			buffer.stereoPan(volumesLeft.back(),volumesRight.back());
-			buffer.copyTo(output,bufferSize,channels,0);
+			int samplesRead = soundFile.readTo(buffer,nFrames);
+			if ( samplesRead==0 ){
+				isPlaying=false;
+				soundFile.seekTo(0);
+			}
+			else{
+				buffer.stereoPan(volumesLeft.back(),volumesRight.back());
+				newBufferE.notify(this,buffer);
+				buffer.copyTo(outputBuffer);
+			}
 		}else{
 			//assert( resampledBuffer.size() == bufferSize );
 			for(int i=0;i<(int)positions.size();i++){
@@ -194,8 +221,8 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 					buffer.resampleTo(resampledBuffer,positions[i],bufferSize,relativeSpeed[i],loop);
 				}
 				resampledBuffer.stereoPan(volumesLeft[i],volumesRight[i]);
-				//resampledBufferE.notify(this,resampledBuffer);
-				resampledBuffer.addTo(output,bufferSize,channels,0,loop);
+				newBufferE.notify(this,resampledBuffer);
+				resampledBuffer.addTo(outputBuffer,0,loop);
 			}
 			updatePositions(bufferSize);
 		}

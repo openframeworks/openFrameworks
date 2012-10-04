@@ -177,15 +177,20 @@ bool ofSoundFile::readTo(ofSoundBuffer & buffer, unsigned int _samples){
 	buffer.setNumChannels(channels);
 	buffer.setSampleRate(samplerate);
 	if(_samples!=0){
+		// will read the requested number of samples
+		// clamp to the number of samples we actually have
+		_samples = min(_samples,samples);
 		buffer.resize(_samples*channels);
 	}
 #ifdef OF_USING_SNDFILE
 	else if (sndFile){
+		// will read entire file
 		buffer.resize(samples);
 	}
 #endif
 #ifdef OF_USING_LAD
-	else if ( audioDecoder ) {
+	else if (audioDecoder) {
+		// will read entire file
 		buffer.resize(samples);
 	}
 #endif
@@ -206,6 +211,7 @@ bool ofSoundFile::readTo(ofSoundBuffer & buffer, unsigned int _samples){
 }
 
 bool ofSoundFile::seekTo(unsigned int sample){
+	sample = min(samples,sample);
 #ifdef OF_USING_SNDFILE
 	if(sndFile) sf_seek(sndFile,sample,SEEK_SET);
 #endif

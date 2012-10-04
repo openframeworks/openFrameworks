@@ -30,14 +30,17 @@ void ofSoundShutdown();
 #include "ofOpenALSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
 
-#ifdef TARGET_OF_IOS
+#elif defined( TARGET_OF_IOS )
 #include "ofxiOSSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
+
+#else
+#include "ofBasicSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofBasicSoundPlayer
 #endif
 
 #ifdef TARGET_ANDROID
 inline void ofSoundShutdown(){}
-#endif
 #endif
 
 #ifdef TARGET_LINUX_ARM
