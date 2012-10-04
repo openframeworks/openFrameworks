@@ -134,7 +134,11 @@ void ofSoundBuffer::copyTo(ofSoundBuffer & soundBuffer, unsigned int nFrames, un
 	soundBuffer.resize(nFrames*outChannels);
 	soundBuffer.setNumChannels(outChannels);
 	soundBuffer.setSampleRate(samplerate);
-	copyTo(&soundBuffer.getBuffer()[0],nFrames,outChannels,fromFrame,loop);
+	copyTo(&soundBuffer[0],nFrames,outChannels,fromFrame,loop);
+}
+
+void ofSoundBuffer::copyTo(ofSoundBuffer & outBuffer, unsigned int fromFrame, bool loop) const{
+	copyTo(&outBuffer[0],outBuffer.getNumFrames(),outBuffer.getNumChannels(),fromFrame,loop);
 }
 
 void ofSoundBuffer::addTo(ofSoundBuffer & soundBuffer, unsigned int nFrames, unsigned int outChannels,unsigned int fromFrame,bool loop) const{
@@ -143,6 +147,11 @@ void ofSoundBuffer::addTo(ofSoundBuffer & soundBuffer, unsigned int nFrames, uns
 	soundBuffer.setSampleRate(samplerate);
 	addTo(&soundBuffer.getBuffer()[0],nFrames,outChannels,fromFrame,loop);
 }
+
+void ofSoundBuffer::addTo(ofSoundBuffer & outBuffer, unsigned int fromFrame, bool loop) const{
+	addTo(&outBuffer[0],outBuffer.getNumFrames(),outBuffer.getNumChannels(),fromFrame,loop);
+}
+
 
 void ofSoundBuffer::copyTo(float * out, unsigned int nFrames, unsigned int outChannels,unsigned int fromFrame, bool loop) const{
 	// figure out how many frames we can copy before we need to stop or loop

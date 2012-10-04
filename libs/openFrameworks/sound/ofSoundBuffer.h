@@ -139,6 +139,11 @@ public:
 	/// as copyTo but mixes source audio with audio in `outBuffer` by adding samples together (+), instead of overwriting.
 	void addTo(ofSoundBuffer & outBuffer, unsigned int outNumFrames, unsigned int outNumChannels, unsigned int fromFrame,bool loop=false) const;
 
+	/// as copyTo above but reads outNumFrames and outNumChannels from outBuffer
+	void copyTo(ofSoundBuffer & outBuffer, unsigned int frameFrame = 0, bool loop=false) const;
+	/// as addTo above but reads outNumFrames and outNumChannels from outBuffer
+	void addTo(ofSoundBuffer & outBuffer, unsigned int fromFrame = 0, bool loop=false) const;
+
 	/// copy sample data to out, where out is already allocated to match outNumFrames and outNumChannels (ie outNumFrames*outNumChannels samples).
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled the out buffer.
 	/// if out has fewer channels than our buffer, just copy the first outNumChannels of our data and skip the rest.
@@ -180,7 +185,7 @@ public:
 
 	friend class ofBaseSoundStream;
 	
-private:
+protected:
 	
 	/// return the underlying buffer. careful!
 	vector<float> & getBuffer();
@@ -194,7 +199,9 @@ private:
 	vector<float> buffer;
 	int channels;
 	int samplerate;
+
 	long unsigned long tickCount;
+	int soundStreamDeviceID;
 };
 
 #endif /* OFSOUNDBUFFER_H_ */
