@@ -19,9 +19,11 @@ ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundB
 ofSoundBuffer::ofSoundBuffer() {
 	channels=1;
 	samplerate=44100;
+	tickCount=0;
 }
 
 ofSoundBuffer::ofSoundBuffer(short * shortBuffer, unsigned int numFrames, int _channels, int _samplerate){
+	tickCount=0;
 	copyFrom(shortBuffer,numFrames,_channels,_samplerate);
 	checkSizeAndChannelsConsistency("constructor");
 }
@@ -40,16 +42,9 @@ vector<float> & ofSoundBuffer::getBuffer(){
 	return buffer;
 }
 
-int ofSoundBuffer::getNumChannels() const{
-	return channels;
-}
 
 unsigned long ofSoundBuffer::getDuration() const{
 	return bufferSize()/samplerate;
-}
-
-int ofSoundBuffer::getSampleRate() const{
-	return samplerate;
 }
 
 void ofSoundBuffer::setNumChannels(int _channels){
@@ -59,14 +54,6 @@ void ofSoundBuffer::setNumChannels(int _channels){
 
 void ofSoundBuffer::setSampleRate(int rate){
 	samplerate = rate;
-}
-
-unsigned int ofSoundBuffer::size() const{
-	return buffer.size();
-}
-
-unsigned int ofSoundBuffer::bufferSize() const{
-	return buffer.size()/channels;
 }
 
 void ofSoundBuffer::resize(unsigned int samples, float val){
