@@ -36,7 +36,7 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		int getNumInputChannels();
 		int getNumOutputChannels();
 		int getSampleRate();
-		int getBufferSize();
+		int getNumFramesPerBuffer();
 		int getNumBuffers() { return nBuffers; }
 		int getDeviceID() { return 0; }
 		

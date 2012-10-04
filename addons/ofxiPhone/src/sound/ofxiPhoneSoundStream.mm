@@ -431,8 +431,10 @@ void ofxiPhoneSoundStream::start(){
 
 //------------------------------------------------------------------------------
 void ofxiPhoneSoundStream::stop(){
-	OSStatus status = AudioOutputUnitStop(audioUnit);
-	checkStatus(status);
+	if (audioUnit!=NULL){
+		OSStatus status = AudioOutputUnitStop(audioUnit);
+		checkStatus(status);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -446,6 +448,8 @@ void ofxiPhoneSoundStream::close(){
 		if(inputBufferList.mBuffers[i].mData != NULL)
 			free(inputBufferList.mBuffers[i].mData);
 	}
+	nInputChannels = 0;
+	nOutputChannels = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -469,7 +473,7 @@ int ofxiPhoneSoundStream::getSampleRate(){
 }
 
 //------------------------------------------------------------------------------
-int ofxiPhoneSoundStream::getBufferSize(){
+int ofxiPhoneSoundStream::getNumFramesPerBuffer(){
     return nFramesPerBuffer;
 }
 
