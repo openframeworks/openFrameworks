@@ -94,16 +94,19 @@ public:
 	static InterpolationAlgorithm defaultAlgorithm;  //defaults to Linear for mobile, Hermite for desktop
 
 	/// sample rate of the audio in this buffer
-	int getSampleRate() const;
+	int getSampleRate() const { return samplerate; }
 	void setSampleRate(int rate);
 	/// resample by changing the playback speed, keeping the same sampleRate
 	void resample(float speed, InterpolationAlgorithm algorithm=defaultAlgorithm);
 	/// the number of channels per frame
-	int getNumChannels() const;
+	int getNumChannels() const { return channels; }
 	/// set the number of channels. does not change the underlying data, ie causes getNumFrames() to return a different result.
 	void setNumChannels(int channels);
 	/// the number of frames, ie the number of sets of (getNumChannels()) samples
-	unsigned long getNumFrames() const;
+	unsigned long getNumFrames() const { return size()/getNumChannels(); }
+	
+	/// return the tickCount that was assigned by ofSoundStream (if this buffer originated from an ofSoundStream).
+	unsigned long long getTickCount() const { return tickCount; }
 	
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
 	unsigned long getDurationMS() const;
@@ -160,12 +163,10 @@ public:
 	
 	void fillWithNoise();
 	float fillWithTone( float pitchHz, float phase=0 );
-	
-
 
 	
 	/// return the total number of samples in this buffer (==getNumFrames()*getNumChannels())
-	unsigned long size() const;
+	unsigned long size() const { return buffer.size(); }
 	/// resize this buffer to exactly this many samples. it's up to you make sure samples matches the channel count.
 	void resize(unsigned int numSamples, float val=float());
 	/// remove all samples, preserving channel count and sample rate.
@@ -177,6 +178,8 @@ public:
 	/// copy data from source, interpreting it as nFrames frames of nChannels channels. resize ourself to fit the incoming data.
 	void set(float * source, unsigned int nFrames, unsigned int nChannels);
 
+	friend class ofBaseSoundStream;
+	
 private:
 	
 	/// return the underlying buffer. careful!
@@ -191,6 +194,7 @@ private:
 	vector<float> buffer;
 	int channels;
 	int samplerate;
+	long unsigned long tickCount;
 };
 
 #endif /* OFSOUNDBUFFER_H_ */
