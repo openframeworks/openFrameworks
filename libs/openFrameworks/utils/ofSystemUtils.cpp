@@ -205,15 +205,15 @@ pascal void modernEventProc(NavEventCallbackMessage callBackSelector,
 			string defaultPath = *(string*)callBackUD;
 			if(defaultPath!=""){
 				OSErr err;
-				
+
 				//  get an FSRef for the starting location
 				FSRef srcRef;
-				FSPathMakeRef((const UInt8*)defaultPath.c_str(), &srcRef, NULL);
-				
+				FSPathMakeRef((const UInt8*)ofToDataPath(defaultPath).c_str(), &srcRef, NULL);
+
 				//  make an AEDesc out of it.
 				AEDesc theDesc;
 				err = AECreateDesc(typeFSRef, &srcRef, sizeof (FSRef), &theDesc);
-				
+
 				//  set it.
 				err = NavCustomControl ( callBackParms->context, kNavCtlSetLocation, (void*)&theDesc);
 			}
@@ -286,12 +286,28 @@ CantGetNavOptions:
 //----------------------------------------------------------------------------------------
 
 
+//----------------------------------------------------------------------------------------
+#ifdef TARGET_WIN32
+//---------------------------------------------------------------------
+static int CALLBACK loadDialogBrowseCallback(
+  HWND hwnd,
+  UINT uMsg,
+  LPARAM lParam,
+  LPARAM lpData
+){
+    string defaultPath = *(string*)lpData;
+    if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
+        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPath(defaultPath).c_str());
+    }
+}
+//----------------------------------------------------------------------------------------
+#endif
+//---------------------------------------------------------------------
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
 ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection, string defaultPath){
 
 	ofFileDialogResult results;
-	defaultPath = ofToDataPath(defaultPath);
 
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
@@ -339,10 +355,20 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.hwndOwner = hwnd;
 #ifdef __MINGW32_VERSION
 		char szFileName[MAX_PATH];
+        memset(szFileName,0,260);
+		if(defaultPath!=""){
+            strcpy(szFileName,ofToDataPath(defaultPath).c_str());
+		}
+
 		ofn.lpstrFilter = "All\0";
 		ofn.lpstrFile = szFileName;
 #else // VS2010
-		wchar_t szFileName[MAX_PATH] = L"";
+		wchar_t szFileName[MAX_PATH];
+		if(defaultFolder!=""){
+            wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultFolder)).c_str());
+		}else{
+		    szFileName = L"";
+		}
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile = szFileName;
 #endif
@@ -375,8 +401,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		bi.pszDisplayName   =   wideCharacterBuffer;
 		bi.lpszTitle        =   L"Select Directory";
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS;
-		bi.lpfn             =   NULL;
-		bi.lParam           =   0;
+		bi.lpfn             =   &loadDialogBrowseCallback;
+		bi.lParam           =   (LPARAM) &defaultPath;
 
 		if(pidl = SHBrowseForFolderW(&bi)){
 			// Copy the path directory to the buffer
