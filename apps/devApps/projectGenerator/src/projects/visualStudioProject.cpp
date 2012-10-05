@@ -21,6 +21,7 @@ bool visualStudioProject::createProjectFile(){
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user, false, true);
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution, false, true);
 	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.filters"),filters, false, true);
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"icon.rc"), projectDir + "icon.rc", false, true);
 
 	ofFile filterFile(filters);
 	string temp = filterFile.readToBuffer();
