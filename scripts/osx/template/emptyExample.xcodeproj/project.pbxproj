@@ -631,6 +631,10 @@
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h</string>
+				<key>ICON</key>
+				<string>$(ICON_NAME_DEBUG)</string>
+				<key>ICON_FILE</key>
+				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -735,6 +739,10 @@
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h</string>
+				<key>ICON</key>
+				<string>$(ICON_NAME_RELEASE)</string>
+				<key>ICON_FILE</key>
+				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -920,7 +928,10 @@
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";</string>
+			<string>cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
+mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
+cp -f "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
+</string>
 		</dict>
 		<key>E4C2424410CC5A17004149E2</key>
 		<dict>
