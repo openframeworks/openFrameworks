@@ -76,6 +76,8 @@ public:
 	static void entry_cb(int state);
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
+private:
+	bool iconSet;
 	
 		 
 };

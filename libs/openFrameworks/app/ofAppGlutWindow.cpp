@@ -213,6 +213,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	displayString		= "";
 	orientation			= OF_ORIENTATION_DEFAULT;
 	bDoubleBuffered = true; // LIA
+	iconSet = false;
 
 }
 
@@ -290,17 +291,6 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	windowW = glutGet(GLUT_WINDOW_WIDTH);
 	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 
-#ifdef TARGET_LINUX
-    ofPixels iconPixels;
-	#ifdef DEBUG
-    	iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-    	GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-	#else
-    	iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-    	GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-	#endif
-    setWindowIcon(iconPixels);
-#endif
 }
 
 //------------------------------------------------------------
@@ -336,6 +326,19 @@ void ofAppGlutWindow::initializeWindow(){
         fixCloseWindowOnWin32();
     #endif
 
+#ifdef TARGET_LINUX
+    if(!iconSet){
+		ofPixels iconPixels;
+		#ifdef DEBUG
+			iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
+			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+		#else
+			iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+		#endif
+		setWindowIcon(iconPixels);
+    }
+#endif
 }
 
 #ifdef TARGET_LINUX
@@ -348,6 +351,7 @@ void ofAppGlutWindow::setWindowIcon(const string & path){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setWindowIcon(const ofPixels & iconPixels){
+	iconSet = true;
 	Display *m_display = glXGetCurrentDisplay();
 	GLXDrawable m_window = glXGetCurrentDrawable();
 	int attributes[40];
