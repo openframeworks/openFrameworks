@@ -5,6 +5,10 @@
 #include "ofEvents.h"
 #include "ofTypes.h"
 
+#ifdef TARGET_LINUX
+#include "ofPixels.h"
+#endif
+
 //class ofPoint;
 class ofBaseApp;
 
@@ -34,6 +38,10 @@ public:
 	void setWindowTitle(string title);
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
+#ifdef TARGET_LINUX
+	void setWindowIcon(const string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
+#endif
 
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();
@@ -68,7 +76,6 @@ public:
 	static void entry_cb(int state);
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
-	
 	
 		 
 };
