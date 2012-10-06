@@ -126,7 +126,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     }
     
 	frameCount = numFrames;
-    frameStep = 1.0*movieDuration.timeValue/numFrames;
+	frameStep = round((double)(movieDuration.timeValue/(double)(numFrames)));
     
 	//NSLog(@" movie has %d frames and frame step %d", frameCount, frameStep);
 	
@@ -559,7 +559,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	if(self.rate != 0){
 		_movie.rate = 0;
 	}
-    QTTime t = QTMakeTime(ceil(frame*frameStep), movieDuration.timeScale);
+	QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
 	QTTime endTime =[_movie frameEndTime:t];
 //	NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
@@ -567,7 +567,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		self.justSetFrame = YES;
 		_movie.currentTime = startTime;
 //		//		NSLog(@"set time to %f", 1.0*_movie.currentTime.timeValue / _movie.currentTime.timeScale);
-//		NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
+//  NSLog(@"nsorderedsame calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
 		[self synchronizeSeek];
 	}
 
@@ -640,7 +640,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (NSInteger) frame
 {
-	return _movie.currentTime.timeValue / frameStep;
+	return (NSInteger)(round(_movie.currentTime.timeValue / frameStep));
 }
 
 - (NSTimeInterval) duration
