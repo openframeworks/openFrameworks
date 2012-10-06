@@ -44,6 +44,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 int			getTotalNumFrames();
 		 float			getSpeed();
 		 bool			getIsMovieDone();
+		 ofLoopType 	getLoopState();
 
 		 void 			setPosition(float pct);
 		 void 			setVolume(float volume);
@@ -76,7 +77,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		int					nFrames;				// number of frames
 		bool				allocated;				// so we know to free pixels or not
 
-		ofLoopType					currentLoopState;
+		ofLoopType			currentLoopState;
 		bool 				bStarted;
 		bool 				bPlaying;
 		bool 				bPaused;

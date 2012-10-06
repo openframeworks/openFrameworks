@@ -123,17 +123,20 @@ public:
 	void load(string path);
 	void save(string path, bool useBinary = false);
     
-    void enableColors();
-    void enableTextures();
-    void enableNormals();
+    virtual void enableColors();
+    virtual void enableTextures();
+    virtual void enableNormals();
+    virtual void enableIndices();
     
-    void disableColors();
-    void disableTextures();
-    void disableNormals();
+    virtual void disableColors();
+    virtual void disableTextures();
+    virtual void disableNormals();
+    virtual void disableIndices();
     
-    bool usingColors();
-    bool usingTextures();
-    bool usingNormals();
+    virtual bool usingColors();
+    virtual bool usingTextures();
+    virtual bool usingNormals();
+    virtual bool usingIndices();
     
 
 protected:
@@ -153,6 +156,7 @@ private:
     bool useColors;
     bool useTextures;
     bool useNormals;
+    bool useIndices;
 	
 //	ofMaterial *mat;
 };
