@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <math.h>
 #include <setjmp.h>
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,6 +17,15 @@
 #include "tinyxml.h"
 #include "svgtiny.h"
 #include "svgtiny_internal.h"
+
+using namespace std;
+
+#ifdef _MSC_VER
+long lroundf (float x) {
+	long xl = (long) x;
+	return x - xl > .5 ? xl + 1 : xl;
+}  
+#endif
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846
