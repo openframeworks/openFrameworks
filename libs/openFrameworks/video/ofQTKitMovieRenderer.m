@@ -392,7 +392,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//          (NSInteger)movieSize.width, (NSInteger)movieSize.height);
 		if((NSInteger)movieSize.width != CVPixelBufferGetWidth(_latestPixelFrame) ||
 		   (NSInteger)movieSize.height != CVPixelBufferGetHeight(_latestPixelFrame)){
-			NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. Ths is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
+			NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. This is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
 				  CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
 			return;
 		}
@@ -405,7 +405,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
 		//If we are using alpha, the ofQTKitPlayer class will have allocated a buffer of size
 		//movieSize.width * movieSize.height * 4
-		//CoreVieo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
+		//CoreVideo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
 		//so we need to swap the alpha around using a vImage permutation
 		vImage_Buffer src = {
 			CVPixelBufferGetBaseAddress(_latestPixelFrame),
@@ -595,10 +595,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	return _movie.currentTime.timeValue;
 }
 
-//This thread will guarentuee that the current frame is in memory
+//This thread will guarantee that the current frame is in memory
 //before proceeding. If something goes weird, it has 1.0 second timeout
 //that it will print a warning and proceed.
-//It works by bockign with a condition, which is signaled
+//It works by blocking with a condition, which is signaled
 //in the frameAvailable callback when the time matches the requested time
 - (void) synchronizeSeek
 {
