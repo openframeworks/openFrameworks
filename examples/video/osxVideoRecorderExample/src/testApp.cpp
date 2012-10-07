@@ -93,8 +93,8 @@ void testApp::draw(){
         ofSetColor(255);
         // fit it into the preview window, but use the correct aspect ratio
         ofRectangle videoGrabberRect(0,0,vidGrabber.getWidth(),vidGrabber.getHeight());
-        ofRectangle previewDrawRectangle = previewWindow.scaleIntoMe(videoGrabberRect);
-        vidGrabber.draw(previewDrawRectangle);
+        videoGrabberRect.scaleTo(previewWindow);
+        vidGrabber.draw(videoGrabberRect);
         ofPopStyle();
     } else{
 		ofPushStyle();
@@ -113,7 +113,7 @@ void testApp::draw(){
         ofSetColor(255);
         // fit it into the preview window, but use the correct aspect ratio
         ofRectangle recordedRect(ofRectangle(0,0,recordedVideoPlayback.getWidth(),recordedVideoPlayback.getHeight()));
-        recordedRect = playbackWindow.scaleIntoMe(recordedRect);
+        recordedRect.scaleTo(playbackWindow);
         recordedVideoPlayback.draw(recordedRect);
         ofPopStyle();
     }
