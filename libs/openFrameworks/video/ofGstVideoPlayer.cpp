@@ -6,8 +6,10 @@
  */
 
 #include "ofGstVideoPlayer.h"
+#include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/audio/multichannel.h>
+#include <gst/app/gstappsink.h>
 
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
@@ -44,8 +46,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	}
 	ofLog(OF_LOG_VERBOSE,"loading "+name);
 
-	//GMainLoop* loop		=
-	g_main_loop_new (NULL, FALSE);
+	ofGstUtils::startGstMainLoop();
 
 	GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
@@ -271,7 +272,7 @@ void ofGstVideoPlayer::setLoopState(ofLoopType state){
 	videoUtils.setLoopState(state);
 }
 
-int	ofGstVideoPlayer::getLoopState(){
+ofLoopType ofGstVideoPlayer::getLoopState(){
 	return videoUtils.getLoopState();
 }
 
