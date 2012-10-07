@@ -546,6 +546,10 @@ void ofQuickTimePlayer::setLoopState(ofLoopType state){
 
 }
 
+//---------------------------------------------------------------------------
+ofLoopType ofQuickTimePlayer::getLoopState(){
+	return currentLoopState;
+}
 
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::setPosition(float pct){

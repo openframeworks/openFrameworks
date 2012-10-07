@@ -272,7 +272,7 @@ void ofGstVideoPlayer::setLoopState(ofLoopType state){
 	videoUtils.setLoopState(state);
 }
 
-int	ofGstVideoPlayer::getLoopState(){
+ofLoopType ofGstVideoPlayer::getLoopState(){
 	return videoUtils.getLoopState();
 }
 

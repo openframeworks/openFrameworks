@@ -44,7 +44,7 @@ public:
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	int		getLoopState(){return loopMode;}
+	ofLoopType	getLoopState(){return loopMode;}
 	void 	setSpeed(float speed);
 
 	void 	setFrameByFrame(bool bFrameByFrame);
@@ -84,17 +84,9 @@ private:
 	GstElement  *		gstSink;
 	GstElement 	*		gstPipeline;
 
-	bool				posChangingPaused;
-	int					pipelineState;
 	float				speed;
 	int64_t				durationNanos;
 	bool				isAppSink;
-
-	// the gst callbacks need to be friended to be able to call us
-	//friend GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data);
-	//friend GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data);
-	//friend void on_eos_from_source (GstAppSink * elt, void * data);
-
 };
 
 
