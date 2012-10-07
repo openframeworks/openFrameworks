@@ -49,6 +49,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 @synthesize frameCount;
 @synthesize justSetFrame;
 @synthesize synchronousSeek;
+@synthesize frameTimeValues;
 
 - (NSDictionary*) pixelBufferAttributes
 {
@@ -111,23 +112,25 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     QTTime curTime = [_movie currentTime];
     
     long numFrames = 0;
-    while(true)
-    {
-        int time = curTime.timeValue;
-        //        % get the end time of the current frame  
+	NSMutableArray* timeValues = [NSMutableArray array];
+    while(true) {
+        //        % get the end time of the current frame
+		[timeValues addObject:[NSNumber numberWithLongLong:curTime.timeValue]];
+
         curTime = [_movie frameEndTime:curTime];
         numFrames++;
+//        int time = curTime.timeValue;
 //        NSLog(@" num frames %ld, %lld/%ld , dif %lld, current time %f", numFrames,curTime.timeValue,curTime.timeScale, curTime.timeValue - time, 1.0*curTime.timeValue/curTime.timeScale);
         if (QTTimeCompare(curTime, endTime) == NSOrderedSame ||
             QTTimeCompare(curTime, [_movie frameEndTime:curTime])  == NSOrderedSame ){ //this will happen for audio files since they have no frames.
             break;
         }
-
     }
     
+	self.frameTimeValues = [NSArray arrayWithArray:timeValues];
+	
 	frameCount = numFrames;
-	frameStep = round((double)(movieDuration.timeValue/(double)(numFrames)));
-    
+//	frameStep = round((double)(movieDuration.timeValue/(double)(numFrames)));
 	//NSLog(@" movie has %d frames and frame step %d", frameCount, frameStep);
 	
 	//if we are using pixels, make the visual context
@@ -219,6 +222,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		if(_textureCache != NULL){
 			CVOpenGLTextureCacheRelease(_textureCache);
 			_textureCache = NULL;
+		}
+		
+		if(frameTimeValues != NULL){
+			self.frameTimeValues = NULL;
 		}
 		
 		if(synchronousSeekLock != nil){
@@ -559,7 +566,8 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	if(self.rate != 0){
 		_movie.rate = 0;
 	}
-	QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
+	//QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
+	QTTime t = QTMakeTime([[self.frameTimeValues objectAtIndex:frame%self.frameTimeValues.count] longLongValue], movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
 	QTTime endTime =[_movie frameEndTime:t];
 //	NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
@@ -638,9 +646,21 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	loadedFirstFrame = true;
 }
 
+//complicated!!! =( Do a search through the frame time values
+//to find the index of the current time, then return that index
+// http://stackoverflow.com/questions/3995949/how-to-write-objective-c-blocks-inline
 - (NSInteger) frame
 {
-	return (NSInteger)(round(_movie.currentTime.timeValue / frameStep));
+	return [self.frameTimeValues indexOfObject:[NSNumber numberWithLongLong:_movie.currentTime.timeValue]
+								 inSortedRange:NSMakeRange(0, self.frameTimeValues.count)
+									   options:NSBinarySearchingInsertionIndex
+							   usingComparator:^(id lhs, id rhs) {
+								   if ([lhs longLongValue] < [rhs longLongValue])
+									   return (NSComparisonResult)NSOrderedAscending;
+								   else if([lhs longLongValue] > [rhs longLongValue])
+										return (NSComparisonResult)NSOrderedDescending;
+								   return (NSComparisonResult)NSOrderedSame;
+							   }];
 }
 
 - (NSTimeInterval) duration

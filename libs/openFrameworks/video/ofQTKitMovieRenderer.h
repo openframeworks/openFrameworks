@@ -20,7 +20,7 @@
 	NSSize movieSize;
 	QTTime movieDuration;
 	NSInteger frameCount;
-	double frameStep;
+//	double frameStep;
     QTTime lastMovieTime;
 	BOOL frameUpdated;
 	BOOL useTexture;
@@ -32,6 +32,7 @@
 	BOOL hasVideo;
 	BOOL hasAudio;
 	BOOL loadedFirstFrame;
+	NSArray* frameTimeValues;
 	NSCondition* synchronousSeekLock;
 }
 
@@ -58,6 +59,7 @@
 @property (nonatomic, readonly) BOOL textureAllocated;
 @property (nonatomic, readonly) GLuint textureID;
 @property (nonatomic, readonly) GLenum textureTarget;
+@property (nonatomic, retain) NSArray* frameTimeValues;
 
 - (NSDictionary *)pixelBufferAttributes;
 
