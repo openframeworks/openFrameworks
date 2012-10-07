@@ -68,10 +68,10 @@ ofGstUtils::ofGstUtils() {
 	gstPipeline					= NULL;
 	gstSink						= NULL;
 
-	posChangingPaused			= 0;
 	durationNanos				= 0;
 
 	isAppSink					= false;
+	isStream					= false;
 
 	appsink						= NULL;
 
@@ -480,13 +480,6 @@ void ofGstUtils::gstHandleMessage(){
 						play();
 					}
 				}
-				/*seek_lock();
-				if(posChangingPaused && newstate==GST_STATE_PLAYING){
-					gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
-					posChangingPaused=false;
-				}
-				seek_unlock();*/
-
 				ofLogVerbose() << "GStreamer: " << GST_MESSAGE_SRC_NAME(msg) << " state changed from " << getName(oldstate) + " to " + getName(newstate) + " (" + getName(pendstate) + ")";
 			}break;
 
@@ -682,8 +675,6 @@ void ofGstVideoUtils::update(){
 					prevBuffer = buffer;
 					bHavePixelsChanged=true;
 				}
-				/// we don't need the appsink buffer anymore
-				//gst_buffer_unref (buffer);
 			}
 		}
 	}else{
@@ -761,11 +752,6 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 		}
 		mutex.unlock();
 	}
-
-
-	/// we don't need the appsink buffer anymore
-	//gst_buffer_unref (buffer);
-
 	return ofGstUtils::preroll_cb(_buffer);
 }
 

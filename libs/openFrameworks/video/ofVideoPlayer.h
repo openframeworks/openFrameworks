@@ -45,7 +45,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				close();		
 
 		void				update();
-		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead", void idleMovie());
+		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead.", void idleMovie());
 		void 				play();
 		void 				stop();
 
@@ -60,7 +60,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				setPosition(float pct);
 		void 				setVolume(float volume); // 0..1
 		void 				setLoopState(ofLoopType state);
-		int					getLoopState();
+		ofLoopType			getLoopState();
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 

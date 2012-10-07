@@ -50,7 +50,7 @@ public:
 	
     int	getCurrentFrame();
     int	getTotalNumFrames();
-    int	getLoopState();
+    ofLoopType	getLoopState();
 	
     void firstFrame();
     void nextFrame();

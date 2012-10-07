@@ -2,7 +2,7 @@
 
 //-------------------------------
 #define OF_VERSION	7
-#define OF_VERSION_MINOR 1
+#define OF_VERSION_MINOR 2
 //-------------------------------
 
 enum ofLoopType{
@@ -247,7 +247,12 @@ typedef TESSindex ofIndexType;
 		#ifdef TARGET_OF_IPHONE
 			#define OF_VIDEO_PLAYER_IPHONE
         #elif defined(TARGET_OSX)
-			#define OF_VIDEO_PLAYER_QTKIT
+			//for 10.7 and 10.8 users we use QTKit for 10.6 users we use QuickTime
+			#ifndef MAC_OS_X_VERSION_10_7
+				#define OF_VIDEO_PLAYER_QUICKTIME
+			#else
+				#define OF_VIDEO_PLAYER_QTKIT
+			#endif
 		#elif !defined(TARGET_ANDROID)
 			#define OF_VIDEO_PLAYER_QUICKTIME
 		#endif
