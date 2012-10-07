@@ -167,7 +167,8 @@ public:
     // Length
     //
     float length() const;
-    float squareLength() const;
+    float lengthSquared() const;
+	OF_DEPRECATED_MSG("Use ofVec3f::lengthSquared() instead.", float squareLength() const);
     /**
 	 * Angle (deg) between two vectors.
 	 * This is an unsigned relative angle from 0 to 180.
@@ -209,9 +210,6 @@ public:
 	
     // getPerpendicular
     ofVec3f perpendiculared( const ofVec3f& vec ) const;
-	
-    // squareLength
-    OF_DEPRECATED_MSG("Use ofVec3f::squareLength() instead.", float lengthSquared() const);
     
     // use getMapped
     ofVec3f  mapped( const ofVec3f& origin,
@@ -1016,11 +1014,11 @@ inline float ofVec3f::length() const {
 }
 
 inline float ofVec3f::lengthSquared() const {
-	return squareLength();
+	return (float)(x*x + y*y + z*z);
 }
 
 inline float ofVec3f::squareLength() const {
-	return (float)(x*x + y*y + z*z);
+	return lengthSquared();
 }
 
 

@@ -667,6 +667,11 @@ void ofMesh::enableNormals(){
 }
 
 //--------------------------------------------------------------
+void ofMesh::enableIndices(){
+	useIndices = true;
+}
+
+//--------------------------------------------------------------
 void ofMesh::disableColors(){
     useColors = false;
 }
@@ -682,6 +687,11 @@ void ofMesh::disableNormals(){
 }
 
 //--------------------------------------------------------------
+void ofMesh::disableIndices(){
+	useIndices = false;
+}
+
+//--------------------------------------------------------------
 bool ofMesh::usingColors(){
     return useColors;
 }
@@ -694,6 +704,11 @@ bool ofMesh::usingTextures(){
 //--------------------------------------------------------------
 bool ofMesh::usingNormals(){
     return useNormals;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingIndices(){
+    return useIndices;
 }
 
 

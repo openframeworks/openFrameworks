@@ -606,32 +606,32 @@ uint64_t ofFile::getSize() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::operator==(const ofFile & file) const {
-	return path() == file.path();
+	return getAbsolutePath() == file.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::operator!=(const ofFile & file) const {
-	return path() != file.path();
+	return getAbsolutePath() != file.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::operator<(const ofFile & file) const {
-	return path() < file.path();
+	return getAbsolutePath() < file.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::operator<=(const ofFile & file) const {
-	return path() <= file.path();
+	return getAbsolutePath() <= file.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::operator>(const ofFile & file) const {
-	return path() > file.path();
+	return getAbsolutePath() > file.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::operator>=(const ofFile & file) const {
-	return path() >= file.path();
+	return getAbsolutePath() >= file.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -815,6 +815,11 @@ bool ofDirectory::exists() const {
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::path() const {
 	return myDir.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofDirectory::getAbsolutePath() const {
+	return ofFilePath::getAbsolutePath(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1144,32 +1149,32 @@ Poco::File & ofDirectory::getPocoFile(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::operator==(const ofDirectory & dir){
-	return path() == dir.path();
+	return getAbsolutePath() == dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::operator!=(const ofDirectory & dir){
-	return path() != dir.path();
+	return getAbsolutePath() != dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::operator<(const ofDirectory & dir){
-	return path() < dir.path();
+	return getAbsolutePath() < dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::operator<=(const ofDirectory & dir){
-	return path() <= dir.path();
+	return getAbsolutePath() <= dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::operator>(const ofDirectory & dir){
-	return path() > dir.path();
+	return getAbsolutePath() > dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::operator>=(const ofDirectory & dir){
-	return path() >= dir.path();
+	return getAbsolutePath() >= dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
