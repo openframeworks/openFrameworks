@@ -21,7 +21,9 @@ Android.mk
 /*/*/ofxiphone-Info.plist
 /*/*/iPhone_Prefix.pch
 /*/*/*/*/Default.png
+/*/*/*/*/Default@2x.png
 /*/*/*/*/Icon.png
+/*/*/*/*/Icon@2x.png
 
 #Code::Blocks
 /*/*/*.cbp
