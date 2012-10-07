@@ -260,7 +260,7 @@ public:
 	
 	virtual int					getCurrentFrame();
 	virtual int					getTotalNumFrames();
-	virtual int					getLoopState();
+	virtual ofLoopType			getLoopState();
 	
 	virtual void				firstFrame();
 	virtual void				nextFrame();
