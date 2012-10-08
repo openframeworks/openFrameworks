@@ -214,7 +214,9 @@ bool xcodeProject::createProjectFile(){
 			}
 		}
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default.png"),projectDir + "/bin/data/Default.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x.png"),projectDir + "/bin/data/Default@2x.png", true, true);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon.png"),projectDir + "/bin/data/Icon.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon@2x.png"),projectDir + "/bin/data/Icon@2x.png", true, true);
     }
 
     // this is for xcode 4 scheme issues. but I'm not sure this is right.
