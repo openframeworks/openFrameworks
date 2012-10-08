@@ -299,6 +299,8 @@ static int CALLBACK loadDialogBrowseCallback(
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
         SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPath(defaultPath).c_str());
     }
+
+	return 0;
 }
 //----------------------------------------------------------------------------------------
 #endif
@@ -364,10 +366,11 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.lpstrFile = szFileName;
 #else // VS2010
 		wchar_t szFileName[MAX_PATH];
-		if(defaultFolder!=""){
-            wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultFolder)).c_str());
+		if(defaultPath!=""){
+            wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
 		}else{
-		    szFileName = L"";
+		    //szFileName = L"";
+			memset(&szFileName,  0, sizeof(szFileName));
 		}
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile = szFileName;
@@ -672,9 +675,15 @@ string ofSystemTextBoxDialog(string question, string text){
 		wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
 		wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 		if(!RegisterClassEx(&wc)){
+			DWORD err=GetLastError();
+			if ((err==ERROR_CLASS_ALREADY_EXISTS)){
+                ; // we are ok
+                // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
+            } else {
 			MessageBox(NULL, L"Window Registration Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
+		}
 		}
 
 		HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
@@ -686,9 +695,11 @@ string ofSystemTextBoxDialog(string question, string text){
 
 		if(dialog == NULL)
 		{
+			
 			MessageBox(NULL,L"Window Creation Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
+			
 		}
 
 		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
@@ -785,9 +796,18 @@ string ofSystemTextBoxDialog(string question, string text){
 		wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 		if(!RegisterClassEx(&wc))
 		{
+
+		    DWORD err=GetLastError();
+            if ((err==ERROR_CLASS_ALREADY_EXISTS)){
+                ; // we are ok
+                // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
+            } else {
 			MessageBox(NULL, "Window Registration Failed!\0", "Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
+		}
+
+
 		}
 
 		HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,

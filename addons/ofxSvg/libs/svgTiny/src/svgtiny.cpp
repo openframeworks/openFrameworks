@@ -8,7 +8,9 @@
 #include <assert.h>
 #include <math.h>
 #include <setjmp.h>
-//#include <stdbool.h>
+#ifndef _MSC_VER
+	#include <stdbool.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -110,7 +112,7 @@ svgtiny_code svgtiny_parse(struct svgtiny_diagram *diagram,
 
     svg = document->documentElement();
     
-    std::cout << svg->localName() << std::endl;
+    //std::cout << svg->localName() << std::endl;
     
 	if (!svg)
 		return svgtiny_NOT_SVG;
@@ -204,7 +206,7 @@ svgtiny_code svgtiny_parse_svg(Poco::XML::Element *svg,
         
         child = (Poco::XML::Element *) cnl->item(i);
         
-        std::cout << child->localName() << std::endl;
+        //std::cout << child->localName() << std::endl;
 
         // I think this can't happen?
 		if (child->nodeType() == Poco::XML::Element::ELEMENT_NODE) {

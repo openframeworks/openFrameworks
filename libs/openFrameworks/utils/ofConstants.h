@@ -2,7 +2,7 @@
 
 //-------------------------------
 #define OF_VERSION	7
-#define OF_VERSION_MINOR 1
+#define OF_VERSION_MINOR 2
 //-------------------------------
 
 enum ofLoopType{
