@@ -898,9 +898,9 @@ void ofMesh::load(string path){
 			currentFace++;
 			if(currentFace==data.getNumIndices()/3){
 				if(orderVertices<orderIndices){
-					state = Faces;
-				}else{
 					state = Vertices;
+				}else{
+					state = Faces;
 				}
 			}
 			continue;
