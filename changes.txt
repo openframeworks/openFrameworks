@@ -342,7 +342,7 @@ EXAMPLES
 
 ## Mac
     + added examples for OS X specific video player features
- 	+ added osxVideoRecorder example demonstrating recording videos to disk on Mac OS X using the ofQTKitGrabber
+    + added osxVideoRecorder example demonstrating recording videos to disk on Mac OS X using the ofQTKitGrabber
     + added osxHighPerformanceVideoPlayer demonstrating accelerated playback of HD videos on OS X using the ofQTKitPlayer
 
 ## iOS
