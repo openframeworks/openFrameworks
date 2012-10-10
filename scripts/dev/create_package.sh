@@ -5,7 +5,13 @@
 platform=$1
 version=$2
 
-#runOSXSLScript=0
+REPO=https://github.com/openframeworks/openFrameworks
+REPO_ALIAS=upstreamhttps
+BRANCH=develop
+
+PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
+PG_REPO_ALIAS=originhttps
+PG_BRANCH=master
 
 hostArch=`uname`
 
@@ -31,9 +37,6 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
-REPO=https://github.com/openframeworks/openFrameworks
-REPO_ALIAS=upstreamhttps
-BRANCH=develop
 
 libsnotinmac="unicap gstappsink glu quicktime videoInput kiss portaudio"
 libsnotinlinux="quicktime videoInput glut glu cairo"
@@ -64,8 +67,13 @@ git pull $REPO $BRANCH
 git submodule init
 git submodule update
 cd apps/projectGenerator/projectGeneratorSimple
-git checkout master
-git pull origin master
+if [ "$PG_BRANCH" != "master" ]; then
+	git remote add $PG_REPO_ALIAS $PG_REPO
+	git fetch $PG_REPO_ALIAS
+    git checkout --track -b $PG_BRANCH ${PG_REPO_ALIAS}/${PG_BRANCH}
+fi
+git checkout $PG_BRANCH
+git pull $PG_REPO $PG_BRANCH
 cd $packageroot
 
 
