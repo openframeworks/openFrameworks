@@ -9,8 +9,8 @@ cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 ./create_package.sh ios $version
 ./create_package.sh osx $version
 ./create_package.sh android $version
-mkdir /var/www/versions/$version
-mv *.tar.gz /var/www/versions/$version
-mv *.zip /var/www/versions/$version
+mkdir /var/www/versions/v${version}
+mv *.tar.gz /var/www/versions/v${version}
+mv *.zip /var/www/versions/v${version}
 
 wget http://openframeworks.cc/release_hook.php?version=${version} -O /dev/null
