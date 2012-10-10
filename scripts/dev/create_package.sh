@@ -141,7 +141,7 @@ function createPackage {
     
     #remove projectGenerator folder
     if [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ]; then
-    	rm -r $pkg_ofroot/apps/projectGenerator
+    	rm -rf $pkg_ofroot/apps/projectGenerator
     fi
 
 	cd $pkg_ofroot/examples
