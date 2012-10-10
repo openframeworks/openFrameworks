@@ -64,6 +64,7 @@ if [ "$BRANCH" != "master" ]; then
 fi
 git reset --hard
 git pull $REPO $BRANCH
+git submodule sync
 git submodule init
 git submodule update
 cd apps/projectGenerator/projectGeneratorSimple
