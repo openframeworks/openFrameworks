@@ -64,6 +64,7 @@ git pull $REPO $BRANCH
 git submodule init
 git submodule update
 cd apps/projectGenerator/projectGeneratorSimple
+git checkout master
 git pull origin master
 cd $packageroot
 
