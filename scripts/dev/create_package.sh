@@ -335,6 +335,12 @@ function createPackage {
 	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxiPhone
 	fi
+	
+	#delete ofxMultiTouch & ofxAccelerometer in non mobile
+	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
+		rm -Rf ofxMultiTouch
+		rm -Rf ofxAccelerometer
+	fi
 
 	#delete eclipse projects
 	if [ "$pkg_platform" != "android" ]; then
