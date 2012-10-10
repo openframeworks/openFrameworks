@@ -3,6 +3,7 @@
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include "ofUtils.h"
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -71,6 +72,7 @@ static gboolean closeGTK(GtkWidget *widget){
     gtk_main_quit();
     return (FALSE);
 }
+
 static void initGTK(){
 	int argc=0; char **argv = NULL;
 	gtk_init (&argc, &argv);
@@ -192,8 +194,36 @@ void ofSystemAlertDialog(string errorMessage){
 //----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
 //---------------------------------------------------------------------
+
+pascal void modernEventProc(NavEventCallbackMessage callBackSelector,
+                            NavCBRecPtr callBackParms, void* callBackUD)
+{
+    switch(callBackSelector)
+    {
+        case kNavCBStart:
+        {
+			string defaultPath = *(string*)callBackUD;
+			if(defaultPath!=""){
+				OSErr err;
+
+				//  get an FSRef for the starting location
+				FSRef srcRef;
+				FSPathMakeRef((const UInt8*)ofToDataPath(defaultPath).c_str(), &srcRef, NULL);
+
+				//  make an AEDesc out of it.
+				AEDesc theDesc;
+				err = AECreateDesc(typeFSRef, &srcRef, sizeof (FSRef), &theDesc);
+
+				//  set it.
+				err = NavCustomControl ( callBackParms->context, kNavCtlSetLocation, (void*)&theDesc);
+			}
+        }
+			break;
+    }
+}
+
 // Gets a file to open from the user. Caller must release the CFURLRef.
-CFURLRef GetOpenFileFromUser(bool bFolder)
+CFURLRef GetOpenFileFromUser(bool bFolder, string defaultPath)
 {
 	NavDialogCreationOptions dialogOptions;
 	NavDialogRef dialog;
@@ -213,9 +243,9 @@ CFURLRef GetOpenFileFromUser(bool bFolder)
 
 	// Create the dialog
 	if( bFolder ){
-		status = NavCreateChooseFolderDialog(&dialogOptions, NULL, NULL, NULL, &dialog);
+		status = NavCreateChooseFolderDialog(&dialogOptions, &modernEventProc, NULL, &defaultPath, &dialog);
 	}else{
-		status = NavCreateGetFileDialog(&dialogOptions, NULL, NULL, NULL, NULL, NULL, &dialog);
+		status = NavCreateGetFileDialog(&dialogOptions, NULL, &modernEventProc, NULL, NULL, &defaultPath, &dialog);
 	}
 
 	require_noerr( status, CantCreateDialog );
@@ -256,9 +286,28 @@ CantGetNavOptions:
 //----------------------------------------------------------------------------------------
 
 
+//----------------------------------------------------------------------------------------
+#ifdef TARGET_WIN32
+//---------------------------------------------------------------------
+static int CALLBACK loadDialogBrowseCallback(
+  HWND hwnd,
+  UINT uMsg,
+  LPARAM lParam,
+  LPARAM lpData
+){
+    string defaultPath = *(string*)lpData;
+    if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
+        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPath(defaultPath).c_str());
+    }
+
+	return 0;
+}
+//----------------------------------------------------------------------------------------
+#endif
+//---------------------------------------------------------------------
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection){
+ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection, string defaultPath){
 
 	ofFileDialogResult results;
 
@@ -266,7 +315,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
-	CFURLRef cfUrl = GetOpenFileFromUser(bFolderSelection);
+	CFURLRef cfUrl = GetOpenFileFromUser(bFolderSelection,defaultPath);
 
 	CFStringRef cfString = NULL;
 
@@ -308,10 +357,21 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 		ofn.hwndOwner = hwnd;
 #ifdef __MINGW32_VERSION
 		char szFileName[MAX_PATH];
+        memset(szFileName,0,260);
+		if(defaultPath!=""){
+            strcpy(szFileName,ofToDataPath(defaultPath).c_str());
+		}
+
 		ofn.lpstrFilter = "All\0";
 		ofn.lpstrFile = szFileName;
 #else // VS2010
-		wchar_t szFileName[MAX_PATH] = L"";
+		wchar_t szFileName[MAX_PATH];
+		if(defaultPath!=""){
+            wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+		}else{
+		    //szFileName = L"";
+			memset(&szFileName,  0, sizeof(szFileName));
+		}
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile = szFileName;
 #endif
@@ -344,8 +404,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 		bi.pszDisplayName   =   wideCharacterBuffer;
 		bi.lpszTitle        =   L"Select Directory";
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS;
-		bi.lpfn             =   NULL;
-		bi.lParam           =   0;
+		bi.lpfn             =   &loadDialogBrowseCallback;
+		bi.lParam           =   (LPARAM) &defaultPath;
 
 		if(pidl = SHBrowseForFolderW(&bi)){
 			// Copy the path directory to the buffer
@@ -369,8 +429,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
-		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle);
-		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle);
+		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,defaultPath);
+		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,defaultPath);
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -615,9 +675,15 @@ string ofSystemTextBoxDialog(string question, string text){
 		wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
 		wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 		if(!RegisterClassEx(&wc)){
+			DWORD err=GetLastError();
+			if ((err==ERROR_CLASS_ALREADY_EXISTS)){
+                ; // we are ok
+                // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
+            } else {
 			MessageBox(NULL, L"Window Registration Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
+		}
 		}
 
 		HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
@@ -629,9 +695,11 @@ string ofSystemTextBoxDialog(string question, string text){
 
 		if(dialog == NULL)
 		{
+			
 			MessageBox(NULL,L"Window Creation Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
+			
 		}
 
 		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
@@ -728,9 +796,18 @@ string ofSystemTextBoxDialog(string question, string text){
 		wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 		if(!RegisterClassEx(&wc))
 		{
+
+		    DWORD err=GetLastError();
+            if ((err==ERROR_CLASS_ALREADY_EXISTS)){
+                ; // we are ok
+                // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
+            } else {
 			MessageBox(NULL, "Window Registration Failed!\0", "Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
+		}
+
+
 		}
 
 		HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
@@ -828,7 +905,7 @@ string ofSystemTextBoxDialog(string question, string text){
 #endif
 
 #ifdef TARGET_ANDROID
-     text = ofxAndroidAlertTextBox(question,text);
+     ofxAndroidAlertTextBox(question,text);
 #endif
 
 	return text;

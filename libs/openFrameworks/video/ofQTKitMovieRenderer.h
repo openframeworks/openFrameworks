@@ -20,17 +20,20 @@
 	NSSize movieSize;
 	QTTime movieDuration;
 	NSInteger frameCount;
-	double frameStep;
+//	double frameStep;
     QTTime lastMovieTime;
 	BOOL frameUpdated;
 	BOOL useTexture;
 	BOOL usePixels;
 	BOOL useAlpha;
-	BOOL synchronousUpdate;
+	BOOL synchronousSeek;
 	BOOL justSetFrame;
 	BOOL frameIsNew;
-	MovieDrawingCompleteUPP myDrawCompleteProc;
-	NSCondition* synchronousUpdateLock;
+	BOOL hasVideo;
+	BOOL hasAudio;
+	BOOL loadedFirstFrame;
+	NSArray* frameTimeValues;
+	NSCondition* synchronousSeekLock;
 }
 
 @property (nonatomic, readonly) NSSize movieSize;
@@ -40,8 +43,9 @@
 @property (nonatomic, readonly) NSTimeInterval duration; //duration in seconds
 @property (nonatomic, readonly) NSInteger frameCount;  //total frames
 @property (nonatomic, readonly) BOOL isFinished;  //returns true if the movie is not looping and over
-@property (readwrite) BOOL justSetFrame;
-@property (nonatomic, readwrite) BOOL synchronousUpdate;
+@property (readwrite) BOOL justSetFrame; //this needs to be set *before* calls to _movie.setTime to allow synchronous seeking
+@property (nonatomic, readwrite) BOOL synchronousSeek;
+
 
 @property (nonatomic, readwrite) float rate;
 @property (nonatomic, readwrite) float volume;
@@ -50,15 +54,17 @@
 @property (nonatomic, readwrite) CGFloat position;  //set and get frame position by percent
 @property (nonatomic, readwrite) NSInteger frame;  //set and get frame position by percent
 @property (nonatomic, readwrite) BOOL loops;  //set and get loopstate
+@property (nonatomic, readwrite) BOOL palindrome;  //set and get palindrome state
 
 @property (nonatomic, readonly) BOOL textureAllocated;
 @property (nonatomic, readonly) GLuint textureID;
 @property (nonatomic, readonly) GLenum textureTarget;
+@property (nonatomic, retain) NSArray* frameTimeValues;
 
 - (NSDictionary *)pixelBufferAttributes;
 
 - (void)draw:(NSRect)drawRect;
-- (BOOL)loadMovie:(NSString *)moviePath allowTexture:(BOOL) useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
+- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
 - (BOOL)update;
 
 - (void)bindTexture;
@@ -75,7 +81,7 @@
 
 - (void)frameAvailable:(CVImageBufferRef)image;
 - (void)frameFailed;
-//when synchronous update is turned on
-- (void)synchronizeUpdate;
+
+- (void)synchronizeSeek;
 
 @end

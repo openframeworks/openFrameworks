@@ -186,11 +186,15 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 			return ofHttpResponse(request,res.getStatus(),res.getReason());
 		}
 
-	} catch (Exception& exc) {
+	} catch (const Exception& exc) {
         ofLog(OF_LOG_ERROR, "ofURLFileLoader " + exc.displayText());
 
         return ofHttpResponse(request,-1,exc.displayText());
-    }	
+
+    } catch (...) {
+    	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception");
+    }
+
 	
 }	
 
