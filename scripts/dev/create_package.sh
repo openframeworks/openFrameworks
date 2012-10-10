@@ -194,10 +194,6 @@ function createPackage {
 	fi
     
 	
-	#delete ofxSynth addon, still not stable
-	cd $pkg_ofroot
-	rm -Rf addons/ofxSynth
-	rm -Rf addons/ofxGui
 	
     #create project files for platform
     createProjectFiles $pkg_platform $pkg_ofroot
@@ -235,6 +231,44 @@ function createPackage {
     if [ "$pkg_platform" = "android" ]; then
         otherplatforms="linux linux64 osx win_cb vs2008 vs2010 ios"
     fi
+    
+    
+	#download and uncompress PG
+	cd $pkg_ofroot
+    if [ "$pkg_platform" = "win_cb" ]; then
+		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_wincb.zip
+		unzip projectGenerator_wincb.zip
+		rm projectGenerator_wincb.zip
+		rm -Rf __MACOSX
+	fi
+    if [ "$pkg_platform" = "vs2010" ]; then
+		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_winvs.zip
+		unzip projectGenerator_winvs.zip
+		rm projectGenerator_winvs.zip
+		rm -Rf __MACOSX
+	fi
+    if [ "$pkg_platform" = "osx" ]; then
+		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_osx.zip
+		unzip projectGenerator_osx.zip
+		rm projectGenerator_osx.zip
+		rm -Rf __MACOSX
+	fi
+    if [ "$pkg_platform" = "ios" ]; then
+		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_ios.zip
+		unzip projectGenerator_ios.zip
+		rm projectGenerator_ios.zip
+		rm -Rf __MACOSX
+	fi
+	
+	# linux remove other platform projects from PG source and copy ofxGui
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+		cd apps/projectGenerator/projectGeneratorSimple
+		deleteCodeblocks
+		deleteVS
+		deleteXcode
+		rm -Rf .git*
+		cp -R $pkg_ofroot/addons/ofxGui src/
+	fi
 
     #delete libraries for other platforms
     cd $pkg_ofroot/libs  
@@ -267,6 +301,32 @@ function createPackage {
         rm -Rf $otherplatforms
         cd $pkg_ofroot/addons
     done
+    
+	#delete ofxSynth addon, still not stable
+	rm -Rf ofxSynth
+	rm -Rf ofxGui
+    
+	#delete ofxAndroid in non android
+	if [ "$pkg_platform" != "android" ]; then
+		rm -Rf ofxAndroid
+	fi
+	#delete ofxiPhone in non ios
+	if [ "$pkg_platform" != "ios" ]; then
+		rm -Rf ofxiPhone
+	fi
+	
+	#delete ofxMultiTouch & ofxAccelerometer in non mobile
+	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
+		rm -Rf ofxMultiTouch
+		rm -Rf ofxAccelerometer
+	fi
+
+	#delete eclipse projects
+	if [ "$pkg_platform" != "android" ]; then
+		cd ${pkg_ofroot}
+		deleteEclipse
+		rm -R libs/openFrameworks/.settings
+	fi
 
     #delete other platforms OF project files
     cd ${pkg_ofroot}/libs/openFrameworksCompiled/lib
@@ -335,28 +395,6 @@ function createPackage {
 		rm -Rf "xcode templates"
 	fi
 	
-	cd ${pkg_ofroot}/addons
-	#delete ofxAndroid in non android
-	if [ "$pkg_platform" != "android" ]; then
-		rm -Rf ofxAndroid
-	fi
-	#delete ofxiPhone in non ios
-	if [ "$pkg_platform" != "ios" ]; then
-		rm -Rf ofxiPhone
-	fi
-	
-	#delete ofxMultiTouch & ofxAccelerometer in non mobile
-	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
-		rm -Rf ofxMultiTouch
-		rm -Rf ofxAccelerometer
-	fi
-
-	#delete eclipse projects
-	if [ "$pkg_platform" != "android" ]; then
-		cd ${pkg_ofroot}
-		deleteEclipse
-		rm -R libs/openFrameworks/.settings
-	fi
 	
 	#download and copy OF compiled
 	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
@@ -365,41 +403,6 @@ function createPackage {
 		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
 	fi
 
-	#download and uncompress PG
-	cd $pkg_ofroot
-    if [ "$pkg_platform" = "win_cb" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_wincb.zip
-		unzip projectGenerator_wincb.zip
-		rm projectGenerator_wincb.zip
-		rm -Rf __MACOSX
-	fi
-    if [ "$pkg_platform" = "vs2010" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_winvs.zip
-		unzip projectGenerator_winvs.zip
-		rm projectGenerator_winvs.zip
-		rm -Rf __MACOSX
-	fi
-    if [ "$pkg_platform" = "osx" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_osx.zip
-		unzip projectGenerator_osx.zip
-		rm projectGenerator_osx.zip
-		rm -Rf __MACOSX
-	fi
-    if [ "$pkg_platform" = "ios" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_ios.zip
-		unzip projectGenerator_ios.zip
-		rm projectGenerator_ios.zip
-		rm -Rf __MACOSX
-	fi
-	
-	# linux remove other platform projects from PG source
-	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
-		cd apps/projectGenerator/projectGeneratorSimple
-		deleteCodeblocks
-		deleteVS
-		deleteXcode
-		rm -Rf .git*
-	fi
 
     #if snow leopard change 10.4u to 10.5
     #if [ $runOSXSLScript = 1 ]; then
