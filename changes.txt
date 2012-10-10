@@ -246,13 +246,19 @@ PLATFORM SPECIFIC
         / java side is already checking resume is not called on start
 
 ## Mac OS X
-    + video player and grabber now use Core Video and QTKit frameworks internally
     / OpenFrameworks now works "out of the box" on 10.7+ by using QTKit for video grabbing & playback,
-      removes reliance upon the 10.6 SDK which still requires QT7
-    / ofVideoPlayer now supports setting and getting frames on videos with non-static framerates
-    / ofVideoPlayer supports a wider range of codecs by using QTKit framework
-    / ofVideoGrabber supports a wider range of video inputs, ie HDV over FireWire
-    / replaced NSLog usage with ofLog functions
+    / If compiling with the 10.6 SDK, the old Quicktime framework based players and grabbers are still included
+    ofVideoPlayer: 
+        / uses Core Video and QTKit internally
+        + added support for getCurrentFrame() and setFrame() on videos with non-static framerates
+        + added support for more codecs through QTKit framework
+        + added support for direct-to-texture video rendering
+        + added option to enabled asynchronous seeking for non-blocking calls to setFrame()
+    ofVideoGrabber:
+        / uses Core Video and QTKit internally
+        + added ability to record videos to disk 
+        + added support supports a wider range of video inputs, for example HDV over FireWire
+        - removed video setting dialog for 10.7+
 
 ## iOS
     + fixed/added antialiasing for iOS
@@ -341,7 +347,6 @@ EXAMPLES
     / updated easyCam example, now explains the reimplementation of ofEasyCam in greater detail
 
 ## Mac
-    + added examples for OS X specific video player features
     + added osxVideoRecorder example demonstrating recording videos to disk on Mac OS X using the ofQTKitGrabber
     + added osxHighPerformanceVideoPlayer demonstrating accelerated playback of HD videos on OS X using the ofQTKitPlayer
 
