@@ -59,7 +59,6 @@
 @property (nonatomic, readonly) BOOL textureAllocated;
 @property (nonatomic, readonly) GLuint textureID;
 @property (nonatomic, readonly) GLenum textureTarget;
-@property (nonatomic, retain) NSArray* frameTimeValues;
 
 - (NSDictionary *)pixelBufferAttributes;
 
