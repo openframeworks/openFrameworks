@@ -49,7 +49,6 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 @synthesize frameCount;
 @synthesize justSetFrame;
 @synthesize synchronousSeek;
-@synthesize frameTimeValues;
 
 - (NSDictionary*) pixelBufferAttributes
 {
@@ -127,7 +126,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         }
     }
     
-	self.frameTimeValues = [NSArray arrayWithArray:timeValues];
+	if(frameTimeValues != NULL){
+		[frameTimeValues release];
+	}
+	frameTimeValues = [[NSArray arrayWithArray:timeValues] retain];
 	
 	frameCount = numFrames;
 //	frameStep = round((double)(movieDuration.timeValue/(double)(numFrames)));
@@ -225,7 +227,8 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		}
 		
 		if(frameTimeValues != NULL){
-			self.frameTimeValues = NULL;
+			[frameTimeValues release];
+			frameTimeValues = NULL;
 		}
 		
 		if(synchronousSeekLock != nil){
@@ -567,7 +570,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		_movie.rate = 0;
 	}
 	//QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
-	QTTime t = QTMakeTime([[self.frameTimeValues objectAtIndex:frame%self.frameTimeValues.count] longLongValue], movieDuration.timeScale);
+	QTTime t = QTMakeTime([[frameTimeValues objectAtIndex:frame%frameTimeValues.count] longLongValue], movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
 	QTTime endTime =[_movie frameEndTime:t];
 //	NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
@@ -651,16 +654,16 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 // http://stackoverflow.com/questions/3995949/how-to-write-objective-c-blocks-inline
 - (NSInteger) frame
 {
-	return [self.frameTimeValues indexOfObject:[NSNumber numberWithLongLong:_movie.currentTime.timeValue]
-								 inSortedRange:NSMakeRange(0, self.frameTimeValues.count)
-									   options:NSBinarySearchingInsertionIndex
-							   usingComparator:^(id lhs, id rhs) {
-								   if ([lhs longLongValue] < [rhs longLongValue])
-									   return (NSComparisonResult)NSOrderedAscending;
-								   else if([lhs longLongValue] > [rhs longLongValue])
-										return (NSComparisonResult)NSOrderedDescending;
-								   return (NSComparisonResult)NSOrderedSame;
-							   }];
+	return [frameTimeValues indexOfObject:[NSNumber numberWithLongLong:_movie.currentTime.timeValue]
+							inSortedRange:NSMakeRange(0, frameTimeValues.count)
+								  options:NSBinarySearchingInsertionIndex
+						  usingComparator:^(id lhs, id rhs) {
+							  if ([lhs longLongValue] < [rhs longLongValue])
+								  return (NSComparisonResult)NSOrderedAscending;
+							  else if([lhs longLongValue] > [rhs longLongValue])
+								  return (NSComparisonResult)NSOrderedDescending;
+							  return (NSComparisonResult)NSOrderedSame;
+						  }];
 }
 
 - (NSTimeInterval) duration
