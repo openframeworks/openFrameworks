@@ -102,7 +102,7 @@ public:
 	void disableEvents();
 protected:
 
-	virtual ParameterType operator=(ParameterType v);
+	virtual ofReadOnlyParameter<ParameterType,Friend> & operator=(ParameterType v);
 
 	ParameterType operator++(int v);
 	ofReadOnlyParameter<ParameterType,Friend> & operator++();
@@ -191,9 +191,9 @@ ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, Para
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator=(ParameterType v){
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator=(ParameterType v){
 	set(v);
-	return obj->value;
+	return *this;
 }
 
 template<typename ParameterType,typename Friend>
@@ -438,6 +438,7 @@ public:
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator&=;
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator|=;
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator^=;
+	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator=;
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator<<=;
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator>>=;
 
