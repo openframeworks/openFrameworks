@@ -87,16 +87,15 @@ void testApp::touchDown(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
 		float widthStep = ofGetWidth() / 3.0f;
 		if (touch.x < widthStep){
-			float pct = touch.x / widthStep;
 			synth.play();
 			synth.setSpeed( 0.1f + ((float)(ofGetHeight() - touch.y) / (float)ofGetHeight())*10);
-			synth.setPan(pct);
+			synth.setPan( ofMap(touch.x, 0,widthStep, -1,1) );
 		} else if (touch.x >= widthStep && touch.x < widthStep*2){
 			beats.play();
 		} else {
 			vocals.play();
 			vocals.setSpeed( 0.1f + ((float)(ofGetHeight() - touch.y) / (float)ofGetHeight())*3);
-			vocals.setPan((float)touch.x / (float)ofGetWidth());	
+			vocals.setPan( ofMap(touch.x, widthStep*2,widthStep*3, -1,1) );
 		}
 	}
 }
