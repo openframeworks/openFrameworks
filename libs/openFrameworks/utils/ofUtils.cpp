@@ -653,6 +653,14 @@ string ofGetVersionInfo(){
 	return sstr.str();
 }
 
+unsigned int ofGetVersionMajor() {
+	return OF_VERSION;
+}
+
+unsigned int ofGetVersionMinor() {
+	return OF_VERSION_MINOR;
+}
+
 //---- new to 006
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
