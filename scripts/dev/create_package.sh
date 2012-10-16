@@ -439,13 +439,18 @@ function createPackage {
     
     rm CONTRIBUTING.md
 
-    #create compressed package
+    #copy empty example
     cd $pkg_ofroot/..
     mkdir -p openFrameworks/apps/myApps 
     if [ "$pkg_platform" = "android" ]; then
         cp -r openFrameworks/examples/android/androidEmptyExample openFrameworks/apps/myApps 
+    elif [ "$pkg_platform" = "ios" ]; then
+        cp -r openFrameworks/examples/ios/emptyExample openFrameworks/apps/myApps 
+    else
+        cp -r openFrameworks/examples/empty/emptyExample openFrameworks/apps/myApps 
     fi
     
+    #create compressed package
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ]; then
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
