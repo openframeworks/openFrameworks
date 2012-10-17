@@ -14,6 +14,7 @@ if [ "$ARCH" = "x86_64" ]; then
 elif [ "$ARCH" = "armv6l" ]; then
     LIBSPATH=linuxarmv6l
 else
+    # default to x86 linux
     LIBSPATH=linux
 fi
 
