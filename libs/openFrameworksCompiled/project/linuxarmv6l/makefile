@@ -15,8 +15,6 @@ ifndef ARCH
 	ARCH = $(shell uname -m)
 endif
 
-	@echo "Arch: " ARCH
-
 # set up host platform for android
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	include paths.make
@@ -64,7 +62,7 @@ ifneq ($(ARCH),android)
 	else ifeq ($(ARCH),armv7l)
 		LIBSPATH=linuxarmv7l
 	else ifeq ($(ARCH),armv6l) 
-		LIBSPATH=linux
+		LIBSPATH=linuxarmv6l
 	else
 		LIBSPATH=linux
 	endif
