@@ -42,12 +42,12 @@ endif
 
 ifeq ($(ARCH),android)
 	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.android
+else ifeq ($(ARCH),armv7l)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.armv7l
+else ifeq ($(ARCH),armv6l)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.armv6l
 else
-    ifeq ($(ARCH),armv7l)
-        include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.arm
-    else
-        include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.linux
-    endif
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.linux
 endif
 
 
