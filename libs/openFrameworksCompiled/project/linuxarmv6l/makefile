@@ -52,19 +52,22 @@ USER_CFLAGS =
 
 SHELL =  /bin/sh
 
-ifneq ($(ARCH),android)
-    CXX =  g++
     ARCH = $(shell uname -m)
+
+ifneq ($(ARCH),android)
+    # not android, so keep moving
+    CXX =  g++
     ifeq ($(ARCH),x86_64)
         LIBSPATH=linux64
+    else ifeq ($(ARCH),armv7l)
+        LIBSPATH=linuxarmv7l
+    else ifeq ($(ARCH),armv6l) 
+        LIBSPATH=linuxarmv6l
     else
-        ifeq ($(ARCH),armv7l)
-            LIBSPATH=linuxarmv7l
-        else
-            LIBSPATH=linux
-        endif
+        LIBSPATH=linux
     endif
 else
+    # the arch is android!
     ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
         LIBSPATH = android/armeabi-v7a
         ABI = armeabi-v7a
@@ -96,12 +99,14 @@ ifeq ($(ARCH),android)
 else
     SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
 endif
+
 OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 INCLUDES_FLAGS += -I../../../poco/include
+
 ifeq ($(ARCH),android)
     INCLUDES_FLAGS += -I../../../glu/include_android
     INCLUDES_FLAGS += -I../../../../addons/ofxAndroid/src
@@ -112,7 +117,6 @@ endif
 CFLAGS += -Wall -fexceptions
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
-
 
 ifneq ($(ARCH),android)
     CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
