@@ -11,7 +11,7 @@ ARCH=$(uname -m)
 # set the LIBSPATH variable based on the ARCH
 if [ "$ARCH" = "x86_64" ]; then
     LIBSPATH=linux64
-elseif [ "$ARCH" = "armv6l" ]; then
+elif [ "$ARCH" = "armv6l" ]; then
     LIBSPATH=linuxarmv6l
 else
     LIBSPATH=linux
