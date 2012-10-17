@@ -16,6 +16,9 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	void listDevices();	
 	void getDeviceList(){};
 	bool initGrabber(int w, int h);
+	
+	bool			setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat 	getPixelFormat();	
 
 	bool isFrameNew();
 	
@@ -33,8 +36,6 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	
 	void setDesiredFrameRate(int framerate);
 	
-	void setPixelFormat(ofPixelFormat internalPixelFormat);
-	ofPixelFormat getPixelFormat();
 	//should implement!
 	/*void setVerbose(bool bTalkToMe);
 	

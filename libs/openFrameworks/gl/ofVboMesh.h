@@ -10,6 +10,21 @@ public:
 	ofVboMesh(const ofMesh & mom);
 	void setUsage(int usage);
 
+    void enableColors();
+    void enableTextures();
+    void enableNormals();
+    void enableIndices();
+
+    void disableColors();
+    void disableTextures();
+    void disableNormals();
+    void disableIndices();
+
+    bool usingColors();
+    bool usingTextures();
+    bool usingNormals();
+    bool usingIndices();
+
 protected:
 	void draw(ofPolyRenderMode drawMode);
 

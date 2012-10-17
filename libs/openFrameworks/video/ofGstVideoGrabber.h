@@ -35,7 +35,9 @@ public:
 	~ofGstVideoGrabber();
 
 	/// needs to be called before initGrabber
-	void setPixelFormat(ofPixelFormat pixelFormat);
+	bool setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat	getPixelFormat();
+	
 	void videoSettings(){};//TODO: what is this??
 
 	void listDevices();

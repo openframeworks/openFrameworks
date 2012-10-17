@@ -70,6 +70,7 @@ bool ofSoundPlayer::loadSound(string fileName, bool stream){
 	if( player != NULL ){
 		return player->loadSound(fileName, stream);
 	}
+	return false;
 }
 
 //--------------------------------------------------------------------
