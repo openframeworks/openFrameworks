@@ -15,6 +15,8 @@ ifndef ARCH
     ARCH = $(shell uname -m)
 endif
 
+    @echo "Arch: " ARCH
+
 # set up host platform for android
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
     include paths.make
@@ -32,7 +34,7 @@ ifeq ($(ARCH),android)
     GCC_VERSION = 4.4.3
 else ifeq ($(ARCH),armv7l)
     COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
-else ifeq ($(ARCH),armv7l)
+else ifeq ($(ARCH),armv6l)
     # From http://www.raspbian.org/RaspbianFAQ
     COMPILER_OPTIMIZATION = -march=armv6 -mfpu=vfp -mfloat-abi=hard
 else
@@ -62,7 +64,7 @@ ifneq ($(ARCH),android)
     else ifeq ($(ARCH),armv7l)
         LIBSPATH=linuxarmv7l
     else ifeq ($(ARCH),armv6l) 
-        LIBSPATH=linuxarmv6l
+        LIBSPATH=linux
     else
         LIBSPATH=linux
     endif
