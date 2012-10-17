@@ -5,6 +5,8 @@ export LC_ALL=C
 ARCH=$(uname -m)
 if [ "$ARCH" = "x86_64" ]; then
         LIBSPATH=linux64
+elseif [ "$ARCH" = "armv6l" ]; thenl
+	LIBSPATH=armv6l
 else
         LIBSPATH=linux
 fi
