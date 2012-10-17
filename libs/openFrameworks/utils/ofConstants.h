@@ -18,7 +18,8 @@ enum ofTargetPlatform{
 	OF_TARGET_IPHONE,
 	OF_TARGET_ANDROID,
 	OF_TARGET_LINUX,
-	OF_TARGET_LINUX64
+	OF_TARGET_LINUX64,
+	OF_TARGET_LINUXARMV6L,
 };
 
 // Cross-platform deprecation warning

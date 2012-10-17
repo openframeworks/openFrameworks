@@ -69,6 +69,7 @@ void testApp::setup(){
 	examplesPanel.add(winvsToggle.setup("win VS projects", ofGetTargetPlatform()==OF_TARGET_WINVS));
 	examplesPanel.add(linuxcbToggle.setup("linux CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX));
 	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX64));
+	examplesPanel.add(linuxarmv6lcbToggle.setup("linuxarmv6l CB projects",ofGetTargetPlatform()==OF_TARGET_LINUXARMV6L));
 	examplesPanel.add(osxToggle.setup("osx projects",ofGetTargetPlatform()==OF_TARGET_OSX));
 	examplesPanel.add(iosToggle.setup("ios projects",ofGetTargetPlatform()==OF_TARGET_IPHONE));
 
@@ -93,27 +94,31 @@ void testApp::setupForTarget(int targ){
             project = new xcodeProject;
             target = "osx";
             break;
-    case OF_TARGET_WINGCC:
+        case OF_TARGET_WINGCC:
             project = new CBWinProject;
             target = "win_cb";
             break;
-    case OF_TARGET_WINVS:
+        case OF_TARGET_WINVS:
             project = new visualStudioProject;
             target = "vs2010";
             break;
-    case OF_TARGET_IPHONE:
+        case OF_TARGET_IPHONE:
             project = new xcodeProject();
             target = "ios";
             break;
-    case OF_TARGET_ANDROID:
+        case OF_TARGET_ANDROID:
             break;
-    case OF_TARGET_LINUX:
+        case OF_TARGET_LINUX:
             project = new CBLinuxProject;
             target = "linux";
             break;
-    case OF_TARGET_LINUX64:
+        case OF_TARGET_LINUX64:
             project = new CBLinuxProject;
             target = "linux64";
+            break;
+        case OF_TARGET_LINUXARMV6L:
+            project = new CBLinuxProject;
+            target = "linuxarmv6l";
             break;
     }
 }
@@ -128,8 +133,9 @@ void testApp::generateExamplesCB(bool & pressed){
 	if( iosToggle )		targetsToMake.push_back(OF_TARGET_IPHONE);
 	if( wincbToggle )	targetsToMake.push_back(OF_TARGET_WINGCC);
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
-	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
-	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
+	if( linuxcbToggle )         targetsToMake.push_back(OF_TARGET_LINUX);
+	if( linux64cbToggle )       targetsToMake.push_back(OF_TARGET_LINUX64);
+	if( linuxarmv6lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV6L);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
@@ -213,6 +219,7 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
 	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
+	if( linuxarmv6lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV6L);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: makeNewProjectViaDialog - must specifiy a project to generate " <<endl;
@@ -257,6 +264,7 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 	if( winvsToggle )	targetsToMake.push_back(OF_TARGET_WINVS);
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
 	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
+	if( linuxarmv6lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV6L);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: updateProjectViaDialog - must specifiy a project to generate " <<endl;
