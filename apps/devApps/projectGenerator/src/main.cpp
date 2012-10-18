@@ -8,6 +8,10 @@
 int main(  int argc, char *argv[]  ){
 
    
+    cout << "In main." << endl;
+    
+    cout << "ofGetTargetPlatform=" << ofGetTargetPlatform() << endl;
+    
 #ifdef TARGET_LINUX
 	if(argc==1){
 		ofAppGlutWindow window;
@@ -90,6 +94,7 @@ int main(  int argc, char *argv[]  ){
 		ofRunApp( app );
 	}
 #else 
+    cout << "IN HERE!!" << endl;
     ofAppGlutWindow window;
     ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
     testApp * app = new testApp;
