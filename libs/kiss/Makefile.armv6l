@@ -1,7 +1,8 @@
 CC=gcc
 CFLAGS=-I./include
+
 LIB=libkiss.a
-LIBDEST=./
+LIBDEST=./lib/linuxarmv6l/
 
 LIBSRC=src/kiss_fft.c src/kiss_fftr.c 
 
