@@ -139,10 +139,10 @@ enum ofTargetPlatform{
 #ifdef TARGET_LINUX
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-		#include <glxew.h>
-		#include <GL/glew.h>
-		#include <GL/gl.h>
-		#include <GL/glx.h>
+		//#include <glxew.h>
+		//#include <GL/glew.h>
+		//#include <GL/gl.h>
+		//#include <GL/glx.h>
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
