@@ -32,19 +32,19 @@ OF_SRC_LIB=$(OF_LIBS_DIR)/openFrameworks
 $(info $(OF_SRC_LIB))
 
 # add folders or single files to exclude fromt he compiled lib
-SOURCE_EXCLUSIONS+=/3d 
+#SOURCE_EXCLUSIONS+=/3d 
 #SOURCE_EXCLUSIONS+=$(OF_SRC_LIB)/app 
-SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp 
-SOURCE_EXCLUSIONS+=/communication 
-SOURCE_EXCLUSIONS+=/events 
-SOURCE_EXCLUSIONS+=/gl 
-SOURCE_EXCLUSIONS+=/graphics 
-SOURCE_EXCLUSIONS+=/math 
-SOURCE_EXCLUSIONS+=/sound 
-SOURCE_EXCLUSIONS+=/text 
-SOURCE_EXCLUSIONS+=/types 
-SOURCE_EXCLUSIONS+=/utils 
-SOURCE_EXCLUSIONS+=/video 
+#SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp 
+#SOURCE_EXCLUSIONS+=/communication 
+#SOURCE_EXCLUSIONS+=/events 
+#SOURCE_EXCLUSIONS+=/gl 
+#SOURCE_EXCLUSIONS+=/graphics 
+#SOURCE_EXCLUSIONS+=/math 
+#SOURCE_EXCLUSIONS+=/sound 
+#SOURCE_EXCLUSIONS+=/text 
+#SOURCE_EXCLUSIONS+=/types 
+#SOURCE_EXCLUSIONS+=/utils 
+#SOURCE_EXCLUSIONS+=/video 
 
 # strip and collapse spaces, and add the % suffix to allow directory matching
 CLEANED_SOURCE_EXCLUSIONS=$(addprefix $(OF_SRC_LIB),$(addsuffix %,$(strip $(SOURCE_EXCLUSIONS))))
@@ -102,6 +102,10 @@ INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 $(info --INCLUDES_FLAGS-- )
 $(foreach v, $(INCLUDES_FLAGS),$(info $(v)))
 
+# ADD THE INCLUDES TO THE CFLAGS
+CFLAGS += -Wall -fexceptions
+CFLAGS += $(INCLUDES_FLAGS)
+CFLAGS += $(CORE_INCLUDE_FLAGS)
 
 ################################################
 
