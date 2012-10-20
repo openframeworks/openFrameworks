@@ -114,7 +114,7 @@ CFLAGS += $(CORE_INCLUDE_FLAGS)
 
 
 ifneq ($(ARCH),android)
-	CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+	CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev glew --cflags)
 	#check if gtk exists and add it
 	GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 	ifeq ($(GTK),0)
