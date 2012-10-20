@@ -98,7 +98,7 @@ endif
 OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
+INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco | grep -v glew)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 INCLUDES_FLAGS += -I../../../poco/include
 ifeq ($(ARCH),android)
