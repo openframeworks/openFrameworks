@@ -361,21 +361,24 @@ void ofSetVerticalSync(bool bSync){
 	//--------------------------------------
 	#ifdef TARGET_LINUX
 	//--------------------------------------
-		void (*swapIntervalExt)(Display *,GLXDrawable, int)  = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
-		if(swapIntervalExt){
-			Display *dpy = glXGetCurrentDisplay();
-			GLXDrawable drawable = glXGetCurrentDrawable();
-			if (drawable) {
-				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
-				return;
-			}
-		}
-		void (*swapInterval)(int)  = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-		if(!swapInterval)
-			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+    
+        #ifndef TARGET_NO_X11
+            void (*swapIntervalExt)(Display *,GLXDrawable, int)  = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+            if(swapIntervalExt){
+                Display *dpy = glXGetCurrentDisplay();
+                GLXDrawable drawable = glXGetCurrentDrawable();
+                if (drawable) {
+                    swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+                    return;
+                }
+            }
+            void (*swapInterval)(int)  = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+            if(!swapInterval)
+                swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
 
-		if(swapInterval)
-			swapInterval(bSync ? 1 : 0);
+            if(swapInterval)
+                swapInterval(bSync ? 1 : 0);
+        #endif
 
 	//--------------------------------------
 	#endif
