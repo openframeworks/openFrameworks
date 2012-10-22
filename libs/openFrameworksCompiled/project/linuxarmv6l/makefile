@@ -38,6 +38,7 @@ $(info $(OF_SRC_LIB))
 #SOURCE_EXCLUSIONS+=/communication 
 #SOURCE_EXCLUSIONS+=/events 
 #SOURCE_EXCLUSIONS+=/gl 
+SOURCE_EXCLUSIONS+=/gl/ofFbo.cpp
 #SOURCE_EXCLUSIONS+=/graphics 
 #SOURCE_EXCLUSIONS+=/math 
 #SOURCE_EXCLUSIONS+=/sound 
@@ -102,10 +103,19 @@ INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 $(info --INCLUDES_FLAGS-- )
 $(foreach v, $(INCLUDES_FLAGS),$(info $(v)))
 
+INCLUDES_FLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+
+
 # ADD THE INCLUDES TO THE CFLAGS
+CFLAGS += -DTARGET_OPENGLES -DTARGET_OPENGLES2 -DTARGET_RASPBERRY_PI -DTARGET_NO_X11
+
 CFLAGS += -Wall -fexceptions
+CFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
+CFLAGS += -lglut
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
+
+
 
 ################################################
 

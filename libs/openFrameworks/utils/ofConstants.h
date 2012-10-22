@@ -1,4 +1,5 @@
 #pragma once
+		#include <stdint.h>
 
 //-------------------------------
 #define OF_VERSION	7
