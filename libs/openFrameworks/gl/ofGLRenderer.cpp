@@ -879,6 +879,7 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofGLRenderer::enablePointSprites(){
+/*
 #ifdef TARGET_OPENGLES
 	glEnable(GL_POINT_SPRITE_OES);
 	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
@@ -891,15 +892,18 @@ void ofGLRenderer::enablePointSprites(){
 	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
+*/
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::disablePointSprites(){
+/*
 #ifdef TARGET_OPENGLES
 	glDisable(GL_POINT_SPRITE_OES);
 #else
 	glDisable(GL_POINT_SPRITE);
 #endif
+*/
 }
 
 //----------------------------------------------------------
