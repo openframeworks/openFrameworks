@@ -304,7 +304,6 @@ ofRectangle	ofGetWindowRect() {
 	return ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 }
 
-
 //--------------------------------------
 void ofSetWindowTitle(string title){
 	window->setWindowTitle(title);
