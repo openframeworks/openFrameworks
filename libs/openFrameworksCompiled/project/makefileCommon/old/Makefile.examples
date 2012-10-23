@@ -1,84 +1,62 @@
+# openFrameworks universal makefile
+#
+# make help : shows this message
+# make Debug:  makes the application with debug symbols
+# make Release: makes the app with optimizations
+# make: the same as make Release
+# make CleanDebug: cleans the Debug target
+# make CleanRelease: cleans the Release target
+# make clean: cleans everything
+#
+#
+# this should work with any OF app, just copy any example
+# change the name of the folder and it should compile
+# only .cpp support, don't use .c files
+# it will look for files in any folder inside the application
+# folder except that in the EXCLUDE_FROM_SOURCE variable
+# it doesn't autodetect include paths yet
+# add the include paths in the USER_CFLAGS variable
+# using the gcc syntax: -Ipath
+#
+# to add addons to your application, edit the addons.make file
+# in this directory and add the names of the addons you want to
+# include
+#
+# edit the following  vars to customize the makefile
+
+ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
+	ARCH = android
+	ifeq ($(shell uname),Darwin)
+		HOST_PLATFORM = darwin-x86
+	else ifeq ($(shell uname),MINGW32_NT-6.1)
+		HOST_PLATFORM = windows
+	else
+		HOST_PLATFORM = linux-x86
+	endif
+endif
+
+ifndef ARCH
+	ARCH=$(shell uname -m)
+endif
+
+ifeq ($(ARCH),android)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.android
+else ifeq ($(ARCH),armv7l)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.armv7l
+else ifeq ($(ARCH),armv6l)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.armv6l
+else
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.linux
+endif
+
+
+
+
+# you shouldn't modify anything below this line
+
+
 SHELL =  /bin/sh
-
-# add custom variables to this file
-
-# OF_ROOT allows to move projects outside apps/* just set this variable to the
-# absoulte path to the OF root folder
-
-OF_ROOT = ../../..
-
-LIBSPATH=linuxarmv6l
-
-# USER_CFLAGS allows to pass custom flags to the compiler
-# for example search paths like:
-# USER_CFLAGS = -I src/objects
-
-USER_CFLAGS = -DTARGET_OPENGLES -DTARGET_OPENGLES2 -DTARGET_RASPBERRY_PI -DTARGET_NO_X11
-
-USER_CFLAGS += -Wall -fexceptions
-USER_CFLAGS += $(addprefix -I, $(shell find src -type d)) 
-
-USER_CFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
-
-USER_LDFLAGS =
-
-EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
-
-COMPILER_OPTIMIZATION = -march=armv6 -mfpu=vfp -mfloat-abi=hard
-
-SDKSTAGE= 
-LDFLAGS = -Wl,-rpath=./libs
-
-LDFLAGS +=-L$(SDKSTAGE)/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -L./libs/ilclient -L./libs/vgfont
-INCLUDES+=-I$(SDKSTAGE)/opt/vc/include/ -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -I./ -I./libs/ilclient -I./libs/vgfont
-
-
-CFLAGS+= -DSTANDALONE 
-CFLAGS+= -D__STDC_CONSTANT_MACROS 
-CFLAGS+= -D__STDC_LIMIT_MACROS 
-CFLAGS+= -DTARGET_POSIX 
-CFLAGS+= -D_LINUX 
-CFLAGS+= -fPIC -DPIC 
-CFLAGS+= -D_REENTRANT 
-CFLAGS+= -D_LARGEFILE64_SOURCE 
-CFLAGS+= -D_FILE_OFFSET_BITS=64 
-CFLAGS+= -U_FORTIFY_SOURCE 
-CFLAGS+= -Wall -g 
-CFLAGS+= -DHAVE_LIBOPENMAX=2 
-CFLAGS+= -DOMX 
-CFLAGS+= -DOMX_SKIP64BIT 
-CFLAGS+= -ftree-vectorize 
-CFLAGS+= -pipe -DUSE_EXTERNAL_OMX 
-CFLAGS+= -DHAVE_LIBBCM_HOST 
-CFLAGS+= -DUSE_EXTERNAL_LIBBCM_HOST 
-CFLAGS+= -DUSE_VCHIQ_ARM 
-CFLAGS+= -Wno-psabi
-
-
-
-
-SYSTEMLIBS += $(shell pkg-config  jack glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-#SYSTEMLIBS += -lGLESv2 -lEGL -lbcm_host -L/opt/vc/lib
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a 
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a 
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a 
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
-
-ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	TARGET_NAME = Debug
-	BIN_NAME = $(APPNAME)_debug
-	TARGET = bin/$(BIN_NAME)
-endif
-
-ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-	TARGET_NAME = Release
-	BIN_NAME = $(APPNAME)
-	TARGET = bin/$(BIN_NAME)
-endif
-
-##########################################################################################
-
-
 
 NODEPS = clean
 SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')
@@ -109,7 +87,6 @@ CFLAGS += -I.
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
 
-
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	CFLAGS += -g3
 	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
@@ -120,9 +97,6 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
 endif
 
-ifeq ($(TARGET_LIBS),)
-    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
-endif
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ifneq ($(ARCH),android)
@@ -184,6 +158,9 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
     DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
 endif
 
+ifeq ($(TARGET_LIBS),)
+    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
+endif
 
 .PHONY: Debug Release all after
 
