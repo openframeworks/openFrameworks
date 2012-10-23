@@ -179,7 +179,7 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_OPENGLES
-	#include "glu.h"
+//	#include "glu.h"
 	//typedef GLushort ofIndexType ;
 #else
 	//typedef GLuint ofIndexType;
