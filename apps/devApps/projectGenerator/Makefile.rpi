@@ -1,2 +1,2 @@
 include config.rpi.make
-include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.rpi
+#include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.rpi
