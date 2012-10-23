@@ -41,11 +41,11 @@ SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp
 SOURCE_EXCLUSIONS+=/gl/ofFbo.cpp
 #SOURCE_EXCLUSIONS+=/graphics 
 #SOURCE_EXCLUSIONS+=/math 
-#SOURCE_EXCLUSIONS+=/sound 
+SOURCE_EXCLUSIONS+=/sound 
 #SOURCE_EXCLUSIONS+=/text 
 #SOURCE_EXCLUSIONS+=/types 
 #SOURCE_EXCLUSIONS+=/utils 
-#SOURCE_EXCLUSIONS+=/video 
+SOURCE_EXCLUSIONS+=/video 
 
 # strip and collapse spaces, and add the % suffix to allow directory matching
 CLEANED_SOURCE_EXCLUSIONS=$(addprefix $(OF_SRC_LIB),$(addsuffix %,$(strip $(SOURCE_EXCLUSIONS))))
@@ -88,9 +88,22 @@ $(info $(OF_SRC_LIB))
 # add folders or single files to exclude fromt he compiled lib
 UNFILTERED_INCLUDES = $(shell find $(OF_LIBS_DIR)/*/include -type d \( ! -name ".*" \))
 
-INCLUDE_EXCLUSIONS+=/poco/include/Poco 
-INCLUDE_EXCLUSIONS+=/poco/include/Poco/CppUnit 
-INCLUDE_EXCLUSIONS+=/quicktime
+#INCLUDE_EXCLUSIONS+= /tess2
+INCLUDE_EXCLUSIONS+= /kiss
+INCLUDE_EXCLUSIONS+= /FreeImage
+INCLUDE_EXCLUSIONS+= /portaudio
+INCLUDE_EXCLUSIONS+= /rtAudio
+INCLUDE_EXCLUSIONS+= /assimp
+INCLUDE_EXCLUSIONS+= /glu
+INCLUDE_EXCLUSIONS+= /videoInput
+INCLUDE_EXCLUSIONS+= /freetype
+INCLUDE_EXCLUSIONS+= /fmodex
+INCLUDE_EXCLUSIONS+= /cairo
+INCLUDE_EXCLUSIONS+= /poco/include/Poco 
+INCLUDE_EXCLUSIONS+= /poco/include/Poco/CppUnit 
+INCLUDE_EXCLUSIONS+= /quicktime
+INCLUDE_EXCLUSIONS+= /glut
+INCLUDE_EXCLUSIONS+= /glew
 
 # strip and collapse spaces, and add the % suffix to allow directory matching
 CLEANED_INCLUDE_EXCLUSIONS=$(addprefix $(OF_LIBS_DIR),$(addsuffix %,$(strip $(INCLUDE_EXCLUSIONS))))
@@ -103,14 +116,14 @@ INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 $(info --INCLUDES_FLAGS-- )
 $(foreach v, $(INCLUDES_FLAGS),$(info $(v)))
 
-INCLUDES_FLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+#INCLUDES_FLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
 
 
 # ADD THE INCLUDES TO THE CFLAGS
 CFLAGS += -DTARGET_OPENGLES -DTARGET_OPENGLES2 -DTARGET_RASPBERRY_PI -DTARGET_NO_X11
 
 CFLAGS += -Wall -fexceptions
-CFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
+CFLAGS += -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
 #CFLAGS += -lglut
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
