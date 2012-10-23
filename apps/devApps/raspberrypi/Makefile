@@ -30,7 +30,7 @@ SDKSTAGE=
 LDFLAGS = -Wl,-rpath=./libs
 
 LDFLAGS +=-L$(SDKSTAGE)/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -L./libs/ilclient -L./libs/vgfont
-INCLUDES+=-I$(SDKSTAGE)/opt/vc/include/ -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -I./ -I./libs/ilclient -I./libs/vgfont
+INCLUDES_FLAGS+=-I$(SDKSTAGE)/opt/vc/include/ -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -I./ -I./libs/ilclient -I./libs/vgfont
 
 
 CFLAGS+= -DSTANDALONE 
