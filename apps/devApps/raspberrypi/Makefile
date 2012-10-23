@@ -7,6 +7,8 @@ SHELL =  /bin/sh
 
 OF_ROOT = ../../..
 
+LIBSPATH=linuxarmv6l
+
 # USER_CFLAGS allows to pass custom flags to the compiler
 # for example search paths like:
 # USER_CFLAGS = -I src/objects
@@ -27,7 +29,7 @@ COMPILER_OPTIMIZATION = -march=armv6 -mfpu=vfp -mfloat-abi=hard
 LDFLAGS = -Wl,-rpath=./libs
 LDFLAGS += -I/opt/vc/include
 
-LDFLAGS+=-L$(SDKSTAGE)/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -L../libs/ilclient -L../libs/vgfont
+LDFLAGS +=-L$(SDKSTAGE)/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -L../libs/ilclient -L../libs/vgfont
 INCLUDES+=-I$(SDKSTAGE)/opt/vc/include/ -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -I./ -I../libs/ilclient -I../libs/vgfont
 
 
@@ -106,6 +108,7 @@ CFLAGS += -Wall -fexceptions
 CFLAGS += -I.
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
+
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	CFLAGS += -g3
