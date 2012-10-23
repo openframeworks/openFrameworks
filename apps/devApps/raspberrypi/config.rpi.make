@@ -11,6 +11,11 @@ OF_ROOT = ../../..
 # USER_CFLAGS = -I src/objects
 
 USER_CFLAGS = $(addprefix -I, $(shell find src -type d)) 
+# ADD THE INCLUDES TO THE CFLAGS
+USER_CFLAGS += -DTARGET_OPENGLES -DTARGET_OPENGLES2 -DTARGET_RASPBERRY_PI -DTARGET_NO_X11
+
+USER_CFLAGS += -Wall -fexceptions
+USER_CFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
 
 
 # USER_LDFLAGS allows to pass custom flags to the linker
