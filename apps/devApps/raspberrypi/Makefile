@@ -1,8 +1,62 @@
-COMPILER_OPTIMIZATION = $(LINUX_ARMV6L_COMPILER_OPTIMIZATIONS)
+SHELL =  /bin/sh
+
+# add custom variables to this file
+
+# OF_ROOT allows to move projects outside apps/* just set this variable to the
+# absoulte path to the OF root folder
+
+OF_ROOT = ../../..
+
+# USER_CFLAGS allows to pass custom flags to the compiler
+# for example search paths like:
+# USER_CFLAGS = -I src/objects
+
+USER_CFLAGS = -DTARGET_OPENGLES -DTARGET_OPENGLES2 -DTARGET_RASPBERRY_PI -DTARGET_NO_X11
+
+USER_CFLAGS += -Wall -fexceptions
+USER_CFLAGS += $(addprefix -I, $(shell find src -type d)) 
+
+USER_CFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
+
+USER_LDFLAGS =
+
+EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
+
+COMPILER_OPTIMIZATION = -march=armv6 -mfpu=vfp -mfloat-abi=hard
 
 LDFLAGS = -Wl,-rpath=./libs
+LDFLAGS += -I/opt/vc/include
+
+LDFLAGS+=-L$(SDKSTAGE)/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -L../libs/ilclient -L../libs/vgfont
+INCLUDES+=-I$(SDKSTAGE)/opt/vc/include/ -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -I./ -I../libs/ilclient -I../libs/vgfont
+
+
+CFLAGS+= -DSTANDALONE 
+CFLAGS+= -D__STDC_CONSTANT_MACROS 
+CFLAGS+= -D__STDC_LIMIT_MACROS 
+CFLAGS+= -DTARGET_POSIX 
+CFLAGS+= -D_LINUX 
+CFLAGS+= -fPIC -DPIC 
+CFLAGS+= -D_REENTRANT 
+CFLAGS+= -D_LARGEFILE64_SOURCE 
+CFLAGS+= -D_FILE_OFFSET_BITS=64 
+CFLAGS+= -U_FORTIFY_SOURCE 
+CFLAGS+= -Wall -g 
+CFLAGS+= -DHAVE_LIBOPENMAX=2 
+CFLAGS+= -DOMX 
+CFLAGS+= -DOMX_SKIP64BIT 
+CFLAGS+= -ftree-vectorize 
+CFLAGS+= -pipe -DUSE_EXTERNAL_OMX 
+CFLAGS+= -DHAVE_LIBBCM_HOST 
+CFLAGS+= -DUSE_EXTERNAL_LIBBCM_HOST 
+CFLAGS+= -DUSE_VCHIQ_ARM 
+CFLAGS+= -Wno-psabi
+
+
+
+
 #SYSTEMLIBS += $(shell pkg-config  jack glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-SYSTEMLIBS += -lGLESv2 -lEGL -lbcm_host -L/opt/vc/lib
+#SYSTEMLIBS += -lGLESv2 -lEGL -lbcm_host -L/opt/vc/lib
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a 
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a 
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a 
@@ -23,7 +77,6 @@ endif
 ##########################################################################################
 
 
-SHELL =  /bin/sh
 
 NODEPS = clean
 SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')
