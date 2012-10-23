@@ -34,7 +34,7 @@ $(info $(OF_SRC_LIB))
 # add folders or single files to exclude fromt he compiled lib
 #SOURCE_EXCLUSIONS+=/3d 
 #SOURCE_EXCLUSIONS+=$(OF_SRC_LIB)/app 
-#SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp 
+SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp 
 #SOURCE_EXCLUSIONS+=/communication 
 #SOURCE_EXCLUSIONS+=/events 
 #SOURCE_EXCLUSIONS+=/gl 
@@ -111,7 +111,7 @@ CFLAGS += -DTARGET_OPENGLES -DTARGET_OPENGLES2 -DTARGET_RASPBERRY_PI -DTARGET_NO
 
 CFLAGS += -Wall -fexceptions
 CFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
-CFLAGS += -lglut
+#CFLAGS += -lglut
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
 
