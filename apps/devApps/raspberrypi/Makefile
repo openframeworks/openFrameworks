@@ -56,7 +56,7 @@ CFLAGS+= -Wno-psabi
 
 
 
-
+INCLUDES_FLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
 CFLAGS += $(shell pkg-config  jack glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
 #SYSTEMLIBS += -lGLESv2 -lEGL -lbcm_host -L/opt/vc/lib
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a 
