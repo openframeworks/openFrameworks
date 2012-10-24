@@ -1,109 +1,113 @@
-# openFrameworks universal makefile
-#
-# make help : shows this message
-# make Debug:  makes the application with debug symbols
-# make Release: makes the app with optimizations
-# make: the same as make Release
-# make CleanDebug: cleans the Debug target
-# make CleanRelease: cleans the Release target
-# make clean: cleans everything
-#
-# edit the following  vars to customize the makefile
-
-USER_CFLAGS = 
 
 
+
+
+##########################################################################################
+# CORE SPACE SPACE
+##########################################################################################
+
+# setup the shell
 SHELL =	 /bin/sh
 
-ARCH = $(shell uname -m)
+ifeq ($(PLATFORM_ARCH),)
+    # determine from the uname
+    ARCH=$(shell uname -m)
+else
+    # obey the platform overrides
+    ARCH=$(PLATFORM_ARCH)
+endif
 
-COMPILER_OPTIMIZATION = -march=armv6 -mfpu=vfp -mfloat-abi=hard
+ifeq ($(PLATFORM_LIBS_PATH),)
+    # determine from the arch
+    LIBSPATH=$(ARCH)
+else
+    # obey the platform overrides
+    LIBSPATH=$(PLATFORM_LIBS_PATH)
+endif
 
-LIBSPATH=linuxarmv6l
-
-OF_COMPILED_LIB=../../lib/$(LIBSPATH)
-
-# where is the libraries directory?
+# construct the relative path variables
+OF_CORE_LIB_PATH=../../lib/$(LIBSPATH)
 OF_LIBS_DIR=../../..
-
-# where are the openFrameworks sources?
 OF_SRC_LIB=$(OF_LIBS_DIR)/openFrameworks
 
-$(info $(OF_SRC_LIB))
+# print the OF_SRC_LIB
+#$(info $(OF_SRC_LIB))
 
-# add folders or single files to exclude fromt he compiled lib
-#SOURCE_EXCLUSIONS+=/3d 
-#SOURCE_EXCLUSIONS+=$(OF_SRC_LIB)/app 
-SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp 
-#SOURCE_EXCLUSIONS+=/communication 
-#SOURCE_EXCLUSIONS+=/events 
-#SOURCE_EXCLUSIONS+=/gl 
-SOURCE_EXCLUSIONS+=/gl/ofFbo.cpp
-#SOURCE_EXCLUSIONS+=/graphics 
-#SOURCE_EXCLUSIONS+=/math 
-SOURCE_EXCLUSIONS+=/sound 
-#SOURCE_EXCLUSIONS+=/text 
-#SOURCE_EXCLUSIONS+=/types 
-#SOURCE_EXCLUSIONS+=/utils 
-SOURCE_EXCLUSIONS+=/video 
 
 # strip and collapse spaces, and add the % suffix to allow directory matching
-CLEANED_SOURCE_EXCLUSIONS=$(addprefix $(OF_SRC_LIB),$(addsuffix %,$(strip $(SOURCE_EXCLUSIONS))))
+FULLLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_SRC_LIB),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
 
-# find all of the source directories
-UNFILTERED_SOURCE_DIRS=$(shell find $(OF_SRC_LIB) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
+# find all of the source directories, exclude all . (dot-hidden) files/folders
+ALL_CORE_SOURCE_PATHS=$(shell find $(OF_SRC_LIB) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
+
+#$(info --UNFILTERED_SOURCE_DIRS DIRS TO COMPILE-- )
+#$(foreach v, $(UNFILTERED_SOURCE_DIRS),$(info $(v)))
 
 # filter out all excluded files / folders that were defined above
-SOURCE_DIRS=$(filter-out $(CLEANED_SOURCE_EXCLUSIONS),$(UNFILTERED_SOURCE_DIRS))
+# this list will be searched for cpp files below and will eventually
+# be included as locations for header searches via 
+FILTERED_CORE_SOURCE_PATHS=$(filter-out $(FULLLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCE_PATHS))
+
+#$(info --SOURCE DIRS TO COMPILE-- )
+#$(foreach v, $(SOURCE_DIRS),$(info $(v)))
 
 # search the directories in the source folders for all .cpp files
-UNFILTERED_SOURCES=$(shell find $(SOURCE_DIRS) -name "*.cpp")
+ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS=$(shell find $(FILTERED_CORE_SOURCE_PATHS) -name "*.cpp")
 
 # filter out all excluded files / folders that were defined above
-SOURCES=$(filter-out $(CLEANED_SOURCE_EXCLUSIONS),$(UNFILTERED_SOURCES))
+SOURCES=$(filter-out $(FULLLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS))
+
+##########################################################################################
+# OBJECT FILES
+##########################################################################################
+
+OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
+DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_LIBS_DIR)/%.cpp,%.d,$(SOURCES)))
+OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
 
 $(info --SOURCES TO COMPILE-- )
 $(foreach v, $(SOURCES),$(info $(v)))
 
+
+#$(patsubst pattern,replacement,text)
+#Finds whitespace-separated words in text that match pattern and replaces them with replacement
+# this will remove the $(OF_LIBS_DIR) and produce
 OBJFILES=$(patsubst $(OF_LIBS_DIR)/%.cpp,%.o,$(SOURCES))
 
-#$(info --OBJFILES-- )
-#$(foreach v, $(OBJFILES),$(info $(v)))
+$(info --OBJFILES-- )
+$(foreach v, $(OBJFILES),$(info $(v)))
 
-################################################
+##########################################################################################
+# COMPILER OPTIMIZATIONS
+##########################################################################################
 
-CORE_INCLUDE_FLAGS=$(addprefix -I,$(SOURCE_DIRS))
 
-#$(info --CORE_INCLUDE_FLAGS-- )
-#$(foreach v, $(CORE_INCLUDE_FLAGS),$(info $(v)))
 
-# where is the libraries directory?
-OF_LIBS_DIR=../../..
+##########################################################################################
+# DEFINES
+##########################################################################################
 
-# where are the openFrameworks sources?
-OF_SRC_LIB=$(OF_LIBS_DIR)/openFrameworks
+# add any user defines to the core defines
+CORE_DEFINES=
+CORE_DEFINES+=$USER_DEFINES 
 
-$(info $(OF_SRC_LIB))
+# bring all defines together, and add flags
+DEFINES=$(addprefix -D,$(CORE_DEFINES));
+
+$(info --DEFINES-- )
+$(foreach v, $(DEFINES),$(info $(v)))
+
+##########################################################################################
+# INCLUDES
+##########################################################################################
+
+CORE_INCLUDE_PATHS=$(OF_SRC_LIB) $(SRC_DIRS) 
+
+#$(info --CORE_INCLUDE_PATHS-- )
+#$(foreach v, $(CORE_INCLUDE_PATHS),$(info $(v)))
 
 # add folders or single files to exclude fromt he compiled lib
-UNFILTERED_INCLUDES = $(shell find $(OF_LIBS_DIR)/*/include -type d \( ! -name ".*" \))
-
-#INCLUDE_EXCLUSIONS+= /tess2
-INCLUDE_EXCLUSIONS+= /kiss
-INCLUDE_EXCLUSIONS+= /FreeImage
-INCLUDE_EXCLUSIONS+= /portaudio
-INCLUDE_EXCLUSIONS+= /rtAudio
-INCLUDE_EXCLUSIONS+= /assimp
-INCLUDE_EXCLUSIONS+= /glu
-INCLUDE_EXCLUSIONS+= /videoInput
-INCLUDE_EXCLUSIONS+= /freetype
-INCLUDE_EXCLUSIONS+= /fmodex
-INCLUDE_EXCLUSIONS+= /cairo
-INCLUDE_EXCLUSIONS+= /poco/include/Poco 
-INCLUDE_EXCLUSIONS+= /poco/include/Poco/CppUnit 
-INCLUDE_EXCLUSIONS+= /quicktime
-INCLUDE_EXCLUSIONS+= /glut
-INCLUDE_EXCLUSIONS+= /glew
+UNFILTERED_CORE_INCLUDES = $(shell find $(OF_LIBS_DIR)/*/include -type d \( ! -name ".*" \))
 
 # strip and collapse spaces, and add the % suffix to allow directory matching
 CLEANED_INCLUDE_EXCLUSIONS=$(addprefix $(OF_LIBS_DIR),$(addsuffix %,$(strip $(INCLUDE_EXCLUSIONS))))
@@ -120,45 +124,38 @@ $(foreach v, $(INCLUDES_FLAGS),$(info $(v)))
 
 
 # ADD THE INCLUDES TO THE CFLAGS
-CFLAGS += -DTARGET_OPENGLES -DTARGET_OPENGLES2 -DTARGET_RASPBERRY_PI -DTARGET_NO_X11
 
 CFLAGS += -Wall -fexceptions
-CFLAGS += -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -L/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
-#CFLAGS += -lglut
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
-
+CFLAGS += $(USER_CFLAGS)
 
 
 ################################################
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	TARGET_CFLAGS = -g3
+	OPTIMIZATION_CFLAGS = -g3
 	TARGET_NAME = $(MAKECMDGOALS)
-	TARGET = $(OF_COMPILED_LIB)/libopenFrameworksDebug.a
+	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
+	OPTIMIZATION_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_NAME = $(MAKECMDGOALS)
-	TARGET = $(OF_COMPILED_LIB)/libopenFrameworks.a
+	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 endif
 
 ifeq ($(MAKECMDGOALS),)
-	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
+	OPTIMIZATION_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_NAME = Release
-	TARGET = $(OF_COMPILED_LIB)/libopenFrameworks.a
+	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
-	TARGET = $(OF_COMPILED_LIB)/libopenFrameworks.a $(OF_COMPILED_LIB)/libopenFrameworksDebug.a
+	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
-
 CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
-OBJ_OUTPUT = obj/$(TARGET_NAME)/
-DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst $(OF_LIBS_DIR)/%.cpp,%.d,$(SOURCES)))
-OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
@@ -171,10 +168,10 @@ all:
 	$(MAKE) Release
 	
 #This rule does the compilation
-$(OBJ_OUTPUT)%.o: ../../../%.cpp 
+$(OBJ_OUTPUT_PATH)%.o: ../../../%.cpp 
 	@echo "compiling object for " $<
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT_PATH)$*.d -MT$(OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
 $(TARGET) : $(OBJS) 
 	echo "creating " $(TARGET)
@@ -189,12 +186,11 @@ clean:
 	rm -f -v $(TARGET)
 	
 $(CLEANTARGET):
-	rm -Rf -v $(OBJ_OUTPUT)
+	rm -Rf -v $(OBJ_OUTPUT_PATH)
 	rm -f -v $(TARGET)
 	
 #.PHONY: help
 help:
- 
 	@echo 
 	@echo openFrameworks compiled library makefile
 	@echo

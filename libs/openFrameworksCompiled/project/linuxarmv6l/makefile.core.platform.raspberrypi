@@ -1,0 +1,119 @@
+##########################################################################################
+# PLATFORM SPACE
+#   This file is mean to allow for platform specific modifications
+#   to the openFrameworks build environment.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+
+##########################################################################################
+# PLATFORM DEFINES
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+PLATFORM_DEFINES=
+PLATFORM_DEFINES+=TARGET_OPENGLES TARGET_OPENGLES2 TARGET_RASPBERRY_PI TARGET_NO_X11 
+
+##########################################################################################
+# PLATFORM OPTIMIZATION FLAGS
+#   -use full cflag style flags here (i.e. -march=native, etc)
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+PLATFORM_OPTIMIZATION_FLAGS=
+PLATFORM_OPTIMIZATION_FLAGS+=-march=armv6 -mfpu=vfp -mfloat-abi=hard 
+
+##########################################################################################
+# PLATFORM HEADER SEARCH PATH
+#   These are special headers that are platform specific
+#   Do not use full flag syntax, that will be added automatically later.
+#   These paths are ABSOLUTE.
+#   Simply use space delimited paths.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+PLATFORM_HEADER_SEARCH_PATHS=
+# Broadcom hardware interface library
+PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include 
+PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/EGL 
+PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/GLES 
+PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/GLES2 
+#PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
+#PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/interface/vcos/pthreads 
+
+##########################################################################################
+# PLATFORM LIBRARY SEARCH PATH
+#   These are special libraries assocated with the above header search paths
+#   Do not use full flag syntax, that will be added automatically later
+#   These paths are ABSOLUTE.
+#   Simply use space delimited paths.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+PLATFORM_LIBRARY_SEARCH_PATHS=
+#USER_LIBRARY_SEARCH_PATHS += -L/opt/vc/lib
+#USER_LIBRARIES += -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm
+ 
+##########################################################################################
+# PLATFORM LIBRARY SEARCH PATH
+#   These are special libraries assocated with the above header search paths
+#   Do not use full flag syntax, that will be added automatically later
+#   Simply use space delimited paths.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+PLATFORM_ARCH=linux-armv6l-hardfloat
+
+##########################################################################################
+# PLATFORM CORE SOURCE EXCLUSIONS
+#   These are paths and filenames relative to the core library 
+#   ($(OF_ROOT)/libs/openFrameworks) source folder.  When a directory is listed 
+#   (i.e. /3d), ALL source files in that directory will be excluded.  
+#   These relative paths will be fully qualified later.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+# add folders or single files to exclude fromt he compiled lib
+PLATFORM_CORE_SOURCE_EXCLUSIONS=
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/3d 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/app 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/communication 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/events 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/gl 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/gl/ofFbo.cpp 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics 
+#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/math 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/sound 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/text 
+#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/types 
+#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/utils 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video 
+
+##########################################################################################
+# PLATFORM CORE SOURCE INCLUSIONS
+#   These are paths and filenames relative to the core library 
+#   ($(OF_ROOT)/libs/openFrameworks) source folder. 
+#   These relative paths will be fully qualified later.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+PLATFORM_CORE_SOURCE_INCLUSIONS=
+
+##########################################################################################
+# PLATFORM CORE LIB HEADER EXCLUSIONS
+#   These are paths and filenames relative to the ($(OF_ROOT)/libs/) folder.
+#   When a directory is listed (i.e. /3d), ALL source files in that directory will
+#   be excluded.
+#   These relative paths will be fully qualified later.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+PLATFORM_CORE_HEADER_EXCLUSIONS=
+#PLATFORM_CORE_INCLUDE_EXCLUSIONS+= /tess2
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/kiss 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/FreeImage 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/portaudio 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/rtAudio 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/assimp 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/glu 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/videoInput 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/freetype 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/fmodex 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/cairo 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/poco/include/Poco 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/poco/include/Poco/CppUnit 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/quicktime 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/glut 
+PLATFORM_CORE_HEADER_EXCLUSIONS+=/glew 

@@ -1,0 +1,4 @@
+# dump preprocessor defines
+#gcc -dM -E - < /dev/null | grep ARM
+#http://elinux.org/RPi_VideoCore_APIs
+
