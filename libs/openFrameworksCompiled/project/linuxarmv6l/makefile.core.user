@@ -1,0 +1,13 @@
+##########################################################################################
+# USER SPACE
+##########################################################################################
+# this is a location where the user can make their own custom 
+# modifications to the openFrameworks core library
+
+# make sure there is a space after everything!
+USER_DEFINES=
+USER_OPTIMIZATION_FLAGS=
+USER_HEADER_SEARCH_PATHS=
+USER_LIBRARY_SEARCH_PATHS=
+USER_LIBRARIES=
+USER_CFLAGS=
