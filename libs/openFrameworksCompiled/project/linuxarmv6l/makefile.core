@@ -1,1 +1,255 @@
-core!
+##########################################################################################
+# CORE SPACE SPACE
+##########################################################################################
+
+# setup the shell
+SHELL = /bin/sh
+
+ifndef PLATFORM_OS 
+    # determine from the uname
+    OS=$(shell uname -a)
+else 
+    # obey the platform override
+    OS=$(PLATFORM_OS)
+endif 
+
+$(info $(OS))
+
+
+ifndef PLATFORM_ARCH
+    # determine from the uname
+    ARCH=$(shell uname -m)
+else
+    # obey the platform override
+    ARCH=$(PLATFORM_ARCH)
+endif
+
+ifndef PLATFORM_LIBS_PATH
+    # determine from the arch
+    ifeq ($(OS),Linux)
+        ifeq ($(ARCH),x86_64)
+            LIBSPATH=linux64
+        else ifeq ($(ARCH),i386)
+            LIBSPATH=linux
+        else
+           $(error This makefile does not support your architecture.)
+        endif
+    else ifeq ($KERNEL),Darwin)
+        LIBSPATH=osx
+    else
+        $(error This makefile does not support your operating system.)
+    endif
+else
+    LIBSPATH=$(PLATFORM_LIBS_PATH)
+endif
+
+$(info Building for ARCH=$(ARCH));
+$(info Libspath=$(LIBSPATH));
+
+# construct the relative path variables
+OF_CORE_LIB_PATH=../../lib/$(LIBSPATH)
+OF_LIBS_DIR=../../..
+OF_SRC_LIB=$(OF_LIBS_DIR)/openFrameworks
+
+# print the OF_SRC_LIB
+#$(info $(OF_SRC_LIB))
+
+##########################################################################################
+# SOURCE FILES
+##########################################################################################
+
+CORE_SOURCE_EXCLUSIONS=$(PLATFORM_CORE_SOURCE_EXCLUSIONS)
+# add more here if needed ...
+
+# strip and collapse spaces, and add the % suffix to allow directory matching
+FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_SRC_LIB),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
+
+# find all of the source directories, exclude all . (dot-hidden) files/folders
+ALL_CORE_SOURCE_PATHS=$(shell find $(OF_SRC_LIB) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
+
+#$(info --UNFILTERED_SOURCE_DIRS DIRS TO COMPILE-- )
+#$(foreach v, $(UNFILTERED_SOURCE_DIRS),$(info $(v)))
+
+# filter out all excluded files / folders that were defined above
+# this list will be searched for cpp files below and will eventually
+# be included as locations for header searches via 
+FILTERED_CORE_SOURCE_PATHS=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCE_PATHS))
+
+$(info --FILTERED_CORE_SOURCE_PATHS-- )
+$(foreach v, $(FILTERED_CORE_SOURCE_PATHS),$(info $(v)))
+
+# search the directories in the source folders for all .cpp files
+ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS=$(shell find $(FILTERED_CORE_SOURCE_PATHS) -name "*.cpp")
+
+# filter out all excluded files / folders that were defined above
+SOURCES=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS))
+
+##TODO: add platform inclusions here
+
+##########################################################################################
+# OBJECT FILES
+##########################################################################################
+
+OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
+DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_LIBS_DIR)/%.cpp,%.d,$(SOURCES)))
+OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
+
+$(info --SOURCES TO COMPILE-- )
+$(foreach v, $(SOURCES),$(info $(v)))
+
+
+#$(patsubst pattern,replacement,text)
+#Finds whitespace-separated words in text that match pattern and replaces them with replacement
+# this will remove the $(OF_LIBS_DIR) and produce
+OBJFILES=$(patsubst $(OF_LIBS_DIR)/%.cpp,%.o,$(SOURCES))
+
+#$(info --OBJFILES-- )
+#$(foreach v, $(OBJFILES),$(info $(v)))
+
+##########################################################################################
+# DEFINES
+##########################################################################################
+
+# add any user defines to the core defines
+CORE_DEFINES=
+CORE_DEFINES+=$USER_DEFINES 
+
+# bring all defines together, and add flags
+DEFINES=$(addprefix -D,$(CORE_DEFINES));
+
+$(info --DEFINES-- )
+$(foreach v, $(DEFINES),$(info $(v)))
+
+##########################################################################################
+# INCLUDES
+##########################################################################################
+
+# create our core include paths from the source directory paths, 
+# these have already been filtered and processed according to rules.
+# plus the root so that we don't miss the ofMain.h.
+CORE_HEADER_PATHS=$(OF_SRC_LIB) $(FILTERED_CORE_SOURCE_PATHS) 
+
+
+# add folders or single files to exclude fromt he compiled lib
+UNFILTERED_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_DIR)/*/include -type d \( ! -name ".*" \))
+
+#$(info --UNFILTERED_CORE_HEADER_PATHS-- )
+#$(foreach v, $(UNFILTERED_CORE_HEADER_PATHS),$(info $(v)))
+#$(info -------- )
+
+
+THIRDPARTY_HEADER_EXCLUSIONS=$(PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS)
+# add more here?
+
+# strip and collapse spaces, and add the % suffix to allow directory matching
+CLEANED_THIRDPARTY_HEADER_EXCLUSIONS=$(addprefix $(OF_LIBS_DIR),$(addsuffix %,$(strip $(THIRDPARTY_HEADER_EXCLUSIONS))))
+
+#$(info --CLEANED_INCLUDE_EXCLUSIONS-- )
+#$(foreach v, $(CLEANED_INCLUDE_EXCLUSIONS),$(info $(v)))
+
+# filter out all excluded files / folders that were defined above
+THIRDPARTY_HEADER_PATHS=$(filter-out $(CLEANED_THIRDPARTY_HEADER_EXCLUSIONS),$(UNFILTERED_THIRDPARTY_HEADER_PATHS))
+
+ALL_HEADER_PATHS= $(PLATFORM_HEADER_SEARCH_PATHS) $(THIRDPARTY_HEADER_PATHS) $(CORE_HEADER_PATHS)
+
+INCLUDES_CFLAGS =$(addprefix -I,$(ALL_HEADER_PATHS)) 
+
+$(info --INCLUDES_CFLAGS-- )
+$(foreach v, $(INCLUDES_CFLAGS),$(info $(v)))
+
+#INCLUDES_FLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+
+
+# ADD THE INCLUDES TO THE CFLAGS
+##########################################################################################
+# DEFINES
+##########################################################################################
+
+ALL_DEFINES=$(PLATFORM_DEFINES)
+DEFINES = $(addprefix -D,$(ALL_DEFINES))
+
+
+##########################################################################################
+# CFLAGS
+##########################################################################################
+
+CFLAGS=
+CFLAGS+=$(DEFINES) 
+CFLAGS+=-Wall -fexceptions 
+CFLAGS+=$(INCLUDES_CFLAGS) 
+
+
+##########################################################################################
+# COMPILER OPTIMIZATIONS and TARGET MAKING
+##########################################################################################
+
+ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)-g3
+    TARGET_NAME = $(MAKECMDGOALS)
+    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) 
+    TARGET_NAME = $(MAKECMDGOALS)
+    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+else 
+    # default to release
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+    TARGET_NAME = Release
+    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+endif
+
+ifeq ($(MAKECMDGOALS),clean)
+	TARGET=$(OF_CORE_LIB_PATH)/libopenFrameworks.a
+	TARGET+= $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+endif
+
+CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
+
+.PHONY: all Debug Release after clean CleanDebug CleanRelease help
+
+Release: $(TARGET) 
+
+Debug: $(TARGET) 
+
+all: 
+	$(MAKE) Debug
+	$(MAKE) Release
+	
+#This rule does the compilation
+$(OBJ_OUTPUT_PATH)%.o: ../../../%.cpp 
+	@echo "compiling object for " $<
+	mkdir -p $(@D)
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT_PATH)$*.d -MT$(OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+
+$(TARGET) : $(OBJS) 
+	echo "creating " $(TARGET)
+	mkdir -p $(@D)
+	$(AR) -r "$@" $(OBJS)
+
+-include $(DEPFILES)
+
+#.PHONY: clean CleanDebug CleanRelease
+clean:
+	rm -Rf obj
+	rm -f -v $(TARGET)
+	
+$(CLEANTARGET):
+	rm -Rf -v $(OBJ_OUTPUT_PATH)
+	rm -f -v $(TARGET)
+	
+#.PHONY: help
+help:
+	@echo 
+	@echo openFrameworks compiled library makefile
+	@echo
+	@echo targets:
+	@echo "make Debug:		builds the library with debug symbols"
+	@echo "make Release:		builds the library with optimizations"
+	@echo "make:			= make Release"
+	@echo "make all:		= make Debug + make Release"
+	@echo "make CleanDebug: cleans the Debug target"
+	@echo "make CleanRelease:	cleans the Release target"
+	@echo "make clean:		cleans everything"
+	@echo
+
+
