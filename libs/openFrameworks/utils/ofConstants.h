@@ -144,6 +144,14 @@ enum ofTargetPlatform{
 		//#include <GL/glew.h>
 		//#include <GL/gl.h>
 		//#include <GL/glx.h>
+//#include "bcm_host.h"
+
+#include "GLES/gl.h"
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
+
+
+
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
