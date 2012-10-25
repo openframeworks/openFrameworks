@@ -16,7 +16,6 @@
 #include <string.h>
 //#include <libxml/parser.h>
 //#include <libxml/debugXML.h>
-#include "tinyxml.h"
 #include "svgtiny.h"
 #include "svgtiny_internal.h"
 
