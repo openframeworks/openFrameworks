@@ -1,4 +1,4 @@
-#include "ofxSVG.h"
+#include "ofxSvg.h"
 #include "ofConstants.h"
 
 ofxSVG::~ofxSVG(){
