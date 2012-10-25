@@ -65,6 +65,7 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	bDepthEnabled = false;
 	bAntiAliasingEnabled = false;
     antiAliasingSamples = 0;
+    esRendererVersion = ESRendererVersion_11;
 }
 
 /******** Initialization methods ************/
@@ -313,6 +314,27 @@ bool ofAppiPhoneWindow::isAntiAliasingEnabled() {
 
 int	ofAppiPhoneWindow::getAntiAliasingSampleCount() {
     return antiAliasingSamples;
+}
+
+//-------------------------------------------------------- ESRenderer version.
+void ofAppiPhoneWindow::enableES1Renderer() {
+    esRendererVersion = ESRendererVersion_11;
+}
+
+void ofAppiPhoneWindow::enableES2Renderer() {
+    esRendererVersion = ESRendererVersion_20;
+}
+
+bool ofAppiPhoneWindow::isES1RendererEnabled() {
+    return esRendererVersion == ESRendererVersion_11;
+}
+
+bool ofAppiPhoneWindow::isES2RendererEnabled() {
+    return esRendererVersion == ESRendererVersion_20;
+}
+
+int ofAppiPhoneWindow::getRendererVersion() {
+    return esRendererVersion;
 }
 
 //-------------------------------------------------------- deprecated.
