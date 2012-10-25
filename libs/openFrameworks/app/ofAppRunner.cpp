@@ -2,8 +2,12 @@
 
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
+
+#ifndef TARGET_NO_SOUND
 #include "ofSoundPlayer.h"
 #include "ofSoundStream.h"
+#endif
+
 #include "ofImage.h"
 #include "ofUtils.h"
 #include "ofEvents.h"
@@ -119,11 +123,13 @@ void ofExitCallback(){
 
 	ofNotifyExit();
 
+	#ifndef TARGET_NO_SOUND
 	//------------------------
 	// try to close engine if needed:
 	ofSoundShutdown();
 	//------------------------
-
+	#endif
+	
 	// try to close quicktime, for non-linux systems:
 	#if defined( OF_VIDEO_CAPTURE_QUICKTIME ) || defined( OF_VIDEO_PLAYER_QUICKTIME)
 	closeQuicktime();
