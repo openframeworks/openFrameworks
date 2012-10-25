@@ -28,8 +28,8 @@
 
 class ofxRaspberryPiWindow: public ofAppBaseWindow {
 public:
-	ofAppBaseWindow(){};
-	~ofAppBaseWindow(){};
+	ofxRaspberryPiWindow(){};
+	virtual ~ofxRaspberryPiWindow(){};
 
 	void setupOpenGL(int w, int h, int screenMode) {}
 	void initializeWindow() {}
