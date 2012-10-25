@@ -25,6 +25,5 @@
 #pragma once
 
 #include "ofxRaspberryPiWindow.h"
-#include "ofxRaspberryPiApp.h"
 #include "ofxRaspberryPiUtils.h"
 
