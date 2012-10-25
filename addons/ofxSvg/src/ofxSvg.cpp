@@ -55,8 +55,8 @@ void ofxSVG::load(string path){
 }
 
 void ofxSVG::draw(){
-	for(int i = 0; i < paths.size(); i++){
-		paths[i]->draw();
+	for(int i = 0; i < (int)paths.size(); i++){
+		paths[i].draw();
 	}
 }
 
@@ -66,9 +66,10 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 	width = diagram->width;
 	height = diagram->height;
 
-	for(int i = 0; i < diagram->shape_count; i++){
+	for(int i = 0; i < (int)diagram->shape_count; i++){
 		if(diagram->shape[i].path){
-			setupShape(&diagram->shape[i]);
+			paths.push_back(ofPath());
+			setupShape(&diagram->shape[i],paths.back());
 		}
 		else if(diagram->shape[i].text){
 			printf("text: not implemented yet\n");
@@ -76,42 +77,39 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 	}
 }
 
-void ofxSVG::setupShape(struct svgtiny_shape * shape){
+void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	float * p = shape->path;
 
-	ofPath * path = new ofPath();
-	paths.push_back(ofPathRef(path));
-
-	path->setFilled(false);
+	path.setFilled(false);
 
 	if(shape->fill != svgtiny_TRANSPARENT){
-		path->setFilled(true);
-		path->setFillHexColor(shape->fill);
+		path.setFilled(true);
+		path.setFillHexColor(shape->fill);
 	}
 
 	if(shape->stroke != svgtiny_TRANSPARENT){
-		path->setStrokeWidth(shape->stroke_width);
-		path->setStrokeHexColor(shape->stroke);
+		path.setStrokeWidth(shape->stroke_width);
+		path.setStrokeHexColor(shape->stroke);
 	}
 
-	path->setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+	path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 
-	for(int i = 0; i < shape->path_length;){
+	for(int i = 0; (int)i < shape->path_length;){
 		if(p[i] == svgtiny_PATH_MOVE){
-			path->moveTo(p[i + 1], p[i + 2]);
+			path.moveTo(p[i + 1], p[i + 2]);
 			i += 3;
 		}
 		else if(p[i] == svgtiny_PATH_CLOSE){
-			path->close();
+			path.close();
 
 			i += 1;
 		}
 		else if(p[i] == svgtiny_PATH_LINE){
-			path->lineTo(p[i + 1], p[i + 2]);
+			path.lineTo(p[i + 1], p[i + 2]);
 			i += 3;
 		}
 		else if(p[i] == svgtiny_PATH_BEZIER){
-			path->bezierTo(p[i + 1], p[i + 2],
+			path.bezierTo(p[i + 1], p[i + 2],
 						   p[i + 3], p[i + 4],
 						   p[i + 5], p[i + 6]);
 			i += 7;
