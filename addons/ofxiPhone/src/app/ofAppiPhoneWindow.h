@@ -92,6 +92,12 @@ public:
     bool                isAntiAliasingEnabled();
     int					getAntiAliasingSampleCount();
     
+    void                enableES1Renderer();
+    void                enableES2Renderer();
+    bool                isES1RendererEnabled();
+    bool                isES2RendererEnabled();
+    int                 getRendererVersion();
+    
     //---------------------------------------------- deprecation messages. to be removed in OF 0073.
     OF_DEPRECATED_MSG("Use enableRetina() instead", void enableRetinaSupport());
     OF_DEPRECATED_MSG("Use isRetinaSupportedOnDevice() instead", bool isRetinaSupported());
@@ -113,6 +119,7 @@ protected:
 	bool bDepthEnabled;
 	bool bAntiAliasingEnabled;
 	int antiAliasingSamples;
+    int esRendererVersion;
 };
 
 
