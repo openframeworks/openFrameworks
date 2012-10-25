@@ -150,8 +150,9 @@ enum ofTargetPlatform{
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
 
-
-
+// don't need this for rpi any more
+//#include "glu.h"
+//#include "gluos.h"
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
