@@ -1,4 +1,5 @@
 #include "ofxSVG.h"
+#include "ofConstants.h"
 
 ofxSVG::~ofxSVG(){
 	paths.clear();
@@ -92,6 +93,8 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape){
 		path->setStrokeWidth(shape->stroke_width);
 		path->setStrokeHexColor(shape->stroke);
 	}
+
+	path->setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 
 	for(int i = 0; i < shape->path_length;){
 		if(p[i] == svgtiny_PATH_MOVE){
