@@ -22,31 +22,29 @@ void ofxSVG::load(string path){
 	svgtiny_code code = svgtiny_parse(diagram, buffer.getText().c_str(), size, path.c_str(), 0, 0);
 
 	if(code != svgtiny_OK){
-		fprintf(stderr, "svgtiny_parse failed: ");
+		ofLogError() << "svgtiny_parse failed: ";
 		switch(code){
 		 case svgtiny_OUT_OF_MEMORY:
-			 fprintf(stderr, "svgtiny_OUT_OF_MEMORY");
+			 ofLogError() << "svgtiny_OUT_OF_MEMORY";
 			 break;
 
 		 case svgtiny_LIBXML_ERROR:
-			 fprintf(stderr, "svgtiny_LIBXML_ERROR");
+			 ofLogError() << "svgtiny_LIBXML_ERROR";
 			 break;
 
 		 case svgtiny_NOT_SVG:
-			 fprintf(stderr, "svgtiny_NOT_SVG");
+			 ofLogError() << "svgtiny_NOT_SVG";
 			 break;
 
 		 case svgtiny_SVG_ERROR:
-			 fprintf(stderr, "svgtiny_SVG_ERROR: line %i: %s",
-					 diagram->error_line,
-					 diagram->error_message);
+			 ofLogError() << "svgtiny_SVG_ERROR: line " << diagram->error_line << ": " << diagram->error_message;
 			 break;
 
 		 default:
-			 fprintf(stderr, "unknown svgtiny_code %i", code);
+			 ofLogError() << "unknown svgtiny_code " << code;
 			 break;
 		}
-		fprintf(stderr, "\n");
+		ofLogError() << endl;
 	}
 
 	setupDiagram(diagram);
@@ -70,9 +68,8 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 		if(diagram->shape[i].path){
 			paths.push_back(ofPath());
 			setupShape(&diagram->shape[i],paths.back());
-		}
-		else if(diagram->shape[i].text){
-			printf("text: not implemented yet\n");
+		}else if(diagram->shape[i].text){
+			ofLogWarning() << "text: not implemented yet";
 		}
 	}
 }
@@ -94,7 +91,7 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 
 	path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 
-	for(int i = 0; (int)i < shape->path_length;){
+	for(int i = 0; i < (int)shape->path_length;){
 		if(p[i] == svgtiny_PATH_MOVE){
 			path.moveTo(p[i + 1], p[i + 2]);
 			i += 3;
@@ -115,7 +112,6 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 			i += 7;
 		}
 		else{
-			//cout << "error\n" << endl;
 			ofLogError() << "SVG parse error";
 			i += 1;
 		}
