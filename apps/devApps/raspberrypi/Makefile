@@ -7,7 +7,7 @@ SHELL =  /bin/sh
 
 OF_ROOT = ../../..
 
-LIBSPATH=linuxarmv6l
+LIBSPATH=linuxarmv6l-hf
 
 # USER_CFLAGS allows to pass custom flags to the compiler
 # for example search paths like:
