@@ -1,17 +1,17 @@
 /*==============================================================================
- 
+
  Copyright (c) 2011, 2012 Christopher Baker <http://christopherbaker.net>
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,21 +19,24 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
+ modified by Philip Whitfield (http://www.undef.ch)
+
  ==============================================================================*/
 
 #pragma once
 
 #include "ofAppBaseWindow.h"
+#include "ofBaseApp.h"
 
 class ofxRaspberryPiWindow: public ofAppBaseWindow {
 public:
-	ofAppBaseWindow(){};
-	~ofAppBaseWindow(){};
+	ofxRaspberryPiWindow(){};
+	virtual ~ofxRaspberryPiWindow(){};
 
-	void setupOpenGL(int w, int h, int screenMode) {}
+	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow() {}
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
+	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
 	void hideCursor() {}
 	void showCursor() {}
@@ -41,7 +44,7 @@ public:
 	void	setWindowPosition(int x, int y) {}
 	void	setWindowShape(int w, int h) {}
 
-	int		getFrameNum() { return 0; }
+	int		getFrameNum();
 	float	getFrameRate() {return 0; }
 	double  getLastFrameTime(){ return 0.0; }
 
@@ -54,8 +57,8 @@ public:
 	bool	doesHWOrientation(){return false;}
 
 	//this is used by ofGetWidth and now determines the window width based on orientation
-	int		getWidth(){ return 0; }
-	int		getHeight(){ return 0; }
+	int		getWidth();
+	int		getHeight();
 
 	void	setFrameRate(float targetRate){}
 	void	setWindowTitle(string title){}
