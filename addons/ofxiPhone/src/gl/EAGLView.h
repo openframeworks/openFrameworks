@@ -56,6 +56,7 @@
     BOOL bUseFSAA;
     BOOL bUseRetina;
     NSInteger fsaaSamples;
+    ESRendererVersion rendererVersion;
     
 	BOOL animating;
 	BOOL displayLinkSupported;
