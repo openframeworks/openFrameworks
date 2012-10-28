@@ -56,7 +56,7 @@
 }
 
 - (id) initWithFrame:(CGRect)frame
- andPreferedRenderer:(ESRendererVersion)rendererVersion
+ andPreferedRenderer:(ESRendererVersion)version
             andDepth:(bool)depth
                andAA:(bool)fsaaEnabled
        andNumSamples:(int)samples
@@ -64,6 +64,7 @@
 
 	if((self = [super initWithFrame:frame])) {
         
+        rendererVersion = version;
         bUseDepth = depth;
         bUseFSAA = fsaaEnabled;
         bUseRetina = retinaEnabled;
@@ -106,6 +107,8 @@
 				[self release];
 				return nil;
 			}
+            
+            rendererVersion = ESRendererVersion_11;
         }
 		
 		self.multipleTouchEnabled = true;
