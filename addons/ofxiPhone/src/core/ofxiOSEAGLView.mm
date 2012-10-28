@@ -9,6 +9,7 @@
 
 #import "ofMain.h"
 #import "ofAppiPhoneWindow.h"
+#import "ofGLES2Renderer.h"
 #import "ofxiPhoneApp.h"
 #import "ofxiOSExtensions.h"
 
@@ -44,6 +45,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
     if(self) {
         
         _instanceRef = self;
+        
+        if(rendererVersion == ESRendererVersion_20) {
+            ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer(false)));
+        } else if(rendererVersion == ESRendererVersion_11) {
+            ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+        }
         
         app = appPtr;
         activeTouches = [[NSMutableDictionary alloc] init];
@@ -145,6 +152,11 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     [self lockGL];
     [self startRender];
+    
+    ofBaseRenderer * currentRenderer = ofGetCurrentRenderer().get();
+    if(currentRenderer->getType() == "GLES2") {
+        ((ofGLES2Renderer *)currentRenderer)->startRender();
+    }
 
     glViewport(0, 0, windowSize->x, windowSize->y);
     
