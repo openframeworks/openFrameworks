@@ -47,8 +47,6 @@ ofGLES2Renderer::ofGLES2Renderer(bool useShapeColor){
     program = 0;
     vertShader = 0;
     fragShader = 0;
-    
-    loadShaders();
 }
 
 ofGLES2Renderer::~ofGLES2Renderer() {

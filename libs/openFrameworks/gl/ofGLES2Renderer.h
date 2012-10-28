@@ -15,6 +15,7 @@ public:
     
 	string getType(){ return "GLES2"; }
     
+    bool loadShaders();
     void startRender();
     void finishRender();
 
@@ -123,7 +124,6 @@ public:
     
 private:
     //---------------------------------------------------------- SHADERS.
-    bool loadShaders();
     GLint compileShader(GLuint *shader, GLenum type, GLsizei count, string file);
     GLint linkProgram(GLuint prog);
     GLint validateProgram(GLuint prog);

@@ -35,8 +35,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
+    
+    ESRendererVersion version = ESRendererVersion_11;
+    if(ofGetCurrentRenderer()->getType() == "GLES2") {
+        version = ESRendererVersion_20;
+    }
+    
     self = [self initWithFrame:frame
-           andPreferedRenderer:(ESRendererVersion)ofAppiPhoneWindow::getInstance()->getRendererVersion()
+           andPreferedRenderer:version
                       andDepth:ofAppiPhoneWindow::getInstance()->isDepthBufferEnabled()
                          andAA:ofAppiPhoneWindow::getInstance()->isAntiAliasingEnabled()
                  andNumSamples:ofAppiPhoneWindow::getInstance()->getAntiAliasingSampleCount()
@@ -47,9 +53,16 @@ static ofxiOSEAGLView * _instanceRef = nil;
         _instanceRef = self;
         
         if(rendererVersion == ESRendererVersion_20) {
-            ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer(false)));
+            if(ofGetCurrentRenderer()->getType() == "GLES2") {
+                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->loadShaders();
+            } else {
+                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer(false)));
+                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->loadShaders();
+            }
         } else if(rendererVersion == ESRendererVersion_11) {
-            ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+            if(ofGetCurrentRenderer()->getType() != "GL") {
+                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+            }
         }
         
         app = appPtr;
