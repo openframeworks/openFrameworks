@@ -5,9 +5,6 @@
 # setup the shell
 SHELL = /bin/sh
 
-# call the platform utility to determine the current platform specific variables
-include Makefile.platform.utility
-
 # construct the relative path variables
 OF_CORE_LIB_PATH=../../lib/$(LIBSPATH)
 OF_LIBS_DIR=../../..
