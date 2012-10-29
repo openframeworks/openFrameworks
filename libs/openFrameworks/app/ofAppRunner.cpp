@@ -106,10 +106,10 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_OF_IPHONE
 		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
-	#elif defined TARGET_ANDROID
+	#elif TARGET_ANDROID
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
-	#ifdef TARGET_OF_RASPBERRY_PI
-		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
+	#elif TARGET_RASPBERRY_PI
+		window = ofPtr<ofAppBaseWindow>(new ofAppRaspberryPiWindow());
 	#else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#endif
