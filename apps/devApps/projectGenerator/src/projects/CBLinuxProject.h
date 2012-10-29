@@ -18,7 +18,8 @@ public:
 
 	enum Arch{
 		Linux,
-		Linux64
+		Linux64,
+        LinuxArmv6l
 	};
 
     void setup();

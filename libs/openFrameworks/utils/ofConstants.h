@@ -20,7 +20,7 @@ enum ofTargetPlatform{
 	OF_TARGET_ANDROID,
 	OF_TARGET_LINUX,
 	OF_TARGET_LINUX64,
-	OF_TARGET_LINUXARMV6L,
+	OF_TARGET_LINUXARMV6L, // arm v6 little endian
 };
 
 // Cross-platform deprecation warning
