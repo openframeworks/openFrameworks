@@ -80,7 +80,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS=
 # PLATFORM ARCHITECTURE
 #   If not defined here the platform architecture will be determined using (uname -m)
 ##########################################################################################
-PLATFORM_ARCH=armv6l-hf
+PLATFORM_ARCH=armv6l
 
 ##########################################################################################
 # PLATFORM OS
@@ -93,7 +93,7 @@ PLATFORM_OS=
 #   This the the path within the (libs/) folders where the platform-specific library 
 #   will live.  For example, 64-bit linux will be (linux64), 32-bit linux will be (linux)
 ##########################################################################################
-PLATFORM_LIBS_PATH=linuxarmv6l-hf
+PLATFORM_LIBS_PATH=
 
 ##########################################################################################
 # PLATFORM CORE SOURCE EXCLUSIONS

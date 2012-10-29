@@ -29,6 +29,8 @@ ifndef PLATFORM_LIBS_PATH
     ifeq ($(OS),Linux)
         ifeq ($(ARCH),x86_64)
             LIBSPATH=linux64
+        else ifeq ($(ARCH),armv6l)
+            LIBSPATH=linuxarmv6l
         else ifeq ($(ARCH),i386)
             LIBSPATH=linux
         else
