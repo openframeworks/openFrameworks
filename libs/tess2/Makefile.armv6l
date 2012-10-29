@@ -1,7 +1,12 @@
+DEFINES=-DTARGET_OPENGLES
+DEFINES+=-DTARGET_OPENGLES2
 CC=gcc
-CFLAGS=-I./include
+
+CFLAGS=$(DEFINES)
+CFLAGS+=-I./include
+
 LIB=libtess2.a
-LIBDEST=./lib/linuxarmv6l/
+LIBDEST=./lib/linuxarmv6l-hf/
 SRC=./Sources
 
 LIBSRC= $(SRC)/bucketalloc.c $(SRC)/dict.c $(SRC)/geom.c $(SRC)/mesh.c $(SRC)/priorityq.c $(SRC)/sweep.c $(SRC)/tess.c 
