@@ -2,3 +2,30 @@
 #gcc -dM -E - < /dev/null | grep ARM
 #http://elinux.org/RPi_VideoCore_APIs
 
+
+
+pi@raspberrypi ~/openFrameworks/libs/tess2 $ gcc -v
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/arm-linux-gnueabihf/4.6/lto-wrapper
+Target: arm-linux-gnueabihf
+Configured with: ../src/configure -v --with-pkgversion='Debian 4.6.3-8+rpi1' --with-bugurl=file:///usr/share/doc/gcc-4.6/README.Bugs --enable-languages=c,c++,fortran,objc,obj-c++ --prefix=/usr --program-suffix=-4.6 --enable-shared --enable-linker-build-id --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.6 --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --enable-gnu-unique-object --enable-plugin --enable-objc-gc --disable-sjlj-exceptions --with-arch=armv6 --with-fpu=vfp --with-float=hard --enable-checking=release --build=arm-linux-gnueabihf --host=arm-linux-gnueabihf --target=arm-linux-gnueabihf
+Thread model: posix
+gcc version 4.6.3 (Debian 4.6.3-8+rpi1) 
+
+Raspberry Pi given to us
+#define __ARMEL__ 1
+#define __ARM_PCS_VFP 1
+#define __ARM_ARCH_6__ 1
+#define __ARM_EABI__ 1
+#define __ARM_FEATURE_DSP 1
+
+
+#define __linux 1
+#define __linux__ 1
+#define __gnu_linux__ 1
+#define linux 1
+
+
+Tests
+http://wiki.debian.org/ArmEabiPort
