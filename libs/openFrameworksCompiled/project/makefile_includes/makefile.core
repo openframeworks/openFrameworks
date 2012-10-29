@@ -163,6 +163,10 @@ CFLAGS+=-Wall -fexceptions
 # add the include cflags
 CFLAGS+=$(INCLUDES_CFLAGS) 
 
+
+$(info OBJ=OUTPUT_PATH=$(OBJ_OUTPUT_PATH))
+
+
 ##########################################################################################
 # COMPILER OPTIMIZATIONS and TARGET MAKING
 ##########################################################################################
