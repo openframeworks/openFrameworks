@@ -29,7 +29,7 @@ ifndef PLATFORM_LIBS_PATH
         else
             $(error This makefile does not support your architecture.)
         endif
-    else ifeq ($KERNEL),Darwin)
+    else ifeq ($(OS),Darwin)
         LIBSPATH=osx
     else
         $(error This makefile does not support your operating system.)
