@@ -157,6 +157,12 @@ int32_t success = 0;
    ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer));
 }
 
+void ofxRaspberryPiWindow::initializeWindow() {
+
+}
+
+
+
 void ofxRaspberryPiWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	appPtr->setup();
 	while (true){
@@ -186,3 +192,55 @@ void ofxRaspberryPiWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 int	ofxRaspberryPiWindow::getWidth(){ return screen_width; }
 int	ofxRaspberryPiWindow::getHeight(){ return screen_height; }
 int ofxRaspberryPiWindow::getFrameNum(){return nFrameCount; }
+
+bool ofxRaspberryPiWindow::_getMouse() {
+    static int fd = -1;
+    const int width=state->screen_width, height=state->screen_height;
+    static int x=800, y=400;
+    const int XSIGN = 1<<4, YSIGN = 1<<5;
+    if (fd<0) {
+       fd = open("/dev/input/mouse0",O_RDONLY|O_NONBLOCK);
+    }
+    if (fd>=0) {
+        struct {char buttons, dx, dy; } m;
+        while (1) {
+           int bytes = read(fd, &m, sizeof m);
+           if (bytes < (int)sizeof m) goto _exit;
+           if (m.buttons&8) {
+              break; // This bit should always be set
+           }
+           read(fd, &m, 1); // Try to sync up again
+        }
+        if (m.buttons&3)
+           return m.buttons&3;
+        x+=m.dx;
+        y+=m.dy;
+        if (m.buttons&XSIGN)
+           x-=256;
+        if (m.buttons&YSIGN)
+           y-=256;
+        if (x<0) x=0;
+        if (y<0) y=0;
+        if (x>width) x=width;
+        if (y>height) y=height;
+   }
+_exit:
+   if (outx) *outx = x;
+   if (outy) *outy = y;
+   return 0;
+
+}
+
+bool ofxRaspberryPiWindow::_getKeyboard() {
+
+
+}
+
+
+
+
+
+
+
+
+

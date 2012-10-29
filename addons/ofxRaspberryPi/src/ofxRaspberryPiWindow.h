@@ -35,7 +35,7 @@ public:
 	virtual ~ofxRaspberryPiWindow(){};
 
 	void setupOpenGL(int w, int h, int screenMode);
-	void initializeWindow() {}
+	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
 	void hideCursor() {}
@@ -70,4 +70,10 @@ public:
 
 	void	enableSetupScreen(){}
 	void	disableSetupScreen(){}
+	
+	
+protected:
+
+    void _getMouse();
+    void _getKeyboard();
 };
