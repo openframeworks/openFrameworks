@@ -108,6 +108,8 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
 	#elif defined TARGET_ANDROID
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
+	#ifdef TARGET_OF_RASPBERRY_PI
+		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#endif
@@ -115,8 +117,8 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 	ofSetupOpenGL(window,w,h,screenMode);
 }
 
-//----------------------- 	gets called when the app exits
-// 							currently looking at who to turn off
+//-----------------------	gets called when the app exits
+//							currently looking at who to turn off
 //							at the end of the application
 
 void ofExitCallback(){
@@ -131,7 +133,7 @@ void ofExitCallback(){
 	#endif
 	
 	// try to close quicktime, for non-linux systems:
-	#if defined( OF_VIDEO_CAPTURE_QUICKTIME ) || defined( OF_VIDEO_PLAYER_QUICKTIME)
+	#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
 	closeQuicktime();
 	#endif
 
@@ -169,7 +171,6 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 								// remain high res, that could mess things
 								// up on your system.
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
-
 	#endif
 
 	window->initializeWindow();
@@ -178,7 +179,6 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 	ofResetElapsedTimeCounter();
 
 	window->runAppViaInfiniteLoop(OFSAptr.get());
-
 
 }
 
@@ -213,7 +213,6 @@ double ofGetLastFrameTime(){
 
 //--------------------------------------
 void ofSetFrameRate(int targetRate){
-
 	window->setFrameRate(targetRate);
 }
 
@@ -346,9 +345,13 @@ void ofSetVerticalSync(bool bSync){
 	#ifdef TARGET_WIN32
 	//----------------------------
 		if (bSync) {
-			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+			if (WGL_EXT_swap_control) {
+				wglSwapIntervalEXT (1);
+			}
 		} else {
-			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+			if (WGL_EXT_swap_control) {
+				wglSwapIntervalEXT (0);
+			}
 		}
 	//----------------------------
 	#endif
@@ -366,27 +369,25 @@ void ofSetVerticalSync(bool bSync){
 	//--------------------------------------
 	#ifdef TARGET_LINUX
 	//--------------------------------------
-    
-        #ifndef TARGET_NO_X11
-            void (*swapIntervalExt)(Display *,GLXDrawable, int)  = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
-            if(swapIntervalExt){
-                Display *dpy = glXGetCurrentDisplay();
-                GLXDrawable drawable = glXGetCurrentDrawable();
-                if (drawable) {
-                    swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
-                    return;
-                }
-            }
-            void (*swapInterval)(int)  = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-            if(!swapInterval)
-                swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
-
-            if(swapInterval)
-                swapInterval(bSync ? 1 : 0);
-        #endif
-
+		#ifndef TARGET_NO_X11
+			void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+			if(swapIntervalExt){
+				Display *dpy = glXGetCurrentDisplay();
+				GLXDrawable drawable = glXGetCurrentDrawable();
+				if (drawable) {
+					swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+					return;
+				}
+			}
+			void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+			if(!swapInterval) {
+				swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+			}
+			if(swapInterval) {
+				swapInterval(bSync ? 1 : 0);
+			}
+			#endif
 	//--------------------------------------
 	#endif
 	//--------------------------------------
-
 }
