@@ -8,17 +8,26 @@
 ##########################################################################################
 # PLATFORM CXX
 ##########################################################################################
-PLATFORM_CXX=
+
+#PLATFORM_CXX=
 
 ##########################################################################################
 # PLATFORM DEFINES
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
 PLATFORM_DEFINES=
+
+# defines used inside openFrameworks libs.
 PLATFORM_DEFINES+=TARGET_NO_SOUND 
 PLATFORM_DEFINES+=TARGET_NO_GLUT 
 PLATFORM_DEFINES+=TARGET_NO_GLU 
-PLATFORM_DEFINES+=TARGET_OPENGLES TARGET_OPENGLES2 TARGET_RASPBERRY_PI TARGET_NO_X11 STANDALONE 
+PLATFORM_DEFINES+=TARGET_NO_X11 
+PLATFORM_DEFINES+=TARGET_OPENGLES 
+PLATFORM_DEFINES+=TARGET_OPENGLES2 
+PLATFORM_DEFINES+=TARGET_RASPBERRY_PI 
+
+# from raspberry pi examples
+PLATFORM_DEFINES+=STANDALONE 
 PLATFORM_DEFINES+=PIC 
 PLATFORM_DEFINES+=_REENTRANT 
 PLATFORM_DEFINES+=_LARGEFILE64_SOURCE 
@@ -35,19 +44,17 @@ PLATFORM_DEFINES+=HAVE_LIBBCM_HOST
 PLATFORM_DEFINES+=USE_EXTERNAL_LIBBCM_HOST 
 PLATFORM_DEFINES+=USE_VCHIQ_ARM 
 
-
 ##########################################################################################
 # PLATFORM OPTIMIZATION FLAGS
 #   -use full cflag style flags here (i.e. -march=native, etc)
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
-PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED=-march=armv6 -mfpu=vfp -mfloat-abi=hard 
 
-# this is to remove the "note: the mangling of 'va_list' has changed in GCC 4.4" warnings
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED=-march=armv6 -mfpu=vfp -mfloat-abi=hard 
 PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-fPIC -ftree-vectorize -Wno-psabi -pipe 
 
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE=
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG=
+#PLATFORM_OPTIMIZATION_CFLAGS_RELEASE=
+#PLATFORM_OPTIMIZATION_CFLAGS_DEBUG=
 
 
 ##########################################################################################
@@ -58,6 +65,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG=
 #   Simply use space delimited paths.
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
+
 PLATFORM_HEADER_SEARCH_PATHS=
 # Broadcom hardware interface library
 PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include 
@@ -72,28 +80,48 @@ PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/interface/vcos/pthreads
 #   Simply use space delimited paths.
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
+
 PLATFORM_LIBRARY_SEARCH_PATHS=
-#USER_LIBRARY_SEARCH_PATHS += -L/opt/vc/lib
-#USER_LIBRARIES += -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm
+PLATFORM_LIBRARY_SEARCH_PATHS+=/opt/vc/lib 
+
+##########################################################################################
+# PLATFORM LIBRARIES
+#   These are special libraries assocated with the above header search paths
+#   Do not use full flag syntax, that will be added automatically later
+#   These paths are ABSOLUTE.
+#   Simply use space delimited paths.
+#   !!!ALWAYS USE TRAILING SPACES!!!
+##########################################################################################
+
+PLATFORM_LIBRARIES=
+PLATFORM_LIBRARIES+=GLESv2 
+PLATFORM_LIBRARIES+=EGL 
+PLATFORM_LIBRARIES+=openmaxil 
+PLATFORM_LIBRARIES+=bcm_host 
+PLATFORM_LIBRARIES+=vcos 
+PLATFORM_LIBRARIES+=vchiq_arm 
  
 ##########################################################################################
 # PLATFORM ARCHITECTURE
 #   If not defined here the platform architecture will be determined using (uname -m)
 ##########################################################################################
-PLATFORM_ARCH=armv6l
+
+#PLATFORM_ARCH=
 
 ##########################################################################################
 # PLATFORM OS
 #   If not defined here the platform kernel will be determined using (uname -s)
 ##########################################################################################
-PLATFORM_OS=
+
+#PLATFORM_OS=
 
 ##########################################################################################
 # PLATFORM LIBS PATH
 #   This the the path within the (libs/) folders where the platform-specific library 
 #   will live.  For example, 64-bit linux will be (linux64), 32-bit linux will be (linux)
 ##########################################################################################
-PLATFORM_LIBS_PATH=
+
+#PLATFORM_LIBS_PATH=
 
 ##########################################################################################
 # PLATFORM CORE SOURCE EXCLUSIONS
@@ -103,48 +131,12 @@ PLATFORM_LIBS_PATH=
 #   These relative paths will be fully qualified later.
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
-# add folders or single files to exclude fromt he compiled lib
-#PLATFORM_CORE_SOURCE_EXCLUSIONS=
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/3d 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/3d/of3dUtils.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/3d/ofCamera.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/3d/ofEasyCam.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/3d/ofNode.cpp 
 
-
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/app 
+PLATFORM_CORE_SOURCE_EXCLUSIONS=
 PLATFORM_CORE_SOURCE_EXCLUSIONS+=/app/ofAppGlutWindow.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/communication 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/events 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/gl 
 PLATFORM_CORE_SOURCE_EXCLUSIONS+=/gl/ofFbo.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofTessellator.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofBitmapFont.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofCairoRenderer.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofGraphics.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofTrueTypeFont.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofPixels.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofImage.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofPolyline.cpp 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics/ofPath.cpp 
-
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/graphics 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/math 
 PLATFORM_CORE_SOURCE_EXCLUSIONS+=/sound 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/text 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/types 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/types/ofColor.cpp
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/types/ofPoint.cpp
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/types/ofRectangle.cpp
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/utils 
-PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video/ofDirectShow 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video/ofQTKit 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video/ofGstVideo 
-#PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video/ofQuickTime 
-
-
- 
+PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video 
 
 ##########################################################################################
 # PLATFORM CORE SOURCE INCLUSIONS
@@ -153,7 +145,8 @@ PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video
 #   These relative paths will be fully qualified later.
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
-PLATFORM_CORE_SOURCE_INCLUSIONS=
+
+#PLATFORM_CORE_SOURCE_INCLUSIONS=
 
 ##########################################################################################
 # PLATFORM CORE LIB HEADER EXCLUSIONS
@@ -163,18 +156,14 @@ PLATFORM_CORE_SOURCE_INCLUSIONS=
 #   These relative paths will be fully qualified later.
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
+
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS=
-#PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+= /tess2
-#PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/kiss 
-#PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/FreeImage 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/portaudio 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/rtAudio 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/assimp 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/glu 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/videoInput 
-#PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/freetype 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/fmodex 
-#PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/cairo 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/poco/include/Poco 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/poco/include/CppUnit 
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS+=/quicktime 
