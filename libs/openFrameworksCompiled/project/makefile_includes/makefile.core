@@ -7,7 +7,6 @@ SHELL = /bin/sh
 
 # construct the relative path variables
 
-
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
     $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
