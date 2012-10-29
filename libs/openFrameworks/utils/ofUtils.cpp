@@ -714,10 +714,15 @@ string ofSystem(string command){
 //--------------------------------------------------
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
-	if(ofSystem("uname -m").find("x86_64")==0)
+    string arch = ofSystem("uname -m");
+    
+	if(Poco::icompare(arch,"x86_64")==0) {
 		return OF_TARGET_LINUX64;
-	else
+    if(Poco::icompare(arch,"armv6l")==0) {
+        return OF_TARGET_LINUXARMV6L;
+	} else {
 		return OF_TARGET_LINUX;
+    }
 #elif defined(TARGET_OSX)
 	return OF_TARGET_OSX;
 #elif defined(TARGET_WIN32)
