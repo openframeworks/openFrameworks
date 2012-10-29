@@ -88,32 +88,6 @@ ifdef MAKEFILE_DEBUG
 endif
 
 ##########################################################################################
-# DEFINES
-##########################################################################################
-
-# add any user defines to the core defines
-CORE_DEFINES=$(USER_DEFINES) 
-#CORE_DEFINES+=
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info --CORE_DEFINES-- )
-    $(foreach v, $(CORE_DEFINES),$(info $(v)))
-    $(info -------- )
-endif
-
-
-# bring all defines together, and add flags -D
-DEFINES=$(addprefix -D,$(CORE_DEFINES))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info --DEFINES-- )
-    $(foreach v, $(DEFINES),$(info $(v)))
-    $(info -------- )
-endif
-
-##########################################################################################
 # INCLUDES
 ##########################################################################################
 
@@ -164,10 +138,20 @@ endif
 ##########################################################################################
 
 # this is the space delimited list of defines
-ALL_DEFINES=$(PLATFORM_DEFINES)
+ALL_DEFINES=
+ALL_DEFINES+=$(USER_DEFINES) 
+ALL_DEFINES+=$(PLATFORM_DEFINES)
 
 # this is the list of flags with -DDEFINE_NAME
 DEFINES=$(addprefix -D,$(ALL_DEFINES))
+
+# print debug information if needed
+ifdef MAKEFILE_DEBUG
+    $(info --DEFINES-- )
+    $(foreach v, $(DEFINES),$(info $(v)))
+    $(info -------- )
+endif
+
 
 ##########################################################################################
 # CFLAGS
