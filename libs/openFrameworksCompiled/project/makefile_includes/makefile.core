@@ -5,14 +5,15 @@
 # setup the shell
 SHELL = /bin/sh
 
-# construct the relative path variables
 
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
+    $(info =============================config.paths=====================================)
     $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
-    $(info OF_SRC_LIB=$(OF_SRC_LIB))
-endif
+    $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
+    $(info OF_LIBS_CORE_PATH=$(OF_LIBS_CORE_PATH))
+    $(info OF_EXPORT_PATH=$(OF_EXPORT_PATH))
+    $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
+    $(info OF_APPS_PATH=$(OF_APPS_PATH))
+
 
 ##########################################################################################
 # SOURCE FILES
@@ -24,10 +25,10 @@ CORE_SOURCE_EXCLUSIONS=$(PLATFORM_CORE_SOURCE_EXCLUSIONS)
 #CORE_SOURCE_EXCLUSIONS+=
 
 # strip and collapse spaces, and add the % suffix to allow directory wildcard matching
-FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_SRC_LIB),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
+FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_LIBS_CORE_PATH),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
 
 # find all of the source directories, exclude all . (dot-hidden) files/folders
-ALL_CORE_SOURCE_PATHS=$(shell find $(OF_SRC_LIB) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
+ALL_CORE_SOURCE_PATHS=$(shell find $(OF_LIBS_CORE_PATH) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
@@ -91,7 +92,7 @@ endif
 # create our core include paths from the source directory paths, 
 # these have already been filtered and processed according to rules.
 # plus the root so that we don't miss the ofMain.h.
-CORE_HEADER_PATHS=$(OF_SRC_LIB) $(FILTERED_CORE_SOURCE_PATHS) 
+CORE_HEADER_PATHS=$(OF_LIBS_CORE_PATH) $(FILTERED_CORE_SOURCE_PATHS) 
 
 
 # add folders or single files to exclude fromt he compiled lib

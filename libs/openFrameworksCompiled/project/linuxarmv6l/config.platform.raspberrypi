@@ -146,7 +146,7 @@ PLATFORM_CORE_SOURCE_EXCLUSIONS+=/video
 #   !!!ALWAYS USE TRAILING SPACES!!!
 ##########################################################################################
 
-#PLATFORM_CORE_SOURCE_INCLUSIONS=
+PLATFORM_CORE_SOURCE_INCLUSIONS=
 
 ##########################################################################################
 # PLATFORM CORE LIB HEADER EXCLUSIONS

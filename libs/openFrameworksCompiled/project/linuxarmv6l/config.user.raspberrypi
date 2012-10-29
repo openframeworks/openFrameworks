@@ -11,6 +11,3 @@ USER_HEADER_SEARCH_PATHS=
 USER_LIBRARY_SEARCH_PATHS=
 USER_LIBRARIES=
 USER_CFLAGS=
-
-# output debug information during make file execution
-MAKEFILE_DEBUG=1
