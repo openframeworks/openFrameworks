@@ -12,9 +12,9 @@ OF_SRC_LIB=$(OF_LIBS_DIR)/openFrameworks
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
-	$(info OF_LIBS_DIR=$(OF_LIBS_DIR))
-	$(info OF_SRC_LIB=$(OF_SRC_LIB))
+    $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
+    $(info OF_LIBS_DIR=$(OF_LIBS_DIR))
+    $(info OF_SRC_LIB=$(OF_SRC_LIB))
 endif
 
 ##########################################################################################
@@ -34,9 +34,9 @@ ALL_CORE_SOURCE_PATHS=$(shell find $(OF_SRC_LIB) -maxdepth 1 -mindepth 1 -type d
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info --ALL_CORE_SOURCE_PATHS-- )
-	$(foreach v, $(ALL_CORE_SOURCE_PATHS),$(info $(v)))
-	$(info -------- )
+    $(info --ALL_CORE_SOURCE_PATHS-- )
+    $(foreach v, $(ALL_CORE_SOURCE_PATHS),$(info $(v)))
+    $(info -------- )
 endif
 
 # filter out all excluded files / folders that were defined above
@@ -46,9 +46,9 @@ FILTERED_CORE_SOURCE_PATHS=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info --FILTERED_CORE_SOURCE_PATHS-- )
-	$(foreach v, $(FILTERED_CORE_SOURCE_PATHS),$(info $(v)))
-	$(info -------- )
+    $(info --FILTERED_CORE_SOURCE_PATHS-- )
+    $(foreach v, $(FILTERED_CORE_SOURCE_PATHS),$(info $(v)))
+    $(info -------- )
 endif
 
 # search the directories in the source folders for all .cpp files
@@ -59,9 +59,9 @@ SOURCES=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCE
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info --SOURCES TO COMPILE-- )
-	$(foreach v, $(SOURCES),$(info $(v)))
-	$(info -------- )
+    $(info --SOURCES TO COMPILE-- )
+    $(foreach v, $(SOURCES),$(info $(v)))
+    $(info -------- )
 endif
 
 ##TODO: add platform inclusions here
@@ -82,9 +82,9 @@ OBJFILES=$(patsubst $(OF_LIBS_DIR)/%.cpp,%.o,$(SOURCES))
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info --OBJFILES-- )
-	$(foreach v, $(OBJFILES),$(info $(v)))
-	$(info -------- )
+    $(info --OBJFILES-- )
+    $(foreach v, $(OBJFILES),$(info $(v)))
+    $(info -------- )
 endif
 
 ##########################################################################################
@@ -92,17 +92,25 @@ endif
 ##########################################################################################
 
 # add any user defines to the core defines
-CORE_DEFINES=
-CORE_DEFINES+=$USER_DEFINES 
-
-# bring all defines together, and add flags -D
-DEFINES=$(addprefix -D,$(CORE_DEFINES));
+CORE_DEFINES=$(USER_DEFINES) 
+#CORE_DEFINES+=
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info --DEFINES-- )
-	$(foreach v, $(DEFINES),$(info $(v)))
-	$(info -------- )
+    $(info --CORE_DEFINES-- )
+    $(foreach v, $(CORE_DEFINES),$(info $(v)))
+    $(info -------- )
+endif
+
+
+# bring all defines together, and add flags -D
+DEFINES=$(addprefix -D,$(CORE_DEFINES))
+
+# print debug information if needed
+ifdef MAKEFILE_DEBUG
+    $(info --DEFINES-- )
+    $(foreach v, $(DEFINES),$(info $(v)))
+    $(info -------- )
 endif
 
 ##########################################################################################
@@ -119,9 +127,9 @@ CORE_HEADER_PATHS=$(OF_SRC_LIB) $(FILTERED_CORE_SOURCE_PATHS)
 UNFILTERED_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_DIR)/*/include -type d \( ! -name ".*" \))
 
 ifdef MAKEFILE_DEBUG
-	$(info --UNFILTERED_THIRDPARTY_HEADER_PATHS-- )
-	$(foreach v, $(UNFILTERED_THIRDPARTY_HEADER_PATHS),$(info $(v)))
-	$(info -------- )
+    $(info --UNFILTERED_THIRDPARTY_HEADER_PATHS-- )
+    $(foreach v, $(UNFILTERED_THIRDPARTY_HEADER_PATHS),$(info $(v)))
+    $(info -------- )
 endif
 
 THIRDPARTY_HEADER_EXCLUSIONS=$(PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS)
@@ -131,9 +139,9 @@ THIRDPARTY_HEADER_EXCLUSIONS=$(PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS)
 CLEANED_THIRDPARTY_HEADER_EXCLUSIONS=$(addprefix $(OF_LIBS_DIR),$(addsuffix %,$(strip $(THIRDPARTY_HEADER_EXCLUSIONS))))
 
 ifdef MAKEFILE_DEBUG
-	$(info --CLEANED_THIRDPARTY_HEADER_EXCLUSIONS-- )
-	$(foreach v, $(CLEANED_THIRDPARTY_HEADER_EXCLUSIONS),$(info $(v)))
-	$(info -------- )
+    $(info --CLEANED_THIRDPARTY_HEADER_EXCLUSIONS-- )
+    $(foreach v, $(CLEANED_THIRDPARTY_HEADER_EXCLUSIONS),$(info $(v)))
+    $(info -------- )
 endif
 
 # filter out all excluded files / folders that were defined above
@@ -145,9 +153,9 @@ INCLUDES_CFLAGS =$(addprefix -I,$(ALL_HEADER_PATHS))
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info --INCLUDES_CFLAGS-- )
-	$(foreach v, $(INCLUDES_CFLAGS),$(info $(v)))
-	$(info -------- )
+    $(info --INCLUDES_CFLAGS-- )
+    $(foreach v, $(INCLUDES_CFLAGS),$(info $(v)))
+    $(info -------- )
 endif
 
 # ADD THE INCLUDES TO THE CFLAGS
@@ -159,7 +167,7 @@ endif
 ALL_DEFINES=$(PLATFORM_DEFINES)
 
 # this is the list of flags with -DDEFINE_NAME
-DEFINES = $(addprefix -D,$(ALL_DEFINES))
+DEFINES=$(addprefix -D,$(ALL_DEFINES))
 
 ##########################################################################################
 # CFLAGS

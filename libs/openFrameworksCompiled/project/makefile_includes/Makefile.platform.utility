@@ -1,6 +1,9 @@
+# setup the shell
+SHELL = /bin/sh
+
 ifndef PLATFORM_OS 
     # determine from the uname
-    OS=$(shell uname -a)
+    OS=$(shell uname -s)
 else 
     # obey the platform override
     OS=$(PLATFORM_OS)
