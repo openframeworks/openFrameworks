@@ -1,0 +1,14 @@
+# change this path, if you are in a non standard directory
+MAKEFILE_INCLUDES_PATH=../makefile_includes
+
+# call the core.user file
+include config.user.osx
+
+# call the platform specific makefile
+include config.platform.osx
+
+# call the platform utility to determine the current platform specific variables
+include $(MAKEFILE_INCLUDES_PATH)/Makefile.platform.utility
+
+# call the shared core makefile
+include $(MAKEFILE_INCLUDES_PATH)/Makefile.core

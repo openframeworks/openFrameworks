@@ -6,14 +6,12 @@
 SHELL = /bin/sh
 
 # construct the relative path variables
-OF_CORE_LIB_PATH=../../lib/$(LIBSPATH)
-OF_LIBS_DIR=../../..
-OF_SRC_LIB=$(OF_LIBS_DIR)/openFrameworks
+
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
     $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
-    $(info OF_LIBS_DIR=$(OF_LIBS_DIR))
+    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
     $(info OF_SRC_LIB=$(OF_SRC_LIB))
 endif
 
@@ -71,14 +69,14 @@ endif
 ##########################################################################################
 
 OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
-DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_LIBS_DIR)/%.cpp,%.d,$(SOURCES)))
+DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_LIBS_PATH)/%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
 
 
 #$(patsubst pattern,replacement,text)
 #Finds whitespace-separated words in text that match pattern and replaces them with replacement
-# this will remove the $(OF_LIBS_DIR) and produce
-OBJFILES=$(patsubst $(OF_LIBS_DIR)/%.cpp,%.o,$(SOURCES))
+# this will remove the $(OF_LIBS_PATH) and produce
+OBJFILES=$(patsubst $(OF_LIBS_PATH)/%.cpp,%.o,$(SOURCES))
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
@@ -98,7 +96,7 @@ CORE_HEADER_PATHS=$(OF_SRC_LIB) $(FILTERED_CORE_SOURCE_PATHS)
 
 
 # add folders or single files to exclude fromt he compiled lib
-UNFILTERED_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_DIR)/*/include -type d \( ! -name ".*" \))
+UNFILTERED_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_PATH)/*/include -type d \( ! -name ".*" \))
 
 ifdef MAKEFILE_DEBUG
     $(info --UNFILTERED_THIRDPARTY_HEADER_PATHS-- )
@@ -110,7 +108,7 @@ THIRDPARTY_HEADER_EXCLUSIONS=$(PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS)
 # add more here?
 
 # strip and collapse spaces, and add the % suffix to allow directory matching
-CLEANED_THIRDPARTY_HEADER_EXCLUSIONS=$(addprefix $(OF_LIBS_DIR),$(addsuffix %,$(strip $(THIRDPARTY_HEADER_EXCLUSIONS))))
+CLEANED_THIRDPARTY_HEADER_EXCLUSIONS=$(addprefix $(OF_LIBS_PATH),$(addsuffix %,$(strip $(THIRDPARTY_HEADER_EXCLUSIONS))))
 
 ifdef MAKEFILE_DEBUG
     $(info --CLEANED_THIRDPARTY_HEADER_EXCLUSIONS-- )
