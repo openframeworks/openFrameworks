@@ -5,48 +5,8 @@
 # setup the shell
 SHELL = /bin/sh
 
-ifndef PLATFORM_OS 
-    # determine from the uname
-    OS=$(shell uname -a)
-else 
-    # obey the platform override
-    OS=$(PLATFORM_OS)
-endif 
-
-$(info $(OS))
-
-
-ifndef PLATFORM_ARCH
-    # determine from the uname
-    ARCH=$(shell uname -m)
-else
-    # obey the platform override
-    ARCH=$(PLATFORM_ARCH)
-endif
-
-ifndef PLATFORM_LIBS_PATH
-    # determine from the arch
-    ifeq ($(OS),Linux)
-        ifeq ($(ARCH),x86_64)
-            LIBSPATH=linux64
-        else ifeq ($(ARCH),armv6l)
-            LIBSPATH=linuxarmv6l
-        else ifeq ($(ARCH),i386)
-            LIBSPATH=linux
-        else
-           $(error This makefile does not support your architecture.)
-        endif
-    else ifeq ($KERNEL),Darwin)
-        LIBSPATH=osx
-    else
-        $(error This makefile does not support your operating system.)
-    endif
-else
-    LIBSPATH=$(PLATFORM_LIBS_PATH)
-endif
-
-$(info Building for ARCH=$(ARCH));
-$(info Libspath=$(LIBSPATH));
+# call the platform utility to determine the current platform specific variables
+include Makefile.platform.utility
 
 # construct the relative path variables
 OF_CORE_LIB_PATH=../../lib/$(LIBSPATH)

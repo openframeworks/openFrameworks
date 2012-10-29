@@ -1,0 +1,11 @@
+# change this path, if you are in a non standard directory
+MAKEFILE_INCLUDES_PATH=../makefile_includes
+
+# call the core.user file
+include Makefile.user.raspberrypi
+
+# call the platform specific makefile
+include Makefile.platform.raspberrypi
+
+# call the shared core makefile
+include $(MAKEFILE_INCLUDES_PATH)/Makefile.core
