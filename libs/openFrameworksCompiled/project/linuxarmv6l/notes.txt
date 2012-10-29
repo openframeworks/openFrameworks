@@ -2,6 +2,8 @@
 #gcc -dM -E - < /dev/null | grep ARM
 #http://elinux.org/RPi_VideoCore_APIs
 
+if __ARM_PCS_VFP is defined, then we know it is armhf
+
 
 
 pi@raspberrypi ~/openFrameworks/libs/tess2 $ gcc -v
