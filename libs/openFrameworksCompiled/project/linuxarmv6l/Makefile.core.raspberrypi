@@ -2,10 +2,10 @@
 MAKEFILE_INCLUDES_PATH=../makefile_includes
 
 # call the core.user file
-include Makefile.user.raspberrypi
+include config.user.raspberrypi
 
 # call the platform specific makefile
-include Makefile.platform.raspberrypi
+include config.platform.raspberrypi
 
 # call the platform utility to determine the current platform specific variables
 include $(MAKEFILE_INCLUDES_PATH)/Makefile.platform.utility
