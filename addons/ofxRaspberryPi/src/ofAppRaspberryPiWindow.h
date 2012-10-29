@@ -29,10 +29,10 @@
 #include "ofAppBaseWindow.h"
 #include "ofBaseApp.h"
 
-class ofxRaspberryPiWindow: public ofAppBaseWindow {
+class ofAppRaspberryPiWindow: public ofAppBaseWindow {
 public:
-	ofxRaspberryPiWindow(){};
-	virtual ~ofxRaspberryPiWindow(){};
+	ofAppRaspberryPiWindow(){};
+	virtual ~ofAppRaspberryPiWindow(){};
 
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
