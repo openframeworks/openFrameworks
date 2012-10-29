@@ -278,7 +278,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 			#ifndef TARGET_WIN32
 				char currDir[1024];
 				path = "/"+path;
-                path = getcwd(currDir, 1024)+path;
+				path = getcwd(currDir, 1024)+path;
 
 			#else
 
@@ -715,25 +715,24 @@ string ofSystem(string command){
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
     string arch = ofSystem("uname -m");
-    
-	if(Poco::icompare(arch,"x86_64")==0) {
-		return OF_TARGET_LINUX64;
-    if(Poco::icompare(arch,"armv6l")==0) {
+    if(Poco::icompare(arch,"x86_64")==0) {
+        return OF_TARGET_LINUX64;
+    } else if(Poco::icompare(arch,"armv6l")==0) {
         return OF_TARGET_LINUXARMV6L;
-	} else {
-		return OF_TARGET_LINUX;
+    } else {
+        return OF_TARGET_LINUX;
     }
 #elif defined(TARGET_OSX)
-	return OF_TARGET_OSX;
+    return OF_TARGET_OSX;
 #elif defined(TARGET_WIN32)
-	#if (_MSC_VER)
-		return OF_TARGET_WINVS;
-	#else
-		return OF_TARGET_WINGCC;
-	#endif
+    #if (_MSC_VER)
+        return OF_TARGET_WINVS;
+    #else
+        return OF_TARGET_WINGCC;
+    #endif
 #elif defined(TARGET_ANDROID)
-	return OF_TARGET_ANDROID;
+    return OF_TARGET_ANDROID;
 #elif defined(TARGET_OF_IPHONE)
-	return OF_TARGET_IPHONE;
+    return OF_TARGET_IPHONE;
 #endif
 }
