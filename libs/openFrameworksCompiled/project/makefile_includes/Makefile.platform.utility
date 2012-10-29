@@ -1,46 +1,46 @@
 ifndef PLATFORM_OS 
-	# determine from the uname
-	OS=$(shell uname -a)
+    # determine from the uname
+    OS=$(shell uname -a)
 else 
-	# obey the platform override
-	OS=$(PLATFORM_OS)
+    # obey the platform override
+    OS=$(PLATFORM_OS)
 endif 
 
 ifndef PLATFORM_ARCH
-	# determine from the uname
-	ARCH=$(shell uname -m)
+    # determine from the uname
+    ARCH=$(shell uname -m)
 else
-	# obey the platform override
-	ARCH=$(PLATFORM_ARCH)
+    # obey the platform override
+    ARCH=$(PLATFORM_ARCH)
 endif
 
 ifndef PLATFORM_LIBS_PATH
-	# determine from the arch
-	ifeq ($(OS),Linux)
-		ifeq ($(ARCH),x86_64)
-			LIBSPATH=linux64
-		else ifeq ($(ARCH),armv6l)
-			LIBSPATH=linuxarmv6l
-		else ifeq ($(ARCH),i386)
-			LIBSPATH=linux
-		else
-			$(error This makefile does not support your architecture.)
-		endif
-	else ifeq ($KERNEL),Darwin)
-		LIBSPATH=osx
-	else
-		$(error This makefile does not support your operating system.)
-	endif
+    # determine from the arch
+    ifeq ($(OS),Linux)
+        ifeq ($(ARCH),x86_64)
+            LIBSPATH=linux64
+        else ifeq ($(ARCH),armv6l)
+            LIBSPATH=linuxarmv6l
+        else ifeq ($(ARCH),i386)
+            LIBSPATH=linux
+        else
+            $(error This makefile does not support your architecture.)
+        endif
+    else ifeq ($KERNEL),Darwin)
+        LIBSPATH=osx
+    else
+        $(error This makefile does not support your operating system.)
+    endif
 else
-	LIBSPATH=$(PLATFORM_LIBS_PATH)
+    LIBSPATH=$(PLATFORM_LIBS_PATH)
 endif
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info ---Makefile.platform.utility---)
-	$(info OS=$(OS))
-	$(info ARCH=$(ARCH))
-	$(info LIBSPATH=$(LIBSPATH))
-	$(info -------------------------------)
+    $(info ---Makefile.platform.utility---)
+    $(info OS=$(OS))
+    $(info ARCH=$(ARCH))
+    $(info LIBSPATH=$(LIBSPATH))
+    $(info -------------------------------)
 endif
 
