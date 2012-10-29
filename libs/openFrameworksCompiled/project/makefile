@@ -23,6 +23,8 @@ ifdef PLATFORM_SPECIFIER
     PLATFORM_CONFIG_SUFFIX=.$(PLATFORM_SPECIFIER)
 endif
 
+PLATFORM_CONFIG_SUFFIX=.raspberrypi
+
 # include the platform specific user and platform configuration files
 include $(PLATFORM_LIBS_PATH)/config.user$(PLATFORM_CONFIG_SUFFIX)
 include $(PLATFORM_LIBS_PATH)/config.platform$(PLATFORM_CONFIG_SUFFIX)
