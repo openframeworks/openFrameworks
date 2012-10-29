@@ -76,4 +76,5 @@ protected:
 
     void _getMouse();
     void _getKeyboard();
+    void _getJoystick();
 };

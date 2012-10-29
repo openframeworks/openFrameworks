@@ -1,0 +1,9 @@
+ifndef PLATFORM_ARCH
+    # determine from the uname
+    PLATFORM_ARCH=$(shell uname -m)
+endif
+
+ifdef MAKEFILE_DEBUG
+    $(info =============================config.arch======================================)
+    $(info $(PLATFORM_ARCH))
+endif

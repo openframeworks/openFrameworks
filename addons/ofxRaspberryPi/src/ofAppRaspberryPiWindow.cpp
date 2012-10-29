@@ -72,6 +72,7 @@ static uint32_t screen_width;
 static uint32_t screen_height;
 static EGL_DISPMANX_WINDOW_T nativewindow;
 
+//------------------------------------------------------------
 void ofAppRaspberryPiWindow::setupOpenGL(int w, int h, int screenMode){
 	bcm_host_init();
 int32_t success = 0;
@@ -157,12 +158,12 @@ int32_t success = 0;
    ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer));
 }
 
+//------------------------------------------------------------
 void ofAppRaspberryPiWindow::initializeWindow() {
 
 }
 
-
-
+//------------------------------------------------------------
 void ofAppRaspberryPiWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	appPtr->setup();
 	while (true){
@@ -189,10 +190,13 @@ void ofAppRaspberryPiWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	eglTerminate( display );
 }
 
+//------------------------------------------------------------
 int	ofAppRaspberryPiWindow::getWidth(){ return screen_width; }
+//------------------------------------------------------------
 int	ofAppRaspberryPiWindow::getHeight(){ return screen_height; }
+//------------------------------------------------------------
 int ofAppRaspberryPiWindow::getFrameNum(){return nFrameCount; }
-
+//------------------------------------------------------------
 bool ofAppRaspberryPiWindow::_getMouse() {
     static int fd = -1;
     const int width=state->screen_width, height=state->screen_height;
@@ -228,19 +232,8 @@ _exit:
    if (outx) *outx = x;
    if (outy) *outy = y;
    return 0;
-
 }
-
-bool ofAppRaspberryPiWindow::_getKeyboard() {
-
-
-}
-
-
-
-
-
-
-
-
-
+//------------------------------------------------------------
+bool ofAppRaspberryPiWindow::_getKeyboard() {}
+//------------------------------------------------------------
+bool ofAppRaspberryPiWindow::_getJoystick() {}
