@@ -1,19 +1,17 @@
 ##########################################################################################
 # PLATFORM SPACE
-#   This file is mean to allow for platform specific modifications
-#   to the openFrameworks build environment.
-#   !!!ALWAYS USE TRAILING SPACES!!!
+#   This file is mean to allow for platform specific 
+#   modifications to the openFrameworks build environment.
+#
 ##########################################################################################
-
-##########################################################################################
-# PLATFORM CXX
-##########################################################################################
-
-#PLATFORM_CXX=
 
 ##########################################################################################
 # PLATFORM DEFINES
-#   !!!ALWAYS USE TRAILING SPACES!!!
+#   Create a space-delimited list of DEFINES.  The list will be converted into 
+#   CFLAGS with the "-D" flag later in the makefile.  An example of fully qualified flag
+#   might look something like this: -DTARGET_OPENGLES2
+#
+#   When making a list as below, make sure to leave a trailing space.
 ##########################################################################################
 PLATFORM_DEFINES=
 
@@ -45,25 +43,41 @@ PLATFORM_DEFINES+=USE_EXTERNAL_LIBBCM_HOST
 PLATFORM_DEFINES+=USE_VCHIQ_ARM 
 
 ##########################################################################################
-# PLATFORM OPTIMIZATION FLAGS
-#   -use full cflag style flags here (i.e. -march=native, etc)
-#   !!!ALWAYS USE TRAILING SPACES!!!
+# PLATFORM CXX
 ##########################################################################################
 
-PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED=-march=armv6 -mfpu=vfp -mfloat-abi=hard 
-PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-fPIC -ftree-vectorize -Wno-psabi -pipe 
+#PLATFORM_CXX=
+
+##########################################################################################
+# PLATFORM OPTIMIZATION FLAGS
+#    Use full CFLAG style flags here (i.e. -march=native, etc)
+#    These flags are added AFTER any flags defined in the core library makefile.
+#
+#        PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED flags are applied to all targets.
+#        PLATFORM_OPTIMIZATION_CFLAGS_RELEASE flags are applied to all RELEASE targets.
+#        PLATFORM_OPTIMIZATION_CFLAGS_DEBUG flags are applied to all DEBUG targets.
+#
+#    When making a list as below, make sure to leave a trailing space.
+##########################################################################################
+
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED=
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-march=armv6  
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-mfpu=vfp 
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-mfloat-abi=hard 
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-fPIC 
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-ftree-vectorize 
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-Wno-psabi 
+PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED+=-pipe 
 
 #PLATFORM_OPTIMIZATION_CFLAGS_RELEASE=
 #PLATFORM_OPTIMIZATION_CFLAGS_DEBUG=
 
-
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATH
-#   These are special headers that are platform specific
-#   Do not use full flag syntax, that will be added automatically later.
-#   These paths are ABSOLUTE.
-#   Simply use space delimited paths.
-#   !!!ALWAYS USE TRAILING SPACES!!!
+#   These are header search paths that are platform specific and are  specified 
+#   using valid paths.  The include flag (i.e. -I) is added automatically.
+#
+#   When making a list, be sure to leave a trailing space.
 ##########################################################################################
 
 PLATFORM_HEADER_SEARCH_PATHS=
@@ -71,6 +85,11 @@ PLATFORM_HEADER_SEARCH_PATHS=
 PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include 
 #PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
 PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/interface/vcos/pthreads 
+
+
+# add the raspberry pi addon directory
+PLATFORM_HEADER_SEARCH_PATHS+=$(OF_ADDONS_PATH)/ofxRaspberryPi/src
+
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATH
