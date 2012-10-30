@@ -158,7 +158,8 @@ else
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
-	TARGET=$(OF_CORE_LIB_PATH)/libopenFrameworks.a
+	TARGET=
+	TARGET+=$(OF_CORE_LIB_PATH)/libopenFrameworks.a
 	TARGET+= $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
