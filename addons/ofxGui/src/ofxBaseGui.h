@@ -2,6 +2,9 @@
 
 #include "ofxXmlSettings.h"
 #include "ofConstants.h"
+#include "ofRectangle.h"
+#include "ofImage.h"
+#include "ofEvents.h"
 
 
 class ofxBaseGui{

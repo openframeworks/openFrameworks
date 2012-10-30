@@ -64,7 +64,7 @@ public:
 	ofMatrix4x4 getGlobalTransformMatrix() const;
 	ofVec3f getGlobalPosition() const;
 	ofQuaternion getGlobalOrientation() const;
-//	ofVec3f getGlobalScale();
+	ofVec3f getGlobalScale() const;
 
 	
 	
@@ -111,13 +111,12 @@ public:
 	void rotate(float degrees, const ofVec3f& v);	// rotate around arbitrary axis by angle
 	void rotate(float degrees, float vx, float vy, float vz);
 	
-	// TODO: immplement these
 	void rotateAround(const ofQuaternion& q, const ofVec3f& point);	// rotate by quaternion around point
 	void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);	// rotate around arbitrary axis by angle around point
 	
 	// orient node to look at position (-ve z axis pointing to node)
 	void lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector = ofVec3f(0, 1, 0));
-	void lookAt(ofNode& lookAtNode, const ofVec3f& upVector = ofVec3f(0, 1, 0));
+	void lookAt(const ofNode& lookAtNode, const ofVec3f& upVector = ofVec3f(0, 1, 0));
 	
 	
 	// orbit object around target at radius

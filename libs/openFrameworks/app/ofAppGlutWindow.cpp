@@ -28,6 +28,7 @@ static int			nFramesForFPS;
 static int			nFrameCount;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
+static bool			bDoubleBuffered; 
 
 
 static bool			bFrameRateSet;
@@ -209,6 +210,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	lastFrameTime		= 0.0;
 	displayString		= "";
 	orientation			= OF_ORIENTATION_DEFAULT;
+	bDoubleBuffered = true; // LIA
 
 }
 
@@ -219,6 +221,13 @@ ofAppGlutWindow::ofAppGlutWindow(){
  void ofAppGlutWindow::setGlutDisplayString(string displayStr){
 	displayString = displayStr;
  }
+
+
+void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
+	bDoubleBuffered = _bDoubleBuffered;
+}
+
+
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
@@ -231,7 +240,11 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	if( displayString != ""){
 		glutInitDisplayString( displayString.c_str() );
 	}else{
-		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		if(bDoubleBuffered){  
+			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		}else{
+			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
+		}
 	}
 
 	windowMode = screenMode;
@@ -566,11 +579,15 @@ void ofAppGlutWindow::display(void){
         if (nFramesSinceWindowResized < 3){
         	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
         } else {
-            if (nFrameCount < 3 || nFramesSinceWindowResized < 3)    glutSwapBuffers();
+            if ( (nFrameCount < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
             else                                                     glFlush();
         }
     } else {
-        glutSwapBuffers();
+        if(bDoubleBuffered){
+			glutSwapBuffers();
+		} else{
+			glFlush();
+		}
     }
     #else
 		if (bClearAuto == false){
@@ -579,7 +596,11 @@ void ofAppGlutWindow::display(void){
 				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 			}
 		}
-        glutSwapBuffers();
+		if(bDoubleBuffered){
+			glutSwapBuffers();
+		} else{
+			glFlush();
+		}
     #endif
 
     nFramesSinceWindowResized++;

@@ -73,7 +73,7 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 			}
 
 
-			pixels.allocate(width, height, 24);
+			pixels.allocate(width, height, 3);
 			return true;
 		} else {
 			ofLog(OF_LOG_ERROR, "error allocating a video device");
@@ -86,6 +86,22 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 	#endif
 	//---------------------------------
 
+}
+
+//---------------------------------------------------------------------------
+bool ofDirectShowGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	//note as we only support RGB we are just confirming that this pixel format is supported
+	if( pixelFormat == OF_PIXELS_RGB ){
+		return true;
+	}
+	ofLogWarning("ofDirectShowGrabber") << "requested pixel format not supported" << endl;
+	return false;
+}
+
+//---------------------------------------------------------------------------
+ofPixelFormat ofDirectShowGrabber::getPixelFormat(){
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	return OF_PIXELS_RGB;
 }
 
 //--------------------------------------------------------------------

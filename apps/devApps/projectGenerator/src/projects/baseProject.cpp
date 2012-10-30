@@ -22,7 +22,7 @@ bool baseProject::create(string path){
     projectName = ofFilePath::getFileName(path);
     bool bDoesDirExist = false;
 
-    ofDirectory project(projectDir);    // this is a directory, really?
+    ofDirectory project(ofFilePath::join(projectDir,"src"));    // this is a directory, really?
     if(project.exists()){
         bDoesDirExist = true;
     }else{
@@ -61,6 +61,25 @@ bool baseProject::create(string path){
                 addSrc(fileNames[i], first);
             }
         }
+
+//		if( target == "ios" ){
+//			getFilesRecursively(ofFilePath::join(projectDir , "bin/data"), fileNames);
+//
+//	        for (int i = 0; i < (int)fileNames.size(); i++){
+//				fileNames[i].erase(fileNames[i].begin(), fileNames[i].begin() + projectDir.length());
+//
+//				string first, last;
+//				splitFromLast(fileNames[i], "/", first, last);
+//				if (fileNames[i] != "Default.png" &&
+//					fileNames[i] != "src/testApp.h" &&
+//					fileNames[i] != "src/main.cpp" &&
+//					fileNames[i] != "src/testApp.mm" &&
+//					fileNames[i] != "src/main.mm"){
+//					addSrc(fileNames[i], first);
+//				}
+//			}
+//		}
+
 #ifdef TARGET_LINUX
     		parseAddons();
 #endif
@@ -90,15 +109,42 @@ bool baseProject::create(string path){
     return true;
 }
 
-bool baseProject::save(){
-	#ifdef TARGET_LINUX
-		ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"),ofFile::WriteOnly);
-		set<ofAddon>::iterator it;
-		for(it=addons.begin();it!=addons.end();it++){
-			addonsMake << it->name << endl;
-		}
-	#endif
+bool baseProject::save(bool createMakeFile){
+
+    // only save an addons.make file if requested on ANY platform
+    // this way we don't thrash the git repo for our examples, but
+    // we do make the addons.make file for any new projects...that
+    // way it can be distributed and re-used by others with the PG
+
+    if(createMakeFile){
+        ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"), ofFile::WriteOnly);
+        for(int i = 0; i < addons.size(); i++){
+            addonsMake << addons[i].name << endl;
+        }
+    }
+
 	return saveProjectFile();
+}
+
+void baseProject::addAddon(ofAddon & addon){
+    for(int i=0;i<(int)addons.size();i++){
+		if(addons[i].name==addon.name) return;
+	}
+
+	addons.push_back(addon);
+
+    for(int i=0;i<(int)addon.includePaths.size();i++){
+        ofLogVerbose() << "adding addon include path: " << addon.includePaths[i];
+        addInclude(addon.includePaths[i]);
+    }
+    for(int i=0;i<(int)addon.libs.size();i++){
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        addLibrary(addon.libs[i]);
+    }
+    for(int i=0;i<(int)addon.srcFiles.size(); i++){
+        ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+    }
 }
 
 void baseProject::parseAddons(){

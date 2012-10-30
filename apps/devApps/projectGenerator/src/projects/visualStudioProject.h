@@ -27,6 +27,11 @@ public:
 
 	static string LOG_NAME;
 
+	pugi::xml_document filterXmlDoc;
+
+
+	void appendFilter(string folderName);
+
 private:
 
 };

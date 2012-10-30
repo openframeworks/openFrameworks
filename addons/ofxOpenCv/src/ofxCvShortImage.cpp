@@ -404,9 +404,7 @@ void ofxCvShortImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
 ofShortPixels & ofxCvShortImage::getShortPixelsRef(){
 	if( !bAllocated ){
 		ofLog(OF_LOG_WARNING, "in getShortPixelsRef, image is not allocated");		
-	}
-	
-	if(bShortPixelsDirty) {
+	} else if(bShortPixelsDirty) {
 
 		//Note this possible introduces a bug where pixels doesn't contain the current image.
 		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
@@ -425,9 +423,7 @@ ofShortPixels & ofxCvShortImage::getShortPixelsRef(){
 ofShortPixels & ofxCvShortImage::getRoiShortPixelsRef(){
 	if( !bAllocated ){
 		ofLog(OF_LOG_WARNING, "in getRoiShortPixelsRef, image is not allocated");		
-	}
-	
-	if(bShortPixelsDirty) {
+	} else if(bShortPixelsDirty) {
 		ofRectangle roi = getROI();
 		unsigned short * roi_ptr = (unsigned short*)cvImage->imageData + ((int)(roi.y)*cvImage->widthStep/(cvImage->depth/8) + (int)roi.x * cvImage->nChannels);
 		shortPixels.setFromAlignedPixels(roi_ptr,roi.width,roi.height,cvImage->nChannels,cvImage->widthStep);

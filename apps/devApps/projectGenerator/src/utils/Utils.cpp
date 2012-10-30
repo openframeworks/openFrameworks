@@ -19,6 +19,12 @@
 #include <fstream>
 #include <string>
 
+#include "Poco/HMACEngine.h"
+#include "Poco/MD5Engine.h"
+using Poco::DigestEngine;
+using Poco::HMACEngine;
+using Poco::MD5Engine;
+
 
 
 #ifdef TARGET_WIN32
@@ -36,6 +42,23 @@
 using namespace Poco;
 
 #include "ofUtils.h"
+
+
+string generateUUID(string input){
+
+    std::string passphrase("openFrameworks"); // HMAC needs a passphrase
+
+    HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
+    hmac.update(input);
+
+    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
+    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+
+    return digestString;
+}
+
+
+
 
 
 void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) {
@@ -72,23 +95,32 @@ std::string LoadFileAsString(const std::string & fn)
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    if( ofFile::doesFileExist(fileName) ){
-		//printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
-		std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
-		ifile.seekg(0,std::ios_base::end);
-		long s=ifile.tellg();
-		//cout << "size of s is " << s << endl;
-		char *buffer=new char[s];
-		ifile.seekg(0);
-		ifile.read(buffer,s);
-		ifile.close();
+	
+	    std::ifstream t(ofToDataPath(fileName).c_str());
+	    std::stringstream buffer;
+	    buffer << t.rdbuf();
+		string bufferStr = buffer.str();
+		t.close();
+	    findandreplace(bufferStr, tFind, tReplace);
+		ofstream myfile;
+        myfile.open (ofToDataPath(fileName).c_str());
+        myfile << bufferStr;
+		myfile.close();
 
-		std::string txt(buffer,s);
-		delete[] buffer;
-
-		findandreplace(txt, tFind, tReplace);
-
-		std::ofstream ofile(ofToDataPath(fileName).c_str());
-		ofile.write(txt.c_str(),txt.size());
+	/*
+	std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
+	ifile.seekg(0,std::ios_base::end);
+	long s=ifile.tellg();
+	char *buffer=new char[s];
+ 	ifile.seekg(0);
+	ifile.read(buffer,s);
+	ifile.close();
+	std::string txt(buffer,s);
+	delete[] buffer;
+	findandreplace(txt, tFind, tReplace);
+	std::ofstream ofile(ofToDataPath(fileName).c_str());
+	ofile.write(txt.c_str(),txt.size());
+	*/  
 		//return 0;
    } else {
        ; // some error checking here would be good.
@@ -145,7 +177,7 @@ void getFilesRecursively(const string & path, vector < string > & fileNames){
 
     ofDirectory dir;
 
-    ofLogVerbose() << "in getFilesRecursively "<< path << endl;
+    //ofLogVerbose() << "in getFilesRecursively "<< path << endl;
 
     dir.listDir(path);
     for (int i = 0; i < dir.size(); i++){
@@ -295,7 +327,23 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
                 splitFromLast(dir.getPath(i), ".", first, ext);
                 
                 if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
-                    if (platformFound) libLibs.push_back(dir.getPath(i));
+                    if (platformFound){
+						libLibs.push_back(dir.getPath(i));
+						
+						//TODO: THEO hack
+						if( platform == "ios" ){ //this is so we can add the osx libs for the simulator builds
+							
+							string currentPath = dir.getPath(i);
+							
+							//TODO: THEO double hack this is why we need install.xml - custom ignore ofxOpenCv 
+							if( currentPath.find("ofxOpenCv") == string::npos ){
+								ofStringReplace(currentPath, "ios", "osx");
+								if( ofFile::doesFileExist(currentPath) ){
+									libLibs.push_back(currentPath);
+								}
+							}
+						}
+					}
                 } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
                     libFiles.push_back(dir.getPath(i));
                 }
@@ -455,6 +503,6 @@ bool askOFRoot(){
 string getOFRootFromConfig(){
 	if(!checkConfigExists()) return "";
 	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::ReadOnly);
-	string filePath = configFile.readToBuffer();
-	return filePath;
+	ofBuffer filePath = configFile.readToBuffer();
+	return filePath.getFirstLine();
 }

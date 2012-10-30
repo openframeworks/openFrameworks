@@ -152,7 +152,17 @@ void ofNotifyKeyReleased(int key){
 void ofNotifyMousePressed(int x, int y, int button){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
-	
+    if( bPreMouseNotSet ){
+		previousMouseX	= x;
+		previousMouseY	= y;
+		bPreMouseNotSet	= false;
+	}else{
+		previousMouseX = currentMouseX;
+		previousMouseY = currentMouseY;
+	}
+    
+	currentMouseX = x;
+	currentMouseY = y;
 	pressedMouseButtons.insert(button);
 
 	if(ofAppPtr){

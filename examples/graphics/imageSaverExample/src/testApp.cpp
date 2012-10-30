@@ -55,7 +55,7 @@ void testApp::draw(){
 
 		string fileName = "snapshot_"+ofToString(10000+snapCounter)+".png";
 		img.saveImage(fileName);
-		sprintf(snapString, "saved %s", fileName);
+		sprintf(snapString, "saved %s", fileName.c_str());
 		snapCounter++;
 		bSnapshot = false;
 	}

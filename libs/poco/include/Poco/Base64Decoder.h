@@ -1,7 +1,7 @@
 //
 // Base64Decoder.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Base64Decoder.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Base64Decoder.h#2 $
 //
 // Library: Foundation
 // Package: Streams
@@ -51,6 +51,12 @@ namespace Poco {
 class Foundation_API Base64DecoderBuf: public UnbufferedStreamBuf
 	/// This streambuf base64-decodes all data read
 	/// from the istream connected to it.
+	///
+	/// Note: For performance reasons, the characters 
+	/// are read directly from the given istream's 
+	/// underlying streambuf, so the state
+	/// of the istream will not reflect that of
+	/// its streambuf.
 {
 public:
 	Base64DecoderBuf(std::istream& istr);
@@ -60,10 +66,10 @@ private:
 	int readFromDevice();
 	int readOne();
 
-	unsigned char _group[3];
-	int           _groupLength;
-	int           _groupIndex;
-	std::istream& _istr;
+	unsigned char   _group[3];
+	int             _groupLength;
+	int             _groupIndex;
+	std::streambuf& _buf;
 	
 	static unsigned char IN_ENCODING[256];
 	static bool          IN_ENCODING_INIT;
@@ -97,6 +103,12 @@ private:
 class Foundation_API Base64Decoder: public Base64DecoderIOS, public std::istream
 	/// This istream base64-decodes all data
 	/// read from the istream connected to it.
+	///
+	/// Note: For performance reasons, the characters 
+	/// are read directly from the given istream's 
+	/// underlying streambuf, so the state
+	/// of the istream will not reflect that of
+	/// its streambuf.
 {
 public:
 	Base64Decoder(std::istream& istr);

@@ -178,6 +178,7 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	bGrabberInited = true;
 
 	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: Camera initialized correctly");
+	paused = false;
 	return true;
 }
 
@@ -201,7 +202,7 @@ void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return;
 
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+	jclass javaClass = getJavaClass();
 
 	jobject camera = getCamera(env, javaClass, cameraId);
 	jmethodID javasetDeviceID = env->GetMethodID(javaClass,"setDeviceID","(I)V");
@@ -217,7 +218,7 @@ bool ofxAndroidVideoGrabber::setAutoFocus(bool autofocus){
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return false;
 
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+	jclass javaClass = getJavaClass();
 
 	jobject camera = getCamera(env, javaClass, cameraId);
 	jmethodID javasetAutoFocus = env->GetMethodID(javaClass,"setAutoFocus","(Z)Z");
@@ -241,8 +242,9 @@ float ofxAndroidVideoGrabber::getWidth(){
 	return pixels.getWidth();
 }
 
-void ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	return true;
 }
 
 ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat(){

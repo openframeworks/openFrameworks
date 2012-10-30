@@ -1,7 +1,7 @@
 //
 // AbstractContainerNode.h
 //
-// $Id: //poco/1.4/XML/include/Poco/DOM/AbstractContainerNode.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/AbstractContainerNode.h#2 $
 //
 // Library: XML
 // Package: DOM
@@ -64,6 +64,8 @@ public:
 	Node* appendChild(Node* newChild);
 	bool hasChildNodes() const;
 	bool hasAttributes() const;
+	Node* getNodeByPath(const XMLString& path) const;
+	Node* getNodeByPathNS(const XMLString& path, const NSMap& nsMap) const;
 
 protected:
 	AbstractContainerNode(Document* pOwnerDocument);
@@ -72,6 +74,15 @@ protected:
 
 	void dispatchNodeRemovedFromDocument();
 	void dispatchNodeInsertedIntoDocument();
+	
+	static const Node* findNode(XMLString::const_iterator& it, const XMLString::const_iterator& end, const Node* pNode, const NSMap* pNSMap);
+	static const Node* findElement(const XMLString& name, const Node* pNode, const NSMap* pNSMap);
+	static const Node* findElement(int index, const Node* pNode, const NSMap* pNSMap);
+	static const Node* findElement(const XMLString& attr, const XMLString& value, const Node* pNode, const NSMap* pNSMap);
+	static const Attr* findAttribute(const XMLString& name, const Node* pNode, const NSMap* pNSMap);
+	bool hasAttributeValue(const XMLString& name, const XMLString& value, const NSMap* pNSMap) const;
+	static bool namesAreEqual(const Node* pNode1, const Node* pNode2, const NSMap* pNSMap);
+	static bool namesAreEqual(const Node* pNode, const XMLString& name, const NSMap* pNSMap);
 
 private:
 	AbstractNode* _pFirstChild;
