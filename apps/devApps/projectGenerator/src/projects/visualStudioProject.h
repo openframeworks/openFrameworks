@@ -1,6 +1,5 @@
 
-#ifndef VSWINPROJECT_H_
-#define VSWINPROJECT_H_
+#pragma once
 
 #include "ofConstants.h"
 #include "pugixml.hpp"
@@ -35,5 +34,3 @@ public:
 private:
 
 };
-
-#endif

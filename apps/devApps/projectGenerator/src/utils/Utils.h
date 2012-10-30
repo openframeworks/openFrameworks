@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef UTILS_H_
-#define UTILS_H_
+#pragma once
 
 #include "ofConstants.h"
 
@@ -57,5 +56,3 @@ inline bool isInVector(T item, vector<T> & vec){
     }
     return bIsInVector;
 }
-
-#endif /* UTILS_H_ */

@@ -39,17 +39,25 @@ public:
 
 class ofKeyEventArgs : public ofEventArgs {
   public:
+	enum Type{
+		Pressed,
+		Released,
+	} type;
 	int key;
 };
 
-class ofMouseEventArgs : public ofEventArgs {
+class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
   public:
-	int x;
-	int y;
+	enum Type{
+		Pressed,
+		Moved,
+		Released,
+		Dragged
+	} type;
 	int button;
 };
 
-class ofTouchEventArgs : public ofEventArgs {
+class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
   public:
 	enum Type{
 		down,
@@ -61,7 +69,6 @@ class ofTouchEventArgs : public ofEventArgs {
 
 	int id;
 	int time;
-	float x, y;
 	int numTouches;
 	float width, height;
 	float angle;
@@ -91,7 +98,6 @@ class ofMessage : public ofEventArgs{
 		}
 		string message;
 };
-		
 
 class ofCoreEvents {
   public:
@@ -99,7 +105,7 @@ class ofCoreEvents {
 	ofEvent<ofEventArgs> 		update;
 	ofEvent<ofEventArgs> 		draw;
 	ofEvent<ofEventArgs> 		exit;
-
+	
 	ofEvent<ofEntryEventArgs>	windowEntered;
 	ofEvent<ofResizeEventArgs> 	windowResized;
 
@@ -237,7 +243,8 @@ void ofUnregisterGetMessages(ListenerClass * listener){
 template<class ListenerClass>
 void ofUnregisterDragEvents(ListenerClass * listener){
 	ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent);
-}
+}	
+
 
 //  event notification only for internal OF use
 void ofNotifySetup();
@@ -246,11 +253,13 @@ void ofNotifyDraw();
 
 void ofNotifyKeyPressed(int key);
 void ofNotifyKeyReleased(int key);
+void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
 void ofNotifyMousePressed(int x, int y, int button);
 void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
+void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);

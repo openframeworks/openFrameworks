@@ -136,6 +136,39 @@ void ofNotifyKeyReleased(int key){
 	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
 }
 
+
+//------------------------------------------
+void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent){
+	switch(keyEvent.type){
+		case ofKeyEventArgs::Pressed:
+			ofNotifyKeyPressed(keyEvent.key);
+			break;
+		case ofKeyEventArgs::Released:
+			ofNotifyKeyReleased(keyEvent.key);
+			break;
+		
+	}
+}
+
+//------------------------------------------
+void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent){
+	switch(mouseEvent.type){
+		case ofMouseEventArgs::Moved:
+			ofNotifyMouseMoved(mouseEvent.x,mouseEvent.y);
+			break;
+		case ofMouseEventArgs::Dragged:
+			ofNotifyMouseDragged(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			break;
+		case ofMouseEventArgs::Pressed:
+			ofNotifyMousePressed(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			break;
+		case ofMouseEventArgs::Released:
+			ofNotifyMouseReleased(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			break;
+		
+	}
+}
+
 //------------------------------------------
 void ofNotifyMousePressed(int x, int y, int button){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();

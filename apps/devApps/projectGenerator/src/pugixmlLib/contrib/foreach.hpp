@@ -4,8 +4,7 @@
  * Written by Arseny Kapoulkine (arseny.kapoulkine@gmail.com)
  */
 
-#ifndef HEADER_PUGIXML_FOREACH_HPP
-#define HEADER_PUGIXML_FOREACH_HPP
+#pragma once
 
 #include "pugixml.hpp"
 
@@ -98,5 +97,3 @@ namespace pugi
 		return result;
 	}
 }
-
-#endif
