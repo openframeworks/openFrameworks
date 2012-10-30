@@ -4,6 +4,10 @@ LIBSPATH=linuxarmv6l
 
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 
+
+
+
+
 NODEPS = clean
 SED_EXCLUDE_FROM_PROJECT_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')
 PROJECT_SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v "$(SED_EXCLUDE_FROM_PROJECT_SRC)" | sed s/.\\///)
@@ -21,6 +25,10 @@ ifndef APPNAME
     APPNAME = $(shell basename `pwd`)
 endif
 
+
+
+
+
 CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find $(OF_ROOT)/libs/*/include -type d | grep -v glu | grep -v quicktime | grep -v poco | grep -v glew)
@@ -35,6 +43,25 @@ CFLAGS += -Wall -fexceptions
 CFLAGS += -I.
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
+
+
+ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+	TARGET_NAME = Debug
+	BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
+endif
+
+ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
+ifeq ($(MAKECMDGOALS),)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	CFLAGS += -g3
