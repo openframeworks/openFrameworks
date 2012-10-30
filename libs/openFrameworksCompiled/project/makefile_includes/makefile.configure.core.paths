@@ -1,0 +1,96 @@
+# define the location of the core path
+
+ifdef MAKEFILE_DEBUG
+    $(info =============================makefile.configure.core.paths====================)
+endif
+
+OF_CORE_SRC_PATH=$(OF_LIBS_PATH)/openFrameworks
+OF_CORE_LIB_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/lib/$(PLATFORM_LIB_SUBPATH)
+
+##########################################################################################
+# SOURCE FILES
+##########################################################################################
+
+# take from the platform core exclusions
+CORE_SOURCE_EXCLUSIONS=$(PLATFORM_CORE_SOURCE_EXCLUSIONS)
+# add more here if needed ...
+#CORE_SOURCE_EXCLUSIONS+=
+
+# strip and collapse spaces, and add the % suffix to allow directory wildcard matching
+FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_CORE_SRC_PATH),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
+
+# find all of the source directories, exclude all . (dot-hidden) files/folders
+ALL_CORE_SOURCE_PATHS=$(shell find $(OF_CORE_SRC_PATH) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
+
+# filter out all excluded files / folders that were defined above
+# this list will be searched for cpp files below and will eventually
+# be included as locations for header searches via 
+FILTERED_CORE_SOURCE_PATHS=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCE_PATHS))
+
+# search the directories in the source folders for all .cpp files
+ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS=$(shell find $(FILTERED_CORE_SOURCE_PATHS) -name "*.cpp")
+
+# filter out all excluded files / folders that were defined above
+OF_CORE_SOURCES=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS))
+
+##TODO: add platform inclusions here
+
+##########################################################################################
+# INCLUDES
+##########################################################################################
+
+# create our core include paths from the source directory paths, 
+# these have already been filtered and processed according to rules.
+# plus the root so that we don't miss the ofMain.h.
+OF_CORE_HEADER_PATHS=$(OF_LIBS_CORE_PATH) $(FILTERED_CORE_SOURCE_PATHS) 
+
+# add folders or single files to exclude fromt he compiled lib
+UNFILTERED_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_PATH)/*/include -type d \( ! -name ".*" \))
+
+THIRDPARTY_HEADER_EXCLUSIONS=$(PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS)
+# add more here?
+
+# strip and collapse spaces, and add the % suffix to allow directory matching
+CLEANED_OF_CORE_THIRDPARTY_HEADER_EXCLUSIONS=$(addprefix $(OF_LIBS_PATH),$(addsuffix %,$(strip $(THIRDPARTY_HEADER_EXCLUSIONS))))
+
+# filter out all excluded files / folders that were defined above
+OF_CORE_THIRDPARTY_HEADER_PATHS=$(filter-out $(CLEANED_OF_CORE_THIRDPARTY_HEADER_EXCLUSIONS),$(UNFILTERED_OF_CORE_THIRDPARTY_HEADER_PATHS))
+
+# ALL OF THE HEADER FILES REQUIRED BY THE OF CORE
+ALL_OF_CORE_HEADER_PATHS=$(PLATFORM_HEADER_SEARCH_PATHS) $(OF_CORE_THIRDPARTY_HEADER_PATHS) $(OF_CORE_HEADER_PATHS)
+
+##########################################################################################
+# LIBRARIES
+##########################################################################################
+
+UNFILTERED_OF_CORE_THIRDPARTY_STATIC_LIBS=$(shell ls $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled)
+UNFILTERED_OF_CORE_THIRDPARTY_SHARED_LIBS=$(shell ls $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.so 2> /dev/null | grep -v openFrameworksCompiled)
+
+# filter out all excluded files / folders that were defined above
+OF_CORE_THIRDPARTY_STATIC_LIBS=$(filter-out $(CLEANED_OF_CORE_THIRDPARTY_HEADER_EXCLUSIONS),$(UNFILTERED_OF_CORE_THIRDPARTY_STATIC_LIBS)) 
+OF_CORE_THIRDPARTY_SHARED_LIBS=$(filter-out $(CLEANED_OF_CORE_THIRDPARTY_HEADER_EXCLUSIONS),$(UNFILTERED_OF_CORE_THIRDPARTY_SHARED_LIBS)) 
+
+# add in any libraries that were explicitly listed in the platform config
+OF_CORE_THIRDPARTY_STATIC_LIBS+=$(PLATFORM_STATIC_LIBRARIES) 
+OF_CORE_THIRDPARTY_SHARED_LIBS+=$(PLATFORM_SHARED_LIBRARIES) 
+
+#ifdef MAKEFILE_DEBUG
+#    $(info ---CLEANED_OF_CORE_THIRDPARTY_HEADER_EXCLUSIONS---)
+#    $(foreach v, $(CLEANED_OF_CORE_THIRDPARTY_HEADER_EXCLUSIONS),$(info $(v)))
+#    $(info ---OF_CORE_THIRDPARTY_STATIC_LIBS---)
+#    $(foreach v, $(OF_CORE_THIRDPARTY_STATIC_LIBS),$(info $(v)))
+#    $(info ---OF_CORE_THIRDPARTY_SHARED_LIBS---)
+#    $(foreach v, $(OF_CORE_THIRDPARTY_SHARED_LIBS),$(info $(v)))
+#    $(info ---UNFILTERED_OF_CORE_THIRDPARTY_SHARED_LIBS---)
+#    $(foreach v, $(UNFILTERED_OF_CORE_THIRDPARTY_SHARED_LIBS),$(info $(v)))
+#endif
+
+##########################################################################################
+# CFLAGS CONSTRUCTION
+##########################################################################################
+
+OF_CORE_INCLUDES_CFLAGS=$(addprefix -I,$(ALL_OF_CORE_HEADER_PATHS))
+
+OF_CORE_STATIC_LIB_CFLAGS=$(addprefix -l,$(OF_CORE_THIRDPARTY_STATIC_LIBS))
+OF_CORE_SHARED_LIB_CFLAGS=$(addprefix -l,$(OF_CORE_THIRDPARTY_SHARED_LIBS))
+OF_CORE_PKG_CONFIG_LIB_CFLAGS=$(shell pkg-config "$(PLATFORM_PKG_CONFIG_LIBRARIES)" --libs)

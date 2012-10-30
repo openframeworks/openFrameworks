@@ -1,1 +1,3 @@
 ofxRaspberryPi
+#ofxOpenCv
+ofxXmlSettings
