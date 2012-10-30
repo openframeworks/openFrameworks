@@ -135,10 +135,6 @@ CFLAGS+=-Wall -fexceptions
 # add the include cflags
 CFLAGS+=$(INCLUDES_CFLAGS) 
 
-
-$(info OBJ=OUTPUT_PATH=$(OBJ_OUTPUT_PATH))
-
-
 ##########################################################################################
 # COMPILER OPTIMIZATIONS and TARGET MAKING
 ##########################################################################################
@@ -168,11 +164,11 @@ CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 ##########################################################################################
 # OBJECT FILES
 ##########################################################################################
-OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
+OBJFILES = $(patsubst $(OF_ROOT)/%.cpp,%.o,$(SOURCES))
 
 OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
 #DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst $(OF_LIBS_PATH)/%.cpp,%.d,$(SOURCES)))
-DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
+DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
 
 ##########################################################################################
@@ -189,7 +185,7 @@ all:
 	$(MAKE) Release
 
 #This rule does the compilation
-$(OBJ_OUTPUT_PATH)%.o: ../../../%.cpp 
+$(OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
 	@echo "compiling object for " $<
 	mkdir -p $(@D)
 	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT_PATH)$*.d -MT$(OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
