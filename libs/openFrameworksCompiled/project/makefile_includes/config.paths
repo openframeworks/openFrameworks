@@ -1,24 +1,22 @@
 # configure basic paths
 
 ifdef OF_ROOT
-    OF_LIBS_PATH=$(OF_ROOT)/libs
     OF_ADDONS_PATH=$(OF_ROOT)/addons
-    OF_LIBS_CORE_PATH=$(OF_ROOT)/libs/openFrameworks
     OF_EXPORT_PATH=$(OF_ROOT)/export
     OF_EXAMPLES_PATH=$(OF_ROOT)/examples
     OF_APPS_PATH=$(OF_ROOT)/apps
+    OF_LIBS_PATH=$(OF_ROOT)/libs
 else 
-    $(error OF_ROOT is not defined);
+    $(error OF_ROOT is not defined)
 endif
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
     $(info =============================config.paths=====================================)
-    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
     $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-    $(info OF_LIBS_CORE_PATH=$(OF_LIBS_CORE_PATH))
     $(info OF_EXPORT_PATH=$(OF_EXPORT_PATH))
     $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
     $(info OF_APPS_PATH=$(OF_APPS_PATH))
+    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
 endif
 

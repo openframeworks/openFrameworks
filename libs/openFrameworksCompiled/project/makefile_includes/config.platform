@@ -5,5 +5,5 @@ endif
 
 ifdef MAKEFILE_DEBUG
     $(info =============================config.platform==================================)
-    $(info $(PLATFORM_OS))
+    $(info PLATFORM_OS=$(PLATFORM_OS))
 endif
