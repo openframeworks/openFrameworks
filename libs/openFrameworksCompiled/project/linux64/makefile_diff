@@ -170,7 +170,7 @@ DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
     $(info --OBJ_OUTPUT-- )
-    $(info  $(OBJ_OUTPUT))
+    $(info  OBJ_OUTPUT=$(OBJ_OUTPUT))
 
     $(info --OBJS-- )
     $(foreach v, $(OBJS),$(info $(v)))
