@@ -32,8 +32,10 @@ static ofPtr<ofAppBaseWindow> 		window;
 // default windowing
 #ifdef TARGET_OF_IPHONE
 	#include "ofAppiPhoneWindow.h"
-#elif defined TARGET_ANDROID
+#elif TARGET_ANDROID
 	#include "ofAppAndroidWindow.h"
+#elif TARGET_RASPBERRY_PI 
+	#include "ofAppRaspberryPiWindow.h"
 #else
 	#include "ofAppGlutWindow.h"
 #endif
