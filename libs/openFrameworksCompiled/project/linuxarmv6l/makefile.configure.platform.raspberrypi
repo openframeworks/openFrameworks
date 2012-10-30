@@ -86,10 +86,8 @@ PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include
 #PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
 PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/interface/vcos/pthreads 
 
-
 # add the raspberry pi addon directory
-PLATFORM_HEADER_SEARCH_PATHS+=$(OF_ADDONS_PATH)/ofxRaspberryPi/src
-
+PLATFORM_HEADER_SEARCH_PATHS+=$(OF_ADDONS_PATH)/ofxRaspberryPi/src 
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATH
@@ -113,13 +111,35 @@ PLATFORM_LIBRARY_SEARCH_PATHS+=/opt/vc/lib
 ##########################################################################################
 
 PLATFORM_LIBRARIES=
+# raspberry pi specific
 PLATFORM_LIBRARIES+=GLESv2 
 PLATFORM_LIBRARIES+=EGL 
 PLATFORM_LIBRARIES+=openmaxil 
 PLATFORM_LIBRARIES+=bcm_host 
 PLATFORM_LIBRARIES+=vcos 
 PLATFORM_LIBRARIES+=vchiq_arm 
- 
+
+#openframeworks core third party
+PLATFORM_LIBRARIES=
+#PLATFORM_LIBRARIES+=openal 
+#PLATFORM_LIBRARIES+=sndfile 
+#PLATFORM_LIBRARIES+=vorbis 
+#PLATFORM_LIBRARIES+=FLAC 
+#PLATFORM_LIBRARIES+=ogg 
+PLATFORM_LIBRARIES+=freeimage 
+
+#static libraries (fully qualified paths)
+PLATFORM_STATIC_LIBRARIES=
+PLATFORM_STATIC_LIBRARIES+=$(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES+=$(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES+=$(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES+=$(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
+
+#openframeworks core third party
+PLATFORM_PKG_CONFIG_LIBRARIES=
+PLATFORM_PKG_CONFIG_LIBRARIES+=cairo 
+PLATFORM_PKG_CONFIG_LIBRARIES+=zlib 
+
 ##########################################################################################
 # PLATFORM ARCHITECTURE
 #   If not defined here the platform architecture will be determined using (uname -m)

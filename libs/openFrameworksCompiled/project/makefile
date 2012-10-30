@@ -13,10 +13,10 @@ ifdef MAKEFILE_DEBUG
 endif
 
 # do all configs
-include $(MAKEFILE_INCLUDES_PATH)/config.paths
-include $(MAKEFILE_INCLUDES_PATH)/config.arch
-include $(MAKEFILE_INCLUDES_PATH)/config.platform
-include $(MAKEFILE_INCLUDES_PATH)/config.libspath
+include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.paths
+include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.arch
+include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.platform
+include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.libspath
 
 # configured by default
 ifdef PLATFORM_SPECIFIER
@@ -26,8 +26,8 @@ endif
 PLATFORM_CONFIG_SUFFIX=.raspberrypi
 
 # include the platform specific user and platform configuration files
-include $(PLATFORM_LIB_SUBPATH)/config.user$(PLATFORM_CONFIG_SUFFIX)
-include $(PLATFORM_LIB_SUBPATH)/config.platform$(PLATFORM_CONFIG_SUFFIX)
+include $(PLATFORM_LIB_SUBPATH)/makefile.configure.user$(PLATFORM_CONFIG_SUFFIX)
+include $(PLATFORM_LIB_SUBPATH)/makefile.configure.platform$(PLATFORM_CONFIG_SUFFIX)
 
 # make the core!
-include $(MAKEFILE_INCLUDES_PATH)/makefile.core
+include $(MAKEFILE_INCLUDES_PATH)/makefile.compile.core
