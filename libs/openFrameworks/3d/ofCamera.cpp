@@ -76,7 +76,6 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 	setPosition(eyeX,eyeY,dist);
 	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
 
-
 	if(vFlip){
 		setScale(1,-1,1);
 	}
@@ -150,11 +149,7 @@ void ofCamera::begin(ofRectangle viewport) {
 		ofLoadMatrix( ortho );
 #endif
 	} else {
-		ofTranslate(-lensOffset.x, -lensOffset.y);
-		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
-		ofMatrix4x4 persp;
-		persp.makePerspectiveMatrix( fov, aspect, nearClip, farClip );
-		ofLoadMatrix( persp );
+		ofLoadMatrix( this->getProjectionMatrix() );
 	}
 
 	glMatrixMode(GL_MODELVIEW);
@@ -173,8 +168,10 @@ void ofCamera::end() {
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) {
+	float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
 	ofMatrix4x4 matProjection;
-	matProjection.makePerspectiveMatrix(fov, viewport.width/viewport.height, nearClip, farClip);
+	matProjection.makePerspectiveMatrix(fov, aspect, nearClip, farClip);
+	matProjection.translate(-lensOffset.x, -lensOffset.y, 0);
 	return matProjection;
 }
 //----------------------------------------
