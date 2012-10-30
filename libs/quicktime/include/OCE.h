@@ -182,8 +182,8 @@ enum {
 
 #define  kUserRecTypeBody           "aoce User"
 #define  kGroupRecTypeBody          "aoce Group"
-#define  kMnMRecTypeBody            "aoce AppleMailª M&M"
-#define  kMnMForwarderRecTypeBody   "aoce AppleMailª Fwdr"
+#define  kMnMRecTypeBody            "aoce AppleMail  M&M"
+#define  kMnMForwarderRecTypeBody   "aoce AppleMail  Fwdr"
 #define  kNetworkSpecRecTypeBody    "aoce NetworkSpec"
 #define  kADAPServerRecTypeBody     "aoce ADAP Server"
 #define  kADAPDNodeRecTypeBody      "aoce ADAP DNode"

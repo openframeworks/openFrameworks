@@ -9,6 +9,9 @@
 //ON IPHONE NOTE INCLUDE THIS BEFORE ANYTHING ELSE
 #include "ofxOpenCv.h"
 
+//warning video player doesn't currently work - use live video only
+//#define _USE_LIVE_VIDEO
+
 class testApp : public ofxiPhoneApp{
 	
 	public:
@@ -29,7 +32,9 @@ class testApp : public ofxiPhoneApp{
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
 
-		ofVideoGrabber vidGrabber;
+        #ifdef _USE_LIVE_VIDEO
+            ofVideoGrabber vidGrabber;
+        #endif
 		ofVideoPlayer vidPlayer;
 
 		ofTexture tex;

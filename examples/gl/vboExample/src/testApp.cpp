@@ -88,8 +88,6 @@ void testApp::setup() {
 	}
 	
 	vboMesh = mesh;
-	
-	glEnable(GL_DEPTH_TEST);
 }
 
 //--------------------------------------------------------------
@@ -101,6 +99,7 @@ void testApp::update() {
 void testApp::draw() {
 	ofBackground(0);
 	cam.begin();
+	glEnable(GL_DEPTH_TEST);
 	
 	ofRotateY(ofGetElapsedTimef() * 30); // slowly rotate the model
 	
@@ -125,10 +124,15 @@ void testApp::draw() {
 		}
 	}
 	img.unbind();
+	
+	glDisable(GL_DEPTH_TEST);
 	cam.end();
 	
 	// draw the framerate in the top left corner
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+	ofDrawBitmapString(ofToString((int) ofGetFrameRate()) + " fps", 10, 20);
+	ofDrawBitmapString("Hold any key for ofVboMesh mode.", 10, 40);
+	string mode = (ofGetKeyPressed() ? "ofVboMesh" : "ofMesh");
+	ofDrawBitmapString("Current mode: " + mode, 10, 60);
 }
 
 //--------------------------------------------------------------

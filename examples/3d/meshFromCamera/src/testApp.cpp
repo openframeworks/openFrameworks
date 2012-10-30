@@ -59,7 +59,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	//grab a new frame
-	vidGrabber.grabFrame();
+	vidGrabber.update();
 	
 	//update the mesh if we have a new frame
 	if (vidGrabber.isFrameNew()){
@@ -79,6 +79,19 @@ void testApp::update(){
 			mainMesh.setColor(i, sampleColor);
 		}
 	}
+	
+	//let's move the camera when you move the mouse
+	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 360);
+
+	
+	//move the camera around the mesh
+	ofVec3f camDirection(0,0,1);
+	ofVec3f centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
+	ofVec3f camDirectionRotated = camDirection.rotated(rotateAmount, ofVec3f(1,0,0));
+	ofVec3f camPosition = centre + camDirectionRotated * extrusionAmount;
+	
+	cam.setPosition(camPosition);
+	cam.lookAt(centre);
 }
 
 //--------------------------------------------------------------
@@ -120,19 +133,6 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-	
-	//let's move the camera when you move the mouse
-	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 360);
-
-	
-	//move the camera around the mesh
-	ofVec3f camDirection(0,0,1);
-	ofVec3f centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
-	ofVec3f camDirectionRotated = camDirection.rotated(rotateAmount, ofVec3f(1,0,0));
-	ofVec3f camPosition = centre + camDirectionRotated * extrusionAmount;
-	
-	cam.setPosition(camPosition);
-	cam.lookAt(centre);
 	
 }
 

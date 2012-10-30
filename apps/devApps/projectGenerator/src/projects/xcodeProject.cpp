@@ -24,11 +24,7 @@ some additional things that might be useful to try in the future:
 
 // we are going to use POCO for computing the MD5 Hash of file names and paths, etc:
 
-#include "Poco/HMACEngine.h"
-#include "Poco/MD5Engine.h"
-using Poco::DigestEngine;
-using Poco::HMACEngine;
-using Poco::MD5Engine;
+
 
 // to add things to the xcode project file, we need some template XML around
 // these are common things we'll want to add
@@ -131,31 +127,41 @@ void xcodeProject::setup(){
 		srcUUID			= "E4B69E1C0A3A1BDC003C02F2";
 		addonUUID		= "BB4B014C10F69532006C3DED";
 		buildPhaseUUID	= "E4B69E200A3A1BDC003C02F2";
+		resourcesUUID	= "";
 	}else{
 		srcUUID			= "E4D8936A11527B74007E1F53";
 		addonUUID		= "BB16F26B0F2B646B00518274";
 		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
+		resourcesUUID   = "BB24DD8F10DA77E000E9C588";
 	}
 }
 
 
 void xcodeProject::saveScheme(){
-    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/");
-    dir.create(true);
-    string schemeTo = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + ".xcscheme";
-    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample.xcscheme", schemeTo);
-    cout << "trying to copy " << projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/emptyExample.xcscheme" << " ------ > " << schemeTo <<endl;
-    findandreplaceInTexfile(schemeTo, "emptyExample", projectName);
+	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
+    ofDirectory::removeDirectory(schemeFolder, true);
+	ofDirectory::createDirectory(schemeFolder, false, true);
+    
+	string schemeToD = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Debug.xcscheme";
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample Debug.xcscheme", schemeToD);
+
+	string schemeToR = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Release.xcscheme";
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample Release.xcscheme", schemeToR);
+	
+    findandreplaceInTexfile(schemeToD, "emptyExample", projectName);
+    findandreplaceInTexfile(schemeToR, "emptyExample", projectName);
+	
+	//TODO: do we still need this?
     string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
     ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
 }
 
 
 void xcodeProject::saveWorkspaceXML(){
-    string xcodeProjectWorkspace = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/contents.xcworkspacedata";
-    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/");
-    dir.create(true);
-    cout << "trying copy " << templatePath + "emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata" << " -----> " << xcodeProjectWorkspace <<endl;
+	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
+	ofDirectory::removeDirectory(workspaceFolder, true);
+	ofDirectory::createDirectory(workspaceFolder, false, true);
+	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
 }
@@ -166,10 +172,12 @@ bool xcodeProject::createProjectFile(){
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-    ofDirectory xcodeDir(xcodeProject);
-    xcodeDir.create(true);
-
-
+    ofDirectory::removeDirectory(xcodeProject, true);
+   
+	ofDirectory xcodeDir(xcodeProject);
+	xcodeDir.create(true);
+	xcodeDir.close();
+	
     ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj/project.pbxproj"),
                        ofFilePath::join(xcodeProject, "project.pbxproj"), true, true);
 
@@ -177,6 +185,19 @@ bool xcodeProject::createProjectFile(){
 
     if( target == "osx" ){
         ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir, true, true);
+		
+		ofDirectory binDirectory(ofFilePath::join(projectDir, "bin"));
+		if (!binDirectory.exists()){
+			ofDirectory dataDirectory(ofFilePath::join(projectDir, "bin/data"));
+			dataDirectory.create(true);
+		}
+		if(binDirectory.exists()){
+			ofDirectory dataDirectory(ofFilePath::join(binDirectory.path(), "data"));
+			if (!dataDirectory.exists()){
+				dataDirectory.create(false);
+			}
+		}
+
     }else{
         ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
@@ -193,7 +214,9 @@ bool xcodeProject::createProjectFile(){
 			}
 		}
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default.png"),projectDir + "/bin/data/Default.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x.png"),projectDir + "/bin/data/Default@2x.png", true, true);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon.png"),projectDir + "/bin/data/Icon.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon@2x.png"),projectDir + "/bin/data/Icon@2x.png", true, true);
     }
 
     // this is for xcode 4 scheme issues. but I'm not sure this is right.
@@ -269,24 +292,6 @@ bool xcodeProject::findArrayForUUID(string UUID, pugi::xml_node & nodeMe){
     }
     return false;
 }
-
-
-
-string generateUUID(string input){
-
-    std::string passphrase("openFrameworks"); // HMAC needs a passphrase
-
-    HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
-    hmac.update(input);
-
-    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
-    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
-
-    return digestString;
-
-
-}
-
 
 
 
@@ -413,23 +418,29 @@ void xcodeProject::addSrc(string srcFile, string folder){
         fileKind = "sourcecode.cpp.cpp";
         addToResources = false;
     }
-    if( ext == "c" ){
+    else if( ext == "c" ){
         fileKind = "sourcecode.c.c";
         addToResources = false;
     }
-    if(ext == "h" || ext == "hpp"){
+    else if(ext == "h" || ext == "hpp"){
         fileKind = "sourcecode.c.h";
         addToBuild = false;
         addToResources = false;
     }
-    if(ext == "mm" || ext == "m"){
+    else if(ext == "mm" || ext == "m"){
         addToResources = false;
         fileKind = "sourcecode.cpp.objcpp";
     }
-    if(ext == "xib"){
-		fileKind = "file";
-        addToBuild	= true;
-    }
+    else if(ext == "xib"){
+		fileKind = "file.xib";
+        addToBuild	= false;
+        addToResources = true;		
+    }else if( target == "ios" ){
+		fileKind = "file";	
+        addToBuild	= false;
+        addToResources = true;				
+	}
+	
     if (folder == "src"){
         bAddFolder = false;
     }
@@ -481,8 +492,21 @@ void xcodeProject::addSrc(string srcFile, string folder){
     //-----------------------------------------------------------------
 
 
-    if (addToResources == true){
-        // no idea where resources go
+    if (addToResources == true && resourcesUUID != ""){
+		
+        string resUUID = generateUUID(srcFile + "-build");
+        string pbxbuildfile = string(PBXBuildFile);
+        findandreplace( pbxbuildfile, "FILEUUID", UUID);
+        findandreplace( pbxbuildfile, "BUILDUUID", resUUID);
+        fileRefDoc.load_buffer(pbxbuildfile.c_str(), strlen(pbxbuildfile.c_str()));
+        doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child().next_sibling());   // UUID FIRST
+        doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child());                  // DICT SECOND
+
+        // add it to the build array.
+        pugi::xml_node array;
+        findArrayForUUID(resourcesUUID, array);    // this is the build array (all build refs get added here)
+        array.append_child("string").append_child(pugi::node_pcdata).set_value(resUUID.c_str());
+		
     }
 
 

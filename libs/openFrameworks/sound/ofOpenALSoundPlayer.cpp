@@ -32,7 +32,7 @@ void ofOpenALSoundUpdate(){
 ofOpenALSoundPlayer::ofOpenALSoundPlayer(){
 	bLoop 			= false;
 	bLoadedOk 		= false;
-	pan 			= 0.5f;
+	pan 			= 0.0f; // range for oF is -1 to 1,
 	volume 			= 1.0f;
 	internalFreq 	= 44100;
 	speed 			= 1;
@@ -218,7 +218,7 @@ bool ofOpenALSoundPlayer::sfStream(string path,vector<short> & buffer,vector<flo
 			fftAuxBuffer.resize(samples_read);
 			buffer.resize(samples_read);
 			setPosition(0);
-			if(!bLoop) stopThread(false);
+			if(!bLoop) stopThread();
 			stream_samples_read = 0;
 			stream_end = true;
 		}
@@ -233,7 +233,7 @@ bool ofOpenALSoundPlayer::sfStream(string path,vector<short> & buffer,vector<flo
 			fftAuxBuffer.resize(frames_read*channels);
 			buffer.resize(frames_read*channels);
 			setPosition(0);
-			if(!bLoop) stopThread(false);
+			if(!bLoop) stopThread();
 			stream_samples_read = 0;
 			stream_end = true;
 		}
@@ -283,7 +283,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(string path,vector<short> & buffer,vector
 		setPosition(0);
 		buffer.resize(done/2);
 		fftAuxBuffer.resize(done/2);
-		if(!bLoop) stopThread(false);
+		if(!bLoop) stopThread();
 		stream_end = true;
 	}
 
@@ -297,13 +297,13 @@ bool ofOpenALSoundPlayer::mpg123Stream(string path,vector<short> & buffer,vector
 #endif
 
 //------------------------------------------------------------
-void ofOpenALSoundPlayer::stream(string fileName, vector<short> & buffer){
+bool ofOpenALSoundPlayer::stream(string fileName, vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)=="mp3" || ofFilePath::getFileExt(fileName)=="MP3" || mp3streamf){
-		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return;
+		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return false;
 	}else
 #endif
-		if(!sfStream(fileName,buffer,fftAuxBuffer)) return;
+		if(!sfStream(fileName,buffer,fftAuxBuffer)) return false;
 
 	fftBuffers.resize(channels);
 	int numFrames = buffer.size()/channels;
@@ -314,17 +314,18 @@ void ofOpenALSoundPlayer::stream(string fileName, vector<short> & buffer){
 			fftBuffers[i][j] = fftAuxBuffer[j*channels+i];
 		}
 	}
+	return true;
 }
 
-void ofOpenALSoundPlayer::readFile(string fileName, vector<short> & buffer){
+bool ofOpenALSoundPlayer::readFile(string fileName, vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)!="mp3" && ofFilePath::getFileExt(fileName)!="MP3"){
-		if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return;
+		if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return false;
 	}else{
-		if(!mpg123ReadFile(fileName,buffer,fftAuxBuffer)) return;
+		if(!mpg123ReadFile(fileName,buffer,fftAuxBuffer)) return false;
 	}
 #else
-	if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return;
+	if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return false;
 #endif
 	fftBuffers.resize(channels);
 	int numFrames = buffer.size()/channels;
@@ -335,15 +336,17 @@ void ofOpenALSoundPlayer::readFile(string fileName, vector<short> & buffer){
 			fftBuffers[i][j] = fftAuxBuffer[j*channels+i];
 		}
 	}
+	return true;
 }
 
 //------------------------------------------------------------
-void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
+bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 
 	fileName = ofToDataPath(fileName);
 
 	bMultiPlay = false;
 	isStreaming = is_stream;
+	int err = AL_NO_ERROR;
 
 	// [1] init sound systems, if necessary
 	initialize();
@@ -354,6 +357,7 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 
 	unloadSound();
 	ALenum format=AL_FORMAT_MONO16;
+	bLoadedOk = false;
 
 	if(!isStreaming){
 		readFile(fileName, buffer);
@@ -373,14 +377,19 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 	if(channels==1){
 		sources.resize(1);
 		alGenSources(1, &sources[0]);
-		if (alGetError() != AL_NO_ERROR)
-			return;
+		err = alGetError();
+		if (err != AL_NO_ERROR)
+		{
+			ofLogError("ofOpenALSoundPlayer") << "error " << err << " generating source for " << fileName;
+			return false;
+		}
 
 		for(int i=0; i<(int)buffers.size(); i++){
 			alBufferData(buffers[i],format,&buffer[0],buffer.size()*2,samplerate);
-			if (alGetError() != AL_NO_ERROR){
-				ofLog(OF_LOG_ERROR,"ofOpenALSoundPlayer: error creating buffer");
-				return;
+			err = alGetError();
+			if (err != AL_NO_ERROR){
+				ofLogError("ofOpenALSoundPlayer:") << "error " << err << " creating buffer for " << fileName;
+				return false;
 			}
 			if(isStreaming){
 				stream(fileName,buffer);
@@ -409,9 +418,10 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 						multibuffer[i][j] = buffer[j*channels+i];
 					}
 					alBufferData(buffers[s*2+i],format,&multibuffer[i][0],buffer.size()/channels*2,samplerate);
-					if (alGetError() != AL_NO_ERROR){
-						ofLog(OF_LOG_ERROR,"ofOpenALSoundPlayer: error creating stereo buffers for " + fileName);
-						return;
+					err = alGetError();
+					if ( err != AL_NO_ERROR){
+						ofLogError("ofOpenALSoundPlayer") << "error " << err << " creating stereo buffers for " << fileName;
+						return false;
 					}
 					alSourceQueueBuffers(sources[i],1,&buffers[s*2+i]);
 					stream(fileName,buffer);
@@ -424,18 +434,19 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 					multibuffer[i][j] = buffer[j*channels+i];
 				}
 				alBufferData(buffers[i],format,&multibuffer[i][0],buffer.size()/channels*2,samplerate);
-				if (alGetError() != AL_NO_ERROR){
-					ofLog(OF_LOG_ERROR,"ofOpenALSoundPlayer: error creating stereo buffers for " + fileName);
-					return;
+				err = alGetError();
+				if (err != AL_NO_ERROR){
+					ofLogError("ofOpenALSoundPlayer") << "error " << err << " creating stereo buffers for " << fileName;
+					return false;
 				}
 				alSourcei (sources[i], AL_BUFFER,   buffers[i]   );
 			}
 		}
 
 		for(int i=0;i<channels;i++){
-			if (alGetError() != AL_NO_ERROR){
-				ofLog(OF_LOG_ERROR,"ofOpenALSoundPlayer: error creating stereo sources for " + fileName);
-				return;
+			if (err != AL_NO_ERROR){
+				ofLogError("ofOpenALSoundPlayer") << "error " << err << " creating stereo sources for " << fileName;
+				return false;
 			}
 
 			// only stereo panning
@@ -450,7 +461,15 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 			alSourcei (sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
 		}
 	}
+	
+	bLoadedOk = true;
+	return bLoadedOk;
 
+}
+
+//------------------------------------------------------------
+bool ofOpenALSoundPlayer::isLoaded(){
+	return bLoadedOk;
 }
 
 //------------------------------------------------------------
@@ -528,6 +547,7 @@ void ofOpenALSoundPlayer::unloadSound(){
 	alDeleteBuffers(buffers.size(),&buffers[0]);
 	alDeleteSources(sources.size(),&sources[0]);
 	streamf = 0;
+	bLoadedOk = false;
 }
 
 //------------------------------------------------------------
@@ -656,8 +676,8 @@ int ofOpenALSoundPlayer::getPositionMS(){
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPan(float p){
 	if(sources.empty()) return;
-	pan = p;
-	p=p*2-1;
+	p = ofClamp(p, -1, 1);
+	pan = p;	
 	if(channels==1){
 		float pos[3] = {p,0,0};
 		alSourcefv(sources[sources.size()-1],AL_POSITION,pos);

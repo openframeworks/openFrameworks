@@ -4,3 +4,12 @@
 # ignore bin folders' contents, except data folder therein
 /devApps/*/bin/*
 !/devApps/*/bin/data/
+
+/devApps/*/.cproject
+/devApps/*/.project
+/devApps/*/.settings/
+
+!_Examples_Moved.txt
+
+# don't ignore the .gitignore file
+!.gitignore

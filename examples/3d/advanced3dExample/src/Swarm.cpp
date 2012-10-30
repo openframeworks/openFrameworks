@@ -1,4 +1,4 @@
-#include "swarm.h"
+#include "Swarm.h"
 
 // This 'swarm' object demonstrates a simple particle system
 //  with 'simple harmonic motion'

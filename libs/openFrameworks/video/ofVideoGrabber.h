@@ -17,6 +17,11 @@
 	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_QTKIT
+	#include "ofQTKitGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofQTKitGrabber
+#endif
+
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	#include "ofDirectShowGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber
@@ -45,11 +50,12 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				listDevices();
 		bool				isFrameNew();
 		void				update();
-		void				grabFrame();
+		OF_DEPRECATED_MSG("Use ofVideoGrabber::update() instead.", void grabFrame());
 		void				close();	
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
 		bool				initGrabber(int w, int h, bool bTexture);
-		void				setPixelFormat(ofPixelFormat pixelFormat);
+		
+		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat 		getPixelFormat();
 		
 		void				videoSettings();
@@ -62,8 +68,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				setUseTexture(bool bUse);
 		void				draw(float x, float y, float w, float h);
 		void				draw(float x, float y);
-		void				draw(const ofPoint & p);
-		void				draw(const ofRectangle & r);
+		using ofBaseDraws::draw;
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -87,6 +92,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		bool bInitialized;
 		ofPtr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
+		
+		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
 		
 		ofPixelFormat internalPixelFormat;
 		int desiredFramerate;

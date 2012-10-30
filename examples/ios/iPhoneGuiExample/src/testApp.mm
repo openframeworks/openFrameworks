@@ -6,9 +6,6 @@ MyGuiView * myGuiViewController;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-		
 	//NOTE WE WON'T RECEIVE TOUCH EVENTS INSIDE OUR APP WHEN THERE IS A VIEW ON TOP OF THE OF VIEW
 
 	lengthRatio	= 0.5;
@@ -18,7 +15,7 @@ void testApp::setup(){
 
 	//Our Gui setup
 	myGuiViewController	= [[MyGuiView alloc] initWithNibName:@"MyGuiView" bundle:nil];
-	[ofxiPhoneGetUIWindow() addSubview:myGuiViewController.view];
+	[ofxiPhoneGetGLParentView() addSubview:myGuiViewController.view];
 
 	ofBackground(255,255,255);
 }

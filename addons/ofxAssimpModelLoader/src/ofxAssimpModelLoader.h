@@ -86,6 +86,13 @@ class ofxAssimpModelLoader{
 		float          getNormalizedScale();
 		ofPoint        getScale();
 
+		ofPoint			getSceneMin(bool bScaled = false);
+		ofPoint			getSceneMax(bool bScaled = false);
+						
+		int				getNumRotations();	// returns the no. of applied rotations
+		ofPoint			getRotationAxis(int which); // gets each rotation axis
+		float			getRotationAngle(int which); //gets each rotation angle
+
         void 		   calculateDimensions();
 
 		const aiScene* getAssimpScene();

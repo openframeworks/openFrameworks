@@ -16,8 +16,8 @@ MorseCodePlayer::MorseCodePlayer(){
 void MorseCodePlayer::setup(){
 	dotPlayer.loadSound("dot.wav", false);
 	dashPlayer.loadSound("dash.wav", false);
-	ofLogVerbose("dotPlayer duration: " + ofToString(dotPlayer.length/dotPlayer.internalFreq));
-	ofLogVerbose("dashPlayer duration: " + ofToString(dashPlayer.length/dashPlayer.internalFreq));
+	//ofLogVerbose("dotPlayer duration: " + ofToString(dotPlayer.length/dotPlayer.internalFreq));
+	//ofLogVerbose("dashPlayer duration: " + ofToString(dashPlayer.length/dashPlayer.internalFreq));
 	isReady = true;
 }
 

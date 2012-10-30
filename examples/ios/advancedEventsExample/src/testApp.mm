@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofRegisterTouchEvents(this);
-			
 	ofBackground(50, 50, 50);
 	
     enabled = false;

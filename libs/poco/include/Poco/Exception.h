@@ -1,7 +1,7 @@
 //
 // Exception.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Exception.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Exception.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -159,14 +159,14 @@ inline int Exception::code() const
 // pointers (which we need for specifying the exception name)
 // are not allowed as template arguments.
 //
-#define POCO_DECLARE_EXCEPTION(API, CLS, BASE) \
+#define POCO_DECLARE_EXCEPTION_CODE(API, CLS, BASE, CODE) \
 	class API CLS: public BASE														\
 	{																				\
 	public:																			\
-		CLS(int code = 0);															\
-		CLS(const std::string& msg, int code = 0);									\
-		CLS(const std::string& msg, const std::string& arg, int code = 0);			\
-		CLS(const std::string& msg, const Poco::Exception& exc, int code = 0);		\
+		CLS(int code = CODE);														\
+		CLS(const std::string& msg, int code = CODE);								\
+		CLS(const std::string& msg, const std::string& arg, int code = CODE);		\
+		CLS(const std::string& msg, const Poco::Exception& exc, int code = CODE);	\
 		CLS(const CLS& exc);														\
 		~CLS() throw();																\
 		CLS& operator = (const CLS& exc);											\
@@ -176,6 +176,8 @@ inline int Exception::code() const
 		void rethrow() const;														\
 	};
 
+#define POCO_DECLARE_EXCEPTION(API, CLS, BASE) \
+	POCO_DECLARE_EXCEPTION_CODE(API, CLS, BASE, 0)
 
 #define POCO_IMPLEMENT_EXCEPTION(CLS, BASE, NAME)													\
 	CLS::CLS(int code): BASE(code)																	\

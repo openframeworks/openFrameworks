@@ -1,7 +1,7 @@
 //
 // SharedLibrary.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/SharedLibrary.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/SharedLibrary.h#3 $
 //
 // Library: Foundation
 // Package: SharedLibrary
@@ -45,6 +45,8 @@
 
 #if defined(hpux) || defined(_hpux)
 #include "Poco/SharedLibrary_HPUX.h"
+#elif defined(POCO_VXWORKS)
+#include "Poco/SharedLibrary_VX.h"
 #elif defined(POCO_OS_FAMILY_UNIX)
 #include "Poco/SharedLibrary_UNIX.h"
 #elif defined(POCO_OS_FAMILY_WINDOWS) && defined(POCO_WIN32_UTF8)
@@ -64,6 +66,24 @@ class Foundation_API SharedLibrary: private SharedLibraryImpl
 	/// loads shared libraries at run-time.
 {
 public:
+	enum Flags
+	{
+		SHLIB_GLOBAL = 1,
+			/// On platforms that use dlopen(), use RTLD_GLOBAL. This is the default
+			/// if no flags are given.
+			///
+			/// This flag is ignored on platforms that do not use dlopen().
+
+		SHLIB_LOCAL  = 2  
+			/// On platforms that use dlopen(), use RTLD_LOCAL instead of RTLD_GLOBAL.
+			///
+			/// Note that if this flag is specified, RTTI (including dynamic_cast and throw) will
+			/// not work for types defined in the shared library with GCC and possibly other
+			/// compilers as well. See http://gcc.gnu.org/faq.html#dso for more information.
+			///
+			/// This flag is ignored on platforms that do not use dlopen().
+	};
+	
 	SharedLibrary();
 		/// Creates a SharedLibrary object.
 		
@@ -71,12 +91,26 @@ public:
 		/// Creates a SharedLibrary object and loads a library
 		/// from the given path.
 
+	SharedLibrary(const std::string& path, int flags);
+		/// Creates a SharedLibrary object and loads a library
+		/// from the given path, using the given flags. 
+		/// See the Flags enumeration for valid values.
+
 	virtual ~SharedLibrary();
 		/// Destroys the SharedLibrary. The actual library
 		/// remains loaded.
 
 	void load(const std::string& path);
 		/// Loads a shared library from the given path.
+		/// Throws a LibraryAlreadyLoadedException if
+		/// a library has already been loaded.
+		/// Throws a LibraryLoadException if the library
+		/// cannot be loaded.
+
+	void load(const std::string& path, int flags);
+		/// Loads a shared library from the given path,
+		/// using the given flags. See the Flags enumeration
+		/// for valid values.
 		/// Throws a LibraryAlreadyLoadedException if
 		/// a library has already been loaded.
 		/// Throws a LibraryLoadException if the library

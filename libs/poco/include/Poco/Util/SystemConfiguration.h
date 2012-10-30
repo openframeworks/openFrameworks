@@ -1,7 +1,7 @@
 //
 // SystemConfiguration.h
 //
-// $Id: //poco/1.4/Util/include/Poco/Util/SystemConfiguration.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/SystemConfiguration.h#2 $
 //
 // Library: Util
 // Package: Configuration
@@ -98,7 +98,9 @@ private:
 	static const std::string HOMEDIR;
 	static const std::string TEMPDIR;
 	static const std::string DATETIME;
+#if !defined(POCO_VXWORKS)
 	static const std::string PID;
+#endif
 	static const std::string ENV;
 };
 

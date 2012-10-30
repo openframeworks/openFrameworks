@@ -117,10 +117,17 @@ void ofURLFileLoader::threadedFunction() {
 
 			if(response.status!=-1){
 				lock();
-		    	ofLog(OF_LOG_VERBOSE,"got request " + requests.front().name);
-				responses.push(response);
-				requests.pop_front();
-		    	ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
+				// double-check that the request hasn't been removed from the queue
+				if( (requests.size()==0) || (requests.front().getID()!=request.getID()) ){
+					// this request has been removed from the queue
+					ofLog(OF_LOG_VERBOSE,"request " + requests.front().name + " is missing from the queue, must have been removed/cancelled" );
+				}
+				else{
+					ofLog(OF_LOG_VERBOSE,"got response to request " + requests.front().name + " status "+ofToString(response.status) );
+					responses.push(response);
+					requests.pop_front();
+					ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
+				}
 				unlock();
 			}else{
 		    	ofLog(OF_LOG_VERBOSE,"failed getting request " + requests.front().name);
@@ -164,11 +171,15 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 			return ofHttpResponse(request,res.getStatus(),res.getReason());
 		}
 
-	} catch (Exception& exc) {
+	} catch (const Exception& exc) {
         ofLog(OF_LOG_ERROR, "ofURLFileLoader " + exc.displayText());
 
         return ofHttpResponse(request,-1,exc.displayText());
-    }	
+
+    } catch (...) {
+    	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception");
+    }
+
 	
 }	
 

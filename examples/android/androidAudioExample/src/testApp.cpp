@@ -15,7 +15,7 @@ void testApp::setup(){
 	lAudio = new float[256];
 	rAudio = new float[256];
 
-	ofSoundStreamSetup(2,2,this, sampleRate,256, 4);
+	soundStream.setup(this,2,2, sampleRate,256, 4);
 }
 
 //--------------------------------------------------------------

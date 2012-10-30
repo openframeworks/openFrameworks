@@ -62,15 +62,11 @@ private:
 		Value(){};
 
 		Value(ParameterType v)
-		:value(v)
-		,min(numeric_limits<ParameterType>::min())
-		,max(numeric_limits<ParameterType>::max()){};
+		:value(v){}
 
 		Value(string name, ParameterType v)
 		:name(name)
-		,value(v)
-		,min(numeric_limits<ParameterType>::min())
-		,max(numeric_limits<ParameterType>::max()){};
+		,value(v){}
 
 		Value(string name, ParameterType v, ParameterType min, ParameterType max)
 		:name(name)
@@ -129,8 +125,8 @@ ParameterType ofxParameter<ParameterType>::getValue(){
 
 template<typename ParameterType>
 void ofxParameter<ParameterType>::setValue(ParameterType v){
-	ofNotifyEvent(obj->changedE,v,this);
 	obj->value = v;
+	ofNotifyEvent(obj->changedE,v,this);
 }
 
 template<typename ParameterType>

@@ -3,46 +3,71 @@
 //--------------------------------------------------------------
 void testApp::setup(){	
 	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
-
-	ofSetFrameRate(20);
-	grabber.setDesiredFrameRate(20);
-	grabber.initGrabber(480, 360);
 	
-	colorCv.allocate(grabber.getWidth(), grabber.getHeight());
-	colorCvSmall.allocate(grabber.getWidth()/4, grabber.getHeight()/4);
-	grayCv.allocate(grabber.getWidth()/4, grabber.getHeight()/4);
-
 	finder.setup("haarcascade_frontalface_default.xml");
-	finder.setNeighbors(1);
-	finder.setScaleHaar(1.5);
 	
+	#ifdef USE_CAMERA 
+		ofSetFrameRate(20);
+		grabber.setDesiredFrameRate(20);
+		grabber.initGrabber(480, 360);
+		
+		int w = grabber.getWidth();
+		int h = grabber.getHeight();
+		
+		//we use different settings for the camera
+		//so we can get a good frame rate 
+		colorCv.allocate(w,h);
+		colorCvSmall.allocate(w/4, h/4);
+		grayCv.allocate(w/4, h/4);	
+		
+		finder.setNeighbors(1);
+		finder.setScaleHaar(1.5);
+	#else 
+		img.loadImage("test.jpg");
+	#endif 
+
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 	ofBackground(255,255,255);	
 	
-	grabber.update();
-	colorCv = grabber.getPixels();
-	
-	colorCvSmall.scaleIntoMe(colorCv, CV_INTER_NN);
-	grayCv = colorCvSmall;
+	#ifdef USE_CAMERA		
+		grabber.update();
+		colorCv = grabber.getPixels();
+		colorCvSmall.scaleIntoMe(colorCv, CV_INTER_NN);
+		grayCv = colorCvSmall;
+		finder.findHaarObjects(grayCv);	
+		faces = finder.blobs;
+	#else
+		//we don't really need to do this every frame
+		//but it simulates closer what the camera demo would be doing
+		finder.findHaarObjects(img);	
+	#endif
 
-	finder.findHaarObjects(grayCv);	
-	faces = finder.blobs;
+	faces = finder.blobs;		
+	cout << " found " << faces.size() << endl; 
+	
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){	
 	
 	ofSetColor(255);
-	grabber.draw(0, 0);
+	
+	float scaleFactor = 1.0;
+	#ifdef USE_CAMERA
+		grabber.draw(0, 0);
+		scaleFactor = 4.0;
+	#else 
+		img.draw(0,0);
+	#endif
 	
 	ofPushStyle();
 		ofNoFill();
 		ofSetColor(255, 0, 255);
 		for(int k = 0; k < faces.size(); k++){
-			ofRectangle rect(faces[k].boundingRect.x*4.0, faces[k].boundingRect.y*4.0, faces[k].boundingRect.width*4, faces[k].boundingRect.width*4.0 );
+			ofRectangle rect(faces[k].boundingRect.x * scaleFactor, faces[k].boundingRect.y * scaleFactor, faces[k].boundingRect.width * scaleFactor, faces[k].boundingRect.width * scaleFactor);
 			ofRect(rect);
 		}
 	ofPopStyle();
