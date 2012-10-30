@@ -39,6 +39,10 @@ LIB_STATIC += $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | g
 LIB_SHARED += $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
 LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
+CFLAGS += -DTARGET_OPENGLES
+CFLAGS += -I/opt/vc/include
+CFLAGS += -I/opt/vc/include/interface/vcos/pthreads
+CFLAGS += -DTARGET_RASPBERRY_PI
 CFLAGS += -Wall -fexceptions
 CFLAGS += -I.
 CFLAGS += $(INCLUDES_FLAGS)

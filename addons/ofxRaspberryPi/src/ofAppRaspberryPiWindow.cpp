@@ -197,8 +197,9 @@ int	ofAppRaspberryPiWindow::getHeight(){ return screen_height; }
 //------------------------------------------------------------
 int ofAppRaspberryPiWindow::getFrameNum(){return nFrameCount; }
 //------------------------------------------------------------
-bool ofAppRaspberryPiWindow::_getMouse() {
-    static int fd = -1;
+void ofAppRaspberryPiWindow::_getMouse() {
+ /*   
+ static int fd = -1;
     const int width=state->screen_width, height=state->screen_height;
     static int x=800, y=400;
     const int XSIGN = 1<<4, YSIGN = 1<<5;
@@ -232,8 +233,9 @@ _exit:
    if (outx) *outx = x;
    if (outy) *outy = y;
    return 0;
+*/
 }
 //------------------------------------------------------------
-bool ofAppRaspberryPiWindow::_getKeyboard() {}
+void ofAppRaspberryPiWindow::_getKeyboard() {}
 //------------------------------------------------------------
-bool ofAppRaspberryPiWindow::_getJoystick() {}
+void ofAppRaspberryPiWindow::_getJoystick() {}
