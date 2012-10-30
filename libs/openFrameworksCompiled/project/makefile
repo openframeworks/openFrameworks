@@ -14,7 +14,7 @@ endif
 
 # do all configs
 include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.paths
-include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.arch
+include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.architecture
 include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.platform
 include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.libspath
 
