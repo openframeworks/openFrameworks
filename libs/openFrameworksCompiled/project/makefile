@@ -26,8 +26,8 @@ endif
 PLATFORM_CONFIG_SUFFIX=.raspberrypi
 
 # include the platform specific user and platform configuration files
-include $(PLATFORM_LIBS_PATH)/config.user$(PLATFORM_CONFIG_SUFFIX)
-include $(PLATFORM_LIBS_PATH)/config.platform$(PLATFORM_CONFIG_SUFFIX)
+include $(PLATFORM_LIB_SUBPATH)/config.user$(PLATFORM_CONFIG_SUFFIX)
+include $(PLATFORM_LIB_SUBPATH)/config.platform$(PLATFORM_CONFIG_SUFFIX)
 
 # make the core!
 include $(MAKEFILE_INCLUDES_PATH)/makefile.core

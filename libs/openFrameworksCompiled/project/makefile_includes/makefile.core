@@ -169,7 +169,7 @@ endif
 # OBJECT FILES
 ##########################################################################################
 
-OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
+OBJ_OUTPUT_PATH=obj/$(TARGET_NAME)/
 
 $(info $(OBJ_OUTPUT_PATH))
 
