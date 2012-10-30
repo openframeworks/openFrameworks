@@ -253,7 +253,7 @@ public class OFAndroid {
 		
         onResume();
         
-        if(OFAndroid::orientation!=-1) OFAndroid::setOrientation(OFAndroid::orientation)
+        if(OFAndroid.orientation!=-1) OFAndroid.setOrientation(OFAndroid.orientation)
 		
 		if(wl!=null) lockScreenSleep();
 	}
@@ -517,7 +517,7 @@ public class OFAndroid {
     
     private static int orientation=-1;
     public static void setScreenOrientation(int orientation){
-    	OFAndroid::orientation = orientation;
+    	OFAndroid.orientation = orientation;
     	switch(orientation){
     	case 0:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
