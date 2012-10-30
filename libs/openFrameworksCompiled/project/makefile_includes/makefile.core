@@ -5,15 +5,9 @@
 # setup the shell
 SHELL = /bin/sh
 
-
-    $(info =============================config.paths=====================================)
-    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
-    $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-    $(info OF_LIBS_CORE_PATH=$(OF_LIBS_CORE_PATH))
-    $(info OF_EXPORT_PATH=$(OF_EXPORT_PATH))
-    $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
-    $(info OF_APPS_PATH=$(OF_APPS_PATH))
-
+# define the location of the core path
+OF_CORE_SRC_PATH=$(OF_LIBS_PATH)/openFrameworks/
+OF_CORE_LIB_PATH=$(OF_LIBS_PATH)/openFrameworksCompiled/$(PLATFORM_LIB_SUBPATH)
 
 ##########################################################################################
 # SOURCE FILES
@@ -25,10 +19,10 @@ CORE_SOURCE_EXCLUSIONS=$(PLATFORM_CORE_SOURCE_EXCLUSIONS)
 #CORE_SOURCE_EXCLUSIONS+=
 
 # strip and collapse spaces, and add the % suffix to allow directory wildcard matching
-FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_LIBS_CORE_PATH),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
+FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_CORE_SRC_PATH),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
 
 # find all of the source directories, exclude all . (dot-hidden) files/folders
-ALL_CORE_SOURCE_PATHS=$(shell find $(OF_LIBS_CORE_PATH) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
+ALL_CORE_SOURCE_PATHS=$(shell find $(OF_CORE_SRC_PATH) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
@@ -64,26 +58,6 @@ endif
 
 ##TODO: add platform inclusions here
 
-##########################################################################################
-# OBJECT FILES
-##########################################################################################
-
-OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
-DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_LIBS_PATH)/%.cpp,%.d,$(SOURCES)))
-OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
-
-
-#$(patsubst pattern,replacement,text)
-#Finds whitespace-separated words in text that match pattern and replaces them with replacement
-# this will remove the $(OF_LIBS_PATH) and produce
-OBJFILES=$(patsubst $(OF_LIBS_PATH)/%.cpp,%.o,$(SOURCES))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info --OBJFILES-- )
-    $(foreach v, $(OBJFILES),$(info $(v)))
-    $(info -------- )
-endif
 
 ##########################################################################################
 # INCLUDES
@@ -190,6 +164,34 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET=$(OF_CORE_LIB_PATH)/libopenFrameworks.a
 	TARGET+= $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
+
+##########################################################################################
+# OBJECT FILES
+##########################################################################################
+
+OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
+
+$(info $(OBJ_OUTPUT_PATH))
+
+DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_LIBS_PATH)/%.cpp,%.d,$(SOURCES)))
+OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
+
+
+#$(patsubst pattern,replacement,text)
+#Finds whitespace-separated words in text that match pattern and replaces them with replacement
+# this will remove the $(OF_LIBS_PATH) and produce
+OBJFILES=$(patsubst $(OF_LIBS_PATH)/%.cpp,%.o,$(SOURCES))
+
+# print debug information if needed
+ifdef MAKEFILE_DEBUG
+    $(info --OBJFILES-- )
+    $(foreach v, $(OBJFILES),$(info $(v)))
+    $(info -------- )
+endif
+
+
+##########################################################################################
+##########################################################################################
 
 CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 
