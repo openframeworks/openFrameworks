@@ -138,21 +138,24 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_LINUX
+
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-		//#include <glxew.h>
-		//#include <GL/glew.h>
-		//#include <GL/gl.h>
-		//#include <GL/glx.h>
-//#include "bcm_host.h"
 
-#include "GLES/gl.h"
-#include "EGL/egl.h"
-#include "EGL/eglext.h"
-
-// don't need this for rpi any more
-//#include "glu.h"
-//#include "gluos.h"
+    #ifdef TARGET_RASPBERRY_PI
+        //#include "bcm_host.h"
+        #include "GLES/gl.h"
+        #include "EGL/egl.h"
+        #include "EGL/eglext.h"
+        // don't need this for rpi any more
+        //#include "glu.h"
+        //#include "gluos.h"
+    #else // normal linux
+        #include <glxew.h>
+        #include <GL/glew.h>
+        #include <GL/gl.h>
+        #include <GL/glx.h>
+    #endif
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
@@ -165,7 +168,6 @@ enum ofTargetPlatform{
         // some things for serial compilation:
         #define B14400	14400
         #define B28800	28800
-
 
 #endif
 
