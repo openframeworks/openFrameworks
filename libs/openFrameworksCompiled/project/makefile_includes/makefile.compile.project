@@ -1,226 +1,273 @@
-##########################################################################################
-# CORE SPACE SPACE
-##########################################################################################
-
-# setup the shell
-SHELL = /bin/sh
-
-# define the location of the core path
-OF_CORE_SRC_PATH=$(OF_LIBS_PATH)/openFrameworks
-OF_CORE_LIB_PATH=$(PLATFORM_LIB_SUBPATH)
-
-ifdef MAKEFILE_DEBUG
-    $(info =============================makefile.core====================================)
-endif
-
-##########################################################################################
-# SOURCE FILES
-##########################################################################################
-
-# take from the platform core exclusions
-CORE_SOURCE_EXCLUSIONS=$(PLATFORM_CORE_SOURCE_EXCLUSIONS)
-# add more here if needed ...
-#CORE_SOURCE_EXCLUSIONS+=
-
-# strip and collapse spaces, and add the % suffix to allow directory wildcard matching
-FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_CORE_SRC_PATH),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info ---FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS---)
-    $(foreach v, $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(info $(v)))
-endif
-
-# find all of the source directories, exclude all . (dot-hidden) files/folders
-ALL_CORE_SOURCE_PATHS=$(shell find $(OF_CORE_SRC_PATH) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info ---ALL_CORE_SOURCE_PATHS---)
-    $(foreach v, $(ALL_CORE_SOURCE_PATHS),$(info $(v)))
-endif
-
-# filter out all excluded files / folders that were defined above
-# this list will be searched for cpp files below and will eventually
-# be included as locations for header searches via 
-FILTERED_CORE_SOURCE_PATHS=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCE_PATHS))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info ---FILTERED_CORE_SOURCE_PATHS--- )
-    $(foreach v, $(FILTERED_CORE_SOURCE_PATHS),$(info $(v)))
-endif
-
-# search the directories in the source folders for all .cpp files
-ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS=$(shell find $(FILTERED_CORE_SOURCE_PATHS) -name "*.cpp")
-
-# filter out all excluded files / folders that were defined above
-SOURCES=$(filter-out $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(ALL_CORE_SOURCES_FROM_FILTERED_SOURCE_PATHS))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info ---SOURCES TO COMPILE--- )
-    $(foreach v, $(SOURCES),$(info $(v)))
-endif
-
-##TODO: add platform inclusions here
+# openFrameworks universal makefile
+#
+# make help : shows this message
+# make Debug:  makes the application with debug symbols
+# make Release: makes the app with optimizations
+# make: the same as make Release
+# make CleanDebug: cleans the Debug target
+# make CleanRelease: cleans the Release target
+# make clean: cleans everything
+#
+#
+# this should work with any OF app, just copy any example
+# change the name of the folder and it should compile
+# only .cpp support, don't use .c files
+# it will look for files in any folder inside the application
+# folder except that in the EXCLUDE_FROM_SOURCE variable
+# it doesn't autodetect include paths yet
+# add the include paths in the USER_CFLAGS variable
+# using the gcc syntax: -Ipath
+#
+# to add addons to your application, edit the addons.make file
+# in this directory and add the names of the addons you want to
+# include
+#
+# edit the following  vars to customize the makefile
 
 ##########################################################################################
-# INCLUDES
-##########################################################################################
 
-# create our core include paths from the source directory paths, 
-# these have already been filtered and processed according to rules.
-# plus the root so that we don't miss the ofMain.h.
-CORE_HEADER_PATHS=$(OF_LIBS_CORE_PATH) $(FILTERED_CORE_SOURCE_PATHS) 
-
-# add folders or single files to exclude fromt he compiled lib
-UNFILTERED_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_PATH)/*/include -type d \( ! -name ".*" \))
-
-ifdef MAKEFILE_DEBUG
-    $(info ---UNFILTERED_THIRDPARTY_HEADER_PATHS--- )
-    $(foreach v, $(UNFILTERED_THIRDPARTY_HEADER_PATHS),$(info $(v)))
-endif
-
-THIRDPARTY_HEADER_EXCLUSIONS=$(PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS)
-# add more here?
-
-# strip and collapse spaces, and add the % suffix to allow directory matching
-CLEANED_THIRDPARTY_HEADER_EXCLUSIONS=$(addprefix $(OF_LIBS_PATH),$(addsuffix %,$(strip $(THIRDPARTY_HEADER_EXCLUSIONS))))
-
-ifdef MAKEFILE_DEBUG
-    $(info ---CLEANED_THIRDPARTY_HEADER_EXCLUSIONS--- )
-    $(foreach v, $(CLEANED_THIRDPARTY_HEADER_EXCLUSIONS),$(info $(v)))
-endif
-
-# filter out all excluded files / folders that were defined above
-THIRDPARTY_HEADER_PATHS=$(filter-out $(CLEANED_THIRDPARTY_HEADER_EXCLUSIONS),$(UNFILTERED_THIRDPARTY_HEADER_PATHS))
-
-ALL_HEADER_PATHS= $(PLATFORM_HEADER_SEARCH_PATHS) $(THIRDPARTY_HEADER_PATHS) $(CORE_HEADER_PATHS)
-
-INCLUDES_CFLAGS =$(addprefix -I,$(ALL_HEADER_PATHS)) 
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info ---INCLUDES_CFLAGS--- )
-    $(foreach v, $(INCLUDES_CFLAGS),$(info $(v)))
-endif
-
-# ADD THE INCLUDES TO THE CFLAGS
-##########################################################################################
-# DEFINES
-##########################################################################################
-
-# this is the space delimited list of defines
-ALL_DEFINES=
-ALL_DEFINES+=$(USER_DEFINES) 
-ALL_DEFINES+=$(PLATFORM_DEFINES)
-
-# this is the list of flags with -DDEFINE_NAME
-DEFINES=$(addprefix -D,$(ALL_DEFINES))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info ---DEFINES--- )
-    $(foreach v, $(DEFINES),$(info $(v)))
-endif
+include makefile.configure.paths
+include makefile.configure.arch
+include makefile.configure.platform
+include makefile.configure.libspath
 
 
-##########################################################################################
-# CFLAGS
-##########################################################################################
+INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include
+INCLUDES_FLAGS += $(shell pkg-config gl glew glu gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev cairo --cflags)
 
-CFLAGS=
-# add the defines
-CFLAGS+=$(DEFINES) 
-# add the core flags
-CFLAGS+=-Wall -fexceptions 
-# add the include cflags
-CFLAGS+=$(INCLUDES_CFLAGS) 
 
-##########################################################################################
-# COMPILER OPTIMIZATIONS and TARGET MAKING
-##########################################################################################
+LDFLAGS = -Wl,-rpath=./libs
+SYSTEMLIBS += $(shell pkg-config jack glu glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev cairo zlib --libs)
+SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)-g3
-	TARGET_NAME = $(MAKECMDGOALS)
-	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
-else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) 
-	TARGET_NAME = $(MAKECMDGOALS)
-	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
-else 
-	# default to release
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
-	TARGET_NAME = Release
-	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+	TARGET_NAME = Debug
+	BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
 endif
+
+ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
+ifeq ($(MAKECMDGOALS),)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
+
+##########################################################################################
+
+
+# you shouldn't modify anything below this line
+
+
+SHELL =  /bin/sh
+
+NODEPS = clean
+SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')
+SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v "$(SED_EXCLUDE_FROM_SRC)" | sed s/.\\///)
+SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(SOURCES)))))
+
+ifneq (,$(USER_SOURCE_DIR))
+	USER_SOURCES = $(shell find $(USER_SOURCE_DIR) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+	USER_OBJFILES =  $(subst $(USER_SOURCE_DIR)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(USER_SOURCES))))))
+endif
+
+ifeq ($(APPNAME),)
+    APPNAME = $(shell basename `pwd`)
+endif
+CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d)
+CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
+INCLUDES = $(shell find $(OF_ROOT)/libs/*/include -type d | grep -v glu | grep -v quicktime | grep -v poco | grep -v glew)
+
+
+
+INCLUDES_FLAGS += $(addprefix -I,$(INCLUDES))
+INCLUDES_FLAGS += -I$(OF_ROOT)/libs/poco/include
+
+LIB_STATIC += $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v Poco)
+LIB_SHARED += $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
+LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
+
+CFLAGS += -Wall -fexceptions
+CFLAGS += -I.
+CFLAGS += $(INCLUDES_FLAGS)
+CFLAGS += $(CORE_INCLUDE_FLAGS)
+
+ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
+	CFLAGS += -g3
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
+endif
+
+ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+	CFLAGS += $(COMPILER_OPTIMIZATION)
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
+endif
+
+
+# deal with the addons
+include makefile.configure.project.addons
 
 ifeq ($(MAKECMDGOALS),clean)
-	TARGET=$(OF_CORE_LIB_PATH)/libopenFrameworks.a
-	TARGET+= $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+	TARGET_NAME = Release
 endif
 
-CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 
-##########################################################################################
-# OBJECT FILES
-##########################################################################################
-OBJFILES = $(patsubst $(OF_ROOT)/%.cpp,%.o,$(SOURCES))
+OBJ_OUTPUT = obj/$(ARCH)$(TARGET_NAME)/
+CLEANTARGET = clean$(TARGET_NAME)
 
-OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
-#DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst $(OF_LIBS_PATH)/%.cpp,%.d,$(SOURCES)))
-DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(SOURCES)))
-OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
+OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
+DEPFILES = $(patsubst %.o,%.d,$(OBJS))
 
-##########################################################################################
-##########################################################################################
+USER_OBJS = $(addprefix $(OBJ_OUTPUT), $(USER_OBJFILES))
+DEPFILES += $(patsubst %.o,%.d,$(USER_OBJS))
 
-.PHONY: all Debug Release after clean CleanDebug CleanRelease help
+ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
+	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
+    DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
+endif
 
-Release: $(TARGET) 
+ifeq ($(TARGET_LIBS),)
+    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
+endif
 
-Debug: $(TARGET) 
+.PHONY: Debug Release all after
 
-all: 
-	$(MAKE) Debug
+Release: $(TARGET) after
+
+Debug: $(TARGET) after
+
+all:
 	$(MAKE) Release
 
-#This rule does the compilation
-$(OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
-	@echo "compiling object for " $<
-	mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT_PATH)$*.d -MT$(OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(TARGET) : $(OBJS) 
-	echo "creating " $(TARGET)
+#This rule does the compilation
+#$(OBJS): $(SOURCES)
+$(OBJ_OUTPUT)%.o: %.cpp
+	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(AR) -r "$@" $(OBJS)
+	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	
+$(OBJ_OUTPUT)%.o: %.cxx
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+
+$(OBJ_OUTPUT)%.o: %.c
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+
+$(OBJ_OUTPUT)%.o: %.cc
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
+	@echo "compiling addon $(ARCH) object for" $<
+	mkdir -p $(@D)
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
+	
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cxx
+	@echo "compiling addon $(ARCH) object for" $<
+	mkdir -p $(@D)
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
+
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
+	@echo "compiling addon $(ARCH) object for" $<
+	mkdir -p $(@D)
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
+	
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cc
+	@echo "compiling addon $(ARCH) object for" $<
+	mkdir -p $(@D)
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
+
+$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.c
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	
+$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cc
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+
+$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	
+$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cxx
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	
+$(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
+	@echo 'linking $(ARCH) $(TARGET) $(LIBSPATH)'
+	mkdir -p $(@D)
+	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIB_STATIC) $(LIB_PATHS_FLAGS) $(LIB_SHARED) $(SYSTEMLIBS)
 
 -include $(DEPFILES)
 
-#.PHONY: clean CleanDebug CleanRelease
+.PHONY: clean cleanDebug cleanRelease
+
 clean:
-	rm -Rf obj
-	rm -f -v $(TARGET)
-	
-$(CLEANTARGET):
-	rm -Rf -v $(OBJ_OUTPUT_PATH)
-	rm -f -v $(TARGET)
-	
-#.PHONY: help
+	rm -rf $(OBJ_OUTPUT)
+	rm -f $(TARGET)
+	rm -rf bin/libs
+
+ifneq ($(CLEANTARGET),clean)
+	$(CLEANTARGET):
+		rm -rf $(OBJ_OUTPUT)
+		rm -f $(TARGET)
+		rm -rf bin/libs
+endif
+
+
+after:$(TARGET)
+	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/
+	@echo
+	@echo "     compiling done"
+	@echo "     to launch the application"
+	@echo
+	@echo "     cd bin"
+	@echo "     ./$(BIN_NAME)"
+	@echo
+
+
+.PHONY: help
 help:
-	@echo 
-	@echo openFrameworks compiled library makefile
+	@echo
+	@echo openFrameworks universal makefile
 	@echo
 	@echo targets:
-	@echo "make Debug:		builds the library with debug symbols"
-	@echo "make Release:		builds the library with optimizations"
+	@echo "make Debug:		builds the application with debug symbols"
+	@echo "make Release:		builds the app with optimizations"
 	@echo "make:			= make Release"
-	@echo "make all:		= make Debug + make Release"
-	@echo "make CleanDebug: cleans the Debug target"
+	@echo "make all:		= make Release"
+	@echo "make CleanDebug:	cleans the Debug target"
 	@echo "make CleanRelease:	cleans the Release target"
 	@echo "make clean:		cleans everything"
 	@echo
-
+	@echo this should work with any OF app, just copy any example
+	@echo change the name of the folder and it should compile
+	@echo "only .cpp support, don't use .c files"
+	@echo it will look for files in any folder inside the application
+	@echo folder except that in the EXCLUDE_FROM_SOURCE variable.
+	@echo "it doesn't autodetect include paths yet"
+	@echo "add the include paths editing the var USER_CFLAGS"
+	@echo at the beginning of the makefile using the gcc syntax:
+	@echo -Ipath
+	@echo
+	@echo to add addons to your application, edit the addons.make file
+	@echo in this directory and add the names of the addons you want to
+	@echo include
+	@echo
