@@ -165,35 +165,20 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET+= $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
+CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
+
 ##########################################################################################
 # OBJECT FILES
 ##########################################################################################
+OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 
-OBJ_OUTPUT_PATH=obj/$(TARGET_NAME)/
-
-$(info $(OBJ_OUTPUT_PATH))
-
-DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst $(OF_LIBS_PATH)/%.cpp,%.d,$(SOURCES)))
+OBJ_OUTPUT_PATH = obj/$(TARGET_NAME)/
+#DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst $(OF_LIBS_PATH)/%.cpp,%.d,$(SOURCES)))
+DEPFILES = $(addprefix $(OBJ_OUTPUT_PATH),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT_PATH), $(OBJFILES))
 
-
-#$(patsubst pattern,replacement,text)
-#Finds whitespace-separated words in text that match pattern and replaces them with replacement
-# this will remove the $(OF_LIBS_PATH) and produce
-OBJFILES=$(patsubst $(OF_LIBS_PATH)/%.cpp,%.o,$(SOURCES))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info --OBJFILES-- )
-    $(foreach v, $(OBJFILES),$(info $(v)))
-    $(info -------- )
-endif
-
-
 ##########################################################################################
 ##########################################################################################
-
-CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
