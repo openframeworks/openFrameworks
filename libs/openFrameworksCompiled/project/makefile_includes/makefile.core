@@ -6,7 +6,7 @@
 SHELL = /bin/sh
 
 # define the location of the core path
-OF_CORE_SRC_PATH=$(OF_LIBS_PATH)/openFrameworks/
+OF_CORE_SRC_PATH=$(OF_LIBS_PATH)/openFrameworks
 OF_CORE_LIB_PATH=$(PLATFORM_LIB_SUBPATH)
 
 ##########################################################################################
