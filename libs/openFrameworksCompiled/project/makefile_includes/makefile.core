@@ -7,7 +7,7 @@ SHELL = /bin/sh
 
 # define the location of the core path
 OF_CORE_SRC_PATH=$(OF_LIBS_PATH)/openFrameworks/
-OF_CORE_LIB_PATH=$(OF_LIBS_PATH)/openFrameworksCompiled/$(PLATFORM_LIB_SUBPATH)
+OF_CORE_LIB_PATH=$(PLATFORM_LIB_SUBPATH)
 
 ##########################################################################################
 # SOURCE FILES
@@ -58,7 +58,6 @@ endif
 
 ##TODO: add platform inclusions here
 
-
 ##########################################################################################
 # INCLUDES
 ##########################################################################################
@@ -67,7 +66,6 @@ endif
 # these have already been filtered and processed according to rules.
 # plus the root so that we don't miss the ofMain.h.
 CORE_HEADER_PATHS=$(OF_LIBS_CORE_PATH) $(FILTERED_CORE_SOURCE_PATHS) 
-
 
 # add folders or single files to exclude fromt he compiled lib
 UNFILTERED_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_PATH)/*/include -type d \( ! -name ".*" \))
@@ -189,7 +187,7 @@ Debug: $(TARGET)
 all: 
 	$(MAKE) Debug
 	$(MAKE) Release
-	
+
 #This rule does the compilation
 $(OBJ_OUTPUT_PATH)%.o: ../../../%.cpp 
 	@echo "compiling object for " $<
