@@ -1,11 +1,14 @@
-$(info $(ADDONS))
+#ifndef PLATFORM_LIB_SUBPATH
+    
+#endif
 
+#ifndef PLATFORM_LIB_SUBPATH
+    
+#endif
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
     # TODO, make sure that the addons for a specific platform (ofxAndroid, are excluded)
     ADDONS = $(shell cat addons.make)
-
-$(info --$(ADDONS))
 
 
     ifneq ($(strip $(ADDONS)),)
@@ -13,7 +16,7 @@ $(info --$(ADDONS))
         ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
         ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
         ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
-        ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(PLATFORM_LIB_SUBPATH), $(ADDONS_LIBS_DIRS) )
+        ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(LIBSPATH), $(ADDONS_LIBS_DIRS) )
 
         ADDONS_INCLUDES = $(ADDONS_DIRS)
         ADDONS_INCLUDES = $(ADDONS_LIBS_DIRS)
