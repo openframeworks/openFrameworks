@@ -1,4 +1,5 @@
 #pragma once
+		#include <stdint.h>
 
 //-------------------------------
 #define OF_VERSION	7
@@ -18,7 +19,9 @@ enum ofTargetPlatform{
 	OF_TARGET_IPHONE,
 	OF_TARGET_ANDROID,
 	OF_TARGET_LINUX,
-	OF_TARGET_LINUX64
+	OF_TARGET_LINUX64,
+	OF_TARGET_LINUXARMV6L, // arm v6 little endian
+	OF_TARGET_LINUXARMV7L, // arm v7 little endian
 };
 
 // Cross-platform deprecation warning
@@ -60,6 +63,10 @@ enum ofTargetPlatform{
 #elif defined (ANDROID)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
+#elif defined(__ARMEL__)
+	#define TARGET_LINUX
+	#define TARGET_OPENGLES
+	#define TARGET_LINUX_ARM
 #else
 	#define TARGET_LINUX
 #endif
@@ -136,11 +143,26 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_LINUX
+
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-		#include <GL/glew.h>
-		#include <GL/gl.h>
-		#include <GL/glx.h>
+
+    #ifdef TARGET_LINUX_ARM
+    	#ifdef TARGET_RASPBERRY_PI
+        	#include "bcm_host.h"
+        #endif
+       
+		#include "GLES/gl.h"
+		#include "GLES/glext.h" 
+		#include "GLES2/gl2.h"
+		#include "GLES2/gl2ext.h"
+		#include "EGL/egl.h"
+		#include "EGL/eglext.h"
+    #else // normal linux
+        #include <GL/glew.h>
+        #include <GL/gl.h>
+        #include <GL/glx.h>
+    #endif
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
@@ -154,13 +176,16 @@ enum ofTargetPlatform{
         #define B14400	14400
         #define B28800	28800
 
-
 #endif
 
 
 #ifdef TARGET_OF_IPHONE
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
+
+	#import <OpenGLES/ES2/gl.h>
+	#import <OpenGLES/ES2/glext.h>
+
 	
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
@@ -172,11 +197,14 @@ enum ofTargetPlatform{
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
 
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
 #ifdef TARGET_OPENGLES
-	#include "glu.h"
+//	#include "glu.h"
 	//typedef GLushort ofIndexType ;
 #else
 	//typedef GLuint ofIndexType;
@@ -489,6 +517,7 @@ enum ofPolyWindingMode{
 
 enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
+enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
 
 //--------------------------------------------
 //
@@ -548,9 +577,20 @@ enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-
 // not sure what to do in the case of non-glut apps....
 
+    #define OF_MOUSE_BUTTON_1      0
+    #define OF_MOUSE_BUTTON_2      1
+    #define OF_MOUSE_BUTTON_3      2
+    #define OF_MOUSE_BUTTON_4      3
+    #define OF_MOUSE_BUTTON_5      4
+    #define OF_MOUSE_BUTTON_6      5
+    #define OF_MOUSE_BUTTON_7      6
+    #define OF_MOUSE_BUTTON_8      7
+    #define OF_MOUSE_BUTTON_LAST   OF_MOUSE_BUTTON_8
+    #define OF_MOUSE_BUTTON_LEFT   OF_MOUSE_BUTTON_1
+    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_2
+    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_3
 
 //--------------------------------------------
 //console colors for our logger - shame this doesn't work with the xcode console

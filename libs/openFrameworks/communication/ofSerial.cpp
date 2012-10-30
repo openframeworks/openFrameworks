@@ -147,6 +147,13 @@ ofSerial::~ofSerial(){
 //----------------------------------------------------------------
 static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 	//TODO - this should be ofStringInString
+	
+
+	#ifdef TARGET_RASPBERRY_PI
+
+	#endif
+
+
 	return ( strstr(A.getDeviceName().c_str(), "usbserial") != NULL );
 }
 
@@ -163,6 +170,10 @@ void ofSerial::buildDeviceList(){
 		prefixMatch.push_back("tty.");
 	#endif
 	#ifdef TARGET_LINUX
+		#ifdef TARGET_RASPBERRY_PI
+			prefixMatch.push_back("ttyACM");
+		#endif
+
 		prefixMatch.push_back("ttyS");
 		prefixMatch.push_back("ttyUSB");
 		prefixMatch.push_back("rfc");

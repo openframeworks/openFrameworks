@@ -15,7 +15,7 @@ public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();
 
-	void setupOpenGL(int w, int h, int screenMode) {}
+	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow() {}
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 

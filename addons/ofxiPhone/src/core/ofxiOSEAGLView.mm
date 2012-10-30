@@ -9,6 +9,7 @@
 
 #import "ofMain.h"
 #import "ofAppiPhoneWindow.h"
+#import "ofGLES2Renderer.h"
 #import "ofxiPhoneApp.h"
 #import "ofxiOSExtensions.h"
 
@@ -34,7 +35,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
-    self = [self initWithFrame:frame 
+    
+    ESRendererVersion version = ESRendererVersion_11;
+    if(ofGetCurrentRenderer()->getType() == "GLES2") {
+        version = ESRendererVersion_20;
+    }
+    
+    self = [self initWithFrame:frame
+           andPreferedRenderer:version
                       andDepth:ofAppiPhoneWindow::getInstance()->isDepthBufferEnabled()
                          andAA:ofAppiPhoneWindow::getInstance()->isAntiAliasingEnabled()
                  andNumSamples:ofAppiPhoneWindow::getInstance()->getAntiAliasingSampleCount()
@@ -43,6 +51,19 @@ static ofxiOSEAGLView * _instanceRef = nil;
     if(self) {
         
         _instanceRef = self;
+        
+        if(rendererVersion == ESRendererVersion_20) {
+            if(ofGetCurrentRenderer()->getType() == "GLES2") {
+                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->setup();
+            } else {
+                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer(false)));
+                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->setup();
+            }
+        } else if(rendererVersion == ESRendererVersion_11) {
+            if(ofGetCurrentRenderer()->getType() != "GL") {
+                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+            }
+        }
         
         app = appPtr;
         activeTouches = [[NSMutableDictionary alloc] init];
@@ -144,14 +165,20 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     [self lockGL];
     [self startRender];
+    
+    ofGLES2Renderer * es2Renderer = NULL;
+    if(ofGetCurrentRenderer()->getType() == "GLES2") {
+        es2Renderer = (ofGLES2Renderer *)(ofGetCurrentRenderer().get());
+        es2Renderer->startRender();
+    }
 
-    glViewport(0, 0, windowSize->x, windowSize->y);
+    ofViewport(ofRectangle(0, 0, windowSize->x, windowSize->y));
     
     float * bgPtr = ofBgColorPtr();
     bool bClearAuto = ofbClearBg();
-    if ( bClearAuto == true){
-        glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(bClearAuto == true) {
+        glClearColor(bgPtr[0], bgPtr[1], bgPtr[2], bgPtr[3]);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     
     if(ofAppiPhoneWindow::getInstance()->isSetupScreenEnabled()) {
@@ -163,6 +190,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
     ofNotifyDraw();
     
     //------------------------------------------
+    
+    if(es2Renderer != NULL) {
+        es2Renderer->finishRender();
+    }
     
     [self finishRender];
     [self unlockGL];

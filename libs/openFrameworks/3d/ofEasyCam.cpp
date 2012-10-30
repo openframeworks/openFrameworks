@@ -206,11 +206,12 @@ void ofEasyCam::updateMouse(){
 		if(lastTap != 0 && curTap - lastTap < doubleclickTime){
 			reset();
 		}
-		if ((bEnableMouseMiddleButton && ofGetMousePressed(1)) || ofGetKeyPressed(doTranslationKey)  || ofGetMousePressed(2)){
+                
+		if ((bEnableMouseMiddleButton && ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)) || ofGetKeyPressed(doTranslationKey)  || ofGetMousePressed(OF_MOUSE_BUTTON_MIDDLE)){
 			bDoTranslate = true;
 			bDoRotate = false;
 			bApplyInertia = false;
-		}else if (ofGetMousePressed(0)) {
+		}else if (ofGetMousePressed(OF_MOUSE_BUTTON_LEFT)) {
 			bDoTranslate = false;
 			bDoRotate = true;
 			bApplyInertia = false;

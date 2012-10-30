@@ -106,6 +106,10 @@ private:
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
 
+#ifdef TARGET_OPENGLES
+	static bool bglFunctionsInitialized;
+#endif
+
 	void destroy();
 
 	bool checkStatus();
