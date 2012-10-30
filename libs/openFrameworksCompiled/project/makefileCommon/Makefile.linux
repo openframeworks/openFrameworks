@@ -1,4 +1,5 @@
-
+##################################################
+## SET UP COMPILER OPTIMIZATIONS BASED ON PLATFORM
 ifeq ($(ARCH),armv7l)
 	LIBSPATH=linuxarmv7l
 	COMPILER_OPTIMIZATION=$(LINUX_ARM7_COMPILER_OPTIMIZATIONS)

@@ -1,4 +1,5 @@
-# configure basic paths
+##########################################################################################
+# This file will set up all of the openframeworks paths
 
 ifdef OF_ROOT
     OF_ADDONS_PATH=$(OF_ROOT)/addons
