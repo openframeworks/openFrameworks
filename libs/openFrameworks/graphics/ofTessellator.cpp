@@ -141,11 +141,11 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMes
 		return;
 	}
 
-	int numVertexes = tessGetVertexCount( cacheTess );
+	int numVertices = tessGetVertexCount( cacheTess );
 	int numIndices = tessGetElementCount( cacheTess )*3;
 
 	dstmesh.clear();
-	dstmesh.addVertices((ofVec3f*)tessGetVertices(cacheTess),numVertexes);
+	dstmesh.addVertices((ofVec3f*)tessGetVertices(cacheTess),numVertices);
 	dstmesh.addIndices((ofIndexType*)tessGetElements(cacheTess),numIndices);
 	/*ofIndexType * tessElements = (ofIndexType *)tessGetElements(cacheTess);
 	for(int i=0;i<numIndices;i++){
@@ -173,7 +173,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, vecto
 			int b = elems[i*2];
 			int n = elems[i*2+1];
 			dstpoly[i].clear();
-			dstpoly[i].addVertexes(&verts[b],n);
+			dstpoly[i].addVertices(&verts[b],n);
 			dstpoly[i].setClosed(true);
 	}
 }

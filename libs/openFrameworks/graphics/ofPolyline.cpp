@@ -9,7 +9,18 @@ ofPolyline::ofPolyline(){
 //----------------------------------------------------------
 ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 	clear();
-	addVertexes(verts);
+	addVertices(verts);
+}
+
+//----------------------------------------------------------
+ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
+    ofPolyline polyline;
+    polyline.addVertex(rect.getMin());
+    polyline.addVertex(rect.getMaxX(),rect.getMinY());
+    polyline.addVertex(rect.getMax());
+    polyline.addVertex(rect.getMinX(),rect.getMaxY());
+    polyline.close();
+    return polyline;
 }
 
 //----------------------------------------------------------
@@ -33,17 +44,27 @@ void ofPolyline::addVertex(float x, float y, float z) {
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+void ofPolyline::addVertices(const vector<ofPoint>& verts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
 	bHasChanged=true;
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+	addVertices(verts);
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertices(const ofPoint* verts, int numverts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts, verts + numverts );
 	bHasChanged=true;
+}
+
+//----------------------------------------------------------
+void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+	addVertices(verts, numverts);
 }
 
 //----------------------------------------------------------
@@ -380,17 +401,16 @@ ofPoint ofPolyline::getCentroid2D() const{
 }
 
 //----------------------------------------------------------
-ofRectangle ofPolyline::getBoundingBox(){
-	ofPolyline & polyline = *this;
+ofRectangle ofPolyline::getBoundingBox() const {
 
 	ofRectangle box;
-	int n = polyline.size();
+	int n = size();
 	if(n > 0) {
-		const ofPoint& first = polyline[0];
+		const ofPoint& first = (*this)[0];
 		// inititally, use width and height as max x and max y
 		box.set(first.x, first.y, first.x, first.y);
 		for(int i = 0; i < n; i++) {
-			const ofPoint& cur = polyline[i];
+			const ofPoint& cur = (*this)[i];
 			if(cur.x < box.x) {
 				box.x = cur.x;
 			}
@@ -413,38 +433,45 @@ ofRectangle ofPolyline::getBoundingBox(){
 
 //----------------------------------------------------------
 ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
-	ofPolyline & polyline = *this;
-	ofPolyline result = polyline;
-	
-	if(!polyline.isClosed()) {
-		ofLog( OF_LOG_ERROR, "ofSmooth() currently only supports closed ofPolylines." );
-		return polyline;
-	}
+	int n = size();
+	smoothingSize = ofClamp(smoothingSize, 0, n);
+	smoothingShape = ofClamp(smoothingShape, 0, 1);
 	
 	// precompute weights and normalization
 	vector<float> weights;
-	weights.resize(smoothingSize+1);
-	float weightSum = 0;
-	weights[0]=1; // center weight
+	weights.resize(smoothingSize);
 	// side weights
-	for(int i = 1; i <= smoothingSize; i++) {
+	for(int i = 1; i < smoothingSize; i++) {
 		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
-		weights[i]=curWeight;
-		weightSum += curWeight;
+		weights[i] = curWeight;
 	}
-	float weightNormalization = 1 / (1 + 2 * weightSum);
 	
-	// use weights to make weighted averages of neighbors
-	int n = polyline.size();
+	// make a copy of this polyline
+	ofPolyline result = *this;
+	
 	for(int i = 0; i < n; i++) {
-		for(int j = 1; j <= smoothingSize; j++) {
-			int leftPosition = (n + i - j) % n;
-			int rightPosition = (i + j) % n;
-			const ofPoint& left = polyline[leftPosition];
-			const ofPoint& right = polyline[rightPosition];
-			result[i] += (left + right) * weights[j];
+		float sum = 1; // center weight
+		for(int j = 1; j < smoothingSize; j++) {
+			ofVec2f cur;
+			int leftPosition = i - j;
+			int rightPosition = i + j;
+			if(leftPosition < 0 && bClosed) {
+				leftPosition += n;
+			}
+			if(leftPosition >= 0) {
+				cur += points[leftPosition];
+				sum += weights[j];
+			}
+			if(rightPosition >= n && bClosed) {
+				rightPosition -= n;
+			}
+			if(rightPosition < n) {
+				cur += points[rightPosition];
+				sum += weights[j];
+			}
+			result[i] += cur * weights[j];
 		}
-		result[i] *= weightNormalization;
+		result[i] /= sum;
 	}
 	
 	return result;

@@ -54,21 +54,21 @@ public:
 		 }
 	}
 
-	void draw(ofImage & img, float x, float y, float z, float w, float h){
+	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(img,x,y,z,w,h);
+			 renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		 }
 	}
 	
-	void draw(ofFloatImage & img, float x, float y, float z, float w, float h){
+	void draw(ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->draw(img,x,y,z,w,h);
+			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 	
-	void draw(ofShortImage & img, float x, float y, float z, float w, float h){
+	void draw(ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->draw(img,x,y,z,w,h);
+			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 	
@@ -100,9 +100,9 @@ public:
 			 renderers[i]->viewport(x,y,width,height,invertY);
 		 }
 	 }
-	 void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f)){
+	 void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setupScreenPerspective(width,height,orientation,vFlip,fov,nearDist,farDist,lensOffset);
+			 renderers[i]->setupScreenPerspective(width,height,orientation,vFlip,fov,nearDist,farDist);
 		 }
 	 }
 	 void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){
