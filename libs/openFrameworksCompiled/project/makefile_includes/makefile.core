@@ -21,6 +21,13 @@ CORE_SOURCE_EXCLUSIONS=$(PLATFORM_CORE_SOURCE_EXCLUSIONS)
 # strip and collapse spaces, and add the % suffix to allow directory wildcard matching
 FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS=$(addprefix $(OF_CORE_SRC_PATH),$(addsuffix %,$(strip $(CORE_SOURCE_EXCLUSIONS))))
 
+# print debug information if needed
+ifdef MAKEFILE_DEBUG
+    $(info --FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS-- )
+    $(foreach v, $(FULLY_QUALIFIED_CORE_SOURCE_EXCLUSIONS),$(info $(v)))
+    $(info -------- )
+endif
+
 # find all of the source directories, exclude all . (dot-hidden) files/folders
 ALL_CORE_SOURCE_PATHS=$(shell find $(OF_CORE_SRC_PATH) -maxdepth 1 -mindepth 1 -type d \( ! -name ".*" \) )
 
