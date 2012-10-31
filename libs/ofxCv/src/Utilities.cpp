@@ -33,12 +33,22 @@ namespace ofxCv {
 	}
 	
 	vector<cv::Point2f> toCv(const ofPolyline& polyline) {
+		// if polyline.getVertices() were const, this could wrap toCv(vec<vec2f>)
 		vector<cv::Point2f> contour(polyline.size());
 		for(int i = 0; i < polyline.size(); i++) {
 			contour[i].x = polyline[i].x;
 			contour[i].y = polyline[i].y;
 		}
 		return contour;		
+	}
+	
+	vector<cv::Point2f> toCv(const vector<ofVec2f>& points) {
+		vector<cv::Point2f> out(points.size());
+		for(int i = 0; i < points.size(); i++) {
+			out[i].x = points[i].x;
+			out[i].y = points[i].y;
+		}
+		return out;		
 	}
 	
 	Scalar toCv(ofColor color) {

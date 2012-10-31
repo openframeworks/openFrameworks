@@ -149,6 +149,7 @@ namespace ofxCv {
 	Point3f toCv(ofVec3f vec);
 	cv::Rect toCv(ofRectangle rect);
 	vector<cv::Point2f> toCv(const ofPolyline& polyline);
+	vector<cv::Point2f> toCv(const vector<ofVec2f>& points);
 	Scalar toCv(ofColor color);
 	
 	// cross-toolkit, cross-bitdepth copying
