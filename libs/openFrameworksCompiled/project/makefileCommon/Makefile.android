@@ -145,6 +145,13 @@ ifeq ($(PKGNAME),)
 endif
 
 AndroidInstall:	
+	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+	else \
+	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
+	fi
+	cd $(PROJECT_PATH); \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
