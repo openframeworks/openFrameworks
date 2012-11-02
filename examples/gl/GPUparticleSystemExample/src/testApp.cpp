@@ -162,6 +162,7 @@ void testApp::update(){
     for(int x = 0; x < textureRes; x++){
         for(int y = 0; y < textureRes; y++){
             glVertex2d(x,y);
+            glTexCoord2i(x, y);
         }
     }
     
