@@ -31,7 +31,7 @@ INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 
 
 LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)"
-ifneq ($(shell uname),MINGW32_NT-6.1)
+ifeq ($(HOST_PLATFORM),linux-x86)
 	LDFLAGS += -fuse-ld=gold
 endif
 SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)/libgnustl_static.a -lgcc
