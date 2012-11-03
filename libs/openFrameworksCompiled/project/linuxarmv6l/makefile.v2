@@ -1,15 +1,15 @@
 # define the openframeworks root
-OF_ROOT=../../..
+OF_ROOT =../../../..
 
 # uncomment to see debug prints
-MAKEFILE_DEBUG=1
+MAKEFILE_DEBUG =1
 
 #=========================================================================================
 # define the root of the project folder (usually we are in this folder already)
-OF_COMPILED_PROJECT_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project
+OF_COMPILED_PROJECT_PATH = $(OF_ROOT)/libs/openFrameworksCompiled/project
 
 # define the location of the shared makefiles
-MAKEFILE_INCLUDES_PATH=$(OF_COMPILED_PROJECT_PATH)/makefile_includes
+MAKEFILE_INCLUDES_PATH = $(OF_COMPILED_PROJECT_PATH)/makefile_includes
 
 ifdef MAKEFILE_DEBUG
     $(info OF_ROOT=$(realpath $(OF_ROOT)))

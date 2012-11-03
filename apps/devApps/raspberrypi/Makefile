@@ -50,8 +50,6 @@ include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.project.addons
 
 include $(MAKEFILE_INCLUDES_PATH)/makefile.configure.core.paths
 
-ALL_INCLUDES_SO_FAR=$(ALL_OF_CORE_HEADER_PATHS) $(ADDONS_INCLUDES)
-
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
     $(info ---ALL_INCLUDES_SO_FAR--- )
@@ -65,6 +63,26 @@ ifdef MAKEFILE_DEBUG
     $(info ---OF_CORE_PKG_CONFIG_LIB_CFLAGS--- )
     $(foreach v, $(OF_CORE_PKG_CONFIG_LIB_CFLAGS),$(info $(v)))
 endif
+
+
+ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+	TARGET_NAME = Debug
+	BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
+endif
+
+ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
+ifeq ($(MAKECMDGOALS),)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
 
 include $(MAKEFILE_INCLUDES_PATH)/makefile.compile.project
 
