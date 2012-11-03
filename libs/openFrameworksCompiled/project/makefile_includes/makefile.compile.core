@@ -17,7 +17,7 @@ endif
 # INCLUDES CFLAGS
 ##########################################################################################
 
-INCLUDES_CFLAGS =$(addprefix -I,$(ALL_OF_CORE_HEADER_PATHS)) 
+INCLUDES_CFLAGS = $(addprefix -I,$(ALL_OF_CORE_HEADER_PATHS))
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
@@ -31,9 +31,9 @@ endif
 ##########################################################################################
 
 # this is the space delimited list of defines
-ALL_DEFINES=
-ALL_DEFINES+=$(USER_DEFINES) 
-ALL_DEFINES+=$(PLATFORM_DEFINES)
+ALL_DEFINES =
+ALL_DEFINES += $(USER_DEFINES)
+ALL_DEFINES += $(PLATFORM_DEFINES)
 
 # this is the list of flags with -DDEFINE_NAME
 DEFINES=$(addprefix -D,$(ALL_DEFINES))
@@ -49,24 +49,24 @@ endif
 # CFLAGS
 ##########################################################################################
 
-CFLAGS=
+CFLAGS =
 # add the defines
-CFLAGS+=$(DEFINES) 
+CFLAGS += $(DEFINES)
 # add the core flags
-CFLAGS+=-Wall -fexceptions 
+CFLAGS += -Wall -fexceptions
 # add the include cflags
-CFLAGS+=$(INCLUDES_CFLAGS) 
+CFLAGS += $(INCLUDES_CFLAGS)
 
 ##########################################################################################
 # COMPILER OPTIMIZATIONS and TARGET MAKING
 ##########################################################################################
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)-g3
+	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) -g3
 	TARGET_NAME = $(MAKECMDGOALS)
 	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) 
+	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
 	TARGET_NAME = $(MAKECMDGOALS)
 	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 else 
@@ -77,9 +77,9 @@ else
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
-	TARGET=
-	TARGET+=$(OF_CORE_LIB_PATH)/libopenFrameworks.a
-	TARGET+= $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+	TARGET =
+	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
 CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
