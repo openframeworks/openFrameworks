@@ -31,7 +31,7 @@ INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 
 
 LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)"
-ifneq ($(shell uname),MINGW32_NT-6.1)
+ifeq ($(HOST_PLATFORM),linux-x86)
 	LDFLAGS += -fuse-ld=gold
 endif
 SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)/libgnustl_static.a -lgcc
@@ -145,6 +145,13 @@ ifeq ($(PKGNAME),)
 endif
 
 AndroidInstall:	
+	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+	else \
+	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
+	fi
+	cd $(PROJECT_PATH); \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
