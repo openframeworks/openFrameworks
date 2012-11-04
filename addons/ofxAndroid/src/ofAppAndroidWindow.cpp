@@ -121,6 +121,9 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
+	if(androidApp){
+		ofxRegisterMultitouch(androidApp);
+	}
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){
