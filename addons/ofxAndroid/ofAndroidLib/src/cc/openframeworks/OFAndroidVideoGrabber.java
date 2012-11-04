@@ -1,15 +1,19 @@
 package cc.openframeworks;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.app.Activity;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
@@ -32,11 +36,24 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		return camera_instances.get(id);
 	}
 	
-	void setDeviceID(int id){
+	public void setDeviceID(int id){
 		deviceID = id;
 	}
 	
-	void initGrabber(int w, int h, int _targetFps){
+	public static boolean supportsTextureRendering(){
+		try {
+			Class surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+	
+	public void initGrabber(int w, int h, int _targetFps){
+		initGrabber(w,h,_targetFps,-1);
+	}
+	
+	public void initGrabber(int w, int h, int _targetFps, int texID){
 		if(deviceID==-1)
 			camera = Camera.open();
 		else{			
@@ -65,13 +82,19 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			} 
 		}
 
-		((Activity)OFAndroid.getContext()).runOnUiThread(new Runnable(){
-			public void run() {
-				OFAndroidVideoGrabber.cameraSurface = new OFCameraSurface(OFAndroid.getContext(), camera);
-			    OFAndroidVideoGrabber.rootViewGroup = (ViewGroup)OFAndroid.getGLContentView().getParent();
-			    OFAndroidVideoGrabber.rootViewGroup.addView(OFAndroidVideoGrabber.cameraSurface);
-			}
-		});
+		if(supportsTextureRendering()){
+			try {
+				Class surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
+				Constructor constructor = surfaceTextureClass.getConstructor(int.class);
+				Object surfaceTexture = constructor.newInstance(0);
+				Method setPreviewTexture = camera.getClass().getMethod("setPreviewTexture", surfaceTextureClass);
+				setPreviewTexture.invoke(camera, surfaceTexture);
+			} catch (Exception e1) {
+				Log.e("OF","Error initializing gl surface",e1);
+			} 
+		}
+		
+		
 
 		Camera.Parameters config = camera.getParameters();
 		
@@ -179,9 +202,15 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			}
 			camera.setPreviewCallback(null);
 			camera.release();
+			if(supportsTextureRendering()){
+				try {
+					Class surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
+					Method setPreviewTexture = camera.getClass().getMethod("setPreviewTexture", surfaceTextureClass);
+					setPreviewTexture.invoke(camera, (Object)null);
+				} catch (Exception e) {
+				}
+			}
 			orientationListener.disable();
-
-			OFAndroidVideoGrabber.rootViewGroup.removeView(OFAndroidVideoGrabber.cameraSurface);
 		}
 	}
 	
@@ -291,47 +320,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private int id;
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
-	private static OFCameraSurface cameraSurface = null;
-	private static ViewGroup rootViewGroup = null;
+	//private static OFCameraSurface cameraSurface = null;
+	//private static ViewGroup rootViewGroup = null;
 	private boolean initialized = false;
 	private boolean previewStarted = false;
 	private Method addBufferMethod;
 	private OrientationListener orientationListener;
 	
 
-}
-
-// OFCameraSurface class is implemented to adhere to the Android 
-// SDK Camera API requirements. 
-// http://developer.android.com/reference/android/hardware/Camera.html 
-// "Important: Pass a fully initialized SurfaceHolder to 
-// setPreviewDisplay(SurfaceHolder). Without a surface, the 
-// camera will be unable to start the preview."
-class OFCameraSurface extends SurfaceView implements SurfaceHolder.Callback {
-
-	public OFCameraSurface(Context context, Camera c){
-		super(context);
-		camera = c;
-		SurfaceHolder surfaceHolder = getHolder();
-		surfaceHolder.addCallback(this);
-		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		Log.i("OF", "OFCameraSurface initialized");
-	}
-
-	// Installs this as the surface holder for camera
-	public void surfaceCreated(SurfaceHolder holder){
-		Log.i("OF", "OFCameraSurface::SurfaceCreated");
-		try{
-			if(camera != null){
-				camera.setPreviewDisplay(holder);
-			}
-		}catch(Exception e){
-			Log.e("OF","Error Camera setPreviewDisplay", e);
-		}
-	}
-	// should be implemented. 
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){}
-	public void surfaceDestroyed(SurfaceHolder holder) {}
-
-	private Camera camera;
 }
