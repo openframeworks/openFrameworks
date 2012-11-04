@@ -318,7 +318,6 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		androidApp->reloadTextures();
 	}
 	ofSetStyle(ofGetStyle());
-	ofSetOrientation(ofGetOrientation());
 	surfaceDestroyed = false;
 
 }
