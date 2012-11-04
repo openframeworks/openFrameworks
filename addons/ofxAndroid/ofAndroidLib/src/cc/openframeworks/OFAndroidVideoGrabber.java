@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.app.Activity;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.Log;
 import android.view.OrientationEventListener;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.ViewGroup;
 
 public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, Camera.PreviewCallback {
 	
@@ -60,6 +64,15 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 				camera = Camera.open();
 			} 
 		}
+
+		((Activity)OFAndroid.getContext()).runOnUiThread(new Runnable(){
+			public void run() {
+				OFAndroidVideoGrabber.cameraSurface = new OFCameraSurface(OFAndroid.getContext(), camera);
+			    OFAndroidVideoGrabber.rootViewGroup = (ViewGroup)OFAndroid.getGLContentView().getParent();
+			    OFAndroidVideoGrabber.rootViewGroup.addView(OFAndroidVideoGrabber.cameraSurface);
+			}
+		});
+
 		Camera.Parameters config = camera.getParameters();
 		
 		Log.i("OF","Grabber supported sizes");
@@ -106,7 +119,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		targetFps = _targetFps;
 		Log.i("OF","camera settings: " + width + "x" + height);
 		
-		buffer = new byte[width*height*2];
+		// it actually needs (width*height) * 3/2
+		int bufferSize = width * height;
+		bufferSize  = bufferSize * ImageFormat.getBitsPerPixel(config.getPreviewFormat()) / 8;
+		buffer = new byte[bufferSize];
 		
 		orientationListener = new OrientationListener(OFAndroid.getContext());
 		orientationListener.enable();
@@ -161,8 +177,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			} catch (InterruptedException e) {
 				Log.e("OF", "problem trying to close camera thread", e);
 			}
+			camera.setPreviewCallback(null);
 			camera.release();
 			orientationListener.disable();
+
+			OFAndroidVideoGrabber.rootViewGroup.removeView(OFAndroidVideoGrabber.cameraSurface);
 		}
 	}
 	
@@ -272,10 +291,47 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private int id;
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
+	private static OFCameraSurface cameraSurface = null;
+	private static ViewGroup rootViewGroup = null;
 	private boolean initialized = false;
 	private boolean previewStarted = false;
 	private Method addBufferMethod;
 	private OrientationListener orientationListener;
 	
 
+}
+
+// OFCameraSurface class is implemented to adhere to the Android 
+// SDK Camera API requirements. 
+// http://developer.android.com/reference/android/hardware/Camera.html 
+// "Important: Pass a fully initialized SurfaceHolder to 
+// setPreviewDisplay(SurfaceHolder). Without a surface, the 
+// camera will be unable to start the preview."
+class OFCameraSurface extends SurfaceView implements SurfaceHolder.Callback {
+
+	public OFCameraSurface(Context context, Camera c){
+		super(context);
+		camera = c;
+		SurfaceHolder surfaceHolder = getHolder();
+		surfaceHolder.addCallback(this);
+		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		Log.i("OF", "OFCameraSurface initialized");
+	}
+
+	// Installs this as the surface holder for camera
+	public void surfaceCreated(SurfaceHolder holder){
+		Log.i("OF", "OFCameraSurface::SurfaceCreated");
+		try{
+			if(camera != null){
+				camera.setPreviewDisplay(holder);
+			}
+		}catch(Exception e){
+			Log.e("OF","Error Camera setPreviewDisplay", e);
+		}
+	}
+	// should be implemented. 
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){}
+	public void surfaceDestroyed(SurfaceHolder holder) {}
+
+	private Camera camera;
 }
