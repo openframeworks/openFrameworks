@@ -2,7 +2,7 @@
 OF_ROOT =../../../..
 
 # uncomment to see debug prints
-MAKEFILE_DEBUG =1
+MAKEFILE_DEBUG=1
 
 #=========================================================================================
 # define the root of the project folder (usually we are in this folder already)

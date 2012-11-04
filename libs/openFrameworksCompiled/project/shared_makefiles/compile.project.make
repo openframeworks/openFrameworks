@@ -1,15 +1,22 @@
+# setup the shell variable
 SHELL = /bin/sh
 
+# print debug information if desired
 ifdef MAKEFILE_DEBUG
     $(info =============================makefile.compile.project=========================)
 endif
 
+# if the APPNAME is not already defined, set it to the present working directory of the proejct
 ifndef APPNAME
     APPNAME = $(shell basename `pwd`)
 endif
 
-$(info APPNAME=$(APPNAME))
+# print the name of the project as a debug message if desired
+ifdef MAKEFILE_DEBUG
+    $(info APPNAME=$(APPNAME))
+endif
 
+# TODO: what is this for?
 NODEPS = clean
 
 ##################
@@ -33,8 +40,8 @@ PROJECT_SOURCES = $(shell find $(FILTERED_PROJECT_SOURCE_DIRS) -name "*.cpp" -or
 PROJECT_OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_SOURCES)))))
 
 ifdef PROJECT_EXTERNAL_SOURCE_PATHS
-	PROJECT_EXTERNAL_SOURCES = $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
-	PROJECT_EXTERNAL_OBJFILES = $(subst $(PROJECT_EXTERNAL_SOURCE_PATHS)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_EXTERNAL_SOURCES))))))
+    PROJECT_EXTERNAL_SOURCES = $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+    PROJECT_EXTERNAL_OBJFILES = $(subst $(PROJECT_EXTERNAL_SOURCE_PATHS)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_EXTERNAL_SOURCES))))))
 endif
 
 
@@ -56,20 +63,20 @@ ALL_INCLUDES_CFLAGS += $(PROJECT_INCLUDES_CFLAGS)
 ## stopped here ...
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	CFLAGS += -g3
-	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
+    CFLAGS += -g3
+    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	CFLAGS += $(COMPILER_OPTIMIZATION)
-	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
+    CFLAGS += $(COMPILER_OPTIMIZATION)
+    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
 endif
 
 ### addons used to be done here ...
 
 ifeq ($(MAKECMDGOALS),clean)
-	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
-	TARGET_NAME = Release
+    TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+    TARGET_NAME = Release
 endif
 
 
@@ -83,7 +90,7 @@ USER_OBJS = $(addprefix $(OBJ_OUTPUT), $(USER_OBJFILES))
 DEPFILES += $(patsubst %.o,%.d,$(USER_OBJS))
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
-	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
+    ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
     DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
 endif
 
@@ -127,7 +134,7 @@ $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
 	@echo "compiling addon $(ARCH) object for" $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
-	
+
 $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cxx
 	@echo "compiling addon $(ARCH) object for" $<
 	mkdir -p $(@D)
@@ -137,7 +144,7 @@ $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
 	@echo "compiling addon $(ARCH) object for" $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
-	
+
 $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cc
 	@echo "compiling addon $(ARCH) object for" $<
 	mkdir -p $(@D)
@@ -147,7 +154,7 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.c
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
-	
+
 $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cc
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
@@ -157,12 +164,12 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
-	
+
 $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cxx
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
-	
+
 $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 	@echo 'linking $(ARCH) $(TARGET) $(LIBSPATH)'
 	mkdir -p $(@D)
