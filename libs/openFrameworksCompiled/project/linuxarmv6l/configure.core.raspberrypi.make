@@ -130,18 +130,17 @@ PLATFORM_LIBRARIES += vchiq_arm
 # in a different search path location.  Otherwise, all libraries that
 # have not been filtered out with PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS
 # will be automatically included. 
-#PLATFORM_LIBRARIES+=
+#PLATFORM_LIBRARIES +=
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/libs/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/libs/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/libs/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoFoundation.a
- 
- 
-PLATFORM_SHARED_LIBRARIES =
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoFoundation.a
 
+# shared libraries 
+PLATFORM_SHARED_LIBRARIES =
 
 #openframeworks core third party
 PLATFORM_PKG_CONFIG_LIBRARIES =
@@ -218,7 +217,6 @@ PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS += /quicktime
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS += /glut
 PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS += /glew
 
-
 ##########################################################################################
 # PLATFORM FRAMEWORKS
 #   These are special frameworks used in OSX.  These will be prefixed with -framework
@@ -226,6 +224,6 @@ PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS += /glew
 #   These paths are ABSOLUTE.
 ##########################################################################################
 
-PLATFORM_LIBRARIES =
+#PLATFORM_FRAMEWORKS =
 
 

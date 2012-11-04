@@ -45,8 +45,6 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
         $(foreach v, $(INVALID_ADDONS),$(info $(v)))
     endif
 
-
-
     # if the addons list is NOT empty ...
     ifneq ($(strip $(ADDONS)),)
         # construct the relative addon source directories

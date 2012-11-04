@@ -1,49 +1,23 @@
 ##########################################################################################
+# print debug information if needed
+ifdef MAKEFILE_DEBUG
+    $(info =============================compile.core.make================================)
+endif
+
+
+##########################################################################################
 # CORE SPACE SPACE
 ##########################################################################################
 
-# setup the shell
-SHELL = /bin/sh
-
-ifndef ALL_OF_CORE_HEADER_PATHS
-    $(error ALL_OF_CORE_HEADER_PATHS is undefined)
-endif
-
-ifndef OF_CORE_LIB_PATH
-    $(error OF_CORE_LIB_PATH is undefined)
-endif
-
-##########################################################################################
-# INCLUDES CFLAGS
-##########################################################################################
-
-INCLUDES_CFLAGS = $(addprefix -I,$(ALL_OF_CORE_HEADER_PATHS))
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-    $(info ---INCLUDES_CFLAGS--- )
-    $(foreach v, $(INCLUDES_CFLAGS),$(info $(v)))
-endif
-
-# ADD THE INCLUDES TO THE CFLAGS
-##########################################################################################
-# DEFINES
-##########################################################################################
-
 # this is the space delimited list of defines
-ALL_DEFINES =
-ALL_DEFINES += $(USER_DEFINES)
-ALL_DEFINES += $(PLATFORM_DEFINES)
 
-# this is the list of flags with -DDEFINE_NAME
-DEFINES=$(addprefix -D,$(ALL_DEFINES))
+DEFINES=$(addprefix -D,$(PLATFORM_DEFINES))
 
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
     $(info ---DEFINES--- )
     $(foreach v, $(DEFINES),$(info $(v)))
 endif
-
 
 ##########################################################################################
 # CFLAGS
@@ -55,34 +29,47 @@ CFLAGS += $(DEFINES)
 # add the core flags
 CFLAGS += -Wall -fexceptions
 # add the include cflags
-CFLAGS += $(INCLUDES_CFLAGS)
+CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 
 ##########################################################################################
 # COMPILER OPTIMIZATIONS and TARGET MAKING
 ##########################################################################################
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) -g3
-	TARGET_NAME = $(MAKECMDGOALS)
-	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+    OPTIMIZATION_CFLAGS =$(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) -g3
+    TARGET_NAME = $(MAKECMDGOALS)
+    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
-	TARGET_NAME = $(MAKECMDGOALS)
-	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    OPTIMIZATION_CFLAGS =$(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+    TARGET_NAME = $(MAKECMDGOALS)
+    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 else 
-	# default to release
-	OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
-	TARGET_NAME = Release
-	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    # default to release
+    OPTIMIZATION_CFLAGS =$(PLATFORM_OPTIMIZATION_CFLAGS_REQUIRED) $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+    TARGET_NAME = Release
+    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
-	TARGET =
-	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
-	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+    TARGET =
+    TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
+
+
+
 CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
+
+ifdef MAKEFILE_DEBUG
+    $(info OPTIMIZATION_CFLAGS=$(OPTIMIZATION_CFLAGS))
+    $(info TARGET_NAME=$(TARGET_NAME))
+    $(info TARGET=$(TARGET))
+    $(info CLEANTARGET=$(CLEANTARGET))
+    $(info CFLAGS=$(CFLAGS))
+endif
+
+
 
 ##########################################################################################
 # OBJECT FILES
@@ -123,11 +110,11 @@ $(TARGET) : $(OBJS)
 clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
-	
+
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT_PATH)
 	rm -f -v $(TARGET)
-	
+
 #.PHONY: help
 help:
 	@echo 
