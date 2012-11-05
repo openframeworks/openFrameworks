@@ -251,10 +251,7 @@
 		</Unit>			
 		<Unit filename="../../../openFrameworks/math/ofVectorMath.h">
 			<Option virtualFolder="openFrameworks/math/" />
-		</Unit>
-		<Unit filename="../../../openFrameworks/ofMain.h">
-			<Option virtualFolder="openFrameworks/" />
-		</Unit>
+		</Unit>		
 		<Unit filename="../../../openFrameworks/sound/ofBaseSoundPlayer.cpp">
 			<Option virtualFolder="openFrameworks/sound/" />
 		</Unit>
@@ -277,9 +274,6 @@
 			<Option virtualFolder="openFrameworks/sound/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofPASoundStream.h">
-			<Option virtualFolder="openFrameworks/sound/" />
-		</Unit>
-		<Unit filename="../../../openFrameworks/sound/ofRtAudioSoundStream.cpp">
 			<Option virtualFolder="openFrameworks/sound/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofRtAudioSoundStream.h">

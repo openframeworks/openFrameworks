@@ -22,6 +22,7 @@ class testApp : public ofBaseApp {
 
 		//instead of using ofVideoPlayer we use the ofQTKitPlayer directly
 		ofQTKitPlayer fingerMovie;
-		bool frameByframe;
+		
+        bool frameByframe;
 };
 
