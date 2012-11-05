@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Workspace Name="openframeworksLib" Database="./openframeworksLib.tags">
-  <Project Name="openframeworksLib" Path="openframeworksLib.project" Active="No"/>
   <Project Name="multiwindowExample" Path="/home/phwhitfield/programming/openFrameworks-git/examples/other/multiwindowExample/multiwindowExample.project" Active="Yes"/>
+  <Project Name="openframeworksLib" Path="openframeworksLib.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
-      <Project Name="openframeworksLib" ConfigName="Debug"/>
       <Project Name="multiwindowExample" ConfigName="Debug"/>
+      <Project Name="openframeworksLib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
-      <Project Name="openframeworksLib" ConfigName="Release"/>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="multiwindowExample" ConfigName="Release"/>
+      <Project Name="openframeworksLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

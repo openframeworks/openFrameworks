@@ -6,7 +6,10 @@ int i = 0;
 void testApp::setup(){
 	ofSetBackgroundColor(255, 100, 100);
 	ofGetMainWindow()->setWindowShape(600, 600);
-	ofCreateWindow(500, 500, 200, 200)->addListener(new windowRenderer);
+	
+	
+	ofCreateWindow(500, 500, ofRandom(100, 800), ofRandom(100, 800))->addListener(new windowRenderer);
+	
 	
 	/*
 	ofCreateWindow(300, 400, 100, 100);
@@ -27,6 +30,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
+	
 	ofSetColor(50, 0, 0);
 	ofRect(i%ofGetWidth(), 100, 10, 10);
 	i++;
@@ -34,10 +38,15 @@ void testApp::draw(){
 	ofSetColor(255, 0, 0);
 	ofRect(ofGetMouseX(), ofGetMouseY(), 50, 50);
 	
-	ofSetColor(255);
+	ofSetColor(0);
+	ofEnableAlphaBlending();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
 	ofDrawBitmapString("SCROLL TO MOVE ME", textPos);
+
 }
 
 //--------------------------------------------------------------
