@@ -18,7 +18,7 @@ include $(OF_SHARED_MAKEFILES_PATH)/configure.core.platform.make
 include $(OF_SHARED_MAKEFILES_PATH)/configure.core.platform.paths.make
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
-AVAILABLE_PLATFORM_VARIANTS=$(shell find $(OF_PLATFORM_MAKEFILES)/configure.core*.make -maxdepth 1 -type f | sed -r 's/.*\.([^\.]*)\.make/\1/' )
+AVAILABLE_PLATFORM_VARIANTS=$(shell find $(OF_PLATFORM_MAKEFILES)/configure.core*.make -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.make/\1/' )
 
 # check to see if we have a file for the desired variant.  if not, quit and list the variants.
 ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
