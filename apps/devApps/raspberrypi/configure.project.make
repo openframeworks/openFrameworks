@@ -5,7 +5,6 @@
 #
 ##########################################################################################
 
-
 PROJECT_EXTERNAL_SOURCE_PATHS=
 
 PROJECT_SOURCE_EXCLUSIONS=bin .xcodeproj obj 

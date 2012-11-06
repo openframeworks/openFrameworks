@@ -1,6 +1,3 @@
-
-
-
 ifdef MAKEFILE_DEBUG
     $(info =============================makefile.configure.project.addons================)
 endif
@@ -21,25 +18,25 @@ endif
 
 ##########################################################################################
 ## if platform addon exclusions are defined in the platform specific build files, add 'em
-ADDON_EXCLUSIONS+=$(PLATFORM_RROJECT_ADDON_EXCLUSIONS) 
+ADDON_EXCLUSIONS += $(PLATFORM_RROJECT_ADDON_EXCLUSIONS)
 ##########################################################################################
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
     # get a list of every addon in the addons directory
-    EVERY_ADDON =$(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
+    EVERY_ADDON = $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
 
     # get a list of all addons in our directory
     ADDONS_ALL = $(strip $(shell cat addons.make))
 
     # compare our project addons list to the available addons and create a list of valid
-    VALID_ADDONS=$(filter $(ADDONS_ALL),$(EVERY_ADDON))
+    VALID_ADDONS = $(filter $(ADDONS_ALL),$(EVERY_ADDON))
 
     # make a list of invalid addons
-    INVALID_ADDONS=$(filter-out $(VALID_ADDONS),$(ADDONS_ALL))
+    INVALID_ADDONS = $(filter-out $(VALID_ADDONS),$(ADDONS_ALL))
 
 
     # filter out all addon exclusions, from the platform and invalid
-    ADDONS=$(filter-out $(ADDON_EXCLUSIONS) $(INVALID_ADDONS),$(ADDONS_ALL))
+    ADDONS = $(filter-out $(ADDON_EXCLUSIONS) $(INVALID_ADDONS),$(ADDONS_ALL))
 
     # if any invalid addons are found, throw an info warning, but don't cause an error
     ifneq (,$(INVALID_ADDONS))
@@ -47,8 +44,6 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
         $(info ---Invalid Addons Found---) 
         $(foreach v, $(INVALID_ADDONS),$(info $(v)))
     endif
-
-
 
     # if the addons list is NOT empty ...
     ifneq ($(strip $(ADDONS)),)
@@ -103,7 +98,7 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
             ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null)
         endif
 
-        # make a list of all shared libraries (ending with *.so)        
+        # make a list of all shared libraries (ending with *.so)
         ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
         
         # create a master list of both static and shared libraries
@@ -117,6 +112,9 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 
         # generate the object file list, for later use with the make
         ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))))
+
+        ##########################
+        ADDONS_INCLUDES_CFLAGS=$(addprefix -I,$(ADDONS_INCLUDES))
 
         # print debug information if so instructed
         ifdef MAKEFILE_DEBUG
