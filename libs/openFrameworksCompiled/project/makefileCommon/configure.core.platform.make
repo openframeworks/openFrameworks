@@ -18,7 +18,7 @@ ifndef PLATFORM_ARCH
     PLATFORM_ARCH=$(shell uname -m)
 endif
 
-# if not defined yet, construct the default PLATFORM_LIBS_PATH
+# if not defined yet, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
     # determine from the arch
     ifeq ($(PLATFORM_OS),Linux)
@@ -45,6 +45,16 @@ ifndef PLATFORM_LIB_SUBPATH
         $(error OF_LIBS_OF_COMPILED_PATH is not defined)
     endif
 endif
+
+# TODO: add appropriate list of platform suffixes
+# these variables will actually be used during compilation
+# http://en.wikipedia.org/wiki/Library_(computing)#File_naming 
+#ifndef PLATFORM_SHARED_LIB_SUFFIXES
+# i.e. if osx check for .dylib AND .so
+# if linux, just look for so
+#endif
+#ifndef PLATFORM_STATIC_LIB_SUFFIXES
+#endif
 
 # if desired, print the variables
 ifdef MAKEFILE_DEBUG
