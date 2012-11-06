@@ -121,6 +121,9 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
+	if(androidApp){
+		ofxRegisterMultitouch(androidApp);
+	}
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){
@@ -315,7 +318,6 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		androidApp->reloadTextures();
 	}
 	ofSetStyle(ofGetStyle());
-	ofSetOrientation(ofGetOrientation());
 	surfaceDestroyed = false;
 
 }
