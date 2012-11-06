@@ -7,11 +7,11 @@
 #
 #   This file will then be a generic platform file like:
 #
-#        configure.core.platform.make
+#        configure.core.linux64.default.make
 #
 #   Or it can specify a specific platform variant like:
 #
-#        configure.core.platform.raspberrypi.make
+#        configure.core.armv6l.raspberrypi.make
 #
 ##########################################################################################
 
@@ -120,9 +120,9 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file paths that will be used
 #   to exclude matching paths and files during list generation.
 #
-#   Each item in the PLATFORM_CORE_EXCLUSIONS list will have the % make wildcard appended
-#   meaning that it will match the listed directory and any subdirectories.  Fully 
-#   qualified filenames (such as source file names) can also be added to the list.
+#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete string
+#   unless teh user adds a wildcard (%) operator to match subdirectories.  GNU make only
+#   allows one wildcard for matching.  The second wildcard (%) is treated literally.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
