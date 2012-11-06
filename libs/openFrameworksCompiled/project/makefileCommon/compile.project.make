@@ -22,54 +22,68 @@ NODEPS = clean
 ##################
 # exclude all items from source according to the config.make file
 
-# make a list of source file and folder exclusions relative to the project directory
-FULLY_QUALIFIED_PROJECT_SOURCE_EXCLUSIONS=$(addprefix ./,$(addsuffix %,$(strip $(PROJECT_SOURCE_EXCLUSIONS))))
-
 # make a list of all directories that could be valid project source directories
-ALL_PROJECT_SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d)
+ALL_PROJECT_SOURCE_PATHS = $(shell find . -maxdepth 1 -mindepth 1 -type d)
+
+# add external source paths
+ALL_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 
 # filter out all excluded files / folders that were defined above
 # this list will be searched for cpp files below and will eventually
 # be included as locations for header searches via 
-FILTERED_PROJECT_SOURCE_DIRS=$(filter-out $(FULLY_QUALIFIED_PROJECT_SOURCE_EXCLUSIONS),$(ALL_PROJECT_SOURCE_DIRS))
+PROJECT_SOURCE_PATHS = $(filter-out $(PROJECT_EXCLUSIONS),$(ALL_PROJECT_SOURCE_PATHS))
 
 # find all sources inside the project's source directory (recursively)
-PROJECT_SOURCES = $(shell find $(FILTERED_PROJECT_SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+PROJECT_SOURCES = $(shell find $(PROJECT_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
 
 # produce object files for all project sourcees
 PROJECT_OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_SOURCES)))))
 
-ifdef PROJECT_EXTERNAL_SOURCE_PATHS
-    PROJECT_EXTERNAL_SOURCES = $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
-    PROJECT_EXTERNAL_OBJFILES = $(subst $(PROJECT_EXTERNAL_SOURCE_PATHS)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_EXTERNAL_SOURCES))))))
-endif
-
-
-PROJECT_INCLUDES = $(FILTERED_PROJECT_SOURCE_DIRS) $(PROJECT_EXTERNAL_SOURCE_PATHS)
+# ifdef PROJECT_EXTERNAL_SOURCE_PATHS
+#     PROJECT_EXTERNAL_SOURCES = $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+#     PROJECT_EXTERNAL_OBJFILES = $(subst $(PROJECT_EXTERNAL_SOURCE_PATHS)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_EXTERNAL_SOURCES))))))
+# endif
 
 # construct all project-specific cflags
-PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(PROJECT_INCLUDES))
+PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(PROJECT_SOURCE_PATHS))
 
 LDFLAGS = -Wl,-rpath=./libs
 
-##########################################################################################
-# construct all includes cflags
 ALL_INCLUDES_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 ALL_INCLUDES_CFLAGS += $(ADDONS_INCLUDES_CFLAGS)
 ALL_INCLUDES_CFLAGS += -I.
 ALL_INCLUDES_CFLAGS += $(PROJECT_INCLUDES_CFLAGS)
 
+
+##########################################################################################
+# CFLAGS
+##########################################################################################
+
+# clean it
+ALL_CFLAGS =
+# add the core flags 
+ALL_CFLAGS += $(OF_CORE_BASE_CFLAGS)
+# add the defines
+ALL_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
+# add the include cflags
+ALL_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
+# clean up all extra whitespaces in the CFLAGS
+CFLAGS = $(strip $(ALL_CFLAGS))
+
+
+
+
 ################################
 ## stopped here ...
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-    CFLAGS += -g3
-    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
+    TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-    CFLAGS += $(COMPILER_OPTIMIZATION)
-    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
+    TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 endif
 
 ### addons used to be done here ...
