@@ -1,6 +1,7 @@
 
 
 
+
 LDFLAGS = -Wl,-rpath=./libs
 SYSTEMLIBS += $(shell pkg-config jack glu glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev cairo zlib --libs)
 SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
