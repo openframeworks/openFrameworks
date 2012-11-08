@@ -158,22 +158,22 @@ ofPtr<ofGLES2Renderer> ofGetGLES2Renderer(){
 
 GLint ofGetAttrLocationPosition(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getPositionAttributeID();
+	return ofGetGLES2Renderer()->getAttrLocationPosition();
 }
 
 GLint ofGetAttrLocationColor(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getColorAttributeID();
+	return ofGetGLES2Renderer()->getAttrLocationColor();
 }
 
 GLint ofGetAttrLocationNormal(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getNormalAttributeID();
+	return ofGetGLES2Renderer()->getAttrLocationNormal();
 }
 
 GLint ofGetAttrLocationTexCoord(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getTexCoordAttributeID();
+	return ofGetGLES2Renderer()->getAttrLocationTexCoord();
 }
 
 

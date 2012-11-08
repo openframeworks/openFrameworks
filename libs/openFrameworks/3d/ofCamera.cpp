@@ -96,7 +96,7 @@ void ofCamera::begin(ofRectangle viewport) {
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
-	ofMatrixMode(OF_MATRIX_PROJECTION);
+	ofSetMatrixMode(OF_MATRIX_PROJECTION);
 	ofLoadIdentityMatrix();
 	
 	if(isOrtho) {
@@ -109,7 +109,7 @@ void ofCamera::begin(ofRectangle viewport) {
 		ofLoadMatrix( persp );
 	}
 
-	ofMatrixMode(OF_MATRIX_MODELVIEW);
+	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
 	ofViewport(viewport);
 }
