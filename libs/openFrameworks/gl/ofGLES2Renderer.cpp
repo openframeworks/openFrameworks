@@ -111,29 +111,37 @@ void ofGLES2Renderer::popView() {
 
 //----------------------------------------------------------
 void ofGLES2Renderer::viewport(ofRectangle viewport_){
-	// TODO :: needs ES2 code.
+	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height,true);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::viewport(float x, float y, float width, float height, bool invertY) {
-	// TODO :: needs ES2 code.
+	if(width == 0) width = ofGetWindowWidth();
+	if(height == 0) height = ofGetWindowHeight();
+
+	if (invertY){
+		if(currentFbo){
+			y = currentFbo->getHeight() - (y + height);
+		}else{
+			y = ofGetWindowHeight() - (y + height);
+		}
+	}
+	currentViewport.set(x, y, width, height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLES2Renderer::getCurrentViewport(){
-    // TODO :: needs ES2 code.
+    return currentViewport;
 }
 
 //----------------------------------------------------------
 int ofGLES2Renderer::getViewportWidth(){
-    // TODO :: needs ES2 code.
-	return ofGetScreenWidth();
+	return currentViewport.width;
 }
 
 //----------------------------------------------------------
 int ofGLES2Renderer::getViewportHeight(){
-    // TODO :: needs ES2 code.
-	return ofGetScreenHeight();
+	return currentViewport.height;
 }
 
 //----------------------------------------------------------
@@ -208,8 +216,8 @@ void ofGLES2Renderer::setupScreenPerspective(float width, float height, ofOrient
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = getViewportWidth();
+	float viewH = getViewportHeight();
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -708,6 +716,36 @@ void ofGLES2Renderer::enablePointSprites(){
 //----------------------------------------------------------
 void ofGLES2Renderer::disablePointSprites(){
     // TODO :: needs ES2 code.
+}
+
+//----------------------------------------------------------
+GLint ofGLES2Renderer::getPositionAttributeID(){
+	return currentShader.getAttributeLocation("position");
+}
+
+//----------------------------------------------------------
+GLint ofGLES2Renderer::getColorAttributeID(){
+	return currentShader.getAttributeLocation("color");
+}
+
+//----------------------------------------------------------
+GLint ofGLES2Renderer::getNormalAttributeID(){
+	return currentShader.getAttributeLocation("normal");
+}
+
+//----------------------------------------------------------
+GLint ofGLES2Renderer::getTexCoordAttributeID(){
+	return currentShader.getAttributeLocation("texcoord");
+}
+
+//----------------------------------------------------------
+ofShader & ofGLES2Renderer::getCurrentShader(){
+	return currentShader;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::setCurrentShader(ofShader & shader){
+	currentShader = shader;
 }
 
 //----------------------------------------------------------

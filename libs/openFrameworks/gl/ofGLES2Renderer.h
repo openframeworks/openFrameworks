@@ -123,6 +123,14 @@ public:
 	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+
+	// attributes location
+	GLint getPositionAttributeID();
+	GLint getColorAttributeID();
+	GLint getNormalAttributeID();
+	GLint getTexCoordAttributeID();
+	ofShader & getCurrentShader();
+	void setCurrentShader(ofShader & shader);
     
 private:
 	void uploadModelViewMatrix(const ofMatrix4x4 & m);
@@ -136,6 +144,7 @@ private:
 	stack <ofRectangle> viewportHistory;
 	stack <ofMatrix4x4> modelViewStack;
 	stack <ofMatrix4x4> projectionStack;
+	ofRectangle currentViewport;
     ofMatrixMode currentMatrixMode;
     ofMatrix4x4 modelView, projection, modelViewOrientation, orientationMatrix;
 	bool bBackgroundAuto;
