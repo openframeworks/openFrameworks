@@ -1,7 +1,8 @@
 #!/bin/bash
 repo_url='https\:\/\/github\.com\/openframeworks\/openFrameworks\/blob\/develop\/'
 EMAILMESSAGE="/tmp/emailmessage.txt"
-EMAIL="of-dev@dev.openframeworks.cc"
+#EMAIL="of-dev@dev.openframeworks.cc"
+EMAIL="arturo@openframeworks.cc"
 SUBJECT="errors building OF"
 FROM="ci@openframeworks.cc"
 errors=0
