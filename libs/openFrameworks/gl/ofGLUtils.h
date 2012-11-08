@@ -8,6 +8,9 @@
 #ifndef OFGLUTILS_H_
 #define OFGLUTILS_H_
 
+#include <set>
+#include "ofConstants.h"
+
 enum ofPrimitiveMode{
 	OF_PRIMITIVE_TRIANGLES,
 	OF_PRIMITIVE_TRIANGLE_STRIP,
@@ -159,5 +162,18 @@ inline int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
 		return GL_LUMINANCE;
 	}
+}
+
+
+inline bool ofCheckGLExtension(string searchName){
+#ifdef TARGET_OPENGLES
+	string extensions = (char*)glGetString(GL_EXTENSIONS);
+	vector<string> extensionsList = ofSplitString(extensions," ");
+	set<string> extensionsSet;
+	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
+	return extensionsSet.find(searchName)!=extensionsSet.end();
+#else
+	return glewGetExtension(searchName.c_str());
+#endif
 }
 #endif /* OFGLUTILS_H_ */
