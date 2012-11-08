@@ -12,6 +12,7 @@ ofMesh::ofMesh(){
     useColors = true;
     useTextures = true;
     useNormals = true;
+    useIndices = true;
 
 }
 
