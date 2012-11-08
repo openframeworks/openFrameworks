@@ -59,7 +59,7 @@ unsigned long ofGetElapsedTimeMicros(){
 
 //--------------------------------------
 float ofGetElapsedTimef(){
-	return ofGetElapsedTimeMicros() / 1000000.0f;
+	return ofGetElapsedTimeMillis() / 1000.0f;
 }
 
 //--------------------------------------
