@@ -125,16 +125,17 @@ public:
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
 	// attributes location
-	GLint getPositionAttributeID();
-	GLint getColorAttributeID();
-	GLint getNormalAttributeID();
-	GLint getTexCoordAttributeID();
+	GLint getAttrLocationPosition();
+	GLint getAttrLocationColor();
+	GLint getAttrLocationNormal();
+	GLint getAttrLocationTexCoord();
 	ofShader & getCurrentShader();
 	void setCurrentShader(ofShader & shader);
     
 private:
 	void uploadModelViewMatrix(const ofMatrix4x4 & m);
 	void uploadProjectionMatrix(const ofMatrix4x4 & m);
+	void uploadTextureMatrix(const ofMatrix4x4 & m);
 	void setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip);
     
 	void startSmoothing();
@@ -144,9 +145,10 @@ private:
 	stack <ofRectangle> viewportHistory;
 	stack <ofMatrix4x4> modelViewStack;
 	stack <ofMatrix4x4> projectionStack;
+	stack <ofMatrix4x4> textureStack;
 	ofRectangle currentViewport;
     ofMatrixMode currentMatrixMode;
-    ofMatrix4x4 modelView, projection, modelViewOrientation, orientationMatrix;
+    ofMatrix4x4 modelView, projection, modelViewOrientation, orientationMatrix, textureMatrix;
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
     ofFloatColor currentColor;
@@ -169,5 +171,4 @@ private:
     
 	ofFbo * currentFbo;
 	ofShader currentShader;
-    
 };

@@ -56,42 +56,190 @@ void ofGLES2Renderer::update(){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
-	// TODO :: needs ES2 code.
+	if(vertexData.getNumVertices()){
+		currentShader.setAttribute3fv("position",&vertexData.getVerticesPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumNormals() && useNormals){
+		currentShader.setAttribute3fv("normal",&vertexData.getNormalsPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumColors() && useColors){
+		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
+	}
+	if(vertexData.getNumTexCoords() && useTextures){
+		currentShader.setUniform1f("useTexture",1);
+		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
+	}else{
+		currentShader.setUniform1f("useTexture",0);
+	}
+
+	if(vertexData.getNumIndices()){
+#ifdef TARGET_OPENGLES
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+#else
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+#endif
+	}else{
+		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
+	}
+	if(vertexData.getNumColors()){
+		glDisableVertexAttribArray(getAttrLocationColor());
+	}
+	if(vertexData.getNumNormals()){
+		glDisableVertexAttribArray(getAttrLocationNormal());
+	}
+	if(vertexData.getNumTexCoords()){
+		glDisableVertexAttribArray(getAttrLocationTexCoord());
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
-    // TODO :: needs ES2 code.
+	if (bSmoothHinted) startSmoothing();
+	if(vertexData.getNumVertices()){
+		currentShader.setAttribute3fv("position",&vertexData.getVerticesPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumNormals() && useNormals){
+		currentShader.setAttribute3fv("normal",&vertexData.getNormalsPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumColors() && useColors){
+		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
+	}
+	if(vertexData.getNumTexCoords() && useTextures){
+		currentShader.setUniform1f("useTexture",1);
+		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
+	}else{
+		currentShader.setUniform1f("useTexture",0);
+	}
+
+	GLenum drawMode;
+	switch(renderType){
+	case OF_MESH_POINTS:
+		drawMode = GL_POINTS;
+		break;
+	case OF_MESH_WIREFRAME:
+		drawMode = GL_LINES;
+		break;
+	case OF_MESH_FILL:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
+	default:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
+	}
+
+	if(vertexData.getNumIndices()){
+#ifdef TARGET_OPENGLES
+		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+#else
+		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+#endif
+	}else{
+		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
+	}
+	if(vertexData.getNumColors()){
+		glDisableVertexAttribArray(getAttrLocationColor());
+	}
+	if(vertexData.getNumNormals()){
+		glDisableVertexAttribArray(getAttrLocationNormal());
+	}
+	if(vertexData.getNumTexCoords()){
+		glDisableVertexAttribArray(getAttrLocationTexCoord());
+	}
+	if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	// TODO :: needs ES2 code.
+	if(!vertexData.empty()) {
+		if (bSmoothHinted) startSmoothing();
+		currentShader.setAttribute3fv("position",&vertexData[0].x,sizeof(ofVec3f));
+		currentShader.setUniform1f("useTexture",0);
+		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+		if (bSmoothHinted) endSmoothing();
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofPolyline & poly){
-	// TODO :: needs ES2 code.
+	if(!poly.getVertices().empty()) {
+		// use smoothness, if requested:
+		if (bSmoothHinted) startSmoothing();
+
+		currentShader.setAttribute3fv("position",&poly.getVertices()[0].x,sizeof(ofVec3f));
+		currentShader.setUniform1f("useTexture",0);
+		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+
+		// use smoothness, if requested:
+		if (bSmoothHinted) endSmoothing();
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofPath & shape){
-	// TODO :: needs ES2 code.
+	ofColor prevColor;
+	if(shape.getUseShapeColor()){
+		prevColor = ofGetStyle().color;
+	}
+	if(shape.isFilled()){
+		ofMesh & mesh = shape.getTessellation();
+		if(shape.getUseShapeColor()){
+			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+		}
+		draw(mesh);
+	}
+	if(shape.hasOutline()){
+		float lineWidth = ofGetStyle().lineWidth;
+		if(shape.getUseShapeColor()){
+			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+		}
+		setLineWidth( shape.getStrokeWidth() );
+		vector<ofPolyline> & outlines = shape.getOutline();
+		for(int i=0; i<(int)outlines.size(); i++)
+			draw(outlines[i]);
+		setLineWidth(lineWidth);
+	}
+	if(shape.getUseShapeColor()){
+		setColor(prevColor);
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	// TODO :: needs ES2 code.
+	if(image.isUsingTexture()){
+		currentShader.setUniform1f("useTexture",1);
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	// TODO :: needs ES2 code.
+	if(image.isUsingTexture()){
+		currentShader.setUniform1f("useTexture",1);
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	// TODO :: needs ES2 code.
+	if(image.isUsingTexture()){
+		currentShader.setUniform1f("useTexture",1);
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
 }
 
 //----------------------------------------------------------
@@ -101,12 +249,28 @@ void ofGLES2Renderer::setCurrentFBO(ofFbo * fbo){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::pushView() {
-	// TODO :: needs ES2 code.
+	viewportHistory.push(currentViewport);
+	ofMatrixMode currentMode = currentMatrixMode;
+	matrixMode(OF_MATRIX_PROJECTION);
+	pushMatrix();
+	matrixMode(OF_MATRIX_MODELVIEW);
+	pushMatrix();
+	matrixMode(currentMode);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::popView() {
-	// TODO :: needs ES2 code.
+	if( viewportHistory.size() ){
+		ofRectangle viewRect = viewportHistory.top();
+		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height,false);
+		viewportHistory.pop();
+	}
+	ofMatrixMode currentMode = currentMatrixMode;
+	matrixMode(OF_MATRIX_PROJECTION);
+	popMatrix();
+	matrixMode(OF_MATRIX_MODELVIEW);
+	popMatrix();
+	matrixMode(currentMode);
 }
 
 //----------------------------------------------------------
@@ -268,7 +432,10 @@ void ofGLES2Renderer::setupScreenOrtho(float width, float height, ofOrientation 
 //----------------------------------------------------------
 //Resets openGL parameters back to OF defaults
 void ofGLES2Renderer::setupGraphicDefaults(){
-    // TODO :: needs ES2 code.
+	/*glEnableVertexAttribArray(getAttrLocationPosition());
+	glDisableVertexAttribArray(getAttrLocationColor());
+	glDisableVertexAttribArray(getAttrLocationNormal());
+	glDisableVertexAttribArray(getAttrLocationTexCoord());*/
 }
 
 //----------------------------------------------------------
@@ -391,7 +558,7 @@ void ofGLES2Renderer::pushMatrix(){
 		projectionStack.push(projection);
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureStack.push(textureMatrix);
 		break;
 	}
 }
@@ -410,7 +577,9 @@ void ofGLES2Renderer::popMatrix(){
 		projectionStack.pop();
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureMatrix = textureStack.top();
+		uploadTextureMatrix(textureMatrix);
+		textureStack.pop();
 		break;
 	}
 }
@@ -432,7 +601,8 @@ void ofGLES2Renderer::translate(float x, float y, float z){
 		uploadProjectionMatrix(projection);
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureMatrix.glTranslate(x,y,z);
+		uploadTextureMatrix(textureMatrix);
 		break;
 	}
 }
@@ -449,7 +619,8 @@ void ofGLES2Renderer::scale(float xAmnt, float yAmnt, float zAmnt){
 		uploadProjectionMatrix(projection);
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureMatrix.glScale(xAmnt,yAmnt,zAmnt);
+		uploadTextureMatrix(textureMatrix);
 		break;
 	}
 }
@@ -466,7 +637,8 @@ void ofGLES2Renderer::rotate(float degrees, float vecX, float vecY, float vecZ){
 		uploadProjectionMatrix(projection);
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureMatrix.glRotate(degrees,vecX,vecY,vecZ);
+		uploadTextureMatrix(textureMatrix);
 		break;
 	}
 }
@@ -514,10 +686,12 @@ void ofGLES2Renderer::loadMatrix (const ofMatrix4x4 & m){
 		uploadModelViewMatrix(modelViewOrientation);
 		break;
 	case OF_MATRIX_PROJECTION:
-		uploadProjectionMatrix(m);
+		projection = m;
+		uploadProjectionMatrix(projection);
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureMatrix = m;
+		uploadTextureMatrix(textureMatrix);
 		break;
 	}
 }
@@ -536,7 +710,8 @@ void ofGLES2Renderer::loadMatrix (const float *m){
 		uploadProjectionMatrix(projection);
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureMatrix.set(m);
+		uploadTextureMatrix(textureMatrix);
 		break;
 	}
 }
@@ -553,7 +728,8 @@ void ofGLES2Renderer::multMatrix (const ofMatrix4x4 & m){
 		uploadProjectionMatrix(projection);
 		break;
 	case OF_MATRIX_TEXTURE:
-		//TODO
+		textureMatrix.preMult(m);
+		uploadTextureMatrix(textureMatrix);
 		break;
 	}
 }
@@ -572,6 +748,10 @@ void ofGLES2Renderer::uploadModelViewMatrix(const ofMatrix4x4 & m){
 //----------------------------------------------------------
 void ofGLES2Renderer::uploadProjectionMatrix(const ofMatrix4x4 & m){
 	currentShader.setUniformMatrix4f("projectionMatrix",m);
+}
+
+void ofGLES2Renderer::uploadTextureMatrix(const ofMatrix4x4 & m){
+	currentShader.setUniformMatrix4f("textureMatrix",m);
 }
 
 //----------------------------------------------------------
@@ -719,22 +899,22 @@ void ofGLES2Renderer::disablePointSprites(){
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getPositionAttributeID(){
+GLint ofGLES2Renderer::getAttrLocationPosition(){
 	return currentShader.getAttributeLocation("position");
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getColorAttributeID(){
+GLint ofGLES2Renderer::getAttrLocationColor(){
 	return currentShader.getAttributeLocation("color");
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getNormalAttributeID(){
+GLint ofGLES2Renderer::getAttrLocationNormal(){
 	return currentShader.getAttributeLocation("normal");
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getTexCoordAttributeID(){
+GLint ofGLES2Renderer::getAttrLocationTexCoord(){
 	return currentShader.getAttributeLocation("texcoord");
 }
 
@@ -761,6 +941,7 @@ void ofGLES2Renderer::drawLine(float x1, float y1, float z1, float x2, float y2,
 
 	currentShader.setAttribute3fv("position",&linePoints[0].x,sizeof(ofVec3f));
 	currentShader.setAttribute4fv("color",&lineColors[0].r,sizeof(ofFloatColor));
+	currentShader.setUniform1f("useTexture",0);
     
 	glDrawArrays(GL_LINES, 0, 2);
     
@@ -792,6 +973,7 @@ void ofGLES2Renderer::drawRectangle(float x, float y, float z, float w, float h)
 
 	currentShader.setAttribute3fv("position",&rectPoints[0].x,sizeof(ofVec3f));
 	currentShader.setAttribute4fv("color",&rectColors[0].r,sizeof(ofFloatColor));
+	currentShader.setUniform1f("useTexture",0);
 
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
     
@@ -814,6 +996,7 @@ void ofGLES2Renderer::drawTriangle(float x1, float y1, float z1, float x2, float
 
 	currentShader.setAttribute3fv("position",&triPoints[0].x,sizeof(ofVec3f));
 	currentShader.setAttribute4fv("color",&triColors[0].r,sizeof(ofFloatColor));
+	currentShader.setUniform1f("useTexture",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
     
@@ -834,6 +1017,7 @@ void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
 
 	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
 	currentShader.setAttribute4fv("color",&circleColors[0].r,sizeof(ofFloatColor));
+	currentShader.setUniform1f("useTexture",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     
@@ -861,6 +1045,7 @@ void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float 
 
 	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
 	currentShader.setAttribute4fv("color",&circleColors[0].r,sizeof(ofFloatColor));
+	currentShader.setUniform1f("useTexture",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     

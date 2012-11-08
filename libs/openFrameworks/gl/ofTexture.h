@@ -171,7 +171,10 @@ class ofTexture : public ofBaseDraws {
 
 protected:
 	void loadData(void * data, int w, int h, int glFormat);
+	void enableTextureTarget();
+	void disableTextureTarget();
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
+	ofMesh quad;
 };
