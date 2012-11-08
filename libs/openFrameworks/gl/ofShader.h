@@ -1,6 +1,5 @@
 #pragma once
 
-#ifndef TARGET_OPENGLES
 
 /*
  todo: add support for attachment of multiple shaders
@@ -35,6 +34,8 @@ public:
 
 	void unload();
 	
+	bool isLoaded();
+
 	void begin();
 	void end();
 	
@@ -69,21 +70,30 @@ public:
 
 	// set attributes that vary per vertex (look up the location before glBegin)
 	GLint getAttributeLocation(const char* name);
-	
+
+#ifndef TARGET_OPENGLES
 	void setAttribute1s(GLint location, short v1);
 	void setAttribute2s(GLint location, short v1, short v2);
 	void setAttribute3s(GLint location, short v1, short v2, short v3);
 	void setAttribute4s(GLint location, short v1, short v2, short v3, short v4);
+#endif
 	
 	void setAttribute1f(GLint location, float v1);
 	void setAttribute2f(GLint location, float v1, float v2);
 	void setAttribute3f(GLint location, float v1, float v2, float v3);
 	void setAttribute4f(GLint location, float v1, float v2, float v3, float v4);
-	
+
+#ifndef TARGET_OPENGLES
 	void setAttribute1d(GLint location, double v1);
 	void setAttribute2d(GLint location, double v1, double v2);
 	void setAttribute3d(GLint location, double v1, double v2, double v3);
 	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4);
+#endif
+
+	void setAttribute1fv(const char* name, float* v, GLsizei stride=sizeof(float));
+	void setAttribute2fv(const char* name, float* v, GLsizei stride=sizeof(float)*2);
+	void setAttribute3fv(const char* name, float* v, GLsizei stride=sizeof(float)*3);
+	void setAttribute4fv(const char* name, float* v, GLsizei stride=sizeof(float)*4);
 	
 	void printActiveUniforms();
 	void printActiveAttributes();
@@ -120,4 +130,3 @@ private:
 	bool bLoaded; 
 };
 
-#endif

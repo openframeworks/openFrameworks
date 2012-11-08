@@ -2,6 +2,7 @@
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
 #include "ofMatrix4x4.h"
+#include "ofShader.h"
 
 #include <stack>
 class ofShapeTessellation;
@@ -15,7 +16,7 @@ public:
     
 	string getType(){ return "GLES2"; }
     
-    bool loadShaders();
+    bool setup();
     void startRender();
     void finishRender();
 
@@ -40,7 +41,7 @@ public:
 	//--------------------------------------------
 	// transformations
 	void pushView();
-        void popView();
+    void popView();
     
 	// setup matrices and viewport (upto you to push and pop view before and after)
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
@@ -67,6 +68,7 @@ public:
 	void rotateY(float degrees);
 	void rotateZ(float degrees);
 	void rotate(float degrees);
+	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
 	void loadMatrix (const ofMatrix4x4 & m);
 	void loadMatrix (const float * m);
@@ -123,16 +125,9 @@ public:
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
     
 private:
-    //---------------------------------------------------------- SHADERS.
-    GLint compileShader(GLuint *shader, GLenum type, GLsizei count, string file);
-    GLint linkProgram(GLuint prog);
-    GLint validateProgram(GLuint prog);
-    void destroyShaders(GLuint vertShader, GLuint fragShader, GLuint prog);
-    
-    GLuint program;
-    GLuint vertShader;
-    GLuint fragShader;
-    //----------------------------------------------------------
+	void uploadModelViewMatrix(const ofMatrix4x4 & m);
+	void uploadProjectionMatrix(const ofMatrix4x4 & m);
+	void setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip);
     
 	void startSmoothing();
 	void endSmoothing();
@@ -141,7 +136,8 @@ private:
 	stack <ofRectangle> viewportHistory;
 	stack <ofMatrix4x4> modelViewStack;
 	stack <ofMatrix4x4> projectionStack;
-    stack <ofMatrix4x4> transformStack;
+    ofMatrixMode currentMatrixMode;
+    ofMatrix4x4 modelView, projection, modelViewOrientation, orientationMatrix;
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
     ofFloatColor currentColor;
@@ -163,5 +159,6 @@ private:
 	ofRectMode rectMode;
     
 	ofFbo * currentFbo;
+	ofShader currentShader;
     
 };

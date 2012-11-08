@@ -60,6 +60,10 @@ ofVbo::ofVbo()
 	texCoordId = 0;
 	indexId    = 0;
 
+	totalVerts = 0;
+	texCoordStride = sizeof(ofVec2f);
+	normalStride = sizeof(ofVec3f);
+	colorStride = sizeof(ofFloatColor);
 
 	bAllocated		= false;
 }
@@ -94,6 +98,11 @@ ofVbo::ofVbo(const ofVbo & mom){
 	retain(indexId);
 
 
+	totalVerts = mom.totalVerts;
+	texCoordStride = sizeof(ofVec2f);
+	normalStride = sizeof(ofVec3f);
+	colorStride = sizeof(ofFloatColor);
+
 	bAllocated		= mom.bAllocated;
 }
 
@@ -127,6 +136,7 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	indexId    = mom.indexId;
 	retain(indexId);
 
+	totalVerts = mom.totalVerts;
 
 	bAllocated		= mom.bAllocated;
 	return *this;
@@ -445,7 +455,7 @@ void ofVbo::bind(){
 //#endif
 	
 	if(bUsingVerts){
-		glEnableClientState(GL_VERTEX_ARRAY);		
+		glEnableClientState(GL_VERTEX_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
 		glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
 	}
@@ -457,13 +467,13 @@ void ofVbo::bind(){
 	}
 	
 	if(bUsingNormals) {
-		glEnableClientState(GL_NORMAL_ARRAY);		
+		glEnableClientState(GL_NORMAL_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, normalId);
 		glNormalPointer(GL_FLOAT, normalStride, 0);
 	}
 	
 	if(bUsingTexCoords) {
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);		
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 		glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
 	}
