@@ -341,6 +341,7 @@ ofTexture::ofTexture(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
+	quad = mom.quad;
 	retain(texData.textureID);
 }
 
@@ -352,6 +353,7 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
+	quad = mom.quad;
 	retain(texData.textureID);
 	return *this;
 }
