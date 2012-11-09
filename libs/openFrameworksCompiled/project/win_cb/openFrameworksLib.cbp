@@ -5,7 +5,7 @@
 		<Option title="openFrameworksLib" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="openframeworks\;openframeworks\app\;openframeworks\communication\;openframeworks\graphics\;openframeworks\sound\;openframeworks\utils\;openframeworks\video\;openframeworks\events\;openframeworks\3d\;openframeworks\gl\;openframeworks\math\;openframeworks\types\;" />
+		<Option virtualFolders="openframeworks\;openframeworks\app\;openframeworks\communication\;openframeworks\graphics\;openframeworks\sound\;openframeworks\utils\;openframeworks\video\;openframeworks\events\;openframeworks\3d\;openframeworks\gl\;openframeworks\math\;openframeworks\types\;openframeworks\window\;" />
 		<Build>
 			<Target title="debug">
 				<Option output="..\..\lib\win_cb\openFrameworksDebug.lib" prefix_auto="0" extension_auto="0" />
@@ -59,6 +59,7 @@
 			<Add directory="..\..\..\openFrameworks\math" />
 			<Add directory="..\..\..\poco\include" />
 			<Add directory="..\..\..\tess2\include" />
+			<Add directory="..\..\..\glfw\include" />
 		</Compiler>
 		<Unit filename="..\..\..\openFrameworks\3d\of3dUtils.cpp">
 			<Option virtualFolder="openframeworks\3d\" />
@@ -422,6 +423,18 @@
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\video\ofVideoPlayer.h">
 			<Option virtualFolder="openframeworks\video\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\window\ofWindow.cpp">
+			<Option virtualFolder="openframeworks\window\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\window\ofWindow.h">
+			<Option virtualFolder="openframeworks\window\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\window\ofWindowManager.cpp">
+			<Option virtualFolder="openframeworks\window\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\window\ofWindowManager.h">
+			<Option virtualFolder="openframeworks\window\" />
 		</Unit>
 		<Extensions>
 			<code_completion />
