@@ -295,6 +295,11 @@ void ofMultMatrix (const float *m){
 	renderer->multMatrix(m);
 }
 
+//----------------------------------------------------------
+void ofSetMatrixMode(ofMatrixMode matrixMode){
+	renderer->matrixMode(matrixMode);
+}
+
 // end transformation matrix related functions
 //----------------------------------------------------------
 

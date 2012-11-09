@@ -6,7 +6,9 @@
 #include "ofGLRenderer.h"
 #include <map>
 
-//#ifndef TARGET_OPENGLES
+#ifdef TARGET_OPENGLES
+#include <dlfcn.h>
+#endif
 
 
 /*
@@ -19,6 +21,8 @@
 
  */
 
+bool ofFbo::bglFunctionsInitialized=false;
+
 // mapping to allow simple opengl EXT and opengl ES OES
 // commented out ones are already defined
 
@@ -29,60 +33,53 @@
 	#ifndef GL_UNSIGNED_INT_24_8
 		#define GL_UNSIGNED_INT_24_8						GL_UNSIGNED_INT_24_8_EXT
 	#endif
-	
-	/*#define glGenFramebuffers								glGenFramebuffersEXT
-	#define glGenRenderbuffers								glGenRenderbuffersEXT
-	#define	glDeleteFramebuffers							glDeleteFramebuffersEXT
-	#define	glBindFramebuffer								glBindFramebufferEXT
-	#define	glBindRenderbuffer								glBindRenderbufferEXT
-	#define glRenderbufferStorage							glRenderbufferStorageEXT
-	#define glFramebufferRenderbuffer						glFramebufferRenderbufferEXT
-	#define glRenderbufferStorageMultisample				glRenderbufferStorageMultisampleEXT
-	#define glFramebufferTexture2D							glFramebufferTexture2DEXT
-	#define glCheckFramebufferStatus						glCheckFramebufferStatusEXT
-	#define GL_WRITE_FRAMEBUFFER							GL_WRITE_FRAMEBUFFER_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
-
-	#ifdef TARGET_WIN32
-	#define glBlitFramebuffer									glBlitFramebufferEXT
-	#define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
-	#define GL_DEPTH_ATTACHMENT								GL_DEPTH_ATTACHMENT_EXT
-	#define GL_DRAW_FRAMEBUFFER								GL_DRAW_FRAMEBUFFER_EXT
-	#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_EXT
-	#define GL_FRAMEBUFFER_BINDING							GL_FRAMEBUFFER_BINDING_EXT
-	#define GL_FRAMEBUFFER_COMPLETE							GL_FRAMEBUFFER_COMPLETE_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT			GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT	GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT
-	#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_EXT
-	#define GL_MAX_COLOR_ATTACHMENTS						GL_MAX_COLOR_ATTACHMENTS_EXT
-	#define GL_MAX_SAMPLES									GL_MAX_SAMPLES_EXT
-	#define GL_STENCIL_ATTACHMENT							GL_STENCIL_ATTACHMENT_EXT
-	#define GL_READ_FRAMEBUFFER								GL_READ_FRAMEBUFFER_EXT
-	#define GL_RENDERBUFFER									GL_RENDERBUFFER_EXT
-	#endif //TARGET_WIN32
-*/
 #else
-	#define glGenFramebuffers								glGenFramebuffersOES
-	#define glGenRenderbuffers								glGenRenderbuffersOES
-	#define	glDeleteFramebuffers							glDeleteFramebuffersOES
-	#define	glDeleteRenderbuffers							glDeleteRenderbuffersOES
-	#define	glBindFramebuffer								glBindFramebufferOES
-	#define	glBindRenderbuffer								glBindRenderbufferOES
-	#define glRenderbufferStorage							glRenderbufferStorageOES
-	#define glFramebufferRenderbuffer						glFramebufferRenderbufferOES
-	#define glRenderbufferStorageMultisample				glRenderbufferStorageMultisampleOES
-	#define glFramebufferTexture2D							glFramebufferTexture2DOES
-	#define glCheckFramebufferStatus						glCheckFramebufferStatusOES
+	typedef void (* glGenFramebuffersType) (GLsizei n, GLuint* framebuffers);
+	glGenFramebuffersType glGenFramebuffersFunc;
+	#define glGenFramebuffers								glGenFramebuffersFunc
+
+	typedef void (* glDeleteFramebuffersType) (GLsizei n, const GLuint* framebuffers);
+	glDeleteFramebuffersType glDeleteFramebuffersFunc;
+	#define	glDeleteFramebuffers							glDeleteFramebuffersFunc
+
+	typedef void (* glDeleteRenderbuffersType) (GLsizei n, const GLuint* renderbuffers);
+	glDeleteRenderbuffersType glDeleteRenderbuffersFunc;
+	#define	glDeleteRenderbuffers							glDeleteRenderbuffersFunc
+
+	typedef void (* glBindFramebufferType) (GLenum target, GLuint framebuffer);
+	glBindFramebufferType glBindFramebufferFunc;
+	#define	glBindFramebuffer								glBindFramebufferFunc
+
+	typedef void (* glBindRenderbufferType) (GLenum target, GLuint renderbuffer);
+	glBindRenderbufferType glBindRenderbufferFunc;
+	#define	glBindRenderbuffer								glBindRenderbufferFunc
+
+	typedef void (* glRenderbufferStorageType) (GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+	glRenderbufferStorageType glRenderbufferStorageFunc;
+	#define glRenderbufferStorage							glRenderbufferStorageFunc
+
+	typedef void (* glFramebufferRenderbufferType) (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+	glFramebufferRenderbufferType glFramebufferRenderbufferFunc;
+	#define glFramebufferRenderbuffer						glFramebufferRenderbufferFunc
+
+	typedef void (* glRenderbufferStorageMultisampleType) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+	glRenderbufferStorageMultisampleType glRenderbufferStorageMultisampleFunc;
+	#define glRenderbufferStorageMultisample				glRenderbufferStorageMultisampleFunc
+
+	typedef void (* glFramebufferTexture2DType) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+	glFramebufferTexture2DType glFramebufferTexture2DFunc;
+	#define glFramebufferTexture2D							glFramebufferTexture2DFunc
+
+	typedef GLenum (* glCheckFramebufferStatusType)  (GLenum target);
+	glCheckFramebufferStatusType glCheckFramebufferStatusFunc;
+	#define glCheckFramebufferStatus						glCheckFramebufferStatusFunc
+
+#ifndef GL_FRAMEBUFFER
 	#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_OES
 	#define GL_RENDERBUFFER									GL_RENDERBUFFER_OES
 	#define GL_DEPTH_ATTACHMENT								GL_DEPTH_ATTACHMENT_OES
 	#define GL_STENCIL_ATTACHMENT							GL_STENCIL_ATTACHMENT_OES
 	//#define GL_DEPTH_STENCIL_ATTACHMENT					GL_DEPTH_STENCIL_ATTACHMENT_OES
-	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
 	#define GL_DEPTH_COMPONENT								GL_DEPTH_COMPONENT16_OES
 	#define GL_STENCIL_INDEX								GL_STENCIL_INDEX8_OES
 	#define GL_FRAMEBUFFER_BINDING							GL_FRAMEBUFFER_BINDING_OES
@@ -91,20 +88,22 @@
 	#define GL_READ_FRAMEBUFFER								GL_READ_FRAMEBUFFER_OES
 	#define GL_DRAW_FRAMEBUFFER								GL_DRAW_FRAMEBUFFER_OES
 	#define GL_WRITE_FRAMEBUFFER							GL_WRITE_FRAMEBUFFER_OES
+	#define GL_COLOR_ATTACHMENT0							GL_COLOR_ATTACHMENT0_OES
 	#define GL_FRAMEBUFFER_COMPLETE							GL_FRAMEBUFFER_COMPLETE_OES
 	#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT			GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES
 	#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT	GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES
 	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES
-	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
 	#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_OES
 	#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_OES
 	#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_OES
 	#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_OES
-	#define GL_COLOR_ATTACHMENT0							GL_COLOR_ATTACHMENT0_OES
+	#define GL_DEPTH_COMPONENT16							GL_DEPTH_COMPONENT16_OES
+#endif
+	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
 	#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_OES
     
 	#define GL_DEPTH24_STENCIL8								GL_DEPTH24_STENCIL8_OES
-	#define GL_DEPTH_COMPONENT16							GL_DEPTH_COMPONENT16_OES
+	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
 	#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
 	#ifdef GL_DEPTH_COMPONENT32_OES 
         #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
@@ -123,7 +122,7 @@ ofFbo::Settings::Settings() {
 	numColorbuffers			= 1;
 	useDepth				= false;
 	useStencil				= false;
-	depthStencilAsTexture			= false;
+	depthStencilAsTexture	= false;
 #ifndef TARGET_OPENGLES
 	textureTarget			= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;
 #else
@@ -208,10 +207,37 @@ fboTextures(0),
 depthBuffer(0),
 stencilBuffer(0),
 savedFramebuffer(0),
+dirty(false),
 defaultTextureIndex(0),
 bIsAllocated(false)
 {
-
+#ifdef TARGET_OPENGLES
+	if(!bglFunctionsInitialized){
+		if(ofGLIsFixedPipeline()){
+			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffersOES");
+			glDeleteFramebuffers = (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffersOES");
+			glDeleteRenderbuffers = (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffersOES");
+			glBindFramebuffer = (glBindFramebufferType)dlsym(RTLD_DEFAULT, "glBindFramebufferOES");
+			glBindRenderbuffer = (glBindRenderbufferType)dlsym(RTLD_DEFAULT, "glBindRenderbufferOES");
+			glRenderbufferStorage = (glRenderbufferStorageType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageOES");
+			glFramebufferRenderbuffer = (glFramebufferRenderbufferType)dlsym(RTLD_DEFAULT, "glFramebufferRenderbufferOES");
+			glRenderbufferStorageMultisample = (glRenderbufferStorageMultisampleType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageMultisampleOES");
+			glFramebufferTexture2D = (glFramebufferTexture2DType)dlsym(RTLD_DEFAULT, "glFramebufferTexture2DOES");
+			glCheckFramebufferStatus = (glCheckFramebufferStatusType)dlsym(RTLD_DEFAULT, "glCheckFramebufferStatusOES");
+		}else{
+			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffers");
+			glDeleteFramebuffers =  (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffers");
+			glDeleteRenderbuffers =  (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffers");
+			glBindFramebuffer =  (glBindFramebufferType)dlsym(RTLD_DEFAULT, "glBindFramebuffer");
+			glBindRenderbuffer = (glBindRenderbufferType)dlsym(RTLD_DEFAULT, "glBindRenderbuffer");
+			glRenderbufferStorage = (glRenderbufferStorageType)dlsym(RTLD_DEFAULT, "glRenderbufferStorage");
+			glFramebufferRenderbuffer = (glFramebufferRenderbufferType)dlsym(RTLD_DEFAULT, "glFramebufferRenderbuffer");
+			glRenderbufferStorageMultisample = (glRenderbufferStorageMultisampleType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageMultisample");
+			glFramebufferTexture2D = (glFramebufferTexture2DType)dlsym(RTLD_DEFAULT, "glFramebufferTexture2D");
+			glCheckFramebufferStatus = (glCheckFramebufferStatusType)dlsym(RTLD_DEFAULT, "glCheckFramebufferStatus");
+		}
+	}
+#endif
 }
 
 ofFbo::ofFbo(const ofFbo & mom){
@@ -329,34 +355,9 @@ void ofFbo::destroy() {
 	bIsAllocated = false;
 }
 
-static GLboolean CheckExtension( const char *extName ){
-	/*
-	 ** Search for extName in the extensions string.  Use of strstr()
-	 ** is not sufficient because extension names can be prefixes of
-	 ** other extension names.  Could use strtok() but the constant
-	 ** string returned by glGetString can be in read-only memory.
-	 */
-	char *p = (char *) glGetString(GL_EXTENSIONS);
-	char *end;
-	int extNameLen;
-
-	extNameLen = strlen(extName);
-	end = p + strlen(p);
-
-	while (p < end) {
-		int n = strcspn(p, " ");
-		if ((extNameLen == n) && (strncmp(extName, p, n) == 0)) {
-			return GL_TRUE;
-		}
-		p += (n + 1);
-	}
-	return GL_FALSE;
-}
-
-
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
-	if(CheckExtension("GL_EXT_framebuffer_object")){
+	if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "FBO supported";
 	}else{
         ofLogError("ofFbo") << "FBO not supported by this graphics card";
@@ -372,7 +373,7 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(CheckExtension("GL_OES_framebuffer_object")){
+	if(!ofGLIsFixedPipeline() || ofCheckGLExtension("GL_OES_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "FBO supported";
 	}else{
 		ofLogError("ofFbo") << "FBO not supported by this graphics card";
@@ -533,12 +534,10 @@ void ofFbo::allocate(Settings _settings) {
 	}
 
 	// check everything is ok with this fbo
-	checkStatus();
+	bIsAllocated = checkStatus();
 
 	// unbind it
 	unbind();
-
-	bIsAllocated = true;
 }
 
 bool ofFbo::isAllocated(){
@@ -562,13 +561,17 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 
 void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
+	ofLogNotice() << "bind framebuffer";
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
+	ofLogNotice() << "allocate texture";
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	//tex.texData.bFlipTexture = true;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
+
+	ofLogNotice() << "framebuffertexture2d";
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	textures.push_back(tex);
 
@@ -603,6 +606,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 
 void ofFbo::begin(bool setupScreen) {
+	if(!bIsAllocated) return;
 	ofPushView();
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
@@ -623,6 +627,7 @@ void ofFbo::begin(bool setupScreen) {
 
 
 void ofFbo::end() {
+	if(!bIsAllocated) return;
 	unbind();
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(NULL);
@@ -653,6 +658,7 @@ int ofFbo::getNumTextures() {
 
 //TODO: Should we also check against card's max attachments or can we assume that's taken care of in texture setup? Still need to figure out MSAA in conjunction with MRT
 void ofFbo::setActiveDrawBuffer(int i){
+	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
     if (i < getNumTextures()){
         GLenum e = GL_COLOR_ATTACHMENT0 + i;
@@ -660,11 +666,12 @@ void ofFbo::setActiveDrawBuffer(int i){
     }else{
         ofLogWarning("ofFbo") << "trying to activate texture " << i << " for drawing that is out of the range (0->" << getNumTextures() << ") of allocated textures for this fbo.";
     }
-	#endif
+#endif
 }
 
 void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
-	#ifndef TARGET_OPENGLES
+	if(!bIsAllocated) return;
+#ifndef TARGET_OPENGLES
     vector<GLenum> attachments;
     for(int i=0; i < (int)ids.size(); i++){
       int id = ids[i];
@@ -676,11 +683,12 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
-	#endif
+#endif
 }
 
 void ofFbo::activateAllDrawBuffers(){
-	#ifndef TARGET_OPENGLES
+	if(!bIsAllocated) return;
+#ifndef TARGET_OPENGLES
     vector<GLenum> attachments;
     for(int i=0; i < getNumTextures(); i++){
         if (i < getNumTextures()){
@@ -691,7 +699,7 @@ void ofFbo::activateAllDrawBuffers(){
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
-	#endif
+#endif
 }
 
 
@@ -738,6 +746,7 @@ void ofFbo::resetAnchor(){
 
 
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
+	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	getTextureReference(attachmentPoint).readToPixels(pixels);
 #else
@@ -750,6 +759,7 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
 }
 
 void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
+	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	getTextureReference(attachmentPoint).readToPixels(pixels);
 #else
@@ -762,6 +772,7 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
 }
 
 void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
+	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	getTextureReference(attachmentPoint).readToPixels(pixels);
 #else
@@ -774,6 +785,7 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
 }
 
 void ofFbo::updateTexture(int attachmentPoint) {
+	if(!bIsAllocated) return;
 	// TODO: flag to see if this is dirty or not
 #ifndef TARGET_OPENGLES
 	if(fbo != fboTextures && dirty) {
@@ -815,6 +827,7 @@ void ofFbo::draw(float x, float y) {
 
 
 void ofFbo::draw(float x, float y, float width, float height) {
+	if(!bIsAllocated) return;
     getTextureReference().draw(x, y, width, height);
 }
 
@@ -866,7 +879,7 @@ bool ofFbo::checkStatus() {
 			break;
 #endif
 		default:
-			ofLogError("ofFbo") << "UNKNOWN ERROR";
+			ofLogError("ofFbo") << "UNKNOWN ERROR " << status;
 			break;
 
 	}

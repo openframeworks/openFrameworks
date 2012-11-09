@@ -329,9 +329,11 @@ static void release(GLuint id){
 }
 
 //----------------------------------------------------------
-ofTexture::ofTexture()
-{
+ofTexture::ofTexture(){
 	resetAnchor();
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 }
 
 //----------------------------------------------------------
@@ -339,6 +341,7 @@ ofTexture::ofTexture(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
+	quad = mom.quad;
 	retain(texData.textureID);
 }
 
@@ -350,6 +353,7 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
+	quad = mom.quad;
 	retain(texData.textureID);
 	return *this;
 }
@@ -407,6 +411,27 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 	texData.bUseExternalTextureID = true;
 }
 
+
+void ofTexture::enableTextureTarget(){
+#ifdef TARGET_OPENGLES
+	if(ofGLIsFixedPipeline()){
+#endif
+		glEnable(texData.textureTarget);
+#ifdef TARGET_OPENGLES
+	}
+#endif
+}
+
+void ofTexture::disableTextureTarget(){
+#ifdef TARGET_OPENGLES
+	if(ofGLIsFixedPipeline()){
+#endif
+		glDisable(texData.textureTarget);
+#ifdef TARGET_OPENGLES
+	}
+#endif
+}
+
 //----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType){
 	allocate(w, h, internalGlDataType, ofGetUsingArbTex());
@@ -448,8 +473,8 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
-	
-	glEnable(texData.textureTarget);
+
+	enableTextureTarget();
 	
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 #ifndef TARGET_OPENGLES
@@ -468,9 +493,10 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
+	//TODO: gles2 implementation
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	
-	glDisable(texData.textureTarget);
+
+	disableTextureTarget();
 	
 	texData.width = w;
 	texData.height = h;
@@ -511,7 +537,7 @@ void ofTexture::allocate(const ofTextureData & textureData){
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
 
-	glEnable(texData.textureTarget);
+	enableTextureTarget();
 
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 #ifndef TARGET_OPENGLES
@@ -531,7 +557,7 @@ void ofTexture::allocate(const ofTextureData & textureData){
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	glDisable(texData.textureTarget);
+	disableTextureTarget();
 
 	texData.bAllocated = true;
 
@@ -642,10 +668,12 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 		//STANDARD openFrameworks: no compression
 		
 		//update the texture image: 
-		glEnable(texData.textureTarget);
+		enableTextureTarget();
+
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
  		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data);
-		glDisable(texData.textureTarget);
+
+ 		disableTextureTarget();
 	} else {
 		//SOSOLIMITED: setup mipmaps and use compression
 		//TODO: activate at least mimaps for OPENGL_ES
@@ -667,7 +695,7 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 			//printf("ofTexture::loadData w:%.1f, h:%.1f, tex_t:%.1f, tex_u:%.1f \n", texData.width,texData.height,texData.tex_t,texData.tex_u);
 		}
 #endif
-		glEnable(texData.textureTarget);
+		enableTextureTarget();
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
@@ -716,8 +744,8 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 		}
 #endif
 		
-		
-		glDisable(texData.textureTarget);
+
+		disableTextureTarget();
 		
 	}
 	//------------------------ back to normal.
@@ -759,10 +787,12 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	}
 	
 	
-	glEnable(texData.textureTarget);
+	enableTextureTarget();
+
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
-	glDisable(texData.textureTarget);
+
+	disableTextureTarget();
 }
 
 
@@ -794,33 +824,34 @@ void ofTexture::resetAnchor(){
 //----------------------------------------------------------
 void ofTexture::bind(){
 	//we could check if it has been allocated - but we don't do that in draw() 
-	glEnable(texData.textureTarget);
+	enableTextureTarget();
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureID);
 	
 	if(ofGetUsingNormalizedTexCoords()) {
-		glMatrixMode(GL_TEXTURE);
-		glPushMatrix();
-		glLoadIdentity();
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		ofPushMatrix();
+		ofLoadIdentityMatrix();
 		
 #ifndef TARGET_OPENGLES	
 		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
-			glScalef(texData.width, texData.height, 1.0f);
+			ofScale(texData.width, texData.height, 1.0f);
 		else 
 #endif			
-			glScalef(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
+			ofScale(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
 		
-		glMatrixMode(GL_MODELVIEW);  		
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
 }
 
 //----------------------------------------------------------
 void ofTexture::unbind(){
-	glDisable(texData.textureTarget);
+
+	disableTextureTarget();
 	
 	if(ofGetUsingNormalizedTexCoords()) {
-		glMatrixMode(GL_TEXTURE);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW); 
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		ofPopMatrix();
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
 }
 
@@ -944,16 +975,6 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 //----------------------------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
 	
-	// make sure we are on unit 0 - we may change this when setting shader samplers
-	// before glEnable or else the shader gets confused
-	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	glActiveTexture(GL_TEXTURE0);
-	
-	// Enable texturing
-	glEnable(texData.textureTarget);
-	
-	// bind the texture
-	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
 	
 	GLfloat px0 = 0.0f;		// up to you to get the aspect ratio right
 	GLfloat py0 = 0.0f;
@@ -1019,32 +1040,29 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 	
-	glPushMatrix(); 
+	ofPushMatrix();
+
+	ofTranslate(x,y,z);
+	quad.getVertices()[0].set(px0,py0);
+	quad.getVertices()[1].set(px1,py0);
+	quad.getVertices()[2].set(px1,py1);
+	quad.getVertices()[3].set(px0,py1);
 	
-	glTranslatef(x,y,z);
+	quad.getTexCoords()[0].set(tx0,ty0);
+	quad.getTexCoords()[1].set(tx1,ty0);
+	quad.getTexCoords()[2].set(tx1,ty1);
+	quad.getTexCoords()[3].set(tx0,ty1);
+
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
 	
-	GLfloat tex_coords[] = {
-		tx0,ty0,
-		tx1,ty0,
-		tx1,ty1,
-		tx0,ty1
-	};
-	GLfloat verts[] = {
-		px0,py0,
-		px1,py0,
-		px1,py1,
-		px0,py1
-	};
+	bind();
+	quad.draw();
+	unbind();
 	
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-	glEnableClientState(GL_VERTEX_ARRAY);		
-	glVertexPointer(2, GL_FLOAT, 0, verts );
-	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	
-	glPopMatrix();
-	glDisable(texData.textureTarget);
+	ofPopMatrix();
 	
 }
 
@@ -1058,17 +1076,6 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {
 		ofEnableAlphaBlending();
 	}
-	
-	// make sure we are on unit 0 - we may change this when setting shader samplers
-	// before glEnable or else the shader gets confused
-	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	glActiveTexture(GL_TEXTURE0);
-	
-	// Enable texturing
-	glEnable(texData.textureTarget);
-	
-	// bind the texture
-	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
 	
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
@@ -1091,31 +1098,25 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	GLfloat ty0 = 0+offseth;
 	GLfloat tx1 = texData.tex_t - offsetw;
 	GLfloat ty1 = texData.tex_u - offseth;
+
+	quad.getVertices()[0].set(p1.x, p1.y);
+	quad.getVertices()[1].set(p2.x, p2.y);
+	quad.getVertices()[2].set(p3.x, p3.y);
+	quad.getVertices()[3].set(p4.x, p4.y);
 	
-	glPushMatrix(); 
+	quad.getTexCoords()[0].set(tx0,ty0);
+	quad.getTexCoords()[1].set(tx1,ty0);
+	quad.getTexCoords()[2].set(tx1,ty1);
+	quad.getTexCoords()[3].set(tx0,ty1);
 	
-	GLfloat tex_coords[] = {
-		tx0,ty0,
-		tx1,ty0,
-		tx1,ty1,
-		tx0,ty1
-	};
-	GLfloat verts[] = {
-		p1.x, p1.y,
-		p2.x, p2.y,
-		p3.x, p3.y,
-		p4.x, p4.y
-	};
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
 	
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-	glEnableClientState(GL_VERTEX_ARRAY);		
-	glVertexPointer(2, GL_FLOAT, 0, verts );
-	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	
-	glPopMatrix();
-	glDisable(texData.textureTarget);
+	bind();
+	quad.draw();
+	unbind();
 	
 	// Disable alpha channel if it was disabled
 	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {

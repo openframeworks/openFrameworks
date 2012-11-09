@@ -3,7 +3,6 @@
 	<name>androidEmptyExample</name>
 	<comment></comment>
 	<projects>
-		<project>addons</project>
 		<project>libs</project>
 		<project>openFrameworks</project>
 	</projects>
@@ -85,11 +84,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>ofxAndroid</name>
-			<type>2</type>
-			<location>/home/arturo/Desktop/openFrameworks/addons/ofxAndroid</location>
-		</link>
-	</linkedResources>
 </projectDescription>
