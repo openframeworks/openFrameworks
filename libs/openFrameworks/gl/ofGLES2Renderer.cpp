@@ -9,212 +9,113 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 
-#ifdef TARGET_OF_IPHONE
-#import <OpenGLES/ES2/gl.h>
-#import <OpenGLES/ES2/glext.h>
-#endif
+string defaultVertexShader =
+		"attribute vec4 position;\
+		attribute vec4 color;\
+		attribute vec4 normal;\
+		attribute vec2 texcoord;\
+		\
+		uniform mat4 modelViewMatrix;\
+		uniform mat4 projectionMatrix;\
+		\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+        \
+		void main(){\
+			gl_Position = projectionMatrix * modelViewMatrix * position;\
+			colorVarying = color;\
+			texCoordVarying = texcoord;\
+		}";
 
-#ifdef TARGET_ANDROID
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#endif
 
-enum {
-    UNIFORM_MODELVIEW_PROJECTION_MATRIX,
-    NUM_UNIFORMS
-};
-GLint uniforms[NUM_UNIFORMS];
+string defaultFragmentShader =
+		"#ifdef GL_ES\n\
+		// define default precision for float, vec, mat.\n\
+		precision highp float;\n\
+		#endif\n\
+		\
+		uniform sampler2D src_tex_unit0;\
+		uniform float useTexture;\
+		uniform float useColors;\
+		uniform vec4 color;\
+		\
+		varying float depth;\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+		\
+		void main(){\
+			vec4 c;\
+			if(useColors>0.5){\
+				c = colorVarying;\
+			}else{\n\
+				c = color;\
+			}\n\
+			if(useTexture>0.5){\
+				gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*c;\
+			}else{\n\
+				gl_FragColor = c;\
+			}\
+		}";
 
-enum {
-    ATTRIB_VERTEX,
-    ATTRIB_COLOR,
-    NUM_ATTRIBUTES
-};
 
 //----------------------------------------------------------
-ofGLES2Renderer::ofGLES2Renderer(bool useShapeColor){
+ofGLES2Renderer::ofGLES2Renderer(string vertexShader, string fragmentShader, bool useShapeColor){
 	bBackgroundAuto = true;
-    
+
 	linePoints.resize(2);
-    lineColors.resize(2);
 	triPoints.resize(3);
-    triColors.resize(3);
 	rectPoints.resize(4);
-    rectColors.resize(4);
-    
+
 	currentFbo = NULL;
-    
-    program = 0;
-    vertShader = 0;
-    fragShader = 0;
+
+    rectMode = OF_RECTMODE_CORNER;
+    bFilled = OF_FILLED;
+    coordHandedness = OF_LEFT_HANDED;
+    bSmoothHinted = false;
+    currentMatrixMode = OF_MATRIX_MODELVIEW;
+
+    vertexFile = vertexShader;
+    fragmentFile = fragmentShader;
 }
 
 ofGLES2Renderer::~ofGLES2Renderer() {
-    destroyShaders(vertShader, fragShader, program);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::startRender() {
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-    if(program) {
-        glUseProgram(program);
-    }
-#endif
+	currentShader.begin();
 }
 
-void ofGLES2Renderer::finishRender() {
-    //
-}
-
-//---------------------------------------------------------- SHADERS.
-//  The below code should be handled by ofShader.
-//  but currently it does not support OpenGL ES.
-//  Once it does, all this shader code should be removed.
 //----------------------------------------------------------
-
-bool ofGLES2Renderer::loadShaders() {
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-    string vertShaderPathname;
-    string fragShaderPathname;
-    
-	// create shader program
-	program = glCreateProgram();
-	
-	// create and compile vertex shader
-    vertShaderPathname = ofToDataPath("shaders/Shader.vsh");
-	if (!compileShader(&vertShader, GL_VERTEX_SHADER, 1, vertShaderPathname)) {
-		destroyShaders(vertShader, fragShader, program);
-		return false;
-	}
-	
-	// create and compile fragment shader
-	fragShaderPathname = ofToDataPath("shaders/Shader.fsh");
-	if (!compileShader(&fragShader, GL_FRAGMENT_SHADER, 1, fragShaderPathname)) {
-		destroyShaders(vertShader, fragShader, program);
-		return false;
-	}
-	
-	// attach vertex shader to program
-	glAttachShader(program, vertShader);
-	
-	// attach fragment shader to program
-	glAttachShader(program, fragShader);
-	
-	// bind attribute locations
-	// this needs to be done prior to linking
-	glBindAttribLocation(program, ATTRIB_VERTEX, "position");
-	glBindAttribLocation(program, ATTRIB_COLOR, "color");
-	
-	// link program
-	if (!linkProgram(program)) {
-		destroyShaders(vertShader, fragShader, program);
-		return false;
-	}
-	
-	// get uniform locations
-	uniforms[UNIFORM_MODELVIEW_PROJECTION_MATRIX] = glGetUniformLocation(program, "modelViewProjectionMatrix");
-	
-	// release vertex and fragment shaders
-	if (vertShader) {
-		glDeleteShader(vertShader);
-		vertShader = 0;
-	}
-	if (fragShader) {
-		glDeleteShader(fragShader);
-		fragShader = 0;
-	}
-	
-	return true;
-#endif
-    return false;
+void ofGLES2Renderer::finishRender() {
+	currentShader.end();
+	modelViewStack.empty();
+	projectionStack.empty();
 }
 
-GLint ofGLES2Renderer::compileShader(GLuint *shader, GLenum type, GLsizei count, string fileName) {
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)    
-	GLint status;
-	const GLchar * sources;
-	
-    ofFile file;
-    file.open(fileName, ofFile::ReadWrite, false);
-    ofBuffer buff = file.readToBuffer();
-    
-	// get source code
-	sources = buff.getText().c_str();
-	if(!sources) {
-        ofLog(OF_LOG_ERROR, "Failed to load vertex shader");
-		return 0;
+//----------------------------------------------------------
+bool ofGLES2Renderer::setup() {
+	bool ret;
+	if(vertexFile!=""){
+		ofLogNotice() << "GLES2 loading vertex shader from " + vertexFile;
+		ret = currentShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
+	}else{
+		ofLogNotice() << "GLES2 loading vertex shader from default source";
+		ret = currentShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
 	}
-	
-    *shader = glCreateShader(type);				// create shader
-    glShaderSource(*shader, 1, &sources, NULL);	// set source code in the shader
-    glCompileShader(*shader);					// compile shader
-	
-    glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
-    if(status == GL_FALSE) {
-        ofLog(OF_LOG_ERROR, "Failed to compile shader:");
-		for(int i = 0; i < count; i++) {
-            ofLog(OF_LOG_ERROR, &sources[i]);
-        }
+	if(ret){
+		if(fragmentFile!=""){
+			ofLogNotice() << "GLES2 loading fragment shader from " + fragmentFile;
+			ret = currentShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
+		}else{
+			ofLogNotice() << "GLES2 loading fragment shader from default source";
+			ret = currentShader.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShader);
+		}
 	}
-	
-	return status;
-#endif
-    return 0;
-}
-
-GLint ofGLES2Renderer::linkProgram(GLuint prog) {
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)    
-	GLint status;
-	
-	glLinkProgram(prog);
-	
-    glGetProgramiv(prog, GL_LINK_STATUS, &status);
-    if(status == GL_FALSE) {
-        ofLog(OF_LOG_ERROR, "Failed to link program");
-    }
-	
-	return status;
-#endif
-    return 0;
-}
-
-GLint ofGLES2Renderer::validateProgram(GLuint prog) {
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	GLint logLength, status;
-	
-	glValidateProgram(prog);
-    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-    if(logLength > 0) {
-        GLchar *log = (GLchar *)malloc(logLength);
-        glGetProgramInfoLog(prog, logLength, &logLength, log);
-        free(log);
-    }
-    
-    glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
-    if(status == GL_FALSE) {
-        ofLog(OF_LOG_ERROR, "Failed to validate program");
-    }
-	
-	return status;
-#endif
-    return 0;
-}
-
-void ofGLES2Renderer::destroyShaders(GLuint vertShader, GLuint fragShader, GLuint prog) {
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	if (vertShader) {
-		glDeleteShader(vertShader);
-		vertShader = 0;
+	if(ret){
+		ret = currentShader.linkProgram();
 	}
-	if (fragShader) {
-		glDeleteShader(fragShader);
-		fragShader = 0;
-	}
-	if (prog) {
-		glDeleteProgram(prog);
-		prog = 0;
-	}
-#endif
+	return ret;
 }
 
 //----------------------------------------------------------
@@ -224,42 +125,201 @@ void ofGLES2Renderer::update(){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
-	// TODO :: needs ES2 code.
+	if(vertexData.getNumVertices()){
+		currentShader.setAttribute3fv("position",&vertexData.getVerticesPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumNormals() && useNormals){
+		currentShader.setAttribute3fv("normal",&vertexData.getNormalsPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumColors() && useColors){
+		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
+		currentShader.setUniform1f("useColors",1);
+	}else{
+		currentShader.setUniform1f("useColors",0);
+	}
+	if(vertexData.getNumTexCoords() && useTextures){
+		currentShader.setUniform1f("useTexture",1);
+		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
+	}else{
+		currentShader.setUniform1f("useTexture",0);
+	}
+
+	if(vertexData.getNumIndices()){
+#ifdef TARGET_OPENGLES
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+#else
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+#endif
+	}else{
+		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
+	}
+	if(vertexData.getNumColors()){
+		glDisableVertexAttribArray(getAttrLocationColor());
+	}
+	if(vertexData.getNumNormals()){
+		glDisableVertexAttribArray(getAttrLocationNormal());
+	}
+	if(vertexData.getNumTexCoords()){
+		glDisableVertexAttribArray(getAttrLocationTexCoord());
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
-    // TODO :: needs ES2 code.
+	if (bSmoothHinted) startSmoothing();
+	if(vertexData.getNumVertices()){
+		currentShader.setAttribute3fv("position",&vertexData.getVerticesPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumNormals() && useNormals){
+		currentShader.setAttribute3fv("normal",&vertexData.getNormalsPointer()->x,sizeof(ofVec3f));
+	}
+	if(vertexData.getNumColors() && useColors){
+		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
+		currentShader.setUniform1f("useColors",1);
+	}else{
+		currentShader.setUniform1f("useColors",0);
+	}
+	if(vertexData.getNumTexCoords() && useTextures){
+		currentShader.setUniform1f("useTexture",1);
+		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
+	}else{
+		currentShader.setUniform1f("useTexture",0);
+	}
+
+	GLenum drawMode;
+	switch(renderType){
+	case OF_MESH_POINTS:
+		drawMode = GL_POINTS;
+		break;
+	case OF_MESH_WIREFRAME:
+		drawMode = GL_LINES;
+		break;
+	case OF_MESH_FILL:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
+	default:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
+	}
+
+	if(vertexData.getNumIndices()){
+#ifdef TARGET_OPENGLES
+		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+#else
+		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+#endif
+	}else{
+		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
+	}
+	if(vertexData.getNumColors()){
+		glDisableVertexAttribArray(getAttrLocationColor());
+	}
+	if(vertexData.getNumNormals()){
+		glDisableVertexAttribArray(getAttrLocationNormal());
+	}
+	if(vertexData.getNumTexCoords()){
+		glDisableVertexAttribArray(getAttrLocationTexCoord());
+	}
+	if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	// TODO :: needs ES2 code.
+	if(!vertexData.empty()) {
+		if (bSmoothHinted) startSmoothing();
+		currentShader.setAttribute3fv("position",&vertexData[0].x,sizeof(ofVec3f));
+		currentShader.setUniform1f("useTexture",0);
+		currentShader.setUniform1f("useColors",0);
+		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+		if (bSmoothHinted) endSmoothing();
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofPolyline & poly){
-	// TODO :: needs ES2 code.
+	if(!poly.getVertices().empty()) {
+		// use smoothness, if requested:
+		if (bSmoothHinted) startSmoothing();
+
+		currentShader.setAttribute3fv("position",&poly.getVertices()[0].x,sizeof(ofVec3f));
+		currentShader.setUniform1f("useTexture",0);
+		currentShader.setUniform1f("useColors",0);
+		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+
+		// use smoothness, if requested:
+		if (bSmoothHinted) endSmoothing();
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofPath & shape){
-	// TODO :: needs ES2 code.
+	ofColor prevColor;
+	if(shape.getUseShapeColor()){
+		prevColor = ofGetStyle().color;
+	}
+	if(shape.isFilled()){
+		ofMesh & mesh = shape.getTessellation();
+		if(shape.getUseShapeColor()){
+			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+		}
+		draw(mesh);
+	}
+	if(shape.hasOutline()){
+		float lineWidth = ofGetStyle().lineWidth;
+		if(shape.getUseShapeColor()){
+			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+		}
+		setLineWidth( shape.getStrokeWidth() );
+		vector<ofPolyline> & outlines = shape.getOutline();
+		for(int i=0; i<(int)outlines.size(); i++)
+			draw(outlines[i]);
+		setLineWidth(lineWidth);
+	}
+	if(shape.getUseShapeColor()){
+		setColor(prevColor);
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	// TODO :: needs ES2 code.
+	if(image.isUsingTexture()){
+		currentShader.setUniform1f("useTexture",1);
+		currentShader.setUniform1f("useColors",0);
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	// TODO :: needs ES2 code.
+	if(image.isUsingTexture()){
+		currentShader.setUniform1f("useTexture",1);
+		currentShader.setUniform1f("useColors",0);
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	// TODO :: needs ES2 code.
+	if(image.isUsingTexture()){
+		currentShader.setUniform1f("useTexture",1);
+		currentShader.setUniform1f("useColors",0);
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
 }
 
 //----------------------------------------------------------
@@ -269,39 +329,64 @@ void ofGLES2Renderer::setCurrentFBO(ofFbo * fbo){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::pushView() {
-	// TODO :: needs ES2 code.
+	viewportHistory.push(currentViewport);
+	ofMatrixMode currentMode = currentMatrixMode;
+	matrixMode(OF_MATRIX_PROJECTION);
+	pushMatrix();
+	matrixMode(OF_MATRIX_MODELVIEW);
+	pushMatrix();
+	matrixMode(currentMode);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::popView() {
-	// TODO :: needs ES2 code.
+	if( viewportHistory.size() ){
+		ofRectangle viewRect = viewportHistory.top();
+		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height,false);
+		viewportHistory.pop();
+	}
+	ofMatrixMode currentMode = currentMatrixMode;
+	matrixMode(OF_MATRIX_PROJECTION);
+	popMatrix();
+	matrixMode(OF_MATRIX_MODELVIEW);
+	popMatrix();
+	matrixMode(currentMode);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::viewport(ofRectangle viewport_){
-	// TODO :: needs ES2 code.
+	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height,true);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::viewport(float x, float y, float width, float height, bool invertY) {
-	// TODO :: needs ES2 code.
+	if(width == 0) width = ofGetWindowWidth();
+	if(height == 0) height = ofGetWindowHeight();
+
+	if (invertY){
+		if(currentFbo){
+			y = currentFbo->getHeight() - (y + height);
+		}else{
+			y = ofGetWindowHeight() - (y + height);
+		}
+	}
+	currentViewport.set(x, y, width, height);
+	glViewport(x, y, width, height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLES2Renderer::getCurrentViewport(){
-    // TODO :: needs ES2 code.
+    return currentViewport;
 }
 
 //----------------------------------------------------------
 int ofGLES2Renderer::getViewportWidth(){
-    // TODO :: needs ES2 code.
-	return ofGetScreenWidth();
+	return currentViewport.width;
 }
 
 //----------------------------------------------------------
 int ofGLES2Renderer::getViewportHeight(){
-    // TODO :: needs ES2 code.
-	return ofGetScreenHeight();
+	return currentViewport.height;
 }
 
 //----------------------------------------------------------
@@ -315,102 +400,123 @@ ofHandednessType ofGLES2Renderer::getCoordHandedness() {
 }
 
 //----------------------------------------------------------
+void ofGLES2Renderer::setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip){
+	orientationMatrix.makeIdentityMatrix();
+
+	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
+	if(ofDoesHWOrientation()){
+		if(vFlip){
+			orientationMatrix.glScale(1, -1, 1);
+			orientationMatrix.glTranslate(0, -height, 0);
+		}
+	}else{
+		if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
+		switch(orientation) {
+			case OF_ORIENTATION_180:
+				orientationMatrix.glRotate(-180, 0, 0, 1);
+				if(vFlip){
+					orientationMatrix.glScale(1, -1, 1);
+					orientationMatrix.glTranslate(-width, 0, 0);
+				}else{
+					orientationMatrix.glTranslate(-width, -height, 0);
+				}
+
+				break;
+
+			case OF_ORIENTATION_90_RIGHT:
+				orientationMatrix.glRotate(-90, 0, 0, 1);
+				if(vFlip){
+					orientationMatrix.glScale(-1, 1, 1);
+				}else{
+					orientationMatrix.glScale(-1, -1, 1);
+					orientationMatrix.glTranslate(0, -height, 0);
+				}
+				break;
+
+			case OF_ORIENTATION_90_LEFT:
+				orientationMatrix.glRotate(90, 0, 0, 1);
+				if(vFlip){
+					orientationMatrix.glScale(-1, 1, 1);
+					orientationMatrix.glTranslate(-width, -height, 0);
+				}else{
+					orientationMatrix.glScale(-1, -1, 1);
+					orientationMatrix.glTranslate(-width, 0, 0);
+				}
+				break;
+
+			case OF_ORIENTATION_DEFAULT:
+			default:
+				if(vFlip){
+					orientationMatrix.glScale(1, -1, 1);
+					orientationMatrix.glTranslate(0, -height, 0);
+				}
+				break;
+		}
+	}
+}
+
+//----------------------------------------------------------
 void ofGLES2Renderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
-    
+
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-    
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
-    
+
+	float viewW = getViewportWidth();
+	float viewH = getViewportHeight();
+
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
 	float halfFov = PI * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 	float aspect = (float) viewW / viewH;
-    
+
 	if(nearDist == 0) nearDist = dist / 10.0f;
 	if(farDist == 0) farDist = dist * 10.0f;
-    
-	ofMatrix4x4 projectionMatrix;
-	projectionMatrix.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
-    
-	ofMatrix4x4 modelViewMatrix;
-	modelViewMatrix.makeLookAtViewMatrix(ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0));
-    
-    ofMatrix4x4 orientationMatrix;
-    
-	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
-	if(ofDoesHWOrientation()){
-		if(vFlip){
-            orientationMatrix.glScale(1, -1, 1);
-            orientationMatrix.glTranslate(0, -height, 0);
-		}
-	}else{
-		if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
-		switch(orientation) {
-			case OF_ORIENTATION_180:
-                orientationMatrix.glRotate(-180, 0, 0, 1);
-				if(vFlip){
-                    orientationMatrix.glScale(1, -1, 1);
-                    orientationMatrix.glTranslate(-width, 0, 0);
-				}else{
-                    orientationMatrix.glTranslate(-width, -height, 0);
-				}
-                
-				break;
-                
-			case OF_ORIENTATION_90_RIGHT:
-                orientationMatrix.glRotate(-90, 0, 0, 1);
-				if(vFlip){
-                    orientationMatrix.glScale(-1, 1, 1);
-				}else{
-                    orientationMatrix.glScale(-1, -1, 1);
-                    orientationMatrix.glTranslate(0, -height, 0);
-				}
-				break;
-                
-			case OF_ORIENTATION_90_LEFT:
-                orientationMatrix.glRotate(90, 0, 0, 1);
-				if(vFlip){
-                    orientationMatrix.glScale(-1, 1, 1);
-                    orientationMatrix.glTranslate(-width, -height, 0);
-				}else{
-                    orientationMatrix.glScale(-1, -1, 1);
-                    orientationMatrix.glTranslate(-width, 0, 0);
-				}
-				break;
-                
-			case OF_ORIENTATION_DEFAULT:
-			default:
-				if(vFlip){
-                    orientationMatrix.glScale(1, -1, 1);
-                    orientationMatrix.glTranslate(0, -height, 0);
-				}
-				break;
-		}
-	}
-    
-    ofMatrix4x4 modelViewProjectionMatrix;
-    modelViewProjectionMatrix = projectionMatrix;
-    modelViewProjectionMatrix.preMult(modelViewMatrix);
-    modelViewProjectionMatrix.preMult(orientationMatrix);
-    
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-    glUniformMatrix4fv(0, 1, GL_FALSE, modelViewProjectionMatrix.getPtr());
-#endif
+
+	projection.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
+	modelView.makeLookAtViewMatrix(ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0));
+	setOrientationMatrix(width,height,orientation,vFlip);
+
+	modelViewOrientation = modelView;
+	modelViewOrientation.preMult(orientationMatrix);
+	uploadModelViewMatrix(orientationMatrix);
+	uploadProjectionMatrix(projection);
+	matrixMode(OF_MATRIX_MODELVIEW);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
-    // TODO :: needs ES2 code.
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+
+	float viewW = ofGetViewportWidth();
+	float viewH = ofGetViewportHeight();
+
+
+	ofSetCoordHandedness(OF_RIGHT_HANDED);
+	if(vFlip) {
+		projection = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
+		ofSetCoordHandedness(OF_LEFT_HANDED);
+	}else{
+		projection = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
+	}
+
+	setOrientationMatrix(width,height,orientation,vFlip);
+
+	uploadProjectionMatrix(projection);
+
+	matrixMode(OF_MATRIX_MODELVIEW);
+	loadIdentityMatrix();
 }
 
 //----------------------------------------------------------
 //Resets openGL parameters back to OF defaults
 void ofGLES2Renderer::setupGraphicDefaults(){
-    // TODO :: needs ES2 code.
+	/*glEnableVertexAttribArray(getAttrLocationPosition());
+	glDisableVertexAttribArray(getAttrLocationColor());
+	glDisableVertexAttribArray(getAttrLocationNormal());
+	glDisableVertexAttribArray(getAttrLocationTexCoord());*/
 }
 
 //----------------------------------------------------------
@@ -424,7 +530,6 @@ void ofGLES2Renderer::setCircleResolution(int res){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
 		circlePoints.resize(circlePolyline.size());
-        circleColors.resize(circlePolyline.size());
 	}
 }
 
@@ -521,15 +626,42 @@ void ofGLES2Renderer::setSphereResolution(int res) {
 	}
 }
 
+
 //our openGL wrappers
 //----------------------------------------------------------
 void ofGLES2Renderer::pushMatrix(){
-	transformStack.push(ofMatrix4x4());
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelViewStack.push(modelViewOrientation);
+		break;
+	case OF_MATRIX_PROJECTION:
+		projectionStack.push(projection);
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureStack.push(textureMatrix);
+		break;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::popMatrix(){
-	transformStack.pop();
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelViewOrientation = modelViewStack.top();
+		uploadModelViewMatrix(modelViewOrientation);
+		modelViewStack.pop();
+		break;
+	case OF_MATRIX_PROJECTION:
+		projection = projectionStack.top();
+		uploadProjectionMatrix(projection);
+		projectionStack.pop();
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureMatrix = textureStack.top();
+		uploadTextureMatrix(textureMatrix);
+		textureStack.pop();
+		break;
+	}
 }
 
 //----------------------------------------------------------
@@ -539,17 +671,56 @@ void ofGLES2Renderer::translate(const ofPoint& p){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::translate(float x, float y, float z){
-	// TODO :: needs ES2 code.
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelViewOrientation.glTranslate(x,y,z);
+		uploadModelViewMatrix(modelViewOrientation);
+		break;
+	case OF_MATRIX_PROJECTION:
+		projection.glTranslate(x,y,z);
+		uploadProjectionMatrix(projection);
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureMatrix.glTranslate(x,y,z);
+		uploadTextureMatrix(textureMatrix);
+		break;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::scale(float xAmnt, float yAmnt, float zAmnt){
-	// TODO :: needs ES2 code.
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelViewOrientation.glScale(xAmnt,yAmnt,zAmnt);
+		uploadModelViewMatrix(modelViewOrientation);
+		break;
+	case OF_MATRIX_PROJECTION:
+		projection.glScale(xAmnt,yAmnt,zAmnt);
+		uploadProjectionMatrix(projection);
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureMatrix.glScale(xAmnt,yAmnt,zAmnt);
+		uploadTextureMatrix(textureMatrix);
+		break;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::rotate(float degrees, float vecX, float vecY, float vecZ){
-	// TODO :: needs ES2 code.
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelViewOrientation.glRotate(degrees,vecX,vecY,vecZ);
+		uploadModelViewMatrix(modelViewOrientation);
+		break;
+	case OF_MATRIX_PROJECTION:
+		projection.glRotate(degrees,vecX,vecY,vecZ);
+		uploadProjectionMatrix(projection);
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureMatrix.glRotate(degrees,vecX,vecY,vecZ);
+		uploadTextureMatrix(textureMatrix);
+		break;
+	}
 }
 
 //----------------------------------------------------------
@@ -574,28 +745,93 @@ void ofGLES2Renderer::rotate(float degrees){
 }
 
 //----------------------------------------------------------
+void ofGLES2Renderer::matrixMode(ofMatrixMode mode){
+	currentMatrixMode = mode;
+}
+
+//----------------------------------------------------------
 void ofGLES2Renderer::loadIdentityMatrix (void){
-	// TODO :: needs ES2 code.
+	ofMatrix4x4 m;
+	m.makeIdentityMatrix();
+	loadMatrix(m);
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::loadMatrix (const ofMatrix4x4 & m){
-	// TODO :: needs ES2 code.
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelView = m;
+		modelViewOrientation = modelView;
+		modelViewOrientation.preMult(orientationMatrix);
+		uploadModelViewMatrix(modelViewOrientation);
+		break;
+	case OF_MATRIX_PROJECTION:
+		projection = m;
+		uploadProjectionMatrix(projection);
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureMatrix = m;
+		uploadTextureMatrix(textureMatrix);
+		break;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::loadMatrix (const float *m){
-	// TODO :: needs ES2 code.
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelView.set(m);
+		modelViewOrientation = modelView;
+		modelViewOrientation.preMult(orientationMatrix);
+		uploadModelViewMatrix(modelViewOrientation);
+		break;
+	case OF_MATRIX_PROJECTION:
+		projection.set(m);
+		uploadProjectionMatrix(projection);
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureMatrix.set(m);
+		uploadTextureMatrix(textureMatrix);
+		break;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::multMatrix (const ofMatrix4x4 & m){
-	// TODO :: needs ES2 code.
+	switch(currentMatrixMode){
+	case OF_MATRIX_MODELVIEW:
+		modelViewOrientation.preMult(m);
+		uploadModelViewMatrix(modelViewOrientation);
+		break;
+	case OF_MATRIX_PROJECTION:
+		projection.preMult(m);
+		uploadProjectionMatrix(projection);
+		break;
+	case OF_MATRIX_TEXTURE:
+		textureMatrix.preMult(m);
+		uploadTextureMatrix(textureMatrix);
+		break;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::multMatrix (const float *m){
-	// TODO :: needs ES2 code.
+	ofMatrix4x4 mat(m);
+	multMatrix(mat);
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::uploadModelViewMatrix(const ofMatrix4x4 & m){
+	currentShader.setUniformMatrix4f("modelViewMatrix",m);
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::uploadProjectionMatrix(const ofMatrix4x4 & m){
+	currentShader.setUniformMatrix4f("projectionMatrix",m);
+}
+
+void ofGLES2Renderer::uploadTextureMatrix(const ofMatrix4x4 & m){
+	currentShader.setUniformMatrix4f("textureMatrix",m);
 }
 
 //----------------------------------------------------------
@@ -616,6 +852,7 @@ void ofGLES2Renderer::setColor(int _r, int _g, int _b){
 //----------------------------------------------------------
 void ofGLES2Renderer::setColor(int _r, int _g, int _b, int _a){
 	currentColor.set(_r/255.f,_g/255.f,_b/255.f,_a/255.f);
+	currentShader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
 }
 
 //----------------------------------------------------------
@@ -743,20 +980,46 @@ void ofGLES2Renderer::disablePointSprites(){
 }
 
 //----------------------------------------------------------
+GLint ofGLES2Renderer::getAttrLocationPosition(){
+	return currentShader.getAttributeLocation("position");
+}
+
+//----------------------------------------------------------
+GLint ofGLES2Renderer::getAttrLocationColor(){
+	return currentShader.getAttributeLocation("color");
+}
+
+//----------------------------------------------------------
+GLint ofGLES2Renderer::getAttrLocationNormal(){
+	return currentShader.getAttributeLocation("normal");
+}
+
+//----------------------------------------------------------
+GLint ofGLES2Renderer::getAttrLocationTexCoord(){
+	return currentShader.getAttributeLocation("texcoord");
+}
+
+//----------------------------------------------------------
+ofShader & ofGLES2Renderer::getCurrentShader(){
+	return currentShader;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::setCurrentShader(ofShader & shader){
+	currentShader = shader;
+}
+
+//----------------------------------------------------------
 void ofGLES2Renderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
 	linePoints[0].set(x1,y1,z1);
 	linePoints[1].set(x2,y2,z2);
     
-    lineColors[0].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    lineColors[1].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
-    
-	glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &linePoints[0].x);
-	glEnableVertexAttribArray(ATTRIB_VERTEX);
-	glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_TRUE, sizeof(ofFloatColor), &lineColors[0].r);
-    glEnableVertexAttribArray(ATTRIB_COLOR);
+
+	currentShader.setAttribute3fv("position",&linePoints[0].x,sizeof(ofVec3f));
+	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays(GL_LINES, 0, 2);
     
@@ -778,18 +1041,12 @@ void ofGLES2Renderer::drawRectangle(float x, float y, float z, float w, float h)
 		rectPoints[3].set(x-w/2.0f, y+h/2.0f, z);
 	}
     
-    rectColors[0].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    rectColors[1].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    rectColors[2].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    rectColors[3].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
-    
-	glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &rectPoints[0].x);
-	glEnableVertexAttribArray(ATTRIB_VERTEX);
-	glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_TRUE, sizeof(ofFloatColor), &rectColors[0].r);
-    glEnableVertexAttribArray(ATTRIB_COLOR);
+
+	currentShader.setAttribute3fv("position",&rectPoints[0].x,sizeof(ofVec3f));
+	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
 
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
     
@@ -803,17 +1060,12 @@ void ofGLES2Renderer::drawTriangle(float x1, float y1, float z1, float x2, float
 	triPoints[1].set(x2,y2,z2);
 	triPoints[2].set(x3,y3,z3);
     
-    triColors[0].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    triColors[1].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    triColors[2].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &triPoints[0].x);
-	glEnableVertexAttribArray(ATTRIB_VERTEX);
-	glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_TRUE, sizeof(ofFloatColor), &triColors[0].r);
-    glEnableVertexAttribArray(ATTRIB_COLOR);
+	currentShader.setAttribute3fv("position",&triPoints[0].x,sizeof(ofVec3f));
+	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
     
@@ -826,16 +1078,14 @@ void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
-        circleColors[i].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
-    
-	glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &circlePoints[0].x);
-	glEnableVertexAttribArray(ATTRIB_VERTEX);
-	glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_TRUE, sizeof(ofFloatColor), &circleColors[0].r);
-    glEnableVertexAttribArray(ATTRIB_COLOR);
+
+	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
+	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     
@@ -855,16 +1105,14 @@ void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float 
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
-        circleColors[i].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
-    
-	glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &circlePoints[0].x);
-	glEnableVertexAttribArray(ATTRIB_VERTEX);
-	glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_TRUE, sizeof(ofFloatColor), &circleColors[0].r);
-    glEnableVertexAttribArray(ATTRIB_COLOR);
+
+	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
+	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     
