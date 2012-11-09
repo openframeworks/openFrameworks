@@ -9,17 +9,63 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 
+string defaultVertexShader =
+		"attribute vec4 position;\
+		attribute vec4 color;\
+		attribute vec4 normal;\
+		attribute vec2 texcoord;\
+		\
+		uniform mat4 modelViewMatrix;\
+		uniform mat4 projectionMatrix;\
+		\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+        \
+		void main(){\
+			gl_Position = projectionMatrix * modelViewMatrix * position;\
+			colorVarying = color;\
+			texCoordVarying = texcoord;\
+		}";
+
+
+string defaultFragmentShader =
+		"#ifdef GL_ES\n\
+		// define default precision for float, vec, mat.\n\
+		precision highp float;\n\
+		#endif\n\
+		\
+		uniform sampler2D src_tex_unit0;\
+		uniform float useTexture;\
+		uniform float useColors;\
+		uniform vec4 color;\
+		\
+		varying float depth;\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+		\
+		void main(){\
+			vec4 c;\
+			if(useColors>0.5){\
+				c = colorVarying;\
+			}else{\n\
+				c = color;\
+			}\n\
+			if(useTexture>0.5){\
+				gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*c;\
+			}else{\n\
+				gl_FragColor = c;\
+			}\
+		}";
+
+
 //----------------------------------------------------------
-ofGLES2Renderer::ofGLES2Renderer(bool useShapeColor){
+ofGLES2Renderer::ofGLES2Renderer(string vertexShader, string fragmentShader, bool useShapeColor){
 	bBackgroundAuto = true;
-    
+
 	linePoints.resize(2);
-    lineColors.resize(2);
 	triPoints.resize(3);
-    triColors.resize(3);
 	rectPoints.resize(4);
-    rectColors.resize(4);
-    
+
 	currentFbo = NULL;
 
     rectMode = OF_RECTMODE_CORNER;
@@ -27,6 +73,9 @@ ofGLES2Renderer::ofGLES2Renderer(bool useShapeColor){
     coordHandedness = OF_LEFT_HANDED;
     bSmoothHinted = false;
     currentMatrixMode = OF_MATRIX_MODELVIEW;
+
+    vertexFile = vertexShader;
+    fragmentFile = fragmentShader;
 }
 
 ofGLES2Renderer::~ofGLES2Renderer() {
@@ -46,7 +95,27 @@ void ofGLES2Renderer::finishRender() {
 
 //----------------------------------------------------------
 bool ofGLES2Renderer::setup() {
-	return currentShader.load("shaders/Shader.vsh","shaders/Shader.fsh");
+	bool ret;
+	if(vertexFile!=""){
+		ofLogNotice() << "GLES2 loading vertex shader from " + vertexFile;
+		ret = currentShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
+	}else{
+		ofLogNotice() << "GLES2 loading vertex shader from default source";
+		ret = currentShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+	}
+	if(ret){
+		if(fragmentFile!=""){
+			ofLogNotice() << "GLES2 loading fragment shader from " + fragmentFile;
+			ret = currentShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
+		}else{
+			ofLogNotice() << "GLES2 loading fragment shader from default source";
+			ret = currentShader.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShader);
+		}
+	}
+	if(ret){
+		ret = currentShader.linkProgram();
+	}
+	return ret;
 }
 
 //----------------------------------------------------------
@@ -64,6 +133,9 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, bool useColors, bool useTextures
 	}
 	if(vertexData.getNumColors() && useColors){
 		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
+		currentShader.setUniform1f("useColors",1);
+	}else{
+		currentShader.setUniform1f("useColors",0);
 	}
 	if(vertexData.getNumTexCoords() && useTextures){
 		currentShader.setUniform1f("useTexture",1);
@@ -103,6 +175,9 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, boo
 	}
 	if(vertexData.getNumColors() && useColors){
 		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
+		currentShader.setUniform1f("useColors",1);
+	}else{
+		currentShader.setUniform1f("useColors",0);
 	}
 	if(vertexData.getNumTexCoords() && useTextures){
 		currentShader.setUniform1f("useTexture",1);
@@ -154,6 +229,7 @@ void ofGLES2Renderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 		if (bSmoothHinted) startSmoothing();
 		currentShader.setAttribute3fv("position",&vertexData[0].x,sizeof(ofVec3f));
 		currentShader.setUniform1f("useTexture",0);
+		currentShader.setUniform1f("useColors",0);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
 		if (bSmoothHinted) endSmoothing();
 	}
@@ -167,6 +243,7 @@ void ofGLES2Renderer::draw(ofPolyline & poly){
 
 		currentShader.setAttribute3fv("position",&poly.getVertices()[0].x,sizeof(ofVec3f));
 		currentShader.setUniform1f("useTexture",0);
+		currentShader.setUniform1f("useColors",0);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
@@ -207,6 +284,7 @@ void ofGLES2Renderer::draw(ofPath & shape){
 void ofGLES2Renderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		currentShader.setUniform1f("useTexture",1);
+		currentShader.setUniform1f("useColors",0);
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
@@ -220,6 +298,7 @@ void ofGLES2Renderer::draw(ofImage & image, float x, float y, float z, float w, 
 void ofGLES2Renderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		currentShader.setUniform1f("useTexture",1);
+		currentShader.setUniform1f("useColors",0);
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
@@ -233,6 +312,7 @@ void ofGLES2Renderer::draw(ofFloatImage & image, float x, float y, float z, floa
 void ofGLES2Renderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		currentShader.setUniform1f("useTexture",1);
+		currentShader.setUniform1f("useColors",0);
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
@@ -449,7 +529,6 @@ void ofGLES2Renderer::setCircleResolution(int res){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
 		circlePoints.resize(circlePolyline.size());
-        circleColors.resize(circlePolyline.size());
 	}
 }
 
@@ -772,6 +851,7 @@ void ofGLES2Renderer::setColor(int _r, int _g, int _b){
 //----------------------------------------------------------
 void ofGLES2Renderer::setColor(int _r, int _g, int _b, int _a){
 	currentColor.set(_r/255.f,_g/255.f,_b/255.f,_a/255.f);
+	currentShader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
 }
 
 //----------------------------------------------------------
@@ -933,15 +1013,12 @@ void ofGLES2Renderer::drawLine(float x1, float y1, float z1, float x2, float y2,
 	linePoints[0].set(x1,y1,z1);
 	linePoints[1].set(x2,y2,z2);
     
-    lineColors[0].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    lineColors[1].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&linePoints[0].x,sizeof(ofVec3f));
-	currentShader.setAttribute4fv("color",&lineColors[0].r,sizeof(ofFloatColor));
 	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays(GL_LINES, 0, 2);
     
@@ -963,17 +1040,12 @@ void ofGLES2Renderer::drawRectangle(float x, float y, float z, float w, float h)
 		rectPoints[3].set(x-w/2.0f, y+h/2.0f, z);
 	}
     
-    rectColors[0].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    rectColors[1].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    rectColors[2].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    rectColors[3].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&rectPoints[0].x,sizeof(ofVec3f));
-	currentShader.setAttribute4fv("color",&rectColors[0].r,sizeof(ofFloatColor));
 	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
 
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
     
@@ -987,16 +1059,12 @@ void ofGLES2Renderer::drawTriangle(float x1, float y1, float z1, float x2, float
 	triPoints[1].set(x2,y2,z2);
 	triPoints[2].set(x3,y3,z3);
     
-    triColors[0].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    triColors[1].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    triColors[2].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-    
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&triPoints[0].x,sizeof(ofVec3f));
-	currentShader.setAttribute4fv("color",&triColors[0].r,sizeof(ofFloatColor));
 	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
     
@@ -1009,15 +1077,14 @@ void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
-        circleColors[i].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
-	currentShader.setAttribute4fv("color",&circleColors[0].r,sizeof(ofFloatColor));
 	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     
@@ -1037,15 +1104,14 @@ void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float 
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
-        circleColors[i].set(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
-	currentShader.setAttribute4fv("color",&circleColors[0].r,sizeof(ofFloatColor));
 	currentShader.setUniform1f("useTexture",0);
+	currentShader.setUniform1f("useColors",0);
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     

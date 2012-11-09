@@ -11,7 +11,7 @@ class ofFbo;
 
 class ofGLES2Renderer: public ofBaseRenderer{
 public:
-	ofGLES2Renderer(bool useShapeColor=true);
+	ofGLES2Renderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
 	~ofGLES2Renderer();
     
 	string getType(){ return "GLES2"; }
@@ -157,10 +157,6 @@ private:
 	vector<ofPoint> rectPoints;
 	vector<ofPoint> triPoints;
 	vector<ofPoint> circlePoints;
-    vector<ofFloatColor> lineColors;
-    vector<ofFloatColor> rectColors;
-    vector<ofFloatColor> triColors;
-    vector<ofFloatColor> circleColors;
 	ofPolyline circlePolyline;
 	
 	ofMesh sphereMesh;
@@ -171,4 +167,6 @@ private:
     
 	ofFbo * currentFbo;
 	ofShader currentShader;
+	string vertexFile;
+	string fragmentFile;
 };
