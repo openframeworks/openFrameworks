@@ -371,6 +371,7 @@ void ofGLES2Renderer::viewport(float x, float y, float width, float height, bool
 		}
 	}
 	currentViewport.set(x, y, width, height);
+	glViewport(x, y, width, height);
 }
 
 //----------------------------------------------------------
