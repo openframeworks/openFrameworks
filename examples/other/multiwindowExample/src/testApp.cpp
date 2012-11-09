@@ -4,12 +4,10 @@ int i = 0;
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	
 	ofSetBackgroundColor(255, 100, 100);
 	ofGetMainWindow()->setWindowShape(600, 600);
-	
-	
 	ofCreateWindow(500, 500, ofRandom(100, 800), ofRandom(100, 800))->addListener(new windowRenderer);
-	
 	
 	/*
 	ofCreateWindow(300, 400, 100, 100);
@@ -20,6 +18,7 @@ void testApp::setup(){
 	textPos.set(ofGetWidth()*.5, ofGetHeight()*.5);	
 	
 	ofSetVerticalSync(true);
+	
 }
 
 //--------------------------------------------------------------
