@@ -63,6 +63,7 @@
 		53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA339112DF8F5000C622CE /* CoreVideo.framework */; };
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
 		675FA3E2163A270100AF000E /* ofGLES2Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 675FA3E1163A270100AF000E /* ofGLES2Renderer.cpp */; };
+		677F17E2164DB68800E6FEF9 /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 677F17E1164DB68800E6FEF9 /* ofGLUtils.cpp */; };
 		772C25181469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772C25161469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp */; };
 		772C25191469274B00DDAAE6 /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772C25171469274B00DDAAE6 /* ofOpenALSoundPlayer.h */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
@@ -245,6 +246,7 @@
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		675FA3DF163A260C00AF000E /* ofGLES2Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofGLES2Renderer.h; sourceTree = "<group>"; };
 		675FA3E1163A270100AF000E /* ofGLES2Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGLES2Renderer.cpp; sourceTree = "<group>"; };
+		677F17E1164DB68800E6FEF9 /* ofGLUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGLUtils.cpp; sourceTree = "<group>"; };
 		772C25161469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		772C25171469274B00DDAAE6 /* ofOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOpenALSoundPlayer.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -672,6 +674,7 @@
 				E485F6991360A8FF00E939D3 /* ofGLRenderer.h */,
 				675FA3E1163A270100AF000E /* ofGLES2Renderer.cpp */,
 				675FA3DF163A260C00AF000E /* ofGLES2Renderer.h */,
+				677F17E1164DB68800E6FEF9 /* ofGLUtils.cpp */,
 				E485F69A1360A8FF00E939D3 /* ofGLUtils.h */,
 				E485F69B1360A8FF00E939D3 /* ofLight.cpp */,
 				E485F69C1360A8FF00E939D3 /* ofLight.h */,
@@ -1044,6 +1047,7 @@
 				1594366515CF5F420087B684 /* ofiPhoneVideoPlayer.mm in Sources */,
 				1594366A15CF5F650087B684 /* ofxiPhoneSoundStream.mm in Sources */,
 				675FA3E2163A270100AF000E /* ofGLES2Renderer.cpp in Sources */,
+				677F17E2164DB68800E6FEF9 /* ofGLUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

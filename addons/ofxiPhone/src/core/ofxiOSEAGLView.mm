@@ -54,10 +54,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
         
         if(rendererVersion == ESRendererVersion_20) {
             if(ofGetCurrentRenderer()->getType() == "GLES2") {
-                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->loadShaders();
+                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->setup();
             } else {
                 ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer(false)));
-                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->loadShaders();
+                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->setup();
             }
         } else if(rendererVersion == ESRendererVersion_11) {
             if(ofGetCurrentRenderer()->getType() != "GL") {
@@ -171,13 +171,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
         ((ofGLES2Renderer *)currentRenderer)->startRender();
     }
 
-    glViewport(0, 0, windowSize->x, windowSize->y);
+    ofViewport(ofRectangle(0, 0, windowSize->x, windowSize->y));
     
     float * bgPtr = ofBgColorPtr();
     bool bClearAuto = ofbClearBg();
-    if ( bClearAuto == true){
-        glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(bClearAuto == true) {
+        glClearColor(bgPtr[0], bgPtr[1], bgPtr[2], bgPtr[3]);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     
     if(ofAppiPhoneWindow::getInstance()->isSetupScreenEnabled()) {
@@ -189,6 +189,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
     ofNotifyDraw();
     
     //------------------------------------------
+    
+    if(currentRenderer->getType() == "GLES2") {
+        ((ofGLES2Renderer *)currentRenderer)->finishRender();
+    }
     
     [self finishRender];
     [self unlockGL];
