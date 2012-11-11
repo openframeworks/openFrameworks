@@ -16,6 +16,11 @@ change key:
 ---------------------------------------------------------------
 
 / ofGetElapsedTimef() no longer wraps after ~71 minutes, which was a bug introduced with 0072. ofGetElapsedTimeMicros() previously also wrapped after ~71 minutes, and this has been fixed as well.
+/ fixed broken pause and other fixes in ofVideoPlayer on OSX
+/ fixes to AndroidVideoGrabber
+/ Android empty example inherits from ofxAndroidApp + adds android methods
++ auto register android touch events
++ ofMultMatrix(), ofLoadMatrix(), ofLoadIdentityMatrix()
 
 ---------------------------------------------------------------
 
