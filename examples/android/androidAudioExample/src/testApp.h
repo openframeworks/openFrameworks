@@ -38,6 +38,8 @@ class testApp : public ofxAndroidApp{
 		float 	phase;
 		float 	phaseAdder;
 		float 	phaseAdderTarget;
+
+		ofSoundStream soundStream;
 };
 
 #endif	

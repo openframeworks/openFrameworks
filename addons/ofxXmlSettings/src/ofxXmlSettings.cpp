@@ -4,6 +4,9 @@
 #include <string>
 #include <iostream>
 
+// this increases the accuracy of ofToString() when saving floating point values
+// but in the process of setting it also causes very small values to be ignored.
+const float floatPrecision = 9;
 
 //----------------------------------------
 // a pretty useful tokenization system:
@@ -316,6 +319,8 @@ int ofxXmlSettings::setValue(const string& tag, double value, int which){
     
     // this is the current way that the implementation is done, which seems wrong
     return writeTag(tag, ofToString(value), which);
+	//int tagID = writeTag(tag, ofToString(value, floatPrecision).c_str(), which) -1;
+	//return tagID;
 }
 
 //---------------------------------------------------------
@@ -359,8 +364,10 @@ int ofxXmlSettings::addValue(const string& tag, int value){
 
 //---------------------------------------------------------
 int ofxXmlSettings::addValue(const string&  tag, double value){
-    currentElement.addValue(tag, ofToString(value));
-    return getSiblingCount(currentElement, tag);
+    //currentElement.addValue(tag, ofToString(value));
+    //return getSiblingCount(currentElement, tag);
+	int tagID = writeTag(tag, ofToString(value, floatPrecision).c_str(), -1) -1;
+	return tagID;
 }
 
 //---------------------------------------------------------
@@ -386,7 +393,9 @@ int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, double value, int which){
-	return writeAttribute(tag, attribute, ofToString(value), which);
+	//return writeAttribute(tag, attribute, ofToString(value), which);
+	int tagID = writeAttribute(tag, attribute, ofToString(value, floatPrecision).c_str(), which) -1;
+	return tagID;
 }
 
 //---------------------------------------------------------

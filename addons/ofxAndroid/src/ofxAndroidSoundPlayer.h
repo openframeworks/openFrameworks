@@ -8,7 +8,7 @@ public:
 	ofxAndroidSoundPlayer();
 	virtual ~ofxAndroidSoundPlayer();
 
-	void loadSound(string fileName, bool stream = false);
+	bool loadSound(string fileName, bool stream = false);
 	void unloadSound();
 	void play();
 	void stop();

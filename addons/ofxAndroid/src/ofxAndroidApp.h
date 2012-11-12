@@ -66,6 +66,7 @@ public:
 
 	virtual void okPressed(){};
 	virtual void cancelPressed(){};
+	virtual void networkConnected(bool connected){};
 };
 
 

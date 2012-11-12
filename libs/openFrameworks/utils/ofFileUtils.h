@@ -11,14 +11,17 @@ class ofBuffer{
 	
 public:
 	ofBuffer();
-	ofBuffer(const char * buffer, int size);
+	ofBuffer(const char * buffer, unsigned int size);
+	ofBuffer(const string & text);
 	ofBuffer(istream & stream);
 	ofBuffer(const ofBuffer & buffer_);
 
 	~ofBuffer();
 
-	void set(const char * _buffer, int _size);
+	void set(const char * _buffer, unsigned int _size);
+	void set(const string & text);
 	bool set(istream & stream);
+	void append(const char * _buffer, unsigned int _size);
 
 	bool writeTo(ostream & stream) const;
 
@@ -31,6 +34,7 @@ public:
 
 	string getText() const;
 	operator string() const;  // cast to string, to use a buffer as a string
+	ofBuffer & operator=(const string & text);
 
 	long size() const;
 	string getNextLine();
@@ -200,6 +204,7 @@ public:
 
 	bool exists() const;
 	string path() const;
+	string getAbsolutePath() const;
 
 	bool canRead() const;
 	bool canWrite() const;
