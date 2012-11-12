@@ -846,6 +846,7 @@ void ofTexture::bind(){
 //----------------------------------------------------------
 void ofTexture::unbind(){
 
+	glBindTexture( texData.textureTarget, 0);
 	disableTextureTarget();
 	
 	if(ofGetUsingNormalizedTexCoords()) {

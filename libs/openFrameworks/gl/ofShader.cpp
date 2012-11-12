@@ -2,8 +2,12 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofGraphics.h"
+#include "ofGLES2Renderer.h"
 #include <map>
 
+
+GLint ofShader::activeProgram=0;
+GLint ofShader::prevActiveProgram=0;
 
 static map<GLuint,int> & getShaderIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
@@ -74,6 +78,39 @@ bLoaded(false)
 //--------------------------------------------------------------
 ofShader::~ofShader() {
 	unload();
+}
+
+//--------------------------------------------------------------
+ofShader::ofShader(const ofShader & mom) :
+program(mom.program),
+bLoaded(mom.bLoaded),
+shaders(mom.shaders),
+attribsCache(mom.attribsCache),
+uniformsCache(mom.uniformsCache){
+	if(mom.bLoaded){
+		retainProgram(program);
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			retainShader(shader);
+		}
+	}
+}
+
+//--------------------------------------------------------------
+ofShader & ofShader::operator=(const ofShader & mom){
+	program = mom.program;
+	bLoaded = mom.bLoaded;
+	shaders = mom.shaders,
+	attribsCache = mom.attribsCache,
+	uniformsCache = mom.uniformsCache;
+	if(mom.bLoaded){
+		retainProgram(program);
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			retainShader(shader);
+		}
+	}
+	return *this;
 }
 
 //--------------------------------------------------------------
@@ -287,7 +324,9 @@ void ofShader::unload() {
 			releaseProgram(program);
 			program = 0;
 		}
-		
+
+		attribsCache.clear();
+		uniformsCache.clear();
 		shaders.clear();
 	}
 	bLoaded = false;
@@ -300,14 +339,27 @@ bool ofShader::isLoaded(){
 
 //--------------------------------------------------------------
 void ofShader::begin() {
-	if (bLoaded == true)
+	if (bLoaded && activeProgram!=program){
 		glUseProgram(program);
+		prevActiveProgram = activeProgram;
+		activeProgram = program;
+		if(!ofGLIsFixedPipeline()){
+			ofGetGLES2Renderer()->beginCustomShader(*this);
+		}
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::end() {
-	if (bLoaded == true)
-		glUseProgram(0);
+	if (bLoaded && activeProgram==program){
+		if(!ofGLIsFixedPipeline()){
+			ofGetGLES2Renderer()->endCustomShader();
+		}else{
+			glUseProgram(prevActiveProgram);
+			activeProgram = prevActiveProgram;
+			prevActiveProgram = 0;
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -555,12 +607,22 @@ void ofShader::setAttribute4d(GLint location, double v1, double v2, double v3, d
 
 //--------------------------------------------------------------
 GLint ofShader::getAttributeLocation(const char* name) {
-	return glGetAttribLocation(program, name);
+	if(attribsCache.find(name)!=attribsCache.end()){
+		return attribsCache[name];
+	}
+	GLint location = glGetAttribLocation(program, name);
+	attribsCache[name] = location;
+	return location;
 }
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const char* name) {
-	return glGetUniformLocation(program, name);
+	if(uniformsCache.find(name)!=uniformsCache.end()){
+		return uniformsCache[name];
+	}
+	GLint location = glGetUniformLocation(program, name);
+	uniformsCache[name] = location;
+	return location;
 }
 
 //--------------------------------------------------------------
