@@ -17,6 +17,7 @@
 #include "ofColor.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
+#include "ofXml.h"
 
 //--------------------------
 // math
