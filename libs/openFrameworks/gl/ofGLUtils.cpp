@@ -3,6 +3,7 @@
 #include <set>
 #include "ofGLES2Renderer.h"
 #include "ofGraphics.h"
+#include "ofShader.h"
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode m){
 #ifndef TARGET_OPENGLES
@@ -176,6 +177,72 @@ GLint ofGetAttrLocationTexCoord(){
 	return ofGetGLES2Renderer()->getAttrLocationTexCoord();
 }
 
+void ofEnableVertices(){
+	if(ofGLIsFixedPipeline()){
+		glEnableClientState(GL_VERTEX_ARRAY);
+	}else{
+		glEnableVertexAttribArray(ofGetAttrLocationPosition());
+	}
+}
 
+void ofEnableTexCoords(){
+	if(ofGLIsFixedPipeline()){
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	}else{
+		glEnableVertexAttribArray(ofGetAttrLocationTexCoord());
+		ofGetGLES2Renderer()->enableTexCoords();
+	}
+}
 
+void ofEnableColorCoords(){
+	if(ofGLIsFixedPipeline()){
+		glEnableClientState(GL_COLOR_ARRAY);
+	}else{
+		glEnableVertexAttribArray(ofGetAttrLocationColor());
+		ofGetGLES2Renderer()->enableColors();
+	}
+}
 
+void ofEnableNormals(){
+	if(ofGLIsFixedPipeline()){
+		glEnableClientState(GL_NORMAL_ARRAY);
+	}else{
+		glEnableVertexAttribArray(ofGetAttrLocationNormal());
+		ofGetGLES2Renderer()->enableNormals();
+	}
+}
+
+void ofDisableVertices(){
+	if(ofGLIsFixedPipeline()){
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}else{
+		glDisableVertexAttribArray(ofGetAttrLocationPosition());
+	}
+}
+
+void ofDisableTexCoords(){
+	if(ofGLIsFixedPipeline()){
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}else{
+		glDisableVertexAttribArray(ofGetAttrLocationTexCoord());
+		ofGetGLES2Renderer()->disableTexCoords();
+	}
+}
+
+void ofDisableColorCoords(){
+	if(ofGLIsFixedPipeline()){
+		glDisableClientState(GL_COLOR_ARRAY);
+	}else{
+		glDisableVertexAttribArray(ofGetAttrLocationColor());
+		ofGetGLES2Renderer()->disableColors();
+	}
+}
+
+void ofDisableNormals(){
+	if(ofGLIsFixedPipeline()){
+		glDisableClientState(GL_NORMAL_ARRAY);
+	}else{
+		glDisableVertexAttribArray(ofGetAttrLocationNormal());
+		ofGetGLES2Renderer()->disableNormals();
+	}
+}

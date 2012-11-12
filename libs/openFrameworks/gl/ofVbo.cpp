@@ -450,68 +450,50 @@ GLuint ofVbo::getIndexId(){
 void ofVbo::bind(){
 	if(bUsingVerts){
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		ofEnableVertices();
 		if(ofGLIsFixedPipeline()){
-			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
 		}else{
 			glVertexAttribPointer(ofGetAttrLocationPosition(), 3, GL_FLOAT, GL_FALSE, vertStride, 0);
-			glEnableVertexAttribArray(ofGetAttrLocationPosition());
 		}
 	}
 	
 	if(bUsingColors) {
 		glBindBuffer(GL_ARRAY_BUFFER, colorId);
+		ofEnableColorCoords();
 		if(ofGLIsFixedPipeline()){
-			glEnableClientState(GL_COLOR_ARRAY);
 			glColorPointer(4, GL_FLOAT, colorStride, 0);
 		}else{
 			glVertexAttribPointer(ofGetAttrLocationColor(), 4, GL_FLOAT, GL_FALSE, colorStride, 0);
-			glEnableVertexAttribArray(ofGetAttrLocationColor());
 		}
 	}
 	
 	if(bUsingNormals) {
 		glBindBuffer(GL_ARRAY_BUFFER, normalId);
+		ofEnableNormals();
 		if(ofGLIsFixedPipeline()){
-			glEnableClientState(GL_NORMAL_ARRAY);
 			glNormalPointer(GL_FLOAT, normalStride, 0);
 		}else{
 			glVertexAttribPointer(ofGetAttrLocationNormal(), 3, GL_FLOAT, GL_FALSE, normalStride, 0);
-			glEnableVertexAttribArray(ofGetAttrLocationNormal());
 		}
 	}
 	
 	if(bUsingTexCoords) {
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
+		ofEnableTexCoords();
 		if(ofGLIsFixedPipeline()){
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
 		}else{
 			glVertexAttribPointer(ofGetAttrLocationTexCoord(), 3, GL_FLOAT, GL_FALSE, texCoordStride, 0);
-			glEnableVertexAttribArray(ofGetAttrLocationTexCoord());
 		}
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
-//	if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
-	if(ofGLIsFixedPipeline()){
-		if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
-		if(bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
-		if(bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}else{
-		glDisableVertexAttribArray(ofGetAttrLocationColor());
-		glDisableVertexAttribArray(ofGetAttrLocationNormal());
-		glDisableVertexAttribArray(ofGetAttrLocationTexCoord());
-	}
-	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
-	
-//#ifndef	TARGET_OPENGLES
-//	glPopClientAttrib();
-//	glPopAttrib();	
-//#endif
-	
+	if(bUsingColors) ofDisableColorCoords();
+	if(bUsingNormals) ofDisableNormals();
+	if(bUsingTexCoords) ofDisableTexCoords();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

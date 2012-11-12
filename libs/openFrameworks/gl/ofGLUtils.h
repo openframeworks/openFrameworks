@@ -10,6 +10,8 @@
 
 #include "ofConstants.h"
 #include "ofTypes.h"
+
+class ofShader;
 class ofGLES2Renderer;
 
 enum ofPrimitiveMode{
@@ -60,4 +62,14 @@ GLint ofGetAttrLocationPosition();
 GLint ofGetAttrLocationColor();
 GLint ofGetAttrLocationNormal();
 GLint ofGetAttrLocationTexCoord();
+
+void ofEnableVertices();
+void ofEnableTexCoords();
+void ofEnableColorCoords();
+void ofEnableNormals();
+void ofDisableVertices();
+void ofDisableTexCoords();
+void ofDisableColorCoords();
+void ofDisableNormals();
+
 #endif /* OFGLUTILS_H_ */

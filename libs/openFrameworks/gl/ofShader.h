@@ -18,6 +18,8 @@ class ofShader {
 public:
 	ofShader();
 	~ofShader();
+	ofShader(const ofShader & shader);
+	ofShader & operator=(const ofShader & shader);
 	
 	bool load(string shaderName);
 	bool load(string vertName, string fragName, string geomName="");
@@ -114,8 +116,12 @@ public:
 	
 private:
 	GLuint program;
+	bool bLoaded;
 	map<GLenum, GLuint> shaders;
-	
+	map<string, GLint> attribsCache;
+	map<string, GLint> uniformsCache;
+	static GLint activeProgram;
+	static GLint prevActiveProgram;
 	
 	GLint getUniformLocation(const char* name);
 	
@@ -127,6 +133,5 @@ private:
 	
 	void checkAndCreateProgram();
 	
-	bool bLoaded; 
 };
 

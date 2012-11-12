@@ -129,8 +129,19 @@ public:
 	GLint getAttrLocationColor();
 	GLint getAttrLocationNormal();
 	GLint getAttrLocationTexCoord();
+
 	ofShader & getCurrentShader();
-	void setCurrentShader(ofShader & shader);
+	void setDefaultShader(ofShader & shader);
+
+	void enableTexCoords();
+	void enableColors();
+	void enableNormals();
+	void disableTexCoords();
+	void disableColors();
+	void disableNormals();
+
+	void beginCustomShader(ofShader & shader);
+	void endCustomShader();
     
 private:
 	void uploadModelViewMatrix(const ofMatrix4x4 & m);
@@ -166,7 +177,10 @@ private:
 	ofRectMode rectMode;
     
 	ofFbo * currentFbo;
+	ofShader defaultShader;
 	ofShader currentShader;
 	string vertexFile;
 	string fragmentFile;
+
+	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled;
 };
