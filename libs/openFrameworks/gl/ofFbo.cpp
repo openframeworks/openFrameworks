@@ -21,7 +21,9 @@
 
  */
 
+#ifdef TARGET_OPENGLES
 bool ofFbo::bglFunctionsInitialized=false;
+#endif
 
 // mapping to allow simple opengl EXT and opengl ES OES
 // commented out ones are already defined

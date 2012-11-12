@@ -480,7 +480,7 @@ void ofGLES2Renderer::setupScreenPerspective(float width, float height, ofOrient
 
 	modelViewOrientation = modelView;
 	modelViewOrientation.preMult(orientationMatrix);
-	uploadModelViewMatrix(orientationMatrix);
+	uploadModelViewMatrix(modelViewOrientation);
 	uploadProjectionMatrix(projection);
 	matrixMode(OF_MATRIX_MODELVIEW);
 }
