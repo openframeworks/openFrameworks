@@ -76,6 +76,11 @@ ofGLES2Renderer::ofGLES2Renderer(string vertexShader, string fragmentShader, boo
 
     vertexFile = vertexShader;
     fragmentFile = fragmentShader;
+
+    verticesEnabled = true;
+    colorsEnabled = false;
+    texCoordsEnabled = false;
+    normalsEnabled = false;
 }
 
 ofGLES2Renderer::~ofGLES2Renderer() {
@@ -83,12 +88,12 @@ ofGLES2Renderer::~ofGLES2Renderer() {
 
 //----------------------------------------------------------
 void ofGLES2Renderer::startRender() {
-	currentShader.begin();
+	defaultShader.begin();
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::finishRender() {
-	currentShader.end();
+	defaultShader.end();
 	modelViewStack.empty();
 	projectionStack.empty();
 }
@@ -98,23 +103,24 @@ bool ofGLES2Renderer::setup() {
 	bool ret;
 	if(vertexFile!=""){
 		ofLogNotice() << "GLES2 loading vertex shader from " + vertexFile;
-		ret = currentShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
+		ret = defaultShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
 	}else{
 		ofLogNotice() << "GLES2 loading vertex shader from default source";
-		ret = currentShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+		ret = defaultShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
 	}
 	if(ret){
 		if(fragmentFile!=""){
 			ofLogNotice() << "GLES2 loading fragment shader from " + fragmentFile;
-			ret = currentShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
+			ret = defaultShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
 		}else{
 			ofLogNotice() << "GLES2 loading fragment shader from default source";
-			ret = currentShader.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShader);
+			ret = defaultShader.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShader);
 		}
 	}
 	if(ret){
-		ret = currentShader.linkProgram();
+		ret = defaultShader.linkProgram();
 	}
+	currentShader = defaultShader;
 	return ret;
 }
 
@@ -133,15 +139,15 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, bool useColors, bool useTextures
 	}
 	if(vertexData.getNumColors() && useColors){
 		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
-		currentShader.setUniform1f("useColors",1);
+		enableColors();
 	}else{
-		currentShader.setUniform1f("useColors",0);
+		disableColors();
 	}
 	if(vertexData.getNumTexCoords() && useTextures){
-		currentShader.setUniform1f("useTexture",1);
 		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
+		enableTexCoords();
 	}else{
-		currentShader.setUniform1f("useTexture",0);
+		disableTexCoords();
 	}
 
 	if(vertexData.getNumIndices()){
@@ -154,13 +160,13 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, bool useColors, bool useTextures
 		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
 	}
 	if(vertexData.getNumColors()){
-		glDisableVertexAttribArray(getAttrLocationColor());
+		disableColors();
 	}
 	if(vertexData.getNumNormals()){
-		glDisableVertexAttribArray(getAttrLocationNormal());
+		disableNormals();
 	}
 	if(vertexData.getNumTexCoords()){
-		glDisableVertexAttribArray(getAttrLocationTexCoord());
+		disableTexCoords();
 	}
 }
 
@@ -175,15 +181,15 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, boo
 	}
 	if(vertexData.getNumColors() && useColors){
 		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
-		currentShader.setUniform1f("useColors",1);
+		enableColors();
 	}else{
-		currentShader.setUniform1f("useColors",0);
+		disableColors();
 	}
 	if(vertexData.getNumTexCoords() && useTextures){
-		currentShader.setUniform1f("useTexture",1);
 		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
+		enableTexCoords();
 	}else{
-		currentShader.setUniform1f("useTexture",0);
+		disableTexCoords();
 	}
 
 	GLenum drawMode;
@@ -212,13 +218,13 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, boo
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
 	if(vertexData.getNumColors()){
-		glDisableVertexAttribArray(getAttrLocationColor());
+		disableColors();
 	}
 	if(vertexData.getNumNormals()){
-		glDisableVertexAttribArray(getAttrLocationNormal());
+		disableNormals();
 	}
 	if(vertexData.getNumTexCoords()){
-		glDisableVertexAttribArray(getAttrLocationTexCoord());
+		disableTexCoords();
 	}
 	if (bSmoothHinted) endSmoothing();
 }
@@ -228,8 +234,8 @@ void ofGLES2Renderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 	if(!vertexData.empty()) {
 		if (bSmoothHinted) startSmoothing();
 		currentShader.setAttribute3fv("position",&vertexData[0].x,sizeof(ofVec3f));
-		currentShader.setUniform1f("useTexture",0);
-		currentShader.setUniform1f("useColors",0);
+		disableTexCoords();
+		disableColors();
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
 		if (bSmoothHinted) endSmoothing();
 	}
@@ -242,8 +248,8 @@ void ofGLES2Renderer::draw(ofPolyline & poly){
 		if (bSmoothHinted) startSmoothing();
 
 		currentShader.setAttribute3fv("position",&poly.getVertices()[0].x,sizeof(ofVec3f));
-		currentShader.setUniform1f("useTexture",0);
-		currentShader.setUniform1f("useColors",0);
+		disableTexCoords();
+		disableColors();
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
@@ -283,42 +289,45 @@ void ofGLES2Renderer::draw(ofPath & shape){
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
-		currentShader.setUniform1f("useTexture",1);
-		currentShader.setUniform1f("useColors",0);
+		enableTexCoords();
+		disableColors();
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
+		disableTexCoords();
 	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
-		currentShader.setUniform1f("useTexture",1);
-		currentShader.setUniform1f("useColors",0);
+		enableTexCoords();
+		disableColors();
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
+		disableTexCoords();
 	}
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
-		currentShader.setUniform1f("useTexture",1);
-		currentShader.setUniform1f("useColors",0);
+		enableTexCoords();
+		disableColors();
 		ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
 			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
+		disableTexCoords();
 	}
 }
 
@@ -966,7 +975,59 @@ void ofGLES2Renderer::endSmoothing(){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::setBlendMode(ofBlendMode blendMode){
-	// TODO :: needs ES2 code.
+	switch (blendMode){
+
+		case OF_BLENDMODE_ALPHA:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			break;
+		}
+
+		case OF_BLENDMODE_ADD:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			break;
+		}
+
+		case OF_BLENDMODE_MULTIPLY:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
+			break;
+		}
+
+		case OF_BLENDMODE_SCREEN:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+			break;
+		}
+
+		case OF_BLENDMODE_SUBTRACT:{
+			glEnable(GL_BLEND);
+		#ifndef TARGET_OPENGLES
+			glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+		#else
+			ofLog(OF_LOG_WARNING, "OF_BLENDMODE_SUBTRACT not currently supported on OpenGL/ES");
+		#endif
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			break;
+		}
+
+
+		default:
+			break;
+	}
 }
 
 //----------------------------------------------------------
@@ -1005,8 +1066,57 @@ ofShader & ofGLES2Renderer::getCurrentShader(){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setCurrentShader(ofShader & shader){
+void ofGLES2Renderer::setDefaultShader(ofShader & shader){
+	defaultShader = shader;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::enableTexCoords(){
+	currentShader.setUniform1f("useTexture",1);
+	texCoordsEnabled = true;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::enableColors(){
+	currentShader.setUniform1f("useColors",1);
+	colorsEnabled = true;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::enableNormals(){
+	normalsEnabled = true;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::disableTexCoords(){
+	currentShader.setUniform1f("useTexture",0);
+	texCoordsEnabled = false;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::disableColors(){
+	currentShader.setUniform1f("useColors",0);
+	colorsEnabled = false;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::disableNormals(){
+	normalsEnabled = false;
+}
+
+//----------------------------------------------------------
+void ofGLES2Renderer::beginCustomShader(ofShader & shader){
+	shader.setUniform1f("useTexture",texCoordsEnabled);
+	shader.setUniform1f("useColors",colorsEnabled);
+	shader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
+	shader.setUniformMatrix4f("modelViewMatrix",modelViewOrientation);
+	shader.setUniformMatrix4f("projectionMatrix",projection);
+	shader.setUniformMatrix4f("textureMatrix",textureMatrix);
 	currentShader = shader;
+}
+
+void ofGLES2Renderer::endCustomShader(){
+	beginCustomShader(defaultShader);
 }
 
 //----------------------------------------------------------
@@ -1018,8 +1128,8 @@ void ofGLES2Renderer::drawLine(float x1, float y1, float z1, float x2, float y2,
 	if (bSmoothHinted) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&linePoints[0].x,sizeof(ofVec3f));
-	currentShader.setUniform1f("useTexture",0);
-	currentShader.setUniform1f("useColors",0);
+	disableTexCoords();
+	disableColors();
     
 	glDrawArrays(GL_LINES, 0, 2);
     
@@ -1045,8 +1155,8 @@ void ofGLES2Renderer::drawRectangle(float x, float y, float z, float w, float h)
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&rectPoints[0].x,sizeof(ofVec3f));
-	currentShader.setUniform1f("useTexture",0);
-	currentShader.setUniform1f("useColors",0);
+	disableTexCoords();
+	disableColors();
 
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
     
@@ -1064,8 +1174,8 @@ void ofGLES2Renderer::drawTriangle(float x1, float y1, float z1, float x2, float
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&triPoints[0].x,sizeof(ofVec3f));
-	currentShader.setUniform1f("useTexture",0);
-	currentShader.setUniform1f("useColors",0);
+	disableTexCoords();
+	disableColors();
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
     
@@ -1084,8 +1194,8 @@ void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
-	currentShader.setUniform1f("useTexture",0);
-	currentShader.setUniform1f("useColors",0);
+	disableTexCoords();
+	disableColors();
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     
@@ -1111,8 +1221,8 @@ void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float 
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
 	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
-	currentShader.setUniform1f("useTexture",0);
-	currentShader.setUniform1f("useColors",0);
+	disableTexCoords();
+	disableColors();
     
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     
