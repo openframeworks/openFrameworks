@@ -140,12 +140,7 @@ class ofxXmlSettings{
 		int 	addValue(const string&  tag, double         value);
 		int 	addValue(const string&  tag, const string& 	value);
     
-        int     addTag( const string& tag) { return addTagByPath(tag); }
-
-		int		addTagByPath(const string& tag); //adds an empty tag at the current level
-        int 	addTagByPath(const string&  tag, int            value);
-        int 	addTagByPath(const string&  tag, double         value);
-        int 	addTagByPath(const string&  tag, const string& 	value);
+        int     addTag( const string& tag);
 
 
         // Attribute-related methods
@@ -194,16 +189,19 @@ class ofxXmlSettings{
 
 	protected:
     
-        Poco::XML::Document *document;
-        Element *currentElement;
-        Poco::XML::DOMParser parser;
+        //Poco::XML::Document *document;
+        //Element *currentElement;
+        ///Poco::XML::DOMParser parser;
 
         ofFile file;
     
-        Element* getElement(const string& tag, const int which, bool useFirstTagForIndex = false);
-        Element* getElement(const string& path);
+        ofXml currentElement;
+        ofXml documentElement;
     
-        int getSiblingCount(Element *element, const string tag);
+        ofXml getElement(const string& tag, const int which, bool useFirstTagForIndex = false);
+        ofXml getElement(const string& path);
+    
+        int getSiblingCount(ofXml element, const string tag);
 		int             level;
 
 		int writeTag(const string&  tag, const string& valueString, int which = 0);
