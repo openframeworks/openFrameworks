@@ -23,6 +23,7 @@ extern "C" {
 	#include <libudev.h>
 }
 
+#include <gst/gst.h>
 
 /* for ioctl query */
 #include <fcntl.h>
@@ -460,7 +461,7 @@ static void get_device_data (ofGstDevice &webcam_device, int desired_framerate)
 		g_object_get (G_OBJECT (src), "device-name", &name, (void*)NULL);
 
 		ofLog(OF_LOG_VERBOSE, "Device: %s (%s)\n", name==NULL?"":name, webcam_device.video_device.c_str());
-		GstPad     *pad  = gst_element_get_pad (src, "src");
+		GstPad     *pad  = gst_element_get_static_pad (src, "src");
 		GstCaps    *caps = gst_pad_get_caps (pad);
 		gst_object_unref (pad);
 
@@ -497,8 +498,13 @@ ofGstVideoGrabber::~ofGstVideoGrabber(){
 	close();
 }
 
-void ofGstVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+bool ofGstVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	return true;
+}
+
+ofPixelFormat ofGstVideoGrabber::getPixelFormat(){
+	return internalPixelFormat;
 }
 
 void ofGstVideoGrabber::setVerbose(bool bVerbose){

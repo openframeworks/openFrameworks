@@ -12,6 +12,7 @@ ofMesh::ofMesh(){
     useColors = true;
     useTextures = true;
     useNormals = true;
+    useIndices = true;
 
 }
 
@@ -202,7 +203,7 @@ void ofMesh::addTexCoords(const ofVec2f* tCoords, int amt){
 }
 
 //--------------------------------------------------------------
-ofIndexType ofMesh::getIndex(int i) const{
+ofIndexType ofMesh::getIndex(ofIndexType i) const{
 	return indices[i];
 }
 
@@ -233,7 +234,7 @@ void ofMesh::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType ind
 
 //REMOVERS
 //--------------------------------------------------------------
-void ofMesh::removeVertex(int index){
+void ofMesh::removeVertex(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove vertex out of range of this mesh. Taking no action.");
   }else{
@@ -243,7 +244,7 @@ void ofMesh::removeVertex(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeNormal(int index){
+void ofMesh::removeNormal(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove normal out of range of this mesh. Taking no action.");
   }else{
@@ -253,7 +254,7 @@ void ofMesh::removeNormal(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeColor(int index){
+void ofMesh::removeColor(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove color out of range of this mesh. Taking no action.");
   }else{
@@ -263,7 +264,7 @@ void ofMesh::removeColor(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeTexCoord(int index){
+void ofMesh::removeTexCoord(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove texCoord out of range of this mesh. Taking no action.");
   }else{
@@ -273,7 +274,7 @@ void ofMesh::removeTexCoord(int index){
 }
 
 //--------------------------------------------------------------
-void ofMesh::removeIndex(int index){
+void ofMesh::removeIndex(ofIndexType index){
   if(index >= vertices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove index out of range of this mesh. Taking no action.");
   }else{
@@ -290,22 +291,22 @@ ofPrimitiveMode ofMesh::getMode() const{
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getVertex(int i) const{
+ofVec3f ofMesh::getVertex(ofIndexType i) const{
 	return vertices[i];
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getNormal(int i) const{
+ofVec3f ofMesh::getNormal(ofIndexType i) const{
 	return normals[i];
 }
 
 //--------------------------------------------------------------
-ofFloatColor ofMesh::getColor(int i) const{
+ofFloatColor ofMesh::getColor(ofIndexType i) const{
 	return colors[i];
 }
 
 //--------------------------------------------------------------
-ofVec2f ofMesh::getTexCoord(int i) const{
+ofVec2f ofMesh::getTexCoord(ofIndexType i) const{
 	return texCoords[i];
 }
 
@@ -549,33 +550,33 @@ void ofMesh::setMode(ofPrimitiveMode m){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setVertex(int index, const ofVec3f& v){
+void ofMesh::setVertex(ofIndexType index, const ofVec3f& v){
 	vertices[index] = v;
 	bVertsChanged = true;
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setNormal(int index, const ofVec3f& n){
+void ofMesh::setNormal(ofIndexType index, const ofVec3f& n){
 	normals[index] = n;
 	bNormalsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setColor(int index, const ofFloatColor& c){
+void ofMesh::setColor(ofIndexType index, const ofFloatColor& c){
 	colors[index] = c;
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setTexCoord(int index, const ofVec2f& t){
+void ofMesh::setTexCoord(ofIndexType index, const ofVec2f& t){
 	texCoords[index] = t;
 	bTexCoordsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::setIndex(int i, ofIndexType  val){
-	indices[i] = val;
+void ofMesh::setIndex(ofIndexType index, ofIndexType  val){
+	indices[index] = val;
 	bIndicesChanged = true;
 }
 
@@ -667,6 +668,11 @@ void ofMesh::enableNormals(){
 }
 
 //--------------------------------------------------------------
+void ofMesh::enableIndices(){
+	useIndices = true;
+}
+
+//--------------------------------------------------------------
 void ofMesh::disableColors(){
     useColors = false;
 }
@@ -682,6 +688,11 @@ void ofMesh::disableNormals(){
 }
 
 //--------------------------------------------------------------
+void ofMesh::disableIndices(){
+	useIndices = false;
+}
+
+//--------------------------------------------------------------
 bool ofMesh::usingColors(){
     return useColors;
 }
@@ -694,6 +705,11 @@ bool ofMesh::usingTextures(){
 //--------------------------------------------------------------
 bool ofMesh::usingNormals(){
     return useNormals;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingIndices(){
+    return useIndices;
 }
 
 

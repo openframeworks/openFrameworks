@@ -15,6 +15,11 @@
 	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_QTKIT
+	#include "ofQTKitPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
+#endif
+
 #ifdef OF_VIDEO_PLAYER_IPHONE
 	#include "ofiPhoneVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer
@@ -32,12 +37,15 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		bool 				loadMovie(string name);
 	    string				getMoviePath();
-		void				setPixelFormat(ofPixelFormat pixelFormat);
+
+		bool				setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat		getPixelFormat(); 
+		
 		void 				closeMovie();
-		void 				close();
+		void 				close();		
 
 		void				update();
-		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead", void idleMovie());
+		OF_DEPRECATED_MSG("Use ofVideoPlayer::update() instead.", void idleMovie());
 		void 				play();
 		void 				stop();
 
@@ -52,7 +60,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				setPosition(float pct);
 		void 				setVolume(float volume); // 0..1
 		void 				setLoopState(ofLoopType state);
-		int					getLoopState();
+		ofLoopType			getLoopState();
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
