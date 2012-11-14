@@ -798,7 +798,7 @@ void ofMesh::load(string path){
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b")==0 || line.find("property float a")==0)){
+		if(state==VertexDef && (line.find("property uchar red")==0 || line.find("property uchar green")==0 || line.find("property uchar blue")==0 || line.find("property uchar alpha")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
 			continue;
@@ -857,11 +857,12 @@ void ofMesh::load(string path){
 
 			if(colorCompsFound>0){
 				ofColor c;
-				sline >> c.r;
-				sline >> c.g;
-				sline >> c.b;
-				if(colorCompsFound>3) sline >> c.a;
-				data.getColors()[currentVertex] = c;
+				int r, g, b, a = 255;
+				sline >> r;
+				sline >> g;
+				sline >> b;
+				if(colorCompsFound>3) sline >> a;
+				data.getColors()[currentVertex] = ofColor(r, g, b, a);
 			}
 
 			if(texCoordsFound>0){
