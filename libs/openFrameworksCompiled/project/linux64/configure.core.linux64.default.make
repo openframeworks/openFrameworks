@@ -43,7 +43,7 @@ HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 #   the DEFINES to determine what source files to include or what default player 
 #   to use.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_DEFINES =
@@ -60,26 +60,28 @@ endif
 
 ################################################################################
 # PLATFORM REQUIRED ADDON
-#   This is a list of addons required for this platform.  This list is used to EXCLUDE
-#   addon source files when compiling projects, while INCLUDING their header files.
-#   During core library compilation, this is used to include required addon header files
-#   as needed within the core. 
+#   This is a list of addons required for this platform.  This list is used to 
+#   EXCLUDE addon source files when compiling projects, while INCLUDING their 
+#   header files. During core library compilation, this is used to include 
+#   required addon header files as needed within the core. 
 #
-#   For instance, if you are compiling for Android, you would add ofxAndroid here.
-#   If you are compiling for Raspberry Pi, you would add ofxRaspberryPi here.
+#   For instance, if you are compiling for Android, you would add ofxAndroid 
+#   here. If you are compiling for Raspberry Pi, you would add ofxRaspberryPi 
+#   here.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_REQUIRED_ADDON =
 
 ################################################################################
 # PLATFORM CFLAGS
-#   This is a list of fully qualified CFLAGS required when compiling for this platform.
-#   These flags will always be added when compiling a project or the core library.  These
-#   Flags are presented to the compiler AFTER the PLATFORM_OPTIMIZATION_CFLAGS below. 
+#   This is a list of fully qualified CFLAGS required when compiling for this 
+#   platform. These flags will always be added when compiling a project or the 
+#   core library.  These flags are presented to the compiler AFTER the 
+#   PLATFORM_OPTIMIZATION_CFLAGS below. 
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
@@ -99,15 +101,17 @@ PLATFORM_CFLAGS += -Os
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
-#   These are lists of CFLAGS that are target-specific.  While any flags could be 
-#   conditionally added, they are usually limited to optimization flags.  These flags are
-#   added BEFORE the PLATFORM_CFLAGS.
+#   These are lists of CFLAGS that are target-specific.  While any flags could 
+#   be conditionally added, they are usually limited to optimization flags.  
+#   These flags are added BEFORE the PLATFORM_CFLAGS.
 #
-#    PLATFORM_OPTIMIZATION_CFLAGS_RELEASE flags are only applied to RELEASE targets.
+#   PLATFORM_OPTIMIZATION_CFLAGS_RELEASE flags are only applied to 
+#      RELEASE targets.
 #
-#    PLATFORM_OPTIMIZATION_CFLAGS_DEBUG flags are only applied to DEBUG targets.
+#   PLATFORM_OPTIMIZATION_CFLAGS_DEBUG flags are only applied to 
+#      DEBUG targets.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
@@ -118,16 +122,18 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
-#   During compilation, these makefiles will generate lists of sources, headers and 
-#   third party libraries to be compiled and linked into a program or core library.
-#   The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file paths that will be used
-#   to exclude matching paths and files during list generation.
+#   During compilation, these makefiles will generate lists of sources, headers 
+#   and third party libraries to be compiled and linked into a program or core 
+#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
+#   paths that will be used to exclude matching paths and files during list 
+#   generation.
 #
-#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete string
-#   unless teh user adds a wildcard (%) operator to match subdirectories.  GNU make only
-#   allows one wildcard for matching.  The second wildcard (%) is treated literally.
+#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
+#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   GNU make only allows one wildcard for matching.  The second wildcard (%) is
+#   treated literally.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_CORE_EXCLUSIONS =
@@ -159,11 +165,12 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/lib
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
 #   These are header search paths that are platform specific and are specified 
-#   using fully-qualified paths.  The include flag (i.e. -I) is prefixed automatically.
-#   These are usually not required, but may be required by some experimental platforms
-#   such as the raspberry pi or other other embedded architectures.
+#   using fully-qualified paths.  The include flag (i.e. -I) is prefixed 
+#   automatically. These are usually not required, but may be required by some 
+#   experimental platforms such as the raspberry pi or other other embedded 
+#   architectures.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_HEADER_SEARCH_PATHS =
@@ -173,17 +180,18 @@ PLATFORM_HEADER_SEARCH_PATHS =
 #   These are library names/paths that are platform specific and are specified 
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
-#   PLATFORM_LIBRARIES are libraries that can be found in the library search paths.
+#   PLATFORM_LIBRARIES are libraries that can be found in the library search 
+#       paths.
 #   PLATFORM_STATIC_LIBRARIES is a list of required static libraries.
 #   PLATFORM_SHARED_LIBRARIES is a list of required shared libraries.
-#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are under system
-#       control and are easily accesible via the package configuration utility
-#       (i.e. pkg-config)
+#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are 
+#       under system control and are easily accesible via the package 
+#       configuration utility (i.e. pkg-config)
 #
 #   See the helpfile for the -l flag here for more information:
 #       http://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_LIBRARIES =
@@ -225,13 +233,14 @@ endif
 ################################################################################
 # PLATFORM LIBRARY SEARCH PATHS
 #   These are library search paths that are platform specific and are specified 
-#   using fully-qualified paths.  The lib search flag (i.e. -L) is prefixed automatically.
-#   The -L paths are used to find libraries defined above with the -l flag.
+#   using fully-qualified paths.  The lib search flag (i.e. -L) is prefixed 
+#   automatically. The -L paths are used to find libraries defined above with 
+#   the -l flag.
 #
 #   See the the following link for more information on the -L flag:
 #       http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html 
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_LIBRARY_SEARCH_PATHS =
@@ -241,29 +250,29 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #   These are a list of platform frameworks.  
 #   These are used exclusively with Darwin/OSX.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-#PLATFORM_FRAMEWORK =
+#PLATFORM_FRAMEWORKS =
 
 ################################################################################
 # PLATFORM FRAMEWORK SEARCH PATHS
 #   These are a list of platform framework search paths.  
 #   These are used exclusively with Darwin/OSX.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-#PLATFORM_FRAMEWORK_SEARCH_PATHS =
+#PLATFORM_FRAMEWORKS_SEARCH_PATHS =
 
 ################################################################################
 # LOW LEVEL CONFIGURATION BELOW
-#   The following sections should only rarely be modified.  They are meant for developers
-#   why need fine control when, for instance, creating a platform specific makefile for
-#   a new openFrameworks platform, such as raspberry pi. 
+#   The following sections should only rarely be modified.  They are meant for 
+#   developers who need fine control when, for instance, creating a platform 
+#   specific makefile for a new openFrameworks platform, such as raspberry pi. 
 ################################################################################
 
 ################################################################################
 # PLATFORM CONFIGURATIONS
-#   These will override the architecture vars generated by configure.platform.make
+# These will override the architecture vars generated by configure.platform.make
 ################################################################################
 #PLATFORM_ARCH =
 #PLATFORM_OS =
