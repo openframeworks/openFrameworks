@@ -44,16 +44,16 @@
 #endif
 
 static bool enableDataPath = true;
-static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-static unsigned long startTimeMicros = ofGetSystemTimeMicros();
+static unsigned long long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+static unsigned long long startTimeMicros = ofGetSystemTimeMicros();
 
 //--------------------------------------
-unsigned long ofGetElapsedTimeMillis(){
+unsigned long long ofGetElapsedTimeMillis(){
 	return ofGetSystemTime() - startTime;
 }
 
 //--------------------------------------
-unsigned long ofGetElapsedTimeMicros(){
+unsigned long long ofGetElapsedTimeMicros(){
 	return ofGetSystemTimeMicros() - startTimeMicros;
 }
 
@@ -75,11 +75,13 @@ void ofResetElapsedTimeCounter(){
  * when subtracting an initial start time, unless the total time exceeds
  * 32-bit, where the GLUT API return value is also overflowed.
  */
-unsigned long ofGetSystemTime( ) {
+unsigned long long ofGetSystemTime( ) {
 	#ifndef TARGET_WIN32
 		struct timeval now;
 		gettimeofday( &now, NULL );
-		return now.tv_usec/1000 + now.tv_sec*1000;
+		return 
+			(unsigned long long) now.tv_usec/1000 + 
+			(unsigned long long) now.tv_sec*1000;
 	#else
 		#if defined(_WIN32_WCE)
 			return GetTickCount();
@@ -89,11 +91,13 @@ unsigned long ofGetSystemTime( ) {
 	#endif
 }
 
-unsigned long ofGetSystemTimeMicros( ) {
+unsigned long long ofGetSystemTimeMicros( ) {
 	#ifndef TARGET_WIN32
 		struct timeval now;
 		gettimeofday( &now, NULL );
-		return now.tv_usec + now.tv_sec*1000000;
+		return 
+			(unsigned long long) now.tv_usec +
+			(unsigned long long) now.tv_sec*1000000;
 	#else
 		#if defined(_WIN32_WCE)
 			return GetTickCount()*1000;
