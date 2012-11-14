@@ -1,24 +1,26 @@
-##########################################################################################
-#   If they haven't already been defined, this file will generate the following variables 
+################################################################################
+#   If they haven't already been defined, this file will generate the following 
+#   variables 
 #
 #   $(PLATFORM_OS) (e.g. Linux, Darwin, etc.).
 #   $(PLATFORM_ARCH) (e.g. armv6l, x86_64, i386, etc.).
 #   $(PLATFORM_LIB_SUBPATH) (e.g. linuxarmv6l, osx, linux64, linux, etc)
-##########################################################################################
+################################################################################
+#   
 
-# if it is not already defined, determine this platform's operating system via uname -s
+# if not defined, determine this platform's operating system via uname -s
 ifndef PLATFORM_OS 
     # determine from the uname if not defined manually
     PLATFORM_OS=$(shell uname -s)
 endif
 
-# if it is not already defined, determine this platform's architecture via uname -m
+# if not defined, determine this platform's architecture via uname -m
 ifndef PLATFORM_ARCH
     # determine from the uname
     PLATFORM_ARCH=$(shell uname -m)
 endif
 
-# if not defined yet, construct the default PLATFORM_LIB_SUBPATH
+# if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
     # determine from the arch
     ifeq ($(PLATFORM_OS),Linux)
@@ -58,7 +60,7 @@ endif
 
 # if desired, print the variables
 ifdef MAKEFILE_DEBUG
-    $(info =============================configure.platform.make==========================)
+    $(info ===================configure.platform.make==========================)
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
     $(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
