@@ -1,17 +1,18 @@
 # TODO: add checks here for variables, flags etc.
 
-##########################################################################################
+################################################################################
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-    $(info =============================compile.core.make================================)
+    $(info ===================compile.core.make================================)
 endif
 
-##########################################################################################
+################################################################################
 # CFLAGS
-##########################################################################################
+################################################################################
 
 # clean it
 ALL_CFLAGS =
+
 # add the core flags (platform flags are aggregated in here)
 ALL_CFLAGS += $(OF_CORE_BASE_CFLAGS)
 # add the defines
@@ -21,16 +22,16 @@ ALL_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
 
-##########################################################################################
+################################################################################
 # COMPILER OPTIMIZATIONS and TARGET GENERATION
-##########################################################################################
-
-# $(TARGET_NAME) is the name of the target defined for the use of the CLEANTARGET target.
-# $(TARGET) is the name of the library that will be created
-
-# if TARGET has not already been defined in a platform-based make file, we use this
-# selection system to define our TARGET.  Platform specific targets should define the 
-# following and respect the "CLEANTARGET system below."
+################################################################################
+#
+# $(TARGET_NAME) is the name of the target defined for the use of the 
+# CLEANTARGET target. $(TARGET) is the name of the library that will be created.
+#
+# If TARGET has not already been defined in a platform-based make file, we use 
+# this selection system to define our TARGET.  Platform specific targets should
+# define the following and respect the "CLEANTARGET system below."
 #  
 #  $(TARGET)
 #  $(TARGET_NAME)
@@ -46,15 +47,15 @@ ifndef TARGET
 	    TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 	    TARGET_NAME = 
 
-	# check to see if any part of our target includes teh String "Debug"
+	# check to see if any part of our target includes the String "Debug"
 	# this will happen if we call Debug OR CleanDebug
 	else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
 	    TARGET_NAME = Debug
 	    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 
-	# check to see if any part of our target includes teh String "Debug"
-	# this will happen if we call Debug OR CleanRelease
+	# check to see if any part of our target includes the String "Release"
+	# this will happen if we call Release OR CleanRelease
 	else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
 	    TARGET_NAME = Release
@@ -72,9 +73,14 @@ ifdef TARGET_NAME
 	CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 endif
 
-##########################################################################################
+################################################################################
 # OBJECT AND DEPENDENCY FILES DEFINITIONS
-##########################################################################################
+#	Object file paths are generated here (as opposed to with the rest of the 
+#   flags) because we want to place them in target-specific folders. We
+#   determine targets above. We –could– determine the target info earlier if we
+#   wanted to.  It's here because that's approximately where it was in the 
+#   legacy makefiles.
+################################################################################
 
 # define the location for our intermediate object files
 OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
@@ -83,19 +89,17 @@ OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
 OF_CORE_OBJ_OUPUT_PATH =$(OF_CORE_OBJ_BASE_PATH)/$(TARGET_NAME)
 
 # create a named list of dependency files
-# 1. create a list of .d dependency files based on the current list of OF_CORE_SOURCE_FILES 
-#	$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
+# 1. create a list of .d dependency files based on the current list of 
+#  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
-#	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-
+#  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
 OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
 
 # create a named list of object files
-# 1. create a list of object files based on the current list of OF_CORE_SOURCE_FILES
-#	$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
+# 1. create a list of object files based on the current list of
+#   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-
 OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
 
 ifdef MAKEFILE_DEBUG
@@ -106,18 +110,20 @@ ifdef MAKEFILE_DEBUG
     $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
 endif
 
-##########################################################################################
-# While most MAKE targets respond to lists of filenames, .PHONY targets are targets that
-# are "recipe" only -- that is recipes that respond to specific requests, not filenames
-# or lists of filenames.  .PNONY targets are used to avoid conflict with files of the same name
-# and to improve performance.
+################################################################################
+# While most MAKE targets respond to lists of filenames, .PHONY targets are 
+# targets that are "recipe" only -- that is recipes that respond to specific
+# requests, not filenames or lists of filenames.  .PNONY targets are used to 
+# avoid conflict with files of the same name and to improve performance.
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-# Release will pass the library name (i.e. ... libopenFrameworks.a) down the the @(TARGET) target
-Release: $(TARGET) 
+# Release will pass the library name (i.e. ... libopenFrameworks.a) 
+# down the the @(TARGET) target
+Release: $(TARGET) after
 
-# Release will pass the library name (i.e. ... libopenFrameworksDebug.a) down the the @(TARGET) target
-Debug: $(TARGET) 
+# Debug will pass the library name (i.e. ... libopenFrameworksDebug.a)
+# down the the @(TARGET) target
+Debug: $(TARGET) after
 
 # all will first run the debug target, then the release target
 all: 
@@ -131,7 +137,8 @@ $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp
 	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 # this target does the linking of the library
-# $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the $(OF_CORE_OBJ_FILES) must be processed first  
+# $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
+# $(OF_CORE_OBJ_FILES) must be processed first  
 $(TARGET) : $(OF_CORE_OBJ_FILES) 
 	echo "Creating library " $(TARGET)
 	mkdir -p $(@D)
@@ -152,7 +159,9 @@ $(CLEANTARGET):
 	@echo "Removing " $(TARGET)
 	rm -f $(TARGET)
 
-#.PHONY: help
+after: $(TARGET)
+	@echo "Done!"
+
 help:
 	@echo 
 	@echo openFrameworks compiled library makefile
