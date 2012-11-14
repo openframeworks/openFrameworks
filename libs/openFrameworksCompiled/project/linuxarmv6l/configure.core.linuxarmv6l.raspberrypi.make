@@ -155,7 +155,10 @@ PLATFORM_CORE_EXCLUSIONS =
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/gl/ofFbo.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 
 # third party
 
@@ -208,6 +211,7 @@ PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
+PLATFORM_LIBRARIES += freeimage
 
 #openframeworks core third party
 # these can be added if they are part of the core, but are 
@@ -226,6 +230,10 @@ PLATFORM_SHARED_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-0.10
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-0.10
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-0.10
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-0.10
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
