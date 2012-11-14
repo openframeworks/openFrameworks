@@ -9,7 +9,7 @@ class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 
-class ofGLES2Renderer: public ofBaseRenderer{
+class ofGLES2Renderer: public ofBaseGLRenderer{
 public:
 	ofGLES2Renderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
 	~ofGLES2Renderer();
@@ -133,9 +133,11 @@ public:
 	ofShader & getCurrentShader();
 	void setDefaultShader(ofShader & shader);
 
+	void enableVertices();
 	void enableTexCoords();
 	void enableColors();
 	void enableNormals();
+	void disableVertices();
 	void disableTexCoords();
 	void disableColors();
 	void disableNormals();

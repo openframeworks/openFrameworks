@@ -1071,30 +1071,44 @@ void ofGLES2Renderer::setDefaultShader(ofShader & shader){
 }
 
 //----------------------------------------------------------
+void ofGLES2Renderer::enableVertices(){
+	glEnableVertexAttribArray(getAttrLocationPosition());
+}
+
+//----------------------------------------------------------
 void ofGLES2Renderer::enableTexCoords(){
+	glEnableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",1);
 	texCoordsEnabled = true;
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::enableColors(){
+	glEnableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",1);
 	colorsEnabled = true;
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::enableNormals(){
+	glEnableVertexAttribArray(getAttrLocationNormal());
 	normalsEnabled = true;
+}
+
+void ofGLES2Renderer::disableVertices(){
+	glDisableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::disableTexCoords(){
+	glDisableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",0);
 	texCoordsEnabled = false;
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::disableColors(){
+	glDisableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",0);
 	colorsEnabled = false;
 }
