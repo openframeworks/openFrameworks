@@ -73,8 +73,8 @@ PLATFORM_REQUIRED_ADDON =
 ##########################################################################################
 # PLATFORM CFLAGS
 #   This is a list of fully qualified CFLAGS required when compiling for this platform.
-#   These flags will alwasy be added when compiling a project or the core library.  These
-#   Flags are presented to the compile BEFORE the PLATFORM_OPTIMIZATION_CFLAGS below. 
+#   These flags will always be added when compiling a project or the core library.  These
+#   Flags are presented to the compiler AFTER the PLATFORM_OPTIMIZATION_CFLAGS below. 
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
@@ -98,7 +98,7 @@ PLATFORM_CFLAGS += -Os
 # PLATFORM OPTIMIZATION CFLAGS
 #   These are lists of CFLAGS that are target-specific.  While any flags could be 
 #   conditionally added, they are usually limited to optimization flags.  These flags are
-#   added AFTER the PLATFORM_CFLAGS.
+#   added BEFORE the PLATFORM_CFLAGS.
 #
 #    PLATFORM_OPTIMIZATION_CFLAGS_RELEASE flags are only applied to RELEASE targets.
 #
@@ -144,7 +144,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 
-# third party static libs
+# third party static libs (this may not matter due to exclusions in poco's libsorder.make)
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a

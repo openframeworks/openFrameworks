@@ -1,5 +1,5 @@
 ifdef MAKEFILE_DEBUG
-    $(info =============================makefile.configure.project.addons================)
+    $(info ===================makefile.configure.project.addons================)
 endif
 
 # check to make sure OF_ROOT is defined
@@ -16,116 +16,196 @@ ifndef PLATFORM_LIB_SUBPATH
     $(error PLATFORM_LIB_SUBPATH is not defined)
 endif
 
-##########################################################################################
-## if platform addon exclusions are defined in the platform specific build files, add 'em
-ADDON_EXCLUSIONS += $(PLATFORM_RROJECT_ADDON_EXCLUSIONS)
-##########################################################################################
+################################################################################
+# if platform addon exclusions are defined in the platform specific build files, 
+# add them because they have already been added into the core. 
+ADDON_EXCLUSIONS = $(PLATFORM_REQUIRED_ADDON);
 
-ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
-    # get a list of every addon in the addons directory
-    EVERY_ADDON = $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
+################################################################################
+# for reference, please see the following:
+# https://github.com/benben/ofxAddonTemplate
 
-    # get a list of all addons in our directory
-    ADDONS_ALL = $(strip $(shell cat addons.make))
+ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT)/*.make)),addons.make)
+    ############################################################################
+    # VALIDATE REQUESTED ADDONS
+    ############################################################################
 
-    # compare our project addons list to the available addons and create a list of valid
-    VALID_ADDONS = $(filter $(ADDONS_ALL),$(EVERY_ADDON))
+    # create a list of every addon installed in the addons directory
+    ALL_INSTALLED_ADDONS = $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
 
-    # make a list of invalid addons
-    INVALID_ADDONS = $(filter-out $(VALID_ADDONS),$(ADDONS_ALL))
+    # get a list of all addons listed in addons.make file
+    # sed 's/[ ]*#.*//g' strips all comments beginning with #
+    # (to escape # in make, you must use \#)
+    # sed '/^$/d' removes all empty lines
+    # (to escape $ in make, you must use $$)
+    REQUESTED_PROJECT_ADDONS = $(shell cat $(PROJECT_ROOT)/addons.make | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
 
+    # create a list requested addons that are actually installed on the system
+    VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
 
-    # filter out all addon exclusions, from the platform and invalid
-    ADDONS = $(filter-out $(ADDON_EXCLUSIONS) $(INVALID_ADDONS),$(ADDONS_ALL))
+    # create a list of the invalid addons
+    INVALID_PROJECT_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
-    # if any invalid addons are found, throw an info warning, but don't cause an error
-    ifneq (,$(INVALID_ADDONS))
-        $(info ---addons.make---)
-        $(info ---Invalid Addons Found---) 
-        $(foreach v, $(INVALID_ADDONS),$(info $(v)))
+    # if any invalid addons are found, throw a warning, but don't cause an error
+    ifneq ($(INVALID_PROJECT_ADDONS),)
+        $(warning The following unknown addons will be ignored:)
+        $(foreach v, $(INVALID_PROJECT_ADDONS),$(info $(v)))
+        # TODO: download and launch requested addons from ofxaddons?
     endif
 
+    # create a list of addons, excluding invalid and platform-specific addons
+    PROJECT_ADDONS = $(filter-out $(ADDON_EXCLUSIONS) $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+
+    ############################################################################
+    # PROCESS PROJECT ADDONS IF AVAILABLE
+    ############################################################################
+
     # if the addons list is NOT empty ...
-    ifneq ($(strip $(ADDONS)),)
-        # construct the relative addon source directories
-        ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
-        # construct the relative addon lib directories
-        ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
-        # construct the full path of the addon source directories
-        ADDONS_DIRS = $(addprefix $(OF_ADDONS_PATH)/, $(ADDONS_REL_DIRS) )
+    ifneq ($(PROJECT_ADDONS),)
 
-        # iterate through and throw a warning if the addon directory is not valid
-        #$(foreach v, $(ADDONS_DIRS),ifneq(,$(info $(shell if [ ! -d $(v) ]; then echo 0; fi ))))
+        ########################################################################
+        # PROCESS VALID ADDONS IF AVAILABLE
+        ########################################################################
 
-        # construct the full path of the addon lib directories
-        ADDONS_LIBS_DIRS = $(addprefix $(OF_ADDONS_PATH)/, $(ADDONS_LIBS_REL_DIRS) )
+        ########################################################################
+        # ADDON SOURCE FILES ###################################################
+        # construct the full paths of the addon source directories 
+        # (e.g. https://github.com/benben/ofxAddonTemplate/tree/master/src)
+        PROJECT_ADDONS_SOURCE_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(addsuffix /src, $(PROJECT_ADDONS)) )
 
-        # construct the full path of the addon platform-specific library directories
-        ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(PLATFORM_LIB_SUBPATH), $(ADDONS_LIBS_DIRS) )
+        # create a list of addon source files
+        # 2> /dev/null consumes file not found errors from find searches
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        PROJECT_ADDONS_OFX_SOURCES = $(shell find $(PROJECT_ADDONS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" )
 
+        ########################################################################
+        # ADDON'S LIBS' SOURCE FILES ###########################################
+        # construct the full paths of the addon's libs' source directories 
+        # (e.g. https://github.com/benben/ofxAddonTemplate/tree/master/libs/necessaryLib/src)
+        PROJECT_ADDONS_LIBS_SOURCE_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(addsuffix /libs/*/src, $(PROJECT_ADDONS)) )
 
-        #### THE FOLLOWING TWO LINES SEEM TO DUPLICATE SOME STUFF
-        # begin constructing a lis of addon includes (no cflags [-I] yet)
-        # include the each of the addon base directories
-        #ADDONS_INCLUDES =  $(ADDONS_DIRS)
+        # construct the full paths of the addon's libs' source directories to be included
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        PROJECT_ADDONS_LIBS_SOURCE_INCLUDES = $(shell find $(PROJECT_ADDONS_LIBS_SOURCE_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )
+
+        # create a list of addon's libs' source files
+        # 2> /dev/null consumes file not found errors from find searches
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        PROJECT_ADDONS_LIBS_SOURCES = $(shell find $(PROJECT_ADDONS_LIBS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]"  )
+
+        ########################################################################
+        # ADDON'S LIBS' INCLUDES ###############################################
+        # construct the full paths of the addon's include directories 
+        # TODO: do we need to prevent recursive searching for includes?
+        # (e.g. https://github.com/benben/ofxAddonTemplate/tree/master/libs/necessaryLib/include)
+        PROJECT_ADDONS_LIBS_INCLUDES_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(addsuffix /libs/*/include, $(PROJECT_ADDONS)) )
         
-        # include the each of the addon lib directories (sometimes the lib is not compiled)
-        #ADDONS_INCLUDES += $(ADDONS_LIBS_DIRS)
-        
-        # include the each of the addon base directories recursively
-        ADDONS_INCLUDES += $(shell find $(ADDONS_DIRS) -type d 2> /dev/null)
-        # include the each of the addon libs directories recursively
-        ADDONS_INCLUDES += $(shell find $(ADDONS_LIBS_DIRS) -type d 2> /dev/null)
-        
-        # create the fully qualified list of addon CFLAG include (i.e. -I../../myfolder)
-        #ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
-        # do this later
+        # search through all of the include's sub folders
+        # 2> /dev/null consumes file not found errors from find searches
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        PROJECT_ADDONS_LIBS_INCLUDES = $(shell find $(PROJECT_ADDONS_LIBS_INCLUDES_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]"  )
 
-        # if the addons folder includes a libsorder.make file, then order the library's 
-        # static libs according to the list.  this is important because some libraries
-        # require a specific linking order (e.g. opencv).
+        ########################################################################
+        # ADDON'S PLATFORM SPECIFIC STATIC LIBS ################################
+        # construct the full paths of the addon's platform specific static libs 
+        # (e.g. https://github.com/benben/ofxAddonTemplate/tree/master/libs/necessaryLib/lib/linux)
+        PROJECT_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(addsuffix /libs/*/lib/$(PLATFORM_LIB_SUBPATH), $(PROJECT_ADDONS)) )
+ 
+        # create a list of all addon platform libraries
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        ALL_PLATFORM_LIBS = $(shell find $(PROJECT_ADDONS_LIBS_PLATFORM_LIB_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )
 
-        # TODO: if ANY of the addons have a libsorder.make file, then ALL of the 
-        # addons will be taken through this order lib section.  Perhaps 
-        # should use a foreach?
-        ifeq ($(findstring libsorder.make,$(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null)),libsorder.make)
-            ADDONS_LIBS_W_ORDER = $(shell cat $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null))
-            EXCLUDE_LIBS_FILTER = $(addprefix %,$(addsuffix .a,$(ADDONS_LIBS_W_ORDER)))
-            ADDONS_LIBS_STATICS = $(filter-out $(EXCLUDE_LIBS_FILTER), $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a))
-            ADDONS_LIBS_STATICS += $(addprefix $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g),$(ADDONS_LIBS_W_ORDER))
-        else
-            # if no libsorder file is included, just add them based on their filesystem order
-            ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null)
-        endif
+        # create a list of all platform lib directories that have libsorder.make
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        LIBSORDER_MAKE_FILES = $(shell find $(PROJECT_ADDONS_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make 2> /dev/null | grep -v "/\.[^\.]" )
 
-        # make a list of all shared libraries (ending with *.so)
-        ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
-        
+        # create a list of all of the platform libs that require ordering
+        PLATFORM_LIBS_THAT_NEED_ORDER = $(subst /lib/$(PLATFORM_LIB_SUBPATH)/libsorder.make,,$(LIBSORDER_MAKE_FILES))
+
+        # create a list of all of the platform libs that DO NOT require ordering
+        # by removing those that do from the list of all platform libraries
+        PLATFORM_LIBS_THAT_DONT_NEED_ORDER := $(filter-out $(PLATFORM_LIBS_THAT_NEED_ORDER),$(subst /lib/$(PLATFORM_LIB_SUBPATH),,$(ALL_PLATFORM_LIBS)))
+
+        # create a list of all static libs in the platform lib dir, using only 
+        # the static libs that don't need order
+        # 2> /dev/null consumes file not found errors from find searches
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        # TODO: create a varaible for platform specific static lib suffix
+        PROJECT_ADDONS_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(PLATFORM_LIB_SUBPATH),$(PLATFORM_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
+
+        # create a list of all static lib files for the libs that need order
+        # NOTE. this is the most unintuitive line of make script magic in here
+        # How does it work?
+        # 1. Explode each libsorder.make file using cat.  
+        # 2. For each lib listed in the libsorder.make file, look back at the
+        #    _original_ path for the libsorder.make file itself, and construct 
+        #    a path for each of the ordered static libs.  Thus, each exploded 
+        #    static lib will get its path from the path of the libsorder.make 
+        #    in which it was listed.
+        # 3. Add all of them to the ordered files.
+        #    sed 's/[ ]*#.*//g' strips all comments beginning with #
+        #    (to escape # in make, you must use \#)
+        #    sed '/^$/d' removes all empty lines
+        #    (to escape $ in make, you must use $$)
+        PROJECT_ADDONS_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
+
+        ########################################################################
+        # ADDON'S PLATFORM SPECIFIC SHARED LIBS ################################
+        # 2> /dev/null consumes file not found errors from find searches
+        # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+        # TODO: create a varaible for platform specific shared lib suffix
+        # TODO: do we need to create an equiv to libsorder.make for shared libs?
+        #PROJECT_ADDONS_LIBS_PLATFORM_LIBS_SHARED = $(shell find $(PROJECT_ADDONS_LIBS_PLATFORM_LIB_PATHS) -name *.so 2> /dev/null | grep -v "/\.[^\.]")
+        #TODO: what to do with shared libs?
+
+################################################################################
+# GATHER ALL LISTS #############################################################
+################################################################################
+
+        ########################################################################
+        # ADDON'S SOURCES ######################################################
         # create a master list of both static and shared libraries
-        ADDONSLIBS = $(ADDONS_LIBS_STATICS)
-        ADDONSLIBS += $(ADDONS_LIBS_SHARED)
+        # Note: add libs sources first
+        PROJECT_ADDONS_SOURCE_FILES := $(PROJECT_ADDONS_LIBS_SOURCES)
+        PROJECT_ADDONS_SOURCE_FILES += $(PROJECT_ADDONS_OFX_SOURCES)
 
-        # make a list of all source files in the addons directory (recursively)
-        ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c" 2> /dev/null)
-        # add any source files that are in the libs directory (sometimes these are not compiled)
-        ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" 2>/dev/null)
+        ########################################################################
+        # ADDON'S INCLUDES #####################################################
+        # create a master list of both static and shared libraries
+        # Note: add libs sources first
 
-        # generate the object file list, for later use with the make
-        ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))))
+        PROJECT_ADDONS_INCLUDES := $(PROJECT_ADDONS_LIBS_SOURCE_INCLUDES)
+        PROJECT_ADDONS_INCLUDES += $(PROJECT_ADDONS_LIBS_INCLUDES)
+        PROJECT_ADDONS_INCLUDES += $(PROJECT_ADDONS_SOURCE_PATHS)
 
-        ##########################
-        ADDONS_INCLUDES_CFLAGS=$(addprefix -I,$(ADDONS_INCLUDES))
+        ########################################################################
+        # ADDON'S PLATFORM SPECIFIC LIBS #######################################
+        # create a master list of both static and shared libraries
+        PROJECT_ADDONS_LIBS := $(PROJECT_ADDONS_LIBS_PLATFORM_LIBS_STATICS)
+        #PROJECT_ADDONS_LIBS += $(PROJECT_ADDONS_LIBS_PLATFORM_LIBS_SHARED)
+        #TODO: what to do with shared libs?
 
+        ########################################################################
+        #  DEBUGGING
+        ########################################################################
         # print debug information if so instructed
         ifdef MAKEFILE_DEBUG
-            $(info ---ADDONS_INCLUDES---)
-            $(foreach v, $(ADDONS_INCLUDES),$(info $(v)))
-            $(info ---ADDONS_SOURCES---)
-            $(foreach v, $(ADDONS_SOURCES),$(info $(v)))
-            $(info ---ADDONSLIBS---)
-            $(foreach v, $(ADDONSLIBS),$(info $(v)))
-            $(info ---ADDONS_OBJFILES---)
-            $(foreach v, $(ADDONS_OBJFILES),$(info $(v)))
+            $(info ---PROJECT_ADDONS_INCLUDES---)
+            $(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
+            $(info ---PROJECT_ADDONS_SOURCES---)
+            $(foreach v, $(PROJECT_ADDONS_SOURCES),$(info $(v)))
+            $(info ---PROJECT_ADDONS_LIBS---)
+            $(foreach v, $(PROJECT_ADDONS_LIBS),$(info $(v)))
+            $(info ---PROJECT_ADDONS_OBJFILES---)
+            $(foreach v, $(PROJECT_ADDONS_OBJFILES),$(info $(v)))
+            $(info ---PROJECT_ADDONS_BASE_CFLAGS---)
+            $(foreach v, $(PROJECT_ADDONS_BASE_CFLAGS),$(info $(v)))
+            $(info ---PROJECT_ADDONS_DEFINES_CFLAGS---)
+            $(foreach v, $(PROJECT_ADDONS_DEFINES_CFLAGS),$(info $(v)))
+            $(info ---PROJECT_ADDONS_INCLUDES_CFLAGS---)
+            $(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
+            $(info ---PROJECT_ADDONS_LDFLAGS---)
+            $(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
         endif
     endif
 endif

@@ -1,12 +1,11 @@
-# setup the shell variable
-SHELL = /bin/sh
-
+################################################################################
 # print debug information if desired
+
 ifdef MAKEFILE_DEBUG
-    $(info =============================makefile.compile.project=========================)
+    $(info ===================makefile.compile.project=========================)
 endif
 
-# if the APPNAME is not already defined, set it to the present working directory of the proejct
+# if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
     APPNAME = $(shell basename `pwd`)
 endif
@@ -16,64 +15,61 @@ ifdef MAKEFILE_DEBUG
     $(info APPNAME=$(APPNAME))
 endif
 
+# make sure we have a project root defined
+ifndef PROJECT_ROOT
+	PROJECT_ROOT=.
+endif
+
 # TODO: what is this for?
 NODEPS = clean
 
-##################
-# exclude all items from source according to the config.make file
-
-# make a list of all directories that could be valid project source directories
-ALL_PROJECT_SOURCE_PATHS = $(shell find . -maxdepth 1 -mindepth 1 -type d)
-
-# add external source paths
-ALL_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
-
-# filter out all excluded files / folders that were defined above
-# this list will be searched for cpp files below and will eventually
-# be included as locations for header searches via 
-PROJECT_SOURCE_PATHS = $(filter-out $(PROJECT_EXCLUSIONS),$(ALL_PROJECT_SOURCE_PATHS))
-
-# find all sources inside the project's source directory (recursively)
-PROJECT_SOURCES = $(shell find $(PROJECT_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
-
-# produce object files for all project sourcees
-PROJECT_OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_SOURCES)))))
-
-# ifdef PROJECT_EXTERNAL_SOURCE_PATHS
-#     PROJECT_EXTERNAL_SOURCES = $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
-#     PROJECT_EXTERNAL_OBJFILES = $(subst $(PROJECT_EXTERNAL_SOURCE_PATHS)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_EXTERNAL_SOURCES))))))
-# endif
-
-# construct all project-specific cflags
-PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(PROJECT_SOURCE_PATHS))
-
-LDFLAGS = -Wl,-rpath=./libs
-
-ALL_INCLUDES_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
-ALL_INCLUDES_CFLAGS += $(ADDONS_INCLUDES_CFLAGS)
-ALL_INCLUDES_CFLAGS += -I.
-ALL_INCLUDES_CFLAGS += $(PROJECT_INCLUDES_CFLAGS)
-
-
-##########################################################################################
+################################################################################
 # CFLAGS
-##########################################################################################
+################################################################################
 
 # clean it
 ALL_CFLAGS =
-# add the core flags 
+
+################################################################################
+# CORE FLAGS ###################################################################
+# add the base CFLAGS from the core (platform specific)
 ALL_CFLAGS += $(OF_CORE_BASE_CFLAGS)
-# add the defines
+# add the base CFLAGS from the addons
+ALL_CFLAGS += $(PROJECT_BASE_CFLAGS)
+
+################################################################################
+# DEFINE FLAGS #################################################################
+# add the defines from the core (platform specific)
 ALL_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
-# add the include cflags
+# add the defines from the project
+ALL_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
+
+################################################################################
+# INCLUDE FLAGS ################################################################
+# add the include CFLAGS from the core (platform specific)
 ALL_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
+# add the include CFLAGS from the project
+ALL_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
+
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
 
+################################################################################
+# LDFLAGS
+################################################################################
 
+# clean it
+ALL_LDFLAGS =
 
+# add the include LDFLAGS from the project
+ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
+# add the include LDFLAGS from the core (platform specific)
+ALL_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
 
-################################
+# clean up all extra whitespaces in the LDFLAGS
+LDFLAGS = $(strip $(ALL_LDFLAGS))
+
+################################################################################
 ## stopped here ...
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
@@ -93,121 +89,106 @@ ifeq ($(MAKECMDGOALS),clean)
     TARGET_NAME = Release
 endif
 
-
-OBJ_OUTPUT = obj/$(ARCH)$(TARGET_NAME)/
-CLEANTARGET = clean$(TARGET_NAME)
-
-OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
-DEPFILES = $(patsubst %.o,%.d,$(OBJS))
-
-USER_OBJS = $(addprefix $(OBJ_OUTPUT), $(USER_OBJFILES))
-DEPFILES += $(patsubst %.o,%.d,$(USER_OBJS))
-
-ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
-    ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
-    DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
+# we only get a CLEAN_TARGET if a TARGET_NAME has been defined
+# Like TARGET, this must be defined above or in a platform file.
+ifdef TARGET_NAME
+	CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 endif
 
-ifeq ($(TARGET_LIBS),)
-    TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
-endif
 
-.PHONY: Debug Release all after
+################################################################################
+# OBJECT AND DEPENDENCY FILES DEFINITIONS
+#	Object file paths are generated here (as opposed to with the rest of the 
+#   flags) because we want to place them in target-specific folders. We
+#   determine targets above. We –could– determine the target info earlier if we
+#   wanted to.  It's here because that's approximately where it was in the 
+#   legacy makefiles.
+################################################################################
+
+# define the subdirectory for our target name
+OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(TARGET_NAME)
+
+OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
+OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,/,$(addprefix $(OF_PLATFORM_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES)))
+OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
+
+OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
+OF_PROJECT_ADDONS_OBJS = $(subst $(OF_ROOT)/,/,$(addprefix $(OF_PLATFORM_OBJ_OUPUT_PATH),$(OF_PROJECT_ADDONS_OBJ_FILES)))
+OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
+
+# TODO: deal with shared libs?
+
+
+.PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
 Release: $(TARGET) after
 
 Debug: $(TARGET) after
 
 all:
+	$(MAKE) Debug
 	$(MAKE) Release
-
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
-$(OBJ_OUTPUT)%.o: %.cpp
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cpp
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cxx
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cc
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
 	
-$(OBJ_OUTPUT)%.o: %.cxx
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.c
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
 
-$(OBJ_OUTPUT)%.o: %.c
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
 
-$(OBJ_OUTPUT)%.o: %.cc
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cxx
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
 
-$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
-	@echo "compiling addon $(ARCH) object for" $<
-	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
-
-$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cxx
-	@echo "compiling addon $(ARCH) object for" $<
-	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
-
-$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
-	@echo "compiling addon $(ARCH) object for" $<
-	mkdir -p $(@D)
-	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
-
-$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cc
-	@echo "compiling addon $(ARCH) object for" $<
-	mkdir -p $(@D)
-	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
-
-$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.c
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cc
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
-
-$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cc
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	
+$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
 
-$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
-	@echo "compiling $(ARCH) object for: " $<
+$(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS)
+	@echo 'linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
-
-$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cxx
-	@echo "compiling $(ARCH) object for: " $<
-	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o$@ -c $<
-
-$(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
-	@echo 'linking $(ARCH) $(TARGET) $(LIBSPATH)'
-	mkdir -p $(@D)
-	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIB_STATIC) $(LIB_PATHS_FLAGS) $(LIB_SHARED) $(SYSTEMLIBS)
-
--include $(DEPFILES)
-
-.PHONY: clean cleanDebug cleanRelease
+	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_CORE_LIBS) $(OF_PROJECT_LIBS) 
+-include $(OF_PLATFORM_DEPENDENCY_FILES)
 
 clean:
-	rm -rf $(OBJ_OUTPUT)
+	rm -rf $(OF_PLATFORM_OBJ_OUPUT_PATH)
 	rm -f $(TARGET)
 	rm -rf bin/libs
 
-ifneq ($(CLEANTARGET),clean)
-	$(CLEANTARGET):
-		rm -rf $(OBJ_OUTPUT)
-		rm -f $(TARGET)
-		rm -rf bin/libs
-endif
+$(CLEANTARGET):
+	rm -rf $(OF_PLATFORM_OBJ_OUPUT_PATH)
+	rm -f $(TARGET)
+	rm -rf bin/libs
 
-
-after:$(TARGET)
-	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/
+after: $(TARGET)
+	cp -r $(OF_EXPORT_PATH)/$(PLATFORM_LIB_SUBPATH)/libs bin/
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
@@ -216,20 +197,21 @@ after:$(TARGET)
 	@echo "     ./$(BIN_NAME)"
 	@echo
 
-
-.PHONY: help
 help:
 	@echo
 	@echo openFrameworks universal makefile
 	@echo
-	@echo targets:
-	@echo "make Debug:		builds the application with debug symbols"
-	@echo "make Release:		builds the app with optimizations"
+	@echo "Targets:"
+	@echo
+	@echo "make Debug:		builds the library with debug symbols"
+	@echo "make Release:		builds the library with optimizations"
 	@echo "make:			= make Release"
-	@echo "make all:		= make Release"
+	@echo "make all:		= make Debug + make Release"
 	@echo "make CleanDebug:	cleans the Debug target"
 	@echo "make CleanRelease:	cleans the Release target"
 	@echo "make clean:		cleans everything"
+	@echo "make help:		this help message"
+	@echo
 	@echo
 	@echo this should work with any OF app, just copy any example
 	@echo change the name of the folder and it should compile
@@ -245,36 +227,3 @@ help:
 	@echo in this directory and add the names of the addons you want to
 	@echo include
 	@echo
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# print debug information if needed
-ifdef MAKEFILE_DEBUG
-##    $(info ---FULLY_QUALIFIED_PROJECT_SOURCE_EXCLUSIONS--- )
-#    $(foreach v, $(FULLY_QUALIFIED_PROJECT_SOURCE_EXCLUSIONS),$(info $(v)))
-#    $(info ---ALL_PROJECT_SOURCE_DIRS--- )
-#    $(foreach v, $(ALL_PROJECT_SOURCE_DIRS),$(info $(v)))
-##    $(info ---FILTERED_PROJECT_SOURCE_DIRS--- )
- #   $(foreach v, $(FILTERED_PROJECT_SOURCE_DIRS),$(info $(v)))
- #   $(info ---PROJECT_SOURCES--- )
- #   $(foreach v, $(PROJECT_SOURCES),$(info $(v)))
-  # $(info ---PROJECT_OBJFILES--- )
- # $(foreach v, $(PROJECT_OBJFILES),$(info $(v)))
-endif
