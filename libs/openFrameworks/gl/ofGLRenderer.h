@@ -9,7 +9,7 @@ class ofMesh;
 class ofFbo;
 
 
-class ofGLRenderer: public ofBaseRenderer{
+class ofGLRenderer: public ofBaseGLRenderer{
 public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
@@ -119,6 +119,17 @@ public:
 	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+
+
+	// gl specifics
+	void enableVertices();
+	void enableTexCoords();
+	void enableColors();
+	void enableNormals();
+	void disableVertices();
+	void disableTexCoords();
+	void disableColors();
+	void disableNormals();
 
 private:
 	void startSmoothing();
