@@ -22,7 +22,7 @@ ifndef OF_LIBS_OF_COMPILED_PROJECT_PATH
     $(error OF_LIBS_OF_COMPILED_PROJECT_PATH is not defined)
 endif
 
-##########################################################################################
+################################################################################
 # make an entry like the shared makefiles
 ifndef OF_PLATFORM_MAKEFILES
     OF_PLATFORM_MAKEFILES=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)
@@ -31,5 +31,3 @@ endif
 ifndef OF_CORE_LIB_PATH
     OF_CORE_LIB_PATH=$(OF_LIBS_OF_COMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)
 endif
-
-
