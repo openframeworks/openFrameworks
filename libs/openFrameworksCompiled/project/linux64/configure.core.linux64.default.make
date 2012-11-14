@@ -43,7 +43,7 @@ HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 #   the DEFINES to determine what source files to include or what default player 
 #   to use.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_DEFINES =
@@ -68,7 +68,7 @@ endif
 #   For instance, if you are compiling for Android, you would add ofxAndroid here.
 #   If you are compiling for Raspberry Pi, you would add ofxRaspberryPi here.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_REQUIRED_ADDON =
@@ -79,7 +79,7 @@ PLATFORM_REQUIRED_ADDON =
 #   These flags will always be added when compiling a project or the core library.  These
 #   Flags are presented to the compiler AFTER the PLATFORM_OPTIMIZATION_CFLAGS below. 
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
@@ -107,7 +107,7 @@ PLATFORM_CFLAGS += -Os
 #
 #    PLATFORM_OPTIMIZATION_CFLAGS_DEBUG flags are only applied to DEBUG targets.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
@@ -127,7 +127,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   unless teh user adds a wildcard (%) operator to match subdirectories.  GNU make only
 #   allows one wildcard for matching.  The second wildcard (%) is treated literally.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_CORE_EXCLUSIONS =
@@ -163,7 +163,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/lib
 #   These are usually not required, but may be required by some experimental platforms
 #   such as the raspberry pi or other other embedded architectures.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_HEADER_SEARCH_PATHS =
@@ -183,7 +183,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 #   See the helpfile for the -l flag here for more information:
 #       http://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_LIBRARIES =
@@ -231,7 +231,7 @@ endif
 #   See the the following link for more information on the -L flag:
 #       http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html 
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_LIBRARY_SEARCH_PATHS =
@@ -241,18 +241,18 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #   These are a list of platform frameworks.  
 #   These are used exclusively with Darwin/OSX.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-#PLATFORM_FRAMEWORK =
+#PLATFORM_FRAMEWORKS =
 
 ################################################################################
 # PLATFORM FRAMEWORK SEARCH PATHS
 #   These are a list of platform framework search paths.  
 #   These are used exclusively with Darwin/OSX.
 #
-# Note: Be sure to leave a leading space when using a += operator to add items to the list
+#   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-#PLATFORM_FRAMEWORK_SEARCH_PATHS =
+#PLATFORM_FRAMEWORKS_SEARCH_PATHS =
 
 ################################################################################
 # LOW LEVEL CONFIGURATION BELOW
