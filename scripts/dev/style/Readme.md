@@ -56,3 +56,19 @@ Example:
 ## styleOFCore
 
 This script runs the OF styler on the core in `libs/openFrameworks/`.
+
+## styleWholeOF
+
+This script runs the OF styler on all of OF - the core, files in src folders in official addons, and in all examples.
+
+## Commit messages
+
+If you end up committing the formatted code, use a commit message which mentions 'code style', for example 
+'Formating pass according to the current OF code style.'
+
+## Whitespace and git(hub)
+
+Uncrustify produces mostly whitespace changes.
+When using git, you can ignore whitespace changes in relevant commands by using the '-w' option. 
+On Github, the same can be accomplished by appending '?w=1' to any URL.
+
