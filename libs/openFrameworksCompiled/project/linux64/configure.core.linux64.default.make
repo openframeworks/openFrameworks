@@ -1,5 +1,5 @@
 ################################################################################
-# CONFIGURE CORE PLATFORM  MAKEFILE
+# CONFIGURE CORE PLATFORM MAKEFILE
 #   This file is where we make platform and architecture specific 
 #   configurations. This file can be specified for a generic architecture or can
 #   be defined as variants. For instance, normally this file will be located in 
