@@ -160,6 +160,7 @@ OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
 ################################################################################
 
 OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS))
+OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 
 ################################################################################
 # DEBUG INFO
