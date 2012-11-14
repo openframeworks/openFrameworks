@@ -1,4 +1,28 @@
 ---------------------------------------------------------------
+          .oooo.     .oooo.    ooooooooo   .oooo.   
+         d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b  
+        888    888 888    888       .8'        ]8P' 
+        888    888 888    888      .8'       <88b.  
+        888    888 888    888     .8'         `88b. 
+        `88b  d88' `88b  d88'    .8'     o.   .88P  
+         `Y8bd8P'   `Y8bd8P'    .8'      `8bd88P'   
+
+OF 0073 changelog:
+
+change key:
+    + added
+    - removed
+    / modified
+---------------------------------------------------------------
+
+/ ofGetElapsedTimef() no longer wraps after ~71 minutes, which was a bug introduced with 0072. ofGetElapsedTimeMicros() previously also wrapped after ~71 minutes, and this has been fixed as well.
+/ fixed broken pause and other fixes in ofVideoPlayer on OSX
+/ fixes to AndroidVideoGrabber
+/ Android empty example inherits from ofxAndroidApp + adds android methods
++ auto register android touch events
++ ofMultMatrix(), ofLoadMatrix(), ofLoadIdentityMatrix()
+
+---------------------------------------------------------------
 
           .oooo.     .oooo.    ooooooooo   .oooo.   
          d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b  
