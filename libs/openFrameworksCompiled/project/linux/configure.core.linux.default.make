@@ -72,7 +72,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDON =
+PLATFORM_REQUIRED_ADDONS =
 
 ################################################################################
 # PLATFORM CFLAGS
