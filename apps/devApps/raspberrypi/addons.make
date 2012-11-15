@@ -2,5 +2,3 @@
 # These are the names of the folders in your $
 
 ofxRaspberryPi
-#ofxOpenCv
-ofxXmlSettings
