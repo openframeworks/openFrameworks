@@ -72,16 +72,6 @@ ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-ofPtr<ofGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="GL"){
-		return (ofPtr<ofGLRenderer>&)ofGetCurrentRenderer();
-	}else if(ofGetCurrentRenderer()->getType()=="collection"){
-		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
-	}else{
-		return ofPtr<ofGLRenderer>();
-	}
-}
-
 #ifndef TARGET_OPENGLES 
 
 //-----------------------------------------------------------------------------------
@@ -297,6 +287,11 @@ void ofMultMatrix (const ofMatrix4x4 & m){
 //----------------------------------------------------------
 void ofMultMatrix (const float *m){
 	renderer->multMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofSetMatrixMode(ofMatrixMode matrixMode){
+	renderer->matrixMode(matrixMode);
 }
 
 // end transformation matrix related functions
