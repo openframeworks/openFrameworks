@@ -119,7 +119,7 @@ OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(PLATFORM_LI
 OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" | grep -v "/\.[^\.]")
+ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
 
 # add in any libraries that were explicitly listed in the platform config files.
 OF_CORE_THIRDPARTY_STATIC_LIBS := $(PLATFORM_STATIC_LIBRARIES)
