@@ -44,15 +44,11 @@ void testApp::exit(){
 
 }
 
-//--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs & touch){
-    //
-}
 
 //--------------------------------------------------------------
-void mousePressed(int x, int y, int button);
+void testApp::mousePressed(int x, int y, int button) {
     
     // we have to transform the coords to what the shader is expecting which is 0,0 in the center and y axis flipped.
     mousePoint.x = x * 2 - ofGetWidth();
     mousePoint.y = ofGetHeight() * 0.5 - y;
-}
+} 

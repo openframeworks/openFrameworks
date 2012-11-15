@@ -22,7 +22,7 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);		
 
-	void ringButtonPressed(bool & pressed);
+	//void ringButtonPressed(bool & pressed);
 
 	bool bHide;
 
@@ -31,11 +31,11 @@ public:
 	ofxIntSlider circleResolution;
 	ofxToggle filled;
 	ofxButton twoCircles;
-	ofxButton ringButton;
+	//ofxButton ringButton;
 	ofxLabel status;
 
 	ofxPanel gui;
 
-	ofSoundPlayer ring;
+	//ofSoundPlayer ring;
 };
 

@@ -144,10 +144,21 @@ enum ofTargetPlatform{
 
     #ifdef TARGET_RASPBERRY_PI
         //#include "bcm_host.h"
-        #include "GLES/gl.h"
-        #include "EGL/egl.h"
-        #include "EGL/eglext.h"
-        // don't need this for rpi any more
+       
+#include "GLES/gl.h"
+#include "GLES/glext.h" 
+#include "GLES2/gl2.h"
+#include "GLES2/gl2ext.h"
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
+
+
+
+//#include "GLES/glext.h" 
+	//#include "GLES/gl.h"
+        //#include "EGL/egl.h"
+        //#include "EGL/eglext.h"
+	// don't need this for rpi any more
         //#include "glu.h"
         //#include "gluos.h"
     #else // normal linux

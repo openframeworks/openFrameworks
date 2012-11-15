@@ -153,7 +153,7 @@ PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/gl/ofFbo.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/gl/ofFbo.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
@@ -249,6 +249,8 @@ PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-0.10
 PLATFORM_HEADER_SEARCH_PATHS =
 # Broadcom hardware interface library
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include
+PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/GLES2
+PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/GLES
 #PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
 

@@ -1,2 +1,3 @@
+ofxRaspberryPi
 ofxXmlSettings
 ofxGui

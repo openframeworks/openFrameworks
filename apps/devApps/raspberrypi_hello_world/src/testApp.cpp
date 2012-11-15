@@ -3,17 +3,27 @@
 	
 //--------------------------------------------------------------
 void testApp::setup(){
-	ofBackground(127,127,127);
+	ofBackground(255,255,0);
+
+i = 0;
 }
 
 //--------------------------------------------------------------
 void testApp::exit(){}
 
 //--------------------------------------------------------------
-void testApp::update(){}
+void testApp::update(){
+i += 3;
+i = i % 360;
+ofLogError("testApp") << "It's all happening. " << i << endl;
+
+}
 
 //--------------------------------------------------------------
 void testApp::draw() {
+ofPushMatrix();
+ofTranslate(ofGetWidth()/2.0f-100,ofGetHeight()/2.0f-100);
+ofRotateZ(i);
     ofPushStyle();
     ofFill();
     ofSetColor(ofColor::red);
@@ -68,6 +78,8 @@ void testApp::draw() {
     ofSetColor(ofColor::red);
     ofLine(260, 120, 300, 220);
     ofPopStyle();
+ofPopMatrix();
+
 }
 
 //--------------------------------------------------------------
