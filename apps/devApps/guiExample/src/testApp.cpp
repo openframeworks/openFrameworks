@@ -13,26 +13,26 @@ void testApp::setup(){
 	gui.add(b.setup( "blue", 140.0f, 0, 255 ));
 	gui.add(circleResolution.setup("circle res", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
-	gui.add(ringButton.setup("ring"));
+	//gui.add(ringButton.setup("ring"));
 	gui.add(status.setup("Status", ""));
 	
-	ringButton.addListener(this,&testApp::ringButtonPressed);
+	//ringButton.addListener(this,&testApp::ringButtonPressed);
 
 	bHide = true;
 
-	ring.loadSound("ring.wav");
+	//ring.loadSound("ring.wav");
 }
 
 //--------------------------------------------------------------
 void testApp::exit(){
-	ringButton.removeListener(this,&testApp::ringButtonPressed);
+	//ringButton.removeListener(this,&testApp::ringButtonPressed);
 }
-
+/*
 //--------------------------------------------------------------
-void testApp::ringButtonPressed(bool & pressed){
+//void testApp::ringButtonPressed(bool & pressed){
 	if(pressed) ring.play();
 }
-
+*/
 //--------------------------------------------------------------
 void testApp::update(){
 	ofSetCircleResolution(circleResolution);
