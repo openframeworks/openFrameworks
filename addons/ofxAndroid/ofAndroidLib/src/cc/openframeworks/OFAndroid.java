@@ -1038,12 +1038,16 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
+        Log.i("OF","setting OpenGL ES version to 2");
+        setEGLContextClientVersion(2);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         setRenderer(mRenderer);
     }
 	
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
+        Log.i("OF","setting OpenGL ES version to 2");
+        setEGLContextClientVersion(2);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         setRenderer(mRenderer);
     }

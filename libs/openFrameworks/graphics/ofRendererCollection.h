@@ -8,10 +8,10 @@ public:
 
 	 string getType(){ return "collection"; }
 
-	 ofPtr<ofGLRenderer> getGLRenderer(){
+	 ofPtr<ofBaseGLRenderer> getGLRenderer(){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 if(renderers[i]->getType()=="GL"){
-				 return (ofPtr<ofGLRenderer>&)renderers[i];
+			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="GLES2"){
+				 return (ofPtr<ofBaseGLRenderer>&)renderers[i];
 			 }
 		 }
 		 return ofPtr<ofGLRenderer>();
