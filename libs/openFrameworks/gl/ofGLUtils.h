@@ -13,6 +13,7 @@
 
 class ofShader;
 class ofGLES2Renderer;
+class ofBaseGLRenderer;
 
 enum ofPrimitiveMode{
 	OF_PRIMITIVE_TRIANGLES,
@@ -57,6 +58,7 @@ bool ofCheckGLExtension(string searchName);
 bool ofGLIsFixedPipeline();
 
 ofPtr<ofGLES2Renderer> ofGetGLES2Renderer();
+ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
 
 GLint ofGetAttrLocationPosition();
 GLint ofGetAttrLocationColor();

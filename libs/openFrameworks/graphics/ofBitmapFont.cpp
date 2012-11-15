@@ -324,25 +324,19 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 #include "ofTexture.h"
 
 static bool		bBitmapTexturePrepared = false;
-ofTexture		glesBitmappedFontTexture;
-unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
+static ofTexture		glesBitmappedFontTexture;
+static unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#ifdef TARGET_OPENGLES
 //---------------------------------------------------------------------
 void ofUpdateBitmapCharacterTexture(){
 	bBitmapTexturePrepared = false;
 }
 #endif
 
-//static GLfloat tex_coords[8];
-//static GLfloat verts[8];
 static float widthTex = 8.0f/256.0f;
 static float heightTex = 14.0f/256.0f;
-
-//TODO: make this bigger - or re-port back to vector?
-vector <GLfloat> coords;
-vector <GLfloat> verts;
-
+static ofMesh charMesh;
 static int vC = 0;
 
 //---------------------------------------------------------------------
@@ -371,6 +365,8 @@ static void prepareBitmapTexture(){
 		}
 		
 		glesBitmappedFontTexture.loadData(myLetterPixels, 16*16, 16*16, GL_LUMINANCE_ALPHA);
+		glesBitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
+		charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
 		
 	}
 
@@ -391,48 +387,32 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 
 		float posTexW = (float)(character % 16)/16.0f;
 		float posTexH = ((int)(character / 16.0f))/16.0f;
-				
-		coords[vC]		= posTexW;
-		coords[vC+1]	= posTexH;
-		coords[vC+2]	= posTexW + widthTex;
-		coords[vC+3]	= posTexH;
-		coords[vC+4]	= posTexW+widthTex;
-		coords[vC+5]	= posTexH+heightTex;
-		
 
-		coords[vC+6]	= posTexW + widthTex;
-		coords[vC+7]	= posTexH+heightTex;
-		coords[vC+8]	= posTexW;
-		coords[vC+9]	= posTexH+heightTex;
-		coords[vC+10]	= posTexW;
-		coords[vC+11]	= posTexH;
+
+		charMesh.getTexCoords()[vC].set(posTexW,posTexH);
+		charMesh.getTexCoords()[vC+1].set(posTexW + widthTex,posTexH);
+		charMesh.getTexCoords()[vC+2].set(posTexW+widthTex,posTexH+heightTex);
 		
-		verts[vC]	= x;
-		verts[vC+1]	= y;
-		verts[vC+2]	= x+8;
-		verts[vC+3]	= y;
-		verts[vC+4]	= x+8;
-		verts[vC+5]	= y+14;
-				
-		verts[vC+6]	= x+8;
-		verts[vC+7]	= y+14;
-		verts[vC+8] = x;
-		verts[vC+9] = y+14;
-		verts[vC+10] = x;
-		verts[vC+11] = y;
+		charMesh.getTexCoords()[vC+3].set(posTexW + widthTex,posTexH+heightTex);
+		charMesh.getTexCoords()[vC+4].set(posTexW,posTexH+heightTex);
+		charMesh.getTexCoords()[vC+5].set(posTexW,posTexH);
+
+		charMesh.getVertices()[vC].set(x,y);
+		charMesh.getVertices()[vC+1].set(x+8,y);
+		charMesh.getVertices()[vC+2].set(x+8,y+14);
+
+		charMesh.getVertices()[vC+3].set(x+8,y+14);
+		charMesh.getVertices()[vC+4].set(x,y+14);
+		charMesh.getVertices()[vC+5].set(x,y);
 			
-		vC += 12;
+		vC += 6;
 	}	
 }
 
 //---------------------------------------------------------------------
 void ofDrawBitmapCharacterStart(int stringLength){
-
-	verts.clear();
-	coords.clear();
-	
-	verts.assign(12 * (stringLength+1), 0);
-	coords.assign(12 * (stringLength+1), 0);
+	charMesh.getVertices().resize(6 * (stringLength+1));
+	charMesh.getTexCoords().resize(6 * (stringLength+1));
 
 	if(!bBitmapTexturePrepared){
 		prepareBitmapTexture();
@@ -447,23 +427,15 @@ void ofDrawBitmapCharacterStart(int stringLength){
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
 #endif
-
-	glEnableClientState(GL_VERTEX_ARRAY);		
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-	
-	glTexParameterf(glesBitmappedFontTexture.getTextureData().textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	vC = 0;
 }
 
 //---------------------------------------------------------------------
 void ofDrawBitmapCharacterEnd(){
 	if( vC > 0 ){
-		glTexCoordPointer(2, GL_FLOAT, 0, &coords[0] );
-		glVertexPointer(2, GL_FLOAT, 0, &verts[0] );
-		glDrawArrays(GL_TRIANGLES, 0, vC/2 );
+		charMesh.draw();
 	}
 
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 #ifndef TARGET_OPENGLES
 	glPopAttrib();
 #endif

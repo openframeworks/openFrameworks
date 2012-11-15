@@ -1240,3 +1240,35 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 	glBlendFunc(blend_src, blend_dst);
 }
+
+void ofGLRenderer::enableVertices(){
+	glEnableClientState(GL_VERTEX_ARRAY);
+}
+
+void ofGLRenderer::enableTexCoords(){
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void ofGLRenderer::enableColors(){
+	glEnableClientState(GL_COLOR_ARRAY);
+}
+
+void ofGLRenderer::enableNormals(){
+	glEnableClientState(GL_NORMAL_ARRAY);
+}
+
+void ofGLRenderer::disableVertices(){
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void ofGLRenderer::disableTexCoords(){
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void ofGLRenderer::disableColors(){
+	glDisableClientState(GL_COLOR_ARRAY);
+}
+
+void ofGLRenderer::disableNormals(){
+	glDisableClientState(GL_NORMAL_ARRAY);
+}

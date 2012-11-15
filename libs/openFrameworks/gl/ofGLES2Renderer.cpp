@@ -1071,30 +1071,44 @@ void ofGLES2Renderer::setDefaultShader(ofShader & shader){
 }
 
 //----------------------------------------------------------
+void ofGLES2Renderer::enableVertices(){
+	glEnableVertexAttribArray(getAttrLocationPosition());
+}
+
+//----------------------------------------------------------
 void ofGLES2Renderer::enableTexCoords(){
+	glEnableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",1);
 	texCoordsEnabled = true;
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::enableColors(){
+	glEnableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",1);
 	colorsEnabled = true;
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::enableNormals(){
+	glEnableVertexAttribArray(getAttrLocationNormal());
 	normalsEnabled = true;
+}
+
+void ofGLES2Renderer::disableVertices(){
+	glDisableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::disableTexCoords(){
+	glDisableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",0);
 	texCoordsEnabled = false;
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::disableColors(){
+	glDisableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",0);
 	colorsEnabled = false;
 }
@@ -1205,7 +1219,16 @@ void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::drawSphere(float x, float y, float z, float radius) {
-    // TODO :: needs ES2 code.
+    glEnable(GL_NORMALIZE);
+    pushMatrix();
+    scale(radius, radius, radius);
+    if(bFilled) {
+        sphereMesh.draw();
+    } else {
+        sphereMesh.drawWireframe();
+    }
+    popMatrix();
+    glDisable(GL_NORMALIZE);
 }
 
 //----------------------------------------------------------
@@ -1232,5 +1255,194 @@ void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float 
 
 //----------------------------------------------------------
 void ofGLES2Renderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
-	// TODO :: needs ES2 code.
+	// this is copied from the ofTrueTypeFont
+	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	int len = (int)textString.length();
+	//float yOffset = 0;
+	float fontSize = 8.0f;
+	bool bOrigin = false;
+
+	float sx = 0;
+	float sy = -fontSize;
+
+
+	///////////////////////////
+	// APPLY TRANSFORM / VIEW
+	///////////////////////////
+	//
+
+	bool hasModelView = false;
+	bool hasProjection = false;
+	bool hasViewport = false;
+
+	ofRectangle rViewport;
+
+#ifdef TARGET_OPENGLES
+	if(mode == OF_BITMAPMODE_MODEL_BILLBOARD) {
+		mode = OF_BITMAPMODE_SIMPLE;
+	}
+#endif
+
+	switch (mode) {
+
+		case OF_BITMAPMODE_SIMPLE:
+
+			sx += x;
+			sy += y;
+			break;
+
+		case OF_BITMAPMODE_SCREEN:
+
+			hasViewport = true;
+			pushView();
+
+			rViewport = ofGetWindowRect();
+			viewport(rViewport);
+
+			matrixMode(OF_MATRIX_PROJECTION);
+			loadIdentityMatrix();
+			matrixMode(OF_MATRIX_MODELVIEW);
+			loadIdentityMatrix();
+
+			translate(-1, 1, 0);
+			scale(2/rViewport.width, -2/rViewport.height, 1);
+
+			translate(x, y, 0);
+			break;
+
+		case OF_BITMAPMODE_VIEWPORT:
+
+			rViewport = getCurrentViewport();
+
+			hasProjection = true;
+			matrixMode(OF_MATRIX_PROJECTION);
+			pushMatrix();
+			loadIdentityMatrix();
+
+			hasModelView = true;
+			matrixMode(OF_MATRIX_MODELVIEW);
+			pushMatrix();
+			loadIdentityMatrix();
+
+			translate(-1, 1, 0);
+			scale(2/rViewport.width, -2/rViewport.height, 1);
+
+			translate(x, y, 0);
+			break;
+
+		case OF_BITMAPMODE_MODEL:
+
+			hasModelView = true;
+			matrixMode(OF_MATRIX_MODELVIEW);
+			pushMatrix();
+
+			translate(x, y, z);
+			scale(1, -1, 0);
+			break;
+
+		case OF_BITMAPMODE_MODEL_BILLBOARD:
+			//our aim here is to draw to screen
+			//at the viewport position related
+			//to the world position x,y,z
+
+			// ***************
+			// this will not compile for opengl ES
+			// ***************
+#ifndef TARGET_OPENGLES
+			//gluProject method
+			GLdouble modelview[16], projection[16];
+			GLint view[4];
+			double dScreenX, dScreenY, dScreenZ;
+			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+			glGetDoublev(GL_PROJECTION_MATRIX, projection);
+			glGetIntegerv(GL_VIEWPORT, view);
+			view[0] = 0; view[1] = 0; //we're already drawing within viewport
+			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
+
+			if (dScreenZ >= 1)
+				return;
+
+			rViewport = ofGetCurrentViewport();
+
+			hasProjection = true;
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+
+			hasModelView = true;
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+
+			glTranslatef(-1, -1, 0);
+			glScalef(2/rViewport.width, 2/rViewport.height, 1);
+
+			glTranslatef(dScreenX, dScreenY, 0);
+
+			if(currentFbo == NULL) {
+				glScalef(1, -1, 1);
+			} else {
+				glScalef(1,  1, 1); // invert when rendering inside an fbo
+			}
+
+#endif
+			break;
+
+		default:
+			break;
+	}
+	//
+	///////////////////////////
+
+
+	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
+	//We do this because its way faster
+	ofDrawBitmapCharacterStart(textString.size());
+
+	for(int c = 0; c < len; c++){
+		if(textString[c] == '\n'){
+
+			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			if(mode == OF_BITMAPMODE_SIMPLE) {
+				sx = x;
+			} else {
+				sx = 0;
+			}
+
+			//glRasterPos2f(x,y + (int)yOffset);
+		} else if (textString[c] >= 32){
+			// < 32 = control characters - don't draw
+			// solves a bug with control characters
+			// getting drawn when they ought to not be
+			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
+
+			sx += fontSize;
+		}
+	}
+	//We do this because its way faster
+	ofDrawBitmapCharacterEnd();
+
+
+	if (hasModelView)
+		popMatrix();
+
+	if (hasProjection)
+	{
+		matrixMode(OF_MATRIX_PROJECTION);
+		popMatrix();
+		matrixMode(OF_MATRIX_MODELVIEW);
+	}
+
+	if (hasViewport)
+		popView();
+
+	glBlendFunc(blend_src, blend_dst);
 }
