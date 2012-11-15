@@ -60,6 +60,10 @@ ofVbo::ofVbo()
 	texCoordId = 0;
 	indexId    = 0;
 
+	totalVerts = 0;
+	texCoordStride = sizeof(ofVec2f);
+	normalStride = sizeof(ofVec3f);
+	colorStride = sizeof(ofFloatColor);
 
 	bAllocated		= false;
 }
@@ -94,6 +98,11 @@ ofVbo::ofVbo(const ofVbo & mom){
 	retain(indexId);
 
 
+	totalVerts = mom.totalVerts;
+	texCoordStride = sizeof(ofVec2f);
+	normalStride = sizeof(ofVec3f);
+	colorStride = sizeof(ofFloatColor);
+
 	bAllocated		= mom.bAllocated;
 }
 
@@ -127,6 +136,7 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	indexId    = mom.indexId;
 	retain(indexId);
 
+	totalVerts = mom.totalVerts;
 
 	bAllocated		= mom.bAllocated;
 	return *this;
@@ -438,50 +448,52 @@ GLuint ofVbo::getIndexId(){
 
 //--------------------------------------------------------------
 void ofVbo::bind(){
-	
-//#ifndef TARGET_OPENGLES
-//	glPushAttrib(GL_ALL_ATTRIB_BITS);
-//	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-//#endif
-	
 	if(bUsingVerts){
-		glEnableClientState(GL_VERTEX_ARRAY);		
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
-		glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
+		ofEnableVertices();
+		if(ofGLIsFixedPipeline()){
+			glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
+		}else{
+			glVertexAttribPointer(ofGetAttrLocationPosition(), 3, GL_FLOAT, GL_FALSE, vertStride, 0);
+		}
 	}
 	
 	if(bUsingColors) {
-		glEnableClientState(GL_COLOR_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, colorId);
-		glColorPointer(4, GL_FLOAT, colorStride, 0);
+		ofEnableColorCoords();
+		if(ofGLIsFixedPipeline()){
+			glColorPointer(4, GL_FLOAT, colorStride, 0);
+		}else{
+			glVertexAttribPointer(ofGetAttrLocationColor(), 4, GL_FLOAT, GL_FALSE, colorStride, 0);
+		}
 	}
 	
 	if(bUsingNormals) {
-		glEnableClientState(GL_NORMAL_ARRAY);		
 		glBindBuffer(GL_ARRAY_BUFFER, normalId);
-		glNormalPointer(GL_FLOAT, normalStride, 0);
+		ofEnableNormals();
+		if(ofGLIsFixedPipeline()){
+			glNormalPointer(GL_FLOAT, normalStride, 0);
+		}else{
+			glVertexAttribPointer(ofGetAttrLocationNormal(), 3, GL_FLOAT, GL_FALSE, normalStride, 0);
+		}
 	}
 	
 	if(bUsingTexCoords) {
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);		
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
-		glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
+		ofEnableTexCoords();
+		if(ofGLIsFixedPipeline()){
+			glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
+		}else{
+			glVertexAttribPointer(ofGetAttrLocationTexCoord(), 3, GL_FLOAT, GL_FALSE, texCoordStride, 0);
+		}
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
-//	if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
-	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
-	if(bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
-	if(bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
-	
-//#ifndef	TARGET_OPENGLES
-//	glPopClientAttrib();
-//	glPopAttrib();	
-//#endif
-	
+	if(bUsingColors) ofDisableColorCoords();
+	if(bUsingNormals) ofDisableNormals();
+	if(bUsingTexCoords) ofDisableTexCoords();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
