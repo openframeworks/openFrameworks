@@ -14,7 +14,6 @@
 
 void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
-ofPtr<ofGLRenderer> ofGetGLRenderer();
 
 //for pdf screenshot
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
