@@ -175,6 +175,10 @@ enum ofTargetPlatform{
 #ifdef TARGET_OF_IPHONE
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
+
+	#import <OpenGLES/ES2/gl.h>
+	#import <OpenGLES/ES2/glext.h>
+
 	
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
@@ -185,6 +189,9 @@ enum ofTargetPlatform{
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
+
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
 
 	#define TARGET_LITTLE_ENDIAN
 #endif
@@ -502,6 +509,7 @@ enum ofPolyWindingMode{
 
 enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
+enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
 
 //--------------------------------------------
 //

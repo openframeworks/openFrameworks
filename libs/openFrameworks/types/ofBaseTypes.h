@@ -27,6 +27,7 @@ typedef ofImage_<unsigned short> ofShortImage;
 
 class ofPath;
 class ofPolyline;
+class ofFbo;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -319,6 +320,7 @@ public:
 	virtual void rotateY(float degrees){};
 	virtual void rotateZ(float degrees){};
 	virtual void rotate(float degrees){};
+	virtual void matrixMode(ofMatrixMode mode){};
 	virtual void loadIdentityMatrix (void){};
 	virtual void loadMatrix (const ofMatrix4x4 & m){};
 	virtual void loadMatrix (const float *m){};
@@ -376,4 +378,19 @@ public:
 
 	// returns true if the renderer can render curves without decomposing them
 	virtual bool rendersPathPrimitives()=0;
+};
+
+class ofBaseGLRenderer: public ofBaseRenderer{
+public:
+	virtual void setCurrentFBO(ofFbo * fbo)=0;
+
+	virtual void enableVertices()=0;
+	virtual void enableTexCoords()=0;
+	virtual void enableColors()=0;
+	virtual void enableNormals()=0;
+
+	virtual void disableVertices()=0;
+	virtual void disableTexCoords()=0;
+	virtual void disableColors()=0;
+	virtual void disableNormals()=0;
 };
