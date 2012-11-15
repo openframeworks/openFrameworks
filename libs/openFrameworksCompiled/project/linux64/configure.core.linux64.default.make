@@ -72,7 +72,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDON =
+PLATFORM_REQUIRED_ADDONS =
 
 ################################################################################
 # PLATFORM CFLAGS
@@ -203,7 +203,7 @@ PLATFORM_LIBRARIES += sndfile
 PLATFORM_LIBRARIES += vorbis
 PLATFORM_LIBRARIES += FLAC
 PLATFORM_LIBRARIES += ogg
-PLATFORM_LIBRARIES += freeimage
+# PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =

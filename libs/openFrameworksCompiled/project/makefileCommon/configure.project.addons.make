@@ -19,8 +19,8 @@ endif
 ################################################################################
 # if platform addon exclusions are defined in the platform specific build files, 
 # add them because they have already been added into the core. 
-ADDON_EXCLUSIONS = $(PLATFORM_REQUIRED_ADDON);
-
+#ADDON_EXCLUSIONS = $(PLATFORM_REQUIRED_ADDON);
+ADDON_EXCLUSIONS =
 ################################################################################
 # for reference, please see the following:
 # https://github.com/benben/ofxAddonTemplate
