@@ -2,16 +2,13 @@
 !.project
 !ofx3DModelLoader
 !ofxAccelerometer
-!ofxDirList
 !ofxiPhone
 !ofxRaspberryPi
 !ofxMultiTouch
 !ofxNetwork
 !ofxOpenCv
 !ofxOsc
-!ofxThread
 !ofxVectorGraphics
-!ofxVectorMath
 !ofxXmlSettings
 !ofxAndroid
 ofxAndroid/ofAndroidLib/bin
