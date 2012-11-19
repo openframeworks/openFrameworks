@@ -97,7 +97,8 @@ void ofCamera::begin(ofRectangle viewport) {
 	calcClipPlanes(viewport);
 
 	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	ofLoadIdentityMatrix();
+	
 	if(isOrtho) {
 		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
 		//			else
@@ -106,14 +107,18 @@ void ofCamera::begin(ofRectangle viewport) {
 #else
 		ofMatrix4x4 ortho;
 		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
-		glLoadMatrixf(ortho.getPtr());
+		ofLoadMatrix( ortho );
 #endif
 	} else {
-		gluPerspective(fov, viewport.width/viewport.height, nearClip, farClip);
+		
+		ofMatrix4x4 persp;
+		persp.makePerspectiveMatrix( fov, viewport.width/viewport.height, nearClip, farClip );
+		ofLoadMatrix( persp );
+		//gluPerspective(fov, viewport.width/viewport.height, nearClip, farClip);
 	}
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
+	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
 	ofViewport(viewport);
 }
 

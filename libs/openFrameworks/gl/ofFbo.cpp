@@ -241,6 +241,8 @@ ofFbo::ofFbo(const ofFbo & mom){
 		retainRB(colorBuffers[i]);
 	}
 	textures = mom.textures;
+	dirty = mom.dirty;
+	defaultTextureIndex = mom.defaultTextureIndex;
 }
 
 ofFbo & ofFbo::operator=(const ofFbo & mom){
@@ -271,6 +273,8 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 		retainRB(colorBuffers[i]);
 	}
 	textures = mom.textures;
+	dirty = mom.dirty;
+	defaultTextureIndex = mom.defaultTextureIndex;
 	return *this;
 }
 
