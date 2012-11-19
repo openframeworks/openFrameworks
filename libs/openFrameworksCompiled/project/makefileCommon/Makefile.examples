@@ -59,9 +59,9 @@ endif
 SHELL =  /bin/sh
 
 NODEPS = clean
-SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')
-SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v "$(SED_EXCLUDE_FROM_SRC)" | sed s/.\\///)
-SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')\|^\..*\|\/\..**
+SOURCE_DIRS = $(shell find . -type d | sed s/.\\/// | grep -v "$(SED_EXCLUDE_FROM_SRC)")
+SOURCES = $(shell find $(SOURCE_DIRS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" )
 OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(SOURCES)))))
 
 ifneq (,$(USER_SOURCE_DIR))
