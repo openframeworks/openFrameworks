@@ -93,14 +93,14 @@ OF_CORE_OBJ_OUPUT_PATH =$(OF_CORE_OBJ_BASE_PATH)/$(TARGET_NAME)
 #  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
+OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
 
 # create a named list of object files
 # 1. create a list of object files based on the current list of
 #   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
+OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
 
 ifdef MAKEFILE_DEBUG
     $(info OF_CORE_OBJ_OUPUT_PATH=$(OF_CORE_OBJ_OUPUT_PATH))
