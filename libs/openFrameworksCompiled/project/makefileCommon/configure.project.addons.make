@@ -20,7 +20,19 @@ endif
 # for reference, please see the following:
 # https://github.com/benben/ofxAddonTemplate
 
+# we will process addons if there is an 
+# addons.make file OR PLATFORM_REQUIRED_ADDONS is defined
+# we do it this way because gnu make can't do logical ORs 
+B_PROCESS_ADDONS = 
+ifdef PLATFORM_REQUIRED_ADDONS
+    B_PROCESS_ADDONS = yes
+endif
 ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT)/*.make)),addons.make)
+    B_PROCESS_ADDONS = yes
+endif
+
+# you can't do LOGICAL ORs in make.  So we do this ...
+ifdef B_PROCESS_ADDONS
     ############################################################################
     # VALIDATE REQUESTED ADDONS
     ############################################################################
@@ -36,23 +48,21 @@ ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT)/*.make)),addons.make)
     REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
 
     # deal with platform specfic addons
-
     # remove any platform specific addons that were already added to the addons.make file
     REQUESTED_PROJECT_ADDONS := $(filter-out $(PLATFORM_REQUIRED_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
+    # define a function to remove duplicates without using sort, because sort 
+    # will place the list in lexicographic order, and we want to respect the 
+    # user's addons.make order.  
     remove-dupes = $(if $1,$(strip $(word 1,$1) \
                    $(call $0,$(filter-out $(word 1,$1),$1))))
 
     # remove all duplicates that might be in the addons.make file
-    REQUESTED_PROJECT_ADDONS := = $(call remove-dupes,$(CC)))
+    REQUESTED_PROJECT_ADDONS := $(call remove-dupes,$(REQUESTED_PROJECT_ADDONS))
 
     # add platform required addons from the platform configuration file (if needed)
     # add the platform required addons first, so that they are always linked first
     REQUESTED_PROJECT_ADDONS := $(PLATFORM_REQUIRED_ADDONS) $(REQUESTED_PROJECT_ADDONS)
-
-    $(info --------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)
-    $(foreach v, $(INVALID_PROJECT_ADDONS),$(info $(v)))
-    $(info --------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)    
 
     # create a list requested addons that are actually installed on the system
     VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
@@ -71,6 +81,9 @@ ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT)/*.make)),addons.make)
     PROJECT_ADDONS = $(filter-out $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
 
+            $(info ---PROJECT_ADDONS---)
+            $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
+            $(info --------------------)
 
     ############################################################################
     # PROCESS PROJECT ADDONS IF AVAILABLE
