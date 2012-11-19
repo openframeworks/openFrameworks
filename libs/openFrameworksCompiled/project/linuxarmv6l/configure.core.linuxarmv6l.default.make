@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
 #   This file is where we make platform and architecture specific 
 #   configurations. This file can be specified for a generic architecture or can
@@ -70,9 +70,8 @@ PLATFORM_DEFINES += HAVE_LIBBCM_HOST
 PLATFORM_DEFINES += USE_EXTERNAL_LIBBCM_HOST
 PLATFORM_DEFINES += USE_VCHIQ_ARM
 
-
 ################################################################################
-# PLATFORM REQUIRED ADDON
+# PLATFORM REQUIRED ADDONS
 #   This is a list of addons required for this platform.  This list is used to 
 #   EXCLUDE addon source files when compiling projects, while INCLUDING their 
 #   header files. During core library compilation, this is used to include 
@@ -85,11 +84,11 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDON = ofxRaspberryPi
+PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
 
-##########################################################################################
+################################################################################
 # PLATFORM CXX
-##########################################################################################
+################################################################################
 
 #PLATFORM_CXX=
 
