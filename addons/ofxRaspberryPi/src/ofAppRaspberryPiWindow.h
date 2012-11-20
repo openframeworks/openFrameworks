@@ -26,55 +26,28 @@
 
 #pragma once
 
-#include "ofAppBaseWindow.h"
+#include "bcm_host.h"
+
+#include "ofEGLWindow.h"
 #include "ofBaseApp.h"
 
-class ofAppRaspberryPiWindow: public ofAppBaseWindow {
+#include "ofGLRenderer.h"
+#include "ofGraphics.h"
+
+
+class ofEGLWindow; // forward declaration
+
+class ofAppRaspberryPiWindow : public ofEGLWindow {
 public:
-	ofAppRaspberryPiWindow(){};
-	virtual ~ofAppRaspberryPiWindow(){};
+	ofAppRaspberryPiWindow();
+	virtual ~ofAppRaspberryPiWindow();
 
 	void setupOpenGL(int w, int h, int screenMode);
-	void initializeWindow();
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
-
-	void hideCursor() {}
-	void showCursor() {}
-
-	void	setWindowPosition(int x, int y) {}
-	void	setWindowShape(int w, int h) {}
-
-	int		getFrameNum();
-	float	getFrameRate() {return 0; }
-	double  getLastFrameTime(){ return 0.0; }
-
-	ofPoint	getWindowPosition() {return ofPoint(); }
-	ofPoint	getWindowSize(){return ofPoint(); }
-	ofPoint	getScreenSize(){return ofPoint(); }
-
-	void			setOrientation(ofOrientation orientation){ }
-	ofOrientation	getOrientation(){ return OF_ORIENTATION_DEFAULT; }
-	bool	doesHWOrientation(){return false;}
-
-	//this is used by ofGetWidth and now determines the window width based on orientation
-	int		getWidth();
-	int		getHeight();
-
-	void	setFrameRate(float targetRate){}
-	void	setWindowTitle(string title){}
-
-	int		getWindowMode() {return 0;}
-
-	void	setFullscreen(bool fullscreen){}
-	void	toggleFullscreen(){}
-
-	void	enableSetupScreen(){}
-	void	disableSetupScreen(){}
-	
 	
 protected:
 
-    void _getMouse();
-    void _getKeyboard();
-    void _getJoystick();
+    // void _getMouse();
+    // void _getKeyboard();
+    // void _getJoystick();
+
 };
