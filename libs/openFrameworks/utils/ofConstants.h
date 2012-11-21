@@ -143,7 +143,7 @@ enum ofTargetPlatform{
         #include <unistd.h>
 
     #ifdef TARGET_RASPBERRY_PI
-        //#include "bcm_host.h"
+        #include "bcm_host.h"
        
 #include "GLES/gl.h"
 #include "GLES/glext.h" 
