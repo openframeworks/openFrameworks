@@ -46,8 +46,20 @@ public:
 	
 protected:
 
+
+	ofRectangle getScreenRect() {
+
+	}
+
+	ofRectangle requestNewWindowRect(const ofRectangle& requestedWindowRect) {
+		
+	}
+
+
     // void _getMouse();
     // void _getKeyboard();
     // void _getJoystick();
+
+    EGL_DISPMANX_WINDOW_T nativeWindow;
 
 };

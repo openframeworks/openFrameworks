@@ -32,47 +32,173 @@
 
 class ofEGLWindow : public ofAppBaseWindow {
 public:
-	ofEGLWindow(){ };
-	virtual ~ofEGLWindow(){};
+	ofEGLWindow();
+	virtual ~ofEGLWindow();
 
-	virtual void setupOpenGL(int w, int h, int screenMode);
+	//virtual void setupOpenGL(int w, int h, int screenMode);
+
+	virtual void setupEGL(NativeWindowType nativeWindow);
+	virtual void destroyEGL();
+
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
-	virtual void hideCursor() {}
-	virtual void showCursor() {}
+	virtual void hideCursor();
+	virtual void showCursor();
 
-	virtual void	setWindowPosition(int x, int y) {}
-	virtual void	setWindowShape(int w, int h) {}
+	virtual void	setWindowPosition(int x, int y);
+	virtual void	setWindowShape(int w, int h);
 
 	virtual int		getFrameNum();
-	virtual float	getFrameRate() {return 0; }
-	virtual double  getLastFrameTime(){ return 0.0; }
+	virtual float	getFrameRate();
+	virtual double  getLastFrameTime();
 
-	virtual ofPoint	getWindowPosition() {return ofPoint(); }
-	virtual ofPoint	getWindowSize(){return ofPoint(); }
-	virtual ofPoint	getScreenSize(){return ofPoint(); }
+	virtual ofPoint	getWindowPosition();
+	virtual ofPoint	getWindowSize();
+	virtual ofPoint	getScreenSize();
 
-	virtual void			setOrientation(ofOrientation orientation){ }
-	virtual ofOrientation	getOrientation(){ return OF_ORIENTATION_DEFAULT; }
-	virtual bool	doesHWOrientation(){return false;}
+	virtual void			setOrientation(ofOrientation orientation);
+	virtual ofOrientation	getOrientation();
+	virtual bool			doesHWOrientation();
 
 	//this is used by ofGetWidth and now determines the window width based on orientation
 	virtual int		getWidth();
 	virtual int		getHeight();
 
-	virtual void	setFrameRate(float targetRate){}
-	virtual void	setWindowTitle(string title){}
+	virtual void	setFrameRate(float targetRate);
+	virtual void	setWindowTitle(string title); // TODO const correct
 
-	virtual int		getWindowMode() {return 0;}
+	virtual int		getWindowMode(); // TODO use enum
 
-	virtual void	setFullscreen(bool fullscreen){}
-	virtual void	toggleFullscreen(){}
+	virtual void	setFullscreen(bool fullscreen);
+	virtual void	toggleFullscreen();
 
-	virtual void	enableSetupScreen(){}
-	virtual void	disableSetupScreen(){}
+	virtual void	enableSetupScreen();
+	virtual void	disableSetupScreen();
 
 protected:
+
+	void idle();
+	virtual void postIdle() {};
+	void display();
+	virtual void postDisplay() {};
+
+	void infiniteLoop();
+
+	void setWindowRect(const ofRectangle& requestedWindowRect) {
+		if(requestedWindowRect != currentWindowRect) {
+			ofRectangle oldWindowRect = currentWindowRect;
+
+			currentWindowRect = requestNewWindowRect(requestedWindowRect);
+			
+			if(oldWindowRect != currentWindowRect) {
+				ofNotifyWindowResized(currentWindowRect.width,currentWindowRect.height);
+				nFramesSinceWindowResized = 0;
+			}
+		}
+	}
+
+
+	// get the latest screen measurement
+	virtual ofRectangle getScreenRect() = 0;
+	// request a window size / position.  will adjust the context to match (if possible)
+	// and return the resulting window rectangle.
+	virtual ofRectangle requestNewWindowRect(const ofRectangle& requestedWindowRect) = 0;
+
+	int getWindowWidth() {
+		return currentWindowRect.width;
+	}
+
+
+	int getWindowHeight() {
+		return currentWindowRect.height;
+	}
+
+	bool     terminate;
+
+	int      windowMode;
+	bool     bNewScreenMode;
+	float    timeNow, timeThen, fps;
+	int      nFramesForFPS;
+	int      nFrameCount;
+	int      buttonInUse;
+	bool     bEnableSetupScreen;
+
+
+	bool     bFrameRateSet;
+	int      millisForFrame;
+	int      prevMillis;
+	int      diffMillis;
+
+	float    frameRate;
+
+	double   lastFrameTime;
+
+//	int      requestedWidth;
+//	int      requestedHeight;
+//	int      nonFullScreenX;
+//	int      nonFullScreenY;
+//	int      windowW;
+//	int      windowH;
+	string   eglDisplayString;
+	int      nFramesSinceWindowResized;
+	ofOrientation orientation;
+	ofBaseApp *  ofAppPtr;
+
+	// TODO thread for keyboard and mouse input?
+
+
+	// EGL window
+	ofRectangle screenRect;
+	ofRectangle nonFullscreenWindowRect; // the rectangle describing the non-fullscreen window
+	ofRectangle currentWindowRect; // the rectangle describing the current device
+
+	EGLDisplay eglDisplay;  // EGL display connection
+	EGLSurface eglSurface;
+	EGLContext eglContext;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// void windowResized(int w, int h) {
+// 	windowW = w;
+// 	windowH = h;
+
+// 	ofNotifyWindowResized(w, h);
+
+// 	nFramesSinceWindowResized = 0;
+// }
+
+// 		virtual void windowEntry ( int state ) { }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 	string getEGLErrorString(){
 // 		EGLint nErr = eglGetError();

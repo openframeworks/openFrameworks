@@ -28,7 +28,8 @@
 
 
 #include "ofAppRaspberryPiWindow.h"
-
+#include "ofEGLWindow.h"
+#include <assert.h>
 
 //------------------------------------------------------------
 ofAppRaspberryPiWindow::ofAppRaspberryPiWindow() { };
@@ -36,14 +37,100 @@ ofAppRaspberryPiWindow::ofAppRaspberryPiWindow() { };
 ofAppRaspberryPiWindow::~ofAppRaspberryPiWindow(){ };
 
 //------------------------------------------------------------
-void ofAppRaspberryPiWindow::setupOpenGL(int w, int h, int screenMode)
-{
+void ofAppRaspberryPiWindow::setupOpenGL(int w, int h, int screenMode) {
 
     // raspberry pi host init
+    // TODO: this may be called elsewhere in the core ...
+
+
     bcm_host_init();
 
+    //boolean force HDMI vs. composite
+
+    int32_t success = 0;
+
+    uint32_t sw;
+    uint32_t sh;
+
+    // create an EGL window surface
+    // IF SCREENMODE==FULLSCREEN
+    success = graphics_get_display_size(0 /* LCD */, &sw, &sh);
+    assert( success >= 0 );
+
+cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
+cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
+
+
+
+//////////////////////////
+    VC_RECT_T dst_rect;
+    VC_RECT_T src_rect;
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = sw;
+    dst_rect.height = sh;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = sw << 16;
+    src_rect.height = sh << 16;
+
+    DISPMANX_ELEMENT_HANDLE_T dispman_element;
+    DISPMANX_DISPLAY_HANDLE_T dispman_display;
+    DISPMANX_UPDATE_HANDLE_T dispman_update;
+
+
+    dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
+    dispman_update = vc_dispmanx_update_start( 0 );
+
+    dispman_element = vc_dispmanx_element_add ( dispman_update, 
+                                                dispman_display,
+                                                0/*layer*/, 
+                                                &dst_rect, 
+                                                0/*src*/,
+                                                &src_rect, 
+                                                DISPMANX_PROTECTION_NONE, 
+                                                0 /*alpha*/, 
+                                                0/*clamp*/, 
+                                                (DISPMANX_TRANSFORM_T)0/*transform*/
+                                                );
+
+    nativeWindow.element = dispman_element;
+    nativeWindow.width = sw;
+    nativeWindow.height = sh;
+    vc_dispmanx_update_submit_sync( dispman_update );
+
+
+// //////////////////////////
+
+
+
+
+
+
+
+
+
     // call the super class method
-    ofEGLWindow::setupOpenGL(w,h,screenMode);
+    ofEGLWindow::setupEGL(&nativeWindow);
+
+    // call the super class opengl setup
+    //ofEGLWindow::setupOpenGL(sw, sh, screenMode);
+
+    cout << "CREATED SCREEN WITH SIZE " << sw << " x " << sh << endl;
+
+
+    // TEMPORARY
+
+    screenRect.x = 0;
+    screenRect.y = 0;
+    screenRect.width = sw;
+    screenRect.height = sh;
+
+    nonFullscreenWindowRect = screenRect;
+    currentWindowRect = screenRect;
+
 
     // choose our renderer
     ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer));
