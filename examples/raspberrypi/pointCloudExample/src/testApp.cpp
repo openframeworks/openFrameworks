@@ -8,7 +8,7 @@ void testApp::setup(){
         // we're going to load a ton of points into an ofMesh
         mesh.setMode(OF_PRIMITIVE_POINTS);
         // loop through the image in the x and y axes
-        int skip = 4; // load a subset of the points
+        int skip = 3; // load a subset of the points
         for(int y = 0; y < img.getHeight(); y += skip) {
                 for(int x = 0; x < img.getWidth(); x += skip) {
                         ofColor cur = img.getColor(x, y);
@@ -25,7 +25,7 @@ void testApp::setup(){
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
-        glPointSize(3); // make the points bigger
+        glPointSize(2); // make the points bigger
 	count = 0;
 }
 
@@ -48,7 +48,6 @@ void testApp::draw() {
 	ofRotateY(r);
 	mesh.draw();
 	ofPopMatrix();
-	
 }
 
 //--------------------------------------------------------------
