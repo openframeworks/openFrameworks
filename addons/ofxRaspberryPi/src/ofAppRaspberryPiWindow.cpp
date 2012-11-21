@@ -28,7 +28,7 @@
 
 
 #include "ofAppRaspberryPiWindow.h"
-#include "ofEGLWindow.h"
+//#include "ofAppEGLWindow.h"
 #include <assert.h>
 
 //------------------------------------------------------------
@@ -113,7 +113,7 @@ cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
 
 
     // call the super class method
-    ofEGLWindow::setupEGL(&nativeWindow);
+    ofAppEGLWindow::setupEGL(&nativeWindow);
 
     // call the super class opengl setup
     //ofEGLWindow::setupOpenGL(sw, sh, screenMode);

@@ -30,10 +30,10 @@
 
 #include "ofAppBaseWindow.h"
 
-class ofEGLWindow : public ofAppBaseWindow {
+class ofAppEGLWindow : public ofAppBaseWindow {
 public:
-	ofEGLWindow();
-	virtual ~ofEGLWindow();
+	ofAppEGLWindow();
+	virtual ~ofAppEGLWindow();
 
 	//virtual void setupOpenGL(int w, int h, int screenMode);
 

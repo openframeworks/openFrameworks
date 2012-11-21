@@ -28,16 +28,16 @@
 
 #include "bcm_host.h"
 
-#include "ofEGLWindow.h"
+#include "ofAppEGLWindow.h"
 #include "ofBaseApp.h"
 
 #include "ofGLRenderer.h"
 #include "ofGraphics.h"
 
 
-class ofEGLWindow; // forward declaration
+class ofAppEGLWindow; // forward declaration
 
-class ofAppRaspberryPiWindow : public ofEGLWindow {
+class ofAppRaspberryPiWindow : public ofAppEGLWindow {
 public:
 	ofAppRaspberryPiWindow();
 	virtual ~ofAppRaspberryPiWindow();

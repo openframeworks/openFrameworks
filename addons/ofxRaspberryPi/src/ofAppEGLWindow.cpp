@@ -26,7 +26,7 @@
 
 #pragma oncecd bin
 
-#include "ofEGLWindow.h"
+#include "ofAppEGLWindow.h"
 
 #include "ofGraphics.h" // used in runAppViaInfiniteLoop()
 #include "ofAppRunner.h"
@@ -39,7 +39,7 @@
 // use static callbacks (like glut)
 
 //------------------------------------------------------------
-ofEGLWindow::ofEGLWindow() {
+ofAppEGLWindow::ofAppEGLWindow() {
     terminate      = false;
 
     timeNow         = 0;
@@ -67,19 +67,19 @@ ofEGLWindow::ofEGLWindow() {
 }
 
 //------------------------------------------------------------
-ofEGLWindow::~ofEGLWindow() {
+ofAppEGLWindow::~ofAppEGLWindow() {
 
 }
 
 // //------------------------------------------------------------
-// void ofEGLWindow::setupOpenGL(int w, int h, int screenMode) {
-//     cout << "in ofEGLWINDOW: setupOpenGL" << endl;
+// void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
+//     cout << "in ofAppEGLWINDOW: setupOpenGL" << endl;
 
 //     windowMode = screenMode;
 //     bNewScreenMode = true;
 
 //     if(windowMode == OF_GAME_MODE) {
-//         ofLogWarning("ofEGLWindow") << "OF_GAME_MODE not supported.";
+//         ofLogWarning("ofAppEGLWindow") << "OF_GAME_MODE not supported.";
 //     }
 
 //     //windowW = requestedWidth  = getWindowWidth();
@@ -88,7 +88,7 @@ ofEGLWindow::~ofEGLWindow() {
 // }
 
 //------------------------------------------------------------
-void ofEGLWindow::setupEGL(NativeWindowType nativeWindow)
+void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow)
 {
 
     EGLBoolean result;
@@ -99,7 +99,7 @@ void ofEGLWindow::setupEGL(NativeWindowType nativeWindow)
     eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
     if(eglDisplay == EGL_NO_DISPLAY) {
-      ofLogError("ofEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
+      ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
       return;
     }
 
@@ -111,15 +111,15 @@ void ofEGLWindow::setupEGL(NativeWindowType nativeWindow)
 
     if(result == EGL_BAD_DISPLAY) {
 //  eglDisplay is not an EGL connection
-      ofLogError("ofEGLWindow::setupEGL") << "eglInitialize returned EGL_BAD_DISPLAY";
+      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_BAD_DISPLAY";
       return;
     } else if(result == EGL_NOT_INITIALIZED) {
       // eglDisplay cannot be intitialized
-      ofLogError("ofEGLWindow::setupEGL") << "eglInitialize returned EGL_NOT_INITIALIZED";
+      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_NOT_INITIALIZED";
       return;
     } else if(result == EGL_FALSE) {
       // eglinitialize was not initialiezd
-      ofLogError("ofEGLWindow::setupEGL") << "eglInitialize returned EGL_FALSE";
+      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_FALSE";
       return;
     } else {
       // result == EGL_TRUE
@@ -167,7 +167,7 @@ void ofEGLWindow::setupEGL(NativeWindowType nativeWindow)
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::destroyEGL() {
+void ofAppEGLWindow::destroyEGL() {
     eglMakeCurrent( eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
     eglDestroySurface( eglDisplay, eglSurface );
     eglDestroyContext( eglDisplay, eglContext );
@@ -175,13 +175,13 @@ void ofEGLWindow::destroyEGL() {
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::initializeWindow()
+void ofAppEGLWindow::initializeWindow()
 {
     nFramesSinceWindowResized = 0;
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
+void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
     ofAppPtr = appPtr; // make a local copy
    
     ofNotifySetup();
@@ -195,7 +195,7 @@ void ofEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::infiniteLoop() {
+void ofAppEGLWindow::infiniteLoop() {
     while (!terminate) {
       idle();
       display();
@@ -203,17 +203,17 @@ void ofEGLWindow::infiniteLoop() {
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::hideCursor(){
-    ofLogNotice("ofEGLWindow") << "hideCursor() not implemented.";
+void ofAppEGLWindow::hideCursor(){
+    ofLogNotice("ofAppEGLWindow") << "hideCursor() not implemented.";
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::showCursor(){
-    ofLogNotice("ofEGLWindow") << "showCursor() not implemented.";
+void ofAppEGLWindow::showCursor(){
+    ofLogNotice("ofAppEGLWindow") << "showCursor() not implemented.";
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::setFrameRate(float targetRate){
+void ofAppEGLWindow::setFrameRate(float targetRate){
   // given this FPS, what is the amount of millis per frame
   // that should elapse?
 
@@ -233,27 +233,27 @@ void ofEGLWindow::setFrameRate(float targetRate){
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::setWindowTitle(string title) {
-    ofLogNotice("ofEGLWindow") << "setWindowTitle() not implemented.";
+void ofAppEGLWindow::setWindowTitle(string title) {
+    ofLogNotice("ofAppEGLWindow") << "setWindowTitle() not implemented.";
 }
 
 //------------------------------------------------------------
-ofPoint ofEGLWindow::getWindowSize(){
+ofPoint ofAppEGLWindow::getWindowSize(){
   return ofPoint(currentWindowRect.width, currentWindowRect.height,0);
 }
 
 //------------------------------------------------------------
-ofPoint ofEGLWindow::getWindowPosition(){
+ofPoint ofAppEGLWindow::getWindowPosition(){
   return currentWindowRect.getPosition();
 }
 
 //------------------------------------------------------------
-ofPoint ofEGLWindow::getScreenSize(){
+ofPoint ofAppEGLWindow::getScreenSize(){
   return ofPoint(screenRect.width, screenRect.height,0);
 }
 
 //------------------------------------------------------------
-int ofEGLWindow::getWidth(){
+int ofAppEGLWindow::getWidth(){
   if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
     return currentWindowRect.width;
   }
@@ -261,7 +261,7 @@ int ofEGLWindow::getWidth(){
 }
 
 //------------------------------------------------------------
-int ofEGLWindow::getHeight(){
+int ofAppEGLWindow::getHeight(){
   if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
     return currentWindowRect.height;
   }
@@ -269,29 +269,29 @@ int ofEGLWindow::getHeight(){
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::setOrientation(ofOrientation orientationIn){
+void ofAppEGLWindow::setOrientation(ofOrientation orientationIn){
   orientation = orientationIn;
 }
 
 //------------------------------------------------------------
-ofOrientation ofEGLWindow::getOrientation(){
+ofOrientation ofAppEGLWindow::getOrientation(){
   return orientation;
 }
 
 //------------------------------------------------------------
-bool ofEGLWindow::doesHWOrientation() {
+bool ofAppEGLWindow::doesHWOrientation() {
     return false;
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::setWindowPosition(int x, int y){
+void ofAppEGLWindow::setWindowPosition(int x, int y){
 // todo -- set window rect, etc, but if we are in fullscreen mode,
     // we won't change it.
   setWindowRect(ofRectangle(x,y,currentWindowRect.width,currentWindowRect.height));
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::setWindowShape(int w, int h){
+void ofAppEGLWindow::setWindowShape(int w, int h){
   // todo -- set window rect, etc, but if we are in fullscreen mode,
  // we won't change it.
   setWindowRect(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
@@ -300,12 +300,12 @@ void ofEGLWindow::setWindowShape(int w, int h){
 
 
 //------------------------------------------------------------
-int ofEGLWindow::getWindowMode(){
+int ofAppEGLWindow::getWindowMode(){
   return windowMode;
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::toggleFullscreen(){
+void ofAppEGLWindow::toggleFullscreen(){
   if( windowMode == OF_GAME_MODE)return;
 
   if( windowMode == OF_WINDOW ){
@@ -317,7 +317,7 @@ void ofEGLWindow::toggleFullscreen(){
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::setFullscreen(bool fullscreen){
+void ofAppEGLWindow::setFullscreen(bool fullscreen){
     if( windowMode == OF_GAME_MODE)return;
 
     if(fullscreen && windowMode != OF_FULLSCREEN){
@@ -330,17 +330,17 @@ void ofEGLWindow::setFullscreen(bool fullscreen){
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::enableSetupScreen(){
+void ofAppEGLWindow::enableSetupScreen(){
   bEnableSetupScreen = true;
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::disableSetupScreen(){
+void ofAppEGLWindow::disableSetupScreen(){
   bEnableSetupScreen = false;
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::idle() {
+void ofAppEGLWindow::idle() {
   //  thanks to jorge for the fix:
   //  http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
 
@@ -372,7 +372,7 @@ void ofEGLWindow::idle() {
 }
 
 //------------------------------------------------------------
-void ofEGLWindow::display() {
+void ofAppEGLWindow::display() {
 
   // take care of any requests for a new screen mode
   if (windowMode != OF_GAME_MODE){
@@ -413,17 +413,17 @@ void ofEGLWindow::display() {
 }
 
 //------------------------------------------------------------
-float ofEGLWindow::getFrameRate(){
+float ofAppEGLWindow::getFrameRate(){
   return frameRate;
 }
 
 //------------------------------------------------------------
-double ofEGLWindow::getLastFrameTime(){
+double ofAppEGLWindow::getLastFrameTime(){
   return lastFrameTime;
 }
 
 //------------------------------------------------------------
-int ofEGLWindow::getFrameNum(){
+int ofAppEGLWindow::getFrameNum(){
   return nFrameCount;
 }
 
