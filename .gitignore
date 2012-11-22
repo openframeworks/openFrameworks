@@ -18,3 +18,5 @@ obj/
 bin/
 build/
 !data/
+
+ofxCv.wiki/
