@@ -955,7 +955,7 @@ ofRectMode ofGLES2Renderer::getRectMode(){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::setLineWidth(float lineWidth){
-	// TODO :: needs ES2 code.
+	glLineWidth(lineWidth);
 }
 
 //----------------------------------------------------------
