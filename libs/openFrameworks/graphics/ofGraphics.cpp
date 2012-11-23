@@ -6,22 +6,22 @@
 #include "ofPath.h"
 #include "ofRendererCollection.h"
 
-#ifndef TARGET_NO_GLU
-#ifdef TARGET_OSX
-	#include <OpenGL/glu.h>
-#endif
+#ifndef TARGET_LINUX_ARM
+	#ifdef TARGET_OSX
+		#include <OpenGL/glu.h>
+	#endif
 
-//#ifdef TARGET_OPENGLES
-//	#include "glu.h"
-//#endif
-//
-#ifdef TARGET_LINUX
-	#include <GL/glu.h>
-#endif
+	#ifdef TARGET_OPENGLES
+		#include "glu.h"
+	#endif
 
-#ifdef TARGET_WIN32
-	#include "glu.h"
-#endif
+	#ifdef TARGET_LINUX
+		#include <GL/glu.h>
+	#endif
+
+	#ifdef TARGET_WIN32
+		#include "glu.h"
+	#endif
 #endif
 
 
@@ -29,7 +29,6 @@
     #define CALLBACK
 #endif
 
-#ifndef TARGET_NO_GLUT
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
 	#include "glut.h"
@@ -37,9 +36,8 @@
 #ifdef TARGET_OSX
 	#include <GLUT/glut.h>
 #endif
-#ifdef TARGET_LINUX
+#if defined( TARGET_LINUX ) && !defined(TARGET_OPENGLES)
 	#include <GL/glut.h>
-#endif
 #endif
 
 
