@@ -32,10 +32,10 @@ static ofPtr<ofAppBaseWindow> 		window;
 // default windowing
 #ifdef TARGET_OF_IPHONE
 	#include "ofAppiPhoneWindow.h"
-#elif TARGET_ANDROID
+#elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
-#elif TARGET_RASPBERRY_PI 
-	#include "ofAppRaspberryPiWindow.h"
+#elif defined(TARGET_LINUX_ARM)
+	#include "ofAppEGLWindow.h"
 #else
 	#include "ofAppGlutWindow.h"
 #endif
@@ -110,10 +110,10 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_OF_IPHONE
 		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
-	#elif TARGET_ANDROID
+	#elif defined(TARGET_ANDROID)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
-	#elif TARGET_RASPBERRY_PI
-		window = ofPtr<ofAppBaseWindow>(new ofAppRaspberryPiWindow());
+	#elif defined(TARGET_LINUX_ARM)
+		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
 	#else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#endif
@@ -371,26 +371,24 @@ void ofSetVerticalSync(bool bSync){
 	//--------------------------------------
 
 	//--------------------------------------
-	#ifdef TARGET_LINUX
+	#if defined ( TARGET_LINUX ) && !defined ( TARGET_OPENGLES )
 	//--------------------------------------
-		#ifndef TARGET_NO_X11
-			void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
-			if(swapIntervalExt){
-				Display *dpy = glXGetCurrentDisplay();
-				GLXDrawable drawable = glXGetCurrentDrawable();
-				if (drawable) {
-					swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
-					return;
-				}
+		void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+		if(swapIntervalExt){
+			Display *dpy = glXGetCurrentDisplay();
+			GLXDrawable drawable = glXGetCurrentDrawable();
+			if (drawable) {
+				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+				return;
 			}
-			void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-			if(!swapInterval) {
-				swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
-			}
-			if(swapInterval) {
-				swapInterval(bSync ? 1 : 0);
-			}
-			#endif
+		}
+		void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+		if(!swapInterval) {
+			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+		}
+		if(swapInterval) {
+			swapInterval(bSync ? 1 : 0);
+		}
 	//--------------------------------------
 	#endif
 	//--------------------------------------

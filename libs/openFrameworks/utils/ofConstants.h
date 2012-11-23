@@ -21,6 +21,7 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUX,
 	OF_TARGET_LINUX64,
 	OF_TARGET_LINUXARMV6L, // arm v6 little endian
+	OF_TARGET_LINUXARMV7L, // arm v7 little endian
 };
 
 // Cross-platform deprecation warning
@@ -62,6 +63,10 @@ enum ofTargetPlatform{
 #elif defined (ANDROID)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
+#elif defined(__ARMEL__)
+	#define TARGET_LINUX
+	#define TARGET_OPENGLES
+	#define TARGET_LINUX_ARM
 #else
 	#define TARGET_LINUX
 #endif
@@ -142,25 +147,17 @@ enum ofTargetPlatform{
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
 
-    #ifdef TARGET_RASPBERRY_PI
-        #include "bcm_host.h"
+    #ifdef TARGET_LINUX_ARM
+    	#ifdef TARGET_RASPBERRY_PI
+        	#include "bcm_host.h"
+        #endif
        
-#include "GLES/gl.h"
-#include "GLES/glext.h" 
-#include "GLES2/gl2.h"
-#include "GLES2/gl2ext.h"
-#include "EGL/egl.h"
-#include "EGL/eglext.h"
-
-
-
-//#include "GLES/glext.h" 
-	//#include "GLES/gl.h"
-        //#include "EGL/egl.h"
-        //#include "EGL/eglext.h"
-	// don't need this for rpi any more
-        //#include "glu.h"
-        //#include "gluos.h"
+		#include "GLES/gl.h"
+		#include "GLES/glext.h" 
+		#include "GLES2/gl2.h"
+		#include "GLES2/gl2ext.h"
+		#include "EGL/egl.h"
+		#include "EGL/eglext.h"
     #else // normal linux
         #include <glxew.h>
         #include <GL/glew.h>

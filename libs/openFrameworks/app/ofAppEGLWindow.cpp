@@ -23,9 +23,6 @@
     Modified by Philip Whitfield (undef.ch)
 
  ==============================================================================*/
-
-#pragma oncecd bin
-
 #include "ofAppEGLWindow.h"
 
 #include "ofGraphics.h" // used in runAppViaInfiniteLoop()
@@ -71,42 +68,194 @@ ofAppEGLWindow::~ofAppEGLWindow() {
 
 }
 
-// //------------------------------------------------------------
-// void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
-//     cout << "in ofAppEGLWINDOW: setupOpenGL" << endl;
+//------------------------------------------------------------
+bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
 
-//     windowMode = screenMode;
-//     bNewScreenMode = true;
+	#ifdef TARGET_RASPBERRY_PI
+ 	bcm_host_init();
 
-//     if(windowMode == OF_GAME_MODE) {
-//         ofLogWarning("ofAppEGLWindow") << "OF_GAME_MODE not supported.";
-//     }
+    //boolean force HDMI vs. composite
 
-//     //windowW = requestedWidth  = getWindowWidth();
-//     //windowH = requestedHeight = getWindowHeight();
+    int32_t success = 0;
 
-// }
+    uint32_t sw;
+    uint32_t sh;
+
+    // create an EGL window surface
+    // IF SCREENMODE==FULLSCREEN
+    success = graphics_get_display_size(0 /* LCD */, &sw, &sh);
+    if(!success) return false;
+
+	cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
+	cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
+
+
+
+	//////////////////////////
+    VC_RECT_T dst_rect;
+    VC_RECT_T src_rect;
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = sw;
+    dst_rect.height = sh;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = sw << 16;
+    src_rect.height = sh << 16;
+
+    DISPMANX_ELEMENT_HANDLE_T dispman_element;
+    DISPMANX_DISPLAY_HANDLE_T dispman_display;
+    DISPMANX_UPDATE_HANDLE_T dispman_update;
+
+
+    dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
+    dispman_update = vc_dispmanx_update_start( 0 );
+
+    dispman_element = vc_dispmanx_element_add ( dispman_update, 
+                                                dispman_display,
+                                                0/*layer*/, 
+                                                &dst_rect, 
+                                                0/*src*/,
+                                                &src_rect, 
+                                                DISPMANX_PROTECTION_NONE, 
+                                                0 /*alpha*/, 
+                                                0/*clamp*/, 
+                                                (DISPMANX_TRANSFORM_T)0/*transform*/
+                                                );
+
+    EGL_DISPMANX_WINDOW_T nativeWindow;
+    nativeWindow.element = dispman_element;
+    nativeWindow.width = sw;
+    nativeWindow.height = sh;
+    vc_dispmanx_update_submit_sync( dispman_update );
+    return setupEGL((NativeWindowType) nativeWindow);
+    #else
+    return false;
+    #endif
+    
+}
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow)
+bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
+	// X11 variables
+	Window				x11Window	= 0;
+	Display*			x11Display	= 0;
+	long				x11Screen	= 0;
+	XVisualInfo*		x11Visual	= 0;
+	Colormap			x11Colormap	= 0;
+	/*
+		Step 0 - Create a NativeWindowType that we can use it for OpenGL ES output
+	*/
+	Window					sRootWindow;
+    XSetWindowAttributes	sWA;
+	unsigned int			ui32Mask;
+	int						i32Depth;
+	
+	// Initializes the display and screen
+	x11Display = XOpenDisplay( 0 );
+	if (!x11Display)
+	{
+		ofLogError()<< "Error: Unable to open X display";
+		return false;
+	}
+	x11Screen = XDefaultScreen( x11Display );
+
+	// Gets the window parameters
+	sRootWindow = RootWindow(x11Display, x11Screen);
+	i32Depth = DefaultDepth(x11Display, x11Screen);
+	x11Visual = new XVisualInfo;
+	XMatchVisualInfo( x11Display, x11Screen, i32Depth, TrueColor, x11Visual);
+	if (!x11Visual)
+	{
+		ofLogError()<< "Error: Unable to acquire visual";
+		return false;
+	}
+    x11Colormap = XCreateColormap( x11Display, sRootWindow, x11Visual->visual, AllocNone );
+    sWA.colormap = x11Colormap;
+
+    // Add to these for handling other events
+    sWA.event_mask = StructureNotifyMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask;
+    ui32Mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
+
+	// Creates the X11 window
+    x11Window = XCreateWindow( x11Display, RootWindow(x11Display, x11Screen), 0, 0, w, h,
+								 0, CopyFromParent, InputOutput, CopyFromParent, ui32Mask, &sWA);
+	XMapWindow(x11Display, x11Window);
+	XFlush(x11Display);
+	
+	setupEGL((NativeWindowType)x11Window,x11Display);
+	
+	return true;
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
+     
+	 cout << "in ofAppEGLWINDOW: setupOpenGL" << endl;
+
+     windowMode = screenMode;
+     bNewScreenMode = true;
+
+     if(windowMode == OF_GAME_MODE) {
+         ofLogWarning("ofAppEGLWindow") << "OF_GAME_MODE not supported.";
+     }
+
+     //windowW = requestedWidth  = getWindowWidth();
+     //windowH = requestedHeight = getWindowHeight();
+
+	#ifdef TARGET_RASPBERRY_PI
+		setupRPiNativeWindow(w,h,screenMode);
+	#else 
+		setupX11NativeWindow(w,h,screenMode);
+	#endif
+
+    cout << "CREATED SCREEN WITH SIZE " << w << " x " << h << endl;
+
+
+    // TEMPORARY
+
+    screenRect.x = 0;
+    screenRect.y = 0;
+    screenRect.width = w;
+    screenRect.height = h;
+
+    nonFullscreenWindowRect = screenRect;
+    currentWindowRect = screenRect;
+
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
 {
 
     EGLBoolean result;
     EGLint num_config;
     EGLConfig config;
 
+	ofLogNotice() << "setting EGL Display";
     // get an EGL eglDisplay connection
-    eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if(display==NULL){
+	ofLogNotice() << "setting default Display";
+    	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    }else{
+		ofLogNotice() << "setting argument Display";
+    	eglDisplay = eglGetDisplay((NativeDisplayType)display);
+    }
 
     if(eglDisplay == EGL_NO_DISPLAY) {
-      ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
-      return;
+		ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
+		return;
+    }else{
+    	ofLogNotice() << "EGL Display correctly set";
     }
 
     EGLint eglVersionMajor = 0;
     EGLint eglVersionMinor = 0;
 
     // initialize the EGL eglDisplay connection
+	ofLogNotice() << "eglInitialize";
     result = eglInitialize(eglDisplay, &eglVersionMajor, &eglVersionMinor);
 
     if(result == EGL_BAD_DISPLAY) {
@@ -138,6 +287,7 @@ void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow)
     };
 
     // get an appropriate EGL frame buffer configuration
+	ofLogNotice() << "eglChooseConfig";
     result = eglChooseConfig(eglDisplay, 
                              attribute_list, 
                              &config, 
@@ -146,15 +296,18 @@ void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow)
 
     assert(EGL_FALSE != result);
 
-    // create an EGL rendering eglContext
-    eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, NULL);
-
-    assert(eglContext != EGL_NO_CONTEXT);
-
+	ofLogNotice() << "eglCreateWindowSurface";
     eglSurface = eglCreateWindowSurface( eglDisplay, config, nativeWindow, NULL );
     assert(eglSurface != EGL_NO_SURFACE);
+    
+    // create an EGL rendering eglContext
+	ofLogNotice() << "eglCreateContext";
+    eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, NULL);
+    assert(eglContext != EGL_NO_CONTEXT);
+
 
     // connect the eglContext to the eglSurface
+	ofLogNotice() << "eglMakeCurrent";
     result = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
     assert(EGL_FALSE != result);
 
@@ -428,3 +581,12 @@ int ofAppEGLWindow::getFrameNum(){
 }
 
 
+ofRectangle ofAppEGLWindow::getScreenRect(){
+	return 	currentWindowRect;
+}
+
+ofRectangle ofAppEGLWindow::requestNewWindowRect(const ofRectangle& rect){
+	setWindowPosition(rect.x,rect.y);
+	setWindowShape(rect.width,rect.height);
+	return getScreenRect();
+}

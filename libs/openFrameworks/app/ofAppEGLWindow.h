@@ -29,15 +29,17 @@
 #include "ofBaseApp.h"
 
 #include "ofAppBaseWindow.h"
+#include "X11/Xlib.h"
+#include "X11/Xutil.h"
 
 class ofAppEGLWindow : public ofAppBaseWindow {
 public:
 	ofAppEGLWindow();
 	virtual ~ofAppEGLWindow();
 
-	//virtual void setupOpenGL(int w, int h, int screenMode);
+	virtual void setupOpenGL(int w, int h, int screenMode);
 
-	virtual void setupEGL(NativeWindowType nativeWindow);
+	virtual void setupEGL(NativeWindowType nativeWindow, Display * display=NULL);
 	virtual void destroyEGL();
 
 	virtual void initializeWindow();
@@ -78,6 +80,9 @@ public:
 
 protected:
 
+	bool setupX11NativeWindow(int w, int h, int screenMode);
+	bool setupRPiNativeWindow(int w, int h, int screenMode);
+
 	void idle();
 	virtual void postIdle() {};
 	void display();
@@ -98,13 +103,8 @@ protected:
 		}
 	}
 
-
-	// get the latest screen measurement
-	virtual ofRectangle getScreenRect() = 0;
-	// request a window size / position.  will adjust the context to match (if possible)
-	// and return the resulting window rectangle.
-	virtual ofRectangle requestNewWindowRect(const ofRectangle& requestedWindowRect) = 0;
-
+	virtual ofRectangle getScreenRect();
+	virtual ofRectangle requestNewWindowRect(const ofRectangle&);
 	int getWindowWidth() {
 		return currentWindowRect.width;
 	}
@@ -156,6 +156,7 @@ protected:
 	EGLDisplay eglDisplay;  // EGL display connection
 	EGLSurface eglSurface;
 	EGLContext eglContext;
+	
 
 
 
