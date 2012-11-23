@@ -148,7 +148,7 @@ bool ofCheckGLExtension(string searchName){
 }
 
 bool ofGLIsFixedPipeline(){
-	return ofGetCurrentRenderer()->getType()!="GLES2";
+	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!="GLES2";
 }
 
 ofPtr<ofGLES2Renderer> ofGetGLES2Renderer(){
