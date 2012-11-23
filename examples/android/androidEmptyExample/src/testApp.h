@@ -5,7 +5,7 @@
 #include "ofMain.h"
 #include "ofxAndroid.h"
 
-class testApp : public ofBaseApp{
+class testApp : public ofxAndroidApp{
 	
 	public:
 		
