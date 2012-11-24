@@ -3,9 +3,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	// register touch events
-	ofxRegisterMultitouch(this);
-
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
     // we need GL_TEXTURE_2D for our models coords.

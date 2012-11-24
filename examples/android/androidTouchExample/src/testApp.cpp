@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	// register touch events
-	ofxRegisterMultitouch(this);
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 

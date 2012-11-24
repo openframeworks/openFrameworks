@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	// register touch events
-	ofxRegisterMultitouch(this);
-
 	ofBackground(0,0,0);
 
 	bPause	   = false;

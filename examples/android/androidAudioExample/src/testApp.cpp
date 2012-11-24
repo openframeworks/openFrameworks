@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	// register touch events
-	ofxRegisterMultitouch(this);
-
 	ofBackground(255,255,255);
 	ofSetColor(0,0,0);
 	ofSetLogLevel(OF_LOG_NOTICE);

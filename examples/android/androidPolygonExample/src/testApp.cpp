@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	// register touch events
-	ofxRegisterMultitouch(this);
-	
 	//ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	
 	//this is to scale down the example for the iphone screen

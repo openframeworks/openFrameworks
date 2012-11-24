@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	// register touch events
-	ofxRegisterMultitouch(this);
-
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	synth.loadSound("sounds/synth.wav");
 	beats.loadSound("sounds/1085.mp3");
