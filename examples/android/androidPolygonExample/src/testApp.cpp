@@ -2,10 +2,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-
-	// register touch events
-	ofRegisterTouchEvents(this);
-	
 	//ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	
 	//this is to scale down the example for the iphone screen
@@ -414,48 +410,103 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
-	if( touch.id == 0 ){
+void testApp::keyPressed  (int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(int x, int y, int id){
+	if( id == 0 ){
 		for (int i = 0; i < nCurveVertices; i++){
-			float diffx = touch.x/appIphoneScale - curveVertices[i].x;
-			float diffy = touch.y/appIphoneScale - curveVertices[i].y;
+			float diffx = x/appIphoneScale - curveVertices[i].x;
+			float diffy = y/appIphoneScale - curveVertices[i].y;
 			float dist = sqrt(diffx*diffx + diffy*diffy);
 			if (dist < 45 ){
 				curveVertices[i].bBeingDragged = true;
 			} else {
 				curveVertices[i].bBeingDragged = false;
-			}	
+			}
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
-	if( touch.id == 0 ){
+void testApp::touchMoved(int x, int y, int id){
+	if( id == 0 ){
 		for (int i = 0; i < nCurveVertices; i++){
-		if (curveVertices[i].bBeingDragged == true){
-			curveVertices[i].x = touch.x/appIphoneScale;
-			curveVertices[i].y = touch.y/appIphoneScale;
+			if (curveVertices[i].bBeingDragged == true){
+				curveVertices[i].x = x/appIphoneScale;
+				curveVertices[i].y = y/appIphoneScale;
+			}
 		}
-	}
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
-	if( touch.id == 0 ){
+void testApp::touchUp(int x, int y, int id){
+	if( id == 0 ){
 		for (int i = 0; i < nCurveVertices; i++){
-			curveVertices[i].bBeingDragged = false;	
+			curveVertices[i].bBeingDragged = false;
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+void testApp::touchDoubleTap(int x, int y, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs &touch){
+void testApp::touchCancelled(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::pause(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::stop(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::resume(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::reloadTextures(){
+
+}
+
+//--------------------------------------------------------------
+bool testApp::backPressed(){
+	return false;
+}
+
+//--------------------------------------------------------------
+void testApp::okPressed(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::cancelPressed(){
 
 }
