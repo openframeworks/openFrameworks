@@ -1,6 +1,4 @@
-#ifndef _TEST_APP
-#define _TEST_APP
-
+#pragma once
 
 #include "ofMain.h"
 #include "ofxAndroid.h"
@@ -47,5 +45,3 @@ public:
 	bool	bPause;
 	int		zoom, zoomTarget;
 };
-
-#endif
