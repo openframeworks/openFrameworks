@@ -1,5 +1,4 @@
-#ifndef _TEST_APP
-#define _TEST_APP
+#pragma once
 
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////
@@ -83,7 +82,6 @@ class testApp : public ofxAndroidApp{
 		//ray drawn under mouse cursor [start,end]
 		ofVec3f					ray[2];
 };
-#endif
 
 /*
 
