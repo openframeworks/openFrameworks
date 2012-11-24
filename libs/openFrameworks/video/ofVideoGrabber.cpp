@@ -183,14 +183,12 @@ void ofVideoGrabber::update(){
 		grabber->update();
 		if( bUseTexture && grabber->isFrameNew() ){
 
-#ifndef TARGET_RASPBERRY_PI
-#ifndef TARGET_ANDROID
+#if !defined( TARGET_LINUX_ARM ) && !defined( TARGET_ANDROID )
 			//NOTE: keeping this for now as ofGetGLTypeFromPixelFormat return GL_RGBA for OF_PIXELS_BGRA
 			//TODO: once ofGetGLTypeFromPixelFormat is fixed then we just need the single line below. Could be to do with line 81 above?
 			if(internalPixelFormat == OF_PIXELS_BGRA){
 				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), GL_BGRA);
 			}else
-#endif
 #endif
 			{
 				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
