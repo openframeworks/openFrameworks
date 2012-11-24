@@ -127,10 +127,8 @@
 		E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
 		E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
 		E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
-<<<<<<< HEAD
 		ED8BD65315F402B900B2C635 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED8BD65115F402B900B2C635 /* ofXml.cpp */; };
 		ED8BD65415F402B900B2C635 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = ED8BD65215F402B900B2C635 /* ofXml.h */; };
-=======
 		E703368A15D4AF13009A3FDE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E703368915D4AF13009A3FDE /* CoreVideo.framework */; };
 		E703368C15D4AF1A009A3FDE /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E703368B15D4AF1A009A3FDE /* QTKit.framework */; };
 		E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E703368D15D4B03E009A3FDE /* ofQTKitGrabber.h */; };
@@ -140,7 +138,6 @@
 		E7F985E315E0DC6A003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985E115E0DC54003869B5 /* Accelerate.framework */; };
 		FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */; };
 		FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */; };
->>>>>>> 8d9abe6a05bd0f279cdb7cb32173908b98c879e5
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -281,10 +278,8 @@
 		E4F3BB1312F4C752002D19BB /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTrueTypeFont.cpp; path = ../../../openFrameworks/graphics/ofTrueTypeFont.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTrueTypeFont.h; path = ../../../openFrameworks/graphics/ofTrueTypeFont.h; sourceTree = SOURCE_ROOT; };
-<<<<<<< HEAD
 		ED8BD65115F402B900B2C635 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
 		ED8BD65215F402B900B2C635 /* ofXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofXml.h; sourceTree = "<group>"; };
-=======
 		E703368915D4AF13009A3FDE /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		E703368B15D4AF1A009A3FDE /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
 		E703368D15D4B03E009A3FDE /* ofQTKitGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitGrabber.h; sourceTree = "<group>"; };
@@ -294,7 +289,6 @@
 		E7F985E115E0DC54003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitMovieRenderer.h; sourceTree = "<group>"; };
 		FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofQTKitMovieRenderer.m; sourceTree = "<group>"; };
->>>>>>> 8d9abe6a05bd0f279cdb7cb32173908b98c879e5
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -651,14 +645,11 @@
 				E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */,
 				E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */,
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
-<<<<<<< HEAD
 				ED8BD65415F402B900B2C635 /* ofXml.h in Headers */,
-=======
 				E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */,
 				E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */,
 				E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */,
 				FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */,
->>>>>>> 8d9abe6a05bd0f279cdb7cb32173908b98c879e5
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -766,14 +757,11 @@
 				92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */,
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
-<<<<<<< HEAD
 				ED8BD65315F402B900B2C635 /* ofXml.cpp in Sources */,
-=======
 				E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */,
 				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
 				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
 				FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */,
->>>>>>> 8d9abe6a05bd0f279cdb7cb32173908b98c879e5
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -819,10 +807,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
-<<<<<<< HEAD
 				SDKROOT = macosx10.7;
-=======
->>>>>>> 8d9abe6a05bd0f279cdb7cb32173908b98c879e5
 			};
 			name = Debug;
 		};
@@ -867,10 +852,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
-<<<<<<< HEAD
 				SDKROOT = macosx10.7;
-=======
->>>>>>> 8d9abe6a05bd0f279cdb7cb32173908b98c879e5
 			};
 			name = Release;
 		};
