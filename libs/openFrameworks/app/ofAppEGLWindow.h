@@ -29,20 +29,24 @@
 #include "ofBaseApp.h"
 
 #include "ofAppBaseWindow.h"
+#include "ofThread.h"
+#include "ofImage.h"
 
 #ifndef TARGET_RASPBERRY_PI
 	#include "X11/Xlib.h"
 	#include "X11/Xutil.h"
 #endif
 
-class ofAppEGLWindow : public ofAppBaseWindow {
+#include <queue>
+
+class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
 	ofAppEGLWindow();
 	virtual ~ofAppEGLWindow();
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
-	virtual bool setupEGL(NativeWindowType nativeWindow, NativeDisplayType * display=NULL);
+	virtual bool setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display=NULL);
 	virtual void destroyEGL();
 
 	virtual void initializeWindow();
@@ -82,7 +86,6 @@ public:
 	virtual void	disableSetupScreen();
 
 protected:
-
 	bool setupX11NativeWindow(int w, int h, int screenMode);
 	bool setupRPiNativeWindow(int w, int h, int screenMode);
 
@@ -126,6 +129,7 @@ protected:
 	int      nFrameCount;
 	int      buttonInUse;
 	bool     bEnableSetupScreen;
+	bool	 bShowCursor;
 
 
 	bool     bFrameRateSet;
@@ -136,19 +140,10 @@ protected:
 	float    frameRate;
 
 	double   lastFrameTime;
-
-//	int      requestedWidth;
-//	int      requestedHeight;
-//	int      nonFullScreenX;
-//	int      nonFullScreenY;
-//	int      windowW;
-//	int      windowH;
 	string   eglDisplayString;
 	int      nFramesSinceWindowResized;
 	ofOrientation orientation;
 	ofBaseApp *  ofAppPtr;
-
-	// TODO thread for keyboard and mouse input?
 
 
 	// EGL window
@@ -164,14 +159,20 @@ protected:
 
 
 #ifdef TARGET_RASPBERRY_PI
-  // NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
-  EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
+	// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
+	EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
 #else
-  Window nativeWindow; // x11
+	Window nativeWindow; // x11
 #endif
 
 
-
+	void threadedFunction();
+	queue<ofMouseEventArgs> mouseEvents;
+	queue<ofKeyEventArgs> keyEvents;
+	void callMouseEvents();
+	ofImage mouseCursor;
+	
+	
 
 
 

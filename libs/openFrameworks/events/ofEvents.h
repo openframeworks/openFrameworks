@@ -47,14 +47,18 @@ class ofDragInfo{
 			int key;
 		};
 
-		class ofMouseEventArgs : public ofEventArgs {
+		class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 		  public:
-			int x;
-			int y;
+			enum Type{
+				Pressed,
+				Moved,
+				Released,
+				Dragged
+			} type;
 			int button;
 		};
 
-		class ofTouchEventArgs : public ofEventArgs {
+		class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 		  public:
 			enum Type{
 				down,
@@ -66,7 +70,6 @@ class ofDragInfo{
 
 			int id;
 			int time;
-			float x, y;
 			int numTouches;
 			float width, height;
 			float angle;
@@ -261,6 +264,7 @@ void ofNotifyMousePressed(int x, int y, int button);
 void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
+void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
