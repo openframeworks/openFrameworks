@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
+
 	//ofDisableArbTex();
 	hasStarted = false;
 	
