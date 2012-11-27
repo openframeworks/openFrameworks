@@ -318,7 +318,7 @@ void ofShader::unload() {
 		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 			GLuint shader = it->second;
 			if(shader) {
-				ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
+				//ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
 				releaseShader(program,shader);
 			}
 		}
