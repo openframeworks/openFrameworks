@@ -50,6 +50,11 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 	GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
+	
+	#ifdef TARGET_LINUX_ARM
+	// don't use ffmpegcolorspace internally
+	g_object_set(G_OBJECT(gstPipeline), "flags", (1 << 6), (void*)NULL);
+	#endif
 
 	// create the oF appsink for video rgb without sync to clock
 	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
@@ -59,21 +64,38 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
 	gst_base_sink_set_max_lateness  (GST_BASE_SINK(gstSink), -1);
 
-	int bpp;
+	int bpp,depth=24;
 	string mime;
+	int r_mask = 0xff0000;
+	int g_mask = 0x00ff00;
+	int b_mask = 0x0000ff;
+	int a_mask = 0x000000ff;
+	
 	switch(internalPixelFormat){
 	case OF_PIXELS_MONO:
 		mime = "video/x-raw-gray";
 		bpp = 8;
+		depth = 8;
 		break;
 	case OF_PIXELS_RGB:
 		mime = "video/x-raw-rgb";
 		bpp = 24;
 		break;
 	case OF_PIXELS_RGBA:
+		mime = "video/x-raw-rgb";
+		bpp = 32;
+		depth = 32;
+		r_mask = 0xff000000;
+		g_mask = 0x00ff0000;
+		b_mask = 0x0000ff00;
+		break;
 	case OF_PIXELS_BGRA:
 		mime = "video/x-raw-rgb";
 		bpp = 32;
+		depth = 32;
+		r_mask = 0x0000ff00;
+		g_mask = 0x00ff0000;
+		b_mask = 0xff000000;
 		break;
 	default:
 		mime = "video/x-raw-rgb";
@@ -81,17 +103,24 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		break;
 	}
 
-	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
+	GstCaps *caps;
+	
+	if(internalPixelFormat==OF_PIXELS_MONO){
+		caps = gst_caps_new_simple(mime.c_str(),
 										"bpp", G_TYPE_INT, bpp,
-										"depth", G_TYPE_INT, 24,
-										"endianness",G_TYPE_INT,4321,
-										"red_mask",G_TYPE_INT,0xff0000,
-										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,
-										"alpha_mask",G_TYPE_INT,0x000000ff,
-
-
+										"depth", G_TYPE_INT, depth,
 										NULL);
+	}else{
+		caps = gst_caps_new_simple(mime.c_str(),
+										"bpp", G_TYPE_INT, bpp,
+										"depth", G_TYPE_INT, depth,
+										"endianness",G_TYPE_INT,4321,
+										"red_mask",G_TYPE_INT,r_mask,
+										"green_mask",G_TYPE_INT,g_mask,
+										"blue_mask",G_TYPE_INT,b_mask,
+										"alpha_mask",G_TYPE_INT,a_mask,
+										NULL);
+	}
 	gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
 	gst_caps_unref(caps);
 
@@ -110,7 +139,22 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",appBin,(void*)NULL);
 	}else{
+		#ifdef TARGET_LINUX_ARM
+		GstElement * scale = gst_element_factory_make("ffmpegcolorspace","appsink_scale");
+		GstElement* appBin = gst_bin_new("app_bin");
+		gst_bin_add(GST_BIN(appBin), scale);
+		GstPad* scalePad = gst_element_get_static_pad(scale, "sink");
+		GstPad* ghostPad = gst_ghost_pad_new("app_bin_sink", scalePad);
+		gst_object_unref(scalePad);
+		gst_element_add_pad(appBin, ghostPad);
+
+		gst_bin_add_many(GST_BIN(appBin), gstSink, NULL);
+		gst_element_link_many(scale, gstSink, NULL);
+		
+		g_object_set (G_OBJECT(gstPipeline),"video-sink",appBin,(void*)NULL);
+		#else
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,(void*)NULL);
+		#endif
 	}
 
 #ifdef TARGET_WIN32
