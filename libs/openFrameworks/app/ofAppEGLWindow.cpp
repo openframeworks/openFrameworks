@@ -362,12 +362,23 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     // TODO -- give the ability to send in this list when setting up.
     EGLint glesVersion;
     int glesVersionForContext;
+
+    if(ofGetCurrentRenderer()) {
+      ofLogNotice("ofAppEGLWindow::setupEGL") << "ofGetCurrentRenderer()->getType()=" << ofGetCurrentRenderer()->getType();
+    } else {
+      ofLogNotice("ofAppEGLWindow::setupEGL") << "No current render selected.";
+    }
+
+
+
     if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()=="GLES2"){
-		glesVersion = EGL_OPENGL_ES2_BIT;
-		glesVersionForContext = 2;
+      glesVersion = EGL_OPENGL_ES2_BIT;
+	   	glesVersionForContext = 2;
+      ofLogNotice("ofAppEGLWindow::setupEGL") << "GLES2 Renderer detected.";
     }else{
-		glesVersion = EGL_OPENGL_ES_BIT;
-		glesVersionForContext = 1;
+		  glesVersion = EGL_OPENGL_ES_BIT;
+		  glesVersionForContext = 1;
+      ofLogNotice("ofAppEGLWindow::setupEGL") << "Default Renderer detected.";
     }
     
     EGLint attribute_list[] = {
@@ -407,6 +418,7 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 		EGL_CONTEXT_CLIENT_VERSION, glesVersionForContext,
 		EGL_NONE
 	};
+
 	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateContext";
     eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, contextAttribList);
     assert(eglContext != EGL_NO_CONTEXT);
@@ -425,15 +437,15 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     //ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer));
     
     if(glesVersionForContext==2){
-		ofLogNotice("ofAppEGLWindow::setupEGL") << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
-		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
-		renderer->setup();
+  		ofLogNotice("ofAppEGLWindow::setupEGL") << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
+  		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+  		renderer->setup();
     }
     
 	printf("EGL_VERSION = %s\n", (char *) eglQueryString(display, EGL_VERSION));
-	printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));
-	printf("GL_VERSION    = %s\n", (char *) glGetString(GL_VERSION));
-	printf("GL_VENDOR     = %s\n", (char *) glGetString(GL_VENDOR));
+	printf("GL_RENDERER = %s\n", (char *) glGetString(GL_RENDERER));
+	printf("GL_VERSION  = %s\n", (char *) glGetString(GL_VERSION));
+	printf("GL_VENDOR   = %s\n", (char *) glGetString(GL_VENDOR));
 
     return true;
 }
@@ -749,7 +761,8 @@ ofRectangle ofAppEGLWindow::requestNewWindowRect(const ofRectangle& rect){
 
 //------------------------------------------------------------
 void ofAppEGLWindow::threadedFunction(){
-	getPocoThread().setOSPriority(Poco::Thread::getMinOSPriority());
+  // TODO: commented to avoid linking problem
+	//getPocoThread().setOSPriority(Poco::Thread::getMinOSPriority());
 	ofFile mouseFile("/dev/input/mouse0",ofFile::ReadOnly);    
 	const int XSIGN = 1<<4, YSIGN = 1<<5;
     struct {char buttons, dx, dy; } m;
