@@ -30,6 +30,7 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include <assert.h>
+
 // TODO. we may not need these to be static, but we will
 // leave it this way for now in case future EGL windows 
 // use static callbacks (like glut)
@@ -60,6 +61,8 @@ ofAppEGLWindow::ofAppEGLWindow() {
     lastFrameTime   = 0.0;
     eglDisplayString   = "";
     orientation     = OF_ORIENTATION_DEFAULT;
+
+cout << "ofAppEGLWindow constructor " << endl;
 }
 
 //------------------------------------------------------------
@@ -70,163 +73,92 @@ ofAppEGLWindow::~ofAppEGLWindow() {
 //------------------------------------------------------------
 bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
 
-	#ifdef TARGET_RASPBERRY_PI
- 	bcm_host_init();
+#ifdef TARGET_RASPBERRY_PI
+  bcm_host_init();
 
-    //boolean force HDMI vs. composite
+  //boolean force HDMI vs. composite
 
-    int32_t success = 0;
+  int32_t success = 0;
 
-    uint32_t sw;
-    uint32_t sh;
+  uint32_t sw;
+  uint32_t sh;
 
-    // create an EGL window surface
-    // IF SCREENMODE==FULLSCREEN
-    success = graphics_get_display_size(0 /* LCD */, &sw, &sh);
-    if(!success) return false;
+  // create an EGL window surface
+  // IF SCREENMODE==FULLSCREEN
+  success = graphics_get_display_size(0 /* LCD */, &sw, &sh);
 
-	cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
-	cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
+    cout << "succes=" << success << endl;
 
-
-
-	//////////////////////////
-    VC_RECT_T dst_rect;
-    VC_RECT_T src_rect;
-
-    dst_rect.x = 0;
-    dst_rect.y = 0;
-    dst_rect.width = sw;
-    dst_rect.height = sh;
-
-    src_rect.x = 0;
-    src_rect.y = 0;
-    src_rect.width = sw << 16;
-    src_rect.height = sh << 16;
-
-    DISPMANX_ELEMENT_HANDLE_T dispman_element;
-    DISPMANX_DISPLAY_HANDLE_T dispman_display;
-    DISPMANX_UPDATE_HANDLE_T dispman_update;
-
-
-    dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
-    dispman_update = vc_dispmanx_update_start( 0 );
-
-    dispman_element = vc_dispmanx_element_add ( dispman_update, 
-                                                dispman_display,
-                                                0/*layer*/, 
-                                                &dst_rect, 
-                                                0/*src*/,
-                                                &src_rect, 
-                                                DISPMANX_PROTECTION_NONE, 
-                                                0 /*alpha*/, 
-                                                0/*clamp*/, 
-                                                (DISPMANX_TRANSFORM_T)0/*transform*/
-                                                );
-
-    EGL_DISPMANX_WINDOW_T nativeWindow;
-    nativeWindow.element = dispman_element;
-    nativeWindow.width = sw;
-    nativeWindow.height = sh;
-    vc_dispmanx_update_submit_sync( dispman_update );
-    
-   /*  EGLBoolean result;
-    EGLint num_config;
-    EGLConfig config;
-
-	ofLogNotice() << "setting EGL Display";
-	
-	Display *display = NULL;
-    // get an EGL eglDisplay connection
-    if(display==NULL){
-	ofLogNotice() << "setting default Display";
-    	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    }else{
-		ofLogNotice() << "setting argument Display";
-    	eglDisplay = eglGetDisplay((NativeDisplayType)display);
-    }
-
-    if(eglDisplay == EGL_NO_DISPLAY) {
-		ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
-		return false;
-    }else{
-    	ofLogNotice() << "EGL Display correctly set";
-    }
-
-    EGLint eglVersionMajor = 0;
-    EGLint eglVersionMinor = 0;
-
-    // initialize the EGL eglDisplay connection
-	ofLogNotice() << "eglInitialize";
-    result = eglInitialize(eglDisplay, &eglVersionMajor, &eglVersionMinor);
-
-    if(result == EGL_BAD_DISPLAY) {
-//  eglDisplay is not an EGL connection
-      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_BAD_DISPLAY";
-      return false;
-    } else if(result == EGL_NOT_INITIALIZED) {
-      // eglDisplay cannot be intitialized
-      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_NOT_INITIALIZED";
-      return false;
-    } else if(result == EGL_FALSE) {
-      // eglinitialize was not initialiezd
-      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_FALSE";
-      return false;
-    } else {
-      // result == EGL_TRUE
-      // success!
-    }
-
-    // TODO -- give the ability to send in this list when setting up.
-    static const EGLint attribute_list[] =
-    {
-        EGL_RED_SIZE,   8, // 8 bits for red
-        EGL_GREEN_SIZE, 8, // 8 bits for green
-        EGL_BLUE_SIZE,  8, // 8 bits for blue
-        EGL_ALPHA_SIZE, 8, // 8 bits for alpha
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT, // default eglSurface type
-        EGL_NONE // attribute list is termintated with EGL_NONE
-    };
-
-    // get an appropriate EGL frame buffer configuration
-	ofLogNotice() << "eglChooseConfig";
-    result = eglChooseConfig(eglDisplay, 
-                             attribute_list, 
-                             &config, 
-                             1, 
-                             &num_config);
-
-    assert(EGL_FALSE != result);
-
-	ofLogNotice() << "eglCreateWindowSurface";
-    eglSurface = eglCreateWindowSurface( eglDisplay, config, (EGLNativeDisplayType)&nativeWindow, NULL );
-    assert(eglSurface != EGL_NO_SURFACE);
-    
-    // create an EGL rendering eglContext
-	ofLogNotice() << "eglCreateContext";
-    eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, NULL);
-    assert(eglContext != EGL_NO_CONTEXT);
-
-
-    // connect the eglContext to the eglSurface
-	ofLogNotice() << "eglMakeCurrent";
-    result = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-    assert(EGL_FALSE != result);
-
-    // Set background color and clear buffers
-    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
-    glClear( GL_COLOR_BUFFER_BIT );
-    glClear( GL_DEPTH_BUFFER_BIT );
-    */
-    return setupEGL((NativeWindowType) &nativeWindow);
-    #else
+  if(success < 0) {
+    cout << "tried to get display, but failed." << endl;
     return false;
-    #endif
+  }
+
+  cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
+  cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
+
+  if(screenMode == OF_WINDOW) {
+    sw = MIN(sw,w);
+    sh = MIN(sh,h);
+  } else {
+    // OF_FULLSCREEN and GAME take the screen size 
+  }
+
+    cout << "CREATING A SCREEN THAT IS w=" << sw << " and h=" << sh << endl;
+
+
+//////////////////////////
+  VC_RECT_T dst_rect;
+  VC_RECT_T src_rect;
+
+  dst_rect.x = 0;
+  dst_rect.y = 0;
+  dst_rect.width = sw;
+  dst_rect.height = sh;
+
+  src_rect.x = 0;
+  src_rect.y = 0;
+  src_rect.width = sw << 16;
+  src_rect.height = sh << 16;
+
+  DISPMANX_ELEMENT_HANDLE_T dispman_element;
+  DISPMANX_DISPLAY_HANDLE_T dispman_display;
+  DISPMANX_UPDATE_HANDLE_T dispman_update;
+
+
+  dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
+  dispman_update = vc_dispmanx_update_start( 0 );
+
+  dispman_element = vc_dispmanx_element_add ( dispman_update, 
+                                              dispman_display,
+                                              0/*layer*/, 
+                                              &dst_rect, 
+                                              0/*src*/,
+                                              &src_rect, 
+                                              DISPMANX_PROTECTION_NONE, 
+                                              0 /*alpha*/, 
+                                              0/*clamp*/, 
+                                              (DISPMANX_TRANSFORM_T)0/*transform*/
+                                              );
+
+  nativeWindow.element = dispman_element;
+  nativeWindow.width = sw;
+  nativeWindow.height = sh;
+
+  vc_dispmanx_update_submit_sync( dispman_update );
+  
+  return setupEGL(&nativeWindow,NULL);
+    
+#else
+  return false;
+#endif
     
 }
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
+#ifndef TARGET_RASPBERRY_PI
+
 	// X11 variables
 	Window				x11Window	= 0;
 	Display*			x11Display	= 0;
@@ -273,9 +205,14 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
 	XMapWindow(x11Display, x11Window);
 	XFlush(x11Display);
 	
-	return setupEGL((NativeWindowType)x11Window,x11Display);
-	
+  return setupEGL(&x11Window,x11Display);
+
+#else
+  return false;
+#endif
+
 }
+
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
@@ -292,21 +229,28 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
      //windowW = requestedWidth  = getWindowWidth();
      //windowH = requestedHeight = getWindowHeight();
 
+
+
 	#ifdef TARGET_RASPBERRY_PI
-		setupRPiNativeWindow(w,h,screenMode);
+		bool success = setupRPiNativeWindow(w,h,screenMode);
 	#else 
-		setupX11NativeWindow(w,h,screenMode);
+		bool success = setupX11NativeWindow(w,h,screenMode);
 	#endif
 
-    cout << "CREATED SCREEN WITH SIZE " << w << " x " << h << endl;
+    if(!success) {
+      cout << "CREATED screen failed " << w << " x " << h << endl;
+    } else {
+      cout << "CREATED SCREEN WITH SIZE " << w << " x " << h << endl;
+    }
 
 
-    // TEMPORARY
+
+    // TEMPORARY -- screenRect info must be set in setups
 
     screenRect.x = 0;
     screenRect.y = 0;
-    screenRect.width = w;
-    screenRect.height = h;
+    screenRect.width = nativeWindow.width;
+    screenRect.height = nativeWindow.height;
 
     nonFullscreenWindowRect = screenRect;
     currentWindowRect = screenRect;
@@ -314,35 +258,36 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
+bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, NativeDisplayType * display)
 {
 
     EGLBoolean result;
     EGLint num_config;
     EGLConfig config;
 
-	ofLogNotice() << "setting EGL Display";
+	ofLogNotice("ofAppEGLWindow::setupEGL") << "setting EGL Display";
     // get an EGL eglDisplay connection
+    
     if(display==NULL){
-	ofLogNotice() << "setting default Display";
+    	ofLogNotice("ofAppEGLWindow::setupEGL") << "setting default Display";
     	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     }else{
-		ofLogNotice() << "setting argument Display";
-    	eglDisplay = eglGetDisplay((NativeDisplayType)display);
+		  ofLogNotice("ofAppEGLWindow::setupEGL") << "setting argument Display";
+    	eglDisplay = eglGetDisplay(display);
     }
 
     if(eglDisplay == EGL_NO_DISPLAY) {
-		ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
-		return false;
+		  ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
+		  return false;
     }else{
-    	ofLogNotice() << "EGL Display correctly set";
+    	ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL Display correctly set";
     }
 
     EGLint eglVersionMajor = 0;
     EGLint eglVersionMinor = 0;
 
     // initialize the EGL eglDisplay connection
-	ofLogNotice() << "eglInitialize";
+	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglInitialize";
     result = eglInitialize(eglDisplay, &eglVersionMajor, &eglVersionMinor);
 
     if(result == EGL_BAD_DISPLAY) {
@@ -374,7 +319,7 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
     };
 
     // get an appropriate EGL frame buffer configuration
-	ofLogNotice() << "eglChooseConfig";
+	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglChooseConfig";
     result = eglChooseConfig(eglDisplay, 
                              attribute_list, 
                              &config, 
@@ -383,18 +328,18 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
 
     assert(EGL_FALSE != result);
 
-	ofLogNotice() << "eglCreateWindowSurface";
+	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateWindowSurface";
     eglSurface = eglCreateWindowSurface( eglDisplay, config, nativeWindow, NULL );
     assert(eglSurface != EGL_NO_SURFACE);
     
     // create an EGL rendering eglContext
-	ofLogNotice() << "eglCreateContext";
+	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateContext";
     eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, NULL);
     assert(eglContext != EGL_NO_CONTEXT);
 
 
     // connect the eglContext to the eglSurface
-	ofLogNotice() << "eglMakeCurrent";
+	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglMakeCurrent";
     result = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
     assert(EGL_FALSE != result);
 
@@ -402,8 +347,10 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
-	return true;
+
     //ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer));
+
+    return true;
 }
 
 //------------------------------------------------------------
