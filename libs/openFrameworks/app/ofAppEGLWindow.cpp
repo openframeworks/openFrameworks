@@ -30,7 +30,6 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include <assert.h>
-
 // TODO. we may not need these to be static, but we will
 // leave it this way for now in case future EGL windows 
 // use static callbacks (like glut)
@@ -130,7 +129,96 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
     nativeWindow.width = sw;
     nativeWindow.height = sh;
     vc_dispmanx_update_submit_sync( dispman_update );
-    return setupEGL((NativeWindowType) nativeWindow);
+    
+   /*  EGLBoolean result;
+    EGLint num_config;
+    EGLConfig config;
+
+	ofLogNotice() << "setting EGL Display";
+	
+	Display *display = NULL;
+    // get an EGL eglDisplay connection
+    if(display==NULL){
+	ofLogNotice() << "setting default Display";
+    	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    }else{
+		ofLogNotice() << "setting argument Display";
+    	eglDisplay = eglGetDisplay((NativeDisplayType)display);
+    }
+
+    if(eglDisplay == EGL_NO_DISPLAY) {
+		ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
+		return false;
+    }else{
+    	ofLogNotice() << "EGL Display correctly set";
+    }
+
+    EGLint eglVersionMajor = 0;
+    EGLint eglVersionMinor = 0;
+
+    // initialize the EGL eglDisplay connection
+	ofLogNotice() << "eglInitialize";
+    result = eglInitialize(eglDisplay, &eglVersionMajor, &eglVersionMinor);
+
+    if(result == EGL_BAD_DISPLAY) {
+//  eglDisplay is not an EGL connection
+      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_BAD_DISPLAY";
+      return false;
+    } else if(result == EGL_NOT_INITIALIZED) {
+      // eglDisplay cannot be intitialized
+      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_NOT_INITIALIZED";
+      return false;
+    } else if(result == EGL_FALSE) {
+      // eglinitialize was not initialiezd
+      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_FALSE";
+      return false;
+    } else {
+      // result == EGL_TRUE
+      // success!
+    }
+
+    // TODO -- give the ability to send in this list when setting up.
+    static const EGLint attribute_list[] =
+    {
+        EGL_RED_SIZE,   8, // 8 bits for red
+        EGL_GREEN_SIZE, 8, // 8 bits for green
+        EGL_BLUE_SIZE,  8, // 8 bits for blue
+        EGL_ALPHA_SIZE, 8, // 8 bits for alpha
+        EGL_SURFACE_TYPE, EGL_WINDOW_BIT, // default eglSurface type
+        EGL_NONE // attribute list is termintated with EGL_NONE
+    };
+
+    // get an appropriate EGL frame buffer configuration
+	ofLogNotice() << "eglChooseConfig";
+    result = eglChooseConfig(eglDisplay, 
+                             attribute_list, 
+                             &config, 
+                             1, 
+                             &num_config);
+
+    assert(EGL_FALSE != result);
+
+	ofLogNotice() << "eglCreateWindowSurface";
+    eglSurface = eglCreateWindowSurface( eglDisplay, config, (EGLNativeDisplayType)&nativeWindow, NULL );
+    assert(eglSurface != EGL_NO_SURFACE);
+    
+    // create an EGL rendering eglContext
+	ofLogNotice() << "eglCreateContext";
+    eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, NULL);
+    assert(eglContext != EGL_NO_CONTEXT);
+
+
+    // connect the eglContext to the eglSurface
+	ofLogNotice() << "eglMakeCurrent";
+    result = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+    assert(EGL_FALSE != result);
+
+    // Set background color and clear buffers
+    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+    glClear( GL_COLOR_BUFFER_BIT );
+    glClear( GL_DEPTH_BUFFER_BIT );
+    */
+    return setupEGL((NativeWindowType) &nativeWindow);
     #else
     return false;
     #endif
@@ -185,9 +273,8 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
 	XMapWindow(x11Display, x11Window);
 	XFlush(x11Display);
 	
-	setupEGL((NativeWindowType)x11Window,x11Display);
+	return setupEGL((NativeWindowType)x11Window,x11Display);
 	
-	return true;
 }
 
 //------------------------------------------------------------
@@ -227,7 +314,7 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
+bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
 {
 
     EGLBoolean result;
@@ -246,7 +333,7 @@ void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
 
     if(eglDisplay == EGL_NO_DISPLAY) {
 		ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
-		return;
+		return false;
     }else{
     	ofLogNotice() << "EGL Display correctly set";
     }
@@ -261,15 +348,15 @@ void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
     if(result == EGL_BAD_DISPLAY) {
 //  eglDisplay is not an EGL connection
       ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_BAD_DISPLAY";
-      return;
+      return false;
     } else if(result == EGL_NOT_INITIALIZED) {
       // eglDisplay cannot be intitialized
       ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_NOT_INITIALIZED";
-      return;
+      return false;
     } else if(result == EGL_FALSE) {
       // eglinitialize was not initialiezd
       ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_FALSE";
-      return;
+      return false;
     } else {
       // result == EGL_TRUE
       // success!
@@ -315,7 +402,7 @@ void ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, Display * display)
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
-
+	return true;
     //ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer));
 }
 

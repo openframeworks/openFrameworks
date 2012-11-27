@@ -50,6 +50,7 @@ GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode);
 
 ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode);
 
+int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat);
 int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
 
 
