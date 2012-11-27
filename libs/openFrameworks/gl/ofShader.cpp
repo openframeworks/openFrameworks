@@ -98,6 +98,9 @@ uniformsCache(mom.uniformsCache){
 
 //--------------------------------------------------------------
 ofShader & ofShader::operator=(const ofShader & mom){
+	if(bLoaded){
+		unload();
+	}
 	program = mom.program;
 	bLoaded = mom.bLoaded;
 	shaders = mom.shaders,
