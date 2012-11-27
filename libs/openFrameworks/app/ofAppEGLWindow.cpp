@@ -31,6 +31,48 @@
 #include "ofFileUtils.h"
 #include <assert.h>
 
+#define MOUSE_CURSOR_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
+{ unsigned int __bpp; unsigned char *__ip; const unsigned char *__il, *__rd; \
+  __bpp = (bpp); __ip = (image_buf); __il = __ip + (size) * __bpp; \
+  __rd = (rle_data); if (__bpp > 3) { /* RGBA */ \
+    while (__ip < __il) { unsigned int __l = *(__rd++); \
+      if (__l & 128) { __l = __l - 128; \
+        do { memcpy (__ip, __rd, 4); __ip += 4; } while (--__l); __rd += 4; \
+      } else { __l *= 4; memcpy (__ip, __rd, __l); \
+               __ip += __l; __rd += __l; } } \
+  } else { /* RGB */ \
+    while (__ip < __il) { unsigned int __l = *(__rd++); \
+      if (__l & 128) { __l = __l - 128; \
+        do { memcpy (__ip, __rd, 3); __ip += 3; } while (--__l); __rd += 3; \
+      } else { __l *= 3; memcpy (__ip, __rd, __l); \
+               __ip += __l; __rd += __l; } } \
+  } } while (0)
+static const struct {
+  unsigned int 	 width;
+  unsigned int 	 height;
+  unsigned int 	 bpp; /* 2:RGB16, 3:RGB, 4:RGBA */ 
+  unsigned char	 rle_pixel_data[382 + 1];
+} mouse_cursor_data = {
+  12, 19, 4,
+  "\1\0\0\0\377\213\377\377\377\0\202\0\0\0\377\212\377\377\377\0\3\0\0\0\377"
+  "\377\377\377\377\0\0\0\377\211\377\377\377\0\1\0\0\0\377\202\377\377\377"
+  "\377\1\0\0\0\377\210\377\377\377\0\1\0\0\0\377\203\377\377\377\377\1\0\0"
+  "\0\377\207\377\377\377\0\1\0\0\0\377\204\377\377\377\377\1\0\0\0\377\206"
+  "\377\377\377\0\1\0\0\0\377\205\377\377\377\377\1\0\0\0\377\205\377\377\377"
+  "\0\1\0\0\0\377\206\377\377\377\377\1\0\0\0\377\204\377\377\377\0\1\0\0\0"
+  "\377\207\377\377\377\377\1\0\0\0\377\203\377\377\377\0\1\0\0\0\377\210\377"
+  "\377\377\377\1\0\0\0\377\202\377\377\377\0\1\0\0\0\377\211\377\377\377\377"
+  "\3\0\0\0\377\377\377\377\0\0\0\0\377\212\377\377\377\377\202\0\0\0\377\206"
+  "\377\377\377\377\206\0\0\0\377\203\377\377\377\377\1\0\0\0\377\202\377\377"
+  "\377\377\1\0\0\0\377\204\377\377\377\0\1\0\0\0\377\202\377\377\377\377\3"
+  "\0\0\0\377\377\377\377\0\0\0\0\377\202\377\377\377\377\1\0\0\0\377\203\377"
+  "\377\377\0\3\0\0\0\377\377\377\377\377\0\0\0\377\202\377\377\377\0\1\0\0"
+  "\0\377\202\377\377\377\377\1\0\0\0\377\203\377\377\377\0\202\0\0\0\377\204"
+  "\377\377\377\0\1\0\0\0\377\202\377\377\377\377\1\0\0\0\377\210\377\377\377"
+  "\0\1\0\0\0\377\202\377\377\377\377\1\0\0\0\377\211\377\377\377\0\202\0\0"
+  "\0\377\203\377\377\377\0",
+};
+
 // TODO. we may not need these to be static, but we will
 // leave it this way for now in case future EGL windows 
 // use static callbacks (like glut)
@@ -147,7 +189,14 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
 
   vc_dispmanx_update_submit_sync( dispman_update );
   
-  return setupEGL(&nativeWindow,NULL);
+  bool ret = setupEGL(&nativeWindow,NULL);
+  if(ret){
+  	screenRect.x = 0;
+	screenRect.y = 0;
+    screenRect.width = nativeWindow.width;
+    screenRect.height = nativeWindow.height;
+  }
+  return ret;
     
 #else
   return false;
@@ -205,10 +254,16 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
 	XMapWindow(x11Display, x11Window);
 	XFlush(x11Display);
 	
-  return setupEGL(&x11Window,x11Display);
-
+	bool ret = setupEGL((NativeWindowType)x11Window,(EGLNativeDisplayType*)x11Display);
+	if(ret){
+		screenRect.x = 0;
+		screenRect.y = 0;
+		screenRect.width = w;
+		screenRect.height = h;
+	}
+	return ret;
 #else
-  return false;
+  	return false;
 #endif
 
 }
@@ -243,22 +298,18 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
       cout << "CREATED SCREEN WITH SIZE " << w << " x " << h << endl;
     }
 
-
-
-    // TEMPORARY -- screenRect info must be set in setups
-
-    screenRect.x = 0;
-    screenRect.y = 0;
-    screenRect.width = nativeWindow.width;
-    screenRect.height = nativeWindow.height;
-
     nonFullscreenWindowRect = screenRect;
     currentWindowRect = screenRect;
+    
+    mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
+    MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
+    mouseCursor.update();
+	bShowCursor = true;
 
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, NativeDisplayType * display)
+bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display)
 {
 
     EGLBoolean result;
@@ -272,8 +323,8 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, NativeDisplayType *
     	ofLogNotice("ofAppEGLWindow::setupEGL") << "setting default Display";
     	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     }else{
-		  ofLogNotice("ofAppEGLWindow::setupEGL") << "setting argument Display";
-    	eglDisplay = eglGetDisplay(display);
+		ofLogNotice("ofAppEGLWindow::setupEGL") << "setting argument Display";
+    	eglDisplay = eglGetDisplay(*display);
     }
 
     if(eglDisplay == EGL_NO_DISPLAY) {
@@ -372,7 +423,6 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
     ofAppPtr = appPtr; // make a local copy
    
     ofNotifySetup();
-    ofNotifyUpdate();
 
     // loop it!
     infiniteLoop();
@@ -383,20 +433,34 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::infiniteLoop() {
+	startThread();
     while (!terminate) {
-      idle();
-      display();
+    	callMouseEvents();	
+    	idle();
+    	display();
     }
 }
 
 //------------------------------------------------------------
+void ofAppEGLWindow::callMouseEvents(){
+	static queue<ofMouseEventArgs> copy;
+	lock();
+	copy = mouseEvents;
+	unlock();
+	while(!copy.empty()){
+		ofNotifyMouseEvent(copy.front());
+		copy.pop();
+	}
+}
+
+//------------------------------------------------------------
 void ofAppEGLWindow::hideCursor(){
-    ofLogNotice("ofAppEGLWindow") << "hideCursor() not implemented.";
+	bShowCursor = false;
 }
 
 //------------------------------------------------------------
 void ofAppEGLWindow::showCursor(){
-    ofLogNotice("ofAppEGLWindow") << "showCursor() not implemented.";
+	bShowCursor = true;
 }
 
 //------------------------------------------------------------
@@ -589,6 +653,13 @@ void ofAppEGLWindow::display() {
   if( bEnableSetupScreen ) ofSetupScreen(); // this calls into the current renderer (ofSetupScreenPerspective)
 
   ofNotifyDraw();
+  
+  if(bShowCursor){
+  	ofBlendMode blend = ofGetStyle().blendingMode;
+  	ofEnableAlphaBlending();
+  	mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
+  	ofEnableBlendMode(blend);
+  }
 
   eglSwapBuffers(eglDisplay, eglSurface);
 
@@ -615,12 +686,75 @@ int ofAppEGLWindow::getFrameNum(){
 }
 
 
+//------------------------------------------------------------
 ofRectangle ofAppEGLWindow::getScreenRect(){
 	return 	currentWindowRect;
 }
 
+//------------------------------------------------------------
 ofRectangle ofAppEGLWindow::requestNewWindowRect(const ofRectangle& rect){
 	setWindowPosition(rect.x,rect.y);
 	setWindowShape(rect.width,rect.height);
 	return getScreenRect();
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::threadedFunction(){
+	getPocoThread().setOSPriority(Poco::Thread::getMinOSPriority());
+	ofFile mouseFile("/dev/input/mouse0",ofFile::ReadOnly);    
+	const int XSIGN = 1<<4, YSIGN = 1<<5;
+    struct {char buttons, dx, dy; } m;
+    ofMouseEventArgs mouseEvent;
+    bool pushMouseEvent;
+    bool mousePressed=false;
+	while(isThreadRunning()){
+		pushMouseEvent=false;
+		while(1){
+			mouseFile.read((char*)&m,sizeof(m));
+	        if (m.buttons&8) {
+	        	break; // This bit should always be set
+	        }
+	        mouseFile.read(&m.buttons,1); //try to sync
+        	ofSleepMillis(5);
+	    }
+        if (m.buttons&3){
+        	mouseEvent.button = m.buttons&3;
+        	if(mousePressed){
+        		mouseEvent.type = ofMouseEventArgs::Dragged;
+        	}else{
+        		mouseEvent.type = ofMouseEventArgs::Pressed;
+        		pushMouseEvent = true;
+        	}
+        	mousePressed = true;
+        }else{
+        	if(mousePressed){
+        		mouseEvent.type = ofMouseEventArgs::Released;
+        		pushMouseEvent = true;
+        	}else{
+        		mouseEvent.type = ofMouseEventArgs::Moved;
+        	}
+        	mousePressed = false;
+        }
+        if(m.dx!=0 || m.dy!=0){
+        	mouseEvent.x+=m.dx*2;
+        	mouseEvent.y-=m.dy*2;
+        	pushMouseEvent = true;
+        }
+        if (m.buttons&XSIGN){
+        	mouseEvent.x-=256*2;
+        	pushMouseEvent = true;
+        }
+        if (m.buttons&YSIGN){
+        	mouseEvent.y+=256*2;
+        	pushMouseEvent = true;
+        }
+        mouseEvent.x = ofClamp(mouseEvent.x,0,currentWindowRect.width);
+        mouseEvent.y = ofClamp(mouseEvent.y,0,currentWindowRect.height);
+        if(pushMouseEvent){
+			lock();
+		    mouseEvents.push(mouseEvent);
+		    unlock();
+		}
+        ofSleepMillis(50);
+	}
 }
