@@ -29,8 +29,11 @@
 #include "ofBaseApp.h"
 
 #include "ofAppBaseWindow.h"
-#include "X11/Xlib.h"
-#include "X11/Xutil.h"
+
+#ifndef TARGET_RASPBERRY_PI
+	#include "X11/Xlib.h"
+	#include "X11/Xutil.h"
+#endif
 
 class ofAppEGLWindow : public ofAppBaseWindow {
 public:
@@ -39,7 +42,7 @@ public:
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
-	virtual bool setupEGL(NativeWindowType nativeWindow, Display * display=NULL);
+	virtual bool setupEGL(NativeWindowType nativeWindow, NativeDisplayType * display=NULL);
 	virtual void destroyEGL();
 
 	virtual void initializeWindow();
@@ -160,110 +163,14 @@ protected:
 
 
 
+#ifdef TARGET_RASPBERRY_PI
+  // NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
+  EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
+#else
+  Window nativeWindow; // x11
+#endif
 
 
-
-
-
-
-
-
-
-
-
-// void windowResized(int w, int h) {
-// 	windowW = w;
-// 	windowH = h;
-
-// 	ofNotifyWindowResized(w, h);
-
-// 	nFramesSinceWindowResized = 0;
-// }
-
-// 		virtual void windowEntry ( int state ) { }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 	string getEGLErrorString(){
-// 		EGLint nErr = eglGetError();
-// 		switch(nErr){
-// 			case EGL_SUCCESS: 				return "EGL_SUCCESS";
-// 			case EGL_BAD_DISPLAY:			return "EGL_BAD_DISPLAY";
-// 			case EGL_NOT_INITIALIZED:		return "EGL_NOT_INITIALIZED";
-// 			case EGL_BAD_ACCESS:			return "EGL_BAD_ACCESS";
-// 			case EGL_BAD_ALLOC:				return "EGL_BAD_ALLOC";
-// 			case EGL_BAD_ATTRIBUTE:			return "EGL_BAD_ATTRIBUTE";
-// 			case EGL_BAD_CONFIG:			return "EGL_BAD_CONFIG";
-// 			case EGL_BAD_CONTEXT:			return "EGL_BAD_CONTEXT";
-// 			case EGL_BAD_CURRENT_SURFACE:	return "EGL_BAD_CURRENT_SURFACE";
-// 			case EGL_BAD_MATCH:				return "EGL_BAD_MATCH";
-// 			case EGL_BAD_NATIVE_PIXMAP:		return "EGL_BAD_NATIVE_PIXMAP";
-// 			case EGL_BAD_NATIVE_WINDOW:		return "EGL_BAD_NATIVE_WINDOW";
-// 			case EGL_BAD_PARAMETER:			return "EGL_BAD_PARAMETER";
-// 			case EGL_BAD_SURFACE:			return "EGL_BAD_SURFACE";
-// 			default:						return "unknown";
-// 		}
-
-// 	};
-
-
-//     void printConfigAttribuet(EGLDisplay display, EGLConfig config, string attributeString, EGLint attribute) {
-
-//     	EGLint value = 0;
-
-//     	if(eglGetConfigAttrib(display,config,,value)) {
-//     		cout << attributeString << "=" << value << endl;
-//     	} else {
-//     		cout << attributeString << " failed with error " << getEGLErrorString() << endl;
-//     	}
-//     }
-
-//     void printEGLConfigInfo(EGLDisplay display, 
-//     						EGLConfig config) {
-
-
-
-
-// EGL_BUFFER_SIZE
-// EGL_RED_SIZE
-// EGL_GREEN_SIZE
-// EGL_BLUE_SIZE
-// EGL_ALPHA_SIZE
-// EGL_CONFIG_CAVEAT
-// EGL_DEPTH_SIZE
-// EGL_LEVEL
-// EGL_MAX_PBUFFER_WIDTH
-// EGL_MAX_PBUFFER_HEIGHT
-// EGL_MAX_PBUFFER_PIXELS
-// EGL_NATIVE_RENDERABLE
-// EGL_NATIVE_VISUAL_ID
-// EGL_NATIVE_VISUAL_TYPE
-// EGL_PRESERVED_RESOURCES
-// EGL_SAMPLE_BUFFERS
-// EGL_SAMPLES
-// EGL_STENCIL_BITS
-// EGL_SURFACE_TYPE
-// EGL_TRANSPARENT_TYPE
-// EGL_TRANSPARENT_RED
-// EGL_TRANSPARENT_GREEN
-// EGL_TRANSPARENT_BLUE
 
 
 
