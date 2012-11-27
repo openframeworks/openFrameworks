@@ -722,7 +722,6 @@ void ofAppEGLWindow::threadedFunction(){
 	        	break; // This bit should always be set
 	        }
 	        mouseFile.read(&m.buttons,1); //try to sync
-        	ofSleepMillis(5);
 	    }
         if (m.buttons&3){
         	mouseEvent.button = m.buttons&3;
@@ -743,6 +742,9 @@ void ofAppEGLWindow::threadedFunction(){
         	mousePressed = false;
         }
         if(m.dx!=0 || m.dy!=0){
+        	//TODO: *2 is an arbitrary factor that makes mouse speed ok at 1024x768,
+        	// to be totally correct we might need to take into account screen size
+        	// and add acceleration
         	mouseEvent.x+=m.dx*2;
         	mouseEvent.y-=m.dy*2;
         	pushMouseEvent = true;
@@ -762,6 +764,6 @@ void ofAppEGLWindow::threadedFunction(){
 		    mouseEvents.push(mouseEvent);
 		    unlock();
 		}
-        ofSleepMillis(50);
+        ofSleepMillis(20);
 	}
 }
