@@ -2,6 +2,7 @@
 #include "testApp.h"
 #ifdef TARGET_ANDROID
 	#include "ofAppAndroidWindow.h"
+	#include "ofGLES2Renderer.h"
 #else
 	#include "ofAppGlutWindow.h"
 #endif
@@ -11,6 +12,7 @@
 int main(){
 
 #ifdef TARGET_ANDROID
+	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer()));
 	ofAppAndroidWindow *window = new ofAppAndroidWindow;
 #else
 	ofAppGlutWindow *window = new ofAppGlutWindow;
