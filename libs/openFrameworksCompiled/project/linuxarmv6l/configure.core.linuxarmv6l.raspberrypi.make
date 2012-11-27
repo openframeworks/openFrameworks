@@ -213,10 +213,6 @@ PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
 PLATFORM_LIBRARIES += freeimage
 PLATFORM_LIBRARIES += ilclient
-#PLATFORM_LIBRARIES += cvaux
-#PLATFORM_LIBRARIES += highgui
-#PLATFORM_LIBRARIES += cv
-#PLATFORM_LIBRARIES += cxcore
 
 #openframeworks core third party
 # these can be added if they are part of the core, but are 
