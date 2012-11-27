@@ -446,6 +446,9 @@ void ofAppEGLWindow::callMouseEvents(){
 	static queue<ofMouseEventArgs> copy;
 	lock();
 	copy = mouseEvents;
+	while(!mouseEvents.empty()){
+		mouseEvents.pop();
+	}
 	unlock();
 	while(!copy.empty()){
 		ofNotifyMouseEvent(copy.front());
@@ -655,10 +658,11 @@ void ofAppEGLWindow::display() {
   ofNotifyDraw();
   
   if(bShowCursor){
-  	ofBlendMode blend = ofGetStyle().blendingMode;
+	ofPushStyle();
   	ofEnableAlphaBlending();
+  	ofSetColor(255);
   	mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
-  	ofEnableBlendMode(blend);
+  	ofPopStyle();
   }
 
   eglSwapBuffers(eglDisplay, eglSurface);
