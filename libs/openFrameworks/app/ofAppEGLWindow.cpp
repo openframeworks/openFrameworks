@@ -29,6 +29,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofFileUtils.h"
+#include "ofGLES2Renderer.h"
 #include <assert.h>
 
 #define MOUSE_CURSOR_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
@@ -249,7 +250,7 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
     ui32Mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
 
 	// Creates the X11 window
-    x11Window = XCreateWindow( x11Display, RootWindow(x11Display, x11Screen), 0, 0, w, h,
+    x11Window = XCreateWindow( x11Display, sRootWindow, 0, 0, w, h,
 								 0, CopyFromParent, InputOutput, CopyFromParent, ui32Mask, &sWA);
 	XMapWindow(x11Display, x11Window);
 	XFlush(x11Display);
@@ -388,10 +389,16 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
                              &num_config);
 
     assert(EGL_FALSE != result);
+    
 
 	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateWindowSurface";
     eglSurface = eglCreateWindowSurface( eglDisplay, config, nativeWindow, NULL );
     assert(eglSurface != EGL_NO_SURFACE);
+    
+    
+	// get an appropriate EGL frame buffer configuration
+	//result = eglBindAPI(EGL_OPENGL_ES_API);
+	//assert(EGL_FALSE != result);
     
     // create an EGL rendering eglContext
     
@@ -416,6 +423,17 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     glClear( GL_DEPTH_BUFFER_BIT );
 
     //ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer));
+    
+    if(glesVersionForContext==2){
+		ofLogNotice("ofAppEGLWindow::setupEGL") << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
+		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		renderer->setup();
+    }
+    
+	printf("EGL_VERSION = %s\n", (char *) eglQueryString(display, EGL_VERSION));
+	printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));
+	printf("GL_VERSION    = %s\n", (char *) glGetString(GL_VERSION));
+	printf("GL_VENDOR     = %s\n", (char *) glGetString(GL_VENDOR));
 
     return true;
 }
@@ -660,6 +678,10 @@ void ofAppEGLWindow::display() {
   // set viewport, clear the screen
  
 
+	if(ofGetCurrentRenderer()->getType()=="GLES2"){
+		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		renderer->startRender();
+	}
   ofViewport(0, 0, getWindowWidth(), getWindowHeight());    // used to be glViewport( 0, 0, width, height );
   
   float * bgPtr = ofBgColorPtr();
@@ -684,6 +706,10 @@ void ofAppEGLWindow::display() {
   	ofPopStyle();
   }
 
+	if(ofGetCurrentRenderer()->getType()=="GLES2"){
+		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		renderer->finishRender();
+	}
   eglSwapBuffers(eglDisplay, eglSurface);
 
   nFramesSinceWindowResized++;
