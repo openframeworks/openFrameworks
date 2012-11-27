@@ -1,5 +1,4 @@
-#CXX = llvm-gcc-4.2 -x c++
-CXX = clang -x c++ 
+
 ##########################################################################################
 # CONFIGURE CORE PLATFORM  MAKEFILE
 #   This file is where we make platform and architecture specific configurations.
@@ -278,8 +277,14 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 #PLATFORM_OS =
 #PLATFORM_LIBS_PATH =
 
-##########################################################################################
+################################################################################
 # PLATFORM CXX
 #    Don't want to use a default compiler?
-##########################################################################################
-#PLATFORM_CXX=
+################################################################################
+PLATFORM_CXX = clang -x c++
+
+################################################################################
+# PLATFORM CC
+#    Don't want to use a default compiler?
+################################################################################
+#PLATFORM_CC=

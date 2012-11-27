@@ -1,12 +1,8 @@
 #include "ofMain.h"
 #include "testApp.h"
-#include "ofAppRaspberryPiWindow.h"
-#include "ofGLES2Renderer.h"
 
 //========================================================================
 int main( ){
-    ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer()));
-
 	ofSetupOpenGL(1024,768, OF_WINDOW);// <-------- setup the GL context
 
 	// this kicks off the running of my app
