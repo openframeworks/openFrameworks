@@ -112,10 +112,37 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 	}
 }
 
-int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
+
+int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
 		return GL_RGBA;
+	case OF_PIXELS_MONO:
+		return GL_LUMINANCE;
+	case OF_PIXELS_RGB:
+		return GL_RGB;
+	case OF_PIXELS_RGBA:
+		return GL_RGBA;
+    case OF_PIXELS_RGB565:
+#ifdef TARGET_OPENGLES
+    	return GL_RGB;
+#else
+        return GL_RGB5;
+#endif
+	default:
+		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
+		return GL_LUMINANCE;
+	}
+}
+
+int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
+	switch(pixelFormat){
+	case OF_PIXELS_BGRA:
+#ifdef TARGET_OPENGLES
+    	return GL_BGRA_EXT;
+#else
+        return GL_RGBA;
+#endif
 	case OF_PIXELS_MONO:
 		return GL_LUMINANCE;
 	case OF_PIXELS_RGB:

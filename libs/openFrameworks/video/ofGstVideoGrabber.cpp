@@ -579,7 +579,10 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	gchar* pipeline_string;
 	if(format.fourcc==-1){
 		format_str_pipeline = "%s name=video_source device=%s ! "
-								 "%s,width=%d,height=%d,framerate=%d/%d "
+								 "%s,width=%d,height=%d "
+								 #ifndef TARGET_LINUX_ARM
+								 ",framerate=%d/%d "
+								 #endif
 								 "%s %s ";
 
 		pipeline_string=g_strdup_printf (
@@ -589,12 +592,17 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 					      format.mimetype.c_str(),
 					      format.width,
 					      format.height,
+						  #ifndef TARGET_LINUX_ARM
 					      format.choosen_framerate.numerator,
 					      format.choosen_framerate.denominator,
+					      #endif
 					      decodebin, scale);
 	}else{
 		format_str_pipeline = "%s name=video_source device=%s ! "
-								 "%s,format=\(fourcc\)%" GST_FOURCC_FORMAT ",width=%d,height=%d,framerate=%d/%d "
+								 "%s,format=\(fourcc\)%" GST_FOURCC_FORMAT ",width=%d,height=%d "
+								 #ifndef TARGET_LINUX_ARM
+								 ",framerate=%d/%d "
+								 #endif
 								 "%s %s ";
 
 		pipeline_string=g_strdup_printf (
@@ -605,13 +613,18 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 					      GST_FOURCC_ARGS(format.fourcc),
 					      format.width,
 					      format.height,
+						  #ifndef TARGET_LINUX_ARM
 					      format.choosen_framerate.numerator,
 					      format.choosen_framerate.denominator,
+					      #endif
 					      decodebin, scale);
 	}
 #else
 	string format_str_pipeline = "%s name=video_source device=%s ! "
-			 "%s,width=%d,height=%d,framerate=%d/%d "
+			 "%s,width=%d,height=%d "
+			 #ifndef TARGET_LINUX_ARM
+			 ",framerate=%d/%d "
+			 #endif
 			 "%s %s ";
 
 	gchar* pipeline_string=g_strdup_printf (
@@ -621,8 +634,10 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 		      format.mimetype.c_str(),
 		      format.width,
 		      format.height,
+			  #ifndef TARGET_LINUX_ARM
 		      format.choosen_framerate.numerator,
 		      format.choosen_framerate.denominator,
+		      #endif
 		      decodebin, scale);
 #endif
 
