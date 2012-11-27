@@ -70,4 +70,7 @@ In the case of `linuxarmv6l`, there is currently no `default` configuration file
 - check for platform required system libs using pkg-config -- if they do not exist, throw an error that instructs the user how to install them using their package management system.
 - .
 
-
+- Priority Low: Makefiles need to be consolidated (there are a lot of files in the makefilesCommon directory and most of them can be merged together -- they are currently seprated by function -- so makefiles dont have to reimplement common features).  This is low priority.
+- Priority Medium: Makefiles currently work with linux and linux64, but are not yet configured to replace the android builds.  This should be straightforward using the platform-specific configuration files.  This will need to be done before any kind of oF core integration will be a possibility.
+Testing!
+- Makefile should support cross-compiling. Not sure if they do already, I haven't tried. But we shouldn't have to compile on the board. Normally I compile on my host machine in an smb-share with a board. (need cross compiling workflow tut :)

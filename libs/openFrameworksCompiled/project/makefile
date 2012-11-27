@@ -11,7 +11,7 @@
 #
 ################################################################################
 
-# define the OF_SHARED_MAKEFILES location
+# define the OF_SHARED_MAKEFILES_PATH location
 OF_SHARED_MAKEFILES_PATH=./makefileCommon
 
 # do all of the core cofiguration work.

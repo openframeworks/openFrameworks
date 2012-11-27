@@ -159,6 +159,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGra
 
 # third party
 
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/portaudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
@@ -203,13 +204,14 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/lib
 PLATFORM_LIBRARIES =
 # raspberry pi specific
 PLATFORM_LIBRARIES += udev
-PLATFORM_LIBRARIES += GLESv2
-PLATFORM_LIBRARIES += EGL
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
+PLATFORM_LIBRARIES += GLESv2
+PLATFORM_LIBRARIES += EGL
 PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBRARIES += portaudio
 
 #openframeworks core third party
 # these can be added if they are part of the core, but are 
