@@ -6,6 +6,14 @@ ifdef MAKEFILE_DEBUG
     $(info ===================compile.core.make================================)
 endif
 
+ifdef PLATFORM_CXX
+    CXX = $(PLATFORM_CXX)
+endif
+
+ifdef PLATFORM_CC
+    CC = $(PLATFORM_CC)
+endif
+
 ################################################################################
 # CFLAGS
 ################################################################################
