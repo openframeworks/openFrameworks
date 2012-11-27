@@ -30,8 +30,13 @@ ifndef PLATFORM_LIB_SUBPATH
             PLATFORM_LIB_SUBPATH=linuxarmv6l
         else ifeq ($(PLATFORM_ARCH),i386)
             PLATFORM_LIB_SUBPATH=linux
+        # TODO is i386 always compatible with i686?
+        else ifeq ($(PLATFORM_ARCH),i686)
+            PLATFORM_LIB_SUBPATH=linux
         else
             $(error This makefile does not support your architecture)
+            # TODO : list the detected architecture
+            # TODO : list the "supported" archiectures
         endif
     else ifeq ($(PLATFORM_OS),android)
         PLATFORM_LIB_SUBPATH=android
@@ -39,6 +44,8 @@ ifndef PLATFORM_LIB_SUBPATH
         PLATFORM_LIB_SUBPATH=osx
     else
         $(error This makefile does not support your operating system)
+            # TODO : list the detected OS
+            # TODO : list the "supported" OSs
     endif
 
     ifdef OF_LIBS_OF_COMPILED_PROJECT_PATH
