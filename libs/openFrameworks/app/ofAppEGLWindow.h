@@ -39,7 +39,7 @@ public:
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
-	virtual void setupEGL(NativeWindowType nativeWindow, Display * display=NULL);
+	virtual bool setupEGL(NativeWindowType nativeWindow, Display * display=NULL);
 	virtual void destroyEGL();
 
 	virtual void initializeWindow();
