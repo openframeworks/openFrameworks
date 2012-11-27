@@ -24,17 +24,14 @@ void testApp::draw(){
 	ofSetColor(245, 58, 135);
 	ofFill();
 
-
-
-cout<<"currentShader"<<endl;
-    ofShader &currentShader = ofGetGLES2Renderer()->getCurrentShader();
-cout<<"currentShader"<<endl;
-//    currentShader.setUniform1f("timeValX", 10 * 0.1 );     // we want to pass in some varrying values to animate our type / color
-//    currentShader.setUniform1f("timeValY", 10 * 0.18 );
-//    currentShader.setUniform2f("mouse", mousePoint.x, mousePoint.y);        // we also pass in the mouse position
+   ofShader &currentShader = ofGetGLES2Renderer()->getCurrentShader();
+   currentShader.setUniform1f("timeValX", 10 * 0.1 );     // we want to pass in some varrying values to animate our type / color
+   currentShader.setUniform1f("timeValY", 10 * 0.18 );
+   currentShader.setUniform2f("mouse", mousePoint.x, mousePoint.y);        // we also pass in the mouse position
 
     ofRectangle rect = font.getStringBoundingBox("openFrameworks", 0, 0);   // size of text.
     int x = (ofGetWidth() - rect.width) * 0.5;                              // position in center screen.
+    
     int padding = rect.height + 50;                                         // draw the text multiple times.
     for(int y=rect.height; y<ofGetHeight(); y+=padding) {
         font.drawStringAsShapes("openFrameworks", x, y);
@@ -49,7 +46,7 @@ void testApp::exit(){
 
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button) {
+void testApp::mouseMoved(int x, int y) {
     
     // we have to transform the coords to what the shader is expecting which is 0,0 in the center and y axis flipped.
     mousePoint.x = x * 2 - ofGetWidth();
