@@ -359,15 +359,25 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     }
 
     // TODO -- give the ability to send in this list when setting up.
-    static const EGLint attribute_list[] =
-    {
-        EGL_RED_SIZE,   8, // 8 bits for red
-        EGL_GREEN_SIZE, 8, // 8 bits for green
-        EGL_BLUE_SIZE,  8, // 8 bits for blue
-        EGL_ALPHA_SIZE, 8, // 8 bits for alpha
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT, // default eglSurface type
-        EGL_NONE // attribute list is termintated with EGL_NONE
-    };
+    EGLint glesVersion;
+    int glesVersionForContext;
+    if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()=="GLES2"){
+		glesVersion = EGL_OPENGL_ES2_BIT;
+		glesVersionForContext = 2;
+    }else{
+		glesVersion = EGL_OPENGL_ES_BIT;
+		glesVersionForContext = 1;
+    }
+    
+    EGLint attribute_list[] = {
+		    EGL_RED_SIZE,   8, // 8 bits for red
+		    EGL_GREEN_SIZE, 8, // 8 bits for green
+		    EGL_BLUE_SIZE,  8, // 8 bits for blue
+		    EGL_ALPHA_SIZE, 8, // 8 bits for alpha
+		    EGL_SURFACE_TYPE, EGL_WINDOW_BIT, // default eglSurface type
+		    EGL_RENDERABLE_TYPE, glesVersion, //openGL ES version
+		    EGL_NONE // attribute list is termintated with EGL_NONE
+		};
 
     // get an appropriate EGL frame buffer configuration
 	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglChooseConfig";
@@ -384,8 +394,14 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     assert(eglSurface != EGL_NO_SURFACE);
     
     // create an EGL rendering eglContext
+    
+    EGLint contextAttribList[] = 
+	{
+		EGL_CONTEXT_CLIENT_VERSION, glesVersionForContext,
+		EGL_NONE
+	};
 	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateContext";
-    eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, NULL);
+    eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, contextAttribList);
     assert(eglContext != EGL_NO_CONTEXT);
 
 
