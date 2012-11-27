@@ -660,8 +660,11 @@ void ofAppEGLWindow::display() {
   if(bShowCursor){
 	ofPushStyle();
   	ofEnableAlphaBlending();
+  	ofDisableTextureEdgeHack();
   	ofSetColor(255);
   	mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
+  	ofEnableTextureEdgeHack();
+  	//TODO: we need a way of querying the previous state of texture hack
   	ofPopStyle();
   }
 
