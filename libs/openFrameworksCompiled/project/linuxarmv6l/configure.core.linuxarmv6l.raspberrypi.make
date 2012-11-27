@@ -153,7 +153,6 @@ PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/gl/ofFbo.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
@@ -212,6 +211,7 @@ PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
 PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBRARIES += ilclient
 
 #openframeworks core third party
 # these can be added if they are part of the core, but are 
