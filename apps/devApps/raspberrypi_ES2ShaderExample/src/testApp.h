@@ -10,7 +10,7 @@ class testApp : public ofBaseApp {
         void draw();
         void exit();
 	
-      void mousePressed(int x, int y, int button);
+      void mouseMoved(int x, int y);
 
 		ofTrueTypeFont font;
         ofPoint mousePoint;
