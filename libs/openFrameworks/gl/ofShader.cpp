@@ -98,13 +98,16 @@ uniformsCache(mom.uniformsCache){
 
 //--------------------------------------------------------------
 ofShader & ofShader::operator=(const ofShader & mom){
+    if(this == &mom) {
+        return;
+    }
 	if(bLoaded){
 		unload();
 	}
 	program = mom.program;
 	bLoaded = mom.bLoaded;
-	shaders = mom.shaders,
-	attribsCache = mom.attribsCache,
+	shaders = mom.shaders;
+	attribsCache = mom.attribsCache;
 	uniformsCache = mom.uniformsCache;
 	if(mom.bLoaded){
 		retainProgram(program);
@@ -123,8 +126,6 @@ bool ofShader::load(string shaderName) {
 
 //--------------------------------------------------------------
 bool ofShader::load(string vertName, string fragName, string geomName) {
-	unload();
-
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
 #ifndef TARGET_OPENGLES
@@ -147,6 +148,8 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromSource(GLenum type, string source) {
+    unload();
+    
 	// create program if it doesn't exist already
 	checkAndCreateProgram();
 
@@ -342,13 +345,15 @@ bool ofShader::isLoaded(){
 
 //--------------------------------------------------------------
 void ofShader::begin() {
-	if (bLoaded && activeProgram!=program){
+	if (bLoaded){
 		glUseProgram(program);
-		prevActiveProgram = activeProgram;
-		activeProgram = program;
-		if(!ofGLIsFixedPipeline()){
-			ofGetGLES2Renderer()->beginCustomShader(*this);
-		}
+        if(activeProgram!=program) {
+            prevActiveProgram = activeProgram;
+            activeProgram = program;
+            if(!ofGLIsFixedPipeline()){
+                ofGetGLES2Renderer()->beginCustomShader(*this);
+            }
+        }
 	}
 }
 
