@@ -6,7 +6,7 @@ CFLAGS=$(DEFINES)
 CFLAGS+=-I./include
 
 LIB=libtess2.a
-LIBDEST=./lib/linuxarmv6l-hf/
+LIBDEST=./lib/linuxarmv6l/
 SRC=./Sources
 
 LIBSRC= $(SRC)/bucketalloc.c $(SRC)/dict.c $(SRC)/geom.c $(SRC)/mesh.c $(SRC)/priorityq.c $(SRC)/sweep.c $(SRC)/tess.c 
