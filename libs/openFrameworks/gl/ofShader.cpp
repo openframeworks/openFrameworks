@@ -99,7 +99,7 @@ uniformsCache(mom.uniformsCache){
 //--------------------------------------------------------------
 ofShader & ofShader::operator=(const ofShader & mom){
     if(this == &mom) {
-        return;
+        return *this;
     }
 	if(bLoaded){
 		unload();
