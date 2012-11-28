@@ -88,12 +88,12 @@ ofGLES2Renderer::~ofGLES2Renderer() {
 
 //----------------------------------------------------------
 void ofGLES2Renderer::startRender() {
-	defaultShader.begin();
+	currentShader.begin();
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::finishRender() {
-	defaultShader.end();
+	currentShader.end();
 	modelViewStack.empty();
 	projectionStack.empty();
 }
@@ -1127,18 +1127,10 @@ void ofGLES2Renderer::beginCustomShader(ofShader & shader){
 	shader.setUniformMatrix4f("projectionMatrix",projection);
 	shader.setUniformMatrix4f("textureMatrix",textureMatrix);
 	currentShader = shader;
-	currentShader.begin();
 }
 
 void ofGLES2Renderer::endCustomShader(){
-	defaultShader.setUniform1f("useTexture",texCoordsEnabled);
-	defaultShader.setUniform1f("useColors",colorsEnabled);
-	defaultShader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
-	defaultShader.setUniformMatrix4f("modelViewMatrix",modelViewOrientation);
-	defaultShader.setUniformMatrix4f("projectionMatrix",projection);
-	defaultShader.setUniformMatrix4f("textureMatrix",textureMatrix);
-	currentShader = defaultShader;
-	currentShader.begin();
+	defaultShader.begin();
 }
 
 //----------------------------------------------------------
