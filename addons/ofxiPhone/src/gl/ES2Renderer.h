@@ -16,8 +16,6 @@
     // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
     GLuint defaultFramebuffer, colorRenderbuffer;
 
-    GLuint program;
-	
 	//settings
 	bool fsaaEnabled;
 	int fsaaSamples;
@@ -29,6 +27,8 @@
 - (void) startRender;
 - (void) finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
+- (BOOL)createFramebuffer:(CAEAGLLayer *)layer;
+- (void)destroyFramebuffer;
 - (EAGLContext*) context;
 
 - (NSInteger)getWidth;
