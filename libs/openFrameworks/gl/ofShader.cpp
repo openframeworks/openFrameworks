@@ -345,14 +345,12 @@ bool ofShader::isLoaded(){
 
 //--------------------------------------------------------------
 void ofShader::begin() {
-	if (bLoaded){
+	if (bLoaded && activeProgram!=program){
 		glUseProgram(program);
-        if(activeProgram!=program) {
-            prevActiveProgram = activeProgram;
-            activeProgram = program;
-            if(!ofGLIsFixedPipeline()){
-                ofGetGLES2Renderer()->beginCustomShader(*this);
-            }
+        prevActiveProgram = activeProgram;
+        activeProgram = program;
+        if(!ofGLIsFixedPipeline()){
+            ofGetGLES2Renderer()->beginCustomShader(*this);
         }
 	}
 }
