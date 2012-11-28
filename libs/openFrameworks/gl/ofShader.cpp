@@ -6,8 +6,8 @@
 #include <map>
 
 
-GLint ofShader::activeProgram=0;
-GLint ofShader::prevActiveProgram=0;
+GLuint ofShader::activeProgram=0;
+GLuint ofShader::prevActiveProgram=0;
 
 static map<GLuint,int> & getShaderIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
