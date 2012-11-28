@@ -24,13 +24,6 @@
             [self release];
             return nil;
         }
-
-        // Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
-        glGenFramebuffers(1, &defaultFramebuffer);
-        glGenRenderbuffers(1, &colorRenderbuffer);
-        glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
-        glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
     }
 
     return self;
@@ -42,7 +35,6 @@
 
 - (void)startRender {
     [EAGLContext setCurrentContext:context];
-    glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 }
 
 
@@ -52,34 +44,46 @@
 }
 
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer {
-    // Allocate color buffer backing based on the current layer size
+    [self destroyFramebuffer];
+    [self createFramebuffer:layer];
+}
+
+- (BOOL)createFramebuffer:(CAEAGLLayer *)layer {
+    glGenFramebuffers(1, &defaultFramebuffer);
+    glGenRenderbuffers(1, &colorRenderbuffer);
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+    
     [context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+    
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
+    
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         NSLog(@"Failed to make complete framebuffer object %x %ix%i", glCheckFramebufferStatus(GL_FRAMEBUFFER), backingWidth, backingHeight);
         return NO;
     }
-
+    
     return YES;
 }
 
-- (void)dealloc {
-    // Tear down GL
+- (void)destroyFramebuffer {
     if(defaultFramebuffer) {
         glDeleteFramebuffers(1, &defaultFramebuffer);
         defaultFramebuffer = 0;
     }
-
+    
     if(colorRenderbuffer) {
         glDeleteRenderbuffers(1, &colorRenderbuffer);
         colorRenderbuffer = 0;
     }
+}
 
-    // Tear down context
+- (void)dealloc {
+    [self destroyFramebuffer];
+
     if([EAGLContext currentContext] == context) {
         [EAGLContext setCurrentContext:nil];
     }
