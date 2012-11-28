@@ -126,8 +126,6 @@ bool ofShader::load(string shaderName) {
 
 //--------------------------------------------------------------
 bool ofShader::load(string vertName, string fragName, string geomName) {
-	unload();
-
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
 #ifndef TARGET_OPENGLES
@@ -150,6 +148,8 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromSource(GLenum type, string source) {
+    unload();
+    
 	// create program if it doesn't exist already
 	checkAndCreateProgram();
 
