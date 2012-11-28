@@ -88,12 +88,12 @@ ofGLES2Renderer::~ofGLES2Renderer() {
 
 //----------------------------------------------------------
 void ofGLES2Renderer::startRender() {
-	defaultShader.begin();
+	currentShader.begin();
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::finishRender() {
-	defaultShader.end();
+	currentShader.end();
 	modelViewStack.empty();
 	projectionStack.empty();
 }
