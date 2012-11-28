@@ -166,9 +166,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
     [self lockGL];
     [self startRender];
     
-    ofBaseRenderer * currentRenderer = ofGetCurrentRenderer().get();
-    if(currentRenderer->getType() == "GLES2") {
-        ((ofGLES2Renderer *)currentRenderer)->startRender();
+    ofGLES2Renderer * es2Renderer = NULL;
+    if(ofGetCurrentRenderer()->getType() == "GLES2") {
+        es2Renderer = (ofGLES2Renderer *)(ofGetCurrentRenderer().get());
+        es2Renderer->startRender();
     }
 
     ofViewport(ofRectangle(0, 0, windowSize->x, windowSize->y));
@@ -190,8 +191,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     //------------------------------------------
     
-    if(currentRenderer->getType() == "GLES2") {
-        ((ofGLES2Renderer *)currentRenderer)->finishRender();
+    if(es2Renderer != NULL) {
+        es2Renderer->finishRender();
     }
     
     [self finishRender];
