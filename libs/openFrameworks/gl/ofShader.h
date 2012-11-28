@@ -120,8 +120,8 @@ private:
 	map<GLenum, GLuint> shaders;
 	map<string, GLint> attribsCache;
 	map<string, GLint> uniformsCache;
-	static GLint activeProgram;
-	static GLint prevActiveProgram;
+	static GLuint activeProgram;
+	static GLuint prevActiveProgram;
 	
 	GLint getUniformLocation(const char* name);
 	
