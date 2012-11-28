@@ -485,6 +485,7 @@ void ofAppEGLWindow::infiniteLoop() {
     	idle();
     	display();
     }
+    stopThread();
 }
 
 //------------------------------------------------------------
