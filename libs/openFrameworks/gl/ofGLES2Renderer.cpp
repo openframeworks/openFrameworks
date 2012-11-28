@@ -1129,8 +1129,9 @@ void ofGLES2Renderer::beginCustomShader(ofShader & shader){
 	currentShader = shader;
 }
 
+//----------------------------------------------------------
 void ofGLES2Renderer::endCustomShader(){
-	beginCustomShader(defaultShader);
+	defaultShader.begin();
 }
 
 //----------------------------------------------------------
