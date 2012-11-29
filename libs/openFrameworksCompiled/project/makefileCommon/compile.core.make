@@ -157,6 +157,7 @@ $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp
 # $(OF_CORE_OBJ_FILES) must be processed first  
 $(TARGET) : $(OF_CORE_OBJ_FILES) 
 	echo "Creating library " $(TARGET)
+	$(info $(@D))
 	mkdir -p $(@D)
 	$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
 
@@ -177,7 +178,8 @@ $(CLEANTARGET):
 
 after: $(TARGET)
 	@echo "Done!"
-
+	
+	
 help:
 	@echo 
 	@echo openFrameworks compiled library makefile
