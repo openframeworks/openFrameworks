@@ -49,5 +49,7 @@ public:
 	virtual void	enableSetupScreen(){}
 	virtual void	disableSetupScreen(){}
 	
+	virtual void	setVerticalSync(bool enabled){};
+
 };
 
