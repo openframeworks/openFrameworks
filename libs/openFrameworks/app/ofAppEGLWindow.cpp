@@ -896,6 +896,14 @@ void ofAppEGLWindow::handleEvent(const XEvent& event){
 		}
 		ofNotifyMouseEvent(mouseEvent);
 		break;
+	case ConfigureNotify:
+		currentWindowRect.x = event.xconfigure.x;
+		currentWindowRect.y = event.xconfigure.y;
+		currentWindowRect.width = event.xconfigure.width;
+		currentWindowRect.height = event.xconfigure.height;
+		nonFullscreenWindowRect = currentWindowRect;
+		ofNotifyWindowResized(event.xconfigure.width,event.xconfigure.height);
+		break;
 	/*case ClientMessage:
 	{
 	  if (event.xclient.message_type == wmProtocols_ &&
