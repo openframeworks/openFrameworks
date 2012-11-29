@@ -32,6 +32,10 @@
 #include "ofGLES2Renderer.h"
 #include <assert.h>
 
+#ifndef TARGET_RASPBERRY_PI
+#include <X11/XKBlib.h>
+#endif
+
 #define MOUSE_CURSOR_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
 { unsigned int __bpp; unsigned char *__ip; const unsigned char *__il, *__rd; \
   __bpp = (bpp); __ip = (image_buf); __il = __ip + (size) * __bpp; \
@@ -204,8 +208,8 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
 #ifndef TARGET_RASPBERRY_PI
 
 	// X11 variables
-	Window				x11Window	= 0;
-	Display*			x11Display	= 0;
+	x11Window	= 0;
+	x11Display	= 0;
 	long				x11Screen	= 0;
 	XVisualInfo*		x11Visual	= 0;
 	Colormap			x11Colormap	= 0;
@@ -240,7 +244,7 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
     sWA.colormap = x11Colormap;
 
     // Add to these for handling other events
-    sWA.event_mask = StructureNotifyMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask;
+    sWA.event_mask = StructureNotifyMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | KeyPressMask | KeyReleaseMask;
     ui32Mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
 
 	// Creates the X11 window
@@ -296,9 +300,11 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
     nonFullscreenWindowRect = screenRect;
     currentWindowRect = screenRect;
     
+	#ifdef TARGET_RASPBERRY_PI
     mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
     MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
     mouseCursor.update();
+    #endif
 	bShowCursor = true;
 
 }
@@ -473,9 +479,13 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::infiniteLoop() {
+	
+	#ifdef TARGET_RASPBERRY_PI
 	startThread();
+	#endif
+	
     while (!terminate) {
-    	callMouseEvents();	
+		checkEvents();	
     	idle();
     	display();
     }
@@ -483,7 +493,19 @@ void ofAppEGLWindow::infiniteLoop() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::callMouseEvents(){
+void ofAppEGLWindow::checkEvents(){
+	#ifndef TARGET_RASPBERRY_PI
+	while(1){
+		XEvent event;
+		if (::XCheckWindowEvent(x11Display, x11Window, -1, &event)){
+			handleEvent(event);
+		}else if (::XCheckTypedEvent(x11Display, ClientMessage, &event)){
+			handleEvent(event);
+		}else{
+			break;
+		}
+	}
+	#else
 	static queue<ofMouseEventArgs> copy;
 	lock();
 	copy = mouseEvents;
@@ -495,6 +517,7 @@ void ofAppEGLWindow::callMouseEvents(){
 		ofNotifyMouseEvent(copy.front());
 		copy.pop();
 	}
+	#endif
 }
 
 //------------------------------------------------------------
@@ -702,6 +725,7 @@ void ofAppEGLWindow::display() {
 
   ofNotifyDraw();
   
+  #ifdef TARGET_RASPBERRY_PI
   if(bShowCursor){
 	ofPushStyle();
   	ofEnableAlphaBlending();
@@ -712,6 +736,7 @@ void ofAppEGLWindow::display() {
   	//TODO: we need a way of querying the previous state of texture hack
   	ofPopStyle();
   }
+  #endif
 
 	if(ofGetCurrentRenderer()->getType()=="GLES2"){
 		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
@@ -758,6 +783,140 @@ ofRectangle ofAppEGLWindow::requestNewWindowRect(const ofRectangle& rect){
 void ofAppEGLWindow::setVerticalSync(bool enabled){
 	eglSwapInterval(eglDisplay, enabled ? 1 : 0);
 }
+
+static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int event_mask) {
+    KeySym keysym = NoSymbol;
+
+    //Get the map
+    XkbDescPtr keyboard_map = XkbGetMap(display, XkbAllClientInfoMask, XkbUseCoreKbd);
+    if (keyboard_map) {
+        //What is diff between XkbKeyGroupInfo and XkbKeyNumGroups?
+        unsigned char info = XkbKeyGroupInfo(keyboard_map, keycode);
+        unsigned int num_groups = XkbKeyNumGroups(keyboard_map, keycode);
+
+        //Get the group
+        unsigned int group = 0x00;
+        switch (XkbOutOfRangeGroupAction(info)) {
+            case XkbRedirectIntoRange:
+                /* If the RedirectIntoRange flag is set, the four least significant
+                 * bits of the groups wrap control specify the index of a group to
+                 * which all illegal groups correspond. If the specified group is
+                 * also out of range, all illegal groups map to Group1.
+                 */
+                group = XkbOutOfRangeGroupInfo(info);
+                if (group >= num_groups) {
+                    group = 0;
+                }
+            break;
+
+            case XkbClampIntoRange:
+                /* If the ClampIntoRange flag is set, out-of-range groups correspond
+                 * to the nearest legal group. Effective groups larger than the
+                 * highest supported group are mapped to the highest supported group;
+                 * effective groups less than Group1 are mapped to Group1 . For
+                 * example, a key with two groups of symbols uses Group2 type and
+                 * symbols if the global effective group is either Group3 or Group4.
+                 */
+                group = num_groups - 1;
+            break;
+
+            case XkbWrapIntoRange:
+                /* If neither flag is set, group is wrapped into range using integer
+                 * modulus. For example, a key with two groups of symbols for which
+                 * groups wrap uses Group1 symbols if the global effective group is
+                 * Group3 or Group2 symbols if the global effective group is Group4.
+                 */
+            default:
+                if (num_groups != 0) {
+                    group %= num_groups;
+                }
+            break;
+        }
+
+        XkbKeyTypePtr key_type = XkbKeyKeyType(keyboard_map, keycode, group);
+        unsigned int active_mods = event_mask & key_type->mods.mask;
+
+        int i, level = 0;
+        for (i = 0; i < key_type->map_count; i++) {
+            if (key_type->map[i].active && key_type->map[i].mods.mask == active_mods) {
+                level = key_type->map[i].level;
+            }
+        }
+
+        keysym = XkbKeySymEntry(keyboard_map, keycode, level, group);
+        XkbFreeClientMap(keyboard_map, XkbAllClientInfoMask, true);
+    }
+
+    return keysym;
+}
+
+//------------------------------------------------------------
+#ifndef TARGET_RASPBERRY_PI
+void ofAppEGLWindow::handleEvent(const XEvent& event){
+    static ofMouseEventArgs mouseEvent;
+    static ofKeyEventArgs keyEvent;
+	switch (event.type){
+	case KeyPress:
+	case KeyRelease:{
+		KeySym key = KeyCodeToKeySym(x11Display,event.xkey.keycode,event.xkey.state);
+		keyEvent.key = key;
+		if (event.type == KeyPress){
+			keyEvent.type = ofKeyEventArgs::Pressed;
+			if(key == 65307){
+				keyEvent.key = OF_KEY_ESC;
+			}
+		}else if (event.type == KeyRelease){
+			cout << "keyrelease" << endl;
+			keyEvent.type = ofKeyEventArgs::Released;
+		}
+		ofNotifyKeyEvent(keyEvent);
+		}break;
+
+	case ButtonPress:
+	case ButtonRelease:
+		mouseEvent.x = static_cast<float>(event.xbutton.x);
+		mouseEvent.y = static_cast<float>(event.xbutton.y);
+		mouseEvent.button = event.xbutton.button;
+		if (event.type == ButtonPress){
+			mouseEvent.type = ofMouseEventArgs::Pressed;
+		}else{
+			mouseEvent.type = ofMouseEventArgs::Released;
+		}
+		ofNotifyMouseEvent(mouseEvent);
+		break;
+	case MotionNotify:
+		//cout << "motion notify" << endl;
+		mouseEvent.x = static_cast<float>(event.xmotion.x);
+		mouseEvent.y = static_cast<float>(event.xmotion.y);
+		mouseEvent.button = event.xbutton.button;
+		if(ofGetMousePressed()){
+			mouseEvent.type = ofMouseEventArgs::Dragged;
+		}else{
+			mouseEvent.type = ofMouseEventArgs::Moved;
+		}
+		ofNotifyMouseEvent(mouseEvent);
+		break;
+	/*case ClientMessage:
+	{
+	  if (event.xclient.message_type == wmProtocols_ &&
+		event.xclient.format == 32 &&
+		event.xclient.data.l[0] == (long) wmDeleteWindow_)
+	  {
+		if (listener())
+		{
+		  if (listener()->onClose(wrapper() ? *wrapper() : *(WindowInterface*)this))
+		    isShuttingDown_ = true;
+		}
+		else
+		{
+		  isShuttingDown_ = true;
+		}
+	  }
+	  break;
+	}*/
+	}
+}
+#endif
 
 //------------------------------------------------------------
 void ofAppEGLWindow::threadedFunction(){
