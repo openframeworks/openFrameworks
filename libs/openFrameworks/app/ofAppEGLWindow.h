@@ -85,6 +85,8 @@ public:
 	virtual void	enableSetupScreen();
 	virtual void	disableSetupScreen();
 
+	virtual void	setVerticalSync(bool enabled);
+
 protected:
 	bool setupX11NativeWindow(int w, int h, int screenMode);
 	bool setupRPiNativeWindow(int w, int h, int screenMode);

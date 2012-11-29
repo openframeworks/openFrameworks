@@ -754,6 +754,11 @@ ofRectangle ofAppEGLWindow::requestNewWindowRect(const ofRectangle& rect){
 	return getScreenRect();
 }
 
+
+void ofAppEGLWindow::setVerticalSync(bool enabled){
+	eglSwapInterval(eglDisplay, enabled ? 1 : 0);
+}
+
 //------------------------------------------------------------
 void ofAppEGLWindow::threadedFunction(){
   // TODO: commented to avoid linking problem
