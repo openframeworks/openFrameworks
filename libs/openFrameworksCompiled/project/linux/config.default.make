@@ -143,6 +143,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
@@ -152,15 +153,9 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 
-# third party static libs (this may not matter due to exclusions in poco's libsorder.make)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -197,13 +192,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 PLATFORM_LIBRARIES =
 PLATFORM_LIBRARIES += GL
 PLATFORM_LIBRARIES += glut
-PLATFORM_LIBRARIES += asound
-PLATFORM_LIBRARIES += openal
-PLATFORM_LIBRARIES += sndfile
-PLATFORM_LIBRARIES += vorbis
-PLATFORM_LIBRARIES += FLAC
-PLATFORM_LIBRARIES += ogg
-# PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
@@ -223,12 +212,19 @@ PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-0.10
 PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-0.10
 PLATFORM_PKG_CONFIG_LIBRARIES += libudev
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
+PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
 
 # conditionally add GTK
 ifeq ($(HAS_SYSTEM_GTK),0)
     PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
 endif
 
+# conditionally add mpg123
+ifeq ($(HAS_SYSTEM_MPG123),0)
+    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
 
 ################################################################################
 # PLATFORM LIBRARY SEARCH PATHS
@@ -283,9 +279,3 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #    Don't want to use a default compiler?
 ################################################################################
 #PLATFORM_CXX=
-
-################################################################################
-# PLATFORM CC
-#    Don't want to use a default compiler?
-################################################################################
-#PLATFORM_CC=

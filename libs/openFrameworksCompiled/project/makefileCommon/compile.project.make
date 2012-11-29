@@ -86,6 +86,26 @@ ALL_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
 
+
+
+# Name TARGET
+ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+	TARGET_NAME = Debug
+	BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
+else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+else ifeq ($(MAKECMDGOALS),)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
+
+
+
 ################################################################################
 ## stopped here ...
 
@@ -123,7 +143,7 @@ endif
 ################################################################################
 
 # define the subdirectory for our target name
-OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(TARGET_NAME)
+OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(PLATFORM_OS)$(PLATFORM_ARCH)$(TARGET_NAME)
 
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,/,$(addprefix $(OF_PLATFORM_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES)))
@@ -135,7 +155,6 @@ OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
 
 # TODO: deal with shared libs?
 
-
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
 Release: $(TARGET) after
@@ -145,6 +164,13 @@ Debug: $(TARGET) after
 all:
 	$(MAKE) Debug
 	$(MAKE) Release
+	
+# This rule adds a dependency for projects to the OF library 
+# so if any OF file gets modified the OF library will be compiled
+# before compiling the project
+
+$(TARGET_LIBS): $(OF_CORE_SOURCE_FILES)
+	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME)
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
@@ -188,10 +214,10 @@ $(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
 
-$(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS)
+$(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS)
 	@echo 'linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
 	mkdir -p $(@D)
-	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_CORE_LIBS) $(OF_PROJECT_LIBS) 
+	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) 
 -include $(OF_PLATFORM_DEPENDENCY_FILES)
 
 clean:
