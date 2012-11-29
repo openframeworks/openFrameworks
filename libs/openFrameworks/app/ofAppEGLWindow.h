@@ -33,8 +33,8 @@
 #include "ofImage.h"
 
 #ifndef TARGET_RASPBERRY_PI
-	#include "X11/Xlib.h"
-	#include "X11/Xutil.h"
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
 #endif
 
 #include <queue>
@@ -121,6 +121,7 @@ protected:
 	int getWindowHeight() {
 		return currentWindowRect.height;
 	}
+	
 
 	bool     terminate;
 
@@ -157,6 +158,11 @@ protected:
 	EGLSurface eglSurface;
 	EGLContext eglContext;
 	
+#ifndef TARGET_RASPBERRY_PI
+	void handleEvent(const XEvent& event);
+	Display*			x11Display;
+	Window				x11Window;
+#endif
 
 
 
@@ -171,7 +177,7 @@ protected:
 	void threadedFunction();
 	queue<ofMouseEventArgs> mouseEvents;
 	queue<ofKeyEventArgs> keyEvents;
-	void callMouseEvents();
+	void checkEvents();
 	ofImage mouseCursor;
 	
 	
