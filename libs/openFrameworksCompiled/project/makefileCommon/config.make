@@ -1,3 +1,11 @@
+#------------------------------------------------------------------------------
+# This file detects the current platform, creates the needed variables for that
+# platform, generates the variables for the paths to the code, addons, libraries...
+# and the list of source code for the core and common include search paths for the
+# core and projects. It's included from both the core makefile and the projects
+# makefile
+
+
 # #####################  PLATFORM DETECTION ###################################
 # determine the platform's architecture, os and form the platform-specific libarary subpath
 #   If they haven't already been defined, this file will generate the following 
@@ -57,7 +65,7 @@ endif
 
 # if desired, print the variables
 ifdef MAKEFILE_DEBUG
-    $(info ===================configure.platform.make==========================)
+    $(info =================== config.make platform detection ================)
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
     $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
@@ -134,7 +142,7 @@ endif
 ################################################################################
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-    $(info ===================configure.core.paths.make========================)
+    $(info =================== config.make paths =============================)
     $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
     $(info OF_EXPORT_PATH=$(OF_EXPORT_PATH))
     $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
@@ -163,7 +171,7 @@ endif
 
 
 # include the platform specific user and platform configuration files
-include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_VARIANT).make
+include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).make
 
 
 
@@ -251,7 +259,7 @@ OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOUR
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info =============================configure.core.flags.make========================)
+    $(info ========================= config.make flags ========================)
     $(info ---OF_CORE_DEFINES_CFLAGS---)
     $(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
     
@@ -260,8 +268,6 @@ ifdef MAKEFILE_DEBUG
   
     $(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
     $(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
-    
-    $(info =============================configure.core.flags.make========================)
 
     $(info ---OF_CORE_SOURCE_FILES---)
     $(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
