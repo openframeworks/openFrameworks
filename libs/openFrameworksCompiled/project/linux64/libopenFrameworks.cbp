@@ -4,7 +4,6 @@
 	<Project>
 		<Option title="libopenFrameworks" />
 		<Option makefile_is_custom="1" />
-		<Option execution_dir="/home/arturo/Desktop/openFrameworks/libs/openFrameworksCompiled/project/" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Option virtualFolders="openFrameworks/sound/;openFrameworks/;openFrameworks/utils/;openFrameworks/video/;openFrameworks/graphics/;openFrameworks/events/;openFrameworks/communication/;openFrameworks/app/;openFrameworks/3d/;openFrameworks/gl/;openFrameworks/math/;openFrameworks/types/;" />
