@@ -138,7 +138,6 @@ enum ofTargetPlatform{
 #ifdef TARGET_LINUX
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-		#include <glxew.h>
 		#include <GL/glew.h>
 		#include <GL/gl.h>
 		#include <GL/glx.h>
