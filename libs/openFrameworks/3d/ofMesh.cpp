@@ -735,6 +735,8 @@ void ofMesh::load(string path){
 	int currentVertex = 0;
 	int currentNormal = 0;
 	int currentFace = 0;
+	
+	bool floatColor = false;
 
 	enum State{
 		Header,
@@ -801,6 +803,14 @@ void ofMesh::load(string path){
 		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b")==0 || line.find("property float a")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
+			floatColor = true;
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property uchar red")==0 || line.find("property uchar green")==0 || line.find("property uchar blue")==0 || line.find("property uchar alpha")==0)){
+			colorCompsFound++;
+			data.getColors().resize(data.getVertices().size());
+			floatColor = false;
 			continue;
 		}
 
@@ -856,12 +866,21 @@ void ofMesh::load(string path){
 			data.getVertices()[currentVertex] = v;
 
 			if(colorCompsFound>0){
-				ofColor c;
-				sline >> c.r;
-				sline >> c.g;
-				sline >> c.b;
-				if(colorCompsFound>3) sline >> c.a;
-				data.getColors()[currentVertex] = c;
+				if (floatColor){
+					ofFloatColor c;
+					sline >> c.r;
+					sline >> c.g;
+					sline >> c.b;
+					if(colorCompsFound>3) sline >> c.a;
+					data.getColors()[currentVertex] = c;
+				}else{
+					int r, g, b, a = 255;
+					sline >> r;
+					sline >> g;
+					sline >> b;
+					if(colorCompsFound>3) sline >> a;
+					data.getColors()[currentVertex] = ofColor(r, g, b, a);
+				}
 			}
 
 			if(texCoordsFound>0){
