@@ -46,27 +46,8 @@ NODEPS = clean
 
 # clean it
 ALL_CFLAGS =
-
-################################################################################
-# CORE FLAGS ###################################################################
-# add the base CFLAGS from the core (platform specific)
-ALL_CFLAGS += $(OF_CORE_BASE_CFLAGS)
-# add the base CFLAGS from the addons
-ALL_CFLAGS += $(PROJECT_BASE_CFLAGS)
-
-################################################################################
-# DEFINE FLAGS #################################################################
-# add the defines from the core (platform specific)
-ALL_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
-# add the defines from the project
-ALL_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
-
-################################################################################
-# INCLUDE FLAGS ################################################################
-# add the include CFLAGS from the core (platform specific)
-ALL_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
-# add the include CFLAGS from the project
-ALL_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
+# add the base CFLAGS from Makefiles.examples
+ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
 
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
@@ -78,10 +59,8 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 # clean it
 ALL_LDFLAGS =
 
-# add the include LDFLAGS from the project
+# add the include LDFLAGS from Makefiles.examples
 ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
-# add the include LDFLAGS from the core (platform specific)
-ALL_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
 
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
@@ -110,12 +89,20 @@ endif
 ## stopped here ...
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
+	ifeq ($strip($(PROJECT_CFLAGS_DEBUG)),)
+	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+	else
+		OPTIMIZATION_CFLAGS = $(PROJECT_CFLAGS_DEBUG)
+	endif
     TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
+	ifeq ($strip($(PROJECT_CFLAGS_RELEASE)),)
+	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+	else
+		OPTIMIZATION_CFLAGS = $(PROJECT_CFLAGS_RELEASE)
+	endif
     TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 endif
 
