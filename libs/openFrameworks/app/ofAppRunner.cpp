@@ -345,51 +345,5 @@ int ofGetWindowMode(){
 
 //--------------------------------------
 void ofSetVerticalSync(bool bSync){
-	//----------------------------
-	#ifdef TARGET_WIN32
-	//----------------------------
-		if (bSync) {
-			if (WGL_EXT_swap_control) {
-				wglSwapIntervalEXT (1);
-			}
-		} else {
-			if (WGL_EXT_swap_control) {
-				wglSwapIntervalEXT (0);
-			}
-		}
-	//----------------------------
-	#endif
-	//----------------------------
-
-	//--------------------------------------
-	#ifdef TARGET_OSX
-	//--------------------------------------
-		GLint sync = bSync == true ? 1 : 0;
-		CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
-	//--------------------------------------
-	#endif
-	//--------------------------------------
-
-	//--------------------------------------
-	#if defined ( TARGET_LINUX ) && !defined ( TARGET_OPENGLES )
-	//--------------------------------------
-		void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
-		if(swapIntervalExt){
-			Display *dpy = glXGetCurrentDisplay();
-			GLXDrawable drawable = glXGetCurrentDrawable();
-			if (drawable) {
-				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
-				return;
-			}
-		}
-		void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-		if(!swapInterval) {
-			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
-		}
-		if(swapInterval) {
-			swapInterval(bSync ? 1 : 0);
-		}
-	//--------------------------------------
-	#endif
-	//--------------------------------------
+	window->setVerticalSync(bSync);
 }

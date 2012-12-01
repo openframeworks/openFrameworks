@@ -148,6 +148,20 @@ void ofNotifyKeyReleased(int key){
 	#endif
 }
 
+
+//------------------------------------------
+void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent){
+	switch(keyEvent.type){
+		case ofKeyEventArgs::Pressed:
+			ofNotifyKeyPressed(keyEvent.key);
+			break;
+		case ofKeyEventArgs::Released:
+			ofNotifyKeyReleased(keyEvent.key);
+			break;
+		
+	}
+}
+
 //------------------------------------------
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 	switch(mouseEvent.type){

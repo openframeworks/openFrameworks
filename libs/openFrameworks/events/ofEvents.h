@@ -44,6 +44,10 @@ class ofDragInfo{
 
 		class ofKeyEventArgs : public ofEventArgs {
 		  public:
+			enum Type{
+				Pressed,
+				Released,
+			} type;
 			int key;
 		};
 
@@ -259,6 +263,7 @@ void ofNotifyDraw();
 
 void ofNotifyKeyPressed(int key);
 void ofNotifyKeyReleased(int key);
+void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
 void ofNotifyMousePressed(int x, int y, int button);
 void ofNotifyMouseReleased(int x, int y, int button);
