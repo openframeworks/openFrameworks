@@ -779,11 +779,14 @@ ofRectangle ofAppEGLWindow::requestNewWindowRect(const ofRectangle& rect){
 	return getScreenRect();
 }
 
-
+//------------------------------------------------------------
 void ofAppEGLWindow::setVerticalSync(bool enabled){
 	eglSwapInterval(eglDisplay, enabled ? 1 : 0);
 }
 
+
+#ifndef TARGET_RASPBERRY_PI
+//------------------------------------------------------------
 static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int event_mask) {
     KeySym keysym = NoSymbol;
 
@@ -851,7 +854,6 @@ static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int e
 }
 
 //------------------------------------------------------------
-#ifndef TARGET_RASPBERRY_PI
 void ofAppEGLWindow::handleEvent(const XEvent& event){
     static ofMouseEventArgs mouseEvent;
     static ofKeyEventArgs keyEvent;
