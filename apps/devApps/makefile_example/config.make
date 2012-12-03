@@ -117,6 +117,6 @@ PROJECT_CFLAGS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PROJECT_CFLAGS_RELEASE = -march=native -mtune=native -Os
-PROJECT_CFLAGS_DEBUG = -g3
+PROJECT_CFLAGS_RELEASE = 
+PROJECT_CFLAGS_DEBUG = 
 
