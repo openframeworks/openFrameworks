@@ -15,7 +15,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	sprintf (timeString, "time: %i:%i:%i \nelapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
+	sprintf (timeString, "time: %i:%i:%i \nelapsed time %lli", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
 	
 	float w = vagRounded.stringWidth(eventString);
 	float h = vagRounded.stringHeight(eventString);
@@ -38,12 +38,12 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
-	sprintf(eventString, "keyPressed = (%i)", key);
+	sprintf(eventString, "keyPressed = (%i) %c", key, (char)key);
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){ 
-	sprintf(eventString, "keyReleased = (%i)", key);	
+	sprintf(eventString, "keyReleased = (%i) %c", key, (char)key);	
 }
 
 //--------------------------------------------------------------
