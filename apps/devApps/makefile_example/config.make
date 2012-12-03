@@ -3,6 +3,8 @@
 #   This file is where we make project specific configurations.
 ################################################################################
 
+OF_ROOT=../../..
+
 ################################################################################
 # Custom Application Name
 #   Will default to the project's folder name if not defined.
