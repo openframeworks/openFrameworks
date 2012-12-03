@@ -34,8 +34,6 @@ class ofxAssimpModelLoader{
 
         void           clear();
     
-        void update();
-    
         void           setScale(float x, float y, float z);
         void           setPosition(float x, float y, float z);
         void           setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
@@ -52,10 +50,6 @@ class ofxAssimpModelLoader{
         void           setTime(float time); // 0 - duration
         float          getDuration(int animation);
 
-        void play();
-        void stop();
-        void setLoop(bool bLoop);
-    
         vector<string> getMeshNames();
         int            getNumMeshes();
 
@@ -128,11 +122,6 @@ class ofxAssimpModelLoader{
         int currentAnimation;
         
         float animationTime;
-    
-        int animationStartTime;
-        float progress;
-        bool bLoop;
-        bool bPlay;
 		
 		string modelFolder;
         
