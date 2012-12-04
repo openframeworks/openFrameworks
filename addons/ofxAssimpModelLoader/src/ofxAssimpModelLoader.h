@@ -35,6 +35,7 @@ class ofxAssimpModelLoader{
 
         void update();
         void updateAnimations();
+        void updateModelMatrix();
     
         bool hasAnimations();
         unsigned int getAnimationCount();
@@ -90,6 +91,7 @@ class ofxAssimpModelLoader{
 		ofPoint        getSceneCenter();
 		float          getNormalizedScale();
 		ofPoint        getScale();
+        ofMatrix4x4     getModelMatrix();
 
 		ofPoint			getSceneMin(bool bScaled = false);
 		ofPoint			getSceneMax(bool bScaled = false);
@@ -121,7 +123,8 @@ class ofxAssimpModelLoader{
     
         void getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max);
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
-        
+
+        string filepath;
 		string modelFolder;
         
         bool normalizeScale;
@@ -134,12 +137,15 @@ class ofxAssimpModelLoader{
         vector <ofPoint> rotAxis;
         ofPoint scale;
         ofPoint pos;
-        string filepath;
+        ofMatrix4x4 modelMatrix;
 
         vector<ofLight> lights;
         vector<ofxAssimpMeshHelper> modelMeshes;
         vector<ofxAssimpAnimation> animations;
 
-        bool bUsingTextures, bUsingNormals, bUsingColors, bUsingMaterials;
+        bool bUsingTextures;
+        bool bUsingNormals;
+        bool bUsingColors;
+        bool bUsingMaterials;
         float normalizeFactor;
 };
