@@ -136,6 +136,10 @@ ofxAssimpModelLoader::ofxAssimpModelLoader(){
 	clear();
 }
 
+ofxAssimpModelLoader::~ofxAssimpModelLoader(){
+    //
+}
+
 //------------------------------------------
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
 	normalizeFactor = ofGetWidth() / 2.0;
@@ -404,12 +408,14 @@ void ofxAssimpModelLoader::loadGLResources(){
         meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
         modelMeshes.push_back(meshHelper);
     }
-
-    animationTime = -1;
-    setNormalizedTime(0);
+    
+    int numOfAnimations = scene->mNumAnimations;
+    for(int i=0; i<numOfAnimations; i++) {
+        aiAnimation * animation = scene->mAnimations[i];
+        animations.push_back(ofxAssimpAnimation(scene, animation));
+    }
 
     ofLog(OF_LOG_VERBOSE, "finished loading gl resources");
-
 }
 
 //-------------------------------------------
@@ -425,9 +431,6 @@ void ofxAssimpModelLoader::clear(){
     rotAxis.clear();
     lights.clear();
 
-    lastAnimationTime = 0;
-    currentAnimation = 0;
-    animationTime = 0;
     scale = ofPoint(1, 1, 1);
 	if(scene){
 		aiReleaseImport(scene);
@@ -440,10 +443,122 @@ void ofxAssimpModelLoader::clear(){
     bUsingColors = true;
 }
 
-//-------------------------------------------
-ofxAssimpModelLoader::~ofxAssimpModelLoader(){
+//------------------------------------------- update.
+void ofxAssimpModelLoader::update() {
+    updateAnimations();
 }
 
+void ofxAssimpModelLoader::updateAnimations() {
+    if(!hasAnimations()) {
+        return;
+    }
+    
+    for(int i=0; i<animations.size(); i++) {
+        animations[i].update();
+    }
+    
+    // update mesh position for the animation
+	for(int i=0; i<modelMeshes.size(); ++i) {
+		// current mesh we are introspecting
+		const aiMesh* mesh = modelMeshes[i].mesh;
+        
+		// calculate bone matrices
+		vector<aiMatrix4x4> boneMatrices(mesh->mNumBones);
+		for(int a=0; a<mesh->mNumBones; ++a) {
+			const aiBone* bone = mesh->mBones[a];
+            
+			// find the corresponding node by again looking recursively through the node hierarchy for the same name
+			aiNode* node = scene->mRootNode->FindNode(bone->mName);
+            
+			// start with the mesh-to-bone matrix
+			boneMatrices[a] = bone->mOffsetMatrix;
+			// and now append all node transformations down the parent chain until we're back at mesh coordinates again
+			const aiNode* tempNode = node;
+			while(tempNode) {
+				// check your matrix multiplication order here!!!
+				boneMatrices[a] = tempNode->mTransformation * boneMatrices[a];
+				// boneMatrices[a] = boneMatrices[a] * tempNode->mTransformation;
+				tempNode = tempNode->mParent;
+			}
+			modelMeshes[i].hasChanged = true;
+			modelMeshes[i].validCache = false;
+		}
+        
+		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(),0);
+		if(mesh->HasNormals()){
+			modelMeshes[i].animatedNorm.assign(modelMeshes[i].animatedNorm.size(),0);
+		}
+		// loop through all vertex weights of all bones
+		for(int a=0; a<mesh->mNumBones; ++a) {
+			const aiBone* bone = mesh->mBones[a];
+			const aiMatrix4x4& posTrafo = boneMatrices[a];
+            
+			for(int b=0; b<bone->mNumWeights; ++b) {
+				const aiVertexWeight& weight = bone->mWeights[b];
+                
+				size_t vertexId = weight.mVertexId;
+				const aiVector3D& srcPos = mesh->mVertices[vertexId];
+                
+				modelMeshes[i].animatedPos[vertexId] += weight.mWeight * (posTrafo * srcPos);
+			}
+			if(mesh->HasNormals()){
+				// 3x3 matrix, contains the bone matrix without the translation, only with rotation and possibly scaling
+				aiMatrix3x3 normTrafo = aiMatrix3x3( posTrafo);
+				for(int b=0; b<bone->mNumWeights; ++b) {
+					const aiVertexWeight& weight = bone->mWeights[b];
+					size_t vertexId = weight.mVertexId;
+                    
+					const aiVector3D& srcNorm = mesh->mNormals[vertexId];
+					modelMeshes[i].animatedNorm[vertexId] += weight.mWeight * (normTrafo * srcNorm);
+				}
+			}
+		}
+	}
+}
+
+//------------------------------------------- animations.
+bool ofxAssimpModelLoader::hasAnimations() {
+    return animations.size() > 0;
+}
+
+unsigned int ofxAssimpModelLoader::getAnimationCount(){
+    return animations.size();
+}
+
+ofxAssimpAnimation & ofxAssimpModelLoader::getAnimation(int animationIndex) {
+    animationIndex = ofClamp(animationIndex, 0, animations.size()-1);
+    return animations[animationIndex];
+}
+
+void ofxAssimpModelLoader::playAllAnimations() {
+    for(int i=0; i<animations.size(); i++) {
+        animations[i].play();
+    }
+}
+
+void ofxAssimpModelLoader::stopAllAnimations() {
+    for(int i=0; i<animations.size(); i++) {
+        animations[i].stop();
+    }
+}
+
+void ofxAssimpModelLoader::resetAllAnimations() {
+    for(int i=0; i<animations.size(); i++) {
+        animations[i].reset();
+    }
+}
+
+void ofxAssimpModelLoader::setPausedForAllAnimations(bool pause) {
+    for(int i=0; i<animations.size(); i++) {
+        animations[i].setPaused(pause);
+    }
+}
+
+void ofxAssimpModelLoader::setLoopStateForAllAnimations(ofLoopType state) {
+    for(int i=0; i<animations.size(); i++) {
+        animations[i].setLoopState(state);
+    }
+}
 
 //-------------------------------------------
 void ofxAssimpModelLoader::getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max)
@@ -491,54 +606,6 @@ void ofxAssimpModelLoader::getBoundingBoxForNode(const struct aiNode* nd,  struc
 }
 
 //-------------------------------------------
-unsigned int ofxAssimpModelLoader::getAnimationCount(){
-    if(scene)
-        return scene->mNumAnimations;
-    else {
-        ofLog(OF_LOG_WARNING, "No Model Loaded");
-        return 0;
-    }
-
-}
-
-//-------------------------------------------
-void ofxAssimpModelLoader::setAnimation(int anim){
-    currentAnimation = MIN(anim, (int)scene->mNumAnimations);
-}
-
-//-------------------------------------------
-float ofxAssimpModelLoader::getDuration(int animation){
-    const aiAnimation* anim = scene->mAnimations[animation];
-    return anim->mDuration;
-}
-
-
-//-------------------------------------------
-void ofxAssimpModelLoader::setNormalizedTime(float t){ // 0 - 1
-
-    if(getAnimationCount())
-    {
-
-        const aiAnimation* anim = scene->mAnimations[currentAnimation];
-        float realT = ofMap(t, 0.0, 1.0, 0.0, (float)anim->mDuration, false);
-
-        setTime(realT);
-    }
-}
-
-void ofxAssimpModelLoader::setTime(float t){ // 0 - 1
-    if(getAnimationCount()){
-
-        // only evaluate if we have a delta t.
-        if(animationTime != t){
-            animationTime = t;
-            updateAnimation(currentAnimation, animationTime);
-        }
-    }
-}
-
-
-//-------------------------------------------
 void ofxAssimpModelLoader::setPosition(float x, float y, float z){
     pos.x = x;
     pos.y = y;
@@ -573,176 +640,6 @@ void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, floa
     rotAxis[which].x = rot_x;
     rotAxis[which].y = rot_y;
     rotAxis[which].z = rot_z;
-}
-
-//-------------------------------------------
-void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float currentTime){
-
-    const aiAnimation* mAnim = scene->mAnimations[animationIndex];
-
-    // calculate the transformations for each animation channel
-	for( unsigned int a = 0; a < mAnim->mNumChannels; a++)
-	{
-		const aiNodeAnim* channel = mAnim->mChannels[a];
-
-        aiNode* targetNode = scene->mRootNode->FindNode(channel->mNodeName);
-
-        // ******** Position *****
-        aiVector3D presentPosition( 0, 0, 0);
-        if( channel->mNumPositionKeys > 0)
-        {
-            // Look for present frame number. Search from last position if time is after the last time, else from beginning
-            // Should be much quicker than always looking from start for the average use case.
-            unsigned int frame = 0;// (currentTime >= lastAnimationTime) ? lastFramePositionIndex : 0;
-            while( frame < channel->mNumPositionKeys - 1)
-            {
-                if( currentTime < channel->mPositionKeys[frame+1].mTime)
-                    break;
-                frame++;
-            }
-
-            // interpolate between this frame's value and next frame's value
-            unsigned int nextFrame = (frame + 1) % channel->mNumPositionKeys;
-            const aiVectorKey& key = channel->mPositionKeys[frame];
-            const aiVectorKey& nextKey = channel->mPositionKeys[nextFrame];
-            double diffTime = nextKey.mTime - key.mTime;
-            if( diffTime < 0.0)
-                diffTime += mAnim->mDuration;
-            if( diffTime > 0)
-            {
-                float factor = float( (currentTime - key.mTime) / diffTime);
-                presentPosition = key.mValue + (nextKey.mValue - key.mValue) * factor;
-            } else
-            {
-                presentPosition = key.mValue;
-            }
-        }
-
-        // ******** Rotation *********
-        aiQuaternion presentRotation( 1, 0, 0, 0);
-        if( channel->mNumRotationKeys > 0)
-        {
-            unsigned int frame = 0;//(currentTime >= lastAnimationTime) ? lastFrameRotationIndex : 0;
-            while( frame < channel->mNumRotationKeys - 1)
-            {
-                if( currentTime < channel->mRotationKeys[frame+1].mTime)
-                    break;
-                frame++;
-            }
-
-            // interpolate between this frame's value and next frame's value
-            unsigned int nextFrame = (frame + 1) % channel->mNumRotationKeys;
-            const aiQuatKey& key = channel->mRotationKeys[frame];
-            const aiQuatKey& nextKey = channel->mRotationKeys[nextFrame];
-            double diffTime = nextKey.mTime - key.mTime;
-            if( diffTime < 0.0)
-                diffTime += mAnim->mDuration;
-            if( diffTime > 0)
-            {
-                float factor = float( (currentTime - key.mTime) / diffTime);
-                aiQuaternion::Interpolate( presentRotation, key.mValue, nextKey.mValue, factor);
-            } else
-            {
-                presentRotation = key.mValue;
-            }
-        }
-
-        // ******** Scaling **********
-        aiVector3D presentScaling( 1, 1, 1);
-        if( channel->mNumScalingKeys > 0)
-        {
-            unsigned int frame = 0;//(currentTime >= lastAnimationTime) ? lastFrameScaleIndex : 0;
-            while( frame < channel->mNumScalingKeys - 1)
-            {
-                if( currentTime < channel->mScalingKeys[frame+1].mTime)
-                    break;
-                frame++;
-            }
-
-            // TODO: (thom) interpolation maybe? This time maybe even logarithmic, not linear
-            presentScaling = channel->mScalingKeys[frame].mValue;
-        }
-
-        // build a transformation matrix from it
-        //aiMatrix4x4& mat;// = mTransforms[a];
-        aiMatrix4x4 mat = aiMatrix4x4( presentRotation.GetMatrix());
-        mat.a1 *= presentScaling.x; mat.b1 *= presentScaling.x; mat.c1 *= presentScaling.x;
-        mat.a2 *= presentScaling.y; mat.b2 *= presentScaling.y; mat.c2 *= presentScaling.y;
-        mat.a3 *= presentScaling.z; mat.b3 *= presentScaling.z; mat.c3 *= presentScaling.z;
-        mat.a4 = presentPosition.x; mat.b4 = presentPosition.y; mat.c4 = presentPosition.z;
-        //mat.Transpose();
-
-        targetNode->mTransformation = mat;
-
-    }
-
-    lastAnimationTime = currentTime;
-
-    // update mesh position for the animation
-	for (unsigned int i = 0; i < modelMeshes.size(); ++i){
-
-		// current mesh we are introspecting
-		const aiMesh* mesh = modelMeshes[i].mesh;
-
-		// calculate bone matrices
-		std::vector<aiMatrix4x4> boneMatrices( mesh->mNumBones);
-		for( size_t a = 0; a < mesh->mNumBones; ++a)
-		{
-			const aiBone* bone = mesh->mBones[a];
-
-			// find the corresponding node by again looking recursively through the node hierarchy for the same name
-			aiNode* node = scene->mRootNode->FindNode(bone->mName);
-
-			// start with the mesh-to-bone matrix
-			boneMatrices[a] = bone->mOffsetMatrix;
-			// and now append all node transformations down the parent chain until we're back at mesh coordinates again
-			const aiNode* tempNode = node;
-			while( tempNode)
-			{
-				// check your matrix multiplication order here!!!
-				boneMatrices[a] = tempNode->mTransformation * boneMatrices[a];
-				// boneMatrices[a] = boneMatrices[a] * tempNode->mTransformation;
-				tempNode = tempNode->mParent;
-			}
-			modelMeshes[i].hasChanged = true;
-			modelMeshes[i].validCache = false;
-		}
-
-		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(),0);
-		if(mesh->HasNormals()){
-			modelMeshes[i].animatedNorm.assign(modelMeshes[i].animatedNorm.size(),0);
-		}
-		// loop through all vertex weights of all bones
-		for( size_t a = 0; a < mesh->mNumBones; ++a)
-		{
-			const aiBone* bone = mesh->mBones[a];
-			const aiMatrix4x4& posTrafo = boneMatrices[a];
-
-
-			for( size_t b = 0; b < bone->mNumWeights; ++b)
-			{
-				const aiVertexWeight& weight = bone->mWeights[b];
-
-				size_t vertexId = weight.mVertexId;
-				const aiVector3D& srcPos = mesh->mVertices[vertexId];
-
-				modelMeshes[i].animatedPos[vertexId] += weight.mWeight * (posTrafo * srcPos);
-			}
-			if(mesh->HasNormals()){
-				// 3x3 matrix, contains the bone matrix without the translation, only with rotation and possibly scaling
-				aiMatrix3x3 normTrafo = aiMatrix3x3( posTrafo);
-				for( size_t b = 0; b < bone->mNumWeights; ++b)
-				{
-					const aiVertexWeight& weight = bone->mWeights[b];
-					size_t vertexId = weight.mVertexId;
-
-					const aiVector3D& srcNorm = mesh->mNormals[vertexId];
-					modelMeshes[i].animatedNorm[vertexId] += weight.mWeight * (normTrafo * srcNorm);
-
-				}
-			}
-		}
-	}
 }
 
 //-------------------------------------------
