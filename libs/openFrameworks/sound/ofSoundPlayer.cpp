@@ -26,7 +26,7 @@ void ofSoundUpdate(){
 	#endif
 }
 
-#ifndef TARGET_ANDROID
+#if !defined(TARGET_ANDROID) && !defined(TARGET_LINUX_ARM)
 //--------------------
 void ofSoundShutdown(){
 	#ifdef OF_SOUND_PLAYER_FMOD
