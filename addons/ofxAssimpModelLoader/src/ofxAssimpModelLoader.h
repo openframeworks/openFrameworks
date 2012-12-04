@@ -19,6 +19,7 @@
 // 3) Ability to ease *between* two animations. Maybe later folks.
 
 #include "ofxAssimpMeshHelper.h"
+#include "ofxAssimpAnimation.h"
 
 class ofxAssimpModelLoader{
 
@@ -32,6 +33,18 @@ class ofxAssimpModelLoader{
         void           createLightsFromAiModel();
         void           optimizeScene();
 
+        void update();
+        void updateAnimations();
+    
+        bool hasAnimations();
+        unsigned int getAnimationCount();
+        ofxAssimpAnimation & getAnimation(int animationIndex);
+        void playAllAnimations();
+        void stopAllAnimations();
+        void resetAllAnimations();
+        void setPausedForAllAnimations(bool pause);
+        void setLoopStateForAllAnimations(ofLoopType state);
+    
         void           clear();
     
         void           setScale(float x, float y, float z);
@@ -41,14 +54,6 @@ class ofxAssimpModelLoader{
         // Scale the model to the screen automatically.
         void           setScaleNomalization(bool normalize);
         void		   setNormalizationFactor(float factor);
-
-        // This changes when you load a different model, may be 0.
-        unsigned int   getAnimationCount();
-    
-        void           setAnimation(int anim); // 0 to 1 - getNumAnimations()
-        void           setNormalizedTime(float time); // 0 - 1
-        void           setTime(float time); // 0 - duration
-        float          getDuration(int animation);
 
         vector<string> getMeshNames();
         int            getNumMeshes();
@@ -117,17 +122,8 @@ class ofxAssimpModelLoader{
         void getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max);
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
         
-
-        bool hasAnimations;
-        int currentAnimation;
-        
-        float animationTime;
-		
 		string modelFolder;
         
-        // for interpolating between keyframes.
-        float lastAnimationTime;
-    
         bool normalizeScale;
     
         // TODO: make this return an of
@@ -141,7 +137,8 @@ class ofxAssimpModelLoader{
         string filepath;
 
         vector<ofLight> lights;
-        vector <ofxAssimpMeshHelper> modelMeshes;
+        vector<ofxAssimpMeshHelper> modelMeshes;
+        vector<ofxAssimpAnimation> animations;
 
         bool bUsingTextures, bUsingNormals, bUsingColors, bUsingMaterials;
         float normalizeFactor;
