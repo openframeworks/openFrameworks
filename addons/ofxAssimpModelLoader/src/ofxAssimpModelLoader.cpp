@@ -254,6 +254,8 @@ void ofxAssimpModelLoader::calculateDimensions(){
 	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
 	normalizedScale = 1.f / normalizedScale;
 	normalizedScale *= normalizeFactor;
+    
+    updateModelMatrix();
 }
 
 //-------------------------------------------
@@ -441,6 +443,8 @@ void ofxAssimpModelLoader::clear(){
     bUsingNormals = true;
     bUsingTextures = true;
     bUsingColors = true;
+    
+    updateModelMatrix();
 }
 
 //------------------------------------------- update.
@@ -514,6 +518,19 @@ void ofxAssimpModelLoader::updateAnimations() {
 			}
 		}
 	}
+}
+
+void ofxAssimpModelLoader::updateModelMatrix() {
+    modelMatrix.makeIdentityMatrix();
+    modelMatrix.glTranslate(pos);
+    modelMatrix.glRotate(180, 0, 0, 1);
+    if(normalizeScale) {
+        modelMatrix.glScale(normalizedScale , normalizedScale, normalizedScale);
+    }
+    for(int i = 0; i < (int)rotAngle.size(); i++){ // @julapy - not sure why rotAngle isn't a ofVec4f.
+        modelMatrix.glRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
+    }
+    modelMatrix.glScale(scale.x, scale.y, scale.z);
 }
 
 //------------------------------------------- animations.
@@ -610,6 +627,8 @@ void ofxAssimpModelLoader::setPosition(float x, float y, float z){
     pos.x = x;
     pos.y = y;
     pos.z = z;
+
+    updateModelMatrix();
 }
 
 //-------------------------------------------
@@ -617,14 +636,16 @@ void ofxAssimpModelLoader::setScale(float x, float y, float z){
     scale.x = x;
     scale.y = y;
     scale.z = z;
+
+    updateModelMatrix();
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::setScaleNomalization(bool normalize)
-{
+void ofxAssimpModelLoader::setScaleNomalization(bool normalize) {
     normalizeScale = normalize;
-}
 
+    updateModelMatrix();
+}
 
 //-------------------------------------------
 void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, float rot_y, float rot_z){
@@ -640,6 +661,8 @@ void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, floa
     rotAxis[which].x = rot_x;
     rotAxis[which].y = rot_y;
     rotAxis[which].z = rot_z;
+
+    updateModelMatrix();
 }
 
 //-------------------------------------------
@@ -690,20 +713,7 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     glEnable(GL_NORMALIZE);
     
     ofPushMatrix();
-    
-    ofTranslate(pos);
-    
-    ofRotate(180, 0, 0, 1);
-    
-    if(normalizeScale) {
-        ofScale(normalizedScale , normalizedScale, normalizedScale);
-    }
-    
-    for(int i = 0; i < (int)rotAngle.size(); i++){
-        ofRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
-    }
-    
-    ofScale(scale.x, scale.y, scale.z);
+    ofMultMatrix(modelMatrix);
     
     if(getAnimationCount()) {
         updateGLResources();
@@ -927,6 +937,11 @@ float ofxAssimpModelLoader::getNormalizedScale(){
 //-------------------------------------------
 ofPoint ofxAssimpModelLoader::getScale(){
 	return scale;
+}
+
+//-------------------------------------------
+ofMatrix4x4 ofxAssimpModelLoader::getModelMatrix() {
+    return modelMatrix;
 }
 
 //-------------------------------------------
