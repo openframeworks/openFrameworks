@@ -30,7 +30,9 @@ static ofPtr<ofAppBaseWindow> 		window;
 
 //========================================================================
 // default windowing
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_NODISPLAY
+	#include "ofAppNoWindow.h"
+#elif defined(TARGET_OF_IPHONE)
 	#include "ofAppiPhoneWindow.h"
 #elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
@@ -108,7 +110,9 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
-	#ifdef TARGET_OF_IPHONE
+	#ifdef TARGET_NODISPLAY
+		window = ofPtr<ofAppBaseWindow>(new ofAppNoWindow());
+	#elif defined(TARGET_OF_IPHONE)
 		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
 	#elif defined(TARGET_ANDROID)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
