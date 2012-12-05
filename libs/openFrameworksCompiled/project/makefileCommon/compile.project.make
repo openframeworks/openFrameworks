@@ -20,6 +20,23 @@ ifndef PROJECT_ROOT
 	PROJECT_ROOT=.
 endif
 
+ifdef PLATFORM_CXX
+    CXX = $(PLATFORM_CXX)
+endif
+
+ifdef PROJECT_CXX
+    CXX = $(PROJECT_CXX)
+endif
+
+ifdef PLATFORM_CC
+    CC = $(PLATFORM_CC)
+endif
+
+ifdef PLATFORM_CC
+    CC = $(PLATFORM_CC)
+endif
+
+
 # TODO: what is this for?
 NODEPS = clean
 
