@@ -1,7 +1,7 @@
 #include "testApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	synth.loadSound("sounds/synth.wav");
 	beats.loadSound("sounds/1085.mp3");
@@ -15,17 +15,14 @@ void testApp::setup(){
 }
 
 //--------------------------------------------------------------
-void testApp::update(){	
-	
-	ofBackground(255,255,255);
-	
+void testApp::update(){
 	// update the sound playing system:
 	ofSoundUpdate();
-	
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	ofBackground(255,255,255);
 	
 	char tempStr[255];
 	
@@ -65,14 +62,14 @@ void testApp::draw(){
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play (multiplay)\npct done: %f\nspeed: %f", vocals.getPosition(),  vocals.getSpeed());
+	sprintf(tempStr, "click to play (multiplay)\npct done: %f\nspeed: %f\npan: %f", vocals.getPosition(),  vocals.getSpeed(), vocals.getPan());
 	ofDrawBitmapString(tempStr, widthDiv*2+50,ofGetHeight()-50);
-
 	
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
+
 }
 
 //--------------------------------------------------------------
@@ -81,54 +78,88 @@ void testApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
-	// continuously control the speed of the beat sample via drag, 
-	// when in the "beat" region:
-	float widthStep = ofGetWidth() / 3.0f;
-	if (x >= widthStep && x < widthStep*2){
-		beats.setSpeed( 0.5f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*1.0f);
-	} 
-
-}
-
-//--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
-	float widthStep = ofGetWidth() / 3.0f;
-	if (x < widthStep){
-		float pct = x / widthStep;
-		synth.play();
-		synth.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*10);
-		synth.setPan(pct);
-	} else if (x >= widthStep && x < widthStep*2){
-		beats.play();
-	} else {
-		vocals.play();
-		vocals.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*3);
-		vocals.setPan((float)(x - widthStep*2) / (float)widthStep);
-	}
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 
 }
 
 //--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
+void testApp::touchDown(int x, int y, int id){
+	float widthStep = ofGetWidth() / 3.0f;
+	if (x < widthStep){
+		float pct = x / widthStep;
+		synth.play();
+		synth.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*2.0f);
+		synth.setPan(2.0*pct-1.0);
+	} else if (x >= widthStep && x < widthStep*2){
+		beats.play();
+	} else {
+		vocals.play();
+		vocals.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*2.0f);
+		vocals.setPan(2.0*(float)(x - widthStep*2) / (float)widthStep-1.0);
+	}
+}
+
+//--------------------------------------------------------------
+void testApp::touchMoved(int x, int y, int id){
+	// continuously control the speed of the beat sample via drag,
+	// when in the "beat" region:
+	float widthStep = ofGetWidth() / 3.0f;
+	if (x >= widthStep && x < widthStep*2){
+		beats.setSpeed( 0.5f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*1.0f);
+	}
+}
+
+//--------------------------------------------------------------
+void testApp::touchUp(int x, int y, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::touchDoubleTap(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::pause(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::stop(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::resume(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::reloadTextures(){
+
+}
+
+//--------------------------------------------------------------
+bool testApp::backPressed(){
+	return false;
+}
+
+//--------------------------------------------------------------
+void testApp::okPressed(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::cancelPressed(){
 
 }
