@@ -1,11 +1,9 @@
-#ifndef _TEST_APP
-#define _TEST_APP
-
+#pragma once
 
 #include "ofMain.h"
 #include "ofxAndroid.h"
 
-class testApp : public ofBaseApp{
+class testApp : public ofxAndroidApp{
 	
 	public:
 		
@@ -33,6 +31,3 @@ class testApp : public ofBaseApp{
 		void okPressed();
 		void cancelPressed();
 };
-
-#endif	
-
