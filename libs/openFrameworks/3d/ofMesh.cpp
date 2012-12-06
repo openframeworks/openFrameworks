@@ -725,7 +725,6 @@ void ofMesh::load(string path){
 
 	int orderVertices=-1;
 	int orderIndices=-1;
-	int orderNormals=-1;
 
 	int vertexCoordsFound=0;
 	int colorCompsFound=0;
@@ -735,11 +734,12 @@ void ofMesh::load(string path){
 	int currentVertex = 0;
 	int currentNormal = 0;
 	int currentFace = 0;
+	
+	bool floatColor = false;
 
 	enum State{
 		Header,
 		VertexDef,
-		NormalDef,
 		FaceDef,
 		Vertices,
 		Normals,
@@ -772,23 +772,16 @@ void ofMesh::load(string path){
 			continue;
 		}
 
-		if((state==Header || state==NormalDef || state==FaceDef) && line.find("element vertex")==0){
+		if((state==Header || state==FaceDef) && line.find("element vertex")==0){
 			state = VertexDef;
-			orderVertices = MAX(orderIndices, orderNormals)+1;
+			orderVertices = MAX(orderIndices, 0)+1;
 			data.getVertices().resize(ofToInt(line.substr(15)));
 			continue;
 		}
 
-		if((state==Header || state==VertexDef || state==FaceDef) && line.find("element normal")==0){
-			state = NormalDef;
-			orderNormals = MAX(orderIndices, orderVertices)+1;
-			data.getNormals().resize(ofToInt(line.substr(15)));
-			continue;
-		}
-
-		if((state==Header || state==NormalDef || state==VertexDef) && line.find("element face")==0){
+		if((state==Header || state==VertexDef) && line.find("element face")==0){
 			state = FaceDef;
-			orderIndices = MAX(orderVertices, orderNormals)+1;
+			orderIndices = MAX(orderVertices, 0)+1;
 			data.getIndices().resize(ofToInt(line.substr(13))*3);
 			continue;
 		}
@@ -801,6 +794,14 @@ void ofMesh::load(string path){
 		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b")==0 || line.find("property float a")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
+			floatColor = true;
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property uchar red")==0 || line.find("property uchar green")==0 || line.find("property uchar blue")==0 || line.find("property uchar alpha")==0)){
+			colorCompsFound++;
+			data.getColors().resize(data.getVertices().size());
+			floatColor = false;
 			continue;
 		}
 
@@ -810,8 +811,9 @@ void ofMesh::load(string path){
 			continue;
 		}
 
-		if(state==NormalDef && (line.find("property float x")==0 || line.find("property float y")==0 || line.find("property float z")==0)){
+		if(state==VertexDef && (line.find("property float nx")==0 || line.find("property float ny")==0 || line.find("property float nz")==0)){
 			normalsCoordsFound++;
+			if (normalsCoordsFound==3) data.getNormals().resize(data.getVertices().size());
 			continue;
 		}
 
@@ -825,22 +827,19 @@ void ofMesh::load(string path){
 				error =  "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
 				goto clean;
 			}
-			if(data.hasNormals() && colorCompsFound!=3 && colorCompsFound!=4){
-				error = "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
+			if(data.hasNormals() && normalsCoordsFound!=3){
+				error = "data has normal coordiantes but not correct number of components. Found " + ofToString(normalsCoordsFound) + " expecting 3";
 				goto clean;
 			}
 			if(!data.hasVertices()){
 				ofLogWarning() << "mesh without vertices";
 			}
 			if(orderVertices==-1) orderVertices=9999;
-			if(orderNormals==-1) orderNormals=9999;
 			if(orderIndices==-1) orderIndices=9999;
 
-			if(orderVertices<orderNormals && orderVertices<orderIndices){
+			if(orderVertices < orderIndices){
 				state = Vertices;
-			}else if(orderNormals<orderVertices && orderNormals<orderIndices){
-				state = Normals;
-			}else if(orderIndices<orderVertices && orderIndices<orderNormals){
+			}else {
 				state = Faces;
 			}
 			continue;
@@ -856,12 +855,21 @@ void ofMesh::load(string path){
 			data.getVertices()[currentVertex] = v;
 
 			if(colorCompsFound>0){
-				ofColor c;
-				sline >> c.r;
-				sline >> c.g;
-				sline >> c.b;
-				if(colorCompsFound>3) sline >> c.a;
-				data.getColors()[currentVertex] = c;
+				if (floatColor){
+					ofFloatColor c;
+					sline >> c.r;
+					sline >> c.g;
+					sline >> c.b;
+					if(colorCompsFound>3) sline >> c.a;
+					data.getColors()[currentVertex] = c;
+				}else{
+					int r, g, b, a = 255;
+					sline >> r;
+					sline >> g;
+					sline >> b;
+					if(colorCompsFound>3) sline >> a;
+					data.getColors()[currentVertex] = ofColor(r, g, b, a);
+				}
 			}
 
 			if(texCoordsFound>0){
@@ -870,32 +878,21 @@ void ofMesh::load(string path){
 				sline >> uv.y;
 				data.getTexCoords()[currentVertex] = uv;
 			}
+			
+			if (normalsCoordsFound>0){
+				ofVec3f n;
+				sline >> n.x;
+				sline >> n.y;
+				sline >> n.z;
+				data.getNormals()[currentVertex] = n;
+			}
+			
 			currentVertex++;
 			if(currentVertex==data.getNumVertices()){
-				if(orderNormals<orderIndices){
-					state = Normals;
-				}else{
-					state = Faces;
-				}
-			}
-			continue;
-		}
-
-		if(state==Normals){
-			stringstream sline;
-			sline.str(line);
-			ofVec3f v;
-			sline >> v.x;
-			sline >> v.y;
-			sline >> v.z;
-			data.getNormals()[currentNormal] = v;
-
-			currentNormal++;
-			if(currentNormal==data.getNumNormals()){
 				if(orderVertices<orderIndices){
-					state = Vertices;
-				}else{
 					state = Faces;
+				}else{
+					state = Vertices;
 				}
 			}
 			continue;
@@ -920,10 +917,10 @@ void ofMesh::load(string path){
 
 			currentFace++;
 			if(currentFace==data.getNumIndices()/3){
-				if(orderVertices<orderNormals){
+				if(orderVertices<orderIndices){
 					state = Vertices;
 				}else{
-					state = Normals;
+					state = Faces;
 				}
 			}
 			continue;
