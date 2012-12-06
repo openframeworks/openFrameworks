@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.base.162935411">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.base.162935411" moduleId="org.eclipse.cdt.core.settings" name="AndroidDebug">
@@ -38,6 +36,16 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.base.1403843933" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base">
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.683027320" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="cdt.managedbuild.toolchain.gnu.base.162935411.1388651267" name="/" resourcePath="ofxAndroid">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.base.400959911" name="cdt.managedbuild.toolchain.gnu.base" superClass="cdt.managedbuild.toolchain.gnu.base" unusedChildren="">
+							<tool id="cdt.managedbuild.tool.gnu.archiver.base.1679023878" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.2046915958"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1096856475" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.738796065"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.362562960" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.175987381"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.441961600" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.1213607532"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.797340449" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.1994850335"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.base.1496401125" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.1403843933"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -1510,7 +1518,13 @@
 			</profile>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/androidAssimpExample"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="AndroidDebug">
+			<resource resourceType="PROJECT" workspacePath="/androidAssimpExample"/>
+		</configuration>
+		<configuration configurationName="AndroidRelease">
+			<resource resourceType="PROJECT" workspacePath="/androidAssimpExample"/>
+		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>
