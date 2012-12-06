@@ -2,10 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-
 	ofBackground(0,0,0);
-	ofRegisterTouchEvents(this);
-	//ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 
 	bPause	   = false;
 	restLength = 3.0;
@@ -44,16 +41,8 @@ void testApp::setup(){
 
 }
 
-// android destroys the gl context when it pauses apps
-// most OF textures are automatically regenerated
-// but you'll need to regenerate the vbo yourself
-void testApp::resume(){
-	vbo.setVertexData(pos, total, GL_DYNAMIC_DRAW);
-}
-
 //--------------------------------------------------------------
 void testApp::update(){
-
 
 	if(!bPause) {
 		ofVec3f vec;
@@ -82,14 +71,12 @@ void testApp::update(){
 		}
 	}
 
-
 	zoom += (zoomTarget-zoom) * 0.04;
 
 }
 
 //--------------------------------------------------------------
 void testApp::draw() {
-
 
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, zoom);
@@ -121,28 +108,86 @@ void testApp::draw() {
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs &touch){
-	if(touch.id == 2) bPause = !bPause;
+void testApp::keyPressed  (int key){
+
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(ofTouchEventArgs &touch){
-	if(touch.id == 1) {
-		zoomTarget = ofMap(touch.x, 0.0, ofGetWidth(), 100, 500);
+void testApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(int x, int y, int id){
+	if(id == 2) bPause = !bPause;
+}
+
+//--------------------------------------------------------------
+void testApp::touchMoved(int x, int y, int id){
+	if(id == 1) {
+		zoomTarget = ofMap(x, 0.0, ofGetWidth(), 100, 500);
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(ofTouchEventArgs &touch){
-	
+void testApp::touchUp(int x, int y, int id){
+
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs &touch){
-	
+void testApp::touchDoubleTap(int x, int y, int id){
+
 }
 
 //--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs &touch){
-	
+void testApp::touchCancelled(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::pause(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::stop(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::resume(){
+	// android destroys the gl context when it pauses apps
+	// most OF textures are automatically regenerated
+	// but you'll need to regenerate the vbo yourself
+	vbo.setVertexData(pos, total, GL_DYNAMIC_DRAW);
+}
+
+//--------------------------------------------------------------
+void testApp::reloadTextures(){
+
+}
+
+//--------------------------------------------------------------
+bool testApp::backPressed(){
+	return false;
+}
+
+//--------------------------------------------------------------
+void testApp::okPressed(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::cancelPressed(){
+
 }
