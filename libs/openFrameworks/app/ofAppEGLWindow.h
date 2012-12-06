@@ -32,7 +32,15 @@
 #include "ofThread.h"
 #include "ofImage.h"
 
-#ifndef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI
+#define TARGET_NO_X11 1
+#endif
+
+#ifdef TARGET_NO_X11
+	#include "linux/kd.h"	// keyboard stuff...
+	#include "termios.h"
+	#include "sys/ioctl.h"
+#else
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
 #endif
@@ -46,8 +54,11 @@ public:
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
+	virtual bool setupNativeWindow(int w, int h, int screenMode);
 	virtual bool setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display=NULL);
 	virtual void destroyEGL();
+
+	virtual void setupPeripherals();
 
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
@@ -88,8 +99,6 @@ public:
 	virtual void	setVerticalSync(bool enabled);
 
 protected:
-	bool setupX11NativeWindow(int w, int h, int screenMode);
-	bool setupRPiNativeWindow(int w, int h, int screenMode);
 
 	void idle();
 	virtual void postIdle() {};
@@ -149,6 +158,19 @@ protected:
 	ofBaseApp *  ofAppPtr;
 
 
+	void threadedFunction();
+	queue<ofMouseEventArgs> mouseEvents;
+	queue<ofKeyEventArgs> keyEvents;
+	void checkEvents();
+	ofImage mouseCursor;
+
+	// TODO: getters and setters?  OR automatically set based on 
+	// OS or screen size?  Should be changed when screen is resized?
+	float mouseScaleX;
+	float mouseScaleY;
+//------------------------------------------------------------
+// WINDOWING
+//------------------------------------------------------------
 	// EGL window
 	ofRectangle screenRect;
 	ofRectangle nonFullscreenWindowRect; // the rectangle describing the non-fullscreen window
@@ -157,29 +179,26 @@ protected:
 	EGLDisplay eglDisplay;  // EGL display connection
 	EGLSurface eglSurface;
 	EGLContext eglContext;
+
+//------------------------------------------------------------
+// PLATFORM SPECIFIC WINDOWING
+//------------------------------------------------------------
 	
-#ifndef TARGET_RASPBERRY_PI
+#ifdef TARGET_NO_X11
+	#ifdef TARGET_RASPBERRY_PI
+		// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
+		EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
+		bool setupRPiNativeWindow(int w, int h, int screenMode);
+	#else
+		// ERROR -- no option supplied for NO_X11 option
+	#endif
+#else // yes, to X11
 	void handleEvent(const XEvent& event);
 	Display*			x11Display;
 	Window				x11Window;
-#endif
-
-
-
-#ifdef TARGET_RASPBERRY_PI
-	// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
-	EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
-#else
 	Window nativeWindow; // x11
-#endif
-
-
-	void threadedFunction();
-	queue<ofMouseEventArgs> mouseEvents;
-	queue<ofKeyEventArgs> keyEvents;
-	void checkEvents();
-	ofImage mouseCursor;
-	
+	bool setupX11NativeWindow(int w, int h, int screenMode);
+#endif	
 	
 
 
