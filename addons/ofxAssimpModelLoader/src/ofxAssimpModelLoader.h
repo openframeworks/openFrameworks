@@ -99,6 +99,9 @@ class ofxAssimpModelLoader{
     
          
     protected:
+    
+        void drawNode(ofPolyRenderMode renderType, aiNode * node);
+    
         // the main Asset Import scene that does the magic.
         const aiScene* scene;
 
