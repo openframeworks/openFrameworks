@@ -30,7 +30,6 @@ void testApp::windowResized(int w, int h){
 
 }
 
-
 //--------------------------------------------------------------
 void testApp::touchDown(int x, int y, int id){
 
@@ -89,9 +88,9 @@ bool testApp::backPressed(){
 //--------------------------------------------------------------
 void testApp::okPressed(){
 
-};
+}
 
 //--------------------------------------------------------------
 void testApp::cancelPressed(){
 
-};
+}
