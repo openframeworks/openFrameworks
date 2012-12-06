@@ -125,7 +125,7 @@ void testApp::keyPressed(int key){
         case '2':
             model.loadModel("TurbochiFromXSI.dae");
             model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-            model.setRotation(0,90,1,0,0);
+            model.setRotation(0,-180,1,0,0);
             ofEnableSeparateSpecularLight();
             break;
         case '3':
@@ -136,12 +136,12 @@ void testApp::keyPressed(int key){
         case '4':
             model.loadModel("monster-animated-character-X.X");
             model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+            model.setRotation(0,-90,0,0,1);
             ofDisableSeparateSpecularLight();
             break;
 		case '5':
 			model.loadModel("squirrel/NewSquirrel.3ds");
 		    model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-            model.setRotation(0,-90,1,0,0);
             ofDisableSeparateSpecularLight();
 			break;
 		case ' ':
