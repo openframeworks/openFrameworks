@@ -80,9 +80,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>linux64</name>
+			<name>project</name>
 			<type>2</type>
-			<location>/home/arturo/Desktop/openFrameworks/libs/openFrameworksCompiled/project/linux64</location>
+			<location>/home/arturo/Desktop/openFrameworks/libs/openFrameworksCompiled/project</location>
 		</link>
 	</linkedResources>
 </projectDescription>

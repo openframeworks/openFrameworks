@@ -46,27 +46,8 @@ NODEPS = clean
 
 # clean it
 ALL_CFLAGS =
-
-################################################################################
-# CORE FLAGS ###################################################################
-# add the base CFLAGS from the core (platform specific)
-ALL_CFLAGS += $(OF_CORE_BASE_CFLAGS)
-# add the base CFLAGS from the addons
-ALL_CFLAGS += $(PROJECT_BASE_CFLAGS)
-
-################################################################################
-# DEFINE FLAGS #################################################################
-# add the defines from the core (platform specific)
-ALL_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
-# add the defines from the project
-ALL_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
-
-################################################################################
-# INCLUDE FLAGS ################################################################
-# add the include CFLAGS from the core (platform specific)
-ALL_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
-# add the include CFLAGS from the project
-ALL_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
+# add the base CFLAGS from Makefiles.examples
+ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
 
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
@@ -78,24 +59,50 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 # clean it
 ALL_LDFLAGS =
 
-# add the include LDFLAGS from the project
+# add the include LDFLAGS from Makefiles.examples
 ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
-# add the include LDFLAGS from the core (platform specific)
-ALL_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
 
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
+
+
+
+# Name TARGET
+ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+	TARGET_NAME = Debug
+	BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
+else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+else ifeq ($(MAKECMDGOALS),)
+	TARGET_NAME = Release
+	BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
+endif
+
+
+
 
 ################################################################################
 ## stopped here ...
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
+	ifeq ($strip($(PROJECT_CFLAGS_DEBUG)),)
+	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+	else
+		OPTIMIZATION_CFLAGS = $(PROJECT_CFLAGS_DEBUG)
+	endif
     TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
+	ifeq ($strip($(PROJECT_CFLAGS_RELEASE)),)
+	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+	else
+		OPTIMIZATION_CFLAGS = $(PROJECT_CFLAGS_RELEASE)
+	endif
     TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 endif
 
@@ -123,7 +130,7 @@ endif
 ################################################################################
 
 # define the subdirectory for our target name
-OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(TARGET_NAME)
+OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(PLATFORM_OS)$(PLATFORM_ARCH)$(TARGET_NAME)
 
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,/,$(addprefix $(OF_PLATFORM_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES)))
@@ -135,7 +142,6 @@ OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
 
 # TODO: deal with shared libs?
 
-
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
 Release: $(TARGET) after
@@ -145,6 +151,13 @@ Debug: $(TARGET) after
 all:
 	$(MAKE) Debug
 	$(MAKE) Release
+	
+# This rule adds a dependency for projects to the OF library 
+# so if any OF file gets modified the OF library will be compiled
+# before compiling the project
+
+$(TARGET_LIBS): $(OF_CORE_SOURCE_FILES)
+	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME)
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
@@ -188,10 +201,10 @@ $(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
 
-$(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS)
+$(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS)
 	@echo 'linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
 	mkdir -p $(@D)
-	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_CORE_LIBS) $(OF_PROJECT_LIBS) 
+	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) 
 -include $(OF_PLATFORM_DEPENDENCY_FILES)
 
 clean:
