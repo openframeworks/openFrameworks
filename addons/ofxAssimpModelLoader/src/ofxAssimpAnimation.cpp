@@ -10,9 +10,8 @@
 ofxAssimpAnimation::ofxAssimpAnimation(const aiScene * scene, aiAnimation * animation) {
     this->scene = scene;
     this->animation = animation;
-    animationStartTimeMs = -1;
-    animationCurrTimeMs = -1;
-    animationPrevTimeMs = -1;
+    animationCurrTime = 0;
+    animationPrevTime = 0;
     bPlay = false;
     bPause = false;
     loopType = OF_LOOP_NONE;
@@ -38,36 +37,33 @@ aiAnimation * ofxAssimpAnimation::getAnimation() {
 }
 
 void ofxAssimpAnimation::update() {
-    if(bPlay) {
-        animationPrevTimeMs = animationCurrTimeMs;
-        animationCurrTimeMs = ofGetElapsedTimeMillis();
-        if(bPause) { // is paused and also in a play state - adjust anim start time.
-            int timeDiff = animationCurrTimeMs - animationPrevTimeMs;
-            animationStartTimeMs += timeDiff;
-            return;
-        }
-    } else {
+    animationPrevTime = animationCurrTime;
+    animationCurrTime = ofGetElapsedTimef();
+    
+    if(!bPlay || bPause) {
         return;
     }
     
-    int duration = getDurationInMilliSeconds();
-    int time = (animationCurrTimeMs - animationStartTimeMs);
-    progress = time / (float)duration;
-    if(progress > 1.0 && loopType == OF_LOOP_NONE) {
-        progress = 1.0;
+    float duration = getDurationInSeconds();
+    float timeStep = animationCurrTime - animationPrevTime;
+    float positionStep = timeStep / (float)duration;
+    float position = getPosition() + positionStep;
+    
+    if(position > 1.0 && loopType == OF_LOOP_NONE) {
+        position = 1.0;
         stop();
-    } else if(progress > 1.0 && loopType == OF_LOOP_NORMAL) {
-        progress -= 1.0;
-        animationStartTimeMs = animationCurrTimeMs + (duration * progress);
-    } else if(progress > 1.0 && loopType == OF_LOOP_PALINDROME) {
+    } else if(position > 1.0 && loopType == OF_LOOP_NORMAL) {
+        position = fmod(position, 1.0f);
+    } else if(position > 1.0 && loopType == OF_LOOP_PALINDROME) {
         // TODO.
-    } else if(progress < 0.0 && loopType == OF_LOOP_PALINDROME) {
+    } else if(position < 0.0 && loopType == OF_LOOP_PALINDROME) {
         // TODO.
     }
     
-    progressInSeconds = progress * getDurationInSeconds();
-    progressInMilliSeconds = progress * getDurationInMilliSeconds();
-    
+    setPosition(position);
+}
+
+void ofxAssimpAnimation::updateAnimationNodes() {
 	for(int i=0; i<animation->mNumChannels; i++) {
         const aiNodeAnim * channel = animation->mChannels[i];
         aiNode * targetNode = scene->mRootNode->FindNode(channel->mNodeName);
@@ -155,9 +151,7 @@ void ofxAssimpAnimation::play() {
     }
     bPlay = true;
     bPause = false;
-    animationStartTimeMs = ofGetElapsedTimeMillis();
-    animationCurrTimeMs = animationStartTimeMs;
-    animationPrevTimeMs = animationStartTimeMs;
+
     setPosition(0);
 }
 
@@ -167,9 +161,6 @@ void ofxAssimpAnimation::stop() {
     }
     bPlay = false;
     bPause = false;
-    animationStartTimeMs = -1;
-    animationCurrTimeMs = -1;
-    animationPrevTimeMs = -1;
 }
 
 void ofxAssimpAnimation::reset() {
@@ -189,7 +180,7 @@ bool ofxAssimpAnimation::isPlaying() {
 }
 
 bool ofxAssimpAnimation::isFinished() {
-    return !bPlay && (progress == 1.0);
+    return !bPlay && (getPosition() == 1.0);
 }
 
 float ofxAssimpAnimation::getPosition() {
@@ -221,9 +212,15 @@ void ofxAssimpAnimation::setPaused(bool paused) {
 }
 
 void ofxAssimpAnimation::setPosition(float position) {
+    position = ofClamp(position, 0.0f, 1.0f);
+    if(progress == position) {
+        return;
+    }
     progress = position;
     progressInSeconds = progress * getDurationInSeconds();
     progressInMilliSeconds = progress * getDurationInMilliSeconds();
+    
+    updateAnimationNodes();
 }
 
 void ofxAssimpAnimation::setLoopState(ofLoopType state) {
