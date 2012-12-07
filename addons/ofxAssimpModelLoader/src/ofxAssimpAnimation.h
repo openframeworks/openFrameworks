@@ -44,11 +44,12 @@ public:
     
 protected:
     
+    void updateAnimationNodes();
+    
     const aiScene * scene;
     aiAnimation * animation;
-    int animationStartTimeMs;
-    int animationCurrTimeMs;
-    int animationPrevTimeMs;
+    float animationCurrTime;
+    float animationPrevTime;
     bool bPlay;
     bool bPause;
     ofLoopType loopType;
