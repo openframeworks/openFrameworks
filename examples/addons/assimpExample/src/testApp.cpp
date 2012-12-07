@@ -20,8 +20,6 @@ void testApp::setup(){
         model.setPausedForAllAnimations(true);
     }
     
-    mesh = model.getMesh(0);
-
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 
 	glEnable(GL_DEPTH_TEST);
@@ -62,16 +60,19 @@ void testApp::draw(){
     ofRotate(-mouseX, 0, 1, 0);
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     
+    ofxAssimpMeshHelper & meshHelper = model.getMeshHelper(0);
+    
     ofMultMatrix(model.getModelMatrix());
+    ofMultMatrix(meshHelper.matrix);
     
-    ofMaterial material = model.getMaterialForMesh(0);
-    ofTexture tex = model.getTextureForMesh(0);
+    ofMaterial & material = meshHelper.material;
+    ofTexture & texture = meshHelper.texture;
     
-    tex.bind();
+    texture.bind();
     material.begin();
     mesh.drawWireframe();
     material.end();
-    tex.unbind();
+    texture.unbind();
 	ofPopMatrix();
 
 	glPopAttrib();
