@@ -511,9 +511,10 @@ void ofxAssimpModelLoader::setAnimation(int animationIndex) {
 
 // DEPRECATED.
 void ofxAssimpModelLoader::setNormalizedTime(float time) {
-    if(currentAnimation == -1) {
+    if(!hasAnimations()) {
         return;
     }
+    setAnimation(currentAnimation); // call this again to clamp animation index, in case the model is reloaded.
     ofxAssimpAnimation & animation = animations[currentAnimation];
     float realT = ofMap(time, 0.0, 1.0, 0.0, animation.getDurationInSeconds(), false);
     setTime(realT);
@@ -521,9 +522,10 @@ void ofxAssimpModelLoader::setNormalizedTime(float time) {
 
 // DEPRECATED.
 void ofxAssimpModelLoader::setTime(float time) {
-    if(currentAnimation == -1) {
+    if(!hasAnimations()) {
         return;
     }
+    setAnimation(currentAnimation); // call this again to clamp animation index, in case the model is reloaded.
     ofxAssimpAnimation & animation = animations[currentAnimation];
     animation.setPosition(time);
 }
