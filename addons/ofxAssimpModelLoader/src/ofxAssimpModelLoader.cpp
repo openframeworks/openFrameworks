@@ -1,135 +1,10 @@
 #include "ofxAssimpModelLoader.h"
+#include "ofxAssimpUtils.h"
 
+#include "assimp.h"
+#include "aiScene.h"
 #include "aiConfig.h"
 #include "aiPostProcess.h"
-#include <assert.h>
-
-//--------------------------------------------------------------
-static inline ofFloatColor aiColorToOfColor(const aiColor4D& c){
-	return ofFloatColor(c.r,c.g,c.b,c.a);
-}
-
-//--------------------------------------------------------------
-static inline ofFloatColor aiColorToOfColor(const aiColor3D& c){
-	return ofFloatColor(c.r,c.g,c.b,1);
-}
-
-//--------------------------------------------------------------
-static inline ofVec3f aiVecToOfVec(const aiVector3D& v){
-	return ofVec3f(v.x,v.y,v.z);
-}
-
-static inline vector<ofVec3f> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
-	vector<ofVec3f> ofv(v.size());
-	if(sizeof(aiVector3D)==sizeof(ofVec3f)){
-		memcpy(&ofv[0],&v[0],v.size()*sizeof(ofVec3f));
-	}else{
-		for(int i=0;i<(int)v.size();i++){
-			ofv[i]=aiVecToOfVec(v[i]);
-		}
-	}
-	return ofv;
-}
-
-//--------------------------------------------------------------
-static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper * helper = NULL){
-
-	// default to triangle mode
-	ofm.setMode(OF_PRIMITIVE_TRIANGLES);
-
-	// copy vertices
-	for (int i=0; i < (int)aim->mNumVertices;i++){
-		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
-	}
-
-	if(aim->HasNormals()){
-		for (int i=0; i < (int)aim->mNumVertices;i++){
-			ofm.addNormal(ofVec3f(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
-		}
-	}
-
-	// aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
-	// just one for now
-	if(aim->GetNumUVChannels()>0){
-		for (int i=0; i < (int)aim->mNumVertices;i++){
-			if( helper != NULL && helper->texture.getWidth() > 0.0 ){
-				ofVec2f texCoord = helper->texture.getCoordFromPercent(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y);
-				ofm.addTexCoord(texCoord);
-			}else{
-				ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));			
-			}
-		}
-	}
-
-	//aiColor4D * 	mColors [AI_MAX_NUMBER_OF_COLOR_SETS]
-	// just one for now
-	if(aim->GetNumColorChannels()>0){
-		for (int i=0; i < (int)aim->mNumVertices;i++){
-			ofm.addColor(aiColorToOfColor(aim->mColors[0][i]));
-		}
-	}
-
-	for (int i=0; i <(int) aim->mNumFaces;i++){
-		if(aim->mFaces[i].mNumIndices>3){
-			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
-		}
-		for (int j=0; j<(int)aim->mFaces[i].mNumIndices; j++){
-			ofm.addIndex(aim->mFaces[i].mIndices[j]);
-		}
-	}
-
-	ofm.setName(string(aim->mName.data));
-	//	ofm.materialId = aim->mMaterialIndex;
-}
-
-//--------------------------------------------------------------
-static void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofNode& ofm){
-	float m[16] = { aim.a1,aim.a2,aim.a3,aim.a4,
-					aim.b1,aim.b2,aim.b3,aim.b4,
-					aim.c1,aim.c2,aim.c3,aim.c4,
-					aim.d1,aim.d2,aim.d3,aim.d4 };
-
-	ofm.setTransformMatrix(	m);
-}
-/*
-//--------------------------------------------------------------
-static void aiNodeToOfNode(const aiNode* ain, ofNode& ofn, const ofModel& model){
-	aiMatrix4x4ToOfMatrix4x4(ain->mTransformation, ofn);
-//	for (int i =0; i < (int)ain->mNumMeshes;i++){
-//		ofn.addMesh(model.meshes.at(ain->mMeshes[i]));
-//	}
-//	ofn.setName(string(ain->mName.data));
-}
-
-//--------------------------------------------------------------
-static int createNodes(const aiNode* curNode, ofModel& model){
-	//lets only make nodes that have meshes for now
-	if(curNode->mNumMeshes){
-		model.nodes.push_back(ofNode());
-		aiNodeToOfNode(curNode, model.nodes.back(), model);
-	}
-
-	if (curNode->mNumChildren>0){
-		for (int i =0; i<(int)curNode->mNumChildren;i++){
-			createNodes(curNode->mChildren[i], model);
-		}
-	}else return 0;
-
-#warning "this is returning nothing ig nNumChildren i>0  fix it"
-}
-
-//--------------------------------------------------------------
-void createBones(const aiScene* scene, ofModel& model){
-	for (int i =0; i < (int)scene->mNumMeshes;i++){
-		aiMesh& curMesh = *scene->mMeshes[i];
-		if(curMesh.HasBones()){
-			for (int j=0; j < (int)curMesh.mNumBones;j++){
-				aiNode* boneNode = scene->mRootNode->FindNode(curMesh.mBones[j]->mName);
-			}
-		}
-	}
-}*/
-
 
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 	scene = NULL;
@@ -427,6 +302,7 @@ void ofxAssimpModelLoader::clear(){
 
     // clear out everything.
     modelMeshes.clear();
+    animations.clear();
     pos.set(0,0,0);
     scale.set(1,1,1);
     rotAngle.clear();
@@ -444,12 +320,16 @@ void ofxAssimpModelLoader::clear(){
     bUsingTextures = true;
     bUsingColors = true;
     
+    currentAnimation = -1;
+    
     updateModelMatrix();
 }
 
 //------------------------------------------- update.
 void ofxAssimpModelLoader::update() {
     updateAnimations();
+    updateGLResources();
+    updateMeshes(scene->mRootNode, ofMatrix4x4());
 }
 
 void ofxAssimpModelLoader::updateAnimations() {
@@ -520,6 +400,23 @@ void ofxAssimpModelLoader::updateAnimations() {
 	}
 }
 
+void ofxAssimpModelLoader::updateGLResources(){
+    if(!hasAnimations()) {
+        return;
+    }
+    // now upload the result position and normal along with the other vertex attributes into a dynamic vertex buffer, VBO or whatever
+    for (unsigned int i = 0; i < modelMeshes.size(); ++i){
+    	if(modelMeshes[i].hasChanged){
+			const aiMesh* mesh = modelMeshes[i].mesh;
+			modelMeshes[i].vbo.updateVertexData(&modelMeshes[i].animatedPos[0].x,mesh->mNumVertices);
+			if(mesh->HasNormals()){
+                modelMeshes[i].vbo.updateNormalData(&modelMeshes[i].animatedNorm[0].x,mesh->mNumVertices);
+			}
+			modelMeshes[i].hasChanged = false;
+    	}
+    }
+}
+
 void ofxAssimpModelLoader::updateModelMatrix() {
     modelMatrix.makeIdentityMatrix();
     modelMatrix.glTranslate(pos);
@@ -531,6 +428,27 @@ void ofxAssimpModelLoader::updateModelMatrix() {
         modelMatrix.glRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
     }
     modelMatrix.glScale(scale.x, scale.y, scale.z);
+}
+
+void ofxAssimpModelLoader::updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix) {
+    
+    aiMatrix4x4 m = node->mTransformation;
+    m.Transpose();
+	ofMatrix4x4 matrix(m.a1, m.a2, m.a3, m.a4,
+                       m.b1, m.b2, m.b3, m.b4,
+                       m.c1, m.c2, m.c3, m.c4,
+                       m.d1, m.d2, m.d3, m.d4);
+    matrix *= parentMatrix;
+    
+    for(int i=0; i<node->mNumMeshes; i++) {
+        int meshIndex = node->mMeshes[i];
+        ofxAssimpMeshHelper & mesh = modelMeshes[meshIndex];
+        mesh.matrix = matrix;
+    }
+    
+    for(int i=0; i<node->mNumChildren; i++) {
+        updateMeshes(node->mChildren[i], matrix);
+    }
 }
 
 //------------------------------------------- animations.
@@ -575,6 +493,63 @@ void ofxAssimpModelLoader::setLoopStateForAllAnimations(ofLoopType state) {
     for(int i=0; i<animations.size(); i++) {
         animations[i].setLoopState(state);
     }
+}
+
+void ofxAssimpModelLoader::setPositionForAllAnimations(float position) {
+    for(int i=0; i<animations.size(); i++) {
+        animations[i].setPosition(position);
+    }
+}
+
+// DEPRECATED.
+void ofxAssimpModelLoader::setAnimation(int animationIndex) {
+    if(!hasAnimations()) {
+        return;
+    }
+    currentAnimation = ofClamp(animationIndex, 0, getAnimationCount() - 1);
+}
+
+// DEPRECATED.
+void ofxAssimpModelLoader::setNormalizedTime(float time) {
+    if(currentAnimation == -1) {
+        return;
+    }
+    ofxAssimpAnimation & animation = animations[currentAnimation];
+    float realT = ofMap(time, 0.0, 1.0, 0.0, animation.getDurationInSeconds(), false);
+    setTime(realT);
+}
+
+// DEPRECATED.
+void ofxAssimpModelLoader::setTime(float time) {
+    if(currentAnimation == -1) {
+        return;
+    }
+    ofxAssimpAnimation & animation = animations[currentAnimation];
+    animation.setPosition(time);
+}
+
+// DEPRECATED.
+float ofxAssimpModelLoader::getDuration(int animationIndex) {
+    if(!hasAnimations()) {
+        return 0;
+    }
+    animationIndex = ofClamp(animationIndex, 0, getAnimationCount() - 1);
+    float duration = animations[animationIndex].getDurationInSeconds();
+    return duration;
+}
+
+//------------------------------------------- meshes.
+bool ofxAssimpModelLoader::hasMeshes() {
+    return modelMeshes.size() > 0;
+}
+
+unsigned int ofxAssimpModelLoader::getMeshCount() {
+    return modelMeshes.size();
+}
+
+ofxAssimpMeshHelper & ofxAssimpModelLoader::getMeshHelper(int meshIndex) {
+    meshIndex = ofClamp(meshIndex, 0, modelMeshes.size()-1);
+    return modelMeshes[meshIndex];
 }
 
 //-------------------------------------------
@@ -665,22 +640,6 @@ void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, floa
     updateModelMatrix();
 }
 
-//-------------------------------------------
-void ofxAssimpModelLoader::updateGLResources(){
-    // now upload the result position and normal along with the other vertex attributes into a dynamic vertex buffer, VBO or whatever
-    for (unsigned int i = 0; i < modelMeshes.size(); ++i){
-    	if(modelMeshes[i].hasChanged){
-			const aiMesh* mesh = modelMeshes[i].mesh;
-			modelMeshes[i].vbo.updateVertexData(&modelMeshes[i].animatedPos[0].x,mesh->mNumVertices);
-			if(mesh->HasNormals()){
-				 modelMeshes[i].vbo.updateNormalData(&modelMeshes[i].animatedNorm[0].x,mesh->mNumVertices);
-			}
-			modelMeshes[i].hasChanged = false;
-    	}
-    }
-}
-
-
 //--------------------------------------------------------------
 void ofxAssimpModelLoader::drawWireframe(){
 	draw(OF_MESH_WIREFRAME);
@@ -715,11 +674,54 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
     
-    if(getAnimationCount()) {
-        updateGLResources();
+    for(int i=0; i<modelMeshes.size(); i++) {
+        ofxAssimpMeshHelper & mesh = modelMeshes[i];
+        
+        ofPushMatrix();
+        ofMultMatrix(mesh.matrix);
+        
+        if(bUsingTextures && mesh.texture.isAllocated()){
+            mesh.texture.bind();
+        }
+        
+        if(bUsingMaterials){
+            mesh.material.begin();
+        }
+        
+        if(mesh.twoSided) {
+            glEnable(GL_CULL_FACE);
+        }
+        else {
+            glDisable(GL_CULL_FACE);
+        }
+        
+        ofEnableBlendMode(mesh.blendMode);
+#ifndef TARGET_OPENGLES
+        mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
+#else
+        switch(renderType){
+		    case OF_MESH_FILL:
+		    	mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
+		    	break;
+		    case OF_MESH_WIREFRAME:
+		    	mesh.vbo.drawElements(GL_LINES,mesh.indices.size());
+		    	break;
+		    case OF_MESH_POINTS:
+		    	mesh.vbo.drawElements(GL_POINTS,mesh.indices.size());
+		    	break;
+        }
+#endif
+        
+        if(bUsingTextures && mesh.texture.bAllocated()){
+            mesh.texture.unbind();
+        }
+        
+        if(bUsingMaterials){
+            mesh.material.end();
+        }
+        
+        ofPopMatrix();
     }
-    
-    drawNode(renderType, scene->mRootNode);
     
     ofPopMatrix();
     
@@ -728,70 +730,6 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     glPopAttrib();
 #endif
     ofPopStyle();
-}
-
-void ofxAssimpModelLoader::drawNode(ofPolyRenderMode renderType, aiNode * node) {
-    
-    ofPushMatrix();
-    
-    aiMatrix4x4 m = node->mTransformation;
-    m.Transpose();
-	ofMatrix4x4 mat(m.a1, m.a2, m.a3, m.a4,
-                    m.b1, m.b2, m.b3, m.b4,
-                    m.c1, m.c2, m.c3, m.c4,
-                    m.d1, m.d2, m.d3, m.d4);
-    ofMultMatrix(mat);
-    
-    for(int i=0; i<node->mNumMeshes; i++) {
-        int meshIndex = node->mMeshes[i];
-        ofxAssimpMeshHelper & meshHelper = modelMeshes[meshIndex];
-        
-        if(bUsingTextures && meshHelper.texture.isAllocated()){
-            meshHelper.texture.bind();
-        }
-        
-        if(bUsingMaterials){
-            meshHelper.material.begin();
-        }
-        
-        if(meshHelper.twoSided) {
-            glEnable(GL_CULL_FACE);
-        }
-        else {
-            glDisable(GL_CULL_FACE);
-        }
-        
-        ofEnableBlendMode(meshHelper.blendMode);
-#ifndef TARGET_OPENGLES
-        meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
-#else
-        switch(renderType){
-		    case OF_MESH_FILL:
-		    	meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
-		    	break;
-		    case OF_MESH_WIREFRAME:
-		    	meshHelper.vbo.drawElements(GL_LINES,meshHelper.indices.size());
-		    	break;
-		    case OF_MESH_POINTS:
-		    	meshHelper.vbo.drawElements(GL_POINTS,meshHelper.indices.size());
-		    	break;
-        }
-#endif
-        
-        if(bUsingTextures && meshHelper.texture.bAllocated()){
-            meshHelper.texture.unbind();
-        }
-        
-        if(bUsingMaterials){
-            meshHelper.material.end();
-        }
-    }
-    
-    for(int i=0; i<node->mNumChildren; i++) {
-        drawNode(renderType, node->mChildren[i]);
-    }
-
-    ofPopMatrix();
 }
 
 //-------------------------------------------
