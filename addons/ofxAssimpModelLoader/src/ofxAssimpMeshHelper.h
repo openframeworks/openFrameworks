@@ -1,20 +1,21 @@
+//
+//  ofxAssimpMeshHelper.h
+//  Created by Lukasz Karluk on 4/12/12.
+//
 
 #pragma once
 
 #include "ofMain.h"
-#include "aiMesh.h"
+#include "assimp.h"
+
+class aiMesh;
 
 class ofxAssimpMeshHelper {
 
 public:
 
-	ofxAssimpMeshHelper() {
-		mesh = NULL;
-        blendMode = OF_BLENDMODE_ALPHA;
-        twoSided = false;
-        hasChanged = false;
-        validCache = false;
-	}
+	ofxAssimpMeshHelper();
+    ~ofxAssimpMeshHelper();
     
     aiMesh * mesh; // pointer to the aiMesh we represent.
 
@@ -35,4 +36,6 @@ public:
 
     ofMesh cachedMesh;
     bool validCache;
+    
+    ofMatrix4x4 matrix;
 };
