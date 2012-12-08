@@ -778,67 +778,87 @@ void ofxAssimpModelLoader::drawVertices(){
 
 
 //-------------------------------------------
-void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
-{
-    if(scene){
-
-        ofPushStyle();
-
+void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
+    if(scene == NULL) {
+        return;
+    }
+    
+    ofPushStyle();
+    
 #ifndef TARGET_OPENGLES
-        glPushAttrib(GL_ALL_ATTRIB_BITS);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 #endif
-        glEnable(GL_NORMALIZE);
-
-        ofPushMatrix();
-
-        ofTranslate(pos);
-
-        ofRotate(180, 0, 0, 1);
-        ofTranslate(-scene_center.x, -scene_center.y, scene_center.z);
-
-        if(normalizeScale)
-        {
-            ofScale(normalizedScale , normalizedScale, normalizedScale);
-        }
-
-        for(int i = 0; i < (int)rotAngle.size(); i++){
-            ofRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
-        }
-
-        ofScale(scale.x, scale.y, scale.z);
-
-
-        if(getAnimationCount())
-        {
-            updateGLResources();
-        }
-
-		for(int i = 0; i < (int)modelMeshes.size(); i++){
-			ofxAssimpMeshHelper & meshHelper = modelMeshes.at(i);
-
-			// Texture Binding
-			if(bUsingTextures && meshHelper.texture.isAllocated()){
-				meshHelper.texture.bind();
-			}
-
-			if(bUsingMaterials){
-				meshHelper.material.begin();
-			}
-
-
-			// Culling
-			if(meshHelper.twoSided)
-				glEnable(GL_CULL_FACE);
-			else
-				glDisable(GL_CULL_FACE);
-
-			ofEnableBlendMode(meshHelper.blendMode);
+    glEnable(GL_NORMALIZE);
+    
+    ofPushMatrix();
+    
+    ofTranslate(pos);
+    
+    ofRotate(180, 0, 0, 1);
+    
+    if(normalizeScale) {
+        ofScale(normalizedScale , normalizedScale, normalizedScale);
+    }
+    
+    for(int i = 0; i < (int)rotAngle.size(); i++){
+        ofRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
+    }
+    
+    ofScale(scale.x, scale.y, scale.z);
+    
+    if(getAnimationCount()) {
+        updateGLResources();
+    }
+    
+    drawNode(renderType, scene->mRootNode);
+    
+    ofPopMatrix();
+    
 #ifndef TARGET_OPENGLES
-		    meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
+    glPopClientAttrib();
+    glPopAttrib();
+#endif
+    ofPopStyle();
+}
+
+void ofxAssimpModelLoader::drawNode(ofPolyRenderMode renderType, aiNode * node) {
+    
+    ofPushMatrix();
+    
+    aiMatrix4x4 m = node->mTransformation;
+    m.Transpose();
+	ofMatrix4x4 mat(m.a1, m.a2, m.a3, m.a4,
+                    m.b1, m.b2, m.b3, m.b4,
+                    m.c1, m.c2, m.c3, m.c4,
+                    m.d1, m.d2, m.d3, m.d4);
+    ofMultMatrix(mat);
+    
+    for(int i=0; i<node->mNumMeshes; i++) {
+        int meshIndex = node->mMeshes[i];
+        ofxAssimpMeshHelper & meshHelper = modelMeshes[meshIndex];
+        
+        if(bUsingTextures && meshHelper.texture.isAllocated()){
+            meshHelper.texture.bind();
+        }
+        
+        if(bUsingMaterials){
+            meshHelper.material.begin();
+        }
+        
+        if(meshHelper.twoSided) {
+            glEnable(GL_CULL_FACE);
+        }
+        else {
+            glDisable(GL_CULL_FACE);
+        }
+        
+        ofEnableBlendMode(meshHelper.blendMode);
+#ifndef TARGET_OPENGLES
+        meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
 #else
-		    switch(renderType){
+        switch(renderType){
 		    case OF_MESH_FILL:
 		    	meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
 		    	break;
@@ -848,27 +868,23 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 		    case OF_MESH_POINTS:
 		    	meshHelper.vbo.drawElements(GL_POINTS,meshHelper.indices.size());
 		    	break;
-		    }
+        }
 #endif
-
-			// Texture Binding
-			if(bUsingTextures && meshHelper.texture.bAllocated()){
-				meshHelper.texture.unbind();
-			}
-
-			if(bUsingMaterials){
-				meshHelper.material.end();
-			}
-		}
-
-        ofPopMatrix();
-
-#ifndef TARGET_OPENGLES
-        glPopClientAttrib();
-        glPopAttrib();
-#endif
-        ofPopStyle();
+        
+        if(bUsingTextures && meshHelper.texture.bAllocated()){
+            meshHelper.texture.unbind();
+        }
+        
+        if(bUsingMaterials){
+            meshHelper.material.end();
+        }
     }
+    
+    for(int i=0; i<node->mNumChildren; i++) {
+        drawNode(renderType, node->mChildren[i]);
+    }
+
+    ofPopMatrix();
 }
 
 //-------------------------------------------

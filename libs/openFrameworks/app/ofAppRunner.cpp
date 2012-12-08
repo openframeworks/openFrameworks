@@ -64,7 +64,9 @@ void ofRunApp(ofBaseApp * OFSA){
 		OFSAptr->mouseY = 0;
 	}
 
+#ifndef TARGET_ANDROID
 	atexit(ofExitCallback);
+#endif
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
@@ -168,7 +170,9 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 		OFSAptr->mouseY = 0;
 	}
 
+#ifndef TARGET_ANDROID
 	atexit(ofExitCallback);
+#endif
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
