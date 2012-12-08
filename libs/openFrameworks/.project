@@ -84,5 +84,10 @@
 			<type>2</type>
 			<location>/home/arturo/Desktop/openFrameworks/libs/openFrameworksCompiled/project</location>
 		</link>
+		<link>
+			<name>project</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/openFrameworksCompiled/project</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
