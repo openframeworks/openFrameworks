@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>androidOpenCVExample</name>
+	<name>androidOpenCVFaceExample</name>
 	<comment></comment>
 	<projects>
 		<project>addons</project>
@@ -87,9 +87,19 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>ofxOpenCv</name>
+			<name>addons</name>
 			<type>2</type>
-			<location>/home/arturo/Desktop/openFrameworks/addons/ofxOpenCv</location>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>addons/ofxAndroid</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxAndroid</locationURI>
+		</link>
+		<link>
+			<name>addons/ofxOpenCv</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxOpenCv</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
