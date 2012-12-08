@@ -87,9 +87,14 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>ofxAndroid</name>
+			<name>addons</name>
 			<type>2</type>
-			<locationURI>OF_ADDONS/ofxAndroid</locationURI>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>addons/ofxAndroid</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxAndroid</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
