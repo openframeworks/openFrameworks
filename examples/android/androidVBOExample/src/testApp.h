@@ -14,17 +14,26 @@ public:
 	void update();
 	void draw();
 	
-	// android destroys the gl context when it pauses apps
-	// most OF textures are automatically regenerated
-	// but you'll need to regenerate the vbo yourself
-	void resume();
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-	void touchDown(ofTouchEventArgs &touch);
-	void touchMoved(ofTouchEventArgs &touch);
-	void touchUp(ofTouchEventArgs &touch);
-	void touchDoubleTap(ofTouchEventArgs &touch);
-	void touchCancelled(ofTouchEventArgs &touch);
-	
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
+
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
+
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
+
 	ofVbo	vbo;
 	ofVec3f pos[GRID_WIDTH*GRID_HEIGHT*LENGTH];
 	ofVec3f center;
@@ -36,5 +45,3 @@ public:
 	bool	bPause;
 	int		zoom, zoomTarget;
 };
-
-

@@ -54,6 +54,9 @@ static queue<ofTouchEventArgs> touchEventArgsQueue;
 static ofMutex mutex;
 static bool threadedTouchEvents = false;
 
+
+void ofExitCallback();
+
 //static ofAppAndroidWindow window;
 
 JavaVM * ofGetJavaVMPtr(){
@@ -300,7 +303,7 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
-
+	ofExitCallback();
 }
 
 void
