@@ -29,18 +29,7 @@ class testApp : public ofxiPhoneApp{
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
 
-		bool bAnimate;
-		bool bAnimateMouse;
-		float animationTime;
         ofxAssimpModelLoader model;
-
-        ofVboMesh mesh;
-        ofPoint position;
-        float normScale;
-        ofPoint scale;
-        ofPoint sceneCenter;
-        ofMaterial material;
-        ofTexture tex;
         ofLight	light;
 };
 
