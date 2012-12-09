@@ -22,17 +22,16 @@ class ofxSVG {
 			return paths.size();
 		}
 		ofPath & getPathAt(int n){
-			return *paths[n];
+			return paths[n];
 		}
 
 	private:
 
 		float width, height;
 
-		typedef ofPtr <ofPath> ofPathRef;
-		vector <ofPathRef> paths;
+		vector <ofPath> paths;
 
 		void setupDiagram(struct svgtiny_diagram * diagram);
-		void setupShape(struct svgtiny_shape * shape);
+		void setupShape(struct svgtiny_shape * shape, ofPath & path);
 
 };
