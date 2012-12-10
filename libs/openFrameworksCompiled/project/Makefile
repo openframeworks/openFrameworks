@@ -26,25 +26,24 @@ ifndef SHELL
     SHELL := /bin/sh
 endif
 
-# if the user has not specified a special variant, then use the default variant
+# If the user has not specified a special variant at the command line, use the 
+# default variant. To define a specific variant, use a command like:
+#
+#     make PLATFORM_VARIANT=pandaboard
+#
+# and make sure that the corresponding platform variant file is available.
+
 ifndef PLATFORM_VARIANT
 	PLATFORM_VARIANT=default
 endif
 
+# include the global configuration file
+include $(OF_SHARED_MAKEFILES_PATH)/config.make
 
-include makefileCommon/config.make
-
-
-
-# compile core openFrameworks library
-# check for platform specific compile rules
+# compile core openFrameworks library check for platform specific compile rules
 # if there's none use common ones
 ifeq ($(wildcard $(OF_PLATFORM_MAKEFILES)/compile.core.make),) 
     include $(OF_SHARED_MAKEFILES_PATH)/compile.core.make
 else 
     include $(OF_PLATFORM_MAKEFILES)/compile.core.make
 endif
-
-
-
-
