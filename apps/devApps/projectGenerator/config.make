@@ -37,12 +37,7 @@ PROJECT_ROOT = .
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PROJECT_EXTERNAL_SOURCE_PATHS = addons
-PROJECT_EXTERNAL_SOURCE_PATHS += projects
-PROJECT_EXTERNAL_SOURCE_PATHS += pugixmlLib
-PROJECT_EXTERNAL_SOURCE_PATHS += utils
-
-
+# PROJECT_EXTERNAL_SOURCE_PATHS = 
 
 ################################################################################
 # PROJECT EXCLUSIONS
