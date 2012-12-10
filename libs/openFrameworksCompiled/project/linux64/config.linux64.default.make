@@ -154,7 +154,10 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
-#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
+# TODO: we are using OUR modern headers, but linking against the system libs ... 
+# this may someday create problems, but it is required because of the FreeImage
+# x11 BOOL conflict.
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/
 
 
 ################################################################################
@@ -192,7 +195,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 PLATFORM_LIBRARIES =
 PLATFORM_LIBRARIES += GL
 PLATFORM_LIBRARIES += glut
-#PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =

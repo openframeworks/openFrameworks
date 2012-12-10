@@ -86,12 +86,6 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
 
 ################################################################################
-# PLATFORM CXX
-################################################################################
-
-#PLATFORM_CXX=
-
-################################################################################
 # PLATFORM CFLAGS
 #   This is a list of fully qualified CFLAGS required when compiling for this 
 #   platform. These flags will always be added when compiling a project or the 
@@ -321,5 +315,11 @@ PLATFORM_CORE_SOURCE_INCLUSIONS =
 ##########################################################################################
 
 #PLATFORM_FRAMEWORKS =
+
+################################################################################
+# PLATFORM CXX
+################################################################################
+
+#PLATFORM_CXX=
 
 

@@ -46,7 +46,7 @@ NODEPS = clean
 # clean it
 ALL_CFLAGS =
 # add the base CFLAGS from Makefiles.examples
-ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
+ALL_CFLAGS += $(PROJECT_CFLAGS)
 
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
@@ -59,7 +59,7 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 ALL_LDFLAGS =
 
 # add the include LDFLAGS from Makefiles.examples
-ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
+ALL_LDFLAGS += $(PROJECT_LDFLAGS)
 
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
@@ -84,19 +84,19 @@ endif
 ## stopped here ... TODO: what does this mean?
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifeq ($strip($(PROJECT_CFLAGS_DEBUG)),)
+	ifeq ($strip($(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
 	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
 	else
-		OPTIMIZATION_CFLAGS = $(PROJECT_CFLAGS_DEBUG)
+		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 	endif
     TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	ifeq ($strip($(PROJECT_CFLAGS_RELEASE)),)
+	ifeq ($strip($(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
 	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
 	else
-		OPTIMIZATION_CFLAGS = $(PROJECT_CFLAGS_RELEASE)
+		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
 	endif
     TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
 endif
@@ -124,7 +124,10 @@ endif
 ################################################################################
 
 # define the subdirectory for our target name
-OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(PLATFORM_OS)$(PLATFORM_ARCH)$(TARGET_NAME)
+
+
+
+OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
 
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,/,$(addprefix $(OF_PLATFORM_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES)))
