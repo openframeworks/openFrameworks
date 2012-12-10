@@ -46,6 +46,7 @@ public:
 	void disableMouseMiddleButton();
 	bool getMouseMiddleButtonEnabled();
 	
+    void setAutoDistance(bool bAutoDistance);
 	
 private:
 	void setDistance(float distance, bool save);
@@ -61,7 +62,7 @@ private:
 	bool bInsideArcball;
 	bool bMouseInputEnabled;
 	bool bDistanceSet;
-
+    bool bAutoDistance;
 	float lastDistance;
 
 	float drag;

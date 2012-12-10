@@ -1,6 +1,12 @@
 
 #include "ofxAndroidUtils.h"
 
+// fix for undefined symbols from ndk r8c
+extern "C" {
+  extern void *__dso_handle __attribute__((__visibility__ ("hidden")));
+  void *__dso_handle;
+}
+
 bool ofxAndroidIsOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
@@ -303,7 +309,7 @@ string ofxAndroidRandomUUID(){
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return false;
+		return "";
 	}
 
 
@@ -339,7 +345,7 @@ string ofxAndroidGetTextBoxResult(){
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return false;
+		return "";
 	}
 
 
