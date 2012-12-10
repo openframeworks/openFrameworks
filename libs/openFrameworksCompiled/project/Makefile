@@ -38,7 +38,7 @@ ifndef PLATFORM_VARIANT
 endif
 
 # include the global configuration file
-include $(OF_SHARED_MAKEFILES_PATH)/config.make
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
 
 # compile core openFrameworks library check for platform specific compile rules
 # if there's none use common ones
