@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxSVG.h"
+#include "ofxSvg.h"
 
 class testApp : public ofBaseApp{
     
@@ -21,5 +21,7 @@ public:
     void gotMessage(ofMessage msg);
     
     ofxSVG svg;
+    float step;
+    vector<ofPolyline> outlines;
     
 };
