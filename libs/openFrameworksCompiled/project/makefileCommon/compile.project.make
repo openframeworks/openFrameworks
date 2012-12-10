@@ -1,23 +1,6 @@
 ################################################################################
-# print debug information if desired
-
 ifdef MAKEFILE_DEBUG
-    $(info =====================compile.project.make===========================)
-endif
-
-# if APPNAME is not defined, set it to the project dir name
-ifndef APPNAME
-    APPNAME = $(shell basename `pwd`)
-endif
-
-# print the name of the project as a debug message if desired
-ifdef MAKEFILE_DEBUG
-    $(info APPNAME=$(APPNAME))
-endif
-
-# make sure we have a project root defined
-ifndef PROJECT_ROOT
-	PROJECT_ROOT = .
+    $(info ===================compile.project.make=============================)
 endif
 
 ifdef PLATFORM_CXX

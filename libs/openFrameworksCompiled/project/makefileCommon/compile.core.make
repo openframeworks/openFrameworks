@@ -1,7 +1,4 @@
-# TODO: add checks here for variables, flags etc.
-
 ################################################################################
-# print debug information if needed
 ifdef MAKEFILE_DEBUG
     $(info ===================compile.core.make================================)
 endif

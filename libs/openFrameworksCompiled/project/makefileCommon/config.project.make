@@ -5,24 +5,35 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 # configuration work basically means creating lots of
 # lists of source files, search paths, libraries, etc.
 #
-ifndef OF_ROOT
-    OF_ROOT=../../..
-endif
-
 ifndef SHELL
     SHELL := /bin/sh
 endif
 
-# if the user has not specified a special variant, then use the default variant
-ifndef PLATFORM_VARIANT
-    PLATFORM_VARIANT=default
+ifndef OF_ROOT
+    OF_ROOT= ../../..
 endif
 
 ifndef PROJECT_ROOT
     PROJECT_ROOT= .
 endif
 
-include $(OF_SHARED_MAKEFILES_PATH)/config.make
+# if APPNAME is not defined, set it to the project dir name
+ifndef APPNAME
+    APPNAME = $(shell basename `pwd`)
+endif
+
+# if the user has not specified a special variant, then use the default variant
+ifndef PLATFORM_VARIANT
+    PLATFORM_VARIANT = default
+endif
+
+# if not defined
+ifndef PROJECT_LDFLAGS
+	PROJECT_LDFLAGS = -Wl,-rpath=./libs
+endif
+
+
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
 
 ############################## FLAGS ###########################################
 # OF CORE LIBRARIES SEARCH PATHS (-L ...) (not used during core compilation, but 
@@ -184,11 +195,11 @@ ifdef B_PROCESS_ADDONS
     # define a function to remove duplicates without using sort, because sort 
     # will place the list in lexicographic order, and we want to respect the 
     # user's addons.make order.  
-    remove-dupes = $(if $1,$(strip $(word 1,$1) \
-                   $(call $0,$(filter-out $(word 1,$1),$1))))
+    remove-dupes-func = $(if $1,$(strip $(word 1,$1) \
+                        $(call $0,$(filter-out $(word 1,$1),$1))))
 
     # remove all duplicates that might be in the addons.make file
-    REQUESTED_PROJECT_ADDONS := $(call remove-dupes,$(REQUESTED_PROJECT_ADDONS))
+    REQUESTED_PROJECT_ADDONS := $(call remove-dupes-func,$(REQUESTED_PROJECT_ADDONS))
 
     # add platform required addons from the platform configuration file (if needed)
     # add the platform required addons first, so that they are always linked first
@@ -375,6 +386,12 @@ endif
 
 OF_PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 
+# add defaults here TODO: should these always be 
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
+
+
 ################################################################################
 # PROJECT SOURCE FILES
 ################################################################################
@@ -384,7 +401,7 @@ OF_PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 # create a list of all dirs in the project root that might be valid project
 # source directories 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]")
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
 
 # be included as locations for header searches via 
 TMP_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
@@ -407,6 +424,11 @@ OF_PROJECT_INCLUDES := $(OF_PROJECT_SOURCE_PATHS)
 OF_PROJECT_INCLUDES += $(PROJECT_ADDONS_INCLUDES)
 
 OF_PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(OF_PROJECT_INCLUDES))
+
+#ifdef MAKEFILE_DEBUG
+    $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
+    $(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
+#endif
 
 ################################################################################
 # PROJECT LIBRARIES (-l ...) (not used during core compilation, but vars are 
@@ -436,7 +458,7 @@ OF_PROJECT_DEFINES_CFLAGS = $(addprefix -D,$(OF_PROJECT_DEFINES))
 
 # gather any project CFLAGS
 OF_PROJECT_CFLAGS := $(PROJECT_CFLAGS)
-OF_PROJECT_CFLAGS += $(USER_CFLAGS)
+OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_BASE_CFLAGS)
@@ -449,11 +471,10 @@ OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 ################################################################################
 
 OF_PROJECT_LDFLAGS := $(PROJECT_LDFLAGS)
-OF_PROJECT_LDFLAGS += $(USER_LDLAGS)
-OF_PROJECT_LDFLAGS += $(USER_LIBS)
+OF_PROJECT_LDFLAGS += $(USER_LDLAGS) # legacy
+OF_PROJECT_LDFLAGS += $(USER_LIBS)   # legacy
 OF_PROJECT_LDFLAGS += $(OF_PROJECT_LIBS_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
-
 
 
 # compile core openFrameworks library
