@@ -19,7 +19,7 @@ ifndef PLATFORM_VARIANT
 endif
 
 ifndef PROJECT_ROOT
-    PROJECT_ROOT=.
+    PROJECT_ROOT= .
 endif
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.make

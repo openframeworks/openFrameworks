@@ -117,6 +117,6 @@ PROJECT_CFLAGS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PROJECT_CFLAGS_RELEASE = 
-PROJECT_CFLAGS_DEBUG = 
+PROJECT_OPTIMIZATION_CFLAGS_RELEASE = 
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
 

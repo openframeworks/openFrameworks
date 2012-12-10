@@ -99,10 +99,10 @@ endif
 ################################################################################
 
 # define the location for our intermediate object files
-OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
+#OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
 
 # define the subdirectory for our target name
-OF_CORE_OBJ_OUPUT_PATH =$(OF_CORE_OBJ_BASE_PATH)/$(TARGET_NAME)
+OF_CORE_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
 
 # create a named list of dependency files
 # 1. create a list of .d dependency files based on the current list of 
