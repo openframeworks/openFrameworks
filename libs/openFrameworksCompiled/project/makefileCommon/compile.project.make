@@ -17,7 +17,7 @@ endif
 
 # make sure we have a project root defined
 ifndef PROJECT_ROOT
-	PROJECT_ROOT=.
+	PROJECT_ROOT = .
 endif
 
 ifdef PLATFORM_CXX
@@ -45,8 +45,8 @@ NODEPS = clean
 
 # clean it
 ALL_CFLAGS =
-# add the base CFLAGS from Makefiles.examples
-ALL_CFLAGS += $(PROJECT_CFLAGS)
+# add the CFLAGS from Makefiles.examples
+ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
 
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
@@ -125,19 +125,36 @@ endif
 
 # define the subdirectory for our target name
 
+ifdef MAKEFILE_DEBUG
+    $(info ---OF_PROJECT_SOURCE_FILES---)
+    $(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
+endif
+ifdef MAKEFILE_DEBUG
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+endif
 
 
-OF_PLATFORM_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
+OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
 
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
-OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,/,$(addprefix $(OF_PLATFORM_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES)))
+OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES)))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
 OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
-OF_PROJECT_ADDONS_OBJS = $(subst $(OF_ROOT)/,/,$(addprefix $(OF_PLATFORM_OBJ_OUPUT_PATH),$(OF_PROJECT_ADDONS_OBJ_FILES)))
+OF_PROJECT_ADDONS_OBJS = $(subst $(OF_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(OF_PROJECT_ADDONS_OBJ_FILES)))
 OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
 
+OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
+
 # TODO: deal with shared libs?
+
+
+
+ifdef MAKEFILE_DEBUG
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
@@ -157,59 +174,59 @@ $(TARGET_LIBS): $(OF_CORE_SOURCE_FILES)
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cpp
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cpp
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cxx
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cxx
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cc
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cc
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 	
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.c
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.c
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cxx
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cxx
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cc
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cc
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 	
-$(OF_PLATFORM_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.d -MT$(OF_PLATFORM_OBJ_OUPUT_PATH)$*.o -o$@ -c $<
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS)
 	@echo 'linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
 	mkdir -p $(@D)
 	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) 
--include $(OF_PLATFORM_DEPENDENCY_FILES)
+-include $(OF_PROJECT_DEPENDENCY_FILES)
 
 clean:
-	rm -rf $(OF_PLATFORM_OBJ_OUPUT_PATH)
+	rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH)
 	rm -f $(TARGET)
 	rm -rf bin/libs
 
 $(CLEANTARGET):
-	rm -rf $(OF_PLATFORM_OBJ_OUPUT_PATH)
+	rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH)
 	rm -f $(TARGET)
 	rm -rf bin/libs
 

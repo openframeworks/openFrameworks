@@ -1,16 +1,17 @@
+MAKEFILE_DEBUG=1
 ################################################################################
 # CONFIGURE PROJECT MAKEFILE
 #   This file is where we make project specific configurations.
 ################################################################################
 
-OF_ROOT=../../..
+OF_ROOT = ../../..
 
 ################################################################################
 # Custom Application Name
 #   Will default to the project's folder name if not defined.
 ################################################################################
 
-#APPNAME=myappname
+#APPNAME = myappname
 
 ################################################################################
 # PROJECT ROOT
@@ -71,7 +72,8 @@ PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 # add a runtime path to search for those shared libraries, since they aren't 
 # incorporated directly into the final executable application binary.
 # TODO: should this be a default setting?
-PROJECT_LDFLAGS=-Wl,-rpath=./libs
+
+PROJECT_LDFLAGS = -Wl,-rpath=./libs
 
 ################################################################################
 # PROJECT DEFINES
@@ -119,4 +121,3 @@ PROJECT_CFLAGS =
 
 PROJECT_OPTIMIZATION_CFLAGS_RELEASE = 
 PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
-
