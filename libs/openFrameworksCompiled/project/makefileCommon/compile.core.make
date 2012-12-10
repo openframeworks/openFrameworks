@@ -18,8 +18,8 @@ ifdef PLATFORM_CC
     CC = $(PLATFORM_CC)
 endif
 
-ifdef PLATFORM_CC
-    CC = $(PLATFORM_CC)
+ifdef PROJECT_CC
+    CC = $(PROJECT_CC)
 endif
 
 ################################################################################

@@ -3,6 +3,8 @@
 #   This file is where we make project specific configurations.
 ################################################################################
 
+OF_ROOT=../../..
+
 ################################################################################
 # Custom Application Name
 #   Will default to the project's folder name if not defined.
@@ -26,14 +28,14 @@ PROJECT_ROOT = .
 ################################################################################
 # None
 
-# ################################################################################
-# # PROJECT EXTERNAL SOURCE PATHS
-# #   These are fully qualified paths that are not within the PROJECT_ROOT folder.
-# #   Like source folders in the PROJECT_ROOT, these paths are subject to 
-# #   exlclusion via the PROJECT_EXLCUSIONS list.
-# #
-# #   Note: Leave a leading space when adding list items with the += operator
-# ################################################################################
+################################################################################
+# PROJECT EXTERNAL SOURCE PATHS
+#   These are fully qualified paths that are not within the PROJECT_ROOT folder.
+#   Like source folders in the PROJECT_ROOT, these paths are subject to 
+#   exlclusion via the PROJECT_EXLCUSIONS list.
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
 
 # PROJECT_EXTERNAL_SOURCE_PATHS = 
 
@@ -115,6 +117,6 @@ PROJECT_CFLAGS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PROJECT_OPTIMIZATION_CFLAGS_RELEASE=
-PROJECT_OPTIMIZATION_CFLAGS_DEBUG=
+PROJECT_CFLAGS_RELEASE = 
+PROJECT_CFLAGS_DEBUG = 
 

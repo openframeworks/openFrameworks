@@ -2,7 +2,7 @@
 # print debug information if desired
 
 ifdef MAKEFILE_DEBUG
-    $(info ===================makefile.compile.project=========================)
+    $(info =====================compile.project.make===========================)
 endif
 
 # if APPNAME is not defined, set it to the project dir name
@@ -32,10 +32,9 @@ ifdef PLATFORM_CC
     CC = $(PLATFORM_CC)
 endif
 
-ifdef PLATFORM_CC
-    CC = $(PLATFORM_CC)
+ifdef PROJECT_CC
+    CC = $(PROJECT_CC)
 endif
-
 
 # TODO: what is this for?
 NODEPS = clean
@@ -65,8 +64,6 @@ ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
 
-
-
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
@@ -83,10 +80,8 @@ else ifeq ($(MAKECMDGOALS),)
 endif
 
 
-
-
 ################################################################################
-## stopped here ...
+## stopped here ... TODO: what does this mean?
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	ifeq ($strip($(PROJECT_CFLAGS_DEBUG)),)
@@ -118,7 +113,6 @@ endif
 ifdef TARGET_NAME
 	CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 endif
-
 
 ################################################################################
 # OBJECT AND DEPENDENCY FILES DEFINITIONS
@@ -155,7 +149,6 @@ all:
 # This rule adds a dependency for projects to the OF library 
 # so if any OF file gets modified the OF library will be compiled
 # before compiling the project
-
 $(TARGET_LIBS): $(OF_CORE_SOURCE_FILES)
 	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME)
 

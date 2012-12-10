@@ -24,12 +24,6 @@ endif
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.make
 
-
-
-
-
-
-
 ############################## FLAGS ###########################################
 # OF CORE LIBRARIES SEARCH PATHS (-L ...) (not used during core compilation, but 
 #    variables are used during project compilation)
@@ -131,14 +125,6 @@ ifdef MAKEFILE_DEBUG
     $(info ---OF_CORE_LIBS---)
     $(foreach v, $(OF_CORE_LIBS),$(info $(v)))
 endif
-
-
-
-
-
-
-
-
 
 ################################# ADDONS ######################################
 
@@ -382,15 +368,6 @@ ifdef B_PROCESS_ADDONS
         endif
     endif
 endif
-
-
-
-
-
-
-
-
-
 
 ################################################################################
 # CLEAN PROJECT EXCLUSIONS 

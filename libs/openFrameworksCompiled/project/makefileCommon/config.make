@@ -73,12 +73,6 @@ ifdef MAKEFILE_DEBUG
 endif
 
 
-
-
-
-
-
-
 # #####################  PATHS  ###############################################
 # confgure all core paths, excluding platform and project specific paths
 #
@@ -167,15 +161,8 @@ ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
     $(error Platform Variant "$(PLATFORM_VARIANT)" is not valid. Valid variants include [$(strip $(AVAILABLE_PLATFORM_VARIANTS))])
 endif
 
-
-
-
 # include the platform specific user and platform configuration files
 include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).make
-
-
-
-
 
 ################################ FLAGS #########################################
 # define the location of the core path
