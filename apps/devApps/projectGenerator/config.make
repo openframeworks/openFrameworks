@@ -1,23 +1,29 @@
 ################################################################################
-# CONFIGURE PROJECT MAKEFILE
+# CONFIGURE PROJECT MAKEFILE (optional)
 #   This file is where we make project specific configurations.
 ################################################################################
 
-OF_ROOT=../../..
+################################################################################
+# OF ROOT
+#   The location of your root openFrameworks installation
+#       (default) OF_ROOT = ../../.. 
+################################################################################
+# OF_ROOT = ../../..
 
 ################################################################################
-# Custom Application Name
-#   Will default to the project's folder name if not defined.
+# App Name
+# 	Custom Application Name
+#       (default) APPNAME = (this project's folder name)
 ################################################################################
-
-#APPNAME=myappname
+# APPNAME = customAppName
 
 ################################################################################
 # PROJECT ROOT
-#   If not defined, the project root is assumed to be "this" directory (i.e. ./)
+#   The location of the project - a starting place for searching for files
+#       (default) PROJECT_ROOT = . (this directory)
+#    
 ################################################################################
-
-PROJECT_ROOT = .
+# PROJECT_ROOT = .
 
 ################################################################################
 # PROJECT SPECIFIC CHECKS
@@ -34,9 +40,10 @@ PROJECT_ROOT = .
 #   Like source folders in the PROJECT_ROOT, these paths are subject to 
 #   exlclusion via the PROJECT_EXLCUSIONS list.
 #
+#     (default) PROJECT_EXTERNAL_SOURCE_PATHS = (blank) 
+#
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-
 # PROJECT_EXTERNAL_SOURCE_PATHS = 
 
 ################################################################################
@@ -51,17 +58,23 @@ PROJECT_ROOT = .
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
 #
+#      (default) PROJECT_EXCLUSIONS = (blank)
+#
+#		Will automatically exclude the following:
+#
+#			$(PROJECT_ROOT)/bin%
+#			$(PROJECT_ROOT)/obj%
+#			$(PROJECT_ROOT)/%.xcodeproj
+#
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-
-PROJECT_EXCLUSIONS =
-PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin%
-PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj%
-PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
+# PROJECT_EXCLUSIONS =
 
 ################################################################################
 # PROJECT LINKER FLAGS
 #	These flags will be sent to the linker when compiling the executable.
+#
+#		(default) PROJECT_LDFLAGS = -Wl,-rpath=./libs
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
@@ -71,17 +84,18 @@ PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 # add a runtime path to search for those shared libraries, since they aren't 
 # incorporated directly into the final executable application binary.
 # TODO: should this be a default setting?
-PROJECT_LDFLAGS=-Wl,-rpath=./libs
+# PROJECT_LDFLAGS=-Wl,-rpath=./libs
 
 ################################################################################
 # PROJECT DEFINES
 #   Create a space-delimited list of DEFINES. The list will be converted into 
 #   CFLAGS with the "-D" flag later in the makefile.
 #
+#		(default) PROJECT_DEFINES = (blank)
+#
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-
-PROJECT_DEFINES = 
+# PROJECT_DEFINES = 
 
 ################################################################################
 # PROJECT CFLAGS
@@ -90,14 +104,15 @@ PROJECT_DEFINES =
 #   defined in your platform specific core configuration files. These flags are
 #   presented to the compiler BEFORE the PROJECT_OPTIMIZATION_CFLAGS below. 
 #
+#		(default) PROJECT_CFLAGS = (blank)
+#
 #   Note: Before adding PROJECT_CFLAGS, note that the PLATFORM_CFLAGS defined in 
 #   your platform specific configuration file will be applied by default and 
 #   further flags here may not be needed.
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-
-PROJECT_CFLAGS = 
+# PROJECT_CFLAGS = 
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS
@@ -107,7 +122,11 @@ PROJECT_CFLAGS =
 #
 #   PROJECT_OPTIMIZATION_CFLAGS_RELEASE flags are only applied to RELEASE targets.
 #
+#		(default) PROJECT_OPTIMIZATION_CFLAGS_RELEASE = (blank)
+#
 #   PROJECT_OPTIMIZATION_CFLAGS_DEBUG flags are only applied to DEBUG targets.
+#
+#		(default) PROJECT_OPTIMIZATION_CFLAGS_DEBUG = (blank)
 #
 #   Note: Before adding PROJECT_OPTIMIZATION_CFLAGS, please note that the 
 #   PLATFORM_OPTIMIZATION_CFLAGS defined in your platform specific configuration 
@@ -116,7 +135,15 @@ PROJECT_CFLAGS =
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
+# PROJECT_OPTIMIZATION_CFLAGS_RELEASE = 
+# PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
 
-PROJECT_CFLAGS_RELEASE = 
-PROJECT_CFLAGS_DEBUG = 
-
+################################################################################
+# PROJECT COMPILERS
+#   Custom compilers can be set for CC and CXX
+#		(default) PROJECT_CXX = (blank)
+#		(default) PROJECT_CC = (blank)
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
+# PROJECT_CXX = 
+# PROJECT_CC = 
