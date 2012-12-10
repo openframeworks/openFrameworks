@@ -312,6 +312,7 @@ typedef ofBaseApp ofSimpleApp;
 #include <iomanip>  //for setprecision
 #include <fstream>
 #include <algorithm>
+#include <cfloat>
 using namespace std;
 
 #ifndef PI
