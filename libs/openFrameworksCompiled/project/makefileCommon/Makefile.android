@@ -16,6 +16,8 @@ else
     endif
 endif
 
+PROJECT_PATH=$(PWD)
+
 TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 ANDROID_PREFIX=arm-linux-androideabi-
@@ -56,7 +58,7 @@ endif
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	TARGET_NAME = Release_arm7
-	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb
 	TARGET = libs/armeabi-v7a/libOFAndroidApp.so
 	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM7)
@@ -105,10 +107,12 @@ CleanAndroid:
 	
 afterDebugAndroid:$(TARGET)
 	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
+	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	
+	@echo copying debugging binaries
 	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi
 	
-	#create gdb.setup for armeabi
+	@echo create gdb.setup for armeabi
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
 	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
 	@echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
@@ -116,17 +120,45 @@ afterDebugAndroid:$(TARGET)
 	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
 	@echo "" >> libs/armeabi/gdb.setup 
 	
+	@echo creating Android.mk and Application.mk
 	@if [ ! -d jni ]; then mkdir jni; fi
 	@echo "APP_ABI := armeabi" > jni/Application.mk
 	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
+	
+	
+	@echo compressing and copying resources from bin/data into res
+	@cd $(PROJECT_PATH); \
+	if [ -d "bin/data" ]; then \
+		mkdir -p res/raw; \
+		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
+		zip -r ../../res/raw/$(RESNAME).zip *; \
+		cd ../..; \
+	fi
+	
+	@echo updating ofAndroidLib project
+	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+	else \
+		$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
+	fi
+	
+	@#echo updating current project
+	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#else \
+	#	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#fi
 
 afterReleaseAndroid:$(TARGET)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	
+	@echo copying debugging binaries
 	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
 	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a
 	
-	#create gdb.setup for armeabi-v7a
+	@echo create gdb.setup for armeabi-v7a
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
 	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup
 	@echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup
@@ -134,9 +166,36 @@ afterReleaseAndroid:$(TARGET)
 	@echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup 
 	@echo "" >> libs/armeabi-v7a/gdb.setup 
 	
+	@echo creating Android.mk and Application.mk
 	@if [ ! -d jni ]; then mkdir jni; fi
 	@echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk
 	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
+	
+	
+	@echo compressing and copying resources from bin/data into res
+	@cd $(PROJECT_PATH); \
+	if [ -d "bin/data" ]; then \
+		mkdir -p res/raw; \
+		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
+		zip -r ../../res/raw/$(RESNAME).zip *; \
+		cd ../..; \
+	fi
+	
+	@echo updating ofAndroidLib project
+	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+	else \
+		$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
+	fi
+	
+	@#@echo updating current project
+	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#else \
+	#	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#fi
 
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 
@@ -151,7 +210,7 @@ AndroidInstall:
 	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
 	else \
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
-	fi
+	fi 
 	cd $(PROJECT_PATH); \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
