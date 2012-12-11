@@ -405,12 +405,21 @@ ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d |
 
 # be included as locations for header searches via 
 TMP_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
+
+# legacy exclusion
 ifdef EXCLUDE_FROM_SOURCE
     SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')\|^\..*\|\/\..**
     OF_PROJECT_SOURCE_PATHS = $(shell echo $(TMP_SOURCE_PATHS) | sed s/.\\/// | grep -v "$(SED_EXCLUDE_FROM_SRC)")
 else
     OF_PROJECT_SOURCE_PATHS = $(TMP_SOURCE_PATHS)
 endif
+
+$(info ---OF_PROJECT_SOURCE_PATHS---)
+$(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
+
+$(info ---OF_PROJECT_EXCLUSIONS---)
+$(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
+
 
 # find all sources inside the project's source directory (recursively)
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
