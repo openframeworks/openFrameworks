@@ -146,7 +146,8 @@ endif
 
 AndroidInstall:	
 	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
-	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	echo installing on $(HOST_PLATFORM); \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
 	else \
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
@@ -161,7 +162,7 @@ AndroidInstall:
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
-	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
 	else \
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
@@ -178,7 +179,7 @@ AndroidInstall:
 	if [ -f bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
 	if [ -f bin/build.prop ]; then rm bin/build.prop; fi
 	if [ -f bin/jarlist.cache ]; then rm bin/jarlist.cache; fi
-	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	$(ANT_BIN)/ant debug; \
 	else \
 	ant debug; \
