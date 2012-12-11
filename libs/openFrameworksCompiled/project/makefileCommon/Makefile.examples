@@ -29,7 +29,7 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
-	else ifeq ($(shell uname),MINGW32_NT-6.1)
+	else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
 		HOST_PLATFORM = windows
 	else
 		HOST_PLATFORM = linux-x86
