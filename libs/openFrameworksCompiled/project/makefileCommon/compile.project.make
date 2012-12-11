@@ -42,7 +42,7 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 ALL_LDFLAGS =
 
 # add the include LDFLAGS from Makefiles.examples
-ALL_LDFLAGS += $(PROJECT_LDFLAGS)
+ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
