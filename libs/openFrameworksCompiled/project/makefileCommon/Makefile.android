@@ -1,6 +1,7 @@
 COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 
-NDK_PLATFORM = android-8
+NDK_PLATFORM = android-14
+SDK_TARGET = android-17
 GCC_VERSION = 4.6
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
@@ -139,16 +140,16 @@ afterDebugAndroid:$(TARGET)
 	@echo updating ofAndroidLib project
 	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
-		$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
+		$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi
 	
 	@#echo updating current project
 	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
 	#else \
-	#	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
 	#fi
 
 afterReleaseAndroid:$(TARGET)
@@ -185,16 +186,16 @@ afterReleaseAndroid:$(TARGET)
 	@echo updating ofAndroidLib project
 	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
-		$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
+		$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi
 	
 	@#@echo updating current project
 	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
 	#else \
-	#	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
 	#fi
 
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
@@ -207,9 +208,9 @@ AndroidInstall:
 	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
 	echo installing on $(HOST_PLATFORM); \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
+	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi 
 	cd $(PROJECT_PATH); \
 	if [ -d "bin/data" ]; then \
@@ -222,30 +223,23 @@ AndroidInstall:
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi
-	if [ -d bin/classes ]; then rm -r bin/classes; fi
-	if [ -d bin/res ]; then rm -r bin/res; fi
-	if [ -f bin/classes.dex ]; then rm bin/classes.dex; fi
-	if [ -f bin/classes.dex.d ]; then rm bin/classes.dex.d; fi
-	if [ -f bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
-	if [ -f bin/OFActivity.ap_.d ]; then rm bin/OFActivity.ap_.d; fi
-	if [ -f bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
-	if [ -f bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
-	if [ -f bin/OFActivity-debug-unaligned.apk.d ]; then rm bin/OFActivity-debug-unaligned.apk.d; fi
-	if [ -f bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
-	if [ -f bin/build.prop ]; then rm bin/build.prop; fi
-	if [ -f bin/jarlist.cache ]; then rm bin/jarlist.cache; fi
+	
+	#rm -r $(addprefix bin/,$(shell ls bin/ | grep -v ^data$))
+	
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-	$(ANT_BIN)/ant debug; \
+	#$(ANT_BIN)/ant clean; \
+	$(ANT_BIN)/ant debug install; \
 	else \
-	ant debug; \
+	#ant clean; \
+	ant debug install; \
 	fi
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
-	$(SDK_ROOT)/platform-tools/adb uninstall $(PKGNAME)
+	#$(SDK_ROOT)/platform-tools/adb uninstall $(PKGNAME)
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
 	#fi
 	$(SDK_ROOT)/platform-tools/adb shell am start -a android.intent.action.MAIN -n $(PKGNAME)/$(PKGNAME).OFActivity
