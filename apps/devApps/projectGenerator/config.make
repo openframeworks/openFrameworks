@@ -69,10 +69,10 @@
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PROJECT_EXCLUSIONS = $(PROJECT_ROOT)/src/pugixmlLib/lib/%
+PROJECT_EXCLUSIONS = $(PROJECT_ROOT)/src/pugixmlLib/lib%
 PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/src/pugixmlLib/%.jam
 PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/src/pugixmlLib/%.txt
-PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/src/pugixmlLib/scripts/%
+PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/src/pugixmlLib/scripts%
 
 ################################################################################
 # PROJECT LINKER FLAGS

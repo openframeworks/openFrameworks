@@ -11,8 +11,7 @@
  * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
-#ifndef HEADER_PUGIXML_HPP
-#define HEADER_PUGIXML_HPP
+#pragma once
 
 #include "pugiconfig.hpp"
 
@@ -1103,7 +1102,6 @@ namespace std
 }
 #endif
 
-#endif
 
 /**
  * Copyright (c) 2006-2010 Arseny Kapoulkine
