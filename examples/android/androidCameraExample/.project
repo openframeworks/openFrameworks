@@ -85,18 +85,6 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>addons</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>addons/ofxAndroid</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/addons/ofxAndroid</locationURI>
-		</link>
-	</linkedResources>
 	<variableList>
 		<variable>
 			<name>OF_ADDONS</name>
