@@ -14,8 +14,12 @@
 # App Name
 # 	Custom Application Name
 #       (default) APPNAME = (this project's folder name)
+# App Name Suffix
+#       (default) APPNAME_SUFFIX = .app
+#
 ################################################################################
 # APPNAME = customAppName
+# APPNAME_SUFFIX = .app
 
 ################################################################################
 # PROJECT ROOT
