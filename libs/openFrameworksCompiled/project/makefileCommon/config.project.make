@@ -22,6 +22,11 @@ ifndef APPNAME
     APPNAME = $(shell basename `pwd`)
 endif
 
+ifndef APPNAME_SUFFIX
+    APPNAME_SUFFIX = .app
+endif
+
+
 # if the user has not specified a special variant, then use the default variant
 ifndef PLATFORM_VARIANT
     PLATFORM_VARIANT = default
@@ -91,7 +96,7 @@ OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(PLATFORM_LI
 #    (to escape # in make, you must use \#)
 #    sed '/^$/d' removes all empty lines
 #    (to escape $ in make, you must use $$)
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
@@ -186,7 +191,7 @@ ifdef B_PROCESS_ADDONS
     # (to escape # in make, you must use \#)
     # sed '/^$/d' removes all empty lines
     # (to escape $ in make, you must use $$)
-    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
+    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
 
     # deal with platform specfic addons
     # remove any platform specific addons that were already added to the addons.make file
@@ -221,10 +226,11 @@ ifdef B_PROCESS_ADDONS
     # create a list of addons, excluding invalid and platform-specific addons
     PROJECT_ADDONS = $(filter-out $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
-
-            $(info ---PROJECT_ADDONS---)
-            $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
-            $(info --------------------)
+    ifdef MAKEFILE_DEBUG
+        $(info ---PROJECT_ADDONS---)
+        $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
+        $(info --------------------)
+    endif
 
     ############################################################################
     # PROCESS PROJECT ADDONS IF AVAILABLE
@@ -317,7 +323,7 @@ ifdef B_PROCESS_ADDONS
         #    (to escape # in make, you must use \#)
         #    sed '/^$/d' removes all empty lines
         #    (to escape $ in make, you must use $$)
-        PROJECT_ADDONS_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
+        PROJECT_ADDONS_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
 
         ########################################################################
         # ADDON'S PLATFORM SPECIFIC SHARED LIBS ################################
@@ -414,12 +420,13 @@ else
     OF_PROJECT_SOURCE_PATHS = $(TMP_SOURCE_PATHS)
 endif
 
-$(info ---OF_PROJECT_SOURCE_PATHS---)
-$(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
+ifdef MAKEFILE_DEBUG
+	$(info ---OF_PROJECT_SOURCE_PATHS---)
+	$(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
 
-$(info ---OF_PROJECT_EXCLUSIONS---)
-$(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
-
+	$(info ---OF_PROJECT_EXCLUSIONS---)
+	$(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
+endif
 
 # find all sources inside the project's source directory (recursively)
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
@@ -434,10 +441,10 @@ OF_PROJECT_INCLUDES += $(PROJECT_ADDONS_INCLUDES)
 
 OF_PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(OF_PROJECT_INCLUDES))
 
-#ifdef MAKEFILE_DEBUG
+ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
     $(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
-#endif
+endif
 
 ################################################################################
 # PROJECT LIBRARIES (-l ...) (not used during core compilation, but vars are 
