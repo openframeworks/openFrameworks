@@ -28,7 +28,7 @@ class testApp : public ofBaseApp{
         bool bAnimateMouse;
         float animationPosition;
 
-        ofVboMesh mesh;
+        ofMesh mesh;
         ofLight	light;
 };
 
