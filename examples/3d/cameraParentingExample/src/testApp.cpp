@@ -154,23 +154,17 @@ void testApp::draw(){
 		// draw line from cam to its lookat
 		if(lookatIndex[i] >= 0) {
 			ofSetColor(0, 255, 255);
-			glBegin(GL_LINES);
 			ofVec3f v1 = cam[i].getGlobalPosition();
 			ofVec3f v2 = testNodes[lookatIndex[i]].getGlobalPosition();
-			glVertex3f(v1.x, v1.y, v1.z);
-			glVertex3f(v2.x, v2.y, v2.z);
-			glEnd();
+            ofLine(v1,v2);
 		}
 		
 		// draw line from cam to its parent
 		if(parentIndex[i] >= 0) {
 			ofSetColor(255, 255, 0);
-			glBegin(GL_LINES);
 			ofVec3f v1 = cam[i].getGlobalPosition();
 			ofVec3f v2 = testNodes[parentIndex[i]].getGlobalPosition();
-			glVertex3f(v1.x, v1.y, v1.z);
-			glVertex3f(v2.x, v2.y, v2.z);
-			glEnd();
+            ofLine(v1,v2);
 		}
 	}
 	

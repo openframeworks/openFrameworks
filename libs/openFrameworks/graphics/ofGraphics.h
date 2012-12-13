@@ -203,6 +203,7 @@ OF_DEPRECATED_MSG("Use ofVertices instead.", void ofVertexes(const vector <ofPoi
 
 
 void ofCurveVertex(float x, float y);
+void ofCurveVertex(float x, float y, float z);
 void ofCurveVertex(ofPoint & p);
 void ofCurveVertices(const vector <ofPoint> & curvePoints);
 OF_DEPRECATED_MSG("Use ofCurveVertices instead.", void ofCurveVertexes(const vector <ofPoint> & curvePoints));
