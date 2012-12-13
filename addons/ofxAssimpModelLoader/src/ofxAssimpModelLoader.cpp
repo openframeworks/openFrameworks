@@ -17,57 +17,29 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 
 //------------------------------------------
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
-	normalizeFactor = ofGetWidth() / 2.0;
-
-    // if we have a model loaded, unload the fucker.
-    if(scene != NULL){
-        clear();
+    file.open(modelName);
+    if(!file.exists()) {
+        ofLog(OF_LOG_VERBOSE, "%s is not found.", modelName.c_str());
+        return false;
     }
 
-
-    // Load our new path.
-    filepath = modelName;
-    string filepath = ofToDataPath(modelName);
-
-	//theo added - so we can have models and their textures in sub folders
-	modelFolder = ofFilePath::getEnclosingDirectory(filepath);
-
-    ofLog(OF_LOG_VERBOSE, "loading model %s", filepath.c_str());
-    ofLog(OF_LOG_VERBOSE, "loading from folder %s", modelFolder.c_str());
-
-    // only ever give us triangles.
-    aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
-    aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
-
-    // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
-    unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
-    if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
-			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
-			aiProcess_RemoveRedundantMaterials;
-
-    scene = aiImportFile(filepath.c_str(), flags);
-
-    if(scene){
-        calculateDimensions();
-        loadGLResources();
-
-        if(getAnimationCount())
-            ofLog(OF_LOG_VERBOSE, "scene has animations");
-        else {
-            ofLog(OF_LOG_VERBOSE, "no animations");
-
-        }
-        return true;
-    }else{
-    	ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
-    	return false;
-    }
+    ofLog(OF_LOG_VERBOSE, "loading model %s", file.getFileName().c_str());
+    ofLog(OF_LOG_VERBOSE, "loading from folder %s", file.getEnclosingDirectory().c_str());
+    
+    ofBuffer buffer = file.readToBuffer();
+    
+    bool bOk = loadModel(buffer, optimize, file.getExtension().c_str());
+    return bOk;
 }
 
 //-------------------------------------------
 bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
 	normalizeFactor = ofGetWidth() / 2.0;
-
+    
+    if(scene != NULL){
+        clear();
+    }
+    
 	// only ever give us triangles.
 	aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
 	aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
@@ -78,10 +50,8 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
 			aiProcess_RemoveRedundantMaterials;
 
-	if(scene){
-		clear();
-	}
 	scene = aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension);
+    
 	if(scene){
 		calculateDimensions();
 		loadGLResources();
@@ -97,7 +67,6 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 		ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
 		return false;
 	}
-
 }
 
 //-------------------------------------------
@@ -228,12 +197,12 @@ void ofxAssimpModelLoader::loadGLResources(){
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
-            string modelFolder = ofFilePath::getEnclosingDirectory(filepath,false);
+            string modelFolder = file.getEnclosingDirectory();
             string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
             string texFile = ofFilePath::getFileName(texPath.data);
             string realPath = modelFolder + relTexPath  + texFile;
 			if(!ofFile::doesFileExist(realPath) || !ofLoadImage(meshHelper.texture,realPath)) {
-                ofLog(OF_LOG_ERROR,string("error loading image ") + filepath + " " +realPath);
+                ofLog(OF_LOG_ERROR,string("error loading image ") + file.getFileName() + " " +realPath);
 			}else{
                 ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
 			}
@@ -327,20 +296,43 @@ void ofxAssimpModelLoader::clear(){
 
 //------------------------------------------- update.
 void ofxAssimpModelLoader::update() {
+    if(hasAnimations() == false) {
+        return;
+    }
     updateAnimations();
-    updateGLResources();
     updateMeshes(scene->mRootNode, ofMatrix4x4());
+    updateBones();
+    updateGLResources();
 }
 
 void ofxAssimpModelLoader::updateAnimations() {
-    if(!hasAnimations()) {
-        return;
-    }
-    
     for(int i=0; i<animations.size(); i++) {
         animations[i].update();
     }
+}
+
+void ofxAssimpModelLoader::updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix) {
     
+    aiMatrix4x4 m = node->mTransformation;
+    m.Transpose();
+	ofMatrix4x4 matrix(m.a1, m.a2, m.a3, m.a4,
+                       m.b1, m.b2, m.b3, m.b4,
+                       m.c1, m.c2, m.c3, m.c4,
+                       m.d1, m.d2, m.d3, m.d4);
+    matrix *= parentMatrix;
+    
+    for(int i=0; i<node->mNumMeshes; i++) {
+        int meshIndex = node->mMeshes[i];
+        ofxAssimpMeshHelper & mesh = modelMeshes[meshIndex];
+        mesh.matrix = matrix;
+    }
+    
+    for(int i=0; i<node->mNumChildren; i++) {
+        updateMeshes(node->mChildren[i], matrix);
+    }
+}
+
+void ofxAssimpModelLoader::updateBones() {
     // update mesh position for the animation
 	for(int i=0; i<modelMeshes.size(); ++i) {
 		// current mesh we are introspecting
@@ -401,9 +393,6 @@ void ofxAssimpModelLoader::updateAnimations() {
 }
 
 void ofxAssimpModelLoader::updateGLResources(){
-    if(!hasAnimations()) {
-        return;
-    }
     // now upload the result position and normal along with the other vertex attributes into a dynamic vertex buffer, VBO or whatever
     for (unsigned int i = 0; i < modelMeshes.size(); ++i){
     	if(modelMeshes[i].hasChanged){
@@ -428,27 +417,6 @@ void ofxAssimpModelLoader::updateModelMatrix() {
         modelMatrix.glRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
     }
     modelMatrix.glScale(scale.x, scale.y, scale.z);
-}
-
-void ofxAssimpModelLoader::updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix) {
-    
-    aiMatrix4x4 m = node->mTransformation;
-    m.Transpose();
-	ofMatrix4x4 matrix(m.a1, m.a2, m.a3, m.a4,
-                       m.b1, m.b2, m.b3, m.b4,
-                       m.c1, m.c2, m.c3, m.c4,
-                       m.d1, m.d2, m.d3, m.d4);
-    matrix *= parentMatrix;
-    
-    for(int i=0; i<node->mNumMeshes; i++) {
-        int meshIndex = node->mMeshes[i];
-        ofxAssimpMeshHelper & mesh = modelMeshes[meshIndex];
-        mesh.matrix = matrix;
-    }
-    
-    for(int i=0; i<node->mNumChildren; i++) {
-        updateMeshes(node->mChildren[i], matrix);
-    }
 }
 
 //------------------------------------------- animations.
@@ -528,6 +496,7 @@ void ofxAssimpModelLoader::setTime(float time) {
     setAnimation(currentAnimation); // call this again to clamp animation index, in case the model is reloaded.
     ofxAssimpAnimation & animation = animations[currentAnimation];
     animation.setPosition(time);
+    update();
 }
 
 // DEPRECATED.

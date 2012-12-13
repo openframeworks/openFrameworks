@@ -114,8 +114,9 @@ class ofxAssimpModelLoader{
     protected:
     
         void updateAnimations();
-        void updateModelMatrix();
         void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
+        void updateBones();
+        void updateModelMatrix();
     
         // the main Asset Import scene that does the magic.
         const aiScene * scene;
@@ -132,8 +133,7 @@ class ofxAssimpModelLoader{
         void getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max);
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
 
-        string filepath;
-		string modelFolder;
+        ofFile file;
         
         aiVector3D scene_min, scene_max, scene_center;
     
