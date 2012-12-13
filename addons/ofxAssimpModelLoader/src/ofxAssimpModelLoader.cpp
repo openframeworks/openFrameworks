@@ -55,6 +55,7 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 	if(scene){
 		calculateDimensions();
 		loadGLResources();
+        update();
 
 		if(getAnimationCount())
 			ofLog(OF_LOG_VERBOSE, "scene has animations");
