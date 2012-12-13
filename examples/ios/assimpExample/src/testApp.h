@@ -28,8 +28,12 @@ class testApp : public ofxiPhoneApp{
         void gotFocus();
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
+    
+        void loadModel(int modelIndex);
 
         ofxAssimpModelLoader model;
+        int modelIndex;
+        int modelsTotal;
         ofLight	light;
 };
 

@@ -8,16 +8,57 @@ void testApp::setup(){
     
     ofDisableArbTex(); // we need GL_TEXTURE_2D for our models coords.
     
-    model.loadModel("astroBoy_walk.dae", true);
-    model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
-    model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
-    model.playAllAnimations();
-    
 	glEnable(GL_DEPTH_TEST);
     
     glShadeModel(GL_SMOOTH); //some model / light stuff
     light.enable();
     ofEnableSeparateSpecularLight();
+    
+    modelIndex = 0;
+    modelsTotal = 4;
+    loadModel(modelIndex);
+}
+
+void testApp::loadModel(int modelIndex) {
+    ofPoint modelPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
+    
+    switch(modelIndex){
+        case 0:
+            model.loadModel("astroBoy_walk.dae");
+            model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
+            ofEnableSeparateSpecularLight();
+            break;
+        case 1:
+            model.loadModel("TurbochiFromXSI.dae");
+            model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
+            model.setRotation(0, -180, 1, 0, 0);
+            model.setScale(1.2, 1.2, 1.2);
+            ofEnableSeparateSpecularLight();
+            break;
+        case 2:
+            model.loadModel("dwarf.x");
+            model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
+            model.setScale(1.2, 1.2, 1.2);
+            ofDisableSeparateSpecularLight();
+            break;
+        case 3:
+            model.loadModel("monster-animated-character-X.X");
+            model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
+            model.setRotation(0, -90, 0, 0, 1);
+            ofDisableSeparateSpecularLight();
+            break;
+        case 4:
+            model.loadModel("squirrel/NewSquirrel.3ds");
+            model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
+            model.setRotation(0, -90, 1, 0, 0);
+            ofDisableSeparateSpecularLight();
+            break;
+        default:
+            break;
+    }
+    
+    model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
+    model.playAllAnimations();
 }
 
 //--------------------------------------------------------------
@@ -42,8 +83,8 @@ void testApp::draw(){
     ofPopMatrix();
 
     ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate(), 2), 10, 15);
-    ofDrawBitmapString("fingers 2-5 load models", 10, 30);
-    ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 45);
+    ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 30);
+    ofDrawBitmapString("double tap to change model", 10, 60);
 }
 
 //--------------------------------------------------------------
@@ -53,38 +94,7 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
-	if(touch.id >= 1){
-		switch(touch.id){
-			case 1:
-				model.loadModel("dwarf.x");
-				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
-				model.setScale(1.2, 1.2, 1.2);	
-				ofDisableSeparateSpecularLight();
-				break;
-			case 2:
-				model.loadModel("TurbochiFromXSI.dae");
-				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
-				model.setRotation(0,-180,1,0,0);
-				model.setScale(1.2, 1.2, 1.2);
-				ofEnableSeparateSpecularLight();
-				break;				
-			case 3:
-				model.loadModel("squirrel/NewSquirrel.3ds");
-				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
-				ofDisableSeparateSpecularLight();
-				break;
-			case 4:
-				model.loadModel("astroBoy_walk.dae");
-				model.setPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
-				ofEnableSeparateSpecularLight();
-				break;
-			default:
-				break;
-		}
-	}
     
-    model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
-    model.playAllAnimations();
 }
 
 //--------------------------------------------------------------
@@ -99,7 +109,10 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){
-
+    if(++modelIndex > modelsTotal - 1){
+        modelIndex = 0;
+	}
+    loadModel(modelIndex);
 }
 
 //--------------------------------------------------------------
