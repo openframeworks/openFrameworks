@@ -26,6 +26,11 @@
 #   ifdefs within the openFrameworks core source code.
 ################################################################################
 
+#check if gtk exists and add it
+HAS_SYSTEM_GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+#check if mpg123 exists and add it
+HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+
 ################################################################################
 # PLATFORM DEFINES
 #   Create a list of DEFINES for this platform.  The list will be converted into 
@@ -43,12 +48,17 @@
 
 PLATFORM_DEFINES =
 
+# add OF_USING_GTK define IF we have it defined as a system library
+ifeq ($(HAS_SYSTEM_GTK),0)
+    PLATFORM_DEFINES += OF_USING_GTK
+endif
+
+# add OF_USING_MPG123 define IF we have it defined as a system library
+ifeq ($(HAS_SYSTEM_MPG123),0)
+    PLATFORM_DEFINES += OF_USING_MPG123
+endif
+
 # defines used inside openFrameworks libs.
-PLATFORM_DEFINES += TARGET_NO_SOUND
-PLATFORM_DEFINES += TARGET_NO_GLUT
-PLATFORM_DEFINES += TARGET_NO_GLU
-PLATFORM_DEFINES += TARGET_NO_X11
-PLATFORM_DEFINES += TARGET_OPENGLES2
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
 
 # from raspberry pi examples
@@ -120,7 +130,7 @@ PLATFORM_CFLAGS += -pipe
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE =
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -145,11 +155,11 @@ PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
 # third party
 
@@ -166,15 +176,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 
-
-# third party static libs (this may not matter due to exclusions in poco's libsorder.make)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
 
 ################################################################################
 # PLATFORM LIBRARIES
@@ -228,6 +229,22 @@ PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-0.10
 PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-0.10
 PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-0.10
 PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-0.10
+PLATFORM_PKG_CONFIG_LIBRARIES += libudev
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
+PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
+PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
+PLATFORM_PKG_CONFIG_LIBRARIES += x11
+
+# conditionally add GTK
+ifeq ($(HAS_SYSTEM_GTK),0)
+    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
+endif
+
+# conditionally add mpg123
+ifeq ($(HAS_SYSTEM_MPG123),0)
+    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
