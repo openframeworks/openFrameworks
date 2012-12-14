@@ -297,11 +297,11 @@ void ofxAssimpModelLoader::clear(){
 
 //------------------------------------------- update.
 void ofxAssimpModelLoader::update() {
+    updateAnimations();
+    updateMeshes(scene->mRootNode, ofMatrix4x4());
     if(hasAnimations() == false) {
         return;
     }
-    updateAnimations();
-    updateMeshes(scene->mRootNode, ofMatrix4x4());
     updateBones();
     updateGLResources();
 }

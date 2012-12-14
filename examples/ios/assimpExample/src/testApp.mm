@@ -15,7 +15,7 @@ void testApp::setup(){
     ofEnableSeparateSpecularLight();
     
     modelIndex = 0;
-    modelsTotal = 4;
+    modelsTotal = 5;
     loadModel(modelIndex);
 }
 
@@ -50,7 +50,6 @@ void testApp::loadModel(int modelIndex) {
         case 4:
             model.loadModel("squirrel/NewSquirrel.3ds");
             model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
-            model.setRotation(0, -90, 1, 0, 0);
             ofDisableSeparateSpecularLight();
             break;
         default:
