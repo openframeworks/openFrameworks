@@ -98,6 +98,11 @@ void ofBuffer::set(const string & text){
 }
 
 //--------------------------------------------------
+void ofBuffer::append(const string& _buffer){
+	append(_buffer.c_str(), _buffer.size());
+}
+
+//--------------------------------------------------
 void ofBuffer::append(const char * _buffer, unsigned int _size){
 	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
 	buffer.back() = 0;
