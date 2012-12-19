@@ -1,6 +1,7 @@
 COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 
-NDK_PLATFORM = android-8
+NDK_PLATFORM = android-14
+SDK_TARGET = android-17
 GCC_VERSION = 4.6
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
@@ -15,6 +16,8 @@ else
 	    ABI = armeabi
     endif
 endif
+
+PROJECT_PATH=$(PWD)
 
 TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
@@ -56,7 +59,7 @@ endif
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 	TARGET_NAME = Release_arm7
-	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb
 	TARGET = libs/armeabi-v7a/libOFAndroidApp.so
 	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM7)
@@ -105,10 +108,12 @@ CleanAndroid:
 	
 afterDebugAndroid:$(TARGET)
 	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
+	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	
+	@echo copying debugging binaries
 	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi
 	
-	#create gdb.setup for armeabi
+	@echo create gdb.setup for armeabi
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
 	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
 	@echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
@@ -116,17 +121,45 @@ afterDebugAndroid:$(TARGET)
 	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
 	@echo "" >> libs/armeabi/gdb.setup 
 	
+	@echo creating Android.mk and Application.mk
 	@if [ ! -d jni ]; then mkdir jni; fi
 	@echo "APP_ABI := armeabi" > jni/Application.mk
 	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
+	
+	
+	@echo compressing and copying resources from bin/data into res
+	@cd $(PROJECT_PATH); \
+	if [ -d "bin/data" ]; then \
+		mkdir -p res/raw; \
+		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
+		zip -r ../../res/raw/$(RESNAME).zip *; \
+		cd ../..; \
+	fi
+	
+	@echo updating ofAndroidLib project
+	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
+	else \
+		$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
+	fi
+	
+	@#echo updating current project
+	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
+	#else \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
+	#fi
 
 afterReleaseAndroid:$(TARGET)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	
+	@echo copying debugging binaries
 	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
 	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a
 	
-	#create gdb.setup for armeabi-v7a
+	@echo create gdb.setup for armeabi-v7a
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
 	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup
 	@echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup
@@ -134,9 +167,36 @@ afterReleaseAndroid:$(TARGET)
 	@echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup 
 	@echo "" >> libs/armeabi-v7a/gdb.setup 
 	
+	@echo creating Android.mk and Application.mk
 	@if [ ! -d jni ]; then mkdir jni; fi
 	@echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk
 	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
+	
+	
+	@echo compressing and copying resources from bin/data into res
+	@cd $(PROJECT_PATH); \
+	if [ -d "bin/data" ]; then \
+		mkdir -p res/raw; \
+		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
+		zip -r ../../res/raw/$(RESNAME).zip *; \
+		cd ../..; \
+	fi
+	
+	@echo updating ofAndroidLib project
+	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
+	else \
+		$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
+	fi
+	
+	@#@echo updating current project
+	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
+	#else \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
+	#fi
 
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 
@@ -146,11 +206,12 @@ endif
 
 AndroidInstall:	
 	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
-	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
-	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path .; \
+	echo installing on $(HOST_PLATFORM); \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path .; \
-	fi
+	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
+	fi 
 	cd $(PROJECT_PATH); \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
@@ -161,31 +222,24 @@ AndroidInstall:
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
-	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
-	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH); \
+	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi
-	if [ -d bin/classes ]; then rm -r bin/classes; fi
-	if [ -d bin/res ]; then rm -r bin/res; fi
-	if [ -f bin/classes.dex ]; then rm bin/classes.dex; fi
-	if [ -f bin/classes.dex.d ]; then rm bin/classes.dex.d; fi
-	if [ -f bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
-	if [ -f bin/OFActivity.ap_.d ]; then rm bin/OFActivity.ap_.d; fi
-	if [ -f bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
-	if [ -f bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
-	if [ -f bin/OFActivity-debug-unaligned.apk.d ]; then rm bin/OFActivity-debug-unaligned.apk.d; fi
-	if [ -f bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
-	if [ -f bin/build.prop ]; then rm bin/build.prop; fi
-	if [ -f bin/jarlist.cache ]; then rm bin/jarlist.cache; fi
-	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
-	$(ANT_BIN)/ant debug; \
+	
+	#rm -r $(addprefix bin/,$(shell ls bin/ | grep -v ^data$))
+	
+	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#$(ANT_BIN)/ant clean; \
+	$(ANT_BIN)/ant debug install; \
 	else \
-	ant debug; \
+	#ant clean; \
+	ant debug install; \
 	fi
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
-	$(SDK_ROOT)/platform-tools/adb uninstall $(PKGNAME)
+	#$(SDK_ROOT)/platform-tools/adb uninstall $(PKGNAME)
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
 	#fi
 	$(SDK_ROOT)/platform-tools/adb shell am start -a android.intent.action.MAIN -n $(PKGNAME)/$(PKGNAME).OFActivity
