@@ -15,6 +15,7 @@
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
 
+
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
 #if defined (TARGET_WIN32) || defined(TARGET_OSX)
@@ -51,8 +52,20 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 
-
 void ofExitCallback();
+
+#if defined(TARGET_LINUX) || defined(TARGET_OSX)
+	#include <signal.h>
+	
+	static bool bExitCalled = false;
+	void sighandler(int sig) {
+		ofLogVerbose("ofAppRunner") << "sighandler : Signal handled " << sig;
+		if(!bExitCalled) {
+			bExitCalled = true;
+			exitApp();
+		}
+	}
+#endif
 
 // the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
 //--------------------------------------
@@ -67,6 +80,20 @@ void ofRunApp(ofBaseApp * OFSA){
 #ifndef TARGET_ANDROID
 	atexit(ofExitCallback);
 #endif
+
+#if defined(TARGET_LINUX) || defined(TARGET_OSX)
+	// see http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html#Termination-Signals
+	signal(SIGTERM, &sighandler);
+    signal(SIGQUIT, &sighandler); 
+	signal(SIGINT,  &sighandler);
+
+	signal(SIGKILL, &sighandler); // not much to be done here
+	signal(SIGHUP,  &sighandler); // not much to be done here
+
+	// http://www.gnu.org/software/libc/manual/html_node/Program-Error-Signals.html#Program-Error-Signals
+    signal(SIGABRT, &sighandler);  // abort signal
+#endif
+
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time

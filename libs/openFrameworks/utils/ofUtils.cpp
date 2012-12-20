@@ -211,6 +211,8 @@ static string & dataPathRoot(){
 	static string * dataPathRoot = new string("sdcard/");
 #elif defined(TARGET_LINUX)
 	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
+//#elif defined(TARGET_LINUX_ARM)
+//		static string * dataPathRoot = new string("data/");
 #else
 	static string * dataPathRoot = new string("data/");
 #endif
