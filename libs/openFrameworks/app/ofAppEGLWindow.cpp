@@ -32,95 +32,92 @@
 #include "ofGLES2Renderer.h"
 #include <assert.h>
 
-#ifdef TARGET_NO_X11
+// native events
+struct udev         *udev;
+struct udev_device  *dev;
+struct udev_monitor *mon;
+static int  udev_fd     = -1;
 
-    struct udev         *udev;
-    struct udev_device  *dev;
-    struct udev_monitor *mon;
-    static int  udev_fd     = -1;
+static int  keyboard_fd = -1; // defaults to 0 ie console
+static int  mouse_fd    = -1; // defaults to 0 
 
-    static int  keyboard_fd = -1; // defaults to 0 ie console
-    static int  mouse_fd    = -1; // defaults to 0 
+// minimal map
+const int lowercase_map[] = {
+    0,  0,  '1',  '2',  '3',  '4',  '5', '6',  '7', '8', '9', '0',
+    '-', '=', '\b', '\t', 'q',  'w',  'e', 'r',  't', 'y', 'u', 'i',
+    'o', 'p', '[',  ']',  '\n', 0,   'a', 's',  'd', 'f', 'g', 'h',
+    'j', 'k', 'l',  ';',  '\'',  '\n', 0,  '\\', 'z', 'x', 'c', 'v',
+    'b', 'n', 'm',  ',',  '.',  '/',  0,  '*',  0,  ' ', 0,  0,
+    0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+    0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+    0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
+ 
+};
 
-    // minimal map
-    const int lowercase_map[] = {
-        0,  0,  '1',  '2',  '3',  '4',  '5', '6',  '7', '8', '9', '0',
-        '-', '=', '\b', '\t', 'q',  'w',  'e', 'r',  't', 'y', 'u', 'i',
-        'o', 'p', '[',  ']',  '\n', 0,   'a', 's',  'd', 'f', 'g', 'h',
-        'j', 'k', 'l',  ';',  '\'',  '\n', 0,  '\\', 'z', 'x', 'c', 'v',
-        'b', 'n', 'm',  ',',  '.',  '/',  0,  '*',  0,  ' ', 0,  0,
-        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
-     
-    };
-    
-    // minimal keyboard map
-    const int uppercase_map[] = {
-        0,  0,  '!',  '@',  '#',  '$',  '%', '^',  '&', '*', '(', ')',
-        '_', '+', '\b', '\t', 'Q',  'W',  'E', 'R',  'T', 'Y', 'U', 'I',
-        'O', 'P', '{',  '}',  '\n', 0,   'A', 'S',  'D', 'F', 'G', 'H',
-        'J', 'K', 'L',  ':',  '"', '\n', 0,  '\\', 'Z', 'X', 'C', 'V',
-        'B', 'N', 'M',  '<',  '>',  '?',  0,  '*',  0,  ' ', 0,  0,
-        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
-    };
+// minimal keyboard map
+const int uppercase_map[] = {
+    0,  0,  '!',  '@',  '#',  '$',  '%', '^',  '&', '*', '(', ')',
+    '_', '+', '\b', '\t', 'Q',  'W',  'E', 'R',  'T', 'Y', 'U', 'I',
+    'O', 'P', '{',  '}',  '\n', 0,   'A', 'S',  'D', 'F', 'G', 'H',
+    'J', 'K', 'L',  ':',  '"', '\n', 0,  '\\', 'Z', 'X', 'C', 'V',
+    'B', 'N', 'M',  '<',  '>',  '?',  0,  '*',  0,  ' ', 0,  0,
+    0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+    0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+    0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
+};
 
-    // keep track of a few things ...
-    typedef struct {
-        bool shiftPressed;
-        bool capsLocked;
-    } KeyboardState;
+// keep track of a few things ...
+typedef struct {
+    bool shiftPressed;
+    bool capsLocked;
+} KeyboardState;
 
-    static KeyboardState kb;
+static KeyboardState kb;
 
-    static struct termios tc;
-    static struct termios ots;
+static struct termios tc;
+static struct termios ots;
 
-    typedef struct {
-        int   mouseButtonState;
-    } MouseState;
+typedef struct {
+    int   mouseButtonState;
+} MouseState;
 
-    #define MOUSE_BUTTON_LEFT_MASK        1
-    #define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
-    #define MOUSE_BUTTON_RIGHT_MASK  2 << 1
+#define MOUSE_BUTTON_LEFT_MASK        1
+#define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
+#define MOUSE_BUTTON_RIGHT_MASK  2 << 1
 
-    static MouseState mb;
+static MouseState mb;
 
-    static int string_ends_with(const char *str, const char *suffix) {
-        if (!str || !suffix)
-            return 0;
-        size_t lenstr = strlen(str);
-        size_t lensuffix = strlen(suffix);
-        if (lensuffix > lenstr)
-            return 0;
-        return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+static int string_ends_with(const char *str, const char *suffix) {
+    if (!str || !suffix)
+        return 0;
+    size_t lenstr = strlen(str);
+    size_t lensuffix = strlen(suffix);
+    if (lensuffix > lenstr)
+        return 0;
+    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+}
+
+static int dummy_sort(const struct dirent **a,const struct dirent **b) {
+    return 1; // dummy sort
+}
+
+static int filter_kbd(const struct dirent *d) {
+    if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-kbd")) {
+        return 1;
+    } else {
+        return 0;
     }
+}
 
-    static int dummy_sort(const struct dirent **a,const struct dirent **b) {
-        return 1; // dummy sort
+static int filter_mouse(const struct dirent *d) {
+    if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-mouse")) {
+        return 1;
+    } else {
+        return 0;
     }
+}
 
-    static int filter_kbd(const struct dirent *d) {
-        if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-kbd")) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    static int filter_mouse(const struct dirent *d) {
-        if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-mouse")) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-#else
-  #include <X11/XKBlib.h>
-#endif
-
+// native
 #define MOUSE_CURSOR_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
 { unsigned int __bpp; unsigned char *__ip; const unsigned char *__il, *__rd; \
   __bpp = (bpp); __ip = (image_buf); __il = __ip + (size) * __bpp; \
@@ -132,10 +129,10 @@
                __ip += __l; __rd += __l; } } \
 } while (0)
 static const struct {
-  unsigned int 	 width;
-  unsigned int 	 height;
-  unsigned int 	 bpp; /* 2:RGB16, 3:RGB, 4:RGBA */ 
-  unsigned char	 rle_pixel_data[382 + 1];
+  unsigned int   width;
+  unsigned int   height;
+  unsigned int   bpp; /* 2:RGB16, 3:RGB, 4:RGBA */ 
+  unsigned char  rle_pixel_data[382 + 1];
 } mouse_cursor_data = {
   12, 19, 4,
   "\1\0\0\0\377\213\377\377\377\0\202\0\0\0\377\212\377\377\377\0\3\0\0\0\377"
@@ -158,6 +155,8 @@ static const struct {
 };
 
 
+// X11 events
+  #include <X11/XKBlib.h>
 
 // TODO. we may not need these to be static, but we will
 // leave it this way for now in case future EGL windows 
@@ -196,10 +195,33 @@ ofAppEGLWindow::ofAppEGLWindow() {
     mouseScaleX = 2.0f;
     mouseScaleY = 2.0f;
 
+    eglWindowPreference = OF_APP_WINDOW_AUTO;
+    isUsingX11 = false;
+
+    init();
+
 }
 
 //------------------------------------------------------------
-ofAppEGLWindow::~ofAppEGLWindow() {}
+ofAppEGLWindow::~ofAppEGLWindow() {
+  ofRemoveListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::init() {
+  ofAddListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::exit(ofEventArgs &e) {
+  terminate = true; // TODO, it is unlikely that this will happen
+  if(!isUsingX11) {
+    destroyNativeEvents();
+  }   
+
+  // we got a terminate ... so clean up.
+  destroyEGL();
+}
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
@@ -214,12 +236,12 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
      //windowW = requestedWidth  = getWindowWidth();
      //windowH = requestedHeight = getWindowHeight();
 
-	bool success = setupNativeWindow(w,h,screenMode);
+	   bool success = setupNativeWindow(w,h,screenMode);
 
     if(!success) {
-      cout << "CREATED screen failed " << w << " x " << h << endl;
+      ofLogNotice("ofAppEGLWindow::setupOpenGL")  << "CREATED screen failed " << w << " x " << h;
     } else {
-      cout << "CREATED SCREEN WITH SIZE " << w << " x " << h << endl;
+      ofLogNotice("ofAppEGLWindow::setupOpenGL")  << "CREATED SCREEN WITH SIZE " << w << " x " << h;
     }
 
     nonFullscreenWindowRect = screenRect;
@@ -233,44 +255,56 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setupPeripherals() {
-  #ifdef TARGET_NO_X11
-    // roll our own cursor!
-    mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
-    MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
-    mouseCursor.update();
-  #else
-    ofError("ofAppEGLWindow") << "Peripherals not supported on X11";
-  #endif
+    if(!isUsingX11) {
+        // roll our own cursor!
+        mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
+        MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
+        mouseCursor.update();
+    } else {
+        ofLogError("ofAppEGLWindow") << "Peripherals not supported on X11";
+    }
 }
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::setupNativeWindow(int w, int h, int screenMode) {
+    // X11 check
+    // char * pDisplay;
+    // pDisplay = getenv ("DISPLAY");
+    // bool bIsX11Available = (pDisplay != NULL);
 
-  // X11 check
-  char * pDisplay;
-  pDisplay = getenv ("DISPLAY");
-  if (pDisplay != NULL) {
-    cout << "X11 is available : DISPLAY = " << pDisplay << "." << endl;
-  } else {
-    cout << "X11 is NOT available." << endl;
-  }
+    bool bIsX11Available = getenv("DISPLAY") != NULL;
 
-  #ifdef TARGET_NO_X11
-    #ifdef TARGET_RASPBERRY_PI
-      return setupRPiNativeWindow(w,h,screenMode);
-    #else
-      ofError("ofAppEGLWindow") << "Window type not defined correctly!";
-      return false;
-    #endif
-  #else 
-    return setupX11NativeWindow(w,h,screenMode);
-  #endif
+    if(eglWindowPreference == OF_APP_WINDOW_AUTO) {
+        if(bIsX11Available) {
+            isUsingX11 = true;
+        } else {
+            isUsingX11 = false;
+        }
+    } else if(eglWindowPreference == OF_APP_WINDOW_NATIVE) {
+        isUsingX11 = false;
+    } else if(eglWindowPreference == OF_APP_WINDOW_X11) {
+        isUsingX11 = true;
+        if(!bIsX11Available) {
+            ofLogError("ofAppEGLWindow") << "X11 Window requested, but X11 is not available.";
+            return false;
+        }
+    }
+
+
+    if(isUsingX11) {
+        return setupX11NativeWindow(w,h,screenMode);
+    } else {
+        #ifdef TARGET_RASPBERRY_PI
+          return setupRPiNativeWindow(w,h,screenMode);
+        #else
+          ofLogError("ofAppEGLWindow") << "Window type not defined correctly for thsi system!";
+          return false;
+        #endif
+    }
 }
 
-
 //------------------------------------------------------------
-bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display)
-{
+bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display) {
 
   EGLBoolean result;
   EGLint num_config;
@@ -280,10 +314,8 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     // get an EGL eglDisplay connection
     
     if(display==NULL){
-    	ofLogNotice("ofAppEGLWindow::setupEGL") << "setting default Display";
     	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     }else{
-		ofLogNotice("ofAppEGLWindow::setupEGL") << "setting argument Display";
     	eglDisplay = eglGetDisplay(*display);
     }
 
@@ -291,14 +323,13 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 	   ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
 	   return false;
     }else{
-    	ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL Display correctly set";
+    	ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL Display correctly set.";
     }
 
     EGLint eglVersionMajor = 0;
     EGLint eglVersionMinor = 0;
 
     // initialize the EGL eglDisplay connection
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglInitialize";
     result = eglInitialize(eglDisplay, &eglVersionMajor, &eglVersionMinor);
 
     if(result == EGL_BAD_DISPLAY) {
@@ -349,7 +380,6 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 		};
 
     // get an appropriate EGL frame buffer configuration
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglChooseConfig";
     result = eglChooseConfig(eglDisplay, 
                              attribute_list, 
                              &config, 
@@ -358,8 +388,6 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 
     assert(EGL_FALSE != result);
     
-
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateWindowSurface";
     eglSurface = eglCreateWindowSurface( eglDisplay, config, nativeWindow, NULL );
     assert(eglSurface != EGL_NO_SURFACE);
     
@@ -376,13 +404,11 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 		EGL_NONE
 	};
 
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateContext";
     eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, contextAttribList);
     assert(eglContext != EGL_NO_CONTEXT);
 
 
     // connect the eglContext to the eglSurface
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglMakeCurrent";
     result = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
     assert(EGL_FALSE != result);
 
@@ -398,17 +424,26 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
   		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
   		renderer->setup();
     }
-    
-	printf("EGL_VERSION = %s\n", (char *) eglQueryString(display, EGL_VERSION));
-	printf("GL_RENDERER = %s\n", (char *) glGetString(GL_RENDERER));
-	printf("GL_VERSION  = %s\n", (char *) glGetString(GL_VERSION));
-	printf("GL_VENDOR   = %s\n", (char *) glGetString(GL_VENDOR));
+
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "-----EGL-----";
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VERSION_MAJOR = " << eglVersionMajor;
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VERSION_MINOR = " << eglVersionMinor;
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_CLIENT_APIS = " << eglQueryString(eglDisplay, EGL_CLIENT_APIS);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VENDOR = "  << eglQueryString(eglDisplay, EGL_VENDOR);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VERSION = " << eglQueryString(eglDisplay, EGL_VERSION);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_EXTENSIONS = " << eglQueryString(eglDisplay, EGL_EXTENSIONS);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "GL_RENDERER = " << glGetString(GL_RENDERER);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "GL_VERSION  = " << glGetString(GL_VERSION);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "GL_VENDOR   = " << glGetString(GL_VENDOR);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "-------------";
+
 
     return true;
 }
 
 //------------------------------------------------------------
 void ofAppEGLWindow::destroyEGL() {
+    ofLogNotice("ofAppEGLWindow::destroyEGL") << "Destroying EGL window.";
     eglMakeCurrent( eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
     eglDestroySurface( eglDisplay, eglSurface );
     eglDestroyContext( eglDisplay, eglContext );
@@ -426,28 +461,32 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
    
     ofNotifySetup();
 
+    if(!isUsingX11) {
+        setupNativeEvents();
+    }
+
     // loop it!
-    infiniteLoop();
-    
-    // we got a terminate ... so clean up.
-    destroyEGL();
+    while (!terminate) {
+      checkEvents();  
+      idle();
+      display();
+    }
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::infiniteLoop() {
-	
-    #ifdef TARGET_NO_X11
-        #ifdef TARGET_RASPBERRY_PI
-            startThread();
-        #endif
-	#endif
-	
-    while (!terminate) {
-		checkEvents();	
-    	idle();
-    	display();
-    }
-    stopThread();
+bool ofAppEGLWindow::setupNativeEvents() {
+  setupNativeUDev();
+  setupNativeMouse();
+  setupNativeKeyboard();
+  startThread();
+}
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::destroyNativeEvents() {
+  destroyNativeUDev();
+  destroyNativeMouse(); 
+  destroyNativeKeyboard(); 
+  waitForThread(true);
 }
 
 //------------------------------------------------------------
@@ -476,44 +515,44 @@ int ofAppEGLWindow::getWindowHeight() {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::checkEvents(){
-  #ifdef TARGET_NO_X11
-    static queue<ofMouseEventArgs> mouseEventsCopy;
-    lock();
-    mouseEventsCopy = mouseEvents;
-    while(!mouseEvents.empty()){
-      mouseEvents.pop();
-    }
-    unlock();
-    while(!mouseEventsCopy.empty()){
-      ofNotifyMouseEvent(mouseEventsCopy.front());
-      mouseEventsCopy.pop();
-    }
 
-    // KEYBOARD EVENTS
-    static queue<ofKeyEventArgs> keyEventsCopy;
-    lock();
-    keyEventsCopy = keyEvents;
-    while(!keyEvents.empty()){
-      keyEvents.pop();
-    }
-    unlock();
-    while(!keyEventsCopy.empty()){
-      ofNotifyKeyEvent(keyEventsCopy.front());
-      keyEventsCopy.pop();
-    }
+    if(isUsingX11) {
+        while(1){
+            XEvent event;
+            if (::XCheckWindowEvent(x11Display, x11Window, -1, &event)){
+                handleX11Event(event);
+            }else if (::XCheckTypedEvent(x11Display, ClientMessage, &event)){
+                handleX11Event(event);
+            }else{
+                break;
+            }
+        }    
+    } else {
+        static queue<ofMouseEventArgs> mouseEventsCopy;
+        lock();
+        mouseEventsCopy = mouseEvents;
+        while(!mouseEvents.empty()){
+          mouseEvents.pop();
+        }
+        unlock();
+        while(!mouseEventsCopy.empty()){
+          ofNotifyMouseEvent(mouseEventsCopy.front());
+          mouseEventsCopy.pop();
+        }
 
-  #else
-    while(1){
-  		XEvent event;
-  		if (::XCheckWindowEvent(x11Display, x11Window, -1, &event)){
-  			handleEvent(event);
-  		}else if (::XCheckTypedEvent(x11Display, ClientMessage, &event)){
-  			handleEvent(event);
-  		}else{
-  			break;
-  		}
-  	}
-  #endif
+        // KEYBOARD EVENTS
+        static queue<ofKeyEventArgs> keyEventsCopy;
+        lock();
+        keyEventsCopy = keyEvents;
+        while(!keyEvents.empty()){
+          keyEvents.pop();
+        }
+        unlock();
+        while(!keyEventsCopy.empty()){
+          ofNotifyKeyEvent(keyEventsCopy.front());
+          keyEventsCopy.pop();
+        }
+    }
 }
 
 //------------------------------------------------------------
@@ -723,32 +762,27 @@ void ofAppEGLWindow::display() {
 
   ofNotifyDraw();
   
-  #ifdef TARGET_NO_X11
+  if(!isUsingX11) {
     if(bShowCursor){
-    ofPushStyle();
-    	ofEnableAlphaBlending();
-    	ofDisableTextureEdgeHack();
-    	ofSetColor(255);
-    	mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
-    	ofEnableTextureEdgeHack();
-    	//TODO: we need a way of querying the previous state of texture hack
-    	ofPopStyle();
+        ofPushStyle();
+        ofEnableAlphaBlending();
+        ofDisableTextureEdgeHack();
+        ofSetColor(255);
+        mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
+        ofEnableTextureEdgeHack();
+        //TODO: we need a way of querying the previous state of texture hack
+        ofPopStyle();
     }
-  #else 
-    // X11 shows its own cursor
-  #endif
-
+   }
+ 
 	if(ofGetCurrentRenderer()->getType()=="GLES2"){
 		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
 		renderer->finishRender();
     }
   
   eglSwapBuffers(eglDisplay, eglSurface);
-
   nFramesSinceWindowResized++;
-
   nFrameCount++;    // increase the overall frame count
-
   postDisplay();
 }
 
@@ -792,33 +826,23 @@ void ofAppEGLWindow::threadedFunction(){
     // TODO: a way to setup mouse and keyboard if 
     // they are not plugged in upon start
     // This can be done with our udev device callbacks
-    setupUDev();
-    setupMouse();
-    setupKeyboard();
 
     while(isThreadRunning()) {
-
-        readUDevEvents();
-        readMouseEvents();
-        readKeyboardEvents();
+        readNativeUDevEvents();
+        readNativeMouseEvents();
+        readNativeKeyboardEvents();
 
         // sleep briefly
         ofSleepMillis(20);
 	}
-
-    destroyUDev();
-    destroyMouse(); 
-    destroyKeyboard(); 
 }
  
 //------------------------------------------------------------
 // PLATFORM SPECIFIC RPI
 //------------------------------------------------------------
 
-#ifdef TARGET_NO_X11
-
 //------------------------------------------------------------
-bool ofAppEGLWindow::setupUDev() {
+bool ofAppEGLWindow::setupNativeUDev() {
  
     udev = udev_new(); // create new udev object
     if(!udev) {
@@ -838,13 +862,13 @@ bool ofAppEGLWindow::setupUDev() {
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::destroyUDev() {
+bool ofAppEGLWindow::destroyNativeUDev() {
     udev_unref(udev); // clean up
 }
 
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::setupMouse() {
+bool ofAppEGLWindow::setupNativeMouse() {
     struct dirent **eps;
     int n = scandir("/dev/input/by-path/", &eps, filter_mouse, dummy_sort);
 
@@ -853,15 +877,15 @@ bool ofAppEGLWindow::setupMouse() {
         char devicePathBuffer[256];
         sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
         mouse_fd = open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
-        ofLogVerbose("ofAppEGLWindow") << "setupMouse() : mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupMouse() : mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
     } else {
-        ofLogWarning("ofAppEGLWindow") << "setupMouse() : Unabled to find mouse.";
+        ofLogNotice("ofAppEGLWindow") << "setupMouse() : Unabled to find mouse.";
     }
 
     if (mouse_fd >= 0) {
         char deviceNameBuffer[256] = "Unknown Device";
         ioctl(mouse_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-        ofLogVerbose("ofAppEGLWindow") << "setupMouse() : mouse device name = " << deviceNameBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupMouse() : mouse device name = " << deviceNameBuffer;
     } else {
         ofLogError("ofAppEGLWindow") << "setupMouse() : did not open mouse.";
     }
@@ -872,7 +896,7 @@ bool ofAppEGLWindow::setupMouse() {
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::setupKeyboard() {
+bool ofAppEGLWindow::setupNativeKeyboard() {
     struct dirent **eps;
     int n = scandir("/dev/input/by-path/", &eps, filter_kbd, dummy_sort);
 
@@ -881,7 +905,7 @@ bool ofAppEGLWindow::setupKeyboard() {
         char devicePathBuffer[256];
         sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
         keyboard_fd=open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
-        ofLogVerbose("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
     } else {
         ofLogWarning("ofAppEGLWindow") << "setupKeyboard() : Unabled to find keyboard.";
     }
@@ -889,7 +913,7 @@ bool ofAppEGLWindow::setupKeyboard() {
     if (keyboard_fd >= 0) {
         char deviceNameBuffer[256] = "Unknown Device";
         ioctl(keyboard_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-        ofLogVerbose("ofAppEGLWindow") << "setupKeyboard() : keyboard device name = " << deviceNameBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard device name = " << deviceNameBuffer;
     
 
         // save current terminal settings
@@ -911,26 +935,26 @@ bool ofAppEGLWindow::setupKeyboard() {
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::destroyMouse() {
+bool ofAppEGLWindow::destroyNativeMouse() {
     if(mouse_fd >= 0) {
         // nothing to do
     }
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::destroyKeyboard() {
-    ofLogVerbose("ofAppEGLWindow") << "destroyKeyboard()";
+bool ofAppEGLWindow::destroyNativeKeyboard() {
+    ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard()";
 
     if (keyboard_fd >= 0) {
       tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
     } else {
-      ofLogVerbose("ofAppEGLWindow") << "destroyKeyboard() : unable to reset terminal";
+      ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard() : unable to reset terminal";
     }
 }
 
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::readUDevEvents() {
+bool ofAppEGLWindow::readNativeUDevEvents() {
     // look for devices being attatched / detatched
 
     fd_set fds;
@@ -964,7 +988,7 @@ bool ofAppEGLWindow::readUDevEvents() {
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::readKeyboardEvents() {
+bool ofAppEGLWindow::readNativeKeyboardEvents() {
     // http://www.diegm.uniud.it/loghi/CE2/kbd.pdf
     // http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
     // https://strcpy.net/b/archives/2010/11/17/abusing_the_linux_input_subsystem/index.html
@@ -1124,7 +1148,7 @@ bool ofAppEGLWindow::readKeyboardEvents() {
                         pushKeyEvent = true;
                     }
                 } else {
-                    ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents() : input_event.code is outside of our small range.";
+                    ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents() : input_event.code is outside of our small range.";
                 }
             }
         } else if(ev.type == EV_MSC) {
@@ -1154,7 +1178,7 @@ bool ofAppEGLWindow::readKeyboardEvents() {
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::readMouseEvents() {
+bool ofAppEGLWindow::readNativeMouseEvents() {
     // http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
     struct input_event ev;
 
@@ -1194,7 +1218,7 @@ bool ofAppEGLWindow::readMouseEvents() {
                     axisValuePending = true;
                     break;
                 default:
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : Unknown mouse axis (perhaps it's the scroll wheel?)";
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : Unknown mouse axis (perhaps it's the scroll wheel?)";
                     break;
              }
 
@@ -1212,7 +1236,7 @@ bool ofAppEGLWindow::readMouseEvents() {
                     mouseEvent.button = mb.mouseButtonState;
                     pushMouseEvent = true;
                 } else { // unknown
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_MIDDLE) {
                 if(ev.value == 0) { // release
@@ -1226,7 +1250,7 @@ bool ofAppEGLWindow::readMouseEvents() {
                     mouseEvent.button = mb.mouseButtonState;
                     pushMouseEvent = true;
                 } else { // unknown
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_RIGHT) {
                 if(ev.value == 0) { // release
@@ -1240,10 +1264,10 @@ bool ofAppEGLWindow::readMouseEvents() {
                     mouseEvent.button = mb.mouseButtonState;
                     pushMouseEvent = true;
                 } else {
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else {
-                ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.code = " << ev.code;
+                ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.code = " << ev.code;
             }
             // not sure why we are getting that event here
         } else if(ev.type == EV_MSC) {
@@ -1293,7 +1317,7 @@ bool ofAppEGLWindow::readMouseEvents() {
 }
 
 
-    #ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI
 //------------------------------------------------------------
 bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
 
@@ -1315,8 +1339,8 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
     return false;
   }
 
-  cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
-  cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
+  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "Requested Screen Size w=" << w << " and  h=" << h;
+  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "Hardware Screen Size sw=" << sw << " and  sh=" << sh;
 
   if(screenMode == OF_WINDOW) {
     sw = MIN(sw,w);
@@ -1325,7 +1349,7 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
     // OF_FULLSCREEN and GAME take the screen size 
   }
 
-    cout << "CREATING A SCREEN THAT IS w=" << sw << " and h=" << sh << endl;
+  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "Final Screen Size sw=" << sw << " and  sh=" << sh;
 
 
 //////////////////////////
@@ -1346,10 +1370,10 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
     DISPMANX_DISPLAY_HANDLE_T dispman_display;
     DISPMANX_UPDATE_HANDLE_T dispman_update;
 
-    VC_DISPMANX_ALPHA_T nativeWindowAlpha;
-    nativeWindowAlpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
-    nativeWindowAlpha.opacity = 255; // TODO: set from structFrom new struct
-    nativeWindowAlpha.mask = 0;
+    VC_DISPMANX_ALPHA_T rpiNativeWindowAlpha;
+    rpiNativeWindowAlpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
+    rpiNativeWindowAlpha.opacity = 255; // TODO: set from structFrom new struct
+    rpiNativeWindowAlpha.mask = 0;
 
     dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
     dispman_update  = vc_dispmanx_update_start( 0 );
@@ -1361,32 +1385,29 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
                                               0/*src*/,
                                               &src_rect, 
                                               DISPMANX_PROTECTION_NONE, 
-                                              &nativeWindowAlpha, 
+                                              &rpiNativeWindowAlpha, 
                                               0/*clamp*/, 
                                               (DISPMANX_TRANSFORM_T)0/*transform*/
                                               );
 
-    nativeWindow.element = dispman_element;
-    nativeWindow.width = sw;
-    nativeWindow.height = sh;
+    rpiNativeWindow.element = dispman_element;
+    rpiNativeWindow.width = sw;
+    rpiNativeWindow.height = sh;
 
     vc_dispmanx_update_submit_sync( dispman_update );
 
-    bool ret = setupEGL(&nativeWindow,NULL);
+    bool ret = setupEGL(&rpiNativeWindow,NULL);
 
     if(ret){
         screenRect.x = 0;
         screenRect.y = 0;
-        screenRect.width = nativeWindow.width;
-        screenRect.height = nativeWindow.height;
+        screenRect.width = rpiNativeWindow.width;
+        screenRect.height = rpiNativeWindow.height;
     }
 
     return ret;    
 }
-    #else
-    // ERROR -- no option supplied for NO_X11 option
-    #endif
-#else
+#endif
 
 //------------------------------------------------------------
 // X11 BELOW
@@ -1565,7 +1586,7 @@ static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int e
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::handleEvent(const XEvent& event){
+void ofAppEGLWindow::handleX11Event(const XEvent& event){
     static ofMouseEventArgs mouseEvent;
     static ofKeyEventArgs keyEvent;
     switch (event.type){
@@ -1640,6 +1661,3 @@ void ofAppEGLWindow::handleEvent(const XEvent& event){
   }*/
   }
 }
-#endif
-
-
