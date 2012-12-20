@@ -197,10 +197,31 @@ ofAppEGLWindow::ofAppEGLWindow() {
 
     eglWindowPreference = OF_APP_WINDOW_AUTO;
     isUsingX11 = false;
+
+    init();
+
 }
 
 //------------------------------------------------------------
-ofAppEGLWindow::~ofAppEGLWindow() {}
+ofAppEGLWindow::~ofAppEGLWindow() {
+  ofRemoveListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::init() {
+  ofAddListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::exit(ofEventArgs &e) {
+  terminate = true; // TODO, it is unlikely that this will happen
+  if(!isUsingX11) {
+    destroyNativeEvents();
+  }   
+
+  // we got a terminate ... so clean up.
+  destroyEGL();
+}
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
@@ -215,12 +236,12 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
      //windowW = requestedWidth  = getWindowWidth();
      //windowH = requestedHeight = getWindowHeight();
 
-	bool success = setupNativeWindow(w,h,screenMode);
+	   bool success = setupNativeWindow(w,h,screenMode);
 
     if(!success) {
-      cout << "CREATED screen failed " << w << " x " << h << endl;
+      ofLogNotice("ofAppEGLWindow::setupOpenGL")  << "CREATED screen failed " << w << " x " << h;
     } else {
-      cout << "CREATED SCREEN WITH SIZE " << w << " x " << h << endl;
+      ofLogNotice("ofAppEGLWindow::setupOpenGL")  << "CREATED SCREEN WITH SIZE " << w << " x " << h;
     }
 
     nonFullscreenWindowRect = screenRect;
@@ -293,10 +314,8 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     // get an EGL eglDisplay connection
     
     if(display==NULL){
-    	ofLogNotice("ofAppEGLWindow::setupEGL") << "setting default Display";
     	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     }else{
-		ofLogNotice("ofAppEGLWindow::setupEGL") << "setting argument Display";
     	eglDisplay = eglGetDisplay(*display);
     }
 
@@ -304,14 +323,13 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 	   ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
 	   return false;
     }else{
-    	ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL Display correctly set";
+    	ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL Display correctly set.";
     }
 
     EGLint eglVersionMajor = 0;
     EGLint eglVersionMinor = 0;
 
     // initialize the EGL eglDisplay connection
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglInitialize";
     result = eglInitialize(eglDisplay, &eglVersionMajor, &eglVersionMinor);
 
     if(result == EGL_BAD_DISPLAY) {
@@ -362,7 +380,6 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 		};
 
     // get an appropriate EGL frame buffer configuration
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglChooseConfig";
     result = eglChooseConfig(eglDisplay, 
                              attribute_list, 
                              &config, 
@@ -371,7 +388,6 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 
     assert(EGL_FALSE != result);
     
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateWindowSurface";
     eglSurface = eglCreateWindowSurface( eglDisplay, config, nativeWindow, NULL );
     assert(eglSurface != EGL_NO_SURFACE);
     
@@ -388,13 +404,11 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 		EGL_NONE
 	};
 
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglCreateContext";
     eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, contextAttribList);
     assert(eglContext != EGL_NO_CONTEXT);
 
 
     // connect the eglContext to the eglSurface
-	ofLogNotice("ofAppEGLWindow::setupEGL") << "eglMakeCurrent";
     result = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
     assert(EGL_FALSE != result);
 
@@ -410,18 +424,26 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
   		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
   		renderer->setup();
     }
-    
-	printf("EGL_VERSION = %s\n", (char *) eglQueryString(display, EGL_VERSION));
-	printf("GL_RENDERER = %s\n", (char *) glGetString(GL_RENDERER));
-	printf("GL_VERSION  = %s\n", (char *) glGetString(GL_VERSION));
-	printf("GL_VENDOR   = %s\n", (char *) glGetString(GL_VENDOR));
+
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "-----EGL-----";
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VERSION_MAJOR = " << eglVersionMajor;
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VERSION_MINOR = " << eglVersionMinor;
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_CLIENT_APIS = " << eglQueryString(eglDisplay, EGL_CLIENT_APIS);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VENDOR = "  << eglQueryString(eglDisplay, EGL_VENDOR);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_VERSION = " << eglQueryString(eglDisplay, EGL_VERSION);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL_EXTENSIONS = " << eglQueryString(eglDisplay, EGL_EXTENSIONS);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "GL_RENDERER = " << glGetString(GL_RENDERER);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "GL_VERSION  = " << glGetString(GL_VERSION);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "GL_VENDOR   = " << glGetString(GL_VENDOR);
+    ofLogNotice("ofAppEGLWindow::setupEGL") << "-------------";
+
 
     return true;
 }
 
 //------------------------------------------------------------
 void ofAppEGLWindow::destroyEGL() {
-    cout << "destroying EGL window." << endl;
+    ofLogNotice("ofAppEGLWindow::destroyEGL") << "Destroying EGL window.";
     eglMakeCurrent( eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
     eglDestroySurface( eglDisplay, eglSurface );
     eglDestroyContext( eglDisplay, eglContext );
@@ -439,29 +461,32 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
    
     ofNotifySetup();
 
+    if(!isUsingX11) {
+        setupNativeEvents();
+    }
+
     // loop it!
-    infiniteLoop();
-    
-    // we got a terminate ... so clean up.
-    destroyEGL();
+    while (!terminate) {
+      checkEvents();  
+      idle();
+      display();
+    }
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::infiniteLoop() {
-	
-    if(!isUsingX11) {
-        startThread();
-    }
-	
-    while (!terminate) {
-		checkEvents();	
-    	idle();
-    	display();
-    }
+bool ofAppEGLWindow::setupNativeEvents() {
+  setupNativeUDev();
+  setupNativeMouse();
+  setupNativeKeyboard();
+  startThread();
+}
 
-    if(!isUsingX11) {
-        stopThread();
-    }   
+//------------------------------------------------------------
+bool ofAppEGLWindow::destroyNativeEvents() {
+  destroyNativeUDev();
+  destroyNativeMouse(); 
+  destroyNativeKeyboard(); 
+  waitForThread(true);
 }
 
 //------------------------------------------------------------
@@ -801,12 +826,8 @@ void ofAppEGLWindow::threadedFunction(){
     // TODO: a way to setup mouse and keyboard if 
     // they are not plugged in upon start
     // This can be done with our udev device callbacks
-    setupNativeUDev();
-    setupNativeMouse();
-    setupNativeKeyboard();
 
     while(isThreadRunning()) {
-
         readNativeUDevEvents();
         readNativeMouseEvents();
         readNativeKeyboardEvents();
@@ -814,10 +835,6 @@ void ofAppEGLWindow::threadedFunction(){
         // sleep briefly
         ofSleepMillis(20);
 	}
-
-    destroyNativeUDev();
-    destroyNativeMouse(); 
-    destroyNativeKeyboard(); 
 }
  
 //------------------------------------------------------------
@@ -860,15 +877,15 @@ bool ofAppEGLWindow::setupNativeMouse() {
         char devicePathBuffer[256];
         sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
         mouse_fd = open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
-        ofLogVerbose("ofAppEGLWindow") << "setupMouse() : mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupMouse() : mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
     } else {
-        ofLogWarning("ofAppEGLWindow") << "setupMouse() : Unabled to find mouse.";
+        ofLogNotice("ofAppEGLWindow") << "setupMouse() : Unabled to find mouse.";
     }
 
     if (mouse_fd >= 0) {
         char deviceNameBuffer[256] = "Unknown Device";
         ioctl(mouse_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-        ofLogVerbose("ofAppEGLWindow") << "setupMouse() : mouse device name = " << deviceNameBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupMouse() : mouse device name = " << deviceNameBuffer;
     } else {
         ofLogError("ofAppEGLWindow") << "setupMouse() : did not open mouse.";
     }
@@ -888,7 +905,7 @@ bool ofAppEGLWindow::setupNativeKeyboard() {
         char devicePathBuffer[256];
         sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
         keyboard_fd=open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
-        ofLogVerbose("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
     } else {
         ofLogWarning("ofAppEGLWindow") << "setupKeyboard() : Unabled to find keyboard.";
     }
@@ -896,7 +913,7 @@ bool ofAppEGLWindow::setupNativeKeyboard() {
     if (keyboard_fd >= 0) {
         char deviceNameBuffer[256] = "Unknown Device";
         ioctl(keyboard_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-        ofLogVerbose("ofAppEGLWindow") << "setupKeyboard() : keyboard device name = " << deviceNameBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard device name = " << deviceNameBuffer;
     
 
         // save current terminal settings
@@ -926,12 +943,12 @@ bool ofAppEGLWindow::destroyNativeMouse() {
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::destroyNativeKeyboard() {
-    ofLogVerbose("ofAppEGLWindow") << "destroyKeyboard()";
+    ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard()";
 
     if (keyboard_fd >= 0) {
       tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
     } else {
-      ofLogVerbose("ofAppEGLWindow") << "destroyKeyboard() : unable to reset terminal";
+      ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard() : unable to reset terminal";
     }
 }
 
@@ -1131,7 +1148,7 @@ bool ofAppEGLWindow::readNativeKeyboardEvents() {
                         pushKeyEvent = true;
                     }
                 } else {
-                    ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents() : input_event.code is outside of our small range.";
+                    ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents() : input_event.code is outside of our small range.";
                 }
             }
         } else if(ev.type == EV_MSC) {
@@ -1201,7 +1218,7 @@ bool ofAppEGLWindow::readNativeMouseEvents() {
                     axisValuePending = true;
                     break;
                 default:
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : Unknown mouse axis (perhaps it's the scroll wheel?)";
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : Unknown mouse axis (perhaps it's the scroll wheel?)";
                     break;
              }
 
@@ -1219,7 +1236,7 @@ bool ofAppEGLWindow::readNativeMouseEvents() {
                     mouseEvent.button = mb.mouseButtonState;
                     pushMouseEvent = true;
                 } else { // unknown
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_MIDDLE) {
                 if(ev.value == 0) { // release
@@ -1233,7 +1250,7 @@ bool ofAppEGLWindow::readNativeMouseEvents() {
                     mouseEvent.button = mb.mouseButtonState;
                     pushMouseEvent = true;
                 } else { // unknown
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_RIGHT) {
                 if(ev.value == 0) { // release
@@ -1247,10 +1264,10 @@ bool ofAppEGLWindow::readNativeMouseEvents() {
                     mouseEvent.button = mb.mouseButtonState;
                     pushMouseEvent = true;
                 } else {
-                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else {
-                ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.code = " << ev.code;
+                ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.code = " << ev.code;
             }
             // not sure why we are getting that event here
         } else if(ev.type == EV_MSC) {
@@ -1322,8 +1339,8 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
     return false;
   }
 
-  cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
-  cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
+  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "Requested Screen Size w=" << w << " and  h=" << h;
+  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "Hardware Screen Size sw=" << sw << " and  sh=" << sh;
 
   if(screenMode == OF_WINDOW) {
     sw = MIN(sw,w);
@@ -1332,7 +1349,7 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
     // OF_FULLSCREEN and GAME take the screen size 
   }
 
-    cout << "CREATING A SCREEN THAT IS w=" << sw << " and h=" << sh << endl;
+  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "Final Screen Size sw=" << sw << " and  sh=" << sh;
 
 
 //////////////////////////

@@ -32,10 +32,6 @@
 #include "ofThread.h"
 #include "ofImage.h"
 
-#ifdef TARGET_RASPBERRY_PI
-#define TARGET_NO_X11 1
-#endif
-
 // include includes for both native and X11 possibilities
 #include <libudev.h>
 #include <stdbool.h>
@@ -71,6 +67,8 @@ class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
 	ofAppEGLWindow();
 	virtual ~ofAppEGLWindow();
+
+	void exit(ofEventArgs &e);
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
@@ -119,13 +117,12 @@ public:
 	virtual void	setVerticalSync(bool enabled);
 
 protected:
+	void init();
 
 	void idle();
 	virtual void postIdle() {};
 	void display();
 	virtual void postDisplay() {};
-
-	void infiniteLoop();
 
 	void setWindowRect(const ofRectangle& requestedWindowRect);
 
@@ -213,6 +210,9 @@ bool setupX11NativeWindow(int w, int h, int screenMode);
 //------------------------------------------------------------
 // PLATFORM SPECIFIC EVENTS
 //------------------------------------------------------------
+bool setupNativeEvents();
+bool destroyNativeEvents();
+
 bool setupNativeUDev();
 bool destroyNativeUDev();
 
