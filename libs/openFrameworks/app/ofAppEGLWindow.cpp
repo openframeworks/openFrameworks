@@ -43,7 +43,7 @@
     static int  mouse_fd    = -1; // defaults to 0 
 
     // minimal map
-    const char lowercase_map[] = {
+    const int lowercase_map[] = {
         0,  0,  '1',  '2',  '3',  '4',  '5', '6',  '7', '8', '9', '0',
         '-', '=', '\b', '\t', 'q',  'w',  'e', 'r',  't', 'y', 'u', 'i',
         'o', 'p', '[',  ']',  '\n', 0,   'a', 's',  'd', 'f', 'g', 'h',
@@ -56,7 +56,7 @@
     };
     
     // minimal keyboard map
-    const char uppercase_map[] = {
+    const int uppercase_map[] = {
         0,  0,  '!',  '@',  '#',  '$',  '%', '^',  '&', '*', '(', ')',
         '_', '+', '\b', '\t', 'Q',  'W',  'E', 'R',  'T', 'Y', 'U', 'I',
         'O', 'P', '{',  '}',  '\n', 0,   'A', 'S',  'D', 'F', 'G', 'H',
@@ -245,6 +245,16 @@ void ofAppEGLWindow::setupPeripherals() {
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::setupNativeWindow(int w, int h, int screenMode) {
+
+  // X11 check
+  char * pDisplay;
+  pDisplay = getenv ("DISPLAY");
+  if (pDisplay != NULL) {
+    cout << "X11 is available : DISPLAY = " << pDisplay << "." << endl;
+  } else {
+    cout << "X11 is NOT available." << endl;
+  }
+
   #ifdef TARGET_NO_X11
     #ifdef TARGET_RASPBERRY_PI
       return setupRPiNativeWindow(w,h,screenMode);
@@ -852,6 +862,8 @@ bool ofAppEGLWindow::setupMouse() {
         char deviceNameBuffer[256] = "Unknown Device";
         ioctl(mouse_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
         ofLogVerbose("ofAppEGLWindow") << "setupMouse() : mouse device name = " << deviceNameBuffer;
+    } else {
+        ofLogError("ofAppEGLWindow") << "setupMouse() : did not open mouse.";
     }
 
     mb.mouseButtonState = 0;
@@ -888,6 +900,8 @@ bool ofAppEGLWindow::setupKeyboard() {
         tc.c_lflag |= ECHONL;
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
 
+    } else {
+        ofLogError("ofAppEGLWindow") << "setupKeyboard() : did not open keyboard.";
     }
 
     kb.shiftPressed = false;
@@ -905,8 +919,12 @@ bool ofAppEGLWindow::destroyMouse() {
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::destroyKeyboard() {
+    ofLogVerbose("ofAppEGLWindow") << "destroyKeyboard()";
+
     if (keyboard_fd >= 0) {
-        tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
+      tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
+    } else {
+      ofLogVerbose("ofAppEGLWindow") << "destroyKeyboard() : unable to reset terminal";
     }
 }
 
