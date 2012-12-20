@@ -32,8 +32,93 @@
 #include "ofGLES2Renderer.h"
 #include <assert.h>
 
-#ifndef TARGET_RASPBERRY_PI
-#include <X11/XKBlib.h>
+#ifdef TARGET_NO_X11
+
+    struct udev         *udev;
+    struct udev_device  *dev;
+    struct udev_monitor *mon;
+    static int  udev_fd     = -1;
+
+    static int  keyboard_fd = -1; // defaults to 0 ie console
+    static int  mouse_fd    = -1; // defaults to 0 
+
+    // minimal map
+    const char lowercase_map[] = {
+        0,  0,  '1',  '2',  '3',  '4',  '5', '6',  '7', '8', '9', '0',
+        '-', '=', '\b', '\t', 'q',  'w',  'e', 'r',  't', 'y', 'u', 'i',
+        'o', 'p', '[',  ']',  '\n', 0,   'a', 's',  'd', 'f', 'g', 'h',
+        'j', 'k', 'l',  ';',  '\'',  '\n', 0,  '\\', 'z', 'x', 'c', 'v',
+        'b', 'n', 'm',  ',',  '.',  '/',  0,  '*',  0,  ' ', 0,  0,
+        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
+     
+    };
+    
+    // minimal keyboard map
+    const char uppercase_map[] = {
+        0,  0,  '!',  '@',  '#',  '$',  '%', '^',  '&', '*', '(', ')',
+        '_', '+', '\b', '\t', 'Q',  'W',  'E', 'R',  'T', 'Y', 'U', 'I',
+        'O', 'P', '{',  '}',  '\n', 0,   'A', 'S',  'D', 'F', 'G', 'H',
+        'J', 'K', 'L',  ':',  '"', '\n', 0,  '\\', 'Z', 'X', 'C', 'V',
+        'B', 'N', 'M',  '<',  '>',  '?',  0,  '*',  0,  ' ', 0,  0,
+        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
+        0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
+    };
+
+    // keep track of a few things ...
+    typedef struct {
+        bool shiftPressed;
+        bool capsLocked;
+    } KeyboardState;
+
+    static KeyboardState kb;
+
+    static struct termios tc;
+    static struct termios ots;
+
+    typedef struct {
+        int   mouseButtonState;
+    } MouseState;
+
+    #define MOUSE_BUTTON_LEFT_MASK        1
+    #define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
+    #define MOUSE_BUTTON_RIGHT_MASK  2 << 1
+
+    static MouseState mb;
+
+    static int string_ends_with(const char *str, const char *suffix) {
+        if (!str || !suffix)
+            return 0;
+        size_t lenstr = strlen(str);
+        size_t lensuffix = strlen(suffix);
+        if (lensuffix > lenstr)
+            return 0;
+        return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+    }
+
+    static int dummy_sort(const struct dirent **a,const struct dirent **b) {
+        return 1; // dummy sort
+    }
+
+    static int filter_kbd(const struct dirent *d) {
+        if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-kbd")) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    static int filter_mouse(const struct dirent *d) {
+        if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-mouse")) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+#else
+  #include <X11/XKBlib.h>
 #endif
 
 #define MOUSE_CURSOR_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
@@ -72,6 +157,8 @@ static const struct {
   "\0\377\203\377\377\377\0",
 };
 
+
+
 // TODO. we may not need these to be static, but we will
 // leave it this way for now in case future EGL windows 
 // use static callbacks (like glut)
@@ -103,175 +190,19 @@ ofAppEGLWindow::ofAppEGLWindow() {
     eglDisplayString   = "";
     orientation     = OF_ORIENTATION_DEFAULT;
 
-cout << "ofAppEGLWindow constructor " << endl;
+    //TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
+    // to be totally correct we might need to take into account screen size
+    // and add acceleration
+    mouseScaleX = 2.0f;
+    mouseScaleY = 2.0f;
+
 }
 
 //------------------------------------------------------------
-ofAppEGLWindow::~ofAppEGLWindow() {
-
-}
-
-//------------------------------------------------------------
-bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
-
-#ifdef TARGET_RASPBERRY_PI
-  bcm_host_init();
-
-  //boolean force HDMI vs. composite
-
-  int32_t success = 0;
-
-  uint32_t sw;
-  uint32_t sh;
-
-  // create an EGL window surface
-  // IF SCREENMODE==FULLSCREEN
-  success = graphics_get_display_size(0 /* LCD */, &sw, &sh);
-
-    cout << "succes=" << success << endl;
-
-  if(success < 0) {
-    cout << "tried to get display, but failed." << endl;
-    return false;
-  }
-
-  cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
-  cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
-
-  if(screenMode == OF_WINDOW) {
-    sw = MIN(sw,w);
-    sh = MIN(sh,h);
-  } else {
-    // OF_FULLSCREEN and GAME take the screen size 
-  }
-
-    cout << "CREATING A SCREEN THAT IS w=" << sw << " and h=" << sh << endl;
-
-
-//////////////////////////
-  VC_RECT_T dst_rect;
-  VC_RECT_T src_rect;
-
-  dst_rect.x = 0;
-  dst_rect.y = 0;
-  dst_rect.width = sw;
-  dst_rect.height = sh;
-
-  src_rect.x = 0;
-  src_rect.y = 0;
-  src_rect.width = sw << 16;
-  src_rect.height = sh << 16;
-
-  DISPMANX_ELEMENT_HANDLE_T dispman_element;
-  DISPMANX_DISPLAY_HANDLE_T dispman_display;
-  DISPMANX_UPDATE_HANDLE_T dispman_update;
-
-
-  dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
-  dispman_update = vc_dispmanx_update_start( 0 );
-
-  dispman_element = vc_dispmanx_element_add ( dispman_update, 
-                                              dispman_display,
-                                              0/*layer*/, 
-                                              &dst_rect, 
-                                              0/*src*/,
-                                              &src_rect, 
-                                              DISPMANX_PROTECTION_NONE, 
-                                              0 /*alpha*/, 
-                                              0/*clamp*/, 
-                                              (DISPMANX_TRANSFORM_T)0/*transform*/
-                                              );
-
-  nativeWindow.element = dispman_element;
-  nativeWindow.width = sw;
-  nativeWindow.height = sh;
-
-  vc_dispmanx_update_submit_sync( dispman_update );
-  
-  bool ret = setupEGL(&nativeWindow,NULL);
-  if(ret){
-  	screenRect.x = 0;
-	screenRect.y = 0;
-    screenRect.width = nativeWindow.width;
-    screenRect.height = nativeWindow.height;
-  }
-  return ret;
-    
-#else
-  return false;
-#endif
-    
-}
-
-//------------------------------------------------------------
-bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
-#ifndef TARGET_RASPBERRY_PI
-
-	// X11 variables
-	x11Window	= 0;
-	x11Display	= 0;
-	long				x11Screen	= 0;
-	XVisualInfo*		x11Visual	= 0;
-	Colormap			x11Colormap	= 0;
-	/*
-		Step 0 - Create a NativeWindowType that we can use it for OpenGL ES output
-	*/
-	Window					sRootWindow;
-    XSetWindowAttributes	sWA;
-	unsigned int			ui32Mask;
-	int						i32Depth;
-	
-	// Initializes the display and screen
-	x11Display = XOpenDisplay( 0 );
-	if (!x11Display)
-	{
-		ofLogError()<< "Error: Unable to open X display";
-		return false;
-	}
-	x11Screen = XDefaultScreen( x11Display );
-
-	// Gets the window parameters
-	sRootWindow = RootWindow(x11Display, x11Screen);
-	i32Depth = DefaultDepth(x11Display, x11Screen);
-	x11Visual = new XVisualInfo;
-	XMatchVisualInfo( x11Display, x11Screen, i32Depth, TrueColor, x11Visual);
-	if (!x11Visual)
-	{
-		ofLogError()<< "Error: Unable to acquire visual";
-		return false;
-	}
-    x11Colormap = XCreateColormap( x11Display, sRootWindow, x11Visual->visual, AllocNone );
-    sWA.colormap = x11Colormap;
-
-    // Add to these for handling other events
-    sWA.event_mask = StructureNotifyMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | KeyPressMask | KeyReleaseMask;
-    ui32Mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
-
-	// Creates the X11 window
-    x11Window = XCreateWindow( x11Display, sRootWindow, 0, 0, w, h,
-								 0, CopyFromParent, InputOutput, CopyFromParent, ui32Mask, &sWA);
-	XMapWindow(x11Display, x11Window);
-	XFlush(x11Display);
-	
-	bool ret = setupEGL((NativeWindowType)x11Window,(EGLNativeDisplayType*)x11Display);
-	if(ret){
-		screenRect.x = 0;
-		screenRect.y = 0;
-		screenRect.width = w;
-		screenRect.height = h;
-	}
-	return ret;
-#else
-  	return false;
-#endif
-
-}
-
+ofAppEGLWindow::~ofAppEGLWindow() {}
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
-     
-	 cout << "in ofAppEGLWINDOW: setupOpenGL" << endl;
 
      windowMode = screenMode;
      bNewScreenMode = true;
@@ -283,13 +214,7 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
      //windowW = requestedWidth  = getWindowWidth();
      //windowH = requestedHeight = getWindowHeight();
 
-
-
-	#ifdef TARGET_RASPBERRY_PI
-		bool success = setupRPiNativeWindow(w,h,screenMode);
-	#else 
-		bool success = setupX11NativeWindow(w,h,screenMode);
-	#endif
+	bool success = setupNativeWindow(w,h,screenMode);
 
     if(!success) {
       cout << "CREATED screen failed " << w << " x " << h << endl;
@@ -300,22 +225,46 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
     nonFullscreenWindowRect = screenRect;
     currentWindowRect = screenRect;
     
-	#ifdef TARGET_RASPBERRY_PI
+    setupPeripherals();
+
+  	bShowCursor = true;
+
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::setupPeripherals() {
+  #ifdef TARGET_NO_X11
+    // roll our own cursor!
     mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
     MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
     mouseCursor.update();
-    #endif
-	bShowCursor = true;
-
+  #else
+    ofError("ofAppEGLWindow") << "Peripherals not supported on X11";
+  #endif
 }
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::setupNativeWindow(int w, int h, int screenMode) {
+  #ifdef TARGET_NO_X11
+    #ifdef TARGET_RASPBERRY_PI
+      return setupRPiNativeWindow(w,h,screenMode);
+    #else
+      ofError("ofAppEGLWindow") << "Window type not defined correctly!";
+      return false;
+    #endif
+  #else 
+    return setupX11NativeWindow(w,h,screenMode);
+  #endif
+}
+
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display)
 {
 
-    EGLBoolean result;
-    EGLint num_config;
-    EGLConfig config;
+  EGLBoolean result;
+  EGLint num_config;
+  EGLConfig config;
 
 	ofLogNotice("ofAppEGLWindow::setupEGL") << "setting EGL Display";
     // get an EGL eglDisplay connection
@@ -329,8 +278,8 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     }
 
     if(eglDisplay == EGL_NO_DISPLAY) {
-		  ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
-		  return false;
+	   ofLogError("ofAppEGLWindow::setupEGL") << "eglGetDisplay returned: " << eglDisplay;
+	   return false;
     }else{
     	ofLogNotice("ofAppEGLWindow::setupEGL") << "EGL Display correctly set";
     }
@@ -344,19 +293,19 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 
     if(result == EGL_BAD_DISPLAY) {
 //  eglDisplay is not an EGL connection
-      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_BAD_DISPLAY";
-      return false;
+        ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_BAD_DISPLAY";
+        return false;
     } else if(result == EGL_NOT_INITIALIZED) {
-      // eglDisplay cannot be intitialized
-      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_NOT_INITIALIZED";
-      return false;
+        // eglDisplay cannot be intitialized
+        ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_NOT_INITIALIZED";
+        return false;
     } else if(result == EGL_FALSE) {
-      // eglinitialize was not initialiezd
-      ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_FALSE";
-      return false;
+        // eglinitialize was not initialiezd
+        ofLogError("ofAppEGLWindow::setupEGL") << "eglInitialize returned EGL_FALSE";
+        return false;
     } else {
-      // result == EGL_TRUE
-      // success!
+        // result == EGL_TRUE
+        // success!
     }
 
     // TODO -- give the ability to send in this list when setting up.
@@ -369,12 +318,10 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
       ofLogNotice("ofAppEGLWindow::setupEGL") << "No current render selected.";
     }
 
-
-
     if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()=="GLES2"){
-      glesVersion = EGL_OPENGL_ES2_BIT;
+        glesVersion = EGL_OPENGL_ES2_BIT;
 	   	glesVersionForContext = 2;
-      ofLogNotice("ofAppEGLWindow::setupEGL") << "GLES2 Renderer detected.";
+        ofLogNotice("ofAppEGLWindow::setupEGL") << "GLES2 Renderer detected.";
     }else{
 		  glesVersion = EGL_OPENGL_ES_BIT;
 		  glesVersionForContext = 1;
@@ -459,8 +406,7 @@ void ofAppEGLWindow::destroyEGL() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::initializeWindow()
-{
+void ofAppEGLWindow::initializeWindow() {
     nFramesSinceWindowResized = 0;
 }
 
@@ -480,8 +426,10 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
 //------------------------------------------------------------
 void ofAppEGLWindow::infiniteLoop() {
 	
-	#ifdef TARGET_RASPBERRY_PI
-	startThread();
+    #ifdef TARGET_NO_X11
+        #ifdef TARGET_RASPBERRY_PI
+            startThread();
+        #endif
 	#endif
 	
     while (!terminate) {
@@ -493,31 +441,69 @@ void ofAppEGLWindow::infiniteLoop() {
 }
 
 //------------------------------------------------------------
+void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
+    if(requestedWindowRect != currentWindowRect) {
+        ofRectangle oldWindowRect = currentWindowRect;
+
+        currentWindowRect = requestNewWindowRect(requestedWindowRect);
+        
+        if(oldWindowRect != currentWindowRect) {
+            ofNotifyWindowResized(currentWindowRect.width,currentWindowRect.height);
+            nFramesSinceWindowResized = 0;
+        }
+    }
+}
+
+//------------------------------------------------------------
+int ofAppEGLWindow::getWindowWidth() {
+    return currentWindowRect.width;
+}
+
+//------------------------------------------------------------
+int ofAppEGLWindow::getWindowHeight() {
+    return currentWindowRect.height;
+}
+
+//------------------------------------------------------------
 void ofAppEGLWindow::checkEvents(){
-	#ifndef TARGET_RASPBERRY_PI
-	while(1){
-		XEvent event;
-		if (::XCheckWindowEvent(x11Display, x11Window, -1, &event)){
-			handleEvent(event);
-		}else if (::XCheckTypedEvent(x11Display, ClientMessage, &event)){
-			handleEvent(event);
-		}else{
-			break;
-		}
-	}
-	#else
-	static queue<ofMouseEventArgs> copy;
-	lock();
-	copy = mouseEvents;
-	while(!mouseEvents.empty()){
-		mouseEvents.pop();
-	}
-	unlock();
-	while(!copy.empty()){
-		ofNotifyMouseEvent(copy.front());
-		copy.pop();
-	}
-	#endif
+  #ifdef TARGET_NO_X11
+    static queue<ofMouseEventArgs> mouseEventsCopy;
+    lock();
+    mouseEventsCopy = mouseEvents;
+    while(!mouseEvents.empty()){
+      mouseEvents.pop();
+    }
+    unlock();
+    while(!mouseEventsCopy.empty()){
+      ofNotifyMouseEvent(mouseEventsCopy.front());
+      mouseEventsCopy.pop();
+    }
+
+    // KEYBOARD EVENTS
+    static queue<ofKeyEventArgs> keyEventsCopy;
+    lock();
+    keyEventsCopy = keyEvents;
+    while(!keyEvents.empty()){
+      keyEvents.pop();
+    }
+    unlock();
+    while(!keyEventsCopy.empty()){
+      ofNotifyKeyEvent(keyEventsCopy.front());
+      keyEventsCopy.pop();
+    }
+
+  #else
+    while(1){
+  		XEvent event;
+  		if (::XCheckWindowEvent(x11Display, x11Window, -1, &event)){
+  			handleEvent(event);
+  		}else if (::XCheckTypedEvent(x11Display, ClientMessage, &event)){
+  			handleEvent(event);
+  		}else{
+  			break;
+  		}
+  	}
+  #endif
 }
 
 //------------------------------------------------------------
@@ -624,7 +610,7 @@ int ofAppEGLWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppEGLWindow::toggleFullscreen(){
-  if( windowMode == OF_GAME_MODE)return;
+  if( windowMode == OF_GAME_MODE) return;
 
   if( windowMode == OF_WINDOW ){
     setFullscreen(true);
@@ -636,7 +622,7 @@ void ofAppEGLWindow::toggleFullscreen(){
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setFullscreen(bool fullscreen){
-    if( windowMode == OF_GAME_MODE)return;
+    if( windowMode == OF_GAME_MODE) return;
 
     if(fullscreen && windowMode != OF_FULLSCREEN){
         bNewScreenMode  = true;
@@ -671,6 +657,7 @@ void ofAppEGLWindow::idle() {
       usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
     }
   }
+
   prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
 
   timeNow = ofGetElapsedTimef();
@@ -712,6 +699,7 @@ void ofAppEGLWindow::display() {
 		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
 		renderer->startRender();
 	}
+
   ofViewport(0, 0, getWindowWidth(), getWindowHeight());    // used to be glViewport( 0, 0, width, height );
   
   float * bgPtr = ofBgColorPtr();
@@ -725,23 +713,26 @@ void ofAppEGLWindow::display() {
 
   ofNotifyDraw();
   
-  #ifdef TARGET_RASPBERRY_PI
-  if(bShowCursor){
-	ofPushStyle();
-  	ofEnableAlphaBlending();
-  	ofDisableTextureEdgeHack();
-  	ofSetColor(255);
-  	mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
-  	ofEnableTextureEdgeHack();
-  	//TODO: we need a way of querying the previous state of texture hack
-  	ofPopStyle();
-  }
+  #ifdef TARGET_NO_X11
+    if(bShowCursor){
+    ofPushStyle();
+    	ofEnableAlphaBlending();
+    	ofDisableTextureEdgeHack();
+    	ofSetColor(255);
+    	mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
+    	ofEnableTextureEdgeHack();
+    	//TODO: we need a way of querying the previous state of texture hack
+    	ofPopStyle();
+    }
+  #else 
+    // X11 shows its own cursor
   #endif
 
 	if(ofGetCurrentRenderer()->getType()=="GLES2"){
 		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
 		renderer->finishRender();
-	}
+    }
+  
   eglSwapBuffers(eglDisplay, eglSurface);
 
   nFramesSinceWindowResized++;
@@ -753,23 +744,22 @@ void ofAppEGLWindow::display() {
 
 //------------------------------------------------------------
 float ofAppEGLWindow::getFrameRate(){
-  return frameRate;
+    return frameRate;
 }
 
 //------------------------------------------------------------
 double ofAppEGLWindow::getLastFrameTime(){
-  return lastFrameTime;
+    return lastFrameTime;
 }
 
 //------------------------------------------------------------
 int ofAppEGLWindow::getFrameNum(){
-  return nFrameCount;
+    return nFrameCount;
 }
-
 
 //------------------------------------------------------------
 ofRectangle ofAppEGLWindow::getScreenRect(){
-	return 	currentWindowRect;
+    return 	currentWindowRect;
 }
 
 //------------------------------------------------------------
@@ -784,8 +774,711 @@ void ofAppEGLWindow::setVerticalSync(bool enabled){
 	eglSwapInterval(eglDisplay, enabled ? 1 : 0);
 }
 
+//------------------------------------------------------------
+void ofAppEGLWindow::threadedFunction(){
+    // set the thread to low priority
+    getPocoThread().setOSPriority(Poco::Thread::getMinOSPriority());
 
-#ifndef TARGET_RASPBERRY_PI
+    // TODO: a way to setup mouse and keyboard if 
+    // they are not plugged in upon start
+    // This can be done with our udev device callbacks
+    setupUDev();
+    setupMouse();
+    setupKeyboard();
+
+    while(isThreadRunning()) {
+
+        readUDevEvents();
+        readMouseEvents();
+        readKeyboardEvents();
+
+        // sleep briefly
+        ofSleepMillis(20);
+	}
+
+    destroyUDev();
+    destroyMouse(); 
+    destroyKeyboard(); 
+}
+ 
+//------------------------------------------------------------
+// PLATFORM SPECIFIC RPI
+//------------------------------------------------------------
+
+#ifdef TARGET_NO_X11
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::setupUDev() {
+ 
+    udev = udev_new(); // create new udev object
+    if(!udev) {
+        ofLogError("ofAppEGLWindow") << "setupUDev() : Can't create udev object.";
+    } else {
+        ofLogNotice("ofAppEGLWindow") << "setupUDev() : Created udev object.";
+        // setup udev to monitor for input devices
+        mon = udev_monitor_new_from_netlink(udev, "udev");
+        // TODO filter for input devices
+        //udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
+        udev_monitor_enable_receiving(mon);
+        // get the file descriptor for the mon (used w/ select);
+        udev_fd = udev_monitor_get_fd(mon);
+    }
+
+    return udev_fd > -1;
+}
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::destroyUDev() {
+    udev_unref(udev); // clean up
+}
+
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::setupMouse() {
+    struct dirent **eps;
+    int n = scandir("/dev/input/by-path/", &eps, filter_mouse, dummy_sort);
+
+    // make sure that we found an appropriate entry
+    if(n >= 0 && eps != 0 && eps[0] != 0) {
+        char devicePathBuffer[256];
+        sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
+        mouse_fd = open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
+        ofLogVerbose("ofAppEGLWindow") << "setupMouse() : mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+    } else {
+        ofLogWarning("ofAppEGLWindow") << "setupMouse() : Unabled to find mouse.";
+    }
+
+    if (mouse_fd >= 0) {
+        char deviceNameBuffer[256] = "Unknown Device";
+        ioctl(mouse_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
+        ofLogVerbose("ofAppEGLWindow") << "setupMouse() : mouse device name = " << deviceNameBuffer;
+    }
+
+    mb.mouseButtonState = 0;
+
+    return mouse_fd > -1;
+}
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::setupKeyboard() {
+    struct dirent **eps;
+    int n = scandir("/dev/input/by-path/", &eps, filter_kbd, dummy_sort);
+
+    // make sure that we found an appropriate entry
+    if(n >= 0 && eps != 0 && eps[0] != 0) {
+        char devicePathBuffer[256];
+        sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
+        keyboard_fd=open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
+        ofLogVerbose("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+    } else {
+        ofLogWarning("ofAppEGLWindow") << "setupKeyboard() : Unabled to find keyboard.";
+    }
+
+    if (keyboard_fd >= 0) {
+        char deviceNameBuffer[256] = "Unknown Device";
+        ioctl(keyboard_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
+        ofLogVerbose("ofAppEGLWindow") << "setupKeyboard() : keyboard device name = " << deviceNameBuffer;
+    
+
+        // save current terminal settings
+        tcgetattr (STDIN_FILENO, &tc);
+        ots = tc;
+        // disable echo on our temporary settings
+        tc.c_lflag &= ~ECHO;
+        tc.c_lflag |= ECHONL;
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
+
+    }
+
+    kb.shiftPressed = false;
+    kb.capsLocked = false;
+    
+    return keyboard_fd > -1;
+}
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::destroyMouse() {
+    if(mouse_fd >= 0) {
+        // nothing to do
+    }
+}
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::destroyKeyboard() {
+    if (keyboard_fd >= 0) {
+        tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
+    }
+}
+
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::readUDevEvents() {
+    // look for devices being attatched / detatched
+
+    fd_set fds;
+    struct timeval tv;
+    int ret;
+
+    FD_ZERO(&fds);
+    FD_SET(udev_fd, &fds);
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
+
+    ret = select(udev_fd+1, &fds, NULL, NULL, &tv);
+
+    /* Check if our file descriptor has received data. */
+    if (ret > 0 && FD_ISSET(udev_fd, &fds)) {
+        /* Make the call to receive the device.
+           select() ensured that this will not block. */
+        dev = udev_monitor_receive_device(mon);
+        if (dev) {
+            printf("Got Device\n");
+            printf("   Node: %s\n", udev_device_get_devnode(dev));
+            printf("   Subsystem: %s\n", udev_device_get_subsystem(dev));
+            printf("   Devtype: %s\n", udev_device_get_devtype(dev));
+            printf("   Action: %s\n", udev_device_get_action(dev));
+            udev_device_unref(dev);
+        }
+        else {
+            printf("No Device from receive_device(). An error occured.\n");
+        }                   
+    }
+}
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::readKeyboardEvents() {
+    // http://www.diegm.uniud.it/loghi/CE2/kbd.pdf
+    // http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
+    // https://strcpy.net/b/archives/2010/11/17/abusing_the_linux_input_subsystem/index.html
+    struct input_event ev;
+    char key = 0;
+
+    int nBytesRead = read(keyboard_fd, &ev,sizeof(struct input_event));
+
+    static ofKeyEventArgs keyEvent;
+    bool pushKeyEvent = false;
+
+    while(nBytesRead >= 0) {
+
+        if (ev.type==EV_KEY) {
+            if(ev.value == 0) {
+                // key released
+                keyEvent.type = ofKeyEventArgs::Released;
+            } else if(ev.value == 1) {
+                // key pressed
+                keyEvent.type = ofKeyEventArgs::Pressed;
+            } else if(ev.value == 2) {
+                // key repeated
+                keyEvent.type = ofKeyEventArgs::Pressed;
+            } else {
+                // unknown ev.value
+            }
+
+            bool shouldMapKey = false;
+
+            switch (ev.code) {
+                case KEY_RIGHTSHIFT:
+                case KEY_LEFTSHIFT:
+                    kb.shiftPressed = ev.value;
+                    break;
+                case KEY_RIGHTCTRL:
+                case KEY_LEFTCTRL:
+                    break;
+            case KEY_CAPSLOCK:
+                if (ev.value == 1) {
+                    if (kb.capsLocked) {
+                        kb.capsLocked = 0;
+                    } else {
+                        kb.capsLocked = 1;
+                    }
+                }
+                break;
+
+            case KEY_ESC:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_ESC;
+                break;
+            case KEY_BACKSPACE:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_BACKSPACE;
+                break;
+            case KEY_DELETE:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_DEL;
+                break;
+            case KEY_F1:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F1;
+                break;
+            case KEY_F2:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F2;
+                break;
+            case KEY_F3:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F3;
+                break;
+            case KEY_F4:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F4;
+                break;
+            case KEY_F5:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F5;
+                break;
+            case KEY_F6:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F6;
+                break;
+            case KEY_F7:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F7;
+                break;
+            case KEY_F8:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F8;
+                break;
+            case KEY_F9:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F9;
+                break;
+            case KEY_F10:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F10;
+                break;
+            case KEY_F11:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F11;
+                break;
+            case KEY_F12:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_F12;
+                break;
+            case KEY_LEFT:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_LEFT;
+                break;
+            case KEY_UP:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_UP;
+                break;
+            case KEY_RIGHT:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_RIGHT;
+                break;
+            case KEY_DOWN:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_DOWN;
+                break;
+            case KEY_PAGEUP:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_PAGE_UP;
+                break;
+            case KEY_PAGEDOWN:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_PAGE_DOWN;
+                break;
+            case KEY_HOME:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_HOME;
+                break;
+            case KEY_END:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_END;
+                break;
+            case KEY_INSERT:
+                pushKeyEvent = true;
+                keyEvent.key = OF_KEY_INSERT;
+                break;
+
+            default:
+            // VERY RUDIMENTARY KEY MAPPING WITH MAPS ABOVE
+                if(ev.code < sizeof(lowercase_map)) {
+                    if (kb.shiftPressed) {
+                        key = uppercase_map[ev.code];
+                        if (kb.capsLocked) keyEvent.key = tolower(key);
+                        keyEvent.key = key;
+                        pushKeyEvent = true;
+                    } else {
+                        key = lowercase_map[ev.code];
+                        if (kb.capsLocked) key = toupper(key);
+                        keyEvent.key = key;
+                        pushKeyEvent = true;
+                    }
+                } else {
+                    ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents() : input_event.code is outside of our small range.";
+                }
+            }
+        } else if(ev.type == EV_MSC) {
+            // EV_MSC events are used for input and output events that 
+            // do not fall under other categories.
+            // ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents() : EV_MSC";
+        } else if(ev.type == EV_SYN ) {
+            // EV_SYN Used as markers to separate events. Events may be 
+            // separated in time or in space, such as with the multitouch protocol.
+            // ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents() : EV_SYN";
+        } else {
+            // unhandled type
+        }
+
+        // do we have a mouse svent to push?
+        if(pushKeyEvent){
+            lock();
+            keyEvents.push(keyEvent);
+            unlock();
+            pushKeyEvent = false;
+        }
+
+        nBytesRead = read(keyboard_fd, &ev,sizeof(struct input_event));
+    }
+
+    return true;
+}
+
+//------------------------------------------------------------
+bool ofAppEGLWindow::readMouseEvents() {
+    // http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
+    struct input_event ev;
+
+    static ofMouseEventArgs mouseEvent;
+
+    bool pushMouseEvent = false;
+
+    int nBytesRead = read(mouse_fd, &ev,sizeof(struct input_event));
+
+    bool axisValuePending = false;
+
+    while(nBytesRead >= 0) {
+
+        if(ev.type == EV_REL || ev.type == EV_ABS) {
+            int axis = ev.code;
+            int amount = ev.value;
+
+            switch(axis) {
+                case 0:
+                    if(ev.type == EV_REL) {
+                        mouseEvent.x += amount * mouseScaleX; 
+                    } else {
+                        mouseEvent.x = amount * mouseScaleX;
+                    }
+
+                    mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+                    axisValuePending = true;
+                    break;
+                case 1:
+                    if(ev.type == EV_REL) {
+                        mouseEvent.y += amount * mouseScaleY; 
+                    } else {
+                        mouseEvent.y = amount * mouseScaleY;
+                    }
+
+                    mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+                    axisValuePending = true;
+                    break;
+                default:
+                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : Unknown mouse axis (perhaps it's the scroll wheel?)";
+                    break;
+             }
+
+        } else if(ev.type == EV_KEY) {
+            // only tracking three buttons now ...
+            if(ev.code == BTN_LEFT) {
+                if(ev.value == 0) { // release
+                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.type = ofMouseEventArgs::Released;
+                    mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
+                    pushMouseEvent = true;
+                } else if(ev.value == 1) { // press
+                    mb.mouseButtonState |= MOUSE_BUTTON_LEFT_MASK;
+                    mouseEvent.type = ofMouseEventArgs::Pressed;
+                    mouseEvent.button = mb.mouseButtonState;
+                    pushMouseEvent = true;
+                } else { // unknown
+                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                }
+            } else if(ev.code == BTN_MIDDLE) {
+                if(ev.value == 0) { // release
+                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.type = ofMouseEventArgs::Released;
+                    mb.mouseButtonState &= ~MOUSE_BUTTON_MIDDLE_MASK;
+                    pushMouseEvent = true;
+                } else if(ev.value == 1) { // press
+                    mb.mouseButtonState |= MOUSE_BUTTON_MIDDLE_MASK;
+                    mouseEvent.type = ofMouseEventArgs::Pressed;
+                    mouseEvent.button = mb.mouseButtonState;
+                    pushMouseEvent = true;
+                } else { // unknown
+                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                }
+            } else if(ev.code == BTN_RIGHT) {
+                if(ev.value == 0) { // release
+                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.type = ofMouseEventArgs::Released;
+                    mb.mouseButtonState &= ~MOUSE_BUTTON_RIGHT_MASK;
+                    pushMouseEvent = true;
+                } else if(ev.value == 1) { // press
+                    mb.mouseButtonState |= MOUSE_BUTTON_RIGHT_MASK;
+                    mouseEvent.type = ofMouseEventArgs::Pressed;
+                    mouseEvent.button = mb.mouseButtonState;
+                    pushMouseEvent = true;
+                } else {
+                    ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                }
+            } else {
+                ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.code = " << ev.code;
+            }
+            // not sure why we are getting that event here
+        } else if(ev.type == EV_MSC) {
+            // EV_MSC events are used for input and output events that 
+            // do not fall under other categories.
+            // ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_MSC";
+        } else if(ev.type == EV_SYN ) {
+            // EV_SYN Used as markers to separate events. Events may be 
+            // separated in time or in space, such as with the multitouch protocol.
+
+            // EV_SYN events are sent when axis value (one or a pair) are changed
+            if(axisValuePending) {
+                // TODO, this state doesn't make as much sense when the mouse is not dragging
+                if(mb.mouseButtonState > 0) {
+                    // dragging (what if dragging w/ more than one button?)
+                    mouseEvent.type = ofMouseEventArgs::Dragged;
+                } else {
+                    // just moving
+                    mouseEvent.type = ofMouseEventArgs::Moved;
+                }
+                
+                mouseEvent.button = mb.mouseButtonState;
+
+                pushMouseEvent = true;
+                axisValuePending = false;
+            }
+
+            //ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_SYN";
+        } else {
+            // unhandled type
+        }
+
+        // do we have a mouse event to push?
+        if(pushMouseEvent){
+            // lock the thread for a moment while we copy the data
+            lock();
+            mouseEvents.push(mouseEvent);
+            unlock();
+            pushMouseEvent = false;
+        }
+
+        nBytesRead = read(mouse_fd, &ev,sizeof(struct input_event));
+    }
+
+    return true;
+
+}
+
+
+    #ifdef TARGET_RASPBERRY_PI
+//------------------------------------------------------------
+bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
+
+  bcm_host_init();
+
+  //boolean force HDMI vs. composite
+
+  int32_t success = 0;
+
+  uint32_t sw;
+  uint32_t sh;
+
+  // create an EGL window surface
+  // IF SCREENMODE==FULLSCREEN
+  success = graphics_get_display_size(0 /* LCD */, &sw, &sh);
+
+  if(success < 0) {
+    ofLogError("ofAppEGLWindow") << "setupRPiNativeWindow() : tried to get display, but failed.";
+    return false;
+  }
+
+  cout << "   REQUESTED SCREEN SIZE w=" << w << " and  h=" << h << endl;
+  cout << "HARDWARE SCREEN SIZE IS sw=" << sw << " and sh=" << sh << endl;
+
+  if(screenMode == OF_WINDOW) {
+    sw = MIN(sw,w);
+    sh = MIN(sh,h);
+  } else {
+    // OF_FULLSCREEN and GAME take the screen size 
+  }
+
+    cout << "CREATING A SCREEN THAT IS w=" << sw << " and h=" << sh << endl;
+
+
+//////////////////////////
+    VC_RECT_T dst_rect;
+    VC_RECT_T src_rect;
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = sw;
+    dst_rect.height = sh;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = sw << 16;
+    src_rect.height = sh << 16;
+
+    DISPMANX_ELEMENT_HANDLE_T dispman_element;
+    DISPMANX_DISPLAY_HANDLE_T dispman_display;
+    DISPMANX_UPDATE_HANDLE_T dispman_update;
+
+    VC_DISPMANX_ALPHA_T nativeWindowAlpha;
+    nativeWindowAlpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
+    nativeWindowAlpha.opacity = 255; // TODO: set from structFrom new struct
+    nativeWindowAlpha.mask = 0;
+
+    dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
+    dispman_update  = vc_dispmanx_update_start( 0 );
+
+    dispman_element = vc_dispmanx_element_add ( dispman_update, 
+                                              dispman_display,
+                                              0/*layer*/, 
+                                              &dst_rect, 
+                                              0/*src*/,
+                                              &src_rect, 
+                                              DISPMANX_PROTECTION_NONE, 
+                                              &nativeWindowAlpha, 
+                                              0/*clamp*/, 
+                                              (DISPMANX_TRANSFORM_T)0/*transform*/
+                                              );
+
+    nativeWindow.element = dispman_element;
+    nativeWindow.width = sw;
+    nativeWindow.height = sh;
+
+    vc_dispmanx_update_submit_sync( dispman_update );
+
+    bool ret = setupEGL(&nativeWindow,NULL);
+
+    if(ret){
+        screenRect.x = 0;
+        screenRect.y = 0;
+        screenRect.width = nativeWindow.width;
+        screenRect.height = nativeWindow.height;
+    }
+
+    return ret;    
+}
+    #else
+    // ERROR -- no option supplied for NO_X11 option
+    #endif
+#else
+
+//------------------------------------------------------------
+// X11 BELOW
+//------------------------------------------------------------
+bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
+
+  // X11 variables
+  x11Window      = 0;
+  x11Display     = 0;
+  long x11Screen = 0;
+  XVisualInfo*  x11Visual   = 0;
+  Colormap      x11Colormap = 0;
+  /*
+    Step 0 - Create a NativeWindowType that we can use it for OpenGL ES output
+  */
+  Window               sRootWindow;
+  XSetWindowAttributes sWA;
+  unsigned int         ui32Mask;
+  int                  i32Depth;
+  
+  // Initializes the display and screen
+  x11Display = XOpenDisplay( 0 );
+  if (!x11Display) {
+    ofLogError("ofAppEGLWindow")<< "Unable to open X display.";
+    return false;
+  }
+ 
+  x11Screen = XDefaultScreen( x11Display );
+
+  // Gets the window parameters
+  sRootWindow = RootWindow(x11Display, x11Screen);
+  i32Depth = DefaultDepth(x11Display, x11Screen);
+  x11Visual = new XVisualInfo;
+
+  XMatchVisualInfo( x11Display, x11Screen, i32Depth, TrueColor, x11Visual);
+
+  if (!x11Visual) {
+    ofLogError("ofAppEGLWindow") << "Unable to acquire visual.";
+    return false;
+  }
+
+  x11Colormap = XCreateColormap( x11Display, sRootWindow, x11Visual->visual, AllocNone );
+
+  // set the colormap window attribuet
+  sWA.colormap = x11Colormap;
+
+  // Add to these for handling other events
+  sWA.event_mask = 0;
+  sWA.event_mask |= StructureNotifyMask;
+  sWA.event_mask |= ExposureMask;
+  sWA.event_mask |= ButtonPressMask;
+  sWA.event_mask |= ButtonReleaseMask;
+  sWA.event_mask |= PointerMotionMask;
+  sWA.event_mask |= KeyPressMask;
+  sWA.event_mask |= KeyReleaseMask;
+ 
+  // setup background pixel attributes
+  ui32Mask = 0;
+  ui32Mask |= CWBackPixel;
+  ui32Mask |= CWBorderPixel; 
+  ui32Mask |= CWEventMask; 
+  ui32Mask |= CWColormap;
+
+  // Creates the X11 window
+  x11Window = XCreateWindow(x11Display, // Specifies the connection to the X server.
+                            sRootWindow, // Specifies the parent window.
+                            0, 0, // Specify the x and y coordinates, 
+                            // which are the top-left outside corner 
+                            // of the window's borders and are relative 
+                            // to the inside of the parent window's borders. 
+                            w, h, // Specify the width and height, which are the 
+                            // created window's inside dimensions and do 
+                            // not include the created window's borders.
+                            0, // Specifies the width of the created 
+                            // window's border in pixels.
+                            CopyFromParent, // Specifies the window's depth. 
+                            // A depth of CopyFromParent means 
+                            // the depth is taken from the parent. 
+                            InputOutput, // Specifies the created window's class. 
+                            // You can pass InputOutput, InputOnly, 
+                            // or CopyFromParent. A class of CopyFromParent 
+                            // means the class is taken from the parent.
+                            CopyFromParent, // Specifies the visual type. 
+                            // A visual of CopyFromParent means the visual type 
+                            // is taken from the parent.
+                            ui32Mask, // Specifies which window attributes are 
+                            // defined in the attributes argument. This mask is
+                            // the bitwise inclusive OR of the valid attribute 
+                            // mask bits. If valuemask is zero, the attributes 
+                            // are ignored and are not referenced.
+                            &sWA //Specifies the background pixel value of the window.
+                            );
+
+  XMapWindow(x11Display, x11Window);
+  XFlush(x11Display);
+  
+  bool ret = setupEGL((NativeWindowType)x11Window,(EGLNativeDisplayType*)x11Display);
+
+  if(ret){
+    // TODO, update this, or make X11 windows query the window directly
+    // i.e. it should be possible to only use screenRect with nonx11 setups.
+    screenRect.x = 0;
+    screenRect.y = 0;
+    screenRect.width = w;
+    screenRect.height = h;
+  }
+
+  return ret;
+}
+
 //------------------------------------------------------------
 static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int event_mask) {
     KeySym keysym = NoSymbol;
@@ -857,137 +1550,78 @@ static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int e
 void ofAppEGLWindow::handleEvent(const XEvent& event){
     static ofMouseEventArgs mouseEvent;
     static ofKeyEventArgs keyEvent;
-	switch (event.type){
-	case KeyPress:
-	case KeyRelease:{
-		KeySym key = KeyCodeToKeySym(x11Display,event.xkey.keycode,event.xkey.state);
-		keyEvent.key = key;
-		if (event.type == KeyPress){
-			keyEvent.type = ofKeyEventArgs::Pressed;
-			if(key == 65307){
-				keyEvent.key = OF_KEY_ESC;
-			}
-		}else if (event.type == KeyRelease){
-			cout << "keyrelease" << endl;
-			keyEvent.type = ofKeyEventArgs::Released;
-		}
-		ofNotifyKeyEvent(keyEvent);
-		}break;
-
-	case ButtonPress:
-	case ButtonRelease:
-		mouseEvent.x = static_cast<float>(event.xbutton.x);
-		mouseEvent.y = static_cast<float>(event.xbutton.y);
-		mouseEvent.button = event.xbutton.button;
-		if (event.type == ButtonPress){
-			mouseEvent.type = ofMouseEventArgs::Pressed;
-		}else{
-			mouseEvent.type = ofMouseEventArgs::Released;
-		}
-		ofNotifyMouseEvent(mouseEvent);
-		break;
-	case MotionNotify:
-		//cout << "motion notify" << endl;
-		mouseEvent.x = static_cast<float>(event.xmotion.x);
-		mouseEvent.y = static_cast<float>(event.xmotion.y);
-		mouseEvent.button = event.xbutton.button;
-		if(ofGetMousePressed()){
-			mouseEvent.type = ofMouseEventArgs::Dragged;
-		}else{
-			mouseEvent.type = ofMouseEventArgs::Moved;
-		}
-		ofNotifyMouseEvent(mouseEvent);
-		break;
-	case ConfigureNotify:
-		currentWindowRect.x = event.xconfigure.x;
-		currentWindowRect.y = event.xconfigure.y;
-		currentWindowRect.width = event.xconfigure.width;
-		currentWindowRect.height = event.xconfigure.height;
-		nonFullscreenWindowRect = currentWindowRect;
-		ofNotifyWindowResized(event.xconfigure.width,event.xconfigure.height);
-		break;
-	/*case ClientMessage:
-	{
-	  if (event.xclient.message_type == wmProtocols_ &&
-		event.xclient.format == 32 &&
-		event.xclient.data.l[0] == (long) wmDeleteWindow_)
-	  {
-		if (listener())
-		{
-		  if (listener()->onClose(wrapper() ? *wrapper() : *(WindowInterface*)this))
-		    isShuttingDown_ = true;
-		}
-		else
-		{
-		  isShuttingDown_ = true;
-		}
-	  }
-	  break;
-	}*/
-	}
+    switch (event.type){
+        case KeyPress:
+        case KeyRelease: 
+            {
+                KeySym key = KeyCodeToKeySym(x11Display,event.xkey.keycode,event.xkey.state);
+                keyEvent.key = key;
+                if (event.type == KeyPress) {
+                    keyEvent.type = ofKeyEventArgs::Pressed;
+                    if(key == 65307){
+                        keyEvent.key = OF_KEY_ESC;
+                    }
+                } else if (event.type == KeyRelease){
+                    keyEvent.type = ofKeyEventArgs::Released;
+                }
+                
+                ofNotifyKeyEvent(keyEvent);
+            }
+            break;
+        case ButtonPress:
+        case ButtonRelease:
+            mouseEvent.x = static_cast<float>(event.xbutton.x);
+            mouseEvent.y = static_cast<float>(event.xbutton.y);
+            mouseEvent.button = event.xbutton.button;
+            if (event.type == ButtonPress){
+                mouseEvent.type = ofMouseEventArgs::Pressed;
+            } else {
+                mouseEvent.type = ofMouseEventArgs::Released;
+            }
+            
+            ofNotifyMouseEvent(mouseEvent);
+            break;
+        case MotionNotify:
+            //cout << "motion notify" << endl;
+            mouseEvent.x = static_cast<float>(event.xmotion.x);
+            mouseEvent.y = static_cast<float>(event.xmotion.y);
+            mouseEvent.button = event.xbutton.button;
+            if(ofGetMousePressed()) {
+                mouseEvent.type = ofMouseEventArgs::Dragged;
+            } else {
+                mouseEvent.type = ofMouseEventArgs::Moved;
+            }
+            
+            ofNotifyMouseEvent(mouseEvent);
+            break;
+        case ConfigureNotify:
+            currentWindowRect.x = event.xconfigure.x;
+            currentWindowRect.y = event.xconfigure.y;
+            currentWindowRect.width = event.xconfigure.width;
+            currentWindowRect.height = event.xconfigure.height;
+            nonFullscreenWindowRect = currentWindowRect;
+            ofNotifyWindowResized(event.xconfigure.width,event.xconfigure.height);
+            break;
+  /*case ClientMessage:
+  {
+    if (event.xclient.message_type == wmProtocols_ &&
+    event.xclient.format == 32 &&
+    event.xclient.data.l[0] == (long) wmDeleteWindow_)
+    {
+    if (listener())
+    {
+      if (listener()->onClose(wrapper() ? *wrapper() : *(WindowInterface*)this))
+        isShuttingDown_ = true;
+    }
+    else
+    {
+      isShuttingDown_ = true;
+    }
+    }
+    break;
+  }*/
+  }
 }
 #endif
 
-//------------------------------------------------------------
-void ofAppEGLWindow::threadedFunction(){
-  // TODO: commented to avoid linking problem
-	//getPocoThread().setOSPriority(Poco::Thread::getMinOSPriority());
-	ofFile mouseFile("/dev/input/mouse0",ofFile::ReadOnly);    
-	const int XSIGN = 1<<4, YSIGN = 1<<5;
-    struct {char buttons, dx, dy; } m;
-    ofMouseEventArgs mouseEvent;
-    bool pushMouseEvent;
-    bool mousePressed=false;
-	while(isThreadRunning()){
-		pushMouseEvent=false;
-		while(1){
-			mouseFile.read((char*)&m,sizeof(m));
-	        if (m.buttons&8) {
-	        	break; // This bit should always be set
-	        }
-	        mouseFile.read(&m.buttons,1); //try to sync
-	    }
-        if (m.buttons&3){
-        	mouseEvent.button = m.buttons&3;
-        	if(mousePressed){
-        		mouseEvent.type = ofMouseEventArgs::Dragged;
-        	}else{
-        		mouseEvent.type = ofMouseEventArgs::Pressed;
-        		pushMouseEvent = true;
-        	}
-        	mousePressed = true;
-        }else{
-        	if(mousePressed){
-        		mouseEvent.type = ofMouseEventArgs::Released;
-        		pushMouseEvent = true;
-        	}else{
-        		mouseEvent.type = ofMouseEventArgs::Moved;
-        	}
-        	mousePressed = false;
-        }
-        if(m.dx!=0 || m.dy!=0){
-        	//TODO: *2 is an arbitrary factor that makes mouse speed ok at 1024x768,
-        	// to be totally correct we might need to take into account screen size
-        	// and add acceleration
-        	mouseEvent.x+=m.dx*2;
-        	mouseEvent.y-=m.dy*2;
-        	pushMouseEvent = true;
-        }
-        if (m.buttons&XSIGN){
-        	mouseEvent.x-=256*2;
-        	pushMouseEvent = true;
-        }
-        if (m.buttons&YSIGN){
-        	mouseEvent.y+=256*2;
-        	pushMouseEvent = true;
-        }
-        mouseEvent.x = ofClamp(mouseEvent.x,0,currentWindowRect.width);
-        mouseEvent.y = ofClamp(mouseEvent.y,0,currentWindowRect.height);
-        if(pushMouseEvent){
-			lock();
-		    mouseEvents.push(mouseEvent);
-		    unlock();
-		}
-        ofSleepMillis(20);
-	}
-}
+

@@ -32,7 +32,28 @@
 #include "ofThread.h"
 #include "ofImage.h"
 
-#ifndef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI
+#define TARGET_NO_X11 1
+#endif
+
+#ifdef TARGET_NO_X11
+	#include <libudev.h>
+	#include <stdbool.h>
+	#include <stdio.h> // sprintf
+	#include <stdlib.h>  // malloc
+	#include <math.h>
+	#include <fcntl.h>  // open fcntl
+	#include <unistd.h> // read close 
+	#include <linux/joystick.h>
+
+	#include "linux/kd.h"	// keyboard stuff...
+	#include "termios.h"
+	#include "sys/ioctl.h"
+
+	#include <dirent.h>  // scandir
+	#include <string.h> // strlen
+
+#else
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
 #endif
@@ -46,8 +67,11 @@ public:
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
+	virtual bool setupNativeWindow(int w, int h, int screenMode);
 	virtual bool setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display=NULL);
 	virtual void destroyEGL();
+
+	virtual void setupPeripherals();
 
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
@@ -88,8 +112,6 @@ public:
 	virtual void	setVerticalSync(bool enabled);
 
 protected:
-	bool setupX11NativeWindow(int w, int h, int screenMode);
-	bool setupRPiNativeWindow(int w, int h, int screenMode);
 
 	void idle();
 	virtual void postIdle() {};
@@ -98,30 +120,13 @@ protected:
 
 	void infiniteLoop();
 
-	void setWindowRect(const ofRectangle& requestedWindowRect) {
-		if(requestedWindowRect != currentWindowRect) {
-			ofRectangle oldWindowRect = currentWindowRect;
-
-			currentWindowRect = requestNewWindowRect(requestedWindowRect);
-			
-			if(oldWindowRect != currentWindowRect) {
-				ofNotifyWindowResized(currentWindowRect.width,currentWindowRect.height);
-				nFramesSinceWindowResized = 0;
-			}
-		}
-	}
+	void setWindowRect(const ofRectangle& requestedWindowRect);
 
 	virtual ofRectangle getScreenRect();
 	virtual ofRectangle requestNewWindowRect(const ofRectangle&);
-	int getWindowWidth() {
-		return currentWindowRect.width;
-	}
 
-
-	int getWindowHeight() {
-		return currentWindowRect.height;
-	}
-	
+	int getWindowWidth();
+	int getWindowHeight();
 
 	bool     terminate;
 
@@ -149,6 +154,26 @@ protected:
 	ofBaseApp *  ofAppPtr;
 
 
+	void threadedFunction();
+	queue<ofMouseEventArgs> mouseEvents;
+	queue<ofKeyEventArgs>   keyEvents;
+	void checkEvents();
+	ofImage mouseCursor;
+
+	// TODO: getters and setters?  OR automatically set based on 
+	// OS or screen size?  Should be changed when screen is resized?
+	float mouseScaleX;
+	float mouseScaleY;
+
+
+	// float getMouseScaleX() const;
+	// void setMouseScaleX(float x);
+	// float getMouseScaleY() const;
+	// void setMouseScaleY(float y);
+
+//------------------------------------------------------------
+// WINDOWING
+//------------------------------------------------------------
 	// EGL window
 	ofRectangle screenRect;
 	ofRectangle nonFullscreenWindowRect; // the rectangle describing the non-fullscreen window
@@ -157,29 +182,46 @@ protected:
 	EGLDisplay eglDisplay;  // EGL display connection
 	EGLSurface eglSurface;
 	EGLContext eglContext;
-	
-#ifndef TARGET_RASPBERRY_PI
-	void handleEvent(const XEvent& event);
+
+//------------------------------------------------------------
+// PLATFORM SPECIFIC WINDOWING
+//------------------------------------------------------------
+	 
+#ifdef TARGET_NO_X11
+	#ifdef TARGET_RASPBERRY_PI
+		// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
+		EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
+		bool setupRPiNativeWindow(int w, int h, int screenMode);
+	#else
+		// ERROR -- no option supplied for NO_X11 option
+	#endif
+#else // yes to X11
 	Display*			x11Display;
 	Window				x11Window;
-#endif
-
-
-
-#ifdef TARGET_RASPBERRY_PI
-	// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
-	EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
-#else
 	Window nativeWindow; // x11
-#endif
+	bool setupX11NativeWindow(int w, int h, int screenMode);
+#endif	
+ 
+//------------------------------------------------------------
+// PLATFORM SPECIFIC EVENTS
+//------------------------------------------------------------
+#ifdef TARGET_NO_X11
+	bool setupUDev();
+	bool destroyUDev();
 
+	bool setupMouse();
+	bool setupKeyboard();
 
-	void threadedFunction();
-	queue<ofMouseEventArgs> mouseEvents;
-	queue<ofKeyEventArgs> keyEvents;
-	void checkEvents();
-	ofImage mouseCursor;
-	
+	bool destroyMouse();
+	bool destroyKeyboard();
+
+	bool readMouseEvents();
+	bool readKeyboardEvents();
+	bool readUDevEvents();
+
+#else // yes to X11
+	void handleEvent(const XEvent& event);
+#endif	
 	
 
 
