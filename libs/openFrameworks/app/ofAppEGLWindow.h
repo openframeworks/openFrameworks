@@ -36,29 +36,36 @@
 #define TARGET_NO_X11 1
 #endif
 
-#ifdef TARGET_NO_X11
-	#include <libudev.h>
-	#include <stdbool.h>
-	#include <stdio.h> // sprintf
-	#include <stdlib.h>  // malloc
-	#include <math.h>
-	#include <fcntl.h>  // open fcntl
-	#include <unistd.h> // read close 
-	#include <linux/joystick.h>
+// include includes for both native and X11 possibilities
+#include <libudev.h>
+#include <stdbool.h>
+#include <stdio.h> // sprintf
+#include <stdlib.h>  // malloc
+#include <math.h>
+#include <fcntl.h>  // open fcntl
+#include <unistd.h> // read close 
+#include <linux/joystick.h>
 
-	#include "linux/kd.h"	// keyboard stuff...
-	#include "termios.h"
-	#include "sys/ioctl.h"
+#include "linux/kd.h"	// keyboard stuff...
+#include "termios.h"
+#include "sys/ioctl.h"
 
-	#include <dirent.h>  // scandir
-	#include <string.h> // strlen
+#include <dirent.h>  // scandir
+#include <string.h> // strlen
 
-#else
-	#include <X11/Xlib.h>
-	#include <X11/Xutil.h>
-#endif
+// x11
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #include <queue>
+
+// TODO: this shold be passed in with the other window settings, like window alpha, etc.
+enum ofAppEGLWindowType {
+	OF_APP_WINDOW_AUTO,
+	OF_APP_WINDOW_NATIVE,
+	OF_APP_WINDOW_X11
+};
+
 
 class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
@@ -186,45 +193,40 @@ protected:
 //------------------------------------------------------------
 // PLATFORM SPECIFIC WINDOWING
 //------------------------------------------------------------
-	 
-#ifdef TARGET_NO_X11
-	#ifdef TARGET_RASPBERRY_PI
-		// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
-		EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
-		bool setupRPiNativeWindow(int w, int h, int screenMode);
-	#else
-		// ERROR -- no option supplied for NO_X11 option
-	#endif
-#else // yes to X11
-	Display*			x11Display;
-	Window				x11Window;
-	Window nativeWindow; // x11
-	bool setupX11NativeWindow(int w, int h, int screenMode);
-#endif	
+	
+	ofAppEGLWindowType eglWindowPreference;
+	bool isUsingX11;
+
+#ifdef TARGET_RASPBERRY_PI
+	// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
+	EGL_DISPMANX_WINDOW_T rpiNativeWindow; // rpi
+	bool setupRPiNativeWindow(int w, int h, int screenMode);
+#else
+	// if you are not raspberry pi, you will not be able to
+	// create a window without using x11.
+#endif
+
+Display*			x11Display;
+Window				x11Window;
+bool setupX11NativeWindow(int w, int h, int screenMode);
  
 //------------------------------------------------------------
 // PLATFORM SPECIFIC EVENTS
 //------------------------------------------------------------
-#ifdef TARGET_NO_X11
-	bool setupUDev();
-	bool destroyUDev();
+bool setupNativeUDev();
+bool destroyNativeUDev();
 
-	bool setupMouse();
-	bool setupKeyboard();
+bool setupNativeMouse();
+bool setupNativeKeyboard();
 
-	bool destroyMouse();
-	bool destroyKeyboard();
+bool destroyNativeMouse();
+bool destroyNativeKeyboard();
 
-	bool readMouseEvents();
-	bool readKeyboardEvents();
-	bool readUDevEvents();
+bool readNativeMouseEvents();
+bool readNativeKeyboardEvents();
+bool readNativeUDevEvents();
 
-#else // yes to X11
-	void handleEvent(const XEvent& event);
-#endif	
-	
-
-
+void handleX11Event(const XEvent& event);
 
 
 };
