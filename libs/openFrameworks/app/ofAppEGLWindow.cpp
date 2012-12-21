@@ -158,12 +158,44 @@ static const struct {
 // X11 events
   #include <X11/XKBlib.h>
 
+
+//-------------------------------------------------------------------------------------
+ofAppEGLWindow::Settings::Settings() {
+  eglWindowPreference = OF_APP_WINDOW_AUTO;
+  eglWindowOpacity = 255;
+
+  eglRedSize   = 8; // 8 bits for red
+  eglGreenSize = 8; // 8 bits for green
+  eglBlueSize  = 8; // 8 bits for blue
+  eglAlphaSize = 8; // 8 bits for alpha
+
+  eglSurfaceType = EGL_WINDOW_BIT; // default eglSurface type
+
+  initialClearColor = ofColor(0.15 * 255, 0.15 * 255, 0.15 * 255, 255);
+
+}
+
 // TODO. we may not need these to be static, but we will
 // leave it this way for now in case future EGL windows 
 // use static callbacks (like glut)
 
 //------------------------------------------------------------
 ofAppEGLWindow::ofAppEGLWindow() {
+  init();
+}
+
+//------------------------------------------------------------
+ofAppEGLWindow::ofAppEGLWindow(Settings _settings) {
+  init(_settings);
+}
+
+//------------------------------------------------------------
+ofAppEGLWindow::~ofAppEGLWindow() {
+  ofRemoveListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::init(Settings _settings) {
     terminate      = false;
 
     timeNow         = 0;
@@ -195,21 +227,12 @@ ofAppEGLWindow::ofAppEGLWindow() {
     mouseScaleX = 2.0f;
     mouseScaleY = 2.0f;
 
-    eglWindowPreference = OF_APP_WINDOW_AUTO;
     isUsingX11 = false;
 
-    init();
+    // APPLY SETTINGS
+    settings = _settings;
 
-}
-
-//------------------------------------------------------------
-ofAppEGLWindow::~ofAppEGLWindow() {
-  ofRemoveListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
-}
-
-//------------------------------------------------------------
-void ofAppEGLWindow::init() {
-  ofAddListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
+    ofAddListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
 }
 
 //------------------------------------------------------------
@@ -274,21 +297,31 @@ bool ofAppEGLWindow::setupNativeWindow(int w, int h, int screenMode) {
 
     bool bIsX11Available = getenv("DISPLAY") != NULL;
 
-    if(eglWindowPreference == OF_APP_WINDOW_AUTO) {
+    if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
         if(bIsX11Available) {
             isUsingX11 = true;
         } else {
             isUsingX11 = false;
         }
-    } else if(eglWindowPreference == OF_APP_WINDOW_NATIVE) {
+    } else if(settings.eglWindowPreference == OF_APP_WINDOW_NATIVE) {
         isUsingX11 = false;
-    } else if(eglWindowPreference == OF_APP_WINDOW_X11) {
+    } else if(settings.eglWindowPreference == OF_APP_WINDOW_X11) {
         isUsingX11 = true;
         if(!bIsX11Available) {
+            isUsingX11 = false;
             ofLogError("ofAppEGLWindow") << "X11 Window requested, but X11 is not available.";
-            return false;
         }
     }
+
+    ////////////////
+    // TODO remove the following ifdef once x11 is accelerated on RPI
+    #ifdef TARGET_RASPBERRY_PI
+    if(isUsingX11) {
+        isUsingX11 = false;
+        ofLogWarning("ofAppEGLWindow") << "I'm sorry, I know you wanted X11, but it's not availble on RPI yet.  Using a native window instead.";
+    }
+    #endif
+    ////////////////
 
 
     if(isUsingX11) {
@@ -297,7 +330,7 @@ bool ofAppEGLWindow::setupNativeWindow(int w, int h, int screenMode) {
         #ifdef TARGET_RASPBERRY_PI
           return setupRPiNativeWindow(w,h,screenMode);
         #else
-          ofLogError("ofAppEGLWindow") << "Window type not defined correctly for thsi system!";
+          ofLogError("ofAppEGLWindow") << "There is no native window type for this system. Perhaps try X11?";
           return false;
         #endif
     }
@@ -370,11 +403,11 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     }
     
     EGLint attribute_list[] = {
-		    EGL_RED_SIZE,   8, // 8 bits for red
-		    EGL_GREEN_SIZE, 8, // 8 bits for green
-		    EGL_BLUE_SIZE,  8, // 8 bits for blue
-		    EGL_ALPHA_SIZE, 8, // 8 bits for alpha
-		    EGL_SURFACE_TYPE, EGL_WINDOW_BIT, // default eglSurface type
+		    EGL_RED_SIZE,        settings.eglRedSize, // 8 bits for red
+		    EGL_GREEN_SIZE,      settings.eglGreenSize, // 8 bits for green
+		    EGL_BLUE_SIZE,       settings.eglBlueSize, // 8 bits for blue
+		    EGL_ALPHA_SIZE,      settings.eglAlphaSize, // 8 bits for alpha
+		    EGL_SURFACE_TYPE,    settings.eglSurfaceType, // default eglSurface type
 		    EGL_RENDERABLE_TYPE, glesVersion, //openGL ES version
 		    EGL_NONE // attribute list is termintated with EGL_NONE
 		};
@@ -413,7 +446,10 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
     assert(EGL_FALSE != result);
 
     // Set background color and clear buffers
-    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+    glClearColor(settings.initialClearColor.r / 255.0f,
+                 settings.initialClearColor.g / 255.0f,
+                 settings.initialClearColor.b / 255.0f,
+                 settings.initialClearColor.a / 255.0f);
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
 
@@ -851,8 +887,8 @@ bool ofAppEGLWindow::setupNativeUDev() {
         ofLogNotice("ofAppEGLWindow") << "setupUDev() : Created udev object.";
         // setup udev to monitor for input devices
         mon = udev_monitor_new_from_netlink(udev, "udev");
-        // TODO filter for input devices
-        //udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
+        // just listen for input devices
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
         udev_monitor_enable_receiving(mon);
         // get the file descriptor for the mon (used w/ select);
         udev_fd = udev_monitor_get_fd(mon);
@@ -1372,7 +1408,7 @@ bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
 
     VC_DISPMANX_ALPHA_T rpiNativeWindowAlpha;
     rpiNativeWindowAlpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
-    rpiNativeWindowAlpha.opacity = 255; // TODO: set from structFrom new struct
+    rpiNativeWindowAlpha.opacity = ofClamp(settings.eglWindowOpacity,0,255);
     rpiNativeWindowAlpha.mask = 0;
 
     dispman_display = vc_dispmanx_display_open( 0 /* LCD */);

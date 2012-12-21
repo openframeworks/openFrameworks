@@ -65,7 +65,11 @@ enum ofAppEGLWindowType {
 
 class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
+
+	struct Settings;
+
 	ofAppEGLWindow();
+	ofAppEGLWindow(Settings settings);
 	virtual ~ofAppEGLWindow();
 
 	void exit(ofEventArgs &e);
@@ -115,9 +119,25 @@ public:
 	virtual void	disableSetupScreen();
 
 	virtual void	setVerticalSync(bool enabled);
+	
+	struct Settings {
+		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
+		EGLint eglWindowOpacity; // 0-255 window alpha value
+
+		EGLint eglRedSize;    // n bits for red channel
+		EGLint eglGreenSize;  // n bits for green channel
+		EGLint eglBlueSize;   // n bits for blue channel
+		EGLint eglAlphaSize;  // n bits for alpha channel
+
+		EGLint eglSurfaceType; // egl surface type
+
+		ofColor initialClearColor;
+
+		Settings();
+	};
 
 protected:
-	void init();
+	void init(Settings settings = Settings());
 
 	void idle();
 	virtual void postIdle() {};
@@ -191,7 +211,6 @@ protected:
 // PLATFORM SPECIFIC WINDOWING
 //------------------------------------------------------------
 	
-	ofAppEGLWindowType eglWindowPreference;
 	bool isUsingX11;
 
 #ifdef TARGET_RASPBERRY_PI
@@ -203,30 +222,32 @@ protected:
 	// create a window without using x11.
 #endif
 
-Display*			x11Display;
-Window				x11Window;
-bool setupX11NativeWindow(int w, int h, int screenMode);
- 
+	Display*			x11Display;
+	Window				x11Window;
+	bool setupX11NativeWindow(int w, int h, int screenMode);
+	 
 //------------------------------------------------------------
-// PLATFORM SPECIFIC EVENTS
+// EVENTS
 //------------------------------------------------------------
-bool setupNativeEvents();
-bool destroyNativeEvents();
+	bool setupNativeEvents();
+	bool destroyNativeEvents();
 
-bool setupNativeUDev();
-bool destroyNativeUDev();
+	bool setupNativeUDev();
+	bool destroyNativeUDev();
 
-bool setupNativeMouse();
-bool setupNativeKeyboard();
+	bool setupNativeMouse();
+	bool setupNativeKeyboard();
 
-bool destroyNativeMouse();
-bool destroyNativeKeyboard();
+	bool destroyNativeMouse();
+	bool destroyNativeKeyboard();
 
-bool readNativeMouseEvents();
-bool readNativeKeyboardEvents();
-bool readNativeUDevEvents();
+	bool readNativeMouseEvents();
+	bool readNativeKeyboardEvents();
+	bool readNativeUDevEvents();
 
-void handleX11Event(const XEvent& event);
+	void handleX11Event(const XEvent& event);
 
+private:
+	Settings 			settings;
 
 };
