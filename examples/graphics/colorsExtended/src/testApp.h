@@ -29,6 +29,7 @@ class testApp : public ofBaseApp{
         vector < colorNameMapping > colorNames;
     
         ofPoint mouseSmoothed;
-    
+
+        int sortedType;             // keep track of which sort we've done
     
 };
