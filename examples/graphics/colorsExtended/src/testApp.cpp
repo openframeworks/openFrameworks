@@ -501,6 +501,8 @@ void testApp::setup(){
     ofEnableAlphaBlending();
     
     
+    sortedType = 1; // by name, at the start
+    
 }
 
 //--------------------------------------------------------------
@@ -553,13 +555,25 @@ void testApp::draw(){
 void testApp::keyPressed(int key){
     
     if (key == '1'){
-        std::sort(colorNames.begin(), colorNames.end(), compareName);
+        if (sortedType != 1){
+            sortedType = 1;
+            std::sort(colorNames.begin(), colorNames.end(), compareName);
+        }
     } else if (key == '2'){
-        std::sort(colorNames.begin(), colorNames.end(), compareHue);
+        if (sortedType != 2){
+            sortedType = 2;
+            std::sort(colorNames.begin(), colorNames.end(), compareHue);
+        }
     } else if (key == '3'){
-        std::sort(colorNames.begin(), colorNames.end(), compareBrightness);
+        if (sortedType != 3){
+            sortedType = 3;
+            std::sort(colorNames.begin(), colorNames.end(), compareBrightness);
+        }
     } else if (key == '4'){
-        std::sort(colorNames.begin(), colorNames.end(), compareSaturation);
+        if (sortedType != 4){
+            sortedType = 4;
+            std::sort(colorNames.begin(), colorNames.end(), compareSaturation);
+        }
     }
 }
 
