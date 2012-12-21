@@ -1,11 +1,27 @@
 #include "testApp.h"
 
+bool compareName( const colorNameMapping& s1, const colorNameMapping& s2 ) {
+    return strcasecmp( s1.name.c_str(), s2.name.c_str() ) <= 0;
+}
+
+bool compareBrightness( const colorNameMapping& s1, const colorNameMapping& s2 ) {
+    return s1.color.getBrightness() < s2.color.getBrightness();
+}
+
+bool compareHue( const colorNameMapping& s1, const colorNameMapping& s2 ) {
+    return s1.color.getHue() < s2.color.getHue();
+}
+
+bool compareSaturation( const colorNameMapping& s1, const colorNameMapping& s2 ) {
+    return s1.color.getSaturation() < s2.color.getSaturation();
+}
+
 //--------------------------------------------------------------
 void testApp::setup(){
     
     
     // build a map from name to ofColor of all the named OF colors;
-    
+
     colorNameMap["white"] = ofColor::white;
     colorNameMap["gray"] = ofColor::gray;
     colorNameMap["black"] = ofColor::black;
@@ -461,10 +477,29 @@ void testApp::setup(){
     colorNameMap["yellow3"] = ofColor::yellow3;
     colorNameMap["yellow4"] = ofColor::yellow4;
     colorNameMap["yellowgreen"] = ofColor::yellowgreen;
+    
 
+    // this map is useful if we want to address the colors by string.
+    // since we might want to sort this, we can put them in a vector also
+    
+    for (int i = 0; i < colorNameMap.size(); i++){
+        
+        map<string, ofColor>::iterator mapEntry = colorNameMap.begin();
+        std::advance( mapEntry, i );
+        
+        colorNameMapping mapping;
+        mapping.name = mapEntry->first;
+        mapping.color = mapEntry->second;
+        colorNames.push_back(mapping);
+    
+    }
+    
     ofBackground(255);
 
-    ofSetVerticalSync(true); 
+    ofSetVerticalSync(true);
+    
+    ofEnableAlphaBlending();
+    
     
 }
 
@@ -473,7 +508,7 @@ void testApp::update(){
 
     // smoothing the mouse a bit over time
 
-    mouseSmoothed = 0.99 * mouseSmoothed + 0.01 * ofPoint(mouseX, mouseY);
+    mouseSmoothed = 0.95 * mouseSmoothed + 0.05 * ofPoint(mouseX, mouseY);
 
 }
 
@@ -482,7 +517,7 @@ void testApp::draw(){
     
     // calculate the total size needed to display all the colors
     
-    float totalSize = (ceil(colorNameMap.size()/3.0)) * 50 - ofGetHeight();
+    float totalSize = (ceil(colorNameMap.size()/3.0)) * 50 - ofGetHeight() + 60;
     
     // map the smoothed mouse to this: 
     
@@ -493,29 +528,39 @@ void testApp::draw(){
     
   
     
-    for (int i = 0; i < colorNameMap.size(); i++){
+    for (int i = 0; i < colorNames.size(); i++){
     
         int x = (i % 3) * ofGetWidth()/3.0;
         int y = (floor(i / 3)) * 50;
         
-        map<string, ofColor>::iterator colorMapping = colorNameMap.begin();
-        std::advance( colorMapping, i );
-        
-        ofSetColor( colorMapping->second );
+        ofSetColor( colorNames[i].color );
         ofRect(0 + x, y - offset, (i%3 == 2) ? ofGetWidth() - x : ofGetWidth()/3.0, 50);
         
-        ofDrawBitmapStringHighlight(colorMapping->first, 20 + x, y -offset+30, ofColor::white, ofColor::black);
+        ofDrawBitmapStringHighlight(colorNames[i].name, 20 + x, y -offset+30, ofColor::white, ofColor::black);
         
     }
 
     
+    
+    ofSetColor(0);
+    ofRect(0, ofGetHeight()-60, ofGetWidth(), 60);
+    ofDrawBitmapStringHighlight("press '1' to sort by name, '2' to sort by hue,\n'3' to sort by brightness, '4' to sort by saturation", 20, ofGetHeight()-60 + 30, ofColor::black, ofColor::white);
     
     
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+    
+    if (key == '1'){
+        std::sort(colorNames.begin(), colorNames.end(), compareName);
+    } else if (key == '2'){
+        std::sort(colorNames.begin(), colorNames.end(), compareHue);
+    } else if (key == '3'){
+        std::sort(colorNames.begin(), colorNames.end(), compareBrightness);
+    } else if (key == '4'){
+        std::sort(colorNames.begin(), colorNames.end(), compareSaturation);
+    }
 }
 
 //--------------------------------------------------------------
