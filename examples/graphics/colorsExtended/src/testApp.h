@@ -2,6 +2,11 @@
 
 #include "ofMain.h"
 
+typedef struct {
+    string name;
+    ofColor color;
+} colorNameMapping;
+
 class testApp : public ofBaseApp{
 
 	public:
@@ -20,6 +25,8 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
         map < string, ofColor > colorNameMap;
+    
+        vector < colorNameMapping > colorNames;
     
         ofPoint mouseSmoothed;
     
