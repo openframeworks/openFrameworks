@@ -462,8 +462,10 @@ void testApp::setup(){
     colorNameMap["yellow4"] = ofColor::yellow4;
     colorNameMap["yellowgreen"] = ofColor::yellowgreen;
 
+    ofBackground(255);
+
+    ofSetVerticalSync(true); 
     
-        
 }
 
 //--------------------------------------------------------------
@@ -477,10 +479,10 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
+    
     // calculate the total size needed to display all the colors
     
-    float totalSize = colorNameMap.size() * 50 - ofGetHeight();
+    float totalSize = (ceil(colorNameMap.size()/3.0)) * 50 - ofGetHeight();
     
     // map the smoothed mouse to this: 
     
@@ -489,15 +491,20 @@ void testApp::draw(){
     // draw all the colors
     // note this could be optimized, since we're drawing plenty that's offscreen here.
     
+  
+    
     for (int i = 0; i < colorNameMap.size(); i++){
     
+        int x = (i % 3) * ofGetWidth()/3.0;
+        int y = (floor(i / 3)) * 50;
+        
         map<string, ofColor>::iterator colorMapping = colorNameMap.begin();
         std::advance( colorMapping, i );
         
         ofSetColor( colorMapping->second );
-        ofRect(0,i*50 - offset, ofGetWidth(), 50);
+        ofRect(0 + x, y - offset, (i%3 == 2) ? ofGetWidth() - x : ofGetWidth()/3.0, 50);
         
-        ofDrawBitmapStringHighlight(colorMapping->first, 20,i*50-offset+30, ofColor::darkgray, ofColor::white);
+        ofDrawBitmapStringHighlight(colorMapping->first, 20 + x, y -offset+30, ofColor::white, ofColor::black);
         
     }
 
