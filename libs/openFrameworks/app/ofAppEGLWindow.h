@@ -32,22 +32,55 @@
 #include "ofThread.h"
 #include "ofImage.h"
 
-#ifndef TARGET_RASPBERRY_PI
-	#include <X11/Xlib.h>
-	#include <X11/Xutil.h>
-#endif
+// include includes for both native and X11 possibilities
+#include <libudev.h>
+#include <stdbool.h>
+#include <stdio.h> // sprintf
+#include <stdlib.h>  // malloc
+#include <math.h>
+#include <fcntl.h>  // open fcntl
+#include <unistd.h> // read close 
+#include <linux/joystick.h>
+
+#include "linux/kd.h"	// keyboard stuff...
+#include "termios.h"
+#include "sys/ioctl.h"
+
+#include <dirent.h>  // scandir
+#include <string.h> // strlen
+
+// x11
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #include <queue>
 
+// TODO: this shold be passed in with the other window settings, like window alpha, etc.
+enum ofAppEGLWindowType {
+	OF_APP_WINDOW_AUTO,
+	OF_APP_WINDOW_NATIVE,
+	OF_APP_WINDOW_X11
+};
+
+
 class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
+
+	struct Settings;
+
 	ofAppEGLWindow();
+	ofAppEGLWindow(Settings settings);
 	virtual ~ofAppEGLWindow();
+
+	void exit(ofEventArgs &e);
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
+	virtual bool setupNativeWindow(int w, int h, int screenMode);
 	virtual bool setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display=NULL);
 	virtual void destroyEGL();
+
+	virtual void setupPeripherals();
 
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
@@ -86,42 +119,38 @@ public:
 	virtual void	disableSetupScreen();
 
 	virtual void	setVerticalSync(bool enabled);
+	
+	struct Settings {
+		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
+		EGLint eglWindowOpacity; // 0-255 window alpha value
+
+		EGLint eglRedSize;    // n bits for red channel
+		EGLint eglGreenSize;  // n bits for green channel
+		EGLint eglBlueSize;   // n bits for blue channel
+		EGLint eglAlphaSize;  // n bits for alpha channel
+
+		EGLint eglSurfaceType; // egl surface type
+
+		ofColor initialClearColor;
+
+		Settings();
+	};
 
 protected:
-	bool setupX11NativeWindow(int w, int h, int screenMode);
-	bool setupRPiNativeWindow(int w, int h, int screenMode);
+	void init(Settings settings = Settings());
 
 	void idle();
 	virtual void postIdle() {};
 	void display();
 	virtual void postDisplay() {};
 
-	void infiniteLoop();
-
-	void setWindowRect(const ofRectangle& requestedWindowRect) {
-		if(requestedWindowRect != currentWindowRect) {
-			ofRectangle oldWindowRect = currentWindowRect;
-
-			currentWindowRect = requestNewWindowRect(requestedWindowRect);
-			
-			if(oldWindowRect != currentWindowRect) {
-				ofNotifyWindowResized(currentWindowRect.width,currentWindowRect.height);
-				nFramesSinceWindowResized = 0;
-			}
-		}
-	}
+	void setWindowRect(const ofRectangle& requestedWindowRect);
 
 	virtual ofRectangle getScreenRect();
 	virtual ofRectangle requestNewWindowRect(const ofRectangle&);
-	int getWindowWidth() {
-		return currentWindowRect.width;
-	}
 
-
-	int getWindowHeight() {
-		return currentWindowRect.height;
-	}
-	
+	int getWindowWidth();
+	int getWindowHeight();
 
 	bool     terminate;
 
@@ -149,6 +178,26 @@ protected:
 	ofBaseApp *  ofAppPtr;
 
 
+	void threadedFunction();
+	queue<ofMouseEventArgs> mouseEvents;
+	queue<ofKeyEventArgs>   keyEvents;
+	void checkEvents();
+	ofImage mouseCursor;
+
+	// TODO: getters and setters?  OR automatically set based on 
+	// OS or screen size?  Should be changed when screen is resized?
+	float mouseScaleX;
+	float mouseScaleY;
+
+
+	// float getMouseScaleX() const;
+	// void setMouseScaleX(float x);
+	// float getMouseScaleY() const;
+	// void setMouseScaleY(float y);
+
+//------------------------------------------------------------
+// WINDOWING
+//------------------------------------------------------------
 	// EGL window
 	ofRectangle screenRect;
 	ofRectangle nonFullscreenWindowRect; // the rectangle describing the non-fullscreen window
@@ -157,32 +206,48 @@ protected:
 	EGLDisplay eglDisplay;  // EGL display connection
 	EGLSurface eglSurface;
 	EGLContext eglContext;
+
+//------------------------------------------------------------
+// PLATFORM SPECIFIC WINDOWING
+//------------------------------------------------------------
 	
-#ifndef TARGET_RASPBERRY_PI
-	void handleEvent(const XEvent& event);
-	Display*			x11Display;
-	Window				x11Window;
-#endif
-
-
+	bool isUsingX11;
 
 #ifdef TARGET_RASPBERRY_PI
 	// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
-	EGL_DISPMANX_WINDOW_T nativeWindow; // rpi
+	EGL_DISPMANX_WINDOW_T rpiNativeWindow; // rpi
+	bool setupRPiNativeWindow(int w, int h, int screenMode);
 #else
-	Window nativeWindow; // x11
+	// if you are not raspberry pi, you will not be able to
+	// create a window without using x11.
 #endif
 
+	Display*			x11Display;
+	Window				x11Window;
+	bool setupX11NativeWindow(int w, int h, int screenMode);
+	 
+//------------------------------------------------------------
+// EVENTS
+//------------------------------------------------------------
+	bool setupNativeEvents();
+	bool destroyNativeEvents();
 
-	void threadedFunction();
-	queue<ofMouseEventArgs> mouseEvents;
-	queue<ofKeyEventArgs> keyEvents;
-	void checkEvents();
-	ofImage mouseCursor;
-	
-	
+	bool setupNativeUDev();
+	bool destroyNativeUDev();
 
+	bool setupNativeMouse();
+	bool setupNativeKeyboard();
 
+	bool destroyNativeMouse();
+	bool destroyNativeKeyboard();
 
+	bool readNativeMouseEvents();
+	bool readNativeKeyboardEvents();
+	bool readNativeUDevEvents();
+
+	void handleX11Event(const XEvent& event);
+
+private:
+	Settings 			settings;
 
 };

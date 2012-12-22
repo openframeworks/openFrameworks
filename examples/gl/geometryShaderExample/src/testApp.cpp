@@ -44,7 +44,7 @@ void testApp::draw(){
 		shader.setUniform3f("lightDir", sin(ofGetElapsedTimef()/10), cos(ofGetElapsedTimef()/10), 0);
 	}
 
-	glColor3f(1, 1, 1);
+	ofColor(255);
 	
 	ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2, 0);
 	ofRotateX(mouseY);

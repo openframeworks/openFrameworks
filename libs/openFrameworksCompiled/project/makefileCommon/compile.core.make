@@ -1,7 +1,4 @@
-# TODO: add checks here for variables, flags etc.
-
 ################################################################################
-# print debug information if needed
 ifdef MAKEFILE_DEBUG
     $(info ===================compile.core.make================================)
 endif
@@ -18,8 +15,8 @@ ifdef PLATFORM_CC
     CC = $(PLATFORM_CC)
 endif
 
-ifdef PLATFORM_CC
-    CC = $(PLATFORM_CC)
+ifdef PROJECT_CC
+    CC = $(PROJECT_CC)
 endif
 
 ################################################################################
@@ -99,24 +96,24 @@ endif
 ################################################################################
 
 # define the location for our intermediate object files
-OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
+#OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
 
 # define the subdirectory for our target name
-OF_CORE_OBJ_OUPUT_PATH =$(OF_CORE_OBJ_BASE_PATH)/$(TARGET_NAME)
+OF_CORE_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
 
 # create a named list of dependency files
 # 1. create a list of .d dependency files based on the current list of 
 #  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
+OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
 
 # create a named list of object files
 # 1. create a list of object files based on the current list of
 #   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
+OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
 
 ifdef MAKEFILE_DEBUG
     $(info OF_CORE_OBJ_OUPUT_PATH=$(OF_CORE_OBJ_OUPUT_PATH))
@@ -150,7 +147,7 @@ all:
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
 	@echo "Compiling" $<
 	mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF$(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 # this target does the linking of the library
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
