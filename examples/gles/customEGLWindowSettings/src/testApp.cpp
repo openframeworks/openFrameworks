@@ -5,7 +5,6 @@
 void testApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
 
-	ofBackground(255,255,0);
 
     rpiLogo.loadImage("Raspi_Colour_R.png");
 
@@ -24,6 +23,8 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw() {
+    ofBackground(255,0);
+
 
     ofSetColor(255);
     ofPushMatrix();

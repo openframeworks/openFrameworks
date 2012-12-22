@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef CBLINUXPROJECT_H_
-#define CBLINUXPROJECT_H_
+#pragma once
 
 #include "ofConstants.h"
 #include "pugixml.hpp"
@@ -34,5 +33,3 @@ private:
 
 	Arch arch;
 };
-
-#endif /* CBLINUXPROJECT_H_ */

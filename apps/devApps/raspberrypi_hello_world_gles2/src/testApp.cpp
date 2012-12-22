@@ -14,7 +14,6 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::exit(){
     ofLogVerbose("testApp") << "exit()";
-
 }
 
 //--------------------------------------------------------------
@@ -40,7 +39,7 @@ void testApp::draw() {
     ofSetColor(255,0,0);
     ofNoFill();
     ofLine(ofGetMouseX(),0,ofGetMouseX(),ofGetHeight());
-    ofLine(0,ofGetMouseY(),ofGetHeight(),ofGetMouseY());
+    ofLine(0,ofGetMouseY(),ofGetWidth(),ofGetMouseY());
     ofPopStyle();
 }
 
