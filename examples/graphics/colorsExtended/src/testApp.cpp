@@ -197,7 +197,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-
+    
     // smoothing the mouse a bit over time
 
     mouseSmoothed = 0.95 * mouseSmoothed + 0.05 * ofPoint(mouseX, mouseY);
@@ -247,22 +247,22 @@ void testApp::keyPressed(int key){
     if (key == '1'){
         if (sortedType != 1){
             sortedType = 1;
-            std::sort(colorNames.begin(), colorNames.end(), compareName);
+            ofSort(colorNames, compareName);
         }
     } else if (key == '2'){
         if (sortedType != 2){
             sortedType = 2;
-            std::sort(colorNames.begin(), colorNames.end(), compareHue);
+            ofSort(colorNames, compareHue);
         }
     } else if (key == '3'){
         if (sortedType != 3){
             sortedType = 3;
-            std::sort(colorNames.begin(), colorNames.end(), compareBrightness);
+            ofSort(colorNames, compareBrightness);
         }
     } else if (key == '4'){
         if (sortedType != 4){
             sortedType = 4;
-            std::sort(colorNames.begin(), colorNames.end(), compareSaturation);
+            ofSort(colorNames, compareSaturation);
         }
     }
 }
