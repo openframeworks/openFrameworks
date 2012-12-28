@@ -30,6 +30,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.os.PowerManager;
@@ -404,6 +405,10 @@ public class OFAndroid {
 		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
 		ofActivity.registerReceiver(networkStateReceiver, filter);
 		networkConnected(isOnline());
+	}
+	
+	static public void launchBrowser(String url){
+		ofActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 	}
 	
 	
