@@ -98,6 +98,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void setPan(float vol){
 		pan = vol;
+		// in Android, panning is done by setting the volume on individual channels
 		setVolume(volume);
 	}
 	
