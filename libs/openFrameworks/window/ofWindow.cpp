@@ -144,6 +144,7 @@ void ofWindow::draw(){
 			++it;
 		}
 	#endif
+
 	glfwSwapBuffers(window);
 }
 void ofWindow::destroy(){

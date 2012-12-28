@@ -115,6 +115,7 @@ ofWindowManager::ofWindowManager() {
 	diffMillis = 0;
 	setFrameRate(60);
 	nFrameCount = 0;
+	bFrameRateSet = false;
 }
 
 ofWindowManager::~ofWindowManager() {
@@ -219,7 +220,7 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
 
 	*/
 
-	glfwWindowHint(GLFW_DEPTH_BITS, 16);
+	glfwWindowHint(GLFW_DEPTH_BITS, 32);
 
 	ofWindowMode windowMode = OF_WINDOW;
 	if(screenMode == OF_GAME_MODE)
@@ -230,9 +231,10 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
 
 	glfwMakeContextCurrent(mainWindow->getGlfwWindow());
 
-	glfwSwapInterval( 1 );
+	glfwSwapInterval( 0 );
 
 	glfwSetTime( 0.0 );
+
 
 	ofAddListener(ofEvents().exit, this, &ofWindowManager::exit);
 }

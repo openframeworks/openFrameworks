@@ -113,12 +113,9 @@ void ofNotifyKeyPressed(int key){
 	keyEventArgs.key = key;
 	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
 	
-	
 	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
 		exitApp();
 	}
-	
-	
 }
 
 //------------------------------------------
