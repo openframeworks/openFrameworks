@@ -53,6 +53,9 @@ static queue<ofTouchEventArgs> touchEventArgsQueue;
 static ofMutex mutex;
 static bool threadedTouchEvents = false;
 
+
+void ofExitCallback();
+
 //static ofAppAndroidWindow window;
 
 JavaVM * ofGetJavaVMPtr(){
@@ -121,6 +124,9 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
+	if(androidApp){
+		ofxRegisterMultitouch(androidApp);
+	}
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){
@@ -292,7 +298,7 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
-
+	ofExitCallback();
 }
 
 void
@@ -315,7 +321,6 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		androidApp->reloadTextures();
 	}
 	ofSetStyle(ofGetStyle());
-	ofSetOrientation(ofGetOrientation());
 	surfaceDestroyed = false;
 
 }
