@@ -1,24 +1,13 @@
 #include "testApp.h"
 
-int i = 0;
-
 //--------------------------------------------------------------
 void testApp::setup(){
 	
 	ofSetBackgroundColor(255, 100, 100);
 	ofGetMainWindow()->setWindowShape(600, 600);
-	ofCreateWindow(500, 500, ofRandom(100, 800), ofRandom(100, 800))->addListener(new windowRenderer);
-	
-	/*
-	ofCreateWindow(300, 400, 100, 100);
-	ofCreateWindow(600, 600, 100, 100);
-	ofGetMainWindow()->setWindowPosition(200, 200);
-	*/
-	 
-	textPos.set(ofGetWidth()*.5, ofGetHeight()*.5);	
-	
-	ofSetVerticalSync(true);
-	
+	ofCreateWindow(650, 0, ofRandom(400, 800), ofRandom(100, 800))->addListener(new windowRenderer);
+
+	textPos.set(200, 300);
 }
 
 //--------------------------------------------------------------
@@ -29,22 +18,19 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	
-	ofSetColor(50, 0, 0);
-	ofRect(i%ofGetWidth(), 100, 10, 10);
-	i++;
+	ofFill();
+	ofSetColor(160);
+	ofRect(ofGetFrameNum()%ofGetWidth(), 0, 2, ofGetHeight());
 
-	ofSetColor(255, 0, 0);
-	ofRect(ofGetMouseX(), ofGetMouseY(), 50, 50);
+	ofSetColor(0, 0, 0);
+	ofSetRectMode(OF_RECTMODE_CENTER);
+	ofRect(ofGetMouseX(), ofGetMouseY(), 20, 20);
 	
 	ofSetColor(0);
-	ofEnableAlphaBlending();
+	ofDrawBitmapString("THIS IS THE FIRST WINDOW "+ofToString(ofGetFrameRate()), 30, 30);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
-	ofDrawBitmapString("SCROLL TO MOVE ME", textPos);
+	ofSetRectMode(OF_RECTMODE_CORNER);
+	ofDrawBitmapStringHighlight("SCROLL TO MOVE ME", textPos);
 
 }
 

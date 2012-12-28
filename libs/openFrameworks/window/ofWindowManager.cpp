@@ -140,18 +140,18 @@ ofWindowManager::~ofWindowManager()
 	glfwTerminate();
 }
 
-ofWindow * ofWindowManager::createWindow(int w, int h)
+ofWindow * ofWindowManager::createWindow(int w, int h, ofWindowMode windowMode)
 {
-	return createWindow(0, 0, w, h);
+	return createWindow(0, 0, w, h, windowMode);
 }
 
-ofWindow * ofWindowManager::createWindow(int x, int y, int width, int height)
+ofWindow * ofWindowManager::createWindow(int x, int y, int width, int height, ofWindowMode windowMode)
 {
 	ofWindow * win = new ofWindow();
 
 	win->setWindowPositionAndShape(x, y, width, height);
 	addWindow(win);
-	win->initializeWindow();
+	win->initializeWindow(windowMode);
 	if(win->getGlfwWindow() != NULL) {
 		glfwSetWindowSizeCallback(win->getGlfwWindow(), &glfwWindowSizeCallback);
 		glfwSetWindowCloseCallback(win->getGlfwWindow(),&glfwWindowCloseCallback);
@@ -250,8 +250,11 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode)
 	
 	glfwWindowHint(GLFW_DEPTH_BITS, 16);
 
+	ofWindowMode windowMode = OF_WINDOW;
+	if(screenMode == OF_GAME_MODE)
+		windowMode = OF_GAME_MODE;
 
-	mainWindow = createWindow(w, h);
+	mainWindow = createWindow(w, h, windowMode);
 	activeWindow = mainWindow;
 	
 	glfwMakeContextCurrent(mainWindow->getGlfwWindow());
@@ -259,6 +262,8 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode)
 	glfwSwapInterval( 1 );
 
 	glfwSetTime( 0.0 );
+
+	ofAddListener(ofEvents().exit, this, &ofWindowManager::exit);
 }
 
 void ofWindowManager::initializeWindow()
@@ -590,3 +595,7 @@ void ofWindowManager::toggleFullscreen()
 	activeWindow->toggleFullscreen();
 }
 
+void ofWindowManager::exit(ofEventArgs& e)
+{
+	glfwTerminate();
+}

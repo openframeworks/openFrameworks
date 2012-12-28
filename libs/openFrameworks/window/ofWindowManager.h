@@ -11,8 +11,8 @@ class ofWindowManager : public ofAppBaseWindow {
 		ofWindowManager();
 		~ofWindowManager();
 
-		ofWindow * createWindow(int w = 800, int h = 600);
-		ofWindow * createWindow(int x, int y, int width, int height);
+		ofWindow * createWindow(int w = 800, int h = 600, ofWindowMode windowMode = OF_WINDOW);
+		ofWindow * createWindow(int x, int y, int width, int height, ofWindowMode windowMode = OF_WINDOW);
 		void deleteWindow(ofWindow * win);
 		void deleteWindow(int id);
 
@@ -59,6 +59,7 @@ class ofWindowManager : public ofAppBaseWindow {
 		void initializeGLFW();
 		void addWindow(ofWindow * win);
 		void removeWindow(ofWindow * win);
+		void exit(ofEventArgs& e);
 
 		ofWindowList windows;
 		ofWindow * mainWindow;

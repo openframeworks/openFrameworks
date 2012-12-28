@@ -218,7 +218,7 @@ class ofWindow : public ofAppBaseWindow {
 		~ofWindow();
 
 		void enableContext();
-		void initializeWindow();
+		void initializeWindow(ofWindowMode mode = OF_WINDOW);
 
 		void setWindowPositionAndShape(ofRectangle rect);
 		void setWindowPositionAndShape(int x, int y, int width, int height);

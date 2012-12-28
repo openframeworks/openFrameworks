@@ -36,9 +36,11 @@ ofWindow::~ofWindow(){
 	ofRemoveListener(ofEvents().draw, this, &ofWindow::draw);
 }
 
-void ofWindow::initializeWindow(){
+void ofWindow::initializeWindow(ofWindowMode wm){
 	ofLogNotice("CREATING WINDOW AT " + ofToString(x) + "/" + ofToString(y) + " SIZE " + ofToString(width) + " x " + ofToString(height));
-	
+
+	windowMode = wm;
+
 	/*Find out if we can share the context */
 	GLFWwindow win = NULL;
 	ofWindow* mainWindow = ofGetMainWindow();
