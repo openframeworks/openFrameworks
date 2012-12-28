@@ -579,3 +579,14 @@ int ofWindowManager::getFrameNum()
 {
 	return nFrameCount;
 }
+
+void ofWindowManager::setFullscreen(bool fullscreen)
+{
+	activeWindow->setFullscreen(fullscreen);
+}
+
+void ofWindowManager::toggleFullscreen()
+{
+	activeWindow->toggleFullscreen();
+}
+

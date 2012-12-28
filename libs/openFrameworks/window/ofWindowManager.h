@@ -38,6 +38,9 @@ class ofWindowManager : public ofAppBaseWindow {
 		int     getWidth();
 		int     getHeight();
 
+		void toggleFullscreen();
+		void setFullscreen(bool fullscreen);
+
 		//would like to have these functions private. but don't know how...
 		void glfwWindowFocus(GLFWwindow glfwWin, int action);
 		void glfwWindowSize(GLFWwindow glfwWin, int w, int h);

@@ -242,6 +242,10 @@ class ofWindow : public ofAppBaseWindow {
 		void setWidth(int w);
 		void setHeight(int h);
 
+		void setFullscreen(bool fullscreen);
+		void toggleFullscreen();
+		bool isFullscreen();
+
 		int getWidth();
 		int getHeight();
 
@@ -297,6 +301,7 @@ class ofWindow : public ofAppBaseWindow {
 		GLFWwindow window;
 
 		bool isInitialized;
+		ofWindowMode windowMode;
 		int id;
 		int width;
 		int height;

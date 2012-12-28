@@ -18,7 +18,9 @@ ofWindow::ofWindow() : mouseX(0),
 	previousMouseY(0),
 	isFocused(false),
 	title("ofTestApp"),
-	isInitialized(false){
+	isInitialized(false),
+	windowMode(OF_WINDOW)
+	{
 	id = lastWindowID;
 	lastWindowID++;
 	width = 800;
@@ -42,7 +44,11 @@ void ofWindow::initializeWindow(){
 	ofWindow* mainWindow = ofGetMainWindow();
 	if(mainWindow != NULL)
 		win = mainWindow->getGlfwWindow();
-	window = glfwCreateWindow(width, height, GLFW_WINDOWED, title.c_str(), win);
+	int mode = GLFW_WINDOWED;
+	if(windowMode == OF_GAME_MODE)
+		mode = GLFW_FULLSCREEN;
+
+	window = glfwCreateWindow(width, height, mode, title.c_str(), win);
 	if(window == NULL)
 		ofLogError("Could not initialize window");
 	
@@ -344,9 +350,11 @@ int ofWindow::getY(){
 
 int ofWindow::setX(int _x){
 	setWindowPosition(_x, y);
+	return _x; //TODO: this should return the actual window position
 }
 int ofWindow::setY(int _y){
 	setWindowPosition(x, _y);
+	return _y; //TODO: this should return the actual window position
 }
 
 void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h){
@@ -459,3 +467,25 @@ void ofWindow::updateMouse(int x, int y)
 	mouseX = x;
 	mouseY = y;	
 }
+
+bool ofWindow::isFullscreen()
+{
+	if(windowMode  == OF_FULLSCREEN)
+		return true;
+	if(windowMode == OF_GAME_MODE)
+		return true;
+	return false;
+}
+
+void ofWindow::setFullscreen(bool fullscreen)
+{
+}
+
+void ofWindow::setWindowPositionAndShape(ofRectangle rect)
+{
+}
+
+void ofWindow::toggleFullscreen()
+{
+}
+
