@@ -77,14 +77,14 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void setVolume(float vol){
 		volume = vol;
-        // calculates left/right volumes from pan-value (constant panning law) 
-        // see: Curtis Roads: Computer Music Tutorial p 460
+		// calculates left/right volumes from pan-value (constant panning law) 
+		// see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
-        float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
-        float cosAngle = FloatMath.cos(angle);
-        float sinAngle = FloatMath.sin(angle);
-        leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
-        rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
+		float cosAngle = FloatMath.cos(angle);
+		float sinAngle = FloatMath.sin(angle);
+		leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
 		if(stream){
 			if(player!=null) player.setVolume(leftVolume, rightVolume);
 		}else if(streamID!=-1){
