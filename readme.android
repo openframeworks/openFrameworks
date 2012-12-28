@@ -99,6 +99,7 @@ Edit this file:
     openFrameworks/libs/openFrameworksCompiled/project/android/paths.make
 
 This will tell openFrameworks where to find the SDK, NDK and Ant.
+If you don't have this file, create it from the paths.make.default template in the same directory.
 
 - Set the values of SDK_ROOT and NDK_ROOT to their install paths
 
