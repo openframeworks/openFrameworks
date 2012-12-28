@@ -31,17 +31,15 @@ void testApp::draw(){
 
 	ofSetRectMode(OF_RECTMODE_CORNER);
 	ofDrawBitmapStringHighlight("SCROLL TO MOVE ME", textPos);
-
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-
+	ofGetMainWindow()->toggleFullscreen();
 }
 
 //--------------------------------------------------------------
