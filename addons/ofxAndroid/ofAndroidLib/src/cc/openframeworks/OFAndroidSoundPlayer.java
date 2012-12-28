@@ -179,7 +179,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	float getPan(){
-		return pan/2.f+1;
+		return pan;
 	}
 	
 	boolean isLoaded(){
