@@ -50,6 +50,9 @@ void ofWindow::initializeWindow(ofWindowMode wm){
 	if(windowMode == OF_GAME_MODE)
 		mode = GLFW_FULLSCREEN;
 
+	glfwWindowHint(GLFW_POSITION_X, x);
+	glfwWindowHint(GLFW_POSITION_Y, y);
+
 	window = glfwCreateWindow(width, height, mode, title.c_str(), win);
 	if(window == NULL)
 		ofLogError("Could not initialize window");
@@ -330,7 +333,8 @@ void ofWindow::windowClosed(){
 }
 ofPoint ofWindow::getWindowPosition(){
 	if(window != NULL){
-		glfwGetWindowPos(window, &x, &y);
+		x = glfwGetWindowParam(window, GLFW_POSITION_X);
+		y = glfwGetWindowParam(window, GLFW_POSITION_Y);
 	}
 	return ofPoint(x, y);
 }
@@ -372,7 +376,8 @@ void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h){
 	}
 }
 void ofWindow::setWindowPosition(int x, int y){
-	glfwSetWindowPos(window, x, y);
+	//glfwSetWindowPos(window, x, y);
+	//ofLogWarning("SET WINDOW POSITION DOES CURRENTLY NOT WORK");
 }
 void ofWindow::setWindowPosition(ofPoint pos){
 	setWindowPosition(pos.x, pos.y);
