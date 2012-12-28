@@ -67,12 +67,6 @@ extern "C" {
  #endif
 #endif /* APIENTRY */
 
-/* TEMPORARY MinGW-w64 hacks.
- */
-#if __MINGW64__
- #define WINAPI
-#endif
-
 /* The following three defines are here solely to make some Windows-based
  * <GL/gl.h> files happy. Theoretically we could include <windows.h>, but
  * it has the major drawback of severely polluting our namespace.
@@ -147,7 +141,7 @@ extern "C" {
 /* Include the chosen OpenGL header and, optionally, the GLU header.
  */
 #if defined(__APPLE_CC__)
-  #if defined(GLFW_INCLUDE_GL3)
+  #if defined(GLFW_INCLUDE_GLCOREARB)
     #include <OpenGL/gl3.h>
   #else
     #define GL_GLEXT_LEGACY
@@ -157,8 +151,8 @@ extern "C" {
     #include <OpenGL/glu.h>
   #endif
 #else
-  #if defined(GLFW_INCLUDE_GL3)
-    #include <GL3/gl3.h>
+  #if defined(GLFW_INCLUDE_GLCOREARB)
+    #include <GL/glcorearb.h>
   #else
     #include <GL/gl.h>
   #endif
@@ -388,11 +382,10 @@ extern "C" {
 /* glfwGetWindowParam tokens */
 #define GLFW_ACTIVE               0x00020001
 #define GLFW_ICONIFIED            0x00020002
+#define GLFW_CLOSE_REQUESTED      0x00020003
 #define GLFW_OPENGL_REVISION      0x00020004
 
-/* The following constants are used for both glfwGetWindowParam
- * and glfwWindowHint
- */
+/* glfwWindowHint tokens */
 #define GLFW_RED_BITS             0x00021000
 #define GLFW_GREEN_BITS           0x00021001
 #define GLFW_BLUE_BITS            0x00021002
@@ -406,14 +399,24 @@ extern "C" {
 #define GLFW_ACCUM_ALPHA_BITS     0x0002100A
 #define GLFW_AUX_BUFFERS          0x0002100B
 #define GLFW_STEREO               0x0002100C
-#define GLFW_WINDOW_RESIZABLE     0x0002100D
 #define GLFW_FSAA_SAMPLES         0x0002100E
-#define GLFW_OPENGL_VERSION_MAJOR 0x0002100F
-#define GLFW_OPENGL_VERSION_MINOR 0x00021010
-#define GLFW_OPENGL_FORWARD_COMPAT 0x00021011
-#define GLFW_OPENGL_DEBUG_CONTEXT 0x00021012
-#define GLFW_OPENGL_PROFILE       0x00021013
-#define GLFW_OPENGL_ROBUSTNESS    0x00021014
+
+/* The following constants are used with both glfwGetWindowParam
+ * and glfwWindowHint
+ */
+#define GLFW_CLIENT_API           0x00022000
+#define GLFW_OPENGL_VERSION_MAJOR 0x00022001
+#define GLFW_OPENGL_VERSION_MINOR 0x00022002
+#define GLFW_OPENGL_FORWARD_COMPAT 0x00022003
+#define GLFW_OPENGL_DEBUG_CONTEXT 0x00022004
+#define GLFW_OPENGL_PROFILE       0x00022005
+#define GLFW_OPENGL_ROBUSTNESS    0x00022006
+#define GLFW_RESIZABLE            0x00022007
+#define GLFW_VISIBLE              0x00022008
+
+/* GLFW_CLIENT_API tokens */
+#define GLFW_OPENGL_API           0x00000001
+#define GLFW_OPENGL_ES_API        0x00000002
 
 /* GLFW_OPENGL_ROBUSTNESS mode tokens */
 #define GLFW_OPENGL_NO_ROBUSTNESS         0x00000000
@@ -424,7 +427,6 @@ extern "C" {
 #define GLFW_OPENGL_NO_PROFILE    0x00000000
 #define GLFW_OPENGL_CORE_PROFILE  0x00000001
 #define GLFW_OPENGL_COMPAT_PROFILE 0x00000002
-#define GLFW_OPENGL_ES2_PROFILE   0x00000004
 
 /* glfwGetInputMode/glfwSetInputMode tokens */
 #define GLFW_CURSOR_MODE          0x00030001
@@ -527,24 +529,27 @@ GLFWAPI void glfwGetGammaRamp(GLFWgammaramp* ramp);
 GLFWAPI void glfwSetGammaRamp(const GLFWgammaramp* ramp);
 
 /* Window handling */
-GLFWAPI GLFWwindow glfwCreateWindow(int width, int height, int mode, const char* title, GLFWwindow share);
+GLFWAPI void glfwDefaultWindowHints(void);
 GLFWAPI void glfwWindowHint(int target, int hint);
+GLFWAPI GLFWwindow glfwCreateWindow(int width, int height, int mode, const char* title, GLFWwindow share);
 GLFWAPI void glfwDestroyWindow(GLFWwindow window);
-GLFWAPI void glfwSetWindowTitle(GLFWwindow, const char* title);
-GLFWAPI void glfwGetWindowSize(GLFWwindow, int* width, int* height);
-GLFWAPI void glfwSetWindowSize(GLFWwindow, int width, int height);
-GLFWAPI void glfwGetWindowPos(GLFWwindow, int* xpos, int* ypos);
-GLFWAPI void glfwSetWindowPos(GLFWwindow, int xpos, int ypos);
+GLFWAPI void glfwSetWindowTitle(GLFWwindow window, const char* title);
+GLFWAPI void glfwGetWindowSize(GLFWwindow window, int* width, int* height);
+GLFWAPI void glfwSetWindowSize(GLFWwindow window, int width, int height);
+GLFWAPI void glfwGetWindowPos(GLFWwindow window, int* xpos, int* ypos);
+GLFWAPI void glfwSetWindowPos(GLFWwindow window, int xpos, int ypos);
 GLFWAPI void glfwIconifyWindow(GLFWwindow window);
 GLFWAPI void glfwRestoreWindow(GLFWwindow window);
+GLFWAPI void glfwShowWindow(GLFWwindow window);
+GLFWAPI void glfwHideWindow(GLFWwindow window);
 GLFWAPI int  glfwGetWindowParam(GLFWwindow window, int param);
 GLFWAPI void glfwSetWindowUserPointer(GLFWwindow window, void* pointer);
 GLFWAPI void* glfwGetWindowUserPointer(GLFWwindow window);
-GLFWAPI void glfwSetWindowSizeCallback(GLFWwindowsizefun cbfun);
-GLFWAPI void glfwSetWindowCloseCallback(GLFWwindowclosefun cbfun);
-GLFWAPI void glfwSetWindowRefreshCallback(GLFWwindowrefreshfun cbfun);
-GLFWAPI void glfwSetWindowFocusCallback(GLFWwindowfocusfun cbfun);
-GLFWAPI void glfwSetWindowIconifyCallback(GLFWwindowiconifyfun cbfun);
+GLFWAPI void glfwSetWindowSizeCallback(GLFWwindow window, GLFWwindowsizefun cbfun);
+GLFWAPI void glfwSetWindowCloseCallback(GLFWwindow window, GLFWwindowclosefun cbfun);
+GLFWAPI void glfwSetWindowRefreshCallback(GLFWwindow window, GLFWwindowrefreshfun cbfun);
+GLFWAPI void glfwSetWindowFocusCallback(GLFWwindow window, GLFWwindowfocusfun cbfun);
+GLFWAPI void glfwSetWindowIconifyCallback(GLFWwindow window, GLFWwindowiconifyfun cbfun);
 
 /* Event handling */
 GLFWAPI void glfwPollEvents(void);
@@ -558,16 +563,16 @@ GLFWAPI int  glfwGetMouseButton(GLFWwindow window, int button);
 GLFWAPI void glfwGetCursorPos(GLFWwindow window, int* xpos, int* ypos);
 GLFWAPI void glfwSetCursorPos(GLFWwindow window, int xpos, int ypos);
 GLFWAPI void glfwGetScrollOffset(GLFWwindow window, double* xoffset, double* yoffset);
-GLFWAPI void glfwSetKeyCallback(GLFWkeyfun cbfun);
-GLFWAPI void glfwSetCharCallback(GLFWcharfun cbfun);
-GLFWAPI void glfwSetMouseButtonCallback(GLFWmousebuttonfun cbfun);
-GLFWAPI void glfwSetCursorPosCallback(GLFWcursorposfun cbfun);
-GLFWAPI void glfwSetCursorEnterCallback(GLFWcursorenterfun cbfun);
-GLFWAPI void glfwSetScrollCallback(GLFWscrollfun cbfun);
+GLFWAPI void glfwSetKeyCallback(GLFWwindow window, GLFWkeyfun cbfun);
+GLFWAPI void glfwSetCharCallback(GLFWwindow window, GLFWcharfun cbfun);
+GLFWAPI void glfwSetMouseButtonCallback(GLFWwindow window, GLFWmousebuttonfun cbfun);
+GLFWAPI void glfwSetCursorPosCallback(GLFWwindow window, GLFWcursorposfun cbfun);
+GLFWAPI void glfwSetCursorEnterCallback(GLFWwindow window, GLFWcursorenterfun cbfun);
+GLFWAPI void glfwSetScrollCallback(GLFWwindow window, GLFWscrollfun cbfun);
 
 /* Joystick input */
 GLFWAPI int glfwGetJoystickParam(int joy, int param);
-GLFWAPI int glfwGetJoystickPos(int joy, float* pos, int numaxes);
+GLFWAPI int glfwGetJoystickAxes(int joy, float* axes, int numaxes);
 GLFWAPI int glfwGetJoystickButtons(int joy, unsigned char* buttons, int numbuttons);
 
 /* Clipboard */

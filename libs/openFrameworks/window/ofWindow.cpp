@@ -28,13 +28,31 @@ ofWindow::ofWindow() : mouseX(0),
 		keyState[i] = false;
 	}
 }
+
 ofWindow::~ofWindow(){
 	ofRemoveListener(ofEvents().update, this, &ofWindow::update);
 	ofRemoveListener(ofEvents().draw, this, &ofWindow::draw);
 }
+
 void ofWindow::initializeWindow(){
 	ofLogNotice("CREATING WINDOW AT " + ofToString(x) + "/" + ofToString(y) + " SIZE " + ofToString(width) + " x " + ofToString(height));
-	window = glfwCreateWindow(width, height, GLFW_WINDOWED, title.c_str(), NULL);
+	
+	/*Find out if we can share the context */
+	GLFWwindow win = NULL;
+	ofWindow* mainWindow = ofGetMainWindow();
+	if(mainWindow != NULL)
+		win = mainWindow->getGlfwWindow();
+	window = glfwCreateWindow(width, height, GLFW_WINDOWED, title.c_str(), win);
+	if(window == NULL)
+		ofLogError("Could not initialize window");
+	
+	/*
+	int major = glfwGetWindowParam(window, GLFW_OPENGL_VERSION_MAJOR);
+	int minor = glfwGetWindowParam(window, GLFW_OPENGL_VERSION_MINOR);
+	*/
+	
+	glfwSetInputMode( window, GLFW_STICKY_KEYS, GL_TRUE );
+	
 	isInitialized = true;
 	setWindowPositionAndShape(x, y, width, height);
 }
@@ -212,6 +230,10 @@ void ofWindow::mouseDragged(int mX, int mY, int button){
 }
 
 void ofWindow::scrolled(float deltaX, float deltaY){
+	#ifndef TARGET_OSX
+	deltaX *= -1;
+	#endif
+	
 	ofNotifyScrolled(deltaX, deltaY);
 	#ifdef OF_USING_POCO
 		ofScrollEventArgs e;

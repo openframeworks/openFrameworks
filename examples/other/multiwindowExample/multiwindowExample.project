@@ -33,7 +33,8 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/phwhitfield/programming/openFrameworks-git/examples/other/multiwindowExample/bin/multiwindowExample" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/phwhitfield/programming/openFrameworks-git/examples/other/multiwindowExample/bin" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -71,6 +72,7 @@
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -100,4 +102,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
