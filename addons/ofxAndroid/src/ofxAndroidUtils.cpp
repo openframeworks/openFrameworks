@@ -374,10 +374,9 @@ void ofxAndroidLaunchBrowser(string url){
 		return;
 	}
 
-	// check url string for http:// or https://
-	if(false){
+	if((url.compare(0,7,"http://") != 0) && (url.compare(0,8,"https://") != 0)){
 		ofLog(OF_LOG_WARNING,"ofxAndroidLaunchBrowser: url must begin with http:// or https://");
-		return;	  
+		return;
 	}
 	jstring jUrl = ofGetJNIEnv()->NewStringUTF(url.c_str());
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,jUrl);
