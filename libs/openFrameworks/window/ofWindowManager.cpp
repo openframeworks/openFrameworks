@@ -14,63 +14,51 @@
 
 /********** GLFW CALLBACKS **********************************************************/
 
-void glfwErrorCallback(int type, const char * err)
-{
+void glfwErrorCallback(int type, const char * err) {
 	ofLog(OF_LOG_ERROR, err);
 }
 
-void glfwWindowSizeCallback(GLFWwindow glfwWin, int w, int h)
-{
+void glfwWindowSizeCallback(GLFWwindow glfwWin, int w, int h) {
 	ofGetWindowManager()->glfwWindowSize(glfwWin, w, h);
 }
 
-int glfwWindowCloseCallback(GLFWwindow glfwWin)
-{
+int glfwWindowCloseCallback(GLFWwindow glfwWin) {
 	return ofGetWindowManager()->glfwWindowClose(glfwWin);
 }
 
-void glfwWindowRefreshCallback(GLFWwindow glfwWin)
-{
+void glfwWindowRefreshCallback(GLFWwindow glfwWin) {
 	ofGetWindowManager()->glfwWindowRefresh(glfwWin);
 }
 
-void glfwWindowFocusCallback(GLFWwindow glfwWin, int action)
-{
+void glfwWindowFocusCallback(GLFWwindow glfwWin, int action) {
 	ofGetWindowManager()->glfwWindowFocus(glfwWin, action);
 }
 
-void glfwWindowIconifyCallback(GLFWwindow glfwWin, int action)
-{
+void glfwWindowIconifyCallback(GLFWwindow glfwWin, int action) {
 	ofGetWindowManager()->glfwWindowIconify(glfwWin, action);
 }
 
-void glfwMouseButtonCallback(GLFWwindow glfwWin, int button, int action)
-{
+void glfwMouseButtonCallback(GLFWwindow glfwWin, int button, int action) {
 	ofGetWindowManager()->glfwMouseButton(glfwWin, button, action);
 }
 
-void glfwMousePosCallback(GLFWwindow glfwWin, int x, int y)
-{
+void glfwMousePosCallback(GLFWwindow glfwWin, int x, int y) {
 	ofGetWindowManager()->glfwMousePos(glfwWin, x, y);
 }
 
-void glfwCursorEnterCallback(GLFWwindow glfwWin, int action)
-{
+void glfwCursorEnterCallback(GLFWwindow glfwWin, int action) {
 	ofGetWindowManager()->glfwCursorEnter(glfwWin, action);
 }
 
-void glfwScrollCallback(GLFWwindow glfwWin, double deltaX, double deltaY)
-{
+void glfwScrollCallback(GLFWwindow glfwWin, double deltaX, double deltaY) {
 	ofGetWindowManager()->glfwScroll(glfwWin, deltaX, deltaY);
 }
 
-void glfwKeyCallback(GLFWwindow glfwWin, int key, int action)
-{
+void glfwKeyCallback(GLFWwindow glfwWin, int key, int action) {
 	ofGetWindowManager()->glfwKey(glfwWin, key, action);
 }
 
-void glfwCharCallback(GLFWwindow glfwWin, int character)
-{
+void glfwCharCallback(GLFWwindow glfwWin, int character) {
 	ofGetWindowManager()->glfwChar(glfwWin, character);
 }
 
@@ -80,31 +68,26 @@ void glfwCharCallback(GLFWwindow glfwWin, int character)
 
 ofWindowManager * windowManager = NULL;
 
-ofWindowManager * ofGetWindowManager()
-{
+ofWindowManager * ofGetWindowManager() {
 	if(windowManager == NULL) {
 		windowManager = new ofWindowManager();
 	}
 	return windowManager;
 }
 
-ofWindow * ofCreateWindow(int x, int y, int width, int height)
-{
+ofWindow * ofCreateWindow(int x, int y, int width, int height) {
 	return ofGetWindowManager()->createWindow(x, y, width, height);
 }
 
-ofWindow * ofCreateWindow(int width, int height)
-{
+ofWindow * ofCreateWindow(int width, int height) {
 	return ofCreateWindow(0, 0, width, height);
 }
 
-ofWindow * ofGetMainWindow()
-{
+ofWindow * ofGetMainWindow() {
 	return ofGetWindowManager()->getMainWindow();
 }
 
-ofWindow * ofGetLastCreatedWindow()
-{
+ofWindow * ofGetLastCreatedWindow() {
 	return ofGetWindowManager()->getLastCreatedWindow();
 }
 
@@ -122,8 +105,7 @@ static int diffMillis;
 static float frameRate;
 static double lastFrameTime;
 
-ofWindowManager::ofWindowManager()
-{
+ofWindowManager::ofWindowManager() {
 	timeNow = 0;
 	timeThen = 0;
 	fps = 60.0;                 //give a realistic starting value - win32 issues
@@ -135,18 +117,15 @@ ofWindowManager::ofWindowManager()
 	nFrameCount = 0;
 }
 
-ofWindowManager::~ofWindowManager()
-{
+ofWindowManager::~ofWindowManager() {
 	glfwTerminate();
 }
 
-ofWindow * ofWindowManager::createWindow(int w, int h, ofWindowMode windowMode)
-{
+ofWindow * ofWindowManager::createWindow(int w, int h, ofWindowMode windowMode) {
 	return createWindow(0, 0, w, h, windowMode);
 }
 
-ofWindow * ofWindowManager::createWindow(int x, int y, int width, int height, ofWindowMode windowMode)
-{
+ofWindow * ofWindowManager::createWindow(int x, int y, int width, int height, ofWindowMode windowMode) {
 	ofWindow * win = new ofWindow();
 
 	win->setWindowPositionAndShape(x, y, width, height);
@@ -170,18 +149,15 @@ ofWindow * ofWindowManager::createWindow(int x, int y, int width, int height, of
 	return win;
 }
 
-void ofWindowManager::addWindow(ofWindow * win)
-{
+void ofWindowManager::addWindow(ofWindow * win) {
 	windows.push_back(ofWindowPtr(win));
 }
 
-void ofWindowManager::deleteWindow(ofWindow * win)
-{
+void ofWindowManager::deleteWindow(ofWindow * win) {
 	win->destroy();
 }
 
-void ofWindowManager::removeWindow(ofWindow * win)
-{
+void ofWindowManager::removeWindow(ofWindow * win) {
 
 	ofWindowList::iterator it = windows.begin();
 	while(it != windows.end()) {
@@ -197,13 +173,11 @@ void ofWindowManager::removeWindow(ofWindow * win)
 	}
 }
 
-void ofWindowManager::deleteWindow(int id)
-{
+void ofWindowManager::deleteWindow(int id) {
 	deleteWindow(getWindowById(id));
 }
 
-ofWindow * ofWindowManager::getWindowById(int id)
-{
+ofWindow * ofWindowManager::getWindowById(int id) {
 	ofWindowList::iterator it = windows.begin();
 	while(it != windows.end()) {
 		if((*it)->id == id) {
@@ -216,8 +190,7 @@ ofWindow * ofWindowManager::getWindowById(int id)
 }
 
 
-ofWindow * ofWindowManager::getWindowByGlfw(GLFWwindow win)
-{
+ofWindow * ofWindowManager::getWindowByGlfw(GLFWwindow win) {
 	ofWindowList::iterator it = windows.begin();
 	while(it != windows.end()) {
 		if((*it)->getGlfwWindow() == win) {
@@ -229,16 +202,14 @@ ofWindow * ofWindowManager::getWindowByGlfw(GLFWwindow win)
 	return mainWindow;
 }
 
-void ofWindowManager::initializeGLFW()
-{
+void ofWindowManager::initializeGLFW() {
 	if(!glfwInit()) {
 		ofLogError("Failed to initialize GLFW");
 		ofExit(0);
 	}
 }
 
-void ofWindowManager::setupOpenGL(int w, int h, int screenMode)
-{
+void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
 	initializeGLFW();
 	/*
 		glfwWindowHint(GLFW_OPENGL_VERSION_MAJOR, 2);
@@ -247,7 +218,7 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	*/
-	
+
 	glfwWindowHint(GLFW_DEPTH_BITS, 16);
 
 	ofWindowMode windowMode = OF_WINDOW;
@@ -256,7 +227,7 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode)
 
 	mainWindow = createWindow(w, h, windowMode);
 	activeWindow = mainWindow;
-	
+
 	glfwMakeContextCurrent(mainWindow->getGlfwWindow());
 
 	glfwSwapInterval( 1 );
@@ -266,16 +237,14 @@ void ofWindowManager::setupOpenGL(int w, int h, int screenMode)
 	ofAddListener(ofEvents().exit, this, &ofWindowManager::exit);
 }
 
-void ofWindowManager::initializeWindow()
-{
+void ofWindowManager::initializeWindow() {
 	//define all callbacks now, so there won't happen anything before OF is fully initialized
 	glfwSetErrorCallback(&glfwErrorCallback);
 
 	mainWindow->setup();
 }
 
-void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr)
-{
+void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 
 	appPtr->setup();
 	mainWindow->addListener(appPtr);
@@ -289,8 +258,7 @@ void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr)
 	}
 }
 
-void ofWindowManager::update()
-{
+void ofWindowManager::update() {
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
 	if(nFrameCount != 0 && bFrameRateSet == true) {
@@ -329,24 +297,20 @@ void ofWindowManager::update()
 	ofNotifyUpdate();
 }
 
-void ofWindowManager::draw()
-{
+void ofWindowManager::draw() {
 	ofNotifyDraw();
 }
 
-ofWindow * ofWindowManager::getLastCreatedWindow()
-{
+ofWindow * ofWindowManager::getLastCreatedWindow() {
 	return windows.back().get();
 }
 
 
-ofWindow * ofWindowManager::getMainWindow()
-{
+ofWindow * ofWindowManager::getMainWindow() {
 	return mainWindow;
 }
 
-void ofWindowManager::setFrameRate(float targetRate)
-{
+void ofWindowManager::setFrameRate(float targetRate) {
 	// given this FPS, what is the amount of millis per frame
 	// that should elapse?
 
@@ -365,63 +329,51 @@ void ofWindowManager::setFrameRate(float targetRate)
 
 }
 
-float ofWindowManager::getFrameRate()
-{
+float ofWindowManager::getFrameRate() {
 	return frameRate;
 }
 
-void ofWindowManager::setActiveWindow(ofWindow * win)
-{
+void ofWindowManager::setActiveWindow(ofWindow * win) {
 	activeWindow = win;
 	ofSetMouseValues(activeWindow->mouseX, activeWindow->mouseY, activeWindow->previousMouseX, activeWindow->previousMouseY);
 	activeWindow->enableContext();
 }
 
-ofPoint ofWindowManager::getWindowPosition()
-{
+ofPoint ofWindowManager::getWindowPosition() {
 	return activeWindow->getWindowPosition();
 }
-ofPoint ofWindowManager::getWindowSize()
-{
+ofPoint ofWindowManager::getWindowSize() {
 	return activeWindow->getWindowSize();
 }
 
 //this is used by ofGetWidth and now determines the window width based on orientation
-int ofWindowManager::getWidth()
-{
+int ofWindowManager::getWidth() {
 	return activeWindow->getWidth();
 }
-int ofWindowManager::getHeight()
-{
+int ofWindowManager::getHeight() {
 	return activeWindow->getHeight();
 }
 
 ////GLFW CALLBACKS
-void ofWindowManager::glfwWindowFocus(GLFWwindow glfwWin, int action)
-{
+void ofWindowManager::glfwWindowFocus(GLFWwindow glfwWin, int action) {
 	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
-void ofWindowManager::glfwWindowSize(GLFWwindow glfwWin, int w, int h)
-{
+void ofWindowManager::glfwWindowSize(GLFWwindow glfwWin, int w, int h) {
 	ofWindow * win = getWindowByGlfw(glfwWin);
 	win->windowResized(w, h);
 }
-int ofWindowManager::glfwWindowClose(GLFWwindow glfwWin)
-{
+int ofWindowManager::glfwWindowClose(GLFWwindow glfwWin) {
 	ofWindow * win = getWindowByGlfw(glfwWin);
 	removeWindow(win);
 	return 1;
 }
-void ofWindowManager::glfwWindowRefresh(GLFWwindow glfwWin)
-{
+void ofWindowManager::glfwWindowRefresh(GLFWwindow glfwWin) {
 	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
-void ofWindowManager::glfwWindowIconify(GLFWwindow glfwWin, int action)
-{
+void ofWindowManager::glfwWindowIconify(GLFWwindow glfwWin, int action) {
 	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
-void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action)
-{
+void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action) {
 	ofWindow * win = getWindowByGlfw(glfwWin);
 	if(action == GLFW_PRESS) {
 		win->mousePressed(button);
@@ -429,24 +381,20 @@ void ofWindowManager::glfwMouseButton(GLFWwindow glfwWin, int button, int action
 		win->mouseReleased(button);
 	}
 }
-void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY)
-{
+void ofWindowManager::glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY) {
 	ofWindow * win = getWindowByGlfw(glfwWin);
 	win->mouseMoved(mouseX, mouseY);
 }
-void ofWindowManager::glfwCursorEnter(GLFWwindow glfwWin, int action)
-{
+void ofWindowManager::glfwCursorEnter(GLFWwindow glfwWin, int action) {
 	//ofWindow * win = getWindowByGlfw(glfwWin);
 }
-void ofWindowManager::glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY)
-{
+void ofWindowManager::glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY) {
 	ofWindow * win = getWindowByGlfw(glfwWin);
 	win->scrolled(-deltaX, -deltaY);
 }
 
 
-void ofWindowManager::glfwKey(GLFWwindow glfwWin, int key, int action)
-{
+void ofWindowManager::glfwKey(GLFWwindow glfwWin, int key, int action) {
 	ofWindow * win = getWindowByGlfw(glfwWin);
 
 	//TODO: I'm sure there is some way to do this more efficient than a case statement (Philip)
@@ -575,27 +523,22 @@ void ofWindowManager::glfwKey(GLFWwindow glfwWin, int key, int action)
 
 
 }
-void ofWindowManager::glfwChar(GLFWwindow glfwWin, int key)
-{
+void ofWindowManager::glfwChar(GLFWwindow glfwWin, int key) {
 	ofWindow * win = getWindowByGlfw(glfwWin);
 }
 
-int ofWindowManager::getFrameNum()
-{
+int ofWindowManager::getFrameNum() {
 	return nFrameCount;
 }
 
-void ofWindowManager::setFullscreen(bool fullscreen)
-{
+void ofWindowManager::setFullscreen(bool fullscreen) {
 	activeWindow->setFullscreen(fullscreen);
 }
 
-void ofWindowManager::toggleFullscreen()
-{
+void ofWindowManager::toggleFullscreen() {
 	activeWindow->toggleFullscreen();
 }
 
-void ofWindowManager::exit(ofEventArgs& e)
-{
+void ofWindowManager::exit(ofEventArgs& e) {
 	glfwTerminate();
 }
