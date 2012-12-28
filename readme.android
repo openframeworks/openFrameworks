@@ -235,7 +235,7 @@ After you're done copying the project, you'll need to change the name of the app
 
 It's important to keep the package prefix as cc.openframeworks or some things can stop working. This will be fixed in future versions when Eclipse support for native code is better.
 
-<a id="faq"></a>FAQ
+FAQ
 ---
 
 **If the build fails:**
