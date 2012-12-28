@@ -360,6 +360,30 @@ string ofxAndroidGetTextBoxResult(){
 	return ofGetJNIEnv()->GetStringUTFChars(str,&isCopy);
 }
 
+void ofxAndroidLaunchBrowser(string url){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"launchBrowser","(Ljava/lang/String;)V");
+	if(!method){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid launchBrowser method");
+		return;
+	}
+
+	// check url string for http:// or https://
+	if(false){
+		ofLog(OF_LOG_WARNING,"ofxAndroidLaunchBrowser: url must begin with http:// or https://");
+		return;	  
+	}
+	jstring jUrl = ofGetJNIEnv()->NewStringUTF(url.c_str());
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,jUrl);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jUrl);
+}
+
 ofxAndroidEventsClass & ofxAndroidEvents(){
 	static ofxAndroidEventsClass * events = new ofxAndroidEventsClass;
 	return *events;
