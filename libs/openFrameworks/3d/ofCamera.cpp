@@ -241,7 +241,7 @@ void ofCamera::calcClipPlanes(ofRectangle viewport)
 void ofCamera::save(string savePath){
 		
     ofBuffer buffer;
-    buffer.append("viewMatrix\n" + ofToString(getGlobalTransformMatrix()) + "\n" );// ModelViewMatrix())+ "\n");
+    buffer.append("transformMatrix\n" + ofToString(getGlobalTransformMatrix()) + "\n" );
     buffer.append("fov\n" + ofToString(fov)+"\n");
     buffer.append("near\n" + ofToString(nearClip)+"\n");
     buffer.append("far\n" + ofToString(farClip)+"\n");
@@ -249,18 +249,6 @@ void ofCamera::save(string savePath){
     buffer.append("forceAspectRatio\n" + ofToString(forceAspectRatio)+"\n");
     buffer.append("aspectRatio\n" + ofToString(aspectRatio) + "\n");
     buffer.append("isOrtho\n" + ofToString(isOrtho) + "\n");
-    cout << "===================================="<<endl;
-    cout << "ofCamera save:"<< endl;
-    cout << string("viewMatrix\n" + ofToString(getGlobalTransformMatrix())+ "\n");
-    cout << string("fov\n" + ofToString(fov)+"\n");
-    cout << string("near\n" + ofToString(nearClip)+"\n");
-    cout << string("far\n" + ofToString(farClip)+"\n");
-    cout << string("lensOffset\n" + ofToString(lensOffset)+"\n");
-    cout << string("forceAspectRatio\n" + ofToString(forceAspectRatio)+"\n");
-    cout << string("aspectRatio\n" + ofToString(aspectRatio) + "\n");
-    cout << string("isOrtho\n" + ofToString(isOrtho) + "\n");
-    
-    
     
     if(ofBufferToFile(savePath, buffer)){
         ofLogNotice("ofCamera saved successfully!");
@@ -277,61 +265,40 @@ void ofCamera::load(string loadPath){
 	}
 	float aRatio;
 	ofBuffer buffer(file);  
-    cout << "===================================="<<endl;
-	cout << "ofCamera load" << endl;
 	while (!buffer.isLastLine()) {
 		string line = buffer.getNextLine();
-        if (line == "viewMatrix") {
+        if (line == "transformMatrix") {
             string str =buffer.getNextLine() + "\n";
             str += buffer.getNextLine() + "\n";
             str += buffer.getNextLine() + "\n";
             str += buffer.getNextLine();
             
-            cout << "view Matrix"<<endl;
-            cout << str <<endl;
             ofMatrix4x4 m;
             istringstream iss;
             iss.str(str);
             iss >> m;
-            cout << "----------------" << endl;
-            cout << ofToString(m) << endl;
-            setTransformMatrix(m);//.getInverse());
-            
-            cout << "----------------" << endl;
-            cout <<  ofToString(getGlobalTransformMatrix())<< endl;
+            setTransformMatrix(m);
             
         }else if(line == "fov"){
             setFov(ofToFloat(buffer.getNextLine()));
-            cout << "fov loaded"<<endl;
         }else if(line == "near"){
             setNearClip(ofToFloat(buffer.getNextLine()));
-            cout << "nearClip loaded"<<endl;
         }else if(line == "far"){
             setFarClip(ofToFloat(buffer.getNextLine()));
-             cout << "far clip loaded"<<endl;
         }else if(line == "lensOffset"){
             vector<string> vals = ofSplitString(buffer.getNextLine(), ", ");
             if (vals.size()==2) {
                 setLensOffset(ofVec2f(ofToFloat(vals[0]), ofToFloat(vals[1])));
-                 cout << "lensofset loaded"<<endl;
             }
         }else if(line == "forceAspectRatio"){
-            string s = buffer.getNextLine();
-            cout << "forceAspectRatio "<< s << endl ;
-            setForceAspectRatio(ofToBool(s));//buffer.getNextLine()));
+            setForceAspectRatio(ofToBool(buffer.getNextLine()));//buffer.getNextLine()));
         }else if(line == "aspectRatio"){
-            string s = buffer.getNextLine();
-            cout << "aspectRatio "<< s << endl ;
-            aRatio = ofToFloat(s);
-            //setAspectRatio(ofToFloat(s));//buffer.getNextLine()));
+            aRatio = ofToFloat(buffer.getNextLine());
         }else if(line == "isOrtho"){
             isOrtho = ofToBool(buffer.getNextLine());
-             cout << "isOrtho loaded"<<endl;
         }
 	}
     if (forceAspectRatio) {
         setAspectRatio(aRatio);
     }
-    
-   // setupPerspective(false, fov, nearClip, farClip,lensOffset);
 }
