@@ -238,9 +238,10 @@ void ofCamera::calcClipPlanes(ofRectangle viewport)
 	}
 }
 //----------------------------------------
-void ofCamera::save(string savePath){
+bool ofCamera::save(string savePath){
 		
     ofBuffer buffer;
+    buffer.append("--------------ofCamera parameters--------------\n");
     buffer.append("transformMatrix\n" + ofToString(getGlobalTransformMatrix()) + "\n" );
     buffer.append("fov\n" + ofToString(fov)+"\n");
     buffer.append("near\n" + ofToString(nearClip)+"\n");
@@ -252,16 +253,19 @@ void ofCamera::save(string savePath){
     
     if(ofBufferToFile(savePath, buffer)){
         ofLogNotice("ofCamera saved successfully!");
+        return true;
     }else{
         ofLogWarning("failed to save ofCamera!");
+        return false;
     }
 }
 //----------------------------------------
-void ofCamera::load(string loadPath){
+bool ofCamera::load(string loadPath){
     ofFile file(loadPath);
 	
 	if(!file.exists()){
 		ofLogError("The file " + loadPath + " is missing");
+        return false;
 	}
 	float aRatio;
 	ofBuffer buffer(file);  
@@ -301,4 +305,5 @@ void ofCamera::load(string loadPath){
     if (forceAspectRatio) {
         setAspectRatio(aRatio);
     }
+    return true;
 }

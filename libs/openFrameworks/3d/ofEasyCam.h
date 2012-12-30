@@ -30,13 +30,7 @@ public:
 	// translation happens only when the key is pressed.
 	void setTranslationKey(char key);
 	char getTranslationKey();
-	//--
-	/*
-	void mouseDragged(ofMouseEventArgs& mouse);
-	void mouseMoved(ofMouseEventArgs& mouse);
-	void mousePressed(ofMouseEventArgs& mouse);
-	void mouseReleased(ofMouseEventArgs& mouse);
-//*/
+
 	// enable or disable mouse input to navigate
 	void enableMouseInput();
 	void disableMouseInput();
@@ -47,6 +41,10 @@ public:
 	bool getMouseMiddleButtonEnabled();
 	
     void setAutoDistance(bool bAutoDistance);
+    
+    virtual bool save(string savePath);
+    virtual bool load(string loadPath);
+	
 	
 private:
 	void setDistance(float distance, bool save);
