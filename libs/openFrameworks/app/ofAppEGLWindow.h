@@ -54,6 +54,7 @@
 #include <X11/Xutil.h>
 
 #include <queue>
+#include <map>
 
 // TODO: this shold be passed in with the other window settings, like window alpha, etc.
 enum ofAppEGLWindowType {
@@ -62,6 +63,8 @@ enum ofAppEGLWindowType {
 	OF_APP_WINDOW_X11
 };
 
+typedef map<EGLint,EGLint> ofEGLAttributeList;
+typedef map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
 
 class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
@@ -124,14 +127,14 @@ public:
 		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
 		EGLint eglWindowOpacity; // 0-255 window alpha value
 
-		EGLint eglRedSize;    // n bits for red channel
-		EGLint eglGreenSize;  // n bits for green channel
-		EGLint eglBlueSize;   // n bits for blue channel
-		EGLint eglAlphaSize;  // n bits for alpha channel
-
-		EGLint eglSurfaceType; // egl surface type
+		ofEGLAttributeList frameBufferAttributes;
+		// surface creation
+		ofEGLAttributeList windowSurfaceAttributes;
 
 		ofColor initialClearColor;
+
+		int screenNum;
+		int layer;
 
 		Settings();
 	};
@@ -213,17 +216,27 @@ protected:
 	
 	bool isUsingX11;
 
+	bool isNativeWindowInited;
+	bool bIsX11WindowInited;
+
+	void initNative();
+	void exitNative();
+
 #ifdef TARGET_RASPBERRY_PI
 	// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
 	EGL_DISPMANX_WINDOW_T rpiNativeWindow; // rpi
 	bool setupRPiNativeWindow(int w, int h, int screenMode);
+	void initRPiNative();
+	void exitRPiNative();
 #else
 	// if you are not raspberry pi, you will not be able to
 	// create a window without using x11.
 #endif
 
-	Display*			x11Display;
-	Window				x11Window;
+	Display*	x11Display;
+	Screen*		x11Screen;
+	Window		x11Window;
+	long 		x11ScreenNum;
 	bool setupX11NativeWindow(int w, int h, int screenMode);
 	 
 //------------------------------------------------------------
