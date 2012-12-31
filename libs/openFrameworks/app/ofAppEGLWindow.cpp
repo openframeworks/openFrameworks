@@ -33,9 +33,9 @@
 #include <assert.h>
 
 // native events
-struct udev         *udev;
-struct udev_device  *dev;
-struct udev_monitor *mon;
+struct udev*         udev;
+struct udev_device*  dev;
+struct udev_monitor* mon;
 static int  udev_fd     = -1;
 
 static int  keyboard_fd = -1; // defaults to 0 ie console
@@ -81,6 +81,7 @@ typedef struct {
     int   mouseButtonState;
 } MouseState;
 
+// TODO, make this match the upcoming additions to ofWindow
 #define MOUSE_BUTTON_LEFT_MASK        1
 #define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
 #define MOUSE_BUTTON_RIGHT_MASK  2 << 1
@@ -154,6 +155,32 @@ static const struct {
   "\0\377\203\377\377\377\0",
 };
 
+// from http://cantuna.googlecode.com/svn-history/r16/trunk/src/screen.cpp
+#define CASE_STR(x,y) case x: str = y; break
+
+static const char* eglErrorString(EGLint err) {
+    string str;
+    switch (err) {
+        CASE_STR(EGL_SUCCESS, "No error");
+        CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialised");
+        CASE_STR(EGL_BAD_ACCESS, "Access violation");
+        CASE_STR(EGL_BAD_ALLOC, "Could not allocate resources");
+        CASE_STR(EGL_BAD_ATTRIBUTE, "Invalid attribute");
+        CASE_STR(EGL_BAD_CONTEXT, "Invalid context specified");
+        CASE_STR(EGL_BAD_CONFIG, "Invald frame buffer configuration specified");
+        CASE_STR(EGL_BAD_CURRENT_SURFACE, "Current window, pbuffer or pixmap surface is no longer valid");
+        CASE_STR(EGL_BAD_DISPLAY, "Invalid display specified");
+        CASE_STR(EGL_BAD_SURFACE, "Invalid surface specified");
+        CASE_STR(EGL_BAD_MATCH, "Bad argument match");
+        CASE_STR(EGL_BAD_PARAMETER, "Invalid paramater");
+        CASE_STR(EGL_BAD_NATIVE_PIXMAP, "Invalid NativePixmap");
+        CASE_STR(EGL_BAD_NATIVE_WINDOW, "Invalid NativeWindow");
+        CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
+        default: str = "Unknown error " + err; break;
+    }
+    return str.c_str();
+}
+
 
 // X11 events
   #include <X11/XKBlib.h>
@@ -164,15 +191,18 @@ ofAppEGLWindow::Settings::Settings() {
   eglWindowPreference = OF_APP_WINDOW_AUTO;
   eglWindowOpacity = 255;
 
-  eglRedSize   = 8; // 8 bits for red
-  eglGreenSize = 8; // 8 bits for green
-  eglBlueSize  = 8; // 8 bits for blue
-  eglAlphaSize = 8; // 8 bits for alpha
-
-  eglSurfaceType = EGL_WINDOW_BIT; // default eglSurface type
+  // these are usually set as default, but set them here just to be sure
+  frameBufferAttributes[EGL_RED_SIZE]     = 8; // 8 bits for red
+  frameBufferAttributes[EGL_GREEN_SIZE]   = 8; // 8 bits for green
+  frameBufferAttributes[EGL_BLUE_SIZE]    = 8; // 8 bits for blue
+  frameBufferAttributes[EGL_ALPHA_SIZE]   = 8; // 8 bits for alpha
+  frameBufferAttributes[EGL_DEPTH_SIZE]   = 24; // 24 bits for depth
+  frameBufferAttributes[EGL_STENCIL_SIZE] = 8; // 8 bits for stencil
 
   initialClearColor = ofColor(0.15 * 255, 0.15 * 255, 0.15 * 255, 255);
 
+  screenNum = 0; /* 0 = LCD on the raspberry pi */
+  layer = 0;
 }
 
 // TODO. we may not need these to be static, but we will
@@ -210,7 +240,7 @@ void ofAppEGLWindow::init(Settings _settings) {
     buttonInUse     = 0;
     bEnableSetupScreen  = true;
     bFrameRateSet   = false;
-    millisForFrame    = 0;
+    millisForFrame  = 0;
     prevMillis      = 0;
     diffMillis      = 0;
     // requestedWidth    = 0;
@@ -228,9 +258,13 @@ void ofAppEGLWindow::init(Settings _settings) {
     mouseScaleY = 2.0f;
 
     isUsingX11 = false;
+    isNativeWindowInited = false;
+    bIsX11WindowInited   = false;
 
     // APPLY SETTINGS
     settings = _settings;
+
+    initNative();
 
     ofAddListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
 }
@@ -244,6 +278,22 @@ void ofAppEGLWindow::exit(ofEventArgs &e) {
 
   // we got a terminate ... so clean up.
   destroyEGL();
+
+  exitNative();
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::initNative() {
+    #ifdef TARGET_RASPBERRY_PI
+        initRPiNative();
+    #endif
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::exitNative() {
+    #ifdef TARGET_RASPBERRY_PI
+        exitRPiNative();
+    #endif
 }
 
 //------------------------------------------------------------
@@ -340,8 +390,6 @@ bool ofAppEGLWindow::setupNativeWindow(int w, int h, int screenMode) {
 bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display) {
 
   EGLBoolean result;
-  EGLint num_config;
-  EGLConfig config;
 
 	ofLogNotice("ofAppEGLWindow::setupEGL") << "setting EGL Display";
     // get an EGL eglDisplay connection
@@ -382,7 +430,6 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
         // success!
     }
 
-    // TODO -- give the ability to send in this list when setting up.
     EGLint glesVersion;
     int glesVersionForContext;
 
@@ -394,56 +441,134 @@ bool ofAppEGLWindow::setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayTyp
 
     if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()=="GLES2"){
         glesVersion = EGL_OPENGL_ES2_BIT;
-	   	glesVersionForContext = 2;
+	    glesVersionForContext = 2;
         ofLogNotice("ofAppEGLWindow::setupEGL") << "GLES2 Renderer detected.";
     }else{
-		  glesVersion = EGL_OPENGL_ES_BIT;
-		  glesVersionForContext = 1;
-      ofLogNotice("ofAppEGLWindow::setupEGL") << "Default Renderer detected.";
+		glesVersion = EGL_OPENGL_ES_BIT;
+		glesVersionForContext = 1;
+        ofLogNotice("ofAppEGLWindow::setupEGL") << "Default Renderer detected.";
     }
     
-    EGLint attribute_list[] = {
-		    EGL_RED_SIZE,        settings.eglRedSize, // 8 bits for red
-		    EGL_GREEN_SIZE,      settings.eglGreenSize, // 8 bits for green
-		    EGL_BLUE_SIZE,       settings.eglBlueSize, // 8 bits for blue
-		    EGL_ALPHA_SIZE,      settings.eglAlphaSize, // 8 bits for alpha
-		    EGL_SURFACE_TYPE,    settings.eglSurfaceType, // default eglSurface type
-		    EGL_RENDERABLE_TYPE, glesVersion, //openGL ES version
-		    EGL_NONE // attribute list is termintated with EGL_NONE
-		};
+    EGLint num_config;
+    EGLConfig config;
+
+    ofEGLAttributeListIterator iter, iterEnd;
+    int i;
+
+    // each attribute has 2 values, and we need one extra for the EGL_NONE terminator
+    EGLint attribute_list_framebuffer_config[settings.frameBufferAttributes.size() * 2 + 1];
+
+    iter = settings.frameBufferAttributes.begin();
+    iterEnd = settings.frameBufferAttributes.end();
+    i = 0;
+    for(; iter != iterEnd; iter++) {
+        attribute_list_framebuffer_config[i++] = iter->first;
+        attribute_list_framebuffer_config[i++] = iter->second;
+    }
+    attribute_list_framebuffer_config[i] = EGL_NONE; // add the terminator
 
     // get an appropriate EGL frame buffer configuration
+    // http://www.khronos.org/registry/egl/sdk/docs/man/xhtml/eglChooseConfig.html
     result = eglChooseConfig(eglDisplay, 
-                             attribute_list, 
+                             attribute_list_framebuffer_config, 
                              &config, 
-                             1, 
+                             1, // we only want the first one.  if we want more, 
+                                // we need to pass in an array.
                              &num_config);
 
-    assert(EGL_FALSE != result);
+
+    if(result == EGL_FALSE) {
+        EGLint error = eglGetError();
+        ofLogError("ofAppEGLWindow::setupEGL") << "Error finding valid configuration based on settings : " << eglErrorString(error);
+        return false;
+    }
+
+    // each attribute has 2 values, and we need one extra for the EGL_NONE terminator
+    EGLint attribute_list_window_surface[settings.windowSurfaceAttributes.size() * 2 + 1];
+
+    iter = settings.windowSurfaceAttributes.begin();
+    iterEnd = settings.windowSurfaceAttributes.end();
+
+    i = 0;
+    for(; iter != iterEnd; iter++) {
+        attribute_list_window_surface[i++] = iter->first;
+        attribute_list_window_surface[i++] = iter->second;
+    }
+    attribute_list_window_surface[i] = EGL_NONE; // add the terminator
+
+    // create a surface
+    eglSurface = eglCreateWindowSurface( eglDisplay, // our display handle 
+                                         config,    // our first config
+                                         nativeWindow, // our native window
+                                         attribute_list_window_surface); // surface attribute list
     
-    eglSurface = eglCreateWindowSurface( eglDisplay, config, nativeWindow, NULL );
-    assert(eglSurface != EGL_NO_SURFACE);
-    
-    
+    if(eglSurface == EGL_NO_SURFACE) {
+        EGLint error = eglGetError();
+        switch(error) {
+            case EGL_BAD_MATCH:
+                ofLogError("ofAppEGLWindow::setupEGL") << "Error creating surface: EGL_BAD_MATCH (" << eglErrorString(error) << ") " 
+                << " Check window and EGLConfig attributes to determine compatibility, " 
+                << "or verify that the EGLConfig supports rendering to a window.";
+                 break;
+            case EGL_BAD_CONFIG:
+                ofLogError("ofAppEGLWindow::setupEGL") << "Error creating surface: EGL_BAD_CONFIG (" << eglErrorString(error) << ") "
+                << "Verify that provided EGLConfig is valid.";
+                 break;
+            case EGL_BAD_NATIVE_WINDOW:
+                ofLogError("ofAppEGLWindow::setupEGL") << "Error creating surface: EGL_BAD_NATIVE_WINDOW (" << eglErrorString(error) << ") "
+                << "Verify that provided EGLNativeWindow is valid.";
+                 break;
+            case EGL_BAD_ALLOC:
+                ofLogError("ofAppEGLWindow::setupEGL") << "Error creating surface: EGL_BAD_ALLOC (" << eglErrorString(error) << ") "
+                << "Not enough resources available.";
+                 break;
+             default:
+              ofLogError("ofAppEGLWindow::setupEGL") << "Error creating surface: << " << error << "(" << eglErrorString(error) << ") ";
+           } 
+
+        return false;
+    }
+
 	// get an appropriate EGL frame buffer configuration
 	//result = eglBindAPI(EGL_OPENGL_ES_API);
 	//assert(EGL_FALSE != result);
     
     // create an EGL rendering eglContext
     
-    EGLint contextAttribList[] = 
+    EGLint attribute_list_surface_context[] = 
 	{
 		EGL_CONTEXT_CLIENT_VERSION, glesVersionForContext,
 		EGL_NONE
 	};
 
-    eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, contextAttribList);
-    assert(eglContext != EGL_NO_CONTEXT);
+    eglContext = eglCreateContext(eglDisplay, 
+                                  config, 
+                                  EGL_NO_CONTEXT, 
+                                  attribute_list_surface_context);
+
+    if(eglContext == EGL_NO_CONTEXT) {
+       EGLint error = eglGetError();
+       if(error == EGL_BAD_CONFIG) {
+            ofLogError("ofAppEGLWindow::setupEGL") << "Error creating context.  EGL_BAD_CONFIG (" << eglErrorString(error) << ") ";
+            return false;
+       } else {
+            ofLogError("ofAppEGLWindow::setupEGL") << "Error creating context. " << error <<  " (" << eglErrorString(error) << ")";
+            return false;
+       }
+    }
 
 
     // connect the eglContext to the eglSurface
-    result = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-    assert(EGL_FALSE != result);
+    result = eglMakeCurrent(eglDisplay, 
+                            eglSurface, // draw surface
+                            eglSurface, // read surface
+                            eglContext);
+
+    if(eglContext == EGL_FALSE) {
+        EGLint error = eglGetError();
+        ofLogError("ofAppEGLWindow::setupEGL") << "Error making current. (" << eglErrorString(error) << ") ";
+        return false;
+    }
 
     // Set background color and clear buffers
     glClearColor(settings.initialClearColor.r / 255.0f,
@@ -1352,12 +1477,21 @@ bool ofAppEGLWindow::readNativeMouseEvents() {
 
 }
 
-
 #ifdef TARGET_RASPBERRY_PI
+//------------------------------------------------------------
+void ofAppEGLWindow::initRPiNative() {
+    bcm_host_init();
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::exitRPiNative() {
+    bcm_host_deinit();
+}
+
 //------------------------------------------------------------
 bool ofAppEGLWindow::setupRPiNativeWindow(int w, int h, int screenMode){
 
-  bcm_host_init();
+  //bcm_host_init();
 
   //boolean force HDMI vs. composite
 
@@ -1453,9 +1587,11 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
   // X11 variables
   x11Window      = 0;
   x11Display     = 0;
-  long x11Screen = 0;
-  XVisualInfo*  x11Visual   = 0;
+  x11ScreenNum   = 0; // TODO: settings.screenNum?
+  x11Screen      = 0;
+  XVisualInfo*  x11Visual   = 0; // TODO does this need to be deleted?
   Colormap      x11Colormap = 0;
+
   /*
     Step 0 - Create a NativeWindowType that we can use it for OpenGL ES output
   */
@@ -1471,14 +1607,19 @@ bool ofAppEGLWindow::setupX11NativeWindow(int w, int h, int screenMode){
     return false;
   }
  
-  x11Screen = XDefaultScreen( x11Display );
+  x11ScreenNum = XDefaultScreen(x11Display);
+  x11Screen    = XDefaultScreenOfDisplay(x11Display);
 
   // Gets the window parameters
-  sRootWindow = RootWindow(x11Display, x11Screen);
-  i32Depth = DefaultDepth(x11Display, x11Screen);
-  x11Visual = new XVisualInfo;
+  sRootWindow = RootWindow(x11Display, x11ScreenNum);
+  i32Depth = DefaultDepth(x11Display, x11ScreenNum);
+  x11Visual = new XVisualInfo(); // TODO does this need to be deleted?
 
-  XMatchVisualInfo( x11Display, x11Screen, i32Depth, TrueColor, x11Visual);
+  XMatchVisualInfo( x11Display, 
+                    x11ScreenNum, 
+                    i32Depth, 
+                    TrueColor, 
+                    x11Visual);
 
   if (!x11Visual) {
     ofLogError("ofAppEGLWindow") << "Unable to acquire visual.";
