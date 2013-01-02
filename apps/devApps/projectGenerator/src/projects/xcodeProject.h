@@ -4,8 +4,6 @@
 
 #include "baseProject.h"
 
-
-
 class xcodeProject : public baseProject {
 
 public:
