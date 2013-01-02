@@ -70,7 +70,7 @@ ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-#ifndef TARGET_OPENGLES 
+//#ifndef TARGET_OPENGLES 
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ void ofEndSaveScreenAsPDF(){
 	}
 }
 
-#endif
+//#endif
 
 
 

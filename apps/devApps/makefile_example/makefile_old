@@ -1,2 +1,0 @@
-include config.make_old
-include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples
