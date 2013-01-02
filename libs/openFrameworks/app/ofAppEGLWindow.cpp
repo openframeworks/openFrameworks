@@ -1945,7 +1945,8 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
                             // which are the top-left outside corner 
                             // of the window's borders and are relative 
                             // to the inside of the parent window's borders. 
-                            (int)windowRect.width, (int)windowRect.height, // Specify the width and height, which are the 
+                            (unsigned int)windowRect.width, 
+                            (unsigned int int)windowRect.height, // Specify the width and height, which are the 
                             // created window's inside dimensions and do 
                             // not include the created window's borders.
                             0, // Specifies the width of the created 
