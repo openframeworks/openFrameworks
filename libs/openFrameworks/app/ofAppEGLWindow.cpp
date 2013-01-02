@@ -1223,22 +1223,8 @@ void ofAppEGLWindow::display() {
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
   if(!success) {
        GLint error = eglGetError();
-       ofLogNotice() << "eglSwapBuffersFail()" << eglErrorString(error);
-        if (error == EGL_BAD_ALLOC || error == EGL_BAD_SURFACE) {
-          //eglDestroySurface(eglDisplay, eglSurface);
-          //eglSurface = eglCreateWindowSurface(eglDisplay,
-          //                                      eglConfig,
-          //                                      getWindow(),
-          //                                      NULL);
-          //  eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-          cout << "HERE" << endl;
-        } else {
-          cout << "NO HERE" << endl;
-        }
-
-
+       ofLogNotice("ofAppEGLWindow::display") << "Failure at eglSwapBuffers" << eglErrorString(error);
   }
-
 
   nFramesSinceWindowResized++;
   nFrameCount++;    // increase the overall frame count
