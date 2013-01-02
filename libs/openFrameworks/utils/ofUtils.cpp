@@ -39,6 +39,14 @@
 
 #endif
 
+#ifdef TARGET_OF_IPHONE
+#include "ofxiPhoneExtras.h"
+#endif
+
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
+
 #ifndef MAXPATHLEN
 	#define MAXPATHLEN 1024
 #endif
@@ -644,6 +652,22 @@ void ofLaunchBrowser(string url){
 		string commandStr = "xdg-open "+url;
 		int ret = system(commandStr.c_str());
 		if(ret!=0) ofLog(OF_LOG_ERROR,"ofLaunchBrowser: couldn't open browser");
+	//----------------------------
+	#endif
+	//----------------------------
+
+	//--------------------------------------
+	#ifdef TARGET_OF_IPHONE
+	//--------------------------------------
+		ofxiPhoneLaunchBrowser(url);
+	//----------------------------
+	#endif
+	//----------------------------
+
+	//--------------------------------------
+	#ifdef TARGET_ANDROID
+	//--------------------------------------
+		ofxAndroidLaunchBrowser(url);
 	//----------------------------
 	#endif
 	//----------------------------
