@@ -373,11 +373,6 @@ void ofxAndroidLaunchBrowser(string url){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid launchBrowser method");
 		return;
 	}
-
-	if((url.compare(0,7,"http://") != 0) && (url.compare(0,8,"https://") != 0)){
-		ofLog(OF_LOG_WARNING,"ofxAndroidLaunchBrowser: url must begin with http:// or https://");
-		return;
-	}
 	jstring jUrl = ofGetJNIEnv()->NewStringUTF(url.c_str());
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,jUrl);
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jUrl);
