@@ -290,6 +290,13 @@ void ofAppEGLWindow::init(Settings _settings) {
     // APPLY SETTINGS
     settings = _settings;
 
+    eglDisplay = NULL;
+    eglSurface = NULL;
+    eglContext = NULL;
+    eglConfig  = NULL;
+    eglVersionMinor = -1;
+    eglVersionMinor = -1;
+
     // X11 check
     // char * pDisplay;
     // pDisplay = getenv ("DISPLAY");
@@ -538,12 +545,17 @@ bool ofAppEGLWindow::createSurface() {
                                 // to find a good configuration
                              &num_configs);
 
-
     if(result == EGL_FALSE) {
         EGLint error = eglGetError();
         ofLogError("ofAppEGLWindow::createSurface") << "Error finding valid configuration based on settings : " << eglErrorString(error);
         return false;
     }
+
+    if(num_configs <= 0 || eglConfig == NULL) {
+        ofLogError("ofAppEGLWindow::createSurface") << "No matching configs were found (num_configs=" << num_configs<< ").";
+        return false;
+    }
+
 
     // each attribute has 2 values, and we need one extra for the EGL_NONE terminator
     EGLint attribute_list_window_surface[settings.windowSurfaceAttributes.size() * 2 + 1];
@@ -674,6 +686,14 @@ bool ofAppEGLWindow::destroySurface() {
         eglDestroyContext(eglDisplay, eglContext);
         eglTerminate(eglDisplay);
         isSurfaceInited = false;
+
+        eglDisplay = NULL;
+        eglSurface = NULL;
+        eglContext = NULL;
+        eglConfig  = NULL;
+        eglVersionMinor = -1;
+        eglVersionMinor = -1;
+        
         return true;
     } else {
         ofLogError("ofAppEGLWindow::destroySurface") << "Attempted to destroy uninitialized window.";
