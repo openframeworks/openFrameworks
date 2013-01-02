@@ -13,12 +13,6 @@ void testApp::setup() {
     // super fast = 3
     mode = 1;
     
-    
-    // add a ton to start with
-    for (int i=0; i<400000; i++) {
-        addPoint(ofRandomWidth(), ofRandomHeight());
-    }    
-    
 }
 
 //--------------------------------------------------------------
