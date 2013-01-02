@@ -290,6 +290,13 @@ void ofAppEGLWindow::init(Settings _settings) {
     // APPLY SETTINGS
     settings = _settings;
 
+    eglDisplay = NULL;
+    eglSurface = NULL;
+    eglContext = NULL;
+    eglConfig  = NULL;
+    eglVersionMinor = -1;
+    eglVersionMinor = -1;
+
     // X11 check
     // char * pDisplay;
     // pDisplay = getenv ("DISPLAY");
@@ -538,12 +545,17 @@ bool ofAppEGLWindow::createSurface() {
                                 // to find a good configuration
                              &num_configs);
 
-
     if(result == EGL_FALSE) {
         EGLint error = eglGetError();
         ofLogError("ofAppEGLWindow::createSurface") << "Error finding valid configuration based on settings : " << eglErrorString(error);
         return false;
     }
+
+    if(num_configs <= 0 || eglConfig == NULL) {
+        ofLogError("ofAppEGLWindow::createSurface") << "No matching configs were found (num_configs=" << num_configs<< ").";
+        return false;
+    }
+
 
     // each attribute has 2 values, and we need one extra for the EGL_NONE terminator
     EGLint attribute_list_window_surface[settings.windowSurfaceAttributes.size() * 2 + 1];
@@ -674,6 +686,14 @@ bool ofAppEGLWindow::destroySurface() {
         eglDestroyContext(eglDisplay, eglContext);
         eglTerminate(eglDisplay);
         isSurfaceInited = false;
+
+        eglDisplay = NULL;
+        eglSurface = NULL;
+        eglContext = NULL;
+        eglConfig  = NULL;
+        eglVersionMinor = -1;
+        eglVersionMinor = -1;
+        
         return true;
     } else {
         ofLogError("ofAppEGLWindow::destroySurface") << "Attempted to destroy uninitialized window.";
@@ -1885,7 +1905,7 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 
   // make sure our requested window rectangle does not exceed the native 
   // screen size, or start outside of it.
-  ofRectangle windowRect = requestedWindowRect;//screenRect.getIntersection(requestedWindowRect);
+  ofRectangle windowRect = requestedWindowRect.getStandardized();//screenRect.getIntersection(requestedWindowRect);
 
   // Initializes the display and screen
   x11Display = XOpenDisplay( 0 );
@@ -1945,7 +1965,7 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
                             // which are the top-left outside corner 
                             // of the window's borders and are relative 
                             // to the inside of the parent window's borders. 
-                            (int)windowRect.width, (int)windowRect.height, // Specify the width and height, which are the 
+                            (unsigned int)windowRect.width, (unsigned int)windowRect.height, // Specify the width and height, which are the 
                             // created window's inside dimensions and do 
                             // not include the created window's borders.
                             0, // Specifies the width of the created 
