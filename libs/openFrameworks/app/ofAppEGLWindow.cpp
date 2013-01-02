@@ -1016,7 +1016,6 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
                            x11Window,
                            x,
                            y);
-      // TODO: do we need to recreate the EGL Surface here???
     if(ret == BadValue) {
       ofLogError("ofAppEGLWindow::setWindowPosition") << "XMoveWindow returned BadValue.";
     } else if(ret == BadWindow) {
@@ -1077,7 +1076,6 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
                            x11Window,
                            (unsigned int)w,
                            (unsigned int)h);
-      // TODO: do we need to recreate the EGL Surface here???
     if(ret == BadValue) {
       ofLogError("ofAppEGLWindow::setWindowPosition") << "XMoveWindow returned BadValue.";
     } else if(ret == BadWindow) {
@@ -2109,8 +2107,6 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
             ofNotifyMouseEvent(mouseEvent);
             break;
         case ConfigureNotify:
-            // TODO - @arturo does the EGL surface need to be recreated?
-            // or does this happen automatically in X11?
             currentWindowRect.x = event.xconfigure.x;
             currentWindowRect.y = event.xconfigure.y;
             currentWindowRect.width = event.xconfigure.width;
