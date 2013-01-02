@@ -608,13 +608,13 @@ string ofVAArgsToString(const char * format, va_list args){
 
 //--------------------------------------------------
 void ofLaunchBrowser(string url){
+	url = ofToLower(url);
 
 	// http://support.microsoft.com/kb/224816
     
 	//make sure it is a properly formatted url
-	if(Poco::icompare(url.substr(0,7), "http://") != 0 &&
-       Poco::icompare(url.substr(0,8), "https://") != 0) {
-		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin http:// or https://");
+	if((url.compare(0,7,"http://") != 0) && (url.compare(0,8,"https://") != 0)){
+		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin with http:// or https://");
 		return;
 	}
 
