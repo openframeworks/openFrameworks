@@ -60,12 +60,17 @@ void testApp::draw() {
     
     // draw the points the slow way
     if(mode == 1) {
+        #ifdef TARGET_OPENGLES
+        ofSetColor(255);
+        ofDrawBitmapString("OpenGL immediate mode not available in OpenGL ES. Press 2 or 3.",ofGetWidth() / 2.0f - 300,ofGetHeight() / 2.0f);
+        #else 
         ofSetColor(255);
         glBegin(GL_POINTS);
         for (int i=0; i<points.size(); i++) {
             glVertex2f(points[i].x, points[i].y);
         }
         glEnd();
+        #endif
     }
     
     // a bit faster
