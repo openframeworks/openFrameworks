@@ -1881,11 +1881,11 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
   unsigned int         ui32Mask;
   int                  i32Depth;
   
-  ofRectangle screenRect = getScreenRect();
+  //ofRectangle screenRect = getScreenRect();
 
   // make sure our requested window rectangle does not exceed the native 
   // screen size, or start outside of it.
-  ofRectangle windowRect = screenRect.getIntersection(requestedWindowRect);
+  ofRectangle windowRect = requestedWindowRect;//screenRect.getIntersection(requestedWindowRect);
 
   // Initializes the display and screen
   x11Display = XOpenDisplay( 0 );
