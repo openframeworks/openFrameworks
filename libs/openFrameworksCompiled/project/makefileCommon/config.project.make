@@ -22,11 +22,6 @@ ifndef APPNAME
     APPNAME = $(shell basename `pwd`)
 endif
 
-ifndef APPNAME_SUFFIX
-    APPNAME_SUFFIX = .app
-endif
-
-
 # if the user has not specified a special variant, then use the default variant
 ifndef PLATFORM_VARIANT
     PLATFORM_VARIANT = default
