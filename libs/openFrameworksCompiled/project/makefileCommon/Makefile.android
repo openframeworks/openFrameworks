@@ -12,8 +12,13 @@ else
         LIBSPATH = android/armeabi-v7a
     	ABI = armeabi-v7a
     else
-    	LIBSPATH = android/armeabi
-	    ABI = armeabi
+    	ifeq ($(MAKECMDGOALS),Debug)
+	        LIBSPATH = android/armeabi-v7a
+	    	ABI = armeabi-v7a
+    	else
+	    	LIBSPATH = android/armeabi
+		    ABI = armeabi
+		endif
     endif
 endif
 
@@ -41,11 +46,12 @@ SYSTEMLIBS +=  -lsupc++ -lz -lGLESv1_CM -llog -ldl -lm -lc $(NDK_ROOT)/sources/c
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 #LIB_STATIC += $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libsndfile.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libcommon.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgsm.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libg72x.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libFLAC.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libreplaygain_synthesis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libreplaygain_analysis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgrabbag.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgrabbag.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libgetopt.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libutf8.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbis.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbisfile.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libvorbisenc.a $(OF_ROOT)/libs/libsndfile/lib/$(LIBSPATH)/libogg.a
 
-
+DATA_FILES = $(shell find bin/data -type f)
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
-	TARGET = libs/armeabi/libOFAndroidApp.so
+	TARGET = libs/armeabi-v7a/libOFAndroidApp.so
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 	LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
 	USER_LIBS = $(USER_LIBS_ARM)
 endif
@@ -78,6 +84,16 @@ ifeq ($(MAKECMDGOALS),AndroidInstall)
 	TARGET_NAME = Install
 endif
 
+ifeq ($(APPNAME),)
+    APPNAME = $(shell basename `pwd`)
+endif
+RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+RESFILE=res/raw/$(RESNAME).zip
+
+
+ifeq ($(PKGNAME),)
+    PKGNAME = cc.openframeworks.$(APPNAME)
+endif
 
 DebugAndroid: $(TARGET) afterDebugAndroid
 
@@ -85,7 +101,7 @@ ReleaseAndroid: $(TARGET)
 
 Release_arm7Android: $(TARGET)
 
-Release_neonAndroid: $(TARGET) afterReleaseAndroid
+Release_neonAndroid: $(TARGET) 
 
 TestLinkAndroid: $(TARGET) afterDebugAndroid
 
@@ -93,9 +109,22 @@ AndroidDebug:
 	$(MAKE) DebugAndroid
 
 AndroidRelease:
-	$(MAKE) ReleaseAndroid
-	$(MAKE) Release_arm7Android
-	$(MAKE) Release_neonAndroid
+	@if [ "$(findstring armv5,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv5" ]; then \
+		echo making release armv5; \
+		$(MAKE) ReleaseAndroid; \
+	fi
+	
+	@if [ "$(findstring armv7,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv7" ]; then \
+		echo making release armv7; \
+		$(MAKE) Release_arm7Android; \
+	fi
+	
+	@if [ "$(findstring neon,$(ANDROID_BUILD_ARCHS_RELEASE))" = "neon" ]; then \
+		echo making release neon; \
+		$(MAKE) Release_neonAndroid; \
+	fi
+	
+	$(MAKE) afterReleaseAndroid
 	
 .PHONY:  afterDebugAndroid afterReleaseAndroid CleanAndroid
 
@@ -106,58 +135,12 @@ CleanAndroid:
 	rm -f libs/armeabi/libOFAndroidApp.so
 	
 	
-afterDebugAndroid:$(TARGET)
-	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
+afterDebugAndroid: $(RESFILE)
+	@if [ -d libs/armeabi ]; then rm -r libs/armeabi; fi
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	
 	@echo copying debugging binaries
-	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi
-	
-	@echo create gdb.setup for armeabi
-	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
-	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
-	@echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
-	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup
-	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
-	@echo "" >> libs/armeabi/gdb.setup 
-	
-	@echo creating Android.mk and Application.mk
-	@if [ ! -d jni ]; then mkdir jni; fi
-	@echo "APP_ABI := armeabi" > jni/Application.mk
-	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
-	
-	
-	@echo compressing and copying resources from bin/data into res
-	@cd $(PROJECT_PATH); \
-	if [ -d "bin/data" ]; then \
-		mkdir -p res/raw; \
-		rm res/raw/$(RESNAME).zip; \
-		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
-		cd ../..; \
-	fi
-	
-	@echo updating ofAndroidLib project
-	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
-	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
-	else \
-		$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
-	fi
-	
-	@#echo updating current project
-	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
-	#else \
-	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
-	#fi
-
-afterReleaseAndroid:$(TARGET)
-	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	
-	@echo copying debugging binaries
-	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
-	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a
+	@cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a/
 	
 	@echo create gdb.setup for armeabi-v7a
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
@@ -169,7 +152,7 @@ afterReleaseAndroid:$(TARGET)
 	
 	@echo creating Android.mk and Application.mk
 	@if [ ! -d jni ]; then mkdir jni; fi
-	@echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk
+	@echo "APP_ABI := armeabi-v7a" > jni/Application.mk
 	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 	
 	
@@ -183,26 +166,114 @@ afterReleaseAndroid:$(TARGET)
 		cd ../..; \
 	fi
 	
-	@echo updating ofAndroidLib project
-	@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
-	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-		cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
-	else \
-		$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
-	fi
-	
-	@#@echo updating current project
-	#@if [ "$(HOST_PLATFORM)" = "windows" ]; then \
-	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
+	#@echo updating ofAndroidLib project
+	#@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	#if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	#else \
-	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path $(PROJECT_PATH); \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
+	#fi
+	
+	#@echo updating current project
+	#@cd $(PROJECT_PATH); \
+	#if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
+	#else \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	#fi
 
-RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+afterReleaseAndroid: $(RESFILE)
+	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
+	
+	@echo copying debugging binaries
+	@if [ "$(findstring neon,$(ANDROID_BUILD_ARCHS_RELEASE))" = "neon" ]; then \
+		cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/; \
+	fi
+	
+	@if [ "$(findstring armv5,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv5" ]; then \
+		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi; \
+	fi
+	
+	@if [ "$(findstring armv7,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv7" ]; then \
+		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
+	fi
+	
+	@if [ "$(findstring neon,$(ANDROID_BUILD_ARCHS_RELEASE))" = "neon" ]; then \
+		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
+	fi
+	
+	@if [ "$(findstring armv5,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv5" ]; then \
+		echo create gdb.setup for armeabi; \
+		echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup; \
+		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup; \
+		echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup; \
+		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup; \
+		echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup; \
+		echo "" >> libs/armeabi/gdb.setup; \
+	fi
+	
+	@if [ "$(findstring armv7,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv7" ]; then \
+		echo create gdb.setup for armeabi-v7a; \
+		echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup; \
+		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup; \
+		echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup; \
+		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup; \
+		echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup ; \
+		echo "" >> libs/armeabi-v7a/gdb.setup; \
+	fi
+	
+	@echo creating Android.mk and Application.mk
+	@if [ ! -d jni ]; then mkdir jni; fi
+	@if [ "$(findstring armv5,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv5" ]; then \
+		if [ "$(findstring armv7,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv7" ]; then \
+			echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk; \
+		else \
+			if [ "$(findstring neon,$(ANDROID_BUILD_ARCHS_RELEASE))" = "neon" ]; then \
+				echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk; \
+			else \
+				echo "APP_ABI := armeabi-v7a" > jni/Application.mk; \
+			fi; \
+		fi; \
+	else \
+		if [ "$(findstring armv7,$(ANDROID_BUILD_ARCHS_RELEASE))" = "armv7" ]; then \
+			echo "APP_ABI := armeabi-v7a" > jni/Application.mk; \
+		else \
+			if [ "$(findstring neon,$(ANDROID_BUILD_ARCHS_RELEASE))" = "neon" ]; then \
+				echo "APP_ABI := armeabi-v7a" > jni/Application.mk; \
+			else \
+				echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk; \
+			fi; \
+		fi; \
+	fi; \
+	echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
+	
+	#@echo updating ofAndroidLib project
+	#@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	#if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
+	#else \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
+	#fi
+	
+	#@echo updating current project
+	#@cd $(PROJECT_PATH); \
+	#if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
+	#else \
+	#	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
+	#fi
+	
+$(RESFILE): $(DATA_FILES)
+	@echo compressing and copying resources from bin/data into res
+	cd $(PROJECT_PATH); \
+	if [ -d "bin/data" ]; then \
+		mkdir -p res/raw; \
+		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
+		zip -r ../../res/raw/$(RESNAME).zip *; \
+		cd ../..; \
+	fi
 
-ifeq ($(PKGNAME),)
-    PKGNAME = cc.openframeworks.$(APPNAME)
-endif
 
 AndroidInstall:	
 	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
