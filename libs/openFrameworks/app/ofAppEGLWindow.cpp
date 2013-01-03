@@ -521,7 +521,7 @@ bool ofAppEGLWindow::createSurface() {
     int i;
 
     // each attribute has 2 values, and we need one extra for the EGL_NONE terminator
-    EGLint attribute_list_framebuffer_config[settings.frameBufferAttributes.size() * 2 + 1];
+    EGLint attribute_list_framebuffer_config[settings.frameBufferAttributes.size() * 2 + 3];
 
     iter = settings.frameBufferAttributes.begin();
     iterEnd = settings.frameBufferAttributes.end();
@@ -530,6 +530,8 @@ bool ofAppEGLWindow::createSurface() {
         attribute_list_framebuffer_config[i++] = iter->first;
         attribute_list_framebuffer_config[i++] = iter->second;
     }
+	attribute_list_framebuffer_config[i++] = EGL_RENDERABLE_TYPE;
+	attribute_list_framebuffer_config[i++] = glesVersion; //openGL ES version
     attribute_list_framebuffer_config[i] = EGL_NONE; // add the terminator
 
     EGLint num_configs;
@@ -601,6 +603,8 @@ bool ofAppEGLWindow::createSurface() {
            } 
 
         return false;
+    }else{
+        ofLogNotice("ofAppEGLWindow::createSurface") << "Surface created correctly";
     }
 
   // get an appropriate EGL frame buffer configuration
@@ -609,6 +613,8 @@ bool ofAppEGLWindow::createSurface() {
   if(result == EGL_FALSE) {
       ofLogError("ofAppEGLWindow::createSurface") << "Error binding API (" << eglErrorString(eglGetError()) << ") ";
       return false;
+  }else{
+      ofLogNotice("ofAppEGLWindow::createSurface") << "API Binded correctly";
   }
 
   // create an EGL rendering eglContext  

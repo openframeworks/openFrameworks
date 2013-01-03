@@ -50,15 +50,15 @@ LDFLAGS = $(strip $(ALL_LDFLAGS))
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
-	BIN_NAME = $(APPNAME)_debug$(APPNAME_SUFFIX)
+	BIN_NAME = $(APPNAME)_debug
 	TARGET = bin/$(BIN_NAME)
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
-	BIN_NAME = $(APPNAME)$(APPNAME_SUFFIX)
+	BIN_NAME = $(APPNAME)
 	TARGET = bin/$(BIN_NAME)
 else ifeq ($(MAKECMDGOALS),)
 	TARGET_NAME = Release
-	BIN_NAME = $(APPNAME)$(APPNAME_SUFFIX)
+	BIN_NAME = $(APPNAME)
 	TARGET = bin/$(BIN_NAME)
 endif
 
@@ -87,7 +87,7 @@ endif
 ### addons used to be done here ...
 
 ifeq ($(MAKECMDGOALS),clean)
-    TARGET = bin/$(APPNAME)_debug$(APPNAME_SUFFIX) bin/$(APPNAME)$(APPNAME_SUFFIX)
+    TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
     TARGET_NAME = Release
 endif
 
