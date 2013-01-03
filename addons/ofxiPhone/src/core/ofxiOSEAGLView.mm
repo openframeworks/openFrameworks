@@ -221,12 +221,19 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		}
 		
 		ofTouchEventArgs touchArgs;
+        touchArgs.time = ofGetElapsedTimeMillis();
         touchArgs.numTouches = [[event touchesForView:self] count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		if([touch tapCount] == 2) ofNotifyEvent(ofEvents().touchDoubleTap,touchArgs);	// send doubletap
-		ofNotifyEvent(ofEvents().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
+        touchArgs.tapCount = [touch tapCount];
+		if([touch tapCount] == 2) {
+            touchArgs.type = ofTouchEventArgs::doubleTap;
+            ofNotifyEvent(ofEvents().touchDoubleTap,touchArgs);	// send doubletap
+        }
+        
+        touchArgs.type = ofTouchEventArgs::down;
+        ofNotifyEvent(ofEvents().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}	
 }
 
@@ -254,10 +261,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
 			ofNotifyMouseDragged(touchPoint.x, touchPoint.y, 0);			
 		}		
 		ofTouchEventArgs touchArgs;
+        touchArgs.time = ofGetElapsedTimeMillis();
+        touchArgs.type = ofTouchEventArgs::move;
 		touchArgs.numTouches = [[event touchesForView:self] count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+        touchArgs.tapCount = [touch tapCount];
 		ofNotifyEvent(ofEvents().touchMoved, touchArgs);
 	}
 }
@@ -289,10 +299,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		}
 		
 		ofTouchEventArgs touchArgs;
+        touchArgs.time = ofGetElapsedTimeMillis();
+        touchArgs.type = ofTouchEventArgs::up;
 		touchArgs.numTouches = [[event touchesForView:self] count] - [touches count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+        touchArgs.tapCount = [touch tapCount];
 		ofNotifyEvent(ofEvents().touchUp, touchArgs);
 	}
 }
@@ -318,10 +331,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		ofTouchEventArgs touchArgs;
+        touchArgs.time = ofGetElapsedTimeMillis();
+        touchArgs.type = ofTouchEventArgs::cancel;
 		touchArgs.numTouches = [[event touchesForView:self] count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+        touchArgs.tapCount = [touch tapCount];
 		ofNotifyEvent(ofEvents().touchCancelled, touchArgs);
 	}
 	
