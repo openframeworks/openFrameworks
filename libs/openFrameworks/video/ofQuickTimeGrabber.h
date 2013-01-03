@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 
-#ifndef TARGET_LINUX
+#if !defined(TARGET_LINUX) && !defined(MAC_OS_X_VERSION_10_7)
 	#include "ofQtUtils.h"
 	#include "ofTexture.h"
 	#include "ofBaseTypes.h"
@@ -24,6 +24,9 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		bool					initGrabber(int w, int h);
 		void					update();
 		bool					isFrameNew();
+
+		bool					setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat			getPixelFormat();
 
 		unsigned char			* getPixels();
 		ofPixelsRef		 		getPixelsRef();

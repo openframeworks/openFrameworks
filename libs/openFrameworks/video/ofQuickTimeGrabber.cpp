@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 
 
-#ifndef TARGET_LINUX
+#if !defined(TARGET_LINUX) && !defined(MAC_OS_X_VERSION_10_7)
 
 //---------------------------------
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -87,6 +87,22 @@ void ofQuickTimeGrabber::setDeviceID(int _deviceID){
 //--------------------------------------------------------------------
 void ofQuickTimeGrabber::setDesiredFrameRate(int framerate){
 	attemptFramerate = framerate;
+}
+
+//---------------------------------------------------------------------------
+bool ofQuickTimeGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	//note as we only support RGB we are just confirming that this pixel format is supported
+	if( pixelFormat == OF_PIXELS_RGB ){
+		return true;
+	}
+	ofLogWarning("ofQuickTimeGrabber") << "requested pixel format not supported" << endl;
+	return false;
+}
+
+//---------------------------------------------------------------------------
+ofPixelFormat ofQuickTimeGrabber::getPixelFormat(){
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	return OF_PIXELS_RGB;
 }
 
 //--------------------------------------------------------------------

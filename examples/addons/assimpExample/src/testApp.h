@@ -22,18 +22,13 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
     
-		bool bAnimate;
-		bool bAnimateMouse;
-		float animationTime;
         ofxAssimpModelLoader model;
+    
+		bool bAnimate;
+        bool bAnimateMouse;
+        float animationPosition;
 
-        ofVboMesh mesh;
-        ofPoint position;
-        float normScale;
-        ofPoint scale;
-        ofPoint sceneCenter;
-        ofMaterial material;
-        ofTexture tex;
+        ofMesh mesh;
         ofLight	light;
 };
 
