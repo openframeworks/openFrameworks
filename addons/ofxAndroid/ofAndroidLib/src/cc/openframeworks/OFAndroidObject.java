@@ -19,7 +19,7 @@ public abstract class OFAndroidObject {
 	protected State state;
 	public static Set<OFAndroidObject> ofObjects = new HashSet<OFAndroidObject>();
 	
-	OFAndroidObject(){
+	public OFAndroidObject(){
 		state = State.Created;
 		ofObjects.add(this);
 	}
