@@ -91,8 +91,9 @@ class ofTouchEventArgs : public ofEventArgs {
 	} type;
     
 	int id;
-	unsigned long long int time;
-    unsigned long long int frame;
+	unsigned long long time;
+    unsigned long long frame;
+    
 	float x, y;
 	int numTouches;
     int numTaps;
