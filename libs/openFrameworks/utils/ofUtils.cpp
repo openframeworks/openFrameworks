@@ -100,9 +100,9 @@ unsigned long long ofGetSystemTimeMicros( ) {
 			(unsigned long long) now.tv_sec*1000000;
 	#else
 		#if defined(_WIN32_WCE)
-			return GetTickCount()*1000;
+			return ((unsigned long long)GetTickCount()) * 1000;
 		#else
-			return timeGetTime()*1000;
+			return ((unsigned long long)timeGetTime()) * 1000;
 		#endif
 	#endif
 }

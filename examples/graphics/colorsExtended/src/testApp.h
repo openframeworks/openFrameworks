@@ -1,9 +1,11 @@
-#ifndef _TEST_APP
-#define _TEST_APP
+#pragma once
 
 #include "ofMain.h"
-#include "ofxAssimpModelLoader.h"
-#include "ofVboMesh.h"
+
+typedef struct {
+    string name;
+    ofColor color;
+} colorNameMapping;
 
 class testApp : public ofBaseApp{
 
@@ -11,8 +13,8 @@ class testApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		
-		void keyPressed(int key);
+
+		void keyPressed  (int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
 		void mouseDragged(int x, int y, int button);
@@ -20,16 +22,14 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);		
+		void gotMessage(ofMessage msg);
     
-        ofxAssimpModelLoader model;
+        map < string, ofColor > colorNameMap;
     
-		bool bAnimate;
-        bool bAnimateMouse;
-        float animationPosition;
+        vector < colorNameMapping > colorNames;
+    
+        ofPoint mouseSmoothed;
 
-        ofMesh mesh;
-        ofLight	light;
+        int sortedType;             // keep track of which sort we've done
+    
 };
-
-#endif
