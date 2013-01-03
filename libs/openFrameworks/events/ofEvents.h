@@ -70,7 +70,7 @@ class ofTouchEventArgs : public ofEventArgs {
         frame = 0;
         x = y = 0;
         numTouches = 0;
-        tapCount = 0;
+        numTaps = 0;
         width = height = 0;
         angle = 0;
         minoraxis = majoraxis = 0;
@@ -95,7 +95,7 @@ class ofTouchEventArgs : public ofEventArgs {
     unsigned long long int frame;
 	float x, y;
 	int numTouches;
-    int tapCount;
+    int numTaps;
 	float width, height;
 	float angle;
 	float minoraxis, majoraxis;
