@@ -51,7 +51,7 @@ import android.widget.Toast;
 public class OFAndroid {
 	
 	// List based on http://bit.ly/NpkL4Q
-	static public final String[] mExternalStorageDirectories = new String[] { 
+	static private final String[] mExternalStorageDirectories = new String[] { 
 			"/mnt/sdcard-ext", 
 			"/mnt/sdcard/external_sd", 
 			"/sdcard/sd", 
@@ -116,9 +116,25 @@ public class OFAndroid {
 
 	        dataPath="";
     		try{
+    			// Set data path
     			//dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
     			dataPath = getRealExternalStorageDirectory();
     			dataPath += "/Android/data/"+packageName;
+    			
+				// Check if old data path exists and copy content to new data path location
+				String oldDataPath = getRealExternalStorageDirectory() + "/" + packageName;								
+				File oldDataDir = new File(oldDataPath);				
+				if(oldDataDir.exists()) 
+				{	
+					Log.d("OF", "Found old data in: " + oldDataPath);
+					
+					File newDatadir = new File(dataPath);					
+					if (oldDataDir.renameTo(newDatadir))
+						Log.d("OF", "Moved data to new storage location: " + dataPath);
+					else
+						Log.e("OF", "Could not move data to new storage location: " + dataPath);				
+				}
+
     			Log.i("OF","creating app directory: " + dataPath);
 				try{
 					
