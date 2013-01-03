@@ -54,6 +54,7 @@
 #include <X11/Xutil.h>
 
 #include <queue>
+#include <map>
 
 // TODO: this shold be passed in with the other window settings, like window alpha, etc.
 enum ofAppEGLWindowType {
@@ -62,6 +63,8 @@ enum ofAppEGLWindowType {
 	OF_APP_WINDOW_X11
 };
 
+typedef map<EGLint,EGLint> ofEGLAttributeList;
+typedef map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
 
 class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
@@ -75,12 +78,6 @@ public:
 	void exit(ofEventArgs &e);
 
 	virtual void setupOpenGL(int w, int h, int screenMode);
-
-	virtual bool setupNativeWindow(int w, int h, int screenMode);
-	virtual bool setupEGL(NativeWindowType nativeWindow, EGLNativeDisplayType * display=NULL);
-	virtual void destroyEGL();
-
-	virtual void setupPeripherals();
 
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
@@ -124,14 +121,14 @@ public:
 		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
 		EGLint eglWindowOpacity; // 0-255 window alpha value
 
-		EGLint eglRedSize;    // n bits for red channel
-		EGLint eglGreenSize;  // n bits for green channel
-		EGLint eglBlueSize;   // n bits for blue channel
-		EGLint eglAlphaSize;  // n bits for alpha channel
-
-		EGLint eglSurfaceType; // egl surface type
+		ofEGLAttributeList frameBufferAttributes;
+		// surface creation
+		ofEGLAttributeList windowSurfaceAttributes;
 
 		ofColor initialClearColor;
+
+		int screenNum;
+		int layer;
 
 		Settings();
 	};
@@ -140,14 +137,16 @@ protected:
 	void init(Settings settings = Settings());
 
 	void idle();
-	virtual void postIdle() {};
 	void display();
-	virtual void postDisplay() {};
 
 	void setWindowRect(const ofRectangle& requestedWindowRect);
 
+
+//	bool create
+
+	virtual void setupPeripherals();
+
 	virtual ofRectangle getScreenRect();
-	virtual ofRectangle requestNewWindowRect(const ofRectangle&);
 
 	int getWindowWidth();
 	int getWindowHeight();
@@ -196,35 +195,74 @@ protected:
 	// void setMouseScaleY(float y);
 
 //------------------------------------------------------------
-// WINDOWING
+// EGL
 //------------------------------------------------------------
-	// EGL window
-	ofRectangle screenRect;
-	ofRectangle nonFullscreenWindowRect; // the rectangle describing the non-fullscreen window
-	ofRectangle currentWindowRect; // the rectangle describing the current device
+
+	bool createSurface();
+	bool destroySurface();
+
+	// bool resizeSurface();
 
 	EGLDisplay eglDisplay;  // EGL display connection
 	EGLSurface eglSurface;
 	EGLContext eglContext;
 
+    EGLConfig eglConfig;
+
+	EGLint eglVersionMajor;
+    EGLint eglVersionMinor;
+
 //------------------------------------------------------------
 // PLATFORM SPECIFIC WINDOWING
 //------------------------------------------------------------
 	
+//------------------------------------------------------------
+// WINDOWING
+//------------------------------------------------------------
+	// EGL window
+	ofRectangle nonFullscreenWindowRect; // the rectangle describing the non-fullscreen window
+	ofRectangle currentWindowRect; // the rectangle describing the current device
+
+	bool createWindow(const ofRectangle& requestedWindowRect);
+	bool destroyWindow();
+
 	bool isUsingX11;
 
+	bool isWindowInited;
+	bool isSurfaceInited;
+
+	void initNative();
+	void exitNative();
+
+	EGLNativeWindowType getNativeWindow();
+	EGLNativeDisplayType getNativeDisplay();
+
 #ifdef TARGET_RASPBERRY_PI
-	// NOTE: EGL_DISPMANX_WINDOW_T nativeWindow is a var that must stay in scope
-	EGL_DISPMANX_WINDOW_T rpiNativeWindow; // rpi
-	bool setupRPiNativeWindow(int w, int h, int screenMode);
+	void initRPiNative();
+	void exitRPiNative();
+
+	EGL_DISPMANX_WINDOW_T dispman_native_window; // rpi
+
+	DISPMANX_UPDATE_HANDLE_T dispman_update;
+    DISPMANX_ELEMENT_HANDLE_T dispman_element;
+    DISPMANX_DISPLAY_HANDLE_T dispman_display;
+
+	DISPMANX_CLAMP_T 		  dispman_clamp;
+	DISPMANX_TRANSFORM_T 	  dispman_transform;
+    VC_DISPMANX_ALPHA_T       dispman_alpha;
+	
+	bool createRPiNativeWindow(const ofRectangle& requestedWindowRect);
+
 #else
 	// if you are not raspberry pi, you will not be able to
 	// create a window without using x11.
 #endif
 
-	Display*			x11Display;
-	Window				x11Window;
-	bool setupX11NativeWindow(int w, int h, int screenMode);
+	Display*	x11Display;
+	Screen*		x11Screen;
+	Window		x11Window;
+	long 		x11ScreenNum;
+	bool createX11NativeWindow(const ofRectangle& requestedWindowRect);
 	 
 //------------------------------------------------------------
 // EVENTS
