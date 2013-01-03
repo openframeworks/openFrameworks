@@ -8,7 +8,9 @@
 #ifndef SVGTINY_INTERNAL_H
 #define SVGTINY_INTERNAL_H
 
-#include <stdbool.h>
+#ifndef _MSC_VER
+	#include <stdbool.h>
+#endif
 
 #ifndef UNUSED
 #define UNUSED(x) ((void) (x))

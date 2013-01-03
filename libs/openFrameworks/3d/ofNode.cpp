@@ -232,7 +232,7 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 }
 
 //----------------------------------------
-void ofNode::lookAt(ofNode& lookAtNode, const ofVec3f& upVector) {
+void ofNode::lookAt(const ofNode& lookAtNode, const ofVec3f& upVector) {
 	lookAt(lookAtNode.getGlobalPosition(), upVector);
 }
 
@@ -303,9 +303,10 @@ ofQuaternion ofNode::getGlobalOrientation() const {
 }
 
 //----------------------------------------
-//ofVec3f getGlobalScale() {
-//	return 
-//}
+ofVec3f ofNode::getGlobalScale() const {
+	if(parent) return getScale()*parent->getGlobalScale();
+	else return getScale();
+}
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
@@ -341,13 +342,14 @@ void ofNode::draw() {
 
 //----------------------------------------
 void ofNode::transformGL() const {
-	glPushMatrix();
-	glMultMatrixf(getGlobalTransformMatrix().getPtr());
+	ofPushMatrix();
+	ofMultMatrix( getGlobalTransformMatrix() );
+	//glMultMatrixf( getGlobalTransformMatrix().getPtr() );
 }
 
 //----------------------------------------
 void ofNode::restoreTransformGL() const {
-	glPopMatrix();
+	ofPopMatrix();
 }
 
 //----------------------------------------
