@@ -46,6 +46,8 @@ string ofxAndroidRandomUUID();
 
 void ofxAndroidMonitorNetworkState();
 
+void ofxAndroidLaunchBrowser(string url);
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();
