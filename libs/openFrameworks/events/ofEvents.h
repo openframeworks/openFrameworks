@@ -92,7 +92,7 @@ class ofTouchEventArgs : public ofEventArgs {
     
 	int id;
 	unsigned long long time;
-    unsigned long long frame;
+	unsigned long long frame;
     
 	float x, y;
 	int numTouches;
