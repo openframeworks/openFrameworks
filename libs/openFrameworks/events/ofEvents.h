@@ -52,36 +52,58 @@ class ofKeyEventArgs : public ofEventArgs {
 
 class ofMouseEventArgs : public ofEventArgs {
   public:
-    ofMouseEventArgs() : x(0), y(0), button(0), numClicks(0), deviceId(0) {}
+    ofMouseEventArgs() {
+        id = 0;
+        deviceId = 0;
+        time = 0;
+        frame = 0;
+        x = y = 0;
+        clickCount = 0;
+
+        button = 0;
+    }
+    
 	virtual ~ofMouseEventArgs() {}
-    int x;
-	int y;
+    
+    int id;
+    unsigned int deviceId;
+    unsigned long long time;
+    unsigned long long frame;
+    int x, y;
+    int clickCount;
+
 	int button;
-    int numClicks;
-    unsigned int deviceId;    
 };
 
 class ofTouchEventArgs : public ofEventArgs {
   public:
     ofTouchEventArgs() {
-        type = stationary;
         id = 0;
+        deviceId = 0;
         time = 0;
         frame = 0;
         x = y = 0;
+        tapCount = 0;
+        
+        type = stationary;
         numTouches = 0;
-        numTaps = 0;
         width = height = 0;
         angle = 0;
         minoraxis = majoraxis = 0;
         pressure = 0;
         xspeed = yspeed = 0;
         xaccel = yaccel = 0;
-        deviceId = 0;
     }
     virtual ~ofTouchEventArgs() {};
     
-	enum Type{
+    int id;
+    unsigned int deviceId;
+	unsigned long long time;
+	unsigned long long frame;
+	float x, y;
+    int tapCount;
+
+    enum Type{
 		down,
 		up,
 		move,
@@ -90,13 +112,7 @@ class ofTouchEventArgs : public ofEventArgs {
 		stationary
 	} type;
     
-	int id;
-	unsigned long long time;
-	unsigned long long frame;
-    
-	float x, y;
-	int numTouches;
-    int numTaps;
+	int   numTouches;
 	float width, height;
 	float angle;
 	float minoraxis, majoraxis;
@@ -104,7 +120,6 @@ class ofTouchEventArgs : public ofEventArgs {
 	float xspeed, yspeed;
 	float xaccel, yaccel;
     
-    unsigned int deviceId;
     
 };
 
