@@ -307,6 +307,9 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 	ofLog(OF_LOG_NOTICE,"onSurfaceDestroyed");
 	ofUnloadAllFontTextures();
 	ofPauseVideoGrabbers();
+	if(androidApp){
+		androidApp->unloadTextures();
+	}
 }
 
 void
@@ -315,6 +318,9 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	if(!surfaceDestroyed){
 		ofUnloadAllFontTextures();
 		ofPauseVideoGrabbers();
+		if(androidApp){
+			androidApp->unloadTextures();
+		}
 	}
 	reloadTextures();
 	if(androidApp){
@@ -577,8 +583,8 @@ Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, jboolean connected){
-	if(androidApp) androidApp->networkConnected(connected);
 	bool bConnected = (bool)connected;
+	if(androidApp) androidApp->networkConnected(bConnected);
 	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
 }
