@@ -5,20 +5,33 @@ void testApp::setup(){
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 
-	font.loadFont("verdana.ttf",14);
-	ofBackground(255,255,255);
+	font.loadFont("verdana.ttf",24);
+	ofSetLineWidth(10);
+	ofBackground(0,0,0);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofSetColor(0,0,0);
 	accel = ofxAccelerometer.getForce();
-	sprintf(buf,"g(x,y,z)= (%f, %f, %f)",accel.x,accel.y,accel.z);
+	sprintf(buf[0],"g(x) = %0.2f",accel.x);
+	sprintf(buf[1],"g(y) = %0.2f",accel.y);
+	sprintf(buf[2],"g(z) = %0.2f",accel.z);
+	normAccel = accel.getNormalized();
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	font.drawString(buf,20,20);
+	ofSetColor(255,255,0);
+	font.drawString(buf[0],10,24);
+	ofSetColor(255,0,255);
+	font.drawString(buf[1],10,font.stringHeight(buf[0])+24);
+
+	ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
+
+	ofSetColor(255,255,0);
+	ofLine(0,0,normAccel.x*ofGetWidth()/2,0);
+	ofSetColor(255,0,255);
+	ofLine(0,0,0,-normAccel.y*ofGetHeight()/2);
 }
 
 //--------------------------------------------------------------

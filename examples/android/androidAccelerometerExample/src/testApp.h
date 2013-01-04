@@ -34,6 +34,6 @@ class testApp : public ofxAndroidApp{
 		void cancelPressed();
 
 		ofTrueTypeFont font;
-		ofVec3f accel;
-		char buf[64];
+		ofVec3f accel, normAccel;
+		char buf[3][64];
 };
