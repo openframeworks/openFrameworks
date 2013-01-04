@@ -87,7 +87,7 @@ class ofTouchEventArgs : public ofEventArgs {
 		move,
 		doubleTap,
 		cancel,
-        stationary
+		stationary
 	} type;
     
 	int id;
