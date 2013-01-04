@@ -52,58 +52,59 @@ class ofKeyEventArgs : public ofEventArgs {
 
 class ofMouseEventArgs : public ofEventArgs {
   public:
-    ofMouseEventArgs() {
-        id = 0;
-        deviceId = 0;
-        time = 0;
-        frame = 0;
-        x = y = 0;
-        clickCount = 0;
+	ofMouseEventArgs() {
+		id = 0;
+		deviceId = 0;
+		time = 0;
+		frame = 0;
+		x = y = 0;
+		clickCount = 0;
 
-        button = 0;
-    }
+		button = 0;
+	}
     
 	virtual ~ofMouseEventArgs() {}
     
-    int id;
-    unsigned int deviceId;
-    unsigned long long time;
-    unsigned long long frame;
-    int x, y;
-    int clickCount;
+	int id;
+	unsigned int deviceId;
+	unsigned long long time;
+	unsigned long long frame;
+	int x, y;
+	int clickCount;
 
 	int button;
 };
 
 class ofTouchEventArgs : public ofEventArgs {
   public:
-    ofTouchEventArgs() {
-        id = 0;
-        deviceId = 0;
-        time = 0;
-        frame = 0;
-        x = y = 0;
-        tapCount = 0;
-        
-        type = stationary;
-        numTouches = 0;
-        width = height = 0;
-        angle = 0;
-        minoraxis = majoraxis = 0;
-        pressure = 0;
-        xspeed = yspeed = 0;
-        xaccel = yaccel = 0;
-    }
-    virtual ~ofTouchEventArgs() {};
-    
-    int id;
-    unsigned int deviceId;
+	ofTouchEventArgs() {
+		id = 0;
+		deviceId = 0;
+		time = 0;
+		frame = 0;
+		x = y = 0;
+		tapCount = 0;
+
+		type = stationary;
+		numTouches = 0;
+		width = height = 0;
+		angle = 0;
+		minoraxis = majoraxis = 0;
+		pressure = 0;
+		xspeed = yspeed = 0;
+		xaccel = yaccel = 0;
+	}
+
+	virtual ~ofTouchEventArgs() {};
+
+	int id;
+	unsigned int deviceId;
 	unsigned long long time;
 	unsigned long long frame;
 	float x, y;
-    int tapCount;
+	int tapCount;
 
-    enum Type{
+	enum Type{
 		down,
 		up,
 		move,
@@ -111,7 +112,7 @@ class ofTouchEventArgs : public ofEventArgs {
 		cancel,
 		stationary
 	} type;
-    
+
 	int   numTouches;
 	float width, height;
 	float angle;
@@ -119,8 +120,6 @@ class ofTouchEventArgs : public ofEventArgs {
 	float pressure;
 	float xspeed, yspeed;
 	float xaccel, yaccel;
-    
-    
 };
 
 class ofAudioEventArgs : public ofEventArgs {
