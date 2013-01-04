@@ -5,26 +5,27 @@
 #include "ofEventUtils.h"
 
 //-------------------------- mouse/key query
-bool		ofGetMousePressed(int button=-1); //by default any button
-bool		ofGetKeyPressed(int key=-1); //by default any key
+bool ofGetMousePressed(int button=-1); // by default any button
+bool ofGetKeyPressed(int key=-1);      // by default any key
 
-int			ofGetMouseX();
-int			ofGetMouseY();
+int  ofGetMouseX();
+int  ofGetMouseY();
 
-int			ofGetPreviousMouseX();
-int			ofGetPreviousMouseY();
+int  ofGetPreviousMouseX();
+int  ofGetPreviousMouseY();
 
-void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
+void ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
-void		exitApp(); 
+void exitApp(); 
 
 //-----------------------------------------------
 class ofDragInfo{
-	public:
-		vector <string> files;
-		ofPoint position;
+  public:
+    ofDragInfo() {}
+    virtual ~ofDragInfo() {}
+    vector <string> files;
+    ofPoint position;
 };
-
 
 //-----------------------------------------------
 // event arguments, this are used in oF to pass
@@ -33,36 +34,86 @@ class ofDragInfo{
 class ofEventArgs{};
 
 class ofEntryEventArgs : public ofEventArgs {
-public:
+  public:
+    ofEntryEventArgs() : state(0) {}
+    virtual ~ofEntryEventArgs() {}
+    
 	int state;
 };
 
 class ofKeyEventArgs : public ofEventArgs {
   public:
+    ofKeyEventArgs() : key(0), deviceId(0) {}
+    virtual ~ofKeyEventArgs() {}
+
 	int key;
+    unsigned int deviceId;
 };
 
 class ofMouseEventArgs : public ofEventArgs {
   public:
-	int x;
-	int y;
+	ofMouseEventArgs() {
+		id = 0;
+		deviceId = 0;
+		time = 0;
+		frame = 0;
+		x = y = 0;
+		clickCount = 0;
+
+		button = 0;
+	}
+    
+	virtual ~ofMouseEventArgs() {}
+    
+	int id;
+	unsigned int deviceId;
+	unsigned long long time;
+	unsigned long long frame;
+	int x, y;
+	int clickCount;
+
 	int button;
 };
 
 class ofTouchEventArgs : public ofEventArgs {
   public:
+	ofTouchEventArgs() {
+		id = 0;
+		deviceId = 0;
+		time = 0;
+		frame = 0;
+		x = y = 0;
+		tapCount = 0;
+
+		type = stationary;
+		numTouches = 0;
+		width = height = 0;
+		angle = 0;
+		minoraxis = majoraxis = 0;
+		pressure = 0;
+		xspeed = yspeed = 0;
+		xaccel = yaccel = 0;
+	}
+
+	virtual ~ofTouchEventArgs() {};
+
+	int id;
+	unsigned int deviceId;
+	unsigned long long time;
+	unsigned long long frame;
+	float x, y;
+	int tapCount;
+
 	enum Type{
 		down,
 		up,
 		move,
 		doubleTap,
-		cancel
+		cancel,
+		stationary
 	} type;
 
-	int id;
-	int time;
-	float x, y;
-	int numTouches;
+	int   numTouches;
 	float width, height;
 	float angle;
 	float minoraxis, majoraxis;
@@ -73,6 +124,8 @@ class ofTouchEventArgs : public ofEventArgs {
 
 class ofAudioEventArgs : public ofEventArgs {
   public:
+    ofAudioEventArgs() : buffer(NULL), bufferSize(0), nChannels(0) {}
+    virtual ~ofAudioEventArgs() {}
 	float* buffer;
 	int bufferSize;
 	int nChannels;
@@ -80,16 +133,17 @@ class ofAudioEventArgs : public ofEventArgs {
 
 class ofResizeEventArgs : public ofEventArgs {
   public:
+    ofResizeEventArgs() : width(0), height(0) {}
+    virtual ~ofResizeEventArgs() {}
 	int width;
 	int height;
 };
 
 class ofMessage : public ofEventArgs{
-	public:
-		ofMessage( string msg ){
-			message = msg;
-		}
-		string message;
+  public:
+    ofMessage( string msg ) : message(msg) {}
+    virtual ~ofMessage() {}
+    string message;
 };
 		
 

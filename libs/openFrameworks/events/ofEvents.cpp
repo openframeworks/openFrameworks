@@ -16,6 +16,10 @@ ofEventArgs voidEventArgs;
 
 static int	currentMouseX=0, currentMouseY=0;
 static int	previousMouseX=0, previousMouseY=0;
+static int  mouseClickCount=0;
+static unsigned long long lastMouseClick=0;
+static unsigned long long mouseClickCountThreshold=500; // 500 milliseconds seems to be standard
+
 static bool		bPreMouseNotSet;
 static set<int> pressedMouseButtons;
 static set<int> pressedKeys;
@@ -153,6 +157,22 @@ void ofNotifyMousePressed(int x, int y, int button){
 	currentMouseY = y;
 	pressedMouseButtons.insert(button);
 
+    unsigned long long now = ofGetElapsedTimeMillis();
+    unsigned long long currentFrame = ofGetFrameNum();
+    
+    mouseEventArgs.frame = currentFrame;
+    mouseEventArgs.time = now;
+
+    if((now - lastMouseClick) < mouseClickCountThreshold) {
+        mouseClickCount++;
+    } else {
+        mouseClickCount = 1;
+    }
+
+    lastMouseClick = now;
+    
+    mouseEventArgs.clickCount = mouseClickCount;
+    
 	if(ofAppPtr){
 		ofAppPtr->mousePressed(x,y,button);
 		ofAppPtr->mouseX = x;
@@ -182,6 +202,12 @@ void ofNotifyMouseReleased(int x, int y, int button){
 	currentMouseX = x;
 	currentMouseY = y;
 	pressedMouseButtons.erase(button);
+
+    unsigned long long now = ofGetElapsedTimeMillis();
+    unsigned long long currentFrame = ofGetFrameNum();
+    
+    mouseEventArgs.frame = currentFrame;
+    mouseEventArgs.time = now;
 
 	if(ofAppPtr){
 		ofAppPtr->mouseReleased(x,y,button);
@@ -213,6 +239,12 @@ void ofNotifyMouseDragged(int x, int y, int button){
 	currentMouseX = x;
 	currentMouseY = y;
 	
+    unsigned long long now = ofGetElapsedTimeMillis();
+    unsigned long long currentFrame = ofGetFrameNum();
+    
+    mouseEventArgs.frame = currentFrame;
+    mouseEventArgs.time = now;
+
 	if(ofAppPtr){
 		ofAppPtr->mouseDragged(x,y,button);
 		ofAppPtr->mouseX = x;
@@ -241,6 +273,12 @@ void ofNotifyMouseMoved(int x, int y){
 	currentMouseX = x;
 	currentMouseY = y;
 	
+    unsigned long long now = ofGetElapsedTimeMillis();
+    unsigned long long currentFrame = ofGetFrameNum();
+    
+    mouseEventArgs.frame = currentFrame;
+    mouseEventArgs.time = now;
+
 	if(ofAppPtr){
 		ofAppPtr->mouseMoved(x,y);
 		ofAppPtr->mouseX = x;
