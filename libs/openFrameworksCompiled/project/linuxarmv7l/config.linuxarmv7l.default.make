@@ -30,6 +30,12 @@
 HAS_SYSTEM_GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 #check if mpg123 exists and add it
 HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+#check gstreamer version
+ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
+    GST_VERSION = 1.0
+else
+    GST_VERSION = 0.10
+endif
 
 ################################################################################
 # PLATFORM DEFINES
@@ -200,10 +206,10 @@ PLATFORM_SHARED_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-0.10
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-0.10
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-0.10
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-0.10
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
 PLATFORM_PKG_CONFIG_LIBRARIES += libudev
 PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
