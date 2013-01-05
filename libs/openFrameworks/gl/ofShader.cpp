@@ -158,7 +158,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 
 string ofShader::parseForIncludes( const string& path, int level ) 
 {
-	if ( level > 32 )
+    if ( level > 32 )
     {
         ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
         return "";
@@ -171,10 +171,9 @@ string ofShader::parseForIncludes( const string& path, int level )
         return "";
     }
 
-    string src = buffer.getText(); 
     stringstream output;
     stringstream input;
-    input << src;
+    input << buffer.getText();
         
     Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
     Poco::RegularExpression::MatchVec matches;
