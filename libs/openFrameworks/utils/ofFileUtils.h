@@ -21,6 +21,7 @@ public:
 	void set(const char * _buffer, unsigned int _size);
 	void set(const string & text);
 	bool set(istream & stream);
+	void append(const string& _buffer);
 	void append(const char * _buffer, unsigned int _size);
 
 	bool writeTo(ostream & stream) const;
