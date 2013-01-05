@@ -672,8 +672,9 @@ ofGstVideoUtils::ofGstVideoUtils(){
 #if GST_VERSION_MAJOR==1
 	prevBuffer = 0;
 	GstMapInfo initMapinfo		= {0,};
-#endif
 	mapinfo 					= initMapinfo;
+#endif
+	
 }
 
 ofGstVideoUtils::~ofGstVideoUtils(){
