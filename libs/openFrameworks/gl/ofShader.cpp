@@ -94,14 +94,18 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 }
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromFile(GLenum type, string filename) {
-	ofBuffer buffer = ofBufferFromFile(filename);
-	if(buffer.size()) {
-		return setupShaderFromSource(type, buffer.getText());
-	} else {
-		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
-		return false;
-	}
+bool ofShader::setupShaderFromFile(GLenum type, string filename) 
+{
+    string src = parseForIncludes( filename, 0 );
+    if ( !src.empty() ) 
+    {
+		return setupShaderFromSource( type, src );
+    }
+    else 
+    {
+        ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
+        return false;
+    }
 }
 
 //--------------------------------------------------------------
@@ -145,6 +149,50 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	retainShader(shader);
 
 	return true;
+}
+
+/*
+ * Parse for GLSL includes taken from
+ * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
+ */
+
+string ofShader::parseForIncludes( const string& path, int level ) 
+{
+	if ( level > 32 )
+    {
+        ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+        return "";
+    }
+
+    ofBuffer buffer = ofBufferFromFile( path );
+    if ( !buffer.size() ) 
+    {
+        ofLog( OF_LOG_ERROR, "Could not open glsl include file "+path );
+        return "";
+    }
+	
+    stringstream out;
+        
+    vector<string> lines = ofSplitString( buffer.getText(), "\n" );
+
+    for ( int i = 0; i < lines.size(); i++ )
+    {
+        string line = lines[i];
+        
+        Poco::RegularExpression::MatchVec matches;
+        Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
+
+        if ( re.match( line, 0, matches ) != 2 ) 
+        {
+            out << line << endl;
+            continue;
+        }
+        
+        string include = line.substr(matches[1].offset, matches[1].length);
+
+        out << parseForIncludes( include, level + 1 ) << endl;
+    }
+    return out.str();
 }
 
 //--------------------------------------------------------------
