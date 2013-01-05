@@ -1,5 +1,4 @@
 #include "testApp.h"
-  
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -29,11 +28,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	ofBackground(0, 0, 0);
-	glEnable(GL_NORMALIZE);
-	glCullFace(GL_FRONT);
-	glDisable(GL_CULL_FACE);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glDisable(GL_BLEND);
 	
 	float movementSpeed = .1;
 	float cloudSize = ofGetWidth() / 2;
@@ -42,7 +36,7 @@ void testApp::draw(){
 	int boxCount = 100;
 	
 	cam.begin();
-	ofBox(200);
+	
 	for(int i = 0; i < boxCount; i++) {
 		ofPushMatrix();
 		
