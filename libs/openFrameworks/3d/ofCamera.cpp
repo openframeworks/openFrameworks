@@ -237,3 +237,73 @@ void ofCamera::calcClipPlanes(ofRectangle viewport)
 		farClip = (farClip == 0) ? dist * 10.0f : farClip;
 	}
 }
+//----------------------------------------
+bool ofCamera::save(string savePath){
+		
+    ofBuffer buffer;
+    buffer.append("--------------ofCamera parameters--------------\n");
+    buffer.append("transformMatrix\n" + ofToString(getGlobalTransformMatrix()) + "\n" );
+    buffer.append("fov\n" + ofToString(fov)+"\n");
+    buffer.append("near\n" + ofToString(nearClip)+"\n");
+    buffer.append("far\n" + ofToString(farClip)+"\n");
+    buffer.append("lensOffset\n" + ofToString(lensOffset)+"\n");
+    buffer.append("forceAspectRatio\n" + ofToString(forceAspectRatio)+"\n");
+    buffer.append("aspectRatio\n" + ofToString(aspectRatio) + "\n");
+    buffer.append("isOrtho\n" + ofToString(isOrtho) + "\n");
+    
+    if(ofBufferToFile(savePath, buffer)){
+        ofLogNotice("ofCamera saved successfully!");
+        return true;
+    }else{
+        ofLogWarning("failed to save ofCamera!");
+        return false;
+    }
+}
+//----------------------------------------
+bool ofCamera::load(string loadPath){
+    ofFile file(loadPath);
+	
+	if(!file.exists()){
+		ofLogError("The file " + loadPath + " is missing");
+        return false;
+	}
+	float aRatio;
+	ofBuffer buffer(file);  
+	while (!buffer.isLastLine()) {
+		string line = buffer.getNextLine();
+        if (line == "transformMatrix") {
+            string str =buffer.getNextLine() + "\n";
+            str += buffer.getNextLine() + "\n";
+            str += buffer.getNextLine() + "\n";
+            str += buffer.getNextLine();
+            
+            ofMatrix4x4 m;
+            istringstream iss;
+            iss.str(str);
+            iss >> m;
+            setTransformMatrix(m);
+            
+        }else if(line == "fov"){
+            setFov(ofToFloat(buffer.getNextLine()));
+        }else if(line == "near"){
+            setNearClip(ofToFloat(buffer.getNextLine()));
+        }else if(line == "far"){
+            setFarClip(ofToFloat(buffer.getNextLine()));
+        }else if(line == "lensOffset"){
+            vector<string> vals = ofSplitString(buffer.getNextLine(), ", ");
+            if (vals.size()==2) {
+                setLensOffset(ofVec2f(ofToFloat(vals[0]), ofToFloat(vals[1])));
+            }
+        }else if(line == "forceAspectRatio"){
+            setForceAspectRatio(ofToBool(buffer.getNextLine()));//buffer.getNextLine()));
+        }else if(line == "aspectRatio"){
+            aRatio = ofToFloat(buffer.getNextLine());
+        }else if(line == "isOrtho"){
+            isOrtho = ofToBool(buffer.getNextLine());
+        }
+	}
+    if (forceAspectRatio) {
+        setAspectRatio(aRatio);
+    }
+    return true;
+}

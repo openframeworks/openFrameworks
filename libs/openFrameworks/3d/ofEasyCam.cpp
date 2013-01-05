@@ -260,3 +260,58 @@ void ofEasyCam::updateMouse(){
 		}
 	}
 }
+//----------------------------------------
+bool ofEasyCam::save(string savePath){
+    
+    if(ofCamera::save(savePath)){
+    ofBuffer buffer = ofBufferFromFile(savePath);
+    
+	buffer.append("--------------ofEasyCam parameters--------------\n");
+    buffer.append("target\n" + ofToString(target.getPosition()) + "\n" );
+    buffer.append("bEnableMouseMiddleButton\n" + ofToString(bEnableMouseMiddleButton)+"\n");
+    buffer.append("bMouseInputEnabled\n" + ofToString(bMouseInputEnabled)+"\n");
+    buffer.append("bAutoDistance\n" + ofToString(bAutoDistance)+"\n");
+    buffer.append("drag\n" + ofToString(drag)+"\n");
+    buffer.append("doTranslationKey\n" + ofToString(doTranslationKey)+"\n");
+    
+    if(ofBufferToFile(savePath, buffer)){
+        ofLogNotice("ofEasyCam saved successfully!");
+        return true;
+    }else{
+        ofLogWarning("failed to save ofEasyCam!");
+        return false;
+    }
+    }else{
+        return false;
+    }
+}
+//----------------------------------------
+bool ofEasyCam::load(string loadPath){
+    if(ofCamera::load(loadPath)){
+	ofBuffer buffer = ofBufferFromFile(loadPath);
+        
+	while (!buffer.isLastLine()) {
+		string line = buffer.getNextLine();
+        if (line == "target") {
+            vector<string> vals = ofSplitString(buffer.getNextLine(), ", ");
+            if (vals.size()==3) {
+                target.setPosition(ofVec3f(ofToFloat(vals[0]), ofToFloat(vals[1]), ofToFloat(vals[2])));
+            }            
+        }else if(line == "drag"){
+            setDrag(ofToFloat(buffer.getNextLine()));
+        }else if(line == "bEnableMouseMiddleButton"){
+            bEnableMouseMiddleButton = ofToBool(buffer.getNextLine());
+        }else if(line == "bMouseInputEnabled"){
+            bMouseInputEnabled = ofToBool(buffer.getNextLine());
+        }else if(line == "bAutoDistance"){
+            bAutoDistance = ofToBool(buffer.getNextLine());
+        }else if(line == "doTranslationKey"){
+            doTranslationKey = ofToChar(buffer.getNextLine());
+        }
+	}
+        return true;
+    }else {
+        return false;
+    }
+}
+

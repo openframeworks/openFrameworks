@@ -64,6 +64,9 @@ public:
 	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport());
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport());
 	
+    
+    virtual bool save(string savePath);
+    virtual bool load(string loadPath);
 	
 protected:
 	void calcClipPlanes(ofRectangle viewport);
