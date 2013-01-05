@@ -170,29 +170,29 @@ string ofShader::parseForIncludes( const string& path, int level )
         ofLog( OF_LOG_ERROR, "Could not open glsl include file "+path );
         return "";
     }
-	
-    stringstream out;
-        
-    vector<string> lines = ofSplitString( buffer.getText(), "\n" );
 
-    for ( int i = 0; i < lines.size(); i++ )
+    string src = buffer.getText(); 
+    stringstream output;
+    stringstream input;
+    input << src;
+        
+    Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
+    Poco::RegularExpression::MatchVec matches;
+
+    string line;
+    while( std::getline(input,line) )
     {
-        string line = lines[i];
-        
-        Poco::RegularExpression::MatchVec matches;
-        Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
-
-        if ( re.match( line, 0, matches ) != 2 ) 
+        if ( re.match( line, 0, matches ) < 2 ) 
         {
-            out << line << endl;
+            output << line << endl;
             continue;
         }
         
         string include = line.substr(matches[1].offset, matches[1].length);
 
-        out << parseForIncludes( include, level + 1 ) << endl;
+        output << parseForIncludes( include, level + 1 ) << endl;
     }
-    return out.str();
+    return output.str();
 }
 
 //--------------------------------------------------------------
