@@ -39,6 +39,14 @@
 
 #endif
 
+#ifdef TARGET_OF_IPHONE
+#include "ofxiPhoneExtras.h"
+#endif
+
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
+
 #ifndef MAXPATHLEN
 	#define MAXPATHLEN 1024
 #endif
@@ -604,18 +612,21 @@ string ofVAArgsToString(const char * format, va_list args){
 void ofLaunchBrowser(string url){
 
 	// http://support.microsoft.com/kb/224816
-    
-	//make sure it is a properly formatted url
-	if(Poco::icompare(url.substr(0,7), "http://") != 0 &&
-       Poco::icompare(url.substr(0,8), "https://") != 0) {
-		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin http:// or https://");
+
+	// make sure it is a properly formatted url:
+	//   some platforms, like Android, require urls to start with lower-case http/https
+	if(Poco::icompare(url.substr(0,8), "https://") == 0){
+		url.replace(0,5,"https");
+	}
+	else if(Poco::icompare(url.substr(0,7), "http://") == 0){
+		url.replace(0,4,"http");
+	}
+	else{
+		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin with http:// or https://");
 		return;
 	}
 
-	//----------------------------
 	#ifdef TARGET_WIN32
-	//----------------------------
-
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
 		ShellExecuteA(NULL, "open", url.c_str(),
@@ -624,31 +635,28 @@ void ofLaunchBrowser(string url){
 		ShellExecute(NULL, "open", url.c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#endif
-
-	//----------------------------
 	#endif
-	//----------------------------
 
-	//--------------------------------------
 	#ifdef TARGET_OSX
-	//--------------------------------------
 		// ok gotta be a better way then this,
 		// this is what I found...
 		string commandStr = "open "+url;
 		system(commandStr.c_str());
-	//----------------------------
 	#endif
-	//----------------------------
 
-	//--------------------------------------
 	#ifdef TARGET_LINUX
-	//--------------------------------------
 		string commandStr = "xdg-open "+url;
 		int ret = system(commandStr.c_str());
 		if(ret!=0) ofLog(OF_LOG_ERROR,"ofLaunchBrowser: couldn't open browser");
-	//----------------------------
 	#endif
-	//----------------------------
+
+	#ifdef TARGET_OF_IPHONE
+		ofxiPhoneLaunchBrowser(url);
+	#endif
+
+	#ifdef TARGET_ANDROID
+		ofxAndroidLaunchBrowser(url);
+	#endif
 }
 
 //--------------------------------------------------

@@ -183,7 +183,7 @@ ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) {
 //----------------------------------------
 ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) {
 
-	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix();
+	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix(viewport);
 	ofVec3f ScreenXYZ;
 
 	ScreenXYZ.x = (CameraXYZ.x + 1.0f) / 2.0f * viewport.width + viewport.x;
