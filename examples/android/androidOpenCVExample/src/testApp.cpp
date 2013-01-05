@@ -42,7 +42,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	gray.draw(5,5);
 	contourFinder.draw(5,5);
 	ofSetColor(0x000000);

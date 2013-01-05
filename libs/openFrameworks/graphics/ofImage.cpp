@@ -528,9 +528,6 @@ ofImage_<PixelType>::ofImage_(){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 }
 
 //----------------------------------------------------------
@@ -545,9 +542,6 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	setFromPixels(pix);
 }
@@ -563,9 +557,6 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	loadImage(file);
 }
@@ -581,9 +572,6 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	loadImage(filename);
 }
@@ -600,6 +588,9 @@ ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<PixelType>& m
 //----------------------------------------------------------
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	clear();
 	clone(mom);
 	update();
@@ -609,10 +600,6 @@ ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
 template<typename PixelType>
 ofImage_<PixelType>::~ofImage_(){
 	clear();
-
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	unregisterImage(this);
-#endif
 }
 
 
@@ -634,6 +621,9 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(string fileName){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
@@ -649,6 +639,9 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	bool bLoadedOk = ofLoadImage(pixels, buffer);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
@@ -756,6 +749,9 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	if (width == w && height == h && newType == type){
 		return;
 	}
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	pixels.allocate(w, h, newType);
 
 	// take care of texture allocation --
@@ -773,7 +769,9 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::clear(){
-
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	unregisterImage(this);
+#endif
 	pixels.clear();
 	if(bUseTexture)	tex.clear();
 

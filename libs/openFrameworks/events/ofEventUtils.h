@@ -1,10 +1,6 @@
-#ifndef _OF_EVENTS
-#error "ofEventUtils shouldn't be included directly, include ofEvents.h or ofMain.h"
-#endif
+#pragma once
 
 #include "ofConstants.h"
-
-#ifdef OF_USING_POCO
 
 #include "Poco/FIFOEvent.h"
 #include "Poco/Delegate.h"
@@ -110,4 +106,3 @@ static void ofNotifyEvent(EventType & event, const ArgumentsType & args){
 	event.notify(NULL,args);
 }
 
-#endif
