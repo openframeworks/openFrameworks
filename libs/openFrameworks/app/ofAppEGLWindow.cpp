@@ -1370,7 +1370,7 @@ bool ofAppEGLWindow::setupNativeKeyboard() {
         char devicePathBuffer[256];
         sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
         keyboard_fd=open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
-        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  keyboard_fd << " devicePath=" << devicePathBuffer;
     } else {
         ofLogWarning("ofAppEGLWindow") << "setupKeyboard() : Unabled to find keyboard.";
     }
