@@ -1691,42 +1691,42 @@ bool ofAppEGLWindow::readNativeMouseEvents() {
             // only tracking three buttons now ...
             if(ev.code == BTN_LEFT) {
                 if(ev.value == 0) { // release
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
                     mouseEvent.type = ofMouseEventArgs::Released;
                     mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
                     pushMouseEvent = true;
                 } else if(ev.value == 1) { // press
                     mb.mouseButtonState |= MOUSE_BUTTON_LEFT_MASK;
                     mouseEvent.type = ofMouseEventArgs::Pressed;
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
                     pushMouseEvent = true;
                 } else { // unknown
                     ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_MIDDLE) {
                 if(ev.value == 0) { // release
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
                     mouseEvent.type = ofMouseEventArgs::Released;
                     mb.mouseButtonState &= ~MOUSE_BUTTON_MIDDLE_MASK;
                     pushMouseEvent = true;
                 } else if(ev.value == 1) { // press
                     mb.mouseButtonState |= MOUSE_BUTTON_MIDDLE_MASK;
                     mouseEvent.type = ofMouseEventArgs::Pressed;
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
                     pushMouseEvent = true;
                 } else { // unknown
                     ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_RIGHT) {
                 if(ev.value == 0) { // release
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
                     mouseEvent.type = ofMouseEventArgs::Released;
                     mb.mouseButtonState &= ~MOUSE_BUTTON_RIGHT_MASK;
                     pushMouseEvent = true;
                 } else if(ev.value == 1) { // press
                     mb.mouseButtonState |= MOUSE_BUTTON_RIGHT_MASK;
                     mouseEvent.type = ofMouseEventArgs::Pressed;
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
                     pushMouseEvent = true;
                 } else {
                     ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
