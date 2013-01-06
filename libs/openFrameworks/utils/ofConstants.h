@@ -578,9 +578,20 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-
 // not sure what to do in the case of non-glut apps....
 
+    #define OF_MOUSE_BUTTON_1      0
+    #define OF_MOUSE_BUTTON_2      1
+    #define OF_MOUSE_BUTTON_3      2
+    #define OF_MOUSE_BUTTON_4      3
+    #define OF_MOUSE_BUTTON_5      4
+    #define OF_MOUSE_BUTTON_6      5
+    #define OF_MOUSE_BUTTON_7      6
+    #define OF_MOUSE_BUTTON_8      7
+    #define OF_MOUSE_BUTTON_LAST   OF_MOUSE_BUTTON_8
+    #define OF_MOUSE_BUTTON_LEFT   OF_MOUSE_BUTTON_1
+    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_2
+    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_3
 
 //--------------------------------------------
 //console colors for our logger - shame this doesn't work with the xcode console
