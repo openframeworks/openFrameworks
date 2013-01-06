@@ -251,6 +251,36 @@ ofAppEGLWindow::~ofAppEGLWindow() {
 }
 
 //------------------------------------------------------------
+EGLDisplay getEglDisplay() const {
+  return eglDisplay;
+}
+
+//------------------------------------------------------------
+EGLSurface getEglSurface() const {
+  return eglSurface;
+}
+
+//------------------------------------------------------------
+EGLContext getEglContext() const {
+  return eglContext;
+}
+
+//------------------------------------------------------------
+EGLConfig  getEglConfig() const {
+  return eglConfig;
+}
+
+//------------------------------------------------------------
+EGLint getEglVersionMajor () const {
+  return eglVersionMajor;
+}
+
+//------------------------------------------------------------
+EGLint getEglVersionMinor() const {
+  return eglVersionMinor;
+}
+
+//------------------------------------------------------------
 void ofAppEGLWindow::init(Settings _settings) {
     terminate      = false;
 
