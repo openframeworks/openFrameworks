@@ -11,6 +11,7 @@
 	#include "glut.h"
 #endif
 #ifdef TARGET_OSX
+    #include <OpenGL/OpenGL.h>
 	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
 	#include <Carbon/Carbon.h>
 #endif
