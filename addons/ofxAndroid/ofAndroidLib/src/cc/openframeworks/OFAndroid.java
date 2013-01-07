@@ -30,6 +30,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.os.PowerManager;
@@ -128,9 +129,25 @@ public class OFAndroid {
 		
 			        dataPath="";
 		    		try{
-		    			//dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-		    			dataPath = getRealExternalStorageDirectory();
-		    			dataPath += "/"+packageName;
+						// Set data path
+						//dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+						dataPath = getRealExternalStorageDirectory();
+						dataPath += "/Android/data/"+packageName;
+
+						// Check if old data path exists and copy content to new data path location
+						String oldDataPath = getRealExternalStorageDirectory() + "/" + packageName;								
+						File oldDataDir = new File(oldDataPath);				
+						if(oldDataDir.exists()) 
+						{	
+							Log.d("OF", "Found old data in: " + oldDataPath);
+
+							File newDatadir = new File(dataPath);					
+							if (oldDataDir.renameTo(newDatadir))
+								Log.d("OF", "Moved data to new storage location: " + dataPath);
+							else
+								Log.e("OF", "Could not move data to new storage location: " + dataPath);				
+						}
+
 		    			Log.i("OF","creating app directory: " + dataPath);
 						try{
 							
@@ -434,6 +451,10 @@ public class OFAndroid {
 		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
 		ofActivity.registerReceiver(networkStateReceiver, filter);
 		networkConnected(isOnline());
+	}
+	
+	static public void launchBrowser(String url){
+		ofActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 	}
 	
 	
