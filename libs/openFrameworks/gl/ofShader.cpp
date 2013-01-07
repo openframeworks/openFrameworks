@@ -94,15 +94,13 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 }
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromFile(GLenum type, string filename) 
-{
+bool ofShader::setupShaderFromFile(GLenum type, string filename) {
+
     string src = parseForIncludes( filename, 0 );
-    if ( !src.empty() ) 
-    {
+    if ( !src.empty() ) {
 		return setupShaderFromSource( type, src );
     }
-    else 
-    {
+    else {
         ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
         return false;
     }
@@ -156,17 +154,14 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
-string ofShader::parseForIncludes( const string& path, int level ) 
-{
-    if ( level > 32 )
-    {
+string ofShader::parseForIncludes( const string& path, int level ) {
+    if ( level > 32 ) {
         ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
         return "";
     }
 
     ofBuffer buffer = ofBufferFromFile( path );
-    if ( !buffer.size() ) 
-    {
+    if ( !buffer.size() ) {
         ofLog( OF_LOG_ERROR, "Could not open glsl include file "+path );
         return "";
     }
@@ -179,10 +174,9 @@ string ofShader::parseForIncludes( const string& path, int level )
     Poco::RegularExpression::MatchVec matches;
 
     string line;
-    while( std::getline(input,line) )
-    {
-        if ( re.match( line, 0, matches ) < 2 ) 
-        {
+    while( std::getline(input,line) ) {
+
+        if ( re.match( line, 0, matches ) < 2 ) {
             output << line << endl;
             continue;
         }
