@@ -17,16 +17,4 @@ if [ $exit_code != 0 ]; then
 	exit $exit_code
 fi
 
-cd ..
-./compileOF.sh
-exit_code=$?
-if [ $exit_code != 0 ]; then
-  exit $exit_code
-fi
-
-./compilePG.sh
-exit_code=$?
-if [ $exit_code != 0 ]; then
-  exit $exit_code
-fi
 
