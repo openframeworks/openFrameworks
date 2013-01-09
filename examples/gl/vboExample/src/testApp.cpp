@@ -58,7 +58,8 @@ void testApp::setup() {
 	
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	int skip = 1;	// this controls the resolution of the mesh
+	int skip = 10;	// this controls the resolution of the mesh
+	
 	int width = img.getWidth();
 	int height = img.getHeight();
 	ofVec3f zero(0, 0, 0);
@@ -97,7 +98,7 @@ void testApp::update() {
 
 //--------------------------------------------------------------
 void testApp::draw() {
-	ofBackground(0);
+	ofBackgroundGradient(ofColor(64), ofColor(0));
 	cam.begin();
 	glEnable(GL_DEPTH_TEST);
 	
