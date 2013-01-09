@@ -116,7 +116,7 @@ private:
 	
 	static string nameForType(GLenum type);
     
-    string parseForIncludes( const string& path, int level );
+    string parseForIncludes( const string& source, int level );
 	
 	void checkAndCreateProgram();
 	
