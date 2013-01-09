@@ -95,15 +95,13 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromFile(GLenum type, string filename) {
-
-    string src = parseForIncludes( filename, 0 );
-    if ( !src.empty() ) {
-		return setupShaderFromSource( type, src );
-    }
-    else {
-        ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
-        return false;
-    }
+	ofBuffer buffer = ofBufferFromFile(filename);
+	if(buffer.size()) {
+		return setupShaderFromSource(type, buffer.getText());
+	} else {
+		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
+		return false;
+	}
 }
 
 //--------------------------------------------------------------
@@ -118,10 +116,13 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 		ofLog(OF_LOG_ERROR, "Failed creating shader of type " + nameForType(type));
 		return false;
 	}
+
+    // parse for includes
+    string src = parseForIncludes( source, 0 );
 	
 	// compile shader
-	const char* sptr = source.c_str();
-	int ssize = source.size();
+	const char* sptr = src.c_str();
+	int ssize = src.size();
 	glShaderSource(shader, 1, &sptr, &ssize);
 	glCompileShader(shader);
 	
@@ -154,21 +155,16 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
-string ofShader::parseForIncludes( const string& path, int level ) {
+string ofShader::parseForIncludes( const string& src, int level ) {
+
     if ( level > 32 ) {
         ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
         return "";
     }
 
-    ofBuffer buffer = ofBufferFromFile( path );
-    if ( !buffer.size() ) {
-        ofLog( OF_LOG_ERROR, "Could not open glsl include file "+path );
-        return "";
-    }
-
     stringstream output;
     stringstream input;
-    input << buffer.getText();
+    input << src;
         
     Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
     Poco::RegularExpression::MatchVec matches;
@@ -179,11 +175,17 @@ string ofShader::parseForIncludes( const string& path, int level ) {
         if ( re.match( line, 0, matches ) < 2 ) {
             output << line << endl;
             continue;
-        }
+        } 
         
         string include = line.substr(matches[1].offset, matches[1].length);
+        
+        ofBuffer buffer = ofBufferFromFile( include );
+        if ( !buffer.size() ) {
+            ofLog( OF_LOG_ERROR, "Could not open glsl include file "+include );
+            continue;
+        }
 
-        output << parseForIncludes( include, level + 1 ) << endl;
+        output << parseForIncludes( buffer.getText(), level + 1 ) << endl;
     }
     return output.str();
 }
