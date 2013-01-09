@@ -137,10 +137,10 @@ public:
 	EGLSurface getEglSurface() const;
 	EGLContext getEglContext() const;
 
-    EGLConfig  getEglConfig() const;
+	EGLConfig  getEglConfig() const;
 
 	EGLint getEglVersionMajor () const;
-    EGLint getEglVersionMinor() const;
+	EGLint getEglVersionMinor() const;
 
 
 protected:
