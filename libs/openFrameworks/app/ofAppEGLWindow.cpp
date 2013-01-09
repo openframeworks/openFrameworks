@@ -251,32 +251,32 @@ ofAppEGLWindow::~ofAppEGLWindow() {
 }
 
 //------------------------------------------------------------
-EGLDisplay getEglDisplay() const {
+EGLDisplay ofAppEGLWindow::getEglDisplay() const {
   return eglDisplay;
 }
 
 //------------------------------------------------------------
-EGLSurface getEglSurface() const {
+EGLSurface ofAppEGLWindow::getEglSurface() const {
   return eglSurface;
 }
 
 //------------------------------------------------------------
-EGLContext getEglContext() const {
+EGLContext ofAppEGLWindow::getEglContext() const {
   return eglContext;
 }
 
 //------------------------------------------------------------
-EGLConfig  getEglConfig() const {
+EGLConfig ofAppEGLWindow::getEglConfig() const {
   return eglConfig;
 }
 
 //------------------------------------------------------------
-EGLint getEglVersionMajor () const {
+EGLint ofAppEGLWindow::getEglVersionMajor () const {
   return eglVersionMajor;
 }
 
 //------------------------------------------------------------
-EGLint getEglVersionMinor() const {
+EGLint ofAppEGLWindow::getEglVersionMinor() const {
   return eglVersionMinor;
 }
 
