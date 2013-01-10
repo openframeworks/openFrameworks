@@ -1267,6 +1267,11 @@ void ofAppEGLWindow::display() {
             glDisable(GL_DEPTH_TEST);
         }
         
+        bool isUsingNormalizedTexCoords = ofGetUsingNormalizedTexCoords();
+        if(isUsingNormalizedTexCoords) {
+          ofDisableNormalizedTexCoords();
+        }
+        
         ofPushStyle();
         ofEnableAlphaBlending();
         ofDisableTextureEdgeHack();
@@ -1278,6 +1283,10 @@ void ofAppEGLWindow::display() {
         
         if(bIsDepthTestEnabled == GL_TRUE) {
             glEnable(GL_DEPTH_TEST);
+        }
+
+        if(isUsingNormalizedTexCoords) {
+          ofEnableNormalizedTexCoords();
         }
 
 
