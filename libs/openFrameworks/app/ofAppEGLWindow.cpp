@@ -1259,6 +1259,14 @@ void ofAppEGLWindow::display() {
   
   if(!isUsingX11) {
     if(bShowCursor){
+        
+        GLboolean bIsDepthTestEnabled = GL_FALSE;
+        glGetBooleanv(GL_DEPTH_TEST, &bIsDepthTestEnabled);
+
+        if(bIsDepthTestEnabled == GL_TRUE) {
+            glDisable(GL_DEPTH_TEST);
+        }
+        
         ofPushStyle();
         ofEnableAlphaBlending();
         ofDisableTextureEdgeHack();
@@ -1267,6 +1275,11 @@ void ofAppEGLWindow::display() {
         ofEnableTextureEdgeHack();
         //TODO: we need a way of querying the previous state of texture hack
         ofPopStyle();
+        
+        if(bIsDepthTestEnabled == GL_TRUE) {
+            glEnable(GL_DEPTH_TEST);
+        }
+
 
     }
    }
