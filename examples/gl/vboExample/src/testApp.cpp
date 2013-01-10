@@ -57,7 +57,7 @@ void testApp::setup() {
 
     #ifdef TARGET_OPENGLES
     // While this will will work on normal OpenGL as well, it is 
-    // required for OpenGL ES because ARB textures are not supports.
+    // required for OpenGL ES because ARB textures are not supported.
     // If this IS set, then we conditionally normalize our 
     // texture coordinates below.
     ofEnableNormalizedTexCoords();
@@ -98,12 +98,12 @@ void testApp::setup() {
 
 				// Normalize our texture coordinates if normalized 
 				// texture coordinates are currently enabled.
-                if(ofGetUsingNormalizedTexCoords()) {
-                    nwi /= imageSize;
-                    nei /= imageSize;
-                    sei /= imageSize;
-                    swi /= imageSize;
-                }
+				if(ofGetUsingNormalizedTexCoords()) {
+					nwi /= imageSize;
+					nei /= imageSize;
+					sei /= imageSize;
+					swi /= imageSize;
+				}
 
 				addTexCoords(mesh, nwi, nei, sei, swi);
 			}
