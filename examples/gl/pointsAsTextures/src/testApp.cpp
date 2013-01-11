@@ -16,7 +16,7 @@ void testApp::setup() {
 	camera.setDistance(camDist);
 	
 	// randomly add a point on a sphere
-	int   num = 1000;
+	int   num = 500;
 	float radius = 1000;
 	for(int i = 0; i<num; i++ ) {
 		
@@ -40,9 +40,12 @@ void testApp::setup() {
 	
 	
 	// load the shader
-	if(shader.load("shader")) {
-		printf("Shader is loaded\n"); 
-	}
+	#ifdef TARGET_OPENGLES
+        shader.load("shaders_gles/shader");
+	#else
+        shader.load("shaders/shader"); 
+        #endif
+
 }
 
 //--------------------------------------------------------------

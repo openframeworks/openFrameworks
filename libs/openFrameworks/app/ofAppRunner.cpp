@@ -2,14 +2,19 @@
 
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
+
+#ifndef TARGET_NO_SOUND
 #include "ofSoundPlayer.h"
 #include "ofSoundStream.h"
+#endif
+
 #include "ofImage.h"
 #include "ofUtils.h"
 #include "ofEvents.h"
 #include "ofMath.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
+
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -26,10 +31,14 @@ static ofPtr<ofAppBaseWindow> 		window;
 
 //========================================================================
 // default windowing
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_NODISPLAY
+	#include "ofAppNoWindow.h"
+#elif defined(TARGET_OF_IPHONE)
 	#include "ofAppiPhoneWindow.h"
-#elif defined TARGET_ANDROID
+#elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
+#elif defined(TARGET_LINUX_ARM)
+	#include "ofAppEGLWindow.h"
 #else
 	#include "ofAppGlutWindow.h"
 #endif
@@ -43,8 +52,20 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 
-
 void ofExitCallback();
+
+#if defined(TARGET_LINUX) || defined(TARGET_OSX)
+	#include <signal.h>
+	
+	static bool bExitCalled = false;
+	void sighandler(int sig) {
+		ofLogVerbose("ofAppRunner") << "sighandler : Signal handled " << sig;
+		if(!bExitCalled) {
+			bExitCalled = true;
+			exitApp();
+		}
+	}
+#endif
 
 // the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
 //--------------------------------------
@@ -59,6 +80,20 @@ void ofRunApp(ofBaseApp * OFSA){
 #ifndef TARGET_ANDROID
 	atexit(ofExitCallback);
 #endif
+
+#if defined(TARGET_LINUX) || defined(TARGET_OSX)
+	// see http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html#Termination-Signals
+	signal(SIGTERM, &sighandler);
+    signal(SIGQUIT, &sighandler); 
+	signal(SIGINT,  &sighandler);
+
+	signal(SIGKILL, &sighandler); // not much to be done here
+	signal(SIGHUP,  &sighandler); // not much to be done here
+
+	// http://www.gnu.org/software/libc/manual/html_node/Program-Error-Signals.html#Program-Error-Signals
+    signal(SIGABRT, &sighandler);  // abort signal
+#endif
+
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
@@ -94,7 +129,9 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
 	}
 #endif
-	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+    if(ofGetCurrentRenderer() == NULL) {
+        ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+    }
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	//ofSetupGraphicDefaults();
 }
@@ -102,10 +139,14 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
-	#ifdef TARGET_OF_IPHONE
+	#ifdef TARGET_NODISPLAY
+		window = ofPtr<ofAppBaseWindow>(new ofAppNoWindow());
+	#elif defined(TARGET_OF_IPHONE)
 		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
-	#elif defined TARGET_ANDROID
+	#elif defined(TARGET_ANDROID)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
+	#elif defined(TARGET_LINUX_ARM)
+		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
 	#else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#endif
@@ -113,21 +154,23 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 	ofSetupOpenGL(window,w,h,screenMode);
 }
 
-//----------------------- 	gets called when the app exits
-// 							currently looking at who to turn off
+//-----------------------	gets called when the app exits
+//							currently looking at who to turn off
 //							at the end of the application
 
 void ofExitCallback(){
 
 	ofNotifyExit();
 
+	#ifndef TARGET_NO_SOUND
 	//------------------------
 	// try to close engine if needed:
 	ofSoundShutdown();
 	//------------------------
-
+	#endif
+	
 	// try to close quicktime, for non-linux systems:
-	#if defined( OF_VIDEO_CAPTURE_QUICKTIME ) || defined( OF_VIDEO_PLAYER_QUICKTIME)
+	#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
 	closeQuicktime();
 	#endif
 
@@ -167,7 +210,6 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 								// remain high res, that could mess things
 								// up on your system.
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
-
 	#endif
 
 	window->initializeWindow();
@@ -176,7 +218,6 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 	ofResetElapsedTimeCounter();
 
 	window->runAppViaInfiniteLoop(OFSAptr.get());
-
 
 }
 
@@ -211,7 +252,6 @@ double ofGetLastFrameTime(){
 
 //--------------------------------------
 void ofSetFrameRate(int targetRate){
-
 	window->setFrameRate(targetRate);
 }
 
@@ -308,7 +348,6 @@ ofRectangle	ofGetWindowRect() {
 	return ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 }
 
-
 //--------------------------------------
 void ofSetWindowTitle(string title){
 	window->setWindowTitle(title);
@@ -341,48 +380,5 @@ int ofGetWindowMode(){
 
 //--------------------------------------
 void ofSetVerticalSync(bool bSync){
-	//----------------------------
-	#ifdef TARGET_WIN32
-	//----------------------------
-		if (bSync) {
-			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
-		} else {
-			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
-		}
-	//----------------------------
-	#endif
-	//----------------------------
-
-	//--------------------------------------
-	#ifdef TARGET_OSX
-	//--------------------------------------
-		GLint sync = bSync == true ? 1 : 0;
-		CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
-	//--------------------------------------
-	#endif
-	//--------------------------------------
-
-	//--------------------------------------
-	#ifdef TARGET_LINUX
-	//--------------------------------------
-		void (*swapIntervalExt)(Display *,GLXDrawable, int)  = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
-		if(swapIntervalExt){
-			Display *dpy = glXGetCurrentDisplay();
-			GLXDrawable drawable = glXGetCurrentDrawable();
-			if (drawable) {
-				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
-				return;
-			}
-		}
-		void (*swapInterval)(int)  = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-		if(!swapInterval)
-			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
-
-		if(swapInterval)
-			swapInterval(bSync ? 1 : 0);
-
-	//--------------------------------------
-	#endif
-	//--------------------------------------
-
+	window->setVerticalSync(bSync);
 }

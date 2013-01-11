@@ -44,6 +44,10 @@ void ofSoundShutdown();
 inline void ofSoundShutdown(){}
 #endif
 
+#ifdef TARGET_LINUX_ARM
+inline void ofSoundShutdown(){}
+#endif
+
 //---------------------------------------------
 class ofSoundPlayer : public ofBaseSoundPlayer {
 

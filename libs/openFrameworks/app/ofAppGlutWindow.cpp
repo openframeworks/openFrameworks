@@ -11,6 +11,7 @@
 	#include "glut.h"
 #endif
 #ifdef TARGET_OSX
+    #include <OpenGL/OpenGL.h>
 	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
 	#include <Carbon/Carbon.h>
 #endif
@@ -493,6 +494,56 @@ void ofAppGlutWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 }
 
+//------------------------------------------------------------
+void ofAppGlutWindow::setVerticalSync(bool bSync){
+	//----------------------------
+	#ifdef TARGET_WIN32
+	//----------------------------
+		if (bSync) {
+			if (WGL_EXT_swap_control) {
+				wglSwapIntervalEXT (1);
+			}
+		} else {
+			if (WGL_EXT_swap_control) {
+				wglSwapIntervalEXT (0);
+			}
+		}
+	//----------------------------
+	#endif
+	//----------------------------
+
+	//--------------------------------------
+	#ifdef TARGET_OSX
+	//--------------------------------------
+		GLint sync = bSync == true ? 1 : 0;
+		CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+
+	//--------------------------------------
+	#ifdef TARGET_LINUX
+	//--------------------------------------
+		void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+		if(swapIntervalExt){
+			Display *dpy = glXGetCurrentDisplay();
+			GLXDrawable drawable = glXGetCurrentDrawable();
+			if (drawable) {
+				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+				return;
+			}
+		}
+		void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+		if(!swapInterval) {
+			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+		}
+		if(swapInterval) {
+			swapInterval(bSync ? 1 : 0);
+		}
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
@@ -646,6 +697,19 @@ void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, x, y);
 
+    
+    int ofMouseButton = button;
+    
+    if(button == GLUT_LEFT_BUTTON) {
+        button = OF_MOUSE_BUTTON_LEFT;
+    } else if(button == GLUT_MIDDLE_BUTTON) {
+        button = OF_MOUSE_BUTTON_MIDDLE;
+    } else if(button == GLUT_RIGHT_BUTTON) {
+        button = OF_MOUSE_BUTTON_RIGHT;
+    } else {
+        ofLogWarning("ofAppGlutWindow::mouse_cb") << "Unmapped glut mouse button: " << button;
+    }
+    
 	if (nFrameCount > 0){
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);

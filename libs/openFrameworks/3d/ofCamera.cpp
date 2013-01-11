@@ -135,24 +135,20 @@ void ofCamera::begin(ofRectangle viewport) {
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
-	glMatrixMode(GL_PROJECTION);
+	ofSetMatrixMode(OF_MATRIX_PROJECTION);
 	ofLoadIdentityMatrix();
 	
 	if(isOrtho) {
-		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
-		//			else
-#ifndef TARGET_OPENGLES
-		glOrtho(0, viewport.width, 0, viewport.height, nearClip, farClip);
-#else
 		ofMatrix4x4 ortho;
 		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
 		ofLoadMatrix( ortho );
-#endif
 	} else {
-		ofLoadMatrix( this->getProjectionMatrix() );
+		ofMatrix4x4 persp;
+		persp.makePerspectiveMatrix( fov, viewport.width/viewport.height, nearClip, farClip );
+		ofLoadMatrix( persp );
 	}
 
-	glMatrixMode(GL_MODELVIEW);
+	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
 	ofViewport(viewport);
 }
