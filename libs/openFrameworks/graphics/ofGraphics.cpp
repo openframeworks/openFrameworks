@@ -6,21 +6,24 @@
 #include "ofPath.h"
 #include "ofRendererCollection.h"
 
-#ifdef TARGET_OSX
-	#include <OpenGL/glu.h>
+#ifndef TARGET_LINUX_ARM
+	#ifdef TARGET_OSX
+		#include <OpenGL/glu.h>
+	#endif
+
+	#ifdef TARGET_OPENGLES
+		#include "glu.h"
+	#endif
+
+	#ifdef TARGET_LINUX
+		#include <GL/glu.h>
+	#endif
+
+	#ifdef TARGET_WIN32
+		#include "glu.h"
+	#endif
 #endif
 
-//#ifdef TARGET_OPENGLES
-//	#include "glu.h"
-//#endif
-//
-#ifdef TARGET_LINUX
-	#include <GL/glu.h>
-#endif
-
-#ifdef TARGET_WIN32
-	#include "glu.h"
-#endif
 
 #ifndef TARGET_WIN32
     #define CALLBACK
@@ -33,10 +36,9 @@
 #ifdef TARGET_OSX
 	#include <GLUT/glut.h>
 #endif
-#ifdef TARGET_LINUX
+#if defined( TARGET_LINUX ) && !defined(TARGET_OPENGLES)
 	#include <GL/glut.h>
 #endif
-
 
 
 //style stuff - new in 006
@@ -68,17 +70,7 @@ ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-ofPtr<ofGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="GL"){
-		return (ofPtr<ofGLRenderer>&)ofGetCurrentRenderer();
-	}else if(ofGetCurrentRenderer()->getType()=="collection"){
-		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
-	}else{
-		return ofPtr<ofGLRenderer>();
-	}
-}
-
-#ifndef TARGET_OPENGLES 
+//#ifndef TARGET_OPENGLES 
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
@@ -125,7 +117,7 @@ void ofEndSaveScreenAsPDF(){
 	}
 }
 
-#endif
+//#endif
 
 
 
@@ -293,6 +285,11 @@ void ofMultMatrix (const ofMatrix4x4 & m){
 //----------------------------------------------------------
 void ofMultMatrix (const float *m){
 	renderer->multMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofSetMatrixMode(ofMatrixMode matrixMode){
+	renderer->matrixMode(matrixMode);
 }
 
 // end transformation matrix related functions

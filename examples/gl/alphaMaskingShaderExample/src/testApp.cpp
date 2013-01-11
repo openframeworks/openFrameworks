@@ -27,6 +27,11 @@ void testApp::setup(){
     //
     //  3 - And the third one it«s passing the shader programa on a single string;
     //
+
+
+    #ifdef TARGET_OPENGLES
+    shader.load("shaders_gles/alphamask.vert","shaders_gles/alphamask.frag");
+    #else
     string shaderProgram = "#version 120\n \
     #extension GL_ARB_texture_rectangle : enable\n \
     \
@@ -43,7 +48,8 @@ void testApp::setup(){
     }";
     shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram);
     shader.linkProgram(); 
-    
+    #endif
+
     // Let«s clear the FBO«s
     // otherwise it will bring some junk with it from the memory    
     maskFbo.begin();

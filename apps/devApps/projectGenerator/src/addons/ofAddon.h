@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFADDON_H_
-#define OFADDON_H_
+#pragma once
 
 #include <map>
 #include "ofConstants.h"
@@ -39,5 +38,3 @@ public:
     }
 
 };
-
-#endif /* OFADDON_H_ */

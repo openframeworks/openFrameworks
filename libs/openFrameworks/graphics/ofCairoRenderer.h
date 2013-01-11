@@ -85,6 +85,12 @@ public:
 	void rotateY(float degrees);
 	void rotateZ(float degrees);
 	void rotate(float degrees);
+	void matrixMode(ofMatrixMode mode);
+	void loadIdentityMatrix (void);
+	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const float * m);
+	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const float * m);
 
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -157,6 +163,8 @@ private:
 	stack<ofMatrix4x4> modelViewStack;
 	stack<ofRectangle> viewportStack;
 	
+	ofMatrixMode currentMatrixMode;
+
 	vector<ofPoint> sphereVerts;
 	vector<ofPoint> spherePoints;
 
