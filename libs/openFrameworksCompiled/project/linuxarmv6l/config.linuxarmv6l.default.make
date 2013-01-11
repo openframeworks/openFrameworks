@@ -17,25 +17,8 @@
 #
 ################################################################################
 
-################################################################################
-# PLATFORM SPECIFIC CHECKS
-#   This is a platform defined section to create internal flags to enable or 
-#   disable the addition of various features within this makefile.  For 
-#   instance, on Linux, we check to see if there GTK+-2.0 is defined, allowing 
-#   us to include that library and generate DEFINES that are interpreted as 
-#   ifdefs within the openFrameworks core source code.
-################################################################################
+include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.make
 
-#check if gtk exists and add it
-HAS_SYSTEM_GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
-#check if mpg123 exists and add it
-HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
-#check gstreamer version
-ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
-    GST_VERSION = 1.0
-else
-    GST_VERSION = 0.10
-endif
 
 ################################################################################
 # PLATFORM DEFINES
@@ -51,18 +34,6 @@ endif
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-
-PLATFORM_DEFINES =
-
-# add OF_USING_GTK define IF we have it defined as a system library
-ifeq ($(HAS_SYSTEM_GTK),0)
-    PLATFORM_DEFINES += OF_USING_GTK
-endif
-
-# add OF_USING_MPG123 define IF we have it defined as a system library
-ifeq ($(HAS_SYSTEM_MPG123),0)
-    PLATFORM_DEFINES += OF_USING_MPG123
-endif
 
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
@@ -112,7 +83,6 @@ PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CFLAGS =
 PLATFORM_CFLAGS += -march=armv6
 PLATFORM_CFLAGS += -mfpu=vfp
 PLATFORM_CFLAGS += -mfloat-abi=hard
@@ -120,68 +90,6 @@ PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
 PLATFORM_CFLAGS += -Wno-psabi
 PLATFORM_CFLAGS += -pipe
-
-################################################################################
-# PLATFORM OPTIMIZATION CFLAGS
-#   These are lists of CFLAGS that are target-specific.  While any flags could 
-#   be conditionally added, they are usually limited to optimization flags.  
-#   These flags are added BEFORE the PLATFORM_CFLAGS.
-#
-#   PLATFORM_OPTIMIZATION_CFLAGS_RELEASE flags are only applied to 
-#      RELEASE targets.
-#
-#   PLATFORM_OPTIMIZATION_CFLAGS_DEBUG flags are only applied to 
-#      DEBUG targets.
-#
-#   Note: Leave a leading space when adding list items with the += operator
-################################################################################
-
-# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
-
-# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
-
-################################################################################
-# PLATFORM CORE EXCLUSIONS
-#   During compilation, these makefiles will generate lists of sources, headers 
-#   and third party libraries to be compiled and linked into a program or core 
-#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
-#   paths that will be used to exclude matching paths and files during list 
-#   generation.
-#
-#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
-#   string unless teh user adds a wildcard (%) operator to match subdirectories.
-#   GNU make only allows one wildcard for matching.  The second wildcard (%) is
-#   treated literally.
-#
-#   Note: Leave a leading space when adding list items with the += operator
-################################################################################
-
-PLATFORM_CORE_EXCLUSIONS =
-
-# core sources
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-
-# third party
-
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/portaudio/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 
 
 ################################################################################
@@ -203,55 +111,12 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARIES =
 # raspberry pi specific
-PLATFORM_LIBRARIES += udev
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
-PLATFORM_LIBRARIES += GLESv2
 PLATFORM_LIBRARIES += EGL
-PLATFORM_LIBRARIES += freeimage
-PLATFORM_LIBRARIES += portaudio
-
-#openframeworks core third party
-# these can be added if they are part of the core, but are 
-# in a different search path location.  Otherwise, all libraries that
-# have not been filtered out with PLATFORM_THIRDPARTY_HEADER_EXCLUSIONS
-# will be automatically included. 
-#PLATFORM_LIBRARIES +=
-
-#static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBRARIES =
-
-# shared libraries 
-PLATFORM_SHARED_LIBRARIES =
-
-#openframeworks core third party
-PLATFORM_PKG_CONFIG_LIBRARIES =
-PLATFORM_PKG_CONFIG_LIBRARIES += cairo
-PLATFORM_PKG_CONFIG_LIBRARIES += zlib
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += libudev
-PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
-PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
-PLATFORM_PKG_CONFIG_LIBRARIES += openal
-PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
-PLATFORM_PKG_CONFIG_LIBRARIES += x11
-
-# conditionally add GTK
-ifeq ($(HAS_SYSTEM_GTK),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
-endif
-
-# conditionally add mpg123
-ifeq ($(HAS_SYSTEM_MPG123),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
-endif
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -264,14 +129,11 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS =
 # Broadcom hardware interface library
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include
 #PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
 
-# add the raspberry pi addon directory
-PLATFORM_HEADER_SEARCH_PATHS += $(OF_ADDONS_PATH)/ofxRaspberryPi/src
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATH
@@ -282,69 +144,8 @@ PLATFORM_HEADER_SEARCH_PATHS += $(OF_ADDONS_PATH)/ofxRaspberryPi/src
 #   Note: Leave a leading space when adding list items with the += operator
 ##########################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS =
 PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
 
 
-##########################################################################################
-# PLATFORM ARCHITECTURE
-#   This will override the architecture information generated by 
-#  
-##########################################################################################
-#PLATFORM_ARCH =
-
-##########################################################################################
-# PLATFORM OS
-#   If not defined here the platform kernel will be determined using (uname -s)
-##########################################################################################
-
-#PLATFORM_OS =
-
-##########################################################################################
-# PLATFORM LIBS PATH
-#   This the the path within the (libs/) folders where the platform-specific library 
-#   will live.  For example, 64-bit linux will be (linux64), 32-bit linux will be (linux)
-##########################################################################################
-
-#PLATFORM_LIBS_PATH =
-# TODO
-
-
-
-##########################################################################################
-# PLATFORM CORE SOURCE INCLUSIONS
-#   These are paths and filenames relative to the core library 
-#   ($(OF_ROOT)/libs/openFrameworks) source folder. 
-#   These relative paths will be fully qualified later.
-#   !!!ALWAYS USE TRAILING SPACES!!!
-##########################################################################################
-
-PLATFORM_CORE_SOURCE_INCLUSIONS =
-
-##########################################################################################
-# PLATFORM CORE LIB HEADER EXCLUSIONS
-#   These are paths and filenames relative to the ($(OF_ROOT)/libs/) folder.
-#   When a directory is listed (i.e. /3d), ALL source files in that directory will
-#   be excluded.
-#   These relative paths will be fully qualified later.
-##########################################################################################
-
-# TODO
-##########################################################################################
-# PLATFORM FRAMEWORKS
-#   These are special frameworks used in OSX.  These will be prefixed with -framework
-#   Do not use full flag syntax, that will be added automatically later
-#   These paths are ABSOLUTE.
-##########################################################################################
-# TODO
-
-#PLATFORM_FRAMEWORKS =
-
-################################################################################
-# PLATFORM CXX / CC
-################################################################################
-
-#PLATFORM_CXX=
-#PLATFORM_CC=
 
 
