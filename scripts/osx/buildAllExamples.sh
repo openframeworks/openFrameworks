@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#careful...
 cd ../../examples
 
 for category in $( ls . )
@@ -12,22 +11,21 @@ do
     for example in $( ls . )
     do
         echo "-----------------------------------------------------------------"
-        echo cleaning $example Debug
+        echo building $example Debug
         cd $example
-	xcodebuild -configuration Debug -target "$example" -project "$example.xcodeproj" clean
+	xcodebuild -configuration Debug -target "$example" -project "$example.xcodeproj"
 	if [ "$?" != "0" ]; then
-	   echo failed cleaning $example Debug
+	   echo failed building $example Debug
 	   exit
 	fi
         echo "-----------------------------------------------------------------"
-        echo cleaning $example Release
-        cd $example
-	xcodebuild -configuration Release -target "$example" -project "$example.xcodeproj" clean
+        echo building $example Release
+	xcodebuild -configuration Release -target "$example" -project "$example.xcodeproj"
 	if [ "$?" != "0" ]; then
-	   echo failed cleaning $example Release
+	   echo failed building $example Release
 	   exit
 	fi
-        cd ..
+        cd ../
         echo "-----------------------------------------------------------------"
         echo ""
     done
