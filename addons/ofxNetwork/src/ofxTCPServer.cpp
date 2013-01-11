@@ -57,14 +57,17 @@ bool ofxTCPServer::close(){
 		it->second.close();
 	}
 	TCPConnections.clear();
-
-	stopThread(); //stop the thread
+    stopThread();
 
 	if( !TCPServer.Close() ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: unable to close connection");
+
+		waitForThread(false); //stop the thread
 		return false;
 	}else{
 		connected = false;
+
+		waitForThread(false); //stop the thread
 		return true;
 	}
 }
@@ -149,6 +152,29 @@ bool ofxTCPServer::sendRawBytesToAll(const char * rawBytes, const int numBytes){
 	return true;
 }
 
+
+//--------------------------
+bool ofxTCPServer::sendRawMsg(int clientID, const char * rawBytes, const int numBytes){
+	if( !isClientSetup(clientID) ){
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
+		return false;
+	}
+	else{
+		return TCPConnections[clientID].sendRawMsg(rawBytes, numBytes);
+	}
+}
+
+//--------------------------
+bool ofxTCPServer::sendRawMsgToAll(const char * rawBytes, const int numBytes){
+	if(TCPConnections.size() == 0 || numBytes <= 0) return false;
+
+	map<int,ofxTCPClient>::iterator it;
+	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
+		if(it->second.isConnected())it->second.sendRawMsg(rawBytes, numBytes);
+	}
+	return true;
+}
+
 //--------------------------
 int ofxTCPServer::getNumReceivedBytes(int clientID){
 	if( !isClientSetup(clientID) ){
@@ -167,6 +193,16 @@ int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numByt
 	}
 
 	return TCPConnections[clientID].receiveRawBytes(receiveBytes, numBytes);
+}
+
+//--------------------------
+int ofxTCPServer::receiveRawMsg(int clientID, char * receiveBytes,  int numBytes){
+	if( !isClientSetup(clientID) ){
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
+		return 0;
+	}
+
+	return TCPConnections[clientID].receiveRawMsg(receiveBytes, numBytes);
 }
 
 //--------------------------
@@ -234,11 +270,11 @@ void ofxTCPServer::threadedFunction(){
 		}
 
 		if( !TCPServer.Listen(TCP_MAX_CLIENTS) ){
-			ofLog(OF_LOG_ERROR, "ofxTCPServer: Listen() failed");
+			if(isThreadRunning()) ofLog(OF_LOG_ERROR, "ofxTCPServer: Listen() failed");
 		}
 		
 		if( !TCPServer.Accept(TCPConnections[acceptId].TCPClient) ){
-			ofLog(OF_LOG_ERROR, "ofxTCPServer: Accept() failed\n");
+			if(isThreadRunning()) ofLog(OF_LOG_ERROR, "ofxTCPServer: Accept() failed\n");
 		}else{
 			TCPConnections[acceptId].setup(acceptId, bClientBlocking);
 			TCPConnections[acceptId].setMessageDelimiter(messageDelimiter);
@@ -246,6 +282,7 @@ void ofxTCPServer::threadedFunction(){
 			if(acceptId == idCount) idCount++;
 		}
 	}
+	idCount = 0;
 	ofLog(OF_LOG_VERBOSE, "ofxTCPServer: listen thread ended");
 }
 
