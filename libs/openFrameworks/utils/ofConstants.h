@@ -159,7 +159,6 @@ enum ofTargetPlatform{
 		#include "EGL/egl.h"
 		#include "EGL/eglext.h"
     #else // normal linux
-        #include <glxew.h>
         #include <GL/glew.h>
         #include <GL/gl.h>
         #include <GL/glx.h>
