@@ -300,3 +300,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #    Don't want to use a default compiler?
 ################################################################################
 #PLATFORM_CXX=
+
+afterplatform: after
+	@echo 
