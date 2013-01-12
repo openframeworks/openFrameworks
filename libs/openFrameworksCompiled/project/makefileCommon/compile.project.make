@@ -197,12 +197,7 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS)
 	@echo 'Linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
 	mkdir -p $(@D)
-	@if [ "$(PLATFORM_OS)" = "Darwin" ]; then \
-		$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) $(TARGET_LIBS); \
-	else \
-		$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS); \
-	fi 
-	
+	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) $(TARGET_LIBS);	
 	
 # This rule adds a dependency for projects to the OF library 
 # so if any OF file gets modified the OF library will be compiled
@@ -225,7 +220,7 @@ $(CLEANTARGET):
 	rm -rf bin/libs
 
 after: $(TARGET)
-	cp -r $(OF_EXPORT_PATH)/$(PLATFORM_LIB_SUBPATH)/libs bin/
+	cp -r $(OF_EXPORT_PATH)/$(PLATFORM_LIB_SUBPATH) bin/
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
