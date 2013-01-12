@@ -133,6 +133,16 @@ public:
 		Settings();
 	};
 
+	EGLDisplay getEglDisplay() const;
+	EGLSurface getEglSurface() const;
+	EGLContext getEglContext() const;
+
+	EGLConfig  getEglConfig() const;
+
+	EGLint getEglVersionMajor () const;
+	EGLint getEglVersionMinor() const;
+
+
 protected:
 	void init(Settings settings = Settings());
 

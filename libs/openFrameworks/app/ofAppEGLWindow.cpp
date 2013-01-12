@@ -251,6 +251,36 @@ ofAppEGLWindow::~ofAppEGLWindow() {
 }
 
 //------------------------------------------------------------
+EGLDisplay ofAppEGLWindow::getEglDisplay() const {
+  return eglDisplay;
+}
+
+//------------------------------------------------------------
+EGLSurface ofAppEGLWindow::getEglSurface() const {
+  return eglSurface;
+}
+
+//------------------------------------------------------------
+EGLContext ofAppEGLWindow::getEglContext() const {
+  return eglContext;
+}
+
+//------------------------------------------------------------
+EGLConfig ofAppEGLWindow::getEglConfig() const {
+  return eglConfig;
+}
+
+//------------------------------------------------------------
+EGLint ofAppEGLWindow::getEglVersionMajor () const {
+  return eglVersionMajor;
+}
+
+//------------------------------------------------------------
+EGLint ofAppEGLWindow::getEglVersionMinor() const {
+  return eglVersionMinor;
+}
+
+//------------------------------------------------------------
 void ofAppEGLWindow::init(Settings _settings) {
     terminate      = false;
 
@@ -1229,6 +1259,19 @@ void ofAppEGLWindow::display() {
   
   if(!isUsingX11) {
     if(bShowCursor){
+        
+        GLboolean bIsDepthTestEnabled = GL_FALSE;
+        glGetBooleanv(GL_DEPTH_TEST, &bIsDepthTestEnabled);
+
+        if(bIsDepthTestEnabled == GL_TRUE) {
+            glDisable(GL_DEPTH_TEST);
+        }
+        
+        bool isUsingNormalizedTexCoords = ofGetUsingNormalizedTexCoords();
+        if(isUsingNormalizedTexCoords) {
+          ofDisableNormalizedTexCoords();
+        }
+        
         ofPushStyle();
         ofEnableAlphaBlending();
         ofDisableTextureEdgeHack();
@@ -1237,6 +1280,15 @@ void ofAppEGLWindow::display() {
         ofEnableTextureEdgeHack();
         //TODO: we need a way of querying the previous state of texture hack
         ofPopStyle();
+        
+        if(bIsDepthTestEnabled == GL_TRUE) {
+            glEnable(GL_DEPTH_TEST);
+        }
+
+        if(isUsingNormalizedTexCoords) {
+          ofEnableNormalizedTexCoords();
+        }
+
 
     }
    }
@@ -1370,7 +1422,7 @@ bool ofAppEGLWindow::setupNativeKeyboard() {
         char devicePathBuffer[256];
         sprintf(devicePathBuffer,"/dev/input/by-path/%s\0",eps[0]->d_name);
         keyboard_fd=open(devicePathBuffer, O_RDONLY | O_NONBLOCK);
-        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  keyboard_fd << " devicePath=" << devicePathBuffer;
     } else {
         ofLogWarning("ofAppEGLWindow") << "setupKeyboard() : Unabled to find keyboard.";
     }
@@ -1691,42 +1743,42 @@ bool ofAppEGLWindow::readNativeMouseEvents() {
             // only tracking three buttons now ...
             if(ev.code == BTN_LEFT) {
                 if(ev.value == 0) { // release
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
                     mouseEvent.type = ofMouseEventArgs::Released;
                     mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
                     pushMouseEvent = true;
                 } else if(ev.value == 1) { // press
                     mb.mouseButtonState |= MOUSE_BUTTON_LEFT_MASK;
                     mouseEvent.type = ofMouseEventArgs::Pressed;
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
                     pushMouseEvent = true;
                 } else { // unknown
                     ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_MIDDLE) {
                 if(ev.value == 0) { // release
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
                     mouseEvent.type = ofMouseEventArgs::Released;
                     mb.mouseButtonState &= ~MOUSE_BUTTON_MIDDLE_MASK;
                     pushMouseEvent = true;
                 } else if(ev.value == 1) { // press
                     mb.mouseButtonState |= MOUSE_BUTTON_MIDDLE_MASK;
                     mouseEvent.type = ofMouseEventArgs::Pressed;
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
                     pushMouseEvent = true;
                 } else { // unknown
                     ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_RIGHT) {
                 if(ev.value == 0) { // release
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
                     mouseEvent.type = ofMouseEventArgs::Released;
                     mb.mouseButtonState &= ~MOUSE_BUTTON_RIGHT_MASK;
                     pushMouseEvent = true;
                 } else if(ev.value == 1) { // press
                     mb.mouseButtonState |= MOUSE_BUTTON_RIGHT_MASK;
                     mouseEvent.type = ofMouseEventArgs::Pressed;
-                    mouseEvent.button = mb.mouseButtonState;
+                    mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
                     pushMouseEvent = true;
                 } else {
                     ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;

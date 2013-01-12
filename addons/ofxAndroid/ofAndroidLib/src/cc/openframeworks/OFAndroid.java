@@ -31,6 +31,8 @@ import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.MulticastLock;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.os.PowerManager;
@@ -141,7 +143,7 @@ public class OFAndroid {
 						{	
 							Log.d("OF", "Found old data in: " + oldDataPath);
 
-							File newDatadir = new File(dataPath);					
+							File newDatadir = new File(dataPath);
 							if (oldDataDir.renameTo(newDatadir))
 								Log.d("OF", "Moved data to new storage location: " + dataPath);
 							else
@@ -610,6 +612,22 @@ public class OFAndroid {
 		gps.stopGPS();
 	}
 	
+	static MulticastLock mcLock;
+	public static void enableMulticast(){
+		WifiManager wifi = (WifiManager)ofActivity.getSystemService( Context.WIFI_SERVICE );
+		if(wifi != null)
+		{
+		    mcLock = wifi.createMulticastLock("mylock");
+		    mcLock.acquire();
+		}
+	}
+	
+	public static void disableMulticast(){
+		if(mcLock!=null){
+			mcLock.release();
+		}
+	}
+	
 	public static void alertBox(String msg){  
 		final String alertMsg = msg;
 		/*try{
@@ -1028,8 +1046,6 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 		
 		final float xDistance = Math.abs(e1.getX() - e2.getX());
 		final float yDistance = Math.abs(e1.getY() - e2.getY());
-
-		Log.i("OF","onFLing vel: " + velocityX +" dis:" +xDistance);
 
 		if(xDistance > OFGestureListener.swipe_Max_Distance || yDistance > OFGestureListener.swipe_Max_Distance)
 			return false;

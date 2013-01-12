@@ -227,6 +227,11 @@ ofBaseApp * ofGetAppPtr(){
 }
 
 //--------------------------------------
+ofAppBaseWindow * ofGetWindowPtr(){
+	return window.get();
+}
+
+//--------------------------------------
 void ofSetAppPtr(ofPtr<ofBaseApp> appPtr) {
 	OFSAptr = appPtr;
 }
