@@ -11,6 +11,7 @@
 	#include "glut.h"
 #endif
 #ifdef TARGET_OSX
+    #include <OpenGL/OpenGL.h>
 	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
 	#include <Carbon/Carbon.h>
 #endif
@@ -696,6 +697,19 @@ void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, x, y);
 
+    
+    int ofMouseButton = button;
+    
+    if(button == GLUT_LEFT_BUTTON) {
+        button = OF_MOUSE_BUTTON_LEFT;
+    } else if(button == GLUT_MIDDLE_BUTTON) {
+        button = OF_MOUSE_BUTTON_MIDDLE;
+    } else if(button == GLUT_RIGHT_BUTTON) {
+        button = OF_MOUSE_BUTTON_RIGHT;
+    } else {
+        ofLogWarning("ofAppGlutWindow::mouse_cb") << "Unmapped glut mouse button: " << button;
+    }
+    
 	if (nFrameCount > 0){
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);

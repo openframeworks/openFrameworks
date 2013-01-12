@@ -15,6 +15,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		loop = false;
 		soundID = -1;
 		streamID = -1;
+		multiPlay = false;
 	}
 	
 	void loadSound(String fileName, boolean stream){
@@ -59,8 +60,9 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 			if(getIsPlaying()) setPosition(0);	
 			player.start();
 		}else{
-			if(!multiPlay)
+			if(!multiPlay){
 				pool.stop(streamID);
+			}
 			streamID = pool.play(soundID,leftVolume,rightVolume,1,loop?-1:0,speed);
 			bIsPlaying = true;
 		}
@@ -137,12 +139,12 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	void setMultiPlay(boolean bMp){
-		if(multiPlay==bMp) return;
 		multiPlay = bMp;
-		if(fileName!=null){
+		if(fileName!=null && multiPlay && stream){
+			Log.w("OF", "multiplay only supported as no stream, reloading " + fileName + " as no stream");
 			String currFileName = fileName;
 			unloadSound();
-			loadSound(currFileName, !bMp);
+			loadSound(currFileName, false);
 		}
 	}
 	
@@ -200,7 +202,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	@Override
 	protected void appResume() {
 		if(bIsLoaded){
-			loadSound(fileName, !multiPlay);
+			loadSound(fileName, stream);
 		}
 	}
 

@@ -65,6 +65,9 @@ void ofxAndroidSoundStreamResume();
 
 bool ofxAndroidCheckSDCardMounted();
 
+void ofxAndroidEnableMulticast();
+void ofxAndroidDisableMulticast();
+
 //this is just to fix a problem with undefined symbols
 inline void ofFixSoundStreamInclude(){
 	ofSoundStreamClose();
