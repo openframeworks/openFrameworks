@@ -27,11 +27,6 @@ ifndef PLATFORM_VARIANT
     PLATFORM_VARIANT = default
 endif
 
-# if not defined
-ifndef PROJECT_LDFLAGS
-	PROJECT_LDFLAGS = -Wl,-rpath=./libs
-endif
-
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
 
@@ -94,7 +89,13 @@ OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(PLATFORM_LI
 OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+ifeq ($(PLATFORM_OS),Linux)
+	ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+else
+	ifeq ($(PLATFORM_OS),Darwin)
+		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.dylib -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+	endif
+endif
 
 # add in any libraries that were explicitly listed in the platform config files.
 OF_CORE_THIRDPARTY_STATIC_LIBS := $(PLATFORM_STATIC_LIBRARIES)
@@ -104,7 +105,7 @@ OF_CORE_THIRDPARTY_STATIC_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(OF_CORE_LIBS
 OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
 
 #TODO what to do with shared libs?
-#OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
+OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
 
 # generate the list of core includes
 # 1. Add the libraries defined in the platform config files.
@@ -482,10 +483,12 @@ OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 ################################################################################
 
 OF_PROJECT_LDFLAGS := $(PROJECT_LDFLAGS)
+OF_PROJECT_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(USER_LDLAGS) # legacy
 OF_PROJECT_LDFLAGS += $(USER_LIBS)   # legacy
 OF_PROJECT_LDFLAGS += $(OF_PROJECT_LIBS_LDFLAGS)
-OF_PROJECT_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
+OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PLATFORM_FRAMEWORKS))
+
 
 
 # compile core openFrameworks library

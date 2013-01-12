@@ -95,6 +95,19 @@ PLATFORM_CFLAGS = -Wall
 PLATFORM_CFLAGS += -fexceptions
 
 
+################################################################################
+# PLATFORM LDFLAGS
+#   This is a list of fully qualified LDFLAGS required when linking for this 
+#   platform. These flags will always be added when linking a project or the 
+#   core library.  
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
+
+PLATFORM_LDFLAGS = -Wl,-rpath=./libs
+
+
+
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
