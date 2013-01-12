@@ -18,6 +18,12 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	triPoints.resize(3);
 
 	currentFbo = NULL;
+	
+	coordHandedness = OF_LEFT_HANDED;
+	bgColor = ofColor(200,200,200);
+	bFilled = OF_FILLED;
+	bSmoothHinted = false;
+	rectMode = OF_RECTMODE_CORNER;
 }
 
 //----------------------------------------------------------
