@@ -220,7 +220,7 @@ $(CLEANTARGET):
 	rm -rf bin/libs
 
 after: $(TARGET)
-	cp -r $(OF_EXPORT_PATH)/$(PLATFORM_LIB_SUBPATH) bin/
+	cp -r $(OF_EXPORT_PATH)/$(PLATFORM_LIB_SUBPATH)/* bin/
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
