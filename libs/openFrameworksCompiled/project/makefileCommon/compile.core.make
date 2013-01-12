@@ -87,43 +87,6 @@ ifdef TARGET_NAME
 endif
 
 ################################################################################
-# OBJECT AND DEPENDENCY FILES DEFINITIONS
-#	Object file paths are generated here (as opposed to with the rest of the 
-#   flags) because we want to place them in target-specific folders. We
-#   determine targets above. We –could– determine the target info earlier if we
-#   wanted to.  It's here because that's approximately where it was in the 
-#   legacy makefiles.
-################################################################################
-
-# define the location for our intermediate object files
-#OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
-
-# define the subdirectory for our target name
-OF_CORE_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
-
-# create a named list of dependency files
-# 1. create a list of .d dependency files based on the current list of 
-#  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
-# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
-#  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
-
-# create a named list of object files
-# 1. create a list of object files based on the current list of
-#   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
-# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
-#	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
-
-ifdef MAKEFILE_DEBUG
-    $(info OF_CORE_OBJ_OUPUT_PATH=$(OF_CORE_OBJ_OUPUT_PATH))
-    $(info ---OF_CORE_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
-    $(info ---OF_CORE_OBJ_FILES---)
-    $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
-endif
-
-################################################################################
 # While most MAKE targets respond to lists of filenames, .PHONY targets are 
 # targets that are "recipe" only -- that is recipes that respond to specific
 # requests, not filenames or lists of filenames.  .PNONY targets are used to 

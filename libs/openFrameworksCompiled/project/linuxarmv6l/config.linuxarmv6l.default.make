@@ -17,6 +17,14 @@
 #
 ################################################################################
 
+################################################################################
+# include common rules
+#
+#   all linux systems have several rules in common so most of them are included
+#   from the following file
+#
+################################################################################
+
 include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.make
 
 
@@ -117,6 +125,7 @@ PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
 PLATFORM_LIBRARIES += EGL
+PLATFORM_LIBRARIES += GLESv2
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS

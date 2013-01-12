@@ -141,19 +141,15 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-Release: $(TARGET) after
+	
+Release: $(TARGET_LIBS) $(TARGET) after
 
-Debug: $(TARGET) after
+Debug: $(TARGET_LIBS) $(TARGET) after
 
 all:
 	$(MAKE) Debug
 	$(MAKE) Release
 	
-# This rule adds a dependency for projects to the OF library 
-# so if any OF file gets modified the OF library will be compiled
-# before compiling the project
-$(TARGET_LIBS): $(OF_CORE_SOURCE_FILES)
-	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME)
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
@@ -197,10 +193,20 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS)
+$(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS)
 	@echo 'Linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
 	mkdir -p $(@D)
 	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) 
+	
+	
+# This rule adds a dependency for projects to the OF library 
+# so if any OF file gets modified the OF library will be compiled
+# before compiling the project
+$(TARGET_LIBS): $(OF_CORE_OBJ_FILES)
+	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME)
+	
+	
+-include $(OF_CORE_DEPENDENCY_FILES)
 -include $(OF_PROJECT_DEPENDENCY_FILES)
 
 clean:

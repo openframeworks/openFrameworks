@@ -211,7 +211,7 @@ OF_CORE_THIRDPARTY_HEADER_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_
 OF_CORE_INCLUDES_CFLAGS = $(addprefix -I,$(PLATFORM_HEADER_SEARCH_PATHS))
 # 2. Add all of the system library search paths defined by the platform config files.
 # Note,  2> /dev/null sends all STDERR message into the /dev/null abyss.
-OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PLATFORM_PKG_CONFIG_LIBRARIES)" --cflags 2> /dev/null)
+OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PLATFORM_PKG_CONFIG_LIBRARIES)" --cflags )
 # 3. Add all of the standard OF third party library headers (these have already been filtered above according to the platform config files)
 OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_THIRDPARTY_HEADER_PATHS))
 # 4. Add all of the core OF headers(these have already been filtered above according to the platform config files)
@@ -240,6 +240,37 @@ OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
 # filter out all excluded files / folders that were defined above
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.cpp" | grep -v "/\.[^\.]"))
+OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
+
+
+################################################################################
+# CORE OBJECT AND DEPENDENCY FILES DEFINITIONS
+#	Object file paths are generated here (as opposed to with the rest of the 
+#   flags) because we want to place them in target-specific folders. We
+#   determine targets above. We –could– determine the target info earlier if we
+#   wanted to.  It's here because that's approximately where it was in the 
+#   legacy makefiles.
+################################################################################
+
+# define the location for our intermediate object files
+#OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
+
+# define the subdirectory for our target name
+OF_CORE_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
+
+# create a named list of dependency files
+# 1. create a list of .d dependency files based on the current list of 
+#  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
+# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
+#  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
+OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
+
+# create a named list of object files
+# 1. create a list of object files based on the current list of
+#   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
+# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
+#	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
+OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
 
 
 ################################################################################
@@ -258,6 +289,17 @@ ifdef MAKEFILE_DEBUG
 
     $(info ---OF_CORE_SOURCE_FILES---)
     $(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
+    
+    $(info ---OF_CORE_HEADER_FILES---)
+    $(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
+    
+    $(info OF_CORE_OBJ_OUPUT_PATH=$(OF_CORE_OBJ_OUPUT_PATH))
+    
+    $(info ---OF_CORE_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
+    
+    $(info ---OF_CORE_OBJ_FILES---)
+    $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
 endif
 
 
