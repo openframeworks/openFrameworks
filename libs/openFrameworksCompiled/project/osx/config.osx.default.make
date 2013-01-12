@@ -317,6 +317,6 @@ endif
 #PLATFORM_CC=
 
 
-afterplatform:
+afterplatform: after
 	@install_name_tool -change ./libfmodex.dylib ./libs/libfmodex.dylib $(TARGET)
 	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
