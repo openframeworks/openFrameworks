@@ -74,8 +74,10 @@ PLATFORM_CFLAGS = -Wall
 PLATFORM_CFLAGS += -fexceptions
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
-PLATFORM_CFLAGS += -march=native
-PLATFORM_CFLAGS += -mtune=native
+ifneq ($(MAC_OS_SDK),10.6)
+	PLATFORM_CFLAGS += -march=native
+	PLATFORM_CFLAGS += -mtune=native
+endif
 
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 PLATFORM_CFLAGS += -finline-functions
@@ -86,15 +88,45 @@ PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
-PLATFORM_CFLAGS += -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
+ifeq ($(MAC_OS_SDK),10.6)
+	PLATFORM_CFLAGS += -isysroot /Developer/SDKs/MacOSX10.6.sdk
+	PLATFORM_CFLAGS += -F/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks
+	PLATFORM_CFLAGS += -mmacosx-version-min=10.6
+else
+	PLATFORM_CFLAGS += -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
+	PLATFORM_CFLAGS += -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks
+	PLATFORM_CFLAGS += -mmacosx-version-min=10.7
+endif
 
-PLATFORM_CFLAGS += -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks
 
 PLATFORM_CFLAGS += -fasm-blocks 
 PLATFORM_CFLAGS += -funroll-loops 
-PLATFORM_CFLAGS += -mmacosx-version-min=10.7
 PLATFORM_CFLAGS += -mssse3
 PLATFORM_CFLAGS += -fmessage-length=0
+
+ifeq ($(MAC_OS_SDK),10.6)
+PLATFORM_CFLAGS += -pipe 
+PLATFORM_CFLAGS += -Wno-trigraphs 
+PLATFORM_CFLAGS += -fpascal-strings 
+PLATFORM_CFLAGS += -fasm-blocks 
+PLATFORM_CFLAGS += -Wno-deprecated-declarations 
+PLATFORM_CFLAGS += -Wno-invalid-offsetof 
+PLATFORM_CFLAGS += -gdwarf-2
+PLATFORM_CFLAGS += -x objective-c++
+else
+PLATFORM_CFLAGS += -x c++
+endif
+
+
+PLATFORM_LDFLAGS += -arch i386
+PLATFORM_LDFLAGS += -stdlib
+PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
+ifeq ($(MAC_OS_SDK),10.6)
+	PLATFORM_LDFLAGS += -mmacosx-version-min=10.6
+else	
+	PLATFORM_LDFLAGS += -mmacosx-version-min=10.7
+endif
+
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -132,19 +164,20 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
-# PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-# PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-# PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+
 
 # third party
-#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/include_android/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/include_ios/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
-# PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
@@ -186,34 +219,21 @@ PLATFORM_HEADER_SEARCH_PATHS =
 ##########################################################################################
 
 PLATFORM_LIBRARIES =
-PLATFORM_LIBRARIES += GL
-PLATFORM_LIBRARIES += glut
-PLATFORM_LIBRARIES += asound
-PLATFORM_LIBRARIES += openal
-PLATFORM_LIBRARIES += sndfile
-PLATFORM_LIBRARIES += vorbis
-PLATFORM_LIBRARIES += FLAC
-PLATFORM_LIBRARIES += ogg
-PLATFORM_LIBRARIES += freeimage
+#PLATFORM_LIBRARIES += GL
+#PLATFORM_LIBRARIES += glut
+#PLATFORM_LIBRARIES += asound
+#PLATFORM_LIBRARIES += openal
+#PLATFORM_LIBRARIES += sndfile
+#PLATFORM_LIBRARIES += vorbis
+#PLATFORM_LIBRARIES += FLAC
+#PLATFORM_LIBRARIES += ogg
+#PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =
-
-#openframeworks core third party
-PLATFORM_PKG_CONFIG_LIBRARIES =
-# PLATFORM_PKG_CONFIG_LIBRARIES += jack
-# PLATFORM_PKG_CONFIG_LIBRARIES += glu
-# PLATFORM_PKG_CONFIG_LIBRARIES += cairo
-# PLATFORM_PKG_CONFIG_LIBRARIES += zlib
-# PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-0.10
-# PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-0.10
-# PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-0.10
-# PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-0.10
-# PLATFORM_PKG_CONFIG_LIBRARIES += libudev
-# PLATFORM_PKG_CONFIG_LIBRARIES += glew
 
 
 ##########################################################################################
@@ -281,7 +301,14 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 # PLATFORM CXX
 #    Don't want to use a default compiler?
 ################################################################################
-PLATFORM_CXX = clang -x c++
+
+
+ifeq ($(MAC_OS_SDK),10.6)
+	PLATFORM_CXX = /Developer/usr/bin/g++-4.2 
+else
+	PLATFORM_CXX = clang 
+endif
+
 
 ################################################################################
 # PLATFORM CC
