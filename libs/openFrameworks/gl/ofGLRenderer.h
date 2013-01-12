@@ -138,7 +138,7 @@ private:
 	
 	ofMesh sphereMesh;
 
-	ofFillFlag bFilled;
+	ofFillFlag fillFlag;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
 
