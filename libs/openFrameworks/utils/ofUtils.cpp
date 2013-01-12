@@ -668,7 +668,7 @@ void ofLaunchBrowser(string url){
 //--------------------------------------------------
 string ofGetVersionInfo(){
 	stringstream sstr;
-	sstr << "OF version: " << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH << endl;
+	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH << endl;
 	return sstr.str();
 }
 
