@@ -197,7 +197,11 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS)
 	@echo 'Linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
 	mkdir -p $(@D)
-	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) 
+	@if [ "$(PLATFORM_OS)" = "Darwin" ]; then \
+		$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) $(TARGET_LIBS); \
+	else \
+		$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS); \
+	fi 
 	
 	
 # This rule adds a dependency for projects to the OF library 
