@@ -46,6 +46,7 @@ int 		ofGetWindowHeight();
 bool		ofDoesHWOrientation();
 ofPoint		ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
+ofAppBaseWindow * ofGetWindowPtr();
 
 void 		ofSetWindowPosition(int x, int y);
 void 		ofSetWindowShape(int width, int height);
