@@ -1,19 +1,7 @@
 ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
-#   This file is where we make platform and architecture specific 
-#   configurations. This file can be specified for a generic architecture or can
-#   be defined as variants. For instance, normally this file will be located in 
-#   a platform specific subpath such as 
-#
-#        $(OF_ROOT)/libs/openFrameworksComplied/linux64
-#
-#   This file will then be a generic platform file like:
-#
-#        configure.core.linux64.default.make
-#
-#   Or it can specify a specific platform variant like:
-#
-#        configure.core.linuxarmv6l.raspberrypi.make
+#   This file has linux common rules for all the platforms (x86_64, i386,armv6l 
+#   and armv7l)
 #
 ################################################################################
 
@@ -26,11 +14,11 @@
 #   ifdefs within the openFrameworks core source code.
 ################################################################################
 
-ifeq ($(PLATFORM_ARCH),linuxarmv6l)
+ifeq ($(PLATFORM_ARCH),armv6l)
 	LINUX_ARM=1
 endif
 
-ifeq ($(PLATFORM_ARCH),linuxarmv7l)
+ifeq ($(PLATFORM_ARCH),armv7l)
 	LINUX_ARM=1
 endif
 
@@ -230,11 +218,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
 
-ifeq ($(LINUX_ARM),1)
-	PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
-	PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
-	PLATFORM_PKG_CONFIG_LIBRARIES += egl
-else
+ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew

@@ -17,6 +17,14 @@
 #
 ################################################################################
 
+################################################################################
+# include common rules
+#
+#   all linux systems have several rules in common so most of them are included
+#   from the following file
+#
+################################################################################
+
 include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.make
 
 
@@ -38,3 +46,26 @@ PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
 PLATFORM_CFLAGS += -Wno-psabi
 PLATFORM_CFLAGS += -pipe
+
+################################################################################
+# PLATFORM LIBRARIES
+# These are library names/paths that are platform specific and are specified
+# using names or paths. The library flag (i.e. -l) is prefixed automatically.
+#
+# PLATFORM_LIBRARIES are libraries that can be found in the library search
+# paths.
+# PLATFORM_STATIC_LIBRARIES is a list of required static libraries.
+# PLATFORM_SHARED_LIBRARIES is a list of required shared libraries.
+# PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are
+# under system control and are easily accesible via the package
+# configuration utility (i.e. pkg-config)
+#
+# See the helpfile for the -l flag here for more information:
+# http://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
+#
+# Note: Leave a leading space when adding list items with the += operator
+################################################################################
+
+PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
+PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
+PLATFORM_PKG_CONFIG_LIBRARIES += egl
