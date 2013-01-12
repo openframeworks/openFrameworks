@@ -1,7 +1,6 @@
 #include "ofAppNoWindow.h"
 #include "ofBaseApp.h"
-#include "ofMain.h"
-
+#include "ofGraphics.h"
 
 
 #if defined TARGET_OSX || defined TARGET_LINUX
@@ -9,6 +8,7 @@
 #include <string.h>
 #include <sys/select.h>
 #include <termios.h>
+#include <signal.h>
 
 struct termios orig_termios;
 struct sigaction act_open;
