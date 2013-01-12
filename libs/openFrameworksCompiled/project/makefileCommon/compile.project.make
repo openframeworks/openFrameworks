@@ -143,9 +143,9 @@ endif
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
 	
-Release: $(TARGET_LIBS) $(TARGET) after
+Release: $(TARGET_LIBS) $(TARGET) after afterplatform
 
-Debug: $(TARGET_LIBS) $(TARGET) after
+Debug: $(TARGET_LIBS) $(TARGET) after afterplatform
 
 all:
 	$(MAKE) Debug
