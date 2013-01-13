@@ -20,7 +20,6 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	currentFbo = NULL;
 	
 	coordHandedness = OF_LEFT_HANDED;
-	bgColor = ofColor(200,200,200);
 	fillFlag = OF_FILLED;
 	bSmoothHinted = false;
 	rectMode = OF_RECTMODE_CORNER;
