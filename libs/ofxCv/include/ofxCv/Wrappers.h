@@ -289,4 +289,8 @@ cv::name(xMat, yMat, resultMat);\
 		Mat rotationMatrix = getRotationMatrix2D(center, angle, 1);
 		warpAffine(srcMat, dstMat, rotationMatrix, srcMat.size(), interpolation, BORDER_CONSTANT, toCv(fill));
 	}
+	
+	// finds the 3x4 matrix that best describes the (premultiplied) affine transformation between two point clouds
+	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to);
+	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, vector<unsigned char>& outliers);
 }
