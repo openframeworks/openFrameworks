@@ -253,11 +253,9 @@ void ofColor_<unsigned char>::setHex (int hexColor, float alpha){
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHex (int hexColor, float alpha){
-	ofColor c = ofColor::fromHex(hexColor,alpha);
-	ofColor_<PixelType> tc = (ofColor_<PixelType>)c;
-	r = tc.r;
-	g = tc.g;
-	b = tc.b;
+	r = ((hexColor >> 16) & 0xff)/(float)(0xff) * limit();
+	g = ((hexColor >> 8) & 0xff)/(float)(0xff) * limit();
+	b = ((hexColor >> 0) & 0xff)/(float)(0xff) * limit();
 	a = alpha;
 }
 
