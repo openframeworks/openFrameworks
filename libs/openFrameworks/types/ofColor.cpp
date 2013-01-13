@@ -498,16 +498,16 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 }
 
 
-template<typename PixelType>
-int ofColor_<PixelType>::getHex () const {
+template<>
+int ofColor_<unsigned char>::getHex () const {
 	return
 		((0xff & (unsigned char) r) << 16) |
 		((0xff & (unsigned char) g) << 8) |
 		((0xff & (unsigned char) b));
 }
 
-template<>
-int ofColor_<float>::getHex () const {
+template<typename PixelType>
+int ofColor_<PixelType>::getHex () const {
 	return ((ofColor) *this).getHex();
 }
 
