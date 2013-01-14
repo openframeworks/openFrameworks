@@ -880,6 +880,11 @@ void ofCurveVertex(float x, float y){
 	shape.curveTo(x,y);
 }
 
+//---------------------------------------------------
+void ofCurveVertex(float x, float y, float z){
+	shape.curveTo(x,y,z);
+}
+
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofPoint> & curvePoints){
 	for( int k = 0; k < (int)curvePoints.size(); k++){
