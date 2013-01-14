@@ -247,7 +247,7 @@ OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
 # search the directories in the source folders for all .cpp files
 # filter out all excluded files / folders that were defined above
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.cpp" | grep -v "/\.[^\.]"))
+OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" | grep -v "/\.[^\.]"))
 OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
 
 

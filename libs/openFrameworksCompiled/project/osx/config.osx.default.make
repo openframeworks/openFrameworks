@@ -88,16 +88,20 @@ PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
-ifeq ($(MAC_OS_SDK),10.6)
-	PLATFORM_CFLAGS += -isysroot /Developer/SDKs/MacOSX10.6.sdk
-	PLATFORM_CFLAGS += -F/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks
-	PLATFORM_CFLAGS += -mmacosx-version-min=10.6
-else
-	PLATFORM_CFLAGS += -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
-	PLATFORM_CFLAGS += -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks
-	PLATFORM_CFLAGS += -mmacosx-version-min=10.7
+
+ifndef MAC_OS_SDK
+    MAC_OS_SDK=10.7
 endif
 
+ifeq ($(wildcard file1),/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk)
+	MAC_OS_SDK_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk
+else
+    MAC_OS_SDK_ROOT=/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk
+endif
+
+PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
+PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
+PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 
 PLATFORM_CFLAGS += -fasm-blocks 
 PLATFORM_CFLAGS += -funroll-loops 
@@ -112,10 +116,9 @@ PLATFORM_CFLAGS += -fasm-blocks
 PLATFORM_CFLAGS += -Wno-deprecated-declarations 
 PLATFORM_CFLAGS += -Wno-invalid-offsetof 
 PLATFORM_CFLAGS += -gdwarf-2
-PLATFORM_CFLAGS += -x objective-c++
-else
-PLATFORM_CFLAGS += -x c++
 endif
+
+PLATFORM_CFLAGS += -x objective-c++
 
 
 ################################################################################
@@ -128,13 +131,8 @@ endif
 
 
 PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -stdlib
 PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
-ifeq ($(MAC_OS_SDK),10.6)
-	PLATFORM_LDFLAGS += -mmacosx-version-min=10.6
-else	
-	PLATFORM_LDFLAGS += -mmacosx-version-min=10.7
-endif
+PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 
 
 ##########################################################################################
@@ -228,15 +226,9 @@ PLATFORM_HEADER_SEARCH_PATHS =
 ##########################################################################################
 
 PLATFORM_LIBRARIES =
-#PLATFORM_LIBRARIES += GL
-#PLATFORM_LIBRARIES += glut
-#PLATFORM_LIBRARIES += asound
-#PLATFORM_LIBRARIES += openal
-#PLATFORM_LIBRARIES += sndfile
-#PLATFORM_LIBRARIES += vorbis
-#PLATFORM_LIBRARIES += FLAC
-#PLATFORM_LIBRARIES += ogg
-#PLATFORM_LIBRARIES += freeimage
+ifneq ($(MAC_OS_SDK),10.6)
+    PLATFORM_LIBRARIES += objc
+endif
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
@@ -279,7 +271,12 @@ PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreFoundation
 PLATFORM_FRAMEWORKS += CoreServices
 PLATFORM_FRAMEWORKS += OpenGL
+ifeq ($(MAC_OS_SDK),10.6)
 PLATFORM_FRAMEWORKS += QuickTime
+else
+PLATFORM_FRAMEWORKS += CoreVideo
+PLATFORM_FRAMEWORKS += Cocoa
+endif
 
 ##########################################################################################
 # PLATFORM FRAMEWORK SEARCH PATHS
@@ -313,9 +310,11 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 
 
 ifeq ($(MAC_OS_SDK),10.6)
-	PLATFORM_CXX = /Developer/usr/bin/g++-4.2 
+    PLATFORM_CXX = g++ 
+    PLATFORM_CC = gcc
 else
-	PLATFORM_CXX = clang 
+	PLATFORM_CXX = clang++
+    PLATFORM_CC = clang 
 endif
 
 
@@ -327,5 +326,5 @@ endif
 
 
 afterplatform: after
-	@install_name_tool -change ./libfmodex.dylib ./libs/libfmodex.dylib $(TARGET)
-	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
+	@install_name_tool -change ./libfmodex.dylib ./libs/libfmodex.dylib bin/$(BIN_NAME)
+	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT bin/$(BIN_NAME)
