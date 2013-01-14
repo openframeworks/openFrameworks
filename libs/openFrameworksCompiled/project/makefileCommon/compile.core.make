@@ -118,7 +118,24 @@ ifdef TARGET_NAME
 	CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 endif
 
-$(info TARGET=$(TARGET))
+ABIS_TO_COMPILE =
+
+ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+	ifdef ABIS_TO_COMPILE_RELEASE
+		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_RELEASE)
+	endif
+endif
+
+ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
+	ifdef ABIS_TO_COMPILE_DEBUG
+		ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+			ifdef ABIS_TO_COMPILE_RELEASE
+				ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
+			endif
+		endif
+		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
+	endif
+endif
 
 ################################################################################
 # CORE OBJECT AND DEPENDENCY FILES DEFINITIONS
@@ -233,10 +250,13 @@ $(CLEANTARGET)ABI:
 	
 $(CLEANTARGET):
 ifndef ABIS_TO_COMPILE
-	@$(MAKE) $(CLEANTARGET)ABI
+	$(MAKE) $(CLEANTARGET)ABI
 else
+ifeq ($(TARGET_NAME),Debug)
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+endif
 endif
 
 after: $(TARGET)
