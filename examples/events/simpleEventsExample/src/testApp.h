@@ -18,10 +18,10 @@ class testApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-    void newCircleEvent(ofVec2f & e);
-    void newGlobalEvent(ofVec2f & e);
-	circle redCircle;
-    circle grayCircles [TOTAL_GRAY_CIRCLES];
+    void onMouseInCircle(ofVec2f & e);
+    void onMouseInAnyCircle(ofVec2f & e);
+    Circle redCircle;
+    Circle grayCircles [TOTAL_GRAY_CIRCLES];
     ofColor bg;
     ofVec2f clickedPoint;
     

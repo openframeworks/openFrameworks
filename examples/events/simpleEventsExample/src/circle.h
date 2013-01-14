@@ -11,11 +11,11 @@
 
 #include "ofMain.h"
 
-class circle {
+class Circle {
 public:
 
-    circle(){}
-    ~circle(){}
+    Circle(){}
+    ~Circle(){}
     // to be able to broadcast events from a class we must declare the ofEvent object that will be broadcasted.
     // this object can be declared as class variable so events are broadcasted and listened for each specific class instance.
     // the data type of the event, what's declared between the < > can be whatever you want, event a custom class. 

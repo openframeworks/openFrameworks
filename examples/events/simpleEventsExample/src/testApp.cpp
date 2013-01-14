@@ -17,8 +17,8 @@ void testApp::setup(){
     
     ofAddListener(redCircle.clickedInside, //the ofEvent that we want to listen to. In this case exclusively to the circleEvent of redCircle (red circle) object.
                   this, //pointer to the class that is going to be listening. it can be a pointer to any object. There's no need to declare the listeners within the class that's going to listen.
-                  &testApp::newCircleEvent);//pointer to the method that's going to be called when a new event is broadcasted (callback method). The parameters of the event are passed to this method.
-    ofAddListener(circle::clickedInsideGlobal , this, &testApp::newGlobalEvent);//listening to this event will enable us to get events from any instance of the circle class as this event is static (shared by all instances of the same class).
+                  &testApp::onMouseInCircle);//pointer to the method that's going to be called when a new event is broadcasted (callback method). The parameters of the event are passed to this method.
+    ofAddListener(Circle::clickedInsideGlobal , this, &testApp::onMouseInAnyCircle);//listening to this event will enable us to get events from any instance of the circle class as this event is static (shared by all instances of the same class).
     
     //Notice that when calling the static event we are using :: while when calling the instance event we use a . (dot).
   }
@@ -45,10 +45,10 @@ void testApp::draw(){
     ofDrawBitmapStringHighlight(msg, 30,30);    
 }
 //--------------------------------------------------------------
-void testApp::newCircleEvent(ofVec2f & e){
+void testApp::onMouseInCircle(ofVec2f & e){
     clickedPoint.set(e); 
 }
 //--------------------------------------------------------------
-void testApp::newGlobalEvent(ofVec2f & e){
+void testApp::onMouseInAnyCircle(ofVec2f & e){
      bg.set(ofRandom(255), ofRandom(255), ofRandom(255));
 }
