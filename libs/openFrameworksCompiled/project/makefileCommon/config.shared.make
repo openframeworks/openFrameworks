@@ -170,24 +170,6 @@ else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 endif
 
-ABIS_TO_COMPILE =
-
-ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	ifdef ABIS_TO_COMPILE_RELEASE
-		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_RELEASE)
-	endif
-endif
-
-ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifdef ABIS_TO_COMPILE_DEBUG
-		ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-			ifdef ABIS_TO_COMPILE_RELEASE
-				ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
-			endif
-		endif
-		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
-	endif
-endif
 
 ################################ FLAGS #########################################
 # define the location of the core path
