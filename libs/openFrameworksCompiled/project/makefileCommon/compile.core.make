@@ -200,19 +200,19 @@ DebugABI: $(TARGET)
 
 Release: 
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) ReleaseABI
+	@$(MAKE) --no-print-directory ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo done
 endif
-	@$(MAKE) after 
+	@$(MAKE) --no-print-directory after 
 	
 Debug: 
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) DebugABI
+	@$(MAKE) --no-print-directory DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo done
 endif
-	@$(MAKE) after 
+	@$(MAKE) --no-print-directory after 
 	
 # all will first run the debug target, then the release target
 all: 
@@ -250,12 +250,12 @@ $(CLEANTARGET)ABI:
 	
 $(CLEANTARGET):
 ifndef ABIS_TO_COMPILE
-	$(MAKE) $(CLEANTARGET)ABI
+	$(MAKE) --no-print-directory $(CLEANTARGET)ABI
 else
 ifeq ($(TARGET_NAME),Debug)
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 endif
 endif
 

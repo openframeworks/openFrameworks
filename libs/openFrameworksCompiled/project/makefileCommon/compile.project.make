@@ -70,12 +70,8 @@ else ifeq ($(MAKECMDGOALS),)
 	TARGET_NAME = Release
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
 		BIN_NAME = $(APPNAME)
-		TARGET = bin/$(BIN_NAME)
-	else
-		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
 endif
-
 
 ABIS_TO_COMPILE =
 
@@ -195,26 +191,34 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-ReleaseABI: $(TARGET_LIBS) $(TARGET)
+ReleaseABI: $(TARGET)
 
-DebugABI: $(TARGET_LIBS) $(TARGET)
+DebugABI: $(TARGET)
 	
 Release: 
+	@echo Compiling OF library for Release
+	@$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME) PLATFORM_OS=$(PLATFORM_OS)
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) ReleaseABI
+	@$(MAKE) --no-print-directory ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo done
 endif
-	@$(MAKE) afterplatform TARGET_NAME=$(TARGET_NAME) BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
+ifneq ($(MAKECMDGOALS),)
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+endif 
 
 
 Debug: 
+	@echo Compiling OF library for Debug
+	@$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME) PLATFORM_OS=$(PLATFORM_OS)
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) DebugABI
+	@$(MAKE) --no-print-directory DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo done
 endif
-	@$(MAKE) afterplatform TARGET_NAME=$(TARGET_NAME) BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" 
+ifneq ($(MAKECMDGOALS),)
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+endif 
 
 all:
 	$(MAKE) Debug
@@ -269,36 +273,33 @@ $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS)
 	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS)
 
 	
-# This rule adds a dependency for projects to the OF library 
-# so if any OF file gets modified the OF library will be compiled
-# before compiling the project
-$(TARGET_LIBS): 
-	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME) PLATFORM_OS=$(PLATFORM_OS)
 
 -include $(OF_PROJECT_DEPENDENCY_FILES)
 
 clean:
-	$(MAKE) CleanDebug
-	$(MAKE) CleanRelease
+	@$(MAKE) --no-print-directory CleanDebug
+	@$(MAKE) --no-print-directory CleanRelease
 
 $(CLEANTARGET)ABI:
-	@rm -f $(OF_PROJECT_ADDONS_OBJS) 2> /dev/null
-	@rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH) 2> /dev/null
-	@rm -f $(TARGET) 2> /dev/null
+ifneq ($(OF_PROJECT_ADDONS_OBJS),)
+	rm -f $(OF_PROJECT_ADDONS_OBJS)
+endif
+	rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH)
+	rm -f $(TARGET)
 	
 $(CLEANTARGET):
 ifndef ABIS_TO_COMPILE
-	$(MAKE) $(CLEANTARGET)ABI
+	@$(MAKE) --no-print-directory $(CLEANTARGET)ABI
 else
 ifeq ($(TARGET_NAME),Debug)
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 endif
 endif
 	@rm -rf bin/libs
 
-after: $(TARGET)
+after: $(TARGET_NAME)
 	cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/
 	@echo
 	@echo "     compiling done"
