@@ -37,7 +37,7 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
 
 # generate a list of all third party libs, excluding the compiled openFrameworkslibrary.
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS = $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH) -type d -not -path "*/openFrameworksCompiled/*" | grep -v "/\.[^\.]")
+ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS = $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH) -type d -not -path "*/openFrameworksCompiled/*" | grep -v "/\.[^\.]")
 
 # filter out all excluded paths defined in the platform config files.
 OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS))
@@ -49,7 +49,7 @@ OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_
 ################################################################################
 
 # construct the full paths of the core's platform specific static libs 
-ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)
+ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)
 
 # create a list of all core platform libraries
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
@@ -60,18 +60,18 @@ ALL_OF_CORE_LIBS_PATHS = $(shell find $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -ty
 ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell find $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
 
 # create a list of all of the core libs that require ordering
-OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(PLATFORM_LIB_SUBPATH)/libsorder.make,,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
+OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
 
 # create a list of all of the platform libs that DO NOT require ordering
 # by removing those that do from the list of all platform libraries
-OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER),$(subst /lib/$(PLATFORM_LIB_SUBPATH),,$(ALL_OF_CORE_LIBS_PATHS)))
+OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER),$(subst /lib/$(ABI_LIB_SUBPATH),,$(ALL_OF_CORE_LIBS_PATHS)))
 
 # create a list of all static libs in the core lib dir, using only 
 # the static libs that don't need order
 # 2> /dev/null consumes file not found errors from find searches
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # TODO: create a varaible for core specific static lib suffix
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(PLATFORM_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
 # create a list of all static lib files for the libs that need order
 # NOTE. this is the most unintuitive line of make script magic in here
 # How does it work?
@@ -90,16 +90,16 @@ OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_F
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ifeq ($(PLATFORM_OS),Linux)
-	ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+	ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
 else
 	ifeq ($(PLATFORM_OS),Darwin)
-		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.dylib -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.dylib -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
 	endif
 endif
 
 # add in any libraries that were explicitly listed in the platform config files.
-OF_CORE_THIRDPARTY_STATIC_LIBS := $(PLATFORM_STATIC_LIBRARIES)
-OF_CORE_THIRDPARTY_STATIC_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(OF_CORE_LIBS_PLATFORM_LIBS_STATICS))
+OF_CORE_THIRDPARTY_STATIC_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(OF_CORE_LIBS_PLATFORM_LIBS_STATICS))
+OF_CORE_THIRDPARTY_STATIC_LIBS += $(PLATFORM_STATIC_LIBRARIES)
 
 # add in any libraries that were explicitly listed in the platform config files.
 OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
@@ -108,15 +108,15 @@ OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
 OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
 
 # generate the list of core includes
-# 1. Add the libraries defined in the platform config files.
-OF_CORE_LIBS := $(addprefix -l,$(PLATFORM_LIBRARIES))
 # 2. Add all of the third party static libs defined by the platform config files.
-OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_STATIC_LIBS)
+OF_CORE_LIBS := $(OF_CORE_THIRDPARTY_STATIC_LIBS)
 # 2. Add all of the third party shared libs defined by the platform config files.
 OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 # Note,  2> /dev/null sends all STDERR message into the /dev/null abyss.
 OF_CORE_LIBS += $(shell pkg-config "$(PLATFORM_PKG_CONFIG_LIBRARIES)" --libs 2> /dev/null)
+# 1. Add the libraries defined in the platform config files.
+OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 
 ################################################################################
 # OF PLATFORM LDFLAGS
@@ -153,9 +153,9 @@ ifndef OF_ADDONS_PATH
     $(error OF_ADDONS_PATH is not defined)
 endif
 
-# check to make sure PLATFORM_LIB_SUBPATH is defined
-ifndef PLATFORM_LIB_SUBPATH
-    $(error PLATFORM_LIB_SUBPATH is not defined)
+# check to make sure ABI_LIB_SUBPATH is defined
+ifndef ABI_LIB_SUBPATH
+    $(error ABI_LIB_SUBPATH is not defined)
 endif
 
 ################################################################################
@@ -281,7 +281,7 @@ ifdef B_PROCESS_ADDONS
         # ADDON'S PLATFORM SPECIFIC STATIC LIBS ################################
         # construct the full paths of the addon's platform specific static libs 
         # (e.g. https://github.com/benben/ofxAddonTemplate/tree/master/libs/necessaryLib/lib/linux)
-        PROJECT_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(addsuffix /libs/*/lib/$(PLATFORM_LIB_SUBPATH), $(PROJECT_ADDONS)) )
+        PROJECT_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(addsuffix /libs/*/lib/$(ABI_LIB_SUBPATH), $(PROJECT_ADDONS)) )
  
         # create a list of all addon platform libraries
         # grep -v "/\.[^\.]" will exclude all .hidden folders and files
@@ -292,18 +292,18 @@ ifdef B_PROCESS_ADDONS
         LIBSORDER_MAKE_FILES = $(shell find $(PROJECT_ADDONS_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make 2> /dev/null | grep -v "/\.[^\.]" )
 
         # create a list of all of the platform libs that require ordering
-        PLATFORM_LIBS_THAT_NEED_ORDER = $(subst /lib/$(PLATFORM_LIB_SUBPATH)/libsorder.make,,$(LIBSORDER_MAKE_FILES))
+        PLATFORM_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$(LIBSORDER_MAKE_FILES))
 
         # create a list of all of the platform libs that DO NOT require ordering
         # by removing those that do from the list of all platform libraries
-        PLATFORM_LIBS_THAT_DONT_NEED_ORDER := $(filter-out $(PLATFORM_LIBS_THAT_NEED_ORDER),$(subst /lib/$(PLATFORM_LIB_SUBPATH),,$(ALL_PLATFORM_LIBS)))
+        PLATFORM_LIBS_THAT_DONT_NEED_ORDER := $(filter-out $(PLATFORM_LIBS_THAT_NEED_ORDER),$(subst /lib/$(ABI_LIB_SUBPATH),,$(ALL_PLATFORM_LIBS)))
 
         # create a list of all static libs in the platform lib dir, using only 
         # the static libs that don't need order
         # 2> /dev/null consumes file not found errors from find searches
         # grep -v "/\.[^\.]" will exclude all .hidden folders and files
         # TODO: create a varaible for platform specific static lib suffix
-        PROJECT_ADDONS_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(PLATFORM_LIB_SUBPATH),$(PLATFORM_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
+        PROJECT_ADDONS_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(PLATFORM_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
 
         # create a list of all static lib files for the libs that need order
         # NOTE. this is the most unintuitive line of make script magic in here
@@ -417,11 +417,11 @@ else
 endif
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_SOURCE_PATHS---)
-	$(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
+    $(info ---OF_PROJECT_SOURCE_PATHS---)
+    $(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
 
-	$(info ---OF_PROJECT_EXCLUSIONS---)
-	$(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
+    $(info ---OF_PROJECT_EXCLUSIONS---)
+    $(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
 endif
 
 # find all sources inside the project's source directory (recursively)
@@ -494,8 +494,8 @@ OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PLATFORM_FRAMEWORKS))
 # compile core openFrameworks library
 # check for platform specific compile rules
 # if there's none use common ones
-ifeq ($(wildcard $(OF_PLATFORM_MAKEFILES)/compile.project.make),) 
+ifeq ($(wildcard $(OF_PLATFORM_MAKEFILES)/compile.$(PLATFORM_LIB_SUBPATH).project.make),) 
     include $(OF_SHARED_MAKEFILES_PATH)/compile.project.make
 else 
-    include $(OF_PLATFORM_MAKEFILES)/compile.project.make
+    include $(OF_PLATFORM_MAKEFILES)/compile.$(PLATFORM_LIB_SUBPATH).project.make
 endif

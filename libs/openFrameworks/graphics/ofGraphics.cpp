@@ -70,7 +70,7 @@ ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-//#ifndef TARGET_OPENGLES 
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IPHONE)
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ void ofEndSaveScreenAsPDF(){
 	}
 }
 
-//#endif
+#endif
 
 
 

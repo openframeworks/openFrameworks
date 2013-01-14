@@ -164,6 +164,31 @@ endif
 # include the platform specific user and platform configuration files
 include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).make
 
+ifdef ABI_PATH
+	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
+else
+	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
+endif
+
+ABIS_TO_COMPILE =
+
+ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+	ifdef ABIS_TO_COMPILE_RELEASE
+		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_RELEASE)
+	endif
+endif
+
+ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
+	ifdef ABIS_TO_COMPILE_DEBUG
+		ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+			ifdef ABIS_TO_COMPILE_RELEASE
+				ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
+			endif
+		endif
+		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
+	endif
+endif
+
 ################################ FLAGS #########################################
 # define the location of the core path
 #TODO: make sure all of the right checks are here.
@@ -244,34 +269,6 @@ OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOUR
 OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
 
 
-################################################################################
-# CORE OBJECT AND DEPENDENCY FILES DEFINITIONS
-#	Object file paths are generated here (as opposed to with the rest of the 
-#   flags) because we want to place them in target-specific folders. We
-#   determine targets above. We –could– determine the target info earlier if we
-#   wanted to.  It's here because that's approximately where it was in the 
-#   legacy makefiles.
-################################################################################
-
-# define the location for our intermediate object files
-#OF_CORE_OBJ_BASE_PATH = $(PLATFORM_LIB_SUBPATH)/obj
-
-# define the subdirectory for our target name
-OF_CORE_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
-
-# create a named list of dependency files
-# 1. create a list of .d dependency files based on the current list of 
-#  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
-# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
-#  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
-
-# create a named list of object files
-# 1. create a list of object files based on the current list of
-#   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
-# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
-#	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
 
 
 ################################################################################
@@ -293,14 +290,6 @@ ifdef MAKEFILE_DEBUG
     
     $(info ---OF_CORE_HEADER_FILES---)
     $(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
-    
-    $(info OF_CORE_OBJ_OUPUT_PATH=$(OF_CORE_OBJ_OUPUT_PATH))
-    
-    $(info ---OF_CORE_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
-    
-    $(info ---OF_CORE_OBJ_FILES---)
-    $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
 
     $(info ---PLATFORM_CORE_EXCLUSIONS---)
     $(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))

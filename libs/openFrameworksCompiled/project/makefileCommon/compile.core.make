@@ -19,6 +19,14 @@ ifdef PROJECT_CC
     CC = $(PROJECT_CC)
 endif
 
+ifdef PLATFORM_AR
+    AR = $(PLATFORM_AR)
+endif
+
+ifdef PROJECT_AR
+    AR = $(PROJECT_AR)
+endif
+
 ################################################################################
 # CFLAGS
 ################################################################################
@@ -51,33 +59,57 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 #  #(OPTIMIZATION_CFLAGS)
 #
 
-# check to see if our target has been defined elsewhere
-ifndef TARGET
-	# check to see if this is a "pure" clean target
-	ifeq ($(MAKECMDGOALS),clean)
-	    TARGET =
-	    TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
-	    TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
-	    TARGET_NAME = 
+# check to see if this is a "pure" clean target
+ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
+    TARGET =
+    ifdef PLATFORM_CORELIB_DEBUG_TARGET
+    	TARGET += $(PLATFORM_CORELIB_DEBUG_TARGET)
+    else
+    	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+    endif
+    
+    ifdef PLATFORM_CORELIB_RELEASE_TARGET
+    	TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
+    else
+    	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    endif
+    
+    TARGET_NAME = 
 
-	# check to see if any part of our target includes the String "Debug"
-	# this will happen if we call Debug OR CleanDebug
-	else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
-	    TARGET_NAME = Debug
-	    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+# check to see if any part of our target includes the String "Debug"
+# this will happen if we call Debug OR CleanDebug
+else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+    TARGET_NAME = Debug
+    ifdef PLATFORM_CORELIB_DEBUG_TARGET
+    	TARGET = $(PLATFORM_CORELIB_DEBUG_TARGET)
+    else
+    	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+    endif
 
-	# check to see if any part of our target includes the String "Release"
-	# this will happen if we call Release OR CleanRelease
-	else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
-	    TARGET_NAME = Release
-	    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
-	else ## why doesn't make allow for easy logical operators?
-	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
-	    TARGET_NAME = Release
-	    TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
-	 endif
+# check to see if any part of our target includes the String "Release"
+# this will happen if we call Release OR CleanRelease
+else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+    TARGET_NAME = Release
+    ifdef PLATFORM_CORELIB_RELEASE_TARGET
+    	TARGET = $(PLATFORM_CORELIB_RELEASE_TARGET)
+    else
+    	TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    endif
+    
+else ifeq ($(MAKECMDGOALS),after)
+    TARGET =
+    TARGET_NAME = 
+    
+else ## why doesn't make allow for easy logical operators?
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+    TARGET_NAME = Release
+    ifdef PLATFORM_CORELIB_RELEASE_TARGET
+    	TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
+    else
+    	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    endif
  endif
 
 # we only get a CLEAN_TARGET if a TARGET_NAME has been defined
@@ -85,6 +117,54 @@ ifndef TARGET
 ifdef TARGET_NAME
 	CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 endif
+
+$(info TARGET=$(TARGET))
+
+################################################################################
+# CORE OBJECT AND DEPENDENCY FILES DEFINITIONS
+#	Object file paths are generated here (as opposed to with the rest of the 
+#   flags) because we want to place them in target-specific folders. We
+#   determine targets above. We –could– determine the target info earlier if we
+#   wanted to.  It's here because that's approximately where it was in the 
+#   legacy makefiles.
+################################################################################
+
+# define the subdirectory for our target name
+ifdef ABI
+	OF_CORE_OBJ_OUPUT_PATH = $(OF_CORE_LIB_PATH)/obj/$(ABI)/$(TARGET_NAME)/
+else
+	OF_CORE_OBJ_OUPUT_PATH = $(OF_CORE_LIB_PATH)/obj/$(TARGET_NAME)/
+endif
+
+# create a named list of dependency files
+# 1. create a list of .d dependency files based on the current list of 
+#  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
+# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
+#  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
+OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES)))
+
+# create a named list of object files
+# 1. create a list of object files based on the current list of
+#   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
+# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
+#	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
+OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)))
+
+    
+################################################################################
+# DEBUG INFO
+################################################################################
+ifdef MAKEFILE_DEBUG
+    $(info ========================= compile.core.make flags ========================)
+    $(info OF_CORE_OBJ_OUPUT_PATH=$(OF_CORE_OBJ_OUPUT_PATH))
+    
+    $(info ---OF_CORE_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
+    
+    $(info ---OF_CORE_OBJ_FILES---)
+    $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
+endif
+
 
 ################################################################################
 # While most MAKE targets respond to lists of filenames, .PHONY targets are 
@@ -95,12 +175,28 @@ endif
 
 # Release will pass the library name (i.e. ... libopenFrameworks.a) 
 # down the the @(TARGET) target
-Release: $(TARGET) after
+ReleaseABI: $(TARGET)
 
 # Debug will pass the library name (i.e. ... libopenFrameworksDebug.a)
 # down the the @(TARGET) target
-Debug: $(TARGET) after
+DebugABI: $(TARGET)
 
+Release: 
+ifndef ABIS_TO_COMPILE_RELEASE
+	@$(MAKE) ReleaseABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo done
+endif
+	@$(MAKE) after 
+	
+Debug: 
+ifndef ABIS_TO_COMPILE_DEBUG
+	@$(MAKE) DebugABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo done
+endif
+	@$(MAKE) after 
+	
 # all will first run the debug target, then the release target
 all: 
 	$(MAKE) Debug
@@ -116,25 +212,32 @@ $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
 # $(OF_CORE_OBJ_FILES) must be processed first  
 $(TARGET) : $(OF_CORE_OBJ_FILES) 
-	echo "Creating library " $(TARGET)
-	$(info $(@D))
+	@echo "Creating library " $(TARGET)
 	mkdir -p $(@D)
 	$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
 
 -include $(OF_CORE_DEPENDENCY_FILES)
 
 #.PHONY: clean CleanDebug CleanRelease
-clean:
-	@echo "Removing object files in " $(OF_CORE_OBJ_OUPUT_PATH)
-	rm -Rf $(OF_CORE_OBJ_OUPUT_PATH)
-	@echo "Removing " $(TARGET)
-	rm -f $(TARGET)
 
-$(CLEANTARGET):
+	
+clean:
+	$(MAKE) CleanRelease
+	$(MAKE) CleanDebug
+
+$(CLEANTARGET)ABI:
 	@echo "Removing object files in " $(OF_CORE_OBJ_OUPUT_PATH)
 	rm -Rf $(OF_CORE_OBJ_OUPUT_PATH)
 	@echo "Removing " $(TARGET)
 	rm -f $(TARGET)
+	
+$(CLEANTARGET):
+ifndef ABIS_TO_COMPILE
+	@$(MAKE) $(CLEANTARGET)ABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+endif
 
 after: $(TARGET)
 	@echo "Done!"

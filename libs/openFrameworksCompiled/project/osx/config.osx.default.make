@@ -118,6 +118,15 @@ PLATFORM_CFLAGS += -x c++
 endif
 
 
+################################################################################
+# PLATFORM LDFLAGS
+#   This is a list of fully qualified LDFLAGS required when linking for this 
+#   platform. These flags will always be added when linking a project.
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
+
+
 PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -stdlib
 PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
