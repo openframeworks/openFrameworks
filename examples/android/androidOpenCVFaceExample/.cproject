@@ -21,7 +21,7 @@
 					<folderInfo id="com.android.toolchain.gcc.898517443.1887315853" name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1485392764" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.607397687" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder arguments="" cleanBuildTarget="CleanAndroid" command="make" id="com.android.builder.1043977411" incrementalBuildTarget="AndroidRelease" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
+							<builder arguments="" cleanBuildTarget="CleanRelease PLATFORM_OS=Android" command="make" id="com.android.builder.1043977411" incrementalBuildTarget="Release PLATFORM_OS=Android" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
 							<tool id="com.android.gcc.compiler.1716371911" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.1288876143" superClass="com.android.gcc.inputType"/>
 							</tool>
@@ -53,7 +53,7 @@
 					<folderInfo id="com.android.toolchain.gcc.898517443.1692179379." name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1065244540" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.1950827678" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder arguments="" cleanBuildTarget="CleanAndroid" command="make" id="com.android.builder.1321623372" incrementalBuildTarget="AndroidDebug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
+							<builder arguments="" cleanBuildTarget="CleanDebug PLATFORM_OS=Android" command="make" id="com.android.builder.1321623372" incrementalBuildTarget="Debug PLATFORM_OS=Android" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
 							<tool id="com.android.gcc.compiler.1704257024" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.431232555" superClass="com.android.gcc.inputType"/>
 							</tool>
@@ -69,10 +69,10 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Release">
+		<configuration configurationName="Default">
 			<resource resourceType="PROJECT" workspacePath="/androidOpenCVFaceExample"/>
 		</configuration>
-		<configuration configurationName="Default">
+		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/androidOpenCVFaceExample"/>
 		</configuration>
 		<configuration configurationName="Debug">

@@ -98,8 +98,7 @@ PLATFORM_CFLAGS += -fexceptions
 ################################################################################
 # PLATFORM LDFLAGS
 #   This is a list of fully qualified LDFLAGS required when linking for this 
-#   platform. These flags will always be added when linking a project or the 
-#   core library.  
+#   platform. These flags will always be added when linking a project. 
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
@@ -163,12 +162,16 @@ endif
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 
 
 ################################################################################

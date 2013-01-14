@@ -51,16 +51,29 @@ LDFLAGS = $(strip $(ALL_LDFLAGS))
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
-	BIN_NAME = $(APPNAME)_debug
-	TARGET = bin/$(BIN_NAME)
+	ifndef PLATFORM_PROJECT_DEBUG_TARGET
+		BIN_NAME = $(APPNAME)_debug
+		TARGET = bin/$(BIN_NAME)
+	else
+		TARGET = $(PLATFORM_PROJECT_DEBUG_TARGET)
+	endif
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
-	BIN_NAME = $(APPNAME)
-	TARGET = bin/$(BIN_NAME)
+	ifndef PLATFORM_PROJECT_RELEASE_TARGET
+		BIN_NAME = $(APPNAME)
+		TARGET = bin/$(BIN_NAME)
+	else
+		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
+	endif
+	
 else ifeq ($(MAKECMDGOALS),)
 	TARGET_NAME = Release
-	BIN_NAME = $(APPNAME)
-	TARGET = bin/$(BIN_NAME)
+	ifndef PLATFORM_PROJECT_RELEASE_TARGET
+		BIN_NAME = $(APPNAME)
+		TARGET = bin/$(BIN_NAME)
+	else
+		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
+	endif
 endif
 
 
@@ -73,7 +86,12 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 	endif
-    TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+	
+    ifdef PLATFORM_CORELIB_DEBUG_TARGET
+    	TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
+    else
+    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+    endif
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -82,7 +100,12 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
 	endif
-    TARGET_LIBS = $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+	
+    ifdef PLATFORM_CORELIB_RELEASE_TARGET
+    	TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
+    else
+    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    endif
 endif
 
 ### addons used to be done here ...
@@ -118,21 +141,23 @@ ifdef MAKEFILE_DEBUG
     $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif
 
-
-OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
-
+ifdef ABI
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)
+else
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
+endif
+	
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES)))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
 OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
-OF_PROJECT_ADDONS_OBJS = $(subst $(OF_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(OF_PROJECT_ADDONS_OBJ_FILES)))
+OF_PROJECT_ADDONS_OBJS = $(subst $(OF_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_ADDONS_OBJ_FILES)))
 OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
 
 OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
 # TODO: deal with shared libs?
-
 
 
 ifdef MAKEFILE_DEBUG
@@ -142,10 +167,26 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-	
-Release: $(TARGET_LIBS) $(TARGET) afterplatform
+ReleaseABI: $(TARGET_LIBS) $(TARGET)
 
-Debug: $(TARGET_LIBS) $(TARGET) afterplatform
+DebugABI: $(TARGET_LIBS) $(TARGET)
+	
+Release: 
+ifndef ABIS_TO_COMPILE_RELEASE
+	@$(MAKE) ReleaseABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo done
+endif
+	@$(MAKE) afterplatform TARGET_NAME=$(TARGET_NAME) BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
+
+
+Debug: 
+ifndef ABIS_TO_COMPILE_DEBUG
+	@$(MAKE) DebugABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo done
+endif
+	@$(MAKE) afterplatform TARGET_NAME=$(TARGET_NAME) BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" 
 
 all:
 	$(MAKE) Debug
@@ -195,32 +236,38 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.c
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS)
-	@echo 'Linking $(TARGET) for $(PLATFORM_LIB_SUBPATH)'
+	@echo 'Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
 	mkdir -p $(@D)
-	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS) $(TARGET_LIBS);	
+	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS)
+
 	
 # This rule adds a dependency for projects to the OF library 
 # so if any OF file gets modified the OF library will be compiled
 # before compiling the project
-$(TARGET_LIBS): $(OF_CORE_OBJ_FILES)
+$(TARGET_LIBS): 
 	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME)
-	
-	
--include $(OF_CORE_DEPENDENCY_FILES)
+
 -include $(OF_PROJECT_DEPENDENCY_FILES)
 
 clean:
-	rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH)
-	rm -f $(TARGET)
-	rm -rf bin/libs
+	$(MAKE) CleanDebug
+	$(MAKE) CleanRelease
 
-$(CLEANTARGET):
+$(CLEANTARGET)ABI:
 	rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH)
 	rm -f $(TARGET)
+	
+$(CLEANTARGET):
+ifndef ABIS_TO_COMPILE
+	@$(MAKE) $(CLEANTARGET)ABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+endif
 	rm -rf bin/libs
 
 after: $(TARGET)
-	cp -r $(OF_EXPORT_PATH)/$(PLATFORM_LIB_SUBPATH)/* bin/
+	cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
@@ -259,3 +306,14 @@ help:
 	@echo in this directory and add the names of the addons you want to
 	@echo include
 	@echo
+	
+		
+#legacy targets
+AndroidRelease:
+	$(MAKE) Release PLATFORM_OS=Android
+	
+AndroidDebug:
+	$(MAKE) Debug PLATFORM_OS=Android
+	
+CleanAndroid:
+	$(MAKE) clean PLATFORM_OS=Android

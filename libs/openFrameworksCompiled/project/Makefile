@@ -42,8 +42,8 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
 
 # compile core openFrameworks library check for platform specific compile rules
 # if there's none use common ones
-ifeq ($(wildcard $(OF_PLATFORM_MAKEFILES)/compile.core.make),) 
+ifeq ($(wildcard $(OF_PLATFORM_MAKEFILES)/compile.$(PLATFORM_LIB_SUBPATH).core.make),) 
     include $(OF_SHARED_MAKEFILES_PATH)/compile.core.make
 else 
-    include $(OF_PLATFORM_MAKEFILES)/compile.core.make
+    include $(OF_PLATFORM_MAKEFILES)/compile.$(PLATFORM_LIB_SUBPATH).core.make
 endif
