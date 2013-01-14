@@ -111,7 +111,6 @@ PLATFORM_CFLAGS += -fmessage-length=0
 ifeq ($(MAC_OS_SDK),10.6)
 PLATFORM_CFLAGS += -pipe 
 PLATFORM_CFLAGS += -Wno-trigraphs 
-PLATFORM_CFLAGS += -fpascal-strings 
 PLATFORM_CFLAGS += -fasm-blocks 
 PLATFORM_CFLAGS += -Wno-deprecated-declarations 
 PLATFORM_CFLAGS += -Wno-invalid-offsetof 
