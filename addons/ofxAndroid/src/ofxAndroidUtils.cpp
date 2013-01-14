@@ -1,6 +1,12 @@
 
 #include "ofxAndroidUtils.h"
 
+// fix for undefined symbols from ndk r8c
+extern "C" {
+  extern void *__dso_handle __attribute__((__visibility__ ("hidden")));
+  void *__dso_handle;
+}
+
 bool ofxAndroidIsOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
@@ -298,12 +304,46 @@ bool ofxAndroidCheckSDCardMounted(){
 
 }
 
+void ofxAndroidEnableMulticast(){
+
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"enableMulticast","()V");
+	if(!method){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid enableMulticast method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
+}
+
+void ofxAndroidDisableMulticast(){
+
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"disableMulticast","()V");
+	if(!method){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid disableMulticast method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
+}
+
 string ofxAndroidRandomUUID(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return false;
+		return "";
 	}
 
 
@@ -339,7 +379,7 @@ string ofxAndroidGetTextBoxResult(){
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return false;
+		return "";
 	}
 
 
@@ -352,6 +392,24 @@ string ofxAndroidGetTextBoxResult(){
 
 	jboolean isCopy;
 	return ofGetJNIEnv()->GetStringUTFChars(str,&isCopy);
+}
+
+void ofxAndroidLaunchBrowser(string url){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"launchBrowser","(Ljava/lang/String;)V");
+	if(!method){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid launchBrowser method");
+		return;
+	}
+	jstring jUrl = ofGetJNIEnv()->NewStringUTF(url.c_str());
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,jUrl);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jUrl);
 }
 
 ofxAndroidEventsClass & ofxAndroidEvents(){

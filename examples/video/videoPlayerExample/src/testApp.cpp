@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
-
+	ofSetVerticalSync(true);
 	frameByframe = false;
 
 	// Uncomment this to show movies with alpha channels
