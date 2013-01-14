@@ -325,7 +325,7 @@ endif
 #PLATFORM_CC=
 
 
-afterplatform: 
+afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app
 	@mkdir -p bin/$(BIN_NAME).app/Contents
 	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
@@ -368,3 +368,4 @@ afterplatform:
 	@echo "     cd bin"
 	@echo "     open $(BIN_NAME).app"
 	@echo
+	
