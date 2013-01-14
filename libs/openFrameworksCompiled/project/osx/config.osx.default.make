@@ -25,7 +25,6 @@
 #   core source code.
 ##########################################################################################
 
-#
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -324,6 +323,51 @@ endif
 #PLATFORM_CC=
 
 
-afterplatform: after
-	@install_name_tool -change ./libfmodex.dylib ./libs/libfmodex.dylib bin/$(BIN_NAME)
+afterplatform: $(TARGET_NAME)
+	@rm -rf bin/$(BIN_NAME).app
+	@mkdir -p bin/$(BIN_NAME).app
+	@mkdir -p bin/$(BIN_NAME).app/Contents
+	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
+	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
+	
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>com.your-company-name.www</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	#@echo '  <key>CFBundleIconFile</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	#@echo '  <string>foo.icns</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	
+	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib bin/$(BIN_NAME)
 	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT bin/$(BIN_NAME)
+	
+	@mv bin/$(BIN_NAME) bin/$(BIN_NAME).app/Contents/MacOS
+	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
+	
+	@echo
+	@echo "     compiling done"
+	@echo "     to launch the application"
+	@echo
+	@echo "     cd bin"
+	@echo "     open $(BIN_NAME).app"
+	@echo
+	
