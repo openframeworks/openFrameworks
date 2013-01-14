@@ -25,7 +25,6 @@
 #   core source code.
 ##########################################################################################
 
-#
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -326,6 +325,7 @@ endif
 
 
 afterplatform: $(TARGET_NAME)
+	@rm -rf bin/$(BIN_NAME).app
 	@mkdir -p bin/$(BIN_NAME).app
 	@mkdir -p bin/$(BIN_NAME).app/Contents
 	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
@@ -358,11 +358,11 @@ afterplatform: $(TARGET_NAME)
 	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	
-	@install_name_tool -change ./libfmodex.dylib ./libs/libfmodex.dylib bin/$(BIN_NAME)
+	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib bin/$(BIN_NAME)
 	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT bin/$(BIN_NAME)
 	
-	cp bin/$(BIN_NAME) bin/$(BIN_NAME).app/Contents/MacOS
-	cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
+	@mv bin/$(BIN_NAME) bin/$(BIN_NAME).app/Contents/MacOS
+	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
 	
 	@echo
 	@echo "     compiling done"
