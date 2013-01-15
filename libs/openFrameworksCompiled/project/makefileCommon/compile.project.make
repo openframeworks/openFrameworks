@@ -1,3 +1,5 @@
+.DEFAULT_GOAL=Release
+
 ################################################################################
 ifdef MAKEFILE_DEBUG
     $(info ===================compile.project.make=============================)
@@ -203,9 +205,8 @@ ifndef ABIS_TO_COMPILE_RELEASE
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo done
 endif
-ifneq ($(MAKECMDGOALS),)
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
-endif 
+
 
 
 Debug: 
@@ -216,9 +217,7 @@ ifndef ABIS_TO_COMPILE_DEBUG
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo done
 endif
-ifneq ($(MAKECMDGOALS),)
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
-endif 
 
 ReleaseABI: $(TARGET)
 

@@ -72,6 +72,25 @@ PLATFORM_CFLAGS = -Wall
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
+ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/)
+	MAC_OS_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+else
+    MAC_OS_SDK_PATH=/Developer/SDKs
+endif
+
+ifndef MAC_OS_SDK
+    ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
+		MAC_OS_SDK=10.6
+	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
+		MAC_OS_SDK=10.7
+	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+		MAC_OS_SDK=10.8
+	endif
+endif
+
+MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
+
+
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
 ifneq ($(MAC_OS_SDK),10.6)
 	PLATFORM_CFLAGS += -march=native
@@ -87,16 +106,6 @@ PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
-
-ifndef MAC_OS_SDK
-    MAC_OS_SDK=10.7
-endif
-
-ifeq ($(wildcard file1),/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk)
-	MAC_OS_SDK_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk
-else
-    MAC_OS_SDK_ROOT=/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk
-endif
 
 PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
 PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
@@ -308,13 +317,13 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 ################################################################################
 
 
-ifeq ($(MAC_OS_SDK),10.6)
-    PLATFORM_CXX = g++ 
-    PLATFORM_CC = gcc
-else
-	PLATFORM_CXX = clang++
-    PLATFORM_CC = clang 
-endif
+#ifeq ($(MAC_OS_SDK),10.6)
+#    PLATFORM_CXX = g++ 
+#    PLATFORM_CC = gcc
+#else
+#	PLATFORM_CXX = clang
+#    PLATFORM_CC = clang 
+#endif
 
 
 ################################################################################
