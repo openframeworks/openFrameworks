@@ -9,7 +9,6 @@ PROJECT_ADDONS_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(PROJECT_ADDONS))
 
 # parses addons includes, in PARSED_ADDON_INCLUDES receives full PATHS to addons
 define parse_addons_includes
-	$(info parsing includes for $1) \
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(addsuffix /src, $1)) \
 	$(eval PARSED_ADDONS_LIBS_SOURCE_PATHS = $(addsuffix /libs/*/src, $1)) \
 	$(eval PARSED_ADDONS_LIBS_SOURCE_INCLUDES = $(shell find $(PARSED_ADDONS_LIBS_SOURCE_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )) \
@@ -22,7 +21,6 @@ endef
 
 # parses addons sources, in PARSED_ADDON_SOURCES receives full PATHS to addons
 define parse_addons_sources
-	$(info parsing sources for $1) \
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(addsuffix /src, $1)) \
 	$(eval PARSED_ADDONS_OFX_SOURCES = $(shell find $(PARSED_ADDONS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" )) \
 	$(eval PARSED_ADDONS_LIBS_SOURCE_PATHS = $(addsuffix /libs/*/src, $1)) \
@@ -35,12 +33,14 @@ endef
 define parse_addons_libraries
 	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(addsuffix /libs/*/lib/$(ABI_LIB_SUBPATH), $1)) \
 	$(eval PARSED_ALL_PLATFORM_LIBS = $(shell find $(PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )) \
-	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )) \
-	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED = $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.so 2> /dev/null | grep -v "/\.[^\.]" )) \
-	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED += $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.dylib 2> /dev/null | grep -v "/\.[^\.]" )) \
-	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED += $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.dll 2> /dev/null | grep -v "/\.[^\.]" )) \
-	$(eval PARSED_ADDONS_LIBS = $(PARSED_ADDONS_LIBS_PLATFORM_LIBS_STATICS)) \
-	$(eval PARSED_ADDONS_LIBS += $(PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED)) 
+	$(if $(PARSED_ALL_PLATFORM_LIBS), \
+		$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )) \
+		$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED = $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.so 2> /dev/null | grep -v "/\.[^\.]" )) \
+		$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED += $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.dylib 2> /dev/null | grep -v "/\.[^\.]" )) \
+		$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED += $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.dll 2> /dev/null | grep -v "/\.[^\.]" )) \
+		$(eval PARSED_ADDONS_LIBS = $(PARSED_ADDONS_LIBS_PLATFORM_LIBS_STATICS)) \
+		$(eval PARSED_ADDONS_LIBS += $(PARSED_ADDONS_LIBS_PLATFORM_LIBS_SHARED)) \
+	)
 endef
 
 
