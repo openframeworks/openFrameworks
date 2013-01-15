@@ -203,7 +203,7 @@ Release:
 ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) --no-print-directory ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo 
 endif
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 
@@ -215,7 +215,7 @@ Debug:
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) --no-print-directory DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo 
 endif
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 
