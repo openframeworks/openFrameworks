@@ -70,6 +70,9 @@ else ifeq ($(MAKECMDGOALS),)
 	TARGET_NAME = Release
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
 		BIN_NAME = $(APPNAME)
+		TARGET = bin/$(BIN_NAME)
+	else
+		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
 endif
 
@@ -191,9 +194,6 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-ReleaseABI: $(TARGET)
-
-DebugABI: $(TARGET)
 	
 Release: 
 	@echo Compiling OF library for Release
@@ -219,6 +219,10 @@ endif
 ifneq ($(MAKECMDGOALS),)
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 endif 
+
+ReleaseABI: $(TARGET)
+
+DebugABI: $(TARGET)
 
 all:
 	$(MAKE) Debug
