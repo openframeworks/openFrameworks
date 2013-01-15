@@ -235,14 +235,14 @@ OF_CORE_LIBS := $(OF_CORE_THIRDPARTY_STATIC_LIBS)
 OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
-ifneq ($(CORE_PKG_CONFIG_LIBRARIES),)
+ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
 endif
 # 4. Add the libraries defined in the platform config files.
 OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 
 # add the list of addon includes
-ifneq ($(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES),)
+ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)),)
 	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)" --cflags)
 endif
 
@@ -320,7 +320,6 @@ endif
 # TODO - + frameworks?
 OF_PROJECT_LIBS := 
 OF_PROJECT_LIBS += $(PROJECT_ADDONS_LIBS)
-
 #OF_PROJECT_LIBS_LDFLAGS = $(addprefix -l,$(OF_PROJECT_LIBS))
 
 ################################################################################
