@@ -78,7 +78,7 @@ $(foreach addon, $(PROJECT_ADDONS_PATHS), \
 	$(if $(strip $(ADDON_INCLUDES)), \
 		$(eval PROJECT_ADDONS_INCLUDES += $(addprefix $(addon)/,$(ADDON_INCLUDES))), \
 		$(call parse_addons_includes, $(addon)) \
-		$(eval PROJECT_ADDONS_INCLUDES=$(PARSED_ADDONS_INCLUDES)) \
+		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
 	) \
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
