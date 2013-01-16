@@ -54,27 +54,52 @@ LDFLAGS = $(strip $(ALL_LDFLAGS))
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
 	ifndef PLATFORM_PROJECT_DEBUG_TARGET
-		BIN_NAME = $(APPNAME)_debug
-		TARGET = bin/$(BIN_NAME)
+		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_DEBUG_TARGET)
+	endif
+	ifndef PLATFORM_PROJECT_DEBUG_BIN_NAME
+		BIN_NAME = $(APPNAME)_debug
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_DEBUG_BIN_NAME)
 	endif
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
-		BIN_NAME = $(APPNAME)
-		TARGET = bin/$(BIN_NAME)
+		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
+	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+		BIN_NAME = $(APPNAME)
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+	endif
+	
+else ifeq ($(MAKECMDGOALS),run)
+	TARGET_NAME = Release
+	ifndef PLATFORM_PROJECT_RELEASE_TARGET
+		TARGET = bin/$(APPNAME)
+	else
+		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
+	endif
+	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+		BIN_NAME = $(APPNAME)
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+	endif	
 	
 else ifeq ($(MAKECMDGOALS),)
 	TARGET_NAME = Release
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
-		BIN_NAME = $(APPNAME)
-		TARGET = bin/$(BIN_NAME)
+		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
+	endif
+	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+		BIN_NAME = $(APPNAME)
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
 	endif
 endif
 
@@ -227,6 +252,13 @@ all:
 	$(MAKE) Debug
 	$(MAKE) Release
 	
+run:
+ifeq ($(PLATFORM_RUN_COMMAND),)
+	$(BIN_NAME)
+else
+	$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
+endif
+	
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
@@ -310,6 +342,10 @@ after: $(TARGET_NAME)
 	@echo
 	@echo "     cd bin"
 	@echo "     ./$(BIN_NAME)"
+	@echo "     "
+	@echo "     - or -"
+	@echo "     "
+	@echo "     make run"
 	@echo
 
 help:
