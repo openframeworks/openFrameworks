@@ -53,11 +53,17 @@ LDFLAGS = $(strip $(ALL_LDFLAGS))
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
+	
+	ifndef RUN_TARGET
+		RUN_TARGET = RunDebug
+	endif
+	
 	ifndef PLATFORM_PROJECT_DEBUG_TARGET
-		TARGET = bin/$(APPNAME)
+		TARGET = bin/$(APPNAME)_debug
 	else
 		TARGET = $(PLATFORM_PROJECT_DEBUG_TARGET)
 	endif
+	
 	ifndef PLATFORM_PROJECT_DEBUG_BIN_NAME
 		BIN_NAME = $(APPNAME)_debug
 	else
@@ -65,11 +71,17 @@ ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	endif
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
+	
+	ifndef RUN_TARGET
+		RUN_TARGET = RunRelease
+	endif
+	
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
 		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
+	
 	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
 		BIN_NAME = $(APPNAME)
 	else
@@ -91,11 +103,17 @@ else ifeq ($(MAKECMDGOALS),run)
 	
 else ifeq ($(MAKECMDGOALS),)
 	TARGET_NAME = Release
+	
+	ifndef RUN_TARGET
+		RUN_TARGET = run
+	endif
+	
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
 		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
+	
 	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
 		BIN_NAME = $(APPNAME)
 	else
@@ -230,7 +248,7 @@ ifndef ABIS_TO_COMPILE_RELEASE
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo 
 endif
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET)
 
 
 
@@ -242,7 +260,7 @@ ifndef ABIS_TO_COMPILE_DEBUG
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo 
 endif
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET)
 
 ReleaseABI: $(TARGET)
 
@@ -254,9 +272,23 @@ all:
 	
 run:
 ifeq ($(PLATFORM_RUN_COMMAND),)
-	$(BIN_NAME)
+	@bin/$(BIN_NAME)
 else
-	$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
+	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
+endif
+
+RunRelease:
+ifeq ($(PLATFORM_RUN_COMMAND),)
+	@bin/$(BIN_NAME)
+else
+	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
+endif
+
+RunDebug:
+ifeq ($(PLATFORM_RUN_COMMAND),)
+	@bin/$(BIN_NAME)
+else
+	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
 endif
 	
 
@@ -345,7 +377,7 @@ after: $(TARGET_NAME)
 	@echo "     "
 	@echo "     - or -"
 	@echo "     "
-	@echo "     make run"
+	@echo "     $(MAKE) $(RUN_TARGET)"
 	@echo
 
 help:
