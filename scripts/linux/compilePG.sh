@@ -16,6 +16,6 @@ fi
 mkdir ../../../projectGenerator 2> /dev/null
 cp -R bin/* ../../../projectGenerator
 mv ../../../projectGenerator/projectGeneratorSimple ../../../projectGenerator/projectGenerator
-sed -i "s/..\/..\/..\/..\//..\//g" ../../../projectGenerator/data/settings/projectGeneratorSettings.xml
+sed -i "s/..\/..\/..\/..\//..\//g" ../../../projectGenerator/data/projectGeneratorSettings.xml
 chown -R $ID:$GROUP_ID obj bin
 chown -R $ID:$GROUP_ID ../../../projectGenerator
