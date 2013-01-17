@@ -160,14 +160,14 @@ endif
 #  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(patsubst $(OF_ROOT)/%.mm,%.d,$(OF_CORE_SOURCE_FILES))))
+OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(patsubst $(OF_ROOT)/%.mm,%.d,$(patsubst $(OF_ROOT)/%.m,%.d,$(OF_CORE_SOURCE_FILES)))))
 
 # create a named list of object files
 # 1. create a list of object files based on the current list of
 #   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(patsubst $(OF_ROOT)/%.mm,%.o,$(OF_CORE_SOURCE_FILES))))
+OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(patsubst $(OF_ROOT)/%.mm,%.o,$(patsubst $(OF_ROOT)/%.m,%.o,$(OF_CORE_SOURCE_FILES)))))
 
     
 ################################################################################
@@ -231,6 +231,11 @@ $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.mm
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+
+$(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.m
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 # this target does the linking of the library
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
