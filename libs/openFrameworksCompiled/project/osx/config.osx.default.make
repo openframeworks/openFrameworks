@@ -25,6 +25,11 @@
 #   core source code.
 ##########################################################################################
 
+PLATFORM_PROJECT_DEBUG_BIN_NAME=bin/$(APPNAME)_debug.app
+PLATFORM_PROJECT_DEBUG_TARGET=bin/$(APPNAME)_debug
+PLATFORM_PROJECT_RELEASE_BIN_NAME=bin/$(APPNAME).app
+PLATFORM_PROJECT_RELEASE_TARGET=bin/$(APPNAME)
+PLATFORM_RUN_COMMAND = open
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -72,6 +77,25 @@ PLATFORM_CFLAGS = -Wall
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
+ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/)
+	MAC_OS_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+else
+    MAC_OS_SDK_PATH=/Developer/SDKs
+endif
+
+ifndef MAC_OS_SDK
+    ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+		MAC_OS_SDK=10.8
+	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
+		MAC_OS_SDK=10.7
+	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
+		MAC_OS_SDK=10.6
+	endif
+endif
+
+MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
+
+
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
 ifneq ($(MAC_OS_SDK),10.6)
 	PLATFORM_CFLAGS += -march=native
@@ -87,16 +111,6 @@ PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
-
-ifndef MAC_OS_SDK
-    MAC_OS_SDK=10.7
-endif
-
-ifeq ($(wildcard file1),/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk)
-	MAC_OS_SDK_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk
-else
-    MAC_OS_SDK_ROOT=/Developer/SDKs/MacOSX$(MAC_OS_SDK).sdk
-endif
 
 PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
 PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
@@ -307,13 +321,13 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 ################################################################################
 
 
-ifeq ($(MAC_OS_SDK),10.6)
-    PLATFORM_CXX = g++ 
-    PLATFORM_CC = gcc
-else
-	PLATFORM_CXX = clang++
-    PLATFORM_CC = clang 
-endif
+#ifeq ($(MAC_OS_SDK),10.6)
+#    PLATFORM_CXX = g++ 
+#    PLATFORM_CC = gcc
+#else
+#	PLATFORM_CXX = clang
+#    PLATFORM_CC = clang 
+#endif
 
 
 ################################################################################
@@ -324,50 +338,55 @@ endif
 
 
 afterplatform: $(TARGET_NAME)
-	@rm -rf bin/$(BIN_NAME).app
-	@mkdir -p bin/$(BIN_NAME).app
-	@mkdir -p bin/$(BIN_NAME).app/Contents
-	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
-	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
+	@rm -rf $(BIN_NAME)
+	@mkdir -p $(BIN_NAME)
+	@mkdir -p $(BIN_NAME)/Contents
+	@mkdir -p $(BIN_NAME)/Contents/MacOS
+	@mkdir -p $(BIN_NAME)/Contents/Resources
 	
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>com.your-company-name.www</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	#@echo '  <key>CFBundleIconFile</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	#@echo '  <string>foo.icns</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' > $(BIN_NAME)/Contents/Info.plist
+	@echo '!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '<plist version="1.0">' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '<dict>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>CFBundleGetInfoString</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>CFBundleExecutable</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>CFBundleIdentifier</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <string>com.your-company-name.www</string>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>CFBundleName</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> $(BIN_NAME)/Contents/Info.plist
+	#@echo '  <key>CFBundleIconFile</key>' >> $(BIN_NAME)/Contents/Info.plist
+	#@echo '  <string>foo.icns</string>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>CFBundleShortVersionString</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <string>0.01</string>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <string>6.0</string>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>CFBundlePackageType</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <string>APPL</string>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>IFMajorVersion</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <integer>0</integer>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <key>IFMinorVersion</key>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '  <integer>1</integer>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '</dict>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '</plist>' >> $(BIN_NAME)/Contents/Info.plist
 	
-	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib bin/$(BIN_NAME)
-	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT bin/$(BIN_NAME)
+	@echo TARGET=$(TARGET)
 	
-	@mv bin/$(BIN_NAME) bin/$(BIN_NAME).app/Contents/MacOS
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
+	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib $(TARGET)
+	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
+	
+	@mv $(TARGET) $(BIN_NAME)/Contents/MacOS
+	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/MacOS
 	
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
 	@echo
-	@echo "     cd bin"
-	@echo "     open $(BIN_NAME).app"
+	@echo "     open $(BIN_NAME)"
+	@echo "     "
+	@echo "     - or -"
+	@echo "     "
+	@echo "     make $(RUN_TARGET)"
 	@echo
 	
