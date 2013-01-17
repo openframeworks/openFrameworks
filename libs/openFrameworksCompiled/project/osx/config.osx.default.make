@@ -84,12 +84,12 @@ else
 endif
 
 ifndef MAC_OS_SDK
-    ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
-		MAC_OS_SDK=10.6
+    ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+		MAC_OS_SDK=10.8
 	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
 		MAC_OS_SDK=10.7
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
-		MAC_OS_SDK=10.8
+	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
+		MAC_OS_SDK=10.6
 	endif
 endif
 
@@ -372,10 +372,12 @@ afterplatform: $(TARGET_NAME)
 	@echo '</dict>' >> $(BIN_NAME)/Contents/Info.plist
 	@echo '</plist>' >> $(BIN_NAME)/Contents/Info.plist
 	
-	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib bin/$(APPNAME)
-	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT bin/$(APPNAME)
+	@echo TARGET=$(TARGET)
 	
-	@mv bin/$(APPNAME) $(BIN_NAME)/Contents/MacOS
+	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib $(TARGET)
+	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
+	
+	@mv $(TARGET) $(BIN_NAME)/Contents/MacOS
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/MacOS
 	
 	@echo
@@ -386,6 +388,6 @@ afterplatform: $(TARGET_NAME)
 	@echo "     "
 	@echo "     - or -"
 	@echo "     "
-	@echo "     make run"
+	@echo "     make $(RUN_TARGET)"
 	@echo
 	

@@ -140,13 +140,14 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	endif
 endif
 
+# Optimization flags
 
-################################################################################
-## stopped here ... TODO: what does this mean?
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG += 
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifeq ($strip($(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
-	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
+		OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 	endif
@@ -159,7 +160,7 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	ifeq ($strip($(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
 	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
@@ -248,7 +249,7 @@ ifndef ABIS_TO_COMPILE_RELEASE
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo 
 endif
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET)
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 
 
 
@@ -260,7 +261,7 @@ ifndef ABIS_TO_COMPILE_DEBUG
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo 
 endif
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET)
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 
 ReleaseABI: $(TARGET)
 
