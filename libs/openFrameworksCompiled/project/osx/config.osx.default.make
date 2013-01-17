@@ -97,7 +97,7 @@ MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
 
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
-ifneq ($(MAC_OS_SDK),10.6)
+ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
 	PLATFORM_CFLAGS += -march=native
 	PLATFORM_CFLAGS += -mtune=native
 endif
