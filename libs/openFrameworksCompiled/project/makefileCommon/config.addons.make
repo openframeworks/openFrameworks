@@ -10,13 +10,14 @@ PROJECT_ADDONS_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(PROJECT_ADDONS))
 # parses addons includes, in PARSED_ADDON_INCLUDES receives full PATHS to addons
 define parse_addons_includes
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(addsuffix /src, $1)) \
+	$(eval PARSED_ADDONS_SOURCE_INCLUDES = $(shell find $(PARSED_ADDONS_SOURCE_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )) \
 	$(eval PARSED_ADDONS_LIBS_SOURCE_PATHS = $(addsuffix /libs/*/src, $1)) \
 	$(eval PARSED_ADDONS_LIBS_SOURCE_INCLUDES = $(shell find $(PARSED_ADDONS_LIBS_SOURCE_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )) \
 	$(eval PARSED_ADDONS_LIBS_INCLUDES_PATHS = $(addsuffix /libs/*/include, $1)) \
 	$(eval PARSED_ADDONS_LIBS_INCLUDES = $(shell find $(PARSED_ADDONS_LIBS_INCLUDES_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]"  )) \
 	$(eval PARSED_ADDONS_INCLUDES = $(PARSED_ADDONS_LIBS_SOURCE_INCLUDES)) \
 	$(eval PARSED_ADDONS_INCLUDES += $(PARSED_ADDONS_LIBS_INCLUDES)) \
-	$(eval PARSED_ADDONS_INCLUDES += $(PARSED_ADDONS_SOURCE_PATHS)) 
+	$(eval PARSED_ADDONS_INCLUDES += $(PARSED_ADDONS_SOURCE_INCLUDES)) 
 endef
 
 # parses addons sources, in PARSED_ADDON_SOURCES receives full PATHS to addons
