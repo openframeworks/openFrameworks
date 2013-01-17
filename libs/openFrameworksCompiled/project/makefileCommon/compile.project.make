@@ -1,3 +1,5 @@
+.DEFAULT_GOAL=Release
+
 ################################################################################
 ifdef MAKEFILE_DEBUG
     $(info ===================compile.project.make=============================)
@@ -51,25 +53,71 @@ LDFLAGS = $(strip $(ALL_LDFLAGS))
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
+	
+	ifndef RUN_TARGET
+		RUN_TARGET = RunDebug
+	endif
+	
 	ifndef PLATFORM_PROJECT_DEBUG_TARGET
-		BIN_NAME = $(APPNAME)_debug
-		TARGET = bin/$(BIN_NAME)
+		TARGET = bin/$(APPNAME)_debug
 	else
 		TARGET = $(PLATFORM_PROJECT_DEBUG_TARGET)
 	endif
+	
+	ifndef PLATFORM_PROJECT_DEBUG_BIN_NAME
+		BIN_NAME = $(APPNAME)_debug
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_DEBUG_BIN_NAME)
+	endif
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
+	
+	ifndef RUN_TARGET
+		RUN_TARGET = RunRelease
+	endif
+	
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
-		BIN_NAME = $(APPNAME)
-		TARGET = bin/$(BIN_NAME)
+		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
 	
-else ifeq ($(MAKECMDGOALS),)
+	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+		BIN_NAME = $(APPNAME)
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+	endif
+	
+else ifeq ($(MAKECMDGOALS),run)
 	TARGET_NAME = Release
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
+		TARGET = bin/$(APPNAME)
+	else
+		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
+	endif
+	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
 		BIN_NAME = $(APPNAME)
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+	endif	
+	
+else ifeq ($(MAKECMDGOALS),)
+	TARGET_NAME = Release
+	
+	ifndef RUN_TARGET
+		RUN_TARGET = run
+	endif
+	
+	ifndef PLATFORM_PROJECT_RELEASE_TARGET
+		TARGET = bin/$(APPNAME)
+	else
+		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
+	endif
+	
+	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+		BIN_NAME = $(APPNAME)
+	else
+		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
 	endif
 endif
 
@@ -92,13 +140,14 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	endif
 endif
 
+# Optimization flags
 
-################################################################################
-## stopped here ... TODO: what does this mean?
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG += 
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifeq ($strip($(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
-	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
+		OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 	endif
@@ -111,7 +160,7 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	ifeq ($strip($(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
 	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
@@ -191,9 +240,6 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-ReleaseABI: $(TARGET)
-
-DebugABI: $(TARGET)
 	
 Release: 
 	@echo Compiling OF library for Release
@@ -201,11 +247,10 @@ Release:
 ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) --no-print-directory ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo 
 endif
-ifneq ($(MAKECMDGOALS),)
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
-endif 
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+
 
 
 Debug: 
@@ -214,15 +259,38 @@ Debug:
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) --no-print-directory DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo 
 endif
-ifneq ($(MAKECMDGOALS),)
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
-endif 
+	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+
+ReleaseABI: $(TARGET)
+
+DebugABI: $(TARGET)
 
 all:
 	$(MAKE) Debug
 	$(MAKE) Release
+	
+run:
+ifeq ($(PLATFORM_RUN_COMMAND),)
+	@bin/$(BIN_NAME)
+else
+	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
+endif
+
+RunRelease:
+ifeq ($(PLATFORM_RUN_COMMAND),)
+	@bin/$(BIN_NAME)
+else
+	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
+endif
+
+RunDebug:
+ifeq ($(PLATFORM_RUN_COMMAND),)
+	@bin/$(BIN_NAME)
+else
+	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
+endif
 	
 
 #This rule does the compilation
@@ -307,6 +375,10 @@ after: $(TARGET_NAME)
 	@echo
 	@echo "     cd bin"
 	@echo "     ./$(BIN_NAME)"
+	@echo "     "
+	@echo "     - or -"
+	@echo "     "
+	@echo "     $(MAKE) $(RUN_TARGET)"
 	@echo
 
 help:

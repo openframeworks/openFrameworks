@@ -217,9 +217,13 @@ OF_CORE_THIRDPARTY_HEADER_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_
 # 1. Add the header search paths defined by the platform config files.
 OF_CORE_INCLUDES_CFLAGS = $(addprefix -I,$(PLATFORM_HEADER_SEARCH_PATHS))
 # 2. Add all of the system library search paths defined by the platform config files.
-ifneq ($(PLATFORM_PKG_CONFIG_LIBRARIES),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PLATFORM_PKG_CONFIG_LIBRARIES)" --cflags )
+CORE_PKG_CONFIG_LIBRARIES =
+CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
+CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
+ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
+	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
 endif
+
 # 3. Add all of the standard OF third party library headers (these have already been filtered above according to the platform config files)
 OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_THIRDPARTY_HEADER_PATHS))
 # 4. Add all of the core OF headers(these have already been filtered above according to the platform config files)

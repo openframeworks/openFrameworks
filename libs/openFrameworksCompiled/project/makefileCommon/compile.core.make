@@ -1,3 +1,5 @@
+.DEFAULT_GOAL=all
+
 ################################################################################
 ifdef MAKEFILE_DEBUG
     $(info ===================compile.core.make================================)
@@ -190,19 +192,11 @@ endif
 # avoid conflict with files of the same name and to improve performance.
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-# Release will pass the library name (i.e. ... libopenFrameworks.a) 
-# down the the @(TARGET) target
-ReleaseABI: $(TARGET)
-
-# Debug will pass the library name (i.e. ... libopenFrameworksDebug.a)
-# down the the @(TARGET) target
-DebugABI: $(TARGET)
-
 Release: 
 ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) --no-print-directory ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo 
 endif
 	@$(MAKE) --no-print-directory after 
 	
@@ -210,14 +204,22 @@ Debug:
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) --no-print-directory DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo 
 endif
 	@$(MAKE) --no-print-directory after 
 	
+# Release will pass the library name (i.e. ... libopenFrameworks.a) 
+# down the the @(TARGET) target
+ReleaseABI: $(TARGET)
+
+# Debug will pass the library name (i.e. ... libopenFrameworksDebug.a)
+# down the the @(TARGET) target
+DebugABI: $(TARGET)
+	
 # all will first run the debug target, then the release target
 all: 
-	$(MAKE) Debug
-	$(MAKE) Release
+	@$(MAKE) --no-print-directory Debug
+	@$(MAKE) --no-print-directory Release
 
 #This rule does the compilation
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
