@@ -132,15 +132,11 @@ void ofGLRenderer::draw( ofPrimitiveBase& model, ofPolyRenderMode renderType  ) 
     
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         glEnable( GL_NORMALIZE );
-        //glPushMatrix();
-        //ofVec3f scale = model.getScale();
-        //glScalef( scale.x, scale.y, scale.z);
     }
     
     draw( model.getMesh(), renderType, model.getMesh().usingColors(), model.getMesh().usingTextures(), model.getMesh().usingNormals() );
     
     if(model.hasScaling() && model.hasNormalsEnabled()) {
-        //glPopMatrix();
         glDisable( GL_NORMALIZE );
     }
     

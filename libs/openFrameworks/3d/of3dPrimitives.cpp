@@ -519,16 +519,12 @@ void ofPrimitiveBase::mergeDuplicateVerticies() {
     map <int, bool> ptCreated;
     map <int, int> oldIndexNewIndex;
     
-    //if(getMesh(meshIndex).hasColors()) {
-        vector<ofFloatColor> newColors;
-        vector<ofFloatColor>& colors    = getMesh().getColors();
-    //}
-    //if(getMesh(meshIndex).hasTexCoords()) {
-        vector<ofVec2f> newTCoords;
-        vector<ofVec2f>& tcoords        = getMesh().getTexCoords();
-    //}
+    vector<ofFloatColor> newColors;
+    vector<ofFloatColor>& colors    = getMesh().getColors();
+    vector<ofVec2f> newTCoords;
+    vector<ofVec2f>& tcoords        = getMesh().getTexCoords();
     vector<ofVec3f> newNormals;
-    vector<ofVec3f>& normals            = getMesh().getNormals();
+    vector<ofVec3f>& normals        = getMesh().getNormals();
     
     for(int i = 0; i < indicies.size(); i++){
         ptCreated[i] = false;
@@ -588,7 +584,6 @@ void ofPrimitiveBase::mergeDuplicateVerticies() {
 
 
 
-// REMOVE //
 //--------------------------------------------------------------
 void ofPrimitiveBase::drawVertices() {
 	draw(OF_MESH_POINTS);
@@ -763,8 +758,7 @@ void ofPlanePrimitive::set(float width, float height, int columns, int rows, ofP
     _mesh.clear();
     _mesh = ofGetPlaneMesh( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
     
-    //if(_texCoords.size() > 0)
-        normalizeAndApplySavedTexCoords();
+    normalizeAndApplySavedTexCoords();
     
 }
 
@@ -942,7 +936,7 @@ void ofSpherePrimitive::set(float radius, int res, ofPrimitiveMode mode ) {
     ofPrimitiveBase::setResolution(res, res, res);
     getMesh().clear();
     _mesh = ofGetSphereMesh( getRadius(), getResolution().x, mode );
-    //if(_texCoords.size()>0)
+    
     normalizeAndApplySavedTexCoords();
 }
 
@@ -1252,13 +1246,11 @@ void ofIcoSpherePrimitive::setResolution( int iterations ) {
 //----------------------------------------------------------
 void ofIcoSpherePrimitive::setResolution( int resX, int resY, int resZ ) {
     ofPrimitiveBase::setResolution(resX, resY, resZ);
-    //_radius = 1.f;
+    
     getMesh().clear();
     // store the number of iterations in the resolution //
     _mesh = ofGetIcoSphereMesh( getRadius(), getResolution().x );
-    
-    //if(_texCoords.size()>0)
-        normalizeAndApplySavedTexCoords();
+    normalizeAndApplySavedTexCoords();
 }
 
 //----------------------------------------------------------
@@ -1465,8 +1457,6 @@ ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int he
         
     }
     
-    cout << "cylinder mesh num indexes = " << mesh.getNumIndices() << endl;
-    
     return mesh;
 }
 
@@ -1531,8 +1521,7 @@ void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, in
     getMesh().clear();
     _mesh = ofGetCylinderMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
     
-    //if(_texCoords.size()>0)
-        normalizeAndApplySavedTexCoords();
+    normalizeAndApplySavedTexCoords();
     
 }
 
@@ -1840,8 +1829,7 @@ void ofConePrimitive::set( float radius, float height, int radiusSegments, int h
     getMesh().clear();
     _mesh = ofGetConeMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
     
-    //if(_texCoords.size()>0)
-        normalizeAndApplySavedTexCoords();
+    normalizeAndApplySavedTexCoords();
     
 }
 
@@ -2259,8 +2247,7 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     _mesh.clear();
     _mesh = ofGetBoxMesh( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
     
-    //if(_texCoords.size()>0)
-        normalizeAndApplySavedTexCoords();
+    normalizeAndApplySavedTexCoords();
 }
 
 //--------------------------------------------------------------
