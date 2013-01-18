@@ -51,6 +51,16 @@ namespace ofxCv {
 		return out;		
 	}
 	
+	vector<cv::Point3f> toCv(const vector<ofVec3f>& points) {
+		vector<cv::Point3f> out(points.size());
+		for(int i = 0; i < points.size(); i++) {
+			out[i].x = points[i].x;
+			out[i].y = points[i].y;
+			out[i].z = points[i].z;
+		}
+		return out;		
+	}
+	
 	Scalar toCv(ofColor color) {
 		return Scalar(color.r, color.g, color.b, color.a);
 	}

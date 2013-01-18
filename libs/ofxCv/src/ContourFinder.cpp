@@ -161,6 +161,9 @@ namespace ofxCv {
 	}
 	
 	cv::RotatedRect ContourFinder::getFitEllipse(unsigned int i) const {
+		if(contours[i].size() < 5) {
+			return getMinAreaRect(i);
+		}
 		return fitEllipse(Mat(contours[i]));
 	}
 	
