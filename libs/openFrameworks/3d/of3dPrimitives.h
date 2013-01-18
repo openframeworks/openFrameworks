@@ -75,7 +75,7 @@ public:
     bool hasNormalsEnabled();
     ofVec3f getResolution() const;
     
-    void mergeDuplicateVerticies();
+    void mergeDuplicateVertices();
     
     void enableNormals();
     void enableTextures();
@@ -85,7 +85,7 @@ public:
     void disableTextures();
     void disableColors();
     
-    // return a list of triangles that do not share verticies or indicies //
+    // return a list of triangles that do not share vertices or indices //
     ofVec3f getFaceNormal(of3dTriangle& tri);
     vector<of3dTriangle> getUniqueTriangles();
     vector<ofVec3f> getFaceNormals( bool perVetex=false);
@@ -112,8 +112,8 @@ protected:
     ofVec4f _texCoords;
     
     ofVec3f _resolution;
-    vector<ofIndexType> getIndicies( int startIndex, int endIndex );
-    void setColorForIndicies( int startIndex, int endIndex, ofColor color );
+    vector<ofIndexType> getIndices( int startIndex, int endIndex );
+    void setColorForIndices( int startIndex, int endIndex, ofColor color );
     ofMesh getMeshForIndexes( int startIndex, int endIndex, int startVertIndex, int endVertIndex );
 };
 
@@ -197,11 +197,11 @@ public:
     void setCylinderColor( ofColor color );
     void setBottomCapColor( ofColor color );
     
-    vector<ofIndexType> getTopCapIndicies();
+    vector<ofIndexType> getTopCapIndices();
     ofMesh getTopCapMesh();
-    vector<ofIndexType> getCylinderIndicies();
+    vector<ofIndexType> getCylinderIndices();
     ofMesh getCylinderMesh();
-    vector<ofIndexType> getBottomCapIndicies();
+    vector<ofIndexType> getBottomCapIndices();
     ofMesh getBottomCapMesh();
     
     float getHeight();
@@ -212,7 +212,7 @@ protected:
     float _height;
     bool _bCapped;
     int _strides[3][2];
-    int _verticies[3][2];
+    int _vertices[3][2];
 };
 
 class ofConePrimitive : public ofPrimitiveBase {
@@ -233,9 +233,9 @@ public:
     void setTopColor( ofColor color );
     void setCapColor( ofColor color );
     
-    vector<ofIndexType> getConeIndicies();
+    vector<ofIndexType> getConeIndices();
     ofMesh getConeMesh();
-    vector<ofIndexType> getCapIndicies();
+    vector<ofIndexType> getCapIndices();
     ofMesh getCapMesh();
     
     
@@ -247,7 +247,7 @@ protected:
     float _height;
     
     int _strides[2][2];
-    int _verticies[2][2];
+    int _vertices[2][2];
 };
 
 class ofBoxPrimitive : public ofPrimitiveBase {
@@ -277,7 +277,7 @@ public:
     
     void resizeToTexture( ofTexture& inTexture );
     
-    vector<ofIndexType> getSideIndicies( int sideIndex );
+    vector<ofIndexType> getSideIndices( int sideIndex );
     ofMesh getSideMesh( int sideIndex );
     
     void setResolution( int res ); // same resolution for all sides //
@@ -291,9 +291,9 @@ public:
     ofVec3f getSize() const;
 protected:
     ofVec3f _size;
-    // indicies strides for faces //
+    // indices strides for faces //
     int _strides[6][2];
-    int _verticies[6][2];
+    int _vertices[6][2];
 };
 
 
