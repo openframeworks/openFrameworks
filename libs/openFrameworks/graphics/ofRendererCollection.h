@@ -54,7 +54,7 @@ public:
 		 }
 	}
     
-    void draw( of3dModel& model, ofPolyRenderMode renderType ) {
+    void draw( ofPrimitiveBase& model, ofPolyRenderMode renderType ) {
         for(int i=0;i<(int)renderers.size();i++) {
             renderers[i]->draw( model, renderType );
         }
