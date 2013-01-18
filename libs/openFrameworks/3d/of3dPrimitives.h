@@ -70,7 +70,6 @@ public:
     int getNumTexcoords();
     ofVec4f* getTexCoordsPtr();
     ofVec4f& getTexCoords();
-    //map<int, ofVec4f>& getTexCoords();
     
     bool hasScaling();
     bool hasNormalsEnabled();
