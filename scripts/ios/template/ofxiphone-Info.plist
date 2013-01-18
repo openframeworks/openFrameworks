@@ -30,7 +30,9 @@
 	<true/>
 	<key>UIApplicationExitsOnSuspend</key>
 	<true/>
-	<key>UIInterfaceOrientation</key>
-	<string>UIInterfaceOrientationPortrait</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
 </dict>
 </plist>

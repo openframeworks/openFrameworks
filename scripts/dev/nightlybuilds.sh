@@ -35,7 +35,7 @@ rm /var/www/versions/nightly/of_latest_android_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_win_cb_release.zip /var/www/versions/nightly/of_v${lastversion}_win_cb_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_vs2010_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2010_nightly.zi
+mv /var/www/versions/nightly/of_v${lastversion}_vs2010_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2010_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_android_nightly.tar.gz

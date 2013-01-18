@@ -869,6 +869,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/debug/";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -879,6 +880,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/release/";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
