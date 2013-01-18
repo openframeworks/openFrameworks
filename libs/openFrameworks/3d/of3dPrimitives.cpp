@@ -159,19 +159,6 @@ void ofPrimitiveBase::disableColors() {
 }
 
 //----------------------------------------------------------
-ofVec3f ofPrimitiveBase::getFaceNormal(of3dTriangle& tri) {
-    ofVec3f U, V, n;
-    
-    U = (tri.points[1]-tri.points[0]);
-    V = (tri.points[2]-tri.points[0]);
-    
-    n = U.crossed(V);
-    n.normalize();
-    
-    return n;
-}
-
-//----------------------------------------------------------
 vector<of3dTriangle> ofPrimitiveBase::getUniqueTriangles() {
     
     vector<of3dTriangle> triangles;
@@ -198,7 +185,7 @@ vector<of3dTriangle> ofPrimitiveBase::getUniqueTriangles() {
             for(int k = 0; k < 3; k++) {
                 index = indices[j+k];
                 tri.points[k].set(verts[index].x, verts[index].y, verts[index].z);//      = verts[index];
-                tri.faceNormal = getFaceNormal( tri );
+                tri.calculateFaceNormal();
                 if(bHasNormals)
                     tri.normals[k]      = normals[index];
                 if(bHasTexcoords)
@@ -226,9 +213,9 @@ vector<ofVec3f> ofPrimitiveBase::getFaceNormals( bool perVetex ) {
     vector<ofVec3f> faceNormals;
         
     if(getMesh().hasVertices()) {
-        vector<ofVec3f>& verts          = getMesh().getVertices();
+        vector<ofVec3f>& verts         = getMesh().getVertices();
         vector<ofIndexType>& indices   = getMesh().getIndices();
-        vector<ofVec3f> normals         = getMesh().getNormals();
+        vector<ofVec3f> normals        = getMesh().getNormals();
         
         if(verts.size() > 3 && indices.size() > 3) {
             

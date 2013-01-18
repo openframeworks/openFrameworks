@@ -28,6 +28,28 @@ public:
         bHasNormals = bHasColors = bHasTexcoords = false;
     }
     
+    ofVec3f getFaceNormal() {
+        ofVec3f U, V, n;
+        
+        U = (points[1]-points[0]);
+        V = (points[2]-points[0]);
+        
+        n = U.crossed(V);
+        n.normalize();
+        
+        return n;
+    }
+    
+    void calculateFaceNormal() {
+        ofVec3f U, V;
+        
+        U = (points[1]-points[0]);
+        V = (points[2]-points[0]);
+        
+        faceNormal = U.crossed(V);
+        faceNormal.normalize();
+    }
+    
     ofPoint points[3];
     ofVec3f faceNormal;
     ofVec3f normals[3];
@@ -86,7 +108,6 @@ public:
     void disableColors();
     
     // return a list of triangles that do not share vertices or indices //
-    ofVec3f getFaceNormal(of3dTriangle& tri);
     vector<of3dTriangle> getUniqueTriangles();
     vector<ofVec3f> getFaceNormals( bool perVetex=false);
     void setFromTriangles( vector<of3dTriangle>& tris, bool bUseFaceNormal=false );
