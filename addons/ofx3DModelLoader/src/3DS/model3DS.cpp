@@ -523,7 +523,14 @@ void mesh3DS::draw(){
 		float shininess = currentMaterial.getShininess();
 		float adjustedSpecular[4] = {specular[0]*shininess, specular[1]*shininess, specular[2]*shininess, 1};
 
+#ifndef TARGET_OPENGLES
 		glPushAttrib(GL_LIGHTING_BIT);
+#endif
+
+#ifdef TARGET_OPENGLES
+		/* In OpenGL ES, the GL_FRONT_AND_BACK flag is the only flag that can be passed */
+		materialFaces = GL_FRONT_AND_BACK;
+#else
 		if(currentMaterial.isTwoSided()){
 			glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
 			materialFaces = GL_FRONT_AND_BACK;
@@ -532,6 +539,7 @@ void mesh3DS::draw(){
 			glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,0);
 			materialFaces = GL_FRONT;
 		}
+#endif
 
 		// Apply material colors
 		if(glIsEnabled(GL_LIGHTING)){
@@ -545,44 +553,74 @@ void mesh3DS::draw(){
 			glMaterialfv(materialFaces, GL_SPECULAR, adjustedSpecular);
 			glMaterialf(materialFaces, GL_SHININESS, 128.f * currentMaterial.getSpecularExponent());
 		}
-		else glColor3fv(currentMaterial.getDiffuseColor());
+		else
+		{
+			const float* color = currentMaterial.getDiffuseColor();
+			glColor4f(color[0], color[1], color[2], 1.0f);
+		}
 
 		const std::vector<ushort> *currentMatFaces = &(materialsIter->second);
 		numFaces = (int)currentMatFaces->size(); //number of faces in this material
 
 		switch(m_drawMode){
 			case DRAW_IMMEDIATE_MODE:
-
-				glBegin(GL_TRIANGLES);
+				// This is like DRAW_VERTEX_ARRAY, but the array is not already constructed, so we need to do it here
 				for(face=0; face<numFaces; face+=3){
-					if(hasTextureMap){
-						texcoordIndex = (*currentMatFaces)[face]*2;
-						glTexCoord2f(m_texcoords[texcoordIndex], m_texcoords[texcoordIndex+1]);
+					int vertexIndices[] = {
+						(*currentMatFaces)[face]*3,
+						(*currentMatFaces)[face+1]*3,
+						(*currentMatFaces)[face+2]*3
+					};
+					float vertex_data[] = {
+						m_normals[vertexIndices[0]], m_normals[vertexIndices[0]+1], m_normals[vertexIndices[0]+2],
+						m_normals[vertexIndices[1]], m_normals[vertexIndices[1]+1], m_normals[vertexIndices[1]+2],
+						m_normals[vertexIndices[2]], m_normals[vertexIndices[2]+1], m_normals[vertexIndices[2]+2]
+						
+					};
+					float normal_data[] = {
+						m_vertices[vertexIndices[0]], m_vertices[vertexIndices[0]+1], m_vertices[vertexIndices[0]+2],
+						m_vertices[vertexIndices[1]], m_vertices[vertexIndices[1]+1], m_vertices[vertexIndices[1]+2],
+						m_vertices[vertexIndices[2]], m_vertices[vertexIndices[2]+1], m_vertices[vertexIndices[2]+2]
+						
+					};
+					
+					glEnableClientState(GL_VERTEX_ARRAY);
+					glEnableClientState(GL_NORMAL_ARRAY);
+					if (hasTextureMap) {
+						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					}
-					vertexIndex = (*currentMatFaces)[face]*3;
-					glNormal3f(m_normals[vertexIndex], m_normals[vertexIndex+1], m_normals[vertexIndex+2]);
-					glVertex3f(m_vertices[vertexIndex], m_vertices[vertexIndex+1], m_vertices[vertexIndex+2]);
 
-					if(hasTextureMap){
-						texcoordIndex = (*currentMatFaces)[face+1]*2;
-						glTexCoord2f(m_texcoords[texcoordIndex], m_texcoords[texcoordIndex+1]);
-					}
-					vertexIndex = (*currentMatFaces)[face+1]*3;
-					glNormal3f(m_normals[vertexIndex], m_normals[vertexIndex+1], m_normals[vertexIndex+2]);
-					glVertex3f(m_vertices[vertexIndex], m_vertices[vertexIndex+1], m_vertices[vertexIndex+2]);
+					glVertexPointer(3, GL_FLOAT, 0, vertex_data);
+					glNormalPointer(GL_FLOAT, 0, normal_data);
 
-					if(hasTextureMap){
-						texcoordIndex = (*currentMatFaces)[face+2]*2;
-						glTexCoord2f(m_texcoords[texcoordIndex], m_texcoords[texcoordIndex+1]);
+					if (hasTextureMap) {
+						int texCoordIndices[] = {
+							(*currentMatFaces)[face]*2,
+							(*currentMatFaces)[face+1]*2,
+							(*currentMatFaces)[face+2]*2
+						};
+						float texcoord_data[] = {
+							m_texcoords[texCoordIndices[0]], m_texcoords[texCoordIndices[0]+1],
+							m_texcoords[texCoordIndices[1]], m_texcoords[texCoordIndices[1]+1],
+							m_texcoords[texCoordIndices[2]], m_texcoords[texCoordIndices[2]+1]
+						};
+
+						glTexCoordPointer(2, GL_FLOAT, 0, texcoord_data);
+						// don't move this statement out of the block since texcoord_data will be out of scope otherwise
+						glDrawArrays(GL_TRIANGLES, 0, 3);
 					}
-					vertexIndex = (*currentMatFaces)[face+2]*3;
-					glNormal3f(m_normals[vertexIndex], m_normals[vertexIndex+1], m_normals[vertexIndex+2]);
-					glVertex3f(m_vertices[vertexIndex], m_vertices[vertexIndex+1], m_vertices[vertexIndex+2]);
+					else
+					{
+						glDrawArrays(GL_TRIANGLES, 0, 3);
+					}
+
+					glDisableClientState( GL_VERTEX_ARRAY );
+					glDisableClientState( GL_NORMAL_ARRAY );
+					if(hasTextureMap){
+						glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+					}
 				}
-				glEnd();
-
 				break;
-
 			case DRAW_VERTEX_ARRAY:
 
 				glEnableClientState( GL_VERTEX_ARRAY );
@@ -630,8 +668,9 @@ void mesh3DS::draw(){
 				std::cout<<"[3DS] ERROR: Invalid mesh draw mode specified"<<std::endl;
 				break;
 		}
-
+#ifndef TARGET_OPENGLES
 		glPopAttrib(); // GL_LIGHTING_BIT
+#endif
 	}
 }
 

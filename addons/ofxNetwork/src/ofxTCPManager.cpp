@@ -30,6 +30,7 @@ ofxTCPManager::ofxTCPManager()
   m_dwTimeoutReceive= OF_TCP_DEFAULT_TIMEOUT;
   m_dwTimeoutAccept= OF_TCP_DEFAULT_TIMEOUT;
   m_iListenPort= -1;
+  m_closing = false;
 };
 
 //--------------------------------------------------------------------------------
@@ -42,12 +43,14 @@ bool ofxTCPManager::Close()
 	#ifdef TARGET_WIN32
 		if(closesocket(m_hSocket) == SOCKET_ERROR)
 	#else
+		m_closing = true;
+		shutdown(m_hSocket,SHUT_RDWR);
 		if(close(m_hSocket) == SOCKET_ERROR)
 	#endif
-	{
-		ofxNetworkCheckError();
-		return(false);
-	}
+		{
+			ofxNetworkCheckError();
+			return(false);
+		}
 
 	m_hSocket= INVALID_SOCKET;
 
@@ -69,6 +72,7 @@ void ofxTCPManager::CleanUp() {
 bool ofxTCPManager::Create()
 {
   if (m_hSocket != INVALID_SOCKET) return(false);
+  m_closing = false;
 
   m_hSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_IP);
 
@@ -132,7 +136,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
   iSize= sizeof(sockaddr_in);
   sConnect.m_hSocket= accept(m_hSocket, (sockaddr*)&addr, &iSize);
   bool ret = (sConnect.m_hSocket != INVALID_SOCKET);
-  if(!ret) ofxNetworkCheckError();
+  if(!ret && !m_closing) ofxNetworkCheckError();
   return ret;
 }
 
