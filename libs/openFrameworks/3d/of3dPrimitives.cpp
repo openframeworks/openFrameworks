@@ -57,16 +57,16 @@ ofVec4f& ofPrimitiveBase::getTexCoords() {
 //}
 
 //----------------------------------------------------------
-vector<ofIndexType> ofPrimitiveBase::getIndicies( int startIndex, int endIndex ) {
-    vector<ofIndexType> indicies;
-    indicies.assign( getMesh().getIndices().begin()+startIndex, getMesh().getIndices().begin()+endIndex );
-    return indicies;
+vector<ofIndexType> ofPrimitiveBase::getIndices( int startIndex, int endIndex ) {
+    vector<ofIndexType> indices;
+    indices.assign( getMesh().getIndices().begin()+startIndex, getMesh().getIndices().begin()+endIndex );
+    return indices;
 }
 
 //----------------------------------------------------------
-void ofPrimitiveBase::setColorForIndicies( int startIndex, int endIndex, ofColor color ) {
+void ofPrimitiveBase::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
     if(!getMesh().hasColors()) {
-        // no colors for verticies, so we must set them here //
+        // no colors for vertices, so we must set them here //
         getMesh().getColors().resize(getMesh().getNumVertices());
     }
     
@@ -81,9 +81,9 @@ ofMesh ofPrimitiveBase::getMeshForIndexes( int startIndex, int endIndex, int sta
     ofMesh mesh;
     mesh.setMode( getMesh().getMode() );
     
-    vector<ofVec3f> verticies;
-    verticies.assign( getMesh().getVertices().begin()+startVertIndex, getMesh().getVertices().begin()+endVertIndex );
-    mesh.addVertices( verticies );
+    vector<ofVec3f> vertices;
+    vertices.assign( getMesh().getVertices().begin()+startVertIndex, getMesh().getVertices().begin()+endVertIndex );
+    mesh.addVertices( vertices );
     
     if(getMesh().hasColors()) {
         vector<ofFloatColor> colors;
@@ -190,7 +190,7 @@ vector<of3dTriangle> ofPrimitiveBase::getUniqueTriangles() {
     bool bHasNormals    = getMesh().hasNormals();
     bool bHasTexcoords  = getMesh().hasTexCoords();
     
-    //cout << "getUniqueTriangles :: indicies.size = "<<indices.size() << endl;
+    //cout << "getUniqueTriangles :: Indices.size = "<<indices.size() << endl;
 
     if(getMesh().getMode() == OF_PRIMITIVE_TRIANGLES) {
         for(int j = 0; j < indices.size(); j += 3) {
@@ -227,16 +227,16 @@ vector<ofVec3f> ofPrimitiveBase::getFaceNormals( bool perVetex ) {
         
     if(getMesh().hasVertices()) {
         vector<ofVec3f>& verts          = getMesh().getVertices();
-        vector<ofIndexType>& indicies   = getMesh().getIndices();
+        vector<ofIndexType>& indices   = getMesh().getIndices();
         vector<ofVec3f> normals         = getMesh().getNormals();
         
-        if(verts.size() > 3 && indicies.size() > 3) {
+        if(verts.size() > 3 && indices.size() > 3) {
             
             ofVec3f v1, v2, v3, n; ofVec3f U, V;
-            for(int i = 0; i < indicies.size(); i+=3) {
-                v1 = verts[indicies[i+0]];
-                v2 = verts[indicies[i+1]];
-                v3 = verts[indicies[i+2]];
+            for(int i = 0; i < indices.size(); i+=3) {
+                v1 = verts[indices[i+0]];
+                v2 = verts[indices[i+1]];
+                v3 = verts[indices[i+2]];
                 
                 U = (v2-v1);
                 V = (v3-v1);
@@ -489,29 +489,29 @@ void ofPrimitiveBase::setTexCoordsFromTexture( ofTexture& inTexture ) {
 
 
 //----------------------------------------------------------
-void ofPrimitiveBase::mergeDuplicateVerticies() {
+void ofPrimitiveBase::mergeDuplicateVertices() {
     
     vector<ofVec3f> verts          = getMesh().getVertices();
-    vector<ofIndexType> indicies   = getMesh().getIndices();
+    vector<ofIndexType> indices   = getMesh().getIndices();
     
     //get indexes to share single point - TODO: try j < i
-    for(int i = 0; i < indicies.size(); i++) {
-        for(int j = 0; j < indicies.size(); j++ ) {
+    for(int i = 0; i < indices.size(); i++) {
+        for(int j = 0; j < indices.size(); j++ ) {
             if(i==j) continue;
             
-            ofIndexType i1  = indicies[i];
-            ofIndexType i2  = indicies[j];
+            ofIndexType i1  = indices[i];
+            ofIndexType i2  = indices[j];
             ofVec3f v1      = verts[ i1 ];
             ofVec3f v2      = verts[ i2 ];
             
             if( v1 == v2 && i1 != i2) {
-                indicies[j] = i1;
+                indices[j] = i1;
                 break;
             }
         }
     }
     
-    //indicies array now has list of unique points we need
+    //indices array now has list of unique points we need
     //but we need to delete the old points we're not using and that means the index values will change
     //so we are going to create a new list of points and new indexes - we will use a map to map old index values to the new ones
     vector <ofPoint> newPoints;
@@ -526,12 +526,12 @@ void ofPrimitiveBase::mergeDuplicateVerticies() {
     vector<ofVec3f> newNormals;
     vector<ofVec3f>& normals        = getMesh().getNormals();
     
-    for(int i = 0; i < indicies.size(); i++){
+    for(int i = 0; i < indices.size(); i++){
         ptCreated[i] = false;
     }
     
-    for(int i = 0; i < indicies.size(); i++){
-        ofIndexType index = indicies[i];
+    for(int i = 0; i < indices.size(); i++){
+        ofIndexType index = indices[i];
         ofPoint p = verts[ index ];
         
         if( ptCreated[index] == false ){
@@ -557,11 +557,11 @@ void ofPrimitiveBase::mergeDuplicateVerticies() {
     verts.clear();
     verts = newPoints;
     
-    indicies.clear();
-    indicies = newIndexes;
+    indices.clear();
+    indices = newIndexes;
     
     getMesh().clearIndices();
-    getMesh().addIndices(indicies);
+    getMesh().addIndices(indices);
     getMesh().clearVertices();
     getMesh().addVertices( verts );
     
@@ -1359,7 +1359,7 @@ ofMesh ofGetCylinderMesh( float radius, float height, int radiusSegments, int he
     maxTexYNormalized   = 1.f;
     if(bCapped) maxTexYNormalized = (heightSegments) / maxTexY;
     
-    // cylinder verticies //
+    // cylinder vertices //
     for(int iy = 0; iy < heightSegments; iy++) {
         normal.set(1,0,0);
         for(int ix = 0; ix < radiusSegments; ix++) {
@@ -1497,25 +1497,25 @@ void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, in
     // 0 -> top cap
     _strides[0][0] = 0;
     _strides[0][1] = resX * resZ * indexStep;
-    _verticies[0][0] = 0;
-    _verticies[0][1] = getResolution().x * getResolution().z;
+    _vertices[0][0] = 0;
+    _vertices[0][1] = getResolution().x * getResolution().z;
     
     // 1 -> cylinder //
     if(bCapped) {
         _strides[1][0] = _strides[0][0] + _strides[0][1];
-        _verticies[1][0] = _verticies[0][0] + _verticies[0][1];
+        _vertices[1][0] = _vertices[0][0] + _vertices[0][1];
     } else {
         _strides[1][0] = 0;
-        _verticies[1][0] = 0;
+        _vertices[1][0] = 0;
     }
     _strides[1][1] = resX * resY * indexStep;
-    _verticies[1][1] = getResolution().x * getResolution().y;
+    _vertices[1][1] = getResolution().x * getResolution().y;
     
     // 2 -> bottom cap
     _strides[2][0] = _strides[1][0] + _strides[1][1];
     _strides[2][1] = resX * resZ * indexStep;
-    _verticies[2][0] = _verticies[1][0]+_verticies[1][1];
-    _verticies[2][1] = getResolution().x * getResolution().z;
+    _vertices[2][0] = _vertices[1][0]+_vertices[1][1];
+    _vertices[2][1] = getResolution().x * getResolution().z;
     
     
     getMesh().clear();
@@ -1570,7 +1570,7 @@ void ofCylinderPrimitive::setTopCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndicies( _strides[0][0], _strides[0][0]+_strides[0][1], color );
+    setColorForIndices( _strides[0][0], _strides[0][0]+_strides[0][1], color );
 }
 
 //--------------------------------------------------------------
@@ -1578,7 +1578,7 @@ void ofCylinderPrimitive::setCylinderColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndicies( _strides[1][0], _strides[1][0]+_strides[1][1], color );
+    setColorForIndices( _strides[1][0], _strides[1][0]+_strides[1][1], color );
 }
 
 //--------------------------------------------------------------
@@ -1586,12 +1586,12 @@ void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndicies( _strides[2][0], _strides[2][0]+_strides[2][1], color );
+    setColorForIndices( _strides[2][0], _strides[2][0]+_strides[2][1], color );
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getTopCapIndicies() {
-    return ofPrimitiveBase::getIndicies( _strides[0][0], _strides[0][0] + _strides[0][1] );
+vector<ofIndexType> ofCylinderPrimitive::getTopCapIndices() {
+    return ofPrimitiveBase::getIndices( _strides[0][0], _strides[0][0] + _strides[0][1] );
 }
 
 //--------------------------------------------------------------
@@ -1601,15 +1601,15 @@ ofMesh ofCylinderPrimitive::getTopCapMesh() {
         return ofMesh();
     }
     return getMeshForIndexes( _strides[0][0], _strides[0][0]+_strides[0][1],
-                             _verticies[0][0], _verticies[0][0]+_verticies[0][1] );
+                             _vertices[0][0], _vertices[0][0]+_vertices[0][1] );
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getCylinderIndicies() {
+vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndicies( _strides[1][0], _strides[1][0] + _strides[1][1] );
+    return ofPrimitiveBase::getIndices( _strides[1][0], _strides[1][0] + _strides[1][1] );
 }
 
 //--------------------------------------------------------------
@@ -1619,15 +1619,15 @@ ofMesh ofCylinderPrimitive::getCylinderMesh() {
         return ofMesh();
     }
     return getMeshForIndexes( _strides[1][0], _strides[1][0]+_strides[1][1],
-                             _verticies[1][0], _verticies[1][0]+_verticies[1][1] );
+                             _vertices[1][0], _vertices[1][0]+_vertices[1][1] );
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndicies() {
+vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndicies( _strides[2][0], _strides[2][0] + _strides[2][1] );
+    return ofPrimitiveBase::getIndices( _strides[2][0], _strides[2][0] + _strides[2][1] );
 }
 
 //--------------------------------------------------------------
@@ -1637,7 +1637,7 @@ ofMesh ofCylinderPrimitive::getBottomCapMesh() {
         return ofMesh();
     }
     return getMeshForIndexes( _strides[2][0], _strides[2][0]+_strides[2][1],
-                             _verticies[2][0], _verticies[2][0]+_verticies[2][1] );
+                             _vertices[2][0], _vertices[2][0]+_vertices[2][1] );
 }
 
 //--------------------------------------------------------------
@@ -1695,7 +1695,7 @@ ofMesh ofGetConeMesh( float radius, float height, int radiusSegments, int height
     float crossAngle = ofVec3f(radius, 1, 0).angle( ofVec3f(0,1,0) );
     ofVec3f startVec(0, -halfH-1.f, 0);
     
-    // cone verticies //
+    // cone vertices //
     for(int iy = 0; iy < heightSegments; iy++) {
         normal.set(1,0,0);
         for(int ix = 0; ix < radiusSegments; ix++) {
@@ -1845,13 +1845,13 @@ void ofConePrimitive::set( float radius, float height, int radiusSegments, int h
     
     _strides[ 0 ][0] = 0;
     _strides[ 0 ][1] = (resX)*(resY) * indexStep;
-    _verticies[0][0] = 0;
-    _verticies[0][1] = getResolution().x * getResolution().y;
+    _vertices[0][0] = 0;
+    _vertices[0][1] = getResolution().x * getResolution().y;
     
     _strides[ 1 ][0] = _strides[ 0 ][0] + _strides[ 0 ][1];
     _strides[ 1 ][1] = (resX)*(resZ) * indexStep;
-    _verticies[1][0] = _verticies[0][0] + _verticies[0][1];
-    _verticies[1][1] = getResolution().x * getResolution().z;
+    _vertices[1][0] = _vertices[0][0] + _vertices[0][1];
+    _vertices[1][1] = getResolution().x * getResolution().z;
     
     getMesh().clear();
     _mesh = ofGetConeMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
@@ -1904,7 +1904,7 @@ void ofConePrimitive::setTopColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndicies( _strides[0][0], _strides[0][0]+_strides[0][1], color );
+    setColorForIndices( _strides[0][0], _strides[0][0]+_strides[0][1], color );
 }
 
 //--------------------------------------------------------------
@@ -1912,15 +1912,15 @@ void ofConePrimitive::setCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndicies( _strides[1][0], _strides[1][0]+_strides[1][1], color );
+    setColorForIndices( _strides[1][0], _strides[1][0]+_strides[1][1], color );
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofConePrimitive::getConeIndicies() {
+vector<ofIndexType> ofConePrimitive::getConeIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndicies(_strides[0][0], _strides[0][0]+_strides[0][1]);
+    return ofPrimitiveBase::getIndices(_strides[0][0], _strides[0][0]+_strides[0][1]);
 }
 
 //--------------------------------------------------------------
@@ -1928,8 +1928,8 @@ ofMesh ofConePrimitive::getConeMesh() {
     int startIndex  = _strides[0][0];
     int endIndex    = startIndex + _strides[0][1];
     
-    int startVertIndex  = _verticies[0][0];
-    int endVertIndex    = startVertIndex + _verticies[0][1];
+    int startVertIndex  = _vertices[0][0];
+    int endVertIndex    = startVertIndex + _vertices[0][1];
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
         return ofMesh();
@@ -1938,11 +1938,11 @@ ofMesh ofConePrimitive::getConeMesh() {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofConePrimitive::getCapIndicies() {
+vector<ofIndexType> ofConePrimitive::getCapIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndicies( _strides[1][0], _strides[1][0] + _strides[1][1] );
+    return ofPrimitiveBase::getIndices( _strides[1][0], _strides[1][0] + _strides[1][1] );
 }
 
 //--------------------------------------------------------------
@@ -1950,8 +1950,8 @@ ofMesh ofConePrimitive::getCapMesh() {
     int startIndex  = _strides[1][0];
     int endIndex    = startIndex + _strides[1][1];
     
-    int startVertIndex  = _verticies[1][0];
-    int endVertIndex    = startVertIndex + _verticies[1][1];
+    int startVertIndex  = _vertices[1][0];
+    int endVertIndex    = startVertIndex + _vertices[1][1];
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
         return ofMesh();
@@ -2258,38 +2258,38 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     //FRONT, resY, resX
     _strides[ SIDE_FRONT ][0] = 0;
     _strides[ SIDE_FRONT ][1] = (resY-1)*(resX-1)*6;
-    _verticies[SIDE_FRONT][0] = 0;
-    _verticies[SIDE_FRONT][1] = resX * resY;
+    _vertices[SIDE_FRONT][0] = 0;
+    _vertices[SIDE_FRONT][1] = resX * resY;
     
     //RIGHT, resY, resZ
     _strides[ SIDE_RIGHT ][0] = _strides[ SIDE_FRONT ][0] + _strides[ SIDE_FRONT ][1];
     _strides[ SIDE_RIGHT ][1] = (resY-1)*(resZ-1)*6;
-    _verticies[SIDE_RIGHT][0] = _verticies[SIDE_FRONT][0] + _verticies[SIDE_FRONT][1];
-    _verticies[SIDE_RIGHT][1] = resY * resZ;
+    _vertices[SIDE_RIGHT][0] = _vertices[SIDE_FRONT][0] + _vertices[SIDE_FRONT][1];
+    _vertices[SIDE_RIGHT][1] = resY * resZ;
     
     //LEFT, resY, resZ
     _strides[ SIDE_LEFT ][0] = _strides[ SIDE_RIGHT ][0] + _strides[ SIDE_RIGHT ][1];
     _strides[ SIDE_LEFT ][1] = (resY-1)*(resZ-1)*6;
-    _verticies[SIDE_LEFT][0] = _verticies[SIDE_RIGHT][0] + _verticies[SIDE_RIGHT][1];
-    _verticies[SIDE_LEFT][1] = resY * resZ;
+    _vertices[SIDE_LEFT][0] = _vertices[SIDE_RIGHT][0] + _vertices[SIDE_RIGHT][1];
+    _vertices[SIDE_LEFT][1] = resY * resZ;
     
     //BACK, resY, resX
     _strides[ SIDE_BACK ][0] = _strides[ SIDE_LEFT ][0] + _strides[ SIDE_LEFT ][1];
     _strides[ SIDE_BACK ][1] = (resY-1)*(resX-1)*6;
-    _verticies[SIDE_BACK][0] = _verticies[SIDE_LEFT][0] + _verticies[SIDE_LEFT][1];
-    _verticies[SIDE_BACK][1] = resY * resX;
+    _vertices[SIDE_BACK][0] = _vertices[SIDE_LEFT][0] + _vertices[SIDE_LEFT][1];
+    _vertices[SIDE_BACK][1] = resY * resX;
     
     //TOP, resZ, resX
     _strides[ SIDE_TOP ][0] = _strides[ SIDE_BACK ][0] + _strides[ SIDE_BACK ][1];
     _strides[ SIDE_TOP ][1] = (resZ-1)*(resX-1)*6;
-    _verticies[SIDE_TOP][0] = _verticies[SIDE_BACK][0] + _verticies[SIDE_BACK][1];
-    _verticies[SIDE_TOP][1] = resZ * resX;
+    _vertices[SIDE_TOP][0] = _vertices[SIDE_BACK][0] + _vertices[SIDE_BACK][1];
+    _vertices[SIDE_TOP][1] = resZ * resX;
     
     //BOTTOM, resZ, resX
     _strides[ SIDE_BOTTOM ][0] = _strides[ SIDE_TOP ][0]+_strides[ SIDE_TOP ][1];
     _strides[ SIDE_BOTTOM ][1] = (resZ-1)*(resX-1)*6;
-    _verticies[SIDE_BOTTOM][0] = _verticies[SIDE_TOP][0] + _verticies[SIDE_TOP][1];
-    _verticies[SIDE_BOTTOM][1] = resZ * resX;
+    _vertices[SIDE_BOTTOM][0] = _vertices[SIDE_TOP][0] + _vertices[SIDE_TOP][1];
+    _vertices[SIDE_BOTTOM][1] = resZ * resX;
     
     _mesh.clear();
     _mesh = ofGetBoxMesh( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
@@ -2332,14 +2332,14 @@ void ofBoxPrimitive::resizeToTexture( ofTexture& inTexture ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofBoxPrimitive::getSideIndicies( int sideIndex ) {
+vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) {
     
     if(sideIndex < 0 || sideIndex >= SIDES_TOTAL) {
-        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getSideIndicies : faceIndex out of bounds, returning SIDE_FRONT ";
+        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getSideIndices : faceIndex out of bounds, returning SIDE_FRONT ";
         sideIndex = SIDE_FRONT;
     }
     
-    return getIndicies(_strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1]);
+    return getIndices(_strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1]);
 }
 
 //--------------------------------------------------------------
@@ -2352,8 +2352,8 @@ ofMesh ofBoxPrimitive::getSideMesh( int sideIndex ) {
     int startIndex  = _strides[sideIndex][0];
     int endIndex    = startIndex+_strides[sideIndex][1];
     
-    int startVertIndex  = _verticies[sideIndex][0];
-    int endVertIndex    = startVertIndex + _verticies[sideIndex][1];
+    int startVertIndex  = _vertices[sideIndex][0];
+    int endVertIndex    = startVertIndex + _vertices[sideIndex][1];
     
     return getMeshForIndexes( startIndex, endIndex, startVertIndex, endVertIndex );
 }
@@ -2381,7 +2381,7 @@ void ofBoxPrimitive::setSideColor( int sideIndex, ofColor color ) {
         ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: setSideColor : sideIndex out of bounds, setting SIDE_FRONT ";
         sideIndex = SIDE_FRONT;
     }
-    setColorForIndicies( _strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1], color );
+    setColorForIndices( _strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1], color );
 }
 
 //--------------------------------------------------------------
