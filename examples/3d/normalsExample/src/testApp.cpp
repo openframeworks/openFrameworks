@@ -99,7 +99,7 @@ void testApp::draw(){
 
     mesh.drawFaces();
     ofSetColor(255,255,255);
-    light.customDraw();
+    light.draw();
     
     
     // draw our normals, and show that they are perpendicular to the vector from the center to the vertex
