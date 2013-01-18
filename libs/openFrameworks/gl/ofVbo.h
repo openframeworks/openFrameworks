@@ -45,6 +45,16 @@ public:
 	void updateNormalData(const float * normal0x, int total);
 	void updateTexCoordData(const float * texCoord0x, int total);
 	
+	void enableColors();
+	void enableNormals();
+	void enableTexCoords();
+	void enableIndices();
+
+	void disableColors();
+	void disableNormals();
+	void disableTexCoords();
+	void disableIndices();
+
 	GLuint getVertId();
 	GLuint getColorId();
 	GLuint getNormalId();
@@ -62,7 +72,14 @@ public:
 	void drawElements(int drawMode, int amt);
 	void bind();
 	void unbind();
+
 	void clear();
+
+	void clearVertices();
+	void clearNormals();
+	void clearColors();
+	void clearTexCoords();
+	void clearIndices();
 
 private:
 

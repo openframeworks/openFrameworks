@@ -112,9 +112,9 @@ int	ofBaseVideoPlayer::getTotalNumFrames(){
 }
 
 //---------------------------------------------------------------------------
-int	ofBaseVideoPlayer::getLoopState(){
+ofLoopType	ofBaseVideoPlayer::getLoopState(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::getLoopState not implemented");
-	return 0;
+	return OF_LOOP_NONE;
 }
 
 //---------------------------------------------------------------------------
