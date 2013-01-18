@@ -22,7 +22,7 @@ bool baseProject::create(string path){
     projectName = ofFilePath::getFileName(path);
     bool bDoesDirExist = false;
 
-    ofDirectory project(projectDir);    // this is a directory, really?
+    ofDirectory project(ofFilePath::join(projectDir,"src"));    // this is a directory, really?
     if(project.exists()){
         bDoesDirExist = true;
     }else{
@@ -61,7 +61,7 @@ bool baseProject::create(string path){
                 addSrc(fileNames[i], first);
             }
         }
-		
+
 //		if( target == "ios" ){
 //			getFilesRecursively(ofFilePath::join(projectDir , "bin/data"), fileNames);
 //
@@ -79,7 +79,7 @@ bool baseProject::create(string path){
 //				}
 //			}
 //		}
-		
+
 #ifdef TARGET_LINUX
     		parseAddons();
 #endif
