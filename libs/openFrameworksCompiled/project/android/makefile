@@ -97,7 +97,7 @@ endif
 
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
 ifeq ($(ARCH),android)
-	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofOpenALSoundPlayer.cpp)
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofOpenALSoundPlayer.cpp | grep -v "ofCairoRenderer.cpp" | grep -v "ofFmodSoundPlayer.cpp")
 else
 	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
 endif
@@ -134,7 +134,7 @@ ifneq ($(ARCH),android)
 endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	TARGET_CFLAGS = -g3
+	TARGET_CFLAGS = -g3 -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 	TARGET_NAME = $(MAKECMDGOALS)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif

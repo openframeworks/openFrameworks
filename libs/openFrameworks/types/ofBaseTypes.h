@@ -16,6 +16,7 @@
 #include "ofColor.h"
 #include "ofMesh.h"
 #include "ofPixels.h"
+#include "ofMatrix4x4.h"
 
 template<typename T>
 class ofImage_;
@@ -260,7 +261,7 @@ public:
 	
 	virtual int					getCurrentFrame();
 	virtual int					getTotalNumFrames();
-	virtual int					getLoopState();
+	virtual ofLoopType			getLoopState();
 	
 	virtual void				firstFrame();
 	virtual void				nextFrame();
@@ -318,7 +319,12 @@ public:
 	virtual void rotateY(float degrees){};
 	virtual void rotateZ(float degrees){};
 	virtual void rotate(float degrees){};
-
+	virtual void loadIdentityMatrix (void){};
+	virtual void loadMatrix (const ofMatrix4x4 & m){};
+	virtual void loadMatrix (const float *m){};
+	virtual void multMatrix (const ofMatrix4x4 & m){};
+	virtual void multMatrix (const float *m){};
+	
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};
 	virtual void setupScreen(){};

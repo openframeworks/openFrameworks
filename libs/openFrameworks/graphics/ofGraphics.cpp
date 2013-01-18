@@ -270,6 +270,31 @@ void ofRotate(float degrees){
 	renderer->rotate(degrees);
 }
 
+//----------------------------------------------------------
+void ofLoadIdentityMatrix (void){
+	renderer->loadIdentityMatrix();
+}
+
+//----------------------------------------------------------
+void ofLoadMatrix (const ofMatrix4x4 & m){
+	renderer->loadMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofLoadMatrix (const float *m){
+	renderer->loadMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofMultMatrix (const ofMatrix4x4 & m){
+	renderer->multMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofMultMatrix (const float *m){
+	renderer->multMatrix(m);
+}
+
 // end transformation matrix related functions
 //----------------------------------------------------------
 
@@ -853,6 +878,11 @@ void ofVertexes( const vector <ofPoint> & polyPoints ){
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
 	shape.curveTo(x,y);
+}
+
+//---------------------------------------------------
+void ofCurveVertex(float x, float y, float z){
+	shape.curveTo(x,y,z);
 }
 
 //----------------------------------------------------------
