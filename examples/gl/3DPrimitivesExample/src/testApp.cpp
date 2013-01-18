@@ -279,12 +279,16 @@ void testApp::draw() {
         if(mode == 3) {
             cylinder.transformGL();
             glPushMatrix(); {
-                ofTranslate( topCap.getNormal(0) * (cos(ofGetElapsedTimef()*5)+1)*.5f * 100 );
-                topCap.draw();
+                if(topCap.getNumNormals() > 0) {
+                    ofTranslate( topCap.getNormal(0) * (cos(ofGetElapsedTimef()*5)+1)*.5f * 100 );
+                    topCap.draw();
+                }
             } glPopMatrix();
             glPushMatrix(); {
-                ofTranslate( bottomCap.getNormal(0) * (cos(ofGetElapsedTimef()*4)+1)*.5f * 100 );
-                bottomCap.draw();
+                if(bottomCap.getNumNormals() > 0) {
+                    ofTranslate( bottomCap.getNormal(0) * (cos(ofGetElapsedTimef()*4)+1)*.5f * 100 );
+                    bottomCap.draw();
+                }
             } glPopMatrix();
             glPushMatrix(); {
                 float scale = (cos(ofGetElapsedTimef()*3)+1)*.5f + .2;
@@ -321,9 +325,11 @@ void testApp::draw() {
         if(mode == 3) {
             cone.transformGL();
             glPushMatrix();
-            ofTranslate( bottomCap.getNormal(0) * cone.getHeight()*.5 );
-            glRotatef( sin(ofGetElapsedTimef()*5) * RAD_TO_DEG, 1, 0, 0);
-            bottomCap.draw();
+            if(bottomCap.getNumNormals() > 0 ) {
+                ofTranslate( bottomCap.getNormal(0) * cone.getHeight()*.5 );
+                glRotatef( sin(ofGetElapsedTimef()*5) * RAD_TO_DEG, 1, 0, 0);
+                bottomCap.draw();
+            }
             glPopMatrix();
             
             glPushMatrix();
@@ -481,18 +487,10 @@ void testApp::keyPressed(int key) {
             bDrawNormals = !bDrawNormals;
             break;
         case OF_KEY_RIGHT:
-            if(mode == 3) {
-                sphere.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-                icoSphere.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-            }
             mode++;
             if(mode > 3) mode = 0;
             break;
         case OF_KEY_LEFT:
-            if(mode == 3) {
-                sphere.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-                icoSphere.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-            }
             mode--;
             if(mode < 0) mode = 3;
             break;
@@ -570,9 +568,26 @@ void testApp::keyPressed(int key) {
         cone.setTexCoordsFromTexture( vidGrabber.getTextureReference() );
     }
     
+    // 
     if( mode == 3 ) {
+        
+        bSplitFaces = false;
+        
+        // if the faces were split, we can get some weird results, since we
+        // might not know what the new strides were,
+        // so reset the primitives by calling their setMode function
+        // which recreates the mesh with the proper indicies //
+        sphere.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+        icoSphere.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+        cylinder.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
+        cone.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
+        // box only supports triangles //
+        box.setMode( OF_PRIMITIVE_TRIANGLES );
+        
         plane.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
         plane.setTexCoords(0, 0, 5, 5);
+        
+        // rebuild the box, 
         box.setTexCoords(0, 0, 5, 5);
         sphere.setTexCoords(0, 0, 5, 5);
         icoSphere.setTexCoords(0, 0, 5, 5);
