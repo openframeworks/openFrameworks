@@ -12,56 +12,54 @@
 #include <map>
 
 //----------------------------------------------------------
-static map<of3dPrimitiveType, of3dModel*>& getCached3dPrimitives() {
-    static map<of3dPrimitiveType, of3dModel*>* primitives = new map<of3dPrimitiveType, of3dModel*>;
+static map<of3dPrimitiveType, ofPrimitiveBase*>& getCached3dPrimitives() {
+    static map<of3dPrimitiveType, ofPrimitiveBase*>* primitives = new map<of3dPrimitiveType, ofPrimitiveBase*>;
     return *primitives;
 }
-//static map<of3dPrimitiveType, of3dModel> primitives = map<of3dPrimitiveType, of3dModel>();
 
 //----------------------------------------------------------
-static of3dModel& getCached3dPrimitive( of3dPrimitiveType type ) {
+static ofPrimitiveBase& getCached3dPrimitive( of3dPrimitiveType type ) {
     switch (type) {
         case OF_3D_PRIMITIVE_PLANE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
                 cout << "of3dGraphics :: getCached3dPrimitive : inserting plane - " << type << endl;
                 getCached3dPrimitives().insert( make_pair<of3dPrimitiveType,
-                                               of3dModel*>(type, new ofPlanePrimitive(1.0f, 1.0f, 6, 4)));
+                                               ofPrimitiveBase*>(type, new ofPlanePrimitive(1.0f, 1.0f, 6, 4)));
             }
             break;
         case OF_3D_PRIMITIVE_SPHERE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
                 cout << "of3dGraphics :: getCached3dPrimitive : inserting sphere - " << type << endl;
                 getCached3dPrimitives().insert( make_pair<of3dPrimitiveType,
-                                               of3dModel*>(type, new ofSpherePrimitive(1.0f, 4)));
+                                               ofPrimitiveBase*>(type, new ofSpherePrimitive(1.0f, 4)));
             }
             break;
         case OF_3D_PRIMITIVE_ICO_SPHERE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
                 cout << "of3dGraphics :: getCached3dPrimitive : inserting ICO sphere - " << type << endl;
                 getCached3dPrimitives().insert( make_pair<of3dPrimitiveType,
-                                               of3dModel*>(type, new ofIcoSpherePrimitive(1.0f, 2)));
+                                               ofPrimitiveBase*>(type, new ofIcoSpherePrimitive(1.0f, 2)));
             }
             break;
         case OF_3D_PRIMITIVE_BOX:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
                 cout << "of3dGraphics :: getCached3dPrimitive : inserting box " << type << endl;
                 getCached3dPrimitives().insert(make_pair<of3dPrimitiveType,
-                                               of3dModel*>(type, new  ofBoxPrimitive( 1.f, 1.f, 1.f )  ));
+                                               ofPrimitiveBase*>(type, new  ofBoxPrimitive( 1.f, 1.f, 1.f )  ));
             }
             break;
         case OF_3D_PRIMITIVE_CONE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
                 cout << "of3dGraphics :: getCached3dPrimitive : inserting cone " << type << endl;
-                // ofGetConeMesh( float radius, float height, int radiusSegments, int heightSegments, int capSegments )
                 getCached3dPrimitives().insert(make_pair<of3dPrimitiveType,
-                                      of3dModel*>(type, new ofConePrimitive( 1.f, 1.f, 9, 3, 2)));
+                                      ofPrimitiveBase*>(type, new ofConePrimitive( 1.f, 1.f, 9, 3, 2)));
             }
             break;
         case OF_3D_PRIMITIVE_CYLINDER:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end() ) {
                 cout << "of3dGraphics :: getCached3dPrimitive : inserting Cylinder - " << endl;
                 getCached3dPrimitives().insert( make_pair<of3dPrimitiveType,
-                                               of3dModel*>(type, new ofCylinderPrimitive(1.f, 1.f, 8, 4, 2, true)));
+                                               ofPrimitiveBase*>(type, new ofCylinderPrimitive(1.f, 1.f, 8, 4, 2, true)));
             }
             break;
         default:
@@ -71,7 +69,7 @@ static of3dModel& getCached3dPrimitive( of3dPrimitiveType type ) {
 }
 
 //----------------------------------------------------------
-static void renderCached3dPrimitive( of3dModel& model ) {
+static void renderCached3dPrimitive( ofPrimitiveBase& model ) {
     if(ofGetFill() == OF_OUTLINE) {
         model.draw(OF_MESH_WIREFRAME);
     } else {
@@ -112,7 +110,7 @@ void ofPlane(ofPoint& position, float width, float height) {
 
 //----------------------------------------------------------
 void ofPlane( float width, float height ) {
-    of3dModel& plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE );
+    ofPrimitiveBase& plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE );
     plane.setScale( width, height, 1.0 );
     renderCached3dPrimitive( plane );
 }
@@ -151,7 +149,7 @@ void ofSphere(const ofPoint& position, float radius) {
 
 //----------------------------------------------------------
 void ofSphere(float radius) {
-    of3dModel& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE );
+    ofPrimitiveBase& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE );
     sphere.setScale( radius, radius, radius );
     renderCached3dPrimitive( sphere );
 }
@@ -190,7 +188,7 @@ void ofIcoSphere(const ofPoint& position, float radius) {
 
 //----------------------------------------------------------
 void ofIcoSphere(float radius) {
-    of3dModel& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE );
+    ofPrimitiveBase& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE );
     sphere.setScale( radius );
     renderCached3dPrimitive( sphere );
 }
@@ -218,7 +216,7 @@ void ofCylinder(const ofPoint& position, float radius, float height) {
     ofCylinder( position.x, position.y, position.z, radius, height );
 }
 void ofCylinder(float radius, float height) {
-    of3dModel& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER );
+    ofPrimitiveBase& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER );
     mesh.setScale( radius, height, radius );
     renderCached3dPrimitive( mesh );
 }
@@ -258,7 +256,7 @@ void ofCone(const ofPoint& position, float radius, float height) {
 
 //----------------------------------------------------------
 void ofCone(float radius, float height) {
-    of3dModel& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE );
+    ofPrimitiveBase& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE );
     mesh.setScale( radius, height, radius );
     renderCached3dPrimitive( mesh );
 }
@@ -314,7 +312,7 @@ void ofBox(float size) {
 
 //----------------------------------------------------------
 void ofBox( float width, float height, float depth ) {
-    of3dModel& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX );
+    ofPrimitiveBase& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX );
     mesh.setScale( width, height, depth );
     renderCached3dPrimitive( mesh );
 }

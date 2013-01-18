@@ -387,7 +387,7 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::draw( of3dModel& model, ofPolyRenderMode renderType  ) {
+void ofCairoRenderer::draw( ofPrimitiveBase& model, ofPolyRenderMode renderType  ) {
     
     if(model.hasScaling()) {
         ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
@@ -397,10 +397,8 @@ void ofCairoRenderer::draw( of3dModel& model, ofPolyRenderMode renderType  ) {
         //glScalef( scale.x, scale.y, scale.z);
     }
     
-    for(int i = 0; i < model.getNumMeshes(); i++) {
-        //ofMesh& mesh = model.getMesh( i );
-        //draw( mesh, renderType, false, false, false );
-    }
+    ofMesh& mesh = model.getMesh();
+    draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
     
     if(model.hasScaling()) {
         //glPopMatrix();
