@@ -22,43 +22,61 @@ enum of3dPrimitiveType {
     OF_3D_PRIMITIVE_CYLINDER
 };
 
-
-class of3dModel : public ofNode {
+class of3dTriangle {
 public:
-    of3dModel();
-    virtual ~of3dModel();
+    of3dTriangle() {
+        bHasNormals = bHasColors = bHasTexcoords = false;
+    }
+    
+    ofPoint points[3];
+    ofVec3f faceNormal;
+    ofVec3f normals[3];
+    ofFloatColor colors[3];
+    ofVec2f texcoords[3];
+    
+    void setHasColors( bool bColors ) {bHasColors = bColors; }
+    void setHasNormals( bool bNormals ) {bHasNormals = bNormals; }
+    void setHasTexcoords( bool bTexcoords ) {bHasTexcoords = bTexcoords; }
+    
+    bool hasColors() { return bHasColors; }
+    bool hasNormals() {return bHasNormals; }
+    bool hasTexcoords() { return bHasTexcoords; }
+    
+protected:
+    bool bHasNormals, bHasColors, bHasTexcoords;
+    
+};
+
+
+class ofPrimitiveBase : public ofNode {
+public:
+    ofPrimitiveBase();
+    virtual ~ofPrimitiveBase();
     
     // applies to all the meshes evenly //
     void setTexCoords( float u1, float v1, float u2, float v2 );
     // apply to a specific mesh //
-    void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
+    //void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
     // does not store texture. Creates tex coords from texture, if texture is
     // non-arb, then it will create normalized tex coords //
     // defaults to index 0 
-    void setTexCoordsFromTexture( ofTexture& inTexture, int tCoordsIndex=0 );
+    void setTexCoordsFromTexture( ofTexture& inTexture );
     // useful when creating a new model, since it uses normalized tex coords //
-    void normalizeAndApplySavedTexCoords( int meshIndex );
+    void normalizeAndApplySavedTexCoords();
     
-    void addMesh( ofMesh& mesh );
-    
-    int getNumMeshes();
-    ofMesh* getMeshPtr(int meshIndex);
-    ofMesh& getMesh( int meshIndex=0 );
-    vector<ofMesh>& getMeshes();
-    
-    int getNumTextures();
-    ofTexture* getTexturePtr(int texIndex);
-    ofTexture& getTexture( int texIndex);
-    map<int, ofTexture>& getTextures();
+    ofMesh* getMeshPtr();
+    ofMesh& getMesh();
     
     int getNumTexcoords();
-    ofVec4f* getTexCoordPtr( int texCoordIndex );
-    ofVec4f& getTexCoord( int texCoordIndex );
-    map<int, ofVec4f>& getTexCoords();
+    ofVec4f* getTexCoordsPtr();
+    ofVec4f& getTexCoords();
+    //map<int, ofVec4f>& getTexCoords();
     
     bool hasScaling();
     bool hasNormalsEnabled();
     ofVec3f getResolution() const;
+    
+    void mergeDuplicateVerticies();
     
     void enableNormals();
     void enableTextures();
@@ -67,6 +85,14 @@ public:
     void disableNormals();
     void disableTextures();
     void disableColors();
+    
+    // return a list of triangles that do not share verticies or indicies //
+    ofVec3f getFaceNormal(of3dTriangle& tri);
+    vector<of3dTriangle> getUniqueTriangles();
+    vector<ofVec3f> getFaceNormals( bool perVetex=false);
+    void setFromTriangles( vector<of3dTriangle>& tris, bool bUseFaceNormal=false );
+    
+    void smoothNormals( float angle );
     
     void setResolution( int resX, int resY, int resZ );
     
@@ -79,33 +105,34 @@ public:
     void drawFaces();
     void draw();
     void draw(ofPolyRenderMode renderType);
-    void drawNormals( float length );
+    void drawNormals( float length, bool bFaceNormals=false );
+    void drawAxes(float a_size);
     
 protected:
-    vector<ofMesh>      _meshes;
-    map<int, ofVec4f>   _texCoords;
-    map<int, ofTexture> _textures;
+    ofMesh  _mesh;
+    ofVec4f _texCoords;
     
     ofVec3f _resolution;
     vector<ofIndexType> getIndicies( int startIndex, int endIndex );
-    void setColorForIndicies(int meshIndex, int startIndex, int endIndex, ofColor color );
-    ofMesh getMeshForIndexes(int meshIndex, int startIndex, int endIndex, int startVertIndex, int endVertIndex );
+    void setColorForIndicies( int startIndex, int endIndex, ofColor color );
+    ofMesh getMeshForIndexes( int startIndex, int endIndex, int startVertIndex, int endVertIndex );
 };
 
-class ofPlanePrimitive : public of3dModel {
+class ofPlanePrimitive : public ofPrimitiveBase {
 public:
     ofPlanePrimitive();
     ofPlanePrimitive( float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofPlanePrimitive();
     
     void set(float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
-    void setDimensions( float width, float height );
-    void resizeToTexture( ofTexture& inTexture );
+    void set( float width, float height );
+    void resizeToTexture( ofTexture& inTexture, float scale=1.f );
     void setWidth( float width );
     void setHeight( float height );
     
     void setResolution( int columns, int rows );
     void setResolution(int resX, int resY, int resZ);
+    void setMode( ofPrimitiveMode mode );
     
     float getWidth();
     float getHeight();
@@ -115,15 +142,17 @@ protected:
     float _height;
 };
 
-class ofSpherePrimitive : public of3dModel {
+class ofSpherePrimitive : public ofPrimitiveBase {
 public:
     ofSpherePrimitive();
-    ofSpherePrimitive( float radius, int res );
+    ofSpherePrimitive( float radius, int res, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofSpherePrimitive();
     
-    void set( float radius, int resolution );
+    void set( float radius, int resolution, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void setResolution( int res );
     void setResolution( int resX, int resY, int resZ );
+    
+    void setMode( ofPrimitiveMode mode );
     
     void setRadius(float radius);
     float getRadius();
@@ -132,7 +161,7 @@ protected:
     float _radius;
 };
 
-class ofIcoSpherePrimitive : public of3dModel {
+class ofIcoSpherePrimitive : public ofPrimitiveBase {
 public:
     ofIcoSpherePrimitive();
     ofIcoSpherePrimitive( float radius, int iterations );
@@ -142,6 +171,7 @@ public:
     void setResolution( int iterations );
     void setResolution( int resX, int resY, int resZ );
     void setRadius(float radius);
+    void setMode( ofPrimitiveMode mode );
     
     float getRadius();
     
@@ -149,19 +179,20 @@ protected:
     float _radius;
 };
 
-class ofCylinderPrimitive : public of3dModel {
+class ofCylinderPrimitive : public ofPrimitiveBase {
 public:
     ofCylinderPrimitive();
     ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofCylinderPrimitive();
     
     void set( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped=true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
-    void set( float radius, float height );
+    void set( float radius, float height, bool bCapped=true );
     void setRadius( float radius );
     void setHeight( float height );
     void setCapped( bool bCapped );
     
-    void setResolution( int radiusSegments=7, int heightSegments=3, int capSegments=2 );
+    void setResolution( int radiusSegments, int heightSegments, int capSegments=2 );
+    void setMode( ofPrimitiveMode mode );
     
     void setTopCapColor( ofColor color );
     void setCylinderColor( ofColor color );
@@ -185,7 +216,7 @@ protected:
     int _verticies[3][2];
 };
 
-class ofConePrimitive : public of3dModel {
+class ofConePrimitive : public ofPrimitiveBase {
 public:
     
     ofConePrimitive();
@@ -196,14 +227,15 @@ public:
     void set( float radius, float height );
     void setResolution( int radiusSegments, int heightSegments );
     void setResolution( int resX, int resY, int resZ );
+    void setMode( ofPrimitiveMode mode );
     void setRadius( float radius );
     void setHeight( float height );
     
     void setTopColor( ofColor color );
     void setCapColor( ofColor color );
     
-    vector<ofIndexType> getTopIndicies();
-    ofMesh getTopMesh();
+    vector<ofIndexType> getConeIndicies();
+    ofMesh getConeMesh();
     vector<ofIndexType> getCapIndicies();
     ofMesh getCapMesh();
     
@@ -219,7 +251,7 @@ protected:
     int _verticies[2][2];
 };
 
-class ofBoxPrimitive : public of3dModel {
+class ofBoxPrimitive : public ofPrimitiveBase {
 public:
     
     enum BoxSides {
@@ -251,6 +283,7 @@ public:
     
     void setResolution( int res ); // same resolution for all sides //
     void setResolution( int resX, int resY, int resZ );
+    void setMode( ofPrimitiveMode mode );
     void setSideColor( int sideIndex, ofColor color );
     
     float getWidth();
