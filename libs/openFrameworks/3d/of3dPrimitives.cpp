@@ -1567,16 +1567,25 @@ void ofCylinderPrimitive::setMode( ofPrimitiveMode mode ) {
 
 //--------------------------------------------------------------
 void ofCylinderPrimitive::setTopCapColor( ofColor color ) {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+    }
     setColorForIndicies( _strides[0][0], _strides[0][0]+_strides[0][1], color );
 }
 
 //--------------------------------------------------------------
 void ofCylinderPrimitive::setCylinderColor( ofColor color ) {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+    }
     setColorForIndicies( _strides[1][0], _strides[1][0]+_strides[1][1], color );
 }
 
 //--------------------------------------------------------------
 void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+    }
     setColorForIndicies( _strides[2][0], _strides[2][0]+_strides[2][1], color );
 }
 
@@ -1587,28 +1596,46 @@ vector<ofIndexType> ofCylinderPrimitive::getTopCapIndicies() {
 
 //--------------------------------------------------------------
 ofMesh ofCylinderPrimitive::getTopCapMesh() {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        return ofMesh();
+    }
     return getMeshForIndexes( _strides[0][0], _strides[0][0]+_strides[0][1],
                              _verticies[0][0], _verticies[0][0]+_verticies[0][1] );
 }
 
 //--------------------------------------------------------------
 vector<ofIndexType> ofCylinderPrimitive::getCylinderIndicies() {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+    }
     return ofPrimitiveBase::getIndicies( _strides[1][0], _strides[1][0] + _strides[1][1] );
 }
 
 //--------------------------------------------------------------
 ofMesh ofCylinderPrimitive::getCylinderMesh() {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        return ofMesh();
+    }
     return getMeshForIndexes( _strides[1][0], _strides[1][0]+_strides[1][1],
                              _verticies[1][0], _verticies[1][0]+_verticies[1][1] );
 }
 
 //--------------------------------------------------------------
 vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndicies() {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+    }
     return ofPrimitiveBase::getIndicies( _strides[2][0], _strides[2][0] + _strides[2][1] );
 }
 
 //--------------------------------------------------------------
 ofMesh ofCylinderPrimitive::getBottomCapMesh() {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        return ofMesh();
+    }
     return getMeshForIndexes( _strides[2][0], _strides[2][0]+_strides[2][1],
                              _verticies[2][0], _verticies[2][0]+_verticies[2][1] );
 }
@@ -1874,16 +1901,25 @@ void ofConePrimitive::setHeight(float height) {
 
 //--------------------------------------------------------------
 void ofConePrimitive::setTopColor( ofColor color ) {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+    }
     setColorForIndicies( _strides[0][0], _strides[0][0]+_strides[0][1], color );
 }
 
 //--------------------------------------------------------------
 void ofConePrimitive::setCapColor( ofColor color ) {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+    }
     setColorForIndicies( _strides[1][0], _strides[1][0]+_strides[1][1], color );
 }
 
 //--------------------------------------------------------------
 vector<ofIndexType> ofConePrimitive::getConeIndicies() {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+    }
     return ofPrimitiveBase::getIndicies(_strides[0][0], _strides[0][0]+_strides[0][1]);
 }
 
@@ -1894,11 +1930,18 @@ ofMesh ofConePrimitive::getConeMesh() {
     
     int startVertIndex  = _verticies[0][0];
     int endVertIndex    = startVertIndex + _verticies[0][1];
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        return ofMesh();
+    }
     return getMeshForIndexes( startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
 //--------------------------------------------------------------
 vector<ofIndexType> ofConePrimitive::getCapIndicies() {
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+    }
     return ofPrimitiveBase::getIndicies( _strides[1][0], _strides[1][0] + _strides[1][1] );
 }
 
@@ -1909,6 +1952,10 @@ ofMesh ofConePrimitive::getCapMesh() {
     
     int startVertIndex  = _verticies[1][0];
     int endVertIndex    = startVertIndex + _verticies[1][1];
+    if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
+        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        return ofMesh();
+    }
     return getMeshForIndexes( startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
@@ -2325,7 +2372,7 @@ void ofBoxPrimitive::setResolution( int resX, int resY, int resZ ) {
 //----------------------------------------------------------
 void ofBoxPrimitive::setMode( ofPrimitiveMode mode ) {
     // only supports triangles //
-    //setResolution( getResolution().x, getResolution().y, getResolution().z );
+    setResolution( getResolution().x, getResolution().y, getResolution().z );
 }
 
 //--------------------------------------------------------------
