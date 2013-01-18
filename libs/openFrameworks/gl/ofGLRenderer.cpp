@@ -128,7 +128,7 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw( of3dModel& model, ofPolyRenderMode renderType  ) {
+void ofGLRenderer::draw( ofPrimitiveBase& model, ofPolyRenderMode renderType  ) {
     
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         glEnable( GL_NORMALIZE );
@@ -137,10 +137,7 @@ void ofGLRenderer::draw( of3dModel& model, ofPolyRenderMode renderType  ) {
         //glScalef( scale.x, scale.y, scale.z);
     }
     
-    for(int i = 0; i < model.getNumMeshes(); i++) {
-        ofMesh& mesh = model.getMesh( i );
-        draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
-    }
+    draw( model.getMesh(), renderType, model.getMesh().usingColors(), model.getMesh().usingTextures(), model.getMesh().usingNormals() );
     
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         //glPopMatrix();
