@@ -220,7 +220,7 @@ void ofVideoPlayer::setLoopState(ofLoopType state){
 	}
 }
 
-int	ofVideoPlayer::getLoopState(){
+ofLoopType ofVideoPlayer::getLoopState(){
 	if( player != NULL ){
 		return player->getLoopState();
 	}else{
