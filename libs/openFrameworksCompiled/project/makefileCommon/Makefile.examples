@@ -29,7 +29,7 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
-	else ifeq ($(shell uname),MINGW32_NT-6.1)
+	else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
 		HOST_PLATFORM = windows
 	else
 		HOST_PLATFORM = linux-x86
@@ -59,22 +59,22 @@ endif
 SHELL =  /bin/sh
 
 NODEPS = clean
-SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')
-SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v "$(SED_EXCLUDE_FROM_SRC)" | sed s/.\\///)
-SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')\|^\..*\|\/\..*
+SOURCE_DIRS = $(shell find . -type d 2> /dev/null | sed s/.\\/// | grep -v "$(SED_EXCLUDE_FROM_SRC)" )
+SOURCES = $(shell find $(SOURCE_DIRS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" 2> /dev/null)
 OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(SOURCES)))))
 
 ifneq (,$(USER_SOURCE_DIR))
-	USER_SOURCES = $(shell find $(USER_SOURCE_DIR) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx")
+	USER_SOURCES = $(shell find $(USER_SOURCE_DIR) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" 2> /dev/null)
 	USER_OBJFILES =  $(subst $(USER_SOURCE_DIR)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(USER_SOURCES))))))
 endif
 
 ifeq ($(APPNAME),)
     APPNAME = $(shell basename `pwd`)
 endif
-CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d)
+CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d 2> /dev/null)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find $(OF_ROOT)/libs/*/include -type d | grep -v glu | grep -v quicktime | grep -v poco | grep -v glew)
+INCLUDES = $(shell find $(OF_ROOT)/libs/*/include -type d 2> /dev/null | grep -v glu | grep -v quicktime | grep -v poco | grep -v glew )
 INCLUDES_FLAGS += $(addprefix -I,$(INCLUDES))
 INCLUDES_FLAGS += -I$(OF_ROOT)/libs/poco/include
 
