@@ -294,7 +294,7 @@ endif
 
 # find all sources inside the project's source directory (recursively)
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" | grep -v "/\.[^\.]")
+OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx"  | grep -v "/\.[^\.]")
 
 ################################################################################
 # PROJECT HEADER INCLUDES (-I ...)
