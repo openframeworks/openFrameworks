@@ -40,7 +40,8 @@
 #endif
 
 #ifdef TARGET_OF_IPHONE
-#include "ofxiPhoneExtras.h"
+//TODO: mark this file as objective-c in the iphone xcode project
+//#include "ofxiPhoneExtras.h"
 #endif
 
 #ifdef TARGET_ANDROID
@@ -649,7 +650,7 @@ void ofLaunchBrowser(string url){
 	#endif
 
 	#ifdef TARGET_OF_IPHONE
-		ofxiPhoneLaunchBrowser(url);
+		//ofxiPhoneLaunchBrowser(url);
 	#endif
 
 	#ifdef TARGET_ANDROID
