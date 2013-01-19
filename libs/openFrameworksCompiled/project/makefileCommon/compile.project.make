@@ -354,6 +354,7 @@ ifneq ($(OF_PROJECT_ADDONS_OBJS),)
 endif
 	rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH)
 	rm -f $(TARGET)
+	rm -rf $(BIN_NAME)
 	
 $(CLEANTARGET):
 ifndef ABIS_TO_COMPILE
