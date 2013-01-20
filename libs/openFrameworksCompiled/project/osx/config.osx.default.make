@@ -79,7 +79,7 @@ PLATFORM_CFLAGS += -fexceptions
 
 MAC_OS_SDK_ROOT=$(shell xcode-select -print-path)
 
-ifeq ($(findstring .app, $(MAC_OS_SDK_ROOT))
+ifeq ($(findstring .app, $(MAC_OS_SDK_ROOT),.app)
     MAC_OS_SDK_PATH=$(MAC_OS_SDK_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 else
 	MAC_OS_SDK_PATH=$(MAC_OS_SDK_ROOT)/SDKs
