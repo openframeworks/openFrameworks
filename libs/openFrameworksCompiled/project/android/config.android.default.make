@@ -86,6 +86,8 @@ TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin
 ANDROID_PREFIX=arm-linux-androideabi-
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 DATA_FILES = $(shell find bin/data -type f)
+RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
 	ABI_PATH = armeabi-v7a
