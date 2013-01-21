@@ -2,8 +2,6 @@
 # PROCESS VALID ADDONS IF AVAILABLE
 ########################################################################
 
-# ADDONS PATHS
-PROJECT_ADDONS_PATHS = $(addprefix $(OF_ADDONS_PATH)/, $(PROJECT_ADDONS)) 
 
 
 
@@ -48,7 +46,6 @@ endef
 space :=
 space += 
 
-PROCESS_NEXT=0
 
 # PARSE addon.make FILES
 #
@@ -59,8 +56,18 @@ PROCESS_NEXT=0
 # 4. if the line matches common: or platform: set the PROCESS_NEXT flag to true
 # 5. if the line matches %: but it's not common or platform: set PROCESS_NEXT to false
 # 6: if PROCESS_NEXT eval the line to put the variable in the makefile space
-
-$(foreach addon, $(PROJECT_ADDONS_PATHS), \
+define parse_addon
+	$(eval addon=$(addprefix $(OF_ADDONS_PATH)/, $1)) \
+	$(eval ADDON_DEPENDENCIES= ) \
+	$(eval ADDON_DATA= ) \
+	$(eval ADDON_INCLUDES= ) \
+	$(eval ADDON_CFLAGS= ) \
+	$(eval ADDON_LDFLAGS= ) \
+	$(eval ADDON_LIBS= ) \
+	$(eval ADDON_PKG_CONFIG_LIBRARIES= ) \
+	$(eval ADDON_FRAMEWORKS= ) \
+	$(eval ADDON_SOURCES= ) \
+	$(eval PROCESS_NEXT=0) \
 	$(if $(wildcard $(addon)/addon.make), \
 		$(foreach var_line, $(subst $(space),?,$(shell cat $(addon)/addon.make | tr '\n' '\t')), \
 			$(eval unscaped_var_line=$(strip $(subst ?, ,$(var_line)))) \
@@ -95,7 +102,23 @@ $(foreach addon, $(PROJECT_ADDONS_PATHS), \
 		$(call parse_addons_sources, $(addon)) \
 		$(eval PROJECT_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_SOURCE_FILES)) \
 	) \
+	$(if $(strip $(ADDON_DATA)), \
+		$(eval PROJECT_ADDONS_DATA += $(addon)/$(ADDON_DATA)) \
+	) \
+	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
+		$(if $(filter $(addon_dep),$(PROJECT_ADDONS)), , \
+			$(eval PROJECT_ADDONS += $(addon_dep)) \
+			$(call parse_addon, $(addon_dep)) \
+		) \
+	) 
+endef
+
+
+$(foreach addon_to_parse, $(PROJECT_ADDONS), \
+	$(call parse_addon, $(addon_to_parse)) \
 )
+
+
 
 ########################################################################
 #  DEBUGGING

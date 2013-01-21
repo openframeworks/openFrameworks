@@ -249,6 +249,9 @@ ifndef ABIS_TO_COMPILE_RELEASE
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo 
 endif
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
+endif
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 
 
@@ -260,6 +263,9 @@ ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) --no-print-directory DebugABI
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo 
+endif
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
 endif
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 
@@ -381,6 +387,10 @@ after: $(TARGET_NAME)
 	@echo "     "
 	@echo "     $(MAKE) $(RUN_TARGET)"
 	@echo
+	
+copyaddonsdata:
+	@mkdir -p bin/data
+	@cp -rf $(PROJECT_ADDONS_DATA) bin/data/
 
 help:
 	@echo
