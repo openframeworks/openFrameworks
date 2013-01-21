@@ -26,9 +26,9 @@ define parse_addons_sources
 	$(eval PARSED_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_OFX_SOURCES)) 
 endef
 
-# parses addons libraries, in PARSED_ADDON_LIBS receives full PATHS to addons
+# parses addons libraries, in PARSED_ADDON_LIBS receives full PATHS to addons and libs_exclude
 define parse_addons_libraries
-	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(addsuffix /libs/*/lib/$(ABI_LIB_SUBPATH), $1)) \
+	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(filter-out $(ADDON_LIBS_EXCLUDE),$(addsuffix /libs/*/lib/$(ABI_LIB_SUBPATH), $1))) \
 	$(eval PARSED_ALL_PLATFORM_LIBS = $(shell find $(PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )) \
 	$(if $(PARSED_ALL_PLATFORM_LIBS), \
 		$(eval PARSED_ADDONS_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(PARSED_ALL_PLATFORM_LIBS) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )) \
