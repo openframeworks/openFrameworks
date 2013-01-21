@@ -3,8 +3,6 @@
 ########################################################################
 
 
-
-
 # parses addons includes, in PARSED_ADDON_INCLUDES receives full PATHS to addons
 define parse_addons_includes
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(addsuffix /src, $1)) \
@@ -117,8 +115,6 @@ endef
 $(foreach addon_to_parse, $(PROJECT_ADDONS), \
 	$(call parse_addon, $(addon_to_parse)) \
 )
-
-
 
 ########################################################################
 #  DEBUGGING

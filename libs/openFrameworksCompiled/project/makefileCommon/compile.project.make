@@ -1,54 +1,14 @@
 .DEFAULT_GOAL=Release
 
-################################################################################
-ifdef MAKEFILE_DEBUG
-    $(info ===================compile.project.make=============================)
+# define the OF_SHARED_MAKEFILES location
+OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
+
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
+
+# if APPNAME is not defined, set it to the project dir name
+ifndef APPNAME
+    APPNAME = $(shell basename `pwd`)
 endif
-
-ifdef PLATFORM_CXX
-    CXX = $(PLATFORM_CXX)
-endif
-
-ifdef PROJECT_CXX
-    CXX = $(PROJECT_CXX)
-endif
-
-ifdef PLATFORM_CC
-    CC = $(PLATFORM_CC)
-endif
-
-ifdef PROJECT_CC
-    CC = $(PROJECT_CC)
-endif
-
-# TODO: what is this for?
-NODEPS = clean
-
-################################################################################
-# CFLAGS
-################################################################################
-
-# clean it
-ALL_CFLAGS =
-# add the CFLAGS from Makefiles.examples
-ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
-
-# clean up all extra whitespaces in the CFLAGS
-CFLAGS = $(strip $(ALL_CFLAGS))
-
-################################################################################
-# LDFLAGS
-################################################################################
-
-# clean it
-ALL_LDFLAGS =
-
-# add the include LDFLAGS from Makefiles.examples
-ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
-ALL_LDFLAGS += $(PLATFORM_LDFLAGS)
-
-# clean up all extra whitespaces in the LDFLAGS
-LDFLAGS = $(strip $(ALL_LDFLAGS))
 
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
@@ -140,41 +100,6 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	endif
 endif
 
-# Optimization flags
-
-PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
-PROJECT_OPTIMIZATION_CFLAGS_DEBUG += 
-
-ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
-		OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
-	else
-		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
-	endif
-	
-    ifdef PLATFORM_CORELIB_DEBUG_TARGET
-    	TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
-    else
-    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
-    endif
-endif
-
-ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
-	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
-	else
-		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
-	endif
-	
-    ifdef PLATFORM_CORELIB_RELEASE_TARGET
-    	TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
-    else
-    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
-    endif
-endif
-
-### addons used to be done here ...
-
 ifeq ($(MAKECMDGOALS),clean)
     TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
     TARGET_NAME = Release
@@ -186,64 +111,22 @@ ifdef TARGET_NAME
 	CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 endif
 
-################################################################################
-# OBJECT AND DEPENDENCY FILES DEFINITIONS
-#	Object file paths are generated here (as opposed to with the rest of the 
-#   flags) because we want to place them in target-specific folders. We
-#   determine targets above. We –could– determine the target info earlier if we
-#   wanted to.  It's here because that's approximately where it was in the 
-#   legacy makefiles.
-################################################################################
 
-# define the subdirectory for our target name
-
-ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_SOURCE_FILES---)
-    $(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
-endif
-ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+ifeq ($(findstring ABI,$(MAKECMDGOALS)),ABI)
+	include $(OF_SHARED_MAKEFILES_PATH)/config.project.make
+	-include $(OF_PROJECT_DEPENDENCY_FILES)
 endif
 
-ifdef ABI
-	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)
-else
-	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
-endif
-	
-OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
-OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES)))
-OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
-
-OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
-
-OF_PROJECT_ADDONS_OBJS = 
-
-$(foreach addon_obj, $(OF_PROJECT_ADDONS_OBJ_FILES), \
-     $(eval OF_PROJECT_ADDONS_OBJS+= $(patsubst $(OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
-                                          $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
-                                          $(addon_obj))) \
-)
-#OF_PROJECT_ADDONS_OBJS = $(patsubst $(OF_ROOT)/addons/ofx%/%,$(OF_ROOT)/addons/ofx%/obj/%,$(OF_PROJECT_ADDONS_OBJ_FILES))
-OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
-
-OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
-
-# TODO: deal with shared libs?
-
-
-ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
-endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
 	
 Release: 
 	@echo Compiling OF library for Release
-	@$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME) PLATFORM_OS=$(PLATFORM_OS)
+	@$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS)
+	@echo
+	@echo
+	@echo Compiling $(APPNAME) for Release
 ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) --no-print-directory ReleaseABI
 else
@@ -258,7 +141,10 @@ endif
 
 Debug: 
 	@echo Compiling OF library for Debug
-	@$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ $(TARGET_NAME) PLATFORM_OS=$(PLATFORM_OS)
+	@$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Debug PLATFORM_OS=$(PLATFORM_OS)
+	@echo
+	@echo
+	@echo Compiling $(APPNAME) for Debug
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) --no-print-directory DebugABI
 else
@@ -346,9 +232,6 @@ $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TAR
 	mkdir -p $(@D)
 	$(CXX) -o $@ $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(LDFLAGS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(OF_CORE_LIBS)
 
-	
-
--include $(OF_PROJECT_DEPENDENCY_FILES)
 
 clean:
 	@$(MAKE) --no-print-directory CleanDebug
