@@ -94,7 +94,10 @@ void ofxThreadedImageLoader::threadedFunction() {
                     //cout << "loaded from disk " << entry.name << endl;
                 }
                 else if(entry.type == OF_LOAD_FROM_URL) {
+                    lock();
                     images_async_loading.push_back(entry);
+                    unlock();
+                    
                     ofLoadURLAsync(entry.url, entry.name);
                 }
                 
@@ -109,7 +112,6 @@ void ofxThreadedImageLoader::threadedFunction() {
 
             }
             
-            unlock();
             errorCounter = 0;
             
         } catch (exception& e) {
