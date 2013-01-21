@@ -261,12 +261,14 @@ ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d |
 TMP_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
 
 # legacy exclusion
-ifdef EXCLUDE_FROM_SOURCE
-    SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')\|^\..*\|\/\..*
-    OF_PROJECT_SOURCE_PATHS = $(shell echo $(TMP_SOURCE_PATHS) | sed s/.\\/// | grep -v "$(SED_EXCLUDE_FROM_SRC)")
-else
-    OF_PROJECT_SOURCE_PATHS = $(TMP_SOURCE_PATHS)
-endif
+#ifdef EXCLUDE_FROM_SOURCE
+#    SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')\|^\..*\|\/\..*
+#    OF_PROJECT_SOURCE_PATHS = $(shell echo $(TMP_SOURCE_PATHS) | sed s/.\\/// | grep -v "$(SED_EXCLUDE_FROM_SRC)")
+#else
+#    OF_PROJECT_SOURCE_PATHS = $(TMP_SOURCE_PATHS)
+#endif
+    
+OF_PROJECT_SOURCE_PATHS = $(TMP_SOURCE_PATHS)
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_SOURCE_PATHS---)
@@ -459,7 +461,7 @@ ifdef ABI
 else
 	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
 endif
-	
+
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES)))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
