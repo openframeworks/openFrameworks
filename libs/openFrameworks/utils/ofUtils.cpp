@@ -40,7 +40,8 @@
 #endif
 
 #ifdef TARGET_OF_IPHONE
-#include "ofxiPhoneExtras.h"
+//TODO: mark this file as objective-c in the iphone xcode project
+//#include "ofxiPhoneExtras.h"
 #endif
 
 #ifdef TARGET_ANDROID
@@ -398,6 +399,14 @@ float ofToFloat(const string& floatString) {
 }
 
 //----------------------------------------
+double ofToDouble(const string& doubleString) {
+	double x = 0;
+	istringstream cur(doubleString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
 bool ofToBool(const string& boolString) {
 	static const string trueString = "true";
 	static const string falseString = "false";
@@ -649,7 +658,7 @@ void ofLaunchBrowser(string url){
 	#endif
 
 	#ifdef TARGET_OF_IPHONE
-		ofxiPhoneLaunchBrowser(url);
+		//ofxiPhoneLaunchBrowser(url);
 	#endif
 
 	#ifdef TARGET_ANDROID
