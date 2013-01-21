@@ -17,6 +17,19 @@
 ################################################################################
 #   
 
+ifndef SHELL
+    SHELL := /bin/sh
+endif
+
+ifndef OF_ROOT
+    OF_ROOT=../../..
+endif
+
+# if the user has not specified a special variant, then use the default variant
+ifndef PLATFORM_VARIANT
+    PLATFORM_VARIANT = default
+endif
+
 # if not defined, determine this platform's operating system via uname -s
 ifndef PLATFORM_OS 
     # determine from the uname if not defined manually

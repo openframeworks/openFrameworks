@@ -1,14 +1,7 @@
-# define the OF_SHARED_MAKEFILES location
-OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
-
 # do all of the core cofiguration work.
 # configuration work basically means creating lots of
 # lists of source files, search paths, libraries, etc.
 #
-ifndef SHELL
-    SHELL := /bin/sh
-endif
-
 ifndef OF_ROOT
     OF_ROOT= ../../..
 endif
@@ -17,18 +10,9 @@ ifndef PROJECT_ROOT
     PROJECT_ROOT= .
 endif
 
-# if APPNAME is not defined, set it to the project dir name
-ifndef APPNAME
-    APPNAME = $(shell basename `pwd`)
-endif
 
-# if the user has not specified a special variant, then use the default variant
-ifndef PLATFORM_VARIANT
-    PLATFORM_VARIANT = default
-endif
-
-
-include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
+# define the OF_SHARED_MAKEFILES location
+OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
 
 ############################## FLAGS ###########################################
 # OF CORE LIBRARIES SEARCH PATHS (-L ...) (not used during core compilation, but 
@@ -360,11 +344,143 @@ OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
 
 
 
-# compile core openFrameworks library
-# check for platform specific compile rules
-# if there's none use common ones
-ifeq ($(wildcard $(OF_PLATFORM_MAKEFILES)/compile.$(PLATFORM_LIB_SUBPATH).project.make),) 
-    include $(OF_SHARED_MAKEFILES_PATH)/compile.project.make
-else 
-    include $(OF_PLATFORM_MAKEFILES)/compile.$(PLATFORM_LIB_SUBPATH).project.make
+
+
+
+
+
+
+################################################################################
+ifdef MAKEFILE_DEBUG
+    $(info ===================compile.project.make=============================)
+endif
+
+ifdef PLATFORM_CXX
+    CXX = $(PLATFORM_CXX)
+endif
+
+ifdef PROJECT_CXX
+    CXX = $(PROJECT_CXX)
+endif
+
+ifdef PLATFORM_CC
+    CC = $(PLATFORM_CC)
+endif
+
+ifdef PROJECT_CC
+    CC = $(PROJECT_CC)
+endif
+
+# TODO: what is this for?
+NODEPS = clean
+
+################################################################################
+# CFLAGS
+################################################################################
+
+# clean it
+ALL_CFLAGS =
+# add the CFLAGS from Makefiles.examples
+ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
+
+# clean up all extra whitespaces in the CFLAGS
+CFLAGS = $(strip $(ALL_CFLAGS))
+
+################################################################################
+# LDFLAGS
+################################################################################
+
+# clean it
+ALL_LDFLAGS =
+
+# add the include LDFLAGS from Makefiles.examples
+ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
+ALL_LDFLAGS += $(PLATFORM_LDFLAGS)
+
+# clean up all extra whitespaces in the LDFLAGS
+LDFLAGS = $(strip $(ALL_LDFLAGS))
+
+# Optimization flags
+
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG += 
+
+ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
+		OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+	else
+		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
+	endif
+	
+    ifdef PLATFORM_CORELIB_DEBUG_TARGET
+    	TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
+    else
+    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+    endif
+endif
+
+ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
+	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+	else
+		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
+	endif
+	
+    ifdef PLATFORM_CORELIB_RELEASE_TARGET
+    	TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
+    else
+    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    endif
+endif
+
+
+################################################################################
+# OBJECT AND DEPENDENCY FILES DEFINITIONS
+#	Object file paths are generated here (as opposed to with the rest of the 
+#   flags) because we want to place them in target-specific folders. We
+#   determine targets above. We –could– determine the target info earlier if we
+#   wanted to.  It's here because that's approximately where it was in the 
+#   legacy makefiles.
+################################################################################
+
+# define the subdirectory for our target name
+
+ifdef MAKEFILE_DEBUG
+    $(info ---OF_PROJECT_SOURCE_FILES---)
+    $(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
+endif
+ifdef MAKEFILE_DEBUG
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+endif
+
+ifdef ABI
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)
+else
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
+endif
+	
+OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
+OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES)))
+OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
+
+OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
+
+OF_PROJECT_ADDONS_OBJS = 
+$(foreach addon_obj, $(OF_PROJECT_ADDONS_OBJ_FILES), \
+     $(eval OF_PROJECT_ADDONS_OBJS+= $(patsubst $(OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
+                                          $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
+                                          $(addon_obj))) \
+)
+
+OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
+
+OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
+
+# TODO: deal with shared libs?
+
+
+ifdef MAKEFILE_DEBUG
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif
