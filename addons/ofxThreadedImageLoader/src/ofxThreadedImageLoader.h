@@ -16,7 +16,7 @@
 
 using namespace std;
 
-class ofxLabThreadedImageLoader : public ofThread {
+class ofxThreadedImageLoader : public ofThread {
 public:
     
     
@@ -48,7 +48,7 @@ public:
     typedef deque<ofImageLoaderEntry>::iterator entry_iterator;
     
     
-	ofxLabThreadedImageLoader();
+	ofxThreadedImageLoader();
 	void loadFromDisk(ofImage* image, string file);
 	void loadFromURL(ofImage* image, string url);
     
@@ -57,7 +57,7 @@ public:
     virtual void threadedFunction();
     
 	void urlResponse(ofHttpResponse & response);
-	entry_iterator getEntryFromAsyncQueue(string name);
+	
 
 	deque<ofImageLoaderEntry> images_async_loading; // keeps track of images which are loading async
 	
@@ -69,18 +69,17 @@ public:
 	
 private:
     
-	bool shouldLoadImages();
-	ofImageLoaderEntry getNextImageToLoad();
-	ofImageLoaderEntry getNextImageToUpdate();
-	
+	bool                shouldLoadImages();
+	ofImageLoaderEntry  getNextImageToLoad();
+	ofImageLoaderEntry  getNextImageToUpdate();
+	entry_iterator      getEntryFromAsyncQueue(string name);
     
-	int             _num_loading;
+	int                 num_loading;
     
-    Poco::Condition _condition;
-    ofMutex         _bufferMutex;
+    Poco::Condition     condition;
     
-    int             _lastUpdate;
+    int                 lastUpdate;
     
-    int             _errorCounter;
+    int                 errorCounter;
 };
 

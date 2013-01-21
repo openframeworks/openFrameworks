@@ -1,33 +1,33 @@
-#include "ofxLabThreadedImageLoader.h"
+#include "ofxThreadedImageLoader.h"
 #include <sstream>
-ofxLabThreadedImageLoader::ofxLabThreadedImageLoader() 
+ofxThreadedImageLoader::ofxThreadedImageLoader() 
 :ofThread()
 {
-	_num_loading = 0;
-    ofAddListener(ofEvents().update, this, &ofxLabThreadedImageLoader::update);
+	num_loading = 0;
+    ofAddListener(ofEvents().update, this, &ofxThreadedImageLoader::update);
 	ofRegisterURLNotification(this);    
     
     startThread();
-    _lastUpdate = 0;
-    _errorCounter = 0;
+    lastUpdate = 0;
+    errorCounter = 0;
 }
 
 // Load an image from disk.
 //--------------------------------------------------------------
-void ofxLabThreadedImageLoader::loadFromDisk(ofImage* image, string filename) {
+void ofxThreadedImageLoader::loadFromDisk(ofImage* image, string filename) {
     
-	_bufferMutex.lock();
 	
-	_num_loading++;
+	num_loading++;
 	ofImageLoaderEntry entry(image, OF_LOAD_FROM_DISK);
 	entry.filename = filename;
-	entry.id = _num_loading;
+	entry.id = num_loading;
 	entry.image->setUseTexture(false);
-	images_to_load_buffer.push_back(entry);
-
-    _bufferMutex.unlock();
+	entry.name = filename;
     
-    _condition.signal();
+    lock();
+    images_to_load_buffer.push_back(entry);
+    condition.signal();
+    unlock();
     
     
 }
@@ -36,54 +36,46 @@ void ofxLabThreadedImageLoader::loadFromDisk(ofImage* image, string filename) {
 // Load an url asynchronously from an url.
 // * 5 bucks this doesn't work
 //--------------------------------------------------------------
-void ofxLabThreadedImageLoader::loadFromURL(ofImage* image, string url) {
+void ofxThreadedImageLoader::loadFromURL(ofImage* image, string url) {
 
-    _bufferMutex.lock();
 	
-	_num_loading++;
+	num_loading++;
 	ofImageLoaderEntry entry(image, OF_LOAD_FROM_URL);
 	entry.url = url;
-	entry.id = _num_loading;
+	entry.id = num_loading;
 	entry.image->setUseTexture(false);	
 	
 	stringstream ss;
 	ss << "image" << entry.id;
 	entry.name = ss.str();
 
+    lock();
 	images_to_load_buffer.push_back(entry);
-	
-    _bufferMutex.unlock();
-    
-    _condition.signal();
+    condition.signal();
+    unlock();
 }
 
 
 // Reads from the queue and loads new images.
 //--------------------------------------------------------------
-void ofxLabThreadedImageLoader::threadedFunction() {
+void ofxThreadedImageLoader::threadedFunction() {
     
-    _errorCounter = 0;
+    errorCounter = 0;
     
-	while(true) {
+	while( isThreadRunning() ) {
         
         try {
             
             lock();
             // wake every 1/2 second just in case we missed something
-            //_condition.wait(this->mutex, 500);
+            condition.tryWait(this->mutex, 500);
 
-            // above condition call crashes thread for unknown reasons,
-            // resorting to a standard wait
-            _condition.wait(this->mutex);
-
-            // check on wait
-            _bufferMutex.lock();
             images_to_load.insert( images_to_load.end(),
                                    images_to_load_buffer.begin(),
                                    images_to_load_buffer.end() );
             
             images_to_load_buffer.clear();
-            _bufferMutex.unlock();
+            unlock();
             
             while( shouldLoadImages() ) {
                 ofImageLoaderEntry entry = getNextImageToLoad();
@@ -99,6 +91,7 @@ void ofxLabThreadedImageLoader::threadedFunction() {
                     }
                     
                     images_to_update.push_back(entry);
+                    //cout << "loaded from disk " << entry.name << endl;
                 }
                 else if(entry.type == OF_LOAD_FROM_URL) {
                     images_async_loading.push_back(entry);
@@ -106,27 +99,27 @@ void ofxLabThreadedImageLoader::threadedFunction() {
                 }
                 
                 // also check while looping
-                _bufferMutex.lock();
+                lock();
                 images_to_load.insert( images_to_load.end(),
                                        images_to_load_buffer.begin(),
                                        images_to_load_buffer.end() );
                 
                 images_to_load_buffer.clear();
-                _bufferMutex.unlock();
+                unlock();
 
             }
             
             unlock();
-            _errorCounter = 0;
+            errorCounter = 0;
             
         } catch (exception& e) {
             stringstream ss;
-            ss << "Exception caught in ofxLabThreadedImageLoader: " << e.what() << endl;
+            ss << "Exception caught in ofxThreadedImageLoader: " << e.what() << endl;
             ofLog( OF_LOG_ERROR, ss.str() );
 
-            ++_errorCounter;
+            ++errorCounter;
             // don't overload log
-            sleep(_errorCounter * 1000);
+            sleep(errorCounter * 1000);
             
             unlock();
         }
@@ -138,8 +131,9 @@ void ofxLabThreadedImageLoader::threadedFunction() {
 // The loaded image is removed from the async_queue and added to the
 // update queue. The update queue is used to update the texture.
 //--------------------------------------------------------------
-void ofxLabThreadedImageLoader::urlResponse(ofHttpResponse & response) {
+void ofxThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 	if(response.status == 200) {
+        
 		lock();
 		
 		// Get the loaded url from the async queue and move it into the update queue.
@@ -148,6 +142,7 @@ void ofxLabThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 			(*it).image->loadImage(response.data);
             
 			images_async_loading.erase(it);
+            //cout << "loaded " << it->name << endl;
 		}
 		
 		unlock();
@@ -171,28 +166,17 @@ void ofxLabThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 	}
 }
 
-// Find an entry in the aysnc queue.
-//--------------------------------------------------------------
-ofxLabThreadedImageLoader::entry_iterator ofxLabThreadedImageLoader::getEntryFromAsyncQueue(string name) {
-	entry_iterator it = images_async_loading.begin();		
-	while(it != images_async_loading.end()) {
-		if((*it).name == name) {
-			return it;			
-		}
-	}
-	return images_async_loading.end();
-}
-
 
 // Check the update queue and update the texture
 //--------------------------------------------------------------
-void ofxLabThreadedImageLoader::update(ofEventArgs & a){
+void ofxThreadedImageLoader::update(ofEventArgs & a){
     
     // TODO put a max on the number of images we copy over
     // so that we don't slow thngs down
     
+    lock();
 	ofImageLoaderEntry entry = getNextImageToUpdate();
-	if (entry.image != NULL) {
+	while (entry.image != NULL) {
 
 		const ofPixels& pix = entry.image->getPixelsRef();
 		entry.image->getTextureReference().allocate(
@@ -203,35 +187,46 @@ void ofxLabThreadedImageLoader::update(ofEventArgs & a){
 		
 		entry.image->setUseTexture(true);
 		entry.image->update();
+        
+        //cout << "Updated " << entry.name << endl;
+        entry = getNextImageToUpdate();
 	}
+    unlock();
+}
 
-    // get around the fact that our mutex won't time out
-    if( ((int) ofGetElapsedTimef()) - _lastUpdate > 1 ) {
-        _lastUpdate = ofGetElapsedTimef();
-        _condition.signal();
-    }
+
+// Find an entry in the aysnc queue.
+//   * private, no lock protection, is private function
+//--------------------------------------------------------------
+ofxThreadedImageLoader::entry_iterator ofxThreadedImageLoader::getEntryFromAsyncQueue(string name) {
+	entry_iterator it = images_async_loading.begin();
+	while(it != images_async_loading.end()) {
+		if((*it).name == name) {
+			return it;
+		}
+	}
+	return images_async_loading.end();
 }
 
 
 // Pick an entry from the queue with images for which the texture
 // needs to be update.
+//   * private, no lock protection, is private function
 //--------------------------------------------------------------
-ofxLabThreadedImageLoader::ofImageLoaderEntry ofxLabThreadedImageLoader::getNextImageToUpdate() {
-    lock();
+ofxThreadedImageLoader::ofImageLoaderEntry ofxThreadedImageLoader::getNextImageToUpdate() {
     
 	ofImageLoaderEntry entry;
 	if(images_to_update.size() > 0) {
 		entry = images_to_update.front();
 		images_to_update.pop_front();
 	}
-    unlock();
 	return entry;
 }
 
 // Pick the next image to load from disk.
-//   * private, no lock protection, called from area already locked
+//   * private, no lock protection, is private function
 //--------------------------------------------------------------
-ofxLabThreadedImageLoader::ofImageLoaderEntry ofxLabThreadedImageLoader::getNextImageToLoad() {
+ofxThreadedImageLoader::ofImageLoaderEntry ofxThreadedImageLoader::getNextImageToLoad() {
 	
     ofImageLoaderEntry entry;
 	if(images_to_load.size() > 0) {
@@ -242,8 +237,10 @@ ofxLabThreadedImageLoader::ofImageLoaderEntry ofxLabThreadedImageLoader::getNext
 }
 
 // Check if there are still images in the queue.
+//   * private, no lock protection, is private function
 //--------------------------------------------------------------
-bool ofxLabThreadedImageLoader::shouldLoadImages() {
-	return (images_to_load.size() > 0);
+bool ofxThreadedImageLoader::shouldLoadImages() {
+    bool temp = images_to_load.size() > 0;
+    
+	return temp;
 }
-
