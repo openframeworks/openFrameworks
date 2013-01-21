@@ -109,6 +109,7 @@ void ofxThreadedImageLoader::threadedFunction() {
 
             }
             
+            unlock();
             errorCounter = 0;
             
         } catch (exception& e) {
@@ -147,9 +148,6 @@ void ofxThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 		unlock();
 	}
 	else {
-        
-        lock();
-        
 		// log error.
 		stringstream ss;
 		ss << "Could not image from url, response status: " << response.status;
