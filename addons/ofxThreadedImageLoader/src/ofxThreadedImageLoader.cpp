@@ -61,70 +61,75 @@ void ofxThreadedImageLoader::loadFromURL(ofImage* image, string url) {
 void ofxThreadedImageLoader::threadedFunction() {
     
     errorCounter = 0;
+
     
 	while( isThreadRunning() ) {
         
         try {
-            
             lock();
             // wake every 1/2 second just in case we missed something
             condition.tryWait(this->mutex, 500);
+            images_to_load.insert( images_to_load.end(),
+                                  images_to_load_buffer.begin(),
+                                  images_to_load_buffer.end() );
+            
+            images_to_load_buffer.clear();
+            
+        } catch (exception &e) {
+            
+            unlock();
+            
+            stringstream ss;
+            ss << "Exception caught in ofxThreadedImageLoader: " << e.what() << endl;
+            ofLog( OF_LOG_ERROR, ss.str() );
+            
+            ++errorCounter;
+            // don't overload log
+            sleep(errorCounter * 1000);
+            
+            continue;
+        }
 
+        unlock();
+        
+        
+        while( shouldLoadImages() ) {
+            
+            ofImageLoaderEntry entry = getNextImageToLoad();
+            if(entry.image == NULL) {
+                continue;
+            }
+            
+            if(entry.type == OF_LOAD_FROM_DISK) {
+                if(! entry.image->loadImage(entry.filename) )  { 
+                    stringstream ss;
+                    ss << "ofxThreadedImageLoader error loading image " << entry.filename;
+                    ofLog(OF_LOG_ERROR, ss.str() );
+                }
+                
+                images_to_update.push_back(entry);
+                //cout << "loaded from disk " << entry.name << endl;
+            }
+            else if(entry.type == OF_LOAD_FROM_URL) {
+                lock();
+                images_async_loading.push_back(entry);
+                unlock();
+                
+                ofLoadURLAsync(entry.url, entry.name);
+            }
+            
+            // also check while looping so we can continue if possible
+            lock();
             images_to_load.insert( images_to_load.end(),
                                    images_to_load_buffer.begin(),
                                    images_to_load_buffer.end() );
             
             images_to_load_buffer.clear();
             unlock();
-            
-            while( shouldLoadImages() ) {
-                ofImageLoaderEntry entry = getNextImageToLoad();
-                if(entry.image == NULL) {
-                    continue;
-                }
-            
-                if(entry.type == OF_LOAD_FROM_DISK) {
-                    if(! entry.image->loadImage(entry.filename) )  { 
-                        stringstream ss;
-                        ss << "ofxThreadedImageLoader error loading image " << entry.filename;
-                        ofLog(OF_LOG_ERROR, ss.str() );
-                    }
-                    
-                    images_to_update.push_back(entry);
-                    //cout << "loaded from disk " << entry.name << endl;
-                }
-                else if(entry.type == OF_LOAD_FROM_URL) {
-                    lock();
-                    images_async_loading.push_back(entry);
-                    unlock();
-                    
-                    ofLoadURLAsync(entry.url, entry.name);
-                }
-                
-                // also check while looping
-                lock();
-                images_to_load.insert( images_to_load.end(),
-                                       images_to_load_buffer.begin(),
-                                       images_to_load_buffer.end() );
-                
-                images_to_load_buffer.clear();
-                unlock();
 
-            }
-            
-            errorCounter = 0;
-            
-        } catch (exception& e) {
-            stringstream ss;
-            ss << "Exception caught in ofxThreadedImageLoader: " << e.what() << endl;
-            ofLog( OF_LOG_ERROR, ss.str() );
-
-            ++errorCounter;
-            // don't overload log
-            sleep(errorCounter * 1000);
-            
-            unlock();
         }
+        
+        errorCounter = 0;
 	}
 }
 
