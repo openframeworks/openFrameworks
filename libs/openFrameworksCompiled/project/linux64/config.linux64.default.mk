@@ -25,7 +25,7 @@
 #
 ################################################################################
 
-include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.make
+include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 
 ################################################################################

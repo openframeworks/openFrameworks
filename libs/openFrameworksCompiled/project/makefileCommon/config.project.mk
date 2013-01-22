@@ -208,7 +208,7 @@ ifdef B_PROCESS_ADDONS
 
     # if the addons list is NOT empty ...
     ifneq ($(PROJECT_ADDONS),)
-		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.make
+		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
     endif
 endif
 

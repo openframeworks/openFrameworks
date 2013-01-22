@@ -16,6 +16,6 @@ OF_SHARED_MAKEFILES_PATH=./makefileCommon
 
 
 # include the global configuration file
-include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
-include $(OF_SHARED_MAKEFILES_PATH)/compile.core.make
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
+include $(OF_SHARED_MAKEFILES_PATH)/compile.core.mk
 

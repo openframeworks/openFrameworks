@@ -45,9 +45,9 @@ space :=
 space += 
 
 
-# PARSE addon.make FILES
+# PARSE addon_config.mk FILES
 #
-# 1. read the addon.make file for each adddon that has it
+# 1. read the addon_config.mk file for each adddon that has it
 # 2. read each line of the addon by converting \n to \t since makefiles treat \n as spaces
 #    also convert spaces to ? so foreach works for each line instead of each word
 # 3. unscape ? to space inside the loop
@@ -66,8 +66,8 @@ define parse_addon
 	$(eval ADDON_FRAMEWORKS= ) \
 	$(eval ADDON_SOURCES= ) \
 	$(eval PROCESS_NEXT=0) \
-	$(if $(wildcard $(addon)/addon.make), \
-		$(foreach var_line, $(subst $(space),?,$(shell cat $(addon)/addon.make | tr '\n' '\t')), \
+	$(if $(wildcard $(addon)/addon_config.mk), \
+		$(foreach var_line, $(subst $(space),?,$(shell cat $(addon)/addon_config.mk | tr '\n' '\t')), \
 			$(eval unscaped_var_line=$(strip $(subst ?, ,$(var_line)))) \
 			$(if $(filter $(PROCESS_NEXT),1), $(eval $(unscaped_var_line))) \
 			$(if $(filter %:,$(unscaped_var_line)), \
