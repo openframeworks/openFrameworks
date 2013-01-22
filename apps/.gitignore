@@ -13,3 +13,6 @@
 
 # don't ignore the .gitignore file
 !.gitignore
+
+# except the projectGenerator directory, too
+!projectGenerator/

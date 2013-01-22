@@ -498,13 +498,17 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) {
 		ofPoint diff = next - cur;
 		
 		float curSegmentLength = diff.length();
-		totalLength += curSegmentLength;
-		
-		while(curStep * spacing <= totalLength) {
-			float curSample = curStep * spacing;
-			float curLength = curSample - (totalLength - curSegmentLength);
-			float relativeSample = curLength / curSegmentLength;
-			result.addVertex(cur.getInterpolated(next, relativeSample));
+		if(curSegmentLength > 0) {
+			totalLength += curSegmentLength;
+			
+			while(curStep * spacing <= totalLength) {
+				float curSample = curStep * spacing;
+				float curLength = curSample - (totalLength - curSegmentLength);
+				float relativeSample = curLength / curSegmentLength;
+				result.addVertex(cur.getInterpolated(next, relativeSample));
+				curStep++;
+			}
+		} else {
 			curStep++;
 		}
 	}

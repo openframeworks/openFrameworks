@@ -65,6 +65,7 @@ public:
 		bFlipTexture = false;
 		compressionType = OF_COMPRESS_NONE;
 		bAllocated = false;
+		bUseExternalTextureID = false;
 	}
 
 	unsigned int textureID;
@@ -82,6 +83,7 @@ public:
 	bool bFlipTexture;
 	ofTexCompression compressionType;
 	bool bAllocated;
+	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
@@ -104,6 +106,9 @@ class ofTexture : public ofBaseDraws {
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention); //lets you overide the default OF texture type
 	virtual void allocate(const ofPixels& pix);
 	void clear();
+
+	void setUseExternalTextureID(GLuint externTexID); //allows you to point ofTexture's texture id to an externally allocated id. 
+													  //its up to you to set the rest of the textData params manually. 
 
 	void loadData(const unsigned char* const data, int w, int h, int glFormat);
 	void loadData(const unsigned short* data, int w, int h, int glFormat);

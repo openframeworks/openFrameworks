@@ -43,6 +43,11 @@ class ofxTCPServer : public ofThread{
 		bool send(int clientID, string message);
 		bool sendToAll(string message);
 
+
+		// same as send for binary data
+		bool sendRawMsg(int clientID, const char * rawMsg, const int numBytes);
+		bool sendRawMsgToAll(const char * rawMsg, const int numBytes);
+
 		//send and receive raw bytes lets you send and receive
 		//byte (char) arrays without modifiying or appending the data.
 		//Strings terminate on null bytes so this is the better option
@@ -64,20 +69,22 @@ class ofxTCPServer : public ofThread{
 		//sender should send "Hello World[/TCP]"
 		string receive(int clientID);
 
+		// same as receive for binary data
+		int receiveRawMsg(int clientID, char * receiveBytes,  int numBytes);
+
 		//pass in buffer to be filled - make sure the buffer
 		//is at least as big as numBytes
 		int receiveRawBytes(int clientID, char * receiveBytes,  int numBytes);
 
 
-		//don't call this
-		//--------------------------
-		void threadedFunction();
 
+
+	protected:
+		void threadedFunction();
 
 		ofxTCPManager			TCPServer;
 		map<int,ofxTCPClient>	TCPConnections;
 
-	protected:
 		bool			connected;
 		string			str;
 		int				idCount, port;

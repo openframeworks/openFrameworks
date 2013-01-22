@@ -14,8 +14,8 @@ int 	ofNextPow2(int input);
 
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
-unsigned long ofGetElapsedTimeMillis();
-unsigned long ofGetElapsedTimeMicros();
+unsigned long long ofGetElapsedTimeMillis();
+unsigned long long ofGetElapsedTimeMicros();
 int 	ofGetFrameNum();
 
 int 	ofGetSeconds();
@@ -25,8 +25,8 @@ int 	ofGetHours();
 //number of seconds since 1970
 unsigned int ofGetUnixTime();
 
-unsigned long ofGetSystemTime( );			// system time in milliseconds;
-unsigned long ofGetSystemTimeMicros( );			// system time in microseconds;
+unsigned long long ofGetSystemTime( );			// system time in milliseconds;
+unsigned long long ofGetSystemTimeMicros( );			// system time in microseconds;
 
 		//returns 
 string ofGetTimestampString();
@@ -149,6 +149,7 @@ string ofHexToString(const string& stringHexString);
 int ofToInt(const string& intString);
 char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
+double ofToDouble(const string& doubleString);
 bool ofToBool(const string& boolString);
 
 template <class T>

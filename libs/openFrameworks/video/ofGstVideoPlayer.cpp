@@ -6,8 +6,9 @@
  */
 
 #include "ofGstVideoPlayer.h"
+#include <gst/gst.h>
 #include <gst/video/video.h>
-#include <gst/audio/multichannel.h>
+#include <gst/app/gstappsink.h>
 
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
@@ -44,10 +45,13 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	}
 	ofLog(OF_LOG_VERBOSE,"loading "+name);
 
-	//GMainLoop* loop		=
-	g_main_loop_new (NULL, FALSE);
+	ofGstUtils::startGstMainLoop();
 
+#if GST_VERSION_MAJOR==0
 	GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
+#else
+	GstElement * gstPipeline = gst_element_factory_make("playbin","player");
+#endif
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
 	// create the oF appsink for video rgb without sync to clock
@@ -58,6 +62,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
 	gst_base_sink_set_max_lateness  (GST_BASE_SINK(gstSink), -1);
 
+#if GST_VERSION_MAJOR==0
 	int bpp;
 	string mime;
 	switch(internalPixelFormat){
@@ -88,9 +93,47 @@ bool ofGstVideoPlayer::loadMovie(string name){
 										"green_mask",G_TYPE_INT,0x00ff00,
 										"blue_mask",G_TYPE_INT,0x0000ff,
 										"alpha_mask",G_TYPE_INT,0x000000ff,
-
-
 										NULL);
+#else
+	int bpp;
+	string mime="video/x-raw";
+	string format;
+	switch(internalPixelFormat){
+	case OF_PIXELS_MONO:
+		format = "GRAY8";
+		bpp = 8;
+		break;
+	case OF_PIXELS_RGB:
+		format = "RGB";
+		bpp = 24;
+		break;
+	case OF_PIXELS_RGBA:
+		format = "RGBA";
+		bpp = 32;
+		break;
+	case OF_PIXELS_BGRA:
+		format = "BGRA";
+		bpp = 32;
+		break;
+	default:
+		format = "RGB";
+		bpp=24;
+		break;
+	}
+
+	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
+										"format", G_TYPE_STRING, format.c_str(),
+										/*"bpp", G_TYPE_INT, bpp,
+										"depth", G_TYPE_INT, 24,
+										"endianness",G_TYPE_INT,4321,
+										"red_mask",G_TYPE_INT,0xff0000,
+										"green_mask",G_TYPE_INT,0x00ff00,
+										"blue_mask",G_TYPE_INT,0x0000ff,
+										"alpha_mask",G_TYPE_INT,0x000000ff,*/
+										NULL);
+#endif
+
+
 	gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
 	gst_caps_unref(caps);
 
@@ -136,6 +179,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 
 	nFrames		  = 0;
 	if(GstPad* pad = gst_element_get_static_pad(videoUtils.getSink(), "sink")){
+#if GST_VERSION_MAJOR==0
 		int width,height;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
 			if(!videoUtils.allocate(width,height,bpp)) return false;
@@ -144,8 +188,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			return false;
 		}
 
-		const GValue *framerate;
-		framerate = gst_video_frame_rate(pad);
+		const GValue *framerate = gst_video_frame_rate(pad);
 		fps_n=0;
 		fps_d=0;
 		if(framerate && GST_VALUE_HOLDS_FRACTION (framerate)){
@@ -156,8 +199,29 @@ bool ofGstVideoPlayer::allocate(int bpp){
 		}else{
 			ofLog(OF_LOG_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
 		}
-		gst_object_unref(GST_OBJECT(pad));
 		bIsAllocated = true;
+#else
+		if(GstCaps *caps = gst_pad_get_current_caps (GST_PAD (pad))){
+			GstVideoInfo info;
+			gst_video_info_init (&info);
+			if (gst_video_info_from_caps (&info, caps)){
+				if(!videoUtils.allocate(info.width,info.height,bpp)) return false;
+			}else{
+				ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
+				return false;
+			}
+
+			fps_n = info.fps_n;
+			fps_d = info.fps_d;
+			nFrames = (float)(durationNanos / GST_SECOND) * (float)fps_n/(float)fps_d;
+			gst_caps_unref(caps);
+			bIsAllocated = true;
+		}else{
+			ofLog(OF_LOG_ERROR,"GStreamer: cannot get pipeline caps");
+			bIsAllocated = false;
+		}
+#endif
+		gst_object_unref(GST_OBJECT(pad));
 	}else{
 		ofLog(OF_LOG_ERROR,"GStreamer: cannot get sink pad");
 		bIsAllocated = false;
@@ -271,7 +335,7 @@ void ofGstVideoPlayer::setLoopState(ofLoopType state){
 	videoUtils.setLoopState(state);
 }
 
-int	ofGstVideoPlayer::getLoopState(){
+ofLoopType ofGstVideoPlayer::getLoopState(){
 	return videoUtils.getLoopState();
 }
 
