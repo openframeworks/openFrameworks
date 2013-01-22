@@ -3,7 +3,7 @@
 # define the OF_SHARED_MAKEFILES location
 OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
 
-include $(OF_SHARED_MAKEFILES_PATH)/config.shared.make
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
@@ -113,7 +113,7 @@ endif
 
 
 ifeq ($(findstring ABI,$(MAKECMDGOALS)),ABI)
-	include $(OF_SHARED_MAKEFILES_PATH)/config.project.make
+	include $(OF_SHARED_MAKEFILES_PATH)/config.project.mk
 	-include $(OF_PROJECT_DEPENDENCY_FILES)
 endif
 

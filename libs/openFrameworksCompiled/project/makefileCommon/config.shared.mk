@@ -78,7 +78,7 @@ endif
 
 # if desired, print the variables
 ifdef MAKEFILE_DEBUG
-    $(info =================== config.make platform detection ================)
+    $(info =================== config.mk platform detection ================)
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
     $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
@@ -149,7 +149,7 @@ endif
 ################################################################################
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-    $(info =================== config.make paths =============================)
+    $(info =================== config.mk paths =============================)
     $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
     $(info OF_EXPORT_PATH=$(OF_EXPORT_PATH))
     $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
@@ -166,7 +166,7 @@ endif
 
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
-AVAILABLE_PLATFORM_VARIANTS=$(shell find $(OF_PLATFORM_MAKEFILES)/config.*.make -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.make/\1/' )
+AVAILABLE_PLATFORM_VARIANTS=$(shell find $(OF_PLATFORM_MAKEFILES)/config.*.mk -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.mk/\1/' )
 AVAILABLE_PLATFORM_VARIANTS+=default
 
 # check to see if we have a file for the desired variant.  if not, quit and list the variants.
@@ -175,7 +175,7 @@ ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
 endif
 
 # include the platform specific user and platform configuration files
-include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).make
+include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
 
 ifdef ABI_PATH
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
@@ -274,7 +274,7 @@ OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOUR
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info ========================= config.make flags ========================)
+    $(info ========================= config.mk flags ========================)
     $(info ---OF_CORE_DEFINES_CFLAGS---)
     $(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
     
