@@ -107,7 +107,9 @@ void ofxThreadedImageLoader::threadedFunction() {
                     ofLog(OF_LOG_ERROR, ss.str() );
                 }
                 
+                lock();
                 images_to_update.push_back(entry);
+                unlock();
                 //cout << "loaded from disk " << entry.name << endl;
             }
             else if(entry.type == OF_LOAD_FROM_URL) {
