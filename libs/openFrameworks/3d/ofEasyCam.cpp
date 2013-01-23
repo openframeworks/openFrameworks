@@ -30,8 +30,13 @@ ofEasyCam::ofEasyCam(){
 	doTranslationKey = 'm';
 	
 	reset();
-	enableMouseInput();	
-
+	
+	// for now, it is ok.
+	this->viewport = ofGetCurrentViewport();
+	// needs to run.
+	updateCam();	
+	
+	enableMouseInput();
 }
 
 //----------------------------------------
