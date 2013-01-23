@@ -30,12 +30,6 @@ ofEasyCam::ofEasyCam(){
 	doTranslationKey = 'm';
 	
 	reset();
-	
-	// for now, it is ok.
-	this->viewport = ofGetCurrentViewport();
-	// needs to run.
-	updateCam();	
-	
 	enableMouseInput();
 }
 
@@ -44,8 +38,9 @@ ofEasyCam::~ofEasyCam(){
 	disableMouseInput();
 }
 
-void ofEasyCam::updateCam() {
-	if(!bDistanceSet && bAutoDistance){
+//----------------------------------------
+void ofEasyCam::update(ofEventArgs & args){
+    if(!bDistanceSet && bAutoDistance){
         setDistance(getImagePlaneDistance(viewport), true);
     }
     if(bMouseInputEnabled){
@@ -61,11 +56,6 @@ void ofEasyCam::updateCam() {
 			updateTranslation(); 
 		}
 	}	
-}
-
-//----------------------------------------
-void ofEasyCam::update(ofEventArgs & args){
-    updateCam();
 }
 //----------------------------------------
 void ofEasyCam::begin(ofRectangle viewport){
