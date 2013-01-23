@@ -65,6 +65,10 @@ void ofEasyCam::begin(ofRectangle viewport){
 
 //----------------------------------------
 void ofEasyCam::reset(){
+	// needs to set a new distance.
+	this->viewport = ofGetCurrentViewport();
+	setDistance(getImagePlaneDistance(viewport), true);
+	
 	target.resetTransform();
 	
 	target.setPosition(0,0, 0);
