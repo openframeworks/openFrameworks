@@ -38,13 +38,13 @@ ofEasyCam::ofEasyCam(){
 ofEasyCam::~ofEasyCam(){
 	disableMouseInput();
 }
-//----------------------------------------
-void ofEasyCam::update(ofEventArgs & args){
-    if(!bDistanceSet && bAutoDistance){
+
+void ofEasyCam::updateCam() {
+	if(!bDistanceSet && bAutoDistance){
         setDistance(getImagePlaneDistance(viewport), true);
     }
     if(bMouseInputEnabled){
-	
+		
 		rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
 		if (bMouseInputEnabled) {
 			updateMouse();
@@ -56,6 +56,11 @@ void ofEasyCam::update(ofEventArgs & args){
 			updateTranslation(); 
 		}
 	}	
+}
+
+//----------------------------------------
+void ofEasyCam::update(ofEventArgs & args){
+    updateCam();
 }
 //----------------------------------------
 void ofEasyCam::begin(ofRectangle viewport){
