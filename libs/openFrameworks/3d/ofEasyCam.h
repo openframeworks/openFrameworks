@@ -90,6 +90,11 @@ private:
 	void update(ofEventArgs & args);
 	void updateMouse();
 	
+	// needs to run at least once.
+	//TODO: find variables that are not initialized
+	//      when the cam is created.
+	void updateCam();
+	
 	char doTranslationKey;
 	
 	unsigned long lastTap;
