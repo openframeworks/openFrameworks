@@ -1,4 +1,391 @@
 ---------------------------------------------------------------
+          .oooo.     .oooo.    ooooooooo   .oooo.   
+         d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b  
+        888    888 888    888       .8'        ]8P' 
+        888    888 888    888      .8'       <88b.  
+        888    888 888    888     .8'         `88b. 
+        `88b  d88' `88b  d88'    .8'     o.   .88P  
+         `Y8bd8P'   `Y8bd8P'    .8'      `8bd88P'   
+
+OF 0073 changelog:
+
+change key:
+    + added
+    - removed
+    / modified
+---------------------------------------------------------------
+
+/ ofGetElapsedTimef() no longer wraps after ~71 minutes, which was a bug introduced with 0072. ofGetElapsedTimeMicros() previously also wrapped after ~71 minutes, and this has been fixed as well.
+/ fixed broken pause and other fixes in ofVideoPlayer on OSX
+/ fixes to AndroidVideoGrabber
+/ Android empty example inherits from ofxAndroidApp + adds android methods
++ auto register android touch events
++ ofMultMatrix(), ofLoadMatrix(), ofLoadIdentityMatrix()
+
+---------------------------------------------------------------
+
+          .oooo.     .oooo.    ooooooooo   .oooo.   
+         d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b  
+        888    888 888    888       .8'        ]8P' 
+        888    888 888    888      .8'       .d8P'  
+        888    888 888    888     .8'      .dP'     
+        `88b  d88' `88b  d88'    .8'     .oP     .o 
+         `Y8bd8P'   `Y8bd8P'    .8'      8888888888 
+
+OF 0072 changelog:
+
+change key:
+    + added
+    - removed
+    / modified
+-------------------------------------------------------------
+
+DEPRECATIONS & REMOVALS
+========================
+
+## Deprecations: (will be removed in a future release, replacements noted after --->)
+
+    / ofVec*f: squareLength() ---> lengthSquared()
+    / ofVideoGrabber: grabFrame() ---> update()
+    / ofVideoPlayer: idleMovie() ---> update()
+    / ofPolyline: addVertexes() ---> addVertices()
+    
+    ofGraphics:
+        / ofVertexes() ---> ofVertices()
+        / ofCurveVertexes() ---> ofCurveVertices()
+    
+    ofQTKitPlayer:
+        / bind() ---> getTexture()->bind()
+        / unbind() ---> getTexture()->unbind()
+    
+    ofAppiPhoneWindow:
+        / enableRetinaSupport() ---> enableRetina()
+        / isRetinaSupported() ---> isRetinaSupportedOnDevice()
+        / isDepthEnabled() ---> isDepthBufferEnabled()
+
+## Removals: (have been deprecated previously, their functionality has been migrated to the OF core)
+   
+    - ofxDirList ---> ofFileUtils: ofFile, ofFilePath, ofDirectory, etc
+    - ofxThread ---> ofThread
+    - ofxVectorMath ---> ofVectorMath: ofVec2f, ofVec3f, etc
+
+CORE
+====
+
+/ fixed lots of compilation warnings in the core library
+
+## 3d
+    / ofMaterial: fixed incorrect storing / restoring of shininess 
+    
+    ofEasyCam:
+        + enable/disable/get now uses middle mouse button for translation, activated by default
+        + added set/get translation key, pressing this key and dragging with the left mouse button
+           will translate the camera instead of rotating
+        - removed mouseEvent listener methods
+        / underlying math rewritten for readability, efficiency, & reliability
+        / fixed strange or erratic behaviour and blocked rotation
+        / setTarget now behaves as expected
+        / fixed camera movement before dragging
+        / updated rotation interactions to rotate over all three axes, rotation over the X or Y axes is
+          achieved by starting to drag inside a circle with it's diameter set to the minimum between
+          the viewport width and height, when the drag starts outside this circle Z axis rotation is achieved
+        
+    ofMesh:
+        / convert all index types from int to ofIndexType
+        / fixes to multiLightExample
+        
+    ofNode: 
+        + missing implementation for rotateAround()
+        + added getGlobalScale()
+
+## App
+    / ofGetElapsedTimeMillis() now returns an unsigned long
+
+## Communication
+    + added ofSerial speed: 230400
+
+## Events
+    / ofNotifyMousePressed() wasn't updating currentMouseX and currentMouseY
+    / ofEvents: const parameters in events can be notifed by passing a value directly
+
+## Graphics
+    + added ofClear(ofColor c)
+    + added ofRectRounded functions, bring on the lawsuit APPL ...
+    / fixed anti-aliasing issue when auto background set to false
+    / ofFloatImage and ofShortImage display correctly again
+    / ofDrawBitmapString(): default style changed to be backwards compatible with pre-007 
+    / ofDrawBitmapString(): fixed drawing in simple mode, and drawing with alpha enabled
+    / ofDrawBitmapString(): fixed rendering to FBOs (i.e. upside-down inside FBO)
+    / ofGstUtils: several fixes for network streams and performance
+    
+    ofCairoRenderer:
+        + added support for rendering to a png
+        / now sets current style every frame since Cairo wasn't preserving the style
+        / now gueses type from file extension and renders to memory
+        / fixed broken Z-rotation when called with ofRotate(X,0,0,1)
+        / use ofSaveImage() to save image buffers instead of Cairo png
+
+    ofImage:
+        / saveImage() now flattens color channels (4 to 3) when saving a jpeg
+        / fixed memcpy bug in getBmpFromPixels()
+        / update() rewritten to use ofGetGlInternalFormat so ofImage can handle short and float images
+        
+    ofPolyline:
+        + added fromRectangle()
+        / getBoundingBox() is now const
+
+    ofTrueTypeFont:
+        / make font rendering whitespace and printable character width the same  
+
+## Math
+    / ofPoint & ofVec*f: fixed myVec = float only assigning to the x value,
+      now prints an error message to help track down bugs, you should now use myVec.set(float) 
+      instead to set all three values to the same float value
+    / all instances of functions named *Vertexes have been changed to *Vertices
+    / ofVec3f: removed default argument for z component in 3 value constructor
+
+## OpenGL
+    - removed unused ofCheckGLTypesEqual(int, int)
+    / ofLight::customDraw(): fixed bug
+
+    ofFbo:
+        / fixed FBO error when trying to retain depth texture
+        / cleanup and bugfixes for both iOS and desktop
+        / fixed bug where ofFbo was broken on systems that did not support MSAA
+
+    ofTexture:
+        + added setUseExternalTextureID for setting external Texture ID which will not be released by ofTexture, 
+           was causing crashes for people trying to use external texture ids
+        / can now read to pixels from depth buffers
+        / added depth texture to image type support for OpenGL ES
+        
+    ofVboMesh
+        + added enabled/disable of flags for colors, texCoords, indices, & normals
+        / fixed problem when changing size to 0
+        / fixed clearing of vbo buffers when mesh is reallocated to 0 
+
+## Sound
+    / setPan() now works consistently (range is -1..1) over all objects that use sound
+    / ofOpenALSoundPlayer: fix for stopThread with no arguments
+    / ofSoundPlayer::loadSound() now properly returns a bool when it succeeds or fails
+
+## Types
+     / ofPixels: fixes to channel count in OF_PIXELS_RGBA
+     
+    ofRectangle:
+        + added getters and setters for x , y, width, & height 
+        + added methods for working with lines, translation, & scaling
+        + edge x/y locations can now be called by their "anchor" name (ofAlignHorz and ofAlignVert) 
+           using getHorzAnchor() and getVertAnchor()
+        + calling standardize() on a given ofRectangle will adjust the x / y position to make both 
+           the width / height to greater than zero
+        + added a + operator, which is equivalent to calling translate(ofPoint ...)
+        - removed getAsPolyline() and growToInclude()
+        / x & y vars are now references to an underlying ofPoint, you can get a reference to 
+          the underlying ofPoint via getPositionRef()
+
+    ofColor:
+        / fixes to reading from byte streams
+        / fixes to setHsb for ofFloatColor and ofShortColor
+
+## Utils
+    + added deprecation mechanism: compile-time warnings tell you if you are using legacy/old functions,
+       alternatives are mentioned where appropriate
+    + ofSystemTextDialog
+    + ofToString: added float formatting args
+    + ofThread: added getter for poco thread
+    / ofLog messages are significantly shorter
+    / ofToDataPath() bugfixes
+    / ofToString(value,int,int,char) now unambiguous
+    / ofToHex(): fixed incorrect return value for non-ascii input
+    / ofGetModifierPressed(): fixes to getting whether modifier keys are pressed
+    / ofGetElapsedTimeMillis(): fixes to time counter functions, and increased accuracy
+    / ofFileUtils: fixed comparison operators
+    / ofThread: stopThread() fix
+    / ofBuffer: set and operator= from string + append method
+    / ofLaunchBrowser: now accepts https URLs
+    / ofPtr: extended facade to allow for dynamic_pointer_cast
+    
+    ofConstants:
+        + added ofAlignVert & ofAlignHorz enums based on Qt, 
+           could be combined into a single bit-wise combined alignment flag
+        + added ofAspectRatioMode enum, describes how an aspect ratio is preserved (or not) during scaling operations,
+           can be combined with ofAlignVert and ofAlignHorz to describe a rectangular scaling operation
+        + added ofScaleMode enum, represents a set of common scaling modes where each scaling mode can also be 
+           described by a specific combination of ofAspectRatioMode, an ofAlignVert, and an ofAlignHorz
+           making ofScaleMode makes common scaling operations less verbose
+        
+    ofURLFileLoader: 
+        / now catches all exceptions
+        / fixed issue with ofRemoveRequest if ofURLFileLoader currently loading the request
+
+## Video
+    / solved dropped frame bug on setFrame
+    / fixed createMovieFromURL
+    / fixed problem when reloading movies
+    / fixed setTexture(true) (allocates texture if it wasn't already allocated)
+    / fixes to GStreamer streaming and initialization, squash unnecessary re-init on stop
+
+    ofVideoPlayer:
+        + added functionality to load video from a URL
+        + added movie path variable and getter
+        / setVolume changed to take a float 0..1 with a warning message on out-of-range
+        / updated to handle pixel formats more optimally
+    
+    ofVideoGrabber:
+        / switched to 24RGB pixel format to avoid manual conversion
+        / now allows up to 24 cameras on Windows
+
+PLATFORM SPECIFIC
+=================
+
+## Android
+    + ofSystemTextAlert: added android version
+    + ofSoundPlayer: implemented multiplay and streaming
+    / Makefile now includes ofVideoPlayer
+    / Eclipse project: update android target to use Android toolchain
+    / updated setPixelFormat and getPixelFormat
+    / updated OpenCV library
+    / no more modal dialogs, were causing problems with gui thread
+    / ofSoundPlayer: resource usage and bug fixes
+    / updates Hardware Key handling to use characters instead of keycodes
+    
+    ofAndroidLib:
+        + added support for touchCancelled and swipe
+        / updated to the latest Android SDK R20 and Android-NDK-R8B
+        / updated minimum SDK level to 8 or Android 2.2
+        / multitouch now supports 10+ pointers
+
+    ofxAndroid:
+        + added listAlert
+        + added network alerts
+        + added ofxAndroidEvents
+        / no longer crashes on 4.0.4 and 4.1.1 devices
+        / updates to fix paths to external storage
+        / ofThread now registers pthreads through JNI
+
+    ofAppAndroidWindow:
+        / no longer crashes when returning from onPause()
+        / fix for non-threaded mouse events
+        / java side is already checking resume is not called on start
+
+## Mac OS X
+    / OpenFrameworks now works "out of the box" on 10.7+ by using QTKit for video grabbing & playback,
+    / If compiling with the 10.6 SDK, the old Quicktime framework based players and grabbers are still included
+    ofVideoPlayer: 
+        / uses Core Video and QTKit internally
+        + added support for getCurrentFrame() and setFrame() on videos with non-static framerates
+        + added support for more codecs through QTKit framework
+        + added support for direct-to-texture video rendering
+        + added option to enabled asynchronous seeking for non-blocking calls to setFrame()
+    ofVideoGrabber:
+        / uses Core Video and QTKit internally
+        + added ability to record videos to disk 
+        + added support supports a wider range of video inputs, for example HDV over FireWire
+        - removed video setting dialog for 10.7+
+
+## iOS
+    + fixed/added antialiasing for iOS
+    + added ofxiPhoneGetGLParentView() for accessing the GLView parent UIView,
+       this is now where other UIViews should be added to (was ofxiPhoneGetUIWindow()),
+       also fixes a bug where the native video player was not displaying correctly on first load
+    + added EAGLViewDelegate for getting state updates from EAGLView, also added a destroy method
+    + added ofxiOSExtensions giving access to functions for reloading OpenGL textures,
+       called when a ofxiOSEAGLView is destroyed and another fresh ofxiOSEAGLView is created
+    + added ofxiPhoneLaunchBrowser(string url) to ofxiPhoneExtras
+    - removed ofFmodSoundPlayer files from iOS+OF project which were causing compile issues with nightly builds
+    - removed ofxiPhoneSoundPlayer.mm, was never used
+    / iOS Xcode project valid architecture is now set to armv6 armv7 by default
+    / iOS+OFLib deployment target has been set to 4.0, the base supported version of iOS by OF
+    / fixed buggy compiler error with iOS events
+    / fixed create_package to not delete iOS libraries
+    / ofiPhoneVideoPlayer and AVFoundationVideoPlayer rewritten / cleanedup
+    / fixed AVPlayerItem crash on unloading video
+    / glViewController is now set as the window's rootViewController, 
+      this is a much nicer implementation than adding the glViewController's view to the window
+    / fixed ofxiPhoneSendGLViewToFront() and ofxiPhoneSendGLViewToBack() to always work with the GLView superview
+    / GLView is now brought to front using ofxiPhoneSendGLViewToFront()
+    / ofImage::grabScreen fixed for iOS
+    / ofxiPhoneScreenGrab: updated for retina display
+    / isRetinaSupported() made more reliable
+    / fixed accelerometer readings for devices with default landscape orientation (i.e. tablets)
+    / EAGLView, ES1Renderer, and ES2Renderer now do not have any OF dependencies,
+      can now be used to setup openGL ES without OF (if not required)
+    / ofOpenALSoundPlayer: safety fixes for iOS
+
+    ofAppiPhoneWindow:
+        + enabling retina was ambiguous, method names are now more concise
+        + added methods for disabling retina, depth, & anti-aliasing
+        / isRetinaSupported() made more reliable 
+        / now accesses window position, size, and screen size from the ofxiOSEAGLView
+        
+    ofxiOSEAGLView 
+        + ofxiOSEAGLView is the OF specific extension of EAGLView, 
+           most of the logic from the ofxiPhoneViewController has been move into here,
+           it is now possible to create a ofxIOSEAGLView without the need for a ofxiPhoneViewController container
+        + only accepts ofxiPhoneApp instead of ofBaseApp, this is more strict and safe
+        + moved window size and position code from ofAppiPhoneWindow into ofxiOSEAGLView, 
+           makes more sense for ofxiOSEAGLView to return these values and only recalculate them when
+           layoutSubviews() is called on a ofxiOSEAGLView resize
+        
+     ofxiPhoneViewController:
+        + now adds itself as a delegate when creating a glView,
+           this is handy to get glView callbacks when extending in another class
+        / completely refactored to only create and set up the glView, now rotates the glView to the device orientation
+
+## Linux
+    + added new method for setting vsync
+    - removed unused FMOD scripts
+    / ofOpenALSoundPlayer: bugfixes for Linux
+
+## Windows
+    + added readme for Visual Studio
+    / added missing elif statement for MiniGW, changed the compiler from 4.4.3 to 4.6
+    / ofSystemAlertBoxDialog: fixed for VS2010 and CB Windows
+    / updated to Fmod 4.4
+    / ofSystemUtils: fix windows dialog
+    / ofUtils: fixed VS2010 compilation and dynamic shared pointer casting
+
+CORE ADDONS
+============
+
+    - removed ofAddons.h
+    / ofxOsc: install.xml brought up to date
+    / ofxOpenCV: partially fixed OpenCV runtime errors with MiniGW -  needs newer GCC for proper fix
+    / ofxXmlSettings::setValue() fixed truncated floating point arguments bug introduced in 007
+    / ofxXmlSettings: increased precision when saving double values
+
+PROJECT GENERATOR
+==================
+
+    / updated project generator template to include QTKit and CoreVideo frameworks on Mac OS X
+
+EXAMPLES
+=========
+
+    + added rectangleAlignmentAndScaling example: demonstrates all of the new ofRectangle alignment and scaling features
+    / videoGrabber example: updated with comments about legacy video settings and info on how to enable alpha movies
+    / asciiVideo example: cleaned-up and clarified, now uses OF convenience functions for lightness and charToString conversion
+    / shader example: fixed for ATI cards
+    / fixed billboard and pointsAsTextures examples
+    / updated easyCam example, now explains the reimplementation of ofEasyCam in greater detail
+
+## Mac
+    + added osxVideoRecorder example demonstrating recording videos to disk on Mac OS X using the ofQTKitGrabber
+    + added osxHighPerformanceVideoPlayer demonstrating accelerated playback of HD videos on OS X using the ofQTKitPlayer
+
+## iOS
+    + moviePlayer example: added video player volume
+    / Mapkit example fixed
+    
+## Android
+    + added OpenCVFace face tracking example
+    / soundPlayer example: updated to show multiplay on Android
+    / touch example: bug fixes
+    / image example: updated to fix path to image in loadImage(FILE)
+
+
+---------------------------------------------------------------
 	  .oooo.     .oooo.    ooooooooo   .o  
 	 d8P'`Y8b   d8P'`Y8b  d"""""""8' o888  
 	888    888 888    888       .8'   888  

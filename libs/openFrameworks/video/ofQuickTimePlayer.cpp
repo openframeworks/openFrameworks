@@ -2,9 +2,7 @@
 #include "ofUtils.h"
 
 #ifndef TARGET_LINUX
-//--------------------------------------------------------------
 #ifdef  OF_VIDEO_PLAYER_QUICKTIME
-//--------------------------------------------------------------
 
 bool  	createMovieFromPath(char * path, Movie &movie);
 bool 	createMovieFromPath(char * path, Movie &movie){
@@ -100,11 +98,6 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 	ofvp->bHavePixelsChanged = true;
 	return noErr;
 }
-
-//--------------------------------------------------------------
-#endif
-//--------------------------------------------------------------
-
 
 //---------------------------------------------------------------------------
 ofQuickTimePlayer::ofQuickTimePlayer (){
@@ -257,7 +250,15 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 	#endif
 
 	LockPixels(GetGWorldPixMap(offscreenGWorld));
-	SetGWorld (offscreenGWorld, NULL);
+
+    // from : https://github.com/openframeworks/openFrameworks/issues/244
+    // SetGWorld do not seems to be necessary for offscreen rendering of the movie
+    // only SetMovieGWorld should be called
+    // if both are called, the app will crash after a few ofVideoPlayer object have been deleted
+
+	#ifndef TARGET_WIN32
+        SetGWorld (offscreenGWorld, NULL);
+	#endif
 	SetMovieGWorld (moviePtr, offscreenGWorld, nil);
 
 }
@@ -278,6 +279,24 @@ bool ofQuickTimePlayer::loadMovie(string name){
 		initializeQuicktime();			// init quicktime
 		closeMovie();					// if we have a movie open, close it
 		bLoaded 				= false;	// try to load now
+
+
+    // from : https://github.com/openframeworks/openFrameworks/issues/244
+    // http://developer.apple.com/library/mac/#documentation/QuickTime/RM/QTforWindows/QTforWindows/C-Chapter/3BuildingQuickTimeCa.html
+    // Apple's documentation *seems* to state that a Gworld should have been set prior to calling NewMovieFromFile
+    // So I set a dummy Gworld (1x1 pixel) before calling createMovieFromPath
+    // it avoids crash at the creation of objet ofVideoPlayer after a previous ofVideoPlayer have been deleted
+
+    #ifdef TARGET_WIN32
+        if (width != 0 && height != 0){
+            pixels.clear();
+            delete [] offscreenGWorldPixels;
+        }
+        width = 1;
+        height = 1;
+        createImgMemAndGWorld();
+    #endif
+
 
 		if( name.substr(0, 7) == "http://" || name.substr(0,7) == "rtsp://" ){
 			if(! createMovieFromURL(name, moviePtr) ) return false;
@@ -461,7 +480,7 @@ void ofQuickTimePlayer::stop(){
 }
 
 //--------------------------------------------------------
-void ofQuickTimePlayer::setVolume(int volume){
+void ofQuickTimePlayer::setVolume(float volume){
 	if( !isLoaded() ){
 		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
 		return;
@@ -471,7 +490,7 @@ void ofQuickTimePlayer::setVolume(int volume){
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
 
-	SetMovieVolume(moviePtr, volume);
+	SetMovieVolume(moviePtr, volume*255);
 
 	//--------------------------------------
 	#endif
@@ -527,6 +546,10 @@ void ofQuickTimePlayer::setLoopState(ofLoopType state){
 
 }
 
+//---------------------------------------------------------------------------
+ofLoopType ofQuickTimePlayer::getLoopState(){
+	return currentLoopState;
+}
 
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::setPosition(float pct){
@@ -667,6 +690,22 @@ int ofQuickTimePlayer::getCurrentFrame(){
 	#endif
 	//--------------------------------------
 
+}
+
+//---------------------------------------------------------------------------
+bool ofQuickTimePlayer::setPixelFormat(ofPixelFormat pixelFormat){
+	//note as we only support RGB we are just confirming that this pixel format is supported
+	if( pixelFormat == OF_PIXELS_RGB ){
+		return true;
+	}
+	ofLogWarning("ofQuickTimePlayer") << "requested pixel format not supported" << endl;
+	return false;
+}
+
+//---------------------------------------------------------------------------
+ofPixelFormat ofQuickTimePlayer::getPixelFormat(){
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	return OF_PIXELS_RGB;
 }
 
 
@@ -839,6 +878,8 @@ bool ofQuickTimePlayer::isLoaded(){
 bool ofQuickTimePlayer::isPlaying(){
 	return bPlaying;
 }
+
+#endif
 
 #endif
 

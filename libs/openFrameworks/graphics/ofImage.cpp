@@ -68,11 +68,11 @@ void ofInitFreeImage(bool deinit=false){
 	// need a new bool to avoid c++ "deinitialization order fiasco":
 	// http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.15
 	static bool	* bFreeImageInited = new bool(false);
-	if(!bFreeImageInited && !deinit){
+	if(!*bFreeImageInited && !deinit){
 		FreeImage_Initialise();
 		*bFreeImageInited = true;
 	}
-	if(bFreeImageInited && deinit){
+	if(*bFreeImageInited && deinit){
 		FreeImage_DeInitialise();
 	}
 }
@@ -125,7 +125,7 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 		unsigned char* src = (unsigned char*) pixels;
 		unsigned char* dst = bmpBits;
 		for(int i = 0; i < (int)height; i++) {
-			memcpy(dst, src, dstStride);
+			memcpy(dst, src, srcStride);
 			src += srcStride;
 			dst += dstStride;
 		}
@@ -221,7 +221,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
-	int width, height, bpp;
 	bool bLoaded = false;
 	FIBITMAP* bmp = NULL;
 	FIMEMORY* hmem = NULL;
@@ -252,8 +251,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
-	} else {
-		width = height = bpp = 0;
 	}
 
 	if (bmp != NULL){
@@ -418,6 +415,13 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		return;
 	}
 
+	if(format==OF_IMAGE_FORMAT_JPEG && pix.getNumChannels()==4){
+		ofPixels pix3 = pix;
+		pix3.setNumChannels(3);
+		saveImage(pix3,buffer,format,qualityLevel);
+		return;
+	}
+
 	#ifdef TARGET_LITTLE_ENDIAN
 	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
@@ -452,6 +456,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		   }else{
 				FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
 		   }
+
 		   /*
 
 		  NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
@@ -523,9 +528,6 @@ ofImage_<PixelType>::ofImage_(){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 }
 
 //----------------------------------------------------------
@@ -540,9 +542,6 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	setFromPixels(pix);
 }
@@ -558,9 +557,6 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	loadImage(file);
 }
@@ -576,9 +572,6 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	loadImage(filename);
 }
@@ -595,6 +588,9 @@ ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<PixelType>& m
 //----------------------------------------------------------
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	clear();
 	clone(mom);
 	update();
@@ -604,10 +600,6 @@ ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
 template<typename PixelType>
 ofImage_<PixelType>::~ofImage_(){
 	clear();
-
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	unregisterImage(this);
-#endif
 }
 
 
@@ -629,6 +621,9 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(string fileName){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
@@ -644,6 +639,9 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	bool bLoadedOk = ofLoadImage(pixels, buffer);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
@@ -751,6 +749,9 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	if (width == w && height == h && newType == type){
 		return;
 	}
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	pixels.allocate(w, h, newType);
 
 	// take care of texture allocation --
@@ -768,7 +769,9 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::clear(){
-
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	unregisterImage(this);
+#endif
 	pixels.clear();
 	if(bUseTexture)	tex.clear();
 
@@ -867,27 +870,17 @@ ofImage_<PixelType> & ofImage_<PixelType>::operator=(ofPixels_<PixelType> & pixe
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::update(){
-
+	width = pixels.getWidth();
+	height = pixels.getHeight();
+	bpp = pixels.getBitsPerPixel();
+	type = pixels.getImageType();
 	if (pixels.isAllocated() && bUseTexture){
-		GLint type = GL_RGB;
-		if(pixels.getNumChannels() == 1) {
-			type = GL_LUMINANCE;
-		} else if(pixels.getNumChannels() == 3) {
-			type = GL_RGB;
-		} else if(pixels.getNumChannels() == 4) {
-			type = GL_RGBA;
-		}
-		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getHeight() || type != tex.getTextureData().glTypeInternal)
-		{
-			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
+		int glTypeInternal = ofGetGlInternalFormat(pixels);
+		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glTypeInternal != glTypeInternal){
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), glTypeInternal);
 		}
 		tex.loadData(pixels);
 	}
-	
-	width	= pixels.getWidth();
-	height	= pixels.getHeight();
-	bpp		= pixels.getBitsPerPixel();
-	type	= pixels.getImageType();
 }
 
 //------------------------------------
@@ -908,7 +901,6 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
-    int sw = ofGetViewportWidth();
     int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
     
 	if (!((width == _w) && (height == _h))){
@@ -940,6 +932,7 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	
     #else
     
+    int sw = ofGetViewportWidth();
     int numPixels   = width*height;
     if( numPixels == 0 ){
         ofLog(OF_LOG_ERROR, "grabScreen width or height is 0 - returning");
@@ -1178,6 +1171,7 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 			break;
 		default:
 			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
+			break;
 	}
 	
 	putBmpIntoPixels(convertedBmp, pix, false);

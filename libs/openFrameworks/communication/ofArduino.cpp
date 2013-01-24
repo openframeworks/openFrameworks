@@ -120,14 +120,12 @@ bool ofArduino::connect(string device, int baud){
 // the preferred method is to listen for the EInitialized event in your application
 bool ofArduino::isArduinoReady(){	
 	if(bUseDelay) {
-        if (_initialized || (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH) {
-            initPins();
-            connected = true;
-            return connected;
-        }
-	} else {
-		return connected;
-    }
+		if (_initialized || (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH) {
+			initPins();
+			connected = true;
+		}
+	}
+	return connected;
 }
 
 void  ofArduino::setUseDelay(bool bDelay){
@@ -552,17 +550,14 @@ void ofArduino::processDigitalPort(int port, unsigned char value){
 	int previous;
 	int i;
 	int pin;
-    int analogOffset;
     int port1Pins;
     int port2Pins;
     
     // support Firmata 2.3/Arduino 1.0 with backwards compatibility to previous protocol versions
     if (_firmwareVersionSum >= FIRMWARE2_3) {
-        analogOffset = 14;
         port1Pins = 8;
         port2Pins = 4;
     } else {
-        analogOffset = 16;
         port1Pins = 6;
         port2Pins = 6;
     }

@@ -13,10 +13,16 @@
 
 
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
-	include paths.make
+	ifeq ($(wildcard paths.make),)
+    $(error Android paths.make file does not exist. Create it from paths.make.default)
+	else
+		include paths.make
+	endif
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
+	else ifeq ($(shell uname),MINGW32_NT-6.1)
+		HOST_PLATFORM = windows
 	else
 		HOST_PLATFORM = linux-x86
 	endif
@@ -29,7 +35,7 @@ endif
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
 	NDK_PLATFORM = android-8
-	GCC_VERSION = 4.4.3
+	GCC_VERSION = 4.6
 else
 ifeq ($(ARCH),armv7l)
 	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
@@ -85,13 +91,13 @@ else
 	AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 	SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -frtti -fexceptions
-	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/"
+	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI)/include" -I"$(NDK_ROOT)/sources/crystax/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI)/include"
 	CFLAGS += -DANDROID
 endif
 
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
 ifeq ($(ARCH),android)
-	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofOpenALSoundPlayer.cpp)
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofOpenALSoundPlayer.cpp | grep -v "ofCairoRenderer.cpp" | grep -v "ofFmodSoundPlayer.cpp")
 else
 	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
 endif
@@ -128,7 +134,7 @@ ifneq ($(ARCH),android)
 endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	TARGET_CFLAGS = -g3
+	TARGET_CFLAGS = -g3 -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 	TARGET_NAME = $(MAKECMDGOALS)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif

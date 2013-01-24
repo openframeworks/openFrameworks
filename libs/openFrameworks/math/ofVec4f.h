@@ -111,7 +111,8 @@ public:
     // Length
     //
     float length() const;
-    float squareLength() const;
+    float lengthSquared() const;
+	OF_DEPRECATED_MSG("Use ofVec4f::lengthSquared() instead.", float squareLength() const);
     /**
 	 * Dot Product.
 	 */
@@ -134,9 +135,6 @@ public:
 	
     // getLimited
     ofVec4f limited(float max) const;
-	
-    // squareLength
-    float lengthSquared() const;
 	
     // use squareDistance
     float  distanceSquared( const ofVec4f& pnt ) const;
@@ -544,11 +542,11 @@ inline float ofVec4f::length() const {
 }
 
 inline float ofVec4f::lengthSquared() const {
-	return squareLength();
+	return (float)(x*x + y*y + z*z + w*w);
 }
 
 inline float ofVec4f::squareLength() const {
-	return (float)(x*x + y*y + z*z + w*w);
+	return lengthSquared();
 }
 
 

@@ -13,8 +13,9 @@
 
 
 #ifdef TARGET_WIN32
-	#ifndef _MSC_VER
+    #ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
+	#include <sys/param.h> // for MAXPATHLEN
     #endif
 #endif
 
@@ -38,28 +39,42 @@
 
 #endif
 
+#ifdef TARGET_OF_IPHONE
+//TODO: mark this file as objective-c in the iphone xcode project
+//#include "ofxiPhoneExtras.h"
+#endif
+
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
+
+#ifndef MAXPATHLEN
+	#define MAXPATHLEN 1024
+#endif
+
 static bool enableDataPath = true;
-static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-static unsigned long startTimeMicros = ofGetSystemTimeMicros();
+static unsigned long long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+static unsigned long long startTimeMicros = ofGetSystemTimeMicros();
 
 //--------------------------------------
-int ofGetElapsedTimeMillis(){
-	return (int)(ofGetSystemTime() - startTime);
+unsigned long long ofGetElapsedTimeMillis(){
+	return ofGetSystemTime() - startTime;
 }
 
 //--------------------------------------
-unsigned long ofGetElapsedTimeMicros(){
-	return (int)(ofGetSystemTimeMicros() - startTimeMicros);
+unsigned long long ofGetElapsedTimeMicros(){
+	return ofGetSystemTimeMicros() - startTimeMicros;
 }
 
 //--------------------------------------
 float ofGetElapsedTimef(){
-	return ((float) ((int)(ofGetSystemTime() - startTime)) / 1000.0f);
+	return ofGetElapsedTimeMicros() / 1000000.0f;
 }
 
 //--------------------------------------
 void ofResetElapsedTimeCounter(){
 	startTime = ofGetSystemTime();
+	startTimeMicros = ofGetSystemTimeMicros();
 }
 
 //=======================================
@@ -69,11 +84,13 @@ void ofResetElapsedTimeCounter(){
  * when subtracting an initial start time, unless the total time exceeds
  * 32-bit, where the GLUT API return value is also overflowed.
  */
-unsigned long ofGetSystemTime( ) {
+unsigned long long ofGetSystemTime( ) {
 	#ifndef TARGET_WIN32
 		struct timeval now;
 		gettimeofday( &now, NULL );
-		return now.tv_usec/1000 + now.tv_sec*1000;
+		return 
+			(unsigned long long) now.tv_usec/1000 + 
+			(unsigned long long) now.tv_sec*1000;
 	#else
 		#if defined(_WIN32_WCE)
 			return GetTickCount();
@@ -83,16 +100,18 @@ unsigned long ofGetSystemTime( ) {
 	#endif
 }
 
-unsigned long ofGetSystemTimeMicros( ) {
+unsigned long long ofGetSystemTimeMicros( ) {
 	#ifndef TARGET_WIN32
 		struct timeval now;
 		gettimeofday( &now, NULL );
-		return now.tv_usec + now.tv_sec*1000000;
+		return 
+			(unsigned long long) now.tv_usec +
+			(unsigned long long) now.tv_sec*1000000;
 	#else
 		#if defined(_WIN32_WCE)
-			return GetTickCount()*1000;
+			return ((unsigned long long)GetTickCount()) * 1000;
 		#else
-			return timeGetTime()*1000;
+			return ((unsigned long long)timeGetTime()) * 1000;
 		#endif
 	#endif
 }
@@ -302,7 +321,7 @@ string ofToHex(const string& value) {
 	int numBytes = value.size();
 	for(int i = 0; i < numBytes; i++) {
 		// print each byte as a 2-character wide hex value
-		out << setfill('0') << setw(2) << hex << (unsigned int) value[i];
+		out << setfill('0') << setw(2) << hex << (unsigned int) ((unsigned char)value[i]);
 	}
 	return out.str();
 }
@@ -340,10 +359,14 @@ char ofHexToChar(const string& charHexString) {
 
 //----------------------------------------
 float ofHexToFloat(const string& floatHexString) {
-	int x = 0;
+	union intFloatUnion {
+		int x;
+		float f;
+	} myUnion;
+	myUnion.x = 0;
 	istringstream cur(floatHexString);
-	cur >> hex >> x;
-	return *((float*) &x);
+	cur >> hex >> myUnion.x;
+	return myUnion.f;
 }
 
 //----------------------------------------
@@ -371,6 +394,14 @@ string ofHexToString(const string& stringHexString) {
 float ofToFloat(const string& floatString) {
 	float x = 0;
 	istringstream cur(floatString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+double ofToDouble(const string& doubleString) {
+	double x = 0;
+	istringstream cur(doubleString);
 	cur >> x;
 	return x;
 }
@@ -436,15 +467,13 @@ char ofBinaryToChar(const string& value) {
 float ofBinaryToFloat(const string& value) {
 	const int floatSize = sizeof(float) * 8;
 	bitset<floatSize> binaryString(value);
-	unsigned long result = binaryString.to_ulong();
-	// this line means:
-	// 1 take the address of the unsigned long
-	// 2 pretend it is the address of a float
-	// 3 then use it as a float
-	// this is a bit-for-bit 'typecast'
-	return *((float*) &result);
+	union ulongFloatUnion {
+			unsigned long result;
+			float f;
+	} myUFUnion;
+	myUFUnion.result = binaryString.to_ulong();
+	return myUFUnion.f;
 }
-
 //----------------------------------------
 string ofBinaryToString(const string& value) {
 	ostringstream out;
@@ -591,16 +620,20 @@ void ofLaunchBrowser(string url){
 
 	// http://support.microsoft.com/kb/224816
 
-	//make sure it is a properly formatted url
-	if(url.substr(0,7) != "http://"){
-		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin http://");
+	// make sure it is a properly formatted url:
+	//   some platforms, like Android, require urls to start with lower-case http/https
+	if(Poco::icompare(url.substr(0,8), "https://") == 0){
+		url.replace(0,5,"https");
+	}
+	else if(Poco::icompare(url.substr(0,7), "http://") == 0){
+		url.replace(0,4,"http");
+	}
+	else{
+		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin with http:// or https://");
 		return;
 	}
 
-	//----------------------------
 	#ifdef TARGET_WIN32
-	//----------------------------
-
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
 		ShellExecuteA(NULL, "open", url.c_str(),
@@ -609,31 +642,28 @@ void ofLaunchBrowser(string url){
 		ShellExecute(NULL, "open", url.c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#endif
-
-	//----------------------------
 	#endif
-	//----------------------------
 
-	//--------------------------------------
 	#ifdef TARGET_OSX
-	//--------------------------------------
 		// ok gotta be a better way then this,
 		// this is what I found...
 		string commandStr = "open "+url;
 		system(commandStr.c_str());
-	//----------------------------
 	#endif
-	//----------------------------
 
-	//--------------------------------------
 	#ifdef TARGET_LINUX
-	//--------------------------------------
 		string commandStr = "xdg-open "+url;
 		int ret = system(commandStr.c_str());
 		if(ret!=0) ofLog(OF_LOG_ERROR,"ofLaunchBrowser: couldn't open browser");
-	//----------------------------
 	#endif
-	//----------------------------
+
+	#ifdef TARGET_OF_IPHONE
+		//ofxiPhoneLaunchBrowser(url);
+	#endif
+
+	#ifdef TARGET_ANDROID
+		ofxAndroidLaunchBrowser(url);
+	#endif
 }
 
 //--------------------------------------------------
