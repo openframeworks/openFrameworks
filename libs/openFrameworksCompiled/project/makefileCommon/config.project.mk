@@ -280,14 +280,14 @@ endif
 
 # find all sources inside the project's source directory (recursively)
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx"  | grep -v "/\.[^\.]")
+OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" -or -name "*.S" | grep -v "/\.[^\.]")
 
 ################################################################################
 # PROJECT HEADER INCLUDES (-I ...)
 ################################################################################
 
-OF_PROJECT_INCLUDES := $(filter-out $(OF_PROJECT_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS))
-OF_PROJECT_INCLUDES += $(filter-out $(OF_PROJECT_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES))
+OF_PROJECT_INCLUDES := $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS))
+OF_PROJECT_INCLUDES += $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES))
 
 OF_PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(OF_PROJECT_INCLUDES))
 
@@ -462,7 +462,7 @@ else
 	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
 endif
 
-OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(OF_PROJECT_SOURCE_FILES)))))
+OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES)))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
