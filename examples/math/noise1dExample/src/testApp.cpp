@@ -229,8 +229,6 @@ void testApp::renderLinearSignedNoiseDemo(){
 	ofEnableSmoothing();
 	ofNoFill();
 	
-	float noiseAmount = radialNoiseAmountSlider.getValue();
-	
 	// draw a "baseline"
 	ofSetColor(0,0,0, 64); 
 	ofLine(0,0, drawWiggleWidth,0); 
