@@ -24,15 +24,10 @@ extern "C"{
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
-static bool firstLoad=true;
 
 
 static int  sWindowWidth  = 480;
 static int  sWindowHeight = 800;
-/*static int  sDemoStopped  = 0;
-static long sTimeOffset   = 0;
-static int  sTimeOffsetInit = 0;
-static long sTimeStopped  = 0;*/
 
 static bool bSetupScreen = true;
 
@@ -57,6 +52,9 @@ static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 static queue<ofTouchEventArgs> touchEventArgsQueue;
 static ofMutex mutex;
 static bool threadedTouchEvents = false;
+
+
+void ofExitCallback();
 
 //static ofAppAndroidWindow window;
 
@@ -126,6 +124,9 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
+	if(androidApp){
+		ofxRegisterMultitouch(androidApp);
+	}
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){
@@ -297,7 +298,7 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
-
+	ofExitCallback();
 }
 
 void
@@ -306,18 +307,20 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 	ofLog(OF_LOG_NOTICE,"onSurfaceDestroyed");
 	ofUnloadAllFontTextures();
 	ofPauseVideoGrabbers();
+	if(androidApp){
+		androidApp->unloadTextures();
+	}
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
-	if(firstLoad){
-		firstLoad=false;
-		return;
-	}
 	if(!surfaceDestroyed){
 		ofUnloadAllFontTextures();
 		ofPauseVideoGrabbers();
+		if(androidApp){
+			androidApp->unloadTextures();
+		}
 	}
 	reloadTextures();
 	if(androidApp){
@@ -386,6 +389,9 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 				break;
 			case ofTouchEventArgs::doubleTap:
 				ofNotifyEvent(ofEvents().touchDoubleTap,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::cancel:
+				ofNotifyEvent(ofEvents().touchCancelled,touchEventArgsQueue.front());
 				break;
 			}
 			touchEventArgsQueue.pop();
@@ -468,6 +474,23 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,j
 }
 
 void
+Java_cc_openframeworks_OFAndroid_onTouchCancelled(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y){
+	ofTouchEventArgs touch;
+	touch.id = id;
+	touch.x = x;
+	touch.y = y;
+	touch.pressure = 0;
+	touch.type = ofTouchEventArgs::cancel;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents().touchCancelled,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
+}
+
+void
 Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
 	ofTouchEventArgs touch;
 	touch.id = id;
@@ -501,6 +524,13 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 		mutex.lock();
 		touchEventArgsQueue.push(touch);
 		mutex.unlock();
+	}
+}
+
+void
+Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir){
+	if(androidApp){
+		androidApp->swipe((ofxAndroidSwipeDir)swipeDir,id);
 	}
 }
 
@@ -540,11 +570,22 @@ Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz,
 void
 Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jobject  thiz ){
 	if(androidApp) androidApp->okPressed();
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
 	if(androidApp) androidApp->cancelPressed();
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().cancelPressed,yes);
+}
+
+void
+Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, jboolean connected){
+	bool bConnected = (bool)connected;
+	if(androidApp) androidApp->networkConnected(bConnected);
+	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
 }
 

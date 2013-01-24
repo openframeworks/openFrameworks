@@ -184,38 +184,6 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	}
 }
 
-static bool ofCheckGLTypesEqual(int type1, int type2){
-#ifndef TARGET_OPENGLES
-	if(type1==GL_LUMINANCE || type1==GL_LUMINANCE8){
-		if(type2==GL_LUMINANCE || type2==GL_LUMINANCE8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else if(type1==GL_RGB || type1==GL_RGB8){
-		if(type2==GL_RGB || type2==GL_RGB8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else if(type1==GL_RGBA || type1==GL_RGBA8){
-		if(type2==GL_RGBA || type2==GL_RGBA8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else
-#endif
-		return type1==type2;
-}
-
-
 ofImageType ofGetImageTypeFromGLType(int glType){
 	switch(glType){
 	case GL_LUMINANCE:
@@ -224,6 +192,13 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 		return OF_IMAGE_COLOR;
 	case GL_RGBA:
 		return OF_IMAGE_COLOR_ALPHA;
+#ifndef TARGET_OPENGLES
+	case GL_DEPTH_COMPONENT32:
+	case GL_DEPTH_COMPONENT16:
+	case GL_DEPTH_COMPONENT24:
+	case GL_DEPTH_COMPONENT:
+		return OF_IMAGE_GRAYSCALE;
+#endif
 	}
 	return OF_IMAGE_UNDEFINED;
 }
@@ -369,7 +344,9 @@ ofTexture::ofTexture(const ofTexture & mom){
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture & mom){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
@@ -407,14 +384,27 @@ const ofTextureData& ofTexture::getTextureData() const {
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
 }
 
 //----------------------------------------------------------
 void ofTexture::clear(){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
+	texData.bUseExternalTextureID = false;
 	texData.textureID  = 0;
 	texData.bAllocated = false;
+}
+
+//----------------------------------------------------------
+void ofTexture::setUseExternalTextureID(GLuint externTexID){
+	clear();
+	texData.textureID = externTexID;
+	texData.bAllocated = true;
+	texData.bUseExternalTextureID = true;
 }
 
 //----------------------------------------------------------
@@ -489,18 +479,29 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 }
 
 void ofTexture::allocate(const ofTextureData & textureData){
+	if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
+		ofLogError() << "ofTexture::allocate - the ofTextureData structure passed must be set with a width and height.";
+		return;
+	}
+
 	texData = textureData;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if (!(texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle))
+	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle ){
+		texData.tex_t = texData.width;
+		texData.tex_u = texData.height;
+		texData.tex_w = texData.width;
+		texData.tex_h = texData.height;		
+	}else
 #endif
 	{
 		//otherwise we need to calculate the next power of 2 for the requested dimensions
 		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(texData.tex_w);
-		texData.tex_h = ofNextPow2(texData.tex_h);
-		texData.tex_t = 1.0f;
-		texData.tex_u = 1.0f;
+		texData.tex_w = ofNextPow2(texData.width);
+		texData.tex_h = ofNextPow2(texData.height);
+		texData.tex_t = texData.width / texData.tex_w;
+		texData.tex_u = texData.height / texData.tex_h;
+
 		texData.textureTarget = GL_TEXTURE_2D;
 	}
 
@@ -522,7 +523,6 @@ void ofTexture::allocate(const ofTextureData & textureData){
 #else
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, texData.pixelType, 0);
 #endif
-
 
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

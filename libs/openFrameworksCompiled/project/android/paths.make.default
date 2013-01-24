@@ -1,0 +1,7 @@
+# Default paths.make file.
+# Enter the correct paths for your system and save this file as paths.make
+
+NDK_ROOT=<path-to-NDK-location>
+SDK_ROOT=<path-to-SDK-location>
+ANT_HOME=/usr
+ANT_BIN=$(ANT_HOME)/bin/

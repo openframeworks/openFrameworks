@@ -60,6 +60,7 @@ local.properties
 *~
 # KDE
 .directory
+.AppleDouble
 
 #OSX
 .DS_Store
@@ -76,6 +77,7 @@ Desktop.ini
 
 #Android
 .csettings
+/libs/openFrameworksCompiled/project/android/paths.make
 
 # Miscellaneous
 .mailmap

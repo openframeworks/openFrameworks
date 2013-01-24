@@ -445,7 +445,7 @@ void ofDrawBitmapCharacterStart(int stringLength){
 	// which discards pixels unless their alpha is 1.0f
 	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_EQUAL, 1.0f);
+	glAlphaFunc(GL_GREATER, 0);
 #endif
 
 	glEnableClientState(GL_VERTEX_ARRAY);		

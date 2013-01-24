@@ -50,7 +50,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		ofOpenALSoundPlayer();
 		virtual ~ofOpenALSoundPlayer();
 
-		void loadSound(string fileName, bool stream = false);
+		bool loadSound(string fileName, bool stream = false);
 		void unloadSound();
 		void play();
 		void stop();
@@ -101,8 +101,8 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		bool mpg123Stream(string path,vector<short> & buffer,vector<float> & fftAuxBuffer);
 #endif
 
-		void readFile(string fileName,vector<short> & buffer);
-		void stream(string fileName, vector<short> & buffer);
+		bool readFile(string fileName,vector<short> & buffer);
+		bool stream(string fileName, vector<short> & buffer);
 
 		bool isStreaming;
 		bool bMultiPlay;

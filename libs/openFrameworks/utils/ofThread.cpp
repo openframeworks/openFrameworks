@@ -153,6 +153,11 @@ bool ofThread::isCurrentThread(){
 }
 
 //-------------------------------------------------
+Poco::Thread & ofThread::getPocoThread(){
+	return thread;
+}
+
+//-------------------------------------------------
 bool ofThread::isMainThread(){
 	if(Poco::Thread::current() == NULL)
 		return true;

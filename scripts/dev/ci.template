@@ -1,0 +1,3 @@
+<h1>Continuous Integration</h1>
+<p>This page shows the results of a daily compile of openFrameworks and all the examples. If you see any error or warning and want to fix it, use github to send us a pull request with your changes</p>
+<p>This tests are being run on linux 64bit so other platforms could have different errors/warnings even if they don't appear here</p>

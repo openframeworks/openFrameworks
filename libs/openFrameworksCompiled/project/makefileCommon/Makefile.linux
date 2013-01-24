@@ -12,8 +12,14 @@ else
 	endif
 endif
 
+ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
+    GST_VERSION = 1.0
+else
+    GST_VERSION = 0.10
+endif
+    
 INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include
-INCLUDES_FLAGS += $(shell pkg-config gl glew glu gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev cairo --cflags)
+INCLUDES_FLAGS += $(shell pkg-config gl glew glu gstreamer-$(GST_VERSION) gstreamer-video-$(GST_VERSION) gstreamer-base-$(GST_VERSION) libudev cairo --cflags)
 
 #check if gtk exists and add it
 GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
@@ -31,8 +37,9 @@ endif
 
 
 LDFLAGS = -Wl,-rpath=./libs
-SYSTEMLIBS += $(shell pkg-config jack glu glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev cairo zlib --libs)
-SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
+    
+SYSTEMLIBS += $(shell pkg-config jack glu glew gstreamer-$(GST_VERSION) gstreamer-video-$(GST_VERSION) gstreamer-base-$(GST_VERSION) gstreamer-app-$(GST_VERSION) libudev cairo zlib --libs)
+SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage -lportaudio -lfreetype
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)

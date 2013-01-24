@@ -1,4 +1,5 @@
 #include "ofxToggle.h"
+#include "ofGraphics.h"
 
 ofxToggle::ofxToggle(string toggleName, ofxParameter<bool> _bVal, float width, float height){
 	setup(toggleName,_bVal,defaultWidth,height);

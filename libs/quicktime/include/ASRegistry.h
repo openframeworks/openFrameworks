@@ -96,7 +96,7 @@ enum {
     kASRemainder                = FOUR_CHAR_CODE('mod '),       /*  0x6d6f6420  */
     kASPower                    = FOUR_CHAR_CODE('^   '),       /*  0x5e202020  */
     kASEqual                    = kAEEquals,
-    kASNotEqual                 = FOUR_CHAR_CODE('­   '),       /*  0xad202020  */
+    kASNotEqual                 = 0xad202020,       /*  0xad202020  */
     kASGreaterThan              = kAEGreaterThan,
     kASGreaterThanOrEqual       = kAEGreaterThanEquals,
     kASLessThan                 = kAELessThan,

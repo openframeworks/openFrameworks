@@ -360,11 +360,20 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(fov, aspect, nearDist, farDist);
+		
+	ofMatrix4x4 persp;
+	persp.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
+	loadMatrix( persp );
+	//gluPerspective(fov, aspect, nearDist, farDist);
+
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
+	
+	ofMatrix4x4 lookAt;
+	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
+	loadMatrix( lookAt );
+	//gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
 
 	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
 	if(ofDoesHWOrientation()){
@@ -675,6 +684,32 @@ void ofGLRenderer::rotateZ(float degrees){
 //----------------------------------------------------------
 void ofGLRenderer::rotate(float degrees){
 	glRotatef(degrees, 0, 0, 1);
+}
+
+
+//----------------------------------------------------------
+void ofGLRenderer::loadIdentityMatrix (void){
+	glLoadIdentity();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::loadMatrix (const ofMatrix4x4 & m){
+	loadMatrix( m.getPtr() );
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::loadMatrix (const float *m){
+	glLoadMatrixf(m);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::multMatrix (const ofMatrix4x4 & m){
+	multMatrix( m.getPtr() );
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::multMatrix (const float *m){
+	glMultMatrixf(m);
 }
 
 //----------------------------------------------------------
@@ -1051,6 +1086,12 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	bool hasViewport = false;
 
 	ofRectangle rViewport;
+	
+#ifdef TARGET_OPENGLES
+	if(mode == OF_BITMAPMODE_MODEL_BILLBOARD) {
+		mode = OF_BITMAPMODE_SIMPLE;
+	}
+#endif
 
 	switch (mode) {
 
@@ -1147,7 +1188,13 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			glScalef(2/rViewport.width, 2/rViewport.height, 1);
 
 			glTranslatef(dScreenX, dScreenY, 0);
-			glScalef(1, -1, 1);
+            
+            if(currentFbo == NULL) {
+                glScalef(1, -1, 1);
+            } else {
+                glScalef(1,  1, 1); // invert when rendering inside an fbo
+            }
+            
 #endif
 			break;
 
