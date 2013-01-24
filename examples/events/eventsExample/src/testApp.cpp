@@ -17,9 +17,6 @@ void testApp::draw(){
 	
 	sprintf (timeString, "time: %i:%i:%i \nelapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
 	
-	float w = vagRounded.stringWidth(eventString);
-	float h = vagRounded.stringHeight(eventString);
-	
 	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);
 	

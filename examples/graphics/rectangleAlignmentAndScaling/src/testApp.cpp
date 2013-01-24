@@ -125,7 +125,6 @@ void testApp::draw(){
     // make the menu
     stringstream ss;
     
-    int tab = 20;
     ss << "Keys:" << endl;
     ss << "----------------------------------------------------------" << endl;
     ss << " New Subject / Target (space) " << endl;

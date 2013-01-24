@@ -164,8 +164,8 @@ void printGLInfo(){
     char *version = NULL;
     char *vendor = NULL;
     char *renderer = NULL;
-    char *extensions = NULL;
-    int   glutVersion;
+//    char *extensions = NULL;
+//    int   glutVersion;
 
     //glutVersion = glutGet(0x01FC);
     version =     (char*)glGetString(GL_VERSION);
