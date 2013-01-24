@@ -338,7 +338,7 @@ string testApp::getHorzAlignString(ofAlignHorz hAlign) {
             return "OF_ALIGN_HORZ_IGNORE";
         default:
         	ofLogError() << "Unknown ofAlignHorz: " << hAlign;
-        	return -1
+        	return "";
     }
 }
 
@@ -355,7 +355,7 @@ string testApp::getVertAlignString(ofAlignVert vAlign) {
             return "OF_ALIGN_VERT_IGNORE";
         default:
         	ofLogError() << "Unknown ofAlignVert: " << vAlign;
-        	return -1
+        	return "";
     }
 }
 
@@ -370,7 +370,7 @@ string testApp::getAspectRatioModeString(ofAspectRatioMode mode) {
             return "OF_ASPECT_RATIO_KEEP_BY_EXPANDING";
         default:
         	ofLogError() << "Unknown ofAspectRatioMode: " << mode;
-        	return -1
+        	return "";
     }
 }
 
@@ -387,7 +387,7 @@ string testApp::getScaleModeString(ofScaleMode mode) {
             return "OF_SCALEMODE_STRETCH_TO_FILL";
         default:
         	ofLogError() << "Unknown ofScaleMode: " << mode;
-        	return -1
+        	return "";
     }
 }
 

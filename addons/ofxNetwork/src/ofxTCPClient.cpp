@@ -267,7 +267,7 @@ int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 	int posDelimiter = findDelimiter(tmpBuffReceive.getBinaryBuffer(),tmpBuffReceive.size(),messageDelimiter);
 	if(posDelimiter>0){
 		memcpy(receiveBuffer,tmpBuffReceive.getBinaryBuffer(),posDelimiter);
-		if(tmpBuffReceive.size()>(unsigned int)posDelimiter+messageDelimiter.size()){
+		if(tmpBuffReceive.size() > posDelimiter + (int)messageDelimiter.size()){
 			memcpy(tmpBuff,tmpBuffReceive.getBinaryBuffer()+posDelimiter+messageDelimiter.size(),tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
 			tmpBuffReceive.set(tmpBuff,tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
 		}else{
