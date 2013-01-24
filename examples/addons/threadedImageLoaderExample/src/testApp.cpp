@@ -32,7 +32,7 @@ void testApp::draw(){
 	
 	// draw the images.
 	glColor3f(1,1,1);
-	for(int i = 0; i < images.size(); ++i) {
+	for(unsigned int i = 0; i < images.size(); ++i) {
 		int x = (i%8);
 		int y = (i/8);
 		images.at(i)->draw(x*128,y*128, 128,128);
