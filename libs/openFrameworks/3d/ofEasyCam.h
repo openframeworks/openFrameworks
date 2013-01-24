@@ -11,10 +11,10 @@ public:
 	// TODO: this should be ofGetViewRect() eventually
 	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
 	void reset();
+    void update();
 
 	//----------------------------------------
 	// advanced functions
-
 	void setTarget(const ofVec3f& target);
 	void setTarget(ofNode& target);
 	ofNode& getTarget();
@@ -30,13 +30,7 @@ public:
 	// translation happens only when the key is pressed.
 	void setTranslationKey(char key);
 	char getTranslationKey();
-	//--
-	/*
-	void mouseDragged(ofMouseEventArgs& mouse);
-	void mouseMoved(ofMouseEventArgs& mouse);
-	void mousePressed(ofMouseEventArgs& mouse);
-	void mouseReleased(ofMouseEventArgs& mouse);
-//*/
+	
 	// enable or disable mouse input to navigate
 	void enableMouseInput();
 	void disableMouseInput();

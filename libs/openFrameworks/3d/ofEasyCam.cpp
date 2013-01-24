@@ -31,6 +31,7 @@ ofEasyCam::ofEasyCam(){
 	
 	reset();
 	enableMouseInput();	
+    update();
 
 }
 
@@ -40,6 +41,10 @@ ofEasyCam::~ofEasyCam(){
 }
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
+    update();
+}
+//----------------------------------------
+void ofEasyCam::update(){
     if(!bDistanceSet && bAutoDistance){
         setDistance(getImagePlaneDistance(viewport), true);
     }
@@ -65,6 +70,8 @@ void ofEasyCam::begin(ofRectangle viewport){
 
 //----------------------------------------
 void ofEasyCam::reset(){
+    this->viewport = ofGetCurrentViewport();
+    bDistanceSet = false;
 	target.resetTransform();
 	
 	target.setPosition(0,0, 0);
@@ -73,7 +80,6 @@ void ofEasyCam::reset(){
 	resetTransform();
 	setPosition(0, 0, lastDistance);
 	
-		
 	xRot = 0;
 	yRot = 0;
 	zRot = 0;
