@@ -243,6 +243,8 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/portaudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
 
 # android project folders
 PROJECT_EXCLUSIONS += ./gen
@@ -311,6 +313,10 @@ PLATFORM_LIBRARIES += gcc
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
 PLATFORM_STATIC_LIBRARIES += $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/libgnustl_static.a
 
 # shared libraries 
@@ -389,6 +395,7 @@ afterplatform:$(RESFILE)
 	@echo copying debugging binaries for $(ABIS_TO_COMPILE)
 	@if [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
 		cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/; \
+		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
 	fi
 	
 	@if [ "$(findstring armv5,$(ABIS_TO_COMPILE))" = "armv5" ]; then \
@@ -399,9 +406,6 @@ afterplatform:$(RESFILE)
 		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
 	fi
 	
-	@if [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
-		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
-	fi
 	
 	@if [ "$(findstring armv5,$(ABIS_TO_COMPILE))" = "armv5" ]; then \
 		echo create gdb.setup for armeabi; \
