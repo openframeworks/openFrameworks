@@ -302,6 +302,10 @@ void testApp::keyPressed(int key){
 
         #ifdef TARGET_WIN32
         string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
+        #endif
+
+        #ifdef TARGET_LINUX
+        string command = "xdg-open " + ofToString(ofToDataPath("openglReport.txt").c_str());
         #else
         string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
         #endif
