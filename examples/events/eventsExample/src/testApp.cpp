@@ -15,7 +15,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	sprintf (timeString, "time: %i:%i:%i \nelapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
+	sprintf (timeString, "time: %i:%i:%i \nelapsed time %lli", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
 	
 	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);

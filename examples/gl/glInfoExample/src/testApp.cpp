@@ -306,9 +306,9 @@ void testApp::keyPressed(int key){
         string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
         #endif
 
-
-        system(command.c_str());
-
+        if (0 != system(command.c_str())){
+			ofLogWarning() << "Command " << command.c_str() << " did not return 0. Something may have gone wrong.";
+		}
     }
 }
 

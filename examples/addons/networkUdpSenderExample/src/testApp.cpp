@@ -65,7 +65,7 @@ void testApp::mouseReleased(int x, int y, int button){
 	for(unsigned int i=0; i<stroke.size(); i++){
 		message+=ofToString(stroke[i].x)+"|"+ofToString(stroke[i].y)+"[/p]";
 	}
-	int sent = udpConnection.Send(message.c_str(),message.length());
+	udpConnection.Send(message.c_str(),message.length());
 }
 
 //--------------------------------------------------------------
