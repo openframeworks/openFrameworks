@@ -22,9 +22,9 @@ enum of3dPrimitiveType {
     OF_3D_PRIMITIVE_CYLINDER
 };
 
-class of3dTriangle {
+class ofMeshFace {
 public:
-    of3dTriangle() {
+    ofMeshFace() {
         bHasNormals = bHasColors = bHasTexcoords = false;
     }
     
@@ -107,9 +107,9 @@ public:
     void disableColors();
     
     // return a list of triangles that do not share vertices or indices //
-    vector<of3dTriangle> getUniqueTriangles();
+    vector<ofMeshFace> getUniqueTriangles();
     vector<ofVec3f> getFaceNormals( bool perVetex=false);
-    void setFromTriangles( vector<of3dTriangle>& tris, bool bUseFaceNormal=false );
+    void setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
     
     void smoothNormals( float angle );
     
