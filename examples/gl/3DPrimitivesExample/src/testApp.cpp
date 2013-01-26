@@ -194,7 +194,7 @@ void testApp::draw() {
     if(mode == 3) {
         // to get unique triangle, you have to use triangles mode //
         sphere.setMode( OF_PRIMITIVE_TRIANGLES );
-        triangles = sphere.getUniqueTriangles();
+        triangles = sphere.getMesh().getUniqueTriangles();
     }
     
     if(bFill) {
@@ -209,7 +209,7 @@ void testApp::draw() {
                     triangles[i].points[j] += triangles[i].faceNormal * strength;
                 }
             }
-            sphere.setFromTriangles( triangles );
+            sphere.getMesh().setFromTriangles( triangles );
         }
         sphere.draw();
         
@@ -230,7 +230,7 @@ void testApp::draw() {
     icoSphere.rotate(spinY, 0, 1.0, 0.0);
     
     if(mode == 3) {
-        triangles = icoSphere.getUniqueTriangles();
+        triangles = icoSphere.getMesh().getUniqueTriangles();
     }
     
     if(bFill) {
@@ -245,7 +245,7 @@ void testApp::draw() {
                     triangles[i].points[j] += triangles[i].faceNormal * frc;
                 }
             }
-            icoSphere.setFromTriangles( triangles );
+            icoSphere.getMesh().setFromTriangles( triangles );
         }
         
         icoSphere.draw();
@@ -510,28 +510,28 @@ void testApp::keyPressed(int key) {
             
             if(bSplitFaces) {
                 sphere.setMode( OF_PRIMITIVE_TRIANGLES );
-                vector<ofMeshFace> triangles = sphere.getUniqueTriangles();
-                sphere.setFromTriangles( triangles, true );
+                vector<ofMeshFace> triangles = sphere.getMesh().getUniqueTriangles();
+                sphere.getMesh().setFromTriangles( triangles, true );
                 
                 icoSphere.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = icoSphere.getUniqueTriangles();
-                icoSphere.setFromTriangles(triangles, true);
+                triangles = icoSphere.getMesh().getUniqueTriangles();
+                icoSphere.getMesh().setFromTriangles(triangles, true);
                 
                 plane.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = plane.getUniqueTriangles();
-                plane.setFromTriangles(triangles, true);
+                triangles = plane.getMesh().getUniqueTriangles();
+                plane.getMesh().setFromTriangles(triangles, true);
                 
                 cylinder.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = cylinder.getUniqueTriangles();
-                cylinder.setFromTriangles(triangles, true);
+                triangles = cylinder.getMesh().getUniqueTriangles();
+                cylinder.getMesh().setFromTriangles(triangles, true);
                 
                 cone.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = cone.getUniqueTriangles();
-                cone.setFromTriangles(triangles, true);
+                triangles = cone.getMesh().getUniqueTriangles();
+                cone.getMesh().setFromTriangles(triangles, true);
                 
                 box.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = box.getUniqueTriangles();
-                box.setFromTriangles(triangles, true);
+                triangles = box.getMesh().getUniqueTriangles();
+                box.getMesh().setFromTriangles(triangles, true);
                 
             } else {
                 cout << "Normal mode" <<endl;
