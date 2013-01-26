@@ -11,6 +11,54 @@
 #include "ofConstants.h"
 #include "ofGLUtils.h"
 
+// this is always a triangle //
+class ofMeshFace {
+public:
+    ofMeshFace() {
+        bHasNormals = bHasColors = bHasTexcoords = false;
+    }
+    
+    ofVec3f getFaceNormal() {
+        ofVec3f U, V, n;
+        
+        U = (points[1]-points[0]);
+        V = (points[2]-points[0]);
+        
+        n = U.crossed(V);
+        n.normalize();
+        
+        return n;
+    }
+    
+    void calculateFaceNormal() {
+        ofVec3f U, V;
+        
+        U = (points[1]-points[0]);
+        V = (points[2]-points[0]);
+        
+        faceNormal = U.crossed(V);
+        faceNormal.normalize();
+    }
+    
+    ofPoint points[3];
+    ofVec3f faceNormal;
+    ofVec3f normals[3];
+    ofFloatColor colors[3];
+    ofVec2f texcoords[3];
+    
+    void setHasColors( bool bColors ) {bHasColors = bColors; }
+    void setHasNormals( bool bNormals ) {bHasNormals = bNormals; }
+    void setHasTexcoords( bool bTexcoords ) {bHasTexcoords = bTexcoords; }
+    
+    bool hasColors() { return bHasColors; }
+    bool hasNormals() {return bHasNormals; }
+    bool hasTexcoords() { return bHasTexcoords; }
+    
+protected:
+    bool bHasNormals, bHasColors, bHasTexcoords;
+    
+};
+
 class ofMesh{
 public:
 	
@@ -137,6 +185,14 @@ public:
     virtual bool usingTextures();
     virtual bool usingNormals();
     virtual bool usingIndices();
+    
+    
+    void mergeDuplicateVertices();
+    // return a list of triangles that do not share vertices or indices //
+    vector<ofMeshFace> getUniqueFaces();
+    vector<ofVec3f> getFaceNormals( bool perVetex=false);
+    void setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
+    void smoothNormals( float angle );
     
     static ofMesh plane(float width, float height, int columns=2, int rows=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh sphere(float radius, int res=12, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
