@@ -190,7 +190,7 @@ void testApp::draw() {
     sphere.rotate(spinY, 0, 1.0, 0.0);
     
     
-    vector<of3dTriangle> triangles;
+    vector<ofMeshFace> triangles;
     if(mode == 3) {
         // to get unique triangle, you have to use triangles mode //
         sphere.setMode( OF_PRIMITIVE_TRIANGLES );
@@ -510,7 +510,7 @@ void testApp::keyPressed(int key) {
             
             if(bSplitFaces) {
                 sphere.setMode( OF_PRIMITIVE_TRIANGLES );
-                vector<of3dTriangle> triangles = sphere.getUniqueTriangles();
+                vector<ofMeshFace> triangles = sphere.getUniqueTriangles();
                 sphere.setFromTriangles( triangles, true );
                 
                 icoSphere.setMode( OF_PRIMITIVE_TRIANGLES );

@@ -139,9 +139,9 @@ void ofPrimitiveBase::disableColors() {
 }
 
 //----------------------------------------------------------
-vector<of3dTriangle> ofPrimitiveBase::getUniqueTriangles() {
+vector<ofMeshFace> ofPrimitiveBase::getUniqueTriangles() {
     
-    vector<of3dTriangle> triangles;
+    vector<ofMeshFace> triangles;
     
     vector<ofVec3f>& verts       = getMesh().getVertices();
     vector<ofVec3f>& normals     = getMesh().getNormals();
@@ -161,7 +161,7 @@ vector<of3dTriangle> ofPrimitiveBase::getUniqueTriangles() {
 
     if(getMesh().getMode() == OF_PRIMITIVE_TRIANGLES) {
         for(int j = 0; j < indices.size(); j += 3) {
-            of3dTriangle tri;
+            ofMeshFace tri;
             for(int k = 0; k < 3; k++) {
                 index = indices[j+k];
                 tri.points[k].set(verts[index].x, verts[index].y, verts[index].z);//      = verts[index];
@@ -226,8 +226,8 @@ vector<ofVec3f> ofPrimitiveBase::getFaceNormals( bool perVetex ) {
 }
 
 //----------------------------------------------------------
-void ofPrimitiveBase::setFromTriangles( vector<of3dTriangle>& tris, bool bUseFaceNormal ) {
-    vector<of3dTriangle>::iterator it;
+void ofPrimitiveBase::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
+    vector<ofMeshFace>::iterator it;
     
     vector<ofVec3f> verts;
     vector<ofVec2f> tcoords;
@@ -273,7 +273,7 @@ void ofPrimitiveBase::setFromTriangles( vector<of3dTriangle>& tris, bool bUseFac
 void ofPrimitiveBase::smoothNormals( float angle ) {
     
     if(getMesh().getMode() == OF_PRIMITIVE_TRIANGLES) {
-        vector<of3dTriangle> triangles = getUniqueTriangles();
+        vector<ofMeshFace> triangles = getUniqueTriangles();
         vector<ofVec3f> verts;
         for(int i = 0; i < triangles.size(); i++) {
             for(int j = 0; j < 3; j++) {
