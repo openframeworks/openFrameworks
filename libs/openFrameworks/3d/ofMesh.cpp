@@ -1,5 +1,6 @@
 #include "ofMesh.h"
 #include "ofGraphics.h"
+#include <map>
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
@@ -1040,6 +1041,332 @@ void ofMesh::save(string path, bool useBinary){
 	}
 
 	//TODO: add index generation for other OF_PRIMITIVE cases
+}
+
+//----------------------------------------------------------
+void ofMesh::mergeDuplicateVertices() {
+    
+    vector<ofVec3f> verts         = getVertices();
+    vector<ofIndexType> indices   = getIndices();
+    
+    //get indexes to share single point - TODO: try j < i
+    for(int i = 0; i < indices.size(); i++) {
+        for(int j = 0; j < indices.size(); j++ ) {
+            if(i==j) continue;
+            
+            ofIndexType i1  = indices[i];
+            ofIndexType i2  = indices[j];
+            ofVec3f v1      = verts[ i1 ];
+            ofVec3f v2      = verts[ i2 ];
+            
+            if( v1 == v2 && i1 != i2) {
+                indices[j] = i1;
+                break;
+            }
+        }
+    }
+    
+    //indices array now has list of unique points we need
+    //but we need to delete the old points we're not using and that means the index values will change
+    //so we are going to create a new list of points and new indexes - we will use a map to map old index values to the new ones
+    vector <ofPoint> newPoints;
+    vector <ofIndexType> newIndexes;
+    map <int, bool> ptCreated;
+    map <int, int> oldIndexNewIndex;
+    
+    vector<ofFloatColor> newColors;
+    vector<ofFloatColor>& colors    = getColors();
+    vector<ofVec2f> newTCoords;
+    vector<ofVec2f>& tcoords        = getTexCoords();
+    vector<ofVec3f> newNormals;
+    vector<ofVec3f>& normals        = getNormals();
+    
+    for(int i = 0; i < indices.size(); i++){
+        ptCreated[i] = false;
+    }
+    
+    for(int i = 0; i < indices.size(); i++){
+        ofIndexType index = indices[i];
+        ofPoint p = verts[ index ];
+        
+        if( ptCreated[index] == false ){
+            oldIndexNewIndex[index] = newPoints.size();
+            newPoints.push_back( p );
+            if(hasColors()) {
+                newColors.push_back(colors[index]);
+            }
+            if(hasTexCoords()) {
+                newTCoords.push_back(tcoords[index]);
+            }
+            if(hasNormals()) {
+                newNormals.push_back(normals[index]);
+            }
+            
+            ptCreated[index] = true;
+        }
+        
+        //cout << "["<<i<<"]: old " << index << " --> " << oldIndexNewIndex[index] << endl;
+        newIndexes.push_back( oldIndexNewIndex[index] );
+    }
+    
+    verts.clear();
+    verts = newPoints;
+    
+    indices.clear();
+    indices = newIndexes;
+    
+    clearIndices();
+    addIndices(indices);
+    clearVertices();
+    addVertices( verts );
+    
+    if(hasColors()) {
+        clearColors();
+        addColors( newColors );
+    }
+    
+    if(hasTexCoords()) {
+        clearTexCoords();
+        addTexCoords( newTCoords );
+    }
+    
+    if(hasNormals()) {
+        clearNormals();
+        addNormals( newNormals );
+    }
+    
+}
+
+//----------------------------------------------------------
+vector<ofMeshFace> ofMesh::getUniqueFaces() {
+    
+    vector<ofMeshFace> triangles;
+    
+    vector<ofVec3f>& verts       = getVertices();
+    vector<ofVec3f>& normals     = getNormals();
+    vector<ofVec2f>& tcoords     = getTexCoords();
+    vector<ofFloatColor>&colors  = getColors();
+    vector<ofIndexType>& indices = getIndices();
+    // if we are doing triangles, we have to use a vert and normal for each triangle
+    // that way we can calculate face normals and use getFace();
+    
+    int index;
+    
+    bool bHasColors     = hasColors();
+    bool bHasNormals    = hasNormals();
+    bool bHasTexcoords  = hasTexCoords();
+    
+    //cout << "getUniqueFaces :: Indices.size = "<<indices.size() << endl;
+    
+    if( getMode() == OF_PRIMITIVE_TRIANGLES) {
+        for(int j = 0; j < indices.size(); j += 3) {
+            ofMeshFace tri;
+            for(int k = 0; k < 3; k++) {
+                index = indices[j+k];
+                tri.points[k].set(verts[index].x, verts[index].y, verts[index].z);//      = verts[index];
+                tri.calculateFaceNormal();
+                if(bHasNormals)
+                    tri.normals[k]      = normals[index];
+                if(bHasTexcoords)
+                    tri.texcoords[k]    = tcoords[index];
+                if(bHasColors)
+                    tri.colors[k]       = colors[index];
+                tri.setHasColors(bHasColors);
+                tri.setHasNormals(bHasNormals);
+                tri.setHasTexcoords(bHasTexcoords);
+            }
+            triangles.push_back( tri );
+        }
+        
+    } else {
+        ofLog( OF_LOG_WARNING, "ofMesh :: splitVertices only works with mode == OF_PRIMITIVE_TRIANGLES" );
+    }
+    
+    return triangles;
+    
+}
+
+//----------------------------------------------------------
+vector<ofVec3f> ofMesh::getFaceNormals( bool perVetex ) {
+    // default for ofPrimitiveBase is vertex normals //
+    vector<ofVec3f> faceNormals;
+    
+    if( hasVertices() ) {
+        vector<ofVec3f>& verts         = getVertices();
+        vector<ofIndexType>& indices   = getIndices();
+        vector<ofVec3f> normals        = getNormals();
+        
+        if(verts.size() > 3 && indices.size() > 3) {
+            
+            ofVec3f v1, v2, v3, n; ofVec3f U, V;
+            for(int i = 0; i < indices.size(); i+=3) {
+                v1 = verts[indices[i+0]];
+                v2 = verts[indices[i+1]];
+                v3 = verts[indices[i+2]];
+                
+                U = (v2-v1);
+                V = (v3-v1);
+                
+                n = U.crossed(V);
+                n.normalize();
+                
+                faceNormals.push_back(n);
+                if(perVetex) {
+                    faceNormals.push_back(n);
+                    faceNormals.push_back(n);
+                }
+            }
+            return faceNormals;
+        }
+        
+    }
+    
+    return faceNormals;
+}
+
+//----------------------------------------------------------
+void ofMesh::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
+    vector<ofMeshFace>::iterator it;
+    
+    vector<ofVec3f> verts;
+    vector<ofVec2f> tcoords;
+    vector<ofFloatColor> colors;
+    vector<ofVec3f> normals;
+    
+    for(it = tris.begin(); it != tris.end(); it++) {
+        for(int k = 0; k < 3; k++) {
+            verts.push_back( it->points[k] );
+            if(it->hasTexcoords())
+                tcoords.push_back( it->texcoords[k] );
+            if(it->hasColors())
+                colors.push_back( it->colors[k] );
+            if(it->hasNormals() || bUseFaceNormal) {
+                if(bUseFaceNormal)
+                    normals.push_back(it->faceNormal);
+                else
+                    normals.push_back( it->normals[k] );
+            }
+        }
+    }
+    clearIndices();
+    clearVertices();
+    addVertices(verts);
+    
+    setupIndicesAuto();
+    
+    if(normals.size() > 0) {
+        clearNormals();
+        addNormals(normals);
+    }
+    if(colors.size() > 0) {
+        clearColors();
+        addColors( colors );
+    }
+    if( tcoords.size() > 0 ) {
+        clearTexCoords();
+        addTexCoords( tcoords );
+    }
+}
+
+//----------------------------------------------------------
+void ofMesh::smoothNormals( float angle ) {
+    
+    if( getMode() == OF_PRIMITIVE_TRIANGLES) {
+        vector<ofMeshFace> triangles = getUniqueFaces();
+        vector<ofVec3f> verts;
+        for(int i = 0; i < triangles.size(); i++) {
+            for(int j = 0; j < 3; j++) {
+                verts.push_back(triangles[i].points[j]);
+            }
+        }
+        
+        map<int, int> removeIds;
+        
+        float epsilon = .01f;
+        for(int i = 0; i < verts.size()-1; i++) {
+            for(int j = i+1; j < verts.size(); j++) {
+                if(i != j) {
+                    ofVec3f& v1 = verts[i];
+                    ofVec3f& v2 = verts[j];
+                    if( v1.distance(v2) <= epsilon ) {
+                        // average the location //
+                        verts[i] = (v1+v2)/2.f;
+                        verts[j] = verts[i];
+                        removeIds[j] = 1;
+                    }
+                }
+            }
+        }
+        
+        // string of vertex in 3d space to triangle index //
+        map<string, vector<int> > vertHash;
+        
+//        cout << "ofMesh :: smoothNormals num verts = " << verts.size() << " tris size = " << triangles.size() << endl;
+        
+        string xStr, yStr, zStr;
+        
+        for(int i = 0; i < verts.size(); i++ ) {
+            xStr = "x"+ofToString(verts[i].x==-0?0:verts[i].x);
+            yStr = "y"+ofToString(verts[i].y==-0?0:verts[i].y);
+            zStr = "z"+ofToString(verts[i].z==-0?0:verts[i].z);
+            string vstring = xStr+yStr+zStr;
+            if(vertHash.find(vstring) == vertHash.end()) {
+                for(int j = 0; j < triangles.size(); j++) {
+                    for(int k = 0; k < 3; k++) {
+                        if(verts[i].x == triangles[j].points[k].x) {
+                            if(verts[i].y == triangles[j].points[k].y) {
+                                if(verts[i].z == triangles[j].points[k].z) {
+                                    vertHash[vstring].push_back( j );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+//        for( map<string, vector<int> >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
+//            //for( map<string, int >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
+//            cout << "ofMesh :: SmoothNormals : "<<it->first<<"  num = " << it->second.size() << endl;
+//        }
+        
+        
+        ofVec3f normal;
+        float angleCos = cos(angle * DEG_TO_RAD );
+        float numNormals=0;
+        ofVec3f f1, f2;
+        
+        for(int j = 0; j < triangles.size(); j++) {
+            for(int k = 0; k < 3; k++) {
+                xStr = "x"+ofToString(triangles[j].points[k].x==-0?0:triangles[j].points[k].x);
+                yStr = "y"+ofToString(triangles[j].points[k].y==-0?0:triangles[j].points[k].y);
+                zStr = "z"+ofToString(triangles[j].points[k].z==-0?0:triangles[j].points[k].z);
+                
+                string vstring = xStr+yStr+zStr;
+                numNormals=0;
+                normal.set(0,0,0);
+                if(vertHash.find(vstring) != vertHash.end()) {
+                    for(int i = 0; i < vertHash[vstring].size(); i++) {
+                        f1 = triangles[j].faceNormal;
+                        f2 = triangles[vertHash[vstring][i]].faceNormal;
+                        if(f1.dot(f2) >= angleCos ) {
+                            normal += f2;
+                            numNormals+=1.f;
+                        }
+                    }
+                    //normal /= (float)vertHash[vstring].size();
+                    normal /= numNormals;
+                    
+                    triangles[j].normals[k] = normal;
+                    triangles[j].setHasNormals( true );
+                }
+            }
+        }
+        
+        //cout << "SmoothNormals - Setting from triangles " << endl;
+        setFromTriangles( triangles );
+        
+    }
 }
 
 // PLANE MESH //
