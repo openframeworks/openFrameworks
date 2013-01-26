@@ -22,53 +22,6 @@ enum of3dPrimitiveType {
     OF_3D_PRIMITIVE_CYLINDER
 };
 
-class ofMeshFace {
-public:
-    ofMeshFace() {
-        bHasNormals = bHasColors = bHasTexcoords = false;
-    }
-    
-    ofVec3f getFaceNormal() {
-        ofVec3f U, V, n;
-        
-        U = (points[1]-points[0]);
-        V = (points[2]-points[0]);
-        
-        n = U.crossed(V);
-        n.normalize();
-        
-        return n;
-    }
-    
-    void calculateFaceNormal() {
-        ofVec3f U, V;
-        
-        U = (points[1]-points[0]);
-        V = (points[2]-points[0]);
-        
-        faceNormal = U.crossed(V);
-        faceNormal.normalize();
-    }
-    
-    ofPoint points[3];
-    ofVec3f faceNormal;
-    ofVec3f normals[3];
-    ofFloatColor colors[3];
-    ofVec2f texcoords[3];
-    
-    void setHasColors( bool bColors ) {bHasColors = bColors; }
-    void setHasNormals( bool bNormals ) {bHasNormals = bNormals; }
-    void setHasTexcoords( bool bTexcoords ) {bHasTexcoords = bTexcoords; }
-    
-    bool hasColors() { return bHasColors; }
-    bool hasNormals() {return bHasNormals; }
-    bool hasTexcoords() { return bHasTexcoords; }
-    
-protected:
-    bool bHasNormals, bHasColors, bHasTexcoords;
-    
-};
-
 
 class ofPrimitiveBase : public ofNode {
 public:
@@ -96,8 +49,6 @@ public:
     bool hasNormalsEnabled();
     ofVec3f getResolution() const;
     
-    void mergeDuplicateVertices();
-    
     void enableNormals();
     void enableTextures();
     void enableColors();
@@ -105,13 +56,6 @@ public:
     void disableNormals();
     void disableTextures();
     void disableColors();
-    
-    // return a list of triangles that do not share vertices or indices //
-    vector<ofMeshFace> getUniqueTriangles();
-    vector<ofVec3f> getFaceNormals( bool perVetex=false);
-    void setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
-    
-    void smoothNormals( float angle );
     
     void setResolution( int resX, int resY, int resZ );
     
