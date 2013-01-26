@@ -194,7 +194,7 @@ void testApp::draw() {
     if(mode == 3) {
         // to get unique triangle, you have to use triangles mode //
         sphere.setMode( OF_PRIMITIVE_TRIANGLES );
-        triangles = sphere.getMesh().getUniqueTriangles();
+        triangles = sphere.getMesh().getUniqueFaces();
     }
     
     if(bFill) {
@@ -230,7 +230,7 @@ void testApp::draw() {
     icoSphere.rotate(spinY, 0, 1.0, 0.0);
     
     if(mode == 3) {
-        triangles = icoSphere.getMesh().getUniqueTriangles();
+        triangles = icoSphere.getMesh().getUniqueFaces();
     }
     
     if(bFill) {
@@ -510,27 +510,27 @@ void testApp::keyPressed(int key) {
             
             if(bSplitFaces) {
                 sphere.setMode( OF_PRIMITIVE_TRIANGLES );
-                vector<ofMeshFace> triangles = sphere.getMesh().getUniqueTriangles();
+                vector<ofMeshFace> triangles = sphere.getMesh().getUniqueFaces();
                 sphere.getMesh().setFromTriangles( triangles, true );
                 
                 icoSphere.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = icoSphere.getMesh().getUniqueTriangles();
+                triangles = icoSphere.getMesh().getUniqueFaces();
                 icoSphere.getMesh().setFromTriangles(triangles, true);
                 
                 plane.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = plane.getMesh().getUniqueTriangles();
+                triangles = plane.getMesh().getUniqueFaces();
                 plane.getMesh().setFromTriangles(triangles, true);
                 
                 cylinder.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = cylinder.getMesh().getUniqueTriangles();
+                triangles = cylinder.getMesh().getUniqueFaces();
                 cylinder.getMesh().setFromTriangles(triangles, true);
                 
                 cone.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = cone.getMesh().getUniqueTriangles();
+                triangles = cone.getMesh().getUniqueFaces();
                 cone.getMesh().setFromTriangles(triangles, true);
                 
                 box.setMode( OF_PRIMITIVE_TRIANGLES );
-                triangles = box.getMesh().getUniqueTriangles();
+                triangles = box.getMesh().getUniqueFaces();
                 box.getMesh().setFromTriangles(triangles, true);
                 
             } else {
