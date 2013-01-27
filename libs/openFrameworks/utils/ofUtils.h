@@ -174,6 +174,7 @@ char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
 
+
 string 	ofGetVersionInfo();
 
 void	ofSaveScreen(string filename);
