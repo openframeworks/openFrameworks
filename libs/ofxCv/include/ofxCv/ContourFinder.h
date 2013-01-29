@@ -73,6 +73,7 @@ namespace ofxCv {
 		void setAutoThreshold(bool autoThreshold);
 		void setInvert(bool invert);
 		void setTargetColor(ofColor targetColor, TrackingColorMode trackingColorMode = TRACK_COLOR_RGB);
+		void setFindHoles(bool findHoles);
 		
 		void resetMinArea();
 		void resetMaxArea();
@@ -104,6 +105,8 @@ namespace ofxCv {
 		
 		RectTracker tracker;
 		vector<cv::Rect> boundingRects;
+
+		int contourFindingMode;
 	};	
 	
 }

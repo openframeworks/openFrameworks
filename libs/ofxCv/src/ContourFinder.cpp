@@ -10,7 +10,8 @@ namespace ofxCv {
 	,thresholdValue(128.)
 	,invert(false)
 	,simplify(true)
-	,useTargetColor(false) {
+	,useTargetColor(false)
+	,contourFindingMode(CV_RETR_EXTERNAL){
 		resetMinArea();
 		resetMaxArea();
 	}
@@ -52,7 +53,7 @@ namespace ofxCv {
 		// run the contour finder
 		vector<vector<cv::Point> > allContours;
 		int simplifyMode = simplify ? CV_CHAIN_APPROX_SIMPLE : CV_CHAIN_APPROX_NONE;
-		cv::findContours(thresh, allContours, CV_RETR_EXTERNAL, simplifyMode);
+		cv::findContours(thresh, allContours, contourFindingMode, simplifyMode);
 		
 		// filter the contours
 		bool needMinFilter = (minArea > 0);
@@ -89,6 +90,15 @@ namespace ofxCv {
 		tracker.track(boundingRects);
 	}
 	
+
+	void ContourFinder::setFindHoles(bool findHoles){
+		if(findHoles){
+			contourFindingMode = CV_RETR_LIST;
+		}else{
+			contourFindingMode = CV_RETR_EXTERNAL;
+		}
+	}
+
 	const vector<vector<cv::Point> >& ContourFinder::getContours() const {
 		return contours;
 	}
