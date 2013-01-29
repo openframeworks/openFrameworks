@@ -16,7 +16,7 @@
 #ifdef TARGET_LINUX
 // not needed any more, keeping it for compatibility with previous version
 //#define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE
-//#define PREFER_RGB_OVER_YUV
+#define PREFER_RGB_OVER_YUV
 #define PREFER_NON_COMPRESSED
 
 extern "C" {
@@ -333,6 +333,37 @@ static void add_video_format (ofGstDevice &webcam_device,
 			if(fabs(new_framerate - desired_framerate) < fabs(curr_framerate - desired_framerate) ){
 				ofLog(OF_LOG_VERBOSE,"more similar framerate replacing existing format\n");
 				webcam_device.video_formats[i] = video_format;
+				
+#ifdef PREFER_NON_COMPRESSED
+			}else if(webcam_device.video_formats[i].mimetype != "video/x-raw-yuv"
+					&& webcam_device.video_formats[i].mimetype != "video/x-raw-rgb"
+					&& ( video_format.mimetype == "video/x-raw-yuv" || video_format.mimetype == "video/x-raw-rgb" )
+					&& new_framerate == curr_framerate){
+				ofLog(OF_LOG_VERBOSE,"non compressed format with same framerate, replacing existing format\n");
+				webcam_device.video_formats[i] = video_format;
+#else
+			}else if((webcam_device.video_formats[i].mimetype == "video/x-raw-yuv"
+					|| webcam_device.video_formats[i].mimetype == "video/x-raw-rgb")
+					&& ( video_format.mimetype != "video/x-raw-yuv" && video_format.mimetype != "video/x-raw-rgb" )
+					&& new_framerate == curr_framerate){
+				ofLog(OF_LOG_VERBOSE,"non compressed format with same framerate, replacing existing format\n");
+				webcam_device.video_formats[i] = video_format;
+
+#endif
+#ifdef PREFER_RGB_OVER_YUV
+			}else if(webcam_device.video_formats[i].mimetype == "video/x-raw-yuv"
+					&& video_format.mimetype == "video/x-raw-rgb"
+					&& new_framerate == curr_framerate){
+				ofLog(OF_LOG_VERBOSE,"rgb format with same framerate as yuv, replacing existing format\n");
+				webcam_device.video_formats[i] = video_format;
+#else
+			}else if(webcam_device.video_formats[i].mimetype == "video/x-raw-rgb"
+					&& video_format.mimetype == "video/x-raw-yuv"
+					&& new_framerate == curr_framerate){
+				ofLog(OF_LOG_VERBOSE,"rgb format with same framerate as yuv, replacing existing format\n");
+				webcam_device.video_formats[i] = video_format;
+#endif
+				
 			}else{
 				ofLog(OF_LOG_VERBOSE,"already added, skipping\n");
 			}
