@@ -20,7 +20,7 @@ namespace ofxCv {
 	}
 	
 	void Flow::calcOpticalFlow(ofPixelsRef lastImage, ofPixelsRef currentImage){
-		last.setFromPixels(lastImage);
+		last = lastImage;
 		last.setImageType(OF_IMAGE_GRAYSCALE); //force to gray
 		
 		calcFlow(); //will call concrete implementation
@@ -44,7 +44,7 @@ namespace ofxCv {
 			calcFlow(); //will call concrete implementation
 			hasFlow = true;
 		}
-		
+
 		last.setFromPixels(curr.getPixelsRef());
 	}
 	
@@ -73,7 +73,14 @@ namespace ofxCv {
     
 	
 #pragma mark PYRLK IMPLEMENTATION
-	FlowPyrLK::FlowPyrLK(){
+	FlowPyrLK::FlowPyrLK()
+	:windowSize(32)
+	,maxLevel(3)
+	,maxFeatures(200)
+	,qualityLevel(0.01)
+	,minDistance(4)
+	,pyramidLevels(10)
+	{
 	}
 	
 	FlowPyrLK::~FlowPyrLK(){
@@ -96,30 +103,52 @@ namespace ofxCv {
 	}
 	
 	void FlowPyrLK::calcFlow(){
-		prevPts.clear();
+		if(!nextPts.empty()){
+			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
+
+			prevPts = nextPts;
+			nextPts.clear();
+			calcOpticalFlowPyrLK(
+													 prevPyramid,
+													 pyramid,
+													 prevPts,
+													 nextPts,
+													 status,
+													 err,
+
+													 cv::Size(windowSize, windowSize),
+													 maxLevel
+													 );
+			status.resize(nextPts.size(),0);
+			prevPyramid = pyramid;
+			pyramid.clear();
+		}else{
+			resetFeaturesToTrack();
+			buildOpticalFlowPyramid(toCv(curr),prevPyramid,cv::Size(windowSize, windowSize),10);
+		}
+	}
+	
+	void FlowPyrLK::resetFeaturesToTrack(){
 		goodFeaturesToTrack(
-												toCv(last),
-												prevPts,
+												toCv(curr),
+												nextPts,
 												maxFeatures,
 												qualityLevel,
 												minDistance
 												);
-		
-		vector<uchar> status;
-		vector<float> err;
-		calcOpticalFlowPyrLK(
-												 toCv(last),
-												 toCv(curr),
-												 prevPts,
-												 nextPts,
-												 status,
-												 err,
-												 
-												 cv::Size(windowSize, windowSize),
-												 maxLevel
-												 );
 	}
-	
+
+    void FlowPyrLK::setFeaturesToTrack(const vector<ofVec2f> & features){
+    	nextPts.resize(features.size());
+    	for(int i=0;i<features.size();i++){
+    		nextPts[i]=toCv(features[i]);
+    	}
+    }
+
+    void FlowPyrLK::setFeaturesToTrack(const vector<cv::Point2f> & features){
+    	nextPts = features;
+    }
+
     int FlowPyrLK::getWidth() {
         return last.getWidth();
     }
@@ -131,11 +160,33 @@ namespace ofxCv {
 		return toOf(prevPts).getVertices();
 	}
 	
+	vector<ofPoint> FlowPyrLK::getCurrent(){
+		vector<ofPoint> ret;
+		for(int i = 0; i < nextPts.size(); i++) {
+			if(status[i]){
+				ret.push_back(toOf(nextPts[i]));
+			}
+		}
+		return ret;
+	}
+
+	vector<ofVec2f> FlowPyrLK::getMotion(){
+		vector<ofVec2f> ret(prevPts.size());
+		for(int i = 0; i < prevPts.size(); i++) {
+			if(status[i]){
+				ret.push_back(toOf(nextPts[i])-toOf(prevPts[i]));
+			}
+		}
+		return ret;
+	}
+
 	void FlowPyrLK::drawFlow(ofRectangle rect) {
 		ofVec2f offset(rect.x,rect.y);
 		ofVec2f scale(rect.width/last.getWidth(),rect.height/last.getHeight());
 		for(int i = 0; i < prevPts.size(); i++) {
-			ofLine(toOf(prevPts[i])*scale+offset, toOf(nextPts[i])*scale+offset);
+			if(status[i]){
+				ofLine(toOf(prevPts[i])*scale+offset, toOf(nextPts[i])*scale+offset);
+			}
 		}
 	}
 	
