@@ -39,6 +39,12 @@ namespace ofxCv {
 			case 1: default: return CV_8U;
 		}
 	}
+	template <> inline int getDepth(ofPixels_<signed short>& pixels) {
+		return CV_16S;
+	}
+	template <> inline int getDepth(ofPixels_<signed char>& pixels) {
+		return CV_8S;
+	}
 	template <class T> inline int getDepth(ofBaseHasPixels_<T>& img) {
 		return getDepth(img.getPixelsRef());
 	}
