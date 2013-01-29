@@ -63,14 +63,22 @@ namespace ofxCv {
 		void setMaxLevel(int maxLevel);
 		void setMaxFeatures(int maxFeatures);
 		void setQualityLevel(float qualityLevel);
+		void setPyramidLevels(int levels);
 		
 		//returns tracking features for this image
 		vector<ofPoint> getFeatures();
+		vector<ofPoint> getCurrent();
+		vector<ofVec2f> getMotion();
 		
         // size of flow
         int getWidth();
         int getHeight();
         
+        // recalculates features to track
+        void resetFeaturesToTrack();
+        void setFeaturesToTrack(const vector<ofVec2f> & features);
+        void setFeaturesToTrack(const vector<cv::Point2f> & features);
+
 	protected:
 		
 		void drawFlow(ofRectangle r);
@@ -86,6 +94,15 @@ namespace ofxCv {
 		
 		//min distance for PyrLK 
 		int minDistance;
+
+		//pyramid levels
+		int pyramidLevels;
+
+		//pyramid + err/status data
+		vector<cv::Mat> pyramid;
+		vector<cv::Mat> prevPyramid;
+		vector<uchar> status;
+		vector<float> err;
 	};
 	
 #pragma mark FLOW FARNEBACK	
