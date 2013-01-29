@@ -365,6 +365,7 @@ namespace ofxCv {
 					labels.erase(labels.begin() + i);
 				}
 			}
+			return labels;
 		}
 		vector<F>& getFollowers() {
 			return followers;
