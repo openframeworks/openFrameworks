@@ -43,61 +43,6 @@ vector<ofIndexType> ofPrimitiveBase::getIndices( int startIndex, int endIndex ) 
     return indices;
 }
 
-//----------------------------------------------------------
-void ofPrimitiveBase::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
-    if(!getMesh().hasColors()) {
-        // no colors for vertices, so we must set them here //
-        getMesh().getColors().resize(getMesh().getNumVertices());
-    }
-    
-    for(int i = startIndex; i < endIndex; i++) {
-        getMesh().setColor( getMesh().getIndex(i), color);
-    }
-}
-
-//----------------------------------------------------------
-ofMesh ofPrimitiveBase::getMeshForIndexes( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) {
-    
-    ofMesh mesh;
-    mesh.setMode( getMesh().getMode() );
-    
-    vector<ofVec3f> vertices;
-    vertices.assign( getMesh().getVertices().begin()+startVertIndex, getMesh().getVertices().begin()+endVertIndex );
-    mesh.addVertices( vertices );
-    
-    if(getMesh().hasColors()) {
-        vector<ofFloatColor> colors;
-        colors.assign( getMesh().getColors().begin()+startVertIndex, getMesh().getColors().begin()+endVertIndex );
-        mesh.addColors( colors );
-        if(getMesh().usingColors()) mesh.enableColors();
-        else mesh.disableColors();
-    }
-    
-    if(getMesh().hasTexCoords()) {
-        vector<ofVec2f> texcoords;
-        texcoords.assign( getMesh().getTexCoords().begin()+startVertIndex, getMesh().getTexCoords().begin()+endVertIndex );
-        mesh.addTexCoords( texcoords );
-        if(getMesh().usingTextures()) mesh.enableTextures();
-        else mesh.disableTextures();
-    }
-    
-    if(getMesh().hasNormals()) {
-        vector<ofVec3f> normals;
-        normals.assign( getMesh().getNormals().begin()+startVertIndex, getMesh().getNormals().begin()+endVertIndex );
-        mesh.addNormals( normals );
-        if(getMesh().usingNormals()) mesh.enableNormals();
-        else mesh.disableNormals();
-    }
-    
-    int offsetIndex = getMesh().getIndex(startIndex);
-    for(int i = startIndex; i < endIndex; i++) {
-        int index = getMesh().getIndex(i) - offsetIndex;
-        mesh.addIndex( index );
-    }
-    
-    return mesh;
-}
-
 
 //----------------------------------------------------------
 bool ofPrimitiveBase::hasScaling() {

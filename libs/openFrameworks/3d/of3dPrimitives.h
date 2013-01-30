@@ -77,8 +77,7 @@ protected:
     
     ofVec3f _resolution;
     vector<ofIndexType> getIndices( int startIndex, int endIndex );
-    void setColorForIndices( int startIndex, int endIndex, ofColor color );
-    ofMesh getMeshForIndexes( int startIndex, int endIndex, int startVertIndex, int endVertIndex );
+    
 };
 
 class ofPlanePrimitive : public ofPrimitiveBase {

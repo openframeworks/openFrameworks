@@ -1044,6 +1044,61 @@ void ofMesh::save(string path, bool useBinary){
 }
 
 //----------------------------------------------------------
+void ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
+    if(!hasColors()) {
+        // no colors for vertices, so we must set them here //
+        getColors().resize( getNumVertices() );
+    }
+    
+    for(int i = startIndex; i < endIndex; i++) {
+        setColor( getIndex(i), color);
+    }
+}
+
+//----------------------------------------------------------
+ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) {
+    
+    ofMesh mesh;
+    mesh.setMode( getMode() );
+    
+    vector<ofVec3f> vertices;
+    vertices.assign( getVertices().begin()+startVertIndex, getVertices().begin()+endVertIndex );
+    mesh.addVertices( vertices );
+    
+    if( hasColors() ) {
+        vector<ofFloatColor> colors;
+        colors.assign( getColors().begin()+startVertIndex, getColors().begin()+endVertIndex );
+        mesh.addColors( colors );
+        if( usingColors()) mesh.enableColors();
+        else mesh.disableColors();
+    }
+    
+    if( hasTexCoords() ) {
+        vector<ofVec2f> texcoords;
+        texcoords.assign( getTexCoords().begin()+startVertIndex, getTexCoords().begin()+endVertIndex );
+        mesh.addTexCoords( texcoords );
+        if( usingTextures() ) mesh.enableTextures();
+        else mesh.disableTextures();
+    }
+    
+    if( hasNormals() ) {
+        vector<ofVec3f> normals;
+        normals.assign( getNormals().begin()+startVertIndex, getNormals().begin()+endVertIndex );
+        mesh.addNormals( normals );
+        if( usingNormals() ) mesh.enableNormals();
+        else mesh.disableNormals();
+    }
+    
+    int offsetIndex = getIndex(startIndex);
+    for(int i = startIndex; i < endIndex; i++) {
+        int index = getIndex(i) - offsetIndex;
+        mesh.addIndex( index );
+    }
+    
+    return mesh;
+}
+
+//----------------------------------------------------------
 void ofMesh::mergeDuplicateVertices() {
     
     vector<ofVec3f> verts         = getVertices();
