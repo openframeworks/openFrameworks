@@ -111,7 +111,11 @@ void ofPrimitiveBase::mapTexCoords( float u1, float v1, float u2, float v2 ) {
 
 //----------------------------------------------------------
 void ofPrimitiveBase::mapTexCoordsFromTexture( ofTexture& inTexture ) {
-    bool bNormalized = (inTexture.getTextureData().textureTarget!=GL_TEXTURE_RECTANGLE_ARB);
+    bool bNormalized = true;
+#ifndef TARGET_OPENGLES
+    bNormalized = (inTexture.getTextureData().textureTarget!=GL_TEXTURE_RECTANGLE_ARB);
+#endif
+    
     ofTextureData& tdata = inTexture.getTextureData();
     if(bNormalized)
         mapTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
