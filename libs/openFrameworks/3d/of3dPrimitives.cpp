@@ -94,17 +94,7 @@ void ofPrimitiveBase::setResolution( int resX, int resY, int resZ ) {
 }
 
 //----------------------------------------------------------
-void ofPrimitiveBase::normalizeAndApplySavedTexCoords() {
-    ofVec4f tcoords = getTexCoords();
-    // when a new mesh is created, it uses normalized tex coords, we need to reset them
-    // but save the ones used previously //
-    _texCoords.set(0,0,1,1);
-    setTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
-}
-
-// applies to all the meshes evenly //
-//----------------------------------------------------------
-void ofPrimitiveBase::setTexCoords( float u1, float v1, float u2, float v2 ) {
+void ofPrimitiveBase::mapTexCoords( float u1, float v1, float u2, float v2 ) {
     //setTexCoords( u1, v1, u2, v2 );
     ofVec4f prevTcoord = getTexCoords();
     
@@ -120,16 +110,25 @@ void ofPrimitiveBase::setTexCoords( float u1, float v1, float u2, float v2 ) {
 }
 
 //----------------------------------------------------------
-void ofPrimitiveBase::setTexCoordsFromTexture( ofTexture& inTexture ) {
+void ofPrimitiveBase::mapTexCoordsFromTexture( ofTexture& inTexture ) {
     bool bNormalized = (inTexture.getTextureData().textureTarget!=GL_TEXTURE_RECTANGLE_ARB);
     ofTextureData& tdata = inTexture.getTextureData();
     if(bNormalized)
-        setTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
+        mapTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
     else
-        setTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
+        mapTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
     
     ofVec4f tcoords = getTexCoords();
-    setTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+    mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+}
+
+//----------------------------------------------------------
+void ofPrimitiveBase::normalizeAndApplySavedTexCoords() {
+    ofVec4f tcoords = getTexCoords();
+    // when a new mesh is created, it uses normalized tex coords, we need to reset them
+    // but save the ones used previously //
+    _texCoords.set(0,0,1,1);
+    mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 
@@ -254,7 +253,7 @@ void ofPlanePrimitive::set( float width, float height ) {
 //--------------------------------------------------------------
 void ofPlanePrimitive::resizeToTexture( ofTexture& inTexture, float scale ) {
     set(inTexture.getWidth() * scale, inTexture.getHeight() * scale);
-    setTexCoordsFromTexture( inTexture );
+    mapTexCoordsFromTexture( inTexture );
 }
 
 //--------------------------------------------------------------
@@ -545,7 +544,7 @@ void ofCylinderPrimitive::setTopCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndices( _strides[0][0], _strides[0][0]+_strides[0][1], color );
+    getMesh().setColorForIndices( _strides[0][0], _strides[0][0]+_strides[0][1], color );
 }
 
 //--------------------------------------------------------------
@@ -553,7 +552,7 @@ void ofCylinderPrimitive::setCylinderColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndices( _strides[1][0], _strides[1][0]+_strides[1][1], color );
+    getMesh().setColorForIndices( _strides[1][0], _strides[1][0]+_strides[1][1], color );
 }
 
 //--------------------------------------------------------------
@@ -561,7 +560,7 @@ void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndices( _strides[2][0], _strides[2][0]+_strides[2][1], color );
+    getMesh().setColorForIndices( _strides[2][0], _strides[2][0]+_strides[2][1], color );
 }
 
 //--------------------------------------------------------------
@@ -575,7 +574,7 @@ ofMesh ofCylinderPrimitive::getTopCapMesh() {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
         return ofMesh();
     }
-    return getMeshForIndexes( _strides[0][0], _strides[0][0]+_strides[0][1],
+    return getMesh().getMeshForIndices( _strides[0][0], _strides[0][0]+_strides[0][1],
                              _vertices[0][0], _vertices[0][0]+_vertices[0][1] );
 }
 
@@ -593,7 +592,7 @@ ofMesh ofCylinderPrimitive::getCylinderMesh() {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
         return ofMesh();
     }
-    return getMeshForIndexes( _strides[1][0], _strides[1][0]+_strides[1][1],
+    return getMesh().getMeshForIndices( _strides[1][0], _strides[1][0]+_strides[1][1],
                              _vertices[1][0], _vertices[1][0]+_vertices[1][1] );
 }
 
@@ -611,7 +610,7 @@ ofMesh ofCylinderPrimitive::getBottomCapMesh() {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
         return ofMesh();
     }
-    return getMeshForIndexes( _strides[2][0], _strides[2][0]+_strides[2][1],
+    return getMesh().getMeshForIndices( _strides[2][0], _strides[2][0]+_strides[2][1],
                              _vertices[2][0], _vertices[2][0]+_vertices[2][1] );
 }
 
@@ -728,7 +727,7 @@ void ofConePrimitive::setTopColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndices( _strides[0][0], _strides[0][0]+_strides[0][1], color );
+    getMesh().setColorForIndices( _strides[0][0], _strides[0][0]+_strides[0][1], color );
 }
 
 //--------------------------------------------------------------
@@ -736,7 +735,7 @@ void ofConePrimitive::setCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    setColorForIndices( _strides[1][0], _strides[1][0]+_strides[1][1], color );
+    getMesh().setColorForIndices( _strides[1][0], _strides[1][0]+_strides[1][1], color );
 }
 
 //--------------------------------------------------------------
@@ -758,7 +757,7 @@ ofMesh ofConePrimitive::getConeMesh() {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
         return ofMesh();
     }
-    return getMeshForIndexes( startIndex, endIndex, startVertIndex, endVertIndex );
+    return getMesh().getMeshForIndices( startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
 //--------------------------------------------------------------
@@ -780,7 +779,7 @@ ofMesh ofConePrimitive::getCapMesh() {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
         return ofMesh();
     }
-    return getMeshForIndexes( startIndex, endIndex, startVertIndex, endVertIndex );
+    return getMesh().getMeshForIndices( startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
 //--------------------------------------------------------------
@@ -900,7 +899,7 @@ void ofBoxPrimitive::setDepth( float a_depth ) {
 //--------------------------------------------------------------
 void ofBoxPrimitive::resizeToTexture( ofTexture& inTexture ) {
     set(inTexture.getWidth(), inTexture.getHeight(), inTexture.getWidth());
-    setTexCoordsFromTexture( inTexture );
+    mapTexCoordsFromTexture( inTexture );
 }
 
 //--------------------------------------------------------------
@@ -927,7 +926,7 @@ ofMesh ofBoxPrimitive::getSideMesh( int sideIndex ) {
     int startVertIndex  = _vertices[sideIndex][0];
     int endVertIndex    = startVertIndex + _vertices[sideIndex][1];
     
-    return getMeshForIndexes( startIndex, endIndex, startVertIndex, endVertIndex );
+    return getMesh().getMeshForIndices( startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
 //--------------------------------------------------------------
@@ -953,7 +952,7 @@ void ofBoxPrimitive::setSideColor( int sideIndex, ofColor color ) {
         ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: setSideColor : sideIndex out of bounds, setting SIDE_FRONT ";
         sideIndex = SIDE_FRONT;
     }
-    setColorForIndices( _strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1], color );
+    getMesh().setColorForIndices( _strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1], color );
 }
 
 //--------------------------------------------------------------

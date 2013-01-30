@@ -28,16 +28,13 @@ public:
     ofPrimitiveBase();
     virtual ~ofPrimitiveBase();
     
-    // applies to all the meshes evenly //
-    void setTexCoords( float u1, float v1, float u2, float v2 );
-    // apply to a specific mesh //
+    void mapTexCoords( float u1, float v1, float u2, float v2 );
     //void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
     // does not store texture. Creates tex coords from texture, if texture is
     // non-arb, then it will create normalized tex coords //
     // defaults to index 0 
-    void setTexCoordsFromTexture( ofTexture& inTexture );
-    // useful when creating a new model, since it uses normalized tex coords //
-    void normalizeAndApplySavedTexCoords();
+    void mapTexCoordsFromTexture( ofTexture& inTexture );
+    
     
     ofMesh* getMeshPtr();
     ofMesh& getMesh();
@@ -72,6 +69,10 @@ public:
     void drawAxes(float a_size);
     
 protected:
+    
+    // useful when creating a new model, since it uses normalized tex coords //
+    void normalizeAndApplySavedTexCoords();
+    
     ofMesh  _mesh;
     ofVec4f _texCoords;
     
