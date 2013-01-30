@@ -111,6 +111,10 @@ private:
 #endif
 	void		unloadTextures();
 	void		reloadTextures();
+	static bool	initLibraries();
+	static void finishLibraries();
+
+	friend void ofExitCallback();
 };
 
 
