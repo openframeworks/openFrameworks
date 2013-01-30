@@ -552,20 +552,20 @@ void testApp::keyPressed(int key) {
         // resize the plane to the size of the texture //
         plane.resizeToTexture( texture.getTextureReference() );
         // setTexCoordsFromTexture sets normalized or non-normalized tex coords based on an ofTexture passed in.
-        box.setTexCoordsFromTexture( texture.getTextureReference() );
-        sphere.setTexCoordsFromTexture( texture.getTextureReference() );
-        icoSphere.setTexCoordsFromTexture( texture.getTextureReference() );
-        cylinder.setTexCoordsFromTexture( texture.getTextureReference() );
-        cone.setTexCoordsFromTexture( texture.getTextureReference() );
+        box.mapTexCoordsFromTexture( texture.getTextureReference() );
+        sphere.mapTexCoordsFromTexture( texture.getTextureReference() );
+        icoSphere.mapTexCoordsFromTexture( texture.getTextureReference() );
+        cylinder.mapTexCoordsFromTexture( texture.getTextureReference() );
+        cone.mapTexCoordsFromTexture( texture.getTextureReference() );
     }
     
     if(mode == 2) {
         plane.resizeToTexture( vidGrabber.getTextureReference(), .5 );
-        box.setTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        sphere.setTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        icoSphere.setTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        cylinder.setTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        cone.setTexCoordsFromTexture( vidGrabber.getTextureReference() );
+        box.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
+        sphere.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
+        icoSphere.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
+        cylinder.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
+        cone.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
     }
     
     // 
@@ -585,14 +585,14 @@ void testApp::keyPressed(int key) {
         box.setMode( OF_PRIMITIVE_TRIANGLES );
         
         plane.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
-        plane.setTexCoords(0, 0, 5, 5);
+        plane.mapTexCoords(0, 0, 5, 5);
         
         // rebuild the box, 
-        box.setTexCoords(0, 0, 5, 5);
-        sphere.setTexCoords(0, 0, 5, 5);
-        icoSphere.setTexCoords(0, 0, 5, 5);
-        cylinder.setTexCoords(0, 0, 5, 5);
-        cone.setTexCoords(0, 0, 5, 5);
+        box.mapTexCoords(0, 0, 5, 5);
+        sphere.mapTexCoords(0, 0, 5, 5);
+        icoSphere.mapTexCoords(0, 0, 5, 5);
+        cylinder.mapTexCoords(0, 0, 5, 5);
+        cone.mapTexCoords(0, 0, 5, 5);
         
         // store the box sides so that we can manipulate them later //
         for(int i = 0; i < ofBoxPrimitive::SIDES_TOTAL; i++ ) {
