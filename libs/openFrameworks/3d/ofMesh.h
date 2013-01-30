@@ -186,7 +186,8 @@ public:
     virtual bool usingNormals();
     virtual bool usingIndices();
     
-    
+    void setColorForIndices( int startIndex, int endIndex, ofColor color );
+    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex );
     void mergeDuplicateVertices();
     // return a list of triangles that do not share vertices or indices //
     vector<ofMeshFace> getUniqueFaces();
