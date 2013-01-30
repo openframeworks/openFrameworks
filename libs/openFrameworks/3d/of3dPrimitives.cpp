@@ -229,26 +229,29 @@ void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
         vector<ofVec3f>& vertices = getMesh().getVertices();
         ofVec3f normal;
         ofVec3f vert;
-        glBegin(GL_LINES);
+        
+        ofMesh tempMesh;
+        tempMesh.setMode( OF_PRIMITIVE_LINES );
+        tempMesh.getVertices().assign( normals.size() * 2, ofVec3f() );
         
         if(bFaceNormals) {
             for(int i = 0; i < normals.size(); i += 3) {
                 vert = (vertices[i+0]+vertices[i+1]+vertices[i+2]) / 3;
-                glVertex3f(vert.x, vert.y, vert.z);
-                normal = normals[i];
+                tempMesh.setVertex(i*2, vert);
+                normal = normals[i].getNormalized();
                 normal *= length;
-                glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
+                tempMesh.setVertex(i*2+1, normal+vert);
             }
         } else {
             for(int i = 0; i < normals.size(); i++) {
                 vert = vertices[i];
                 normal = normals[i].normalized();
-                glVertex3f(vert.x, vert.y, vert.z);
+                tempMesh.setVertex( i*2, vert);
                 normal *= length;
-                glVertex3f(normal.x+vert.x, normal.y+vert.y, normal.z+vert.z);
+                tempMesh.setVertex(i*2+1, normal+vert);
             }
         }
-        glEnd();
+        tempMesh.draw();
     } else {
         ofLog(OF_LOG_WARNING, "ofPrimitiveBase :: drawNormals()") << " : mesh normals are disabled";
     }
