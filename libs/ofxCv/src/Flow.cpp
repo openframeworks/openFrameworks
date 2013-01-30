@@ -140,7 +140,7 @@ namespace ofxCv {
 
     void FlowPyrLK::setFeaturesToTrack(const vector<ofVec2f> & features){
     	nextPts.resize(features.size());
-    	for(int i=0;i<features.size();i++){
+    	for(int i=0;i<(int)features.size();i++){
     		nextPts[i]=toCv(features[i]);
     	}
     }
@@ -157,12 +157,13 @@ namespace ofxCv {
     }
     
 	vector<ofPoint> FlowPyrLK::getFeatures(){
-		return toOf(prevPts).getVertices();
+		ofPolyline poly =toOf(prevPts);
+		return poly.getVertices();
 	}
 	
 	vector<ofPoint> FlowPyrLK::getCurrent(){
 		vector<ofPoint> ret;
-		for(int i = 0; i < nextPts.size(); i++) {
+		for(int i = 0; i < (int)nextPts.size(); i++) {
 			if(status[i]){
 				ret.push_back(toOf(nextPts[i]));
 			}
@@ -172,7 +173,7 @@ namespace ofxCv {
 
 	vector<ofVec2f> FlowPyrLK::getMotion(){
 		vector<ofVec2f> ret(prevPts.size());
-		for(int i = 0; i < prevPts.size(); i++) {
+		for(int i = 0; i < (int)prevPts.size(); i++) {
 			if(status[i]){
 				ret.push_back(toOf(nextPts[i])-toOf(prevPts[i]));
 			}
@@ -183,7 +184,7 @@ namespace ofxCv {
 	void FlowPyrLK::drawFlow(ofRectangle rect) {
 		ofVec2f offset(rect.x,rect.y);
 		ofVec2f scale(rect.width/last.getWidth(),rect.height/last.getHeight());
-		for(int i = 0; i < prevPts.size(); i++) {
+		for(int i = 0; i < (int)prevPts.size(); i++) {
 			if(status[i]){
 				ofLine(toOf(prevPts[i])*scale+offset, toOf(nextPts[i])*scale+offset);
 			}
@@ -191,7 +192,15 @@ namespace ofxCv {
 	}
 	
 #pragma mark FARNEBACK IMPLEMENTATION
-	FlowFarneback::FlowFarneback(){
+	FlowFarneback::FlowFarneback()
+	:pyramidScale(0.5)
+	,numLevels(4)
+	,windowSize(8)
+	,numIterations(2)
+	,polyN(7)
+	,polySigma(1.5)
+	,farnebackGaussian(false)
+	{
 	}
 	
 	FlowFarneback::~FlowFarneback(){
