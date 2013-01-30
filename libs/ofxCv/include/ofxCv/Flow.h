@@ -83,6 +83,7 @@ namespace ofxCv {
 		
 		void drawFlow(ofRectangle r);
 		void calcFlow();
+		void calcFeaturesToTrack(vector<cv::Point2f> & features);
 		
 		vector<cv::Point2f> prevPts, nextPts;
 		
@@ -97,6 +98,8 @@ namespace ofxCv {
 
 		//pyramid levels
 		int pyramidLevels;
+
+		bool calcFeaturesNextFrame;
 
 		//pyramid + err/status data
 		vector<cv::Mat> pyramid;

@@ -80,6 +80,7 @@ namespace ofxCv {
 	,qualityLevel(0.01)
 	,minDistance(4)
 	,pyramidLevels(10)
+	,calcFeaturesNextFrame(true)
 	{
 	}
 	
@@ -104,38 +105,61 @@ namespace ofxCv {
 	
 	void FlowPyrLK::calcFlow(){
 		if(!nextPts.empty()){
-			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
-
-			prevPts = nextPts;
+			if(calcFeaturesNextFrame){
+				calcFeaturesToTrack(prevPts);
+				calcFeaturesNextFrame = false;
+			}else{
+				prevPts = nextPts;
+			}
 			nextPts.clear();
-			calcOpticalFlowPyrLK(
-													 prevPyramid,
-													 pyramid,
-													 prevPts,
-													 nextPts,
-													 status,
-													 err,
 
-													 cv::Size(windowSize, windowSize),
-													 maxLevel
-													 );
-			status.resize(nextPts.size(),0);
+#if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
+			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
+			calcOpticalFlowPyrLK(
+						 prevPyramid,
+						 pyramid,
+						 prevPts,
+						 nextPts,
+						 status,
+						 err,
+
+						 cv::Size(windowSize, windowSize),
+						 maxLevel
+						 );
 			prevPyramid = pyramid;
-			pyramid.clear();
+#else
+			calcOpticalFlowPyrLK(
+						 toCv(last),
+						 toCv(curr),
+						 prevPts,
+						 nextPts,
+						 status,
+						 err,
+						 cv::Size(windowSize, windowSize),
+						 maxLevel
+						 );
+#endif
+			status.resize(nextPts.size(),0);
 		}else{
-			resetFeaturesToTrack();
+			calcFeaturesToTrack(nextPts);
+#if CV_MAJOR_VERSION==2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
 			buildOpticalFlowPyramid(toCv(curr),prevPyramid,cv::Size(windowSize, windowSize),10);
+#endif
 		}
 	}
-	
-	void FlowPyrLK::resetFeaturesToTrack(){
+
+	void FlowPyrLK::calcFeaturesToTrack(vector<cv::Point2f> & features){
 		goodFeaturesToTrack(
-												toCv(curr),
-												nextPts,
-												maxFeatures,
-												qualityLevel,
-												minDistance
-												);
+			toCv(curr),
+			features,
+			maxFeatures,
+			qualityLevel,
+			minDistance
+			);
+	}
+
+	void FlowPyrLK::resetFeaturesToTrack(){
+		calcFeaturesNextFrame=true;
 	}
 
     void FlowPyrLK::setFeaturesToTrack(const vector<ofVec2f> & features){
