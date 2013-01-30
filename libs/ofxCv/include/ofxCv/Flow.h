@@ -10,7 +10,7 @@ namespace ofxCv {
 	class Flow {
 	public:
 		Flow();
-		~Flow();
+		virtual ~Flow();
 		
 		//call these functions to calculate flow on sequential images.
 		//After this call the flow field will be populated and
@@ -53,7 +53,7 @@ namespace ofxCv {
 	class FlowPyrLK : public Flow {
 	public:
 		FlowPyrLK();
-		~FlowPyrLK();
+		virtual ~FlowPyrLK();
 		
 		//flow parameters
 		void setMinDistance(int minDistance);		
@@ -111,7 +111,7 @@ namespace ofxCv {
 	public:
 		
 		FlowFarneback();
-		~FlowFarneback();
+		virtual ~FlowFarneback();
 		
 		//see http://opencv.willowgarage.com/documentation/cpp/motion_analysis_and_object_tracking.html
 		//for a description of these parameters
