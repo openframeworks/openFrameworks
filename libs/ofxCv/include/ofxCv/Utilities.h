@@ -39,6 +39,12 @@ namespace ofxCv {
 			case 1: default: return CV_8U;
 		}
 	}
+	template <> inline int getDepth(ofPixels_<signed short>& pixels) {
+		return CV_16S;
+	}
+	template <> inline int getDepth(ofPixels_<signed char>& pixels) {
+		return CV_8S;
+	}
 	template <class T> inline int getDepth(ofBaseHasPixels_<T>& img) {
 		return getDepth(img.getPixelsRef());
 	}
@@ -189,7 +195,7 @@ namespace ofxCv {
 	template <class T> inline ofPolyline toOf(const vector<cv::Point_<T> >& contour) {
 		ofPolyline polyline;
 		polyline.resize(contour.size());
-		for(int i = 0; i < contour.size(); i++) {
+		for(int i = 0; i < (int)contour.size(); i++) {
 			polyline[i].x = contour[i].x;
 			polyline[i].y = contour[i].y;
 		}

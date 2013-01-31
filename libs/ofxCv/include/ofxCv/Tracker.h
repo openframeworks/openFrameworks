@@ -64,25 +64,25 @@ namespace ofxCv {
 		T object;
 		
 		TrackedObject(const T& object, unsigned int label, int index)
-		:object(object)
-		,lastSeen(0)
-		,age(0)
+		:lastSeen(0)
 		,label(label)
-		,index(index) {
+		,age(0)
+		,index(index)
+		,object(object){
 		}
 		TrackedObject(const T& object, const TrackedObject<T>& previous, int index)
-		:object(object)
+		:lastSeen(0)
 		,label(previous.label)
+		,age(previous.age)
 		,index(index)
-		,lastSeen(0)
-		,age(previous.age) {
+		,object(object){
 		}
 		TrackedObject(const TrackedObject<T>& old)
-		:object(old.object)
+		:lastSeen(old.lastSeen)
 		,label(old.label)
+		,age(old.age)
 		,index(-1)
-		,lastSeen(old.lastSeen)
-		,age(old.age) {
+		,object(old.object){
 		}
 		void timeStep(bool visible) {
 			age++;
@@ -118,18 +118,19 @@ namespace ofxCv {
 		vector<unsigned int> currentLabels, previousLabels, newLabels, deadLabels;
 		std::map<unsigned int, TrackedObject<T>*> previousLabelMap, currentLabelMap;
 		
-		float maximumDistance;
 		unsigned int persistence, curLabel;
+		float maximumDistance;
 		unsigned int getNewLabel() {
 			return curLabel++;
 		}
 		
 	public:
 		Tracker<T>()
-		:curLabel(0)
-		,persistence(15)
+		:persistence(15)
+		,curLabel(0)
 		,maximumDistance(64) {
 		}
+		virtual ~Tracker(){};
 		void setPersistence(unsigned int persistence);
 		void setMaximumDistance(float maximumDistance);
 		virtual vector<unsigned int>& track(const vector<T>& objects);
@@ -189,7 +190,7 @@ namespace ofxCv {
 		vector<bool> matchedObjects(n, false);
 		vector<bool> matchedPrevious(m, false);
 		// walk through matches in order
-		for(int k = 0; k < all.size(); k++) {
+		for(int k = 0; k < (int)all.size(); k++) {
 			MatchPair& match = all[k].first;
 			int i = match.first;
 			int j = match.second;
@@ -231,12 +232,12 @@ namespace ofxCv {
 		
 		// build label maps
 		currentLabelMap.clear();
-		for(int i = 0; i < current.size(); i++) {
+		for(int i = 0; i < (int)current.size(); i++) {
 			unsigned int label = current[i].getLabel();
 			currentLabelMap[label] = &(current[i]);
 		}
 		previousLabelMap.clear();
-		for(int i = 0; i < previous.size(); i++) {
+		for(int i = 0; i < (int)previous.size(); i++) {
 			unsigned int label = previous[i].getLabel();
 			previousLabelMap[label] = &(previous[i]);
 		}
@@ -312,6 +313,7 @@ namespace ofxCv {
 		:dead(false)
 		,label(0) {}
 		
+		virtual ~Follower(){};
 		virtual void setup(const T& track) {}
 		virtual void update(const T& track) {}
 		virtual void kill() {
@@ -365,6 +367,7 @@ namespace ofxCv {
 					labels.erase(labels.begin() + i);
 				}
 			}
+			return labels;
 		}
 		vector<F>& getFollowers() {
 			return followers;

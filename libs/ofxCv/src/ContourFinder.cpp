@@ -7,10 +7,11 @@ namespace ofxCv {
 	
 	ContourFinder::ContourFinder()
 	:autoThreshold(true)
-	,thresholdValue(128.)
 	,invert(false)
 	,simplify(true)
-	,useTargetColor(false) {
+	,thresholdValue(128.)
+	,useTargetColor(false)
+	,contourFindingMode(CV_RETR_EXTERNAL){
 		resetMinArea();
 		resetMaxArea();
 	}
@@ -52,7 +53,7 @@ namespace ofxCv {
 		// run the contour finder
 		vector<vector<cv::Point> > allContours;
 		int simplifyMode = simplify ? CV_CHAIN_APPROX_SIMPLE : CV_CHAIN_APPROX_NONE;
-		cv::findContours(thresh, allContours, CV_RETR_EXTERNAL, simplifyMode);
+		cv::findContours(thresh, allContours, contourFindingMode, simplifyMode);
 		
 		// filter the contours
 		bool needMinFilter = (minArea > 0);
@@ -62,7 +63,7 @@ namespace ofxCv {
 			double imgArea = img.rows * img.cols;
 			double imgMinArea = minAreaNorm ? (minArea * imgArea) : minArea;
 			double imgMaxArea = maxAreaNorm ? (maxArea * imgArea) : maxArea;
-			for(int i = 0; i < allContours.size(); i++) {
+			for(int i = 0; i < (int)allContours.size(); i++) {
 				double curArea = contourArea(Mat(allContours[i]));
 				if((!needMinFilter || curArea >= imgMinArea) &&
 					 (!needMaxFilter || curArea <= imgMaxArea)) {
@@ -75,13 +76,13 @@ namespace ofxCv {
 		
 		// generate polylines from the contours
 		polylines.clear();
-		for(int i = 0; i < size(); i++) {
+		for(int i = 0; i < (int)size(); i++) {
 			polylines.push_back(toOf(contours[i]));
 		}
 		
 		// generate bounding boxes from the contours
 		boundingRects.clear();
-		for(int i = 0; i < size(); i++) {
+		for(int i = 0; i < (int)size(); i++) {
 			boundingRects.push_back(boundingRect(Mat(contours[i])));
 		}
 		
@@ -89,6 +90,15 @@ namespace ofxCv {
 		tracker.track(boundingRects);
 	}
 	
+
+	void ContourFinder::setFindHoles(bool findHoles){
+		if(findHoles){
+			contourFindingMode = CV_RETR_LIST;
+		}else{
+			contourFindingMode = CV_RETR_EXTERNAL;
+		}
+	}
+
 	const vector<vector<cv::Point> >& ContourFinder::getContours() const {
 		return contours;
 	}
@@ -180,7 +190,7 @@ namespace ofxCv {
 		
 		// unbounded binary search to simplify the convex hull until it's 4 points
 		if(quad.size() > 4) {
-			for(int i = 0; i < maxIterations; i++) {
+			for(int i = 0; i <(int) maxIterations; i++) {
 				approxPolyDP(Mat(convexHull), quad, curEpsilon, true);
 				if(quad.size() == targetPoints) {
 					break;
@@ -249,7 +259,7 @@ namespace ofxCv {
 	void ContourFinder::draw() {
 		ofPushStyle();
 		ofNoFill();
-		for(int i = 0; i < polylines.size(); i++) {
+		for(int i = 0; i < (int)polylines.size(); i++) {
 			polylines[i].draw();
 			ofRect(toOf(getBoundingRect(i)));
 		}

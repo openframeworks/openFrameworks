@@ -10,7 +10,7 @@ namespace ofxCv {
 	class Flow {
 	public:
 		Flow();
-		~Flow();
+		virtual ~Flow();
 		
 		//call these functions to calculate flow on sequential images.
 		//After this call the flow field will be populated and
@@ -53,7 +53,7 @@ namespace ofxCv {
 	class FlowPyrLK : public Flow {
 	public:
 		FlowPyrLK();
-		~FlowPyrLK();
+		virtual ~FlowPyrLK();
 		
 		//flow parameters
 		void setMinDistance(int minDistance);		
@@ -63,18 +63,27 @@ namespace ofxCv {
 		void setMaxLevel(int maxLevel);
 		void setMaxFeatures(int maxFeatures);
 		void setQualityLevel(float qualityLevel);
+		void setPyramidLevels(int levels);
 		
 		//returns tracking features for this image
 		vector<ofPoint> getFeatures();
+		vector<ofPoint> getCurrent();
+		vector<ofVec2f> getMotion();
 		
         // size of flow
         int getWidth();
         int getHeight();
         
+        // recalculates features to track
+        void resetFeaturesToTrack();
+        void setFeaturesToTrack(const vector<ofVec2f> & features);
+        void setFeaturesToTrack(const vector<cv::Point2f> & features);
+
 	protected:
 		
 		void drawFlow(ofRectangle r);
 		void calcFlow();
+		void calcFeaturesToTrack(vector<cv::Point2f> & features);
 		
 		vector<cv::Point2f> prevPts, nextPts;
 		
@@ -86,6 +95,17 @@ namespace ofxCv {
 		
 		//min distance for PyrLK 
 		int minDistance;
+
+		//pyramid levels
+		int pyramidLevels;
+
+		bool calcFeaturesNextFrame;
+
+		//pyramid + err/status data
+		vector<cv::Mat> pyramid;
+		vector<cv::Mat> prevPyramid;
+		vector<uchar> status;
+		vector<float> err;
 	};
 	
 #pragma mark FLOW FARNEBACK	
@@ -94,7 +114,7 @@ namespace ofxCv {
 	public:
 		
 		FlowFarneback();
-		~FlowFarneback();
+		virtual ~FlowFarneback();
 		
 		//see http://opencv.willowgarage.com/documentation/cpp/motion_analysis_and_object_tracking.html
 		//for a description of these parameters

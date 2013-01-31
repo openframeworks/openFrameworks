@@ -73,11 +73,12 @@ namespace ofxCv {
 	
 	Calibration::Calibration() :
 		patternType(CHESSBOARD),
-		patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
+		patternSize(cv::Size(10, 7)), // based on Chessboard_A4.pdf, assuming world units are centimeters
 		subpixelSize(cv::Size(11,11)),
+		squareSize(2.5),
+		reprojectionError(0),
 		fillFrame(true),
-		ready(false),
-		reprojectionError(0) {
+		ready(false) {
 		
 	}
 	
@@ -97,7 +98,7 @@ namespace ofxCv {
 		fs << "distCoeffs" << distCoeffs;
 		fs << "reprojectionError" << reprojectionError;
 		fs << "features" << "[";
-		for(int i = 0; i < imagePoints.size(); i++) {
+		for(int i = 0; i < (int)imagePoints.size(); i++) {
 			fs << "[:" << imagePoints[i] << "]";
 		}
 		fs << "]";
@@ -156,7 +157,7 @@ namespace ofxCv {
 		return found;
 	}
 	bool Calibration::findBoard(Mat img, vector<Point2f>& pointBuf, bool refine) {
-		bool found;
+		bool found=false;
 		if(patternType == CHESSBOARD) {
 			// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
 			int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
@@ -236,7 +237,7 @@ namespace ofxCv {
 		ofDirectory dirList;
 		ofImage cur;
 		dirList.listDir(directory);
-		for(int i = 0; i < dirList.size(); i++) {
+		for(int i = 0; i < (int)dirList.size(); i++) {
 			cur.loadImage(dirList.getPath(i));
 			if(!add(toCv(cur))) {
 				ofLog(OF_LOG_ERROR, "Calibration::add() failed on " + dirList.getPath(i));
@@ -323,7 +324,7 @@ namespace ofxCv {
 		ofPushStyle();
 		ofNoFill();
 		ofSetColor(ofColor::red);
-		for(int j = 0; j < imagePoints[i].size(); j++) {
+		for(int j = 0; j < (int)imagePoints[i].size(); j++) {
 			ofCircle(toOf(imagePoints[i][j]), 5);
 		}
 		ofPopStyle();
@@ -366,7 +367,7 @@ namespace ofxCv {
 		
 		ofDrawBitmapString(ofToString(i), 0, 0);
 		
-		for(int j = 0; j < objectPoints[i].size(); j++) {
+		for(int j = 0; j < (int)objectPoints[i].size(); j++) {
 			ofPushMatrix();
 			ofTranslate(toOf(objectPoints[i][j]));
 			ofCircle(0, 0, .5);
@@ -375,7 +376,7 @@ namespace ofxCv {
 
 		ofMesh mesh;
 		mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
-		for(int j = 0; j < objectPoints[i].size(); j++) {
+		for(int j = 0; j < (int)objectPoints[i].size(); j++) {
 			ofVec3f cur = toOf(objectPoints[i][j]);
 			mesh.addVertex(cur);
 		}
@@ -396,7 +397,7 @@ namespace ofxCv {
 		perViewErrors.clear();
 		perViewErrors.resize(objectPoints.size());
 		
-		for(int i = 0; i < objectPoints.size(); i++) {
+		for(int i = 0; i < (int)objectPoints.size(); i++) {
 			projectPoints(Mat(objectPoints[i]), boardRotations[i], boardTranslations[i], distortedIntrinsics.getCameraMatrix(), distCoeffs, imagePoints2);
 			double err = norm(Mat(imagePoints[i]), Mat(imagePoints2), CV_L2);
 			int n = objectPoints[i].size();

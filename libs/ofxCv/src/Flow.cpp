@@ -20,7 +20,7 @@ namespace ofxCv {
 	}
 	
 	void Flow::calcOpticalFlow(ofPixelsRef lastImage, ofPixelsRef currentImage){
-		last.setFromPixels(lastImage);
+		last = lastImage;
 		last.setImageType(OF_IMAGE_GRAYSCALE); //force to gray
 		
 		calcFlow(); //will call concrete implementation
@@ -44,7 +44,7 @@ namespace ofxCv {
 			calcFlow(); //will call concrete implementation
 			hasFlow = true;
 		}
-		
+
 		last.setFromPixels(curr.getPixelsRef());
 	}
 	
@@ -73,7 +73,15 @@ namespace ofxCv {
     
 	
 #pragma mark PYRLK IMPLEMENTATION
-	FlowPyrLK::FlowPyrLK(){
+	FlowPyrLK::FlowPyrLK()
+	:windowSize(32)
+	,maxLevel(3)
+	,maxFeatures(200)
+	,qualityLevel(0.01)
+	,minDistance(4)
+	,pyramidLevels(10)
+	,calcFeaturesNextFrame(true)
+	{
 	}
 	
 	FlowPyrLK::~FlowPyrLK(){
@@ -96,30 +104,75 @@ namespace ofxCv {
 	}
 	
 	void FlowPyrLK::calcFlow(){
-		prevPts.clear();
-		goodFeaturesToTrack(
-												toCv(last),
-												prevPts,
-												maxFeatures,
-												qualityLevel,
-												minDistance
-												);
-		
-		vector<uchar> status;
-		vector<float> err;
-		calcOpticalFlowPyrLK(
-												 toCv(last),
-												 toCv(curr),
-												 prevPts,
-												 nextPts,
-												 status,
-												 err,
-												 
-												 cv::Size(windowSize, windowSize),
-												 maxLevel
-												 );
+		if(!nextPts.empty()){
+			if(calcFeaturesNextFrame){
+				calcFeaturesToTrack(prevPts);
+				calcFeaturesNextFrame = false;
+			}else{
+				prevPts = nextPts;
+			}
+			nextPts.clear();
+
+#if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
+			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
+			calcOpticalFlowPyrLK(
+						 prevPyramid,
+						 pyramid,
+						 prevPts,
+						 nextPts,
+						 status,
+						 err,
+
+						 cv::Size(windowSize, windowSize),
+						 maxLevel
+						 );
+			prevPyramid = pyramid;
+#else
+			calcOpticalFlowPyrLK(
+						 toCv(last),
+						 toCv(curr),
+						 prevPts,
+						 nextPts,
+						 status,
+						 err,
+						 cv::Size(windowSize, windowSize),
+						 maxLevel
+						 );
+#endif
+			status.resize(nextPts.size(),0);
+		}else{
+			calcFeaturesToTrack(nextPts);
+#if CV_MAJOR_VERSION==2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
+			buildOpticalFlowPyramid(toCv(curr),prevPyramid,cv::Size(windowSize, windowSize),10);
+#endif
+		}
 	}
-	
+
+	void FlowPyrLK::calcFeaturesToTrack(vector<cv::Point2f> & features){
+		goodFeaturesToTrack(
+			toCv(curr),
+			features,
+			maxFeatures,
+			qualityLevel,
+			minDistance
+			);
+	}
+
+	void FlowPyrLK::resetFeaturesToTrack(){
+		calcFeaturesNextFrame=true;
+	}
+
+    void FlowPyrLK::setFeaturesToTrack(const vector<ofVec2f> & features){
+    	nextPts.resize(features.size());
+    	for(int i=0;i<(int)features.size();i++){
+    		nextPts[i]=toCv(features[i]);
+    	}
+    }
+
+    void FlowPyrLK::setFeaturesToTrack(const vector<cv::Point2f> & features){
+    	nextPts = features;
+    }
+
     int FlowPyrLK::getWidth() {
         return last.getWidth();
     }
@@ -128,19 +181,50 @@ namespace ofxCv {
     }
     
 	vector<ofPoint> FlowPyrLK::getFeatures(){
-		return toOf(prevPts).getVertices();
+		ofPolyline poly =toOf(prevPts);
+		return poly.getVertices();
 	}
 	
+	vector<ofPoint> FlowPyrLK::getCurrent(){
+		vector<ofPoint> ret;
+		for(int i = 0; i < (int)nextPts.size(); i++) {
+			if(status[i]){
+				ret.push_back(toOf(nextPts[i]));
+			}
+		}
+		return ret;
+	}
+
+	vector<ofVec2f> FlowPyrLK::getMotion(){
+		vector<ofVec2f> ret(prevPts.size());
+		for(int i = 0; i < (int)prevPts.size(); i++) {
+			if(status[i]){
+				ret.push_back(toOf(nextPts[i])-toOf(prevPts[i]));
+			}
+		}
+		return ret;
+	}
+
 	void FlowPyrLK::drawFlow(ofRectangle rect) {
 		ofVec2f offset(rect.x,rect.y);
 		ofVec2f scale(rect.width/last.getWidth(),rect.height/last.getHeight());
-		for(int i = 0; i < prevPts.size(); i++) {
-			ofLine(toOf(prevPts[i])*scale+offset, toOf(nextPts[i])*scale+offset);
+		for(int i = 0; i < (int)prevPts.size(); i++) {
+			if(status[i]){
+				ofLine(toOf(prevPts[i])*scale+offset, toOf(nextPts[i])*scale+offset);
+			}
 		}
 	}
 	
 #pragma mark FARNEBACK IMPLEMENTATION
-	FlowFarneback::FlowFarneback(){
+	FlowFarneback::FlowFarneback()
+	:pyramidScale(0.5)
+	,numLevels(4)
+	,windowSize(8)
+	,numIterations(2)
+	,polyN(7)
+	,polySigma(1.5)
+	,farnebackGaussian(false)
+	{
 	}
 	
 	FlowFarneback::~FlowFarneback(){
