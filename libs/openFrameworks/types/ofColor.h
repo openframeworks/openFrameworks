@@ -24,8 +24,29 @@ class ofColor_{
 		static ofColor_<PixelType> fromHsb (float hue, float saturation, float brightness, float alpha = limit());
 		static ofColor_<PixelType> fromHex (int hexColor, float alpha = limit());
 		
-		static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta, yellow;
-	
+        // these are based on CSS named colors
+        // http://www.w3schools.com/cssref/css_colornames.asp
+    
+        static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta,
+        yellow,aliceBlue,antiqueWhite,aqua,aquamarine,azure,beige,bisque,blanchedAlmond,
+        blueViolet,brown,burlyWood,cadetBlue,chartreuse,chocolate,coral,cornflowerBlue,cornsilk,
+        crimson,darkBlue,darkCyan,darkGoldenRod,darkGray,darkGrey,darkGreen,darkKhaki,
+        darkMagenta,darkOliveGreen,darkorange,darkOrchid,darkRed,darkSalmon,darkSeaGreen,
+        darkSlateBlue,darkSlateGray,darkSlateGrey,darkTurquoise,darkViolet,deepPink,
+        deepSkyBlue,dimGray,dimGrey,dodgerBlue,fireBrick,floralWhite,forestGreen,fuchsia,
+        gainsboro,ghostWhite,gold,goldenRod,grey,greenYellow,honeyDew,hotPink,indianRed,indigo,
+        ivory,khaki,lavender,lavenderBlush,lawnGreen,lemonChiffon,lightBlue,lightCoral,
+        lightCyan,lightGoldenRodYellow,lightGray,lightGrey,lightGreen,lightPink,lightSalmon,
+        lightSeaGreen,lightSkyBlue,lightSlateGray,lightSlateGrey,lightSteelBlue,lightYellow,
+        lime,limeGreen,linen,maroon,mediumAquaMarine,mediumBlue,mediumOrchid,mediumPurple,
+        mediumSeaGreen,mediumSlateBlue,mediumSpringGreen,mediumTurquoise,mediumVioletRed,
+        midnightBlue,mintCream,mistyRose,moccasin,navajoWhite,navy,oldLace,olive,oliveDrab,
+        orange,orangeRed,orchid,paleGoldenRod,paleGreen,paleTurquoise,paleVioletRed,papayaWhip,
+        peachPuff,peru,pink,plum,powderBlue,purple,rosyBrown,royalBlue,saddleBrown,salmon,
+        sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
+        springGreen,steelBlue,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
+        yellowGreen;
+    
 		void set (float _r, float _g, float _b, float _a = limit());
 		void set (float _gray, float _a = limit());
 		void set (ofColor_<PixelType> const & color);
@@ -91,13 +112,28 @@ class ofColor_{
 		}
 
 		friend istream& operator>>(istream& is, ofColor_<PixelType>& color) {
-			is >> color.r;
-			is.ignore(2);
-			is >> color.g;
-			is.ignore(2);
-			is >> color.b;
-			is.ignore(2);
-			is >> color.a;
+			if(sizeof(PixelType) == 1) {
+				int component;
+				is >> component;
+				color.r = component;
+				is.ignore(2);
+				is >> component;
+				color.g = component;
+				is.ignore(2);
+				is >> component;
+				color.b = component;
+				is.ignore(2);
+				is >> component;
+				color.a = component;
+			}else{
+				is >> color.r;
+				is.ignore(2);
+				is >> color.g;
+				is.ignore(2);
+				is >> color.b;
+				is.ignore(2);
+				is >> color.a;
+			}
 			return is;
 		}
 				

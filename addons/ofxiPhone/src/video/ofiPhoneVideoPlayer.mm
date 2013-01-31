@@ -12,6 +12,7 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	pixelsRGB = NULL;
 	pixelsRGBA = NULL;
     internalGLFormat = GL_RGB;
+	internalPixelFormat = OF_PIXELS_RGB;
 	
     bFrameNew = false;
     bResetPixels = false;
@@ -53,7 +54,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
         if(_videoTextureCache == NULL) {
             CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, 
                                                         NULL, 
-                                                        (__bridge void *)ofxiPhoneGetGLView().context,
+                                                        ofxiPhoneGetGLView().context,
                                                         NULL, 
                                                         &_videoTextureCache);
             if(err) {
@@ -110,6 +111,30 @@ void ofiPhoneVideoPlayer::close() {
     bUpdatePixels = false;
     bUpdatePixelsToRgb = false;
     bUpdateTexture = false;
+}
+
+//----------------------------------------
+bool ofiPhoneVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
+	if(_internalPixelFormat == OF_PIXELS_RGB) {
+		internalPixelFormat = _internalPixelFormat;
+		internalGLFormat = GL_RGB;
+		return true;		
+    } else if(_internalPixelFormat == OF_PIXELS_RGBA) {
+		internalPixelFormat = _internalPixelFormat;
+		internalGLFormat = GL_RGBA;
+		return true;
+    } else if(_internalPixelFormat == OF_PIXELS_BGRA) {
+		internalPixelFormat = _internalPixelFormat;	
+		internalGLFormat = GL_BGRA;
+		return true;
+    }
+	return false;
+}
+
+
+//---------------------------------------------------------------------------
+ofPixelFormat ofiPhoneVideoPlayer::getPixelFormat(){
+	return internalPixelFormat;
 }
 
 //----------------------------------------
@@ -607,7 +632,7 @@ int	ofiPhoneVideoPlayer::getTotalNumFrames() {
 }
 
 //----------------------------------------
-int	ofiPhoneVideoPlayer::getLoopState() {
+ofLoopType	ofiPhoneVideoPlayer::getLoopState() {
     if(videoPlayer == NULL) {
         return OF_LOOP_NONE;
     }
@@ -636,17 +661,6 @@ void ofiPhoneVideoPlayer::nextFrame() {
 //----------------------------------------
 void ofiPhoneVideoPlayer::previousFrame() {
     return; // not supported yet.
-}
-
-//----------------------------------------
-void ofiPhoneVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
-	if(_internalPixelFormat == OF_PIXELS_RGB) {
-		internalGLFormat = GL_RGB;
-    } else if(_internalPixelFormat == OF_PIXELS_RGBA) {
-		internalGLFormat = GL_RGBA;
-    } else if(_internalPixelFormat == OF_PIXELS_BGRA) {
-		internalGLFormat = GL_BGRA;
-    }
 }
 
 //----------------------------------------

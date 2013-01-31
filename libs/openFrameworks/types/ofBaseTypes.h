@@ -16,6 +16,7 @@
 #include "ofColor.h"
 #include "ofMesh.h"
 #include "ofPixels.h"
+#include "ofMatrix4x4.h"
 
 class ofAbstractParameter;
 
@@ -205,13 +206,14 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual float	getHeight() = 0;
 	virtual float	getWidth() = 0;
 	
+	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat getPixelFormat() = 0;
+
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
 	virtual void setDeviceID(int _deviceID);
 	virtual void setDesiredFrameRate(int framerate);
 	virtual void videoSettings();
-	virtual void setPixelFormat(ofPixelFormat pixelFormat);
-	virtual ofPixelFormat getPixelFormat();
 	
 };
 
@@ -243,6 +245,9 @@ public:
 	virtual bool				isLoaded() = 0;
 	virtual bool				isPlaying() = 0;
 	
+	virtual bool				setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat 		getPixelFormat() = 0;
+		
 	//should implement!
 	virtual float 				getPosition();
 	virtual float 				getSpeed();
@@ -258,13 +263,11 @@ public:
 	
 	virtual int					getCurrentFrame();
 	virtual int					getTotalNumFrames();
-	virtual int					getLoopState();
+	virtual ofLoopType			getLoopState();
 	
 	virtual void				firstFrame();
 	virtual void				nextFrame();
 	virtual void				previousFrame();
-	virtual void				setPixelFormat(ofPixelFormat pixelFormat);
-	
 };
 
 //----------------------------------------------------------
@@ -318,7 +321,12 @@ public:
 	virtual void rotateY(float degrees){};
 	virtual void rotateZ(float degrees){};
 	virtual void rotate(float degrees){};
-
+	virtual void loadIdentityMatrix (void){};
+	virtual void loadMatrix (const ofMatrix4x4 & m){};
+	virtual void loadMatrix (const float *m){};
+	virtual void multMatrix (const ofMatrix4x4 & m){};
+	virtual void multMatrix (const float *m){};
+	
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};
 	virtual void setupScreen(){};

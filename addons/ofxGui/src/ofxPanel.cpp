@@ -6,6 +6,7 @@
  */
 
 #include "ofxPanel.h"
+#include "ofGraphics.h"
 
 ofImage ofxPanel::loadIcon;
 ofImage ofxPanel::saveIcon;

@@ -122,7 +122,7 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	mat.makeRotationMatrix(ofVec3f(0,0,1), end - start);
 	ofPushMatrix();
 	ofTranslate(end);
-	glMultMatrixf(mat.getPtr());
+	ofMultMatrix(mat.getPtr());
 	ofTranslate(0,0,-headSize);
 	ofCone(headSize, headSize);	
 	ofPopMatrix();

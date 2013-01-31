@@ -31,17 +31,22 @@ public:
 	void setFov(float f);
 	void setNearClip(float f);
 	void setFarClip(float f);
-	
+	void setLensOffset(const ofVec2f & lensOffset);
+	void setAspectRatio(float aspectRatio);
+	void setForceAspectRatio(bool forceAspectRatio);
+
 	float getFov() const { return fov; };
 	float getNearClip() const { return nearClip; };
 	float getFarClip() const { return farClip; };
+	ofVec2f getLensOffset() const { return lensOffset; };
+	bool getForceAspectRatio() const {return forceAspectRatio;};
+    float getAspectRatio() const {return aspectRatio; };
+	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f));
+	void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
 	
-	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
-	float getFov();
 	
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
@@ -68,6 +73,9 @@ protected:
 	float fov;
 	float nearClip;
 	float farClip;
+	ofVec2f lensOffset;
+	bool forceAspectRatio;
+	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool isActive;
 };
 
