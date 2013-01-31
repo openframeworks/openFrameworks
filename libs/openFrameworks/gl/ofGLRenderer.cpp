@@ -128,13 +128,13 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw( ofPrimitiveBase& model, ofPolyRenderMode renderType  ) {
+void ofGLRenderer::draw( ofPrimitiveBase& model, ofPolyRenderMode renderType) {
     bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glEnable( GL_NORMALIZE );
     }
     
-    draw( model.getMesh(), renderType, model.getMesh().usingColors(), model.getMesh().usingTextures(), model.getMesh().usingNormals() );
+    model.getMesh().draw(renderType);
     
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glDisable( GL_NORMALIZE );

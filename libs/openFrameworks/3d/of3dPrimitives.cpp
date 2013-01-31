@@ -9,21 +9,50 @@
 #include "of3dPrimitives.h"
 #include "ofGraphics.h"
 
-ofPrimitiveBase::ofPrimitiveBase() {
+ofPrimitiveBase::ofPrimitiveBase()
+:usingVbo(true)
+,_mesh(new ofVboMesh)
+{
     setScale(1.0, 1.0, 1.0);
 }
+
+//----------------------------------------------------------
 ofPrimitiveBase::~ofPrimitiveBase() {
     
+}
+
+//----------------------------------------------------------
+ofPrimitiveBase::ofPrimitiveBase(const ofPrimitiveBase & mom){
+    _texCoords = mom._texCoords;
+    usingVbo = mom.usingVbo;
+	if(usingVbo){
+		_mesh = ofPtr<ofMesh>(new ofVboMesh);
+	}else{
+		_mesh = ofPtr<ofMesh>(new ofMesh);
+	}
+	*_mesh = *mom._mesh;
+    _resolution = mom._resolution;
+}
+
+//----------------------------------------------------------
+ofPrimitiveBase & ofPrimitiveBase::operator=(const ofPrimitiveBase & mom){
+	if(&mom!=this){
+		_texCoords = mom._texCoords;
+		setUseVbo(mom.usingVbo);
+		*_mesh = *mom._mesh;
+		_resolution = mom._resolution;
+	}
+    return *this;
 }
 
 // GETTERS //
 //----------------------------------------------------------
 ofMesh* ofPrimitiveBase::getMeshPtr() {
-    return& _mesh;
+    return _mesh.get();
 }
 //----------------------------------------------------------
 ofMesh& ofPrimitiveBase::getMesh() {
-    return _mesh;
+    return *_mesh;
 }
 
 //----------------------------------------------------------
@@ -170,36 +199,33 @@ void ofPrimitiveBase::draw(ofPolyRenderMode renderType) {
 void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
     ofNode::transformGL();
     
-    float fixLength = getScale().length();
-    
     if(getMesh().usingNormals()) {
         vector<ofVec3f>& normals = getMesh().getNormals();
         vector<ofVec3f>& vertices = getMesh().getVertices();
         ofVec3f normal;
         ofVec3f vert;
         
-        ofMesh tempMesh;
-        tempMesh.setMode( OF_PRIMITIVE_LINES );
-        tempMesh.getVertices().assign( normals.size() * 2, ofVec3f() );
+        normalsMesh.setMode( OF_PRIMITIVE_LINES );
+        normalsMesh.getVertices().resize( normals.size() * 2);
         
         if(bFaceNormals) {
-            for(int i = 0; i < normals.size(); i += 3) {
+            for(int i = 0; i < (int)normals.size(); i += 3) {
                 vert = (vertices[i+0]+vertices[i+1]+vertices[i+2]) / 3;
-                tempMesh.setVertex(i*2, vert);
+                normalsMesh.setVertex(i*2, vert);
                 normal = normals[i].getNormalized();
                 normal *= length;
-                tempMesh.setVertex(i*2+1, normal+vert);
+                normalsMesh.setVertex(i*2+1, normal+vert);
             }
         } else {
-            for(int i = 0; i < normals.size(); i++) {
+            for(int i = 0; i < (int)normals.size(); i++) {
                 vert = vertices[i];
                 normal = normals[i].normalized();
-                tempMesh.setVertex( i*2, vert);
+                normalsMesh.setVertex( i*2, vert);
                 normal *= length;
-                tempMesh.setVertex(i*2+1, normal+vert);
+                normalsMesh.setVertex(i*2+1, normal+vert);
             }
         }
-        tempMesh.draw();
+        normalsMesh.draw();
     } else {
         ofLog(OF_LOG_WARNING, "ofPrimitiveBase :: drawNormals()") << " : mesh normals are disabled";
     }
@@ -216,6 +242,23 @@ void ofPrimitiveBase::drawAxes(float a_size) {
 }
 
 
+void ofPrimitiveBase::setUseVbo(bool useVbo){
+	if(useVbo!=usingVbo){
+		ofPtr<ofMesh> newMesh;
+		if(useVbo){
+			newMesh = ofPtr<ofMesh>(new ofVboMesh);
+		}else{
+			newMesh = ofPtr<ofMesh>(new ofMesh);
+		}
+		*newMesh = *_mesh;
+		_mesh = newMesh;
+	}
+	usingVbo = useVbo;
+}
+
+bool ofPrimitiveBase::isUsingVbo(){
+	return usingVbo;
+}
 
 // PLANE PRIMITIVE //
 //--------------------------------------------------------------
@@ -240,9 +283,9 @@ void ofPlanePrimitive::set(float width, float height, int columns, int rows, ofP
     _height = height;
     ofPrimitiveBase::setResolution(columns, rows, 0);
     
-    _mesh.clear();
+    _mesh->clear();
     //_mesh = ofGetPlaneMesh( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
-    _mesh = ofMesh::plane( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
+    *_mesh = ofMesh::plane( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
     
     normalizeAndApplySavedTexCoords();
     
@@ -336,7 +379,7 @@ void ofSpherePrimitive::set(float radius, int res, ofPrimitiveMode mode ) {
     ofPrimitiveBase::setResolution(res, res, res);
     getMesh().clear();
     //_mesh = ofGetSphereMesh( getRadius(), getResolution().x, mode );
-    _mesh = ofMesh::sphere( getRadius(), getResolution().x, mode );
+    *_mesh = ofMesh::sphere( getRadius(), getResolution().x, mode );
     
     normalizeAndApplySavedTexCoords();
 }
@@ -415,7 +458,7 @@ void ofIcoSpherePrimitive::setResolution( int resX, int resY, int resZ ) {
     getMesh().clear();
     // store the number of iterations in the resolution //
     //_mesh = ofGetIcoSphereMesh( getRadius(), getResolution().x );
-    _mesh = ofMesh::icosphere( getRadius(), getResolution().x );
+    *_mesh = ofMesh::icosphere( getRadius(), getResolution().x );
     normalizeAndApplySavedTexCoords();
 }
 
@@ -497,7 +540,7 @@ void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, in
     
     getMesh().clear();
     //_mesh = ofGetCylinderMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
-    _mesh = ofMesh::cylinder( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
+    *_mesh = ofMesh::cylinder( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
     
     normalizeAndApplySavedTexCoords();
     
@@ -681,7 +724,7 @@ void ofConePrimitive::set( float radius, float height, int radiusSegments, int h
     
     getMesh().clear();
     //_mesh = ofGetConeMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
-    _mesh = ofMesh::cone( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
+    *_mesh = ofMesh::cone( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
     
     normalizeAndApplySavedTexCoords();
     
@@ -865,9 +908,9 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     _vertices[SIDE_BOTTOM][0] = _vertices[SIDE_TOP][0] + _vertices[SIDE_TOP][1];
     _vertices[SIDE_BOTTOM][1] = resZ * resX;
     
-    _mesh.clear();
+    _mesh->clear();
     //_mesh = ofGetBoxMesh( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
-    _mesh = ofMesh::box( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
+    *_mesh = ofMesh::box( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
     
     normalizeAndApplySavedTexCoords();
 }

@@ -7,7 +7,7 @@
 //
 #pragma once
 
-#include "ofMesh.h"
+#include "ofVboMesh.h"
 #include "ofRectangle.h"
 #include "ofNode.h"
 #include "ofTexture.h"
@@ -28,6 +28,9 @@ public:
     ofPrimitiveBase();
     virtual ~ofPrimitiveBase();
     
+    ofPrimitiveBase(const ofPrimitiveBase & mom);
+    ofPrimitiveBase & operator=(const ofPrimitiveBase & mom);
+
     void mapTexCoords( float u1, float v1, float u2, float v2 );
     //void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
     // does not store texture. Creates tex coords from texture, if texture is
@@ -68,13 +71,17 @@ public:
     void drawNormals( float length, bool bFaceNormals=false );
     void drawAxes(float a_size);
     
+    void setUseVbo(bool useVbo);
+    bool isUsingVbo();
 protected:
     
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords();
     
-    ofMesh  _mesh;
     ofVec4f _texCoords;
+    bool usingVbo;
+    ofPtr<ofMesh>  _mesh;
+    ofMesh normalsMesh;
     
     ofVec3f _resolution;
     vector<ofIndexType> getIndices( int startIndex, int endIndex );
