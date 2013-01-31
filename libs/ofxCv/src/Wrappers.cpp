@@ -41,17 +41,20 @@ namespace ofxCv {
 	cv::RotatedRect fitEllipse(const ofPolyline& polyline) {
 		return fitEllipse(Mat(toCv(polyline)));
 	}
-	
-	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to) {
+    
+	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, float accuracy) {
+		if(from.size() != to.size() || from.size() == 0 || to.size() == 0) {
+			return ofMatrix4x4();
+		}
 		vector<unsigned char> outliers;
-		return estimateAffine3D(from, to, outliers);
+		return estimateAffine3D(from, to, outliers, accuracy);
 	}
-		
-	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, vector<unsigned char>& outliers) {
+    
+	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, vector<unsigned char>& outliers, float accuracy) {
 		Mat fromMat(1, from.size(), CV_32FC3, &from[0]);
 		Mat toMat(1, to.size(), CV_32FC3, &to[0]);
 		Mat affine;
-		estimateAffine3D(fromMat, toMat, affine, outliers);
+		estimateAffine3D(fromMat, toMat, affine, outliers, 3, accuracy);
 		ofMatrix4x4 affine4x4;
 		affine4x4.set(affine.ptr<double>());
 		affine4x4(3, 0) = 0;
