@@ -12,6 +12,9 @@ ofxButton* ofxButton::setup(string toggleName, float width, float height){
 	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 
 	ofRegisterMouseEvents(this);
+
+	value.addListener(this,&ofxButton::valueChanged);
+
 	return this;
 }
 
@@ -34,3 +37,8 @@ void ofxButton::mouseDragged(ofMouseEventArgs & args){
 	ofxToggle::mouseDragged(args);
 }
 
+void ofxButton::valueChanged(bool & v){
+	if(!v){
+		ofNotifyEvent(triggerEvent);
+	}
+}
