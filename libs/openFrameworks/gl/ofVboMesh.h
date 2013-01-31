@@ -25,10 +25,10 @@ public:
     bool usingNormals();
     bool usingIndices();
 
-protected:
 	void draw(ofPolyRenderMode drawMode);
 
 private:
+	void updateVbo();
 	ofVbo vbo;
 	int usage;
 	int vboNumVerts, vboNumIndices, vboNumNormals, vboNumTexCoords, vboNumColors;
