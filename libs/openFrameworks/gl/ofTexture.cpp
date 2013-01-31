@@ -184,38 +184,6 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	}
 }
 
-static bool ofCheckGLTypesEqual(int type1, int type2){
-#ifndef TARGET_OPENGLES
-	if(type1==GL_LUMINANCE || type1==GL_LUMINANCE8){
-		if(type2==GL_LUMINANCE || type2==GL_LUMINANCE8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else if(type1==GL_RGB || type1==GL_RGB8){
-		if(type2==GL_RGB || type2==GL_RGB8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else if(type1==GL_RGBA || type1==GL_RGBA8){
-		if(type2==GL_RGBA || type2==GL_RGBA8){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	else
-#endif
-		return type1==type2;
-}
-
-
 ofImageType ofGetImageTypeFromGLType(int glType){
 	switch(glType){
 	case GL_LUMINANCE:
@@ -224,6 +192,13 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 		return OF_IMAGE_COLOR;
 	case GL_RGBA:
 		return OF_IMAGE_COLOR_ALPHA;
+#ifndef TARGET_OPENGLES
+	case GL_DEPTH_COMPONENT32:
+	case GL_DEPTH_COMPONENT16:
+	case GL_DEPTH_COMPONENT24:
+	case GL_DEPTH_COMPONENT:
+		return OF_IMAGE_GRAYSCALE;
+#endif
 	}
 	return OF_IMAGE_UNDEFINED;
 }
@@ -369,7 +344,9 @@ ofTexture::ofTexture(const ofTexture & mom){
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture & mom){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
@@ -407,14 +384,27 @@ const ofTextureData& ofTexture::getTextureData() const {
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
 }
 
 //----------------------------------------------------------
 void ofTexture::clear(){
-	release(texData.textureID);
+	if(!texData.bUseExternalTextureID){
+		release(texData.textureID);
+	}
+	texData.bUseExternalTextureID = false;
 	texData.textureID  = 0;
 	texData.bAllocated = false;
+}
+
+//----------------------------------------------------------
+void ofTexture::setUseExternalTextureID(GLuint externTexID){
+	clear();
+	texData.textureID = externTexID;
+	texData.bAllocated = true;
+	texData.bUseExternalTextureID = true;
 }
 
 //----------------------------------------------------------

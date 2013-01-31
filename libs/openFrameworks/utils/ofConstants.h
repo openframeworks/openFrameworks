@@ -1,8 +1,10 @@
 #pragma once
 
 //-------------------------------
-#define OF_VERSION	7
-#define OF_VERSION_MINOR 1
+#define OF_VERSION_MAJOR 0
+#define OF_VERSION_MINOR 7
+#define OF_VERSION_PATCH 4
+
 //-------------------------------
 
 enum ofLoopType{
@@ -166,7 +168,7 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_ANDROID
-#include <typeinfo>
+	#include <typeinfo>
 	#include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
@@ -204,8 +206,12 @@ typedef TESSindex ofIndexType;
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
 	#elif defined(TARGET_OSX)
-
-		#define OF_VIDEO_CAPTURE_QUICKTIME
+		//on 10.6 and below we can use the old grabber
+		#ifndef MAC_OS_X_VERSION_10_7
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#else
+			#define OF_VIDEO_CAPTURE_QTKIT
+        #endif
 
 	#elif defined (TARGET_WIN32)
 
@@ -241,6 +247,13 @@ typedef TESSindex ofIndexType;
 	#else
 		#ifdef TARGET_OF_IPHONE
 			#define OF_VIDEO_PLAYER_IPHONE
+        #elif defined(TARGET_OSX)
+			//for 10.7 and 10.8 users we use QTKit for 10.6 users we use QuickTime
+			#ifndef MAC_OS_X_VERSION_10_7
+				#define OF_VIDEO_PLAYER_QUICKTIME
+			#else
+				#define OF_VIDEO_PLAYER_QTKIT
+			#endif
 		#elif !defined(TARGET_ANDROID)
 			#define OF_VIDEO_PLAYER_QUICKTIME
 		#endif
@@ -300,6 +313,7 @@ typedef ofBaseApp ofSimpleApp;
 #include <iomanip>  //for setprecision
 #include <fstream>
 #include <algorithm>
+#include <cfloat>
 using namespace std;
 
 #ifndef PI
@@ -357,9 +371,53 @@ enum ofWindowMode{
  	OF_GAME_MODE	= 2
 };
 
+enum ofAspectRatioMode {
+    OF_ASPECT_RATIO_IGNORE            = 0,
+    OF_ASPECT_RATIO_KEEP              = 1,
+    OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
+};
+
+enum ofAlignVert {
+    OF_ALIGN_VERT_IGNORE   = 0x0000,
+    OF_ALIGN_VERT_TOP      = 0x0010,
+    OF_ALIGN_VERT_BOTTOM   = 0x0020,
+    OF_ALIGN_VERT_CENTER   = 0x0040,
+};
+
+enum ofAlignHorz {
+    OF_ALIGN_HORZ_IGNORE   = 0x0000,
+    OF_ALIGN_HORZ_LEFT     = 0x0001,
+    OF_ALIGN_HORZ_RIGHT    = 0x0002,
+    OF_ALIGN_HORZ_CENTER   = 0x0004,
+};
+
 enum ofRectMode{
 	OF_RECTMODE_CORNER=0,
  	OF_RECTMODE_CENTER=1
+};
+
+enum ofScaleMode{
+    // ofScaleMode can usually be interpreted as a concise combination of
+    // an ofAspectRatioMode, an ofAlignVert and an ofAlignHorz.
+    
+    // fits the SUBJECT rect INSIDE the TARGET rect.
+    // Preserves SUBJECTS's aspect ratio.
+    // Final Subject's Area <= Target's Area.
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_FIT     = 0,
+    // FILLS the TARGET rect with the SUBJECT rect.
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area >= Target's Area.
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_FILL    = 1,
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area is Unchanged
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_CENTER  = 2, // centers the subject
+    // Can CHANGE the SUBJECT's aspect ratio.
+    // Subject's Area == Target's Area
+    // Subject's Center == Target's Center
+ 	OF_SCALEMODE_STRETCH_TO_FILL = 3, // simply matches the target dims
 };
 
 enum ofImageType{

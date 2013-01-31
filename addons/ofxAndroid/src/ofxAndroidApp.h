@@ -26,6 +26,7 @@ public:
 	virtual void stop(){};
 	virtual void resume(){};
 	virtual void reloadTextures(){}
+	virtual void unloadTextures(){}
 
 	virtual void touchDown(int x, int y, int id) {};
 	virtual void touchMoved(int x, int y, int id) {};
@@ -66,6 +67,7 @@ public:
 
 	virtual void okPressed(){};
 	virtual void cancelPressed(){};
+	virtual void networkConnected(bool connected){};
 };
 
 

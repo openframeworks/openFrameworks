@@ -270,6 +270,31 @@ void ofRotate(float degrees){
 	renderer->rotate(degrees);
 }
 
+//----------------------------------------------------------
+void ofLoadIdentityMatrix (void){
+	renderer->loadIdentityMatrix();
+}
+
+//----------------------------------------------------------
+void ofLoadMatrix (const ofMatrix4x4 & m){
+	renderer->loadMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofLoadMatrix (const float *m){
+	renderer->loadMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofMultMatrix (const ofMatrix4x4 & m){
+	renderer->multMatrix(m);
+}
+
+//----------------------------------------------------------
+void ofMultMatrix (const float *m){
+	renderer->multMatrix(m);
+}
+
 // end transformation matrix related functions
 //----------------------------------------------------------
 
@@ -855,6 +880,11 @@ void ofCurveVertex(float x, float y){
 	shape.curveTo(x,y);
 }
 
+//---------------------------------------------------
+void ofCurveVertex(float x, float y, float z){
+	shape.curveTo(x,y,z);
+}
+
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofPoint> & curvePoints){
 	for( int k = 0; k < (int)curvePoints.size(); k++){
@@ -1122,7 +1152,7 @@ void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofC
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
 	vector<string> lines = ofSplitString(text, "\n");
 	int textLength = 0;
-	for(int i = 0; i < lines.size(); i++) {
+	for(unsigned int i = 0; i < lines.size(); i++) {
 		// tabs are not rendered
 		int tabs = count(lines[i].begin(), lines[i].end(), '\t');
 		int curLength = lines[i].length() - tabs;
