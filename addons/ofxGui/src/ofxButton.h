@@ -18,4 +18,19 @@ public:
 	virtual void saveTo(ofBaseSerializer& serializer){};
 	virtual void loadFrom(ofBaseSerializer& serializer){};
 
+	template<class ListenerClass>
+	void addListener(ListenerClass * listener, void ( ListenerClass::*method )()){
+		ofAddListener(triggerEvent,listener,method);
+	}
+
+	template<class ListenerClass>
+	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )()){
+		ofRemoveListener(triggerEvent,listener,method);
+	}
+	using ofxToggle::addListener;
+	using ofxToggle::removeListener;
+private:
+	ofEvent<void> triggerEvent;
+	void valueChanged(bool & v);
+
 };
