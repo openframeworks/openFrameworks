@@ -14,48 +14,43 @@
 // this is always a triangle //
 class ofMeshFace {
 public:
-    ofMeshFace() {
-        bHasNormals = bHasColors = bHasTexcoords = false;
+    ofMeshFace()
+	:vertices(3)
+	,normals(3)
+	,colors(3)
+	,texCoords(3)
+	,bHasNormals(false)
+	,bHasColors(false)
+	,bHasTexcoords(false)
+	,bFaceNormalDirty(false)
+	{
     }
-    
-    ofVec3f getFaceNormal() {
-        ofVec3f U, V, n;
-        
-        U = (points[1]-points[0]);
-        V = (points[2]-points[0]);
-        
-        n = U.crossed(V);
-        n.normalize();
-        
-        return n;
-    }
-    
-    void calculateFaceNormal() {
-        ofVec3f U, V;
-        
-        U = (points[1]-points[0]);
-        V = (points[2]-points[0]);
-        
-        faceNormal = U.crossed(V);
+
+    ofVec3f getFaceNormal(){
+        ofVec3f U, V, faceNormal;
+
+        U = (vertices[1]-vertices[0]);
+        V = (vertices[2]-vertices[0]);
+
+        faceNormal = U.getCrossed(V);
         faceNormal.normalize();
+    	return faceNormal;
     }
-    
-    ofPoint points[3];
-    ofVec3f faceNormal;
-    ofVec3f normals[3];
-    ofFloatColor colors[3];
-    ofVec2f texcoords[3];
-    
-    void setHasColors( bool bColors ) {bHasColors = bColors; }
-    void setHasNormals( bool bNormals ) {bHasNormals = bNormals; }
-    void setHasTexcoords( bool bTexcoords ) {bHasTexcoords = bTexcoords; }
-    
+
+    void setHasColors( bool bColors ) { bHasColors = bColors; }
+    void setHasNormals( bool bNormals ) { bHasNormals = bNormals; }
+    void setHasTexcoords( bool bTexcoords ) { bHasTexcoords = bTexcoords; }
+
     bool hasColors() { return bHasColors; }
-    bool hasNormals() {return bHasNormals; }
+    bool hasNormals() { return bHasNormals; }
     bool hasTexcoords() { return bHasTexcoords; }
-    
+
+    vector<ofVec3f> vertices;
+    vector<ofVec3f> normals;
+    vector<ofFloatColor> colors;
+    vector<ofVec2f> texCoords;
 protected:
-    bool bHasNormals, bHasColors, bHasTexcoords;
+    bool bHasNormals, bHasColors, bHasTexcoords, bFaceNormalDirty;
     
 };
 

@@ -1218,12 +1218,11 @@ vector<ofMeshFace> ofMesh::getUniqueFaces() {
             ofMeshFace tri;
             for(int k = 0; k < 3; k++) {
                 index = indices[j+k];
-                tri.points[k].set(verts[index].x, verts[index].y, verts[index].z);//      = verts[index];
-                tri.calculateFaceNormal();
+                tri.vertices[k].set(verts[index].x, verts[index].y, verts[index].z);//      = verts[index];
                 if(bHasNormals)
                     tri.normals[k]      = normals[index];
                 if(bHasTexcoords)
-                    tri.texcoords[k]    = tcoords[index];
+                    tri.texCoords[k]    = tcoords[index];
                 if(bHasColors)
                     tri.colors[k]       = colors[index];
                 tri.setHasColors(bHasColors);
@@ -1290,14 +1289,14 @@ void ofMesh::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
     
     for(it = tris.begin(); it != tris.end(); it++) {
         for(int k = 0; k < 3; k++) {
-            verts.push_back( it->points[k] );
+            verts.push_back( it->vertices[k] );
             if(it->hasTexcoords())
-                tcoords.push_back( it->texcoords[k] );
+                tcoords.push_back( it->texCoords[k] );
             if(it->hasColors())
                 colors.push_back( it->colors[k] );
             if(it->hasNormals() || bUseFaceNormal) {
                 if(bUseFaceNormal)
-                    normals.push_back(it->faceNormal);
+                    normals.push_back(it->getFaceNormal());
                 else
                     normals.push_back( it->normals[k] );
             }
@@ -1331,7 +1330,7 @@ void ofMesh::smoothNormals( float angle ) {
         vector<ofVec3f> verts;
         for(int i = 0; i < triangles.size(); i++) {
             for(int j = 0; j < 3; j++) {
-                verts.push_back(triangles[i].points[j]);
+                verts.push_back(triangles[i].vertices[j]);
             }
         }
         
@@ -1368,9 +1367,9 @@ void ofMesh::smoothNormals( float angle ) {
             if(vertHash.find(vstring) == vertHash.end()) {
                 for(int j = 0; j < triangles.size(); j++) {
                     for(int k = 0; k < 3; k++) {
-                        if(verts[i].x == triangles[j].points[k].x) {
-                            if(verts[i].y == triangles[j].points[k].y) {
-                                if(verts[i].z == triangles[j].points[k].z) {
+                        if(verts[i].x == triangles[j].vertices[k].x) {
+                            if(verts[i].y == triangles[j].vertices[k].y) {
+                                if(verts[i].z == triangles[j].vertices[k].z) {
                                     vertHash[vstring].push_back( j );
                                 }
                             }
@@ -1393,17 +1392,17 @@ void ofMesh::smoothNormals( float angle ) {
         
         for(int j = 0; j < triangles.size(); j++) {
             for(int k = 0; k < 3; k++) {
-                xStr = "x"+ofToString(triangles[j].points[k].x==-0?0:triangles[j].points[k].x);
-                yStr = "y"+ofToString(triangles[j].points[k].y==-0?0:triangles[j].points[k].y);
-                zStr = "z"+ofToString(triangles[j].points[k].z==-0?0:triangles[j].points[k].z);
+                xStr = "x"+ofToString(triangles[j].vertices[k].x==-0?0:triangles[j].vertices[k].x);
+                yStr = "y"+ofToString(triangles[j].vertices[k].y==-0?0:triangles[j].vertices[k].y);
+                zStr = "z"+ofToString(triangles[j].vertices[k].z==-0?0:triangles[j].vertices[k].z);
                 
                 string vstring = xStr+yStr+zStr;
                 numNormals=0;
                 normal.set(0,0,0);
                 if(vertHash.find(vstring) != vertHash.end()) {
                     for(int i = 0; i < vertHash[vstring].size(); i++) {
-                        f1 = triangles[j].faceNormal;
-                        f2 = triangles[vertHash[vstring][i]].faceNormal;
+                        f1 = triangles[j].getFaceNormal();
+                        f2 = triangles[vertHash[vstring][i]].getFaceNormal();
                         if(f1.dot(f2) >= angleCos ) {
                             normal += f2;
                             numNormals+=1.f;
