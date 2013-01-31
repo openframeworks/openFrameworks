@@ -76,6 +76,7 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 	setPosition(eyeX,eyeY,dist);
 	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
 
+
 	if(vFlip){
 		setScale(1,-1,1);
 	}
@@ -128,19 +129,19 @@ float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
 //----------------------------------------
 void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
-	isActive = true;  
+	isActive = true;
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
-	glMatrixMode(GL_PROJECTION);
+	ofMatrixMode(OF_MATRIX_PROJECTION);
 	ofLoadIdentityMatrix();
 
 	ofLoadMatrix( this->getProjectionMatrix(viewport) );
 
-	glMatrixMode(GL_MODELVIEW);
+	ofMatrixMode(OF_MATRIX_MODELVIEW);
 	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
 	ofViewport(viewport);
 }
