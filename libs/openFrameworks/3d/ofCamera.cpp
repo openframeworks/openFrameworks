@@ -137,20 +137,8 @@ void ofCamera::begin(ofRectangle viewport) {
 
 	glMatrixMode(GL_PROJECTION);
 	ofLoadIdentityMatrix();
-	
-	if(isOrtho) {
-		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
-		//			else
-#ifndef TARGET_OPENGLES
-		glOrtho(0, viewport.width, 0, viewport.height, nearClip, farClip);
-#else
-		ofMatrix4x4 ortho;
-		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
-		ofLoadMatrix( ortho );
-#endif
-	} else {
-		ofLoadMatrix( this->getProjectionMatrix() );
-	}
+
+	ofLoadMatrix( this->getProjectionMatrix(viewport) );
 
 	glMatrixMode(GL_MODELVIEW);
 	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
@@ -168,11 +156,18 @@ void ofCamera::end() {
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) {
-	float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
-	ofMatrix4x4 matProjection;
-	matProjection.makePerspectiveMatrix(fov, aspect, nearClip, farClip);
-	matProjection.translate(-lensOffset.x, -lensOffset.y, 0);
-	return matProjection;
+	if(isOrtho) {
+		ofMatrix4x4 ortho;
+		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
+		ofLoadMatrix( ortho );
+		return ortho;
+	}else{
+		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
+		ofMatrix4x4 matProjection;
+		matProjection.makePerspectiveMatrix(fov, aspect, nearClip, farClip);
+		matProjection.translate(-lensOffset.x, -lensOffset.y, 0);
+		return matProjection;
+	}
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewMatrix() {
