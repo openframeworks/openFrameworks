@@ -87,6 +87,7 @@ ofxColorSlider<ColorType> * ofxColorSlider<ColorType>::setup(string controlName,
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
         add(new ofxSlider<ColorType>(names[i], p));
         p.addListener(this, & ofxColorSlider::changeSlider);
+        collection[i]->setFillColor(value.get());
     }
 
     sliderChanging = false;

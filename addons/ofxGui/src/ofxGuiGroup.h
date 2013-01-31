@@ -51,7 +51,7 @@ public:
 	ofxBaseGui * getControl(string name);
 	ofxBaseGui * getControl(int num);
     
-	ofAbstractParameter & getParameter();
+	virtual ofAbstractParameter & getParameter();
 protected:
     void registerMouseEvents();
     virtual void setValue(float mx, float my, bool bCheck);

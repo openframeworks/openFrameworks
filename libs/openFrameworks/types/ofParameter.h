@@ -101,7 +101,6 @@ public:
 	void enableEvents();
 	void disableEvents();
 protected:
-
 	virtual ParameterType operator=(ParameterType v);
 
 	ParameterType operator++(int v);
@@ -289,9 +288,11 @@ string ofReadOnlyParameter<ParameterType,Friend>::toString() const{
 
 template<typename ParameterType,typename Friend>
 void ofReadOnlyParameter<ParameterType,Friend>::fromString(string str){
+	ParameterType v;
 	stringstream sstr;
 	sstr << str;
-	sstr >> obj->value;
+	sstr >> v;
+	set(v);
 }
 
 
