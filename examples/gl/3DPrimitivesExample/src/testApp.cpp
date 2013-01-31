@@ -206,7 +206,7 @@ void testApp::draw() {
             
             for(int i = 0; i < triangles.size(); i++ ) {
                 for(int j = 0; j < 3; j++ ) {
-                    triangles[i].points[j] += triangles[i].faceNormal * strength;
+                    triangles[i].vertices[j] += triangles[i].getFaceNormal() * strength;
                 }
             }
             sphere.getMesh().setFromTriangles( triangles );
@@ -242,7 +242,7 @@ void testApp::draw() {
             for(int i = 0; i < triangles.size(); i++ ) {
                 float frc = ofSignedNoise(angle* (float)i * .1, angle*.05) * 4;
                 for(int j = 0; j < 3; j++ ) {
-                    triangles[i].points[j] += triangles[i].faceNormal * frc;
+                    triangles[i].vertices[j] += triangles[i].getFaceNormal() * frc;
                 }
             }
             icoSphere.getMesh().setFromTriangles( triangles );
