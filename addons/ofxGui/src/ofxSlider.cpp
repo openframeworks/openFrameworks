@@ -2,19 +2,13 @@
 #include "ofGraphics.h"
 
 template<typename Type>
-ofxSlider<Type>::ofxSlider(string sliderName, ofParameter<Type> _val, float width, float height){
-	setup(sliderName,_val,width,height);
+ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height){
+	setup(_val,width,height);
 }
 
 template<typename Type>
-ofxSlider<Type>::ofxSlider(string sliderName, Type _val, Type _min, Type _max, float width, float height){
-	setup(sliderName,_val,_min,_max,width,height);
-}
-
-template<typename Type>
-ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _val, float width, float height){
+ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
 	bUpdateOnReleaseOnly = false;
-	name = sliderName;
 	value = _val;
 	b.x = 0;
 	b.y = 0;
@@ -29,8 +23,8 @@ ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofParameter<Type> _va
 
 template<typename Type>
 ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, Type _val, Type _min, Type _max, float width, float height){
-	ofParameter<Type> v(sliderName,_val,_min,_max);
-	return setup(sliderName,v,width,height);
+	value.set(sliderName,_val,_min,_max);
+	return setup(value,width,height);
 }
 
 template<typename Type>
@@ -89,7 +83,7 @@ void ofxSlider<Type>::draw(){
 
 	ofTranslate(0, b.height / 2 + 4);
 	ofSetColor(textColor);
-	ofDrawBitmapString(name, textPadding, 0);
+	ofDrawBitmapString(getName(), textPadding, 0);
 	string valStr = ofToString(value.get());
 	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 
@@ -117,7 +111,7 @@ void ofxSlider<unsigned char>::draw(){
 
 	ofTranslate(0, b.height / 2 + 4);
 	ofSetColor(thisTextColor);
-	ofDrawBitmapString(name, textPadding, 0);
+	ofDrawBitmapString(getName(), textPadding, 0);
 	string valStr = ofToString((int)value.get());
 	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 

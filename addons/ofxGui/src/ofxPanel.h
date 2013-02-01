@@ -6,7 +6,7 @@ class ofxGuiGroup;
 
 class ofxPanel : public ofxGuiGroup {
 public:
-    ofxPanel(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel(){};
 	ofxPanel(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
 	void draw();
 	virtual void mouseReleased(ofMouseEventArgs & args);

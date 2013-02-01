@@ -37,7 +37,10 @@ public:
 	friend ostream& operator<<(ostream& os, const ofAbstractParameter& p);
 	friend istream& operator>>(istream& is, ofAbstractParameter& p);
 
+	virtual bool isSerializable() const;
+
 protected:
+	virtual void setSerializable(bool serializable);
 	void notifyParent();
 
 private:
@@ -100,6 +103,8 @@ public:
 
 	void enableEvents();
 	void disableEvents();
+	bool isSerializable() const;
+
 protected:
 	virtual ParameterType operator=(ParameterType v);
 
@@ -134,35 +139,42 @@ protected:
 	class Value{
 	public:
 		Value()
-		:bInNotify(false){};
+		:bInNotify(false)
+		,serializable(true){};
 
 		Value(ParameterType v)
 		:value(v)
-		,bInNotify(false){};
+		,bInNotify(false)
+		,serializable(true){};
 
 		Value(string name, ParameterType v)
 		:name(name)
 		,value(v)
-		,bInNotify(false){};
+		,bInNotify(false)
+		,serializable(true){};
 
 		Value(string name, ParameterType v, ParameterType min, ParameterType max)
 		:name(name)
 		,value(v)
 		,min(min)
 		,max(max)
-		,bInNotify(false){};
+		,bInNotify(false)
+		,serializable(true){};
 
 		string name;
 		ParameterType value, prevValue;
 		ParameterType min, max;
 		ofEvent<ParameterType> changedE;
 		bool bInNotify;
+		bool serializable;
 	};
 	ofPtr<Value> obj;
 	void (ofReadOnlyParameter<ParameterType,Friend>::*setMethod)(ParameterType v);
 
 	void eventsSetValue(ParameterType v);
 	void noEventsSetValue(ParameterType v);
+
+	void setSerializable(bool serializable);
 
 	friend class FriendMaker<Friend>::Type;
 };
@@ -244,6 +256,16 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::noEventsSetValue(Paramete
 	obj->value = v;
 }
 
+
+template<typename ParameterType,typename Friend>
+void ofReadOnlyParameter<ParameterType,Friend>::setSerializable(bool serializable){
+	obj->serializable = serializable;
+}
+
+template<typename ParameterType,typename Friend>
+bool ofReadOnlyParameter<ParameterType,Friend>::isSerializable() const{
+	return obj->serializable;
+}
 
 template<typename ParameterType,typename Friend>
 void ofReadOnlyParameter<ParameterType,Friend>::setMin(ParameterType min){
@@ -441,6 +463,9 @@ public:
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator^=;
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator<<=;
 	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator>>=;
+	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::setSerializable;
+	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::isSerializable;
+
 
 	inline ofParameter<ParameterType> & set(ParameterType v){
 		ofReadOnlyParameter<ParameterType,ofAbstractParameter>::set(v);

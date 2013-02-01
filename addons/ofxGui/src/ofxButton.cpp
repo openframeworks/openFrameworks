@@ -1,7 +1,11 @@
 #include "ofxButton.h"
 
+ofxButton::ofxButton(){
+	value.setSerializable(false);
+}
+
 ofxButton* ofxButton::setup(string toggleName, float width, float height){
-	name = toggleName;
+	setName(toggleName);
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
