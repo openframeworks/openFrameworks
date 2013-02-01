@@ -30,11 +30,11 @@ public:
 	string getName();
 	void setName(string name);
 
-	void setPosition(ofPoint p);
-	void setPosition(float x, float y);
-	void setSize(float w, float h);
-	void setShape(ofRectangle r);
-	void setShape(float x, float y, float w, float h);
+	virtual void setPosition(ofPoint p);
+	virtual void setPosition(float x, float y);
+	virtual void setSize(float w, float h);
+	virtual void setShape(ofRectangle r);
+	virtual void setShape(float x, float y, float w, float h);
 
 	ofPoint getPosition();
 	ofRectangle getShape();
@@ -62,6 +62,7 @@ protected:
 
 	static const ofColor headerBackgroundColor;
 	static const ofColor backgroundColor;
+	static const ofColor borderColor;
 	static const ofColor textColor;
 	static const ofColor fillColor;
 

@@ -28,8 +28,12 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	b.y = y;
 	header = defaultHeight;
 	spacing  = 1;
-	b.width = defaultWidth;
-	b.height = spacing;
+	spacingNextElement = 2;
+	if(parent!=NULL){
+		b.width = parent->getWidth();
+	}else{
+		b.width = defaultWidth;
+	}
     clear();
 	filename = _filename;
     
@@ -80,10 +84,11 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back( element );
     
-	element->setPosition(0, b.height);
-    
+
+	element->setPosition(0, b.height-spacing*2);
 	b.height += element->getHeight() + spacing;
-	if(b.width<element->getWidth()) b.width = element->getWidth();
+
+	//if(b.width<element->getWidth()) b.width = element->getWidth();
     
 	ofUnregisterMouseEvents(element);
     
@@ -91,9 +96,26 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	if(subgroup!=NULL){
 		subgroup->filename = filename;
 		subgroup->parent = this;
+		subgroup->setWidthElements(b.width*.98);
+	}else{
+		if(parent!=NULL){
+			element->setSize(b.width*.98,element->getHeight());
+			element->setPosition(b.x + b.width-element->getWidth(),element->getPosition().y);
+		}
 	}
     
 	parameters.add(element->getParameter());
+}
+
+void ofxGuiGroup::setWidthElements(float w){
+	for(int i=0;i<(int)collection.size();i++){
+		collection[i]->setSize(w,collection[i]->getHeight());
+		collection[i]->setPosition(b.width-w,collection[i]->getPosition().y);
+		ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(collection[i]);
+		if(subgroup!=NULL){
+			subgroup->setWidthElements(w*.98);
+		}
+	}
 }
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
@@ -103,48 +125,48 @@ void ofxGuiGroup::add(const ofParameterGroup & parameters){
 }
 
 void ofxGuiGroup::add(ofParameter<float> & parameter){
-	add(new ofxFloatSlider(parameter));
+	add(new ofxFloatSlider(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<int> & parameter){
-	add(new ofxIntSlider(parameter));
+	add(new ofxIntSlider(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<bool> & parameter){
-	add(new ofxToggle(parameter));
+	add(new ofxToggle(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<string> & parameter){
-	add(new ofxLabel(parameter));
+	add(new ofxLabel(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<ofVec2f> & parameter){
-	add(new ofxVecSlider_<ofVec2f>(parameter));
+	add(new ofxVecSlider_<ofVec2f>(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<ofVec3f> & parameter){
-	add(new ofxVecSlider_<ofVec3f>(parameter));
+	add(new ofxVecSlider_<ofVec3f>(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<ofVec4f> & parameter){
-	add(new ofxVecSlider_<ofVec4f>(parameter));
+	add(new ofxVecSlider_<ofVec4f>(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<ofColor> & parameter){
-	add(new ofxColorSlider_<unsigned char>(parameter));
+	add(new ofxColorSlider_<unsigned char>(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<ofShortColor> & parameter){
-	add(new ofxColorSlider_<unsigned short>(parameter));
+	add(new ofxColorSlider_<unsigned short>(parameter,b.width));
 }
 
 void ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
-	add(new ofxColorSlider_<float>(parameter));
+	add(new ofxColorSlider_<float>(parameter,b.width));
 }
 
 void ofxGuiGroup::clear(){
 	collection.clear();
-	b.height = header + spacing;
+	b.height = header + spacing + spacingNextElement;
 }
 
 void ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
@@ -198,9 +220,13 @@ void ofxGuiGroup::draw(){
 	currentFrame = ofGetFrameNum();
     
 	ofTranslate(b.x, b.y);
-    
+
+	ofNoFill();
+	ofSetColor(borderColor);
+	ofRect(0, 0, b.width, b.height-spacingNextElement);
+
 	ofFill();
-	ofSetColor(headerBackgroundColor);
+	ofSetColor(headerBackgroundColor,180);
 	ofRect(0, 0, b.width, header);
     
 	ofSetColor(textColor);
@@ -290,7 +316,7 @@ void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 
 void ofxGuiGroup::minimize(){
 	minimized=true;
-	b.height = header + spacing;
+	b.height = header + spacing + spacingNextElement;
 	if(parent) parent->sizeChangedCB();
 }
 
@@ -299,6 +325,7 @@ void ofxGuiGroup::maximize(){
 	for(int i=0;i<(int)collection.size();i++){
 		b.height += collection[i]->getHeight() + spacing;
 	}
+	b.height += spacingNextElement;
 	if(parent) parent->sizeChangedCB();
 }
 

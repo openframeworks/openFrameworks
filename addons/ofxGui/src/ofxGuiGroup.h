@@ -31,6 +31,8 @@ public:
     void minimizeAll();
     void maximizeAll();
 
+	void setWidthElements(float w);
+
 	void clear();
 	
 	virtual void mouseMoved(ofMouseEventArgs & args);
@@ -58,7 +60,7 @@ protected:
     virtual void setValue(float mx, float my, bool bCheck);
     void sizeChangedCB();
     
-	float spacing;
+	float spacing,spacingNextElement;
 	float header;
 	
     template<class ControlType>
