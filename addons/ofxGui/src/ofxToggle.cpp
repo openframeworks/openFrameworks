@@ -1,12 +1,11 @@
 #include "ofxToggle.h"
 #include "ofGraphics.h"
 
-ofxToggle::ofxToggle(string toggleName, ofParameter<bool> _bVal, float width, float height){
-	setup(toggleName,_bVal,defaultWidth,height);
+ofxToggle::ofxToggle(ofParameter<bool> _bVal, float width, float height){
+	setup(_bVal,width,height);
 }
 
-ofxToggle * ofxToggle::setup(string toggleName, ofParameter<bool> _bVal, float width, float height){
-	name = toggleName;
+ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -18,6 +17,12 @@ ofxToggle * ofxToggle::setup(string toggleName, ofParameter<bool> _bVal, float w
 
 	ofRegisterMouseEvents(this);
 	return this;
+
+}
+
+ofxToggle * ofxToggle::setup(string toggleName, bool _bVal, float width, float height){
+	value.set(toggleName,_bVal);
+	return setup(value,width,height);
 }
 
 
@@ -62,9 +67,7 @@ void ofxToggle::draw(){
 
 	ofSetColor(textColor);
 	ofTranslate(0, b.height / 2 + 4);
-	ofDrawBitmapString(name, textPadding + checkboxRect.width, 0);
-	//string valStr = value ? "true" : "false";
-	//ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
+	ofDrawBitmapString(getName(), textPadding + checkboxRect.width, 0);
 
 	ofPopMatrix();
 	ofSetColor(c);

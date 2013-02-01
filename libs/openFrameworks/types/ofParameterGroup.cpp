@@ -2,6 +2,12 @@
 #include "ofUtils.h"
 #include "ofParameter.h"
 
+ofParameterGroup::ofParameterGroup()
+:serializable(true)
+{
+
+}
+
 void ofParameterGroup::add(ofAbstractParameter & param){
 	parameters.push_back(&param);
 	parametersIndex[param.getName()] = parameters.size()-1;
@@ -223,4 +229,12 @@ const ofAbstractParameter & ofParameterGroup::back() const{
 
 const ofAbstractParameter & ofParameterGroup::front() const{
 	return *parameters.front();
+}
+
+void ofParameterGroup::setSerializable(bool _serializable){
+	serializable = _serializable;
+}
+
+bool ofParameterGroup::isSerializable() const{
+	return serializable;
 }

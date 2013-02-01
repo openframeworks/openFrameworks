@@ -52,11 +52,11 @@ void ofxBaseGui::setDefaultSerializer(ofBaseFileSerializer& _serializer){
 }
 
 string ofxBaseGui::getName(){
-	return name;
+	return getParameter().getName();
 }
 
 void ofxBaseGui::setName(string _name){
-	name = _name;
+	getParameter().setName(_name);
 }
 
 void ofxBaseGui::setPosition(ofPoint p){

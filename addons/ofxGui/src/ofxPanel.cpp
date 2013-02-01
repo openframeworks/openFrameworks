@@ -12,11 +12,9 @@
 ofImage ofxPanel::loadIcon;
 ofImage ofxPanel::saveIcon;
 
-ofxPanel::ofxPanel(string collectionName, string filename, float x, float y) : ofxGuiGroup(collectionName, filename, x, y){
-	this->registerMouseEvents();
-}
-
-ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y) : ofxGuiGroup(parameters, filename, x, y){
+ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y)
+: ofxGuiGroup(parameters, filename, x, y)
+, bGrabbed(false){
 	this->registerMouseEvents();
 }
 
@@ -53,7 +51,7 @@ void ofxPanel::draw(){
 	ofRect(0, 0, b.width, header);
 
 	ofSetColor(textColor);
-	ofDrawBitmapString(name, textPadding, header / 2 + 4);
+	ofDrawBitmapString(getName(), textPadding, header / 2 + 4);
 
 	ofPushMatrix();
 	loadIcon.draw(loadBox.x, loadBox.y);

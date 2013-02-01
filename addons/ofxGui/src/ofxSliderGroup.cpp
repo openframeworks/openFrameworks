@@ -1,13 +1,13 @@
 #include "ofxSliderGroup.h"
 
 template<class VecType>
-ofxVecSlider<VecType>::ofxVecSlider(string controlName, ofParameter<VecType> value, float width, float height){
+ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, float height){
 	sliderChanging = false;
-    setup(controlName, value);
+    setup(value, width, height);
 }
 
 template<class VecType>
-ofxVecSlider<VecType> * ofxVecSlider<VecType>::setup(string controlName, ofParameter<VecType> value, float width, float height){
+ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, float width, float height){
     ofxGuiGroup::setup(value.getName(), "", 0, 0);
     
     parameters.clear();
@@ -15,7 +15,7 @@ ofxVecSlider<VecType> * ofxVecSlider<VecType>::setup(string controlName, ofParam
     const string names[4] = {"x", "y", "z", "w"};
     
     this->value = value;
-    this->value.addListener(this, & ofxVecSlider::changeValue);
+    this->value.addListener(this, & ofxVecSlider_::changeValue);
 
     VecType val = value;
     VecType min = value.getMin();
@@ -23,16 +23,23 @@ ofxVecSlider<VecType> * ofxVecSlider<VecType>::setup(string controlName, ofParam
     
     for (int i=0; i<VecType::DIM; i++) {
     	ofParameter<float> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<float>(names[i], p));
-        p.addListener(this, & ofxVecSlider::changeSlider);
+        add(new ofxSlider<float>(p, width, height));
+        p.addListener(this, & ofxVecSlider_::changeSlider);
     }
 
     sliderChanging = false;
     return this;
+
 }
 
 template<class VecType>
-void ofxVecSlider<VecType>::changeSlider(const void * parameter, float & _value){
+ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(string controlName, const VecType & v, const VecType & min, const VecType & max, float width, float height){
+	value.set(controlName,v,min,max);
+	return setup(value,width,height);
+}
+
+template<class VecType>
+void ofxVecSlider_<VecType>::changeSlider(const void * parameter, float & _value){
     sliderChanging = true;
     ofParameter<float> & param = *(ofParameter<float>*)parameter;
     int i = parameters.getPosition(param.getName());
@@ -43,7 +50,7 @@ void ofxVecSlider<VecType>::changeSlider(const void * parameter, float & _value)
 }
 
 template<class VecType>
-void ofxVecSlider<VecType>::changeValue(VecType & value){
+void ofxVecSlider_<VecType>::changeValue(VecType & value){
     if (sliderChanging){
         return;
     }
@@ -53,31 +60,46 @@ void ofxVecSlider<VecType>::changeValue(VecType & value){
 }
 
 template<class VecType>
-ofAbstractParameter & ofxVecSlider<VecType>::getParameter(){
+ofAbstractParameter & ofxVecSlider_<VecType>::getParameter(){
 	return value;
 }
 
-template class ofxVecSlider<ofVec2f>;
-template class ofxVecSlider<ofVec3f>;
-template class ofxVecSlider<ofVec4f>;
+template<class VecType>
+VecType ofxVecSlider_<VecType>::operator=(const VecType & v){
+	value = v;
+	return value;
+}
+
+template<class VecType>
+ofxVecSlider_<VecType>::operator const VecType & (){
+	return value;
+}
+
+template<class VecType>
+const VecType * ofxVecSlider_<VecType>::operator->(){
+	return &value.get();
+}
+
+template class ofxVecSlider_<ofVec2f>;
+template class ofxVecSlider_<ofVec3f>;
+template class ofxVecSlider_<ofVec4f>;
 
 
 template<class ColorType>
-ofxColorSlider<ColorType>::ofxColorSlider(string controlName, ofParameter<ofColor_<ColorType> > value, float width, float height){
+ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > value, float width, float height){
 	sliderChanging = false;
-    setup(controlName, value);
+    setup(value, width, height);
 }
 
 template<class ColorType>
-ofxColorSlider<ColorType> * ofxColorSlider<ColorType>::setup(string controlName, ofParameter<ofColor_<ColorType> > value, float width, float height){
+ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, float width, float height){
     ofxGuiGroup::setup(value.getName(), "", 0, 0);
-
     parameters.clear();
 
     const string names[4] = {"r", "g", "b", "a"};
 
     this->value = value;
-    this->value.addListener(this, & ofxColorSlider::changeValue);
+    this->value.addListener(this, & ofxColorSlider_::changeValue);
 
     ofColor_<ColorType> val = value;
     ofColor_<ColorType> min = value.getMin();
@@ -85,8 +107,8 @@ ofxColorSlider<ColorType> * ofxColorSlider<ColorType>::setup(string controlName,
 
     for (int i=0; i<4; i++) {
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<ColorType>(names[i], p));
-        p.addListener(this, & ofxColorSlider::changeSlider);
+        add(new ofxSlider<ColorType>(p, width, height));
+        p.addListener(this, & ofxColorSlider_::changeSlider);
         collection[i]->setFillColor(value.get());
     }
 
@@ -94,8 +116,15 @@ ofxColorSlider<ColorType> * ofxColorSlider<ColorType>::setup(string controlName,
     return this;
 }
 
+
 template<class ColorType>
-void ofxColorSlider<ColorType>::changeSlider(const void * parameter, ColorType & _value){
+ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(string controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height){
+    value.set(controlName, v, min, max);
+	return setup(value,width,height);
+}
+
+template<class ColorType>
+void ofxColorSlider_<ColorType>::changeSlider(const void * parameter, ColorType & _value){
     sliderChanging = true;
     ofParameter<float> & param = *(ofParameter<float>*)parameter;
     int i = parameters.getPosition(param.getName());
@@ -111,7 +140,7 @@ void ofxColorSlider<ColorType>::changeSlider(const void * parameter, ColorType &
 }
 
 template<class ColorType>
-void ofxColorSlider<ColorType>::changeValue(ofColor_<ColorType> & value){
+void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
     if (sliderChanging){
         return;
     }
@@ -122,10 +151,21 @@ void ofxColorSlider<ColorType>::changeValue(ofColor_<ColorType> & value){
 }
 
 template<class ColorType>
-ofAbstractParameter & ofxColorSlider<ColorType>::getParameter(){
+ofAbstractParameter & ofxColorSlider_<ColorType>::getParameter(){
 	return value;
 }
 
-template class ofxColorSlider<unsigned char>;
-template class ofxColorSlider<unsigned short>;
-template class ofxColorSlider<float>;
+template<class ColorType>
+ofColor_<ColorType> ofxColorSlider_<ColorType>::operator=(const ofColor_<ColorType> & v){
+	value = v;
+	return value;
+}
+
+template<class ColorType>
+ofxColorSlider_<ColorType>::operator const ofColor_<ColorType> & (){
+	return value;
+}
+
+template class ofxColorSlider_<unsigned char>;
+template class ofxColorSlider_<unsigned short>;
+template class ofxColorSlider_<float>;

@@ -8,13 +8,12 @@ void testApp::setup(){
 	gui.setup("panel"); // most of the time you don't need a name
 	gui.add(filled.setup("bFill", true));
 	gui.add(radius.setup( "radius", 140, 10, 300 ));
-	gui.add(r.setup( "red", 100.0f, 0, 255 ));
-	gui.add(g.setup( "green", 100.0f, 0, 255 ));
-	gui.add(b.setup( "blue", 140.0f, 0, 255 ));
-	gui.add(circleResolution.setup("circle res", 5, 3, 90));
+	gui.add(center.setup("center",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
+	gui.add(color.setup("color",ofColor(100,100,140),ofColor(0,0),ofColor(255,255)));
+	gui.add(circleResolution.setup("circleRes", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
-	gui.add(status.setup("Status", ""));
+	gui.add(screenSize.setup("screenSize", ""));
 	
 	ringButton.addListener(this,&testApp::ringButtonPressed);
 
@@ -29,8 +28,8 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
-void testApp::ringButtonPressed(bool & pressed){
-	if(pressed) ring.play();
+void testApp::ringButtonPressed(){
+	ring.play();
 }
 
 //--------------------------------------------------------------
@@ -40,7 +39,6 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
     ofBackgroundGradient(ofColor::white, ofColor::gray);
     
 	if( filled ){
@@ -49,12 +47,12 @@ void testApp::draw(){
 		ofNoFill();
 	}
 
-	ofSetColor(r, g, b);
+	ofSetColor(color);
 	if(twoCircles){
-		ofCircle(ofGetWidth()/2-radius*.5, ofGetHeight()/2, radius );
-		ofCircle(ofGetWidth()/2+radius*.5, ofGetHeight()/2, radius );
+		ofCircle(center->x-radius*.5, center->y, radius );
+		ofCircle(center->x+radius*.5, center->y, radius );
 	}else{
-		ofCircle(ofGetWidth()/2, ofGetHeight()/2, radius );
+		ofCircle((ofVec2f)center, radius );
 	}
 	
 	// auto draw?
@@ -74,6 +72,9 @@ void testApp::keyPressed(int key){
 	}
 	if(key == 'l') {
 		gui.loadFromFile("settings.xml");
+	}
+	if(key == ' '){
+		color = ofColor(255);
 	}
 }
 
@@ -103,7 +104,7 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-    status = "Size: " + ofToString(w) + "x" + ofToString(h);
+    screenSize = ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

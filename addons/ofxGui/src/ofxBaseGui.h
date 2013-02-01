@@ -55,7 +55,6 @@ public:
 
 
 protected:
-	string name;
 	unsigned long currentFrame;			
 	ofRectangle b;
 	bool bGuiActive;

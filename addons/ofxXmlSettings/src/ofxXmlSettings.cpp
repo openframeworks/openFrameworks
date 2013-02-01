@@ -416,6 +416,7 @@ int ofxXmlSettings::addTag(const string& tag){
 }
 
 void ofxXmlSettings::serialize(const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
 	string name = parameter.getName();
 	if(name=="") name="UnknownName";
 	if(parameter.type()==typeid(ofParameterGroup).name()){
@@ -436,6 +437,7 @@ void ofxXmlSettings::serialize(const ofAbstractParameter & parameter){
 }
 
 void ofxXmlSettings::deserialize(ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
 	string name = parameter.getName();
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);

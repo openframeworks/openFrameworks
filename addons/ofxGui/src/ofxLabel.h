@@ -6,13 +6,11 @@
 class ofxLabel: public ofxBaseGui {
 public:
     ofxLabel(){}
+    ofxLabel(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
     virtual ~ofxLabel() {}
-    // We need a string version here as literals are not getting converted to
-    // ofxParameter<string>. For status.setup("Status", "") we get:
-    // error: no matching function for call to ‘ofxLabel::setup(const char [7], const char [1])’
-    // note:   no known conversion for argument 2 from ‘const char [1]’ to ‘ofxParameter<std::basic_string<char> >’
-    ofxLabel * setup(string labelName, string _label, float width = defaultWidth, float height = defaultHeight);
-    ofxLabel * setup(string labelName, ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+
+    ofxLabel * setup(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel * setup(string labelName, string label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual void mouseMoved(ofMouseEventArgs & args){}

@@ -3,12 +3,6 @@
 #include "ofxSliderGroup.h"
 #include "ofGraphics.h"
 
-ofxGuiGroup::ofxGuiGroup(string collectionName, string filename, float x, float y){
-	minimized = false;
-	parent = NULL;
-    setup(collectionName, filename, x, y);
-}
-
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, string filename, float x, float y){
 	minimized = false;
 	parent = NULL;
@@ -16,24 +10,12 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, string filename, f
 }
 
 ofxGuiGroup * ofxGuiGroup::setup(string collectionName, string filename, float x, float y){
-	name = collectionName;
-	parameters.setName(name);
-	b.x = x;
-	b.y = y;
-	header = defaultHeight;
-	spacing  = 1;
-	b.width = defaultWidth;
-	b.height = spacing;
-    this->clear();
-	this->filename = filename;
-    
-	return this;
+	parameters.setName(collectionName);
+	return setup(parameters,filename,x,y);
 }
 
 
 ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _filename, float x, float y){
-	name = _parameters.getName();
-	parameters.setName(name);
 	b.x = x;
 	b.y = y;
 	header = defaultHeight;
@@ -112,39 +94,39 @@ void ofxGuiGroup::add(const ofParameterGroup & parameters){
 }
 
 void ofxGuiGroup::add(ofParameter<float> & parameter){
-	add(new ofxFloatSlider(parameter.getName(),parameter));
+	add(new ofxFloatSlider(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<int> & parameter){
-	add(new ofxIntSlider(parameter.getName(),parameter));
+	add(new ofxIntSlider(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<bool> & parameter){
-	add(new ofxToggle(parameter.getName(),parameter));
+	add(new ofxToggle(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<ofVec2f> & parameter){
-	add(new ofxVecSlider<ofVec2f>(parameter.getName(),parameter));
+	add(new ofxVecSlider_<ofVec2f>(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<ofVec3f> & parameter){
-	add(new ofxVecSlider<ofVec3f>(parameter.getName(),parameter));
+	add(new ofxVecSlider_<ofVec3f>(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<ofVec4f> & parameter){
-	add(new ofxVecSlider<ofVec4f>(parameter.getName(),parameter));
+	add(new ofxVecSlider_<ofVec4f>(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<ofColor> & parameter){
-	add(new ofxColorSlider<unsigned char>(parameter.getName(),parameter));
+	add(new ofxColorSlider_<unsigned char>(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<ofShortColor> & parameter){
-	add(new ofxColorSlider<unsigned short>(parameter.getName(),parameter));
+	add(new ofxColorSlider_<unsigned short>(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
-	add(new ofxColorSlider<float>(parameter.getName(),parameter));
+	add(new ofxColorSlider_<float>(parameter));
 }
 
 void ofxGuiGroup::clear(){
@@ -209,7 +191,7 @@ void ofxGuiGroup::draw(){
 	ofRect(0, 0, b.width, header);
     
 	ofSetColor(textColor);
-	ofDrawBitmapString(name, textPadding, header / 2 + 4);
+	ofDrawBitmapString(getName(), textPadding, header / 2 + 4);
 	if(minimized){
 		ofDrawBitmapString("+", b.width-textPadding-8, header / 2 + 4);
 	}else{

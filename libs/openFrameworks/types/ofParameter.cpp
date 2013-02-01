@@ -55,6 +55,14 @@ void ofAbstractParameter::notifyParent(){
 	if(getParent()) getParent()->notifyParameterChanged(*this);
 }
 
+void ofAbstractParameter::setSerializable(bool serializable){
+
+}
+
+bool ofAbstractParameter::isSerializable() const{
+	return true;
+}
+
 ostream& operator<<(ostream& os, const ofAbstractParameter& p){
 	os << p.toString();
 	return os;

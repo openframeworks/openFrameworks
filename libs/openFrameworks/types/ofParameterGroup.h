@@ -16,6 +16,7 @@
 
 class ofParameterGroup: public ofAbstractParameter {
 public:
+	ofParameterGroup();
 
 	template<typename ParameterType>
 	void add(ofParameter<ParameterType> & param);
@@ -92,10 +93,14 @@ public:
 	const ofAbstractParameter & back() const;
 	const ofAbstractParameter & front() const;
 
+	void setSerializable(bool serializable);
+	bool isSerializable() const;
+
 private:
 	map<string,int> parametersIndex;
 	vector<ofAbstractParameter*> parameters;
 	string name;
+	bool serializable;
 };
 
 

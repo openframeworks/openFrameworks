@@ -22,17 +22,18 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);		
 
-	void ringButtonPressed(bool & pressed);
+	void ringButtonPressed();
 
 	bool bHide;
 
 	ofxFloatSlider radius;
-	ofxIntSlider r, g, b;
+	ofxColorSlider color;
+	ofxVec2Slider center;
 	ofxIntSlider circleResolution;
 	ofxToggle filled;
 	ofxButton twoCircles;
 	ofxButton ringButton;
-	ofxLabel status;
+	ofxLabel screenSize;
 
 	ofxPanel gui;
 

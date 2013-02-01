@@ -7,7 +7,7 @@
 
 class ofxGuiGroup : public ofxBaseGui {
 public:
-    ofxGuiGroup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup(){}
 	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
     virtual ~ofxGuiGroup() {}
     ofxGuiGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
