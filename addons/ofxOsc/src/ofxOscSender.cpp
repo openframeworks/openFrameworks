@@ -137,7 +137,7 @@ void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParamet
 	}else if(parameter.type()==typeid(ofParameter<bool>).name()){
 		msg.addIntArg(parameter.cast<bool>());
 	}else{
-		msg.addStringArg(parameter.cast<string>());
+		msg.addStringArg(parameter.toString());
 	}
 }
 

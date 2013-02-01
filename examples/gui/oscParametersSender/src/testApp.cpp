@@ -6,12 +6,7 @@ void testApp::setup(){
 	parameters.add(size.set("size",10,1,100));
 	parameters.add(number.set("number",10,1,100));
 	parameters.add(check.set("check",false));
-	colors.setName("colors");
-	colors.add(r.set("r",127,0,255));
-	colors.add(g.set("g",127,0,255));
-	colors.add(b.set("b",127,0,255));
-	colors.add(a.set("a",127,0,255));
-	parameters.add(colors);
+	parameters.add(color.set("color",ofColor(127),ofColor(0,0),ofColor(255)));
 	gui.setup(parameters);
 	// by now needs to pass the gui parameter groups since the panel internally creates it's own group
 	sync.setup((ofParameterGroup&)gui.getParameter(),6667,"localhost",6666);
