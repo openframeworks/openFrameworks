@@ -12,7 +12,7 @@ ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height)
 	b.height = height;
 	currentFrame = 0;
 	bGuiActive = false;
-	value = _bVal;
+	value.makeReferenceTo(_bVal);
 	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 
 	ofRegisterMouseEvents(this);

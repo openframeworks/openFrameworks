@@ -2,6 +2,14 @@
 #include "ofxPanel.h"
 #include "ofxSliderGroup.h"
 #include "ofGraphics.h"
+#include "ofxLabel.h"
+
+ofxGuiGroup::ofxGuiGroup(){
+	minimized = false;
+	parent = NULL;
+	spacing  = 1;
+	header = defaultHeight;
+}
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, string filename, float x, float y){
 	minimized = false;
@@ -63,6 +71,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 		}
 	}
 
+	parameters = _parameters;
 	ofRegisterMouseEvents(this);
     
 	return this;
@@ -105,6 +114,10 @@ void ofxGuiGroup::add(ofParameter<bool> & parameter){
 	add(new ofxToggle(parameter));
 }
 
+void ofxGuiGroup::add(ofParameter<string> & parameter){
+	add(new ofxLabel(parameter));
+}
+
 void ofxGuiGroup::add(ofParameter<ofVec2f> & parameter){
 	add(new ofxVecSlider_<ofVec2f>(parameter));
 }
@@ -131,7 +144,7 @@ void ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
 
 void ofxGuiGroup::clear(){
 	collection.clear();
-	b.height = header + spacing; // weird to start out with something arbitrary like this
+	b.height = header + spacing;
 }
 
 void ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){

@@ -14,7 +14,7 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     
     const string names[4] = {"x", "y", "z", "w"};
     
-    this->value = value;
+    this->value.makeReferenceTo(value);
     this->value.addListener(this, & ofxVecSlider_::changeValue);
 
     VecType val = value;
@@ -98,7 +98,7 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
 
     const string names[4] = {"r", "g", "b", "a"};
 
-    this->value = value;
+    this->value.makeReferenceTo(value);
     this->value.addListener(this, & ofxColorSlider_::changeValue);
 
     ofColor_<ColorType> val = value;

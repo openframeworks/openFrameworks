@@ -97,10 +97,16 @@ public:
 	bool isSerializable() const;
 
 private:
-	map<string,int> parametersIndex;
-	vector<ofAbstractParameter*> parameters;
-	string name;
-	bool serializable;
+	class Value{
+	public:
+		Value():serializable(true){}
+
+		map<string,int> parametersIndex;
+		vector<ofAbstractParameter*> parameters;
+		string name;
+		bool serializable;
+	};
+	ofPtr<Value> obj;
 };
 
 
@@ -117,18 +123,18 @@ ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
 template<class ParameterType>
 void ofParameterGroup::add(ofParameter<ParameterType> & param){
 	ofParameter<ParameterType> * p = new ofParameter<ParameterType>;
-	*p = param;
-	parameters.push_back(p);
-	parametersIndex[p->getName()] = parameters.size()-1;
+	p->makeReferenceTo(param);
+	obj->parameters.push_back(p);
+	obj->parametersIndex[p->getName()] = obj->parameters.size()-1;
 	p->setParent(this);
 }
 
 template<typename ParameterType,typename Friend>
 void ofParameterGroup::add(ofReadOnlyParameter<ParameterType,Friend> & param){
 	ofReadOnlyParameter<ParameterType,Friend> * p = new ofReadOnlyParameter<ParameterType,Friend>;
-	*p = param;
-	parameters.push_back(p);
-	parametersIndex[p->getName()] = parameters.size()-1;
+	p->makeReferenceTo(param);
+	obj->parameters.push_back(p);
+	obj->parametersIndex[p->getName()] = obj->parameters.size()-1;
 	p->setParent(this);
 }
 #endif /* OFXPARAMETERGROUP_H_ */

@@ -9,7 +9,7 @@ ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height){
 template<typename Type>
 ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
 	bUpdateOnReleaseOnly = false;
-	value = _val;
+	value.makeReferenceTo(_val);
 	b.x = 0;
 	b.y = 0;
 	b.width = width;

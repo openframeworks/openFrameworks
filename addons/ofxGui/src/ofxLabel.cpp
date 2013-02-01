@@ -6,15 +6,14 @@ ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
 }
 
 ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height) {
-    label    = _label;
+    label.makeReferenceTo(_label);
     b.width  = width;
     b.height = height;
     return this;
 }
 
 ofxLabel* ofxLabel::setup(string labelName, string _label, float width, float height) {
-	label = _label;
-    label.setName(labelName);
+    label.set(labelName,_label);
     return setup(label,width,height);
 }
 

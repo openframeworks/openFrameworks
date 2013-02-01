@@ -3,20 +3,20 @@
 #include "ofParameter.h"
 
 ofParameterGroup::ofParameterGroup()
-:serializable(true)
+:obj(new Value)
 {
 
 }
 
 void ofParameterGroup::add(ofAbstractParameter & param){
-	parameters.push_back(&param);
-	parametersIndex[param.getName()] = parameters.size()-1;
+	obj->parameters.push_back(&param);
+	obj->parametersIndex[param.getName()] = obj->parameters.size()-1;
 	param.setParent(this);
 }
 
 void ofParameterGroup::clear(){
-    parameters.clear();
-    parametersIndex.clear();
+	obj->parameters.clear();
+	obj->parametersIndex.clear();
 }
 
 ofParameter<bool> ofParameterGroup::getBool(string name) const	{
@@ -125,7 +125,7 @@ ofParameterGroup ofParameterGroup::getGroup(int pos) const{
 		return ofParameterGroup();
 	}else{
 		if(getType(pos)==typeid(ofParameterGroup).name()){
-			return *static_cast<ofParameterGroup* >(parameters[pos]);
+			return *static_cast<ofParameterGroup* >(obj->parameters[pos]);
 		}else{
 			ofLogError() << "ofParameterGroup::get asked for bad type, returning empty";
 			return ofParameterGroup();
@@ -135,34 +135,35 @@ ofParameterGroup ofParameterGroup::getGroup(int pos) const{
 
 
 int ofParameterGroup::size() const{
-	return parameters.size();
+	return obj->parameters.size();
 }
 
 string ofParameterGroup::getName(int position) const{
 	if(position>=size()){
 		return "";
 	}else{
-		return parameters[position]->getName();
+		return obj->parameters[position]->getName();
 	}
 }
 
 string ofParameterGroup::getType(int position) const{
 	if(position>=size()) return "";
-	else return parameters[position]->type();
+	else return obj->parameters[position]->type();
 }
 
 
 int ofParameterGroup::getPosition(string name) const{
-	if(parametersIndex.find(name)!=parametersIndex.end()) return parametersIndex.find(name)->second;
+	if(obj->parametersIndex.find(name)!=obj->parametersIndex.end())
+		return obj->parametersIndex.find(name)->second;
 	return -1;
 }
 
 string ofParameterGroup::getName() const{
-	return name;
+	return obj->name;
 }
 
 void ofParameterGroup::setName(string _name){
-	name = _name;
+	obj->name = _name;
 }
 
 string ofParameterGroup::toString() const{
@@ -173,13 +174,13 @@ string ofParameterGroup::toString() const{
 
 
 ofAbstractParameter & ofParameterGroup::get(string name) const{
-	map<string,int>::const_iterator it = parametersIndex.find(name);
+	map<string,int>::const_iterator it = obj->parametersIndex.find(name);
 	int index = it->second;
 	return get(index);
 }
 
 ofAbstractParameter & ofParameterGroup::get(int pos) const{
-	return *parameters[pos];
+	return *obj->parameters[pos];
 }
 
 
@@ -207,7 +208,7 @@ ostream& operator<<(ostream& os, const ofParameterGroup& group) {
 }
 
 bool ofParameterGroup::contains(string name){
-	return parametersIndex.find(name)!=parametersIndex.end();
+	return obj->parametersIndex.find(name)!=obj->parametersIndex.end();
 }
 
 void ofParameterGroup::notifyParameterChanged(ofAbstractParameter & param){
@@ -216,25 +217,25 @@ void ofParameterGroup::notifyParameterChanged(ofAbstractParameter & param){
 }
 
 ofAbstractParameter & ofParameterGroup::back(){
-	return *parameters.back();
+	return *obj->parameters.back();
 }
 
 ofAbstractParameter & ofParameterGroup::front(){
-	return *parameters.front();
+	return *obj->parameters.front();
 }
 
 const ofAbstractParameter & ofParameterGroup::back() const{
-	return *parameters.back();
+	return *obj->parameters.back();
 }
 
 const ofAbstractParameter & ofParameterGroup::front() const{
-	return *parameters.front();
+	return *obj->parameters.front();
 }
 
 void ofParameterGroup::setSerializable(bool _serializable){
-	serializable = _serializable;
+	obj->serializable = _serializable;
 }
 
 bool ofParameterGroup::isSerializable() const{
-	return serializable;
+	return obj->serializable;
 }

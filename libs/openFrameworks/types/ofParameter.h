@@ -105,8 +105,11 @@ public:
 	void disableEvents();
 	bool isSerializable() const;
 
+	void makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom);
+
 protected:
-	virtual ParameterType operator=(ParameterType v);
+	virtual ofReadOnlyParameter<ParameterType,Friend> & operator=(const ofReadOnlyParameter<ParameterType,Friend> & v);
+	virtual const ParameterType & operator=(const ParameterType & v);
 
 	ParameterType operator++(int v);
 	ofReadOnlyParameter<ParameterType,Friend> & operator++();
@@ -202,7 +205,13 @@ ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, Para
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator=(ParameterType v){
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator=(const ofReadOnlyParameter<ParameterType,Friend> & v){
+	set(v);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::operator=(const ParameterType & v){
 	set(v);
 	return obj->value;
 }
@@ -426,6 +435,11 @@ ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Fr
 	obj->value>>=v;
 	set(obj->value);
 	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+void ofReadOnlyParameter<ParameterType,Friend>::makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom){
+	obj = mom.obj;
 }
 
 template<typename ParameterType>
