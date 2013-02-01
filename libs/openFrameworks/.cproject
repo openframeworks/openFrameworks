@@ -59,7 +59,7 @@
 					<folderInfo id="0.1456782960.417897956." name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1678797551" name="Android GCC" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.1942526953" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder arguments="-C ../openFrameworksCompiled/project/android -j4" cleanBuildTarget="CleanAndroid" command="make" id="cdt.managedbuild.builder.gnu.cross.942956906" incrementalBuildTarget="android" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder arguments="-C ../openFrameworksCompiled/project" cleanBuildTarget="clean PLATFORM_OS=Android" command="make" id="cdt.managedbuild.builder.gnu.cross.942956906" incrementalBuildTarget="all PLATFORM_OS=Android" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="com.android.gcc.compiler.1556898117" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.1884741128" superClass="com.android.gcc.inputType"/>
 							</tool>
