@@ -7,7 +7,7 @@
 
 class ofxGuiGroup : public ofxBaseGui {
 public:
-	ofxGuiGroup(){}
+	ofxGuiGroup();
 	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
     virtual ~ofxGuiGroup() {}
     ofxGuiGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
@@ -18,6 +18,7 @@ public:
 	void add(ofParameter<float> & parameter);
 	void add(ofParameter<int> & parameter);
 	void add(ofParameter<bool> & parameter);
+	void add(ofParameter<string> & parameter);
     void add(ofParameter<ofVec2f> & parameter);
     void add(ofParameter<ofVec3f> & parameter);
     void add(ofParameter<ofVec4f> & parameter);

@@ -6,26 +6,39 @@ void testApp::setup(){
 	bool useJson = false;
 	if(useJson){
 		gui.setDefaultSerializer(json);
-		gui.setup(renderer.parameters,"settings.json");
+		gui.setup("","settings.json");
 	}else{
-		gui.setup(renderer.parameters,"settings.xml");
+		gui.setup("","settings.xml");
 	}
+
+	// by setting the listener before the param values
+	// the listener method will get called on gui.add
+	vSync.addListener(this,&testApp::vSyncChanged);
+	gui.add(vSync.set("vSync",true));
+	gui.add(renderer.parameters);
+
 	ofEnableAlphaBlending();
-	renderer.frameNum.addListener(this,&testApp::frameNumChanged);
 }
 
-void testApp::frameNumChanged(int & frame){
-	cout << frame << endl;
+void testApp::vSyncChanged(bool & vSync){
+	ofSetVerticalSync(vSync);
 }
+
 
 //--------------------------------------------------------------
 void testApp::update(){
+	// frameNum is a readonly parameter so this will fail to compile
+	// unless we are inside the CirclesRenderer class
+	// renderer.frameNum = 5;
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	gui.draw();
 	renderer.draw();
+	ofSetColor(255);
+	ofDrawBitmapString("frame: " + ofToString(renderer.frameNum),ofGetWidth()-150,20);
+	ofDrawBitmapString("fps: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-150,40);
 }
 
 //--------------------------------------------------------------

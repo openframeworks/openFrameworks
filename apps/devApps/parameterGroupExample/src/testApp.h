@@ -4,6 +4,7 @@
 #include "ofxGui.h"
 #include "CirclesRenderer.h"
 #include "ofxJSONElement.h"
+#include "ofxXmlSettings.h"
 
 class testApp : public ofBaseApp{
 
@@ -22,9 +23,10 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		void frameNumChanged(int & frame);
+		void vSyncChanged(bool & vSync);
 
 		ofxPanel gui;
+		ofParameter<bool> vSync;
 		ofxXmlSettings settings;
 		CirclesRenderer renderer;
 		ofxJSONElement json;
