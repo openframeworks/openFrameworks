@@ -117,16 +117,26 @@ protected:
 	ParameterType operator--(int v);
 	ofReadOnlyParameter<ParameterType,Friend> & operator--();
 
-	ofReadOnlyParameter<ParameterType,Friend> & operator+=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator-=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator*=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator/=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator%=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator&=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator|=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator^=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator<<=(const ParameterType & v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator>>=(const ParameterType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator+=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator-=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator*=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator/=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator%=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator&=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator|=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator^=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator<<=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend> & operator>>=(const OtherType & v);
 
 
 	virtual ofReadOnlyParameter<ParameterType,Friend> & set(ParameterType v);
@@ -368,70 +378,80 @@ ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Fr
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator+=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator+=(const OtherType & v){
 	obj->value+=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator-=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator-=(const OtherType & v){
 	obj->value-=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator*=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator*=(const OtherType & v){
 	obj->value*=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator/=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator/=(const OtherType & v){
 	obj->value/=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator%=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator%=(const OtherType & v){
 	obj->value%=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator&=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator&=(const OtherType & v){
 	obj->value&=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator|=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator|=(const OtherType & v){
 	obj->value|=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator^=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator^=(const OtherType & v){
 	obj->value^=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator<<=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator<<=(const OtherType & v){
 	obj->value<<=v;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator>>=(const ParameterType & v){
+template<typename OtherType>
+ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator>>=(const OtherType & v){
 	obj->value>>=v;
 	set(obj->value);
 	return *this;
