@@ -243,8 +243,6 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 					p->cast<float>() = msg.getArgAsFloat(0);
 				}else if(p->type()==typeid(ofParameter<bool>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){
 					p->cast<bool>() = msg.getArgAsInt32(0);
-				}else if(p->type()==typeid(ofParameter<bool>).name() && msg.getArgType(0)==OFXOSC_TYPE_STRING){
-					p->cast<string>() = msg.getArgAsString(0);
 				}else if(msg.getArgType(0)==OFXOSC_TYPE_STRING){
 					p->fromString(msg.getArgAsString(0));
 				}

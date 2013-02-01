@@ -26,8 +26,8 @@ class testApp : public ofBaseApp{
 		ofParameter<float> size;
 		ofParameter<int> number;
 		ofParameter<bool> check;
-		ofParameterGroup parameters,colors;
-		ofParameter<int> r,g,b,a;
+		ofParameterGroup parameters;
+		ofParameter<ofColor> color;
 		ofxPanel gui;
 
 };
