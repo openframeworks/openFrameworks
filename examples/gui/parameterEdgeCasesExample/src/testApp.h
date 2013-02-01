@@ -10,6 +10,7 @@ class testApp : public ofBaseApp{
 		void draw();
 
 		void colorChanged(ofColor & color);
+		void incrementParam(ofParameter<int> p);
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -22,5 +23,6 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 		ofParameter<ofColor> color;
+		ofParameter<int> a,b;
 
 };
