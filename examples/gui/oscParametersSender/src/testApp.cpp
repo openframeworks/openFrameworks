@@ -21,6 +21,11 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	gui.draw();
+	ofSetColor(color);
+	for(int i=0;i<number;i++){
+		ofCircle(ofGetWidth()*.5-size*((number-1)*0.5-i), ofGetHeight()*.5, size);
+	}
+
 }
 
 //--------------------------------------------------------------
