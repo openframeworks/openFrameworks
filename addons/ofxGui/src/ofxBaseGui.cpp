@@ -4,6 +4,7 @@
 const ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
+ofxBaseGui::borderColor(100),
 ofxBaseGui::textColor(255),
 ofxBaseGui::fillColor(128);
 

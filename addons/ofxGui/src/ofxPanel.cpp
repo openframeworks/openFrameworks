@@ -46,6 +46,10 @@ void ofxPanel::draw(){
 
 	ofTranslate(b.x, b.y);
 
+	ofNoFill();
+	ofSetColor(borderColor);
+	ofRect(0, 0, b.width, b.height);
+
 	ofFill();
 	ofSetColor(headerBackgroundColor);
 	ofRect(0, 0, b.width, header);
