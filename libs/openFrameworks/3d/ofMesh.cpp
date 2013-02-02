@@ -1211,14 +1211,12 @@ vector<ofMeshFace> ofMesh::getUniqueFaces() {
     bool bHasNormals    = hasNormals();
     bool bHasTexcoords  = hasTexCoords();
     
-    //cout << "getUniqueFaces :: Indices.size = "<<indices.size() << endl;
-    
     if( getMode() == OF_PRIMITIVE_TRIANGLES) {
         for(int j = 0; j < indices.size(); j += 3) {
             ofMeshFace tri;
             for(int k = 0; k < 3; k++) {
                 index = indices[j+k];
-                tri.vertices[k].set(verts[index].x, verts[index].y, verts[index].z);//      = verts[index];
+                tri.setVertex( k, verts[index] );
                 if(bHasNormals)
                     tri.normals[k]      = normals[index];
                 if(bHasTexcoords)
@@ -1228,6 +1226,8 @@ vector<ofMeshFace> ofMesh::getUniqueFaces() {
                 tri.setHasColors(bHasColors);
                 tri.setHasNormals(bHasNormals);
                 tri.setHasTexcoords(bHasTexcoords);
+                // only calculate the normal after all vertices have been set //
+                if(k == 2) tri.calculateFaceNormal();
             }
             triangles.push_back( tri );
         }
@@ -1252,19 +1252,17 @@ vector<ofVec3f> ofMesh::getFaceNormals( bool perVetex ) {
         
         if(verts.size() > 3 && indices.size() > 3) {
             
-            ofVec3f v1, v2, v3, n; ofVec3f U, V;
+            ofMeshFace face;
+            ofVec3f n;
             for(int i = 0; i < indices.size(); i+=3) {
-                v1 = verts[indices[i+0]];
-                v2 = verts[indices[i+1]];
-                v3 = verts[indices[i+2]];
+                face.setVertex( 0, verts[indices[i+0]] );
+                face.setVertex( 1, verts[indices[i+1]] );
+                face.setVertex( 2, verts[indices[i+2]] );
                 
-                U = (v2-v1);
-                V = (v3-v1);
+                face.calculateFaceNormal();
+                n = face.getFaceNormal();
                 
-                n = U.crossed(V);
-                n.normalize();
-                
-                faceNormals.push_back(n);
+                faceNormals.push_back( n );
                 if(perVetex) {
                     faceNormals.push_back(n);
                     faceNormals.push_back(n);
@@ -1294,9 +1292,9 @@ void ofMesh::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
                 tcoords.push_back( it->texCoords[k] );
             if(it->hasColors())
                 colors.push_back( it->colors[k] );
-            if(it->hasNormals() || bUseFaceNormal) {
-                if(bUseFaceNormal)
-                    normals.push_back(it->getFaceNormal());
+            if( it->hasNormals() || bUseFaceNormal) {
+                if(bUseFaceNormal) 
+                    normals.push_back( it->getFaceNormal() );
                 else
                     normals.push_back( it->normals[k] );
             }
@@ -2032,7 +2030,6 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     
     float maxTexY = heightSegments-1.f + capSegs-1.f;
     
-    float crossAngle = ofVec3f(radius, 1, 0).angle( ofVec3f(0,1,0) );
     ofVec3f startVec(0, -halfH-1.f, 0);
     
     // cone vertices //
