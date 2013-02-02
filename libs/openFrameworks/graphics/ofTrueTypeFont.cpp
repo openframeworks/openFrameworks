@@ -289,6 +289,10 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		FcDefaultSubstitute(pattern);
 		FcResult result;
 		FcPattern * fontMatch = FcFontMatch(0,pattern,&result);
+		if(!fontMatch){
+			ofLogError() << "couldn't find font file or system font with name " << _filename;
+			return false;
+		}
 		FcChar8	*file;
 		if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
 			filename = (const char*)file;
