@@ -55,7 +55,7 @@ void ofxPanel::draw(){
 	ofRect(0, 0, b.width, header);
 
 	ofSetColor(textColor);
-	ofDrawBitmapString(getName(), textPadding, header / 2 + 4);
+	font.drawString(getName(), textPadding, header / 2 + 4);
 
 	ofPushMatrix();
 	loadIcon.draw(loadBox.x, loadBox.y);

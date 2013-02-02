@@ -83,9 +83,9 @@ void ofxSlider<Type>::draw(){
 
 	ofTranslate(0, b.height / 2 + 4);
 	ofSetColor(textColor);
-	ofDrawBitmapString(getName(), textPadding, 0);
+	font.drawString(getName(), textPadding, 0);
 	string valStr = ofToString(value.get());
-	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
+	font.drawString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 
 	ofPopMatrix();
 	ofSetColor(c);
@@ -111,9 +111,9 @@ void ofxSlider<unsigned char>::draw(){
 
 	ofTranslate(0, b.height / 2 + 4);
 	ofSetColor(thisTextColor);
-	ofDrawBitmapString(getName(), textPadding, 0);
+	font.drawString(getName(), textPadding, 0);
 	string valStr = ofToString((int)value.get());
-	ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
+	font.drawString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 
 	ofPopMatrix();
 	ofPopStyle();

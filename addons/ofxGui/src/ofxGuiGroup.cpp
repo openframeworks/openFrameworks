@@ -230,11 +230,11 @@ void ofxGuiGroup::draw(){
 	ofRect(0, 0, b.width, header);
     
 	ofSetColor(textColor);
-	ofDrawBitmapString(getName(), textPadding, header / 2 + 4);
+	font.drawString(getName(), textPadding, header / 2 + 4);
 	if(minimized){
-		ofDrawBitmapString("+", b.width-textPadding-8, header / 2 + 4);
+		font.drawString("+", b.width-textPadding-8, header / 2 + 4);
 	}else{
-		ofDrawBitmapString("-", b.width-textPadding-8, header / 2 + 4);
+		font.drawString("-", b.width-textPadding-8, header / 2 + 4);
 	}
     
 	if(!minimized){
