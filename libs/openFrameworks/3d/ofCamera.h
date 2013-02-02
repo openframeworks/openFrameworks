@@ -39,7 +39,8 @@ public:
 	float getNearClip() const { return nearClip; };
 	float getFarClip() const { return farClip; };
 	ofVec2f getLensOffset() const { return lensOffset; };
-	
+	bool getForceAspectRatio() const {return forceAspectRatio;};
+    float getAspectRatio() const {return aspectRatio; };
 	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f));
 	void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
 	
