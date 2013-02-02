@@ -33,7 +33,7 @@ void ofxLabel::draw() {
     if(!getName().empty()){
     	name = getName() + ": ";
     }
-    ofDrawBitmapString(name + (string)label, textPadding, 0);
+    font.drawString(name + (string)label, textPadding, 0);
 
     ofPopMatrix();
     ofSetColor(c);

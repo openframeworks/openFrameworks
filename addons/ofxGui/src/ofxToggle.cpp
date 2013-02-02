@@ -67,7 +67,7 @@ void ofxToggle::draw(){
 
 	ofSetColor(textColor);
 	ofTranslate(0, b.height / 2 + 4);
-	ofDrawBitmapString(getName(), textPadding + checkboxRect.width, 0);
+	font.drawString(getName(), textPadding + checkboxRect.width, 0);
 
 	ofPopMatrix();
 	ofSetColor(c);

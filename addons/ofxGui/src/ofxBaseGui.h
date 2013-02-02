@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofParameter.h"
-
+#include "ofTrueTypeFont.h"
 
 class ofxBaseGui{
 public:
@@ -52,11 +52,13 @@ public:
 	void setFillColor(const ofColor & color);
 
 	virtual ofAbstractParameter & getParameter() = 0;
-
+	static void loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 
 protected:
 	unsigned long currentFrame;			
 	ofRectangle b;
+	static ofTrueTypeFont font;
+	static bool fontLoaded;
 	bool bGuiActive;
 	ofBaseFileSerializer * serializer;
 
