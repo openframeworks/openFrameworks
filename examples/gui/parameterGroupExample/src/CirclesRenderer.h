@@ -16,7 +16,7 @@ class CirclesRenderer {
 public:
 	CirclesRenderer();
 
-	void setup();
+	void setup(string name);
 	void draw();
 
 	ofParameterGroup parameters;
