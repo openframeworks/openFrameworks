@@ -28,6 +28,6 @@ class testApp : public ofBaseApp{
 		ofxPanel gui;
 		ofParameter<bool> vSync;
 		ofxXmlSettings settings;
-		CirclesRenderer renderer;
+		CirclesRenderer renderer1,renderer2;
 		ofxJSONElement json;
 };

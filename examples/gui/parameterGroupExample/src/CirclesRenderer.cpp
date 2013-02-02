@@ -13,8 +13,8 @@ CirclesRenderer::CirclesRenderer() {
 }
 
 
-void CirclesRenderer::setup(){
-	parameters.setName("circleRenderer");
+void CirclesRenderer::setup(string name){
+	parameters.setName(name);
 	parameters.add(size.set("size",10,0,100));
 	parameters.add(number.set("number",2,1,20));
 	parameters.add(position.set("position",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
