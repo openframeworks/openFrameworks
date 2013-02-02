@@ -87,7 +87,7 @@ void ofSetPlaneResolution( int columns, int rows ) {
 //----------------------------------------------------------
 ofVec2f ofGetPlaneResolution() {
     ofPlanePrimitive& plane = ((ofPlanePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_PLANE));
-    return ofVec2f(plane.getResolution().x, plane.getResolution().y);
+    return plane.getResolution();
 }
 
 //----------------------------------------------------------
@@ -126,7 +126,7 @@ void ofSetSphereResolution(int res) {
 
 //---------------------------------------------------------
 int ofGetSphereResolution() {
-    return ((ofSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).getResolution().x;
+    return ((ofSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).getResolution();
 }
 
 //----------------------------------------------------------
@@ -165,7 +165,7 @@ void ofSetIcoSphereResolution( int res ) {
 
 //----------------------------------------------------------
 int ofGetIcoSphereResolution() {
-    return ((ofIcoSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).getResolution().x;
+    return ((ofIcoSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).getResolution();
 }
 
 //----------------------------------------------------------
@@ -195,26 +195,37 @@ void ofIcoSphere(float radius) {
 
 
 // Cylinder //
+//----------------------------------------------------------
 void ofSetCylinderResolution( int radiusSegments, int heightSegments, int capSegments ) {
     if(ofGetCylinderResolution() != ofVec3f( radiusSegments, heightSegments, capSegments )) {
         ((ofCylinderPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).setResolution(radiusSegments, heightSegments, capSegments);
     }
 }
+
+//----------------------------------------------------------
 ofVec3f ofGetCylinderResolution() {
     return ((ofCylinderPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).getResolution();
 }
+
+//----------------------------------------------------------
 void ofCylinder(float x, float y, float radius, float height) {
     ofCylinder( x, y, 0, radius, height );
 }
+
+//----------------------------------------------------------
 void ofCylinder(float x, float y, float z, float radius, float height) {
     ofPushMatrix();
     ofTranslate(x, y, z);
     ofCylinder(radius, height);
     ofPopMatrix();
 }
+
+//----------------------------------------------------------
 void ofCylinder(const ofPoint& position, float radius, float height) {
     ofCylinder( position.x, position.y, position.z, radius, height );
 }
+
+//----------------------------------------------------------
 void ofCylinder(float radius, float height) {
     ofPrimitiveBase& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER );
     mesh.setScale( radius, height, radius );
