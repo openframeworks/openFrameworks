@@ -194,8 +194,8 @@ void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
     ofNode::transformGL();
     
     if(getMesh().usingNormals()) {
-        vector<ofVec3f>& normals = getMesh().getNormals();
-        vector<ofVec3f>& vertices = getMesh().getVertices();
+        vector<ofVec3f>& normals    = getMesh().getNormals();
+        vector<ofVec3f>& vertices   = getMesh().getVertices();
         ofVec3f normal;
         ofVec3f vert;
         
@@ -203,8 +203,16 @@ void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
         normalsMesh.getVertices().resize( normals.size() * 2);
         
         if(bFaceNormals) {
-            for(int i = 0; i < (int)normals.size(); i += 3) {
-                vert = (vertices[i+0]+vertices[i+1]+vertices[i+2]) / 3;
+            for(int i = 0; i < (int)normals.size(); i++ ) {
+                if(i % 3 == 0) {
+                    vert = (vertices[i]+vertices[i+1]+vertices[i+2]) / 3;
+                } else if(i % 3 == 1) {
+                    vert = (vertices[i-1]+vertices[i]+vertices[i+1]) / 3;
+                } else if ( i % 3 == 2) {
+                    vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3;
+                }
+                //vert = (vertices[i+0]+vertices[i+1]+vertices[i+2]) / 3;
+                //vert = vertices[i];
                 normalsMesh.setVertex(i*2, vert);
                 normal = normals[i].getNormalized();
                 normal *= length;
@@ -277,7 +285,7 @@ void ofPlanePrimitive::set(float width, float height, int columns, int rows, ofP
     _height = height;
     _resolution.set( columns, rows );
     
-    _mesh->clear();
+    getMesh().clear();
     //_mesh = ofGetPlaneMesh( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
     *_mesh = ofMesh::plane( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
     
@@ -391,7 +399,6 @@ void ofSpherePrimitive::set( float radius, int res, ofPrimitiveMode mode ) {
     _radius     = radius;
     _resolution = res;
     getMesh().clear();
-    //_mesh = ofGetSphereMesh( getRadius(), getResolution().x, mode );
     *_mesh = ofMesh::sphere( getRadius(), getResolution(), mode );
     
     normalizeAndApplySavedTexCoords();
