@@ -27,6 +27,7 @@ public:
     }
 
     ofVec3f getFaceNormal() {
+        if(bFaceNormalDirty) calculateFaceNormal();
         return faceNormal;
     }
     
@@ -38,6 +39,12 @@ public:
         
         faceNormal = U.getCrossed(V);
         faceNormal.normalize();
+        bFaceNormalDirty = false;
+    }
+    
+    void setVertex( int index, const ofVec3f& v ) {
+        vertices[index].set( v );
+        bFaceNormalDirty = true;
     }
 
     void setHasColors( bool bColors ) { bHasColors = bColors; }
