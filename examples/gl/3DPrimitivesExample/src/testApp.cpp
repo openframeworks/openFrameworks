@@ -534,16 +534,16 @@ void testApp::keyPressed(int key) {
                 box.getMesh().setFromTriangles(triangles, true);
                 
             } else {
-                cout << "Normal mode" <<endl;
+                //cout << "Normal mode" <<endl;
                 // vertex normals are calculated with creation, set resolution //
-                sphere.setResolution( sphere.getResolution().x );
+                sphere.setResolution( sphere.getResolution() );
                 
-                icoSphere.setResolution( icoSphere.getResolution().x );
-                plane.setResolution( plane.getResolution().x, plane.getResolution().y );
+                icoSphere.setResolution( icoSphere.getResolution() );
+                plane.setResolution( plane.getNumColumns(), plane.getNumRows() );
                 
-                cylinder.setResolution( cylinder.getResolution().x, cylinder.getResolution().y, cylinder.getResolution().z );
-                cone.setResolution( cone.getResolution().x, cone.getResolution().y, cone.getResolution().z );
-                box.setResolution( box.getResolution().x );
+                cylinder.setResolution( cylinder.getResolutionRadius(), cylinder.getResolutionHeight(), cylinder.getResolutionCap() );
+                cone.setResolution( cone.getResolutionRadius(), cone.getResolutionHeight(), cone.getResolutionCap() );
+                box.setResolution( box.getResolutionWidth() );
             }
             break;
 	}
