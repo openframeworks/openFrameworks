@@ -31,7 +31,6 @@ ofPrimitiveBase::ofPrimitiveBase(const ofPrimitiveBase & mom){
 		_mesh = ofPtr<ofMesh>(new ofMesh);
 	}
 	*_mesh = *mom._mesh;
-    _resolution = mom._resolution;
 }
 
 //----------------------------------------------------------
@@ -40,7 +39,6 @@ ofPrimitiveBase & ofPrimitiveBase::operator=(const ofPrimitiveBase & mom){
 		_texCoords = mom._texCoords;
 		setUseVbo(mom.usingVbo);
 		*_mesh = *mom._mesh;
-		_resolution = mom._resolution;
 	}
     return *this;
 }
@@ -82,10 +80,6 @@ bool ofPrimitiveBase::hasScaling() {
 bool ofPrimitiveBase::hasNormalsEnabled() {
     return getMesh().hasNormals();
 }
-//----------------------------------------------------------
-ofVec3f ofPrimitiveBase::getResolution() const {
-    return _resolution;
-}
 
 //----------------------------------------------------------
 void ofPrimitiveBase::enableNormals() {
@@ -118,9 +112,9 @@ void ofPrimitiveBase::disableColors() {
 // SETTERS //
 
 //----------------------------------------------------------
-void ofPrimitiveBase::setResolution( int resX, int resY, int resZ ) {
-    _resolution.set( resX, resY, resZ );
-}
+//void ofPrimitiveBase::setResolution( int resX, int resY, int resZ ) {
+//    _resolution.set( resX, resY, resZ );
+//}
 
 //----------------------------------------------------------
 void ofPrimitiveBase::mapTexCoords( float u1, float v1, float u2, float v2 ) {
@@ -281,7 +275,7 @@ void ofPlanePrimitive::set(float width, float height, int columns, int rows, ofP
     
     _width  = width;
     _height = height;
-    ofPrimitiveBase::setResolution(columns, rows, 0);
+    _resolution.set( columns, rows );
     
     _mesh->clear();
     //_mesh = ofGetPlaneMesh( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
@@ -298,20 +292,36 @@ void ofPlanePrimitive::set( float width, float height ) {
 }
 
 //--------------------------------------------------------------
+void ofPlanePrimitive::setWidth( float width ) {
+    _width = width;
+    setResolution( getResolution().x, getResolution().y );
+}
+
+//--------------------------------------------------------------
+void ofPlanePrimitive::setHeight(float height) {
+    _height = height;
+    setResolution( getResolution().x, getResolution().y );
+}
+
+//--------------------------------------------------------------
 void ofPlanePrimitive::resizeToTexture( ofTexture& inTexture, float scale ) {
     set(inTexture.getWidth() * scale, inTexture.getHeight() * scale);
     mapTexCoordsFromTexture( inTexture );
 }
 
 //--------------------------------------------------------------
-void ofPlanePrimitive::setResolution( int columns, int rows ) {
-    setResolution( columns,  rows,  0);
+void ofPlanePrimitive::setColumns( int columns ) {
+    setResolution( columns, getNumRows() );
 }
 
 //--------------------------------------------------------------
-void ofPlanePrimitive::setResolution(int resX, int resY, int resZ) {
-    
-    ofPrimitiveBase::setResolution(resX, resY, 0); // no z value //
+void ofPlanePrimitive::setRows( int rows ) {
+    setResolution( getNumColumns(), rows );
+}
+
+//--------------------------------------------------------------
+void ofPlanePrimitive::setResolution( int columns, int rows ) {
+    _resolution.set( columns, rows );
     ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP;
     mode = getMesh().getMode();
     
@@ -328,15 +338,18 @@ void ofPlanePrimitive::setMode(ofPrimitiveMode mode) {
 }
 
 //--------------------------------------------------------------
-void ofPlanePrimitive::setWidth( float width ) {
-    _width = width;
-    setResolution( getResolution().x, getResolution().y );
+int ofPlanePrimitive::getNumColumns() {
+    return (int)_resolution.x;
 }
 
 //--------------------------------------------------------------
-void ofPlanePrimitive::setHeight(float height) {
-    _height = height;
-    setResolution( getResolution().x, getResolution().y );
+int ofPlanePrimitive::getNumRows() {
+    return (int)_resolution.y;
+}
+
+//--------------------------------------------------------------
+ofVec2f ofPlanePrimitive::getResolution() {
+    return _resolution;
 }
 
 //--------------------------------------------------------------
@@ -358,14 +371,14 @@ float ofPlanePrimitive::getHeight() {
 ofSpherePrimitive::ofSpherePrimitive() {
     _texCoords = ofVec4f(0,0,1,1);
     _radius = 20;
-    setResolution(16);
+    setResolution( 16 );
 }
 
 //----------------------------------------------------------
 ofSpherePrimitive::ofSpherePrimitive( float radius, int res, ofPrimitiveMode mode ) {
     _radius = radius;
     _texCoords = ofVec4f(0,0,1,1);
-    setResolution(res, res, res);
+    setResolution( res );
 }
 
 //----------------------------------------------------------
@@ -374,29 +387,25 @@ ofSpherePrimitive::~ofSpherePrimitive() {
 }
 
 //----------------------------------------------------------
-void ofSpherePrimitive::set(float radius, int res, ofPrimitiveMode mode ) {
-    _radius = radius;
-    ofPrimitiveBase::setResolution(res, res, res);
+void ofSpherePrimitive::set( float radius, int res, ofPrimitiveMode mode ) {
+    _radius     = radius;
+    _resolution = res;
     getMesh().clear();
     //_mesh = ofGetSphereMesh( getRadius(), getResolution().x, mode );
-    *_mesh = ofMesh::sphere( getRadius(), getResolution().x, mode );
+    *_mesh = ofMesh::sphere( getRadius(), getResolution(), mode );
     
     normalizeAndApplySavedTexCoords();
 }
 
 //----------------------------------------------------------
-void ofSpherePrimitive::setResolution(int res) {
-    setResolution(res, res, res);
-}
-
-//----------------------------------------------------------
-void ofSpherePrimitive::setResolution(int resX, int resY, int resZ) {
-    ofPrimitiveBase::setResolution(resX, resY, resZ);
-    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP;
+void ofSpherePrimitive::setResolution( int res ) {
+    //ofPrimitiveBase::setResolution(resX, resY, resZ);
+    _resolution             = res;
+    ofPrimitiveMode mode    = OF_PRIMITIVE_TRIANGLE_STRIP;
     
     mode = getMesh().getMode();
     
-    set(getRadius(), getResolution().x, mode );
+    set(getRadius(), getResolution(), mode );
 }
 
 //----------------------------------------------------------
@@ -404,13 +413,13 @@ void ofSpherePrimitive::setMode( ofPrimitiveMode mode ) {
     ofPrimitiveMode currMode = OF_PRIMITIVE_TRIANGLE_STRIP;
     mode = getMesh().getMode();
     if(currMode != mode)
-        set(getRadius(), getResolution().x, mode );
+        set(getRadius(), getResolution(), mode );
 }
 
 //----------------------------------------------------------
 void ofSpherePrimitive::setRadius(float radius) {
     _radius = radius;
-    setResolution(getResolution().x, getResolution().y, getResolution().z);
+    setResolution( getResolution() );
 }
 
 //----------------------------------------------------------
@@ -418,21 +427,25 @@ float ofSpherePrimitive::getRadius() {
     return _radius;
 }
 
+//----------------------------------------------------------
+int ofSpherePrimitive::getResolution() {
+    return _resolution;
+}
 
 
 // ICO SPHERE //
 //----------------------------------------------------------
 ofIcoSpherePrimitive::ofIcoSpherePrimitive() {
-    _texCoords = ofVec4f(0,0,1,1);
-    _radius = 20;
-    setResolution(2);
+    _texCoords  = ofVec4f(0,0,1,1);
+    _radius     = 20;
+    setResolution( 2 );
 }
 
 //----------------------------------------------------------
 ofIcoSpherePrimitive::ofIcoSpherePrimitive( float radius, int iterations ) {
-    _texCoords = ofVec4f(0,0,1,1);
-    _radius = radius;
-    setResolution(iterations);
+    _texCoords  = ofVec4f(0,0,1,1);
+    _radius     = radius;
+    setResolution( iterations );
 }
 
 //----------------------------------------------------------
@@ -448,30 +461,25 @@ void ofIcoSpherePrimitive::set(float radius, int res ) {
 
 //----------------------------------------------------------
 void ofIcoSpherePrimitive::setResolution( int iterations ) {
-    setResolution(iterations, iterations, iterations);
-}
-
-//----------------------------------------------------------
-void ofIcoSpherePrimitive::setResolution( int resX, int resY, int resZ ) {
-    ofPrimitiveBase::setResolution(resX, resY, resZ);
+    // store the number of iterations in the resolution //
+    _resolution = iterations;
     
     getMesh().clear();
-    // store the number of iterations in the resolution //
-    //_mesh = ofGetIcoSphereMesh( getRadius(), getResolution().x );
-    *_mesh = ofMesh::icosphere( getRadius(), getResolution().x );
+    
+    *_mesh = ofMesh::icosphere( getRadius(), getResolution() );
     normalizeAndApplySavedTexCoords();
 }
 
 //----------------------------------------------------------
 void ofIcoSpherePrimitive::setMode( ofPrimitiveMode mode ) {
     // ofIcoSpherePrimitive only works with OF_PRIMITIVE_TRIANGLES //
-    setResolution( (int)getResolution().x );
+    setResolution( getResolution() );
 }
 
 //----------------------------------------------------------
 void ofIcoSpherePrimitive::setRadius(float radius) {
     _radius = radius;
-    setResolution(getResolution().x);
+    setResolution( getResolution() );
 }
 
 //----------------------------------------------------------
@@ -479,6 +487,10 @@ float ofIcoSpherePrimitive::getRadius() {
     return _radius;
 }
 
+//----------------------------------------------------------
+int ofIcoSpherePrimitive::getResolution() {
+    return _resolution;
+}
 
 
 
@@ -489,20 +501,21 @@ ofCylinderPrimitive::ofCylinderPrimitive() {
 }
 
 //--------------------------------------------------------------
-ofCylinderPrimitive::ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped, ofPrimitiveMode mode ) {
+ofCylinderPrimitive::ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments, bool bCapped, ofPrimitiveMode mode ) {
     _texCoords = ofVec4f(0,0,1,1);
-    set( radius, height, radiusSegments, heightSegments, numCapSegments, bCapped, mode );
+    set( radius, height, radiusSegments, heightSegments, capSegments, bCapped, mode );
 }
 
 //--------------------------------------------------------------
 ofCylinderPrimitive::~ofCylinderPrimitive() {}
 
 //--------------------------------------------------------------
-void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped, ofPrimitiveMode mode) {
+void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, int heightSegments, int capSegments, bool bCapped, ofPrimitiveMode mode) {
     _radius = radius;
     _height = height;
     _bCapped = bCapped;
-    ofPrimitiveBase::setResolution( radiusSegments, heightSegments, numCapSegments );
+    //ofPrimitiveBase::setResolution( radiusSegments, heightSegments, numCapSegments );
+    _resolution.set( radiusSegments, heightSegments, capSegments );
     
     int resX = getResolution().x;
     int resY = getResolution().y-1;
@@ -556,7 +569,7 @@ void ofCylinderPrimitive::set( float radius, float height, bool bCapped ) {
 //--------------------------------------------------------------
 void ofCylinderPrimitive::setRadius( float radius ) {
     _radius = radius;
-    setResolution(getResolution().x, getResolution().y, getResolution().z);
+    setResolution( getResolution().x, getResolution().y, getResolution().z );
 }
 
 //--------------------------------------------------------------
@@ -569,6 +582,21 @@ void ofCylinderPrimitive::setHeight( float height ) {
 void ofCylinderPrimitive::setCapped(bool bCapped) {
     _bCapped = bCapped;
     setResolution( getResolution().x, getResolution().y, getResolution().z );
+}
+
+//--------------------------------------------------------------
+void ofCylinderPrimitive::setResolutionRadius( int radiusRes ) {
+    setResolution( radiusRes, getResolutionHeight(), getResolutionCap() );
+}
+
+//--------------------------------------------------------------
+void ofCylinderPrimitive::setResolutionHeight( int heightRes ) {
+    setResolution( getResolutionRadius(), heightRes, getResolutionCap() );
+}
+
+//--------------------------------------------------------------
+void ofCylinderPrimitive::setResolutionCap( int capRes ) {
+    setResolution( getResolutionRadius(), getResolutionHeight(), capRes );
 }
 
 //--------------------------------------------------------------
@@ -662,6 +690,26 @@ ofMesh ofCylinderPrimitive::getBottomCapMesh() {
 }
 
 //--------------------------------------------------------------
+int ofCylinderPrimitive::getResolutionRadius() {
+    return (int)_resolution.x;
+}
+
+//--------------------------------------------------------------
+int ofCylinderPrimitive::getResolutionHeight() {
+    return (int)_resolution.y;
+}
+
+//--------------------------------------------------------------
+int ofCylinderPrimitive::getResolutionCap() {
+    return (int)_resolution.z;
+}
+
+//--------------------------------------------------------------
+ofVec3f ofCylinderPrimitive::getResolution() {
+    return _resolution;
+}
+
+//--------------------------------------------------------------
 float ofCylinderPrimitive::getHeight() {
     return _height;
 }
@@ -700,7 +748,7 @@ ofConePrimitive::~ofConePrimitive() {}
 void ofConePrimitive::set( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
     _radius = radius;
     _height = height;
-    ofPrimitiveBase::setResolution(radiusSegments, heightSegments, capSegments);
+    _resolution.set(radiusSegments, heightSegments, capSegments);
     
     int resX = getResolution().x;
     int resY = getResolution().y-1;
@@ -738,15 +786,25 @@ void ofConePrimitive::set( float radius, float height ) {
 }
 
 //--------------------------------------------------------------
-void ofConePrimitive::setResolution( int radiusSegments, int heightSegments ) {
-    setResolution(radiusSegments, heightSegments, getResolution().z);
+void ofConePrimitive::setResolutionRadius( int radiusRes ) {
+    setResolution( radiusRes, getResolutionHeight(), getResolutionCap() );
 }
 
 //--------------------------------------------------------------
-void ofConePrimitive::setResolution( int resX, int resY, int resZ ) {
+void ofConePrimitive::setResolutionHeight( int heightRes ) {
+    setResolution( getResolutionRadius(), heightRes, getResolutionCap() );
+}
+
+//--------------------------------------------------------------
+void ofConePrimitive::setResolutionCap( int capRes ) {
+    setResolution( getResolutionRadius(), getResolutionHeight(), capRes );
+}
+
+//--------------------------------------------------------------
+void ofConePrimitive::setResolution( int radiusRes, int heightRes, int capRes ) {
     ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP;
     mode = getMesh().getMode();
-    set( getRadius(), getHeight(), resX, resY, resZ, mode );
+    set( getRadius(), getHeight(), radiusRes, heightRes, capRes, mode );
 }
 
 //----------------------------------------------------------
@@ -830,6 +888,26 @@ ofMesh ofConePrimitive::getCapMesh() {
 }
 
 //--------------------------------------------------------------
+int ofConePrimitive::getResolutionRadius() {
+    return (int)_resolution.x;
+}
+
+//--------------------------------------------------------------
+int ofConePrimitive::getResolutionHeight() {
+    return (int)_resolution.y;
+}
+
+//--------------------------------------------------------------
+int ofConePrimitive::getResolutionCap() {
+    return (int)_resolution.z;
+}
+
+//--------------------------------------------------------------
+ofVec3f ofConePrimitive::getResolution() {
+    return _resolution;
+}
+
+//--------------------------------------------------------------
 float ofConePrimitive::getRadius() {
     return _radius;
 }
@@ -866,7 +944,7 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     _size.y = height;
     _size.z = depth;
     
-    ofPrimitiveBase::setResolution( resWidth, resHeight, resDepth);
+    _resolution.set( resWidth, resHeight, resDepth );
     
     int resX = getResolution().x;
     int resY = getResolution().y;
@@ -982,8 +1060,23 @@ void ofBoxPrimitive::setResolution( int res ) {
 }
 
 //--------------------------------------------------------------
-void ofBoxPrimitive::setResolution( int resX, int resY, int resZ ) {
-    ofPrimitiveBase::setResolution(resX, resY, resZ);
+void ofBoxPrimitive::setResolutionWidth( int widthRes ) {
+    setResolution( widthRes, getResolutionHeight(), getResolutionDepth() );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setResolutionHeight( int heightRes ) {
+    setResolution( getResolutionWidth(), heightRes, getResolutionDepth() );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setResolutionDepth( int depthRes ) {
+    setResolution( getResolutionWidth(), getResolutionHeight(), depthRes );
+}
+
+//--------------------------------------------------------------
+void ofBoxPrimitive::setResolution( int resWidth, int resHeight, int resDepth ) {
+    _resolution.set( resWidth, resHeight, resDepth );
     set( getWidth(), getHeight(), getDepth() );
 }
 
@@ -1000,6 +1093,26 @@ void ofBoxPrimitive::setSideColor( int sideIndex, ofColor color ) {
         sideIndex = SIDE_FRONT;
     }
     getMesh().setColorForIndices( _strides[sideIndex][0], _strides[sideIndex][0]+_strides[sideIndex][1], color );
+}
+
+//--------------------------------------------------------------
+int ofBoxPrimitive::getResolutionWidth() {
+    return (int)_resolution.x;
+}
+
+//--------------------------------------------------------------
+int ofBoxPrimitive::getResolutionHeight() {
+    return (int)_resolution.y;
+}
+
+//--------------------------------------------------------------
+int ofBoxPrimitive::getResolutionDepth() {
+    return (int)_resolution.z;
+}
+
+//--------------------------------------------------------------
+ofVec3f ofBoxPrimitive::getResolution() {
+    return _resolution;
 }
 
 //--------------------------------------------------------------

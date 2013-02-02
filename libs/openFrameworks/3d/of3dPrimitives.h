@@ -47,7 +47,6 @@ public:
     
     bool hasScaling();
     bool hasNormalsEnabled();
-    ofVec3f getResolution() const;
     
     void enableNormals();
     void enableTextures();
@@ -56,8 +55,6 @@ public:
     void disableNormals();
     void disableTextures();
     void disableColors();
-    
-    void setResolution( int resX, int resY, int resZ );
     
     void removeMesh( int index );
     void removeTexture( int index );
@@ -83,7 +80,7 @@ protected:
     ofPtr<ofMesh>  _mesh;
     ofMesh normalsMesh;
     
-    ofVec3f _resolution;
+    //ofVec3f _resolution;
     vector<ofIndexType> getIndices( int startIndex, int endIndex );
     
 };
@@ -100,9 +97,15 @@ public:
     void setWidth( float width );
     void setHeight( float height );
     
+    void setColumns( int columns );
+    void setRows( int rows );
     void setResolution( int columns, int rows );
-    void setResolution(int resX, int resY, int resZ);
     void setMode( ofPrimitiveMode mode );
+    
+    int getNumColumns();
+    int getNumRows();
+    // x = columns, y = rows //
+    ofVec2f getResolution();
     
     float getWidth();
     float getHeight();
@@ -110,6 +113,7 @@ public:
 protected:
     float _width;
     float _height;
+    ofVec2f _resolution;
 };
 
 class ofSpherePrimitive : public ofPrimitiveBase {
@@ -120,15 +124,15 @@ public:
     
     void set( float radius, int resolution, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void setResolution( int res );
-    void setResolution( int resX, int resY, int resZ );
-    
+    void setRadius(float radius);
     void setMode( ofPrimitiveMode mode );
     
-    void setRadius(float radius);
     float getRadius();
+    int getResolution();
     
 protected:
     float _radius;
+    int _resolution;
 };
 
 class ofIcoSpherePrimitive : public ofPrimitiveBase {
@@ -137,30 +141,34 @@ public:
     ofIcoSpherePrimitive( float radius, int iterations );
     ~ofIcoSpherePrimitive();
     
-    void set(float radius, int res );
+    void set( float radius, int res );
     void setResolution( int iterations );
-    void setResolution( int resX, int resY, int resZ );
-    void setRadius(float radius);
+    void setRadius( float radius );
     void setMode( ofPrimitiveMode mode );
     
     float getRadius();
+    int getResolution();
     
 protected:
     float _radius;
+    int _resolution;
 };
 
 class ofCylinderPrimitive : public ofPrimitiveBase {
 public:
     ofCylinderPrimitive();
-    ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped = true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, bool bCapped = true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofCylinderPrimitive();
     
-    void set( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments=2, bool bCapped=true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, bool bCapped=true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void set( float radius, float height, bool bCapped=true );
     void setRadius( float radius );
     void setHeight( float height );
     void setCapped( bool bCapped );
     
+    void setResolutionRadius( int radiusRes );
+    void setResolutionHeight( int heightRes );
+    void setResolutionCap( int capRes );
     void setResolution( int radiusSegments, int heightSegments, int capSegments=2 );
     void setMode( ofPrimitiveMode mode );
     
@@ -175,6 +183,11 @@ public:
     vector<ofIndexType> getBottomCapIndices();
     ofMesh getBottomCapMesh();
     
+    int getResolutionRadius();
+    int getResolutionHeight();
+    int getResolutionCap();
+    ofVec3f getResolution();
+    
     float getHeight();
     float getRadius();
     bool getCapped();
@@ -184,6 +197,7 @@ protected:
     bool _bCapped;
     int _strides[3][2];
     int _vertices[3][2];
+    ofVec3f _resolution;
 };
 
 class ofConePrimitive : public ofPrimitiveBase {
@@ -195,8 +209,11 @@ public:
     
     void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void set( float radius, float height );
-    void setResolution( int radiusSegments, int heightSegments );
-    void setResolution( int resX, int resY, int resZ );
+    void setResolutionRadius( int radiusRes );
+    void setResolutionHeight( int heightRes );
+    void setResolutionCap( int capRes );
+    void setResolution( int radiusRes, int heightRes, int capRes );
+    
     void setMode( ofPrimitiveMode mode );
     void setRadius( float radius );
     void setHeight( float height );
@@ -209,6 +226,10 @@ public:
     vector<ofIndexType> getCapIndices();
     ofMesh getCapMesh();
     
+    int getResolutionRadius();
+    int getResolutionHeight();
+    int getResolutionCap();
+    ofVec3f getResolution();
     
     float getRadius();
     float getHeight();
@@ -216,6 +237,8 @@ public:
 protected:
     float _radius;
     float _height;
+    
+    ofVec3f _resolution;
     
     int _strides[2][2];
     int _vertices[2][2];
@@ -252,9 +275,18 @@ public:
     ofMesh getSideMesh( int sideIndex );
     
     void setResolution( int res ); // same resolution for all sides //
-    void setResolution( int resX, int resY, int resZ );
+    void setResolutionWidth( int widthRes );
+    void setResolutionHeight( int heightRes );
+    void setResolutionDepth( int depthRes );
+    void setResolution( int resWidth, int resHeight, int resDepth );
+    
     void setMode( ofPrimitiveMode mode );
     void setSideColor( int sideIndex, ofColor color );
+    
+    int getResolutionWidth();
+    int getResolutionHeight();
+    int getResolutionDepth();
+    ofVec3f getResolution();
     
     float getWidth();
     float getHeight();
@@ -262,6 +294,7 @@ public:
     ofVec3f getSize() const;
 protected:
     ofVec3f _size;
+    ofVec3f _resolution;
     // indices strides for faces //
     int _strides[6][2];
     int _vertices[6][2];
