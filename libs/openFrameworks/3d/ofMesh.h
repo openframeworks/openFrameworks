@@ -26,15 +26,18 @@ public:
 	{
     }
 
-    ofVec3f getFaceNormal(){
-        ofVec3f U, V, faceNormal;
-
+    ofVec3f getFaceNormal() {
+        return faceNormal;
+    }
+    
+    void calculateFaceNormal() {
+        ofVec3f U, V;
+        
         U = (vertices[1]-vertices[0]);
         V = (vertices[2]-vertices[0]);
-
+        
         faceNormal = U.getCrossed(V);
         faceNormal.normalize();
-    	return faceNormal;
     }
 
     void setHasColors( bool bColors ) { bHasColors = bColors; }
@@ -51,6 +54,7 @@ public:
     vector<ofVec2f> texCoords;
 protected:
     bool bHasNormals, bHasColors, bHasTexcoords, bFaceNormalDirty;
+    ofVec3f faceNormal;
     
 };
 
