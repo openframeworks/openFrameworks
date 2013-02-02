@@ -15,11 +15,11 @@
 class ofMeshFace {
 public:
     ofMeshFace()
-	:vertices(3)
-	,normals(3)
-	,colors(3)
-	,texCoords(3)
-	,bHasNormals(false)
+//	:vertices(3)
+//	,normals(3)
+//	,colors(3)
+//	,texCoords(3)
+	:bHasNormals(false)
 	,bHasColors(false)
 	,bHasTexcoords(false)
 	,bFaceNormalDirty(false)
@@ -54,11 +54,16 @@ public:
     bool hasColors() { return bHasColors; }
     bool hasNormals() { return bHasNormals; }
     bool hasTexcoords() { return bHasTexcoords; }
-
-    vector<ofVec3f> vertices;
-    vector<ofVec3f> normals;
-    vector<ofFloatColor> colors;
-    vector<ofVec2f> texCoords;
+    
+    ofVec3f vertices[3];
+    ofVec3f normals[3];
+    ofFloatColor colors[3];
+    ofVec2f texCoords[3];
+    
+//    vector<ofVec3f> vertices;
+//    vector<ofVec3f> normals;
+//    vector<ofFloatColor> colors;
+//    vector<ofVec2f> texCoords;
 protected:
     bool bHasNormals, bHasColors, bHasTexcoords, bFaceNormalDirty;
     ofVec3f faceNormal;
