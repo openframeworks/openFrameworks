@@ -6,6 +6,7 @@
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
 #include "freetype2/freetype/fttrigon.h"
+#include <fontconfig/fontconfig.h>
 
 #include <algorithm>
 
@@ -14,6 +15,8 @@
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
+static bool librariesInitialized = false;
+static FT_Library library;
 
 //--------------------------------------------------------
 void ofTrueTypeFont::setGlobalDpi(int newDpi){
@@ -186,6 +189,33 @@ bool compare_cps(const charProps & c1, const charProps & c2){
 	else return c1.tH > c2.tH;
 }
 
+bool ofTrueTypeFont::initLibraries(){
+	if(!librariesInitialized){
+	    FT_Error err;
+	    err = FT_Init_FreeType( &library );
+
+	    if (err){
+			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error initializing freetype lib: FT_Error = %d", err);
+			return false;
+		}
+
+		FcBool result = FcInit();
+		if(!result){
+			return false;
+		}
+		librariesInitialized = true;
+	}
+    return true;
+}
+
+void ofTrueTypeFont::finishLibraries(){
+	if(!librariesInitialized){
+		FcFini();
+		FT_Done_FreeType(library);
+	}
+}
+
+
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
@@ -233,6 +263,8 @@ void ofTrueTypeFont::reloadTextures(){
 //-----------------------------------------------------------
 bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
 
+	initLibraries();
+
 	//------------------------------------------------
 	if (bLoadedOk == true){
 
@@ -246,6 +278,25 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	}
 
 	filename = ofToDataPath(_filename,true);
+	ofFile fontFile(filename,ofFile::Reference);
+	if(!fontFile.exists()){
+		FcPattern * pattern = FcNameParse((const FcChar8*)_filename.c_str());//FcPatternBuild (0, FC_FAMILY, FcTypeString, filename.c_str(), (char *) 0);
+		FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
+		if(!ret){
+			ofLogError() << "couldn't find font file or system font with name " << _filename;
+			return false;
+		}
+		FcDefaultSubstitute(pattern);
+		FcResult result;
+		FcPattern * fontMatch = FcFontMatch(0,pattern,&result);
+		FcChar8	*file;
+		if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
+			filename = (const char*)file;
+		}else{
+			ofLogError() << "couldn't find font match for " << _filename;
+			return false;
+		}
+	}
 
 	bLoadedOk 			= false;
 	bAntiAliased 		= _bAntiAliased;
@@ -256,17 +307,8 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	dpi 				= _dpi;
 
 	//--------------- load the library and typeface
-	
-    FT_Error err;
-    
-    FT_Library library;
-    
-    err = FT_Init_FreeType( &library );
-    if (err){
-		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error initializing freetype lib: FT_Error = %d", err);
-		return false;
-	}
 
+    FT_Error err;
 	FT_Face face;
     
     err = FT_New_Face( library, filename.c_str(), 0, &face );
@@ -495,7 +537,6 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
-	FT_Done_FreeType(library);
   	bLoadedOk = true;
 	return true;
 }
