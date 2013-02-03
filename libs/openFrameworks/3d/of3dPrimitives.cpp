@@ -211,8 +211,6 @@ void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
                 } else if ( i % 3 == 2) {
                     vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3;
                 }
-                //vert = (vertices[i+0]+vertices[i+1]+vertices[i+2]) / 3;
-                //vert = vertices[i];
                 normalsMesh.setVertex(i*2, vert);
                 normal = normals[i].getNormalized();
                 normal *= length;
