@@ -192,7 +192,7 @@ void testApp::draw() {
     
     vector<ofMeshFace> triangles;
     if(mode == 3) {
-        // to get unique triangle, you have to use triangles mode //
+        // to get unique triangles, you have to use triangles mode //
         sphere.setMode( OF_PRIMITIVE_TRIANGLES );
         triangles = sphere.getMesh().getUniqueFaces();
     }
@@ -202,7 +202,7 @@ void testApp::draw() {
         ofSetColor(255);
         if(mode == 3) {
             float angle = ofGetElapsedTimef()*3.2;
-            float strength = (sin( angle ) + .25) * .5f * 100.f;
+            float strength = (sin( angle+.25 )) * .5f * 100.f;
             
             for(int i = 0; i < triangles.size(); i++ ) {
                 for(int j = 0; j < 3; j++ ) {
@@ -476,12 +476,12 @@ void testApp::keyPressed(int key) {
             break;
         case '4':
             bSplitFaces=false;
-            sphere.setResolution(48);
+            sphere.setResolution(36);
             icoSphere.setResolution(4);
             plane.setResolution(12, 9);
             cylinder.setResolution(20, 13, 4);
             cone.setResolution(20, 9, 3);
-            box.setResolution(14);
+            box.setResolution(12);
             break;
         case 'n':
             bDrawNormals = !bDrawNormals;
@@ -534,7 +534,6 @@ void testApp::keyPressed(int key) {
                 box.getMesh().setFromTriangles(triangles, true);
                 
             } else {
-                //cout << "Normal mode" <<endl;
                 // vertex normals are calculated with creation, set resolution //
                 sphere.setResolution( sphere.getResolution() );
                 
