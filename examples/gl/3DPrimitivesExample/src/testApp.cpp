@@ -203,10 +203,14 @@ void testApp::draw() {
         if(mode == 3) {
             float angle = ofGetElapsedTimef()*3.2;
             float strength = (sin( angle+.25 )) * .5f * 100.f;
-            
+            ofVec3f faceNormal;
             for(int i = 0; i < triangles.size(); i++ ) {
+                // store the face normal here.
+                // we change the vertices, which makes the face normal dirty and will
+                // be recalculated every time that we call getFaceNormal //
+                faceNormal = triangles[i].getFaceNormal();
                 for(int j = 0; j < 3; j++ ) {
-                    triangles[i].vertices[j] += triangles[i].getFaceNormal() * strength;
+                    triangles[i].setVertex( j, triangles[i].getVertex(j) + faceNormal * strength);
                 }
             }
             sphere.getMesh().setFromTriangles( triangles );
@@ -239,10 +243,12 @@ void testApp::draw() {
         
         if(mode == 3) {
             float angle = (ofGetElapsedTimef() * 1.4);
+            ofVec3f faceNormal;
             for(int i = 0; i < triangles.size(); i++ ) {
                 float frc = ofSignedNoise(angle* (float)i * .1, angle*.05) * 4;
+                faceNormal = triangles[i].getFaceNormal();
                 for(int j = 0; j < 3; j++ ) {
-                    triangles[i].vertices[j] += triangles[i].getFaceNormal() * frc;
+                    triangles[i].setVertex(j, triangles[i].getVertex(j) + faceNormal * frc );
                 }
             }
             icoSphere.getMesh().setFromTriangles( triangles );
