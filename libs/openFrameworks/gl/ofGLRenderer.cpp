@@ -440,17 +440,6 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation ori
 	glLoadIdentity();
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
-#ifndef TARGET_OPENGLES
-	if(vFlip) {
-		ofSetCoordHandedness(OF_LEFT_HANDED);
-	}
-
-	if(nearDist == -1) nearDist = 0;
-	if(farDist == -1) farDist = 10000;
-	
-	glOrtho(0, viewW, 0, viewH, nearDist, farDist);
-
-#else
 	if(vFlip) {
 		ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
@@ -458,7 +447,6 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation ori
 	
 	ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
 	glMultMatrixf(ortho.getPtr());	
-#endif
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -686,6 +674,10 @@ void ofGLRenderer::rotate(float degrees){
 	glRotatef(degrees, 0, 0, 1);
 }
 
+//----------------------------------------------------------
+void ofGLRenderer::matrixMode(ofMatrixMode mode){
+	glMatrixMode(GL_MODELVIEW+mode);
+}
 
 //----------------------------------------------------------
 void ofGLRenderer::loadIdentityMatrix (void){
