@@ -554,14 +554,23 @@ float ofTrueTypeFont::getSpaceSize(){
 ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 	if( bMakeContours == false ){
 		ofLog(OF_LOG_ERROR, "getCharacterAsPoints: contours not created,  call loadFont with makeContours set to true" );
-	}
-
+        return ofTTFCharacter();
+        
+    }
+    if (character >= nCharacters){
+        ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (character + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+        
+        return ofTTFCharacter();
+    }
+    
+    return charOutlines[character];
+    /*
 	if( bMakeContours && (int)charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < (int)charOutlines.size() ){
 		return charOutlines[character-NUM_CHARACTER_TO_START];
 	}else{
 		if(charOutlines.empty())charOutlines.push_back(ofTTFCharacter());
 		return charOutlines[0];
-	}
+	}//*/
 }
 
 //-----------------------------------------------------------
@@ -632,7 +641,7 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				 X += cps[cy].setWidth * letterSpacing * spaceSize;
 		  } else if(cy > -1){
-			  	shapes.push_back(getCharacterAsPoints(str[index]));
+			  	shapes.push_back(getCharacterAsPoints(cy));
 			  	shapes.back().translate(ofPoint(X,Y));
 
 				X += cps[cy].setWidth * letterSpacing;
