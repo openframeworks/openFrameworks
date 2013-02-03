@@ -15,10 +15,6 @@
 class ofMeshFace {
 public:
     ofMeshFace()
-//	:vertices(3)
-//	,normals(3)
-//	,colors(3)
-//	,texCoords(3)
 	:bHasNormals(false)
 	,bHasColors(false)
 	,bHasTexcoords(false)
@@ -46,6 +42,35 @@ public:
         vertices[index].set( v );
         bFaceNormalDirty = true;
     }
+    
+    const ofVec3f& getVertex( int index ) {
+        return vertices[index];
+    }
+    
+    void setNormal( int index, const ofVec3f& n ) {
+        normals[index] = n;
+        bHasNormals = true;
+    }
+    
+    const ofVec3f& getNormal( int index ) {
+        return normals[ index ];
+    }
+    
+    void setColor( int index, ofFloatColor& color ) {
+        colors[index] = color;
+        bHasColors = true;
+    }
+    const ofFloatColor& getColor(int index) {
+        return colors[index];
+    }
+    
+    void setTexCoord( int index, ofVec2f& tCoord ) {
+        texCoords[index] = tCoord;
+        bHasTexcoords = true;
+    }
+    const ofVec2f& getTexCoord( int index ) {
+        return texCoords[index];
+    }
 
     void setHasColors( bool bColors ) { bHasColors = bColors; }
     void setHasNormals( bool bNormals ) { bHasNormals = bNormals; }
@@ -55,19 +80,13 @@ public:
     bool hasNormals() { return bHasNormals; }
     bool hasTexcoords() { return bHasTexcoords; }
     
+protected:
+    bool bHasNormals, bHasColors, bHasTexcoords, bFaceNormalDirty;
+    ofVec3f faceNormal;
     ofVec3f vertices[3];
     ofVec3f normals[3];
     ofFloatColor colors[3];
     ofVec2f texCoords[3];
-    
-//    vector<ofVec3f> vertices;
-//    vector<ofVec3f> normals;
-//    vector<ofFloatColor> colors;
-//    vector<ofVec2f> texCoords;
-protected:
-    bool bHasNormals, bHasColors, bHasTexcoords, bFaceNormalDirty;
-    ofVec3f faceNormal;
-    
 };
 
 class ofMesh{

@@ -1218,14 +1218,11 @@ vector<ofMeshFace> ofMesh::getUniqueFaces() {
                 index = indices[j+k];
                 tri.setVertex( k, verts[index] );
                 if(bHasNormals)
-                    tri.normals[k]      = normals[index];
+                    tri.setNormal(k, normals[index] );
                 if(bHasTexcoords)
-                    tri.texCoords[k]    = tcoords[index];
+                    tri.setTexCoord(k, tcoords[index] );
                 if(bHasColors)
-                    tri.colors[k]       = colors[index];
-                tri.setHasColors(bHasColors);
-                tri.setHasNormals(bHasNormals);
-                tri.setHasTexcoords(bHasTexcoords);
+                    tri.setColor(k, colors[index] );
                 // only calculate the normal after all vertices have been set //
                 if(k == 2) tri.calculateFaceNormal();
             }
@@ -1287,16 +1284,16 @@ void ofMesh::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
     
     for(it = tris.begin(); it != tris.end(); it++) {
         for(int k = 0; k < 3; k++) {
-            verts.push_back( it->vertices[k] );
+            verts.push_back( it->getVertex(k) );
             if(it->hasTexcoords())
-                tcoords.push_back( it->texCoords[k] );
+                tcoords.push_back( it->getTexCoord(k) );
             if(it->hasColors())
-                colors.push_back( it->colors[k] );
+                colors.push_back( it->getColor(k) );
             if( it->hasNormals() || bUseFaceNormal) {
                 if(bUseFaceNormal) 
                     normals.push_back( it->getFaceNormal() );
                 else
-                    normals.push_back( it->normals[k] );
+                    normals.push_back( it->getNormal(k) );
             }
         }
     }
@@ -1328,7 +1325,7 @@ void ofMesh::smoothNormals( float angle ) {
         vector<ofVec3f> verts;
         for(int i = 0; i < triangles.size(); i++) {
             for(int j = 0; j < 3; j++) {
-                verts.push_back(triangles[i].vertices[j]);
+                verts.push_back( triangles[i].getVertex(j) );
             }
         }
         
@@ -1365,9 +1362,9 @@ void ofMesh::smoothNormals( float angle ) {
             if(vertHash.find(vstring) == vertHash.end()) {
                 for(int j = 0; j < triangles.size(); j++) {
                     for(int k = 0; k < 3; k++) {
-                        if(verts[i].x == triangles[j].vertices[k].x) {
-                            if(verts[i].y == triangles[j].vertices[k].y) {
-                                if(verts[i].z == triangles[j].vertices[k].z) {
+                        if(verts[i].x == triangles[j].getVertex(k).x) {
+                            if(verts[i].y == triangles[j].getVertex(k).y) {
+                                if(verts[i].z == triangles[j].getVertex(k).z) {
                                     vertHash[vstring].push_back( j );
                                 }
                             }
@@ -1387,12 +1384,14 @@ void ofMesh::smoothNormals( float angle ) {
         float angleCos = cos(angle * DEG_TO_RAD );
         float numNormals=0;
         ofVec3f f1, f2;
+        ofVec3f vert;
         
         for(int j = 0; j < triangles.size(); j++) {
             for(int k = 0; k < 3; k++) {
-                xStr = "x"+ofToString(triangles[j].vertices[k].x==-0?0:triangles[j].vertices[k].x);
-                yStr = "y"+ofToString(triangles[j].vertices[k].y==-0?0:triangles[j].vertices[k].y);
-                zStr = "z"+ofToString(triangles[j].vertices[k].z==-0?0:triangles[j].vertices[k].z);
+                vert = triangles[j].getVertex(k);
+                xStr = "x"+ofToString(vert.x==-0?0:vert.x);
+                yStr = "y"+ofToString(vert.y==-0?0:vert.y);
+                zStr = "z"+ofToString(vert.z==-0?0:vert.z);
                 
                 string vstring = xStr+yStr+zStr;
                 numNormals=0;
@@ -1409,8 +1408,7 @@ void ofMesh::smoothNormals( float angle ) {
                     //normal /= (float)vertHash[vstring].size();
                     normal /= numNormals;
                     
-                    triangles[j].normals[k] = normal;
-                    triangles[j].setHasNormals( true );
+                    triangles[j].setNormal(k, normal);
                 }
             }
         }
