@@ -1195,17 +1195,18 @@ void ofMesh::mergeDuplicateVertices() {
 //----------------------------------------------------------
 vector<ofMeshFace> ofMesh::getUniqueFaces() {
     
-    vector<ofMeshFace> triangles;
-    
     vector<ofVec3f>& verts       = getVertices();
     vector<ofVec3f>& normals     = getNormals();
     vector<ofVec2f>& tcoords     = getTexCoords();
     vector<ofFloatColor>&colors  = getColors();
     vector<ofIndexType>& indices = getIndices();
     // if we are doing triangles, we have to use a vert and normal for each triangle
-    // that way we can calculate face normals and use getFace();
+    // that way we can calculate face normals and use getFaceNormal();
+    vector<ofMeshFace> triangles;
+    triangles.assign( indices.size()/3, ofMeshFace() );
     
-    int index;
+    int index       = 0;
+    int triindex    = 0;
     
     bool bHasColors     = hasColors();
     bool bHasNormals    = hasNormals();
@@ -1226,11 +1227,12 @@ vector<ofMeshFace> ofMesh::getUniqueFaces() {
                 // only calculate the normal after all vertices have been set //
                 if(k == 2) tri.calculateFaceNormal();
             }
-            triangles.push_back( tri );
+            triangles[triindex] = tri;
+            triindex++;
         }
         
     } else {
-        ofLog( OF_LOG_WARNING, "ofMesh :: splitVertices only works with mode == OF_PRIMITIVE_TRIANGLES" );
+        ofLog( OF_LOG_WARNING, "ofMesh :: getUniqueFaces : only works with mode == OF_PRIMITIVE_TRIANGLES" );
     }
     
     return triangles;
@@ -1275,6 +1277,12 @@ vector<ofVec3f> ofMesh::getFaceNormals( bool perVetex ) {
 
 //----------------------------------------------------------
 void ofMesh::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
+    
+    if(tris.size() < 1) {
+        ofLogWarning( "ofMesh :: setFromTriangles : tris is equal to zero" );
+        return;
+    }
+    
     vector<ofMeshFace>::iterator it;
     
     vector<ofVec3f> verts;
@@ -1282,19 +1290,28 @@ void ofMesh::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
     vector<ofFloatColor> colors;
     vector<ofVec3f> normals;
     
+    verts.assign(tris.size()*3, ofVec3f() );
+    it = tris.begin();
+    // if the first tri has data, assume the rest do as well //
+    if(it->hasNormals()) normals.assign(tris.size()*3, ofVec3f() );
+    if(it->hasColors()) colors.assign( tris.size()*3, ofFloatColor() );
+    if(it->hasTexcoords()) tcoords.assign( tris.size()*3, ofVec2f() );
+    
+    int i = 0;
     for(it = tris.begin(); it != tris.end(); it++) {
         for(int k = 0; k < 3; k++) {
-            verts.push_back( it->getVertex(k) );
+            verts[i] = it->getVertex(k);
             if(it->hasTexcoords())
-                tcoords.push_back( it->getTexCoord(k) );
+                tcoords[i] = it->getTexCoord(k);
             if(it->hasColors())
-                colors.push_back( it->getColor(k) );
+                colors[i] = it->getColor(k);
             if( it->hasNormals() || bUseFaceNormal) {
                 if(bUseFaceNormal) 
-                    normals.push_back( it->getFaceNormal() );
+                    normals[i] = it->getFaceNormal();
                 else
-                    normals.push_back( it->getNormal(k) );
+                    normals[i] = it->getNormal(k);
             }
+            i++;
         }
     }
     clearIndices();
