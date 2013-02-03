@@ -31,6 +31,8 @@ typedef ofPath ofTTFCharacter;
 class ofTrueTypeFont{
 
 public:
+
+
 	ofTrueTypeFont();
 	virtual ~ofTrueTypeFont();
 	
