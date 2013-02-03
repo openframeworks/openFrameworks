@@ -482,7 +482,7 @@ void testApp::keyPressed(int key) {
             break;
         case '4':
             bSplitFaces=false;
-            sphere.setResolution(36);
+            sphere.setResolution(48);
             icoSphere.setResolution(4);
             plane.setResolution(12, 9);
             cylinder.setResolution(20, 13, 4);
