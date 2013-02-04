@@ -6,7 +6,10 @@
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
 #include "freetype2/freetype/fttrigon.h"
+
+#ifdef TARGET_LINUX
 #include <fontconfig/fontconfig.h>
+#endif
 
 #include <algorithm>
 
@@ -260,6 +263,56 @@ void ofTrueTypeFont::reloadTextures(){
 	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 }
 
+static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string & filename){
+	filename = ofToDataPath(fontname,true);
+	ofFile fontFile(filename,ofFile::Reference);
+	if(!fontFile.exists()){
+#ifdef TARGET_LINUX
+		FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());//FcPatternBuild (0, FC_FAMILY, FcTypeString, filename.c_str(), (char *) 0);
+		FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
+		if(!ret){
+			ofLogError() << "couldn't find font file or system font with name " << fontname;
+			return false;
+		}
+		FcDefaultSubstitute(pattern);
+		FcResult result;
+		FcPattern * fontMatch = FcFontMatch(0,pattern,&result);
+		if(!fontMatch){
+			ofLogError() << "couldn't find font file or system font with name " << fontname;
+			return false;
+		}
+		FcChar8	*file;
+		if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
+			filename = (const char*)file;
+		}else{
+			ofLogError() << "couldn't find font match for " << fontname;
+			return false;
+		}
+#elif defined(TARGET_OSX)
+		if(ofToLower(filename) == "sans-serif" || ofToLower(filename)=="sans") {
+			filename = "/System/Library/Fonts/Helvetica.dfont";
+		} else if(ofToLower(filename) == "serif") {
+			filename = "/System/Library/Fonts/Times.dfont";
+		}else if(ofToLower(filename) == "monospace" || ofToLower(filename)=="mono") {
+			filename = "/System/Library/Fonts/Menlo.ttc";
+		}
+#elif defined(TARGET_WIN32)
+#endif
+
+
+		FT_Error err;
+	    err = FT_New_Face( library, filename.c_str(), 0, &face );
+		if (err) {
+	        // simple error table in lieu of full table (see fterrors.h)
+	        string errorString = "unknown freetype";
+	        if(err == 1) errorString = "INVALID FILENAME";
+	        ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - %s: %s: FT_Error = %d", errorString.c_str(), filename.c_str(), err);
+			return false;
+		}
+	}
+	return true;
+}
+
 //-----------------------------------------------------------
 bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
 
@@ -277,30 +330,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		_dpi = ttfGlobalDpi;
 	}
 
-	filename = ofToDataPath(_filename,true);
-	ofFile fontFile(filename,ofFile::Reference);
-	if(!fontFile.exists()){
-		FcPattern * pattern = FcNameParse((const FcChar8*)_filename.c_str());//FcPatternBuild (0, FC_FAMILY, FcTypeString, filename.c_str(), (char *) 0);
-		FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
-		if(!ret){
-			ofLogError() << "couldn't find font file or system font with name " << _filename;
-			return false;
-		}
-		FcDefaultSubstitute(pattern);
-		FcResult result;
-		FcPattern * fontMatch = FcFontMatch(0,pattern,&result);
-		if(!fontMatch){
-			ofLogError() << "couldn't find font file or system font with name " << _filename;
-			return false;
-		}
-		FcChar8	*file;
-		if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
-			filename = (const char*)file;
-		}else{
-			ofLogError() << "couldn't find font match for " << _filename;
-			return false;
-		}
-	}
+
 
 	bLoadedOk 			= false;
 	bAntiAliased 		= _bAntiAliased;
@@ -312,16 +342,10 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 	//--------------- load the library and typeface
 
-    FT_Error err;
+
 	FT_Face face;
-    
-    err = FT_New_Face( library, filename.c_str(), 0, &face );
-	if (err) {
-        // simple error table in lieu of full table (see fterrors.h)
-        string errorString = "unknown freetype";
-        if(err == 1) errorString = "INVALID FILENAME";
-        ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - %s: %s: FT_Error = %d", errorString.c_str(), filename.c_str(), err);
-		return false;
+	if(!loadFontFace(_filename,_fontSize,face,filename)){
+        return false;
 	}
 
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
@@ -345,6 +369,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	vector<ofPixels> expanded_data(nCharacters);
 
 	long areaSum=0;
+	FT_Error err;
 
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){

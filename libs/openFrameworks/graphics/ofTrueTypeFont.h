@@ -28,6 +28,10 @@ typedef ofPath ofTTFCharacter;
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
 
+const static string OF_TTF_SANS = "sans";
+const static string OF_TTF_SERIF = "serif";
+const static string OF_TTF_MONO = "mono";
+
 class ofTrueTypeFont{
 
 public:
@@ -100,7 +104,7 @@ protected:
 
 	ofTexture texAtlas;
 	bool binded;
-	ofVboMesh stringQuads;
+	ofMesh stringQuads;
 
 private:
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
