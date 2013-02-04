@@ -12,13 +12,16 @@
 ofImage ofxPanel::loadIcon;
 ofImage ofxPanel::saveIcon;
 
+ofxPanel::ofxPanel()
+:bGrabbed(false){}
+
 ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y)
 : ofxGuiGroup(parameters, filename, x, y)
 , bGrabbed(false){
 	this->registerMouseEvents();
 }
 
-void ofxPanel::draw(){
+ofxPanel * ofxPanel::setup(string collectionName, string filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		unsigned char loadIconData[] = {0x38,0x88,0xa,0x6,0x7e,0x60,0x50,0x11,0x1c};
 		unsigned char saveIconData[] = {0xff,0x4a,0x95,0xea,0x15,0xa8,0x57,0xa9,0x7f};
@@ -27,48 +30,81 @@ void ofxPanel::draw(){
 		loadStencilFromHex(loadIcon, loadIconData);
 		loadStencilFromHex(saveIcon, saveIconData);
 	}
+	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
+}
 
+ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, string filename, float x, float y){
+	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
+		unsigned char loadIconData[] = {0x38,0x88,0xa,0x6,0x7e,0x60,0x50,0x11,0x1c};
+		unsigned char saveIconData[] = {0xff,0x4a,0x95,0xea,0x15,0xa8,0x57,0xa9,0x7f};
+		loadIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
+		saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
+		loadStencilFromHex(loadIcon, loadIconData);
+		loadStencilFromHex(saveIcon, saveIconData);
+	}
+	return (ofxPanel*)ofxGuiGroup::setup(parameters,filename,x,y);
+}
+
+void ofxPanel::generateDraw(){
+	border.clear();
+	border.setStrokeColor(thisBorderColor);
+	border.setStrokeWidth(1);
+	border.setFilled(false);
+	border.moveTo(b.x,b.y);
+	border.lineTo(b.x+b.width+1,b.y);
+	border.lineTo(b.x+b.width+1,b.y+b.height-spacingNextElement);
+	border.lineTo(b.x,b.y+b.height-spacingNextElement);
+	border.close();
+
+
+	headerBg.clear();
+	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
+	headerBg.setFilled(true);
+	headerBg.moveTo(b.x,b.y+1);
+	headerBg.lineTo(b.x+b.width,b.y+1);
+	headerBg.lineTo(b.x+b.width,b.y+header+1);
+	headerBg.lineTo(b.x,b.y+header+1);
+	headerBg.close();
 
 	int iconSpacing = 6;
-	loadBox.x = b.width - (loadIcon.getWidth() + saveIcon.getWidth() + iconSpacing + textPadding);
-	loadBox.y = header / 2 - loadIcon.getHeight() / 2;
+	loadBox.x = b.x + b.width - (loadIcon.getWidth() + saveIcon.getWidth() + iconSpacing + textPadding);
+	loadBox.y = b.y + header / 2 - loadIcon.getHeight() / 2;
 	loadBox.width = loadIcon.getWidth();
 	loadBox.height = loadIcon.getHeight();
 	saveBox.set(loadBox);
 	saveBox.x += loadIcon.getWidth() + iconSpacing;
 
+	textMesh = font.getStringMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+}
 
-	bool currentFill = ofGetStyle().bFill;
-	ofColor c = ofGetStyle().color;
-	ofPushMatrix();
-
+void ofxPanel::draw(){
 	currentFrame = ofGetFrameNum();
 
-	ofTranslate(b.x, b.y);
+	border.draw();
+	headerBg.draw();
 
-	ofNoFill();
-	ofSetColor(borderColor);
-	ofRect(0, 0, b.width, b.height);
+	ofBlendMode blendMode = ofGetStyle().blendingMode;
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableAlphaBlending();
+	}
+	ofColor c = ofGetStyle().color;
+	ofSetColor(thisTextColor);
+	font.getFontTexture().bind();
+	//font.drawString(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	textMesh.draw();
+	font.getFontTexture().unbind();
 
-	ofFill();
-	ofSetColor(headerBackgroundColor);
-	ofRect(0, 0, b.width, header);
-
-	ofSetColor(textColor);
-	font.drawString(getName(), textPadding, header / 2 + 4);
-
-	ofPushMatrix();
 	loadIcon.draw(loadBox.x, loadBox.y);
 	saveIcon.draw(saveBox.x, saveBox.y);
-	ofPopMatrix();
 
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->draw();
 	}
 
-	ofPopMatrix();
 	ofSetColor(c);
-	if(!currentFill) ofNoFill();
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableBlendMode(blendMode);
+	}
 }
 
 void ofxPanel::mouseReleased(ofMouseEventArgs & args){
@@ -94,17 +130,16 @@ void ofxPanel::setValue(float mx, float my, bool bCheck){
 				bGrabbed = false;
 			}
 
-			if(loadBox.inside(mx - b.x, my - b.y)) {
+			if(loadBox.inside(mx, my)) {
 				loadFromFile(filename);
 				ofNotifyEvent(loadPressedE,this);
 			}
-			if(saveBox.inside(mx - b.x, my - b.y)) {
+			if(saveBox.inside(mx, my)) {
 				saveToFile(filename);
 				ofNotifyEvent(savePressedE,this);
 			}
 		}
 	} else if( bGrabbed ){
-		b.x = mx - grabPt.x;
-		b.y = my - grabPt.y;
+		setPosition(mx - grabPt.x,my - grabPt.y);
 	}
 }

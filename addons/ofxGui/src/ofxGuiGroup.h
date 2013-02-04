@@ -10,8 +10,8 @@ public:
 	ofxGuiGroup();
 	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
     virtual ~ofxGuiGroup() {}
-    ofxGuiGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
-	ofxGuiGroup * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
+    virtual ofxGuiGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
+	virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
     
 	void add(ofxBaseGui * element);
     void add(const ofParameterGroup & parameters);
@@ -55,6 +55,9 @@ public:
 	ofxBaseGui * getControl(int num);
     
 	virtual ofAbstractParameter & getParameter();
+
+	virtual void setPosition(ofPoint p);
+	virtual void setPosition(float x, float y);
 protected:
     void registerMouseEvents();
     virtual void setValue(float mx, float my, bool bCheck);
@@ -66,6 +69,8 @@ protected:
     template<class ControlType>
 	ControlType & getControlType(string name);
 
+    virtual void generateDraw();
+
 	vector <ofxBaseGui *> collection;
 	ofParameterGroup parameters;
 	
@@ -73,6 +78,8 @@ protected:
 	bool minimized;
 
 	ofxGuiGroup * parent;
+	ofPath border, headerBg;
+	ofVboMesh textMesh;
 };
 
 template<class ControlType>

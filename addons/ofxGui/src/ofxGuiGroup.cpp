@@ -8,6 +8,7 @@ ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
 	parent = NULL;
 	spacing  = 1;
+	spacingNextElement = 3;
 	header = defaultHeight;
 }
 
@@ -28,7 +29,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	b.y = y;
 	header = defaultHeight;
 	spacing  = 1;
-	spacingNextElement = 2;
+	spacingNextElement = 3;
 	if(parent!=NULL){
 		b.width = parent->getWidth();
 	}else{
@@ -77,15 +78,17 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 
 	parameters = _parameters;
 	ofRegisterMouseEvents(this);
+
+	generateDraw();
     
 	return this;
 }
 
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back( element );
-    
 
-	element->setPosition(0, b.height-spacing*2);
+	element->setPosition(b.x, b.y + b.height  + spacing);
+
 	b.height += element->getHeight() + spacing;
 
 	//if(b.width<element->getWidth()) b.width = element->getWidth();
@@ -105,17 +108,20 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	}
     
 	parameters.add(element->getParameter());
+	generateDraw();
 }
 
 void ofxGuiGroup::setWidthElements(float w){
 	for(int i=0;i<(int)collection.size();i++){
 		collection[i]->setSize(w,collection[i]->getHeight());
-		collection[i]->setPosition(b.width-w,collection[i]->getPosition().y);
+		collection[i]->setPosition(b.x + b.width-w,collection[i]->getPosition().y);
 		ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(collection[i]);
 		if(subgroup!=NULL){
 			subgroup->setWidthElements(w*.98);
 		}
 	}
+	sizeChangedCB();
+	generateDraw();
 }
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
@@ -166,13 +172,11 @@ void ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
 
 void ofxGuiGroup::clear(){
 	collection.clear();
-	b.height = header + spacing + spacingNextElement;
+	b.height = header + spacing + spacingNextElement ;
 }
 
 void ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 	ofMouseEventArgs a = args;
-	a.x -= b.x;
-	a.y -= b.y;
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->mouseMoved(a);
 	}
@@ -182,8 +186,6 @@ void ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	setValue(args.x, args.y, true);
 	if( bGuiActive ){
 		ofMouseEventArgs a = args;
-		a.x -= b.x;
-		a.y -= b.y;
 		for(int i = 0; i < (int)collection.size(); i++){
 			collection[i]->mousePressed(a);
 		}
@@ -194,8 +196,6 @@ void ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 	setValue(args.x, args.y, false);
 	if( bGuiActive ){
 		ofMouseEventArgs a = args;
-		a.x -= b.x;
-		a.y -= b.y;
 		for(int i = 0; i < (int)collection.size(); i++){
 			collection[i]->mouseDragged(a);
 		}
@@ -206,46 +206,71 @@ void ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
 	for(int k = 0; k < (int)collection.size(); k++){
 		ofMouseEventArgs a = args;
-		a.x -= b.x;
-		a.y -= b.y;
 		collection[k]->mouseReleased(a);
 	}
 }
 
-void ofxGuiGroup::draw(){
-	bool currentFill = ofGetStyle().bFill;
-	ofColor c = ofGetStyle().color;
-	ofPushMatrix();
-    
-	currentFrame = ofGetFrameNum();
-    
-	ofTranslate(b.x, b.y);
+void ofxGuiGroup::generateDraw(){
+	border.clear();
+	border.setFillColor(ofColor(thisBorderColor,180));
+	border.setFilled(true);
+	border.moveTo(b.x,b.y+ spacingNextElement);
+	border.lineTo(b.x+b.width+1,b.y+ spacingNextElement);
+	border.lineTo(b.x+b.width+1,b.y+b.height+ spacingNextElement);
+	border.lineTo(b.x,b.y+b.height+ spacingNextElement);
+	border.close();
 
-	ofNoFill();
-	ofSetColor(borderColor);
-	ofRect(0, 0, b.width, b.height-spacingNextElement);
 
-	ofFill();
-	ofSetColor(headerBackgroundColor,180);
-	ofRect(0, 0, b.width, header);
-    
-	ofSetColor(textColor);
-	font.drawString(getName(), textPadding, header / 2 + 4);
+	headerBg.clear();
+	headerBg.setFillColor(thisHeaderBackgroundColor);
+	headerBg.setFilled(true);
+	headerBg.moveTo(b.x,b.y +1 + spacingNextElement);
+	headerBg.lineTo(b.x+b.width,b.y+1+ spacingNextElement);
+	headerBg.lineTo(b.x+b.width,b.y+header+1+ spacingNextElement);
+	headerBg.lineTo(b.x,b.y+header+1+ spacingNextElement);
+	headerBg.close();
+
+	textMesh = font.getStringMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
 	if(minimized){
-		font.drawString("+", b.width-textPadding-8, header / 2 + 4);
+		textMesh.append(font.getStringMesh("+", b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement));
 	}else{
-		font.drawString("-", b.width-textPadding-8, header / 2 + 4);
+		textMesh.append(font.getStringMesh("-", b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement));
 	}
+}
+
+void ofxGuiGroup::draw(){
+
+	currentFrame = ofGetFrameNum();
+
+	border.draw();
+	headerBg.draw();
+
+	ofBlendMode blendMode = ofGetStyle().blendingMode;
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableAlphaBlending();
+	}
+	ofColor c = ofGetStyle().color;
+	ofSetColor(thisTextColor);
+	font.getFontTexture().bind();
+	/*font.drawString(getName(), textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
+	if(minimized){
+		font.drawString("+", b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement);
+	}else{
+		font.drawString("-", b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement);
+	}*/
+	textMesh.draw();
+	font.getFontTexture().unbind();
     
 	if(!minimized){
 		for(int i = 0; i < (int)collection.size(); i++){
 			collection[i]->draw();
 		}
 	}
-    
-	ofPopMatrix();
+
 	ofSetColor(c);
-	if(!currentFill) ofNoFill();
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableBlendMode(blendMode);
+	}
 }
 
 vector<string> ofxGuiGroup::getControlNames(){
@@ -316,8 +341,9 @@ void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 
 void ofxGuiGroup::minimize(){
 	minimized=true;
-	b.height = header + spacing + spacingNextElement;
+	b.height = header + spacing + spacingNextElement + 1 /*border*/;
 	if(parent) parent->sizeChangedCB();
+	generateDraw();
 }
 
 void ofxGuiGroup::maximize(){
@@ -325,8 +351,8 @@ void ofxGuiGroup::maximize(){
 	for(int i=0;i<(int)collection.size();i++){
 		b.height += collection[i]->getHeight() + spacing;
 	}
-	b.height += spacingNextElement;
 	if(parent) parent->sizeChangedCB();
+	generateDraw();
 }
 
 void ofxGuiGroup::minimizeAll(){
@@ -344,13 +370,19 @@ void ofxGuiGroup::maximizeAll(){
 }
 
 void ofxGuiGroup::sizeChangedCB(){
-	float y = header + spacing;
+	float y;
+	if(parent){
+		y = b.y  + header + spacing + spacingNextElement;
+	}else{
+		y = b.y  + header + spacing;
+	}
 	for(int i=0;i<(int)collection.size();i++){
-		collection[i]->setPosition(collection[i]->getPosition().x,y);
+		collection[i]->setPosition(collection[i]->getPosition().x,y + spacing);
 		y += collection[i]->getHeight() + spacing;
 	}
-	b.height = y;
+	b.height = y - b.y;
 	if(parent) parent->sizeChangedCB();
+	generateDraw();
 }
 
 
@@ -367,4 +399,19 @@ ofxBaseGui * ofxGuiGroup::getControl(int num){
 
 ofAbstractParameter & ofxGuiGroup::getParameter(){
 	return parameters;
+}
+
+void ofxGuiGroup::setPosition(ofPoint p){
+	ofVec2f diff = p - b.getPosition();
+
+	for(int i=0;i<(int)collection.size();i++){
+		collection[i]->setPosition(collection[i]->getPosition()+diff);
+	}
+
+	b.setPosition(p);
+	generateDraw();
+}
+
+void ofxGuiGroup::setPosition(float x, float y){
+	setPosition(ofVec2f(x,y));
 }

@@ -5,6 +5,10 @@ ofxToggle::ofxToggle(ofParameter<bool> _bVal, float width, float height){
 	setup(_bVal,width,height);
 }
 
+ofxToggle::~ofxToggle(){
+	value.removeListener(this,&ofxToggle::valueChanged);
+}
+
 ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){
 	b.x = 0;
 	b.y = 0;
@@ -15,7 +19,10 @@ ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height)
 	value.makeReferenceTo(_bVal);
 	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 
+	value.addListener(this,&ofxToggle::valueChanged);
 	ofRegisterMouseEvents(this);
+	generateDraw();
+
 	return this;
 
 }
@@ -40,38 +47,65 @@ void ofxToggle::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
 }
 
+void ofxToggle::generateDraw(){
+	bg.clear();
+	bg.setFillColor(thisBackgroundColor);
+	bg.moveTo(b.x,b.y);
+	bg.lineTo(b.x+b.width,b.y);
+	bg.lineTo(b.x+b.width,b.y+b.height);
+	bg.lineTo(b.x,b.y+b.height);
+	bg.close();
+
+	fg.clear();
+	if(value){
+		fg.setFilled(true);
+		fg.setFillColor(thisFillColor);
+	}else{
+		fg.setFilled(false);
+		fg.setStrokeWidth(1);
+		fg.setStrokeColor(thisFillColor);
+	}
+	fg.moveTo(b.getPosition()+checkboxRect.getTopLeft());
+	fg.lineTo(b.getPosition()+checkboxRect.getTopRight());
+	fg.lineTo(b.getPosition()+checkboxRect.getBottomRight());
+	fg.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
+	fg.close();
+
+	cross.clear();
+	cross.setStrokeColor(thisTextColor);
+	cross.setStrokeWidth(1);
+	cross.setFilled(false);
+	cross.moveTo(b.getPosition()+checkboxRect.getTopLeft());
+	cross.lineTo(b.getPosition()+checkboxRect.getBottomRight());
+	cross.moveTo(b.getPosition()+checkboxRect.getTopRight());
+	cross.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
+
+	textMesh = font.getStringMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+}
+
 void ofxToggle::draw(){
 	currentFrame = ofGetFrameNum();
 
-	bool currentFill = ofGetStyle().bFill;
-	ofColor c = ofGetStyle().color;
-	ofPushMatrix();
-
-	ofSetColor(backgroundColor);
-	ofRect(b);
-
-	ofTranslate(b.x, b.y);
-
-	ofFill();
-	ofSetColor(fillColor);
-	ofRect(checkboxRect);
+	bg.draw();
+	fg.draw();
 
 	if( value ){
-		ofSetColor(textColor);
-		ofLine(checkboxRect.x, checkboxRect.y, checkboxRect.x + checkboxRect.width, checkboxRect.y + checkboxRect.height);
-		ofLine(checkboxRect.x, checkboxRect.y+ checkboxRect.height, checkboxRect.x + checkboxRect.width, checkboxRect.y);
-	} else {
-		ofSetColor(backgroundColor);
-		ofRect(checkboxRect.x + 1, checkboxRect.y + 1, checkboxRect.width - 2, checkboxRect.height - 2);
+		cross.draw();
 	}
 
-	ofSetColor(textColor);
-	ofTranslate(0, b.height / 2 + 4);
-	font.drawString(getName(), textPadding + checkboxRect.width, 0);
-
-	ofPopMatrix();
+	ofColor c = ofGetStyle().color;
+	ofBlendMode blendMode = ofGetStyle().blendingMode;
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableAlphaBlending();
+	}
+	ofSetColor(thisTextColor);
+	font.getFontTexture().bind();
+	textMesh.draw();
+	font.getFontTexture().unbind();
 	ofSetColor(c);
-	if(!currentFill) ofNoFill();
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableBlendMode(blendMode);
+	}
 }
 
 bool ofxToggle::operator=(bool v){
@@ -108,4 +142,8 @@ void ofxToggle::setValue(float mx, float my, bool bCheck){
 
 ofAbstractParameter & ofxToggle::getParameter(){
 	return value;
+}
+
+void ofxToggle::valueChanged(bool & value){
+	generateDraw();
 }

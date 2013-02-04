@@ -10,13 +10,6 @@ public:
 	ofxBaseGui();
 	
 	virtual ~ofxBaseGui();
-
-	virtual void mouseMoved(ofMouseEventArgs & args) = 0;
-	virtual void mousePressed(ofMouseEventArgs & args) = 0;
-	virtual void mouseDragged(ofMouseEventArgs & args) = 0;
-	virtual void mouseReleased(ofMouseEventArgs & args) = 0;
-	
-	virtual void setValue(float mx, float my, bool bCheckBounds) = 0;
 	virtual void draw() = 0;
 	
 	void saveToFile(string filename);
@@ -43,18 +36,28 @@ public:
 
 	ofColor getHeaderBackgroundColor();
 	ofColor getBackgroundColor();
+	ofColor getBorderColor();
 	ofColor getTextColor();
 	ofColor getFillColor();
 
 	void setHeaderBackgroundColor(const ofColor & color);
 	void setBackgroundColor(const ofColor & color);
+	void setBorderColor(const ofColor & color);
 	void setTextColor(const ofColor & color);
 	void setFillColor(const ofColor & color);
 
 	virtual ofAbstractParameter & getParameter() = 0;
 	static void loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 
+
+	virtual void mouseMoved(ofMouseEventArgs & args) = 0;
+	virtual void mousePressed(ofMouseEventArgs & args) = 0;
+	virtual void mouseDragged(ofMouseEventArgs & args) = 0;
+	virtual void mouseReleased(ofMouseEventArgs & args) = 0;
 protected:
+
+	virtual void setValue(float mx, float my, bool bCheckBounds) = 0;
+
 	unsigned long currentFrame;			
 	ofRectangle b;
 	static ofTrueTypeFont font;
@@ -70,6 +73,7 @@ protected:
 
 	ofColor thisHeaderBackgroundColor;
 	ofColor thisBackgroundColor;
+	ofColor thisBorderColor;
 	ofColor thisTextColor;
 	ofColor thisFillColor;
 
@@ -79,4 +83,6 @@ protected:
 
 	static string saveStencilToHex(ofImage& img);
 	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;
+
+	virtual void generateDraw(){};
 }; 

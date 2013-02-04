@@ -2,6 +2,18 @@
 #include "ofGraphics.h"
 
 template<typename Type>
+ofxSlider<Type>::ofxSlider(){
+	bUpdateOnReleaseOnly = false;
+	currentFrame = ofGetFrameNum();
+	bGuiActive = false;
+}
+
+template<typename Type>
+ofxSlider<Type>::~ofxSlider(){
+	value.removeListener(this,&ofxSlider::valueChanged);
+}
+
+template<typename Type>
 ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height){
 	setup(_val,width,height);
 }
@@ -17,7 +29,9 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 	currentFrame = ofGetFrameNum();
 	bGuiActive = false;
 
+	value.addListener(this,&ofxSlider::valueChanged);
 	ofRegisterMouseEvents(this);
+	generateDraw();
 	return this;
 }
 
@@ -65,59 +79,92 @@ ofxSlider<Type>::operator const Type & (){
 }
 
 template<typename Type>
-void ofxSlider<Type>::draw(){
-	bool currentFill = ofGetStyle().bFill;
-	ofColor c = ofGetStyle().color;
-	ofPushMatrix();
+void ofxSlider<Type>::generateDraw(){
+	bg.clear();
+	bar.clear();
 
-	currentFrame = ofGetFrameNum();
-	ofFill();
-	ofSetColor(backgroundColor);
-	ofRect(b);
+	bg.setFillColor(thisBackgroundColor);
+	bg.setFilled(true);
+	bg.moveTo(b.x, b.y);
+	bg.lineTo(b.x+b.width,b.y);
+	bg.lineTo(b.x+b.width,b.y+b.height);
+	bg.lineTo(b.x,b.y+b.height);
+	bg.close();
 
-	ofTranslate(b.x, b.y);
 	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
-	ofEnableAlphaBlending();
-	ofSetColor(fillColor);
-	ofRect(1, 1, valAsPct, b.height-2);
+	bar.setFillColor(thisFillColor);
+	bar.setFilled(true);
+	bar.moveTo(b.x+1, b.y+1);
+	bar.lineTo(b.x+1+valAsPct,b.y+1);
+	bar.lineTo(b.x+1+valAsPct,b.y+b.height-1);
+	bar.lineTo(b.x+1,b.y+b.height-1);
+	bar.close();
 
-	ofTranslate(0, b.height / 2 + 4);
-	ofSetColor(textColor);
-	font.drawString(getName(), textPadding, 0);
-	string valStr = ofToString(value.get());
-	font.drawString(valStr, b.width - textPadding - valStr.length() * 8, 0);
-
-	ofPopMatrix();
-	ofSetColor(c);
-	if(!currentFill) ofNoFill();
+	generateText();
 }
 
+
+template<typename Type>
+void ofxSlider<Type>::generateText(){
+	string valStr = ofToString(value);
+	textMesh = font.getStringMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	textMesh.append(font.getStringMesh(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4));
+}
 
 template<>
-void ofxSlider<unsigned char>::draw(){
-	ofPushStyle();
-	ofPushMatrix();
+void ofxSlider<unsigned char>::generateText(){
+	string valStr = ofToString((int)value);
+	textMesh = font.getStringMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	textMesh.append(font.getStringMesh(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4));
+}
+
+template<typename Type>
+void ofxSlider<Type>::draw(){
+	ofColor c = ofGetStyle().color;
 
 	currentFrame = ofGetFrameNum();
-	ofFill();
-	ofSetColor(thisBackgroundColor);
-	ofRect(b);
 
-	ofTranslate(b.x, b.y);
-	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
-	ofEnableAlphaBlending();
-	ofSetColor(thisFillColor);
-	ofRect(1, 1, valAsPct, b.height-2);
+	bg.draw();
+	bar.draw();
 
-	ofTranslate(0, b.height / 2 + 4);
+	ofBlendMode blendMode = ofGetStyle().blendingMode;
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableAlphaBlending();
+	}
 	ofSetColor(thisTextColor);
-	font.drawString(getName(), textPadding, 0);
-	string valStr = ofToString((int)value.get());
-	font.drawString(valStr, b.width - textPadding - valStr.length() * 8, 0);
+	/*font.bind();
+	font.drawString(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	string valStr = ofToString(value);
+	font.drawString(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4);
+	font.unbind();*/
+	font.getFontTexture().bind();
+	textMesh.draw();
+	font.getFontTexture().unbind();
 
-	ofPopMatrix();
-	ofPopStyle();
+	ofSetColor(c);
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableBlendMode(blendMode);
+	}
 }
+
+
+/*template<>
+void ofxSlider<unsigned char>::draw(){
+	bool currentFill = ofGetStyle().bFill;
+	ofColor c = ofGetStyle().color;
+
+	currentFrame = ofGetFrameNum();
+
+	bg.draw();
+	bar.draw();
+
+	font.getFontTexture().bind();
+	textMesh.draw();
+	font.getFontTexture().unbind();
+
+	ofSetColor(c);
+	if(!currentFill) ofNoFill();
+}*/
 
 template<typename Type>
 void ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
@@ -148,6 +195,10 @@ void ofxSlider<Type>::setUpdateOnReleaseOnly(bool _bUpdateOnReleaseOnly){
 	bUpdateOnReleaseOnly = _bUpdateOnReleaseOnly;
 }
 
+template<typename Type>
+void ofxSlider<Type>::valueChanged(Type & value){
+	generateDraw();
+}
 
 template class ofxSlider<int>;
 template class ofxSlider<unsigned int>;

@@ -8,7 +8,8 @@ class ofxSlider : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:	
-	ofxSlider(){}
+	ofxSlider();
+	~ofxSlider();
 	ofxSlider(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
@@ -43,6 +44,11 @@ protected:
 	ofParameter<Type> value;
 	bool bUpdateOnReleaseOnly;
 	void setValue(float mx, float my, bool bCheck);
+	void generateDraw();
+	void generateText();
+	void valueChanged(Type & value);
+	ofPath bg, bar;
+	ofVboMesh textMesh;
 };
 
 typedef ofxSlider<float> ofxFloatSlider;

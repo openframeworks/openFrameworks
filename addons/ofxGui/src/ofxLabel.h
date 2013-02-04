@@ -7,7 +7,7 @@ class ofxLabel: public ofxBaseGui {
 public:
     ofxLabel(){}
     ofxLabel(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
-    virtual ~ofxLabel() {}
+    virtual ~ofxLabel();
 
     ofxLabel * setup(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
     ofxLabel * setup(string labelName, string label, float width = defaultWidth, float height = defaultHeight);
@@ -42,4 +42,8 @@ public:
 
 protected:
     ofParameter<string> label;
+    void generateDraw();
+    void valueChanged(string & value);
+    ofPath bg;
+    ofVboMesh textMesh;
 };
