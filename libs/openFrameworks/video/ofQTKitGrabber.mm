@@ -4,7 +4,6 @@
 #import <QuickTime/QuickTime.h>
 #import <Accelerate/Accelerate.h>
 
-
 //This Objective-C class contains all the OS specific
 //Stuff we need for pulling images from a video camera feed
 //the QTCaptureVideoPreviewOutput is a non-blocking frame receiver delegate
@@ -515,7 +514,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
             }
 
             CVPixelBufferLockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
-#ifdef MAC_OS_X_VERSION_10_8
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8)
+            //fast conversion of BGRA -> RGB introduced in 10.8
             vImage_Buffer src;
             src.height = CVPixelBufferGetHeight(cvFrame);
             src.width = CVPixelBufferGetWidth(cvFrame);
@@ -527,22 +527,27 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
             dest.width = width;
             dest.rowBytes = width*3;
             dest.data = pixels->getPixels();
-            
-            vImage_Error err;
-            err = vImageConvert_BGRA8888toRGB888(&src, &dest, kvImageNoFlags);
+
+            vImage_Error err = vImageConvert_BGRA8888toRGB888(&src, &dest, kvImageNoFlags);
             if(err != kvImageNoError){
                 NSLog(@"Error in Pixel Copy vImage_error %ld", err);
             }
 #else
             //manually convert BGRA -> RGB
-            unsigned char* src = (unsigned char*)CVPixelBufferGetBaseAddress(cvFrame);
-            unsigned char* dst = pixels->getPixels();
-            for(int i = 0; i < width*height; i++){
-                dst[0] = src[2];
-                dst[1] = src[1];
-                dst[2] = src[0];
-                dst+=3;
-                src+=4;
+            int dstBpp = 3;
+            int srcBpp = 4;
+            int dstRowBytes = width*dstBpp;
+            int srcRowBytes = CVPixelBufferGetBytesPerRow(cvFrame);
+            for(int y = 0; y < height; y++){
+                unsigned char* src = ((unsigned char*)CVPixelBufferGetBaseAddress(cvFrame)) + y*srcRowBytes;
+                unsigned char* dst = pixels->getPixels() + y*dstRowBytes;
+                for(int x = 0; x < width; x++){
+                    dst[0] = src[2];
+                    dst[1] = src[1];
+                    dst[2] = src[0];
+                    dst+=dstBpp;
+                    src+=srcBpp;
+                }                    
             }
 #endif
             CVPixelBufferUnlockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
