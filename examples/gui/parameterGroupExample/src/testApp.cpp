@@ -7,9 +7,9 @@ void testApp::setup(){
 	bool useJson = false;
 	if(useJson){
 		gui.setDefaultSerializer(json);
-		gui.setup("","settings.json");
+		gui.setup("settings","settings.json");
 	}else{
-		gui.setup("","settings.xml");
+		gui.setup("settings","settings.xml");
 	}
 
 	// by setting the listener before the param values
