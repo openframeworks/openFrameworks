@@ -2,6 +2,7 @@
 #include "ofQTKitGrabber.h"
 #import <QTKit/QTKit.h>
 #import <QuickTime/QuickTime.h>
+#import <Accelerate/Accelerate.h>
 
 
 //This Objective-C class contains all the OS specific
@@ -178,7 +179,7 @@
         NSMutableDictionary* pixelBufferAttributes = [NSMutableDictionary dictionary];
         //we can turn capture pixels off if we just want to use this object for recording
         if(_shouldCapturePixels){
-            [pixelBufferAttributes setValue:[NSNumber numberWithInt: kCVPixelFormatType_24RGB]
+            [pixelBufferAttributes setValue:[NSNumber numberWithInt: kCVPixelFormatType_32BGRA]
                                      forKey:(NSString*)kCVPixelBufferPixelFormatTypeKey];
             [pixelBufferAttributes setValue:[NSNumber numberWithBool:YES]
                                      forKey:(NSString*)kCVPixelBufferOpenGLCompatibilityKey];
@@ -512,23 +513,41 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                 width  = CVPixelBufferGetWidth(cvFrame);
                 height = CVPixelBufferGetHeight(cvFrame);
             }
-            
-            size_t dstBytesPerRow = pixels->getWidth() * 3;
+
             CVPixelBufferLockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
-            if (CVPixelBufferGetBytesPerRow(cvFrame) == dstBytesPerRow) {
-                memcpy(pixels->getPixels(), CVPixelBufferGetBaseAddress(cvFrame), pixels->getHeight() * dstBytesPerRow);
+#ifdef MAC_OS_X_VERSION_10_8
+            NSLog(@"10.8!");
+            vImage_Buffer src;
+            src.height = CVPixelBufferGetHeight(cvFrame);
+            src.width = CVPixelBufferGetWidth(cvFrame);
+            src.data = CVPixelBufferGetBaseAddress(cvFrame);
+            src.rowBytes = CVPixelBufferGetBytesPerRow(cvFrame);
+            
+            vImage_Buffer dest;
+            dest.height = height;
+            dest.width = width;
+            dest.rowBytes = width*3;
+            dest.data = pixels->getPixels();
+            
+            vImage_Error err;
+            err = vImageConvert_BGRA8888toRGB888(&src, &dest, kvImageNoFlags);
+            if(err != kvImageNoError){
+                NSLog(@"Error in Pixel Copy vImage_error %ld", err);
             }
-            else {
-                unsigned char *dst = pixels->getPixels();
-                unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(cvFrame);
-                size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(cvFrame);
-                size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
-                for (int y = 0; y < pixels->getHeight(); y++){
-                    memcpy(dst, src, copyBytesPerRow);
-                    dst += dstBytesPerRow;
-                    src += srcBytesPerRow;
-                }
+#else
+            NSLog(@"10.7!");
+
+            //manually convert BGRA -> RGB
+            unsigned char* src = (unsigned char*)CVPixelBufferGetBaseAddress(cvFrame);
+            unsigned char* dst = pixels->getPixels();
+            for(int i = 0; i < width*height; i++){
+                dst[0] = src[2];
+                dst[1] = src[1];
+                dst[2] = src[0];
+                dst+=3;
+                src+=4;
             }
+#endif
             CVPixelBufferUnlockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
 
             hasNewFrame = NO;
