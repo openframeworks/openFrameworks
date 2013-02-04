@@ -66,6 +66,8 @@ public:
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
 	vector<ofTTFCharacter> getStringAsPoints(string str);
+	ofMesh & getStringMesh(string s, float x, float y);
+	ofTexture & getFontTexture();
 
 	void bind();
 	void unbind();
@@ -91,13 +93,14 @@ protected:
 
 	void 			drawChar(int c, float x, float y);
 	void			drawCharAsShape(int c, float x, float y);
+	void			createStringMesh(string s, float x, float y);
 	
 	int				border;//, visibleBorder;
 	string			filename;
 
 	ofTexture texAtlas;
 	bool binded;
-	ofMesh stringQuads;
+	ofVboMesh stringQuads;
 
 private:
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)

@@ -790,27 +790,10 @@ float ofTrueTypeFont::stringHeight(string c) {
     return rect.height;
 }
 
-//=====================================================================
-void ofTrueTypeFont::drawString(string c, float x, float y) {
-
-    /*glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texAtlas.draw(0,0);*/
-
-    if (!bLoadedOk){
-    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-    	return;
-    };
-
+void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
-
-
-	bool alreadyBinded = binded;
-
-	if(!alreadyBinded) bind();
-
 	int len = (int)c.length();
 
 	while(index < len){
@@ -831,7 +814,35 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		}
 		index++;
 	}
+}
 
+ofMesh & ofTrueTypeFont::getStringMesh(string c, float x, float y){
+	stringQuads.clear();
+	createStringMesh(c,x,y);
+	return stringQuads;
+}
+
+ofTexture & ofTrueTypeFont::getFontTexture(){
+	return texAtlas;
+}
+
+//=====================================================================
+void ofTrueTypeFont::drawString(string c, float x, float y) {
+
+    /*glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	texAtlas.draw(0,0);*/
+
+    if (!bLoadedOk){
+    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+    	return;
+    };
+
+
+	bool alreadyBinded = binded;
+
+	if(!alreadyBinded) bind();
+	createStringMesh(c,x,y);
 	if(!alreadyBinded) unbind();
 
 }
