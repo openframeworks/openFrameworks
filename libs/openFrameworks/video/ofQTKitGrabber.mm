@@ -516,7 +516,6 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
             CVPixelBufferLockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
 #ifdef MAC_OS_X_VERSION_10_8
-            NSLog(@"10.8!");
             vImage_Buffer src;
             src.height = CVPixelBufferGetHeight(cvFrame);
             src.width = CVPixelBufferGetWidth(cvFrame);
@@ -535,8 +534,6 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                 NSLog(@"Error in Pixel Copy vImage_error %ld", err);
             }
 #else
-            NSLog(@"10.7!");
-
             //manually convert BGRA -> RGB
             unsigned char* src = (unsigned char*)CVPixelBufferGetBaseAddress(cvFrame);
             unsigned char* dst = pixels->getPixels();
