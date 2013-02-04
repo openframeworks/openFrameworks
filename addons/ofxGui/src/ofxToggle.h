@@ -6,6 +6,7 @@
 class ofxToggle : public ofxBaseGui{
 public:
 	ofxToggle(){};
+	~ofxToggle();
 	ofxToggle(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle * setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle * setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
@@ -39,5 +40,8 @@ protected:
 	ofParameter<bool> value;
 	
 	void setValue(float mx, float my, bool bCheck);
-	
+	void generateDraw();
+	void valueChanged(bool & value);
+	ofPath bg,fg,cross;
+	ofVboMesh textMesh;
 };

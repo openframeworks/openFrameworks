@@ -4,7 +4,7 @@
 const ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
-ofxBaseGui::borderColor(100),
+ofxBaseGui::borderColor(120,100),
 ofxBaseGui::textColor(255),
 ofxBaseGui::fillColor(128);
 
@@ -22,6 +22,7 @@ ofxBaseGui::ofxBaseGui(){
 
 	thisHeaderBackgroundColor=headerBackgroundColor;
 	thisBackgroundColor=backgroundColor;
+	thisBorderColor=borderColor;
 	thisTextColor=textColor;
 	thisFillColor=fillColor;
 
@@ -78,19 +79,23 @@ void ofxBaseGui::setPosition(ofPoint p){
 void ofxBaseGui::setPosition(float x, float y){
 	b.x = x;
 	b.y = y;
+	generateDraw();
 }
 
 void ofxBaseGui::setSize(float w, float h){
 	b.width = w;
 	b.height = h;
+	generateDraw();
 }
 
 void ofxBaseGui::setShape(ofRectangle r){
 	b = r;
+	generateDraw();
 }
 
 void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x,y,w,h);
+	generateDraw();
 }
 
 ofPoint ofxBaseGui::getPosition(){
@@ -117,6 +122,10 @@ ofColor ofxBaseGui::getBackgroundColor(){
 	return thisBackgroundColor;
 }
 
+ofColor ofxBaseGui::getBorderColor(){
+	return thisBorderColor;
+}
+
 ofColor ofxBaseGui::getTextColor(){
 	return thisTextColor;
 }
@@ -126,18 +135,27 @@ ofColor ofxBaseGui::getFillColor(){
 }
 
 void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
+	generateDraw();
 	thisHeaderBackgroundColor = color;
 }
 
 void ofxBaseGui::setBackgroundColor(const ofColor & color){
+	generateDraw();
 	thisBackgroundColor = color;
 }
 
+void ofxBaseGui::setBorderColor(const ofColor & color){
+	generateDraw();
+	thisBorderColor = color;
+}
+
 void ofxBaseGui::setTextColor(const ofColor & color){
+	generateDraw();
 	thisTextColor = color;
 }
 
 void ofxBaseGui::setFillColor(const ofColor & color){
+	generateDraw();
 	thisFillColor = color;
 }
 
