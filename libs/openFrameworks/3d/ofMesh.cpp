@@ -10,6 +10,7 @@ ofMesh::ofMesh(){
 	bNormalsChanged = false;
 	bTexCoordsChanged = false;
 	bIndicesChanged = false;
+	bFacesDirty = false;
     useColors = true;
     useTextures = true;
     useNormals = true;
@@ -49,7 +50,7 @@ void ofMesh::clear(){
 		bIndicesChanged = true;
 		indices.clear();
 	}
-
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -104,27 +105,27 @@ bool ofMesh::haveIndicesChanged(){
 
 
 //--------------------------------------------------------------
-bool ofMesh::hasVertices(){
+bool ofMesh::hasVertices() const{
 	return !vertices.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasColors(){
+bool ofMesh::hasColors() const{
 	return !colors.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasNormals(){
+bool ofMesh::hasNormals() const{
 	return !normals.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasTexCoords(){
+bool ofMesh::hasTexCoords() const{
 	return !texCoords.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasIndices(){
+bool ofMesh::hasIndices() const{
 	return !indices.empty();
 }
 
@@ -134,54 +135,63 @@ bool ofMesh::hasIndices(){
 void ofMesh::addVertex(const ofVec3f& v){
 	vertices.push_back(v);
 	bVertsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addVertices(const vector<ofVec3f>& verts){
 	vertices.insert(vertices.end(),verts.begin(),verts.end());
 	bVertsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addVertices(const ofVec3f* verts, int amt){
 	vertices.insert(vertices.end(),verts,verts+amt);
 	bVertsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addColor(const ofFloatColor& c){
 	colors.push_back(c);
 	bColorsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addColors(const vector<ofFloatColor>& cols){
 	colors.insert(colors.end(),cols.begin(),cols.end());
 	bColorsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addColors(const ofFloatColor* cols, int amt){
 	colors.insert(colors.end(),cols,cols+amt);
 	bColorsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addNormal(const ofVec3f& n){
 	normals.push_back(n);
 	bNormalsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addNormals(const vector<ofVec3f>& norms){
 	normals.insert(normals.end(),norms.begin(),norms.end());
 	bNormalsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addNormals(const ofVec3f* norms, int amt){
 	normals.insert(normals.end(),norms,norms+amt);
 	bNormalsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -189,18 +199,21 @@ void ofMesh::addTexCoord(const ofVec2f& t){
 	//TODO: figure out if we add to all other arrays to match
 	texCoords.push_back(t);
 	bTexCoordsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addTexCoords(const vector<ofVec2f>& tCoords){
 	texCoords.insert(texCoords.end(),tCoords.begin(),tCoords.end());
 	bTexCoordsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addTexCoords(const ofVec2f* tCoords, int amt){
 	texCoords.insert(texCoords.end(),tCoords,tCoords+amt);
 	bTexCoordsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -212,18 +225,21 @@ ofIndexType ofMesh::getIndex(ofIndexType i) const{
 void ofMesh::addIndex(ofIndexType i){
 	indices.push_back(i);
 	bIndicesChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addIndices(const vector<ofIndexType>& inds){
 	indices.insert(indices.end(),inds.begin(),inds.end());
 	bIndicesChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::addIndices(const ofIndexType* inds, int amt){
 	indices.insert(indices.end(),inds,inds+amt);
 	bIndicesChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -241,6 +257,7 @@ void ofMesh::removeVertex(ofIndexType index){
   }else{
     vertices.erase(vertices.begin() + index);
     bVertsChanged = true;
+	bFacesDirty = true;
   }
 }
 
@@ -251,6 +268,7 @@ void ofMesh::removeNormal(ofIndexType index){
   }else{
     normals.erase(normals.begin() + index);
     bNormalsChanged = true;
+	bFacesDirty = true;
   }
 }
 
@@ -261,6 +279,7 @@ void ofMesh::removeColor(ofIndexType index){
   }else{
     colors.erase(colors.begin() + index);
     bColorsChanged = true;
+	bFacesDirty = true;
   }
 }
 
@@ -271,6 +290,7 @@ void ofMesh::removeTexCoord(ofIndexType index){
   }else{
     texCoords.erase(texCoords.begin() + index);
     bTexCoordsChanged = true;
+	bFacesDirty = true;
   }
 }
 
@@ -281,6 +301,7 @@ void ofMesh::removeIndex(ofIndexType index){
   }else{
     indices.erase(indices.begin() + index);
     bIndicesChanged = true;
+	bFacesDirty = true;
   }
 }
 
@@ -441,26 +462,31 @@ const ofIndexType * ofMesh::getIndexPointer() const{
 
 vector<ofVec3f> & ofMesh::getVertices(){
 	bVertsChanged = true;
+	bFacesDirty = true;
 	return vertices;
 }
 
 vector<ofFloatColor> & ofMesh::getColors(){
 	bColorsChanged = true;
+	bFacesDirty = true;
 	return colors;
 }
 
 vector<ofVec3f> & ofMesh::getNormals(){
 	bNormalsChanged = true;
+	bFacesDirty = true;
 	return normals;
 }
 
 vector<ofVec2f> & ofMesh::getTexCoords(){
 	bTexCoordsChanged = true;
+	bFacesDirty = true;
 	return texCoords;
 }
 
 vector<ofIndexType> & ofMesh::getIndices(){
 	bIndicesChanged = true;
+	bFacesDirty = true;
 	return indices;
 }
 
@@ -555,30 +581,35 @@ void ofMesh::setVertex(ofIndexType index, const ofVec3f& v){
 	vertices[index] = v;
 	bVertsChanged = true;
 	bIndicesChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::setNormal(ofIndexType index, const ofVec3f& n){
 	normals[index] = n;
 	bNormalsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::setColor(ofIndexType index, const ofFloatColor& c){
 	colors[index] = c;
 	bColorsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::setTexCoord(ofIndexType index, const ofVec2f& t){
 	texCoords[index] = t;
 	bTexCoordsChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::setIndex(ofIndexType index, ofIndexType  val){
 	indices[index] = val;
 	bIndicesChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -589,7 +620,7 @@ void ofMesh::setName(string name_){
 //--------------------------------------------------------------
 void ofMesh::setupIndicesAuto(){
 	bIndicesChanged = true;
-	indices.clear();
+	bFacesDirty = true;
 	indices.resize(vertices.size());
 	for(int i = 0; i < (int)vertices.size();i++){
 		indices[i]=(ofIndexType)i;
@@ -608,24 +639,28 @@ void ofMesh::clearVertices(){
 void ofMesh::clearNormals(){
 	normals.clear();
 	bNormalsChanged=true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::clearColors(){
 	colors.clear();
 	bColorsChanged=true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::clearTexCoords(){
 	texCoords.clear();
 	bTexCoordsChanged=true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
 void ofMesh::clearIndices(){
 	indices.clear();
 	bIndicesChanged = true;
+	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -694,22 +729,22 @@ void ofMesh::disableIndices(){
 }
 
 //--------------------------------------------------------------
-bool ofMesh::usingColors(){
+bool ofMesh::usingColors() const{
     return useColors;
 }
 
 //--------------------------------------------------------------
-bool ofMesh::usingTextures(){
+bool ofMesh::usingTextures() const{
     return useTextures;
 }
 
 //--------------------------------------------------------------
-bool ofMesh::usingNormals(){
+bool ofMesh::usingNormals() const{
     return useNormals;
 }
 
 //--------------------------------------------------------------
-bool ofMesh::usingIndices(){
+bool ofMesh::usingIndices() const{
     return useIndices;
 }
 
@@ -733,7 +768,6 @@ void ofMesh::load(string path){
 	int normalsCoordsFound=0;
 
 	int currentVertex = 0;
-	int currentNormal = 0;
 	int currentFace = 0;
 	
 	bool floatColor = false;
@@ -936,9 +970,9 @@ void ofMesh::load(string path){
 	data = backup;
 }
 
-void ofMesh::save(string path, bool useBinary){
+void ofMesh::save(string path, bool useBinary) const{
 	ofFile os(path, ofFile::WriteOnly);
-	ofMesh& data = *this;
+	const ofMesh& data = *this;
 
 	os << "ply" << endl;
 	if(useBinary) {
@@ -1056,7 +1090,7 @@ void ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
 }
 
 //----------------------------------------------------------
-ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) {
+ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const{
     
     ofMesh mesh;
     mesh.setMode( getMode() );
@@ -1186,80 +1220,73 @@ void ofMesh::mergeDuplicateVertices() {
 }
 
 //----------------------------------------------------------
-vector<ofMeshFace> ofMesh::getUniqueFaces() {
-    
-    vector<ofVec3f>& verts       = getVertices();
-    vector<ofVec3f>& normals     = getNormals();
-    vector<ofVec2f>& tcoords     = getTexCoords();
-    vector<ofFloatColor>&colors  = getColors();
-    vector<ofIndexType>& indices = getIndices();
-    // if we are doing triangles, we have to use a vert and normal for each triangle
-    // that way we can calculate face normals and use getFaceNormal();
-    vector<ofMeshFace> triangles;
-    triangles.resize( indices.size()/3 );
-    
-    int index       = 0;
-    int triindex    = 0;
-    
-    bool bHasColors     = hasColors();
-    bool bHasNormals    = hasNormals();
-    bool bHasTexcoords  = hasTexCoords();
-    
-    if( getMode() == OF_PRIMITIVE_TRIANGLES) {
-        for(unsigned int j = 0; j < indices.size(); j += 3) {
-            ofMeshFace & tri = triangles[triindex];
-            for(int k = 0; k < 3; k++) {
-                index = indices[j+k];
-                tri.setVertex( k, verts[index] );
-                if(bHasNormals)
-                    tri.setNormal(k, normals[index] );
-                if(bHasTexcoords)
-                    tri.setTexCoord(k, tcoords[index] );
-                if(bHasColors)
-                    tri.setColor(k, colors[index] );
-                // only calculate the normal after all vertices have been set //
-                if(k == 2) tri.calculateFaceNormal();
-            }
-            triindex++;
-        }
-        
-    } else {
-        ofLog( OF_LOG_WARNING, "ofMesh :: getUniqueFaces : only works with mode == OF_PRIMITIVE_TRIANGLES" );
+const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
+    if(bFacesDirty){
+		// if we are doing triangles, we have to use a vert and normal for each triangle
+		// that way we can calculate face normals and use getFaceNormal();
+		faces.resize( indices.size()/3 );
+
+		int index       = 0;
+		int triindex    = 0;
+
+		bool bHasColors     = hasColors();
+		bool bHasNormals    = hasNormals();
+		bool bHasTexcoords  = hasTexCoords();
+
+		if( getMode() == OF_PRIMITIVE_TRIANGLES) {
+			for(unsigned int j = 0; j < indices.size(); j += 3) {
+				ofMeshFace & tri = faces[triindex];
+				for(int k = 0; k < 3; k++) {
+					index = indices[j+k];
+					tri.setVertex( k, vertices[index] );
+					if(bHasNormals)
+						tri.setNormal(k, normals[index] );
+					if(bHasTexcoords)
+						tri.setTexCoord(k, texCoords[index] );
+					if(bHasColors)
+						tri.setColor(k, colors[index] );
+				}
+				triindex++;
+			}
+
+		} else {
+			ofLog( OF_LOG_WARNING, "ofMesh :: getUniqueFaces : only works with mode == OF_PRIMITIVE_TRIANGLES" );
+		}
+
+		bFacesDirty = false;
     }
     
-    return triangles;
+    return faces;
     
 }
 
 //----------------------------------------------------------
-vector<ofVec3f> ofMesh::getFaceNormals( bool perVetex ) {
+vector<ofVec3f> ofMesh::getFaceNormals( bool perVertex ) const{
     // default for ofPrimitiveBase is vertex normals //
     vector<ofVec3f> faceNormals;
     
     if( hasVertices() ) {
-        vector<ofVec3f>& verts         = getVertices();
-        vector<ofIndexType>& indices   = getIndices();
-        vector<ofVec3f> normals        = getNormals();
-        
-        if(verts.size() > 3 && indices.size() > 3) {
-            
+        if(vertices.size() > 3 && indices.size() > 3) {
+        	if(perVertex){
+        		faceNormals.resize(indices.size()*3);
+        	}else{
+        		faceNormals.resize(indices.size());
+        	}
             ofMeshFace face;
             ofVec3f n;
             for(unsigned int i = 0; i < indices.size(); i+=3) {
-                face.setVertex( 0, verts[indices[i+0]] );
-                face.setVertex( 1, verts[indices[i+1]] );
-                face.setVertex( 2, verts[indices[i+2]] );
+                face.setVertex( 0, vertices[indices[i+0]] );
+                face.setVertex( 1, vertices[indices[i+1]] );
+                face.setVertex( 2, vertices[indices[i+2]] );
                 
-                face.calculateFaceNormal();
                 n = face.getFaceNormal();
                 
-                faceNormals.push_back( n );
-                if(perVetex) {
-                    faceNormals.push_back(n);
-                    faceNormals.push_back(n);
+                faceNormals[i]=n;
+                if(perVertex) {
+                    faceNormals[i+1]=n;
+                    faceNormals[i+2]=n;
                 }
             }
-            return faceNormals;
         }
         
     }
@@ -1268,62 +1295,58 @@ vector<ofVec3f> ofMesh::getFaceNormals( bool perVetex ) {
 }
 
 //----------------------------------------------------------
-void ofMesh::setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
-    
-    if(tris.size() < 1) {
+void ofMesh::setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
+    if(tris.empty()) {
         ofLogWarning( "ofMesh :: setFromTriangles : tris is equal to zero" );
         return;
     }
     
-    vector<ofMeshFace>::iterator it;
+    vector<ofMeshFace>::const_iterator it;
     
-    vector<ofVec3f> verts;
-    vector<ofVec2f> tcoords;
-    vector<ofFloatColor> colors;
-    vector<ofVec3f> normals;
-    
-    verts.resize(tris.size()*3 );
+    vertices.resize(tris.size()*3 );
     it = tris.begin();
     // if the first tri has data, assume the rest do as well //
-    if(it->hasNormals()) normals.assign(tris.size()*3, ofVec3f() );
-    if(it->hasColors()) colors.assign( tris.size()*3, ofFloatColor() );
-    if(it->hasTexcoords()) tcoords.assign( tris.size()*3, ofVec2f() );
+    if(it->hasNormals()){
+    	normals.resize(tris.size()*3);
+    }else{
+    	normals.clear();
+    }
+    if(it->hasColors()){
+    	colors.resize(tris.size()*3);
+    }else{
+    	colors.clear();
+    }
+    if(it->hasTexcoords()){
+    	texCoords.resize(tris.size()*3);
+    }else{
+    	texCoords.clear();
+    }
     
     int i = 0;
     for(it = tris.begin(); it != tris.end(); it++) {
         for(int k = 0; k < 3; k++) {
-            verts[i] = it->getVertex(k);
+            vertices[i] = it->getVertex(k);
             if(it->hasTexcoords())
-                tcoords[i] = it->getTexCoord(k);
+            	texCoords[i] = it->getTexCoord(k);
             if(it->hasColors())
                 colors[i] = it->getColor(k);
-            if( it->hasNormals() || bUseFaceNormal) {
-                if(bUseFaceNormal) 
-                    normals[i] = it->getFaceNormal();
-                else
-                    normals[i] = it->getNormal(k);
-            }
+			if(bUseFaceNormal)
+				normals[i] = it->getFaceNormal();
+			else if(it->hasNormals())
+				normals[i] = it->getNormal(k);
             i++;
         }
     }
-    clearIndices();
-    clearVertices();
-    addVertices(verts);
     
     setupIndicesAuto();
-    
-    if(normals.size() > 0) {
-        clearNormals();
-        addNormals(normals);
-    }
-    if(colors.size() > 0) {
-        clearColors();
-        addColors( colors );
-    }
-    if( tcoords.size() > 0 ) {
-        clearTexCoords();
-        addTexCoords( tcoords );
-    }
+    bVertsChanged = true;
+    bIndicesChanged = true;
+    bNormalsChanged = true;
+    bColorsChanged = true;
+    bTexCoordsChanged = true;
+
+    bFacesDirty = false;
+    faces = tris;
 }
 
 //----------------------------------------------------------
@@ -1341,8 +1364,8 @@ void ofMesh::smoothNormals( float angle ) {
         map<int, int> removeIds;
         
         float epsilon = .01f;
-        for(int i = 0; i < verts.size()-1; i++) {
-            for(int j = i+1; j < verts.size(); j++) {
+        for(unsigned int i = 0; i < verts.size()-1; i++) {
+            for(unsigned int j = i+1; j < verts.size(); j++) {
                 if(i != j) {
                     ofVec3f& v1 = verts[i];
                     ofVec3f& v2 = verts[j];
@@ -2404,6 +2427,88 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 
 
 
+ofMeshFace::ofMeshFace()
+:bHasNormals(false)
+,bHasColors(false)
+,bHasTexcoords(false)
+,bFaceNormalDirty(false)
+{
+}
+
+const ofVec3f & ofMeshFace::getFaceNormal() const{
+    if(bFaceNormalDirty) calculateFaceNormal();
+    return faceNormal;
+}
+
+void ofMeshFace::calculateFaceNormal() const{
+    ofVec3f U, V;
+
+    U = (vertices[1]-vertices[0]);
+    V = (vertices[2]-vertices[0]);
+
+    faceNormal = U.getCrossed(V);
+    faceNormal.normalize();
+    bFaceNormalDirty = false;
+}
+
+void ofMeshFace::setVertex( int index, const ofVec3f& v ) {
+    vertices[index].set( v );
+    bFaceNormalDirty = true;
+}
+
+const ofVec3f& ofMeshFace::getVertex( int index ) const{
+    return vertices[index];
+}
+
+void ofMeshFace::setNormal( int index, const ofVec3f& n ) {
+    normals[index] = n;
+    bHasNormals = true;
+}
+
+const ofVec3f& ofMeshFace::getNormal( int index ) const{
+    return normals[ index ];
+}
+
+void ofMeshFace::setColor( int index, const ofFloatColor& color ) {
+    colors[index] = color;
+    bHasColors = true;
+}
+
+const ofFloatColor& ofMeshFace::getColor(int index) const{
+    return colors[index];
+}
+
+void ofMeshFace::setTexCoord( int index, const ofVec2f& tCoord ) {
+    texCoords[index] = tCoord;
+    bHasTexcoords = true;
+}
+const ofVec2f& ofMeshFace::getTexCoord( int index ) const{
+    return texCoords[index];
+}
+
+void ofMeshFace::setHasColors( bool bColors ) {
+	bHasColors = bColors;
+}
+
+void ofMeshFace::setHasNormals( bool bNormals ) {
+	bHasNormals = bNormals;
+}
+
+void ofMeshFace::setHasTexcoords( bool bTexcoords ) {
+	bHasTexcoords = bTexcoords;
+}
+
+bool ofMeshFace::hasColors() const{
+	return bHasColors;
+}
+
+bool ofMeshFace::hasNormals() const{
+	return bHasNormals;
+}
+
+bool ofMeshFace::hasTexcoords() const{
+	return bHasTexcoords;
+}
 
 
 

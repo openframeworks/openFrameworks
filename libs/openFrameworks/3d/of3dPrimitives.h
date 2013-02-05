@@ -66,7 +66,7 @@ protected:
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords();
     
-    ofVec4f _texCoords;
+    ofVec4f texCoords;
     bool usingVbo;
     ofPtr<ofMesh>  mesh;
     ofMesh normalsMesh;
@@ -101,9 +101,9 @@ public:
     float getHeight();
     
 protected:
-    float _width;
-    float _height;
-    ofVec2f _resolution;
+    float width;
+    float height;
+    ofVec2f resolution;
 };
 
 class ofSpherePrimitive : public of3dPrimitive {
@@ -121,8 +121,8 @@ public:
     int getResolution();
     
 protected:
-    float _radius;
-    int _resolution;
+    float radius;
+    int resolution;
 };
 
 class ofIcoSpherePrimitive : public of3dPrimitive {
@@ -140,8 +140,8 @@ public:
     int getResolution();
     
 protected:
-    float _radius;
-    int _resolution;
+    float radius;
+    int resolution;
 };
 
 class ofCylinderPrimitive : public of3dPrimitive {
@@ -182,12 +182,12 @@ public:
     float getRadius();
     bool getCapped();
 protected:
-    float _radius;
-    float _height;
-    bool _bCapped;
-    int _strides[3][2];
-    int _vertices[3][2];
-    ofVec3f _resolution;
+    float radius;
+    float height;
+    bool bCapped;
+    int strides[3][2];
+    int vertices[3][2];
+    ofVec3f resolution;
 };
 
 class ofConePrimitive : public of3dPrimitive {
@@ -225,18 +225,18 @@ public:
     float getHeight();
     
 protected:
-    float _radius;
-    float _height;
+    float radius;
+    float height;
     
-    ofVec3f _resolution;
+    ofVec3f resolution;
     
-    int _strides[2][2];
-    int _vertices[2][2];
+    int strides[2][2];
+    int vertices[2][2];
 };
 
 class ofBoxPrimitive : public of3dPrimitive {
 public:
-    
+
     enum BoxSides {
         SIDE_FRONT,
         SIDE_RIGHT,
@@ -246,7 +246,6 @@ public:
         SIDE_BOTTOM,
         SIDES_TOTAL
     };
-    
     ofBoxPrimitive();
     ofBoxPrimitive( float width, float height, float depth, int resWidth=2, int resHeight=2, int resDepth=2 );
     ~ofBoxPrimitive();
@@ -283,11 +282,12 @@ public:
     float getDepth();
     ofVec3f getSize() const;
 protected:
-    ofVec3f _size;
-    ofVec3f _resolution;
+    ofVec3f size;
+    ofVec3f resolution;
     // indices strides for faces //
-    int _strides[6][2];
-    int _vertices[6][2];
+    int strides[6][2];
+    int vertices[6][2];
+
 };
 
 
