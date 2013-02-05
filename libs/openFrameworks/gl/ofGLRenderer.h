@@ -6,7 +6,7 @@
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
-class ofPrimitiveBase;
+class of3dPrimitive;
 
 class ofGLRenderer: public ofBaseRenderer{
 public:
@@ -20,7 +20,7 @@ public:
 	void update();
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw( ofPrimitiveBase& model, ofPolyRenderMode renderType);
+    void draw( of3dPrimitive& model, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);

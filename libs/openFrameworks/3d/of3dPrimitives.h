@@ -23,13 +23,13 @@ enum of3dPrimitiveType {
 };
 
 
-class ofPrimitiveBase : public ofNode {
+class of3dPrimitive : public ofNode {
 public:
-    ofPrimitiveBase();
-    virtual ~ofPrimitiveBase();
+    of3dPrimitive();
+    virtual ~of3dPrimitive();
     
-    ofPrimitiveBase(const ofPrimitiveBase & mom);
-    ofPrimitiveBase & operator=(const ofPrimitiveBase & mom);
+    of3dPrimitive(const of3dPrimitive & mom);
+    of3dPrimitive & operator=(const of3dPrimitive & mom);
 
     void mapTexCoords( float u1, float v1, float u2, float v2 );
     //void setTexCoords( int meshindex, float u1, float v1, float u2, float v2 );
@@ -77,15 +77,14 @@ protected:
     
     ofVec4f _texCoords;
     bool usingVbo;
-    ofPtr<ofMesh>  _mesh;
+    ofPtr<ofMesh>  mesh;
     ofMesh normalsMesh;
     
-    //ofVec3f _resolution;
     vector<ofIndexType> getIndices( int startIndex, int endIndex );
     
 };
 
-class ofPlanePrimitive : public ofPrimitiveBase {
+class ofPlanePrimitive : public of3dPrimitive {
 public:
     ofPlanePrimitive();
     ofPlanePrimitive( float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
@@ -116,7 +115,7 @@ protected:
     ofVec2f _resolution;
 };
 
-class ofSpherePrimitive : public ofPrimitiveBase {
+class ofSpherePrimitive : public of3dPrimitive {
 public:
     ofSpherePrimitive();
     ofSpherePrimitive( float radius, int res, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
@@ -135,7 +134,7 @@ protected:
     int _resolution;
 };
 
-class ofIcoSpherePrimitive : public ofPrimitiveBase {
+class ofIcoSpherePrimitive : public of3dPrimitive {
 public:
     ofIcoSpherePrimitive();
     ofIcoSpherePrimitive( float radius, int iterations );
@@ -154,7 +153,7 @@ protected:
     int _resolution;
 };
 
-class ofCylinderPrimitive : public ofPrimitiveBase {
+class ofCylinderPrimitive : public of3dPrimitive {
 public:
     ofCylinderPrimitive();
     ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, bool bCapped = true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
@@ -200,7 +199,7 @@ protected:
     ofVec3f _resolution;
 };
 
-class ofConePrimitive : public ofPrimitiveBase {
+class ofConePrimitive : public of3dPrimitive {
 public:
     
     ofConePrimitive();
@@ -244,7 +243,7 @@ protected:
     int _vertices[2][2];
 };
 
-class ofBoxPrimitive : public ofPrimitiveBase {
+class ofBoxPrimitive : public of3dPrimitive {
 public:
     
     enum BoxSides {

@@ -128,7 +128,7 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw( ofPrimitiveBase& model, ofPolyRenderMode renderType) {
+void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
     bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glEnable( GL_NORMALIZE );

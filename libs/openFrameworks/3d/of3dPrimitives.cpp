@@ -1,5 +1,5 @@
 //
-//  ofPrimitiveBase.cpp
+//  of3dPrimitive.cpp
 //  openFrameworksLib
 //
 //  Created by Nick Hardeman on 9/14/12.
@@ -9,62 +9,62 @@
 #include "of3dPrimitives.h"
 #include "ofGraphics.h"
 
-ofPrimitiveBase::ofPrimitiveBase()
+of3dPrimitive::of3dPrimitive()
 :usingVbo(true)
-,_mesh(new ofVboMesh)
+,mesh(new ofVboMesh)
 {
     setScale(1.0, 1.0, 1.0);
 }
 
 //----------------------------------------------------------
-ofPrimitiveBase::~ofPrimitiveBase() {
+of3dPrimitive::~of3dPrimitive() {
     
 }
 
 //----------------------------------------------------------
-ofPrimitiveBase::ofPrimitiveBase(const ofPrimitiveBase & mom){
+of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom){
     _texCoords = mom._texCoords;
     usingVbo = mom.usingVbo;
 	if(usingVbo){
-		_mesh = ofPtr<ofMesh>(new ofVboMesh);
+		mesh = ofPtr<ofMesh>(new ofVboMesh);
 	}else{
-		_mesh = ofPtr<ofMesh>(new ofMesh);
+		mesh = ofPtr<ofMesh>(new ofMesh);
 	}
-	*_mesh = *mom._mesh;
+	*mesh = *mom.mesh;
 }
 
 //----------------------------------------------------------
-ofPrimitiveBase & ofPrimitiveBase::operator=(const ofPrimitiveBase & mom){
+of3dPrimitive & of3dPrimitive::operator=(const of3dPrimitive & mom){
 	if(&mom!=this){
 		_texCoords = mom._texCoords;
 		setUseVbo(mom.usingVbo);
-		*_mesh = *mom._mesh;
+		*mesh = *mom.mesh;
 	}
     return *this;
 }
 
 // GETTERS //
 //----------------------------------------------------------
-ofMesh* ofPrimitiveBase::getMeshPtr() {
-    return _mesh.get();
+ofMesh* of3dPrimitive::getMeshPtr() {
+    return mesh.get();
 }
 //----------------------------------------------------------
-ofMesh& ofPrimitiveBase::getMesh() {
-    return *_mesh;
+ofMesh& of3dPrimitive::getMesh() {
+    return *mesh;
 }
 
 //----------------------------------------------------------
-ofVec4f* ofPrimitiveBase::getTexCoordsPtr() {
+ofVec4f* of3dPrimitive::getTexCoordsPtr() {
     return& _texCoords;
 }
 
 //----------------------------------------------------------
-ofVec4f& ofPrimitiveBase::getTexCoords() {
+ofVec4f& of3dPrimitive::getTexCoords() {
     return _texCoords;
 }
 
 //----------------------------------------------------------
-vector<ofIndexType> ofPrimitiveBase::getIndices( int startIndex, int endIndex ) {
+vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) {
     vector<ofIndexType> indices;
     indices.assign( getMesh().getIndices().begin()+startIndex, getMesh().getIndices().begin()+endIndex );
     return indices;
@@ -72,37 +72,37 @@ vector<ofIndexType> ofPrimitiveBase::getIndices( int startIndex, int endIndex ) 
 
 
 //----------------------------------------------------------
-bool ofPrimitiveBase::hasScaling() {
+bool of3dPrimitive::hasScaling() {
     ofVec3f scale = getScale();
     return (scale.x != 1.f || scale.y != 1.f || scale.z != 1.f);
 }
 //----------------------------------------------------------
-bool ofPrimitiveBase::hasNormalsEnabled() {
+bool of3dPrimitive::hasNormalsEnabled() {
     return getMesh().hasNormals();
 }
 
 //----------------------------------------------------------
-void ofPrimitiveBase::enableNormals() {
+void of3dPrimitive::enableNormals() {
     getMesh().enableNormals();
 }
 //----------------------------------------------------------
-void ofPrimitiveBase::enableTextures() {
+void of3dPrimitive::enableTextures() {
     getMesh().enableTextures();
 }
 //----------------------------------------------------------
-void ofPrimitiveBase::enableColors() {
+void of3dPrimitive::enableColors() {
     getMesh().enableColors();
 }
 //----------------------------------------------------------
-void ofPrimitiveBase::disableNormals() {
+void of3dPrimitive::disableNormals() {
     getMesh().disableNormals();
 }
 //----------------------------------------------------------
-void ofPrimitiveBase::disableTextures() {
+void of3dPrimitive::disableTextures() {
     getMesh().disableTextures();
 }
 //----------------------------------------------------------
-void ofPrimitiveBase::disableColors() {
+void of3dPrimitive::disableColors() {
     getMesh().disableColors();
 }
 
@@ -112,12 +112,7 @@ void ofPrimitiveBase::disableColors() {
 // SETTERS //
 
 //----------------------------------------------------------
-//void ofPrimitiveBase::setResolution( int resX, int resY, int resZ ) {
-//    _resolution.set( resX, resY, resZ );
-//}
-
-//----------------------------------------------------------
-void ofPrimitiveBase::mapTexCoords( float u1, float v1, float u2, float v2 ) {
+void of3dPrimitive::mapTexCoords( float u1, float v1, float u2, float v2 ) {
     //setTexCoords( u1, v1, u2, v2 );
     ofVec4f prevTcoord = getTexCoords();
     
@@ -133,7 +128,7 @@ void ofPrimitiveBase::mapTexCoords( float u1, float v1, float u2, float v2 ) {
 }
 
 //----------------------------------------------------------
-void ofPrimitiveBase::mapTexCoordsFromTexture( ofTexture& inTexture ) {
+void of3dPrimitive::mapTexCoordsFromTexture( ofTexture& inTexture ) {
     bool bNormalized = true;
 #ifndef TARGET_OPENGLES
     bNormalized = (inTexture.getTextureData().textureTarget!=GL_TEXTURE_RECTANGLE_ARB);
@@ -150,7 +145,7 @@ void ofPrimitiveBase::mapTexCoordsFromTexture( ofTexture& inTexture ) {
 }
 
 //----------------------------------------------------------
-void ofPrimitiveBase::normalizeAndApplySavedTexCoords() {
+void of3dPrimitive::normalizeAndApplySavedTexCoords() {
     ofVec4f tcoords = getTexCoords();
     // when a new mesh is created, it uses normalized tex coords, we need to reset them
     // but save the ones used previously //
@@ -162,27 +157,27 @@ void ofPrimitiveBase::normalizeAndApplySavedTexCoords() {
 
 
 //--------------------------------------------------------------
-void ofPrimitiveBase::drawVertices() {
+void of3dPrimitive::drawVertices() {
 	draw(OF_MESH_POINTS);
 }
 
 //--------------------------------------------------------------
-void ofPrimitiveBase::drawWireframe() {
+void of3dPrimitive::drawWireframe() {
 	draw(OF_MESH_WIREFRAME);
 }
 
 //--------------------------------------------------------------
-void ofPrimitiveBase::drawFaces() {
+void of3dPrimitive::drawFaces() {
 	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
-void ofPrimitiveBase::draw() {
+void of3dPrimitive::draw() {
 	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
-void ofPrimitiveBase::draw(ofPolyRenderMode renderType) {
+void of3dPrimitive::draw(ofPolyRenderMode renderType) {
     // ofNode applies all of the tranformations needed, included scale //
     ofNode::transformGL();
     ofGetCurrentRenderer()->draw(*this, renderType);
@@ -190,7 +185,7 @@ void ofPrimitiveBase::draw(ofPolyRenderMode renderType) {
 }
 
 //--------------------------------------------------------------
-void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
+void of3dPrimitive::drawNormals(float length, bool bFaceNormals) {
     ofNode::transformGL();
     
     if(getMesh().usingNormals()) {
@@ -227,7 +222,7 @@ void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
         }
         normalsMesh.draw();
     } else {
-        ofLog(OF_LOG_WARNING, "ofPrimitiveBase :: drawNormals()") << " : mesh normals are disabled";
+        ofLog(OF_LOG_WARNING, "of3dPrimitive :: drawNormals()") << " : mesh normals are disabled";
     }
     
     
@@ -235,14 +230,14 @@ void ofPrimitiveBase::drawNormals(float length, bool bFaceNormals) {
 }
 
 //--------------------------------------------------------------
-void ofPrimitiveBase::drawAxes(float a_size) {
+void of3dPrimitive::drawAxes(float a_size) {
     ofNode::transformGL();
     ofDrawAxis(a_size);
     ofNode::restoreTransformGL();
 }
 
-
-void ofPrimitiveBase::setUseVbo(bool useVbo){
+//--------------------------------------------------------------
+void of3dPrimitive::setUseVbo(bool useVbo){
 	if(useVbo!=usingVbo){
 		ofPtr<ofMesh> newMesh;
 		if(useVbo){
@@ -250,13 +245,14 @@ void ofPrimitiveBase::setUseVbo(bool useVbo){
 		}else{
 			newMesh = ofPtr<ofMesh>(new ofMesh);
 		}
-		*newMesh = *_mesh;
-		_mesh = newMesh;
+		*newMesh = *mesh;
+		mesh = newMesh;
 	}
 	usingVbo = useVbo;
 }
 
-bool ofPrimitiveBase::isUsingVbo(){
+//--------------------------------------------------------------
+bool of3dPrimitive::isUsingVbo(){
 	return usingVbo;
 }
 
@@ -284,8 +280,7 @@ void ofPlanePrimitive::set(float width, float height, int columns, int rows, ofP
     _resolution.set( columns, rows );
     
     getMesh().clear();
-    //_mesh = ofGetPlaneMesh( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
-    *_mesh = ofMesh::plane( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
+    *mesh = ofMesh::plane( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
     
     normalizeAndApplySavedTexCoords();
     
@@ -397,14 +392,13 @@ void ofSpherePrimitive::set( float radius, int res, ofPrimitiveMode mode ) {
     _radius     = radius;
     _resolution = res;
     getMesh().clear();
-    *_mesh = ofMesh::sphere( getRadius(), getResolution(), mode );
+    *mesh = ofMesh::sphere( getRadius(), getResolution(), mode );
     
     normalizeAndApplySavedTexCoords();
 }
 
 //----------------------------------------------------------
 void ofSpherePrimitive::setResolution( int res ) {
-    //ofPrimitiveBase::setResolution(resX, resY, resZ);
     _resolution             = res;
     ofPrimitiveMode mode    = OF_PRIMITIVE_TRIANGLE_STRIP;
     
@@ -471,7 +465,7 @@ void ofIcoSpherePrimitive::setResolution( int iterations ) {
     
     getMesh().clear();
     
-    *_mesh = ofMesh::icosphere( getRadius(), getResolution() );
+    *mesh = ofMesh::icosphere( getRadius(), getResolution() );
     normalizeAndApplySavedTexCoords();
 }
 
@@ -519,7 +513,6 @@ void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, in
     _radius = radius;
     _height = height;
     _bCapped = bCapped;
-    //ofPrimitiveBase::setResolution( radiusSegments, heightSegments, numCapSegments );
     _resolution.set( radiusSegments, heightSegments, capSegments );
     
     int resX = getResolution().x;
@@ -557,8 +550,7 @@ void ofCylinderPrimitive::set(float radius, float height, int radiusSegments, in
     
     
     getMesh().clear();
-    //_mesh = ofGetCylinderMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
-    *_mesh = ofMesh::cylinder( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
+    *mesh = ofMesh::cylinder( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
     
     normalizeAndApplySavedTexCoords();
     
@@ -645,7 +637,7 @@ void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
 
 //--------------------------------------------------------------
 vector<ofIndexType> ofCylinderPrimitive::getTopCapIndices() {
-    return ofPrimitiveBase::getIndices( _strides[0][0], _strides[0][0] + _strides[0][1] );
+    return of3dPrimitive::getIndices( _strides[0][0], _strides[0][0] + _strides[0][1] );
 }
 
 //--------------------------------------------------------------
@@ -663,7 +655,7 @@ vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndices( _strides[1][0], _strides[1][0] + _strides[1][1] );
+    return of3dPrimitive::getIndices( _strides[1][0], _strides[1][0] + _strides[1][1] );
 }
 
 //--------------------------------------------------------------
@@ -681,7 +673,7 @@ vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndices( _strides[2][0], _strides[2][0] + _strides[2][1] );
+    return of3dPrimitive::getIndices( _strides[2][0], _strides[2][0] + _strides[2][1] );
 }
 
 //--------------------------------------------------------------
@@ -776,8 +768,7 @@ void ofConePrimitive::set( float radius, float height, int radiusSegments, int h
     _vertices[1][1] = getResolution().x * getResolution().z;
     
     getMesh().clear();
-    //_mesh = ofGetConeMesh( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
-    *_mesh = ofMesh::cone( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
+    *mesh = ofMesh::cone( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
     
     normalizeAndApplySavedTexCoords();
     
@@ -853,7 +844,7 @@ vector<ofIndexType> ofConePrimitive::getConeIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndices(_strides[0][0], _strides[0][0]+_strides[0][1]);
+    return of3dPrimitive::getIndices(_strides[0][0], _strides[0][0]+_strides[0][1]);
 }
 
 //--------------------------------------------------------------
@@ -875,7 +866,7 @@ vector<ofIndexType> ofConePrimitive::getCapIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
     }
-    return ofPrimitiveBase::getIndices( _strides[1][0], _strides[1][0] + _strides[1][1] );
+    return of3dPrimitive::getIndices( _strides[1][0], _strides[1][0] + _strides[1][1] );
 }
 
 //--------------------------------------------------------------
@@ -991,9 +982,8 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     _vertices[SIDE_BOTTOM][0] = _vertices[SIDE_TOP][0] + _vertices[SIDE_TOP][1];
     _vertices[SIDE_BOTTOM][1] = resZ * resX;
     
-    _mesh->clear();
-    //_mesh = ofGetBoxMesh( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
-    *_mesh = ofMesh::box( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
+    mesh->clear();
+    *mesh = ofMesh::box( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
     
     normalizeAndApplySavedTexCoords();
 }
