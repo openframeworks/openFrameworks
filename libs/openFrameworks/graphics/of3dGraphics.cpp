@@ -11,6 +11,16 @@
 #include "of3dPrimitives.h"
 #include <map>
 
+
+enum of3dPrimitiveType {
+	OF_3D_PRIMITIVE_PLANE,
+    OF_3D_PRIMITIVE_SPHERE,
+    OF_3D_PRIMITIVE_ICO_SPHERE,
+	OF_3D_PRIMITIVE_BOX,
+	OF_3D_PRIMITIVE_CONE,
+    OF_3D_PRIMITIVE_CYLINDER
+};
+
 //----------------------------------------------------------
 static map<of3dPrimitiveType, of3dPrimitive*>& getCached3dPrimitives() {
     static map<of3dPrimitiveType, of3dPrimitive*>* primitives = new map<of3dPrimitiveType, of3dPrimitive*>;
