@@ -4,7 +4,6 @@
 void testApp::setup(){
 
 	ofSetVerticalSync(true);
-	ofSetFrameRate(60);
 	ofBackground(20);
     
     // GL_REPEAT for texture wrap only works with NON-ARB textures //
@@ -66,7 +65,7 @@ void testApp::update() {
                             cos(ofGetElapsedTimef()*.2) * ofGetWidth()
     );
     
-	ofSetWindowTitle("Framerate: "+ofToString(ofGetFrameRate(), 0));
+	//ofSetWindowTitle("Framerate: "+ofToString(ofGetFrameRate(), 0));
     if(mode == 2 || ofGetElapsedTimef() < 10) {
         vidGrabber.update();
     }
@@ -106,7 +105,6 @@ void testApp::draw() {
     plane.rotate(spinY, 0, 1.0, 0.0);
     
     
-    ofMesh deformPlane;
     if(mode == 3) {
         deformPlane = plane.getMesh();
         // x = columns, y = rows //
@@ -161,10 +159,10 @@ void testApp::draw() {
         if(mode == 3) {
             box.transformGL();
             for(int i = 0; i < ofBoxPrimitive::SIDES_TOTAL; i++ ) {
-                glPushMatrix();
+                ofPushMatrix();
                 ofTranslate( boxSides[i].getNormal(0) * sin(ofGetElapsedTimef()) * 50  );
                 boxSides[i].draw();
-                glPopMatrix();
+                ofPopMatrix();
             }
             box.restoreTransformGL();
         } else {
@@ -189,10 +187,7 @@ void testApp::draw() {
     sphere.rotate(spinX, 1.0, 0.0, 0.0);
     sphere.rotate(spinY, 0, 1.0, 0.0);
     
-    
-    vector<ofMeshFace> triangles;
     if(mode == 3) {
-        // to get unique triangles, you have to use triangles mode //
         sphere.setMode( OF_PRIMITIVE_TRIANGLES );
         triangles = sphere.getMesh().getUniqueFaces();
     }
@@ -206,8 +201,8 @@ void testApp::draw() {
             ofVec3f faceNormal;
             for(int i = 0; i < triangles.size(); i++ ) {
                 // store the face normal here.
-                // we change the vertices, which makes the face normal dirty and will
-                // be recalculated every time that we call getFaceNormal //
+                // we change the vertices, which makes the face normal change
+                // every time that we call getFaceNormal //
                 faceNormal = triangles[i].getFaceNormal();
                 for(int j = 0; j < 3; j++ ) {
                     triangles[i].setVertex( j, triangles[i].getVertex(j) + faceNormal * strength);
@@ -495,10 +490,18 @@ void testApp::keyPressed(int key) {
         case OF_KEY_RIGHT:
             mode++;
             if(mode > 3) mode = 0;
+            if(mode==3){
+                // to get unique triangles, you have to use triangles mode //
+                sphere.setMode( OF_PRIMITIVE_TRIANGLES );
+            }
             break;
         case OF_KEY_LEFT:
             mode--;
             if(mode < 0) mode = 3;
+            if(mode==3){
+                // to get unique triangles, you have to use triangles mode //
+                sphere.setMode( OF_PRIMITIVE_TRIANGLES );
+            }
             break;
         case 'a':
             bDrawAxes = !bDrawAxes;
