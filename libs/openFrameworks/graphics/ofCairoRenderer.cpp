@@ -389,7 +389,7 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::draw( ofPrimitiveBase& model, ofPolyRenderMode renderType  ) {
+void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
     
     if(model.hasScaling()) {
         ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
