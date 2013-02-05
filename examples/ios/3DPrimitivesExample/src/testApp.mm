@@ -85,7 +85,7 @@ void testApp::draw(){
     
     ofSetColor(180);
     ofNoFill();
-    ofSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth());
+    ofDrawSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth());
     
     if(mode == 1 || mode == 2) texture.getTextureReference().bind();
     
