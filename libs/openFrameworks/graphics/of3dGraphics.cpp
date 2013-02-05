@@ -101,25 +101,25 @@ ofVec2f ofGetPlaneResolution() {
 }
 
 //----------------------------------------------------------
-void ofPlane(float x, float y, float width, float height) {
-    ofPlane( x, y, 0, width, height);
+void ofDrawPlane(float x, float y, float width, float height) {
+    ofDrawPlane( x, y, 0, width, height);
 }
 
 //----------------------------------------------------------
-void ofPlane(float x, float y, float z, float width, float height) {
+void ofDrawPlane(float x, float y, float z, float width, float height) {
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofPlane(width, height);
+    ofDrawPlane(width, height);
     ofPopMatrix();
 }
 
 //----------------------------------------------------------
-void ofPlane(ofPoint& position, float width, float height) {
-    ofPlane(position.x,position.y,position.z,width, height);
+void ofDrawPlane(ofPoint& position, float width, float height) {
+    ofDrawPlane(position.x,position.y,position.z,width, height);
 }
 
 //----------------------------------------------------------
-void ofPlane( float width, float height ) {
+void ofDrawPlane( float width, float height ) {
     of3dPrimitive& plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE );
     plane.setScale( width, height, 1.0 );
     renderCached3dPrimitive( plane );
@@ -200,25 +200,25 @@ int ofGetIcoSphereResolution() {
 }
 
 //----------------------------------------------------------
-void ofIcoSphere(float x, float y, float z, float radius) {
+void ofDrawIcoSphere(float x, float y, float z, float radius) {
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofIcoSphere(radius);
+    ofDrawIcoSphere(radius);
     ofPopMatrix();
 }
 
 //----------------------------------------------------------
-void ofIcoSphere(float x, float y, float radius) {
-    ofIcoSphere(x, y, 0, radius);
+void ofDrawIcoSphere(float x, float y, float radius) {
+    ofDrawIcoSphere(x, y, 0, radius);
 }
 
 //----------------------------------------------------------
-void ofIcoSphere(const ofPoint& position, float radius) {
-    ofIcoSphere(position.x,position.y,position.z,radius);
+void ofDrawIcoSphere(const ofPoint& position, float radius) {
+    ofDrawIcoSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------------------------
-void ofIcoSphere(float radius) {
+void ofDrawIcoSphere(float radius) {
     of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE );
     sphere.setScale( radius );
     renderCached3dPrimitive( sphere );
@@ -239,25 +239,25 @@ ofVec3f ofGetCylinderResolution() {
 }
 
 //----------------------------------------------------------
-void ofCylinder(float x, float y, float radius, float height) {
-    ofCylinder( x, y, 0, radius, height );
+void ofDrawCylinder(float x, float y, float radius, float height) {
+    ofDrawCylinder( x, y, 0, radius, height );
 }
 
 //----------------------------------------------------------
-void ofCylinder(float x, float y, float z, float radius, float height) {
+void ofDrawCylinder(float x, float y, float z, float radius, float height) {
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofCylinder(radius, height);
+    ofDrawCylinder(radius, height);
     ofPopMatrix();
 }
 
 //----------------------------------------------------------
-void ofCylinder(const ofPoint& position, float radius, float height) {
-    ofCylinder( position.x, position.y, position.z, radius, height );
+void ofDrawCylinder(const ofPoint& position, float radius, float height) {
+    ofDrawCylinder( position.x, position.y, position.z, radius, height );
 }
 
 //----------------------------------------------------------
-void ofCylinder(float radius, float height) {
+void ofDrawCylinder(float radius, float height) {
     of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER );
     mesh.setScale( radius, height, radius );
     renderCached3dPrimitive( mesh );

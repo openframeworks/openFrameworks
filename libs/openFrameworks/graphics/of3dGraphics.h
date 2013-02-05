@@ -22,10 +22,10 @@
 // Grid Plane - drawn from the center //
 void ofSetPlaneResolution( int columns, int rows );
 ofVec2f ofGetPlaneResolution();
-void ofPlane(float x, float y, float width, float height);
-void ofPlane(float x, float y, float z, float width, float height);
-void ofPlane(ofPoint& position, float width, float height);
-void ofPlane( float width, float height );
+void ofDrawPlane(float x, float y, float width, float height);
+void ofDrawPlane(float x, float y, float z, float width, float height);
+void ofDrawPlane(ofPoint& position, float width, float height);
+void ofDrawPlane( float width, float height );
 
 // UV Sphere
 void ofSetSphereResolution(int res);
@@ -45,18 +45,18 @@ OF_DEPRECATED_MSG("Use ofDrawSphere instead.", void ofSphere(float radius) );
 // Ico Sphere
 void ofSetIcoSphereResolution( int res );
 int ofGetIcoSphereResolution();
-void ofIcoSphere(float x, float y, float z, float radius);
-void ofIcoSphere(float x, float y, float radius);
-void ofIcoSphere(const ofPoint& position, float radius);
-void ofIcoSphere(float radius);
+void ofDrawIcoSphere(float x, float y, float z, float radius);
+void ofDrawIcoSphere(float x, float y, float radius);
+void ofDrawIcoSphere(const ofPoint& position, float radius);
+void ofDrawIcoSphere(float radius);
 
 // Cylinder //
 void ofSetCylinderResolution( int radiusSegments, int heightSegments, int capSegments=2 );
 ofVec3f ofGetCylinderResolution();
-void ofCylinder(float x, float y, float radius, float height);
-void ofCylinder(float x, float y, float z, float radius, float height);
-void ofCylinder(const ofPoint& position, float radius, float height);
-void ofCylinder(float radius, float height);
+void ofDrawCylinder(float x, float y, float radius, float height);
+void ofDrawCylinder(float x, float y, float z, float radius, float height);
+void ofDrawCylinder(const ofPoint& position, float radius, float height);
+void ofDrawCylinder(float radius, float height);
 
 // Cone
 void ofSetConeResolution( int radiusSegments, int heightSegments, int capSegments=2);
