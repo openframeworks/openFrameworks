@@ -64,6 +64,7 @@ public:
 	void rotateY(float degrees);
 	void rotateZ(float degrees);
 	void rotate(float degrees);
+	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
 	void loadMatrix (const ofMatrix4x4 & m);
 	void loadMatrix (const float * m);

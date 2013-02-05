@@ -8,10 +8,7 @@
  */
 
 // TODO: 
-// add off-axis projection options (eventually tile render support)
-// fix ortho projection
-// add toWorld, toScreen methods
-// add get/set projection matrix
+// add set projection matrix
 // support for left handed or right handed?
 
 #pragma once
@@ -26,6 +23,7 @@
 class ofCamera : public ofNode {
 public:
 	ofCamera();
+	virtual ~ofCamera(){};
 	
 	// projection properties:
 	void setFov(float f);
@@ -55,15 +53,15 @@ public:
 	virtual void end();
 	
 	// for hardcore peeps, access to the projection matrix
-	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());	
-	ofMatrix4x4 getModelViewMatrix();
-	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());
+	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofMatrix4x4 getModelViewMatrix() const;
+	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
 	// convert between spaces
-	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()); 
-	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport());
-	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport());
-	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport());
+	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	
 	
 protected:
