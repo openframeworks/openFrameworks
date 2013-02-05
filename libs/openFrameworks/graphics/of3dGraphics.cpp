@@ -130,7 +130,7 @@ int ofGetSphereResolution() {
 }
 
 //----------------------------------------------------------
-void ofSphere(float x, float y, float z, float radius) {
+void ofDrawSphere(float x, float y, float z, float radius) {
     ofPushMatrix();
     ofTranslate(x, y, z);
     ofSphere(radius);
@@ -138,20 +138,41 @@ void ofSphere(float x, float y, float z, float radius) {
 }
 
 //----------------------------------------------------------
-void ofSphere(float x, float y, float radius) {
+void ofDrawSphere(float x, float y, float radius) {
     ofSphere(x, y, 0, radius);
 }
 
 //----------------------------------------------------------
-void ofSphere(const ofPoint& position, float radius) {
+void ofDrawSphere(const ofPoint& position, float radius) {
     ofSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------------------------
-void ofSphere(float radius) {
+void ofDrawSphere(float radius) {
     of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE );
     sphere.setScale( radius, radius, radius );
     renderCached3dPrimitive( sphere );
+}
+
+// Deprecated methods - for compatability with previous versions of OF //
+//----------------------------------------------------------
+void ofSphere(float x, float y, float z, float radius) {
+    ofDrawSphere(x, y, z, radius);
+}
+
+//----------------------------------------------------------
+void ofSphere(float x, float y, float radius) {
+    ofDrawSphere(x, y, 0, radius);
+}
+
+//----------------------------------------------------------
+void ofSphere(const ofPoint& position, float radius) {
+    ofDrawSphere(position.x,position.y,position.z,radius);
+}
+
+//----------------------------------------------------------
+void ofSphere(float radius) {
+    ofDrawSphere(radius);
 }
 
 
@@ -248,7 +269,7 @@ ofVec3f ofGetConeResolution() {
 }
 
 //----------------------------------------------------------
-void ofCone(float x, float y, float z, float radius, float height) {
+void ofDrawCone(float x, float y, float z, float radius, float height) {
     ofPushMatrix();
     ofTranslate(x, y, z);
     ofCone(radius, height);
@@ -256,20 +277,40 @@ void ofCone(float x, float y, float z, float radius, float height) {
 }
 
 //----------------------------------------------------------
-void ofCone(float x, float y, float radius, float height) {
+void ofDrawCone(float x, float y, float radius, float height) {
     ofCone( x, y, 0, radius, height );
 }
 
 //----------------------------------------------------------
-void ofCone(const ofPoint& position, float radius, float height) {
+void ofDrawCone(const ofPoint& position, float radius, float height) {
     ofCone( position.x, position.y, position.z, radius, height );
 }
 
 //----------------------------------------------------------
-void ofCone(float radius, float height) {
+void ofDrawCone(float radius, float height) {
     of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE );
     mesh.setScale( radius, height, radius );
     renderCached3dPrimitive( mesh );
+}
+
+//----------------------------------------------------------
+void ofCone(float x, float y, float z, float radius, float height) {
+    ofDrawCone(x, y, z, radius, height);
+}
+
+//----------------------------------------------------------
+void ofCone(float x, float y, float radius, float height) {
+    ofDrawCone( x, y, 0, radius, height );
+}
+
+//----------------------------------------------------------
+void ofCone(const ofPoint& position, float radius, float height) {
+    ofDrawCone( position.x, position.y, position.z, radius, height );
+}
+
+//----------------------------------------------------------
+void ofCone(float radius, float height) {
+    ofDrawCone(radius, height );
 }
 
 
@@ -294,7 +335,7 @@ ofVec3f ofGetBoxResolution() {
 }
 
 //----------------------------------------------------------
-void ofBox( float x, float y, float z, float width, float height, float depth) {
+void ofDrawBox( float x, float y, float z, float width, float height, float depth) {
     ofPushMatrix();
     ofTranslate(x, y, z);
     ofBox( width, height, depth );
@@ -302,30 +343,61 @@ void ofBox( float x, float y, float z, float width, float height, float depth) {
 }
 
 //----------------------------------------------------------
-void ofBox(float x, float y, float z, float size) {
+void ofDrawBox(float x, float y, float z, float size) {
     ofBox( x, y, z, size, size, size );
 }
 
 //----------------------------------------------------------
-void ofBox(const ofPoint& position, float width, float height, float depth) {
+void ofDrawBox(const ofPoint& position, float width, float height, float depth) {
     ofBox( position.x, position.y, position.z, width, height, depth );
 }
 
 //----------------------------------------------------------
-void ofBox(const ofPoint& position, float size) {
+void ofDrawBox(const ofPoint& position, float size) {
     ofBox( position.x, position.y, position.z, size, size, size );
 }
 
 //----------------------------------------------------------
-void ofBox(float size) {
+void ofDrawBox(float size) {
     ofBox( size, size, size );
 }
 
 //----------------------------------------------------------
-void ofBox( float width, float height, float depth ) {
+void ofDrawBox( float width, float height, float depth ) {
     of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX );
     mesh.setScale( width, height, depth );
     renderCached3dPrimitive( mesh );
+}
+
+// deprecated methods //
+//----------------------------------------------------------
+void ofBox( float x, float y, float z, float width, float height, float depth) {
+    ofDrawBox(x,y,z,width,height,depth);
+}
+
+//----------------------------------------------------------
+void ofBox(float x, float y, float z, float size) {
+    ofDrawBox( x, y, z, size, size, size );
+}
+
+//----------------------------------------------------------
+void ofBox(const ofPoint& position, float width, float height, float depth) {
+    ofDrawBox( position.x, position.y, position.z, width, height, depth );
+}
+
+//----------------------------------------------------------
+void ofBox(const ofPoint& position, float size) {
+    ofDrawBox( position.x, position.y, position.z, size, size, size );
+}
+
+//----------------------------------------------------------
+void ofBox(float size) {
+    ofDrawBox( size, size, size );
+}
+
+//----------------------------------------------------------
+void ofBox( float width, float height, float depth ) {
+    ofDrawBox(width,height,depth);
 }
 
 

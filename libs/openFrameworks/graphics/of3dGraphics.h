@@ -30,10 +30,17 @@ void ofPlane( float width, float height );
 // UV Sphere
 void ofSetSphereResolution(int res);
 int ofGetSphereResolution();
-void ofSphere(float x, float y, float radius);
-void ofSphere(float x, float y, float z, float radius);
-void ofSphere(const ofPoint& position, float radius);
-void ofSphere(float radius);
+void ofDrawSphere(float x, float y, float radius);
+void ofDrawSphere(float x, float y, float z, float radius);
+void ofDrawSphere(const ofPoint& position, float radius);
+void ofDrawSphere(float radius);
+
+// Deprecated Methods //
+OF_DEPRECATED_MSG("Use ofDrawSphere instead.", void ofSphere(float x, float y, float radius) );
+OF_DEPRECATED_MSG("Use ofDrawSphere instead.", void ofSphere(float x, float y, float z, float radius) );
+OF_DEPRECATED_MSG("Use ofDrawSphere instead.", void ofSphere(const ofPoint& position, float radius) );
+OF_DEPRECATED_MSG("Use ofDrawSphere instead.", void ofSphere(float radius) );
+
 
 // Ico Sphere
 void ofSetIcoSphereResolution( int res );
@@ -54,21 +61,35 @@ void ofCylinder(float radius, float height);
 // Cone
 void ofSetConeResolution( int radiusSegments, int heightSegments, int capSegments=2);
 ofVec3f ofGetConeResolution();
-void ofCone(float x, float y, float z, float radius, float height);
-void ofCone(float x, float y, float radius, float height);
-void ofCone(const ofPoint& position, float radius, float height);
-void ofCone(float radius, float height);
+void ofDrawCone(float x, float y, float z, float radius, float height);
+void ofDrawCone(float x, float y, float radius, float height);
+void ofDrawCone(const ofPoint& position, float radius, float height);
+void ofDrawCone(float radius, float height);
+
+// Deprecated Methods //
+OF_DEPRECATED_MSG("Use ofDrawCone instead.", void ofCone(float x, float y, float z, float radius, float height) );
+OF_DEPRECATED_MSG("Use ofDrawCone instead.", void ofCone(float x, float y, float radius, float height) );
+OF_DEPRECATED_MSG("Use ofDrawCone instead.", void ofCone(const ofPoint& position, float radius, float height) );
+OF_DEPRECATED_MSG("Use ofDrawCone instead.", void ofCone(float radius, float height) );
 
 // Box
 void ofSetBoxResolution( int res );
 void ofSetBoxResolution( int resWidth, int resHeight, int resDepth );
 ofVec3f ofGetBoxResolution();
-void ofBox( float x, float y, float z, float width, float height, float depth);
-void ofBox(float x, float y, float z, float size);
-void ofBox(const ofPoint& position, float width, float height, float depth);
-void ofBox(const ofPoint& position, float size);
-void ofBox(float size);
-void ofBox( float width, float height, float depth );
+void ofDrawBox( float x, float y, float z, float width, float height, float depth);
+void ofDrawBox(float x, float y, float z, float size);
+void ofDrawBox(const ofPoint& position, float width, float height, float depth);
+void ofDrawBox(const ofPoint& position, float size);
+void ofDrawBox(float size);
+void ofDrawBox( float width, float height, float depth );
+
+// deprecated methods //
+OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox( float x, float y, float z, float width, float height, float depth) );
+OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox(float x, float y, float z, float size) );
+OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox(const ofPoint& position, float width, float height, float depth) );
+OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox(const ofPoint& position, float size) );
+OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox(float size) );
+OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox( float width, float height, float depth ) );
 
 
 
