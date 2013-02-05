@@ -197,7 +197,7 @@ void testApp::draw() {
         ofSetColor(255);
         if(mode == 3) {
             float angle = ofGetElapsedTimef()*3.2;
-            float strength = (sin( angle+.25 )) * .5f * 100.f;
+            float strength = (sin( angle+.25 )) * .5f * 5.f;
             ofVec3f faceNormal;
             for(int i = 0; i < triangles.size(); i++ ) {
                 // store the face normal here.
