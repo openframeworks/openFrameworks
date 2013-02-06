@@ -1,8 +1,8 @@
-<panel>
-    <bFill>1</bFill>
+<group>
+    <fill>1</fill>
     <radius>140</radius>
     <center>512, 384</center>
     <color>100, 100, 140, 255</color>
-    <circleRes>5</circleRes>
-    <screenSize>1024x768</screenSize>
-</panel>
+    <circle_res>5</circle_res>
+    <screen_size>1024x768</screen_size>
+</group>
