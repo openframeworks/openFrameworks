@@ -246,12 +246,14 @@ public class OFAndroid {
 		Log.i("OF","onResume");
 		enableTouchEvents();
         mGLView.onResume();
-
+		
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onResume();
 		}
 		
         onResume();
+        
+        if(OFAndroid.orientation!=-1) OFAndroid.setScreenOrientation(OFAndroid.orientation);
 		
 		if(wl!=null) lockScreenSleep();
 	}
@@ -512,7 +514,10 @@ public class OFAndroid {
     	//ofActivity.getWindow().setAttributes(attrs);
     }
     
+    
+    private static int orientation=-1;
     public static void setScreenOrientation(int orientation){
+    	OFAndroid.orientation = orientation;
     	switch(orientation){
     	case 0:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

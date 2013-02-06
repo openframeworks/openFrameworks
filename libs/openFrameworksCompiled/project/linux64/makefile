@@ -98,7 +98,7 @@ endif
 OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
+INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco | grep -v glew)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 INCLUDES_FLAGS += -I../../../poco/include
 ifeq ($(ARCH),android)
@@ -114,7 +114,7 @@ CFLAGS += $(CORE_INCLUDE_FLAGS)
 
 
 ifneq ($(ARCH),android)
-	CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+	CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev glew --cflags)
 	#check if gtk exists and add it
 	GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 	ifeq ($(GTK),0)
