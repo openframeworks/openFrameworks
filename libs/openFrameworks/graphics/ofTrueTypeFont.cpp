@@ -15,6 +15,7 @@
 
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -192,6 +193,88 @@ bool compare_cps(const charProps & c1, const charProps & c2){
 	else return c1.tH > c2.tH;
 }
 
+
+#ifdef TARGET_OSX
+static string osxFontPathByName( string fontname ){
+    FSRef ref;
+    unsigned char path[2048];
+	
+    CFStringRef  cfFontName;
+    ATSFontRef   atsFontRef;
+	
+	
+    if( fontname == "" )
+        return "";
+	
+    cfFontName = CFStringCreateWithCString( kCFAllocatorDefault, fontname.c_str(), kCFStringEncodingUTF8 );
+	
+    atsFontRef = ATSFontFindFromName( cfFontName, kATSOptionFlagsIncludeDisabledMask );
+	
+    if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL ){
+        atsFontRef = ATSFontFamilyFindFromName( cfFontName, kATSOptionFlagsDefault );
+		
+        if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
+        {
+            atsFontRef = ATSFontFindFromPostScriptName( cfFontName, kATSOptionFlagsDefault );
+			
+            if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
+            {
+                ofLogError() << "couldn't find " << fontname;
+                CFRelease( cfFontName );
+                return "";
+            }
+        }
+    }
+    CFRelease( cfFontName );
+	
+    if (ATSFontGetFileReference( atsFontRef, &ref ) != noErr){
+        ofLogError() << "couldn't get file ref for " << fontname ;
+        return "";
+    }
+	
+    if (FSRefMakePath(&ref, path, sizeof(path)) != noErr){
+        ofLogError(  "failure when getting path from FSRef" );
+        return "";
+    }
+	
+	
+    return (char*)path;
+}
+#endif
+
+
+#ifdef TARGET_LINUX
+static string linuxFontPathByName(string fontname){
+	string filename;
+	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
+	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
+	if(!ret){
+		ofLogError() << "couldn't find font file or system font with name " << fontname;
+		return false;
+	}
+	FcDefaultSubstitute(pattern);
+	FcResult result;
+	FcPattern * fontMatch=NULL;
+	if(fontSet==0){
+		fontMatch = FcFontMatch(0,pattern,&result);
+	}else{
+		fontMatch = FcFontSetMatch(0, &fontSet, 1, pattern, &result);
+	}
+	if(!fontMatch){
+		ofLogError() << "couldn't match font file or system font with name " << fontname;
+		return false;
+	}
+	FcChar8	*file;
+	if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
+		filename = (const char*)file;
+	}else{
+		ofLogError() << "couldn't find font match for " << fontname;
+		return false;
+	}
+	return filename;
+}
+#endif
+
 bool ofTrueTypeFont::initLibraries(){
 	if(!librariesInitialized){
 	    FT_Error err;
@@ -201,19 +284,22 @@ bool ofTrueTypeFont::initLibraries(){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error initializing freetype lib: FT_Error = %d", err);
 			return false;
 		}
-
+#ifdef TARGET_LINUX
 		FcBool result = FcInit();
 		if(!result){
 			return false;
 		}
+#endif
 		librariesInitialized = true;
 	}
     return true;
 }
 
 void ofTrueTypeFont::finishLibraries(){
-	if(!librariesInitialized){
+	if(librariesInitialized){
+#ifdef TARGET_LINUX
 		FcFini();
+#endif
 		FT_Done_FreeType(library);
 	}
 }
@@ -266,50 +352,33 @@ void ofTrueTypeFont::reloadTextures(){
 static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string & filename){
 	filename = ofToDataPath(fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
+	int fontID = 0;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
-		FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());//FcPatternBuild (0, FC_FAMILY, FcTypeString, filename.c_str(), (char *) 0);
-		FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
-		if(!ret){
-			ofLogError() << "couldn't find font file or system font with name " << fontname;
-			return false;
+		filename = linuxFontPathByName(fontname);
+#else
+		if(fontname==OF_TTF_SANS){
+			fontname = "Helvetica";
+			fontID = 2;
+		}else if(fontname==OF_TTF_SERIF){
+			fontname = "Times New Roman";
+		}else if(fontname==OF_TTF_MONO){
+			fontname = "Menlo Regular";
 		}
-		FcDefaultSubstitute(pattern);
-		FcResult result;
-		FcPattern * fontMatch = FcFontMatch(0,pattern,&result);
-		if(!fontMatch){
-			ofLogError() << "couldn't find font file or system font with name " << fontname;
-			return false;
-		}
-		FcChar8	*file;
-		if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
-			filename = (const char*)file;
-		}else{
-			ofLogError() << "couldn't find font match for " << fontname;
-			return false;
-		}
-#elif defined(TARGET_OSX)
-		if(ofToLower(filename) == "sans-serif" || ofToLower(filename)=="sans") {
-			filename = "/System/Library/Fonts/Helvetica.dfont";
-		} else if(ofToLower(filename) == "serif") {
-			filename = "/System/Library/Fonts/Times.dfont";
-		}else if(ofToLower(filename) == "monospace" || ofToLower(filename)=="mono") {
-			filename = "/System/Library/Fonts/Menlo.ttc";
-		}
-#elif defined(TARGET_WIN32)
+		filename = osxFontPathByName(fontname);
 #endif
-
-
-		FT_Error err;
-	    err = FT_New_Face( library, filename.c_str(), 0, &face );
-		if (err) {
-	        // simple error table in lieu of full table (see fterrors.h)
-	        string errorString = "unknown freetype";
-	        if(err == 1) errorString = "INVALID FILENAME";
-	        ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - %s: %s: FT_Error = %d", errorString.c_str(), filename.c_str(), err);
-			return false;
-		}
+		ofLogWarning() << fontname << " not a file in data trying to load from" << filename;
 	}
+	FT_Error err;
+	err = FT_New_Face( library, filename.c_str(), fontID, &face );
+	if (err) {
+		// simple error table in lieu of full table (see fterrors.h)
+		string errorString = "unknown freetype";
+		if(err == 1) errorString = "INVALID FILENAME";
+		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - %s: %s: FT_Error = %d", errorString.c_str(), fontname.c_str(), err);
+		return false;
+	}
+	
 	return true;
 }
 
