@@ -10,7 +10,7 @@ ofParameterGroup::ofParameterGroup()
 
 void ofParameterGroup::add(ofAbstractParameter & param){
 	obj->parameters.push_back(&param);
-	obj->parametersIndex[param.getName()] = obj->parameters.size()-1;
+	obj->parametersIndex[param.getEscapedName()] = obj->parameters.size()-1;
 	param.setParent(this);
 }
 
@@ -153,8 +153,8 @@ string ofParameterGroup::getType(int position) const{
 
 
 int ofParameterGroup::getPosition(string name) const{
-	if(obj->parametersIndex.find(name)!=obj->parametersIndex.end())
-		return obj->parametersIndex.find(name)->second;
+	if(obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end())
+		return obj->parametersIndex.find(escape(name))->second;
 	return -1;
 }
 
@@ -166,6 +166,14 @@ void ofParameterGroup::setName(string _name){
 	obj->name = _name;
 }
 
+string ofParameterGroup::getEscapedName() const{
+	if(getName()==""){
+		return "group";
+	}else{
+		return ofAbstractParameter::getEscapedName();
+	}
+}
+
 string ofParameterGroup::toString() const{
 	stringstream out;
 	out << *this;
@@ -174,7 +182,7 @@ string ofParameterGroup::toString() const{
 
 
 ofAbstractParameter & ofParameterGroup::get(string name) const{
-	map<string,int>::const_iterator it = obj->parametersIndex.find(name);
+	map<string,int>::const_iterator it = obj->parametersIndex.find(escape(name));
 	int index = it->second;
 	return get(index);
 }
@@ -208,7 +216,7 @@ ostream& operator<<(ostream& os, const ofParameterGroup& group) {
 }
 
 bool ofParameterGroup::contains(string name){
-	return obj->parametersIndex.find(name)!=obj->parametersIndex.end();
+	return obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end();
 }
 
 void ofParameterGroup::notifyParameterChanged(ofAbstractParameter & param){

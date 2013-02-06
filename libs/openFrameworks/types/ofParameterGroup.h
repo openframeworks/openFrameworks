@@ -80,6 +80,7 @@ public:
 
 	string getName() const;
 	void setName(string name);
+	string getEscapedName() const;
 	string toString() const;
 
 	bool contains(string name);

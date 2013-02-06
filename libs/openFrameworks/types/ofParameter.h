@@ -19,6 +19,8 @@ public:
 	virtual void fromString(string str);
 	virtual string type() const;
 
+	virtual string getEscapedName() const;
+
 	void setParent(ofParameterGroup * _parent);
 	const ofParameterGroup * getParent() const;
 	ofParameterGroup * getParent();
@@ -42,7 +44,7 @@ public:
 protected:
 	virtual void setSerializable(bool serializable);
 	void notifyParent();
-
+	virtual string escape(string str) const;
 private:
 	ofParameterGroup * parent;
 };

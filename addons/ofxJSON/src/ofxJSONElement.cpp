@@ -133,18 +133,18 @@ void ofxJSONElement::serialize(const ofAbstractParameter & parameter){
 			e.serialize(group.get(i));
 		}
 		Value & v = *this;
-		v[group.getName()] = e;
+		v[group.getEscapedName()] = e;
 	}else{
 		Value & v = *this;
 		string type = parameter.type();
 		if(type==typeid(ofParameter<int>).name()){
-			v[parameter.getName()] = parameter.cast<int>().get();
+			v[parameter.getEscapedName()] = parameter.cast<int>().get();
 		}else if(type==typeid(ofParameter<float>).name()){
-			v[parameter.getName()] = parameter.cast<float>().get();
+			v[parameter.getEscapedName()] = parameter.cast<float>().get();
 		}else if(type==typeid(ofParameter<bool>).name()){
-			v[parameter.getName()] = parameter.cast<bool>().get();
+			v[parameter.getEscapedName()] = parameter.cast<bool>().get();
 		}else{
-			v[parameter.getName()] = parameter.toString();
+			v[parameter.getEscapedName()] = parameter.toString();
 		}
 	}
 }
