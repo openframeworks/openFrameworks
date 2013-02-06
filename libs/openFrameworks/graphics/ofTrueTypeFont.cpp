@@ -6,12 +6,16 @@
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
 #include "freetype2/freetype/fttrigon.h"
+
+#ifdef TARGET_LINUX
 #include <fontconfig/fontconfig.h>
+#endif
 
 #include <algorithm>
 
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -189,6 +193,171 @@ bool compare_cps(const charProps & c1, const charProps & c2){
 	else return c1.tH > c2.tH;
 }
 
+
+#ifdef TARGET_OSX
+static string osxFontPathByName( string fontname ){
+    FSRef ref;
+    unsigned char path[2048];
+
+    CFStringRef  cfFontName;
+    ATSFontRef   atsFontRef;
+
+
+    if( fontname == "" )
+        return "";
+
+    cfFontName = CFStringCreateWithCString( kCFAllocatorDefault, fontname.c_str(), kCFStringEncodingUTF8 );
+
+    atsFontRef = ATSFontFindFromName( cfFontName, kATSOptionFlagsIncludeDisabledMask );
+
+    if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL ){
+        atsFontRef = ATSFontFamilyFindFromName( cfFontName, kATSOptionFlagsDefault );
+
+        if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
+        {
+            atsFontRef = ATSFontFindFromPostScriptName( cfFontName, kATSOptionFlagsDefault );
+
+            if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
+            {
+                ofLogError() << "couldn't find " << fontname;
+                CFRelease( cfFontName );
+                return "";
+            }
+        }
+    }
+    CFRelease( cfFontName );
+
+    if (ATSFontGetFileReference( atsFontRef, &ref ) != noErr){
+        ofLogError() << "couldn't get file ref for " << fontname ;
+        return "";
+    }
+
+    if (FSRefMakePath(&ref, path, sizeof(path)) != noErr){
+        ofLogError(  "failure when getting path from FSRef" );
+        return "";
+    }
+
+
+    return (char*)path;
+}
+#endif
+
+#ifdef TARGET_WIN32
+#include <map>
+// font font face -> file name name mapping
+static map<string, string> fonts_table;
+// read font linking information from registry, and store in std::map
+void initWindows(){
+    ofLogError() << "init windows";
+	LONG l_ret;
+
+	const wchar_t *Fonts = L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
+
+	HKEY key_ft;
+	l_ret = RegOpenKeyExW(HKEY_LOCAL_MACHINE, Fonts, 0, KEY_QUERY_VALUE, &key_ft);
+	if (l_ret != ERROR_SUCCESS){
+	    ofLogError() << "couldn't find register key";
+        return;
+	}
+
+	DWORD value_count;
+	DWORD max_data_len;
+	wchar_t value_name[2048];
+	BYTE *value_data;
+
+
+	// get font_file_name -> font_face mapping from the "Fonts" registry key
+
+	l_ret = RegQueryInfoKeyW(key_ft, NULL, NULL, NULL, NULL, NULL, NULL, &value_count, NULL, &max_data_len, NULL, NULL);
+	if(l_ret != ERROR_SUCCESS){
+	    ofLogError() << "couldn't query register for fonts";
+        return;
+	}
+
+	// no font installed
+	if (value_count == 0){
+	    ofLogError() << "couldn't find any fonts in register";
+        return;
+	}
+
+	// max_data_len is in BYTE
+	value_data = static_cast<BYTE *>(HeapAlloc(GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS, max_data_len));
+	if(value_data == NULL) return;
+
+	char value_name_char[2048];
+	char value_data_char[2048];
+	/*char ppidl[2048];
+	char fontsPath[2048];
+    SHGetKnownFolderIDList(FOLDERID_Fonts, 0, NULL, &ppidl);
+    SHGetPathFromIDList(ppidl,&fontsPath);*/
+    string fontsDir = getenv ("windir");
+    fontsDir += "\\Fonts\\";
+	for (DWORD i = 0; i < value_count; ++i)
+	{
+			DWORD name_len = 2048;
+			DWORD data_len = max_data_len;
+
+			l_ret = RegEnumValueW(key_ft, i, value_name, &name_len, NULL, NULL, value_data, &data_len);
+			if(l_ret != ERROR_SUCCESS){
+			     ofLogError() << "couldn't read registry key for a font type";
+			     continue;
+			}
+
+            wcstombs(value_name_char,value_name,2048);
+			wcstombs(value_data_char,reinterpret_cast<wchar_t *>(value_data),2048);
+			string curr_face = value_name_char;
+			string font_file = value_data_char;
+			curr_face = curr_face.substr(0, curr_face.find('(') - 1);
+			fonts_table[curr_face] = fontsDir + font_file;
+	}
+
+
+	HeapFree(GetProcessHeap(), 0, value_data);
+
+	l_ret = RegCloseKey(key_ft);
+}
+
+
+static string winFontPathByName( string fontname ){
+    if(fonts_table.find(fontname)!=fonts_table.end()){
+        return fonts_table[fontname];
+    }
+    for(map<string,string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+        if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
+    }
+    return "";
+}
+#endif
+
+#ifdef TARGET_LINUX
+static string linuxFontPathByName(string fontname){
+	string filename;
+	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
+	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
+	if(!ret){
+		ofLogError() << "couldn't find font file or system font with name " << fontname;
+		return "";
+	}
+	FcDefaultSubstitute(pattern);
+	FcResult result;
+	FcPattern * fontMatch=NULL;
+	fontMatch = FcFontMatch(0,pattern,&result);
+
+	if(!fontMatch){
+		ofLogError() << "couldn't match font file or system font with name " << fontname;
+		return "";
+	}
+	FcChar8	*file;
+	if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
+		filename = (const char*)file;
+	}else{
+		ofLogError() << "couldn't find font match for " << fontname;
+		return "";
+	}
+	return filename;
+}
+#endif
+
 bool ofTrueTypeFont::initLibraries(){
 	if(!librariesInitialized){
 	    FT_Error err;
@@ -198,19 +367,25 @@ bool ofTrueTypeFont::initLibraries(){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error initializing freetype lib: FT_Error = %d", err);
 			return false;
 		}
-
+#ifdef TARGET_LINUX
 		FcBool result = FcInit();
 		if(!result){
 			return false;
 		}
+#endif
+#ifdef TARGET_WIN32
+		initWindows();
+#endif
 		librariesInitialized = true;
 	}
     return true;
 }
 
 void ofTrueTypeFont::finishLibraries(){
-	if(!librariesInitialized){
-		FcFini();
+	if(librariesInitialized){
+#ifdef TARGET_LINUX
+		//FcFini();
+#endif
 		FT_Done_FreeType(library);
 	}
 }
@@ -260,6 +435,52 @@ void ofTrueTypeFont::reloadTextures(){
 	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 }
 
+static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string & filename){
+	filename = ofToDataPath(fontname,true);
+	ofFile fontFile(filename,ofFile::Reference);
+	int fontID = 0;
+	if(!fontFile.exists()){
+#ifdef TARGET_LINUX
+		filename = linuxFontPathByName(fontname);
+#elif defined(TARGET_OSX)
+		if(fontname==OF_TTF_SANS){
+			fontname = "Helvetica";
+			fontID = 2;
+		}else if(fontname==OF_TTF_SERIF){
+			fontname = "Times New Roman";
+		}else if(fontname==OF_TTF_MONO){
+			fontname = "Menlo Regular";
+		}
+		filename = osxFontPathByName(fontname);
+#elif defined(TARGET_WIN32)
+		if(fontname==OF_TTF_SANS){
+			fontname = "Arial";
+		}else if(fontname==OF_TTF_SERIF){
+			fontname = "Times New Roman";
+		}else if(fontname==OF_TTF_MONO){
+			fontname = "Courier New";
+		}
+        filename = winFontPathByName(fontname);
+#endif
+		if(filename == "" ){
+			ofLogError() << "couldn't find font " << fontname;
+			return false;
+		}
+		ofLogVerbose() << fontname << " not a file in data loading system font from " << filename;
+	}
+	FT_Error err;
+	err = FT_New_Face( library, filename.c_str(), fontID, &face );
+	if (err) {
+		// simple error table in lieu of full table (see fterrors.h)
+		string errorString = "unknown freetype";
+		if(err == 1) errorString = "INVALID FILENAME";
+		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - %s: %s: FT_Error = %d", errorString.c_str(), fontname.c_str(), err);
+		return false;
+	}
+
+	return true;
+}
+
 //-----------------------------------------------------------
 bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
 
@@ -277,26 +498,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		_dpi = ttfGlobalDpi;
 	}
 
-	filename = ofToDataPath(_filename,true);
-	ofFile fontFile(filename,ofFile::Reference);
-	if(!fontFile.exists()){
-		FcPattern * pattern = FcNameParse((const FcChar8*)_filename.c_str());//FcPatternBuild (0, FC_FAMILY, FcTypeString, filename.c_str(), (char *) 0);
-		FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
-		if(!ret){
-			ofLogError() << "couldn't find font file or system font with name " << _filename;
-			return false;
-		}
-		FcDefaultSubstitute(pattern);
-		FcResult result;
-		FcPattern * fontMatch = FcFontMatch(0,pattern,&result);
-		FcChar8	*file;
-		if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
-			filename = (const char*)file;
-		}else{
-			ofLogError() << "couldn't find font match for " << _filename;
-			return false;
-		}
-	}
+
 
 	bLoadedOk 			= false;
 	bAntiAliased 		= _bAntiAliased;
@@ -308,16 +510,10 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 	//--------------- load the library and typeface
 
-    FT_Error err;
+
 	FT_Face face;
-    
-    err = FT_New_Face( library, filename.c_str(), 0, &face );
-	if (err) {
-        // simple error table in lieu of full table (see fterrors.h)
-        string errorString = "unknown freetype";
-        if(err == 1) errorString = "INVALID FILENAME";
-        ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - %s: %s: FT_Error = %d", errorString.c_str(), filename.c_str(), err);
-		return false;
+	if(!loadFontFace(_filename,_fontSize,face,filename)){
+        return false;
 	}
 
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
@@ -341,6 +537,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	vector<ofPixels> expanded_data(nCharacters);
 
 	long areaSum=0;
+	FT_Error err;
 
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){
@@ -349,7 +546,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT );
         if(err){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error with FT_Load_Glyph %i: FT_Error = %d", i, err);
-                        
+
 		}
 
 		if (bAntiAliased == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
@@ -786,27 +983,10 @@ float ofTrueTypeFont::stringHeight(string c) {
     return rect.height;
 }
 
-//=====================================================================
-void ofTrueTypeFont::drawString(string c, float x, float y) {
-
-    /*glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texAtlas.draw(0,0);*/
-
-    if (!bLoadedOk){
-    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-    	return;
-    };
-
+void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
-
-
-	bool alreadyBinded = binded;
-
-	if(!alreadyBinded) bind();
-
 	int len = (int)c.length();
 
 	while(index < len){
@@ -827,7 +1007,35 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		}
 		index++;
 	}
+}
 
+ofMesh & ofTrueTypeFont::getStringMesh(string c, float x, float y){
+	stringQuads.clear();
+	createStringMesh(c,x,y);
+	return stringQuads;
+}
+
+ofTexture & ofTrueTypeFont::getFontTexture(){
+	return texAtlas;
+}
+
+//=====================================================================
+void ofTrueTypeFont::drawString(string c, float x, float y) {
+
+    /*glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	texAtlas.draw(0,0);*/
+
+    if (!bLoadedOk){
+    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+    	return;
+    };
+
+
+	bool alreadyBinded = binded;
+
+	if(!alreadyBinded) bind();
+	createStringMesh(c,x,y);
 	if(!alreadyBinded) unbind();
 
 }
