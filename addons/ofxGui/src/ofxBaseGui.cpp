@@ -27,7 +27,7 @@ ofxBaseGui::ofxBaseGui(){
 	thisFillColor=fillColor;
 
 	if(!fontLoaded)
-		loadFont("sans",8,true,true);
+		loadFont(OF_TTF_SANS,8,true,true);
 }
 
 void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
