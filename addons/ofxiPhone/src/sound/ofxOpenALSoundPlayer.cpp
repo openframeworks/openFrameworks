@@ -30,7 +30,11 @@ UInt32	numSounds;
 bool	mp3Loaded;
 
 
-ofMutex soundPlayerLock;
+static ofMutex& soundPlayerLock() {
+    static ofMutex* m = new ofMutex;
+    return *m;
+}
+
 vector<ofxOpenALSoundPlayer *> soundPlayers;
 
 //--------------------------------------------------------------
@@ -61,7 +65,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 	unloadSound();
 	numSounds--;
 	
-	soundPlayerLock.lock();
+	soundPlayerLock().lock();
 	for(int i=0;i<soundPlayers.size();i++)
 	{
 		if(soundPlayers[i] == this)
@@ -70,7 +74,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 			break;
 		}
 	}
-	soundPlayerLock.unlock();
+	soundPlayerLock().unlock();
 	
 	if(numSounds==0) {
 		closeSoundEngine();
@@ -108,9 +112,9 @@ bool ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
 			bLoadedOk=false;
 		}
 		
-		soundPlayerLock.lock();
+		soundPlayerLock().lock();
 		soundPlayers.push_back(this);
-		soundPlayerLock.unlock();
+		soundPlayerLock().unlock();
 	}
 	
 	return bLoadedOk;
@@ -392,10 +396,10 @@ void ofxOpenALSoundPlayer::closeSoundEngine(){
 //--------------------------------------------------------------
 
 void ofxALSoundStopAll(){
-	soundPlayerLock.lock();
+	soundPlayerLock().lock();
 	for(int i=0;i<soundPlayers.size();i++)
 			soundPlayers[i]->stop();
-	soundPlayerLock.unlock();
+	soundPlayerLock().unlock();
 }
 
 //--------------------------------------------------------------
@@ -444,10 +448,10 @@ bool ofxOpenALSoundPlayer::update() {
 
 bool ofxOpenALSoundPlayer::prime() {
 
-	soundPlayerLock.lock();
+	soundPlayerLock().lock();
 	for(int i=0;i<soundPlayers.size();i++)
 		soundPlayers[i]->update();
-	soundPlayerLock.unlock();
+	soundPlayerLock().unlock();
 	
 	multiPlaySource * m;
 	m = new multiPlaySource();
@@ -479,9 +483,9 @@ bool ofxOpenALSoundPlayer::loadBackgroundMusic(string fileName, bool queue, bool
 			bLoadedOk=true;
 			mp3Loaded=true;
 			
-			soundPlayerLock.lock();
+			soundPlayerLock().lock();
 				soundPlayers.push_back(this);
-			soundPlayerLock.unlock();
+			soundPlayerLock().unlock();
 		}
 		else
 		{
