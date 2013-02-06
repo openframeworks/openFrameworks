@@ -28,9 +28,9 @@ typedef ofPath ofTTFCharacter;
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
 
-const static string OF_TTF_SANS = "sans";
+const static string OF_TTF_SANS = "sans-serif";
 const static string OF_TTF_SERIF = "serif";
-const static string OF_TTF_MONO = "mono";
+const static string OF_TTF_MONO = "monospace";
 
 class ofTrueTypeFont{
 
