@@ -17,6 +17,22 @@ void ofAbstractParameter::setName(string name) {
 
 }
 
+string ofAbstractParameter::getEscapedName() const{
+	return escape(getName());
+}
+
+
+string ofAbstractParameter::escape(string str) const{
+	ofStringReplace(str, " ", "_");
+	ofStringReplace(str, "<", "_");
+	ofStringReplace(str, ">", "_");
+	ofStringReplace(str, "{", "_");
+	ofStringReplace(str, "}", "_");
+	ofStringReplace(str, "[", "_");
+	ofStringReplace(str, "]", "_");
+	return str;
+}
+
 string ofAbstractParameter::toString() const {
 	return "";
 }
