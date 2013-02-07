@@ -9,7 +9,7 @@
 #include "fdog.h"
 #include "myvec.h"
 
-class ofApp : public ofBaseApp{
+class testApp : public ofBaseApp{
 public:
 	void setup();
 	void update();

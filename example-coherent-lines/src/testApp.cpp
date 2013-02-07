@@ -1,4 +1,4 @@
-#include "ofApp.h"
+#include "testApp.h"
 
 using namespace ofxCv;
 using namespace cv;
@@ -19,7 +19,7 @@ void removeIslands(ofPixels& img) {
 	}
 }
 
-void ofApp::setup() {
+void testApp::setup() {
 	ofSetVerticalSync(true);
 	
 	ofDirectory dir;
@@ -57,7 +57,7 @@ void ofApp::setup() {
 	gui.loadSettings("settings.xml");
 }
 
-void ofApp::update(){
+void testApp::update(){
 	bool doFDoG = gui.getValueB("doFDoG");
 	bool doCanny = gui.getValueB("doCanny");
 	bool doThin = gui.getValueB("doThin");
@@ -115,7 +115,7 @@ void ofApp::update(){
 	}
 }
 
-void ofApp::draw(){
+void testApp::draw(){
 	for(int i = 0; i < input.size(); i++) {
 		input[i].draw(i * 256, 0);
 		output[i].draw(i * 256, 256);
