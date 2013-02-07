@@ -34,10 +34,6 @@ void testApp::setup() {
 		output.push_back(cur);
 		canny.push_back(cur);
 	}
-	width = input[0].getWidth();
-	height = input[0].getHeight();
-	
-	img.init(width, height);
 	
 	gui.setup();
 	gui.addPanel("Settings");
@@ -76,22 +72,8 @@ void testApp::update(){
 	for(int i = 0; i < input.size(); i++) {
 		if(doFDoG) {
 			int j = 0;
-			for(int y = 0; y < height; y++) {
-				for(int x = 0; x < width; x++) {
-					img[x][y] = input[i].getPixels()[j++] - black;
-				}
-			}
-			etf.init(width, height);
-			etf.set(img);
-			etf.Smooth(halfw, smoothPasses);
-			GetFDoG(img, etf, sigma1, sigma2, tau); 
-			//GrayThresholding(img, threshold);
-			j = 0;
-			for(int y = 0; y < height; y++) {
-				for(int x = 0; x < width; x++) {
-					output[i].getPixels()[j++] = img[x][y];
-				}
-			}
+			// apply "black" offset
+			CLD(input[i], output[i]);
 			if(doThresh) {
 				threshold(output[i], thresh);
 			}
