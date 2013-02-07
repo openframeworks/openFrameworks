@@ -30,4 +30,5 @@ class testApp : public ofBaseApp{
 		ofxXmlSettings settings;
 		CirclesRenderer renderer1,renderer2;
 		ofxJSONElement json;
+		ofTrueTypeFont font;
 };

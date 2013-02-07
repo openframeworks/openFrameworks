@@ -19,6 +19,9 @@ void testApp::setup(){
 	gui.add(renderer1.parameters);
 	gui.add(renderer2.parameters);
 
+	gui.loadFromFile("settings.xml");
+
+	font.loadFont(OF_TTF_SANS,9,true,true);
 	ofEnableAlphaBlending();
 }
 
@@ -36,12 +39,13 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	gui.draw();
+    ofBackgroundGradient(ofColor::white, ofColor::gray);
 	renderer1.draw();
 	renderer2.draw();
 	ofSetColor(255);
-	ofDrawBitmapString("frame: " + ofToString(renderer1.frameNum),ofGetWidth()-150,20);
-	ofDrawBitmapString("fps: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-150,40);
+	gui.draw();
+	font.drawString("frame: " + ofToString(renderer1.frameNum),ofGetWidth()-150,20);
+	font.drawString("fps: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-150,40);
 }
 
 //--------------------------------------------------------------
