@@ -143,18 +143,18 @@ int ofGetSphereResolution() {
 void ofDrawSphere(float x, float y, float z, float radius) {
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofSphere(radius);
+    ofDrawSphere(radius);
     ofPopMatrix();
 }
 
 //----------------------------------------------------------
 void ofDrawSphere(float x, float y, float radius) {
-    ofSphere(x, y, 0, radius);
+    ofDrawSphere(x, y, 0, radius);
 }
 
 //----------------------------------------------------------
 void ofDrawSphere(const ofPoint& position, float radius) {
-    ofSphere(position.x,position.y,position.z,radius);
+    ofDrawSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------------------------
@@ -282,18 +282,18 @@ ofVec3f ofGetConeResolution() {
 void ofDrawCone(float x, float y, float z, float radius, float height) {
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofCone(radius, height);
+    ofDrawCone(radius, height);
     ofPopMatrix();
 }
 
 //----------------------------------------------------------
 void ofDrawCone(float x, float y, float radius, float height) {
-    ofCone( x, y, 0, radius, height );
+	ofDrawCone( x, y, 0, radius, height );
 }
 
 //----------------------------------------------------------
 void ofDrawCone(const ofPoint& position, float radius, float height) {
-    ofCone( position.x, position.y, position.z, radius, height );
+	ofDrawCone( position.x, position.y, position.z, radius, height );
 }
 
 //----------------------------------------------------------
@@ -348,28 +348,28 @@ ofVec3f ofGetBoxResolution() {
 void ofDrawBox( float x, float y, float z, float width, float height, float depth) {
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofBox( width, height, depth );
+    ofDrawBox( width, height, depth );
     ofPopMatrix();
 }
 
 //----------------------------------------------------------
 void ofDrawBox(float x, float y, float z, float size) {
-    ofBox( x, y, z, size, size, size );
+	ofDrawBox( x, y, z, size, size, size );
 }
 
 //----------------------------------------------------------
 void ofDrawBox(const ofPoint& position, float width, float height, float depth) {
-    ofBox( position.x, position.y, position.z, width, height, depth );
+	ofDrawBox( position.x, position.y, position.z, width, height, depth );
 }
 
 //----------------------------------------------------------
 void ofDrawBox(const ofPoint& position, float size) {
-    ofBox( position.x, position.y, position.z, size, size, size );
+	ofDrawBox( position.x, position.y, position.z, size, size, size );
 }
 
 //----------------------------------------------------------
 void ofDrawBox(float size) {
-    ofBox( size, size, size );
+	ofDrawBox( size, size, size );
 }
 
 //----------------------------------------------------------

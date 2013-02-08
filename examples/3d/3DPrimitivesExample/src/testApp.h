@@ -46,5 +46,7 @@ public:
     
     // place to store the sides of the box //
     ofMesh boxSides[ofBoxPrimitive::SIDES_TOTAL];
+    ofMesh deformPlane;
+    vector<ofMeshFace> triangles;
     
 };
