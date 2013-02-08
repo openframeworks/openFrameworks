@@ -192,9 +192,12 @@ void testApp::draw(){
         ofSetColor(255);
         if(mode == 2) {
             float angle = ofGetElapsedTimef()*3.2;
-            float strength = (sin( angle ) + .25) * .5f * 100.f;
+            float strength = (sin( angle )) * .25f * 2.f;
             ofVec3f faceNormal;
             for(int i = 0; i < triangles.size(); i++ ) {
+                // store the face normal here.
+                // we change the vertices, which makes the face normal change
+                // every time that we call getFaceNormal //
                 faceNormal = triangles[i].getFaceNormal();
                 for(int j = 0; j < 3; j++ ) {
                     triangles[i].setVertex( j, triangles[i].getVertex(j) + faceNormal * strength);
