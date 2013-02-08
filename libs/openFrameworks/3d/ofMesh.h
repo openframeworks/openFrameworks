@@ -11,83 +11,7 @@
 #include "ofConstants.h"
 #include "ofGLUtils.h"
 
-// this is always a triangle //
-class ofMeshFace {
-public:
-    ofMeshFace()
-	:bHasNormals(false)
-	,bHasColors(false)
-	,bHasTexcoords(false)
-	,bFaceNormalDirty(false)
-	{
-    }
-
-    ofVec3f getFaceNormal() {
-        if(bFaceNormalDirty) calculateFaceNormal();
-        return faceNormal;
-    }
-    
-    void calculateFaceNormal() {
-        ofVec3f U, V;
-        
-        U = (vertices[1]-vertices[0]);
-        V = (vertices[2]-vertices[0]);
-        
-        faceNormal = U.getCrossed(V);
-        faceNormal.normalize();
-        bFaceNormalDirty = false;
-    }
-    
-    void setVertex( int index, const ofVec3f& v ) {
-        vertices[index].set( v );
-        bFaceNormalDirty = true;
-    }
-    
-    const ofVec3f& getVertex( int index ) {
-        return vertices[index];
-    }
-    
-    void setNormal( int index, const ofVec3f& n ) {
-        normals[index] = n;
-        bHasNormals = true;
-    }
-    
-    const ofVec3f& getNormal( int index ) {
-        return normals[ index ];
-    }
-    
-    void setColor( int index, ofFloatColor& color ) {
-        colors[index] = color;
-        bHasColors = true;
-    }
-    const ofFloatColor& getColor(int index) {
-        return colors[index];
-    }
-    
-    void setTexCoord( int index, ofVec2f& tCoord ) {
-        texCoords[index] = tCoord;
-        bHasTexcoords = true;
-    }
-    const ofVec2f& getTexCoord( int index ) {
-        return texCoords[index];
-    }
-
-    void setHasColors( bool bColors ) { bHasColors = bColors; }
-    void setHasNormals( bool bNormals ) { bHasNormals = bNormals; }
-    void setHasTexcoords( bool bTexcoords ) { bHasTexcoords = bTexcoords; }
-
-    bool hasColors() { return bHasColors; }
-    bool hasNormals() { return bHasNormals; }
-    bool hasTexcoords() { return bHasTexcoords; }
-    
-protected:
-    bool bHasNormals, bHasColors, bHasTexcoords, bFaceNormalDirty;
-    ofVec3f faceNormal;
-    ofVec3f vertices[3];
-    ofVec3f normals[3];
-    ofFloatColor colors[3];
-    ofVec2f texCoords[3];
-};
+class ofMeshFace;
 
 class ofMesh{
 public:
@@ -187,11 +111,11 @@ public:
 	bool haveTexCoordsChanged();
 	bool haveIndicesChanged();
 	
-	bool hasVertices();
-	bool hasColors();
-	bool hasNormals();
-	bool hasTexCoords();
-	bool hasIndices();
+	bool hasVertices() const;
+	bool hasColors() const;
+	bool hasNormals() const;
+	bool hasTexCoords() const;
+	bool hasIndices() const;
 	
 	void drawVertices();
 	void drawWireframe();
@@ -199,7 +123,7 @@ public:
 	void draw();
 
 	void load(string path);
-	void save(string path, bool useBinary = false);
+	void save(string path, bool useBinary = false) const;
     
     virtual void enableColors();
     virtual void enableTextures();
@@ -211,18 +135,18 @@ public:
     virtual void disableNormals();
     virtual void disableIndices();
     
-    virtual bool usingColors();
-    virtual bool usingTextures();
-    virtual bool usingNormals();
-    virtual bool usingIndices();
+    virtual bool usingColors() const;
+    virtual bool usingTextures() const;
+    virtual bool usingNormals() const;
+    virtual bool usingIndices() const;
     
     void setColorForIndices( int startIndex, int endIndex, ofColor color );
-    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex );
+    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
     void mergeDuplicateVertices();
     // return a list of triangles that do not share vertices or indices //
-    vector<ofMeshFace> getUniqueFaces();
-    vector<ofVec3f> getFaceNormals( bool perVetex=false);
-    void setFromTriangles( vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
+    const vector<ofMeshFace> & getUniqueFaces() const;
+    vector<ofVec3f> getFaceNormals( bool perVetex=false) const;
+    void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
     void smoothNormals( float angle );
     
     static ofMesh plane(float width, float height, int columns=2, int rows=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
@@ -242,6 +166,12 @@ private:
 	vector<ofVec3f> normals;
 	vector<ofVec2f> texCoords;
 	vector<ofIndexType> indices;
+
+	// this variables are only caches and returned always as const
+	// mutable allows to change them from const methods
+	mutable vector<ofMeshFace> faces;
+	mutable bool bFacesDirty;
+
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
 	string name;
@@ -252,4 +182,45 @@ private:
     bool useIndices;
 	
 //	ofMaterial *mat;
+};
+
+// this is always a triangle //
+class ofMeshFace {
+public:
+    ofMeshFace();
+
+    const ofVec3f & getFaceNormal() const;
+
+    void setVertex( int index, const ofVec3f& v );
+    const ofVec3f& getVertex( int index ) const;
+
+    void setNormal( int index, const ofVec3f& n );
+    const ofVec3f& getNormal( int index ) const;
+
+    void setColor( int index, const ofFloatColor& color );
+    const ofFloatColor& getColor(int index) const;
+
+    void setTexCoord( int index, const ofVec2f& tCoord );
+    const ofVec2f& getTexCoord( int index ) const;
+
+    void setHasColors( bool bColors );
+    void setHasNormals( bool bNormals );
+    void setHasTexcoords( bool bTexcoords );
+
+    bool hasColors() const;
+    bool hasNormals() const;
+    bool hasTexcoords() const;
+
+private:
+    void calculateFaceNormal() const;
+    bool bHasNormals, bHasColors, bHasTexcoords;
+
+	// this variables are only caches and returned always as const
+	// mutable allows to change them from const methods
+    mutable bool bFaceNormalDirty;
+    mutable ofVec3f faceNormal;
+    ofVec3f vertices[3];
+    ofVec3f normals[3];
+    ofFloatColor colors[3];
+    ofVec2f texCoords[3];
 };
