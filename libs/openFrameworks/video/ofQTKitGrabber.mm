@@ -514,7 +514,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
             }
 
             CVPixelBufferLockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
-#if (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8)
+#if( MAC_OS_X_VERSION_10_8 && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8)
             //fast conversion of BGRA -> RGB introduced in 10.8
             vImage_Buffer src;
             src.height = CVPixelBufferGetHeight(cvFrame);
