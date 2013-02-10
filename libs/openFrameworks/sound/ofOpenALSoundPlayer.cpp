@@ -706,8 +706,14 @@ void ofOpenALSoundPlayer::setPaused(bool bP){
 	if(sources.empty()) return;
 	if(bP){
 		alSourcePausev(sources.size(),&sources[0]);
+		if(isStreaming){
+			stopThread();
+		}
 	}else{
 		alSourcePlayv(sources.size(),&sources[0]);
+		if(isStreaming){
+			startThread();
+		}
 	}
 
 	bPaused = bP;
@@ -795,6 +801,10 @@ void ofOpenALSoundPlayer::play(){
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::stop(){
 	alSourceStopv(channels,&sources[sources.size()-channels]);
+	if(isStreaming){
+		setPosition(0);
+		stopThread();
+	}
 }
 
 // ----------------------------------------------------------------------------
