@@ -120,12 +120,13 @@ PLATFORM_CFLAGS += -pipe
 ################################################################################
 
 # raspberry pi specific
+PLATFORM_LIBRARIES += GLESv2
+PLATFORM_LIBRARIES += EGL
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
-PLATFORM_LIBRARIES += EGL
-PLATFORM_LIBRARIES += GLESv2
+
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
