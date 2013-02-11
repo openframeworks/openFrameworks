@@ -525,7 +525,7 @@ void ofFbo::allocate(Settings _settings) {
 	#endif
 
 	// now create all textures and color buffers
-	for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(i);
+	for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
 	if(fbo != fboTextures) {
@@ -560,12 +560,14 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 }
 
 
-void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
+void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
 	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
+	GLint temp;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
 	ofTexture tex;
-	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
+	tex.allocate(settings.width, settings.height, internalFormat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	//tex.texData.bFlipTexture = true;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
@@ -581,6 +583,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 		colorBuffers.push_back(colorBuffer);
 		retainRB(colorBuffer);
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, temp);
 }
 
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum  attachment){
