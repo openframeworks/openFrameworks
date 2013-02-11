@@ -556,21 +556,13 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 		ofLog(OF_LOG_ERROR, "getCharacterAsPoints: contours not created,  call loadFont with makeContours set to true" );
             return ofTTFCharacter();
 	}
-    if (character >= nCharacters){
+    if (character - NUM_CHARACTER_TO_START >= nCharacters || character < NUM_CHARACTER_TO_START){
         ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (character + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
         
         return ofTTFCharacter();
     }
     
-    return charOutlines[character];
-    /*
-	if( bMakeContours && (int)charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < (int)charOutlines.size() ){
-		return charOutlines[character-NUM_CHARACTER_TO_START];
-	}else{
-		if(charOutlines.empty())charOutlines.push_back(ofTTFCharacter());
-		return charOutlines[0];
-	}
-     */
+    return charOutlines[character - NUM_CHARACTER_TO_START];
 }
 
 //-----------------------------------------------------------
@@ -632,20 +624,18 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 	while(index < len){
 		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
 		if (cy < nCharacters){ 			// full char set or not?
-		  if (str[index] == '\n') {
-
+			if (str[index] == '\n') {
 				Y += lineHeight;
 				X = 0 ; //reset X Pos back to zero
-
-		  }else if (str[index] == ' ') {
-				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].setWidth * letterSpacing * spaceSize;
-		  } else if(cy > -1){
-              shapes.push_back(getCharacterAsPoints(cy));// str[index]));
-			  	shapes.back().translate(ofPoint(X,Y));
+			}else if (str[index] == ' ') {
+				int cy = (int)'p' - NUM_CHARACTER_TO_START;
+				X += cps[cy].setWidth * letterSpacing * spaceSize;
+			} else if(cy > -1){
+				shapes.push_back(getCharacterAsPoints(str[index]));
+				shapes.back().translate(ofPoint(X,Y));
 
 				X += cps[cy].setWidth * letterSpacing;
-		  }
+			}
 		}
 		index++;
 	}
@@ -661,8 +651,7 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	}
 	//-----------------------
 
-	int cu = c;
-	ofTTFCharacter & charRef = charOutlines[cu];
+	ofTTFCharacter & charRef = charOutlines[c - NUM_CHARACTER_TO_START];
 	charRef.setFilled(ofGetStyle().bFill);
 	charRef.draw(x,y);
 }
@@ -889,7 +878,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 				 X += cps[cy].setWidth;
 				 //glTranslated(cps[cy].width, 0, 0);
 		  } else if(cy > -1){
-				drawCharAsShape(cy, X, Y);
+				drawCharAsShape(c[index], X, Y);
 				X += cps[cy].setWidth;
 				//glTranslated(cps[cy].setWidth, 0, 0);
 		  }
