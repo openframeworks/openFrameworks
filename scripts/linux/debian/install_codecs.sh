@@ -11,7 +11,7 @@ fi
 
 GSTREAMER_VERSION=0.10
 
-apt-cache show -n libgstreamer1.0-dev | grep Version >/dev/null
+apt-cache show -n libgstreamer1.0-dev >/dev/null
 RET = $?
 
 if [ $RET -eq 0 ]; then
