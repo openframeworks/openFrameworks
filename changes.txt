@@ -161,7 +161,7 @@ PROJECT GENERATOR
 ==================
 
 ## project generator (simple)
-    / updated the git submodule and gitignore for develop branch á Pull Request #1781
+    / updated the git submodule and gitignore for develop branch
     / fix project generator on Linux
  
 EXAMPLES
