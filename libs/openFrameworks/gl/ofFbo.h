@@ -45,6 +45,11 @@ public:
 	void bind();
 	void unbind();
 
+	bool checkStatus();
+	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
+	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
+	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum attachment);
+
 	int	getNumTextures();
 
   void setActiveDrawBuffer(int i);
@@ -80,7 +85,7 @@ public:
 
 		Settings();
 	};
-private:
+protected:
 
 	Settings 			settings;
 	int					isBound;
@@ -107,11 +112,6 @@ private:
 	bool				bIsAllocated;
 
 	void destroy();
-
-	bool checkStatus();
-	void createAndAttachTexture(GLenum attachmentPoint);
-	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
-	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum attachment);
 
 	// if using MSAA, we will have rendered into a colorbuffer, not directly into the texture
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
