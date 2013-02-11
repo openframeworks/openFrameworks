@@ -11,7 +11,7 @@ fi
 
 GSTREAMER_VERSION=0.10
 
-dpkg-query -l libgstreamer2.0-dev >/dev/null
+dpkg-query -l libgstreamer1.0-dev >/dev/null
 RET = $?
 
 if [ $RET -eq 0 ]; then
