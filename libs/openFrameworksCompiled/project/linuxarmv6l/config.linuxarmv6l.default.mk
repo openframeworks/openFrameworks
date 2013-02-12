@@ -143,6 +143,7 @@ PLATFORM_LIBRARIES += vchiq_arm
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include
 #PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
+PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 
 
 ##########################################################################################
