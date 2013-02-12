@@ -5,6 +5,13 @@ currenthash=$(git rev-parse HEAD)
 if [ "$currenthash" = "$lasthash" ]; then
     return 0
 fi
+
+# delete packages older than 3 weeks ago
+threeweeksago=$(date --date=@$[$(date +%s)-60*60*24*7*3] +%Y%m%d)
+weektodelete=${threeweeksago:0:7}
+rm /var/www/versions/nightly/of_v${weektodelete}_release.*
+
+
 lastversion=$(date +%Y%m%d)
 echo $currenthash>lasthash.txt
 ./create_package.sh linux $lastversion
