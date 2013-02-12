@@ -85,7 +85,7 @@ public:
 
 		Settings();
 	};
-protected:
+private:
 
 	Settings 			settings;
 	int					isBound;
