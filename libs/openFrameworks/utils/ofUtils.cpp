@@ -274,8 +274,18 @@ string ofToDataPath(string path, bool makeAbsolute){
 			path = dataPathRoot()+path;
 		}
 
+	#if defined(TARGET_QNX)
+		// Always use absolute path on QNX platform
+		char fullpath[1024];
+		char appPath[1024];
+
+		getcwd(appPath, 1024);
+		snprintf(fullpath, 1024, "%s/%s", appPath, path.c_str());
+		path = fullpath;
+	#endif
+	
 		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
-			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
+			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID) & !defined(TARGET_QNX)
 
 			#ifndef TARGET_WIN32
 				char currDir[1024];
