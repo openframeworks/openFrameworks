@@ -221,6 +221,8 @@ namespace ofxCv {
 		return rotationAmount;
 	}
 	
+	vector<cv::Point2f> getConvexPolygon(const vector<cv::Point2f>& convexHull, int targetPoints);
+	
 	static const ofColor cyanPrint = ofColor::fromHex(0x00abec);
 	static const ofColor magentaPrint = ofColor::fromHex(0xec008c);
 	static const ofColor yellowPrint = ofColor::fromHex(0xffee00);

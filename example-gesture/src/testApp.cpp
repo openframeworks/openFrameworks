@@ -254,34 +254,45 @@ void testApp::draw() {
 	float lineRatio = 6;
 	bool lineLike = rect.size.width / rect.size.height > lineRatio || rect.size.height / rect.size.width > lineRatio;
 	
+	ofColor lineColor(128), rectColor(128), ellipseColor(128);
 	if(lineLike || (lineSum < rectSum && lineSum < ellipseSum)) {
-		ofSetColor(magentaPrint);
-		ofLine(linePoint, linePoint - lineDirection * 1000);
-		ofLine(linePoint, linePoint + lineDirection * 1000);
+		lineColor = magentaPrint;
 		for(int i = 0; i < polyline.size(); i++) {
 			ofLine(polyline[i], closestPointOnLine(linePoint + lineDirection * 1000, linePoint - lineDirection * 1000, polyline[i]));
 		}
 	} else if(rectSum < lineSum && rectSum < ellipseSum) {
-		ofPushMatrix();
-		ofTranslate(rect.center.x, rect.center.y);
-		ofRotate(rect.angle);
-		ofSetColor(yellowPrint);
-		ofRect(-rect.size.width / 2, -rect.size.height / 2, rect.size.width, rect.size.height);
-		ofPopMatrix();
+		rectColor = yellowPrint;
 		for(int i = 0; i < polyline.size(); i++) {
 			ofLine(polyline[i], closestPointOnRect(rect, polyline[i]));
 		}
 	} else if(ellipseSum < lineSum && ellipseSum < rectSum) {
-		ofPushMatrix();
-		ofTranslate(ellipse.center.x, ellipse.center.y);
-		ofRotate(ellipse.angle);
-		ofSetColor(cyanPrint);
-		ofEllipse(0, 0, ellipse.size.width, ellipse.size.height);
-		ofPopMatrix();
+		ellipseColor = cyanPrint;
 		for(int i = 0; i < polyline.size(); i++) {
 			ofLine(polyline[i], closestPointOnEllipse(ellipse, polyline[i]));
 		}
 	}
+	
+	ofSetColor(lineColor);
+	ofLine(linePoint, linePoint - lineDirection * 1000);
+	ofLine(linePoint, linePoint + lineDirection * 1000);
+	
+	ofPushMatrix();
+	ofTranslate(rect.center.x, rect.center.y);
+	ofRotate(rect.angle);
+	ofSetColor(rectColor);
+	ofRect(-rect.size.width / 2, -rect.size.height / 2, rect.size.width, rect.size.height);
+	ofPopMatrix();
+	
+	ofPushMatrix();
+	ofTranslate(ellipse.center.x, ellipse.center.y);
+	ofRotate(ellipse.angle);
+	ofSetColor(ellipseColor);
+	ofEllipse(0, 0, ellipse.size.width, ellipse.size.height);
+	ofPopMatrix();
+	
+	ofSetColor(128);
+	triangle.draw();
+	quad.draw();
 }
 
 void testApp::updateGestures() {
@@ -290,6 +301,10 @@ void testApp::updateGestures() {
 	}
 	fitLine(polyline, linePoint, lineDirection);
 	rect = minAreaRect(polyline);
+	
+	vector<cv::Point2f> points = toCv(polyline);
+	triangle = toOf(getConvexPolygon(points, 3));
+	quad = toOf(getConvexPolygon(points, 4));
 }
 
 void testApp::mousePressed(int x, int y, int button) {

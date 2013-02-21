@@ -17,4 +17,5 @@ public:
 	ofPolyline polyline;
 	cv::RotatedRect ellipse, rect;
 	ofVec2f linePoint, lineDirection;
+	ofPolyline triangle, quad;
 };
