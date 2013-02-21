@@ -147,7 +147,8 @@ ofSerial::~ofSerial(){
 //----------------------------------------------------------------
 static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 	//TODO - this should be ofStringInString
-	return ( strstr(A.getDeviceName().c_str(), "usbserial") != NULL );
+	return ( strstr(A.getDeviceName().c_str(), "usbserial") != NULL ||
+		 strstr(A.getDeviceName().c_str(), "usbmodem") != NULL );
 }
 
 //----------------------------------------------------------------
