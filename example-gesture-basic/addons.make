@@ -1,2 +1,0 @@
-ofxOpenCv
-ofxCv

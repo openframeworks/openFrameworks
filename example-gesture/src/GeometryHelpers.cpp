@@ -141,6 +141,19 @@ Real DistancePointEllipse (const Real e[2], const Real y[2], Real x[2])
     return distance;
 }
 
+ofVec2f closestPointOnRay(const ofVec2f& p1, const ofVec2f& p2, const ofVec2f& p3) {
+	if(p1 == p2) {
+		return p1;
+	}
+	
+	float u = (p3.x - p1.x) * (p2.x - p1.x);
+	u += (p3.y - p1.y) * (p2.y - p1.y);
+	float len = (p2 - p1).length();
+	u /= (len * len);
+	
+	return p1.getInterpolated(p2, u);
+}
+
 ofVec2f closestPointOnLine(const ofVec2f& p1, const ofVec2f& p2, const ofVec2f& p3) {
 	if(p1 == p2) {
 		return p1;
@@ -218,4 +231,8 @@ float distanceToRect(const ofVec2f& point, const cv::RotatedRect& rect) {
 
 float distanceToLine(const ofVec2f& point, const ofVec2f& start, const ofVec2f& end) {
 	return closestPointOnLine(start, end, point).distance(point);					  
+}
+
+float distanceToRay(const ofVec2f& point, const ofVec2f& start, const ofVec2f& end) {
+	return closestPointOnRay(start, end, point).distance(point);					  
 }
