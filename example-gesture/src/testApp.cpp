@@ -22,7 +22,7 @@ void testApp::draw() {
 	ofSetColor(255, 64);
 	polyline.draw();
 	
-	ofSetColor(255, 16);
+	ofSetColor(255, 32);
 	float lineSum = 0, rectSum = 0, ellipseSum = 0;
 	for(int i = 0; i < polyline.size(); i++) {
 		lineSum += distanceToLine(polyline[i], linePoint - lineDirection * 1000, linePoint + lineDirection * 1000);
@@ -44,8 +44,8 @@ void testApp::draw() {
 	float lineRatio = 6;
 	bool lineLike = rect.size.width / rect.size.height > lineRatio || rect.size.height / rect.size.width > lineRatio;
 	
-	ofSetColor(255, 16);
-	ofColor lineColor(255, 16), rectColor(255, 16), ellipseColor(255, 16);
+	ofSetColor(255, 32);
+	ofColor lineColor(255, 32), rectColor(255, 32), ellipseColor(255, 32);
 	if(lineLike || (lineSum < rectSum && lineSum < ellipseSum)) {
 		lineColor = magentaPrint;
 		for(int i = 0; i < polyline.size(); i++) {
@@ -91,16 +91,15 @@ void testApp::draw() {
 		float stopAngle = atan2f(stopPoint.y, stopPoint.x);
 		//ofLine(0, 0, cos(startAngle) * 1000, sin(startAngle) * 1000);
 		//ofLine(0, 0, cos(stopAngle) * 1000, sin(stopAngle) * 1000);
-		ofDrawBitmapString(ofToString(startAngle), startPoint);
-		ofDrawBitmapString(ofToString(stopAngle), stopPoint);
 		
 		ofPolyline partial;
 		for(int i = 0; i < polyline.size(); i++) {
 			ofVec2f cur = polyline[i];
 			cur -= center;
 			cur.rotate(-ellipse.angle);
-			float angle = atan2f(cur.y, cur.x);
-			partial.addVertex(ofVec2f(cos(angle) * ellipse.size.width / 2, sin(angle) * ellipse.size.height / 2));
+			float a = ellipse.size.width / 2, b = ellipse.size.height / 2, x0 = cur.x, y0 = cur.y;
+			float scale = (a * b) / sqrtf(a * a * y0 * y0 + b * b * x0 * x0);
+			partial.addVertex(cur.x * scale, cur.y * scale);
 		}
 		partial.draw();
 	}
