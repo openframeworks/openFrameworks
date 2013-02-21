@@ -24,7 +24,7 @@ void testApp::draw() {
 		case Recognizer::GESTURE_LINE: ofSetColor(magentaPrint); break;
 		case Recognizer::GESTURE_ARC: ofSetColor(cyanPrint); break;
 	}
-	if(recognizer.getError() < .5) {
+	if(recognizer.getFitError() < .5) {
 		recognizer.getPolyline().draw();
 	}
 }

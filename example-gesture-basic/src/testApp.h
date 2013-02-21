@@ -12,15 +12,16 @@ public:
 	Recognizer()
 	:lineRatio(6)
 	,gestureType(GESTURE_LINE)
+	,fitError(0)
 	{}
 	void setLineRatio(float lineRatio) {
 		this->lineRatio = lineRatio;
 	}
-	GestureType getGestureType() {
+	GestureType getGestureType() const {
 		return gestureType;
 	}
-	float getError() {
-		return 0;
+	float getFitError() const {
+		return fitError;
 	}
 	ofPolyline& getPolyline() {
 		return idealized;
@@ -47,10 +48,12 @@ public:
 		idealized.clear();
 		if(isLine) {
 			gestureType = GESTURE_LINE;
+			fitError = lineSum;
 			idealized.addVertex(closestPointOnRay(linePoint, linePoint + lineDirection, polyline[0]));
 			idealized.addVertex(closestPointOnRay(linePoint, linePoint + lineDirection, polyline[polyline.size() - 1]));
 		} else {
 			gestureType = GESTURE_ARC;
+			fitError = ellipseSum;
 			ofVec2f center(ellipse.center.x, ellipse.center.y);
 			// it would make more sense to do this at a fixed resolution
 			for(int i = 0; i < polyline.size(); i++) {
@@ -68,7 +71,7 @@ protected:
 	cv::RotatedRect ellipse, rect;
 	ofVec2f linePoint, lineDirection;
 	ofPolyline idealized;
-	float lineRatio;
+	float lineRatio, fitError;
 	GestureType gestureType;
 };
 
