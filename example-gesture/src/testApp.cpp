@@ -89,8 +89,6 @@ void testApp::draw() {
 		stopPoint.rotate(-ellipse.angle);
 		float startAngle = atan2f(startPoint.y, startPoint.x);
 		float stopAngle = atan2f(stopPoint.y, stopPoint.x);
-		//ofLine(0, 0, cos(startAngle) * 1000, sin(startAngle) * 1000);
-		//ofLine(0, 0, cos(stopAngle) * 1000, sin(stopAngle) * 1000);
 		
 		ofPolyline partial;
 		for(int i = 0; i < polyline.size(); i++) {
