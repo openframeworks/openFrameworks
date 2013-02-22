@@ -63,7 +63,7 @@ void swarm::customDraw(){
 	light.enable();
 	light.setPosition(particles[0].position);
 
-	for(int i = 0; i < particles.size(); i++){
+	for(unsigned int i = 0; i < particles.size(); i++){
 		ofPushStyle();
 		ofSetColor(particles[i].color);
 
@@ -94,7 +94,7 @@ void swarm::update(){
 	float dt = ofGetLastFrameTime();
 
 	// Update positions, velocities
-	for(int i = 0; i < particles.size(); i++){
+	for(unsigned int i = 0; i < particles.size(); i++){
 
 		// -----------
 		//
