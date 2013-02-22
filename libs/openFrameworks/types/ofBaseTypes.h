@@ -319,6 +319,7 @@ public:
 	virtual void rotateY(float degrees){};
 	virtual void rotateZ(float degrees){};
 	virtual void rotate(float degrees){};
+	virtual void matrixMode(ofMatrixMode mode){};
 	virtual void loadIdentityMatrix (void){};
 	virtual void loadMatrix (const ofMatrix4x4 & m){};
 	virtual void loadMatrix (const float *m){};

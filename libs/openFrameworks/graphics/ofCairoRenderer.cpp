@@ -37,6 +37,7 @@ ofCairoRenderer::ofCairoRenderer(){
 	multiPage = false;
 	bFilled = OF_FILLED;
 	b3D = false;
+	currentMatrixMode=OF_MATRIX_MODELVIEW;
 }
 
 ofCairoRenderer::~ofCairoRenderer(){
@@ -720,6 +721,67 @@ void ofCairoRenderer::rotateZ(float degrees){
 
 void ofCairoRenderer::rotate(float degrees){
 	rotateZ(degrees);
+}
+
+void ofCairoRenderer::matrixMode(ofMatrixMode mode){
+	currentMatrixMode = mode;
+}
+
+void ofCairoRenderer::loadIdentityMatrix (void){
+	if(!surface || !cr) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		cairo_matrix_init_identity(getCairoMatrix());
+		setCairoMatrix();
+	}
+
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView.makeIdentityMatrix();
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection.makeIdentityMatrix();
+	}
+}
+
+void ofCairoRenderer::loadMatrix (const ofMatrix4x4 & m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView = m;
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection = m;
+	}
+}
+
+void ofCairoRenderer::loadMatrix (const float * m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView.set(m);
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection.set(m);
+	}
+
+}
+
+void ofCairoRenderer::multMatrix (const ofMatrix4x4 & m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView *= m;
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection *= m;
+	}
+}
+
+void ofCairoRenderer::multMatrix (const float * m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	ofMatrix4x4 mat(m);
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView *= mat;
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection *= mat;
+	}
 }
 
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
