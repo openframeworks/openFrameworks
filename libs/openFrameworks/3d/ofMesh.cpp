@@ -732,7 +732,6 @@ void ofMesh::load(string path){
 	int normalsCoordsFound=0;
 
 	int currentVertex = 0;
-	int currentNormal = 0;
 	int currentFace = 0;
 	
 	bool floatColor = false;
