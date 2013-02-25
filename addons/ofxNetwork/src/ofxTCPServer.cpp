@@ -50,21 +50,25 @@ void ofxTCPServer::setMessageDelimiter(string delim){
 //--------------------------
 bool ofxTCPServer::close(){
 
-	if(!connected) return true;
+	//	gr: if we created the TCP server, but didn't bind, we still want to close the TCPServer
+	//		the name "connected" is pretty misleading
+	if(connected) 
+	{
+		map<int,ofxTCPClient>::iterator it;
+		for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
+			it->second.close();
+		}
+		TCPConnections.clear();
 
-	map<int,ofxTCPClient>::iterator it;
-	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
-		it->second.close();
+		stopThread(); //stop the thread
+		connected = false;
 	}
-	TCPConnections.clear();
-
-	stopThread(); //stop the thread
 
 	if( !TCPServer.Close() ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: unable to close connection");
 		return false;
 	}else{
-		connected = false;
+		//connected = false;
 		return true;
 	}
 }
