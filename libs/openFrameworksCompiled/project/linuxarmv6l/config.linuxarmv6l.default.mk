@@ -79,7 +79,7 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
+PLATFORM_REQUIRED_ADDONS =
 
 ################################################################################
 # PLATFORM CFLAGS
