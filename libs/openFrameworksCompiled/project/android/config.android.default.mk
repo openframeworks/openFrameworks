@@ -203,7 +203,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   generation.
 #
 #   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
-#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   string unless the user adds a wildcard (%) operator to match subdirectories.
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
 #
