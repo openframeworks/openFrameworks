@@ -1,0 +1,1 @@
+You need to add a copy of haarcascade_frontalface_alt2.xml to this directory.
