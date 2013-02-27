@@ -265,8 +265,8 @@ void ofSerial::close(){
     	if (bInited){
     		tcsetattr(fd,TCSANOW,&oldoptions);
     		::close(fd);
+    		bInited = false;
     	}
-    	// [CHECK] -- anything else need to be reset?
     //---------------------------------------------
     #endif
     //---------------------------------------------
