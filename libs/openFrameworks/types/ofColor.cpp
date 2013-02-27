@@ -253,7 +253,7 @@ void ofColor_<unsigned char>::setHex (int hexColor, float alpha){
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHex (int hexColor, float alpha){
-	ofColor c = ofColor::fromHex(hexColor,alpha);
+	ofColor c = ofColor::fromHex(hexColor);
 	*this = c;
 	a = alpha;
 }
