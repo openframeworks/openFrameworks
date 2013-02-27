@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 micasa. All rights reserved.
 //
 
-#include "Circle.h"
+#include "circle.h"
 
 // the static event, or any static variable, must be initialized outside of the class definition.
 ofEvent<ofVec2f> Circle::clickedInsideGlobal = ofEvent<ofVec2f>(); 

@@ -92,7 +92,7 @@ void testApp::searchGoogleImages() {
     }
     
     // load all the images
-    for (int i=0; i<urls.size(); i++) {
+    for (unsigned int i=0; i<urls.size(); i++) {
         images.push_back(URLImage());
         images.back().url = urls[i];
         images.back().bDoneLoading = false;
@@ -104,7 +104,7 @@ void testApp::searchGoogleImages() {
     ofStringReplace(rawData, " ", "");
     ofStringReplace(rawData, "\t", "");
     string str;
-    for (int i=0; i<rawData.size(); i++) {
+    for (unsigned int i=0; i<rawData.size(); i++) {
         str += rawData[i];
         if(i%40==39) str+="\n";
     }
@@ -113,7 +113,7 @@ void testApp::searchGoogleImages() {
 
 //--------------------------------------------------------------
 void testApp::update(){
-    for(int i=0; i<images.size(); i++) {
+    for(unsigned int i=0; i<images.size(); i++) {
         if(!images[i].bDoneLoading) {
             images[i].loadImage(images[i].url);
             images[i].bDoneLoading = true;
@@ -130,13 +130,13 @@ void testApp::draw() {
     ofDrawBitmapString(rawData, 20, 20);
     
     // draw the urls
-    for(int i=0; i<urls.size(); i++) {
+    for(unsigned int i=0; i<urls.size(); i++) {
         ofSetColor(255);
         ofDrawBitmapString(urls[i].substr(0, 30)+"...", 360, 20+(i*20));
     }
     
     // draw the urls
-    for(int i=0; i<urls.size(); i++) {
+    for(unsigned int i=0; i<urls.size(); i++) {
         ofSetColor(255);
         ofDrawBitmapString(urls[i].substr(0, 30)+"...", 360, 20+(i*20));
     }
@@ -144,7 +144,7 @@ void testApp::draw() {
     // draw the images
     float x = 0;
     float y = 0;
-    for(int i=0; i<images.size(); i++) {
+    for(unsigned int i=0; i<images.size(); i++) {
         ofSetColor(255);
         images[i].draw(640+x, 20+y);
         

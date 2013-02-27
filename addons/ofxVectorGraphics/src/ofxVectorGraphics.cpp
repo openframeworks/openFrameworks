@@ -513,7 +513,7 @@ void ofxVectorGraphics::endShape(bool bClose){
 			
 			//we go through and we calculate the bezier of each 
 			//catmull rom curve - smart right? :)
-			for (int i = 1; i< curvePts.size()-2; i++) {
+			for (unsigned int i = 1; i< curvePts.size()-2; i++) {
 				
 				ofPoint3 prevPt(	curvePts[i-1][0],	curvePts[i-1][1]);
 				ofPoint3 startPt(curvePts[i][0],		curvePts[i][1]);							

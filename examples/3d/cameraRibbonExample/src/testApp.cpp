@@ -28,7 +28,7 @@ void testApp::update(){
 	//don't move the points if we are using the camera
     if(!usecamera){
         ofVec3f sumOfAllPoints(0,0,0);
-        for(int i = 0; i < points.size(); i++){
+        for(unsigned int i = 0; i < points.size(); i++){
             points[i].z -= 4;
             sumOfAllPoints += points[i];
         }
@@ -50,7 +50,7 @@ void testApp::draw(){
 	//do the same thing from the first example...
     ofMesh mesh;
 	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-	for(int i = 1; i < points.size(); i++){
+	for(unsigned int i = 1; i < points.size(); i++){
 
 		//find this point and the next point
 		ofVec3f thisPoint = points[i-1];
