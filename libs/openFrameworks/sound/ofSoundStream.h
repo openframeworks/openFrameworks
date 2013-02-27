@@ -49,6 +49,10 @@ class ofSoundStream{
 		void close();
 		
 		long unsigned long getTickCount();
+		int getNumInputChannels();
+		int getNumOutputChannels();
+		int getSampleRate();
+		int getBufferSize();
 		
 	protected:
 		
