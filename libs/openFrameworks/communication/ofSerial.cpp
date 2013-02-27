@@ -678,3 +678,6 @@ int ofSerial::available(){
 	return numBytes;
 }
 
+bool ofSerial::isInitialized() const{
+	return bInited;
+}
