@@ -126,6 +126,14 @@ namespace ofxCv {
 		distortedIntrinsics.setup(cameraMatrix, imageSize, sensorSize);
 		updateUndistortion();
 	}
+                   
+	void Calibration::setIntrinsics(Intrinsics& i, Mat& distortionCoefficients){
+		distortedIntrinsics = i;
+        distCoeffs = distortionCoefficients;
+        addedImageSize = i.getImageSize();
+        updateUndistortion();
+        ready = true;
+	}
 	void Calibration::setPatternType(CalibrationPattern patternType) {
 		this->patternType = patternType;
 	}
