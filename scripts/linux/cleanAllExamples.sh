@@ -9,7 +9,7 @@ do
             continue
     fi
     cd $category
-    for example in $( find . -maxdepth 1 -type d )
+    for example in $( find . -maxdepth 1 -type d | grep -v osx )
     do
 	if [ "$example" = "." ]; then
 		continue

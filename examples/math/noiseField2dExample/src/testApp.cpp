@@ -85,7 +85,6 @@ void testApp::draw() {
 	ofBackground(255);
   if(debugMode) {
     ofSetColor(0);
-    float s = windSpeed;
 		// draw a vector field for the debug screen
     for(int i = 0; i < width; i += step) {
       for(int j = 0; j < height; j += step) {

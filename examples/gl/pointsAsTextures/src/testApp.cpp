@@ -82,7 +82,7 @@ void testApp::draw() {
 	// sizing to the right size
 	ofEnableAlphaBlending();
 	camera.begin();
-	for (int i=0; i<points.size(); i++) {
+	for (unsigned int i=0; i<points.size(); i++) {
 		ofSetColor(255, 80);
 		ofVec3f mid = points[i];
 		mid.normalize();

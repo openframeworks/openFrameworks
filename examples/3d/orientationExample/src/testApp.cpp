@@ -48,7 +48,7 @@ void testApp::update(){
 	// clear the pathLines ofMesh from any old vertices
 	pathLines.clear();
 	// add all the vertices from pathVertices
-	for(int i = 0; i < pathVertices.size(); i++) {
+	for(unsigned int i = 0; i < pathVertices.size(); i++) {
 		pathLines.addVertex(pathVertices[i]);
 	}
 }

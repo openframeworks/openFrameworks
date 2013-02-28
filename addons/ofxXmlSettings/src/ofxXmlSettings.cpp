@@ -276,7 +276,7 @@ int ofxXmlSettings::getNumTags(const string&  tag){
 
 	//grab the handle from the level we are at
 	//normally this is the doc but could be a pushed node
-	TiXmlHandle tagHandle = storedHandle;
+	//TiXmlHandle tagHandle = storedHandle;
 
 	int count = 0;
 

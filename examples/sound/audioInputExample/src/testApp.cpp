@@ -72,7 +72,7 @@ void testApp::draw(){
 		ofSetLineWidth(3);
 					
 			ofBeginShape();
-			for (int i = 0; i < left.size(); i++){
+			for (unsigned int i = 0; i < left.size(); i++){
 				ofVertex(i*2, 100 -left[i]*180.0f);
 			}
 			ofEndShape(false);
@@ -95,7 +95,7 @@ void testApp::draw(){
 		ofSetLineWidth(3);
 					
 			ofBeginShape();
-			for (int i = 0; i < right.size(); i++){
+			for (unsigned int i = 0; i < right.size(); i++){
 				ofVertex(i*2, 100 -right[i]*180.0f);
 			}
 			ofEndShape(false);
@@ -118,7 +118,7 @@ void testApp::draw(){
 		
 		//lets draw the volume history as a graph
 		ofBeginShape();
-		for (int i = 0; i < volHistory.size(); i++){
+		for (unsigned int i = 0; i < volHistory.size(); i++){
 			if( i == 0 ) ofVertex(i, 400);
 
 			ofVertex(i, 400 - volHistory[i] * 70);
