@@ -128,7 +128,7 @@ void testApp::keyReleased(int key){
 			break;
 		case OF_KEY_UP:
 			dirLoadIndex++;
-			if (dirLoadIndex>=dir.size()) {
+			if (dirLoadIndex>=(int)dir.size()) {
 				dirLoadIndex=0;
 			}
 			loadLUT(dir.getPath(dirLoadIndex));
