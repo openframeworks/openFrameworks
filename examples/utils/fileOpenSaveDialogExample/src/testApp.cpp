@@ -17,11 +17,11 @@ void testApp::draw()
 	ofDrawBitmapString("Press spacebar to open an image, \"s\" to save the processed output", 20, 15);
 	
 	
-	for (int i=0; i<loadedImages.size(); i++){
+	for (unsigned int i=0; i<loadedImages.size(); i++){
 		loadedImages[i].draw(0, 20);
 	}
 	
-	for (int i=0; i<processedImages.size(); i++){
+	for (unsigned int i=0; i<processedImages.size(); i++){
 		processedImages[i].draw(processedImages[i].getWidth(), 20);
 	}
 	
