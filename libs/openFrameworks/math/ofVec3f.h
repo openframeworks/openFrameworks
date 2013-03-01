@@ -18,7 +18,7 @@ public:
 	/// assigns scalar to x, y, and z
 	explicit ofVec3f( float _scalar );
 	
-    ofVec3f( const ofVec2f& vec );
+    ofVec3f( const ofVec2f& vec, float _z=0 );
     ofVec3f( const ofVec4f& vec );
 	
 	float * getPtr() {
@@ -36,6 +36,32 @@ public:
 		return getPtr()[n];
 	}
 	
+
+	// swizzles
+	//
+	ofVec2f xy() const {
+		return ofVec2f( x, y );
+	}
+	
+	ofVec2f xz() const {
+		return ofVec2f( x, z );
+	}
+    
+	ofVec2f yx() const {
+		return ofVec2f( y, x );
+	}
+	
+	ofVec2f yz() const {
+		return ofVec2f( y, z );
+	}
+	
+	ofVec2f zx() const {
+		return ofVec2f( z, x );
+	}
+    
+	ofVec2f zy() const {
+		return ofVec2f( z, y );
+	}
     
 	// Getters and Setters.
     //
@@ -255,7 +281,7 @@ ofVec3f operator/( float f, const ofVec3f& vec );
 /////////////////
 
 
-inline ofVec3f::ofVec3f( const ofVec2f& vec ):x(vec.x), y(vec.y), z(0) {}
+inline ofVec3f::ofVec3f( const ofVec2f& vec, float _z=0 ):x(vec.x), y(vec.y), z(_z) {}
 inline ofVec3f::ofVec3f( const ofVec4f& vec ):x(vec.x), y(vec.y), z(vec.z) {}
 inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {};
 inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {};
