@@ -136,22 +136,22 @@ FI_STRUCT (FIMULTIBITMAP) { void *data; };
 #ifndef _MSC_VER
 // define portable types for 32-bit / 64-bit OS
 #include <inttypes.h>
-typedef int32_t BOOL;
-typedef uint8_t BYTE;
-typedef uint16_t WORD;
-typedef uint32_t DWORD;
-typedef int32_t LONG;
-typedef int64_t FIINT64;
-typedef uint64_t FIUINT64;
+#define BOOL int32_t
+#define BYTE uint8_t
+#define WORD uint16_t
+#define DWORD uint32_t
+#define LONG int32_t
+#define FIINT64 int64_t
+#define FIUINT64 uint64_t
 #else
 // MS is not C99 ISO compliant
-typedef long BOOL;
-typedef unsigned char BYTE;
-typedef unsigned short WORD;
-typedef unsigned long DWORD;
-typedef long LONG;
-typedef signed __int64 FIINT64;
-typedef unsigned __int64 FIUINT64;
+#define BOOL long
+#define BYTE unsigned char
+#define WORD unsigned short
+#define DWORD unsigned long
+#define LONG long
+#define FIINT64 signed __int64
+#define FIUINT64 unsigned __int64
 #endif // _MSC_VER
 
 #if (defined(_WIN32) || defined(__WIN32__))
@@ -1099,5 +1099,13 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_MultigridPoissonSolver(FIBITMAP *Laplac
 #ifdef __cplusplus
 }
 #endif
+
+#undef BOOL
+#undef BYTE
+#undef WORD
+#undef DWORD
+#undef LONG
+#undef FIINT64
+#undef FIUINT64
 
 #endif // FREEIMAGE_H
