@@ -52,12 +52,14 @@ bool ofxTCPServer::close(){
 
 	if(!connected) return true;
 
+	mConnectionsLock.lock();
 	map<int,ofxTCPClient>::iterator it;
 	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
 		it->second.close();
 	}
 	TCPConnections.clear();
-    stopThread();
+	mConnectionsLock.unlock();	//	unlock for thread
+	stopThread();
 
 	if( !TCPServer.Close() ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: unable to close connection");
@@ -74,6 +76,7 @@ bool ofxTCPServer::close(){
 
 //--------------------------
 bool ofxTCPServer::disconnectClient(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return false;
@@ -87,6 +90,7 @@ bool ofxTCPServer::disconnectClient(int clientID){
 
 //--------------------------
 bool ofxTCPServer::send(int clientID, string message){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist\n");
 		return false;
@@ -100,6 +104,7 @@ bool ofxTCPServer::send(int clientID, string message){
 
 //--------------------------
 bool ofxTCPServer::sendToAll(string message){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if(TCPConnections.size() == 0) return false;
 
 	map<int,ofxTCPClient>::iterator it;
@@ -117,6 +122,7 @@ bool ofxTCPServer::sendToAll(string message){
 
 //--------------------------
 string ofxTCPServer::receive(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return "client doesn't exist";
@@ -132,6 +138,7 @@ string ofxTCPServer::receive(int clientID){
 
 //--------------------------
 bool ofxTCPServer::sendRawBytes(int clientID, const char * rawBytes, const int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
 		return false;
@@ -143,6 +150,7 @@ bool ofxTCPServer::sendRawBytes(int clientID, const char * rawBytes, const int n
 
 //--------------------------
 bool ofxTCPServer::sendRawBytesToAll(const char * rawBytes, const int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if(TCPConnections.size() == 0 || numBytes <= 0) return false;
 
 	map<int,ofxTCPClient>::iterator it;
@@ -155,6 +163,7 @@ bool ofxTCPServer::sendRawBytesToAll(const char * rawBytes, const int numBytes){
 
 //--------------------------
 bool ofxTCPServer::sendRawMsg(int clientID, const char * rawBytes, const int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
 		return false;
@@ -166,6 +175,7 @@ bool ofxTCPServer::sendRawMsg(int clientID, const char * rawBytes, const int num
 
 //--------------------------
 bool ofxTCPServer::sendRawMsgToAll(const char * rawBytes, const int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if(TCPConnections.size() == 0 || numBytes <= 0) return false;
 
 	map<int,ofxTCPClient>::iterator it;
@@ -177,6 +187,7 @@ bool ofxTCPServer::sendRawMsgToAll(const char * rawBytes, const int numBytes){
 
 //--------------------------
 int ofxTCPServer::getNumReceivedBytes(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
 		return 0;
@@ -187,6 +198,7 @@ int ofxTCPServer::getNumReceivedBytes(int clientID){
 
 //--------------------------
 int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return 0;
@@ -195,8 +207,10 @@ int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numByt
 	return TCPConnections[clientID].receiveRawBytes(receiveBytes, numBytes);
 }
 
+
 //--------------------------
 int ofxTCPServer::receiveRawMsg(int clientID, char * receiveBytes,  int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return 0;
@@ -207,6 +221,7 @@ int ofxTCPServer::receiveRawMsg(int clientID, char * receiveBytes,  int numBytes
 
 //--------------------------
 int ofxTCPServer::getClientPort(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
 		return 0;
@@ -216,6 +231,7 @@ int ofxTCPServer::getClientPort(int clientID){
 
 //--------------------------
 string ofxTCPServer::getClientIP(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return "000.000.000.000";
@@ -225,6 +241,7 @@ string ofxTCPServer::getClientIP(int clientID){
 
 //--------------------------
 int ofxTCPServer::getNumClients(){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	return TCPConnections.size()-1;
 }
 
@@ -245,11 +262,13 @@ bool ofxTCPServer::isConnected(){
 
 //--------------------------
 bool ofxTCPServer::isClientSetup(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	return TCPConnections.find(clientID)!=TCPConnections.end();
 }
 
 //--------------------------
 bool ofxTCPServer::isClientConnected(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	return isClientSetup(clientID) && TCPConnections[clientID].isConnected();
 }
 
@@ -273,9 +292,14 @@ void ofxTCPServer::threadedFunction(){
 			if(isThreadRunning()) ofLog(OF_LOG_ERROR, "ofxTCPServer: Listen() failed");
 		}
 		
-		if( !TCPServer.Accept(TCPConnections[acceptId].TCPClient) ){
+		//	we need to lock here, but can't as it blocks...
+		//	so use a temporary to not block the lock 
+		ofxTCPManager NewClient;
+		if( !TCPServer.Accept( NewClient ) ){
 			if(isThreadRunning()) ofLog(OF_LOG_ERROR, "ofxTCPServer: Accept() failed\n");
 		}else{
+			ofMutex::ScopedLock Lock( mConnectionsLock );
+			TCPConnections[acceptId].TCPClient = NewClient;
 			TCPConnections[acceptId].setup(acceptId, bClientBlocking);
 			TCPConnections[acceptId].setMessageDelimiter(messageDelimiter);
 			ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(acceptId) + " connected on port " + ofToString(TCPConnections[acceptId].getPort()) );
