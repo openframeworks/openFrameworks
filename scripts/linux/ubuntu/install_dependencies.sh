@@ -14,8 +14,7 @@ apt-get update
 GSTREAMER_VERSION=0.10
 GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
 
-apt-cache policy libgstreamer1.0-dev | grep Version >/dev/null
-RET=$?
+RET=$(apt-cache show -n libgstreamer1.0-dev &> /dev/null; echo $?)
 
 if [ "$RET" -eq "0" ]; then
     echo selecting gstreamer 1.0

@@ -61,7 +61,6 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 					if(printVectorInfo){
 						ofLog(OF_LOG_NOTICE, "flag[%i] is set to 1 - regular point - %f %f", j, lastPoint.x, lastPoint.y);
 					}
-					//testOutline.push_back(lastPoint);
 					charOutlines.lineTo(lastPoint/64);
 
 				}else{
@@ -1107,11 +1106,9 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	}
 
 	GLint		index	= 0;
-	GLfloat		X		= 0;
-	GLfloat		Y		= 0;
+	GLfloat		X		= x;
+	GLfloat		Y		= y;
 
-	ofPushMatrix();
-	ofTranslate(x, y);
 	int len = (int)c.length();
 
 	while(index < len){
@@ -1120,7 +1117,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		  if (c[index] == '\n') {
 
 				Y += lineHeight;
-				X = 0 ; //reset X Pos back to zero
+				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
@@ -1134,8 +1131,6 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		}
 		index++;
 	}
-
-	ofPopMatrix();
 
 }
 
