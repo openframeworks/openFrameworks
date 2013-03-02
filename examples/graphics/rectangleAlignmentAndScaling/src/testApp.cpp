@@ -125,7 +125,6 @@ void testApp::draw(){
     // make the menu
     stringstream ss;
     
-    int tab = 20;
     ss << "Keys:" << endl;
     ss << "----------------------------------------------------------" << endl;
     ss << " New Subject / Target (space) " << endl;
@@ -337,6 +336,9 @@ string testApp::getHorzAlignString(ofAlignHorz hAlign) {
             return "OF_ALIGN_HORZ_RIGHT";
         case OF_ALIGN_HORZ_IGNORE:
             return "OF_ALIGN_HORZ_IGNORE";
+        default:
+        	ofLogError() << "Unknown ofAlignHorz: " << hAlign;
+        	return "";
     }
 }
 
@@ -351,6 +353,9 @@ string testApp::getVertAlignString(ofAlignVert vAlign) {
             return "OF_ALIGN_VERT_BOTTOM";
         case OF_ALIGN_VERT_IGNORE:
             return "OF_ALIGN_VERT_IGNORE";
+        default:
+        	ofLogError() << "Unknown ofAlignVert: " << vAlign;
+        	return "";
     }
 }
 
@@ -363,6 +368,9 @@ string testApp::getAspectRatioModeString(ofAspectRatioMode mode) {
             return "OF_ASPECT_RATIO_KEEP";
         case OF_ASPECT_RATIO_KEEP_BY_EXPANDING:
             return "OF_ASPECT_RATIO_KEEP_BY_EXPANDING";
+        default:
+        	ofLogError() << "Unknown ofAspectRatioMode: " << mode;
+        	return "";
     }
 }
 
@@ -377,6 +385,9 @@ string testApp::getScaleModeString(ofScaleMode mode) {
             return "OF_SCALEMODE_CENTER";
         case OF_SCALEMODE_STRETCH_TO_FILL:
             return "OF_SCALEMODE_STRETCH_TO_FILL";
+        default:
+        	ofLogError() << "Unknown ofScaleMode: " << mode;
+        	return "";
     }
 }
 
