@@ -48,6 +48,11 @@
 
 - (void)startRender {
     [EAGLContext setCurrentContext:context];
+
+	if(fsaaEnabled) {
+		// Set up so that we draw into the multisampled buffer.
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
+	}
 }
 
 - (void)finishRender {
@@ -70,8 +75,11 @@
     [context presentRenderbuffer:GL_RENDERBUFFER_OES];
 	
 	if(fsaaEnabled) {
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
-    }
+		// Set current fb to the 'resolve' buffer (mapped to the display). This means GL state is such that we can
+		//  read back (screen-grabs, texture-grabs, etc.) from within event handling methods.
+		//  Caveat: Can't execute direct GL draws from event handling methods...but don't think we should be anyway.
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
+	}
 }
 
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer {	
