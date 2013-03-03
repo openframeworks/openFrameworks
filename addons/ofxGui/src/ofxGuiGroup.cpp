@@ -10,6 +10,7 @@ ofxGuiGroup::ofxGuiGroup(){
 	spacing  = 1;
 	spacingNextElement = 3;
 	header = defaultHeight;
+	bGuiActive = false;
 }
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, string filename, float x, float y){
@@ -22,7 +23,6 @@ ofxGuiGroup * ofxGuiGroup::setup(string collectionName, string filename, float x
 	parameters.setName(collectionName);
 	return setup(parameters,filename,x,y);
 }
-
 
 ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _filename, float x, float y){
 	b.x = x;
@@ -37,6 +37,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	}
     clear();
 	filename = _filename;
+	bGuiActive = false;
     
 	for(int i=0;i<_parameters.size();i++){
 		string type = _parameters.getType(i);
@@ -77,7 +78,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	}
 
 	parameters = _parameters;
-	ofRegisterMouseEvents(this);
+	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 
 	generateDraw();
     
@@ -180,10 +181,15 @@ void ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->mouseMoved(a);
 	}
+	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+		ofEventMarkAttended();
+	}
 }
 
 void ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
-	setValue(args.x, args.y, true);
+	if(setValue(args.x, args.y, true)){
+		ofEventMarkAttended();
+	}
 	if( bGuiActive ){
 		ofMouseEventArgs a = args;
 		for(int i = 0; i < (int)collection.size(); i++){
@@ -193,7 +199,9 @@ void ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 }
 
 void ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
-	setValue(args.x, args.y, false);
+	if(setValue(args.x, args.y, false)){
+		ofEventMarkAttended();
+	}
 	if( bGuiActive ){
 		ofMouseEventArgs a = args;
 		for(int i = 0; i < (int)collection.size(); i++){
@@ -207,6 +215,9 @@ void ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	for(int k = 0; k < (int)collection.size(); k++){
 		ofMouseEventArgs a = args;
 		collection[k]->mouseReleased(a);
+	}
+	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+		ofEventMarkAttended();
 	}
 }
 
@@ -238,10 +249,7 @@ void ofxGuiGroup::generateDraw(){
 	}
 }
 
-void ofxGuiGroup::draw(){
-
-	currentFrame = ofGetFrameNum();
-
+void ofxGuiGroup::render(){
 	border.draw();
 	headerBg.draw();
 
@@ -252,12 +260,7 @@ void ofxGuiGroup::draw(){
 	ofColor c = ofGetStyle().color;
 	ofSetColor(thisTextColor);
 	font.getFontTexture().bind();
-	/*font.drawString(getName(), textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
-	if(minimized){
-		font.drawString("+", b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement);
-	}else{
-		font.drawString("-", b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement);
-	}*/
+
 	textMesh.draw();
 	font.getFontTexture().unbind();
     
@@ -311,32 +314,35 @@ ofxBaseGui * ofxGuiGroup::getControl(string name){
 }
 
 void ofxGuiGroup::registerMouseEvents(){
-    ofRegisterMouseEvents(this);
+	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 }
 
-void ofxGuiGroup::setValue(float mx, float my, bool bCheck){
+bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
     
-	if( ofGetFrameNum() - currentFrame > 1 ){
+	if( !isGuiDrawing() ){
 		bGuiActive = false;
-		return;
+		return false;
 	}
 
 
 	if( bCheck ){
-		ofRectangle minButton(b.x+b.width-textPadding-10,b.y,10,header);
-		if(minButton.inside(mx,my)){
-			minimized = !minimized;
-			if(minimized){
-				minimize();
-			}else{
-				maximize();
-			}
-		}
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
+
+			ofRectangle minButton(b.x+b.width-textPadding-10,b.y,10,header);
+			if(minButton.inside(mx,my)){
+				minimized = !minimized;
+				if(minimized){
+					minimize();
+				}else{
+					maximize();
+				}
+				return true;
+			}
         }
 	}
 
+	return false;
 }
 
 void ofxGuiGroup::minimize(){

@@ -4,7 +4,6 @@
 template<typename Type>
 ofxSlider<Type>::ofxSlider(){
 	bUpdateOnReleaseOnly = false;
-	currentFrame = ofGetFrameNum();
 	bGuiActive = false;
 }
 
@@ -26,11 +25,10 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 	b.y = 0;
 	b.width = width;
 	b.height = height;
-	currentFrame = ofGetFrameNum();
 	bGuiActive = false;
 
 	value.addListener(this,&ofxSlider::valueChanged);
-	ofRegisterMouseEvents(this);
+	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 	generateDraw();
 	return this;
 }
@@ -43,6 +41,9 @@ ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, Type _val, Type _min,
 
 template<typename Type>
 void ofxSlider<Type>::mouseMoved(ofMouseEventArgs & args){
+	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+		ofEventMarkAttended();
+	}
 }
 
 template<typename Type>
@@ -50,12 +51,16 @@ void ofxSlider<Type>::mousePressed(ofMouseEventArgs & args){
 	if(bUpdateOnReleaseOnly){
 		value.disableEvents();
 	}
-	setValue(args.x, args.y, true);
+	if(setValue(args.x, args.y, true)){
+		ofEventMarkAttended();
+	}
 }
 
 template<typename Type>
 void ofxSlider<Type>::mouseDragged(ofMouseEventArgs & args){
-	setValue(args.x, args.y, false);
+	if(setValue(args.x, args.y, false)){
+		ofEventMarkAttended();
+	}
 }
 
 template<typename Type>
@@ -63,8 +68,12 @@ void ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
 	if(bUpdateOnReleaseOnly){
 		value.enableEvents();
 	}
-	setValue(args.x, args.y, false);
+	bool attended = setValue(args.x, args.y, false);
+
 	bGuiActive = false;
+	if(attended){
+		ofEventMarkAttended();
+	}
 }
 
 template<typename Type>
@@ -119,10 +128,8 @@ void ofxSlider<unsigned char>::generateText(){
 }
 
 template<typename Type>
-void ofxSlider<Type>::draw(){
+void ofxSlider<Type>::render(){
 	ofColor c = ofGetStyle().color;
-
-	currentFrame = ofGetFrameNum();
 
 	bg.draw();
 	bar.draw();
@@ -132,11 +139,6 @@ void ofxSlider<Type>::draw(){
 		ofEnableAlphaBlending();
 	}
 	ofSetColor(thisTextColor);
-	/*font.bind();
-	font.drawString(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	string valStr = ofToString(value);
-	font.drawString(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4);
-	font.unbind();*/
 	font.getFontTexture().bind();
 	textMesh.draw();
 	font.getFontTexture().unbind();
@@ -148,29 +150,11 @@ void ofxSlider<Type>::draw(){
 }
 
 
-/*template<>
-void ofxSlider<unsigned char>::draw(){
-	bool currentFill = ofGetStyle().bFill;
-	ofColor c = ofGetStyle().color;
-
-	currentFrame = ofGetFrameNum();
-
-	bg.draw();
-	bar.draw();
-
-	font.getFontTexture().bind();
-	textMesh.draw();
-	font.getFontTexture().unbind();
-
-	ofSetColor(c);
-	if(!currentFill) ofNoFill();
-}*/
-
 template<typename Type>
-void ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
-	if( ofGetFrameNum() - currentFrame > 1 ){
+bool ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
+	if( !isGuiDrawing() ){
 		bGuiActive = false;
-		return;
+		return false;
 	}
 	if( bCheck ){
 		if( b.inside(mx, my) ){
@@ -181,7 +165,9 @@ void ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
 	}
 	if( bGuiActive ){
 		value = ofMap(mx, b.x, b.x + b.width, value.getMin(), value.getMax(), true);
+		return true;
 	}
+	return false;
 }
 
 template<typename Type>

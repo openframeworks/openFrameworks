@@ -14,13 +14,12 @@ ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height)
 	b.y = 0;
 	b.width = width;
 	b.height = height;
-	currentFrame = 0;
 	bGuiActive = false;
 	value.makeReferenceTo(_bVal);
 	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 
 	value.addListener(this,&ofxToggle::valueChanged);
-	ofRegisterMouseEvents(this);
+	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 	generateDraw();
 
 	return this;
@@ -34,17 +33,29 @@ ofxToggle * ofxToggle::setup(string toggleName, bool _bVal, float width, float h
 
 
 void ofxToggle::mouseMoved(ofMouseEventArgs & args){
+	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+		ofEventMarkAttended();
+	}
 }
 
 void ofxToggle::mousePressed(ofMouseEventArgs & args){
-	setValue(args.x, args.y, true);
+	if(setValue(args.x, args.y, true)){
+		ofEventMarkAttended();
+	}
 }
 
 void ofxToggle::mouseDragged(ofMouseEventArgs & args){
+	if(bGuiActive && b.inside(ofPoint(args.x,args.y))){
+		ofEventMarkAttended();
+	}
 }
 
 void ofxToggle::mouseReleased(ofMouseEventArgs & args){
+	bool wasGuiActive = bGuiActive;
 	bGuiActive = false;
+	if(wasGuiActive && b.inside(ofPoint(args.x,args.y))){
+		ofEventMarkAttended();
+	}
 }
 
 void ofxToggle::generateDraw(){
@@ -83,9 +94,7 @@ void ofxToggle::generateDraw(){
 	textMesh = font.getStringMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
 }
 
-void ofxToggle::draw(){
-	currentFrame = ofGetFrameNum();
-
+void ofxToggle::render(){
 	bg.draw();
 	fg.draw();
 
@@ -117,11 +126,11 @@ ofxToggle::operator const bool & (){
 	return value;
 }
 
-void ofxToggle::setValue(float mx, float my, bool bCheck){
+bool ofxToggle::setValue(float mx, float my, bool bCheck){
 
-	if( ofGetFrameNum() - currentFrame > 1 ){
+	if( !isGuiDrawing() ){
 		bGuiActive = false;
-		return;
+		return false;
 	}
 	if( bCheck ){
 		ofRectangle checkRect = checkboxRect;
@@ -137,7 +146,9 @@ void ofxToggle::setValue(float mx, float my, bool bCheck){
 	}
 	if( bGuiActive ){
 		value = !value;
+		return true;
 	}
+	return false;
 }
 
 ofAbstractParameter & ofxToggle::getParameter(){

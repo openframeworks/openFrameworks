@@ -260,6 +260,214 @@ private:
 };
 
 
+template <>
+class FunctionPriorityDelegate<void,true,true>: public AbstractPriorityDelegate<void>
+	/// Wraps a freestanding function or static member function
+	/// for use as a PriorityDelegate.
+{
+public:
+	typedef void (*NotifyMethod)(const void*);
+
+	FunctionPriorityDelegate(NotifyMethod method, int prio):
+		AbstractPriorityDelegate<void>(prio),
+		_receiverMethod(method)
+	{
+	}
+
+	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
+		AbstractPriorityDelegate<void>(delegate),
+		_receiverMethod(delegate._receiverMethod)
+	{
+	}
+
+	FunctionPriorityDelegate& operator = (const FunctionPriorityDelegate& delegate)
+	{
+		if (&delegate != this)
+		{
+			this->_receiverMethod = delegate._receiverMethod;
+			this->_priority       = delegate._priority;
+		}
+		return *this;
+	}
+
+	~FunctionPriorityDelegate()
+	{
+	}
+
+	bool notify(const void* sender)
+	{
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(sender);
+			return true;
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<void>& other) const
+	{
+		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
+		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<void>* clone() const
+	{
+		return new FunctionPriorityDelegate(*this);
+	}
+
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
+protected:
+	NotifyMethod _receiverMethod;
+	Mutex _mutex;
+
+private:
+	FunctionPriorityDelegate();
+};
+
+
+template <>
+class FunctionPriorityDelegate<void, true, false>: public AbstractPriorityDelegate<void>
+{
+public:
+	typedef void (*NotifyMethod)(void*);
+
+	FunctionPriorityDelegate(NotifyMethod method, int prio):
+		AbstractPriorityDelegate<void>(prio),
+		_receiverMethod(method)
+	{
+	}
+
+	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
+		AbstractPriorityDelegate<void>(delegate),
+		_receiverMethod(delegate._receiverMethod)
+	{
+	}
+
+	FunctionPriorityDelegate& operator = (const FunctionPriorityDelegate& delegate)
+	{
+		if (&delegate != this)
+		{
+			this->_receiverMethod = delegate._receiverMethod;
+			this->_priority       = delegate._priority;
+		}
+		return *this;
+	}
+
+	~FunctionPriorityDelegate()
+	{
+	}
+
+	bool notify(const void* sender)
+	{
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)(const_cast<void*>(sender));
+			return true;
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<void>& other) const
+	{
+		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
+		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<void>* clone() const
+	{
+		return new FunctionPriorityDelegate(*this);
+	}
+
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
+protected:
+	NotifyMethod _receiverMethod;
+	Mutex _mutex;
+
+private:
+	FunctionPriorityDelegate();
+};
+
+
+template <>
+class FunctionPriorityDelegate<void, false>: public AbstractPriorityDelegate<void>
+{
+public:
+	typedef void (*NotifyMethod)();
+
+	FunctionPriorityDelegate(NotifyMethod method, int prio):
+		AbstractPriorityDelegate<void>(prio),
+		_receiverMethod(method)
+	{
+	}
+
+	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
+		AbstractPriorityDelegate<void>(delegate),
+		_receiverMethod(delegate._receiverMethod)
+	{
+	}
+
+	FunctionPriorityDelegate& operator = (const FunctionPriorityDelegate& delegate)
+	{
+		if (&delegate != this)
+		{
+			this->_receiverMethod = delegate._receiverMethod;
+			this->_priority       = delegate._priority;
+		}
+		return *this;
+	}
+
+	~FunctionPriorityDelegate()
+	{
+	}
+
+	bool notify(const void* sender)
+	{
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverMethod)
+		{
+			(*_receiverMethod)();
+			return true;
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<void>& other) const
+	{
+		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
+		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<void>* clone() const
+	{
+		return new FunctionPriorityDelegate(*this);
+	}
+
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverMethod = 0;
+	}
+
+protected:
+	NotifyMethod _receiverMethod;
+	Mutex _mutex;
+
+private:
+	FunctionPriorityDelegate();
+};
+
 } // namespace Poco
 
 
