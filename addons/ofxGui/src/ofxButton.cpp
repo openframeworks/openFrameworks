@@ -10,12 +10,11 @@ ofxButton* ofxButton::setup(string toggleName, float width, float height){
 	b.y = 0;
 	b.width = width;
 	b.height = height;
-	currentFrame = 0;
 	bGuiActive = false;
 	value = false;
 	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 
-	ofRegisterMouseEvents(this);
+	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 
 	value.addListener(this,&ofxButton::valueChanged);
 
@@ -23,11 +22,12 @@ ofxButton* ofxButton::setup(string toggleName, float width, float height){
 }
 
 void ofxButton::mouseReleased(ofMouseEventArgs & args){
-	setValue(args.x, args.y, false);
+	bool attended = setValue(args.x, args.y, false);
 	bGuiActive = false;
+	if(attended){
+		ofEventMarkAttended();
+	}
 }
-
-
 
 void ofxButton::mouseMoved(ofMouseEventArgs & args){
 	ofxToggle::mouseMoved(args);

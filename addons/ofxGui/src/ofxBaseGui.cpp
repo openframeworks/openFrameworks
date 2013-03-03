@@ -16,8 +16,7 @@ ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
 
 ofxBaseGui::ofxBaseGui(){
-	bGuiActive = false;
-	currentFrame = 0;
+	currentFrame = ofGetFrameNum();
 	serializer = new ofxXmlSettings;
 
 	thisHeaderBackgroundColor=headerBackgroundColor;
@@ -36,7 +35,21 @@ void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, boo
 }
 
 ofxBaseGui::~ofxBaseGui(){
-	ofUnregisterMouseEvents(this);
+	ofUnregisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+}
+
+
+void ofxBaseGui::draw(){
+	currentFrame = ofGetFrameNum();
+	render();
+}
+
+bool ofxBaseGui::isGuiDrawing(){
+	if( ofGetFrameNum() - currentFrame > 1 ){
+		return false;
+	}else{
+		return true;
+	}
 }
 
 void ofxBaseGui::saveToFile(string filename) {

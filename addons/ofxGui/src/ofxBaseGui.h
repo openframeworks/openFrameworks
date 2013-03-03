@@ -10,7 +10,7 @@ public:
 	ofxBaseGui();
 	
 	virtual ~ofxBaseGui();
-	virtual void draw() = 0;
+	void draw();
 	
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
@@ -55,14 +55,13 @@ public:
 	virtual void mouseDragged(ofMouseEventArgs & args) = 0;
 	virtual void mouseReleased(ofMouseEventArgs & args) = 0;
 protected:
+	virtual void render()=0;
+	bool isGuiDrawing();
+	virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
 
-	virtual void setValue(float mx, float my, bool bCheckBounds) = 0;
-
-	unsigned long currentFrame;			
 	ofRectangle b;
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
-	bool bGuiActive;
 	ofBaseFileSerializer * serializer;
 
 	static const ofColor headerBackgroundColor;
@@ -85,4 +84,7 @@ protected:
 	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;
 
 	virtual void generateDraw(){};
+
+private:
+	unsigned long currentFrame;
 }; 

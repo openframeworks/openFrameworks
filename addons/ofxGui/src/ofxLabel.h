@@ -21,9 +21,6 @@ public:
 	virtual void saveTo(ofBaseSerializer& serializer){};
 	virtual void loadFrom(ofBaseSerializer& serializer){};
 
-    virtual void setValue(float mx, float my, bool bCheckBounds){}
-
-    void draw();
 
     template<class ListenerClass>
     void addListener(ListenerClass * listener, void ( ListenerClass::*method )(string&)){
@@ -41,9 +38,11 @@ public:
     ofAbstractParameter & getParameter();
 
 protected:
+    void render();
     ofParameter<string> label;
     void generateDraw();
     void valueChanged(string & value);
+    bool setValue(float mx, float my, bool bCheckBounds){return false;}
     ofPath bg;
     ofVboMesh textMesh;
 };

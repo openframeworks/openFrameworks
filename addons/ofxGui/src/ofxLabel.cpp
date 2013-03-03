@@ -41,9 +41,7 @@ void ofxLabel::generateDraw(){
 	textMesh = font.getStringMesh(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
 }
 
-void ofxLabel::draw() {
-    currentFrame = ofGetFrameNum();
-
+void ofxLabel::render() {
 	ofColor c = ofGetStyle().color;
 
 	bg.draw();
@@ -56,7 +54,6 @@ void ofxLabel::draw() {
     font.getFontTexture().bind();
     textMesh.draw();
     font.getFontTexture().unbind();
-    //font.drawString(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
 
     ofSetColor(c);
 	if(blendMode!=OF_BLENDMODE_ALPHA){

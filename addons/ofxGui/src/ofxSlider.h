@@ -35,15 +35,16 @@ public:
 	double operator=(Type v);
 	operator const Type & ();
 
-	void draw();
 	
 
 	ofAbstractParameter & getParameter();
 
 protected:
+	void render();
 	ofParameter<Type> value;
 	bool bUpdateOnReleaseOnly;
-	void setValue(float mx, float my, bool bCheck);
+	bool bGuiActive;
+	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
 	void generateText();
 	void valueChanged(Type & value);

@@ -77,9 +77,7 @@ void ofxPanel::generateDraw(){
 	textMesh = font.getStringMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
 }
 
-void ofxPanel::draw(){
-	currentFrame = ofGetFrameNum();
-
+void ofxPanel::render(){
 	border.draw();
 	headerBg.draw();
 
@@ -90,7 +88,7 @@ void ofxPanel::draw(){
 	ofColor c = ofGetStyle().color;
 	ofSetColor(thisTextColor);
 	font.getFontTexture().bind();
-	//font.drawString(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+
 	textMesh.draw();
 	font.getFontTexture().unbind();
 
@@ -110,14 +108,17 @@ void ofxPanel::draw(){
 void ofxPanel::mouseReleased(ofMouseEventArgs & args){
     this->bGrabbed = false;
     ofxGuiGroup::mouseReleased(args);
+    if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+    	ofEventMarkAttended();
+    }
 }
 
-void ofxPanel::setValue(float mx, float my, bool bCheck){
+bool ofxPanel::setValue(float mx, float my, bool bCheck){
 
-	if( ofGetFrameNum() - currentFrame > 1 ){
+	if( !isGuiDrawing() ){
 		bGrabbed = false;
 		bGuiActive = false;
-		return;
+		return false;
 	}
 	if( bCheck ){
 		if( b.inside(mx, my) ){
@@ -133,13 +134,17 @@ void ofxPanel::setValue(float mx, float my, bool bCheck){
 			if(loadBox.inside(mx, my)) {
 				loadFromFile(filename);
 				ofNotifyEvent(loadPressedE,this);
+				return true;
 			}
 			if(saveBox.inside(mx, my)) {
 				saveToFile(filename);
 				ofNotifyEvent(savePressedE,this);
+				return true;
 			}
 		}
 	} else if( bGrabbed ){
 		setPosition(mx - grabPt.x,my - grabPt.y);
+		return true;
 	}
+	return false;
 }
