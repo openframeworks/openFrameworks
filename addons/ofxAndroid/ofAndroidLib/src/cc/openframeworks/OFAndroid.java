@@ -977,14 +977,10 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
                 case MotionEvent.ACTION_MOVE:
                 {
             		for(int i=0; i<event.getHistorySize(); i++)
-            		{
-            			try{
-		                	for(int j=0; j<event.getPointerCount(); j++)
-		                	{
-	                			int ptr = event.getPointerId(j);
-	                			OFAndroid.onTouchMoved(ptr, event.getHistoricalX(ptr, i), event.getHistoricalY(ptr, i), event.getHistoricalPressure(ptr, i));                		
-	                		}
-            			}catch(IllegalArgumentException e){}
+            		{            			
+		                for(int j=0; j<event.getPointerCount(); j++){	                			
+	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i));
+	                	}            			
                 	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
 	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
