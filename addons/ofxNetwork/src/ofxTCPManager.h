@@ -174,10 +174,6 @@ public:
 		if ((m_hSocket)&&(m_hSocket != INVALID_SOCKET)) Close();
 	};
 
-	//	null socket so it's not closed on destruction (assume something has taken ownership). 
-	//	hack for https://github.com/openframeworks/openFrameworks/issues/1901#issuecomment-14258400
-	void LoseSocket()	{	m_hSocket = NULL;	}	
-
 	bool Close();
 	bool Create();
 	bool Listen(int iMaxConnections);
@@ -208,7 +204,11 @@ public:
 	bool CheckHost(const char *pAddrStr);
 	void CleanUp();
 
-protected:
+private:
+	// private copy so this can't be copied to avoid problems with destruction
+	ofxTCPManager(const ofxTCPManager & mom){};
+	ofxTCPManager & operator=(const ofxTCPManager & mom){return *this;}
+
   int m_iListenPort;
   int m_iMaxConnections;
 
