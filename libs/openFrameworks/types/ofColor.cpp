@@ -450,7 +450,7 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 		PixelType qv = (PixelType) ((1.f - saturationNorm * hueSixRemainder) * brightness);
 		PixelType tv = (PixelType) ((1.f - saturationNorm * (1.f - hueSixRemainder)) * brightness);
 		switch(hueSixCategory) {
-			case 0: // r
+			case 0: case 6: // r
 				r = brightness;
 				g = tv;
 				b = pv;
