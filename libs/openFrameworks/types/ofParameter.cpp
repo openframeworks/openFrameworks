@@ -30,6 +30,11 @@ string ofAbstractParameter::escape(string str) const{
 	ofStringReplace(str, "}", "_");
 	ofStringReplace(str, "[", "_");
 	ofStringReplace(str, "]", "_");
+	ofStringReplace(str, ",", "_");
+	ofStringReplace(str, "(", "_");
+	ofStringReplace(str, ")", "_");
+	ofStringReplace(str, "/", "_");
+	ofStringReplace(str, "\\", "_");
 	return str;
 }
 
