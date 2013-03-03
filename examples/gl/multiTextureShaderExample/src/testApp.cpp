@@ -30,8 +30,8 @@ void testApp::setup(){
     //  2 - Giving the right file names for each one: 
     //      Ex.: shader.load( "myShader.vert","myShader.frag");
     //
-    //  3 - And the third one it«s passing the shader programa on a single string;
-    //      In this particular example we are using STRINGIFY witch it«s a handy macro
+    //  3 - And the third one is passing the shader programa on a single string;
+    //      In this particular example we are using STRINGIFY which is a handy macro
     string shaderProgram = STRINGIFY(
                                      uniform sampler2DRect tex0;
                                      uniform sampler2DRect tex1;
@@ -58,7 +58,7 @@ void testApp::setup(){
     shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram);
     shader.linkProgram(); 
     
-    // Let«s clear the FBO«s
+    // Let's clear the FBOs
     // otherwise it will bring some junk with it from the memory    
     fbo.begin();
     ofClear(0,0,0,255);
@@ -71,7 +71,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-    vidGrabber.grabFrame();
+    vidGrabber.update();
     fingerMovie.update();
         
     // This just 
