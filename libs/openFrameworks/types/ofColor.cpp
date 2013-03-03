@@ -243,11 +243,18 @@ void ofColor_<PixelType>::set (ofColor_<PixelType> const & color){
 }
 
 
-template<typename PixelType>
-void ofColor_<PixelType>::setHex (int hexColor, float alpha){
+template<>
+void ofColor_<unsigned char>::setHex (int hexColor, float alpha){
 	r = (hexColor >> 16) & 0xff;
 	g = (hexColor >> 8) & 0xff;
 	b = (hexColor >> 0) & 0xff;
+	a = alpha;
+}
+
+template<typename PixelType>
+void ofColor_<PixelType>::setHex (int hexColor, float alpha){
+	ofColor c = ofColor::fromHex(hexColor);
+	*this = c;
 	a = alpha;
 }
 
@@ -450,7 +457,7 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 		PixelType qv = (PixelType) ((1.f - saturationNorm * hueSixRemainder) * brightness);
 		PixelType tv = (PixelType) ((1.f - saturationNorm * (1.f - hueSixRemainder)) * brightness);
 		switch(hueSixCategory) {
-			case 0: // r
+			case 0: case 6: // r
 				r = brightness;
 				g = tv;
 				b = pv;
@@ -488,12 +495,17 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 }
 
 
-template<typename PixelType>
-int ofColor_<PixelType>::getHex () const {
+template<>
+int ofColor_<unsigned char>::getHex () const {
 	return
 		((0xff & (unsigned char) r) << 16) |
 		((0xff & (unsigned char) g) << 8) |
 		((0xff & (unsigned char) b));
+}
+
+template<typename PixelType>
+int ofColor_<PixelType>::getHex () const {
+	return ((ofColor) *this).getHex();
 }
 
 
