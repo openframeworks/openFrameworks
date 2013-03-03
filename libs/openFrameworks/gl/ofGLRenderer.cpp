@@ -18,6 +18,11 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	triPoints.resize(3);
 
 	currentFbo = NULL;
+	
+	coordHandedness = OF_LEFT_HANDED;
+	fillFlag = OF_FILLED;
+	bSmoothHinted = false;
+	rectMode = OF_RECTMODE_CORNER;
 }
 
 //----------------------------------------------------------
@@ -796,12 +801,12 @@ void ofGLRenderer::background(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void ofGLRenderer::setFillMode(ofFillFlag fill){
-	bFilled = fill;
+	fillFlag = fill;
 }
 
 //----------------------------------------------------------
 ofFillFlag ofGLRenderer::getFillMode(){
-	return bFilled;
+	return fillFlag;
 }
 
 //----------------------------------------------------------
@@ -962,14 +967,14 @@ void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
 }
 
@@ -980,14 +985,14 @@ void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2
 	triPoints[2].set(x3,y3,z3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
 }
 
@@ -999,14 +1004,14 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
 }
 
@@ -1016,7 +1021,7 @@ void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
     glEnable(GL_NORMALIZE);
     glPushMatrix();
     glScalef(radius, radius, radius);
-    if(bFilled) {
+    if(fillFlag) {
         sphereMesh.draw();
     } else {
         sphereMesh.drawWireframe();
@@ -1036,14 +1041,14 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
 }
 
