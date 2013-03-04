@@ -14,6 +14,7 @@ public:
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
+	void allocateMrt(int width, int height, int numColorbuffers, GLint colorFormats[], GLint depthStencilInternalFormat = GL_NONE);
 	bool isAllocated();
 
 	void draw(float x, float y);
