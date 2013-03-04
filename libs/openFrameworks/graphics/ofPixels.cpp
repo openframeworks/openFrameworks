@@ -289,6 +289,15 @@ void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 }
 
 template<typename PixelType>
+void ofPixels_<PixelType>::setColor(ofColor_<PixelType> color) {
+	for(int y = 0; y < height; y++) {
+		for(int x = 0; x < width; x++) {
+			setColor(x, y, color);
+		}
+	}
+}
+
+template<typename PixelType>
 PixelType & ofPixels_<PixelType>::operator[](int pos){
 	return pixels[pos];
 }
