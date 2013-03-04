@@ -842,6 +842,12 @@ void ofImage_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 
 //------------------------------------
 template<typename PixelType>
+void ofImage_<PixelType>::setColor(ofColor_<PixelType> color) {
+	pixels.setColor(color);
+}
+
+//------------------------------------
+template<typename PixelType>
 void  ofImage_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){
 
 	allocate(w, h, newType);
