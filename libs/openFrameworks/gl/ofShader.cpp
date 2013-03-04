@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofGraphics.h"
-#include "ofGLES2Renderer.h"
+#include "ofProgrammableGLRenderer.h"
 #include <map>
 
 

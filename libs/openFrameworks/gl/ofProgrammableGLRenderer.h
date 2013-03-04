@@ -9,10 +9,12 @@ class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 
-class ofGLES2Renderer: public ofBaseGLRenderer{
+class ofProgrammableGLRenderer: public ofBaseGLRenderer{
+
+
 public:
-	ofGLES2Renderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
-	~ofGLES2Renderer();
+	ofProgrammableGLRenderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
+	~ofProgrammableGLRenderer();
     
 	string getType(){ return "GLES2"; }
     
