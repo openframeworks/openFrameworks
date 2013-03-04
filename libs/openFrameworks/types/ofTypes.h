@@ -56,6 +56,7 @@ class ofSerialDeviceInfo{
 
 #include "Poco/Mutex.h"
 typedef Poco::FastMutex ofMutex;
+typedef Poco::FastMutex::ScopedLock ofScopedLock;
 
 //----------------------------------------------------------
 // ofStyle
