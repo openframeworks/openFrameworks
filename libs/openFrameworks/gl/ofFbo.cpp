@@ -541,6 +541,86 @@ void ofFbo::allocate(Settings _settings) {
 	bIsAllocated = true;
 }
 
+void ofFbo::allocateMrt(int width, int height, int numColorbuffers, GLint colorFormats[], GLint depthStencilInternalFormat) {
+	if(!checkGLSupport()) return;
+	
+	destroy();
+	
+	ofFbo::Settings _settings;
+	_settings.width			= width;
+	_settings.height		= height;
+	_settings.numColorbuffers = numColorbuffers;
+    
+#ifdef TARGET_OPENGLES
+	_settings.useDepth		= false;
+	_settings.useStencil	= false;
+	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect.
+    _settings.textureTarget	= GL_TEXTURE_2D;
+#else    
+	_settings.useDepth		= (depthStencilInternalFormat == GL_DEPTH_COMPONENT) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT16) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT24) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT32) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT32F) || (depthStencilInternalFormat == GL_DEPTH_STENCIL) || (depthStencilInternalFormat == GL_UNSIGNED_INT_24_8) || (depthStencilInternalFormat == GL_DEPTH24_STENCIL8) || (depthStencilInternalFormat == GL_DEPTH32F_STENCIL8);
+	_settings.useStencil	= (depthStencilInternalFormat == GL_STENCIL_INDEX) || (depthStencilInternalFormat == GL_STENCIL_INDEX1) || (depthStencilInternalFormat == GL_STENCIL_INDEX4) || (depthStencilInternalFormat == GL_STENCIL_INDEX8) || (depthStencilInternalFormat == GL_STENCIL_INDEX16) || (depthStencilInternalFormat == GL_DEPTH_STENCIL) || (depthStencilInternalFormat == GL_UNSIGNED_INT_24_8) || (depthStencilInternalFormat == GL_DEPTH24_STENCIL8) || (depthStencilInternalFormat == GL_DEPTH32F_STENCIL8);
+	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect. 	
+    _settings.textureTarget	= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;    
+#endif 
+	
+	_settings.depthStencilAsTexture = false;
+	_settings.depthStencilInternalFormat = depthStencilInternalFormat;
+	_settings.numSamples		= 0;
+	
+	if(_settings.width == 0) _settings.width = ofGetWidth();
+	if(_settings.height == 0) _settings.height = ofGetHeight();
+	if(_settings.numColorbuffers > maxColorAttachments() && maxColorAttachments() > -1) {
+		ofLogWarning("ofFbo") << "clamping numColorbuffers (" << _settings.numColorbuffers << ") to maxColorAttachments (" << maxColorAttachments() << ")";
+		_settings.numColorbuffers = maxColorAttachments();
+	}
+	settings = _settings;
+	
+	// create main fbo
+	// this is the main one we bind for drawing into
+	// all the renderbuffers are attached to this (whether MSAA is enabled or not)
+	glGenFramebuffers(1, &fbo);
+	retainFB(fbo);
+	bind();
+	
+	//currently depth only works if stencil is enabled. 
+	// http://forum.openframeworks.cc/index.php/topic,6837.0.html
+#ifdef TARGET_OPENGLES
+	if(settings.useDepth){
+	  	settings.useStencil = true;
+	}
+#endif
+
+	if( settings.useDepth && settings.useStencil ){
+#ifdef TARGET_OPENGLES
+		GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
+#else
+		GLenum depthAttachment = GL_DEPTH_STENCIL_ATTACHMENT;
+#endif
+		stencilBuffer = depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
+		retainRB(stencilBuffer);
+		retainRB(depthBuffer);	
+	}else if(settings.useDepth){
+		depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, GL_DEPTH_ATTACHMENT);
+		retainRB(depthBuffer);
+	}else if(settings.useStencil){
+		stencilBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, GL_STENCIL_ATTACHMENT);
+		retainRB(stencilBuffer);
+	}
+	
+	fboTextures = fbo;
+	
+	for(int i=0; i<settings.numColorbuffers; i++)
+		createAndAttachTexture(colorFormats[i], i);
+	
+	// check everything is ok with this fbo
+	checkStatus();
+	
+	// unbind it
+	unbind();
+	
+	bIsAllocated = true;
+}
+
 bool ofFbo::isAllocated(){
 	return bIsAllocated;
 }
