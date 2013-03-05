@@ -8,6 +8,7 @@
 #include "ofGLUtils.h"
 #include "ofImage.h"
 #include "ofFbo.h"
+#include "ofVbo.h"
 
 #ifdef TARGET_OPENGLES
 string defaultVertexShader =
@@ -139,6 +140,15 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
     colorsEnabled = false;
     texCoordsEnabled = false;
     normalsEnabled = false;
+	
+	// tig: allocate our default vbos on the heap so that we can work with forward-declarations in the header file.
+	circleVbo		= ofPtr<ofVbo>(new ofVbo());
+	triangleVbo		= ofPtr<ofVbo>(new ofVbo());
+	rectVbo			= ofPtr<ofVbo>(new ofVbo());
+	lineVbo			= ofPtr<ofVbo>(new ofVbo());
+	vertexDataVbo	= ofPtr<ofVbo>(new ofVbo());
+	meshVbo			= ofPtr<ofVbo>(new ofVbo());
+
 
 #ifndef TARGET_OPENGLES
 	glGenVertexArrays(1, &defaultVAO);
@@ -218,68 +228,27 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, bool useColors, bool us
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
 
-	// tig: note that there is a lot of code duplication going on here.
-	// the most elegant way to do it would be to do a good old
-	// 	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW);
-	// and then render the vbo by calling its .draw() method.
-	// we can't do that, however, since vbo::draw() doesn't allow us to specify
-	// whether we should use Colors, Textures, Normals.
+	// tig: note that there was a lot of code duplication going on here.
+	// using ofVbo's draw methods, to keep stuff DRY
+	
+	meshVbo->clear();
+	meshVbo->setMesh(vertexData, GL_DYNAMIC_DRAW);
+	
+	if (!useColors)		meshVbo->disableColors();
+	if (!useTextures)	meshVbo->disableTexCoords();
+	if (!useNormals)	meshVbo->disableNormals();
+	
+	
+	// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
+	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer. Whereas
+	// gles2.0 doesn't allow for a polygonmode.
 
-	// I have another idea.
-	
-	// call .disableColours() if needed...
-	
-	
-	if(!vertexData.hasVertices()){
-		ofLogVerbose() << "Cannot draw a mesh without vertices.";
-		return;
-	}
-
-	if (bSmoothHinted) startSmoothing();
-	meshVbo.clear();
-	
-	meshVbo.setVertexData( vertexData.getVerticesPointer(), vertexData.getNumVertices(), GL_DYNAMIC_DRAW);
-	preparePrimitiveDraw(meshVbo);
-	
-	if(useNormals && vertexData.hasNormals()){
-		meshVbo.setNormalData(vertexData.getNormalsPointer(), vertexData.getNumNormals(), GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getNormalId()); // bind to normals from vbo
-		enableNormals();
-		glVertexAttribPointer(getAttrLocationNormal(), 3, GL_FLOAT,GL_FALSE,0,0);	// upload normals
-	} else {
-		disableNormals();
-		glBindBuffer(GL_ARRAY_BUFFER,0);
-	}
-	
-	if(useColors && vertexData.hasColors()){
-		meshVbo.setColorData(vertexData.getColorsPointer(),vertexData.getNumColors(),GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getColorId()); // bind colors from vbo
-		enableColors();
-		glVertexAttribPointer(getAttrLocationColor(), 4 , GL_FLOAT, GL_FALSE,0,0);
-	} else {
-		disableColors();
-		glBindBuffer(GL_ARRAY_BUFFER,0);
-	}
-	
-	if(useTextures && vertexData.hasTexCoords()){
-		meshVbo.setTexCoordData(vertexData.getTexCoordsPointer(), vertexData.getNumTexCoords(), GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getColorId()); // bind to triangle vertices
-		enableTexCoords();
-		glVertexAttribPointer(getAttrLocationTexCoord(), 2, GL_FLOAT,GL_FALSE,0,0);
-
-	} else {
-		disableTexCoords();
-		glBindBuffer(GL_ARRAY_BUFFER,0);
-	}
-	
-	if (vertexData.hasIndices()){
-		meshVbo.setIndexData(vertexData.getIndexPointer(), vertexData.getNumIndices(), GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshVbo.getIndexId());
-	}
-	
-	GLenum drawMode;
 	
 #ifdef TARGET_OPENGLES
+	
+	// GLES 
+	
+	GLenum drawMode;
 	switch(renderType){
 		case OF_MESH_POINTS:
 			drawMode = GL_POINTS;
@@ -296,40 +265,29 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 			break;
 	}
 	if(vertexData.hasIndices()){
-		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,NULL);
+		meshVbo->drawElements(drawMode, meshVbo->getNumIndices());
 	} else {
-		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
+		meshVbo->draw(drawMode, 0, meshVbo->getNumVertices());
 	}
 #else
-	
+
 	// OpenGL
 	
-	// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
-	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer. Whereas
-	// gles2.0 doesn't allow for a polygonmode.
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-	if(vertexData.hasIndices()) {
-		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,NULL);
+	if(meshVbo->getUsingIndices()) {
+		meshVbo->drawElements(ofGetGLPrimitiveMode(vertexData.getMode()), meshVbo->getNumIndices());
 	}
 	else {
-		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
+		meshVbo->draw(ofGetGLPrimitiveMode(vertexData.getMode()), 0, meshVbo->getNumVertices());
 	}
-		// tig: note further that we could query and store the current polygon mode, but don't, since that would
-	// infer a massive performance penalty. instead, we revert the glPolygonMode to mirror the current ofFill state
+	
+	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
+	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
 	// after we're finished drawing, following the principle of least surprise.
 	glPolygonMode(GL_FRONT_AND_BACK, (ofGetFill() == OF_OUTLINE) ?  GL_LINE : GL_FILL);
 	
 #endif
 	
-	if(vertexData.getNumColors()){
-		disableColors();
-	}
-	if(vertexData.getNumNormals()){
-		disableNormals();
-	}
-	if(vertexData.getNumTexCoords()){
-		disableTexCoords();
-	}
 	if (bSmoothHinted) endSmoothing();
 	
 	finishPrimitiveDraw();
@@ -341,8 +299,8 @@ void ofProgrammableGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMod
 		if (bSmoothHinted) startSmoothing();
 		disableTexCoords();
 		disableColors();
-		vertexDataVbo.setVertexData(&vertexData[0], vertexData.size(), GL_DYNAMIC_DRAW);
-		preparePrimitiveDraw(vertexDataVbo);
+		vertexDataVbo->setVertexData(&vertexData[0], vertexData.size(), GL_DYNAMIC_DRAW);
+		preparePrimitiveDraw(*vertexDataVbo);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
 		finishPrimitiveDraw();
 		if (bSmoothHinted) endSmoothing();
@@ -358,8 +316,8 @@ void ofProgrammableGLRenderer::draw(ofPolyline & poly){
 		disableTexCoords();
 		disableColors();
 
-		vertexDataVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
-		preparePrimitiveDraw(vertexDataVbo);
+		vertexDataVbo->setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
+		preparePrimitiveDraw(*vertexDataVbo);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 		finishPrimitiveDraw();
 
@@ -1152,80 +1110,80 @@ void ofProgrammableGLRenderer::disablePointSprites(){
 }
 
 //----------------------------------------------------------
-inline GLint ofProgrammableGLRenderer::getAttrLocationPosition(){
+GLint ofProgrammableGLRenderer::getAttrLocationPosition(){
 	return currentShader.getAttributeLocation("position");
 }
 
 //----------------------------------------------------------
-inline GLint ofProgrammableGLRenderer::getAttrLocationColor(){
+GLint ofProgrammableGLRenderer::getAttrLocationColor(){
 	return currentShader.getAttributeLocation("color");
 }
 
 //----------------------------------------------------------
-inline GLint ofProgrammableGLRenderer::getAttrLocationNormal(){
+GLint ofProgrammableGLRenderer::getAttrLocationNormal(){
 	return currentShader.getAttributeLocation("normal");
 }
 
 //----------------------------------------------------------
-inline GLint ofProgrammableGLRenderer::getAttrLocationTexCoord(){
+GLint ofProgrammableGLRenderer::getAttrLocationTexCoord(){
 	return currentShader.getAttributeLocation("texcoord");
 }
 
 //----------------------------------------------------------
-inline ofShader & ofProgrammableGLRenderer::getCurrentShader(){
+ofShader & ofProgrammableGLRenderer::getCurrentShader(){
 	return currentShader;
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::setDefaultShader(ofShader & shader){
+void ofProgrammableGLRenderer::setDefaultShader(ofShader & shader){
 	defaultShader = shader;
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::enableVertices(){
+void ofProgrammableGLRenderer::enableVertices(){
 	glEnableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::enableTexCoords(){
+void ofProgrammableGLRenderer::enableTexCoords(){
 	glEnableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",1);
 	texCoordsEnabled = true;
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::enableColors(){
+void ofProgrammableGLRenderer::enableColors(){
 	glEnableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",1);
 	colorsEnabled = true;
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::enableNormals(){
+void ofProgrammableGLRenderer::enableNormals(){
 	glEnableVertexAttribArray(getAttrLocationNormal());
 	normalsEnabled = true;
 }
 
-inline void ofProgrammableGLRenderer::disableVertices(){
+void ofProgrammableGLRenderer::disableVertices(){
 	glDisableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::disableTexCoords(){
+void ofProgrammableGLRenderer::disableTexCoords(){
 	glDisableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",0);
 	texCoordsEnabled = false;
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::disableColors(){
+void ofProgrammableGLRenderer::disableColors(){
 	glDisableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",0);
 	colorsEnabled = false;
 }
 
 //----------------------------------------------------------
-inline void ofProgrammableGLRenderer::disableNormals(){
+void ofProgrammableGLRenderer::disableNormals(){
 	normalsEnabled = false;
 }
 
@@ -1256,9 +1214,10 @@ inline void ofProgrammableGLRenderer::preparePrimitiveDraw(ofVbo& vbo_){
 }
 
 inline void ofProgrammableGLRenderer::finishPrimitiveDraw(){
-	// ubind, basically.
+	// when drawing a vbo other attrib arrays are bound, but the vbo takes care of unbinding the
+	// color, texcoord and index arrays. 
 	glDisableVertexAttribArray(0);			// disable vertex attrib array.
-	glBindBuffer(GL_ARRAY_BUFFER,0);		// unbind by binding to zero
+	glBindBuffer(GL_ARRAY_BUFFER,0);		// unbind current buffer by binding to zero
 }
 
 //----------------------------------------------------------
@@ -1272,8 +1231,8 @@ void ofProgrammableGLRenderer::drawLine(float x1, float y1, float z1, float x2, 
 	disableTexCoords();
 	disableColors();
     
-	lineVbo.setVertexData(&linePoints[0], 2, GL_DYNAMIC_DRAW);
-	preparePrimitiveDraw(lineVbo);
+	lineVbo->setVertexData(&linePoints[0], 2, GL_DYNAMIC_DRAW);
+	preparePrimitiveDraw(*lineVbo);
 	glDrawArrays(GL_LINES, 0, 2);
 	finishPrimitiveDraw();
     
@@ -1301,9 +1260,9 @@ void ofProgrammableGLRenderer::drawRectangle(float x, float y, float z, float w,
 	disableTexCoords();
 	disableColors();
 
-	rectVbo.setVertexData(&rectPoints[0], 4, GL_DYNAMIC_DRAW);
+	rectVbo->setVertexData(&rectPoints[0], 4, GL_DYNAMIC_DRAW);
 	
-	preparePrimitiveDraw(rectVbo);
+	preparePrimitiveDraw(*rectVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 	finishPrimitiveDraw();
     
@@ -1323,9 +1282,9 @@ void ofProgrammableGLRenderer::drawTriangle(float x1, float y1, float z1, float 
 	disableTexCoords();
 	disableColors();
     
-	triangleVbo.setVertexData(&triPoints[0], 3, GL_DYNAMIC_DRAW);
+	triangleVbo->setVertexData(&triPoints[0], 3, GL_DYNAMIC_DRAW);
 	
-	preparePrimitiveDraw(triangleVbo);
+	preparePrimitiveDraw(*triangleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_STRIP : GL_LINE_LOOP, 0, 3);
 	finishPrimitiveDraw();
     
@@ -1343,12 +1302,12 @@ void ofProgrammableGLRenderer::drawCircle(float x, float y, float z,  float radi
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	circleVbo.setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
+	circleVbo->setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
 	
 	disableTexCoords();
 	disableColors();
     
-	preparePrimitiveDraw(circleVbo);
+	preparePrimitiveDraw(*circleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     finishPrimitiveDraw();
 	
@@ -1382,12 +1341,12 @@ void ofProgrammableGLRenderer::drawEllipse(float x, float y, float z, float widt
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	circleVbo.setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
+	circleVbo->setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
 	
 	disableTexCoords();
 	disableColors();
     
-	preparePrimitiveDraw(circleVbo);
+	preparePrimitiveDraw(*circleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
     finishPrimitiveDraw();
     
