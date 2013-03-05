@@ -1,4 +1,4 @@
-#include "ofGLES2Renderer.h"
+#include "ofProgrammableGLRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
 #include "ofGraphics.h"
@@ -60,7 +60,7 @@ string defaultFragmentShader =
 
 
 //----------------------------------------------------------
-ofGLES2Renderer::ofGLES2Renderer(string vertexShader, string fragmentShader, bool useShapeColor){
+ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor){
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
@@ -91,7 +91,7 @@ ofGLES2Renderer::ofGLES2Renderer(string vertexShader, string fragmentShader, boo
 
 }
 
-ofGLES2Renderer::~ofGLES2Renderer() {
+ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 
 #ifndef TARGET_OPENGLES
 	glDeleteVertexArrays(1, &defaultVAO);
@@ -102,19 +102,19 @@ ofGLES2Renderer::~ofGLES2Renderer() {
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::startRender() {
+void ofProgrammableGLRenderer::startRender() {
 	currentShader.begin();
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::finishRender() {
+void ofProgrammableGLRenderer::finishRender() {
 	currentShader.end();
 	modelViewStack.empty();
 	projectionStack.empty();
 }
 
 //----------------------------------------------------------
-bool ofGLES2Renderer::setup() {
+bool ofProgrammableGLRenderer::setup() {
 	bool ret;
 	if(vertexFile!=""){
 		ofLogNotice() << "GLES2 loading vertex shader from " + vertexFile;
@@ -140,17 +140,17 @@ bool ofGLES2Renderer::setup() {
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::update(){
+void ofProgrammableGLRenderer::update(){
     //
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+void ofProgrammableGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
 	draw(vertexData, OF_MESH_FILL, useColors, useTextures, useNormals); // tig: use default mode if no render mode specified.
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
+void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
 
 	if(!vertexData.hasVertices()){
 		ofLogVerbose() << "Cannot draw a mesh without vertices.";
@@ -259,7 +259,7 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, boo
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
+void ofProgrammableGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	if(!vertexData.empty()) {
 		if (bSmoothHinted) startSmoothing();
 		disableTexCoords();
@@ -273,7 +273,7 @@ void ofGLES2Renderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(ofPolyline & poly){
+void ofProgrammableGLRenderer::draw(ofPolyline & poly){
 	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:
 		if (bSmoothHinted) startSmoothing();
@@ -292,7 +292,7 @@ void ofGLES2Renderer::draw(ofPolyline & poly){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(ofPath & shape){
+void ofProgrammableGLRenderer::draw(ofPath & shape){
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = ofGetStyle().color;
@@ -321,7 +321,7 @@ void ofGLES2Renderer::draw(ofPath & shape){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofProgrammableGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		enableTexCoords();
 		disableColors();
@@ -336,7 +336,7 @@ void ofGLES2Renderer::draw(ofImage & image, float x, float y, float z, float w, 
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofProgrammableGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		enableTexCoords();
 		disableColors();
@@ -351,7 +351,7 @@ void ofGLES2Renderer::draw(ofFloatImage & image, float x, float y, float z, floa
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofProgrammableGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	if(image.isUsingTexture()){
 		enableTexCoords();
 		disableColors();
@@ -366,12 +366,12 @@ void ofGLES2Renderer::draw(ofShortImage & image, float x, float y, float z, floa
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setCurrentFBO(ofFbo * fbo){
+void ofProgrammableGLRenderer::setCurrentFBO(ofFbo * fbo){
 	currentFbo = fbo;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::pushView() {
+void ofProgrammableGLRenderer::pushView() {
 	viewportHistory.push(currentViewport);
 	ofMatrixMode currentMode = currentMatrixMode;
 	matrixMode(OF_MATRIX_PROJECTION);
@@ -382,7 +382,7 @@ void ofGLES2Renderer::pushView() {
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::popView() {
+void ofProgrammableGLRenderer::popView() {
 	if( viewportHistory.size() ){
 		ofRectangle viewRect = viewportHistory.top();
 		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height,false);
@@ -397,12 +397,12 @@ void ofGLES2Renderer::popView() {
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::viewport(ofRectangle viewport_){
+void ofProgrammableGLRenderer::viewport(ofRectangle viewport_){
 	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height,true);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::viewport(float x, float y, float width, float height, bool invertY) {
+void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height, bool invertY) {
 	if(width == 0) width = ofGetWindowWidth();
 	if(height == 0) height = ofGetWindowHeight();
 
@@ -418,32 +418,32 @@ void ofGLES2Renderer::viewport(float x, float y, float width, float height, bool
 }
 
 //----------------------------------------------------------
-ofRectangle ofGLES2Renderer::getCurrentViewport(){
+ofRectangle ofProgrammableGLRenderer::getCurrentViewport(){
     return currentViewport;
 }
 
 //----------------------------------------------------------
-int ofGLES2Renderer::getViewportWidth(){
+int ofProgrammableGLRenderer::getViewportWidth(){
 	return currentViewport.width;
 }
 
 //----------------------------------------------------------
-int ofGLES2Renderer::getViewportHeight(){
+int ofProgrammableGLRenderer::getViewportHeight(){
 	return currentViewport.height;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setCoordHandedness(ofHandednessType handedness) {
+void ofProgrammableGLRenderer::setCoordHandedness(ofHandednessType handedness) {
 	coordHandedness = handedness;
 }
 
 //----------------------------------------------------------
-ofHandednessType ofGLES2Renderer::getCoordHandedness() {
+ofHandednessType ofProgrammableGLRenderer::getCoordHandedness() {
 	return coordHandedness;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip){
+void ofProgrammableGLRenderer::setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip){
 	orientationMatrix.makeIdentityMatrix();
 
 	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
@@ -499,7 +499,7 @@ void ofGLES2Renderer::setOrientationMatrix(float width, float height, ofOrientat
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
 
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
@@ -529,7 +529,7 @@ void ofGLES2Renderer::setupScreenPerspective(float width, float height, ofOrient
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
+void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
@@ -555,7 +555,7 @@ void ofGLES2Renderer::setupScreenOrtho(float width, float height, ofOrientation 
 
 //----------------------------------------------------------
 //Resets openGL parameters back to OF defaults
-void ofGLES2Renderer::setupGraphicDefaults(){
+void ofProgrammableGLRenderer::setupGraphicDefaults(){
 	/*glEnableVertexAttribArray(getAttrLocationPosition());
 	glDisableVertexAttribArray(getAttrLocationColor());
 	glDisableVertexAttribArray(getAttrLocationNormal());
@@ -563,12 +563,12 @@ void ofGLES2Renderer::setupGraphicDefaults(){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setupScreen(){
+void ofProgrammableGLRenderer::setupScreen(){
 	setupScreenPerspective();	// assume defaults
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setCircleResolution(int res){
+void ofProgrammableGLRenderer::setCircleResolution(int res){
 	if((int)circlePolyline.size()!=res+1){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
@@ -577,7 +577,7 @@ void ofGLES2Renderer::setCircleResolution(int res){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setSphereResolution(int res) {
+void ofProgrammableGLRenderer::setSphereResolution(int res) {
 	if(sphereMesh.getNumVertices() == 0 || res != ofGetStyle().sphereResolution) {
 		int n = res * 2;
 		float ndiv2=(float)n/2;
@@ -672,7 +672,7 @@ void ofGLES2Renderer::setSphereResolution(int res) {
 
 //our openGL wrappers
 //----------------------------------------------------------
-void ofGLES2Renderer::pushMatrix(){
+void ofProgrammableGLRenderer::pushMatrix(){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewStack.push(modelViewOrientation);
@@ -687,7 +687,7 @@ void ofGLES2Renderer::pushMatrix(){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::popMatrix(){
+void ofProgrammableGLRenderer::popMatrix(){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewOrientation = modelViewStack.top();
@@ -708,12 +708,12 @@ void ofGLES2Renderer::popMatrix(){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::translate(const ofPoint& p){
+void ofProgrammableGLRenderer::translate(const ofPoint& p){
 	translate(p.x, p.y, p.z);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::translate(float x, float y, float z){
+void ofProgrammableGLRenderer::translate(float x, float y, float z){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewOrientation.glTranslate(x,y,z);
@@ -731,7 +731,7 @@ void ofGLES2Renderer::translate(float x, float y, float z){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::scale(float xAmnt, float yAmnt, float zAmnt){
+void ofProgrammableGLRenderer::scale(float xAmnt, float yAmnt, float zAmnt){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewOrientation.glScale(xAmnt,yAmnt,zAmnt);
@@ -749,7 +749,7 @@ void ofGLES2Renderer::scale(float xAmnt, float yAmnt, float zAmnt){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::rotate(float degrees, float vecX, float vecY, float vecZ){
+void ofProgrammableGLRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewOrientation.glRotate(degrees,vecX,vecY,vecZ);
@@ -767,40 +767,40 @@ void ofGLES2Renderer::rotate(float degrees, float vecX, float vecY, float vecZ){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::rotateX(float degrees){
+void ofProgrammableGLRenderer::rotateX(float degrees){
 	rotate(degrees, 1, 0, 0);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::rotateY(float degrees){
+void ofProgrammableGLRenderer::rotateY(float degrees){
 	rotate(degrees, 0, 1, 0);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::rotateZ(float degrees){
+void ofProgrammableGLRenderer::rotateZ(float degrees){
 	rotate(degrees, 0, 0, 1);
 }
 
 //same as ofRotateZ
 //----------------------------------------------------------
-void ofGLES2Renderer::rotate(float degrees){
+void ofProgrammableGLRenderer::rotate(float degrees){
 	rotateZ(degrees);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::matrixMode(ofMatrixMode mode){
+void ofProgrammableGLRenderer::matrixMode(ofMatrixMode mode){
 	currentMatrixMode = mode;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::loadIdentityMatrix (void){
+void ofProgrammableGLRenderer::loadIdentityMatrix (void){
 	ofMatrix4x4 m;
 	m.makeIdentityMatrix();
 	loadMatrix(m);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::loadMatrix (const ofMatrix4x4 & m){
+void ofProgrammableGLRenderer::loadMatrix (const ofMatrix4x4 & m){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelView = m;
@@ -820,7 +820,7 @@ void ofGLES2Renderer::loadMatrix (const ofMatrix4x4 & m){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::loadMatrix (const float *m){
+void ofProgrammableGLRenderer::loadMatrix (const float *m){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelView.set(m);
@@ -840,7 +840,7 @@ void ofGLES2Renderer::loadMatrix (const float *m){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::multMatrix (const ofMatrix4x4 & m){
+void ofProgrammableGLRenderer::multMatrix (const ofMatrix4x4 & m){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewOrientation.preMult(m);
@@ -858,53 +858,53 @@ void ofGLES2Renderer::multMatrix (const ofMatrix4x4 & m){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::multMatrix (const float *m){
+void ofProgrammableGLRenderer::multMatrix (const float *m){
 	ofMatrix4x4 mat(m);
 	multMatrix(mat);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::uploadModelViewMatrix(const ofMatrix4x4 & m){
+void ofProgrammableGLRenderer::uploadModelViewMatrix(const ofMatrix4x4 & m){
 	currentShader.setUniformMatrix4f("modelViewMatrix",m);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::uploadProjectionMatrix(const ofMatrix4x4 & m){
+void ofProgrammableGLRenderer::uploadProjectionMatrix(const ofMatrix4x4 & m){
 	currentShader.setUniformMatrix4f("projectionMatrix",m);
 }
 
-void ofGLES2Renderer::uploadTextureMatrix(const ofMatrix4x4 & m){
+void ofProgrammableGLRenderer::uploadTextureMatrix(const ofMatrix4x4 & m){
 	currentShader.setUniformMatrix4f("textureMatrix",m);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setColor(const ofColor & color){
+void ofProgrammableGLRenderer::setColor(const ofColor & color){
 	setColor(color.r,color.g,color.b,color.a);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setColor(const ofColor & color, int _a){
+void ofProgrammableGLRenderer::setColor(const ofColor & color, int _a){
 	setColor(color.r,color.g,color.b,_a);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setColor(int _r, int _g, int _b){
+void ofProgrammableGLRenderer::setColor(int _r, int _g, int _b){
 	setColor(_r, _g, _b, 255);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setColor(int _r, int _g, int _b, int _a){
+void ofProgrammableGLRenderer::setColor(int _r, int _g, int _b, int _a){
 	currentColor.set(_r/255.f,_g/255.f,_b/255.f,_a/255.f);
 	currentShader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setColor(int gray){
+void ofProgrammableGLRenderer::setColor(int gray){
 	setColor(gray, gray, gray);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setHexColor(int hexColor){
+void ofProgrammableGLRenderer::setHexColor(int hexColor){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;
 	int b = (hexColor >> 0) & 0xff;
@@ -912,18 +912,18 @@ void ofGLES2Renderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::clear(float r, float g, float b, float a) {
+void ofProgrammableGLRenderer::clear(float r, float g, float b, float a) {
 	glClearColor(r / 255., g / 255., b / 255., a / 255.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::clear(float brightness, float a) {
+void ofProgrammableGLRenderer::clear(float brightness, float a) {
 	clear(brightness, brightness, brightness, a);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::clearAlpha() {
+void ofProgrammableGLRenderer::clearAlpha() {
 	glColorMask(0, 0, 0, 1);
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -931,84 +931,84 @@ void ofGLES2Renderer::clearAlpha() {
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setBackgroundAuto(bool bAuto){
+void ofProgrammableGLRenderer::setBackgroundAuto(bool bAuto){
 	bBackgroundAuto = bAuto;
 }
 
 //----------------------------------------------------------
-bool ofGLES2Renderer::bClearBg(){
+bool ofProgrammableGLRenderer::bClearBg(){
 	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofGLES2Renderer::getBgColor(){
+ofFloatColor & ofProgrammableGLRenderer::getBgColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::background(const ofColor & c){
+void ofProgrammableGLRenderer::background(const ofColor & c){
 	bgColor = c;
 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::background(float brightness) {
+void ofProgrammableGLRenderer::background(float brightness) {
 	background(brightness);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::background(int hexColor, float _a){
+void ofProgrammableGLRenderer::background(int hexColor, float _a){
 	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::background(int r, int g, int b, int a){
+void ofProgrammableGLRenderer::background(int r, int g, int b, int a){
 	background(ofColor(r,g,b,a));
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setFillMode(ofFillFlag fill){
+void ofProgrammableGLRenderer::setFillMode(ofFillFlag fill){
 	bFilled = fill;
 }
 
 //----------------------------------------------------------
-ofFillFlag ofGLES2Renderer::getFillMode(){
+ofFillFlag ofProgrammableGLRenderer::getFillMode(){
 	return bFilled;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setRectMode(ofRectMode mode){
+void ofProgrammableGLRenderer::setRectMode(ofRectMode mode){
 	rectMode = mode;
 }
 
 //----------------------------------------------------------
-ofRectMode ofGLES2Renderer::getRectMode(){
+ofRectMode ofProgrammableGLRenderer::getRectMode(){
 	return rectMode;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setLineWidth(float lineWidth){
+void ofProgrammableGLRenderer::setLineWidth(float lineWidth){
 	glLineWidth(lineWidth);
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setLineSmoothing(bool smooth){
+void ofProgrammableGLRenderer::setLineSmoothing(bool smooth){
 	bSmoothHinted = smooth;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::startSmoothing(){
+void ofProgrammableGLRenderer::startSmoothing(){
     // TODO :: needs ES2 code.
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::endSmoothing(){
+void ofProgrammableGLRenderer::endSmoothing(){
     // TODO :: needs ES2 code.
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setBlendMode(ofBlendMode blendMode){
+void ofProgrammableGLRenderer::setBlendMode(ofBlendMode blendMode){
 	switch (blendMode){
 
 		case OF_BLENDMODE_ALPHA:{
@@ -1065,95 +1065,95 @@ void ofGLES2Renderer::setBlendMode(ofBlendMode blendMode){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::enablePointSprites(){
+void ofProgrammableGLRenderer::enablePointSprites(){
     // TODO :: needs ES2 code.
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::disablePointSprites(){
+void ofProgrammableGLRenderer::disablePointSprites(){
     // TODO :: needs ES2 code.
 }
 
 //----------------------------------------------------------
-inline GLint ofGLES2Renderer::getAttrLocationPosition(){
+inline GLint ofProgrammableGLRenderer::getAttrLocationPosition(){
 	return currentShader.getAttributeLocation("position");
 }
 
 //----------------------------------------------------------
-inline GLint ofGLES2Renderer::getAttrLocationColor(){
+inline GLint ofProgrammableGLRenderer::getAttrLocationColor(){
 	return currentShader.getAttributeLocation("color");
 }
 
 //----------------------------------------------------------
-inline GLint ofGLES2Renderer::getAttrLocationNormal(){
+inline GLint ofProgrammableGLRenderer::getAttrLocationNormal(){
 	return currentShader.getAttributeLocation("normal");
 }
 
 //----------------------------------------------------------
-inline GLint ofGLES2Renderer::getAttrLocationTexCoord(){
+inline GLint ofProgrammableGLRenderer::getAttrLocationTexCoord(){
 	return currentShader.getAttributeLocation("texcoord");
 }
 
 //----------------------------------------------------------
-inline ofShader & ofGLES2Renderer::getCurrentShader(){
+inline ofShader & ofProgrammableGLRenderer::getCurrentShader(){
 	return currentShader;
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::setDefaultShader(ofShader & shader){
+inline void ofProgrammableGLRenderer::setDefaultShader(ofShader & shader){
 	defaultShader = shader;
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::enableVertices(){
+inline void ofProgrammableGLRenderer::enableVertices(){
 	glEnableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::enableTexCoords(){
+inline void ofProgrammableGLRenderer::enableTexCoords(){
 	glEnableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",1);
 	texCoordsEnabled = true;
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::enableColors(){
+inline void ofProgrammableGLRenderer::enableColors(){
 	glEnableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",1);
 	colorsEnabled = true;
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::enableNormals(){
+inline void ofProgrammableGLRenderer::enableNormals(){
 	glEnableVertexAttribArray(getAttrLocationNormal());
 	normalsEnabled = true;
 }
 
-inline void ofGLES2Renderer::disableVertices(){
+inline void ofProgrammableGLRenderer::disableVertices(){
 	glDisableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::disableTexCoords(){
+inline void ofProgrammableGLRenderer::disableTexCoords(){
 	glDisableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",0);
 	texCoordsEnabled = false;
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::disableColors(){
+inline void ofProgrammableGLRenderer::disableColors(){
 	glDisableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",0);
 	colorsEnabled = false;
 }
 
 //----------------------------------------------------------
-inline void ofGLES2Renderer::disableNormals(){
+inline void ofProgrammableGLRenderer::disableNormals(){
 	normalsEnabled = false;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::beginCustomShader(ofShader & shader){
+void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
 	shader.setUniform1f("useTexture",texCoordsEnabled);
 	shader.setUniform1f("useColors",colorsEnabled);
 	shader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
@@ -1164,14 +1164,14 @@ void ofGLES2Renderer::beginCustomShader(ofShader & shader){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::endCustomShader(){
+void ofProgrammableGLRenderer::endCustomShader(){
 	defaultShader.begin();
 }
 // ----------------------------------------------------------------------
 #pragma mark- Primitive Draw Methods
 // ----------------------------------------------------------------------
 
-inline void ofGLES2Renderer::preparePrimitiveDraw(ofVbo& vbo_){
+inline void ofProgrammableGLRenderer::preparePrimitiveDraw(ofVbo& vbo_){
 	// bind vertex array
 #ifndef TARGET_OPENGLES
 	glBindVertexArray(defaultVAO);
@@ -1184,14 +1184,14 @@ inline void ofGLES2Renderer::preparePrimitiveDraw(ofVbo& vbo_){
 	
 }
 
-inline void ofGLES2Renderer::finishPrimitiveDraw(){
+inline void ofProgrammableGLRenderer::finishPrimitiveDraw(){
 	// ubind, basically.
 	glDisableVertexAttribArray(0);			// disable vertex attrib array.
 	glBindBuffer(GL_ARRAY_BUFFER,0);		// unbind by binding to zero
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+void ofProgrammableGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
 	linePoints[0].set(x1,y1,z1);
 	linePoints[1].set(x2,y2,z2);
     
@@ -1211,7 +1211,7 @@ void ofGLES2Renderer::drawLine(float x1, float y1, float z1, float x2, float y2,
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::drawRectangle(float x, float y, float z, float w, float h) {
+void ofProgrammableGLRenderer::drawRectangle(float x, float y, float z, float w, float h) {
 	if (rectMode == OF_RECTMODE_CORNER){
 		rectPoints[0].set(x,y,z);
 		rectPoints[1].set(x+w, y, z);
@@ -1241,7 +1241,7 @@ void ofGLES2Renderer::drawRectangle(float x, float y, float z, float w, float h)
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+void ofProgrammableGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
 	triPoints[0].set(x1,y1,z1);
 	triPoints[1].set(x2,y2,z2);
 	triPoints[2].set(x3,y3,z3);
@@ -1263,7 +1263,7 @@ void ofGLES2Renderer::drawTriangle(float x1, float y1, float z1, float x2, float
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
+void ofProgrammableGLRenderer::drawCircle(float x, float y, float z,  float radius){
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
@@ -1286,7 +1286,7 @@ void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::drawSphere(float x, float y, float z, float radius) {
+void ofProgrammableGLRenderer::drawSphere(float x, float y, float z, float radius) {
     glEnable(GL_NORMALIZE);
     pushMatrix();
     scale(radius, radius, radius);
@@ -1300,7 +1300,7 @@ void ofGLES2Renderer::drawSphere(float x, float y, float z, float radius) {
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float height){
+void ofProgrammableGLRenderer::drawEllipse(float x, float y, float z, float width, float height){
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
@@ -1325,7 +1325,7 @@ void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float 
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
+void ofProgrammableGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
 	// this is copied from the ofTrueTypeFont
 	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
 	GLint blend_src, blend_dst;

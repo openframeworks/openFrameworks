@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofGraphics.h"
-#include "ofGLES2Renderer.h"
+#include "ofProgrammableGLRenderer.h"
 #include <map>
 
 
@@ -351,7 +351,7 @@ void ofShader::begin() {
             prevActiveProgram = activeProgram;
             activeProgram = program;
             if(!ofGLIsFixedPipeline()){
-                ofGetGLES2Renderer()->beginCustomShader(*this);
+                ofGetProgrammableGLRenderer()->beginCustomShader(*this);
             }
         }
 	}
@@ -361,7 +361,7 @@ void ofShader::begin() {
 void ofShader::end() {
 	if (bLoaded && activeProgram==program){
 		if(!ofGLIsFixedPipeline()){
-			ofGetGLES2Renderer()->endCustomShader();
+			ofGetProgrammableGLRenderer()->endCustomShader();
 		}else{
 			glUseProgram(prevActiveProgram);
 			activeProgram = prevActiveProgram;
