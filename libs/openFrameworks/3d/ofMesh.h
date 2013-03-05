@@ -109,11 +109,11 @@ public:
 	bool haveTexCoordsChanged();
 	bool haveIndicesChanged();
 	
-	bool hasVertices();
-	bool hasColors();
-	bool hasNormals();
-	bool hasTexCoords();
-	bool hasIndices();
+	bool hasVertices() const;
+	bool hasColors() const;
+	bool hasNormals() const;
+	bool hasTexCoords() const;
+	bool hasIndices() const;
 	
 	void drawVertices();
 	void drawWireframe();

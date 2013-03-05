@@ -4,8 +4,10 @@
 // index updating/deleting?
 // setVertexData with float* should know about ofVec3f vs ofVec2f?
 
-#include "ofVbo.h"
+
 #include "ofUtils.h"
+#include "ofVbo.h"
+
 #include <map>
 
 static map<GLuint,int> & getIds(){
@@ -155,10 +157,10 @@ ofVbo::~ofVbo(){
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage){
 	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
-	setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
-	setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
-	setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
-	setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
+	if (mesh.hasColors()) setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
+	if (mesh.hasNormals()) setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
+	if (mesh.hasTexCoords()) setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
+	if (mesh.hasIndices()) setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
 }
 
 //--------------------------------------------------------------

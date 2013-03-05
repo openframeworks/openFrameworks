@@ -103,27 +103,27 @@ bool ofMesh::haveIndicesChanged(){
 
 
 //--------------------------------------------------------------
-bool ofMesh::hasVertices(){
+bool ofMesh::hasVertices() const {
 	return !vertices.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasColors(){
+bool ofMesh::hasColors() const {
 	return !colors.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasNormals(){
+bool ofMesh::hasNormals() const {
 	return !normals.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasTexCoords(){
+bool ofMesh::hasTexCoords() const{
 	return !texCoords.empty();
 }
 
 //--------------------------------------------------------------
-bool ofMesh::hasIndices(){
+bool ofMesh::hasIndices() const {
 	return !indices.empty();
 }
 
