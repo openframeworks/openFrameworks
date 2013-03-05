@@ -146,92 +146,98 @@ void ofGLES2Renderer::update(){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
-	if(vertexData.getNumVertices()){
-		currentShader.setAttribute3fv("position",&vertexData.getVerticesPointer()->x,sizeof(ofVec3f));
-	}
-	if(vertexData.getNumNormals() && useNormals){
-		currentShader.setAttribute3fv("normal",&vertexData.getNormalsPointer()->x,sizeof(ofVec3f));
-	}
-	if(vertexData.getNumColors() && useColors){
-		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
-		enableColors();
-	}else{
-		disableColors();
-	}
-	if(vertexData.getNumTexCoords() && useTextures){
-		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
-		enableTexCoords();
-	}else{
-		disableTexCoords();
-	}
-
-	if(vertexData.getNumIndices()){
-#ifdef TARGET_OPENGLES
-		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
-#else
-		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
-#endif
-	}else{
-		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
-	}
-	if(vertexData.getNumColors()){
-		disableColors();
-	}
-	if(vertexData.getNumNormals()){
-		disableNormals();
-	}
-	if(vertexData.getNumTexCoords()){
-		disableTexCoords();
-	}
+	draw(vertexData, OF_MESH_FILL, useColors, useTextures, useNormals); // tig: use default mode if no render mode specified.
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
-	if (bSmoothHinted) startSmoothing();
-	if(vertexData.getNumVertices()){
-		currentShader.setAttribute3fv("position",&vertexData.getVerticesPointer()->x,sizeof(ofVec3f));
-	}
-	if(vertexData.getNumNormals() && useNormals){
-		currentShader.setAttribute3fv("normal",&vertexData.getNormalsPointer()->x,sizeof(ofVec3f));
-	}
-	if(vertexData.getNumColors() && useColors){
-		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor));
-		enableColors();
-	}else{
-		disableColors();
-	}
-	if(vertexData.getNumTexCoords() && useTextures){
-		currentShader.setAttribute2fv("texcoord",&vertexData.getTexCoordsPointer()->x,sizeof(ofVec2f));
-		enableTexCoords();
-	}else{
-		disableTexCoords();
+
+	if(!vertexData.hasVertices()){
+		ofLogVerbose() << "Cannot draw a mesh without vertices.";
+		return;
 	}
 
+	if (bSmoothHinted) startSmoothing();
+	meshVbo.clear();
+	meshVbo.setVertexData( vertexData.getVerticesPointer(), vertexData.getNumVertices(), GL_DYNAMIC_DRAW);
+	preparePrimitiveDraw(meshVbo);
+	
+	if(useNormals && vertexData.hasNormals()){
+		meshVbo.setNormalData(vertexData.getNormalsPointer(), vertexData.getNumNormals(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getNormalId()); // bind to normals from vbo
+		enableNormals();
+		glVertexAttribPointer(currentShader.getAttributeLocation("normal"), 3, GL_FLOAT,GL_FALSE,0,0);	// upload normals
+	} else {
+		disableNormals();
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+	}
+	
+	if(useColors && vertexData.hasColors()){
+		meshVbo.setColorData(vertexData.getColorsPointer(),vertexData.getNumColors(),GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getColorId()); // bind colors from vbo
+		enableColors();
+		glVertexAttribPointer(getAttrLocationColor(), 4 , GL_FLOAT, GL_FALSE,0,0);
+
+		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor)); // upload colors
+	} else {
+		disableColors();
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+	}
+	
+	if(useTextures && vertexData.hasTexCoords()){
+		meshVbo.setTexCoordData(vertexData.getTexCoordsPointer(), vertexData.getNumTexCoords(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getColorId()); // bind to triangle vertices
+		enableTexCoords();
+		glVertexAttribPointer(getAttrLocationTexCoord(), 2, GL_FLOAT,GL_FALSE,0,0);
+
+	} else {
+		disableTexCoords();
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+	}
+	
+	if (vertexData.hasIndices()){
+		meshVbo.setIndexData(vertexData.getIndexPointer(), vertexData.getNumIndices(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshVbo.getIndexId());
+	}
+	
 	GLenum drawMode;
 	switch(renderType){
 	case OF_MESH_POINTS:
-		drawMode = GL_POINTS;
+		drawMode = GL_POINT;
 		break;
 	case OF_MESH_WIREFRAME:
-		drawMode = GL_LINES;
+		drawMode = GL_LINE;
 		break;
 	case OF_MESH_FILL:
-		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		drawMode = GL_FILL;
 		break;
 	default:
-		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+			// use the current fill mode to tell.
+			drawMode = (ofGetFill() == OF_OUTLINE) ?  GL_LINE : GL_FILL;
 		break;
 	}
 
-	if(vertexData.getNumIndices()){
+	// tig: note that we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
+	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer.
+	
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+
+	if(vertexData.hasIndices()){
 #ifdef TARGET_OPENGLES
-		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,NULL);
 #else
-		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,NULL);
 #endif
 	}else{
-		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
+		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
 	}
+	
+	// tig: note further that we could query and store the current polygon mode, but don't, since that would
+	// infer a massive performance penalty. instead, we revert the glPolygonMode to mirror the current ofFill state
+	// after we're finished drawing, following the principle of least surprise.
+
+	glPolygonMode(GL_FRONT_AND_BACK, (ofGetFill() == OF_OUTLINE) ?  GL_LINE : GL_FILL);
+	
 	if(vertexData.getNumColors()){
 		disableColors();
 	}
@@ -242,16 +248,20 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, boo
 		disableTexCoords();
 	}
 	if (bSmoothHinted) endSmoothing();
+	
+	finishPrimitiveDraw();
 }
 
 //----------------------------------------------------------
 void ofGLES2Renderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	if(!vertexData.empty()) {
 		if (bSmoothHinted) startSmoothing();
-		currentShader.setAttribute3fv("position",&vertexData[0].x,sizeof(ofVec3f));
 		disableTexCoords();
 		disableColors();
+		vertexDataVbo.setVertexData(&vertexData[0], vertexData.size(), GL_DYNAMIC_DRAW);
+		preparePrimitiveDraw(vertexDataVbo);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+		finishPrimitiveDraw();
 		if (bSmoothHinted) endSmoothing();
 	}
 }
@@ -262,10 +272,13 @@ void ofGLES2Renderer::draw(ofPolyline & poly){
 		// use smoothness, if requested:
 		if (bSmoothHinted) startSmoothing();
 
-		currentShader.setAttribute3fv("position",&poly.getVertices()[0].x,sizeof(ofVec3f));
 		disableTexCoords();
 		disableColors();
+
+		vertexDataVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
+		preparePrimitiveDraw(vertexDataVbo);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+		finishPrimitiveDraw();
 
 		// use smoothness, if requested:
 		if (bSmoothHinted) endSmoothing();
@@ -1056,80 +1069,80 @@ void ofGLES2Renderer::disablePointSprites(){
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getAttrLocationPosition(){
+inline GLint ofGLES2Renderer::getAttrLocationPosition(){
 	return currentShader.getAttributeLocation("position");
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getAttrLocationColor(){
+inline GLint ofGLES2Renderer::getAttrLocationColor(){
 	return currentShader.getAttributeLocation("color");
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getAttrLocationNormal(){
+inline GLint ofGLES2Renderer::getAttrLocationNormal(){
 	return currentShader.getAttributeLocation("normal");
 }
 
 //----------------------------------------------------------
-GLint ofGLES2Renderer::getAttrLocationTexCoord(){
+inline GLint ofGLES2Renderer::getAttrLocationTexCoord(){
 	return currentShader.getAttributeLocation("texcoord");
 }
 
 //----------------------------------------------------------
-ofShader & ofGLES2Renderer::getCurrentShader(){
+inline ofShader & ofGLES2Renderer::getCurrentShader(){
 	return currentShader;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::setDefaultShader(ofShader & shader){
+inline void ofGLES2Renderer::setDefaultShader(ofShader & shader){
 	defaultShader = shader;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::enableVertices(){
+inline void ofGLES2Renderer::enableVertices(){
 	glEnableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::enableTexCoords(){
+inline void ofGLES2Renderer::enableTexCoords(){
 	glEnableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",1);
 	texCoordsEnabled = true;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::enableColors(){
+inline void ofGLES2Renderer::enableColors(){
 	glEnableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",1);
 	colorsEnabled = true;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::enableNormals(){
+inline void ofGLES2Renderer::enableNormals(){
 	glEnableVertexAttribArray(getAttrLocationNormal());
 	normalsEnabled = true;
 }
 
-void ofGLES2Renderer::disableVertices(){
+inline void ofGLES2Renderer::disableVertices(){
 	glDisableVertexAttribArray(getAttrLocationPosition());
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::disableTexCoords(){
+inline void ofGLES2Renderer::disableTexCoords(){
 	glDisableVertexAttribArray(getAttrLocationTexCoord());
 	currentShader.setUniform1f("useTexture",0);
 	texCoordsEnabled = false;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::disableColors(){
+inline void ofGLES2Renderer::disableColors(){
 	glDisableVertexAttribArray(getAttrLocationColor());
 	currentShader.setUniform1f("useColors",0);
 	colorsEnabled = false;
 }
 
 //----------------------------------------------------------
-void ofGLES2Renderer::disableNormals(){
+inline void ofGLES2Renderer::disableNormals(){
 	normalsEnabled = false;
 }
 
@@ -1179,11 +1192,13 @@ void ofGLES2Renderer::drawLine(float x1, float y1, float z1, float x2, float y2,
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
-	currentShader.setAttribute3fv("position",&linePoints[0].x,sizeof(ofVec3f));
 	disableTexCoords();
 	disableColors();
     
+	lineVbo.setVertexData(&linePoints[0], 2, GL_DYNAMIC_DRAW);
+	preparePrimitiveDraw(lineVbo);
 	glDrawArrays(GL_LINES, 0, 2);
+	finishPrimitiveDraw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted) endSmoothing();
@@ -1206,11 +1221,14 @@ void ofGLES2Renderer::drawRectangle(float x, float y, float z, float w, float h)
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	currentShader.setAttribute3fv("position",&rectPoints[0].x,sizeof(ofVec3f));
 	disableTexCoords();
 	disableColors();
 
+	rectVbo.setVertexData(&rectPoints[0], 4, GL_DYNAMIC_DRAW);
+	
+	preparePrimitiveDraw(rectVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
+	finishPrimitiveDraw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1225,11 +1243,14 @@ void ofGLES2Renderer::drawTriangle(float x1, float y1, float z1, float x2, float
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	currentShader.setAttribute3fv("position",&triPoints[0].x,sizeof(ofVec3f));
 	disableTexCoords();
 	disableColors();
     
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
+	triangleVbo.setVertexData(&triPoints[0], 3, GL_DYNAMIC_DRAW);
+	
+	preparePrimitiveDraw(triangleVbo);
+	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_STRIP : GL_LINE_LOOP, 0, 3);
+	finishPrimitiveDraw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1245,7 +1266,6 @@ void ofGLES2Renderer::drawCircle(float x, float y, float z,  float radius){
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-//	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
 	circleVbo.setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
 	
 	disableTexCoords();
@@ -1285,11 +1305,14 @@ void ofGLES2Renderer::drawEllipse(float x, float y, float z, float width, float 
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	currentShader.setAttribute3fv("position",&circlePoints[0].x,sizeof(ofVec3f));
+	circleVbo.setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
+	
 	disableTexCoords();
 	disableColors();
     
+	preparePrimitiveDraw(circleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+    finishPrimitiveDraw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
