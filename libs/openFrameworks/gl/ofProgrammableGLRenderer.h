@@ -3,12 +3,13 @@
 #include "ofPolyline.h"
 #include "ofMatrix4x4.h"
 #include "ofShader.h"
-#include "ofVbo.h"
+
 
 #include <stack>
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
+class ofVbo;
 
 class ofProgrammableGLRenderer: public ofBaseGLRenderer{
 public:
@@ -148,12 +149,12 @@ public:
     
 private:
 	
-	ofVbo circleVbo;
-	ofVbo triangleVbo;
-	ofVbo rectVbo;
-	ofVbo lineVbo;
-	ofVbo vertexDataVbo;
-	ofVbo meshVbo;
+	ofPtr<ofVbo> circleVbo;
+	ofPtr<ofVbo> triangleVbo;
+	ofPtr<ofVbo> rectVbo;
+	ofPtr<ofVbo> lineVbo;
+	ofPtr<ofVbo> vertexDataVbo;
+	ofPtr<ofVbo> meshVbo;
 	
 	GLuint defaultVAO;
 	void preparePrimitiveDraw(ofVbo& vbo_);
