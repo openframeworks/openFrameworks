@@ -3,18 +3,17 @@
 #include "ofPolyline.h"
 #include "ofMatrix4x4.h"
 #include "ofShader.h"
+#include "ofVbo.h"
 
 #include <stack>
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 
-class ofProgrammableGLRenderer: public ofBaseGLRenderer{
-
-
+class ofGLES2Renderer: public ofBaseGLRenderer{
 public:
-	ofProgrammableGLRenderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
-	~ofProgrammableGLRenderer();
+	ofGLES2Renderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
+	~ofGLES2Renderer();
     
 	string getType(){ return "GLES2"; }
     
@@ -148,6 +147,18 @@ public:
 	void endCustomShader();
     
 private:
+	
+	ofVbo circleVbo;
+	ofVbo triangleVbo;
+	ofVbo rectVbo;
+	ofVbo lineVbo;
+	ofVbo vertexDataVbo;
+	ofVbo meshVbo;
+	
+	GLuint defaultVAO;
+	void preparePrimitiveDraw(ofVbo& vbo_);
+	void finishPrimitiveDraw();
+	
 	void uploadModelViewMatrix(const ofMatrix4x4 & m);
 	void uploadProjectionMatrix(const ofMatrix4x4 & m);
 	void uploadTextureMatrix(const ofMatrix4x4 & m);
