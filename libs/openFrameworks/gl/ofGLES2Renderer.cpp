@@ -201,42 +201,48 @@ void ofGLES2Renderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, boo
 	}
 	
 	GLenum drawMode;
-	switch(renderType){
-	case OF_MESH_POINTS:
-		drawMode = GL_POINT;
-		break;
-	case OF_MESH_WIREFRAME:
-		drawMode = GL_LINE;
-		break;
-	case OF_MESH_FILL:
-		drawMode = GL_FILL;
-		break;
-	default:
-			// use the current fill mode to tell.
-			drawMode = (ofGetFill() == OF_OUTLINE) ?  GL_LINE : GL_FILL;
-		break;
-	}
-
-	// tig: note that we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
-	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer.
 	
-	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-
-	if(vertexData.hasIndices()){
 #ifdef TARGET_OPENGLES
-		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,NULL);
+	switch(renderType){
+		case OF_MESH_POINTS:
+			drawMode = GL_POINTS;
+			break;
+		case OF_MESH_WIREFRAME:
+			drawMode = GL_LINES;
+			break;
+		case OF_MESH_FILL:
+			drawMode = vertexData.getMode();
+			break;
+		default:
+			// use the current fill mode to tell.
+			drawMode = vertexData.getMode();
+			break;
+	}
+	if(vertexData.hasIndices()){
+		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,NULL);
+	} else {
+		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
+	}
 #else
+	
+	// OpenGL
+	
+	// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
+	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer. Whereas
+	// gles2.0 doesn't allow for a polygonmode.
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	if(vertexData.hasIndices()) {
 		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,NULL);
-#endif
-	}else{
+	}
+	else {
 		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
 	}
-	
-	// tig: note further that we could query and store the current polygon mode, but don't, since that would
+		// tig: note further that we could query and store the current polygon mode, but don't, since that would
 	// infer a massive performance penalty. instead, we revert the glPolygonMode to mirror the current ofFill state
 	// after we're finished drawing, following the principle of least surprise.
-
 	glPolygonMode(GL_FRONT_AND_BACK, (ofGetFill() == OF_OUTLINE) ?  GL_LINE : GL_FILL);
+	
+#endif
 	
 	if(vertexData.getNumColors()){
 		disableColors();
