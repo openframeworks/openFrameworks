@@ -1,7 +1,7 @@
 #include "ofGLUtils.h"
 
 #include <set>
-#include "ofProgrammableGLRenderer.h"
+#include "ofGLES2Renderer.h"
 #include "ofGraphics.h"
 #include "ofShader.h"
 #include "ofBaseTypes.h"
@@ -151,11 +151,11 @@ bool ofGLIsFixedPipeline(){
 	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!="GLES2";
 }
 
-ofPtr<ofProgrammableGLRenderer> ofGetGLES2Renderer(){
+ofPtr<ofGLES2Renderer> ofGetGLES2Renderer(){
 	if(ofGetCurrentRenderer()->getType()=="GLES2"){
-		return (ofPtr<ofProgrammableGLRenderer>&)ofGetCurrentRenderer();
+		return (ofPtr<ofGLES2Renderer>&)ofGetCurrentRenderer();
 	}else{
-		return ofPtr<ofProgrammableGLRenderer>();
+		return ofPtr<ofGLES2Renderer>();
 	}
 }
 
