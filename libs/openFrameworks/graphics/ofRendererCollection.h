@@ -10,7 +10,7 @@ public:
 
 	 ofPtr<ofBaseGLRenderer> getGLRenderer(){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="GLES2"){
+			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
 				 return (ofPtr<ofBaseGLRenderer>&)renderers[i];
 			 }
 		 }
