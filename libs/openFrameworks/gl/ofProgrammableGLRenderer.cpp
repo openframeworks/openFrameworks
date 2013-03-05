@@ -9,7 +9,7 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 
-
+#ifdef TARGET_OPENGLES
 string defaultVertexShader =
 		"attribute vec4 position;\
 		attribute vec4 color;\
@@ -57,6 +57,63 @@ string defaultFragmentShader =
 				gl_FragColor = c;\
 			}\
 		}";
+#else
+string defaultVertexShader =
+"#version 150\n\
+\n\
+uniform mat4 projectionMatrix;\n\
+uniform mat4 modelViewMatrix;\n\
+\n\
+uniform vec4 uColor;\n\
+\n\
+\n\
+in vec4  position;\n\
+in vec4  normal;\n\
+in vec2  texCoord;\n\
+in vec4  color;\n\
+\n\
+out vec4 colorVarying;\n\
+out vec2 texCoordVarying;\n\
+\n\
+void main()\n\
+{\n\
+	colorVarying = uColor;\n\
+	\n\
+	colorVarying = vec4((normal.xyz + vec3(1.0, 1.0, 1.0)) / 2.0,1.0);\n\
+	//	vertColor = vec4(1.0);\n\
+	colorVarying.a = 1.0;\n\
+	texCoordVarying = texCoord;\n\
+	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
+}";
+
+
+string defaultFragmentShader =
+"#version 150\n\
+\n\
+uniform sampler2D src_tex_unit0;\n\
+uniform float useTexture;\n\
+uniform float useColors;\n\
+uniform vec4 color;\n\
+\n\
+in float depth;\n\
+in vec4 colorVarying;\n\
+in vec2 texCoordVarying;\n\
+out vec4 fragColor;\n\
+\n\
+void main(){\n\
+vec4 c = vec4(1.0);\n\
+if(useColors>0.5){\n\
+c = colorVarying;\n\
+}else{\n\
+c = color;\n\
+}\n\
+if(useTexture>0.5){\n\
+fragColor = mix(texture(src_tex_unit0, texCoordVarying),c,0.5);\n\
+}else{\n\
+fragColor = c;\n\
+}\n\
+}";
+#endif
 
 
 //----------------------------------------------------------
@@ -159,6 +216,7 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 
 	if (bSmoothHinted) startSmoothing();
 	meshVbo.clear();
+	
 	meshVbo.setVertexData( vertexData.getVerticesPointer(), vertexData.getNumVertices(), GL_DYNAMIC_DRAW);
 	preparePrimitiveDraw(meshVbo);
 	
@@ -166,7 +224,7 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 		meshVbo.setNormalData(vertexData.getNormalsPointer(), vertexData.getNumNormals(), GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getNormalId()); // bind to normals from vbo
 		enableNormals();
-		glVertexAttribPointer(currentShader.getAttributeLocation("normal"), 3, GL_FLOAT,GL_FALSE,0,0);	// upload normals
+		glVertexAttribPointer(getAttrLocationNormal(), 3, GL_FLOAT,GL_FALSE,0,0);	// upload normals
 	} else {
 		disableNormals();
 		glBindBuffer(GL_ARRAY_BUFFER,0);
@@ -177,8 +235,6 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 		glBindBuffer(GL_ARRAY_BUFFER, meshVbo.getColorId()); // bind colors from vbo
 		enableColors();
 		glVertexAttribPointer(getAttrLocationColor(), 4 , GL_FLOAT, GL_FALSE,0,0);
-
-		currentShader.setAttribute4fv("color",&vertexData.getColorsPointer()->r,sizeof(ofFloatColor)); // upload colors
 	} else {
 		disableColors();
 		glBindBuffer(GL_ARRAY_BUFFER,0);
