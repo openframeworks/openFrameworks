@@ -146,6 +146,7 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	glGenVertexArraysOES(1, &defaultVAO);
 #endif
 
+
 }
 
 ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
@@ -160,6 +161,14 @@ ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::startRender() {
+
+	// bind vertex array
+#ifndef TARGET_OPENGLES
+	glBindVertexArray(defaultVAO);
+#else
+	glBindVertexArrayOES(defaultVAO);
+#endif
+
 	currentShader.begin();
 }
 
@@ -209,6 +218,18 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, bool useColors, bool us
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
 
+	// tig: note that there is a lot of code duplication going on here.
+	// the most elegant way to do it would be to do a good old
+	// 	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW);
+	// and then render the vbo by calling its .draw() method.
+	// we can't do that, however, since vbo::draw() doesn't allow us to specify
+	// whether we should use Colors, Textures, Normals.
+
+	// I have another idea.
+	
+	// call .disableColours() if needed...
+	
+	
 	if(!vertexData.hasVertices()){
 		ofLogVerbose() << "Cannot draw a mesh without vertices.";
 		return;
@@ -1228,12 +1249,6 @@ void ofProgrammableGLRenderer::endCustomShader(){
 // ----------------------------------------------------------------------
 
 inline void ofProgrammableGLRenderer::preparePrimitiveDraw(ofVbo& vbo_){
-	// bind vertex array
-#ifndef TARGET_OPENGLES
-	glBindVertexArray(defaultVAO);
-#else
-	glBindVertexArrayOES(defaultVAO);
-#endif
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_.getVertId()); // bind to triangle vertices
 	glEnableVertexAttribArray(currentShader.getAttributeLocation("position"));	// activate attribute 'position' in shader
 	glVertexAttribPointer(currentShader.getAttributeLocation("position"), 3, GL_FLOAT,GL_FALSE,0,0);
