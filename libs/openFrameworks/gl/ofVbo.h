@@ -81,6 +81,9 @@ public:
 	void clearTexCoords();
 	void clearIndices();
 
+	int getNumVertices() const;
+	int getNumIndices() const;
+	
 private:
 
 	GLuint indexId;
@@ -105,6 +108,7 @@ private:
 
 	int		vertSize;
 	int		totalVerts;
+	int		totalIndices;
 
 	int vertUsage;
 	int colorUsage;

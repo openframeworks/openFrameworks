@@ -61,6 +61,8 @@ ofVbo::ofVbo()
 	indexId    = 0;
 
 	totalVerts = 0;
+	totalIndices = 0;
+	
 	texCoordStride = sizeof(ofVec2f);
 	normalStride = sizeof(ofVec3f);
 	colorStride = sizeof(ofFloatColor);
@@ -99,6 +101,8 @@ ofVbo::ofVbo(const ofVbo & mom){
 
 
 	totalVerts = mom.totalVerts;
+	totalIndices = mom.totalIndices;
+
 	texCoordStride = sizeof(ofVec2f);
 	normalStride = sizeof(ofVec3f);
 	colorStride = sizeof(ofFloatColor);
@@ -137,6 +141,7 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	retain(indexId);
 
 	totalVerts = mom.totalVerts;
+	totalIndices = mom.totalIndices;
 
 	bAllocated		= mom.bAllocated;
 	return *this;
@@ -273,6 +278,8 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 		glGenBuffers(1, &(indexId));
 		retain(indexId);
 	}
+	
+	totalIndices = total;
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ofIndexType) * total, &indices[0], usage);
@@ -539,6 +546,7 @@ void ofVbo::clearVertices(){
 		release(vertId);
 		vertId = 0;
 		bUsingVerts = false;
+		totalVerts = 0;
 	}
 }
 
@@ -575,5 +583,21 @@ void ofVbo::clearIndices(){
 		release(indexId);
 		indexId = 0;
 		bUsingIndices = false;
+		totalIndices = 0;
 	}
+}
+
+//--------------------------------------------------------------
+int ofVbo::getNumIndices() const {
+	if (bUsingIndices) {
+		return totalIndices;
+	} else {
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------
+
+int ofVbo::getNumVertices() const {
+	return totalVerts;
 }
