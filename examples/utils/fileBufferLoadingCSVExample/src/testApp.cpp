@@ -71,7 +71,7 @@ void testApp::keyPressed(int key){
 	myKey = (char) key;
 	myKey = ofToUpper(myKey);
 	
-	for (int i=0; i<morseCodeSymbols.size(); i++) {
+	for (unsigned int i=0; i<morseCodeSymbols.size(); i++) {
 		if (morseCodeSymbols[i].character == myKey){
 			currentSymbol = morseCodeSymbols[i];
 			player.playCode(currentSymbol.code);

@@ -134,7 +134,7 @@ ifneq ($(ARCH),android)
 endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	TARGET_CFLAGS = -g3
+	TARGET_CFLAGS = -g3 -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 	TARGET_NAME = $(MAKECMDGOALS)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif

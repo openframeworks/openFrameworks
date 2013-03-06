@@ -4,6 +4,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofMesh.h"
+#include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
@@ -18,6 +19,11 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	triPoints.resize(3);
 
 	currentFbo = NULL;
+	
+	coordHandedness = OF_LEFT_HANDED;
+	fillFlag = OF_FILLED;
+	bSmoothHinted = false;
+	rectMode = OF_RECTMODE_CORNER;
 }
 
 //----------------------------------------------------------
@@ -124,6 +130,21 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 		}
 #endif
 		if (bSmoothHinted) endSmoothing();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
+    bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
+    if(model.hasScaling() && model.hasNormalsEnabled()) {
+        if(!normalsEnabled) glEnable( GL_NORMALIZE );
+    }
+    
+    model.getMesh().draw(renderType);
+    
+    if(model.hasScaling() && model.hasNormalsEnabled()) {
+        if(!normalsEnabled) glDisable( GL_NORMALIZE );
+    }
+    
 }
 
 //----------------------------------------------------------
@@ -528,99 +549,6 @@ void ofGLRenderer::setCircleResolution(int res){
 	}
 }
 
-//----------------------------------------------------------
-void ofGLRenderer::setSphereResolution(int res) {
-	if(sphereMesh.getNumVertices() == 0 || res != ofGetStyle().sphereResolution) {
-		int n = res * 2;
-		float ndiv2=(float)n/2;
-    
-		/*
-		 Original code by Paul Bourke
-		 A more efficient contribution by Federico Dosil (below)
-		 Draw a point for zero radius spheres
-		 Use CCW facet ordering
-		 http://paulbourke.net/texture_colour/texturemap/
-		 */
-		
-		float theta2 = TWO_PI;
-		float phi1 = -HALF_PI;
-		float phi2 = HALF_PI;
-		float r = 1.f; // normalize the verts //
-    
-		sphereMesh.clear();
-    sphereMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-    
-		int i, j;
-    float theta1 = 0.f;
-		float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
-		cte3 = (theta2-theta1)/n;
-		cte1 = (phi2-phi1)/ndiv2;
-		dosdivn = 2*unodivn;
-		ofVec3f e,p,e2,p2;
-    
-		if (n < 0){
-			n = -n;
-			ndiv2 = -ndiv2;
-		}
-		if (n < 4) {n = 4; ndiv2=(float)n/2;}
-    if(r <= 0) r = 1;
-		
-		t2=phi1;
-		cost2=cos(phi1);
-		j1divn=0;
-    
-    ofVec3f vert, normal;
-    ofVec2f tcoord;
-		
-		for (j=0;j<ndiv2;j++) {
-			t1 = t2;
-			t2 += cte1;
-			t3 = theta1 - cte3;
-			cost1 = cost2;
-			cost2 = cos(t2);
-			e.y = sin(t1);
-			e2.y = sin(t2);
-			p.y = r * e.y;
-			p2.y = r * e2.y;
-			
-			idivn=0;
-			jdivn=j1divn;
-			j1divn+=dosdivn;
-			for (i=0;i<=n;i++) {
-				t3 += cte3;
-				e.x = cost1 * cos(t3);
-				e.z = cost1 * sin(t3);
-				p.x = r * e.x;
-				p.z = r * e.z;
-				
-				normal.set( e.x, e.y, e.z );
-				tcoord.set( idivn, jdivn );
-				vert.set( p.x, p.y, p.z );
-				
-				sphereMesh.addNormal(normal);
-				sphereMesh.addTexCoord(tcoord);
-				sphereMesh.addVertex(vert);
-				
-				e2.x = cost2 * cos(t3);
-				e2.z = cost2 * sin(t3);
-				p2.x = r * e2.x;
-				p2.z = r * e2.z;
-				
-				normal.set(e2.x, e2.y, e2.z);
-				tcoord.set(idivn, j1divn);
-				vert.set(p2.x, p2.y, p2.z);
-				
-				sphereMesh.addNormal(normal);
-				sphereMesh.addTexCoord(tcoord);
-				sphereMesh.addVertex(vert);
-				
-				idivn += unodivn;
-				
-			}
-		}
-	}
-}
-
 //our openGL wrappers
 //----------------------------------------------------------
 void ofGLRenderer::pushMatrix(){
@@ -796,12 +724,12 @@ void ofGLRenderer::background(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void ofGLRenderer::setFillMode(ofFillFlag fill){
-	bFilled = fill;
+	fillFlag = fill;
 }
 
 //----------------------------------------------------------
 ofFillFlag ofGLRenderer::getFillMode(){
-	return bFilled;
+	return fillFlag;
 }
 
 //----------------------------------------------------------
@@ -962,14 +890,14 @@ void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
 }
 
@@ -980,14 +908,14 @@ void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2
 	triPoints[2].set(x3,y3,z3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
 }
 
@@ -999,31 +927,15 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
-    
-    glEnable(GL_NORMALIZE);
-    glPushMatrix();
-    glScalef(radius, radius, radius);
-    if(bFilled) {
-        sphereMesh.draw();
-    } else {
-        sphereMesh.drawWireframe();
-    }
-    glPopMatrix();
-    glDisable(GL_NORMALIZE);
-    
 }
 
 //----------------------------------------------------------
@@ -1036,14 +948,14 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
 
 }
 
