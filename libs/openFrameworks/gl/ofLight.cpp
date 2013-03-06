@@ -370,13 +370,13 @@ ofFloatColor ofLight::getSpecularColor() const {
 //----------------------------------------
 void ofLight::customDraw() {
     if(getIsPointLight()) {
-        ofSphere( 0,0,0, 10);
+        ofDrawSphere( 0,0,0, 10);
     } else if (getIsSpotlight()) {
         float coneHeight = (sin(spotCutOff*DEG_TO_RAD) * 30.f) + 1;
         float coneRadius = (cos(spotCutOff*DEG_TO_RAD) * 30.f) + 8;
-        ofCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
+        ofDrawCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
     } else {
-        ofBox(10);
+        ofDrawBox(10);
     }
     ofDrawAxis(20);
 }
