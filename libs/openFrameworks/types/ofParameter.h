@@ -191,7 +191,7 @@ protected:
 
 	void setSerializable(bool serializable);
 
-	friend class FriendMaker<Friend>::Type;
+	friend typename FriendMaker<Friend>::Type;
 };
 
 
