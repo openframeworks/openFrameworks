@@ -8,17 +8,18 @@ class ofxSlider : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:	
-	ofxSlider(){}
-	ofxSlider(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
-	ofxSlider* setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider();
+	~ofxSlider();
+	ofxSlider(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider* setup(string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
 	virtual void mouseMoved(ofMouseEventArgs & args);
 	virtual void mousePressed(ofMouseEventArgs & args);
 	virtual void mouseDragged(ofMouseEventArgs & args);
 	virtual void mouseReleased(ofMouseEventArgs & args);
-	
-	virtual void saveToXml(ofxXmlSettings& xml);
-	virtual void loadFromXml(ofxXmlSettings& xml);
+
+	void setUpdateOnReleaseOnly(bool bUpdateOnReleaseOnly);
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
@@ -32,16 +33,22 @@ public:
 
 
 	double operator=(Type v);
-	operator Type & ();
+	operator const Type & ();
 
 	void draw();
 	
-	ofxParameter<Type> value;
+
+	ofAbstractParameter & getParameter();
 
 protected:
-	Type min, max;
-	
+	ofParameter<Type> value;
+	bool bUpdateOnReleaseOnly;
 	void setValue(float mx, float my, bool bCheck);
+	void generateDraw();
+	void generateText();
+	void valueChanged(Type & value);
+	ofPath bg, bar;
+	ofVboMesh textMesh;
 };
 
 typedef ofxSlider<float> ofxFloatSlider;

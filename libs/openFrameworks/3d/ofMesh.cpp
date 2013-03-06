@@ -714,6 +714,29 @@ bool ofMesh::usingIndices(){
 
 
 //--------------------------------------------------------------
+void ofMesh::append(ofMesh & mesh){
+	int prevNumVertices = vertices.size();
+	if(mesh.getNumVertices()){
+		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
+	}
+	if(mesh.getNumTexCoords()){
+		texCoords.insert(texCoords.end(),mesh.getTexCoords().begin(),mesh.getTexCoords().end());
+	}
+	if(mesh.getNumColors()){
+		colors.insert(colors.end(),mesh.getColors().begin(),mesh.getColors().end());
+	}
+	if(mesh.getNumNormals()){
+		normals.insert(normals.end(),mesh.getNormals().begin(),mesh.getNormals().end());
+	}
+	if(mesh.getNumIndices()){
+		for(unsigned int i=0;i<mesh.getIndices().size();i++){
+			indices.push_back(mesh.getIndex(i)+prevNumVertices);
+		}
+	}
+}
+
+
+//--------------------------------------------------------------
 void ofMesh::load(string path){
 	ofFile is(path, ofFile::ReadOnly);
 	ofMesh& data = *this;

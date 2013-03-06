@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
+		587EF21C15BE001000481B1E /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 587EF21815BE001000481B1E /* ofParameter.cpp */; };
+		587EF21D15BE001000481B1E /* ofParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 587EF21915BE001000481B1E /* ofParameter.h */; };
+		587EF21E15BE001000481B1E /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 587EF21A15BE001000481B1E /* ofParameterGroup.cpp */; };
+		587EF21F15BE001000481B1E /* ofParameterGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 587EF21B15BE001000481B1E /* ofParameterGroup.h */; };
 		772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
 		772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
 		92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F86132DA7DD00EC2631 /* ofPath.cpp */; };
@@ -141,6 +145,10 @@
 /* Begin PBXFileReference section */
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
+		587EF21815BE001000481B1E /* ofParameter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameter.cpp; sourceTree = "<group>"; };
+		587EF21915BE001000481B1E /* ofParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameter.h; sourceTree = "<group>"; };
+		587EF21A15BE001000481B1E /* ofParameterGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameterGroup.cpp; sourceTree = "<group>"; };
+		587EF21B15BE001000481B1E /* ofParameterGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameterGroup.h; sourceTree = "<group>"; };
 		772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOpenALSoundPlayer.h; sourceTree = "<group>"; };
 		92C55F86132DA7DD00EC2631 /* ofPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPath.cpp; sourceTree = "<group>"; };
@@ -587,6 +595,7 @@
 			files = (
 				E4B5AE1F12D94F9B00BA355D /* ofQtUtils.h in Headers */,
 				E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */,
+				E4B5AE2312D94F9B00BA355D /* ofQuickTimePlayer.h in Headers */,
 				E4F3BA6812F4C4BF002D19BB /* of3dUtils.h in Headers */,
 				E4F3BA6A12F4C4BF002D19BB /* ofCamera.h in Headers */,
 				E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */,
@@ -706,6 +715,7 @@
 				E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */,
 				E4B5AE1E12D94F9B00BA355D /* ofQtUtils.cpp in Sources */,
 				E4B5AE2012D94F9B00BA355D /* ofQuickTimeGrabber.cpp in Sources */,
+				E4B5AE2212D94F9B00BA355D /* ofQuickTimePlayer.cpp in Sources */,
 				E4F3BA6712F4C4BF002D19BB /* of3dUtils.cpp in Sources */,
 				E4F3BA6912F4C4BF002D19BB /* ofCamera.cpp in Sources */,
 				E4F3BA6B12F4C4BF002D19BB /* ofEasyCam.cpp in Sources */,
