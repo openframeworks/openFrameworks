@@ -14,6 +14,7 @@
 
 #include "ofNode.h"
 #include "ofColor.h"
+#include "of3dGraphics.h"
 
 #define OF_MAX_LIGHTS		8		// max number of lights allowed by default opengl
 

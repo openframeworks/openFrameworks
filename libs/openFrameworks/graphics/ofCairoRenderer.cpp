@@ -5,6 +5,7 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofImage.h"
+#include "of3dPrimitives.h"
 
 //-----------------------------------------------------------------------------------
 static void helper_quadratic_to (cairo_t *cr,
@@ -385,6 +386,27 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
         ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
     }
 	draw(vertexData,false,false,false);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
+    
+    if(model.hasScaling()) {
+        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
+        //glEnable( GL_NORMALIZE );
+        //glPushMatrix();
+        //ofVec3f scale = model.getScale();
+        //glScalef( scale.x, scale.y, scale.z);
+    }
+    
+    ofMesh& mesh = model.getMesh();
+    draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
+    
+    if(model.hasScaling()) {
+        //glPopMatrix();
+        //glDisable( GL_NORMALIZE );
+    }
+    
 }
 
 void ofCairoRenderer::draw(ofSubPath & path){

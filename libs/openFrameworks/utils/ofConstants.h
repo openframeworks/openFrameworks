@@ -1,8 +1,10 @@
 #pragma once
 
 //-------------------------------
-#define OF_VERSION	7
-#define OF_VERSION_MINOR 2
+#define OF_VERSION_MAJOR 0
+#define OF_VERSION_MINOR 7
+#define OF_VERSION_PATCH 4
+
 //-------------------------------
 
 enum ofLoopType{
@@ -138,7 +140,6 @@ enum ofTargetPlatform{
 #ifdef TARGET_LINUX
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-		#include <glxew.h>
 		#include <GL/glew.h>
 		#include <GL/gl.h>
 		#include <GL/glx.h>
@@ -319,6 +320,7 @@ typedef ofBaseApp ofSimpleApp;
 #include <iomanip>  //for setprecision
 #include <fstream>
 #include <algorithm>
+#include <cfloat>
 using namespace std;
 
 #ifndef PI
