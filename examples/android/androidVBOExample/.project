@@ -3,7 +3,6 @@
 	<name>androidVBOExample</name>
 	<comment></comment>
 	<projects>
-		<project>openFrameworks</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

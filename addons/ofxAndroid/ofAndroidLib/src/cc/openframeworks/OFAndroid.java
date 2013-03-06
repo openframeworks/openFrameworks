@@ -970,21 +970,17 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
         	
             public boolean onTouch(View v, MotionEvent event) {
             	final int action = event.getAction();
-            	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) 
-                >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+            	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) 
+                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
                 switch((action & MotionEvent.ACTION_MASK)){
                 case MotionEvent.ACTION_MOVE:
                 {
             		for(int i=0; i<event.getHistorySize(); i++)
-            		{
-            			try{
-		                	for(int j=0; j<event.getPointerCount(); j++)
-		                	{
-	                			int ptr = event.getPointerId(j);
-	                			OFAndroid.onTouchMoved(ptr, event.getHistoricalX(ptr, i), event.getHistoricalY(ptr, i), event.getHistoricalPressure(ptr, i));                		
-	                		}
-            			}catch(IllegalArgumentException e){}
+            		{            			
+		                for(int j=0; j<event.getPointerCount(); j++){	                			
+	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i));
+	                	}            			
                 	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
 	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
@@ -1015,7 +1011,7 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
 		final int action = event.getAction();
-		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
         final int pointerId = event.getPointerId(pointerIndex);
 
         OFAndroid.onTouchDoubleTap(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
@@ -1152,14 +1148,14 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
+		this.w = w;
+		this.h = h;
     	if(!setup && OFAndroid.unpackingDone){
         	setup();
     	}
     	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
     	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
     	OFAndroid.resize(w, h);
-		this.w = w;
-		this.h = h;
     }
     
     private void setup(){
