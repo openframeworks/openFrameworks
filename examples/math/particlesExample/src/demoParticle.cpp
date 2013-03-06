@@ -95,7 +95,7 @@ void demoParticle::update(){
 			int closest = -1; 
 			float closestDist = 9999999;
 			
-			for(int i = 0; i < attractPoints->size(); i++){
+			for(unsigned int i = 0; i < attractPoints->size(); i++){
 				float lenSq = ( attractPoints->at(i)-pos ).lengthSquared();
 				if( lenSq < closestDist ){
 					closestDist = lenSq;
