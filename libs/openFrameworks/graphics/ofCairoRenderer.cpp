@@ -5,21 +5,22 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofImage.h"
+#include "of3dPrimitives.h"
 
 //-----------------------------------------------------------------------------------
-static void helper_quadratic_to (cairo_t *cr,
-                     double x1, double y1,
-                     double x2, double y2)
-{
-  double x0, y0;
-  cairo_get_current_point (cr, &x0, &y0);
-  cairo_curve_to (cr,
-                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x0,
-                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
-                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
-                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
-                  y1, y2);
-}
+//static void helper_quadratic_to (cairo_t *cr,
+//                     double x1, double y1,
+//                     double x2, double y2)
+//{
+//  double x0, y0;
+//  cairo_get_current_point (cr, &x0, &y0);
+//  cairo_curve_to (cr,
+//                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x0,
+//                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
+//                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
+//                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
+//                  y1, y2);
+//}
 
 _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char *data, unsigned int length){
 	((ofCairoRenderer*)closure)->streamBuffer.append((const char*)data,length);
@@ -385,6 +386,27 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
         ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
     }
 	draw(vertexData,false,false,false);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
+    
+    if(model.hasScaling()) {
+        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
+        //glEnable( GL_NORMALIZE );
+        //glPushMatrix();
+        //ofVec3f scale = model.getScale();
+        //glScalef( scale.x, scale.y, scale.z);
+    }
+    
+    ofMesh& mesh = model.getMesh();
+    draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
+    
+    if(model.hasScaling()) {
+        //glPopMatrix();
+        //glDisable( GL_NORMALIZE );
+    }
+    
 }
 
 void ofCairoRenderer::draw(ofSubPath & path){
