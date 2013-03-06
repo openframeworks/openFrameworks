@@ -138,6 +138,7 @@ public:
     virtual bool usingNormals();
     virtual bool usingIndices();
     
+    void append(ofMesh & mesh);
 
 protected:
 	virtual void draw(ofPolyRenderMode renderType);
