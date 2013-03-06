@@ -359,17 +359,21 @@ void ofFbo::destroy() {
 
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
-	if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
-		ofLogVerbose("ofFbo") << "FBO supported";
-	}else{
-        ofLogError("ofFbo") << "FBO not supported by this graphics card";
-		return false;
+	
+	if (ofGLIsFixedPipeline()){
+		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
+			ofLogVerbose("ofFbo") << "FBO supported";
+		}else{
+			ofLogError("ofFbo") << "FBO not supported by this graphics card";
+			return false;
+		}
 	}
+
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
 
-	ofLogVerbose("ofFbo") << "checkGLSupport()"
+	ofLogNotice("ofFbo") << "checkGLSupport()"
                           << "maxColorAttachments: " << _maxColorAttachments
                           << "maxDrawBuffers: " << _maxDrawBuffers
                           << "maxSamples: " << _maxSamples;
