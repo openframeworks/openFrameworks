@@ -56,6 +56,7 @@
     BOOL bUseFSAA;
     BOOL bUseRetina;
     NSInteger fsaaSamples;
+    ESRendererVersion rendererVersion;
     
 	BOOL animating;
 	BOOL displayLinkSupported;
@@ -75,10 +76,11 @@
 @property (nonatomic) float animationFrameInterval;
 @property (nonatomic) float animationFrameRate;
 
-- (id) initWithFrame:(CGRect)frame 
-            andDepth:(bool)depth 
-               andAA:(bool)fsaaEnabled 
-       andNumSamples:(int)samples 
+- (id) initWithFrame:(CGRect)frame
+ andPreferedRenderer:(ESRendererVersion)rendererVersion
+            andDepth:(bool)depth
+               andAA:(bool)fsaaEnabled
+       andNumSamples:(int)samples
            andRetina:(bool)retinaEnabled;
 
 - (void) startAnimation;

@@ -14,7 +14,6 @@
 
 void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
-ofPtr<ofGLRenderer> ofGetGLRenderer();
 
 //for pdf screenshot
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
@@ -57,7 +56,7 @@ void ofLoadMatrix (const ofMatrix4x4 & m);   // Andreas: I've included both a of
 void ofLoadMatrix (const float *m);			// ideally we would always use ofMatrix4x4, but in a lot of temporary
 void ofMultMatrix (const ofMatrix4x4 & m);	// ofMatrix4x4 objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
-void ofSetMatrixMode (ofMatrixMode matrixMode);
+void ofSetMatrixMode(ofMatrixMode matrixMode);
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();
@@ -77,7 +76,6 @@ ofRectMode 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
 
 void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can change it here
 void ofSetCurveResolution(int res);
-void ofSetSphereResolution(int res);
 
 
 // drawing options
@@ -216,22 +214,6 @@ void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, 
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
 
-
-//3d
-void ofSphere(float x, float y, float z, float radius);
-void ofSphere(float x, float y, float radius);
-void ofSphere(const ofPoint& position, float radius);
-void ofSphere(float radius);
-
-void ofBox(float x, float y, float z, float size);
-void ofBox(float x, float y, float size);
-void ofBox(const ofPoint& position, float size);
-void ofBox(float size);
-
-void ofCone(float x, float y, float z, float radius, float height);
-void ofCone(float x, float y, float radius, float height);
-void ofCone(const ofPoint& position, float radius, float height);
-void ofCone(float radius, float height);
 
 // bitmapped type
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);

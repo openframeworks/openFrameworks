@@ -21,6 +21,7 @@ extern "C"{
 #include "ofxAccelerometer.h"
 #include <android/log.h>
 #include "ofFileUtils.h"
+#include "ofGLES2Renderer.h"
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
@@ -120,6 +121,10 @@ ofAppAndroidWindow::ofAppAndroidWindow() {
 
 ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
+}
+
+void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
+
 }
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
@@ -322,6 +327,10 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 			androidApp->unloadTextures();
 		}
 	}
+	if(ofGetCurrentRenderer()->getType()=="GLES2"){
+		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		renderer->setup();
+	}
 	reloadTextures();
 	if(androidApp){
 		androidApp->reloadTextures();
@@ -334,7 +343,11 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
-    //initAndroidOF();
+	if(ofGetCurrentRenderer()->getType()=="GLES2"){
+		ofLogNotice() << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
+		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		renderer->setup();
+	}
 	ofLog(OF_LOG_NOTICE,"setup");
 	paused = false;
     sWindowWidth  = w;
@@ -402,6 +415,10 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	ofNotifyUpdate();
 
 
+	if(ofGetCurrentRenderer()->getType()=="GLES2"){
+		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		renderer->startRender();
+	}
 	int width, height;
 
 	width  = sWindowWidth;
@@ -420,6 +437,11 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 
 	if(bSetupScreen) ofSetupScreen();
 	ofNotifyDraw();
+
+	if(ofGetCurrentRenderer()->getType()=="GLES2"){
+		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		renderer->finishRender();
+	}
 
 	unsigned long currTime = ofGetElapsedTimeMicros();
 	unsigned long frameMicros = currTime - beginFrameMicros;

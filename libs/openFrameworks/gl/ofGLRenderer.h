@@ -2,14 +2,13 @@
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
 #include "ofMatrix4x4.h"
-
 #include <stack>
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
+class of3dPrimitive;
 
-
-class ofGLRenderer: public ofBaseRenderer{
+class ofGLRenderer: public ofBaseGLRenderer{
 public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
@@ -21,6 +20,7 @@ public:
 	void update();
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
+    void draw( of3dPrimitive& model, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
@@ -79,7 +79,6 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setCircleResolution(int res);
-	void setSphereResolution(int res);
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
@@ -120,6 +119,17 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
+
+	// gl specifics
+	void enableVertices();
+	void enableTexCoords();
+	void enableColors();
+	void enableNormals();
+	void disableVertices();
+	void disableTexCoords();
+	void disableColors();
+	void disableNormals();
+
 private:
 	void startSmoothing();
 	void endSmoothing();
@@ -136,8 +146,6 @@ private:
 	vector<ofPoint> triPoints;
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
-	
-	ofMesh sphereMesh;
 
 	ofFillFlag fillFlag;
 	bool bSmoothHinted;

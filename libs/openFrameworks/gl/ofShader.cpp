@@ -1,10 +1,13 @@
 #include "ofShader.h"
 #include "ofUtils.h"
 #include "ofFileUtils.h"
+#include "ofGraphics.h"
+#include "ofGLES2Renderer.h"
 #include <map>
 
-#ifndef TARGET_OPENGLES
 
+GLuint ofShader::activeProgram=0;
+GLuint ofShader::prevActiveProgram=0;
 
 static map<GLuint,int> & getShaderIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
@@ -78,17 +81,56 @@ ofShader::~ofShader() {
 }
 
 //--------------------------------------------------------------
+ofShader::ofShader(const ofShader & mom) :
+program(mom.program),
+bLoaded(mom.bLoaded),
+shaders(mom.shaders),
+attribsCache(mom.attribsCache),
+uniformsCache(mom.uniformsCache){
+	if(mom.bLoaded){
+		retainProgram(program);
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			retainShader(shader);
+		}
+	}
+}
+
+//--------------------------------------------------------------
+ofShader & ofShader::operator=(const ofShader & mom){
+    if(this == &mom) {
+        return *this;
+    }
+	if(bLoaded){
+		unload();
+	}
+	program = mom.program;
+	bLoaded = mom.bLoaded;
+	shaders = mom.shaders;
+	attribsCache = mom.attribsCache;
+	uniformsCache = mom.uniformsCache;
+	if(mom.bLoaded){
+		retainProgram(program);
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			retainShader(shader);
+		}
+	}
+	return *this;
+}
+
+//--------------------------------------------------------------
 bool ofShader::load(string shaderName) {
 	return load(shaderName + ".vert", shaderName + ".frag");
 }
 
 //--------------------------------------------------------------
 bool ofShader::load(string vertName, string fragName, string geomName) {
-	unload();
-
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
+#ifndef TARGET_OPENGLES
 	if(geomName.empty() == false) setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
+#endif
 	
 	return linkProgram();
 }
@@ -106,6 +148,8 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromSource(GLenum type, string source) {
+    unload();
+    
 	// create program if it doesn't exist already
 	checkAndCreateProgram();
 
@@ -149,27 +193,37 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 
 //--------------------------------------------------------------
 void ofShader::setGeometryInputType(GLenum type) {
+#ifndef TARGET_OPENGLES
 	checkAndCreateProgram();
 	glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, type);
+#endif
 }
 
 //--------------------------------------------------------------
 void ofShader::setGeometryOutputType(GLenum type) {
+#ifndef TARGET_OPENGLES
 	checkAndCreateProgram();
 	glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
+#endif
 }
 
 //--------------------------------------------------------------
 void ofShader::setGeometryOutputCount(int count) {
+#ifndef TARGET_OPENGLES
 	checkAndCreateProgram();
 	glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, count);
+#endif
 }
 
 //--------------------------------------------------------------
 int ofShader::getGeometryMaxOutputCount() {
+#ifndef TARGET_OPENGLES
 	int temp;
 	glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT, &temp);
 	return temp;
+#else
+	return 0;
+#endif
 }
 
 //--------------------------------------------------------------
@@ -216,9 +270,15 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 	}
 }
 
+
+
 //--------------------------------------------------------------
 void ofShader::checkAndCreateProgram() {
+#ifndef TARGET_OPENGLES
 	if(GL_ARB_shader_objects) {
+#else
+	if(true){
+#endif
 		if(program == 0) {
 			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
 			program = glCreateProgram();
@@ -235,7 +295,7 @@ bool ofShader::linkProgram() {
 			ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
 		} else {
 			checkAndCreateProgram();
-			
+
 			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 				GLuint shader = it->second;
 				if(shader) {
@@ -270,22 +330,44 @@ void ofShader::unload() {
 			releaseProgram(program);
 			program = 0;
 		}
-		
+
+		attribsCache.clear();
+		uniformsCache.clear();
 		shaders.clear();
 	}
 	bLoaded = false;
 }
 
 //--------------------------------------------------------------
+bool ofShader::isLoaded(){
+	return bLoaded;
+}
+
+//--------------------------------------------------------------
 void ofShader::begin() {
-	if (bLoaded == true)
+	if (bLoaded){
 		glUseProgram(program);
+        if(activeProgram!=program) {
+            prevActiveProgram = activeProgram;
+            activeProgram = program;
+            if(!ofGLIsFixedPipeline()){
+                ofGetGLES2Renderer()->beginCustomShader(*this);
+            }
+        }
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::end() {
-	if (bLoaded == true)
-		glUseProgram(0);
+	if (bLoaded && activeProgram==program){
+		if(!ofGLIsFixedPipeline()){
+			ofGetGLES2Renderer()->endCustomShader();
+		}else{
+			glUseProgram(prevActiveProgram);
+			activeProgram = prevActiveProgram;
+			prevActiveProgram = 0;
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -420,6 +502,7 @@ void ofShader::setUniformMatrix4f(const char* name, const ofMatrix4x4 & m) {
 		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, m.getPtr());
 }
 
+#ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 void ofShader::setAttribute1s(GLint location, short v1) {
 	if(bLoaded)
@@ -443,6 +526,7 @@ void ofShader::setAttribute4s(GLint location, short v1, short v2, short v3, shor
 	if(bLoaded)
 		glVertexAttrib4s(location, v1, v2, v3, v4);
 }
+#endif
 
 //--------------------------------------------------------------
 void ofShader::setAttribute1f(GLint location, float v1) {
@@ -468,6 +552,42 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 		glVertexAttrib4f(location, v1, v2, v3, v4);
 }
 
+void ofShader::setAttribute1fv(const char* name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		glVertexAttribPointer(location, 1, GL_FLOAT, GL_FALSE, stride, v);
+		glEnableVertexAttribArray(location);
+	}
+}
+
+void ofShader::setAttribute2fv(const char* name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, stride, v);
+		glEnableVertexAttribArray(location);
+	}
+
+}
+
+void ofShader::setAttribute3fv(const char* name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, stride, v);
+		glEnableVertexAttribArray(location);
+	}
+
+}
+
+void ofShader::setAttribute4fv(const char* name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		glVertexAttribPointer(location, 4, GL_FLOAT, GL_FALSE, stride, v);
+		glEnableVertexAttribArray(location);
+	}
+
+}
+
+#ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 void ofShader::setAttribute1d(GLint location, double v1) {
 	if(bLoaded)
@@ -491,15 +611,26 @@ void ofShader::setAttribute4d(GLint location, double v1, double v2, double v3, d
 	if(bLoaded)
 		glVertexAttrib4d(location, v1, v2, v3, v4);
 }
+#endif
 
 //--------------------------------------------------------------
 GLint ofShader::getAttributeLocation(const char* name) {
-	return glGetAttribLocation(program, name);
+	if(attribsCache.find(name)!=attribsCache.end()){
+		return attribsCache[name];
+	}
+	GLint location = glGetAttribLocation(program, name);
+	attribsCache[name] = location;
+	return location;
 }
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const char* name) {
-	return glGetUniformLocation(program, name);
+	if(uniformsCache.find(name)!=uniformsCache.end()){
+		return uniformsCache[name];
+	}
+	GLint location = glGetUniformLocation(program, name);
+	uniformsCache[name] = location;
+	return location;
 }
 
 //--------------------------------------------------------------
@@ -563,9 +694,9 @@ string ofShader::nameForType(GLenum type) {
 	switch(type) {
 		case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+		#ifndef TARGET_OPENGLES
 		case GL_GEOMETRY_SHADER_EXT: return "GL_GEOMETRY_SHADER_EXT";
+		#endif
 		default: return "UNKNOWN SHADER TYPE";
 	}
 }
-
-#endif
