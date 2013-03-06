@@ -330,6 +330,18 @@
 		<Unit filename="..\..\..\openFrameworks\types\ofColor.h">
 			<Option virtualFolder="openframeworks\types\" />
 		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameter.cpp">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameter.h">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameterGroup.cpp">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameterGroup.h">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
 		<Unit filename="..\..\..\openFrameworks\types\ofPoint.cpp">
 			<Option virtualFolder="openframeworks\types\" />
 		</Unit>
