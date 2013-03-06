@@ -136,7 +136,7 @@ private:
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
 
-	ofFillFlag bFilled;
+	ofFillFlag fillFlag;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
 
