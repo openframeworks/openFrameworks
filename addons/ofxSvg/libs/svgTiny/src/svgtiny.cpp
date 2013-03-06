@@ -16,7 +16,6 @@
 #include <string.h>
 //#include <libxml/parser.h>
 //#include <libxml/debugXML.h>
-#include "tinyxml.h"
 #include "svgtiny.h"
 #include "svgtiny_internal.h"
 
@@ -806,7 +805,6 @@ svgtiny_code svgtiny_parse_poly(Poco::XML::Element *poly,
 	p = (float*) malloc(sizeof p[0] * strlen(s));
 	if (!p) {
         //xmlFree(points);
-        free(points);
 		return svgtiny_OUT_OF_MEMORY;
 	}
 
@@ -835,7 +833,6 @@ svgtiny_code svgtiny_parse_poly(Poco::XML::Element *poly,
 		p[i++] = svgtiny_PATH_CLOSE;
 
 	//xmlFree(points);
-    free(points);
 
 	return svgtiny_add_path(p, i, &state);
 }
