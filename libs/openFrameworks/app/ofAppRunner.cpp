@@ -10,6 +10,7 @@
 #include "ofMath.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
+#include "ofTrueTypeFont.h"
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -137,9 +138,10 @@ void ofExitCallback(){
 	//------------------------
 	// try to close freeImage:
 	ofCloseFreeImage();
+
 	//------------------------
 	// try to close free type:
-	// ....
+	ofTrueTypeFont::finishLibraries();
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);

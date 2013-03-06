@@ -32,7 +32,7 @@ class testApp : public ofBaseApp{
 		vector <Bug> bugs;
 		vector <ofVec2f> holes;
 		
-		int maxBullets;
+		unsigned int maxBullets;
 		int bugsKilled;
 		bool bFire;
 };
