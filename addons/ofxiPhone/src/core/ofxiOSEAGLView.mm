@@ -37,7 +37,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
     
     ESRendererVersion version = ESRendererVersion_11;
-    if(ofGetCurrentRenderer()->getType() == "GLES2") {
+    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
         version = ESRendererVersion_20;
     }
     
@@ -167,7 +167,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     [self startRender];
     
     ofProgrammableGLRenderer * es2Renderer = NULL;
-    if(ofGetCurrentRenderer()->getType() == "GLES2") {
+    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
         es2Renderer = (ofProgrammableGLRenderer *)(ofGetCurrentRenderer().get());
         es2Renderer->startRender();
     }
