@@ -98,6 +98,11 @@ void ofBuffer::set(const string & text){
 }
 
 //--------------------------------------------------
+void ofBuffer::append(const string& _buffer){
+	append(_buffer.c_str(), _buffer.size());
+}
+
+//--------------------------------------------------
 void ofBuffer::append(const char * _buffer, unsigned int _size){
 	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
 	buffer.back() = 0;
@@ -1327,10 +1332,14 @@ string ofFilePath::join(string path1, string path2){
 string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
-		if (readlink("/proc/self/exe", buff, FILENAME_MAX) == -1){
+		ssize_t size = readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+		if (size == -1){
 			ofLogError("ofFilePath") << "readlink failed with error " << errno;
 		}
-		return buff;
+		else{
+			buff[size] = '\0';
+			return buff;
+		}
 	#elif defined(TARGET_OSX)
 		char path[FILENAME_MAX];
 		uint32_t size = sizeof(path);

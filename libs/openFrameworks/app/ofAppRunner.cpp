@@ -10,6 +10,7 @@
 #include "ofMath.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
+#include "ofTrueTypeFont.h"
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -56,7 +57,9 @@ void ofRunApp(ofBaseApp * OFSA){
 		OFSAptr->mouseY = 0;
 	}
 
+#ifndef TARGET_ANDROID
 	atexit(ofExitCallback);
+#endif
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
@@ -135,9 +138,10 @@ void ofExitCallback(){
 	//------------------------
 	// try to close freeImage:
 	ofCloseFreeImage();
+
 	//------------------------
 	// try to close free type:
-	// ....
+	ofTrueTypeFont::finishLibraries();
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);
@@ -154,7 +158,9 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 		OFSAptr->mouseY = 0;
 	}
 
+#ifndef TARGET_ANDROID
 	atexit(ofExitCallback);
+#endif
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time

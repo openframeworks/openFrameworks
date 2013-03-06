@@ -17,7 +17,8 @@ We love hearing about bugs! It's how we get them fixed.
 - If you notice something odd happening, try to make it happen again (reproduce it). 
 - If you can reproduce it, try to figure out if it's caused by your code or by openFrameworks. 
 - If it looks like it's caused by openFrameworks (or if you're not sure), submit a bug report to the [issue tracker](github.com/openframeworks/openFrameworks/issues). 
-  - Search the issue tracker to make sure your problem has not been reported yet. If you find a relevant bug, comment there. If not, open a new issue.
+  - **Search the issue tracker** to make sure your problem has not been reported yet. If you find a relevant bug, comment there, even if it's an old or closed one! 
+  - Only if you don't find a relevant issue, open a new issue. A new issue does not generate more exposure/visibility than commenting on an existing one.
   - Make sure you give it a good title! 
   A good title explains the core of the problem in about 5-10 words. (It's sometimes easier to write the title after you've written the description.)
     - Examples of bad titles: _problem with ofRectangle_ or _can't set color_

@@ -459,8 +459,8 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 		//ie (320x240) becomes (512x256)
 		texData.tex_w = ofNextPow2(w);
 		texData.tex_h = ofNextPow2(h);
-		texData.tex_t = 1.0f;
-		texData.tex_u = 1.0f;
+		texData.tex_t = w / texData.tex_w;
+		texData.tex_u = h / texData.tex_h;
 		texData.textureTarget = GL_TEXTURE_2D;
 	}
 	

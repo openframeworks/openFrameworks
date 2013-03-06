@@ -29,14 +29,7 @@ public:
 	// the translation key is the key used to switch between rotation and translation.
 	// translation happens only when the key is pressed.
 	void setTranslationKey(char key);
-	char getTranslationKey();
-	//--
-	/*
-	void mouseDragged(ofMouseEventArgs& mouse);
-	void mouseMoved(ofMouseEventArgs& mouse);
-	void mousePressed(ofMouseEventArgs& mouse);
-	void mouseReleased(ofMouseEventArgs& mouse);
-//*/
+    char getTranslationKey();
 	// enable or disable mouse input to navigate
 	void enableMouseInput();
 	void disableMouseInput();
@@ -46,6 +39,7 @@ public:
 	void disableMouseMiddleButton();
 	bool getMouseMiddleButtonEnabled();
 	
+    void setAutoDistance(bool bAutoDistance);
 	
 private:
 	void setDistance(float distance, bool save);
@@ -61,7 +55,7 @@ private:
 	bool bInsideArcball;
 	bool bMouseInputEnabled;
 	bool bDistanceSet;
-
+    bool bAutoDistance;
 	float lastDistance;
 
 	float drag;

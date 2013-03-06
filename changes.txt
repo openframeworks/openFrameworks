@@ -1,3 +1,216 @@
+________________/\\\\\\\\\\\\\\\_________/\\\\\\\___________/\\\\\\\\\\\\\\\_____________/\\\____        
+ _______________\/\\\///////////________/\\\/////\\\________\/////////////\\\___________/\\\\\____       
+  _______________\/\\\__________________/\\\____\//\\\__________________/\\\/__________/\\\/\\\____      
+   _____/\\\\\____\/\\\\\\\\\\\_________\/\\\_____\/\\\________________/\\\/___________/\\\/\/\\\____     
+    ___/\\\///\\\__\/\\\///////__________\/\\\_____\/\\\______________/\\\/___________/\\\/__\/\\\____    
+     __/\\\__\//\\\_\/\\\_________________\/\\\_____\/\\\____________/\\\/___________/\\\\\\\\\\\\\\\\_   
+      _\//\\\__/\\\__\/\\\_________________\//\\\____/\\\___________/\\\/____________\///////////\\\//__  
+       __\///\\\\\/___\/\\\__________________\///\\\\\\\/____/\\\__/\\\/________/\\\___________\/\\\____ 
+        ____\/////_____\///_____ _______________\///////_____\///__\///__________\///____________\///_____
+
+
+------------------------------------------------------------------------------
+OF 0.7.4 changelog:
+ 
+change key:
+  + added
+  - removed
+  / modified
+------------------------------------------------------------------------------
+
+
+MAJOR CHANGES
+========================
+
+New Codeblocks (windows): 
+For 0.7.4 we updated all core libraries to work against the new version of codeblocks, which itself uses a new version of GCC.  Anyone using codeblocks on windows will need to update to 12.11, because these libraries will not work with older versions of codeblocks. 
+
+System Libraries (linux):
+Linux now uses some system libraries instead of including them in the core.  Please ensure you have installed the system dependencies for your OS.  You can install the system dependencies by executing the install_dependencies.sh script in  $OF_ROOT/scripts/linux/DISTRO/install_dependencies.sh, where DISTRO is your running linux distribution.  Currently oF has install scripts for Debian, Ubuntu, ArchLinux, and Fedora.
+
+New versioning system:
+From now on, OF version are numbered Major.Minor.Patch (e.g. 0.7.4). See Utils section and readme.md for details.
+
+DEPRECATIONS & REMOVALS
+========================
+- removed OF_USING_POCO conditionals
+- support for Codeblocks version 10.04 on windows
+- removed portaudio and freetype libraries.  Linux now uses some system libraries.  Please ensure you have installed the system dependencies. 
+
+CORE
+====
+## 3d
+     
+    ofCamera:
+        + added getForceAspectRatio() and getAspectRatio() 
+        - dependencies with glu, openGL 
+        / fix const correctness
+        / fixed worldToScreen() bug
+        / lens offset 
+   
+    ofEasyCam:
+        / setPosition fix
+
+    ofMesh:
+        / fixed load and save type mismatch
+        / fixed ofMesh.load() to load Normals
+            
+    3DModelBuilder:
+        / to work with OpenGL ES
+ 
+## App
+    No Updates
+## Communication
+    No Updates
+## Events
+    + added void events (events that can be listened to from a method without arguments)
+    - removed OF_USING_POCO conditionals
+ 
+## Graphics
+
+    ofTrueTypeFont:
+       / fixed out-of-bounds access in string display functions
+       / fixed getStringAsPoints() when using full character set
+
+    ofColor:
+       + css3-style colors (ofColor::mediumAquaMarine, ofColor::lightSkyBlue, etc.)
+
+    ofPath:
+        + added ofCurveVertex(x, y, z) overload
+       
+## Math
+    No Updates 
+## GL
+    No Updates
+## Sound
+    No Updates
+## Types
+    No Updates
+## Utils
+    + added ofToDouble()
+    + added Android and iOS functionality to ofLaunchBrowser
+    / ofGetVersionInfo() now returns only the version string.
+
+    ofBuffer:
+        + added append()
+
+    ofConstants:
+        + added #include <cfloat>
+        / The OF_VERSION* defines have been changed for the new version system.
+        
+## Video
+    
+    ofGstVideoGrabber: 
+        + included support for PREFER_RGB_OVER_YUV and PREFER_NON_COMPRESSED
+        / updated gstreamer player/grabber to be compatible with gstreamer 1.0
+
+PLATFORM SPECIFIC
+=================
+ 
+## Android
+    + added ofxAndroidLaunchBrowser(String url)to ofxAndroidUtils
+    + added parent OFActivity class
+    + added wifi multicast lock
+    + added unloadTextures() to ofxAndroidApp
+
+    / fixed getPan() and multiplay resume in ofxAndroidSoundPlayer
+    / exposed getRealExternalStorageDirectory() as a public method
+    / changed dataPath location to use Android standards
+    / updated to Android SDK 21 and NDK r8d
+    / updated eclipse project to use default run method instead of AndroidInstall target
+    / fixed windows platform detection
+    / added ability to choose arm targets through config.make
+    / updates to the accelerometer units
+    / updated readme file to reflect latest changes in Eclipse setup
+    
+    ofImage:
+        / register images on load  
+ 
+## Mac OS X
+    / ofQTKitVideoGrabber now uses BGRA with BGRA to RGB blitting for fast capture. 
+ 
+## iOS
+    ofImage:
+        / register images on load  
+ 
+## Linux
+    - removed portaudio and freetype libraries
+
+## Windows
+    + codeblocks 12.11 support (drop support for earlier CB versions)
+    / fixed grayscale image on windows
+    / fixed microsecond timer overflow
+ 
+CORE ADDONS
+============
+
+## ofxOpenCV
+    / fixed broken hole detection in CV contour finder
+    / applied patch for opencv bug (http://code.opencv.org/issues/1643) 
+ 
+## ofxOpenALSoundPlayer
+    / fixed static ofMutex issue in ofxOpenALSoundPlayer
+ 
+## ofxAssimpModelLoader
+    / Assimp makeover 
+    / aiNode bugfix 
+
+## ofxTCP
+    + adds rawMsg send and receive 
+    / fixes tcp close 
+ 
+## ofxSvg
+    / several bugfixes for ofxSvg
+ 
+PROJECT GENERATOR
+==================
+
+## project generator (simple)
+    / updated the git submodule and gitignore for develop branch
+    / fix project generator on Linux
+ 
+EXAMPLES
+=========
+
+## All Platforms
+    + added simpleEventsExample
+    + added graphics/colorExtended example
+    / fixed GPUparticleSystemExample unexpected behavior
+    / added missing baud variable to communication/serialExample
+    / updated firmataExample and fontShapesExample to use ofBaseApp instead of ofSimpleApp
+ 
+## Android
+    + androidAccelerometerExample
+    + android3DModelLoaderExample
+    / updated android examples to use ofxAndroidApp instead of ofBaseApp
+
+
+
+
+---------------------------------------------------------------
+          .oooo.     .oooo.    ooooooooo   .oooo.   
+         d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b  
+        888    888 888    888       .8'        ]8P' 
+        888    888 888    888      .8'       <88b.  
+        888    888 888    888     .8'         `88b. 
+        `88b  d88' `88b  d88'    .8'     o.   .88P  
+         `Y8bd8P'   `Y8bd8P'    .8'      `8bd88P'   
+
+OF 0073 changelog:
+
+change key:
+    + added
+    - removed
+    / modified
+---------------------------------------------------------------
+
+/ ofGetElapsedTimef() no longer wraps after ~71 minutes, which was a bug introduced with 0072. ofGetElapsedTimeMicros() previously also wrapped after ~71 minutes, and this has been fixed as well.
+/ fixed broken pause and other fixes in ofVideoPlayer on OSX
+/ fixes to AndroidVideoGrabber
+/ Android empty example inherits from ofxAndroidApp + adds android methods
++ auto register android touch events
++ ofMultMatrix(), ofLoadMatrix(), ofLoadIdentityMatrix()
+
 ---------------------------------------------------------------
 
           .oooo.     .oooo.    ooooooooo   .oooo.   
