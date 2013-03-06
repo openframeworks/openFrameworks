@@ -55,7 +55,7 @@ void ofxVecSlider_<VecType>::changeValue(VecType & value){
         return;
     }
     for (int i=0; i<VecType::DIM; i++){
-        parameters[i].cast<float>() = value[i];
+        parameters[i].template cast<float>() = value[i];
     }
 }
 
@@ -145,7 +145,7 @@ void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
         return;
     }
     for (int i=0; i<4; i++){
-        parameters[i].cast<ColorType>() = value[i];
+        parameters[i].template cast<ColorType>() = value[i];
     	collection[i]->setFillColor(value);
     }
 }
