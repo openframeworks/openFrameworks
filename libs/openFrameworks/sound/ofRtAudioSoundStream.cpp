@@ -78,7 +78,7 @@ void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 }
 
 //------------------------------------------------------------------------------
-bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int bufferSize, int nBuffers){
+bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
 	if( audio != NULL ){
 		close();
 	}
@@ -88,7 +88,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 
 	sampleRate			=  _sampleRate;
 	tickCount			=  0;
-	bufferSize			= ofNextPow2(bufferSize);	// must be pow2
+	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
 		audio = ofPtr<RtAudio>(new RtAudio());
@@ -195,6 +195,16 @@ int ofRtAudioSoundStream::getNumInputChannels(){
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getNumOutputChannels(){
 	return nOutputChannels;		
+}
+
+//------------------------------------------------------------------------------
+int ofRtAudioSoundStream::getSampleRate(){
+	return sampleRate;
+}
+
+//------------------------------------------------------------------------------
+int ofRtAudioSoundStream::getBufferSize(){
+	return bufferSize;
 }
 
 //------------------------------------------------------------------------------
