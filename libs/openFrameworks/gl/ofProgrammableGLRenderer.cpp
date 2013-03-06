@@ -9,6 +9,7 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 #include "ofVbo.h"
+#include "of3dPrimitives.h"
 
 #ifdef TARGET_OPENGLES
 string defaultVertexShader =
@@ -291,6 +292,14 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	if (bSmoothHinted) endSmoothing();
 	
 	finishPrimitiveDraw();
+}
+
+//----------------------------------------------------------
+void ofProgrammableGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
+
+    // tig: note that you are responsible for yourself to normalise your normals in GL3+
+	// do that in the vertex shader, before passing on the normals to the fragment shader.
+	model.getMesh().draw(renderType);
 }
 
 //----------------------------------------------------------
@@ -1306,6 +1315,7 @@ void ofProgrammableGLRenderer::drawCircle(float x, float y, float z,  float radi
 	
 	disableTexCoords();
 	disableColors();
+	disableNormals();
     
 	preparePrimitiveDraw(*circleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
