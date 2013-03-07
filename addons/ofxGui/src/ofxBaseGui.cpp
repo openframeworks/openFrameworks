@@ -1,5 +1,6 @@
 #include "ofxBaseGui.h"
 #include "ofxXmlSettings.h"
+#include "ofImage.h"
 
 const ofColor
 ofxBaseGui::headerBackgroundColor(64),
