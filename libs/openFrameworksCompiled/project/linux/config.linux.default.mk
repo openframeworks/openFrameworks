@@ -43,6 +43,24 @@ PLATFORM_CFLAGS += -mtune=native
 
 
 ################################################################################
+# PLATFORM DEFINES
+#   Create a list of DEFINES for this platform.  The list will be converted into 
+#   CFLAGS with the "-D" flag later in the makefile.  An example of fully 
+#   qualified flag might look something like this: -DTARGET_OPENGLES2
+#
+#   DEFINES are used throughout the openFrameworks code, especially when making
+#   #ifdef decisions for cross-platform compatibility.  For instance, when 
+#   choosing a video playback framework, the openFrameworks base classes look at
+#   the DEFINES to determine what source files to include or what default player 
+#   to use.
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
+
+PLATFORM_DEFINES += GLFW_EXPOSE_NATIVE_X11
+PLATFORM_DEFINES += GLFW_EXPOSE_NATIVE_GLX
+
+################################################################################
 # PLATFORM LIBRARIES
 #   These are library names/paths that are platform specific and are specified 
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.

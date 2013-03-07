@@ -49,18 +49,21 @@ void ofWindow::initializeWindow(ofWindowMode wm) {
 	windowMode = wm;
 
 	/*Find out if we can share the context */
-	GLFWwindow win = NULL;
+	GLFWwindow* win = NULL;
 	ofWindow* mainWindow = ofGetMainWindow();
 	if(mainWindow != NULL)
 		win = mainWindow->getGlfwWindow();
+	/*
+	//TODO: This has to work again
 	int mode = GLFW_WINDOWED;
 	if(windowMode == OF_GAME_MODE)
 		mode = GLFW_FULLSCREEN;
 
 	glfwWindowHint(GLFW_POSITION_X, x);
 	glfwWindowHint(GLFW_POSITION_Y, y);
+	*/
 
-	window = glfwCreateWindow(width, height, mode, title.c_str(), win);
+	window = glfwCreateWindow(width, height, title.c_str(), NULL, win);
 	if(window == NULL)
 		ofLogError("Could not initialize window");
 
@@ -98,7 +101,7 @@ void ofWindow::addListener(ofWindowListener * listener) {
 void ofWindow::addListener(ofBaseApp * app) {
 	addListener(new ofWindowToOfBaseApp(app));
 }
-GLFWwindow ofWindow::getGlfwWindow() {
+GLFWwindow* ofWindow::getGlfwWindow() {
 	return window;
 }
 void ofWindow::enableContext() {
@@ -341,8 +344,7 @@ void ofWindow::windowClosed() {
 }
 ofPoint ofWindow::getWindowPosition() {
 	if(window != NULL) {
-		x = glfwGetWindowParam(window, GLFW_POSITION_X);
-		y = glfwGetWindowParam(window, GLFW_POSITION_Y);
+		glfwGetWindowPos(window, &x, &y);
 	}
 	return ofPoint(x, y);
 }
@@ -385,6 +387,7 @@ void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h) {
 void ofWindow::setWindowPosition(int x, int y) {
 	//glfwSetWindowPos(window, x, y);
 	//ofLogWarning("SET WINDOW POSITION DOES CURRENTLY NOT WORK");
+	glfwSetWindowPos(window, x, y);
 }
 void ofWindow::setWindowPosition(ofPoint pos) {
 	setWindowPosition(pos.x, pos.y);

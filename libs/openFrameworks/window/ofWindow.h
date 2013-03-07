@@ -270,7 +270,7 @@ class ofWindow : public ofAppBaseWindow {
 		int previousMouseX, previousMouseY;
 
 	private:
-		GLFWwindow getGlfwWindow();
+		GLFWwindow* getGlfwWindow();
 
 		void destroy();
 
@@ -298,7 +298,7 @@ class ofWindow : public ofAppBaseWindow {
 		ofRectangle previousShape;
 		bool isFocused;
 		string title;
-		GLFWwindow window;
+		GLFWwindow* window;
 
 		bool isInitialized;
 		ofWindowMode windowMode;

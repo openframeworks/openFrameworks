@@ -42,20 +42,20 @@ class ofWindowManager : public ofAppBaseWindow {
 		void setFullscreen(bool fullscreen);
 
 		//would like to have these functions private. but don't know how...
-		void glfwWindowFocus(GLFWwindow glfwWin, int action);
-		void glfwWindowSize(GLFWwindow glfwWin, int w, int h);
-		int glfwWindowClose(GLFWwindow glfwWin);
-		void glfwWindowRefresh(GLFWwindow glfwWin);
-		void glfwWindowIconify(GLFWwindow glfwWin, int action);
-		void glfwMouseButton(GLFWwindow glfwWin, int button, int action);
-		void glfwMousePos(GLFWwindow glfwWin, int mouseX, int mouseY);
-		void glfwCursorEnter(GLFWwindow glfwWin, int action);
-		void glfwScroll(GLFWwindow glfwWin, float deltaX, float deltaY);
-		void glfwKey(GLFWwindow glfwWin, int key, int action);
-		void glfwChar(GLFWwindow glfwWin, int key);
+		void glfwWindowFocus(GLFWwindow* glfwWin, int action);
+		void glfwWindowSize(GLFWwindow* glfwWin, int w, int h);
+		int glfwWindowClose(GLFWwindow* glfwWin);
+		void glfwWindowRefresh(GLFWwindow* glfwWin);
+		void glfwWindowIconify(GLFWwindow* glfwWin, int action);
+		void glfwMouseButton(GLFWwindow* glfwWin, int button, int action);
+		void glfwMousePos(GLFWwindow* glfwWin, int mouseX, int mouseY);
+		void glfwCursorEnter(GLFWwindow* glfwWin, int action);
+		void glfwScroll(GLFWwindow* glfwWin, float deltaX, float deltaY);
+		void glfwKey(GLFWwindow* glfwWin, int key, int action);
+		void glfwChar(GLFWwindow* glfwWin, int key);
 
 	private:
-		ofWindow * getWindowByGlfw(GLFWwindow win);
+		ofWindow * getWindowByGlfw(GLFWwindow* win);
 		void initializeGLFW();
 		void addWindow(ofWindow * win);
 		void removeWindow(ofWindow * win);
