@@ -176,6 +176,7 @@ string ofBinaryToString(const string& value);
 string 	ofGetVersionInfo();
 unsigned int ofGetVersionMajor();
 unsigned int ofGetVersionMinor();
+unsigned int ofGetVersionPatch();
 
 void	ofSaveScreen(string filename);
 void	ofSaveFrame(bool bUseViewport = false);

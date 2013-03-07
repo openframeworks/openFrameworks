@@ -661,6 +661,10 @@ unsigned int ofGetVersionMinor() {
 	return OF_VERSION_MINOR;
 }
 
+unsigned int ofGetVersionPatch() {
+	return OF_VERSION_PATCH;
+}
+
 //---- new to 006
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
