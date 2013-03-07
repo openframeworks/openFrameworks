@@ -679,12 +679,12 @@
 		E485F6951360A8FF00E939D3 /* gl */ = {
 			isa = PBXGroup;
 			children = (
-				221FD01216E7557200522E7E /* ofProgrammableGLRenderer.cpp */,
-				221FD01316E7557200522E7E /* ofProgrammableGLRenderer.h */,
 				E485F6961360A8FF00E939D3 /* ofFbo.cpp */,
 				E485F6971360A8FF00E939D3 /* ofFbo.h */,
 				E485F6981360A8FF00E939D3 /* ofGLRenderer.cpp */,
 				E485F6991360A8FF00E939D3 /* ofGLRenderer.h */,
+				221FD01216E7557200522E7E /* ofProgrammableGLRenderer.cpp */,
+				221FD01316E7557200522E7E /* ofProgrammableGLRenderer.h */,
 				677F17E1164DB68800E6FEF9 /* ofGLUtils.cpp */,
 				E485F69A1360A8FF00E939D3 /* ofGLUtils.h */,
 				E485F69B1360A8FF00E939D3 /* ofLight.cpp */,
