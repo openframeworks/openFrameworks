@@ -64,7 +64,7 @@ public:
 	void pushMatrix();
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
-	void translate(const ofPoint & p);
+	void translate(const ofVec3f & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
 	void rotate(float degrees, float vecX, float vecY, float vecZ);
 	void rotateX(float degrees);
@@ -160,22 +160,29 @@ private:
 	void preparePrimitiveDraw(ofVbo& vbo_);
 	void finishPrimitiveDraw();
 	
-	void uploadModelViewMatrix(const ofMatrix4x4 & m);
-	void uploadProjectionMatrix(const ofMatrix4x4 & m);
-	void uploadTextureMatrix(const ofMatrix4x4 & m);
-	void setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip);
-    
+	void uploadCurrentMatrix();
+
+	ofMatrix4x4 getOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip);
+
 	void startSmoothing();
 	void endSmoothing();
     
 	ofHandednessType coordHandedness;
-	stack <ofRectangle> viewportHistory;
-	stack <ofMatrix4x4> modelViewStack;
-	stack <ofMatrix4x4> projectionStack;
-	stack <ofMatrix4x4> textureStack;
 	ofRectangle currentViewport;
+
+	stack <ofRectangle> viewportHistory;
+	stack <ofMatrix4x4> modelViewMatrixStack;
+	stack <ofMatrix4x4> projectionMatrixStack;
+	stack <ofMatrix4x4> textureMatrixStack;
+	
     ofMatrixMode currentMatrixMode;
-    ofMatrix4x4 modelView, projection, modelViewOrientation, orientationMatrix, textureMatrix;
+
+	ofMatrix4x4 * currentMatrix;
+
+	ofMatrix4x4	currentModelViewMatrix;
+	ofMatrix4x4	currentProjectionMatrix;
+	ofMatrix4x4	currentTextureMatrix;
+
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
     ofFloatColor currentColor;
@@ -186,8 +193,6 @@ private:
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
 	
-//	ofMesh sphereMesh;
-    
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;

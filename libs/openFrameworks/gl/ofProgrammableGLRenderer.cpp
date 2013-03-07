@@ -92,7 +92,7 @@ void main()\n\
 string defaultFragmentShader =
 "#version 150\n\
 \n\
-uniform sampler2D src_tex_unit0;\n\
+uniform sampler2DRect src_tex_unit0;\n\
 uniform float useTexture;\n\
 uniform float useColors;\n\
 uniform vec4 color;\n\
@@ -110,7 +110,7 @@ c = colorVarying;\n\
 c = color;\n\
 }\n\
 if(useTexture>0.5){\n\
-fragColor = mix(texture(src_tex_unit0, texCoordVarying),c,0.5);\n\
+fragColor = texture(src_tex_unit0, texCoordVarying) * c;\n\
 }else{\n\
 fragColor = c;\n\
 }\n\
@@ -120,6 +120,7 @@ fragColor = c;\n\
 
 //----------------------------------------------------------
 ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor){
+	currentMatrix = &currentModelViewMatrix;
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
@@ -156,8 +157,6 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 #else
 	glGenVertexArraysOES(1, &defaultVAO);
 #endif
-
-
 }
 
 ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
@@ -168,6 +167,8 @@ ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 	glDeleteVertexArraysOES(1, &defaultVAO);
 #endif
 
+	ofLogNotice() << "Destroyed ofProgrammableGLRenderer";
+	
 }
 
 //----------------------------------------------------------
@@ -179,7 +180,6 @@ void ofProgrammableGLRenderer::startRender() {
 #else
 	glBindVertexArrayOES(defaultVAO);
 #endif
-
 	currentShader.begin();
 }
 
@@ -188,15 +188,15 @@ void ofProgrammableGLRenderer::finishRender() {
 	currentShader.end();
 
 	int tmpCounter = 0;
-	while (!modelViewStack.empty()){
-		modelViewStack.pop();
+	while (!modelViewMatrixStack.empty()){
+		modelViewMatrixStack.pop();
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on modelView matrix stack. Check if modelview matrix push() and pop() pair up properly.";
 	
 	tmpCounter = 0;
-	while (!projectionStack.empty()){
-		projectionStack.pop();
+	while (!projectionMatrixStack.empty()){
+		projectionMatrixStack.pop();
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on projection matrix stack. Check if projection matrix push() and pop() pair up properly.";
@@ -206,18 +206,18 @@ void ofProgrammableGLRenderer::finishRender() {
 bool ofProgrammableGLRenderer::setup() {
 	bool ret;
 	if(vertexFile!=""){
-		ofLogNotice() << "GLES2 loading vertex shader from " + vertexFile;
+		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from " + vertexFile;
 		ret = defaultShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
 	}else{
-		ofLogNotice() << "GLES2 loading vertex shader from default source";
+		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from default source";
 		ret = defaultShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
 	}
 	if(ret){
 		if(fragmentFile!=""){
-			ofLogNotice() << "GLES2 loading fragment shader from " + fragmentFile;
+			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from " + fragmentFile;
 			ret = defaultShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
 		}else{
-			ofLogNotice() << "GLES2 loading fragment shader from default source";
+			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from default source";
 			ret = defaultShader.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShader);
 		}
 	}
@@ -297,6 +297,9 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
 	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
 	// after we're finished drawing, following the principle of least surprise.
+	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
+	// of its state on the client side...
+	
 	glPolygonMode(GL_FRONT_AND_BACK, (ofGetFill() == OF_OUTLINE) ?  GL_LINE : GL_FILL);
 	
 #endif
@@ -308,9 +311,6 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
-
-    // tig: note that you are responsible for yourself to normalise your normals in GL3+
-	// do that in the vertex shader, before passing on the normals to the fragment shader.
 	model.getMesh().draw(renderType);
 }
 
@@ -441,7 +441,7 @@ void ofProgrammableGLRenderer::pushView() {
 void ofProgrammableGLRenderer::popView() {
 	if( viewportHistory.size() ){
 		ofRectangle viewRect = viewportHistory.top();
-		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height,false);
+		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height, false);
 		viewportHistory.pop();
 	}
 	ofMatrixMode currentMode = currentMatrixMode;
@@ -475,6 +475,11 @@ void ofProgrammableGLRenderer::viewport(float x, float y, float width, float hei
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getCurrentViewport(){
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	
+	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+
     return currentViewport;
 }
 
@@ -499,8 +504,8 @@ ofHandednessType ofProgrammableGLRenderer::getCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip){
-	orientationMatrix.makeIdentityMatrix();
+ofMatrix4x4 ofProgrammableGLRenderer::getOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip){
+	ofMatrix4x4 orientationMatrix;
 
 	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
 	if(ofDoesHWOrientation()){
@@ -519,9 +524,9 @@ void ofProgrammableGLRenderer::setOrientationMatrix(float width, float height, o
 				}else{
 					orientationMatrix.glTranslate(-width, -height, 0);
 				}
-
+				
 				break;
-
+				
 			case OF_ORIENTATION_90_RIGHT:
 				orientationMatrix.glRotate(-90, 0, 0, 1);
 				if(vFlip){
@@ -531,7 +536,7 @@ void ofProgrammableGLRenderer::setOrientationMatrix(float width, float height, o
 					orientationMatrix.glTranslate(0, -height, 0);
 				}
 				break;
-
+				
 			case OF_ORIENTATION_90_LEFT:
 				orientationMatrix.glRotate(90, 0, 0, 1);
 				if(vFlip){
@@ -542,7 +547,7 @@ void ofProgrammableGLRenderer::setOrientationMatrix(float width, float height, o
 					orientationMatrix.glTranslate(-width, 0, 0);
 				}
 				break;
-
+				
 			case OF_ORIENTATION_DEFAULT:
 			default:
 				if(vFlip){
@@ -552,6 +557,7 @@ void ofProgrammableGLRenderer::setOrientationMatrix(float width, float height, o
 				break;
 		}
 	}
+	return orientationMatrix;
 }
 
 //----------------------------------------------------------
@@ -560,6 +566,8 @@ void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height,
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
+	getCurrentViewport();	// tig: we force GL to tell us the current viewport, otherwise we might end up with garbage data in getViewportWidth() and getViewportHeight()
+	
 	float viewW = getViewportWidth();
 	float viewH = getViewportHeight();
 
@@ -573,15 +581,19 @@ void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height,
 	if(nearDist == 0) nearDist = dist / 10.0f;
 	if(farDist == 0) farDist = dist * 10.0f;
 
-	projection.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
-	modelView.makeLookAtViewMatrix(ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0));
-	setOrientationMatrix(width,height,orientation,vFlip);
 
-	modelViewOrientation = modelView;
-	modelViewOrientation.preMult(orientationMatrix);
-	uploadModelViewMatrix(modelViewOrientation);
-	uploadProjectionMatrix(projection);
+	matrixMode(OF_MATRIX_PROJECTION);
+	ofMatrix4x4 persp;
+	persp.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
+	loadMatrix( persp );
+	
 	matrixMode(OF_MATRIX_MODELVIEW);
+	ofMatrix4x4 lookAt;
+	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
+	ofMatrix4x4 orientationMatrix = getOrientationMatrix(width,height,orientation,vFlip);
+	loadMatrix(lookAt);
+	multMatrix(orientationMatrix);
+	
 }
 
 //----------------------------------------------------------
@@ -592,30 +604,28 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 	float viewW = ofGetViewportWidth();
 	float viewH = ofGetViewportHeight();
 
+	ofMatrix4x4 ortho;
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	if(vFlip) {
-		projection = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
+		ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}else{
-		projection = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
+		ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
 	}
 
-	setOrientationMatrix(width,height,orientation,vFlip);
-
-	uploadProjectionMatrix(projection);
-
+	matrixMode(OF_MATRIX_PROJECTION);
+	loadMatrix(ortho); // make ortho our new projection matrix.
+	
 	matrixMode(OF_MATRIX_MODELVIEW);
+	ofMatrix4x4 orientationMatrix = getOrientationMatrix(width,height,orientation,vFlip);
 	loadIdentityMatrix();
+	multMatrix(orientationMatrix);
 }
 
 //----------------------------------------------------------
 //Resets openGL parameters back to OF defaults
 void ofProgrammableGLRenderer::setupGraphicDefaults(){
-	/*glEnableVertexAttribArray(getAttrLocationPosition());
-	glDisableVertexAttribArray(getAttrLocationColor());
-	glDisableVertexAttribArray(getAttrLocationNormal());
-	glDisableVertexAttribArray(getAttrLocationTexCoord());*/
 }
 
 //----------------------------------------------------------
@@ -632,194 +642,60 @@ void ofProgrammableGLRenderer::setCircleResolution(int res){
 	}
 }
 
-////----------------------------------------------------------
-//void ofProgrammableGLRenderer::setSphereResolution(int res) {
-//	if(sphereMesh.getNumVertices() == 0 || res != ofGetStyle().sphereResolution) {
-//		int n = res * 2;
-//		float ndiv2=(float)n/2;
-//        
-//		/*
-//		 Original code by Paul Bourke
-//		 A more efficient contribution by Federico Dosil (below)
-//		 Draw a point for zero radius spheres
-//		 Use CCW facet ordering
-//		 http://paulbourke.net/texture_colour/texturemap/
-//		 */
-//		
-//		float theta2 = TWO_PI;
-//		float phi1 = -HALF_PI;
-//		float phi2 = HALF_PI;
-//		float r = 1.f; // normalize the verts //
-//        
-//		sphereMesh.clear();
-//        sphereMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-//        
-//		int i, j;
-//        float theta1 = 0.f;
-//		float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
-//		cte3 = (theta2-theta1)/n;
-//		cte1 = (phi2-phi1)/ndiv2;
-//		dosdivn = 2*unodivn;
-//		ofVec3f e,p,e2,p2;
-//        
-//		if (n < 0){
-//			n = -n;
-//			ndiv2 = -ndiv2;
-//		}
-//		if (n < 4) {n = 4; ndiv2=(float)n/2;}
-//        if(r <= 0) r = 1;
-//		
-//		t2=phi1;
-//		cost2=cos(phi1);
-//		j1divn=0;
-//        
-//        ofVec3f vert, normal;
-//        ofVec2f tcoord;
-//		
-//		for (j=0;j<ndiv2;j++) {
-//			t1 = t2;
-//			t2 += cte1;
-//			t3 = theta1 - cte3;
-//			cost1 = cost2;
-//			cost2 = cos(t2);
-//			e.y = sin(t1);
-//			e2.y = sin(t2);
-//			p.y = r * e.y;
-//			p2.y = r * e2.y;
-//			
-//			idivn=0;
-//			jdivn=j1divn;
-//			j1divn+=dosdivn;
-//			for (i=0;i<=n;i++) {
-//				t3 += cte3;
-//				e.x = cost1 * cos(t3);
-//				e.z = cost1 * sin(t3);
-//				p.x = r * e.x;
-//				p.z = r * e.z;
-//				
-//				normal.set( e.x, e.y, e.z );
-//				tcoord.set( idivn, jdivn );
-//				vert.set( p.x, p.y, p.z );
-//				
-//				sphereMesh.addNormal(normal);
-//				sphereMesh.addTexCoord(tcoord);
-//				sphereMesh.addVertex(vert);
-//				
-//				e2.x = cost2 * cos(t3);
-//				e2.z = cost2 * sin(t3);
-//				p2.x = r * e2.x;
-//				p2.z = r * e2.z;
-//				
-//				normal.set(e2.x, e2.y, e2.z);
-//				tcoord.set(idivn, j1divn);
-//				vert.set(p2.x, p2.y, p2.z);
-//				
-//				sphereMesh.addNormal(normal);
-//				sphereMesh.addTexCoord(tcoord);
-//				sphereMesh.addVertex(vert);
-//				
-//				idivn += unodivn;
-//				
-//			}
-//		}
-//	}
-//}
-//
-
 //our openGL wrappers
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::pushMatrix(){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
-		modelViewStack.push(modelViewOrientation);
+		modelViewMatrixStack.push(currentModelViewMatrix);
 		break;
 	case OF_MATRIX_PROJECTION:
-		projectionStack.push(projection);
+		projectionMatrixStack.push(currentProjectionMatrix);
 		break;
 	case OF_MATRIX_TEXTURE:
-		textureStack.push(textureMatrix);
+		textureMatrixStack.push(currentTextureMatrix);
 		break;
 	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popMatrix(){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelViewOrientation = modelViewStack.top();
-		uploadModelViewMatrix(modelViewOrientation);
-		modelViewStack.pop();
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection = projectionStack.top();
-		uploadProjectionMatrix(projection);
-		projectionStack.pop();
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix = textureStack.top();
-		uploadTextureMatrix(textureMatrix);
-		textureStack.pop();
-		break;
+	if (currentMatrixMode == OF_MATRIX_MODELVIEW && !modelViewMatrixStack.empty()){
+		currentModelViewMatrix = modelViewMatrixStack.top();
+		modelViewMatrixStack.pop();
+	} else if (currentMatrixMode == OF_MATRIX_PROJECTION && !projectionMatrixStack.empty()){
+		currentProjectionMatrix = projectionMatrixStack.top();
+		projectionMatrixStack.pop();
+	} else if (currentMatrixMode == OF_MATRIX_TEXTURE && !textureMatrixStack.empty()){
+		currentTextureMatrix = textureMatrixStack.top();
+		textureMatrixStack.pop();
+	} else {
+		ofLogWarning() << "ofxGL3Renderer: Empty matrix stack, cannot pop any further.";
 	}
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::translate(const ofPoint& p){
+void ofProgrammableGLRenderer::translate(const ofVec3f& p){
 	translate(p.x, p.y, p.z);
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::translate(float x, float y, float z){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelViewOrientation.glTranslate(x,y,z);
-		uploadModelViewMatrix(modelViewOrientation);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection.glTranslate(x,y,z);
-		uploadProjectionMatrix(projection);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix.glTranslate(x,y,z);
-		uploadTextureMatrix(textureMatrix);
-		break;
-	}
+	currentMatrix->glTranslate(x, y, z);
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::scale(float xAmnt, float yAmnt, float zAmnt){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelViewOrientation.glScale(xAmnt,yAmnt,zAmnt);
-		uploadModelViewMatrix(modelViewOrientation);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection.glScale(xAmnt,yAmnt,zAmnt);
-		uploadProjectionMatrix(projection);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix.glScale(xAmnt,yAmnt,zAmnt);
-		uploadTextureMatrix(textureMatrix);
-		break;
-	}
+	currentMatrix->glScale(xAmnt, yAmnt, zAmnt);
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelViewOrientation.glRotate(degrees,vecX,vecY,vecZ);
-		uploadModelViewMatrix(modelViewOrientation);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection.glRotate(degrees,vecX,vecY,vecZ);
-		uploadProjectionMatrix(projection);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix.glRotate(degrees,vecX,vecY,vecZ);
-		uploadTextureMatrix(textureMatrix);
-		break;
-	}
+	currentMatrix->glRotate(degrees, vecX, vecY, vecZ);
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
@@ -846,91 +722,53 @@ void ofProgrammableGLRenderer::rotate(float degrees){
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::matrixMode(ofMatrixMode mode){
 	currentMatrixMode = mode;
+	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
+		currentMatrix = &currentModelViewMatrix;
+	} else if (currentMatrixMode == OF_MATRIX_PROJECTION){
+		currentMatrix = &currentProjectionMatrix;
+	} else if (currentMatrixMode == OF_MATRIX_TEXTURE){
+		currentMatrix = &currentTextureMatrix;
+	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadIdentityMatrix (void){
-	ofMatrix4x4 m;
-	m.makeIdentityMatrix();
-	loadMatrix(m);
+	currentMatrix->makeIdentityMatrix();
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadMatrix (const ofMatrix4x4 & m){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelView = m;
-		modelViewOrientation = modelView;
-		modelViewOrientation.preMult(orientationMatrix);
-		uploadModelViewMatrix(modelViewOrientation);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection = m;
-		uploadProjectionMatrix(projection);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix = m;
-		uploadTextureMatrix(textureMatrix);
-		break;
-	}
+	currentMatrix->set(m);
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadMatrix (const float *m){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelView.set(m);
-		modelViewOrientation = modelView;
-		modelViewOrientation.preMult(orientationMatrix);
-		uploadModelViewMatrix(modelViewOrientation);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection.set(m);
-		uploadProjectionMatrix(projection);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix.set(m);
-		uploadTextureMatrix(textureMatrix);
-		break;
-	}
+	currentMatrix->set(m);
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::multMatrix (const ofMatrix4x4 & m){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelViewOrientation.preMult(m);
-		uploadModelViewMatrix(modelViewOrientation);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection.preMult(m);
-		uploadProjectionMatrix(projection);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix.preMult(m);
-		uploadTextureMatrix(textureMatrix);
-		break;
-	}
+	multMatrix(m.getPtr());
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::multMatrix (const float *m){
-	ofMatrix4x4 mat(m);
-	multMatrix(mat);
+	currentMatrix->preMult(m);
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::uploadModelViewMatrix(const ofMatrix4x4 & m){
-	currentShader.setUniformMatrix4f("modelViewMatrix",m);
-}
+void ofProgrammableGLRenderer::uploadCurrentMatrix(){
 
-//----------------------------------------------------------
-void ofProgrammableGLRenderer::uploadProjectionMatrix(const ofMatrix4x4 & m){
-	currentShader.setUniformMatrix4f("projectionMatrix",m);
-}
+	// uploads the current matrix to the current shader.
+	
+	if (currentMatrixMode == OF_MATRIX_MODELVIEW)	currentShader.setUniformMatrix4f("modelViewMatrix", currentModelViewMatrix);
+	if (currentMatrixMode == OF_MATRIX_PROJECTION)	currentShader.setUniformMatrix4f("projectionMatrix", currentProjectionMatrix);
+	if (currentMatrixMode == OF_MATRIX_TEXTURE)		currentShader.setUniformMatrix4f("textureMatrix", currentTextureMatrix);
 
-void ofProgrammableGLRenderer::uploadTextureMatrix(const ofMatrix4x4 & m){
-	currentShader.setUniformMatrix4f("textureMatrix",m);
 }
 
 //----------------------------------------------------------
@@ -1213,10 +1051,15 @@ void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
 	shader.setUniform1f("useTexture",texCoordsEnabled);
 	shader.setUniform1f("useColors",colorsEnabled);
 	shader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
-	shader.setUniformMatrix4f("modelViewMatrix",modelViewOrientation);
-	shader.setUniformMatrix4f("projectionMatrix",projection);
-	shader.setUniformMatrix4f("textureMatrix",textureMatrix);
+
 	currentShader = shader;
+
+	ofMatrixMode previousMatrixMode = currentMatrixMode;
+	matrixMode(OF_MATRIX_MODELVIEW);	uploadCurrentMatrix();
+	matrixMode(OF_MATRIX_PROJECTION);	uploadCurrentMatrix();
+	matrixMode(OF_MATRIX_TEXTURE);		uploadCurrentMatrix();
+	matrixMode(previousMatrixMode);
+
 }
 
 //----------------------------------------------------------
@@ -1364,12 +1207,15 @@ void ofProgrammableGLRenderer::drawEllipse(float x, float y, float z, float widt
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
+
 	// this is copied from the ofTrueTypeFont
 	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
 	GLint blend_src, blend_dst;
 	glGetIntegerv( GL_BLEND_SRC, &blend_src );
 	glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
+
+	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
