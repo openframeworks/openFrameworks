@@ -244,7 +244,8 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	// tig: note that there was a lot of code duplication going on here.
 	// using ofVbo's draw methods, to keep stuff DRY
 	
-	meshVbo->clear();
+	if (meshVbo->getIsAllocated()) meshVbo->clear();
+	
 	meshVbo->setMesh(vertexData, GL_DYNAMIC_DRAW);
 	
 	if (!useColors)		meshVbo->disableColors();
@@ -1210,12 +1211,12 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 
 	// this is copied from the ofTrueTypeFont
 	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
-	GLint blend_src, blend_dst;
-	glGetIntegerv( GL_BLEND_SRC, &blend_src );
-	glGetIntegerv( GL_BLEND_DST, &blend_dst );
+	//	GLint blend_src, blend_dst;
+//	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+//	glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
+	ofBlendMode previousBlendMode = ofGetStyle().blendingMode;
 
-	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -1304,51 +1305,57 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
+		{
 			//our aim here is to draw to screen
 			//at the viewport position related
 			//to the world position x,y,z
 
-			// ***************
-			// this will not compile for opengl ES
-			// ***************
-#ifndef TARGET_OPENGLES
-			//gluProject method
-			GLdouble modelview[16], projection[16];
-			GLint view[4];
-			double dScreenX, dScreenY, dScreenZ;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-			glGetIntegerv(GL_VIEWPORT, view);
-			view[0] = 0; view[1] = 0; //we're already drawing within viewport
-			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
+			// tig: we want to get the signed normalised screen coordinates (-1,+1) of our point (x,y,z)
+			// that's projection * modelview * point in GLSL multiplication order
+			// then doing the good old (v + 1.0) / 2. to get unsigned normalized screen (0,1) coordinates.
+			// we then multiply x by width and y by height to get window coordinates.
 
-			if (dScreenZ >= 1)
-				return;
-
+			// previous implementations used gluProject, which made it incompatible with GLES (and the future)
+			// https://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man3/gluProject.3.html
+			//
+			// this could probably be backported to the GL2 Renderer =)
+			
 			rViewport = ofGetCurrentViewport();
+			
+			ofVec3f dScreen = ofVec3f(x,y,z) * currentModelViewMatrix * currentProjectionMatrix;
+			dScreen += ofVec3f(1.0) ;
+			dScreen *= 0.5;
+			
+			dScreen.x += rViewport.x;
+			dScreen.x *= rViewport.width;
+
+			dScreen.y += rViewport.y;
+			dScreen.y *= rViewport.height;
+			
+			if (dScreen.z >= 1) return;
+
 
 			hasProjection = true;
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
+			matrixMode(OF_MATRIX_PROJECTION);
+			pushMatrix();
+			loadIdentityMatrix();
 
 			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
+			matrixMode(OF_MATRIX_MODELVIEW);
+			pushMatrix();
+			loadIdentityMatrix();
 
-			glTranslatef(-1, -1, 0);
-			glScalef(2/rViewport.width, 2/rViewport.height, 1);
+			translate(-1, -1, 0);
+			scale(2/rViewport.width, 2/rViewport.height, 1);
 
-			glTranslatef(dScreenX, dScreenY, 0);
+			translate(dScreen.x, dScreen.y, 0);
 
 			if(currentFbo == NULL) {
-				glScalef(1, -1, 1);
+				scale(1, -1, 1);
 			} else {
-				glScalef(1,  1, 1); // invert when rendering inside an fbo
+				scale(1,  1, 1); // invert when rendering inside an fbo
 			}
-
-#endif
+		}
 			break;
 
 		default:
@@ -1399,5 +1406,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	if (hasViewport)
 		popView();
 
-	glBlendFunc(blend_src, blend_dst);
+	ofEnableBlendMode(previousBlendMode);
+	// glBlendFunc(blend_src, blend_dst);
 }
