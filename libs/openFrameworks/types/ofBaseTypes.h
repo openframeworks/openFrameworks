@@ -18,6 +18,8 @@
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
 
+class ofAbstractParameter;
+
 template<typename T>
 class ofImage_;
 
@@ -378,3 +380,21 @@ public:
 	// returns true if the renderer can render curves without decomposing them
 	virtual bool rendersPathPrimitives()=0;
 };
+
+class ofBaseSerializer{
+public:
+	virtual ~ofBaseSerializer(){}
+
+	virtual void serialize(const ofAbstractParameter & parameter)=0;
+	virtual void deserialize(ofAbstractParameter & parameter)=0;
+};
+
+class ofBaseFileSerializer: public ofBaseSerializer{
+public:
+	virtual ~ofBaseFileSerializer(){}
+
+	virtual bool load(string path)=0;
+	virtual bool save(string path)=0;
+};
+
+

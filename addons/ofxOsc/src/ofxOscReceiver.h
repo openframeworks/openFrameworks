@@ -65,6 +65,8 @@ public:
 	/// return true
 	bool getNextMessage( ofxOscMessage* );
 
+	bool getParameter(ofAbstractParameter & parameter);
+
 protected:
 	/// process an incoming osc message and add it to the queue
 	virtual void ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint );
