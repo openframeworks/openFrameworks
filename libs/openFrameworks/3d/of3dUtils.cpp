@@ -1,5 +1,6 @@
 #include "of3dUtils.h"
 #include "ofGraphics.h"
+#include "of3dGraphics.h"
 
 void ofDrawAxis(float size) {
 	ofPushStyle();
@@ -124,7 +125,7 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	ofTranslate(end);
 	ofMultMatrix(mat.getPtr());
 	ofTranslate(0,0,-headSize);
-	ofCone(headSize, headSize);	
+	ofDrawCone(headSize, headSize);
 	ofPopMatrix();
 }
 //--------------------------------------------------------------
