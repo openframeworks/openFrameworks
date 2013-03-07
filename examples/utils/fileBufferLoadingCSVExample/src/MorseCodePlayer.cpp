@@ -43,7 +43,7 @@ void MorseCodePlayer::update(){
 void MorseCodePlayer::playCode(string morseCode){
 	isReady = false;
 	codes.clear();
-	for (int i =0; i<morseCode.size(); i++){
+	for (unsigned int i =0; i<morseCode.size(); i++){
 		codes.push_back(morseCode[i]);		
 	}
 	currentSoundIndex = 0;

@@ -204,7 +204,11 @@ public:
 	bool CheckHost(const char *pAddrStr);
 	void CleanUp();
 
-protected:
+private:
+	// private copy so this can't be copied to avoid problems with destruction
+	ofxTCPManager(const ofxTCPManager & mom){};
+	ofxTCPManager & operator=(const ofxTCPManager & mom){return *this;}
+
   int m_iListenPort;
   int m_iMaxConnections;
 
@@ -219,6 +223,7 @@ protected:
   unsigned long m_dwTimeoutAccept;
   bool nonBlocking;
   static bool m_bWinsockInit;
+  bool m_closing;
 
 };
 

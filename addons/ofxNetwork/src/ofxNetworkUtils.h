@@ -123,6 +123,9 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 	case EPIPE:
 		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EPIPE: This socket was connected but the connection is now broken.");
 		break;
+	case EINVAL:
+		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EINVAL: Invalid argument");
+		break;
 	case EAGAIN:
 		//ofLog(OF_LOG_VERBOSE,"ofxNetwork:"+file+": " +line+" EAGAIN: try again");
 		break;
