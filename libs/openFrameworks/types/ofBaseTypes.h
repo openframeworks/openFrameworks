@@ -18,6 +18,7 @@
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
 
+class ofAbstractParameter;
 
 template<typename T>
 class ofImage_;
@@ -28,6 +29,7 @@ typedef ofImage_<unsigned short> ofShortImage;
 
 class ofPath;
 class ofPolyline;
+class of3dPrimitive;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -272,7 +274,6 @@ public:
 //----------------------------------------------------------
 // base renderers
 //----------------------------------------------------------
-class of3dPrimitive;
 
 class ofBaseRenderer{
 public:
@@ -286,7 +287,7 @@ public:
 	virtual void draw(ofPath & shape)=0;
 	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
-    virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType)=0;
+	virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType )=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
@@ -342,6 +343,7 @@ public:
 	virtual void setBlendMode(ofBlendMode blendMode)=0;
 	virtual void setLineSmoothing(bool smooth)=0;
 	virtual void setCircleResolution(int res){};
+	virtual void setSphereResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
 
@@ -379,3 +381,21 @@ public:
 	// returns true if the renderer can render curves without decomposing them
 	virtual bool rendersPathPrimitives()=0;
 };
+
+class ofBaseSerializer{
+public:
+	virtual ~ofBaseSerializer(){}
+
+	virtual void serialize(const ofAbstractParameter & parameter)=0;
+	virtual void deserialize(ofAbstractParameter & parameter)=0;
+};
+
+class ofBaseFileSerializer: public ofBaseSerializer{
+public:
+	virtual ~ofBaseFileSerializer(){}
+
+	virtual bool load(string path)=0;
+	virtual bool save(string path)=0;
+};
+
+
