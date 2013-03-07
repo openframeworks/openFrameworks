@@ -160,7 +160,6 @@ ReleaseABI: $(TARGET)
 DebugABI: $(TARGET)
 
 all:
-	$(MAKE) Debug
 	$(MAKE) Release
 	
 run:
@@ -294,7 +293,7 @@ help:
 	@echo "make Debug:		builds the library with debug symbols"
 	@echo "make Release:		builds the library with optimizations"
 	@echo "make:			= make Release"
-	@echo "make all:		= make Debug + make Release"
+	@echo "make all:		= make Release"
 	@echo "make CleanDebug:	cleans the Debug target"
 	@echo "make CleanRelease:	cleans the Release target"
 	@echo "make clean:		cleans everything"
