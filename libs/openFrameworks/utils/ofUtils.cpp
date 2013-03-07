@@ -654,7 +654,7 @@ string ofGetVersionInfo(){
 }
 
 unsigned int ofGetVersionMajor() {
-	return OF_VERSION;
+	return OF_VERSION_MAJOR;
 }
 
 unsigned int ofGetVersionMinor() {
