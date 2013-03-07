@@ -199,6 +199,8 @@ private:
     
 	ofFbo * currentFbo;
 	ofShader defaultShader;
+	ofShader bitmapStringShader;
+	
 	ofShader currentShader;
 	string vertexFile;
 	string fragmentFile;

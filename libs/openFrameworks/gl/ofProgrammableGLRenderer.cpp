@@ -58,15 +58,18 @@ string defaultFragmentShader =
 			}else{\n\
 				gl_FragColor = c;\
 			}\
-		}";
+}";
+
+// tig: todo: implement shaders for bitmapstringdraw on GLES2...
+string bitmapStringVertexShader		= "";
+string bitmapStringFragmentShader	= "";
+
 #else
 string defaultVertexShader =
 "#version 150\n\
 \n\
 uniform mat4 projectionMatrix;\n\
 uniform mat4 modelViewMatrix;\n\
-\n\
-uniform vec4 uColor;\n\
 \n\
 \n\
 in vec4  position;\n\
@@ -79,11 +82,11 @@ out vec2 texCoordVarying;\n\
 \n\
 void main()\n\
 {\n\
-	colorVarying = uColor;\n\
+	colorVarying = color;\n\
 	\n\
-	colorVarying = vec4((normal.xyz + vec3(1.0, 1.0, 1.0)) / 2.0,1.0);\n\
+	// colorVarying = vec4((normal.xyz + vec3(1.0, 1.0, 1.0)) / 2.0,1.0);\n\
 	//	vertColor = vec4(1.0);\n\
-	colorVarying.a = 1.0;\n\
+	// colorVarying.a = 1.0;\n\
 	texCoordVarying = texcoord;\n\
 	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
 }";
@@ -115,6 +118,52 @@ fragColor = texture(src_tex_unit0, texCoordVarying) * c;\n\
 fragColor = c;\n\
 }\n\
 }";
+
+string bitmapStringVertexShader ="\n\
+#version 150\n\
+\n\
+uniform mat4 projectionMatrix;\n\
+uniform mat4 modelViewMatrix;\n\
+uniform vec4 uColor;\n\
+\n\
+\n\
+in vec4  position;\n\
+in vec4  normal;\n\
+in vec4  color;\n\
+in vec2  texcoord;\n\
+\n\
+flat out vec4 vertColor;\n\
+out vec2 texCoordVarying;\n\
+\n\
+void main()\n\
+{\n\
+	vertColor = uColor;\n\
+	\n\
+	vertColor = vec4((normal.xyz + vec3(1.0, 1.0, 1.0)) / 2.0,1.0);\n\
+	//	vertColor = vec4(1.0);\n\
+	vertColor.a = 1.0;\n\
+	texCoordVarying = texcoord;\n\
+	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
+}";
+
+
+string bitmapStringFragmentShader ="\n\
+#version 150\n\
+\n\
+uniform sampler2D src_tex_unit0;\n\
+uniform vec4 color;\n\
+\n\
+flat	in  vec4 vertColor;\n\
+in  vec2 texCoordVarying;\n\
+\n\
+out vec4 fragColor;\n\
+\n\
+void main()\n\
+{\n\
+	\n\
+	fragColor = color * texture(src_tex_unit0, texCoordVarying);\n\
+}";
+
 #endif
 
 
@@ -224,8 +273,23 @@ bool ofProgrammableGLRenderer::setup() {
 	if(ret){
 		ret = defaultShader.linkProgram();
 	}
+	
+	
+	
+	bool bmpShdRet = false;
+	
+	ofLogNotice("ofProgrammableGLRenderer") << "loading bitmapString vertex shader from default source";
+	bmpShdRet = bitmapStringShader.setupShaderFromSource(GL_VERTEX_SHADER, bitmapStringVertexShader);
+	if (bmpShdRet) {
+		ofLogNotice("ofProgrammableGLRenderer") << "loading bitmapString fragment shader from default source";
+		bmpShdRet = bitmapStringShader.setupShaderFromSource(GL_FRAGMENT_SHADER, bitmapStringFragmentShader);
+	}
+	if (bmpShdRet) {
+		bmpShdRet = bitmapStringShader.linkProgram();
+	}
+	
 	currentShader = defaultShader;
-	return ret;
+	return ret && bmpShdRet;
 }
 
 //----------------------------------------------------------
@@ -1209,12 +1273,7 @@ void ofProgrammableGLRenderer::drawEllipse(float x, float y, float z, float widt
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
 
-	// this is copied from the ofTrueTypeFont
-	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
-	//	GLint blend_src, blend_dst;
-//	glGetIntegerv( GL_BLEND_SRC, &blend_src );
-//	glGetIntegerv( GL_BLEND_DST, &blend_dst );
-
+	// remember the current blend mode so that we can restore it at the end of this method.
 	ofBlendMode previousBlendMode = ofGetStyle().blendingMode;
 
 	glEnable(GL_BLEND);
@@ -1364,6 +1423,11 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	//
 	///////////////////////////
 
+	// tig: we switch over to our built-in bitmapstring shader
+	// to render text. This gives us more flexibility & control
+	// and does not mess/interfere with client side shaders.
+	
+	bitmapStringShader.begin();
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
@@ -1391,6 +1455,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	}
 	//We do this because its way faster
 	ofDrawBitmapCharacterEnd();
+	bitmapStringShader.end();
 
 
 	if (hasModelView)
@@ -1406,6 +1471,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	if (hasViewport)
 		popView();
 
+	// restore blendmode
 	ofEnableBlendMode(previousBlendMode);
-	// glBlendFunc(blend_src, blend_dst);
 }
