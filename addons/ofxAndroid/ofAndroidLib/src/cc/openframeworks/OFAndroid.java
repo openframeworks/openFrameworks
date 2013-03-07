@@ -70,13 +70,17 @@ public class OFAndroid {
 	public static String getRealExternalStorageDirectory()
 	{				
 		// Standard way to get the external storage directory
-		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();	
+		File SDCardDir = new File(externalPath);		
+    	if(SDCardDir.exists() && SDCardDir.canWrite()) {		
+    		return externalPath;
+    	}
 		
 		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
 		for(int i = 0; i < mExternalStorageDirectories.length; i++)
 		{
 			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);	
-			File SDCardDir = new File(mExternalStorageDirectories[i]);		
+			SDCardDir = new File(mExternalStorageDirectories[i]);		
 	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {				
 	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
 				break;
