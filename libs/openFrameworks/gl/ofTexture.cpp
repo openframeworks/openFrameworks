@@ -486,7 +486,13 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
 	//TODO: gles2 implementation
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	if (ofGLIsFixedPipeline()){
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	} else {
+		// tig: glTexEnvf has no effect when a fragment shader is bound,
+		// which is a pre-requisite for programmable GL
+		// so we omit the call.
+	}
 
 	disableTextureTarget();
 	
