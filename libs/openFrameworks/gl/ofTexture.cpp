@@ -413,23 +413,15 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 
 
 void ofTexture::enableTextureTarget(){
-#ifdef TARGET_OPENGLES
 	if(ofGLIsFixedPipeline()){
-#endif
 		glEnable(texData.textureTarget);
-#ifdef TARGET_OPENGLES
 	}
-#endif
 }
 
 void ofTexture::disableTextureTarget(){
-#ifdef TARGET_OPENGLES
 	if(ofGLIsFixedPipeline()){
-#endif
 		glDisable(texData.textureTarget);
-#ifdef TARGET_OPENGLES
 	}
-#endif
 }
 
 //----------------------------------------------------------
