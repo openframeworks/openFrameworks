@@ -80,12 +80,13 @@ uniform mat4 modelViewMatrix;\n\
 \n\
 \n\
 in vec4  position;\n\
-in vec4  normal;\n\
 in vec2  texcoord;\n\
 in vec4  color;\n\
+in vec3  normal;\n\
 \n\
 out vec4 colorVarying;\n\
 out vec2 texCoordVarying;\n\
+out vec4 normalVarying;\n\
 \n\
 void main()\n\
 {\n\
@@ -113,17 +114,18 @@ in vec2 texCoordVarying;\n\
 out vec4 fragColor;\n\
 \n\
 void main(){\n\
-vec4 c = vec4(1.0);\n\
-if(useColors>0.5){\n\
-c = colorVarying;\n\
-}else{\n\
-c = color;\n\
-}\n\
-if(useTexture>0.5){\n\
-fragColor = texture(src_tex_unit0, texCoordVarying) * c;\n\
-}else{\n\
-fragColor = c;\n\
-}\n\
+	vec4 c = vec4(1.0);\n\
+	if(useColors>0.5){\n\
+		c = colorVarying;\n\
+	}else{\n\
+		c = color;\n\
+	}\n\
+\n\
+	if(useTexture>0.5){\n\
+		fragColor = texture(src_tex_unit0, texCoordVarying) * c;\n\
+	} else {\n\
+		fragColor = c;\n\
+	}\n\
 }";
 
 string bitmapStringVertexShader ="\n\
@@ -135,20 +137,15 @@ uniform vec4 uColor;\n\
 \n\
 \n\
 in vec4  position;\n\
-in vec4  normal;\n\
 in vec4  color;\n\
+in vec4  placeholder;			// tig: THIS IS REALLY WEIRD, BUT IT SEEMS WE ABSOLUTELY NEED THAT VARIABLE HERE.\n\
 in vec2  texcoord;\n\
 \n\
-flat out vec4 vertColor;\n\
 out vec2 texCoordVarying;\n\
 \n\
 void main()\n\
 {\n\
-	vertColor = uColor;\n\
-	\n\
-	vertColor = vec4((normal.xyz + vec3(1.0, 1.0, 1.0)) / 2.0,1.0);\n\
-	//	vertColor = vec4(1.0);\n\
-	vertColor.a = 1.0;\n\
+	texCoordVarying.x = placeholder.x; // APPLY PLACEHOLDER SO THAT IT WON'T GET OPTIMISED AWAY\n\
 	texCoordVarying = texcoord;\n\
 	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
 }";
@@ -158,17 +155,20 @@ string bitmapStringFragmentShader ="\n\
 #version 150\n\
 \n\
 uniform sampler2D src_tex_unit0;\n\
-uniform vec4 color;\n\
+uniform vec4 color = vec4(1.0);\n\
 \n\
-flat	in  vec4 vertColor;\n\
-in  vec2 texCoordVarying;\n\
 \n\
+in vec2 texCoordVarying;\n\
 out vec4 fragColor;\n\
 \n\
 void main()\n\
 {\n\
 	\n\
-	fragColor = color * texture(src_tex_unit0, texCoordVarying);\n\
+	vec4 tex = texture(src_tex_unit0, texCoordVarying);\n\
+	// We will not write anything to the framebuffer if we have a transparent pixel\n\
+	// This makes sure we don't mess up our depth buffer. \n\
+	if (tex.a < 0.5) discard; \n\
+	fragColor = color * tex; \n\
 }";
 
 #endif
@@ -279,9 +279,13 @@ bool ofProgrammableGLRenderer::setup() {
 	}
 	if(ret){
 		ret = defaultShader.linkProgram();
+		ofLogNotice() << "default shader";
+		defaultShader.printActiveAttributes();
+		defaultShader.printActiveUniforms();
+		
 	}
 	
-	
+//	glUseProgram(0);
 	
 	bool bmpShdRet = false;
 	
@@ -293,6 +297,10 @@ bool ofProgrammableGLRenderer::setup() {
 	}
 	if (bmpShdRet) {
 		bmpShdRet = bitmapStringShader.linkProgram();
+		ofLogNotice() << "bitmapString shader";
+		bitmapStringShader.printActiveAttributes();
+		bitmapStringShader.printActiveUniforms();
+
 	}
 	
 	currentShader = defaultShader;
@@ -702,6 +710,7 @@ void ofProgrammableGLRenderer::setupGraphicDefaults(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setupScreen(){
+	defaultShader.begin();
 	setupScreenPerspective();	// assume defaults
 }
 
@@ -1100,6 +1109,7 @@ void ofProgrammableGLRenderer::enableColors(){
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableNormals(){
 	glEnableVertexAttribArray(getAttrLocationNormal());
+	currentShader.setUniform1f("useNormals",1);
 	normalsEnabled = true;
 }
 
