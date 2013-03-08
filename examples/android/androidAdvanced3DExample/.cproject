@@ -15,7 +15,7 @@
 					<folderInfo id="com.android.toolchain.gcc.898517443.1887315853" name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1485392764" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.607397687" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder cleanBuildTarget="AndroidClean" id="cdt.managedbuild.builder.gnu.cross.1367273402" incrementalBuildTarget="AndroidRelease" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder cleanBuildTarget="CleanRelease PLATFORM_OS=Android" id="cdt.managedbuild.builder.gnu.cross.1367273402" incrementalBuildTarget="Release PLATFORM_OS=Android" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="com.android.gcc.compiler.1716371911" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.1288876143" superClass="com.android.gcc.inputType"/>
 							</tool>
@@ -41,7 +41,7 @@
 					<folderInfo id="com.android.toolchain.gcc.898517443.1692179379." name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1065244540" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.1950827678" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder cleanBuildTarget="AndroidClean" id="cdt.managedbuild.builder.gnu.cross.417286195" incrementalBuildTarget="AndroidDebug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder cleanBuildTarget="CleanDebug PLATFORM_OS=Android" id="cdt.managedbuild.builder.gnu.cross.417286195" incrementalBuildTarget="Debug PLATFORM_OS=Android" managedBuildOn="false" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="com.android.gcc.compiler.1704257024" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.431232555" superClass="com.android.gcc.inputType"/>
 							</tool>
