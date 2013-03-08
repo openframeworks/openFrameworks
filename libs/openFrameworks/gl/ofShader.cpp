@@ -426,8 +426,11 @@ void ofShader::setUniform4i(const char* name, int v1, int v2, int v3, int v4) {
 
 //--------------------------------------------------------------
 void ofShader::setUniform1f(const char* name, float v1) {
-	if(bLoaded)
-		glUniform1f(getUniformLocation(name), v1);
+	if(bLoaded) {
+		// tig: let's check whether the location is actually valid.
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1f(loc, v1);
+	}
 }
 
 //--------------------------------------------------------------
