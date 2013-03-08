@@ -61,10 +61,17 @@ string defaultFragmentShader =
 }";
 
 // tig: todo: implement shaders for bitmapstringdraw on GLES2...
+// GLSL_ES shader written against spec:
+// http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
+
 string bitmapStringVertexShader		= "";
 string bitmapStringFragmentShader	= "";
 
 #else
+
+// tig: GLSL #150 shaders written against spec:
+// http://www.opengl.org/registry/doc/GLSLangSpec.1.50.09.pdf
+
 string defaultVertexShader =
 "#version 150\n\
 \n\
@@ -948,7 +955,15 @@ ofRectMode ofProgrammableGLRenderer::getRectMode(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setLineWidth(float lineWidth){
-	glLineWidth(lineWidth);
+	// tig: glLinewidth is 'kind of' deprecated.
+	// http://www.opengl.org/registry/doc/glspec32.core.20090803.pdf
+	// p.330: "LineWidth values greater than 1.0 will generate an
+	// INVALID_VALUE error".
+	// use geometry shaders to draw lines of varying thickness...
+	
+	ofLogVerbose() << "glLineWidth has no effect in openGL3.2+\nUse a geometry shader to generate thick lines.";
+	
+	// glLineWidth(lineWidth);
 }
 
 //----------------------------------------------------------
@@ -1145,7 +1160,7 @@ inline void ofProgrammableGLRenderer::preparePrimitiveDraw(ofVbo& vbo_){
 inline void ofProgrammableGLRenderer::finishPrimitiveDraw(){
 	// when drawing a vbo other attrib arrays are bound, but the vbo takes care of unbinding the
 	// color, texcoord and index arrays. 
-	glDisableVertexAttribArray(0);			// disable vertex attrib array.
+	// glDisableVertexAttribArray(0);		 	// disable vertex attrib array.
 	glBindBuffer(GL_ARRAY_BUFFER,0);		// unbind current buffer by binding to zero
 }
 
