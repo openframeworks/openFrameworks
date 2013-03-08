@@ -198,10 +198,11 @@ private:
 	ofRectMode rectMode;
     
 	ofFbo * currentFbo;
-	ofShader defaultShader;
-	ofShader bitmapStringShader;
 	
 	ofShader currentShader;
+	ofShader defaultShader;
+	ofShader bitmapStringShader;
+
 	string vertexFile;
 	string fragmentFile;
 
