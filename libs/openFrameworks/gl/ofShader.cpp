@@ -35,7 +35,7 @@ static void releaseShader(GLuint program, GLuint id){
 			getShaderIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofShader: releasing id not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofShader") << "Releasing id not found. This shouldn't be happening. Releasing anyway.";
 		glDetachShader(program, id);
 		glDeleteShader(id);
 	}
@@ -60,7 +60,7 @@ static void releaseProgram(GLuint id){
 			getProgramIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofShader: releasing program not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofShader") << "Releasing program not found. This shouldn't be happening. Releasing anyway.";
 		glDeleteProgram(id);
 	}
 }
@@ -99,7 +99,7 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getText());
 	} else {
-		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
+		ofLogError("ofShader") << "Could not load shader of type " << nameForType(type) << " from file " << filename << ".";
 		return false;
 	}
 }
@@ -113,7 +113,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	// create shader
 	GLuint shader = glCreateShader(type);
 	if(shader == 0) {
-		ofLog(OF_LOG_ERROR, "Failed creating shader of type " + nameForType(type));
+		ofLogError("ofShader") << "Failed creating shader of type " << nameForType(type) << ".";
 		return false;
 	}
 	
@@ -128,15 +128,14 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
     GLuint err = glGetError();
     if (err != GL_NO_ERROR){
-        ofLog( OF_LOG_ERROR, "OpenGL generated error " + ofToString(err) + " trying to get the compile status for " + nameForType(type) + " shader. Does your video card support this?" );
+        ofLogError("ofShader") << "OpenGL generated error " << err << " trying to get the compile status for " << nameForType(type) << " shader. Does your video card support this?";
         return false;
     }
     
-	if(status == GL_TRUE)
-		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader compiled.");
-	
-	else if (status == GL_FALSE) {
-		ofLog(OF_LOG_ERROR, nameForType(type) + " shader failed to compile");
+	if(status == GL_TRUE) {
+		ofLogVerbose("ofShader") << nameForType(type) << " shader compiled.";
+	} else if (status == GL_FALSE) {
+		ofLogError("ofShader") <<  nameForType(type) << " shader failed to compile.";
 		checkShaderInfoLog(shader, type);
 		return false;
 	}
@@ -178,13 +177,13 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
     GLuint err = glGetError();
     if (err != GL_NO_ERROR){
-        ofLog( OF_LOG_ERROR, "OpenGL generated error "+ofToString(err)+" trying to get the program link status. Does your video card support shader programs?" );
+        ofLogError("ofShader") << "OpenGL generated error " << err << " trying to get the program link status. Does your video card support shader programs?";
         return false;
     }
-	if(status == GL_TRUE)
-		ofLog(OF_LOG_VERBOSE, "Program linked.");
-	else if (status == GL_FALSE) {
-		ofLog(OF_LOG_ERROR, "Program failed to link.");
+	if(status == GL_TRUE) {
+		ofLogVerbose("ofShader") << "Program linked.";
+	} else if (status == GL_FALSE) {
+		ofLogError("ofShader") << "Program failed to link.";
 		checkProgramInfoLog(program);
 		return false;
 	}
@@ -198,7 +197,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type) {
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(OF_LOG_ERROR, nameForType(type) + " shader reports:\n" + infoBuffer);
+		ofLogError("ofShader") << nameForType(type) << " shader reports: " << endl << infoBuffer;
 		delete [] infoBuffer;
 	}
 }
@@ -210,8 +209,7 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer);
-		string msg = "Shader program reports:\n";
-		ofLog(OF_LOG_ERROR, msg + infoBuffer);
+		ofLogError("ofShader") << "Shader program reports: " << endl << infoBuffer;
 		delete [] infoBuffer;
 	}
 }
@@ -220,39 +218,41 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 void ofShader::checkAndCreateProgram() {
 	if(GL_ARB_shader_objects) {
 		if(program == 0) {
-			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
+            ofLogVerbose("ofShader") << "Creating GLSL Program.";
 			program = glCreateProgram();
 			retainProgram(program);
 		}
 	} else {
-		ofLog(OF_LOG_ERROR, "Sorry, it looks like you can't run 'ARB_shader_objects'.\nPlease check the capabilites of your graphics card.\nhttp://www.ozone3d.net/gpu_caps_viewer/");
+        ofLogError("ofShader") << "Sorry, it looks like you can't run 'ARB_shader_objects'." << endl
+                               << "Please check the capabilites of your graphics card." << endl
+                               << "http://www.ozone3d.net/gpu_caps_viewer/.";
 	}
 }
 
 //--------------------------------------------------------------
 bool ofShader::linkProgram() {
-		if(shaders.empty()) {
-			ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
-		} else {
-			checkAndCreateProgram();
-			
-			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-				GLuint shader = it->second;
-				if(shader) {
-					ofLog(OF_LOG_VERBOSE, "Attaching shader of type " + nameForType(it->first));
-					glAttachShader(program, shader);
-				}
-			}
-			
-			glLinkProgram(program);
-            
-            checkProgramLinkStatus(program);
+    if(shaders.empty()) {
+        ofLogError("ofShader") << "Trying to link GLSL program, but no shaders created yet.";
+    } else {
+        checkAndCreateProgram();
+        
+        for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+            GLuint shader = it->second;
+            if(shader) {
+                ofLogVerbose("ofShader") << "Attaching shader of type " << nameForType(it->first) << ".";
+                glAttachShader(program, shader);
+            }
+        }
+        
+        glLinkProgram(program);
+        
+        checkProgramLinkStatus(program);
 
-            // bLoaded means we have loaded shaders onto the graphics card;
-            // it doesn't necessarily mean that these shaders have compiled and linked successfully.
-			bLoaded = true;
-		}
-		return bLoaded;
+        // bLoaded means we have loaded shaders onto the graphics card;
+        // it doesn't necessarily mean that these shaders have compiled and linked successfully.
+        bLoaded = true;
+    }
+    return bLoaded;
 }
 
 //--------------------------------------------------------------
@@ -261,7 +261,7 @@ void ofShader::unload() {
 		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 			GLuint shader = it->second;
 			if(shader) {
-				ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
+				ofLogVerbose("ofShader") << "Detaching and deleting shader of type " + nameForType(it->first) << ".";
 				releaseShader(program,shader);
 			}
 		}
@@ -503,49 +503,121 @@ GLint ofShader::getUniformLocation(const char* name) {
 }
 
 //--------------------------------------------------------------
-void ofShader::printActiveUniforms() {
+vector<ofShaderUniform> ofShader::getActiveUniforms() {
+
+    vector<ofShaderUniform> activeUniforms;
+    
 	GLint numUniforms = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
-	cout << numUniforms << " uniforms:" << endl;
-	
 	GLint uniformMaxLength = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformMaxLength);
 	
 	GLint count = -1;
 	GLenum type = 0;
+    GLsizei length;
 	GLchar* uniformName = new GLchar[uniformMaxLength];
 	for(GLint i = 0; i < numUniforms; i++) {
-		GLsizei length;
-		glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
-		cout << " [" << i << "] ";
-		for(int j = 0; j < length; j++)
-			cout << uniformName[j];
-		cout << " @ index " << getUniformLocation(uniformName) << endl;
+        glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
+        GLenum err = glGetError();
+        if(err == GL_NO_ERROR) {
+            ofShaderUniform uniformVar;
+            string name(uniformName,length);
+            uniformVar.name = name;
+            uniformVar.location = getUniformLocation(name.c_str());
+            uniformVar.index = i;
+            uniformVar.size = count;
+            uniformVar.type = type;
+            uniformVar.isBuiltIn = (uniformVar.name.length() > 3 && uniformVar.name.substr(0,3) == "gl_");
+            // add it
+            activeUniforms.push_back(uniformVar);
+        } else {
+            const GLubyte* errString = gluErrorString(err);
+            if(errString != NULL) {
+                ofLogError("ofShader") << "Error reading uniform variable code " << err << " : " << errString << ".";
+            } else {
+                ofLogError("ofShader") << "Error reading uniform variable code " << err << " : unknown error type.";
+            }
+        }
+        
 	}
 	delete [] uniformName;
+    
+    return activeUniforms;
 }
 
 //--------------------------------------------------------------
-void ofShader::printActiveAttributes() {
+vector<ofShaderAttribute> ofShader::getActiveAttributes() {
+
+    vector<ofShaderAttribute> activeAttributes;
+    
 	GLint numAttributes = 0;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttributes);
-	cout << numAttributes << " attributes:" << endl;
-	
 	GLint attributeMaxLength = 0;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attributeMaxLength);
 	
 	GLint count = -1;
 	GLenum type = 0;
+    GLsizei length;
 	GLchar* attributeName = new GLchar[attributeMaxLength];
 	for(GLint i = 0; i < numAttributes; i++) {
-		GLsizei length;
-		glGetActiveAttrib(program, i, attributeMaxLength, &length, &count, &type, attributeName);
-		cout << " [" << i << "] ";
-		for(int j = 0; j < length; j++)
-			cout <<attributeName[j];
-		cout << " @ index " << getAttributeLocation(attributeName) << endl;
+        glGetActiveUniform(program, i, attributeMaxLength, &length, &count, &type, attributeName);
+        GLenum err = glGetError();
+        if(err == GL_NO_ERROR) {
+            ofShaderAttribute attributeVar;
+            string name(attributeName,length);
+            attributeVar.name = name;
+            attributeVar.location = getUniformLocation(name.c_str());
+            attributeVar.index = i;
+            attributeVar.size = count;
+            attributeVar.type = type;
+            attributeVar.isBuiltIn = (attributeVar.name.length() > 3 && attributeVar.name.substr(0,3) == "gl_");
+            // add it
+            activeAttributes.push_back(attributeVar);
+        } else {
+            const GLubyte* errString = gluErrorString(err);
+            if(errString != NULL) {
+                ofLogError("ofShader") << "Error reading attribute variable code " << err << " : " << errString << ".";
+            } else {
+                ofLogError("ofShader") << "Error reading attribute variable code " << err << " : unknown error type.";
+            }
+        }
+        
 	}
 	delete [] attributeName;
+    
+    return activeAttributes;
+}
+
+//--------------------------------------------------------------
+string ofShader::printActiveUniforms() {
+    vector<ofShaderUniform> activeUniforms = getActiveUniforms();
+    stringstream ss;
+    ss << activeUniforms.size() << " uniforms:" << endl;
+    for(size_t i = 0; i < activeUniforms.size(); i++) {
+        ofShaderUniform& value = activeUniforms[i];
+        ss << " [" << value.index << "] ";
+        ss << value.name << " @ index ";
+        ss << value.location << endl;
+    }
+
+    cout << ss.str(); // to the console
+    return ss.str();
+}
+
+//--------------------------------------------------------------
+string ofShader::printActiveAttributes() {
+    vector<ofShaderAttribute> activeAttributes = getActiveAttributes();
+    stringstream ss;
+    ss << activeAttributes.size() << " attributes:" << endl;
+    for(size_t i = 0; i < activeAttributes.size(); i++) {
+        ofShaderUniform& value = activeAttributes[i];
+        ss << " [" << value.index << "] ";
+        ss << value.name << " @ index ";
+        ss << value.location << endl;
+    }
+    
+    cout << ss.str(); // to the console
+    return ss.str();
 }
 
 //--------------------------------------------------------------
