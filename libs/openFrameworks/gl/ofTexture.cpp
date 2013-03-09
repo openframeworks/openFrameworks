@@ -3,6 +3,9 @@
 #include "ofAppRunner.h"	// for getWidth()
 #include "ofGraphics.h"
 #include "ofPixels.h"
+#ifdef TARGET_OF_IPHONE
+#include "ofAppiPhoneWindow.h"
+#endif
 #include <map>
 
 //----------------------------------------------------------
@@ -761,7 +764,18 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	
 	glEnable(texData.textureTarget);
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+    
+#ifdef TARGET_OF_IPHONE
+	// We're on iOS.
+	// Get pointer to the iOS app window, then call our special wrapped version of glCopyTexSubImage2D,
+	//  to ensure the iOS-flavoured antialiased framebuffer is dealt with correctly.
+	ofAppiPhoneWindow::getInstance()->copyTexSubImage2D(texData.textureTarget, 0, 0, 0, x, y, w, h);
+    
+#else // Not on iOS, so straight glCopyTexSubImage2D()..
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
+    
+#endif
+    
 	glDisable(texData.textureTarget);
 }
 

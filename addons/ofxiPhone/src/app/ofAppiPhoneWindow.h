@@ -92,6 +92,10 @@ public:
     bool                isAntiAliasingEnabled();
     int					getAntiAliasingSampleCount();
     
+    // Do a glCopyTexSubImage2D(), dealing with iOS-flavoured antialiased framebuffer properly if necessary.
+    void copyTexSubImage2D(unsigned int textureTarget, int level,
+                           int xoffset, int yoffset, int x, int y, size_t width, size_t height);
+    
     //---------------------------------------------- deprecation messages. to be removed in OF 0073.
     OF_DEPRECATED_MSG("Use enableRetina() instead", void enableRetinaSupport());
     OF_DEPRECATED_MSG("Use isRetinaSupportedOnDevice() instead", bool isRetinaSupported());

@@ -324,5 +324,19 @@
     }
 }
 
+//------------------------------------------------------------------- Wrapped GL buffer read-back.
+
+// Read back framebuffer (e.g. for screen grab), dealing with antialiasing correctly. [via ESRenderer.]
+- (void) readPixels:(int)width:(int)height:(void *)buffer
+{
+    [renderer readPixels:width:height:buffer];
+}
+
+// Do a glCopyTexSubImage2D(), dealing with antialiasing correctly. [via ESRenderer.]
+- (void) copyTexSubImage2D:(unsigned int)textureTarget:(int)level
+                          :(int)xoffset:(int)yoffset:(int)x:(int)y:(size_t)width:(size_t)height
+{
+    [renderer copyTexSubImage2D:textureTarget:level:xoffset:yoffset:x:y:width:height];
+}
 
 @end

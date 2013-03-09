@@ -48,11 +48,6 @@
 
 - (void)startRender {
     [EAGLContext setCurrentContext:context];
-
-	if(fsaaEnabled) {
-		// Set up so that we draw into the multisampled buffer.
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
-	}
 }
 
 - (void)finishRender {
@@ -75,11 +70,8 @@
     [context presentRenderbuffer:GL_RENDERBUFFER_OES];
 	
 	if(fsaaEnabled) {
-		// Set current fb to the 'resolve' buffer (mapped to the display). This means GL state is such that we can
-		//  read back (screen-grabs, texture-grabs, etc.) from within event handling methods.
-		//  Caveat: Can't execute direct GL draws from event handling methods...but don't think we should be anyway.
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
-	}
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
+    }
 }
 
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer {	
@@ -184,6 +176,39 @@
 
 - (NSInteger)getHeight {
     return backingHeight;
+}
+
+// Read back framebuffer (e.g. for screen grab) to supplied memory buffer. This wraps glReadPixels()
+//  to ensure we read from the resolve ('default') buffer if antialiasing is enabled.
+- (void)readPixels:(int)width:(int)height:(void *)buffer
+{
+    if(fsaaEnabled) {
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
+    }
+    
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+    
+    if(fsaaEnabled) {
+        // Set back to the FSAA buffer, ready for next draw operation.
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
+    }
+}
+
+// Call glCopyTexSubImage2D(), wrapped to ensure we read from the resolve ('default') buffer if
+//  antialiasing is enabled.
+- (void) copyTexSubImage2D:(unsigned int)textureTarget:(int)level
+                          :(int)xoffset:(int)yoffset:(int)x:(int)y:(size_t)width:(size_t)height
+{
+    if(fsaaEnabled) {
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
+    }
+    
+	glCopyTexSubImage2D(textureTarget, level, xoffset, yoffset, x, y, width, height);
+    
+    if(fsaaEnabled) {
+        // Set back to the FSAA buffer, ready for next draw operation.
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
+    }
 }
 
 @end
