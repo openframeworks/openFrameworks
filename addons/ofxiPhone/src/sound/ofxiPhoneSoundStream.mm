@@ -24,7 +24,7 @@
 static bool							isSetup			= false;
 static bool							isRunning		= false;
 AudioStreamBasicDescription			format, audioFormat;
-AudioUnit ofxiPhoneSoundStream::audioUnit		= NULL;
+AudioUnit							audioUnit		= NULL;
 AudioBufferList						inputBufferList;		// input buffer
 static ofBaseSoundInput *			soundInputPtr	= NULL;
 static ofBaseSoundOutput *			soundOutputPtr	= NULL;
@@ -68,22 +68,10 @@ bool checkStatus(OSStatus error) {
 
 // called when the audio system is interrupted (backgrounded, etc)
 static void rioInterruptionListener(void *inClientData, UInt32 inInterruption) {
-    ofxiPhoneSoundStream * rio = (ofxiPhoneSoundStream *)inClientData;
-    
-	if(inInterruption == kAudioSessionBeginInterruption){
+	if(inInterruption == kAudioSessionBeginInterruption)
 		ofLog(OF_LOG_VERBOSE, "ofxiPhoneSoundStream: Audio session interrupted");
-        
-        AudioOutputUnitStop( rio->audioUnit );
-    }
-	else if(inInterruption == kAudioSessionEndInterruption){
+	else if(inInterruption == kAudioSessionEndInterruption)
 		ofLog(OF_LOG_VERBOSE, "ofxiPhoneSoundStream: Audio session resumed");
-        
-        if(isRunning){
-            // make sure we are again the active session
-            AudioSessionSetActive( true );
-            AudioOutputUnitStart( rio->audioUnit );
-        }
-    }
 }
 
 static OSStatus playbackCallback(void *inRefCon, 
@@ -135,7 +123,7 @@ static OSStatus recordingCallback(void *inRefCon,
 	ioData = &inputBufferList;
 	
     // obtain recorded samples
-	OSStatus status = AudioUnitRender(ofxiPhoneSoundStream::audioUnit, ioActionFlags, inTimeStamp, 1, inNumberFrames, ioData);
+	OSStatus status = AudioUnitRender(audioUnit, ioActionFlags, inTimeStamp, 1, inNumberFrames, ioData);
     if(checkStatus(status)) {
 		ofLog(OF_LOG_ERROR, "ofxiPhoneSoundStream: Couldn't render input audio samples");
 		return status;
