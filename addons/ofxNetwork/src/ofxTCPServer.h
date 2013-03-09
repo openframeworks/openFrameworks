@@ -90,7 +90,7 @@ class ofxTCPServer : public ofThread{
 
 		ofxTCPManager			TCPServer;
 		map<int,ofPtr<ofxTCPClient> >	TCPConnections;
-		ofMutex					mConnectionsLock;
+		ofMutex					mConnectionsLock;	//	oh look, threaded class with no locks on the objects.
 
 		bool			connected;
 		string			str;
