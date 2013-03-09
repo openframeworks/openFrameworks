@@ -26,7 +26,7 @@ void testApp::draw(){
 
     ofSetHexColor(0xff0033);
 
-    ofDrawBitmapString("press 's' to stop the thread and 'a' to start it", 50, 160);
+    ofDrawBitmapString("press 's' to stop the thread\npress 'a' to start the thread\npress '!' to test the exception handler (will log an error and stop the thread).", 50, 160);
 }
 
 //--------------------------------------------------------------
@@ -36,6 +36,8 @@ void testApp::keyPressed  (int key){
         TO.start();
     } else if (key == 's'){
         TO.stop();
+    } else if (key == '!'){
+        TO.throwErrorTest();
     }
 }
 
