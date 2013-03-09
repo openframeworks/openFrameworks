@@ -4,6 +4,7 @@
 
 #include "ofBaseSoundStream.h"
 #include "ofTypes.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 
 class ofxiPhoneSoundStream : public ofBaseSoundStream{
@@ -32,7 +33,9 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 	
 		int getNumInputChannels();
 		int getNumOutputChannels();
-		
+    
+        static AudioUnit audioUnit;
+
 	private:
 		long unsigned long	tickCount;
 		int					nInputChannels;
