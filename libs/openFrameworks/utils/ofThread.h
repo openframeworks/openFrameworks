@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofThreadErrorHandler.h"
 #include "ofTypes.h"
 
 #include "Poco/Thread.h"
@@ -190,8 +189,5 @@ class ofThread : protected Poco::Runnable{
 		void run(); 
 		
 		Poco::Thread thread;
-    
-		ofThreadErrorHandler errorHandler;
-		Poco::ErrorHandler*  oldErrorHandler;
 
 };
