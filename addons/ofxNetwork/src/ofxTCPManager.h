@@ -174,10 +174,6 @@ public:
 		if ((m_hSocket)&&(m_hSocket != INVALID_SOCKET)) Close();
 	};
 
-	//	null socket so it's not closed on destruction (assume something has taken ownership). 
-	//	hack for https://github.com/openframeworks/openFrameworks/issues/1901#issuecomment-14258400
-	void LoseSocket()	{	m_hSocket = NULL;	}	
-
 	bool Close();
 	bool Create();
 	bool Listen(int iMaxConnections);

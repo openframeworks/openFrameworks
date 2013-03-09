@@ -299,9 +299,7 @@ void ofxTCPServer::threadedFunction(){
 			if(isThreadRunning()) ofLog(OF_LOG_ERROR, "ofxTCPServer: Accept() failed\n");
 		}else{
 			ofMutex::ScopedLock Lock( mConnectionsLock );
-			//	take owenership of socket from NewClient
 			TCPConnections[acceptId].TCPClient = NewClient;
-			NewClient.LoseSocket();
 			TCPConnections[acceptId].setup(acceptId, bClientBlocking);
 			TCPConnections[acceptId].setMessageDelimiter(messageDelimiter);
 			ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(acceptId) + " connected on port " + ofToString(TCPConnections[acceptId].getPort()) );
