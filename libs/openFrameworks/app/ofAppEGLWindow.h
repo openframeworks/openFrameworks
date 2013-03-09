@@ -277,21 +277,21 @@ protected:
 //------------------------------------------------------------
 // EVENTS
 //------------------------------------------------------------
-	bool setupNativeEvents();
-	bool destroyNativeEvents();
+	void setupNativeEvents();
+	void destroyNativeEvents();
 
-	bool setupNativeUDev();
-	bool destroyNativeUDev();
+	void setupNativeUDev();
+	void destroyNativeUDev();
 
-	bool setupNativeMouse();
-	bool setupNativeKeyboard();
+	void setupNativeMouse();
+	void setupNativeKeyboard();
 
-	bool destroyNativeMouse();
-	bool destroyNativeKeyboard();
+	void destroyNativeMouse();
+	void destroyNativeKeyboard();
 
-	bool readNativeMouseEvents();
-	bool readNativeKeyboardEvents();
-	bool readNativeUDevEvents();
+	void readNativeMouseEvents();
+	void readNativeKeyboardEvents();
+	void readNativeUDevEvents();
 
 	void handleX11Event(const XEvent& event);
 
