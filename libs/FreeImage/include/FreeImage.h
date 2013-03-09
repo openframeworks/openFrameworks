@@ -154,6 +154,12 @@ FI_STRUCT (FIMULTIBITMAP) { void *data; };
 #define FIUINT64 unsigned __int64 
 #endif // _MSC_VER
 
+#if (defined(_WIN32) || defined(__WIN32__))
+#pragma pack(push, 1)
+#else
+#pragma pack(1)	  	
+#endif // WIN32
+
 typedef struct tagRGBQUAD {
 #if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
   BYTE rgbBlue;
