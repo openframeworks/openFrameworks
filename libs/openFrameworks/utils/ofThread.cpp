@@ -13,6 +13,7 @@ ofThread::ofThread(){
    verbose = false;
    thread.setName("Thread "+ofToString(thread.id()));
    blocking = true;
+   oldErrorHandler = NULL;
 } 
 
 //------------------------------------------------- 
@@ -57,6 +58,11 @@ void ofThread::startThread(bool blocking, bool verbose){
 		ofSetLogLevel(thread.name(), OF_LOG_NOTICE);
 	}
 
+    // register our error handler to catch any excaptions we
+    // didn't explictly catch in our threadedFunction().
+    errorHandler.setName(getThreadName());
+    oldErrorHandler = Poco::ErrorHandler::set(&errorHandler);
+    
 	thread.start(*this);
 } 
 
@@ -132,6 +138,8 @@ void ofThread::waitForThread(bool stop){
 			return;
 		}
 		thread.join();
+        
+        Poco::ErrorHandler::set(oldErrorHandler);
    }
 }
 
