@@ -183,6 +183,9 @@
 - (void)readPixels:(int)width:(int)height:(void *)buffer
 {
     if(fsaaEnabled) {
+ 		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
+		glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
+		glResolveMultisampleFramebufferAPPLE();
         glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
     }
     
@@ -200,6 +203,9 @@
                           :(int)xoffset:(int)yoffset:(int)x:(int)y:(size_t)width:(size_t)height
 {
     if(fsaaEnabled) {
+		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
+		glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
+		glResolveMultisampleFramebufferAPPLE();
         glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
     }
     
