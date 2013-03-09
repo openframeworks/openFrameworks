@@ -11,6 +11,7 @@
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
 #include "ofTrueTypeFont.h"
+#include "ofErrors.h"
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -50,6 +51,8 @@ void ofExitCallback();
 // the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
+
+    ofInitErrorHandler();
 
 	OFSAptr = ofPtr<ofBaseApp>(OFSA);
 	if(OFSAptr){
@@ -149,6 +152,8 @@ void ofExitCallback(){
 
 //--------------------------------------
 void ofRunApp(ofPtr<ofBaseApp> OFSA){
+
+    ofInitErrorHandler();
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
