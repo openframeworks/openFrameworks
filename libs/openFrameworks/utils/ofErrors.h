@@ -28,13 +28,13 @@ public:
     virtual ~ofErrorHandler(){}
     
     virtual void exception(const Poco::Exception& exc) {
-        ofLogError("ofErrorHandler::exception") << "Uncaught exception: " << exc.displayText();
+        ofLogFatalError("ofErrorHandler::exception") << "Uncaught exception: " << exc.displayText();
     }
     
     virtual void exception(const std::exception& exc) {
-        ofLogError("ofErrorHandler::exception") << "Uncaught exception: " << exc.what();
+        ofLogFatalError("ofErrorHandler::exception") << "Uncaught exception: " << exc.what();
     }
     virtual void exception() {
-        ofLogError("ofErrorHandler::exception") << "Uncaught exception: Unknown exception.";
+        ofLogFatalError("ofErrorHandler::exception") << "Uncaught exception: Unknown exception.";
     }
 };
