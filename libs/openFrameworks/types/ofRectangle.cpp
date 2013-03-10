@@ -2,7 +2,7 @@
 #include "ofRectangle.h"
  
 //----------------------------------------------------------
-ofRectangle::ofRectangle() : x(position.x), y(position.y) {
+ofRectangle::ofRectangle() : x(position.x), y(position.y), width(size.width), height(size.height) {
     set(0,0,0,0);
 }
 
@@ -10,22 +10,32 @@ ofRectangle::ofRectangle() : x(position.x), y(position.y) {
 ofRectangle::~ ofRectangle(){}
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(float px, float py, float w, float h) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(float px, float py, float w, float h) : x(position.x), y(position.y), width(size.width), height(size.height) {
 	set(px,py,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofPoint& p, float w, float h) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(const ofPoint& p, float w, float h) : x(position.x), y(position.y), width(size.width), height(size.height) {
     set(p,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofRectangle& rect) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(float px, float py, const ofSize& s) : x(position.x), y(position.y), width(size.width), height(size.height) {
+    set(px,py,s);
+}
+
+//----------------------------------------------------------
+ofRectangle::ofRectangle(const ofPoint& p, const ofSize& s) : x(position.x), y(position.y), width(size.width), height(size.height) {
+    set(p.x,p.y,s.width,s.height);
+}
+
+//----------------------------------------------------------
+ofRectangle::ofRectangle(const ofRectangle& rect) : x(position.x), y(position.y), width(size.width), height(size.height) {
     set(rect);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofPoint& p0, const ofPoint& p1) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(const ofPoint& p0, const ofPoint& p1) : x(position.x), y(position.y), width(size.width), height(size.height) {
     set(p0,p1);
 }
 
@@ -40,6 +50,16 @@ void ofRectangle::set(float px, float py, float w, float h) {
 //----------------------------------------------------------
 void ofRectangle::set(const ofPoint& p, float w, float h) {
     set(p.x, p.y, w, h);
+}
+
+//----------------------------------------------------------
+void ofRectangle::set(float px, float py, const ofSize& s) {
+    set(px, py, s.width, s.height);
+}
+
+//----------------------------------------------------------
+void ofRectangle::set(const ofPoint& p, const ofSize& s) {
+    set(p.x, p.y, s.width, s.height);
 }
 
 //----------------------------------------------------------
@@ -94,6 +114,17 @@ void ofRectangle::setPosition(const ofPoint& p) {
 }
 
 //----------------------------------------------------------
+void ofRectangle::setSize(float w, float h) {
+    size.width = width;
+    size.height = height;
+}
+
+//----------------------------------------------------------
+void ofRectangle::setSize(const ofSize& s) {
+    size = s;
+}
+
+//----------------------------------------------------------
 void ofRectangle::setFromCenter(float px, float py, float w, float h) {
     set(px - w*0.5f, py - h*0.5f, w, h);
 }
@@ -101,6 +132,16 @@ void ofRectangle::setFromCenter(float px, float py, float w, float h) {
 //----------------------------------------------------------
 void ofRectangle::setFromCenter(const ofPoint& p, float w, float h) {
     setFromCenter(p.x, p.y, w, h);
+}
+
+//----------------------------------------------------------
+void ofRectangle::setFromCenter(float px, float py, const ofSize& s) {
+    setFromCenter(px, py, s.width, s.height);
+}
+
+//----------------------------------------------------------
+void ofRectangle::setFromCenter(const ofPoint& p, const ofSize& s) {
+    setFromCenter(p.x, p.y, s.width, s.height);
 }
 
 //----------------------------------------------------------
@@ -648,6 +689,15 @@ ofPoint ofRectangle::getCenter() const {
 	return ofPoint(x + width * 0.5f, y + height * 0.5f, 0);
 }
 
+//----------------------------------------------------------
+ofSize ofRectangle::getSize() const {
+    return size;
+}
+
+//----------------------------------------------------------
+ofSize& ofRectangle::getSizeRef() {
+    return size;
+}
 //----------------------------------------------------------
 float ofRectangle::getX() const {
     return x;
