@@ -147,7 +147,7 @@ ofFbo::Settings::Settings(const Settings & mom) {
 	useStencil				= mom.useStencil;
 	depthStencilAsTexture	= mom.depthStencilAsTexture;
 	textureTarget			= mom.textureTarget;
-	internalFormat			= mom.internalformat;
+	internalformat			= mom.internalformat;
 	depthStencilInternalFormat	= mom.depthStencilInternalFormat;
 	wrapModeHorizontal		= mom.wrapModeHorizontal;
 	wrapModeVertical		= mom.wrapModeVertical;
@@ -547,7 +547,7 @@ void ofFbo::allocate(Settings _settings) {
 		for(int i=0; i<settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
 	}
 	else if(settings.numColorbuffers > 0) {
-		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalFormat, i);
+		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
 	}
 	else {
 		ofLogWarning("ofFbo") << "no color buffers specified";
