@@ -256,8 +256,10 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 # source directories 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
-ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
-ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
+ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
+	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
+	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
+endif
 
 # be included as locations for header searches via 
 OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
@@ -455,7 +457,7 @@ else
 endif
 
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
-OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
+OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
 OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
