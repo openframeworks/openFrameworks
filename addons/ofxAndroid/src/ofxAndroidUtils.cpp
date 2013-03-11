@@ -412,6 +412,13 @@ void ofxAndroidLaunchBrowser(string url){
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jUrl);
 }
 
+void ofxAndroidNotifyLoadPercent(float percent){
+	jobject activity = ofGetOFActivityObject();
+	jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
+	jmethodID onLoadPercent = ofGetJNIEnv()->GetMethodID(activityClass,"onLoadPercent","(F)V");
+	ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat)percent);
+}
+
 ofxAndroidEventsClass & ofxAndroidEvents(){
 	static ofxAndroidEventsClass * events = new ofxAndroidEventsClass;
 	return *events;
