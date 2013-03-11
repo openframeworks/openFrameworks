@@ -120,6 +120,7 @@
 ofFbo::Settings::Settings() {
 	width					= 0;
 	height					= 0;
+	numColorbuffers			= 1;
 	useDepth				= false;
 	useStencil				= false;
 	depthStencilAsTexture			= false;
@@ -128,7 +129,7 @@ ofFbo::Settings::Settings() {
 #else
 	textureTarget			= GL_TEXTURE_2D;
 #endif
-
+	internalformat			= GL_RGBA;
 	depthStencilInternalFormat		= GL_DEPTH_COMPONENT24;
 	wrapModeHorizontal		= GL_CLAMP_TO_EDGE;
 	wrapModeVertical		= GL_CLAMP_TO_EDGE;
@@ -140,11 +141,13 @@ ofFbo::Settings::Settings() {
 ofFbo::Settings::Settings(const Settings & mom) {
 	width					= mom.width;
 	height					= mom.height;
+	numColorbuffers			= mom.numColorbuffers;
 	colorFormats			= mom.colorFormats;
 	useDepth				= mom.useDepth;
 	useStencil				= mom.useStencil;
 	depthStencilAsTexture	= mom.depthStencilAsTexture;
-	textureTarget			= mom.textureTarget;	
+	textureTarget			= mom.textureTarget;
+	internalFormat			= mom.internalformat;
 	depthStencilInternalFormat	= mom.depthStencilInternalFormat;
 	wrapModeHorizontal		= mom.wrapModeHorizontal;
 	wrapModeVertical		= mom.wrapModeVertical;
@@ -405,7 +408,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 
 	settings.width			= width;
 	settings.height			= height;
-	settings.colorFormats.push_back(internalformat);
+	settings.internalformat	= internalformat;
 	settings.numSamples		= numSamples;
     
 #ifdef TARGET_OPENGLES
@@ -540,7 +543,16 @@ void ofFbo::allocate(Settings _settings) {
 	#endif
 
 	// now create all textures and color buffers
-	for(int i=0; i<settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
+	if(settings.colorFormats.size() > 0) {
+		for(int i=0; i<settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
+	}
+	else if(settings.numColorbuffers > 0) {
+		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalFormat, i);
+	}
+	else {
+		ofLogWarning("ofFbo") << "no color buffers specified";
+	}
+
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
 	if(fbo != fboTextures) {
@@ -588,8 +600,10 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	textures.push_back(tex);
+	
 	settings.colorFormats.reserve(attachmentPoint + 1);
 	settings.colorFormats[attachmentPoint] = internalFormat;
+	settings.numColorbuffers = settings.colorFormats.size();
 
 	// if MSAA, bind main fbo and attach renderbuffer
 	if(settings.numSamples) {
