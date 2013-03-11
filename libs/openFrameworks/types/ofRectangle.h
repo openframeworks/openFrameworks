@@ -11,6 +11,7 @@
 
 #include "ofConstants.h"
 #include "ofPoint.h"
+#include "ofSize.h"
 #include "ofLog.h"
 
 //----------------------------------------------------------
@@ -61,11 +62,15 @@ public:
     virtual ~ofRectangle();
     ofRectangle(float px, float py, float w, float h);
     ofRectangle(const ofPoint& p, float w, float h);
+    ofRectangle(float px, float py, const ofSize& s);
+    ofRectangle(const ofPoint& p, const ofSize& s);
     ofRectangle(const ofRectangle& rect);
     ofRectangle(const ofPoint& p0, const ofPoint& p1);
 
     void set(float px, float py, float w, float h);
     void set(const ofPoint& p, float w, float h);
+    void set(float px, float py, const ofSize& s);
+    void set(const ofPoint& p, const ofSize& s);
     void set(const ofRectangle& rect);
     void set(const ofPoint& p0, const ofPoint& p1);
 
@@ -78,9 +83,14 @@ public:
     void setPosition(float px, float py);
     void setPosition(const ofPoint& p);
     
+    void setSize(float w, float h);
+    void setSize(const ofSize& s);
+    
     void setFromCenter(float px, float py, float w, float h);
     void setFromCenter(const ofPoint& p, float w, float h);
-
+    void setFromCenter(float px, float py, const ofSize& s);
+    void setFromCenter(const ofPoint& p, const ofSize& s);
+    
     void translate(float dx, float dy);
     void translate(const ofPoint& dp);
     
@@ -200,6 +210,9 @@ public:
 
     ofPoint getCenter() const;
     
+    ofSize  getSize() const;
+    ofSize& getSizeRef();
+
     float getX() const;
     float getY() const;
     float getWidth() const;
@@ -214,7 +227,9 @@ public:
     ofPoint position;
     float& x;
     float& y;
-    float width;
-    float height;
+    
+    ofSize size;
+    float& width;
+    float& height;
 };
 
