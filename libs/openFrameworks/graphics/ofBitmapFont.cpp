@@ -347,7 +347,9 @@ static void prepareBitmapTexture(){
 	
 	if (!bBitmapTexturePrepared){
 
-		if (ofGLIsFixedPipeline()){
+		
+#ifdef TARGET_OPENGLES
+
 			myLetterPixels.resize(16*16 * 16*16 * 2); // letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
 			bitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
 			bBitmapTexturePrepared = true;
@@ -371,13 +373,41 @@ static void prepareBitmapTexture(){
 			bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_LUMINANCE_ALPHA);
 			bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
 
+		
+#else
+		if (ofGLIsFixedPipeline()){
+			myLetterPixels.resize(16*16 * 16*16 * 2); // letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
+			bitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
+			bBitmapTexturePrepared = true;
+			
+			for (int i = 0; i < 256; i++) {
+				
+				const unsigned char * face = bmpChar_8x13_Map[i];
+				
+				for (int j = 1; j < 15; j++){
+					for (int k = 0; k < 8; k++){
+						if ( ((face[15-j] << k) & (128)) > 0 ){
+							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+						}else{
+							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
+							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
+						}
+					}
+				}
+			}
+			bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_LUMINANCE_ALPHA);
+			bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
+			
 		} else {
 			// tig: In openGL 3+, GL_LUMINANCE_ALPHA is deprecated.
 			// it's easiest for now to construct a proper RGBA texture.
 			
-			myLetterPixels.resize(16*16 * 16*16 * 4); // letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
-
+			myLetterPixels.resize(16*16 * 16*16 * 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
+			
+			
 			bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
+			
 			bBitmapTexturePrepared = true;
 			
 			for (int i = 0; i < 256; i++) {
@@ -403,9 +433,10 @@ static void prepareBitmapTexture(){
 			
 			bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_RGBA);
 			bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-
+			
 		}
-
+		
+#endif
 
 		charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
 		
