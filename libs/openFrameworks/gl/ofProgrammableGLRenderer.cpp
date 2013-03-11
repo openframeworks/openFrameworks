@@ -128,10 +128,6 @@ out vec4 normalVarying;\n\
 void main()\n\
 {\n\
 	colorVarying = color;\n\
-	\n\
-	// colorVarying = vec4((normal.xyz + vec3(1.0, 1.0, 1.0)) / 2.0,1.0);\n\
-	//	vertColor = vec4(1.0);\n\
-	// colorVarying.a = 1.0;\n\
 	texCoordVarying = texcoord;\n\
 	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
 }";
@@ -141,9 +137,9 @@ string defaultFragmentShader =
 "#version 150\n\
 \n\
 uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture;\n\
-uniform float useColors;\n\
-uniform vec4 color;\n\
+uniform float useTexture = 0.0;\n\
+uniform float useColors = 0.0;\n\
+uniform vec4 color = vec4(1.0);\n\
 \n\
 in float depth;\n\
 in vec4 colorVarying;\n\
@@ -153,7 +149,7 @@ out vec4 fragColor;\n\
 void main(){\n\
 	vec4 c = vec4(1.0);\n\
 	if(useColors>0.5){\n\
-		c = colorVarying;\n\
+		c = vec4(1.0,0.0,0.0,1.0);\n\
 	}else{\n\
 		c = color;\n\
 	}\n\
@@ -170,19 +166,15 @@ string bitmapStringVertexShader ="\n\
 \n\
 uniform mat4 projectionMatrix;\n\
 uniform mat4 modelViewMatrix;\n\
-uniform vec4 uColor;\n\
-\n\
 \n\
 in vec4  position;\n\
 in vec4  color;\n\
-in vec4  placeholder;			// tig: THIS IS REALLY WEIRD, BUT IT SEEMS WE ABSOLUTELY NEED THAT VARIABLE HERE.\n\
 in vec2  texcoord;\n\
 \n\
 out vec2 texCoordVarying;\n\
 \n\
 void main()\n\
 {\n\
-	texCoordVarying.x = placeholder.x; // APPLY PLACEHOLDER SO THAT IT WON'T GET OPTIMISED AWAY\n\
 	texCoordVarying = texcoord;\n\
 	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
 }";
@@ -266,7 +258,6 @@ ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::startRender() {
-
 	// bind vertex array
 #ifndef TARGET_OPENGLES
 	glBindVertexArray(defaultVAO);
@@ -278,8 +269,15 @@ void ofProgrammableGLRenderer::startRender() {
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::finishRender() {
-	currentShader.end();
+	glUseProgram(0);
 
+	// bind vertex array
+#ifndef TARGET_OPENGLES
+	glBindVertexArray(0);
+#else
+	glBindVertexArrayOES(0);
+#endif
+	
 	int tmpCounter = 0;
 	while (!modelViewMatrixStack.empty()){
 		modelViewMatrixStack.pop();
@@ -316,13 +314,8 @@ bool ofProgrammableGLRenderer::setup() {
 	}
 	if(ret){
 		ret = defaultShader.linkProgram();
-		ofLogNotice() << "default shader";
-		defaultShader.printActiveAttributes();
-		defaultShader.printActiveUniforms();
-		
+		ofLogVerbose() << "Loaded default shader";
 	}
-	
-//	glUseProgram(0);
 	
 	bool bmpShdRet = false;
 	
@@ -334,10 +327,7 @@ bool ofProgrammableGLRenderer::setup() {
 	}
 	if (bmpShdRet) {
 		bmpShdRet = bitmapStringShader.linkProgram();
-		ofLogNotice() << "bitmapString shader";
-		bitmapStringShader.printActiveAttributes();
-		bitmapStringShader.printActiveUniforms();
-
+		ofLogVerbose() << "Loaded bitmapString shader";
 	}
 	
 	currentShader = defaultShader;
@@ -360,9 +350,12 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	// tig: note that there was a lot of code duplication going on here.
 	// using ofVbo's draw methods, to keep stuff DRY
 	
-	if (meshVbo->getIsAllocated()) meshVbo->clear();
-	
-	meshVbo->setMesh(vertexData, GL_DYNAMIC_DRAW);
+	if (meshVbo->getIsAllocated()) {
+		meshVbo->clear();
+	}
+
+
+	meshVbo->setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
 	
 	if (!useColors)		meshVbo->disableColors();
 	if (!useTextures)	meshVbo->disableTexCoords();
@@ -1131,23 +1124,38 @@ void ofProgrammableGLRenderer::enableVertices(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableTexCoords(){
-	glEnableVertexAttribArray(getAttrLocationTexCoord());
-	currentShader.setUniform1f("useTexture",1);
-	texCoordsEnabled = true;
+	GLint loc = getAttrLocationTexCoord();
+	if (loc != -1){
+		glEnableVertexAttribArray(loc);
+		currentShader.setUniform1f("useTexture",1);
+		texCoordsEnabled = true;
+	} else {
+		texCoordsEnabled = false;
+	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableColors(){
-	glEnableVertexAttribArray(getAttrLocationColor());
-	currentShader.setUniform1f("useColors",1);
-	colorsEnabled = true;
+	GLint loc = getAttrLocationColor();
+	if (loc != -1 ){
+		glEnableVertexAttribArray(loc);
+		currentShader.setUniform1f("useColors",1);
+		colorsEnabled = true;
+	} else {
+		colorsEnabled = false;
+	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableNormals(){
-	glEnableVertexAttribArray(getAttrLocationNormal());
-	currentShader.setUniform1f("useNormals",1);
-	normalsEnabled = true;
+	GLint loc = getAttrLocationNormal();
+	if (loc != -1){
+		glEnableVertexAttribArray(getAttrLocationNormal());
+		currentShader.setUniform1f("useNormals",1);
+		normalsEnabled = true;
+	} else {
+		normalsEnabled = false;
+	}
 }
 
 void ofProgrammableGLRenderer::disableVertices(){
@@ -1156,20 +1164,30 @@ void ofProgrammableGLRenderer::disableVertices(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disableTexCoords(){
-	glDisableVertexAttribArray(getAttrLocationTexCoord());
+	GLint loc = getAttrLocationTexCoord();
+	if (loc != -1){
+		glDisableVertexAttribArray(loc);
+	}
 	currentShader.setUniform1f("useTexture",0);
 	texCoordsEnabled = false;
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disableColors(){
-	glDisableVertexAttribArray(getAttrLocationColor());
+	GLint loc = getAttrLocationColor();
+	if (loc != -1){
+		glDisableVertexAttribArray(loc);
+	}
 	currentShader.setUniform1f("useColors",0);
 	colorsEnabled = false;
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disableNormals(){
+	GLint loc = getAttrLocationNormal();
+	if (loc != -1){
+		glDisableVertexAttribArray(loc);
+	}
 	normalsEnabled = false;
 }
 
