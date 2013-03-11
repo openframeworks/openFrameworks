@@ -120,7 +120,6 @@
 ofFbo::Settings::Settings() {
 	width					= 0;
 	height					= 0;
-	numColorbuffers			= 1;
 	useDepth				= false;
 	useStencil				= false;
 	depthStencilAsTexture			= false;
@@ -129,7 +128,7 @@ ofFbo::Settings::Settings() {
 #else
 	textureTarget			= GL_TEXTURE_2D;
 #endif
-	internalformat			= GL_RGBA;
+
 	depthStencilInternalFormat		= GL_DEPTH_COMPONENT24;
 	wrapModeHorizontal		= GL_CLAMP_TO_EDGE;
 	wrapModeVertical		= GL_CLAMP_TO_EDGE;
@@ -390,7 +389,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 
 	settings.width			= width;
 	settings.height			= height;
-	settings.internalformat	= internalformat;
+	settings.colorFormats.push_back(internalformat);
 	settings.numSamples		= numSamples;
     
 #ifdef TARGET_OPENGLES
@@ -525,7 +524,7 @@ void ofFbo::allocate(Settings _settings) {
 	#endif
 
 	// now create all textures and color buffers
-	for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
+	for(int i=0; i<settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
 	if(fbo != fboTextures) {
@@ -538,86 +537,6 @@ void ofFbo::allocate(Settings _settings) {
 	// unbind it
 	unbind();
 
-	bIsAllocated = true;
-}
-
-void ofFbo::allocateMrt(int width, int height, int numColorbuffers, GLint colorFormats[], GLint depthStencilInternalFormat) {
-	if(!checkGLSupport()) return;
-	
-	destroy();
-	
-	ofFbo::Settings _settings;
-	_settings.width			= width;
-	_settings.height		= height;
-	_settings.numColorbuffers = numColorbuffers;
-    
-#ifdef TARGET_OPENGLES
-	_settings.useDepth		= false;
-	_settings.useStencil	= false;
-	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect.
-    _settings.textureTarget	= GL_TEXTURE_2D;
-#else    
-	_settings.useDepth		= (depthStencilInternalFormat == GL_DEPTH_COMPONENT) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT16) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT24) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT32) || (depthStencilInternalFormat == GL_DEPTH_COMPONENT32F) || (depthStencilInternalFormat == GL_DEPTH_STENCIL) || (depthStencilInternalFormat == GL_UNSIGNED_INT_24_8) || (depthStencilInternalFormat == GL_DEPTH24_STENCIL8) || (depthStencilInternalFormat == GL_DEPTH32F_STENCIL8);
-	_settings.useStencil	= (depthStencilInternalFormat == GL_STENCIL_INDEX) || (depthStencilInternalFormat == GL_STENCIL_INDEX1) || (depthStencilInternalFormat == GL_STENCIL_INDEX4) || (depthStencilInternalFormat == GL_STENCIL_INDEX8) || (depthStencilInternalFormat == GL_STENCIL_INDEX16) || (depthStencilInternalFormat == GL_DEPTH_STENCIL) || (depthStencilInternalFormat == GL_UNSIGNED_INT_24_8) || (depthStencilInternalFormat == GL_DEPTH24_STENCIL8) || (depthStencilInternalFormat == GL_DEPTH32F_STENCIL8);
-	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect. 	
-    _settings.textureTarget	= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;    
-#endif 
-	
-	_settings.depthStencilAsTexture = false;
-	_settings.depthStencilInternalFormat = depthStencilInternalFormat;
-	_settings.numSamples		= 0;
-	
-	if(_settings.width == 0) _settings.width = ofGetWidth();
-	if(_settings.height == 0) _settings.height = ofGetHeight();
-	if(_settings.numColorbuffers > maxColorAttachments() && maxColorAttachments() > -1) {
-		ofLogWarning("ofFbo") << "clamping numColorbuffers (" << _settings.numColorbuffers << ") to maxColorAttachments (" << maxColorAttachments() << ")";
-		_settings.numColorbuffers = maxColorAttachments();
-	}
-	settings = _settings;
-	
-	// create main fbo
-	// this is the main one we bind for drawing into
-	// all the renderbuffers are attached to this (whether MSAA is enabled or not)
-	glGenFramebuffers(1, &fbo);
-	retainFB(fbo);
-	bind();
-	
-	//currently depth only works if stencil is enabled. 
-	// http://forum.openframeworks.cc/index.php/topic,6837.0.html
-#ifdef TARGET_OPENGLES
-	if(settings.useDepth){
-	  	settings.useStencil = true;
-	}
-#endif
-
-	if( settings.useDepth && settings.useStencil ){
-#ifdef TARGET_OPENGLES
-		GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
-#else
-		GLenum depthAttachment = GL_DEPTH_STENCIL_ATTACHMENT;
-#endif
-		stencilBuffer = depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
-		retainRB(stencilBuffer);
-		retainRB(depthBuffer);	
-	}else if(settings.useDepth){
-		depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, GL_DEPTH_ATTACHMENT);
-		retainRB(depthBuffer);
-	}else if(settings.useStencil){
-		stencilBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, GL_STENCIL_ATTACHMENT);
-		retainRB(stencilBuffer);
-	}
-	
-	fboTextures = fbo;
-	
-	for(int i=0; i<settings.numColorbuffers; i++)
-		createAndAttachTexture(colorFormats[i], i);
-	
-	// check everything is ok with this fbo
-	checkStatus();
-	
-	// unbind it
-	unbind();
-	
 	bIsAllocated = true;
 }
 
@@ -653,13 +572,14 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	textures.push_back(tex);
-
+	settings.colorFormats.reserve(attachmentPoint + 1);
+	settings.colorFormats[attachmentPoint] = internalFormat;
 
 	// if MSAA, bind main fbo and attach renderbuffer
 	if(settings.numSamples) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-		GLuint colorBuffer = createAndAttachRenderbuffer(settings.internalformat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
+		GLuint colorBuffer = createAndAttachRenderbuffer(internalFormat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		colorBuffers.push_back(colorBuffer);
 		retainRB(colorBuffer);
 	}
@@ -939,7 +859,7 @@ bool ofFbo::checkStatus() {
 			break;
 #ifndef TARGET_OPENGLES
 		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+			ofLogWarning("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
 			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
