@@ -14,7 +14,6 @@ public:
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
-	void allocateMrt(int width, int height, int numColorbuffers, GLint colorFormats[], GLint depthStencilInternalFormat = GL_NONE);
 	bool isAllocated();
 
 	void draw(float x, float y);
@@ -71,12 +70,13 @@ public:
 	struct Settings {
 		int		width;					// width of images attached to fbo
 		int		height;					// height of images attached to fbo
-		int		numColorbuffers;		// how many color buffers to create
+		vector<GLint> colorFormats;		// format of the color attachments
+		//int		numColorbuffers;		// deprecated. use colorFormats.size()
 		bool	useDepth;				// whether to use depth buffer or not
 		bool	useStencil;				// whether to use stencil buffer or not
 		bool	depthStencilAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
 		GLenum	textureTarget;			// GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE_ARB
-		GLint	internalformat;			// GL_RGBA, GL_RGBA16F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB etc.
+		//GLint	internalformat;			// deprecated. use colorFormats[n]
 		GLint	depthStencilInternalFormat; 	// GL_DEPTH_COMPONENT(16/24/32)
 		int		wrapModeHorizontal;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
 		int		wrapModeVertical;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
