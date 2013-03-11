@@ -71,12 +71,12 @@ public:
 		int		width;					// width of images attached to fbo
 		int		height;					// height of images attached to fbo
 		vector<GLint> colorFormats;		// format of the color attachments
-		//int		numColorbuffers;		// deprecated. use colorFormats.size()
+		OF_DEPRECATED_MSG("Old variable. Use colorFormats.size()!", int numColorbuffers);
 		bool	useDepth;				// whether to use depth buffer or not
 		bool	useStencil;				// whether to use stencil buffer or not
 		bool	depthStencilAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
 		GLenum	textureTarget;			// GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE_ARB
-		//GLint	internalformat;			// deprecated. use colorFormats[n]
+		OF_DEPRECATED_MSG("Old variable. Use colorFormats.push_back(colorFormat)", GLint internalformat);
 		GLint	depthStencilInternalFormat; 	// GL_DEPTH_COMPONENT(16/24/32)
 		int		wrapModeHorizontal;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
 		int		wrapModeVertical;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
@@ -85,6 +85,7 @@ public:
 		int		numSamples;				// number of samples for multisampling (set 0 to disable)
 
 		Settings();
+		Settings(const Settings & mom);
 	};
 private:
 

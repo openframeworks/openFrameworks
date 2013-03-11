@@ -137,6 +137,22 @@ ofFbo::Settings::Settings() {
 	numSamples				= 0;
 }
 
+ofFbo::Settings::Settings(const Settings & mom) {
+	width					= mom.width;
+	height					= mom.height;
+	colorFormats			= mom.colorFormats;
+	useDepth				= mom.useDepth;
+	useStencil				= mom.useStencil;
+	depthStencilAsTexture	= mom.depthStencilAsTexture;
+	textureTarget			= mom.textureTarget;	
+	depthStencilInternalFormat	= mom.depthStencilInternalFormat;
+	wrapModeHorizontal		= mom.wrapModeHorizontal;
+	wrapModeVertical		= mom.wrapModeVertical;
+	minFilter				= mom.minFilter;
+	maxFilter				= mom.maxFilter;
+	numSamples				= mom.numSamples;
+}
+
 static map<GLuint,int> & getIdsFB(){
 	static map<GLuint,int> * idsFB = new map<GLuint,int>;
 	return *idsFB;
