@@ -17,7 +17,8 @@ public:
 	~ofVbo();
 
 	void setMesh(const ofMesh & mesh, int usage);
-
+	void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
+	
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setVertexData(const ofVec2f * verts, int total, int usage);
 

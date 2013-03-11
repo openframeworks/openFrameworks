@@ -157,10 +157,19 @@ ofVbo::~ofVbo(){
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage){
 	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
-	if (mesh.hasColors()) setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
-	if (mesh.hasNormals()) setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
-	if (mesh.hasTexCoords()) setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
-	if (mesh.hasIndices()) setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
+	(mesh.hasColors())		? setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage)			: disableColors();
+	(mesh.hasNormals())		? setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage)		: disableNormals();
+	(mesh.hasTexCoords())	?  setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage) : disableTexCoords();
+	(mesh.hasIndices())		? setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage)			: disableIndices();
+}
+
+//--------------------------------------------------------------
+void ofVbo::setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals){
+	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
+	(mesh.hasColors() && useColors)			? setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage)			: disableColors();
+	(mesh.hasNormals() && useNormals)		? setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage)		: disableNormals();
+	(mesh.hasTexCoords() && useTextures)	? setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage)	: disableTexCoords();
+	(mesh.hasIndices())						? setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage)			: disableIndices();
 }
 
 //--------------------------------------------------------------
@@ -507,6 +516,7 @@ void ofVbo::bind(){
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
+	ofDisableVertices();	// tig: oh dear, finding that bug was painful.
 	if(bUsingColors) ofDisableColorCoords();
 	if(bUsingNormals) ofDisableNormals();
 	if(bUsingTexCoords) ofDisableTexCoords();
