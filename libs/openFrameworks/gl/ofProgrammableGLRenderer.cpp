@@ -64,8 +64,45 @@ string defaultFragmentShader =
 // GLSL_ES shader written against spec:
 // http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
 
-string bitmapStringVertexShader		= "";
-string bitmapStringFragmentShader	= "";
+string bitmapStringVertexShader		= "\n\
+#ifdef GL_ES\n\
+// define default precision for float, vec, mat.\n\
+precision highp float;\n\
+#endif\n\
+\n\
+uniform mat4 projectionMatrix;\n\
+uniform mat4 modelViewMatrix;\n\
+\n\
+attribute vec4  position;\n\
+attribute vec2  texcoord;\n\
+\n\
+varying vec2 texCoordVarying;\n\
+\n\
+void main()\n\
+{\n\
+	texCoordVarying = texcoord;\n\
+	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
+}";
+string bitmapStringFragmentShader	= "\n\
+#ifdef GL_ES\n\
+// define default precision for float, vec, mat.\n\
+precision highp float;\n\
+#endif\n\
+\n\
+uniform sampler2D src_tex_unit0;\n\
+uniform vec4 color;\n\
+\n\
+varying vec2 texCoordVarying;\n\
+\n\
+void main()\n\
+{\n\
+	\n\
+	vec4 tex = texture2D(src_tex_unit0, texCoordVarying);\n\
+	// We will not write anything to the framebuffer if we have a transparent pixel\n\
+	// This makes sure we don't mess up our depth buffer.\n\
+	if (tex.a < 0.5) discard;\n\
+	gl_FragColor = color * tex;\n\
+}";
 
 #else
 
@@ -350,11 +387,11 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 			drawMode = GL_LINES;
 			break;
 		case OF_MESH_FILL:
-			drawMode = vertexData.getMode();
+			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 			break;
 		default:
 			// use the current fill mode to tell.
-			drawMode = vertexData.getMode();
+			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 			break;
 	}
 	if(vertexData.hasIndices()){
