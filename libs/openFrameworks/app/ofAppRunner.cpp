@@ -14,6 +14,7 @@
 #include "ofMath.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
+#include "ofTrueTypeFont.h"
 
 
 // TODO: closing seems wonky. 
@@ -178,9 +179,10 @@ void ofExitCallback(){
 	//------------------------
 	// try to close freeImage:
 	ofCloseFreeImage();
+
 	//------------------------
 	// try to close free type:
-	// ....
+	ofTrueTypeFont::finishLibraries();
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);

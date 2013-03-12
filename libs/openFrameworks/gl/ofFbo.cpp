@@ -359,19 +359,23 @@ void ofFbo::destroy() {
 
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
-	if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
-		ofLogVerbose("ofFbo") << "FBO supported";
-	}else{
-        ofLogError("ofFbo") << "FBO not supported by this graphics card";
-		return false;
+	
+	if (ofGLIsFixedPipeline()){
+		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
+			ofLogVerbose("ofFbo") << "FBO supported";
+		}else{
+			ofLogError("ofFbo") << "FBO not supported by this graphics card";
+			return false;
+		}
 	}
+
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
 
-	ofLogVerbose("ofFbo") << "checkGLSupport()"
-                          << "maxColorAttachments: " << _maxColorAttachments
-                          << "maxDrawBuffers: " << _maxDrawBuffers
+	ofLogNotice("ofFbo") << "checkGLSupport(): "
+                          << "maxColorAttachments: " << _maxColorAttachments << ", "
+                          << "maxDrawBuffers: " << _maxDrawBuffers << ", "
                           << "maxSamples: " << _maxSamples;
 #else
 
@@ -563,17 +567,17 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 
 void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
-	ofLogNotice() << "bind framebuffer";
+	ofLogVerbose() << "bind framebuffer";
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
-	ofLogNotice() << "allocate texture";
+	ofLogVerbose() << "allocate texture";
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	//tex.texData.bFlipTexture = true;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 
-	ofLogNotice() << "framebuffertexture2d";
+	ofLogVerbose() << "framebuffertexture2d";
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	textures.push_back(tex);
 

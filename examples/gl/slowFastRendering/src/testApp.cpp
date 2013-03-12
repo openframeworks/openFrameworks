@@ -27,7 +27,7 @@ void testApp::update() {
     }
     
     // move all the points around
-    for (int i=0; i<points.size(); i++) {
+    for (unsigned int i=0; i<points.size(); i++) {
         
         speeds[i].y += 0.04; // some grav
         points[i]   += speeds[i];
@@ -60,7 +60,7 @@ void testApp::draw() {
         #else 
         ofSetColor(255);
         glBegin(GL_POINTS);
-        for (int i=0; i<points.size(); i++) {
+        for (unsigned int i=0; i<points.size(); i++) {
             glVertex2f(points[i].x, points[i].y);
         }
         glEnd();

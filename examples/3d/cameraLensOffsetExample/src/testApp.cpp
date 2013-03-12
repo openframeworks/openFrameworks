@@ -142,7 +142,7 @@ void testApp::drawScene(bool isPreview){
 	ofSetColor(255);
 	ofSetLineWidth(5.0f);
 	ofBeginShape();
-	for (int i=0; i<headPositionHistory.size(); i++) {
+	for (unsigned int i=0; i<headPositionHistory.size(); i++) {
 		ofPoint vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float( headPositionHistory.size() - i ) * 0.05f);
 		ofCurveVertex(vertex);
 	}
@@ -184,7 +184,7 @@ void testApp::draw(){
 	video.draw(0, 0);
 	ofPushStyle();
 	ofNoFill();
-	for(int i = 0; i < finder.blobs.size(); i++) {
+	for(unsigned int i = 0; i < finder.blobs.size(); i++) {
 		ofRectangle cur = finder.blobs[i].boundingRect;
 		ofRect(cur.x, cur.y, cur.width, cur.height);
 	}

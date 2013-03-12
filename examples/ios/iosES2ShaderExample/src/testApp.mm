@@ -8,6 +8,9 @@ void testApp::setup(){
 	ofEnableAlphaBlending();
     ofSetLogLevel(OF_LOG_VERBOSE);
     
+    shader.load("shaders/noise.vert", "shaders/noise.frag");
+    bUseShader = false;
+    
 	//we load a font and tell OF to make outlines so we can draw it as GL shapes rather than textures
     int fontSize = ofGetWidth() / 10;
 	font.loadFont("type/verdana.ttf", fontSize, true, false, true, 0.4, 72);
@@ -24,16 +27,22 @@ void testApp::draw(){
 	ofSetColor(245, 58, 135);
 	ofFill();
     
-    ofShader & currentShader = ofGetGLES2Renderer()->getCurrentShader();
-    currentShader.setUniform1f("timeValX", ofGetElapsedTimef() * 0.1 );     // we want to pass in some varrying values to animate our type / color
-    currentShader.setUniform1f("timeValY", -ofGetElapsedTimef() * 0.18 );
-    currentShader.setUniform2f("mouse", mousePoint.x, mousePoint.y);        // we also pass in the mouse position
+    if(bUseShader) {
+        shader.begin();
+        shader.setUniform1f("timeValX", ofGetElapsedTimef() * 0.1 );     // we want to pass in some varrying values to animate our type / color
+        shader.setUniform1f("timeValY", -ofGetElapsedTimef() * 0.18 );
+        shader.setUniform2f("mouse", mousePoint.x, mousePoint.y);        // we also pass in the mouse position
+    }
     
     ofRectangle rect = font.getStringBoundingBox("openFrameworks", 0, 0);   // size of text.
     int x = (ofGetWidth() - rect.width) * 0.5;                              // position in center screen.
     int padding = rect.height + 50;                                         // draw the text multiple times.
     for(int y=rect.height; y<ofGetHeight(); y+=padding) {
         font.drawStringAsShapes("openFrameworks", x, y);
+    }
+
+    if(bUseShader) {
+        shader.end();
     }
     
     ofPopStyle();
@@ -46,7 +55,7 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
-    //
+    bUseShader = true;
 }
 
 //--------------------------------------------------------------
@@ -58,7 +67,7 @@ void testApp::touchMoved(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs & touch){
-    //
+    bUseShader = false;
 }
 
 //--------------------------------------------------------------

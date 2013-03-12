@@ -4,17 +4,19 @@
 #include "ofMatrix4x4.h"
 #include "ofShader.h"
 
+
 #include <stack>
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
+class ofVbo;
 
-class ofGLES2Renderer: public ofBaseGLRenderer{
+class ofProgrammableGLRenderer: public ofBaseGLRenderer{
 public:
-	ofGLES2Renderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
-	~ofGLES2Renderer();
+	ofProgrammableGLRenderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
+	~ofProgrammableGLRenderer();
     
-	string getType(){ return "GLES2"; }
+	string getType(){ return "ProgrammableGL"; }
     
     bool setup();
     void startRender();
@@ -25,6 +27,7 @@ public:
 	void update();
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
+    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
@@ -61,7 +64,7 @@ public:
 	void pushMatrix();
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
-	void translate(const ofPoint & p);
+	void translate(const ofVec3f & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
 	void rotate(float degrees, float vecX, float vecY, float vecZ);
 	void rotateX(float degrees);
@@ -120,7 +123,6 @@ public:
 	void drawRectangle(float x, float y, float z, float w, float h);
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 	void drawCircle(float x, float y, float z, float radius);
-	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
@@ -146,22 +148,41 @@ public:
 	void endCustomShader();
     
 private:
-	void uploadModelViewMatrix(const ofMatrix4x4 & m);
-	void uploadProjectionMatrix(const ofMatrix4x4 & m);
-	void uploadTextureMatrix(const ofMatrix4x4 & m);
-	void setOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip);
-    
+	
+	ofPtr<ofVbo> circleVbo;
+	ofPtr<ofVbo> triangleVbo;
+	ofPtr<ofVbo> rectVbo;
+	ofPtr<ofVbo> lineVbo;
+	ofPtr<ofVbo> vertexDataVbo;
+	ofPtr<ofVbo> meshVbo;
+	
+	GLuint defaultVAO;
+	void preparePrimitiveDraw(ofVbo& vbo_);
+	void finishPrimitiveDraw();
+	
+	void uploadCurrentMatrix();
+
+	ofMatrix4x4 getOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip);
+
 	void startSmoothing();
 	void endSmoothing();
     
 	ofHandednessType coordHandedness;
-	stack <ofRectangle> viewportHistory;
-	stack <ofMatrix4x4> modelViewStack;
-	stack <ofMatrix4x4> projectionStack;
-	stack <ofMatrix4x4> textureStack;
 	ofRectangle currentViewport;
+
+	stack <ofRectangle> viewportHistory;
+	stack <ofMatrix4x4> modelViewMatrixStack;
+	stack <ofMatrix4x4> projectionMatrixStack;
+	stack <ofMatrix4x4> textureMatrixStack;
+	
     ofMatrixMode currentMatrixMode;
-    ofMatrix4x4 modelView, projection, modelViewOrientation, orientationMatrix, textureMatrix;
+
+	ofMatrix4x4 * currentMatrix;
+
+	ofMatrix4x4	currentModelViewMatrix;
+	ofMatrix4x4	currentProjectionMatrix;
+	ofMatrix4x4	currentTextureMatrix;
+
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
     ofFloatColor currentColor;
@@ -172,15 +193,16 @@ private:
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
 	
-	ofMesh sphereMesh;
-    
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
     
 	ofFbo * currentFbo;
-	ofShader defaultShader;
+	
 	ofShader currentShader;
+	ofShader defaultShader;
+	ofShader bitmapStringShader;
+
 	string vertexFile;
 	string fragmentFile;
 

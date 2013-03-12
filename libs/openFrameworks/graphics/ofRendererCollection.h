@@ -10,7 +10,7 @@ public:
 
 	 ofPtr<ofBaseGLRenderer> getGLRenderer(){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="GLES2"){
+			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
 				 return (ofPtr<ofBaseGLRenderer>&)renderers[i];
 			 }
 		 }
@@ -53,6 +53,12 @@ public:
 			 renderers[i]->draw(vertexData,drawMode);
 		 }
 	}
+    
+    void draw( of3dPrimitive& model, ofPolyRenderMode renderType ) {
+        for(int i=0;i<(int)renderers.size();i++) {
+            renderers[i]->draw( model, renderType );
+        }
+    }
 
 	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		 for(int i=0;i<(int)renderers.size();i++){
@@ -425,12 +431,6 @@ public:
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawCircle(x,y,z,radius);
 		 }
-	}
-	
-	void drawSphere(float x, float y, float z, float radius) {
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->drawSphere(x,y,z,radius);
-		}
 	}
 
 	void drawEllipse(float x, float y, float z, float width, float height){

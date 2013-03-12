@@ -18,6 +18,7 @@
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
 
+
 template<typename T>
 class ofImage_;
 
@@ -272,6 +273,7 @@ public:
 //----------------------------------------------------------
 // base renderers
 //----------------------------------------------------------
+class of3dPrimitive;
 
 class ofBaseRenderer{
 public:
@@ -285,6 +287,7 @@ public:
 	virtual void draw(ofPath & shape)=0;
 	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
+    virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
@@ -340,7 +343,6 @@ public:
 	virtual void setBlendMode(ofBlendMode blendMode)=0;
 	virtual void setLineSmoothing(bool smooth)=0;
 	virtual void setCircleResolution(int res){};
-	virtual void setSphereResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
 
@@ -371,7 +373,6 @@ public:
 	virtual void drawRectangle(float x, float y, float z, float w, float h)=0;
 	virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)=0;
 	virtual void drawCircle(float x, float y, float z, float radius)=0;
-	virtual void drawSphere(float x, float y, float z, float radius)=0;
 	virtual void drawEllipse(float x, float y, float z, float width, float height)=0;
 	virtual void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode)=0;
 

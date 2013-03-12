@@ -11,6 +11,8 @@
 #include "ofConstants.h"
 #include "ofGLUtils.h"
 
+class ofMeshFace;
+
 class ofMesh{
 public:
 	
@@ -109,11 +111,11 @@ public:
 	bool haveTexCoordsChanged();
 	bool haveIndicesChanged();
 	
-	bool hasVertices();
-	bool hasColors();
-	bool hasNormals();
-	bool hasTexCoords();
-	bool hasIndices();
+	bool hasVertices() const;
+	bool hasColors() const;
+	bool hasNormals() const;
+	bool hasTexCoords() const;
+	bool hasIndices() const;
 	
 	void drawVertices();
 	void drawWireframe();
@@ -121,7 +123,7 @@ public:
 	void draw();
 
 	void load(string path);
-	void save(string path, bool useBinary = false);
+	void save(string path, bool useBinary = false) const;
     
     virtual void enableColors();
     virtual void enableTextures();
@@ -133,13 +135,28 @@ public:
     virtual void disableNormals();
     virtual void disableIndices();
     
-    virtual bool usingColors();
-    virtual bool usingTextures();
-    virtual bool usingNormals();
-    virtual bool usingIndices();
+    virtual bool usingColors() const;
+    virtual bool usingTextures() const;
+    virtual bool usingNormals() const;
+    virtual bool usingIndices() const;
     
-
-protected:
+    void setColorForIndices( int startIndex, int endIndex, ofColor color );
+    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
+    void mergeDuplicateVertices();
+    // return a list of triangles that do not share vertices or indices //
+    const vector<ofMeshFace> & getUniqueFaces() const;
+    vector<ofVec3f> getFaceNormals( bool perVetex=false) const;
+    void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
+    void smoothNormals( float angle );
+    
+    static ofMesh plane(float width, float height, int columns=2, int rows=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh sphere(float radius, int res=12, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh icosahedron(float radius);
+    static ofMesh icosphere(float radius, int iterations=2);
+    static ofMesh cylinder(float radius, float height, int radiusSegments=12, int heightSegments=6, int numCapSegments=2, bool bCapped = true, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh cone(float radius, float height, int radiusSegments=12, int heightSegments=6, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh box(float width, float height, float depth, int resX=4, int resY=4, int resZ=4);
+    
 	virtual void draw(ofPolyRenderMode renderType);
 
 private:
@@ -149,6 +166,12 @@ private:
 	vector<ofVec3f> normals;
 	vector<ofVec2f> texCoords;
 	vector<ofIndexType> indices;
+
+	// this variables are only caches and returned always as const
+	// mutable allows to change them from const methods
+	mutable vector<ofMeshFace> faces;
+	mutable bool bFacesDirty;
+
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
 	string name;
@@ -159,4 +182,45 @@ private:
     bool useIndices;
 	
 //	ofMaterial *mat;
+};
+
+// this is always a triangle //
+class ofMeshFace {
+public:
+    ofMeshFace();
+
+    const ofVec3f & getFaceNormal() const;
+
+    void setVertex( int index, const ofVec3f& v );
+    const ofVec3f& getVertex( int index ) const;
+
+    void setNormal( int index, const ofVec3f& n );
+    const ofVec3f& getNormal( int index ) const;
+
+    void setColor( int index, const ofFloatColor& color );
+    const ofFloatColor& getColor(int index) const;
+
+    void setTexCoord( int index, const ofVec2f& tCoord );
+    const ofVec2f& getTexCoord( int index ) const;
+
+    void setHasColors( bool bColors );
+    void setHasNormals( bool bNormals );
+    void setHasTexcoords( bool bTexcoords );
+
+    bool hasColors() const;
+    bool hasNormals() const;
+    bool hasTexcoords() const;
+
+private:
+    void calculateFaceNormal() const;
+    bool bHasNormals, bHasColors, bHasTexcoords;
+
+	// this variables are only caches and returned always as const
+	// mutable allows to change them from const methods
+    mutable bool bFaceNormalDirty;
+    mutable ofVec3f faceNormal;
+    ofVec3f vertices[3];
+    ofVec3f normals[3];
+    ofFloatColor colors[3];
+    ofVec2f texCoords[3];
 };
