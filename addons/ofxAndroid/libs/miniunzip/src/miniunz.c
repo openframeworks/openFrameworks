@@ -450,6 +450,35 @@ int do_extract(
     return 0;
 }
 
+int do_extract_one_entry(
+    unzFile uf,
+    int opt_extract_without_path,
+    int opt_overwrite,
+    const char* password,
+    unz_global_info * gi,
+    uLong i)
+{;
+    int err;
+    FILE* fout=NULL;
+
+    if (do_extract_currentfile(uf,&opt_extract_without_path,
+                                      &opt_overwrite,
+                                      password) != UNZ_OK)
+		return 0;
+
+	if ((i+1)<gi->number_entry)
+	{
+		err = unzGoToNextFile(uf);
+		if (err!=UNZ_OK)
+		{
+			printf("error %d with zipfile in unzGoToNextFile\n",err);
+			return 1;
+		}
+	}
+
+    return 0;
+}
+
 int do_extract_onefile(
     unzFile uf,
     const char* filename,
