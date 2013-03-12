@@ -2034,6 +2034,10 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 // Cone Mesh //
 //--------------------------------------------------------------
 ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
+	// tig: this primitive seems to have wrong winding order for its triangles,
+	// they need to wind counter-clockwise (but cone seems to wind clockwise) this
+	// leads to problems when we do glCullFace(GL_BACK) - glEnable(GL_CULL_FACE)
+	// make sure to check how the indices are added to the mesh...
     ofMesh mesh;
     if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
         mode = OF_PRIMITIVE_TRIANGLE_STRIP;

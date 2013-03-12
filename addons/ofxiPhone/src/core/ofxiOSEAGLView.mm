@@ -9,7 +9,7 @@
 
 #import "ofMain.h"
 #import "ofAppiPhoneWindow.h"
-#import "ofGLES2Renderer.h"
+#import "ofProgrammableGLRenderer.h"
 #import "ofxiPhoneApp.h"
 #import "ofxiOSExtensions.h"
 
@@ -37,7 +37,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
     
     ESRendererVersion version = ESRendererVersion_11;
-    if(ofGetCurrentRenderer()->getType() == "GLES2") {
+    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
         version = ESRendererVersion_20;
     }
     
@@ -53,11 +53,11 @@ static ofxiOSEAGLView * _instanceRef = nil;
         _instanceRef = self;
         
         if(rendererVersion == ESRendererVersion_20) {
-            if(ofGetCurrentRenderer()->getType() == "GLES2") {
-                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->setup();
+            if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
+                ((ofProgrammableGLRenderer *)ofGetCurrentRenderer().get())->setup();
             } else {
-                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer(false)));
-                ((ofGLES2Renderer *)ofGetCurrentRenderer().get())->setup();
+                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofProgrammableGLRenderer(false)));
+                ((ofProgrammableGLRenderer *)ofGetCurrentRenderer().get())->setup();
             }
         } else if(rendererVersion == ESRendererVersion_11) {
             if(ofGetCurrentRenderer()->getType() != "GL") {
@@ -166,9 +166,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
     [self lockGL];
     [self startRender];
     
-    ofGLES2Renderer * es2Renderer = NULL;
-    if(ofGetCurrentRenderer()->getType() == "GLES2") {
-        es2Renderer = (ofGLES2Renderer *)(ofGetCurrentRenderer().get());
+    ofProgrammableGLRenderer * es2Renderer = NULL;
+    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
+        es2Renderer = (ofProgrammableGLRenderer *)(ofGetCurrentRenderer().get());
         es2Renderer->startRender();
     }
 

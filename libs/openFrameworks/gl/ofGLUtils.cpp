@@ -1,7 +1,7 @@
 #include "ofGLUtils.h"
 
 #include <set>
-#include "ofGLES2Renderer.h"
+#include "ofProgrammableGLRenderer.h"
 #include "ofGraphics.h"
 #include "ofShader.h"
 #include "ofBaseTypes.h"
@@ -148,39 +148,39 @@ bool ofCheckGLExtension(string searchName){
 }
 
 bool ofGLIsFixedPipeline(){
-	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!="GLES2";
+	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!="ProgrammableGL";
 }
 
-ofPtr<ofGLES2Renderer> ofGetGLES2Renderer(){
-	if(ofGetCurrentRenderer()->getType()=="GLES2"){
-		return (ofPtr<ofGLES2Renderer>&)ofGetCurrentRenderer();
+ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer(){
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		return (ofPtr<ofProgrammableGLRenderer>&)ofGetCurrentRenderer();
 	}else{
-		return ofPtr<ofGLES2Renderer>();
+		return ofPtr<ofProgrammableGLRenderer>();
 	}
 }
 
 GLint ofGetAttrLocationPosition(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getAttrLocationPosition();
+	return ofGetProgrammableGLRenderer()->getAttrLocationPosition();
 }
 
 GLint ofGetAttrLocationColor(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getAttrLocationColor();
+	return ofGetProgrammableGLRenderer()->getAttrLocationColor();
 }
 
 GLint ofGetAttrLocationNormal(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getAttrLocationNormal();
+	return ofGetProgrammableGLRenderer()->getAttrLocationNormal();
 }
 
 GLint ofGetAttrLocationTexCoord(){
 	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetGLES2Renderer()->getAttrLocationTexCoord();
+	return ofGetProgrammableGLRenderer()->getAttrLocationTexCoord();
 }
 
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="GLES2"){
+	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
 		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
 	}else if(ofGetCurrentRenderer()->getType()=="collection"){
 		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();

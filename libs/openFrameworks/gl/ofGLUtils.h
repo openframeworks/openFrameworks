@@ -12,7 +12,7 @@
 #include "ofTypes.h"
 
 class ofShader;
-class ofGLES2Renderer;
+class ofProgrammableGLRenderer;
 class ofBaseGLRenderer;
 
 enum ofPrimitiveMode{
@@ -57,7 +57,7 @@ bool ofCheckGLExtension(string searchName);
 
 bool ofGLIsFixedPipeline();
 
-ofPtr<ofGLES2Renderer> ofGetGLES2Renderer();
+ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer();
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
 
 GLint ofGetAttrLocationPosition();

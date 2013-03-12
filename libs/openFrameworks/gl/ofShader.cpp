@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofGraphics.h"
-#include "ofGLES2Renderer.h"
+#include "ofProgrammableGLRenderer.h"
 #include <map>
 
 
@@ -351,7 +351,7 @@ void ofShader::begin() {
             prevActiveProgram = activeProgram;
             activeProgram = program;
             if(!ofGLIsFixedPipeline()){
-                ofGetGLES2Renderer()->beginCustomShader(*this);
+                ofGetProgrammableGLRenderer()->beginCustomShader(*this);
             }
         }
 	}
@@ -361,7 +361,7 @@ void ofShader::begin() {
 void ofShader::end() {
 	if (bLoaded && activeProgram==program){
 		if(!ofGLIsFixedPipeline()){
-			ofGetGLES2Renderer()->endCustomShader();
+			ofGetProgrammableGLRenderer()->endCustomShader();
 		}else{
 			glUseProgram(prevActiveProgram);
 			activeProgram = prevActiveProgram;
@@ -392,9 +392,13 @@ void ofShader::setUniformTexture(const char* name, ofTexture& tex, int textureLo
 	if(bLoaded) {
 		ofTextureData texData = tex.getTextureData();
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		glEnable(texData.textureTarget);
-		glBindTexture(texData.textureTarget, texData.textureID);
-		glDisable(texData.textureTarget);
+		if (ofGLIsFixedPipeline()){
+			glEnable(texData.textureTarget);
+			glBindTexture(texData.textureTarget, texData.textureID);
+			glDisable(texData.textureTarget);
+		} else {
+			glBindTexture(texData.textureTarget, texData.textureID);
+		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);
 	}
@@ -402,104 +406,138 @@ void ofShader::setUniformTexture(const char* name, ofTexture& tex, int textureLo
 
 //--------------------------------------------------------------
 void ofShader::setUniform1i(const char* name, int v1) {
-	if(bLoaded)
-		glUniform1i(getUniformLocation(name), v1);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1i(loc, v1);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform2i(const char* name, int v1, int v2) {
-	if(bLoaded)
-		glUniform2i(getUniformLocation(name), v1, v2);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2i(loc, v1, v2);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform3i(const char* name, int v1, int v2, int v3) {
-	if(bLoaded)
-		glUniform3i(getUniformLocation(name), v1, v2, v3);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3i(loc, v1, v2, v3);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform4i(const char* name, int v1, int v2, int v3, int v4) {
-	if(bLoaded)
-		glUniform4i(getUniformLocation(name), v1, v2, v3, v4);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) 	glUniform4i(loc, v1, v2, v3, v4);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform1f(const char* name, float v1) {
-	if(bLoaded)
-		glUniform1f(getUniformLocation(name), v1);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1f(loc, v1);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform2f(const char* name, float v1, float v2) {
-	if(bLoaded)
-		glUniform2f(getUniformLocation(name), v1, v2);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2f(loc, v1, v2);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform3f(const char* name, float v1, float v2, float v3) {
-	if(bLoaded)
-		glUniform3f(getUniformLocation(name), v1, v2, v3);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3f(loc, v1, v2, v3);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform4f(const char* name, float v1, float v2, float v3, float v4) {
-	if(bLoaded)
-		glUniform4f(getUniformLocation(name), v1, v2, v3, v4);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform4f(loc, v1, v2, v3, v4);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform1iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform1iv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform2iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform2iv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform3iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform3iv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform4iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform4iv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform4iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform1fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform1fv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform2fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform2fv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform3fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform3fv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniform4fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform4fv(getUniformLocation(name), count, v);
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform4fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::setUniformMatrix4f(const char* name, const ofMatrix4x4 & m) {
-	if(bLoaded)
-		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, m.getPtr());
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, m.getPtr());
+	}
 }
 
 #ifndef TARGET_OPENGLES
@@ -555,16 +593,20 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 void ofShader::setAttribute1fv(const char* name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
-		glVertexAttribPointer(location, 1, GL_FLOAT, GL_FALSE, stride, v);
-		glEnableVertexAttribArray(location);
+		if (location != -1) {
+			glVertexAttribPointer(location, 1, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
 	}
 }
 
 void ofShader::setAttribute2fv(const char* name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
-		glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, stride, v);
-		glEnableVertexAttribArray(location);
+		if (location != -1) {
+			glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
 	}
 
 }
@@ -572,19 +614,21 @@ void ofShader::setAttribute2fv(const char* name, float* v, GLsizei stride){
 void ofShader::setAttribute3fv(const char* name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
-		glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, stride, v);
-		glEnableVertexAttribArray(location);
+		if (location != -1) {
+			glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
 	}
-
 }
 
 void ofShader::setAttribute4fv(const char* name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
-		glVertexAttribPointer(location, 4, GL_FLOAT, GL_FALSE, stride, v);
-		glEnableVertexAttribArray(location);
+		if (location != -1) {
+			glVertexAttribPointer(location, 4, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
 	}
-
 }
 
 #ifndef TARGET_OPENGLES

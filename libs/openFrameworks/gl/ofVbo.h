@@ -17,7 +17,8 @@ public:
 	~ofVbo();
 
 	void setMesh(const ofMesh & mesh, int usage);
-
+	void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
+	
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setVertexData(const ofVec2f * verts, int total, int usage);
 
@@ -81,6 +82,9 @@ public:
 	void clearTexCoords();
 	void clearIndices();
 
+	int getNumVertices() const;
+	int getNumIndices() const;
+	
 private:
 
 	GLuint indexId;
@@ -105,6 +109,7 @@ private:
 
 	int		vertSize;
 	int		totalVerts;
+	int		totalIndices;
 
 	int vertUsage;
 	int colorUsage;
