@@ -117,8 +117,8 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 		return false;
 	}
 
-    // parse for includes
-    string src = parseForIncludes( source, 0 );
+  // parse for includes
+  string src = parseForIncludes( source );
 	
 	// compile shader
 	const char* sptr = src.c_str();
@@ -151,43 +151,51 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 }
 
 /*
- * Parse for GLSL includes taken from
+ * Parse for GLSL includes based on
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
-string ofShader::parseForIncludes( const string& src, int level ) {
+string ofShader::parseForIncludes( const string& src, int level, vector<string> *_included ) {
+    
+  if ( level > 32 ) {
+    ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+    return "";
+  }
 
-    if ( level > 32 ) {
-        ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
-        return "";
+  stringstream output;
+  stringstream input;
+  input << src;
+
+  Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
+  Poco::RegularExpression::MatchVec matches;
+
+  string line;
+  while( std::getline(input,line) ) {
+
+    if ( re.match( line, 0, matches ) < 2 ) {
+      output << line << endl;
+      continue;
+    } 
+
+    string include = line.substr(matches[1].offset, matches[1].length);
+
+    if ( std::find( _included->begin(), _included->end(), include ) != _included->end() ) { 
+      ofLog( OF_LOG_VERBOSE, include + " already included" );
+      continue;
+     }
+
+    _included->push_back( include );
+
+    ofBuffer buffer = ofBufferFromFile( include );
+    if ( !buffer.size() ) {
+      ofLog( OF_LOG_ERROR, "Could not open glsl include file "+include );
+      continue;
     }
 
-    stringstream output;
-    stringstream input;
-    input << src;
-        
-    Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
-    Poco::RegularExpression::MatchVec matches;
+    output << parseForIncludes( buffer.getText(), level + 1, _included ) << endl;
+  }
 
-    string line;
-    while( std::getline(input,line) ) {
-
-        if ( re.match( line, 0, matches ) < 2 ) {
-            output << line << endl;
-            continue;
-        } 
-        
-        string include = line.substr(matches[1].offset, matches[1].length);
-        
-        ofBuffer buffer = ofBufferFromFile( include );
-        if ( !buffer.size() ) {
-            ofLog( OF_LOG_ERROR, "Could not open glsl include file "+include );
-            continue;
-        }
-
-        output << parseForIncludes( buffer.getText(), level + 1 ) << endl;
-    }
-    return output.str();
+  return output.str();
 }
 
 //--------------------------------------------------------------
