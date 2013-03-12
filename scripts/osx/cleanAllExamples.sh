@@ -11,19 +11,15 @@ do
 	cd $category
 	for example in $( ls . )
 	do
-		echo "-----------------------------------------------------------------"
-		echo cleaning $example Debug
 		cd $example
-		xcodebuild -configuration Debug -target "$example" -project "$example.xcodeproj" clean
-		if [ "$?" != "0" ]; then
-			echo failed cleaning $example Debug
-			exit
+		if [ ! -d Makefile ]; then
+		    cp ../../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples ./Makefile
 		fi
 		echo "-----------------------------------------------------------------"
-		echo cleaning $example Release
-		xcodebuild -configuration Release -target "$example" -project "$example.xcodeproj" clean
+		echo cleaning $example
+		make clean
 		if [ "$?" != "0" ]; then
-			echo failed cleaning $example Release
+			echo failed cleaning $example
 			exit
 		fi
 		cd ..
