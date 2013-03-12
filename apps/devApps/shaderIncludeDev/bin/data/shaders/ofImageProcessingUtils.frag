@@ -1,4 +1,7 @@
 
+#pragma include "shaders/ofImageProcessingUtils.frag" 
+#pragma include "shaders/ofBlendingUtils.frag"
+  
 vec4 blurH(sampler2DRect tex, vec2 texCoord, float scale){
 	vec4 sum = vec4(0.0);
 

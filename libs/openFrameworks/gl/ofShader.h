@@ -116,7 +116,7 @@ private:
 	
 	static string nameForType(GLenum type);
     
-    string parseForIncludes( const string& source, int level );
+    string parseForIncludes( const string& source, int level = 0, vector<string> *_included = &(vector<string>()) );
 	
 	void checkAndCreateProgram();
 	
