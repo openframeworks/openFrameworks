@@ -50,7 +50,7 @@ void testApp::draw(){
 	ofRotateX(mouseY);
 	ofRotateY(mouseX);
 
-	for(int i=1; i<points.size(); i++) {
+	for(unsigned int i=1; i<points.size(); i++) {
 		ofLine(points[i-1], points[i]);
 	}
 	
