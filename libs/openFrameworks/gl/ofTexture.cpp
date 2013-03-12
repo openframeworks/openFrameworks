@@ -413,23 +413,15 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 
 
 void ofTexture::enableTextureTarget(){
-#ifdef TARGET_OPENGLES
 	if(ofGLIsFixedPipeline()){
-#endif
 		glEnable(texData.textureTarget);
-#ifdef TARGET_OPENGLES
 	}
-#endif
 }
 
 void ofTexture::disableTextureTarget(){
-#ifdef TARGET_OPENGLES
 	if(ofGLIsFixedPipeline()){
-#endif
 		glDisable(texData.textureTarget);
-#ifdef TARGET_OPENGLES
 	}
-#endif
 }
 
 //----------------------------------------------------------
@@ -494,7 +486,13 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
 	//TODO: gles2 implementation
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	if (ofGLIsFixedPipeline()){
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	} else {
+		// tig: glTexEnvf has no effect when a fragment shader is bound,
+		// which is a pre-requisite for programmable GL
+		// so we omit the call.
+	}
 
 	disableTextureTarget();
 	

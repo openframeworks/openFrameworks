@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */; };
+		221FD01016E74E6900522E7E /* ofProgrammableGLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
 		2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
-		67D96B951651AF6D00D5242D /* ofGLES2Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B921651AF6D00D5242D /* ofGLES2Renderer.cpp */; };
-		67D96B961651AF6D00D5242D /* ofGLES2Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 67D96B931651AF6D00D5242D /* ofGLES2Renderer.h */; };
 		67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
 		772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
 		772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
@@ -146,14 +146,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofProgrammableGLRenderer.cpp; path = gl/ofProgrammableGLRenderer.cpp; sourceTree = "<group>"; };
+		221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofProgrammableGLRenderer.h; path = gl/ofProgrammableGLRenderer.h; sourceTree = "<group>"; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
 		2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
-		67D96B921651AF6D00D5242D /* ofGLES2Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLES2Renderer.cpp; path = gl/ofGLES2Renderer.cpp; sourceTree = "<group>"; };
-		67D96B931651AF6D00D5242D /* ofGLES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofGLES2Renderer.h; path = gl/ofGLES2Renderer.h; sourceTree = "<group>"; };
 		67D96B941651AF6D00D5242D /* ofGLUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLUtils.cpp; path = gl/ofGLUtils.cpp; sourceTree = "<group>"; };
 		772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOpenALSoundPlayer.h; sourceTree = "<group>"; };
@@ -328,12 +328,12 @@
 		DACFA8C8132D09C7008D4B7A /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */,
+				221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */,
 				DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */,
 				DACFA8CA132D09E8008D4B7A /* ofFbo.h */,
 				DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */,
 				DACFA8CC132D09E8008D4B7A /* ofGLRenderer.h */,
-				67D96B921651AF6D00D5242D /* ofGLES2Renderer.cpp */,
-				67D96B931651AF6D00D5242D /* ofGLES2Renderer.h */,
 				67D96B941651AF6D00D5242D /* ofGLUtils.cpp */,
 				DACFA8CD132D09E8008D4B7A /* ofGLUtils.h */,
 				DACFA8CE132D09E8008D4B7A /* ofLight.cpp */,
@@ -666,7 +666,7 @@
 				FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
-				67D96B961651AF6D00D5242D /* ofGLES2Renderer.h in Headers */,
+				221FD01016E74E6900522E7E /* ofProgrammableGLRenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -780,8 +780,8 @@
 				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
 				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
 				FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */,
-				67D96B951651AF6D00D5242D /* ofGLES2Renderer.cpp in Sources */,
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,
+				221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

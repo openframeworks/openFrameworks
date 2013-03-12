@@ -4,8 +4,10 @@
 // index updating/deleting?
 // setVertexData with float* should know about ofVec3f vs ofVec2f?
 
-#include "ofVbo.h"
+
 #include "ofUtils.h"
+#include "ofVbo.h"
+
 #include <map>
 
 static map<GLuint,int> & getIds(){
@@ -61,6 +63,8 @@ ofVbo::ofVbo()
 	indexId    = 0;
 
 	totalVerts = 0;
+	totalIndices = 0;
+	
 	texCoordStride = sizeof(ofVec2f);
 	normalStride = sizeof(ofVec3f);
 	colorStride = sizeof(ofFloatColor);
@@ -99,6 +103,8 @@ ofVbo::ofVbo(const ofVbo & mom){
 
 
 	totalVerts = mom.totalVerts;
+	totalIndices = mom.totalIndices;
+
 	texCoordStride = sizeof(ofVec2f);
 	normalStride = sizeof(ofVec3f);
 	colorStride = sizeof(ofFloatColor);
@@ -137,6 +143,7 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	retain(indexId);
 
 	totalVerts = mom.totalVerts;
+	totalIndices = mom.totalIndices;
 
 	bAllocated		= mom.bAllocated;
 	return *this;
@@ -150,10 +157,19 @@ ofVbo::~ofVbo(){
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage){
 	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
-	setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
-	setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
-	setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
-	setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
+	(mesh.hasColors())		? setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage)			: disableColors();
+	(mesh.hasNormals())		? setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage)		: disableNormals();
+	(mesh.hasTexCoords())	?  setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage) : disableTexCoords();
+	(mesh.hasIndices())		? setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage)			: disableIndices();
+}
+
+//--------------------------------------------------------------
+void ofVbo::setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals){
+	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
+	(mesh.hasColors() && useColors)			? setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage)			: disableColors();
+	(mesh.hasNormals() && useNormals)		? setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage)		: disableNormals();
+	(mesh.hasTexCoords() && useTextures)	? setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage)	: disableTexCoords();
+	(mesh.hasIndices())						? setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage)			: disableIndices();
 }
 
 //--------------------------------------------------------------
@@ -273,6 +289,8 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 		glGenBuffers(1, &(indexId));
 		retain(indexId);
 	}
+	
+	totalIndices = total;
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ofIndexType) * total, &indices[0], usage);
@@ -474,7 +492,14 @@ void ofVbo::bind(){
 		if(ofGLIsFixedPipeline()){
 			glNormalPointer(GL_FLOAT, normalStride, 0);
 		}else{
-			glVertexAttribPointer(ofGetAttrLocationNormal(), 3, GL_FLOAT, GL_FALSE, normalStride, 0);
+			// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
+			// normalized while being uploaded to GPU memory.
+			// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+			// Normalizing the normals on the shader is probably faster, but sending non-normalized normals is
+			// more prone to lead to artifacts difficult to diagnose, especially with the built-in 3D primitives.
+			// If you need to optimise this, and you've dug this far through the code, you are most probably
+			// able to roll your own client code for binding & rendering vbos anyway...
+			glVertexAttribPointer(ofGetAttrLocationNormal(), 3, GL_FLOAT, GL_TRUE, normalStride, 0);
 		}
 	}
 	
@@ -491,6 +516,7 @@ void ofVbo::bind(){
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
+	ofDisableVertices();	// tig: oh dear, finding that bug was painful.
 	if(bUsingColors) ofDisableColorCoords();
 	if(bUsingNormals) ofDisableNormals();
 	if(bUsingTexCoords) ofDisableTexCoords();
@@ -539,6 +565,7 @@ void ofVbo::clearVertices(){
 		release(vertId);
 		vertId = 0;
 		bUsingVerts = false;
+		totalVerts = 0;
 	}
 }
 
@@ -575,5 +602,21 @@ void ofVbo::clearIndices(){
 		release(indexId);
 		indexId = 0;
 		bUsingIndices = false;
+		totalIndices = 0;
 	}
+}
+
+//--------------------------------------------------------------
+int ofVbo::getNumIndices() const {
+	if (bUsingIndices) {
+		return totalIndices;
+	} else {
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------
+
+int ofVbo::getNumVertices() const {
+	return totalVerts;
 }

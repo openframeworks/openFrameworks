@@ -77,14 +77,19 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	updateVbo();
 	GLuint mode = ofGetGLPrimitiveMode(getMode());
 #ifndef TARGET_OPENGLES
-	glPushAttrib(GL_POLYGON_BIT);
+	if (ofGLIsFixedPipeline()) {
+		// this is deprecated in GL3.2+
+		glPushAttrib(GL_POLYGON_BIT);
+	}
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(drawMode));
 	if(getNumIndices() && drawMode!=OF_MESH_POINTS){
 		vbo.drawElements(mode,getNumIndices());
 	}else{
 		vbo.draw(mode,0,getNumVertices());
 	}
-	glPopAttrib();
+	if (ofGLIsFixedPipeline()){
+		glPopAttrib();
+	}
 #else
 	if(drawMode == OF_MESH_POINTS){
 		vbo.draw(GL_POINTS,0,getNumVertices());
