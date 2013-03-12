@@ -244,7 +244,7 @@ string ofxTCPServer::getClientIP(int clientID){
 //--------------------------
 int ofxTCPServer::getNumClients(){
 	ofMutex::ScopedLock Lock( mConnectionsLock );
-	return TCPConnections.size()-1;
+	return TCPConnections.size();
 }
 
 //--------------------------
