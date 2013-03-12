@@ -18,6 +18,7 @@
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
 
+class ofAbstractParameter;
 
 template<typename T>
 class ofImage_;
@@ -29,6 +30,7 @@ typedef ofImage_<unsigned short> ofShortImage;
 class ofPath;
 class ofPolyline;
 class ofFbo;
+class of3dPrimitive;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -395,3 +397,22 @@ public:
 	virtual void disableColors()=0;
 	virtual void disableNormals()=0;
 };
+
+
+class ofBaseSerializer{
+public:
+	virtual ~ofBaseSerializer(){}
+
+	virtual void serialize(const ofAbstractParameter & parameter)=0;
+	virtual void deserialize(ofAbstractParameter & parameter)=0;
+};
+
+class ofBaseFileSerializer: public ofBaseSerializer{
+public:
+	virtual ~ofBaseFileSerializer(){}
+
+	virtual bool load(string path)=0;
+	virtual bool save(string path)=0;
+};
+
+

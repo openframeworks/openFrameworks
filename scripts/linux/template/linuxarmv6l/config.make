@@ -11,17 +11,6 @@
 # OF_ROOT = ../../..
 
 ################################################################################
-# App Name
-# 	Custom Application Name
-#       (default) APPNAME = (this project's folder name)
-# App Name Suffix
-#       (default) APPNAME_SUFFIX = .app
-#
-################################################################################
-# APPNAME = customAppName
-# APPNAME_SUFFIX = .app
-
-################################################################################
 # PROJECT ROOT
 #   The location of the project - a starting place for searching for files
 #       (default) PROJECT_ROOT = . (this directory)

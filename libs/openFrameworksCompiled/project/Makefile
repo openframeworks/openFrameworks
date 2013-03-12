@@ -1,6 +1,6 @@
 ################################################################################
 # OPENFRAMEWORKS MAKEFILE
-#   The openFrameworks makefile system is desiged for ease of use, and 
+#   The openFrameworks makefile system is designed for ease of use, and 
 #   particularly for straight-forward platform-based configurations.
 #
 #   Read the documentation or simply execute :
