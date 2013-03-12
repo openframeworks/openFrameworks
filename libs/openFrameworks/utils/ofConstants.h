@@ -62,7 +62,7 @@ enum ofTargetPlatform{
 	#else
 		#define TARGET_OSX
 	#endif
-#elif defined (ANDROID)
+#elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
 #elif defined(__ARMEL__)

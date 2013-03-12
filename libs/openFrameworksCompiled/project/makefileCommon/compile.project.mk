@@ -160,7 +160,6 @@ ReleaseABI: $(TARGET)
 DebugABI: $(TARGET)
 
 all:
-	$(MAKE) Debug
 	$(MAKE) Release
 	
 run:
@@ -208,6 +207,31 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.c
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 	
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.S
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.cpp
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.cxx
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.cc
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.c
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	
+$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
@@ -294,7 +318,7 @@ help:
 	@echo "make Debug:		builds the library with debug symbols"
 	@echo "make Release:		builds the library with optimizations"
 	@echo "make:			= make Release"
-	@echo "make all:		= make Debug + make Release"
+	@echo "make all:		= make Release"
 	@echo "make CleanDebug:	cleans the Debug target"
 	@echo "make CleanRelease:	cleans the Release target"
 	@echo "make clean:		cleans everything"

@@ -283,12 +283,22 @@ help:
 	@echo
 	@echo "make Debug:		builds the library with debug symbols"
 	@echo "make Release:		builds the library with optimizations"
-	@echo "make:			= make Release"
+	@echo "make:			= make all"
 	@echo "make all:		= make Debug + make Release"
-	@echo "make CleanDebug:	cleans the Debug target"
+	@echo "make CleanDebug:		cleans the Debug target"
 	@echo "make CleanRelease:	cleans the Release target"
 	@echo "make clean:		cleans everything"
 	@echo "make help:		this help message"
+	@echo 
+	@echo "Platform OS"
+	@echo 
+	@echo "Currently the only platform that needs to specify the OS is"
+	@echo "android. This is already setup in the eclipse porjects but"
+	@echo "the correct parameter is:"
+	@echo 
+	@echo "e.g."
+	@echo
+	@echo "make Release PLATFORM_OS=Android"
 	@echo
 	@echo "Platform Variants:"
 	@echo

@@ -85,7 +85,7 @@ TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 ANDROID_PREFIX=arm-linux-androideabi-
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
-DATA_FILES = $(shell find bin/data -type f)
+DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 RESFILE=$(RESNAME).zip
 
@@ -203,7 +203,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   generation.
 #
 #   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
-#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   string unless the user adds a wildcard (%) operator to match subdirectories.
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
 #
@@ -304,7 +304,7 @@ PLATFORM_LIBRARIES =
 PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 
-PLATFORM_LIBRARIES += GLESv2 
+#PLATFORM_LIBRARIES += GLESv2 
 PLATFORM_LIBRARIES += log 
 PLATFORM_LIBRARIES += dl 
 PLATFORM_LIBRARIES += m 
@@ -313,10 +313,14 @@ PLATFORM_LIBRARIES += gcc
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
 PLATFORM_STATIC_LIBRARIES += $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/libgnustl_static.a
 
 # shared libraries 

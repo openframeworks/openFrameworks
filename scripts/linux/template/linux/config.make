@@ -11,17 +11,6 @@
 # OF_ROOT = ../../..
 
 ################################################################################
-# App Name
-# 	Custom Application Name
-#       (default) APPNAME = (this project's folder name)
-# App Name Suffix
-#       (default) APPNAME_SUFFIX = .app
-#
-################################################################################
-# APPNAME = customAppName
-# APPNAME_SUFFIX = .app
-
-################################################################################
 # PROJECT ROOT
 #   The location of the project - a starting place for searching for files
 #       (default) PROJECT_ROOT = . (this directory)
@@ -81,13 +70,12 @@
 #		(default) PROJECT_LDFLAGS = -Wl,-rpath=./libs
 #
 #   Note: Leave a leading space when adding list items with the += operator
-################################################################################
-
+#
 # Currently, shared libraries that are needed are copied to the 
 # $(PROJECT_ROOT)/bin/libs directory.  The following LDFLAGS tell the linker to
 # add a runtime path to search for those shared libraries, since they aren't 
 # incorporated directly into the final executable application binary.
-# TODO: should this be a default setting?
+################################################################################
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
 
 ################################################################################
