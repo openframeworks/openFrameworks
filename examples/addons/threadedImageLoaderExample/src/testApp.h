@@ -21,7 +21,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
 		
 		ofxThreadedImageLoader loader;
-		vector<ofImage*> images;
+		vector<ofImage> images;
 		int total;
 	
 };

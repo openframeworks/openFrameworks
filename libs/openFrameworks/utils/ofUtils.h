@@ -149,6 +149,7 @@ string ofHexToString(const string& stringHexString);
 int ofToInt(const string& intString);
 char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
+double ofToDouble(const string& doubleString);
 bool ofToBool(const string& boolString);
 
 template <class T>
@@ -174,6 +175,9 @@ float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
 
 string 	ofGetVersionInfo();
+unsigned int ofGetVersionMajor();
+unsigned int ofGetVersionMinor();
+unsigned int ofGetVersionPatch();
 
 void	ofSaveScreen(string filename);
 void	ofSaveFrame(bool bUseViewport = false);
