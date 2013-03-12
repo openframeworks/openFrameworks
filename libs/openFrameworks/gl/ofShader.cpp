@@ -155,7 +155,12 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
-string ofShader::parseForIncludes( const string& src, int level, vector<string> *_included ) {
+string ofShader::parseForIncludes( const string& source ) {
+  vector<string> included;
+  return parseForIncludes( source, included ); 
+}
+
+string ofShader::parseForIncludes( const string& source, vector<string>& included, int level ) {
     
   if ( level > 32 ) {
     ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
@@ -164,13 +169,13 @@ string ofShader::parseForIncludes( const string& src, int level, vector<string> 
 
   stringstream output;
   stringstream input;
-  input << src;
+  input << source;
 
   Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
   Poco::RegularExpression::MatchVec matches;
 
   string line;
-  while( std::getline(input,line) ) {
+  while( std::getline( input, line ) ) {
 
     if ( re.match( line, 0, matches ) < 2 ) {
       output << line << endl;
@@ -179,12 +184,12 @@ string ofShader::parseForIncludes( const string& src, int level, vector<string> 
 
     string include = line.substr(matches[1].offset, matches[1].length);
 
-    if ( std::find( _included->begin(), _included->end(), include ) != _included->end() ) { 
+    if ( std::find( included.begin(), included.end(), include ) != included.end() ) { 
       ofLog( OF_LOG_VERBOSE, include + " already included" );
       continue;
      }
 
-    _included->push_back( include );
+    included.push_back( include );
 
     ofBuffer buffer = ofBufferFromFile( include );
     if ( !buffer.size() ) {
@@ -192,7 +197,7 @@ string ofShader::parseForIncludes( const string& src, int level, vector<string> 
       continue;
     }
 
-    output << parseForIncludes( buffer.getText(), level + 1, _included ) << endl;
+    output << parseForIncludes( buffer.getText(), included, level + 1 ) << endl;
   }
 
   return output.str();
