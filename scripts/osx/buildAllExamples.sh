@@ -18,16 +18,16 @@ do
        	    cp ../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples "$example"/Makefile
        	fi
 
-	echo "-----------------------------------------------------------------"
-	echo building $example Debug
-	make Debug -j2 -C $example
-	ret=$?
-	if [ $ret -ne 0 ]; then
+        echo "-----------------------------------------------------------------"
+        echo building $example Debug
+        make Debug -j2 -C $example
+        ret=$?
+        if [ $ret -ne 0 ]; then
        	    echo failed building $example Debug
        	    exit
-       	fi
+        fi
 
-       	echo "-----------------------------------------------------------------"
+        echo "-----------------------------------------------------------------"
        	echo building $example Release
        	make Release -j2 -C $example
        	ret=$?

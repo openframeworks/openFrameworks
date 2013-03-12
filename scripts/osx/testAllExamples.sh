@@ -18,7 +18,7 @@ do
         if [ ! -d "$example"/bin/$(basename $example).app ]; then
             echo "-----------------------------------------------------------------"
        	    echo building $example
-	    if [ ! -e "$example"/Makefile ]; then
+            if [ ! -e "$example"/Makefile ]; then
        	        cp ../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples "$example"/Makefile
        	    fi
             make Release -j2 -C $example

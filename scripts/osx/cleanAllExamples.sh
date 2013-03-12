@@ -18,16 +18,16 @@ do
        	    cp ../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples "$example"/Makefile
        	fi
 
-	echo "-----------------------------------------------------------------"
-	echo cleaning $example
-	make clean -C $example
-	ret=$?
-	if [ $ret -ne 0 ]; then
+        echo "-----------------------------------------------------------------"
+        echo cleaning $example
+        make clean -C $example
+        ret=$?
+        if [ $ret -ne 0 ]; then
        	    echo failed cleaning $example
        	    exit
        	fi
-	echo rm -rf $example/obj 2> /dev/null
-	rm -rf $example/obj 2> /dev/null
+        echo rm -rf $example/obj 2> /dev/null
+        rm -rf $example/obj 2> /dev/null
 
        	echo "-----------------------------------------------------------------"
        	echo ""
