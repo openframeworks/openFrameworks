@@ -10,17 +10,20 @@ do
 	cd $category
 	for example in $( ls . )
 	do
+		cd $example
+		if [ ! -d Makefile ]; then
+		    cp ../../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples ./Makefile
+		fi
 		echo "-----------------------------------------------------------------"
 		echo building $example Debug
-		cd $example
-		xcodebuild -configuration Debug -target "$example" -project "$example.xcodeproj"
+		make Debug
 		if [ "$?" != "0" ]; then
 			echo failed building $example Debug
 			exit
 		fi
 		echo "-----------------------------------------------------------------"
 		echo building $example Release
-		xcodebuild -configuration Release -target "$example" -project "$example.xcodeproj"
+		make Release
 		if [ "$?" != "0" ]; then
 			echo failed building $example Release
 			exit

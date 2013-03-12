@@ -10,20 +10,22 @@ do
 	cd $category
 	for example in $( ls . )
 	do
+		cd $example
 		echo "-----------------------------------------------------------------"
 		echo running $example
-		cd $example
 		if [ ! -d bin/"$example".app ]; then
-	        echo building $example
-			xcodebuild -configuration Release -target "$example" -project "$example.xcodeproj"
-			if [ "$?" != "0" ]; then
-				echo failed building $example
-				exit
-			fi
+	            echo building $example
+		    if [ ! -d Makefile ]; then
+			cp ../../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples ./Makefile
+		    fi
+		    make Release
+		    if [ "$?" != "0" ]; then
+			echo failed building $example
+			exit
+		    fi
 		fi
-		cd bin
-		./"$example".app/Contents/MacOS/"$example"
-		cd ../../
+		./bin/"$example".app/Contents/MacOS/"$example"
+		cd ..
 		echo "-----------------------------------------------------------------"
 		echo ""
 	done
