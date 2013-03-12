@@ -1,33 +1,37 @@
 #!/bin/bash
 
-cd ../../examples
-
-for category in $( ls . )
+for category in $( find ../../examples -maxdepth 1 -type d )
 do
-	if [ "$category" = "android" -o "$category" = "ios" ]; then
-		continue
-	fi
-	cd $category
-	for example in $( ls . )
-	do
-		cd $example
-		echo "-----------------------------------------------------------------"
-		echo running $example
-		if [ ! -d bin/"$example".app ]; then
-	            echo building $example
-		    if [ ! -d Makefile ]; then
-			cp ../../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples ./Makefile
-		    fi
-		    make Release
-		    if [ "$?" != "0" ]; then
-			echo failed building $example
-			exit
-		    fi
-		fi
-		./bin/"$example".app/Contents/MacOS/"$example"
-		cd ..
-		echo "-----------------------------------------------------------------"
-		echo ""
-	done
-	cd ..
+    if [ "$category" = "../../examples/android" -o "$category" = "../../examples/ios" -o "$category" = "../../examples" ]; then
+       	continue
+    fi
+    echo "-----------------------------------------------------------------"
+    echo running ALL examples in $category
+    echo "-----------------------------------------------------------------"
+
+    for example in $( find $category -maxdepth 1 -type d )
+    do
+        if [ "$example" = "$category" ]; then
+       	    continue
+       	fi
+
+        if [ ! -d "$example"/bin/$(basename $example).app ]; then
+            echo "-----------------------------------------------------------------"
+       	    echo building $example
+	    if [ ! -e "$example"/Makefile ]; then
+       	        cp ../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples "$example"/Makefile
+       	    fi
+            make Release -j2 -C $example
+            ret=$?
+            if [ $ret -ne 0 ]; then
+       	        echo failed building $example
+       	        exit
+            fi
+            echo "-----------------------------------------------------------------"
+        fi
+        echo running $example
+       	echo "-----------------------------------------------------------------"
+        "$example"/bin/$(basename $example).app/Contents/MacOS/$(basename $example)
+       	echo "-----------------------------------------------------------------"
+    done
 done
