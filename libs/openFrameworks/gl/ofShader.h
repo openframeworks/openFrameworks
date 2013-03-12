@@ -12,6 +12,7 @@
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
+#include "Poco/RegularExpression.h"
 #include <map>
 
 
@@ -114,6 +115,9 @@ private:
 	void checkShaderInfoLog(GLuint shader, GLenum type);
 	
 	static string nameForType(GLenum type);
+    
+    string parseForIncludes( const string& source );
+    string parseForIncludes( const string& source, vector<string>& included, int level = 0 );
 	
 	void checkAndCreateProgram();
 	
