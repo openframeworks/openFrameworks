@@ -1,8 +1,11 @@
 #include "ofxBaseGui.h"
+#include "ofxXmlSettings.h"
+#include "ofImage.h"
 
 const ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
+ofxBaseGui::borderColor(120,100),
 ofxBaseGui::textColor(255),
 ofxBaseGui::fillColor(128);
 
@@ -10,9 +13,27 @@ const int ofxBaseGui::textPadding = 4;
 const int ofxBaseGui::defaultWidth = 200;
 const int ofxBaseGui::defaultHeight = 16;
 
+ofTrueTypeFont ofxBaseGui::font;
+bool ofxBaseGui::fontLoaded = false;
+
 ofxBaseGui::ofxBaseGui(){
 	bGuiActive = false;
 	currentFrame = 0;
+	serializer = new ofxXmlSettings;
+
+	thisHeaderBackgroundColor=headerBackgroundColor;
+	thisBackgroundColor=backgroundColor;
+	thisBorderColor=borderColor;
+	thisTextColor=textColor;
+	thisFillColor=fillColor;
+
+	if(!fontLoaded)
+		loadFont(OF_TTF_SANS,8,true,true);
+}
+
+void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
+	font.loadFont(filename,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
+	fontLoaded = true;
 }
 
 ofxBaseGui::~ofxBaseGui(){
@@ -20,24 +41,36 @@ ofxBaseGui::~ofxBaseGui(){
 }
 
 void ofxBaseGui::saveToFile(string filename) {
-	ofxXmlSettings xml;
-	xml.loadFile(filename);
-	saveToXml(xml);
-	xml.saveFile(filename);
+	serializer->load(filename);
+	saveTo(*serializer);
+	serializer->save(filename);
 }
 
 void ofxBaseGui::loadFromFile(string filename) {
-	ofxXmlSettings xml;
-	xml.loadFile(filename);
-	loadFromXml(xml);
+	serializer->load(filename);
+	loadFrom(*serializer);
+}
+
+
+void ofxBaseGui::saveTo(ofBaseFileSerializer& serializer){
+	serializer.serialize(getParameter());
+}
+
+void ofxBaseGui::loadFrom(ofBaseFileSerializer& serializer){
+	serializer.deserialize(getParameter());
+}
+
+
+void ofxBaseGui::setDefaultSerializer(ofBaseFileSerializer& _serializer){
+	serializer = &_serializer;
 }
 
 string ofxBaseGui::getName(){
-	return name;
+	return getParameter().getName();
 }
 
 void ofxBaseGui::setName(string _name){
-	name = _name;
+	getParameter().setName(_name);
 }
 
 void ofxBaseGui::setPosition(ofPoint p){
@@ -47,19 +80,23 @@ void ofxBaseGui::setPosition(ofPoint p){
 void ofxBaseGui::setPosition(float x, float y){
 	b.x = x;
 	b.y = y;
+	generateDraw();
 }
 
 void ofxBaseGui::setSize(float w, float h){
 	b.width = w;
 	b.height = h;
+	generateDraw();
 }
 
 void ofxBaseGui::setShape(ofRectangle r){
 	b = r;
+	generateDraw();
 }
 
 void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x,y,w,h);
+	generateDraw();
 }
 
 ofPoint ofxBaseGui::getPosition(){
@@ -76,6 +113,51 @@ float ofxBaseGui::getWidth(){
 
 float ofxBaseGui::getHeight(){
 	return b.height;
+}
+
+ofColor ofxBaseGui::getHeaderBackgroundColor(){
+	return thisHeaderBackgroundColor;
+}
+
+ofColor ofxBaseGui::getBackgroundColor(){
+	return thisBackgroundColor;
+}
+
+ofColor ofxBaseGui::getBorderColor(){
+	return thisBorderColor;
+}
+
+ofColor ofxBaseGui::getTextColor(){
+	return thisTextColor;
+}
+
+ofColor ofxBaseGui::getFillColor(){
+	return thisFillColor;
+}
+
+void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
+	generateDraw();
+	thisHeaderBackgroundColor = color;
+}
+
+void ofxBaseGui::setBackgroundColor(const ofColor & color){
+	generateDraw();
+	thisBackgroundColor = color;
+}
+
+void ofxBaseGui::setBorderColor(const ofColor & color){
+	generateDraw();
+	thisBorderColor = color;
+}
+
+void ofxBaseGui::setTextColor(const ofColor & color){
+	generateDraw();
+	thisTextColor = color;
+}
+
+void ofxBaseGui::setFillColor(const ofColor & color){
+	generateDraw();
+	thisFillColor = color;
 }
 
 string ofxBaseGui::saveStencilToHex(ofImage& img) {

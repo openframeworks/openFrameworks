@@ -79,18 +79,28 @@ void testApp::draw(){
 	// we could draw the whole contour finder
 	//contourFinder.draw(360,540);
 
-	// or, instead we can draw each blob individually,
+	// or, instead we can draw each blob individually from the blobs vector,
 	// this is how to get access to them:
     for (int i = 0; i < contourFinder.nBlobs; i++){
         contourFinder.blobs[i].draw(360,540);
+		
+		// draw over the centroid if the blob is a hole
+		ofSetColor(255);
+		if(contourFinder.blobs[i].hole){
+			ofDrawBitmapString("hole",
+				contourFinder.blobs[i].boundingRect.getCenter().x + 360,
+				contourFinder.blobs[i].boundingRect.getCenter().y + 540);
+		}
     }
 
 	// finally, a report:
-
 	ofSetHexColor(0xffffff);
-	char reportStr[1024];
-	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
-	ofDrawBitmapString(reportStr, 20, 600);
+	stringstream reportStr;
+	reportStr << "bg subtraction and blob detection" << endl
+			  << "press ' ' to capture bg" << endl
+			  << "threshold " << threshold << " (press: +/-)" << endl
+			  << "num blobs found " << contourFinder.nBlobs << ", fps: " << ofGetFrameRate();
+	ofDrawBitmapString(reportStr.str(), 20, 600);
 
 }
 

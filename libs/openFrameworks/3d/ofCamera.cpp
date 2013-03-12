@@ -76,6 +76,7 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 	setPosition(eyeX,eyeY,dist);
 	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
 
+
 	if(vFlip){
 		setScale(1,-1,1);
 	}
@@ -128,31 +129,19 @@ float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
 //----------------------------------------
 void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
-	isActive = true;  
+	isActive = true;
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
-	glMatrixMode(GL_PROJECTION);
+	ofSetMatrixMode(OF_MATRIX_PROJECTION);
 	ofLoadIdentityMatrix();
-	
-	if(isOrtho) {
-		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
-		//			else
-#ifndef TARGET_OPENGLES
-		glOrtho(0, viewport.width, 0, viewport.height, nearClip, farClip);
-#else
-		ofMatrix4x4 ortho;
-		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
-		ofLoadMatrix( ortho );
-#endif
-	} else {
-		ofLoadMatrix( this->getProjectionMatrix() );
-	}
 
-	glMatrixMode(GL_MODELVIEW);
+	ofLoadMatrix( this->getProjectionMatrix(viewport) );
+
+	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
 	ofViewport(viewport);
 }
@@ -167,25 +156,31 @@ void ofCamera::end() {
 	}
 }
 //----------------------------------------
-ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) {
-	float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
-	ofMatrix4x4 matProjection;
-	matProjection.makePerspectiveMatrix(fov, aspect, nearClip, farClip);
-	matProjection.translate(-lensOffset.x, -lensOffset.y, 0);
-	return matProjection;
+ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
+	if(isOrtho) {
+		ofMatrix4x4 ortho;
+		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
+		return ortho;
+	}else{
+		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
+		ofMatrix4x4 matProjection;
+		matProjection.makePerspectiveMatrix(fov, aspect, nearClip, farClip);
+		matProjection.translate(-lensOffset.x, -lensOffset.y, 0);
+		return matProjection;
+	}
 }
 //----------------------------------------
-ofMatrix4x4 ofCamera::getModelViewMatrix() {
+ofMatrix4x4 ofCamera::getModelViewMatrix() const {
 	ofMatrix4x4 matModelView;
 	matModelView.makeInvertOf(getGlobalTransformMatrix());
 	return matModelView;
 }
 //----------------------------------------
-ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) {
+ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) const {
 	return getModelViewMatrix() * getProjectionMatrix(viewport);
 }
 //----------------------------------------
-ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) {
+ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
 
 	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix(viewport);
 	ofVec3f ScreenXYZ;
@@ -199,7 +194,7 @@ ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) {
 
 }
 //----------------------------------------
-ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) {
+ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
 
 	//convert from screen to camera
 	ofVec3f CameraXYZ;
@@ -216,11 +211,11 @@ ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) {
 
 }
 //----------------------------------------
-ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) {
+ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) const {
 	return WorldXYZ * getModelViewProjectionMatrix(viewport);
 }
 //----------------------------------------
-ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) {
+ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) const {
 
 	ofMatrix4x4 inverseCamera;
 	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));

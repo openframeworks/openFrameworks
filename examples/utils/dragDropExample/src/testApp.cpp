@@ -16,7 +16,7 @@ void testApp::draw(){
 	
 	float dx = dragPt.x;
 	float dy = dragPt.y;
-	for(int k = 0; k < draggedImages.size(); k++){
+	for(unsigned int k = 0; k < draggedImages.size(); k++){
 		draggedImages[k].draw(dx, dy);
 		dy += draggedImages[k].getHeight() + 10;
 	}
@@ -72,7 +72,7 @@ void testApp::dragEvent(ofDragInfo info){
 		dragPt = info.position;
 		
 		draggedImages.assign( info.files.size(), ofImage() );
-		for(int k = 0; k < info.files.size(); k++){
+		for(unsigned int k = 0; k < info.files.size(); k++){
 			draggedImages[k].loadImage(info.files[k]);
 		}
 	}

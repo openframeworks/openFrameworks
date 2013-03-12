@@ -1,8 +1,10 @@
 #pragma once
 
 //-------------------------------
-#define OF_VERSION	7
-#define OF_VERSION_MINOR 2
+#define OF_VERSION_MAJOR 0
+#define OF_VERSION_MINOR 7
+#define OF_VERSION_PATCH 4
+
 //-------------------------------
 
 enum ofLoopType{
@@ -57,7 +59,7 @@ enum ofTargetPlatform{
 	#else
 		#define TARGET_OSX
 	#endif
-#elif defined (ANDROID)
+#elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
 #else
@@ -489,6 +491,7 @@ enum ofPolyWindingMode{
 
 enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
+enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
 
 //--------------------------------------------
 //

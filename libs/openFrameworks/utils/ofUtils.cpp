@@ -278,9 +278,20 @@ string ofToDataPath(string path, bool makeAbsolute){
 	
 	if( enableDataPath ){
 
+        //we create dataPath as a string for the check, on windows we modify it to check both types of slashes
+        //however we use the original value from dataPathRoot() to prepend the string if needed.  
+        string dataPath = dataPathRoot(); 
+        string enclosingFolder = path.substr(0,dataPath.length());
+        
+        #ifdef TARGET_WIN32
+            //this is so we can check both "data\" and "data/" on windows
+            std::replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
+            std::replace( dataPath.begin(), dataPath.end(), '\\', '/' );
+        #endif // TARGET_WIN32
+
 		//check if absolute path has been passed or if data path has already been applied
 		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot().length()) != dataPathRoot())){
+		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" && enclosingFolder != dataPath)){
 			path = dataPathRoot()+path;
 		}
 
@@ -393,6 +404,14 @@ string ofHexToString(const string& stringHexString) {
 float ofToFloat(const string& floatString) {
 	float x = 0;
 	istringstream cur(floatString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+double ofToDouble(const string& doubleString) {
+	double x = 0;
+	istringstream cur(doubleString);
 	cur >> x;
 	return x;
 }
@@ -659,10 +678,21 @@ void ofLaunchBrowser(string url){
 
 //--------------------------------------------------
 string ofGetVersionInfo(){
-	string version;
 	stringstream sstr;
-	sstr << "of version: " << OF_VERSION << endl;
+	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH << endl;
 	return sstr.str();
+}
+
+unsigned int ofGetVersionMajor() {
+	return OF_VERSION_MAJOR;
+}
+
+unsigned int ofGetVersionMinor() {
+	return OF_VERSION_MINOR;
+}
+
+unsigned int ofGetVersionPatch() {
+	return OF_VERSION_PATCH;
 }
 
 //---- new to 006
