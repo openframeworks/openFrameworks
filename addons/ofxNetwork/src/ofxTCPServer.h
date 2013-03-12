@@ -33,6 +33,7 @@ class ofxTCPServer : public ofThread{
 		int getClientPort(int clientID);
 		string getClientIP(int clientID);
 
+		bool isClientSetup(int clientID);
 		bool isClientConnected(int clientID);
 
 		//send data as a string - a short message
@@ -78,19 +79,11 @@ class ofxTCPServer : public ofThread{
 
 
 
-	private:
-		// private copy so this can't be copied to avoid problems with destruction
-		ofxTCPServer(const ofxTCPServer & mom){};
-		ofxTCPServer & operator=(const ofxTCPServer & mom){return *this;}
-
-		ofxTCPClient & getClient(int clientID);
-		bool isClientSetup(int clientID);
-
+	protected:
 		void threadedFunction();
 
 		ofxTCPManager			TCPServer;
-		map<int,ofPtr<ofxTCPClient> >	TCPConnections;
-		ofMutex					mConnectionsLock;
+		map<int,ofxTCPClient>	TCPConnections;
 
 		bool			connected;
 		string			str;
