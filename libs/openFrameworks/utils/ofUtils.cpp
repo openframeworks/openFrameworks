@@ -7,6 +7,7 @@
 #include "Poco/String.h"
 #include "Poco/LocalDateTime.h"
 #include "Poco/DateTimeFormatter.h"
+#include "Poco/URI.h"
 
 #include <cctype> // for toupper
 
@@ -626,53 +627,56 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
-void ofLaunchBrowser(string url){
+void ofLaunchBrowser(string _url){
 
+    Poco::URI uri;
+    
+    try {
+        uri = Poco::URI(_url);
+    } catch(const Poco::SyntaxException& exc) {
+        ofLogError("ofLaunchBrowser") << "Malformed URL: " << _url;
+        return;
+    }
+    
 	// http://support.microsoft.com/kb/224816
-
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
-	if(Poco::icompare(url.substr(0,8), "https://") == 0){
-		url.replace(0,5,"https");
-	}
-	else if(Poco::icompare(url.substr(0,7), "http://") == 0){
-		url.replace(0,4,"http");
-	}
-	else{
-		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin with http:// or https://");
+    //   Poco::URI automatically converts the scheme to lower case
+	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
+		ofLogError("ofLaunchBrowser") << "URL must begin with http:// or https://";
 		return;
 	}
 
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", url.c_str(),
+		ShellExecuteA(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#else
-		ShellExecute(NULL, "open", url.c_str(),
+		ShellExecute(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#endif
 	#endif
 
 	#ifdef TARGET_OSX
-		// ok gotta be a better way then this,
-		// this is what I found...
-		string commandStr = "open \"" + url + "\"";
-		system(commandStr.c_str());
+        // could also do with LSOpenCFURLRef
+		string commandStr = "open \"" + uri.toString() + "\"";
+		int ret = system(commandStr.c_str());
+        if(ret!=0) ofLogError("ofLaunchBrowser") << "Could not open browser.";
 	#endif
 
 	#ifdef TARGET_LINUX
-		string commandStr = "xdg-open "+url;
+		string commandStr = "xdg-open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
-		if(ret!=0) ofLog(OF_LOG_ERROR,"ofLaunchBrowser: couldn't open browser");
+		if(ret!=0) ofLogError("ofLaunchBrowser") << "Could not open browser.";
 	#endif
 
 	#ifdef TARGET_OF_IPHONE
-		ofxiPhoneLaunchBrowser(url);
+		ofxiPhoneLaunchBrowser(uri.toString());
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(url);
+		ofxAndroidLaunchBrowser(uri.toString());
 	#endif
 }
 
