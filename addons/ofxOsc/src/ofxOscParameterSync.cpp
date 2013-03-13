@@ -5,7 +5,7 @@
  *      Author: arturo
  */
 
-#include "/home/arturo/Desktop/openFrameworks/addons/ofxOsc/src/ofxOscParameterSync.h"
+#include "ofxOscParameterSync.h"
 
 ofxOscParameterSync::ofxOscParameterSync() {
 	syncGroup = NULL;
