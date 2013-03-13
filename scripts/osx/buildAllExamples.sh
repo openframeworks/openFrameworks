@@ -14,13 +14,15 @@ do
        	    continue
        	fi
 
-       	if [ ! -e "$example"/Makefile ]; then
-       	    cp ../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples "$example"/Makefile
+       	if [ ! -e "$example"/$(basename $example).xcodeproj ]; then
+       	    echo "-----------------------------------------------------------------"
+       	    echo no xcode project for $example
+       	    continue
        	fi
 
         echo "-----------------------------------------------------------------"
         echo building $example Debug
-        make Debug -j2 -C $example
+        xcodebuild -configuration Debug -target $(basename $example) -project $example/$(basename $example).xcodeproj
         ret=$?
         if [ $ret -ne 0 ]; then
        	    echo failed building $example Debug
@@ -29,7 +31,7 @@ do
 
         echo "-----------------------------------------------------------------"
        	echo building $example Release
-       	make Release -j2 -C $example
+       	xcodebuild -configuration Release -target $(basename $example) -project $example/$(basename $example).xcodeproj
        	ret=$?
        	if [ $ret -ne 0 ]; then
        	    echo failed building $example Release

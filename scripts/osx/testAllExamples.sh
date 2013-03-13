@@ -18,10 +18,12 @@ do
         if [ ! -d "$example"/bin/$(basename $example).app ]; then
             echo "-----------------------------------------------------------------"
        	    echo building $example
-            if [ ! -e "$example"/Makefile ]; then
-       	        cp ../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples "$example"/Makefile
-       	    fi
-            make Release -j2 -C $example
+            if [ ! -e "$example"/$(basename $example).xcodeproj ]; then
+                echo "-----------------------------------------------------------------"
+                echo no xcode project for $example
+                continue
+            fi
+            xcodebuild -configuration Release -target $(basename $example) -project $example/$(basename $example).xcodeproj
             ret=$?
             if [ $ret -ne 0 ]; then
        	        echo failed building $example
