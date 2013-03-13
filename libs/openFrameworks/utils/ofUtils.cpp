@@ -657,7 +657,7 @@ void ofLaunchBrowser(string url){
 	#ifdef TARGET_OSX
 		// ok gotta be a better way then this,
 		// this is what I found...
-		string commandStr = "open "+url;
+		string commandStr = "open \"" + url + "\"";
 		system(commandStr.c_str());
 	#endif
 
