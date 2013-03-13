@@ -641,9 +641,7 @@ void ofLaunchBrowser(string _url, bool uriEncodeQuery){
     if(uriEncodeQuery) {
         uri.setQuery(uri.getRawQuery()); // URI encodes during set
     }
-    
-    cout << uri.toString() << endl;
-    
+        
 	// http://support.microsoft.com/kb/224816
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
