@@ -20,10 +20,10 @@ public:
     void disableNormals();
     void disableIndices();
 
-    bool usingColors();
-    bool usingTextures();
-    bool usingNormals();
-    bool usingIndices();
+    virtual bool usingColors() const;
+    virtual bool usingTextures() const;
+    virtual bool usingNormals() const;
+    virtual bool usingIndices() const;
 
 	void draw(ofPolyRenderMode drawMode);
 
