@@ -14,20 +14,31 @@ do
        	    continue
        	fi
 
-       	if [ ! -e "$example"/Makefile ]; then
-       	    cp ../../libs/openFrameworksCompiled/project/makefileCommon/Makefile.examples "$example"/Makefile
+       	if [ ! -e "$example"/$(basename $example).xcodeproj ]; then
+       	    echo "-----------------------------------------------------------------"
+       	    echo no xcode project for $example
+       	    continue
        	fi
 
         echo "-----------------------------------------------------------------"
-        echo cleaning $example
-        make clean -C $example
+        echo cleaning $example Debug
+        xcodebuild -configuration Debug -target $(basename $example) -project $example/$(basename $example).xcodeproj clean
         ret=$?
         if [ $ret -ne 0 ]; then
-       	    echo failed cleaning $example
+       	    echo failed cleaning $example Debug
+       	    exit
+        fi
+
+        echo "-----------------------------------------------------------------"
+       	echo cleaning $example Release
+       	xcodebuild -configuration Release -target $(basename $example) -project $example/$(basename $example).xcodeproj clean
+       	ret=$?
+       	if [ $ret -ne 0 ]; then
+       	    echo failed cleaning $example Release
        	    exit
        	fi
-        echo rm -rf $example/obj 2> /dev/null
-        rm -rf $example/obj 2> /dev/null
+        echo rm -rf $example/build 2> /dev/null
+        rm -rf $example/build 2> /dev/null
 
        	echo "-----------------------------------------------------------------"
        	echo ""
