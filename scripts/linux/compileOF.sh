@@ -12,7 +12,7 @@ fi
 WHO=`who am i`;ID=`echo ${WHO%% *}`
 GROUP_ID=`id --group -n ${ID}`
 
-cd ../../libs/openFrameworksCompiled/project/$LIBSPATH
+cd ../../libs/openFrameworksCompiled/project
 make Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
