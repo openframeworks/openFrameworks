@@ -627,7 +627,7 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
-void ofLaunchBrowser(string _url){
+void ofLaunchBrowser(string _url, bool uriEncodeQuery){
 
     Poco::URI uri;
     
@@ -637,6 +637,12 @@ void ofLaunchBrowser(string _url){
         ofLogError("ofLaunchBrowser") << "Malformed URL: " << _url;
         return;
     }
+    
+    if(uriEncodeQuery) {
+        uri.setQuery(uri.getRawQuery()); // URI encodes during set
+    }
+    
+    cout << uri.toString() << endl;
     
 	// http://support.microsoft.com/kb/224816
 	// make sure it is a properly formatted url:
