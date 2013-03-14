@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	
-    ofBackground(255, 255, 255);
+    ofBackground(255,255,255);
     
 	ofSetFrameRate(60); // we set the frameRate slower, so that we see the movement of the lines better
 	
