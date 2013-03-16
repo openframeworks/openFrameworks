@@ -1,4 +1,7 @@
+[openFrameworks](http://openframeworks.cc/) | [Documentation table of contents](TOC.md)
 
+Code::Blocks - Windows
+======================
 
 1) installing Codeblocks:
 --------------------------------------------------------------------------------
@@ -6,7 +9,7 @@
 follow the steps here:
 http://www.openframeworks.cc/setup/setup/codeblocks
 
-** be sure to follow step e ** 
+**be sure to follow step e** 
 
 download this zip:
 
