@@ -1,21 +1,22 @@
 #------------------------------------------------------------------------------
 # This file detects the current platform, creates the needed variables for that
-# platform, generates the variables for the paths to the code, addons, libraries...
-# and the list of source code for the core and common include search paths for the
-# core and projects. It's included from both the core makefile and the projects
-# makefile
+# platform, generates the variables for the paths to the code, addons, 
+# libraries and the list of source code for the core and common include search 
+# paths for the core and projects. It's included from both the core makefile and
+# the project's makefile.
 
 
 # #####################  PLATFORM DETECTION ###################################
-# determine the platform's architecture, os and form the platform-specific libarary subpath
+# determine the platform's architecture, os and form the platform-specific 
+# libarary subpath.
+#
 #   If they haven't already been defined, this file will generate the following 
-#   variables 
+#   variables:
 #
 #   $(PLATFORM_OS) (e.g. Linux, Darwin, etc.).
 #   $(PLATFORM_ARCH) (e.g. armv6l, x86_64, i386, etc.).
 #   $(PLATFORM_LIB_SUBPATH) (e.g. linuxarmv6l, osx, linux64, linux, etc)
 ################################################################################
-#   
 
 ifndef SHELL
     SHELL := /bin/sh
@@ -105,7 +106,6 @@ endif
 #   $(OF_ROOT) must be defined previously.
 ################################################################################
 
-
 ################################################################################
 # create path definitions
 ifndef OF_ADDONS_PATH
@@ -165,8 +165,6 @@ ifdef MAKEFILE_DEBUG
     $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
 endif
 
-
-
 # generate a list of valid core platform variants from the files in the platform makefiles directory
 AVAILABLE_PLATFORM_VARIANTS=$(shell find $(OF_PLATFORM_MAKEFILES)/config.*.mk -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.mk/\1/' )
 AVAILABLE_PLATFORM_VARIANTS+=default
@@ -185,7 +183,6 @@ else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 endif
 
-
 ################################ FLAGS #########################################
 # define the location of the core path
 #TODO: make sure all of the right checks are here.
@@ -203,7 +200,6 @@ endif
 
 # take from the platform core exclusions and strip and collapse spaces
 CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
-
 
 ################################################################################
 # OF CORE HEADER INCLUDES (-I ...)
@@ -244,7 +240,6 @@ OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_THIRDPARTY_HEADER_PATHS))
 # 4. Add all of the core OF headers(these have already been filtered above according to the platform config files)
 OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_HEADER_PATHS))
 
-
 ################################################################################
 # OF CORE DEFINES
 ################################################################################
@@ -258,7 +253,6 @@ OF_CORE_DEFINES_CFLAGS=$(addprefix -D,$(PLATFORM_DEFINES))
 # gather any platform CFLAGS
 OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
 
-
 ################################################################################
 # CORE SOURCE FILES
 ################################################################################
@@ -268,9 +262,6 @@ OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" -or -name "*.m" | grep -v "/\.[^\.]"))
 OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
-
-
-
 
 ################################################################################
 # DEBUG INFO
