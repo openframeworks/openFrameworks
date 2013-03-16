@@ -240,6 +240,18 @@
     <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.h">
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofParameterGroup.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\3d\of3dPrimitives.h">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\of3dGraphics.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -406,6 +418,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.cpp">
       <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofParameter.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofParameterGroup.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\3d\of3dPrimitives.cpp">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\of3dGraphics.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
