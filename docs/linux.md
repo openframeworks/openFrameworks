@@ -1,4 +1,7 @@
-OpenFrameworks on Linux (with Code::Blocks): 
+[openFrameworks](http://openframeworks.cc/) | [Documentation table of contents](TOC.md)
+
+Linux
+=====
 
 a) Installation
 ---------------
@@ -103,7 +106,7 @@ add its name in a new line in this file.
 
 g) Post build steps:
 --------------------
-	
+    
 some folks have mentioned trouble with post-build step which copies the export
 directory into the bin folder. if you have issues, please let us know,
 and especially what Linux you are running, what version of Code::Blocks, etc...
@@ -136,7 +139,7 @@ build = build + run system.
 We are hoping that crafty folk will get into scripting, esp. as it relates to
 addons, etc. Please share any helpful scripts on the forum.
 
-	
+    
 i) Linux info, advice, etc
 --------------------------
 
