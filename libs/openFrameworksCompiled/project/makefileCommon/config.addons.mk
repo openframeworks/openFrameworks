@@ -59,6 +59,7 @@ define parse_addon
 	$(eval ADDON_DEPENDENCIES= ) \
 	$(eval ADDON_DATA= ) \
 	$(eval ADDON_INCLUDES= ) \
+	$(eval ADDON_INCLUDES_EXCLUDE= ) \
 	$(eval ADDON_CFLAGS= ) \
 	$(eval ADDON_LDFLAGS= ) \
 	$(eval ADDON_LIBS= ) \
@@ -86,6 +87,12 @@ define parse_addon
 		$(call parse_addons_includes, $(addon)) \
 		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
 	) \
+	$(if $(strip $(ADDON_INCLUDES_EXCLUDE)), \
+		$(eval PROJECT_ADDONS_INCLUDES_EXCLUDE += $(addprefix $(addon)/,$(ADDON_INCLUDES_EXCLUDE))), \
+		$(eval PROJECT_ADDONS_INCLUDES_EXCLUDE += $(ADDON_INCLUDES_EXCLUDE)) \
+	) \
+	$(eval PROJECT_ADDONS_INCLUDES := $(filter-out $(PROJECT_ADDONS_INCLUDES_EXCLUDE),$(PROJECT_ADDONS_INCLUDES))) \
+	\
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
 		$(eval PROJECT_ADDONS_LIBS += $(addprefix $(addon)/,$(ADDON_LIBS))), \
