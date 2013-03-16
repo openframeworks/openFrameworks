@@ -1,9 +1,13 @@
+/**
+ * openFrameworks Serial Test for Arduino
+ * 
+ */
 
 int ledPin = 13;   // select the pin for the LED
 int val = 0;       // variable to store the data from the serial port
 
 void setup() {
-  pinMode(ledPin,OUTPUT);   // declare the LED's pin as output
+  pinMode(ledPin,OUTPUT);    // declare the LED's pin as output
   Serial.begin(9600);        // connect to the serial port
 }
 
