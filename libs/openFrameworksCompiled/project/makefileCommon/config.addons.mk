@@ -94,11 +94,16 @@ define parse_addon
 	$(eval PROJECT_ADDONS_INCLUDES := $(filter-out $(PROJECT_ADDONS_INCLUDES_EXCLUDE),$(PROJECT_ADDONS_INCLUDES))) \
 	\
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
+	\
+	$(eval $(info =======CFLAGS========)) \
+	$(eval $(foreach v, $(PROJECT_ADDONS_CFLAGS),$(info $(v)))) \
+	\
 	$(if $(strip $(ADDON_LIBS)), \
 		$(eval PROJECT_ADDONS_LIBS += $(addprefix $(addon)/,$(ADDON_LIBS))), \
 		$(call parse_addons_libraries, $(addon)) \
 		$(eval PROJECT_ADDONS_LIBS += $(PARSED_ADDONS_LIBS)) \
 	) \
+	\
 	$(eval PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
 	$(eval PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
 	$(eval PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
