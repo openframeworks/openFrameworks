@@ -1,7 +1,7 @@
 # do all of the core cofiguration work.
 # configuration work basically means creating lots of
 # lists of source files, search paths, libraries, etc.
-#
+
 ifndef OF_ROOT
     OF_ROOT= ../../..
 endif
@@ -25,7 +25,6 @@ ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS = $(shell find $(OF_LIBS_PATH)/*/lib/$(A
 
 # filter out all excluded paths defined in the platform config files.
 OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS))
-
 
 ################################################################################
 # OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables are 
@@ -91,14 +90,12 @@ OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
 #TODO what to do with shared libs?
 OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
 
-
 ################################################################################
 # OF PLATFORM LDFLAGS
 ################################################################################
 
 OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS))
 OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
-
 
 ################################################################################
 # DEBUG INFO
@@ -324,7 +321,6 @@ OF_PROJECT_CFLAGS += $(OF_CORE_BASE_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 
-
 ################################################################################
 # PROJECT LDLAGS
 ################################################################################
@@ -337,14 +333,6 @@ OF_PROJECT_LDFLAGS += $(OF_PROJECT_LIBS_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PLATFORM_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
-
-
-
-
-
-
-
-
 
 ################################################################################
 ifdef MAKEFILE_DEBUG
@@ -429,7 +417,6 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
     endif
 endif
 
-
 ################################################################################
 # OBJECT AND DEPENDENCY FILES DEFINITIONS
 #	Object file paths are generated here (as opposed to with the rest of the 
@@ -474,7 +461,6 @@ OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_ADDONS_OBJS))
 OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
 # TODO: deal with shared libs?
-
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_DEPENDENCY_FILES---)
