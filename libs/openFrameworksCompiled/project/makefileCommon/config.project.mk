@@ -234,14 +234,28 @@ endif
 OF_PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 
 # add defaults here TODO: should these always be 
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin  # exactly this path
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin% # any children of this path
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin%
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git/%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git%
 
+# A pattern can contain only one TRAILING %. This is a "feature" in GNU Make.
+# As a consequence of this "feature" $(filter ...) and $(filter-out ...) 
+# cannot match substrings in our exclusions.  For example, the following will 
+# not be matched as one might expect with normal wildcards / regex patterns:
+#
+# OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj 
+# OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj/%
+#
+# GNU make does allow us to do something like this though:
+# In this case, we look for all paths that have the pattern:
+#     $(PROJECT_ROOT)/*.xcodeproj (here * works as expected)
+# and then it appends a % (the make pattern matcher) ONLY to the end of each
+# of the paths discovered by the $(wildcard ...) function.  The output of
+# this function is now compatible with GNU Make $(filter ...) and $(filter-out).
+OF_PROJECT_EXCLUSIONS += $(addsuffix %,$(wildcard $(PROJECT_ROOT)/*.xcodeproj))
 
 ################################################################################
 # PROJECT SOURCE FILES
