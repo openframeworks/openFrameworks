@@ -95,9 +95,6 @@ define parse_addon
 	\
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	\
-	$(eval $(info =======CFLAGS========)) \
-	$(eval $(foreach v, $(PROJECT_ADDONS_CFLAGS),$(info $(v)))) \
-	\
 	$(if $(strip $(ADDON_LIBS)), \
 		$(eval PROJECT_ADDONS_LIBS += $(addprefix $(addon)/,$(ADDON_LIBS))), \
 		$(call parse_addons_libraries, $(addon)) \
