@@ -415,23 +415,23 @@ function createPackage {
     #choose readme
     cd $pkg_ofroot
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
-        mv readme.linux readme
+        mv docs/linux.md readme
     fi
     
-    if [ "$platform" = "vs2008" ]; then
-        mv readme.vs2008 readme
+    if [ "$platform" = "vs" ]; then
+        mv docs/visualstudio.md readme
     fi
     
     if [ "$platform" = "win_cb" ]; then
-        mv readme.win_cb readme
+        mv docs/codeblocks.md readme
     fi
     
     if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then
-        mv readme.osx readme
+        mv docs/osx.md readme
     fi
 
     if [ "$platform" = "android" ]; then
-        mv readme.android readme
+        mv docs/android.md readme
     fi
     
     rm readme.*
