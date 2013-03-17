@@ -3,7 +3,7 @@
 rem setupCommandLine.cmd
 rem
 rem openFrameworks C++ Libraries command-line build script
-rem for MS Visual Studio 2010 to 2012
+rem for MS Visual Studio 2012
 rem
 rem Usage
 rem -----
