@@ -3,7 +3,7 @@
 Code::Blocks - Windows
 ======================
 
-We like Code::Blocks for Windows development since it's light weight, and avoids some of the quirkiness of windows visual studio. here's a step by step tutorial to get up and running. 
+We like Code::Blocks for Windows development since it's light weight, and avoids some of the quirkiness of windows visual studio. here's a step by step tutorial to get up and running.  
 **Note**: [Additions](#additions) are required to run openFrameworks. Please do not skip this step. 
 
 Installation
@@ -32,7 +32,7 @@ Workspaces
 In 0.061 we've moved to a "compiled" openframeworks.  This means, you should open up the workspace
 that comes with each project: 
 
-imageSaverExample.cbp
+imageSaverExample.cbp  
 imageSaverExample.workspace 	<---------- load this
 
 The workspaces load both the imageSaverExample project as well as the openframeworksLib project, and 
