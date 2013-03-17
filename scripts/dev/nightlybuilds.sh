@@ -16,8 +16,7 @@ echo $currenthash>lasthash.txt
 ./create_package.sh linux $lastversion
 ./create_package.sh linux64 $lastversion
 ./create_package.sh win_cb $lastversion
-./create_package.sh vs2010 $lastversion
-./create_package.sh vs2012 $lastversion
+./create_package.sh vs $lastversion
 ./create_package.sh ios $lastversion
 ./create_package.sh osx $lastversion
 ./create_package.sh android $lastversion
@@ -26,8 +25,7 @@ mv *.zip /var/www/versions/nightly
 rm /var/www/versions/nightly/of_latest_linux_release.tar.gz
 rm /var/www/versions/nightly/of_latest_linux64_release.tar.gz
 rm /var/www/versions/nightly/of_latest_win_cb_release.zip
-rm /var/www/versions/nightly/of_latest_vs2010_release.zip
-rm /var/www/versions/nightly/of_latest_vs2012_release.zip
+rm /var/www/versions/nightly/of_latest_vs_release.zip
 rm /var/www/versions/nightly/of_latest_ios_release.zip
 rm /var/www/versions/nightly/of_latest_osx_release.zip
 rm /var/www/versions/nightly/of_latest_android_release.tar.gz
@@ -35,8 +33,7 @@ rm /var/www/versions/nightly/of_latest_android_release.tar.gz
 rm /var/www/versions/nightly/of_latest_linux_nightly.tar.gz
 rm /var/www/versions/nightly/of_latest_linux64_nightly.tar.gz
 rm /var/www/versions/nightly/of_latest_win_cb_nightly.zip
-rm /var/www/versions/nightly/of_latest_vs2010_nightly.zip
-rm /var/www/versions/nightly/of_latest_vs2012_nightly.zip
+rm /var/www/versions/nightly/of_latest_vs_nightly.zip
 rm /var/www/versions/nightly/of_latest_ios_nightly.zip
 rm /var/www/versions/nightly/of_latest_osx_nightly.zip
 rm /var/www/versions/nightly/of_latest_android_nightly.tar.gz
@@ -44,8 +41,7 @@ rm /var/www/versions/nightly/of_latest_android_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_win_cb_release.zip /var/www/versions/nightly/of_v${lastversion}_win_cb_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_vs2010_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2010_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_vs2012_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2012_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_vs_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_android_nightly.tar.gz
@@ -53,8 +49,7 @@ mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/
 ln -s /var/www/versions/nightly/of_v${lastversion}_linux_nightly.tar.gz /var/www/versions/nightly/of_latest_linux_nightly.tar.gz
 ln -s /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz /var/www/versions/nightly/of_latest_linux64_nightly.tar.gz
 ln -s /var/www/versions/nightly/of_v${lastversion}_win_cb_nightly.zip /var/www/versions/nightly/of_latest_win_cb_nightly.zip
-ln -s /var/www/versions/nightly/of_v${lastversion}_vs2010_nightly.zip /var/www/versions/nightly/of_latest_vs2010_nightly.zip
-ln -s /var/www/versions/nightly/of_v${lastversion}_vs2012_nightly.zip /var/www/versions/nightly/of_latest_vs2012_nightly.zip
+ln -s /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip /var/www/versions/nightly/of_latest_vs_nightly.zip
 ln -s /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip /var/www/versions/nightly/of_latest_ios_nightly.zip
 ln -s /var/www/versions/nightly/of_v${lastversion}_osx_nightly.zip /var/www/versions/nightly/of_latest_osx_nightly.zip
 ln -s /var/www/versions/nightly/of_v${lastversion}_android_nightly.tar.gz /var/www/versions/nightly/of_latest_android_nightly.tar.gz

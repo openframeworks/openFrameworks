@@ -1,5 +1,5 @@
 #!/bin/bash
-# $1 -> platform: win_cb, linux, linux64, vs2008, osx, osxSL, ios, all
+# $1 -> platform: win_cb, linux, linux64, vs, osx, osxSL, ios, all
 # $2 -> version number: 006
 
 platform=$1
@@ -21,11 +21,11 @@ hostArch=`uname`
 #    echo "will make changes for snow leopard"
 #fi
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "vs2010" ] && [ "$platform" != "vs2012" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, vs2010, vs2012, osx, android, ios, all
+    echo win_cb, linux, linux64, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -33,7 +33,7 @@ if [ "$version" == "" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, osx, android, all
+    echo win_cb, linux, linux64, vs, osx, android, all
     exit 1
 fi
 
@@ -89,13 +89,6 @@ function deleteMakefiles {
     #delete makefiles
     rm Makefile
     rm *.make
-}
-
-function deleteVS2008 {
-    #delete vs2008 files
-    rm *.vcproj
-    rm *.vcproj.user
-    rm *_vs2008.sln
 }
 
 function deleteVS {
@@ -180,7 +173,7 @@ function createPackage {
 	    rm -Rf video/osxVideoRecorderExample
 	fi
 	
-	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs2010" ] || [ "$pkg_platform" == "vs2012" ]; then
+	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
 	fi
@@ -193,39 +186,31 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 osx win_cb vs2008 vs2010 vs2012 ios android"
+        otherplatforms="linux64 osx win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux osx win_cb vs2008 vs2010 vs2012 ios android"
+        otherplatforms="linux osx win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 vs2010 vs2012 ios android makefileCommon"
+        otherplatforms="linux linux64 win_cb vs ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs2008 vs2010 vs2012 ios android makefileCommon"
+        otherplatforms="linux linux64 osx vs ios android makefileCommon"
     fi
 
-    if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2010 vs2012 ios android makefileCommon"
-    fi
-
-    if [ "$pkg_platform" = "vs2010" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008 vs2012 ios android makefileCommon"
-    fi
-
-    if [ "$pkg_platform" = "vs2012" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008 vs2010 ios android makefileCommon"
+    if [ "$pkg_platform" = "vs" ]; then
+        otherplatforms="linux linux64 osx win_cb ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 vs2010 vs2012 android makefileCommon"
+        otherplatforms="linux linux64 win_cb vs android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008 vs2010 vs2012 ios"
+        otherplatforms="linux linux64 osx win_cb vs ios"
     fi
     
     
@@ -237,7 +222,7 @@ function createPackage {
 		rm projectGenerator_wincb.zip
 		rm -Rf __MACOSX
 	fi
-    if [ "$pkg_platform" = "vs2010" ] || [ "$pkg_platform" = "vs2012" ]; then
+    if [ "$pkg_platform" = "vs" ]; then
 		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_winvs.zip
 		unzip projectGenerator_winvs.zip
 		rm projectGenerator_winvs.zip
@@ -280,7 +265,7 @@ function createPackage {
         rm -Rf $libsnotinmac
     elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ] || [ "$pkg_platform" = "vs2010" ] || [ "$pkg_platform" = "vs2012" ]; then
+    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs" ]; then
         rm -Rf $libsnotinwindows
     elif [ "$pkg_platform" = "android" ]; then
         rm -Rf $libsnotinandroid
@@ -366,7 +351,7 @@ function createPackage {
 	if [ "$pkg_platform" != "linux64" ]; then
     	rm -Rf $otherplatforms
 	else
-    	rm -Rf win_cb vs2008 vs2010 vs2012 osx ios
+    	rm -Rf win_cb vs osx ios
 	fi
 	if [ "$pkg_platform" == "ios" ]; then
 		rm -Rf osx
@@ -463,7 +448,7 @@ function createPackage {
 
 
 if [ "$platform" = "all" ]; then
-    for eachplatform in win_cb linux linux64 vs2008 vs2010 vs2012 osx 
+    for eachplatform in win_cb linux linux64 vs osx 
     do
         cd $packageroot
         mkdir of_v${version}_${eachplatform}
