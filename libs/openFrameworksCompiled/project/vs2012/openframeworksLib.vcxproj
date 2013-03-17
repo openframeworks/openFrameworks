@@ -88,6 +88,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\openFrameworks\3d\of3dPrimitives.h" />
     <ClInclude Include="..\..\..\openFrameworks\3d\of3dUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\3d\ofCamera.h" />
     <ClInclude Include="..\..\..\openFrameworks\3d\ofEasyCam.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="..\..\..\openFrameworks\gl\ofTexture.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofVbo.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofVboMesh.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\of3dGraphics.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofBitmapFont.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphics.h" />
@@ -132,6 +134,8 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
+    <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h" />
+    <ClInclude Include="..\..\..\openFrameworks\types\ofParameterGroup.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofColor.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofPoint.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofRectangle.h" />
@@ -156,6 +160,7 @@
     <ClInclude Include="..\..\..\openFrameworks\events\ofEventUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\openFrameworks\3d\of3dPrimitives.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\3d\of3dUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\3d\ofCamera.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\3d\ofEasyCam.cpp" />
@@ -172,6 +177,7 @@
     <ClCompile Include="..\..\..\openFrameworks\gl\ofTexture.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofVbo.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofVboMesh.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\of3dGraphics.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofBitmapFont.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphics.cpp" />
@@ -195,6 +201,8 @@
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofBaseTypes.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofColor.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\types\ofParameter.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\types\ofParameterGroup.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofPoint.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp" />
