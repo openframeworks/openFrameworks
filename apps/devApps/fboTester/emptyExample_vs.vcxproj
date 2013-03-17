@@ -20,10 +20,12 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -63,7 +65,7 @@
     <Link>
       <AdditionalDependencies>openframeworksLibDebug.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudioD.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;GLee.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;PocoUtilmtd.lib;PocoXMLmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glee\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs;..\..\..\libs\rtAudio\lib\vs;..\..\..\libs\FreeImage\lib\vs;..\..\..\libs\freetype\lib\vs;..\..\..\libs\quicktime\lib\vs;..\..\..\libs\fmodex\lib\vs;..\..\..\libs\videoInput\lib\vs;..\..\..\libs\glee\lib\vs;..\..\..\libs\glu\lib\vs;..\..\..\libs\Poco\lib\vs;..\..\..\libs\openFrameworksCompiled\lib\vs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib; LIBC.lib; LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)_debugInfo.pdb</ProgramDatabaseFile>
@@ -75,7 +77,7 @@
     </Link>
     <PostBuildEvent>
       <Message>adding DLLs and creating data folder</Message>
-      <Command>xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs2010\*.dll" "$(ProjectDir)bin"
+      <Command>xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"
 if not exist "$(ProjectDir)bin\data" mkdir  "$(ProjectDir)bin\data"
 </Command>
     </PostBuildEvent>
@@ -94,7 +96,7 @@ if not exist "$(ProjectDir)bin\data" mkdir  "$(ProjectDir)bin\data"
     </ClCompile>
     <Link>
       <AdditionalDependencies>openframeworksLib.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudio.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;GLee.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmt.lib;PocoNetmt.lib;PocoUtilmt.lib;PocoXMLmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glee\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs;..\..\..\libs\rtAudio\lib\vs;..\..\..\libs\FreeImage\lib\vs;..\..\..\libs\freetype\lib\vs;..\..\..\libs\quicktime\lib\vs;..\..\..\libs\fmodex\lib\vs;..\..\..\libs\videoInput\lib\vs;..\..\..\libs\glee\lib\vs;..\..\..\libs\glu\lib\vs;..\..\..\libs\Poco\lib\vs;..\..\..\libs\openFrameworksCompiled\lib\vs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib; LIBC.lib; LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -109,7 +111,7 @@ if not exist "$(ProjectDir)bin\data" mkdir  "$(ProjectDir)bin\data"
     </Link>
     <PostBuildEvent>
       <Message>adding DLLs and creating data folder</Message>
-      <Command>xcopy /e /i /y "$(ProjectDir)\..\..\..\export\vs2010\*.dll" "$(ProjectDir)\bin"
+      <Command>xcopy /e /i /y "$(ProjectDir)\..\..\..\export\vs\*.dll" "$(ProjectDir)\bin"
 if not exist "$(ProjectDir)\bin\data" mkdir  "$(ProjectDir)\bin\data"
 
 </Command>
@@ -123,7 +125,7 @@ if not exist "$(ProjectDir)\bin\data" mkdir  "$(ProjectDir)\bin\data"
     <ClInclude Include="src\testApp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj">
+    <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
