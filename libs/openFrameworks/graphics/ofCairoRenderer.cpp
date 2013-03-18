@@ -630,7 +630,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_ADD);
 			break;
 		}
-
+#if (CAIRO_VERSION_MAJOR==1 && CAIRO_VERSION_MINOR>=10) || CAIRO_VERSION_MAJOR>1
 		case OF_BLENDMODE_MULTIPLY:{
 			cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
 			break;
@@ -645,7 +645,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_DIFFERENCE);
 			break;
 		}
-
+#endif
 
 		default:
 			break;
