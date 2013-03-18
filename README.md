@@ -15,7 +15,7 @@ The `master` branch of this repository corresponds to the most recent release, w
 How to
 ------
 If you want to work with the openFrameworks GitHub repository, you should use the project generator to create project files for all the code in `examples/`.  
-For per-platform readmes, and more informations, see [documentation](docs/TOC.md).
+For per-platform readmes, and more informations, see [documentation](docs/table_of_contents.md).
 
 Versioning
 ----------
