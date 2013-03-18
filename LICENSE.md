@@ -12,4 +12,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-openFrameworks also ships with a mix of the following libraries, depending on your platform, which may have different licenses.
+openFrameworks also ships with a mix of the following [libraries](docs/libraries.md), depending on your platform, which may have different licenses.
+
+* [OpenGL](http://www.opengl.org/), [GLEW](http://glew.sourceforge.net/), [GLUT](http://www.opengl.org/resources/libraries/glut/), [libtess2](https://code.google.com/p/libtess2/) and [cairo](http://cairographics.org/) for graphics
+* [rtAudio](http://www.music.mcgill.ca/~gary/rtaudio/), [PortAudio](http://www.portaudio.com/) or [FMOD](http://www.fmod.org/)  and [Kiss FFT](http://kissfft.sourceforge.net/) for audio input, output and analysis
+* [FreeType](http://freetype.sourceforge.net/index2.html) for fonts
+* [FreeImage](http://freeimage.sourceforge.net/) for image saving and loading
+* [Quicktime](http://developer.apple.com/quicktime/), [Unicap](http://unicap-imaging.org/), [GStreamer](http://gstreamer.freedesktop.org/) and [videoInput](https://github.com/ofTheo/videoInput) for video playback and grabbing
+* [Poco](http://pocoproject.org/) for a variety of utilities
