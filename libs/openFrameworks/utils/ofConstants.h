@@ -100,7 +100,7 @@ enum ofTargetPlatform{
 		#pragma warning(disable : 4267)		// conversion from size_t to Size warning... possible loss of data
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
 		#pragma warning(disable : 4099)		// for debug, PDB 'vc80.pdb' was not found with...
-		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx TODO: Be active with VS2012
+		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
 	#endif
 
 	#define TARGET_LITTLE_ENDIAN			// intel cpu
