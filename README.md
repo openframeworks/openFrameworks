@@ -2,7 +2,7 @@
 ================
 openFrameworks is a C++ toolkit for creative coding
 
-Donwload
+Download
 --------
 To grab a copy of openFrameworks for your platform, check the [download page](http://openframeworks.cc/download) on the main site.  
  
