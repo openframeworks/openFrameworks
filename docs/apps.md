@@ -13,14 +13,14 @@ Hierarchy
 Just remember projects in `apps/` still need to be two levels deep.  
 
 	apps/
-	  mySoundApp/ 
+		mySoundApp/ 
 
 will not work
 
 	apps/  
-	  soundApps/  
-		mySoundApp/  
-	  miscApps/  
-		experiments/
+		soundApps/  
+			mySoundApp/  
+		miscApps/  
+			experiments/
 
 will work 
