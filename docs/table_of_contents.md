@@ -15,7 +15,7 @@ Getting started
 Usage
 -----
 * [Examples and Apps](apps.md) — An introduction to making use of openFrameworks core.
-* [projectGenerator](projectGenerator.md) — Usage of the tool to generate projects.
+* [projectGenerator](projectgenerator.md) — Usage of the tool to generate projects.
 
 About
 -----
