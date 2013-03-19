@@ -509,7 +509,7 @@ void ofVbo::bind(){
 		if(ofGLIsFixedPipeline()){
 			glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
 		}else{
-			glVertexAttribPointer(ofGetAttrLocationTexCoord(), 3, GL_FLOAT, GL_FALSE, texCoordStride, 0);
+			glVertexAttribPointer(ofGetAttrLocationTexCoord(), 2, GL_FLOAT, GL_FALSE, texCoordStride, 0);
 		}
 	}
 }
