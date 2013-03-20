@@ -172,7 +172,7 @@ void testApp::setup(){
     // this map is useful if we want to address the colors by string.
     // since we might want to sort this, we can put them in a vector also
     
-    for (int i = 0; i < colorNameMap.size(); i++){
+    for (unsigned int i = 0; i < colorNameMap.size(); i++){
         
         map<string, ofColor>::iterator mapEntry = colorNameMap.begin();
         std::advance( mapEntry, i );
@@ -220,7 +220,7 @@ void testApp::draw(){
     
   
     
-    for (int i = 0; i < colorNames.size(); i++){
+    for (unsigned int i = 0; i < colorNames.size(); i++){
     
         int x = (i % 3) * ofGetWidth()/3.0;
         int y = (floor(i / 3)) * 50;
