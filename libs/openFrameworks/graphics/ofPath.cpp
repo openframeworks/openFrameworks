@@ -268,7 +268,7 @@ void ofPath::ellipse(const ofPoint & p, float width, float height){
 }
 
 //----------------------------------------------------------
-void ofPath::rect(const ofRectangle & r){
+void ofPath::rectangle(const ofRectangle & r){
 	moveTo(r.getTopLeft());
 	lineTo(r.getTopRight());
 	lineTo(r.getBottomRight());
@@ -277,7 +277,7 @@ void ofPath::rect(const ofRectangle & r){
 }
 
 //----------------------------------------------------------
-void ofPath::rect(const ofPoint & p,float w,float h){
+void ofPath::rectangle(const ofPoint & p,float w,float h){
 	moveTo(p);
 	lineTo(p.x+w,p.y,p.z);
 	lineTo(p.x+w,p.y+h,p.z);
@@ -286,7 +286,7 @@ void ofPath::rect(const ofPoint & p,float w,float h){
 }
 
 //----------------------------------------------------------
-void ofPath::rect(float x,float y,float w,float h){
+void ofPath::rectangle(float x,float y,float w,float h){
 	moveTo(x,y);
 	lineTo(x+w,y);
 	lineTo(x+w,y+h);
@@ -295,7 +295,7 @@ void ofPath::rect(float x,float y,float w,float h){
 }
 
 //----------------------------------------------------------
-void ofPath::rect(float x,float y,float z,float w,float h){
+void ofPath::rectangle(float x,float y,float z,float w,float h){
 	moveTo(x,y,z);
 	lineTo(x+w,y,z);
 	lineTo(x+w,y+h,z);
@@ -365,7 +365,7 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 	   (fabs(bottomLeftRadius)  < FLT_EPSILON)) {
 
 		// rect mode respect happens in ofRect
-		rect(x, y, z, w, h);
+		rectangle(x, y, z, w, h);
 	} else {
 		float left   = x;
 		float right  = x + w;
