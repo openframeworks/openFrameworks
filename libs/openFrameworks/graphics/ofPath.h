@@ -64,10 +64,10 @@ public:
 	void ellipse(float x, float y, float z, float width, float height);
 	void ellipse(const ofPoint & p, float width, float height);
 
-	void rect(const ofRectangle & r);
-	void rect(const ofPoint & p,float w,float h);
-	void rect(float x,float y,float w,float h);
-	void rect(float x,float y,float z,float w,float h);
+	void rectangle(const ofRectangle & r);
+	void rectangle(const ofPoint & p,float w,float h);
+	void rectangle(float x,float y,float w,float h);
+	void rectangle(float x,float y,float z,float w,float h);
 
 	void rectRounded(const ofRectangle & b, float r);
 	void rectRounded(const ofPoint & p, float w, float h, float r);
