@@ -217,6 +217,196 @@ void ofPath::arcNegative(float x, float y, float z, float radiusX, float radiusY
 	arcNegative(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd);
 }
 
+
+
+//----------------------------------------------------------
+void ofPath::triangle(float x1,float y1,float x2,float y2,float x3, float y3){
+	triangle(x1,y1,0.0f,x2,y2,0.0f,x3,y3,0.0f);
+}
+
+//----------------------------------------------------------
+void ofPath::triangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
+	moveTo(x1,y1,z1);
+	lineTo(x2,y2,z2);
+	lineTo(x3,y3,z3);
+	close();
+}
+
+//----------------------------------------------------------
+void ofPath::triangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
+	triangle(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z);
+}
+
+
+//----------------------------------------------------------
+void ofPath::circle(float x, float y, float radius){
+	circle(x,y,0.0f,radius);
+}
+
+//----------------------------------------------------------
+void ofPath::circle(float x, float y, float z, float radius){
+	arc(x,y,z,radius,radius,0,360);
+}
+
+//----------------------------------------------------------
+void ofPath::circle(const ofPoint & p, float radius){
+	circle(p.x,p.y,p.z,radius);
+}
+
+
+//----------------------------------------------------------
+void ofPath::ellipse(float x, float y, float width, float height){
+	ellipse(x,y,0.0f,width,height);
+}
+
+//----------------------------------------------------------
+void ofPath::ellipse(float x, float y, float z, float width, float height){
+	arc(x,y,z,width*.5,height*.5,0,360);
+}
+
+//----------------------------------------------------------
+void ofPath::ellipse(const ofPoint & p, float width, float height){
+	ellipse(p.x,p.y,p.z,width,height);
+}
+
+//----------------------------------------------------------
+void ofPath::rect(const ofRectangle & r){
+	moveTo(r.getTopLeft());
+	lineTo(r.getTopRight());
+	lineTo(r.getBottomRight());
+	lineTo(r.getBottomLeft());
+	close();
+}
+
+//----------------------------------------------------------
+void ofPath::rect(const ofPoint & p,float w,float h){
+	moveTo(p);
+	lineTo(p.x+w,p.y,p.z);
+	lineTo(p.x+w,p.y+h,p.z);
+	lineTo(p.x,p.y+h,p.z);
+	close();
+}
+
+//----------------------------------------------------------
+void ofPath::rect(float x,float y,float w,float h){
+	moveTo(x,y);
+	lineTo(x+w,y);
+	lineTo(x+w,y+h);
+	lineTo(x,y+h);
+	close();
+}
+
+//----------------------------------------------------------
+void ofPath::rect(float x,float y,float z,float w,float h){
+	moveTo(x,y,z);
+	lineTo(x+w,y,z);
+	lineTo(x+w,y+h,z);
+	lineTo(x,y+h,z);
+	close();
+}
+
+//----------------------------------------------------------
+void ofPath::rectRounded(const ofRectangle & b, float r){
+	rectRounded(b.x,b.y,0,b.width,b.height,r,r,r,r);
+}
+
+//----------------------------------------------------------
+void ofPath::rectRounded(const ofPoint & p, float w, float h, float r){
+	rectRounded(p.x,p.y,p.z,w,h,r,r,r,r);
+}
+
+//----------------------------------------------------------
+void ofPath::rectRounded(float x, float y, float w, float h, float r){
+	rectRounded(x,y,0.0f,w,h,r,r,r,r);
+}
+
+//----------------------------------------------------------
+void ofPath::rectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
+														float topRightRadius,
+														float bottomRightRadius,
+														float bottomLeftRadius){
+
+	rectRounded(p.x,p.y,p.z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
+
+//----------------------------------------------------------
+void ofPath::rectRounded(const ofRectangle & b, float topLeftRadius,
+										  float topRightRadius,
+										  float bottomRightRadius,
+										  float bottomLeftRadius){
+	rectRounded(b.x,b.y,0,b.width,b.height,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
+
+//----------------------------------------------------------
+void ofPath::rectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
+												  float topRightRadius,
+												  float bottomRightRadius,
+												  float bottomLeftRadius){
+	// since we support w / h < 0, canonicalize the rectangle for easier drawing
+	if(w < 0.0f) {
+		x += w;
+		w *= -1.0f;
+	}
+
+	if(h < 0.0f) {
+		y += h;
+		h *= -1.0f;
+	}
+
+	// keep radii in check
+	float maxRadius = MIN(w / 2.0f, h / 2.0f);
+	topLeftRadius        = MIN(topLeftRadius,     maxRadius);
+	topRightRadius       = MIN(topRightRadius,    maxRadius);
+	bottomRightRadius    = MIN(bottomRightRadius, maxRadius);
+	bottomLeftRadius     = MIN(bottomLeftRadius,  maxRadius);
+
+	// if all radii are ~= 0.0f, then render as a normal rectangle
+	if((fabs(topLeftRadius)     < FLT_EPSILON) &&
+	   (fabs(topRightRadius)    < FLT_EPSILON) &&
+	   (fabs(bottomRightRadius) < FLT_EPSILON) &&
+	   (fabs(bottomLeftRadius)  < FLT_EPSILON)) {
+
+		// rect mode respect happens in ofRect
+		rect(x, y, z, w, h);
+	} else {
+		float left   = x;
+		float right  = x + w;
+		float top    = y;
+		float bottom = y + h;
+
+
+		moveTo(left + topLeftRadius, top, z);
+
+		// top right
+		if(fabs(topRightRadius) >= FLT_EPSILON) {
+			arc(right - topRightRadius, top + topRightRadius, z, topRightRadius, topRightRadius, 270, 360);
+		} else {
+			lineTo(right, top, z);
+		}
+
+		lineTo(right, bottom - bottomRightRadius);
+		// bottom right
+		if(fabs(bottomRightRadius) >= FLT_EPSILON) {
+			arc(right - bottomRightRadius, bottom - bottomRightRadius, z, bottomRightRadius, bottomRightRadius, 0, 90);
+		}
+
+		lineTo(left + bottomLeftRadius, bottom, z);
+
+		// bottom left
+		if(fabs(bottomLeftRadius) >= FLT_EPSILON) {
+			arc(left + bottomLeftRadius, bottom - bottomLeftRadius, z, bottomLeftRadius, bottomLeftRadius, 90, 180);
+		}
+
+		lineTo(left, top + topLeftRadius, z);
+
+		// top left
+		if(fabs(topLeftRadius) >= FLT_EPSILON) {
+			arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
+		}
+
+	}
+}
+
 //----------------------------------------------------------
 void ofPath::close(){
 	if(mode==COMMANDS){
@@ -328,10 +518,10 @@ void ofPath::generatePolylinesFromCommands(){
 				polylines[j].quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 				break;
 			case Command::arc:
-				polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, arcResolution);
+				polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
 				break;
 			case Command::arcNegative:
-				polylines[j].arcNegative(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, arcResolution);
+				polylines[j].arcNegative(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
 				break;
 			case Command::close:
 				polylines[j].setClosed(true);
