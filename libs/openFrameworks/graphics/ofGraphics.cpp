@@ -746,7 +746,7 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 
 //----------------------------------------------------------
 void ofRect(const ofRectangle & r){
-	ofRect(r.x, r.y, 0.0f, r.width, r.height);
+	ofRect(r.x,r.y,0.0f,r.width, r.height);
 }
 
 //----------------------------------------------------------
@@ -766,17 +766,17 @@ void ofRect(float x,float y,float z,float w,float h){
 
 //----------------------------------------------------------
 void ofRectRounded(const ofRectangle & b, float r){
-	ofRectRounded(b.x, b.y, 0.0f, b.width, b.height, r);
+	ofRectRounded(b,r,r,r,r);
 }
 
 //----------------------------------------------------------
 void ofRectRounded(const ofPoint & p, float w, float h, float r){
-	ofRectRounded(p.x, p.y, p.z, w, h, r);
+	ofRectRounded(p.x, p.y, p.z, w, h, r,r,r,r);
 }
 
 //----------------------------------------------------------
 void ofRectRounded(float x, float y, float w, float h, float r){
-	ofRectRounded(x, y, 0.0f, w, h, r);
+	ofRectRounded(x, y, 0.0f, w, h, r,r,r,r);
 }
 
 //----------------------------------------------------------
@@ -792,7 +792,9 @@ void ofRectRounded(const ofRectangle & b, float topLeftRadius,
                                           float topRightRadius,
                                           float bottomRightRadius,
                                           float bottomLeftRadius) {
-    ofRectRounded(b.x,b.y,0.0f,b.width,b.height,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+
+	// if the parameter is an ofRectangle we don't do rectMode
+	ofRectRounded(b.x,b.y,0.0f,b.width,b.height,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
 }
 
 
@@ -801,87 +803,17 @@ void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRad
                                                                 float topRightRadius,
                                                                 float bottomRightRadius,
                                                                 float bottomLeftRadius) {
-    
-    // since we support w / h < 0, canonicalize the rectangle for easier drawing
-    if(w < 0.0f) {
-        x += w;
-        w *= -1.0f;
-    }
-    
-    if(h < 0.0f) {
-        y += h; 
-        h *= -1.0f;
-    }
-    
-    // keep radii in check
-    float maxRadius = MIN(w / 2.0f, h / 2.0f);
-    topLeftRadius        = MIN(topLeftRadius,     maxRadius);
-    topRightRadius       = MIN(topRightRadius,    maxRadius);
-    bottomRightRadius    = MIN(bottomRightRadius, maxRadius);
-    bottomLeftRadius     = MIN(bottomLeftRadius,  maxRadius);
-    
-    // if all radii are ~= 0.0f, then render as a normal rectangle
-    if((fabs(topLeftRadius)     < FLT_EPSILON) &&
-       (fabs(topRightRadius)    < FLT_EPSILON) &&
-       (fabs(bottomRightRadius) < FLT_EPSILON) &&
-       (fabs(bottomLeftRadius)  < FLT_EPSILON)) {
- 
-        // rect mode respect happens in ofRect
-        ofRect(x, y, z, w, h);
-    } else {
-
-        // respect the current rectmode
-        switch (ofGetRectMode()) {
-            case OF_RECTMODE_CORNER:
-                break;
-            case OF_RECTMODE_CENTER:
-                x -= w / 2.0f;
-                y -= h / 2.0f;
-                break;
-            default:
-                ofLogWarning("ofRectRounded") << "Unknown ofRectMode " << ofGetRectMode() << ".";
-        }
-        
-        float left   = x;
-        float right  = x + w;
-        float top    = y;
-        float bottom = y + h;
-
-        shape.setCircleResolution(currentStyle.circleResolution);
-        
-        shape.clear();
-        
-        shape.lineTo(left + topLeftRadius, top, z);
-
-        // top right
-        if(fabs(topRightRadius) >= FLT_EPSILON) {
-            shape.arc(right - topRightRadius, top + topRightRadius, z, topRightRadius, topRightRadius, 270, 360);
-        } else {
-            shape.lineTo(right, top, z);
-        }
-        
-        shape.lineTo(right, bottom - bottomRightRadius);
-        // bottom right
-        if(fabs(bottomRightRadius) >= FLT_EPSILON) {
-            shape.arc(right - bottomRightRadius, bottom - bottomRightRadius, z, bottomRightRadius, bottomRightRadius, 0, 90);
-        }
-        
-        shape.lineTo(left + bottomLeftRadius, bottom, z);
-        
-        // bottom left
-        if(fabs(bottomLeftRadius) >= FLT_EPSILON) {
-            shape.arc(left + bottomLeftRadius, bottom - bottomLeftRadius, z, bottomLeftRadius, bottomLeftRadius, 90, 180);
-        }
-            
-        shape.lineTo(left, top + topLeftRadius, z);
-
-        // top left
-        if(fabs(topLeftRadius) >= FLT_EPSILON) {
-            shape.arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
-        }
-                               
-        shape.draw();
-    }
+	// respect the current rectmode
+	switch (ofGetRectMode()) {
+		case OF_RECTMODE_CENTER:
+			x -= w / 2.0f;
+			y -= h / 2.0f;
+			break;
+		default:
+			break;
+	}
+    shape.rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+    shape.draw();
 
 }
 

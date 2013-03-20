@@ -52,6 +52,39 @@ public:
 	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
+	void triangle(float x1,float y1,float x2,float y2,float x3, float y3);
+	void triangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3);
+	void triangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
+
+	void circle(float x, float y, float radius);
+	void circle(float x, float y, float z, float radius);
+	void circle(const ofPoint & p, float radius);
+
+	void ellipse(float x, float y, float width, float height);
+	void ellipse(float x, float y, float z, float width, float height);
+	void ellipse(const ofPoint & p, float width, float height);
+
+	void rect(const ofRectangle & r);
+	void rect(const ofPoint & p,float w,float h);
+	void rect(float x,float y,float w,float h);
+	void rect(float x,float y,float z,float w,float h);
+
+	void rectRounded(const ofRectangle & b, float r);
+	void rectRounded(const ofPoint & p, float w, float h, float r);
+	void rectRounded(float x, float y, float w, float h, float r);
+	void rectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
+	                                                        float topRightRadius,
+	                                                        float bottomRightRadius,
+	                                                        float bottomLeftRadius);
+	void rectRounded(const ofRectangle & b, float topLeftRadius,
+	                                          float topRightRadius,
+	                                          float bottomRightRadius,
+	                                          float bottomLeftRadius);
+	void rectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
+                                                      float topRightRadius,
+                                                      float bottomRightRadius,
+                                                      float bottomLeftRadius);
+
 	void setPolyWindingMode(ofPolyWindingMode mode);
 	void setFilled(bool hasFill); // default true
 	void setStrokeWidth(float width); // default 0
