@@ -65,7 +65,8 @@ namespace ofxCv {
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
 		bool findBoard(Mat img, vector<Point2f> &pointBuf, bool refine = true);
-										  
+		void setIntrinsics(Intrinsics& distortedIntrinsics, Mat& distortionCoefficients);
+        
 		void undistort(Mat img, int interpolationMode = INTER_NEAREST);
 		void undistort(Mat src, Mat dst, int interpolationMode = INTER_NEAREST);
 		

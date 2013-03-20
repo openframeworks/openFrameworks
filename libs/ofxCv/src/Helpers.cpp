@@ -88,6 +88,40 @@ namespace ofxCv {
 		return angleSum / weights;
 	}
 	
+	vector<cv::Point2f> getConvexPolygon(const vector<cv::Point2f>& convexHull, int targetPoints) {
+		vector<cv::Point2f> result = convexHull;
+		
+		static const unsigned int maxIterations = 16;
+		static const double infinity = numeric_limits<double>::infinity();
+		double minEpsilon = 0;
+		double maxEpsilon = infinity;
+		double curEpsilon = 16; // good initial guess
+		
+		// unbounded binary search to simplify the convex hull until it's targetPoints
+		if(result.size() > targetPoints) {
+			for(int i = 0; i < maxIterations; i++) {
+				approxPolyDP(Mat(convexHull), result, curEpsilon, true);
+				if(result.size() == targetPoints) {
+					break;
+				}
+				if(result.size() > targetPoints) {
+					minEpsilon = curEpsilon;
+					if(maxEpsilon == infinity) {
+						curEpsilon = curEpsilon *  2;
+					} else {
+						curEpsilon = (maxEpsilon + minEpsilon) / 2;
+					}
+				}
+				if(result.size() < targetPoints) {
+					maxEpsilon = curEpsilon;
+					curEpsilon = (maxEpsilon + minEpsilon) / 2;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	void drawHighlightString(string text, ofPoint position, ofColor background, ofColor foreground) {
 		drawHighlightString(text, position.x, position.y, background, foreground);
 	}

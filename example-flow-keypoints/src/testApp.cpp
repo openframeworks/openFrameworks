@@ -4,7 +4,6 @@ using namespace cv;
 using namespace ofxCv;
 
 void testApp::setup(){
-	grabber.setDeviceID(1);
 	grabber.initGrabber(640,480);
 }
 
@@ -45,7 +44,9 @@ void testApp::mouseReleased(int x, int y, int button){
 			keypointsInside.push_back(keypoints[i]);
 		}
 	}
+    #if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
 	KeyPointsFilter::retainBest(keypointsInside,30);
+    #endif
 	KeyPoint::convert(keypointsInside,featuresToTrack);
 	flow.setFeaturesToTrack(featuresToTrack);
 }

@@ -307,6 +307,7 @@ cv::name(xMat, yMat, resultMat);\
 	ofPolyline convexHull(const ofPolyline& polyline);
 	cv::RotatedRect minAreaRect(const ofPolyline& polyline);
 	cv::RotatedRect fitEllipse(const ofPolyline& polyline);
+	void fitLine(const ofPolyline& polyline, ofVec2f& point, ofVec2f& direction);
 	
 	// kind of obscure function, draws filled polygons on the CPU
 	template <class D>
