@@ -53,14 +53,12 @@ ofPath::ofPath(){
 
 //----------------------------------------------------------
 void ofPath::clear(){
-	if(mode==COMMANDS){
-		commands.clear();
-	}else{
-		// for performance, instead of clearing the whole vector
-		// let one polyline and clear it: avoids instantiation
-		polylines.resize(1);
-		polylines[0].clear();
-	}
+	commands.clear();
+	// for performance, instead of clearing the whole vector
+	// let one polyline and clear it: avoids instantiation
+	polylines.resize(1);
+	polylines[0].clear();
+	cachedTessellation.clear();
 	flagShapeChanged();
 }
 
