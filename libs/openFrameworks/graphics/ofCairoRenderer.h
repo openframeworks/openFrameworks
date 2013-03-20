@@ -32,7 +32,7 @@ public:
 	void update();
 
 	void draw(ofPath & shape);
-	void draw(ofSubPath & path);
+	void draw(ofPath::Command & path);
 	void draw(ofPolyline & poly);
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
