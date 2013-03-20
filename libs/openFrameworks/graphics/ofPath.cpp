@@ -35,15 +35,14 @@ ofPath::Command::Command(Type type , const ofPoint & centre, float radiusX, floa
 {
 }
 
-// ofShape
 //----------------------------------------------------------
 ofPath::ofPath(){
 	strokeWidth = 0;
 	bFill = true;
 	windingMode = OF_POLY_WINDING_ODD;
-	prevCurveRes = 16;
-	curveResolution = 16;
-	arcResolution = 20;
+	prevCurveRes = 20;
+	curveResolution = 20;
+	circleResolution = 20;
 	mode = COMMANDS;
 	bNeedsTessellation = false;
 	bHasChanged = false;
@@ -114,7 +113,7 @@ void ofPath::curveTo(const ofPoint & p){
 	if(mode==COMMANDS){
 		addCommand(Command(Command::curveTo,p));
 	}else{
-		lastPolyline().curveTo(p);
+		lastPolyline().curveTo(p,curveResolution);
 	}
 	flagShapeChanged();
 }
@@ -134,7 +133,7 @@ void ofPath::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & 
 	if(mode==COMMANDS){
 		addCommand(Command(Command::bezierTo,p,cp1,cp2));
 	}else{
-		lastPolyline().bezierTo(cp1,cp2,p);
+		lastPolyline().bezierTo(cp1,cp2,p,curveResolution);
 	}
 	flagShapeChanged();
 }
@@ -154,7 +153,7 @@ void ofPath::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoin
 	if(mode==COMMANDS){
 		addCommand(Command(Command::quadBezierTo,p,cp1,cp2));
 	}else{
-		lastPolyline().quadBezierTo(cp1,cp2,p);
+		lastPolyline().quadBezierTo(cp1,cp2,p,curveResolution);
 	}
 	flagShapeChanged();
 }
@@ -183,7 +182,7 @@ void ofPath::arc(const ofPoint & centre, float radiusX, float radiusY, float ang
 	if(mode==COMMANDS){
 		addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
-		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,arcResolution);
+		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
 	}
 	flagShapeChanged();
 }
@@ -203,7 +202,7 @@ void ofPath::arcNegative(const ofPoint & centre, float radiusX, float radiusY, f
 	if(mode==COMMANDS){
 		addCommand(Command(Command::arcNegative,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
-		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,arcResolution);
+		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
 	}
 	flagShapeChanged();
 }
@@ -226,7 +225,6 @@ void ofPath::close(){
 		lastPolyline().setClosed(true);
 	}
 	flagShapeChanged();
-	//newPath();
 }
 
 //----------------------------------------------------------
@@ -393,6 +391,7 @@ void ofPath::draw(){
 	}else{
 		tessellate();
 
+
 		ofColor prevColor;
 		if(bUseShapeColor){
 			prevColor = ofGetStyle().color;
@@ -462,18 +461,23 @@ void ofPath::setCurveResolution(int _curveResolution){
 }
 
 //----------------------------------------------------------
-int ofPath::getCurveResolution(){
-	return curveResolution;
+void ofPath::setCircleResolution(int res){
+	circleResolution = res;
+}
+
+//----------------------------------------------------------
+int ofPath::getCircleResolution() const {
+	return circleResolution;
 }
 
 //----------------------------------------------------------
 void ofPath::setArcResolution(int res){
-	arcResolution = res;
+	circleResolution = res;
 }
 
 //----------------------------------------------------------
-int ofPath::getArcResolution(){
-	return arcResolution;
+int ofPath::getArcResolution() const {
+	return circleResolution;
 }
 
 //----------------------------------------------------------
@@ -482,7 +486,7 @@ void ofPath::setUseShapeColor(bool useColor){
 }
 
 //----------------------------------------------------------
-bool ofPath::getUseShapeColor(){
+bool ofPath::getUseShapeColor() const {
 	return bUseShapeColor;
 }
 
