@@ -7,26 +7,26 @@ private:
 	int** p; 
 	void delete_all() {
 		for (int i = 0; i < Nr; i++) 
-				delete[] p[i];
-			delete[] p;
+			delete[] p[i];
+		delete[] p;
 	}
 public:
 	imatrix() 
-    {
+	{
 		Nr = 1, Nc = 1;
 		p = new int*[Nr];
 		for(int i = 0; i < Nr; i++)
-		   p[i] = new int[Nc];
-        p[0][0]=1; 
-    };
+			p[i] = new int[Nc];
+		p[0][0]=1; 
+	};
 	imatrix(int i, int j) 
-    {
+	{
 		Nr = i, Nc = j;
 		
 		p = new int*[Nr];
 		for(i = 0; i < Nr; i++)
-		   p[i] = new int[Nc];
-    };
+			p[i] = new int[Nc];
+	};
 	imatrix(imatrix& b) {
 		Nr = b.Nr;
 		Nc = b.Nc;
@@ -39,20 +39,20 @@ public:
 		}
 	}
 	void init(int i, int j) 
-    {
+	{
 		delete_all();
 		Nr = i, Nc = j;
 		p = new int*[Nr];
 		for(i = 0; i < Nr; i++)
-		   p[i] = new int[Nc];
-    };
-
+			p[i] = new int[Nc];
+	};
+	
 	~imatrix()
 	{
 		delete_all();
 	}
 	int* operator[](int i) { return p[i]; };
-
+	
 	int& get( int i, int j ) const { return p[i][j]; }
 	int getRow() const { return Nr; }
 	int getCol() const { return Nc; }

@@ -230,7 +230,7 @@ cv::name(xMat, yMat, resultMat);\
 		copy(src, dst);
 		int width = getWidth(src), height = getHeight(src);
 		imatrix img;
-		img.init(width, height);
+		img.init(height, width);
 		int j = 0;
 		Mat dstMat = toCv(dst);
 		// copy from dst to img
@@ -240,7 +240,7 @@ cv::name(xMat, yMat, resultMat);\
 			}
 		}
 		ETF etf;
-		etf.init(width, height);
+		etf.init(height, width);
 		etf.set(img);
 		etf.Smooth(halfw, smoothPasses);
 		GetFDoG(img, etf, sigma1, sigma2, tau);
