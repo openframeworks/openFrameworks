@@ -53,7 +53,7 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 	renderer->setupGraphicDefaults();
 
 	if(renderer->rendersPathPrimitives()){
-		shape.setMode(ofPath::PATHS);
+		shape.setMode(ofPath::COMMANDS);
 	}else{
 		shape.setMode(ofPath::POLYLINES);
 	}

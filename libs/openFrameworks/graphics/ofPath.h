@@ -8,7 +8,6 @@
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
 
-class ofSubPath;
 
 class ofPath{
 public:
@@ -74,9 +73,6 @@ public:
 	void draw(float x, float y);
 	void draw();
 
-	vector<ofSubPath> & getSubPaths();
-	const vector<ofSubPath> & getSubPaths() const;
-
 	vector<ofPolyline> & getOutline();
 	ofMesh & getTessellation();
 
@@ -84,13 +80,15 @@ public:
 
 	// only needs to be called when path is modified externally
 	void flagShapeChanged();
+	bool hasChanged();
 
 	enum Mode{
-		PATHS,
+		COMMANDS,
 		POLYLINES
 	};
 
 	void setMode(Mode mode);
+	Mode getMode();
 
 	void setCurveResolution(int curveResolution);
 	int getCurveResolution();
@@ -107,15 +105,49 @@ public:
 	void rotate(float az, const ofVec3f& axis );
 	void scale(float x, float y);
 
+	struct Command{
+		enum Type{
+			moveTo,
+			lineTo,
+			curveTo,
+			bezierTo,
+			quadBezierTo,
+			arc,
+			arcNegative,
+			close
+		};
+
+		/// for close
+		Command(Type type);
+
+		/// for lineTo and curveTo
+		Command(Type type , const ofPoint & p);
+
+		/// for bezierTo
+		Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2);
+
+		///for arc
+		Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
+
+
+		Type type;
+		ofPoint to;
+		ofPoint cp1, cp2;
+		float radiusX, radiusY, angleBegin, angleEnd;
+	};
+
+	vector<Command> & getCommands();
+	const vector<Command> & getCommands() const;
+
 private:
 
-	ofSubPath & lastPath();
 	ofPolyline & lastPolyline();
-
-	void generatePolylinesFromPaths();
+	void addCommand(const Command & command);
+	void generatePolylinesFromCommands();
 
 	// path description
-	vector<ofSubPath>		paths;
+	//vector<ofSubPath>		paths;
+	vector<Command> 	commands;
 	ofPolyWindingMode 	windingMode;
 	ofColor 			fillColor;
 	ofColor				strokeColor;
@@ -127,62 +159,19 @@ private:
 	vector<ofPolyline>  polylines;
 	vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
 
-	ofVboMesh				cachedTessellation;
+	ofVboMesh			cachedTessellation;
 	bool				cachedTessellationValid;
 
 	static ofTessellator tessellator;
 
-	bool				hasChanged;
+	bool				bHasChanged;
 	int					prevCurveRes;
 	int					curveResolution;
 	int					arcResolution;
 	bool 				bNeedsTessellation;
+	bool				bNeedsPolylinesGeneration;
 
 	Mode				mode;
 };
 
-
-class ofSubPath{
-public:
-	struct Command;
-
-	ofSubPath();
-	vector<Command> & getCommands();
-	const vector<Command> & getCommands() const;
-	void addCommand(const Command & command);
-	bool hasChanged();
-	void close();
-	bool isClosed();
-	int size();
-
-	struct Command{
-		enum Type{
-			lineTo,
-			curveTo,
-			bezierTo,
-			quadBezierTo,
-			arc,
-            arcNegative,
-		};
-
-		/// for lineTo and curveTo
-		Command(Type type , const ofPoint & p);
-
-		/// for bezierTo
-		Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2);
-
-		///for arc
-		Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
-
-		Type type;
-		ofPoint to;
-		ofPoint cp1, cp2;
-		float radiusX, radiusY, angleBegin, angleEnd;
-	};
-
-private:
-	vector<Command> commands;
-	bool			bClosed;
-	bool			bHasChanged;
-};
 
