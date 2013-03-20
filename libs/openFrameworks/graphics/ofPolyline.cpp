@@ -262,15 +262,15 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 }
 
 //----------------------------------------------------------
-void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int curveResolution){
+void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution){
     
-    if(curveResolution<=1) curveResolution=2;
-    setCircleResolution(curveResolution);
-    points.reserve(points.size()+curveResolution);
+    if(circleResolution<=1) circleResolution=2;
+    setCircleResolution(circleResolution);
+    points.reserve(points.size()+circleResolution);
 
     const float epsilon = 0.0001f;
     
-    const int nCirclePoints = (int)circlePoints.size();
+    const size_t nCirclePoints = circlePoints.size();
     float segmentArcSize  = M_TWO_PI / (float)nCirclePoints;
     
     // convert angles to radians and wrap them into the range 0-M_TWO_PI and 
@@ -402,32 +402,14 @@ ofPoint ofPolyline::getCentroid2D() const{
 
 //----------------------------------------------------------
 ofRectangle ofPolyline::getBoundingBox() const {
-
 	ofRectangle box;
-	int n = size();
-	if(n > 0) {
-		const ofPoint& first = (*this)[0];
-		// inititally, use width and height as max x and max y
-		box.set(first.x, first.y, first.x, first.y);
-		for(int i = 0; i < n; i++) {
-			const ofPoint& cur = (*this)[i];
-			if(cur.x < box.x) {
-				box.x = cur.x;
-			}
-			if(cur.x > box.width) {
-				box.width = cur.x;
-			}
-			if(cur.y < box.y) {
-				box.y = cur.y;
-			}
-			if(cur.y > box.height) {
-				box.height = cur.y;
-			}
-		}
-		// later, we make width and height relative
-		box.width -= box.x;
-		box.height -= box.y;
-	}
+    for(size_t i = 0; i < size(); i++) {
+        if(i == 0) {
+            box.set(points[i],0,0);
+        } else {
+            box.growToInclude(points[i]);
+        }
+    }
 	return box;
 }
 
