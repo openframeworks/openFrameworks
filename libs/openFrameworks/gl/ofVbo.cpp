@@ -382,57 +382,57 @@ void ofVbo::disableIndices(){
 }
 
 //--------------------------------------------------------------
-bool ofVbo::getIsAllocated(){
+bool ofVbo::getIsAllocated() const {
 	return bAllocated;
 }	
 
 //--------------------------------------------------------------
-bool ofVbo::getUsingVerts(){
+bool ofVbo::getUsingVerts() const  {
 	return bUsingVerts;
 }	
 
 //--------------------------------------------------------------
-bool ofVbo::getUsingColors(){
+bool ofVbo::getUsingColors() const {
 	return bUsingColors;
 }	
 
 //--------------------------------------------------------------
-bool ofVbo::getUsingNormals(){
+bool ofVbo::getUsingNormals() const {
 	return bUsingNormals;
 }
 
 //--------------------------------------------------------------
-bool ofVbo::getUsingTexCoords(){
+bool ofVbo::getUsingTexCoords() const {
 	return bUsingTexCoords;
 }
 
 //--------------------------------------------------------------
-bool ofVbo::getUsingIndices(){
+bool ofVbo::getUsingIndices() const {
 	return  bUsingIndices;
 }
 
 //--------------------------------------------------------------
-GLuint ofVbo::getVertId(){
+GLuint ofVbo::getVertId() const {
 	return vertId;
 }
 
 //--------------------------------------------------------------
-GLuint ofVbo::getColorId(){
+GLuint ofVbo::getColorId() const{
 	return colorId;
 }
 
 //--------------------------------------------------------------
-GLuint ofVbo::getNormalId(){
+GLuint ofVbo::getNormalId() const {
 	return normalId;
 }
 
 //--------------------------------------------------------------
-GLuint ofVbo::getTexCoordId(){
+GLuint ofVbo::getTexCoordId() const {
 	return texCoordId;
 }
 
 //--------------------------------------------------------------
-GLuint ofVbo::getIndexId(){
+GLuint ofVbo::getIndexId() const {
 	return indexId;
 }
 

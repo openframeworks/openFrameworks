@@ -56,109 +56,25 @@ void ofVboMesh::disableIndices(){
 	vbo.disableIndices();
 }
 
-bool ofVboMesh::usingColors(){
+bool ofVboMesh::usingColors() const {
 	return vbo.getUsingColors();
 }
 
-bool ofVboMesh::usingTextures(){
+bool ofVboMesh::usingTextures() const {
 	return vbo.getUsingTexCoords();
 }
 
-bool ofVboMesh::usingNormals(){
+bool ofVboMesh::usingNormals() const {
 	return vbo.getUsingNormals();
 }
 
-bool ofVboMesh::usingIndices(){
+bool ofVboMesh::usingIndices() const {
 	return vbo.getUsingIndices();
 }
 
 
 void ofVboMesh::draw(ofPolyRenderMode drawMode){
-	if(!vbo.getIsAllocated()){
-		if(getNumVertices()){
-			vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
-		}
-		if(getNumColors()){
-			vbo.setColorData(getColorsPointer(),getNumColors(),usage);
-		}
-		if(getNumNormals()){
-			vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
-		}
-		if(getNumTexCoords()){
-			vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
-		}
-		if(getNumIndices()){
-			vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
-		}
-		vboNumIndices = getNumIndices();
-		vboNumVerts = getNumVertices();
-		vboNumColors = getNumColors();
-		vboNumTexCoords = getNumTexCoords();
-		vboNumNormals = getNumNormals();
-	}
-
-	if(haveVertsChanged()){
-		if(getNumVertices()==0){
-			vbo.clearVertices();
-			vboNumVerts = getNumVertices();
-		}else if(vboNumVerts!=getNumVertices()){
-			vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
-			vboNumVerts = getNumVertices();
-		}else{
-			vbo.updateVertexData(getVerticesPointer(),getNumVertices());
-		}
-	}
-	if(haveColorsChanged()){
-		if(getNumColors()==0){
-			vbo.clearColors();
-			vboNumColors = getNumColors();
-		}else if(vboNumColors!=getNumColors()){
-			vbo.setColorData(getColorsPointer(),getNumColors(),usage);
-			vboNumColors = getNumColors();
-		}else{
-			vbo.enableColors();
-			vbo.updateColorData(getColorsPointer(),getNumColors());
-
-		}
-	}
-	if(haveNormalsChanged()){
-		if(getNumNormals()==0){
-			vbo.clearNormals();
-			vboNumNormals = getNumNormals();
-		}else if(vboNumNormals!=getNumNormals()){
-			vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
-			vboNumNormals = getNumNormals();
-		}else{
-			vbo.enableNormals();
-			vbo.updateNormalData(getNormalsPointer(),getNumNormals());
-		}
-	}
-	if(haveTexCoordsChanged()){
-		if(getNumTexCoords()==0){
-			vbo.clearTexCoords();
-			vboNumTexCoords = getNumTexCoords();
-		}else if(vboNumTexCoords!=getNumTexCoords()){
-			vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
-			vboNumTexCoords = getNumTexCoords();
-		}else{
-			vbo.enableTexCoords();
-			vbo.updateTexCoordData(getTexCoordsPointer(),getNumTexCoords());
-		}
-	}
-	if(haveIndicesChanged()){
-		if(getNumIndices()==0){
-			vbo.clearIndices();
-			vboNumIndices = getNumIndices();
-		}else if(vboNumIndices!=getNumIndices()){
-			vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
-			vboNumIndices = getNumIndices();
-		}else{
-			vbo.enableIndices();
-			vbo.updateIndexData(getIndexPointer(),getNumIndices());
-		}
-	}
-
-
+	updateVbo();
 	GLuint mode = ofGetGLPrimitiveMode(getMode());
 #ifndef TARGET_OPENGLES
 	glPushAttrib(GL_POLYGON_BIT);
@@ -187,5 +103,91 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	}
 #endif
 
+}
 
+void ofVboMesh::updateVbo(){
+	if(!vbo.getIsAllocated()){
+		if(getNumVertices()){
+			vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
+		}
+		if(getNumColors()){
+			vbo.setColorData(getColorsPointer(),getNumColors(),usage);
+		}
+		if(getNumNormals()){
+			vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
+		}
+		if(getNumTexCoords()){
+			vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
+		}
+		if(getNumIndices()){
+			vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
+		}
+		vboNumIndices = getNumIndices();
+		vboNumVerts = getNumVertices();
+		vboNumColors = getNumColors();
+		vboNumTexCoords = getNumTexCoords();
+		vboNumNormals = getNumNormals();
+	}else{
+
+		if(haveVertsChanged()){
+			if(getNumVertices()==0){
+				vbo.clearVertices();
+				vboNumVerts = getNumVertices();
+			}else if(vboNumVerts!=getNumVertices()){
+				vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
+				vboNumVerts = getNumVertices();
+			}else{
+				vbo.updateVertexData(getVerticesPointer(),getNumVertices());
+			}
+		}
+		if(haveColorsChanged()){
+			if(getNumColors()==0){
+				vbo.clearColors();
+				vboNumColors = getNumColors();
+			}else if(vboNumColors!=getNumColors()){
+				vbo.setColorData(getColorsPointer(),getNumColors(),usage);
+				vboNumColors = getNumColors();
+			}else{
+				vbo.enableColors();
+				vbo.updateColorData(getColorsPointer(),getNumColors());
+
+			}
+		}
+		if(haveNormalsChanged()){
+			if(getNumNormals()==0){
+				vbo.clearNormals();
+				vboNumNormals = getNumNormals();
+			}else if(vboNumNormals!=getNumNormals()){
+				vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
+				vboNumNormals = getNumNormals();
+			}else{
+				vbo.enableNormals();
+				vbo.updateNormalData(getNormalsPointer(),getNumNormals());
+			}
+		}
+		if(haveTexCoordsChanged()){
+			if(getNumTexCoords()==0){
+				vbo.clearTexCoords();
+				vboNumTexCoords = getNumTexCoords();
+			}else if(vboNumTexCoords!=getNumTexCoords()){
+				vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
+				vboNumTexCoords = getNumTexCoords();
+			}else{
+				vbo.enableTexCoords();
+				vbo.updateTexCoordData(getTexCoordsPointer(),getNumTexCoords());
+			}
+		}
+		if(haveIndicesChanged()){
+			if(getNumIndices()==0){
+				vbo.clearIndices();
+				vboNumIndices = getNumIndices();
+			}else if(vboNumIndices!=getNumIndices()){
+				vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
+				vboNumIndices = getNumIndices();
+			}else{
+				vbo.enableIndices();
+				vbo.updateIndexData(getIndexPointer(),getNumIndices());
+			}
+		}
+	}
 }

@@ -64,7 +64,7 @@ void testApp::draw(){
 	ofPopMatrix();
 	
 	ofSetColor(255);	
-	for(int i = 0; i < cities.size(); i++){
+	for(unsigned int i = 0; i < cities.size(); i++){
 		
 		//three rotations
 		//two to represent the latitude and lontitude of the city
