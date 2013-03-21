@@ -34,7 +34,7 @@ namespace ofxCv {
 		}
 		void update(cv::Mat img) {
 			convertColor(img, gray, CV_RGB2GRAY);
-			resize(gray, graySmall);
+			resize(gray, graySmall, rescale, rescale);
 			cv::Mat graySmallMat = toCv(graySmall);
 			if(useHistogramEqualization) {
 				equalizeHist(graySmallMat, graySmallMat);
@@ -50,10 +50,11 @@ namespace ofxCv {
 		}
 		ofRectangle getObject(int i) const {
 			ofRectangle rect = toOf(objects[i]);
-			rect.scale(1 / rescale);
+			rect.width /= rescale, rect.height /= rescale;
+			rect.x /= rescale, rect.y /= rescale;
 			return rect;
 		}
-		void setRescale() {
+		void setRescale(float rescale) {
 			this->rescale = rescale;
 		}
 		float getRescale() const {
