@@ -630,7 +630,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_ADD);
 			break;
 		}
-
+#if (CAIRO_VERSION_MAJOR==1 && CAIRO_VERSION_MINOR>=10) || CAIRO_VERSION_MAJOR>1
 		case OF_BLENDMODE_MULTIPLY:{
 			cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
 			break;
@@ -645,7 +645,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_DIFFERENCE);
 			break;
 		}
-
+#endif
 
 		default:
 			break;
@@ -854,7 +854,7 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	if(height == 0) height = ofGetWindowHeight();
 
 	if (invertY){
-		y = ofGetWindowHeight() - (y + height);
+		y = -y;
 	}
 
 
@@ -875,8 +875,8 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 	if(height == 0) height = ofGetHeight();
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = viewportRect.width;
+	float viewH = viewportRect.height;
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -943,8 +943,8 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation 
 	if(height == 0) height = ofGetHeight();
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = viewportRect.width;
+	float viewH = viewportRect.height;
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
