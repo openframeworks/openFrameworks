@@ -259,7 +259,10 @@ cv::name(xMat, yMat, resultMat);\
 	
 	template <class S, class D>
 	void resize(S& src, D& dst, float xScale, float yScale, int interpolation = INTER_LINEAR) { // also: INTER_NEAREST, INTER_AREA, INTER_CUBIC, INTER_LANCZOS4
-		allocate(dst, getWidth(src) * xScale, getHeight(src) * yScale, getCvImageType(src));
+		int dstWidth = getWidth(src) * xScale, dstHeight = getHeight(src) * yScale;
+		if(getWidth(dst) != dstWidth || getHeight(dst) != dstHeight) {
+			allocate(dst, dstWidth, dstHeight, getCvImageType(src));
+		}
 		Mat srcMat = toCv(src), dstMat = toCv(dst);
 		resize(src, dst, interpolation);
 	}
