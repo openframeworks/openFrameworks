@@ -21,7 +21,7 @@ extern "C"{
 #include "ofxAccelerometer.h"
 #include <android/log.h>
 #include "ofFileUtils.h"
-#include "ofGLES2Renderer.h"
+#include "ofProgrammableGLRenderer.h"
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
@@ -124,7 +124,7 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 }
 
 void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
-
+	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofProgrammableGLRenderer));
 }
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
@@ -343,8 +343,8 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 			androidApp->unloadTextures();
 		}
 	}
-	if(ofGetCurrentRenderer()->getType()=="GLES2"){
-		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
 		renderer->setup();
 	}
 	reloadTextures();
@@ -359,9 +359,9 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
-	if(ofGetCurrentRenderer()->getType()=="GLES2"){
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
 		ofLogNotice() << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
-		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
 		renderer->setup();
 	}
 	ofLog(OF_LOG_NOTICE,"setup");
@@ -431,8 +431,8 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	ofNotifyUpdate();
 
 
-	if(ofGetCurrentRenderer()->getType()=="GLES2"){
-		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
 		renderer->startRender();
 	}
 	int width, height;
@@ -454,8 +454,8 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	if(bSetupScreen) ofSetupScreen();
 	ofNotifyDraw();
 
-	if(ofGetCurrentRenderer()->getType()=="GLES2"){
-		ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
 		renderer->finishRender();
 	}
 
