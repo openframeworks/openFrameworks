@@ -240,7 +240,7 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 #ifndef TARGET_OPENGLES
 	glGenVertexArrays(1, &defaultVAO);
 #else
-	glGenVertexArraysOES(1, &defaultVAO);
+	//TODO: glGenVertexArraysOES(1, &defaultVAO);
 #endif
 }
 
@@ -249,7 +249,7 @@ ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 #ifndef TARGET_OPENGLES
 	glDeleteVertexArrays(1, &defaultVAO);
 #else
-	glDeleteVertexArraysOES(1, &defaultVAO);
+	//TODO: glDeleteVertexArraysOES(1, &defaultVAO);
 #endif
 
 	ofLogNotice() << "Destroyed ofProgrammableGLRenderer";
@@ -262,7 +262,7 @@ void ofProgrammableGLRenderer::startRender() {
 #ifndef TARGET_OPENGLES
 	glBindVertexArray(defaultVAO);
 #else
-	glBindVertexArrayOES(defaultVAO);
+	//TODO: glBindVertexArrayOES(defaultVAO);
 #endif
 	currentShader.begin();
 }
@@ -275,7 +275,7 @@ void ofProgrammableGLRenderer::finishRender() {
 #ifndef TARGET_OPENGLES
 	glBindVertexArray(0);
 #else
-	glBindVertexArrayOES(0);
+	//TODO: glBindVertexArrayOES(0);
 #endif
 	
 	int tmpCounter = 0;
@@ -1026,47 +1026,35 @@ void ofProgrammableGLRenderer::setBlendMode(ofBlendMode blendMode){
 
 		case OF_BLENDMODE_ALPHA:{
 			glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
+			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			break;
 		}
 
 		case OF_BLENDMODE_ADD:{
 			glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
+			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			break;
 		}
 
 		case OF_BLENDMODE_MULTIPLY:{
 			glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
+			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
 			break;
 		}
 
 		case OF_BLENDMODE_SCREEN:{
 			glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
+			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
 			break;
 		}
 
 		case OF_BLENDMODE_SUBTRACT:{
 			glEnable(GL_BLEND);
-		#ifndef TARGET_OPENGLES
 			glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-		#else
-			ofLog(OF_LOG_WARNING, "OF_BLENDMODE_SUBTRACT not currently supported on OpenGL/ES");
-		#endif
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			break;
 		}

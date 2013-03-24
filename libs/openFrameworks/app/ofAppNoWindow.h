@@ -67,6 +67,7 @@ class ofNoopRenderer: public ofBaseRenderer{
 
 	virtual void draw(ofPolyline & poly){}
 	virtual void draw(ofPath & shape){}
+	virtual void draw(of3dPrimitive&, ofPolyRenderMode){}
 	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){}
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){}
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){}
