@@ -44,6 +44,10 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode, ofBaseRenderer* renderer, bool initGlew){
+	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode, ofPtr<ofBaseRenderer>(renderer), initGlew);
+}
+
 
 void ofExitCallback();
 
@@ -83,23 +87,29 @@ void ofRunApp(ofBaseApp * OFSA){
 
 //--------------------------------------
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+	ofSetupOpenGL(windowPtr, w, h, screenMode, ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+}
+
+//--------------------------------------
+void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> rendererPtr, bool initGlew){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
 	
 #ifndef TARGET_OPENGLES
-	glewExperimental = GL_TRUE;
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		/* Problem: glewInit failed, something is seriously wrong. */
-		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
+	if(initGlew){
+		glewExperimental = GL_TRUE;
+		GLenum err = glewInit();
+		if (GLEW_OK != err)
+		{
+			/* Problem: glewInit failed, something is seriously wrong. */
+			ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
+		}
 	}
 #endif
-	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+	ofSetCurrentRenderer(rendererPtr);
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	//ofSetupGraphicDefaults();
 }
-
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
