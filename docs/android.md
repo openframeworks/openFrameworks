@@ -1,3 +1,8 @@
+[openFrameworks](http://openframeworks.cc/) | [Documentation table of contents](table_of_contents.md)
+
+Android
+=======
+
 This information is also online: http://openframeworks.cc/setup/android-eclipse
 
 **Note**: see the FAQ at the bottom of this page if you're having trouble.

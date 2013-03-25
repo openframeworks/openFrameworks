@@ -1,4 +1,9 @@
-#include "WProgram.h"
+/**
+ * openFrameworks Serial Test for Arduino
+ * 
+ */
+
+#include "Arduino.h"
 
 int ledPin = 13;   // select the pin for the LED
 int val = 0;       // variable to store the data from the serial port
