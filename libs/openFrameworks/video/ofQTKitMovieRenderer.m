@@ -57,6 +57,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 @synthesize audioFrequencyLevels = _audioFrequencyLevels;
 @synthesize audioVolumeLevels = _audioVolumeLevels;
+@synthesize audioFrequencyMeteringBandFrequencies = _audioFrequencyMeteringBandFrequencies;
 
 - (NSDictionary*) pixelBufferAttributes
 {
@@ -198,6 +199,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	self.loops = YES;
     self.palindrome = NO;
 
+    if (_audioFrequencyMeteringBandFrequencies != NULL) {
+        free(_audioFrequencyMeteringBandFrequencies);
+        _audioFrequencyMeteringBandFrequencies = NULL;
+    }
     if (_audioFrequencyLevels != NULL) {
         free(_audioFrequencyLevels);
         _audioFrequencyLevels = NULL;
@@ -207,12 +212,16 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         _audioVolumeLevels = NULL;
     }
     if (hasAudio) {
-        // allocate memory for the QTAudioFrequencyLevels struct and set it up
-        // depending on the number of channels and frequency bands you want
         _audioFrequencyLevels = (QTAudioFrequencyLevels *)malloc(offsetof(QTAudioFrequencyLevels, level[numberOfBandLevels * numberOfChannels]));
         _audioFrequencyLevels->numChannels = numberOfChannels;
         _audioFrequencyLevels->numFrequencyBands = numberOfBandLevels;
         SetMovieAudioFrequencyMeteringNumBands([_movie quickTimeMovie], kQTAudioMeter_MonoMix, &numberOfBandLevels);
+
+        _audioFrequencyMeteringBandFrequencies = malloc(_audioFrequencyLevels->numFrequencyBands * sizeof(Float32));
+        OSStatus err = GetMovieAudioFrequencyMeteringBandFrequencies([_movie quickTimeMovie], kQTAudioMeter_MonoMix, numberOfBandLevels, _audioFrequencyMeteringBandFrequencies);
+        if (err) {
+            NSLog(@"Error %ld getting movie audio frequency metering band frequencies", err);
+        }
 
         _audioVolumeLevels = (QTAudioVolumeLevels *)malloc(offsetof(QTAudioVolumeLevels, level[numberOfVolumeLevels * numberOfChannels]));
         _audioVolumeLevels->numChannels = numberOfChannels;

@@ -24,24 +24,32 @@ void testApp::update(){
 void testApp::draw(){
 
     if (catMovie.isLoaded()) {
+        int currLeft = 20;
+        int currTop = 20;
+        
         // Draw the movie.
         ofSetColor(ofColor::white);
-        catMovie.draw(20, 20);
+        catMovie.draw(currLeft, currTop);
 
         // Draw the audio frequency bands.
+        currLeft += catMovie.getWidth() + 20;
+        int freqWidth = ofGetWidth() - currLeft - 20;
+        int freqHeight = catMovie.getHeight();
         ofSetColor(ofColor::black);
-        ofNoFill();
-        ofRect(520, 20, catMovie.getWidth(), catMovie.getHeight());
-        ofFill();
+        ofLine(currLeft, currTop, currLeft, currTop + freqHeight);
         int totalNumBands = catMovie.getAudioFrequencyLevels()->numChannels * catMovie.getAudioFrequencyLevels()->numFrequencyBands;
-        float bandWidth = catMovie.getWidth() / (float)totalNumBands;
+        float bandHeight = freqHeight / (float)totalNumBands;
         for (int i = 0; i < catMovie.getAudioFrequencyLevels()->numChannels; i++) {
             for (int j = 0; j < catMovie.getAudioFrequencyLevels()->numFrequencyBands; j++) {
                 int index = (i * catMovie.getAudioFrequencyLevels()->numFrequencyBands) + j;
-                float bandHeight = catMovie.getAudioFrequencyLevels()->level[index] * catMovie.getHeight();
-
+                float bandWidth = catMovie.getAudioFrequencyLevels()->level[index] * freqWidth;
+                float bandTop = currTop + index * bandHeight;
+                
                 ofSetColor(255 / totalNumBands * (index + 1), 0, 0);
-                ofRect(520 + index * bandWidth, 20 + catMovie.getHeight() - bandHeight, bandWidth, bandHeight);
+                ofRect(currLeft, bandTop, bandWidth, bandHeight);
+
+                ofSetColor(ofColor::black);
+                ofDrawBitmapString(ofToString(catMovie.getAudioFrequencyMeteringBandFrequencies()[j], 1), currLeft + bandWidth + 15, bandTop + 15);
             }
         }
 

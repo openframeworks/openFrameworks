@@ -101,6 +101,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 
         QTAudioFrequencyLevels * getAudioFrequencyLevels();
         QTAudioVolumeLevels * getAudioVolumeLevels();
+        Float32 * getAudioFrequencyMeteringBandFrequencies();
 
 		void                draw(float x, float y, float w, float h);
 		void                draw(float x, float y);

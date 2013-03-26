@@ -466,6 +466,11 @@ QTAudioVolumeLevels * ofQTKitPlayer::getAudioVolumeLevels(){
 }
 
 //--------------------------------------------------------------------
+Float32 * ofQTKitPlayer::getAudioFrequencyMeteringBandFrequencies(){
+    return [moviePlayer audioFrequencyMeteringBandFrequencies];
+}
+
+//--------------------------------------------------------------------
 void ofQTKitPlayer::reallocatePixels(){
     if(pixelFormat == OF_PIXELS_RGBA){
         pixels.allocate(getWidth(), getHeight(), OF_IMAGE_COLOR_ALPHA);

@@ -19,6 +19,7 @@
     
     QTAudioFrequencyLevels * _audioFrequencyLevels;
     QTAudioVolumeLevels * _audioVolumeLevels;
+    Float32 * _audioFrequencyMeteringBandFrequencies;
 
 	NSSize movieSize;
 	QTTime movieDuration;
@@ -51,6 +52,7 @@
 
 @property (nonatomic, readonly) QTAudioFrequencyLevels * audioFrequencyLevels;
 @property (nonatomic, readonly) QTAudioVolumeLevels * audioVolumeLevels;
+@property (nonatomic, readonly) Float32 * audioFrequencyMeteringBandFrequencies;
 
 @property (nonatomic, readwrite) float rate;
 @property (nonatomic, readwrite) float volume;
