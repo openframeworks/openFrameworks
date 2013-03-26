@@ -20,6 +20,7 @@ Usage
 About
 -----
 * [Libraries](libraries.md) — Details about libraries.
+* [Serial](serial.md) — Details about serial communication.
 
 More
 ----
