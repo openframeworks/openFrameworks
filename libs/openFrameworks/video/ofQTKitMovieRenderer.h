@@ -17,6 +17,9 @@
 	CVOpenGLTextureRef _latestTextureFrame;
 	CVPixelBufferRef _latestPixelFrame;
     
+    QTAudioFrequencyLevels * _audioFrequencyLevels;
+    QTAudioVolumeLevels * _audioVolumeLevels;
+
 	NSSize movieSize;
 	QTTime movieDuration;
 	NSInteger frameCount;
@@ -46,6 +49,8 @@
 @property (readwrite) BOOL justSetFrame; //this needs to be set *before* calls to _movie.setTime to allow synchronous seeking
 @property (nonatomic, readwrite) BOOL synchronousSeek;
 
+@property (nonatomic, readonly) QTAudioFrequencyLevels * audioFrequencyLevels;
+@property (nonatomic, readonly) QTAudioVolumeLevels * audioVolumeLevels;
 
 @property (nonatomic, readwrite) float rate;
 @property (nonatomic, readwrite) float volume;

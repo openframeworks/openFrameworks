@@ -456,6 +456,16 @@ bool ofQTKitPlayer::getSynchronousSeeking(){
 }
 
 //--------------------------------------------------------------------
+QTAudioFrequencyLevels * ofQTKitPlayer::getAudioFrequencyLevels(){
+    return [moviePlayer audioFrequencyLevels];
+}
+
+//--------------------------------------------------------------------
+QTAudioVolumeLevels * ofQTKitPlayer::getAudioVolumeLevels(){
+    return [moviePlayer audioVolumeLevels];
+}
+
+//--------------------------------------------------------------------
 void ofQTKitPlayer::reallocatePixels(){
     if(pixelFormat == OF_PIXELS_RGBA){
         pixels.allocate(getWidth(), getHeight(), OF_IMAGE_COLOR_ALPHA);

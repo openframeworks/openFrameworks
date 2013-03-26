@@ -5,6 +5,7 @@
 
 #include "ofMain.h"
 
+#include <QuickTime/QuickTime.h>
 #ifdef __OBJC__
  #import "ofQTKitMovieRenderer.h"
 #endif
@@ -97,6 +98,9 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
     
         void                setSynchronousSeeking(bool synchronous);
 		bool                getSynchronousSeeking();
+
+        QTAudioFrequencyLevels * getAudioFrequencyLevels();
+        QTAudioVolumeLevels * getAudioVolumeLevels();
 
 		void                draw(float x, float y, float w, float h);
 		void                draw(float x, float y);
