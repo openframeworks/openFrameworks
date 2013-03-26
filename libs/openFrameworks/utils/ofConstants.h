@@ -1,8 +1,10 @@
 #pragma once
 
 //-------------------------------
-#define OF_VERSION	7
-#define OF_VERSION_MINOR 2
+#define OF_VERSION_MAJOR 0
+#define OF_VERSION_MINOR 7
+#define OF_VERSION_PATCH 4
+
 //-------------------------------
 
 enum ofLoopType{
@@ -57,7 +59,7 @@ enum ofTargetPlatform{
 	#else
 		#define TARGET_OSX
 	#endif
-#elif defined (ANDROID)
+#elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
 #else
@@ -89,6 +91,7 @@ enum ofTargetPlatform{
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
 		#include <stdint.h>
+		#include <functional>
 		#pragma warning(disable : 4068)     // unknown pragmas
 		#pragma warning(disable : 4101)     // unreferenced local variable
 		#pragma	warning(disable : 4312)		// type cast conversion (in qt vp)
@@ -97,6 +100,7 @@ enum ofTargetPlatform{
 		#pragma warning(disable : 4267)		// conversion from size_t to Size warning... possible loss of data
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
 		#pragma warning(disable : 4099)		// for debug, PDB 'vc80.pdb' was not found with...
+		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
 	#endif
 
 	#define TARGET_LITTLE_ENDIAN			// intel cpu
@@ -489,6 +493,7 @@ enum ofPolyWindingMode{
 
 enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
+enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
 
 //--------------------------------------------
 //

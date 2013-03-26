@@ -36,6 +36,7 @@ public:
 	void draw(ofPolyline & poly);
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
+    void draw( of3dPrimitive& model, ofPolyRenderMode renderType );
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
@@ -85,6 +86,12 @@ public:
 	void rotateY(float degrees);
 	void rotateZ(float degrees);
 	void rotate(float degrees);
+	void matrixMode(ofMatrixMode mode);
+	void loadIdentityMatrix (void);
+	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const float * m);
+	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const float * m);
 
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -157,6 +164,8 @@ private:
 	stack<ofMatrix4x4> modelViewStack;
 	stack<ofRectangle> viewportStack;
 	
+	ofMatrixMode currentMatrixMode;
+
 	vector<ofPoint> sphereVerts;
 	vector<ofPoint> spherePoints;
 

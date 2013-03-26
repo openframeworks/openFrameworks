@@ -70,7 +70,7 @@ void testApp::draw() {
         
         // increment the letter count until 
         // we reach the end of the line
-        if(letterCount < seussLines[lineCount].size()) {
+        if(letterCount < (int)seussLines[lineCount].size()) {
            
             // move on to the next letter
             letterCount ++;
