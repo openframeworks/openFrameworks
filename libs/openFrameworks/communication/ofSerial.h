@@ -55,6 +55,7 @@ class ofSerial {
 			bool 			bVerbose;
 			void 			setVerbose(bool bLoudmouth) { bVerbose = bLoudmouth; };
 
+            bool            isInitialized() const;
 			
 
 	protected:

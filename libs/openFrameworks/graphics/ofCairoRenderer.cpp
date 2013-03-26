@@ -5,21 +5,22 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofImage.h"
+#include "of3dPrimitives.h"
 
 //-----------------------------------------------------------------------------------
-static void helper_quadratic_to (cairo_t *cr,
-                     double x1, double y1,
-                     double x2, double y2)
-{
-  double x0, y0;
-  cairo_get_current_point (cr, &x0, &y0);
-  cairo_curve_to (cr,
-                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x0,
-                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
-                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
-                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
-                  y1, y2);
-}
+//static void helper_quadratic_to (cairo_t *cr,
+//                     double x1, double y1,
+//                     double x2, double y2)
+//{
+//  double x0, y0;
+//  cairo_get_current_point (cr, &x0, &y0);
+//  cairo_curve_to (cr,
+//                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x0,
+//                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
+//                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
+//                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
+//                  y1, y2);
+//}
 
 _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char *data, unsigned int length){
 	((ofCairoRenderer*)closure)->streamBuffer.append((const char*)data,length);
@@ -37,6 +38,7 @@ ofCairoRenderer::ofCairoRenderer(){
 	multiPage = false;
 	bFilled = OF_FILLED;
 	b3D = false;
+	currentMatrixMode=OF_MATRIX_MODELVIEW;
 }
 
 ofCairoRenderer::~ofCairoRenderer(){
@@ -80,6 +82,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		break;
 	case IMAGE:
 		imageBuffer.allocate(_viewport.width, _viewport.height, 4);
+		imageBuffer.set(0);
 		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
 	case FROM_FILE_EXTENSION:
@@ -114,6 +117,7 @@ void ofCairoRenderer::close(){
 	if(surface){
 		cairo_surface_flush(surface);
 		if(type==IMAGE && filename!=""){
+			imageBuffer.swapRgb();
 			ofSaveImage(imageBuffer,filename);
 		}
 		cairo_surface_finish(surface);
@@ -199,8 +203,8 @@ void ofCairoRenderer::draw(ofPath & shape){
 
 	if(shape.isFilled()){
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getFillColor() * ofGetStyle().color;
-			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+			ofColor c = shape.getFillColor();
+			c.a = shape.getFillColor().a;
 			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		}
 
@@ -213,8 +217,8 @@ void ofCairoRenderer::draw(ofPath & shape){
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getStrokeColor() * ofGetStyle().color;
-			c.a = shape.getStrokeColor().a/255. * ofGetStyle().color.a;
+			ofColor c = shape.getStrokeColor();
+			c.a = shape.getStrokeColor().a;
 			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		}
 		cairo_set_line_width( cr, shape.getStrokeWidth() );
@@ -384,6 +388,27 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
         ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
     }
 	draw(vertexData,false,false,false);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
+    
+    if(model.hasScaling()) {
+        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
+        //glEnable( GL_NORMALIZE );
+        //glPushMatrix();
+        //ofVec3f scale = model.getScale();
+        //glScalef( scale.x, scale.y, scale.z);
+    }
+    
+    ofMesh& mesh = model.getMesh();
+    draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
+    
+    if(model.hasScaling()) {
+        //glPopMatrix();
+        //glDisable( GL_NORMALIZE );
+    }
+    
 }
 
 void ofCairoRenderer::draw(ofSubPath & path){
@@ -607,7 +632,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_ADD);
 			break;
 		}
-
+#if (CAIRO_VERSION_MAJOR==1 && CAIRO_VERSION_MINOR>=10) || CAIRO_VERSION_MAJOR>1
 		case OF_BLENDMODE_MULTIPLY:{
 			cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
 			break;
@@ -622,7 +647,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_DIFFERENCE);
 			break;
 		}
-
+#endif
 
 		default:
 			break;
@@ -722,6 +747,67 @@ void ofCairoRenderer::rotate(float degrees){
 	rotateZ(degrees);
 }
 
+void ofCairoRenderer::matrixMode(ofMatrixMode mode){
+	currentMatrixMode = mode;
+}
+
+void ofCairoRenderer::loadIdentityMatrix (void){
+	if(!surface || !cr) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		cairo_matrix_init_identity(getCairoMatrix());
+		setCairoMatrix();
+	}
+
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView.makeIdentityMatrix();
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection.makeIdentityMatrix();
+	}
+}
+
+void ofCairoRenderer::loadMatrix (const ofMatrix4x4 & m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView = m;
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection = m;
+	}
+}
+
+void ofCairoRenderer::loadMatrix (const float * m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView.set(m);
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection.set(m);
+	}
+
+}
+
+void ofCairoRenderer::multMatrix (const ofMatrix4x4 & m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView *= m;
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection *= m;
+	}
+}
+
+void ofCairoRenderer::multMatrix (const float * m){
+	if(!surface || !cr) return;
+	if(!b3D) return;
+	ofMatrix4x4 mat(m);
+	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
+		modelView *= mat;
+	}else if(currentMatrixMode==OF_MATRIX_PROJECTION){
+		projection *= mat;
+	}
+}
+
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
     if(!surface || !cr) return;
     
@@ -770,7 +856,7 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	if(height == 0) height = ofGetWindowHeight();
 
 	if (invertY){
-		y = ofGetWindowHeight() - (y + height);
+		y = -y;
 	}
 
 
@@ -791,8 +877,8 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 	if(height == 0) height = ofGetHeight();
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = viewportRect.width;
+	float viewH = viewportRect.height;
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -859,8 +945,8 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation 
 	if(height == 0) height = ofGetHeight();
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = viewportRect.width;
+	float viewH = viewportRect.height;
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 

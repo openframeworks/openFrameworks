@@ -75,7 +75,7 @@ using namespace Poco::XML;
 
 #define MAX_TAG_VALUE_LENGTH_IN_CHARS		1024
 
-class ofxXmlSettings{
+class ofxXmlSettings: public ofBaseFileSerializer{
 
 	public:
         ofxXmlSettings();
@@ -88,6 +88,9 @@ class ofxXmlSettings{
 		bool loadFile(const string& xmlFile);
 		bool saveFile(const string& xmlFile);
 		bool saveFile();
+
+		bool load(string path);
+		bool save(string path);
 
 		void clearTagContents(const string& tag, int which = 0);
 		void removeTag(const string& tag, int which = 0);
@@ -141,6 +144,9 @@ class ofxXmlSettings{
 		int 	addValue(const string&  tag, const string& 	value);
     
         int     addTag( const string& tag);
+
+		void serialize(const ofAbstractParameter & parameter);
+		void deserialize(ofAbstractParameter & parameter);
 
 
         // Attribute-related methods
