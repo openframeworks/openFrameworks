@@ -150,6 +150,11 @@ ofRectangle ofGetCurrentViewport(){
 }
 
 //----------------------------------------------------------
+ofRectangle ofGetNativeViewport(){
+	return renderer->getNativeViewport();
+}
+
+//----------------------------------------------------------
 int ofGetViewportWidth(){
 	return renderer->getViewportWidth();
 }

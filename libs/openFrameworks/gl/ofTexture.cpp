@@ -413,15 +413,11 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 
 
 void ofTexture::enableTextureTarget(){
-	if(ofGLIsFixedPipeline()){
-		glEnable(texData.textureTarget);
-	}
+	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget);
 }
 
 void ofTexture::disableTextureTarget(){
-	if(ofGLIsFixedPipeline()){
-		glDisable(texData.textureTarget);
-	}
+	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget);
 }
 
 //----------------------------------------------------------

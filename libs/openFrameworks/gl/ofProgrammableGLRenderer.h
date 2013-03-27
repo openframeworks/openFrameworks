@@ -54,6 +54,7 @@ public:
 	void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
 	ofRectangle getCurrentViewport();
+	ofRectangle getNativeViewport();
 	int getViewportWidth();
 	int getViewportHeight();
     
@@ -144,6 +145,9 @@ public:
 	void disableColors();
 	void disableNormals();
 
+	void enableTextureTarget(int textureTarget);
+	void disableTextureTarget(int textureTarget);
+
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
     
@@ -162,10 +166,16 @@ private:
 	
 	void uploadCurrentMatrix();
 
-	ofMatrix4x4 getOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip);
+	void setOrientationMatrix(ofOrientation orientation, bool vFlip);
 
 	void startSmoothing();
 	void endSmoothing();
+
+	void beginDefaultShader();
+	void disableAtributtes();
+	void enableAttributes();
+	void uploadAllMatrices();
+
     
 	ofHandednessType coordHandedness;
 	ofRectangle currentViewport;
@@ -179,9 +189,11 @@ private:
 
 	ofMatrix4x4 * currentMatrix;
 
-	ofMatrix4x4	currentModelViewMatrix;
-	ofMatrix4x4	currentProjectionMatrix;
-	ofMatrix4x4	currentTextureMatrix;
+	ofMatrix4x4	modelViewMatrix;
+	ofMatrix4x4	projectionMatrix;
+	ofMatrix4x4	textureMatrix;
+	ofMatrix4x4 modelViewProjectionMatrix;
+	ofMatrix4x4 orientationMatrix;
 
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
@@ -200,11 +212,14 @@ private:
 	ofFbo * currentFbo;
 	
 	ofShader currentShader;
-	ofShader defaultShader;
+	ofShader externalShader,defaultShaderTexColor,defaultShaderTex2DColor,defaultShaderNoTexColor,defaultShaderTexNoColor,defaultShaderTex2DNoColor,defaultShaderNoTexNoColor;
 	ofShader bitmapStringShader;
 
 	string vertexFile;
 	string fragmentFile;
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled;
+	bool externalShaderProvided;
+	bool usingCustomShader;
+	int currentTextureTarget;
 };

@@ -4,6 +4,7 @@
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
+#include "ofVboMesh.h"
 
 int ofGetGlInternalFormat(const ofPixels& pix);
 int ofGetGlInternalFormat(const ofShortPixels& pix);
@@ -176,5 +177,5 @@ protected:
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-	ofMesh quad;
+	ofVboMesh quad;
 };

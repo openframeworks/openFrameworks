@@ -338,6 +338,12 @@ ofRectangle ofGLRenderer::getCurrentViewport(){
 }
 
 //----------------------------------------------------------
+ofRectangle ofGLRenderer::getNativeViewport(){
+	ofRectangle orientedViewport = getCurrentViewport();
+    return orientedViewport;
+}
+
+//----------------------------------------------------------
 int ofGLRenderer::getViewportWidth(){
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -1187,4 +1193,12 @@ void ofGLRenderer::disableColors(){
 
 void ofGLRenderer::disableNormals(){
 	glDisableClientState(GL_NORMAL_ARRAY);
+}
+
+void ofGLRenderer::enableTextureTarget(int textureTarget){
+	glEnable(textureTarget);
+}
+
+void ofGLRenderer::disableTextureTarget(int textureTarget){
+	glDisable(textureTarget);
 }

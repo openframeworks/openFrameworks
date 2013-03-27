@@ -55,11 +55,9 @@ void ofCamera::setForceAspectRatio(bool forceAspectRatio){
 
 //----------------------------------------
 void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
-
-	float eyeX = viewW / 2;
-	float eyeY = viewH / 2;
+	ofRectangle orientedViewport = ofGetNativeViewport();
+	float eyeX = orientedViewport.width / 2;
+	float eyeY = orientedViewport.height / 2;
 	float halfFov = PI * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
@@ -77,9 +75,9 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
 
 
-	if(vFlip){
+	/*if(vFlip){
 		setScale(1,-1,1);
-	}
+	}*/
 }
 
 //----------------------------------------
@@ -137,13 +135,11 @@ void ofCamera::begin(ofRectangle viewport) {
 	calcClipPlanes(viewport);
 
 	ofSetMatrixMode(OF_MATRIX_PROJECTION);
-	ofLoadIdentityMatrix();
-
 	ofLoadMatrix( this->getProjectionMatrix(viewport) );
 
 	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
-	ofViewport(viewport);
+	ofViewport(viewport.x,viewport.y,viewport.width,viewport.height,false);
 }
 
 // if begin(); pushes first, then we need an end to pop
