@@ -20,18 +20,20 @@ string defaultVertexShader =
 		\
 		uniform mat4 modelViewMatrix;\
 		uniform mat4 projectionMatrix;\
+		uniform mat4 textureMatrix;\
+		uniform mat4 modelViewProjectionMatrix;\
 		\
 		varying vec4 colorVarying;\
 		varying vec2 texCoordVarying;\
         \
 		void main(){\
-			gl_Position = projectionMatrix * modelViewMatrix * position;\
+			gl_Position = modelViewProjectionMatrix * position;\
 			colorVarying = color;\
-			texCoordVarying = texcoord;\
+			texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\
 		}";
 
 
-string defaultFragmentShader =
+/*string defaultFragmentShader =
 		"#ifdef GL_ES\n\
 		// define default precision for float, vec, mat.\n\
 		precision highp float;\n\
@@ -58,7 +60,83 @@ string defaultFragmentShader =
 			}else{\n\
 				gl_FragColor = c;\
 			}\
-}";
+}";*/
+
+string defaultFragmentShaderTexColor =
+		"#ifdef GL_ES\n\
+		// define default precision for float, vec, mat.\n\
+		precision highp float;\n\
+		#endif\n\
+		\
+		uniform sampler2D src_tex_unit0;\
+		uniform float useTexture;\
+		uniform float useColors;\
+		uniform vec4 color;\
+		\
+		varying float depth;\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+		\
+		void main(){\
+		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*colorVarying;\
+        }";
+
+string defaultFragmentShaderTexNoColor =
+		"#ifdef GL_ES\n\
+		// define default precision for float, vec, mat.\n\
+		precision highp float;\n\
+		#endif\n\
+		\
+		uniform sampler2D src_tex_unit0;\
+		uniform float useTexture;\
+		uniform float useColors;\
+		uniform vec4 color;\
+		\
+		varying float depth;\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+		\
+		void main(){\
+		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*color;\
+        }";
+
+string defaultFragmentShaderNoTexColor =
+		"#ifdef GL_ES\n\
+		// define default precision for float, vec, mat.\n\
+		precision highp float;\n\
+		#endif\n\
+		\
+		uniform sampler2D src_tex_unit0;\
+		uniform float useTexture;\
+		uniform float useColors;\
+		uniform vec4 color;\
+		\
+		varying float depth;\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+		\
+		void main(){\
+		    gl_FragColor = colorVarying;\
+        }";
+
+string defaultFragmentShaderNoTexNoColor =
+		"#ifdef GL_ES\n\
+		// define default precision for float, vec, mat.\n\
+		precision highp float;\n\
+		#endif\n\
+		\
+		uniform sampler2D src_tex_unit0;\
+		uniform float useTexture;\
+		uniform float useColors;\
+		uniform vec4 color;\
+		\
+		varying float depth;\
+		varying vec4 colorVarying;\
+		varying vec2 texCoordVarying;\
+		\
+		void main(){\
+		    gl_FragColor = color;\
+        }";
 
 // tig: todo: implement shaders for bitmapstringdraw on GLES2...
 // GLSL_ES shader written against spec:
@@ -72,6 +150,8 @@ precision highp float;\n\
 \n\
 uniform mat4 projectionMatrix;\n\
 uniform mat4 modelViewMatrix;\n\
+uniform mat4 textureMatrix;\
+uniform mat4 modelViewProjectionMatrix;\n\
 \n\
 attribute vec4  position;\n\
 attribute vec2  texcoord;\n\
@@ -80,8 +160,8 @@ varying vec2 texCoordVarying;\n\
 \n\
 void main()\n\
 {\n\
-	texCoordVarying = texcoord;\n\
-	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
+	texCoordVarying = textureMatrix*texcoord;\n\
+	gl_Position = modelViewProjectionMatrix * position;\n\
 }";
 string bitmapStringFragmentShader	= "\n\
 #ifdef GL_ES\n\
@@ -114,6 +194,8 @@ string defaultVertexShader =
 \n\
 uniform mat4 projectionMatrix;\n\
 uniform mat4 modelViewMatrix;\n\
+uniform mat4 textureMatrix;\
+uniform mat4 modelViewProjectionMatrix;\n\
 \n\
 \n\
 in vec4  position;\n\
@@ -128,12 +210,12 @@ out vec4 normalVarying;\n\
 void main()\n\
 {\n\
 	colorVarying = color;\n\
-	texCoordVarying = texcoord;\n\
-	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
+	texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\
+	gl_Position = modelViewProjectionMatrix * position;\n\
 }";
 
 
-string defaultFragmentShader =
+/*string defaultFragmentShader =
 "#version 150\n\
 \n\
 uniform sampler2DRect src_tex_unit0;\n\
@@ -159,6 +241,108 @@ void main(){\n\
 	} else {\n\
 		fragColor = c;\n\
 	}\n\
+}";*/
+
+string defaultFragmentShaderTexColor ="\n\
+#version 150\n\
+\n\
+uniform sampler2DRect src_tex_unit0;\n\
+uniform float useTexture = 0.0;\n\
+uniform float useColors = 0.0;\n\
+uniform vec4 color = vec4(1.0);\n\
+\n\
+in float depth;\n\
+in vec4 colorVarying;\n\
+in vec2 texCoordVarying;\n\
+out vec4 fragColor;\n\
+\n\
+void main(){\n\
+	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
+}";
+
+string defaultFragmentShaderTexNoColor ="\n\
+#version 150\n\
+\n\
+uniform sampler2DRect src_tex_unit0;\n\
+uniform float useTexture = 0.0;\n\
+uniform float useColors = 0.0;\n\
+uniform vec4 color = vec4(1.0);\n\
+\n\
+in float depth;\n\
+in vec4 colorVarying;\n\
+in vec2 texCoordVarying;\n\
+out vec4 fragColor;\n\
+\n\
+void main(){\n\
+	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
+}";
+
+string defaultFragmentShaderTex2DColor ="\n\
+#version 150\n\
+\n\
+uniform sampler2D src_tex_unit0;\n\
+uniform float useTexture = 0.0;\n\
+uniform float useColors = 0.0;\n\
+uniform vec4 color = vec4(1.0);\n\
+\n\
+in float depth;\n\
+in vec4 colorVarying;\n\
+in vec2 texCoordVarying;\n\
+out vec4 fragColor;\n\
+\n\
+void main(){\n\
+	fragColor = texture2D(src_tex_unit0, texCoordVarying) * colorVarying;\n\
+}";
+
+string defaultFragmentShaderTex2DNoColor ="\n\
+#version 150\n\
+\n\
+uniform sampler2D src_tex_unit0;\n\
+uniform float useTexture = 0.0;\n\
+uniform float useColors = 0.0;\n\
+uniform vec4 color = vec4(1.0);\n\
+\n\
+in float depth;\n\
+in vec4 colorVarying;\n\
+in vec2 texCoordVarying;\n\
+out vec4 fragColor;\n\
+\n\
+void main(){\n\
+	fragColor = texture2D(src_tex_unit0, texCoordVarying) * color;\n\
+}";
+
+string defaultFragmentShaderNoTexColor ="\n\
+#version 150\n\
+\n\
+uniform sampler2DRect src_tex_unit0;\n\
+uniform float useTexture = 0.0;\n\
+uniform float useColors = 0.0;\n\
+uniform vec4 color = vec4(1.0);\n\
+\n\
+in float depth;\n\
+in vec4 colorVarying;\n\
+in vec2 texCoordVarying;\n\
+out vec4 fragColor;\n\
+\n\
+void main(){\n\
+	fragColor = colorVarying;\n\
+}";
+
+string defaultFragmentShaderNoTexNoColor ="\n\
+#version 150\n\
+\n\
+uniform sampler2DRect src_tex_unit0;\n\
+uniform float useTexture = 0.0;\n\
+uniform float useColors = 0.0;\n\
+uniform vec4 color = vec4(1.0);\n\
+\n\
+in float depth;\n\
+in vec4 colorVarying;\n\
+in vec2 texCoordVarying;\n\
+out vec4 fragColor;\n\
+\n\
+void main(){\n\
+	fragColor = color;\n\
 }";
 
 string bitmapStringVertexShader ="\n\
@@ -166,6 +350,8 @@ string bitmapStringVertexShader ="\n\
 \n\
 uniform mat4 projectionMatrix;\n\
 uniform mat4 modelViewMatrix;\n\
+uniform mat4 textureMatrix;\
+uniform mat4 modelViewProjectionMatrix;\n\
 \n\
 in vec4  position;\n\
 in vec4  color;\n\
@@ -176,36 +362,32 @@ out vec2 texCoordVarying;\n\
 void main()\n\
 {\n\
 	texCoordVarying = texcoord;\n\
-	gl_Position = projectionMatrix * modelViewMatrix * position;\n\
+	gl_Position = modelViewProjectionMatrix * position;\n\
 }";
 
-
-string bitmapStringFragmentShader ="\n\
+string bitmapStringFragmentShader	= "\n\
 #version 150\n\
 \n\
 uniform sampler2D src_tex_unit0;\n\
 uniform vec4 color = vec4(1.0);\n\
-\n\
-\n\
 in vec2 texCoordVarying;\n\
 out vec4 fragColor;\n\
 \n\
 void main()\n\
 {\n\
 	\n\
-	vec4 tex = texture(src_tex_unit0, texCoordVarying);\n\
+	vec4 tex = texture2D(src_tex_unit0, texCoordVarying);\n\
 	// We will not write anything to the framebuffer if we have a transparent pixel\n\
-	// This makes sure we don't mess up our depth buffer. \n\
-	if (tex.a < 0.5) discard; \n\
-	fragColor = color * tex; \n\
+	// This makes sure we don't mess up our depth buffer.\n\
+	if (tex.a < 0.5) discard;\n\
+	fragColor = color * tex;\n\
 }";
-
 #endif
 
 
 //----------------------------------------------------------
 ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor){
-	currentMatrix = &currentModelViewMatrix;
+	currentMatrix = &modelViewMatrix;
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
@@ -236,11 +418,17 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	vertexDataVbo	= ofPtr<ofVbo>(new ofVbo());
 	meshVbo			= ofPtr<ofVbo>(new ofVbo());
 
+	externalShaderProvided = false;
+
+	orientationMatrix.makeIdentityMatrix();
+
 
 #ifndef TARGET_OPENGLES
 	glGenVertexArrays(1, &defaultVAO);
+	currentTextureTarget = GL_TEXTURE_RECTANGLE_ARB;
 #else
-	//TODO: glGenVertexArraysOES(1, &defaultVAO);
+	currentTextureTarget = GL_TEXTURE_2D;
+	//glGenVertexArraysOES(1, &defaultVAO);
 #endif
 }
 
@@ -249,7 +437,7 @@ ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 #ifndef TARGET_OPENGLES
 	glDeleteVertexArrays(1, &defaultVAO);
 #else
-	//TODO: glDeleteVertexArraysOES(1, &defaultVAO);
+	//glDeleteVertexArraysOES(1, &defaultVAO);
 #endif
 
 	ofLogNotice() << "Destroyed ofProgrammableGLRenderer";
@@ -262,7 +450,7 @@ void ofProgrammableGLRenderer::startRender() {
 #ifndef TARGET_OPENGLES
 	glBindVertexArray(defaultVAO);
 #else
-	//TODO: glBindVertexArrayOES(defaultVAO);
+	//glBindVertexArrayOES(defaultVAO);
 #endif
 	currentShader.begin();
 }
@@ -275,7 +463,7 @@ void ofProgrammableGLRenderer::finishRender() {
 #ifndef TARGET_OPENGLES
 	glBindVertexArray(0);
 #else
-	//TODO: glBindVertexArrayOES(0);
+	//glBindVertexArrayOES(0);
 #endif
 	
 	int tmpCounter = 0;
@@ -295,26 +483,58 @@ void ofProgrammableGLRenderer::finishRender() {
 
 //----------------------------------------------------------
 bool ofProgrammableGLRenderer::setup() {
-	bool ret;
+	bool ret=false;
+	externalShaderProvided=false;
+	if(vertexFile!="" && fragmentFile==""){
+		ofLogError() << "can't use custom vertex shader without fragment, falling back to default";
+		vertexFile = "";
+	}
 	if(vertexFile!=""){
 		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from " + vertexFile;
-		ret = defaultShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
+		ret = externalShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
+		externalShaderProvided=true;
 	}else{
 		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from default source";
-		ret = defaultShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+		if(fragmentFile!=""){
+			externalShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+		}else{
+			ret = defaultShaderTexColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+			ret &= defaultShaderTex2DColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+			ret &= defaultShaderNoTexColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+			ret &= defaultShaderTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+			ret &= defaultShaderTex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+			ret &= defaultShaderNoTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
+		}
+
 	}
 	if(ret){
 		if(fragmentFile!=""){
 			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from " + fragmentFile;
-			ret = defaultShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
+			ret = externalShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
+			externalShaderProvided=true;
 		}else{
 			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from default source";
-			ret = defaultShader.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShader);
+			ret = defaultShaderTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTexColor);
+			ret &= defaultShaderTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTex2DColor);
+			ret &= defaultShaderNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderNoTexColor);
+			ret &= defaultShaderTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTexNoColor);
+			ret &= defaultShaderTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTex2DNoColor);
+			ret &= defaultShaderNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderNoTexNoColor);
 		}
 	}
 	if(ret){
-		ret = defaultShader.linkProgram();
-		ofLogVerbose() << "Loaded default shader";
+		if(externalShaderProvided){
+			ret = externalShader.linkProgram();
+			ofLogVerbose() << "Loaded provided shader";
+		}else{
+			ret = defaultShaderTexColor.linkProgram();
+			ret = defaultShaderTex2DColor.linkProgram();
+			ret &= defaultShaderNoTexColor.linkProgram();
+			ret &= defaultShaderTexNoColor.linkProgram();
+			ret &= defaultShaderTex2DNoColor.linkProgram();
+			ret &= defaultShaderNoTexNoColor.linkProgram();
+			ofLogVerbose() << "Loaded default shader";
+		}
 	}
 	
 	bool bmpShdRet = false;
@@ -330,7 +550,7 @@ bool ofProgrammableGLRenderer::setup() {
 		ofLogVerbose() << "Loaded bitmapString shader";
 	}
 	
-	currentShader = defaultShader;
+	beginDefaultShader();
 	return ret && bmpShdRet;
 }
 
@@ -431,9 +651,11 @@ void ofProgrammableGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMod
 		disableTexCoords();
 		disableColors();
 		vertexDataVbo->setVertexData(&vertexData[0], vertexData.size(), GL_DYNAMIC_DRAW);
-		preparePrimitiveDraw(*vertexDataVbo);
+		vertexDataVbo->draw(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+
+		/*preparePrimitiveDraw(*vertexDataVbo);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
-		finishPrimitiveDraw();
+		finishPrimitiveDraw();*/
 		if (bSmoothHinted) endSmoothing();
 	}
 }
@@ -569,28 +791,51 @@ void ofProgrammableGLRenderer::viewport(ofRectangle viewport_){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height, bool invertY) {
-	if(width == 0) width = ofGetWindowWidth();
-	if(height == 0) height = ofGetWindowHeight();
+	if(!currentFbo && !ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
+		swap(width,height);
+		swap(x,y);
+	}
+	if(width == 0 || height == 0){
+		width = ofGetWindowWidth();
+		height = ofGetWindowHeight();
+	}
 
-	if (invertY){
+	if (!invertY){
 		if(currentFbo){
 			y = currentFbo->getHeight() - (y + height);
 		}else{
 			y = ofGetWindowHeight() - (y + height);
 		}
 	}
+
 	currentViewport.set(x, y, width, height);
-	glViewport(x, y, width, height);
+
+	glViewport(x,y,width,height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getCurrentViewport(){
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	
+
 	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
 
-    return currentViewport;
+	if(!currentFbo && !ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
+		swap(currentViewport.width,currentViewport.height);
+		swap(currentViewport.x,currentViewport.y);
+	}
+	return currentViewport;
+}
+
+//----------------------------------------------------------
+ofRectangle ofProgrammableGLRenderer::getNativeViewport(){
+	ofRectangle orientedViewport = getCurrentViewport();
+
+	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
+		swap(orientedViewport.width,orientedViewport.height);
+		swap(orientedViewport.x,orientedViewport.y);
+	}
+    return orientedViewport;
 }
 
 //----------------------------------------------------------
@@ -614,72 +859,53 @@ ofHandednessType ofProgrammableGLRenderer::getCoordHandedness() {
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofProgrammableGLRenderer::getOrientationMatrix(float width, float height, ofOrientation orientation, bool vFlip){
-	ofMatrix4x4 orientationMatrix;
+void ofProgrammableGLRenderer::setOrientationMatrix(ofOrientation orientation, bool vFlip){
+	orientationMatrix.makeIdentityMatrix();
 
-	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
 	if(ofDoesHWOrientation()){
 		if(vFlip){
-			orientationMatrix.glScale(1, -1, 1);
-			orientationMatrix.glTranslate(0, -height, 0);
+			orientationMatrix.scale(1,-1,1);
 		}
 	}else{
-		if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 		switch(orientation) {
 			case OF_ORIENTATION_180:
-				orientationMatrix.glRotate(-180, 0, 0, 1);
-				if(vFlip){
-					orientationMatrix.glScale(1, -1, 1);
-					orientationMatrix.glTranslate(-width, 0, 0);
-				}else{
-					orientationMatrix.glTranslate(-width, -height, 0);
-				}
-				
+				orientationMatrix.makeRotationMatrix(180,0,0,1);
+				if(vFlip)
+					orientationMatrix.scale(1,-1,1);
 				break;
-				
+
 			case OF_ORIENTATION_90_RIGHT:
-				orientationMatrix.glRotate(-90, 0, 0, 1);
-				if(vFlip){
-					orientationMatrix.glScale(-1, 1, 1);
-				}else{
-					orientationMatrix.glScale(-1, -1, 1);
-					orientationMatrix.glTranslate(0, -height, 0);
-				}
+				orientationMatrix.makeRotationMatrix(90,0,0,1);
+				if(vFlip)
+					orientationMatrix.scale(-1,1,1);
 				break;
-				
+
 			case OF_ORIENTATION_90_LEFT:
-				orientationMatrix.glRotate(90, 0, 0, 1);
-				if(vFlip){
-					orientationMatrix.glScale(-1, 1, 1);
-					orientationMatrix.glTranslate(-width, -height, 0);
-				}else{
-					orientationMatrix.glScale(-1, -1, 1);
-					orientationMatrix.glTranslate(-width, 0, 0);
-				}
+				orientationMatrix.makeRotationMatrix(-90,0,0,1);
+				if(vFlip)
+					orientationMatrix.scale(-1,1,1);
 				break;
-				
+
 			case OF_ORIENTATION_DEFAULT:
 			default:
-				if(vFlip){
-					orientationMatrix.glScale(1, -1, 1);
-					orientationMatrix.glTranslate(0, -height, 0);
-				}
+				if(vFlip)
+					orientationMatrix.scale(1,-1,1);
 				break;
 		}
 	}
-	return orientationMatrix;
+
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
 
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
-
-	getCurrentViewport();	// tig: we force GL to tell us the current viewport, otherwise we might end up with garbage data in getViewportWidth() and getViewportHeight()
+	ofRectangle currentViewport = getCurrentViewport();
 	
-	float viewW = getViewportWidth();
-	float viewH = getViewportHeight();
+	float viewW = currentViewport.width;
+	float viewH = currentViewport.height;
+
+	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
+	setOrientationMatrix(orientation,vFlip);
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -696,13 +922,11 @@ void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height,
 	ofMatrix4x4 persp;
 	persp.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
 	loadMatrix( persp );
-	
+
 	matrixMode(OF_MATRIX_MODELVIEW);
 	ofMatrix4x4 lookAt;
 	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
-	ofMatrix4x4 orientationMatrix = getOrientationMatrix(width,height,orientation,vFlip);
 	loadMatrix(lookAt);
-	multMatrix(orientationMatrix);
 	
 }
 
@@ -711,8 +935,10 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	ofRectangle orientedViewport = getNativeViewport();
+
+	float viewW = orientedViewport.width;
+	float viewH = orientedViewport.height;
 
 	ofMatrix4x4 ortho;
 
@@ -724,13 +950,13 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 		ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
 	}
 
+	setOrientationMatrix(orientation,vFlip);
+
 	matrixMode(OF_MATRIX_PROJECTION);
 	loadMatrix(ortho); // make ortho our new projection matrix.
-	
+
 	matrixMode(OF_MATRIX_MODELVIEW);
-	ofMatrix4x4 orientationMatrix = getOrientationMatrix(width,height,orientation,vFlip);
 	loadIdentityMatrix();
-	multMatrix(orientationMatrix);
 }
 
 //----------------------------------------------------------
@@ -740,7 +966,7 @@ void ofProgrammableGLRenderer::setupGraphicDefaults(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setupScreen(){
-	defaultShader.begin();
+	beginDefaultShader();
 	setupScreenPerspective();	// assume defaults
 }
 
@@ -758,13 +984,13 @@ void ofProgrammableGLRenderer::setCircleResolution(int res){
 void ofProgrammableGLRenderer::pushMatrix(){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
-		modelViewMatrixStack.push(currentModelViewMatrix);
+		modelViewMatrixStack.push(modelViewMatrix);
 		break;
 	case OF_MATRIX_PROJECTION:
-		projectionMatrixStack.push(currentProjectionMatrix);
+		projectionMatrixStack.push(projectionMatrix);
 		break;
 	case OF_MATRIX_TEXTURE:
-		textureMatrixStack.push(currentTextureMatrix);
+		textureMatrixStack.push(textureMatrix);
 		break;
 	}
 }
@@ -772,13 +998,13 @@ void ofProgrammableGLRenderer::pushMatrix(){
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popMatrix(){
 	if (currentMatrixMode == OF_MATRIX_MODELVIEW && !modelViewMatrixStack.empty()){
-		currentModelViewMatrix = modelViewMatrixStack.top();
+		modelViewMatrix = modelViewMatrixStack.top();
 		modelViewMatrixStack.pop();
 	} else if (currentMatrixMode == OF_MATRIX_PROJECTION && !projectionMatrixStack.empty()){
-		currentProjectionMatrix = projectionMatrixStack.top();
+		projectionMatrix = projectionMatrixStack.top();
 		projectionMatrixStack.pop();
 	} else if (currentMatrixMode == OF_MATRIX_TEXTURE && !textureMatrixStack.empty()){
-		currentTextureMatrix = textureMatrixStack.top();
+		textureMatrix = textureMatrixStack.top();
 		textureMatrixStack.pop();
 	} else {
 		ofLogWarning() << "ofxGL3Renderer: Empty matrix stack, cannot pop any further.";
@@ -834,11 +1060,11 @@ void ofProgrammableGLRenderer::rotate(float degrees){
 void ofProgrammableGLRenderer::matrixMode(ofMatrixMode mode){
 	currentMatrixMode = mode;
 	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
-		currentMatrix = &currentModelViewMatrix;
+		currentMatrix = &modelViewMatrix;
 	} else if (currentMatrixMode == OF_MATRIX_PROJECTION){
-		currentMatrix = &currentProjectionMatrix;
+		currentMatrix = &projectionMatrix;
 	} else if (currentMatrixMode == OF_MATRIX_TEXTURE){
-		currentMatrix = &currentTextureMatrix;
+		currentMatrix = &textureMatrix;
 	}
 }
 
@@ -875,10 +1101,18 @@ void ofProgrammableGLRenderer::multMatrix (const float *m){
 void ofProgrammableGLRenderer::uploadCurrentMatrix(){
 
 	// uploads the current matrix to the current shader.
-	
-	if (currentMatrixMode == OF_MATRIX_MODELVIEW)	currentShader.setUniformMatrix4f("modelViewMatrix", currentModelViewMatrix);
-	if (currentMatrixMode == OF_MATRIX_PROJECTION)	currentShader.setUniformMatrix4f("projectionMatrix", currentProjectionMatrix);
-	if (currentMatrixMode == OF_MATRIX_TEXTURE)		currentShader.setUniformMatrix4f("textureMatrix", currentTextureMatrix);
+
+	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
+		currentShader.setUniformMatrix4f("modelViewMatrix", modelViewMatrix);
+		currentShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewMatrix*projectionMatrix*orientationMatrix);
+	}
+	if (currentMatrixMode == OF_MATRIX_PROJECTION){
+		currentShader.setUniformMatrix4f("projectionMatrix", projectionMatrix*orientationMatrix);
+		currentShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewMatrix*projectionMatrix*orientationMatrix);
+	}
+	if (currentMatrixMode == OF_MATRIX_TEXTURE){
+		currentShader.setUniformMatrix4f("textureMatrix", textureMatrix);
+	}
 
 }
 
@@ -1000,9 +1234,11 @@ void ofProgrammableGLRenderer::setLineWidth(float lineWidth){
 	// INVALID_VALUE error".
 	// use geometry shaders to draw lines of varying thickness...
 	
+#ifndef TARGET_OPENGLES
 	ofLogVerbose() << "glLineWidth has no effect in openGL3.2+\nUse a geometry shader to generate thick lines.";
-	
-	// glLineWidth(lineWidth);
+#else
+	glLineWidth(lineWidth);
+#endif
 }
 
 //----------------------------------------------------------
@@ -1102,7 +1338,8 @@ ofShader & ofProgrammableGLRenderer::getCurrentShader(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setDefaultShader(ofShader & shader){
-	defaultShader = shader;
+	externalShader = shader;
+	externalShaderProvided = true;
 }
 
 //----------------------------------------------------------
@@ -1112,37 +1349,40 @@ void ofProgrammableGLRenderer::enableVertices(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableTexCoords(){
-	GLint loc = getAttrLocationTexCoord();
-	if (loc != -1){
-		glEnableVertexAttribArray(loc);
+	texCoordsEnabled = true;
+	ofShader prevShader = currentShader;
+	if(!usingCustomShader) beginDefaultShader();
+
+	if(prevShader==currentShader){
+		GLint loc = getAttrLocationTexCoord();
+		if (loc != -1){
+			glEnableVertexAttribArray(loc);
+		}
 		currentShader.setUniform1f("useTexture",1);
-		texCoordsEnabled = true;
-	} else {
-		texCoordsEnabled = false;
 	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableColors(){
-	GLint loc = getAttrLocationColor();
-	if (loc != -1 ){
-		glEnableVertexAttribArray(loc);
+	colorsEnabled = true;
+	ofShader prevShader = currentShader;
+	if(!usingCustomShader) beginDefaultShader();
+
+	if(prevShader==currentShader){
+		GLint loc = getAttrLocationColor();
+		if (loc != -1){
+			glEnableVertexAttribArray(loc);
+		}
 		currentShader.setUniform1f("useColors",1);
-		colorsEnabled = true;
-	} else {
-		colorsEnabled = false;
 	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableNormals(){
+	normalsEnabled = true;
 	GLint loc = getAttrLocationNormal();
 	if (loc != -1){
 		glEnableVertexAttribArray(getAttrLocationNormal());
-		currentShader.setUniform1f("useNormals",1);
-		normalsEnabled = true;
-	} else {
-		normalsEnabled = false;
 	}
 }
 
@@ -1152,22 +1392,32 @@ void ofProgrammableGLRenderer::disableVertices(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disableTexCoords(){
-	GLint loc = getAttrLocationTexCoord();
-	if (loc != -1){
-		glDisableVertexAttribArray(loc);
-	}
-	currentShader.setUniform1f("useTexture",0);
 	texCoordsEnabled = false;
+	ofShader prevShader = currentShader;
+	if(!usingCustomShader) beginDefaultShader();
+
+	if(prevShader==currentShader){
+		GLint loc = getAttrLocationTexCoord();
+		if (loc != -1){
+			glDisableVertexAttribArray(loc);
+		}
+		currentShader.setUniform1f("useTexture",0);
+	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disableColors(){
-	GLint loc = getAttrLocationColor();
-	if (loc != -1){
-		glDisableVertexAttribArray(loc);
-	}
-	currentShader.setUniform1f("useColors",0);
 	colorsEnabled = false;
+	ofShader prevShader = currentShader;
+	if(!usingCustomShader) beginDefaultShader();
+
+	if(prevShader==currentShader){
+		GLint loc = getAttrLocationColor();
+		if (loc != -1){
+			glDisableVertexAttribArray(loc);
+		}
+		currentShader.setUniform1f("useColors",0);
+	}
 }
 
 //----------------------------------------------------------
@@ -1179,29 +1429,114 @@ void ofProgrammableGLRenderer::disableNormals(){
 	normalsEnabled = false;
 }
 
+void ofProgrammableGLRenderer::enableTextureTarget(int textureTarget){
+	currentTextureTarget = textureTarget;
+	beginDefaultShader();
+}
+
+void ofProgrammableGLRenderer::disableTextureTarget(int textureTarget){
+
+}
+
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
+	if(currentShader==shader) return;
+
 	shader.setUniform1f("useTexture",texCoordsEnabled);
 	shader.setUniform1f("useColors",colorsEnabled);
 	shader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
 
 	currentShader = shader;
+	enableAttributes();
+	uploadAllMatrices();
+	usingCustomShader = true;
+}
 
-	ofMatrixMode previousMatrixMode = currentMatrixMode;
-	matrixMode(OF_MATRIX_MODELVIEW);	uploadCurrentMatrix();
-	matrixMode(OF_MATRIX_PROJECTION);	uploadCurrentMatrix();
-	matrixMode(OF_MATRIX_TEXTURE);		uploadCurrentMatrix();
-	matrixMode(previousMatrixMode);
+void ofProgrammableGLRenderer::uploadAllMatrices(){
+	currentShader.setUniformMatrix4f("modelViewMatrix", modelViewMatrix);
+	currentShader.setUniformMatrix4f("projectionMatrix", projectionMatrix*orientationMatrix);
+	currentShader.setUniformMatrix4f("textureMatrix", textureMatrix);
+	currentShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewMatrix*projectionMatrix*orientationMatrix);
+}
 
+void ofProgrammableGLRenderer::disableAtributtes(){
+	glDisableVertexAttribArray(getAttrLocationPosition());
+	if(texCoordsEnabled){
+		int loc = getAttrLocationTexCoord();
+		if(loc!=-1){
+			glDisableVertexAttribArray(loc);
+		}
+	}
+	if(colorsEnabled){
+		int loc = getAttrLocationColor();
+		if(loc!=-1){
+			glDisableVertexAttribArray(loc);
+		}
+	}
+	if(normalsEnabled){
+		int loc = getAttrLocationNormal();
+		if(loc!=-1){
+			glDisableVertexAttribArray(loc);
+		}
+	}
+}
+
+void ofProgrammableGLRenderer::enableAttributes(){
+	glEnableVertexAttribArray(getAttrLocationPosition());
+	if(texCoordsEnabled){
+		int loc = getAttrLocationTexCoord();
+		if(loc!=-1){
+			glEnableVertexAttribArray(loc);
+		}
+	}
+	if(colorsEnabled){
+		int loc = getAttrLocationColor();
+		if(loc!=-1){
+			glEnableVertexAttribArray(loc);
+		}
+	}
+	if(normalsEnabled){
+		int loc = getAttrLocationNormal();
+		if(loc!=-1){
+			glEnableVertexAttribArray(loc);
+		}
+	}
+}
+
+
+void ofProgrammableGLRenderer::beginDefaultShader(){
+	ofShader nextShader;
+
+	if(externalShaderProvided){
+		nextShader = externalShader;
+	}else{
+		if(colorsEnabled && texCoordsEnabled){
+			if(currentTextureTarget==GL_TEXTURE_RECTANGLE_ARB) nextShader = defaultShaderTexColor;
+			else nextShader = defaultShaderTex2DColor;
+		}else if(colorsEnabled){
+			nextShader = defaultShaderNoTexColor;
+		}else if(texCoordsEnabled){
+			if(currentTextureTarget==GL_TEXTURE_RECTANGLE_ARB) nextShader = defaultShaderTexNoColor;
+			else nextShader = defaultShaderTex2DNoColor;
+		}else{
+			nextShader = defaultShaderNoTexNoColor;
+		}
+	}
+
+	if(currentShader!=nextShader){
+		disableAtributtes();
+		nextShader.begin();
+	}
+	usingCustomShader = false;
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::endCustomShader(){
-	defaultShader.begin();
+	disableAtributtes();
+	beginDefaultShader();
 }
-// ----------------------------------------------------------------------
-#pragma mark- Primitive Draw Methods
-// ----------------------------------------------------------------------
+
+
 
 inline void ofProgrammableGLRenderer::preparePrimitiveDraw(ofVbo& vbo_){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_.getVertId()); // bind to triangle vertices
@@ -1225,13 +1560,14 @@ void ofProgrammableGLRenderer::drawLine(float x1, float y1, float z1, float x2, 
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
-	disableTexCoords();
-	disableColors();
+	/*disableTexCoords();
+	disableColors();*/
     
 	lineVbo->setVertexData(&linePoints[0], 2, GL_DYNAMIC_DRAW);
-	preparePrimitiveDraw(*lineVbo);
+	lineVbo->draw(GL_LINES, 0, 2);
+	/*preparePrimitiveDraw(*lineVbo);
 	glDrawArrays(GL_LINES, 0, 2);
-	finishPrimitiveDraw();
+	finishPrimitiveDraw();*/
     
 	// use smoothness, if requested:
 	if (bSmoothHinted) endSmoothing();
@@ -1254,14 +1590,16 @@ void ofProgrammableGLRenderer::drawRectangle(float x, float y, float z, float w,
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	disableTexCoords();
+	/*disableTexCoords();
 	disableColors();
+	disableNormals();*/
 
 	rectVbo->setVertexData(&rectPoints[0], 4, GL_DYNAMIC_DRAW);
+	rectVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 	
-	preparePrimitiveDraw(*rectVbo);
+	/*preparePrimitiveDraw(*rectVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
-	finishPrimitiveDraw();
+	finishPrimitiveDraw();*/
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1276,14 +1614,16 @@ void ofProgrammableGLRenderer::drawTriangle(float x1, float y1, float z1, float 
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	disableTexCoords();
+	/*disableTexCoords();
 	disableColors();
+	disableNormals();*/
     
 	triangleVbo->setVertexData(&triPoints[0], 3, GL_DYNAMIC_DRAW);
-	
-	preparePrimitiveDraw(*triangleVbo);
+	triangleVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_STRIP : GL_LINE_LOOP, 0, 3);
+
+	/*preparePrimitiveDraw(*triangleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_STRIP : GL_LINE_LOOP, 0, 3);
-	finishPrimitiveDraw();
+	finishPrimitiveDraw();*/
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1301,13 +1641,14 @@ void ofProgrammableGLRenderer::drawCircle(float x, float y, float z,  float radi
 
 	circleVbo->setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
 	
-	disableTexCoords();
+	/*disableTexCoords();
 	disableColors();
-	disableNormals();
-    
-	preparePrimitiveDraw(*circleVbo);
+	disableNormals();*/
+
+	circleVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	/*preparePrimitiveDraw(*circleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
-    finishPrimitiveDraw();
+    finishPrimitiveDraw();*/
 	
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1327,12 +1668,15 @@ void ofProgrammableGLRenderer::drawEllipse(float x, float y, float z, float widt
 
 	circleVbo->setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
 	
-	disableTexCoords();
+	/*disableTexCoords();
 	disableColors();
+	disableNormals();*/
+
+	circleVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP,0,circlePoints.size());
     
-	preparePrimitiveDraw(*circleVbo);
+	/*preparePrimitiveDraw(*circleVbo);
 	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
-    finishPrimitiveDraw();
+    finishPrimitiveDraw();*/
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1367,12 +1711,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	bool hasViewport = false;
 
 	ofRectangle rViewport;
-
-#ifdef TARGET_OPENGLES
-	if(mode == OF_BITMAPMODE_MODEL_BILLBOARD) {
-		mode = OF_BITMAPMODE_SIMPLE;
-	}
-#endif
 
 	switch (mode) {
 
@@ -1428,7 +1766,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			pushMatrix();
 
 			translate(x, y, z);
-			scale(1, -1, 0);
+			//scale(1, -1, 0);
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1447,9 +1785,9 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			//
 			// this could probably be backported to the GL2 Renderer =)
 			
-			rViewport = ofGetCurrentViewport();
+			rViewport = getCurrentViewport();
 			
-			ofVec3f dScreen = ofVec3f(x,y,z) * currentModelViewMatrix * currentProjectionMatrix;
+			ofVec3f dScreen = ofVec3f(x,y,z) * modelViewMatrix * projectionMatrix;
 			dScreen += ofVec3f(1.0) ;
 			dScreen *= 0.5;
 			
@@ -1476,12 +1814,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			scale(2/rViewport.width, 2/rViewport.height, 1);
 
 			translate(dScreen.x, dScreen.y, 0);
-
-			if(currentFbo == NULL) {
-				scale(1, -1, 1);
-			} else {
-				scale(1,  1, 1); // invert when rendering inside an fbo
-			}
 		}
 			break;
 

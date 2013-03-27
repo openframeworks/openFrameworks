@@ -100,7 +100,7 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 			vbo.draw(GL_LINES,0,getNumVertices());
 		}
 	}else{
-		if(getNumIndices() && drawMode!=OF_MESH_POINTS){
+		if(getNumIndices()){
 			vbo.drawElements(mode,getNumIndices());
 		}else{
 			vbo.draw(mode,0,getNumVertices());

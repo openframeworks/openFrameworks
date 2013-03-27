@@ -176,12 +176,14 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
         return false;
     }
     
-	if(status == GL_TRUE)
+	if(status == GL_TRUE){
 		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader compiled.");
+		checkShaderInfoLog(shader, type, OF_LOG_WARNING);
+	}
 	
 	else if (status == GL_FALSE) {
 		ofLog(OF_LOG_ERROR, nameForType(type) + " shader failed to compile");
-		checkShaderInfoLog(shader, type);
+		checkShaderInfoLog(shader, type, OF_LOG_ERROR);
 		return false;
 	}
 	
@@ -246,13 +248,13 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
 }
 
 //--------------------------------------------------------------
-void ofShader::checkShaderInfoLog(GLuint shader, GLenum type) {
+void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel) {
 	GLsizei infoLength;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(OF_LOG_ERROR, nameForType(type) + " shader reports:\n" + infoBuffer);
+		ofLog(logLevel, nameForType(type) + " shader reports:\n" + infoBuffer);
 		delete [] infoBuffer;
 	}
 }
@@ -354,6 +356,8 @@ void ofShader::begin() {
                 ofGetProgrammableGLRenderer()->beginCustomShader(*this);
             }
         }
+	}else{
+		ofLogError() << "trying to begin unloaded shader";
 	}
 }
 
@@ -731,6 +735,16 @@ GLuint& ofShader::getProgram() {
 //--------------------------------------------------------------
 GLuint& ofShader::getShader(GLenum type) {
 	return shaders[type];
+}
+
+//--------------------------------------------------------------
+bool ofShader::operator==(const ofShader & other){
+	return other.program==program;
+}
+
+//--------------------------------------------------------------
+bool ofShader::operator!=(const ofShader & other){
+	return other.program!=program;
 }
 
 //--------------------------------------------------------------

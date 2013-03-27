@@ -303,13 +303,14 @@ public:
 	// setup matrices and viewport (upto you to push and pop view before and after)
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-	virtual void viewport(ofRectangle viewport){};
-	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
+	virtual void viewport(ofRectangle viewport){}
+	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){}
 	virtual void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){};
-	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
-	virtual int getViewportWidth(){return 0;};
-	virtual int getViewportHeight(){return 0;};
+	virtual void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){}
+	virtual ofRectangle getCurrentViewport(){return ofRectangle();}
+	virtual ofRectangle getNativeViewport(){return getCurrentViewport();}
+	virtual int getViewportWidth(){return 0;}
+	virtual int getViewportHeight(){return 0;}
 
 	virtual void setCoordHandedness(ofHandednessType handedness){};
 	virtual ofHandednessType getCoordHandedness(){return OF_LEFT_HANDED;};
@@ -396,6 +397,9 @@ public:
 	virtual void disableTexCoords()=0;
 	virtual void disableColors()=0;
 	virtual void disableNormals()=0;
+
+	virtual void enableTextureTarget(int textureTarget)=0;
+	virtual void disableTextureTarget(int textureTarget)=0;
 };
 
 

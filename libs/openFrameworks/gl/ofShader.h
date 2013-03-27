@@ -114,6 +114,9 @@ public:
 	GLuint& getProgram();
 	GLuint& getShader(GLenum type);
 	
+	bool operator==(const ofShader & other);
+	bool operator!=(const ofShader & other);
+
 private:
 	GLuint program;
 	bool bLoaded;
@@ -127,7 +130,7 @@ private:
 	
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);
-	void checkShaderInfoLog(GLuint shader, GLenum type);
+	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
 	
 	static string nameForType(GLenum type);
 	
