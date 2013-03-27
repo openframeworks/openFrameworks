@@ -366,14 +366,22 @@ ofPoint ofAppGlutWindow::getWindowSize(){
 ofPoint ofAppGlutWindow::getWindowPosition(){
 	int x = glutGet(GLUT_WINDOW_X);
 	int y = glutGet(GLUT_WINDOW_Y);
-	return ofPoint(x,y,0);
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+		return ofPoint(x,y,0);
+	}else{
+		return ofPoint(y,x,0);
+	}
 }
 
 //------------------------------------------------------------
 ofPoint ofAppGlutWindow::getScreenSize(){
 	int width = glutGet(GLUT_SCREEN_WIDTH);
 	int height = glutGet(GLUT_SCREEN_HEIGHT);
-	return ofPoint(width, height,0);
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+		return ofPoint(width, height,0);
+	}else{
+		return ofPoint(height, width,0);
+	}
 }
 
 //------------------------------------------------------------
@@ -395,6 +403,7 @@ int ofAppGlutWindow::getHeight(){
 //------------------------------------------------------------
 void ofAppGlutWindow::setOrientation(ofOrientation orientationIn){
 	orientation = orientationIn;
+	ofViewport();
 }
 
 //------------------------------------------------------------
@@ -602,7 +611,7 @@ void ofAppGlutWindow::display(void){
 	}
 
 	// set viewport, clear the screen
-	ofViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));		// used to be glViewport( 0, 0, width, height );
+	ofViewport();		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
