@@ -148,7 +148,7 @@ class ofxAssimpModelLoader{
         ofMatrix4x4 modelMatrix;
 
         vector<ofLight> lights;
-        vector<ofxAssimpTexture> textures;
+        vector<ofxAssimpTexture *> textures;
         vector<ofxAssimpMeshHelper> modelMeshes;
         vector<ofxAssimpAnimation> animations;
         int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.

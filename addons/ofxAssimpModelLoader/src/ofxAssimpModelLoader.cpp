@@ -210,7 +210,7 @@ void ofxAssimpModelLoader::loadGLResources(){
             ofxAssimpTexture * assimpTexture = NULL;
             bool bTextureAlreadyExists = false;
             for(int j=0; j<textures.size(); j++) {
-                assimpTexture = &textures[j];
+                assimpTexture = textures[j];
                 if(assimpTexture->getTexturePath() == realPath) {
                     bTextureAlreadyExists = true;
                     break;
@@ -223,8 +223,8 @@ void ofxAssimpModelLoader::loadGLResources(){
                 ofTexture * texture = new ofTexture();
                 bool bTextureLoadedOk = ofLoadImage(*texture, realPath);
                 if(bTextureLoadedOk) {
-                    textures.push_back(ofxAssimpTexture(texture, realPath));
-                    assimpTexture = &textures.back();
+                    textures.push_back(new ofxAssimpTexture(texture, realPath));
+                    assimpTexture = textures.back();
                     meshHelper.assimpTexture = assimpTexture;
                     ofLog(OF_LOG_VERBOSE, "texture loaded, width: %f height %f", texture->getWidth(), texture->getHeight());
                 } else {
@@ -318,8 +318,8 @@ void ofxAssimpModelLoader::clear(){
     currentAnimation = -1;
     
     for(int i=0; i<textures.size(); i++) {
-        if(textures[i].hasTexture()) {
-            ofTexture * tex = textures[i].getTexturePtr();
+        if(textures[i]->hasTexture()) {
+            ofTexture * tex = textures[i]->getTexturePtr();
             delete tex;
         }
     }
