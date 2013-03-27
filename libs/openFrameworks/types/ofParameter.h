@@ -54,14 +54,6 @@ template <class T>
 struct FriendMaker {typedef T Type;};
 
 
-template<bool C, typename T = void>
-struct enable_if {
-typedef T type;
-};
-
-template<typename T>
-struct enable_if<false, T> { };
-
 template<typename ParameterType,typename Friend>
 class ofReadOnlyParameter: public ofAbstractParameter{
 public:
@@ -191,7 +183,7 @@ protected:
 
 	void setSerializable(bool serializable);
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) || (_MSC_VER)
 	friend typename FriendMaker<Friend>::Type;
 #else
 	friend class FriendMaker<Friend>::Type;

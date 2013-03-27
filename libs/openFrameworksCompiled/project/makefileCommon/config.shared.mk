@@ -54,6 +54,8 @@ ifndef PLATFORM_LIB_SUBPATH
             PLATFORM_LIB_SUBPATH=linuxarmv7l
         else ifeq ($(PLATFORM_ARCH),i386)
             PLATFORM_LIB_SUBPATH=linux
+        else ifeq ($(PLATFORM_ARCH),i686)
+            PLATFORM_LIB_SUBPATH=linux
         else
             $(error This makefile does not support your architecture)
         endif
