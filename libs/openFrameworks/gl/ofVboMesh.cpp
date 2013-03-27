@@ -56,19 +56,19 @@ void ofVboMesh::disableIndices(){
 	vbo.disableIndices();
 }
 
-bool ofVboMesh::usingColors(){
+bool ofVboMesh::usingColors() const {
 	return vbo.getUsingColors();
 }
 
-bool ofVboMesh::usingTextures(){
+bool ofVboMesh::usingTextures() const {
 	return vbo.getUsingTexCoords();
 }
 
-bool ofVboMesh::usingNormals(){
+bool ofVboMesh::usingNormals() const {
 	return vbo.getUsingNormals();
 }
 
-bool ofVboMesh::usingIndices(){
+bool ofVboMesh::usingIndices() const {
 	return vbo.getUsingIndices();
 }
 
