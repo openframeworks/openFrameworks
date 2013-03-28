@@ -768,6 +768,7 @@ void ofProgrammableGLRenderer::pushView() {
 	matrixMode(OF_MATRIX_MODELVIEW);
 	pushMatrix();
 	matrixMode(currentMode);
+	orientationStack.push(make_pair(ofGetOrientation(),vFlipped));
 }
 
 //----------------------------------------------------------
@@ -783,6 +784,9 @@ void ofProgrammableGLRenderer::popView() {
 	matrixMode(OF_MATRIX_MODELVIEW);
 	popMatrix();
 	matrixMode(currentMode);
+	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
+	setOrientation(orientationFlip.first,orientationFlip.second);
+	orientationStack.pop();
 }
 
 //----------------------------------------------------------
