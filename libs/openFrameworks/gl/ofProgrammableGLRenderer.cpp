@@ -568,11 +568,11 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	// tig: note that there was a lot of code duplication going on here.
 	// using ofVbo's draw methods, to keep stuff DRY
 
+	if (vertexData.getVertices().empty()) return;
+
 	if (meshVbo.getIsAllocated()) {
 		meshVbo.clear();
 	}
-
-	if (vertexData.getVertices().empty()) return;
 	
 	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
 	

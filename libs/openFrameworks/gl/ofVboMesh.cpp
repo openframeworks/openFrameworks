@@ -74,6 +74,7 @@ bool ofVboMesh::usingIndices() const {
 
 
 void ofVboMesh::draw(ofPolyRenderMode drawMode){
+	if(getNumVertices()==0) return;
 	updateVbo();
 	GLuint mode = ofGetGLPrimitiveMode(getMode());
 #ifndef TARGET_OPENGLES

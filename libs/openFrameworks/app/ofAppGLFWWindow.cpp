@@ -46,6 +46,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	timeNow				= 0;
 	timeThen			= 0;
 	frameRate			= 0;
+	orientation = OF_ORIENTATION_DEFAULT;
 
 //	 OF_KEY_MODIFIER = 0x0000;
 //	 OF_KEY_RETURN	= 294;
