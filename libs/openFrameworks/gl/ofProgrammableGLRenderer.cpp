@@ -378,10 +378,10 @@ out vec4 fragColor;\n\
 void main()\n\
 {\n\
 	\n\
-	vec4 tex = texture2D(src_tex_unit0, texCoordVarying);\n\
+	vec4 tex = texture(src_tex_unit0, texCoordVarying);\n\
 	// We will not write anything to the framebuffer if we have a transparent pixel\n\
 	// This makes sure we don't mess up our depth buffer.\n\
-	if (tex.r < 0.5) discard;\n\
+	if (tex.a < 0.5) discard;\n\
 	fragColor = color * tex;\n\
 }";
 #endif
@@ -763,7 +763,6 @@ void ofProgrammableGLRenderer::pushView() {
 	matrixMode(OF_MATRIX_MODELVIEW);
 	pushMatrix();
 	matrixMode(currentMode);
-	orientationStack.push(make_pair(ofGetOrientation(),isVFlipped()));
 }
 
 //----------------------------------------------------------
@@ -779,10 +778,6 @@ void ofProgrammableGLRenderer::popView() {
 	matrixMode(OF_MATRIX_MODELVIEW);
 	popMatrix();
 	matrixMode(currentMode);
-	ofOrientation orientation = orientationStack.top().first;
-	bool vFlipped = orientationStack.top().second;
-	orientationStack.pop();
-	setOrientation(orientation,vFlipped);
 }
 
 //----------------------------------------------------------
@@ -847,11 +842,6 @@ int ofProgrammableGLRenderer::getViewportWidth(){
 //----------------------------------------------------------
 int ofProgrammableGLRenderer::getViewportHeight(){
 	return currentViewport.height;
-}
-
-//----------------------------------------------------------
-bool ofProgrammableGLRenderer::isVFlipped() const{
-	return vFlipped;
 }
 
 //----------------------------------------------------------
@@ -1468,7 +1458,15 @@ void ofProgrammableGLRenderer::uploadAllMatrices(){
 }
 
 void ofProgrammableGLRenderer::disableAtributtes(){
-	glDisableVertexAttribArray(getAttrLocationPosition());
+
+	if (!currentShader.isLoaded()) return;
+	
+	{
+		int loc = getAttrLocationPosition();
+		if(loc!=-1){
+		glDisableVertexAttribArray(loc);
+		}
+	}
 	if(texCoordsEnabled){
 		int loc = getAttrLocationTexCoord();
 		if(loc!=-1){
@@ -1799,6 +1797,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			translate(-1, -1, 0);
 
 			scale(2/rViewport.width, 2/rViewport.height, 1);
+
 			translate(dScreen.x, dScreen.y, 0);
 			if(!isVFlipped()){
 				scale(1,-1,1);
