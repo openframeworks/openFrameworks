@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */; };
 		221FD01016E74E6900522E7E /* ofProgrammableGLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */; };
+		22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
+		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
@@ -152,6 +154,8 @@
 /* Begin PBXFileReference section */
 		221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofProgrammableGLRenderer.cpp; path = gl/ofProgrammableGLRenderer.cpp; sourceTree = "<group>"; };
 		221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofProgrammableGLRenderer.h; path = gl/ofProgrammableGLRenderer.h; sourceTree = "<group>"; };
+		22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppGLFWWindow.cpp; sourceTree = "<group>"; };
+		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
@@ -403,6 +407,8 @@
 		E4B27AAB10CBE92A00536013 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */,
+				22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */,
 				E4B27AAC10CBE92A00536013 /* ofAppBaseWindow.h */,
 				E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */,
 				E4B27AAE10CBE92A00536013 /* ofAppGlutWindow.h */,
@@ -681,6 +687,7 @@
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
 				221FD01016E74E6900522E7E /* ofProgrammableGLRenderer.h in Headers */,
+				22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -798,6 +805,7 @@
 				DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */,
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,
 				221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */,
+				22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

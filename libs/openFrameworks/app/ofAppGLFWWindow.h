@@ -16,7 +16,11 @@
 //#define _GLFW_USE_MENUBAR
 
 #include "glfw_config.h"
+#ifdef TARGET_OSX
+#include "GL/glfw3.h"
+#else
 #include "glfw3.h"
+#endif
 
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"

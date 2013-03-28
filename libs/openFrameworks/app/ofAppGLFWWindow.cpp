@@ -257,7 +257,8 @@ void ofAppGLFWWindow::changeMode(){
 		ofAppGLFWWindow::setWindowPosition(0,0);
 
 		#ifdef TARGET_OSX
-			SetSystemUIMode(kUIModeAllHidden,NULL);
+//	tig: this doesn't compile
+		// SetSystemUIMode(kUIModeAllHidden,NULL);
 		#endif
 
 	}else if( windowMode == OF_WINDOW ){
@@ -273,7 +274,8 @@ void ofAppGLFWWindow::changeMode(){
 		//----------------------------------------------------
 
 		#ifdef TARGET_OSX
-			SetSystemUIMode(kUIModeNormal,NULL);
+		// tig:this doesn't compile
+//			SetSystemUIMode(kUIModeNormal,NULL);
 		#endif
 	}
 }
