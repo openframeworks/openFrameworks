@@ -12,8 +12,8 @@ void testApp::setup(){
 	ofBackground(255, 255, 255);
 
     // Enable audio frequency and volume metering.
-    catMovie.enableAudioFrequencyMetering();
-    catMovie.enableAudioVolumeMetering();
+    catMovie.enableAudioFrequencyMetering(2);
+    catMovie.enableAudioVolumeMetering(2);
 
     // Load and start the movie.
 	catMovie.loadMovie("movies/cat.mp4", OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
@@ -51,11 +51,11 @@ void testApp::draw(){
             for (int j = 0; j < catMovie.getNumAudioFrequencyBands(); j++) {
                 bandWidth = catMovie.getAudioFrequencyLevel(i, j) * freqWidth;
 
-                ofSetColor(255, 0, 0);
+                ofSetColor(i%2? 0:200, 0, i%2? 200:0);
                 ofRect(currLeft, bandTop, bandWidth, bandHeight);
 
                 ofSetColor(ofColor::black);
-                ofDrawBitmapString(ofToString(catMovie.getAudioFrequencyMeteringBand(i, j), 1) + " Hz", currLeft + bandWidth + 15, bandTop + 15);
+                ofDrawBitmapString(ofToString(catMovie.getAudioFrequencyMeteringBand(j), 1) + " Hz", currLeft + bandWidth + 15, bandTop + 15);
 
                 bandTop += bandHeight;
             }

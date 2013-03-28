@@ -111,7 +111,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
         vector<float>&      getAudioFrequencyLevels();
         float               getAudioFrequencyLevel(int channel, int band);
         vector<float>&      getAudioFrequencyMeteringBands();
-        float               getAudioFrequencyMeteringBand(int channel, int band);
+        float               getAudioFrequencyMeteringBand(int band);
 
         int                 getNumAudioVolumeChannels();
         vector<float>&      getAudioVolumeLevels();
