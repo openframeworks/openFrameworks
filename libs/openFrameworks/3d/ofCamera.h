@@ -42,6 +42,9 @@ public:
 	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f));
 	void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
 	
+	void setVFlip(bool vflip);
+	bool isVFlipped();
+
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
@@ -75,5 +78,6 @@ protected:
 	bool forceAspectRatio;
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool isActive;
+	bool vFlip;
 };
 
