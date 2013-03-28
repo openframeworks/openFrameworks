@@ -574,7 +574,8 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 		meshVbo->clear();
 	}
 
-
+	if (vertexData.getVertices().empty()) return;
+	
 	meshVbo->setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
 	
 	if (!useColors)		meshVbo->disableColors();
@@ -1460,7 +1461,15 @@ void ofProgrammableGLRenderer::uploadAllMatrices(){
 }
 
 void ofProgrammableGLRenderer::disableAtributtes(){
-	glDisableVertexAttribArray(getAttrLocationPosition());
+
+	if (!currentShader.isLoaded()) return;
+	
+	{
+		int loc = getAttrLocationPosition();
+		if(loc!=-1){
+		glDisableVertexAttribArray(loc);
+		}
+	}
 	if(texCoordsEnabled){
 		int loc = getAttrLocationTexCoord();
 		if(loc!=-1){
