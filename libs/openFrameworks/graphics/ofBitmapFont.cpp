@@ -337,7 +337,7 @@ void ofUpdateBitmapCharacterTexture(){
 static vector<unsigned char> myLetterPixels;
 static float widthTex = 8.0f/256.0f;
 static float heightTex = 14.0f/256.0f;
-static ofMesh charMesh;
+static ofVboMesh charMesh;
 static int vC = 0;
 
 //---------------------------------------------------------------------
@@ -483,8 +483,8 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 
 //---------------------------------------------------------------------
 void ofDrawBitmapCharacterStart(int stringLength){
-	charMesh.getVertices().resize(6 * (stringLength+1));
-	charMesh.getTexCoords().resize(6 * (stringLength+1));
+	charMesh.getVertices().resize(6 * stringLength);
+	charMesh.getTexCoords().resize(6 * stringLength);
 
 	if(!bBitmapTexturePrepared){
 		prepareBitmapTexture();

@@ -37,6 +37,7 @@ ofRectangle ofGetNativeViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
 int ofOrientationToDegrees(ofOrientation orientation);
+bool ofIsVFlipped();
 
 void ofSetCoordHandedness(ofHandednessType handedness);
 ofHandednessType ofGetCoordHandedness();

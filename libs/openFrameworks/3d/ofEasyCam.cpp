@@ -233,6 +233,13 @@ void ofEasyCam::updateMouse(){
 			bApplyInertia = true;
 			bValidClick = false;
 		}else {
+			int vFlip;
+			if(ofIsVFlipped()){
+				vFlip = -1;
+			}else{
+				vFlip =  1;
+			}
+
 			mouseVel = mouse  - lastMouse;
 			
 			if (bDoTranslate) {
@@ -243,18 +250,18 @@ void ofEasyCam::updateMouse(){
 					moveZ = mouseVel.y * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;				
 				}else {
 					moveX = -mouseVel.x * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.width;
-					moveY =  mouseVel.y * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.height;
+					moveY = vFlip * mouseVel.y * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.height;
 				}
 			}else {
 				xRot = 0;
 				yRot = 0;
 				zRot = 0;
 				if (bInsideArcball) {
-					xRot = -mouseVel.y * rotationFactor;
+					xRot = vFlip * -mouseVel.y * rotationFactor;
 					yRot = -mouseVel.x * rotationFactor;
 				}else {
 					ofVec2f center(viewport.width/2, viewport.height/2);
-					zRot = - ofVec2f(mouse.x - viewport.x - center.x, mouse.y -viewport.y -center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
+					zRot = - vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
 				}
 			}
 			lastMouse = mouse;

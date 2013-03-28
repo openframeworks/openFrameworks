@@ -181,6 +181,11 @@ int ofOrientationToDegrees(ofOrientation orientation){
 }
 
 //----------------------------------------------------------
+bool ofIsVFlipped(){
+	return renderer->isVFlipped();
+}
+
+//----------------------------------------------------------
 void ofSetCoordHandedness(ofHandednessType handedness){
 	renderer->setCoordHandedness(handedness);
 }
