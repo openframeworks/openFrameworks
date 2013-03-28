@@ -378,11 +378,11 @@ function createPackage {
 	
 	
 	#download and copy OF compiled
-	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    if [ "$pkg_platform" = "win_cb" ]; then
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	fi
+	#cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
+    #if [ "$pkg_platform" = "win_cb" ]; then
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+	#fi
 
 
     #if snow leopard change 10.4u to 10.5
@@ -396,27 +396,24 @@ function createPackage {
     #choose readme
     cd $pkg_ofroot
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
-        mv docs/linux.md readme
+        cp docs/linux.md INSTALL.md
     fi
     
     if [ "$platform" = "vs" ]; then
-        mv docs/visualstudio.md readme
+        cp docs/visualstudio.md INSTALL.md
     fi
     
     if [ "$platform" = "win_cb" ]; then
-        mv docs/codeblocks.md readme
+        cp docs/codeblocks.md INSTALL.md
     fi
     
     if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then
-        mv docs/osx.md readme
+        cp docs/osx.md INSTALL.md
     fi
 
     if [ "$platform" = "android" ]; then
-        mv docs/android.md readme
+        cp docs/android.md INSTALL.md
     fi
-    
-    rm readme.*
-    mv readme readme.txt
     
     rm CONTRIBUTING.md
 
