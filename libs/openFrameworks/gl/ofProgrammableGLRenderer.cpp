@@ -11,6 +11,8 @@
 #include "ofVbo.h"
 #include "of3dPrimitives.h"
 
+static const int OF_NO_TEXTURE=-1;
+
 #ifdef TARGET_OPENGLES
 string defaultVertexShader =
 		"attribute vec4 position;\
@@ -291,7 +293,7 @@ in vec2 texCoordVarying;\n\
 out vec4 fragColor;\n\
 \n\
 void main(){\n\
-	fragColor = texture2D(src_tex_unit0, texCoordVarying) * colorVarying;\n\
+	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
 }";
 
 string defaultFragmentShaderTex2DNoColor ="\n\
@@ -308,7 +310,7 @@ in vec2 texCoordVarying;\n\
 out vec4 fragColor;\n\
 \n\
 void main(){\n\
-	fragColor = texture2D(src_tex_unit0, texCoordVarying) * color;\n\
+	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
 }";
 
 string defaultFragmentShaderNoTexColor ="\n\
@@ -379,7 +381,7 @@ void main()\n\
 	vec4 tex = texture2D(src_tex_unit0, texCoordVarying);\n\
 	// We will not write anything to the framebuffer if we have a transparent pixel\n\
 	// This makes sure we don't mess up our depth buffer.\n\
-	if (tex.a < 0.5) discard;\n\
+	if (tex.r < 0.5) discard;\n\
 	fragColor = color * tex;\n\
 }";
 #endif
@@ -390,9 +392,10 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	currentMatrix = &modelViewMatrix;
 	bBackgroundAuto = true;
 
-	linePoints.resize(2);
-	triPoints.resize(3);
-	rectPoints.resize(4);
+	lineVbo.getVertices().resize(2);
+	lineVbo.setMode(OF_PRIMITIVE_LINES);
+	triangleVbo.getVertices().resize(3);
+	rectVbo.getVertices().resize(4);
 
 	currentFbo = NULL;
 
@@ -409,27 +412,20 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
     colorsEnabled = false;
     texCoordsEnabled = false;
     normalsEnabled = false;
-	
-	// tig: allocate our default vbos on the heap so that we can work with forward-declarations in the header file.
-	circleVbo		= ofPtr<ofVbo>(new ofVbo());
-	triangleVbo		= ofPtr<ofVbo>(new ofVbo());
-	rectVbo			= ofPtr<ofVbo>(new ofVbo());
-	lineVbo			= ofPtr<ofVbo>(new ofVbo());
-	vertexDataVbo	= ofPtr<ofVbo>(new ofVbo());
-	meshVbo			= ofPtr<ofVbo>(new ofVbo());
-
 	externalShaderProvided = false;
 
 	orientationMatrix.makeIdentityMatrix();
 
 
+	glGetError();
 #ifndef TARGET_OPENGLES
 	glGenVertexArrays(1, &defaultVAO);
-	currentTextureTarget = GL_TEXTURE_RECTANGLE_ARB;
+	currentTextureTarget = OF_NO_TEXTURE;
 #else
-	currentTextureTarget = GL_TEXTURE_2D;
+	currentTextureTarget = OF_NO_TEXTURE;
 	//glGenVertexArraysOES(1, &defaultVAO);
 #endif
+	glGetError();
 }
 
 ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
@@ -549,8 +545,9 @@ bool ofProgrammableGLRenderer::setup() {
 		bmpShdRet = bitmapStringShader.linkProgram();
 		ofLogVerbose() << "Loaded bitmapString shader";
 	}
-	
+
 	beginDefaultShader();
+	glGetError();
 	return ret && bmpShdRet;
 }
 
@@ -569,19 +566,15 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 
 	// tig: note that there was a lot of code duplication going on here.
 	// using ofVbo's draw methods, to keep stuff DRY
-	
-	if (meshVbo->getIsAllocated()) {
-		meshVbo->clear();
+
+	if (meshVbo.getIsAllocated()) {
+		meshVbo.clear();
 	}
 
 
-	meshVbo->setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
-	
-	if (!useColors)		meshVbo->disableColors();
-	if (!useTextures)	meshVbo->disableTexCoords();
-	if (!useNormals)	meshVbo->disableNormals();
-	
-	
+	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
+
+
 	// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
 	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer. Whereas
 	// gles2.0 doesn't allow for a polygonmode.
@@ -608,20 +601,19 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 			break;
 	}
 	if(vertexData.hasIndices()){
-		meshVbo->drawElements(drawMode, meshVbo->getNumIndices());
+		meshVbo.drawElements(drawMode, meshVbo.getNumIndices());
 	} else {
-		meshVbo->draw(drawMode, 0, meshVbo->getNumVertices());
+		meshVbo.draw(drawMode, 0, meshVbo.getNumVertices());
 	}
 #else
 
 	// OpenGL
 	
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-	if(meshVbo->getUsingIndices()) {
-		meshVbo->drawElements(ofGetGLPrimitiveMode(vertexData.getMode()), meshVbo->getNumIndices());
-	}
-	else {
-		meshVbo->draw(ofGetGLPrimitiveMode(vertexData.getMode()), 0, meshVbo->getNumVertices());
+	if(meshVbo.getUsingIndices()) {
+		meshVbo.drawElements(ofGetGLPrimitiveMode(vertexData.getMode()), meshVbo.getNumIndices());
+	} else {
+		meshVbo.draw(ofGetGLPrimitiveMode(vertexData.getMode()), 0, meshVbo.getNumVertices());
 	}
 	
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
@@ -636,7 +628,7 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	
 	if (bSmoothHinted) endSmoothing();
 	
-	finishPrimitiveDraw();
+	//finishPrimitiveDraw();
 }
 
 //----------------------------------------------------------
@@ -648,10 +640,12 @@ void ofProgrammableGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode rend
 void ofProgrammableGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	if(!vertexData.empty()) {
 		if (bSmoothHinted) startSmoothing();
-		disableTexCoords();
-		disableColors();
-		vertexDataVbo->setVertexData(&vertexData[0], vertexData.size(), GL_DYNAMIC_DRAW);
-		vertexDataVbo->draw(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+
+		/*disableTexCoords();
+		disableColors();*/
+
+		vertexDataVbo.setVertexData(&vertexData[0], vertexData.size(), GL_DYNAMIC_DRAW);
+		vertexDataVbo.draw(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
 
 		/*preparePrimitiveDraw(*vertexDataVbo);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
@@ -666,13 +660,15 @@ void ofProgrammableGLRenderer::draw(ofPolyline & poly){
 		// use smoothness, if requested:
 		if (bSmoothHinted) startSmoothing();
 
-		disableTexCoords();
-		disableColors();
+		/*disableTexCoords();
+		disableColors();*/
 
-		vertexDataVbo->setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
-		preparePrimitiveDraw(*vertexDataVbo);
+		vertexDataVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
+		vertexDataVbo.draw(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+
+		/*preparePrimitiveDraw(vertexDataVbo);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
-		finishPrimitiveDraw();
+		finishPrimitiveDraw();*/
 
 		// use smoothness, if requested:
 		if (bSmoothHinted) endSmoothing();
@@ -767,6 +763,7 @@ void ofProgrammableGLRenderer::pushView() {
 	matrixMode(OF_MATRIX_MODELVIEW);
 	pushMatrix();
 	matrixMode(currentMode);
+	orientationStack.push(make_pair(ofGetOrientation(),isVFlipped()));
 }
 
 //----------------------------------------------------------
@@ -782,6 +779,10 @@ void ofProgrammableGLRenderer::popView() {
 	matrixMode(OF_MATRIX_MODELVIEW);
 	popMatrix();
 	matrixMode(currentMode);
+	ofOrientation orientation = orientationStack.top().first;
+	bool vFlipped = orientationStack.top().second;
+	orientationStack.pop();
+	setOrientation(orientation,vFlipped);
 }
 
 //----------------------------------------------------------
@@ -849,6 +850,11 @@ int ofProgrammableGLRenderer::getViewportHeight(){
 }
 
 //----------------------------------------------------------
+bool ofProgrammableGLRenderer::isVFlipped() const{
+	return vFlipped;
+}
+
+//----------------------------------------------------------
 void ofProgrammableGLRenderer::setCoordHandedness(ofHandednessType handedness) {
 	coordHandedness = handedness;
 }
@@ -859,10 +865,11 @@ ofHandednessType ofProgrammableGLRenderer::getCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setOrientationMatrix(ofOrientation orientation, bool vFlip){
-	orientationMatrix.makeIdentityMatrix();
+void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vFlip){
+	vFlipped = vFlip;
 
 	if(ofDoesHWOrientation()){
+		orientationMatrix.makeIdentityMatrix();
 		if(vFlip){
 			orientationMatrix.scale(1,-1,1);
 		}
@@ -888,6 +895,7 @@ void ofProgrammableGLRenderer::setOrientationMatrix(ofOrientation orientation, b
 
 			case OF_ORIENTATION_DEFAULT:
 			default:
+				orientationMatrix.makeIdentityMatrix();
 				if(vFlip)
 					orientationMatrix.scale(1,-1,1);
 				break;
@@ -898,14 +906,13 @@ void ofProgrammableGLRenderer::setOrientationMatrix(ofOrientation orientation, b
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
-
 	ofRectangle currentViewport = getCurrentViewport();
 	
 	float viewW = currentViewport.width;
 	float viewH = currentViewport.height;
 
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
-	setOrientationMatrix(orientation,vFlip);
+	setOrientation(orientation,vFlip);
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -935,10 +942,10 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
-	ofRectangle orientedViewport = getNativeViewport();
+	ofRectangle currentViewport = getCurrentViewport();
 
-	float viewW = orientedViewport.width;
-	float viewH = orientedViewport.height;
+	float viewW = currentViewport.width;
+	float viewH = currentViewport.height;
 
 	ofMatrix4x4 ortho;
 
@@ -950,7 +957,7 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 		ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
 	}
 
-	setOrientationMatrix(orientation,vFlip);
+	setOrientation(orientation,vFlip);
 
 	matrixMode(OF_MATRIX_PROJECTION);
 	loadMatrix(ortho); // make ortho our new projection matrix.
@@ -975,7 +982,7 @@ void ofProgrammableGLRenderer::setCircleResolution(int res){
 	if((int)circlePolyline.size()!=res+1){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
-		circlePoints.resize(circlePolyline.size());
+		circleVbo.getVertices() = circlePolyline.getVertices();
 	}
 }
 
@@ -1435,7 +1442,8 @@ void ofProgrammableGLRenderer::enableTextureTarget(int textureTarget){
 }
 
 void ofProgrammableGLRenderer::disableTextureTarget(int textureTarget){
-
+	currentTextureTarget = OF_NO_TEXTURE;
+	beginDefaultShader();
 }
 
 //----------------------------------------------------------
@@ -1511,13 +1519,31 @@ void ofProgrammableGLRenderer::beginDefaultShader(){
 		nextShader = externalShader;
 	}else{
 		if(colorsEnabled && texCoordsEnabled){
-			if(currentTextureTarget==GL_TEXTURE_RECTANGLE_ARB) nextShader = defaultShaderTexColor;
-			else nextShader = defaultShaderTex2DColor;
+			switch(currentTextureTarget){
+			case GL_TEXTURE_RECTANGLE_ARB:
+				nextShader = defaultShaderTexColor;
+				break;
+			case GL_TEXTURE_2D:
+				nextShader = defaultShaderTex2DColor;
+				break;
+			case OF_NO_TEXTURE:
+				nextShader = defaultShaderNoTexColor;
+				break;
+			}
 		}else if(colorsEnabled){
 			nextShader = defaultShaderNoTexColor;
 		}else if(texCoordsEnabled){
-			if(currentTextureTarget==GL_TEXTURE_RECTANGLE_ARB) nextShader = defaultShaderTexNoColor;
-			else nextShader = defaultShaderTex2DNoColor;
+			switch(currentTextureTarget){
+			case GL_TEXTURE_RECTANGLE_ARB:
+				nextShader = defaultShaderTexNoColor;
+				break;
+			case GL_TEXTURE_2D:
+				nextShader = defaultShaderTex2DNoColor;
+				break;
+			case OF_NO_TEXTURE:
+				nextShader = defaultShaderNoTexNoColor;
+				break;
+			}
 		}else{
 			nextShader = defaultShaderNoTexNoColor;
 		}
@@ -1554,20 +1580,13 @@ inline void ofProgrammableGLRenderer::finishPrimitiveDraw(){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
-	linePoints[0].set(x1,y1,z1);
-	linePoints[1].set(x2,y2,z2);
+	lineVbo.getVertices()[0].set(x1,y1,z1);
+	lineVbo.getVertices()[1].set(x2,y2,z2);
     
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
-
-	/*disableTexCoords();
-	disableColors();*/
     
-	lineVbo->setVertexData(&linePoints[0], 2, GL_DYNAMIC_DRAW);
-	lineVbo->draw(GL_LINES, 0, 2);
-	/*preparePrimitiveDraw(*lineVbo);
-	glDrawArrays(GL_LINES, 0, 2);
-	finishPrimitiveDraw();*/
+	lineVbo.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted) endSmoothing();
@@ -1576,30 +1595,22 @@ void ofProgrammableGLRenderer::drawLine(float x1, float y1, float z1, float x2, 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::drawRectangle(float x, float y, float z, float w, float h) {
 	if (rectMode == OF_RECTMODE_CORNER){
-		rectPoints[0].set(x,y,z);
-		rectPoints[1].set(x+w, y, z);
-		rectPoints[2].set(x+w, y+h, z);
-		rectPoints[3].set(x, y+h, z);
+		rectVbo.getVertices()[0].set(x,y,z);
+		rectVbo.getVertices()[1].set(x+w, y, z);
+		rectVbo.getVertices()[2].set(x+w, y+h, z);
+		rectVbo.getVertices()[3].set(x, y+h, z);
 	}else{
-		rectPoints[0].set(x-w/2.0f, y-h/2.0f, z);
-		rectPoints[1].set(x+w/2.0f, y-h/2.0f, z);
-		rectPoints[2].set(x+w/2.0f, y+h/2.0f, z);
-		rectPoints[3].set(x-w/2.0f, y+h/2.0f, z);
+		rectVbo.getVertices()[0].set(x-w/2.0f, y-h/2.0f, z);
+		rectVbo.getVertices()[1].set(x+w/2.0f, y-h/2.0f, z);
+		rectVbo.getVertices()[2].set(x+w/2.0f, y+h/2.0f, z);
+		rectVbo.getVertices()[3].set(x-w/2.0f, y+h/2.0f, z);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	/*disableTexCoords();
-	disableColors();
-	disableNormals();*/
-
-	rectVbo->setVertexData(&rectPoints[0], 4, GL_DYNAMIC_DRAW);
-	rectVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
-	
-	/*preparePrimitiveDraw(*rectVbo);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
-	finishPrimitiveDraw();*/
+	rectVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
+	rectVbo.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1607,23 +1618,15 @@ void ofProgrammableGLRenderer::drawRectangle(float x, float y, float z, float w,
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-	triPoints[0].set(x1,y1,z1);
-	triPoints[1].set(x2,y2,z2);
-	triPoints[2].set(x3,y3,z3);
+	triangleVbo.getVertices()[0].set(x1,y1,z1);
+	triangleVbo.getVertices()[1].set(x2,y2,z2);
+	triangleVbo.getVertices()[2].set(x3,y3,z3);
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	/*disableTexCoords();
-	disableColors();
-	disableNormals();*/
-    
-	triangleVbo->setVertexData(&triPoints[0], 3, GL_DYNAMIC_DRAW);
-	triangleVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_STRIP : GL_LINE_LOOP, 0, 3);
-
-	/*preparePrimitiveDraw(*triangleVbo);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_STRIP : GL_LINE_LOOP, 0, 3);
-	finishPrimitiveDraw();*/
+	triangleVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
+	triangleVbo.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1633,22 +1636,14 @@ void ofProgrammableGLRenderer::drawTriangle(float x1, float y1, float z1, float 
 void ofProgrammableGLRenderer::drawCircle(float x, float y, float z,  float radius){
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
-		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
+		circleVbo.getVertices()[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	circleVbo->setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
-	
-	/*disableTexCoords();
-	disableColors();
-	disableNormals();*/
-
-	circleVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
-	/*preparePrimitiveDraw(*circleVbo);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
-    finishPrimitiveDraw();*/
+	circleVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+	circleVbo.draw();
 	
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1660,23 +1655,14 @@ void ofProgrammableGLRenderer::drawEllipse(float x, float y, float z, float widt
 	float radiusY = height*0.5;
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
-		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
+		circleVbo.getVertices()[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	circleVbo->setVertexData(&circlePoints[0].x, 3, circlePoints.size(), GL_DYNAMIC_DRAW, sizeof(ofVec3f));
-	
-	/*disableTexCoords();
-	disableColors();
-	disableNormals();*/
-
-	circleVbo->draw((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP,0,circlePoints.size());
-    
-	/*preparePrimitiveDraw(*circleVbo);
-	glDrawArrays((bFilled == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
-    finishPrimitiveDraw();*/
+	circleVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+	circleVbo.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -1811,9 +1797,12 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			loadIdentityMatrix();
 
 			translate(-1, -1, 0);
-			scale(2/rViewport.width, 2/rViewport.height, 1);
 
+			scale(2/rViewport.width, 2/rViewport.height, 1);
 			translate(dScreen.x, dScreen.y, 0);
+			if(!isVFlipped()){
+				scale(1,-1,1);
+			}
 		}
 			break;
 

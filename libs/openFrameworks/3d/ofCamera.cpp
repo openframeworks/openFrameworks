@@ -18,7 +18,8 @@ nearClip(0),
 farClip(0),
 lensOffset(0.0f, 0.0f),
 forceAspectRatio(false),
-isActive(false)
+isActive(false),
+vFlip(false)
 {
 }
 
@@ -54,7 +55,7 @@ void ofCamera::setForceAspectRatio(bool forceAspectRatio){
 }
 
 //----------------------------------------
-void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
+void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
 	ofRectangle orientedViewport = ofGetNativeViewport();
 	float eyeX = orientedViewport.width / 2;
 	float eyeY = orientedViewport.height / 2;
@@ -73,11 +74,7 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 
 	setPosition(eyeX,eyeY,dist);
 	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
-
-
-	/*if(vFlip){
-		setScale(1,-1,1);
-	}*/
+	vFlip = _vFlip;
 }
 
 //----------------------------------------
@@ -102,6 +99,17 @@ void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & b
 	setAspectRatio( bottomEdge.length() / leftEdge.length() );
 	float distanceAlongOpticalAxis = abs(bottomLeftToCam.dot(cameraLookVector));
 	setFov(2.0f * RAD_TO_DEG * atan( (leftEdge.length() / 2.0f) / distanceAlongOpticalAxis));
+}
+
+
+//----------------------------------------
+void ofCamera::setVFlip(bool vflip){
+	vFlip = vflip;
+}
+
+//----------------------------------------
+bool ofCamera::isVFlipped(){
+	return vFlip;
 }
 
 //----------------------------------------
@@ -134,12 +142,14 @@ void ofCamera::begin(ofRectangle viewport) {
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
+	ofGetCurrentRenderer()->setOrientation(ofGetOrientation(),vFlip);
+	ofViewport(viewport.x,viewport.y,viewport.width,viewport.height,false);
+
 	ofSetMatrixMode(OF_MATRIX_PROJECTION);
 	ofLoadMatrix( this->getProjectionMatrix(viewport) );
 
 	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
-	ofViewport(viewport.x,viewport.y,viewport.width,viewport.height,false);
 }
 
 // if begin(); pushes first, then we need an end to pop

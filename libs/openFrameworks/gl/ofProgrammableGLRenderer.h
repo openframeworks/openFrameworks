@@ -53,10 +53,12 @@ public:
 	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
 	void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
+	void setOrientation(ofOrientation orientation, bool vFlip);
 	ofRectangle getCurrentViewport();
 	ofRectangle getNativeViewport();
 	int getViewportWidth();
 	int getViewportHeight();
+	bool isVFlipped() const;
     
 	void setCoordHandedness(ofHandednessType handedness);
 	ofHandednessType getCoordHandedness();
@@ -152,13 +154,14 @@ public:
 	void endCustomShader();
     
 private:
-	
-	ofPtr<ofVbo> circleVbo;
-	ofPtr<ofVbo> triangleVbo;
-	ofPtr<ofVbo> rectVbo;
-	ofPtr<ofVbo> lineVbo;
-	ofPtr<ofVbo> vertexDataVbo;
-	ofPtr<ofVbo> meshVbo;
+
+	ofPolyline circlePolyline;
+	ofVboMesh circleVbo;
+	ofVboMesh triangleVbo;
+	ofVboMesh rectVbo;
+	ofVboMesh lineVbo;
+	ofVbo vertexDataVbo;
+	ofVbo meshVbo;
 	
 	GLuint defaultVAO;
 	void preparePrimitiveDraw(ofVbo& vbo_);
@@ -166,7 +169,6 @@ private:
 	
 	void uploadCurrentMatrix();
 
-	void setOrientationMatrix(ofOrientation orientation, bool vFlip);
 
 	void startSmoothing();
 	void endSmoothing();
@@ -184,6 +186,7 @@ private:
 	stack <ofMatrix4x4> modelViewMatrixStack;
 	stack <ofMatrix4x4> projectionMatrixStack;
 	stack <ofMatrix4x4> textureMatrixStack;
+	stack <pair<ofOrientation,bool> > orientationStack;
 	
     ofMatrixMode currentMatrixMode;
 
@@ -194,16 +197,12 @@ private:
 	ofMatrix4x4	textureMatrix;
 	ofMatrix4x4 modelViewProjectionMatrix;
 	ofMatrix4x4 orientationMatrix;
+	bool vFlipped;
 
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
     ofFloatColor currentColor;
     
-	vector<ofPoint> linePoints;
-	vector<ofPoint> rectPoints;
-	vector<ofPoint> triPoints;
-	vector<ofPoint> circlePoints;
-	ofPolyline circlePolyline;
 	
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
