@@ -307,10 +307,12 @@ public:
 	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){}
 	virtual void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
 	virtual void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){}
+	virtual void setOrientation(ofOrientation orientation, bool vFlip){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();}
 	virtual ofRectangle getNativeViewport(){return getCurrentViewport();}
 	virtual int getViewportWidth(){return 0;}
 	virtual int getViewportHeight(){return 0;}
+	virtual bool isVFlipped() const{return true;}
 
 	virtual void setCoordHandedness(ofHandednessType handedness){};
 	virtual ofHandednessType getCoordHandedness(){return OF_LEFT_HANDED;};

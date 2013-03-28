@@ -50,6 +50,7 @@ public:
 	ofRectangle getNativeViewport();
 	int getViewportWidth();
 	int getViewportHeight();
+	bool isVFlipped() const{ return false; } //TODO: implement vflip in orientation matrix
 
 	void setCoordHandedness(ofHandednessType handedness);
 	ofHandednessType getCoordHandedness();
