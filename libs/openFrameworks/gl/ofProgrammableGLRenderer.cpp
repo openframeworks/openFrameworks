@@ -413,6 +413,7 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
     texCoordsEnabled = false;
     normalsEnabled = false;
 	externalShaderProvided = false;
+	settingDefaultShader = false;
 
 	orientationMatrix.makeIdentityMatrix();
 
@@ -872,6 +873,12 @@ ofHandednessType ofProgrammableGLRenderer::getCoordHandedness() {
 void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vFlip){
 	vFlipped = vFlip;
 
+	if(vFlip){
+		ofSetCoordHandedness(OF_LEFT_HANDED);
+	}else{
+		ofSetCoordHandedness(OF_RIGHT_HANDED);
+	}
+
 	if(ofDoesHWOrientation()){
 		orientationMatrix.makeIdentityMatrix();
 		if(vFlip){
@@ -953,10 +960,8 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 
 	ofMatrix4x4 ortho;
 
-	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	if(vFlip) {
 		ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
-		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}else{
 		ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
 	}
@@ -1461,7 +1466,7 @@ void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
 	currentShader = shader;
 	enableAttributes();
 	uploadAllMatrices();
-	usingCustomShader = true;
+	if(!settingDefaultShader) usingCustomShader = true;
 }
 
 void ofProgrammableGLRenderer::uploadAllMatrices(){
@@ -1475,11 +1480,9 @@ void ofProgrammableGLRenderer::disableAtributtes(){
 
 	if (!currentShader.isLoaded()) return;
 	
-	{
-		int loc = getAttrLocationPosition();
-		if(loc!=-1){
+	int loc = getAttrLocationPosition();
+	if(loc!=-1){
 		glDisableVertexAttribArray(loc);
-		}
 	}
 	if(texCoordsEnabled){
 		int loc = getAttrLocationTexCoord();
@@ -1525,6 +1528,7 @@ void ofProgrammableGLRenderer::enableAttributes(){
 
 
 void ofProgrammableGLRenderer::beginDefaultShader(){
+	if(usingCustomShader) return;
 	ofShader nextShader;
 
 	if(externalShaderProvided){
@@ -1563,14 +1567,16 @@ void ofProgrammableGLRenderer::beginDefaultShader(){
 
 	if(currentShader!=nextShader){
 		disableAtributtes();
+		settingDefaultShader = true;
 		nextShader.begin();
+		settingDefaultShader = false;
 	}
-	usingCustomShader = false;
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::endCustomShader(){
 	disableAtributtes();
+	usingCustomShader = false;
 	beginDefaultShader();
 }
 

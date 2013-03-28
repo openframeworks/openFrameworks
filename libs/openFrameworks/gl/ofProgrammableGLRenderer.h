@@ -219,6 +219,6 @@ private:
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled;
 	bool externalShaderProvided;
-	bool usingCustomShader;
+	bool usingCustomShader, settingDefaultShader;
 	int currentTextureTarget;
 };
