@@ -180,7 +180,7 @@ void of3dPrimitive::draw() {
 void of3dPrimitive::draw(ofPolyRenderMode renderType) {
     // ofNode applies all of the tranformations needed, included scale //
     ofNode::transformGL();
-    mesh->draw(renderType);
+    ofGetCurrentRenderer()->draw(*this, renderType);
     ofNode::restoreTransformGL();
 }
 
