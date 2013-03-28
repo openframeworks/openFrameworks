@@ -573,7 +573,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	ofLogVerbose() << "allocate texture";
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
-	//tex.texData.bFlipTexture = true;
+	tex.texData.bFlipTexture = true;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 
@@ -613,24 +613,18 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 void ofFbo::begin(bool setupScreen) {
 	if(!bIsAllocated) return;
-	ofPushView();
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
+	ofPushView();
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
+	ofGetCurrentRenderer()->setOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
 	ofViewport(0, 0, getWidth(), getHeight(), false);
 	if(setupScreen){
-        ofOrientation orient = ofGetOrientation();
-#ifdef TARGET_OF_IPHONE
-        orient = OF_ORIENTATION_DEFAULT;
-#endif
-		ofSetupScreenPerspective(getWidth(), getHeight(), orient, false);
+		ofSetupScreenPerspective(getWidth(), getHeight(), OF_ORIENTATION_DEFAULT, ofIsVFlipped());
 	}
 	bind();
 }
-
-//void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
-//void ofSetupScreenPerspective(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-
 
 void ofFbo::end() {
 	if(!bIsAllocated) return;

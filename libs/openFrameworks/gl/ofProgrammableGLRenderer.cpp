@@ -786,6 +786,7 @@ void ofProgrammableGLRenderer::popView() {
 	popMatrix();
 	matrixMode(currentMode);
 	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
+	ofSetOrientation(orientationFlip.first);
 	setOrientation(orientationFlip.first,orientationFlip.second);
 	orientationStack.pop();
 }
@@ -797,7 +798,7 @@ void ofProgrammableGLRenderer::viewport(ofRectangle viewport_){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height, bool invertY) {
-	if(!currentFbo && !ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
+	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
 		swap(width,height);
 		swap(x,y);
 	}
@@ -806,7 +807,7 @@ void ofProgrammableGLRenderer::viewport(float x, float y, float width, float hei
 		height = ofGetWindowHeight();
 	}
 
-	if (!invertY){
+	if (invertY){
 		if(currentFbo){
 			y = currentFbo->getHeight() - (y + height);
 		}else{

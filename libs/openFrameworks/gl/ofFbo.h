@@ -81,7 +81,6 @@ public:
 		Settings();
 	};
 private:
-
 	Settings 			settings;
 	int					isBound;
 
