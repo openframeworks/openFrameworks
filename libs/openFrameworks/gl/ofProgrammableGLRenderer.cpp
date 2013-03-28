@@ -291,7 +291,7 @@ in vec2 texCoordVarying;\n\
 out vec4 fragColor;\n\
 \n\
 void main(){\n\
-	fragColor = texture2D(src_tex_unit0, texCoordVarying) * colorVarying;\n\
+	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
 }";
 
 string defaultFragmentShaderTex2DNoColor ="\n\
@@ -308,7 +308,7 @@ in vec2 texCoordVarying;\n\
 out vec4 fragColor;\n\
 \n\
 void main(){\n\
-	fragColor = texture2D(src_tex_unit0, texCoordVarying) * color;\n\
+	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
 }";
 
 string defaultFragmentShaderNoTexColor ="\n\
@@ -376,7 +376,7 @@ out vec4 fragColor;\n\
 void main()\n\
 {\n\
 	\n\
-	vec4 tex = texture2D(src_tex_unit0, texCoordVarying);\n\
+	vec4 tex = texture(src_tex_unit0, texCoordVarying);\n\
 	// We will not write anything to the framebuffer if we have a transparent pixel\n\
 	// This makes sure we don't mess up our depth buffer.\n\
 	if (tex.a < 0.5) discard;\n\
