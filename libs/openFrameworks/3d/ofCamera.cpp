@@ -137,8 +137,6 @@ void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
 	isActive = true;
 
-	ofSetCoordHandedness(OF_RIGHT_HANDED);
-
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
