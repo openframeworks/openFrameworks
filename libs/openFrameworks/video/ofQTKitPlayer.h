@@ -1,6 +1,8 @@
 // Copyright (c) 2012 openFrameworks team
 // openFrameworks is released under the MIT License. See libs/_Licence.txt
 
+// Audio stuff based on http://www.okado.no/posts/how-to-use-itunes-music-visualizers-in-coco/index.html
+
 #pragma once
 
 #include "ofMain.h"
@@ -99,9 +101,21 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
         void                setSynchronousSeeking(bool synchronous);
 		bool                getSynchronousSeeking();
 
-        QTAudioFrequencyLevels * getAudioFrequencyLevels();
-        QTAudioVolumeLevels * getAudioVolumeLevels();
-        Float32 * getAudioFrequencyMeteringBandFrequencies();
+        void                enableAudioFrequencyMetering(int numChannels = 1, int numBands = 16);
+        void                enableAudioVolumeMetering(int numChannels = 1);
+
+        void                updateAudioMetering();
+
+        int                 getNumAudioFrequencyChannels();
+        int                 getNumAudioFrequencyBands();
+        vector<float>&      getAudioFrequencyLevels();
+        float               getAudioFrequencyLevel(int channel, int band);
+        vector<float>&      getAudioFrequencyMeteringBands();
+        float               getAudioFrequencyMeteringBand(int channel, int band);
+
+        int                 getNumAudioVolumeChannels();
+        vector<float>&      getAudioVolumeLevels();
+        float               getAudioVolumeLevel(int channel);
 
 		void                draw(float x, float y, float w, float h);
 		void                draw(float x, float y);
@@ -152,5 +166,15 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		#else
 			void * moviePlayer;
 		#endif
+
+        int lastAudioUpdateFrame;
+        bool bAudioFrequencyMeteringEnabled;
+        int numAudioFrequencyChannels;
+        int numAudioFrequencyBands;
+        vector<float> audioFrequencyLevels;
+        vector<float> audioFrequencyMeteringBands;
+        bool bAudioVolumeMeteringEnabled;
+        int numAudioVolumeChannels;
+        vector<float> audioVolumeLevels;
 
 };

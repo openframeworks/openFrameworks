@@ -11,6 +11,11 @@
 void testApp::setup(){
 	ofBackground(255, 255, 255);
 
+    // Enable audio frequency and volume metering.
+    catMovie.enableAudioFrequencyMetering();
+    catMovie.enableAudioVolumeMetering();
+
+    // Load and start the movie.
 	catMovie.loadMovie("movies/cat.mp4", OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
 	catMovie.play();
 }
@@ -32,40 +37,43 @@ void testApp::draw(){
         catMovie.draw(currLeft, currTop);
 
         // Draw the audio frequency bands.
+        // The levels returned are normalized (0.0 to 1.0), but measured in Hertz.
         currLeft += catMovie.getWidth() + 20;
         int freqWidth = ofGetWidth() - currLeft - 20;
         int freqHeight = catMovie.getHeight();
         ofSetColor(ofColor::black);
         ofLine(currLeft, currTop, currLeft, currTop + freqHeight);
-        int totalNumBands = catMovie.getAudioFrequencyLevels()->numChannels * catMovie.getAudioFrequencyLevels()->numFrequencyBands;
+        int totalNumBands = catMovie.getNumAudioFrequencyChannels() * catMovie.getNumAudioFrequencyBands();
+        float bandTop = currTop;
+        float bandWidth;
         float bandHeight = freqHeight / (float)totalNumBands;
-        for (int i = 0; i < catMovie.getAudioFrequencyLevels()->numChannels; i++) {
-            for (int j = 0; j < catMovie.getAudioFrequencyLevels()->numFrequencyBands; j++) {
-                int index = (i * catMovie.getAudioFrequencyLevels()->numFrequencyBands) + j;
-                float bandWidth = catMovie.getAudioFrequencyLevels()->level[index] * freqWidth;
-                float bandTop = currTop + index * bandHeight;
-                
-                ofSetColor(255 / totalNumBands * (index + 1), 0, 0);
+        for (int i = 0; i < catMovie.getNumAudioFrequencyChannels(); i++) {
+            for (int j = 0; j < catMovie.getNumAudioFrequencyBands(); j++) {
+                bandWidth = catMovie.getAudioFrequencyLevel(i, j) * freqWidth;
+
+                ofSetColor(255, 0, 0);
                 ofRect(currLeft, bandTop, bandWidth, bandHeight);
 
                 ofSetColor(ofColor::black);
-                ofDrawBitmapString(ofToString(catMovie.getAudioFrequencyMeteringBandFrequencies()[j], 1), currLeft + bandWidth + 15, bandTop + 15);
+                ofDrawBitmapString(ofToString(catMovie.getAudioFrequencyMeteringBand(i, j), 1) + " Hz", currLeft + bandWidth + 15, bandTop + 15);
+
+                bandTop += bandHeight;
             }
         }
 
         // Draw the volume level.
-        // The levels returned are measured in decibels, where 0.0 means full volume, -6.0 means half volume,
+        // The levels returned are measured in deciBels, where 0.0 means full volume, -6.0 means half volume,
         // -12.0 means quarter volume, and -inf means silence.
         ofSetColor(ofColor::black);
         ofNoFill();
         ofRect(20, 420, 980, 32);
         ofDrawBitmapString("-inf", 10, 472);
-        ofDrawBitmapString("-12.0", 250, 472);
-        ofDrawBitmapString("-6.0", 490, 472);
-        ofDrawBitmapString("0.0", 990, 472);
+        ofDrawBitmapString("-12 dB", 245, 472);
+        ofDrawBitmapString("-6 dB", 485, 472);
+        ofDrawBitmapString("0 dB", 985, 472);
         ofFill();
         ofSetColor(ofColor::gray);
-        float volumeLevel = catMovie.getAudioVolumeLevels()->level[0];
+        float volumeLevel = catMovie.getAudioVolumeLevel(0);
         float volumeWidth;
         if (volumeLevel >= 0.0) {
             volumeWidth = 980;

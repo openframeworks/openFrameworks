@@ -12,7 +12,10 @@ ofQTKitPlayer::ofQTKitPlayer() {
     speed = 1.0f;
 	// default this to true so the player update behavior matches ofQuicktimePlayer
 	bSynchronousSeek = true;
-    
+
+    bAudioFrequencyMeteringEnabled = false;
+    bAudioVolumeMeteringEnabled = false;
+
     pixelFormat = OF_PIXELS_RGB;
     currentLoopState = OF_LOOP_NORMAL;
 }
@@ -23,7 +26,105 @@ ofQTKitPlayer::~ofQTKitPlayer() {
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::loadMovie(string path){
+void ofQTKitPlayer::enableAudioFrequencyMetering(int numChannels, int numBands) {
+    bAudioFrequencyMeteringEnabled = true;
+    numAudioFrequencyChannels = numChannels;
+    numAudioFrequencyBands = numBands;
+}
+
+//--------------------------------------------------------------------
+void ofQTKitPlayer::enableAudioVolumeMetering(int numChannels) {
+    bAudioVolumeMeteringEnabled = true;
+    numAudioVolumeChannels = numChannels;
+}
+
+//--------------------------------------------------------------------
+void ofQTKitPlayer::updateAudioMetering() {
+    if (moviePlayer == NULL)
+        return false;
+
+    if (moviePlayer.audioFrequencyMeteringEnabled) {
+        audioFrequencyLevels.clear();
+        for (int i = 0; i < moviePlayer.audioFrequencyLevels->numChannels; i++) {
+            for (int j = 0; j < moviePlayer.audioFrequencyLevels->numFrequencyBands; j++) {
+                int index = (i * moviePlayer.audioFrequencyLevels->numFrequencyBands) + j;
+                audioFrequencyLevels.push_back(moviePlayer.audioFrequencyLevels->level[index]);
+            }
+        }
+    }
+
+    if (moviePlayer.audioVolumeMeteringEnabled) {
+        audioVolumeLevels.clear();
+        for (int i = 0; i < moviePlayer.audioVolumeLevels->numChannels; i++) {
+            audioVolumeLevels.push_back(moviePlayer.audioVolumeLevels->level[i]);
+        }
+    }
+}
+
+//--------------------------------------------------------------------
+int ofQTKitPlayer::getNumAudioFrequencyChannels() {
+    if (moviePlayer && moviePlayer.audioFrequencyMeteringEnabled)
+        return moviePlayer.audioFrequencyLevels->numChannels;
+    
+    return 0;
+}
+
+//--------------------------------------------------------------------
+int ofQTKitPlayer::getNumAudioFrequencyBands() {
+    if (moviePlayer && moviePlayer.audioFrequencyMeteringEnabled)
+        return moviePlayer.audioFrequencyLevels->numFrequencyBands;
+
+    return 0;
+}
+
+//--------------------------------------------------------------------
+vector<float>& ofQTKitPlayer::getAudioFrequencyLevels() {
+    return audioFrequencyLevels;
+}
+
+//--------------------------------------------------------------------
+float ofQTKitPlayer::getAudioFrequencyLevel(int channel, int band) {
+    int index = (channel * moviePlayer.audioFrequencyLevels->numFrequencyBands) + band;
+    if (audioFrequencyLevels.size() > index)
+        return audioFrequencyLevels[index];
+
+    return 0;
+}
+
+//--------------------------------------------------------------------
+vector<float>& ofQTKitPlayer::getAudioFrequencyMeteringBands() {
+    return audioFrequencyMeteringBands;
+}
+
+//--------------------------------------------------------------------
+float ofQTKitPlayer::getAudioFrequencyMeteringBand(int channel, int band) {
+    int index = (channel * moviePlayer.audioFrequencyLevels->numFrequencyBands) + band;
+    return audioFrequencyMeteringBands[index];
+}
+
+//--------------------------------------------------------------------
+int ofQTKitPlayer::getNumAudioVolumeChannels() {
+    if (moviePlayer && moviePlayer.audioVolumeMeteringEnabled)
+        return moviePlayer.audioVolumeLevels->numChannels;
+
+    return 0;
+}
+
+//--------------------------------------------------------------------
+vector<float>& ofQTKitPlayer::getAudioVolumeLevels() {
+    return audioVolumeLevels;
+}
+
+//--------------------------------------------------------------------
+float ofQTKitPlayer::getAudioVolumeLevel(int channel) {
+    if (audioVolumeLevels.size() > channel)
+        return audioVolumeLevels[channel];
+
+    return -INFINITY;
+}
+
+//--------------------------------------------------------------------
+bool ofQTKitPlayer::loadMovie(string path) {
 	return loadMovie(path, OF_QTKIT_DECODE_PIXELS_ONLY);
 }
 
@@ -72,6 +173,25 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
         setLoopState(currentLoopState);
         setSpeed(1.0f);
 		firstFrame(); //will load the first frame
+
+        lastAudioUpdateFrame = -1;
+        if (bAudioFrequencyMeteringEnabled) {
+            [moviePlayer enableAudioFrequencyMetering:numAudioFrequencyChannels
+                                             numBands:numAudioFrequencyBands];
+            
+            // store the actual audio frequency metering band levels (these won't change)
+            audioFrequencyMeteringBands.clear();
+            for (int i = 0; i < moviePlayer.audioFrequencyLevels->numChannels; i++) {
+                for (int j = 0; j < moviePlayer.audioFrequencyLevels->numFrequencyBands; j++) {
+                    int index = (i * moviePlayer.audioFrequencyLevels->numFrequencyBands) + j;
+                    audioFrequencyMeteringBands.push_back(moviePlayer.audioFrequencyMeteringBandFrequencies[index]);
+                }
+            }
+        }
+
+        if (bAudioVolumeMeteringEnabled) {
+            [moviePlayer enableAudioVolumeMetering:numAudioVolumeChannels];
+        }
 	}
 	else {
 		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
@@ -210,6 +330,8 @@ void ofQTKitPlayer::update() {
 	bNewFrame = [moviePlayer update];
 	if (bNewFrame) {
 		bHavePixelsChanged = true;
+
+        updateAudioMetering();
 	}
     [pool release];
 }
@@ -453,21 +575,6 @@ void ofQTKitPlayer::setSynchronousSeeking(bool synchronous){
 //--------------------------------------------------------------------
 bool ofQTKitPlayer::getSynchronousSeeking(){
 	return 	bSynchronousSeek;
-}
-
-//--------------------------------------------------------------------
-QTAudioFrequencyLevels * ofQTKitPlayer::getAudioFrequencyLevels(){
-    return [moviePlayer audioFrequencyLevels];
-}
-
-//--------------------------------------------------------------------
-QTAudioVolumeLevels * ofQTKitPlayer::getAudioVolumeLevels(){
-    return [moviePlayer audioVolumeLevels];
-}
-
-//--------------------------------------------------------------------
-Float32 * ofQTKitPlayer::getAudioFrequencyMeteringBandFrequencies(){
-    return [moviePlayer audioFrequencyMeteringBandFrequencies];
 }
 
 //--------------------------------------------------------------------

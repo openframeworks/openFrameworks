@@ -16,7 +16,13 @@
 	CVOpenGLTextureCacheRef _textureCache;
 	CVOpenGLTextureRef _latestTextureFrame;
 	CVPixelBufferRef _latestPixelFrame;
-    
+
+    BOOL _audioFrequencyMeteringEnabled;
+//    NSInteger _numAudioFrequencyChannels;
+//    NSInteger _numAudioFrequencyBands;
+    FourCharCode _audioFrequencyMixToMeter;
+    BOOL _audioVolumeMeteringEnabled;
+//    NSInteger _numAudioVolumeChannels;
     QTAudioFrequencyLevels * _audioFrequencyLevels;
     QTAudioVolumeLevels * _audioVolumeLevels;
     Float32 * _audioFrequencyMeteringBandFrequencies;
@@ -50,9 +56,14 @@
 @property (readwrite) BOOL justSetFrame; //this needs to be set *before* calls to _movie.setTime to allow synchronous seeking
 @property (nonatomic, readwrite) BOOL synchronousSeek;
 
+@property (nonatomic, readonly) BOOL hasAudio;
+@property (nonatomic, readonly) BOOL hasVideo;
+
+@property (nonatomic, readonly) BOOL audioFrequencyMeteringEnabled;
 @property (nonatomic, readonly) QTAudioFrequencyLevels * audioFrequencyLevels;
-@property (nonatomic, readonly) QTAudioVolumeLevels * audioVolumeLevels;
 @property (nonatomic, readonly) Float32 * audioFrequencyMeteringBandFrequencies;
+@property (nonatomic, readonly) BOOL audioVolumeMeteringEnabled;
+@property (nonatomic, readonly) QTAudioVolumeLevels * audioVolumeLevels;
 
 @property (nonatomic, readwrite) float rate;
 @property (nonatomic, readwrite) float volume;
@@ -71,6 +82,8 @@
 
 - (void)draw:(NSRect)drawRect;
 - (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
+- (void)enableAudioFrequencyMetering:(NSInteger)numChannels numBands:(NSInteger)numBands;
+- (void)enableAudioVolumeMetering:(NSInteger)numChannels;
 - (BOOL)update;
 
 - (void)bindTexture;
@@ -83,7 +96,6 @@
 - (void)stepForward;
 - (void)stepBackward;
 - (void)gotoBeginning;
-
 
 - (void)frameAvailable:(CVImageBufferRef)image;
 - (void)frameFailed;

@@ -9,11 +9,6 @@
 - (QTTime)keyframeStartTime:(QTTime)atTime;
 @end
 
-// Audio stuff based on http://www.okado.no/posts/how-to-use-itunes-music-visualizers-in-coco/index.html
-static UInt32 numberOfBandLevels    = 16;  // increase this number for more frequency bands
-static UInt32 numberOfVolumeLevels  = 1;
-static UInt32 numberOfChannels      = 1;   // 2 for StereoMix - If using DeviceMix, you need to get the channel count of the device.
-
 //--------------------------------------------------------------
 //This method is called whenever a new frame comes in from the visual context
 //it's called on the back thread so locking is performed in Renderer class
@@ -55,9 +50,25 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 @synthesize justSetFrame;
 @synthesize synchronousSeek;
 
+@synthesize hasAudio;
+@synthesize hasVideo;
+
+@synthesize audioFrequencyMeteringEnabled = _audioFrequencyMeteringEnabled;
 @synthesize audioFrequencyLevels = _audioFrequencyLevels;
-@synthesize audioVolumeLevels = _audioVolumeLevels;
 @synthesize audioFrequencyMeteringBandFrequencies = _audioFrequencyMeteringBandFrequencies;
+@synthesize audioVolumeMeteringEnabled = _audioVolumeMeteringEnabled;
+@synthesize audioVolumeLevels = _audioVolumeLevels;
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        // set audio metering defaults
+        _audioFrequencyMeteringEnabled = NO;
+        _audioVolumeMeteringEnabled = NO;
+    }
+    return self;
+}
 
 - (NSDictionary*) pixelBufferAttributes
 {
@@ -211,24 +222,45 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
         free(_audioVolumeLevels);
         _audioVolumeLevels = NULL;
     }
-    if (hasAudio) {
-        _audioFrequencyLevels = (QTAudioFrequencyLevels *)malloc(offsetof(QTAudioFrequencyLevels, level[numberOfBandLevels * numberOfChannels]));
-        _audioFrequencyLevels->numChannels = numberOfChannels;
-        _audioFrequencyLevels->numFrequencyBands = numberOfBandLevels;
-        SetMovieAudioFrequencyMeteringNumBands([_movie quickTimeMovie], kQTAudioMeter_MonoMix, &numberOfBandLevels);
-
-        _audioFrequencyMeteringBandFrequencies = malloc(_audioFrequencyLevels->numFrequencyBands * sizeof(Float32));
-        OSStatus err = GetMovieAudioFrequencyMeteringBandFrequencies([_movie quickTimeMovie], kQTAudioMeter_MonoMix, numberOfBandLevels, _audioFrequencyMeteringBandFrequencies);
-        if (err) {
-            NSLog(@"Error %ld getting movie audio frequency metering band frequencies", err);
-        }
-
-        _audioVolumeLevels = (QTAudioVolumeLevels *)malloc(offsetof(QTAudioVolumeLevels, level[numberOfVolumeLevels * numberOfChannels]));
-        _audioVolumeLevels->numChannels = numberOfChannels;
-        SetMovieAudioVolumeMeteringEnabled([_movie quickTimeMovie], kQTAudioMeter_DeviceMix, YES);
-    }
 
 	return YES;
+}
+
+- (void)enableAudioFrequencyMetering:(NSInteger)numChannels numBands:(NSInteger)numBands
+{
+    if (hasAudio == NO) return;
+
+    _audioFrequencyMeteringEnabled = YES;
+
+    _audioFrequencyLevels = (QTAudioFrequencyLevels *)malloc(offsetof(QTAudioFrequencyLevels, level[numBands * numChannels]));
+    _audioFrequencyLevels->numChannels = numChannels;
+    _audioFrequencyLevels->numFrequencyBands = numBands;
+    _audioFrequencyMeteringBandFrequencies = malloc(_audioFrequencyLevels->numFrequencyBands * sizeof(Float32));
+
+    if (_audioFrequencyLevels->numFrequencyBands == 1)
+        _audioFrequencyMixToMeter = kQTAudioMeter_MonoMix;
+    else if (_audioFrequencyLevels->numFrequencyBands == 2)
+        _audioFrequencyMixToMeter = kQTAudioMeter_StereoMix;
+    else
+        _audioFrequencyMixToMeter = kQTAudioMeter_DeviceMix;
+
+    SetMovieAudioFrequencyMeteringNumBands([_movie quickTimeMovie], _audioFrequencyMixToMeter, &_audioFrequencyLevels->numFrequencyBands);
+    OSStatus err = GetMovieAudioFrequencyMeteringBandFrequencies([_movie quickTimeMovie], _audioFrequencyMixToMeter, _audioFrequencyLevels->numFrequencyBands, _audioFrequencyMeteringBandFrequencies);
+
+    if (err)
+        NSLog(@"Error %ld getting movie audio frequency metering band frequencies", err);
+
+}
+
+- (void)enableAudioVolumeMetering:(NSInteger)numChannels
+{
+    if (hasAudio == NO) return;
+
+    _audioVolumeMeteringEnabled = YES;
+
+    _audioVolumeLevels = (QTAudioVolumeLevels *)malloc(offsetof(QTAudioVolumeLevels, level[numChannels]));
+    _audioVolumeLevels->numChannels = numChannels;
+    SetMovieAudioVolumeMeteringEnabled([_movie quickTimeMovie], kQTAudioMeter_DeviceMix, YES);
 }
 
 - (void) dealloc
@@ -390,14 +422,16 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	QTVisualContextTask(_visualContext);
 
     if (hasAudio) {
-        // Get the audio attributes.
-        OSStatus err = GetMovieAudioFrequencyLevels([_movie quickTimeMovie], kQTAudioMeter_MonoMix, _audioFrequencyLevels);
-        if (err) {
-            NSLog(@"Error %ld getting movie audio frequency levels", err);
+        OSStatus err = noErr;
+        if (_audioFrequencyMeteringEnabled) {
+            err = GetMovieAudioFrequencyLevels([_movie quickTimeMovie], _audioFrequencyMixToMeter, _audioFrequencyLevels);
+            if (err)
+                NSLog(@"Error %ld getting movie audio frequency levels", err);
         }
-        err = GetMovieAudioVolumeLevels([_movie quickTimeMovie], kQTAudioMeter_DeviceMix, nil, _audioVolumeLevels);
-        if (err) {
-            NSLog(@"Error %ld getting movie audio volume levels", err);
+        if (_audioVolumeMeteringEnabled) {
+            err = GetMovieAudioVolumeLevels([_movie quickTimeMovie], kQTAudioMeter_DeviceMix, nil, _audioVolumeLevels);
+            if (err)
+                NSLog(@"Error %ld getting movie audio volume levels", err);
         }
     }
 }
