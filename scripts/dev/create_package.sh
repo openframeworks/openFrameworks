@@ -1,5 +1,5 @@
 #!/bin/bash
-# $1 -> platform: win_cb, linux, linux64, vs, osx, osxSL, ios, all
+# $1 -> platform: win_cb, linux, linux64, vs, osx, ios, all
 # $2 -> version number: 006
 
 platform=$1
@@ -15,12 +15,6 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-#if [ "$platform" = "osxSL" ]; then
-#    platform="osx"
-#    runOSXSLScript=1
-#    echo "will make changes for snow leopard"
-#fi
-
 if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
@@ -33,7 +27,7 @@ if [ "$version" == "" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs, osx, android, all
+    echo win_cb, linux, linux64, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -123,12 +117,8 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-	#if [ $runOSXSLScript = 1 ]; then
-	#	rm -Rf of_v${pkg_version}_osxSL*
-	#else
-	    rm -Rf of_v${pkg_version}_${pkg_platform}.*
-		rm -Rf of_v${pkg_version}_${pkg_platform}_*
-    #fi
+	rm -Rf of_v${pkg_version}_${pkg_platform}.*
+	rm -Rf of_v${pkg_version}_${pkg_platform}_*
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
     #remove devApps folder
@@ -377,22 +367,6 @@ function createPackage {
 	fi
 	
 	
-	#download and copy OF compiled
-	#cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    #if [ "$pkg_platform" = "win_cb" ]; then
-	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	#fi
-
-
-    #if snow leopard change 10.4u to 10.5
-    #if [ $runOSXSLScript = 1 ]; then
-    #    cd $pkg_ofroot
-    #    echo "replacing 10.4u with 10.5 for snow leopard"
-    #    find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
-    #    pkg_platform="osxSL"
-    #fi
-    
     #choose readme
     cd $pkg_ofroot
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
