@@ -412,9 +412,9 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		mesh.addColor(end);
 		mesh.addColor(start);
 	}
-	glDepthMask(false);
+	glDepthMask(GL_FALSE);
 	mesh.draw();
-	glDepthMask(true);
+	glDepthMask(GL_TRUE);
 }
 
 //----------------------------------------------------------
