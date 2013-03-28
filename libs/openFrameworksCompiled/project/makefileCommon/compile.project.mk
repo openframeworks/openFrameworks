@@ -160,7 +160,7 @@ ReleaseABI: $(TARGET)
 DebugABI: $(TARGET)
 
 all:
-	$(MAKE) Release
+	$(MAKE) Debug
 	
 run:
 ifeq ($(PLATFORM_RUN_COMMAND),)
