@@ -234,7 +234,7 @@ void ofEasyCam::updateMouse(){
 			bValidClick = false;
 		}else {
 			int vFlip;
-			if(ofIsVFlipped()){
+			if(isVFlipped()){
 				vFlip = -1;
 			}else{
 				vFlip =  1;
