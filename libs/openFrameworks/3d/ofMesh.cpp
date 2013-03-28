@@ -1601,8 +1601,8 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
                     index3 = (iy+1) * (nr) + (ix+0);
                     
                     mesh.addIndex(index1);
-                    mesh.addIndex(index2);
                     mesh.addIndex(index3);
+                    mesh.addIndex(index2);
                 }
                 
                 if(iy < res-1 ) {
@@ -1612,8 +1612,8 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
                     index3 = (iy+1) * (nr) + (ix+0);
                     
                     mesh.addIndex(index1);
-                    mesh.addIndex(index2);
                     mesh.addIndex(index3);
+                    mesh.addIndex(index2);
                     
                 }
             }
