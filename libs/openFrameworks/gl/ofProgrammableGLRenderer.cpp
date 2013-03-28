@@ -850,6 +850,11 @@ int ofProgrammableGLRenderer::getViewportHeight(){
 }
 
 //----------------------------------------------------------
+bool ofProgrammableGLRenderer::isVFlipped() const{
+	return vFlipped;
+}
+
+//----------------------------------------------------------
 void ofProgrammableGLRenderer::setCoordHandedness(ofHandednessType handedness) {
 	coordHandedness = handedness;
 }
