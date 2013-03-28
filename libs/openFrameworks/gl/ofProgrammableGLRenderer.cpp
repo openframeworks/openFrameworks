@@ -571,10 +571,15 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 		meshVbo.clear();
 	}
 
-
+	if (vertexData.getVertices().empty()) return;
+	
 	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
-
-
+	
+	if (!useColors)		meshVbo.disableColors();
+	if (!useTextures)	meshVbo.disableTexCoords();
+	if (!useNormals)	meshVbo.disableNormals();
+	
+	
 	// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
 	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer. Whereas
 	// gles2.0 doesn't allow for a polygonmode.
