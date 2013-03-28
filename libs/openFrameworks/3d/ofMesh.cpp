@@ -685,6 +685,7 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
+	if(getNumVertices()==0) return;
 	ofGetCurrentRenderer()->draw(*this,renderType,useColors,useTextures,useNormals);
 }
 
