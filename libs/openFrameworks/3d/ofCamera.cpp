@@ -140,8 +140,8 @@ void ofCamera::begin(ofRectangle viewport) {
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
-	ofSetOrientation(ofGetOrientation(),vFlip);
 	ofViewport(viewport.x,viewport.y,viewport.width,viewport.height);
+	ofSetOrientation(ofGetOrientation(),vFlip);
 
 	ofSetMatrixMode(OF_MATRIX_PROJECTION);
 	ofLoadMatrix( this->getProjectionMatrix(viewport) );

@@ -290,7 +290,6 @@ public:
 	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
     virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType)=0;
-	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
