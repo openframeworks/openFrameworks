@@ -762,7 +762,7 @@ void ofProgrammableGLRenderer::setCurrentFBO(ofFbo * fbo){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::pushView() {
-	viewportHistory.push(currentViewport);
+	viewportHistory.push(getCurrentViewport());
 	ofMatrixMode currentMode = currentMatrixMode;
 	matrixMode(OF_MATRIX_PROJECTION);
 	pushMatrix();
@@ -774,9 +774,13 @@ void ofProgrammableGLRenderer::pushView() {
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popView() {
+	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
+	ofSetOrientation(orientationFlip.first);
+	setOrientation(orientationFlip.first,orientationFlip.second);
+	orientationStack.pop();
 	if( viewportHistory.size() ){
 		ofRectangle viewRect = viewportHistory.top();
-		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height, false);
+		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
 		viewportHistory.pop();
 	}
 	ofMatrixMode currentMode = currentMatrixMode;
@@ -785,29 +789,30 @@ void ofProgrammableGLRenderer::popView() {
 	matrixMode(OF_MATRIX_MODELVIEW);
 	popMatrix();
 	matrixMode(currentMode);
-	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
-	ofSetOrientation(orientationFlip.first);
-	setOrientation(orientationFlip.first,orientationFlip.second);
-	orientationStack.pop();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::viewport(ofRectangle viewport_){
-	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height,true);
+	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height);
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height, bool invertY) {
+void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height) {
 	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
 		swap(width,height);
 		swap(x,y);
 	}
 	if(width == 0 || height == 0){
-		width = ofGetWindowWidth();
-		height = ofGetWindowHeight();
+		if(currentFbo){
+			width = currentFbo->getWidth();
+			height = currentFbo->getHeight();
+		}else{
+			width = ofGetWindowWidth();
+			height = ofGetWindowHeight();
+		}
 	}
 
-	if (invertY){
+	if (isVFlipped()){
 		if(currentFbo){
 			y = currentFbo->getHeight() - (y + height);
 		}else{
@@ -815,19 +820,22 @@ void ofProgrammableGLRenderer::viewport(float x, float y, float width, float hei
 		}
 	}
 
-	currentViewport.set(x, y, width, height);
-
 	glViewport(x,y,width,height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getCurrentViewport(){
-	GLint viewport[4];					// Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, viewport);
+	ofRectangle currentViewport = getNativeViewport();
 
-	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+	if (isVFlipped()){
+		if(currentFbo){
+			currentViewport.y = currentFbo->getHeight() - (currentViewport.y + currentViewport.height);
+		}else{
+			currentViewport.y = ofGetWindowHeight() - (currentViewport.y + currentViewport.height);
+		}
+	}
 
-	if(!currentFbo && !ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
+	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
 		swap(currentViewport.width,currentViewport.height);
 		swap(currentViewport.x,currentViewport.y);
 	}
@@ -836,23 +844,22 @@ ofRectangle ofProgrammableGLRenderer::getCurrentViewport(){
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getNativeViewport(){
-	ofRectangle orientedViewport = getCurrentViewport();
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	ofRectangle nativeViewport;
 
-	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
-		swap(orientedViewport.width,orientedViewport.height);
-		swap(orientedViewport.x,orientedViewport.y);
-	}
-    return orientedViewport;
+	nativeViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+    return nativeViewport;
 }
 
 //----------------------------------------------------------
 int ofProgrammableGLRenderer::getViewportWidth(){
-	return currentViewport.width;
+	return getCurrentViewport().width;
 }
 
 //----------------------------------------------------------
 int ofProgrammableGLRenderer::getViewportHeight(){
-	return currentViewport.height;
+	return getCurrentViewport().height;
 }
 
 //----------------------------------------------------------

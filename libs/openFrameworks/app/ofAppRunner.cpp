@@ -300,8 +300,11 @@ void ofShowCursor(){
 }
 
 //--------------------------------------
-void ofSetOrientation(ofOrientation orientation){
+void ofSetOrientation(ofOrientation orientation, bool vFlip){
 	window->setOrientation(orientation);
+	if(ofGetCurrentRenderer()){
+		ofGetCurrentRenderer()->setOrientation(orientation,vFlip);
+	}
 }
 
 //--------------------------------------
