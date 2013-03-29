@@ -346,97 +346,36 @@ static void prepareBitmapTexture(){
 			
 	
 	if (!bBitmapTexturePrepared){
+		myLetterPixels.resize(16*16 * 16*16 * 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
 
+
+		bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
 		
-#ifdef TARGET_OPENGLES
-
-			myLetterPixels.resize(16*16 * 16*16 * 2); // letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
-			bitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
-			bBitmapTexturePrepared = true;
-			
-			for (int i = 0; i < 256; i++) {
-				
-				const unsigned char * face = bmpChar_8x13_Map[i];
-				
-				for (int j = 1; j < 15; j++){
-					for (int k = 0; k < 8; k++){
-						if ( ((face[15-j] << k) & (128)) > 0 ){
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
-						}else{
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
-						}
-					}
-				}
-			}
-			bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_LUMINANCE_ALPHA);
-			bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-
+		bBitmapTexturePrepared = true;
 		
-#else
-		if (ofGLIsFixedPipeline()){
-			myLetterPixels.resize(16*16 * 16*16 * 2); // letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
-			bitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
-			bBitmapTexturePrepared = true;
+		for (int i = 0; i < 256; i++) {
 			
-			for (int i = 0; i < 256; i++) {
-				
-				const unsigned char * face = bmpChar_8x13_Map[i];
-				
-				for (int j = 1; j < 15; j++){
-					for (int k = 0; k < 8; k++){
-						if ( ((face[15-j] << k) & (128)) > 0 ){
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
-						}else{
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
-						}
+			const unsigned char * face = bmpChar_8x13_Map[i];
+			
+			for (int j = 1; j < 15; j++){
+				for (int k = 0; k < 8; k++){
+					if ( ((face[15-j] << k) & (128)) > 0 ){
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 255;
+					}else{
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 0;
 					}
 				}
 			}
-			bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_LUMINANCE_ALPHA);
-			bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-			
-		} else {
-			// tig: In openGL 3+, GL_LUMINANCE_ALPHA is deprecated.
-			// it's easiest for now to construct a proper RGBA texture.
-			
-			myLetterPixels.resize(16*16 * 16*16 * 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
-			
-			
-			bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
-			
-			bBitmapTexturePrepared = true;
-			
-			for (int i = 0; i < 256; i++) {
-				
-				const unsigned char * face = bmpChar_8x13_Map[i];
-				
-				for (int j = 1; j < 15; j++){
-					for (int k = 0; k < 8; k++){
-						if ( ((face[15-j] << k) & (128)) > 0 ){
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 255;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 255;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 255;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 255;
-						}else{
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 0;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 0;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 0;
-							myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 0;
-						}
-					}
-				}
-			}
-			
-			bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_RGBA);
-			bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-			
 		}
 		
-#endif
+		bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_RGBA);
+		bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
 
 		charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
 		
@@ -490,33 +429,38 @@ void ofDrawBitmapCharacterStart(int stringLength){
 		prepareBitmapTexture();
 	}
 	
-	bitmappedFontTexture.bind();
-
-#ifndef TARGET_OPENGLES
-	if (ofGLIsFixedPipeline()){
-		// this temporarily enables alpha testing,
-		// which discards pixels unless their alpha is 1.0f
-		glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
-		glEnable(GL_ALPHA_TEST);
-		glAlphaFunc(GL_GREATER, 0);
-	} else {
-		// glPush/PopAttrib is deprecated.
-	}
-#endif
 	vC = 0;
 }
 
 //---------------------------------------------------------------------
 void ofDrawBitmapCharacterEnd(){
 	if( vC > 0 ){
+		charMesh.getVertices().resize(vC);
+		charMesh.getTexCoords().resize(vC);
+		bitmappedFontTexture.bind();
+
+		#ifndef TARGET_OPENGLES
+			if (ofGLIsFixedPipeline()){
+				// this temporarily enables alpha testing,
+				// which discards pixels unless their alpha is 1.0f
+				glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+				glEnable(GL_ALPHA_TEST);
+				glAlphaFunc(GL_GREATER, 0);
+			} else {
+				// glPush/PopAttrib is deprecated and we are doing the alpha test through a shader
+			}
+		#endif
+
 		charMesh.draw();
+
+		#ifndef TARGET_OPENGLES
+			if (ofGLIsFixedPipeline()){
+				glPopAttrib();
+			}
+		#endif
+
+		bitmappedFontTexture.unbind();
 	}
 
-#ifndef TARGET_OPENGLES
-	if (ofGLIsFixedPipeline()){
-		glPopAttrib();
-	}
-#endif
-	bitmappedFontTexture.unbind();
 }
 
