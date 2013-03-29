@@ -415,6 +415,8 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	externalShaderProvided = false;
 	settingDefaultShader = false;
 
+	wrongUseLoggedOnce = false;
+
 	orientationMatrix.makeIdentityMatrix();
 
 
@@ -564,21 +566,16 @@ void ofProgrammableGLRenderer::draw(ofMesh & vertexData, bool useColors, bool us
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
-
+	if(!wrongUseLoggedOnce){
+		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
+		wrongUseLoggedOnce = true;
+	}
 	// tig: note that there was a lot of code duplication going on here.
 	// using ofVbo's draw methods, to keep stuff DRY
 
 	if (vertexData.getVertices().empty()) return;
-
-	if (meshVbo.getIsAllocated()) {
-		meshVbo.clear();
-	}
 	
 	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
-	
-	if (!useColors)		meshVbo.disableColors();
-	if (!useTextures)	meshVbo.disableTexCoords();
-	if (!useNormals)	meshVbo.disableNormals();
 	
 	
 	// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
@@ -643,38 +640,17 @@ void ofProgrammableGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode rend
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	if(!vertexData.empty()) {
-		if (bSmoothHinted) startSmoothing();
-
-		/*disableTexCoords();
-		disableColors();*/
-
-		vertexDataVbo.setVertexData(&vertexData[0], vertexData.size(), GL_DYNAMIC_DRAW);
-		vertexDataVbo.draw(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
-
-		/*preparePrimitiveDraw(*vertexDataVbo);
-		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
-		finishPrimitiveDraw();*/
-		if (bSmoothHinted) endSmoothing();
-	}
-}
-
-//----------------------------------------------------------
 void ofProgrammableGLRenderer::draw(ofPolyline & poly){
+	if(!wrongUseLoggedOnce){
+		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
+		wrongUseLoggedOnce = true;
+	}
 	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:
 		if (bSmoothHinted) startSmoothing();
 
-		/*disableTexCoords();
-		disableColors();*/
-
 		vertexDataVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
 		vertexDataVbo.draw(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
-
-		/*preparePrimitiveDraw(vertexDataVbo);
-		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
-		finishPrimitiveDraw();*/
 
 		// use smoothness, if requested:
 		if (bSmoothHinted) endSmoothing();
@@ -1778,7 +1754,10 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			pushMatrix();
 
 			translate(x, y, z);
-			//scale(1, -1, 0);
+
+			if(!isVFlipped()){
+				scale(1,-1,1);
+			}
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1827,6 +1806,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			scale(2/rViewport.width, 2/rViewport.height, 1);
 
 			translate(dScreen.x, dScreen.y, 0);
+
 			if(!isVFlipped()){
 				scale(1,-1,1);
 			}

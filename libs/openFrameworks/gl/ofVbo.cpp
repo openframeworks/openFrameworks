@@ -156,20 +156,40 @@ ofVbo::~ofVbo(){
 
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage){
-	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
-	(mesh.hasColors())		? setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage)			: disableColors();
-	(mesh.hasNormals())		? setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage)		: disableNormals();
-	(mesh.hasTexCoords())	?  setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage) : disableTexCoords();
-	(mesh.hasIndices())		? setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage)			: disableIndices();
+	setMesh(mesh,usage,mesh.hasColors(),mesh.hasTexCoords(),mesh.hasNormals());
 }
 
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals){
+	if(mesh.getVertices().empty()){
+		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
+		return;
+	}
 	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
-	(mesh.hasColors() && useColors)			? setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage)			: disableColors();
-	(mesh.hasNormals() && useNormals)		? setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage)		: disableNormals();
-	(mesh.hasTexCoords() && useTextures)	? setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage)	: disableTexCoords();
-	(mesh.hasIndices())						? setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage)			: disableIndices();
+	if(mesh.hasColors() && useColors){
+		setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
+		enableColors();
+	}else{
+		disableColors();
+	}
+	if(mesh.hasNormals() && useNormals){
+		setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
+		enableNormals();
+	}else{
+		disableNormals();
+	}
+	if(mesh.hasTexCoords() && useTextures){
+		setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
+		enableTexCoords();
+	}else{
+		disableTexCoords();
+	}
+	if(mesh.hasIndices()){
+		setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
+		enableIndices();
+	}else{
+		disableIndices();
+	}
 }
 
 //--------------------------------------------------------------
@@ -516,12 +536,12 @@ void ofVbo::bind(){
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	ofDisableVertices();	// tig: oh dear, finding that bug was painful.
 	if(bUsingColors) ofDisableColorCoords();
 	if(bUsingNormals) ofDisableNormals();
 	if(bUsingTexCoords) ofDisableTexCoords();
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -556,6 +576,7 @@ void ofVbo::clear(){
 	clearColors();
 	clearTexCoords();
 	clearIndices();
+	bAllocated		= false;
 }
 
 
@@ -566,6 +587,9 @@ void ofVbo::clearVertices(){
 		vertId = 0;
 		bUsingVerts = false;
 		totalVerts = 0;
+		vertSize = -1;
+		vertStride      = 0;
+		vertUsage		= -1;
 	}
 }
 
@@ -575,6 +599,8 @@ void ofVbo::clearNormals(){
 		release(normalId);
 		normalId = 0;
 		bUsingNormals = false;
+		normUsage		= -1;
+		normalStride = sizeof(ofVec3f);
 	}
 }
 
@@ -584,6 +610,8 @@ void ofVbo::clearColors(){
 		release(colorId);
 		colorId = 0;
 		bUsingColors = false;
+		colorUsage		= -1;
+		colorStride = sizeof(ofFloatColor);
 	}
 }
 
@@ -593,6 +621,8 @@ void ofVbo::clearTexCoords(){
 		release(texCoordId);
 		texCoordId = 0;
 		bUsingTexCoords = false;
+		texUsage		= -1;
+		texCoordStride = sizeof(ofVec2f);
 	}
 }
 

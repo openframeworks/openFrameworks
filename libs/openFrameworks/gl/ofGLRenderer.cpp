@@ -148,17 +148,6 @@ void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	if(!vertexData.empty()) {
-		if (bSmoothHinted) startSmoothing();
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
-		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
-		if (bSmoothHinted) endSmoothing();
-	}
-}
-
-//----------------------------------------------------------
 void ofGLRenderer::draw(ofPolyline & poly){
 	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:

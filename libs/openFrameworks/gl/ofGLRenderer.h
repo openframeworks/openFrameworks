@@ -20,10 +20,9 @@ public:
 	void update();
 	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
 	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw( of3dPrimitive& model, ofPolyRenderMode renderType);
+    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
-	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);

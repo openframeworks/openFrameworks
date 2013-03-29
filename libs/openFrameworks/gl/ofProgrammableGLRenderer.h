@@ -30,7 +30,6 @@ public:
     void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
-	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
@@ -220,4 +219,6 @@ private:
 	bool externalShaderProvided;
 	bool usingCustomShader, settingDefaultShader;
 	int currentTextureTarget;
+
+	bool wrongUseLoggedOnce;
 };
