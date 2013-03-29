@@ -613,13 +613,12 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 void ofFbo::begin(bool setupScreen) {
 	if(!bIsAllocated) return;
+	ofPushView();
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
-	ofPushView();
-	ofSetOrientation(OF_ORIENTATION_DEFAULT);
-	ofGetCurrentRenderer()->setOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
-	ofViewport(0, 0, getWidth(), getHeight(), false);
+	ofSetOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
+	ofViewport(0, 0, getWidth(), getHeight());
 	if(setupScreen){
 		ofSetupScreenPerspective(getWidth(), getHeight(), OF_ORIENTATION_DEFAULT, ofIsVFlipped());
 	}
