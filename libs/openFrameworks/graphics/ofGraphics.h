@@ -35,7 +35,7 @@ OF_DEPRECATED_MSG("ofViewport is now set with or without vflip according to the 
 		void ofViewport(float x, float y, float width, float height, bool vFlip));
 
 void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = -1);
+void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
 ofRectangle ofGetCurrentViewport();
 ofRectangle ofGetNativeViewport();
 int ofGetViewportWidth();

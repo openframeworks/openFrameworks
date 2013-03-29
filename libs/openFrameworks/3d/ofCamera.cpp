@@ -163,7 +163,11 @@ void ofCamera::end() {
 ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
 	if(isOrtho) {
 		ofMatrix4x4 ortho;
-		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
+		/*if(vFlip) {
+			ortho = ofMatrix4x4::newOrthoMatrix(0, viewport.width, viewport.height, 0, nearClip, farClip);
+		}else{*/
+			ortho = ofMatrix4x4::newOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
+		//}
 		return ortho;
 	}else{
 		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
