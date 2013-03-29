@@ -417,6 +417,8 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 
 	wrongUseLoggedOnce = false;
 
+	vFlipped = true;
+
 	orientationMatrix.makeIdentityMatrix();
 
 
@@ -937,6 +939,9 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
+	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
+	setOrientation(orientation,vFlip);
+
 	ofRectangle currentViewport = getCurrentViewport();
 
 	float viewW = currentViewport.width;
@@ -944,13 +949,7 @@ void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOri
 
 	ofMatrix4x4 ortho;
 
-	if(vFlip) {
-		ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
-	}else{
-		ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
-	}
-
-	setOrientation(orientation,vFlip);
+	ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
 
 	matrixMode(OF_MATRIX_PROJECTION);
 	loadMatrix(ortho); // make ortho our new projection matrix.
