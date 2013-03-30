@@ -19,10 +19,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\..\libs\openFrameworksCompiled\project\vs\icon.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\..\libs\openFrameworksCompiled\project\vs\icon.ico" />
-    <Image Include="..\..\..\libs\openFrameworksCompiled\project\vs\icon_debug.ico" />
+    <ResourceCompile Include="icon.rc" />
   </ItemGroup>
 </Project>
