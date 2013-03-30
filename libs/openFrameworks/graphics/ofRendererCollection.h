@@ -1,12 +1,14 @@
 #pragma once
 
 #include "ofBaseTypes.h"
+#include "ofGLRenderer.h"
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
 	 ~ofRendererCollection(){}
 
-	 string getType(){ return "collection"; }
+	 static const string TYPE;
+	 const string & getType(){ return TYPE; }
 
 	 ofPtr<ofBaseGLRenderer> getGLRenderer(){
 		 for(int i=0;i<(int)renderers.size();i++){

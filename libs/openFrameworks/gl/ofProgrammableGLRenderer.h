@@ -15,8 +15,9 @@ class ofProgrammableGLRenderer: public ofBaseGLRenderer{
 public:
 	ofProgrammableGLRenderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
 	~ofProgrammableGLRenderer();
-    
-	string getType(){ return "ProgrammableGL"; }
+
+    static const string TYPE;
+	const string & getType(){ return TYPE; }
     
     bool setup();
     void startRender();

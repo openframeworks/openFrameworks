@@ -281,7 +281,7 @@ class ofBaseRenderer{
 public:
 	virtual ~ofBaseRenderer(){}
 
-	virtual string getType()=0;
+	virtual const string & getType()=0;
 
 	virtual void update()=0;
 
