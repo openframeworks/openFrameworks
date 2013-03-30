@@ -420,7 +420,7 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	vFlipped = true;
 
 	orientationMatrix.makeIdentityMatrix();
-
+	currentShader = &defaultShaderNoTexNoColor;
 
 	glGetError();
 #ifndef TARGET_OPENGLES
@@ -453,7 +453,7 @@ void ofProgrammableGLRenderer::startRender() {
 #else
 	//glBindVertexArrayOES(defaultVAO);
 #endif
-	currentShader.begin();
+	currentShader->begin();
 }
 
 //----------------------------------------------------------
@@ -899,6 +899,8 @@ void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vF
 		}
 	}
 
+	orientedProjectionMatrix = projectionMatrix * orientationMatrix;
+
 }
 
 //----------------------------------------------------------
@@ -936,9 +938,6 @@ void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height,
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
-
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 	setOrientation(orientation,vFlip);
 
@@ -1102,15 +1101,18 @@ void ofProgrammableGLRenderer::uploadCurrentMatrix(){
 	// uploads the current matrix to the current shader.
 
 	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
-		currentShader.setUniformMatrix4f("modelViewMatrix", modelViewMatrix);
-		currentShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewMatrix*projectionMatrix*orientationMatrix);
+		modelViewProjectionMatrix = modelViewMatrix*orientedProjectionMatrix;
+		currentShader->setUniformMatrix4f("modelViewMatrix", modelViewMatrix);
+		currentShader->setUniformMatrix4f("modelViewProjectionMatrix", modelViewProjectionMatrix);
 	}
 	if (currentMatrixMode == OF_MATRIX_PROJECTION){
-		currentShader.setUniformMatrix4f("projectionMatrix", projectionMatrix*orientationMatrix);
-		currentShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewMatrix*projectionMatrix*orientationMatrix);
+		orientedProjectionMatrix = projectionMatrix*orientationMatrix;
+		modelViewProjectionMatrix = modelViewMatrix*orientedProjectionMatrix;
+		currentShader->setUniformMatrix4f("projectionMatrix", projectionMatrix);
+		currentShader->setUniformMatrix4f("modelViewProjectionMatrix", modelViewProjectionMatrix);
 	}
 	if (currentMatrixMode == OF_MATRIX_TEXTURE){
-		currentShader.setUniformMatrix4f("textureMatrix", textureMatrix);
+		currentShader->setUniformMatrix4f("textureMatrix", textureMatrix);
 	}
 
 }
@@ -1133,7 +1135,7 @@ void ofProgrammableGLRenderer::setColor(int _r, int _g, int _b){
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setColor(int _r, int _g, int _b, int _a){
 	currentColor.set(_r/255.f,_g/255.f,_b/255.f,_a/255.f);
-	currentShader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
+	currentShader->setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
 }
 
 //----------------------------------------------------------
@@ -1312,27 +1314,27 @@ void ofProgrammableGLRenderer::disablePointSprites(){
 
 //----------------------------------------------------------
 GLint ofProgrammableGLRenderer::getAttrLocationPosition(){
-	return currentShader.getAttributeLocation("position");
+	return currentShader->getAttributeLocation("position");
 }
 
 //----------------------------------------------------------
 GLint ofProgrammableGLRenderer::getAttrLocationColor(){
-	return currentShader.getAttributeLocation("color");
+	return currentShader->getAttributeLocation("color");
 }
 
 //----------------------------------------------------------
 GLint ofProgrammableGLRenderer::getAttrLocationNormal(){
-	return currentShader.getAttributeLocation("normal");
+	return currentShader->getAttributeLocation("normal");
 }
 
 //----------------------------------------------------------
 GLint ofProgrammableGLRenderer::getAttrLocationTexCoord(){
-	return currentShader.getAttributeLocation("texcoord");
+	return currentShader->getAttributeLocation("texcoord");
 }
 
 //----------------------------------------------------------
 ofShader & ofProgrammableGLRenderer::getCurrentShader(){
-	return currentShader;
+	return *currentShader;
 }
 
 //----------------------------------------------------------
@@ -1349,30 +1351,30 @@ void ofProgrammableGLRenderer::enableVertices(){
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableTexCoords(){
 	texCoordsEnabled = true;
-	ofShader prevShader = currentShader;
+	ofShader * prevShader = currentShader;
 	if(!usingCustomShader) beginDefaultShader();
 
-	if(prevShader==currentShader){
+	if(*prevShader==*currentShader){
 		GLint loc = getAttrLocationTexCoord();
 		if (loc != -1){
 			glEnableVertexAttribArray(loc);
 		}
-		currentShader.setUniform1f("useTexture",1);
+		currentShader->setUniform1f("useTexture",1);
 	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enableColors(){
 	colorsEnabled = true;
-	ofShader prevShader = currentShader;
+	ofShader * prevShader = currentShader;
 	if(!usingCustomShader) beginDefaultShader();
 
-	if(prevShader==currentShader){
+	if(*prevShader==*currentShader){
 		GLint loc = getAttrLocationColor();
 		if (loc != -1){
 			glEnableVertexAttribArray(loc);
 		}
-		currentShader.setUniform1f("useColors",1);
+		currentShader->setUniform1f("useColors",1);
 	}
 }
 
@@ -1392,30 +1394,30 @@ void ofProgrammableGLRenderer::disableVertices(){
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disableTexCoords(){
 	texCoordsEnabled = false;
-	ofShader prevShader = currentShader;
+	ofShader * prevShader = currentShader;
 	if(!usingCustomShader) beginDefaultShader();
 
-	if(prevShader==currentShader){
+	if(*prevShader==*currentShader){
 		GLint loc = getAttrLocationTexCoord();
 		if (loc != -1){
 			glDisableVertexAttribArray(loc);
 		}
-		currentShader.setUniform1f("useTexture",0);
+		currentShader->setUniform1f("useTexture",0);
 	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disableColors(){
 	colorsEnabled = false;
-	ofShader prevShader = currentShader;
+	ofShader * prevShader = currentShader;
 	if(!usingCustomShader) beginDefaultShader();
 
-	if(prevShader==currentShader){
+	if(*prevShader==*currentShader){
 		GLint loc = getAttrLocationColor();
 		if (loc != -1){
 			glDisableVertexAttribArray(loc);
 		}
-		currentShader.setUniform1f("useColors",0);
+		currentShader->setUniform1f("useColors",0);
 	}
 }
 
@@ -1440,28 +1442,29 @@ void ofProgrammableGLRenderer::disableTextureTarget(int textureTarget){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
-	if(currentShader==shader) return;
+	if(*currentShader==shader) return;
 
 	shader.setUniform1f("useTexture",texCoordsEnabled);
 	shader.setUniform1f("useColors",colorsEnabled);
 	shader.setUniform4f("color",currentColor.r,currentColor.g,currentColor.b,currentColor.a);
 
-	currentShader = shader;
+	currentShader = &shader;
 	enableAttributes();
 	uploadAllMatrices();
 	if(!settingDefaultShader) usingCustomShader = true;
 }
 
 void ofProgrammableGLRenderer::uploadAllMatrices(){
-	currentShader.setUniformMatrix4f("modelViewMatrix", modelViewMatrix);
-	currentShader.setUniformMatrix4f("projectionMatrix", projectionMatrix*orientationMatrix);
-	currentShader.setUniformMatrix4f("textureMatrix", textureMatrix);
-	currentShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewMatrix*projectionMatrix*orientationMatrix);
+	currentShader->setUniformMatrix4f("modelViewMatrix", modelViewMatrix);
+	currentShader->setUniformMatrix4f("projectionMatrix", projectionMatrix);
+	currentShader->setUniformMatrix4f("orientationMatrix", orientationMatrix);
+	currentShader->setUniformMatrix4f("textureMatrix", textureMatrix);
+	currentShader->setUniformMatrix4f("modelViewProjectionMatrix", modelViewProjectionMatrix);
 }
 
 void ofProgrammableGLRenderer::disableAtributtes(){
 
-	if (!currentShader.isLoaded()) return;
+	if (!currentShader->isLoaded()) return;
 	
 	int loc = getAttrLocationPosition();
 	if(loc!=-1){
@@ -1512,46 +1515,46 @@ void ofProgrammableGLRenderer::enableAttributes(){
 
 void ofProgrammableGLRenderer::beginDefaultShader(){
 	if(usingCustomShader) return;
-	ofShader nextShader;
+	ofShader * nextShader = NULL;
 
 	if(externalShaderProvided){
-		nextShader = externalShader;
+		nextShader = &externalShader;
 	}else{
 		if(colorsEnabled && texCoordsEnabled){
 			switch(currentTextureTarget){
 			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = defaultShaderTexColor;
+				nextShader = &defaultShaderTexColor;
 				break;
 			case GL_TEXTURE_2D:
-				nextShader = defaultShaderTex2DColor;
+				nextShader = &defaultShaderTex2DColor;
 				break;
 			case OF_NO_TEXTURE:
-				nextShader = defaultShaderNoTexColor;
+				nextShader = &defaultShaderNoTexColor;
 				break;
 			}
 		}else if(colorsEnabled){
-			nextShader = defaultShaderNoTexColor;
+			nextShader = &defaultShaderNoTexColor;
 		}else if(texCoordsEnabled){
 			switch(currentTextureTarget){
 			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = defaultShaderTexNoColor;
+				nextShader = &defaultShaderTexNoColor;
 				break;
 			case GL_TEXTURE_2D:
-				nextShader = defaultShaderTex2DNoColor;
+				nextShader = &defaultShaderTex2DNoColor;
 				break;
 			case OF_NO_TEXTURE:
-				nextShader = defaultShaderNoTexNoColor;
+				nextShader = &defaultShaderNoTexNoColor;
 				break;
 			}
 		}else{
-			nextShader = defaultShaderNoTexNoColor;
+			nextShader = &defaultShaderNoTexNoColor;
 		}
 	}
 
-	if(currentShader!=nextShader){
+	if(nextShader && *currentShader!=*nextShader){
 		disableAtributtes();
 		settingDefaultShader = true;
-		nextShader.begin();
+		nextShader->begin();
 		settingDefaultShader = false;
 	}
 }
@@ -1561,22 +1564,6 @@ void ofProgrammableGLRenderer::endCustomShader(){
 	disableAtributtes();
 	usingCustomShader = false;
 	beginDefaultShader();
-}
-
-
-
-inline void ofProgrammableGLRenderer::preparePrimitiveDraw(ofVbo& vbo_){
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_.getVertId()); // bind to triangle vertices
-	glEnableVertexAttribArray(currentShader.getAttributeLocation("position"));	// activate attribute 'position' in shader
-	glVertexAttribPointer(currentShader.getAttributeLocation("position"), 3, GL_FLOAT,GL_FALSE,0,0);
-	
-}
-
-inline void ofProgrammableGLRenderer::finishPrimitiveDraw(){
-	// when drawing a vbo other attrib arrays are bound, but the vbo takes care of unbinding the
-	// color, texcoord and index arrays. 
-	// glDisableVertexAttribArray(0);		 	// disable vertex attrib array.
-	glBindBuffer(GL_ARRAY_BUFFER,0);		// unbind current buffer by binding to zero
 }
 
 //----------------------------------------------------------
