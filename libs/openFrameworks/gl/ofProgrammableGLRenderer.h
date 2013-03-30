@@ -163,8 +163,6 @@ private:
 	ofVbo meshVbo;
 	
 	GLuint defaultVAO;
-	void preparePrimitiveDraw(ofVbo& vbo_);
-	void finishPrimitiveDraw();
 	
 	void uploadCurrentMatrix();
 
@@ -194,6 +192,7 @@ private:
 	ofMatrix4x4	projectionMatrix;
 	ofMatrix4x4	textureMatrix;
 	ofMatrix4x4 modelViewProjectionMatrix;
+	ofMatrix4x4 orientedProjectionMatrix;
 	ofMatrix4x4 orientationMatrix;
 	bool vFlipped;
 
@@ -208,7 +207,7 @@ private:
     
 	ofFbo * currentFbo;
 	
-	ofShader currentShader;
+	ofShader * currentShader;
 	ofShader externalShader,defaultShaderTexColor,defaultShaderTex2DColor,defaultShaderNoTexColor,defaultShaderTexNoColor,defaultShaderTex2DNoColor,defaultShaderNoTexNoColor;
 	ofShader bitmapStringShader;
 
