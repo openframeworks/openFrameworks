@@ -175,11 +175,11 @@ bool ofCheckGLExtension(string searchName){
 }
 
 bool ofGLIsFixedPipeline(){
-	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!="ProgrammableGL";
+	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!=ofProgrammableGLRenderer::TYPE;
 }
 
 ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+	if(ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
 		return (ofPtr<ofProgrammableGLRenderer>&)ofGetCurrentRenderer();
 	}else{
 		return ofPtr<ofProgrammableGLRenderer>();
@@ -207,9 +207,9 @@ GLint ofGetAttrLocationTexCoord(){
 }
 
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
 		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
-	}else if(ofGetCurrentRenderer()->getType()=="collection"){
+	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
 		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
 	}else{
 		return ofPtr<ofGLRenderer>();

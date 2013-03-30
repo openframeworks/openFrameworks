@@ -22,6 +22,8 @@
 //                  y1, y2);
 //}
 
+const string ofCairoRenderer::TYPE="cairo";
+
 _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char *data, unsigned int length){
 	((ofCairoRenderer*)closure)->streamBuffer.append((const char*)data,length);
 	return CAIRO_STATUS_SUCCESS;

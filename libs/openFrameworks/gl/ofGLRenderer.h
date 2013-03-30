@@ -13,7 +13,8 @@ public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
 
-	string getType(){ return "GL"; }
+    static const string TYPE;
+    const string & getType(){ return TYPE; }
 
 	void setCurrentFBO(ofFbo * fbo);
 

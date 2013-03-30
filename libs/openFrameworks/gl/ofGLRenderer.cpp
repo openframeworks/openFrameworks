@@ -10,6 +10,8 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 
+const string ofGLRenderer::TYPE="ProgrammableGL";
+
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	bBackgroundAuto = true;

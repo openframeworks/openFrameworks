@@ -16,7 +16,8 @@ public:
 	ofCairoRenderer();
 	~ofCairoRenderer();
 
-	string getType(){ return "cairo"; }
+	static const string TYPE;
+	const string & getType(){ return TYPE; }
 
 	enum Type{
 		PDF,

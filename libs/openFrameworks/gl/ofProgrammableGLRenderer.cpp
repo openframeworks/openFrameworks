@@ -12,6 +12,7 @@
 #include "of3dPrimitives.h"
 
 static const int OF_NO_TEXTURE=-1;
+const string ofProgrammableGLRenderer::TYPE="ProgrammableGL";
 
 #ifdef TARGET_OPENGLES
 string defaultVertexShader =
@@ -1189,7 +1190,7 @@ ofFloatColor & ofProgrammableGLRenderer::getBgColor(){
 void ofProgrammableGLRenderer::background(const ofColor & c){
 	bgColor = c;
 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
 //----------------------------------------------------------
@@ -1236,7 +1237,7 @@ void ofProgrammableGLRenderer::setLineWidth(float lineWidth){
 	// use geometry shaders to draw lines of varying thickness...
 	
 #ifndef TARGET_OPENGLES
-	ofLogVerbose() << "glLineWidth has no effect in openGL3.2+\nUse a geometry shader to generate thick lines.";
+	//ofLogVerbose() << "glLineWidth has no effect in openGL3.2+\nUse a geometry shader to generate thick lines.";
 #else
 	glLineWidth(lineWidth);
 #endif
