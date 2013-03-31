@@ -86,6 +86,8 @@ public:
 	int getNumIndices() const;
 	
 private:
+	GLuint vaoID;
+	bool vaoChanged;
 
 	GLuint indexId;
 

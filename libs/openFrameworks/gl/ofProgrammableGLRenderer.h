@@ -129,12 +129,6 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
-	// attributes location
-	GLint getAttrLocationPosition();
-	GLint getAttrLocationColor();
-	GLint getAttrLocationNormal();
-	GLint getAttrLocationTexCoord();
-
 	ofShader & getCurrentShader();
 	void setDefaultShader(ofShader & shader);
 
@@ -162,9 +156,7 @@ private:
 	ofVboMesh lineVbo;
 	ofVbo vertexDataVbo;
 	ofVbo meshVbo;
-	
-	GLuint defaultVAO;
-	
+
 	void uploadCurrentMatrix();
 
 
@@ -172,8 +164,6 @@ private:
 	void endSmoothing();
 
 	void beginDefaultShader();
-	void disableAtributtes();
-	void enableAttributes();
 	void uploadAllMatrices();
 
     

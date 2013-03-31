@@ -10,7 +10,7 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 
-const string ofGLRenderer::TYPE="ProgrammableGL";
+const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
@@ -775,6 +775,9 @@ void ofGLRenderer::endSmoothing(){
 //----------------------------------------------------------
 void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 	switch (blendMode){
+		case OF_BLENDMODE_DISABLED:
+			glDisable(GL_BLEND);
+			break;
 
 		case OF_BLENDMODE_ALPHA:{
 			glEnable(GL_BLEND);
@@ -1155,35 +1158,35 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 }
 
 void ofGLRenderer::enableVertices(){
-	glEnableClientState(GL_VERTEX_ARRAY);
+	//glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void ofGLRenderer::enableTexCoords(){
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ofGLRenderer::enableColors(){
-	glEnableClientState(GL_COLOR_ARRAY);
+	//glEnableClientState(GL_COLOR_ARRAY);
 }
 
 void ofGLRenderer::enableNormals(){
-	glEnableClientState(GL_NORMAL_ARRAY);
+	//glEnableClientState(GL_NORMAL_ARRAY);
 }
 
 void ofGLRenderer::disableVertices(){
-	glDisableClientState(GL_VERTEX_ARRAY);
+	//glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void ofGLRenderer::disableTexCoords(){
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ofGLRenderer::disableColors(){
-	glDisableClientState(GL_COLOR_ARRAY);
+	//glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void ofGLRenderer::disableNormals(){
-	glDisableClientState(GL_NORMAL_ARRAY);
+	//glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void ofGLRenderer::enableTextureTarget(int textureTarget){
