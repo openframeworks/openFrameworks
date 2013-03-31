@@ -440,21 +440,21 @@ void ofDrawBitmapCharacterEnd(){
 		bitmappedFontTexture.bind();
 
 		#ifndef TARGET_OPENGLES
-			if (ofGLIsFixedPipeline()){
+			if (!ofGetProgrammableGLRenderer()){
 				// this temporarily enables alpha testing,
 				// which discards pixels unless their alpha is 1.0f
 				glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 				glEnable(GL_ALPHA_TEST);
 				glAlphaFunc(GL_GREATER, 0);
 			} else {
-				// glPush/PopAttrib is deprecated and we are doing the alpha test through a shader
+				// glPush/PopAttrib is deprecated + we are doing the alpha test through a shader
 			}
 		#endif
 
 		charMesh.draw();
 
 		#ifndef TARGET_OPENGLES
-			if (ofGLIsFixedPipeline()){
+			if (!ofGetProgrammableGLRenderer()){
 				glPopAttrib();
 			}
 		#endif

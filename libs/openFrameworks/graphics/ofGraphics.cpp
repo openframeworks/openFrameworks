@@ -578,8 +578,7 @@ void ofDisablePointSprites(){
 
 //----------------------------------------------------------
 void ofDisableBlendMode(){
-    glDisable(GL_BLEND);
-	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
+    ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 }
 
 //----------------------------------------------------------

@@ -179,31 +179,11 @@ bool ofGLIsFixedPipeline(){
 }
 
 ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
+	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
 		return (ofPtr<ofProgrammableGLRenderer>&)ofGetCurrentRenderer();
 	}else{
 		return ofPtr<ofProgrammableGLRenderer>();
 	}
-}
-
-GLint ofGetAttrLocationPosition(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationPosition();
-}
-
-GLint ofGetAttrLocationColor(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationColor();
-}
-
-GLint ofGetAttrLocationNormal(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationNormal();
-}
-
-GLint ofGetAttrLocationTexCoord(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationTexCoord();
 }
 
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){

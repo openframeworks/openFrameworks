@@ -5,14 +5,16 @@
 #include "ofProgrammableGLRenderer.h"
 #include <map>
 
-
-GLuint ofShader::activeProgram=0;
-GLuint ofShader::prevActiveProgram=0;
+static const string COLOR_ATTRIBUTE="color";
+static const string POSITION_ATTRIBUTE="position";
+static const string NORMAL_ATTRIBUTE="normal";
+static const string TEXCOORD_ATTRIBUTE="texcoord";
 
 static map<GLuint,int> & getShaderIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
 }
+
 static map<GLuint,int> & getProgramIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
@@ -127,7 +129,9 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 #ifndef TARGET_OPENGLES
 	if(geomName.empty() == false) setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
 #endif
-	
+	if(ofGetProgrammableGLRenderer()){
+		bindDefaults();
+	}
 	return linkProgram();
 }
 
@@ -313,6 +317,25 @@ bool ofShader::linkProgram() {
 		return bLoaded;
 }
 
+void ofShader::bindAttribute(GLuint location, const string & name){
+	glBindAttribLocation(program,location,name.c_str());
+}
+
+//--------------------------------------------------------------
+bool ofShader::bindDefaults(){
+	if(shaders.empty()) {
+		ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
+		return false;
+	} else {
+		bindAttribute(ofShader::POSITION_ATTRIBUTE,::POSITION_ATTRIBUTE);
+		bindAttribute(ofShader::COLOR_ATTRIBUTE,::COLOR_ATTRIBUTE);
+		bindAttribute(ofShader::NORMAL_ATTRIBUTE,::NORMAL_ATTRIBUTE);
+		bindAttribute(ofShader::TEXCOORD_ATTRIBUTE,::TEXCOORD_ATTRIBUTE);
+		return true;
+	}
+
+}
+
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
@@ -343,13 +366,9 @@ bool ofShader::isLoaded(){
 void ofShader::begin() {
 	if (bLoaded){
 		glUseProgram(program);
-        if(activeProgram!=program) {
-            prevActiveProgram = activeProgram;
-            activeProgram = program;
-            if(!ofGLIsFixedPipeline()){
-                ofGetProgrammableGLRenderer()->beginCustomShader(*this);
-            }
-        }
+		if(ofGetProgrammableGLRenderer()){
+			ofGetProgrammableGLRenderer()->beginCustomShader(*this);
+		}
 	}else{
 		ofLogError() << "trying to begin unloaded shader";
 	}
@@ -357,13 +376,11 @@ void ofShader::begin() {
 
 //--------------------------------------------------------------
 void ofShader::end() {
-	if (bLoaded && activeProgram==program){
-		if(!ofGLIsFixedPipeline()){
+	if (bLoaded){
+		if(ofGetProgrammableGLRenderer()){
 			ofGetProgrammableGLRenderer()->endCustomShader();
 		}else{
-			glUseProgram(prevActiveProgram);
-			activeProgram = prevActiveProgram;
-			prevActiveProgram = 0;
+			glUseProgram(0);
 		}
 	}
 }

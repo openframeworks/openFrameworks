@@ -97,6 +97,8 @@ public:
 	void setAttribute3fv(const string & name, float* v, GLsizei stride=sizeof(float)*3);
 	void setAttribute4fv(const string & name, float* v, GLsizei stride=sizeof(float)*4);
 	
+	void bindAttribute(GLuint location, const string & name);
+
 	void printActiveUniforms();
 	void printActiveAttributes();
 	
@@ -111,18 +113,38 @@ public:
 	// links program with all compiled shaders
 	bool linkProgram();
 
+	// binds default uniforms and attributes, only useful for
+	// fixed pipeline simulation under programmable renderer
+	// has to be called before linking
+	bool bindDefaults();
+
 	GLuint& getProgram();
 	GLuint& getShader(GLenum type);
 	
 	bool operator==(const ofShader & other);
 	bool operator!=(const ofShader & other);
 
+
+	enum defaultUniforms{
+		MODELVIEW_MATRIX_UNIFORM=1,
+		PROJECTION_MATRIX_UNIFORM,
+		ORIENTATION_MATRIX_UNIFORM,
+		MODELVIEW_PROJECTION_MATRIX_UNIFORM,
+		TEXTURE_MATRIX_UNIFORM,
+		COLOR_UNIFORM
+	};
+
+	enum defaultAttributes{
+		POSITION_ATTRIBUTE=1,
+		COLOR_ATTRIBUTE,
+		NORMAL_ATTRIBUTE,
+		TEXCOORD_ATTRIBUTE
+	};
+
 private:
 	GLuint program;
 	bool bLoaded;
 	map<GLenum, GLuint> shaders;
-	static GLuint activeProgram;
-	static GLuint prevActiveProgram;
 	
 	GLint getUniformLocation(const string & name);
 	
