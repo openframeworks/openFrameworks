@@ -32,37 +32,31 @@ static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
     switch (type) {
         case OF_3D_PRIMITIVE_PLANE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                ofLogVerbose() << "of3dGraphics :: getCached3dPrimitive : inserting plane - " << type;
                 getCached3dPrimitives().insert( make_pair(type, new ofPlanePrimitive(1.0f, 1.0f, 6, 4)));
             }
             break;
         case OF_3D_PRIMITIVE_SPHERE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                ofLogVerbose() << "of3dGraphics :: getCached3dPrimitive : inserting sphere - " << type ;
                 getCached3dPrimitives().insert( make_pair(type, new ofSpherePrimitive(1.0f, 4)));
             }
             break;
         case OF_3D_PRIMITIVE_ICO_SPHERE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                ofLogVerbose() << "of3dGraphics :: getCached3dPrimitive : inserting ICO sphere - " << type ;
                 getCached3dPrimitives().insert( make_pair(type, new ofIcoSpherePrimitive(1.0f, 2)));
             }
             break;
         case OF_3D_PRIMITIVE_BOX:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                ofLogVerbose() << "of3dGraphics :: getCached3dPrimitive : inserting box " << type ;
                 getCached3dPrimitives().insert(make_pair(type, new  ofBoxPrimitive( 1.f, 1.f, 1.f )  ));
             }
             break;
         case OF_3D_PRIMITIVE_CONE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                ofLogVerbose() << "of3dGraphics :: getCached3dPrimitive : inserting cone " << type ;
                 getCached3dPrimitives().insert(make_pair(type, new ofConePrimitive( 1.f, 1.f, 9, 3, 2)));
             }
             break;
         case OF_3D_PRIMITIVE_CYLINDER:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end() ) {
-                cout << "of3dGraphics :: getCached3dPrimitive : inserting Cylinder - " << endl;
                 getCached3dPrimitives().insert( make_pair(type, new ofCylinderPrimitive(1.f, 1.f, 8, 4, 2, true)));
             }
             break;
