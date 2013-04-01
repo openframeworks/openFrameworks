@@ -523,7 +523,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	//ofLog(OF_LOG_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
-	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
+	nCharacters = bFullCharacterSet ? 256 : 256 - NUM_CHARACTER_TO_START;
 
 	//--------------- initialize character info and textures
 	cps.resize(nCharacters);
