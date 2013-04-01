@@ -205,21 +205,25 @@ void ofVbo::setMesh(const ofMesh & mesh, int usage, bool useColors, bool useText
 	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
 	if(mesh.hasColors() && useColors){
 		setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
+		enableColors();
 	}else{
 		disableColors();
 	}
 	if(mesh.hasNormals() && useNormals){
 		setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
+		enableNormals();
 	}else{
 		disableNormals();
 	}
 	if(mesh.hasTexCoords() && useTextures){
 		setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
+		enableTexCoords();
 	}else{
 		disableTexCoords();
 	}
 	if(mesh.hasIndices()){
 		setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
+		enableIndices();
 	}else{
 		disableIndices();
 	}
