@@ -860,41 +860,45 @@ void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vF
 		ofSetCoordHandedness(OF_RIGHT_HANDED);
 	}
 
+	bool vFlipMatrix = vFlip != bool(currentFbo);
+
 	if(ofDoesHWOrientation()){
 		orientationMatrix.makeIdentityMatrix();
-		if(vFlip){
+		if(vFlipMatrix){
 			orientationMatrix.scale(1,-1,1);
 		}
 	}else{
 		switch(orientation) {
 			case OF_ORIENTATION_180:
 				orientationMatrix.makeRotationMatrix(180,0,0,1);
-				if(vFlip)
+				if(vFlipMatrix)
 					orientationMatrix.scale(1,-1,1);
 				break;
 
 			case OF_ORIENTATION_90_RIGHT:
 				orientationMatrix.makeRotationMatrix(90,0,0,1);
-				if(vFlip)
+				if(vFlipMatrix)
 					orientationMatrix.scale(-1,1,1);
 				break;
 
 			case OF_ORIENTATION_90_LEFT:
 				orientationMatrix.makeRotationMatrix(-90,0,0,1);
-				if(vFlip)
+				if(vFlipMatrix)
 					orientationMatrix.scale(-1,1,1);
 				break;
 
 			case OF_ORIENTATION_DEFAULT:
 			default:
 				orientationMatrix.makeIdentityMatrix();
-				if(vFlip)
+				if(vFlipMatrix)
 					orientationMatrix.scale(1,-1,1);
 				break;
 		}
 	}
 
 	orientedProjectionMatrix = projectionMatrix * orientationMatrix;
+	modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
+	uploadAllMatrices();
 
 }
 
@@ -1296,12 +1300,10 @@ void ofProgrammableGLRenderer::setBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::enablePointSprites(){
-    // TODO :: needs ES2 code.
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::disablePointSprites(){
-    // TODO :: needs ES2 code.
 }
 
 //----------------------------------------------------------

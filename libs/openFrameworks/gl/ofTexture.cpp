@@ -842,7 +842,7 @@ void ofTexture::unbind(){
 
 	glBindTexture( texData.textureTarget, 0);
 	disableTextureTarget();
-	
+
 	if(ofGetUsingNormalizedTexCoords()) {
 		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPopMatrix();
@@ -977,9 +977,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat py1 = h;
 	
 	if (texData.bFlipTexture == true){
-		GLint temp = (GLint)py0;
-		py0 = py1;
-		py1 = temp;
+		swap(py0,py1);
 	}
 	
 	// for rect mode center, let's do this:
