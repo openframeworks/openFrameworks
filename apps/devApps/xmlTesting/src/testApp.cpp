@@ -16,8 +16,14 @@ void testApp::setup(){
     
     ofXml child = XML.getChild("food[0]");
     //cout << child.getNumChildren() << endl;
-    //ofXml child2 = child.getChildAt(0);
-    //cout << child2.getNumChildren() << endl;
+    ofXml child2 = child.getChildAt(0);
+    cout << child2.getName() << " " << child2.getValue() << endl;
+    
+    ofXml child3 = child.getChildAt(1);
+    cout << child3.getName() << " " << child3.getValue() << endl;
+    
+    ofXml child4 = child.getChildAt(2);
+    cout << child4.getName() << " " << child4.getValue() << endl;
     
     
     ofXml newXML;
@@ -34,8 +40,8 @@ void testApp::setup(){
     cout << newXML.toString() << endl;
     
     child.addChild(newXML);
-    
-    cout << child.toString() << endl;
+    //cout << " ------------------------------ " << endl;
+    //cout << child.toString() << endl;
     
 }
 
@@ -76,6 +82,8 @@ void testApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
 
+    cout << XML.toString() << endl;
+    
     cout << " number before remove " <<  XML.getNumChildren() << endl;
     XML.remove("food[0]");
     cout << " number after remove " << XML.getNumChildren() << endl;
@@ -91,7 +99,9 @@ void testApp::mousePressed(int x, int y, int button){
     
     XML.addValue("foo", "blaf");
     
-    cout << " number after add " << XML.getNumChildren() << endl;
+    cout << XML.toString() << endl;
+    
+    //cout << " number after add " << XML.getNumChildren() << endl;
     
 }
 

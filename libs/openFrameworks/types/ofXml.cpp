@@ -110,7 +110,7 @@ int ofXml::getNumChildren()
     
     while(i < list->length()) {
         if(list->item(i) && list->item(i)->nodeType() == Node::ELEMENT_NODE) {
-            cout << list->item(i)->nodeName() << endl;
+            //cout << list->item(i)->nodeName() << endl;
             numberOfChildren++;
         }
         i++;
@@ -126,12 +126,20 @@ string ofXml::toString()
     Poco::XML::DOMWriter writer;
     writer.setOptions(XMLWriter::PRETTY_PRINT);
     if(documentRawPtr) {
+        documentRawPtr->normalize();
         writer.writeNode( stream, documentRawPtr->documentElement() );
     } else {
         //writer.writeNode( stream, element );
+        element->normalize();
         writer.writeNode( stream, element.get() );
     }
-    return stream.str();
+    
+    string tmp = stream.str();
+    // don't know how else to get rid of the hidden <#text></#text> nodes
+    ofStringReplace(tmp, "<#text>", "");
+    ofStringReplace(tmp, "</#text>", "");
+    
+    return tmp;
 }
 
 bool ofXml::addChild( ofXml& child )
@@ -144,25 +152,43 @@ bool ofXml::addChild( ofXml& child )
 void ofXml::addList( Element *addTo, Element *addFrom, bool topLevel)
 {
     
-    if(topLevel)
-    {
+    // TODO -
+    // the top level node isn't having it's attributes set
+    // or all the children added to it correctly, so if you make parent, everything needs
+    // to get added to it.
+
+    Element *localToAddTo;
+    
+    //cout << addTo->nodeName() << " " << addFrom->nodeName() << endl;
+    
+    //if(topLevel)
+    //{
         // get the top level node
-        Element* parent = getDocument()->createElement(addFrom->nodeName());
+        localToAddTo = getDocument()->createElement(addFrom->nodeName());
         
         if(addFrom->hasAttributes()) {
             
             NamedNodeMap *map = addFrom->attributes();
             for(int i = 0; i < map->length(); i++) {
-                Attr *attr = getDocument()->createAttribute(map->item(i)->getNodeValue());
+                //Attr *attr = getDocument()->createAttribute(map->item(i)->getNodeValue());
+                Attr *attr = getDocument()->createAttribute(map->item(i)->nodeName());
                 attr->setValue(map->item(i)->getNodeValue());
-                parent->appendChild(attr);
+                localToAddTo->attributes()->setNamedItem(attr);
             }
             
             map->release();
         }
-        
-        addTo->appendChild(parent);
-    }
+    
+        if(addFrom->nodeValue() != "") {
+            Text *text = getDocument()->createTextNode(addFrom->innerText());
+            localToAddTo->appendChild((Node*) text);
+        }
+    
+        // need to make sure parent is what all subsequent adds get put onto it
+        //addTo->appendChild(parent);
+    //} else {
+    //    localToAddTo = addTo;
+    //}
     
     // now look for all children
     
@@ -197,15 +223,27 @@ void ofXml::addList( Element *addTo, Element *addFrom, bool topLevel)
             
             if(list->item(i)->hasChildNodes()) // recurse-action
             {
-                addList( node, (Element*) list->item(i) );
+                NodeList *childList = list->item(i)->childNodes();
+                
+                int j = 0;
+                while(childList->item(j))
+                {
+                    addList( node, (Element*) childList->item(j), false );
+                    j++;
+                }
             }
             
             node->normalize();
-            addTo->appendChild( (Element*) node);
+            localToAddTo->appendChild( (Element*) node);
             i++;
         }
     }
-    list->release();
+    
+    addTo->appendChild(localToAddTo);
+    
+    if( list ) { // we might not have a list of child elements
+        list->release();
+    }
 }
 
 bool ofXml::addValue(const string& path, const string& value, bool createEntirePath)
@@ -244,7 +282,6 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
         // create all the tags that don't exist
         for(int i = lastExistingTag; i < tokens.size(); i++)
         {
-            //Element *newElement = document->getDocument()->createElement(tokens.at(i));
             Element* ei = getDocument()->createElement(tokens.at(i));
             ofPtr<Element> newElement = ofPtr<Element>( ei, deleter<Element>());
             el->appendChild(newElement.get());
@@ -254,10 +291,10 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
         
         if(value != "") 
         {
-            //Text *text = document->getDocument()->createTextNode(value);
             Text *text = getDocument()->createTextNode(value);
             try {
                 element->appendChild( (Node*) text);
+                //el->setNodeValue(value);
             } catch ( DOMException &e ) {
                 stringstream sstream;
                 sstream << " cannot set node value " << DOMErrorMessage(e.code());
@@ -279,6 +316,7 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
             Text *text = getDocument()->createTextNode(value);
             try {
                 newElement->appendChild( (Node*) text);
+                //newElement->setNodeValue(value);
             } catch ( DOMException &e ) {
                 stringstream sstream;
                 sstream << " cannot set node value " << DOMErrorMessage(e.code());
@@ -293,9 +331,9 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
 }
 
 string ofXml::getValue(const string& path) {
-    Element *element = (Element*) element->getNodeByPath(path);
-    if(element) {
-        return element->innerText();
+    Element *e = (Element*) element->getNodeByPath(path);
+    if(e) {
+        return e->innerText();
     }
     return "";
 }
@@ -309,26 +347,26 @@ string ofXml::getValue() {
 
 bool ofXml::setValue(const string& path, const string& value)
 {
-    Element *element = (Element*) element->getNodeByPath(path);
+    Element *e = (Element*) element->getNodeByPath(path);
     
     if(!element) {
         ofLog(OF_LOG_WARNING, " setValue of " + path + " failed because path doesn't exist");
         return false;
     }
     
-    if(element->firstChild()->nodeType() == Node::TEXT_NODE) {
+    if(e->firstChild()->nodeType() == Node::TEXT_NODE) {
         //Text *node = document->getDocument()->createTextNode(ofToString(value));
         Text *node = getDocument()->createTextNode(ofToString(value));
-        element->replaceChild( (Node*) node, element->firstChild()); // swap out
+        e->replaceChild( (Node*) node, e->firstChild()); // swap out
     }
     return true;
 }
 
 string ofXml::getAttribute(const string& path) {
 
-    Node *element = element->getNodeByPath(path);
+    Node *e = element->getNodeByPath(path);
     
-    return element->getNodeValue(); // this will be the value of the attribute
+    return e->getNodeValue(); // this will be the value of the attribute
 }
 
 bool ofXml::setAttribute(const string& path, const string& value)
@@ -410,11 +448,11 @@ bool ofXml::setAttribute(const string& path, const string& value)
 bool ofXml::clearAttributes(const string& path) 
 {
     
-    Element *element = (Element*) element->getNodeByPath(path);
-    NamedNodeMap *map = element->attributes();
+    Element *e = (Element*) element->getNodeByPath(path);
+    NamedNodeMap *map = e->attributes();
     
     for(int i = 0; i < map->length(); i++) {
-        element->removeAttribute(map->item(i)->nodeName());
+        e->removeAttribute(map->item(i)->nodeName());
     }
     
     map->release();
@@ -423,7 +461,7 @@ bool ofXml::clearAttributes(const string& path)
 
 bool ofXml::clearAttributes()
 {
-    //
+    
 }
 
 bool ofXml::clearContents() {
@@ -467,7 +505,7 @@ bool ofXml::exists(const string& path) // works for both attributes and tags
 
 ofXml ofXml::getParent() // works for both attributes and tags
 {
-    cout << " calling get parent " << endl;
+    //cout << " calling get parent " << endl;
     if(element && element->parentNode()->nodeType() == Node::ELEMENT_NODE) {
         Element *pE = (Element*) element->parentNode();
         ofPtr<Element> ap( pE, deleter<Element>());

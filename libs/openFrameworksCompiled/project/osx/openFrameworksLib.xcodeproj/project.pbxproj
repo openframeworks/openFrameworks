@@ -537,15 +537,12 @@
 		E4F3BACF12F4C73C002D19BB /* types */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
 				ED8BD65115F402B900B2C635 /* ofXml.cpp */,
 				ED8BD65215F402B900B2C635 /* ofXml.h */,
-=======
 				DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */,
 				DAC22D3C16E7A4AF0020226D /* ofParameter.h */,
 				DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */,
 				DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */,
->>>>>>> 1ffb481c5d6761f54e16f67744f69dd7bffa7ccd
 				E4F3BAD012F4C73C002D19BB /* ofBaseTypes.cpp */,
 				E4F3BAD112F4C73C002D19BB /* ofBaseTypes.h */,
 				E4F3BAD212F4C73C002D19BB /* ofColor.cpp */,
