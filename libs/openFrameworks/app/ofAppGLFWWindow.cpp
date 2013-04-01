@@ -211,8 +211,8 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		}
 
 		
-		int newMillis = ofGetElapsedTimeMillis(); // you have to measure here
-		lastFrameTime = newMillis-prevMillis;
+		unsigned long long newMillis = ofGetElapsedTimeMillis(); // you have to measure here
+		lastFrameTime = (newMillis-prevMillis)/1000.;
 		prevMillis = newMillis;
 
 		idle();
@@ -233,7 +233,7 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			frameRate	*= 0.9f;
 			frameRate	+= 0.1f*fps;
 		}
-		lastFrameTime	= diff;
+		//lastFrameTime	= diff;
 		timeThen		= timeNow;
 		
 		nFrameCount++;
@@ -471,7 +471,7 @@ void ofAppGLFWWindow::idle_cb(){
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
 	
-	if (nFrameCount != 0 && bFrameRateSet == true){
+	/*if (nFrameCount != 0 && bFrameRateSet == true){
 		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
 		if (diffMillis > millisForFrame){
 			; // we do nothing, we are already slower than target frame
@@ -503,7 +503,7 @@ void ofAppGLFWWindow::idle_cb(){
 		frameRate	+= 0.1f*fps;
 	}
 	lastFrameTime	= diff;
-	timeThen		= timeNow;
+	timeThen		= timeNow;*/
   	// --------------
 	
 	ofNotifyUpdate();
