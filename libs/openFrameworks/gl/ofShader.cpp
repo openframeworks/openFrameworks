@@ -394,9 +394,13 @@ void ofShader::setUniformTexture(const string & name, ofBaseHasTexture& img, int
 void ofShader::setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation){
 	if(bLoaded) {
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		glEnable(textureTarget);
-		glBindTexture(textureTarget, textureID);
-		glDisable(textureTarget);
+		if (ofGLIsFixedPipeline()){
+			glEnable(textureTarget);
+			glBindTexture(textureTarget, textureID);
+			glDisable(textureTarget);
+		} else {
+			glBindTexture(textureTarget, textureID);
+		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);
 	}
