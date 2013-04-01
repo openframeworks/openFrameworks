@@ -37,7 +37,7 @@ static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
             break;
         case OF_3D_PRIMITIVE_SPHERE:
             if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                getCached3dPrimitives().insert( make_pair(type, new ofSpherePrimitive(1.0f, 4)));
+                getCached3dPrimitives().insert( make_pair(type, new ofSpherePrimitive(1.0f, 20)));
             }
             break;
         case OF_3D_PRIMITIVE_ICO_SPHERE:
