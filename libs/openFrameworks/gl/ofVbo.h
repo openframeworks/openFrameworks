@@ -7,6 +7,7 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofGLUtils.h"
+#include <map>
 
 class ofVbo {
 public:
@@ -32,6 +33,8 @@ public:
 	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
 	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
 	
+	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=sizeof(float));
+
 	void updateMesh(const ofMesh & mesh);
 
 	void updateVertexData(const ofVec3f * verts, int total);
@@ -46,6 +49,8 @@ public:
 	void updateNormalData(const float * normal0x, int total);
 	void updateTexCoordData(const float * texCoord0x, int total);
 	
+	void updateAttributeData(int location, const float * vert0x, int total);
+
 	void enableColors();
 	void enableNormals();
 	void enableTexCoords();
@@ -118,5 +123,10 @@ private:
 	int normUsage;
 	int texUsage;
 
+	bool binded;
+
+	map<int,GLuint> attributeIds;
+	map<int,int> attributeStrides;
+	map<int,int> attributeNumCoords;
 
 };

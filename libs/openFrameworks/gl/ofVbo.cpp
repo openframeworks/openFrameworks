@@ -103,6 +103,7 @@ ofVbo::ofVbo()
 
 	vaoChanged 		= false;
 	vaoID			= 0;
+	binded   = false;
 }
 
 ofVbo::ofVbo(const ofVbo & mom){
@@ -145,6 +146,8 @@ ofVbo::ofVbo(const ofVbo & mom){
 	colorStride = sizeof(ofFloatColor);
 
 	bAllocated		= mom.bAllocated;
+
+	binded   = false;
 }
 
 ofVbo & ofVbo::operator=(const ofVbo& mom){
@@ -183,6 +186,7 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	totalIndices = mom.totalIndices;
 
 	bAllocated		= mom.bAllocated;
+	binded   = false;
 	return *this;
 }
 
@@ -355,6 +359,26 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
+	if(attrib0x == NULL){
+		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
+		return;
+	}
+
+	if(attributeIds.find(location)==attributeIds.end()){
+		glGenBuffers(1, &(attributeIds[location]));
+		retain(attributeIds[location]);
+		vaoChanged = true;
+	}
+
+	attributeStrides[location] = stride;
+	attributeNumCoords[location] = numCoords;
+
+	glBindBuffer(GL_ARRAY_BUFFER, attributeIds[location]);
+	glBufferData(GL_ARRAY_BUFFER, total * stride, attrib0x, usage);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 //--------------------------------------------------------------
 void ofVbo::updateMesh(const ofMesh & mesh){
 	ofMesh * nonconstMesh = (ofMesh*)&mesh;
@@ -434,6 +458,13 @@ void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
 	}
 }
 
+void ofVbo::updateAttributeData(int location, const float * attr0x, int total){
+	if(attributeIds.find(location)!=attributeIds.end() && attributeIds[location]!=0) {
+		glBindBuffer(GL_ARRAY_BUFFER, attributeIds[location]);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*attributeStrides[location], attr0x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+}
 
 void ofVbo::enableColors(){
 	if(colorId!=0 && !bUsingColors){
@@ -631,6 +662,12 @@ void ofVbo::bind(){
 			}
 		}
 
+		map<int,GLuint>::iterator it;
+		for(it=attributeIds.begin();it!=attributeIds.end();it++){
+			glEnableVertexAttribArray(it->first);
+			glVertexAttribPointer(it->first, attributeNumCoords[it->first], GL_FLOAT, GL_FALSE, attributeStrides[it->first], 0);
+		}
+
 		vaoChanged=false;
 	}
 
@@ -657,6 +694,7 @@ void ofVbo::bind(){
 	}else{
 		ofDisableTexCoords();
 	}
+	binded   = true;
 }
 
 //--------------------------------------------------------------
@@ -668,14 +706,16 @@ void ofVbo::unbind() {
 	if(bUsingNormals) ofDisableNormals();
 	if(bUsingTexCoords) ofDisableTexCoords();*/
 	glBindVertexArray(0);
+	binded   = false;
 }
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) {
 	if(bAllocated) {
-		bind();
+		bool wasBinded = binded;
+		if(!wasBinded) bind();
 		glDrawArrays(drawMode, first, total);
-		unbind();
+		if(!wasBinded) unbind();
 	}
 }
 
