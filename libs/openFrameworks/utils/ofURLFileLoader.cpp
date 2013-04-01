@@ -141,6 +141,7 @@ void ofURLFileLoader::threadedFunction() {
 		}else{
 			ofLog(OF_LOG_VERBOSE,"stopping on no requests condition");
 			condition.wait(mutex);
+			unlock();
 		}
 	}
 }
