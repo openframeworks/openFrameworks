@@ -573,7 +573,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	ofLogVerbose() << "allocate texture";
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
-	tex.texData.bFlipTexture = true;
+	tex.texData.bFlipTexture = false;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 
@@ -618,7 +618,7 @@ void ofFbo::begin(bool setupScreen) {
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
 	ofSetOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
-	ofViewport(0, 0, getWidth(), getHeight());
+	ofViewport();
 	if(setupScreen){
 		ofSetupScreenPerspective(getWidth(), getHeight(), OF_ORIENTATION_DEFAULT, ofIsVFlipped());
 	}
