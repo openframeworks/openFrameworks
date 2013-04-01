@@ -150,7 +150,6 @@ public:
     ofPtr<Element> getElement();
     ofPtr<Element> getElement(const string& path);
     
-    //Document* getDocument() { if(documentRawPtr) { return documentRawPtr; } return NULL; }
     Document* getDocument();
     
     bool addChild( ofXml& child );
@@ -170,7 +169,6 @@ protected:
     string DOMErrorMessage(short msg);
     
     Poco::XML::Document *documentRawPtr;
-    ofPtr<Poco::XML::DocumentFragment> docFragment;
     ofPtr<ofXmlDocument> document;
     ofPtr<Element> element;
     
