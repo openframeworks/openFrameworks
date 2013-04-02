@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */; };
 		221FD01016E74E6900522E7E /* ofProgrammableGLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */; };
+		22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
 		22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
@@ -154,6 +155,7 @@
 /* Begin PBXFileReference section */
 		221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofProgrammableGLRenderer.cpp; path = gl/ofProgrammableGLRenderer.cpp; sourceTree = "<group>"; };
 		221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofProgrammableGLRenderer.h; path = gl/ofProgrammableGLRenderer.h; sourceTree = "<group>"; };
+		22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRendererCollection.cpp; sourceTree = "<group>"; };
 		22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppGLFWWindow.cpp; sourceTree = "<group>"; };
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
@@ -596,6 +598,7 @@
 				DA48FE73131D85A6000062BC /* ofPolyline.cpp */,
 				DA48FE74131D85A6000062BC /* ofPolyline.h */,
 				DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */,
+				22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */,
 				DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */,
 				DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */,
 				E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */,
@@ -806,6 +809,7 @@
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,
 				221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */,
 				22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */,
+				22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
