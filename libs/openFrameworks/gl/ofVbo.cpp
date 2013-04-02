@@ -136,6 +136,7 @@ ofVbo::ofVbo(const ofVbo & mom){
 	retain(indexId);
 	vaoID	   = mom.vaoID;
 	retainVAO(vaoID);
+	vaoChanged = mom.vaoChanged;
 
 
 	totalVerts = mom.totalVerts;
@@ -147,7 +148,7 @@ ofVbo::ofVbo(const ofVbo & mom){
 
 	bAllocated		= mom.bAllocated;
 
-	binded   = false;
+	binded   = mom.binded;
 }
 
 ofVbo & ofVbo::operator=(const ofVbo& mom){
@@ -181,12 +182,13 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	retain(indexId);
 	vaoID	   = mom.vaoID;
 	retainVAO(vaoID);
+	vaoChanged = mom.vaoChanged;
 
 	totalVerts = mom.totalVerts;
 	totalIndices = mom.totalIndices;
 
 	bAllocated		= mom.bAllocated;
-	binded   = false;
+	binded   = mom.binded;
 	return *this;
 }
 
