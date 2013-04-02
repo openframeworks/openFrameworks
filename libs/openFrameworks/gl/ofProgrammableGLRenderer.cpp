@@ -1609,10 +1609,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			pushMatrix();
 
 			translate(x, y, z);
-
-			if(!isVFlipped()){
-				scale(1,-1,1);
-			}
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1661,10 +1657,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			scale(2/rViewport.width, 2/rViewport.height, 1);
 
 			translate(dScreen.x, dScreen.y, 0);
-
-			if(!isVFlipped()){
-				scale(1,-1,1);
-			}
 		}
 			break;
 
