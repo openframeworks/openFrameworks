@@ -123,7 +123,7 @@ private:
 	int normUsage;
 	int texUsage;
 
-	bool binded;
+	bool bBound;
 
 	map<int,GLuint> attributeIds;
 	map<int,int> attributeStrides;
