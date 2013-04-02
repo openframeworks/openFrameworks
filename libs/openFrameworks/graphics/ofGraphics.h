@@ -7,7 +7,6 @@
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
-#include "ofGLRenderer.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
@@ -34,14 +33,14 @@ OF_DEPRECATED_MSG("ofViewport is now set with or without vflip according to the 
 		" use glViewport if you want to set the viewport  from the bottom of the screen",
 		void ofViewport(float x, float y, float width, float height, bool vFlip));
 
-void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
+bool ofIsVFlipped();
+void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0);
+void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1);
 ofRectangle ofGetCurrentViewport();
 ofRectangle ofGetNativeViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
 int ofOrientationToDegrees(ofOrientation orientation);
-bool ofIsVFlipped();
 
 void ofSetCoordHandedness(ofHandednessType handedness);
 ofHandednessType ofGetCoordHandedness();

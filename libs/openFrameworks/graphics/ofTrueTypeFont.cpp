@@ -841,6 +841,10 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 	int firstIndex = stringQuads.getVertices().size();
 
+	if(!ofIsVFlipped()){
+		swap(v1,v2);
+	}
+
 	stringQuads.addVertex(ofVec3f(x1,y1));
 	stringQuads.addVertex(ofVec3f(x2,y1));
 	stringQuads.addVertex(ofVec3f(x2,y2));

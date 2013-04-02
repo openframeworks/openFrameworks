@@ -976,7 +976,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat px1 = w;
 	GLfloat py1 = h;
 	
-	if (texData.bFlipTexture == true){
+	if (texData.bFlipTexture == ofIsVFlipped()){
 		swap(py0,py1);
 	}
 	

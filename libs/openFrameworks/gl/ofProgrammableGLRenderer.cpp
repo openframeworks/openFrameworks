@@ -860,38 +860,29 @@ void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vF
 		ofSetCoordHandedness(OF_RIGHT_HANDED);
 	}
 
+	orientationMatrix.makeIdentityMatrix();
+
 	bool vFlipMatrix = vFlip != bool(currentFbo);
 
-	if(ofDoesHWOrientation()){
-		orientationMatrix.makeIdentityMatrix();
-		if(vFlipMatrix){
-			orientationMatrix.scale(1,-1,1);
-		}
-	}else{
+	if(vFlipMatrix)
+		orientationMatrix.scale(1,-1,1);
+
+	if(!ofDoesHWOrientation()){
 		switch(orientation) {
 			case OF_ORIENTATION_180:
-				orientationMatrix.makeRotationMatrix(180,0,0,1);
-				if(vFlipMatrix)
-					orientationMatrix.scale(1,-1,1);
+				orientationMatrix.rotate(180,0,0,1);
 				break;
 
 			case OF_ORIENTATION_90_RIGHT:
-				orientationMatrix.makeRotationMatrix(90,0,0,1);
-				if(vFlipMatrix)
-					orientationMatrix.scale(-1,1,1);
+				orientationMatrix.rotate(90,0,0,1);
 				break;
 
 			case OF_ORIENTATION_90_LEFT:
-				orientationMatrix.makeRotationMatrix(-90,0,0,1);
-				if(vFlipMatrix)
-					orientationMatrix.scale(-1,1,1);
+				orientationMatrix.rotate(-90,0,0,1);
 				break;
 
 			case OF_ORIENTATION_DEFAULT:
 			default:
-				orientationMatrix.makeIdentityMatrix();
-				if(vFlipMatrix)
-					orientationMatrix.scale(1,-1,1);
 				break;
 		}
 	}
