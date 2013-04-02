@@ -1,5 +1,6 @@
 
 #include "ofBitmapFont.h"
+#include "ofGraphics.h"
 
 
 // ==============================================================
@@ -399,14 +400,21 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		float posTexW = (float)(character % 16)/16.0f;
 		float posTexH = ((int)(character / 16.0f))/16.0f;
 
+		float texY1 = posTexH;
+		float texY2 = posTexH+heightTex;
 
-		charMesh.getTexCoords()[vC].set(posTexW,posTexH);
-		charMesh.getTexCoords()[vC+1].set(posTexW + widthTex,posTexH);
-		charMesh.getTexCoords()[vC+2].set(posTexW+widthTex,posTexH+heightTex);
+		if(!ofIsVFlipped()){
+			swap(texY1,texY2);
+		}
+
+
+		charMesh.getTexCoords()[vC].set(posTexW,texY1);
+		charMesh.getTexCoords()[vC+1].set(posTexW + widthTex,texY1);
+		charMesh.getTexCoords()[vC+2].set(posTexW+widthTex,texY2);
 		
-		charMesh.getTexCoords()[vC+3].set(posTexW + widthTex,posTexH+heightTex);
-		charMesh.getTexCoords()[vC+4].set(posTexW,posTexH+heightTex);
-		charMesh.getTexCoords()[vC+5].set(posTexW,posTexH);
+		charMesh.getTexCoords()[vC+3].set(posTexW + widthTex,texY2);
+		charMesh.getTexCoords()[vC+4].set(posTexW,texY2);
+		charMesh.getTexCoords()[vC+5].set(posTexW,texY1);
 
 		charMesh.getVertices()[vC].set(x,y);
 		charMesh.getVertices()[vC+1].set(x+8,y);
