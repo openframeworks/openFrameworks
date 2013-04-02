@@ -60,6 +60,7 @@ int getch()
 
 #endif
 
+const string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow(){

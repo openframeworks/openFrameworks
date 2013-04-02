@@ -573,7 +573,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	ofLogVerbose() << "allocate texture";
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
-	tex.texData.bFlipTexture = true;
+	tex.texData.bFlipTexture = false;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 
@@ -613,13 +613,12 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 void ofFbo::begin(bool setupScreen) {
 	if(!bIsAllocated) return;
+	ofPushView();
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
-	ofPushView();
-	ofSetOrientation(OF_ORIENTATION_DEFAULT);
-	ofGetCurrentRenderer()->setOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
-	ofViewport(0, 0, getWidth(), getHeight(), false);
+	ofSetOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
+	ofViewport();
 	if(setupScreen){
 		ofSetupScreenPerspective(getWidth(), getHeight(), OF_ORIENTATION_DEFAULT, ofIsVFlipped());
 	}

@@ -5,6 +5,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofConstants.h"
+#include "ofProgrammableGLRenderer.h"
 
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
@@ -610,6 +611,10 @@ void ofAppGlutWindow::display(void){
 		}
 	}
 
+	if(!ofGLIsFixedPipeline()){
+		ofGetProgrammableGLRenderer()->startRender();
+	}
+
 	// set viewport, clear the screen
 	ofViewport();		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
@@ -663,6 +668,10 @@ void ofAppGlutWindow::display(void){
 		}
     #endif
 
+	if(!ofGLIsFixedPipeline()){
+		ofGetProgrammableGLRenderer()->finishRender();
+	}
+
     nFramesSinceWindowResized++;
 
 	//fps calculation moved to idle_cb as we were having fps speedups when heavy drawing was occuring
@@ -676,7 +685,7 @@ void ofAppGlutWindow::display(void){
 }
 
 //------------------------------------------------------------
-void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
+static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 	int savedY;
 	switch(orientation) {
 		case OF_ORIENTATION_180:

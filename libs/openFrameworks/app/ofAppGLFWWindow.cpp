@@ -84,8 +84,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	// GLFW_STEREO;					0
 	// GLFW_WINDOW_NO_RESIZE;		0
 	// GLFW_FSAA_SAMPLES;			0
-
-	int result;
 	
 #ifdef USE_PROGRAMMABLE_GL
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -194,8 +192,6 @@ void ofAppGLFWWindow::initializeWindow(){
 
 //--------------------------------------------
 void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-	static ofEventArgs voidEventArgs;
-
 	ofAppPtr = appPtr;
 
 	glfwMakeContextCurrent(windowP);
@@ -215,8 +211,8 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		}
 
 		
-		int newMillis = ofGetElapsedTimeMillis(); // you have to measure here
-		lastFrameTime = newMillis-prevMillis;
+		unsigned long long newMillis = ofGetElapsedTimeMillis(); // you have to measure here
+		lastFrameTime = (newMillis-prevMillis)/1000.;
 		prevMillis = newMillis;
 
 		idle();
@@ -237,7 +233,7 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			frameRate	*= 0.9f;
 			frameRate	+= 0.1f*fps;
 		}
-		lastFrameTime	= diff;
+		//lastFrameTime	= diff;
 		timeThen		= timeNow;
 		
 		nFrameCount++;
@@ -286,10 +282,13 @@ void ofAppGLFWWindow::setWindowTitle(string title){
 }
 //------------------------------------------------------------
 ofPoint ofAppGLFWWindow::getWindowSize(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return ofPoint(getWidth(), getHeight(),0);
+	if(windowMode == OF_FULLSCREEN)
+	{
+		GLFWvidmode desktopMode;
+		desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
+		return ofVec3f(desktopMode.width, desktopMode.height,0);
 	}else{
-		return ofPoint(getHeight(), getWidth(),0);
+		return ofPoint(windowW,windowH);
 	}
 }
 
@@ -474,7 +473,7 @@ void ofAppGLFWWindow::idle_cb(){
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
 	
-	if (nFrameCount != 0 && bFrameRateSet == true){
+	/*if (nFrameCount != 0 && bFrameRateSet == true){
 		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
 		if (diffMillis > millisForFrame){
 			; // we do nothing, we are already slower than target frame
@@ -506,7 +505,7 @@ void ofAppGLFWWindow::idle_cb(){
 		frameRate	+= 0.1f*fps;
 	}
 	lastFrameTime	= diff;
-	timeThen		= timeNow;
+	timeThen		= timeNow;*/
   	// --------------
 	
 	ofNotifyUpdate();
@@ -516,17 +515,7 @@ void ofAppGLFWWindow::idle_cb(){
 }
 
 void ofAppGLFWWindow::display(void){
-	
-	static ofEventArgs voidEventArgs;
-
 	glfwMakeContextCurrent(windowP);
-
-	int width, height;
-
-	width  = getWindowSize().x;
-	height = getWindowSize().y;
-
-	height = height > 0 ? height : 1;
 
 	if(!ofGLIsFixedPipeline()) ofGetProgrammableGLRenderer()->startRender();
 	// set viewport, clear the screen
@@ -594,6 +583,32 @@ void ofAppGLFWWindow::exitApp(){
 	OF_EXIT_APP(0);
 }
 
+//------------------------------------------------------------
+static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
+	int savedY;
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			x = ofGetWidth() - x;
+			y = ofGetHeight() - y;
+			break;
+
+		case OF_ORIENTATION_90_RIGHT:
+			savedY = y;
+			y = x;
+			x = ofGetWidth()-savedY;
+			break;
+
+		case OF_ORIENTATION_90_LEFT:
+			savedY = y;
+			y = ofGetHeight() - x;
+			x = savedY;
+			break;
+
+		case OF_ORIENTATION_DEFAULT:
+		default:
+			break;
+	}
+}
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state) {
@@ -613,7 +628,7 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, int x, int y) {
-	static ofMouseEventArgs	mouseEventArgs;
+	rotateMouseXY(ofGetOrientation(), x, y);
 
 	if(!buttonPressed){
 		ofNotifyMouseMoved(x, y);
@@ -630,7 +645,6 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int state) {
-	static ofKeyEventArgs keyEventArgs;
 
 	ofLog(OF_LOG_VERBOSE,"key: %i, state: %i",key,state);
 

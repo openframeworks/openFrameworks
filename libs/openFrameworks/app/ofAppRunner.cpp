@@ -139,10 +139,10 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
     if(ofGetCurrentRenderer() == NULL) {
 
 #ifdef USE_PROGRAMMABLE_GL
-        ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer());
+        ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer("","",false));
 
-    	ofSetCurrentRenderer(ofPtr<ofProgrammableGLRenderer>(programmableGLRenderer));
     	programmableGLRenderer->setup();
+    	ofSetCurrentRenderer(ofPtr<ofProgrammableGLRenderer>(programmableGLRenderer));
 #else
         ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
 #endif
@@ -300,8 +300,11 @@ void ofShowCursor(){
 }
 
 //--------------------------------------
-void ofSetOrientation(ofOrientation orientation){
+void ofSetOrientation(ofOrientation orientation, bool vFlip){
 	window->setOrientation(orientation);
+	if(ofGetCurrentRenderer()){
+		ofGetCurrentRenderer()->setOrientation(orientation,vFlip);
+	}
 }
 
 //--------------------------------------

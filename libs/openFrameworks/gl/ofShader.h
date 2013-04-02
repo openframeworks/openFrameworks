@@ -42,36 +42,36 @@ public:
 	void end();
 	
 	// set a texture reference
-	void setUniformTexture(const char* name, ofBaseHasTexture& img, int textureLocation);
-	void setUniformTexture(const char* name, ofTexture& img, int textureLocation);
-	void setUniformTexture(const char* name, int textureTarget, GLint textureID, int textureLocation);
+	void setUniformTexture(const string & name, ofBaseHasTexture& img, int textureLocation);
+	void setUniformTexture(const string & name, ofTexture& img, int textureLocation);
+	void setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation);
 	
 	// set a single uniform value
-	void setUniform1i(const char* name, int v1);
-	void setUniform2i(const char* name, int v1, int v2);
-	void setUniform3i(const char* name, int v1, int v2, int v3);
-	void setUniform4i(const char* name, int v1, int v2, int v3, int v4);
+	void setUniform1i(const string & name, int v1);
+	void setUniform2i(const string & name, int v1, int v2);
+	void setUniform3i(const string & name, int v1, int v2, int v3);
+	void setUniform4i(const string & name, int v1, int v2, int v3, int v4);
 	
-	void setUniform1f(const char* name, float v1);
-	void setUniform2f(const char* name, float v1, float v2);
-	void setUniform3f(const char* name, float v1, float v2, float v3);
-	void setUniform4f(const char* name, float v1, float v2, float v3, float v4);
+	void setUniform1f(const string & name, float v1);
+	void setUniform2f(const string & name, float v1, float v2);
+	void setUniform3f(const string & name, float v1, float v2, float v3);
+	void setUniform4f(const string & name, float v1, float v2, float v3, float v4);
 	
 	// set an array of uniform values
-	void setUniform1iv(const char* name, int* v, int count = 1);
-	void setUniform2iv(const char* name, int* v, int count = 1);
-	void setUniform3iv(const char* name, int* v, int count = 1);
-	void setUniform4iv(const char* name, int* v, int count = 1);
+	void setUniform1iv(const string & name, int* v, int count = 1);
+	void setUniform2iv(const string & name, int* v, int count = 1);
+	void setUniform3iv(const string & name, int* v, int count = 1);
+	void setUniform4iv(const string & name, int* v, int count = 1);
 	
-	void setUniform1fv(const char* name, float* v, int count = 1);
-	void setUniform2fv(const char* name, float* v, int count = 1);
-	void setUniform3fv(const char* name, float* v, int count = 1);
-	void setUniform4fv(const char* name, float* v, int count = 1);
+	void setUniform1fv(const string & name, float* v, int count = 1);
+	void setUniform2fv(const string & name, float* v, int count = 1);
+	void setUniform3fv(const string & name, float* v, int count = 1);
+	void setUniform4fv(const string & name, float* v, int count = 1);
 	
-	void setUniformMatrix4f(const char* name, const ofMatrix4x4 & m);
+	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
 
 	// set attributes that vary per vertex (look up the location before glBegin)
-	GLint getAttributeLocation(const char* name);
+	GLint getAttributeLocation(const string & name);
 
 #ifndef TARGET_OPENGLES
 	void setAttribute1s(GLint location, short v1);
@@ -92,11 +92,13 @@ public:
 	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4);
 #endif
 
-	void setAttribute1fv(const char* name, float* v, GLsizei stride=sizeof(float));
-	void setAttribute2fv(const char* name, float* v, GLsizei stride=sizeof(float)*2);
-	void setAttribute3fv(const char* name, float* v, GLsizei stride=sizeof(float)*3);
-	void setAttribute4fv(const char* name, float* v, GLsizei stride=sizeof(float)*4);
+	void setAttribute1fv(const string & name, float* v, GLsizei stride=sizeof(float));
+	void setAttribute2fv(const string & name, float* v, GLsizei stride=sizeof(float)*2);
+	void setAttribute3fv(const string & name, float* v, GLsizei stride=sizeof(float)*3);
+	void setAttribute4fv(const string & name, float* v, GLsizei stride=sizeof(float)*4);
 	
+	void bindAttribute(GLuint location, const string & name);
+
 	void printActiveUniforms();
 	void printActiveAttributes();
 	
@@ -111,22 +113,40 @@ public:
 	// links program with all compiled shaders
 	bool linkProgram();
 
+	// binds default uniforms and attributes, only useful for
+	// fixed pipeline simulation under programmable renderer
+	// has to be called before linking
+	bool bindDefaults();
+
 	GLuint& getProgram();
 	GLuint& getShader(GLenum type);
 	
 	bool operator==(const ofShader & other);
 	bool operator!=(const ofShader & other);
 
+
+	enum defaultUniforms{
+		MODELVIEW_MATRIX_UNIFORM=1,
+		PROJECTION_MATRIX_UNIFORM,
+		ORIENTATION_MATRIX_UNIFORM,
+		MODELVIEW_PROJECTION_MATRIX_UNIFORM,
+		TEXTURE_MATRIX_UNIFORM,
+		COLOR_UNIFORM
+	};
+
+	enum defaultAttributes{
+		POSITION_ATTRIBUTE=1,
+		COLOR_ATTRIBUTE,
+		NORMAL_ATTRIBUTE,
+		TEXCOORD_ATTRIBUTE
+	};
+
 private:
 	GLuint program;
 	bool bLoaded;
 	map<GLenum, GLuint> shaders;
-	map<string, GLint> attribsCache;
-	map<string, GLint> uniformsCache;
-	static GLuint activeProgram;
-	static GLuint prevActiveProgram;
 	
-	GLint getUniformLocation(const char* name);
+	GLint getUniformLocation(const string & name);
 	
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);

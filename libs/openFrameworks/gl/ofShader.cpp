@@ -5,14 +5,16 @@
 #include "ofProgrammableGLRenderer.h"
 #include <map>
 
-
-GLuint ofShader::activeProgram=0;
-GLuint ofShader::prevActiveProgram=0;
+static const string COLOR_ATTRIBUTE="color";
+static const string POSITION_ATTRIBUTE="position";
+static const string NORMAL_ATTRIBUTE="normal";
+static const string TEXCOORD_ATTRIBUTE="texcoord";
 
 static map<GLuint,int> & getShaderIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
 }
+
 static map<GLuint,int> & getProgramIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
@@ -84,9 +86,7 @@ ofShader::~ofShader() {
 ofShader::ofShader(const ofShader & mom) :
 program(mom.program),
 bLoaded(mom.bLoaded),
-shaders(mom.shaders),
-attribsCache(mom.attribsCache),
-uniformsCache(mom.uniformsCache){
+shaders(mom.shaders){
 	if(mom.bLoaded){
 		retainProgram(program);
 		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
@@ -107,8 +107,6 @@ ofShader & ofShader::operator=(const ofShader & mom){
 	program = mom.program;
 	bLoaded = mom.bLoaded;
 	shaders = mom.shaders;
-	attribsCache = mom.attribsCache;
-	uniformsCache = mom.uniformsCache;
 	if(mom.bLoaded){
 		retainProgram(program);
 		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
@@ -131,7 +129,9 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 #ifndef TARGET_OPENGLES
 	if(geomName.empty() == false) setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
 #endif
-	
+	if(ofGetProgrammableGLRenderer()){
+		bindDefaults();
+	}
 	return linkProgram();
 }
 
@@ -162,7 +162,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	}
 	
 	// compile shader
-	const char* sptr = source.c_str();
+	const char * sptr = source.c_str();
 	int ssize = source.size();
 	glShaderSource(shader, 1, &sptr, &ssize);
 	glCompileShader(shader);
@@ -317,6 +317,25 @@ bool ofShader::linkProgram() {
 		return bLoaded;
 }
 
+void ofShader::bindAttribute(GLuint location, const string & name){
+	glBindAttribLocation(program,location,name.c_str());
+}
+
+//--------------------------------------------------------------
+bool ofShader::bindDefaults(){
+	if(shaders.empty()) {
+		ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
+		return false;
+	} else {
+		bindAttribute(ofShader::POSITION_ATTRIBUTE,::POSITION_ATTRIBUTE);
+		bindAttribute(ofShader::COLOR_ATTRIBUTE,::COLOR_ATTRIBUTE);
+		bindAttribute(ofShader::NORMAL_ATTRIBUTE,::NORMAL_ATTRIBUTE);
+		bindAttribute(ofShader::TEXCOORD_ATTRIBUTE,::TEXCOORD_ATTRIBUTE);
+		return true;
+	}
+
+}
+
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
@@ -333,8 +352,6 @@ void ofShader::unload() {
 			program = 0;
 		}
 
-		attribsCache.clear();
-		uniformsCache.clear();
 		shaders.clear();
 	}
 	bLoaded = false;
@@ -349,13 +366,9 @@ bool ofShader::isLoaded(){
 void ofShader::begin() {
 	if (bLoaded){
 		glUseProgram(program);
-        if(activeProgram!=program) {
-            prevActiveProgram = activeProgram;
-            activeProgram = program;
-            if(!ofGLIsFixedPipeline()){
-                ofGetProgrammableGLRenderer()->beginCustomShader(*this);
-            }
-        }
+		if(ofGetProgrammableGLRenderer()){
+			ofGetProgrammableGLRenderer()->beginCustomShader(*this);
+		}
 	}else{
 		ofLogError() << "trying to begin unloaded shader";
 	}
@@ -363,36 +376,38 @@ void ofShader::begin() {
 
 //--------------------------------------------------------------
 void ofShader::end() {
-	if (bLoaded && activeProgram==program){
-		if(!ofGLIsFixedPipeline()){
+	if (bLoaded){
+		if(ofGetProgrammableGLRenderer()){
 			ofGetProgrammableGLRenderer()->endCustomShader();
 		}else{
-			glUseProgram(prevActiveProgram);
-			activeProgram = prevActiveProgram;
-			prevActiveProgram = 0;
+			glUseProgram(0);
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const char* name, ofBaseHasTexture& img, int textureLocation) {
+void ofShader::setUniformTexture(const string & name, ofBaseHasTexture& img, int textureLocation) {
 	setUniformTexture(name, img.getTextureReference(), textureLocation);
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const char* name, int textureTarget, GLint textureID, int textureLocation){
+void ofShader::setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation){
 	if(bLoaded) {
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		glEnable(textureTarget);
-		glBindTexture(textureTarget, textureID);
-		glDisable(textureTarget);
+		if (ofGLIsFixedPipeline()){
+			glEnable(textureTarget);
+			glBindTexture(textureTarget, textureID);
+			glDisable(textureTarget);
+		} else {
+			glBindTexture(textureTarget, textureID);
+		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);
 	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const char* name, ofTexture& tex, int textureLocation) {
+void ofShader::setUniformTexture(const string & name, ofTexture& tex, int textureLocation) {
 	if(bLoaded) {
 		ofTextureData texData = tex.getTextureData();
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
@@ -409,7 +424,7 @@ void ofShader::setUniformTexture(const char* name, ofTexture& tex, int textureLo
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1i(const char* name, int v1) {
+void ofShader::setUniform1i(const string & name, int v1) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1i(loc, v1);
@@ -417,7 +432,7 @@ void ofShader::setUniform1i(const char* name, int v1) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2i(const char* name, int v1, int v2) {
+void ofShader::setUniform2i(const string & name, int v1, int v2) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2i(loc, v1, v2);
@@ -425,7 +440,7 @@ void ofShader::setUniform2i(const char* name, int v1, int v2) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3i(const char* name, int v1, int v2, int v3) {
+void ofShader::setUniform3i(const string & name, int v1, int v2, int v3) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3i(loc, v1, v2, v3);
@@ -433,7 +448,7 @@ void ofShader::setUniform3i(const char* name, int v1, int v2, int v3) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4i(const char* name, int v1, int v2, int v3, int v4) {
+void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) 	glUniform4i(loc, v1, v2, v3, v4);
@@ -441,7 +456,7 @@ void ofShader::setUniform4i(const char* name, int v1, int v2, int v3, int v4) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1f(const char* name, float v1) {
+void ofShader::setUniform1f(const string & name, float v1) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1f(loc, v1);
@@ -449,7 +464,7 @@ void ofShader::setUniform1f(const char* name, float v1) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2f(const char* name, float v1, float v2) {
+void ofShader::setUniform2f(const string & name, float v1, float v2) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2f(loc, v1, v2);
@@ -457,7 +472,7 @@ void ofShader::setUniform2f(const char* name, float v1, float v2) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3f(const char* name, float v1, float v2, float v3) {
+void ofShader::setUniform3f(const string & name, float v1, float v2, float v3) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3f(loc, v1, v2, v3);
@@ -465,7 +480,7 @@ void ofShader::setUniform3f(const char* name, float v1, float v2, float v3) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4f(const char* name, float v1, float v2, float v3, float v4) {
+void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, float v4) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4f(loc, v1, v2, v3, v4);
@@ -473,7 +488,7 @@ void ofShader::setUniform4f(const char* name, float v1, float v2, float v3, floa
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1iv(const char* name, int* v, int count) {
+void ofShader::setUniform1iv(const string & name, int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1iv(loc, count, v);
@@ -481,7 +496,7 @@ void ofShader::setUniform1iv(const char* name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2iv(const char* name, int* v, int count) {
+void ofShader::setUniform2iv(const string & name, int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2iv(loc, count, v);
@@ -489,7 +504,7 @@ void ofShader::setUniform2iv(const char* name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3iv(const char* name, int* v, int count) {
+void ofShader::setUniform3iv(const string & name, int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3iv(loc, count, v);
@@ -497,7 +512,7 @@ void ofShader::setUniform3iv(const char* name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4iv(const char* name, int* v, int count) {
+void ofShader::setUniform4iv(const string & name, int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4iv(loc, count, v);
@@ -505,7 +520,7 @@ void ofShader::setUniform4iv(const char* name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1fv(const char* name, float* v, int count) {
+void ofShader::setUniform1fv(const string & name, float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1fv(loc, count, v);
@@ -513,7 +528,7 @@ void ofShader::setUniform1fv(const char* name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2fv(const char* name, float* v, int count) {
+void ofShader::setUniform2fv(const string & name, float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2fv(loc, count, v);
@@ -521,7 +536,7 @@ void ofShader::setUniform2fv(const char* name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3fv(const char* name, float* v, int count) {
+void ofShader::setUniform3fv(const string & name, float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3fv(loc, count, v);
@@ -529,7 +544,7 @@ void ofShader::setUniform3fv(const char* name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4fv(const char* name, float* v, int count) {
+void ofShader::setUniform4fv(const string & name, float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4fv(loc, count, v);
@@ -537,7 +552,7 @@ void ofShader::setUniform4fv(const char* name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix4f(const char* name, const ofMatrix4x4 & m) {
+void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, m.getPtr());
@@ -594,7 +609,7 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 		glVertexAttrib4f(location, v1, v2, v3, v4);
 }
 
-void ofShader::setAttribute1fv(const char* name, float* v, GLsizei stride){
+void ofShader::setAttribute1fv(const string & name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -604,7 +619,7 @@ void ofShader::setAttribute1fv(const char* name, float* v, GLsizei stride){
 	}
 }
 
-void ofShader::setAttribute2fv(const char* name, float* v, GLsizei stride){
+void ofShader::setAttribute2fv(const string & name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -615,7 +630,7 @@ void ofShader::setAttribute2fv(const char* name, float* v, GLsizei stride){
 
 }
 
-void ofShader::setAttribute3fv(const char* name, float* v, GLsizei stride){
+void ofShader::setAttribute3fv(const string & name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -625,7 +640,7 @@ void ofShader::setAttribute3fv(const char* name, float* v, GLsizei stride){
 	}
 }
 
-void ofShader::setAttribute4fv(const char* name, float* v, GLsizei stride){
+void ofShader::setAttribute4fv(const string & name, float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -662,23 +677,13 @@ void ofShader::setAttribute4d(GLint location, double v1, double v2, double v3, d
 #endif
 
 //--------------------------------------------------------------
-GLint ofShader::getAttributeLocation(const char* name) {
-	if(attribsCache.find(name)!=attribsCache.end()){
-		return attribsCache[name];
-	}
-	GLint location = glGetAttribLocation(program, name);
-	attribsCache[name] = location;
-	return location;
+GLint ofShader::getAttributeLocation(const string & name) {
+	return glGetAttribLocation(program, name.c_str());
 }
 
 //--------------------------------------------------------------
-GLint ofShader::getUniformLocation(const char* name) {
-	if(uniformsCache.find(name)!=uniformsCache.end()){
-		return uniformsCache[name];
-	}
-	GLint location = glGetUniformLocation(program, name);
-	uniformsCache[name] = location;
-	return location;
+GLint ofShader::getUniformLocation(const string & name) {
+	return glGetUniformLocation(program, name.c_str());
 }
 
 //--------------------------------------------------------------
