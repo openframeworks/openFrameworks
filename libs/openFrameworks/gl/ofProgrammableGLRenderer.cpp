@@ -1098,7 +1098,7 @@ void ofProgrammableGLRenderer::uploadCurrentMatrix(){
 	if (currentMatrixMode == OF_MATRIX_PROJECTION){
 		orientedProjectionMatrix = projectionMatrix*orientationMatrix;
 		modelViewProjectionMatrix = modelViewMatrix*orientedProjectionMatrix;
-		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, projectionMatrix);
+		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, orientedProjectionMatrix);
 		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
 	}
 	if (currentMatrixMode == OF_MATRIX_TEXTURE){
@@ -1377,7 +1377,7 @@ void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
 void ofProgrammableGLRenderer::uploadAllMatrices(){
 	if(!currentShader) return;
 	currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, modelViewMatrix);
-	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, projectionMatrix);
+	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, orientedProjectionMatrix);
 	currentShader->setUniformMatrix4f(ORIENTATION_MATRIX_UNIFORM, orientationMatrix);
 	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, textureMatrix);
 	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
