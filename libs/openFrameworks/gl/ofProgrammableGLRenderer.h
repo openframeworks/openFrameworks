@@ -15,8 +15,9 @@ class ofProgrammableGLRenderer: public ofBaseGLRenderer{
 public:
 	ofProgrammableGLRenderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
 	~ofProgrammableGLRenderer();
-    
-	string getType(){ return "ProgrammableGL"; }
+
+    static const string TYPE;
+	const string & getType(){ return TYPE; }
     
     bool setup();
     void startRender();
@@ -30,7 +31,6 @@ public:
     void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
-	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
@@ -50,7 +50,7 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
+	void viewport(float x = 0, float y = 0, float width = 0, float height = 0);
 	void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
@@ -129,12 +129,6 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
-	// attributes location
-	GLint getAttrLocationPosition();
-	GLint getAttrLocationColor();
-	GLint getAttrLocationNormal();
-	GLint getAttrLocationTexCoord();
-
 	ofShader & getCurrentShader();
 	void setDefaultShader(ofShader & shader);
 
@@ -162,11 +156,7 @@ private:
 	ofVboMesh lineVbo;
 	ofVbo vertexDataVbo;
 	ofVbo meshVbo;
-	
-	GLuint defaultVAO;
-	void preparePrimitiveDraw(ofVbo& vbo_);
-	void finishPrimitiveDraw();
-	
+
 	void uploadCurrentMatrix();
 
 
@@ -174,13 +164,10 @@ private:
 	void endSmoothing();
 
 	void beginDefaultShader();
-	void disableAtributtes();
-	void enableAttributes();
 	void uploadAllMatrices();
 
     
 	ofHandednessType coordHandedness;
-	ofRectangle currentViewport;
 
 	stack <ofRectangle> viewportHistory;
 	stack <ofMatrix4x4> modelViewMatrixStack;
@@ -196,6 +183,7 @@ private:
 	ofMatrix4x4	projectionMatrix;
 	ofMatrix4x4	textureMatrix;
 	ofMatrix4x4 modelViewProjectionMatrix;
+	ofMatrix4x4 orientedProjectionMatrix;
 	ofMatrix4x4 orientationMatrix;
 	bool vFlipped;
 
@@ -210,7 +198,7 @@ private:
     
 	ofFbo * currentFbo;
 	
-	ofShader currentShader;
+	ofShader * currentShader;
 	ofShader externalShader,defaultShaderTexColor,defaultShaderTex2DColor,defaultShaderNoTexColor,defaultShaderTexNoColor,defaultShaderTex2DNoColor,defaultShaderNoTexNoColor;
 	ofShader bitmapStringShader;
 
@@ -221,4 +209,6 @@ private:
 	bool externalShaderProvided;
 	bool usingCustomShader, settingDefaultShader;
 	int currentTextureTarget;
+
+	bool wrongUseLoggedOnce;
 };

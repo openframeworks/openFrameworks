@@ -10,6 +10,8 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 
+const string ofGLRenderer::TYPE="GL";
+
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	bBackgroundAuto = true;
@@ -145,17 +147,6 @@ void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
         if(!normalsEnabled) glDisable( GL_NORMALIZE );
     }
     
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	if(!vertexData.empty()) {
-		if (bSmoothHinted) startSmoothing();
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
-		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
-		if (bSmoothHinted) endSmoothing();
-	}
 }
 
 //----------------------------------------------------------
@@ -784,6 +775,9 @@ void ofGLRenderer::endSmoothing(){
 //----------------------------------------------------------
 void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 	switch (blendMode){
+		case OF_BLENDMODE_DISABLED:
+			glDisable(GL_BLEND);
+			break;
 
 		case OF_BLENDMODE_ALPHA:{
 			glEnable(GL_BLEND);
@@ -840,7 +834,7 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofGLRenderer::enablePointSprites(){
-/*
+
 #ifdef TARGET_OPENGLES
 	glEnable(GL_POINT_SPRITE_OES);
 	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
@@ -853,18 +847,17 @@ void ofGLRenderer::enablePointSprites(){
 	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
-*/
+
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::disablePointSprites(){
-/*
+
 #ifdef TARGET_OPENGLES
 	glDisable(GL_POINT_SPRITE_OES);
 #else
 	glDisable(GL_POINT_SPRITE);
 #endif
-*/
 }
 
 //----------------------------------------------------------
@@ -1164,35 +1157,35 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 }
 
 void ofGLRenderer::enableVertices(){
-	glEnableClientState(GL_VERTEX_ARRAY);
+	//glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void ofGLRenderer::enableTexCoords(){
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ofGLRenderer::enableColors(){
-	glEnableClientState(GL_COLOR_ARRAY);
+	//glEnableClientState(GL_COLOR_ARRAY);
 }
 
 void ofGLRenderer::enableNormals(){
-	glEnableClientState(GL_NORMAL_ARRAY);
+	//glEnableClientState(GL_NORMAL_ARRAY);
 }
 
 void ofGLRenderer::disableVertices(){
-	glDisableClientState(GL_VERTEX_ARRAY);
+	//glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void ofGLRenderer::disableTexCoords(){
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ofGLRenderer::disableColors(){
-	glDisableClientState(GL_COLOR_ARRAY);
+	//glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void ofGLRenderer::disableNormals(){
-	glDisableClientState(GL_NORMAL_ARRAY);
+	//glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void ofGLRenderer::enableTextureTarget(int textureTarget){

@@ -61,11 +61,6 @@ bool ofGLIsFixedPipeline();
 ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer();
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
 
-GLint ofGetAttrLocationPosition();
-GLint ofGetAttrLocationColor();
-GLint ofGetAttrLocationNormal();
-GLint ofGetAttrLocationTexCoord();
-
 void ofEnableVertices();
 void ofEnableTexCoords();
 void ofEnableColorCoords();

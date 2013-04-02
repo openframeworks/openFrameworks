@@ -1,5 +1,5 @@
 //
-//  of3dModel.h
+//  of3dPrimitives.h
 //  openFrameworksLib
 //
 //  Created by Nick Hardeman on 9/14/12.

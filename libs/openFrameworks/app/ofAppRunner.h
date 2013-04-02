@@ -27,7 +27,7 @@ void 		ofSetFrameRate(int targetRate);
 void		ofSleepMillis(int millis);
 double		ofGetLastFrameTime();
 
-void		ofSetOrientation(ofOrientation orientation);
+void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);
 ofOrientation			ofGetOrientation();
 
 //-------------------------- cursor

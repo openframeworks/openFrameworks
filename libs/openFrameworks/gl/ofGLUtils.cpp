@@ -175,41 +175,21 @@ bool ofCheckGLExtension(string searchName){
 }
 
 bool ofGLIsFixedPipeline(){
-	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!="ProgrammableGL";
+	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!=ofProgrammableGLRenderer::TYPE;
 }
 
 ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
 		return (ofPtr<ofProgrammableGLRenderer>&)ofGetCurrentRenderer();
 	}else{
 		return ofPtr<ofProgrammableGLRenderer>();
 	}
 }
 
-GLint ofGetAttrLocationPosition(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationPosition();
-}
-
-GLint ofGetAttrLocationColor(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationColor();
-}
-
-GLint ofGetAttrLocationNormal(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationNormal();
-}
-
-GLint ofGetAttrLocationTexCoord(){
-	if(ofGLIsFixedPipeline()) return 0;
-	return ofGetProgrammableGLRenderer()->getAttrLocationTexCoord();
-}
-
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
 		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
-	}else if(ofGetCurrentRenderer()->getType()=="collection"){
+	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
 		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
 	}else{
 		return ofPtr<ofGLRenderer>();

@@ -61,7 +61,8 @@ private:
 };
 
 class ofNoopRenderer: public ofBaseRenderer{
-	virtual string getType(){return "NOOP";}
+	static const string TYPE;
+	virtual const string & getType(){return TYPE;}
 
 	virtual void update(){}
 

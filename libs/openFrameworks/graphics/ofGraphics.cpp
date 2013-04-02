@@ -141,8 +141,18 @@ void ofViewport(ofRectangle viewport){
 }
 
 //----------------------------------------------------------
+void ofViewport(float x, float y, float width, float height){
+	renderer->viewport(x,y,width,height);
+}
+
+//----------------------------------------------------------
 void ofViewport(float x, float y, float width, float height, bool invertY){
-	renderer->viewport(x,y,width,height,invertY);
+	if(!invertY){
+		ofLogWarning() << "ofViewport is now set with or without vflip according to the global settings,\n"
+				" use glViewport if you are using vFlip and want to set the viewport\n"
+				" from the bottom of the screen\n";
+	}
+	renderer->viewport(x,y,width,height);
 }
 
 //----------------------------------------------------------
@@ -568,8 +578,7 @@ void ofDisablePointSprites(){
 
 //----------------------------------------------------------
 void ofDisableBlendMode(){
-    glDisable(GL_BLEND);
-	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
+    ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 }
 
 //----------------------------------------------------------

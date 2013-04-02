@@ -523,7 +523,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	//ofLog(OF_LOG_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
-	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
+	nCharacters = bFullCharacterSet ? 256 : 256 - NUM_CHARACTER_TO_START;
 
 	//--------------- initialize character info and textures
 	cps.resize(nCharacters);
@@ -720,16 +720,33 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		x+= sortedCopy[i].tW + border*2;
 	}
 
+	if(ofGLIsFixedPipeline()){
+		texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
 
-	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
+		if(bAntiAliased && fontSize>20){
+			texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+		}else{
+			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+		}
 
-	if(bAntiAliased && fontSize>20){
-		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+		texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
 	}else{
-		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-	}
+		ofPixels luminance = atlasPixels.getChannel(0);
+		ofPixels alpha = atlasPixels.getChannel(1);
+		atlasPixels.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),4);
+		atlasPixels.setChannel(0,luminance);
+		atlasPixels.setChannel(1,luminance);
+		atlasPixels.setChannel(2,luminance);
+		atlasPixels.setChannel(3,alpha);
+		texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_RGBA,false);
 
-	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+		if(bAntiAliased && fontSize>20){
+			texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+		}else{
+			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+		}
+		texAtlas.loadData(atlasPixels);
+	}
 
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
@@ -1053,14 +1070,11 @@ void ofTrueTypeFont::bind(){
 	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
 	    // **************
 		// (a) record the current "alpha state, blend func, etc"
-		#ifndef TARGET_OPENGLES
-			glPushAttrib(GL_COLOR_BUFFER_BIT);
-		#else
-			blend_enabled = glIsEnabled(GL_BLEND);
-			texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-			glGetIntegerv( GL_BLEND_SRC, &blend_src );
-			glGetIntegerv( GL_BLEND_DST, &blend_dst );
-		#endif
+
+		blend_enabled = glIsEnabled(GL_BLEND);
+		texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+		glGetIntegerv( GL_BLEND_SRC, &blend_src );
+		glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
 	    // (b) enable our regular ALPHA blending!
 	    glEnable(GL_BLEND);
@@ -1078,15 +1092,12 @@ void ofTrueTypeFont::unbind(){
 		stringQuads.drawFaces();
 		texAtlas.unbind();
 
-		#ifndef TARGET_OPENGLES
-			glPopAttrib();
-		#else
-			if( !blend_enabled )
-				glDisable(GL_BLEND);
-			if( !texture_2d_enabled )
-				glDisable(GL_TEXTURE_2D);
-			glBlendFunc( blend_src, blend_dst );
-		#endif
+		if( !blend_enabled )
+			glDisable(GL_BLEND);
+		if( !texture_2d_enabled )
+			glDisable(GL_TEXTURE_2D);
+		glBlendFunc( blend_src, blend_dst );
+
 		binded = false;
 	}
 }

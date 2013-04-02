@@ -29,9 +29,13 @@ void ofPopView();
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 void ofViewport(ofRectangle viewport);
-void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
+void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0);
+OF_DEPRECATED_MSG("ofViewport is now set with or without vflip according to the global settings,"
+		" use glViewport if you want to set the viewport  from the bottom of the screen",
+		void ofViewport(float x, float y, float width, float height, bool vFlip));
+
 void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = -1);
+void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
 ofRectangle ofGetCurrentViewport();
 ofRectangle ofGetNativeViewport();
 int ofGetViewportWidth();
