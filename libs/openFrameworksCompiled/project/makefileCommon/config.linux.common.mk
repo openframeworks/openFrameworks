@@ -1,8 +1,7 @@
 ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
-#   This file has linux common rules for all the platforms (x86_64, i386,armv6l 
-#   and armv7l)
-#
+#   This file has linux common rules for all Linux platforms including x86_64, 
+#   i386, armv6l, and armv7l.
 ################################################################################
 
 ################################################################################
@@ -70,7 +69,6 @@ endif
 #   required addon header files as needed within the core. 
 #
 #   For instance, if you are compiling for Android, you would add ofxAndroid 
-#   here. If you are compiling for Raspberry Pi, you would add ofxRaspberryPi 
 #   here.
 #
 #   Note: Leave a leading space when adding list items with the += operator
@@ -94,7 +92,6 @@ PLATFORM_CFLAGS = -Wall
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-
 ################################################################################
 # PLATFORM LDFLAGS
 #   This is a list of fully qualified LDFLAGS required when linking for this 
@@ -104,9 +101,6 @@ PLATFORM_CFLAGS += -fexceptions
 ################################################################################
 
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs
-
-
-
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -138,7 +132,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   generation.
 #
 #   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
-#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   string unless the user adds a wildcard (%) operator to match subdirectories.
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
 #
@@ -148,8 +142,6 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
-PLATFORM_CORE_EXCLUSIONS += %.mm
-PLATFORM_CORE_EXCLUSIONS += %.m
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
@@ -175,7 +167,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 
-
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
 #   These are header search paths that are platform specific and are specified 
@@ -187,7 +178,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS =
+PLATFORM_HEADERS_SEARCH_PATHS =
 
 ################################################################################
 # PLATFORM LIBRARIES
@@ -196,9 +187,9 @@ PLATFORM_HEADER_SEARCH_PATHS =
 #
 #   PLATFORM_LIBRARIES are libraries that can be found in the library search 
 #       paths.
-#   PLATFORM_STATIC_LIBRARIES is a list of required static libraries.
-#   PLATFORM_SHARED_LIBRARIES is a list of required shared libraries.
-#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are 
+#   PLATFORM_STATIC_LIBS is a list of required static libraries.
+#   PLATFORM_SHARED_LIBS is a list of required shared libraries.
+#   PLATFORM_PKG_CONFIG_LIBS is a list of required libraries that are 
 #       under system control and are easily accesible via the package 
 #       configuration utility (i.e. pkg-config)
 #
@@ -208,54 +199,54 @@ PLATFORM_HEADER_SEARCH_PATHS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARIES =
+PLATFORM_LIBS =
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBRARIES += glut
+	PLATFORM_LIBRS += glut
 endif
-PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBS += freeimage
 
 #static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBRARIES =
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBS =
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
 
 # shared libraries 
-PLATFORM_SHARED_LIBRARIES =
+PLATFORM_SHARED_LIBS =
 
 #openframeworks core third party
-PLATFORM_PKG_CONFIG_LIBRARIES =
-PLATFORM_PKG_CONFIG_LIBRARIES += cairo
-PLATFORM_PKG_CONFIG_LIBRARIES += zlib
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += libudev
-PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
-PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
-PLATFORM_PKG_CONFIG_LIBRARIES += openal
-PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
-PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+PLATFORM_PKG_CONFIG_LIBS =
+PLATFORM_PKG_CONFIG_LIBS += cairo
+PLATFORM_PKG_CONFIG_LIBS += zlib
+PLATFORM_PKG_CONFIG_LIBS += gstreamer-app-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBS += gstreamer-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBS += gstreamer-video-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBS += gstreamer-base-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBS += libudev
+PLATFORM_PKG_CONFIG_LIBS += freetype2
+PLATFORM_PKG_CONFIG_LIBS += sndfile
+PLATFORM_PKG_CONFIG_LIBS += openal
+PLATFORM_PKG_CONFIG_LIBS += portaudio-2.0
+PLATFORM_PKG_CONFIG_LIBS += openssl
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gl
-	PLATFORM_PKG_CONFIG_LIBRARIES += glu
-	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+	PLATFORM_PKG_CONFIG_LIBS += gl
+	PLATFORM_PKG_CONFIG_LIBS += glu
+	PLATFORM_PKG_CONFIG_LIBS += glew
 endif
 
 # conditionally add GTK
 ifeq ($(HAS_SYSTEM_GTK),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
+    PLATFORM_PKG_CONFIG_LIBS += gtk+-2.0
 endif
 
 # conditionally add mpg123
 ifeq ($(HAS_SYSTEM_MPG123),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+    PLATFORM_PKG_CONFIG_LIBS += libmpg123
 endif
 
 ################################################################################
@@ -271,7 +262,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS =
+PLATFORM_LIBS_SEARCH_PATHS =
 
 ################################################################################
 # PLATFORM FRAMEWORKS
@@ -312,5 +303,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
+# here we jump back into the main compile.project.mk file
 afterplatform: after
 	@echo 

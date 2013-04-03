@@ -24,11 +24,11 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS = $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH) -type d -not -path "*/openFrameworksCompiled/*" | grep -v "/\.[^\.]")
 
 # filter out all excluded paths defined in the platform config files.
-OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS))
+OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(OF_CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS))
 
 ################################################################################
-# OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables are 
-#    used during project compilation)
+# OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables 
+#	are used during project compilation).
 ################################################################################
 
 # construct the full paths of the core's platform specific static libs 
@@ -81,20 +81,27 @@ else
 endif
 
 # add in any libraries that were explicitly listed in the platform config files.
-OF_CORE_THIRDPARTY_STATIC_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(OF_CORE_LIBS_PLATFORM_LIBS_STATICS))
+OF_CORE_THIRDPARTY_STATIC_LIBS := $(filter-out $(OF_CORE_EXCLUSIONS),$(OF_CORE_LIBS_PLATFORM_LIBS_STATICS))
 OF_CORE_THIRDPARTY_STATIC_LIBS += $(PLATFORM_STATIC_LIBRARIES)
 
 # add in any libraries that were explicitly listed in the platform config files.
 OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
 
 #TODO what to do with shared libs?
-OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
+OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(OF_CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
+
+
+#OF_CORE_THIRDPARTY_SHARED_LIBS
+    $(info ---OF_CORE_THIRDPARTY_SHARED_LIBS---)
+    $(foreach v, $(OF_CORE_THIRDPARTY_SHARED_LIBS),$(info $(v)))
+
+
 
 ################################################################################
 # OF PLATFORM LDFLAGS
 ################################################################################
 
-OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS))
+OF_CORE_LIBRARY_LDFLAGS := $(addprefix -L,$(OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS))
 OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 
 ################################################################################
@@ -136,7 +143,9 @@ endif
 # we will process addons if there is an 
 # addons.make file OR PLATFORM_REQUIRED_ADDONS is defined
 # we do it this way because gnu make can't do logical ORs 
-B_PROCESS_ADDONS = 
+
+B_PROCESS_ADDONS := 
+
 ifdef PLATFORM_REQUIRED_ADDONS
     B_PROCESS_ADDONS = yes
 endif
@@ -151,7 +160,7 @@ ifdef B_PROCESS_ADDONS
     ############################################################################
 
     # create a list of every addon installed in the addons directory
-    ALL_INSTALLED_ADDONS = $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
+    ALL_INSTALLED_ADDONS := $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
 
     # get a list of all addons listed in addons.make file
     # sed 's/[ ]*#.*//g' strips all comments beginning with #
@@ -160,8 +169,8 @@ ifdef B_PROCESS_ADDONS
     # (to escape $ in make, you must use $$)
     REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
 
-    # deal with platform specfic addons
-    # remove any platform specific addons that were already added to the addons.make file
+    # deal with platform specfic addons remove any platform specific addons 
+    # that were already added to the addons.make file
     REQUESTED_PROJECT_ADDONS := $(filter-out $(PLATFORM_REQUIRED_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
     # define a function to remove duplicates without using sort, because sort 
@@ -173,8 +182,9 @@ ifdef B_PROCESS_ADDONS
     # remove all duplicates that might be in the addons.make file
     REQUESTED_PROJECT_ADDONS := $(call remove-dupes-func,$(REQUESTED_PROJECT_ADDONS))
 
-    # add platform required addons from the platform configuration file (if needed)
-    # add the platform required addons first, so that they are always linked first
+    # add platform required addons from the platform configuration file 
+    # (if needed) add the platform required addons first, so that they are 
+    # always linked first
     REQUESTED_PROJECT_ADDONS := $(PLATFORM_REQUIRED_ADDONS) $(REQUESTED_PROJECT_ADDONS)
 
     # create a list requested addons that are actually installed on the system
@@ -215,16 +225,16 @@ OF_CORE_LIBS := $(OF_CORE_THIRDPARTY_STATIC_LIBS)
 # 2. Add all of the third party shared libs defined by the platform config files.
 OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
-CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
-ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+CORE_PKG_CONFIG_LIBS += $(PROJECT_ADDONS_PKG_CONFIG_LIBS)
+ifneq ($(strip $(CORE_PKG_CONFIG_LIBS)),)
+	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBS)" --libs)
 endif
 # 4. Add the libraries defined in the platform config files.
-OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
+OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBS))
 
 # add the list of addon includes
-ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)" --cflags)
+ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBS)),)
+	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBS)" --cflags)
 endif
 
 ################################################################################
@@ -288,7 +298,7 @@ endif
 OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" -or -name "*.S" | grep -v "/\.[^\.]")
 
 ################################################################################
-# PROJECT HEADER INCLUDES (-I ...)
+# PROJECT HEADERS INCLUDES (-I ...)
 ################################################################################
 
 OF_PROJECT_INCLUDES := $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS))
@@ -309,8 +319,7 @@ endif
 # TODO - do we look for search paths or search ... or ?
 # TODO - can libs be included in the template?
 # TODO - + frameworks?
-OF_PROJECT_LIBS := 
-OF_PROJECT_LIBS += $(PROJECT_ADDONS_LIBS)
+OF_PROJECT_LIBS := $(PROJECT_ADDONS_LIBS)
 #OF_PROJECT_LIBS_LDFLAGS = $(addprefix -l,$(OF_PROJECT_LIBS))
 
 ################################################################################
@@ -332,6 +341,7 @@ OF_PROJECT_CFLAGS += $(PROJECT_ADDONS_CFLAGS)
 OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
+OF_PROJECT_CFLAGS += $(addprefix -F,$(PROJECT_ADDONS_FRAMEWORKS_SEARCH_PATHS))
 OF_PROJECT_CFLAGS += $(OF_CORE_BASE_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
@@ -349,6 +359,7 @@ OF_PROJECT_LDFLAGS += $(OF_PROJECT_LIBS_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PLATFORM_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
+OF_PROJECT_LDFLAGS += $(addprefix -F,$(PROJECT_ADDONS_FRAMEWORKS_SEARCH_PATHS))
 
 ################################################################################
 ifdef MAKEFILE_DEBUG
@@ -459,11 +470,45 @@ else
 	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
 endif
 
-OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
+# lots of indentation so we can see what's going on (remember, in Make
+# \t are treated as new lines, while \n are treated as spaces)
+OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,\
+                         $(patsubst %.cpp,%.o,\
+                           $(patsubst %.cxx,%.o,\
+                             $(patsubst %.cc,%.o,\
+                               $(patsubst %.S,%.o,\
+                                 $(patsubst %.mm,%.o,\
+                                   $(patsubst %.m,%.o,\
+                                     $(OF_PROJECT_SOURCE_FILES)\
+                                    )\
+                                  )\
+                                )\
+                              )\
+                            )\
+                          )\
+                        )
+
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
+
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
-OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
+# lots of indentation so we can see what's going on (remember, in Make
+# \t are treated as new lines, while \n are treated as spaces)
+OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,\
+                                $(patsubst %.cpp,%.o,\
+                                  $(patsubst %.cxx,%.o,\
+                                    $(patsubst %.cc,%.o,\
+                                      $(patsubst %.S,%.o,\
+                                        $(patsubst %.mm,%.o,\
+                                          $(patsubst %.m,%.o,\
+                                            $(PROJECT_ADDONS_SOURCE_FILES)\
+                                           )\
+                                         )\
+                                       )\
+                                     )\
+                                   )\
+                                 )\
+                               )
 
 OF_PROJECT_ADDONS_OBJS = 
 $(foreach addon_obj, $(OF_PROJECT_ADDONS_OBJ_FILES), \

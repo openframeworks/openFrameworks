@@ -246,6 +246,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
 
+# TODO: move these into the core ? this should only be platform related core
 # android project folders
 PROJECT_EXCLUSIONS += ./gen
 PROJECT_EXCLUSIONS += ./gen/%
@@ -258,8 +259,6 @@ PROJECT_EXCLUSIONS += ./assets
 PROJECT_EXCLUSIONS += ./assets/%
 PROJECT_EXCLUSIONS += ./libs
 
-
-
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
 #   These are header search paths that are platform specific and are specified 
@@ -271,26 +270,26 @@ PROJECT_EXCLUSIONS += ./libs
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS =
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI_PATH)/include" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/include"
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/crystax/include/" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/libs/glu/include_android"
-PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
+PLATFORM_HEADERS_SEARCH_PATHS =
+PLATFORM_HEADERS_SEARCH_PATHS += "$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" 
+PLATFORM_HEADERS_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" 
+PLATFORM_HEADERS_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" 
+PLATFORM_HEADERS_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI_PATH)/include" 
+PLATFORM_HEADERS_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/include"
+PLATFORM_HEADERS_SEARCH_PATHS += "$(NDK_ROOT)/sources/crystax/include/" 
+PLATFORM_HEADERS_SEARCH_PATHS += "$(OF_ROOT)/libs/glu/include_android"
+PLATFORM_HEADERS_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 
 ################################################################################
 # PLATFORM LIBRARIES
 #   These are library names/paths that are platform specific and are specified 
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
-#   PLATFORM_LIBRARIES are libraries that can be found in the library search 
+#   PLATFORM_LIBS are libraries that can be found in the library search 
 #       paths.
-#   PLATFORM_STATIC_LIBRARIES is a list of required static libraries.
-#   PLATFORM_SHARED_LIBRARIES is a list of required shared libraries.
-#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are 
+#   PLATFORM_STATIC_LIBS is a list of required static libraries.
+#   PLATFORM_SHARED_LIBS is a list of required shared libraries.
+#   PLATFORM_PKG_CONFIG_LIBS is a list of required libraries that are 
 #       under system control and are easily accesible via the package 
 #       configuration utility (i.e. pkg-config)
 #
@@ -300,34 +299,34 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARIES = 
-PLATFORM_LIBRARIES += supc++ 
-PLATFORM_LIBRARIES += z 
-PLATFORM_LIBRARIES += GLESv1_CM 
-#PLATFORM_LIBRARIES += GLESv2 
-PLATFORM_LIBRARIES += log 
-PLATFORM_LIBRARIES += dl 
-PLATFORM_LIBRARIES += m 
-PLATFORM_LIBRARIES += c 
-PLATFORM_LIBRARIES += gcc
+PLATFORM_LIBS = 
+PLATFORM_LIBS += supc++ 
+PLATFORM_LIBS += z 
+PLATFORM_LIBS += GLESv1_CM 
+#PLATFORM_LIBS += GLESv2 
+PLATFORM_LIBS += log 
+PLATFORM_LIBS += dl 
+PLATFORM_LIBS += m 
+PLATFORM_LIBS += c 
+PLATFORM_LIBS += gcc
 
 #static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBRARIES =
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
-PLATFORM_STATIC_LIBRARIES += $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/libgnustl_static.a
+PLATFORM_STATIC_LIBS =
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
+PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
+PLATFORM_STATIC_LIBS += $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/libgnustl_static.a
 
 # shared libraries 
-PLATFORM_SHARED_LIBRARIES =
+PLATFORM_SHARED_LIBS =
 
 #openframeworks core third party
-PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBS =
 
 # conditionally add mpg123
 #ifeq ($(HAS_SYSTEM_MPG123),0)
@@ -347,7 +346,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS =
+PLATFORM_LIBS_SEARCH_PATHS =
 
 ################################################################################
 # PLATFORM FRAMEWORKS
@@ -391,7 +390,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
 PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
-
 
 afterplatform:$(RESFILE)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi

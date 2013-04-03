@@ -9,6 +9,7 @@ ifdef PLATFORM_CXX
     CXX = $(PLATFORM_CXX)
 endif
 
+# PROJECT_CXX takes precedence over PLATFORM_CXX
 ifdef PROJECT_CXX
     CXX = $(PROJECT_CXX)
 endif
@@ -17,6 +18,7 @@ ifdef PLATFORM_CC
     CC = $(PLATFORM_CC)
 endif
 
+# PROJECT_CC takes precedence over PLATFORM_CC
 ifdef PROJECT_CC
     CC = $(PROJECT_CC)
 endif
@@ -25,6 +27,7 @@ ifdef PLATFORM_AR
     AR = $(PLATFORM_AR)
 endif
 
+# PROJECT_AR takes precedence over PLATFORM_AR
 ifdef PROJECT_AR
     AR = $(PROJECT_AR)
 endif
@@ -160,14 +163,30 @@ endif
 #  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(patsubst $(OF_ROOT)/%.mm,%.d,$(patsubst $(OF_ROOT)/%.m,%.d,$(OF_CORE_SOURCE_FILES)))))
+OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),\
+                                         $(patsubst $(OF_ROOT)/%.cpp,%.d,\
+                                           $(patsubst $(OF_ROOT)/%.mm,%.d,\
+                                             $(patsubst $(OF_ROOT)/%.m,%.d,\
+                                               $(OF_CORE_SOURCE_FILES)\
+                                             )\
+                                           )\
+                                         )\
+                                       )
 
 # create a named list of object files
 # 1. create a list of object files based on the current list of
 #   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
 # 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
 #	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(patsubst $(OF_ROOT)/%.mm,%.o,$(patsubst $(OF_ROOT)/%.m,%.o,$(OF_CORE_SOURCE_FILES)))))
+OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),\
+                                  $(patsubst $(OF_ROOT)/%.cpp,%.o,\
+                                     $(patsubst $(OF_ROOT)/%.mm,%.o,\
+                                       $(patsubst $(OF_ROOT)/%.m,%.o,\
+                                         $(OF_CORE_SOURCE_FILES)\
+                                       )\
+                                     )\
+                                  )\
+                                )
 
     
 ################################################################################
@@ -249,7 +268,6 @@ $(TARGET) : $(OF_CORE_OBJ_FILES)
 
 #.PHONY: clean CleanDebug CleanRelease
 
-	
 clean:
 	$(MAKE) CleanRelease
 	$(MAKE) CleanDebug
@@ -273,9 +291,10 @@ endif
 
 after: $(TARGET)
 	@echo "Done!"
-	
+
 	
 help:
+# TODO: update this help file
 	@echo 
 	@echo openFrameworks compiled library makefile
 	@echo

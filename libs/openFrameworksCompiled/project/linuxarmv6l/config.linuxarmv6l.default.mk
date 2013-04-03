@@ -120,12 +120,12 @@ PLATFORM_CFLAGS += -pipe
 ################################################################################
 
 # raspberry pi specific
-PLATFORM_LIBRARIES += GLESv2
-PLATFORM_LIBRARIES += EGL
-PLATFORM_LIBRARIES += openmaxil
-PLATFORM_LIBRARIES += bcm_host
-PLATFORM_LIBRARIES += vcos
-PLATFORM_LIBRARIES += vchiq_arm
+PLATFORM_LIBS += GLESv2
+PLATFORM_LIBS += EGL
+PLATFORM_LIBS += openmaxil
+PLATFORM_LIBS += bcm_host
+PLATFORM_LIBS += vcos
+PLATFORM_LIBS += vchiq_arm
 
 
 ################################################################################
@@ -140,10 +140,10 @@ PLATFORM_LIBRARIES += vchiq_arm
 ################################################################################
 
 # Broadcom hardware interface library
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include
-#PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
+PLATFORM_HEADERS_SEARCH_PATHS += /opt/vc/include
+#PLATFORM_HEADERS_SEARCH_PATHS+=/opt/vc/include/IL
+PLATFORM_HEADERS_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
+PLATFORM_HEADERS_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 
 
 ##########################################################################################
@@ -155,7 +155,7 @@ PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 #   Note: Leave a leading space when adding list items with the += operator
 ##########################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
+PLATFORM_LIBS_SEARCH_PATHS += /opt/vc/lib
 
 
 

@@ -93,7 +93,6 @@ endif
 # confgure all core paths, excluding platform and project specific paths
 #
 #   $(OF_ADDONS_PATH)
-#   $(OF_EXPORT_PATH)
 #   $(OF_EXAMPLES_PATH)
 #   $(OF_APPS_PATH)
 #   $(OF_LIBS_PATH)
@@ -110,9 +109,6 @@ endif
 # create path definitions
 ifndef OF_ADDONS_PATH
     OF_ADDONS_PATH=$(OF_ROOT)/addons
-endif
-ifndef OF_EXPORT_PATH
-    OF_EXPORT_PATH=$(OF_ROOT)/export
 endif
 ifndef OF_EXAMPLES_PATH
     OF_EXAMPLES_PATH=$(OF_ROOT)/examples
@@ -153,7 +149,6 @@ endif
 ifdef MAKEFILE_DEBUG
     $(info =================== config.mk paths =============================)
     $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-    $(info OF_EXPORT_PATH=$(OF_EXPORT_PATH))
     $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
     $(info OF_APPS_PATH=$(OF_APPS_PATH))
     $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
@@ -199,7 +194,7 @@ endif
 ################################################################################
 
 # take from the platform core exclusions and strip and collapse spaces
-CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
+OF_CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 ################################################################################
 # OF CORE HEADER INCLUDES (-I ...)
@@ -209,36 +204,36 @@ CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ALL_OF_CORE_SOURCE_PATHS=$(shell find $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
 
-# create a list of core source PATHS, filtering out any  items that have a match in the CORE_EXCLUSIONS list
-OF_CORE_SOURCE_PATHS=$(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
+# create a list of core source PATHS, filtering out any  items that have a match in the OF_CORE_EXCLUSIONS list
+OF_CORE_SOURCE_PATHS=$(filter-out $(OF_CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
 
 # create our core include paths from the source directory paths, 
 # these have already been filtered and processed according to rules.
 # plus the root so that we don't miss the ofMain.h.
-OF_CORE_HEADER_PATHS = $(OF_LIBS_OPENFRAMEWORKS_PATH) $(OF_CORE_SOURCE_PATHS)
+OF_CORE_HEADERS_PATHS = $(OF_LIBS_OPENFRAMEWORKS_PATH) $(OF_CORE_SOURCE_PATHS)
 
 # add folders or single files to exclude fromt he compiled lib
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_PATH)/*/include -type d | grep -v "/\.[^\.]")
+ALL_OF_CORE_THIRDPARTY_HEADERS_PATHS = $(shell find $(OF_LIBS_PATH)/*/include -type d | grep -v "/\.[^\.]")
 
 # filter out all excluded files / folders that were defined above
-OF_CORE_THIRDPARTY_HEADER_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_HEADER_PATHS))
+OF_CORE_THIRDPARTY_HEADERS_PATHS = $(filter-out $(OF_CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_HEADERS_PATHS))
 
 # generate the list of core includes
 # 1. Add the header search paths defined by the platform config files.
-OF_CORE_INCLUDES_CFLAGS = $(addprefix -I,$(PLATFORM_HEADER_SEARCH_PATHS))
+OF_CORE_INCLUDES_CFLAGS = $(addprefix -I,$(PLATFORM_HEADERS_SEARCH_PATHS))
 # 2. Add all of the system library search paths defined by the platform config files.
-CORE_PKG_CONFIG_LIBRARIES =
-CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
-CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
-ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+CORE_PKG_CONFIG_LIBS =
+CORE_PKG_CONFIG_LIBS += $(PLATFORM_PKG_CONFIG_LIBS)
+CORE_PKG_CONFIG_LIBS += $(PROJECT_PKG_CONFIG_LIBS)
+ifneq ($(strip $(CORE_PKG_CONFIG_LIBS)),)
+	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBS)" --cflags)
 endif
 
 # 3. Add all of the standard OF third party library headers (these have already been filtered above according to the platform config files)
-OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_THIRDPARTY_HEADER_PATHS))
+OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_THIRDPARTY_HEADERS_PATHS))
 # 4. Add all of the core OF headers(these have already been filtered above according to the platform config files)
-OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_HEADER_PATHS))
+OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_HEADERS_PATHS))
 
 ################################################################################
 # OF CORE DEFINES
@@ -260,8 +255,8 @@ OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
 # search the directories in the source folders for all .cpp files
 # filter out all excluded files / folders that were defined above
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" -or -name "*.m" | grep -v "/\.[^\.]"))
-OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
+OF_CORE_SOURCE_FILES=$(filter-out $(OF_CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" -or -name "*.m" | grep -v "/\.[^\.]"))
+OF_CORE_HEADERS_FILES=$(filter-out $(OF_CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
 
 ################################################################################
 # DEBUG INFO
@@ -280,8 +275,8 @@ ifdef MAKEFILE_DEBUG
     $(info ---OF_CORE_SOURCE_FILES---)
     $(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
     
-    $(info ---OF_CORE_HEADER_FILES---)
-    $(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
+    $(info ---OF_CORE_HEADERS_FILES---)
+    $(foreach v, $(OF_CORE_HEADERS_FILES),$(info $(v)))
 
     $(info ---PLATFORM_CORE_EXCLUSIONS---)
     $(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
