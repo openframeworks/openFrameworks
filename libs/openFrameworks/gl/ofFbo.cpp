@@ -620,7 +620,7 @@ void ofFbo::begin(bool setupScreen) {
 	ofSetOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
 	ofViewport();
 	if(setupScreen){
-		ofSetupScreenPerspective(getWidth(), getHeight(), OF_ORIENTATION_DEFAULT, ofIsVFlipped());
+		ofSetupScreenPerspective(getWidth(), getHeight());
 	}
 	bind();
 }

@@ -44,14 +44,15 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
-	void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1);
+	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
+	void setOrientation(ofOrientation orientation, bool vFlip);
+	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
 	ofRectangle getCurrentViewport();
 	ofRectangle getNativeViewport();
 	int getViewportWidth();
 	int getViewportHeight();
-	bool isVFlipped() const{ return false; } //TODO: implement vflip in orientation matrix
+	bool isVFlipped() const;
 
 	void setCoordHandedness(ofHandednessType handedness);
 	ofHandednessType getCoordHandedness();
@@ -144,6 +145,7 @@ private:
 	stack <ofRectangle> viewportHistory;
 	stack <ofMatrix4x4> modelViewStack;
 	stack <ofMatrix4x4> projectionStack;
+	stack <pair<ofOrientation,bool> > orientationStack;
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
 
@@ -158,5 +160,6 @@ private:
 	ofRectMode rectMode;
 
 	ofFbo * currentFbo;
+	bool vFlipped;
 
 };

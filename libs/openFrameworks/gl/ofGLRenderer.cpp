@@ -236,12 +236,7 @@ void ofGLRenderer::setCurrentFBO(ofFbo * fbo){
 
 //----------------------------------------------------------
 void ofGLRenderer::pushView() {
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	ofRectangle currentViewport;
-	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
-	viewportHistory.push(currentViewport);
+	viewportHistory.push(getCurrentViewport());
 
 
 	/*glMatrixMode(GL_PROJECTION);
@@ -257,14 +252,19 @@ void ofGLRenderer::pushView() {
 	projectionStack.push(m);
 	glGetFloatv(GL_MODELVIEW_MATRIX,m.getPtr());
 	modelViewStack.push(m);
+
+	orientationStack.push(make_pair(ofGetOrientation(),vFlipped));
 }
 
 
 //----------------------------------------------------------
 void ofGLRenderer::popView() {
+	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
+	ofSetOrientation(orientationFlip.first,orientationFlip.second);
+	orientationStack.pop();
+
 	if( viewportHistory.size() ){
-		ofRectangle viewRect = viewportHistory.top();
-		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height,false);
+		viewport(viewportHistory.top());
 		viewportHistory.pop();
 	}
 
@@ -291,61 +291,73 @@ void ofGLRenderer::popView() {
 	}
 }
 
+
 //----------------------------------------------------------
 void ofGLRenderer::viewport(ofRectangle viewport_){
-	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height,true);
+	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height, isVFlipped());
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::viewport(float x, float y, float width, float height, bool invertY) {
-	if(width == 0) width = ofGetWindowWidth();
-	if(height == 0) height = ofGetWindowHeight();
+void ofGLRenderer::viewport(float x, float y, float width, float height, bool vflip) {
+	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
+		swap(width,height);
+		swap(x,y);
+	}
+	if(width == 0 || height == 0){
+		if(currentFbo){
+			width = currentFbo->getWidth();
+			height = currentFbo->getHeight();
+		}else{
+			width = ofGetWindowWidth();
+			height = ofGetWindowHeight();
+		}
+	}
 
-	if (invertY){
+	if (vflip){
 		if(currentFbo){
 			y = currentFbo->getHeight() - (y + height);
 		}else{
 			y = ofGetWindowHeight() - (y + height);
 		}
 	}
-	glViewport(x, y, width, height);	
+
+	glViewport(x,y,width,height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLRenderer::getCurrentViewport(){
+	ofRectangle currentViewport = getNativeViewport();
 
-	// I am using opengl calls here instead of returning viewportRect
-	// since someone might use glViewport instead of ofViewport...
+	if (isVFlipped()){
+		if(currentFbo){
+			currentViewport.y = currentFbo->getHeight() - (currentViewport.y + currentViewport.height);
+		}else{
+			currentViewport.y = ofGetWindowHeight() - (currentViewport.y + currentViewport.height);
+		}
+	}
 
-	GLint viewport[4];					// Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	ofRectangle view;
-	view.x = viewport[0];
-	view.y = viewport[1];
-	view.width = viewport[2];
-	view.height = viewport[3];
-	return view;
-
+	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
+		swap(currentViewport.width,currentViewport.height);
+		swap(currentViewport.x,currentViewport.y);
+	}
+	return currentViewport;
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLRenderer::getNativeViewport(){
-	ofRectangle orientedViewport = getCurrentViewport();
-    return orientedViewport;
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	return ofRectangle(viewport[0], viewport[1], viewport[2], viewport[3]);
 }
 
 //----------------------------------------------------------
 int ofGLRenderer::getViewportWidth(){
-	GLint viewport[4];					// Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	return viewport[2];
+	return getCurrentViewport().width;
 }
 
 //----------------------------------------------------------
 int ofGLRenderer::getViewportHeight(){
-	GLint viewport[4];					// Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	return viewport[3];
+	return getCurrentViewport().height;
 }
 
 //----------------------------------------------------------
@@ -359,12 +371,23 @@ ofHandednessType ofGLRenderer::getCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofGLRenderer::setOrientation(ofOrientation orientation, bool vFlip){
+	vFlipped = vFlip;
+}
+
+//----------------------------------------------------------
+bool ofGLRenderer::isVFlipped() const{
+	return vFlipped;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
+	ofRectangle currentViewport = getNativeViewport();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = currentViewport.width;
+	float viewH = currentViewport.height;
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -384,7 +407,6 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 	loadMatrix( persp );
 	//gluPerspective(fov, aspect, nearDist, farDist);
 
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
@@ -393,18 +415,20 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 	loadMatrix( lookAt );
 	//gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
 
+	bool vFlipMatrix = vFlipped != bool(currentFbo);
+
 	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
 	if(ofDoesHWOrientation()){
-		if(vFlip){
+		if(vFlipMatrix){
 			glScalef(1, -1, 1);
 			glTranslatef(0, -height, 0);
 		}
 	}else{
-		if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
+		ofOrientation orientation = ofGetOrientation();
 		switch(orientation) {
 			case OF_ORIENTATION_180:
 				glRotatef(-180, 0, 0, 1);
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(1, -1, 1);
 					glTranslatef(-width, 0, 0);
 				}else{
@@ -415,7 +439,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 
 			case OF_ORIENTATION_90_RIGHT:
 				glRotatef(-90, 0, 0, 1);
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(-1, 1, 1);
 				}else{
 					glScalef(-1, -1, 1);
@@ -425,7 +449,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 
 			case OF_ORIENTATION_90_LEFT:
 				glRotatef(90, 0, 0, 1);
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(-1, 1, 1);
 					glTranslatef(-width, -height, 0);
 				}else{
@@ -436,7 +460,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 
 			case OF_ORIENTATION_DEFAULT:
 			default:
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(1, -1, 1);
 					glTranslatef(0, -height, 0);
 				}
@@ -447,40 +471,45 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, ofOrientati
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
+void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-	
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	ofRectangle currentViewport = getNativeViewport();
+
+	float viewW = currentViewport.width;
+	float viewH = currentViewport.height;
 	
 	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
 
-	ofSetCoordHandedness(OF_RIGHT_HANDED);
-	if(vFlip) {
-		ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
+	ofMatrix4x4 ortho;
+	if(isVFlipped()) {
+		ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
+	}else{
+		ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
+		ofSetCoordHandedness(OF_RIGHT_HANDED);
+
 	}
 	
-	ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
-	glMultMatrixf(ortho.getPtr());	
+	glLoadMatrixf(ortho.getPtr());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	bool vFlipMatrix = vFlipped != bool(currentFbo);
+
 	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
 	if(ofDoesHWOrientation()){
-		if(vFlip){
+		if(vFlipMatrix){
 			glScalef(1, -1, 1);
 			glTranslatef(0, -height, 0);
 		}
 	}else{
-		if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
+		ofOrientation orientation = ofGetOrientation();
 		switch(orientation) {
 			case OF_ORIENTATION_180:
 				glRotatef(-180, 0, 0, 1);
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(1, -1, 1);
 					glTranslatef(-width, 0, 0);
 				}else{
@@ -491,7 +520,7 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation ori
 
 			case OF_ORIENTATION_90_RIGHT:
 				glRotatef(-90, 0, 0, 1);
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(-1, 1, 1);
 				}else{
 					glScalef(-1, -1, 1);
@@ -501,7 +530,7 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation ori
 
 			case OF_ORIENTATION_90_LEFT:
 				glRotatef(90, 0, 0, 1);
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(-1, 1, 1);
 					glTranslatef(-width, -height, 0);
 				}else{
@@ -512,7 +541,7 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, ofOrientation ori
 
 			case OF_ORIENTATION_DEFAULT:
 			default:
-				if(vFlip){
+				if(vFlipMatrix){
 					glScalef(1, -1, 1);
 					glTranslatef(0, -height, 0);
 				}
@@ -1054,7 +1083,9 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			glPushMatrix();
 
 			ofTranslate(x, y, z);
-			ofScale(1, -1, 0);
+			if(isVFlipped()!=bool(currentFbo)){
+				ofScale(1, -1, 0);
+			}
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1096,10 +1127,8 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 			glTranslatef(dScreenX, dScreenY, 0);
             
-            if(currentFbo == NULL) {
+            if(isVFlipped()!=bool(currentFbo)) {
                 glScalef(1, -1, 1);
-            } else {
-                glScalef(1,  1, 1); // invert when rendering inside an fbo
             }
             
 #endif

@@ -873,11 +873,11 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	cairo_clip(cr);
 };
 
-void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
+void ofCairoRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	if(!b3D) return;
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
+	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
 	float viewH = viewportRect.height;
@@ -900,7 +900,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 	switch(orientation) {
 		case OF_ORIENTATION_180:
 			modelView.glRotate(-180,0,0,1);
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(-1,-1,1);
 				modelView.glTranslate(width,0,0);
 			}else{
@@ -911,7 +911,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 
 		case OF_ORIENTATION_90_RIGHT:
 			modelView.glRotate(-90,0,0,1);
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(1,1,1);
 			}else{
 				modelView.glScale(1,-1,1);
@@ -921,7 +921,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 
 		case OF_ORIENTATION_90_LEFT:
 			modelView.glRotate(90,0,0,1);
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(1,1,1);
 				modelView.glTranslate(0,-height,0);
 			}else{
@@ -933,7 +933,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 
 		case OF_ORIENTATION_DEFAULT:
 		default:
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(-1,-1,1);
 				modelView.glTranslate(-width,-height,0);
 			}
@@ -941,18 +941,18 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 	}
 };
 
-void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
+void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist){
 	if(!b3D) return;
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
+	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
 	float viewH = viewportRect.height;
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
-	if(vFlip) {
+	if(isVFlipped()) {
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
 	projection.makeOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
@@ -963,7 +963,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation 
 	switch(orientation) {
 		case OF_ORIENTATION_180:
 			modelView.glRotate(-180,0,0,1);
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(-1,-1,1);
 				modelView.glTranslate(width,0,0);
 			}else{
@@ -974,7 +974,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation 
 
 		case OF_ORIENTATION_90_RIGHT:
 			modelView.glRotate(-90,0,0,1);
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(1,1,1);
 			}else{
 				modelView.glScale(1,-1,1);
@@ -984,7 +984,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation 
 
 		case OF_ORIENTATION_90_LEFT:
 			modelView.glRotate(90,0,0,1);
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(1,1,1);
 				modelView.glTranslate(0,-height,0);
 			}else{
@@ -996,7 +996,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation 
 
 		case OF_ORIENTATION_DEFAULT:
 		default:
-			if(vFlip){
+			if(isVFlipped()){
 				modelView.glScale(-1,-1,1);
 				modelView.glTranslate(-width,-height,0);
 			}

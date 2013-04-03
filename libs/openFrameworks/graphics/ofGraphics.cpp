@@ -141,18 +141,8 @@ void ofViewport(ofRectangle viewport){
 }
 
 //----------------------------------------------------------
-void ofViewport(float x, float y, float width, float height){
-	renderer->viewport(x,y,width,height);
-}
-
-//----------------------------------------------------------
 void ofViewport(float x, float y, float width, float height, bool invertY){
-	if(!invertY){
-		ofLogWarning() << "ofViewport is now set with or without vflip according to the global settings,\n"
-				" use glViewport if you are using vFlip and want to set the viewport\n"
-				" from the bottom of the screen\n";
-	}
-	renderer->viewport(x,y,width,height);
+	renderer->viewport(x,y,width,height,invertY);
 }
 
 //----------------------------------------------------------
@@ -206,14 +196,37 @@ ofHandednessType ofGetCoordHandedness(){
 	return renderer->getCoordHandedness();
 }
 
+
+static bool setupScreenDeprecated=false;
+
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
-	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
+	if(!setupScreenDeprecated){
+		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
+		ofLogError() << "using current orientation and vFlip";
+		setupScreenDeprecated = true;
+	}
+	renderer->setupScreenPerspective(width,height,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
-	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
+	if(!setupScreenDeprecated){
+		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
+		ofLogError() << "using current orientation and vFlip";
+		setupScreenDeprecated = true;
+	}
+	renderer->setupScreenOrtho(width,height,nearDist,farDist);
+}
+
+//----------------------------------------------------------
+void ofSetupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
+	renderer->setupScreenPerspective(width,height, fov,nearDist,farDist);
+}
+
+//----------------------------------------------------------
+void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist){
+	renderer->setupScreenOrtho(width,height,nearDist,farDist);
 }
 
 //----------------------------------------------------------
@@ -221,6 +234,7 @@ void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bo
 void ofSetupGraphicDefaults(){
 	renderer->setupGraphicDefaults();
 	ofSetStyle(ofStyle());
+    ofSetOrientation(OF_ORIENTATION_DEFAULT,true);
 }
 
 //----------------------------------------------------------
@@ -423,9 +437,13 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		gradientMesh.addColor(end);
 		gradientMesh.addColor(start);
 	}
+	GLboolean depthMaskEnabled;
+	glGetBooleanv(GL_DEPTH_WRITEMASK,&depthMaskEnabled);
 	glDepthMask(false);
 	gradientMesh.draw();
-	glDepthMask(true);
+	if(depthMaskEnabled){
+		glDepthMask(true);
+	}
 }
 
 //----------------------------------------------------------
