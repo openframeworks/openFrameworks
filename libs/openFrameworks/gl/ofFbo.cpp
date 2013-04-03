@@ -617,10 +617,9 @@ void ofFbo::begin(bool setupScreen) {
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
-	ofSetOrientation(OF_ORIENTATION_DEFAULT,ofIsVFlipped());
 	ofViewport();
 	if(setupScreen){
-		ofSetupScreenPerspective(getWidth(), getHeight());
+		ofSetupScreenPerspective();
 	}
 	bind();
 }

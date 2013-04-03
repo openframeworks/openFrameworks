@@ -581,7 +581,7 @@ bool ofMatrix4x4::makeInvertOf(const ofMatrix4x4 & rhs){
 	return is_4x3 ? invert_4x3(rhs,*this) :  invert_4x4(rhs,*this);
 }
 
-ofMatrix4x4 ofMatrix4x4::getInverse()
+ofMatrix4x4 ofMatrix4x4::getInverse() const
 {
     ofMatrix4x4 inverse;
     inverse.makeInvertOf(*this);

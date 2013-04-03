@@ -147,7 +147,7 @@ public:
 	void makeOrthoNormalOf(const ofMatrix4x4& rhs);
 	void makeFromMultiplicationOf( const ofMatrix4x4&, const ofMatrix4x4& );
 
-	ofMatrix4x4 getInverse();
+	ofMatrix4x4 getInverse() const;
 
 
 	//---------------------------------------------

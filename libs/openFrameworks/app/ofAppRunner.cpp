@@ -30,7 +30,7 @@
 static ofPtr<ofBaseApp>				OFSAptr;
 static ofPtr<ofAppBaseWindow> 		window;
 
-//#define USE_PROGRAMMABLE_GL
+#define USE_PROGRAMMABLE_GL
 
 //========================================================================
 // default windowing

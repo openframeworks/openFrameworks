@@ -4,6 +4,7 @@
 #include "ofMatrix4x4.h"
 #include "ofShader.h"
 #include "ofGraphics.h"
+#include "ofMatrixStack.h"
 
 
 #include <stack>
@@ -168,36 +169,15 @@ private:
 	void uploadAllMatrices();
 
     
-	ofHandednessType coordHandedness;
-
-	stack <ofRectangle> viewportHistory;
-	stack <ofMatrix4x4> modelViewMatrixStack;
-	stack <ofMatrix4x4> projectionMatrixStack;
-	stack <ofMatrix4x4> textureMatrixStack;
-	stack <pair<ofOrientation,bool> > orientationStack;
-	
-    ofMatrixMode currentMatrixMode;
-
-	ofMatrix4x4 * currentMatrix;
-
-	ofMatrix4x4	modelViewMatrix;
-	ofMatrix4x4	projectionMatrix;
-	ofMatrix4x4	textureMatrix;
-	ofMatrix4x4 modelViewProjectionMatrix;
-	ofMatrix4x4 orientedProjectionMatrix;
-	ofMatrix4x4 orientationMatrix;
-	bool vFlipped;
+	ofMatrixStack matrixStack;
 
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
     ofFloatColor currentColor;
     
-	
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
-    
-	ofFbo * currentFbo;
 	
 	ofShader * currentShader;
 	ofShader externalShader,defaultShaderTexColor,defaultShaderTex2DColor,defaultShaderNoTexColor,defaultShaderTexNoColor,defaultShaderTex2DNoColor,defaultShaderNoTexNoColor;
