@@ -4,6 +4,8 @@
 #include "ofMatrix4x4.h"
 #include <stack>
 #include "ofGraphics.h"
+#include "ofMatrixStack.h"
+
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
@@ -53,6 +55,7 @@ public:
 	int getViewportWidth();
 	int getViewportHeight();
 	bool isVFlipped() const;
+	bool texturesNeedVFlip() const;
 
 	void setCoordHandedness(ofHandednessType handedness);
 	ofHandednessType getCoordHandedness();
@@ -141,11 +144,7 @@ private:
 	void startSmoothing();
 	void endSmoothing();
 
-	ofHandednessType coordHandedness;
-	stack <ofRectangle> viewportHistory;
-	stack <ofMatrix4x4> modelViewStack;
-	stack <ofMatrix4x4> projectionStack;
-	stack <pair<ofOrientation,bool> > orientationStack;
+
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
 
@@ -159,7 +158,6 @@ private:
 	bool bSmoothHinted;
 	ofRectMode rectMode;
 
-	ofFbo * currentFbo;
-	bool vFlipped;
+	ofMatrixStack matrixStack;
 
 };

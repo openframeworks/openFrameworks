@@ -13,16 +13,13 @@
 const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
-ofGLRenderer::ofGLRenderer(bool useShapeColor){
+ofGLRenderer::ofGLRenderer(bool useShapeColor)
+:matrixStack(*ofGetWindowPtr()){
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
-
-	currentFbo = NULL;
-	
-	coordHandedness = OF_LEFT_HANDED;
 	fillFlag = OF_FILLED;
 	bSmoothHinted = false;
 	rectMode = OF_RECTMODE_CORNER;
@@ -231,64 +228,57 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 
 //----------------------------------------------------------
 void ofGLRenderer::setCurrentFBO(ofFbo * fbo){
-	currentFbo = fbo;
+	if(fbo!=NULL){
+		ofMatrix4x4 m;
+		glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
+		m =  m*matrixStack.getOrientationMatrixInverse();
+		ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
+		matrixStack.matrixMode(OF_MATRIX_PROJECTION);
+		matrixStack.loadMatrix(m.getPtr());
+		matrixStack.setRenderSurface(*fbo);
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
+		matrixMode(currentMode);
+	}else{
+		matrixStack.setRenderSurface(*ofGetWindowPtr());
+	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::pushView() {
-	viewportHistory.push(getCurrentViewport());
+	getCurrentViewport();
 
-
-	/*glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();*/
-
-
-	// done like this cause i was getting GL_STACK_UNDERFLOW
-	// should ofPush/PopMatrix work the same way, what if it's mixed with glPush/PopMatrix
 	ofMatrix4x4 m;
+	ofMatrixMode matrixMode = matrixStack.getCurrentMatrixMode();
 	glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
-	projectionStack.push(m);
+	matrixStack.matrixMode(OF_MATRIX_PROJECTION);
+	matrixStack.loadMatrix(m.getPtr());
 	glGetFloatv(GL_MODELVIEW_MATRIX,m.getPtr());
-	modelViewStack.push(m);
+	matrixStack.matrixMode(OF_MATRIX_MODELVIEW);
+	matrixStack.loadMatrix(m.getPtr());
 
-	orientationStack.push(make_pair(ofGetOrientation(),vFlipped));
+	matrixStack.matrixMode(matrixMode);
+
+	matrixStack.pushView();
 }
 
 
 //----------------------------------------------------------
 void ofGLRenderer::popView() {
-	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
-	ofSetOrientation(orientationFlip.first,orientationFlip.second);
-	orientationStack.pop();
+	matrixStack.popView();
 
-	if( viewportHistory.size() ){
-		viewport(viewportHistory.top());
-		viewportHistory.pop();
-	}
+	ofMatrix4x4 m;
+	ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
 
-	/*glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();*/
+	matrixMode(OF_MATRIX_PROJECTION);
+	loadMatrix(matrixStack.getProjectionMatrix());
 
-	// done like this cause i was getting GL_STACK_UNDERFLOW
-	// should ofPush/PopMatrix work the same way, what if it's mixed with glPush/PopMatrix
-	glMatrixMode(GL_PROJECTION);
-	if(!projectionStack.empty()){
-		glLoadMatrixf(projectionStack.top().getPtr());
-		projectionStack.pop();
-	}else{
-		ofLogError() << "popView: couldn't pop projection matrix, stack empty. probably wrong anidated push/popView";
-	}
-	glMatrixMode(GL_MODELVIEW);
-	if(!modelViewStack.empty()){
-		glLoadMatrixf(modelViewStack.top().getPtr());
-		modelViewStack.pop();
-	}else{
-		ofLogError() << "popView: couldn't pop modelView matrix, stack empty. probably wrong anidated push/popView";
-	}
+	matrixMode(OF_MATRIX_MODELVIEW);
+	loadMatrix(matrixStack.getModelViewMatrix());
+
+	matrixMode(currentMode);
+
+	viewport(matrixStack.getCurrentViewport());
 }
 
 
@@ -299,55 +289,25 @@ void ofGLRenderer::viewport(ofRectangle viewport_){
 
 //----------------------------------------------------------
 void ofGLRenderer::viewport(float x, float y, float width, float height, bool vflip) {
-	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
-		swap(width,height);
-		swap(x,y);
-	}
-	if(width == 0 || height == 0){
-		if(currentFbo){
-			width = currentFbo->getWidth();
-			height = currentFbo->getHeight();
-		}else{
-			width = ofGetWindowWidth();
-			height = ofGetWindowHeight();
-		}
-	}
-
-	if (vflip){
-		if(currentFbo){
-			y = currentFbo->getHeight() - (y + height);
-		}else{
-			y = ofGetWindowHeight() - (y + height);
-		}
-	}
-
-	glViewport(x,y,width,height);
+	matrixStack.viewport(x,y,width,height,vflip);
+	ofRectangle nativeViewport = matrixStack.getNativeViewport();
+	glViewport(nativeViewport.x,nativeViewport.y,nativeViewport.width,nativeViewport.height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLRenderer::getCurrentViewport(){
-	ofRectangle currentViewport = getNativeViewport();
-
-	if (isVFlipped()){
-		if(currentFbo){
-			currentViewport.y = currentFbo->getHeight() - (currentViewport.y + currentViewport.height);
-		}else{
-			currentViewport.y = ofGetWindowHeight() - (currentViewport.y + currentViewport.height);
-		}
-	}
-
-	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
-		swap(currentViewport.width,currentViewport.height);
-		swap(currentViewport.x,currentViewport.y);
-	}
-	return currentViewport;
+	getNativeViewport();
+	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLRenderer::getNativeViewport(){
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	return ofRectangle(viewport[0], viewport[1], viewport[2], viewport[3]);
+
+	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	matrixStack.nativeViewport(nativeViewport);
+    return nativeViewport;
 }
 
 //----------------------------------------------------------
@@ -362,29 +322,32 @@ int ofGLRenderer::getViewportHeight(){
 
 //----------------------------------------------------------
 void ofGLRenderer::setCoordHandedness(ofHandednessType handedness) {
-	coordHandedness = handedness;
+
 }
 
 //----------------------------------------------------------
 ofHandednessType ofGLRenderer::getCoordHandedness() {
-	return coordHandedness;
+	return matrixStack.getHandedness();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setOrientation(ofOrientation orientation, bool vFlip){
-	vFlipped = vFlip;
+	matrixStack.setOrientation(orientation,vFlip);
 }
 
 //----------------------------------------------------------
 bool ofGLRenderer::isVFlipped() const{
-	return vFlipped;
+	return matrixStack.isVFlipped();
+}
+
+//----------------------------------------------------------
+bool ofGLRenderer::texturesNeedVFlip() const{
+	return matrixStack.customMatrixNeedsFlip();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
-	ofRectangle currentViewport = getNativeViewport();
+	ofRectangle currentViewport = getCurrentViewport();
 
 	float viewW = currentViewport.width;
 	float viewH = currentViewport.height;
@@ -399,155 +362,35 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 	if(nearDist == 0) nearDist = dist / 10.0f;
 	if(farDist == 0) farDist = dist * 10.0f;
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-		
+
+	matrixMode(OF_MATRIX_PROJECTION);
 	ofMatrix4x4 persp;
 	persp.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
 	loadMatrix( persp );
-	//gluPerspective(fov, aspect, nearDist, farDist);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	
+	matrixMode(OF_MATRIX_MODELVIEW);
 	ofMatrix4x4 lookAt;
 	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
-	loadMatrix( lookAt );
-	//gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
-
-	bool vFlipMatrix = vFlipped != bool(currentFbo);
-
-	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
-	if(ofDoesHWOrientation()){
-		if(vFlipMatrix){
-			glScalef(1, -1, 1);
-			glTranslatef(0, -height, 0);
-		}
-	}else{
-		ofOrientation orientation = ofGetOrientation();
-		switch(orientation) {
-			case OF_ORIENTATION_180:
-				glRotatef(-180, 0, 0, 1);
-				if(vFlipMatrix){
-					glScalef(1, -1, 1);
-					glTranslatef(-width, 0, 0);
-				}else{
-					glTranslatef(-width, -height, 0);
-				}
-
-				break;
-
-			case OF_ORIENTATION_90_RIGHT:
-				glRotatef(-90, 0, 0, 1);
-				if(vFlipMatrix){
-					glScalef(-1, 1, 1);
-				}else{
-					glScalef(-1, -1, 1);
-					glTranslatef(0, -height, 0);
-				}
-				break;
-
-			case OF_ORIENTATION_90_LEFT:
-				glRotatef(90, 0, 0, 1);
-				if(vFlipMatrix){
-					glScalef(-1, 1, 1);
-					glTranslatef(-width, -height, 0);
-				}else{
-					glScalef(-1, -1, 1);
-					glTranslatef(-width, 0, 0);
-				}
-				break;
-
-			case OF_ORIENTATION_DEFAULT:
-			default:
-				if(vFlipMatrix){
-					glScalef(1, -1, 1);
-					glTranslatef(0, -height, 0);
-				}
-				break;
-		}
-	}
-
+	loadMatrix(lookAt);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
-	ofRectangle currentViewport = getNativeViewport();
+
+	ofRectangle currentViewport = getCurrentViewport();
 
 	float viewW = currentViewport.width;
 	float viewH = currentViewport.height;
-	
-	glMatrixMode(GL_PROJECTION);
 
 	ofMatrix4x4 ortho;
-	if(isVFlipped()) {
-		ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
-		ofSetCoordHandedness(OF_LEFT_HANDED);
-	}else{
-		ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
-		ofSetCoordHandedness(OF_RIGHT_HANDED);
 
-	}
-	
-	glLoadMatrixf(ortho.getPtr());
+	ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	matrixMode(OF_MATRIX_PROJECTION);
+	loadMatrix(ortho); // make ortho our new projection matrix.
 
-	bool vFlipMatrix = vFlipped != bool(currentFbo);
-
-	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
-	if(ofDoesHWOrientation()){
-		if(vFlipMatrix){
-			glScalef(1, -1, 1);
-			glTranslatef(0, -height, 0);
-		}
-	}else{
-		ofOrientation orientation = ofGetOrientation();
-		switch(orientation) {
-			case OF_ORIENTATION_180:
-				glRotatef(-180, 0, 0, 1);
-				if(vFlipMatrix){
-					glScalef(1, -1, 1);
-					glTranslatef(-width, 0, 0);
-				}else{
-					glTranslatef(-width, -height, 0);
-				}
-
-				break;
-
-			case OF_ORIENTATION_90_RIGHT:
-				glRotatef(-90, 0, 0, 1);
-				if(vFlipMatrix){
-					glScalef(-1, 1, 1);
-				}else{
-					glScalef(-1, -1, 1);
-					glTranslatef(0, -height, 0);
-				}
-				break;
-
-			case OF_ORIENTATION_90_LEFT:
-				glRotatef(90, 0, 0, 1);
-				if(vFlipMatrix){
-					glScalef(-1, 1, 1);
-					glTranslatef(-width, -height, 0);
-				}else{
-					glScalef(-1, -1, 1);
-					glTranslatef(-width, 0, 0);
-				}
-				break;
-
-			case OF_ORIENTATION_DEFAULT:
-			default:
-				if(vFlipMatrix){
-					glScalef(1, -1, 1);
-					glTranslatef(0, -height, 0);
-				}
-				break;
-		}
-	}
+	matrixMode(OF_MATRIX_MODELVIEW);
+	loadIdentityMatrix();
 
 }
 
@@ -591,7 +434,6 @@ void ofGLRenderer::translate(const ofPoint& p){
 	glTranslatef(p.x, p.y, p.z);
 }
 
-
 //----------------------------------------------------------
 void ofGLRenderer::translate(float x, float y, float z){
 	glTranslatef(x, y, z);
@@ -631,11 +473,12 @@ void ofGLRenderer::rotate(float degrees){
 //----------------------------------------------------------
 void ofGLRenderer::matrixMode(ofMatrixMode mode){
 	glMatrixMode(GL_MODELVIEW+mode);
+	matrixStack.matrixMode(mode);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::loadIdentityMatrix (void){
-	glLoadIdentity();
+	loadMatrix(ofMatrix4x4::newIdentityMatrix());
 }
 
 //----------------------------------------------------------
@@ -645,7 +488,12 @@ void ofGLRenderer::loadMatrix (const ofMatrix4x4 & m){
 
 //----------------------------------------------------------
 void ofGLRenderer::loadMatrix (const float *m){
-	glLoadMatrixf(m);
+	if(matrixStack.getCurrentMatrixMode()==OF_MATRIX_PROJECTION){
+		matrixStack.loadMatrix(m);
+		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
+	}else{
+		glLoadMatrixf(m);
+	}
 }
 
 //----------------------------------------------------------
@@ -655,7 +503,18 @@ void ofGLRenderer::multMatrix (const ofMatrix4x4 & m){
 
 //----------------------------------------------------------
 void ofGLRenderer::multMatrix (const float *m){
-	glMultMatrixf(m);
+	if(matrixStack.getCurrentMatrixMode()==OF_MATRIX_PROJECTION){
+		ofMatrix4x4 current;
+		glGetFloatv(GL_PROJECTION_MATRIX,current.getPtr());
+		if(matrixStack.customMatrixNeedsFlip()){
+			current.scale(1,-1,1);
+		}
+		matrixStack.loadMatrix(current.getPtr());
+		matrixStack.multMatrix(m);
+		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
+	}else{
+		glMultMatrixf(m);
+	}
 }
 
 //----------------------------------------------------------
@@ -993,8 +852,7 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 
 //----------------------------------------------------------
 void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
-	// this is copied from the ofTrueTypeFont
-	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
+	// remember the current blend mode so that we can restore it at the end of this method.
 	GLint blend_src, blend_dst;
 	glGetIntegerv( GL_BLEND_SRC, &blend_src );
 	glGetIntegerv( GL_BLEND_DST, &blend_dst );
@@ -1022,12 +880,6 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	bool hasViewport = false;
 
 	ofRectangle rViewport;
-	
-#ifdef TARGET_OPENGLES
-	if(mode == OF_BITMAPMODE_MODEL_BILLBOARD) {
-		mode = OF_BITMAPMODE_SIMPLE;
-	}
-#endif
 
 	switch (mode) {
 
@@ -1040,98 +892,102 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 		case OF_BITMAPMODE_SCREEN:
 
 			hasViewport = true;
-			ofPushView();
+			pushView();
 
 			rViewport = ofGetWindowRect();
-			ofViewport(rViewport);
+			viewport(rViewport);
 
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
+			matrixMode(OF_MATRIX_PROJECTION);
+			loadIdentityMatrix();
+			matrixMode(OF_MATRIX_MODELVIEW);
+			loadIdentityMatrix();
 
-			glTranslatef(-1, 1, 0);
-			glScalef(2/rViewport.width, -2/rViewport.height, 1);
+			translate(-1, 1, 0);
+			scale(2/rViewport.width, -2/rViewport.height, 1);
 
-			ofTranslate(x, y, 0);
+			translate(x, y, 0);
 			break;
 
 		case OF_BITMAPMODE_VIEWPORT:
 
-			rViewport = ofGetCurrentViewport();
+			rViewport = getCurrentViewport();
 
 			hasProjection = true;
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
+			matrixMode(OF_MATRIX_PROJECTION);
+			pushMatrix();
+			loadIdentityMatrix();
 
 			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
+			matrixMode(OF_MATRIX_MODELVIEW);
+			pushMatrix();
+			loadIdentityMatrix();
 
-			glTranslatef(-1, 1, 0);
-			glScalef(2/rViewport.width, -2/rViewport.height, 1);
+			translate(-1, 1, 0);
+			scale(2/rViewport.width, -2/rViewport.height, 1);
 
-			ofTranslate(x, y, 0);
+			translate(x, y, 0);
 			break;
 
 		case OF_BITMAPMODE_MODEL:
 
 			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
+			matrixMode(OF_MATRIX_MODELVIEW);
+			pushMatrix();
 
-			ofTranslate(x, y, z);
-			if(isVFlipped()!=bool(currentFbo)){
-				ofScale(1, -1, 0);
-			}
+			translate(x, y, z);
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
+		{
 			//our aim here is to draw to screen
 			//at the viewport position related
 			//to the world position x,y,z
 
-			// ***************
-			// this will not compile for opengl ES
-			// ***************
-#ifndef TARGET_OPENGLES
-			//gluProject method
-			GLdouble modelview[16], projection[16];
-			GLint view[4];
-			double dScreenX, dScreenY, dScreenZ;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-			glGetIntegerv(GL_VIEWPORT, view);
-			view[0] = 0; view[1] = 0; //we're already drawing within viewport
-			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
+			// tig: we want to get the signed normalised screen coordinates (-1,+1) of our point (x,y,z)
+			// that's projection * modelview * point in GLSL multiplication order
+			// then doing the good old (v + 1.0) / 2. to get unsigned normalized screen (0,1) coordinates.
+			// we then multiply x by width and y by height to get window coordinates.
 
-			if (dScreenZ >= 1)
-				return;
+			// previous implementations used gluProject, which made it incompatible with GLES (and the future)
+			// https://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man3/gluProject.3.html
+			//
+			// this could probably be backported to the GL2 Renderer =)
+
+			rViewport = getCurrentViewport();
+
+			ofMatrix4x4 modelview, projection;
+			glGetFloatv(GL_MODELVIEW_MATRIX, modelview.getPtr());
+			glGetFloatv(GL_PROJECTION_MATRIX, projection.getPtr());
+
+			ofVec3f dScreen = ofVec3f(x,y,z) * modelview * projection * matrixStack.getOrientationMatrixInverse();
+			dScreen += ofVec3f(1.0) ;
+			dScreen *= 0.5;
+
+			dScreen.x += rViewport.x;
+			dScreen.x *= rViewport.width;
+
+			dScreen.y += rViewport.y;
+			dScreen.y *= rViewport.height;
 			
-			rViewport = ofGetCurrentViewport();
+			if (dScreen.z >= 1) return;
+
 
 			hasProjection = true;
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
+			matrixMode(OF_MATRIX_PROJECTION);
+			pushMatrix();
+			loadIdentityMatrix();
 
 			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
+			matrixMode(OF_MATRIX_MODELVIEW);
+			pushMatrix();
+			loadIdentityMatrix();
 
-			glTranslatef(-1, -1, 0);
-			glScalef(2/rViewport.width, 2/rViewport.height, 1);
+			translate(-1, -1, 0);
 
-			glTranslatef(dScreenX, dScreenY, 0);
-            
-            if(isVFlipped()!=bool(currentFbo)) {
-                glScalef(1, -1, 1);
-            }
-            
-#endif
+			scale(2/rViewport.width, 2/rViewport.height, 1);
+
+			translate(dScreen.x, dScreen.y, 0);
+		}
 			break;
 
 		default:
@@ -1139,6 +995,10 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	}
 	//
 	///////////////////////////
+
+	// tig: we switch over to our built-in bitmapstring shader
+	// to render text. This gives us more flexibility & control
+	// and does not mess/interfere with client side shaders.
 
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
@@ -1161,7 +1021,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
 			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-						
+
 			sx += fontSize;
 		}
 	}
@@ -1170,18 +1030,19 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 
 	if (hasModelView)
-		glPopMatrix();
+		popMatrix();
 
 	if (hasProjection)
 	{
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
+		matrixMode(OF_MATRIX_PROJECTION);
+		popMatrix();
+		matrixMode(OF_MATRIX_MODELVIEW);
 	}
 
 	if (hasViewport)
-		ofPopView();
+		popView();
 
+	// restore blendmode
 	glBlendFunc(blend_src, blend_dst);
 }
 

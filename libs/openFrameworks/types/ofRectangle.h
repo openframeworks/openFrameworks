@@ -218,3 +218,6 @@ public:
     float height;
 };
 
+ostream& operator<<(ostream& os, const ofRectangle& rect);
+istream& operator>>(istream& is, ofRectangle& rect);
+

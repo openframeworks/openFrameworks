@@ -402,8 +402,9 @@ void main()\n\
 
 
 //----------------------------------------------------------
-ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor){
-	currentMatrix = &modelViewMatrix;
+ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor)
+:matrixStack(*ofGetWindowPtr())
+{
 	bBackgroundAuto = true;
 
 	lineVbo.getVertices().resize(2);
@@ -411,13 +412,10 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	triangleVbo.getVertices().resize(3);
 	rectVbo.getVertices().resize(4);
 
-	currentFbo = NULL;
 
     rectMode = OF_RECTMODE_CORNER;
     bFilled = OF_FILLED;
-    coordHandedness = OF_LEFT_HANDED;
     bSmoothHinted = false;
-    currentMatrixMode = OF_MATRIX_MODELVIEW;
 
     vertexFile = vertexShader;
     fragmentFile = fragmentShader;
@@ -431,9 +429,6 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 
 	wrongUseLoggedOnce = false;
 
-	vFlipped = true;
-
-	orientationMatrix.makeIdentityMatrix();
 	currentShader = NULL;
 
 	currentTextureTarget = OF_NO_TEXTURE;
@@ -454,19 +449,7 @@ void ofProgrammableGLRenderer::finishRender() {
 	glUseProgram(0);
 	if(!usingCustomShader && !externalShaderProvided) currentShader = NULL;
 	
-	int tmpCounter = 0;
-	while (!modelViewMatrixStack.empty()){
-		modelViewMatrixStack.pop();
-		tmpCounter++;
-	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on modelView matrix stack. Check if modelview matrix push() and pop() pair up properly.";
-	
-	tmpCounter = 0;
-	while (!projectionMatrixStack.empty()){
-		projectionMatrixStack.pop();
-		tmpCounter++;
-	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on projection matrix stack. Check if projection matrix push() and pop() pair up properly.";
+	matrixStack.clearStacks();
 }
 
 //----------------------------------------------------------
@@ -730,106 +713,50 @@ void ofProgrammableGLRenderer::draw(ofShortImage & image, float x, float y, floa
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setCurrentFBO(ofFbo * fbo){
-	currentFbo = fbo;
+	if(fbo!=NULL){
+		matrixStack.setRenderSurface(*fbo);
+	}else{
+		matrixStack.setRenderSurface(*ofGetWindowPtr());
+	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::pushView() {
-	viewportHistory.push(getCurrentViewport());
-
-	ofMatrixMode currentMode = currentMatrixMode;
-
-	matrixMode(OF_MATRIX_PROJECTION);
-	pushMatrix();
-
-	matrixMode(OF_MATRIX_MODELVIEW);
-	pushMatrix();
-
-	matrixMode(currentMode);
-
-	orientationStack.push(make_pair(ofGetOrientation(),vFlipped));
+	matrixStack.pushView();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popView() {
-	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
-	ofSetOrientation(orientationFlip.first,orientationFlip.second);
-	orientationStack.pop();
-
-	if( viewportHistory.size() ){
-		viewport(viewportHistory.top());
-		viewportHistory.pop();
-	}
-
-	ofMatrixMode currentMode = currentMatrixMode;
-
-	matrixMode(OF_MATRIX_PROJECTION);
-	popMatrix();
-
-	matrixMode(OF_MATRIX_MODELVIEW);
-	popMatrix();
-
-	matrixMode(currentMode);
+	matrixStack.popView();
+	uploadAllMatrices();
+	viewport(matrixStack.getCurrentViewport());
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::viewport(ofRectangle viewport_){
-	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height, isVFlipped());
+	viewport(viewport_.x,viewport_.y,viewport_.width,viewport_.height,ofIsVFlipped());
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height, bool vflip) {
-	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
-		swap(width,height);
-		swap(x,y);
-	}
-	if(width == 0 || height == 0){
-		if(currentFbo){
-			width = currentFbo->getWidth();
-			height = currentFbo->getHeight();
-		}else{
-			width = ofGetWindowWidth();
-			height = ofGetWindowHeight();
-		}
-	}
-
-	if (vflip){
-		if(currentFbo){
-			y = currentFbo->getHeight() - (y + height);
-		}else{
-			y = ofGetWindowHeight() - (y + height);
-		}
-	}
-
-	glViewport(x,y,width,height);
+	matrixStack.viewport(x,y,width,height,vflip);
+	ofRectangle nativeViewport = matrixStack.getNativeViewport();
+	glViewport(nativeViewport.x,nativeViewport.y,nativeViewport.width,nativeViewport.height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getCurrentViewport(){
-	ofRectangle currentViewport = getNativeViewport();
-
-	if (isVFlipped()){
-		if(currentFbo){
-			currentViewport.y = currentFbo->getHeight() - (currentViewport.y + currentViewport.height);
-		}else{
-			currentViewport.y = ofGetWindowHeight() - (currentViewport.y + currentViewport.height);
-		}
-	}
-
-	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
-		swap(currentViewport.width,currentViewport.height);
-		swap(currentViewport.x,currentViewport.y);
-	}
-	return currentViewport;
+	getNativeViewport();
+	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getNativeViewport(){
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	ofRectangle nativeViewport;
 
-	nativeViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	matrixStack.nativeViewport(nativeViewport);
     return nativeViewport;
 }
 
@@ -845,58 +772,22 @@ int ofProgrammableGLRenderer::getViewportHeight(){
 
 //----------------------------------------------------------
 bool ofProgrammableGLRenderer::isVFlipped() const{
-	return vFlipped;
+	return matrixStack.isVFlipped();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setCoordHandedness(ofHandednessType handedness) {
-	coordHandedness = handedness;
+	;
 }
 
 //----------------------------------------------------------
 ofHandednessType ofProgrammableGLRenderer::getCoordHandedness() {
-	return coordHandedness;
+	return matrixStack.getHandedness();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vFlip){
-	vFlipped = vFlip;
-
-	if(vFlip){
-		ofSetCoordHandedness(OF_LEFT_HANDED);
-	}else{
-		ofSetCoordHandedness(OF_RIGHT_HANDED);
-	}
-
-	orientationMatrix.makeIdentityMatrix();
-
-	bool vFlipMatrix = vFlip != bool(currentFbo);
-
-	if(vFlipMatrix)
-		orientationMatrix.scale(1,-1,1);
-
-	if(!ofDoesHWOrientation()){
-		switch(orientation) {
-			case OF_ORIENTATION_180:
-				orientationMatrix.rotate(180,0,0,1);
-				break;
-
-			case OF_ORIENTATION_90_RIGHT:
-				orientationMatrix.rotate(90,0,0,1);
-				break;
-
-			case OF_ORIENTATION_90_LEFT:
-				orientationMatrix.rotate(-90,0,0,1);
-				break;
-
-			case OF_ORIENTATION_DEFAULT:
-			default:
-				break;
-		}
-	}
-
-	orientedProjectionMatrix = projectionMatrix * orientationMatrix;
-	modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
+	matrixStack.setOrientation(orientation,vFlip);
 	uploadAllMatrices();
 
 }
@@ -972,33 +863,12 @@ void ofProgrammableGLRenderer::setCircleResolution(int res){
 //our openGL wrappers
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::pushMatrix(){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelViewMatrixStack.push(modelViewMatrix);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projectionMatrixStack.push(projectionMatrix);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrixStack.push(textureMatrix);
-		break;
-	}
+	matrixStack.pushMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popMatrix(){
-	if (currentMatrixMode == OF_MATRIX_MODELVIEW && !modelViewMatrixStack.empty()){
-		modelViewMatrix = modelViewMatrixStack.top();
-		modelViewMatrixStack.pop();
-	} else if (currentMatrixMode == OF_MATRIX_PROJECTION && !projectionMatrixStack.empty()){
-		projectionMatrix = projectionMatrixStack.top();
-		projectionMatrixStack.pop();
-	} else if (currentMatrixMode == OF_MATRIX_TEXTURE && !textureMatrixStack.empty()){
-		textureMatrix = textureMatrixStack.top();
-		textureMatrixStack.pop();
-	} else {
-		ofLogWarning() << "ofxGL3Renderer: Empty matrix stack, cannot pop any further.";
-	}
+	matrixStack.popMatrix();
 	uploadCurrentMatrix();
 }
 
@@ -1009,19 +879,19 @@ void ofProgrammableGLRenderer::translate(const ofVec3f& p){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::translate(float x, float y, float z){
-	currentMatrix->glTranslate(x, y, z);
+	matrixStack.translate(x,y,z);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::scale(float xAmnt, float yAmnt, float zAmnt){
-	currentMatrix->glScale(xAmnt, yAmnt, zAmnt);
+	matrixStack.scale(xAmnt, yAmnt, zAmnt);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
-	currentMatrix->glRotate(degrees, vecX, vecY, vecZ);
+	matrixStack.rotate(degrees, vecX, vecY, vecZ);
 	uploadCurrentMatrix();
 }
 
@@ -1048,31 +918,24 @@ void ofProgrammableGLRenderer::rotate(float degrees){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::matrixMode(ofMatrixMode mode){
-	currentMatrixMode = mode;
-	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
-		currentMatrix = &modelViewMatrix;
-	} else if (currentMatrixMode == OF_MATRIX_PROJECTION){
-		currentMatrix = &projectionMatrix;
-	} else if (currentMatrixMode == OF_MATRIX_TEXTURE){
-		currentMatrix = &textureMatrix;
-	}
+	matrixStack.matrixMode(mode);
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadIdentityMatrix (void){
-	currentMatrix->makeIdentityMatrix();
+	matrixStack.loadIdentityMatrix();
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadMatrix (const ofMatrix4x4 & m){
-	currentMatrix->set(m);
+	matrixStack.loadMatrix(m.getPtr());
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadMatrix (const float *m){
-	currentMatrix->set(m);
+	matrixStack.loadMatrix(m);
 	uploadCurrentMatrix();
 }
 
@@ -1083,7 +946,7 @@ void ofProgrammableGLRenderer::multMatrix (const ofMatrix4x4 & m){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::multMatrix (const float *m){
-	currentMatrix->preMult(m);
+	matrixStack.multMatrix(m);
 	uploadCurrentMatrix();
 }
 
@@ -1091,20 +954,18 @@ void ofProgrammableGLRenderer::multMatrix (const float *m){
 void ofProgrammableGLRenderer::uploadCurrentMatrix(){
 	if(!currentShader) return;
 	// uploads the current matrix to the current shader.
-
-	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
-		modelViewProjectionMatrix = modelViewMatrix*orientedProjectionMatrix;
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, modelViewMatrix);
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
-	}
-	if (currentMatrixMode == OF_MATRIX_PROJECTION){
-		orientedProjectionMatrix = projectionMatrix*orientationMatrix;
-		modelViewProjectionMatrix = modelViewMatrix*orientedProjectionMatrix;
-		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, orientedProjectionMatrix);
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
-	}
-	if (currentMatrixMode == OF_MATRIX_TEXTURE){
-		currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, textureMatrix);
+	switch(matrixStack.getCurrentMatrixMode()){
+	case OF_MATRIX_MODELVIEW:
+		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewPorjectionMatrix());
+		break;
+	case OF_MATRIX_PROJECTION:
+		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewPorjectionMatrix());
+		break;
+	case OF_MATRIX_TEXTURE:
+		currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());
+		break;
 	}
 
 }
@@ -1378,11 +1239,10 @@ void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
 
 void ofProgrammableGLRenderer::uploadAllMatrices(){
 	if(!currentShader) return;
-	currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, modelViewMatrix);
-	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, orientedProjectionMatrix);
-	currentShader->setUniformMatrix4f(ORIENTATION_MATRIX_UNIFORM, orientationMatrix);
-	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, textureMatrix);
-	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
+	currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
+	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());
+	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewPorjectionMatrix());
 }
 
 void ofProgrammableGLRenderer::beginDefaultShader(){
@@ -1631,7 +1491,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			
 			rViewport = getCurrentViewport();
 			
-			ofVec3f dScreen = ofVec3f(x,y,z) * modelViewMatrix * projectionMatrix;
+			ofVec3f dScreen = ofVec3f(x,y,z) * matrixStack.getModelViewMatrix() * matrixStack.getProjectionMatrixNoOrientation();
 			dScreen += ofVec3f(1.0) ;
 			dScreen *= 0.5;
 			
