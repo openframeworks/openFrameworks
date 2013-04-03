@@ -736,41 +736,49 @@ void ofProgrammableGLRenderer::setCurrentFBO(ofFbo * fbo){
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::pushView() {
 	viewportHistory.push(getCurrentViewport());
+
 	ofMatrixMode currentMode = currentMatrixMode;
+
 	matrixMode(OF_MATRIX_PROJECTION);
 	pushMatrix();
+
 	matrixMode(OF_MATRIX_MODELVIEW);
 	pushMatrix();
+
 	matrixMode(currentMode);
+
 	orientationStack.push(make_pair(ofGetOrientation(),vFlipped));
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popView() {
 	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
-	ofSetOrientation(orientationFlip.first);
-	setOrientation(orientationFlip.first,orientationFlip.second);
+	ofSetOrientation(orientationFlip.first,orientationFlip.second);
 	orientationStack.pop();
+
 	if( viewportHistory.size() ){
-		ofRectangle viewRect = viewportHistory.top();
-		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+		viewport(viewportHistory.top());
 		viewportHistory.pop();
 	}
+
 	ofMatrixMode currentMode = currentMatrixMode;
+
 	matrixMode(OF_MATRIX_PROJECTION);
 	popMatrix();
+
 	matrixMode(OF_MATRIX_MODELVIEW);
 	popMatrix();
+
 	matrixMode(currentMode);
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::viewport(ofRectangle viewport_){
-	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height);
+	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height, isVFlipped());
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height) {
+void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height, bool vflip) {
 	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
 		swap(width,height);
 		swap(x,y);
@@ -785,7 +793,7 @@ void ofProgrammableGLRenderer::viewport(float x, float y, float width, float hei
 		}
 	}
 
-	if (isVFlipped()){
+	if (vflip){
 		if(currentFbo){
 			y = currentFbo->getHeight() - (y + height);
 		}else{
@@ -894,14 +902,11 @@ void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vF
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
 	ofRectangle currentViewport = getCurrentViewport();
 	
 	float viewW = currentViewport.width;
 	float viewH = currentViewport.height;
-
-	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
-	setOrientation(orientation,vFlip);
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -927,10 +932,7 @@ void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height,
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
-	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
-	setOrientation(orientation,vFlip);
-
+void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
 	ofRectangle currentViewport = getCurrentViewport();
 
 	float viewW = currentViewport.width;

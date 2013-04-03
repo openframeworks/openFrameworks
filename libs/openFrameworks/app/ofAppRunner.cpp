@@ -30,7 +30,7 @@
 static ofPtr<ofBaseApp>				OFSAptr;
 static ofPtr<ofAppBaseWindow> 		window;
 
-#define USE_PROGRAMMABLE_GL
+//#define USE_PROGRAMMABLE_GL
 
 //========================================================================
 // default windowing
@@ -148,7 +148,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 #endif
     }
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-	//ofSetupGraphicDefaults();
+	ofSetupGraphicDefaults();
 }
 
 
