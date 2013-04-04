@@ -139,9 +139,9 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
     if(ofGetCurrentRenderer() == NULL) {
 
 #ifdef USE_PROGRAMMABLE_GL
+    	glGetError();
+    	ofShader::initDefaultShaders();
         ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer("","",false));
-
-    	programmableGLRenderer->setup();
     	ofSetCurrentRenderer(ofPtr<ofProgrammableGLRenderer>(programmableGLRenderer));
 #else
         ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));

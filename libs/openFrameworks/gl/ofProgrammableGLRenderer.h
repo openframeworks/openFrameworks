@@ -21,7 +21,6 @@ public:
     static const string TYPE;
 	const string & getType(){ return TYPE; }
     
-    bool setup();
     void startRender();
     void finishRender();
 
@@ -132,7 +131,6 @@ public:
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
 	ofShader & getCurrentShader();
-	void setDefaultShader(ofShader & shader);
 
 	void enableVertices();
 	void enableTexCoords();
@@ -180,14 +178,8 @@ private:
 	ofRectMode rectMode;
 	
 	ofShader * currentShader;
-	ofShader externalShader,defaultShaderTexColor,defaultShaderTex2DColor,defaultShaderNoTexColor,defaultShaderTexNoColor,defaultShaderTex2DNoColor,defaultShaderNoTexNoColor;
-	ofShader bitmapStringShader;
-
-	string vertexFile;
-	string fragmentFile;
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled;
-	bool externalShaderProvided;
 	bool usingCustomShader, settingDefaultShader;
 	int currentTextureTarget;
 

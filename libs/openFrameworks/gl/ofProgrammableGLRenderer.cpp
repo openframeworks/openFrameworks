@@ -27,380 +27,6 @@ static const string USE_COLORS_UNIFORM="useColors";
 const string ofProgrammableGLRenderer::TYPE="ProgrammableGL";
 
 
-#ifdef TARGET_OPENGLES
-string defaultVertexShader =
-		"attribute vec4 position;\
-		attribute vec4 color;\
-		attribute vec4 normal;\
-		attribute vec2 texcoord;\
-		\
-		uniform mat4 modelViewMatrix;\
-		uniform mat4 projectionMatrix;\
-		uniform mat4 textureMatrix;\
-		uniform mat4 modelViewProjectionMatrix;\
-		\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-        \
-		void main(){\
-			gl_Position = modelViewProjectionMatrix * position;\
-			colorVarying = color;\
-			texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\
-		}";
-
-
-/*string defaultFragmentShader =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-			vec4 c;\
-			if(useColors>0.5){\
-				c = colorVarying;\
-			}else{\n\
-				c = color;\
-			}\n\
-			if(useTexture>0.5){\
-				gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*c;\
-			}else{\n\
-				gl_FragColor = c;\
-			}\
-}";*/
-
-string defaultFragmentShaderTexColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*colorVarying;\
-        }";
-
-string defaultFragmentShaderTexNoColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*color;\
-        }";
-
-string defaultFragmentShaderNoTexColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = colorVarying;\
-        }";
-
-string defaultFragmentShaderNoTexNoColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = color;\
-        }";
-
-// tig: todo: implement shaders for bitmapstringdraw on GLES2...
-// GLSL_ES shader written against spec:
-// http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
-
-string bitmapStringVertexShader		= "\n\
-#ifdef GL_ES\n\
-// define default precision for float, vec, mat.\n\
-precision highp float;\n\
-#endif\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-attribute vec4  position;\n\
-attribute vec2  texcoord;\n\
-\n\
-varying vec2 texCoordVarying;\n\
-\n\
-void main()\n\
-{\n\
-	texCoordVarying = textureMatrix*texcoord;\n\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
-string bitmapStringFragmentShader	= "\n\
-#ifdef GL_ES\n\
-// define default precision for float, vec, mat.\n\
-precision highp float;\n\
-#endif\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform vec4 color;\n\
-\n\
-varying vec2 texCoordVarying;\n\
-\n\
-void main()\n\
-{\n\
-	\n\
-	vec4 tex = texture2D(src_tex_unit0, texCoordVarying);\n\
-	// We will not write anything to the framebuffer if we have a transparent pixel\n\
-	// This makes sure we don't mess up our depth buffer.\n\
-	if (tex.a < 0.5) discard;\n\
-	gl_FragColor = color * tex;\n\
-}";
-
-#else
-
-// tig: GLSL #150 shaders written against spec:
-// http://www.opengl.org/registry/doc/GLSLangSpec.1.50.09.pdf
-
-string defaultVertexShader =
-"#version 150\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-\n\
-in vec4  position;\n\
-in vec2  texcoord;\n\
-in vec4  color;\n\
-in vec3  normal;\n\
-\n\
-out vec4 colorVarying;\n\
-out vec2 texCoordVarying;\n\
-out vec4 normalVarying;\n\
-\n\
-void main()\n\
-{\n\
-	colorVarying = color;\n\
-	texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
-
-
-/*string defaultFragmentShader =
-"#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	vec4 c = vec4(1.0);\n\
-	if(useColors>0.5){\n\
-		c = vec4(1.0,0.0,0.0,1.0);\n\
-	}else{\n\
-		c = color;\n\
-	}\n\
-\n\
-	if(useTexture>0.5){\n\
-		fragColor = texture(src_tex_unit0, texCoordVarying) * c;\n\
-	} else {\n\
-		fragColor = c;\n\
-	}\n\
-}";*/
-
-string defaultFragmentShaderTexColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
-}";
-
-string defaultFragmentShaderTexNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
-}";
-
-string defaultFragmentShaderTex2DColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
-}";
-
-string defaultFragmentShaderTex2DNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
-}";
-
-string defaultFragmentShaderNoTexColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = colorVarying;\n\
-}";
-
-string defaultFragmentShaderNoTexNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = color;\n\
-}";
-
-string bitmapStringVertexShader ="\n\
-#version 150\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-in vec4  position;\n\
-in vec4  color;\n\
-in vec2  texcoord;\n\
-\n\
-out vec2 texCoordVarying;\n\
-\n\
-void main()\n\
-{\n\
-	texCoordVarying = texcoord;\n\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
-
-string bitmapStringFragmentShader	= "\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform vec4 color = vec4(1.0);\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main()\n\
-{\n\
-	\n\
-	vec4 tex = texture(src_tex_unit0, texCoordVarying);\n\
-	// We will not write anything to the framebuffer if we have a transparent pixel\n\
-	// This makes sure we don't mess up our depth buffer.\n\
-	if (tex.a < 0.5) discard;\n\
-	fragColor = color * tex;\n\
-}";
-#endif
-
-
 //----------------------------------------------------------
 ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor)
 :matrixStack(*ofGetWindowPtr())
@@ -417,14 +43,10 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
     bFilled = OF_FILLED;
     bSmoothHinted = false;
 
-    vertexFile = vertexShader;
-    fragmentFile = fragmentShader;
-
     verticesEnabled = true;
     colorsEnabled = false;
     texCoordsEnabled = false;
     normalsEnabled = false;
-	externalShaderProvided = false;
 	settingDefaultShader = false;
 
 	wrongUseLoggedOnce = false;
@@ -432,7 +54,6 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	currentShader = NULL;
 
 	currentTextureTarget = OF_NO_TEXTURE;
-	glGetError();
 }
 
 ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
@@ -447,91 +68,9 @@ void ofProgrammableGLRenderer::startRender() {
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::finishRender() {
 	glUseProgram(0);
-	if(!usingCustomShader && !externalShaderProvided) currentShader = NULL;
+	if(!usingCustomShader) currentShader = NULL;
 	
 	matrixStack.clearStacks();
-}
-
-//----------------------------------------------------------
-bool ofProgrammableGLRenderer::setup() {
-	bool ret=false;
-	externalShaderProvided=false;
-	if(vertexFile!="" && fragmentFile==""){
-		ofLogError() << "can't use custom vertex shader without fragment, falling back to default";
-		vertexFile = "";
-	}
-	if(vertexFile!=""){
-		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from " + vertexFile;
-		ret = externalShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
-		externalShaderProvided=true;
-	}else{
-		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from default source";
-		if(fragmentFile!=""){
-			externalShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-		}else{
-			ret = defaultShaderTexColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderTex2DColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderNoTexColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderTex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderNoTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-		}
-
-	}
-	if(ret){
-		if(fragmentFile!=""){
-			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from " + fragmentFile;
-			ret = externalShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
-			externalShaderProvided=true;
-		}else{
-			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from default source";
-			ret = defaultShaderTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTexColor);
-			ret &= defaultShaderTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTex2DColor);
-			ret &= defaultShaderNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderNoTexColor);
-			ret &= defaultShaderTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTexNoColor);
-			ret &= defaultShaderTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTex2DNoColor);
-			ret &= defaultShaderNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderNoTexNoColor);
-		}
-	}
-	if(ret){
-		if(externalShaderProvided){
-			ret = externalShader.linkProgram();
-			ofLogVerbose() << "Loaded provided shader";
-		}else{
-			ret = defaultShaderTexColor.bindDefaults();
-			ret &= defaultShaderTex2DColor.bindDefaults();
-			ret &= defaultShaderNoTexColor.bindDefaults();
-			ret &= defaultShaderTexNoColor.bindDefaults();
-			ret &= defaultShaderTex2DNoColor.bindDefaults();
-			ret &= defaultShaderNoTexNoColor.bindDefaults();
-
-			ret &= defaultShaderTexColor.linkProgram();
-			ret &= defaultShaderTex2DColor.linkProgram();
-			ret &= defaultShaderNoTexColor.linkProgram();
-			ret &= defaultShaderTexNoColor.linkProgram();
-			ret &= defaultShaderTex2DNoColor.linkProgram();
-			ret &= defaultShaderNoTexNoColor.linkProgram();
-			ofLogVerbose() << "Loaded default shader";
-		}
-	}
-	
-	bool bmpShdRet = false;
-	
-	ofLogNotice("ofProgrammableGLRenderer") << "loading bitmapString vertex shader from default source";
-	bmpShdRet = bitmapStringShader.setupShaderFromSource(GL_VERTEX_SHADER, bitmapStringVertexShader);
-	if (bmpShdRet) {
-		ofLogNotice("ofProgrammableGLRenderer") << "loading bitmapString fragment shader from default source";
-		bmpShdRet = bitmapStringShader.setupShaderFromSource(GL_FRAGMENT_SHADER, bitmapStringFragmentShader);
-	}
-	if (bmpShdRet) {
-		bmpShdRet = bitmapStringShader.bindDefaults();
-		bmpShdRet = bitmapStringShader.linkProgram();
-		ofLogVerbose() << "Loaded bitmapString shader";
-	}
-
-	beginDefaultShader();
-	glGetError();
-	return ret && bmpShdRet;
 }
 
 //----------------------------------------------------------
@@ -1166,12 +705,6 @@ ofShader & ofProgrammableGLRenderer::getCurrentShader(){
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setDefaultShader(ofShader & shader){
-	externalShader = shader;
-	externalShaderProvided = true;
-}
-
-//----------------------------------------------------------
 void ofProgrammableGLRenderer::enableVertices(){
 }
 
@@ -1249,38 +782,34 @@ void ofProgrammableGLRenderer::beginDefaultShader(){
 	if(usingCustomShader) return;
 	ofShader * nextShader = NULL;
 
-	if(externalShaderProvided){
-		nextShader = &externalShader;
-	}else{
-		if(colorsEnabled && texCoordsEnabled){
-			switch(currentTextureTarget){
-			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultShaderTexColor;
-				break;
-			case GL_TEXTURE_2D:
-				nextShader = &defaultShaderTex2DColor;
-				break;
-			case OF_NO_TEXTURE:
-				nextShader = &defaultShaderNoTexColor;
-				break;
-			}
-		}else if(colorsEnabled){
-			nextShader = &defaultShaderNoTexColor;
-		}else if(texCoordsEnabled){
-			switch(currentTextureTarget){
-			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultShaderTexNoColor;
-				break;
-			case GL_TEXTURE_2D:
-				nextShader = &defaultShaderTex2DNoColor;
-				break;
-			case OF_NO_TEXTURE:
-				nextShader = &defaultShaderNoTexNoColor;
-				break;
-			}
-		}else{
-			nextShader = &defaultShaderNoTexNoColor;
+	if(colorsEnabled && texCoordsEnabled){
+		switch(currentTextureTarget){
+		case GL_TEXTURE_RECTANGLE_ARB:
+			nextShader = &ofShader::defaultTexColor();
+			break;
+		case GL_TEXTURE_2D:
+			nextShader = &ofShader::defaultTex2DColor();
+			break;
+		case OF_NO_TEXTURE:
+			nextShader = &ofShader::defaultNoTexColor();
+			break;
 		}
+	}else if(colorsEnabled){
+		nextShader = &ofShader::defaultNoTexColor();
+	}else if(texCoordsEnabled){
+		switch(currentTextureTarget){
+		case GL_TEXTURE_RECTANGLE_ARB:
+			nextShader = &ofShader::defaultTexNoColor();
+			break;
+		case GL_TEXTURE_2D:
+			nextShader = &ofShader::defaultTex2DNoColor();
+			break;
+		case OF_NO_TEXTURE:
+			nextShader = &ofShader::defaultNoTexNoColor();
+			break;
+		}
+	}else{
+		nextShader = &ofShader::defaultNoTexNoColor();
 	}
 
 	if(nextShader && (!currentShader || *currentShader!=*nextShader)){
@@ -1532,7 +1061,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	// to render text. This gives us more flexibility & control
 	// and does not mess/interfere with client side shaders.
 	
-	bitmapStringShader.begin();
+	ofShader::bitmapStringShader().begin();
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
@@ -1560,7 +1089,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	}
 	//We do this because its way faster
 	ofDrawBitmapCharacterEnd();
-	bitmapStringShader.end();
+	ofShader::bitmapStringShader().end();
 
 
 	if (hasModelView)
