@@ -202,7 +202,7 @@ void ofxVectorGraphics::noFill(){
 
 //----------------------------------------------------------			
 void ofxVectorGraphics::setLineWidth(float lineWidth){
-	glLineWidth((int)lineWidth);
+	ofSetLineWidth((int)lineWidth);
 	if(bRecord) creeps.setAttributes( CAtLineThickness(lineWidth) );
 }
 
@@ -224,7 +224,7 @@ void ofxVectorGraphics::setColor(int hexColor){
 
 //----------------------------------------------------------
 void ofxVectorGraphics::changeColor(float r, float g, float b){
-	glColor3f(r,g,b);
+	ofSetColor(ofFloatColor(r,g,b));
 	if(bRecord)creeps.setAttributes( CAtColor(r, g, b) );
 }
 
