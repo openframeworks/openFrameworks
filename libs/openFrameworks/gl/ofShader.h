@@ -12,7 +12,7 @@
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
 #include <map>
-
+#include "ofAppBaseWindow.h"
 
 class ofShader {
 public:
@@ -125,21 +125,23 @@ public:
 	bool operator!=(const ofShader & other);
 
 
-	enum defaultUniforms{
-		MODELVIEW_MATRIX_UNIFORM=1,
-		PROJECTION_MATRIX_UNIFORM,
-		ORIENTATION_MATRIX_UNIFORM,
-		MODELVIEW_PROJECTION_MATRIX_UNIFORM,
-		TEXTURE_MATRIX_UNIFORM,
-		COLOR_UNIFORM
-	};
-
+	// these are used only for openGL ES2 or GL3/4 using the programmable GL renderer
 	enum defaultAttributes{
 		POSITION_ATTRIBUTE=1,
 		COLOR_ATTRIBUTE,
 		NORMAL_ATTRIBUTE,
 		TEXCOORD_ATTRIBUTE
 	};
+
+	static ofShader & defaultTexColor();
+	static ofShader & defaultTexNoColor();
+	static ofShader & defaultTex2DColor();
+	static ofShader & defaultTex2DNoColor();
+	static ofShader & defaultNoTexColor();
+	static ofShader & defaultNoTexNoColor();
+	static ofShader & bitmapStringShader();
+
+
 
 private:
 	GLuint program;
@@ -156,5 +158,8 @@ private:
 	
 	void checkAndCreateProgram();
 	
+	static void initDefaultShaders();
+	friend void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);
+
 };
 
