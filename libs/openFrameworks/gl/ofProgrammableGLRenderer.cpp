@@ -15,7 +15,6 @@ static const int OF_NO_TEXTURE=-1;
 
 static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";
 static const string PROJECTION_MATRIX_UNIFORM="projectionMatrix";
-static const string ORIENTATION_MATRIX_UNIFORM="orientationMatrix";
 static const string MODELVIEW_PROJECTION_MATRIX_UNIFORM="modelViewProjectionMatrix";
 static const string TEXTURE_MATRIX_UNIFORM="textureMatrix";
 static const string COLOR_UNIFORM="color";
