@@ -1,12 +1,10 @@
-attribute vec4 position;
-attribute vec4 color;
-attribute vec4 normal;
-attribute vec2 texcoord;
+#version 150
+
+in vec4 position;
+in vec2 texcoord;
 
 uniform mat4 modelViewProjectionMatrix;
 
-varying vec4 colorVarying;
-varying vec2 texCoordVarying;
 
 uniform float timeValX;
 uniform float timeValY;

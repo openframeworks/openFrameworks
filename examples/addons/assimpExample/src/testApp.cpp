@@ -50,8 +50,10 @@ void testApp::draw(){
     model.drawFaces();
     ofPopMatrix();
 
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+   if(ofGetProgrammableGLRenderer()){
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    }
     glEnable(GL_NORMALIZE);
 
     ofPushMatrix();
@@ -74,7 +76,9 @@ void testApp::draw(){
     texture.unbind();
 	ofPopMatrix();
 
-	glPopAttrib();
+    if(ofGetProgrammableGLRenderer()){
+    	glPopAttrib();
+    }
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
     ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);

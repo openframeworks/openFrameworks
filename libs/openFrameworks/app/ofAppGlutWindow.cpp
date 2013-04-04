@@ -404,7 +404,6 @@ int ofAppGlutWindow::getHeight(){
 //------------------------------------------------------------
 void ofAppGlutWindow::setOrientation(ofOrientation orientationIn){
 	orientation = orientationIn;
-	ofViewport();
 }
 
 //------------------------------------------------------------
@@ -714,9 +713,6 @@ static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, x, y);
-
-    
-    int ofMouseButton = button;
     
     if(button == GLUT_LEFT_BUTTON) {
         button = OF_MOUSE_BUTTON_LEFT;
