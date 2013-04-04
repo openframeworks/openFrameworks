@@ -103,7 +103,7 @@ ofVbo::ofVbo()
 
 	vaoChanged 		= false;
 	vaoID			= 0;
-	binded   = false;
+	bBound   = false;
 }
 
 ofVbo::ofVbo(const ofVbo & mom){
@@ -148,7 +148,7 @@ ofVbo::ofVbo(const ofVbo & mom){
 
 	bAllocated		= mom.bAllocated;
 
-	binded   = mom.binded;
+	bBound   = mom.bBound;
 }
 
 ofVbo & ofVbo::operator=(const ofVbo& mom){
@@ -188,7 +188,7 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	totalIndices = mom.totalIndices;
 
 	bAllocated		= mom.bAllocated;
-	binded   = mom.binded;
+	bBound   = mom.bBound;
 	return *this;
 }
 
@@ -696,7 +696,7 @@ void ofVbo::bind(){
 	}else{
 		ofDisableTexCoords();
 	}
-	binded   = true;
+	bBound   = true;
 }
 
 //--------------------------------------------------------------
@@ -708,13 +708,13 @@ void ofVbo::unbind() {
 	if(bUsingNormals) ofDisableNormals();
 	if(bUsingTexCoords) ofDisableTexCoords();*/
 	glBindVertexArray(0);
-	binded   = false;
+	bBound   = false;
 }
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) {
 	if(bAllocated) {
-		bool wasBinded = binded;
+		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 		glDrawArrays(drawMode, first, total);
 		if(!wasBinded) unbind();

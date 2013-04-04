@@ -439,10 +439,10 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 	}
 	GLboolean depthMaskEnabled;
 	glGetBooleanv(GL_DEPTH_WRITEMASK,&depthMaskEnabled);
-	glDepthMask(false);
+	glDepthMask(GL_FALSE);
 	gradientMesh.draw();
 	if(depthMaskEnabled){
-		glDepthMask(true);
+		glDepthMask(GL_TRUE);
 	}
 }
 

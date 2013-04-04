@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */; };
 		221FD01016E74E6900522E7E /* ofProgrammableGLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */; };
+		22769591170D9DD200604FC3 /* ofMatrixStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */; };
+		22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 22769590170D9DD200604FC3 /* ofMatrixStack.h */; };
+		22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
+		22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
+		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
@@ -152,6 +157,11 @@
 /* Begin PBXFileReference section */
 		221FD00D16E74E6900522E7E /* ofProgrammableGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofProgrammableGLRenderer.cpp; path = gl/ofProgrammableGLRenderer.cpp; sourceTree = "<group>"; };
 		221FD00E16E74E6900522E7E /* ofProgrammableGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofProgrammableGLRenderer.h; path = gl/ofProgrammableGLRenderer.h; sourceTree = "<group>"; };
+		2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMatrixStack.cpp; sourceTree = "<group>"; };
+		22769590170D9DD200604FC3 /* ofMatrixStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMatrixStack.h; sourceTree = "<group>"; };
+		22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRendererCollection.cpp; sourceTree = "<group>"; };
+		22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppGLFWWindow.cpp; sourceTree = "<group>"; };
+		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
@@ -403,6 +413,8 @@
 		E4B27AAB10CBE92A00536013 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */,
+				22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */,
 				E4B27AAC10CBE92A00536013 /* ofAppBaseWindow.h */,
 				E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */,
 				E4B27AAE10CBE92A00536013 /* ofAppGlutWindow.h */,
@@ -563,6 +575,8 @@
 		E4F3BAE212F4C745002D19BB /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */,
+				22769590170D9DD200604FC3 /* ofMatrixStack.h */,
 				E4F3BAE312F4C745002D19BB /* ofConstants.h */,
 				E4F3BAE412F4C745002D19BB /* ofFileUtils.cpp */,
 				E4F3BAE512F4C745002D19BB /* ofFileUtils.h */,
@@ -590,6 +604,7 @@
 				DA48FE73131D85A6000062BC /* ofPolyline.cpp */,
 				DA48FE74131D85A6000062BC /* ofPolyline.h */,
 				DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */,
+				22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */,
 				DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */,
 				DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */,
 				E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */,
@@ -681,6 +696,8 @@
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
 				221FD01016E74E6900522E7E /* ofProgrammableGLRenderer.h in Headers */,
+				22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */,
+				22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -798,6 +815,9 @@
 				DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */,
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,
 				221FD00F16E74E6900522E7E /* ofProgrammableGLRenderer.cpp in Sources */,
+				22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */,
+				22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */,
+				22769591170D9DD200604FC3 /* ofMatrixStack.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
