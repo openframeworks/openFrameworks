@@ -52,9 +52,7 @@ public:
 		glTypeInternal = GL_RGB;
 		textureTarget = GL_TEXTURE_2D;
 #endif
-		glType = GL_RGB;
-		pixelType = GL_UNSIGNED_BYTE;
-		
+
 
 		tex_t = 0;
 		tex_u = 0;
@@ -72,8 +70,6 @@ public:
 	unsigned int textureID;
 	int textureTarget;
 	int glTypeInternal; // internalFormat, e.g., GL_RGB8.
-	int glType; // format, e.g., GL_RGB. should be named glFormat
-	int pixelType;  // type, e.g., GL_UNSIGNED_BYTE. should be named glType
 	
 	float tex_t;
 	float tex_u;
@@ -101,22 +97,43 @@ class ofTexture : public ofBaseDraws {
 	virtual ~ofTexture();
 
 	// -----------------------------------------------------------------------
-
+	// glInternalFormat: the format the texture will have in the graphics card (specified on allocate)
+	// http://www.opengl.org/wiki/Image_Format
+	//
+	// glFormat: format of the uploaded data, can be different to the internal format
+	// pixelType: type of the uploaded data, depends on the pixels on cpu memory.
+	// http://www.opengl.org/wiki/Pixel_Transfer
+	//
+	// for most cases is not necessary to specify glFormat and pixelType on allocate
+	// and if needed for some cases like depth textures it'll be automatically guessed
+	// from the internal format if not specified
 	virtual void allocate(const ofTextureData & textureData);
+	virtual void allocate(const ofTextureData & textureData, int glFormat, int pixelType);
 	virtual void allocate(int w, int h, int glInternalFormat); //uses the currently set OF texture type - default ARB texture
+	virtual void allocate(int w, int h, int glInternalFormat, int glFormat, int pixelType); //uses the currently set OF texture type - default ARB texture
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention, int glFormat, int pixelType); //lets you overide the default OF texture type
 	virtual void allocate(const ofPixels& pix);
+	virtual void allocate(const ofPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
 
 	void setUseExternalTextureID(GLuint externTexID); //allows you to point ofTexture's texture id to an externally allocated id. 
 													  //its up to you to set the rest of the textData params manually. 
 
+	// glFormat can be different to the internal format of the texture in each load
+	// for example to a GL_RGBA texture we can upload a 1 channel image as
+	// GL_LUMINANACE and it will be uploaded to the 3 channels
+	// or 2 channels with GL_LUMINANCE_ALPHA and channel 1 will be uploaded to RGB
+	// and channel 2 to A
 	void loadData(const unsigned char* const data, int w, int h, int glFormat);
 	void loadData(const unsigned short* data, int w, int h, int glFormat);
 	void loadData(const float* data, int w, int h, int glFormat);
 	void loadData(const ofPixels & pix);		
 	void loadData(const ofShortPixels & pix);
 	void loadData(const ofFloatPixels & pix);
+	void loadData(const ofPixels & pix, int glFormat);
+	void loadData(const ofShortPixels & pix, int glFormat);
+	void loadData(const ofFloatPixels & pix, int glFormat);
 	
 	void loadScreenData(int x, int y, int w, int h);
 
@@ -171,7 +188,7 @@ class ofTexture : public ofBaseDraws {
 	float getWidth();
 
 protected:
-	void loadData(void * data, int w, int h, int glFormat);
+	void loadData(const void * data, int w, int h, int glFormat, int glType);
 	void enableTextureTarget();
 	void disableTextureTarget();
 

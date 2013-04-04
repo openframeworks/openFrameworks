@@ -335,7 +335,7 @@ void ofUpdateBitmapCharacterTexture(){
 }
 #endif
 
-static vector<unsigned char> myLetterPixels;
+static ofPixels myLetterPixels;
 static float widthTex = 8.0f/256.0f;
 static float heightTex = 14.0f/256.0f;
 static ofVboMesh charMesh;
@@ -347,7 +347,7 @@ static void prepareBitmapTexture(){
 			
 	
 	if (!bBitmapTexturePrepared){
-		myLetterPixels.resize(16*16 * 16*16 * 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
+		myLetterPixels.allocate(16*16, 16*16, 2); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
 
 
 		bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
@@ -361,21 +361,17 @@ static void prepareBitmapTexture(){
 			for (int j = 1; j < 15; j++){
 				for (int k = 0; k < 8; k++){
 					if ( ((face[15-j] << k) & (128)) > 0 ){
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
 					}else{
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
 					}
 				}
 			}
 		}
 		
-		bitmappedFontTexture.loadData(&myLetterPixels[0], 16*16, 16*16, GL_RGBA);
+		bitmappedFontTexture.loadData(myLetterPixels);
 		bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
 
 		charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
