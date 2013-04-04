@@ -453,37 +453,19 @@ void ofFbo::allocate(Settings _settings) {
 #endif
     
 	GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
-	GLint depthPixelType = GL_UNSIGNED_SHORT;
-	GLint depthFormat = GL_DEPTH_COMPONENT;
 
 	if( settings.useDepth && settings.useStencil ){
-		depthFormat = GL_DEPTH_STENCIL;
 		settings.depthStencilInternalFormat = GL_DEPTH_STENCIL;
-		depthPixelType = GL_UNSIGNED_INT_24_8;
 		#ifdef TARGET_OPENGLES
 			depthAttachment = GL_DEPTH_ATTACHMENT;
 		#else
 			depthAttachment = GL_DEPTH_STENCIL_ATTACHMENT;
 		#endif
 	}else if(settings.useDepth){
-		depthPixelType = GL_UNSIGNED_SHORT;
-		if(settings.depthStencilInternalFormat==GL_DEPTH_COMPONENT16){
-			depthPixelType = GL_UNSIGNED_SHORT;
-		}else if(settings.depthStencilInternalFormat==GL_DEPTH_COMPONENT24){
-			depthPixelType = GL_UNSIGNED_INT;
-		}
-        #ifdef GL_DEPTH_COMPONENT32 
-        else if(settings.depthStencilInternalFormat==GL_DEPTH_COMPONENT32){
-			depthPixelType = GL_UNSIGNED_INT;
-		}
-		#endif 
 		depthAttachment = GL_DEPTH_ATTACHMENT;
-		depthFormat = GL_DEPTH_COMPONENT;
 	}else if(settings.useStencil){
 		depthAttachment = GL_STENCIL_ATTACHMENT;
 		settings.depthStencilInternalFormat = GL_STENCIL_INDEX;
-		depthFormat = GL_STENCIL_INDEX;
-		depthPixelType = GL_UNSIGNED_BYTE;
 	}
 
 	//- USE REGULAR RENDER BUFFER
@@ -502,7 +484,7 @@ void ofFbo::allocate(Settings _settings) {
 	//- INSTEAD USE TEXTURE
 	}else{
 		if(settings.useDepth || settings.useStencil){
-		createAndAttachDepthStencilTexture(settings.textureTarget,settings.depthStencilInternalFormat,depthFormat,depthPixelType,depthAttachment);
+		createAndAttachDepthStencilTexture(settings.textureTarget,settings.depthStencilInternalFormat,depthAttachment);
 #ifdef TARGET_OPENGLES
 		// if there's depth and stencil the texture should be attached as
 		// depth and stencil attachments
@@ -592,19 +574,30 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	}
 }
 
-void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum  attachment){
-	
+void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment, GLenum transferFormat, GLenum transferType){
+
+
 	// allocate depthBufferTex as depth buffer;
 	depthBufferTex.texData.glTypeInternal = internalformat;
-	depthBufferTex.texData.glType = format;
-	depthBufferTex.texData.pixelType = type;
 	depthBufferTex.texData.textureTarget = target;
 	depthBufferTex.texData.bFlipTexture = false;
 	depthBufferTex.texData.width = settings.width;
 	depthBufferTex.texData.height = settings.height;
 	
-	//TODO: a bit of a hack for now as we don't know 100% what will be overridden by ofTexture::allocate( ofTextureData & data ); 
-	//but at the moment it seems to work well and resulted in some fixes for the ofTexture::allocate method 
+	depthBufferTex.allocate(depthBufferTex.texData,transferFormat,transferType);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
+}
+
+void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment){
+
+	// allocate depthBufferTex as depth buffer;
+	depthBufferTex.texData.glTypeInternal = internalformat;
+	depthBufferTex.texData.textureTarget = target;
+	depthBufferTex.texData.bFlipTexture = false;
+	depthBufferTex.texData.width = settings.width;
+	depthBufferTex.texData.height = settings.height;
+	
 	depthBufferTex.allocate(depthBufferTex.texData);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);

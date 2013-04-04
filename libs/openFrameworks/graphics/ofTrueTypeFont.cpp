@@ -720,33 +720,14 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		x+= sortedCopy[i].tW + border*2;
 	}
 
-	if(ofGLIsFixedPipeline()){
-		texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
+	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_RGBA,false);
 
-		if(bAntiAliased && fontSize>20){
-			texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
-		}else{
-			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-		}
-
-		texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+	if(bAntiAliased && fontSize>20){
+		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
-		ofPixels luminance = atlasPixels.getChannel(0);
-		ofPixels alpha = atlasPixels.getChannel(1);
-		atlasPixels.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),4);
-		atlasPixels.setChannel(0,luminance);
-		atlasPixels.setChannel(1,luminance);
-		atlasPixels.setChannel(2,luminance);
-		atlasPixels.setChannel(3,alpha);
-		texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_RGBA,false);
-
-		if(bAntiAliased && fontSize>20){
-			texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
-		}else{
-			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-		}
-		texAtlas.loadData(atlasPixels);
+		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 	}
+	texAtlas.loadData(atlasPixels);
 
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
