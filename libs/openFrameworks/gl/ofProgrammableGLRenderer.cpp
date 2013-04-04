@@ -15,7 +15,6 @@ static const int OF_NO_TEXTURE=-1;
 
 static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";
 static const string PROJECTION_MATRIX_UNIFORM="projectionMatrix";
-static const string ORIENTATION_MATRIX_UNIFORM="orientationMatrix";
 static const string MODELVIEW_PROJECTION_MATRIX_UNIFORM="modelViewProjectionMatrix";
 static const string TEXTURE_MATRIX_UNIFORM="textureMatrix";
 static const string COLOR_UNIFORM="color";
@@ -27,383 +26,10 @@ static const string USE_COLORS_UNIFORM="useColors";
 const string ofProgrammableGLRenderer::TYPE="ProgrammableGL";
 
 
-#ifdef TARGET_OPENGLES
-string defaultVertexShader =
-		"attribute vec4 position;\
-		attribute vec4 color;\
-		attribute vec4 normal;\
-		attribute vec2 texcoord;\
-		\
-		uniform mat4 modelViewMatrix;\
-		uniform mat4 projectionMatrix;\
-		uniform mat4 textureMatrix;\
-		uniform mat4 modelViewProjectionMatrix;\
-		\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-        \
-		void main(){\
-			gl_Position = modelViewProjectionMatrix * position;\
-			colorVarying = color;\
-			texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\
-		}";
-
-
-/*string defaultFragmentShader =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-			vec4 c;\
-			if(useColors>0.5){\
-				c = colorVarying;\
-			}else{\n\
-				c = color;\
-			}\n\
-			if(useTexture>0.5){\
-				gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*c;\
-			}else{\n\
-				gl_FragColor = c;\
-			}\
-}";*/
-
-string defaultFragmentShaderTexColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*colorVarying;\
-        }";
-
-string defaultFragmentShaderTexNoColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*color;\
-        }";
-
-string defaultFragmentShaderNoTexColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = colorVarying;\
-        }";
-
-string defaultFragmentShaderNoTexNoColor =
-		"#ifdef GL_ES\n\
-		// define default precision for float, vec, mat.\n\
-		precision highp float;\n\
-		#endif\n\
-		\
-		uniform sampler2D src_tex_unit0;\
-		uniform float useTexture;\
-		uniform float useColors;\
-		uniform vec4 color;\
-		\
-		varying float depth;\
-		varying vec4 colorVarying;\
-		varying vec2 texCoordVarying;\
-		\
-		void main(){\
-		    gl_FragColor = color;\
-        }";
-
-// tig: todo: implement shaders for bitmapstringdraw on GLES2...
-// GLSL_ES shader written against spec:
-// http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
-
-string bitmapStringVertexShader		= "\n\
-#ifdef GL_ES\n\
-// define default precision for float, vec, mat.\n\
-precision highp float;\n\
-#endif\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-attribute vec4  position;\n\
-attribute vec2  texcoord;\n\
-\n\
-varying vec2 texCoordVarying;\n\
-\n\
-void main()\n\
-{\n\
-	texCoordVarying = textureMatrix*texcoord;\n\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
-string bitmapStringFragmentShader	= "\n\
-#ifdef GL_ES\n\
-// define default precision for float, vec, mat.\n\
-precision highp float;\n\
-#endif\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform vec4 color;\n\
-\n\
-varying vec2 texCoordVarying;\n\
-\n\
-void main()\n\
-{\n\
-	\n\
-	vec4 tex = texture2D(src_tex_unit0, texCoordVarying);\n\
-	// We will not write anything to the framebuffer if we have a transparent pixel\n\
-	// This makes sure we don't mess up our depth buffer.\n\
-	if (tex.a < 0.5) discard;\n\
-	gl_FragColor = color * tex;\n\
-}";
-
-#else
-
-// tig: GLSL #150 shaders written against spec:
-// http://www.opengl.org/registry/doc/GLSLangSpec.1.50.09.pdf
-
-string defaultVertexShader =
-"#version 150\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-\n\
-in vec4  position;\n\
-in vec2  texcoord;\n\
-in vec4  color;\n\
-in vec3  normal;\n\
-\n\
-out vec4 colorVarying;\n\
-out vec2 texCoordVarying;\n\
-out vec4 normalVarying;\n\
-\n\
-void main()\n\
-{\n\
-	colorVarying = color;\n\
-	texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
-
-
-/*string defaultFragmentShader =
-"#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	vec4 c = vec4(1.0);\n\
-	if(useColors>0.5){\n\
-		c = vec4(1.0,0.0,0.0,1.0);\n\
-	}else{\n\
-		c = color;\n\
-	}\n\
-\n\
-	if(useTexture>0.5){\n\
-		fragColor = texture(src_tex_unit0, texCoordVarying) * c;\n\
-	} else {\n\
-		fragColor = c;\n\
-	}\n\
-}";*/
-
-string defaultFragmentShaderTexColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
-}";
-
-string defaultFragmentShaderTexNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
-}";
-
-string defaultFragmentShaderTex2DColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
-}";
-
-string defaultFragmentShaderTex2DNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
-}";
-
-string defaultFragmentShaderNoTexColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = colorVarying;\n\
-}";
-
-string defaultFragmentShaderNoTexNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = color;\n\
-}";
-
-string bitmapStringVertexShader ="\n\
-#version 150\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-in vec4  position;\n\
-in vec4  color;\n\
-in vec2  texcoord;\n\
-\n\
-out vec2 texCoordVarying;\n\
-\n\
-void main()\n\
-{\n\
-	texCoordVarying = texcoord;\n\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
-
-string bitmapStringFragmentShader	= "\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform vec4 color = vec4(1.0);\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main()\n\
-{\n\
-	\n\
-	vec4 tex = texture(src_tex_unit0, texCoordVarying);\n\
-	// We will not write anything to the framebuffer if we have a transparent pixel\n\
-	// This makes sure we don't mess up our depth buffer.\n\
-	if (tex.a < 0.5) discard;\n\
-	fragColor = color * tex;\n\
-}";
-#endif
-
-
 //----------------------------------------------------------
-ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor){
-	currentMatrix = &modelViewMatrix;
+ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor)
+:matrixStack(*ofGetWindowPtr())
+{
 	bBackgroundAuto = true;
 
 	lineVbo.getVertices().resize(2);
@@ -411,33 +37,22 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
 	triangleVbo.getVertices().resize(3);
 	rectVbo.getVertices().resize(4);
 
-	currentFbo = NULL;
 
     rectMode = OF_RECTMODE_CORNER;
     bFilled = OF_FILLED;
-    coordHandedness = OF_LEFT_HANDED;
     bSmoothHinted = false;
-    currentMatrixMode = OF_MATRIX_MODELVIEW;
-
-    vertexFile = vertexShader;
-    fragmentFile = fragmentShader;
 
     verticesEnabled = true;
     colorsEnabled = false;
     texCoordsEnabled = false;
     normalsEnabled = false;
-	externalShaderProvided = false;
 	settingDefaultShader = false;
 
 	wrongUseLoggedOnce = false;
 
-	vFlipped = true;
-
-	orientationMatrix.makeIdentityMatrix();
 	currentShader = NULL;
 
 	currentTextureTarget = OF_NO_TEXTURE;
-	glGetError();
 }
 
 ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
@@ -452,103 +67,9 @@ void ofProgrammableGLRenderer::startRender() {
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::finishRender() {
 	glUseProgram(0);
-	if(!usingCustomShader && !externalShaderProvided) currentShader = NULL;
+	if(!usingCustomShader) currentShader = NULL;
 	
-	int tmpCounter = 0;
-	while (!modelViewMatrixStack.empty()){
-		modelViewMatrixStack.pop();
-		tmpCounter++;
-	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on modelView matrix stack. Check if modelview matrix push() and pop() pair up properly.";
-	
-	tmpCounter = 0;
-	while (!projectionMatrixStack.empty()){
-		projectionMatrixStack.pop();
-		tmpCounter++;
-	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on projection matrix stack. Check if projection matrix push() and pop() pair up properly.";
-}
-
-//----------------------------------------------------------
-bool ofProgrammableGLRenderer::setup() {
-	bool ret=false;
-	externalShaderProvided=false;
-	if(vertexFile!="" && fragmentFile==""){
-		ofLogError() << "can't use custom vertex shader without fragment, falling back to default";
-		vertexFile = "";
-	}
-	if(vertexFile!=""){
-		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from " + vertexFile;
-		ret = externalShader.setupShaderFromFile(GL_VERTEX_SHADER,vertexFile);
-		externalShaderProvided=true;
-	}else{
-		ofLogNotice("ofProgrammableGLRenderer") << "loading vertex shader from default source";
-		if(fragmentFile!=""){
-			externalShader.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-		}else{
-			ret = defaultShaderTexColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderTex2DColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderNoTexColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderTex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-			ret &= defaultShaderNoTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
-		}
-
-	}
-	if(ret){
-		if(fragmentFile!=""){
-			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from " + fragmentFile;
-			ret = externalShader.setupShaderFromFile(GL_FRAGMENT_SHADER,fragmentFile);
-			externalShaderProvided=true;
-		}else{
-			ofLogNotice("ofProgrammableGLRenderer") << "loading fragment shader from default source";
-			ret = defaultShaderTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTexColor);
-			ret &= defaultShaderTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTex2DColor);
-			ret &= defaultShaderNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderNoTexColor);
-			ret &= defaultShaderTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTexNoColor);
-			ret &= defaultShaderTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderTex2DNoColor);
-			ret &= defaultShaderNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,defaultFragmentShaderNoTexNoColor);
-		}
-	}
-	if(ret){
-		if(externalShaderProvided){
-			ret = externalShader.linkProgram();
-			ofLogVerbose() << "Loaded provided shader";
-		}else{
-			ret = defaultShaderTexColor.bindDefaults();
-			ret &= defaultShaderTex2DColor.bindDefaults();
-			ret &= defaultShaderNoTexColor.bindDefaults();
-			ret &= defaultShaderTexNoColor.bindDefaults();
-			ret &= defaultShaderTex2DNoColor.bindDefaults();
-			ret &= defaultShaderNoTexNoColor.bindDefaults();
-
-			ret &= defaultShaderTexColor.linkProgram();
-			ret &= defaultShaderTex2DColor.linkProgram();
-			ret &= defaultShaderNoTexColor.linkProgram();
-			ret &= defaultShaderTexNoColor.linkProgram();
-			ret &= defaultShaderTex2DNoColor.linkProgram();
-			ret &= defaultShaderNoTexNoColor.linkProgram();
-			ofLogVerbose() << "Loaded default shader";
-		}
-	}
-	
-	bool bmpShdRet = false;
-	
-	ofLogNotice("ofProgrammableGLRenderer") << "loading bitmapString vertex shader from default source";
-	bmpShdRet = bitmapStringShader.setupShaderFromSource(GL_VERTEX_SHADER, bitmapStringVertexShader);
-	if (bmpShdRet) {
-		ofLogNotice("ofProgrammableGLRenderer") << "loading bitmapString fragment shader from default source";
-		bmpShdRet = bitmapStringShader.setupShaderFromSource(GL_FRAGMENT_SHADER, bitmapStringFragmentShader);
-	}
-	if (bmpShdRet) {
-		bmpShdRet = bitmapStringShader.bindDefaults();
-		bmpShdRet = bitmapStringShader.linkProgram();
-		ofLogVerbose() << "Loaded bitmapString shader";
-	}
-
-	beginDefaultShader();
-	glGetError();
-	return ret && bmpShdRet;
+	matrixStack.clearStacks();
 }
 
 //----------------------------------------------------------
@@ -730,98 +251,50 @@ void ofProgrammableGLRenderer::draw(ofShortImage & image, float x, float y, floa
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setCurrentFBO(ofFbo * fbo){
-	currentFbo = fbo;
+	if(fbo!=NULL){
+		matrixStack.setRenderSurface(*fbo);
+	}else{
+		matrixStack.setRenderSurface(*ofGetWindowPtr());
+	}
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::pushView() {
-	viewportHistory.push(getCurrentViewport());
-	ofMatrixMode currentMode = currentMatrixMode;
-	matrixMode(OF_MATRIX_PROJECTION);
-	pushMatrix();
-	matrixMode(OF_MATRIX_MODELVIEW);
-	pushMatrix();
-	matrixMode(currentMode);
-	orientationStack.push(make_pair(ofGetOrientation(),vFlipped));
+	matrixStack.pushView();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popView() {
-	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
-	ofSetOrientation(orientationFlip.first);
-	setOrientation(orientationFlip.first,orientationFlip.second);
-	orientationStack.pop();
-	if( viewportHistory.size() ){
-		ofRectangle viewRect = viewportHistory.top();
-		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
-		viewportHistory.pop();
-	}
-	ofMatrixMode currentMode = currentMatrixMode;
-	matrixMode(OF_MATRIX_PROJECTION);
-	popMatrix();
-	matrixMode(OF_MATRIX_MODELVIEW);
-	popMatrix();
-	matrixMode(currentMode);
+	matrixStack.popView();
+	uploadAllMatrices();
+	viewport(matrixStack.getCurrentViewport());
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::viewport(ofRectangle viewport_){
-	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height);
+	viewport(viewport_.x,viewport_.y,viewport_.width,viewport_.height,ofIsVFlipped());
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height) {
-	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
-		swap(width,height);
-		swap(x,y);
-	}
-	if(width == 0 || height == 0){
-		if(currentFbo){
-			width = currentFbo->getWidth();
-			height = currentFbo->getHeight();
-		}else{
-			width = ofGetWindowWidth();
-			height = ofGetWindowHeight();
-		}
-	}
-
-	if (isVFlipped()){
-		if(currentFbo){
-			y = currentFbo->getHeight() - (y + height);
-		}else{
-			y = ofGetWindowHeight() - (y + height);
-		}
-	}
-
-	glViewport(x,y,width,height);
+void ofProgrammableGLRenderer::viewport(float x, float y, float width, float height, bool vflip) {
+	matrixStack.viewport(x,y,width,height,vflip);
+	ofRectangle nativeViewport = matrixStack.getNativeViewport();
+	glViewport(nativeViewport.x,nativeViewport.y,nativeViewport.width,nativeViewport.height);
 }
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getCurrentViewport(){
-	ofRectangle currentViewport = getNativeViewport();
-
-	if (isVFlipped()){
-		if(currentFbo){
-			currentViewport.y = currentFbo->getHeight() - (currentViewport.y + currentViewport.height);
-		}else{
-			currentViewport.y = ofGetWindowHeight() - (currentViewport.y + currentViewport.height);
-		}
-	}
-
-	if(!ofDoesHWOrientation() && (ofGetOrientation()==OF_ORIENTATION_90_LEFT || ofGetOrientation()==OF_ORIENTATION_90_RIGHT)){
-		swap(currentViewport.width,currentViewport.height);
-		swap(currentViewport.x,currentViewport.y);
-	}
-	return currentViewport;
+	getNativeViewport();
+	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
 ofRectangle ofProgrammableGLRenderer::getNativeViewport(){
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	ofRectangle nativeViewport;
 
-	nativeViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	matrixStack.nativeViewport(nativeViewport);
     return nativeViewport;
 }
 
@@ -837,71 +310,32 @@ int ofProgrammableGLRenderer::getViewportHeight(){
 
 //----------------------------------------------------------
 bool ofProgrammableGLRenderer::isVFlipped() const{
-	return vFlipped;
+	return matrixStack.isVFlipped();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setCoordHandedness(ofHandednessType handedness) {
-	coordHandedness = handedness;
+	;
 }
 
 //----------------------------------------------------------
 ofHandednessType ofProgrammableGLRenderer::getCoordHandedness() {
-	return coordHandedness;
+	return matrixStack.getHandedness();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::setOrientation(ofOrientation orientation, bool vFlip){
-	vFlipped = vFlip;
-
-	if(vFlip){
-		ofSetCoordHandedness(OF_LEFT_HANDED);
-	}else{
-		ofSetCoordHandedness(OF_RIGHT_HANDED);
-	}
-
-	orientationMatrix.makeIdentityMatrix();
-
-	bool vFlipMatrix = vFlip != bool(currentFbo);
-
-	if(vFlipMatrix)
-		orientationMatrix.scale(1,-1,1);
-
-	if(!ofDoesHWOrientation()){
-		switch(orientation) {
-			case OF_ORIENTATION_180:
-				orientationMatrix.rotate(180,0,0,1);
-				break;
-
-			case OF_ORIENTATION_90_RIGHT:
-				orientationMatrix.rotate(90,0,0,1);
-				break;
-
-			case OF_ORIENTATION_90_LEFT:
-				orientationMatrix.rotate(-90,0,0,1);
-				break;
-
-			case OF_ORIENTATION_DEFAULT:
-			default:
-				break;
-		}
-	}
-
-	orientedProjectionMatrix = projectionMatrix * orientationMatrix;
-	modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
+	matrixStack.setOrientation(orientation,vFlip);
 	uploadAllMatrices();
 
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
 	ofRectangle currentViewport = getCurrentViewport();
 	
 	float viewW = currentViewport.width;
 	float viewH = currentViewport.height;
-
-	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
-	setOrientation(orientation,vFlip);
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -927,10 +361,7 @@ void ofProgrammableGLRenderer::setupScreenPerspective(float width, float height,
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
-	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
-	setOrientation(orientation,vFlip);
-
+void ofProgrammableGLRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
 	ofRectangle currentViewport = getCurrentViewport();
 
 	float viewW = currentViewport.width;
@@ -970,33 +401,12 @@ void ofProgrammableGLRenderer::setCircleResolution(int res){
 //our openGL wrappers
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::pushMatrix(){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelViewMatrixStack.push(modelViewMatrix);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projectionMatrixStack.push(projectionMatrix);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrixStack.push(textureMatrix);
-		break;
-	}
+	matrixStack.pushMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::popMatrix(){
-	if (currentMatrixMode == OF_MATRIX_MODELVIEW && !modelViewMatrixStack.empty()){
-		modelViewMatrix = modelViewMatrixStack.top();
-		modelViewMatrixStack.pop();
-	} else if (currentMatrixMode == OF_MATRIX_PROJECTION && !projectionMatrixStack.empty()){
-		projectionMatrix = projectionMatrixStack.top();
-		projectionMatrixStack.pop();
-	} else if (currentMatrixMode == OF_MATRIX_TEXTURE && !textureMatrixStack.empty()){
-		textureMatrix = textureMatrixStack.top();
-		textureMatrixStack.pop();
-	} else {
-		ofLogWarning() << "ofxGL3Renderer: Empty matrix stack, cannot pop any further.";
-	}
+	matrixStack.popMatrix();
 	uploadCurrentMatrix();
 }
 
@@ -1007,19 +417,19 @@ void ofProgrammableGLRenderer::translate(const ofVec3f& p){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::translate(float x, float y, float z){
-	currentMatrix->glTranslate(x, y, z);
+	matrixStack.translate(x,y,z);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::scale(float xAmnt, float yAmnt, float zAmnt){
-	currentMatrix->glScale(xAmnt, yAmnt, zAmnt);
+	matrixStack.scale(xAmnt, yAmnt, zAmnt);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
-	currentMatrix->glRotate(degrees, vecX, vecY, vecZ);
+	matrixStack.rotate(degrees, vecX, vecY, vecZ);
 	uploadCurrentMatrix();
 }
 
@@ -1046,31 +456,24 @@ void ofProgrammableGLRenderer::rotate(float degrees){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::matrixMode(ofMatrixMode mode){
-	currentMatrixMode = mode;
-	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
-		currentMatrix = &modelViewMatrix;
-	} else if (currentMatrixMode == OF_MATRIX_PROJECTION){
-		currentMatrix = &projectionMatrix;
-	} else if (currentMatrixMode == OF_MATRIX_TEXTURE){
-		currentMatrix = &textureMatrix;
-	}
+	matrixStack.matrixMode(mode);
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadIdentityMatrix (void){
-	currentMatrix->makeIdentityMatrix();
+	matrixStack.loadIdentityMatrix();
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadMatrix (const ofMatrix4x4 & m){
-	currentMatrix->set(m);
+	matrixStack.loadMatrix(m.getPtr());
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::loadMatrix (const float *m){
-	currentMatrix->set(m);
+	matrixStack.loadMatrix(m);
 	uploadCurrentMatrix();
 }
 
@@ -1081,7 +484,7 @@ void ofProgrammableGLRenderer::multMatrix (const ofMatrix4x4 & m){
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::multMatrix (const float *m){
-	currentMatrix->preMult(m);
+	matrixStack.multMatrix(m);
 	uploadCurrentMatrix();
 }
 
@@ -1089,20 +492,18 @@ void ofProgrammableGLRenderer::multMatrix (const float *m){
 void ofProgrammableGLRenderer::uploadCurrentMatrix(){
 	if(!currentShader) return;
 	// uploads the current matrix to the current shader.
-
-	if (currentMatrixMode == OF_MATRIX_MODELVIEW){
-		modelViewProjectionMatrix = modelViewMatrix*orientedProjectionMatrix;
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, modelViewMatrix);
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
-	}
-	if (currentMatrixMode == OF_MATRIX_PROJECTION){
-		orientedProjectionMatrix = projectionMatrix*orientationMatrix;
-		modelViewProjectionMatrix = modelViewMatrix*orientedProjectionMatrix;
-		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, orientedProjectionMatrix);
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
-	}
-	if (currentMatrixMode == OF_MATRIX_TEXTURE){
-		currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, textureMatrix);
+	switch(matrixStack.getCurrentMatrixMode()){
+	case OF_MATRIX_MODELVIEW:
+		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewPorjectionMatrix());
+		break;
+	case OF_MATRIX_PROJECTION:
+		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewPorjectionMatrix());
+		break;
+	case OF_MATRIX_TEXTURE:
+		currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());
+		break;
 	}
 
 }
@@ -1303,12 +704,6 @@ ofShader & ofProgrammableGLRenderer::getCurrentShader(){
 }
 
 //----------------------------------------------------------
-void ofProgrammableGLRenderer::setDefaultShader(ofShader & shader){
-	externalShader = shader;
-	externalShaderProvided = true;
-}
-
-//----------------------------------------------------------
 void ofProgrammableGLRenderer::enableVertices(){
 }
 
@@ -1376,49 +771,44 @@ void ofProgrammableGLRenderer::beginCustomShader(ofShader & shader){
 
 void ofProgrammableGLRenderer::uploadAllMatrices(){
 	if(!currentShader) return;
-	currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, modelViewMatrix);
-	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, orientedProjectionMatrix);
-	currentShader->setUniformMatrix4f(ORIENTATION_MATRIX_UNIFORM, orientationMatrix);
-	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, textureMatrix);
-	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, modelViewProjectionMatrix);
+	currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
+	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());
+	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewPorjectionMatrix());
 }
 
 void ofProgrammableGLRenderer::beginDefaultShader(){
 	if(usingCustomShader) return;
 	ofShader * nextShader = NULL;
 
-	if(externalShaderProvided){
-		nextShader = &externalShader;
-	}else{
-		if(colorsEnabled && texCoordsEnabled){
-			switch(currentTextureTarget){
-			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultShaderTexColor;
-				break;
-			case GL_TEXTURE_2D:
-				nextShader = &defaultShaderTex2DColor;
-				break;
-			case OF_NO_TEXTURE:
-				nextShader = &defaultShaderNoTexColor;
-				break;
-			}
-		}else if(colorsEnabled){
-			nextShader = &defaultShaderNoTexColor;
-		}else if(texCoordsEnabled){
-			switch(currentTextureTarget){
-			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultShaderTexNoColor;
-				break;
-			case GL_TEXTURE_2D:
-				nextShader = &defaultShaderTex2DNoColor;
-				break;
-			case OF_NO_TEXTURE:
-				nextShader = &defaultShaderNoTexNoColor;
-				break;
-			}
-		}else{
-			nextShader = &defaultShaderNoTexNoColor;
+	if(colorsEnabled && texCoordsEnabled){
+		switch(currentTextureTarget){
+		case GL_TEXTURE_RECTANGLE_ARB:
+			nextShader = &ofShader::defaultTexColor();
+			break;
+		case GL_TEXTURE_2D:
+			nextShader = &ofShader::defaultTex2DColor();
+			break;
+		case OF_NO_TEXTURE:
+			nextShader = &ofShader::defaultNoTexColor();
+			break;
 		}
+	}else if(colorsEnabled){
+		nextShader = &ofShader::defaultNoTexColor();
+	}else if(texCoordsEnabled){
+		switch(currentTextureTarget){
+		case GL_TEXTURE_RECTANGLE_ARB:
+			nextShader = &ofShader::defaultTexNoColor();
+			break;
+		case GL_TEXTURE_2D:
+			nextShader = &ofShader::defaultTex2DNoColor();
+			break;
+		case OF_NO_TEXTURE:
+			nextShader = &ofShader::defaultNoTexNoColor();
+			break;
+		}
+	}else{
+		nextShader = &ofShader::defaultNoTexNoColor();
 	}
 
 	if(nextShader && (!currentShader || *currentShader!=*nextShader)){
@@ -1609,10 +999,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			pushMatrix();
 
 			translate(x, y, z);
-
-			if(!isVFlipped()){
-				scale(1,-1,1);
-			}
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1633,7 +1019,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			
 			rViewport = getCurrentViewport();
 			
-			ofVec3f dScreen = ofVec3f(x,y,z) * modelViewMatrix * projectionMatrix;
+			ofVec3f dScreen = ofVec3f(x,y,z) * matrixStack.getModelViewMatrix() * matrixStack.getProjectionMatrixNoOrientation();
 			dScreen += ofVec3f(1.0) ;
 			dScreen *= 0.5;
 			
@@ -1661,10 +1047,6 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 			scale(2/rViewport.width, 2/rViewport.height, 1);
 
 			translate(dScreen.x, dScreen.y, 0);
-
-			if(!isVFlipped()){
-				scale(1,-1,1);
-			}
 		}
 			break;
 
@@ -1678,7 +1060,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	// to render text. This gives us more flexibility & control
 	// and does not mess/interfere with client side shaders.
 	
-	bitmapStringShader.begin();
+	ofShader::bitmapStringShader().begin();
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
@@ -1706,7 +1088,7 @@ void ofProgrammableGLRenderer::drawString(string textString, float x, float y, f
 	}
 	//We do this because its way faster
 	ofDrawBitmapCharacterEnd();
-	bitmapStringShader.end();
+	ofShader::bitmapStringShader().end();
 
 
 	if (hasModelView)

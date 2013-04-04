@@ -82,7 +82,7 @@ public:
     ofVec3f& operator/=( const float f );
 	
 	friend ostream& operator<<(ostream& os, const ofVec3f& vec);
-	friend istream& operator>>(istream& is, const ofVec3f& vec);
+	friend istream& operator>>(istream& is, ofVec3f& vec);
 	
     //Scale
     //

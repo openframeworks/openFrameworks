@@ -39,18 +39,13 @@ void orthoCamera::begin(ofRectangle rect){
 	//--
 	// Setup projection
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	ofSetMatrixMode(OF_MATRIX_PROJECTION);
 	
-#ifndef TARGET_OPENGLES
-	glOrtho(-scalex, scalex, -scaley, scaley, -20 * scale, 20 * scale);
-#else
     ofMatrix4x4 ortho;
     ortho.makeOrthoMatrix(-scalex, scalex, -scaley, scaley, -20 * scale, 28 * scale );
     ofLoadMatrix( ortho );
-#endif
 
-	glMatrixMode(GL_MODELVIEW);
+    ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 
 	//
 	//--

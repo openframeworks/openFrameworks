@@ -135,7 +135,7 @@ void ofxAssimpModelLoader::loadGLResources(){
     ofLog(OF_LOG_VERBOSE, "loading gl resources");
 
     // create new mesh helpers for each mesh, will populate their data later.
-   // modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
+   modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
 
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
@@ -144,8 +144,8 @@ void ofxAssimpModelLoader::loadGLResources(){
         aiMesh* mesh = scene->mMeshes[i];
 
         // the current meshHelper we will be populating data into.
-        //ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
-        ofxAssimpMeshHelper meshHelper;
+        ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
+        //ofxAssimpMeshHelper meshHelper;
 		
         //meshHelper.texture = NULL;
 
@@ -253,7 +253,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 		}
 
         meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
-        modelMeshes.push_back(meshHelper);
+
+        //modelMeshes.push_back(meshHelper);
     }
     
     int numOfAnimations = scene->mNumAnimations;
@@ -636,12 +637,14 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     
     ofPushStyle();
     
-#ifndef TARGET_OPENGLES
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-#endif
-    glEnable(GL_NORMALIZE);
+    if(!ofGetProgrammableGLRenderer()){
+	#ifndef TARGET_OPENGLES
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+	#endif
+		glEnable(GL_NORMALIZE);
+    }
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
     
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
@@ -696,11 +699,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     }
     
     ofPopMatrix();
-    
-#ifndef TARGET_OPENGLES
-    glPopClientAttrib();
-    glPopAttrib();
-#endif
+
+    if(!ofGetProgrammableGLRenderer()){
+	#ifndef TARGET_OPENGLES
+		glPopClientAttrib();
+		glPopAttrib();
+	#endif
+    }
     ofPopStyle();
 }
 

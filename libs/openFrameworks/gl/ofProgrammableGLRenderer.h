@@ -4,6 +4,7 @@
 #include "ofMatrix4x4.h"
 #include "ofShader.h"
 #include "ofGraphics.h"
+#include "ofMatrixStack.h"
 
 
 #include <stack>
@@ -20,7 +21,6 @@ public:
     static const string TYPE;
 	const string & getType(){ return TYPE; }
     
-    bool setup();
     void startRender();
     void finishRender();
 
@@ -51,9 +51,9 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0);
-	void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1);
+	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
+	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	ofRectangle getCurrentViewport();
 	ofRectangle getNativeViewport();
@@ -131,7 +131,6 @@ public:
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
 	ofShader & getCurrentShader();
-	void setDefaultShader(ofShader & shader);
 
 	void enableVertices();
 	void enableTexCoords();
@@ -168,46 +167,19 @@ private:
 	void uploadAllMatrices();
 
     
-	ofHandednessType coordHandedness;
-
-	stack <ofRectangle> viewportHistory;
-	stack <ofMatrix4x4> modelViewMatrixStack;
-	stack <ofMatrix4x4> projectionMatrixStack;
-	stack <ofMatrix4x4> textureMatrixStack;
-	stack <pair<ofOrientation,bool> > orientationStack;
-	
-    ofMatrixMode currentMatrixMode;
-
-	ofMatrix4x4 * currentMatrix;
-
-	ofMatrix4x4	modelViewMatrix;
-	ofMatrix4x4	projectionMatrix;
-	ofMatrix4x4	textureMatrix;
-	ofMatrix4x4 modelViewProjectionMatrix;
-	ofMatrix4x4 orientedProjectionMatrix;
-	ofMatrix4x4 orientationMatrix;
-	bool vFlipped;
+	ofMatrixStack matrixStack;
 
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
     ofFloatColor currentColor;
     
-	
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
-    
-	ofFbo * currentFbo;
 	
 	ofShader * currentShader;
-	ofShader externalShader,defaultShaderTexColor,defaultShaderTex2DColor,defaultShaderNoTexColor,defaultShaderTexNoColor,defaultShaderTex2DNoColor,defaultShaderNoTexNoColor;
-	ofShader bitmapStringShader;
-
-	string vertexFile;
-	string fragmentFile;
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled;
-	bool externalShaderProvided;
 	bool usingCustomShader, settingDefaultShader;
 	int currentTextureTarget;
 
