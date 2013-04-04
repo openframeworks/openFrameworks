@@ -9,18 +9,10 @@ void testApp::setup(){
 	tdfSmall.loadImage("images/tdf_1972_poster.jpg");
 	tdfSmall.resize(tdfSmall.width / 4, tdfSmall.height / 4);
 	tdfSmall.setImageType(OF_IMAGE_GRAYSCALE);
-	if(ofGetProgrammableGLRenderer()){
-		// gl3/4 has dropped GL_LUMINANCE so go back to color alpha
-		tdfSmall.setImageType(OF_IMAGE_COLOR_ALPHA);
-	}
 
 	transparency.loadImage("images/transparency.png");
 	bikeIcon.loadImage("images/bike_icon.png");
 	bikeIcon.setImageType(OF_IMAGE_GRAYSCALE);
-	if(ofGetProgrammableGLRenderer()){
-		// gl3/4 has dropped GL_LUMINANCE so go back to color alpha
-		bikeIcon.setImageType(OF_IMAGE_COLOR_ALPHA);
-	}
 }
 
 //--------------------------------------------------------------
