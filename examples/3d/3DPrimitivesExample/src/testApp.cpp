@@ -24,7 +24,7 @@ void testApp::setup(){
     float width     = ofGetWidth() * .12;
     float height    = ofGetHeight() * .12;
     
-    
+
     plane.set( width*1.5, height*1.5 );
     box.set( width*1.25 );
     sphere.setRadius( width );
@@ -279,23 +279,23 @@ void testApp::draw() {
         ofSetColor(255);
         if(mode == 3) {
             cylinder.transformGL();
-            glPushMatrix(); {
+            ofPushMatrix(); {
                 if(topCap.getNumNormals() > 0) {
                     ofTranslate( topCap.getNormal(0) * (cos(ofGetElapsedTimef()*5)+1)*.5f * 100 );
                     topCap.draw();
                 }
-            } glPopMatrix();
-            glPushMatrix(); {
+            } ofPopMatrix();
+            ofPushMatrix(); {
                 if(bottomCap.getNumNormals() > 0) {
                     ofTranslate( bottomCap.getNormal(0) * (cos(ofGetElapsedTimef()*4)+1)*.5f * 100 );
                     bottomCap.draw();
                 }
-            } glPopMatrix();
-            glPushMatrix(); {
+            } ofPopMatrix();
+            ofPushMatrix(); {
                 float scale = (cos(ofGetElapsedTimef()*3)+1)*.5f + .2;
                 ofScale( scale, scale, scale );
                 body.draw();
-            } glPopMatrix();
+            } ofPopMatrix();
             cylinder.restoreTransformGL();
         } else {
             cylinder.draw();
@@ -325,19 +325,19 @@ void testApp::draw() {
         ofSetColor(255);
         if(mode == 3) {
             cone.transformGL();
-            glPushMatrix();
+            ofPushMatrix();
             if(bottomCap.getNumNormals() > 0 ) {
                 ofTranslate( bottomCap.getNormal(0) * cone.getHeight()*.5 );
-                glRotatef( sin(ofGetElapsedTimef()*5) * RAD_TO_DEG, 1, 0, 0);
+                ofRotate( sin(ofGetElapsedTimef()*5) * RAD_TO_DEG, 1, 0, 0);
                 bottomCap.draw();
             }
-            glPopMatrix();
+            ofPopMatrix();
             
-            glPushMatrix();
-            glRotatef(90, 1, 0, 0);
-            glRotatef( (cos(ofGetElapsedTimef()*6) +1)*.5 * 360 , 1, 0, 0 );
+            ofPushMatrix();
+            ofRotate(90, 1, 0, 0);
+            ofRotate( (cos(ofGetElapsedTimef()*6) +1)*.5 * 360 , 1, 0, 0 );
             body.draw();
-            glPopMatrix();
+            ofPopMatrix();
             cone.restoreTransformGL();
         } else {
             cone.draw();
