@@ -14,7 +14,7 @@ void testApp::setup(){
 	ofNoFill();
 	ofSetFrameRate(30);
 	ofBackground(0);
-	
+
 	//this slows down the rotate a little bit
 	dampen = .4;
 }
@@ -28,7 +28,7 @@ void testApp::update(){
 void testApp::draw(){
 	
 	//translate so that 0,0 is the center of the screen
-    glPushMatrix();  
+    ofPushMatrix();
     ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 40);  
 	//Extract the rotation from the current rotation
     ofVec3f axis;  
