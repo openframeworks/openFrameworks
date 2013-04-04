@@ -12,16 +12,32 @@ void testApp::setup() {
 		vel[i].x = ofRandomf();
 		vel[i].y = ofRandomf();
 		home[i] = pos[i];
-		pointSizes[i] = ofNextPow2(ofRandom(2, 40));
+		pointSizes[i] = ofRandom(2, 40);
 		rotations[i] = ofRandom(0, 360);
 	}
 	
 	// set the vertex data
 	vbo.setVertexData(pos, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	shader.load("Billboard");
+	if(ofGetProgrammableGLRenderer()){
+		shader.load("shaderGL3/Billboard");
+	}else{
+		shader.load("shaderGL2/Billboard");
+	}
 	
 	ofDisableArbTex();
 	texture.loadImage("snow.png");
+
+	// we are getting the location of the point size attribute
+	// we then set the pointSizes to the vertex attritbute
+	// we then bind and then enable
+	shader.begin();
+	int pointAttLoc = shader.getAttributeLocation("pointSize");
+	vbo.setAttributeData(pointAttLoc, pointSizes, 1, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
+
+	// rotate the snow based on the velocity
+	int angleLoc = shader.getAttributeLocation("angle");
+	vbo.setAttributeData(angleLoc, rotations, 1, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
+	shader.end();
 }
 
 //--------------------------------------------------------------
@@ -63,34 +79,26 @@ void testApp::draw() {
 	ofEnableAlphaBlending();
 	ofSetColor(255);
 	
-	ofEnablePointSprites();
 	shader.begin();
+	ofEnablePointSprites();
 	
-	// we are getting the location of the point size attribute
-	// we then set the pointSizes to the vertex attritbute
-	// we then bind and then enable
-	int pointAttLoc = shader.getAttributeLocation("pointSize");
-	glVertexAttribPointer(pointAttLoc, 1, GL_FLOAT, false, 0, pointSizes);
-	glBindAttribLocation(shader.getProgram(), pointAttLoc, "pointSize");
-	glEnableVertexAttribArray(pointAttLoc);
-	
-	// rotate the snow based on the velocity
-	int angleLoc = shader.getAttributeLocation("angle");
-	glVertexAttribPointer(angleLoc, 1, GL_FLOAT, false, 0, rotations);
-	glBindAttribLocation(shader.getProgram(), angleLoc, "angle");
-	glEnableVertexAttribArray(angleLoc);
 	
 	texture.getTextureReference().bind();
 	vbo.updateVertexData(pos, NUM_BILLBOARDS);
+
+	// rotate the snow based on the velocity
+	int angleLoc = shader.getAttributeLocation("angle");
+	vbo.updateAttributeData(angleLoc, rotations, NUM_BILLBOARDS);
+
 	vbo.draw(GL_POINTS, 0, NUM_BILLBOARDS);
 	texture.getTextureReference().unbind();
-	
-	shader.end();
+
 	ofDisablePointSprites();
+	shader.end();
 	
 	// disable vertex attributes
-	glDisableVertexAttribArray(pointAttLoc); 
-	glDisableVertexAttribArray(angleLoc);
+	//glDisableVertexAttribArray(pointAttLoc);
+	//glDisableVertexAttribArray(angleLoc);
 }
 
 //--------------------------------------------------------------
