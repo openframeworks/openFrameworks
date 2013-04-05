@@ -694,10 +694,10 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 
 
-	ofPixels atlasPixels;
-	atlasPixels.allocate(w,h,2);
-	atlasPixels.set(0,255);
-	atlasPixels.set(1,0);
+	ofPixels atlasPixelsLuminanceAlpha;
+	atlasPixelsLuminanceAlpha.allocate(w,h,2);
+	atlasPixelsLuminanceAlpha.set(0,255);
+	atlasPixelsLuminanceAlpha.set(1,0);
 
 
 	int x=0;
@@ -716,11 +716,17 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
 		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
 		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
-		charPixels.pasteInto(atlasPixels,x+border,y+border);
+		charPixels.pasteInto(atlasPixelsLuminanceAlpha,x+border,y+border);
 		x+= sortedCopy[i].tW + border*2;
 	}
 
-	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_RGBA,false);
+	ofPixels atlasPixels;
+	atlasPixels.allocate(atlasPixelsLuminanceAlpha.getWidth(),atlasPixelsLuminanceAlpha.getHeight(),4);
+	atlasPixels.setChannel(0,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(1,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(2,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(3,atlasPixelsLuminanceAlpha.getChannel(1));
+	texAtlas.allocate(atlasPixels,false);
 
 	if(bAntiAliased && fontSize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);

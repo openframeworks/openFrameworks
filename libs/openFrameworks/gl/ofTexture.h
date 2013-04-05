@@ -100,7 +100,7 @@ class ofTexture : public ofBaseDraws {
 	// glInternalFormat: the format the texture will have in the graphics card (specified on allocate)
 	// http://www.opengl.org/wiki/Image_Format
 	//
-	// glFormat: format of the uploaded data, can be different to the internal format
+	// glFormat: format of the uploaded data, has to match the internal format although can change order
 	// pixelType: type of the uploaded data, depends on the pixels on cpu memory.
 	// http://www.opengl.org/wiki/Pixel_Transfer
 	//
@@ -121,10 +121,8 @@ class ofTexture : public ofBaseDraws {
 													  //its up to you to set the rest of the textData params manually. 
 
 	// glFormat can be different to the internal format of the texture in each load
-	// for example to a GL_RGBA texture we can upload a 1 channel image as
-	// GL_LUMINANACE and it will be uploaded to the 3 channels
-	// or 2 channels with GL_LUMINANCE_ALPHA and channel 1 will be uploaded to RGB
-	// and channel 2 to A
+	// for example to a GL_RGBA texture we can upload a  GL_BGRA pixels
+	// but the number of channels need to match according to the standard
 	void loadData(const unsigned char* const data, int w, int h, int glFormat);
 	void loadData(const unsigned short* data, int w, int h, int glFormat);
 	void loadData(const float* data, int w, int h, int glFormat);
