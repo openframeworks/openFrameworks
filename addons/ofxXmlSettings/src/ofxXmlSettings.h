@@ -3,7 +3,7 @@
 
 #include "ofMain.h"
 #include <string.h>
-#include "tinyxml.h"
+#include "../libs/tinyxml.h"
 
 using namespace std;
 
