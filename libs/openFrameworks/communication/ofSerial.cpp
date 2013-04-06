@@ -548,7 +548,7 @@ bool ofSerial::writeByte(unsigned char singleByte){
 		DWORD written = 0;
 		if(!WriteFile(hComm, tmpByte, 1, &written,0)){
 			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
-			 return OF_SERIAL_ERROR;;
+			 return (bool)OF_SERIAL_ERROR;
 		}
 
 		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
