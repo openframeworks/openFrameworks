@@ -92,14 +92,13 @@ enum ofTargetPlatform{
 	#if (_MSC_VER)       // microsoft visual studio
 		#include <stdint.h>
 		#include <functional>
-		#pragma warning(disable : 4068)     // unknown pragmas
-		#pragma warning(disable : 4101)     // unreferenced local variable
-		#pragma	warning(disable : 4312)		// type cast conversion (in qt vp)
-		#pragma warning(disable : 4311)		// type cast pointer truncation (qt vp)
 		#pragma warning(disable : 4018)		// signed/unsigned mismatch (since vector.size() is a size_t)
+		#pragma warning(disable : 4068)		// unknown pragmas
+		#pragma warning(disable : 4101)		// unreferenced local variable
 		#pragma warning(disable : 4267)		// conversion from size_t to Size warning... possible loss of data
+		#pragma warning(disable : 4311)		// type cast pointer truncation (qt vp)
+		#pragma warning(disable : 4312)		// type cast conversion (in qt vp)
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
-		#pragma warning(disable : 4099)		// for debug, PDB 'vc80.pdb' was not found with...
 		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
 	#endif
 
