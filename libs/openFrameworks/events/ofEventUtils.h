@@ -2,28 +2,28 @@
 
 #include "ofConstants.h"
 
-#include "Poco/FIFOEvent.h"
+#include "Poco/BasicEvent.h"
 #include "Poco/Delegate.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 //-----------------------------------------
-// define ofEvent as a poco FIFOEvent
+// define ofEvent as a poco BasicEvent
 // to create your own events use:
 // ofEvent<argType> myEvent
 
 template <typename ArgumentsType>
-class ofEvent: public Poco::FIFOEvent<ArgumentsType> {
+class ofEvent: public Poco::BasicEvent<ArgumentsType> {
 public:
 
-	ofEvent():Poco::FIFOEvent<ArgumentsType>(){
+	ofEvent():Poco::BasicEvent<ArgumentsType>(){
 
 	}
 
 	// allow copy of events, by copying everything except the mutex
 	ofEvent(const ofEvent<ArgumentsType> & mom)
-	:Poco::FIFOEvent<ArgumentsType>()
+	:Poco::BasicEvent<ArgumentsType>()
 	{
 		this->_enabled = mom._enabled;
 	}

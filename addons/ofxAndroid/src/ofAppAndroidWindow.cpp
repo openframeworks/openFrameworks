@@ -87,7 +87,7 @@ jobject ofGetOFActivityObject(){
 	jclass OFAndroid = ofGetJavaOFAndroid();
 	if(!OFAndroid) return NULL;
 
-	jfieldID ofActivityID = env->GetStaticFieldID(OFAndroid,"ofActivity","Landroid/app/Activity;");
+	jfieldID ofActivityID = env->GetStaticFieldID(OFAndroid,"ofActivity","Lcc/openframeworks/OFActivity;");
 	if(!ofActivityID){
 		ofLogError() << "Failed to get field ID for ofActivity";
 		return NULL;
@@ -250,17 +250,33 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
     if(appname!=""){
 		string resources_name = ofToLower(appname + "resources.zip");
 		ofFile resources(resources_name);
+		jobject activity = ofGetOFActivityObject();
+		jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
+		jmethodID onLoadPercent = ofGetJNIEnv()->GetMethodID(activityClass,"onLoadPercent","(F)V");
 		if(resources.exists()){
 			__android_log_print(ANDROID_LOG_DEBUG,"OF",("uncompressing " + resources.getAbsolutePath()).c_str());
 			unzFile zip = unzOpen(resources.getAbsolutePath().c_str());
 			char current_dir[1000];
 			getcwd(current_dir,1000);
 			chdir(ofToDataPath("",true).c_str());
-			do_extract(zip,0,1,NULL);
+
+
+		    unz_global_info gi;
+		    int err = unzGetGlobalInfo (zip,&gi);
+		    if (err!=UNZ_OK){
+		    	__android_log_print(ANDROID_LOG_ERROR,"OF","error %d with zipfile in unzGetGlobalInfo \n",err);
+		    }else{
+
+				for (uLong i=0;i<gi.number_entry;i++){
+					do_extract_one_entry(zip,0,1,NULL,&gi,i);
+					ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat).40f+(.40/gi.number_entry*i));
+				}
+		    }
 			chdir(current_dir);
 
 			resources.remove();
 		}else{
+			ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat).80f);
 			__android_log_print(ANDROID_LOG_DEBUG,"OF",("no resources found in " + resources.getAbsolutePath()).c_str());
 		}
     }

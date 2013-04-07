@@ -55,18 +55,18 @@ public:
 	void disableTexCoords();
 	void disableIndices();
 
-	GLuint getVertId();
-	GLuint getColorId();
-	GLuint getNormalId();
-	GLuint getTexCoordId();
-	GLuint getIndexId();
+	GLuint getVertId() const;
+	GLuint getColorId() const;
+	GLuint getNormalId() const;
+	GLuint getTexCoordId() const;
+	GLuint getIndexId() const;
 	
-	bool getIsAllocated();
-	bool getUsingVerts();
-	bool getUsingColors();
-	bool getUsingNormals();
-	bool getUsingTexCoords();
-	bool getUsingIndices();
+	bool getIsAllocated() const;
+	bool getUsingVerts() const;
+	bool getUsingColors() const;
+	bool getUsingNormals() const;
+	bool getUsingTexCoords() const;
+	bool getUsingIndices() const;
 	
 	void draw(int drawMode, int first, int total);
 	void drawElements(int drawMode, int amt);

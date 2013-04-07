@@ -51,7 +51,7 @@ class ofSerial {
 			int				available();
 
             void            drain();
-
+            bool            isInitialized() const;
 			
 
 	protected:
