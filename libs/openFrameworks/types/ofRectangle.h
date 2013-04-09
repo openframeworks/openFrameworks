@@ -216,5 +216,8 @@ public:
     float& y;
     float width;
     float height;
+
+    string toString() const;
+    operator string() const;
 };
 
