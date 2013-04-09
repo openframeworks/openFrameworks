@@ -697,6 +697,21 @@ PixelType & ofColor_<PixelType>::operator [] (int n){
 	}
 }
 
+template<typename PixelType>
+string ofColor_<PixelType>::toString() const
+{
+    char buffer[ 1024 ];
+    // TODO: proper templated type handling
+    snprintf( buffer, 1024, "[ r: %d g: %d b: %d a: %d ]", ( int )r, ( int )g, ( int )b, ( int )a );
+    return buffer;
+}
+
+template<typename PixelType>
+ofColor_<PixelType>::operator string() const
+{
+    return toString();
+}
+
 template class ofColor_<char>;
 template class ofColor_<unsigned char>;
 template class ofColor_<short>;
