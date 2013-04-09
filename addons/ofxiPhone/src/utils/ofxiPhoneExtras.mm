@@ -407,7 +407,7 @@ string ofxNSStringToString(NSString * s) {
 
 NSString * ofxStringToNSString(string s)
 {
-	return [[[NSString alloc] initWithCString: s.c_str()] autorelease];
+	return [[[NSString alloc] initWithCString: s.c_str() encoding:NSUTF8StringEncoding] autorelease];
 }
 
 //--------------------------------------------------------------
