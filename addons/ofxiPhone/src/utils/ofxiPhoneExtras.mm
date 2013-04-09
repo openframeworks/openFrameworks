@@ -419,6 +419,58 @@ void ofxiPhoneLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
+//--------------------------------------------------------------
+
+inline float ofxColorUnsignedCharToFloat( unsigned char component )
+{
+    if ( component < 0 )
+    {
+        component = 0;
+    }
+    return ( ( float )component ) / 255.0f;
+}
+
+inline unsigned char ofxColorFloatToUnsignedChar( float component )
+{
+    return ( unsigned char )( component * 255.0f );
+}
+
+UIColor* ofxColorToUIColor( const ofColor& from )
+{
+    UIColor* to = [ [ UIColor alloc ] initWithRed: ofxColorUnsignedCharToFloat( from.r )
+                                            green: ofxColorUnsignedCharToFloat( from.g )
+                                             blue: ofxColorUnsignedCharToFloat( from.b )
+                                            alpha: ofxColorUnsignedCharToFloat( from.a ) ];
+    [ to autorelease ];
+    return to;
+}
+
+//--------------------------------------------------------------
+
+ofColor ofxUIColorToofColor( UIColor* from )
+{
+    ofColor to;
+    CGColorRef color = [ from CGColor ];
+    
+    const float* colorComponents = CGColorGetComponents( color );
+    to.r = 0;
+    to.g = 0;
+    to.b = 0;
+    to.a = ofxColorFloatToUnsignedChar( CGColorGetAlpha( color ) );
+    
+    if ( CGColorGetNumberOfComponents( color ) == 2)
+    {
+        to.r = to.g = to.b = ofxColorFloatToUnsignedChar( colorComponents[ 0 ] );
+    }
+    else if ( CGColorGetNumberOfComponents( color ) >= 3)
+    {
+        to.r = ofxColorFloatToUnsignedChar( colorComponents[ 0 ] );
+        to.g = ofxColorFloatToUnsignedChar( colorComponents[ 1 ] );
+        to.b = ofxColorFloatToUnsignedChar( colorComponents[ 2 ] );
+    }
+    return to;
+}
+
 /******************** ofxiPhoneScreenGrab *********************/
 
 @interface SaveDelegate : NSObject {
