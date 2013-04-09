@@ -145,7 +145,10 @@ class ofColor_{
 			};
 			PixelType v[4];
 		};
-		
+
+    string toString() const;
+    operator string() const;
+
 	private:
 		template<typename SrcType>
 		void copyFrom(const ofColor_<SrcType> & mom);
