@@ -384,6 +384,18 @@ string ofToDocumentsPath(string path, bool makeAbsolute){
 }
 
 //----------------------------------------
+string ofToPath(string path, bool useDocuments, bool absolute)
+{
+    if ( useDocuments )
+    {
+        return ofToDocumentsPath( path, absolute );
+    } else
+    {
+        return ofToDataPath( path, absolute );
+    }
+}
+
+//----------------------------------------
 template <>
 string ofToHex(const string& value) {
 	ostringstream out;

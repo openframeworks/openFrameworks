@@ -48,6 +48,8 @@ void	ofEnableDocumentsPath();
 void	ofDisableDocumentsPath();
 string 	ofToDocumentsPath(string path, bool absolute=false);
 
+string ofToPath(string path, bool useDocuments=false, bool absolute=false);
+
 template<class T>
 void ofRandomize(vector<T>& values) {
 	random_shuffle(values.begin(), values.end());
