@@ -195,6 +195,10 @@ string ofxiPhoneGetDocumentsDirectory();
 // opens url in safari.
 void ofxiPhoneLaunchBrowser(string url);
 
+// utility functions for converting ofRectangles and CGRects back and forth
+CGRect ofxRectangleToCGRect(const ofRectangle& from);
+ofRectangle ofxCGRectToofRectangle(const CGRect& from);
+
 //-------------------------------------------------------------------------------
 // backwards compatibility
 //
