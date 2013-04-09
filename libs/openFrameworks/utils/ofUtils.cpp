@@ -52,6 +52,7 @@
 #endif
 
 static bool enableDataPath = true;
+static bool enableDocumentsPath = true;
 static unsigned long long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
 static unsigned long long startTimeMicros = ofGetSystemTimeMicros();
 
@@ -326,6 +327,58 @@ string ofToDataPath(string path, bool makeAbsolute){
 
         path = fixPathForOS(path, dataPathRoot(), makeAbsolute);
 
+	}
+	return path;
+}
+
+//--------------------------------------------------
+void ofEnableDocumentsPath(){
+	enableDocumentsPath = true;
+}
+
+//--------------------------------------------------
+void ofDisableDocumentsPath(){
+	enableDocumentsPath = false;
+}
+
+//--------------------------------------------------
+//use ofSetDocumentsPathRoot() to override this
+static string & documentsPathRoot(){
+#if defined TARGET_OSX
+    // TODO
+#elif defined TARGET_ANDROID
+    // TODO
+#elif defined(TARGET_LINUX)
+    // TODO
+#else
+	static string * documentsPathRoot = new string("documents/");
+#endif
+	return *documentsPathRoot;
+}
+
+static bool & isDocumentsPathSet(){
+	static bool * documentsPathSet = new bool(false);
+	return * documentsPathSet;
+}
+
+//--------------------------------------------------
+void ofSetDocumentsPathRoot(string newRoot){
+	string newPath = "";
+    
+	documentsPathRoot() = newRoot;
+	isDocumentsPathSet() = true;
+}
+
+//--------------------------------------------------
+string ofToDocumentsPath(string path, bool makeAbsolute){
+	
+	if (!isDocumentsPathSet())
+		ofSetDocumentsPathRoot(documentsPathRoot());
+	
+	if( enableDocumentsPath ){
+        
+        path = fixPathForOS(path, documentsPathRoot(), makeAbsolute);
+        
 	}
 	return path;
 }
