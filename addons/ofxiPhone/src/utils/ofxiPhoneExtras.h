@@ -195,6 +195,10 @@ string ofxiPhoneGetDocumentsDirectory();
 // opens url in safari.
 void ofxiPhoneLaunchBrowser(string url);
 
+// utility functions for converting ofColors and UIColors back and forth
+UIColor * ofxColorToUIColor(const ofColor & from);
+ofColor ofxUIColorToofColor(UIColor * from);
+
 //-------------------------------------------------------------------------------
 // backwards compatibility
 //
