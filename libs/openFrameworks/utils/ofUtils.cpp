@@ -52,6 +52,7 @@
 #endif
 
 static bool enableDataPath = true;
+static bool enableDocumentsPath = true;
 static unsigned long long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
 static unsigned long long startTimeMicros = ofGetSystemTimeMicros();
 
@@ -201,6 +202,52 @@ int ofGetWeekday(){
 }
 
 //--------------------------------------------------
+string fixPathForOS(string path, string root, bool makeAbsolute = false){
+    
+    //we create rootPath as a string for the check, on windows we modify it to check both types of slashes
+    //however we use the original value from root to prepend the string if needed.
+    string rootPath = root;
+    string enclosingFolder = path.substr(0,rootPath.length());
+    
+#ifdef TARGET_WIN32
+    //this is so we can check both "data\" and "data/" on windows
+    std::replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
+    std::replace( rootPath.begin(), rootPath.end(), '\\', '/' );
+#endif // TARGET_WIN32
+    
+    //check if absolute path has been passed or if data path has already been applied
+    //do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
+    if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" && enclosingFolder != rootPath)){
+        path = root+path;
+    }
+    
+    if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
+#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
+        
+#ifndef TARGET_WIN32
+        char currDir[1024];
+        path = "/"+path;
+        path = getcwd(currDir, 1024)+path;
+        
+#else
+        
+        char currDir[1024];
+        path = "\\"+path;
+        path = _getcwd(currDir, 1024)+path;
+        std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
+        
+        
+#endif
+        
+        
+#else
+        //do we need iphone specific code here?
+#endif
+    }
+    return path;
+}
+
+//--------------------------------------------------
 void ofEnableDataPath(){
 	enableDataPath = true;
 }
@@ -278,49 +325,74 @@ string ofToDataPath(string path, bool makeAbsolute){
 	
 	if( enableDataPath ){
 
-        //we create dataPath as a string for the check, on windows we modify it to check both types of slashes
-        //however we use the original value from dataPathRoot() to prepend the string if needed.  
-        string dataPath = dataPathRoot(); 
-        string enclosingFolder = path.substr(0,dataPath.length());
-        
-        #ifdef TARGET_WIN32
-            //this is so we can check both "data\" and "data/" on windows
-            std::replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
-            std::replace( dataPath.begin(), dataPath.end(), '\\', '/' );
-        #endif // TARGET_WIN32
-
-		//check if absolute path has been passed or if data path has already been applied
-		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" && enclosingFolder != dataPath)){
-			path = dataPathRoot()+path;
-		}
-
-		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
-			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
-
-			#ifndef TARGET_WIN32
-				char currDir[1024];
-				path = "/"+path;
-                path = getcwd(currDir, 1024)+path;
-
-			#else
-
-				char currDir[1024];
-				path = "\\"+path;
-				path = _getcwd(currDir, 1024)+path;
-				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-
-
-			#endif
-
-
-			#else
-				//do we need iphone specific code here?
-			#endif
-		}
+        path = fixPathForOS(path, dataPathRoot(), makeAbsolute);
 
 	}
 	return path;
+}
+
+//--------------------------------------------------
+void ofEnableDocumentsPath(){
+	enableDocumentsPath = true;
+}
+
+//--------------------------------------------------
+void ofDisableDocumentsPath(){
+	enableDocumentsPath = false;
+}
+
+//--------------------------------------------------
+//use ofSetDocumentsPathRoot() to override this
+static string & documentsPathRoot(){
+#if defined TARGET_OSX
+    // TODO
+#elif defined TARGET_ANDROID
+    // TODO
+#elif defined(TARGET_LINUX)
+    // TODO
+#else
+	static string * documentsPathRoot = new string("documents/");
+#endif
+	return *documentsPathRoot;
+}
+
+static bool & isDocumentsPathSet(){
+	static bool * documentsPathSet = new bool(false);
+	return * documentsPathSet;
+}
+
+//--------------------------------------------------
+void ofSetDocumentsPathRoot(string newRoot){
+	string newPath = "";
+    
+	documentsPathRoot() = newRoot;
+	isDocumentsPathSet() = true;
+}
+
+//--------------------------------------------------
+string ofToDocumentsPath(string path, bool makeAbsolute){
+	
+	if (!isDocumentsPathSet())
+		ofSetDocumentsPathRoot(documentsPathRoot());
+	
+	if( enableDocumentsPath ){
+        
+        path = fixPathForOS(path, documentsPathRoot(), makeAbsolute);
+        
+	}
+	return path;
+}
+
+//----------------------------------------
+string ofToPath(string path, bool useDocuments, bool absolute)
+{
+    if ( useDocuments )
+    {
+        return ofToDocumentsPath( path, absolute );
+    } else
+    {
+        return ofToDataPath( path, absolute );
+    }
 }
 
 //----------------------------------------

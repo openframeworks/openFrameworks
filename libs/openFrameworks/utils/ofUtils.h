@@ -44,6 +44,12 @@ void	ofEnableDataPath();
 void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
 
+void	ofEnableDocumentsPath();
+void	ofDisableDocumentsPath();
+string 	ofToDocumentsPath(string path, bool absolute=false);
+
+string ofToPath(string path, bool useDocuments=false, bool absolute=false);
+
 template<class T>
 void ofRandomize(vector<T>& values) {
 	random_shuffle(values.begin(), values.end());
@@ -76,6 +82,7 @@ bool ofContains(const vector<T>& values, const T& target) {
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );
+void    ofSetDocumentsPathRoot( string root );
 
 template <class T>
 string ofToString(const T& value){
