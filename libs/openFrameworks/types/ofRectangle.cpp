@@ -686,3 +686,14 @@ bool ofRectangle::operator == (const ofRectangle& rect) const {
 	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
 }
 
+string ofRectangle::toString() const
+{
+    char buffer[ 1024 ];
+    snprintf( buffer, 1024, "[ x: %f y: %f w: %f h: %f ]", x, y, width, height );
+    return buffer;
+}
+
+ofRectangle::operator string() const
+{
+    return toString();
+}
