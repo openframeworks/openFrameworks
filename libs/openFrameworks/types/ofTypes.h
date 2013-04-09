@@ -159,6 +159,12 @@ public:
 		explicit
 		ofPtr(std::tr1::unique_ptr<Tp1, Del>&& __r)
 	: std::tr1::shared_ptr<T>(std::move(__r)) { }*/
+    
+    template<typename Tp1>
+    bool operator ==( const ofPtr<Tp1>& __r ) const
+    {
+        return this->get() == __r.get();
+    }
 };
 
 // tgfrerer: extends ofPtr facade to allow dynamic_pointer_cast, pt. 2
@@ -173,3 +179,69 @@ ofPtr<_Tp>
 	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)
 { return ofPtr<_Tp>(__r, std::tr1::__dynamic_cast_tag()); }
 #endif
+
+//----------------------------------------------------------
+// ofPtrWeak
+//----------------------------------------------------------
+template <typename T>
+class ofPtrWeak: public std::tr1::weak_ptr<T>
+{
+public:
+    
+	ofPtrWeak()
+    : std::tr1::weak_ptr<T>() { }
+    
+    template<typename Tp1>
+    explicit
+    ofPtrWeak(Tp1* __p)
+	: std::tr1::weak_ptr<T>(__p) { }
+    
+    template<typename Tp1, typename _Deleter>
+    ofPtrWeak(Tp1* __p, _Deleter __d)
+	: std::tr1::weak_ptr<T>(__p, __d) { }
+    
+    template<typename Tp1, typename _Deleter, typename _Alloc>
+    ofPtrWeak(Tp1* __p, _Deleter __d, const _Alloc& __a)
+	: std::tr1::weak_ptr<T>(__p, __d, __a) { }
+    
+    // Aliasing constructor
+    template<typename Tp1>
+    ofPtrWeak(const ofPtrWeak<Tp1>& __r, T* __p)
+	: std::tr1::weak_ptr<T>(__r, __p) { }
+    
+    template<typename Tp1>
+    ofPtrWeak(const ofPtrWeak<Tp1>& __r)
+	: std::tr1::weak_ptr<T>(__r) { }
+    
+    template<typename Tp1>
+    ofPtrWeak(const ofPtr<Tp1>& __r)
+    : std::tr1::weak_ptr<T>(__r) { }
+    
+    template<typename Tp1>
+    explicit
+    ofPtrWeak(const std::tr1::shared_ptr<Tp1>& __r)
+	: std::tr1::weak_ptr<T>(__r) { }    
+    
+    ofPtr<T> 
+    lock() const
+    {
+        return this->expired() ? ofPtr<T>()
+        : ofPtr<T>(*this);
+    }
+
+    // Implicit conversion to "bool"
+    operator bool() const
+    { return this->expired() ? 0 : 1; }
+    
+    template<typename Tp1>
+    bool operator ==( const ofPtrWeak<Tp1>& __r ) const
+    {
+        return this->lock() == __r.lock();
+    }
+};
+    
+template< typename _Tp, typename _Tp1 >
+ofPtr< _Tp > dynamic_pointer_cast( const ofPtrWeak< _Tp1 >& __r )
+{ 
+    return ofPtr< _Tp >( __r.lock(), std::tr1::__dynamic_cast_tag() ); 
+}
