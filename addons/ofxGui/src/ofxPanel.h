@@ -12,7 +12,7 @@ public:
 	ofxPanel * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
 	ofxPanel * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
 
-	void mouseReleased(ofMouseEventArgs & args);
+	bool mouseReleased(ofMouseEventArgs & args);
 
 	ofEvent<void> loadPressedE;
 	ofEvent<void> savePressedE;

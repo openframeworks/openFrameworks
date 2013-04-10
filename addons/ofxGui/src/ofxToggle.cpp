@@ -32,29 +32,37 @@ ofxToggle * ofxToggle::setup(string toggleName, bool _bVal, float width, float h
 }
 
 
-void ofxToggle::mouseMoved(ofMouseEventArgs & args){
+bool ofxToggle::mouseMoved(ofMouseEventArgs & args){
 	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
-void ofxToggle::mousePressed(ofMouseEventArgs & args){
+bool ofxToggle::mousePressed(ofMouseEventArgs & args){
 	if(setValue(args.x, args.y, true)){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
-void ofxToggle::mouseDragged(ofMouseEventArgs & args){
+bool ofxToggle::mouseDragged(ofMouseEventArgs & args){
 	if(bGuiActive && b.inside(ofPoint(args.x,args.y))){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
-void ofxToggle::mouseReleased(ofMouseEventArgs & args){
+bool ofxToggle::mouseReleased(ofMouseEventArgs & args){
 	bool wasGuiActive = bGuiActive;
 	bGuiActive = false;
 	if(wasGuiActive && b.inside(ofPoint(args.x,args.y))){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 

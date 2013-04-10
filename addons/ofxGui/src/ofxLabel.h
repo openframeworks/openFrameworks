@@ -13,10 +13,10 @@ public:
     ofxLabel * setup(string labelName, string label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
-    virtual void mouseMoved(ofMouseEventArgs & args){}
-    virtual void mousePressed(ofMouseEventArgs & args){}
-    virtual void mouseDragged(ofMouseEventArgs & args){}
-    virtual void mouseReleased(ofMouseEventArgs & args){}
+    virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
+    virtual bool mousePressed(ofMouseEventArgs & args){return false;}
+    virtual bool mouseDragged(ofMouseEventArgs & args){return false;}
+    virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
 
 	virtual void saveTo(ofBaseSerializer& serializer){};
 	virtual void loadFrom(ofBaseSerializer& serializer){};

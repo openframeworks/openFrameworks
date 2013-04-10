@@ -105,11 +105,13 @@ void ofxPanel::render(){
 	}
 }
 
-void ofxPanel::mouseReleased(ofMouseEventArgs & args){
+bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
     this->bGrabbed = false;
-    ofxGuiGroup::mouseReleased(args);
+    if(ofxGuiGroup::mouseReleased(args)) return true;
     if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-    	ofEventMarkAttended();
+    	return true;
+    }else{
+    	return false;
     }
 }
 

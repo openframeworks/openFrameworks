@@ -12,10 +12,10 @@ public:
 	ofxToggle * setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
 	
 
-	virtual void mouseMoved(ofMouseEventArgs & args);
-	virtual void mousePressed(ofMouseEventArgs & args);
-	virtual void mouseDragged(ofMouseEventArgs & args);
-	virtual void mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseMoved(ofMouseEventArgs & args);
+	virtual bool mousePressed(ofMouseEventArgs & args);
+	virtual bool mouseDragged(ofMouseEventArgs & args);
+	virtual bool mouseReleased(ofMouseEventArgs & args);
 	
 
 	template<class ListenerClass>

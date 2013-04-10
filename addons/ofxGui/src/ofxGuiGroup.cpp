@@ -176,48 +176,54 @@ void ofxGuiGroup::clear(){
 	b.height = header + spacing + spacingNextElement ;
 }
 
-void ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
+bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 	ofMouseEventArgs a = args;
 	for(int i = 0; i < (int)collection.size(); i++){
-		collection[i]->mouseMoved(a);
+		if(collection[i]->mouseMoved(a)) return true;
 	}
 	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
-void ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
+bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	if(setValue(args.x, args.y, true)){
-		ofEventMarkAttended();
+		return true;
 	}
 	if( bGuiActive ){
 		ofMouseEventArgs a = args;
 		for(int i = 0; i < (int)collection.size(); i++){
-			collection[i]->mousePressed(a);
+			if(collection[i]->mousePressed(a)) return true;
 		}
 	}
+	return false;
 }
 
-void ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
+bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 	if(setValue(args.x, args.y, false)){
-		ofEventMarkAttended();
+		return true;
 	}
 	if( bGuiActive ){
 		ofMouseEventArgs a = args;
 		for(int i = 0; i < (int)collection.size(); i++){
-			collection[i]->mouseDragged(a);
+			if(collection[i]->mouseDragged(a)) return true;
 		}
 	}
+	return false;
 }
 
-void ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
+bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
 	for(int k = 0; k < (int)collection.size(); k++){
 		ofMouseEventArgs a = args;
-		collection[k]->mouseReleased(a);
+		if(collection[k]->mouseReleased(a)) return true;
 	}
 	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 

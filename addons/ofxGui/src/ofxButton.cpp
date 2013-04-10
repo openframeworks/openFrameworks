@@ -21,24 +21,26 @@ ofxButton* ofxButton::setup(string toggleName, float width, float height){
 	return this;
 }
 
-void ofxButton::mouseReleased(ofMouseEventArgs & args){
+bool ofxButton::mouseReleased(ofMouseEventArgs & args){
 	bool attended = setValue(args.x, args.y, false);
 	bGuiActive = false;
 	if(attended){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
-void ofxButton::mouseMoved(ofMouseEventArgs & args){
-	ofxToggle::mouseMoved(args);
+bool ofxButton::mouseMoved(ofMouseEventArgs & args){
+	return ofxToggle::mouseMoved(args);
 }
 
-void ofxButton::mousePressed(ofMouseEventArgs & args){
-	ofxToggle::mousePressed(args);
+bool ofxButton::mousePressed(ofMouseEventArgs & args){
+	return ofxToggle::mousePressed(args);
 }
 
-void ofxButton::mouseDragged(ofMouseEventArgs & args){
-	ofxToggle::mouseDragged(args);
+bool ofxButton::mouseDragged(ofMouseEventArgs & args){
+	return ofxToggle::mouseDragged(args);
 }
 
 void ofxButton::valueChanged(bool & v){
