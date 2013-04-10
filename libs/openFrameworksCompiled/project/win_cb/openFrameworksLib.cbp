@@ -58,7 +58,8 @@
 			<Add directory="..\..\..\openFrameworks\gl" />
 			<Add directory="..\..\..\openFrameworks\math" />
 			<Add directory="..\..\..\poco\include" />
-			<Add directory="..\..\..\tess2\include" />
+			<Add directory="..\..\..\tess2\include" />			
+			<Add directory="..\..\..\openssl\include" />
 		</Compiler>
 		<Unit filename="..\..\..\openFrameworks\3d\of3dUtils.cpp">
 			<Option virtualFolder="openframeworks\3d\" />

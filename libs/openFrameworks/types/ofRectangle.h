@@ -206,7 +206,7 @@ public:
     float getHeight() const;
 
     ofRectangle& operator = (const ofRectangle& rect);
-    ofRectangle& operator + (const ofPoint& p);
+    ofRectangle operator + (const ofPoint& p);
     
     bool operator == (const ofRectangle& rect) const;
     bool operator != (const ofRectangle& rect) const;

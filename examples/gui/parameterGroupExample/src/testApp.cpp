@@ -4,13 +4,7 @@
 void testApp::setup(){
 	renderer1.setup("renderer1");
 	renderer2.setup("renderer2");
-	bool useJson = false;
-	if(useJson){
-		gui.setDefaultSerializer(json);
-		gui.setup("settings","settings.json");
-	}else{
-		gui.setup("settings","settings.xml");
-	}
+	gui.setup("settings","settings.xml");
 
 	// by setting the listener before the param values
 	// the listener method will get called on gui.add
@@ -58,11 +52,6 @@ void testApp::keyPressed(int key){
 	if(key=='o'){
 		cout << renderer1.parameters;
 		cout << renderer2.parameters;
-	}
-	if(key=='j'){
-		json.serialize(renderer1.parameters);
-		json.serialize(renderer2.parameters);
-		json.save("settings.json");
 	}
 	if(key=='r'){
 		renderer1.color = ofColor(127);

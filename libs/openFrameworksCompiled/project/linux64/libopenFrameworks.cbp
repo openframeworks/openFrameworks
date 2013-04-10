@@ -3,23 +3,18 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="libopenFrameworks" />
-		<Option makefile="makefile" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Option virtualFolders="openFrameworks/sound/;openFrameworks/;openFrameworks/utils/;openFrameworks/video/;openFrameworks/graphics/;openFrameworks/events/;openFrameworks/communication/;openFrameworks/app/;openFrameworks/3d/;openFrameworks/gl/;openFrameworks/math/;openFrameworks/types/;" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../../lib/linux64/libopenFrameworksDebug" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="obj/Debug" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 			</Target>
 			<Target title="Release">
-				<Option output="../../lib/linux64/libopenFrameworks" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="obj/Release" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 			</Target>
@@ -388,6 +383,7 @@
 			<Option virtualFolder="openFrameworks/video/" />
 		</Unit>
 		<Extensions>
+			<lib_finder />
 			<code_completion />
 			<envvars />
 			<debugger />
