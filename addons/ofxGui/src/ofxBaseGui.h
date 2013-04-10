@@ -50,10 +50,10 @@ public:
 	static void loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 
 
-	virtual void mouseMoved(ofMouseEventArgs & args) = 0;
-	virtual void mousePressed(ofMouseEventArgs & args) = 0;
-	virtual void mouseDragged(ofMouseEventArgs & args) = 0;
-	virtual void mouseReleased(ofMouseEventArgs & args) = 0;
+	virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
+	virtual bool mousePressed(ofMouseEventArgs & args) = 0;
+	virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
+	virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
 protected:
 	virtual void render()=0;
 	bool isGuiDrawing();

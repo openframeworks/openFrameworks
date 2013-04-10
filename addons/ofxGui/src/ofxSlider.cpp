@@ -40,31 +40,37 @@ ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, Type _val, Type _min,
 }
 
 template<typename Type>
-void ofxSlider<Type>::mouseMoved(ofMouseEventArgs & args){
+bool ofxSlider<Type>::mouseMoved(ofMouseEventArgs & args){
 	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
 template<typename Type>
-void ofxSlider<Type>::mousePressed(ofMouseEventArgs & args){
+bool ofxSlider<Type>::mousePressed(ofMouseEventArgs & args){
 	if(bUpdateOnReleaseOnly){
 		value.disableEvents();
 	}
 	if(setValue(args.x, args.y, true)){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
 template<typename Type>
-void ofxSlider<Type>::mouseDragged(ofMouseEventArgs & args){
+bool ofxSlider<Type>::mouseDragged(ofMouseEventArgs & args){
 	if(setValue(args.x, args.y, false)){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 
 template<typename Type>
-void ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
+bool ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
 	if(bUpdateOnReleaseOnly){
 		value.enableEvents();
 	}
@@ -72,7 +78,9 @@ void ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
 
 	bGuiActive = false;
 	if(attended){
-		ofEventMarkAttended();
+		return true;
+	}else{
+		return false;
 	}
 }
 

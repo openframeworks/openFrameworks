@@ -4,6 +4,7 @@
 
 #include "Poco/PriorityEvent.h"
 #include "Poco/PriorityDelegate.h"
+#include "ofDelegate.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,13 +37,6 @@ public:
 
 };
 
-class ofEventAttendedException: public Poco::Exception{
-
-};
-
-inline void ofEventMarkAttended(){
-	throw ofEventAttendedException();
-}
 
 enum ofEventOrder{
 	OF_EVENT_ORDER_BEFORE_APP=0,
@@ -83,6 +77,29 @@ void ofAddListener(ofEvent<void> & event, ListenerClass  * listener, void (Liste
     event += Poco::priorityDelegate(listener, listenerMethod, prio);
 }
 
+template <class EventType,typename ArgumentsType, class ListenerClass>
+void ofAddListener(EventType & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(const void*, ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,ArgumentsType,true>(listener, listenerMethod, prio);
+    event += ofDelegate<ListenerClass,ArgumentsType,true>(listener, listenerMethod, prio);
+}
+
+template <class EventType,typename ArgumentsType, class ListenerClass>
+void ofAddListener(EventType & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,ArgumentsType,false>(listener, listenerMethod, prio);
+    event += ofDelegate<ListenerClass,ArgumentsType,false>(listener, listenerMethod, prio);
+}
+
+template <class ListenerClass>
+void ofAddListener(ofEvent<void> & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(const void*), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,void,true>(listener, listenerMethod, prio);
+    event += ofDelegate<ListenerClass,void,true>(listener, listenerMethod, prio);
+}
+
+template <class ListenerClass>
+void ofAddListener(ofEvent<void> & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,void,false>(listener, listenerMethod, prio);
+    event += ofDelegate<ListenerClass,void,false>(listener, listenerMethod, prio);
+}
 //----------------------------------------------------
 // unregister any method of any class to an event.
 // the method must provide one the following
@@ -112,6 +129,25 @@ void ofRemoveListener(ofEvent<void> & event, ListenerClass  * listener, void (Li
     event -= Poco::priorityDelegate(listener, listenerMethod, prio);
 }
 
+template <class EventType,typename ArgumentsType, class ListenerClass>
+void ofRemoveListener(EventType & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(const void*, ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,ArgumentsType,true>(listener, listenerMethod, prio);
+}
+
+template <class EventType,typename ArgumentsType, class ListenerClass>
+void ofRemoveListener(EventType & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,ArgumentsType,false>(listener, listenerMethod, prio);
+}
+
+template <class ListenerClass>
+void ofRemoveListener(ofEvent<void> & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(const void*), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,void,true>(listener, listenerMethod, prio);
+}
+
+template <class ListenerClass>
+void ofRemoveListener(ofEvent<void> & event, ListenerClass  * listener, bool (ListenerClass::*listenerMethod)(), int prio=OF_EVENT_ORDER_AFTER_APP){
+    event -= ofDelegate<ListenerClass,void,false>(listener, listenerMethod, prio);
+}
 //----------------------------------------------------
 // notifies an event so all the registered listeners
 // get called
@@ -125,7 +161,7 @@ template <class EventType,typename ArgumentsType, typename SenderType>
 void ofNotifyEvent(EventType & event, ArgumentsType & args, SenderType * sender){
 	try{
 		event.notify(sender,args);
-	}catch(...){
+	}catch(ofEventAttendedException & e){
 
 	}
 }
@@ -134,7 +170,7 @@ template <class EventType,typename ArgumentsType>
 void ofNotifyEvent(EventType & event, ArgumentsType & args){
 	try{
 		event.notify(NULL,args);
-	}catch(...){
+	}catch(ofEventAttendedException & e){
 
 	}
 }
@@ -143,7 +179,7 @@ template <class EventType, typename ArgumentsType, typename SenderType>
 void ofNotifyEvent(EventType & event, const ArgumentsType & args, SenderType * sender){
 	try{
 		event.notify(sender,args);
-	}catch(...){
+	}catch(ofEventAttendedException & e){
 
 	}
 }
@@ -152,7 +188,7 @@ template <class EventType,typename ArgumentsType>
 void ofNotifyEvent(EventType & event, const ArgumentsType & args){
 	try{
 		event.notify(NULL,args);
-	}catch(...){
+	}catch(ofEventAttendedException & e){
 
 	}
 }
@@ -161,7 +197,7 @@ template <typename SenderType>
 void ofNotifyEvent(ofEvent<void> & event, SenderType * sender){
 	try{
 		event.notify(sender);
-	}catch(...){
+	}catch(ofEventAttendedException & e){
 
 	}
 }
@@ -169,7 +205,7 @@ void ofNotifyEvent(ofEvent<void> & event, SenderType * sender){
 inline void ofNotifyEvent(ofEvent<void> & event){
 	try{
 		event.notify(NULL);
-	}catch(...){
+	}catch(ofEventAttendedException & e){
 
 	}
 }
