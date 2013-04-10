@@ -11,13 +11,25 @@ ofNode::ofNode() :
 }
 
 //----------------------------------------
-void ofNode::setParent(ofNode& parent) {
-	this->parent = &parent;
+void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
+    if(bMaintainGlobalTransform) {
+        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+        this->parent = &parent;
+        setTransformMatrix(globalTransform);
+    } else {
+        this->parent = &parent;
+    }
 }
 
 //----------------------------------------
-void ofNode::clearParent() {
-	this->parent = NULL;
+void ofNode::clearParent(bool bMaintainGlobalTransform) {
+    if(bMaintainGlobalTransform) {
+        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+        this->parent = NULL;
+        setTransformMatrix(globalTransform);
+    } else {
+        this->parent = NULL;
+    }
 }
 
 //----------------------------------------

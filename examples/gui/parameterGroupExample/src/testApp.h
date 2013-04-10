@@ -3,7 +3,6 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "CirclesRenderer.h"
-#include "ofxJSONElement.h"
 #include "ofxXmlSettings.h"
 
 class testApp : public ofBaseApp{
@@ -29,6 +28,5 @@ class testApp : public ofBaseApp{
 		ofParameter<bool> vSync;
 		ofxXmlSettings settings;
 		CirclesRenderer renderer1,renderer2;
-		ofxJSONElement json;
 		ofTrueTypeFont font;
 };

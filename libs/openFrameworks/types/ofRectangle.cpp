@@ -675,10 +675,11 @@ ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
 }
 
 //----------------------------------------------------------
-ofRectangle& ofRectangle::operator + (const ofPoint & point){
-	x += point.x;
-	y += point.y;
-	return *this;
+ofRectangle ofRectangle::operator + (const ofPoint & point){
+	ofRectangle rect=*this;
+	rect.x += point.x;
+	rect.y += point.y;
+	return rect;
 }
 
 //----------------------------------------------------------

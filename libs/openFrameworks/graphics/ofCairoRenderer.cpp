@@ -5,6 +5,7 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofImage.h"
+#include "of3dPrimitives.h"
 
 //-----------------------------------------------------------------------------------
 //static void helper_quadratic_to (cairo_t *cr,
@@ -81,6 +82,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		break;
 	case IMAGE:
 		imageBuffer.allocate(_viewport.width, _viewport.height, 4);
+		imageBuffer.set(0);
 		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
 	case FROM_FILE_EXTENSION:
@@ -115,6 +117,7 @@ void ofCairoRenderer::close(){
 	if(surface){
 		cairo_surface_flush(surface);
 		if(type==IMAGE && filename!=""){
+			imageBuffer.swapRgb();
 			ofSaveImage(imageBuffer,filename);
 		}
 		cairo_surface_finish(surface);
@@ -200,8 +203,8 @@ void ofCairoRenderer::draw(ofPath & shape){
 
 	if(shape.isFilled()){
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getFillColor() * ofGetStyle().color;
-			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+			ofColor c = shape.getFillColor();
+			c.a = shape.getFillColor().a;
 			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		}
 
@@ -214,8 +217,8 @@ void ofCairoRenderer::draw(ofPath & shape){
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getStrokeColor() * ofGetStyle().color;
-			c.a = shape.getStrokeColor().a/255. * ofGetStyle().color.a;
+			ofColor c = shape.getStrokeColor();
+			c.a = shape.getStrokeColor().a;
 			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		}
 		cairo_set_line_width( cr, shape.getStrokeWidth() );
@@ -385,6 +388,27 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
         ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
     }
 	draw(vertexData,false,false,false);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
+    
+    if(model.hasScaling()) {
+        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
+        //glEnable( GL_NORMALIZE );
+        //glPushMatrix();
+        //ofVec3f scale = model.getScale();
+        //glScalef( scale.x, scale.y, scale.z);
+    }
+    
+    ofMesh& mesh = model.getMesh();
+    draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
+    
+    if(model.hasScaling()) {
+        //glPopMatrix();
+        //glDisable( GL_NORMALIZE );
+    }
+    
 }
 
 void ofCairoRenderer::draw(ofSubPath & path){
@@ -608,7 +632,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_ADD);
 			break;
 		}
-
+#if (CAIRO_VERSION_MAJOR==1 && CAIRO_VERSION_MINOR>=10) || CAIRO_VERSION_MAJOR>1
 		case OF_BLENDMODE_MULTIPLY:{
 			cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
 			break;
@@ -623,7 +647,7 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			cairo_set_operator(cr,CAIRO_OPERATOR_DIFFERENCE);
 			break;
 		}
-
+#endif
 
 		default:
 			break;
@@ -832,7 +856,7 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	if(height == 0) height = ofGetWindowHeight();
 
 	if (invertY){
-		y = ofGetWindowHeight() - (y + height);
+		y = -y;
 	}
 
 
@@ -853,8 +877,8 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrient
 	if(height == 0) height = ofGetHeight();
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = viewportRect.width;
+	float viewH = viewportRect.height;
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -921,8 +945,8 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation 
 	if(height == 0) height = ofGetHeight();
 	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
+	float viewW = viewportRect.width;
+	float viewH = viewportRect.height;
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
