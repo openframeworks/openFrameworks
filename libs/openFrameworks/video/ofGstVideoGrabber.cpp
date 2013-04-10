@@ -379,11 +379,12 @@ static void add_video_format (ofGstDevice &webcam_device,
   ofGstVideoFormat &video_format, GstStructure &format_structure, int desired_framerate)
 {
 
-	ofLog(OF_LOG_NOTICE,"%s %s %d x %d framerates:",
+	ofLog(OF_LOG_NOTICE,"%s %s %d x %d , videoformat: %d framerates:",
 				video_format.mimetype.c_str(),
 				video_format.format_name.c_str(),
 				video_format.width,
-				video_format.height);
+				video_format.height,
+				gst_video_format_from_string(video_format.format_name.c_str()));
 	get_supported_framerates (video_format, format_structure);
 	find_framerate (video_format, desired_framerate);
 
@@ -411,8 +412,10 @@ static void add_video_format (ofGstDevice &webcam_device,
 		}
 
 		// with same fps choose non_compressed over compressed
-		if(gst_video_format_from_string(webcam_device.video_formats[i].format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED
+		if((gst_video_format_from_string(webcam_device.video_formats[i].format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED
+				|| gst_video_format_from_string(webcam_device.video_formats[i].format_name.c_str()) == GST_VIDEO_FORMAT_UNKNOWN)
 				&& ( gst_video_format_from_string(video_format.format_name.c_str()) != GST_VIDEO_FORMAT_ENCODED )
+				&& ( gst_video_format_from_string(video_format.format_name.c_str()) != GST_VIDEO_FORMAT_UNKNOWN )
 				&& new_framerate == curr_framerate){
 			ofLog(OF_LOG_VERBOSE,"non compressed format with same framerate, replacing existing format\n");
 			webcam_device.video_formats[i] = video_format;
@@ -680,7 +683,7 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	const char * decodebin = "";
 	if(format.mimetype == "video/x-bayer")
 		decodebin = "! bayer2rgb ";
-	else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED)
+	else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN)
 		decodebin = "! decodebin ";
 
 	const char * scale = "";
