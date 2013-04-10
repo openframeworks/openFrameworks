@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
@@ -26,6 +28,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -35,7 +38,6 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -46,6 +48,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -70,13 +73,17 @@ public class OFAndroid {
 	public static String getRealExternalStorageDirectory()
 	{				
 		// Standard way to get the external storage directory
-		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();	
+		File SDCardDir = new File(externalPath);		
+    	if(SDCardDir.exists() && SDCardDir.canWrite()) {		
+    		return externalPath;
+    	}
 		
 		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
 		for(int i = 0; i < mExternalStorageDirectories.length; i++)
 		{
 			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);	
-			File SDCardDir = new File(mExternalStorageDirectories[i]);		
+			SDCardDir = new File(mExternalStorageDirectories[i]);		
 	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {				
 	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
 				break;
@@ -91,7 +98,7 @@ public class OFAndroid {
 		return dataPath;
 	}
 	
-	public OFAndroid(String appPackageName, Activity activity){
+	public OFAndroid(String appPackageName, OFActivity activity){
 		OFAndroid.ofActivity = activity;
 		ofActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
@@ -128,6 +135,7 @@ public class OFAndroid {
 			        	copydata = true;
 			        }
 			        
+			        ofActivity.onLoadPercent(.05f);
 		
 			        dataPath="";
 		    		try{
@@ -160,6 +168,7 @@ public class OFAndroid {
 						}catch(Exception e){
 							Log.e("OF","error creating dir " + dataPath,e);
 						}
+				        ofActivity.onLoadPercent(.10f);
 						
 						if(copydata){
 			    			for(int i=0; i<files.length; i++){
@@ -197,7 +206,11 @@ public class OFAndroid {
 			    			            to.close();
 			    			          } catch (IOException e) { }
 			    				}
+
+						        ofActivity.onLoadPercent(.10f+.30f/files.length*i);
 			    	        }
+						}else{
+					        ofActivity.onLoadPercent(.40f);
 						}
 		    		}catch(Exception e){
 		    			Log.e("OF","couldn't move app resources to data directory " + dataPath);
@@ -221,6 +234,7 @@ public class OFAndroid {
 					e.printStackTrace();
 				}		
 		        OFAndroid.onUnpackingResourcesDone();
+		        ofActivity.onLoadPercent(.80f);
 			}
 			//android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		}).start();
@@ -273,7 +287,11 @@ public class OFAndroid {
 		unlockScreenSleep();
 
 		if(networkStateReceiver!=null){
-			ofActivity.unregisterReceiver(networkStateReceiver);
+			try{
+				ofActivity.unregisterReceiver(networkStateReceiver);
+			}catch(java.lang.IllegalArgumentException e){
+				
+			}
 		}
 	}
 	
@@ -289,8 +307,6 @@ public class OFAndroid {
         onResume();
         
         if(OFAndroid.orientation!=-1) OFAndroid.setScreenOrientation(OFAndroid.orientation);
-		
-		if(wl!=null) lockScreenSleep();
 		
 		if(networkStateReceiver!=null){
 			monitorNetworkState();
@@ -308,7 +324,11 @@ public class OFAndroid {
 		unlockScreenSleep();
 
 		if(networkStateReceiver!=null){
-			ofActivity.unregisterReceiver(networkStateReceiver);
+			try{
+				ofActivity.unregisterReceiver(networkStateReceiver);
+			}catch(java.lang.IllegalArgumentException e){
+				
+			}
 		}
 		/*if(OFAndroidSoundStream.isInitialized()) 
 			OFAndroidSoundStream.getInstance().stop();*/
@@ -840,18 +860,42 @@ public class OFAndroid {
 		return dataPath + "/" + path;
 	}
 	
+	static boolean sleepLocked=false;
+	
 	public static void lockScreenSleep(){
-		if(wl==null){
-			PowerManager pm = (PowerManager) ofActivity.getSystemService(Context.POWER_SERVICE);
-	        wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "DoNotDimScreen");
+		if(!sleepLocked){
+			ofActivity.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					try{
+						sleepLocked=true;
+						ofActivity.getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+					}catch(Exception e){
+						
+					}
+					
+				}
+			});
 		}
-        wl.acquire();
-        
 	}
 	
 	public static void unlockScreenSleep(){
-		if(wl==null) return;
-		wl.release();
+		if(sleepLocked){
+			ofActivity.runOnUiThread(new Runnable() {
+			
+				@Override
+				public void run() {
+					try{
+						sleepLocked=false;
+				        ofActivity.getWindow().clearFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+					}catch(Exception e){
+						
+					}
+					
+				}
+			});
+		}
 	}
 	
 	public static String getRandomUUID(){
@@ -862,11 +906,10 @@ public class OFAndroid {
     private static OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
     private static OFAndroidGPS gps;
-    private static Activity ofActivity;
+    private static OFActivity ofActivity;
     private OFGestureListener gestureListener;
 	private static String packageName;
 	private static String dataPath;
-	private static PowerManager.WakeLock wl;
 	public static boolean unpackingDone;
 
     public static native boolean hasNeon();
@@ -970,21 +1013,17 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
         	
             public boolean onTouch(View v, MotionEvent event) {
             	final int action = event.getAction();
-            	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) 
-                >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+            	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) 
+                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
                 switch((action & MotionEvent.ACTION_MASK)){
                 case MotionEvent.ACTION_MOVE:
                 {
             		for(int i=0; i<event.getHistorySize(); i++)
-            		{
-            			try{
-		                	for(int j=0; j<event.getPointerCount(); j++)
-		                	{
-	                			int ptr = event.getPointerId(j);
-	                			OFAndroid.onTouchMoved(ptr, event.getHistoricalX(ptr, i), event.getHistoricalY(ptr, i), event.getHistoricalPressure(ptr, i));                		
-	                		}
-            			}catch(IllegalArgumentException e){}
+            		{            			
+		                for(int j=0; j<event.getPointerCount(); j++){	                			
+	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i));
+	                	}            			
                 	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
 	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
@@ -1015,7 +1054,7 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
 		final int action = event.getAction();
-		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
         final int pointerId = event.getPointerId(pointerIndex);
 
         OFAndroid.onTouchDoubleTap(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
@@ -1102,18 +1141,300 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
     public final static int SWIPE_RIGHT = 4;
 }
 
+/*class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser{
+	static int DEPTH_SIZE=16,STENCIL_SIZE=0,EGL_GLES2_BIT=1;
+	
+	private static final int[] EGLCONFIG_ATTRIBUTES_8888 = new int[] {
+		EGL10.EGL_RED_SIZE, 8,
+		EGL10.EGL_GREEN_SIZE, 8,
+		EGL10.EGL_BLUE_SIZE, 8,
+		EGL10.EGL_ALPHA_SIZE, 8,
+		EGL10.EGL_DEPTH_SIZE, OFEGLConfigChooser.DEPTH_SIZE,
+		EGL10.EGL_STENCIL_SIZE, OFEGLConfigChooser.STENCIL_SIZE,
+		EGL10.EGL_RENDERABLE_TYPE, OFEGLConfigChooser.EGL_GLES2_BIT,
+		EGL10.EGL_NONE
+	};
+	
+	private static final int[] EGLCONFIG_ATTRIBUTES_FALLBACK = new int[] {
+		EGL10.EGL_RED_SIZE, 5,
+		EGL10.EGL_GREEN_SIZE, 6,
+		EGL10.EGL_BLUE_SIZE, 5,
+		EGL10.EGL_ALPHA_SIZE, 0,
+		EGL10.EGL_DEPTH_SIZE, 0,
+		EGL10.EGL_STENCIL_SIZE, 0,
+		EGL10.EGL_RENDERABLE_TYPE, 1,
+		EGL10.EGL_NONE
+	};
+	
+	private boolean is24bit=false;
+	
+	boolean is24Bit(){
+		return is24bit;
+	}
+	
+	@Override
+	public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+		int[] buffer = new int[1];
+		int[] attributes;
+		if(egl.eglChooseConfig(display,EGLCONFIG_ATTRIBUTES_8888,null,0,buffer)==false){
+			egl.eglChooseConfig(display,EGLCONFIG_ATTRIBUTES_FALLBACK,null,0,buffer);
+			Log.w("OF", "couldn't create requested EGL config, defaulting to RGB565 fallback");
+			attributes = EGLCONFIG_ATTRIBUTES_FALLBACK;
+			is24bit = false;
+		}else{
+			attributes = EGLCONFIG_ATTRIBUTES_8888;
+			is24bit = true;
+		}
+		int configCount = buffer[0];
+		final EGLConfig[] eglConfigs = new EGLConfig[configCount];
+		egl.eglChooseConfig(display,attributes,eglConfigs,configCount,buffer);
+		return findEGLConfig(egl, display, eglConfigs, attributes);
+	}	
 
+	private int getConfigAttrib(final EGL10 pEGL, final EGLDisplay pEGLDisplay, final EGLConfig pEGLConfig, final int pAttribute, final int pDefaultValue) {
+		int[] buffer = new int[1];
+		if(pEGL.eglGetConfigAttrib(pEGLDisplay, pEGLConfig, pAttribute, buffer)) {
+			return buffer[0];
+		} else {
+			return pDefaultValue;
+		}
+	}
+	
+	private boolean match(int redSize, int greenSize, int blueSize, int alphaSize, int depthSize, int stencilSize, int [] attributes){
+		return redSize==attributes[0] && greenSize==attributes[1] && blueSize==attributes[2] && alphaSize==attributes[3] &&
+				depthSize==attributes[4] && stencilSize==attributes[5];
+	}
+	
+	private EGLConfig findEGLConfig(final EGL10 pEGL, final EGLDisplay pEGLDisplay, final EGLConfig[] pEGLConfigs, int[] attributes) {
+		for(int i = 0; i < pEGLConfigs.length; ++i) {
+			final EGLConfig config = pEGLConfigs[i];
+			if(config != null) {
+				final int redSize = this.getConfigAttrib(pEGL, pEGLDisplay, config, EGL10.EGL_RED_SIZE, 0);
+				final int greenSize = this.getConfigAttrib(pEGL, pEGLDisplay, config, EGL10.EGL_GREEN_SIZE, 0);
+				final int blueSize = this.getConfigAttrib(pEGL, pEGLDisplay, config, EGL10.EGL_BLUE_SIZE, 0);
+				final int alphaSize = this.getConfigAttrib(pEGL, pEGLDisplay, config, EGL10.EGL_ALPHA_SIZE, 0);
+				final int depthSize = this.getConfigAttrib(pEGL, pEGLDisplay, config, EGL10.EGL_DEPTH_SIZE, 0);
+				final int stencilSize = this.getConfigAttrib(pEGL, pEGLDisplay, config, EGL10.EGL_STENCIL_SIZE, 0);
+				
+				if(match(redSize, greenSize, blueSize, alphaSize, depthSize, stencilSize,attributes)) {
+					return config;
+				}
+			}
+		}
+		return pEGLConfigs[0];
+	}
+}*/
+
+class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
+	
+    public OFEGLConfigChooser(int r, int g, int b, int a, int depth, int stencil) {
+        mRedSize = r;
+        mGreenSize = g;
+        mBlueSize = b;
+        mAlphaSize = a;
+        mDepthSize = depth;
+        mStencilSize = stencil;
+    }
+
+    /* This EGL config specification is used to specify 1.x rendering.
+     * We use a minimum size of 4 bits for red/green/blue, but will
+     * perform actual matching in chooseConfig() below.
+     */
+    private static boolean DEBUG = false;
+    private static int EGL_OPENGL_ES_BIT = 1;
+    private static int[] s_configAttribs2 =
+    {
+        EGL10.EGL_RED_SIZE, 4,
+        EGL10.EGL_GREEN_SIZE, 4,
+        EGL10.EGL_BLUE_SIZE, 4,
+        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+        EGL10.EGL_NONE
+    };
+
+    public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+
+        /* Get the number of minimally matching EGL configurations
+         */
+        int[] num_config = new int[1];
+        egl.eglChooseConfig(display, s_configAttribs2, null, 0, num_config);
+
+        int numConfigs = num_config[0];
+
+        if (numConfigs <= 0) {
+            throw new IllegalArgumentException("No configs match configSpec");
+        }
+
+        /* Allocate then read the array of minimally matching EGL configs
+         */
+        EGLConfig[] configs = new EGLConfig[numConfigs];
+        egl.eglChooseConfig(display, s_configAttribs2, configs, numConfigs, num_config);
+
+        if (DEBUG) {
+             printConfigs(egl, display, configs);
+        }
+        /* Now return the "best" one
+         */
+        return chooseConfig(egl, display, configs);
+    }
+
+    public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
+            EGLConfig[] configs) {
+        for(EGLConfig config : configs) {
+            int d = findConfigAttrib(egl, display, config,
+                    EGL10.EGL_DEPTH_SIZE, 0);
+            int s = findConfigAttrib(egl, display, config,
+                    EGL10.EGL_STENCIL_SIZE, 0);
+
+            // We need at least mDepthSize and mStencilSize bits
+            if (d < mDepthSize || s < mStencilSize)
+                continue;
+
+            // We want an *exact* match for red/green/blue/alpha
+            int r = findConfigAttrib(egl, display, config,
+                    EGL10.EGL_RED_SIZE, 0);
+            int g = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_GREEN_SIZE, 0);
+            int b = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_BLUE_SIZE, 0);
+            int a = findConfigAttrib(egl, display, config,
+                    EGL10.EGL_ALPHA_SIZE, 0);
+
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize)
+                return config;
+        }
+        return null;
+    }
+
+    private int findConfigAttrib(EGL10 egl, EGLDisplay display,
+            EGLConfig config, int attribute, int defaultValue) {
+
+        if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
+            return mValue[0];
+        }
+        return defaultValue;
+    }
+
+    private void printConfigs(EGL10 egl, EGLDisplay display,
+        EGLConfig[] configs) {
+        int numConfigs = configs.length;
+        Log.w("OF", String.format("%d configurations", numConfigs));
+        for (int i = 0; i < numConfigs; i++) {
+            Log.w("OF", String.format("Configuration %d:\n", i));
+            printConfig(egl, display, configs[i]);
+        }
+    }
+
+    private void printConfig(EGL10 egl, EGLDisplay display,
+            EGLConfig config) {
+        int[] attributes = {
+                EGL10.EGL_BUFFER_SIZE,
+                EGL10.EGL_ALPHA_SIZE,
+                EGL10.EGL_BLUE_SIZE,
+                EGL10.EGL_GREEN_SIZE,
+                EGL10.EGL_RED_SIZE,
+                EGL10.EGL_DEPTH_SIZE,
+                EGL10.EGL_STENCIL_SIZE,
+                EGL10.EGL_CONFIG_CAVEAT,
+                EGL10.EGL_CONFIG_ID,
+                EGL10.EGL_LEVEL,
+                EGL10.EGL_MAX_PBUFFER_HEIGHT,
+                EGL10.EGL_MAX_PBUFFER_PIXELS,
+                EGL10.EGL_MAX_PBUFFER_WIDTH,
+                EGL10.EGL_NATIVE_RENDERABLE,
+                EGL10.EGL_NATIVE_VISUAL_ID,
+                EGL10.EGL_NATIVE_VISUAL_TYPE,
+                0x3030, // EGL10.EGL_PRESERVED_RESOURCES,
+                EGL10.EGL_SAMPLES,
+                EGL10.EGL_SAMPLE_BUFFERS,
+                EGL10.EGL_SURFACE_TYPE,
+                EGL10.EGL_TRANSPARENT_TYPE,
+                EGL10.EGL_TRANSPARENT_RED_VALUE,
+                EGL10.EGL_TRANSPARENT_GREEN_VALUE,
+                EGL10.EGL_TRANSPARENT_BLUE_VALUE,
+                0x3039, // EGL10.EGL_BIND_TO_TEXTURE_RGB,
+                0x303A, // EGL10.EGL_BIND_TO_TEXTURE_RGBA,
+                0x303B, // EGL10.EGL_MIN_SWAP_INTERVAL,
+                0x303C, // EGL10.EGL_MAX_SWAP_INTERVAL,
+                EGL10.EGL_LUMINANCE_SIZE,
+                EGL10.EGL_ALPHA_MASK_SIZE,
+                EGL10.EGL_COLOR_BUFFER_TYPE,
+                EGL10.EGL_RENDERABLE_TYPE,
+                0x3042 // EGL10.EGL_CONFORMANT
+        };
+        String[] names = {
+                "EGL_BUFFER_SIZE",
+                "EGL_ALPHA_SIZE",
+                "EGL_BLUE_SIZE",
+                "EGL_GREEN_SIZE",
+                "EGL_RED_SIZE",
+                "EGL_DEPTH_SIZE",
+                "EGL_STENCIL_SIZE",
+                "EGL_CONFIG_CAVEAT",
+                "EGL_CONFIG_ID",
+                "EGL_LEVEL",
+                "EGL_MAX_PBUFFER_HEIGHT",
+                "EGL_MAX_PBUFFER_PIXELS",
+                "EGL_MAX_PBUFFER_WIDTH",
+                "EGL_NATIVE_RENDERABLE",
+                "EGL_NATIVE_VISUAL_ID",
+                "EGL_NATIVE_VISUAL_TYPE",
+                "EGL_PRESERVED_RESOURCES",
+                "EGL_SAMPLES",
+                "EGL_SAMPLE_BUFFERS",
+                "EGL_SURFACE_TYPE",
+                "EGL_TRANSPARENT_TYPE",
+                "EGL_TRANSPARENT_RED_VALUE",
+                "EGL_TRANSPARENT_GREEN_VALUE",
+                "EGL_TRANSPARENT_BLUE_VALUE",
+                "EGL_BIND_TO_TEXTURE_RGB",
+                "EGL_BIND_TO_TEXTURE_RGBA",
+                "EGL_MIN_SWAP_INTERVAL",
+                "EGL_MAX_SWAP_INTERVAL",
+                "EGL_LUMINANCE_SIZE",
+                "EGL_ALPHA_MASK_SIZE",
+                "EGL_COLOR_BUFFER_TYPE",
+                "EGL_RENDERABLE_TYPE",
+                "EGL_CONFORMANT"
+        };
+        int[] value = new int[1];
+        for (int i = 0; i < attributes.length; i++) {
+            int attribute = attributes[i];
+            String name = names[i];
+            if ( egl.eglGetConfigAttrib(display, config, attribute, value)) {
+                Log.w("OF", String.format("  %s: %d\n", name, value[0]));
+            } else {
+                // Log.w(TAG, String.format("  %s: failed\n", name));
+                while (egl.eglGetError() != EGL10.EGL_SUCCESS);
+            }
+        }
+    }
+
+    // Subclasses can adjust these values:
+    protected int mRedSize;
+    protected int mGreenSize;
+    protected int mBlueSize;
+    protected int mAlphaSize;
+    protected int mDepthSize;
+    protected int mStencilSize;
+    private int[] mValue = new int[1];
+}
 
 class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        getHolder().setFormat( PixelFormat.RGBA_8888 );
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,8,16,0);
+        setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
     }
 	
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        getHolder().setFormat( PixelFormat.RGBA_8888 );
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,8,16,0);
+        setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
     }
 
@@ -1148,14 +1469,14 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
+		this.w = w;
+		this.h = h;
     	if(!setup && OFAndroid.unpackingDone){
         	setup();
     	}
     	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
     	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
     	OFAndroid.resize(w, h);
-		this.w = w;
-		this.h = h;
     }
     
     private void setup(){

@@ -278,7 +278,7 @@ void testApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-	static float px = -1;
+	// static float px = -1;
 	// if(doMouseOrbit) {
 	// if(px>=0) orbitRadius += x - px;
 	// px = x;

@@ -75,7 +75,7 @@ void testApp::draw() {
     }
     
     // this is the total time of the animation based on fps
-    float totalTime = images.size() / sequenceFPS;  
+    //float totalTime = images.size() / sequenceFPS;
     
     
     int frameIndex = 0;

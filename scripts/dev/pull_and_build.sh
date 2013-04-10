@@ -77,6 +77,12 @@ make -C libs/openFrameworksCompiled/project/linux64 2> ofbuild.log
 echo '<br/><h2>OF core</h2>' >> /var/www/ofbuild.html
 generateLog OF '\.\.\/\.\.\/\.\.\/' 'libs\/' 'src' 'src' 'OF core'
 
+for category in $(ls * -d | grep -v ios | grep -v android); do
+    for example in *; do
+        rm ${category}/${example}/Makefile
+        rm ${category}/${example}/config.make
+    done
+done
 projectGenerator --allexamples
 cd $(cat ~/.ofprojectgenerator/config)
 cd examples

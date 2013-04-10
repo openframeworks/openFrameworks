@@ -29,7 +29,7 @@ void testApp::draw(){
 	int n = mesh.getNumVertices();
 	float nearestDistance = 0;
 	ofVec2f nearestVertex;
-	int nearestIndex;
+	int nearestIndex = 0;
 	ofVec2f mouse(mouseX, mouseY);
 	for(int i = 0; i < n; i++) {
 		ofVec3f cur = cam.worldToScreen(mesh.getVertex(i));

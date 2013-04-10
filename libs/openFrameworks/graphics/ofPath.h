@@ -5,7 +5,7 @@
 #include "ofColor.h"
 #include "ofPolyline.h"
 #include "ofBaseTypes.h"
-#include "ofMesh.h"
+#include "ofVboMesh.h"
 #include "ofTessellator.h"
 
 class ofSubPath;
@@ -127,7 +127,7 @@ private:
 	vector<ofPolyline>  polylines;
 	vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
 
-	ofMesh				cachedTessellation;
+	ofVboMesh				cachedTessellation;
 	bool				cachedTessellationValid;
 
 	static ofTessellator tessellator;
