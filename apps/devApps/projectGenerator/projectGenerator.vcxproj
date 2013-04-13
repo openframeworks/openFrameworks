@@ -14,7 +14,6 @@
     <ProjectGuid>{D46BBF4D-8E03-4A97-9E1D-587E88F0F1A8}</ProjectGuid>
     <RootNamespace>projectGenerator</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -29,8 +28,6 @@
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
@@ -40,25 +37,24 @@
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">obj\$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">obj\$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>bin\</OutDir>
+    <IntDir>obj\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_debug</TargetName>
+    <LinkIncremental>true</LinkIncremental>
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>bin\</OutDir>
+    <IntDir>obj\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src;..\..\..\addons\ofxGui\src;.\src\addons;.\src\pugixmlLib\src;.\src\utils;.\src\projects;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\addons;src\projects;src\pugixmlLib;src\pugixmlLib\contrib;src\pugixmlLib\lib;src\pugixmlLib\scripts;src\pugixmlLib\scripts\pugixml.xcodeproj;src\pugixmlLib\src;src\utils;..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
@@ -72,19 +68,17 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader />
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\addons;src\cocoa;src\projects;src\pugixmlLib;src\pugixmlLib\contrib;src\pugixmlLib\lib;src\pugixmlLib\scripts;src\pugixmlLib\scripts\pugixml.xcodeproj;src\pugixmlLib\src;src\utils;..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\addons;src\projects;src\pugixmlLib;src\pugixmlLib\contrib;src\pugixmlLib\lib;src\pugixmlLib\scripts;src\pugixmlLib\scripts\pugixml.xcodeproj;src\pugixmlLib\src;src\utils;..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DataExecutionPrevention />
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -144,5 +138,4 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
 </Project>
