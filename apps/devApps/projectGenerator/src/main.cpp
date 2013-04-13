@@ -29,7 +29,7 @@ int main(  int argc, char *argv[]  ){
 					app->targetsToMake.push_back( OF_TARGET_LINUX64 );
 				}else if(arg=="win_cb"){
 					app->targetsToMake.push_back( OF_TARGET_WINGCC );
-				}else if(arg=="vs2010"){
+				}else if(arg=="vs"){
 					app->targetsToMake.push_back( OF_TARGET_WINVS );
 				}else if(arg=="osx"){
 					app->targetsToMake.push_back( OF_TARGET_OSX );
@@ -53,7 +53,7 @@ int main(  int argc, char *argv[]  ){
 					cout << "Options:" << endl;
 					cout << "--osx: generate osx project files" << endl;
 					cout << "--win_cb: generate windows codeblocks project files" << endl;
-					cout << "--vs2010: generate windows vs2010 project files" << endl;
+					cout << "--vs: generate windows vs2012 project files" << endl;
 					cout << "--linux: generate linux project files" << endl;
 					cout << "--linux64: generate linux 64bits project files" << endl;
 					cout << "--ios: generate iOS project files" << endl;
