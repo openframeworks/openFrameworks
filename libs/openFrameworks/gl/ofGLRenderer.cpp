@@ -1113,6 +1113,8 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	//We do this because its way faster
 	ofDrawBitmapCharacterStart(textString.size());
 
+	int column = 0;
+
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
@@ -1123,7 +1125,19 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 				sx = 0;
 			}
 
-			//glRasterPos2f(x,y + (int)yOffset);
+			column = 0;
+			//glRasterPos2f(x,y + (int)yOffset
+		} else if (textString[c] == '\t'){
+			//start with a space
+			sx += fontSize;
+			column++;
+
+			//loop until we have a complete tab
+			//8 is the default tab spacing in osx terminal
+			while(column % 8 != 0){
+				sx += fontSize;
+				column++;
+			}
 		} else if (textString[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
@@ -1131,6 +1145,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
 						
 			sx += fontSize;
+			column++;
 		}
 	}
 	//We do this because its way faster
