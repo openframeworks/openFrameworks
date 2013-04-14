@@ -1127,16 +1127,11 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 			column = 0;
 		} else if (textString[c] == '\t'){
-			//start with a space
-			sx += fontSize;
-			column++;
-
-			//loop until we have a complete tab
-			//8 is the default tab spacing in osx terminal and windows command line
-			while(column % 8 != 0){
-				sx += fontSize;
-				column++;
-			}
+			//move the cursor to the position of the next tab
+			//8 is the default tab spacing in osx terminal and windows	 command line
+			int out = column + 8 - (column % 8);
+			sx += fontSize * (out-column);
+			column = out;
 		} else if (textString[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
