@@ -1126,14 +1126,13 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			}
 
 			column = 0;
-			//glRasterPos2f(x,y + (int)yOffset
 		} else if (textString[c] == '\t'){
 			//start with a space
 			sx += fontSize;
 			column++;
 
 			//loop until we have a complete tab
-			//8 is the default tab spacing in osx terminal
+			//8 is the default tab spacing in osx terminal and windows command line
 			while(column % 8 != 0){
 				sx += fontSize;
 				column++;
