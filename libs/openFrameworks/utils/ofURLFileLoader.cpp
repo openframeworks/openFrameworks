@@ -111,8 +111,8 @@ void ofURLFileLoader::stop() {
 }
 
 void ofURLFileLoader::threadedFunction() {
+	lock();
 	while( isThreadRunning() == true ){
-		lock();
     	ofLog(OF_LOG_VERBOSE,"starting thread loop ");
 		if(requests.size()>0){
 	    	ofLog(OF_LOG_VERBOSE,"querying request " + requests.front().name);
@@ -137,7 +137,6 @@ void ofURLFileLoader::threadedFunction() {
 				responses.push(response);
 		    	ofLog(OF_LOG_VERBOSE,"failed getting request " + requests.front().name);
 			}
-			unlock();
 		}else{
 			ofLog(OF_LOG_VERBOSE,"stopping on no requests condition");
 			condition.wait(mutex);
