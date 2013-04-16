@@ -594,15 +594,15 @@ static const NSString * ItemStatusContext;
 }
 
 - (float) getFramerate{
-    return [self getCurrentTimeInSec]*[[[[self.playerItem tracks] objectAtIndex:0] assetTrack] nominalFrameRate];
+    return [[[[self.playerItem tracks] objectAtIndex:0] assetTrack] nominalFrameRate];
 }
 
 - (int)getDurationInFrames{
-    return totalFrames;
+    return [self getDurationInSec]*[self getFramerate];
 }
 
 - (int)getCurrentFrameNum{
-    return  [self getDurationInSec]*[self getFramerate];
+    return  [self getCurrentTimeInSec]*[self getFramerate];
 }
 
 - (void)setPosition:(float)position {
