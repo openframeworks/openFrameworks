@@ -30,7 +30,7 @@
 #include "opencv2/opencv.hpp"
 #include "ofxCv/Utilities.h"
 
-// for coherent line drawing
+// coherent line drawing
 #include "CLD/imatrix.h"
 #include "CLD/ETF.h"
 #include "CLD/fdog.h"
@@ -224,15 +224,18 @@ cv::name(xMat, yMat, resultMat);\
 	// coherent line drawing: good values for halfw are between 1 and 8,
 	// smoothPasses 1, and 4, sigma1 between .01 and 2, sigma2 between .01 and 10,
 	// tau between .8 and 1.0
-	// needs to be rewritten so we're not doing an allocate and copy each time
+	// this could be rewritten into a class so we're not doing an allocate and copy each time
 	template <class S, class D>
-	void CLD(S& src, D& dst, int halfw = 4, int smoothPasses = 2, double sigma1 = .4, double sigma2 = 3, double tau = .97) {
+	void CLD(S& src, D& dst, int halfw = 4, int smoothPasses = 2, double sigma1 = .4, double sigma2 = 3, double tau = .97, int black = 0) {
 		copy(src, dst);
 		int width = getWidth(src), height = getHeight(src);
 		imatrix img;
 		img.init(height, width);
 		Mat dstMat = toCv(dst);
-		// copy from dst to img
+		if(black != 0) {
+			add(dstMat, cv::Scalar(black), dstMat);
+		}
+		// copy from dst (unsigned char) to img (int)
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
 				img[y][x] = dstMat.at<unsigned char>(y, x);
@@ -243,7 +246,7 @@ cv::name(xMat, yMat, resultMat);\
 		etf.set(img);
 		etf.Smooth(halfw, smoothPasses);
 		GetFDoG(img, etf, sigma1, sigma2, tau);
-		// copy result from img to dst
+		// copy result from img (int) to dst (unsigned char)
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
 				dstMat.at<unsigned char>(y, x) = img[y][x];
