@@ -37,7 +37,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void threadedImageLoaderExample::exit(){
-	loader.waitForThread(true); // stop thread
+	loader.stopThread();
 }
 
 //--------------------------------------------------------------
