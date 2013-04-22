@@ -40,7 +40,6 @@ void testApp::setup() {
 	gui.addToggle("doFDoG");
 	gui.addToggle("doThresh");
 	gui.addToggle("doThin");
-	gui.addToggle("doCanny");
 	gui.addSlider("black", 0, -255, 255, true);
 	gui.addSlider("sigma1", 0.4, 0.01, 2.0, false);
 	gui.addSlider("sigma2", 3.0, 0.01, 10.0, false);
@@ -48,14 +47,11 @@ void testApp::setup() {
 	gui.addSlider("thresh", 128, 0, 255, false);
 	gui.addSlider("halfw", 4, 1, 8, true);
 	gui.addSlider("smoothPasses", 2, 1, 4, true);
-	gui.addSlider("cannyParam1", 256, 0, 1024, true);
-	gui.addSlider("cannyParam2", 256, 0, 1024, true);
 	gui.loadSettings("settings.xml");
 }
 
 void testApp::update(){
 	bool doFDoG = gui.getValueB("doFDoG");
-	bool doCanny = gui.getValueB("doCanny");
 	bool doThin = gui.getValueB("doThin");
 	bool doThresh = gui.getValueB("doThresh");
 	
@@ -84,15 +80,6 @@ void testApp::update(){
 				invert(output[i]);
 			}
 			output[i].update();
-		}
-		if(doCanny) {
-			Canny(input[i], canny[i], cannyParam1 * 2, cannyParam2 * 2, 5);
-			if(doThin) {
-				thin(canny[i]);
-				removeIslands(canny[i].getPixelsRef());
-				invert(canny[i]);
-			}
-			canny[i].update();
 		}
 	}
 }

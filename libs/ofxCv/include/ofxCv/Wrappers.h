@@ -31,10 +31,10 @@
 #include "ofxCv/Utilities.h"
 
 // for coherent line drawing
-#include "imatrix.h"
-#include "ETF.h"
-#include "fdog.h"
-#include "myvec.h"
+#include "CLD/imatrix.h"
+#include "CLD/ETF.h"
+#include "CLD/fdog.h"
+#include "CLD/myvec.h"
 
 namespace ofxCv {
 	
@@ -231,12 +231,11 @@ cv::name(xMat, yMat, resultMat);\
 		int width = getWidth(src), height = getHeight(src);
 		imatrix img;
 		img.init(height, width);
-		int j = 0;
 		Mat dstMat = toCv(dst);
 		// copy from dst to img
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
-				img[y][x] = dstMat.at<unsigned char>(j++);
+				img[y][x] = dstMat.at<unsigned char>(y, x);
 			}
 		}
 		ETF etf;
@@ -244,11 +243,10 @@ cv::name(xMat, yMat, resultMat);\
 		etf.set(img);
 		etf.Smooth(halfw, smoothPasses);
 		GetFDoG(img, etf, sigma1, sigma2, tau);
-		j = 0;
 		// copy result from img to dst
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
-				dstMat.at<unsigned char>(j++) = img[y][x];
+				dstMat.at<unsigned char>(y, x) = img[y][x];
 			}
 		}
 	}
