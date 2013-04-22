@@ -85,4 +85,8 @@ void testApp::draw(){
 		ofEnableBlendMode(OF_BLENDMODE_ADD);
 		canny[i].draw(i * 256, 256);
 	}
+	
+	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+	ofDrawBitmapStringHighlight("Coherent line drawing", 10, 20);
+	ofDrawBitmapStringHighlight("Canny edge detection", 10, 256 + 20);
 }
