@@ -5,7 +5,7 @@
 
 #include "ofMain.h"
 #include "ofEvents.h"
-#include "circle.h"
+#include "Circle.h"
 
 #define TOTAL_GRAY_CIRCLES 10
 
