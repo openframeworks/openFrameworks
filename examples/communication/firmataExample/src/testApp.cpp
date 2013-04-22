@@ -69,8 +69,8 @@ void testApp::setupArduino(const int & version) {
     bSetupArduino = true;
     
     // print firmware name and version to the console
-    cout << ard.getFirmwareName() << endl; 
-    cout << "firmata v" << ard.getMajorFirmwareVersion() << "." << ard.getMinorFirmwareVersion() << endl;
+    ofLogNotice() << ard.getFirmwareName(); 
+    ofLogNotice() << "firmata v" << ard.getMajorFirmwareVersion() << "." << ard.getMinorFirmwareVersion();
         
     // Note: pins A0 - A5 can be used as digital input and output.
     // Refer to them as pins 14 - 19 if using StandardFirmata from Arduino 1.0.
