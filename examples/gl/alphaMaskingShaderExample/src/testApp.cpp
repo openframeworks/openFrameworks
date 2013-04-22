@@ -14,9 +14,6 @@ void testApp::setup(){
     maskFbo.allocate(width,height);
     fbo.allocate(width,height);
     
-    ofSetWindowShape(width, height);
-    
-    
     // There are 3 of ways of loading a shader:
     //
     //  1 - Using just the name of the shader and ledding ofShader look for .frag and .vert: 
