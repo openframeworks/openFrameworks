@@ -51,6 +51,11 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
+void testApp::exit() {
+	ofUnregisterURLNotification(this);
+}
+
+//--------------------------------------------------------------
 void testApp::keyPressed(int key){
 	img.clear();
 	ofLoadURLAsync("http://images.wildmadagascar.org/pictures/bemaraha/tsingy_forest.JPG","tsingy_forest");
