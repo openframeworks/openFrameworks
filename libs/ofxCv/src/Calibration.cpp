@@ -125,6 +125,7 @@ namespace ofxCv {
 		addedImageSize = imageSize;
 		distortedIntrinsics.setup(cameraMatrix, imageSize, sensorSize);
 		updateUndistortion();
+		ready = true;
 	}
 	void Calibration::setIntrinsics(Intrinsics& distortedIntrinsics, Mat& distortionCoefficients){
 		this->distortedIntrinsics = distortedIntrinsics;
@@ -214,6 +215,14 @@ namespace ofxCv {
 		}
 	}
 	bool Calibration::calibrate() {
+		if(size() < 1) {
+			ofLog(OF_LOG_ERROR, "Calibration::calibrate() doesn't have any image data to calibrate from.");
+			if(ready) {
+				ofLog(OF_LOG_ERROR, "Calibration::calibrate() doesn't need to be called after Calibration::load().");
+			}
+			return ready;
+		}
+		
 		Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
 		distCoeffs = Mat::zeros(8, 1, CV_64F);
     
