@@ -7,7 +7,9 @@
 #include "myvec.h"
 #include "imatrix.h"
 
-#define ABS(x) ( ((x)>0) ? (x) : (-(x)) )
+#ifndef ABS
+	#define ABS(x) ( ((x)>0) ? (x) : (-(x)) )
+#endif
 #define round(x) ((int) ((x) + 0.5))
 
 inline double gauss(double x, double mean, double sigma)
