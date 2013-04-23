@@ -22,12 +22,12 @@ void testApp::setup() {
 	gui.setup();
 	gui.addPanel("Settings");
 	gui.addToggle("doFDoG", true);
-	gui.addSlider("black", -8, -255, 255, true);
+	gui.addSlider("halfw", 4, 1, 8, true);
+	gui.addSlider("smoothPasses", 2, 1, 4, true);
 	gui.addSlider("sigma1", 0.68, 0.01, 2.0, false);
 	gui.addSlider("sigma2", 6.0, 0.01, 10.0, false);
 	gui.addSlider("tau", 0.974, 0.8, 1.0, false);
-	gui.addSlider("halfw", 4, 1, 8, true);
-	gui.addSlider("smoothPasses", 2, 1, 4, true);
+	gui.addSlider("black", -8, -255, 255, true);
 	gui.addToggle("doThresh", true);
 	gui.addSlider("thresh", 150, 0, 255, false);
 	gui.addToggle("doThin", true);
