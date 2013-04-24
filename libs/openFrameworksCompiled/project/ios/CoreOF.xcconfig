@@ -14,7 +14,6 @@ HEADER_GLU = "$(OF_PATH)/libs/glu/include_ios"
 HEADER_SSL = "$(OF_PATH)/libs/openssl/include"
 
 LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
-LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/osx/freetype.a"
 LIB_TESS = "$(OF_PATH)/libs/tess2/lib/osx/tess2.a"
 LIB_GLU = "$(OF_PATH)/libs/glu/lib/ios/glu.a"
 LIB_SSL = "$(OF_PATH)/libs/openssl/lib/osx/ssl.a"
