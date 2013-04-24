@@ -12,6 +12,7 @@
 		1d5f3298c2fa073628012944b1efde88 /* ofxCvContourFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = c76de5c29bdbd2caa1dd0021a7376220 /* ofxCvContourFinder.cpp */; };
 		2023ef517ed2d8b397511d4bf2052690 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = b9076967f8c54a04362c04aa9e3bb906 /* Helpers.cpp */; };
 		250a95ba26587be85db0a353e6e1dea2 /* ofxCvColorImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ce9c7160245b19131dae61282ee6cb53 /* ofxCvColorImage.cpp */; };
+		273A1E4217287C7000C2179A /* ObjectFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 273A1E4117287C7000C2179A /* ObjectFinder.cpp */; };
 		45cc483a999bf1065a6b926c53724159 /* Distance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9dbd717072c35d324e1016697d7aa720 /* Distance.cpp */; };
 		5cc34d433f5806179935b89ddc75729f /* Flow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03a75a648bc4cf1d9dedd0cea7826717 /* Flow.cpp */; };
 		63020f16c7e8ded9801112417e67ad38 /* ofxCvImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = c6151136d101f857dae12722e3c42f4a /* ofxCvImage.cpp */; };
@@ -89,6 +90,8 @@
 		114b872696817cc33990fc83feb1259e /* imgproc.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = imgproc.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/imgproc/imgproc.hpp; sourceTree = SOURCE_ROOT; };
 		178547e33ce398c7b59f08abb9417787 /* ContourFinder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ContourFinder.h; path = ../../../addons/ofxCv/libs/ofxCv/include/ofxCv/ContourFinder.h; sourceTree = SOURCE_ROOT; };
 		1e95efd35ed9c5d97f2f015ed292592d /* timer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = timer.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/flann/timer.h; sourceTree = SOURCE_ROOT; };
+		273A1E4017287C4400C2179A /* ObjectFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectFinder.h; path = ../libs/ofxCv/include/ofxCv/ObjectFinder.h; sourceTree = "<group>"; };
+		273A1E4117287C7000C2179A /* ObjectFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectFinder.cpp; path = ../libs/ofxCv/src/ObjectFinder.cpp; sourceTree = "<group>"; };
 		2e411f99e3ab7154484b4f96165f5cff /* kmeans_index.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = kmeans_index.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/flann/kmeans_index.h; sourceTree = SOURCE_ROOT; };
 		30884ecd9c171ab1b1bdfc3f6449c692 /* cv.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = cv.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.hpp; sourceTree = SOURCE_ROOT; };
 		319268d200f1ba567e4ccff97a1babd8 /* cxeigen.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = cxeigen.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cxeigen.hpp; sourceTree = SOURCE_ROOT; };
@@ -393,6 +396,7 @@
 		4eb038c7df921aa8a40702861067101e /* ofxCv */ = {
 			isa = PBXGroup;
 			children = (
+				273A1E4017287C4400C2179A /* ObjectFinder.h */,
 				58140e0f92d37844e9c8883d2197e83e /* Calibration.h */,
 				178547e33ce398c7b59f08abb9417787 /* ContourFinder.h */,
 				d29dd28c195cd81267f3c8a12c4586e6 /* Distance.h */,
@@ -675,6 +679,7 @@
 		d240a1dd1ae9f8e81bdbcd2be334b53a /* src */ = {
 			isa = PBXGroup;
 			children = (
+				273A1E4117287C7000C2179A /* ObjectFinder.cpp */,
 				402c8f4015542356d362ac883b9c826c /* Calibration.cpp */,
 				5fbb4a8427353aed09174be5d37a593e /* ContourFinder.cpp */,
 				9dbd717072c35d324e1016697d7aa720 /* Distance.cpp */,
@@ -820,6 +825,7 @@
 				e212c821d1064b92dd953a42edc08aa7 /* ofxCvHaarFinder.cpp in Sources */,
 				63020f16c7e8ded9801112417e67ad38 /* ofxCvImage.cpp in Sources */,
 				d3301f6a0b43bb293ed97c1d5d26c840 /* ofxCvShortImage.cpp in Sources */,
+				273A1E4217287C7000C2179A /* ObjectFinder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

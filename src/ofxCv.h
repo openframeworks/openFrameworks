@@ -24,5 +24,6 @@
 #include "ofxCv/ContourFinder.h" // contour finding and tracking
 #include "ofxCv/RunningBackground.h" // background subtraction
 #include "ofxCv/Flow.h" // optical flow, from james george
+#include "ofxCv/ObjectFinder.h" // object finding (e.g., face detection)
 
 // <3 kyle

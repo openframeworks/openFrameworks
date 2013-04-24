@@ -5,7 +5,7 @@ using namespace cv;
 
 void testApp::setup() {
 	finder.setup("haarcascade_frontalface_alt2.xml");
-	finder.setRescale(.25);
+	finder.setPreset(ObjectFinder::Fast);
 	cam.initGrabber(640, 480);
 }
 
@@ -18,9 +18,12 @@ void testApp::update() {
 
 void testApp::draw() {
 	cam.draw(0, 0);
+	
+	// or just finder.draw()
 	ofNoFill();
 	for(int i = 0; i < finder.size(); i++) {
 		ofRect(finder.getObject(i));
 	}
+	
 	ofDrawBitmapString(ofToString(finder.size()), 10, 20);
 }
