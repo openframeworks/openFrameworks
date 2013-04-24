@@ -300,7 +300,22 @@ namespace ofxCv {
 		return currentLabelMap.find(label)->second->getAge();
 	}
 	
-	typedef Tracker<cv::Rect> RectTracker;
+	class RectTracker : public Tracker<cv::Rect> {
+	public:
+		cv::Vec2f getVelocity(unsigned int i) const {
+			unsigned int label = getLabelFromIndex(i);
+			if(existsPrevious(label)) {
+				const cv::Rect& previous = getPrevious(label);
+				const cv::Rect& current = getCurrent(label);
+				cv::Vec2f previousPosition(previous.x + previous.width / 2, previous.y + previous.height / 2);
+				cv::Vec2f currentPosition(current.x + current.width / 2, current.y + current.height / 2);
+				return currentPosition - previousPosition;
+			} else {
+				return cv::Vec2f(0, 0);
+			}
+		}
+	};
+	
 	typedef Tracker<cv::Point2f> PointTracker;
 	
 	template <class T>

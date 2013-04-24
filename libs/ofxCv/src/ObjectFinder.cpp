@@ -49,16 +49,7 @@ namespace ofxCv {
 		return rect;
 	}
 	cv::Vec2f ObjectFinder::getVelocity(unsigned int i) const {
-		unsigned int label = tracker.getLabelFromIndex(i);
-		if(tracker.existsPrevious(label)) {
-			const cv::Rect& previous = tracker.getPrevious(label);
-			const cv::Rect& current = tracker.getCurrent(label);
-			cv::Vec2f previousPosition(previous.x + previous.width / 2, previous.y + previous.height / 2);
-			cv::Vec2f currentPosition(current.x + current.width / 2, current.y + current.height / 2);
-			return currentPosition - previousPosition;
-		} else {
-			return cv::Vec2f(0, 0);
-		}
+		return tracker.getVelocity(i);
 	}
 	unsigned int ObjectFinder::getLabel(unsigned int i) const {
 		return tracker.getCurrentLabels()[i];
