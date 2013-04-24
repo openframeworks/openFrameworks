@@ -67,7 +67,7 @@ namespace ofxCv {
 		cv::Vec2f getVelocity(unsigned int i) const;
 		
 		RectTracker& getTracker();
-		unsigned int getLabel(unsigned int i);
+		unsigned int getLabel(unsigned int i) const;
 		
 		void setThreshold(float thresholdValue);
 		void setAutoThreshold(bool autoThreshold);

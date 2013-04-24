@@ -226,7 +226,7 @@ namespace ofxCv {
 		}
 	}
 	
-	unsigned int ContourFinder::getLabel(unsigned int i) {
+	unsigned int ContourFinder::getLabel(unsigned int i) const {
 		return tracker.getCurrentLabels()[i];
 	}
 	

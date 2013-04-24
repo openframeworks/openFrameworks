@@ -37,21 +37,42 @@ namespace ofxCv {
 																(findBiggestObject ? CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH : 0),
 																minSize,
 																maxSize);
+		tracker.track(objects);
 	}
 	unsigned int ObjectFinder::size() const {
 		return objects.size();
 	}
-	ofRectangle ObjectFinder::getObject(int i) const {
+	ofRectangle ObjectFinder::getObject(unsigned int i) const {
 		ofRectangle rect = toOf(objects[i]);
 		rect.width /= rescale, rect.height /= rescale;
 		rect.x /= rescale, rect.y /= rescale;
 		return rect;
 	}
+	cv::Vec2f ObjectFinder::getVelocity(unsigned int i) const {
+		unsigned int label = tracker.getLabelFromIndex(i);
+		if(tracker.existsPrevious(label)) {
+			const cv::Rect& previous = tracker.getPrevious(label);
+			const cv::Rect& current = tracker.getCurrent(label);
+			cv::Vec2f previousPosition(previous.x + previous.width / 2, previous.y + previous.height / 2);
+			cv::Vec2f currentPosition(current.x + current.width / 2, current.y + current.height / 2);
+			return currentPosition - previousPosition;
+		} else {
+			return cv::Vec2f(0, 0);
+		}
+	}
+	unsigned int ObjectFinder::getLabel(unsigned int i) const {
+		return tracker.getCurrentLabels()[i];
+	}
+	RectTracker& ObjectFinder::getTracker() {
+		return tracker;
+	}
 	void ObjectFinder::draw() const {
 		ofPushStyle();
 		ofNoFill();
 		for(int i = 0; i < size(); i++) {
-			ofRect(getObject(i));
+			ofRectangle object = getObject(i);
+			ofRect(object);
+			ofDrawBitmapStringHighlight(ofToString(getLabel(i)), object.x, object.y);
 		}
 		ofPopStyle();
 	}

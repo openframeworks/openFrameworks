@@ -1,9 +1,5 @@
-#pragma once
-
-#include "ofxCv.h"
-
 /* 
- ObjectFinder is good for tracking things like faces. usually you want to speed
+ this class is good for tracking things like faces. usually you want to speed
  up the tracking by doing detection on a smaller image, say setRescale(.25) for
  example to track on a 1/4 size image at a higher fps. other options for faster
  tracking include setCannyPruning(true) which will ignore low contrast regions,
@@ -23,20 +19,15 @@
  - handle tracking
  */
 
+#pragma once
+
+#include "ofxCv/Utilities.h"
+#include "ofxCv/Tracker.h"
+
+#include "ofxCv.h"
 namespace ofxCv {
 	class ObjectFinder {
-	protected:
-		float rescale, multiScaleFactor;
-		int minNeighbors;
-		bool useHistogramEqualization, cannyPruning, findBiggestObject;
-		float minSizeScale, maxSizeScale;
-		cv::Mat gray, graySmall;
-		cv::CascadeClassifier classifier;
-		vector<cv::Rect> objects;
-		
 	public:
-		
-		enum Preset {Fast,	Accurate, Sensitive};
 		
 		ObjectFinder();
 		void setup(string cascadeFilename);
@@ -46,9 +37,13 @@ namespace ofxCv {
 		}
 		void update(cv::Mat img);
 		unsigned int size() const;
-		ofRectangle getObject(int i) const;
+		ofRectangle getObject(unsigned int i) const;
+		RectTracker& getTracker();
+		unsigned int getLabel(unsigned int i) const;
+		cv::Vec2f getVelocity(unsigned int i) const;
 		void draw() const;
 		
+		enum Preset {Fast,	Accurate, Sensitive};
 		void setPreset(ObjectFinder::Preset preset);
 		
 		void setRescale(float rescale);
@@ -68,5 +63,15 @@ namespace ofxCv {
 		bool getUseHistogramEqualization() const;
 		float getMinSizeScale() const;
 		float getMaxSizeScale() const;
+		
+	protected:
+		float rescale, multiScaleFactor;
+		int minNeighbors;
+		bool useHistogramEqualization, cannyPruning, findBiggestObject;
+		float minSizeScale, maxSizeScale;
+		cv::Mat gray, graySmall;
+		cv::CascadeClassifier classifier;
+		vector<cv::Rect> objects;
+		RectTracker tracker;
 	};
 }
