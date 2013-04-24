@@ -32,5 +32,10 @@ void testApp::draw() {
 		ofScale(scaleAmount, scaleAmount);
 		sunglasses.draw(0, 0);
 		ofPopMatrix();
+		ofPushMatrix();
+		ofTranslate(object.getPosition());
+		ofDrawBitmapStringHighlight(ofToString(finder.getLabel(i)), 0, 0);
+		ofLine(ofVec2f(), toOf(finder.getVelocity(i)) * 10);
+		ofPopMatrix();
 	}
 }
