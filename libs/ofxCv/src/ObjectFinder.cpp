@@ -13,7 +13,12 @@ namespace ofxCv {
 	{
 	}
 	void ObjectFinder::setup(string cascadeFilename) {
-		classifier.load(ofToDataPath(cascadeFilename));
+		cascadeFilename = ofToDataPath(cascadeFilename);
+		if(ofFile(cascadeFilename).exists()) {
+			classifier.load(cascadeFilename);
+		} else {
+			ofLogError("ObjectFinder::setup") << "Couldn't find " << cascadeFilename;
+		}
 	}
 	void ObjectFinder::update(cv::Mat img) {
 		convertColor(img, gray, CV_RGB2GRAY);
