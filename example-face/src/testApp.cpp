@@ -18,12 +18,6 @@ void testApp::update() {
 
 void testApp::draw() {
 	cam.draw(0, 0);
-	
-	// or just finder.draw()
-	ofNoFill();
-	for(int i = 0; i < finder.size(); i++) {
-		ofRect(finder.getObject(i));
-	}
-	
-	ofDrawBitmapString(ofToString(finder.size()), 10, 20);
+	finder.draw();
+	ofDrawBitmapStringHighlight(ofToString(finder.size()), 10, 20);
 }

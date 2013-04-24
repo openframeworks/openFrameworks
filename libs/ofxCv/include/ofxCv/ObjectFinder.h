@@ -14,9 +14,7 @@
  with a preset using (for example) setPreset(ObjectFinder::Fast).
  
  need to add:
- - draw() method
  - allow rotations
- - handle tracking
  */
 
 #pragma once

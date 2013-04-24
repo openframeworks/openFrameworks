@@ -78,7 +78,7 @@ namespace ofxCv {
 			setFindBiggestObject(false);
 		} else if(preset == ObjectFinder::Accurate) {
 			setRescale(.5);
-			setMinNeighbors(3);
+			setMinNeighbors(6);
 			setMultiScaleFactor(1.02);
 			setMinSizeScale(.1);
 			setMaxSizeScale(1);
