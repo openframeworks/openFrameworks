@@ -206,6 +206,9 @@
 		<Unit filename="../../../addons/ofxCv/libs/ofxCv/include/ofxCv/Helpers.h">
 			<Option virtualFolder="addons/ofxCv/libs/ofxCv/include/ofxCv" />
 		</Unit>
+		<Unit filename="../../../addons/ofxCv/libs/ofxCv/include/ofxCv/ObjectFinder.h">
+			<Option virtualFolder="addons/ofxCv/libs/ofxCv/include/ofxCv" />
+		</Unit>
 		<Unit filename="../../../addons/ofxCv/libs/ofxCv/include/ofxCv/RunningBackground.h">
 			<Option virtualFolder="addons/ofxCv/libs/ofxCv/include/ofxCv" />
 		</Unit>
@@ -231,6 +234,9 @@
 			<Option virtualFolder="addons/ofxCv/libs/ofxCv/src" />
 		</Unit>
 		<Unit filename="../../../addons/ofxCv/libs/ofxCv/src/Helpers.cpp">
+			<Option virtualFolder="addons/ofxCv/libs/ofxCv/src" />
+		</Unit>
+		<Unit filename="../../../addons/ofxCv/libs/ofxCv/src/ObjectFinder.cpp">
 			<Option virtualFolder="addons/ofxCv/libs/ofxCv/src" />
 		</Unit>
 		<Unit filename="../../../addons/ofxCv/libs/ofxCv/src/RunningBackground.cpp">

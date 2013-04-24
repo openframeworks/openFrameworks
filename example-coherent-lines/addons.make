@@ -1,2 +1,3 @@
+ofxControlPanel
 ofxCv
-ofxOpenCv
+ofxXmlSettings

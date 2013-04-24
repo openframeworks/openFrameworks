@@ -28,6 +28,9 @@
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Helpers.cpp">
 			<Filter>addons\ofxCv\libs\ofxCv\src</Filter>
 		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\ObjectFinder.cpp">
+			<Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+		</ClCompile>
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\RunningBackground.cpp">
 			<Filter>addons\ofxCv\libs\ofxCv\src</Filter>
 		</ClCompile>
@@ -195,6 +198,9 @@
 			<Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
 		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Helpers.h">
+			<Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\ObjectFinder.h">
 			<Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
 		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\RunningBackground.h">

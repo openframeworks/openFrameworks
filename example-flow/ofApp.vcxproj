@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{7FD42DF7-442E-479A-BA76-D0022F99702A}</ProjectGuid>
+		<RootNamespace>ofApp</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<CharacterSet>Unicode</CharacterSet>
+		<WholeProgramOptimization>true</WholeProgramOptimization>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings" />
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs2010\openFrameworksRelease.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs2010\openFrameworksDebug.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup>
+		<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+		<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bin\</OutDir>
+		<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">obj\$(Configuration)\</IntDir>
+		<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+		<GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+		<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bin\</OutDir>
+		<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">obj\$(Configuration)\</IntDir>
+		<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_debug</TargetName>
+		<TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
+	</PropertyGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<ClCompile>
+			<Optimization>Disabled</Optimization>
+			<MinimalRebuild>true</MinimalRebuild>
+			<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+			<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+			<PrecompiledHeader />
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+			<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxControlPanel\libs;..\..\..\addons\ofxControlPanel\src;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+			<GenerateDebugInformation>true</GenerateDebugInformation>
+			<ProgramDatabaseFile>$(TargetDir)$(TargetName)_debugInfo.pdb</ProgramDatabaseFile>
+			<SubSystem>Console</SubSystem>
+			<RandomizedBaseAddress>false</RandomizedBaseAddress>
+			<DataExecutionPrevention />
+			<TargetMachine>MachineX86</TargetMachine>
+			<AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+		</Link>
+		<PostBuildEvent />
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<ClCompile>
+			<WholeProgramOptimization>false</WholeProgramOptimization>
+			<PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+			<PrecompiledHeader />
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat />
+			<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxControlPanel\libs;..\..\..\addons\ofxControlPanel\src;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<SubSystem>Console</SubSystem>
+			<OptimizeReferences>true</OptimizeReferences>
+			<EnableCOMDATFolding>true</EnableCOMDATFolding>
+			<RandomizedBaseAddress>false</RandomizedBaseAddress>
+			<DataExecutionPrevention />
+			<TargetMachine>MachineX86</TargetMachine>
+			<LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+			<AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+		</Link>
+		<PostBuildEvent />
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClCompile Include="src\main.cpp" />
+		<ClCompile Include="src\testApp.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiBaseObject.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiCallback.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiCallbackValue.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiColor.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTextBase.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiType2DSlider.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeButtonSlider.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeChartPlotter.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeCustom.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeDrawable.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeFileLister.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeLabel.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeLogger.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeMultiToggle.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypePanel.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeSlider.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeText.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeTextDropDown.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeTextInput.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeToggle.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeVairableLister.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiTypeVideo.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\guiValue.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\ofxControlPanel.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\simpleColor.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\simpleFileLister.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxControlPanel\src\simpleLogger.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\ETF.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\fdog.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Calibration.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\ContourFinder.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Distance.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Flow.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Helpers.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\ObjectFinder.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\RunningBackground.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Tracker.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Utilities.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="src\testApp.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiBaseObject.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiCallback.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiCallbackValue.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiColor.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiCustomImpl.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiIncludes.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTextBase.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiType2DSlider.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeButtonSlider.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeChartPlotter.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeCustom.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeDrawable.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeFileLister.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeLabel.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeLogger.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeMultiToggle.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypePanel.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeSlider.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeText.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeTextDropDown.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeTextInput.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeToggle.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeVairableLister.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiTypeVideo.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiValue.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiVariablePointer.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\guiXmlValue.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\ofxAutoControlPanel.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\ofxControlPanel.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\simpleColor.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\simpleFileLister.h" />
+		<ClInclude Include="..\..\..\addons\ofxControlPanel\src\simpleLogger.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\ETF.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\fdog.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\imatrix.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\myvec.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Calibration.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\ContourFinder.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Distance.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Flow.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Helpers.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\ObjectFinder.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\RunningBackground.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Tracker.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Utilities.h" />
+		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Wrappers.h" />
+		<ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
+		<ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj">
+			<Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets" />
+</Project>

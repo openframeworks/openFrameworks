@@ -4,6 +4,8 @@ using namespace ofxCv;
 using namespace cv;
 
 void testApp::setup() {
+	ofSetVerticalSync(true);
+	ofSetFrameRate(120);
 	finder.setup("haarcascade_frontalface_alt2.xml");
 	finder.setPreset(ObjectFinder::Fast);
 	cam.initGrabber(640, 480);
