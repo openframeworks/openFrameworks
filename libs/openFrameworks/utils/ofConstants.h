@@ -275,6 +275,8 @@ typedef TESSindex ofIndexType;
 #if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
+	#elif defined(TARGET_ANDROID)
+		#define OF_VIDEO_PLAYER_ANDROID
 	#else
 		#ifdef TARGET_OF_IPHONE
 			#define OF_VIDEO_PLAYER_IPHONE
@@ -286,7 +288,7 @@ typedef TESSindex ofIndexType;
 				#define OF_VIDEO_PLAYER_QTKIT
 			#endif
 		#elif !defined(TARGET_ANDROID)
-			#define OF_VIDEO_PLAYER_QUICKTIME
+			#define OF_VIDEO_PLAYER_QUICKTIMEs
 		#endif
 	#endif
 #endif
