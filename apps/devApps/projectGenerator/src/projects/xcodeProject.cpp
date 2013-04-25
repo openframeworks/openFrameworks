@@ -213,8 +213,15 @@ bool xcodeProject::createProjectFile(){
 				dataDirectory.create(false);
 			}
 		}
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default-568h@2x~iphone.png"),projectDir + "/bin/data/Default-568h@2x~iphone.png", true, true);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default.png"),projectDir + "/bin/data/Default.png", true, true);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x.png"),projectDir + "/bin/data/Default@2x.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x~ipad.png"),projectDir + "/bin/data/Default@2x~ipad.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x~iphone.png"),projectDir + "/bin/data/Default@2x~iphone.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default~ipad.png"),projectDir + "/bin/data/Default~ipad.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default~iphone.png"),projectDir + "/bin/data/Default~iphone.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon-72.png"),projectDir + "/bin/data/Icon-72.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon-72@2x.png"),projectDir + "/bin/data/Icon-72@2x.png", true, true);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon.png"),projectDir + "/bin/data/Icon.png", true, true);
         ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon@2x.png"),projectDir + "/bin/data/Icon@2x.png", true, true);
     }
