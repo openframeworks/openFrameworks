@@ -502,7 +502,7 @@ void ofTexture::allocate(const ofTextureData & textureData){
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
-		texData.textureTarget = GL_TEXTURE_2D;
+		//texData.textureTarget = GL_TEXTURE_2D;
 	}
 
 	// attempt to free the previous bound texture, if we can:
@@ -1013,7 +1013,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	
 	ofPoint topLeft = getCoordFromPoint(sx, sy);
 	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
-	
+
 	GLfloat tx0 = topLeft.x + offsetw;
 	GLfloat ty0 = topLeft.y + offseth;
 	GLfloat tx1 = bottomRight.x - offsetw;
@@ -1035,7 +1035,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 		px1,py1,
 		px0,py1
 	};
-	
+
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
 	glEnableClientState(GL_VERTEX_ARRAY);		
