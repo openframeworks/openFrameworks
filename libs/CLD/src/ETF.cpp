@@ -1,6 +1,8 @@
 #include "ETF.h"
 #include "imatrix.h"
 
+#include "ofMain.h"
+
 void ETF::set(imatrix& image) 
 {
 	int i, j;
