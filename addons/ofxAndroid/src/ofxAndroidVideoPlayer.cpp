@@ -154,8 +154,8 @@ void ofxAndroidVideoPlayer::update(){
 		matrix.getPtr()[i] = m[i];
 	}
 
-	texture.getTextureData().tex_t = 1.+1-matrix.getPtr()[0]; // Hack!
-	texture.getTextureData().tex_u = 1.;
+	//texture.getTextureData().tex_t = 1.+1-matrix.getPtr()[0]; // Hack!
+	//texture.getTextureData().tex_u = 1.;
 
 	env->ReleaseFloatArrayElements(matrixJava,m,0);
 
