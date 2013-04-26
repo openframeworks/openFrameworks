@@ -60,6 +60,7 @@ namespace ofxCv {
 		double getContourArea(unsigned int i) const;
 		double getArcLength(unsigned int i) const;
 		vector<cv::Point> getConvexHull(unsigned int i) const;
+		vector<cv::Vec4i> getConvexityDefects(unsigned int i) const;
 		cv::RotatedRect getMinAreaRect(unsigned int i) const;
 		cv::Point2f getMinEnclosingCircle(unsigned int i, float& radius) const;
 		cv::RotatedRect getFitEllipse(unsigned int i) const;
