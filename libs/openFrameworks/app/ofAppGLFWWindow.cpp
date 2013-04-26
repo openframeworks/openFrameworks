@@ -62,7 +62,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	requestedWidth = w;
 	requestedHeight = h;
-	
+
 
 	if(!glfwInit( )){
 		ofLog(OF_LOG_ERROR,"cannot init GLFW");
@@ -84,7 +84,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	// GLFW_STEREO;					0
 	// GLFW_WINDOW_NO_RESIZE;		0
 	// GLFW_FSAA_SAMPLES;			0
-	
+
 #ifdef USE_PROGRAMMABLE_GL
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -92,14 +92,14 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-	
+
 	windowP = glfwCreateWindow(w, h, "GLFW Window", NULL, NULL);
-	
-	
-	
+
+
+
 //	if (windowMode == OF_WINDOW){
 //
-//		
+//
 //		result = glfwOpenWindow(
 //		          w, h,          // Width and height of window
 //		          8, 8, 8,           // Number of red, green, and blue bits for color buffer
@@ -133,7 +133,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 //	{
 //		printf("**** invalid windowMode\n");
 //	}
-//	
+//
 //	if ( result != GL_TRUE )
 //	{
 //		printf("**** failed to open glfw window\n");
@@ -149,16 +149,16 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	requestedHeight = requestedHeight < 1 ? 1 : requestedHeight;
 	glfwGetWindowSize( windowP, &requestedWidth, &requestedHeight );
-	
+
 
 	nonFullScreenW = ofGetWidth();
 	nonFullScreenH = ofGetHeight();
 
     glfwMakeContextCurrent(windowP);
-	
+
 	// glewExperimental = true;
 	glewInit();
-	
+
 	fprintf(stdout,"Vendor:   %s\n",   (char*)glGetString(GL_VENDOR));
 	fprintf(stdout,"Renderer: %s\n",   (char*)glGetString(GL_RENDERER));
 	fprintf(stdout,"Version:  %s\n",   (char*)glGetString(GL_VERSION));
@@ -166,15 +166,14 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 
 	glfwGetWindowSize(windowP, &windowW, &windowH );
-		
+
     setWindowPosition(100, 50);
-	
+
 }
 
 //--------------------------------------------
-int ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
+void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
 	OF_EXIT_APP(0);
-	return 0;
 }
 
 //--------------------------------------------
@@ -210,7 +209,7 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			}
 		}
 
-		
+
 		unsigned long long newMillis = ofGetElapsedTimeMillis(); // you have to measure here
 		lastFrameTime = (newMillis-prevMillis)/1000.;
 		prevMillis = newMillis;
@@ -235,7 +234,7 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		}
 		//lastFrameTime	= diff;
 		timeThen		= timeNow;
-		
+
 		nFrameCount++;
 
 	}
@@ -472,7 +471,7 @@ void ofAppGLFWWindow::idle(void) {
 void ofAppGLFWWindow::idle_cb(){
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-	
+
 	/*if (nFrameCount != 0 && bFrameRateSet == true){
 		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
 		if (diffMillis > millisForFrame){
@@ -487,7 +486,7 @@ void ofAppGLFWWindow::idle_cb(){
 		}
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-	
+
     // -------------- fps calculation:
 	// theo - now moved from display to idle_cb
 	// discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
@@ -496,7 +495,7 @@ void ofAppGLFWWindow::idle_cb(){
 	// theo - please don't mess with this without letting me know.
 	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
 	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
-	
+
 	timeNow = ofGetElapsedTimef();
 	double diff = timeNow-timeThen;
 	if( diff  > 0.00001 ){
@@ -507,7 +506,7 @@ void ofAppGLFWWindow::idle_cb(){
 	lastFrameTime	= diff;
 	timeThen		= timeNow;*/
   	// --------------
-	
+
 	ofNotifyUpdate();
 
 	// glutPostRedisplay();
@@ -532,14 +531,14 @@ void ofAppGLFWWindow::display(void){
 	// or else we have video memory garbage to draw on to...
 
 	glDrawBuffer( GL_BACK );
-	
+
 	// printf("nFrameCount %i \n", nFrameCount);
-	
-	
+
+
 	// glDrawBuffer( GL_FRONT );
 
-	
-	
+
+
 	if ( bClearAuto == true ){
 		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -547,7 +546,7 @@ void ofAppGLFWWindow::display(void){
 	}
 
 	glDrawBuffer( GL_BACK );
-	
+
 
 	if( bEnableSetupScreen )ofSetupScreen();
 
@@ -584,7 +583,7 @@ void ofAppGLFWWindow::exitApp(){
 }
 
 //------------------------------------------------------------
-static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
+static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 	int savedY;
 	switch(orientation) {
 		case OF_ORIENTATION_180:
@@ -627,7 +626,7 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state) {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, int x, int y) {
+void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 	rotateMouseXY(ofGetOrientation(), x, y);
 
 	if(!buttonPressed){
@@ -789,7 +788,7 @@ bool ofAppGLFWWindow::isWindowResizeable(){
 }
 
 //------------------------------------------------------------
-	
+
 void ofAppGLFWWindow::iconify(bool bIconify){
 	if(bIconify)
 			glfwIconifyWindow(windowP);

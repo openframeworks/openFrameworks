@@ -15,12 +15,7 @@
 //#define GLFW_NO_GLU       /* don't drag in the old GLU lib - unless you must. */
 //#define _GLFW_USE_MENUBAR
 
-#include "glfw_config.h"
-#ifdef TARGET_OSX
 #include "GL/glfw3.h"
-#else
-#include "glfw3.h"
-#endif
 
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
@@ -31,7 +26,7 @@ class ofBaseApp;
 class ofAppGLFWWindow : public ofAppBaseWindow {
 
 	static GLFWwindow* windowP;
-	
+
 public:
 
 	ofAppGLFWWindow();
@@ -45,10 +40,10 @@ public:
 
 	void hideCursor();
 	void showCursor();
-	
+
 	int getHeight();
 	int getWidth();
-	
+
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
 	ofVec3f 	getWindowPosition();
@@ -91,14 +86,14 @@ private:
 	void 			idle(void);
 
 	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state);
-	static void 	motion_cb(GLFWwindow* windowP_, int x, int y);
+	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int state);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
-	static int 		exit_cb(GLFWwindow* windowP_);
+	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
-	
+
 	void			idle_cb();
-	
+
 
 	//utils
 	void			changeMode();
