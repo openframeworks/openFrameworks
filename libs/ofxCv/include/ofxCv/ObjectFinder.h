@@ -36,6 +36,7 @@ namespace ofxCv {
 		void update(cv::Mat img);
 		unsigned int size() const;
 		ofRectangle getObject(unsigned int i) const;
+		ofRectangle getObjectSmoothed(unsigned int i) const;
 		RectTracker& getTracker();
 		unsigned int getLabel(unsigned int i) const;
 		cv::Vec2f getVelocity(unsigned int i) const;

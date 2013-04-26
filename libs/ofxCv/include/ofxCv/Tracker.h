@@ -47,6 +47,7 @@
 #include "opencv2/opencv.hpp"
 #include <utility>
 #include <map>
+#include "ofMath.h"
 
 namespace ofxCv {
 	
@@ -133,7 +134,7 @@ namespace ofxCv {
 		virtual ~Tracker(){};
 		void setPersistence(unsigned int persistence);
 		void setMaximumDistance(float maximumDistance);
-		virtual vector<unsigned int>& track(const vector<T>& objects);
+		virtual const vector<unsigned int>& track(const vector<T>& objects);
 		
 		// organized in the order received by track()
 		const vector<unsigned int>& getCurrentLabels() const;
@@ -162,7 +163,7 @@ namespace ofxCv {
 	}
 	
 	template <class T>
-	vector<unsigned int>& Tracker<T>::track(const vector<T>& objects) {
+	const vector<unsigned int>& Tracker<T>::track(const vector<T>& objects) {
 		previous = current;
 		int n = objects.size();
 		int m = previous.size();
@@ -301,7 +302,47 @@ namespace ofxCv {
 	}
 	
 	class RectTracker : public Tracker<cv::Rect> {
+	protected:
+		float smoothingRate;
+		std::map<unsigned int, cv::Rect> smoothed;
 	public:
+		RectTracker()
+		:smoothingRate(.5) {
+		}
+		void setSmoothingRate(float smoothingRate) {
+			this->smoothingRate = smoothingRate;
+		}
+		float getSmoothingRate() const {
+			return smoothingRate;
+		}
+		const vector<unsigned int>& track(const vector<cv::Rect>& objects) {
+			const vector<unsigned int>& labels = Tracker<cv::Rect>::track(objects);
+			// add new objects, update old objects
+			for(int i = 0; i < labels.size(); i++) {
+				unsigned int label = labels[i];
+				const cv::Rect& cur = getCurrent(label);
+				if(smoothed.count(label) > 0) {
+					cv::Rect& smooth = smoothed[label];
+					smooth.x = ofLerp(smooth.x, cur.x, smoothingRate);
+					smooth.y = ofLerp(smooth.y, cur.y, smoothingRate);
+					smooth.width = ofLerp(smooth.width, cur.width, smoothingRate);
+					smooth.height = ofLerp(smooth.height, cur.height, smoothingRate);
+				} else {
+					smoothed[label] = cur;
+				}
+			}
+			std::map<unsigned int, cv::Rect>::iterator smoothedItr;
+			for(smoothedItr = smoothed.begin(); smoothedItr != smoothed.end(); smoothedItr++) {
+				unsigned int label = smoothedItr->first;
+				if(!existsCurrent(label)) {
+					smoothed.erase(smoothed.find(label));
+				}
+			}
+			return labels;
+		}
+		const cv::Rect& getSmoothed(unsigned int label) const {
+			return smoothed.find(label)->second;
+		}
 		cv::Vec2f getVelocity(unsigned int i) const {
 			unsigned int label = getLabelFromIndex(i);
 			if(existsPrevious(label)) {
@@ -355,7 +396,7 @@ namespace ofxCv {
 		vector<unsigned int> labels;
 		vector<F> followers;
 	public:
-		vector<unsigned int>& track(const vector<T>& objects) {
+		const vector<unsigned int>& track(const vector<T>& objects) {
 			Tracker<T>::track(objects);
 			// kill missing, update old
 			for(int i = 0; i < labels.size(); i++) {

@@ -42,16 +42,21 @@ namespace ofxCv {
 																(findBiggestObject ? CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH : 0),
 																minSize,
 																maxSize);
+		for(int i = 0; i < objects.size(); i++) {
+			cv::Rect& rect = objects[i];
+			rect.width /= rescale, rect.height /= rescale;
+			rect.x /= rescale, rect.y /= rescale;
+		}
 		tracker.track(objects);
 	}
 	unsigned int ObjectFinder::size() const {
 		return objects.size();
 	}
 	ofRectangle ObjectFinder::getObject(unsigned int i) const {
-		ofRectangle rect = toOf(objects[i]);
-		rect.width /= rescale, rect.height /= rescale;
-		rect.x /= rescale, rect.y /= rescale;
-		return rect;
+		return toOf(objects[i]);
+	}
+	ofRectangle ObjectFinder::getObjectSmoothed(unsigned int i) const {
+		return toOf(tracker.getSmoothed(getLabel(i)));
 	}
 	cv::Vec2f ObjectFinder::getVelocity(unsigned int i) const {
 		return tracker.getVelocity(i);
