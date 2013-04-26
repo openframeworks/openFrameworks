@@ -18,7 +18,7 @@
 #include "ofTrueTypeFont.h"
 
 
-// TODO: closing seems wonky. 
+// TODO: closing seems wonky.
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
 #if defined (TARGET_WIN32) || defined(TARGET_OSX)
 	#include "ofQtUtils.h"
@@ -43,7 +43,7 @@ static ofPtr<ofAppBaseWindow> 		window;
 #elif defined(TARGET_LINUX_ARM)
 	#include "ofAppEGLWindow.h"
 #else
-#ifdef USE_PROGRAMMABLE_GL
+#if defined(USE_PROGRAMMABLE_GL) && !defined(TARGET_WIN32)
 	#include "ofAppGLFWWindow.h"
 #else
 	#include "ofAppGlutWindow.h"
@@ -63,7 +63,7 @@ void ofExitCallback();
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	#include <signal.h>
-	
+
 	static bool bExitCalled = false;
 	void sighandler(int sig) {
 		ofLogVerbose("ofAppRunner") << "sighandler : Signal handled " << sig;
@@ -91,7 +91,7 @@ void ofRunApp(ofBaseApp * OFSA){
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	// see http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html#Termination-Signals
 	signal(SIGTERM, &sighandler);
-    signal(SIGQUIT, &sighandler); 
+    signal(SIGQUIT, &sighandler);
 	signal(SIGINT,  &sighandler);
 
 	signal(SIGKILL, &sighandler); // not much to be done here
@@ -126,7 +126,7 @@ void ofRunApp(ofBaseApp * OFSA){
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
-	
+
 #ifndef TARGET_OPENGLES
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
@@ -163,7 +163,7 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 	#elif defined(TARGET_LINUX_ARM)
 		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
 	#else
-#ifdef USE_PROGRAMMABLE_GL
+#if defined(USE_PROGRAMMABLE_GL) && !defined(TARGET_WIN32)
 		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
 #else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
@@ -187,7 +187,7 @@ void ofExitCallback(){
 	ofSoundShutdown();
 	//------------------------
 	#endif
-	
+
 	// try to close quicktime, for non-linux systems:
 	#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
 	closeQuicktime();
@@ -367,7 +367,7 @@ bool ofDoesHWOrientation(){
 
 //--------------------------------------------------
 ofPoint	ofGetWindowSize() {
-	//this can't be return ofPoint(ofGetWidth(), ofGetHeight()) as width and height change based on orientation. 
+	//this can't be return ofPoint(ofGetWidth(), ofGetHeight()) as width and height change based on orientation.
 	return window->getWindowSize();
 }
 
