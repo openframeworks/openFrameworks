@@ -84,6 +84,12 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	// GLFW_STEREO;					0
 	// GLFW_WINDOW_NO_RESIZE;		0
 	// GLFW_FSAA_SAMPLES;			0
+	glfwWindowHint(GLFW_RED_BITS, 8);
+	glfwWindowHint(GLFW_GREEN_BITS, 8);
+	glfwWindowHint(GLFW_BLUE_BITS, 8);
+	glfwWindowHint(GLFW_ALPHA_BITS, 8);
+	glfwWindowHint(GLFW_DEPTH_BITS, 24);
+	glfwWindowHint(GLFW_STENCIL_BITS, 0);
 
 #ifdef USE_PROGRAMMABLE_GL
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
