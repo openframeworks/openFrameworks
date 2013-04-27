@@ -914,7 +914,8 @@ void main()\n\
 // http://www.opengl.org/registry/doc/GLSLangSpec.1.50.09.pdf
 
 string defaultVertexShader =
-"#version 150\n\
+"#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform mat4 projectionMatrix;\n\
 uniform mat4 modelViewMatrix;\n\
@@ -939,7 +940,8 @@ void main()\n\
 }";
 
 string defaultFragmentShaderTexColor ="\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform sampler2DRect src_tex_unit0;\n\
 uniform float useTexture = 0.0;\n\
@@ -956,7 +958,8 @@ void main(){\n\
 }";
 
 string defaultFragmentShaderTexNoColor ="\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform sampler2DRect src_tex_unit0;\n\
 uniform float useTexture = 0.0;\n\
@@ -973,7 +976,8 @@ void main(){\n\
 }";
 
 string defaultFragmentShaderTex2DColor ="\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform sampler2D src_tex_unit0;\n\
 uniform float useTexture = 0.0;\n\
@@ -990,7 +994,8 @@ void main(){\n\
 }";
 
 string defaultFragmentShaderTex2DNoColor ="\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform sampler2D src_tex_unit0;\n\
 uniform float useTexture = 0.0;\n\
@@ -1007,7 +1012,8 @@ void main(){\n\
 }";
 
 string defaultFragmentShaderNoTexColor ="\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform sampler2DRect src_tex_unit0;\n\
 uniform float useTexture = 0.0;\n\
@@ -1024,7 +1030,8 @@ void main(){\n\
 }";
 
 string defaultFragmentShaderNoTexNoColor ="\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform sampler2DRect src_tex_unit0;\n\
 uniform float useTexture = 0.0;\n\
@@ -1041,7 +1048,8 @@ void main(){\n\
 }";
 
 string bitmapStringVertexShader ="\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform mat4 projectionMatrix;\n\
 uniform mat4 modelViewMatrix;\n\
@@ -1061,7 +1069,8 @@ void main()\n\
 }";
 
 string bitmapStringFragmentShader	= "\n\
-#version 150\n\
+#version 130\n\
+#extension GL_ARB_texture_rectangle : enable\n\
 \n\
 uniform sampler2D src_tex_unit0;\n\
 uniform vec4 color = vec4(1.0);\n\
