@@ -161,7 +161,7 @@ namespace ofxCv {
 	}
 	
 	vector<cv::Vec4i> ContourFinder::getConvexityDefects(unsigned int i) const {
-		vector<cv::Point> hullIndices;
+		vector<int> hullIndices;
 		const vector<cv::Point>& contour = contours[i];
 		convexHull(Mat(contours[i]), hullIndices, false, false);
 		vector<cv::Vec4i> convexityDefects;
