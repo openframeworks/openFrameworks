@@ -57,6 +57,12 @@ void testApp::draw() {
 		ofPolyline convexHull = toOf(contourFinder.getConvexHull(i));
 		convexHull.draw();
 		
+		// defects of the convex hull
+		vector<cv::Vec4i> defects = contourFinder.getConvexityDefects(i);
+		for(int j = 0; j < defects.size(); j++) {
+			ofLine(defects[j][0], defects[j][1], defects[j][2], defects[j][3]);
+		}
+		
 		// some different styles of contour centers
 		ofVec2f centroid = toOf(contourFinder.getCentroid(i));
 		ofVec2f average = toOf(contourFinder.getAverage(i));
@@ -85,9 +91,9 @@ void testApp::draw() {
 	}
 
 	ofSetColor(255);
-	drawHighlightString(ofToString((int) ofGetFrameRate()) + " fps", 10, 20);
-	drawHighlightString(ofToString((int) threshold) + " threshold", 10, 40);
-	drawHighlightString(trackingColorMode == TRACK_COLOR_RGB ? "RGB tracking" : "hue tracking", 10, 60);
+	drawHighlightString(ofToString((int) ofGetFrameRate()) + " fps", 10, 10);
+	drawHighlightString(ofToString((int) threshold) + " threshold", 10, 30);
+	drawHighlightString(trackingColorMode == TRACK_COLOR_RGB ? "RGB tracking" : "hue tracking", 10, 50);
 	
 	ofTranslate(8, 75);
 	ofFill();
