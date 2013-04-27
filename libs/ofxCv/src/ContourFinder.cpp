@@ -161,35 +161,7 @@ namespace ofxCv {
 	}
 	
 	vector<cv::Vec4i> ContourFinder::getConvexityDefects(unsigned int i) const {
-		vector<int> hullIndices;
-		const vector<cv::Point>& contour = contours[i];
-		convexHull(Mat(contours[i]), hullIndices, false, false);
-		vector<cv::Vec4i> convexityDefects;
-		
-		// this should be replaced by c++ 2.0 api style code once available
-		if(hullIndices.size() > 0 && contour.size() > 0) {		
-			CvMat contourMat = cvMat(1, contour.size(), CV_32SC2, (void*) &contour[0]);
-			CvMat hullMat = cvMat(1, hullIndices.size(), CV_32SC1, (void*) &hullIndices[0]);
-			
-			//We calculate convexity defects
-			CvMemStorage* storage = cvCreateMemStorage(0);
-			CvSeq* defects = cvConvexityDefects(&contourMat, &hullMat, storage);
-			
-			//We store defects points in the convexDefects parameter.
-			for(int i = 0; i < defects->total; i++){
-				CvConvexityDefect* cur = (CvConvexityDefect*) cvGetSeqElem(defects, i);
-				cv::Vec4i defect;
-				defect[0] = cur->depth_point->x;
-				defect[1] = cur->depth_point->y;
-				defect[2] = (cur->start->x + cur->end->x) / 2;
-				defect[3] = (cur->start->y + cur->end->y) / 2;
-        convexityDefects.push_back(defect);
-			}
-			
-			cvReleaseMemStorage(&storage);
-    }
-		
-		return convexityDefects;
+		return convexityDefects(contours[i]);
 	}
 	
 	cv::RotatedRect ContourFinder::getMinAreaRect(unsigned int i) const {

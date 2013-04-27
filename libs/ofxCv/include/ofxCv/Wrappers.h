@@ -309,6 +309,8 @@ cv::name(xMat, yMat, resultMat);\
 	
 	// for contourArea() and arcLength(), see ofPolyline::getArea() and getPerimiter()
 	ofPolyline convexHull(const ofPolyline& polyline);
+	vector<cv::Vec4i> convexityDefects(const vector<cv::Point>& contour);
+	vector<cv::Vec4i> convexityDefects(const ofPolyline& polyline);
 	cv::RotatedRect minAreaRect(const ofPolyline& polyline);
 	cv::RotatedRect fitEllipse(const ofPolyline& polyline);
 	void fitLine(const ofPolyline& polyline, ofVec2f& point, ofVec2f& direction);
