@@ -767,22 +767,7 @@ void ofGLES2Renderer::loadIdentityMatrix (void){
 
 //----------------------------------------------------------
 void ofGLES2Renderer::loadMatrix (const ofMatrix4x4 & m){
-	switch(currentMatrixMode){
-	case OF_MATRIX_MODELVIEW:
-		modelView = m;
-		modelViewOrientation = modelView;
-		modelViewOrientation.preMult(orientationMatrix);
-		uploadModelViewMatrix(modelViewOrientation);
-		break;
-	case OF_MATRIX_PROJECTION:
-		projection = m;
-		uploadProjectionMatrix(projection);
-		break;
-	case OF_MATRIX_TEXTURE:
-		textureMatrix = m;
-		uploadTextureMatrix(textureMatrix);
-		break;
-	}
+    loadMatrix(m.getPtr());
 }
 
 //----------------------------------------------------------
@@ -791,7 +776,6 @@ void ofGLES2Renderer::loadMatrix (const float *m){
 	case OF_MATRIX_MODELVIEW:
 		modelView.set(m);
 		modelViewOrientation = modelView;
-		modelViewOrientation.preMult(orientationMatrix);
 		uploadModelViewMatrix(modelViewOrientation);
 		break;
 	case OF_MATRIX_PROJECTION:
