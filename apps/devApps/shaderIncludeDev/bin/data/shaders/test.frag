@@ -1,8 +1,8 @@
 #version 120
 #extension GL_ARB_texture_rectangle : enable
 
-#pragma include "ofBlendingUtils.frag"
-#pragma include "ofImageProcessingUtils.frag"
+#pragma include "shaders/ofBlendingUtils.frag"
+#pragma include "shaders/ofImageProcessingUtils.frag"
 
 uniform sampler2DRect tex0;
 uniform float blurScale;

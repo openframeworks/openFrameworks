@@ -4,9 +4,33 @@ ofShader shader;
 ofImage img;
 //--------------------------------------------------------------
 void testApp::setup(){
+
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	img.loadImage("testImage.jpg");
-	shader.load("", "shaders/test.frag");
+
+	//shader.load("", "shaders/test.frag");
+
+    string test = "#version 120 \n\
+#extension GL_ARB_texture_rectangle : enable \n\
+#pragma include \"shaders/ofBlendingUtils.frag\" \n\
+#pragma include \"shaders/ofImageProcessingUtils.frag\" \n\
+uniform sampler2DRect tex0; \
+uniform float blurScale; \
+uniform float saturation; \
+void main(){ \
+	vec2 st	= gl_TexCoord[0].st; \
+	vec4 ogColor = texture2DRect(tex0, st); \
+	vec4 blurColor	=  blurH(tex0, st, blurScale); \
+	blurColor		+= blurV(tex0, st, blurScale); \
+	blurColor *= 0.5; \
+	blurColor		+= blurV(tex0, st, blurScale*2.2) * 0.7; \
+	blurColor		+= blurH(tex0, st, blurScale*2.2) * 0.7; \
+	blurColor.rgb = ContrastSaturationBrightness(blurColor.rgb, 1.0, saturation, 1.5); \
+	gl_FragColor = blurColor; \
+}";
+
+	shader.setupShaderFromSource(GL_FRAGMENT_SHADER, test);
+    shader.linkProgram();
 	
 	ofBackground(40, 40, 40);
 }
