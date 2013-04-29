@@ -18,6 +18,9 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		bIsPlaying = false;
 		bIsPaused = true;
 		bIsFrameNew = false;
+		bAutoResume = false;
+		
+		movieCurrentTime = 0;
 		
 	}
 	
@@ -30,6 +33,11 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		}
 	}
 	
+	public void setTextureReference(int texName) {
+		textureName = texName;
+		setTexture(textureName);
+	}
+	
 	@SuppressLint("NewApi")
 	public void setTexture(int texName) {
 		surfaceTexture = new SurfaceTexture(texName);
@@ -39,10 +47,26 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	}
 	
 	@SuppressLint("NewApi")
+	public void clearTextures() {
+		if(surface != null) {
+			surface.release();
+			surface = null;
+		}
+		// TODO Clearing surfaceTexture crashes appResume
+		// so we have to check if it exists always before accesing its methods
+		if(surfaceTexture != null) {
+			surfaceTexture.setOnFrameAvailableListener(null);
+			surfaceTexture.release();
+			surfaceTexture = null;
+		}
+	}
+	
+	@SuppressLint("NewApi")
 	public boolean update() {
 		synchronized(this){
 			if(bIsFrameNew) {
-				surfaceTexture.updateTexImage();
+				movieCurrentTime = mediaPlayer.getCurrentPosition();
+				if(surfaceTexture != null) surfaceTexture.updateTexImage();
 				bIsFrameNew = false;
 				return true;
 			} else {
@@ -53,17 +77,23 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	
 	@SuppressLint("NewApi")
 	public void getTextureMatrix(float[] mtx) {
-		surfaceTexture.getTransformMatrix(mtx);
+		if(surfaceTexture != null) surfaceTexture.getTransformMatrix(mtx);
 	}
 	
+	@SuppressLint("NewApi")
 	public void loadMovie(String fileName){
-		Log.e("OF","ofxAndroidVideo::loading movie.");
 		try {
 			if(mediaPlayer == null) {
 				mediaPlayer = new MediaPlayer();
 				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 					public void onPrepared(MediaPlayer mp) {
 						bIsLoaded = true;
+						if(bAutoResume) {
+							setTexture(textureName);
+							mediaPlayer.seekTo(movieResumeTime);
+							bAutoResume = false;
+							play();
+						}
 					}
 				});
 				mediaPlayer.setOnVideoSizeChangedListener(new OnVideoSizeChangedListener() {
@@ -83,6 +113,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	}
 	
 	public void play(){
+
 		if(mediaPlayer==null) return;
 		
 		if(!bIsLoaded){
@@ -101,11 +132,14 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		mediaPlayer.stop();
 	}
 	
+	@SuppressLint("NewApi")
 	void unloadMovie(){
 		if(mediaPlayer!=null){
+			mediaPlayer.setSurface(null);
 			mediaPlayer.release();
 			mediaPlayer = null;
 		}
+		clearTextures();
 		fileName = null;
 		bIsLoaded = false;
 		bIsPlaying = false;
@@ -126,15 +160,19 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	
 	@Override
 	protected void appPause() {
-		
-		// TODO This method is broken, it stops the video play, it happends randomly during reproduction
-		
+		int currMovieTime = movieCurrentTime;
 		stop();
 		String currFileName = fileName;
 		boolean currIsLoaded = bIsLoaded; 
+		boolean currIsPlaying = bIsPlaying;
 		unloadMovie();
 		fileName = currFileName;
-		bIsLoaded = currIsLoaded;
+		bIsLoaded = currIsLoaded;	
+		bIsPlaying = currIsPlaying;
+		
+		bAutoResume = true;
+		movieResumeTime = currMovieTime;
+	
 	}
 
 	@Override
@@ -159,6 +197,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	
 	
 	private MediaPlayer mediaPlayer;
+	private int textureName;
 	private SurfaceTexture surfaceTexture;
 	private Surface surface;
 	private String fileName;
@@ -166,7 +205,14 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	private boolean bIsPlaying;
 	private boolean bIsPaused;
 	private boolean bIsFrameNew;
-
+	
+	private boolean bAutoResume;
+	private int movieResumeTime;
+	
+	private int movieCurrentTime;
+	
+	
+	
 	
 	
 	

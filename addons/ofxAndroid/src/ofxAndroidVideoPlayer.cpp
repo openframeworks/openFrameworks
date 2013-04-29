@@ -113,12 +113,12 @@ bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 	td.bAllocated = true;
 	texture.texData = td;
 
-	jmethodID javaSetTexture = env->GetMethodID(javaClass,"setTexture","(I)V");
-	if(!javaSetTexture){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setTexture for VideoPlayer");
+	jmethodID javasetTextureReference = env->GetMethodID(javaClass,"setTextureReference","(I)V");
+	if(!javasetTextureReference){
+		ofLog(OF_LOG_ERROR,"Failed to get the java setTextureReference for VideoPlayer");
 		return false;
 	}
-	env->CallVoidMethod(javaVideoPlayer,javaSetTexture,texture.getTextureData().textureID);
+	env->CallVoidMethod(javaVideoPlayer,javasetTextureReference,texture.getTextureData().textureID);
 
 	ofLogError() << width <<"," << height;
 
