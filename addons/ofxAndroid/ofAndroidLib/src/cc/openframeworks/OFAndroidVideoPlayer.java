@@ -132,10 +132,11 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 			return;
 		}
 		
+		mediaPlayer.start();
+		
 		bIsPlaying = true;
 		bIsPaused = false;
 		
-		mediaPlayer.start();
 	}
 	
 	public void stop(){
@@ -180,12 +181,18 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	void setPaused(boolean bP){
 		if(mediaPlayer==null) return;
 		if(bP) {
-			mediaPlayer.pause();
+			if(bIsPlaying) {
+				mediaPlayer.pause();
+				bIsPlaying = !bP;
+				bIsPaused = bP;
+			}
 		} else {
-			mediaPlayer.start();
+			if(bIsPaused) {
+				mediaPlayer.start();
+				bIsPlaying = !bP;
+				bIsPaused = bP;
+			}
 		}
-		bIsPlaying = !bP;
-		bIsPaused = bP;
 	}
 	
 	void setLoopState(boolean bL){
