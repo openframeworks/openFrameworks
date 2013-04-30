@@ -6,6 +6,8 @@ import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.Surface;
 
@@ -19,8 +21,10 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		bIsPaused = true;
 		bIsFrameNew = false;
 		bAutoResume = false;
+		bIsMoviedone = false;
 		
-		movieCurrentTime = 0;
+		pan = 0.f;
+		volume = leftVolume = rightVolume = 1;
 		
 	}
 	
@@ -65,9 +69,9 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	public boolean update() {
 		synchronized(this){
 			if(bIsFrameNew) {
-				movieCurrentTime = mediaPlayer.getCurrentPosition();
 				if(surfaceTexture != null) surfaceTexture.updateTexImage();
 				bIsFrameNew = false;
+				bIsMoviedone = false;
 				return true;
 			} else {
 				return false;
@@ -90,7 +94,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 						bIsLoaded = true;
 						if(bAutoResume) {
 							setTexture(textureName);
-							mediaPlayer.seekTo(movieResumeTime);
+							setPositionMS(movieResumeTime);
 							bAutoResume = false;
 							play();
 						}
@@ -102,6 +106,13 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 						// TODO Auto-generated method stub
 					}
 				});
+				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+					public void onCompletion(MediaPlayer mp) {
+						bIsMoviedone = true;
+					}
+				});
+			} else {
+				mediaPlayer.reset();
 			}
 			mediaPlayer.setDataSource(fileName);
 			mediaPlayer.prepare();
@@ -130,6 +141,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	public void stop(){
 		if(mediaPlayer==null) return;
 		mediaPlayer.stop();
+		bIsPlaying = false;
 	}
 	
 	@SuppressLint("NewApi")
@@ -142,8 +154,48 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		clearTextures();
 		fileName = null;
 		bIsLoaded = false;
+		bIsMoviedone = false;
 		bIsPlaying = false;
 		bIsPaused = true;
+		
+	}
+	
+	void setVolume(float vol){
+		volume = vol;
+		// calculates left/right volumes from pan-value (constant panning law) 
+		// see: Curtis Roads: Computer Music Tutorial p 460
+		// thanks to jasch
+		float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
+		float cosAngle = FloatMath.cos(angle);
+		float sinAngle = FloatMath.sin(angle);
+		leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		if(mediaPlayer!=null)mediaPlayer.setVolume(leftVolume, rightVolume);
+	}
+	
+	float getVolume(){
+		return volume;
+	}
+	
+	void setPaused(boolean bP){
+		if(mediaPlayer==null) return;
+		if(bP) {
+			mediaPlayer.pause();
+		} else {
+			mediaPlayer.start();
+		}
+		bIsPlaying = !bP;
+		bIsPaused = bP;
+	}
+	
+	void setLoopState(boolean bL){
+		if(mediaPlayer==null) return;
+		mediaPlayer.setLooping(bL);
+	}
+	
+	boolean getLoopState(){
+		if(mediaPlayer==null) return false;
+		return mediaPlayer.isLooping();
 	}
 	
 	int getWidth(){
@@ -156,11 +208,64 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		return mediaPlayer.getVideoHeight();
 	}
 	
+	public boolean isLoaded(){
+		return bIsLoaded;
+	}
 	
+	public boolean isPaused(){
+		return bIsPaused;
+	}
+	
+	public boolean isPlaying(){
+		return bIsPlaying;
+	}
+	
+	boolean isMovieDone(){
+		return bIsMoviedone;
+	}
+	
+	
+	void setPosition(float pct){
+		if(mediaPlayer!=null) mediaPlayer.seekTo((int) (mediaPlayer.getDuration()*pct)); // 0 = start, 1 = end;
+	}
+	
+	void setPositionMS(int ms){
+		if(mediaPlayer!=null) mediaPlayer.seekTo(ms); // 0 = start, 1 = end;
+	}
+	
+	float getPosition(){
+		if(mediaPlayer!=null)
+			return ((float)mediaPlayer.getCurrentPosition())/(float)mediaPlayer.getDuration();
+		else
+			return 0;
+	}
+	
+	int getPositionMS(){
+		if(mediaPlayer!=null)
+			return mediaPlayer.getCurrentPosition();
+		else
+			return 0;
+	}
+	
+	float getDuration(){
+		if(mediaPlayer!=null)
+			return (float)mediaPlayer.getDuration();
+		else
+			return 0;
+	}
+	
+	int getDurationMS(){
+		if(mediaPlayer!=null)
+			return mediaPlayer.getDuration();
+		else
+			return 0;
+	}
+	
+
 	
 	@Override
 	protected void appPause() {
-		int currMovieTime = movieCurrentTime;
+		int currMovieTime = getPositionMS();
 		stop();
 		String currFileName = fileName;
 		boolean currIsLoaded = bIsLoaded; 
@@ -197,23 +302,22 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	
 	
 	private MediaPlayer mediaPlayer;
+	
 	private int textureName;
 	private SurfaceTexture surfaceTexture;
 	private Surface surface;
 	private String fileName;
+	private float pan;
+	private float volume;
+	private float leftVolume, rightVolume;
 	private boolean bIsLoaded;
 	private boolean bIsPlaying;
 	private boolean bIsPaused;
+	private boolean bIsMoviedone;
 	private boolean bIsFrameNew;
 	
 	private boolean bAutoResume;
 	private int movieResumeTime;
-	
-	private int movieCurrentTime;
-	
-	
-	
-	
 	
 	
 }
