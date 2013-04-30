@@ -958,21 +958,26 @@ void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofC
 //--------------------------------------------------
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
 	vector<string> lines = ofSplitString(text, "\n");
-	int textLength = 0;
-	for(unsigned int i = 0; i < lines.size(); i++) {
+	int maxLineLength = 0;
+	for(int i = 0; i < lines.size(); i++) {
 		// tabs are not rendered
-		int tabs = count(lines[i].begin(), lines[i].end(), '\t');
-		int curLength = lines[i].length() - tabs;
-		if(curLength > textLength) {
-			textLength = curLength;
+		const string & line(lines[i]);
+		int currentLineLength = 0;
+		for(int j = 0; j < line.size(); j++) {
+			if (line[j] == '\t') {
+				currentLineLength += 8 - (currentLineLength % 8);
+			} else {
+				currentLineLength++;
+			}
 		}
+		maxLineLength = MAX(maxLineLength, currentLineLength);
 	}
 	
 	int padding = 4;
 	int fontSize = 8;
 	float leading = 1.7;
 	int height = lines.size() * fontSize * leading - 1;
-	int width = textLength * fontSize;
+	int width = maxLineLength * fontSize;
 	
 	ofPushStyle();
 	glDepthMask(false);
