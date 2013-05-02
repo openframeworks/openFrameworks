@@ -23,11 +23,16 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		bAutoResume = false;
 		bIsMoviedone = false;
 		
+		// TODO Get movie FPS to implement Frame methods
+		// movieFPS = 16;
+		// nFrames = 0;
+		
 		pan = 0.f;
 		volume = leftVolume = rightVolume = 1;
 		
 	}
 	
+	/*
 	public static boolean supportsTextureRendering(){
 		try {
 			Class surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
@@ -36,6 +41,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 			return false;
 		}
 	}
+	*/
 	
 	public void setTextureReference(int texName) {
 		textureName = texName;
@@ -57,7 +63,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 			surface = null;
 		}
 		// TODO Clearing surfaceTexture crashes appResume
-		// so we have to check if it exists always before accesing its methods
+		// so we have to check if it exists always before accessing its methods
 		if(surfaceTexture != null) {
 			surfaceTexture.setOnFrameAvailableListener(null);
 			surfaceTexture.release();
@@ -92,6 +98,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 					public void onPrepared(MediaPlayer mp) {
 						bIsLoaded = true;
+						//nFrames = (int)(getDurationMS()*1000) * movieFPS;
 						if(bAutoResume) {
 							setTexture(textureName);
 							setPositionMS(movieResumeTime);
@@ -153,11 +160,14 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 			mediaPlayer = null;
 		}
 		clearTextures();
+		
 		fileName = null;
 		bIsLoaded = false;
 		bIsMoviedone = false;
 		bIsPlaying = false;
 		bIsPaused = true;
+		
+		//nFrames = 0;
 		
 	}
 	
@@ -215,6 +225,25 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		return mediaPlayer.getVideoHeight();
 	}
 	
+	/* Needs movie frameRate to work
+	int	getCurrentFrame(){
+		
+		float  framePosInFloat = ((float)getTotalNumFrames() * (float)getPosition());
+		int    framePosInInt = (int)framePosInFloat;
+		float  floatRemainder = (framePosInFloat - framePosInInt);
+		if (floatRemainder > 0.5) framePosInInt = framePosInInt + 1;
+
+		return framePosInInt;
+
+	}
+	*/
+	
+	/* Needs movie frameRate to work
+	int	getTotalNumFrames(){
+		return nFrames;
+	}
+	*/
+		
 	public boolean isLoaded(){
 		return bIsLoaded;
 	}
@@ -322,6 +351,9 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	private boolean bIsPaused;
 	private boolean bIsMoviedone;
 	private boolean bIsFrameNew;
+	
+	//private int movieFPS;
+	//private int nFrames;
 	
 	private boolean bAutoResume;
 	private int movieResumeTime;
