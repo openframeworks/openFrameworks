@@ -489,11 +489,58 @@ ofLoopType ofxAndroidVideoPlayer::getLoopState(){
 };
 
 
+//------------------------------------------------------------
+/* Needs movie frameRate to work
+int ofxAndroidVideoPlayer::getCurrentFrame() {
+
+	if(!javaVideoPlayer){
+		ofLogError() << "cannot get duration on an unloaded video player";
+		return 0.;
+	}
+
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return 0;
+	}
+
+	jmethodID javaGetCurrentFrame = env->GetMethodID(javaClass,"getCurrentFrame","()I");
+	if(!javaGetCurrentFrame){
+		ofLog(OF_LOG_ERROR,"Failed to get the java getCurrentFrame for VideoPlayer");
+		return 0;
+	}
+
+	return env->CallIntMethod(javaVideoPlayer,javaGetCurrentFrame);
+
+};
+*/
 
 
+//------------------------------------------------------------
+/* Needs movie frameRate to work
+int ofxAndroidVideoPlayer::getTotalNumFrames() {
 
+	if(!javaVideoPlayer){
+		ofLogError() << "cannot get duration on an unloaded video player";
+		return 0.;
+	}
 
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return 0;
+	}
 
+	jmethodID javaGetTotalNumFrames = env->GetMethodID(javaClass,"getTotalNumFrames","()I");
+	if(!javaGetTotalNumFrames){
+		ofLog(OF_LOG_ERROR,"Failed to get the java getTotalNumFrames for VideoPlayer");
+		return 0;
+	}
+
+	return env->CallIntMethod(javaVideoPlayer,javaGetTotalNumFrames);
+
+};
+*/
 
 
 
