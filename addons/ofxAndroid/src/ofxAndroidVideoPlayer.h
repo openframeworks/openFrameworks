@@ -33,7 +33,6 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		bool isFrameNew(){ return bIsFrameNew;};
 
 		ofTexture *	getTexture();
-		ofMatrix4x4 & getTextureMatrix();
 
 		float getWidth();
 		float getHeight();
@@ -76,7 +75,6 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		ofPixels pixels;
 
 		jfloatArray matrixJava;
-		ofMatrix4x4 matrix;
 
 		bool bIsFrameNew;
 

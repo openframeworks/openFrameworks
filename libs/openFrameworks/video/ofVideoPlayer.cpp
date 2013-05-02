@@ -350,21 +350,7 @@ void ofVideoPlayer::resetAnchor(){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
-#ifdef TARGET_ANDROID
-	ofSetMatrixMode(OF_MATRIX_TEXTURE);
-	ofPushMatrix();
-	ofxAndroidVideoPlayer * p = (ofxAndroidVideoPlayer *)player.get();
-	ofMultMatrix(p->getTextureMatrix());
-	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-#endif
-
 	getTextureReference().draw(_x, _y, _w, _h);	
-
-#ifdef TARGET_ANDROID
-	ofSetMatrixMode(OF_MATRIX_TEXTURE);
-	ofPopMatrix();
-	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-#endif
 }
 
 //------------------------------------

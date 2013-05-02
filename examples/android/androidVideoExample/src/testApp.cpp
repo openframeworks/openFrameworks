@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
-	player.loadMovie("hands.m4v");
+	player.loadMovie("hands.mp4");
 	player.play();
 
 }
