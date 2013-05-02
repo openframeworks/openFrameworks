@@ -155,8 +155,10 @@ void ofxAndroidVideoPlayer::update(){
 		texture.texData.textureMatrix.getPtr()[i] = m[i];
 	}
 
-	texture.texData.textureMatrix.scale(1,-1,1);
-	texture.texData.textureMatrix.translate(0,1,0);
+	ofMatrix4x4 vFlipTextureMatrix;
+	vFlipTextureMatrix.scale(1,-1,1);
+	vFlipTextureMatrix.translate(0,1,0);
+	texture.texData.textureMatrix = vFlipTextureMatrix * texture.texData.textureMatrix;
 	//texture.getTextureData().tex_t = 1.+1-matrix.getPtr()[0]; // Hack!
 	//texture.getTextureData().tex_u = 1.;
 

@@ -1043,7 +1043,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	};
 
 	if(texData.useTextureMatrix){
-		ofMatrixMode(OF_MATRIX_TEXTURE);
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPushMatrix();
 		ofMultMatrix(texData.textureMatrix);
 	}
@@ -1058,7 +1058,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 	if(texData.useTextureMatrix){
 		ofPopMatrix();
-		ofMatrixMode(OF_MATRIX_MODELVIEW);
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
 	glPopMatrix();
 	glDisable(texData.textureTarget);
