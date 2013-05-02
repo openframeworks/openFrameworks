@@ -59,6 +59,7 @@ public:
 		compressionType = OF_COMPRESS_NONE;
 		bAllocated = false;
 		bUseExternalTextureID = false;
+		useTextureMatrix = false;
 	}
 
 	unsigned int textureID;
@@ -75,6 +76,8 @@ public:
 	ofTexCompression compressionType;
 	bool bAllocated;
 	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
+	ofMatrix4x4 textureMatrix;
+	bool useTextureMatrix;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts

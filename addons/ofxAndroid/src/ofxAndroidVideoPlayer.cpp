@@ -96,7 +96,8 @@ bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 	td.tex_u = 1;
 	td.textureTarget = GL_TEXTURE_EXTERNAL_OES;
 	td.glTypeInternal = GL_RGBA;
-	td.bFlipTexture = true;
+	td.bFlipTexture = false;
+	td.useTextureMatrix = true;
 	glGenTextures(1, (GLuint *)&td.textureID);
 
 	glEnable(td.textureTarget);
@@ -151,9 +152,11 @@ void ofxAndroidVideoPlayer::update(){
 	jfloat * m = env->GetFloatArrayElements(matrixJava,0);
 
 	for(int i=0;i<16;i++) {
-		matrix.getPtr()[i] = m[i];
+		texture.texData.textureMatrix.getPtr()[i] = m[i];
 	}
 
+	texture.texData.textureMatrix.scale(1,-1,1);
+	texture.texData.textureMatrix.translate(0,1,0);
 	//texture.getTextureData().tex_t = 1.+1-matrix.getPtr()[0]; // Hack!
 	//texture.getTextureData().tex_u = 1.;
 
@@ -264,11 +267,6 @@ bool ofxAndroidVideoPlayer::isPlaying(){
 //---------------------------------------------------------------------------
 ofTexture * ofxAndroidVideoPlayer::getTexture(){
 	return & texture;
-}
-
-//---------------------------------------------------------------------------
-ofMatrix4x4 & ofxAndroidVideoPlayer::getTextureMatrix() {
-	return matrix;
 }
 
 //---------------------------------------------------------------------------
