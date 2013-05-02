@@ -6,6 +6,3 @@ libPocoZip.a
 libPocoUtil.a
 libPocoXML.a
 libPocoFoundation.a
-#libPocoDataMySQL.a
-#libPocoDataODBC.a
-#libPocoDataSQLite.a
