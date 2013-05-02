@@ -811,13 +811,19 @@ void ofTexture::bind(){
 		
 		glMatrixMode(GL_MODELVIEW);  		
 	}
+	if(texData.useTextureMatrix){
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		if(!ofGetUsingNormalizedTexCoords()) ofPushMatrix();
+		ofMultMatrix(texData.textureMatrix);
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+	}
 }
 
 //----------------------------------------------------------
 void ofTexture::unbind(){
 	glDisable(texData.textureTarget);
 	
-	if(ofGetUsingNormalizedTexCoords()) {
+	if(texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
 		glMatrixMode(GL_TEXTURE);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW); 
@@ -1036,6 +1042,12 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 		px0,py1
 	};
 
+	if(texData.useTextureMatrix){
+		ofMatrixMode(OF_MATRIX_TEXTURE);
+		ofPushMatrix();
+		ofMultMatrix(texData.textureMatrix);
+	}
+
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
 	glEnableClientState(GL_VERTEX_ARRAY);		
@@ -1043,6 +1055,11 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	
+
+	if(texData.useTextureMatrix){
+		ofPopMatrix();
+		ofMatrixMode(OF_MATRIX_MODELVIEW);
+	}
 	glPopMatrix();
 	glDisable(texData.textureTarget);
 	
