@@ -62,6 +62,7 @@ ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::startRender() {
+	matrixStack.setRenderSurface(*ofGetWindowPtr());
 	beginDefaultShader();
 }
 
