@@ -77,6 +77,7 @@ public:
 
 	void exit(ofEventArgs &e);
 
+    void setGLESVersion(int glesVersion);
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
 	virtual void initializeWindow();
@@ -297,5 +298,6 @@ protected:
 
 private:
 	Settings 			settings;
+	int glesVersion;
 
 };

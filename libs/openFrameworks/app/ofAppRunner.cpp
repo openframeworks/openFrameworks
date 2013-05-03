@@ -121,6 +121,16 @@ void ofRunApp(ofBaseApp * OFSA){
 
 //--------------------------------------
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer){
+    if(!renderer) {
+#ifdef USE_PROGRAMMABLE_GL
+        ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer(false));
+    	renderer = ofPtr<ofBaseRenderer>(programmableGLRenderer);
+#else
+    	renderer = ofPtr<ofBaseRenderer>(new ofGLRenderer(false));
+#endif
+    }
+    ofSetCurrentRenderer(renderer);
+    
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
 
@@ -132,28 +142,17 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 		/* Problem: glewInit failed, something is seriously wrong. */
 		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
 	}
-
+#endif
 
 	fprintf(stdout,"Vendor:   %s\n",   (char*)glGetString(GL_VENDOR));
 	fprintf(stdout,"Renderer: %s\n",   (char*)glGetString(GL_RENDERER));
 	fprintf(stdout,"Version:  %s\n",   (char*)glGetString(GL_VERSION));
 	fprintf(stdout,"GLSL:     %s\n",   (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-#endif
-    if(!renderer) {
-#ifdef USE_PROGRAMMABLE_GL
-        ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer("","",false));
-    	renderer = ofPtr<ofBaseRenderer>(programmableGLRenderer);
-#else
-    	renderer = ofPtr<ofBaseRenderer>(new ofGLRenderer(false));
-#endif
-    }
-
     if(renderer->getType()==ofProgrammableGLRenderer::TYPE){
     	glGetError();
     	ofShader::initDefaultShaders();
     }
-    ofSetCurrentRenderer(renderer);
 
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	ofSetupGraphicDefaults();
@@ -170,15 +169,16 @@ void ofSetupOpenGL(int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
 	#elif defined(TARGET_LINUX_ARM)
 		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
-	#else
-#if defined(TARGET_WIN32)
+		if(renderer && renderer->getType()==ofProgrammableGLRenderer::TYPE){
+			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
+		}
+	#elif defined(TARGET_WIN32)
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
-#else
+    #else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
 		if(renderer && renderer->getType()==ofProgrammableGLRenderer::TYPE){
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
 		}
-#endif
 	#endif
 
 	ofSetupOpenGL(window,w,h,screenMode,renderer);

@@ -27,7 +27,7 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor)
 
 //----------------------------------------------------------
 void ofGLRenderer::update(){
-
+    matrixStack.setRenderSurface(*ofGetWindowPtr());
 }
 
 //----------------------------------------------------------
