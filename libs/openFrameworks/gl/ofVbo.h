@@ -131,6 +131,6 @@ private:
 
 #ifdef TARGET_OPENGLES
 	static bool bGLESFunctionsInitialized;
-	static bool supportVAOs;
 #endif
+	static bool supportVAOs;
 };

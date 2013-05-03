@@ -28,6 +28,8 @@
 	typedef void (* glBindVertexArrayType) (GLuint array);
 	glBindVertexArrayType glBindVertexArrayFunc;
 	#define glBindVertexArray								glBindVertexArrayFunc
+#else
+	bool ofVbo::supportVAOs = true;
 #endif
 
 static map<GLuint,int> & getIds(){
@@ -168,9 +170,11 @@ ofVbo::ofVbo(const ofVbo & mom){
 	retain(texCoordId);
 	indexId    = mom.indexId;
 	retain(indexId);
-	vaoID	   = mom.vaoID;
-	retainVAO(vaoID);
-	vaoChanged = mom.vaoChanged;
+	if(supportVAOs){
+		vaoID	   = mom.vaoID;
+		retainVAO(vaoID);
+		vaoChanged = mom.vaoChanged;
+	}
 
 
 	totalVerts = mom.totalVerts;
@@ -214,9 +218,11 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	retain(texCoordId);
 	indexId    = mom.indexId;
 	retain(indexId);
-	vaoID	   = mom.vaoID;
-	retainVAO(vaoID);
-	vaoChanged = mom.vaoChanged;
+	if(supportVAOs){
+		vaoID	   = mom.vaoID;
+		retainVAO(vaoID);
+		vaoChanged = mom.vaoChanged;
+	}
 
 	totalVerts = mom.totalVerts;
 	totalIndices = mom.totalIndices;
@@ -615,14 +621,17 @@ GLuint ofVbo::getIndexId() const {
 
 //--------------------------------------------------------------
 void ofVbo::bind(){
-	if(vaoID==0){
-		glGenVertexArrays(1, &vaoID);
-		retainVAO(vaoID);
+	if(supportVAOs){
+		if(vaoID==0){
+			glGenVertexArrays(1, &vaoID);
+			retainVAO(vaoID);
+		}
+
+		glBindVertexArray(vaoID);
 	}
 
-	glBindVertexArray(vaoID);
 
-	if(vaoChanged){
+	if(vaoChanged || !supportVAOs){
 		if(bUsingVerts){
 			glBindBuffer(GL_ARRAY_BUFFER, vertId);
 			if(ofGLIsFixedPipeline()){
@@ -735,13 +744,16 @@ void ofVbo::bind(){
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
-	/*glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	ofDisableVertices();	// tig: oh dear, finding that bug was painful.
-	if(bUsingColors) ofDisableColorCoords();
-	if(bUsingNormals) ofDisableNormals();
-	if(bUsingTexCoords) ofDisableTexCoords();*/
-	glBindVertexArray(0);
+	if(supportVAOs){
+		glBindVertexArray(0);
+	}else{
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		ofDisableVertices();	// tig: oh dear, finding that bug was painful.
+		if(bUsingColors) ofDisableColorCoords();
+		if(bUsingNormals) ofDisableNormals();
+		if(bUsingTexCoords) ofDisableTexCoords();
+	}
 	bBound   = false;
 }
 
@@ -778,7 +790,7 @@ void ofVbo::clear(){
 	clearColors();
 	clearTexCoords();
 	clearIndices();
-	if(vaoID!=0){
+	if(supportVAOs && vaoID!=0){
 		releaseVAO(vaoID);
 		vaoID=0;
 	}
