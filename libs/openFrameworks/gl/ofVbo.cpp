@@ -11,6 +11,12 @@
 
 #include <map>
 
+#ifdef TARGET_OPENGLES
+#define glDeleteVertexArrays glDeleteVertexArraysOES
+#define glGenVertexArrays glGenVertexArraysOES
+#define glBindVertexArray glBindVertexArrayOES
+#endif
+
 static map<GLuint,int> & getIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;

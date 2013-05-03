@@ -47,6 +47,7 @@ ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string f
     texCoordsEnabled = false;
     normalsEnabled = false;
 	settingDefaultShader = false;
+	usingCustomShader = false;
 
 	wrongUseLoggedOnce = false;
 
@@ -783,9 +784,11 @@ void ofProgrammableGLRenderer::beginDefaultShader(){
 
 	if(colorsEnabled && texCoordsEnabled){
 		switch(currentTextureTarget){
+#ifndef TARGET_OPENGLES
 		case GL_TEXTURE_RECTANGLE_ARB:
 			nextShader = &ofShader::defaultTexColor();
 			break;
+#endif
 		case GL_TEXTURE_2D:
 			nextShader = &ofShader::defaultTex2DColor();
 			break;
@@ -797,9 +800,11 @@ void ofProgrammableGLRenderer::beginDefaultShader(){
 		nextShader = &ofShader::defaultNoTexColor();
 	}else if(texCoordsEnabled){
 		switch(currentTextureTarget){
+#ifndef TARGET_OPENGLES
 		case GL_TEXTURE_RECTANGLE_ARB:
 			nextShader = &ofShader::defaultTexNoColor();
 			break;
+#endif
 		case GL_TEXTURE_2D:
 			nextShader = &ofShader::defaultTex2DNoColor();
 			break;

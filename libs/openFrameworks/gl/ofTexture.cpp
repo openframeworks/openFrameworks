@@ -3,6 +3,7 @@
 #include "ofAppRunner.h"	// for getWidth()
 #include "ofGraphics.h"
 #include "ofPixels.h"
+#include "ofGLUtils.h"
 #include <map>
 
 //----------------------------------------------------------
@@ -11,7 +12,6 @@ static bool bTexHackEnabled = true;
 static bool	bUsingArbTex		= true;
 static bool bUsingNormalizedTexCoords = false;
 static bool bUseCustomMinMagFilters = false;
-
 
 //---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {

@@ -162,14 +162,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
     glfwMakeContextCurrent(windowP);
 
-	// glewExperimental = true;
-	glewInit();
-
-	fprintf(stdout,"Vendor:   %s\n",   (char*)glGetString(GL_VENDOR));
-	fprintf(stdout,"Renderer: %s\n",   (char*)glGetString(GL_RENDERER));
-	fprintf(stdout,"Version:  %s\n",   (char*)glGetString(GL_VERSION));
-	fprintf(stdout,"GLSL:     %s\n", (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
-
 
 	glfwGetWindowSize(windowP, &windowW, &windowH );
 
@@ -535,8 +527,9 @@ void ofAppGLFWWindow::display(void){
 	// with this line:   if ((bClearAuto == true) || nFrameCount < 3){
 	// we do nFrameCount < 3, so that the buffers are cleared at the start of the app
 	// or else we have video memory garbage to draw on to...
-
+#ifndef TARGET_OPENGLES
 	glDrawBuffer( GL_BACK );
+#endif
 
 	// printf("nFrameCount %i \n", nFrameCount);
 
@@ -551,7 +544,9 @@ void ofAppGLFWWindow::display(void){
 //		glClear( GL_COLOR_BUFFER_BIT );
 	}
 
+#ifndef TARGET_OPENGLES
 	glDrawBuffer( GL_BACK );
+#endif
 
 
 	if( bEnableSetupScreen )ofSetupScreen();

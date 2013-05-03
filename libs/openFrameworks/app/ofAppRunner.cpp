@@ -30,7 +30,7 @@
 static ofPtr<ofBaseApp>				OFSAptr;
 static ofPtr<ofAppBaseWindow> 		window;
 
-#define USE_PROGRAMMABLE_GL
+//#define USE_PROGRAMMABLE_GL
 
 //========================================================================
 // default windowing
@@ -135,6 +135,13 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 		/* Problem: glewInit failed, something is seriously wrong. */
 		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
 	}
+
+
+	fprintf(stdout,"Vendor:   %s\n",   (char*)glGetString(GL_VENDOR));
+	fprintf(stdout,"Renderer: %s\n",   (char*)glGetString(GL_RENDERER));
+	fprintf(stdout,"Version:  %s\n",   (char*)glGetString(GL_VERSION));
+	fprintf(stdout,"GLSL:     %s\n",   (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+
 #endif
     if(ofGetCurrentRenderer() == NULL) {
 
