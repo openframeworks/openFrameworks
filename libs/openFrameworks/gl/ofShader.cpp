@@ -884,7 +884,7 @@ varying vec2 texCoordVarying;\n\
 \n\
 void main()\n\
 {\n\
-	texCoordVarying = textureMatrix*texcoord;\n\
+	texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\n\
 	gl_Position = modelViewProjectionMatrix * position;\n\
 }";
 string bitmapStringFragmentShader	= "\n\
