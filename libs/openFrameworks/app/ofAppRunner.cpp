@@ -142,7 +142,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
 		#endif
 	}else{
-	    #if defined(TARGET_LINUX_ARM)
+	    #if defined(TARGET_LINUX_ARM) && !defined(TARGET_RASPBERRY_PI)
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(1,0);
 		#endif
 	}

@@ -219,8 +219,9 @@ ifneq ($(PLATFORM_ARCH),armv6l)
     PLATFORM_LIBRARIES += Xrandr
     PLATFORM_LIBRARIES += Xxf86vm 
     PLATFORM_LIBRARIES += Xi 
-    PLATFORM_LIBRARIES += freeimage
 endif
+    
+PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
