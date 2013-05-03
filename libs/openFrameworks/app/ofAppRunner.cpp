@@ -52,8 +52,8 @@ static ofPtr<ofAppBaseWindow> 		window;
 // also since old versions created the window in the stack, if this function is called we create a shared_ptr that never deletes
 //--------------------------------------
 static void noopDeleter(ofAppBaseWindow*){}
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer){
-	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode,renderer);
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 
 void ofExitCallback();
@@ -120,18 +120,26 @@ void ofRunApp(ofBaseApp * OFSA){
 }
 
 //--------------------------------------
-void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer){
-    if(!renderer) {
+void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+    if(!ofGetCurrentRenderer()) {
 #ifdef USE_PROGRAMMABLE_GL
-        ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer(false));
-    	renderer = ofPtr<ofBaseRenderer>(programmableGLRenderer);
+    	ofPtr<ofBaseRenderer> renderer(new ofProgrammableGLRenderer(false));
 #else
-    	renderer = ofPtr<ofBaseRenderer>(new ofGLRenderer(false));
+    	ofPtr<ofBaseRenderer> renderer(new ofGLRenderer(false));
 #endif
+        ofSetCurrentRenderer(renderer);
     }
-    ofSetCurrentRenderer(renderer);
     
 	window = windowPtr;
+
+	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
+		#if defined(TARGET_LINUX_ARM)
+			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
+		#elif defined(TARGET_LINUX) || defined(TARGET_OSX)
+			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
+		#endif
+	}
+
 	window->setupOpenGL(w, h, screenMode);
 
 #ifndef TARGET_OPENGLES
@@ -149,7 +157,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	fprintf(stdout,"Version:  %s\n",   (char*)glGetString(GL_VERSION));
 	fprintf(stdout,"GLSL:     %s\n",   (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    if(renderer->getType()==ofProgrammableGLRenderer::TYPE){
+    if(ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
     	glGetError();
     	ofShader::initDefaultShaders();
     }
@@ -160,7 +168,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 
 //--------------------------------------
-void ofSetupOpenGL(int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer){
+void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_NODISPLAY
 		window = ofPtr<ofAppBaseWindow>(new ofAppNoWindow());
 	#elif defined(TARGET_OF_IPHONE)
@@ -169,19 +177,13 @@ void ofSetupOpenGL(int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
 	#elif defined(TARGET_LINUX_ARM)
 		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
-		if(renderer && renderer->getType()==ofProgrammableGLRenderer::TYPE){
-			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
-		}
 	#elif defined(TARGET_WIN32)
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
     #else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
-		if(renderer && renderer->getType()==ofProgrammableGLRenderer::TYPE){
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
-		}
 	#endif
 
-	ofSetupOpenGL(window,w,h,screenMode,renderer);
+	ofSetupOpenGL(window,w,h,screenMode);
 }
 
 //-----------------------	gets called when the app exits

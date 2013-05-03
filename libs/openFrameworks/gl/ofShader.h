@@ -159,7 +159,7 @@ private:
 	void checkAndCreateProgram();
 	
 	static void initDefaultShaders();
-	friend void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer);
+	friend void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);
 
 };
 
