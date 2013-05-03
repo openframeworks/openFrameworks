@@ -89,16 +89,20 @@ bool ofMatrixStack::customMatrixNeedsFlip() const{
 int ofMatrixStack::getRenderSurfaceWidth() const{
 	if(currentFbo){
 		return currentFbo->getWidth();
-	}else{
+	}else if(currentWindow){
 		return currentWindow->getWindowSize().x;
+	}else{
+		return 0;
 	}
 }
 
 int ofMatrixStack::getRenderSurfaceHeight() const{
 	if(currentFbo){
 		return currentFbo->getHeight();
-	}else{
+	}else if(currentWindow){
 		return currentWindow->getWindowSize().y;
+	}else{
+		return 0;
 	}
 }
 
@@ -112,7 +116,7 @@ ofHandednessType ofMatrixStack::getHandedness() const{
 
 
 bool ofMatrixStack::doesHWOrientation() const{
-	return currentFbo || currentWindow->doesHWOrientation();
+	return currentFbo || (currentWindow && currentWindow->doesHWOrientation());
 }
 
 void ofMatrixStack::viewport(float x, float y, float width, float height, bool vflip){
