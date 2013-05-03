@@ -129,4 +129,5 @@ private:
 	map<int,int> attributeStrides;
 	map<int,int> attributeNumCoords;
 
+	static bool bGLESFunctionsInitialized;
 };
