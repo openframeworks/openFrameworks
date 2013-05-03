@@ -129,5 +129,8 @@ private:
 	map<int,int> attributeStrides;
 	map<int,int> attributeNumCoords;
 
+#ifdef TARGET_OPENGLES
 	static bool bGLESFunctionsInitialized;
+	static bool supportVAOs;
+#endif
 };
