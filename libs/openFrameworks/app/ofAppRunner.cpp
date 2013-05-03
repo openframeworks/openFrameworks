@@ -144,7 +144,6 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 #endif
     if(ofGetCurrentRenderer() == NULL) {
-
 #ifdef USE_PROGRAMMABLE_GL
     	glGetError();
     	ofShader::initDefaultShaders();
@@ -153,7 +152,11 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 #else
         ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
 #endif
+    }else if(ofGetProgrammableGLRenderer()){
+    	glGetError();
+    	ofShader::initDefaultShaders();
     }
+
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	ofSetupGraphicDefaults();
 }

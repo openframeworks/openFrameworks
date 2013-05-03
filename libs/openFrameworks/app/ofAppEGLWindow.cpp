@@ -689,11 +689,6 @@ bool ofAppEGLWindow::createSurface() {
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
 
-    if(glesVersionForContext==2){
-      ofLogNotice("ofAppEGLWindow::createSurface") << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
-      ofGetProgrammableGLRenderer()->setup();
-    }
-
     ofLogNotice("ofAppEGLWindow::createSurface") << "-----EGL-----";
     ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_VERSION_MAJOR = " << eglVersionMajor;
     ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_VERSION_MINOR = " << eglVersionMinor;
