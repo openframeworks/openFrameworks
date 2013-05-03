@@ -81,7 +81,7 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 			keyPressed(key.key);
 		}
 		virtual void keyReleased( ofKeyEventArgs & key ){
-			keyPressed(key.key);
+			keyReleased(key.key);
 		}
 
 		virtual void mouseMoved( ofMouseEventArgs & mouse ){
