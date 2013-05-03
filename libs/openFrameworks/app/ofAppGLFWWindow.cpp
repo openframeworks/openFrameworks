@@ -5,7 +5,6 @@
 #include "ofMain.h"
 #include "ofProgrammableGLRenderer.h"
 
-#define USE_PROGRAMMABLE_GL
 
 //========================================================================
 // static variables:
@@ -48,6 +47,8 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	frameRate			= 0;
 	orientation = OF_ORIENTATION_DEFAULT;
 
+	glVersionMinor=glVersionMajor=-1;
+
 //	 OF_KEY_MODIFIER = 0x0000;
 //	 OF_KEY_RETURN	= 294;
 
@@ -56,6 +57,12 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 
 void ofAppGLFWWindow::setFSAASamples(int _samples){
 	samples=_samples;
+}
+
+
+void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
+	glVersionMajor = major;
+	glVersionMinor = minor;
 }
 
 void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
@@ -91,13 +98,15 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 	glfwWindowHint(GLFW_STENCIL_BITS, 0);
 
-#ifdef USE_PROGRAMMABLE_GL
-	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+	if(glVersionMinor!=-1 && glVersionMajor!=-1){
+		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
+		if(glVersionMajor>=3){
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		}
+	}
 
 	windowP = glfwCreateWindow(w, h, "GLFW Window", NULL, NULL);
 

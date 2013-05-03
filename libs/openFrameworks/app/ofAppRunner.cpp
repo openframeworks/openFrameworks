@@ -43,11 +43,8 @@ static ofPtr<ofAppBaseWindow> 		window;
 #elif defined(TARGET_LINUX_ARM)
 	#include "ofAppEGLWindow.h"
 #else
-#if defined(USE_PROGRAMMABLE_GL) && !defined(TARGET_WIN32)
 	#include "ofAppGLFWWindow.h"
-#else
 	#include "ofAppGlutWindow.h"
-#endif
 #endif
 
 // this is hacky only to provide bw compatibility, a shared_ptr should always be initialized using a shared_ptr
@@ -145,8 +142,6 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 #endif
     if(!renderer) {
 #ifdef USE_PROGRAMMABLE_GL
-    	glGetError();
-    	ofShader::initDefaultShaders();
         ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer("","",false));
     	renderer = ofPtr<ofBaseRenderer>(programmableGLRenderer);
 #else
@@ -154,11 +149,11 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 #endif
     }
 
-    ofSetCurrentRenderer(renderer);
-    if(ofGetProgrammableGLRenderer()){
+    if(renderer->getType()==ofProgrammableGLRenderer::TYPE){
     	glGetError();
     	ofShader::initDefaultShaders();
     }
+    ofSetCurrentRenderer(renderer);
 
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	ofSetupGraphicDefaults();
@@ -176,10 +171,13 @@ void ofSetupOpenGL(int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer)
 	#elif defined(TARGET_LINUX_ARM)
 		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
 	#else
-#if defined(USE_PROGRAMMABLE_GL) && !defined(TARGET_WIN32)
-		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
-#else
+#if defined(TARGET_WIN32)
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
+#else
+		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
+		if(renderer && renderer->getType()==ofProgrammableGLRenderer::TYPE){
+			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
+		}
 #endif
 	#endif
 

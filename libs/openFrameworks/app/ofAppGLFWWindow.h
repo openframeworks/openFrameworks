@@ -32,6 +32,7 @@ public:
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow(){}
 
+	void setOpenGLVersion(int major, int minor);
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
@@ -125,6 +126,8 @@ private:
 	int 			nonFullScreenY;
 
 	ofOrientation orientation;
+
+	int glVersionMinor, glVersionMajor;
 
 };
 

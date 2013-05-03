@@ -15,7 +15,7 @@ class ofVbo;
 
 class ofProgrammableGLRenderer: public ofBaseGLRenderer{
 public:
-	ofProgrammableGLRenderer(string vertexShader="", string fragmentShader="", bool useShapeColor=true);
+	ofProgrammableGLRenderer(bool useShapeColor=true);
 	~ofProgrammableGLRenderer();
 
     static const string TYPE;

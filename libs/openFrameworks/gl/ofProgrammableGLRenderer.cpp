@@ -27,7 +27,7 @@ const string ofProgrammableGLRenderer::TYPE="ProgrammableGL";
 
 
 //----------------------------------------------------------
-ofProgrammableGLRenderer::ofProgrammableGLRenderer(string vertexShader, string fragmentShader, bool useShapeColor)
+ofProgrammableGLRenderer::ofProgrammableGLRenderer(bool useShapeColor)
 :matrixStack(*ofGetWindowPtr())
 {
 	bBackgroundAuto = true;
@@ -62,6 +62,7 @@ ofProgrammableGLRenderer::~ofProgrammableGLRenderer() {
 
 //----------------------------------------------------------
 void ofProgrammableGLRenderer::startRender() {
+	matrixStack.setRenderSurface(*ofGetWindowPtr());
 	beginDefaultShader();
 }
 
