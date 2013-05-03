@@ -106,55 +106,16 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		}
+		#ifdef TARGET_OPENGLES
+		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+		#endif
 	}
 
-	windowP = glfwCreateWindow(w, h, "GLFW Window", NULL, NULL);
-
-
-
-//	if (windowMode == OF_WINDOW){
-//
-//
-//		result = glfwOpenWindow(
-//		          w, h,          // Width and height of window
-//		          8, 8, 8,           // Number of red, green, and blue bits for color buffer
-//		          8,                 // Number of bits for alpha buffer
-//		          32,                // Number of bits for depth buffer (Z-buffer)
-//		          0,                 // Number of bits for stencil buffer
-//		          GLFW_WINDOW        // We want a desktop window (could be GLFW_FULLSCREEN)
-//		      );
-//	}else if(windowMode == OF_FULLSCREEN){
-//		result = glfwOpenWindow(
-//				  getScreenSize().x, getScreenSize().y,          // Width and height of window
-//				  8, 8, 8,           // Number of red, green, and blue bits for color buffer
-//				  8,                 // Number of bits for alpha buffer
-//				  32,                // Number of bits for depth buffer (Z-buffer)
-//				  0,                 // Number of bits for stencil buffer
-//				  GLFW_FULLSCREEN        // We want a desktop window (could be GLFW_FULLSCREEN)
-//			  );
-//		showCursor();
-//	}else if(windowMode == OF_GAME_MODE){
-//		result = glfwOpenWindow(
-//				  w, h,          // Width and height of window
-//				  8, 8, 8,           // Number of red, green, and blue bits for color buffer
-//				  8,                 // Number of bits for alpha buffer
-//				  32,                // Number of bits for depth buffer (Z-buffer)
-//				  0,                 // Number of bits for stencil buffer
-//				  GLFW_FULLSCREEN        // We want a desktop window (could be GLFW_FULLSCREEN)
-//			  );
-//		showCursor();
-//	}
-//	else
-//	{
-//		printf("**** invalid windowMode\n");
-//	}
-//
-//	if ( result != GL_TRUE )
-//	{
-//		printf("**** failed to open glfw window\n");
-//	}
-//	else
-//		printf("*--- opened glfw window\n");
+	windowP = glfwCreateWindow(w, h, "", NULL, NULL);
+    if(!windowP) {
+        ofLogError() << "error creating GLFW window";
+        return;
+    }
 
 	setVerticalSync(false);
 	// Set window title
