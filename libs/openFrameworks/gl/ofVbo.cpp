@@ -12,9 +12,19 @@
 #include <map>
 
 #ifdef TARGET_OPENGLES
-#define glDeleteVertexArrays glDeleteVertexArraysOES
-#define glGenVertexArrays glGenVertexArraysOES
-#define glBindVertexArray glBindVertexArrayOES
+	bool ofVbo::bGLESFunctionsInitialized = false;
+
+	typedef void (* glGenVertexArraysType) (GLsizei n,  GLuint *arrays);
+	glGenVertexArraysType glGenVertexArraysFunc;
+	#define glGenVertexArrays								glGenVertexArraysFunc
+
+	typedef void (* glDeleteVertexArraysType) (GLsizei n,  GLuint *arrays);
+	glDeleteVertexArraysType glDeleteVertexArraysFunc;
+	#define glDeleteVertexArrays								glDeleteVertexArraysFunc
+
+	typedef void (* glBindVertexArrayType) (GLuint array);
+	glBindVertexArrayType glBindVertexArrayFunc;
+	#define glBindVertexArrayArrays								glBindVertexArrayFunc
 #endif
 
 static map<GLuint,int> & getIds(){
@@ -76,8 +86,21 @@ static void releaseVAO(GLuint id){
 }
 
 //--------------------------------------------------------------
-ofVbo::ofVbo()
-{
+ofVbo::ofVbo(){
+#ifdef TARGET_OPENGLES
+	if(!bGLESFunctionsInitialized){
+		if(ofGetProgrammableGLRenderer()){
+			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
+			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
+			glBindVertexArrayArrays =  (glBindVertexArrayArraysType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArrays");
+		}else{
+			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArraysOES");
+			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArraysOES");
+			glBindVertexArrayArrays =  (glBindVertexArrayArraysType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArraysOES");
+		}
+	}
+#endif
+
 	bUsingVerts = false;
 	bUsingTexCoords = false;
 	bUsingColors = false;
