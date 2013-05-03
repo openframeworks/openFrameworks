@@ -22,20 +22,8 @@
  */
 
 #ifdef TARGET_OPENGLES
-bool ofFbo::bglFunctionsInitialized=false;
-#endif
-
-// mapping to allow simple opengl EXT and opengl ES OES
-// commented out ones are already defined
-
-#ifndef TARGET_OPENGLES
-	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
+	bool ofFbo::bglFunctionsInitialized=false;
 	
-	#ifndef GL_UNSIGNED_INT_24_8
-		#define GL_UNSIGNED_INT_24_8						GL_UNSIGNED_INT_24_8_EXT
-	#endif
-#else
 	typedef void (* glGenFramebuffersType) (GLsizei n, GLuint* framebuffers);
 	glGenFramebuffersType glGenFramebuffersFunc;
 	#define glGenFramebuffers								glGenFramebuffersFunc
@@ -75,44 +63,6 @@ bool ofFbo::bglFunctionsInitialized=false;
 	typedef GLenum (* glCheckFramebufferStatusType)  (GLenum target);
 	glCheckFramebufferStatusType glCheckFramebufferStatusFunc;
 	#define glCheckFramebufferStatus						glCheckFramebufferStatusFunc
-
-#ifndef GL_FRAMEBUFFER
-	#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_OES
-	#define GL_RENDERBUFFER									GL_RENDERBUFFER_OES
-	#define GL_DEPTH_ATTACHMENT								GL_DEPTH_ATTACHMENT_OES
-	#define GL_STENCIL_ATTACHMENT							GL_STENCIL_ATTACHMENT_OES
-	//#define GL_DEPTH_STENCIL_ATTACHMENT					GL_DEPTH_STENCIL_ATTACHMENT_OES
-	#define GL_DEPTH_COMPONENT								GL_DEPTH_COMPONENT16_OES
-	#define GL_STENCIL_INDEX								GL_STENCIL_INDEX8_OES
-	#define GL_FRAMEBUFFER_BINDING							GL_FRAMEBUFFER_BINDING_OES
-	#define GL_MAX_COLOR_ATTACHMENTS						GL_MAX_COLOR_ATTACHMENTS_OES
-	#define GL_MAX_SAMPLES									GL_MAX_SAMPLES_OES
-	#define GL_READ_FRAMEBUFFER								GL_READ_FRAMEBUFFER_OES
-	#define GL_DRAW_FRAMEBUFFER								GL_DRAW_FRAMEBUFFER_OES
-	#define GL_WRITE_FRAMEBUFFER							GL_WRITE_FRAMEBUFFER_OES
-	#define GL_COLOR_ATTACHMENT0							GL_COLOR_ATTACHMENT0_OES
-	#define GL_FRAMEBUFFER_COMPLETE							GL_FRAMEBUFFER_COMPLETE_OES
-	#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT			GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES
-	#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT	GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES
-	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES
-	#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_OES
-	#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_OES
-	#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_OES
-	#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_OES
-	#define GL_DEPTH_COMPONENT16							GL_DEPTH_COMPONENT16_OES
-#endif
-	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
-	#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_OES
-    
-	#define GL_DEPTH24_STENCIL8								GL_DEPTH24_STENCIL8_OES
-	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
-	#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
-	#ifdef GL_DEPTH_COMPONENT32_OES 
-        #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
-    #endif
-	#ifdef TARGET_OF_IPHONE
-    	#define GL_UNSIGNED_INT                                 GL_UNSIGNED_INT_OES
-	#endif
 #endif
 
 
@@ -215,18 +165,7 @@ bIsAllocated(false)
 {
 #ifdef TARGET_OPENGLES
 	if(!bglFunctionsInitialized){
-		if(ofGLIsFixedPipeline()){
-			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffersOES");
-			glDeleteFramebuffers = (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffersOES");
-			glDeleteRenderbuffers = (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffersOES");
-			glBindFramebuffer = (glBindFramebufferType)dlsym(RTLD_DEFAULT, "glBindFramebufferOES");
-			glBindRenderbuffer = (glBindRenderbufferType)dlsym(RTLD_DEFAULT, "glBindRenderbufferOES");
-			glRenderbufferStorage = (glRenderbufferStorageType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageOES");
-			glFramebufferRenderbuffer = (glFramebufferRenderbufferType)dlsym(RTLD_DEFAULT, "glFramebufferRenderbufferOES");
-			glRenderbufferStorageMultisample = (glRenderbufferStorageMultisampleType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageMultisampleOES");
-			glFramebufferTexture2D = (glFramebufferTexture2DType)dlsym(RTLD_DEFAULT, "glFramebufferTexture2DOES");
-			glCheckFramebufferStatus = (glCheckFramebufferStatusType)dlsym(RTLD_DEFAULT, "glCheckFramebufferStatusOES");
-		}else{
+		if(ofGetProgrammableGLRenderer()){
 			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffers");
 			glDeleteFramebuffers =  (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffers");
 			glDeleteRenderbuffers =  (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffers");
@@ -237,6 +176,17 @@ bIsAllocated(false)
 			glRenderbufferStorageMultisample = (glRenderbufferStorageMultisampleType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageMultisample");
 			glFramebufferTexture2D = (glFramebufferTexture2DType)dlsym(RTLD_DEFAULT, "glFramebufferTexture2D");
 			glCheckFramebufferStatus = (glCheckFramebufferStatusType)dlsym(RTLD_DEFAULT, "glCheckFramebufferStatus");
+		}else{
+			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffersOES");
+			glDeleteFramebuffers = (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffersOES");
+			glDeleteRenderbuffers = (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffersOES");
+			glBindFramebuffer = (glBindFramebufferType)dlsym(RTLD_DEFAULT, "glBindFramebufferOES");
+			glBindRenderbuffer = (glBindRenderbufferType)dlsym(RTLD_DEFAULT, "glBindRenderbufferOES");
+			glRenderbufferStorage = (glRenderbufferStorageType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageOES");
+			glFramebufferRenderbuffer = (glFramebufferRenderbufferType)dlsym(RTLD_DEFAULT, "glFramebufferRenderbufferOES");
+			glRenderbufferStorageMultisample = (glRenderbufferStorageMultisampleType)dlsym(RTLD_DEFAULT, "glRenderbufferStorageMultisampleOES");
+			glFramebufferTexture2D = (glFramebufferTexture2DType)dlsym(RTLD_DEFAULT, "glFramebufferTexture2DOES");
+			glCheckFramebufferStatus = (glCheckFramebufferStatusType)dlsym(RTLD_DEFAULT, "glCheckFramebufferStatusOES");
 		}
 	}
 #endif

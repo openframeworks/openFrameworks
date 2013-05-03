@@ -29,7 +29,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofFileUtils.h"
-#include "ofGLES2Renderer.h"
+#include "ofProgrammableGLRenderer.h"
 #include <assert.h>
 
 // native events
@@ -537,7 +537,7 @@ bool ofAppEGLWindow::createSurface() {
       ofLogNotice("ofAppEGLWindow::createSurface") << "No current render selected.";
     }
 
-    if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()=="GLES2"){
+    if(ofGetProgrammableGLRenderer()){
       glesVersion = EGL_OPENGL_ES2_BIT;
       glesVersionForContext = 2;
         ofLogNotice("ofAppEGLWindow::createSurface") << "GLES2 Renderer detected.";
@@ -691,8 +691,7 @@ bool ofAppEGLWindow::createSurface() {
 
     if(glesVersionForContext==2){
       ofLogNotice("ofAppEGLWindow::createSurface") << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
-      ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
-      renderer->setup();
+      ofGetProgrammableGLRenderer()->setup();
     }
 
     ofLogNotice("ofAppEGLWindow::createSurface") << "-----EGL-----";
@@ -1239,9 +1238,8 @@ void ofAppEGLWindow::display() {
   // set viewport, clear the screen
  
 
-  if(ofGetCurrentRenderer()->getType()=="GLES2"){
-    ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
-    renderer->startRender();
+  if(ofGetProgrammableGLRenderer()){
+    ofGetProgrammableGLRenderer()->startRender();
   }
 
   ofViewport(0, 0, getWindowWidth(), getWindowHeight());    // used to be glViewport( 0, 0, width, height );
@@ -1293,9 +1291,8 @@ void ofAppEGLWindow::display() {
     }
    }
  
-  if(ofGetCurrentRenderer()->getType()=="GLES2") {
-    ofGLES2Renderer* renderer = (ofGLES2Renderer*)ofGetCurrentRenderer().get();
-    renderer->finishRender();
+  if(ofGetProgrammableGLRenderer()) {
+    ofGetProgrammableGLRenderer()->finishRender();
   }
   
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
