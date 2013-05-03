@@ -55,8 +55,8 @@ static ofPtr<ofAppBaseWindow> 		window;
 // also since old versions created the window in the stack, if this function is called we create a shared_ptr that never deletes
 //--------------------------------------
 static void noopDeleter(ofAppBaseWindow*){}
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
-	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer){
+	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode,renderer);
 }
 
 void ofExitCallback();
@@ -123,7 +123,7 @@ void ofRunApp(ofBaseApp * OFSA){
 }
 
 //--------------------------------------
-void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
 
@@ -143,16 +143,19 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	fprintf(stdout,"GLSL:     %s\n",   (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 #endif
-    if(ofGetCurrentRenderer() == NULL) {
+    if(!renderer) {
 #ifdef USE_PROGRAMMABLE_GL
     	glGetError();
     	ofShader::initDefaultShaders();
         ofPtr<ofProgrammableGLRenderer>programmableGLRenderer(new ofProgrammableGLRenderer("","",false));
-    	ofSetCurrentRenderer(ofPtr<ofProgrammableGLRenderer>(programmableGLRenderer));
+    	renderer = ofPtr<ofBaseRenderer>(programmableGLRenderer);
 #else
-        ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+    	renderer = ofPtr<ofBaseRenderer>(new ofGLRenderer(false));
 #endif
-    }else if(ofGetProgrammableGLRenderer()){
+    }
+
+    ofSetCurrentRenderer(renderer);
+    if(ofGetProgrammableGLRenderer()){
     	glGetError();
     	ofShader::initDefaultShaders();
     }
@@ -163,7 +166,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 
 //--------------------------------------
-void ofSetupOpenGL(int w, int h, int screenMode){
+void ofSetupOpenGL(int w, int h, int screenMode, ofPtr<ofBaseRenderer> renderer){
 	#ifdef TARGET_NODISPLAY
 		window = ofPtr<ofAppBaseWindow>(new ofAppNoWindow());
 	#elif defined(TARGET_OF_IPHONE)
@@ -180,7 +183,7 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 #endif
 	#endif
 
-	ofSetupOpenGL(window,w,h,screenMode);
+	ofSetupOpenGL(window,w,h,screenMode,renderer);
 }
 
 //-----------------------	gets called when the app exits
