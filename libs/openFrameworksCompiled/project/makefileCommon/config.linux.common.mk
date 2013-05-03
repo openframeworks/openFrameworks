@@ -62,6 +62,7 @@ ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_DEFINES += OF_USING_MPG123
 endif
 
+
 ################################################################################
 # PLATFORM REQUIRED ADDON
 #   This is a list of addons required for this platform.  This list is used to 
@@ -157,7 +158,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGra
 
 ifeq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 else
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
@@ -212,7 +212,11 @@ PLATFORM_HEADER_SEARCH_PATHS =
 PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBRARIES += glut Xi
+	PLATFORM_LIBRARIES += glut
+	PLATFORM_LIBRARIES += X11 
+	PLATFORM_LIBRARIES += Xrandr
+	PLATFORM_LIBRARIES += Xxf86vm 
+	PLATFORM_LIBRARIES += Xi 
 endif
 PLATFORM_LIBRARIES += freeimage
 
@@ -247,9 +251,6 @@ ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
-	PLATFORM_PKG_CONFIG_LIBRARIES += x11
-	PLATFORM_PKG_CONFIG_LIBRARIES += xrandr
-	PLATFORM_PKG_CONFIG_LIBRARIES += xxf86vm
 endif
 
 # conditionally add GTK
