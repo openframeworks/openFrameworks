@@ -1,11 +1,8 @@
 libPocoNet.a
-libPocoXML.a
+libPocoData.a
+libPocoNetSSL.a
+libPocoCrypto.a
+libPocoZip.a
 libPocoUtil.a
+libPocoXML.a
 libPocoFoundation.a
-#libPocoCrypto.a
-#libPocoData.a
-#libPocoDataMySQL.a
-#libPocoDataODBC.a
-#libPocoDataSQLite.a
-#libPocoNetSSL.a
-#libPocoZip.a
