@@ -326,6 +326,7 @@ void ofAppEGLWindow::init(Settings _settings) {
     eglConfig  = NULL;
     eglVersionMinor = -1;
     eglVersionMinor = -1;
+    glesVersion = 1;
 
     // X11 check
     // char * pDisplay;
@@ -429,6 +430,11 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
     return NULL;
         #endif
   }
+}
+
+
+void ofAppEGLWindow::setGLESVersion(int _glesVersion){
+    glesVersion = _glesVersion;
 }
 
 //------------------------------------------------------------
@@ -537,7 +543,7 @@ bool ofAppEGLWindow::createSurface() {
       ofLogNotice("ofAppEGLWindow::createSurface") << "No current render selected.";
     }
 
-    if(ofGetProgrammableGLRenderer()){
+    if(this->glesVersion==2){
       glesVersion = EGL_OPENGL_ES2_BIT;
       glesVersionForContext = 2;
         ofLogNotice("ofAppEGLWindow::createSurface") << "GLES2 Renderer detected.";

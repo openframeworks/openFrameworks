@@ -1124,7 +1124,6 @@ void ofShader::initDefaultShaders(){
 
 	bitmapStringShader().bindDefaults();
 	bitmapStringShader().linkProgram();
-
 }
 
 ofShader & ofShader::defaultTexColor(){
