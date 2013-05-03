@@ -2,18 +2,7 @@
 
 #include "ofConstants.h"
 
-//#ifdef TARGET_LINUX
-//#include <GL/glfw.h>   // For GLFW, OpenGL and GLU
-//#elif defined(TARGET_OSX)
-//#elif defined(TARGET_WIN32)
-//#include "GL/glfw.h"
-//#endif
-//
-
-//#define _GLFW_COCOA
-//#define GLFW_INCLUDE_GL3  /* don't drag in legacy GL headers. */
-//#define GLFW_NO_GLU       /* don't drag in the old GLU lib - unless you must. */
-//#define _GLFW_USE_MENUBAR
+#define GLFW_INCLUDE_NONE
 
 #include "GL/glfw3.h"
 

@@ -40,11 +40,12 @@ static ofPtr<ofAppBaseWindow> 		window;
 	#include "ofAppiPhoneWindow.h"
 #elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
-#elif defined(TARGET_LINUX_ARM)
+#elif defined(TARGET_WIN32)
+	#include "ofAppGlutWindow.h"
+#elif defined(TARGET_RASPBERRY_PI)
 	#include "ofAppEGLWindow.h"
 #else
 	#include "ofAppGLFWWindow.h"
-	#include "ofAppGlutWindow.h"
 #endif
 
 // this is hacky only to provide bw compatibility, a shared_ptr should always be initialized using a shared_ptr
@@ -133,10 +134,16 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	window = windowPtr;
 
 	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
-		#if defined(TARGET_LINUX_ARM)
+        #if defined(TARGET_RASPBERRY_PI)
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
+		#elif defined(TARGET_LINUX_ARM)
+			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,0);
 		#elif defined(TARGET_LINUX) || defined(TARGET_OSX)
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
+		#endif
+	}else{
+	    #if defined(TARGET_LINUX_ARM)
+			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(1,0);
 		#endif
 	}
 
@@ -175,10 +182,10 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
 	#elif defined(TARGET_ANDROID)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
-	#elif defined(TARGET_LINUX_ARM)
-		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
 	#elif defined(TARGET_WIN32)
 		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
+	#elif defined(TARGET_RASPBERRY_PI)
+		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
     #else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
 	#endif

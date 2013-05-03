@@ -158,6 +158,9 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGra
 
 ifeq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
+    ifeq ($(PLATFORM_ARCH),armv6l)
+	    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGFWWindow.cpp
+    endif
 else
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
@@ -213,12 +216,14 @@ PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
 	PLATFORM_LIBRARIES += glut
-	PLATFORM_LIBRARIES += X11 
-	PLATFORM_LIBRARIES += Xrandr
-	PLATFORM_LIBRARIES += Xxf86vm 
-	PLATFORM_LIBRARIES += Xi 
 endif
-PLATFORM_LIBRARIES += freeimage
+ifneq ($(PLATFORM_ARCH),armv6l)
+    PLATFORM_LIBRARIES += X11 
+    PLATFORM_LIBRARIES += Xrandr
+    PLATFORM_LIBRARIES += Xxf86vm 
+    PLATFORM_LIBRARIES += Xi 
+    PLATFORM_LIBRARIES += freeimage
+endif
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
