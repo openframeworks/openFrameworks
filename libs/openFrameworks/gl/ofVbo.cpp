@@ -286,7 +286,6 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 #else
 	if(!vaoChecked){
 		supportVAOs = glewIsSupported("GL_ARB_vertex_array_object");
-		cout << "vao supported " << supportVAOs << endl;
 		vaoChecked = true;
 	}
 #endif
