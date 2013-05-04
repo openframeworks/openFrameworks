@@ -9,6 +9,10 @@
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_GLX
 #include "glfw3native.h"
+#elif defined(TARGET_OSX)
+#define GLFW_EXPOSE_NATIVE_COCOA
+#define GLFW_EXPOSE_NATIVE_NSGL
+#include "glfw3native.h"
 #endif
 
 //========================================================================
@@ -282,7 +286,6 @@ ofPoint ofAppGLFWWindow::getScreenSize(){
 	if(count>0){
 		GLFWvidmode desktopMode;
 		desktopMode = glfwGetVideoMode(monitors[0]);
-
 		if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 			return ofVec3f(desktopMode.width, desktopMode.height,0);
 		}else{
@@ -387,6 +390,11 @@ double ofAppGLFWWindow::getLastFrameTime() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
+	if (fullscreen)
+		windowMode = OF_FULLSCREEN;
+	else
+		windowMode = OF_WINDOW;
+
 #ifdef TARGET_LINUX
 #include <X11/Xatom.h>
 
@@ -417,13 +425,41 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	xev.xclient.data.l[4] = 0;
 	XSendEvent(display, RootWindow(display, DefaultScreen(display)),
 	           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+#elif defined(TARGET_OSX)
+	if( windowMode == OF_FULLSCREEN){
+		nonFullScreenW = ofGetWidth();
+		nonFullScreenH = ofGetHeight();
 
+		//----------------------------------------------------
+		SetSystemUIMode(kUIModeAllHidden,NULL);
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+		[cocoaWindow setStyleMask:NSBorderlessWindowMask];
+
+		setWindowShape(getScreenSize().x, getScreenSize().y);
+		setWindowPosition(0,0);
+
+		//[cocoaWindow makeFirstResponder: cocoaWindow];
+
+	}else if( windowMode == OF_WINDOW ){
+		SetSystemUIMode(kUIModeNormal,NULL);
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+		[cocoaWindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
+
+		setWindowShape(nonFullScreenW, nonFullScreenH);
+
+		//----------------------------------------------------
+		// if we have recorded the screen posion, put it there
+		// if not, better to let the system do it (and put it where it wants)
+		if (nFrameCount > 0){
+			setWindowPosition(nonFullScreenX,nonFullScreenY);
+		}
+
+		//[cocoaWindow makeFirstResponder: cocoaWindow];
+		//----------------------------------------------------
+
+	}
 #endif
 
-	if (fullscreen)
-		windowMode = OF_FULLSCREEN;
-	else
-		windowMode = OF_WINDOW;
 }
 
 //------------------------------------------------------------
@@ -638,7 +674,7 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int state) {
 		key += 32;
 	}
 
-	if(state == GLFW_PRESS){
+	if(state == GLFW_PRESS || state == GLFW_REPEAT){
 		ofNotifyKeyPressed(key);
 		if (key == OF_KEY_ESC){				// "escape"
 			exitApp();

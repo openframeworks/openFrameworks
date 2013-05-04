@@ -123,21 +123,21 @@ void ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
     if(!ofGetCurrentRenderer()) {
-#ifdef USE_PROGRAMMABLE_GL
-    	ofPtr<ofBaseRenderer> renderer(new ofProgrammableGLRenderer(false));
-#else
-    	ofPtr<ofBaseRenderer> renderer(new ofGLRenderer(false));
-#endif
-        ofSetCurrentRenderer(renderer);
+	#ifdef USE_PROGRAMMABLE_GL
+	    ofPtr<ofBaseRenderer> renderer(new ofProgrammableGLRenderer(false));
+	#else
+	    ofPtr<ofBaseRenderer> renderer(new ofGLRenderer(false));
+	#endif
+	    ofSetCurrentRenderer(renderer,false);
     }
-    
+
 	window = windowPtr;
 
 	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
         #if defined(TARGET_RASPBERRY_PI)
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,0);
+			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,1);
 		#elif defined(TARGET_LINUX) || defined(TARGET_OSX)
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
 		#endif

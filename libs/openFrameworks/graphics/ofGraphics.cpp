@@ -51,10 +51,8 @@ static ofVboMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
 static ofVboMesh gradientMesh;
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_,bool setDefaults){
 	renderer = renderer_;
-	renderer->setupGraphicDefaults();
-
 	if(renderer->rendersPathPrimitives()){
 		shape.setMode(ofPath::PATHS);
 	}else{
@@ -63,8 +61,11 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 
 	shape.setUseShapeColor(false);
 
-	ofSetStyle(currentStyle);
-	ofBackground(currentStyle.bgColor);
+	if(setDefaults){
+		renderer->setupGraphicDefaults();
+		ofSetStyle(currentStyle);
+		ofBackground(currentStyle.bgColor);
+	}
 }
 
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
@@ -96,7 +97,7 @@ void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectan
 	rendererCollection->renderers.push_back(ofGetGLRenderer());
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
-	ofSetCurrentRenderer(rendererCollection);
+	ofSetCurrentRenderer(rendererCollection,true);
 	bScreenShotStarted = true;
 }
 
@@ -110,7 +111,7 @@ void ofEndSaveScreenAsPDF(){
 			cairoScreenshot.reset();
 		}
 		if( storedRenderer ){
-			ofSetCurrentRenderer(storedRenderer);
+			ofSetCurrentRenderer(storedRenderer,true);
 			storedRenderer.reset();
 		}
 		

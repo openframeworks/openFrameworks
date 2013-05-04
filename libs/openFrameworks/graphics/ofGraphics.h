@@ -11,7 +11,7 @@
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer,bool setDefaults=false);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
 
 //for pdf screenshot
