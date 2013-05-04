@@ -133,14 +133,6 @@ public:
 		TEXCOORD_ATTRIBUTE
 	};
 
-	static ofShader & defaultTexColor();
-	static ofShader & defaultTexNoColor();
-	static ofShader & defaultTex2DColor();
-	static ofShader & defaultTex2DNoColor();
-	static ofShader & defaultNoTexColor();
-	static ofShader & defaultNoTexNoColor();
-	static ofShader & bitmapStringShader();
-
 
 
 private:
@@ -158,8 +150,6 @@ private:
 	
 	void checkAndCreateProgram();
 	
-	static void initDefaultShaders();
-	friend void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);
 
 };
 
