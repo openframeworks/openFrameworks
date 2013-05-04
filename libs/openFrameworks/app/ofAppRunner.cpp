@@ -156,17 +156,17 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	{
 		/* Problem: glewInit failed, something is seriously wrong. */
 		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
+		return;
 	}
 #endif
 
-	fprintf(stdout,"Vendor:   %s\n",   (char*)glGetString(GL_VENDOR));
-	fprintf(stdout,"Renderer: %s\n",   (char*)glGetString(GL_RENDERER));
-	fprintf(stdout,"Version:  %s\n",   (char*)glGetString(GL_VERSION));
-	fprintf(stdout,"GLSL:     %s\n",   (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+	ofLogNotice()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
+	ofLogNotice()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
+	ofLogNotice()<< "Version:  "<< (char*)glGetString(GL_VERSION);
+	ofLogNotice()<< "GLSL:     "<< (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-    if(ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
-    	glGetError();
-    	ofShader::initDefaultShaders();
+    if(ofGetProgrammableGLRenderer()){
+    	ofGetProgrammableGLRenderer()->setup();
     }
 
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults

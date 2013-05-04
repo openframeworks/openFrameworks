@@ -18,6 +18,8 @@ public:
 	ofProgrammableGLRenderer(bool useShapeColor=true);
 	~ofProgrammableGLRenderer();
 
+	void setup();
+
     static const string TYPE;
 	const string & getType(){ return TYPE; }
     
@@ -146,6 +148,16 @@ public:
 
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
+
+
+
+	ofShader & defaultTexColor();
+	ofShader & defaultTexNoColor();
+	ofShader & defaultTex2DColor();
+	ofShader & defaultTex2DNoColor();
+	ofShader & defaultNoTexColor();
+	ofShader & defaultNoTexNoColor();
+	ofShader & bitmapStringShader();
     
 private:
 
