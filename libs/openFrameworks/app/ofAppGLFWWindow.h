@@ -82,8 +82,6 @@ private:
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
 
-	void			idle_cb();
-
 
 	//utils
 	void			changeMode();
@@ -100,7 +98,6 @@ private:
 	double			fps;
 
 	int				windowMode;
-	bool			bNewScreenMode;
 
 	bool			bEnableSetupScreen;
 
