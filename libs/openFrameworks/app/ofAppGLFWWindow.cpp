@@ -8,11 +8,15 @@
 #ifdef TARGET_LINUX
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_GLX
-#include "glfw3native.h"
+#include "GL/glfw3native.h"
 #elif defined(TARGET_OSX)
 #define GLFW_EXPOSE_NATIVE_COCOA
 #define GLFW_EXPOSE_NATIVE_NSGL
-#include "glfw3native.h"
+#include "GL/glfw3native.h"
+#elif defined(TARGET_WIN32)
+#define GLFW_EXPOSE_NATIVE_WIN32
+#define GLFW_EXPOSE_NATIVE_WGL
+#include "GL/glfw3native.h"
 #endif
 
 //========================================================================
@@ -126,6 +130,11 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}else{
 		windowP = glfwCreateWindow(w, h, "", NULL, NULL);
+		#ifdef TARGET_WIN32
+		HWND hwnd = glfwGetWin32Window(windowP);
+		lExStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+		lStyle = GetWindowLong(hwnd, GWL_STYLE);
+		#endif // TARGET_WIN32
 		if(windowMode==OF_FULLSCREEN){
 			setFullscreen(true);
 		}
@@ -218,42 +227,6 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	}
 }
 
-void ofAppGLFWWindow::changeMode(){
-	//glfwToggleFullscreen();
-
-	if( windowMode == OF_FULLSCREEN){
-
-		nonFullScreenW = ofGetWidth();
-		nonFullScreenH = ofGetHeight();
-
-		//----------------------------------------------------
-		ofAppGLFWWindow::setWindowShape(getScreenSize().x, getScreenSize().y);
-		ofAppGLFWWindow::setWindowPosition(0,0);
-
-		#ifdef TARGET_OSX
-		//	tig: this doesn't compile
-		// SetSystemUIMode(kUIModeAllHidden,NULL);
-		#endif
-
-	}else if( windowMode == OF_WINDOW ){
-
-		ofAppGLFWWindow::setWindowShape(nonFullScreenW, nonFullScreenH);
-
-		//----------------------------------------------------
-		// if we have recorded the screen posion, put it there
-		// if not, better to let the system do it (and put it where it wants)
-		if (nFrameCount > 0){
-			ofAppGLFWWindow::setWindowPosition(nonFullScreenX,nonFullScreenY);
-		}
-		//----------------------------------------------------
-
-		#ifdef TARGET_OSX
-		// tig:this doesn't compile
-//			SetSystemUIMode(kUIModeNormal,NULL);
-		#endif
-	}
-}
-
 void ofAppGLFWWindow::setWindowTitle(string title){
 	glfwSetWindowTitle(windowP,title.c_str());
 }
@@ -265,6 +238,7 @@ ofPoint ofAppGLFWWindow::getWindowSize(){
 		desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
 		return ofVec3f(desktopMode.width, desktopMode.height,0);
 	}else{
+	    glfwGetWindowSize(windowP,&windowW,&windowH);
 		return ofPoint(windowW,windowH);
 	}
 }
@@ -427,8 +401,10 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 #elif defined(TARGET_OSX)
 	if( windowMode == OF_FULLSCREEN){
-		nonFullScreenW = ofGetWidth();
-		nonFullScreenH = ofGetHeight();
+        nonFullScreenX = getWindowPosition().x;
+        nonFullScreenY = getWindowPosition().y;
+		nonFullScreenW = getWindowSize().x;
+		nonFullScreenH = getWindowSize().y;
 
 		//----------------------------------------------------
 		SetSystemUIMode(kUIModeAllHidden,NULL);
@@ -458,8 +434,33 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		//----------------------------------------------------
 
 	}
-#endif
+#elif defined(TARGET_WIN32)
+    if( windowMode == OF_FULLSCREEN){
+        nonFullScreenX = getWindowPosition().x;
+        nonFullScreenY = getWindowPosition().y;
+		nonFullScreenW = getWindowSize().x;
+		nonFullScreenH = getWindowSize().y;
 
+		//----------------------------------------------------
+		HWND hwnd = glfwGetWin32Window(windowP);
+        SetWindowLong(hwnd, GWL_STYLE,
+                  lStyle & ~(WS_CAPTION | WS_THICKFRAME));
+        SetWindowLong(hwnd, GWL_EXSTYLE,
+                  lExStyle & ~(WS_EX_DLGMODALFRAME |
+                  WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+
+        SetWindowPos(hwnd, NULL, 0, 0,
+                   getScreenSize().x, getScreenSize().y,
+                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+	}else if( windowMode == OF_WINDOW ){
+		HWND hwnd = glfwGetWin32Window(windowP);
+        SetWindowLong(hwnd, GWL_STYLE, lStyle);
+        SetWindowLong(hwnd, GWL_EXSTYLE, lExStyle);
+        setWindowShape(nonFullScreenW,nonFullScreenH);
+        setWindowPosition(nonFullScreenX,nonFullScreenY);
+		//----------------------------------------------------
+#endif
+	}
 }
 
 //------------------------------------------------------------
