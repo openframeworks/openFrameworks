@@ -11,25 +11,22 @@
 
 #include <map>
 
+bool ofVbo::vaoChecked = false;
+bool ofVbo::supportVAOs = false;
+
 #ifdef TARGET_OPENGLES
 	#include <dlfcn.h>
-
-	bool ofVbo::bGLESFunctionsInitialized = false;
-	bool ofVbo::supportVAOs = false;
-
 	typedef void (* glGenVertexArraysType) (GLsizei n,  GLuint *arrays);
 	glGenVertexArraysType glGenVertexArraysFunc;
 	#define glGenVertexArrays								glGenVertexArraysFunc
 
 	typedef void (* glDeleteVertexArraysType) (GLsizei n,  GLuint *arrays);
 	glDeleteVertexArraysType glDeleteVertexArraysFunc;
-	#define glDeleteVertexArrays								glDeleteVertexArraysFunc
+	#define glDeleteVertexArrays							glDeleteVertexArraysFunc
 
 	typedef void (* glBindVertexArrayType) (GLuint array);
 	glBindVertexArrayType glBindVertexArrayFunc;
 	#define glBindVertexArray								glBindVertexArrayFunc
-#else
-	bool ofVbo::supportVAOs = true;
 #endif
 
 static map<GLuint,int> & getIds(){
@@ -92,22 +89,6 @@ static void releaseVAO(GLuint id){
 
 //--------------------------------------------------------------
 ofVbo::ofVbo(){
-#ifdef TARGET_OPENGLES
-	if(!bGLESFunctionsInitialized){
-		if(ofGetProgrammableGLRenderer()){
-			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
-			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
-			glBindVertexArray =  (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArrays");
-		}else{
-			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArraysOES");
-			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArraysOES");
-			glBindVertexArray =  (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArraysOES");
-		}
-		bGLESFunctionsInitialized = true;
-		supportVAOs = glGenVertexArrays && glDeleteVertexArrays && glBindVertexArray;
-	}
-#endif
-
 	bUsingVerts = false;
 	bUsingTexCoords = false;
 	bUsingColors = false;
@@ -287,6 +268,29 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride) {
+
+#ifdef TARGET_OPENGLES
+	if(!vaoChecked){
+		if(ofGetProgrammableGLRenderer()){
+			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
+			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
+			glBindVertexArray =  (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArrays");
+		}else{
+			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArraysOES");
+			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArraysOES");
+			glBindVertexArray =  (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArraysOES");
+		}
+		vaoChecked = true;
+		supportVAOs = glGenVertexArrays && glDeleteVertexArrays && glBindVertexArray;
+	}
+#else
+	if(!vaoChecked){
+		supportVAOs = glewIsSupported("GL_ARB_vertex_array_object");
+		cout << "vao supported " << supportVAOs << endl;
+		vaoChecked = true;
+	}
+#endif
+
 	if(vert0x == NULL) {
 		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
 		return;	
@@ -624,7 +628,12 @@ void ofVbo::bind(){
 	if(supportVAOs){
 		if(vaoID==0){
 			glGenVertexArrays(1, &vaoID);
-			retainVAO(vaoID);
+			if(vaoID!=0){
+				retainVAO(vaoID);
+			}else{
+				supportVAOs = false;
+				ofLogWarning() << "error allocating VAO, disabling VAO support";
+			}
 		}
 
 		glBindVertexArray(vaoID);
