@@ -493,8 +493,10 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
-	//TODO: gles2 implementation
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    // glTexEnv is not supported on GLES2 and causes a crash on iOS 4.x
+    if(ofGetCurrentRenderer()->getType() == "GL") {
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
 
 	disableTextureTarget();
 	
@@ -555,7 +557,10 @@ void ofTexture::allocate(const ofTextureData & textureData){
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    // glTexEnv is not supported on GLES2 and causes a crash on iOS 4.x
+    if(ofGetCurrentRenderer()->getType() == "GL") {
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
 
 	disableTextureTarget();
 
@@ -699,7 +704,12 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+        // glTexEnv is not supported on GLES2 and causes a crash on iOS 4.x
+        if(ofGetCurrentRenderer()->getType() == "GL") {
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        }
+
 #ifndef TARGET_OPENGLES		
 		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
 #endif
