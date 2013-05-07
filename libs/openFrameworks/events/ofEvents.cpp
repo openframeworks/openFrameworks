@@ -69,48 +69,26 @@ void exitApp(){
 
 //------------------------------------------
 void ofNotifySetup(){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	
-	if(ofAppPtr){
-		ofAppPtr->setup();
-	}
 	ofNotifyEvent( ofEvents().setup, voidEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyUpdate(){
 	ofGetCurrentRenderer()->update();
-
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	
-	if(ofAppPtr){
-		ofAppPtr->update();
-	}
 	ofNotifyEvent( ofEvents().update, voidEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyDraw(){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	
-	if(ofAppPtr){
-		ofAppPtr->draw();
-	}
 	ofNotifyEvent( ofEvents().draw, voidEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyKeyPressed(int key){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofKeyEventArgs keyEventArgs;
+	keyEventArgs.key = key;
 
 	pressedKeys.insert(key);
-
-	if(ofAppPtr){
-		ofAppPtr->keyPressed(key);
-	}
-	
-	keyEventArgs.key = key;
 	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
 	
 	
@@ -123,23 +101,22 @@ void ofNotifyKeyPressed(int key){
 
 //------------------------------------------
 void ofNotifyKeyReleased(int key){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofKeyEventArgs keyEventArgs;
+	keyEventArgs.key = key;
 
 	pressedKeys.erase(key);
 
-	if(ofAppPtr){
-		ofAppPtr->keyReleased(key);
-	}
-	
-	keyEventArgs.key = key;
 	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyMousePressed(int x, int y, int button){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+	mouseEventArgs.button = button;
+
+
     if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -153,22 +130,16 @@ void ofNotifyMousePressed(int x, int y, int button){
 	currentMouseY = y;
 	pressedMouseButtons.insert(button);
 
-	if(ofAppPtr){
-		ofAppPtr->mousePressed(x,y,button);
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
-
-	mouseEventArgs.x = x;
-	mouseEventArgs.y = y;
-	mouseEventArgs.button = button;
 	ofNotifyEvent( ofEvents().mousePressed, mouseEventArgs );
+
 }
 
 //------------------------------------------
 void ofNotifyMouseReleased(int x, int y, int button){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+	mouseEventArgs.button = button;
 
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
@@ -183,23 +154,15 @@ void ofNotifyMouseReleased(int x, int y, int button){
 	currentMouseY = y;
 	pressedMouseButtons.erase(button);
 
-	if(ofAppPtr){
-		ofAppPtr->mouseReleased(x,y,button);
-		ofAppPtr->mouseReleased();
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
-
-	mouseEventArgs.x = x;
-	mouseEventArgs.y = y;
-	mouseEventArgs.button = button;
 	ofNotifyEvent( ofEvents().mouseReleased, mouseEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyMouseDragged(int x, int y, int button){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+	mouseEventArgs.button = button;
 
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
@@ -212,23 +175,16 @@ void ofNotifyMouseDragged(int x, int y, int button){
 
 	currentMouseX = x;
 	currentMouseY = y;
-	
-	if(ofAppPtr){
-		ofAppPtr->mouseDragged(x,y,button);
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
 
-	mouseEventArgs.x = x;
-	mouseEventArgs.y = y;
-	mouseEventArgs.button = button;
 	ofNotifyEvent( ofEvents().mouseDragged, mouseEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyMouseMoved(int x, int y){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -241,37 +197,20 @@ void ofNotifyMouseMoved(int x, int y){
 	currentMouseX = x;
 	currentMouseY = y;
 	
-	if(ofAppPtr){
-		ofAppPtr->mouseMoved(x,y);
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
-
-	mouseEventArgs.x = x;
-	mouseEventArgs.y = y;
 	ofNotifyEvent( ofEvents().mouseMoved, mouseEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyExit(){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->exit();
-	}
 	ofNotifyEvent( ofEvents().exit, voidEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyWindowResized(int width, int height){
 	static ofResizeEventArgs resizeEventArgs;
-
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->windowResized(width, height);
-	}
-	
 	resizeEventArgs.width	= width;
 	resizeEventArgs.height	= height;
+
 	ofNotifyEvent( ofEvents().windowResized, resizeEventArgs );
 }
 
