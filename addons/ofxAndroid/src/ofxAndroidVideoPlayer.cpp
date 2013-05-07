@@ -8,9 +8,72 @@
 #include "ofxAndroidVideoPlayer.h"
 #include "ofxAndroidUtils.h"
 #include "ofLog.h"
+#include <set>
+
+//---------------------------------------------------------------------------
+static set<ofxAndroidVideoPlayer*> & all_videoplayers(){
+	static set<ofxAndroidVideoPlayer*> *all_videoplayers = new set<ofxAndroidVideoPlayer*>;
+	return *all_videoplayers;
+}
+
+void ofPauseVideoPlayers(){
+	ofLog(OF_LOG_NOTICE,"ofVideoPlayer: releasing textures");
+	set<ofxAndroidVideoPlayer*>::iterator it;
+	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
+		(*it)->unloadTexture();
+	}
+}
+
+void ofResumeVideoPlayers(){
+	ofLog(OF_LOG_NOTICE,"ofVideoPlayer: trying to allocate textures");
+	set<ofxAndroidVideoPlayer*>::iterator it;
+	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
+		(*it)->reloadTexture();
+	}
+	ofLog(OF_LOG_NOTICE,"ofVideoPlayer: textures allocated");
+}
+
+//---------------------------------------------------------------------------
+void ofxAndroidVideoPlayer::reloadTexture(){
+	if(!texture.texData.bAllocated) return;
+
+	glGenTextures(1, (GLuint *)&texture.texData.textureID);
+
+	glEnable(texture.texData.textureTarget);
+
+	glBindTexture(texture.texData.textureTarget, (GLuint)texture.texData.textureID);
+
+	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glDisable(texture.texData.textureTarget);
+
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return;
+	}
+	jmethodID javasetTexture = env->GetMethodID(javaClass,"setTexture","(I)V");
+	if(!javasetTexture){
+		ofLog(OF_LOG_ERROR,"Failed to get the java setTexture for VideoPlayer");
+		return;
+	}
+	env->CallVoidMethod(javaVideoPlayer,javasetTexture,texture.getTextureData().textureID);
+}
+
+//---------------------------------------------------------------------------
+void ofxAndroidVideoPlayer::unloadTexture(){
+	texture.texData.textureID=0;
+}
+
 
 //---------------------------------------------------------------------------
 ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
+
+	all_videoplayers().insert(this);
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
@@ -48,6 +111,9 @@ ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
 
 //---------------------------------------------------------------------------
 ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
+
+	all_videoplayers().erase(this);
+
 	JNIEnv *env = ofGetJNIEnv();
 	if(javaVideoPlayer) env->DeleteGlobalRef(javaVideoPlayer);
 	if(javaClass) env->DeleteGlobalRef(javaClass);
@@ -98,28 +164,11 @@ bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 	td.glTypeInternal = GL_RGBA;
 	td.bFlipTexture = false;
 	td.useTextureMatrix = true;
-	glGenTextures(1, (GLuint *)&td.textureID);
 
-	glEnable(td.textureTarget);
-
-	glBindTexture(td.textureTarget, (GLuint)td.textureID);
-
-	glTexParameterf(td.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(td.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(td.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(td.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	glDisable(td.textureTarget);
-	td.bAllocated = true;
+	// hack to initialize gl resources from outside ofTexture
 	texture.texData = td;
-
-	jmethodID javasetTextureReference = env->GetMethodID(javaClass,"setTextureReference","(I)V");
-	if(!javasetTextureReference){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setTextureReference for VideoPlayer");
-		return false;
-	}
-	env->CallVoidMethod(javaVideoPlayer,javasetTextureReference,texture.getTextureData().textureID);
+	texture.texData.bAllocated = true;
+	reloadTexture();
 
 	ofLog() << "ofxAndroidVideoPlayer :: Movie size: "<< width <<"," << height;
 
