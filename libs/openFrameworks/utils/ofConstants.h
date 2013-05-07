@@ -288,7 +288,7 @@ typedef TESSindex ofIndexType;
 				#define OF_VIDEO_PLAYER_QTKIT
 			#endif
 		#elif !defined(TARGET_ANDROID)
-			#define OF_VIDEO_PLAYER_QUICKTIMEs
+			#define OF_VIDEO_PLAYER_QUICKTIME
 		#endif
 	#endif
 #endif
