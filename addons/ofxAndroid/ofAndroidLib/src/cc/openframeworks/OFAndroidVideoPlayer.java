@@ -32,22 +32,6 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		
 	}
 	
-	/*
-	public static boolean supportsTextureRendering(){
-		try {
-			Class surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
-	*/
-	
-	public void setTextureReference(int texName) {
-		textureName = texName;
-		setTexture(textureName);
-	}
-	
 	@SuppressLint("NewApi")
 	public void setTexture(int texName) {
 		surfaceTexture = new SurfaceTexture(texName);
@@ -62,8 +46,6 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 			surface.release();
 			surface = null;
 		}
-		// TODO Clearing surfaceTexture crashes appResume
-		// so we have to check if it exists always before accessing its methods
 		if(surfaceTexture != null) {
 			surfaceTexture.setOnFrameAvailableListener(null);
 			surfaceTexture.release();
@@ -98,9 +80,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 					public void onPrepared(MediaPlayer mp) {
 						bIsLoaded = true;
-						//nFrames = (int)(getDurationMS()*1000) * movieFPS;
 						if(bAutoResume) {
-							setTexture(textureName);
 							setPositionMS(movieResumeTime);
 							bAutoResume = false;
 							play();
@@ -339,7 +319,6 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	
 	private MediaPlayer mediaPlayer;
 	
-	private int textureName;
 	private SurfaceTexture surfaceTexture;
 	private Surface surface;
 	private String fileName;
