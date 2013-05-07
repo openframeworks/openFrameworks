@@ -53,6 +53,7 @@ NSString * const kCurrentItemKey	= @"currentItem";
 	CMTime timestampLast;
 	CMTime duration;
     CMTime currentTime;
+    int totalFrames;
     float volume;
     float speed;
     float rateBeforeSeek;
@@ -206,7 +207,7 @@ static const NSString * ItemStatusContext;
             if(status == AVKeyValueStatusLoaded) {
                 
                 duration = [self.asset duration];
-
+                totalFrames = [self getDurationInSec] * [[[[self.playerItem tracks] objectAtIndex:0] assetTrack] nominalFrameRate];
                 if(CMTimeCompare(duration, kCMTimeZero) == 0) {
                     return; // duration is zero.
                 }
@@ -592,9 +593,25 @@ static const NSString * ItemStatusContext;
     return CMTimeGetSeconds(duration);
 }
 
+- (float) getFramerate{
+    return [[[[self.playerItem tracks] objectAtIndex:0] assetTrack] nominalFrameRate];
+}
+
+- (int)getDurationInFrames{
+    return [self getDurationInSec]*[self getFramerate];
+}
+
+- (int)getCurrentFrameNum{
+    return  [self getCurrentTimeInSec]*[self getFramerate];
+}
+
 - (void)setPosition:(float)position {
     double time = [self getDurationInSec] * position;
     [self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+}
+
+- (void)setFrame:(int)frame{
+    [self setPosition: frame / [self getFramerate]];
 }
 
 - (float)getPosition {
