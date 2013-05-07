@@ -65,6 +65,9 @@ void  ofUpdateBitmapCharacterTexture();
 void ofxAndroidSoundStreamPause();
 void ofxAndroidSoundStreamResume();
 
+void ofPauseVideoPlayers();
+void ofResumeVideoPlayers();
+
 bool ofxAndroidCheckSDCardMounted();
 
 void ofxAndroidEnableMulticast();

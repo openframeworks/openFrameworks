@@ -222,6 +222,7 @@ void reloadTextures(){
 	ofReloadAllImageTextures();
 	ofReloadAllFontTextures();
 	ofResumeVideoGrabbers();
+	ofResumeVideoPlayers();
 }
 
 extern "C"{
@@ -323,6 +324,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 	ofLog(OF_LOG_NOTICE,"onSurfaceDestroyed");
 	ofUnloadAllFontTextures();
 	ofPauseVideoGrabbers();
+	ofPauseVideoPlayers();
 	if(androidApp){
 		androidApp->unloadTextures();
 	}
@@ -334,6 +336,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	if(!surfaceDestroyed){
 		ofUnloadAllFontTextures();
 		ofPauseVideoGrabbers();
+		ofPauseVideoPlayers();
 		if(androidApp){
 			androidApp->unloadTextures();
 		}
