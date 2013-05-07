@@ -34,25 +34,52 @@ class ofHttpResponse{
 public:
 	ofHttpResponse(){}
 
-	ofHttpResponse(ofHttpRequest request,const ofBuffer & data,int status, string error)
+	ofHttpResponse(ofHttpRequest request,const ofBuffer & data,int status, string error, int size)
 	:request(request)
 	,data(data)
 	,status(status)
-	,error(error){}
+	,error(error)
+    ,size(size)
+    ,downloaded(data.size())
+    ,downloading(false){}
 
-	ofHttpResponse(ofHttpRequest request,int status,string error)
+	ofHttpResponse(ofHttpRequest request,int status,string error, int size)
 	:request(request)
 	,status(status)
-	,error(error){}
+	,error(error)
+    ,size(size)
+    ,downloaded(0)
+    ,downloading(false){}
 
 	operator ofBuffer&(){
 		return data;
 	}
+    
+    int getDownloaded(){
+        if(request.saveTo){
+            return downloaded;
+        }else{
+            return data.size();
+        }
+    }
+    
+    float getProgressPct(){
+        if(size!=0){
+            return getDownloaded()/float(size);
+        }else{
+            return -1;
+        }
+    }
 
 	ofHttpRequest	    request;
 	ofBuffer		    data;
 	int					status;
 	string				error;
+    int                 size;
+    bool                downloading;
+private:
+    friend class ofURLFileLoader;
+    int                 downloaded;
 };
 
 ofHttpResponse ofLoadURL(string url);
@@ -63,6 +90,7 @@ void ofRemoveURLRequest(int id);
 void ofRemoveAllURLRequests();
 
 ofEvent<ofHttpResponse> & ofURLResponseEvent();
+ofEvent<ofHttpResponse> & ofURLProgressEvent();
 
 template<class T>
 void ofRegisterURLNotification(T * obj){
@@ -102,6 +130,8 @@ class ofURLFileLoader : public ofThread  {
 
 		deque<ofHttpRequest> requests;
 		queue<ofHttpResponse> responses;
+        ofHttpResponse downloading;
+        int prevProgress;
 
 		Poco::Condition condition;
 
