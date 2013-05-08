@@ -84,9 +84,11 @@ vector<float>& ofQTKitPlayer::getAudioFrequencyLevels() {
 
 //--------------------------------------------------------------------
 float ofQTKitPlayer::getAudioFrequencyLevel(int channel, int band) {
-    int index = (channel * moviePlayer.audioFrequencyLevels->numFrequencyBands) + band;
-    if (audioFrequencyLevels.size() > index)
-        return audioFrequencyLevels[index];
+    if (moviePlayer && moviePlayer.audioFrequencyMeteringEnabled) {
+        int index = (channel * moviePlayer.audioFrequencyLevels->numFrequencyBands) + band;
+        if (audioFrequencyLevels.size() > index)
+            return audioFrequencyLevels[index];
+    }
 
     return 0;
 }
