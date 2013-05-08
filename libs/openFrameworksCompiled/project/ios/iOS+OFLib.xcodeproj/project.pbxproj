@@ -68,6 +68,10 @@
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
 		772C25181469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772C25161469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp */; };
 		772C25191469274B00DDAAE6 /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772C25171469274B00DDAAE6 /* ofOpenALSoundPlayer.h */; };
+		97530FB317170D02001E7B6B /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97530FAF17170D02001E7B6B /* ofParameter.cpp */; };
+		97530FB417170D02001E7B6B /* ofParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97530FB017170D02001E7B6B /* ofParameter.h */; };
+		97530FB517170D02001E7B6B /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97530FB117170D02001E7B6B /* ofParameterGroup.cpp */; };
+		97530FB617170D02001E7B6B /* ofParameterGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 97530FB217170D02001E7B6B /* ofParameterGroup.h */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
 		BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -252,6 +256,10 @@
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		772C25161469274B00DDAAE6 /* ofOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		772C25171469274B00DDAAE6 /* ofOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOpenALSoundPlayer.h; sourceTree = "<group>"; };
+		97530FAF17170D02001E7B6B /* ofParameter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameter.cpp; sourceTree = "<group>"; };
+		97530FB017170D02001E7B6B /* ofParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameter.h; sourceTree = "<group>"; };
+		97530FB117170D02001E7B6B /* ofParameterGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameterGroup.cpp; sourceTree = "<group>"; };
+		97530FB217170D02001E7B6B /* ofParameterGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameterGroup.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -765,6 +773,10 @@
 		E485F6DD1360A90000E939D3 /* types */ = {
 			isa = PBXGroup;
 			children = (
+				97530FAF17170D02001E7B6B /* ofParameter.cpp */,
+				97530FB017170D02001E7B6B /* ofParameter.h */,
+				97530FB117170D02001E7B6B /* ofParameterGroup.cpp */,
+				97530FB217170D02001E7B6B /* ofParameterGroup.h */,
 				E485F6DE1360A90000E939D3 /* ofBaseTypes.cpp */,
 				E485F6DF1360A90000E939D3 /* ofBaseTypes.h */,
 				E485F6E01360A90000E939D3 /* ofColor.cpp */,
@@ -929,6 +941,8 @@
 				1594366B15CF5F650087B684 /* ofxiPhoneSoundStream.h in Headers */,
 				2E719E9A16B8DEF500933ED4 /* of3dPrimitives.h in Headers */,
 				2E719E9F16B8DF2000933ED4 /* of3dGraphics.h in Headers */,
+				97530FB417170D02001E7B6B /* ofParameter.h in Headers */,
+				97530FB617170D02001E7B6B /* ofParameterGroup.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1054,6 +1068,8 @@
 				1594366A15CF5F650087B684 /* ofxiPhoneSoundStream.mm in Sources */,
 				2E719E9916B8DEF500933ED4 /* of3dPrimitives.cpp in Sources */,
 				2E719E9E16B8DF2000933ED4 /* of3dGraphics.cpp in Sources */,
+				97530FB317170D02001E7B6B /* ofParameter.cpp in Sources */,
+				97530FB517170D02001E7B6B /* ofParameterGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

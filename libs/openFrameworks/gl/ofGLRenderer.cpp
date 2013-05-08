@@ -182,14 +182,14 @@ void ofGLRenderer::draw(ofPath & shape){
 	if(shape.isFilled()){
 		ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+			setColor( shape.getFillColor(),shape.getFillColor().a);
 		}
 		draw(mesh);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+			setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
 		}
 		setLineWidth( shape.getStrokeWidth() );
 		vector<ofPolyline> & outlines = shape.getOutline();
@@ -1113,6 +1113,8 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	//We do this because its way faster
 	ofDrawBitmapCharacterStart(textString.size());
 
+	int column = 0;
+
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
@@ -1123,7 +1125,13 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 				sx = 0;
 			}
 
-			//glRasterPos2f(x,y + (int)yOffset);
+			column = 0;
+		} else if (textString[c] == '\t'){
+			//move the cursor to the position of the next tab
+			//8 is the default tab spacing in osx terminal and windows	 command line
+			int out = column + 8 - (column % 8);
+			sx += fontSize * (out-column);
+			column = out;
 		} else if (textString[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
@@ -1131,6 +1139,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
 						
 			sx += fontSize;
+			column++;
 		}
 	}
 	//We do this because its way faster
