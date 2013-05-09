@@ -42,6 +42,7 @@ namespace ofxCv {
 	
 	void loadMat(Mat& mat, string filename);
 	void saveMat(Mat mat, string filename);
+	void saveImage(Mat& mat, string filename);
 	
 	// wrapThree are based on functions that operate on three Mat objects.
 	// the first two are inputs, and the third is an output. for example,

@@ -14,6 +14,22 @@ namespace ofxCv {
 		fs << "Mat" << mat;
 	}
 	
+	void saveImage(Mat& mat, string filename) {
+		if(mat.depth() == CV_8U) {
+			ofPixels pix8u;
+			toOf(mat, pix8u);
+			ofSaveImage(pix8u, filename);
+		} else if(mat.depth() == CV_16U) {
+			ofShortPixels pix16u;
+			toOf(mat, pix16u);
+			ofSaveImage(pix16u, filename);
+		} else if(mat.depth() == CV_32F) {
+			ofFloatPixels pix32f;
+			toOf(mat, pix32f);
+			ofSaveImage(pix32f, filename);
+		}
+	}
+	
 	Vec3b convertColor(Vec3b color, int code) {
 		Mat_<Vec3b> mat(1, 1, CV_8UC3);
 		mat(0, 0) = color;
