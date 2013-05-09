@@ -185,7 +185,7 @@ PLATFORM_HEADERS_SEARCH_PATHS =
 #   These are library names/paths that are platform specific and are specified 
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
-#   PLATFORM_LIBRARIES are libraries that can be found in the library search 
+#   PLATFORM_LIBS are libraries that can be found in the library search 
 #       paths.
 #   PLATFORM_STATIC_LIBS is a list of required static libraries.
 #   PLATFORM_SHARED_LIBS is a list of required shared libraries.
@@ -202,7 +202,7 @@ PLATFORM_HEADERS_SEARCH_PATHS =
 PLATFORM_LIBS =
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBRS += glut
+	PLATFORM_LIBS += glut
 endif
 PLATFORM_LIBS += freeimage
 
