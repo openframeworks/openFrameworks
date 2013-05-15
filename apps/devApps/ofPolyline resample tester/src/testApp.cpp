@@ -125,7 +125,7 @@ void testApp::keyPressed(int key){
         case 'o': poly.setClosed(!poly.isClosed()); break;
             
         case 'S': poly = poly.getResampledBySpacing(30); break;
-        case 'C': poly = poly.getResampledByCount(10); break;
+        case 'C': poly = poly.getResampledByCount(50); break;
     }
 }
 
