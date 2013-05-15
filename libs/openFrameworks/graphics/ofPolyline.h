@@ -32,6 +32,9 @@ public:
 	void lineTo(float x, float y, float z=0){
 		addVertex(x,y,z);
 	}
+    
+    void insertVertex(const ofPoint &p, int index);
+    void insertVertex(float x, float y, float z, int index);
 
 	// adds an arc to the polyline
 	// if the arc doesn't start at the same point
