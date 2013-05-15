@@ -923,7 +923,10 @@ static void calcData(ofPoint p1, ofPoint p2, ofPoint p3, float *angle, ofVec3f *
     v1.normalize();
     v2.normalize();
     
-    if(angle) *angle = 180 - v1.angle(v2);//ofRadToDeg(acos(v1.dot(v2)); // TODO: why doesn't this compile! unnessecary normalizations duplicated :(
+    if(angle) {
+        *angle = 180 - v1.angle(v2);//ofRadToDeg(acos(v1.dot(v2)); // TODO: why doesn't this compile! unnessecary normalizations duplicated :(
+        if(*angle != *angle) *angle = 0;    // nan hack
+    }
     
     if(rotation) *rotation = v1.crossed(v2);
     
