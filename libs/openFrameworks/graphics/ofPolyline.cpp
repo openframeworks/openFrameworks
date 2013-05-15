@@ -68,6 +68,19 @@ void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
 }
 
 //----------------------------------------------------------
+void ofPolyline::insertVertex(const ofPoint &p, int index) {
+    curveVertices.clear();
+    points.insert(points.begin()+index, p);
+    bHasChanged = true;
+}
+
+//----------------------------------------------------------
+void ofPolyline::insertVertex(float x, float y, float z, int index) {
+    insertVertex(ofPoint(x, y, z), index);
+}
+
+
+//----------------------------------------------------------
 size_t ofPolyline::size() const {
 	return points.size();
 }

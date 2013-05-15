@@ -1,6 +1,7 @@
 #include "testApp.h"
 
 ofPolyline poly;
+unsigned int nearestIndex;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -40,7 +41,6 @@ void testApp::draw(){
     
     
     float totalLength = poly.getPerimeter();;
-    unsigned int nearestIndex;
     ofPoint nearestPoint = poly.getClosestPoint(ofPoint(mouseX,mouseY), &nearestIndex);
     ofPoint nearestDataPoint = poly[nearestIndex];
     float lengthAtIndex = poly.getLengthAtIndex(nearestIndex);
@@ -148,6 +148,8 @@ void testApp::keyPressed(int key){
             
         case 'S': poly = poly.getResampledBySpacing(30); break;
         case 'C': poly = poly.getResampledByCount(50); break;
+            
+        case 'i': poly.insertVertex(ofPoint(mouseX, mouseY, 0), nearestIndex); break;
     }
 }
 
