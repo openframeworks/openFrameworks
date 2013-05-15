@@ -741,60 +741,6 @@ void ofPolyline::draw(){
 	ofGetCurrentRenderer()->draw(*this);
 }
 
-//--------------------------------------------------
-float ofPolyline::getLengthAtIndex(int f) {
-    if(points.empty()) return 0;
-    if(hasChanged()) updateCache();
-    return lengths[f];
-}
-
-//--------------------------------------------------
-float ofPolyline::getLengthAtIndexInterpolated(float findex) {
-    if(points.empty()) return 0;
-    if(hasChanged()) updateCache();
-    
-    int leftIndex = floor(findex);
-    int rightIndex = leftIndex + 1;
-    float t = findex - leftIndex;
-    
-    return ofLerp(lengths[leftIndex], lengths[rightIndex], t);
-}
-
-
-//--------------------------------------------------
-ofPoint ofPolyline::getPointAtLength(float f) {
-    if(points.empty()) return ofPoint();
-    if(hasChanged()) updateCache();
-    
-    float index = getIndexAtLength(f);
-    int leftIndex = floor(index);
-    int rightIndex = (leftIndex + 1) % points.size();
-    float t = index - leftIndex;
-    
-    ofPoint leftPoint(points[leftIndex]);
-    ofPoint rightPoint(points[rightIndex]);
-    return (rightPoint - leftPoint) * t + leftPoint;
-}
-
-//--------------------------------------------------
-ofPoint ofPolyline::getPointAtNormalisedLength(float f) {
-    float length = getPerimeter();
-    return getPointAtLength(f * length);
-}
-
-
-//--------------------------------------------------
-ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) {
-    if(points.empty()) return ofPoint();
-    
-    int leftIndex = floor(findex);
-    int rightIndex = (leftIndex + 1) % points.size();
-    float t = findex - leftIndex;
-    
-    ofPoint leftPoint(points[leftIndex]);
-    ofPoint rightPoint(points[rightIndex]);
-    return (rightPoint - leftPoint) * t + leftPoint;
-}
 
 
 //--------------------------------------------------
@@ -837,10 +783,68 @@ float ofPolyline::getIndexAtNormalisedLength(float f) {
 }
 
 //--------------------------------------------------
+float ofPolyline::getLengthAtIndex(int index) {
+    if(points.empty()) return 0;
+    if(hasChanged()) updateCache();
+    return lengths[index % lengths.size()];
+}
+
+//--------------------------------------------------
+float ofPolyline::getLengthAtIndexInterpolated(float findex) {
+    if(points.empty()) return 0;
+    if(hasChanged()) updateCache();
+    
+    int leftIndex = floor(findex);
+    int rightIndex = leftIndex + 1;
+    float t = findex - leftIndex;
+    
+    return ofLerp(getLengthAtIndex(leftIndex), getLengthAtIndex(rightIndex), t);
+}
+
+
+//--------------------------------------------------
+ofPoint ofPolyline::getPointAtLength(float f) {
+    if(points.empty()) return ofPoint();
+    if(hasChanged()) updateCache();
+    
+    float index = getIndexAtLength(f);
+    int leftIndex = floor(index);
+    int rightIndex = (leftIndex + 1) % points.size();
+    float t = index - leftIndex;
+    
+    ofPoint leftPoint(points[leftIndex]);
+    ofPoint rightPoint(points[rightIndex]);
+    return (rightPoint - leftPoint) * t + leftPoint;
+}
+
+//--------------------------------------------------
+ofPoint ofPolyline::getPointAtNormalisedLength(float f) {
+    float length = getPerimeter();
+    return getPointAtLength(f * length);
+}
+
+
+//--------------------------------------------------
+ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) {
+    if(points.empty()) return ofPoint();
+    
+    int leftIndex = floor(findex);
+    int rightIndex = (leftIndex + 1) % points.size();
+    float t = findex - leftIndex;
+    
+    ofPoint leftPoint(points[leftIndex]);
+    ofPoint rightPoint(points[rightIndex]);
+    return (rightPoint - leftPoint) * t + leftPoint;
+}
+
+
+//--------------------------------------------------
 float ofPolyline::getAngleAtIndex(int index) {
     if(points.empty()) return 0;
     if(hasChanged()) updateCache();
     
+    if(index < 0) index = isClosed() ? points.size()-1 : 0;
+    else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
     return angles[index];
 }
 
@@ -860,6 +864,8 @@ ofVec3f ofPolyline::getRotationAtIndex(int index) {
     if(points.empty()) return ofVec3f();
     if(hasChanged()) updateCache();
     
+    if(index < 0) index = isClosed() ? points.size()-1 : 0;
+    else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
     return rotations[index];
 }
 
@@ -874,16 +880,41 @@ ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) {
     return getRotationAtIndex(i1).interpolated(getRotationAtIndex(i2), t);
 }
 
+//--------------------------------------------------
+ofVec3f ofPolyline::getNormalAtIndex(int index) {
+    if(points.empty()) return ofVec3f();
+    if(hasChanged()) updateCache();
+    
+    if(index < 0) index = isClosed() ? points.size()-1 : 0;
+    else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
+    return normals[index];
+}
 
 //--------------------------------------------------
-static void calcData(ofPoint p1, ofPoint p2, ofPoint p3, ofVec3f &cross, float &angle) {
-    ofVec3f v1(p2 - p1);
+ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) {
+    if(points.empty()) return ofVec3f();
+    
+    int i1 = floor(findex);
+    int i2 = i1 + 1;
+    float t = findex - i1;
+    
+    return getNormalAtIndex(i1).interpolated(getNormalAtIndex(i2), t);
+}
+
+
+//--------------------------------------------------
+static void calcData(ofPoint p1, ofPoint p2, ofPoint p3, float &angle, ofVec3f &cross, ofVec3f &normal) {
+    ofVec3f v1(p1 - p2);
     ofVec3f v2(p3 - p2);
     v1.normalize();
     v2.normalize();
     
     angle = v1.angle(v2);//ofRadToDeg(acos(v1.dot(v2)); // TODO: why doesn't this compile! unnessecary normalizations duplicated :(
+    
     cross = v1.crossed(v2);
+    
+    normal = -(v1+v2)/2;
+    normal.normalize();
 }
 
 //--------------------------------------------------
@@ -891,12 +922,14 @@ void ofPolyline::updateCache() {
     lengths.clear();
     angles.clear();
     rotations.clear();
+    normals.clear();
     
     if(points.empty()) return;
     
     lengths.push_back(0);
     angles.push_back(0);
     rotations.push_back(ofVec3f());
+    normals.push_back(ofVec3f());
     
     float length = 0;
 	for(int i=0; i<points.size()-1; i++) {
@@ -906,15 +939,17 @@ void ofPolyline::updateCache() {
         if(i>=1) {
             float angle;
             ofVec3f cross;
-            calcData(points[i-1], points[i], points[i+1], cross, angle);
+            ofVec3f normal;
+            calcData(points[i-1], points[i], points[i+1], angle, cross, normal);
             angles.push_back(angle);
             rotations.push_back(cross);
+            normals.push_back(normal);
         }
 	}
     
     angles.push_back(0);
     rotations.push_back(ofVec3f());
-    
+    normals.push_back(ofVec3f());
     
 	if(bClosed && points.size() > 1) {
 		length += points.back().distance(points[0]);
@@ -924,18 +959,22 @@ void ofPolyline::updateCache() {
         {
             float angle;
             ofVec3f cross;
-            calcData(points[points.size()-1], points[0], points[1], cross, angle);
+            ofVec3f normal;
+            calcData(points[points.size()-1], points[0], points[1], angle, cross, normal);
             angles.front() = angle;
             rotations.front() = cross;
+            normals.push_back(normal);
         }
         
         // update data for last point
         {
             float angle;
             ofVec3f cross;
-            calcData(points[points.size()-2], points[points.size()-1], points[0], cross, angle);
+            ofVec3f normal;
+            calcData(points[points.size()-2], points[points.size()-1], points[0], angle, cross, normal);
             angles.back() = angle;
             rotations.back() = cross;
+            normals.push_back(normal);
         }
         
 	}

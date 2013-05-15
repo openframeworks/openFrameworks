@@ -130,6 +130,13 @@ public:
 
 	void draw();
     
+    
+    // get index at given length along the path (interpolated index, includes info on percentage along segment)
+    float getIndexAtLength(float f);
+    
+    // get index at given normalised length along the path (interpolated index, includes info on percentage along segment)
+    float getIndexAtNormalisedLength(float f);
+
     // get length along path at index
     float getLengthAtIndex(int index);
     
@@ -144,12 +151,6 @@ public:
     
     // get point along the path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
     ofPoint getPointAtIndexInterpolated(float findex);
-    
-    // get index at given length along the path (interpolated index, includes info on percentage along segment)
-    float getIndexAtLength(float f);
-    
-    // get index at given normalised length along the path (interpolated index, includes info on percentage along segment)
-    float getIndexAtNormalisedLength(float f);
 
     // get angle (degrees) at index
     float getAngleAtIndex(int index);
@@ -162,7 +163,12 @@ public:
     
     // get rotation vector at interpolated index (interpolated between neighboring indices curvatures) (magnitude is sin of angle)
     ofVec3f getRotationAtIndexInterpolated(float findex);
-
+    
+    // get normal vector at index
+    ofVec3f getNormalAtIndex(int index);
+    
+    // get normal vector at interpolated index (interpolated between neighboring indices curvatures)
+    ofVec3f getNormalAtIndexInterpolated(float findex);
 
 private:
 	void setCircleResolution(int res);
