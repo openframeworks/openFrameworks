@@ -22,11 +22,12 @@ void testApp::draw(){
     poly.draw();
     
     ofSetColor(0, 255, 0);
+    ofSetRectMode(OF_RECTMODE_CENTER);
     glPointSize(5);
     for(int i=0; i<poly.size(); i++) {
         glBegin(GL_POINTS);
         for(int i=0; i<poly.size(); i++) {
-            ofPoint &p = poly[i];
+            ofPoint p = poly[i];
             glVertex2f(p.x, p.y);
         }
         glEnd();
@@ -38,9 +39,7 @@ void testApp::draw(){
     ofPoint nearestPoint = poly.getClosestPoint(ofPoint(mouseX,mouseY), &nearestIndex);
     ofPoint nearestDataPoint = poly[nearestIndex];
     float lengthAtIndex = poly.getLengthAtIndex(nearestIndex);
-//    float lengthAtNormalisedIndex = poly.getLengthAtNormalisedIndex(nearestIndex / (float)poly.size());
     ofPoint pointAtIndex = poly.getPointAtIndexInterpolated(nearestIndex);
-//    ofPoint pointAtNormalisedIndex = poly.getPointAtNormalisedIndex(nearestIndex / (float)poly.size());
     ofPoint pointAtLength = poly.getPointAtLength(lengthAtIndex);
     ofPoint pointAtNormalisedLength = poly.getPointAtNormalisedLength(lengthAtIndex / totalLength);
     float indexAtLength = poly.getIndexAtLength(lengthAtIndex);
