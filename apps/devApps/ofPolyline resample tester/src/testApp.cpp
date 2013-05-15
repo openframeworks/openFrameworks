@@ -24,14 +24,19 @@ void testApp::draw(){
     ofSetColor(0, 255, 0);
     ofSetRectMode(OF_RECTMODE_CENTER);
     glPointSize(5);
+    glBegin(GL_POINTS);
     for(int i=0; i<poly.size(); i++) {
-        glBegin(GL_POINTS);
-        for(int i=0; i<poly.size(); i++) {
-            ofPoint p = poly[i];
-            glVertex2f(p.x, p.y);
-        }
-        glEnd();
+        ofPoint p = poly[i];
+        glVertex2f(p.x, p.y);
     }
+    glEnd();
+    
+    ofSetColor(255, 0, 0);
+    for(int i=0; i<poly.size(); i++) {
+        ofPoint p = poly[i];
+        ofLine(p, p + poly.getNormalAtIndex(i) * 20);
+    }
+
     
     
     float totalLength = poly.getPerimeter();;
@@ -59,6 +64,9 @@ void testApp::draw(){
     float rotMagAtIndex = rotAtIndex.length();
     float rotMagAtIndexSin = rotAtIndexSin.length();
 
+    ofVec3f normalAtIndex = poly.getNormalAtIndex(nearestIndex);
+    ofVec3f normalAtIndexSin = poly.getNormalAtIndexInterpolated(i);
+
     
     ofNoFill();
     ofSetLineWidth(2);
@@ -71,9 +79,11 @@ void testApp::draw(){
     
     ofSetColor(0, 0, 255);
     ofCircle(pointAtIndexSin, 10);
+    ofLine(pointAtIndexSin, pointAtIndexSin + normalAtIndexSin * 100);
     
     ofSetColor(255, 0, 255);
     ofCircle(pointAtNormalisedLengthSin, 15);
+
     
     
     stringstream s;
@@ -117,6 +127,10 @@ void testApp::draw(){
     s << endl;
     s << "rotMagAtIndex: " << rotMagAtIndex << endl;
     s << "rotMagAtIndexSin: " << rotMagAtIndexSin << endl;
+    
+    s << endl;
+    s << "normalAtIndex: " << normalAtIndex << endl;
+    s << "normalAtIndexSin: " << normalAtIndexSin << endl;
     
     ofSetColor(255);
     ofDrawBitmapString(s.str(), 10, 30);
