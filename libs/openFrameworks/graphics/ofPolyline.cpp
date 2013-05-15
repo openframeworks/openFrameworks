@@ -771,7 +771,7 @@ float ofPolyline::getIndexAtLength(float length) {
     int rightLimit = lastPointIndex;
     
     float distAt1, distAt2;
-    for(int iterations = 0; iterations < 100; iterations ++) {	// limit iterations
+    for(int iterations = 0; iterations < 32; iterations ++) {	// limit iterations
         i1 = ofClamp(i1, 0, lengths.size()-1);
         distAt1 = lengths[i1];
         if(distAt1 <= length) {         // if Length at i1 is less than desired Length (this is good)
