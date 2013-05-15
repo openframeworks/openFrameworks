@@ -134,7 +134,7 @@ public:
     float getLengthAtIndex(int index);
     
     // get length along path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
-    float getLengthAtIndexInterpolated(float f);
+    float getLengthAtIndexInterpolated(float findex);
     
     // get point long the path at a distance (e.g. f=150 => 150 units along the path)
     ofPoint getPointAtLength(float f);
@@ -143,7 +143,7 @@ public:
     ofPoint getPointAtNormalisedLength(float f);
     
     // get point along the path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
-    ofPoint getPointAtIndexInterpolated(float f);
+    ofPoint getPointAtIndexInterpolated(float findex);
     
     // get index at given length along the path (interpolated index, includes info on percentage along segment)
     float getIndexAtLength(float f);
@@ -151,11 +151,17 @@ public:
     // get index at given normalised length along the path (interpolated index, includes info on percentage along segment)
     float getIndexAtNormalisedLength(float f);
 
-    // get curvature (angle in degrees) at index
-    float getCurvatureAtIndex(int index);
+    // get angle (degrees) at index
+    float getAngleAtIndex(int index);
     
-    // get curvature (angle in degrees) at interpolated index (interpolated between neighboring indices curvatures)
-    float getCurvatureAtIndexInterpolated(float index);
+    // get angle (degrees) at interpolated index (interpolated between neighboring indices curvatures)
+    float getAngleAtIndexInterpolated(float findex);
+    
+    // get rotation vector at index (magnitude is sin of angle)
+    ofVec3f getRotationAtIndex(int index);
+    
+    // get rotation vector at interpolated index (interpolated between neighboring indices curvatures) (magnitude is sin of angle)
+    ofVec3f getRotationAtIndexInterpolated(float findex);
 
 
 private:
@@ -163,9 +169,10 @@ private:
     float wrapAngle(float angleRad);
 
 	vector<ofPoint> points;
-    vector<float> lengths;    // cumulative lengths (lengths[n] is the distance to the n'th point, zero based)
+    vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
     vector<ofVec3f> normals;    //
-    vector<float> curvature;       // angle of curvature
+    vector<float> angles;    // angle (degrees) between adjacent segments, stored per point (acos(dot product))
+    vector<ofVec3f> rotations;   // rotation between adjacent segments, stored per point (cross product)
 
 	deque<ofPoint> curveVertices;
 	vector<ofPoint> circlePoints;
