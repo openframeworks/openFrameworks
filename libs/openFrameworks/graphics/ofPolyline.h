@@ -124,22 +124,46 @@ public:
 
 	vector<ofPoint> & getVertices();
 
-	float getPerimeter() const;
+	float getPerimeter();
 	float getArea() const;
 	ofPoint getCentroid2D() const;
 
-	void draw();		
+	void draw();
+    
+    // return length along path at f index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
+    float getLengthAtIndex(float f);
+    
+    // return length along the path at f percentage index (e.g. f=0.25 => a quarter of the indices along the path)
+    float getLengthAtNormalisedIndex(float f);
+
+    // return point long the path at f distance (e.g. f=400 => 400 units along the path)
+    ofPoint getPointAtLength(float f);
+    
+    // return point along the path at f percentage (e.g. f=0.25 => 25% along the path)
+    ofPoint getPointAtNormalisedLength(float f);
+    
+    // return point along the path at f index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
+    ofPoint getPointAtIndex(float f);
+    
+    // return point along the path at f percentage index (e.g. f=0.25 => a quarter of the indices along the path)
+    ofPoint getPointAtNormalisedIndex(float f);
+    
+    
+    float getIndexAtLength(float length);
 
 private:
 	void setCircleResolution(int res);
     float wrapAngle(float angleRad);
 
 	vector<ofPoint> points;
+    vector<float> lengths;    // cumulative lengths (lengths[n] is the distance to the n'th point, zero based)
 
 	deque<ofPoint> curveVertices;
 	vector<ofPoint> circlePoints;
 
 	bool bClosed;
 	bool bHasChanged;
+    
+    void updateLengths();
 };
 

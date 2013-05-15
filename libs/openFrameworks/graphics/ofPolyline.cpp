@@ -360,16 +360,23 @@ void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float
 }
 
 //----------------------------------------------------------
-float ofPolyline::getPerimeter() const {
-	float perimeter = 0;
-	int lastPosition = points.size() - 1;
-	for(int i = 0; i < lastPosition; i++) {
-		perimeter += points[i].distance(points[i + 1]);
-	}
-	if(bClosed && points.size() > 1) {
-		perimeter += points[points.size() - 1].distance(points[0]);
-	}
-	return perimeter;
+float ofPolyline::getPerimeter() {
+    if(points.empty()) {
+        return 0;
+    } else {
+        if(hasChanged()) updateLengths();
+        return lengths.back();
+    }
+    
+//	float perimeter = 0;
+//	int lastPosition = points.size() - 1;
+//	for(int i = 0; i < lastPosition; i++) {
+//		perimeter += points[i].distance(points[i + 1]);
+//	}
+//	if(bClosed && points.size() > 1) {
+//		perimeter += points[points.size() - 1].distance(points[0]);
+//	}
+//	return perimeter;
 }
 
 //----------------------------------------------------------
@@ -671,6 +678,7 @@ typedef struct{
 #define d2(u,v)    norm2(u-v)      // distance squared = norm2 of difference
 #define d(u,v)     norm(u-v)       // distance = norm of difference
 
+//--------------------------------------------------
 static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
     if (k <= j+1) // there is nothing to simplify
         return;
@@ -721,6 +729,7 @@ static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
     return;
 }
 
+//--------------------------------------------------
 void ofPolyline::simplify(float tol){
 
 	int n = size();
@@ -764,8 +773,123 @@ void ofPolyline::simplify(float tol){
 
 }
 
+//--------------------------------------------------
 void ofPolyline::draw(){
 	ofGetCurrentRenderer()->draw(*this);
+}
+
+//--------------------------------------------------
+float ofPolyline::getLengthAtIndex(float f) {
+    if(points.empty()) return 0;
+    
+    if(hasChanged()) updateLengths();
+
+    int leftIndex = floor(f);
+    int rightIndex = leftIndex + 1;
+    float t = f - leftIndex;
+    
+    return ofLerp(lengths[leftIndex], lengths[rightIndex], t);
+}
+
+//--------------------------------------------------
+float ofPolyline::getLengthAtNormalisedIndex(float f) {
+    int lastPointIndex = isClosed() ? points.size() : points.size()-1;
+    return getLengthAtIndex(lastPointIndex * f);
+}
+
+
+//--------------------------------------------------
+ofPoint ofPolyline::getPointAtLength(float f) {
+    if(points.empty()) return ofPoint();
+
+    if(hasChanged()) updateLengths();
+    
+    float index = getIndexAtLength(f);
+    int leftIndex = floor(index);
+    int rightIndex = (leftIndex + 1) % points.size();
+    float t = index - leftIndex;
+    
+    ofPoint leftPoint(points[leftIndex]);
+    ofPoint rightPoint(points[rightIndex]);
+    return (rightPoint - leftPoint) * t + leftPoint;
+}
+
+//--------------------------------------------------
+ofPoint ofPolyline::getPointAtNormalisedLength(float f) {
+    float length = getPerimeter();
+    return getPointAtLength(f * length);
+}
+
+
+//--------------------------------------------------
+ofPoint ofPolyline::getPointAtIndex(float f) {
+    if(points.empty()) return ofPoint();
+
+    int leftIndex = floor(f);
+    int rightIndex = (leftIndex + 1) % points.size();
+    float t = f - leftIndex;
+    
+    ofPoint leftPoint(points[leftIndex]);
+    ofPoint rightPoint(points[rightIndex]);
+    return (rightPoint - leftPoint) * t + leftPoint;
+}
+
+
+//--------------------------------------------------
+ofPoint ofPolyline::getPointAtNormalisedIndex(float f) {
+    int lastPointIndex = isClosed() ? points.size() : points.size()-1;
+    return getPointAtIndex(lastPointIndex * f);
+}
+
+//--------------------------------------------------
+void ofPolyline::updateLengths() {
+    lengths.clear();
+
+    if(points.empty()) return;
+        
+    float length = 0;
+    lengths.push_back(length);
+    
+	for(int i=0; i<points.size()-1; i++) {
+		length += points[i].distance(points[i + 1]);
+        lengths.push_back(length);
+	}
+    
+	if(bClosed && points.size() > 1) {
+		length += points.back().distance(points[0]);
+        lengths.push_back(length);
+	}
+}
+
+//--------------------------------------------------
+float ofPolyline::getIndexAtLength(float length) {
+    if(points.empty()) return 0;
+    
+    if(hasChanged()) updateLengths();
+    
+    int lastPointIndex = isClosed() ? points.size() : points.size()-1;
+    
+    int i1 = floor(length / getPerimeter() * lastPointIndex);   // start approximation here
+    int leftLimit = 0;
+    int rightLimit = lastPointIndex;
+    
+    float distAt1, distAt2;
+    for(int iterations = 0; iterations < 100; iterations ++) {	// limit iterations
+        distAt1 = lengths[i1];
+        if(distAt1 <= length) {         // if Length at i1 is less than desired Length (this is good)
+            distAt2 = lengths[i1+1];
+            if(distAt2 > length) {
+                float t = ofMap(length, distAt1, distAt2, 0, 1);
+                return i1 + t;
+            } else {
+                leftLimit = i1;
+            }
+        } else {
+            rightLimit = i1;
+        }
+        i1 = (leftLimit + rightLimit)/2;
+    }
+
 }
 
 
