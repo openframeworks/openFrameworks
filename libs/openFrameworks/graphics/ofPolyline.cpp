@@ -364,19 +364,9 @@ float ofPolyline::getPerimeter() {
     if(points.empty()) {
         return 0;
     } else {
-        if(hasChanged()) updateLengths();
+        if(hasChanged()) updateCache();
         return lengths.back();
     }
-    
-//	float perimeter = 0;
-//	int lastPosition = points.size() - 1;
-//	for(int i = 0; i < lastPosition; i++) {
-//		perimeter += points[i].distance(points[i + 1]);
-//	}
-//	if(bClosed && points.size() > 1) {
-//		perimeter += points[points.size() - 1].distance(points[0]);
-//	}
-//	return perimeter;
 }
 
 //----------------------------------------------------------
@@ -752,10 +742,16 @@ void ofPolyline::draw(){
 }
 
 //--------------------------------------------------
-float ofPolyline::getLengthAtIndex(float f) {
+float ofPolyline::getLengthAtIndex(int f) {
     if(points.empty()) return 0;
-    
-    if(hasChanged()) updateLengths();
+    if(hasChanged()) updateCache();
+    return lengths[f];
+}
+
+//--------------------------------------------------
+float ofPolyline::getLengthAtIndexInterpolated(float f) {
+    if(points.empty()) return 0;
+    if(hasChanged()) updateCache();
 
     int leftIndex = floor(f);
     int rightIndex = leftIndex + 1;
@@ -764,18 +760,11 @@ float ofPolyline::getLengthAtIndex(float f) {
     return ofLerp(lengths[leftIndex], lengths[rightIndex], t);
 }
 
-//--------------------------------------------------
-float ofPolyline::getLengthAtNormalisedIndex(float f) {
-    int lastPointIndex = isClosed() ? points.size() : points.size()-1;
-    return getLengthAtIndex(lastPointIndex * f);
-}
-
 
 //--------------------------------------------------
 ofPoint ofPolyline::getPointAtLength(float f) {
     if(points.empty()) return ofPoint();
-
-    if(hasChanged()) updateLengths();
+    if(hasChanged()) updateCache();
     
     float index = getIndexAtLength(f);
     int leftIndex = floor(index);
@@ -795,7 +784,7 @@ ofPoint ofPolyline::getPointAtNormalisedLength(float f) {
 
 
 //--------------------------------------------------
-ofPoint ofPolyline::getPointAtIndex(float f) {
+ofPoint ofPolyline::getPointAtIndexInterpolated(float f) {
     if(points.empty()) return ofPoint();
 
     int leftIndex = floor(f);
@@ -809,36 +798,9 @@ ofPoint ofPolyline::getPointAtIndex(float f) {
 
 
 //--------------------------------------------------
-ofPoint ofPolyline::getPointAtNormalisedIndex(float f) {
-    int lastPointIndex = isClosed() ? points.size() : points.size()-1;
-    return getPointAtIndex(lastPointIndex * f);
-}
-
-//--------------------------------------------------
-void ofPolyline::updateLengths() {
-    lengths.clear();
-
-    if(points.empty()) return;
-        
-    float length = 0;
-    lengths.push_back(length);
-    
-	for(int i=0; i<points.size()-1; i++) {
-		length += points[i].distance(points[i + 1]);
-        lengths.push_back(length);
-	}
-    
-	if(bClosed && points.size() > 1) {
-		length += points.back().distance(points[0]);
-        lengths.push_back(length);
-	}
-}
-
-//--------------------------------------------------
 float ofPolyline::getIndexAtLength(float length) {
     if(points.empty()) return 0;
-    
-    if(hasChanged()) updateLengths();
+    if(hasChanged()) updateCache();
     
     float totalLength = getPerimeter();
     length = ofClamp(length, 0, totalLength);
@@ -868,4 +830,82 @@ float ofPolyline::getIndexAtLength(float length) {
     return 0;
 }
 
+
+//--------------------------------------------------
+float ofPolyline::getIndexAtNormalisedLength(float f) {
+    return getIndexAtLength(f * getPerimeter());
+}
+
+//--------------------------------------------------
+float ofPolyline::getCurvatureAtIndex(int index) {
+    if(points.empty()) return 0;
+    if(hasChanged()) updateCache();
+    
+    return curvature[index];
+}
+
+//--------------------------------------------------
+float ofPolyline::getCurvatureAtIndexInterpolated(float f) {
+    if(points.empty()) return 0;
+
+    int i1 = floor(f);
+    int i2 = i1 + 1;
+    float t = f - i1;
+    
+    return ofLerp(getCurvatureAtIndex(i1), getCurvatureAtIndex(i2), t);
+}
+
+
+//--------------------------------------------------
+void ofPolyline::updateCache() {
+    lengths.clear();
+    curvature.clear();
+    
+    if(points.empty()) return;
+    
+    lengths.push_back(0);
+    curvature.push_back(0);
+    
+    float length = 0;
+	for(int i=0; i<points.size()-1; i++) {
+		length += points[i].distance(points[i + 1]);
+        lengths.push_back(length);
+        
+        if(i>=1) {
+            int i0 = i;
+            int il = i0-1;
+            int ir = i0+1;
+            
+            ofVec3f v1(points[i0] - points[il]);
+            ofVec3f v2(points[ir] - points[i0]);
+            curvature.push_back(v1.angle(v2));
+        }
+	}
+    
+    curvature.push_back(0);
+    
+	if(bClosed && points.size() > 1) {
+		length += points.back().distance(points[0]);
+        lengths.push_back(length);
+        {
+            int i0 = 0;
+            int ip = points.size()-1;
+            int in = 1;
+            
+            ofVec3f v1(points[i0] - points[ip]);
+            ofVec3f v2(points[in] - points[i0]);
+            curvature.front() = v1.angle(v2);
+        }
+        {
+            int i0 = points.size()-1;
+            int ip = i0-1;
+            int in = 0;
+            
+            ofVec3f v1(points[i0] - points[ip]);
+            ofVec3f v2(points[in] - points[i0]);
+            curvature.back() = v1.angle(v2);
+        }
+        
+	}
+}
 

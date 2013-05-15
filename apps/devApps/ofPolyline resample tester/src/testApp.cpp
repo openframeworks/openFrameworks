@@ -38,20 +38,21 @@ void testApp::draw(){
     ofPoint nearestPoint = poly.getClosestPoint(ofPoint(mouseX,mouseY), &nearestIndex);
     ofPoint nearestDataPoint = poly[nearestIndex];
     float lengthAtIndex = poly.getLengthAtIndex(nearestIndex);
-    float lengthAtNormalisedIndex = poly.getLengthAtNormalisedIndex(nearestIndex / (float)poly.size());
-    ofPoint pointAtIndex = poly.getPointAtIndex(nearestIndex);
-    ofPoint pointAtNormalisedIndex = poly.getPointAtNormalisedIndex(nearestIndex / (float)poly.size());
+//    float lengthAtNormalisedIndex = poly.getLengthAtNormalisedIndex(nearestIndex / (float)poly.size());
+    ofPoint pointAtIndex = poly.getPointAtIndexInterpolated(nearestIndex);
+//    ofPoint pointAtNormalisedIndex = poly.getPointAtNormalisedIndex(nearestIndex / (float)poly.size());
     ofPoint pointAtLength = poly.getPointAtLength(lengthAtIndex);
     ofPoint pointAtNormalisedLength = poly.getPointAtNormalisedLength(lengthAtIndex / totalLength);
     float indexAtLength = poly.getIndexAtLength(lengthAtIndex);
     
     float t = ofMap(sin(ofGetElapsedTimef() * 0.5), -1, 1, 0, 1);
     float i = t * (poly.size()-1);
-    float lengthAtNormalisedIndexT = poly.getLengthAtNormalisedIndex(t);
-    float lengthAtIndexI = poly.getLengthAtIndex(i);
-    ofPoint pointAtNormalisedIndexT = poly.getPointAtNormalisedIndex(t);
-    ofPoint pointAtIndexI = poly.getPointAtIndex(i);
-    ofPoint pointAtNormalisedLengthT = poly.getPointAtNormalisedLength(t);
+    float lengthAtIndexSin = poly.getLengthAtIndexInterpolated(i);
+    ofPoint pointAtIndexSin = poly.getPointAtIndexInterpolated(i);
+    ofPoint pointAtNormalisedLengthSin = poly.getPointAtNormalisedLength(t);
+    
+    float curvatureAtIndex = poly.getCurvatureAtIndex(nearestIndex);
+    float curvatureAtIndexSin = poly.getCurvatureAtIndexInterpolated(i);
     
     ofNoFill();
     ofSetLineWidth(2);
@@ -60,16 +61,13 @@ void testApp::draw(){
     ofCircle(nearestPoint, 5);
     
     ofSetColor(255, 255, 0);
-    ofCircle(nearestDataPoint, 5);
-    
-    ofSetColor(0, 255, 255);
-    ofCircle(pointAtNormalisedIndexT, 10);
+    ofCircle(nearestDataPoint, 7);
     
     ofSetColor(0, 0, 255);
-    ofCircle(pointAtIndexI, 5);
+    ofCircle(pointAtIndexSin, 10);
     
     ofSetColor(255, 0, 255);
-    ofCircle(pointAtNormalisedLengthT, 15);
+    ofCircle(pointAtNormalisedLengthSin, 15);
     
     
     stringstream s;
@@ -83,11 +81,7 @@ void testApp::draw(){
     
     s << endl;
     s << "lengthAtIndex: " << lengthAtIndex << endl;
-    s << "lengthAtNormalisedIndex: " << lengthAtNormalisedIndex << endl;
-    
-    s << endl;
     s << "pointAtIndex: " << pointAtIndex << endl;
-    s << "pointAtNormalisedIndex: " << pointAtNormalisedIndex << endl;
     
     s << endl;
     s << "pointAtLength: " << pointAtLength << endl;
@@ -102,15 +96,14 @@ void testApp::draw(){
     s << "i: " << i << endl;
     
     s << endl;
-    s << "lengthAtNormalisedIndexT: " << lengthAtNormalisedIndexT << endl;
-    s << "lengthAtIndexI: " << lengthAtIndexI << endl;
-
-    s << endl;
-    s << "pointAtNormalisedIndexT: " << pointAtNormalisedIndexT << endl;
-    s << "pointAtIndexI: " << pointAtIndexI << endl;
+    s << "lengthAtIndexSin: " << lengthAtIndexSin << endl;
+    s << "pointAtIndexSin: " << pointAtIndexSin << endl;
+    s << "pointAtNormalisedLengthSin: " << pointAtNormalisedLengthSin << endl;
     
     s << endl;
-    s << "pointAtNormalisedLengthT: " << pointAtNormalisedLengthT << endl;
+    s << "curvatureAtIndex: " << curvatureAtIndex << endl;
+    s << "curvatureAtIndexSin: " << curvatureAtIndexSin << endl;
+    
     
     ofSetColor(255);
     ofDrawBitmapString(s.str(), 10, 30);

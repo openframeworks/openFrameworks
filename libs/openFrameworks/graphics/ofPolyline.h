@@ -130,26 +130,33 @@ public:
 
 	void draw();
     
-    // return length along path at f index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
-    float getLengthAtIndex(float f);
+    // get length along path at index
+    float getLengthAtIndex(int index);
     
-    // return length along the path at f percentage index (e.g. f=0.25 => a quarter of the indices along the path)
-    float getLengthAtNormalisedIndex(float f);
-
-    // return point long the path at f distance (e.g. f=400 => 400 units along the path)
+    // get length along path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
+    float getLengthAtIndexInterpolated(float f);
+    
+    // get point long the path at a distance (e.g. f=150 => 150 units along the path)
     ofPoint getPointAtLength(float f);
     
-    // return point along the path at f percentage (e.g. f=0.25 => 25% along the path)
+    // get point along the path at a percentage (e.g. f=0.25 => 25% along the path)
     ofPoint getPointAtNormalisedLength(float f);
     
-    // return point along the path at f index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
-    ofPoint getPointAtIndex(float f);
+    // get point along the path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
+    ofPoint getPointAtIndexInterpolated(float f);
     
-    // return point along the path at f percentage index (e.g. f=0.25 => a quarter of the indices along the path)
-    ofPoint getPointAtNormalisedIndex(float f);
+    // get index at given length along the path (interpolated index, includes info on percentage along segment)
+    float getIndexAtLength(float f);
     
+    // get index at given normalised length along the path (interpolated index, includes info on percentage along segment)
+    float getIndexAtNormalisedLength(float f);
+
+    // get curvature (angle in degrees) at index
+    float getCurvatureAtIndex(int index);
     
-    float getIndexAtLength(float length);
+    // get curvature (angle in degrees) at interpolated index (interpolated between neighboring indices curvatures)
+    float getCurvatureAtIndexInterpolated(float index);
+
 
 private:
 	void setCircleResolution(int res);
@@ -157,6 +164,8 @@ private:
 
 	vector<ofPoint> points;
     vector<float> lengths;    // cumulative lengths (lengths[n] is the distance to the n'th point, zero based)
+    vector<ofVec3f> normals;    //
+    vector<float> curvature;       // angle of curvature
 
 	deque<ofPoint> curveVertices;
 	vector<ofPoint> circlePoints;
@@ -164,6 +173,6 @@ private:
 	bool bClosed;
 	bool bHasChanged;
     
-    void updateLengths();
+    void updateCache();
 };
 
