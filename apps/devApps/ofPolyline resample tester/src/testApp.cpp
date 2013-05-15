@@ -46,14 +46,14 @@ void testApp::draw(){
     float lengthAtIndex = poly.getLengthAtIndex(nearestIndex);
     ofPoint pointAtIndex = poly.getPointAtIndexInterpolated(nearestIndex);
     ofPoint pointAtLength = poly.getPointAtLength(lengthAtIndex);
-    ofPoint pointAtNormalisedLength = poly.getPointAtNormalisedLength(lengthAtIndex / totalLength);
+    ofPoint pointAtPercentage = poly.getPointAtPercentage(lengthAtIndex / totalLength);
     float indexAtLength = poly.getIndexAtLength(lengthAtIndex);
     
     float t = ofMap(sin(ofGetElapsedTimef() * 0.5), -1, 1, 0, 1);
     float i = t * (poly.size()-1);
     float lengthAtIndexSin = poly.getLengthAtIndexInterpolated(i);
     ofPoint pointAtIndexSin = poly.getPointAtIndexInterpolated(i);
-    ofPoint pointAtNormalisedLengthSin = poly.getPointAtNormalisedLength(t);
+    ofPoint pointAtPercentageSin = poly.getPointAtPercentage(t);
     
     float angleAtIndex = poly.getAngleAtIndex(nearestIndex);
     float angleAtIndexSin = poly.getAngleAtIndexInterpolated(i);
@@ -80,9 +80,11 @@ void testApp::draw(){
     ofSetColor(0, 0, 255);
     ofCircle(pointAtIndexSin, 10);
     ofLine(pointAtIndexSin, pointAtIndexSin + normalAtIndexSin * 100);
+    ofSetColor(0, 255, 255);
+    ofLine(pointAtIndexSin, pointAtIndexSin + rotAtIndexSin * 100);
     
     ofSetColor(255, 0, 255);
-    ofCircle(pointAtNormalisedLengthSin, 15);
+    ofCircle(pointAtPercentageSin, 15);
 
     
     
@@ -101,7 +103,7 @@ void testApp::draw(){
     
     s << endl;
     s << "pointAtLength: " << pointAtLength << endl;
-    s << "pointAtNormalisedLength: " << pointAtNormalisedLength << endl;
+    s << "pointAtPercentage: " << pointAtPercentage << endl;
     
     s << endl;
     s << "indexAtLength: " << indexAtLength << endl;
@@ -114,7 +116,7 @@ void testApp::draw(){
     s << endl;
     s << "lengthAtIndexSin: " << lengthAtIndexSin << endl;
     s << "pointAtIndexSin: " << pointAtIndexSin << endl;
-    s << "pointAtNormalisedLengthSin: " << pointAtNormalisedLengthSin << endl;
+    s << "pointAtPercentageSin: " << pointAtPercentageSin << endl;
     
     s << endl;
     s << "angleAtIndex: " << angleAtIndex << endl;

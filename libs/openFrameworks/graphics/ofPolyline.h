@@ -131,11 +131,13 @@ public:
 	void draw();
     
     
-    // get index at given length along the path (interpolated index, includes info on percentage along segment)
+    // get (interpolated) index at given length along the path
+    // includes info on percentage along segment, e.g. ret=5.75 => 75% along the path between 5th and 6th points
     float getIndexAtLength(float f);
     
-    // get index at given normalised length along the path (interpolated index, includes info on percentage along segment)
-    float getIndexAtNormalisedLength(float f);
+    // get (interpolated) index at given percentage along the path
+    // includes info on percentage along segment, e.g. ret=5.75 => 75% along the path between 5th and 6th points
+    float getIndexAtPercentage(float f);
 
     // get length along path at index
     float getLengthAtIndex(int index);
@@ -143,11 +145,11 @@ public:
     // get length along path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
     float getLengthAtIndexInterpolated(float findex);
     
-    // get point long the path at a distance (e.g. f=150 => 150 units along the path)
+    // get point long the path at a given length (e.g. f=150 => 150 units along the path)
     ofPoint getPointAtLength(float f);
     
-    // get point along the path at a percentage (e.g. f=0.25 => 25% along the path)
-    ofPoint getPointAtNormalisedLength(float f);
+    // get point along the path at a given percentage (e.g. f=0.25 => 25% along the path)
+    ofPoint getPointAtPercentage(float f);
     
     // get point along the path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
     ofPoint getPointAtIndexInterpolated(float findex);
@@ -155,19 +157,19 @@ public:
     // get angle (degrees) at index
     float getAngleAtIndex(int index);
     
-    // get angle (degrees) at interpolated index (interpolated between neighboring indices curvatures)
+    // get angle (degrees) at interpolated index (interpolated between neighboring indices)
     float getAngleAtIndexInterpolated(float findex);
     
     // get rotation vector at index (magnitude is sin of angle)
     ofVec3f getRotationAtIndex(int index);
     
-    // get rotation vector at interpolated index (interpolated between neighboring indices curvatures) (magnitude is sin of angle)
+    // get rotation vector at interpolated index (interpolated between neighboring indices) (magnitude is sin of angle)
     ofVec3f getRotationAtIndexInterpolated(float findex);
     
     // get normal vector at index
     ofVec3f getNormalAtIndex(int index);
     
-    // get normal vector at interpolated index (interpolated between neighboring indices curvatures)
+    // get normal vector at interpolated index (interpolated between neighboring indices)
     ofVec3f getNormalAtIndexInterpolated(float findex);
 
 private:

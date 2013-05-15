@@ -361,7 +361,7 @@ void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float
 
 //----------------------------------------------------------
 float ofPolyline::getPerimeter() {
-    if(points.empty()) {
+    if(points.size() < 2) {
         return 0;
     } else {
         if(hasChanged()) updateCache();
@@ -745,7 +745,7 @@ void ofPolyline::draw(){
 
 //--------------------------------------------------
 float ofPolyline::getIndexAtLength(float length) {
-    if(points.empty()) return 0;
+    if(points.size() < 2) return 0;
     if(hasChanged()) updateCache();
     
     float totalLength = getPerimeter();
@@ -759,7 +759,8 @@ float ofPolyline::getIndexAtLength(float length) {
     
     float distAt1, distAt2;
     for(int iterations = 0; iterations < 100; iterations ++) {	// limit iterations
-        distAt1 = lengths.at(i1);
+        i1 = ofClamp(i1, 0, lengths.size()-1);
+        distAt1 = lengths[i1];
         if(distAt1 <= length) {         // if Length at i1 is less than desired Length (this is good)
             distAt2 = lengths[i1+1];
             if(distAt2 > length) {
@@ -778,20 +779,20 @@ float ofPolyline::getIndexAtLength(float length) {
 
 
 //--------------------------------------------------
-float ofPolyline::getIndexAtNormalisedLength(float f) {
+float ofPolyline::getIndexAtPercentage(float f) {
     return getIndexAtLength(f * getPerimeter());
 }
 
 //--------------------------------------------------
 float ofPolyline::getLengthAtIndex(int index) {
-    if(points.empty()) return 0;
+    if(points.size() < 2) return 0;
     if(hasChanged()) updateCache();
     return lengths[index % lengths.size()];
 }
 
 //--------------------------------------------------
 float ofPolyline::getLengthAtIndexInterpolated(float findex) {
-    if(points.empty()) return 0;
+    if(points.size() < 2) return 0;
     if(hasChanged()) updateCache();
     
     int leftIndex = floor(findex);
@@ -804,7 +805,7 @@ float ofPolyline::getLengthAtIndexInterpolated(float findex) {
 
 //--------------------------------------------------
 ofPoint ofPolyline::getPointAtLength(float f) {
-    if(points.empty()) return ofPoint();
+    if(points.size() < 2) return ofPoint();
     if(hasChanged()) updateCache();
     
     float index = getIndexAtLength(f);
@@ -818,7 +819,7 @@ ofPoint ofPolyline::getPointAtLength(float f) {
 }
 
 //--------------------------------------------------
-ofPoint ofPolyline::getPointAtNormalisedLength(float f) {
+ofPoint ofPolyline::getPointAtPercentage(float f) {
     float length = getPerimeter();
     return getPointAtLength(f * length);
 }
@@ -826,7 +827,7 @@ ofPoint ofPolyline::getPointAtNormalisedLength(float f) {
 
 //--------------------------------------------------
 ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) {
-    if(points.empty()) return ofPoint();
+    if(points.size() < 2) return ofPoint();
     
     int leftIndex = floor(findex);
     int rightIndex = (leftIndex + 1) % points.size();
@@ -840,7 +841,7 @@ ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) {
 
 //--------------------------------------------------
 float ofPolyline::getAngleAtIndex(int index) {
-    if(points.empty()) return 0;
+    if(points.size() < 2) return 0;
     if(hasChanged()) updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
@@ -850,7 +851,7 @@ float ofPolyline::getAngleAtIndex(int index) {
 
 //--------------------------------------------------
 float ofPolyline::getAngleAtIndexInterpolated(float findex) {
-    if(points.empty()) return 0;
+    if(points.size() < 2) return 0;
     
     int i1 = floor(findex);
     int i2 = i1 + 1;
@@ -861,7 +862,7 @@ float ofPolyline::getAngleAtIndexInterpolated(float findex) {
 
 //--------------------------------------------------
 ofVec3f ofPolyline::getRotationAtIndex(int index) {
-    if(points.empty()) return ofVec3f();
+    if(points.size() < 2) return ofVec3f();
     if(hasChanged()) updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
@@ -871,7 +872,7 @@ ofVec3f ofPolyline::getRotationAtIndex(int index) {
 
 //--------------------------------------------------
 ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) {
-    if(points.empty()) return ofVec3f();
+    if(points.size() < 2) return ofVec3f();
     
     int i1 = floor(findex);
     int i2 = i1 + 1;
@@ -882,7 +883,7 @@ ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) {
 
 //--------------------------------------------------
 ofVec3f ofPolyline::getNormalAtIndex(int index) {
-    if(points.empty()) return ofVec3f();
+    if(points.size() < 2) return ofVec3f();
     if(hasChanged()) updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
@@ -892,7 +893,7 @@ ofVec3f ofPolyline::getNormalAtIndex(int index) {
 
 //--------------------------------------------------
 ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) {
-    if(points.empty()) return ofVec3f();
+    if(points.size() < 2) return ofVec3f();
     
     int i1 = floor(findex);
     int i2 = i1 + 1;
@@ -903,18 +904,20 @@ ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) {
 
 
 //--------------------------------------------------
-static void calcData(ofPoint p1, ofPoint p2, ofPoint p3, float &angle, ofVec3f &cross, ofVec3f &normal) {
+static void calcData(ofPoint p1, ofPoint p2, ofPoint p3, float *angle, ofVec3f *rotation, ofVec3f *normal) {
     ofVec3f v1(p1 - p2);
     ofVec3f v2(p3 - p2);
     v1.normalize();
     v2.normalize();
     
-    angle = v1.angle(v2);//ofRadToDeg(acos(v1.dot(v2)); // TODO: why doesn't this compile! unnessecary normalizations duplicated :(
+    if(angle) *angle = v1.angle(v2);//ofRadToDeg(acos(v1.dot(v2)); // TODO: why doesn't this compile! unnessecary normalizations duplicated :(
     
-    cross = v1.crossed(v2);
+    if(rotation) *rotation = v1.crossed(v2);
     
-    normal = -(v1+v2)/2;
-    normal.normalize();
+    if(normal) {
+        *normal = -(v1+v2)/2;
+        normal->normalize();
+    }
 }
 
 //--------------------------------------------------
@@ -924,12 +927,16 @@ void ofPolyline::updateCache() {
     rotations.clear();
     normals.clear();
     
-    if(points.empty()) return;
+    if(points.size() < 2) return;
     
     lengths.push_back(0);
     angles.push_back(0);
     rotations.push_back(ofVec3f());
-    normals.push_back(ofVec3f());
+
+    ofVec3f normal;
+    calcData(points[0], points[0], points[1], NULL, NULL, &normal);
+    normals.push_back(normal);
+
     
     float length = 0;
 	for(int i=0; i<points.size()-1; i++) {
@@ -938,43 +945,47 @@ void ofPolyline::updateCache() {
         
         if(i>=1) {
             float angle;
-            ofVec3f cross;
+            ofVec3f rotation;
             ofVec3f normal;
-            calcData(points[i-1], points[i], points[i+1], angle, cross, normal);
+            calcData(points[i-1], points[i], points[i+1], &angle, &rotation, &normal);
             angles.push_back(angle);
-            rotations.push_back(cross);
+            rotations.push_back(rotation);
             normals.push_back(normal);
         }
 	}
     
     angles.push_back(0);
     rotations.push_back(ofVec3f());
-    normals.push_back(ofVec3f());
+
+    calcData(points[points.size()-2], points[points.size()-1], points[points.size()-1], NULL, NULL, &normal);
+    normals.push_back(normal);
     
-	if(bClosed && points.size() > 1) {
+
+    // if closed update accordingly
+	if(isClosed()) {
 		length += points.back().distance(points[0]);
         lengths.push_back(length);  // add one more length to go back to the starting point
         
         // update data for first point
         {
             float angle;
-            ofVec3f cross;
+            ofVec3f rotation;
             ofVec3f normal;
-            calcData(points[points.size()-1], points[0], points[1], angle, cross, normal);
+            calcData(points[points.size()-1], points[0], points[1], &angle, &rotation, &normal);
             angles.front() = angle;
-            rotations.front() = cross;
-            normals.push_back(normal);
+            rotations.front() = rotation;
+            normals.front() = normal;
         }
         
         // update data for last point
         {
             float angle;
-            ofVec3f cross;
+            ofVec3f rotation;
             ofVec3f normal;
-            calcData(points[points.size()-2], points[points.size()-1], points[0], angle, cross, normal);
+            calcData(points[points.size()-2], points[points.size()-1], points[0], &angle, &rotation, &normal);
             angles.back() = angle;
-            rotations.back() = cross;
-            normals.push_back(normal);
+            rotations.back() = rotation;
+            normals.back() = normal;
         }
         
 	}
