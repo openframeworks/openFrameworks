@@ -50,8 +50,15 @@ void testApp::draw(){
     ofPoint pointAtIndexSin = poly.getPointAtIndexInterpolated(i);
     ofPoint pointAtNormalisedLengthSin = poly.getPointAtNormalisedLength(t);
     
-    float curvatureAtIndex = poly.getCurvatureAtIndex(nearestIndex);
-    float curvatureAtIndexSin = poly.getCurvatureAtIndexInterpolated(i);
+    float angleAtIndex = poly.getAngleAtIndex(nearestIndex);
+    float angleAtIndexSin = poly.getAngleAtIndexInterpolated(i);
+    
+    ofVec3f rotAtIndex = poly.getRotationAtIndex(nearestIndex);
+    ofVec3f rotAtIndexSin = poly.getRotationAtIndexInterpolated(i);
+
+    float rotMagAtIndex = rotAtIndex.length();
+    float rotMagAtIndexSin = rotAtIndexSin.length();
+
     
     ofNoFill();
     ofSetLineWidth(2);
@@ -100,9 +107,16 @@ void testApp::draw(){
     s << "pointAtNormalisedLengthSin: " << pointAtNormalisedLengthSin << endl;
     
     s << endl;
-    s << "curvatureAtIndex: " << curvatureAtIndex << endl;
-    s << "curvatureAtIndexSin: " << curvatureAtIndexSin << endl;
-    
+    s << "angleAtIndex: " << angleAtIndex << endl;
+    s << "angleAtIndexSin: " << angleAtIndexSin << endl;
+
+    s << endl;
+    s << "rotAtIndex: " << rotAtIndex << endl;
+    s << "rotAtIndexSin: " << rotAtIndexSin << endl;
+
+    s << endl;
+    s << "rotMagAtIndex: " << rotMagAtIndex << endl;
+    s << "rotMagAtIndexSin: " << rotMagAtIndexSin << endl;
     
     ofSetColor(255);
     ofDrawBitmapString(s.str(), 10, 30);
