@@ -486,47 +486,20 @@ ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
 
 //----------------------------------------------------------
 ofPolyline ofPolyline::getResampledBySpacing(float spacing) {
-	ofPolyline & polyline = *this;
-	ofPolyline result;
-	// if more properties are added to ofPolyline, we need to copy them here
-	result.setClosed(polyline.isClosed());
-
-	float totalLength = 0;
-	int curStep = 0;
-	int lastPosition = polyline.size() - 1;
-	if(polyline.isClosed()) {
-		lastPosition++;
-	}
-	for(int i = 0; i < lastPosition; i++) {
-		bool repeatNext = i == (int) (polyline.size() - 1);
-	
-		const ofPoint& cur = polyline[i];
-		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
-		ofPoint diff = next - cur;
-		
-		float curSegmentLength = diff.length();
-		if(curSegmentLength > 0) {
-			totalLength += curSegmentLength;
-			
-			while(curStep * spacing <= totalLength) {
-				float curSample = curStep * spacing;
-				float curLength = curSample - (totalLength - curSegmentLength);
-				float relativeSample = curLength / curSegmentLength;
-				result.addVertex(cur.getInterpolated(next, relativeSample));
-				curStep++;
-			}
-		} else {
-			curStep++;
-		}
-	}
-	
-	return result;
+    if(spacing==0) return *this;
+    ofPolyline poly;
+    float totalLength = getPerimeter();
+    for(float f=0; f<totalLength; f += spacing) {
+        poly.lineTo(getPointAtLength(f));
+    }
+    poly.setClosed(isClosed());
+    return poly;
 }
 
 //----------------------------------------------------------
 ofPolyline ofPolyline::getResampledByCount(int count) {
 	float perimeter = getPerimeter();
-	return ofPolyline::getResampledBySpacing(perimeter / count);
+	return ofPolyline::getResampledBySpacing(perimeter / (count-1));
 }
 
 //----------------------------------------------------------
@@ -867,15 +840,18 @@ float ofPolyline::getIndexAtLength(float length) {
     
     if(hasChanged()) updateLengths();
     
+    float totalLength = getPerimeter();
+    length = ofClamp(length, 0, totalLength);
+    
     int lastPointIndex = isClosed() ? points.size() : points.size()-1;
     
-    int i1 = floor(length / getPerimeter() * lastPointIndex);   // start approximation here
+    int i1 = ofClamp(floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
     int leftLimit = 0;
     int rightLimit = lastPointIndex;
     
     float distAt1, distAt2;
     for(int iterations = 0; iterations < 100; iterations ++) {	// limit iterations
-        distAt1 = lengths[i1];
+        distAt1 = lengths.at(i1);
         if(distAt1 <= length) {         // if Length at i1 is less than desired Length (this is good)
             distAt2 = lengths[i1+1];
             if(distAt2 > length) {
@@ -889,7 +865,7 @@ float ofPolyline::getIndexAtLength(float length) {
         }
         i1 = (leftLimit + rightLimit)/2;
     }
-
+    return 0;
 }
 
 
