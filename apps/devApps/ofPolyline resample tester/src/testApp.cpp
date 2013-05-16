@@ -46,14 +46,14 @@ void testApp::draw(){
     float lengthAtIndex = poly.getLengthAtIndex(nearestIndex);
     ofPoint pointAtIndex = poly.getPointAtIndexInterpolated(nearestIndex);
     ofPoint pointAtLength = poly.getPointAtLength(lengthAtIndex);
-    ofPoint pointAtPercentage = poly.getPointAtPercentage(lengthAtIndex / totalLength);
+    ofPoint pointAtPercent = poly.getPointAtPercent(lengthAtIndex / totalLength);
     float indexAtLength = poly.getIndexAtLength(lengthAtIndex);
     
     float t = ofMap(sin(ofGetElapsedTimef() * 0.5), -1, 1, 0, 1);
     float i = t * (poly.size()-1);
     float lengthAtIndexSin = poly.getLengthAtIndexInterpolated(i);
     ofPoint pointAtIndexSin = poly.getPointAtIndexInterpolated(i);
-    ofPoint pointAtPercentageSin = poly.getPointAtPercentage(t);
+    ofPoint pointAtPercentSin = poly.getPointAtPercent(t);
     
     float angleAtIndex = poly.getAngleAtIndex(nearestIndex);
     float angleAtIndexSin = poly.getAngleAtIndexInterpolated(i);
@@ -84,7 +84,7 @@ void testApp::draw(){
     ofLine(pointAtIndexSin, pointAtIndexSin + rotAtIndexSin * 100);
     
     ofSetColor(255, 0, 255);
-    ofCircle(pointAtPercentageSin, 15);
+    ofCircle(pointAtPercentSin, 15);
 
     
     
@@ -103,7 +103,7 @@ void testApp::draw(){
     
     s << endl;
     s << "pointAtLength: " << pointAtLength << endl;
-    s << "pointAtPercentage: " << pointAtPercentage << endl;
+    s << "pointAtPercent: " << pointAtPercent << endl;
     
     s << endl;
     s << "indexAtLength: " << indexAtLength << endl;
@@ -116,7 +116,7 @@ void testApp::draw(){
     s << endl;
     s << "lengthAtIndexSin: " << lengthAtIndexSin << endl;
     s << "pointAtIndexSin: " << pointAtIndexSin << endl;
-    s << "pointAtPercentageSin: " << pointAtPercentageSin << endl;
+    s << "pointAtPercentSin: " << pointAtPercentSin << endl;
     
     s << endl;
     s << "angleAtIndex: " << angleAtIndex << endl;
