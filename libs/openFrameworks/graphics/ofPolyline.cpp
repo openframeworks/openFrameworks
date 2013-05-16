@@ -495,14 +495,24 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) {
     for(float f=0; f<totalLength; f += spacing) {
         poly.lineTo(getPointAtLength(f));
     }
-    poly.setClosed(isClosed());
+    if(!isClosed()) {
+        poly.setClosed(false);
+        poly[poly.size()-1] = points.back();
+    } else {
+        poly.setClosed(true);
+    }
     return poly;
 }
 
 //----------------------------------------------------------
 ofPolyline ofPolyline::getResampledByCount(int count) {
 	float perimeter = getPerimeter();
-	return ofPolyline::getResampledBySpacing(perimeter / (count-1));
+    if(count < 2) {
+        ofLogWarning() << "ofPolyline::getResampledByCount less than two points makes no sense! returning original poly";
+        return *this;
+    } else {
+        return ofPolyline::getResampledBySpacing(perimeter / (count-1));
+    }
 }
 
 //----------------------------------------------------------
