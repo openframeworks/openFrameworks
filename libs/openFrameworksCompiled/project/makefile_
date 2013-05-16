@@ -11,8 +11,8 @@
 #
 ################################################################################
 
-# define the OF_SHARED_MAKEFILES_PATH location
-OF_SHARED_MAKEFILES_PATH=./makefileCommon
+# define the PATH_OF_SHARED_MAKEFILES location
+PATH_OF_SHARED_MAKEFILES=./makefileCommon
 
 # do all of the core cofiguration work.
 # configuration work basically means creating lots of
@@ -21,8 +21,8 @@ OF_SHARED_MAKEFILES_PATH=./makefileCommon
 # configure.core.make calls other make modules that 
 # determine the current platform, load platform specific
 # configuration files, etc.
-include $(OF_SHARED_MAKEFILES_PATH)/configure.core.make
+include $(PATH_OF_SHARED_MAKEFILES)/configure.core.make
 
 # compile core openFrameworks library
 # this is where the core targets reside
-include $(OF_SHARED_MAKEFILES_PATH)/compile.core.make
+include $(PATH_OF_SHARED_MAKEFILES)/compile.core.make

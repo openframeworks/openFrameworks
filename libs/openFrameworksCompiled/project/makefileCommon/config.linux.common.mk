@@ -4,6 +4,9 @@
 #   i386, armv6l, and armv7l.
 ################################################################################
 
+PLATFORM_SHARED_LIBRARY_EXTENSION:=so
+PLATFORM_STATIC_LIBRARY_EXTENSION:=a
+
 ################################################################################
 # PLATFORM SPECIFIC CHECKS
 #   This is a platform defined section to create internal flags to enable or 
@@ -33,6 +36,9 @@ ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
 else
     GST_VERSION = 0.10
 endif
+
+PLATFORM_SHARED_LIBRARIES
+
 
 ################################################################################
 # PLATFORM DEFINES
@@ -124,14 +130,14 @@ PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 
 ################################################################################
-# PLATFORM CORE EXCLUSIONS
+# PLATFORM EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers 
 #   and third party libraries to be compiled and linked into a program or core 
-#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
+#   library. The PLATFORM_EXCLUSIONS is a list of fully qualified file 
 #   paths that will be used to exclude matching paths and files during list 
 #   generation.
 #
-#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
+#   Each item in the PLATFORM_EXCLUSIONS list will be treated as a complete
 #   string unless the user adds a wildcard (%) operator to match subdirectories.
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
@@ -139,33 +145,33 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
+PLATFORM_EXCLUSIONS :=
 
 # core sources
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQtUtils.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimeGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimePlayer.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp
 
 ifeq ($(LINUX_ARM),1)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
+	PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppGlutWindow.cpp
 else
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+	PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glew/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glu/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/quicktime/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/videoInput/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/freetype/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/FreeImage/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/assimp/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glut/%
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -185,11 +191,11 @@ PLATFORM_HEADERS_SEARCH_PATHS =
 #   These are library names/paths that are platform specific and are specified 
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
-#   PLATFORM_LIBS are libraries that can be found in the library search 
+#   PLATFORM_LIBRARIES are libraries that can be found in the library search 
 #       paths.
-#   PLATFORM_STATIC_LIBS is a list of required static libraries.
-#   PLATFORM_SHARED_LIBS is a list of required shared libraries.
-#   PLATFORM_PKG_CONFIG_LIBS is a list of required libraries that are 
+#   PLATFORM_STATIC_LIBRARIES is a list of required static libraries.
+#   PLATFORM_SHARED_LIBRARIES is a list of required shared libraries.
+#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are 
 #       under system control and are easily accesible via the package 
 #       configuration utility (i.e. pkg-config)
 #
@@ -199,54 +205,54 @@ PLATFORM_HEADERS_SEARCH_PATHS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBS =
+PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBS += glut
+	PLATFORM_LIBRARIES += glut
 endif
-PLATFORM_LIBS += freeimage
+PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBS =
-PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBS += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBRARIES =
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
 
 # shared libraries 
-PLATFORM_SHARED_LIBS =
+PLATFORM_SHARED_LIBRARIES =
 
 #openframeworks core third party
-PLATFORM_PKG_CONFIG_LIBS =
-PLATFORM_PKG_CONFIG_LIBS += cairo
-PLATFORM_PKG_CONFIG_LIBS += zlib
-PLATFORM_PKG_CONFIG_LIBS += gstreamer-app-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBS += gstreamer-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBS += gstreamer-video-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBS += gstreamer-base-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBS += libudev
-PLATFORM_PKG_CONFIG_LIBS += freetype2
-PLATFORM_PKG_CONFIG_LIBS += sndfile
-PLATFORM_PKG_CONFIG_LIBS += openal
-PLATFORM_PKG_CONFIG_LIBS += portaudio-2.0
-PLATFORM_PKG_CONFIG_LIBS += openssl
+PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBRARIES += cairo
+PLATFORM_PKG_CONFIG_LIBRARIES += zlib
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += libudev
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
+PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
+PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
+PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_PKG_CONFIG_LIBS += gl
-	PLATFORM_PKG_CONFIG_LIBS += glu
-	PLATFORM_PKG_CONFIG_LIBS += glew
+	PLATFORM_PKG_CONFIG_LIBRARIES += gl
+	PLATFORM_PKG_CONFIG_LIBRARIES += glu
+	PLATFORM_PKG_CONFIG_LIBRARIES += glew
 endif
 
 # conditionally add GTK
 ifeq ($(HAS_SYSTEM_GTK),0)
-    PLATFORM_PKG_CONFIG_LIBS += gtk+-2.0
+    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
 endif
 
 # conditionally add mpg123
 ifeq ($(HAS_SYSTEM_MPG123),0)
-    PLATFORM_PKG_CONFIG_LIBS += libmpg123
+    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
 endif
 
 ################################################################################

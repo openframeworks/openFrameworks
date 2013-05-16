@@ -1,11 +1,7 @@
 
-#TODO
 
-################################################################################
-# CONFIGURE CORE PLATFORM MAKEFILE
-#   This file has linux common rules for all Linux platforms including x86_64, 
-#   i386, armv6l, and armv7l.
-################################################################################
+PLATFORM_SHARED_LIBRARY_EXTENSION:=dylib
+PLATFORM_STATIC_LIBRARY_EXTENSION:=a
 
 ################################################################################
 # PLATFORM SPECIFIC CHECKS
@@ -16,11 +12,11 @@
 #   ifdefs within the openFrameworks core source code.
 ################################################################################
 
-PLATFORM_PROJECT_DEBUG_BIN_NAME=bin/$(APPNAME)_debug.app
-PLATFORM_PROJECT_DEBUG_TARGET=bin/$(APPNAME)_debug
-PLATFORM_PROJECT_RELEASE_BIN_NAME=bin/$(APPNAME).app
-PLATFORM_PROJECT_RELEASE_TARGET=bin/$(APPNAME)
-PLATFORM_RUN_COMMAND = open
+PLATFORM_PROJECT_DEBUG_BIN_NAME:=bin/$(APPNAME)_debug.app
+PLATFORM_PROJECT_DEBUG_TARGET:=bin/$(APPNAME)_debug
+PLATFORM_PROJECT_RELEASE_BIN_NAME:=bin/$(APPNAME).app
+PLATFORM_PROJECT_RELEASE_TARGET:=bin/$(APPNAME)
+PLATFORM_RUN_COMMAND:=open
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -36,7 +32,7 @@ PLATFORM_RUN_COMMAND = open
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES = __MACOSX_CORE__
+PLATFORM_DEFINES:=__MACOSX_CORE__
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -51,7 +47,7 @@ PLATFORM_DEFINES = __MACOSX_CORE__
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_REQUIRED_ADDONS =
+PLATFORM_REQUIRED_ADDONS:=
 
 ##########################################################################################
 # PLATFORM CFLAGS
@@ -63,17 +59,24 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall
+PLATFORM_CFLAGS := -Wall
+PLATFORM_CFLAGS += -Wno-deprecated-declarations
+PLATFORM_CFLAGS += -Wno-c++11-extensions
+PLATFORM_CFLAGS += -Wno-null-conversion
+PLATFORM_CFLAGS += -Wno-unused-variable
+PLATFORM_CFLAGS += -Wno-unused-comparison
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
+MAC_OS_XCODE_ROOT:=$(shell xcode-select -print-path)
 
 ifeq ($(findstring .app, $(MAC_OS_XCODE_ROOT)),.app)
-    MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
+    MAC_OS_SDK_PATH:=\
+    	$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 else
-	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/SDKs
+	MAC_OS_SDK_PATH:=\
+		$(MAC_OS_XCODE_ROOT)/SDKs
 endif
 
 #ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer)
@@ -83,11 +86,20 @@ endif
 #endif
 
 ifndef MAC_OS_SDK
-    ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+    ifeq ($(wildcard \
+    		$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),\
+    		$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk\
+    	 )
 		MAC_OS_SDK=10.8
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
+	else ifeq ($(wildcard \
+				$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),\
+				$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk\
+				)
 		MAC_OS_SDK=10.7
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
+	else ifeq ($(wildcard \
+				$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),\
+				$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk\
+				)
 		MAC_OS_SDK=10.6
 	endif
 endif
@@ -96,7 +108,12 @@ MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
 
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
-ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
+ifeq ($(shell \
+		gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; \
+		echo $$?\
+		),\
+		0\
+	)
 	PLATFORM_CFLAGS += -march=native
 	PLATFORM_CFLAGS += -mtune=native
 endif
@@ -105,14 +122,13 @@ endif
 PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
 PLATFORM_CFLAGS += -Os
-
 PLATFORM_CFLAGS += -arch i386
-
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
 
 PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
-PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
+# TODO: can we put this in the PLATFORM_FRAMEWORK_SEARCH_PATHS
+#PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 
 PLATFORM_CFLAGS += -fasm-blocks 
@@ -131,7 +147,6 @@ endif
 
 PLATFORM_CFLAGS += -x objective-c++
 
-
 ################################################################################
 # PLATFORM LDFLAGS
 #   This is a list of fully qualified LDFLAGS required when linking for this 
@@ -140,9 +155,10 @@ PLATFORM_CFLAGS += -x objective-c++
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS =
+PLATFORM_LDFLAGS :=
 PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
+# TODO: can we put this in the PLATFORM_FRAMEWORK_SEARCH_PATHS
+# PLATFORM_LDFLAGS += -F$(PATH_OF_LIBS)/glut/lib/osx/
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 
 ################################################################################
@@ -161,20 +177,20 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE =
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE :=
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG := -g3
 
 ################################################################################
-# PLATFORM CORE EXCLUSIONS
+# PLATFORM EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers 
 #   and third party libraries to be compiled and linked into a program or core 
-#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
+#   library. The PLATFORM_EXCLUSIONS is a list of fully qualified file 
 #   paths that will be used to exclude matching paths and files during list 
 #   generation.
 #
-#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
+#   Each item in the PLATFORM_EXCLUSIONS list will be treated as a complete
 #   string unless the user adds a wildcard (%) operator to match subdirectories.
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
@@ -183,31 +199,34 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 ################################################################################
 
 # erase all
-PLATFORM_CORE_EXCLUSIONS =
+PLATFORM_EXCLUSIONS =
+
+$(info ============================== $(PATH_OF_LIBS) ====================================)
+$(info $(PATH_OF_LIBS))
 
 # core sources
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstUtils.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstVideoGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstVideoPlayer.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/videoInput/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/quicktime/%
 
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -220,18 +239,32 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/lib
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_HEADERS_SEARCH_PATHS =
+PLATFORM_HEADER_SEARCH_PATHS =
+
+################################################################################
+# PLATFORM SOURCES SEARCH PATHS
+#   These are header search paths that are platform specific and are specified 
+#   using fully-qualified paths.  The include flag (i.e. -I) is prefixed 
+#   automatically. These are usually not required, but may be required by some 
+#   experimental platforms such as the raspberry pi or other other embedded 
+#   architectures.
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
+
+PLATFORM_SOURCES =
+
 
 ################################################################################
 # PLATFORM LIBRARIES
 #   These are library names/paths that are platform specific and are specified 
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
-#   PLATFORM_LIBS are libraries that can be found in the library search 
+#   PLATFORM_LIBRARIES are libraries that can be found in the library search 
 #       paths.
-#   PLATFORM_STATIC_LIBS is a list of required static libraries.
-#   PLATFORM_SHARED_LIBS is a list of required shared libraries.
-#   PLATFORM_PKG_CONFIG_LIBS is a list of required libraries that are 
+#   PLATFORM_STATIC_LIBRARIES is a list of required static libraries.
+#   PLATFORM_SHARED_LIBRARIES is a list of required shared libraries.
+#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are 
 #       under system control and are easily accesible via the package 
 #       configuration utility (i.e. pkg-config)
 #
@@ -241,16 +274,16 @@ PLATFORM_HEADERS_SEARCH_PATHS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBS =
+PLATFORM_LIBRARIES =
 ifneq ($(MAC_OS_SDK),10.6)
-    PLATFORM_LIBS += objc
+    PLATFORM_LIBRARIES += objc
 endif
 
 #static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBS =
+PLATFORM_STATIC_LIBRARIES =
 
 # shared libraries 
-PLATFORM_SHARED_LIBS =
+PLATFORM_SHARED_LIBRARIES =
 
 ################################################################################
 # PLATFORM LIBRARY SEARCH PATHS
@@ -275,7 +308,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_FRAMEWORKS = 
+PLATFORM_FRAMEWORKS := 
 PLATFORM_FRAMEWORKS += Accelerate
 PLATFORM_FRAMEWORKS += QTKit
 PLATFORM_FRAMEWORKS += GLUT
@@ -302,7 +335,10 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
+PLATFORM_FRAMEWORK_SEARCH_PATHS := 
+PLATFORM_FRAMEWORK_SEARCH_PATHS += /System/Library/Frameworks
+PLATFORM_FRAMEWORK_SEARCH_PATHS += $(MAC_OS_SDK_ROOT)/System/Library/Frameworks
+PLATFORM_FRAMEWORK_SEARCH_PATHS += $(PATH_OF_LIBS)/glut/lib/osx/
 
 ################################################################################
 # LOW LEVEL CONFIGURATION BELOW
@@ -315,7 +351,10 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 # PLATFORM CONFIGURATIONS
 # These will override the architecture vars generated by configure.platform.mk
 ################################################################################
-#PLATFORM_ARCH =
+
+# we force i386 here, because currently we do not compile 64 bit binaries
+PLATFORM_ARCH = i386
+
 #PLATFORM_OS =
 #PLATFORM_LIBS_PATH =
 
@@ -367,13 +406,13 @@ afterplatform: $(TARGET_NAME)
 	
 	# libfmodex ... blah
 	@install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib $(TARGET)
-	@cp $(OF_LIBS_PATH)/fmodex/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/MacOS
+	@cp $(PATH_OF_LIBS)/fmodex/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/MacOS
 	
 	# frameworks to be copied
 	@echo $(OF_PROJECT_FRAMEWORKS_EXPORTS)
 	# aaa
 
-	@cp -r $(OF_LIBS_PATH)/glut/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/Frameworks
+	@cp -r $(PATH_OF_LIBS)/glut/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/Frameworks
 
 	# move the target executable into the bundle
 	@mv $(TARGET) $(BIN_NAME)/Contents/MacOS

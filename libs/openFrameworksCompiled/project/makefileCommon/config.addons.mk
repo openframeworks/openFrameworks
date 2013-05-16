@@ -72,28 +72,28 @@ space +=
 # 5. if the line matches %: but it's not common or platform: set PROCESS_NEXT to false
 # 6: if PROCESS_NEXT eval the line to put the variable in the makefile space
 define parse_addon
-	$(eval ADDON_FOLDER=$(addprefix $(OF_ADDONS_PATH)/, $1)) \
-	$(eval ADDON_DEPENDENCIES= ) \
-	$(eval ADDON_DATA= ) \
-	$(eval ADDON_INCLUDES= ) \
-	$(eval ADDON_CFLAGS= ) \
-	$(eval ADDON_LDFLAGS= ) \
-	$(eval ADDON_LIBS= ) \
-	$(eval ADDON_PKG_CONFIG_LIBS= ) \
-	$(eval ADDON_FRAMEWORKS= ) \
-	$(eval ADDON_SOURCES= ) \
-	$(eval ADDON_EXCLUSIONS= ) \
-	$(eval PROCESS_NEXT=0) \
-	$(if $(wildcard $(ADDON_FOLDER)/addon_config.mk), \
-		$(foreach var_line, $(subst $(space),?,$(shell cat $(ADDON_FOLDER)/addon_config.mk | tr '\n' '\t')), \
+	$(eval ADDON_PATH:=$(addprefix $(PATH_OF_ADDONS)/, $1)) \
+	$(eval ADDON_DEPENDENCIES:= ) \
+	$(eval ADDON_DATA:= ) \
+	$(eval ADDON_INCLUDES:= ) \
+	$(eval ADDON_CFLAGS:= ) \
+	$(eval ADDON_LDFLAGS:= ) \
+	$(eval ADDON_LIBS:= ) \
+	$(eval ADDON_PKG_CONFIG_LIBS:= ) \
+	$(eval ADDON_FRAMEWORKS:= ) \
+	$(eval ADDON_SOURCES:= ) \
+	$(eval ADDON_EXCLUSIONS:= ) \
+	$(eval PROCESS_NEXT:=0) \
+	$(if $(wildcard $(ADDON_PATH)/addon_config.mk), \
+		$(foreach var_line, $(subst $(space),?,$(shell cat $(ADDON_PATH)/addon_config.mk | tr '\n' '\t')), \
 			$(eval unescaped_var_line=$(strip $(subst ?, ,$(var_line)))) \
 			$(if $(filter $(PROCESS_NEXT),1), $(eval $(unescaped_var_line))) \
 			$(if $(filter %:,$(unescaped_var_line)), \
 				$(if $(filter common:,$(unescaped_var_line)), \
 					$(eval PROCESS_NEXT=1), \
 					$(if $(filter $(ABI_LIB_SUBPATH):,$(unescaped_var_line)), \
-						$(eval PROCESS_NEXT=1), \
-						$(eval PROCESS_NEXT=0) \
+						$(eval PROCESS_NEXT:=1), \
+						$(eval PROCESS_NEXT:=0) \
 					) \
 				) \
 			) \
@@ -101,26 +101,26 @@ define parse_addon
 	) \
 	\
 	$(if $(strip $(ADDON_EXCLUSIONS)), \
-		$(eval PROJECT_ADDONS_EXCLUSIONS += $(addprefix $(ADDON_FOLDER)/,$(ADDON_EXCLUSIONS))), \
+		$(eval PROJECT_ADDONS_EXCLUSIONS += $(addprefix $(ADDON_PATH)/,$(ADDON_EXCLUSIONS))), \
 		$(info ---PROJECT_ADDONS_EXCLUSIONS---)
 		$(foreach v, $(PROJECT_ADDONS_EXCLUSIONS),$(info $(v)))
 	) \
 	$(if $(strip $(ADDON_INCLUDES)), \
-		$(eval PROJECT_ADDONS_INCLUDES += $(addprefix $(ADDON_FOLDER)/,$(ADDON_INCLUDES))), \
-		$(call FUNC_PARSE_ADDON_INCLUDES, $(ADDON_FOLDER)) \
+		$(eval PROJECT_ADDONS_INCLUDES += $(addprefix $(ADDON_PATH)/,$(ADDON_INCLUDES))), \
+		$(call FUNC_PARSE_ADDON_INCLUDES, $(ADDON_PATH)) \
 		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
 	) \
 	$(if $(strip $(ADDON_EXCLUSIONS)), \
-		$(eval _ADDON_EXCLUSIONS := $(addprefix $(ADDON_FOLDER)/,$(ADDON_EXCLUSIONS))) \
-		$(eval PROJECT_ADDONS_EXCLUSIONS += $(addprefix $(ADDON_FOLDER)/,$(ADDON_EXCLUSIONS))), \
+		$(eval _ADDON_EXCLUSIONS := $(addprefix $(ADDON_PATH)/,$(ADDON_EXCLUSIONS))) \
+		$(eval PROJECT_ADDONS_EXCLUSIONS += $(addprefix $(ADDON_PATH)/,$(ADDON_EXCLUSIONS))), \
 	) \
 	$(eval PROJECT_ADDONS_INCLUDES = $(filter-out $(PROJECT_ADDONS_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES))) \
 	\
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	\
 	$(if $(strip $(ADDON_LIBS)), \
-		$(eval PROJECT_ADDONS_LIBS += $(addprefix $(ADDON_FOLDER)/,$(ADDON_LIBS))), \
-		$(call parse_addons_libs, $(ADDON_FOLDER)) \
+		$(eval PROJECT_ADDONS_LIBS += $(addprefix $(ADDON_PATH)/,$(ADDON_LIBS))), \
+		$(call parse_addons_libs, $(ADDON_PATH)) \
 		$(eval PROJECT_ADDONS_LIBS += $(PARSED_ADDONS_LIBS)) \
 	) \
 	\
@@ -130,12 +130,12 @@ define parse_addon
 	$(eval PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
 	\
 	$(if $(strip $(ADDON_SOURCES)), \
-		$(eval PROJECT_ADDONS_SOURCE_FILES += $(addprefix $(ADDON_FOLDER)/,$(ADDON_SOURCES))), \
-		$(call parse_addons_sources, $(ADDON_FOLDER)) \
+		$(eval PROJECT_ADDONS_SOURCE_FILES += $(addprefix $(ADDON_PATH)/,$(ADDON_SOURCES))), \
+		$(call parse_addons_sources, $(ADDON_PATH)) \
 		$(eval PROJECT_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_SOURCE_FILES)) \
 	) \
 	$(if $(strip $(ADDON_DATA)), \
-		$(eval PROJECT_ADDONS_DATA += $(ADDON_FOLDER)/$(ADDON_DATA)) \
+		$(eval PROJECT_ADDONS_DATA += $(ADDON_PATH)/$(ADDON_DATA)) \
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
 		$(if $(filter $(addon_dep),$(PROJECT_ADDONS)), , \

@@ -1,114 +1,172 @@
-# do all of the core cofiguration work.
-# configuration work basically means creating lots of
-# lists of source files, search paths, libraries, etc.
+################################################################################
+# compile.project.mk
+################################################################################
+#
+#   This file contains all of the project compilation rules.  
+#   It organizes CFLAGS, LDFLAGS, dependency files, for the project and any
+#   addons files.
+#
+################################################################################
 
-ifndef OF_ROOT
-    OF_ROOT= ../../..
+################################################################################
+# PATH_OF_ROOT (conditionally set)
+#   The PATH_OF_ROOT is used throughout the script to locate the root folder 
+#   of the openFrameworks installation directory.  This variable is often set
+#   within custom project files such as $(PATH_OF_PROJECT)/config.make when
+#   a project is in a non-standard location.
+################################################################################
+
+ifndef PATH_OF_ROOT
+    PATH_OF_ROOT:=../../..
 endif
 
-ifndef PROJECT_ROOT
-    PROJECT_ROOT= .
-endif
+################################################################################
+# PATH_PROJECT_ROOT (conditionally set)
+#   The PATH_PROJECT_ROOT is used throughout the script to locate the project
+#   root folder.
+################################################################################
 
+ifndef PATH_PROJECT_ROOT
+    PATH_PROJECT_ROOT:=.
+endif
 
 # define the OF_SHARED_MAKEFILES location
-OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
-
-############################## FLAGS ###########################################
-# OF CORE LIBRARIES SEARCH PATHS (-L ...) (not used during core compilation, but 
-#    variables are used during project compilation)
-################################################################################
-
-# generate a list of all third party libs, excluding the compiled openFrameworkslibrary.
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS = $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH) -type d -not -path "*/openFrameworksCompiled/*" | grep -v "/\.[^\.]")
-
-# filter out all excluded paths defined in the platform config files.
-OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(OF_CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS))
+#PATH_OF_SHARED_MAKEFILES:=$(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
 
 ################################################################################
-# OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables 
-#	are used during project compilation).
+# ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS
+#   The ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS variable is a list of search
+#   paths for the third party library binaries.  In many cases, such as on
+#   linux, there are very few static libraries included.  In other cases, such
+#   as on OSX, we include many static libs that must be linked when building an
+#   executable.
+#
+# Steps:
+# 1. Generate a list of all third party library paths available for the 
+#    for the current ABI_LIB_SUBPATH:
+#
+#		find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH) ...
+#
+# 2. Remove any paths that used for the core openFrameworks compilation
+#		
+# 		... -type d -not -path "*/openFrameworksCompiled/*"
+#
+# 3. Remove any .framework paths.  These will be added later and should not 
+#    be searched and included in the same way as static libraries:
+#
+#		... -type d -not -path "*.framework*" \
+#
+# 4. Remove any hidden directories:
+#
+#		... | grep -v "/\.[^\.]"
+#
 ################################################################################
 
-# construct the full paths of the core's platform specific static libs 
-ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)
+ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS:=\
+    $(shell \
+        find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH) \
+        -type d -not -path "*/openFrameworksCompiled/*" \
+        -type d -not -path "*.framework*" \
+        | grep -v "/\.[^\.]" \
+    )
 
-# create a list of all core platform libraries
+################################################################################
+# CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS
+#   The CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS variable is a filtered list of 
+#   library search paths created by removing all paths that are in the 
+#   CORE_EXCLUSIONS list.  CORE_EXCLUSIONS is primarily defined in the 
+#   config.shared.mk and the platform-specific configuration files.
+################################################################################
+
+CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS:=\
+    $(filter-out \
+        $(CORE_EXCLUSIONS),\
+        $(ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS)\
+    )
+
+
+ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES:=\
+    $(shell \
+        find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH)/*.$(PLATFORM_STATIC_LIBRARY_EXTENSION) \
+        -not -path "*/openFrameworksCompiled/*" \
+        -not -path "*.framework*" \
+        2> /dev/null \
+        | grep -v "/\.[^\.]"\
+    )
+
+CORE_THIRD_PARTY_STATIC_LIBRARIES:=\
+    $(filter-out \
+        $(CORE_EXCLUSIONS),\
+        $(ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES)\
+    )
+
+# will conditionally look for dynamic libs that might need to be included
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBS_PATHS = $(shell find $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES:=\
+    $(shell \
+        find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH)/*.$(PLATFORM_SHARED_LIBRARY_EXTENSION) \
+        -not -path "*/openFrameworksCompiled/*" \
+        -not -path "*.framework*" \
+        2> /dev/null \
+        | grep -v "/\.[^\.]"\
+    )
 
-# create a list of all core lib directories that have libsorder.make
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell find $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+CORE_THIRD_PARTY_SHARED_LIBRARIES:=\
+    $(filter-out \
+        $(CORE_EXCLUSIONS),\
+        $(ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES)\
+    )
 
-# create a list of all of the core libs that require ordering
-OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
-
-# create a list of all of the platform libs that DO NOT require ordering
-# by removing those that do from the list of all platform libraries
-OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER),$(subst /lib/$(ABI_LIB_SUBPATH),,$(ALL_OF_CORE_LIBS_PATHS)))
-
-# create a list of all static libs in the core lib dir, using only 
-# the static libs that don't need order
-# 2> /dev/null consumes file not found errors from find searches
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-# TODO: create a varaible for core specific static lib suffix
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
-# create a list of all static lib files for the libs that need order
-# NOTE. this is the most unintuitive line of make script magic in here
-# How does it work?
-# 1. Explode each libsorder.make file using cat.  
-# 2. For each lib listed in the libsorder.make file, look back at the
-#    _original_ path for the libsorder.make file itself, and construct 
-#    a path for each of the ordered static libs.  Thus, each exploded 
-#    static lib will get its path from the path of the libsorder.make 
-#    in which it was listed.
-# 3. Add all of them to the ordered files.
-#    sed 's/[ ]*#.*//g' strips all comments beginning with #
-#    (to escape # in make, you must use \#)
-#    sed '/^$/d' removes all empty lines
-#    (to escape $ in make, you must use $$)
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
-
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ifeq ($(PLATFORM_OS),Linux)
-	ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
-else
-	ifeq ($(PLATFORM_OS),Darwin)
-		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.dylib -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
-	endif
-endif
-
-# add in any libraries that were explicitly listed in the platform config files.
-OF_CORE_THIRDPARTY_STATIC_LIBS := $(filter-out $(OF_CORE_EXCLUSIONS),$(OF_CORE_LIBS_PLATFORM_LIBS_STATICS))
-OF_CORE_THIRDPARTY_STATIC_LIBS += $(PLATFORM_STATIC_LIBRARIES)
-
-# add in any libraries that were explicitly listed in the platform config files.
-OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
-
-#TODO what to do with shared libs?
-OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(OF_CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
+###############
+############### LEFT OFF HERE 14 MAY 2013
+###############
+###############
+###############
+###############
+###############
 
 
-#OF_CORE_THIRDPARTY_SHARED_LIBS
-    $(info ---OF_CORE_THIRDPARTY_SHARED_LIBS---)
-    $(foreach v, $(OF_CORE_THIRDPARTY_SHARED_LIBS),$(info $(v)))
 
+
+
+#OF_CORE_THIRD_PARTY_SHARED_LIBS
+    $(info ---CORE_THIRD_PARTY_SHARED_LIBRARIES---)
+    $(foreach v, $(CORE_THIRD_PARTY_SHARED_LIBRARIES),$(info $(v)))
+
+## TODO
+########################
+################################################################################
+# CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS (immediately assigned)
+#   The CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS are generated by prepending -F to 
+#   each of the PLATFORM_FRAMEWORK_SEARCH_PATHS defined in the platform-
+#   specific configuration file.  Usually this is only used for OSX/iOS
+#   based builds. 
+################################################################################
+CORE_FRAMEWORKS:=$(PLATFORM_FRAMEWORKS)
+	###################
 
 
 ################################################################################
 # OF PLATFORM LDFLAGS
 ################################################################################
 
-OF_CORE_LIBRARY_LDFLAGS := $(addprefix -L,$(OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS))
-OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
+OF_CORE_LIBRARY_LDFLAGS :=\
+    $(addprefix \
+        -L,\
+        $(CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS)\
+    )
+
+OF_CORE_LIBRARY_LDFLAGS+= \
+    $(addprefix \
+        -L,\
+        $(PLATFORM_LIBRARY_SEARCH_PATHS)\
+    )
 
 ################################################################################
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info =============================configure.core.flags.make========================)   
+    $(info =============================configure.core.flags.make==============)   
     $(info ---OF_CORE_LIBS_LDFLAGS---)
     $(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
     
@@ -122,13 +180,13 @@ ifdef MAKEFILE_DEBUG
     $(info ===================ADDONS================)
 endif
 
-# check to make sure OF_ROOT is defined
-ifndef OF_ROOT
-    $(error OF_ROOT is not defined)
+# check to make sure PATH_OF_ROOT is defined
+ifndef PATH_OF_ROOT
+    $(error PATH_OF_ROOT is not defined)
 endif
 
-ifndef OF_ADDONS_PATH
-    $(error OF_ADDONS_PATH is not defined)
+ifndef PATH_OF_ADDONS
+    $(error PATH_OF_ADDONS is not defined)
 endif
 
 # check to make sure ABI_LIB_SUBPATH is defined
@@ -144,12 +202,10 @@ endif
 # addons.make file OR PLATFORM_REQUIRED_ADDONS is defined
 # we do it this way because gnu make can't do logical ORs 
 
-B_PROCESS_ADDONS := 
-
 ifdef PLATFORM_REQUIRED_ADDONS
     B_PROCESS_ADDONS = yes
 endif
-ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT)/*.make)),addons.make)
+ifeq ($(findstring addons.make,$(wildcard $(PATH_PROJECT_ROOT)/*.make)),addons.make)
     B_PROCESS_ADDONS = yes
 endif
 
@@ -160,38 +216,73 @@ ifdef B_PROCESS_ADDONS
     ############################################################################
 
     # create a list of every addon installed in the addons directory
-    ALL_INSTALLED_ADDONS := $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
+    ALL_INSTALLED_ADDONS := \
+        $(subst \
+            $(PATH_OF_ADDONS)/\
+            ,\
+            ,\
+            $(wildcard \
+                $(PATH_OF_ADDONS)/*\
+                )\
+        )
 
     # get a list of all addons listed in addons.make file
     # sed 's/[ ]*#.*//g' strips all comments beginning with #
     # (to escape # in make, you must use \#)
     # sed '/^$/d' removes all empty lines
     # (to escape $ in make, you must use $$)
-    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
+    REQUESTED_PROJECT_ADDONS:=\
+        $(shell \
+            cat $(PATH_PROJECT_ROOT)/addons.make 2> /dev/null \
+            | sed 's/[ ]*\#.*//g' | sed '/^$$/d' \
+        )
 
     # deal with platform specfic addons remove any platform specific addons 
     # that were already added to the addons.make file
-    REQUESTED_PROJECT_ADDONS := $(filter-out $(PLATFORM_REQUIRED_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+    REQUESTED_PROJECT_ADDONS:=\
+        $(filter-out \
+            $(PLATFORM_REQUIRED_ADDONS),\
+            $(REQUESTED_PROJECT_ADDONS)\
+        )
 
     # define a function to remove duplicates without using sort, because sort 
     # will place the list in lexicographic order, and we want to respect the 
     # user's addons.make order.  
-    remove-dupes-func = $(if $1,$(strip $(word 1,$1) \
-                        $(call $0,$(filter-out $(word 1,$1),$1))))
+    remove-dupes-func = \
+        $(if $1,$(strip $(word 1,$1) \
+            $(call $0,\
+                $(filter-out \
+                    $(word 1,$1),$1)\
+                )\
+            )\
+        )
 
     # remove all duplicates that might be in the addons.make file
-    REQUESTED_PROJECT_ADDONS := $(call remove-dupes-func,$(REQUESTED_PROJECT_ADDONS))
+    REQUESTED_PROJECT_ADDONS:=\
+        $(call 
+            remove-dupes-func,\
+            $(REQUESTED_PROJECT_ADDONS)\
+        )
 
     # add platform required addons from the platform configuration file 
     # (if needed) add the platform required addons first, so that they are 
     # always linked first
-    REQUESTED_PROJECT_ADDONS := $(PLATFORM_REQUIRED_ADDONS) $(REQUESTED_PROJECT_ADDONS)
+    REQUESTED_PROJECT_ADDONS:=\
+        $(PLATFORM_REQUIRED_ADDONS) $(REQUESTED_PROJECT_ADDONS)
 
     # create a list requested addons that are actually installed on the system
-    VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
+    VALID_PROJECT_ADDONS:=\
+        $(filter \
+            $(REQUESTED_PROJECT_ADDONS),\
+            $(ALL_INSTALLED_ADDONS)\
+        )
 
     # create a list of the invalid addons
-    INVALID_PROJECT_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+    INVALID_PROJECT_ADDONS:=\
+        $(filter-out \
+            $(VALID_PROJECT_ADDONS),\
+            $(REQUESTED_PROJECT_ADDONS)\
+        )
 
     # if any invalid addons are found, throw a warning, but don't cause an error
     ifneq ($(INVALID_PROJECT_ADDONS),)
@@ -201,7 +292,11 @@ ifdef B_PROCESS_ADDONS
     endif
 
     # create a list of addons, excluding invalid and platform-specific addons
-    PROJECT_ADDONS = $(filter-out $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+    PROJECT_ADDONS:=\
+        $(filter-out \
+            $(INVALID_PROJECT_ADDONS),\
+            $(REQUESTED_PROJECT_ADDONS)\
+        )
 
     ifdef MAKEFILE_DEBUG
         $(info ---PROJECT_ADDONS---)
@@ -215,26 +310,33 @@ ifdef B_PROCESS_ADDONS
 
     # if the addons list is NOT empty ...
     ifneq ($(PROJECT_ADDONS),)
-		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
+		include $(PATH_OF_SHARED_MAKEFILES)/config.addons.mk
     endif
 endif
 
 # generate the list of core libraries
 # 2. Add all of the third party static libs defined by the platform config files.
-OF_CORE_LIBS := $(OF_CORE_THIRDPARTY_STATIC_LIBS)
+OF_CORE_LIBS := $(OF_CORE_THIRD_PARTY_STATIC_LIBS)
 # 2. Add all of the third party shared libs defined by the platform config files.
-OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
+OF_CORE_LIBS += $(OF_CORE_THIRD_PARTY_SHARED_LIBS)
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 CORE_PKG_CONFIG_LIBS += $(PROJECT_ADDONS_PKG_CONFIG_LIBS)
+
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBS)),)
-	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBS)" --libs)
+	OF_CORE_LIBS += \
+        $(shell \
+            pkg-config "$(CORE_PKG_CONFIG_LIBS)" --libs\
+        )
 endif
 # 4. Add the libraries defined in the platform config files.
-OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBS))
+OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 
 # add the list of addon includes
 ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBS)),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBS)" --cflags)
+	OF_CORE_INCLUDES_CFLAGS += \
+        $(shell \
+            pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBS)" --cflags\
+        )
 endif
 
 ################################################################################
@@ -244,28 +346,34 @@ endif
 OF_PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 
 # add defaults here TODO: should these always be 
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin  # exactly this path
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin% # any children of this path
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git%
+OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/bin  # exactly this path
+OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/bin% # any children of this path
+OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/obj
+OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/obj%
+OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/.git
+OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/.git%
 
 # A pattern can contain only one TRAILING %. This is a "feature" in GNU Make.
 # As a consequence of this "feature" $(filter ...) and $(filter-out ...) 
 # cannot match substrings in our exclusions.  For example, the following will 
 # not be matched as one might expect with normal wildcards / regex patterns:
 #
-# OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj 
-# OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj/%
+# OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/%.xcodeproj 
+# OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/%.xcodeproj/%
 #
 # GNU make does allow us to do something like this though:
 # In this case, we look for all paths that have the pattern:
-#     $(PROJECT_ROOT)/*.xcodeproj (here * works as expected)
+#     $(PATH_PROJECT_ROOT)/*.xcodeproj (here * works as expected)
 # and then it appends a % (the make pattern matcher) ONLY to the end of each
 # of the paths discovered by the $(wildcard ...) function.  The output of
 # this function is now compatible with GNU Make $(filter ...) and $(filter-out).
-OF_PROJECT_EXCLUSIONS += $(addsuffix %,$(wildcard $(PROJECT_ROOT)/*.xcodeproj))
+OF_PROJECT_EXCLUSIONS += \
+    $(addsuffix \
+        %,\
+        $(wildcard \
+            $(PATH_PROJECT_ROOT)/*.xcodeproj\
+        )\
+    )
 
 ################################################################################
 # PROJECT SOURCE FILES
@@ -276,14 +384,30 @@ OF_PROJECT_EXCLUSIONS += $(addsuffix %,$(wildcard $(PROJECT_ROOT)/*.xcodeproj))
 # create a list of all dirs in the project root that might be valid project
 # source directories 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
+ALL_OF_PROJECT_SOURCE_PATHS:=\
+    $(shell \
+        find $(PATH_PROJECT_ROOT) \
+        -mindepth 1 -type d \
+        | grep -v "/\.[^\.]"\
+    )
+
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
-	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
+	
+    ALL_OF_PROJECT_SOURCE_PATHS += \
+        $(shell \
+            find $(PROJECT_EXTERNAL_SOURCE_PATHS) \
+            -mindepth 1 -type d \
+            | grep -v "/\.[^\.]"\
+        )
 endif
 
 # be included as locations for header searches via 
-OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
+OF_PROJECT_SOURCE_PATHS:=\
+    $(filter-out \
+        $(OF_PROJECT_EXCLUSIONS),\
+        $(ALL_OF_PROJECT_SOURCE_PATHS)\
+    )
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_SOURCE_PATHS---)
@@ -301,10 +425,19 @@ OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -n
 # PROJECT HEADERS INCLUDES (-I ...)
 ################################################################################
 
-OF_PROJECT_INCLUDES := $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS))
+OF_PROJECT_INCLUDES:=\
+    $(filter-out \
+        $(PROJECT_INCLUDE_EXCLUSIONS),\
+        $(OF_PROJECT_SOURCE_PATHS)\
+    )
+
 OF_PROJECT_INCLUDES += $(PROJECT_ADDONS_INCLUDES) # already filtered against ADDONS_INCLUDES_EXCLUDE
 
-OF_PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(OF_PROJECT_INCLUDES))
+OF_PROJECT_INCLUDES_CFLAGS := \
+    $(addprefix \
+        -I,\
+        $(OF_PROJECT_INCLUDES)\
+    )
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
@@ -426,7 +559,7 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
     	TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
     else
-    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+    	TARGET_LIBS += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
     endif
 endif
 
@@ -440,7 +573,7 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
     	TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
-    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    	TARGET_LIBS += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
     endif
 endif
 
@@ -488,7 +621,7 @@ OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,\
                           )\
                         )
 
-OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
+OF_PROJECT_OBJS = $(subst $(PATH_PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
 
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
@@ -512,8 +645,8 @@ OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,\
 
 OF_PROJECT_ADDONS_OBJS = 
 $(foreach addon_obj, $(OF_PROJECT_ADDONS_OBJ_FILES), \
-     $(eval OF_PROJECT_ADDONS_OBJS+= $(patsubst $(OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
-                                          $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
+     $(eval OF_PROJECT_ADDONS_OBJS+= $(patsubst $(PATH_OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(PATH_OF_ROOT)/addons/,,$(addon_obj))))/%, \
+                                          $(PATH_OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(PATH_OF_ROOT)/addons/,,$(addon_obj))))/%, \
                                           $(addon_obj))) \
 )
 
