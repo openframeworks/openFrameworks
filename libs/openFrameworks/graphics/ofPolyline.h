@@ -140,7 +140,7 @@ public:
     
     // get (interpolated) index at given percentage along the path
     // includes info on percentage along segment, e.g. ret=5.75 => 75% along the path between 5th and 6th points
-    float getIndexAtPercentage(float f);
+    float getIndexAtPercent(float f);
 
     // get length along path at index
     float getLengthAtIndex(int index);
@@ -152,7 +152,7 @@ public:
     ofPoint getPointAtLength(float f);
     
     // get point along the path at a given percentage (e.g. f=0.25 => 25% along the path)
-    ofPoint getPointAtPercentage(float f);
+    ofPoint getPointAtPercent(float f);
     
     // get point along the path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
     ofPoint getPointAtIndexInterpolated(float findex);

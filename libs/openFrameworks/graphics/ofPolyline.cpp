@@ -792,7 +792,7 @@ float ofPolyline::getIndexAtLength(float length) {
 
 
 //--------------------------------------------------
-float ofPolyline::getIndexAtPercentage(float f) {
+float ofPolyline::getIndexAtPercent(float f) {
     return getIndexAtLength(f * getPerimeter());
 }
 
@@ -832,7 +832,7 @@ ofPoint ofPolyline::getPointAtLength(float f) {
 }
 
 //--------------------------------------------------
-ofPoint ofPolyline::getPointAtPercentage(float f) {
+ofPoint ofPolyline::getPointAtPercent(float f) {
     float length = getPerimeter();
     return getPointAtLength(f * length);
 }
