@@ -489,18 +489,20 @@ ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
 
 //----------------------------------------------------------
 ofPolyline ofPolyline::getResampledBySpacing(float spacing) {
-    if(spacing==0) return *this;
+    if(spacing==0 || size() == 0) return *this;
     ofPolyline poly;
     float totalLength = getPerimeter();
     for(float f=0; f<totalLength; f += spacing) {
         poly.lineTo(getPointAtLength(f));
     }
+    
     if(!isClosed()) {
+        if(poly.size() > 0) poly[poly.size()-1] = points.back();
         poly.setClosed(false);
-        poly[poly.size()-1] = points.back();
     } else {
         poly.setClosed(true);
     }
+
     return poly;
 }
 
