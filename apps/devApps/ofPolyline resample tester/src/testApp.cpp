@@ -149,6 +149,8 @@ void testApp::keyPressed(int key){
         case 'S': poly = poly.getResampledBySpacing(30); break;
         case 'C': poly = poly.getResampledByCount(50); break;
             
+        case 'l': poly.setClosed(!poly.isClosed());
+            
         case 'i': poly.insertVertex(ofPoint(mouseX, mouseY, 0), nearestIndex); break;
     }
 }
