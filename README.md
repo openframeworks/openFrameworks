@@ -17,6 +17,8 @@ How to
 If you want to work with the openFrameworks GitHub repository, you should use the project generator to create project files for all the code in `examples/`.  
 For per-platform readmes, and more informations, see [documentation](docs/table_of_contents.md).
 
+To set up the project generator submodule, use the command `git submodule init` then `git submodule update` whilst inside the openFrameworks repo.
+
 Versioning
 ----------
 openFrameworks uses [Semantic Versioning](http://semver.org/), although strict adherence will only come into effect at version 1.0.0.
