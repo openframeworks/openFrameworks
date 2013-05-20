@@ -117,7 +117,7 @@ void ETF::set2(imatrix& image)
 	for (i = 0; i < Nr; i++) { 
 		for (j = 0; j < Nc; j++) {
 			tmp[i][j] /= max_grad;
-			gmag[i][j] = round(tmp[i][j] * 255.0);
+			gmag[i][j] = (int) (tmp[i][j] * 255.0);
 		}
 	}
 	
