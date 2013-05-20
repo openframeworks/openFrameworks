@@ -462,7 +462,7 @@ ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
 	for(int i = 0; i < n; i++) {
 		float sum = 1; // center weight
 		for(int j = 1; j < smoothingSize; j++) {
-			ofVec2f cur;
+			ofVec3f cur;
 			int leftPosition = i - j;
 			int rightPosition = i + j;
 			if(leftPosition < 0 && bClosed) {
