@@ -87,28 +87,28 @@ public:
 		quadBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
 	}
 
-	ofPolyline getSmoothed(int smoothingSize, float smoothingShape = 0);
+	ofPolyline getSmoothed(int smoothingSize, float smoothingShape = 0) const;
 
 	// resample a polyline based on the distance between the points
-	ofPolyline getResampledBySpacing(float spacing);
+	ofPolyline getResampledBySpacing(float spacing) const;
 
 	// resample a polyline based on the total point count
-	ofPolyline getResampledByCount(int count);
+	ofPolyline getResampledByCount(int count) const;
 
 	// get the bounding box of a polyline
 	ofRectangle getBoundingBox() const;
 	
 	// find the closest point 'target' on a polyline
 	// optionally pass a pointer to/address of an unsigned int to get the index of the closest vertex
-	ofPoint getClosestPoint(const ofPoint& target, unsigned int* nearestIndex = NULL);
+	ofPoint getClosestPoint(const ofPoint& target, unsigned int* nearestIndex = NULL) const;
 	
 	// check wheteher a point is inside the area enclosed by the polyline
 	static bool inside(float x, float y, const ofPolyline & polyline);
 	static bool inside(const ofPoint & p, const ofPolyline & polyline);
     
     // non-static versions
-    bool inside(float x, float y);
-    bool inside(const ofPoint & p);
+    bool inside(float x, float y) const;
+    bool inside(const ofPoint & p) const;
 
 	void simplify(float tolerance=0.3);
 
@@ -137,44 +137,44 @@ public:
     
     // get (interpolated) index at given length along the path
     // includes info on percentage along segment, e.g. ret=5.75 => 75% along the path between 5th and 6th points
-    float getIndexAtLength(float f);
+    float getIndexAtLength(float f) const;
     
     // get (interpolated) index at given percentage along the path
     // includes info on percentage along segment, e.g. ret=5.75 => 75% along the path between 5th and 6th points
-    float getIndexAtPercent(float f);
+    float getIndexAtPercent(float f) const;
 
     // get length along path at index
-    float getLengthAtIndex(int index);
+    float getLengthAtIndex(int index) const;
     
     // get length along path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
-    float getLengthAtIndexInterpolated(float findex);
+    float getLengthAtIndexInterpolated(float findex) const;
     
     // get point long the path at a given length (e.g. f=150 => 150 units along the path)
-    ofPoint getPointAtLength(float f);
+    ofPoint getPointAtLength(float f) const;
     
     // get point along the path at a given percentage (e.g. f=0.25 => 25% along the path)
-    ofPoint getPointAtPercent(float f);
+    ofPoint getPointAtPercent(float f) const;
     
     // get point along the path at interpolated index (e.g. f=5.75 => 75% along the path between 5th and 6th points)
-    ofPoint getPointAtIndexInterpolated(float findex);
+    ofPoint getPointAtIndexInterpolated(float findex) const;
 
     // get angle (degrees) at index
-    float getAngleAtIndex(int index);
+    float getAngleAtIndex(int index) const;
     
     // get angle (degrees) at interpolated index (interpolated between neighboring indices)
-    float getAngleAtIndexInterpolated(float findex);
+    float getAngleAtIndexInterpolated(float findex) const;
     
     // get rotation vector at index (magnitude is sin of angle)
-    ofVec3f getRotationAtIndex(int index);
+    ofVec3f getRotationAtIndex(int index) const;
     
     // get rotation vector at interpolated index (interpolated between neighboring indices) (magnitude is sin of angle)
-    ofVec3f getRotationAtIndexInterpolated(float findex);
+    ofVec3f getRotationAtIndexInterpolated(float findex) const;
     
     // get normal vector at index
-    ofVec3f getNormalAtIndex(int index);
+    ofVec3f getNormalAtIndex(int index) const;
     
     // get normal vector at interpolated index (interpolated between neighboring indices)
-    ofVec3f getNormalAtIndexInterpolated(float findex);
+    ofVec3f getNormalAtIndexInterpolated(float findex) const;
 
 private:
 	void setCircleResolution(int res);

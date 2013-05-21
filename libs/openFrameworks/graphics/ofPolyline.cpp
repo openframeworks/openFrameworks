@@ -453,7 +453,7 @@ ofRectangle ofPolyline::getBoundingBox() const {
 }
 
 //----------------------------------------------------------
-ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
+ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) const {
 	int n = size();
 	smoothingSize = ofClamp(smoothingSize, 0, n);
 	smoothingShape = ofClamp(smoothingShape, 0, 1);
@@ -499,7 +499,7 @@ ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
 }
 
 //----------------------------------------------------------
-ofPolyline ofPolyline::getResampledBySpacing(float spacing) {
+ofPolyline ofPolyline::getResampledBySpacing(float spacing) const {
     if(spacing==0 || size() == 0) return *this;
     ofPolyline poly;
     float totalLength = getPerimeter();
@@ -518,7 +518,7 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) {
 }
 
 //----------------------------------------------------------
-ofPolyline ofPolyline::getResampledByCount(int count) {
+ofPolyline ofPolyline::getResampledByCount(int count) const {
 	float perimeter = getPerimeter();
     if(count < 2) {
         ofLogWarning() << "ofPolyline::getResampledByCount less than two points makes no sense! returning original poly";
@@ -560,8 +560,8 @@ static ofPoint getClosestPointUtil(const ofPoint& p1, const ofPoint& p2, const o
 //----------------------------------------------------------
 // a much faster but less accurate version would check distances to vertices first,
 // which assumes vertices are evenly spaced
-ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearestIndex) {
-	ofPolyline & polyline = *this;
+ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearestIndex) const {
+	const ofPolyline & polyline = *this;
     
 	if(polyline.size() < 2) {
 		if(nearestIndex != NULL) {
@@ -644,13 +644,13 @@ bool ofPolyline::inside(float x, float y, const ofPolyline & polyline){
 }
 
 //--------------------------------------------------
-bool ofPolyline::inside(float x, float y){
+bool ofPolyline::inside(float x, float y) const {
     return ofPolyline::inside(x, y, *this);
     
 }
 
 //--------------------------------------------------
-bool ofPolyline::inside(const ofPoint & p){
+bool ofPolyline::inside(const ofPoint & p) const {
     return ofPolyline::inside(p, *this);
 }
 
@@ -780,7 +780,7 @@ void ofPolyline::draw(){
 
 
 //--------------------------------------------------
-float ofPolyline::getIndexAtLength(float length) {
+float ofPolyline::getIndexAtLength(float length) const {
     if(points.size() < 2) return 0;
     if(bCacheIsDirty) updateCache();
     
@@ -815,19 +815,19 @@ float ofPolyline::getIndexAtLength(float length) {
 
 
 //--------------------------------------------------
-float ofPolyline::getIndexAtPercent(float f) {
+float ofPolyline::getIndexAtPercent(float f) const {
     return getIndexAtLength(f * getPerimeter());
 }
 
 //--------------------------------------------------
-float ofPolyline::getLengthAtIndex(int index) {
+float ofPolyline::getLengthAtIndex(int index) const {
     if(points.size() < 2) return 0;
     if(bCacheIsDirty) updateCache();
     return lengths[index % lengths.size()];
 }
 
 //--------------------------------------------------
-float ofPolyline::getLengthAtIndexInterpolated(float findex) {
+float ofPolyline::getLengthAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return 0;
     if(bCacheIsDirty) updateCache();
     
@@ -840,7 +840,7 @@ float ofPolyline::getLengthAtIndexInterpolated(float findex) {
 
 
 //--------------------------------------------------
-ofPoint ofPolyline::getPointAtLength(float f) {
+ofPoint ofPolyline::getPointAtLength(float f) const {
     if(points.size() < 2) return ofPoint();
     if(bCacheIsDirty) updateCache();
     
@@ -855,14 +855,14 @@ ofPoint ofPolyline::getPointAtLength(float f) {
 }
 
 //--------------------------------------------------
-ofPoint ofPolyline::getPointAtPercent(float f) {
+ofPoint ofPolyline::getPointAtPercent(float f) const {
     float length = getPerimeter();
     return getPointAtLength(f * length);
 }
 
 
 //--------------------------------------------------
-ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) {
+ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return ofPoint();
     
     int leftIndex = floor(findex);
@@ -876,7 +876,7 @@ ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) {
 
 
 //--------------------------------------------------
-float ofPolyline::getAngleAtIndex(int index) {
+float ofPolyline::getAngleAtIndex(int index) const {
     if(points.size() < 2) return 0;
     if(bCacheIsDirty) updateCache();
     
@@ -886,7 +886,7 @@ float ofPolyline::getAngleAtIndex(int index) {
 }
 
 //--------------------------------------------------
-float ofPolyline::getAngleAtIndexInterpolated(float findex) {
+float ofPolyline::getAngleAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return 0;
     
     int i1 = floor(findex);
@@ -897,7 +897,7 @@ float ofPolyline::getAngleAtIndexInterpolated(float findex) {
 }
 
 //--------------------------------------------------
-ofVec3f ofPolyline::getRotationAtIndex(int index) {
+ofVec3f ofPolyline::getRotationAtIndex(int index) const {
     if(points.size() < 2) return ofVec3f();
     if(bCacheIsDirty) updateCache();
     
@@ -907,7 +907,7 @@ ofVec3f ofPolyline::getRotationAtIndex(int index) {
 }
 
 //--------------------------------------------------
-ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) {
+ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return ofVec3f();
     
     int i1 = floor(findex);
@@ -918,7 +918,7 @@ ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) {
 }
 
 //--------------------------------------------------
-ofVec3f ofPolyline::getNormalAtIndex(int index) {
+ofVec3f ofPolyline::getNormalAtIndex(int index) const {
     if(points.size() < 2) return ofVec3f();
     if(bCacheIsDirty) updateCache();
     
@@ -928,7 +928,7 @@ ofVec3f ofPolyline::getNormalAtIndex(int index) {
 }
 
 //--------------------------------------------------
-ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) {
+ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return ofVec3f();
     
     int i1 = floor(findex);
