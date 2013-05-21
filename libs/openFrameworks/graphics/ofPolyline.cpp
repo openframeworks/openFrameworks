@@ -388,7 +388,7 @@ float ofPolyline::getPerimeter() const {
     if(points.size() < 2) {
         return 0;
     } else {
-        if(bCacheIsDirty) updateCache();
+        updateCache();
         return lengths.back();
     }
 }
@@ -513,7 +513,7 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) const {
     } else {
         poly.setClosed(true);
     }
-
+    
     return poly;
 }
 
@@ -782,7 +782,7 @@ void ofPolyline::draw(){
 //--------------------------------------------------
 float ofPolyline::getIndexAtLength(float length) const {
     if(points.size() < 2) return 0;
-    if(bCacheIsDirty) updateCache();
+    updateCache();
     
     float totalLength = getPerimeter();
     length = ofClamp(length, 0, totalLength);
@@ -822,14 +822,14 @@ float ofPolyline::getIndexAtPercent(float f) const {
 //--------------------------------------------------
 float ofPolyline::getLengthAtIndex(int index) const {
     if(points.size() < 2) return 0;
-    if(bCacheIsDirty) updateCache();
+    updateCache();
     return lengths[index % lengths.size()];
 }
 
 //--------------------------------------------------
 float ofPolyline::getLengthAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return 0;
-    if(bCacheIsDirty) updateCache();
+    updateCache();
     
     int leftIndex = floor(findex);
     int rightIndex = leftIndex + 1;
@@ -842,7 +842,7 @@ float ofPolyline::getLengthAtIndexInterpolated(float findex) const {
 //--------------------------------------------------
 ofPoint ofPolyline::getPointAtLength(float f) const {
     if(points.size() < 2) return ofPoint();
-    if(bCacheIsDirty) updateCache();
+    updateCache();
     
     float index = getIndexAtLength(f);
     int leftIndex = floor(index);
@@ -878,7 +878,7 @@ ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) const {
 //--------------------------------------------------
 float ofPolyline::getAngleAtIndex(int index) const {
     if(points.size() < 2) return 0;
-    if(bCacheIsDirty) updateCache();
+    updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
     else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
@@ -899,7 +899,7 @@ float ofPolyline::getAngleAtIndexInterpolated(float findex) const {
 //--------------------------------------------------
 ofVec3f ofPolyline::getRotationAtIndex(int index) const {
     if(points.size() < 2) return ofVec3f();
-    if(bCacheIsDirty) updateCache();
+    updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
     else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
@@ -920,7 +920,7 @@ ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) const {
 //--------------------------------------------------
 ofVec3f ofPolyline::getNormalAtIndex(int index) const {
     if(points.size() < 2) return ofVec3f();
-    if(bCacheIsDirty) updateCache();
+    updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
     else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
@@ -960,74 +960,76 @@ static void calcData(ofPoint p1, ofPoint p2, ofPoint p3, float *angle, ofVec3f *
 }
 
 //--------------------------------------------------
-void ofPolyline::updateCache() const {
-    lengths.clear();
-    angles.clear();
-    rotations.clear();
-    normals.clear();
-    bCacheIsDirty = false;
-    
-    if(points.size() < 2) return;
-    
-    lengths.push_back(0);
-    angles.push_back(0);
-    rotations.push_back(ofVec3f());
-
-    ofVec3f normal;
-    calcData(points[0], points[0], points[1], NULL, NULL, &normal);
-    normals.push_back(normal);
-
-    
-    float length = 0;
-	for(int i=0; i<points.size()-1; i++) {
-		length += points[i].distance(points[i + 1]);
-        lengths.push_back(length);
+void ofPolyline::updateCache(bool bForceUpdate) const {
+    if(bCacheIsDirty || bForceUpdate) {
+        lengths.clear();
+        angles.clear();
+        rotations.clear();
+        normals.clear();
+        bCacheIsDirty = false;
         
-        if(i>=1) {
-            float angle;
-            ofVec3f rotation;
-            ofVec3f normal;
-            calcData(points[i-1], points[i], points[i+1], &angle, &rotation, &normal);
-            angles.push_back(angle);
-            rotations.push_back(rotation);
-            normals.push_back(normal);
-        }
-	}
-    
-    angles.push_back(0);
-    rotations.push_back(ofVec3f());
-
-    calcData(points[points.size()-2], points[points.size()-1], points[points.size()-1], NULL, NULL, &normal);
-    normals.push_back(normal);
-    
-
-    // if closed update accordingly
-	if(isClosed()) {
-		length += points.back().distance(points[0]);
-        lengths.push_back(length);  // add one more length to go back to the starting point
+        if(points.size() < 2) return;
         
-        // update data for first point
-        {
-            float angle;
-            ofVec3f rotation;
-            ofVec3f normal;
-            calcData(points[points.size()-1], points[0], points[1], &angle, &rotation, &normal);
-            angles.front() = angle;
-            rotations.front() = rotation;
-            normals.front() = normal;
+        lengths.push_back(0);
+        angles.push_back(0);
+        rotations.push_back(ofVec3f());
+        
+        ofVec3f normal;
+        calcData(points[0], points[0], points[1], NULL, NULL, &normal);
+        normals.push_back(normal);
+        
+        
+        float length = 0;
+        for(int i=0; i<points.size()-1; i++) {
+            length += points[i].distance(points[i + 1]);
+            lengths.push_back(length);
+            
+            if(i>=1) {
+                float angle;
+                ofVec3f rotation;
+                ofVec3f normal;
+                calcData(points[i-1], points[i], points[i+1], &angle, &rotation, &normal);
+                angles.push_back(angle);
+                rotations.push_back(rotation);
+                normals.push_back(normal);
+            }
         }
         
-        // update data for last point
-        {
-            float angle;
-            ofVec3f rotation;
-            ofVec3f normal;
-            calcData(points[points.size()-2], points[points.size()-1], points[0], &angle, &rotation, &normal);
-            angles.back() = angle;
-            rotations.back() = rotation;
-            normals.back() = normal;
-        }
+        angles.push_back(0);
+        rotations.push_back(ofVec3f());
         
-	}
+        calcData(points[points.size()-2], points[points.size()-1], points[points.size()-1], NULL, NULL, &normal);
+        normals.push_back(normal);
+        
+        
+        // if closed update accordingly
+        if(isClosed()) {
+            length += points.back().distance(points[0]);
+            lengths.push_back(length);  // add one more length to go back to the starting point
+            
+            // update data for first point
+            {
+                float angle;
+                ofVec3f rotation;
+                ofVec3f normal;
+                calcData(points[points.size()-1], points[0], points[1], &angle, &rotation, &normal);
+                angles.front() = angle;
+                rotations.front() = rotation;
+                normals.front() = normal;
+            }
+            
+            // update data for last point
+            {
+                float angle;
+                ofVec3f rotation;
+                ofVec3f normal;
+                calcData(points[points.size()-2], points[points.size()-1], points[0], &angle, &rotation, &normal);
+                angles.back() = angle;
+                rotations.back() = rotation;
+                normals.back() = normal;
+            }
+            
+        }
+    }
 }
 
