@@ -3,6 +3,7 @@
 ofPolyline poly;
 unsigned int nearestIndex = 0;
 float rotAngle = 0;
+bool bRotate = true;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -12,7 +13,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-    rotAngle = ofGetElapsedTimef() * 10;
+    if(bRotate) rotAngle = ofGetElapsedTimef() * 10;
 }
 
 //--------------------------------------------------------------
@@ -155,6 +156,7 @@ void testApp::draw(){
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
     switch(key) {
+        case 'R': bRotate ^= true; if(!bRotate) rotAngle = 0; break;
         case 'r': poly.clear(); break;
         case 'c': poly.curveTo(mouseX, mouseY); break;
         case 'a': poly.arc(mouseX, mouseY, 50, 50, 0, 180); break;
