@@ -196,6 +196,6 @@ private:
 	bool bHasChanged;   // public API has access to this
     mutable bool bCacheIsDirty;   // used only internally, no public API to read
     
-    void updateCache() const;
+    void updateCache(bool bForceUpdate = false) const;
 };
 
