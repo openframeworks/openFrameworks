@@ -162,9 +162,10 @@ void testApp::keyPressed(int key){
         case 'a': poly.arc(mouseX, mouseY, 50, 50, 0, 180); break;
         case 'o': poly.setClosed(!poly.isClosed()); break;
             
+        case 'F': poly.simplify(10); break;
+        case 'M': poly = poly.getSmoothed(5); break;
         case 'S': poly = poly.getResampledBySpacing(30); break;
         case 'C': poly = poly.getResampledByCount(50); break;
-        case 'M': poly.simplify(10); break;
             
         case 'l': poly.setClosed(!poly.isClosed());
             
