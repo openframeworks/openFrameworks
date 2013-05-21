@@ -1,7 +1,8 @@
 #include "testApp.h"
 
 ofPolyline poly;
-unsigned int nearestIndex;
+unsigned int nearestIndex = 0;
+float rotAngle = 0;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -11,13 +12,24 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-    
+    rotAngle = ofGetElapsedTimef() * 10;
 }
 
+//--------------------------------------------------------------
+ofPoint getPoint(float x, float y) {
+    ofPoint p(x - ofGetWidth()/2, y - ofGetHeight()/2, 0);
+//    p.z = 300 * ofSignedNoise(x / ofGetWidth(), y / ofGetHeight(), ofGetElapsedTimef());
+	p.rotate(-rotAngle, ofVec3f(0, 1, 0));
+    return p;
+}
 
 //--------------------------------------------------------------
 void testApp::draw(){
     if(poly.size() < 2) return;
+    
+    ofPushMatrix();
+    ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
+    ofRotateY(rotAngle);
     
     ofSetColor(255, 255, 255);
     poly.draw();
@@ -28,7 +40,7 @@ void testApp::draw(){
     glBegin(GL_POINTS);
     for(int i=0; i<poly.size(); i++) {
         ofPoint p = poly[i];
-        glVertex2f(p.x, p.y);
+        glVertex3f(p.x, p.y, p.z);
     }
     glEnd();
     
@@ -87,6 +99,7 @@ void testApp::draw(){
     ofSetColor(255, 0, 255);
     ofCircle(pointAtPercentSin, 15);
 
+    ofPopMatrix();
     
     
     stringstream s;
@@ -157,42 +170,11 @@ void testApp::keyPressed(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased(int key){
-    
-}
-
-//--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-    
-}
-
-//--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-    poly.lineTo(x, y);
-    
+    poly.lineTo(getPoint(x, y));
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-    poly.lineTo(x, y);
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
-    
-}
-
-//--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
-    
-}
-
-//--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){
-    
+    poly.lineTo(getPoint(x, y));
 }
