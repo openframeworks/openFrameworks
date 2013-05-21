@@ -164,6 +164,7 @@ void testApp::keyPressed(int key){
             
         case 'S': poly = poly.getResampledBySpacing(30); break;
         case 'C': poly = poly.getResampledByCount(50); break;
+        case 'M': poly.simplify(10); break;
             
         case 'l': poly.setClosed(!poly.isClosed());
             
