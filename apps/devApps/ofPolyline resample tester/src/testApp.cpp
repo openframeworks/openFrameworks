@@ -40,7 +40,8 @@ void testApp::draw(){
 
     
     
-    float totalLength = poly.getPerimeter();;
+    float totalLength = 0;//poly.getPerimeter();
+    float totalArea = poly.getArea();
     ofPoint nearestPoint = poly.getClosestPoint(ofPoint(mouseX,mouseY), &nearestIndex);
     ofPoint nearestDataPoint = poly[nearestIndex];
     float lengthAtIndex = poly.getLengthAtIndex(nearestIndex);
