@@ -124,10 +124,11 @@ public:
 	void close();
 
 	bool hasChanged();
+    void flagHasChanged();
 
 	vector<ofPoint> & getVertices();
 
-	float getPerimeter();
+	float getPerimeter() const;
 	float getArea() const;
 	ofPoint getCentroid2D() const;
 
@@ -180,17 +181,21 @@ private:
     float wrapAngle(float angleRad);
 
 	vector<ofPoint> points;
-    vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
-    vector<ofVec3f> normals;    //
-    vector<float> angles;    // angle (degrees) between adjacent segments, stored per point (acos(dot product))
-    vector<ofVec3f> rotations;   // rotation between adjacent segments, stored per point (cross product)
+    
+    // cache
+    mutable vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
+    mutable vector<ofVec3f> normals;    //
+    mutable vector<float> angles;    // angle (degrees) between adjacent segments, stored per point (acos(dot product))
+    mutable vector<ofVec3f> rotations;   // rotation between adjacent segments, stored per point (cross product)
 
+    
 	deque<ofPoint> curveVertices;
 	vector<ofPoint> circlePoints;
 
 	bool bClosed;
-	bool bHasChanged;
+	bool bHasChanged;   // public API has access to this
+    mutable bool bCacheIsDirty;   // used only internally, no public API to read
     
-    void updateCache();
+    void updateCache() const;
 };
 

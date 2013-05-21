@@ -25,29 +25,31 @@ ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
 
 //----------------------------------------------------------
 void ofPolyline::clear() {
-	bClosed=false;
+	setClosed(false);
 	points.clear();
-	bHasChanged = true;
 	curveVertices.clear();
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
 void ofPolyline::addVertex(const ofPoint& p) {
 	curveVertices.clear();
-	points.push_back(p); bHasChanged=true;
+	points.push_back(p);
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
 void ofPolyline::addVertex(float x, float y, float z) {
 	curveVertices.clear();
-	addVertex(ofPoint(x,y,z)); bHasChanged=true;
+	addVertex(ofPoint(x,y,z));
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
 void ofPolyline::addVertices(const vector<ofPoint>& verts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
-	bHasChanged=true;
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
@@ -59,7 +61,7 @@ void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
 void ofPolyline::addVertices(const ofPoint* verts, int numverts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts, verts + numverts );
-	bHasChanged=true;
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
@@ -71,7 +73,7 @@ void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
 void ofPolyline::insertVertex(const ofPoint &p, int index) {
     curveVertices.clear();
     points.insert(points.begin()+index, p);
-    bHasChanged = true;
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
@@ -92,20 +94,20 @@ const ofPoint& ofPolyline::operator[] (int index) const {
 
 //----------------------------------------------------------
 ofPoint& ofPolyline::operator[] (int index) {
-	bHasChanged=true;
+    flagHasChanged();
 	return points[index];
 }
 
 //----------------------------------------------------------
 void ofPolyline::resize(size_t size){
-	bHasChanged=true;
 	points.resize(size);
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
 void ofPolyline::setClosed( bool tf ) {
-	bHasChanged=true;
 	bClosed = tf;
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
@@ -115,7 +117,7 @@ bool ofPolyline::isClosed() const {
 
 //----------------------------------------------------------
 void ofPolyline::close(){
-	bClosed = true;
+    setClosed(true);
 }
 
 //----------------------------------------------------------
@@ -126,6 +128,12 @@ bool ofPolyline::hasChanged(){
     }else{
         return false;
     }
+}
+
+//----------------------------------------------------------
+void ofPolyline::flagHasChanged() {
+    bHasChanged = true;
+    bCacheIsDirty = true;
 }
 
 //----------------------------------------------------------
@@ -207,6 +215,7 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 			points.push_back(ofPoint(x,y,z));
 		}
 	}
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
@@ -222,6 +231,7 @@ void ofPolyline::quadBezierTo(float x1, float y1, float z1, float x2, float y2, 
 		double z = a * z1 + b * z2 + c * z3;
 		points.push_back(ofPoint(x, y, z));
 	}
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
@@ -272,6 +282,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 		}
 		curveVertices.pop_front();
 	}
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
@@ -369,15 +380,15 @@ void ofPolyline::arc(const ofPoint & center, float radiusX, float radiusY, float
             remainingAngle = 0; // call it finished, the next while loop test will fail
         }
     }
-    
+    flagHasChanged();
 }
 
 //----------------------------------------------------------
-float ofPolyline::getPerimeter() {
+float ofPolyline::getPerimeter() const {
     if(points.size() < 2) {
         return 0;
     } else {
-        if(hasChanged()) updateCache();
+        if(bCacheIsDirty) updateCache();
         return lengths.back();
     }
 }
@@ -771,7 +782,7 @@ void ofPolyline::draw(){
 //--------------------------------------------------
 float ofPolyline::getIndexAtLength(float length) {
     if(points.size() < 2) return 0;
-    if(hasChanged()) updateCache();
+    if(bCacheIsDirty) updateCache();
     
     float totalLength = getPerimeter();
     length = ofClamp(length, 0, totalLength);
@@ -811,14 +822,14 @@ float ofPolyline::getIndexAtPercent(float f) {
 //--------------------------------------------------
 float ofPolyline::getLengthAtIndex(int index) {
     if(points.size() < 2) return 0;
-    if(hasChanged()) updateCache();
+    if(bCacheIsDirty) updateCache();
     return lengths[index % lengths.size()];
 }
 
 //--------------------------------------------------
 float ofPolyline::getLengthAtIndexInterpolated(float findex) {
     if(points.size() < 2) return 0;
-    if(hasChanged()) updateCache();
+    if(bCacheIsDirty) updateCache();
     
     int leftIndex = floor(findex);
     int rightIndex = leftIndex + 1;
@@ -831,7 +842,7 @@ float ofPolyline::getLengthAtIndexInterpolated(float findex) {
 //--------------------------------------------------
 ofPoint ofPolyline::getPointAtLength(float f) {
     if(points.size() < 2) return ofPoint();
-    if(hasChanged()) updateCache();
+    if(bCacheIsDirty) updateCache();
     
     float index = getIndexAtLength(f);
     int leftIndex = floor(index);
@@ -867,7 +878,7 @@ ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) {
 //--------------------------------------------------
 float ofPolyline::getAngleAtIndex(int index) {
     if(points.size() < 2) return 0;
-    if(hasChanged()) updateCache();
+    if(bCacheIsDirty) updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
     else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
@@ -888,7 +899,7 @@ float ofPolyline::getAngleAtIndexInterpolated(float findex) {
 //--------------------------------------------------
 ofVec3f ofPolyline::getRotationAtIndex(int index) {
     if(points.size() < 2) return ofVec3f();
-    if(hasChanged()) updateCache();
+    if(bCacheIsDirty) updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
     else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
@@ -909,7 +920,7 @@ ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) {
 //--------------------------------------------------
 ofVec3f ofPolyline::getNormalAtIndex(int index) {
     if(points.size() < 2) return ofVec3f();
-    if(hasChanged()) updateCache();
+    if(bCacheIsDirty) updateCache();
     
     if(index < 0) index = isClosed() ? points.size()-1 : 0;
     else if(index > points.size()-1) index = isClosed() ? 0 : points.size()-1;
@@ -949,11 +960,12 @@ static void calcData(ofPoint p1, ofPoint p2, ofPoint p3, float *angle, ofVec3f *
 }
 
 //--------------------------------------------------
-void ofPolyline::updateCache() {
+void ofPolyline::updateCache() const {
     lengths.clear();
     angles.clear();
     rotations.clear();
     normals.clear();
+    bCacheIsDirty = false;
     
     if(points.size() < 2) return;
     
