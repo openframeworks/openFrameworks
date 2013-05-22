@@ -213,6 +213,6 @@ private:
     // given an interpolated index (e.g. 5.75) return neighboring indices and interolation factor (e.g. 5, 6, 0.75)
     void getInterpolationParams(float findex, int &i1, int &i2, float &t) const;
     
-    void calcData(int i1, int i2, int i3, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) const;
+    void calcData(int index, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) const;
 };
 

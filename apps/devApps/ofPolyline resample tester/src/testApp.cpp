@@ -70,7 +70,7 @@ void testApp::draw(){
     float indexAtLength = poly.getIndexAtLength(lengthAtIndex);
     
     float sinTime = ofMap(sin(ofGetElapsedTimef() * 0.5), -1, 1, 0, 1);
-    float sinIndex = sinTime * (poly.size()-1);  // sinTime mapped to indices direct
+    float sinIndex = sinTime * (poly.isClosed() ? poly.size() : (poly.size()-1));  // sinTime mapped to indices direct
     float sinIndexLength = poly.getIndexAtPercent(sinTime); // sinTime mapped to indices based on length
     
     float lengthAtIndexSin = poly.getLengthAtIndexInterpolated(sinIndex);

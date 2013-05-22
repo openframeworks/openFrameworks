@@ -492,7 +492,7 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) const {
     }
     
     if(!isClosed()) {
-        if(poly.size() > 0) poly[poly.size()-1] = points.back();
+        if(poly.size() > 0) poly.points.back() = points.back();
         poly.setClosed(false);
     } else {
         poly.setClosed(true);
@@ -843,7 +843,7 @@ ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
     ofPoint leftPoint(points[i1]);
     ofPoint rightPoint(points[i2]);
-    return (rightPoint - leftPoint) * t + leftPoint;
+    return leftPoint.interpolated(rightPoint, t);
 }
 
 
@@ -913,11 +913,10 @@ ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) const {
 
 
 //--------------------------------------------------
-//static void calcData(const ofPoint &p1, const ofPoint &p2, const ofPoint &p3, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) {
-void ofPolyline::calcData(int i1, int i2, int i3, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) const {
-    i1 = getWrappedIndex(i1);
-    i2 = getWrappedIndex(i2);
-    i3 = getWrappedIndex(i3);
+void ofPolyline::calcData(int index, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) const {
+    int i1 = getWrappedIndex(index - 1);
+    int i2 = getWrappedIndex(index);
+    int i3 = getWrappedIndex(index + 1);
     
     ofPoint p1(points[i1]);
     ofPoint p2(points[i2]);
@@ -932,16 +931,14 @@ void ofPolyline::calcData(int i1, int i2, int i3, ofVec3f &tangent, float &angle
     tangent.normalize();
     
     rotation = v1.crossed(v2);
-    
-    // HACK: for undefined rotations (eg beginning, end, and colinear), use previous points rotation
-    if(rotation.lengthSquared() < FLT_EPSILON) rotation = rotations[i1];
-    
-    // HACK: if still undefined rotation (eg beginning point), use a default (which works well for 2D)
-    if(rotation.lengthSquared() < FLT_EPSILON) rotation.set(0, 0, 1);
-    angle = 180 - ofRadToDeg(asin(rotation.length()));
-    
-    normal = tangent.getRotated(-90, rotation);
-    if(rotation.x < 0 || rotation.y < 0 || rotation.z < 0) normal *= -1;
+    angle = 180 - ofRadToDeg(acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1)));
+
+    if(rotation.lengthSquared() > 0) {
+        normal = tangent.getRotated(90, rotation);
+        if(rotation.z > 0) normal *= -1;
+    } else {
+        normal = normals[i1];
+    }
 }
 
 
@@ -957,8 +954,9 @@ int ofPolyline::getWrappedIndex(int index) const {
 //--------------------------------------------------
 void ofPolyline::getInterpolationParams(float findex, int &i1, int &i2, float &t) const {
     i1 = floor(findex);
-    i2 = i1 + 1;
     t = findex - i1;
+    i1 = getWrappedIndex(i1);
+    i2 = getWrappedIndex(i1 + 1);
 }
 
 //--------------------------------------------------
@@ -1009,16 +1007,29 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         ofVec3f tangent;
 
         float length = 0;
+        bool bFlipNormal = false;
         for(int i=0; i<points.size(); i++) {
             lengths[i] = length;
 
-            calcData(i-1, i, i+1, tangent, angle, rotation, normal);
+            calcData(i, tangent, angle, rotation, normal);
             tangents[i] = tangent;
             angles[i] = angle;
             rotations[i] = rotation;
             normals[i] = normal;
             
-            length += points[i].distance(points[i + 1]);
+            length += points[i].distance(points[getWrappedIndex(i + 1)]);
+        }
+        
+            // iterate backwards to fill in the gaps?
+        for(int i=points.size()-1; i>=0; --i) {
+            if(rotations[i].lengthSquared() > 0) {
+                rotation = rotations[i];
+            }
+
+            if(normals[i].lengthSquared() < FLT_EPSILON) {
+                normals[i] = tangents[i].getRotated(90, rotation);
+                if(rotation.z > 0) normals[i] *= -1;
+            }
         }
         
         if(isClosed()) lengths.push_back(length);
