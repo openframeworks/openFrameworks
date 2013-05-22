@@ -3,7 +3,7 @@
 ofPolyline poly;
 unsigned int nearestIndex = 0;
 float rotAngle = 0;
-bool bRotate = true;
+bool bRotate = false;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -19,7 +19,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 ofPoint getPoint(float x, float y) {
     ofPoint p(x - ofGetWidth()/2, y - ofGetHeight()/2, 0);
-//    p.z = 300 * ofSignedNoise(x / ofGetWidth(), y / ofGetHeight(), ofGetElapsedTimef());
+    //    p.z = 300 * ofSignedNoise(x / ofGetWidth(), y / ofGetHeight(), ofGetElapsedTimef());
 	p.rotate(-rotAngle, ofVec3f(0, 1, 0));
     return p;
 }
@@ -45,17 +45,23 @@ void testApp::draw(){
     }
     glEnd();
     
-    ofSetColor(255, 0, 0);
     for(int i=0; i<poly.size(); i++) {
         ofPoint p = poly[i];
+        ofSetColor(255, 0, 0);
+        ofLine(p, p + poly.getTangentAtIndex(i) * 20);
+        
+        ofSetColor(0, 255, 0);
         ofLine(p, p + poly.getNormalAtIndex(i) * 20);
+        
+        ofSetColor(0, 128, 255);
+        ofLine(p, p + poly.getRotationAtIndex(i) * 20);
     }
-
+    
     
     
     float totalLength = poly.getPerimeter();
     float totalArea = poly.getArea();
-    ofPoint nearestPoint = poly.getClosestPoint(ofPoint(mouseX,mouseY), &nearestIndex);
+    ofPoint nearestPoint = poly.getClosestPoint(ofPoint(mouseX-ofGetWidth()/2, mouseY-ofGetHeight()/2), &nearestIndex);
     ofPoint nearestDataPoint = poly[nearestIndex];
     float lengthAtIndex = poly.getLengthAtIndex(nearestIndex);
     ofPoint pointAtIndex = poly.getPointAtIndexInterpolated(nearestIndex);
@@ -63,24 +69,29 @@ void testApp::draw(){
     ofPoint pointAtPercent = poly.getPointAtPercent(lengthAtIndex / totalLength);
     float indexAtLength = poly.getIndexAtLength(lengthAtIndex);
     
-    float t = ofMap(sin(ofGetElapsedTimef() * 0.5), -1, 1, 0, 1);
-    float i = t * (poly.size()-1);
-    float lengthAtIndexSin = poly.getLengthAtIndexInterpolated(i);
-    ofPoint pointAtIndexSin = poly.getPointAtIndexInterpolated(i);
-    ofPoint pointAtPercentSin = poly.getPointAtPercent(t);
+    float sinTime = ofMap(sin(ofGetElapsedTimef() * 0.5), -1, 1, 0, 1);
+    float sinIndex = sinTime * (poly.size()-1);  // sinTime mapped to indices direct
+    float sinIndexLength = poly.getIndexAtPercent(sinTime); // sinTime mapped to indices based on length
+    
+    float lengthAtIndexSin = poly.getLengthAtIndexInterpolated(sinIndex);
+    ofPoint pointAtIndexSin = poly.getPointAtIndexInterpolated(sinIndex);
+    ofPoint pointAtPercentSin = poly.getPointAtPercent(sinTime);
     
     float angleAtIndex = poly.getAngleAtIndex(nearestIndex);
-    float angleAtIndexSin = poly.getAngleAtIndexInterpolated(i);
+    float angleAtIndexSin = poly.getAngleAtIndexInterpolated(sinIndex);
     
     ofVec3f rotAtIndex = poly.getRotationAtIndex(nearestIndex);
-    ofVec3f rotAtIndexSin = poly.getRotationAtIndexInterpolated(i);
-
+    ofVec3f rotAtIndexSin = poly.getRotationAtIndexInterpolated(sinIndex);
+    
     float rotMagAtIndex = rotAtIndex.length();
     float rotMagAtIndexSin = rotAtIndexSin.length();
-
+    
     ofVec3f normalAtIndex = poly.getNormalAtIndex(nearestIndex);
-    ofVec3f normalAtIndexSin = poly.getNormalAtIndexInterpolated(i);
-
+    
+    ofVec3f tangentAtIndexSin = poly.getTangentAtIndexInterpolated(sinIndex);
+    ofVec3f normalAtIndexSin = poly.getNormalAtIndexInterpolated(sinIndex);
+    ofVec3f rotationAtIndexSin = poly.getRotationAtIndexInterpolated(sinIndex);
+    
     
     ofNoFill();
     ofSetLineWidth(2);
@@ -91,15 +102,44 @@ void testApp::draw(){
     ofSetColor(255, 255, 0);
     ofCircle(nearestDataPoint, 7);
     
-    ofSetColor(0, 0, 255);
-    ofCircle(pointAtIndexSin, 10);
-    ofLine(pointAtIndexSin, pointAtIndexSin + normalAtIndexSin * 100);
-    ofSetColor(0, 255, 255);
-    ofLine(pointAtIndexSin, pointAtIndexSin + rotAtIndexSin * 100);
-    
-    ofSetColor(255, 0, 255);
-    ofCircle(pointAtPercentSin, 15);
+    // interpolating on indices
+    {
+        ofPoint p = poly.getPointAtIndexInterpolated(sinIndex);
 
+        ofSetColor(0, 255, 255);
+        ofCircle(p, 10);
+        
+        ofSetColor(255, 0, 0);
+        ofLine(p, p + poly.getTangentAtIndexInterpolated(sinIndex) * 60);
+        
+        ofSetColor(0, 255, 0);
+        ofLine(p, p + poly.getNormalAtIndexInterpolated(sinIndex) * 60);
+        
+        ofSetColor(0, 128, 255);
+        ofLine(p, p + poly.getRotationAtIndexInterpolated(sinIndex) * 60);
+    }
+    
+    // interpolating on length percentages
+    {
+        ofPoint p = poly.getPointAtIndexInterpolated(sinIndexLength);
+        
+        ofSetColor(255, 0, 255);
+        ofCircle(p, 10);
+        
+        ofSetColor(255, 0, 0);
+        ofLine(p, p + poly.getTangentAtIndexInterpolated(sinIndexLength) * 60);
+        
+        ofSetColor(0, 255, 0);
+        ofLine(p, p + poly.getNormalAtIndexInterpolated(sinIndexLength) * 60);
+        
+        ofSetColor(0, 128, 255);
+        ofLine(p, p + poly.getRotationAtIndexInterpolated(sinIndexLength) * 60);
+    }
+    
+    
+    ofSetColor(255, 255, 255);
+    ofCircle(poly.getCentroid2D(), 20);
+    
     ofPopMatrix();
     
     
@@ -125,8 +165,9 @@ void testApp::draw(){
     
     
     s << endl;
-    s << "t: " << t << endl;
-    s << "i: " << i << endl;
+    s << "sinTime: " << sinTime << endl;
+    s << "sinIndex: " << sinIndex << endl;
+    s << "sinIndexLength: " << sinIndexLength << endl;
     
     s << endl;
     s << "lengthAtIndexSin: " << lengthAtIndexSin << endl;
@@ -136,11 +177,11 @@ void testApp::draw(){
     s << endl;
     s << "angleAtIndex: " << angleAtIndex << endl;
     s << "angleAtIndexSin: " << angleAtIndexSin << endl;
-
+    
     s << endl;
     s << "rotAtIndex: " << rotAtIndex << endl;
     s << "rotAtIndexSin: " << rotAtIndexSin << endl;
-
+    
     s << endl;
     s << "rotMagAtIndex: " << rotMagAtIndex << endl;
     s << "rotMagAtIndexSin: " << rotMagAtIndexSin << endl;
