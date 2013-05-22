@@ -170,12 +170,21 @@ public:
     // get rotation vector at interpolated index (interpolated between neighboring indices) (magnitude is sin of angle)
     ofVec3f getRotationAtIndexInterpolated(float findex) const;
     
+    // get tangent vector at index
+    ofVec3f getTangentAtIndex(int index) const;
+    
+    // get tangent vector at interpolated index (interpolated between neighboring indices)
+    ofVec3f getTangentAtIndexInterpolated(float findex) const;
+
     // get normal vector at index
     ofVec3f getNormalAtIndex(int index) const;
     
     // get normal vector at interpolated index (interpolated between neighboring indices)
     ofVec3f getNormalAtIndexInterpolated(float findex) const;
-
+    
+    // get wrapped index depending on whether poly is closed or not
+    int getWrappedIndex(int index) const;
+    
 private:
 	void setCircleResolution(int res);
     float wrapAngle(float angleRad);
@@ -184,10 +193,13 @@ private:
     
     // cache
     mutable vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
+    mutable vector<ofVec3f> tangents;   // tangent at vertex, stored per point
     mutable vector<ofVec3f> normals;    //
-    mutable vector<float> angles;    // angle (degrees) between adjacent segments, stored per point (acos(dot product))
     mutable vector<ofVec3f> rotations;   // rotation between adjacent segments, stored per point (cross product)
-
+    mutable vector<float> angles;    // angle (degrees) between adjacent segments, stored per point (asin(cross product))
+    mutable ofPoint centroid2D;
+    mutable float area;
+    
     
 	deque<ofPoint> curveVertices;
 	vector<ofPoint> circlePoints;
@@ -197,5 +209,8 @@ private:
     mutable bool bCacheIsDirty;   // used only internally, no public API to read
     
     void updateCache(bool bForceUpdate = false) const;
+    
+    // given an interpolated index (e.g. 5.75) return neighboring indices and interolation factor (e.g. 5, 6, 0.75)
+    void getInterpolationParams(float findex, int &i1, int &i2, float &t) const;
 };
 
