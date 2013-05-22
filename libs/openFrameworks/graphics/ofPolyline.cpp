@@ -913,7 +913,16 @@ ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) const {
 
 
 //--------------------------------------------------
-static void calcData(const ofPoint &p1, const ofPoint &p2, const ofPoint &p3, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) {
+//static void calcData(const ofPoint &p1, const ofPoint &p2, const ofPoint &p3, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) {
+void ofPolyline::calcData(int i1, int i2, int i3, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) const {
+    i1 = getWrappedIndex(i1);
+    i2 = getWrappedIndex(i2);
+    i3 = getWrappedIndex(i3);
+    
+    ofPoint p1(points[i1]);
+    ofPoint p2(points[i2]);
+    ofPoint p3(points[i3]);
+    
     ofVec3f v1(p1 - p2); // vector to previous point
     ofVec3f v2(p3 - p2); // vector to next point
     v1.normalize();
@@ -923,7 +932,12 @@ static void calcData(const ofPoint &p1, const ofPoint &p2, const ofPoint &p3, of
     tangent.normalize();
     
     rotation = v1.crossed(v2);
-    if(rotation.lengthSquared() < FLT_EPSILON) rotation.set(0, 0, 1);   // HACK for beginning and end points, and colinear to have valid values (in 2D)
+    
+    // HACK: for undefined rotations (eg beginning, end, and colinear), use previous points rotation
+    if(rotation.lengthSquared() < FLT_EPSILON) rotation = rotations[i1];
+    
+    // HACK: if still undefined rotation (eg beginning point), use a default (which works well for 2D)
+    if(rotation.lengthSquared() < FLT_EPSILON) rotation.set(0, 0, 1);
     angle = 180 - ofRadToDeg(asin(rotation.length()));
     
     normal = tangent.getRotated(-90, rotation);
@@ -998,10 +1012,7 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         for(int i=0; i<points.size(); i++) {
             lengths[i] = length;
 
-            int indexPrev = getWrappedIndex(i-1);
-            int indexNext = getWrappedIndex(i+1);
-
-            calcData(points[indexPrev], points[i], points[indexNext], tangent, angle, rotation, normal);
+            calcData(i-1, i, i+1, tangent, angle, rotation, normal);
             tangents[i] = tangent;
             angles[i] = angle;
             rotations[i] = rotation;
