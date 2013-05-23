@@ -229,7 +229,6 @@ void ofCairoRenderer::draw(ofPath & shape){
 	if(shape.getUseShapeColor()){
 		setColor(prevColor);
 	}
-	ofPopStyle();
 }
 
 void ofCairoRenderer::draw(ofPolyline & poly){

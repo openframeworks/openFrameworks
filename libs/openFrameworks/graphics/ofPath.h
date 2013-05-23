@@ -93,13 +93,16 @@ public:
 	void setMode(Mode mode);
 
 	void setCurveResolution(int curveResolution);
-	int getCurveResolution();
+	int getCurveResolution() const;
 
-	void setArcResolution(int res);
-	int getArcResolution();
+    void setCircleResolution(int circleResolution);
+    int getCircleResolution() const;
+    
+	OF_DEPRECATED_MSG("Use setCircleResolution instead.", void setArcResolution(int res));
+    OF_DEPRECATED_MSG("Use getCircleResolution instead.", int getArcResolution() const);
 
 	void setUseShapeColor(bool useColor);
-	bool getUseShapeColor();
+	bool getUseShapeColor() const;
 	
 	void tessellate();
 
@@ -135,7 +138,7 @@ private:
 	bool				hasChanged;
 	int					prevCurveRes;
 	int					curveResolution;
-	int					arcResolution;
+	int					circleResolution;
 	bool 				bNeedsTessellation;
 
 	Mode				mode;

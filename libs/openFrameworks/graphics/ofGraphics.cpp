@@ -451,7 +451,7 @@ void  ofSetRectMode(ofRectMode mode){
 
 //----------------------------------------------------------
 ofRectMode ofGetRectMode(){
-	return 	renderer->getRectMode();
+    return currentStyle.rectMode;
 }
 
 //----------------------------------------------------------
@@ -473,7 +473,7 @@ void ofFill(){
 // Returns OF_FILLED or OF_OUTLINE
 //----------------------------------------------------------
 ofFillFlag ofGetFill(){
-	return renderer->getFillMode();
+    return currentStyle.bFill ? OF_FILLED : OF_OUTLINE;
 }
 
 //----------------------------------------------------------
@@ -765,46 +765,130 @@ void ofRect(float x,float y,float z,float w,float h){
 }
 
 //----------------------------------------------------------
-void ofRectRounded(const ofRectangle & b,float r){
+void ofRectRounded(const ofRectangle & b, float r){
 	ofRectRounded(b.x, b.y, 0.0f, b.width, b.height, r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(const ofPoint & p,float w,float h,float r){
+void ofRectRounded(const ofPoint & p, float w, float h, float r){
 	ofRectRounded(p.x, p.y, p.z, w, h, r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(float x,float y,float w,float h,float r){
+void ofRectRounded(float x, float y, float w, float h, float r){
 	ofRectRounded(x, y, 0.0f, w, h, r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(float x,float y,float z,float w,float h,float r){
-	float x2 = x + w;
-	float y2 = y + h;
+void ofRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
+                                                        float topRightRadius,
+                                                        float bottomRightRadius,
+                                                        float bottomLeftRadius){
+    ofRectRounded(p.x,p.y,p.z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
 
-	if (r > w || r > h || r <= 0){
-		ofRect(x, y, z, w, h);
-		return;
-	}
+//----------------------------------------------------------
+void ofRectRounded(const ofRectangle & b, float topLeftRadius,
+                                          float topRightRadius,
+                                          float bottomRightRadius,
+                                          float bottomLeftRadius) {
+    ofRectRounded(b.x,b.y,0.0f,b.width,b.height,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
 
-	shape.clear();
-	shape.lineTo(x+r, y);
-	shape.bezierTo(x,y, x,y+r, x,y+r);
-	shape.lineTo(x, y2-r);
-	shape.bezierTo(x,y2, x+r,y2, x+r,y2);
-	shape.lineTo(x2-r, y2);
-	shape.bezierTo(x2,y2, x2,y2-r, x2,y2-r);
-	shape.lineTo(x2, y+r);
-	shape.bezierTo(x2,y, x2-r,y, x2-r,y);
-	shape.lineTo(x+r, y);
-	shape.draw();
+
+//----------------------------------------------------------
+void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
+                                                                float topRightRadius,
+                                                                float bottomRightRadius,
+                                                                float bottomLeftRadius) {
+    
+    // since we support w / h < 0, canonicalize the rectangle for easier drawing
+    if(w < 0.0f) {
+        x += w;
+        w *= -1.0f;
+    }
+    
+    if(h < 0.0f) {
+        y += h; 
+        h *= -1.0f;
+    }
+    
+    // keep radii in check
+    float maxRadius = MIN(w / 2.0f, h / 2.0f);
+    topLeftRadius        = MIN(topLeftRadius,     maxRadius);
+    topRightRadius       = MIN(topRightRadius,    maxRadius);
+    bottomRightRadius    = MIN(bottomRightRadius, maxRadius);
+    bottomLeftRadius     = MIN(bottomLeftRadius,  maxRadius);
+    
+    // if all radii are ~= 0.0f, then render as a normal rectangle
+    if((fabs(topLeftRadius)     < FLT_EPSILON) &&
+       (fabs(topRightRadius)    < FLT_EPSILON) &&
+       (fabs(bottomRightRadius) < FLT_EPSILON) &&
+       (fabs(bottomLeftRadius)  < FLT_EPSILON)) {
+ 
+        // rect mode respect happens in ofRect
+        ofRect(x, y, z, w, h);
+    } else {
+
+        // respect the current rectmode
+        switch (ofGetRectMode()) {
+            case OF_RECTMODE_CORNER:
+                break;
+            case OF_RECTMODE_CENTER:
+                x -= w / 2.0f;
+                y -= h / 2.0f;
+                break;
+            default:
+                ofLogWarning("ofRectRounded") << "Unknown ofRectMode " << ofGetRectMode() << ".";
+        }
+        
+        float left   = x;
+        float right  = x + w;
+        float top    = y;
+        float bottom = y + h;
+
+        shape.setCircleResolution(currentStyle.circleResolution);
+        
+        shape.clear();
+        
+        shape.lineTo(left + topLeftRadius, top, z);
+
+        // top right
+        if(fabs(topRightRadius) >= FLT_EPSILON) {
+            shape.arc(right - topRightRadius, top + topRightRadius, z, topRightRadius, topRightRadius, 270, 360);
+        } else {
+            shape.lineTo(right, top, z);
+        }
+        
+        shape.lineTo(right, bottom - bottomRightRadius);
+        // bottom right
+        if(fabs(bottomRightRadius) >= FLT_EPSILON) {
+            shape.arc(right - bottomRightRadius, bottom - bottomRightRadius, z, bottomRightRadius, bottomRightRadius, 0, 90);
+        }
+        
+        shape.lineTo(left + bottomLeftRadius, bottom, z);
+        
+        // bottom left
+        if(fabs(bottomLeftRadius) >= FLT_EPSILON) {
+            shape.arc(left + bottomLeftRadius, bottom - bottomLeftRadius, z, bottomLeftRadius, bottomLeftRadius, 90, 180);
+        }
+            
+        shape.lineTo(left, top + topLeftRadius, z);
+
+        // top left
+        if(fabs(topLeftRadius) >= FLT_EPSILON) {
+            shape.arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
+        }
+                               
+        shape.draw();
+    }
+
 }
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	shape.clear();
+    shape.setCurveResolution(currentStyle.curveResolution);
+    shape.clear();
 	shape.curveTo(x0,y0);
 	shape.curveTo(x1,y1);
 	shape.curveTo(x2,y2);
@@ -814,6 +898,7 @@ void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.curveTo(x0,y0,z0);
 	shape.curveTo(x1,y1,z1);
@@ -825,6 +910,7 @@ void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
@@ -833,6 +919,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0,z0);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
@@ -847,13 +934,11 @@ void ofBeginShape(){
 //----------------------------------------------------------
 void ofVertex(float x, float y){
 	shape.lineTo(x,y);
-
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y, float z){
 	shape.lineTo(x,y,z);
-
 }
 
 //---------------------------------------------------
@@ -875,7 +960,8 @@ void ofVertexes( const vector <ofPoint> & polyPoints ){
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-	shape.curveTo(x,y);
+    shape.setCurveResolution(currentStyle.curveResolution);
+    shape.curveTo(x,y);
 }
 
 //---------------------------------------------------
@@ -885,6 +971,7 @@ void ofCurveVertex(float x, float y, float z){
 
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofPoint> & curvePoints){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	for( int k = 0; k < (int)curvePoints.size(); k++){
 		shape.curveTo(curvePoints[k]);
 	}
@@ -897,20 +984,24 @@ void ofCurveVertexes( const vector <ofPoint> & curvePoints){
 
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
 void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(p1, p2, p3);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
