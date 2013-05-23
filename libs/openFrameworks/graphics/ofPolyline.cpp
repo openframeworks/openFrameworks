@@ -3,11 +3,13 @@
 
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){
+    setRightVector();
 	clear();
 }
 
 //----------------------------------------------------------
 ofPolyline::ofPolyline(const vector<ofPoint>& verts){
+    setRightVector();
 	clear();
 	addVertices(verts);
 }
@@ -761,6 +763,16 @@ void ofPolyline::draw(){
 	ofGetCurrentRenderer()->draw(*this);
 }
 
+//--------------------------------------------------
+void ofPolyline::setRightVector(ofVec3f v) {
+    rightVector = v;
+    flagHasChanged();
+}
+
+//--------------------------------------------------
+ofVec3f ofPolyline::getRightVector() const {
+    return rightVector;
+}
 
 
 //--------------------------------------------------
@@ -933,12 +945,8 @@ void ofPolyline::calcData(int index, ofVec3f &tangent, float &angle, ofVec3f &ro
     rotation = v1.crossed(v2);
     angle = 180 - ofRadToDeg(acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1)));
 
-    if(rotation.lengthSquared() > 0) {
-        normal = tangent.getRotated(90, rotation);
-        if(rotation.z > 0) normal *= -1;
-    } else {
-        normal = normals[i1];
-    }
+    normal = rightVector.getCrossed(tangent);
+    normal.normalize();
 }
 
 
@@ -1018,18 +1026,6 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
             normals[i] = normal;
             
             length += points[i].distance(points[getWrappedIndex(i + 1)]);
-        }
-        
-            // iterate backwards to fill in the gaps?
-        for(int i=points.size()-1; i>=0; --i) {
-            if(rotations[i].lengthSquared() > 0) {
-                rotation = rotations[i];
-            }
-
-            if(normals[i].lengthSquared() < FLT_EPSILON) {
-                normals[i] = tangents[i].getRotated(90, rotation);
-                if(rotation.z > 0) normals[i] *= -1;
-            }
         }
         
         if(isClosed()) lengths.push_back(length);
