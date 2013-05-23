@@ -134,6 +134,10 @@ public:
 
 	void draw();
     
+    // used for calculating the normals
+    void setRightVector(ofVec3f v = ofVec3f(0, 0, -1));
+    ofVec3f getRightVector() const;
+    
     
     // get (interpolated) index at given length along the path
     // includes info on percentage along segment, e.g. ret=5.75 => 75% along the path between 5th and 6th points
@@ -190,6 +194,7 @@ private:
     float wrapAngle(float angleRad);
 
 	vector<ofPoint> points;
+    ofVec3f rightVector;
     
     // cache
     mutable vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)

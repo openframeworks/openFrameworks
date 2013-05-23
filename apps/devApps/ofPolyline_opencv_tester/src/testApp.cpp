@@ -33,9 +33,9 @@ void testApp::update(){
         cur.clear();
         cur.addVertexes(contourFinder.blobs[0].pts);
         cur.close();
-//        cur.simplify(0.5); // <-----------------------------BUG2
+        cur.simplify(0.5);
         poly.clear();
-        poly = cur.getResampledBySpacing(20);  //  <-----------------------------BUG1
+        poly = cur.getResampledBySpacing(20);
     }
 }
 
