@@ -151,5 +151,12 @@ issues, if you have some problem please post in the forum as much info
 as possible.
 
 
+Libs 
+----
+The `export/` folder contains necessary components that need to be exported with the application:
+contains .so (shared objects) that the app needs to run against this allows OF linux apps to be released in a very portable way  
+users of the apps shouldn't need to install anything besides glut (which should be installed in most cases).
+
+
 many thanks!! OFteam
 
