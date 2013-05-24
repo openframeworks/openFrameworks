@@ -1121,11 +1121,11 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].setWidth;
+				 X += cps[cy].setWidth * letterSpacing * spaceSize;
 				 //glTranslated(cps[cy].width, 0, 0);
 		  } else if(cy > -1){
 				drawCharAsShape(c[index], X, Y);
-				X += cps[cy].setWidth;
+				X += cps[cy].setWidth * letterSpacing;
 				//glTranslated(cps[cy].setWidth, 0, 0);
 		  }
 		}
