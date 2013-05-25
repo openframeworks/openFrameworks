@@ -39,41 +39,39 @@ public:
     
     bool            addValue(const string& path, const string& value, bool createEntirePath = false);
     bool            addChild( const string& path );
+    void            addXml( ofXml& xml );
     
     string          getValue(const string& path);
     string          getValue();
     bool            setValue(const string& path, const string& value);
     
     string          getAttribute(const string& path);
-    //bool            addAttribute(const string& path, const string& value);
     bool            setAttribute(const string& path, const string& value);
+    map<string, string> getAttributes();
+    int             getNumChildren();
+
     
     bool            clearAttributes(const string& path);
+    bool            clearAttributes();
     bool            clearContents(const string& path);
     bool            clearContents();
-    bool            clearAttributes();
     
     bool            remove(const string& path); // works for both attributes and tags
     bool            removeAll(const string& path); // works for both attributes and tags
     bool            exists(const string& path); // works for both attributes and tags
     
-    bool            setCurrentElement(const string& path);
     string          getCurrentElementName();
     bool            resetCurrentElement();
     
+    bool            setCurrentElement(const string& path);
     bool            setCurrentElementToParent();
     bool            setCurrentElementToParent(int numLevelsUp);
-    
     bool            setCurrentElementToSibling();
     bool            setCurrentElementToPrevSibling();
     
     void            copyXmlToString(string & str);
     bool            loadFromBuffer( string buffer );
-    int             getNumChildren();
     
-    void            addXml( ofXml& xml );
-    
-    map<string, string> getAttributes();
     string toString();
     
     Element*        getCurrentElement();
@@ -84,9 +82,6 @@ public:
 
        
 protected:
-    
-    //void addList( Element *addTo, Element *addFrom, vector<Element*>& toBeReleased);
-    //void addList( Element *addTo, Element *addFrom);
     
     string DOMErrorMessage(short msg);
     
