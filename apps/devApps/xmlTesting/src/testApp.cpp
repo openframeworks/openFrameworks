@@ -14,7 +14,11 @@ void testApp::setup(){
     ofBuffer buffer = file.readToBuffer();
     XML.loadFromBuffer(buffer.getText());
     
-    
+    XML.setCurrentElement("food[0]");
+    while(XML.setCurrentElementToSibling()) {
+        cout << XML.getCurrentElementName() << endl;
+        cout << XML.getValue() << endl;
+    }
     
     ofXml newXML;
     // check here

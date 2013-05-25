@@ -23,13 +23,6 @@ static vector<string> tokenize(const string & str, const string & delim)
 
 ofXml::~ofXml() {
     
-    cout << "deleting the ofXml " << endl;
-    
-    //if(element) {
-    //    element->release();
-    //}
-    
-    // this is tricky. delete the document?
     if(document) {
         document->release();
         document = 0;
@@ -43,17 +36,11 @@ ofXml::~ofXml() {
 
 ofXml::ofXml( const ofXml& rhs ) {
 
-    //document = (Document*) rhs.document->cloneNode(true);
-    
     document = new Poco::XML::Document();
     Node *n = document->importNode(rhs.getDocument()->documentElement(), true);
     document->appendChild(n);
     
     element = document->documentElement();
-    
-    //
-    //document = rhs.document;
-    //element = rhs.element;
 }
 
 const ofXml& ofXml::operator =( const ofXml& rhs ) {
@@ -80,16 +67,12 @@ Document* ofXml::getDocument() const  {
 
 int ofXml::getNumChildren()
 {
-    //vector<ofXml> vec;
-    //NodeList *list = element->childNodes();
-    
     int numberOfChildren = 0;
     NodeList *list = element->childNodes();
     int i = 0;
     
     while(i < list->length()) {
         if(list->item(i) && list->item(i)->nodeType() == Node::ELEMENT_NODE) {
-            //cout << list->item(i)->nodeName() << endl;
             numberOfChildren++;
         }
         i++;
@@ -111,13 +94,13 @@ string ofXml::toString()
             cout << e.what() << endl;
         }
     } else {
-        //writer.writeNode( stream, element );
         element->normalize();
         writer.writeNode( stream, element );
     }
     
     string tmp = stream.str();
-    // don't know how else to get rid of the hidden <#text></#text> nodes
+    
+    // don't know how else to get rid of the hidden <#text></#text> nodes :/
     ofStringReplace(tmp, "<#text>", "");
     ofStringReplace(tmp, "</#text>", "");
     
@@ -156,12 +139,8 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
         // find the last existing tag
         int lastExistingTag = tokens.size();
         
-        //vector<Element*> toBeReleased;
-        
         for(int i = 0; i < tokens.size(); i++)
         {
-            //Element* ei = getDocument()->createElement(tokens.at(i));
-            //cout << " creating a new node " <<  ei->nodeName() << endl;
             Element* newElement = getDocument()->createElement(tokens.at(i));
             
             cout << " creating " << newElement->nodeName() << endl;
@@ -170,27 +149,21 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
                 lastElement->appendChild(newElement);
             }
             
-            //if( i < tokens.size() - 2 ) {
-            //    toBeReleased.push_back(newElement);
-            //}
-            
             lastElement = newElement;
         }
         
         if(value != "")
         {
-            //ofPtr<Text> textPtr( getDocument()->createTextNode(value) );
+
             Text *text = getDocument()->createTextNode(value);
             try {
-                //el->appendChild( (Node*) textPtr.get() );
+
                 lastElement->appendChild( text );
-                //text->release();
-                
+
             } catch ( DOMException &e ) {
                 stringstream sstream;
                 sstream << " cannot set node value " << DOMErrorMessage(e.code());
                 ofLog(OF_LOG_ERROR, sstream.str());
-                //el->release();
                 return false;
             }
         }
@@ -200,11 +173,6 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
             document->appendChild(element);
         }
         
-        // clean up
-        //for( vector<Element*>::iterator it = toBeReleased.begin(); it != toBeReleased.end(); ++it) {
-            //(*it)->release();
-        //}
-
         return true;
         
     } else {
@@ -228,9 +196,7 @@ bool ofXml::addValue(const string& path, const string& value, bool createEntireP
         
         if(element) {
             element->appendChild(newElement);
-            //newElement->release();
         } else {
-            //element = ofPtr<Element>( newElement, deleter<Element>());
             element = newElement;
         }
         
@@ -261,7 +227,6 @@ bool ofXml::addChild( const string& path )
         for(int i = 0; i < tokens.size(); i++)
         {
             Element *pe = getDocument()->createElement(tokens.at(i));
-            //ofPtr<Element> newElement = ofPtr<Element>( pe, deleter<Element>());
             el->appendChild(pe);
             toBeReleased.push_back(pe);
             el = pe;
@@ -272,11 +237,6 @@ bool ofXml::addChild( const string& path )
         } else {
             element = el;
         }
-        
-        // clean up
-        for( vector<Element*>::iterator it = toBeReleased.begin(); it != toBeReleased.end(); ++it) {
-            //(*it)->release();
-        }
 
         return true;
         
@@ -285,7 +245,6 @@ bool ofXml::addChild( const string& path )
         
         if(element) {
             element->appendChild(pe);
-            //pe->release();
         } else {
             document->appendChild(pe);
             element = document->documentElement();
@@ -356,9 +315,17 @@ bool ofXml::setCurrentElementToParent(int numLevelsUp) {
 bool ofXml::setCurrentElementToSibling()
 {
     Element *node = (Element*) element->nextSibling();
-    if(!node) {
+    
+    // empty space in the XML doc is treated as text nodes. blerg.
+    while(node && node->nodeType() == Node::TEXT_NODE) {
+        node = (Element*) node->nextSibling();
+    }
+    
+    if(!node || node->nodeType() == Node::TEXT_NODE) {
         return false;
     }
+    
+    // we're cool
     element = node;
     return true;
 }
@@ -366,9 +333,16 @@ bool ofXml::setCurrentElementToSibling()
 bool ofXml::setCurrentElementToPrevSibling()
 {
     Element *node = (Element*) element->previousSibling();
-    if(!node) {
+    
+    // empty space in the XML doc is treated as text nodes. blerg.
+    while(node && node->nodeType() == Node::TEXT_NODE) {
+        node = (Element*) node->previousSibling();
+    }
+    
+    if(!node || node->nodeType() == Node::TEXT_NODE) {
         return false;
     }
+
     element = node;
     return true;
 }
@@ -383,7 +357,6 @@ bool ofXml::setValue(const string& path, const string& value)
     }
     
     if(e->firstChild()->nodeType() == Node::TEXT_NODE) {
-        //Text *node = document->getDocument()->createTextNode(ofToString(value));
         Text *node = getDocument()->createTextNode(ofToString(value));
         e->replaceChild( (Node*) node, e->firstChild()); // swap out
         node->release();
@@ -394,45 +367,71 @@ bool ofXml::setValue(const string& path, const string& value)
 string ofXml::getAttribute(const string& path) {
 
     Node *e = element->getNodeByPath(path);
-    
-    return e->getNodeValue(); // this will be the value of the attribute
+    if(e) {
+        return e->getNodeValue(); // this will be the value of the attribute
+    }
+    return "";
 }
 
 bool ofXml::clearAttributes(const string& path) 
 {
     
     Element *e = (Element*) element->getNodeByPath(path);
-    NamedNodeMap *map = e->attributes();
-    
-    for(int i = 0; i < map->length(); i++) {
-        e->removeAttribute(map->item(i)->nodeName());
+    if(e) {
+        NamedNodeMap *map = e->attributes();
+        
+        for(int i = 0; i < map->length(); i++) {
+            e->removeAttribute(map->item(i)->nodeName());
+        }
+        
+        map->release();
+        return true;
     }
-    
-    map->release();
-
+    return false;
 }
 
 bool ofXml::clearAttributes()
 {
-    
+
+    if(element) {
+        NamedNodeMap *map = element->attributes();
+        
+        for(int i = 0; i < map->length(); i++) {
+            element->removeAttribute(map->item(i)->nodeName());
+        }
+        
+        map->release();
+        return true;
+    }
+    return false;
+
 }
 
 bool ofXml::clearContents() {
-    NodeList *list = element->childNodes();
-    for( int i = 0; i < list->length(); i++) {
-        element->removeChild(list->item(i));
+    if(element)
+    {
+        NodeList *list = element->childNodes();
+        for( int i = 0; i < list->length(); i++) {
+            element->removeChild(list->item(i));
+        }
+        list->release();
+        return true;
     }
-    list->release();
+    return false;
 }
 
 bool ofXml::clearContents(const string& path) {
+    
     Element *e = (Element*) element->getNodeByPath(path);
-
-    NodeList *list = e->childNodes();
-    for( int i = 0; i < list->length(); i++) {
-        element->removeChild(list->item(i));
+    if(e) {
+        NodeList *list = e->childNodes();
+        for( int i = 0; i < list->length(); i++) {
+            element->removeChild(list->item(i));
+        }
+        list->release();
+        return true;
     }
-    list->release();
+    return false;
 }
 
 
