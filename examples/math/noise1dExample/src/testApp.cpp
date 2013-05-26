@@ -186,7 +186,7 @@ void testApp::renderRadialSignedNoiseDemo (){
 	// We render out the points stored in the X and Y arrays. 
 	ofMesh wigglyMeshLine; // yes, technically, it's a "mesh"
 	wigglyMeshLine.setMode(OF_PRIMITIVE_LINE_STRIP);
-	float px, py; 
+	float px = 0, py = 0;
 	for (int i=(nSignedNoiseData-1); i>=0; i--){
 		
 		// From the 'i' iterator, use ofMap to compute both 
@@ -228,8 +228,6 @@ void testApp::renderLinearSignedNoiseDemo(){
 	ofEnableAlphaBlending();
 	ofEnableSmoothing();
 	ofNoFill();
-	
-	float noiseAmount = radialNoiseAmountSlider.getValue();
 	
 	// draw a "baseline"
 	ofSetColor(0,0,0, 64); 

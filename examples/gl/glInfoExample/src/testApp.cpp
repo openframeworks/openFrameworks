@@ -51,7 +51,7 @@ print_extension_list(char *ext)
         return;
 
     width = indent;
-    printf(indentString);
+    printf("%s", indentString);
     i = j = 0;
     while (1) {
         if (ext[j] == ' ' || ext[j] == 0) {
@@ -61,7 +61,7 @@ print_extension_list(char *ext)
                 /* start a new line */
                 printf("\n");
                 width = indent;
-                printf(indentString);
+                printf("%s", indentString);
             }
             /* print the extension name between ext[i] and ext[j] */
             while (i < j) {
@@ -164,8 +164,8 @@ void printGLInfo(){
     char *version = NULL;
     char *vendor = NULL;
     char *renderer = NULL;
-    char *extensions = NULL;
-    int   glutVersion;
+//    char *extensions = NULL;
+//    int   glutVersion;
 
     //glutVersion = glutGet(0x01FC);
     version =     (char*)glGetString(GL_VERSION);
@@ -302,13 +302,17 @@ void testApp::keyPressed(int key){
 
         #ifdef TARGET_WIN32
         string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
+        #endif
+
+        #ifdef TARGET_LINUX
+        string command = "xdg-open " + ofToString(ofToDataPath("openglReport.txt").c_str());
         #else
         string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
         #endif
 
-
-        system(command.c_str());
-
+        if (0 != system(command.c_str())){
+			ofLogWarning() << "Command " << command.c_str() << " did not return 0. Something may have gone wrong.";
+		}
     }
 }
 

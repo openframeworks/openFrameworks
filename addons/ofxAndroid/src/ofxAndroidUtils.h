@@ -48,6 +48,8 @@ void ofxAndroidMonitorNetworkState();
 
 void ofxAndroidLaunchBrowser(string url);
 
+void ofxAndroidNotifyLoadPercent(float percent);
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();
