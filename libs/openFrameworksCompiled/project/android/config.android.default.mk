@@ -35,20 +35,20 @@ PLATFORM_STATIC_LIBRARY_EXTENSION:=a
 include $(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
 ifeq ($(shell uname),Darwin)
-	HOST_PLATFORM = darwin-x86
+    HOST_PLATFORM = darwin-x86
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
-	HOST_PLATFORM = windows
+    HOST_PLATFORM = windows
 else
-	HOST_PLATFORM = linux-x86
+    HOST_PLATFORM = linux-x86
 endif
 
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon
+    ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
-	ABIS_TO_COMPILE_DEBUG = armv7
+    ABIS_TO_COMPILE_DEBUG = armv7
 endif
 
 
@@ -71,15 +71,15 @@ PLATFORM_DEFINES =
 PLATFORM_DEFINES = ANDROID
 
 ifndef $(NDK_PLATFORM)
-	NDK_PLATFORM = android-14
+    NDK_PLATFORM = android-14
 endif
 
 ifndef $(SDK_TARGET)
-	SDK_TARGET = android-17
+    SDK_TARGET = android-17
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.6
+    GCC_VERSION = 4.6
 endif
 
 PROJECT_PATH=$(PWD)
@@ -93,21 +93,21 @@ RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
-	ABI_PATH = armeabi-v7a
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    ABI_PATH = armeabi-v7a
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
 
 ifeq ($(ABI),armv5)
-	ABI_PATH = armeabi
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    ABI_PATH = armeabi
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
 
 ifeq ($(ABI),neon)
-	ABI_PATH = armeabi-v7a
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
+    ABI_PATH = armeabi-v7a
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
 endif
 
 PLATFORM_CORELIB_RELEASE_TARGET = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/$(ABI)/libopenFrameworks.a
@@ -153,11 +153,11 @@ PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
 
 
 ifeq ($(ABI),armv7)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
+    PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 endif
 
 ifeq ($(ABI),neon)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+    PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 endif
 
 ################################################################################
@@ -171,7 +171,7 @@ endif
 PLATFORM_LDFLAGS =
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
 ifeq ($(HOST_PLATFORM),linux-x86)
-	LDFLAGS += -fuse-ld=gold
+    LDFLAGS += -fuse-ld=gold
 endif
 
 PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
@@ -497,7 +497,7 @@ $(RESFILE): $(DATA_FILES)
 		cd ../..; \
 	fi
 
-install:	
+install:
 	cd $(PATH_OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
 	echo installing on $(HOST_PLATFORM); \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
