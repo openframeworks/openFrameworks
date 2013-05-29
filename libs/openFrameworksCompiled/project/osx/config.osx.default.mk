@@ -71,13 +71,22 @@ PLATFORM_CFLAGS += -fexceptions
 
 MAC_OS_XCODE_ROOT:=$(shell xcode-select -print-path)
 
+
+
+$(info MAC_OS_XCODE_ROOT=$(MAC_OS_XCODE_ROOT))
+
+# search to see if we are using a new version of 
 ifeq ($(findstring .app, $(MAC_OS_XCODE_ROOT)),.app)
     MAC_OS_SDK_PATH:=\
-    	$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
+        $(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 else
-	MAC_OS_SDK_PATH:=\
-		$(MAC_OS_XCODE_ROOT)/SDKs
+    MAC_OS_SDK_PATH:=\
+        $(MAC_OS_XCODE_ROOT)/SDKs
 endif
+
+
+$(info MAC_OS_SDK_PATH=$(MAC_OS_SDK_PATH))
+
 
 #ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer)
 #	MAC_OS_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
@@ -86,22 +95,17 @@ endif
 #endif
 
 ifndef MAC_OS_SDK
-    ifeq ($(wildcard \
-    		$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),\
-    		$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk\
-    	 )
-		MAC_OS_SDK=10.8
-	else ifeq ($(wildcard \
-				$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),\
-				$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk\
-				)
-		MAC_OS_SDK=10.7
-	else ifeq ($(wildcard \
-				$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),\
-				$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk\
-				)
-		MAC_OS_SDK=10.6
-	endif
+    ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),\
+            $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+        MAC_OS_SDK=10.8
+    else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),\
+            $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
+        MAC_OS_SDK=10.7
+    else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
+        MAC_OS_SDK=10.6
+    else
+        $(error MAC_OS_SDK cannot be determined.  Please check your config.osx.default.mk file)
+    endif
 endif
 
 MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
@@ -109,13 +113,13 @@ MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
 ifeq ($(shell \
-		gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; \
-		echo $$?\
-		),\
-		0\
-	)
-	PLATFORM_CFLAGS += -march=native
-	PLATFORM_CFLAGS += -mtune=native
+        gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; \
+        echo $$?\
+        ),\
+        0\
+    )
+    PLATFORM_CFLAGS += -march=native
+    PLATFORM_CFLAGS += -mtune=native
 endif
 
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)

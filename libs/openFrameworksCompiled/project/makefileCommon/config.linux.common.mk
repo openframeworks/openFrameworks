@@ -17,11 +17,11 @@ PLATFORM_STATIC_LIBRARY_EXTENSION:=a
 ################################################################################
 
 ifeq ($(PLATFORM_ARCH),armv6l)
-	LINUX_ARM=1
+    LINUX_ARM=1
 endif
 
 ifeq ($(PLATFORM_ARCH),armv7l)
-	LINUX_ARM=1
+    LINUX_ARM=1
 endif
 
 #check if gtk exists and add it
@@ -154,9 +154,9 @@ PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimePlayer.cp
 PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp
 
 ifeq ($(LINUX_ARM),1)
-	PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppGlutWindow.cpp
+    PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppGlutWindow.cpp
 else
-	PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
+    PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
 
 # third party
@@ -208,7 +208,7 @@ PLATFORM_HEADERS_SEARCH_PATHS =
 PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBRARIES += glut
+    PLATFORM_LIBRARIES += glut
 endif
 PLATFORM_LIBRARIES += freeimage
 
@@ -240,9 +240,9 @@ PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gl
-	PLATFORM_PKG_CONFIG_LIBRARIES += glu
-	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+    PLATFORM_PKG_CONFIG_LIBRARIES += gl
+    PLATFORM_PKG_CONFIG_LIBRARIES += glu
+    PLATFORM_PKG_CONFIG_LIBRARIES += glew
 endif
 
 # conditionally add GTK

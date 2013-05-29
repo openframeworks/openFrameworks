@@ -120,15 +120,15 @@ ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
     TARGET :=
 
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
-    	TARGET += $(PLATFORM_CORELIB_DEBUG_TARGET)
+        TARGET += $(PLATFORM_CORELIB_DEBUG_TARGET)
     else
-    	TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
+        TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
     endif
     
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
-    	TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
+        TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
-    	TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
+        TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
     endif
     
     TARGET_NAME := 
@@ -139,9 +139,9 @@ else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
     OPTIMIZATION_CFLAGS := $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
     TARGET_NAME := Debug
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
-    	TARGET := $(PLATFORM_CORELIB_DEBUG_TARGET)
+        TARGET := $(PLATFORM_CORELIB_DEBUG_TARGET)
     else
-    	TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
+        TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
     endif
 
 # check to see if any part of our target includes the String "Release"
@@ -150,9 +150,9 @@ else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
     OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
     TARGET_NAME = Release
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
-    	TARGET := $(PLATFORM_CORELIB_RELEASE_TARGET)
+        TARGET := $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
-    	TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
+        TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
     endif
     
 else ifeq ($(MAKECMDGOALS),after)
@@ -163,16 +163,16 @@ else ## why doesn't make allow for easy logical operators?
     OPTIMIZATION_CFLAGS := $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
     TARGET_NAME := Release
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
-    	TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
+        TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
-    	TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
+        TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
     endif
  endif
 
 # we only get a CLEAN_TARGET if a TARGET_NAME has been defined
 # Like TARGET, this must be defined above or in a platform file.
 ifdef TARGET_NAME
-	CLEANTARGET := $(addprefix Clean,$(TARGET_NAME))
+    CLEANTARGET := $(addprefix Clean,$(TARGET_NAME))
 endif
 
 ABIS_TO_COMPILE :=
@@ -180,22 +180,22 @@ ABIS_TO_COMPILE :=
 # look for the Release tag in the TARGET_NAME, and if we find it, add it to our
 # ABIs to compile list.
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	ifdef ABIS_TO_COMPILE_RELEASE
-		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_RELEASE)
-	endif
+    ifdef ABIS_TO_COMPILE_RELEASE
+        ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_RELEASE)
+    endif
 endif
 
 # look for the Debug tag in the TARGET_NAME, and if we find it, add it to our
 # ABIs to compile list.
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifdef ABIS_TO_COMPILE_DEBUG
-		ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-			ifdef ABIS_TO_COMPILE_RELEASE
-				ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
-			endif
-		endif
-		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
-	endif
+    ifdef ABIS_TO_COMPILE_DEBUG
+        ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+            ifdef ABIS_TO_COMPILE_RELEASE
+                ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
+            endif
+        endif
+        ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
+    endif
 endif
 
 ################################################################################
@@ -217,9 +217,9 @@ endif
 ################################################################################
 
 ifdef ABI
-	PATH_CORE_OBJ_OUPUT = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(ABI)/$(TARGET_NAME)/
+    PATH_CORE_OBJ_OUPUT = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(ABI)/$(TARGET_NAME)/
 else
-	PATH_CORE_OBJ_OUPUT = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(TARGET_NAME)/
+    PATH_CORE_OBJ_OUPUT = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(TARGET_NAME)/
 endif
 
 ################################################################################

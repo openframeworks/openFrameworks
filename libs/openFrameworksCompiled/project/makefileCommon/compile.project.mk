@@ -54,75 +54,75 @@ endif
 
 # Name TARGET - Are we using a Debug target?
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-	TARGET_NAME:=Debug
-	
-	ifndef RUN_TARGET
-		RUN_TARGET:=RunDebug
-	endif
-	
-	ifndef PLATFORM_PROJECT_DEBUG_TARGET
-		TARGET:=bin/$(APPNAME)_debug
-	else
-		TARGET:=$(PLATFORM_PROJECT_DEBUG_TARGET)
-	endif
-	
-	ifndef PLATFORM_PROJECT_DEBUG_BIN_NAME
-		BIN_NAME:=$(APPNAME)_debug
-	else
-		BIN_NAME:=$(PLATFORM_PROJECT_DEBUG_BIN_NAME)
-	endif
+    TARGET_NAME:=Debug
+
+    ifndef RUN_TARGET
+        RUN_TARGET:=RunDebug
+    endif
+
+    ifndef PLATFORM_PROJECT_DEBUG_TARGET
+        TARGET:=bin/$(APPNAME)_debug
+    else
+        TARGET:=$(PLATFORM_PROJECT_DEBUG_TARGET)
+    endif
+
+    ifndef PLATFORM_PROJECT_DEBUG_BIN_NAME
+        BIN_NAME:=$(APPNAME)_debug
+    else
+        BIN_NAME:=$(PLATFORM_PROJECT_DEBUG_BIN_NAME)
+    endif
 # Else, are we using a Release target?
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-	TARGET_NAME:=Release
-	
-	ifndef RUN_TARGET
-		RUN_TARGET:=RunRelease
-	endif
-	
-	ifndef PLATFORM_PROJECT_RELEASE_TARGET
-		TARGET:=bin/$(APPNAME)
-	else
-		TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
-	endif
-	
-	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
-		BIN_NAME:=$(APPNAME)
-	else
-		BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
-	endif
+    TARGET_NAME:=Release
+
+    ifndef RUN_TARGET
+        RUN_TARGET:=RunRelease
+    endif
+
+    ifndef PLATFORM_PROJECT_RELEASE_TARGET
+        TARGET:=bin/$(APPNAME)
+    else
+        TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
+    endif
+
+    ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+        BIN_NAME:=$(APPNAME)
+    else
+        BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+    endif
 # Else are we using a run target?
 else ifeq ($(MAKECMDGOALS),run)
-	TARGET_NAME:=Release
-	ifndef PLATFORM_PROJECT_RELEASE_TARGET
-		TARGET:=bin/$(APPNAME)
-	else
-		TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
-	endif
-	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
-		BIN_NAME:=$(APPNAME)
-	else
-		BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
-	endif	
+    TARGET_NAME:=Release
+    ifndef PLATFORM_PROJECT_RELEASE_TARGET
+        TARGET:=bin/$(APPNAME)
+    else
+        TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
+    endif
+    ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+        BIN_NAME:=$(APPNAME)
+    else
+        BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+    endif
 
 # Else we default to Release and set defaults.
 else ifeq ($(MAKECMDGOALS),)
-	TARGET_NAME:=Release
-	
-	ifndef RUN_TARGET
-		RUN_TARGET:=run
-	endif
-	
-	ifndef PLATFORM_PROJECT_RELEASE_TARGET
-		TARGET:=bin/$(APPNAME)
-	else
-		TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
-	endif
-	
-	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
-		BIN_NAME:=$(APPNAME)
-	else
-		BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
-	endif
+    TARGET_NAME:=Release
+
+    ifndef RUN_TARGET
+        RUN_TARGET:=run
+    endif
+
+    ifndef PLATFORM_PROJECT_RELEASE_TARGET
+        TARGET:=bin/$(APPNAME)
+    else
+        TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
+    endif
+
+    ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
+        BIN_NAME:=$(APPNAME)
+    else
+        BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+    endif
 endif
 
 
@@ -137,24 +137,24 @@ ABIS_TO_COMPILE =
 
 # If we are using a Release target ...
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-	# ... and we have defined ABIS_TO_COMPILE_RELEASE in our platform-config 
-	ifdef ABIS_TO_COMPILE_RELEASE
-	    # add it to our list.
-		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_RELEASE)
-	endif
+    # ... and we have defined ABIS_TO_COMPILE_RELEASE in our platform-config 
+    ifdef ABIS_TO_COMPILE_RELEASE
+        # add it to our list.
+        ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_RELEASE)
+    endif
 endif
 
 # If we are using a Debug target ...
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	# ... and we have defined ABIS_TO_COMPILE_DEBUG in our platform-config 
-	ifdef ABIS_TO_COMPILE_DEBUG
-		ifeq ($(findstring Release,$(TARGET_NAME)),Release)
-			ifdef ABIS_TO_COMPILE_RELEASE
-				ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
-			endif
-		endif
-		ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
-	endif
+    # ... and we have defined ABIS_TO_COMPILE_DEBUG in our platform-config 
+    ifdef ABIS_TO_COMPILE_DEBUG
+        ifeq ($(findstring Release,$(TARGET_NAME)),Release)
+            ifdef ABIS_TO_COMPILE_RELEASE
+                ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
+            endif
+        endif
+        ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
+    endif
 endif
 
 # If we are doing a clean release ...
@@ -166,7 +166,7 @@ endif
 # we only get a CLEAN_TARGET if a TARGET_NAME has been defined
 # Like TARGET, this must be defined above or in a platform file.
 ifdef TARGET_NAME
-	CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
+    CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 endif
 
 ################################################################################
@@ -177,8 +177,8 @@ endif
 ################################################################################
 
 ifeq ($(findstring ABI,$(MAKECMDGOALS)),ABI)
-	include $(PATH_OF_SHARED_MAKEFILES)/config.project.mk
-	-include $(OF_PROJECT_DEPENDENCY_FILES)
+    include $(PATH_OF_SHARED_MAKEFILES)/config.project.mk
+    -include $(OF_PROJECT_DEPENDENCY_FILES)
 endif
 
 ################################################################################
@@ -206,7 +206,7 @@ endif
         clean \
         help \
         run
-	
+
 Release: 
 	@echo Compiling OF library for Release
 	@$(MAKE) --no-print-directory -C $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
