@@ -30,11 +30,8 @@ ifndef PATH_PROJECT_ROOT
     PATH_PROJECT_ROOT:=.
 endif
 
-# define the OF_SHARED_MAKEFILES location
-#PATH_OF_SHARED_MAKEFILES:=$(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
-
 ################################################################################
-# ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS
+# ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS (immediately assigned)
 #   The ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS variable is a list of search
 #   paths for the third party library binaries.  In many cases, such as on
 #   linux, there are very few static libraries included.  In other cases, such
@@ -45,20 +42,24 @@ endif
 # 1. Generate a list of all third party library paths available for the 
 #    for the current ABI_LIB_SUBPATH:
 #
-#		find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH) ...
+#       find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH) ...
 #
 # 2. Remove any paths that used for the core openFrameworks compilation
-#		
-# 		... -type d -not -path "*/openFrameworksCompiled/*"
+#
+#       ... -type d -not -path "*/openFrameworksCompiled/*"
 #
 # 3. Remove any .framework paths.  These will be added later and should not 
 #    be searched and included in the same way as static libraries:
 #
-#		... -type d -not -path "*.framework*" \
+#       ... -type d -not -path "*.framework*" \
 #
-# 4. Remove any hidden directories:
+# 4. Send any error messages to /dev/null
 #
-#		... | grep -v "/\.[^\.]"
+#       ... 2> /dev/null \
+#
+# 5. Remove any hidden directories:
+#
+#       ... | grep -v "/\.[^\.]"
 #
 ################################################################################
 
@@ -71,11 +72,12 @@ ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS:=\
     )
 
 ################################################################################
-# CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS
+# CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS (immediately assigned)
 #   The CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS variable is a filtered list of 
-#   library search paths created by removing all paths that are in the 
-#   CORE_EXCLUSIONS list.  CORE_EXCLUSIONS is primarily defined in the 
-#   config.shared.mk and the platform-specific configuration files.
+#   third party library (Poco, Cairo, etc) search paths created by removing all 
+#   paths that are in the CORE_EXCLUSIONS list.  CORE_EXCLUSIONS is primarily 
+#   defined in the config.shared.mk and the platform-specific configuration 
+#   files.
 ################################################################################
 
 CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS:=\
