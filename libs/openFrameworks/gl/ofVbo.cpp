@@ -778,16 +778,18 @@ void ofVbo::draw(int drawMode, int first, int total) {
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) {
 	if(bAllocated){
-		bind();
+		bool hadVAOChnaged = vaoChanged;
+		bool wasBinded = bBound;
+		if(!wasBinded) bind();
 		if(bUsingIndices){
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+			if(supportVAOs && hadVAOChnaged) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 #ifdef TARGET_OPENGLES
 			glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
 #else
 			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
 #endif
 		}
-		unbind();
+		if(!wasBinded) unbind();
 	}
 }
 
