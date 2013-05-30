@@ -287,7 +287,8 @@ OF_CORE_OBJ_FILES = $(addprefix $(PATH_CORE_OBJ_OUPUT),\
 ################################################################################
 # DEBUG ########################################################################
 ################################################################################
-ifdef MAKEFILE_DEBUG
+# ifdef MAKEFILE_DEBUG
+ifdef XXX
     $(info ========================= compile.core.make flags ==================)
     $(info PATH_CORE_OBJ_OUPUT=$(PATH_CORE_OBJ_OUPUT))
     
