@@ -87,6 +87,39 @@ CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS:=\
         $(ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS)\
     )
 
+################################################################################
+# ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES (immediately assigned)
+#   The ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES variable is a list of all
+#   party static library binaries.  In many cases, such as on linux, there are 
+#   very few static libraries included.  In other cases, such as on OSX, we 
+#   include many static libs that must be linked when building an executable.
+#
+# Steps:
+# 1. Generate a list of all third party static libraries by searching for files 
+#    ending with the PLATFORM_STATIC_LIBRARY_EXTENSION within the current
+#    ABI_LIB_SUBPATH:
+#
+#        find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH)\
+#                       /*.$(PLATFORM_STATIC_LIBRARY_EXTENSION) \ ...
+#
+# 2. Remove any paths that used for the core openFrameworks compilation
+#
+#       ... -type d -not -path "*/openFrameworksCompiled/*"
+#
+# 3. Remove any .framework paths.  These will be added later and should not 
+#    be searched and included in the same way as static libraries:
+#
+#       ... -type d -not -path "*.framework*" \
+#
+# 4. Send any error messages to /dev/null
+#
+#       ... 2> /dev/null \
+#
+# 5. Remove any hidden directories:
+#
+#       ... | grep -v "/\.[^\.]"
+#
+################################################################################
 
 ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES:=\
     $(shell \
@@ -97,14 +130,52 @@ ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES:=\
         | grep -v "/\.[^\.]"\
     )
 
+################################################################################
+# CORE_THIRD_PARTY_STATIC_LIBRARIES (immediately assigned)
+#   The CORE_THIRD_PARTY_STATIC_LIBRARIES variable created by filtering out all
+#   items that have been included in the CORE_EXCLUSIONS variable.
+################################################################################
+
 CORE_THIRD_PARTY_STATIC_LIBRARIES:=\
     $(filter-out \
         $(CORE_EXCLUSIONS),\
         $(ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES)\
     )
 
-# will conditionally look for dynamic libs that might need to be included
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
+################################################################################
+# ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES (immediately assigned)
+#   The ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES variable is a list of all
+#   party shared library binaries.  In many cases, such as on linux, there are 
+#   very few static libraries included.  In other cases, such as on OSX, we 
+#   include many static libs that must be linked when building an executable.
+#
+# Steps:
+# 1. Generate a list of all third party static libraries by searching for files 
+#    ending with the PLATFORM_SHARED_LIBRARY_EXTENSION within the current
+#    ABI_LIB_SUBPATH:
+#
+#        find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH)\
+#                       /*.$(PLATFORM_SHARED_LIBRARY_EXTENSION) \ ...
+#
+# 2. Remove any paths that used for the core openFrameworks compilation
+#
+#       ... -type d -not -path "*/openFrameworksCompiled/*"
+#
+# 3. Remove any .framework paths.  These will be added later and should not 
+#    be searched and included in the same way as static libraries:
+#
+#       ... -type d -not -path "*.framework*" \
+#
+# 4. Send any error messages to /dev/null
+#
+#       ... 2> /dev/null \
+#
+# 5. Remove any hidden directories:
+#
+#       ... | grep -v "/\.[^\.]"
+#
+################################################################################
+
 ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES:=\
     $(shell \
         find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH)/*.$(PLATFORM_SHARED_LIBRARY_EXTENSION) \
@@ -114,208 +185,42 @@ ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES:=\
         | grep -v "/\.[^\.]"\
     )
 
+################################################################################
+# CORE_THIRD_PARTY_SHARED_LIBRARIES (immediately assigned)
+#   The CORE_THIRD_PARTY_SHARED_LIBRARIES variable created by filtering out all
+#   items that have been included in the CORE_EXCLUSIONS variable.
+################################################################################
+
 CORE_THIRD_PARTY_SHARED_LIBRARIES:=\
     $(filter-out \
         $(CORE_EXCLUSIONS),\
         $(ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES)\
     )
 
-###############
-############### LEFT OFF HERE 14 MAY 2013
-###############
-###############
-###############
-###############
-###############
-
-
-
-
-
-#OF_CORE_THIRD_PARTY_SHARED_LIBS
-    $(info ---CORE_THIRD_PARTY_SHARED_LIBRARIES---)
-    $(foreach v, $(CORE_THIRD_PARTY_SHARED_LIBRARIES),$(info $(v)))
-
-## TODO
-########################
 ################################################################################
-# CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS (immediately assigned)
-#   The CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS are generated by prepending -F to 
-#   each of the PLATFORM_FRAMEWORK_SEARCH_PATHS defined in the platform-
+# CORE_FRAMEWORK_SEARCH_PATHS (immediately assigned)
+#   PLATFORM_FRAMEWORK_SEARCH_PATHS are defined in the platform-
 #   specific configuration file.  Usually this is only used for OSX/iOS
 #   based builds. 
 ################################################################################
-CORE_FRAMEWORKS:=$(PLATFORM_FRAMEWORKS)
-	###################
+
+CORE_FRAMEWORK_SEARCH_PATHS:=$(PLATFORM_FRAMEWORKS_SEARCH_PATHS)
+
+################################################################################
+# ADDONS #######################################################################
+################################################################################
+
+include $(PATH_OF_SHARED_MAKEFILES)/config.addons.mk
 
 
 ################################################################################
-# OF PLATFORM LDFLAGS
+# FINAL COLLECTION OF VARIABLES ################################################
 ################################################################################
 
-OF_CORE_LIBRARY_LDFLAGS :=\
-    $(addprefix \
-        -L,\
-        $(CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS)\
-    )
 
-OF_CORE_LIBRARY_LDFLAGS+= \
-    $(addprefix \
-        -L,\
-        $(PLATFORM_LIBRARY_SEARCH_PATHS)\
-    )
 
-################################################################################
-# DEBUG INFO
-################################################################################
-ifdef MAKEFILE_DEBUG
-    $(info =============================configure.core.flags.make==============)   
-    $(info ---OF_CORE_LIBS_LDFLAGS---)
-    $(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
-    
-    $(info ---OF_CORE_LIBS---)
-    $(foreach v, $(OF_CORE_LIBS),$(info $(v)))
-endif
 
-################################# ADDONS ######################################
 
-ifdef MAKEFILE_DEBUG
-    $(info ===================ADDONS================)
-endif
-
-# check to make sure PATH_OF_ROOT is defined
-ifndef PATH_OF_ROOT
-    $(error PATH_OF_ROOT is not defined)
-endif
-
-ifndef PATH_OF_ADDONS
-    $(error PATH_OF_ADDONS is not defined)
-endif
-
-# check to make sure ABI_LIB_SUBPATH is defined
-ifndef ABI_LIB_SUBPATH
-    $(error ABI_LIB_SUBPATH is not defined)
-endif
-
-################################################################################
-# for reference, please see the following:
-# https://github.com/benben/ofxAddonTemplate
-
-# we will process addons if there is an 
-# addons.make file OR PLATFORM_REQUIRED_ADDONS is defined
-# we do it this way because gnu make can't do logical ORs 
-
-ifdef PLATFORM_REQUIRED_ADDONS
-    B_PROCESS_ADDONS = yes
-endif
-ifeq ($(findstring addons.make,$(wildcard $(PATH_PROJECT_ROOT)/*.make)),addons.make)
-    B_PROCESS_ADDONS = yes
-endif
-
-# you can't do LOGICAL ORs in make.  So we do this ...
-ifdef B_PROCESS_ADDONS
-    ############################################################################
-    # VALIDATE REQUESTED ADDONS
-    ############################################################################
-
-    # create a list of every addon installed in the addons directory
-    ALL_INSTALLED_ADDONS := \
-        $(subst \
-            $(PATH_OF_ADDONS)/\
-            ,\
-            ,\
-            $(wildcard \
-                $(PATH_OF_ADDONS)/*\
-                )\
-        )
-
-    # get a list of all addons listed in addons.make file
-    # sed 's/[ ]*#.*//g' strips all comments beginning with #
-    # (to escape # in make, you must use \#)
-    # sed '/^$/d' removes all empty lines
-    # (to escape $ in make, you must use $$)
-    REQUESTED_PROJECT_ADDONS:=\
-        $(shell \
-            cat $(PATH_PROJECT_ROOT)/addons.make 2> /dev/null \
-            | sed 's/[ ]*\#.*//g' | sed '/^$$/d' \
-        )
-
-    # deal with platform specfic addons remove any platform specific addons 
-    # that were already added to the addons.make file
-    REQUESTED_PROJECT_ADDONS:=\
-        $(filter-out \
-            $(PLATFORM_REQUIRED_ADDONS),\
-            $(REQUESTED_PROJECT_ADDONS)\
-        )
-
-    # define a function to remove duplicates without using sort, because sort 
-    # will place the list in lexicographic order, and we want to respect the 
-    # user's addons.make order.  
-    remove-dupes-func = \
-        $(if $1,$(strip $(word 1,$1) \
-            $(call $0,\
-                $(filter-out \
-                    $(word 1,$1),$1)\
-                )\
-            )\
-        )
-
-    # remove all duplicates that might be in the addons.make file
-    REQUESTED_PROJECT_ADDONS:=\
-        $(call 
-            remove-dupes-func,\
-            $(REQUESTED_PROJECT_ADDONS)\
-        )
-
-    # add platform required addons from the platform configuration file 
-    # (if needed) add the platform required addons first, so that they are 
-    # always linked first
-    REQUESTED_PROJECT_ADDONS:=\
-        $(PLATFORM_REQUIRED_ADDONS) $(REQUESTED_PROJECT_ADDONS)
-
-    # create a list requested addons that are actually installed on the system
-    VALID_PROJECT_ADDONS:=\
-        $(filter \
-            $(REQUESTED_PROJECT_ADDONS),\
-            $(ALL_INSTALLED_ADDONS)\
-        )
-
-    # create a list of the invalid addons
-    INVALID_PROJECT_ADDONS:=\
-        $(filter-out \
-            $(VALID_PROJECT_ADDONS),\
-            $(REQUESTED_PROJECT_ADDONS)\
-        )
-
-    # if any invalid addons are found, throw a warning, but don't cause an error
-    ifneq ($(INVALID_PROJECT_ADDONS),)
-        $(warning The following unknown addons will be ignored:)
-        $(foreach v, $(INVALID_PROJECT_ADDONS),$(warning $(v)))
-        # TODO: download and launch requested addons from ofxaddons?
-    endif
-
-    # create a list of addons, excluding invalid and platform-specific addons
-    PROJECT_ADDONS:=\
-        $(filter-out \
-            $(INVALID_PROJECT_ADDONS),\
-            $(REQUESTED_PROJECT_ADDONS)\
-        )
-
-    ifdef MAKEFILE_DEBUG
-        $(info ---PROJECT_ADDONS---)
-        $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
-        $(info --------------------)
-    endif
-
-    ############################################################################
-    # PROCESS PROJECT ADDONS IF AVAILABLE
-    ############################################################################
-
-    # if the addons list is NOT empty ...
-    ifneq ($(PROJECT_ADDONS),)
-		include $(PATH_OF_SHARED_MAKEFILES)/config.addons.mk
-    endif
-endif
 
 # generate the list of core libraries
 # 2. Add all of the third party static libs defined by the platform config files.
@@ -441,6 +346,23 @@ OF_PROJECT_INCLUDES_CFLAGS := \
         -I,\
         $(OF_PROJECT_INCLUDES)\
     )
+
+################################################################################
+# OF PLATFORM LDFLAGS
+################################################################################
+
+OF_CORE_LIBRARY_LDFLAGS :=\
+    $(addprefix \
+        -L,\
+        $(CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS)\
+    )
+
+OF_CORE_LIBRARY_LDFLAGS+= \
+    $(addprefix \
+        -L,\
+        $(PLATFORM_LIBRARY_SEARCH_PATHS)\
+    )
+
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
