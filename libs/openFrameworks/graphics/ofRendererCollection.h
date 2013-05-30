@@ -97,7 +97,7 @@ public:
 			 renderers[i]->viewport(viewport);
 		 }
 	}
-	 void viewport(float x = 0, float y = 0, float width = 0, float height = 0){
+	 void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped()){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->viewport(x,y,width,height);
 		 }
