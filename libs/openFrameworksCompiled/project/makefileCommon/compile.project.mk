@@ -125,7 +125,6 @@ else ifeq ($(MAKECMDGOALS),)
     endif
 endif
 
-
 ################################################################################
 # ABIS_TO_COMPILE
 #   Just as in the core, we sometimes need to simultaneously compile multiple
@@ -194,20 +193,20 @@ endif
 ################################################################################
 
 .PHONY: Release \
-        Debug \
-        ReleaseABI \
-        DebugABI \
-        CleanDebug \
-        CleanRelease \
-        CleanDebugABI \
-        CleanReleaseABI \
-        all \
-        after \
-        clean \
-        help \
-        run
+		Debug \
+		ReleaseABI \
+		DebugABI \
+		CleanDebug \
+		CleanRelease \
+		CleanDebugABI \
+		CleanReleaseABI \
+		all \
+		after \
+		clean \
+		help \
+		run
 
-Release: 
+Release:
 	@echo Compiling OF library for Release
 	@$(MAKE) --no-print-directory -C $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
 	@echo
@@ -222,8 +221,6 @@ ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
 endif
 	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
-
-
 
 Debug: 
 	@echo Compiling OF library for Debug
