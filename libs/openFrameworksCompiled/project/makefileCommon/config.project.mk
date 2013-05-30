@@ -68,6 +68,7 @@ ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS:=\
         find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH) \
         -type d -not -path "*/openFrameworksCompiled/*" \
         -type d -not -path "*.framework*" \
+        2> /dev/null \
         | grep -v "/\.[^\.]" \
     )
 
