@@ -326,7 +326,7 @@ endif
         clean \
         help
 
-Release: 
+Release:
 ifndef ABIS_TO_COMPILE_RELEASE
     # if we just have one ABI to compile, then we call the RealeaseABI target
 	@$(MAKE) --no-print-directory ReleaseABI
@@ -338,7 +338,7 @@ endif
     # call the after target (see below for more)
 	@$(MAKE) --no-print-directory after 
 	
-Debug: 
+Debug:
 ifndef ABIS_TO_COMPILE_DEBUG
     # if we just have one ABI to compile, then we call the DebugABI target
 	@$(MAKE) --no-print-directory DebugABI
@@ -349,7 +349,7 @@ else
 endif
     # call the after target (see below for more)
 	@$(MAKE) --no-print-directory after 
-	
+
 # The ReleaseABI target (above) will pass the library name 
 # (i.e. ... libopenFrameworks.a) down the the @(TARGET) target
 ReleaseABI: $(TARGET)
