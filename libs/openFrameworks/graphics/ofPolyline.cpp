@@ -140,8 +140,15 @@ void ofPolyline::flagHasChanged() {
 
 //----------------------------------------------------------
 vector<ofPoint> & ofPolyline::getVertices(){
+    flagHasChanged();
 	return points;
 }
+
+//----------------------------------------------------------
+const vector<ofPoint> & ofPolyline::getVertices() const {
+	return points;
+}
+
 
 //----------------------------------------------------------
 void ofPolyline::setCircleResolution(int res){
@@ -716,6 +723,7 @@ static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
 
 //--------------------------------------------------
 void ofPolyline::simplify(float tol){
+    if(points.size() < 2) return;
     
 	int n = size();
     

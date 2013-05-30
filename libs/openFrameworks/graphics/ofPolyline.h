@@ -127,6 +127,7 @@ public:
     void flagHasChanged();
 
 	vector<ofPoint> & getVertices();
+	const vector<ofPoint> & getVertices() const;
 
 	float getPerimeter() const;
 	float getArea() const;
