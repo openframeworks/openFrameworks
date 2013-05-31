@@ -1,6 +1,6 @@
-########################################################################
+################################################################################
 # PROCESS VALID ADDONS IF AVAILABLE
-########################################################################
+################################################################################
 
 ################################################################################
 # CONSTANTS
@@ -51,7 +51,7 @@ define FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER
     $(if $1,                                                                   \
         $(strip                                                                \
             $(word 1,$1)                                                       \
-            $(call FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER,$(filter-out $(word 1,$1),$1))                           \
+            $(call FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER,$(filter-out $(word 1,$1),$1))\
         ),                                                                     \
         $(call FUNC_DO_NOTHING)                                                \
     )                                                                          \
@@ -65,11 +65,11 @@ endef
 #
 #   Example Usage:
 #   
-#       THE_SOURCES_FOUND :=                             \
-#                      $(call                            \
-#                           FUNC_RECURSIVE_FIND_SOURCES, \
-#                           $(DIRECTORY_TO_SEARCH)       \
-#                       )    
+#       THE_SOURCES_FOUND :=                                                   \
+#                      $(call                                                  \
+#                           FUNC_RECURSIVE_FIND_SOURCES,                       \
+#                           $(DIRECTORY_TO_SEARCH)                             \
+#                       )                                                      \
 #   Steps:
 #
 #   1.  Search the passed directory ($1) for the type file "f" with one of the
@@ -250,24 +250,24 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
         )                                                                      \
     )                                                                          \
     $(info ---PARSED_ADDON_FRAMEWORKS for $(PATH_OF_ADDON)---)                 \
-    $(foreach v, $(PARSED_ADDON_FRAMEWORKS),$(info $(v)))                     \
+    $(foreach v, $(PARSED_ADDON_FRAMEWORKS),$(info $(v)))                      \
                                                                                \
     $(eval PARSED_ADDON_SHARED_LIBRARIES:=                                     \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
             $(PATH_OF_ADDON)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
-            $(FIND_TYPE_FILE),                                            \
+            $(FIND_TYPE_FILE),                                                 \
             *.$(PLATFORM_SHARED_LIBRARY_EXTENSION),                            \
         )                                                                      \
     )                                                                          \
-    $(info ---PARSED_ADDON_SHARED_LIBRARIES for $(PATH_OF_ADDON)---)                 \
-    $(foreach v, $(PARSED_ADDON_SHARED_LIBRARIES),$(info $(v)))                     \
+    $(info ---PARSED_ADDON_SHARED_LIBRARIES for $(PATH_OF_ADDON)---)           \
+    $(foreach v, $(PARSED_ADDON_SHARED_LIBRARIES),$(info $(v)))                \
                                                                                \
     $(eval PARSED_ADDON_STATIC_LIBRARIES:=                                     \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
             $(PATH_OF_ADDON)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
-            $(FIND_TYPE_FILE),                                            \
+            $(FIND_TYPE_FILE),                                                 \
             *.$(PLATFORM_STATIC_LIBRARY_EXTENSION),                            \
         )                                                                      \
     )                                                                          \
@@ -288,14 +288,19 @@ endef
 
 define FUNC_INSTALL_ADDON
     $(eval THIS_ADDON:=$(strip $1)) \
-    $(warning An addon called [$(THIS_ADDON)] is required for this project but was not found!) \
-    $(warning Where was it required?:)\
-    $(warning --> Did the $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk file list it?)\
-    $(warning --> Did another addon list it as a dependency in its $(PATH_OF_ADDONS)/THE_DEPENDENT_ADDON/addon_config.mk file?)\
-    $(warning --> Your project's $(PATH_PROJECT_ROOT)/addons.make file list it?)\
-    $(warning )\
-    $(error You must install [$(THIS_ADDON)] in your $(PATH_OF_ADDONS) directory \
-        or modify your configuration to continue)                              \
+    $(warning An addon called [$(THIS_ADDON)] is required for this project     \
+        but was not found!)                                                    \
+    $(warning Where was it required?:)                                         \
+    $(eval F:=$(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk)\
+    $(warning --> Did the $(F) file list it?)                                  \
+    $(eval F:=$(PATH_OF_ADDONS)/THE_DEPENDENT_ADDON/addon_config.mk)           \
+    $(warning --> Did another addon list it as a dependency in its $(F) file?) \
+    $(eval F:=$(PATH_PROJECT_ROOT)/addons.make)                                \
+    $(warning --> Your project's $(F) file list it?)                           \
+    $(warning )                                                                \
+    $(error You must install [$(THIS_ADDON)] in your                           \
+        $(PATH_OF_ADDONS) directory or modify                                  \
+        your configuration to continue)                                        \
 
 endef
 
@@ -493,16 +498,16 @@ define FUNC_BUILD_ADDON_DEPENDENCY_LIST
     )                                                                          \
                                                                                \
     $(foreach ADDON_DEPENDENCY,$(ADDON_DEPENDENCIES),                          \
-        $(info --------------$(ADDON_DEPENDENCY)---------------)\
+        $(info --------------$(ADDON_DEPENDENCY)---------------)               \
         $(if                                                                   \
             $(filter                                                           \
                 $(ADDON_DEPENDENCY),                                           \
                 $(PROJECT_ADDON_DEPENDENCIES)                                  \
             ),                                                                 \
             $(call FUNC_DO_NOTHING),                                           \
-            $(eval PROJECT_ADDON_DEPENDENCIES:=                                    \
-                $(ADDON_DEPENDENCY) $(PROJECT_ADDON_DEPENDENCIES)                  \
-            )                                                                      \
+            $(eval PROJECT_ADDON_DEPENDENCIES:=                                \
+                $(ADDON_DEPENDENCY) $(PROJECT_ADDON_DEPENDENCIES)              \
+            )                                                                  \
             $(call                                                             \
                 FUNC_BUILD_ADDON_DEPENDENCY_LIST,                              \
                 $(ADDON_DEPENDENCY)                                            \
@@ -604,7 +609,7 @@ ifeq ($(B_PROCESS_ADDONS),TRUE)
 #   Remove all paths to leave us with a list of addon names.
 ################################################################################
 
-    ALL_INSTALLED_ADDONS := \
+    ALL_INSTALLED_ADDONS :=                                                    \
         $(subst $(PATH_OF_ADDONS)/,,$(wildcard $(PATH_OF_ADDONS)/*))
 
 ################################################################################
@@ -661,7 +666,7 @@ ifeq ($(B_PROCESS_ADDONS),TRUE)
 #   (if needed) FIRST, so that they are always linked first.
 ################################################################################
 
-    REQUESTED_PROJECT_ADDONS:=\
+    REQUESTED_PROJECT_ADDONS:=                                                 \
         $(call FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER,                          \
             $(ALL_REQUESTED_ADDONS)                                            \
         )
@@ -672,10 +677,10 @@ ifeq ($(B_PROCESS_ADDONS),TRUE)
 #   located in the PATH_OF_ADDONS folder listed in ALL_INSTALLED_ADDONS
 ################################################################################
 
-    VALID_REQUESTED_PROJECT_ADDONS:=\
-        $(filter \
-            $(REQUESTED_PROJECT_ADDONS),\
-            $(ALL_INSTALLED_ADDONS)\
+    VALID_REQUESTED_PROJECT_ADDONS:=                                           \
+        $(filter                                                               \
+            $(REQUESTED_PROJECT_ADDONS),                                       \
+            $(ALL_INSTALLED_ADDONS)                                            \
         )
 
 ################################################################################
@@ -772,9 +777,9 @@ ifeq ($(B_PROCESS_ADDONS),TRUE)
         $(info --------------------PROJECT_ADDON_DEPENDENCIES_ORDERED)
         $(foreach v, $(PROJECT_ADDON_DEPENDENCIES_ORDERED),$(info $(v)))
 
-        $(foreach ADDON_TO_PARSE,\
-            $(PROJECT_ADDON_DEPENDENCIES_ORDERED),\
-            $(call FUNC_PARSE_ADDON,$(ADDON_TO_PARSE))\
+        $(foreach ADDON_TO_PARSE,                                              \
+            $(PROJECT_ADDON_DEPENDENCIES_ORDERED),                             \
+            $(call FUNC_PARSE_ADDON,$(ADDON_TO_PARSE))                         \
         )
         
     endif
