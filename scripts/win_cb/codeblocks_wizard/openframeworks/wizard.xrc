@@ -58,7 +58,6 @@ setup for you.
       <object class="sizeritem">
         <object class="wxListBox" name="ofAddonsList">
           <content>
-            <item>ofxVectorMath</item>
             <item>ofxXmlSettings</item> 
             <item>ofxOpenCv</item>
             <item>ofxOsc</item>  
