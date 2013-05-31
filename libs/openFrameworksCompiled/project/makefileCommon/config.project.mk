@@ -513,13 +513,11 @@ endif
 
 # define the subdirectory for our target name
 
-# ifdef MAKEFILE_DEBUG
-ifdef XXX
+ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_SOURCE_FILES---)
     $(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
 endif
-# ifdef MAKEFILE_DEBUG
-ifdef XXX
+ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_DEPENDENCY_FILES---)
     $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif
@@ -583,8 +581,7 @@ OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
 # TODO: deal with shared libs?
 
-# ifdef MAKEFILE_DEBUG
-ifdef XXX
+ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_DEPENDENCY_FILES---)
     $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif

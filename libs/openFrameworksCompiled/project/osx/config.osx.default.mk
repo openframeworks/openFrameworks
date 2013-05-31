@@ -71,10 +71,6 @@ PLATFORM_CFLAGS += -fexceptions
 
 MAC_OS_XCODE_ROOT:=$(shell xcode-select -print-path)
 
-
-
-$(info MAC_OS_XCODE_ROOT=$(MAC_OS_XCODE_ROOT))
-
 # search to see if we are using a new version of 
 ifeq ($(findstring .app, $(MAC_OS_XCODE_ROOT)),.app)
     MAC_OS_SDK_PATH:=\
@@ -83,10 +79,6 @@ else
     MAC_OS_SDK_PATH:=\
         $(MAC_OS_XCODE_ROOT)/SDKs
 endif
-
-
-$(info MAC_OS_SDK_PATH=$(MAC_OS_SDK_PATH))
-
 
 #ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer)
 #	MAC_OS_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
@@ -204,9 +196,6 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG := -g3
 
 # erase all
 PLATFORM_EXCLUSIONS =
-
-$(info ============================== $(PATH_OF_LIBS) ====================================)
-$(info $(PATH_OF_LIBS))
 
 # core sources
 PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp

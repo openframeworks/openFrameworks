@@ -539,7 +539,7 @@ endif
 #  DEBUGGING
 ########################################################################
 # print debug information if so instructed
-#ifdef MAKEFILE_DEBUG
+ifdef MAKEFILE_DEBUG
     $(info ---PROJECT_ADDONS_INCLUDES---)
     $(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
     $(info ---PROJECT_ADDONS_EXCLUSIONS---)
@@ -560,4 +560,4 @@ endif
     $(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
     $(info ---PROJECT_ADDONS_LDFLAGS---)
     $(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
-#endif
+endif
