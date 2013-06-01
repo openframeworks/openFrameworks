@@ -2,7 +2,7 @@
 
 #pragma once
 #include "ofConstants.h"
-#include "ofVec3f.h"
+#include "ofVec3.h"
 #include "ofColor.h"
 #include "ofUtils.h"
 #include "ofMesh.h"

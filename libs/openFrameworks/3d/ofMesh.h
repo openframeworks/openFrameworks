@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "ofVec3f.h"
-#include "ofVec2f.h"
+#include "ofVec3.h"
+#include "ofVec2.h"
 #include "ofColor.h"
 #include "ofUtils.h"
 #include "ofConstants.h"
