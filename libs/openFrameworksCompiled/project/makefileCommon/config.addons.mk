@@ -587,17 +587,17 @@ endef
 ################################################################################
 
 # We are unable to do logical ORs in Make, so we set up if/else statements
-B_PROCESS_ADDONS = FALSE
+B_PROCESS_ADDONS = $(FALSE)
 
 ifdef PLATFORM_REQUIRED_ADDONS
-    B_PROCESS_ADDONS = TRUE
+    B_PROCESS_ADDONS = $(TRUE)
 endif
 
 ifeq ($(findstring addons.make,$(wildcard $(PATH_PROJECT_ROOT)/*.make)),addons.make)
-    B_PROCESS_ADDONS = TRUE
+    B_PROCESS_ADDONS = $(TRUE)
 endif
 
-ifeq ($(B_PROCESS_ADDONS),TRUE)
+ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
 ################################################################################
 # VALIDATE REQUESTED ADDONS ####################################################
