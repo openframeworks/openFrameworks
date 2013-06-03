@@ -39,7 +39,7 @@ public:
     
     bool            addValue(const string& path, const string& value, bool createEntirePath = false);
     bool            addChild( const string& path );
-    void            addXml( ofXml& xml );
+    void            addXml( ofXml& xml, bool copyAll = false);
     
     string          getValue(const string& path);
     string          getValue();
@@ -73,6 +73,8 @@ public:
     bool            loadFromBuffer( string buffer );
     
     string toString();
+    
+    // these are advanced, you probably don't want to use them
     
     Element*        getCurrentElement();
     Element*        getElement(const string& path);
