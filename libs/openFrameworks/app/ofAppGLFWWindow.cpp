@@ -10,6 +10,7 @@
 #define GLFW_EXPOSE_NATIVE_GLX
 #include "GL/glfw3native.h"
 #elif defined(TARGET_OSX)
+#include <Cocoa/Cocoa.h>
 #define GLFW_EXPOSE_NATIVE_COCOA
 #define GLFW_EXPOSE_NATIVE_NSGL
 #include "GL/glfw3native.h"
@@ -459,8 +460,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         setWindowShape(nonFullScreenW,nonFullScreenH);
         setWindowPosition(nonFullScreenX,nonFullScreenY);
 		//----------------------------------------------------
-#endif
 	}
+#endif
 }
 
 //------------------------------------------------------------
