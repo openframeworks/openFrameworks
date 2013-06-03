@@ -107,9 +107,18 @@ string ofXml::toString()
     return tmp;
 }
 
-void ofXml::addXml( ofXml& xml ) {
+void ofXml::addXml( ofXml& xml, bool copyAll ) {
     
-    Node *n = document->importNode(xml.getDocument()->documentElement(), true);
+    Node *n = 0;
+    if(copyAll) {
+        n = document->importNode(xml.getDocument()->documentElement(), true);
+    } else {
+        if(xml.getCurrentElement() == 0 || xml.getCurrentElement() == xml.getDocument()->documentElement()) {
+            n = document->importNode(xml.getDocument()->documentElement(), true);
+        } else {
+            n = document->importNode( xml.getCurrentElement(), true);
+        }
+    }
     element->appendChild(n);
     
 }

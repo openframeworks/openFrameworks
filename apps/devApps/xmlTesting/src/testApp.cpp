@@ -35,7 +35,7 @@ void testApp::setup(){
     
     newXML.addValue("flim", "flam");
     newXML.addValue("flim2", "flam2");
-    newXML.setCurrentElement("../");
+    //newXML.setCurrentElement("../");
     
     cout << newXML.toString() << endl;
     
@@ -127,27 +127,32 @@ void testApp::mousePressed(int x, int y, int button){
     
     //cout << " number after add " << XML.getNumChildren() << endl;*/
     
-    /*ofXml aNewXML;
+    ofXml aNewXML;
     aNewXML.addChild("root");
     
-    aNewXML.getChild("root").addValue("foox/bar/eggs/ham", "qux");
+    aNewXML.setCurrentElement("root");
+    aNewXML.addValue("foox/bar/eggs/ham", "qux");
     
     //cout << aNewXML.toString() << endl;
     
-    aNewXML.getChildAt(0).addValue("fooy/bar/eggs/spam", "quux");
-    aNewXML.getChildAt(0).addValue("fooz/bar/green_eggs/butter/yoyo/spam/He/will/miss/the/second/leg", "quuux");
+    aNewXML.addValue("fooy/bar/eggs/spam", "quux");
+    aNewXML.addValue("fooz/bar/green_eggs/butter/yoyo/spam/He/will/miss/the/second/leg", "quuux");
+    
+    aNewXML.setCurrentElement("fooy/bar/eggs/spam");
     
     //cout << aNewXML.toString() << endl;
     
     for( int i = 0; i < 100; i++) {
         ofXml tmp;
+        tmp.addChild("number_root");
+        tmp.setCurrentElement("number_root");
         tmp.addValue("number", ofToString(i));
-        aNewXML.getChild("root").addChild(tmp);
-    }*/
+        aNewXML.addXml(tmp);
+    }
     
-    //cout << aNewXML.toString() << endl;
+    cout << aNewXML.toString() << endl;
     
-    cout << XML.toString() << endl;
+    //cout << XML.toString() << endl;
     
 }
 
