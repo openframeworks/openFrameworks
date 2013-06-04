@@ -9,7 +9,7 @@
 #include <tr1/memory>
 // import smart pointers utils into std
 namespace std {
-#if __cplusplus <= 199711L
+#if __cplusplus<201103L
 	using std::tr1::shared_ptr;
 	using std::tr1::weak_ptr;
 	using std::tr1::enable_shared_from_this;
