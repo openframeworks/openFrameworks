@@ -174,69 +174,69 @@ void ofSendMessage(string messageString);
 ofCoreEvents & ofEvents();
 
 template<class ListenerClass>
-void ofRegisterMouseEvents(ListenerClass * listener){
-	ofAddListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged);
-	ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved);
-	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed);
-	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased);
+void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofAddListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged,prio);
+	ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
+	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
+	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
 }
 
 template<class ListenerClass>
-void ofRegisterKeyEvents(ListenerClass * listener){
-	ofAddListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed);
-	ofAddListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased);
+void ofRegisterKeyEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofAddListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed,prio);
+	ofAddListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased,prio);
 }
 
 template<class ListenerClass>
-void ofRegisterTouchEvents(ListenerClass * listener){
-	ofAddListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
-	ofAddListener(ofEvents().touchDown, listener, &ListenerClass::touchDown);
-	ofAddListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved);
-	ofAddListener(ofEvents().touchUp, listener, &ListenerClass::touchUp);
-	ofAddListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled);
+void ofRegisterTouchEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofAddListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap,prio);
+	ofAddListener(ofEvents().touchDown, listener, &ListenerClass::touchDown,prio);
+	ofAddListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved,prio);
+	ofAddListener(ofEvents().touchUp, listener, &ListenerClass::touchUp,prio);
+	ofAddListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled,prio);
 }
 
 template<class ListenerClass>
-void ofRegisterGetMessages(ListenerClass * listener){
-	ofAddListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage);
+void ofRegisterGetMessages(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofAddListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage,prio);
 }
 
 template<class ListenerClass>
-void ofRegisterDragEvents(ListenerClass * listener){
-	ofAddListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent);
+void ofRegisterDragEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofAddListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent,prio);
 }
 
 template<class ListenerClass>
-void ofUnregisterMouseEvents(ListenerClass * listener){
-	ofRemoveListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged);
-	ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved);
-	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed);
-	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased);
+void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofRemoveListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged,prio);
+	ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
+	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
+	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
 }
 
 template<class ListenerClass>
-void ofUnregisterKeyEvents(ListenerClass * listener){
-	ofRemoveListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed);
-	ofRemoveListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased);
+void ofUnregisterKeyEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofRemoveListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed,prio);
+	ofRemoveListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased,prio);
 }
 
 template<class ListenerClass>
-void ofUnregisterTouchEvents(ListenerClass * listener){
-	ofRemoveListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
-	ofRemoveListener(ofEvents().touchDown, listener, &ListenerClass::touchDown);
-	ofRemoveListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved);
-	ofRemoveListener(ofEvents().touchUp, listener, &ListenerClass::touchUp);
-	ofRemoveListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled);
+void ofUnregisterTouchEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofRemoveListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap,prio);
+	ofRemoveListener(ofEvents().touchDown, listener, &ListenerClass::touchDown,prio);
+	ofRemoveListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved,prio);
+	ofRemoveListener(ofEvents().touchUp, listener, &ListenerClass::touchUp,prio);
+	ofRemoveListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled,prio);
 }
 
 template<class ListenerClass>
-void ofUnregisterGetMessages(ListenerClass * listener){
-	ofRemoveListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage);
+void ofUnregisterGetMessages(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofRemoveListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage,prio);
 }
 
 template<class ListenerClass>
-void ofUnregisterDragEvents(ListenerClass * listener){
-	ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent);
+void ofUnregisterDragEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+	ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent,prio);
 }
 
 //  event notification only for internal OF use

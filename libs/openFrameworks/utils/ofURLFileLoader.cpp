@@ -31,6 +31,11 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	return *event;
 }
 
+ofEvent<ofHttpResponse> & ofURLProgressEvent(){
+	static ofEvent<ofHttpResponse> * event = new ofEvent<ofHttpResponse>;
+	return *event;
+}
+
 ofURLFileLoader::ofURLFileLoader() {
 	if(!factoryLoaded){
 		try {
@@ -168,35 +173,45 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 			rs = &httpSession->receiveResponse(res);
 			session = ofPtr<HTTPSession>(httpSession);
 		}
+        
+        downloading = ofHttpResponse(request,res.getStatus(),res.getReason(),res.getContentLength());
+        prevProgress = 0;
+        downloading.downloading = true;
 		if(!request.saveTo){
-			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
+            downloading.data.set(*rs);
+            downloading.downloading = false;
+			return downloading;//ofHttpResponse(request,*rs,res.getStatus(),res.getReason(),res.getContentLength());
 		}else{
 			ofFile saveTo(request.name,ofFile::WriteOnly,true);
 			char aux_buffer[1024];
 			rs->read(aux_buffer, 1024);
 			std::streamsize n = rs->gcount();
-			while (n > 0){
+            downloading.downloaded += n;
+			while (downloading.downloaded < downloading.size){
 				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
-				saveTo.write(aux_buffer,n);
+				if(n>0) saveTo.write(aux_buffer,n);
 				if (rs->good()){
 					rs->read(aux_buffer, 1024);
 					n = rs->gcount();
-				}
-				else n = 0;
+                    downloading.downloaded += n;
+				}else{
+                    n = 0;
+                }
 			}
-			return ofHttpResponse(request,res.getStatus(),res.getReason());
+            downloading.downloading = false;
+			return downloading;
 		}
 
 	} catch (const Exception& exc) {
         ofLog(OF_LOG_ERROR, "ofURLFileLoader " + exc.displayText());
 
-        return ofHttpResponse(request,-1,exc.displayText());
+        return ofHttpResponse(request,-1,exc.displayText(),0);
 
     } catch (...) {
-    	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception");
+    	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception",0);
     }
 
-	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception");
+	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception",0);
 	
 }	
 
@@ -207,11 +222,18 @@ void ofURLFileLoader::update(ofEventArgs & args){
 		ofLog(OF_LOG_VERBOSE,"ofURLLoader::update: new response " +response.request.name);
 		responses.pop();
 		unlock();
-		ofNotifyEvent(ofURLResponseEvent(),response);
+        ofNotifyEvent(ofURLProgressEvent(), response, this);
+		ofNotifyEvent(ofURLResponseEvent(), response , this);
 		lock();
 	}
 	unlock();
-
+    if(downloading.downloading){
+        int currentProgress = downloading.getDownloaded();
+        if(prevProgress!=currentProgress){
+            ofNotifyEvent(ofURLProgressEvent(), downloading, this);
+            prevProgress = currentProgress;
+        }
+    }
 }
 
 static ofURLFileLoader & getFileLoader(){
