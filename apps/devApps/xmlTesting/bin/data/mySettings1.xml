@@ -33,7 +33,7 @@
 	</minerals>
 </food>
 
-<food>
+<food id="3">
 	<name>Bagels, New York Style </name>
 	<mfr>Thompson</mfr>
 	<serving units="g">104</serving>

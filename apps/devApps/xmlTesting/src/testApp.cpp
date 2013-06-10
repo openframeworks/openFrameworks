@@ -13,12 +13,11 @@ void testApp::setup(){
     file.open("mySettings1.xml");
     ofBuffer buffer = file.readToBuffer();
     XML.loadFromBuffer(buffer.getText());
+    //XML.setCurrentElementToChild(0);
     
-    XML.setCurrentElement("food[0]");
-    while(XML.setCurrentElementToSibling()) {
-        cout << XML.getCurrentElementName() << endl;
-        cout << XML.getValue() << endl;
-    }
+    cout << "XML EXISTS? " << XML.getCurrentElementName() << " " << XML.exists("food[1][@id]") << endl;
+    
+    XML.setCurrentElementToChild(0);
     
     ofXml newXML;
     // check here
@@ -31,13 +30,9 @@ void testApp::setup(){
     
     map<string, string> attrMap = newXML.getAttributes();
     
-    cout << attrMap.size() << endl;
-    
     newXML.addValue("flim", "flam");
     newXML.addValue("flim2", "flam2");
     //newXML.setCurrentElement("../");
-    
-    cout << newXML.toString() << endl;
     
     XML.resetCurrentElement();
     XML.addXml(newXML);
@@ -48,8 +43,6 @@ void testApp::setup(){
     
     //tmp.setCurrentElement("food[0]/serving/@units");
 
-    cout << " TMP XML VALUE IS " << tmp.getValue("food[0]/serving[@units]") << endl;
-    
     
 }
 

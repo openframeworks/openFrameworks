@@ -299,6 +299,32 @@ bool ofXml::resetCurrentElement() {
     return false;
 }
 
+bool ofXml::setCurrentElementToChild(int index)
+{
+    
+    if(!element) { // not sure how this could happen, but just in case
+        element = (Element*)document->documentElement()->firstChild();
+    }
+    
+    int numberOfChildren = 0;
+    NodeList *list = element->childNodes();
+    int i = 0, j = 0;
+    
+    while(i < list->length() && numberOfChildren < index + 1) {
+        if(list->item(i) && list->item(i)->nodeType() == Node::ELEMENT_NODE) {
+            if(numberOfChildren == index) {
+                element = (Element*) list->item(i);
+                return true;
+            }
+            numberOfChildren++;
+        }
+        i++;
+    }
+    
+    return false;
+    
+}
+
 bool ofXml::setCurrentElementToParent(int numLevelsUp) {
     if(element) {
         
