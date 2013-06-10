@@ -57,12 +57,13 @@ public:
     bool            clearContents();
     
     bool            remove(const string& path); // works for both attributes and tags
-    bool            removeAll(const string& path); // works for both attributes and tags
+    //bool            removeAll(const string& path); // works for both attributes and tags
     bool            exists(const string& path); // works for both attributes and tags
     
     string          getCurrentElementName();
     bool            resetCurrentElement();
-    
+
+    bool            setCurrentElementToChild(int index);
     bool            setCurrentElement(const string& path);
     bool            setCurrentElementToParent();
     bool            setCurrentElementToParent(int numLevelsUp);
