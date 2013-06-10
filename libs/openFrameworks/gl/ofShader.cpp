@@ -683,7 +683,18 @@ GLint ofShader::getAttributeLocation(const string & name) {
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name) {
-	return glGetUniformLocation(program, name.c_str());
+
+	GLint loc = -1;
+	
+	map<string, GLint>::iterator it = uniformLocations.find(name);
+	if (it == uniformLocations.end()){
+		loc = glGetUniformLocation(program, name.c_str());
+		if (loc != -1) uniformLocations[name] = loc;
+	} else {
+		loc = it->second;
+	}
+			
+	return loc;
 }
 
 //--------------------------------------------------------------
