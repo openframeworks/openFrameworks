@@ -747,6 +747,50 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
         $(info --------------------PROJECT_ADDON_DEPENDENCIES)
         $(foreach v, $(PROJECT_ADDON_DEPENDENCIES),$(info $(v)))
 
+
+################################################################################
+# PROJECT_ADDON_DEPENDENCIES_ORDERED (immediately assigned)
+#   Takes a list of addon / depency pairs and does a topological sort using 
+#   tsort.  The format needed by tsort is 
+#
+#       ADDON_A ADDON_A_REQUIREMENT ADDON_B ADDON_B_REQUIREMENT ... etc.
+#
+#   To represent a series of relationships like this
+#
+#       ADDON_A requires ADDON_B
+#       ADDON_B requires ADDON_C
+#       ADDON_C requires ADDON_D AND ADDON_E
+#   
+#   We would createa list that looks like this:
+#       
+#       ADDON_A ADDON_B ADDON_B ADDON_C ADDON_C ADDON_D ADDON_C ADDON_E
+#
+#   Thus, when this list of dependecies is sorted with tsort, we will arrive at
+#   a unique list of addons sorted by how much other addons depend upon it.
+#   This will, in effect, allow us to compile our "base" addons earliest.  For
+#   reference, the tsort output from the list above will be:
+#
+#       ADDON_A
+#       ADDON_B
+#       ADDON_C
+#       ADDON_E
+#       ADDON_D
+#
+#   tsort can handle repeated pairs and an even-numbered, white-space-sperated 
+#   list of addon names is required.
+#
+#   From the pespective of the compiler, tsort will output a reversed list 
+#   (i.e. the least-depended-upon addon is first), so in order to get it into
+#   our actual compilation order, we must run the list through:
+#   
+#       tail -r
+#   
+#   which will reverse the list.  Finally, in order to bring it back into make
+#   for processing, we swap all `\n` characters for ` ` spaces.  This space-
+#   seperated list can be iterated by make's foreach command.
+#
+################################################################################
+
         PROJECT_ADDON_DEPENDENCIES_ORDERED :=                                  \
             $(shell                                                            \
                 echo "$(PROJECT_ADDON_DEPENDENCIES_ESCAPED_STRINGS)"           \
