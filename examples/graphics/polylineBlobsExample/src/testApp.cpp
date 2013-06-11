@@ -36,7 +36,7 @@ void testApp::update() {
 		ofPoint target;
 		target.set(mouseX, mouseY);
 			
-		for(int i = 0; i < contourFinder.blobs.size(); i++) {
+		for(unsigned int i = 0; i < contourFinder.blobs.size(); i++) {
 			ofPolyline cur;
 			// add all the current vertices to cur polyline
 			cur.addVertices(contourFinder.blobs[i].pts);
@@ -59,7 +59,7 @@ void testApp::update() {
 //--------------------------------------------------------------
 void drawWithNormals(const ofPolyline& polyline) {
 	for(int i=0; i< (int) polyline.size(); i++ ) {
-		bool repeatNext = i == polyline.size() - 1;
+		bool repeatNext = i == (int)polyline.size() - 1;
 	
 		const ofPoint& cur = polyline[i];
 		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
@@ -86,7 +86,7 @@ void testApp::draw() {
 	ofSetColor(255);
 	cvImgGrayscale.draw(0, 0);
 	
-	for(int i = 0; i < polylines.size(); i++) {
+	for(unsigned int i = 0; i < polylines.size(); i++) {
 		ofNoFill();
 	
 		ofSetColor(255, 0, 0);

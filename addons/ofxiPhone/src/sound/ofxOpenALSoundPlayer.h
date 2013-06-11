@@ -101,6 +101,11 @@ public:
 	static void	ofxALSoundSetReferenceDistance(float dist); // sets the distance after which attenuation is applied
 	static void	ofxALSoundSetMaxDistance(float dist); // sets the maximum distance for which attenuation is applied
 	
+	static void ofxALSoundSetDistanceModel(ALenum model); // sets the formula which determines how attenuation is applied.
+														  // Note: the default distance model is AL_INVERSE_DISTANCE_CLAMPED,
+														  // but you may find AL_LINEAR_DISTANCE_CLAMPED to be more intuitive
+														  // (all sounds beyond the max distance will be silent)
+	
 	void	setLocation(float x, float y, float z); // x -1..1 gets mapped to pan -1..1
 	
 	bool	update(); // can this be called at a different time? maybe should be a static function
