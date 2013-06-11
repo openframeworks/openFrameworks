@@ -404,6 +404,7 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+//--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
 	if(attrib0x == NULL){
 		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
@@ -717,6 +718,7 @@ void ofVbo::bind(){
 
 		map<int,GLuint>::iterator it;
 		for(it=attributeIds.begin();it!=attributeIds.end();it++){
+			glBindBuffer(GL_ARRAY_BUFFER, attributeIds[it->first]);
 			glEnableVertexAttribArray(it->first);
 			glVertexAttribPointer(it->first, attributeNumCoords[it->first], GL_FLOAT, GL_FALSE, attributeStrides[it->first], 0);
 		}
