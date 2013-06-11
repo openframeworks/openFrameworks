@@ -99,7 +99,7 @@ void testApp::drawWithMesh(){
 	float amplitude = mouseY/100.0;
 	float speedDampen = 5;		
 	vector<ofVec3f>& verts = mesh.getVertices();
-	for(int i = 0; i < verts.size(); i++){
+	for(unsigned int i = 0; i < verts.size(); i++){
 		verts[i].x += ofSignedNoise(verts[i].x/liquidness, verts[i].y/liquidness,verts[i].z/liquidness, ofGetElapsedTimef()/speedDampen)*amplitude;
 		verts[i].y += ofSignedNoise(verts[i].z/liquidness, verts[i].x/liquidness,verts[i].y/liquidness, ofGetElapsedTimef()/speedDampen)*amplitude;
 		verts[i].z += ofSignedNoise(verts[i].y/liquidness, verts[i].z/liquidness,verts[i].x/liquidness, ofGetElapsedTimef()/speedDampen)*amplitude;

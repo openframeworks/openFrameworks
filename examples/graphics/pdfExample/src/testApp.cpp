@@ -17,7 +17,7 @@ void testApp::setup(){
 	images.assign(3, ofImage());
 	images[0].loadImage("DSC09316.jpeg");
 	
-	for(int k = 0; k < dropZoneRects.size(); k++){
+	for(unsigned int k = 0; k < dropZoneRects.size(); k++){
 		dropZoneRects[k] = ofRectangle(32 + k * 310, 200, 300, 200);
 	}
 }
@@ -62,7 +62,7 @@ void testApp::draw(){
 	
 	ofSetRectMode(OF_RECTMODE_CORNER);
 	ofNoFill();
-	for(int k = 0; k < dropZoneRects.size(); k++){
+	for(unsigned int k = 0; k < dropZoneRects.size(); k++){
 		ofSetColor(54,54,54);
 		ofRect(dropZoneRects[k]);
 		ofSetColor(245, 58, 135);		
@@ -70,7 +70,7 @@ void testApp::draw(){
 	}
 
 	ofSetColor(255);
-	for(int j = 0; j < images.size(); j ++){
+	for(unsigned int j = 0; j < images.size(); j ++){
 		if( images[j].width > 0 ){
 			
 			float tw = 300;
@@ -183,7 +183,7 @@ void testApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
-	for(int j = 0; j < dropZoneRects.size(); j++){
+	for(unsigned int j = 0; j < dropZoneRects.size(); j++){
 		if( dropZoneRects[j].inside( dragInfo.position ) ){
 			images[j].loadImage( dragInfo.files[0] );
 			break;

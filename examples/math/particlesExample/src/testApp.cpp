@@ -24,7 +24,7 @@ void testApp::resetParticles(){
 	
 	attractPointsWithMovement = attractPoints;
 	
-	for(int i = 0; i < p.size(); i++){
+	for(unsigned int i = 0; i < p.size(); i++){
 		p[i].setMode(currentMode);		
 		p[i].setAttractPoints(&attractPointsWithMovement);;
 		p[i].reset();
@@ -33,13 +33,13 @@ void testApp::resetParticles(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	for(int i = 0; i < p.size(); i++){
+	for(unsigned int i = 0; i < p.size(); i++){
 		p[i].setMode(currentMode);
 		p[i].update();
 	}
 	
 	//lets add a bit of movement to the attract points
-	for(int i = 0; i < attractPointsWithMovement.size(); i++){
+	for(unsigned int i = 0; i < attractPointsWithMovement.size(); i++){
 		attractPointsWithMovement[i].x = attractPoints[i].x + ofSignedNoise(i * 10, ofGetElapsedTimef() * 0.7) * 12.0;
 		attractPointsWithMovement[i].y = attractPoints[i].y + ofSignedNoise(i * -10, ofGetElapsedTimef() * 0.7) * 12.0;
 	}	
@@ -49,13 +49,13 @@ void testApp::update(){
 void testApp::draw(){
     ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
 
-	for(int i = 0; i < p.size(); i++){
+	for(unsigned int i = 0; i < p.size(); i++){
 		p[i].draw();
 	}
 	
 	ofSetColor(190);
 	if( currentMode == PARTICLE_MODE_NEAREST_POINTS ){
-		for(int i = 0; i < attractPoints.size(); i++){
+		for(unsigned int i = 0; i < attractPoints.size(); i++){
 			ofNoFill();
 			ofCircle(attractPointsWithMovement[i], 10);
 			ofFill();

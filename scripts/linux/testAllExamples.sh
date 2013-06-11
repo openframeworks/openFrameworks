@@ -11,6 +11,10 @@ do
     cd $category
     for example in $( ls . )
     do
+        if [[ "$example" == osx* ]]
+        then
+            continue
+        fi    
         echo "-----------------------------------------------------------------"
         echo "building " + $example
         cd $example
