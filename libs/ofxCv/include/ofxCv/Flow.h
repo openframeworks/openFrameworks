@@ -30,8 +30,8 @@ namespace ofxCv {
 		void draw(float x, float y, float width, float height);
 		void draw(ofRectangle rect);
 		int  getWidth();
-        int  getHeight();
-        
+		int  getHeight();
+		
 	protected:
 		ofImage last, curr;
 		bool hasFlow;
@@ -70,15 +70,15 @@ namespace ofxCv {
 		vector<ofPoint> getCurrent();
 		vector<ofVec2f> getMotion();
 		
-        // size of flow
-        int getWidth();
-        int getHeight();
-        
-        // recalculates features to track
-        void resetFeaturesToTrack();
-        void setFeaturesToTrack(const vector<ofVec2f> & features);
-        void setFeaturesToTrack(const vector<cv::Point2f> & features);
-
+		// size of flow
+		int getWidth();
+		int getHeight();
+		
+		// recalculates features to track
+		void resetFeaturesToTrack();
+		void setFeaturesToTrack(const vector<ofVec2f> & features);
+		void setFeaturesToTrack(const vector<cv::Point2f> & features);
+		
 	protected:
 		
 		void drawFlow(ofRectangle r);
@@ -95,12 +95,12 @@ namespace ofxCv {
 		
 		//min distance for PyrLK 
 		int minDistance;
-
+		
 		//pyramid levels
 		int pyramidLevels;
-
+		
 		bool calcFeaturesNextFrame;
-
+		
 		//pyramid + err/status data
 		vector<cv::Mat> pyramid;
 		vector<cv::Mat> prevPyramid;
@@ -134,10 +134,10 @@ namespace ofxCv {
 		ofVec2f getTotalFlowInRegion(ofRectangle region);
 		ofVec2f getAverageFlowInRegion(ofRectangle region);
 		
-        // size of flow
-        int getWidth();
-        int getHeight();
-        
+		// size of flow
+		int getWidth();
+		int getHeight();
+		
 	protected:
 		cv::Mat flow;
 		

@@ -44,7 +44,7 @@ namespace ofxCv {
 			calcFlow(); //will call concrete implementation
 			hasFlow = true;
 		}
-
+		
 		last.setFromPixels(curr.getPixelsRef());
 	}
 	
@@ -68,9 +68,9 @@ namespace ofxCv {
 			drawFlow(rect);
 		}
 	}
-    int Flow::getWidth()  { return 0; }
-    int Flow::getHeight() { return 0; }
-    
+	int Flow::getWidth()  { return 0; }
+	int Flow::getHeight() { return 0; }
+	
 	
 #pragma mark PYRLK IMPLEMENTATION
 	FlowPyrLK::FlowPyrLK()
@@ -112,32 +112,32 @@ namespace ofxCv {
 				prevPts = nextPts;
 			}
 			nextPts.clear();
-
+			
 #if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
 			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
 			calcOpticalFlowPyrLK(
-						 prevPyramid,
-						 pyramid,
-						 prevPts,
-						 nextPts,
-						 status,
-						 err,
-
-						 cv::Size(windowSize, windowSize),
-						 maxLevel
-						 );
+													 prevPyramid,
+													 pyramid,
+													 prevPts,
+													 nextPts,
+													 status,
+													 err,
+													 
+													 cv::Size(windowSize, windowSize),
+													 maxLevel
+													 );
 			prevPyramid = pyramid;
 #else
 			calcOpticalFlowPyrLK(
-						 toCv(last),
-						 toCv(curr),
-						 prevPts,
-						 nextPts,
-						 status,
-						 err,
-						 cv::Size(windowSize, windowSize),
-						 maxLevel
-						 );
+													 toCv(last),
+													 toCv(curr),
+													 prevPts,
+													 nextPts,
+													 status,
+													 err,
+													 cv::Size(windowSize, windowSize),
+													 maxLevel
+													 );
 #endif
 			status.resize(nextPts.size(),0);
 		}else{
@@ -147,39 +147,39 @@ namespace ofxCv {
 #endif
 		}
 	}
-
+	
 	void FlowPyrLK::calcFeaturesToTrack(vector<cv::Point2f> & features){
 		goodFeaturesToTrack(
-			toCv(curr),
-			features,
-			maxFeatures,
-			qualityLevel,
-			minDistance
-			);
+												toCv(curr),
+												features,
+												maxFeatures,
+												qualityLevel,
+												minDistance
+												);
 	}
-
+	
 	void FlowPyrLK::resetFeaturesToTrack(){
 		calcFeaturesNextFrame=true;
 	}
-
-    void FlowPyrLK::setFeaturesToTrack(const vector<ofVec2f> & features){
-    	nextPts.resize(features.size());
-    	for(int i=0;i<(int)features.size();i++){
-    		nextPts[i]=toCv(features[i]);
-    	}
-    }
-
-    void FlowPyrLK::setFeaturesToTrack(const vector<cv::Point2f> & features){
-    	nextPts = features;
-    }
-
-    int FlowPyrLK::getWidth() {
-        return last.getWidth();
-    }
-    int FlowPyrLK::getHeight() {
-        return last.getHeight();
-    }
-    
+	
+	void FlowPyrLK::setFeaturesToTrack(const vector<ofVec2f> & features){
+		nextPts.resize(features.size());
+		for(int i=0;i<(int)features.size();i++){
+			nextPts[i]=toCv(features[i]);
+		}
+	}
+	
+	void FlowPyrLK::setFeaturesToTrack(const vector<cv::Point2f> & features){
+		nextPts = features;
+	}
+	
+	int FlowPyrLK::getWidth() {
+		return last.getWidth();
+	}
+	int FlowPyrLK::getHeight() {
+		return last.getHeight();
+	}
+	
 	vector<ofPoint> FlowPyrLK::getFeatures(){
 		ofPolyline poly =toOf(prevPts);
 		return poly.getVertices();
@@ -194,7 +194,7 @@ namespace ofxCv {
 		}
 		return ret;
 	}
-
+	
 	vector<ofVec2f> FlowPyrLK::getMotion(){
 		vector<ofVec2f> ret(prevPts.size());
 		for(int i = 0; i < (int)prevPts.size(); i++) {
@@ -204,7 +204,7 @@ namespace ofxCv {
 		}
 		return ret;
 	}
-
+	
 	void FlowPyrLK::drawFlow(ofRectangle rect) {
 		ofVec2f offset(rect.x,rect.y);
 		ofVec2f scale(rect.width/last.getWidth(),rect.height/last.getHeight());
@@ -295,17 +295,20 @@ namespace ofxCv {
 	}
 	
 	ofVec2f FlowFarneback::getTotalFlowInRegion(ofRectangle region){
+		if(!hasFlow) {
+			return ofVec2f();
+		}
 		const Scalar& sc = sum(flow(toCv(region)));
-		return ofVec2f(sc[1], sc[0]);
+		return ofVec2f(sc[0], sc[1]);
 	}
 	
-    int FlowFarneback::getWidth() {
-        return flow.cols;
-    }
-    int FlowFarneback::getHeight() {
-        return flow.rows;
-    }
-    
+	int FlowFarneback::getWidth() {
+		return flow.cols;
+	}
+	int FlowFarneback::getHeight() {
+		return flow.rows;
+	}
+	
 	void FlowFarneback::drawFlow(ofRectangle rect){
 		ofVec2f offset(rect.x,rect.y);
 		ofVec2f scale(rect.width/flow.cols, rect.height/flow.rows);
