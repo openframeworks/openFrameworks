@@ -263,7 +263,7 @@ void ofMesh::removeVertex(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeNormal(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= normals.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove normal out of range of this mesh. Taking no action.");
   }else{
     normals.erase(normals.begin() + index);
@@ -274,7 +274,7 @@ void ofMesh::removeNormal(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeColor(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= colors.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove color out of range of this mesh. Taking no action.");
   }else{
     colors.erase(colors.begin() + index);
@@ -285,7 +285,7 @@ void ofMesh::removeColor(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeTexCoord(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= texCoords.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove texCoord out of range of this mesh. Taking no action.");
   }else{
     texCoords.erase(texCoords.begin() + index);
@@ -296,7 +296,7 @@ void ofMesh::removeTexCoord(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeIndex(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= indices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove index out of range of this mesh. Taking no action.");
   }else{
     indices.erase(indices.begin() + index);
