@@ -139,6 +139,7 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::slat
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::snow(1*limit(),0.980392*limit(),0.980392*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::springGreen(0*limit(),1*limit(),0.498039*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::steelBlue(0.27451*limit(),0.509804*limit(),0.705882*limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::blueSteel(0.27451*limit(),0.509804*limit(),0.705882*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::tan(0.823529*limit(),0.705882*limit(),0.54902*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::teal(0*limit(),0.501961*limit(),0.501961*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::thistle(0.847059*limit(),0.74902*limit(),0.847059*limit());
