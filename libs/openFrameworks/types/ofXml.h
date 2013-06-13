@@ -41,9 +41,15 @@ public:
     bool            addChild( const string& path );
     void            addXml( ofXml& xml, bool copyAll = false);
     
+    // templated to be anything
+    template <class T> void addValueT(const string& path, T& data);
+    
     string          getValue(const string& path);
     string          getValue();
     bool            setValue(const string& path, const string& value);
+    
+    // templated to be anything
+    template <class T> T getValueT(const string& path);
     
     string          getAttribute(const string& path);
     bool            setAttribute(const string& path, const string& value);
@@ -60,28 +66,28 @@ public:
     //bool            removeAll(const string& path); // works for both attributes and tags
     bool            exists(const string& path); // works for both attributes and tags
     
-    string          getCurrentElementName();
-    bool            resetCurrentElement();
+    string          getName();
+    bool            reset();
 
-    bool            setCurrentElementToChild(int index);
-    bool            setCurrentElement(const string& path);
-    bool            setCurrentElementToParent();
-    bool            setCurrentElementToParent(int numLevelsUp);
-    bool            setCurrentElementToSibling();
-    bool            setCurrentElementToPrevSibling();
+    bool            setToChild(int index);
+    bool            setTo(const string& path);
+    bool            setToParent();
+    bool            setToParent(int numLevelsUp);
+    bool            setToSibling();
+    bool            setToPrevSibling();
     
-    void            copyXmlToString(string & str);
     bool            loadFromBuffer( string buffer );
+
     
-    string toString();
+    string          toString();
     
     // these are advanced, you probably don't want to use them
     
-    Element*        getCurrentElement();
-    Element*        getElement(const string& path);
+    Element*        getPocoElement();
+    Element*        getPocoElement(const string& path);
     
-    Document*       getDocument();
-    Document*       getDocument() const;
+    Document*       getPocoDocument();
+    Document*       getPocoDocument() const;
 
        
 protected:
