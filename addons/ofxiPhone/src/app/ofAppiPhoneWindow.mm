@@ -315,6 +315,14 @@ int	ofAppiPhoneWindow::getAntiAliasingSampleCount() {
     return antiAliasingSamples;
 }
 
+// Do a glCopyTexSubImage2D(), dealing with iOS-flavoured antialiased framebuffer properly if necessary.
+void ofAppiPhoneWindow::copyTexSubImage2D(unsigned int textureTarget, int level,
+                       int xoffset, int yoffset, int x, int y, size_t width, size_t height)
+{
+    // ...via the view class instance.
+    [[ofxiOSEAGLView getInstance] copyTexSubImage2D:textureTarget:level:xoffset:yoffset:x:y:width:height];
+}
+
 //-------------------------------------------------------- deprecated.
 void ofAppiPhoneWindow::enableRetinaSupport() {
 	enableRetina();

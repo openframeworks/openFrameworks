@@ -21,4 +21,8 @@
 - (NSInteger)getWidth;
 - (NSInteger)getHeight;
 
+- (void) readPixels:(int)width:(int)height:(void *)buffer;
+- (void) copyTexSubImage2D:(unsigned int)textureTarget:(int)level
+                          :(int)xoffset:(int)yoffset:(int)x:(int)y:(size_t)width:(size_t)height;
+
 @end

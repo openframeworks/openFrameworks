@@ -178,4 +178,43 @@
     return backingHeight;
 }
 
+// Read back framebuffer (e.g. for screen grab) to supplied memory buffer. This wraps glReadPixels()
+//  to ensure we read from the resolve ('default') buffer if antialiasing is enabled.
+- (void)readPixels:(int)width:(int)height:(void *)buffer
+{
+    if(fsaaEnabled) {
+ 		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
+		glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
+		glResolveMultisampleFramebufferAPPLE();
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
+    }
+    
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+    
+    if(fsaaEnabled) {
+        // Set back to the FSAA buffer, ready for next draw operation.
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
+    }
+}
+
+// Call glCopyTexSubImage2D(), wrapped to ensure we read from the resolve ('default') buffer if
+//  antialiasing is enabled.
+- (void) copyTexSubImage2D:(unsigned int)textureTarget:(int)level
+                          :(int)xoffset:(int)yoffset:(int)x:(int)y:(size_t)width:(size_t)height
+{
+    if(fsaaEnabled) {
+		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
+		glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
+		glResolveMultisampleFramebufferAPPLE();
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
+    }
+    
+	glCopyTexSubImage2D(textureTarget, level, xoffset, yoffset, x, y, width, height);
+    
+    if(fsaaEnabled) {
+        // Set back to the FSAA buffer, ready for next draw operation.
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
+    }
+}
+
 @end

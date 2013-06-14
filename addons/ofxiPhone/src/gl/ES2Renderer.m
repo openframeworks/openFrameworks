@@ -312,4 +312,21 @@ enum {
     return backingHeight;
 }
 
+// Read back framebuffer (e.g. for screen grab) to supplied memory buffer. This wraps glReadPixels()
+//  to ensure we read from the resolve ('default') buffer if antialiasing is enabled.
+//  [Does nothing - yet - in GLES 2.0 renderer.]
+- (void)readPixels:(int)width:(int)height:(void *)buffer
+{
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+}
+
+// Call glCopyTexSubImage2D(), wrapped to ensure we read from the resolve ('default') buffer if
+//  antialiasing is enabled.
+//  [Does nothing - yet - in GLES 2.0 renderer.]
+- (void) copyTexSubImage2D:(unsigned int)textureTarget:(int)level
+                          :(int)xoffset:(int)yoffset:(int)x:(int)y:(size_t)width:(size_t)height
+{
+	glCopyTexSubImage2D(textureTarget, level, xoffset, yoffset, x, y, width, height);
+}
+
 @end
