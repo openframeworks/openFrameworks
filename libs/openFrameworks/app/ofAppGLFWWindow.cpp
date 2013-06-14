@@ -34,7 +34,6 @@ GLFWwindow* ofAppGLFWWindow::windowP = NULL;
 ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	ofLog(OF_LOG_VERBOSE,"creating glfw window");
 	bEnableSetupScreen	= true;
-	nFrameCount			= 0;
 	buttonInUse			= 0;
 	buttonPressed		= false;
 
@@ -43,38 +42,36 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	nonFullScreenW		= 0;
 	nonFullScreenH		= 0;
 
-	millisForFrame		= 0;
-	prevMillis			= 0;
-	diffMillis			= 0;
-	bFrameRateSet		= false;
-	frameRate			= 0;
 	samples				= 0;
-	nFramesForFPS		= 0;
-	timeNow				= 0;
-	timeThen			= 0;
-	frameRate			= 0;
 	orientation 		= OF_ORIENTATION_DEFAULT;
 
 	requestedWidth		= 0;
 	requestedHeight		= 0;
 	windowMode			= OF_WINDOW;
-	lastFrameTime		= 0;
-	fps					= 60;
 
 	windowW				= 0;
 	windowH				= 0;
+	bDoubleBuffered		= true;
 
 	ofAppPtr			= NULL;
 	instance			= this;
 
 	glVersionMinor=glVersionMajor=-1;
+	nFramesSinceWindowResized = 0;
 
+}
+
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setNumSamples(int _samples){
+	samples=_samples;
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setFSAASamples(int _samples){
-	samples=_samples;
+void ofAppGLFWWindow::setDoubleBuffering(bool doubleBuff){
+	bDoubleBuffered = doubleBuff;
 }
+
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
@@ -109,12 +106,15 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	// GLFW_STEREO;					0
 	// GLFW_WINDOW_NO_RESIZE;		0
 	// GLFW_FSAA_SAMPLES;			0
+
 	glfwWindowHint(GLFW_RED_BITS, 8);
 	glfwWindowHint(GLFW_GREEN_BITS, 8);
 	glfwWindowHint(GLFW_BLUE_BITS, 8);
 	glfwWindowHint(GLFW_ALPHA_BITS, 8);
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 	glfwWindowHint(GLFW_STENCIL_BITS, 0);
+	glfwWindowHint(GLFW_AUX_BUFFERS,bDoubleBuffered?1:0);
+	glfwWindowHint(GLFW_SAMPLES,samples);
 
 	if(glVersionMinor!=-1 && glVersionMajor!=-1){
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -128,6 +128,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
 		#endif
 	}
+
 	if(windowMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
@@ -194,42 +195,78 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	glfwMakeContextCurrent(windowP);
 
 	ofNotifySetup();
-	ofNotifyUpdate();
-
 	while(true){
-		if (nFrameCount != 0 && bFrameRateSet == true){
-			diffMillis = ofGetElapsedTimeMillis() - prevMillis;
-			if (diffMillis > millisForFrame){
-				; // we do nothing, we are already slower than target frame
-			} else {
-				int waitMillis = millisForFrame - diffMillis;
-				ofSleepMillis(waitMillis);
+		ofNotifyUpdate();
+		display();
+	}
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::display(void){
+	if(ofGetProgrammableGLRenderer()){
+		ofGetProgrammableGLRenderer()->startRender();
+	}
+
+	// set viewport, clear the screen
+	ofViewport();		// used to be glViewport( 0, 0, width, height );
+	float * bgPtr = ofBgColorPtr();
+	bool bClearAuto = ofbClearBg();
+
+	// to do non auto clear on PC for now - we do something like "single" buffering --
+	// it's not that pretty but it work for the most part
+
+	#ifdef TARGET_WIN32
+	if (bClearAuto == false){
+		glDrawBuffer (GL_FRONT);
+	}
+	#endif
+
+	if ( bClearAuto == true ){
+		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+	}
+
+	if( bEnableSetupScreen )ofSetupScreen();
+
+	ofNotifyDraw();
+
+	#ifdef TARGET_WIN32
+	if (bClearAuto == false){
+		// on a PC resizing a window with this method of accumulation (essentially single buffering)
+		// is BAD, so we clear on resize events.
+		if (nFramesSinceWindowResized < 3){
+			ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+		} else {
+			if ( (ofGetFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glfwSwapBuffers(windowP);
+			else                                                     glFlush();
+		}
+	} else {
+		if(bDoubleBuffered){
+		    glfwSwapBuffers(windowP);
+		} else {
+			glFlush();
+		}
+	}
+	#else
+		if (bClearAuto == false){
+			// in accum mode resizing a window is BAD, so we clear on resize events.
+			if (nFramesSinceWindowResized < 3){
+				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 			}
 		}
-
-
-		unsigned long long newMillis = ofGetElapsedTimeMillis(); // you have to measure here
-		lastFrameTime = (newMillis-prevMillis)/1000.;
-		prevMillis = newMillis;
-
-		idle();
-		display();
-
-		//	thanks to jorge for the fix:
-		//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-		timeNow = ofGetElapsedTimef();
-		double diff = timeNow-timeThen;
-		if( diff  > 0.00001 ){
-			fps			= 1.0 / diff;
-			frameRate	*= 0.9f;
-			frameRate	+= 0.1f*fps;
+		if(bDoubleBuffered){
+		    glfwSwapBuffers(windowP);
+		} else{
+			glFlush();
 		}
-		//lastFrameTime	= diff;
-		timeThen		= timeNow;
+	#endif
 
-		nFrameCount++;
-
+	if(ofGetProgrammableGLRenderer()){
+		ofGetProgrammableGLRenderer()->finishRender();
 	}
+
+	nFramesSinceWindowResized++;
+	glfwPollEvents();
+
 }
 
 //------------------------------------------------------------
@@ -346,21 +383,6 @@ void ofAppGLFWWindow::showCursor(){
 };
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setFrameRate(float targetRate){
-	// given this FPS, what is the amount of millis per frame
-	// that should elapse?
-
-	// --- > f / s
-
-	bFrameRateSet 			= true;
-	float durationOfFrame 	= 1.0f / (float)targetRate;
-	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-
-	frameRate = targetRate;
-
-};
-
-//------------------------------------------------------------
 void ofAppGLFWWindow::enableSetupScreen(){
 	bEnableSetupScreen = true;
 };
@@ -369,21 +391,6 @@ void ofAppGLFWWindow::enableSetupScreen(){
 void ofAppGLFWWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 };
-
-//------------------------------------------------------------
-int ofAppGLFWWindow::getFrameNum(){
-	return nFrameCount;
-}
-
-//------------------------------------------------------------
-float ofAppGLFWWindow::getFrameRate(){
-	return fps;
-}
-
-//------------------------------------------------------------
-double ofAppGLFWWindow::getLastFrameTime() {
-	return lastFrameTime;
-}
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
@@ -507,43 +514,6 @@ void ofAppGLFWWindow::setOrientation(ofOrientation orientation){
 ofOrientation ofAppGLFWWindow::getOrientation(){
 	return orientation;
 }
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::idle(void) {
-	ofNotifyUpdate();
-
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::display(void){
-	glfwMakeContextCurrent(windowP);
-
-	if(!ofGLIsFixedPipeline()) ofGetProgrammableGLRenderer()->startRender();
-	// set viewport, clear the screen
-	ofViewport();
-	float * bgPtr = ofBgColorPtr();
-	bool bClearAuto = ofbClearBg();
-
-	if ( bClearAuto == true ){
-		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-
-
-	if( bEnableSetupScreen )ofSetupScreen();
-
-
-	ofNotifyDraw();
-
-
-	if(!ofGLIsFixedPipeline()) ofGetProgrammableGLRenderer()->finishRender();
-
-	// Swap front and back buffers (we use a double buffered display)
-    glfwSwapBuffers(windowP);
-	glfwPollEvents();
-
-}
-
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::exitApp(){
@@ -723,6 +693,8 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 		resizeEventArgs.height = h;
 		ofNotifyEvent( ofEvents().windowResized, resizeEventArgs );
 	#endif
+
+	instance->nFramesSinceWindowResized = 0;
 }
 
 //------------------------------------------------------------

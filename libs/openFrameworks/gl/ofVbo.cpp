@@ -642,7 +642,7 @@ void ofVbo::bind(){
 	if(vaoChanged || !supportVAOs){
 		if(bUsingVerts){
 			glBindBuffer(GL_ARRAY_BUFFER, vertId);
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glEnableClientState(GL_VERTEX_ARRAY);
 				glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
 			}else{
@@ -650,7 +650,7 @@ void ofVbo::bind(){
 				glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertStride, 0);
 			}
 		}else{
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glDisableClientState(GL_VERTEX_ARRAY);
 			}else{
 				glDisableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
@@ -659,7 +659,7 @@ void ofVbo::bind(){
 
 		if(bUsingColors) {
 			glBindBuffer(GL_ARRAY_BUFFER, colorId);
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glEnableClientState(GL_COLOR_ARRAY);
 				glColorPointer(4, GL_FLOAT, colorStride, 0);
 			}else{
@@ -667,7 +667,7 @@ void ofVbo::bind(){
 				glVertexAttribPointer(ofShader::COLOR_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, colorStride, 0);
 			}
 		}else{
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glDisableClientState(GL_COLOR_ARRAY);
 			}else{
 				glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
@@ -676,7 +676,7 @@ void ofVbo::bind(){
 
 		if(bUsingNormals) {
 			glBindBuffer(GL_ARRAY_BUFFER, normalId);
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glEnableClientState(GL_NORMAL_ARRAY);
 				glNormalPointer(GL_FLOAT, normalStride, 0);
 			}else{
@@ -691,7 +691,7 @@ void ofVbo::bind(){
 				glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, normalStride, 0);
 			}
 		}else{
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glDisableClientState(GL_NORMAL_ARRAY);
 			}else{
 				glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
@@ -700,7 +700,7 @@ void ofVbo::bind(){
 
 		if(bUsingTexCoords) {
 			glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 				glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
 			}else{
@@ -708,7 +708,7 @@ void ofVbo::bind(){
 				glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, texCoordStride, 0);
 			}
 		}else{
-			if(ofGLIsFixedPipeline()){
+			if(!ofGetProgrammableGLRenderer()){
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			}else{
 				glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);

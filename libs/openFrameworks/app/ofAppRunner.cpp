@@ -278,25 +278,6 @@ void ofExit(int status){
 }
 
 //--------------------------------------
-int ofGetFrameNum(){
-	return window->getFrameNum();
-}
-
-//--------------------------------------
-float ofGetFrameRate(){
-	return window->getFrameRate();
-}
-
-double ofGetLastFrameTime(){
-	return window->getLastFrameTime();
-}
-
-//--------------------------------------
-void ofSetFrameRate(int targetRate){
-	window->setFrameRate(targetRate);
-}
-
-//--------------------------------------
 void ofSleepMillis(int millis){
 	#ifdef TARGET_WIN32
 		Sleep(millis);			//windows sleep in milliseconds
