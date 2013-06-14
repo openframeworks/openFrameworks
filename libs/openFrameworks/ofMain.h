@@ -85,3 +85,6 @@
 #include "ofMesh.h"
 #include "ofNode.h"
 
+//--------------------------
+// 3d
+#include "ofWindowManager.h"

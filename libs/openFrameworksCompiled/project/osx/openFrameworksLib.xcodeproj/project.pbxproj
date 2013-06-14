@@ -602,6 +602,17 @@
 			path = ../../../openFrameworks/graphics;
 			sourceTree = SOURCE_ROOT;
 		};
+		FA4DCF5C150A3D8B002D51A0 /* window */ = {
+			isa = PBXGroup;
+			children = (
+				FA23B638150F7FB600E6C3E1 /* ofWindow.cpp */,
+				FA23B639150F7FB600E6C3E1 /* ofWindow.h */,
+				FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */,
+				FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */,
+			);
+			path = window;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -663,6 +674,9 @@
 				E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */,
 				E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */,
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
+				FA23B645150F7FB600E6C3E1 /* ofWindow.h in Headers */,
+				FA23B649150F7FB600E6C3E1 /* ofWindowManager.h in Headers */,
+								
 				E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */,
 				E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */,
 				E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */,
@@ -760,7 +774,6 @@
 				E4F3BAFD12F4C745002D19BB /* ofUtils.cpp in Sources */,
 				E4F3BB1812F4C752002D19BB /* ofBitmapFont.cpp in Sources */,
 				E4F3BB1C12F4C752002D19BB /* ofGraphics.cpp in Sources */,
-				2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */,
 				E4F3BB1E12F4C752002D19BB /* ofImage.cpp in Sources */,
 				E4F3BB2012F4C752002D19BB /* ofPixels.cpp in Sources */,
 				E4F3BB2A12F4C752002D19BB /* ofTessellator.cpp in Sources */,
@@ -780,12 +793,16 @@
 				92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */,
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
-				E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */,
-				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
-				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
-				FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */,
-				DAC22D3F16E7A4AF0020226D /* ofParameter.cpp in Sources */,
-				DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */,
+				FA23B644150F7FB600E6C3E1 /* ofWindow.cpp in Sources */,
+				FA23B648150F7FB600E6C3E1 /* ofWindowManager.cpp in Sources */,
+				CEA0EBDB163ED983006D3EB1 /* ofQTKitGrabber.mm in Sources */,
+				CEA0EBDD163ED983006D3EB1 /* ofQTKitMovieRenderer.m in Sources */,
+				CEA0EBDF163ED983006D3EB1 /* ofQTKitPlayer.mm in Sources */,
+				CEA0EBE0163ED983006D3EB1 /* ofQtUtils.cpp in Sources */,
+				CEA0EBE2163ED983006D3EB1 /* ofQuickTimeGrabber.cpp in Sources */,
+				CEA0EBE4163ED983006D3EB1 /* ofQuickTimePlayer.cpp in Sources */,
+				CEA0EBE6163ED983006D3EB1 /* ofVideoGrabber.cpp in Sources */,
+				CEA0EBE8163ED983006D3EB1 /* ofVideoPlayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

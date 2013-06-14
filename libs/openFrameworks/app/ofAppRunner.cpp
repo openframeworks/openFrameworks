@@ -85,7 +85,6 @@ void ofRunApp(ofBaseApp * OFSA){
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
-	
 #ifndef TARGET_OPENGLES
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();

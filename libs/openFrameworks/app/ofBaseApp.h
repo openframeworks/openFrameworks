@@ -28,6 +28,7 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void mousePressed( int x, int y, int button ){}
 		virtual void mouseReleased(){}
 		virtual void mouseReleased(int x, int y, int button ){}
+		virtual void scrolled(float deltaX, float deltaY){}
 		
 		virtual void dragEvent(ofDragInfo dragInfo) { }
 		virtual void gotMessage(ofMessage msg){ }

@@ -113,12 +113,9 @@ void ofNotifyKeyPressed(int key){
 	keyEventArgs.key = key;
 	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
 	
-	
 	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
 		exitApp();
 	}
-	
-	
 }
 
 //------------------------------------------
@@ -253,6 +250,20 @@ void ofNotifyMouseMoved(int x, int y){
 }
 
 //------------------------------------------
+void ofNotifyScrolled(float dx, float dy){
+	static ofScrollEventArgs scrollEventArgs;
+	ofBaseApp * ofAppPtr = ofGetAppPtr();
+	if(ofAppPtr){
+		ofAppPtr->scrolled(dx, dy);
+	}
+	#ifdef OF_USING_POCO
+		scrollEventArgs.deltaX	= dx;
+		scrollEventArgs.deltaY	= dy;
+		ofNotifyEvent( ofEvents().scrolled, scrollEventArgs );
+	#endif
+}
+
+//------------------------------------------
 void ofNotifyExit(){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	if(ofAppPtr){
@@ -313,4 +324,13 @@ void ofNotifyWindowEntry( int state ) {
 	entryArgs.state = state;
 	ofNotifyEvent(ofEvents().windowEntered, entryArgs);
 	
+}
+
+//------------------------------------------
+//Todo: This is a little bit of a hack to provide the correct ofGetMouseX and ofGetMouseY to multiwindow but still keeping the glutWindow functional
+void ofSetMouseValues(int currentX, int currentY, int prevX, int prevY){
+	currentMouseX = currentX;
+	currentMouseY = currentY;
+	previousMouseX = prevX;
+	previousMouseY = prevY;
 }

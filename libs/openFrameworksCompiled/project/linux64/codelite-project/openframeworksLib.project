@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="openframeworksLib" InternalType="">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="GL">
+      <File Name="../../../../glfw/include/GL/glfw3.h"/>
+      <File Name="../../../../glfw/include/GL/glfw3native.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="openFrameworks">
+    <VirtualDirectory Name="sound">
+      <File Name="../../../../openFrameworks/sound/ofBaseSoundStream.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofOpenALSoundPlayer.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofBaseSoundPlayer.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofPASoundStream.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofOpenALSoundPlayer.h"/>
+      <File Name="../../../../openFrameworks/sound/ofBaseSoundStream.h"/>
+      <File Name="../../../../openFrameworks/sound/ofRtAudioSoundStream.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofxiPhoneSoundStream.h"/>
+      <File Name="../../../../openFrameworks/sound/ofFmodSoundPlayer.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofPASoundStream.h"/>
+      <File Name="../../../../openFrameworks/sound/ofSoundStream.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofFmodSoundPlayer.h"/>
+      <File Name="../../../../openFrameworks/sound/ofSoundStream.h"/>
+      <File Name="../../../../openFrameworks/sound/ofSoundPlayer.h"/>
+      <File Name="../../../../openFrameworks/sound/ofSoundPlayer.cpp"/>
+      <File Name="../../../../openFrameworks/sound/ofBaseSoundPlayer.h"/>
+      <File Name="../../../../openFrameworks/sound/ofRtAudioSoundStream.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="window">
+      <File Name="../../../../openFrameworks/window/ofWindow.cpp"/>
+      <File Name="../../../../openFrameworks/window/ofWindow.h"/>
+      <File Name="../../../../openFrameworks/window/ofWindowManager.cpp"/>
+      <File Name="../../../../openFrameworks/window/ofWindowManager.h"/>
+      <File Name="../../../../openFrameworks/window/ofDisplay.h"/>
+      <File Name="../../../../openFrameworks/window/ofDisplay.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="graphics">
+      <File Name="../../../../openFrameworks/graphics/ofPath.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofBitmapFont.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofTessellator.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofRendererCollection.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofGraphics.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofPath.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofPixels.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofPolyline.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofTessellator.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofCairoRenderer.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofImage.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofImage.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofPixels.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofGraphics.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofTrueTypeFont.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofCairoRenderer.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofBitmapFont.cpp"/>
+      <File Name="../../../../openFrameworks/graphics/ofPolyline.h"/>
+      <File Name="../../../../openFrameworks/graphics/ofTrueTypeFont.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="utils">
+      <File Name="../../../../openFrameworks/utils/ofSystemUtils.cpp"/>
+      <File Name="../../../../openFrameworks/utils/ofUtils.cpp"/>
+      <File Name="../../../../openFrameworks/utils/ofUtils.h"/>
+      <File Name="../../../../openFrameworks/utils/ofThread.cpp"/>
+      <File Name="../../../../openFrameworks/utils/ofFileUtils.h"/>
+      <File Name="../../../../openFrameworks/utils/ofNoise.h"/>
+      <File Name="../../../../openFrameworks/utils/ofLog.cpp"/>
+      <File Name="../../../../openFrameworks/utils/ofURLFileLoader.h"/>
+      <File Name="../../../../openFrameworks/utils/ofConstants.h"/>
+      <File Name="../../../../openFrameworks/utils/ofURLFileLoader.cpp"/>
+      <File Name="../../../../openFrameworks/utils/ofLog.h"/>
+      <File Name="../../../../openFrameworks/utils/ofFileUtils.cpp"/>
+      <File Name="../../../../openFrameworks/utils/ofThread.h"/>
+      <File Name="../../../../openFrameworks/utils/ofSystemUtils.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="math">
+      <File Name="../../../../openFrameworks/math/ofVec2f.h"/>
+      <File Name="../../../../openFrameworks/math/ofVec2f.cpp"/>
+      <File Name="../../../../openFrameworks/math/ofVectorMath.h"/>
+      <File Name="../../../../openFrameworks/math/ofMath.h"/>
+      <File Name="../../../../openFrameworks/math/ofVec4f.cpp"/>
+      <File Name="../../../../openFrameworks/math/ofVec4f.h"/>
+      <File Name="../../../../openFrameworks/math/ofMatrix3x3.h"/>
+      <File Name="../../../../openFrameworks/math/ofMatrix4x4.h"/>
+      <File Name="../../../../openFrameworks/math/ofQuaternion.h"/>
+      <File Name="../../../../openFrameworks/math/ofVec3f.h"/>
+      <File Name="../../../../openFrameworks/math/ofMatrix4x4.cpp"/>
+      <File Name="../../../../openFrameworks/math/ofMatrix3x3.cpp"/>
+      <File Name="../../../../openFrameworks/math/ofMath.cpp"/>
+      <File Name="../../../../openFrameworks/math/ofQuaternion.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="app">
+      <File Name="../../../../openFrameworks/app/ofAppRunner.cpp"/>
+      <File Name="../../../../openFrameworks/app/ofAppRunner.h"/>
+      <File Name="../../../../openFrameworks/app/ofAppBaseWindow.h"/>
+      <File Name="../../../../openFrameworks/app/ofAppGlutWindow.h"/>
+      <File Name="../../../../openFrameworks/app/ofBaseApp.h"/>
+      <File Name="../../../../openFrameworks/app/ofAppGlutWindow.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="events">
+      <File Name="../../../../openFrameworks/events/ofEventUtils.h"/>
+      <File Name="../../../../openFrameworks/events/ofEvents.cpp"/>
+      <File Name="../../../../openFrameworks/events/ofEvents.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="video">
+      <File Name="../../../../openFrameworks/video/ofGstVideoPlayer.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofiPhoneVideoGrabber.h"/>
+      <File Name="../../../../openFrameworks/video/ofDirectShowGrabber.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofGstVideoGrabber.h"/>
+      <File Name="../../../../openFrameworks/video/ofDirectShowGrabber.h"/>
+      <File Name="../../../../openFrameworks/video/ofQuickTimePlayer.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofVideoPlayer.h"/>
+      <File Name="../../../../openFrameworks/video/ofiPhoneVideoPlayer.h"/>
+      <File Name="../../../../openFrameworks/video/ofQtUtils.h"/>
+      <File Name="../../../../openFrameworks/video/ofGstUtils.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofQuickTimePlayer.h"/>
+      <File Name="../../../../openFrameworks/video/ofQuickTimeGrabber.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofQuickTimeGrabber.h"/>
+      <File Name="../../../../openFrameworks/video/ofQtUtils.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofGstVideoPlayer.h"/>
+      <File Name="../../../../openFrameworks/video/ofGstUtils.h"/>
+      <File Name="../../../../openFrameworks/video/ofVideoPlayer.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofGstVideoGrabber.cpp"/>
+      <File Name="../../../../openFrameworks/video/ofVideoGrabber.h"/>
+      <File Name="../../../../openFrameworks/video/ofVideoGrabber.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gl">
+      <File Name="../../../../openFrameworks/gl/ofVboMesh.cpp"/>
+      <File Name="../../../../openFrameworks/gl/ofVbo.cpp"/>
+      <File Name="../../../../openFrameworks/gl/ofTexture.h"/>
+      <File Name="../../../../openFrameworks/gl/ofVboMesh.h"/>
+      <File Name="../../../../openFrameworks/gl/ofMaterial.h"/>
+      <File Name="../../../../openFrameworks/gl/ofLight.h"/>
+      <File Name="../../../../openFrameworks/gl/ofShader.h"/>
+      <File Name="../../../../openFrameworks/gl/ofFbo.h"/>
+      <File Name="../../../../openFrameworks/gl/ofGLUtils.h"/>
+      <File Name="../../../../openFrameworks/gl/ofVbo.h"/>
+      <File Name="../../../../openFrameworks/gl/ofMaterial.cpp"/>
+      <File Name="../../../../openFrameworks/gl/ofGLRenderer.h"/>
+      <File Name="../../../../openFrameworks/gl/ofGLRenderer.cpp"/>
+      <File Name="../../../../openFrameworks/gl/ofFbo.cpp"/>
+      <File Name="../../../../openFrameworks/gl/ofTexture.cpp"/>
+      <File Name="../../../../openFrameworks/gl/ofLight.cpp"/>
+      <File Name="../../../../openFrameworks/gl/ofShader.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="3d">
+      <File Name="../../../../openFrameworks/3d/ofCamera.cpp"/>
+      <File Name="../../../../openFrameworks/3d/ofEasyCam.h"/>
+      <File Name="../../../../openFrameworks/3d/of3dUtils.cpp"/>
+      <File Name="../../../../openFrameworks/3d/ofEasyCam.cpp"/>
+      <File Name="../../../../openFrameworks/3d/ofMesh.cpp"/>
+      <File Name="../../../../openFrameworks/3d/ofCamera.h"/>
+      <File Name="../../../../openFrameworks/3d/of3dUtils.h"/>
+      <File Name="../../../../openFrameworks/3d/ofMesh.h"/>
+      <File Name="../../../../openFrameworks/3d/ofNode.cpp"/>
+      <File Name="../../../../openFrameworks/3d/ofNode.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="communication">
+      <File Name="../../../../openFrameworks/communication/ofArduino.cpp"/>
+      <File Name="../../../../openFrameworks/communication/ofSerial.h"/>
+      <File Name="../../../../openFrameworks/communication/ofArduino.h"/>
+      <File Name="../../../../openFrameworks/communication/ofSerial.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="types">
+      <File Name="../../../../openFrameworks/types/ofColor.h"/>
+      <File Name="../../../../openFrameworks/types/ofRectangle.h"/>
+      <File Name="../../../../openFrameworks/types/ofRectangle.cpp"/>
+      <File Name="../../../../openFrameworks/types/ofPoint.h"/>
+      <File Name="../../../../openFrameworks/types/ofBaseTypes.h"/>
+      <File Name="../../../../openFrameworks/types/ofTypes.h"/>
+      <File Name="../../../../openFrameworks/types/ofBaseTypes.cpp"/>
+      <File Name="../../../../openFrameworks/types/ofPoint.cpp"/>
+      <File Name="../../../../openFrameworks/types/ofColor.cpp"/>
+    </VirtualDirectory>
+    <File Name="../../../../openFrameworks/.project"/>
+    <File Name="../../../../openFrameworks/ofMain.h"/>
+    <File Name="../../../../openFrameworks/.cproject"/>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+  <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make -j4 all</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)../../</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)/../../</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

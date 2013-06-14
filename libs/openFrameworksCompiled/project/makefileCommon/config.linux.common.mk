@@ -62,6 +62,7 @@ ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_DEFINES += OF_USING_MPG123
 endif
 
+
 ################################################################################
 # PLATFORM REQUIRED ADDON
 #   This is a list of addons required for this platform.  This list is used to 
