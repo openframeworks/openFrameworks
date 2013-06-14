@@ -10,8 +10,8 @@
 
 #pragma once
 #include "ofConstants.h"
-#include "ofVec3f.h"
-#include "ofVec4f.h"
+#include "ofVec3.h"
+#include "ofVec4.h"
 #include <cmath>
 
 #if (_MSC_VER)       

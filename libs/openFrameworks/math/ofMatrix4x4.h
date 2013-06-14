@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include "ofVec3f.h"
-#include "ofVec4f.h"
+#include "ofVec3.h"
+#include "ofVec4.h"
 #include "ofQuaternion.h"
 #include "ofConstants.h"
 #include <cmath>
