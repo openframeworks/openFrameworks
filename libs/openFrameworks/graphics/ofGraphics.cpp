@@ -61,7 +61,6 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 	shape.setUseShapeColor(false);
 
 	ofSetStyle(currentStyle);
-	ofBackground(currentStyle.bgColor);
 }
 
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
@@ -84,8 +83,13 @@ ofPtr<ofGLRenderer> ofGetGLRenderer(){
 //-----------------------------------------------------------------------------------
 #include "ofCairoRenderer.h"
 #include "ofGLRenderer.h"
+#include "ofPixels.h"
+#include "ofTexture.h"
+#include "ofPBO.h"
 
 static ofPtr<ofCairoRenderer> cairoScreenshot;
+static ofPtr<ofCairoRenderer> cairoGLBackend;
+static ofTexture textureCairoGLBackend;
 static ofPtr<ofBaseRenderer> storedRenderer;
 static ofPtr<ofRendererCollection> rendererCollection;
 static bool bScreenShotStarted = false;
@@ -122,6 +126,46 @@ void ofEndSaveScreenAsPDF(){
 		}
 		
 		bScreenShotStarted = false;
+	}
+}
+
+
+void ofEnableCairoGLBackend(bool b3d){
+	storedRenderer = ofGetCurrentRenderer();
+
+	if(!cairoGLBackend){
+		cairoGLBackend = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
+		cairoGLBackend->setupMemoryOnly(ofCairoRenderer::IMAGE,false,b3d);
+	}
+	if(ofGetWidth()!=int(textureCairoGLBackend.getWidth()) || ofGetHeight()!=int(textureCairoGLBackend.getHeight())){
+		cairoGLBackend->close();
+		cairoGLBackend->setupMemoryOnly(ofCairoRenderer::IMAGE,false,b3d);
+
+		textureCairoGLBackend.allocate(ofGetWidth(),ofGetHeight(),GL_RGBA);
+		textureCairoGLBackend.texData.glType = GL_BGRA;
+	}
+
+	ofSetCurrentRenderer(cairoGLBackend);
+	if(ofbClearBg()){
+		ofClear(ofGetStyle().bgColor);
+	}
+}
+
+void ofDisableCairoGLBackend(){
+	if(cairoGLBackend && storedRenderer){
+		cairoGLBackend->update();
+
+		ofSetCurrentRenderer(storedRenderer);
+		storedRenderer.reset();
+		ofColor c = ofGetStyle().color;
+		ofSetColor(255,255);
+		//ofBlendMode currentBlendMode = ofGetStyle().blendingMode;
+		//ofEnableAlphaBlending();
+		ofPixels & pixels = cairoGLBackend->getImageSurfacePixels();
+		textureCairoGLBackend.loadData(pixels.getPixels(),pixels.getWidth(),pixels.getHeight(),GL_BGRA);
+		textureCairoGLBackend.draw(0,0);
+		//ofEnableBlendMode(currentBlendMode);
+		ofSetColor(c);
 	}
 }
 
