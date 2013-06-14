@@ -1,9 +1,11 @@
 ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
-#   This file has linux common rules for all the platforms (x86_64, i386,armv6l 
-#   and armv7l)
-#
+#   This file has linux common rules for all Linux platforms including x86_64, 
+#   i386, armv6l, and armv7l.
 ################################################################################
+
+PLATFORM_SHARED_LIBRARY_EXTENSION:=so
+PLATFORM_STATIC_LIBRARY_EXTENSION:=a
 
 ################################################################################
 # PLATFORM SPECIFIC CHECKS
@@ -15,11 +17,11 @@
 ################################################################################
 
 ifeq ($(PLATFORM_ARCH),armv6l)
-	LINUX_ARM=1
+    LINUX_ARM=1
 endif
 
 ifeq ($(PLATFORM_ARCH),armv7l)
-	LINUX_ARM=1
+    LINUX_ARM=1
 endif
 
 #check if gtk exists and add it
@@ -34,6 +36,9 @@ ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
 else
     GST_VERSION = 0.10
 endif
+
+PLATFORM_SHARED_LIBRARIES
+
 
 ################################################################################
 # PLATFORM DEFINES
@@ -70,7 +75,6 @@ endif
 #   required addon header files as needed within the core. 
 #
 #   For instance, if you are compiling for Android, you would add ofxAndroid 
-#   here. If you are compiling for Raspberry Pi, you would add ofxRaspberryPi 
 #   here.
 #
 #   Note: Leave a leading space when adding list items with the += operator
@@ -94,7 +98,6 @@ PLATFORM_CFLAGS = -Wall
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-
 ################################################################################
 # PLATFORM LDFLAGS
 #   This is a list of fully qualified LDFLAGS required when linking for this 
@@ -104,9 +107,6 @@ PLATFORM_CFLAGS += -fexceptions
 ################################################################################
 
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs
-
-
-
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -130,51 +130,48 @@ PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 
 ################################################################################
-# PLATFORM CORE EXCLUSIONS
+# PLATFORM EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers 
 #   and third party libraries to be compiled and linked into a program or core 
-#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
+#   library. The PLATFORM_EXCLUSIONS is a list of fully qualified file 
 #   paths that will be used to exclude matching paths and files during list 
 #   generation.
 #
-#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
-#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   Each item in the PLATFORM_EXCLUSIONS list will be treated as a complete
+#   string unless the user adds a wildcard (%) operator to match subdirectories.
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
+PLATFORM_EXCLUSIONS :=
 
 # core sources
-PLATFORM_CORE_EXCLUSIONS += %.mm
-PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQtUtils.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimeGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimePlayer.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp
 
 ifeq ($(LINUX_ARM),1)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
+    PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppGlutWindow.cpp
 else
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+    PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
-
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glew/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glu/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/quicktime/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/videoInput/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/freetype/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/FreeImage/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/assimp/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glut/%
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -187,7 +184,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS =
+PLATFORM_HEADERS_SEARCH_PATHS =
 
 ################################################################################
 # PLATFORM LIBRARIES
@@ -211,18 +208,18 @@ PLATFORM_HEADER_SEARCH_PATHS =
 PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBRARIES += glut
+    PLATFORM_LIBRARIES += glut
 endif
 PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =
@@ -243,9 +240,9 @@ PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 
 ifneq ($(LINUX_ARM),1)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gl
-	PLATFORM_PKG_CONFIG_LIBRARIES += glu
-	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+    PLATFORM_PKG_CONFIG_LIBRARIES += gl
+    PLATFORM_PKG_CONFIG_LIBRARIES += glu
+    PLATFORM_PKG_CONFIG_LIBRARIES += glew
 endif
 
 # conditionally add GTK
@@ -271,7 +268,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS =
+PLATFORM_LIBS_SEARCH_PATHS =
 
 ################################################################################
 # PLATFORM FRAMEWORKS
@@ -312,5 +309,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
+# here we jump back into the main compile.project.mk file
 afterplatform: after
 	@echo 

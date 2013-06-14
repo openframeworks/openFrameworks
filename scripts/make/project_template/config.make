@@ -5,18 +5,21 @@
 
 ################################################################################
 # OF ROOT
-#   The location of your root openFrameworks installation
+#   The location of your root openFrameworks installation relative to this
+#   project folder.
 #       (default) PATH_OF_ROOT = ../../.. 
 ################################################################################
 # PATH_OF_ROOT = ../../..
 
 ################################################################################
-# PROJECT ROOT
-#   The location of the project - a starting place for searching for files
-#       (default) PROJECT_ROOT = . (this directory)
+# PROJECT PATH
+#   The location of the project relative to this config.make file.  This is
+#   a starting place for searching for files files.  Usually this should be
+#   in the project folder.
+#       (default) PROJECT_PATH = . (this directory)
 #    
 ################################################################################
-# PROJECT_ROOT = .
+# PROJECT_PATH = .
 
 ################################################################################
 # PROJECT SPECIFIC CHECKS
@@ -24,13 +27,14 @@
 #   conditionally enable or disable the addition of various features within 
 #   this makefile.  For instance, if you want to make changes based on whether
 #   GTK is installed, one might test that here and create a variable to check. 
+#
 ################################################################################
 # None
 
 ################################################################################
 # PROJECT EXTERNAL SOURCE PATHS
-#   These are fully qualified paths that are not within the PROJECT_ROOT folder.
-#   Like source folders in the PROJECT_ROOT, these paths are subject to 
+#   These are fully qualified paths that are not within the PROJECT_PATH folder.
+#   Like source folders in the PROJECT_PATH, these paths are subject to 
 #   exlclusion via the PROJECT_EXLCUSIONS list.
 #
 #     (default) PROJECT_EXTERNAL_SOURCE_PATHS = (blank) 
@@ -55,9 +59,9 @@
 #
 #		Will automatically exclude the following:
 #
-#			$(PROJECT_ROOT)/bin%
-#			$(PROJECT_ROOT)/obj%
-#			$(PROJECT_ROOT)/%.xcodeproj
+#			$(PROJECT_PATH)/bin%
+#			$(PROJECT_PATH)/obj%
+#			$(PROJECT_PATH)/%.xcodeproj
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
@@ -72,7 +76,7 @@
 #   Note: Leave a leading space when adding list items with the += operator
 #
 # Currently, shared libraries that are needed are copied to the 
-# $(PROJECT_ROOT)/bin/libs directory.  The following LDFLAGS tell the linker to
+# $(PROJECT_PATH)/bin/libs directory.  The following LDFLAGS tell the linker to
 # add a runtime path to search for those shared libraries, since they aren't 
 # incorporated directly into the final executable application binary.
 ################################################################################
@@ -121,8 +125,8 @@
 #		(default) PROJECT_OPTIMIZATION_CFLAGS_DEBUG = (blank)
 #
 #   Note: Before adding PROJECT_OPTIMIZATION_CFLAGS, please note that the 
-#   PLATFORM_OPTIMIZATION_CFLAGS defined in your platform specific configuration 
-#   file will be applied by default and further optimization flags here may not 
+#   PLATFORM_OPTIMIZATION_CFLAGS defined in your platform specific configuration
+#   file will be applied by default and further optimization flags here may not
 #   be needed.
 #
 #   Note: Leave a leading space when adding list items with the += operator

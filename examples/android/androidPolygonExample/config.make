@@ -1,9 +1,9 @@
 # add custom variables to this file
 
-# OF_ROOT allows to move projects outside apps/* just set this variable to the
+# PATH_OF_ROOT allows to move projects outside apps/* just set this variable to the
 # absoulte path to the OF root folder
 
-OF_ROOT = ../../..
+PATH_OF_ROOT = ../../..
 
 
 # USER_CFLAGS allows to pass custom flags to the compiler

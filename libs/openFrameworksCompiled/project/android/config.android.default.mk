@@ -5,7 +5,7 @@
 #   be defined as variants. For instance, normally this file will be located in 
 #   a platform specific subpath such as 
 #
-#        $(OF_ROOT)/libs/openFrameworksComplied/linux64
+#        $(PATH_OF_ROOT)/libs/openFrameworksComplied/linux64
 #
 #   This file will then be a generic platform file like:
 #
@@ -16,6 +16,9 @@
 #        configure.core.linuxarmv6l.raspberrypi.make
 #
 ################################################################################
+
+PLATFORM_SHARED_LIBRARY_EXTENSION:=so
+PLATFORM_STATIC_LIBRARY_EXTENSION:=a
 
 ################################################################################
 # PLATFORM SPECIFIC CHECKS
@@ -29,23 +32,23 @@
 #check if mpg123 exists and add it
 #HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 
-include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
+include $(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
 ifeq ($(shell uname),Darwin)
-	HOST_PLATFORM = darwin-x86
+    HOST_PLATFORM = darwin-x86
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
-	HOST_PLATFORM = windows
+    HOST_PLATFORM = windows
 else
-	HOST_PLATFORM = linux-x86
+    HOST_PLATFORM = linux-x86
 endif
 
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon
+    ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
-	ABIS_TO_COMPILE_DEBUG = armv7
+    ABIS_TO_COMPILE_DEBUG = armv7
 endif
 
 
@@ -68,15 +71,15 @@ PLATFORM_DEFINES =
 PLATFORM_DEFINES = ANDROID
 
 ifndef $(NDK_PLATFORM)
-	NDK_PLATFORM = android-14
+    NDK_PLATFORM = android-14
 endif
 
 ifndef $(SDK_TARGET)
-	SDK_TARGET = android-17
+    SDK_TARGET = android-17
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.6
+    GCC_VERSION = 4.6
 endif
 
 PROJECT_PATH=$(PWD)
@@ -90,25 +93,25 @@ RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
-	ABI_PATH = armeabi-v7a
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    ABI_PATH = armeabi-v7a
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
 
 ifeq ($(ABI),armv5)
-	ABI_PATH = armeabi
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    ABI_PATH = armeabi
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
 
 ifeq ($(ABI),neon)
-	ABI_PATH = armeabi-v7a
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
+    ABI_PATH = armeabi-v7a
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
 endif
 
-PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworks.a
-PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworksDebug.a
+PLATFORM_CORELIB_RELEASE_TARGET = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/$(ABI)/libopenFrameworks.a
+PLATFORM_CORELIB_DEBUG_TARGET = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/$(ABI)/libopenFrameworksDebug.a
 
 
 # add OF_USING_MPG123 define IF we have it defined as a system library
@@ -150,11 +153,11 @@ PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
 
 
 ifeq ($(ABI),armv7)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
+    PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 endif
 
 ifeq ($(ABI),neon)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+    PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 endif
 
 ################################################################################
@@ -168,7 +171,7 @@ endif
 PLATFORM_LDFLAGS =
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
 ifeq ($(HOST_PLATFORM),linux-x86)
-	LDFLAGS += -fuse-ld=gold
+    LDFLAGS += -fuse-ld=gold
 endif
 
 PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
@@ -198,11 +201,11 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 # PLATFORM CORE EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers 
 #   and third party libraries to be compiled and linked into a program or core 
-#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
+#   library. The PLATFORM_EXCLUSIONS is a list of fully qualified file 
 #   paths that will be used to exclude matching paths and files during list 
 #   generation.
 #
-#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
+#   Each item in the PLATFORM_EXCLUSIONS list will be treated as a complete
 #   string unless the user adds a wildcard (%) operator to match subdirectories.
 #   GNU make only allows one wildcard for matching.  The second wildcard (%) is
 #   treated literally.
@@ -210,42 +213,43 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
+PLATFORM_EXCLUSIONS =
 
 # core sources
-PLATFORM_CORE_EXCLUSIONS += %.mm
-PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofCairoRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
+PLATFORM_EXCLUSIONS += %.mm
+PLATFORM_EXCLUSIONS += %.m
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQtUtils.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimeGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimePlayer.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstUtils.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstVideoGrabber.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstVideoPlayer.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppGlutWindow.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/graphics/ofCairoRenderer.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/include
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/kiss/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/portaudio/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glew/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/quicktime/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/videoInput/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glu/include
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/fmodex/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/kiss/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/assimp/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glut/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/portaudio/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/rtAudio/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/%
+PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openssl/lib/%
 
+# TODO: move these into the core ? this should only be platform related core
 # android project folders
 PROJECT_EXCLUSIONS += ./gen
 PROJECT_EXCLUSIONS += ./gen/%
@@ -257,8 +261,6 @@ PROJECT_EXCLUSIONS += ./res/%
 PROJECT_EXCLUSIONS += ./assets
 PROJECT_EXCLUSIONS += ./assets/%
 PROJECT_EXCLUSIONS += ./libs
-
-
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -278,8 +280,8 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI_PATH)/include" 
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/include"
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/crystax/include/" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/libs/glu/include_android"
-PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
+PLATFORM_HEADER_SEARCH_PATHS += "$(PATH_OF_ROOT)/libs/glu/include_android"
+PLATFORM_HEADER_SEARCH_PATHS += "$(PATH_OF_ROOT)/addons/ofxAndroid/src"
 
 ################################################################################
 # PLATFORM LIBRARIES
@@ -313,14 +315,14 @@ PLATFORM_LIBRARIES += gcc
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
+PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
 PLATFORM_STATIC_LIBRARIES += $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/libgnustl_static.a
 
 # shared libraries 
@@ -380,7 +382,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_ARCH =
 #PLATFORM_OS =
-#PLATFORM_LIBS_PATH =
+#PLATFORM_LIBRARIES_PATH =
 
 ################################################################################
 # PLATFORM CXX
@@ -392,13 +394,12 @@ PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(
 PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
-
 afterplatform:$(RESFILE)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	
 	@echo copying debugging binaries for $(ABIS_TO_COMPILE)
 	@if [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
-		cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/; \
+		cp $(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/; \
 		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
 	fi
 	
@@ -470,7 +471,7 @@ afterplatform:$(RESFILE)
 	echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 	
 	#@echo updating ofAndroidLib project
-	#@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	#@cd $(PATH_OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
 	#if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	#	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	#else \
@@ -496,8 +497,8 @@ $(RESFILE): $(DATA_FILES)
 		cd ../..; \
 	fi
 
-install:	
-	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+install:
+	cd $(PATH_OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
 	echo installing on $(HOST_PLATFORM); \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
