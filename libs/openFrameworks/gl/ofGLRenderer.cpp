@@ -4,6 +4,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofMesh.h"
+#include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
@@ -132,6 +133,21 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
+    bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
+    if(model.hasScaling() && model.hasNormalsEnabled()) {
+        if(!normalsEnabled) glEnable( GL_NORMALIZE );
+    }
+    
+    model.getMesh().draw(renderType);
+    
+    if(model.hasScaling() && model.hasNormalsEnabled()) {
+        if(!normalsEnabled) glDisable( GL_NORMALIZE );
+    }
+    
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	if(!vertexData.empty()) {
 		if (bSmoothHinted) startSmoothing();
@@ -166,14 +182,14 @@ void ofGLRenderer::draw(ofPath & shape){
 	if(shape.isFilled()){
 		ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+			setColor( shape.getFillColor(),shape.getFillColor().a);
 		}
 		draw(mesh);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+			setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
 		}
 		setLineWidth( shape.getStrokeWidth() );
 		vector<ofPolyline> & outlines = shape.getOutline();
@@ -530,99 +546,6 @@ void ofGLRenderer::setCircleResolution(int res){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
 		circlePoints.resize(circlePolyline.size());
-	}
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::setSphereResolution(int res) {
-	if(sphereMesh.getNumVertices() == 0 || res != ofGetStyle().sphereResolution) {
-		int n = res * 2;
-		float ndiv2=(float)n/2;
-    
-		/*
-		 Original code by Paul Bourke
-		 A more efficient contribution by Federico Dosil (below)
-		 Draw a point for zero radius spheres
-		 Use CCW facet ordering
-		 http://paulbourke.net/texture_colour/texturemap/
-		 */
-		
-		float theta2 = TWO_PI;
-		float phi1 = -HALF_PI;
-		float phi2 = HALF_PI;
-		float r = 1.f; // normalize the verts //
-    
-		sphereMesh.clear();
-    sphereMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-    
-		int i, j;
-    float theta1 = 0.f;
-		float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
-		cte3 = (theta2-theta1)/n;
-		cte1 = (phi2-phi1)/ndiv2;
-		dosdivn = 2*unodivn;
-		ofVec3f e,p,e2,p2;
-    
-		if (n < 0){
-			n = -n;
-			ndiv2 = -ndiv2;
-		}
-		if (n < 4) {n = 4; ndiv2=(float)n/2;}
-    if(r <= 0) r = 1;
-		
-		t2=phi1;
-		cost2=cos(phi1);
-		j1divn=0;
-    
-    ofVec3f vert, normal;
-    ofVec2f tcoord;
-		
-		for (j=0;j<ndiv2;j++) {
-			t1 = t2;
-			t2 += cte1;
-			t3 = theta1 - cte3;
-			cost1 = cost2;
-			cost2 = cos(t2);
-			e.y = sin(t1);
-			e2.y = sin(t2);
-			p.y = r * e.y;
-			p2.y = r * e2.y;
-			
-			idivn=0;
-			jdivn=j1divn;
-			j1divn+=dosdivn;
-			for (i=0;i<=n;i++) {
-				t3 += cte3;
-				e.x = cost1 * cos(t3);
-				e.z = cost1 * sin(t3);
-				p.x = r * e.x;
-				p.z = r * e.z;
-				
-				normal.set( e.x, e.y, e.z );
-				tcoord.set( idivn, jdivn );
-				vert.set( p.x, p.y, p.z );
-				
-				sphereMesh.addNormal(normal);
-				sphereMesh.addTexCoord(tcoord);
-				sphereMesh.addVertex(vert);
-				
-				e2.x = cost2 * cos(t3);
-				e2.z = cost2 * sin(t3);
-				p2.x = r * e2.x;
-				p2.z = r * e2.z;
-				
-				normal.set(e2.x, e2.y, e2.z);
-				tcoord.set(idivn, j1divn);
-				vert.set(p2.x, p2.y, p2.z);
-				
-				sphereMesh.addNormal(normal);
-				sphereMesh.addTexCoord(tcoord);
-				sphereMesh.addVertex(vert);
-				
-				idivn += unodivn;
-				
-			}
-		}
 	}
 }
 
@@ -1016,22 +939,6 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
-    
-    glEnable(GL_NORMALIZE);
-    glPushMatrix();
-    glScalef(radius, radius, radius);
-    if(fillFlag) {
-        sphereMesh.draw();
-    } else {
-        sphereMesh.drawWireframe();
-    }
-    glPopMatrix();
-    glDisable(GL_NORMALIZE);
-    
-}
-
-//----------------------------------------------------------
 void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height){
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
@@ -1206,6 +1113,8 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	//We do this because its way faster
 	ofDrawBitmapCharacterStart(textString.size());
 
+	int column = 0;
+
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
@@ -1216,7 +1125,13 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 				sx = 0;
 			}
 
-			//glRasterPos2f(x,y + (int)yOffset);
+			column = 0;
+		} else if (textString[c] == '\t'){
+			//move the cursor to the position of the next tab
+			//8 is the default tab spacing in osx terminal and windows	 command line
+			int out = column + 8 - (column % 8);
+			sx += fontSize * (out-column);
+			column = out;
 		} else if (textString[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
@@ -1224,6 +1139,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
 						
 			sx += fontSize;
+			column++;
 		}
 	}
 	//We do this because its way faster

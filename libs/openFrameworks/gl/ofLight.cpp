@@ -210,7 +210,8 @@ void ofLight::setup() {
 //----------------------------------------
 void ofLight::enable() {
     setup();
-    onPositionChanged(); // update the position // 
+    onPositionChanged(); // update the position //
+	onOrientationChanged();
 	ofEnableLighting();
 	glEnable(GL_LIGHT0 + glIndex);
 }
@@ -370,13 +371,13 @@ ofFloatColor ofLight::getSpecularColor() const {
 //----------------------------------------
 void ofLight::customDraw() {
     if(getIsPointLight()) {
-        ofSphere( 0,0,0, 10);
+        ofDrawSphere( 0,0,0, 10);
     } else if (getIsSpotlight()) {
         float coneHeight = (sin(spotCutOff*DEG_TO_RAD) * 30.f) + 1;
         float coneRadius = (cos(spotCutOff*DEG_TO_RAD) * 30.f) + 8;
-        ofCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
+        ofDrawCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
     } else {
-        ofBox(10);
+        ofDrawBox(10);
     }
     ofDrawAxis(20);
 }
@@ -384,25 +385,40 @@ void ofLight::customDraw() {
 
 //----------------------------------------
 void ofLight::onPositionChanged() {
+	// TODO: (tig) fix this.  this breaks udpate() thread safety (openGL should not be called in update() but only draw() ),
+	// since this method will most likely be called during update()
+	// if the light is parented and the parent node changes position during update().
+
 	if(glIndex==-1) return;
 	// if we are a positional light and not directional, update light position
 	if(isDirectional == false) {
-		GLfloat cc[] = {getPosition().x, getPosition().y, getPosition().z, 1};
+		// (tig) this fixes an issue in case the light is parented
+		GLfloat cc[] = {getGlobalPosition().x, getGlobalPosition().y, getGlobalPosition().z, 1};
 		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
 	}
 }
 
 //----------------------------------------
 void ofLight::onOrientationChanged() {
+	// TODO: (tig) fix this.  this breaks udpate() thread safety (openGL should not be called in update() but only draw() ),
+	// since this method will most likely be called during update()
+	// if the light is parented and the parent node changes orientation during update().
+	
 	if(glIndex==-1) return;
 	// if we are a directional light and not positional, update light position (direction)
 	if(isDirectional == true) {
-		GLfloat cc[] = {getLookAtDir().x, getLookAtDir().y, getLookAtDir().z, 0};
+		// (tig) takes into account global orientation should node be parented.
+		ofVec3f lookAtDir = ( getGlobalTransformMatrix().getInverse() * ofVec4f(0,0,-1, 1) ).getNormalized();
+		GLfloat cc[] = {lookAtDir.x, lookAtDir.y, lookAtDir.z, 0};
 		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
 	} else {
 		if(isSpotlight) {
 			// determines the axis of the cone light //
-			GLfloat spot_direction[] = { getLookAtDir().x, getLookAtDir().y, getLookAtDir().z, 1.0 };
+			
+			// (tig) takes into account global orientation should node be parented.
+			ofVec3f lookAtDir = ( getGlobalTransformMatrix().getInverse() * ofVec4f(0,0,-1, 1) ).getNormalized();
+			
+			GLfloat spot_direction[] = { lookAtDir.x, lookAtDir.y, lookAtDir.z, 1.0};
 			glLightfv(GL_LIGHT0 + glIndex, GL_SPOT_DIRECTION, spot_direction);
 		}
 	}
