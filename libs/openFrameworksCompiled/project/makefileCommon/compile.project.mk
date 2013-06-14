@@ -338,6 +338,7 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
+<<<<<<< HEAD
 $(PATH_OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/%.o: $(PATH_OF_ROOT)/addons/%.cpp
 	@echo "Compiling" $<
 	mkdir -p $(@D)
@@ -372,6 +373,32 @@ $(PATH_OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/%.o: $(PATH_OF_ROOT)/addons/
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PATH_OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$*.d -MT $(PATH_OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$*.o -o $@ -c $<
+=======
+$(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.cpp
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+
+$(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.cxx
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+
+$(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.cc
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	
+$(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.c
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/o$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	
+$(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.S
+	@echo "Compiling" $<
+	mkdir -p $(@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/o$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+>>>>>>> 93def4152131744fea41f1a39d3668d1caac0e0c
 
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TARGET_LIBS)
 	@echo 'Linking $(TARGET) for $(ABI_LIB_SUBPATH)'

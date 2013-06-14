@@ -523,31 +523,13 @@ ifdef MAKEFILE_DEBUG
 endif
 
 ifdef ABI
-    OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)/
 else
-    OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)/
 endif
 
-# lots of indentation so we can see what's going on (remember, in Make
-# \t are treated as new lines, while \n are treated as spaces)
-OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,\
-                         $(patsubst %.cpp,%.o,\
-                           $(patsubst %.cxx,%.o,\
-                             $(patsubst %.cc,%.o,\
-                               $(patsubst %.S,%.o,\
-                                 $(patsubst %.mm,%.o,\
-                                   $(patsubst %.m,%.o,\
-                                     $(OF_PROJECT_SOURCE_FILES)\
-                                    )\
-                                  )\
-                                )\
-                              )\
-                            )\
-                          )\
-                        )
-
-OF_PROJECT_OBJS = $(subst $(PATH_PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
-
+OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
+OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES))))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
 # lots of indentation so we can see what's going on (remember, in Make
@@ -570,8 +552,8 @@ OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,\
 
 OF_PROJECT_ADDONS_OBJS = 
 $(foreach addon_obj, $(OF_PROJECT_ADDONS_OBJ_FILES), \
-     $(eval OF_PROJECT_ADDONS_OBJS+= $(patsubst $(PATH_OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(PATH_OF_ROOT)/addons/,,$(addon_obj))))/%, \
-                                          $(PATH_OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(PATH_OF_ROOT)/addons/,,$(addon_obj))))/%, \
+     $(eval OF_PROJECT_ADDONS_OBJS+= $(patsubst $(OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
+                                          $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
                                           $(addon_obj))) \
 )
 
