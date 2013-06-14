@@ -53,9 +53,9 @@ public:
 	string getAddress() const { return address; }
 
 	/// return the remote ip
-	string getRemoteIp() { return remote_host; }
+	string getRemoteIp() const { return remote_host; }
 	/// return the remote port
-	int getRemotePort() { return remote_port; }
+	int getRemotePort() const { return remote_port; }
 
 	/// return number of argumentsļ
 	int getNumArgs() const;

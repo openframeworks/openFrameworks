@@ -62,16 +62,16 @@ int ofSaveURLAsync(string url, string path);
 void ofRemoveURLRequest(int id);
 void ofRemoveAllURLRequests();
 
-extern ofEvent<ofHttpResponse> ofURLResponseEvent;
+ofEvent<ofHttpResponse> & ofURLResponseEvent();
 
 template<class T>
 void ofRegisterURLNotification(T * obj){
-	ofAddListener(ofURLResponseEvent,obj,&T::urlResponse);
+	ofAddListener(ofURLResponseEvent(),obj,&T::urlResponse);
 }
 
 template<class T>
 void ofUnregisterURLNotification(T * obj){
-	ofRemoveListener(ofURLResponseEvent,obj,&T::urlResponse);
+	ofRemoveListener(ofURLResponseEvent(),obj,&T::urlResponse);
 }
 
 

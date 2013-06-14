@@ -7,10 +7,13 @@ void testApp::setup(){
 	camHeight 		= 240;
 	
 	vidGrabber.setVerbose(true);
+	vidGrabber.setDeviceID(1);
+	vidGrabber.setDesiredFrameRate(60);
 	vidGrabber.initGrabber(camWidth,camHeight);
 	
 	videoInverted 	= new unsigned char[camWidth*camHeight*3];
 	videoTexture.allocate(camWidth,camHeight, GL_RGB);	
+	ofSetVerticalSync(true);
 }
 
 

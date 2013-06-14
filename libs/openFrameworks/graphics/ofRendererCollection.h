@@ -53,6 +53,12 @@ public:
 			 renderers[i]->draw(vertexData,drawMode);
 		 }
 	}
+    
+    void draw( of3dPrimitive& model, ofPolyRenderMode renderType ) {
+        for(int i=0;i<(int)renderers.size();i++) {
+            renderers[i]->draw( model, renderType );
+        }
+    }
 
 	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 		 for(int i=0;i<(int)renderers.size();i++){
@@ -197,6 +203,37 @@ public:
 		 }
 	 }
 
+	void loadIdentityMatrix (void){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadIdentityMatrix();
+		}
+	}
+	
+	void loadMatrix (const ofMatrix4x4 & m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadMatrix( m );
+		}
+	}
+	
+	void loadMatrix (const float * m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadMatrix( m );
+		}
+	}
+	
+	void multMatrix (const ofMatrix4x4 & m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->multMatrix( m );
+		}
+	}
+	
+	void multMatrix (const float * m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->multMatrix( m );
+		}
+	}
+	
+	
 	// screen coordinate things / default gl values
 	 void setupGraphicDefaults(){
 		 for(int i=0;i<(int)renderers.size();i++){
@@ -394,12 +431,6 @@ public:
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawCircle(x,y,z,radius);
 		 }
-	}
-	
-	void drawSphere(float x, float y, float z, float radius) {
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->drawSphere(x,y,z,radius);
-		}
 	}
 
 	void drawEllipse(float x, float y, float z, float width, float height){

@@ -14,8 +14,8 @@ int 	ofNextPow2(int input);
 
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
-unsigned long ofGetElapsedTimeMillis();
-unsigned long ofGetElapsedTimeMicros();
+unsigned long long ofGetElapsedTimeMillis();
+unsigned long long ofGetElapsedTimeMicros();
 int 	ofGetFrameNum();
 
 int 	ofGetSeconds();
@@ -25,8 +25,8 @@ int 	ofGetHours();
 //number of seconds since 1970
 unsigned int ofGetUnixTime();
 
-unsigned long ofGetSystemTime( );			// system time in milliseconds;
-unsigned long ofGetSystemTimeMicros( );			// system time in microseconds;
+unsigned long long ofGetSystemTime( );			// system time in milliseconds;
+unsigned long long ofGetSystemTimeMicros( );			// system time in microseconds;
 
 		//returns 
 string ofGetTimestampString();
@@ -38,7 +38,7 @@ int     ofGetMonth();
 int     ofGetDay();
 int     ofGetWeekday();
 
-void 	ofLaunchBrowser(string url);
+void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
 
 void	ofEnableDataPath();
 void	ofDisableDataPath();
@@ -149,6 +149,7 @@ string ofHexToString(const string& stringHexString);
 int ofToInt(const string& intString);
 char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
+double ofToDouble(const string& doubleString);
 bool ofToBool(const string& boolString);
 
 template <class T>
@@ -173,7 +174,11 @@ char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
 
+
 string 	ofGetVersionInfo();
+unsigned int ofGetVersionMajor();
+unsigned int ofGetVersionMinor();
+unsigned int ofGetVersionPatch();
 
 void	ofSaveScreen(string filename);
 void	ofSaveFrame(bool bUseViewport = false);

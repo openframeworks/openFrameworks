@@ -127,6 +127,42 @@ bool ofxTCPClient::send(string message){
 	}
 }
 
+bool ofxTCPClient::sendRawMsg(const char * msg, int size){
+
+	// tcp is a stream oriented protocol
+	// so there's no way to be sure were
+	// a message ends without using a terminator
+	// note that you will receive a trailing [/TCP]\0
+	// if sending from here and receiving from receiveRaw or
+	// other applications
+	if(!connected){
+		ofLog(OF_LOG_WARNING, "ofxTCPClient: trying to send while not connected");
+		return false;
+	}
+	tmpBuffSend.append(msg,size);
+	tmpBuffSend.append(messageDelimiter.c_str(),messageDelimiter.size());
+
+	int ret = TCPClient.SendAll( tmpBuffSend.getBinaryBuffer(), tmpBuffSend.size() );
+	if( ret == 0 ){
+		ofLog(OF_LOG_WARNING, "ofxTCPClient: other side disconnected");
+		close();
+		return false;
+	}else if(ret<0){
+		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendAll() failed");
+		return false;
+	}else if(ret<size){
+		// in case of partial send, store the
+		// part that hasn't been sent and send
+		// with the next message to not corrupt
+		// next messages
+		tmpBuffSend.set(&tmpBuffSend.getBinaryBuffer()[ret],tmpBuffSend.size()-ret);
+		return true;
+	}else{
+		tmpBuffSend.clear();
+		return true;
+	}
+}
+
 //--------------------------
 bool ofxTCPClient::sendRaw(string message){
 	if( message.length() == 0) return false;
@@ -200,6 +236,50 @@ string ofxTCPClient::receive(){
 		tmpStr=tmpStr.substr(tmpStr.find(messageDelimiter)+messageDelimiter.size());
 	}
 	return str;
+}
+
+
+static int findDelimiter(char * data, int size, string delimiter){
+	unsigned int posInDelimiter=0;
+	for(int i=0;i<size;i++){
+		if(data[i]==delimiter[posInDelimiter]){
+			posInDelimiter++;
+			if(posInDelimiter==delimiter.size()) return i-delimiter.size()+1;
+		}else{
+			posInDelimiter=0;
+		}
+	}
+	return -1;
+}
+
+int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
+	int length=-2;
+	//only get data from the buffer if we don't have already some complete message
+	if(findDelimiter(tmpBuffReceive.getBinaryBuffer(),tmpBuffReceive.size(),messageDelimiter)==-1){
+		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE);
+		length = receiveRawBytes(tmpBuff, TCP_MAX_MSG_SIZE);
+		if(length>0){ // don't copy the data if there was an error or disconnection
+			tmpBuffReceive.append(tmpBuff,length);
+		}
+	}
+
+	// process any available data
+	int posDelimiter = findDelimiter(tmpBuffReceive.getBinaryBuffer(),tmpBuffReceive.size(),messageDelimiter);
+	if(posDelimiter>0){
+		memcpy(receiveBuffer,tmpBuffReceive.getBinaryBuffer(),posDelimiter);
+		if(tmpBuffReceive.size() > posDelimiter + (int)messageDelimiter.size()){
+			memcpy(tmpBuff,tmpBuffReceive.getBinaryBuffer()+posDelimiter+messageDelimiter.size(),tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
+			tmpBuffReceive.set(tmpBuff,tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
+		}else{
+			tmpBuffReceive.clear();
+		}
+	}
+
+	if(posDelimiter>0){
+		return posDelimiter;
+	}else{
+		return 0;
+	}
 }
 
 //--------------------------

@@ -18,6 +18,8 @@ class testApp : public ofBaseApp {
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
-
+	
+		void drawInteractionArea();
+	bool bShowHelp;
 		ofEasyCam cam; // add mouse controls for camera movement
 };

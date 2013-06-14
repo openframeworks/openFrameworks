@@ -1,6 +1,5 @@
 package cc.openframeworks.androidTouchExample;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -8,7 +7,7 @@ import android.view.MenuItem;
 import cc.openframeworks.OFAndroid;
 
 
-public class OFActivity extends Activity{
+public class OFActivity extends cc.openframeworks.OFActivity{
 
 	@Override
     public void onCreate(Bundle savedInstanceState)
@@ -37,20 +36,22 @@ public class OFActivity extends Activity{
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	if (OFAndroid.keyDown(keyCode, event)) {
-    		return true;
-    	} else {
-    		return super.onKeyDown(keyCode, event);
-    	}
+	if (OFAndroid.keyDown(keyCode, event)) {
+	    return true;
+	} else {
+	    return super.onKeyDown(keyCode, event);
+	}
     }
+    
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (OFAndroid.keyUp(keyCode, event)) {
-        	return true;
-        } else {
-        	return super.onKeyUp(keyCode, event);
-        }
+	if (OFAndroid.keyUp(keyCode, event)) {
+	    return true;
+	} else {
+	    return super.onKeyUp(keyCode, event);
+	}
     }
+
 
 	OFAndroid ofApp;
     

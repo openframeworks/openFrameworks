@@ -3,6 +3,8 @@
 
 #include "ofConstants.h"
 #include "ofxTCPManager.h"
+#include "ofFileUtils.h"
+#include "ofTypes.h"
 
 #define TCP_MAX_MSG_SIZE 512
 //#define STR_END_MSG "[/TCP]"
@@ -39,6 +41,9 @@ class ofxTCPClient{
 		//send data as a string without the end message
 		bool sendRaw(string message);
 
+		//same as send for binary messages
+		bool sendRawMsg(const char * msg, int size);
+
 		//the received message length in bytes
 		int getNumReceivedBytes();
 
@@ -67,6 +72,11 @@ class ofxTCPClient{
 		//is at least as big as numBytes
 		int receiveRawBytes(char * receiveBytes, int numBytes);
 
+		//same as receive for binary data
+		//pass in buffer to be filled - make sure the buffer
+		//is at least as big as numBytes
+		int receiveRawMsg(char * receiveBuffer, int numBytes);
+
 
 		bool isConnected();
 		int getPort();
@@ -78,11 +88,19 @@ class ofxTCPClient{
 		bool setup(int _index, bool blocking);
 
 
+
+private:
+		// private copy so this can't be copied to avoid problems with destruction
+		ofxTCPClient(const ofxTCPManager & mom){};
+		ofxTCPClient & operator=(const ofxTCPClient & mom){return *this;}
+
+		friend class ofxTCPServer;
+
 		ofxTCPManager	TCPClient;
 
-protected:
-
 		char			tmpBuff[TCP_MAX_MSG_SIZE+1];
+		ofBuffer 		tmpBuffReceive;
+		ofBuffer 		tmpBuffSend;
 		string			str, tmpStr, ipAddr;
 		int				index, messageSize, port;
 		bool			connected;
