@@ -84,8 +84,6 @@ private:
 
 
 	//utils
-	void			changeMode();
-
 	int				samples;
 
 	int				nFrameCount;
@@ -115,6 +113,9 @@ private:
 
 	int glVersionMinor, glVersionMajor;
 
+    #ifdef TARGET_WIN32
+    LONG lExStyle, lStyle;
+    #endif // TARGET_WIN32
 };
 
 

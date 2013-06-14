@@ -40,8 +40,6 @@ static ofPtr<ofAppBaseWindow> 		window;
 	#include "ofAppiPhoneWindow.h"
 #elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
-#elif defined(TARGET_WIN32)
-	#include "ofAppGlutWindow.h"
 #elif defined(TARGET_RASPBERRY_PI)
 	#include "ofAppEGLWindow.h"
 #else
@@ -182,8 +180,6 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
 	#elif defined(TARGET_ANDROID)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
-	#elif defined(TARGET_WIN32)
-		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#elif defined(TARGET_RASPBERRY_PI)
 		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
     #else
