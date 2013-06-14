@@ -271,9 +271,7 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
-	int index = getPixelIndex(x, y);
-
+void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color) {
 	if( channels == 1 ){
 		pixels[index] = color.getBrightness();
 	}else if( channels == 3 ){
@@ -285,6 +283,21 @@ void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 		pixels[index+1] = color.g;
 		pixels[index+2] = color.b;
 		pixels[index+3] = color.a;
+	}
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(int x, int y, const ofColor_<PixelType>& color) {
+	setColor(getPixelIndex(x, y), color);
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
+	int i = 0;
+	while(i < size()) {
+		for(int j = 0; j < channels; j++) {
+			pixels[i++] = color[j];
+		}
 	}
 }
 
