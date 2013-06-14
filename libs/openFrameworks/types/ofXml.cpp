@@ -68,7 +68,7 @@ Document* ofXml::getPocoDocument() const  {
     return document;
 }
 
-int ofXml::getNumChildren()
+int ofXml::getNumChildren() const
 {
     int numberOfChildren = 0;
     NodeList *list = element->childNodes();
@@ -406,7 +406,7 @@ bool ofXml::addChild( const string& path )
 }*/
 
 
-string ofXml::getValue()
+string ofXml::getValue() const
 {
     if(element->firstChild()->nodeType() == Node::TEXT_NODE) {
         return element->innerText();
@@ -523,7 +523,7 @@ bool ofXml::setValue(const string& path, const string& value)
     return true;
 }
 
-string ofXml::getAttribute(const string& path) {
+string ofXml::getAttribute(const string& path) const {
 
     Node *e = element->getNodeByPath(path);
     if(e) {
@@ -606,7 +606,7 @@ bool ofXml::remove(const string& path) // works for both attributes and tags
     return false;
 }
 
-bool ofXml::exists(const string& path) // works for both attributes and tags
+bool ofXml::exists(const string& path) const // works for both attributes and tags
 {
     Node *node = element->getNodeByPath(path);
     
@@ -616,7 +616,7 @@ bool ofXml::exists(const string& path) // works for both attributes and tags
     return false;
 }
 
-map<string, string> ofXml::getAttributes() // works for both attributes and tags
+map<string, string> ofXml::getAttributes() const // works for both attributes and tags
 {
     
     map<string, string> attrMap;
@@ -729,7 +729,7 @@ bool ofXml::setAttribute(const string& path, const string& value)
 }
 
 //---------------------------------------------------------
-bool ofXml::loadFromBuffer( string buffer )
+bool ofXml::loadFromBuffer( const string& buffer )
 {
 
     Poco::XML::DOMParser parser;
@@ -764,7 +764,7 @@ Element* ofXml::getPocoElement(const string& path)
     
 }
 
-string ofXml::getName()
+string ofXml::getName() const
 {
     if(element)
     {
