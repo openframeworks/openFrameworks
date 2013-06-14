@@ -1038,13 +1038,7 @@ bool ofCairoRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofCairoRenderer::getBgColor(){
-	return bgColor;
-}
-
-//----------------------------------------------------------
 void ofCairoRenderer::background(const ofColor & c){
-	bgColor = c;
 	clear(c.r,c.g,c.b,c.a);
 }
 

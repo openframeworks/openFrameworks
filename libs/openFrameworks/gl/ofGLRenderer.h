@@ -96,7 +96,6 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofFloatColor & getBgColor();
 	bool bClearBg();
 	void background(const ofColor & c);
 	void background(float brightness);
@@ -128,7 +127,6 @@ private:
 	stack <ofMatrix4x4> modelViewStack;
 	stack <ofMatrix4x4> projectionStack;
 	bool bBackgroundAuto;
-	ofFloatColor bgColor;
 
 	vector<ofPoint> linePoints;
 	vector<ofPoint> rectPoints;

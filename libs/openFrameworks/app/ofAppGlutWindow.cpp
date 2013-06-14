@@ -558,7 +558,6 @@ void ofAppGlutWindow::display(void){
 
 	// set viewport, clear the screen
 	ofViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));		// used to be glViewport( 0, 0, width, height );
-	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
     // to do non auto clear on PC for now - we do something like "single" buffering --
@@ -571,7 +570,7 @@ void ofAppGlutWindow::display(void){
     #endif
 
 	if ( bClearAuto == true || nFrameCount < 3){
-		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+		ofClear(ofGetBackgroundColor());
 	}
 
 	if( bEnableSetupScreen )ofSetupScreen();
@@ -599,7 +598,7 @@ void ofAppGlutWindow::display(void){
 		if (bClearAuto == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
-				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+				ofClear(ofGetBackgroundColor());
 			}
 		}
 		if(bDoubleBuffered){

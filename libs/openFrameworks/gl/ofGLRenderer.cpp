@@ -209,7 +209,7 @@ void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, flo
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			//ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
 	}
 }
@@ -221,7 +221,7 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			//ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
 	}
 }
@@ -233,7 +233,7 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			//ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
 		}
 	}
 }
@@ -696,14 +696,9 @@ bool ofGLRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofGLRenderer::getBgColor(){
-	return bgColor;
-}
-
-//----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
-	bgColor = c;
-	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	ofFloatColor fc= c;
+	glClearColor(fc[0],fc[1],fc[2], fc[3]);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
