@@ -147,7 +147,8 @@ ofSerial::~ofSerial(){
 //----------------------------------------------------------------
 static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 	//TODO - this should be ofStringInString
-	return ( strstr(A.getDeviceName().c_str(), "usbserial") != NULL );
+	return ( strstr(A.getDeviceName().c_str(), "usbserial") != NULL ||
+		 strstr(A.getDeviceName().c_str(), "usbmodem") != NULL );
 }
 
 //----------------------------------------------------------------
@@ -264,8 +265,8 @@ void ofSerial::close(){
     	if (bInited){
     		tcsetattr(fd,TCSANOW,&oldoptions);
     		::close(fd);
+    		bInited = false;
     	}
-    	// [CHECK] -- anything else need to be reset?
     //---------------------------------------------
     #endif
     //---------------------------------------------
@@ -677,3 +678,6 @@ int ofSerial::available(){
 	return numBytes;
 }
 
+bool ofSerial::isInitialized() const{
+	return bInited;
+}

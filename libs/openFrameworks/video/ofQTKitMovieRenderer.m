@@ -111,23 +111,28 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     QTTime curTime = [_movie currentTime];
     
     long numFrames = 0;
-    while(true)
-    {
-        int time = curTime.timeValue;
-        //        % get the end time of the current frame  
+	NSMutableArray* timeValues = [NSMutableArray array];
+    while(true) {
+        //        % get the end time of the current frame
+		[timeValues addObject:[NSNumber numberWithLongLong:curTime.timeValue]];
+
         curTime = [_movie frameEndTime:curTime];
         numFrames++;
+//        int time = curTime.timeValue;
 //        NSLog(@" num frames %ld, %lld/%ld , dif %lld, current time %f", numFrames,curTime.timeValue,curTime.timeScale, curTime.timeValue - time, 1.0*curTime.timeValue/curTime.timeScale);
         if (QTTimeCompare(curTime, endTime) == NSOrderedSame ||
             QTTimeCompare(curTime, [_movie frameEndTime:curTime])  == NSOrderedSame ){ //this will happen for audio files since they have no frames.
             break;
         }
-
     }
     
+	if(frameTimeValues != NULL){
+		[frameTimeValues release];
+	}
+	frameTimeValues = [[NSArray arrayWithArray:timeValues] retain];
+	
 	frameCount = numFrames;
-    frameStep = 1.0*movieDuration.timeValue/numFrames;
-    
+//	frameStep = round((double)(movieDuration.timeValue/(double)(numFrames)));
 	//NSLog(@" movie has %d frames and frame step %d", frameCount, frameStep);
 	
 	//if we are using pixels, make the visual context
@@ -219,6 +224,11 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		if(_textureCache != NULL){
 			CVOpenGLTextureCacheRelease(_textureCache);
 			_textureCache = NULL;
+		}
+		
+		if(frameTimeValues != NULL){
+			[frameTimeValues release];
+			frameTimeValues = NULL;
 		}
 		
 		if(synchronousSeekLock != nil){
@@ -392,7 +402,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//          (NSInteger)movieSize.width, (NSInteger)movieSize.height);
 		if((NSInteger)movieSize.width != CVPixelBufferGetWidth(_latestPixelFrame) ||
 		   (NSInteger)movieSize.height != CVPixelBufferGetHeight(_latestPixelFrame)){
-			NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. Ths is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
+			NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. This is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
 				  CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
 			return;
 		}
@@ -405,7 +415,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
 		//If we are using alpha, the ofQTKitPlayer class will have allocated a buffer of size
 		//movieSize.width * movieSize.height * 4
-		//CoreVieo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
+		//CoreVideo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
 		//so we need to swap the alpha around using a vImage permutation
 		vImage_Buffer src = {
 			CVPixelBufferGetBaseAddress(_latestPixelFrame),
@@ -559,7 +569,8 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	if(self.rate != 0){
 		_movie.rate = 0;
 	}
-    QTTime t = QTMakeTime(ceil(frame*frameStep), movieDuration.timeScale);
+	//QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
+	QTTime t = QTMakeTime([[frameTimeValues objectAtIndex:frame%frameTimeValues.count] longLongValue], movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
 	QTTime endTime =[_movie frameEndTime:t];
 //	NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
@@ -567,7 +578,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		self.justSetFrame = YES;
 		_movie.currentTime = startTime;
 //		//		NSLog(@"set time to %f", 1.0*_movie.currentTime.timeValue / _movie.currentTime.timeScale);
-//		NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
+//  NSLog(@"nsorderedsame calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
 		[self synchronizeSeek];
 	}
 
@@ -595,10 +606,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	return _movie.currentTime.timeValue;
 }
 
-//This thread will guarentuee that the current frame is in memory
+//This thread will guarantee that the current frame is in memory
 //before proceeding. If something goes weird, it has 1.0 second timeout
 //that it will print a warning and proceed.
-//It works by bockign with a condition, which is signaled
+//It works by blocking with a condition, which is signaled
 //in the frameAvailable callback when the time matches the requested time
 - (void) synchronizeSeek
 {
@@ -638,9 +649,21 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	loadedFirstFrame = true;
 }
 
+//complicated!!! =( Do a search through the frame time values
+//to find the index of the current time, then return that index
+// http://stackoverflow.com/questions/3995949/how-to-write-objective-c-blocks-inline
 - (NSInteger) frame
 {
-	return _movie.currentTime.timeValue / frameStep;
+	return [frameTimeValues indexOfObject:[NSNumber numberWithLongLong:_movie.currentTime.timeValue]
+							inSortedRange:NSMakeRange(0, frameTimeValues.count)
+								  options:NSBinarySearchingInsertionIndex
+						  usingComparator:^(id lhs, id rhs) {
+							  if ([lhs longLongValue] < [rhs longLongValue])
+								  return (NSComparisonResult)NSOrderedAscending;
+							  else if([lhs longLongValue] > [rhs longLongValue])
+								  return (NSComparisonResult)NSOrderedDescending;
+							  return (NSComparisonResult)NSOrderedSame;
+						  }];
 }
 
 - (NSTimeInterval) duration

@@ -102,7 +102,7 @@ public:
                  ofScaleMode scaleMode = OF_SCALEMODE_FIT);
 
     void scaleTo(const ofRectangle& targetRect,
-                 ofAspectRatioMode subjectAspectRatioMode = OF_ASPECT_RATIO_KEEP,
+                 ofAspectRatioMode subjectAspectRatioMode,
                  ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
                  ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
 
@@ -206,7 +206,7 @@ public:
     float getHeight() const;
 
     ofRectangle& operator = (const ofRectangle& rect);
-    ofRectangle& operator + (const ofPoint& p);
+    ofRectangle operator + (const ofPoint& p);
     
     bool operator == (const ofRectangle& rect) const;
     bool operator != (const ofRectangle& rect) const;

@@ -17,6 +17,8 @@
 #include "ofColor.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
+#include "ofParameter.h"
+#include "ofParameterGroup.h"
 
 //--------------------------
 // math
@@ -44,7 +46,9 @@
 
 //--------------------------
 // graphics
+#if !defined( TARGET_OF_IPHONE ) & !defined(TARGET_ANDROID)
 #include "ofCairoRenderer.h"
+#endif
 #include "ofGraphics.h"
 #include "ofImage.h"
 #include "ofPath.h"

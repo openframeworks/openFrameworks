@@ -19,7 +19,6 @@ void testApp::setup(){
 void testApp::update(){
 	counter = counter + 0.033f;
 
-    float one = 1.0;
     alpha += 0.01;
    
     alpha = (alpha > 1.0) ? 1.0 : alpha;

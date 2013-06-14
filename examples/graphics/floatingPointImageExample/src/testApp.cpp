@@ -20,7 +20,6 @@ void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
 
 //--------------------------------------------------------------
 ofVec3f getVertexFromImg(ofFloatImage& img, int x, int y) {
-	float scaleFactor = 100;
 	return ofVec3f(x, y, 100 * img.getColor(x, y).getBrightness());
 }
 

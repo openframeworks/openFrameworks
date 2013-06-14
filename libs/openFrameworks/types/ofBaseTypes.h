@@ -16,6 +16,9 @@
 #include "ofColor.h"
 #include "ofMesh.h"
 #include "ofPixels.h"
+#include "ofMatrix4x4.h"
+
+class ofAbstractParameter;
 
 template<typename T>
 class ofImage_;
@@ -26,6 +29,7 @@ typedef ofImage_<unsigned short> ofShortImage;
 
 class ofPath;
 class ofPolyline;
+class of3dPrimitive;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -101,6 +105,7 @@ public:
 
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
 typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
+typedef ofBaseHasPixels_<unsigned short> ofBaseHasShortPixels;
 
 //----------------------------------------------------------
 // ofAbstractImage    ->   to be able to put different types of images in vectors...
@@ -121,6 +126,7 @@ public:
 
 typedef ofBaseImage_<unsigned char> ofBaseImage;
 typedef ofBaseImage_<float> ofBaseFloatImage;
+typedef ofBaseImage_<unsigned short> ofBaseShortImage;
 
 //----------------------------------------------------------
 // ofBaseHasSoundStream
@@ -283,6 +289,7 @@ public:
 	virtual void draw(ofPath & shape)=0;
 	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
+	virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType )=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
@@ -318,7 +325,13 @@ public:
 	virtual void rotateY(float degrees){};
 	virtual void rotateZ(float degrees){};
 	virtual void rotate(float degrees){};
-
+	virtual void matrixMode(ofMatrixMode mode){};
+	virtual void loadIdentityMatrix (void){};
+	virtual void loadMatrix (const ofMatrix4x4 & m){};
+	virtual void loadMatrix (const float *m){};
+	virtual void multMatrix (const ofMatrix4x4 & m){};
+	virtual void multMatrix (const float *m){};
+	
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};
 	virtual void setupScreen(){};
@@ -363,7 +376,6 @@ public:
 	virtual void drawRectangle(float x, float y, float z, float w, float h)=0;
 	virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)=0;
 	virtual void drawCircle(float x, float y, float z, float radius)=0;
-	virtual void drawSphere(float x, float y, float z, float radius)=0;
 	virtual void drawEllipse(float x, float y, float z, float width, float height)=0;
 	virtual void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode)=0;
 
@@ -371,3 +383,21 @@ public:
 	// returns true if the renderer can render curves without decomposing them
 	virtual bool rendersPathPrimitives()=0;
 };
+
+class ofBaseSerializer{
+public:
+	virtual ~ofBaseSerializer(){}
+
+	virtual void serialize(const ofAbstractParameter & parameter)=0;
+	virtual void deserialize(ofAbstractParameter & parameter)=0;
+};
+
+class ofBaseFileSerializer: public ofBaseSerializer{
+public:
+	virtual ~ofBaseFileSerializer(){}
+
+	virtual bool load(string path)=0;
+	virtual bool save(string path)=0;
+};
+
+

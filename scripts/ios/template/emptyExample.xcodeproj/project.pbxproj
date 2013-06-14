@@ -456,44 +456,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>BB24DD8B10DA77E000E9C588</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>BB24DD8C10DA77E000E9C588</string>
-				<string>BB24DD8D10DA77E000E9C588</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>data</string>
-			<key>path</key>
-			<string>bin/data</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BB24DD8C10DA77E000E9C588</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.png</string>
-			<key>path</key>
-			<string>Default.png</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BB24DD8D10DA77E000E9C588</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.png</string>
-			<key>path</key>
-			<string>Icon.png</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>BB24DD8F10DA77E000E9C588</key>
 		<dict>
 			<key>fileRef</key>

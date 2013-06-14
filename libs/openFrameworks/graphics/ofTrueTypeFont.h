@@ -28,6 +28,10 @@ typedef ofPath ofTTFCharacter;
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
 
+const static string OF_TTF_SANS = "sans-serif";
+const static string OF_TTF_SERIF = "serif";
+const static string OF_TTF_MONO = "monospace";
+
 class ofTrueTypeFont{
 
 public:
@@ -66,9 +70,14 @@ public:
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
 	vector<ofTTFCharacter> getStringAsPoints(string str);
+	ofMesh & getStringMesh(string s, float x, float y);
+	ofTexture & getFontTexture();
 
 	void bind();
 	void unbind();
+
+	ofTextEncoding getEncoding() const;
+	void setEncoding(ofTextEncoding encoding);
 
 protected:
 	bool			bLoadedOk;
@@ -91,6 +100,7 @@ protected:
 
 	void 			drawChar(int c, float x, float y);
 	void			drawCharAsShape(int c, float x, float y);
+	void			createStringMesh(string s, float x, float y);
 	
 	int				border;//, visibleBorder;
 	string			filename;
@@ -109,8 +119,13 @@ private:
 	GLboolean blend_enabled;
 	GLboolean texture_2d_enabled;
 #endif
+	ofTextEncoding encoding;
 	void		unloadTextures();
 	void		reloadTextures();
+	static bool	initLibraries();
+	static void finishLibraries();
+
+	friend void ofExitCallback();
 };
 
 

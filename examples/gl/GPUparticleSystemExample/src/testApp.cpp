@@ -93,14 +93,8 @@ void testApp::update(){
     updateVel.setUniform2f("screen", (float)width, (float)height);
     updateVel.setUniform1f("timestep", (float)timeStep);
 
-    // Just a frame to put pixels on
-    ofSetColor(255,255,255,255);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-    glTexCoord2f(textureRes, 0); glVertex3f(textureRes, 0, 0);
-    glTexCoord2f(textureRes, textureRes); glVertex3f( textureRes, textureRes, 0);
-    glTexCoord2f(0, textureRes);  glVertex3f(0, textureRes, 0);
-    glEnd();
+    // draw the source velocity texture to be updated
+    velPingPong.src->draw(0, 0);
     
     updateVel.end();
     velPingPong.dst->end();
@@ -119,14 +113,8 @@ void testApp::update(){
     updatePos.setUniformTexture("velData", velPingPong.src->getTextureReference(), 1);  // Velocity
     updatePos.setUniform1f("timestep",(float) timeStep );
     
-    // Just a frame to put pixels on
-    ofSetColor(255,255,255,255);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-    glTexCoord2f(textureRes, 0); glVertex3f(textureRes, 0, 0);
-    glTexCoord2f(textureRes, textureRes); glVertex3f( textureRes, textureRes, 0);
-    glTexCoord2f(0, textureRes);  glVertex3f(0, textureRes, 0);
-    glEnd();
+    // draw the source position texture to be updated
+    posPingPong.src->draw(0, 0);
     
     updatePos.end();
     posPingPong.dst->end();
@@ -162,6 +150,7 @@ void testApp::update(){
     for(int x = 0; x < textureRes; x++){
         for(int y = 0; y < textureRes; y++){
             glVertex2d(x,y);
+            glTexCoord2i(x, y);
         }
     }
     

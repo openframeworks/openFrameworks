@@ -29,6 +29,7 @@ public:
         // Allocate
         for(int i = 0; i < 2; i++){
             FBOs[i].allocate(_width,_height, _internalformat );
+            FBOs[i].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
         }
         
         // Clean

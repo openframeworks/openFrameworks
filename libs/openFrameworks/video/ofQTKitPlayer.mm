@@ -114,17 +114,15 @@ void ofQTKitPlayer::setPaused(bool _bPaused){
 
     bPaused = _bPaused;
     
-    if(isPlaying() == true) {
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-        if (bPaused == true) {
-            [moviePlayer setRate:0.0f];
-        } else {
-            [moviePlayer setRate:speed];
-        }
+	if (bPaused) {
+		[moviePlayer setRate:0.0f];
+	} else {
+		[moviePlayer setRate:speed];
+	}
 
-        [pool release];
-    }
+	[pool release];
     
 }
 

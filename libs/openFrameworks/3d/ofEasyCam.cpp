@@ -26,7 +26,7 @@ ofEasyCam::ofEasyCam(){
 	bInsideArcball = true;
 	bValidClick = false;
 	bEnableMouseMiddleButton = true;
-	
+	bAutoDistance = true;
 	doTranslationKey = 'm';
 	
 	reset();
@@ -40,10 +40,11 @@ ofEasyCam::~ofEasyCam(){
 }
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
-	if(bMouseInputEnabled){
-		if(!bDistanceSet){
-			setDistance(getImagePlaneDistance(viewport), true);
-		}
+    if(!bDistanceSet && bAutoDistance){
+        setDistance(getImagePlaneDistance(viewport), true);
+    }
+    if(bMouseInputEnabled){
+	
 		rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
 		if (bMouseInputEnabled) {
 			updateMouse();
@@ -112,6 +113,13 @@ void ofEasyCam::setDistance(float distance, bool save){//should this be the dist
 //----------------------------------------
 float ofEasyCam::getDistance() const {
 	return target.getPosition().distance(getPosition());
+}
+//----------------------------------------
+void ofEasyCam::setAutoDistance(bool bAutoDistance){
+    this->bAutoDistance = bAutoDistance;
+    if (bAutoDistance) {
+        bDistanceSet = false;
+    }
 }
 //----------------------------------------
 void ofEasyCam::setDrag(float drag){
@@ -231,10 +239,10 @@ void ofEasyCam::updateMouse(){
 				moveY = 0;
 				moveZ = 0;
 				if (ofGetMousePressed(2)) {
-					moveZ = mouseVel.y * sensitivityZ * getDistance() / viewport.height;				
+					moveZ = mouseVel.y * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;				
 				}else {
-					moveX = -mouseVel.x * sensitivityXY * getDistance() /viewport.width;
-					moveY =  mouseVel.y * sensitivityXY * getDistance() /viewport.height;
+					moveX = -mouseVel.x * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.width;
+					moveY =  mouseVel.y * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.height;
 				}
 			}else {
 				xRot = 0;

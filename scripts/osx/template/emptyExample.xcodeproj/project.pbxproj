@@ -450,6 +450,8 @@
 					<string>-lpthread</string>
 					<string>-mtune=native</string>
 				</array>
+				<key>SDKROOT</key>
+				<string>macosx</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -502,6 +504,8 @@
 					<string>-lpthread</string>
 					<string>-mtune=native</string>
 				</array>
+				<key>SDKROOT</key>
+				<string>macosx</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>

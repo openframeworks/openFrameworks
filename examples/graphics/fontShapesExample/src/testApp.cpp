@@ -32,7 +32,8 @@ void testApp::draw(){
 	ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), 10, 10);
 	ofDrawBitmapString("press a key to see it as a texture and as a vector. ", 10, 24);
 
-	testFont2.drawString("Hello - I am bitmap", 15, 400);
+	// if you see "bitm?p" try changing the text encoding for this file to UTF-8 
+	testFont2.drawString("Hello - I am bitmäp", 15, 400);
 
 	ofFill();
 	testFont2.drawStringAsShapes("Hello - I am vector", 15, 480);

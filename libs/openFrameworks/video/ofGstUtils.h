@@ -9,6 +9,7 @@
 #include "ofEvents.h"
 
 #define GST_DISABLE_DEPRECATED
+#include <gst/gst.h>
 #include <gst/gstpad.h>
 
 class ofGstAppSink;
@@ -60,8 +61,13 @@ public:
 	void setSinkListener(ofGstAppSink * appsink);
 
 	// callbacks to get called from gstreamer
+#if GST_VERSION_MAJOR==0
 	virtual GstFlowReturn preroll_cb(GstBuffer * buffer);
 	virtual GstFlowReturn buffer_cb(GstBuffer * buffer);
+#else
+	virtual GstFlowReturn preroll_cb(GstSample * buffer);
+	virtual GstFlowReturn buffer_cb(GstSample * buffer);
+#endif
 	virtual void 		  eos_cb();
 
 	static void startGstMainLoop();
@@ -124,8 +130,13 @@ public:
 	ofEvent<ofEventArgs> eosEvent;
 
 protected:
-	GstFlowReturn 	preroll_cb(GstBuffer * buffer);
-	GstFlowReturn 	buffer_cb(GstBuffer * buffer);
+#if GST_VERSION_MAJOR==0
+	GstFlowReturn preroll_cb(GstBuffer * buffer);
+	GstFlowReturn buffer_cb(GstBuffer * buffer);
+#else
+	GstFlowReturn preroll_cb(GstSample * buffer);
+	GstFlowReturn buffer_cb(GstSample * buffer);
+#endif
 	void			eos_cb();
 
 
@@ -137,7 +148,12 @@ private:
 	bool			bHavePixelsChanged;
 	bool			bBackPixelsChanged;
 	ofMutex			mutex;
+#if GST_VERSION_MAJOR==0
 	GstBuffer * 	buffer, *prevBuffer;
+#else
+	GstSample * 	buffer, *prevBuffer;
+	GstMapInfo mapinfo;
+#endif
 };
 
 
@@ -147,12 +163,22 @@ private:
 
 class ofGstAppSink{
 public:
-	virtual GstFlowReturn	on_preroll(GstBuffer * buffer){
+	virtual ~ofGstAppSink(){}
+#if GST_VERSION_MAJOR==0
+	virtual GstFlowReturn on_preroll(GstBuffer * buffer){
 		return GST_FLOW_OK;
 	}
-	virtual GstFlowReturn	on_buffer(GstBuffer * buffer){
+	virtual GstFlowReturn on_buffer(GstBuffer * buffer){
 		return GST_FLOW_OK;
 	}
+#else
+	virtual GstFlowReturn on_preroll(GstSample * buffer){
+		return GST_FLOW_OK;
+	}
+	virtual GstFlowReturn on_buffer(GstSample * buffer){
+		return GST_FLOW_OK;
+	}
+#endif
 	virtual void			on_eos(){}
 
 	// return true to set the message as attended so upstream doesn't try to process it

@@ -46,6 +46,10 @@ string ofxAndroidRandomUUID();
 
 void ofxAndroidMonitorNetworkState();
 
+void ofxAndroidLaunchBrowser(string url);
+
+void ofxAndroidNotifyLoadPercent(float percent);
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();
@@ -62,6 +66,9 @@ void ofxAndroidSoundStreamPause();
 void ofxAndroidSoundStreamResume();
 
 bool ofxAndroidCheckSDCardMounted();
+
+void ofxAndroidEnableMulticast();
+void ofxAndroidDisableMulticast();
 
 //this is just to fix a problem with undefined symbols
 inline void ofFixSoundStreamInclude(){

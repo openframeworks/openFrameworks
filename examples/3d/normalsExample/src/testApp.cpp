@@ -99,7 +99,7 @@ void testApp::draw(){
 
     mesh.drawFaces();
     ofSetColor(255,255,255);
-    light.customDraw();
+    light.draw();
     
     
     // draw our normals, and show that they are perpendicular to the vector from the center to the vertex
@@ -110,7 +110,7 @@ void testApp::draw(){
     if(!ofGetKeyPressed()){
         ofDisableLighting();
         ofSetColor(255,255,255,70);         
-        for(int i=0; i < n.size() ;i++){
+        for(unsigned int i=0; i < n.size() ;i++){
             ofLine(v[i].x,v[i].y,v[i].z,
                    v[i].x+n[i].x*normalLength,v[i].y+n[i].y*normalLength,v[i].z+n[i].z*normalLength);
 

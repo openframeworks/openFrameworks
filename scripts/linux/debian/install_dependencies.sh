@@ -1,28 +1,46 @@
-apt-get update
-apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev gstreamer0.10-ffmpeg libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libgtk2.0-dev libjack-dev python-lxml python-argparse
-ARCH=$(uname -m)
-if [ "$ARCH" = "x86_64" ]; then
-        LIBSPATH=linux64
-else
-        LIBSPATH=linux
+#!/bin/bash
+
+if [ $EUID != 0 ]; then
+	echo "this script must be run as root"
+	echo ""
+	echo "usage:"
+	echo "su -"
+	echo "./install_dependencies.sh"
+	exit $exit_code
+   exit 1
 fi
 
-WHO=`sudo who am i`;ID=`echo ${WHO%% *}`
-GROUP_ID=`id --group -n ${ID}`
-cd ../../../libs/openFrameworksCompiled/project/$LIBSPATH
-make Debug
+apt-get update
+
+GSTREAMER_VERSION=0.10
+GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
+
+RET=$(apt-cache show -n libgstreamer1.0-dev &> /dev/null; echo $?)
+
+if [ "$RET" -eq "0" ]; then
+    echo selecting gstreamer 1.0
+    GSTREAMER_VERSION=1.0
+    GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-libav
+fi
+
+apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libgstreamer0.10-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libgtk2.0-dev python-lxml python-argparse portaudio19-dev libfreetype6-dev libssl-dev
+
+apt-get install libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good
 exit_code=$?
 if [ $exit_code != 0 ]; then
-  echo "there has been a problem compiling Debug OF library"
-  echo "please report this problem in the forums"
-  exit $exit_code
+	echo "error installing packages, there could be an error with your internet connection"
+	exit $exit_code
 fi
-chown -R $ID:$GROUP_ID obj ../../lib/${LIBSPATH}/*
-make Release
+
+cd ..
+./compileOF.sh
 exit_code=$?
 if [ $exit_code != 0 ]; then
-  echo "there has been a problem compiling Release OF library"
-  echo "please report this problem in the forums"
   exit $exit_code
 fi
-chown -R $ID:$GROUP_ID obj ../../lib/${LIBSPATH}/*
+
+./compilePG.sh
+exit_code=$?
+if [ $exit_code != 0 ]; then
+  exit $exit_code
+fi
