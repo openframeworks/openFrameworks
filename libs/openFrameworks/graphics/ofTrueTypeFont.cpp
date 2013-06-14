@@ -16,6 +16,10 @@
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
+#include "Poco/TextConverter.h"
+#include "Poco/UTF8Encoding.h"
+#include "Poco/Latin1Encoding.h"
+#include "Poco/Latin9Encoding.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -409,6 +413,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	//visibleBorder	= 2;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
+	encoding = OF_ENCODING_UTF8;
 }
 
 //------------------------------------------------------------------
@@ -515,6 +520,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
         return false;
 	}
 
+
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
 	lineHeight = fontSize * 1.43f;
 
@@ -523,7 +529,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	//ofLog(OF_LOG_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
-	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
+	nCharacters = (bFullCharacterSet ? 256 : 128) - NUM_CHARACTER_TO_START;
 
 	//--------------- initialize character info and textures
 	cps.resize(nCharacters);
@@ -538,11 +544,14 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	long areaSum=0;
 	FT_Error err;
 
+
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){
 
 		//------------------------------------------ anti aliased or not:
-		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT );
+		int glyph = (unsigned char)(i+NUM_CHARACTER_TO_START);
+		if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
+		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), FT_LOAD_DEFAULT );
         if(err){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error with FT_Load_Glyph %i: FT_Error = %d", i, err);
 
@@ -737,6 +746,14 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	return true;
 }
 
+ofTextEncoding ofTrueTypeFont::getEncoding() const {
+	return encoding;
+}
+
+void ofTrueTypeFont::setEncoding(ofTextEncoding _encoding) {
+	encoding = _encoding;
+}
+
 //-----------------------------------------------------------
 bool ofTrueTypeFont::isLoaded() {
 	return bLoadedOk;
@@ -844,6 +861,12 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 //-----------------------------------------------------------
 vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(str,o);
+		str=o;
+	}
+
 	vector<ofTTFCharacter> shapes;
 
 	if (!bLoadedOk){
@@ -1018,17 +1041,22 @@ ofTexture & ofTrueTypeFont::getFontTexture(){
 
 //=====================================================================
 void ofTrueTypeFont::drawString(string c, float x, float y) {
-
-    /*glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texAtlas.draw(0,0);*/
-
-    if (!bLoadedOk){
-    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-    	return;
-    };
-
-
+	
+	/*glEnable(GL_BLEND);
+	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	 texAtlas.draw(0,0);*/
+	
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
+		c=o;
+	}
+	
+	if (!bLoadedOk){
+		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+		return;
+	};
+	
 	bool alreadyBinded = binded;
 
 	if(!alreadyBinded) bind();
@@ -1103,6 +1131,12 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	if (!bMakeContours){
 		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : contours not created for this font - call loadFont with makeContours set to true");
 		return;
+	}
+
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
+		c=o;
 	}
 
 	GLint		index	= 0;
