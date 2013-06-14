@@ -25,22 +25,9 @@
 
 static int			windowMode;
 static bool			bNewScreenMode;
-static float		timeNow, timeThen, fps;
-static int			nFramesForFPS;
-static int			nFrameCount;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
 static bool			bDoubleBuffered; 
-
-
-static bool			bFrameRateSet;
-static int 			millisForFrame;
-static int 			prevMillis;
-static int 			diffMillis;
-
-static float 		frameRate;
-
-static double		lastFrameTime;
 
 static int			requestedWidth;
 static int			requestedHeight;
@@ -190,26 +177,15 @@ static void fixCloseWindowOnWin32(){
 
 //----------------------------------------------------------
 ofAppGlutWindow::ofAppGlutWindow(){
-	timeNow				= 0;
-	timeThen			= 0;
-	fps					= 60.0; //give a realistic starting value - win32 issues
-	frameRate			= 60.0;
 	windowMode			= OF_WINDOW;
 	bNewScreenMode		= true;
-	nFramesForFPS		= 0;
 	nFramesSinceWindowResized = 0;
-	nFrameCount			= 0;
 	buttonInUse			= 0;
 	bEnableSetupScreen	= true;
-	bFrameRateSet		= false;
-	millisForFrame		= 0;
-	prevMillis			= 0;
-	diffMillis			= 0;
 	requestedWidth		= 0;
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
-	lastFrameTime		= 0.0;
 	displayString		= "";
 	orientation			= OF_ORIENTATION_DEFAULT;
 	bDoubleBuffered = true; // LIA
@@ -336,23 +312,6 @@ void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	glutMainLoop();
 }
 
-
-
-//------------------------------------------------------------
-float ofAppGlutWindow::getFrameRate(){
-	return frameRate;
-}
-
-//------------------------------------------------------------
-double ofAppGlutWindow::getLastFrameTime(){
-	return lastFrameTime;
-}
-
-//------------------------------------------------------------
-int ofAppGlutWindow::getFrameNum(){
-	return nFrameCount;
-}
-
 //------------------------------------------------------------
 void ofAppGlutWindow::setWindowTitle(string title){
 	glutSetWindowTitle(title.c_str());
@@ -440,26 +399,6 @@ void ofAppGlutWindow::showCursor(){
 	#else
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	#endif
-}
-
-//------------------------------------------------------------
-void ofAppGlutWindow::setFrameRate(float targetRate){
-	// given this FPS, what is the amount of millis per frame
-	// that should elapse?
-
-	// --- > f / s
-
-	if (targetRate == 0){
-		bFrameRateSet = false;
-		return;
-	}
-
-	bFrameRateSet 			= true;
-	float durationOfFrame 	= 1.0f / (float)targetRate;
-	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-
-	frameRate				= targetRate;
-
 }
 
 //------------------------------------------------------------
@@ -597,7 +536,7 @@ void ofAppGlutWindow::display(void){
 				//----------------------------------------------------
 				// if we have recorded the screen posion, put it there
 				// if not, better to let the system do it (and put it where it wants)
-				if (nFrameCount > 0){
+				if (ofGetFrameNum() > 0){
 					glutPositionWindow(nonFullScreenX,nonFullScreenY);
 				}
 				//----------------------------------------------------
@@ -610,7 +549,7 @@ void ofAppGlutWindow::display(void){
 		}
 	}
 
-	if(!ofGLIsFixedPipeline()){
+	if(ofGetProgrammableGLRenderer()){
 		ofGetProgrammableGLRenderer()->startRender();
 	}
 
@@ -628,7 +567,7 @@ void ofAppGlutWindow::display(void){
     }
     #endif
 
-	if ( bClearAuto == true || nFrameCount < 3){
+	if ( bClearAuto == true || ofGetFrameNum() < 3){
 		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 	}
 
@@ -667,19 +606,11 @@ void ofAppGlutWindow::display(void){
 		}
     #endif
 
-	if(!ofGLIsFixedPipeline()){
+	if(ofGetProgrammableGLRenderer()){
 		ofGetProgrammableGLRenderer()->finishRender();
 	}
 
     nFramesSinceWindowResized++;
-
-	//fps calculation moved to idle_cb as we were having fps speedups when heavy drawing was occuring
-	//wasn't reflecting on the actual app fps which was in reality slower.
-	//could be caused by some sort of deferred drawing?
-
-	nFrameCount++;		// increase the overall frame count
-
-	//setFrameNum(nFrameCount); // get this info to ofUtils for people to access
 
 }
 
@@ -724,7 +655,7 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
         ofLogWarning("ofAppGlutWindow::mouse_cb") << "Unmapped glut mouse button: " << button;
     }
     
-	if (nFrameCount > 0){
+	if (ofGetFrameNum() > 0){
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);
 		} else if (state == GLUT_UP) {
@@ -739,7 +670,7 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 void ofAppGlutWindow::motion_cb(int x, int y) {
 	rotateMouseXY(orientation, x, y);
 
-	if (nFrameCount > 0){
+	if (ofGetFrameNum() > 0){
 		ofNotifyMouseDragged(x, y, buttonInUse);
 	}
 
@@ -749,7 +680,7 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 	rotateMouseXY(orientation, x, y);
 
-	if (nFrameCount > 0){
+	if (ofGetFrameNum() > 0){
 		ofNotifyMouseMoved(x, y);
 	}
 }
@@ -773,44 +704,6 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-
-	//	thanks to jorge for the fix:
-	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-
-	if (nFrameCount != 0 && bFrameRateSet == true){
-		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
-		if (diffMillis > millisForFrame){
-			; // we do nothing, we are already slower than target frame
-		} else {
-			int waitMillis = millisForFrame - diffMillis;
-			#ifdef TARGET_WIN32
-				Sleep(waitMillis);         //windows sleep in milliseconds
-			#else
-				usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
-			#endif
-		}
-	}
-	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-
-    // -------------- fps calculation:
-	// theo - now moved from display to idle_cb
-	// discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
-	//
-	//
-	// theo - please don't mess with this without letting me know.
-	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
-	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
-
-	timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;
-  	// --------------
 
 	ofNotifyUpdate();
 

@@ -5,6 +5,18 @@
 #include "ofGraphics.h"
 #include <set>
 
+static const double MICROS_TO_SEC = .000001;
+static const double MICROS_TO_MILLIS = .001;
+
+static unsigned long long   timeThen = 0, oneSec = 0;
+static float    			targetRate = 0;
+static float				fps = 60;
+static unsigned long long	microsForFrame = 0;
+static unsigned long long	lastFrameTime = 0;
+static bool      			bFrameRateSet = 0;
+static int      			nFramesForFPS = 0;
+static int      			nFrameCount	  = 0;
+
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
 	static ofCoreEvents * events = new ofCoreEvents;
@@ -22,6 +34,42 @@ static set<int> pressedKeys;
 
 static bool bEscQuits = true;
 
+
+//--------------------------------------
+void ofSetFrameRate(int _targetRate){
+	// given this FPS, what is the amount of millis per frame
+	// that should elapse?
+
+	// --- > f / s
+
+	if (_targetRate == 0){
+		bFrameRateSet = false;
+	}else{
+		bFrameRateSet	= true;
+		targetRate		= _targetRate;
+		microsForFrame	= 1000000.0 / (double)targetRate;
+	}
+}
+
+//--------------------------------------
+float ofGetFrameRate(){
+	return fps;
+}
+
+//--------------------------------------
+float ofGetTargetFrameRate(){
+	return targetRate;
+}
+
+//--------------------------------------
+double ofGetLastFrameTime(){
+	return lastFrameTime*MICROS_TO_SEC;
+}
+
+//--------------------------------------
+int ofGetFrameNum(){
+	return nFrameCount;
+}
 
 //--------------------------------------
 bool ofGetMousePressed(int button){ //by default any button
@@ -79,6 +127,44 @@ void ofNotifySetup(){
 
 //------------------------------------------
 void ofNotifyUpdate(){
+	// calculate sleep time to adjust to target fps
+	unsigned long long timeNow = ofGetElapsedTimeMicros();
+	if (nFrameCount != 0 && bFrameRateSet == true){
+		unsigned long long diffMicros = timeNow - timeThen;
+		if(diffMicros < microsForFrame){
+			unsigned long long waitMicros = microsForFrame - diffMicros;
+			#ifdef TARGET_WIN32
+				Sleep(waitMicros*MICROS_TO_MILLIS);
+			#else
+				usleep(waitMicros);
+			#endif
+		}
+	}
+
+	// calculate fps
+	timeNow = ofGetElapsedTimeMicros();
+
+	if(nFrameCount==0){
+		timeThen = timeNow;
+		if(bFrameRateSet)	fps = targetRate;
+	}else{
+		unsigned long long oneSecDiff = timeNow-oneSec;
+
+		if( oneSecDiff  >= 1000000 ){
+			fps = nFramesForFPS/(oneSecDiff*MICROS_TO_SEC);
+			oneSec  = timeNow;
+			nFramesForFPS = 0;
+		}else{
+			fps = fps*.99 + nFramesForFPS/(oneSecDiff*MICROS_TO_SEC)*.01;
+		}
+		nFramesForFPS++;
+
+
+		lastFrameTime 	= timeNow-timeThen;
+		timeThen    	= timeNow;
+	}
+
+	// update renderer, application and notify update event
 	ofGetCurrentRenderer()->update();
 
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
@@ -97,6 +183,8 @@ void ofNotifyDraw(){
 		ofAppPtr->draw();
 	}
 	ofNotifyEvent( ofEvents().draw, voidEventArgs );
+
+	nFrameCount++;
 }
 
 //------------------------------------------

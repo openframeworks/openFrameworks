@@ -284,26 +284,11 @@ EGLint ofAppEGLWindow::getEglVersionMinor() const {
 void ofAppEGLWindow::init(Settings _settings) {
     terminate      = false;
 
-    timeNow         = 0;
-    timeThen        = 0;
-    fps             = 60.0; //give a realistic starting value - win32 issues
-    frameRate       = 60.0;
     windowMode      = OF_WINDOW;
     bNewScreenMode  = true;
-    nFramesForFPS   = 0;
     nFramesSinceWindowResized = 0;
-    nFrameCount     = 0;
     buttonInUse     = 0;
     bEnableSetupScreen  = true;
-    bFrameRateSet   = false;
-    millisForFrame  = 0;
-    prevMillis      = 0;
-    diffMillis      = 0;
-    // requestedWidth    = 0;
-    // requestedHeight   = 0;
-    // nonFullScreenX    = -1;
-    // nonFullScreenY    = -1;
-    lastFrameTime   = 0.0;
     eglDisplayString   = "";
     orientation     = OF_ORIENTATION_DEFAULT;
 
@@ -965,26 +950,6 @@ void ofAppEGLWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setFrameRate(float targetRate){
-  // given this FPS, what is the amount of millis per frame
-  // that should elapse?
-
-  // --- > f / s
-
-  if (targetRate == 0){
-    bFrameRateSet = false;
-    return;
-  }
-
-  bFrameRateSet       = true;
-  float durationOfFrame   = 1.0f / (float)targetRate;
-  millisForFrame      = (int)(1000.0f * durationOfFrame);
-
-  frameRate       = targetRate;
-
-}
-
-//------------------------------------------------------------
 void ofAppEGLWindow::setWindowTitle(string title) {
     ofLogNotice("ofAppEGLWindow") << "setWindowTitle() not implemented.";
 }
@@ -1193,29 +1158,6 @@ void ofAppEGLWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 void ofAppEGLWindow::idle() {
-  if (nFrameCount != 0 && bFrameRateSet == true){
-    diffMillis = ofGetElapsedTimeMillis() - prevMillis;
-    if (diffMillis > millisForFrame){
-      ; // we do nothing, we are already slower than target frame
-    } else {
-      int waitMillis = millisForFrame - diffMillis;
-      usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
-    }
-  }
-
-  prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-
-  timeNow = ofGetElapsedTimef();
-  double diff = timeNow-timeThen;
-  if( diff  > 0.00001 ){
-    fps     = 1.0 / diff;
-    frameRate *= 0.9f;
-    frameRate += 0.1f*fps;
-   }
-   lastFrameTime  = diff;
-   timeThen   = timeNow;
-    // --------------
-
   ofNotifyUpdate();
 
 }
@@ -1248,7 +1190,7 @@ void ofAppEGLWindow::display() {
   float * bgPtr = ofBgColorPtr();
   bool bClearAuto = ofbClearBg();
 
-  if ( bClearAuto == true || nFrameCount < 3){
+  if ( bClearAuto == true || ofGetFrameNum() < 3){
     ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
   }
 
@@ -1303,23 +1245,7 @@ void ofAppEGLWindow::display() {
   }
 
   nFramesSinceWindowResized++;
-  nFrameCount++;    // increase the overall frame count
 
-}
-
-//------------------------------------------------------------
-float ofAppEGLWindow::getFrameRate(){
-    return frameRate;
-}
-
-//------------------------------------------------------------
-double ofAppEGLWindow::getLastFrameTime(){
-    return lastFrameTime;
-}
-
-//------------------------------------------------------------
-int ofAppEGLWindow::getFrameNum(){
-    return nFrameCount;
 }
 
 //------------------------------------------------------------

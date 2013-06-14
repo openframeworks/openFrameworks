@@ -174,10 +174,6 @@ bool ofCheckGLExtension(string searchName){
 #endif
 }
 
-bool ofGLIsFixedPipeline(){
-	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()!=ofProgrammableGLRenderer::TYPE;
-}
-
 ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer(){
 	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
 		return (ofPtr<ofProgrammableGLRenderer>&)ofGetCurrentRenderer();

@@ -310,7 +310,7 @@ void ofFbo::destroy() {
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	
-	if (ofGLIsFixedPipeline()){
+	if (!ofGetProgrammableGLRenderer()){
 		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
 			ofLogVerbose("ofFbo") << "FBO supported";
 		}else{

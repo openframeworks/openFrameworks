@@ -56,8 +56,6 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
 
 bool ofCheckGLExtension(string searchName);
 
-bool ofGLIsFixedPipeline();
-
 ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer();
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
 
