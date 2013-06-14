@@ -68,8 +68,9 @@ public:
 
 	int getPixelIndex(int x, int y) const;
 	ofColor_<PixelType> getColor(int x, int y) const;
-	void setColor(int x, int y, ofColor_<PixelType> color);
-	void setColor(ofColor_<PixelType> color);
+	void setColor(int x, int y, const ofColor_<PixelType>& color);
+	void setColor(int index, const ofColor_<PixelType>& color);
+	void setColor(const ofColor_<PixelType>& color);
 
 	const PixelType& operator[](int pos) const;
 	PixelType& operator[](int pos);
