@@ -706,6 +706,10 @@ static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
 void ofPolyline::simplify(float tol){
 
 	int n = size();
+	
+	if(n == 0) {
+		return;
+	}
 
 	vector <ofPoint> sV;
 	sV.resize(n);
