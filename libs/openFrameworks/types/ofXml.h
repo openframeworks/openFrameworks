@@ -40,13 +40,14 @@ public:
     bool            addChild( const string& path );
     void            addXml( ofXml& xml, bool copyAll = false);
 
-    string          getValue();
+    string          getValue() const;
+
     bool            setValue(const string& path, const string& value);
     
-    string          getAttribute(const string& path);
+    string          getAttribute(const string& path) const;
     bool            setAttribute(const string& path, const string& value);
-    map<string, string> getAttributes();
-    int             getNumChildren();
+    map<string, string> getAttributes() const;
+    int             getNumChildren() const;
 
     
     bool            clearAttributes(const string& path);
@@ -55,9 +56,9 @@ public:
     bool            clearContents();
     
     bool            remove(const string& path); // works for both attributes and tags
-    bool            exists(const string& path); // works for both attributes and tags
+    bool            exists(const string& path) const; // works for both attributes and tags
     
-    string          getName();
+    string          getName() const;
     bool            reset();
 
     bool            setToChild(int index);
@@ -67,7 +68,7 @@ public:
     bool            setToSibling();
     bool            setToPrevSibling();
     
-    bool            loadFromBuffer( string buffer );
+    bool            loadFromBuffer( const string& buffer );
 
     
     string          toString();
