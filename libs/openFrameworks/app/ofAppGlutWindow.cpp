@@ -250,7 +250,13 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	windowMode = screenMode;
 	bNewScreenMode = true;
 
-	if (windowMode != OF_GAME_MODE){
+	if (windowMode == OF_FULLSCREEN){
+		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
+		glutCreateWindow("");
+		
+		requestedWidth  = w;
+		requestedHeight = h;
+	} else if (windowMode != OF_GAME_MODE){
 		glutInitWindowSize(w, h);
 		glutCreateWindow("");
 

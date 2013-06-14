@@ -58,7 +58,8 @@
 			<Add directory="..\..\..\openFrameworks\gl" />
 			<Add directory="..\..\..\openFrameworks\math" />
 			<Add directory="..\..\..\poco\include" />
-			<Add directory="..\..\..\tess2\include" />
+			<Add directory="..\..\..\tess2\include" />			
+			<Add directory="..\..\..\openssl\include" />
 		</Compiler>
 		<Unit filename="..\..\..\openFrameworks\3d\of3dUtils.cpp">
 			<Option virtualFolder="openframeworks\3d\" />
@@ -328,6 +329,18 @@
 			<Option virtualFolder="openframeworks\types\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\types\ofColor.h">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameter.cpp">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameter.h">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameterGroup.cpp">
+			<Option virtualFolder="openframeworks\types\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\types\ofParameterGroup.h">
 			<Option virtualFolder="openframeworks\types\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\types\ofPoint.cpp">
