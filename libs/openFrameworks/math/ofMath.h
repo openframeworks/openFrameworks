@@ -68,15 +68,15 @@ ofPoint 	ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 ofPoint 	ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 
 template<typename Type>
-Type		ofCosineInterpolate(Type y1, Type y2, float pct);
+Type		ofInterpolateCosine(Type y1, Type y2, float pct);
 template<typename Type>
-Type		ofCubicInterpolate(Type y0, Type y1, Type y2, Type y3, float pct);
+Type		ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct);
 template<typename Type>
-Type		ofCatmullRomInterpolate(Type y0, Type y1, Type y2, Type y3, float pct);
+Type		ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct);
 template<typename Type>
-Type		ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct);
+Type		ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct);
 template<typename Type>
-Type		ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias);
+Type		ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias);
 
 
 
@@ -85,7 +85,7 @@ Type		ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct, float 
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofCosineInterpolate(Type y1, Type y2, float pct){
+Type ofInterpolateCosine(Type y1, Type y2, float pct){
 	float pct2;
 
 	pct2 = (1-cos(pct*PI))/2;
@@ -95,7 +95,7 @@ Type ofCosineInterpolate(Type y1, Type y2, float pct){
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofCubicInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
+Type ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct){
 	Type a0,a1,a2,a3;
 	float pct2;
 
@@ -111,7 +111,7 @@ Type ofCubicInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofCatmullRomInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
+Type ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct){
 	Type a0,a1,a2,a3;
 	float pct2 = pct*pct;
 	a0 = -0.5*y0 + 1.5*y1 - 1.5*y2 + 0.5*y3;
@@ -125,7 +125,7 @@ Type ofCatmullRomInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 // laurent de soras
 //--------------------------------------------------
 template<typename Type>
-inline Type ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
+inline Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct){
 	const Type c = (y2 - y0) * 0.5f;
 	const Type v = y1 - y2;
 	const Type w = c + v;
@@ -138,7 +138,7 @@ inline Type ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct){
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofHermiteInterpolate(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias){
+Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias){
 	float pct2,pct3;
 	Type m0,m1;
 	Type a0,a1,a2,a3;
