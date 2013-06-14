@@ -573,29 +573,13 @@ void ofTexture::loadData(const ofFloatPixels & pix){
 //----------------------------------------------------------
 void ofTexture::loadData(void * data, int w, int h, int glFormat){
 	
-	//	can we allow for uploads bigger then texture and
-	//	just take as much as the texture can?
-	//
-	//	ie:
-	//	int uploadW = MIN(w, tex_w);
-	//	int uploadH = MIN(h, tex_h);
-	//  but with a "step" size of w?
-	// 	check "glTexSubImage2D"
-	texData.glType = glFormat;
-	
-	/*if(glFormat!=texData.glType) {
-		ofLogError() << "ofTexture::loadData() failed to upload format " <<  ofGetGlInternalFormatName(glFormat) << " data to " << ofGetGlInternalFormatName(texData.glType) << " texture" <<endl;
-		return;
-	}*/
-	
-	if(w > texData.tex_w || h > texData.tex_h) {
-		ofLogError() << "ofTexture::loadData() failed to upload " <<  w << "x" << h << " data to " << texData.tex_w << "x" << texData.tex_h << " texture";
-		return;
+	// reallocate when the width, height, or glFormat have changed
+	if(w != texData.tex_w || h != texData.tex_h || glFormat != texData.glType) {
+		allocate(w, h, glFormat);
+		texData.glType = glFormat;
+		texData.width = w;
+		texData.height = h;
 	}
-	
-	// update our size with the new dimensions
-	texData.width = w;
-	texData.height = h;
 	
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
