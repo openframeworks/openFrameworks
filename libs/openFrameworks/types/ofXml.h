@@ -25,8 +25,6 @@
 #include <Poco/DOM/NamedNodeMap.h>  
 #include <Poco/DOM/ChildNodesList.h>
 
-using namespace Poco::XML;
-
 class ofXml {
     
 public:
@@ -114,7 +112,7 @@ public:
         if(tokens.size() > 1)
         {
             // don't 'push' down into the new nodes
-            Element* firstElement, *lastElement;
+            Poco::XML::Element* firstElement, *lastElement;
             if(element) {
                 lastElement = element;
             }
@@ -128,7 +126,7 @@ public:
             
             for(int i = 0; i < tokens.size(); i++)
             {
-                Element* newElement = getPocoDocument()->createElement(tokens.at(i));
+                Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
                 
                 cout << " creating " << newElement->nodeName() << endl;
                 
@@ -142,12 +140,12 @@ public:
             if(value != "")
             {
                 
-                Text *text = getPocoDocument()->createTextNode(value);
+                Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
                 try {
                     
                     lastElement->appendChild( text );
                     
-                } catch ( DOMException &e ) {
+                } catch ( Poco::XML::DOMException &e ) {
                     stringstream sstream;
                     sstream << " cannot set node value " << DOMErrorMessage(e.code());
                     ofLog(OF_LOG_ERROR, sstream.str());
@@ -164,16 +162,16 @@ public:
             
         } else {
             
-            Element *newElement = getPocoDocument()->createElement(path);
+            Poco::XML::Element *newElement = getPocoDocument()->createElement(path);
             
             if(value != "") {
                 
-                Text *text = getPocoDocument()->createTextNode(value);
+                Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
                 try {
                     newElement->appendChild(text);
                     text->release();
                     
-                } catch ( DOMException &e ) {
+                } catch ( Poco::XML::DOMException &e ) {
                     stringstream sstream;
                     sstream << " cannot set node value " << DOMErrorMessage(e.code());
                     ofLog(OF_LOG_ERROR, sstream.str());
@@ -199,7 +197,7 @@ public:
         
         if(path == "")
         {
-            if(element->firstChild()->nodeType() == Node::TEXT_NODE) {
+            if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
                 stringstream ss;
                 ss << element->innerText();
                 ss >> data;
@@ -209,7 +207,7 @@ public:
         }
         else
         {
-            Element *e = (Element*) element->getNodeByPath(path);
+            Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
             if(e) {
                 stringstream ss;
                 ss << e->innerText();
@@ -223,11 +221,11 @@ public:
     
     // these are advanced, you probably don't want to use them
     
-    Element*        getPocoElement();
-    Element*        getPocoElement(const string& path);
+    Poco::XML::Element*        getPocoElement();
+    Poco::XML::Element*        getPocoElement(const string& path);
     
-    Document*       getPocoDocument();
-    Document*       getPocoDocument() const;
+    Poco::XML::Document*       getPocoDocument();
+    Poco::XML::Document*       getPocoDocument() const;
 
        
 protected:
@@ -235,6 +233,6 @@ protected:
     string DOMErrorMessage(short msg);
     
     Poco::XML::Document *document;
-    Element *element;
+    Poco::XML::Element *element;
     
 };
