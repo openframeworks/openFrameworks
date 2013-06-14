@@ -275,6 +275,7 @@ OF_PROJECT_EXCLUSIONS += $(PATH_PROJECT_ROOT)/.git%
 # and then it appends a % (the make pattern matcher) ONLY to the end of each
 # of the paths discovered by the $(wildcard ...) function.  The output of
 # this function is now compatible with GNU Make $(filter ...) and $(filter-out).
+
 OF_PROJECT_EXCLUSIONS += \
     $(addsuffix \
         %,\
@@ -363,7 +364,6 @@ OF_CORE_LIBRARY_LDFLAGS+= \
         $(PLATFORM_LIBRARY_SEARCH_PATHS)\
     )
 
-
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
     $(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
@@ -449,6 +449,7 @@ NODEPS = clean
 
 # clean it
 ALL_CFLAGS =
+
 # add the CFLAGS from Makefiles.examples
 ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
 
