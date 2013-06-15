@@ -198,11 +198,6 @@ void ofVideoGrabber::update(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::grabFrame(){
-	update();
-}
-
-//--------------------------------------------------------------------
 void ofVideoGrabber::close(){
 	if(	grabber != NULL ){
 		grabber->close();
