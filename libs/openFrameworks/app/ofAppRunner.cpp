@@ -122,7 +122,7 @@ void ofRunApp(ofBaseApp * OFSA){
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
     if(!ofGetCurrentRenderer()) {
 	#ifdef USE_PROGRAMMABLE_GL
-	    ofPtr<ofBaseRenderer> renderer(new ofProgrammableGLRenderer(false));
+	    ofPtr<ofBaseRenderer> renderer(new ofGLProgrammableRenderer(false));
 	#else
 	    ofPtr<ofBaseRenderer> renderer(new ofGLRenderer(false));
 	#endif
