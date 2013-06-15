@@ -165,7 +165,7 @@ bIsAllocated(false)
 {
 #ifdef TARGET_OPENGLES
 	if(!bglFunctionsInitialized){
-		if(ofGetProgrammableGLRenderer()){
+		if(ofGetGLProgrammableRenderer()){
 			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffers");
 			glDeleteFramebuffers =  (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffers");
 			glDeleteRenderbuffers =  (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffers");
@@ -310,7 +310,7 @@ void ofFbo::destroy() {
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	
-	if (!ofGetProgrammableGLRenderer()){
+	if (!ofGetGLProgrammableRenderer()){
 		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
 			ofLogVerbose("ofFbo") << "FBO supported";
 		}else{
@@ -329,7 +329,7 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(ofGetProgrammableGLRenderer() || ofCheckGLExtension("GL_OES_framebuffer_object")){
+	if(ofGetGLProgrammableRenderer() || ofCheckGLExtension("GL_OES_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "FBO supported";
 	}else{
 		ofLogError("ofFbo") << "FBO not supported by this graphics card";

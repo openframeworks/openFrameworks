@@ -20,7 +20,7 @@ int ofGetGlInternalFormat(const ofPixels& pix) {
 		case 3: return GL_RGB8;
 		case 4: return GL_RGBA8;
 		default:
-			if(ofGetProgrammableGLRenderer()){
+			if(ofGetGLProgrammableRenderer()){
 				return GL_RGBA8;
 			}else{
 				return GL_LUMINANCE8;
@@ -31,7 +31,7 @@ int ofGetGlInternalFormat(const ofPixels& pix) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
 		default:
-			if(ofGetProgrammableGLRenderer()){
+			if(ofGetGLProgrammableRenderer()){
 				return GL_RGBA;
 			}else{
 				return GL_LUMINANCE;
@@ -47,7 +47,7 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 		case 3: return GL_RGB16;
 		case 4: return GL_RGBA16;
 		default:
-		if(ofGetProgrammableGLRenderer()){
+		if(ofGetGLProgrammableRenderer()){
 			return GL_RGBA16;
 		}else{
 			return GL_LUMINANCE16;
@@ -70,7 +70,7 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 		case 3: return GL_RGB32F_ARB;
 		case 4: return GL_RGBA32F_ARB;
 		default:
-		if(ofGetProgrammableGLRenderer()){
+		if(ofGetGLProgrammableRenderer()){
 			return GL_RGBA32F_ARB;
 		}else{
 			return GL_LUMINANCE32F_ARB;
@@ -597,7 +597,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
 
-	if (!ofGetProgrammableGLRenderer()){
+	if (!ofGetGLProgrammableRenderer()){
 		enableTextureTarget();
 	}
 
@@ -609,7 +609,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	if (!ofGetProgrammableGLRenderer()){
+	if (!ofGetGLProgrammableRenderer()){
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		disableTextureTarget();
 	}
