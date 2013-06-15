@@ -760,9 +760,18 @@ void ofVbo::unbind() {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		ofDisableVertices();	// tig: oh dear, finding that bug was painful.
-		if(bUsingColors) ofDisableColorCoords();
-		if(bUsingNormals) ofDisableNormals();
-		if(bUsingTexCoords) ofDisableTexCoords();
+		if(bUsingColors){
+			ofDisableColorCoords();
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
+		if(bUsingNormals){
+			ofDisableNormals();
+			glDisableClientState(GL_NORMAL_ARRAY);
+		}
+		if(bUsingTexCoords){
+			ofDisableTexCoords();
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
 	}
 	bBound   = false;
 }
