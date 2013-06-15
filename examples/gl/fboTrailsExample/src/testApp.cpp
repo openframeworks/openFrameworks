@@ -9,7 +9,13 @@ void testApp::setup(){
 	//allocate our fbos. 
 	//providing the dimensions and the format for the,
 	rgbaFbo.allocate(400, 400, GL_RGBA); // with alpha, 8 bits red, 8 bits green, 8 bits blue, 8 bits alpha, from 0 to 255 in 256 steps	
-	rgbaFboFloat.allocate(400, 400, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
+
+	#ifdef TARGET_OPENGLES
+	rgbaFboFloat.allocate(400, 400, GL_RGBA ); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
+        ofLogWarning("testApp") << "GL_RGBA32F_ARB is not available for OPENGLES.  Using RGBA.";	
+	#else
+        rgbaFboFloat.allocate(400, 400, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
+	#endif
 	
 	// we can also define the fbo with ofFbo::Settings.
 	// this allows us so set more advanced options the width (400), the height (200) and the internal format like this

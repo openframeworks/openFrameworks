@@ -55,14 +55,16 @@
 	return [CAEAGLLayer class];
 }
 
-- (id) initWithFrame:(CGRect)frame 
-            andDepth:(bool)depth 
-               andAA:(bool)fsaaEnabled 
-       andNumSamples:(int)samples 
+- (id) initWithFrame:(CGRect)frame
+ andPreferedRenderer:(ESRendererVersion)version
+            andDepth:(bool)depth
+               andAA:(bool)fsaaEnabled
+       andNumSamples:(int)samples
            andRetina:(bool)retinaEnabled{
 
 	if((self = [super initWithFrame:frame])) {
         
+        rendererVersion = version;
         bUseDepth = depth;
         bUseFSAA = fsaaEnabled;
         bUseRetina = retinaEnabled;
@@ -88,10 +90,12 @@
             }
 		}
 		
-        renderer = [[ES2Renderer alloc] initWithDepth:bUseDepth 
-                                                andAA:bUseFSAA 
-                                       andFSAASamples:fsaaSamples 
-                                            andRetina:bUseRetina];
+        if(rendererVersion == ESRendererVersion_20) {
+            renderer = [[ES2Renderer alloc] initWithDepth:bUseDepth
+                                                    andAA:bUseFSAA
+                                           andFSAASamples:fsaaSamples
+                                                andRetina:bUseRetina];
+        }
 		
         if(!renderer){
             renderer = [[ES1Renderer alloc] initWithDepth:bUseDepth 
@@ -103,6 +107,8 @@
 				[self release];
 				return nil;
 			}
+            
+            rendererVersion = ESRendererVersion_11;
         }
 		
 		self.multipleTouchEnabled = true;

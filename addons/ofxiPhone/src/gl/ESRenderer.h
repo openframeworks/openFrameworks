@@ -11,6 +11,11 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLDrawable.h>
 
+typedef enum {
+    ESRendererVersion_11,
+    ESRendererVersion_20
+} ESRendererVersion;
+
 @protocol ESRenderer <NSObject>
 
 - (void) startRender;

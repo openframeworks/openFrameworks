@@ -17,6 +17,9 @@ void testApp::draw(){
 	
 	sprintf (timeString, "time: %i:%i:%i \nelapsed time %lli", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
 	
+	float w = vagRounded.stringWidth(eventString);
+	float h = vagRounded.stringHeight(eventString);
+	
 	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);
 	
@@ -35,12 +38,126 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
-	sprintf(eventString, "keyPressed = (%i)", key);
+	if(key | OF_KEY_MODIFIER){
+		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
+			sprintf(eventString, "keyPressed = (%i) %s", key, ("F" + ofToString(key+1-OF_KEY_F1)).c_str());
+		}else{
+			switch(key){
+			case OF_KEY_LEFT:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT");
+				break;
+			case OF_KEY_UP:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "UP");
+				break;
+			case OF_KEY_RIGHT:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT");
+				break;
+			case OF_KEY_DOWN:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "DOWN");
+				break;
+			case OF_KEY_PAGE_UP:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "PAGE UP");
+				break;
+			case OF_KEY_PAGE_DOWN:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "PAGE DOWN");
+				break;
+			case OF_KEY_HOME:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "HOME");
+				break;
+			case OF_KEY_END:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "END");
+				break;
+			case OF_KEY_INSERT:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "INSERT");
+				break;
+			case OF_KEY_LEFT_SHIFT:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT SHIFT");
+				break;
+			case OF_KEY_LEFT_CONTROL:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT CONTROL");
+				break;
+			case OF_KEY_LEFT_SUPER:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT SUPER");
+				break;
+			case OF_KEY_RIGHT_SHIFT:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT SHIFT");
+				break;
+			case OF_KEY_RIGHT_CONTROL:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT CONTROL");
+				break;
+			case OF_KEY_RIGHT_ALT:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT ALT");
+				break;
+			case OF_KEY_RIGHT_SUPER:
+				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT SUPER");
+				break;
+			}
+		}
+	}else{
+		sprintf(eventString, "keyPressed = (%i) %c", key, (char)key);
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){ 
-	sprintf(eventString, "keyReleased = (%i)", key);	
+	if(key | OF_KEY_MODIFIER){
+		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
+			sprintf(eventString, "keyReleased = (%i) %s", key, ("F" + ofToString(key+1-OF_KEY_F1)).c_str());
+		}else{
+			switch(key){
+			case OF_KEY_LEFT:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT");
+				break;
+			case OF_KEY_UP:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "UP");
+				break;
+			case OF_KEY_RIGHT:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT");
+				break;
+			case OF_KEY_DOWN:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "DOWN");
+				break;
+			case OF_KEY_PAGE_UP:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "PAGE UP");
+				break;
+			case OF_KEY_PAGE_DOWN:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "PAGE DOWN");
+				break;
+			case OF_KEY_HOME:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "HOME");
+				break;
+			case OF_KEY_END:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "END");
+				break;
+			case OF_KEY_INSERT:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "INSERT");
+				break;
+			case OF_KEY_LEFT_SHIFT:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT SHIFT");
+				break;
+			case OF_KEY_LEFT_CONTROL:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT CONTROL");
+				break;
+			case OF_KEY_LEFT_SUPER:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT SUPER");
+				break;
+			case OF_KEY_RIGHT_SHIFT:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT SHIFT");
+				break;
+			case OF_KEY_RIGHT_CONTROL:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT CONTROL");
+				break;
+			case OF_KEY_RIGHT_ALT:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT ALT");
+				break;
+			case OF_KEY_RIGHT_SUPER:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT SUPER");
+				break;
+			}
+		}
+	}else{
+		sprintf(eventString, "keyReleased = (%i) %c", key, (char)key);
+	}
 }
 
 //--------------------------------------------------------------
