@@ -50,11 +50,7 @@ public:
     
 	virtual void		setWindowPosition(int x, int y) {};
 	virtual void		setWindowShape(int w, int h) {};
-	
-	virtual int			getFrameNum();
-	virtual float		getFrameRate();
-	virtual double		getLastFrameTime();
-	
+		
 	virtual ofPoint		getWindowPosition();
 	virtual ofPoint		getWindowSize();
 	virtual ofPoint		getScreenSize();
@@ -62,7 +58,6 @@ public:
 	virtual int			getWidth();
 	virtual int			getHeight();
 	
-	virtual void		setFrameRate(float targetRate);
 	virtual void		setWindowTitle(string title);
 	
 	virtual int			getWindowMode();
