@@ -29,12 +29,6 @@ public:
 	static void exitApp();
 	void setupOpenGL(int w, int h, int screenMode);
 
-	int			getFrameNum();
-	float		getFrameRate();
-	void		setFrameRate(float targetRate);
-	
-	double		getLastFrameTime() { return lastFrameTime; }
-
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();
 	ofPoint		getScreenSize();
@@ -45,17 +39,6 @@ public:
 
 private:
 	int width, height;
-
-    double			timeNow, timeThen, fps, lastFrameTime;
-    int				nFramesForFPS;
-    int				nFrameCount;
-
-    bool			bFrameRateSet;
-    int 			millisForFrame;
-    int 			prevMillis;
-    int 			diffMillis;
-
-    float 			frameRate;
 
     ofBaseApp *		ofAppPtr;
 };

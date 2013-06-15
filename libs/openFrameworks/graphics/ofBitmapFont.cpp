@@ -448,7 +448,7 @@ void ofDrawBitmapCharacterEnd(){
 		bitmappedFontTexture.bind();
 
 		#ifndef TARGET_OPENGLES
-			if (!ofGetProgrammableGLRenderer()){
+			if (!ofGetGLProgrammableRenderer()){
 				// this temporarily enables alpha testing,
 				// which discards pixels unless their alpha is 1.0f
 				glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
@@ -462,7 +462,7 @@ void ofDrawBitmapCharacterEnd(){
 		charMesh.draw();
 
 		#ifndef TARGET_OPENGLES
-			if (!ofGetProgrammableGLRenderer()){
+			if (!ofGetGLProgrammableRenderer()){
 				glPopAttrib();
 			}
 		#endif

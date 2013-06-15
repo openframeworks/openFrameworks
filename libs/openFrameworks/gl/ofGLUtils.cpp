@@ -1,7 +1,7 @@
 #include "ofGLUtils.h"
 
 #include <set>
-#include "ofProgrammableGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 #include "ofGraphics.h"
 #include "ofShader.h"
 #include "ofBaseTypes.h"
@@ -174,16 +174,16 @@ bool ofCheckGLExtension(string searchName){
 #endif
 }
 
-ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer(){
-	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
-		return (ofPtr<ofProgrammableGLRenderer>&)ofGetCurrentRenderer();
+ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
+	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
+		return (ofPtr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
 	}else{
-		return ofPtr<ofProgrammableGLRenderer>();
+		return ofPtr<ofGLProgrammableRenderer>();
 	}
 }
 
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
+	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
 		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
 	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
 		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
