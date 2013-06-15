@@ -169,11 +169,6 @@ void ofVideoPlayer::update(){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::idleMovie(){
-	update();
-}
-
-//---------------------------------------------------------------------------
 void ofVideoPlayer::closeMovie(){
 	close();
 }
