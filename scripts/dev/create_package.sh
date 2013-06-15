@@ -1,5 +1,5 @@
 #!/bin/bash
-# $1 -> platform: win_cb, linux, linux64, vs, osx, osxSL, ios, all
+# $1 -> platform: win_cb, linux, linux64, vs, osx, ios, all
 # $2 -> version number: 006
 
 platform=$1
@@ -15,12 +15,6 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-#if [ "$platform" = "osxSL" ]; then
-#    platform="osx"
-#    runOSXSLScript=1
-#    echo "will make changes for snow leopard"
-#fi
-
 if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6" ] && [ "$platform" != "linuxarmv7" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
@@ -33,7 +27,7 @@ if [ "$version" == "" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs, osx, android, all
+    echo win_cb, linux, linux64, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -113,7 +107,11 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    projectGenerator --allexamples --${pkg_platform}
+    if [ "${pkg_platform}"=="vs" ]; then
+        projectGenerator --allexamples --vs2010
+    else
+        projectGenerator --allexamples --${pkg_platform}
+    fi
 }
 
 function createPackage {
@@ -123,12 +121,8 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-	#if [ $runOSXSLScript = 1 ]; then
-	#	rm -Rf of_v${pkg_version}_osxSL*
-	#else
-	    rm -Rf of_v${pkg_version}_${pkg_platform}.*
-		rm -Rf of_v${pkg_version}_${pkg_platform}_*
-    #fi
+	rm -Rf of_v${pkg_version}_${pkg_platform}.*
+	rm -Rf of_v${pkg_version}_${pkg_platform}_*
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
     #remove devApps folder
@@ -396,27 +390,24 @@ function createPackage {
     #choose readme
     cd $pkg_ofroot
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
-        mv docs/linux.md readme
+        cp docs/linux.md INSTALL.md
     fi
     
     if [ "$platform" = "vs" ]; then
-        mv docs/visualstudio.md readme
+        cp docs/visualstudio.md INSTALL.md
     fi
     
     if [ "$platform" = "win_cb" ]; then
-        mv docs/codeblocks.md readme
+        cp docs/codeblocks.md INSTALL.md
     fi
     
     if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then
-        mv docs/osx.md readme
+        cp docs/osx.md INSTALL.md
     fi
 
     if [ "$platform" = "android" ]; then
-        mv docs/android.md readme
+        cp docs/android.md INSTALL.md
     fi
-    
-    rm readme.*
-    mv readme readme.txt
     
     rm CONTRIBUTING.md
 

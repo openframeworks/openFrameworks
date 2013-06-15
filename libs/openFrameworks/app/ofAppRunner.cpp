@@ -131,7 +131,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 	window = windowPtr;
 
-	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofProgrammableGLRenderer::TYPE){
+	if(ofGetProgrammableGLRenderer()){
         #if defined(TARGET_RASPBERRY_PI)
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
@@ -275,25 +275,6 @@ void ofSetAppPtr(ofPtr<ofBaseApp> appPtr) {
 //--------------------------------------
 void ofExit(int status){
 	std::exit(status);
-}
-
-//--------------------------------------
-int ofGetFrameNum(){
-	return window->getFrameNum();
-}
-
-//--------------------------------------
-float ofGetFrameRate(){
-	return window->getFrameRate();
-}
-
-double ofGetLastFrameTime(){
-	return window->getLastFrameTime();
-}
-
-//--------------------------------------
-void ofSetFrameRate(int targetRate){
-	window->setFrameRate(targetRate);
 }
 
 //--------------------------------------
