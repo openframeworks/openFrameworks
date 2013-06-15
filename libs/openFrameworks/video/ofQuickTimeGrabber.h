@@ -20,55 +20,54 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		ofQuickTimeGrabber();
 		virtual ~ofQuickTimeGrabber();
 
-		void					listDevices();
-		bool					initGrabber(int w, int h);
-		void					update();
-		bool					isFrameNew();
+		vector<ofVideoDeviceInfo>	listDevices();
+		bool						initGrabber(int w, int h);
+		void						update();
+		bool						isFrameNew();
 
-		bool					setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat			getPixelFormat();
+		bool						setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat				getPixelFormat();
 
-		unsigned char			* getPixels();
-		ofPixelsRef		 		getPixelsRef();
+		unsigned char				* getPixels();
+		ofPixelsRef					getPixelsRef();
 		
-		void					close();
-		void					clearMemory();
+		void						close();
+		void						clearMemory();
 
-		void					videoSettings();
+		void						videoSettings();
 		
-		float					getWidth();
-		float					getHeight();
+		float						getWidth();
+		float						getHeight();
 
-		void					setVerbose(bool bTalkToMe);
-		void					setDeviceID(int _deviceID);
-		void					setDesiredFrameRate(int framerate);
+		void						setVerbose(bool bTalkToMe);
+		void						setDeviceID(int _deviceID);
+		void						setDesiredFrameRate(int framerate);
 
 	protected:
 
-		bool					bChooseDevice;
-		int						deviceID;
-		bool 					bVerbose;
-		bool 					bGrabberInited;
-	    ofPixels				pixels;
-		int						attemptFramerate;
-		bool 					bIsFrameNew;	
+		bool						bChooseDevice;
+		int							deviceID;
+		bool						bVerbose;
+		bool						bGrabberInited;
+	    ofPixels					pixels;
+		int							attemptFramerate;
+		bool						bIsFrameNew;	
 		
 		//int						width, height;
-
-		unsigned char *			offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
+		unsigned char *				offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
 		//int						w,h;
-		bool					bHavePixelsChanged;
-		GWorldPtr				videogworld;
-		SeqGrabComponent		gSeqGrabber;
-		SGChannel				gVideoChannel;
-		Rect					videoRect;
-		bool					bSgInited;
-		string					deviceName;
-		SGGrabCompleteBottleUPP	myGrabCompleteProc;
+		bool						bHavePixelsChanged;
+		GWorldPtr					videogworld;
+		SeqGrabComponent			gSeqGrabber;
+		SGChannel					gVideoChannel;
+		Rect						videoRect;
+		bool						bSgInited;
+		string						deviceName;
+		SGGrabCompleteBottleUPP		myGrabCompleteProc;
 		
-		bool					qtInitSeqGrabber();
-		bool					qtCloseSeqGrabber();
-		bool					qtSelectDevice(int deviceNumber, bool didWeChooseADevice);
+		bool						qtInitSeqGrabber();
+		bool						qtCloseSeqGrabber();
+		bool						qtSelectDevice(int deviceNumber, bool didWeChooseADevice);
 
 		bool					saveSettings();
 		bool					loadSettings();

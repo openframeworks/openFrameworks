@@ -33,9 +33,9 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		ofPixelsRef     getPixelsRef();
 		void            setVerbose(bool bTalkToMe);
 
-		void            listDevices(); // would be better if this returned a vector of devices too, but requires updating base class
+		vector<ofVideoDeviceInfo> listDevices();
 		vector <string> & listAudioDevices();
-		vector <string> & listVideoDevices();
+//		vector <string> & listVideoDevices();
 
 		bool            initRecording();
 		vector <string> & listVideoCodecs();
@@ -75,8 +75,7 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		bool confirmInit();
 		ofPixelFormat pixelFormat;
 	    ofPixels pixels;
-    
-		vector <string>  videoDeviceVec;
+//		vector <string>  videoDeviceVec;
 		vector <string>  audioDeviceVec;
 		vector <string>  videoCodecsVec;
 		vector <string>  audioCodecsVec;

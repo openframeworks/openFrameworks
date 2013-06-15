@@ -246,7 +246,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-void ofQuickTimeGrabber::listDevices(){
+vector<ofVideoDeviceInfo> ofQuickTimeGrabber::listDevices(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -259,7 +259,7 @@ void ofQuickTimeGrabber::listDevices(){
 		//if we need to initialize the grabbing component then do it
 		if( bNeedToInitGrabberFirst ){
 			if( !qtInitSeqGrabber() ){
-				return;
+				return vector<ofVideoDeviceInfo>();
 			}
 		}
 
@@ -287,18 +287,21 @@ void ofQuickTimeGrabber::listDevices(){
 		//this means our the device ID we use for selection has to count both capture 'devices' and their 'inputs'
 		//this needs to be the same in our init grabber method so that we select the device we ask for
 		int deviceCount = 0;
-
+		vector<ofVideoDeviceInfo> videoDevices;
 		ofLog(OF_LOG_NOTICE, "listing available capture devices");
 		for(int i = 0 ; i < (*deviceList)->count ; ++i)
 		{
 			SGDeviceName nameRec;
 			nameRec = (*deviceList)->entry[i];
 			SGDeviceInputList deviceInputList = nameRec.inputs;
-
+			ofVideoDeviceInfo device;
+			device.deviceID = deviceCount;
+			
 			int numInputs = 0;
 			if( deviceInputList ) numInputs = ((*deviceInputList)->count);
 
 			memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 64);
+			
 
 			//this means we can use the capture method
 			if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
@@ -315,15 +318,22 @@ void ofQuickTimeGrabber::listDevices(){
 					}
 
 					ofLogNotice() << "device[" << deviceCount << "] " << p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
-
+					device.deviceName = string(p2cstr(pascalName)) + " - " + p2cstr(pascalNameInput);
+					device.isAvailable = true;
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
 				ofLogNotice() << "(unavailable) device[" << deviceCount << "] " << p2cstr(pascalName);
+				device.deviceName = string(p2cstr(pascalName));
+				
+				device.isAvailable = false;
+				device.isOpen = false;
+				
 				deviceCount++;
 			}
+			videoDevices.push_back( device );
 		}
 		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
@@ -335,7 +345,7 @@ void ofQuickTimeGrabber::listDevices(){
 	//---------------------------------
 	#endif
 	//---------------------------------
-
+	return videoDevices;
 }
 
 //--------------------------------------------------------------------
