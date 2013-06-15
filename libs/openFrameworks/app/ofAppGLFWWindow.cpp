@@ -215,8 +215,6 @@ void ofAppGLFWWindow::initializeWindow(){
 			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
 		#endif
 		setWindowIcon(iconPixels);
-    }else{
-    	cout << "icon already set" << endl;
     }
 #endif
 }
@@ -232,8 +230,6 @@ void ofAppGLFWWindow::setWindowIcon(const string & path){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
-	/*Display *m_display = glXGetCurrentDisplay();
-	GLXDrawable m_window = glXGetCurrentDrawable();*/
 
 	GLXDrawable m_window = glfwGetX11Window(windowP);
 	Display* m_display = glfwGetX11Display();
@@ -802,8 +798,8 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 		if (key == OF_KEY_ESC){				// "escape"
 			exitApp();
 		}
-	}else{
-	 if (action == GLFW_RELEASE) ofNotifyKeyReleased(key);
+	}else if (action == GLFW_RELEASE){
+		ofNotifyKeyReleased(key);
 	}
 }
 
