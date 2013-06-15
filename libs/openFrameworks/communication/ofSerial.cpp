@@ -153,10 +153,10 @@ static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 
 //----------------------------------------------------------------
 void ofSerial::buildDeviceList(){
-	
+
 	deviceType = "serial";
 	devices.clear();
-	
+
 	vector <string> prefixMatch;
 
 	#ifdef TARGET_OSX
@@ -167,26 +167,26 @@ void ofSerial::buildDeviceList(){
 		prefixMatch.push_back("ttyS");
 		prefixMatch.push_back("ttyUSB");
 		prefixMatch.push_back("rfc");
-	#endif	
-	
-	
+	#endif
+
+
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 
 	DIR *dir;
 	struct dirent *entry;
 	dir = opendir("/dev");
-	
+
 	string deviceName	= "";
 	int deviceCount		= 0;
-	
+
 	if (dir == NULL){
 		ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
-	} else {		
+	} else {
 		//for each device
 		while((entry = readdir(dir)) != NULL){
 			deviceName = (char *)entry->d_name;
-			
-			//we go through the prefixes 
+
+			//we go through the prefixes
 			for(int k = 0; k < (int)prefixMatch.size(); k++){
 				//if the device name is longer than the prefix
 				if( deviceName.size() > prefixMatch[k].size() ){
@@ -199,10 +199,10 @@ void ofSerial::buildDeviceList(){
 				}
 			}
 		}
-		closedir(dir);		
+		closedir(dir);
 	}
-	
-	#endif	
+
+	#endif
 
 	//---------------------------------------------
 	#ifdef TARGET_WIN32
@@ -216,14 +216,14 @@ void ofSerial::buildDeviceList(){
 	//---------------------------------------------
 	#endif
     //---------------------------------------------
-	
-	//here we sort the device to have the aruino ones first. 
+
+	//here we sort the device to have the aruino ones first.
 	partition(devices.begin(), devices.end(), isDeviceArduino);
 	//we are reordering the device ids. too!
 	for(int k = 0; k < (int)devices.size(); k++){
 		devices[k].deviceID = k;
 	}
-	
+
 	bHaveEnumeratedDevices = true;
 }
 
@@ -243,7 +243,7 @@ vector <ofSerialDeviceInfo> ofSerial::getDeviceList(){
 }
 
 //----------------------------------------------------------------
-void ofSerial::enumerateDevices(){	
+void ofSerial::enumerateDevices(){
 	listDevices();
 }
 
@@ -299,7 +299,7 @@ bool ofSerial::setup(string portName, int baud){
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	//---------------------------------------------
-	
+
 		//lets account for the name being passed in instead of the device path
 		if( portName.size() > 5 && portName.substr(0, 5) != "/dev/" ){
 			portName = "/dev/" + portName;
@@ -379,10 +379,20 @@ bool ofSerial::setup(string portName, int baud){
 	#ifdef TARGET_WIN32
 	//---------------------------------------------
 
+	char pn[sizeof(portName)];
+	int num;
+	if (sscanf(portName.c_str(), "COM%d", &num) == 1) {
+		// Microsoft KB115831 a.k.a if COM > COM9 you have to use a different
+		// syntax
+		sprintf(pn, "\\\\.\\COM%d", num);
+	} else {
+		strncpy(pn, (const char *)portName.c_str(), sizeof(portName)-1);
+	}
+
 	// open the serial port:
 	// "COM4", etc...
 
-	hComm=CreateFileA(portName.c_str(),GENERIC_READ|GENERIC_WRITE,0,0,
+	hComm=CreateFileA(pn,GENERIC_READ|GENERIC_WRITE,0,0,
 					OPEN_EXISTING,0,0);
 
 	if(hComm==INVALID_HANDLE_VALUE){
