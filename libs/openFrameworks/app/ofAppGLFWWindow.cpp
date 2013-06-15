@@ -14,7 +14,7 @@
 #include <Cocoa/Cocoa.h>
 #define GLFW_EXPOSE_NATIVE_COCOA
 #define GLFW_EXPOSE_NATIVE_NSGL
-#include "GL/glfw3native.h"
+#include "GLFW/glfw3native.h"
 #elif defined(TARGET_WIN32)
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
@@ -471,7 +471,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		//----------------------------------------------------
 		// if we have recorded the screen posion, put it there
 		// if not, better to let the system do it (and put it where it wants)
-		if (nFrameCount > 0){
+		if (ofGetFrameNum() > 0){
 			setWindowPosition(nonFullScreenX,nonFullScreenY);
 		}
 
