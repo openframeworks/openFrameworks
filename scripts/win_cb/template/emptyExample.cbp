@@ -83,9 +83,7 @@
 			<Add library="..\..\..\libs\glu\lib\win_cb\glu32.lib" />
 			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoNetSSL.a" />
 			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoCrypto.a" />
-
 			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoNet.a" />
-
 			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoUtil.a" />
 			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoXML.a" />
 			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoFoundation.a" />
@@ -116,6 +114,9 @@
 			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
 			<Mode after="always" />
 		</ExtraCommands>
+		<Unit filename="icon.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="src\main.cpp">
 			<Option virtualFolder="src" />
 		</Unit>

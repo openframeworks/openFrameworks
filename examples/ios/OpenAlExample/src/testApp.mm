@@ -13,8 +13,10 @@ void testApp::setup(){
 	
 	ofxOpenALSoundPlayer::ofxALSoundSetListenerLocation(ofGetWidth()/2,0,ofGetHeight()/2);
 	ofxOpenALSoundPlayer::ofxALSoundSetReferenceDistance(10);
-	ofxOpenALSoundPlayer::ofxALSoundSetMaxDistance(500);
-	ofxOpenALSoundPlayer::ofxALSoundSetListenerGain(5.0);
+	ofxOpenALSoundPlayer::ofxALSoundSetMaxDistance(200);
+	ofxOpenALSoundPlayer::ofxALSoundSetListenerGain(1.0);
+	ofxOpenALSoundPlayer::ofxALSoundSetDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	
 	for(int i = 0; i < 5; i++){
 		audioLoc[i].set(-1,-1);
 		audioSize[i]=0;
@@ -37,6 +39,10 @@ void testApp::draw(){
 	ofNoFill();
 	ofSetColor(50,50,200);
 	ofCircle(ofGetWidth()/2, ofGetHeight()/2, 4);
+	
+	// draw a circle representing the max distance
+	ofSetColor(200, 50, 50);
+	ofCircle(ofGetWidth()/2, ofGetHeight()/2, 200);
 	
 	for(int i = 0; i < 5; i++){
 		ofSetColor(150+31*i,150+31*i,150+31*i);
