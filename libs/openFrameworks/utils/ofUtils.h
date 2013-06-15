@@ -38,7 +38,7 @@ int     ofGetMonth();
 int     ofGetDay();
 int     ofGetWeekday();
 
-void 	ofLaunchBrowser(string url);
+void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
 
 void	ofEnableDataPath();
 void	ofDisableDataPath();
@@ -173,6 +173,7 @@ int ofBinaryToInt(const string& value);
 char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
+
 
 string 	ofGetVersionInfo();
 unsigned int ofGetVersionMajor();

@@ -8,6 +8,13 @@
 #ifndef OFGLUTILS_H_
 #define OFGLUTILS_H_
 
+#include "ofConstants.h"
+#include "ofTypes.h"
+
+class ofShader;
+class ofGLProgrammableRenderer;
+class ofBaseGLRenderer;
+
 enum ofPrimitiveMode{
 	OF_PRIMITIVE_TRIANGLES,
 	OF_PRIMITIVE_TRIANGLE_STRIP,
@@ -34,130 +41,78 @@ enum ofPolyRenderMode{
 };
 
 
-inline GLuint ofGetGLPolyMode(ofPolyRenderMode m){
+GLuint ofGetGLPolyMode(ofPolyRenderMode m);
+
+ofPolyRenderMode ofGetOFPolyMode(GLuint m);
+
+
+GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode);
+
+ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode);
+
+int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat);
+int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
+
+
+bool ofCheckGLExtension(string searchName);
+
+ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
+ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
+
+void ofEnableVertices();
+void ofEnableTexCoords();
+void ofEnableColorCoords();
+void ofEnableNormals();
+void ofDisableVertices();
+void ofDisableTexCoords();
+void ofDisableColorCoords();
+void ofDisableNormals();
+
 #ifndef TARGET_OPENGLES
-	switch(m){
-		case(OF_MESH_POINTS):
-			return GL_POINT;
-			break;
-		case(OF_MESH_WIREFRAME):
-			return GL_LINE;
-			break;
-		case(OF_MESH_FILL):
-			return GL_FILL;
-			break;
-		default:
-			ofLog(OF_LOG_ERROR,"asked for unsupported or non existant poly mode " + ofToString(m) + " returning GL_FILL");
-			return GL_FILL;
-			break;
-	}
+	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
+	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
+
+	#ifndef GL_UNSIGNED_INT_24_8
+		#define GL_UNSIGNED_INT_24_8						GL_UNSIGNED_INT_24_8_EXT
+	#endif
 #else
-	return 0;
+	#ifndef GL_FRAMEBUFFER
+		#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_OES
+		#define GL_RENDERBUFFER									GL_RENDERBUFFER_OES
+		#define GL_DEPTH_ATTACHMENT								GL_DEPTH_ATTACHMENT_OES
+		#define GL_STENCIL_ATTACHMENT							GL_STENCIL_ATTACHMENT_OES
+		//#define GL_DEPTH_STENCIL_ATTACHMENT					GL_DEPTH_STENCIL_ATTACHMENT_OES
+		#define GL_DEPTH_COMPONENT								GL_DEPTH_COMPONENT16_OES
+		#define GL_STENCIL_INDEX								GL_STENCIL_INDEX8_OES
+		#define GL_FRAMEBUFFER_BINDING							GL_FRAMEBUFFER_BINDING_OES
+		#define GL_MAX_COLOR_ATTACHMENTS						GL_MAX_COLOR_ATTACHMENTS_OES
+		#define GL_MAX_SAMPLES									GL_MAX_SAMPLES_OES
+		#define GL_READ_FRAMEBUFFER								GL_READ_FRAMEBUFFER_OES
+		#define GL_DRAW_FRAMEBUFFER								GL_DRAW_FRAMEBUFFER_OES
+		#define GL_WRITE_FRAMEBUFFER							GL_WRITE_FRAMEBUFFER_OES
+		#define GL_COLOR_ATTACHMENT0							GL_COLOR_ATTACHMENT0_OES
+		#define GL_FRAMEBUFFER_COMPLETE							GL_FRAMEBUFFER_COMPLETE_OES
+		#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT			GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES
+		#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT	GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES
+		#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES
+		#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_OES
+		#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_OES
+		#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_OES
+		#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_OES
+		#define GL_DEPTH_COMPONENT16							GL_DEPTH_COMPONENT16_OES
+	#endif
+	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
+	#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_OES
+
+	#define GL_DEPTH24_STENCIL8								GL_DEPTH24_STENCIL8_OES
+	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
+	#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
+	#ifdef GL_DEPTH_COMPONENT32_OES
+        #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
+    #endif
+	#ifdef TARGET_OF_IPHONE
+    	#define GL_UNSIGNED_INT                                 GL_UNSIGNED_INT_OES
+	#endif
 #endif
-}
 
-inline ofPolyRenderMode ofGetOFPolyMode(GLuint m){
-#ifndef TARGET_OPENGLES
-	switch(m){
-		case(GL_POINT):
-			return OF_MESH_POINTS;
-			break;
-		case(GL_LINE):
-			return OF_MESH_WIREFRAME;
-			break;
-		case(GL_FILL):
-			return OF_MESH_FILL;
-			break;
-		default:
-			ofLog(OF_LOG_ERROR,"asked for non existant glPolygonMode " + ofToString(m) + " returning OF_MESH_FILL");
-			return OF_MESH_FILL;
-			break;
-	}
-#else
-	return OF_MESH_FILL;
-#endif
-}
-
-
-inline GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
-	switch(mode){
-		case OF_PRIMITIVE_TRIANGLES:
-			return GL_TRIANGLES;
-			break;
-		case OF_PRIMITIVE_TRIANGLE_STRIP:
-			return GL_TRIANGLE_STRIP;
-			break;
-		case OF_PRIMITIVE_TRIANGLE_FAN:
-			return GL_TRIANGLE_FAN;
-			break;
-		case OF_PRIMITIVE_LINES:
-			return GL_LINES;
-			break;
-		case OF_PRIMITIVE_LINE_STRIP:
-			return GL_LINE_STRIP;
-			break;
-		case OF_PRIMITIVE_LINE_LOOP:
-			return GL_LINE_LOOP;
-			break;
-		case OF_PRIMITIVE_POINTS:
-			return GL_POINTS;
-			break;
-		default:
-			ofLog(OF_LOG_ERROR,"asked for unsupported or non existant primitive mode " + ofToString(mode) + " returning GL_TRIANGLES");
-			return GL_TRIANGLES;
-			break;
-	}
-}
-
-inline ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
-	switch(mode){
-		case GL_TRIANGLES:
-			return OF_PRIMITIVE_TRIANGLES;
-			break;
-		case GL_TRIANGLE_STRIP:
-			return OF_PRIMITIVE_TRIANGLE_STRIP;
-			break;
-		case GL_TRIANGLE_FAN:
-			return OF_PRIMITIVE_TRIANGLE_FAN;
-			break;
-		case GL_LINES:
-			return OF_PRIMITIVE_LINES;
-			break;
-		case GL_LINE_STRIP:
-			return OF_PRIMITIVE_LINE_STRIP;
-			break;
-		case GL_LINE_LOOP:
-			return OF_PRIMITIVE_LINE_LOOP;
-			break;
-		case GL_POINTS:
-			return OF_PRIMITIVE_POINTS;
-			break;
-		default:
-			ofLog(OF_LOG_ERROR,"asked for non existant primitive mode " + ofToString(mode) + " returning OF_PRIMITIVE_TRIANGLES");
-			return OF_PRIMITIVE_TRIANGLES;
-			break;
-	}
-}
-
-inline int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
-	switch(pixelFormat){
-	case OF_PIXELS_BGRA:
-		return GL_RGBA;
-	case OF_PIXELS_MONO:
-		return GL_LUMINANCE;
-	case OF_PIXELS_RGB:
-		return GL_RGB;
-	case OF_PIXELS_RGBA:
-		return GL_RGBA;
-    case OF_PIXELS_RGB565:
-#ifdef TARGET_OPENGLES 
-    	return GL_RGB;
-#else
-        return GL_RGB5;
-#endif
-	default:
-		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
-		return GL_LUMINANCE;
-	}
-}
 #endif /* OFGLUTILS_H_ */

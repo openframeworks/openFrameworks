@@ -2,16 +2,22 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-
-	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofBackground(34, 34, 34);
 	ofSetVerticalSync(false);
 	ofEnableAlphaBlending();
 		
 	//we load a font and tell OF to make outlines so we can draw it as GL shapes rather than textures
 	font.loadFont("type/verdana.ttf", 100, true, false, true, 0.4, 72);
-	shader.load("shaders/noise.vert", "shaders/noise.frag");
-	
+	#ifdef TARGET_OPENGLES
+	shader.load("shaders_gles/noise.vert","shaders_gles/noise.frag");
+	#else
+	if(ofGetProgrammableGLRenderer()){
+		shader.load("shaders_gl3/noise.vert", "shaders_gl3/noise.frag");
+	}else{
+		shader.load("shaders/noise.vert", "shaders/noise.frag");
+	}
+	#endif
+
 	doShader = true;	
 }
 

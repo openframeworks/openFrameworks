@@ -10,15 +10,22 @@ void testApp::setup(){
     width = ofGetWindowWidth();
     height = ofGetWindowHeight();
     
+    string shadersFolder;
+    if(ofGetProgrammableGLRenderer()){
+    	shadersFolder="shaders_programmable";
+    }else{
+    	shadersFolder="shaders";
+    }
+
     // Loading the Shaders
-    updatePos.load("","shaders/posUpdate.frag");// shader for updating the texture that store the particles position on RG channels
-    updateVel.load("","shaders/velUpdate.frag");// shader for updating the texture that store the particles velocity on RG channels
+    updatePos.load("",shadersFolder+"/posUpdate.frag");// shader for updating the texture that store the particles position on RG channels
+    updateVel.load("",shadersFolder+"/velUpdate.frag");// shader for updating the texture that store the particles velocity on RG channels
     
     // Frag, Vert and Geo shaders for the rendering process of the spark image
     updateRender.setGeometryInputType(GL_POINTS);
 	updateRender.setGeometryOutputType(GL_TRIANGLE_STRIP);
 	updateRender.setGeometryOutputCount(6);
-    updateRender.load("shaders/render.vert","shaders/render.frag","shaders/render.geom");
+    updateRender.load(shadersFolder+"/render.vert",shadersFolder+"/render.frag",shadersFolder+"/render.geom");
     
     // Seting the textures where the information ( position and velocity ) will be
     textureRes = (int)sqrt((float)numParticles);
@@ -35,7 +42,7 @@ void testApp::setup(){
             pos[i*3 + 2] = 0.0;
         }
     }
-    // Load this information in to the FBO«s texture
+    // Load this information in to the FBOï¿½s texture
     posPingPong.allocate(textureRes, textureRes,GL_RGB32F);
     posPingPong.src->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
     posPingPong.dst->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
@@ -49,7 +56,7 @@ void testApp::setup(){
         vel[i*3 + 1] = ofRandom(-1.0,1.0);
         vel[i*3 + 2] = 1.0;
     }
-    // Load this information in to the FBO«s texture
+    // Load this information in to the FBOï¿½s texture
     velPingPong.allocate(textureRes, textureRes,GL_RGB32F);
     velPingPong.src->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
     velPingPong.dst->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
@@ -70,9 +77,9 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-    // In each cycle it«s going to update the velocity first and the the position
+    // In each cycle itï¿½s going to update the velocity first and the the position
     // Each one one with a different shader and FBO.
-    // Because on GPU you can«t write over the texture that you are reading we are
+    // Because on GPU you canï¿½t write over the texture that you are reading we are
     // using to pair of ofFbo attached together on what we call pingPongBuffer 
     // Learn more about Ping-Pong at:
     //
@@ -81,7 +88,7 @@ void testApp::update(){
     
     // Velocities PingPong
     //
-    // It calculates the next frame and see if it«s there any collition
+    // It calculates the next frame and see if itï¿½s there any collition
     // then updates the velocity with that information
     //
     velPingPong.dst->begin();
@@ -125,11 +132,11 @@ void testApp::update(){
     // Rendering
     //
     // 1.   Sending this vertex to the Vertex Shader. 
-    //      Each one it«s draw exactly on the position that match where it«s stored on both vel and pos textures
-    //      So on the Vertex Shader (that«s is first at the pipeline) can search for it information and move it
+    //      Each one itï¿½s draw exactly on the position that match where itï¿½s stored on both vel and pos textures
+    //      So on the Vertex Shader (thatï¿½s is first at the pipeline) can search for it information and move it
     //      to it right position.
-    // 2.   Once it«s in the right place the Geometry Shader make 6 more vertex in order to make a billboard 
-    // 3.   that then on the Fragment Shader it«s going to be filled with the pixels of sparkImg texture
+    // 2.   Once itï¿½s in the right place the Geometry Shader make 6 more vertex in order to make a billboard 
+    // 3.   that then on the Fragment Shader itï¿½s going to be filled with the pixels of sparkImg texture
     //
     renderFBO.begin();
     ofClear(0,0,0,0);
