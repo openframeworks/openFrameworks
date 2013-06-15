@@ -299,19 +299,6 @@ int	ofAppiPhoneWindow::getAntiAliasingSampleCount() {
     return antiAliasingSamples;
 }
 
-//-------------------------------------------------------- deprecated.
-void ofAppiPhoneWindow::enableRetinaSupport() {
-	enableRetina();
-}
-
-bool ofAppiPhoneWindow::isRetinaSupported() {
-	return isRetinaEnabled();
-}
-
-bool ofAppiPhoneWindow::isDepthEnabled() {
-	return isDepthBufferEnabled();
-}
-
 //-------------------------------------------------------- timer loop.
 void ofAppiPhoneWindow::timerLoop() {
     // all the timerLoop logic has been moved into [ofxiOSEAGLView drawView]
