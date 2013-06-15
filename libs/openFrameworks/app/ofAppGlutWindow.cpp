@@ -610,7 +610,7 @@ void ofAppGlutWindow::display(void){
 				#ifdef TARGET_OSX
 					SetSystemUIMode(kUIModeAllHidden,NULL);
 					#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
-						if( nFrameCount <= 10 ){  //is this long enough? too long? 
+						if( ofGetFrameNum() <= 10 ){  //is this long enough? too long?
 							ProcessSerialNumber psn;							
 							OSErr err = GetCurrentProcess( &psn );
 							if ( err == noErr ){
@@ -673,7 +673,7 @@ void ofAppGlutWindow::display(void){
         if (nFramesSinceWindowResized < 3){
         	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
         } else {
-            if ( (nFrameCount < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
+            if ( (ofGetFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
             else                                                     glFlush();
         }
     } else {
