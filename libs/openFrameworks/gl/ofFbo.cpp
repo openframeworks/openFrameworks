@@ -732,7 +732,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 	if(fbo != fboTextures && dirty) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
-		if (ofGLIsFixedPipeline()){
+		if (!ofGetGLProgrammableRenderer()){
 			// save current drawbuffer
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
 		}
@@ -753,7 +753,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 		// restore readbuffer
 		glReadBuffer(readBuffer);
 		
-		if(ofGLIsFixedPipeline()){
+		if(!ofGetGLProgrammableRenderer()){
 		// restore drawbuffer
 			glPopAttrib();
 		}
