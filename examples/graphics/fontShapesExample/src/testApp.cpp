@@ -85,6 +85,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
+	if(key==OF_KEY_ESC) return;
 	testChar = testFont.getCharacterAsPoints(key);
 	letter = key;
 }
