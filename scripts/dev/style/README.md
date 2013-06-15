@@ -1,6 +1,6 @@
 # Source Code Styling
 
-This directory contains scripts and a config file for auto formatting source code according to the OpenFrameworks coding style guidelines:
+This directory contains scripts and a config file for auto formatting source code according to the openFrameworks coding style guidelines:
 https://github.com/openframeworks/openFrameworks/wiki/oF-code-style
 
 The formatter used is `uncrustify`: http://uncrustify.sourceforge.net/
