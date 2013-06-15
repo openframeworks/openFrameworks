@@ -157,7 +157,12 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 		return;
 	}
 #endif
-	
+
+	ofLogVerbose()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
+	ofLogVerbose()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
+	ofLogVerbose()<< "Version:  "<< (char*)glGetString(GL_VERSION);
+	ofLogVerbose()<< "GLSL:     "<< (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
     if(ofGetGLProgrammableRenderer()){
     	ofGetGLProgrammableRenderer()->setup();
     }
