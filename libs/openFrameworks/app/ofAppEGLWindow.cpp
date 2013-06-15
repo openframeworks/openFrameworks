@@ -1181,8 +1181,8 @@ void ofAppEGLWindow::display() {
   // set viewport, clear the screen
  
 
-  if(ofGetProgrammableGLRenderer()){
-    ofGetProgrammableGLRenderer()->startRender();
+  if(ofGetGLProgrammableRenderer()){
+    ofGetGLProgrammableRenderer()->startRender();
   }
 
   ofViewport(0, 0, getWindowWidth(), getWindowHeight());    // used to be glViewport( 0, 0, width, height );
@@ -1234,8 +1234,8 @@ void ofAppEGLWindow::display() {
     }
    }
  
-  if(ofGetProgrammableGLRenderer()) {
-    ofGetProgrammableGLRenderer()->finishRender();
+  if(ofGetGLProgrammableRenderer()) {
+    ofGetGLProgrammableRenderer()->finishRender();
   }
   
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);

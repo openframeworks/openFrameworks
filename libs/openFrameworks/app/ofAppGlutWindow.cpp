@@ -5,7 +5,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofConstants.h"
-#include "ofProgrammableGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
@@ -640,8 +640,8 @@ void ofAppGlutWindow::display(void){
 		}
 	}
 
-	if(ofGetProgrammableGLRenderer()){
-		ofGetProgrammableGLRenderer()->startRender();
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->startRender();
 	}
 
 	// set viewport, clear the screen
@@ -697,8 +697,8 @@ void ofAppGlutWindow::display(void){
 		}
     #endif
 
-	if(ofGetProgrammableGLRenderer()){
-		ofGetProgrammableGLRenderer()->finishRender();
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->finishRender();
 	}
 
     nFramesSinceWindowResized++;

@@ -14,7 +14,7 @@
 #include "ofMath.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
-#include "ofProgrammableGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
 
 
@@ -131,7 +131,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 	window = windowPtr;
 
-	if(ofGetProgrammableGLRenderer()){
+	if(ofGetGLProgrammableRenderer()){
         #if defined(TARGET_RASPBERRY_PI)
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
@@ -163,8 +163,8 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	ofLogNotice()<< "Version:  "<< (char*)glGetString(GL_VERSION);
 	ofLogNotice()<< "GLSL:     "<< (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-    if(ofGetProgrammableGLRenderer()){
-    	ofGetProgrammableGLRenderer()->setup();
+    if(ofGetGLProgrammableRenderer()){
+    	ofGetGLProgrammableRenderer()->setup();
     }
 
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults

@@ -64,17 +64,9 @@ const string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow(){
-	timeNow				= 0;
-	timeThen			= 0;
-	fps					= 60; //give a realistic starting value - win32 issues
-	nFramesForFPS		= 0;
-	nFrameCount			= 0;
-	bFrameRateSet		= false;
-	millisForFrame		= 0;
-	prevMillis			= 0;
-	diffMillis			= 0;
-	frameRate			= 0;
-	lastFrameTime		= 0;
+	ofAppPtr = NULL;
+	width = 0;
+	height = 0;
 }
 
 
@@ -87,23 +79,15 @@ void ofAppNoWindow::setupOpenGL(int w, int h, int screenMode){
 void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofNoopRenderer));
-	static ofEventArgs voidEventArgs;
 
 	ofAppPtr = appPtr;
 
-	if(ofAppPtr){
-		ofAppPtr->setup();
-		ofAppPtr->update();
-	}
 	#if defined TARGET_OSX || defined TARGET_LINUX
 	// for keyboard
 	//set_conio_terminal_mode();
 	#endif
 
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents().setup, voidEventArgs );
-		ofNotifyEvent( ofEvents().update, voidEventArgs );
-	#endif
+	ofNotifySetup();
 
     ofLogNotice()<<	"***\n***\n*** ofAppNoWindow running a headless openFrameworks app\n"
 			"***\n*** keyboard input works here\n"
@@ -111,26 +95,10 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			"***\n";
 	while (true)
 	{
-	    if (nFrameCount != 0 && bFrameRateSet == true){
-            diffMillis = ofGetElapsedTimeMillis() - prevMillis;
-            if (diffMillis > millisForFrame){
-                ; // we do nothing, we are already slower than target frame
-            } else {
-                int waitMillis = millisForFrame - diffMillis;
-                #ifdef TARGET_WIN32
-                    Sleep(waitMillis);         //windows sleep in milliseconds
-                #else
-                    usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
-                #endif
-            }
-        }
-        prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-
-
         /// listen for escape
         #ifdef TARGET_WIN32
         if (GetAsyncKeyState(VK_ESCAPE))
-            OF_EXIT_APP(0);
+            ofNotifyKeyPressed(OF_KEY_ESC);
         #endif
 
 		#if defined TARGET_OSX || defined TARGET_LINUX
@@ -139,7 +107,7 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			int key = getch();
 			if ( key == 27 )
 			{
-				OF_EXIT_APP(0);
+				ofNotifyKeyPressed(OF_KEY_ESC);
 			}
 			else if ( key == /* ctrl-c */ 3 )
 			{
@@ -148,44 +116,14 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			}
 			else
 			{
-				ofAppPtr->keyPressed( key );
+				ofNotifyKeyPressed(key);
 			}
 		}
 		#endif
 
 
-        /// update
-        if (ofAppPtr)
-            ofAppPtr->update();
-
-		#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents().update, voidEventArgs);
-		#endif
-
-		if(ofGetCurrentRenderer()){
-			if (ofAppPtr)
-				ofAppPtr->draw();
-
-			#ifdef OF_USING_POCO
-			ofNotifyEvent( ofEvents().draw, voidEventArgs);
-			#endif
-		}
-
-
-
-        // -------------- fps calculation:
-		timeNow = ofGetElapsedTimef();
-		double diff = timeNow-timeThen;
-		if( diff  > 0.00001 ){
-			fps			= 1.0 / diff;
-			frameRate	*= 0.9f;
-			frameRate	+= 0.1f*fps;
-		}
-		lastFrameTime	= diff;
-		timeThen		= timeNow;
-		// --------------
-
-		nFrameCount++;		// increase the overall frame count
+		ofNotifyUpdate();
+		ofNotifyDraw();
 
 	}
 }
@@ -212,36 +150,6 @@ void ofAppNoWindow::exitApp(){
 #endif
 
 	OF_EXIT_APP(0);
-}
-
-//------------------------------------------------------------
-float ofAppNoWindow::getFrameRate(){
-	return frameRate;
-}
-
-//------------------------------------------------------------
-int ofAppNoWindow::getFrameNum(){
-	return nFrameCount;
-}
-
-//------------------------------------------------------------
-void ofAppNoWindow::setFrameRate(float targetRate){
-	// given this FPS, what is the amount of millis per frame
-	// that should elapse?
-
-	// --- > f / s
-
-	if (targetRate == 0){
-		bFrameRateSet = false;
-		return;
-	}
-
-	bFrameRateSet 			= true;
-	float durationOfFrame 	= 1.0f / (float)targetRate;
-	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-
-	frameRate				= targetRate;
-
 }
 
 ofPoint	ofAppNoWindow::getWindowPosition(){
