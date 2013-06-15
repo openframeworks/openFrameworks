@@ -173,10 +173,10 @@
 		<Unit filename="../../../openFrameworks/gl/ofMaterial.h">
 			<Option virtualFolder="openframeworks/gl/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/gl/ofProgrammableGLRenderer.cpp">
+		<Unit filename="../../../openFrameworks/gl/ofGLProgrammableRenderer.cpp">
 			<Option virtualFolder="openframeworks/gl/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/gl/ofProgrammableGLRenderer.h">
+		<Unit filename="../../../openFrameworks/gl/ofGLProgrammableRenderer.h">
 			<Option virtualFolder="openframeworks/gl/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/gl/ofShader.cpp">
