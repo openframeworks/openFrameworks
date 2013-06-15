@@ -1422,6 +1422,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
+        //Log.i("OF","setting OpenGL ES version to 2");
+        //setEGLContextClientVersion(2);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         getHolder().setFormat( PixelFormat.RGBA_8888 );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,8,16,0);
@@ -1431,6 +1433,8 @@ class OFGLSurfaceView extends GLSurfaceView{
 	
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
+        //Log.i("OF","setting OpenGL ES version to 2");
+        //setEGLContextClientVersion(2);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         getHolder().setFormat( PixelFormat.RGBA_8888 );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,8,16,0);

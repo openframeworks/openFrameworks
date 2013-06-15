@@ -151,22 +151,6 @@ int	ofAppiPhoneWindow::getWindowMode() {
 	return windowMode;
 }
 
-float ofAppiPhoneWindow::getFrameRate() {
-	return [[ofxiOSEAGLView getInstance] getFrameRate];
-}
-
-/******** Other stuff ************/
-void ofAppiPhoneWindow::setFrameRate(float targetRate) {
-	[[ofxiOSEAGLView getInstance] setAnimationFrameRate:targetRate];
-}
-
-int	ofAppiPhoneWindow::getFrameNum() {
-	return [[ofxiOSEAGLView getInstance] getFrameNum];
-}
-
-double ofAppiPhoneWindow::getLastFrameTime() {
-	return [[ofxiOSEAGLView getInstance] getLastFrameTime];
-}
 
 void ofAppiPhoneWindow::setWindowTitle(string title) {
 }
@@ -313,19 +297,6 @@ bool ofAppiPhoneWindow::isAntiAliasingEnabled() {
 
 int	ofAppiPhoneWindow::getAntiAliasingSampleCount() {
     return antiAliasingSamples;
-}
-
-//-------------------------------------------------------- deprecated.
-void ofAppiPhoneWindow::enableRetinaSupport() {
-	enableRetina();
-}
-
-bool ofAppiPhoneWindow::isRetinaSupported() {
-	return isRetinaEnabled();
-}
-
-bool ofAppiPhoneWindow::isDepthEnabled() {
-	return isDepthBufferEnabled();
 }
 
 //-------------------------------------------------------- timer loop.

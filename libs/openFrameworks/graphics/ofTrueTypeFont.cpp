@@ -16,6 +16,10 @@
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
+#include "Poco/TextConverter.h"
+#include "Poco/UTF8Encoding.h"
+#include "Poco/Latin1Encoding.h"
+#include "Poco/Latin9Encoding.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -515,6 +519,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
         return false;
 	}
 
+
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
 	lineHeight = fontSize * 1.43f;
 
@@ -523,7 +528,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	//ofLog(OF_LOG_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
-	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
+	nCharacters = (bFullCharacterSet ? 256 : 128) - NUM_CHARACTER_TO_START;
 
 	//--------------- initialize character info and textures
 	cps.resize(nCharacters);
@@ -538,11 +543,14 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	long areaSum=0;
 	FT_Error err;
 
+
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){
 
 		//------------------------------------------ anti aliased or not:
-		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT );
+		int glyph = (unsigned char)(i+NUM_CHARACTER_TO_START);
+		if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
+		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), FT_LOAD_DEFAULT );
         if(err){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error with FT_Load_Glyph %i: FT_Error = %d", i, err);
 
@@ -694,10 +702,10 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 
 
-	ofPixels atlasPixels;
-	atlasPixels.allocate(w,h,2);
-	atlasPixels.set(0,255);
-	atlasPixels.set(1,0);
+	ofPixels atlasPixelsLuminanceAlpha;
+	atlasPixelsLuminanceAlpha.allocate(w,h,2);
+	atlasPixelsLuminanceAlpha.set(0,255);
+	atlasPixelsLuminanceAlpha.set(1,0);
 
 
 	int x=0;
@@ -716,25 +724,37 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
 		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
 		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
-		charPixels.pasteInto(atlasPixels,x+border,y+border);
+		charPixels.pasteInto(atlasPixelsLuminanceAlpha,x+border,y+border);
 		x+= sortedCopy[i].tW + border*2;
 	}
 
-
-	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
+	ofPixels atlasPixels;
+	atlasPixels.allocate(atlasPixelsLuminanceAlpha.getWidth(),atlasPixelsLuminanceAlpha.getHeight(),4);
+	atlasPixels.setChannel(0,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(1,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(2,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(3,atlasPixelsLuminanceAlpha.getChannel(1));
+	texAtlas.allocate(atlasPixels,false);
 
 	if(bAntiAliased && fontSize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 	}
-
-	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+	texAtlas.loadData(atlasPixels);
 
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
   	bLoadedOk = true;
 	return true;
+}
+
+ofTextEncoding ofTrueTypeFont::getEncoding() const {
+	return encoding;
+}
+
+void ofTrueTypeFont::setEncoding(ofTextEncoding _encoding) {
+	encoding = _encoding;
 }
 
 //-----------------------------------------------------------
@@ -824,6 +844,10 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 	int firstIndex = stringQuads.getVertices().size();
 
+	if(!ofIsVFlipped()){
+		swap(v1,v2);
+	}
+
 	stringQuads.addVertex(ofVec3f(x1,y1));
 	stringQuads.addVertex(ofVec3f(x2,y1));
 	stringQuads.addVertex(ofVec3f(x2,y2));
@@ -844,6 +868,12 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 //-----------------------------------------------------------
 vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(str,o);
+		str=o;
+	}
+
 	vector<ofTTFCharacter> shapes;
 
 	if (!bLoadedOk){
@@ -1018,17 +1048,22 @@ ofTexture & ofTrueTypeFont::getFontTexture(){
 
 //=====================================================================
 void ofTrueTypeFont::drawString(string c, float x, float y) {
-
-    /*glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texAtlas.draw(0,0);*/
-
-    if (!bLoadedOk){
-    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-    	return;
-    };
-
-
+	
+	/*glEnable(GL_BLEND);
+	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	 texAtlas.draw(0,0);*/
+	
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
+		c=o;
+	}
+	
+	if (!bLoadedOk){
+		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+		return;
+	};
+	
 	bool alreadyBinded = binded;
 
 	if(!alreadyBinded) bind();
@@ -1053,14 +1088,11 @@ void ofTrueTypeFont::bind(){
 	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
 	    // **************
 		// (a) record the current "alpha state, blend func, etc"
-		#ifndef TARGET_OPENGLES
-			glPushAttrib(GL_COLOR_BUFFER_BIT);
-		#else
-			blend_enabled = glIsEnabled(GL_BLEND);
-			texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-			glGetIntegerv( GL_BLEND_SRC, &blend_src );
-			glGetIntegerv( GL_BLEND_DST, &blend_dst );
-		#endif
+
+		blend_enabled = glIsEnabled(GL_BLEND);
+		texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+		glGetIntegerv( GL_BLEND_SRC, &blend_src );
+		glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
 	    // (b) enable our regular ALPHA blending!
 	    glEnable(GL_BLEND);
@@ -1078,15 +1110,12 @@ void ofTrueTypeFont::unbind(){
 		stringQuads.drawFaces();
 		texAtlas.unbind();
 
-		#ifndef TARGET_OPENGLES
-			glPopAttrib();
-		#else
-			if( !blend_enabled )
-				glDisable(GL_BLEND);
-			if( !texture_2d_enabled )
-				glDisable(GL_TEXTURE_2D);
-			glBlendFunc( blend_src, blend_dst );
-		#endif
+		if( !blend_enabled )
+			glDisable(GL_BLEND);
+		if( !texture_2d_enabled )
+			glDisable(GL_TEXTURE_2D);
+		glBlendFunc( blend_src, blend_dst );
+
 		binded = false;
 	}
 }
@@ -1103,6 +1132,12 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	if (!bMakeContours){
 		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : contours not created for this font - call loadFont with makeContours set to true");
 		return;
+	}
+
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
+		c=o;
 	}
 
 	GLint		index	= 0;

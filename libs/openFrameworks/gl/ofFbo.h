@@ -81,7 +81,6 @@ public:
 		Settings();
 	};
 private:
-
 	Settings 			settings;
 	int					isBound;
 
@@ -106,12 +105,17 @@ private:
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
 
+#ifdef TARGET_OPENGLES
+	static bool bglFunctionsInitialized;
+#endif
+
 	void destroy();
 
 	bool checkStatus();
 	void createAndAttachTexture(GLenum attachmentPoint);
 	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
-	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum attachment);
+	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment );
+	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment, GLenum transferFormat, GLenum transferType );
 
 	// if using MSAA, we will have rendered into a colorbuffer, not directly into the texture
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
