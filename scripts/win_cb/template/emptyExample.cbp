@@ -76,7 +76,9 @@
 			<Add library="..\..\..\libs\cairo\lib\win_cb\libpixman-1.a" />
 			<Add library="..\..\..\libs\freetype\lib\win_cb\libfreetype.a" />
 			<Add library="..\..\..\libs\glut\lib\win_cb\libglut.a" />			
-			<Add library="..\..\..\libs\glfw\lib\win_cb\libglfw3.a" />
+			<Add library="..\..\..\libs\glfw\lib\win_cb\libglfw3.a" />		
+			<Add library="..\..\..\libs\glfw\lib\win_cb\glfw3dll.a" />	
+			<Add library="..\..\..\libs\glfw\lib\win_cb\glfw3.dll" />
 			<Add library="..\..\..\libs\videoInput\lib\win_cb\videoInputLib.a" />
 			<Add library="..\..\..\libs\fmodex\lib\win_cb\libfmodex.a" />
 			<Add library="..\..\..\libs\glew\lib\win_cb\glew32s.lib" />
