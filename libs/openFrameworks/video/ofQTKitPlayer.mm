@@ -218,19 +218,6 @@ void ofQTKitPlayer::update() {
 bool ofQTKitPlayer::isFrameNew() {
 	return bNewFrame;
 }
-		
-//--------------------------------------------------------------------
-void ofQTKitPlayer::bind() {
-	if(!isLoaded() || !moviePlayer.useTexture) return;
-	updateTexture();
-	tex.bind();
-}
-
-//--------------------------------------------------------------------
-void ofQTKitPlayer::unbind(){
-	if(!isLoaded() || !moviePlayer.useTexture) return;
-	tex.unbind();
-}
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::draw(float x, float y) {

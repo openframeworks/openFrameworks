@@ -23,9 +23,7 @@ public:
 	void addVertex( const ofPoint& p );
 	void addVertex( float x, float y, float z=0 );
 	void addVertices( const vector<ofPoint>& verts );
-	OF_DEPRECATED_MSG("Use ofPolyline::addVertices instead", void addVertexes( const vector<ofPoint>& verts ));
 	void addVertices(const ofPoint* verts, int numverts);
-	OF_DEPRECATED_MSG("Use ofPolyline::addVertices instead",void addVertexes(const ofPoint* verts, int numverts));
 
 	// adds a straight line to the polyline
 	void lineTo(const ofPoint & to ){ addVertex(to); }

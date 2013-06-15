@@ -917,11 +917,6 @@ void ofVertices( const vector <ofPoint> & polyPoints ){
 	}
 }
 
-//----------------------------------------------------------
-void ofVertexes( const vector <ofPoint> & polyPoints ){
-	ofVertices(polyPoints);
-}
-
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
     shape.setCurveResolution(currentStyle.curveResolution);
@@ -939,11 +934,6 @@ void ofCurveVertices( const vector <ofPoint> & curvePoints){
 	for( int k = 0; k < (int)curvePoints.size(); k++){
 		shape.curveTo(curvePoints[k]);
 	}
-}
-
-//----------------------------------------------------------
-void ofCurveVertexes( const vector <ofPoint> & curvePoints){
-	ofCurveVertices(curvePoints);
 }
 
 //---------------------------------------------------
