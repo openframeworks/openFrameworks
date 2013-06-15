@@ -198,7 +198,7 @@ bool isFolderNotCurrentPlatform(string folderName, string platform){
 	if( platforms.size() == 0 ){
 		platforms.push_back("osx");
 		platforms.push_back("win_cb");
-		platforms.push_back("vs2010");
+		platforms.push_back("vs");
 		platforms.push_back("ios");
 		platforms.push_back("linux");
 		platforms.push_back("linux64");
@@ -485,8 +485,8 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 }
 
 bool checkConfigExists(){
-	ofFile config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
-	return config.exists();
+	
+	return ofFile::doesFileExist(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
 }
 
 bool askOFRoot(){
