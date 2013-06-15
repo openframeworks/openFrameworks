@@ -329,7 +329,7 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(!ofGLIsFixedPipeline() || ofCheckGLExtension("GL_OES_framebuffer_object")){
+	if(ofGetProgrammableGLRenderer() || ofCheckGLExtension("GL_OES_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "FBO supported";
 	}else{
 		ofLogError("ofFbo") << "FBO not supported by this graphics card";
