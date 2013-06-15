@@ -139,6 +139,7 @@ private:
 	GLuint program;
 	bool bLoaded;
 	map<GLenum, GLuint> shaders;
+	map<string, GLint> uniformLocations;
 	
 	GLint getUniformLocation(const string & name);
 	
