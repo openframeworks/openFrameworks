@@ -669,7 +669,7 @@ void ofTexture::loadData(const ofFloatPixels & pix, int glFormat){
 //----------------------------------------------------------
 void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glType){
 
-	if(w != texData.tex_w || h != texData.tex_h) {
+	if(w < texData.tex_w || h < texData.tex_h) {
 		allocate(w, h, glFormat, glType);
 	}
 	
