@@ -79,7 +79,6 @@ void ofAppNoWindow::setupOpenGL(int w, int h, int screenMode){
 void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofNoopRenderer));
-	static ofEventArgs voidEventArgs;
 
 	ofAppPtr = appPtr;
 
