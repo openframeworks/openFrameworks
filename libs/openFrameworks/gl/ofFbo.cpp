@@ -138,6 +138,24 @@ ofFbo::Settings::Settings() {
 	numSamples				= 0;
 }
 
+ofFbo::Settings::Settings(const Settings & mom) {
+	width					= mom.width;
+	height					= mom.height;
+	numColorbuffers			= mom.numColorbuffers;
+	colorFormats			= mom.colorFormats;
+	useDepth				= mom.useDepth;
+	useStencil				= mom.useStencil;
+	depthStencilAsTexture	= mom.depthStencilAsTexture;
+	textureTarget			= mom.textureTarget;
+	internalformat			= mom.internalformat;
+	depthStencilInternalFormat	= mom.depthStencilInternalFormat;
+	wrapModeHorizontal		= mom.wrapModeHorizontal;
+	wrapModeVertical		= mom.wrapModeVertical;
+	minFilter				= mom.minFilter;
+	maxFilter				= mom.maxFilter;
+	numSamples				= mom.numSamples;
+}
+
 static map<GLuint,int> & getIdsFB(){
 	static map<GLuint,int> * idsFB = new map<GLuint,int>;
 	return *idsFB;
@@ -525,7 +543,16 @@ void ofFbo::allocate(Settings _settings) {
 	#endif
 
 	// now create all textures and color buffers
-	for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(i);
+	if(settings.colorFormats.size() > 0) {
+		for(int i=0; i<settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
+	}
+	else if(settings.numColorbuffers > 0) {
+		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
+	}
+	else {
+		ofLogWarning("ofFbo") << "no color buffers specified";
+	}
+
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
 	if(fbo != fboTextures) {
@@ -560,27 +587,33 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 }
 
 
-void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
+void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
 	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
+	GLint temp;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
 	ofTexture tex;
-	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
+	tex.allocate(settings.width, settings.height, internalFormat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	//tex.texData.bFlipTexture = true;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	textures.push_back(tex);
-
+	
+	settings.colorFormats.reserve(attachmentPoint + 1);
+	settings.colorFormats[attachmentPoint] = internalFormat;
+	settings.numColorbuffers = settings.colorFormats.size();
 
 	// if MSAA, bind main fbo and attach renderbuffer
 	if(settings.numSamples) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-		GLuint colorBuffer = createAndAttachRenderbuffer(settings.internalformat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
+		GLuint colorBuffer = createAndAttachRenderbuffer(internalFormat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		colorBuffers.push_back(colorBuffer);
 		retainRB(colorBuffer);
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, temp);
 }
 
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum format, GLenum type, GLenum  attachment){
@@ -856,7 +889,7 @@ bool ofFbo::checkStatus() {
 			break;
 #ifndef TARGET_OPENGLES
 		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+			ofLogWarning("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
 			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
