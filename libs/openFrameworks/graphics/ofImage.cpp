@@ -1204,13 +1204,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight() const {
+float ofImage_<PixelType>::getHeight() {
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth() const {
+float ofImage_<PixelType>::getWidth() {
 	return width;
 }
 
