@@ -58,6 +58,10 @@ public:
 	//GLFW specifics
 	void 		setNumSamples(int samples);
 	void 		setDoubleBuffering(bool doubleBuff);
+	void 		setColorBits(int r, int g, int b);
+	void		setAlphaBits(int a);
+	void		setDepthBits(int depth);
+	void		setStencilBits(int stencil);
 	void		listVideoModes();
 	bool		isWindowIconified();
 	bool		isWindowActive();
@@ -79,6 +83,7 @@ private:
 
 	//utils
 	int				samples;
+	int				rBits,gBits,bBits,aBits,depthBits,stencilBits;
 
 	int				windowMode;
 
