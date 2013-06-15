@@ -188,8 +188,13 @@ public:
 	virtual ~ofBaseVideoDraws(){}
 };
 
-class ofVideoDevice {
+class ofVideoDeviceInfo {
   public:
+	ofVideoDeviceInfo(){
+		deviceID = 0;	
+		isAvailable = false;
+		isOpen = false;
+	}
 	string deviceName;
 	int deviceID;	
 	bool isAvailable;
@@ -201,14 +206,14 @@ class ofVideoDevice {
 //----------------------------------------------------------
 class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
-	public :
+  public :
 	virtual ~ofBaseVideoGrabber();
 
 	//needs implementing
-	virtual vector<ofVideoDevice>&	listDevices() = 0;		
-	virtual bool					initGrabber(int w, int h) = 0;
-	virtual void					update() = 0;
-	virtual bool					isFrameNew() = 0;
+	virtual vector<ofVideoDeviceInfo>	listDevices() = 0;		
+	virtual bool						initGrabber(int w, int h) = 0;
+	virtual void						update() = 0;
+	virtual bool						isFrameNew() = 0;
 	
 	virtual unsigned char 	* getPixels() = 0;
 	

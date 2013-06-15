@@ -44,12 +44,12 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 		
-		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
-		ofPtr<ofBaseVideoGrabber> getGrabber();
+		void						setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
+		ofPtr<ofBaseVideoGrabber>	getGrabber();
 
-		vector<ofVideoDevice>& 	listDevices();
-		bool				isFrameNew();
-		void				update();
+		vector<ofVideoDeviceInfo> 	listDevices();
+		bool						isFrameNew();
+		void						update();
 		OF_DEPRECATED_MSG("Use ofVideoGrabber::update() instead.", void grabFrame());
 		void				close();	
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}

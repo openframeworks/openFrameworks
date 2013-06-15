@@ -819,16 +819,16 @@ bool ofQTKitGrabber::hasPreview(){
 // but that requires updating the base class...perhaps we could
 // then have a ofBaseDevice class to be used for enumerating any 
 // type of device for video, sound, serial devices etc etc???
-vector<ofVideoDevice>& ofQTKitGrabber::listDevices(){
+vector<ofVideoDeviceInfo> ofQTKitGrabber::listDevices(){
     //listVideoDevices();
-    videoDevices.clear();
+    vector<ofVideoDeviceInfo> videoDevices;
 	
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
 	NSArray* devices = [QTKitVideoGrabber listVideoDevices];
 	int deviceCount = 0;
 	for (QTCaptureDevice* object in devices){
-		videoDevices.push_back(ofVideoDevice());
+		videoDevices.push_back(ofVideoDeviceInfo());
 		videoDevices[deviceCount].deviceID = deviceCount;
 		videoDevices[deviceCount].deviceName = [[object description] UTF8String];
 		videoDevices[deviceCount].isAvailable = object.isConnected && !object.isInUseByAnotherApplication;

@@ -246,7 +246,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice>& ofQuickTimeGrabber::listDevices(){
+vector<ofVideoDeviceInfo> ofQuickTimeGrabber::listDevices(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -259,7 +259,7 @@ vector<ofVideoDevice>& ofQuickTimeGrabber::listDevices(){
 		//if we need to initialize the grabbing component then do it
 		if( bNeedToInitGrabberFirst ){
 			if( !qtInitSeqGrabber() ){
-				return videoDevices;
+				return vector<ofVideoDeviceInfo>();
 			}
 		}
 
@@ -287,14 +287,14 @@ vector<ofVideoDevice>& ofQuickTimeGrabber::listDevices(){
 		//this means our the device ID we use for selection has to count both capture 'devices' and their 'inputs'
 		//this needs to be the same in our init grabber method so that we select the device we ask for
 		int deviceCount = 0;
-		videoDevices.clear();
+		vector<ofVideoDeviceInfo> videoDevices;
 		ofLog(OF_LOG_NOTICE, "listing available capture devices");
 		for(int i = 0 ; i < (*deviceList)->count ; ++i)
 		{
 			SGDeviceName nameRec;
 			nameRec = (*deviceList)->entry[i];
 			SGDeviceInputList deviceInputList = nameRec.inputs;
-			ofVideoDevice device;
+			ofVideoDeviceInfo device;
 			device.deviceID = deviceCount;
 			
 			int numInputs = 0;
