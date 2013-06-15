@@ -47,7 +47,7 @@ PLATFORM_DEFINES:=__MACOSX_CORE__
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_REQUIRED_ADDONS:=
+PLATFORM_REQUIRED_ADDONS:= ofxGui ofxJSON ofxOsc
 
 ##########################################################################################
 # PLATFORM CFLAGS
@@ -101,7 +101,6 @@ ifndef MAC_OS_SDK
 endif
 
 MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
-
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
 ifeq ($(shell \

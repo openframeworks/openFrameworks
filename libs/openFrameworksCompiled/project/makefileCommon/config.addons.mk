@@ -631,6 +631,9 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 #
 #       | sed '/^$$/d' \
 #
+#   TODO: in the future, this function might parse addons.make for a specific
+#   addon revision, respository, etc.
+#
 ################################################################################
 
     ALL_REQUESTED_PROJECT_ADDONS:=                                             \
@@ -643,6 +646,8 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 ################################################################################
 # PLATFORM_REQUIRED_WITHOUT_ALL_REQUESTED_PROJECT_ADDONS (immediately assigned)
 #   Remove any ALL_REQUESTED_PROJECT_ADDONS from the PLATFORM_REQUIRED_ADDONS
+#   because we assume that the user is attempting to intentionally reorder them 
+#   based on the project's needs.
 ################################################################################
 
     PLATFORM_REQUIRED_WITHOUT_ALL_REQUESTED_PROJECT_ADDONS:=                   \
@@ -653,17 +658,22 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
 ################################################################################
 # ALL_REQUESTED_ADDONS (immediately assigned)
-#   Create a final list of requested addons for this project.
+#   Create a final list of requested addons for this project.  This list now
+#   includes all of the PLATFORM_REQUIRED_ADDONS (MINUS any that were in
+#   addons.make) PLUS all of the addons from addons.make.
 ################################################################################
 
     ALL_REQUESTED_ADDONS:=                                                     \
         $(PLATFORM_REQUIRED_WITHOUT_ALL_REQUESTED_PROJECT_ADDONS)              \
-        $(ALL_REQUESTED_PROJECT_ADDONS) ofxSyphon
+        $(ALL_REQUESTED_PROJECT_ADDONS)
+
 
 ################################################################################
 # REQUESTED_PROJECT_ADDONS (immediately assigned)
 #   Add platform required addons from the platform-specific configuration file 
-#   (if needed) FIRST, so that they are always linked first.
+#   (if needed) FIRST, so that they are always linked first.  This list will
+#   have the duplicates removed, while preserving order.  See the 
+#   FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER for more info.
 ################################################################################
 
     REQUESTED_PROJECT_ADDONS:=                                                 \
@@ -671,9 +681,14 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
             $(ALL_REQUESTED_ADDONS)                                            \
         )
 
+
+    $(info ---REQUESTED_PROJECT_ADDONS---)
+    $(foreach v, $(REQUESTED_PROJECT_ADDONS),$(info $(v)))
+    $(info --------------------)
+
 ################################################################################
 # VALID_REQUESTED_PROJECT_ADDONS (immediately assigned)
-#   Compare the list of addons that we have requested to the those that are
+#   Compare the list of addons that we have requested to those that are
 #   located in the PATH_OF_ADDONS folder listed in ALL_INSTALLED_ADDONS
 ################################################################################
 
@@ -682,6 +697,12 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
             $(REQUESTED_PROJECT_ADDONS),                                       \
             $(ALL_INSTALLED_ADDONS)                                            \
         )
+
+
+
+    $(info ---VALID_REQUESTED_PROJECT_ADDONS---)
+    $(foreach v, $(VALID_REQUESTED_PROJECT_ADDONS),$(info $(v)))
+    $(info --------------------)
 
 ################################################################################
 # INVALID_REQUESTED_PROJECT_ADDONS (immediately assigned)
@@ -703,6 +724,12 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
             $(REQUESTED_PROJECT_ADDONS)                                        \
         )
 
+
+    $(info ---INVALID_REQUESTED_PROJECT_ADDONS---)
+    $(foreach v, $(INVALID_REQUESTED_PROJECT_ADDONS),$(info $(v)))
+    $(info --------------------)
+
+
     $(foreach ADDON_TO_CHECK,$(INVALID_REQUESTED_PROJECT_ADDONS),              \
         $(call                                                                 \
             FUNC_INSTALL_ADDON,                                                \
@@ -718,11 +745,9 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
     PROJECT_ADDONS:=$(REQUESTED_PROJECT_ADDONS)
 
-    ifdef MAKEFILE_DEBUG
-        $(info ---PROJECT_ADDONS---)
+        $(info ---FINAL PROJECT ADDONS TO PROCESS---)
         $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
         $(info --------------------)
-    endif
 
     ############################################################################
     # PROCESS PROJECT ADDONS IF THERE ARE ANY
