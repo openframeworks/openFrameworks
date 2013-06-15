@@ -215,6 +215,8 @@ void ofAppGLFWWindow::initializeWindow(){
 			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
 		#endif
 		setWindowIcon(iconPixels);
+    }else{
+    	cout << "icon already set" << endl;
     }
 #endif
 }
@@ -230,8 +232,12 @@ void ofAppGLFWWindow::setWindowIcon(const string & path){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
-	Display *m_display = glXGetCurrentDisplay();
-	GLXDrawable m_window = glXGetCurrentDrawable();
+	/*Display *m_display = glXGetCurrentDisplay();
+	GLXDrawable m_window = glXGetCurrentDrawable();*/
+
+	GLXDrawable m_window = glfwGetX11Window(windowP);
+	Display* m_display = glfwGetX11Display();
+
 	int attributes[40];
 	int i=0;
 	attributes[i++] = GLX_RGBA;
