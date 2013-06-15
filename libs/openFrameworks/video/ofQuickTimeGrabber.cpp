@@ -301,6 +301,7 @@ vector<ofVideoDevice>& ofQuickTimeGrabber::listDevices(){
 			if( deviceInputList ) numInputs = ((*deviceInputList)->count);
 
 			memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 64);
+			
 
 			//this means we can use the capture method
 			if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
@@ -325,10 +326,14 @@ vector<ofVideoDevice>& ofQuickTimeGrabber::listDevices(){
 
 			}else{
 				ofLogNotice() << "(unavailable) device[" << deviceCount << "] " << p2cstr(pascalName);
+				device.deviceName = string(p2cstr(pascalName));
+				
 				device.isAvailable = false;
+				device.isOpen = false;
+				
 				deviceCount++;
 			}
-			videoDevices.clear();
+			videoDevices.push_back( device );
 		}
 		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
