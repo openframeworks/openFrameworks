@@ -36,4 +36,6 @@ class testApp : public ofBaseApp{
 		float viewerDistance;
 	
 		deque<ofPoint> headPositionHistory;
+
+		ofVboMesh window;
 };

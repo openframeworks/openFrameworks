@@ -22,10 +22,6 @@ public:
 	virtual void	setWindowPosition(int x, int y) {}
 	virtual void	setWindowShape(int w, int h) {}
 
-	virtual int		getFrameNum() { return 0; }
-	virtual	float	getFrameRate() {return 0; }
-	virtual double  getLastFrameTime(){ return 0.0; }
-
 	virtual ofPoint	getWindowPosition() {return ofPoint(); }
 	virtual ofPoint	getWindowSize(){return ofPoint(); }
 	virtual ofPoint	getScreenSize(){return ofPoint(); }
@@ -38,7 +34,6 @@ public:
 	virtual int		getWidth(){ return 0; }
 	virtual int		getHeight(){ return 0; }
 
-	virtual void	setFrameRate(float targetRate){}
 	virtual void	setWindowTitle(string title){}
 
 	virtual int		getWindowMode() {return 0;}
@@ -49,5 +44,7 @@ public:
 	virtual void	enableSetupScreen(){}
 	virtual void	disableSetupScreen(){}
 	
+	virtual void	setVerticalSync(bool enabled){};
+
 };
 

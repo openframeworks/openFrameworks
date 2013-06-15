@@ -6,19 +6,17 @@
 class ofxToggle : public ofxBaseGui{
 public:
 	ofxToggle(){};
-	ofxToggle(string toggleName, ofxParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
-	ofxToggle * setup(string toggleName, ofxParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	~ofxToggle();
+	ofxToggle(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle * setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle * setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
 	
 
-	virtual void mouseMoved(ofMouseEventArgs & args);
-	virtual void mousePressed(ofMouseEventArgs & args);
-	virtual void mouseDragged(ofMouseEventArgs & args);
-	virtual void mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseMoved(ofMouseEventArgs & args);
+	virtual bool mousePressed(ofMouseEventArgs & args);
+	virtual bool mouseDragged(ofMouseEventArgs & args);
+	virtual bool mouseReleased(ofMouseEventArgs & args);
 	
-	virtual void saveToXml(ofxXmlSettings& xml) ;
-	virtual void loadFromXml(ofxXmlSettings& xml);
-	
-	void draw();
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
@@ -32,12 +30,19 @@ public:
 
 
 	bool operator=(bool v);
-	operator bool & ();
+	operator const bool & ();
 
-	ofxParameter<bool> value;
+	virtual ofAbstractParameter & getParameter();
+
 protected:
+	void render();
 	ofRectangle checkboxRect;
+	ofParameter<bool> value;
+	bool bGuiActive;
 	
-	void setValue(float mx, float my, bool bCheck);
-	
+	bool setValue(float mx, float my, bool bCheck);
+	void generateDraw();
+	void valueChanged(bool & value);
+	ofPath bg,fg,cross;
+	ofVboMesh textMesh;
 };

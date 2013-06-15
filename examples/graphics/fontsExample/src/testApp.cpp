@@ -15,7 +15,7 @@ void testApp::setup(){
 	verdana30.setLineHeight(34.0f);
 	verdana30.setLetterSpacing(1.035);
 	
-	verdana14A.loadFont("frabk.ttf", 14, false);
+	verdana14A.loadFont("verdana.ttf", 14, false);
 	verdana14A.setLineHeight(18.0f);
 	verdana14A.setLetterSpacing(1.037);
 
@@ -44,9 +44,9 @@ void testApp::draw(){
 	verdana14.drawString("Font Example - use keyboard to type", 30, 35);
 
 	ofSetColor(245, 58, 135);
-	verdana14.drawString("anti aliased", 145, 92);
-	verdana14.drawString("anti aliased", 145, 195);
-	verdana14A.drawString("aliased", 525, 92);
+	verdana14.drawString("anti aliased", 155, 92);
+	verdana14.drawString("anti aliased", 155, 195);
+	verdana14A.drawString("aliased", 545, 92);
 	
 	ofSetColor(225);
 	verdana14.drawString("verdana 14pt - ", 30, 92);
@@ -69,8 +69,8 @@ void testApp::draw(){
 	ofLine(30, 312, ofGetWidth()-4, 312);
 
 	ofSetColor(245, 58, 135);
-	franklinBook14.drawString("anti aliased", 162, 338);
-	franklinBook14A.drawString("aliased", 555, 338);
+	franklinBook14.drawString("anti aliased", 169, 338);
+	franklinBook14A.drawString("aliased", 560, 338);
 	
 	ofSetColor(225);
 	franklinBook14.drawString("franklin book 14pt - ", 30, 338);

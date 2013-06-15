@@ -609,3 +609,12 @@ void ofxOpenALSoundPlayer::ofxALSoundSetMaxDistance(float dist) {
 		SoundEngine_SetMaxDistance(dist);
 }
 
+//--------------------------------------------------------------
+
+void ofxOpenALSoundPlayer::ofxALSoundSetDistanceModel(ALenum model) {
+	if(!SoundEngineInitialized)
+		ofxOpenALSoundPlayer::initializeSoundEngine();
+	if ( SoundEngineInitialized )
+		alDistanceModel(model);
+}
+

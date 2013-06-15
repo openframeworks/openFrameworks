@@ -135,7 +135,7 @@ void ofxAssimpModelLoader::loadGLResources(){
     ofLog(OF_LOG_VERBOSE, "loading gl resources");
 
     // create new mesh helpers for each mesh, will populate their data later.
-   // modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
+   modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
 
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
@@ -144,8 +144,8 @@ void ofxAssimpModelLoader::loadGLResources(){
         aiMesh* mesh = scene->mMeshes[i];
 
         // the current meshHelper we will be populating data into.
-        //ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
-        ofxAssimpMeshHelper meshHelper;
+        ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
+        //ofxAssimpMeshHelper meshHelper;
 		
         //meshHelper.texture = NULL;
 
@@ -253,7 +253,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 		}
 
         meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
-        modelMeshes.push_back(meshHelper);
+
+        //modelMeshes.push_back(meshHelper);
     }
     
     int numOfAnimations = scene->mNumAnimations;
@@ -307,7 +308,7 @@ void ofxAssimpModelLoader::update() {
 }
 
 void ofxAssimpModelLoader::updateAnimations() {
-    for(int i=0; i<animations.size(); i++) {
+    for(unsigned int i=0; i<animations.size(); i++) {
         animations[i].update();
     }
 }
@@ -322,26 +323,26 @@ void ofxAssimpModelLoader::updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix)
                        m.d1, m.d2, m.d3, m.d4);
     matrix *= parentMatrix;
     
-    for(int i=0; i<node->mNumMeshes; i++) {
+    for(unsigned int i=0; i<node->mNumMeshes; i++) {
         int meshIndex = node->mMeshes[i];
         ofxAssimpMeshHelper & mesh = modelMeshes[meshIndex];
         mesh.matrix = matrix;
     }
     
-    for(int i=0; i<node->mNumChildren; i++) {
+    for(unsigned int i=0; i<node->mNumChildren; i++) {
         updateMeshes(node->mChildren[i], matrix);
     }
 }
 
 void ofxAssimpModelLoader::updateBones() {
     // update mesh position for the animation
-	for(int i=0; i<modelMeshes.size(); ++i) {
+	for(unsigned int i=0; i<modelMeshes.size(); ++i) {
 		// current mesh we are introspecting
 		const aiMesh* mesh = modelMeshes[i].mesh;
         
 		// calculate bone matrices
 		vector<aiMatrix4x4> boneMatrices(mesh->mNumBones);
-		for(int a=0; a<mesh->mNumBones; ++a) {
+		for(unsigned int a=0; a<mesh->mNumBones; ++a) {
 			const aiBone* bone = mesh->mBones[a];
             
 			// find the corresponding node by again looking recursively through the node hierarchy for the same name
@@ -366,11 +367,11 @@ void ofxAssimpModelLoader::updateBones() {
 			modelMeshes[i].animatedNorm.assign(modelMeshes[i].animatedNorm.size(),0);
 		}
 		// loop through all vertex weights of all bones
-		for(int a=0; a<mesh->mNumBones; ++a) {
+		for(unsigned int a=0; a<mesh->mNumBones; ++a) {
 			const aiBone* bone = mesh->mBones[a];
 			const aiMatrix4x4& posTrafo = boneMatrices[a];
             
-			for(int b=0; b<bone->mNumWeights; ++b) {
+			for(unsigned int b=0; b<bone->mNumWeights; ++b) {
 				const aiVertexWeight& weight = bone->mWeights[b];
                 
 				size_t vertexId = weight.mVertexId;
@@ -381,7 +382,7 @@ void ofxAssimpModelLoader::updateBones() {
 			if(mesh->HasNormals()){
 				// 3x3 matrix, contains the bone matrix without the translation, only with rotation and possibly scaling
 				aiMatrix3x3 normTrafo = aiMatrix3x3( posTrafo);
-				for(int b=0; b<bone->mNumWeights; ++b) {
+				for(unsigned int b=0; b<bone->mNumWeights; ++b) {
 					const aiVertexWeight& weight = bone->mWeights[b];
 					size_t vertexId = weight.mVertexId;
                     
@@ -435,37 +436,37 @@ ofxAssimpAnimation & ofxAssimpModelLoader::getAnimation(int animationIndex) {
 }
 
 void ofxAssimpModelLoader::playAllAnimations() {
-    for(int i=0; i<animations.size(); i++) {
+    for(unsigned int i=0; i<animations.size(); i++) {
         animations[i].play();
     }
 }
 
 void ofxAssimpModelLoader::stopAllAnimations() {
-    for(int i=0; i<animations.size(); i++) {
+    for(unsigned int i=0; i<animations.size(); i++) {
         animations[i].stop();
     }
 }
 
 void ofxAssimpModelLoader::resetAllAnimations() {
-    for(int i=0; i<animations.size(); i++) {
+    for(unsigned int i=0; i<animations.size(); i++) {
         animations[i].reset();
     }
 }
 
 void ofxAssimpModelLoader::setPausedForAllAnimations(bool pause) {
-    for(int i=0; i<animations.size(); i++) {
+    for(unsigned int i=0; i<animations.size(); i++) {
         animations[i].setPaused(pause);
     }
 }
 
 void ofxAssimpModelLoader::setLoopStateForAllAnimations(ofLoopType state) {
-    for(int i=0; i<animations.size(); i++) {
+    for(unsigned int i=0; i<animations.size(); i++) {
         animations[i].setLoopState(state);
     }
 }
 
 void ofxAssimpModelLoader::setPositionForAllAnimations(float position) {
-    for(int i=0; i<animations.size(); i++) {
+    for(unsigned int i=0; i<animations.size(); i++) {
         animations[i].setPosition(position);
     }
 }
@@ -636,17 +637,19 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     
     ofPushStyle();
     
-#ifndef TARGET_OPENGLES
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-#endif
-    glEnable(GL_NORMALIZE);
+    if(!ofGetGLProgrammableRenderer()){
+	#ifndef TARGET_OPENGLES
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	#endif
+		glEnable(GL_NORMALIZE);
+    }
     
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
     
-    for(int i=0; i<modelMeshes.size(); i++) {
+    for(unsigned int i=0; i<modelMeshes.size(); i++) {
         ofxAssimpMeshHelper & mesh = modelMeshes[i];
         
         ofPushMatrix();
@@ -696,11 +699,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     }
     
     ofPopMatrix();
-    
-#ifndef TARGET_OPENGLES
-    glPopClientAttrib();
-    glPopAttrib();
-#endif
+
+    if(!ofGetGLProgrammableRenderer()){
+	#ifndef TARGET_OPENGLES
+		glPopClientAttrib();
+		glPopAttrib();
+	#endif
+    }
     ofPopStyle();
 }
 
@@ -881,7 +886,7 @@ int ofxAssimpModelLoader::getNumRotations(){
 
 //-------------------------------------------
 ofPoint ofxAssimpModelLoader::getRotationAxis(int which){
-	if(rotAxis.size() > which){
+	if((int)rotAxis.size() > which){
 		return rotAxis[which];
 	}else{
 		return ofPoint();
@@ -890,7 +895,7 @@ ofPoint ofxAssimpModelLoader::getRotationAxis(int which){
 
 //-------------------------------------------
 float ofxAssimpModelLoader::getRotationAngle(int which){
-	if(rotAngle.size() > which){
+	if((int)rotAngle.size() > which){
 		return rotAngle[which];
 	}else{
 		return 0.0;
