@@ -10,10 +10,10 @@ public:
 	ofxButton();
 	ofxButton* setup(string toggleName, float width = defaultWidth, float height = defaultHeight);
 
-	virtual void mouseReleased(ofMouseEventArgs & args);
-	virtual void mouseMoved(ofMouseEventArgs & args);
-	virtual void mousePressed(ofMouseEventArgs & args);
-	virtual void mouseDragged(ofMouseEventArgs & args);
+	virtual bool mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseMoved(ofMouseEventArgs & args);
+	virtual bool mousePressed(ofMouseEventArgs & args);
+	virtual bool mouseDragged(ofMouseEventArgs & args);
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )()){

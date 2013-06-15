@@ -129,7 +129,85 @@ private:
 	PriorityExpire();
 };
 
+template <>
+class PriorityExpire<void>: public AbstractPriorityDelegate<void>
+	/// Decorator for AbstractPriorityDelegate adding automatic
+	/// expiring of registrations to AbstractPriorityDelegate.
+{
+public:
+	PriorityExpire(const AbstractPriorityDelegate<void>& p, Timestamp::TimeDiff expireMilliSec):
+		AbstractPriorityDelegate<void>(p),
+		_pDelegate(static_cast<AbstractPriorityDelegate<void>*>(p.clone())),
+		_expire(expireMilliSec*1000)
+	{
+	}
 
+	PriorityExpire(const PriorityExpire& expire):
+		AbstractPriorityDelegate<void>(expire),
+		_pDelegate(static_cast<AbstractPriorityDelegate<void>*>(expire._pDelegate->clone())),
+		_expire(expire._expire),
+		_creationTime(expire._creationTime)
+	{
+	}
+
+	~PriorityExpire()
+	{
+		delete _pDelegate;
+	}
+
+	PriorityExpire& operator = (const PriorityExpire& expire)
+	{
+		if (&expire != this)
+		{
+			delete this->_pDelegate;
+			this->_pDelegate    = static_cast<AbstractPriorityDelegate<void>*>(expire._pDelegate->clone());
+			this->_expire       = expire._expire;
+			this->_creationTime = expire._creationTime;
+		}
+		return *this;
+	}
+
+	bool notify(const void* sender)
+	{
+		if (!expired())
+			return this->_pDelegate->notify(sender);
+		else
+			return false;
+	}
+
+	bool equals(const AbstractDelegate<void>& other) const
+	{
+		return other.equals(*_pDelegate);
+	}
+
+	AbstractPriorityDelegate<void>* clone() const
+	{
+		return new PriorityExpire(*this);
+	}
+
+	void disable()
+	{
+		_pDelegate->disable();
+	}
+
+	const AbstractPriorityDelegate<void>* unwrap() const
+	{
+		return this->_pDelegate;
+	}
+
+protected:
+	bool expired() const
+	{
+		return _creationTime.isElapsed(_expire);
+	}
+
+	AbstractPriorityDelegate<void>* _pDelegate;
+	Timestamp::TimeDiff _expire;
+	Timestamp _creationTime;
+
+private:
+	PriorityExpire();
+};
 } // namespace Poco
 
 

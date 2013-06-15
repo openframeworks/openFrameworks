@@ -183,6 +183,9 @@ protected:
 
 	void setSerializable(bool serializable);
 
+	// friending a typedef is a c++11 feature and not supported by all compilers
+	// difference compilers also require different syntax. for more discussion see
+	// https://github.com/openframeworks/openFrameworks/issues/1924
 #if defined(TARGET_OF_IPHONE) || (_MSC_VER) || defined(__clang__)
 	friend typename FriendMaker<Friend>::Type;
 #elif ((__GNUC__ == 4 && __GNUC_MINOR__ > 2) || __GNUC__ > 4)

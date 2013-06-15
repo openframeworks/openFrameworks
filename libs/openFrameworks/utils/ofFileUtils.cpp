@@ -1058,8 +1058,19 @@ void ofDirectory::reset(){
 }
 
 //------------------------------------------------------------------------------------------------------------
+bool natural(const ofFile& a, const ofFile& b) {
+	string aname = a.getBaseName(), bname = b.getBaseName();
+	int aint = ofToInt(aname), bint = ofToInt(bname);
+	if(ofToString(aint) == aname && ofToString(bint) == bname) {
+		return aint < bint;
+	} else {
+		return a < b;
+	}
+}
+
+//------------------------------------------------------------------------------------------------------------
 void ofDirectory::sort(){
-	ofSort(files);
+	ofSort(files, natural);
 }
 
 //------------------------------------------------------------------------------------------------------------

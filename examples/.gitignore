@@ -41,6 +41,7 @@ Android.mk
 /*/*/*.vcxproj
 /*/*/*.vcxproj.user
 /*/*/*.vcxproj.filters
+/*/*/icon.rc
 
 #Eclipse
 /*/*/.cproject
