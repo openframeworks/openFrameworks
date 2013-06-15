@@ -13,6 +13,7 @@ endif
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
+	CFLAGS += -DDEBUG
 	
 	ifndef RUN_TARGET
 		RUN_TARGET = RunDebug

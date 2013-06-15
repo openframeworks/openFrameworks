@@ -82,6 +82,7 @@ ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
 # this will happen if we call Debug OR CleanDebug
 else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
     OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+	CFLAGS += -DDEBUG
     TARGET_NAME = Debug
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
     	TARGET = $(PLATFORM_CORELIB_DEBUG_TARGET)
