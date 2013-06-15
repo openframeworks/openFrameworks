@@ -55,20 +55,10 @@ void ofPolyline::addVertices(const vector<ofPoint>& verts) {
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
-	addVertices(verts);
-}
-
-//----------------------------------------------------------
 void ofPolyline::addVertices(const ofPoint* verts, int numverts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts, verts + numverts );
     flagHasChanged();
-}
-
-//----------------------------------------------------------
-void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
-	addVertices(verts, numverts);
 }
 
 //----------------------------------------------------------
