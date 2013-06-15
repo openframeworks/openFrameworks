@@ -8,6 +8,7 @@
 
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
+#include "ofPixels.h"
 
 //class ofVec3f;
 class ofBaseApp;
@@ -36,6 +37,10 @@ public:
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
 	ofVec3f 	getWindowPosition();
+#ifdef TARGET_LINUX
+	void setWindowIcon(const string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
+#endif
 
 	void setWindowTitle(string title);
 	void setWindowPosition(int x, int y);
@@ -112,6 +117,8 @@ private:
 	ofOrientation orientation;
 
 	int glVersionMinor, glVersionMajor;
+
+	bool iconSet;
 
     #ifdef TARGET_WIN32
     LONG lExStyle, lStyle;
