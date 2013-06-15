@@ -641,10 +641,10 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 	#ifndef TARGET_OPENGLES
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	#endif
 		glEnable(GL_NORMALIZE);
     }
-	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
     
     ofPushMatrix();
     ofMultMatrix(modelMatrix);

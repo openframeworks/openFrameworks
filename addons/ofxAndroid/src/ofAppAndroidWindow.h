@@ -25,10 +25,6 @@ public:
 	void	setWindowPosition(int x, int y) {}
 	void	setWindowShape(int w, int h) {}
 
-	int		getFrameNum();
-	float	getFrameRate();
-	double  getLastFrameTime();
-
 	ofPoint	getWindowPosition() {return ofPoint(); }
 	ofPoint	getWindowSize();
 	ofPoint	getScreenSize(){return getWindowSize(); }
@@ -38,7 +34,6 @@ public:
 
 	bool	doesHWOrientation(){return true;}
 
-	void	setFrameRate(float targetRate);
 	void	setWindowTitle(string title){}
 
 	int		getWindowMode() {return 0;}

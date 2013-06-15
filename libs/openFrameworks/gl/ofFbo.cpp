@@ -310,7 +310,7 @@ void ofFbo::destroy() {
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	
-	if (ofGLIsFixedPipeline()){
+	if (!ofGetProgrammableGLRenderer()){
 		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
 			ofLogVerbose("ofFbo") << "FBO supported";
 		}else{
@@ -329,7 +329,7 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(!ofGLIsFixedPipeline() || ofCheckGLExtension("GL_OES_framebuffer_object")){
+	if(ofGetProgrammableGLRenderer() || ofCheckGLExtension("GL_OES_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "FBO supported";
 	}else{
 		ofLogError("ofFbo") << "FBO not supported by this graphics card";

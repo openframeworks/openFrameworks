@@ -4,7 +4,7 @@
 
 #define GLFW_INCLUDE_NONE
 
-#include "GL/glfw3.h"
+#include "GLFW/glfw3.h"
 
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
@@ -26,7 +26,6 @@ public:
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
-	static void exitApp();
 
 	void hideCursor();
 	void showCursor();
@@ -46,12 +45,6 @@ public:
 	ofOrientation	getOrientation();
 
 	int			getWindowMode();
-	float		getFrameRate();
-	void		setFrameRate(float targetRate);
-	double		getLastFrameTime();
-
-
-	int			getFrameNum();
 
 	void		setFullscreen(bool fullscreen);
 	void		toggleFullscreen();
@@ -63,7 +56,8 @@ public:
 
 
 	//GLFW specifics
-	void		setFSAASamples(int samples);
+	void 		setNumSamples(int samples);
+	void 		setDoubleBuffering(bool doubleBuff);
 	void		listVideoModes();
 	bool		isWindowIconified();
 	bool		isWindowActive();
@@ -73,33 +67,22 @@ public:
 private:
 	// callbacks
 	void			display(void);
-	void 			idle(void);
 
-	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state);
+	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
 	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
-	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int state);
+	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
+	static void 	exitApp();
 
 
 	//utils
 	int				samples;
 
-	int				nFrameCount;
-
-	int 			millisForFrame;
-	int 			prevMillis;
-	int 			diffMillis;
-	bool 			bFrameRateSet;
-	double			lastFrameTime;
-	double			fps;
-
 	int				windowMode;
 
 	bool			bEnableSetupScreen;
-
-	float			frameRate;
 
 	int				requestedWidth;
 	int				requestedHeight;
@@ -108,6 +91,18 @@ private:
 	int 			nonFullScreenH;
 	int 			nonFullScreenX;
 	int 			nonFullScreenY;
+
+	int				buttonInUse;
+	bool			buttonPressed;
+
+	int				windowW;
+	int				windowH;
+
+	int 			nFramesSinceWindowResized;
+	bool			bDoubleBuffered;
+
+	static ofAppGLFWWindow	* instance;
+	static ofBaseApp *	ofAppPtr;
 
 	ofOrientation orientation;
 

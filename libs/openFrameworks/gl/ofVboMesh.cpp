@@ -78,7 +78,7 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	updateVbo();
 	GLuint mode = ofGetGLPrimitiveMode(getMode());
 #ifndef TARGET_OPENGLES
-	if (ofGLIsFixedPipeline()) {
+	if (!ofGetProgrammableGLRenderer()) {
 		// this is deprecated in GL3.2+
 		glPushAttrib(GL_POLYGON_BIT);
 	}
@@ -88,7 +88,7 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	}else{
 		vbo.draw(mode,0,getNumVertices());
 	}
-	if (ofGLIsFixedPipeline()){
+	if (!ofGetProgrammableGLRenderer()){
 		glPopAttrib();
 	}
 #else
