@@ -71,7 +71,7 @@ class ofColor_{
 		void getHsb(float& hue, float& saturation, float& brightness) const;
 		
 		void setHue (float hue);
-		void setSaturation (float saturation);
+		void setSaturation (float saturation); // uses hsb, not hsl. so red desaturated is white, not gray http://en.wikipedia.org/wiki/HSL_and_HSV
 		void setBrightness (float brightness);
 		void setHsb(float hue, float saturation, float brightness, float alpha = limit() );
 		

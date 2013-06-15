@@ -5,9 +5,9 @@
 platform=$1
 version=$2
 
-REPO=https://github.com/arturoc/openFrameworks
-REPO_ALIAS=arturohttps
-BRANCH=feature-elinuxProgrammableGL
+REPO=https://github.com/openframeworks/openFrameworks
+REPO_ALIAS=upstreamhttps
+BRANCH=develop
 
 PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
 PG_REPO_ALIAS=originhttps
@@ -107,11 +107,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "${pkg_platform}"=="vs" ]; then
-        projectGenerator --allexamples --vs2010
-    else
-        projectGenerator --allexamples --${pkg_platform}
-    fi
+    projectGenerator --allexamples --${pkg_platform}
 }
 
 function createPackage {
