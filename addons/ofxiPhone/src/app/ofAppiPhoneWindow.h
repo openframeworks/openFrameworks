@@ -86,11 +86,6 @@ public:
     bool                disableAntiAliasing();
     bool                isAntiAliasingEnabled();
     int					getAntiAliasingSampleCount();
-    
-    //---------------------------------------------- deprecation messages. to be removed in OF 0073.
-    OF_DEPRECATED_MSG("Use enableRetina() instead", void enableRetinaSupport());
-    OF_DEPRECATED_MSG("Use isRetinaSupportedOnDevice() instead", bool isRetinaSupported());
-    OF_DEPRECATED_MSG("Use isDepthBufferEnabled() instead", bool isDepthEnabled());
 	
 	void timerLoop();
 	int					windowMode;

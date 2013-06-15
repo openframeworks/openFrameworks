@@ -168,7 +168,7 @@ public:
     //
     float length() const;
     float lengthSquared() const;
-	OF_DEPRECATED_MSG("Use ofVec3f::lengthSquared() instead.", float squareLength() const);
+
     /**
 	 * Angle (deg) between two vectors.
 	 * This is an unsigned relative angle from 0 to 180.
@@ -1015,10 +1015,6 @@ inline float ofVec3f::length() const {
 
 inline float ofVec3f::lengthSquared() const {
 	return (float)(x*x + y*y + z*z);
-}
-
-inline float ofVec3f::squareLength() const {
-	return lengthSquared();
 }
 
 
