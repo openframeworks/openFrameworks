@@ -177,12 +177,14 @@ void ofNotifyUpdate(){
 
 //------------------------------------------
 void ofNotifyDraw(){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	
-	if(ofAppPtr){
-		ofAppPtr->draw();
+	if(ofGetCurrentRenderer()){
+		ofBaseApp * ofAppPtr = ofGetAppPtr();
+
+		if(ofAppPtr){
+			ofAppPtr->draw();
+		}
+		ofNotifyEvent( ofEvents().draw, voidEventArgs );
 	}
-	ofNotifyEvent( ofEvents().draw, voidEventArgs );
 
 	nFrameCount++;
 }

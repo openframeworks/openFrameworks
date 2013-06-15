@@ -12,7 +12,7 @@
 #include "ofTypes.h"
 
 class ofShader;
-class ofProgrammableGLRenderer;
+class ofGLProgrammableRenderer;
 class ofBaseGLRenderer;
 
 enum ofPrimitiveMode{
@@ -56,7 +56,7 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
 
 bool ofCheckGLExtension(string searchName);
 
-ofPtr<ofProgrammableGLRenderer> ofGetProgrammableGLRenderer();
+ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
 
 void ofEnableVertices();

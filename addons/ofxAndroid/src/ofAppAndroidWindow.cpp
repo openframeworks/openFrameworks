@@ -21,7 +21,7 @@ extern "C"{
 #include "ofxAccelerometer.h"
 #include <android/log.h>
 #include "ofFileUtils.h"
-#include "ofProgrammableGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
@@ -112,7 +112,7 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 }
 
 void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
-	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofProgrammableGLRenderer));
+	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer));
 }
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
@@ -313,7 +313,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		}
 	}
 	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
 		renderer->setup();
 	}
 	reloadTextures();
@@ -330,7 +330,7 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
 {
 	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
 		ofLogNotice() << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
-		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
 		renderer->setup();
 	}
 	ofLog(OF_LOG_NOTICE,"setup");
@@ -396,7 +396,7 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 
 
 	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
 		renderer->startRender();
 	}
 	int width, height;
@@ -419,7 +419,7 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	ofNotifyDraw();
 
 	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		ofProgrammableGLRenderer* renderer = (ofProgrammableGLRenderer*)ofGetCurrentRenderer().get();
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
 		renderer->finishRender();
 	}
 

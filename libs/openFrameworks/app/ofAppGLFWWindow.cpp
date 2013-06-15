@@ -3,7 +3,7 @@
 
 #include "ofBaseApp.h"
 #include "ofMain.h"
-#include "ofProgrammableGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 
 #ifdef TARGET_LINUX
 #define GLFW_EXPOSE_NATIVE_X11
@@ -218,8 +218,8 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
-	if(ofGetProgrammableGLRenderer()){
-		ofGetProgrammableGLRenderer()->startRender();
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->startRender();
 	}
 
 	// set viewport, clear the screen
@@ -275,8 +275,8 @@ void ofAppGLFWWindow::display(void){
 		}
 	#endif
 
-	if(ofGetProgrammableGLRenderer()){
-		ofGetProgrammableGLRenderer()->finishRender();
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->finishRender();
 	}
 
 	nFramesSinceWindowResized++;
