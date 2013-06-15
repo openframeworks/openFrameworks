@@ -157,12 +157,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 		return;
 	}
 #endif
-
-	ofLogNotice()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
-	ofLogNotice()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
-	ofLogNotice()<< "Version:  "<< (char*)glGetString(GL_VERSION);
-	ofLogNotice()<< "GLSL:     "<< (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
-
+	
     if(ofGetGLProgrammableRenderer()){
     	ofGetGLProgrammableRenderer()->setup();
     }
