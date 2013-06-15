@@ -744,11 +744,11 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::listVideoModes(){
-//	GLFWvidmode vidModes[100];
-//	int numModes = glfwGetVideoModes(NULL, NULL );
-//	for(int i=0; i<numModes; i++){
-//		printf("%i x %i %ibits",vidModes[i].Width,vidModes[i].Height,vidModes[i].RedBits+vidModes[i].GreenBits+vidModes[i].BlueBits);
-//	}
+	int numModes;
+	const GLFWvidmode * vidModes = glfwGetVideoModes(NULL, &numModes );
+	for(int i=0; i<numModes; i++){
+		printf("%i x %i %ibits",vidModes[i].width,vidModes[i].height,vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits);
+	}
 }
 
 //------------------------------------------------------------
