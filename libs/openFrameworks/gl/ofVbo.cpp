@@ -12,7 +12,7 @@
 #include <map>
 
 bool ofVbo::vaoChecked = false;
-bool ofVbo::supportVAOs = false;
+bool ofVbo::supportVAOs = true;
 
 #ifdef TARGET_OPENGLES
 	#include <dlfcn.h>

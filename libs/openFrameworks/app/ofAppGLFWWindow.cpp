@@ -43,6 +43,10 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	nonFullScreenH		= 0;
 
 	samples				= 0;
+	rBits=gBits=bBits=aBits = 8;
+	depthBits			= 24;
+	stencilBits			= 0;
+
 	orientation 		= OF_ORIENTATION_DEFAULT;
 
 	requestedWidth		= 0;
@@ -72,6 +76,29 @@ void ofAppGLFWWindow::setDoubleBuffering(bool doubleBuff){
 	bDoubleBuffered = doubleBuff;
 }
 
+//------------------------------------------------------------
+void ofAppGLFWWindow::setColorBits(int r, int g, int b){
+	rBits=r;
+	gBits=g;
+	bBits=b;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setAlphaBits(int a){
+	aBits=a;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setDepthBits(int depth){
+	depthBits=depth;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setStencilBits(int stencil){
+	stencilBits=stencil;
+}
+
+
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
@@ -95,24 +122,12 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	windowMode = screenMode;
 
-	glfwWindowHint( GLFW_SAMPLES, samples );
-	// targets					default
-	// GLFW_REFRESH_RATE			0
-	// GLFW_ACCUM_RED_BITS;			0
-	// GLFW_ACCUM_GREEN_BITS;		0
-	// GLFW_ACCUM_BLUE_BITS;		0
-	// GLFW_ACCUM_ALPHA_BITS;		0
-	// GLFW_AUX_BUFFERS;			0
-	// GLFW_STEREO;					0
-	// GLFW_WINDOW_NO_RESIZE;		0
-	// GLFW_FSAA_SAMPLES;			0
-
-	glfwWindowHint(GLFW_RED_BITS, 8);
-	glfwWindowHint(GLFW_GREEN_BITS, 8);
-	glfwWindowHint(GLFW_BLUE_BITS, 8);
-	glfwWindowHint(GLFW_ALPHA_BITS, 8);
-	glfwWindowHint(GLFW_DEPTH_BITS, 24);
-	glfwWindowHint(GLFW_STENCIL_BITS, 0);
+	glfwWindowHint(GLFW_RED_BITS, rBits);
+	glfwWindowHint(GLFW_GREEN_BITS, gBits);
+	glfwWindowHint(GLFW_BLUE_BITS, bBits);
+	glfwWindowHint(GLFW_ALPHA_BITS, aBits);
+	glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
+	glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
 	glfwWindowHint(GLFW_AUX_BUFFERS,bDoubleBuffered?1:0);
 	glfwWindowHint(GLFW_SAMPLES,samples);
 
@@ -657,8 +672,29 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 		case GLFW_KEY_INSERT:
 			key = OF_KEY_INSERT;
 			break;
-		case GLFW_KEY_ENTER:
-			key = OF_KEY_RETURN;
+		case GLFW_KEY_LEFT_SHIFT:
+			key = OF_KEY_LEFT_SHIFT;
+			break;
+		case GLFW_KEY_LEFT_CONTROL:
+			key = OF_KEY_LEFT_CONTROL;
+			break;
+		case GLFW_KEY_LEFT_ALT:
+			key = OF_KEY_LEFT_ALT;
+			break;
+		case GLFW_KEY_LEFT_SUPER:
+			key = OF_KEY_LEFT_SUPER;
+			break;
+		case GLFW_KEY_RIGHT_SHIFT:
+			key = OF_KEY_RIGHT_SHIFT;
+			break;
+		case GLFW_KEY_RIGHT_CONTROL:
+			key = OF_KEY_RIGHT_CONTROL;
+			break;
+		case GLFW_KEY_RIGHT_ALT:
+			key = OF_KEY_RIGHT_ALT;
+			break;
+		case GLFW_KEY_RIGHT_SUPER:
+			key = OF_KEY_RIGHT_SUPER;
 			break;
 		default:
 			break;
@@ -708,11 +744,11 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::listVideoModes(){
-//	GLFWvidmode vidModes[100];
-//	int numModes = glfwGetVideoModes(NULL, NULL );
-//	for(int i=0; i<numModes; i++){
-//		printf("%i x %i %ibits",vidModes[i].Width,vidModes[i].Height,vidModes[i].RedBits+vidModes[i].GreenBits+vidModes[i].BlueBits);
-//	}
+	int numModes;
+	const GLFWvidmode * vidModes = glfwGetVideoModes(NULL, &numModes );
+	for(int i=0; i<numModes; i++){
+		printf("%i x %i %ibits",vidModes[i].width,vidModes[i].height,vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits);
+	}
 }
 
 //------------------------------------------------------------
