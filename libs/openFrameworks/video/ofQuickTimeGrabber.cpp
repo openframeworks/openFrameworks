@@ -246,7 +246,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-void ofQuickTimeGrabber::listDevices(){
+vector<ofVideoDevice>& ofQuickTimeGrabber::listDevices(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -259,7 +259,7 @@ void ofQuickTimeGrabber::listDevices(){
 		//if we need to initialize the grabbing component then do it
 		if( bNeedToInitGrabberFirst ){
 			if( !qtInitSeqGrabber() ){
-				return;
+				return videoDevices;
 			}
 		}
 
@@ -287,14 +287,16 @@ void ofQuickTimeGrabber::listDevices(){
 		//this means our the device ID we use for selection has to count both capture 'devices' and their 'inputs'
 		//this needs to be the same in our init grabber method so that we select the device we ask for
 		int deviceCount = 0;
-
+		videoDevices.clear();
 		ofLog(OF_LOG_NOTICE, "listing available capture devices");
 		for(int i = 0 ; i < (*deviceList)->count ; ++i)
 		{
 			SGDeviceName nameRec;
 			nameRec = (*deviceList)->entry[i];
 			SGDeviceInputList deviceInputList = nameRec.inputs;
-
+			ofVideoDevice device;
+			device.deviceID = deviceCount;
+			
 			int numInputs = 0;
 			if( deviceInputList ) numInputs = ((*deviceInputList)->count);
 
@@ -315,15 +317,18 @@ void ofQuickTimeGrabber::listDevices(){
 					}
 
 					ofLogNotice() << "device[" << deviceCount << "] " << p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
-
+					device.deviceName = string(p2cstr(pascalName)) + " - " + p2cstr(pascalNameInput);
+					device.isAvailable = true;
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
 				ofLogNotice() << "(unavailable) device[" << deviceCount << "] " << p2cstr(pascalName);
+				device.isAvailable = false;
 				deviceCount++;
 			}
+			videoDevices.clear();
 		}
 		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
@@ -335,7 +340,7 @@ void ofQuickTimeGrabber::listDevices(){
 	//---------------------------------
 	#endif
 	//---------------------------------
-
+	return videoDevices;
 }
 
 //--------------------------------------------------------------------

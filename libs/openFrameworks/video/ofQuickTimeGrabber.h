@@ -20,7 +20,7 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		ofQuickTimeGrabber();
 		virtual ~ofQuickTimeGrabber();
 
-		void					listDevices();
+		vector<ofVideoDevice>&	listDevices();
 		bool					initGrabber(int w, int h);
 		void					update();
 		bool					isFrameNew();
@@ -54,7 +54,7 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		bool 					bIsFrameNew;	
 		
 		//int						width, height;
-
+		vector<ofVideoDevice>	videoDevices;
 		unsigned char *			offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
 		//int						w,h;
 		bool					bHavePixelsChanged;

@@ -819,8 +819,25 @@ bool ofQTKitGrabber::hasPreview(){
 // but that requires updating the base class...perhaps we could
 // then have a ofBaseDevice class to be used for enumerating any 
 // type of device for video, sound, serial devices etc etc???
-void ofQTKitGrabber::listDevices(){
-    listVideoDevices();
+vector<ofVideoDevice>& ofQTKitGrabber::listDevices(){
+    //listVideoDevices();
+    videoDevices.clear();
+	
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+	NSArray* devices = [QTKitVideoGrabber listVideoDevices];
+	int deviceCount = 0;
+	for (QTCaptureDevice* object in devices){
+		videoDevices.push_back(ofVideoDevice());
+		videoDevices[deviceCount].deviceID = deviceCount;
+		videoDevices[deviceCount].deviceName = [[object description] UTF8String];
+		videoDevices[deviceCount].isAvailable = object.isConnected && !object.isInUseByAnotherApplication;
+		videoDevices[deviceCount].isOpen = object.isOpen;
+		deviceCount++;
+	}
+	[pool release];
+    
+	return videoDevices;	
 }
 
 //---------------------------------------------------------------------------
@@ -840,20 +857,20 @@ ofPixelFormat ofQTKitGrabber::getPixelFormat(){
 }
 
 //---------------------------------------------------------------------------
-vector<string>& ofQTKitGrabber::listVideoDevices(){
-    
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-	NSArray* videoDevices = [QTKitVideoGrabber listVideoDevices];
-	videoDeviceVec.clear();
-	for (id object in videoDevices){
-		string str = [[object description] UTF8String];
-		videoDeviceVec.push_back(str);
-	}
-	[pool release];
-    
-	return videoDeviceVec;
-}
+//vector<string>& ofQTKitGrabber::listVideoDevices(){
+//    
+//    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+//    
+//	NSArray* videoDevices = [QTKitVideoGrabber listVideoDevices];
+//	videoDeviceVec.clear();
+//	for (id object in videoDevices){
+//		string str = [[object description] UTF8String];
+//		videoDeviceVec.push_back(str);
+//	}
+//	[pool release];
+//    
+//	return videoDeviceVec;
+//}
 
 vector<string>& ofQTKitGrabber::listAudioDevices(){
     
