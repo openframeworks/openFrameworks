@@ -19,7 +19,6 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
 	ofSetColor(0, 90, 60);
 	ofFill();
 
@@ -32,8 +31,7 @@ void testApp::draw(){
 	ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), 10, 10);
 	ofDrawBitmapString("press a key to see it as a texture and as a vector. ", 10, 24);
 
-	// if you see "bitm?p" try changing the text encoding for this file to UTF-8 
-	testFont2.drawString("Hello - I am bitmäp", 15, 400);
+	testFont2.drawString("Hello - I am bitmap", 15, 400);
 
 	ofFill();
 	testFont2.drawStringAsShapes("Hello - I am vector", 15, 480);
@@ -87,6 +85,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
+	if(key==OF_KEY_ESC) return;
 	testChar = testFont.getCharacterAsPoints(key);
 	letter = key;
 }
