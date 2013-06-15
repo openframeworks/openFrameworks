@@ -55,14 +55,12 @@ public:
 	
 	int			getWindowMode();
 
-	int			getFrameNum();
-	float		getFrameRate();
-	double		getLastFrameTime();
-	void		setFrameRate(float targetRate);
-
 	void		enableSetupScreen();
 	void		disableSetupScreen();
 
+	void		setVerticalSync(bool enabled);
+
+private:
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
 	static void motion_cb(int x, int y);

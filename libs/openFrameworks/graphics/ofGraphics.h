@@ -7,11 +7,12 @@
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
-#include "ofGLRenderer.h"
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
+#define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
+
+
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer,bool setDefaults=false);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
-ofPtr<ofGLRenderer> ofGetGLRenderer();
 
 //for pdf screenshot
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
@@ -27,10 +28,22 @@ void ofPopView();
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 void ofViewport(ofRectangle viewport);
-void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
-void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = -1);
+void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
+
+bool ofIsVFlipped();
+
+void ofSetupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
+void ofSetupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
+
+OF_DEPRECATED_MSG("ofSetupScreenPerspective doesn't accept orientation and vflip parameters anymore, use ofSetOrientation to specify them",
+		void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0)
+);
+OF_DEPRECATED_MSG("ofSetupScreenOrtho doesn't accept orientation and vflip parameters anymore, use ofSetOrientation to specify them",
+		void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1)
+);
+
 ofRectangle ofGetCurrentViewport();
+ofRectangle ofGetNativeViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
 int ofOrientationToDegrees(ofOrientation orientation);
@@ -54,7 +67,7 @@ void ofLoadMatrix (const ofMatrix4x4 & m);   // Andreas: I've included both a of
 void ofLoadMatrix (const float *m);			// ideally we would always use ofMatrix4x4, but in a lot of temporary
 void ofMultMatrix (const ofMatrix4x4 & m);	// ofMatrix4x4 objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
-void ofSetMatrixMode (ofMatrixMode matrixMode);
+void ofSetMatrixMode(ofMatrixMode matrixMode);
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();

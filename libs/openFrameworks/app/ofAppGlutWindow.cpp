@@ -5,12 +5,14 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofConstants.h"
+#include "ofGLProgrammableRenderer.h"
 
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
 	#include "glut.h"
 #endif
 #ifdef TARGET_OSX
+    #include <OpenGL/OpenGL.h>
 	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
 	#include <Carbon/Carbon.h>
 #endif
@@ -25,22 +27,9 @@
 
 static int			windowMode;
 static bool			bNewScreenMode;
-static float		timeNow, timeThen, fps;
-static int			nFramesForFPS;
-static int			nFrameCount;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
 static bool			bDoubleBuffered; 
-
-
-static bool			bFrameRateSet;
-static int 			millisForFrame;
-static int 			prevMillis;
-static int 			diffMillis;
-
-static float 		frameRate;
-
-static double		lastFrameTime;
 
 static int			requestedWidth;
 static int			requestedHeight;
@@ -190,26 +179,15 @@ static void fixCloseWindowOnWin32(){
 
 //----------------------------------------------------------
 ofAppGlutWindow::ofAppGlutWindow(){
-	timeNow				= 0;
-	timeThen			= 0;
-	fps					= 60.0; //give a realistic starting value - win32 issues
-	frameRate			= 60.0;
 	windowMode			= OF_WINDOW;
 	bNewScreenMode		= true;
-	nFramesForFPS		= 0;
 	nFramesSinceWindowResized = 0;
-	nFrameCount			= 0;
 	buttonInUse			= 0;
 	bEnableSetupScreen	= true;
-	bFrameRateSet		= false;
-	millisForFrame		= 0;
-	prevMillis			= 0;
-	diffMillis			= 0;
 	requestedWidth		= 0;
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
-	lastFrameTime		= 0.0;
 	displayString		= "";
 	orientation			= OF_ORIENTATION_DEFAULT;
 	bDoubleBuffered = true; // LIA
@@ -425,23 +403,6 @@ void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	glutMainLoop();
 }
 
-
-
-//------------------------------------------------------------
-float ofAppGlutWindow::getFrameRate(){
-	return frameRate;
-}
-
-//------------------------------------------------------------
-double ofAppGlutWindow::getLastFrameTime(){
-	return lastFrameTime;
-}
-
-//------------------------------------------------------------
-int ofAppGlutWindow::getFrameNum(){
-	return nFrameCount;
-}
-
 //------------------------------------------------------------
 void ofAppGlutWindow::setWindowTitle(string title){
 	glutSetWindowTitle(title.c_str());
@@ -456,14 +417,22 @@ ofPoint ofAppGlutWindow::getWindowSize(){
 ofPoint ofAppGlutWindow::getWindowPosition(){
 	int x = glutGet(GLUT_WINDOW_X);
 	int y = glutGet(GLUT_WINDOW_Y);
-	return ofPoint(x,y,0);
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+		return ofPoint(x,y,0);
+	}else{
+		return ofPoint(y,x,0);
+	}
 }
 
 //------------------------------------------------------------
 ofPoint ofAppGlutWindow::getScreenSize(){
 	int width = glutGet(GLUT_SCREEN_WIDTH);
 	int height = glutGet(GLUT_SCREEN_HEIGHT);
-	return ofPoint(width, height,0);
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+		return ofPoint(width, height,0);
+	}else{
+		return ofPoint(height, width,0);
+	}
 }
 
 //------------------------------------------------------------
@@ -524,26 +493,6 @@ void ofAppGlutWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setFrameRate(float targetRate){
-	// given this FPS, what is the amount of millis per frame
-	// that should elapse?
-
-	// --- > f / s
-
-	if (targetRate == 0){
-		bFrameRateSet = false;
-		return;
-	}
-
-	bFrameRateSet 			= true;
-	float durationOfFrame 	= 1.0f / (float)targetRate;
-	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-
-	frameRate				= targetRate;
-
-}
-
-//------------------------------------------------------------
 int ofAppGlutWindow::getWindowMode(){
 	return windowMode;
 }
@@ -584,6 +533,56 @@ void ofAppGlutWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 }
 
+//------------------------------------------------------------
+void ofAppGlutWindow::setVerticalSync(bool bSync){
+	//----------------------------
+	#ifdef TARGET_WIN32
+	//----------------------------
+		if (bSync) {
+			if (WGL_EXT_swap_control) {
+				wglSwapIntervalEXT (1);
+			}
+		} else {
+			if (WGL_EXT_swap_control) {
+				wglSwapIntervalEXT (0);
+			}
+		}
+	//----------------------------
+	#endif
+	//----------------------------
+
+	//--------------------------------------
+	#ifdef TARGET_OSX
+	//--------------------------------------
+		GLint sync = bSync == true ? 1 : 0;
+		CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+
+	//--------------------------------------
+	#ifdef TARGET_LINUX
+	//--------------------------------------
+		void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+		if(swapIntervalExt){
+			Display *dpy = glXGetCurrentDisplay();
+			GLXDrawable drawable = glXGetCurrentDrawable();
+			if (drawable) {
+				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+				return;
+			}
+		}
+		void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+		if(!swapInterval) {
+			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+		}
+		if(swapInterval) {
+			swapInterval(bSync ? 1 : 0);
+		}
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
@@ -611,7 +610,7 @@ void ofAppGlutWindow::display(void){
 				#ifdef TARGET_OSX
 					SetSystemUIMode(kUIModeAllHidden,NULL);
 					#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
-						if( nFrameCount <= 10 ){  //is this long enough? too long? 
+						if( ofGetFrameNum() <= 10 ){  //is this long enough? too long?
 							ProcessSerialNumber psn;							
 							OSErr err = GetCurrentProcess( &psn );
 							if ( err == noErr ){
@@ -628,7 +627,7 @@ void ofAppGlutWindow::display(void){
 				//----------------------------------------------------
 				// if we have recorded the screen posion, put it there
 				// if not, better to let the system do it (and put it where it wants)
-				if (nFrameCount > 0){
+				if (ofGetFrameNum() > 0){
 					glutPositionWindow(nonFullScreenX,nonFullScreenY);
 				}
 				//----------------------------------------------------
@@ -641,8 +640,12 @@ void ofAppGlutWindow::display(void){
 		}
 	}
 
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->startRender();
+	}
+
 	// set viewport, clear the screen
-	ofViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));		// used to be glViewport( 0, 0, width, height );
+	ofViewport();		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
@@ -655,7 +658,7 @@ void ofAppGlutWindow::display(void){
     }
     #endif
 
-	if ( bClearAuto == true || nFrameCount < 3){
+	if ( bClearAuto == true || ofGetFrameNum() < 3){
 		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 	}
 
@@ -670,7 +673,7 @@ void ofAppGlutWindow::display(void){
         if (nFramesSinceWindowResized < 3){
         	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
         } else {
-            if ( (nFrameCount < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
+            if ( (ofGetFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
             else                                                     glFlush();
         }
     } else {
@@ -694,20 +697,16 @@ void ofAppGlutWindow::display(void){
 		}
     #endif
 
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->finishRender();
+	}
+
     nFramesSinceWindowResized++;
-
-	//fps calculation moved to idle_cb as we were having fps speedups when heavy drawing was occuring
-	//wasn't reflecting on the actual app fps which was in reality slower.
-	//could be caused by some sort of deferred drawing?
-
-	nFrameCount++;		// increase the overall frame count
-
-	//setFrameNum(nFrameCount); // get this info to ofUtils for people to access
 
 }
 
 //------------------------------------------------------------
-void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
+static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 	int savedY;
 	switch(orientation) {
 		case OF_ORIENTATION_180:
@@ -736,8 +735,18 @@ void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, x, y);
-
-	if (nFrameCount > 0){
+    
+    if(button == GLUT_LEFT_BUTTON) {
+        button = OF_MOUSE_BUTTON_LEFT;
+    } else if(button == GLUT_MIDDLE_BUTTON) {
+        button = OF_MOUSE_BUTTON_MIDDLE;
+    } else if(button == GLUT_RIGHT_BUTTON) {
+        button = OF_MOUSE_BUTTON_RIGHT;
+    } else {
+        ofLogWarning("ofAppGlutWindow::mouse_cb") << "Unmapped glut mouse button: " << button;
+    }
+    
+	if (ofGetFrameNum() > 0){
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);
 		} else if (state == GLUT_UP) {
@@ -752,7 +761,7 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 void ofAppGlutWindow::motion_cb(int x, int y) {
 	rotateMouseXY(orientation, x, y);
 
-	if (nFrameCount > 0){
+	if (ofGetFrameNum() > 0){
 		ofNotifyMouseDragged(x, y, buttonInUse);
 	}
 
@@ -762,7 +771,7 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 	rotateMouseXY(orientation, x, y);
 
-	if (nFrameCount > 0){
+	if (ofGetFrameNum() > 0){
 		ofNotifyMouseMoved(x, y);
 	}
 }
@@ -786,44 +795,6 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-
-	//	thanks to jorge for the fix:
-	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-
-	if (nFrameCount != 0 && bFrameRateSet == true){
-		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
-		if (diffMillis > millisForFrame){
-			; // we do nothing, we are already slower than target frame
-		} else {
-			int waitMillis = millisForFrame - diffMillis;
-			#ifdef TARGET_WIN32
-				Sleep(waitMillis);         //windows sleep in milliseconds
-			#else
-				usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
-			#endif
-		}
-	}
-	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-
-    // -------------- fps calculation:
-	// theo - now moved from display to idle_cb
-	// discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
-	//
-	//
-	// theo - please don't mess with this without letting me know.
-	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
-	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
-
-	timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;
-  	// --------------
 
 	ofNotifyUpdate();
 

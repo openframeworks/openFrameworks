@@ -60,7 +60,14 @@
 			<Add directory="..\..\..\poco\include" />
 			<Add directory="..\..\..\tess2\include" />			
 			<Add directory="..\..\..\openssl\include" />
+			<Add directory="..\..\..\glfw\include" />
 		</Compiler>
+		<Unit filename="..\..\..\openFrameworks\3d\of3dPrimitives.cpp">
+			<Option virtualFolder="openframeworks\3d\" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/of3dPrimitives.h">
+			<Option virtualFolder="openframeworks/3d/" />
+		</Unit>
 		<Unit filename="..\..\..\openFrameworks\3d\of3dUtils.cpp">
 			<Option virtualFolder="openframeworks\3d\" />
 		</Unit>
@@ -92,6 +99,12 @@
 			<Option virtualFolder="openframeworks\3d\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\app\ofAppBaseWindow.h">
+			<Option virtualFolder="openframeworks\app\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\app\ofAppGLFWWindow.cpp">
+			<Option virtualFolder="openframeworks\app\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks/app\ofAppGLFWWindow.h">
 			<Option virtualFolder="openframeworks\app\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -145,6 +158,9 @@
 		<Unit filename="..\..\..\openFrameworks\gl\ofGLUtils.h">
 			<Option virtualFolder="openframeworks\gl\" />
 		</Unit>
+		<Unit filename="..\..\..\openFrameworks\gl\ofGLUtils.cpp">
+			<Option virtualFolder="openframeworks\gl\" />
+		</Unit>
 		<Unit filename="..\..\..\openFrameworks\gl\ofLight.cpp">
 			<Option virtualFolder="openframeworks\gl\" />
 		</Unit>
@@ -155,6 +171,12 @@
 			<Option virtualFolder="openframeworks\gl\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\gl\ofMaterial.h">
+			<Option virtualFolder="openframeworks\gl\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.cpp">
+			<Option virtualFolder="openframeworks\gl\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.h">
 			<Option virtualFolder="openframeworks\gl\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\gl\ofShader.cpp">
@@ -180,6 +202,12 @@
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\gl\ofVboMesh.h">
 			<Option virtualFolder="openframeworks\gl\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\graphics\of3dGraphics.cpp">
+			<Option virtualFolder="openframeworks\graphics/" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\graphics\of3dGraphics.h">
+			<Option virtualFolder="openframeworks\graphics/" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofBitmapFont.cpp">
 			<Option virtualFolder="openframeworks\graphics\" />
@@ -221,6 +249,9 @@
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPolyline.h">
+			<Option virtualFolder="openframeworks\graphics\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\graphics\ofRendererCollection.cpp">
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofRendererCollection.h">
@@ -399,6 +430,12 @@
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\utils\ofUtils.h">
 			<Option virtualFolder="openframeworks\utils\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\utils\ofMatrixStack.cpp">
+			<Option virtualFolder="openframeworks\utils/" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\utils\ofMatrixStack.h">
+			<Option virtualFolder="openframeworks\utils/" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\video\ofDirectShowGrabber.cpp">
 			<Option virtualFolder="openframeworks\video\" />

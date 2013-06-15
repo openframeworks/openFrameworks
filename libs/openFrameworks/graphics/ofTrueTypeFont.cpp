@@ -413,7 +413,6 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	//visibleBorder	= 2;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
-	encoding = OF_ENCODING_UTF8;
 }
 
 //------------------------------------------------------------------
@@ -703,10 +702,10 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 
 
-	ofPixels atlasPixels;
-	atlasPixels.allocate(w,h,2);
-	atlasPixels.set(0,255);
-	atlasPixels.set(1,0);
+	ofPixels atlasPixelsLuminanceAlpha;
+	atlasPixelsLuminanceAlpha.allocate(w,h,2);
+	atlasPixelsLuminanceAlpha.set(0,255);
+	atlasPixelsLuminanceAlpha.set(1,0);
 
 
 	int x=0;
@@ -725,20 +724,24 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
 		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
 		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
-		charPixels.pasteInto(atlasPixels,x+border,y+border);
+		charPixels.pasteInto(atlasPixelsLuminanceAlpha,x+border,y+border);
 		x+= sortedCopy[i].tW + border*2;
 	}
 
-
-	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
+	ofPixels atlasPixels;
+	atlasPixels.allocate(atlasPixelsLuminanceAlpha.getWidth(),atlasPixelsLuminanceAlpha.getHeight(),4);
+	atlasPixels.setChannel(0,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(1,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(2,atlasPixelsLuminanceAlpha.getChannel(0));
+	atlasPixels.setChannel(3,atlasPixelsLuminanceAlpha.getChannel(1));
+	texAtlas.allocate(atlasPixels,false);
 
 	if(bAntiAliased && fontSize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 	}
-
-	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+	texAtlas.loadData(atlasPixels);
 
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
@@ -840,6 +843,10 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	y2		= cps[c].y2+y;
 
 	int firstIndex = stringQuads.getVertices().size();
+
+	if(!ofIsVFlipped()){
+		swap(v1,v2);
+	}
 
 	stringQuads.addVertex(ofVec3f(x1,y1));
 	stringQuads.addVertex(ofVec3f(x2,y1));
@@ -1081,14 +1088,11 @@ void ofTrueTypeFont::bind(){
 	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
 	    // **************
 		// (a) record the current "alpha state, blend func, etc"
-		#ifndef TARGET_OPENGLES
-			glPushAttrib(GL_COLOR_BUFFER_BIT);
-		#else
-			blend_enabled = glIsEnabled(GL_BLEND);
-			texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-			glGetIntegerv( GL_BLEND_SRC, &blend_src );
-			glGetIntegerv( GL_BLEND_DST, &blend_dst );
-		#endif
+
+		blend_enabled = glIsEnabled(GL_BLEND);
+		texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+		glGetIntegerv( GL_BLEND_SRC, &blend_src );
+		glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
 	    // (b) enable our regular ALPHA blending!
 	    glEnable(GL_BLEND);
@@ -1106,15 +1110,12 @@ void ofTrueTypeFont::unbind(){
 		stringQuads.drawFaces();
 		texAtlas.unbind();
 
-		#ifndef TARGET_OPENGLES
-			glPopAttrib();
-		#else
-			if( !blend_enabled )
-				glDisable(GL_BLEND);
-			if( !texture_2d_enabled )
-				glDisable(GL_TEXTURE_2D);
-			glBlendFunc( blend_src, blend_dst );
-		#endif
+		if( !blend_enabled )
+			glDisable(GL_BLEND);
+		if( !texture_2d_enabled )
+			glDisable(GL_TEXTURE_2D);
+		glBlendFunc( blend_src, blend_dst );
+
 		binded = false;
 	}
 }

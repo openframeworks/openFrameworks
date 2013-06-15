@@ -685,6 +685,7 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
+	if(getNumVertices()==0) return;
 	ofGetCurrentRenderer()->draw(*this,renderType,useColors,useTextures,useNormals);
 }
 
@@ -1601,8 +1602,8 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
                     index3 = (iy+1) * (nr) + (ix+0);
                     
                     mesh.addIndex(index1);
-                    mesh.addIndex(index2);
                     mesh.addIndex(index3);
+                    mesh.addIndex(index2);
                 }
                 
                 if(iy < res-1 ) {
@@ -1612,8 +1613,8 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
                     index3 = (iy+1) * (nr) + (ix+0);
                     
                     mesh.addIndex(index1);
-                    mesh.addIndex(index2);
                     mesh.addIndex(index3);
+                    mesh.addIndex(index2);
                     
                 }
             }
@@ -2140,8 +2141,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < heightSegments-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y)*radiusSegments + x );
                 mesh.addIndex( (y+1)*radiusSegments + x );
+                mesh.addIndex( (y)*radiusSegments + x );
             }
         }
     }
@@ -2188,8 +2189,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < capSegs-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
                 mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
             }
         }
     }

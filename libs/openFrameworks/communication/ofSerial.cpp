@@ -164,6 +164,10 @@ void ofSerial::buildDeviceList(){
 		prefixMatch.push_back("tty.");
 	#endif
 	#ifdef TARGET_LINUX
+		#ifdef TARGET_RASPBERRY_PI
+			prefixMatch.push_back("ttyACM");
+		#endif
+
 		prefixMatch.push_back("ttyS");
 		prefixMatch.push_back("ttyUSB");
 		prefixMatch.push_back("rfc");
@@ -267,6 +271,7 @@ void ofSerial::close(){
     		::close(fd);
     		bInited = false;
     	}
+    	// [CHECK] -- anything else need to be reset?
     //---------------------------------------------
     #endif
     //---------------------------------------------

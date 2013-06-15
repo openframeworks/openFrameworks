@@ -5,9 +5,9 @@
 platform=$1
 version=$2
 
-REPO=https://github.com/arturoc/openFrameworks
-REPO_ALIAS=arturohttps
-BRANCH=feature-elinuxProgrammableGL
+REPO=https://github.com/openframeworks/openFrameworks
+REPO_ALIAS=upstreamhttps
+BRANCH=develop
 
 PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
 PG_REPO_ALIAS=originhttps
@@ -15,11 +15,11 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6" ] && [ "$platform" != "linuxarmv7" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs, osx, android, ios, all
+    echo win_cb, linux, linux64, linuxarmv6, linuxarmv7, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -180,31 +180,31 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 osx win_cb vs ios android"
+        otherplatforms="linux64 linuxarmv6 linuxarmv7 osx win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux osx win_cb vs ios android"
+        otherplatforms="linux linuxarmv6 linuxarmv7 osx win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 win_cb vs ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 osx vs ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "vs" ]; then
-        otherplatforms="linux linux64 osx win_cb ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 osx win_cb ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 win_cb vs android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 win_cb vs android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 osx win_cb vs ios"
+        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 osx win_cb vs ios"
     fi
     
     
@@ -371,6 +371,22 @@ function createPackage {
 	fi
 	
 	
+	#download and copy OF compiled
+	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
+    if [ "$pkg_platform" = "win_cb" ]; then
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+	fi
+
+
+    #if snow leopard change 10.4u to 10.5
+    #if [ $runOSXSLScript = 1 ]; then
+    #    cd $pkg_ofroot
+    #    echo "replacing 10.4u with 10.5 for snow leopard"
+    #    find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
+    #    pkg_platform="osxSL"
+    #fi
+    
     #choose readme
     cd $pkg_ofroot
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
