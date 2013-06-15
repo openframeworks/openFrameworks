@@ -3,7 +3,6 @@ ofxNetwork
 ofxOpenCv
 ofxOsc
 ofxVectorGraphics
-ofxVectorMath
 ofxXmlSettings
 ofxAssimpModelLoader
 ofxThreadedImageLoader

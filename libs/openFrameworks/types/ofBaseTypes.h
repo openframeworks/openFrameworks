@@ -108,6 +108,7 @@ public:
 
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
 typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
+typedef ofBaseHasPixels_<unsigned short> ofBaseHasShortPixels;
 
 //----------------------------------------------------------
 // ofAbstractImage    ->   to be able to put different types of images in vectors...
@@ -128,6 +129,7 @@ public:
 
 typedef ofBaseImage_<unsigned char> ofBaseImage;
 typedef ofBaseImage_<float> ofBaseFloatImage;
+typedef ofBaseImage_<unsigned short> ofBaseShortImage;
 
 //----------------------------------------------------------
 // ofBaseHasSoundStream
