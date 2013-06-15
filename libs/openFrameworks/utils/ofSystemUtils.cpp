@@ -364,7 +364,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 		ofn.lpstrFilter = "All\0";
 		ofn.lpstrFile = szFileName;
-#else // VS2010
+#else // Visual Studio
 		wchar_t szFileName[MAX_PATH];
 		if(defaultPath!=""){
             wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());

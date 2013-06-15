@@ -3,7 +3,11 @@
 
 #include "ofMain.h"
 #include <string.h>
+#if (_MSC_VER)
+#include "../libs/tinyxml.h"
+#else
 #include "tinyxml.h"
+#endif
 
 using namespace std;
 
