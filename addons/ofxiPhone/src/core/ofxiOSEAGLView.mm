@@ -23,9 +23,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @implementation ofxiOSEAGLView
 
-@synthesize lastFrameTime;
-@synthesize nFrameCount;
-@synthesize frameRate;
 @synthesize screenSize;
 @synthesize windowSize;
 @synthesize windowPos;
@@ -67,13 +64,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         
         app = appPtr;
         activeTouches = [[NSMutableDictionary alloc] init];
-        
-        nFrameCount = 0;
-        lastFrameTime = 0;
-        fps = frameRate = 60.0f;
-        timeNow = 0.0;
-        timeThen = 0.0;
-        
+                
         screenSize = new ofVec3f();
         windowSize = new ofVec3f();
         windowPos = new ofVec3f();
@@ -197,22 +188,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     [self finishRender];
     [self unlockGL];
-    
-    //------------------------------------------
-    
-    timeNow = ofGetElapsedTimef();
-    double diff = timeNow-timeThen;
-    if( diff  > 0.00001 ){
-        fps			= 1.0 / diff;
-        frameRate	*= 0.9f;
-        frameRate	+= 0.1f*fps;
-    }
-    lastFrameTime	= diff;
-    timeThen		= timeNow;
-    
-    nFrameCount++;
-    
-    //------------------------------------------ 
     
     [super notifyDraw];   // alerts delegate that a new frame has been drawn.
 }
