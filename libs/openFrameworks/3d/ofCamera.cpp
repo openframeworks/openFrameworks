@@ -18,7 +18,8 @@ nearClip(0),
 farClip(0),
 lensOffset(0.0f, 0.0f),
 forceAspectRatio(false),
-isActive(false)
+isActive(false),
+vFlip(false)
 {
 }
 
@@ -54,12 +55,10 @@ void ofCamera::setForceAspectRatio(bool forceAspectRatio){
 }
 
 //----------------------------------------
-void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
-
-	float eyeX = viewW / 2;
-	float eyeY = viewH / 2;
+void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
+	ofRectangle orientedViewport = ofGetNativeViewport();
+	float eyeX = orientedViewport.width / 2;
+	float eyeY = orientedViewport.height / 2;
 	float halfFov = PI * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
@@ -75,11 +74,7 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 
 	setPosition(eyeX,eyeY,dist);
 	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
-
-
-	if(vFlip){
-		setScale(1,-1,1);
-	}
+	vFlip = _vFlip;
 }
 
 //----------------------------------------
@@ -94,7 +89,7 @@ void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & b
 	
 	ofVec3f cameraUpVector = bottomEdgeNorm.getCrossed(cameraLookVector);
 	
-	this->lookAt(cameraLookVector + this->getPosition(), cameraUpVector);
+	lookAt(cameraLookVector + this->getPosition(), cameraUpVector);
 
 	//lensoffset
 	ofVec2f lensOffset;
@@ -104,6 +99,17 @@ void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & b
 	setAspectRatio( bottomEdge.length() / leftEdge.length() );
 	float distanceAlongOpticalAxis = abs(bottomLeftToCam.dot(cameraLookVector));
 	setFov(2.0f * RAD_TO_DEG * atan( (leftEdge.length() / 2.0f) / distanceAlongOpticalAxis));
+}
+
+
+//----------------------------------------
+void ofCamera::setVFlip(bool vflip){
+	vFlip = vflip;
+}
+
+//----------------------------------------
+bool ofCamera::isVFlipped(){
+	return vFlip;
 }
 
 //----------------------------------------
@@ -131,19 +137,17 @@ void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
 	isActive = true;
 
-	ofSetCoordHandedness(OF_RIGHT_HANDED);
-
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
 
-	ofSetMatrixMode(OF_MATRIX_PROJECTION);
-	ofLoadIdentityMatrix();
+	ofViewport(viewport.x,viewport.y,viewport.width,viewport.height);
+	ofSetOrientation(ofGetOrientation(),vFlip);
 
-	ofLoadMatrix( this->getProjectionMatrix(viewport) );
+	ofSetMatrixMode(OF_MATRIX_PROJECTION);
+	ofLoadMatrix( getProjectionMatrix(viewport) );
 
 	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-	ofLoadMatrix( ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()) );
-	ofViewport(viewport);
+	ofLoadMatrix( getModelViewMatrix() );
 }
 
 // if begin(); pushes first, then we need an end to pop
@@ -155,12 +159,11 @@ void ofCamera::end() {
 		isActive = false;
 	}
 }
+
 //----------------------------------------
 ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
 	if(isOrtho) {
-		ofMatrix4x4 ortho;
-		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
-		return ortho;
+		return ofMatrix4x4::newOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
 	}else{
 		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
 		ofMatrix4x4 matProjection;
@@ -169,16 +172,17 @@ ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
 		return matProjection;
 	}
 }
+
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewMatrix() const {
-	ofMatrix4x4 matModelView;
-	matModelView.makeInvertOf(getGlobalTransformMatrix());
-	return matModelView;
+	return ofMatrix4x4::getInverseOf(getGlobalTransformMatrix());
 }
+
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) const {
 	return getModelViewMatrix() * getProjectionMatrix(viewport);
 }
+
 //----------------------------------------
 ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
 
@@ -193,6 +197,7 @@ ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
 	return ScreenXYZ;
 
 }
+
 //----------------------------------------
 ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
 
@@ -210,10 +215,12 @@ ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
 	return CameraXYZ * inverseCamera;
 
 }
+
 //----------------------------------------
 ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) const {
 	return WorldXYZ * getModelViewProjectionMatrix(viewport);
 }
+
 //----------------------------------------
 ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) const {
 
@@ -222,9 +229,9 @@ ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) const {
 
 	return CameraXYZ * inverseCamera;
 }
+
 //----------------------------------------
-void ofCamera::calcClipPlanes(ofRectangle viewport)
-{
+void ofCamera::calcClipPlanes(ofRectangle viewport) {
 	// autocalculate near/far clip planes if not set by user
 	if(nearClip == 0 || farClip == 0) {
 		float dist = getImagePlaneDistance(viewport);

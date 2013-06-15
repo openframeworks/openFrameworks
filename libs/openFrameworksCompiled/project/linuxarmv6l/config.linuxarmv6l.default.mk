@@ -158,5 +158,22 @@ PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
 
 
+################################################################################
+# PLATFORM CORE EXCLUSIONS
+#   During compilation, these makefiles will generate lists of sources, headers 
+#   and third party libraries to be compiled and linked into a program or core 
+#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
+#   paths that will be used to exclude matching paths and files during list 
+#   generation.
+#
+#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
+#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   GNU make only allows one wildcard for matching.  The second wildcard (%) is
+#   treated literally.
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
+
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 
 

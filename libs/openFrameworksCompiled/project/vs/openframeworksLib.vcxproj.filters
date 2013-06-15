@@ -252,6 +252,12 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\of3dGraphics.h">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofProgrammableGLRenderer.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -429,6 +435,18 @@
       <Filter>libs\openFrameworks\3d</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\graphics\of3dGraphics.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofGLUtils.cpp">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofProgrammableGLRenderer.cpp">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofMatrixStack.cpp">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofRendererCollection.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
   </ItemGroup>

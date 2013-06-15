@@ -107,18 +107,18 @@ protected:
 
 	ofTexture texAtlas;
 	bool binded;
-	ofMesh stringQuads;
+	ofVboMesh stringQuads;
 
 private:
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
 #endif
-#ifdef TARGET_OPENGLES
+
 	GLint blend_src, blend_dst;
 	GLboolean blend_enabled;
 	GLboolean texture_2d_enabled;
-#endif
+
 	ofTextEncoding encoding;
 	void		unloadTextures();
 	void		reloadTextures();

@@ -21,6 +21,7 @@ extern "C"{
 #include "ofxAccelerometer.h"
 #include <android/log.h>
 #include "ofFileUtils.h"
+#include "ofGLProgrammableRenderer.h"
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
@@ -30,18 +31,6 @@ static int  sWindowWidth  = 480;
 static int  sWindowHeight = 800;
 
 static bool bSetupScreen = true;
-
-static float frameRate = 60;
-
-static int frames = 0;
-static unsigned long onesec = 0;
-static unsigned long previousFrameMicros = 0;
-static int nFrameCount = 0;
-static float targetRate = 60;
-static unsigned long oneFrameTime = 0;
-static bool bFrameRateSet = false;
-
-static double			lastFrameTime;
 
 static JavaVM *ofJavaVM=0;
 
@@ -122,6 +111,10 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
+void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
+	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer));
+}
+
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
 	if(androidApp){
@@ -140,19 +133,6 @@ int	ofAppAndroidWindow::getWidth(){
 int	ofAppAndroidWindow::getHeight(){
 	return sWindowHeight;
 }
-
-int	ofAppAndroidWindow::getFrameNum() {
-	return nFrameCount;
-}
-
-float ofAppAndroidWindow::getFrameRate() {
-	return frameRate;
-}
-
-double ofAppAndroidWindow::getLastFrameTime(){
-	return lastFrameTime;
-}
-
 
 void ofAppAndroidWindow::enableSetupScreen(){
 	bSetupScreen = true;
@@ -205,12 +185,6 @@ void ofAppAndroidWindow::setFullscreen(bool fullscreen){
 
 void ofAppAndroidWindow::toggleFullscreen(){
 
-}
-
-void ofAppAndroidWindow::setFrameRate(float _targetRate){
-	targetRate = _targetRate;
-	oneFrameTime = 1000000.f/targetRate;
-	bFrameRateSet = true;
 }
 
 void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
@@ -338,6 +312,10 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 			androidApp->unloadTextures();
 		}
 	}
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
+		renderer->setup();
+	}
 	reloadTextures();
 	if(androidApp){
 		androidApp->reloadTextures();
@@ -350,7 +328,11 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
-    //initAndroidOF();
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		ofLogNotice() << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
+		renderer->setup();
+	}
 	ofLog(OF_LOG_NOTICE,"setup");
 	paused = false;
     sWindowWidth  = w;
@@ -378,13 +360,8 @@ Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 void
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
-	unsigned long beginFrameMicros = ofGetElapsedTimeMicros();
 
 	if(paused || surfaceDestroyed) return;
-
-	lastFrameTime = double(beginFrameMicros - previousFrameMicros)/1000000.;
-
-	previousFrameMicros = beginFrameMicros;
 
 	if(!threadedTouchEvents){
 		mutex.lock();
@@ -418,6 +395,10 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	ofNotifyUpdate();
 
 
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
+		renderer->startRender();
+	}
 	int width, height;
 
 	width  = sWindowWidth;
@@ -430,26 +411,17 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
-	if ( bClearAuto == true || nFrameCount < 3){
+	if ( bClearAuto == true || ofGetFrameNum() < 3){
 		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 	}
 
 	if(bSetupScreen) ofSetupScreen();
 	ofNotifyDraw();
 
-	unsigned long currTime = ofGetElapsedTimeMicros();
-	unsigned long frameMicros = currTime - beginFrameMicros;
-
-	nFrameCount++;		// increase the overall frame count*/
-	frames++;
-
-	if(currTime - onesec>=1000000){
-		frameRate = frames;
-		frames = 0;
-		onesec = currTime;
+	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
+		renderer->finishRender();
 	}
-
-	if(bFrameRateSet && frameMicros<oneFrameTime) usleep(oneFrameTime-frameMicros);
 
 }
 

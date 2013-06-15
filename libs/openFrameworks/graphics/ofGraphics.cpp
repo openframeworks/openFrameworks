@@ -6,21 +6,24 @@
 #include "ofPath.h"
 #include "ofRendererCollection.h"
 
-#ifdef TARGET_OSX
-	#include <OpenGL/glu.h>
+#ifndef TARGET_LINUX_ARM
+	#ifdef TARGET_OSX
+		#include <OpenGL/glu.h>
+	#endif
+
+	#ifdef TARGET_OPENGLES
+		#include "glu.h"
+	#endif
+
+	#ifdef TARGET_LINUX
+		#include <GL/glu.h>
+	#endif
+
+	#ifdef TARGET_WIN32
+		#include "glu.h"
+	#endif
 #endif
 
-//#ifdef TARGET_OPENGLES
-//	#include "glu.h"
-//#endif
-//
-#ifdef TARGET_LINUX
-	#include <GL/glu.h>
-#endif
-
-#ifdef TARGET_WIN32
-	#include "glu.h"
-#endif
 
 #ifndef TARGET_WIN32
     #define CALLBACK
@@ -33,10 +36,9 @@
 #ifdef TARGET_OSX
 	#include <GLUT/glut.h>
 #endif
-#ifdef TARGET_LINUX
+#if defined( TARGET_LINUX ) && !defined(TARGET_OPENGLES)
 	#include <GL/glut.h>
 #endif
-
 
 
 //style stuff - new in 006
@@ -45,13 +47,12 @@ static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
 static ofPath shape;
-static ofMesh vertexData;
+static ofVboMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
+static ofVboMesh gradientMesh;
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_,bool setDefaults){
 	renderer = renderer_;
-	renderer->setupGraphicDefaults();
-
 	if(renderer->rendersPathPrimitives()){
 		shape.setMode(ofPath::COMMANDS);
 	}else{
@@ -60,25 +61,18 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 
 	shape.setUseShapeColor(false);
 
-	ofSetStyle(currentStyle);
-	ofBackground(currentStyle.bgColor);
+	if(setDefaults){
+		renderer->setupGraphicDefaults();
+		ofSetStyle(currentStyle);
+		ofBackground(currentStyle.bgColor);
+	}
 }
 
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-ofPtr<ofGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="GL"){
-		return (ofPtr<ofGLRenderer>&)ofGetCurrentRenderer();
-	}else if(ofGetCurrentRenderer()->getType()=="collection"){
-		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
-	}else{
-		return ofPtr<ofGLRenderer>();
-	}
-}
-
-#ifndef TARGET_OPENGLES 
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IPHONE)
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
@@ -103,7 +97,7 @@ void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectan
 	rendererCollection->renderers.push_back(ofGetGLRenderer());
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
-	ofSetCurrentRenderer(rendererCollection);
+	ofSetCurrentRenderer(rendererCollection,true);
 	bScreenShotStarted = true;
 }
 
@@ -117,7 +111,7 @@ void ofEndSaveScreenAsPDF(){
 			cairoScreenshot.reset();
 		}
 		if( storedRenderer ){
-			ofSetCurrentRenderer(storedRenderer);
+			ofSetCurrentRenderer(storedRenderer,true);
 			storedRenderer.reset();
 		}
 		
@@ -158,6 +152,11 @@ ofRectangle ofGetCurrentViewport(){
 }
 
 //----------------------------------------------------------
+ofRectangle ofGetNativeViewport(){
+	return renderer->getNativeViewport();
+}
+
+//----------------------------------------------------------
 int ofGetViewportWidth(){
 	return renderer->getViewportWidth();
 }
@@ -184,6 +183,11 @@ int ofOrientationToDegrees(ofOrientation orientation){
 }
 
 //----------------------------------------------------------
+bool ofIsVFlipped(){
+	return renderer->isVFlipped();
+}
+
+//----------------------------------------------------------
 void ofSetCoordHandedness(ofHandednessType handedness){
 	renderer->setCoordHandedness(handedness);
 }
@@ -193,14 +197,37 @@ ofHandednessType ofGetCoordHandedness(){
 	return renderer->getCoordHandedness();
 }
 
+
+static bool setupScreenDeprecated=false;
+
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
-	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
+	if(!setupScreenDeprecated){
+		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
+		ofLogError() << "using current orientation and vFlip";
+		setupScreenDeprecated = true;
+	}
+	renderer->setupScreenPerspective(width,height,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
-	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
+	if(!setupScreenDeprecated){
+		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
+		ofLogError() << "using current orientation and vFlip";
+		setupScreenDeprecated = true;
+	}
+	renderer->setupScreenOrtho(width,height,nearDist,farDist);
+}
+
+//----------------------------------------------------------
+void ofSetupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
+	renderer->setupScreenPerspective(width,height, fov,nearDist,farDist);
+}
+
+//----------------------------------------------------------
+void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist){
+	renderer->setupScreenOrtho(width,height,nearDist,farDist);
 }
 
 //----------------------------------------------------------
@@ -208,6 +235,7 @@ void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bo
 void ofSetupGraphicDefaults(){
 	renderer->setupGraphicDefaults();
 	ofSetStyle(ofStyle());
+    ofSetOrientation(OF_ORIENTATION_DEFAULT,true);
 }
 
 //----------------------------------------------------------
@@ -295,7 +323,8 @@ void ofMultMatrix (const float *m){
 	renderer->multMatrix(m);
 }
 
-void ofSetMatrixMode (ofMatrixMode matrixMode){
+//----------------------------------------------------------
+void ofSetMatrixMode(ofMatrixMode matrixMode){
 	renderer->matrixMode(matrixMode);
 }
 
@@ -365,53 +394,57 @@ void ofBackground(int r, int g, int b, int a){
 //----------------------------------------------------------
 void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
 	float w = ofGetWidth(), h = ofGetHeight();
-	ofMesh mesh;
-	mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	gradientMesh.clear();
+	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying
 		// it and just adding the colors whenever the function is called.
 		ofVec2f center(w / 2, h / 2);
-		mesh.addVertex(center);
-		mesh.addColor(start);
+		gradientMesh.addVertex(center);
+		gradientMesh.addColor(start);
 		int n = 32; // circular gradient resolution
 		float angleBisector = TWO_PI / (n * 2);
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
 			float theta = i * TWO_PI / n;
-			mesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
-			mesh.addColor(end);
+			gradientMesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
+			gradientMesh.addColor(end);
 		}
 	} else if(mode == OF_GRADIENT_LINEAR) {
-		mesh.addVertex(ofVec2f(0, 0));
-		mesh.addVertex(ofVec2f(w, 0));
-		mesh.addVertex(ofVec2f(w, h));
-		mesh.addVertex(ofVec2f(0, h));
-		mesh.addColor(start);
-		mesh.addColor(start);
-		mesh.addColor(end);
-		mesh.addColor(end);
+		gradientMesh.addVertex(ofVec2f(0, 0));
+		gradientMesh.addVertex(ofVec2f(w, 0));
+		gradientMesh.addVertex(ofVec2f(w, h));
+		gradientMesh.addVertex(ofVec2f(0, h));
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(end);
 	} else if(mode == OF_GRADIENT_BAR) {
-		mesh.addVertex(ofVec2f(w / 2, h / 2));
-		mesh.addVertex(ofVec2f(0, h / 2));
-		mesh.addVertex(ofVec2f(0, 0));
-		mesh.addVertex(ofVec2f(w, 0));
-		mesh.addVertex(ofVec2f(w, h / 2));
-		mesh.addVertex(ofVec2f(w, h));
-		mesh.addVertex(ofVec2f(0, h));
-		mesh.addVertex(ofVec2f(0, h / 2));
-		mesh.addColor(start);
-		mesh.addColor(start);
-		mesh.addColor(end);
-		mesh.addColor(end);
-		mesh.addColor(start);
-		mesh.addColor(end);
-		mesh.addColor(end);
-		mesh.addColor(start);
+		gradientMesh.addVertex(ofVec2f(w / 2, h / 2));
+		gradientMesh.addVertex(ofVec2f(0, h / 2));
+		gradientMesh.addVertex(ofVec2f(0, 0));
+		gradientMesh.addVertex(ofVec2f(w, 0));
+		gradientMesh.addVertex(ofVec2f(w, h / 2));
+		gradientMesh.addVertex(ofVec2f(w, h));
+		gradientMesh.addVertex(ofVec2f(0, h));
+		gradientMesh.addVertex(ofVec2f(0, h / 2));
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(start);
 	}
-	glDepthMask(false);
-	mesh.draw();
-	glDepthMask(true);
+	GLboolean depthMaskEnabled;
+	glGetBooleanv(GL_DEPTH_WRITEMASK,&depthMaskEnabled);
+	glDepthMask(GL_FALSE);
+	gradientMesh.draw();
+	if(depthMaskEnabled){
+		glDepthMask(GL_TRUE);
+	}
 }
 
 //----------------------------------------------------------
@@ -564,8 +597,7 @@ void ofDisablePointSprites(){
 
 //----------------------------------------------------------
 void ofDisableBlendMode(){
-    glDisable(GL_BLEND);
-	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
+    ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 }
 
 //----------------------------------------------------------

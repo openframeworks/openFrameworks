@@ -585,7 +585,7 @@ void ofPath::draw(){
 			prevColor = ofGetStyle().color;
 		}
 
-		if(bFill){
+		if(bFill && !cachedTessellation.getVertices().empty()){
 			if(bUseShapeColor){
 				ofSetColor(fillColor);
 			}

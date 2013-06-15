@@ -1,15 +1,20 @@
 #include "ofShader.h"
 #include "ofUtils.h"
 #include "ofFileUtils.h"
+#include "ofGraphics.h"
+#include "ofGLProgrammableRenderer.h"
 #include <map>
 
-#ifndef TARGET_OPENGLES
-
+static const string COLOR_ATTRIBUTE="color";
+static const string POSITION_ATTRIBUTE="position";
+static const string NORMAL_ATTRIBUTE="normal";
+static const string TEXCOORD_ATTRIBUTE="texcoord";
 
 static map<GLuint,int> & getShaderIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
 }
+
 static map<GLuint,int> & getProgramIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
@@ -78,18 +83,55 @@ ofShader::~ofShader() {
 }
 
 //--------------------------------------------------------------
+ofShader::ofShader(const ofShader & mom) :
+program(mom.program),
+bLoaded(mom.bLoaded),
+shaders(mom.shaders){
+	if(mom.bLoaded){
+		retainProgram(program);
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			retainShader(shader);
+		}
+	}
+}
+
+//--------------------------------------------------------------
+ofShader & ofShader::operator=(const ofShader & mom){
+    if(this == &mom) {
+        return *this;
+    }
+	if(bLoaded){
+		unload();
+	}
+	program = mom.program;
+	bLoaded = mom.bLoaded;
+	shaders = mom.shaders;
+	if(mom.bLoaded){
+		retainProgram(program);
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			retainShader(shader);
+		}
+	}
+	return *this;
+}
+
+//--------------------------------------------------------------
 bool ofShader::load(string shaderName) {
 	return load(shaderName + ".vert", shaderName + ".frag");
 }
 
 //--------------------------------------------------------------
 bool ofShader::load(string vertName, string fragName, string geomName) {
-	unload();
-
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
+#ifndef TARGET_OPENGLES
 	if(geomName.empty() == false) setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
-	
+#endif
+	if(ofGetGLProgrammableRenderer()){
+		bindDefaults();
+	}
 	return linkProgram();
 }
 
@@ -106,6 +148,8 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromSource(GLenum type, string source) {
+    unload();
+    
 	// create program if it doesn't exist already
 	checkAndCreateProgram();
 
@@ -118,7 +162,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	}
 	
 	// compile shader
-	const char* sptr = source.c_str();
+	const char * sptr = source.c_str();
 	int ssize = source.size();
 	glShaderSource(shader, 1, &sptr, &ssize);
 	glCompileShader(shader);
@@ -132,12 +176,14 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
         return false;
     }
     
-	if(status == GL_TRUE)
+	if(status == GL_TRUE){
 		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader compiled.");
+		checkShaderInfoLog(shader, type, OF_LOG_WARNING);
+	}
 	
 	else if (status == GL_FALSE) {
 		ofLog(OF_LOG_ERROR, nameForType(type) + " shader failed to compile");
-		checkShaderInfoLog(shader, type);
+		checkShaderInfoLog(shader, type, OF_LOG_ERROR);
 		return false;
 	}
 	
@@ -149,27 +195,37 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 
 //--------------------------------------------------------------
 void ofShader::setGeometryInputType(GLenum type) {
+#ifndef TARGET_OPENGLES
 	checkAndCreateProgram();
 	glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, type);
+#endif
 }
 
 //--------------------------------------------------------------
 void ofShader::setGeometryOutputType(GLenum type) {
+#ifndef TARGET_OPENGLES
 	checkAndCreateProgram();
 	glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
+#endif
 }
 
 //--------------------------------------------------------------
 void ofShader::setGeometryOutputCount(int count) {
+#ifndef TARGET_OPENGLES
 	checkAndCreateProgram();
 	glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, count);
+#endif
 }
 
 //--------------------------------------------------------------
 int ofShader::getGeometryMaxOutputCount() {
+#ifndef TARGET_OPENGLES
 	int temp;
 	glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT, &temp);
 	return temp;
+#else
+	return 0;
+#endif
 }
 
 //--------------------------------------------------------------
@@ -192,13 +248,13 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
 }
 
 //--------------------------------------------------------------
-void ofShader::checkShaderInfoLog(GLuint shader, GLenum type) {
+void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel) {
 	GLsizei infoLength;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(OF_LOG_ERROR, nameForType(type) + " shader reports:\n" + infoBuffer);
+		ofLog(logLevel, nameForType(type) + " shader reports:\n" + infoBuffer);
 		delete [] infoBuffer;
 	}
 }
@@ -216,9 +272,15 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 	}
 }
 
+
+
 //--------------------------------------------------------------
 void ofShader::checkAndCreateProgram() {
+#ifndef TARGET_OPENGLES
 	if(GL_ARB_shader_objects) {
+#else
+	if(true){
+#endif
 		if(program == 0) {
 			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
 			program = glCreateProgram();
@@ -235,7 +297,7 @@ bool ofShader::linkProgram() {
 			ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
 		} else {
 			checkAndCreateProgram();
-			
+
 			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 				GLuint shader = it->second;
 				if(shader) {
@@ -255,13 +317,32 @@ bool ofShader::linkProgram() {
 		return bLoaded;
 }
 
+void ofShader::bindAttribute(GLuint location, const string & name){
+	glBindAttribLocation(program,location,name.c_str());
+}
+
+//--------------------------------------------------------------
+bool ofShader::bindDefaults(){
+	if(shaders.empty()) {
+		ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
+		return false;
+	} else {
+		bindAttribute(ofShader::POSITION_ATTRIBUTE,::POSITION_ATTRIBUTE);
+		bindAttribute(ofShader::COLOR_ATTRIBUTE,::COLOR_ATTRIBUTE);
+		bindAttribute(ofShader::NORMAL_ATTRIBUTE,::NORMAL_ATTRIBUTE);
+		bindAttribute(ofShader::TEXCOORD_ATTRIBUTE,::TEXCOORD_ATTRIBUTE);
+		return true;
+	}
+
+}
+
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
 		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 			GLuint shader = it->second;
 			if(shader) {
-				ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
+				//ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
 				releaseShader(program,shader);
 			}
 		}
@@ -270,156 +351,215 @@ void ofShader::unload() {
 			releaseProgram(program);
 			program = 0;
 		}
-		
+
 		shaders.clear();
 	}
 	bLoaded = false;
 }
 
 //--------------------------------------------------------------
+bool ofShader::isLoaded(){
+	return bLoaded;
+}
+
+//--------------------------------------------------------------
 void ofShader::begin() {
-	if (bLoaded == true)
+	if (bLoaded){
 		glUseProgram(program);
+		if(ofGetGLProgrammableRenderer()){
+			ofGetGLProgrammableRenderer()->beginCustomShader(*this);
+		}
+	}else{
+		ofLogError() << "trying to begin unloaded shader";
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::end() {
-	if (bLoaded == true)
-		glUseProgram(0);
+	if (bLoaded){
+		if(ofGetGLProgrammableRenderer()){
+			ofGetGLProgrammableRenderer()->endCustomShader();
+		}else{
+			glUseProgram(0);
+		}
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const char* name, ofBaseHasTexture& img, int textureLocation) {
+void ofShader::setUniformTexture(const string & name, ofBaseHasTexture& img, int textureLocation) {
 	setUniformTexture(name, img.getTextureReference(), textureLocation);
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const char* name, int textureTarget, GLint textureID, int textureLocation){
+void ofShader::setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation){
 	if(bLoaded) {
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		glEnable(textureTarget);
-		glBindTexture(textureTarget, textureID);
-		glDisable(textureTarget);
+		if (!ofGetGLProgrammableRenderer()){
+			glEnable(textureTarget);
+			glBindTexture(textureTarget, textureID);
+			glDisable(textureTarget);
+		} else {
+			glBindTexture(textureTarget, textureID);
+		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);
 	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const char* name, ofTexture& tex, int textureLocation) {
+void ofShader::setUniformTexture(const string & name, ofTexture& tex, int textureLocation) {
 	if(bLoaded) {
 		ofTextureData texData = tex.getTextureData();
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		glEnable(texData.textureTarget);
-		glBindTexture(texData.textureTarget, texData.textureID);
-		glDisable(texData.textureTarget);
+		if (!ofGetGLProgrammableRenderer()){
+			glEnable(texData.textureTarget);
+			glBindTexture(texData.textureTarget, texData.textureID);
+			glDisable(texData.textureTarget);
+		} else {
+			glBindTexture(texData.textureTarget, texData.textureID);
+		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);
 	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1i(const char* name, int v1) {
-	if(bLoaded)
-		glUniform1i(getUniformLocation(name), v1);
+void ofShader::setUniform1i(const string & name, int v1) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1i(loc, v1);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2i(const char* name, int v1, int v2) {
-	if(bLoaded)
-		glUniform2i(getUniformLocation(name), v1, v2);
+void ofShader::setUniform2i(const string & name, int v1, int v2) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2i(loc, v1, v2);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3i(const char* name, int v1, int v2, int v3) {
-	if(bLoaded)
-		glUniform3i(getUniformLocation(name), v1, v2, v3);
+void ofShader::setUniform3i(const string & name, int v1, int v2, int v3) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3i(loc, v1, v2, v3);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4i(const char* name, int v1, int v2, int v3, int v4) {
-	if(bLoaded)
-		glUniform4i(getUniformLocation(name), v1, v2, v3, v4);
+void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) 	glUniform4i(loc, v1, v2, v3, v4);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1f(const char* name, float v1) {
-	if(bLoaded)
-		glUniform1f(getUniformLocation(name), v1);
+void ofShader::setUniform1f(const string & name, float v1) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1f(loc, v1);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2f(const char* name, float v1, float v2) {
-	if(bLoaded)
-		glUniform2f(getUniformLocation(name), v1, v2);
+void ofShader::setUniform2f(const string & name, float v1, float v2) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2f(loc, v1, v2);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3f(const char* name, float v1, float v2, float v3) {
-	if(bLoaded)
-		glUniform3f(getUniformLocation(name), v1, v2, v3);
+void ofShader::setUniform3f(const string & name, float v1, float v2, float v3) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3f(loc, v1, v2, v3);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4f(const char* name, float v1, float v2, float v3, float v4) {
-	if(bLoaded)
-		glUniform4f(getUniformLocation(name), v1, v2, v3, v4);
+void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, float v4) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform4f(loc, v1, v2, v3, v4);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform1iv(getUniformLocation(name), count, v);
+void ofShader::setUniform1iv(const string & name, int* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform2iv(getUniformLocation(name), count, v);
+void ofShader::setUniform2iv(const string & name, int* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform3iv(getUniformLocation(name), count, v);
+void ofShader::setUniform3iv(const string & name, int* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4iv(const char* name, int* v, int count) {
-	if(bLoaded)
-		glUniform4iv(getUniformLocation(name), count, v);
+void ofShader::setUniform4iv(const string & name, int* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform4iv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform1fv(getUniformLocation(name), count, v);
+void ofShader::setUniform1fv(const string & name, float* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform1fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform2fv(getUniformLocation(name), count, v);
+void ofShader::setUniform2fv(const string & name, float* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform2fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform3fv(getUniformLocation(name), count, v);
+void ofShader::setUniform3fv(const string & name, float* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform3fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4fv(const char* name, float* v, int count) {
-	if(bLoaded)
-		glUniform4fv(getUniformLocation(name), count, v);
+void ofShader::setUniform4fv(const string & name, float* v, int count) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniform4fv(loc, count, v);
+	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix4f(const char* name, const ofMatrix4x4 & m) {
-	if(bLoaded)
-		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, m.getPtr());
+void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, m.getPtr());
+	}
 }
 
+#ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 void ofShader::setAttribute1s(GLint location, short v1) {
 	if(bLoaded)
@@ -443,6 +583,7 @@ void ofShader::setAttribute4s(GLint location, short v1, short v2, short v3, shor
 	if(bLoaded)
 		glVertexAttrib4s(location, v1, v2, v3, v4);
 }
+#endif
 
 //--------------------------------------------------------------
 void ofShader::setAttribute1f(GLint location, float v1) {
@@ -468,6 +609,48 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 		glVertexAttrib4f(location, v1, v2, v3, v4);
 }
 
+void ofShader::setAttribute1fv(const string & name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		if (location != -1) {
+			glVertexAttribPointer(location, 1, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
+	}
+}
+
+void ofShader::setAttribute2fv(const string & name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		if (location != -1) {
+			glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
+	}
+
+}
+
+void ofShader::setAttribute3fv(const string & name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		if (location != -1) {
+			glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
+	}
+}
+
+void ofShader::setAttribute4fv(const string & name, float* v, GLsizei stride){
+	if(bLoaded){
+		GLint location = getAttributeLocation(name);
+		if (location != -1) {
+			glVertexAttribPointer(location, 4, GL_FLOAT, GL_FALSE, stride, v);
+			glEnableVertexAttribArray(location);
+		}
+	}
+}
+
+#ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 void ofShader::setAttribute1d(GLint location, double v1) {
 	if(bLoaded)
@@ -491,15 +674,31 @@ void ofShader::setAttribute4d(GLint location, double v1, double v2, double v3, d
 	if(bLoaded)
 		glVertexAttrib4d(location, v1, v2, v3, v4);
 }
+#endif
 
 //--------------------------------------------------------------
-GLint ofShader::getAttributeLocation(const char* name) {
-	return glGetAttribLocation(program, name);
+GLint ofShader::getAttributeLocation(const string & name) {
+	return glGetAttribLocation(program, name.c_str());
 }
 
 //--------------------------------------------------------------
-GLint ofShader::getUniformLocation(const char* name) {
-	return glGetUniformLocation(program, name);
+GLint ofShader::getUniformLocation(const string & name) {
+	GLint loc = -1;
+#ifdef TARGET_RASPBERRY_PI
+	// tig: caching uniform locations gives the RPi a 17% boost on average
+	map<string, GLint>::iterator it = uniformLocations.find(name);
+	if (it == uniformLocations.end()){
+		loc = glGetUniformLocation(program, name.c_str());
+		if (loc != -1) uniformLocations[name] = loc;
+	} else {
+		loc = it->second;
+	}
+#else
+	// Desktop GL seems to be faster fetching the value from the GPU each time
+	// than retrieving it from cache.
+	loc = glGetUniformLocation(program, name.c_str());
+#endif
+	return loc;
 }
 
 //--------------------------------------------------------------
@@ -559,13 +758,25 @@ GLuint& ofShader::getShader(GLenum type) {
 }
 
 //--------------------------------------------------------------
+bool ofShader::operator==(const ofShader & other){
+	return other.program==program;
+}
+
+//--------------------------------------------------------------
+bool ofShader::operator!=(const ofShader & other){
+	return other.program!=program;
+}
+
+//--------------------------------------------------------------
 string ofShader::nameForType(GLenum type) {
 	switch(type) {
 		case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+		#ifndef TARGET_OPENGLES
 		case GL_GEOMETRY_SHADER_EXT: return "GL_GEOMETRY_SHADER_EXT";
+		#endif
 		default: return "UNKNOWN SHADER TYPE";
 	}
 }
 
-#endif
+
