@@ -68,7 +68,9 @@ public:
 
 	int getPixelIndex(int x, int y) const;
 	ofColor_<PixelType> getColor(int x, int y) const;
-	void setColor(int x, int y, ofColor_<PixelType> color);
+	void setColor(int x, int y, const ofColor_<PixelType>& color);
+	void setColor(int index, const ofColor_<PixelType>& color);
+	void setColor(const ofColor_<PixelType>& color);
 
 	const PixelType& operator[](int pos) const;
 	PixelType& operator[](int pos);
@@ -120,7 +122,8 @@ typedef ofPixels_<unsigned short> ofShortPixels;
 
 
 typedef ofPixels& ofPixelsRef;
-
+typedef ofFloatPixels& ofFloatPixelsRef;
+typedef ofShortPixels& ofShortPixelsRef;
 
 // sorry for these ones, being templated functions inside a template i needed to do it in the .h
 // they allow to do things like:

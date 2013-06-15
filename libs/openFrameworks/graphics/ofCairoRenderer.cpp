@@ -1050,7 +1050,7 @@ void ofCairoRenderer::background(const ofColor & c){
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(float brightness) {
-	background(brightness);
+	background(ofColor(brightness));
 }
 
 //----------------------------------------------------------

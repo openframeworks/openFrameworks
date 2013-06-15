@@ -183,9 +183,9 @@ protected:
 
 	void setSerializable(bool serializable);
 
-#if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX) || (_MSC_VER)
+#if defined(TARGET_OF_IPHONE) || (_MSC_VER) || defined(__clang__)
 	friend typename FriendMaker<Friend>::Type;
-#else
+#elif ((__GNUC__ == 4 && __GNUC_MINOR__ > 2) || __GNUC__ > 4)
 	friend class FriendMaker<Friend>::Type;
 #endif
 };
