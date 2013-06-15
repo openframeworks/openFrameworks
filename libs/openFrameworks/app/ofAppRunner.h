@@ -7,9 +7,12 @@
 
 class ofAppBaseWindow;
 class ofBaseApp;
+class ofBaseRenderer;
 
+void 		ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode, ofPtr<ofBaseRenderer> rendererPtr, bool initGlew = true); //to pass a different renderer than opengl
 void 		ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode); // this is deprecated, use an ofPtr
+void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode, ofBaseRenderer* renderer, bool initGlew = true); //this should also be deprecated but it is in here for the sake of completion
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
 
 void 		ofRunApp(ofPtr<ofBaseApp> OFSA); // this is for deprecated, use an ofPtr
