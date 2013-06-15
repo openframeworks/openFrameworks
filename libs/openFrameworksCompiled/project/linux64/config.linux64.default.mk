@@ -5,7 +5,7 @@
 #   be defined as variants. For instance, normally this file will be located in 
 #   a platform specific subpath such as 
 #
-#        $(OF_ROOT)/libs/openFrameworksComplied/linux64
+#        $(PATH_OF_ROOT)/libs/openFrameworksComplied/linux64
 #
 #   This file will then be a generic platform file like:
 #
@@ -25,7 +25,7 @@
 #
 ################################################################################
 
-include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
+include $(PATH_OF_SHARED_MAKEFILES)/config.linux.common.mk
 
 
 ################################################################################
