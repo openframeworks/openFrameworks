@@ -131,7 +131,9 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	glfwWindowHint(GLFW_ALPHA_BITS, aBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
+#ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS,bDoubleBuffered?1:0);
+#endif
 	glfwWindowHint(GLFW_SAMPLES,samples);
 
 	if(glVersionMinor!=-1 && glVersionMajor!=-1){
