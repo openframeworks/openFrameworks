@@ -53,7 +53,7 @@ int main(  int argc, char *argv[]  ){
 					cout << "Options:" << endl;
 					cout << "--osx: generate osx project files" << endl;
 					cout << "--win_cb: generate windows codeblocks project files" << endl;
-					cout << "--vs: generate windows vs2012 project files" << endl;
+					cout << "--vs: generate windows visual studio project files" << endl;
 					cout << "--linux: generate linux project files" << endl;
 					cout << "--linux64: generate linux 64bits project files" << endl;
 					cout << "--ios: generate iOS project files" << endl;
