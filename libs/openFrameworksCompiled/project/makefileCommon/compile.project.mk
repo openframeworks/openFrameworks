@@ -165,21 +165,21 @@ all:
 	
 run:
 ifeq ($(PLATFORM_RUN_COMMAND),)
-	@bin/$(BIN_NAME)
+	@cd bin;./$(BIN_NAME)
 else
 	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
 endif
 
 RunRelease:
 ifeq ($(PLATFORM_RUN_COMMAND),)
-	@bin/$(BIN_NAME)
+	@cd bin;./$(BIN_NAME)
 else
 	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
 endif
 
 RunDebug:
 ifeq ($(PLATFORM_RUN_COMMAND),)
-	@bin/$(BIN_NAME)
+	@cd bin;./$(BIN_NAME)
 else
 	@$(PLATFORM_RUN_COMMAND) $(BIN_NAME)
 endif
