@@ -47,7 +47,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\gl\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -77,6 +77,8 @@
     <ClInclude Include="..\..\..\openFrameworks\3d\ofMesh.h" />
     <ClInclude Include="..\..\..\openFrameworks\3d\ofNode.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppBaseWindow.h" />
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.h" />
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
@@ -150,7 +152,9 @@
     <ClCompile Include="..\..\..\openFrameworks\3d\ofEasyCam.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\3d\ofMesh.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\3d\ofNode.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofFbo.cpp" />
