@@ -99,7 +99,7 @@ void testApp::setupForTarget(int targ){
             break;
     case OF_TARGET_WINVS:
             project = new visualStudioProject;
-            target = "vs2010";
+            target = "vs";
             break;
     case OF_TARGET_IPHONE:
             project = new xcodeProject();
