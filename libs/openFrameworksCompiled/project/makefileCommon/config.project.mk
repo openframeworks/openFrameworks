@@ -81,11 +81,11 @@ OF_CORE_THIRDPARTY_SHARED_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_
 # OF PLATFORM LDFLAGS
 ################################################################################
 
-OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
-ifeq ($(PLATFORM_OS),Linux)
+ifeq ($(PLATFORM_OS),Linux) 
 	OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(dir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))
 	OF_CORE_LIBRARY_LDFLAGS += $(addprefix -l,$(patsubst lib%,%,$(basename $(notdir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))))
 endif
+OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 
 
 ################################################################################
@@ -385,8 +385,8 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 ALL_LDFLAGS =
 
 # add the include LDFLAGS from Makefiles.examples
-ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 ALL_LDFLAGS += $(PLATFORM_LDFLAGS)
+ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
