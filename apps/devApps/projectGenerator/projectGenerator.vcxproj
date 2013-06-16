@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\addons;src\projects;src\pugixmlLib;src\pugixmlLib\contrib;src\pugixmlLib\lib;src\pugixmlLib\scripts;src\pugixmlLib\scripts\pugixml.xcodeproj;src\pugixmlLib\src;src\utils;..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\addons;src\projects;src\pugixmlLib;src\pugixmlLib\contrib;src\pugixmlLib\lib;src\pugixmlLib\scripts;src\pugixmlLib\scripts\pugixml.xcodeproj;src\pugixmlLib\src;src\utils;..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxXmlSettings\libs\tinyxml\src;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
@@ -72,7 +72,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\addons;src\projects;src\pugixmlLib;src\pugixmlLib\contrib;src\pugixmlLib\lib;src\pugixmlLib\scripts;src\pugixmlLib\scripts\pugixml.xcodeproj;src\pugixmlLib\src;src\utils;..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;src\addons;src\projects;src\pugixmlLib;src\pugixmlLib\contrib;src\pugixmlLib\lib;src\pugixmlLib\scripts;src\pugixmlLib\scripts\pugixml.xcodeproj;src\pugixmlLib\src;src\utils;..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxXmlSettings\libs\tinyxml\src;..\..\..\addons\ofxXmlSettings\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,7 +91,7 @@
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSlider.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h" />
-    <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
+    <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml\src\tinyxml.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="src\addons\ofAddon.h" />
     <ClInclude Include="src\projects\baseProject.h" />
@@ -102,7 +102,6 @@
     <ClInclude Include="src\pugixmlLib\src\pugiconfig.hpp" />
     <ClInclude Include="src\pugixmlLib\src\pugixml.hpp" />
     <ClInclude Include="src\testApp.h" />
-    <ClInclude Include="src\utils\ofAppNoWindow.h" />
     <ClInclude Include="src\utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -114,9 +113,9 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml\src\tinyxml.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml\src\tinyxmlerror.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml\src\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp" />
     <ClCompile Include="src\addons\ofAddon.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -127,7 +126,6 @@
     <ClCompile Include="src\projects\xcodeProject.cpp" />
     <ClCompile Include="src\pugixmlLib\src\pugixml.cpp" />
     <ClCompile Include="src\testApp.cpp" />
-    <ClCompile Include="src\utils\ofAppNoWindow.cpp" />
     <ClCompile Include="src\utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
