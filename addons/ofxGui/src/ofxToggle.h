@@ -12,12 +12,11 @@ public:
 	ofxToggle * setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
 	
 
-	virtual void mouseMoved(ofMouseEventArgs & args);
-	virtual void mousePressed(ofMouseEventArgs & args);
-	virtual void mouseDragged(ofMouseEventArgs & args);
-	virtual void mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseMoved(ofMouseEventArgs & args);
+	virtual bool mousePressed(ofMouseEventArgs & args);
+	virtual bool mouseDragged(ofMouseEventArgs & args);
+	virtual bool mouseReleased(ofMouseEventArgs & args);
 	
-	void draw();
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
@@ -36,10 +35,12 @@ public:
 	virtual ofAbstractParameter & getParameter();
 
 protected:
+	void render();
 	ofRectangle checkboxRect;
 	ofParameter<bool> value;
+	bool bGuiActive;
 	
-	void setValue(float mx, float my, bool bCheck);
+	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
 	void valueChanged(bool & value);
 	ofPath bg,fg,cross;

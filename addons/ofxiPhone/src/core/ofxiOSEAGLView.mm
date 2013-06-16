@@ -9,6 +9,7 @@
 
 #import "ofMain.h"
 #import "ofAppiPhoneWindow.h"
+#import "ofGLProgrammableRenderer.h"
 #import "ofxiPhoneApp.h"
 #import "ofxiOSExtensions.h"
 
@@ -22,9 +23,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @implementation ofxiOSEAGLView
 
-@synthesize lastFrameTime;
-@synthesize nFrameCount;
-@synthesize frameRate;
 @synthesize screenSize;
 @synthesize windowSize;
 @synthesize windowPos;
@@ -34,7 +32,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
-    self = [self initWithFrame:frame 
+    
+    ESRendererVersion version = ESRendererVersion_11;
+    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
+        version = ESRendererVersion_20;
+    }
+    
+    self = [self initWithFrame:frame
+           andPreferedRenderer:version
                       andDepth:ofAppiPhoneWindow::getInstance()->isDepthBufferEnabled()
                          andAA:ofAppiPhoneWindow::getInstance()->isAntiAliasingEnabled()
                  andNumSamples:ofAppiPhoneWindow::getInstance()->getAntiAliasingSampleCount()
@@ -44,15 +49,22 @@ static ofxiOSEAGLView * _instanceRef = nil;
         
         _instanceRef = self;
         
+        if(rendererVersion == ESRendererVersion_20) {
+            if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
+                ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
+            } else {
+                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
+                ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
+            }
+        } else if(rendererVersion == ESRendererVersion_11) {
+            if(ofGetCurrentRenderer()->getType() != "GL") {
+                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+            }
+        }
+        
         app = appPtr;
         activeTouches = [[NSMutableDictionary alloc] init];
-        
-        nFrameCount = 0;
-        lastFrameTime = 0;
-        fps = frameRate = 60.0f;
-        timeNow = 0.0;
-        timeThen = 0.0;
-        
+                
         screenSize = new ofVec3f();
         windowSize = new ofVec3f();
         windowPos = new ofVec3f();
@@ -144,14 +156,20 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     [self lockGL];
     [self startRender];
+    
+    ofGLProgrammableRenderer * es2Renderer = NULL;
+    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
+        es2Renderer = (ofGLProgrammableRenderer *)(ofGetCurrentRenderer().get());
+        es2Renderer->startRender();
+    }
 
-    glViewport(0, 0, windowSize->x, windowSize->y);
+    ofViewport(ofRectangle(0, 0, windowSize->x, windowSize->y));
     
     float * bgPtr = ofBgColorPtr();
     bool bClearAuto = ofbClearBg();
-    if ( bClearAuto == true){
-        glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(bClearAuto == true) {
+        glClearColor(bgPtr[0], bgPtr[1], bgPtr[2], bgPtr[3]);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     
     if(ofAppiPhoneWindow::getInstance()->isSetupScreenEnabled()) {
@@ -164,24 +182,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     //------------------------------------------
     
+    if(es2Renderer != NULL) {
+        es2Renderer->finishRender();
+    }
+    
     [self finishRender];
     [self unlockGL];
-    
-    //------------------------------------------
-    
-    timeNow = ofGetElapsedTimef();
-    double diff = timeNow-timeThen;
-    if( diff  > 0.00001 ){
-        fps			= 1.0 / diff;
-        frameRate	*= 0.9f;
-        frameRate	+= 0.1f*fps;
-    }
-    lastFrameTime	= diff;
-    timeThen		= timeNow;
-    
-    nFrameCount++;
-    
-    //------------------------------------------ 
     
     [super notifyDraw];   // alerts delegate that a new frame has been drawn.
 }

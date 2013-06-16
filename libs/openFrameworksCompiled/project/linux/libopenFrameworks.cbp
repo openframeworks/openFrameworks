@@ -101,6 +101,12 @@
 		<Unit filename="../../../openFrameworks/gl/ofGLRenderer.h">
 			<Option virtualFolder="openFrameworks/gl/" />
 		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLProgrammableRenderer.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLProgrammableRenderer.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/gl/ofGLUtils.h">
 			<Option virtualFolder="openFrameworks/gl/" />
 		</Unit>
