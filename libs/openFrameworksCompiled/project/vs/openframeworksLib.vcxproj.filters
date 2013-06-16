@@ -252,7 +252,7 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\of3dGraphics.h">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\gl\ofProgrammableGLRenderer.h">
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h">
