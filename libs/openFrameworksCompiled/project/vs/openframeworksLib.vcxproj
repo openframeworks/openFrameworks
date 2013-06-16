@@ -87,6 +87,7 @@
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofLight.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofMaterial.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofShader.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofTexture.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofVbo.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFileUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofLog.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofNoise.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofSystemUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofThread.h" />
@@ -157,8 +159,10 @@
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofFbo.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLRenderer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofGLUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofLight.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofMaterial.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofShader.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofTexture.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofVbo.cpp" />
@@ -171,6 +175,7 @@
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPath.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixels.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPolyline.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofRendererCollection.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofTessellator.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMath.cpp" />
@@ -190,6 +195,7 @@
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofLog.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofMatrixStack.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofSystemUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofThread.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofURLFileLoader.cpp" />

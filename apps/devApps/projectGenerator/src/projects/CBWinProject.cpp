@@ -25,6 +25,7 @@ bool CBWinProject::createProjectFile(){
 	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.cbp"),project, false, true);
 
 	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.workspace"),workspace, false, true);
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"icon.rc"), projectDir + "icon.rc", false, true);
 
     //let's do some renaming:
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));

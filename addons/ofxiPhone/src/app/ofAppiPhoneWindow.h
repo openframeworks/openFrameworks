@@ -50,11 +50,7 @@ public:
     
 	virtual void		setWindowPosition(int x, int y) {};
 	virtual void		setWindowShape(int w, int h) {};
-	
-	virtual int			getFrameNum();
-	virtual float		getFrameRate();
-	virtual double		getLastFrameTime();
-	
+		
 	virtual ofPoint		getWindowPosition();
 	virtual ofPoint		getWindowSize();
 	virtual ofPoint		getScreenSize();
@@ -62,7 +58,6 @@ public:
 	virtual int			getWidth();
 	virtual int			getHeight();
 	
-	virtual void		setFrameRate(float targetRate);
 	virtual void		setWindowTitle(string title);
 	
 	virtual int			getWindowMode();
@@ -91,11 +86,6 @@ public:
     bool                disableAntiAliasing();
     bool                isAntiAliasingEnabled();
     int					getAntiAliasingSampleCount();
-    
-    //---------------------------------------------- deprecation messages. to be removed in OF 0073.
-    OF_DEPRECATED_MSG("Use enableRetina() instead", void enableRetinaSupport());
-    OF_DEPRECATED_MSG("Use isRetinaSupportedOnDevice() instead", bool isRetinaSupported());
-    OF_DEPRECATED_MSG("Use isDepthBufferEnabled() instead", bool isDepthEnabled());
 	
 	void timerLoop();
 	int					windowMode;

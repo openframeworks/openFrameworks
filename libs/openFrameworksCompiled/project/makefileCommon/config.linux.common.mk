@@ -62,6 +62,7 @@ ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_DEFINES += OF_USING_MPG123
 endif
 
+
 ################################################################################
 # PLATFORM REQUIRED ADDON
 #   This is a list of addons required for this platform.  This list is used to 
@@ -103,7 +104,7 @@ PLATFORM_CFLAGS += -fexceptions
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS = -Wl,-rpath=./libs
+PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
 
 
@@ -213,6 +214,13 @@ PLATFORM_LIBRARIES =
 ifneq ($(LINUX_ARM),1)
 	PLATFORM_LIBRARIES += glut
 endif
+ifneq ($(PLATFORM_ARCH),armv6l)
+    PLATFORM_LIBRARIES += X11 
+    PLATFORM_LIBRARIES += Xrandr
+    PLATFORM_LIBRARIES += Xxf86vm 
+    PLATFORM_LIBRARIES += Xi 
+endif
+    
 PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)

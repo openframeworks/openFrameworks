@@ -20,8 +20,15 @@ Android.mk
 /*/*/openFrameworks-Info.plist
 /*/*/ofxiphone-Info.plist
 /*/*/iPhone_Prefix.pch
+/*/*/*/*/Default-568h@2x~iphone.png
 /*/*/*/*/Default.png
 /*/*/*/*/Default@2x.png
+/*/*/*/*/Default@2x~ipad.png
+/*/*/*/*/Default@2x~iphone.png
+/*/*/*/*/Default~ipad.png
+/*/*/*/*/Default~iphone.png
+/*/*/*/*/Icon-72.png
+/*/*/*/*/Icon-72@2x.png
 /*/*/*/*/Icon.png
 /*/*/*/*/Icon@2x.png
 
@@ -34,6 +41,7 @@ Android.mk
 /*/*/*.vcxproj
 /*/*/*.vcxproj.user
 /*/*/*.vcxproj.filters
+/*/*/icon.rc
 
 #Eclipse
 /*/*/.cproject

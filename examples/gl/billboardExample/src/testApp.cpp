@@ -34,7 +34,11 @@ void testApp::setup() {
 	// load the bilboard shader 
 	// this is used to change the
 	// size of the particle
-	billboardShader.load("Billboard");
+	if(ofGetProgrammableGLRenderer()){
+		billboardShader.load("shadersGL3/Billboard");
+	}else{
+		billboardShader.load("shadersGL2/Billboard");
+	}
 	
 	// we need to disable ARB textures in order to use normalized texcoords
 	ofDisableArbTex();
@@ -92,11 +96,11 @@ void testApp::draw() {
 	// size of the points via the vert shader
 	billboardShader.begin();
 	
-	ofEnablePointSprites();
+	ofEnablePointSprites(); // not needed for GL3/4
 	texture.getTextureReference().bind();
 	billboards.draw();
 	texture.getTextureReference().unbind();
-	ofDisablePointSprites();
+	ofDisablePointSprites(); // not needed for GL3/4
 	
 	billboardShader.end();
 	
