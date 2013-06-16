@@ -232,30 +232,6 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 }
 
 //---------------------------------
-template<class T>
-int ofGetGlFormat(const ofPixels_<T> & pixels) {
-	switch(pixels.getNumChannels()) {
-		case 4:
-			return GL_RGBA;
-			break;
-		case 3:
-			return GL_RGB;
-			break;
-		case 2:
-			return GL_LUMINANCE_ALPHA;
-			break;
-		case 1:
-			return GL_LUMINANCE;
-			break;
-
-		default:
-			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized returning glFormat as GL_RGBA";
-			return GL_RGBA;
-			break;
-	}
-}
-
-//---------------------------------
 int ofGetGlType(const ofPixels & pixels) {
 	return GL_UNSIGNED_BYTE;
 }
