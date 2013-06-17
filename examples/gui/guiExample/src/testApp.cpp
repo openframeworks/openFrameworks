@@ -4,7 +4,11 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofSetVerticalSync(true);
-	
+
+	// we add this listener before setting up so the initial circle resolution is correct
+	circleResolution.addListener(this, &testApp::circleResolutionChanged);
+	ringButton.addListener(this,&testApp::ringButtonPressed);
+
 	gui.setup(); // most of the time you don't need a name
 	gui.add(filled.setup("fill", true));
 	gui.add(radius.setup( "radius", 140, 10, 300 ));
@@ -14,8 +18,6 @@ void testApp::setup(){
 	gui.add(twoCircles.setup("two circles"));
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.setup("screen size", ""));
-	
-	ringButton.addListener(this,&testApp::ringButtonPressed);
 
 	bHide = true;
 
@@ -25,6 +27,11 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::exit(){
 	ringButton.removeListener(this,&testApp::ringButtonPressed);
+}
+
+//--------------------------------------------------------------
+void testApp::circleResolutionChanged(int & circleResolution){
+	ofSetCircleResolution(circleResolution);
 }
 
 //--------------------------------------------------------------

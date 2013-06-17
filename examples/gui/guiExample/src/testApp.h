@@ -22,6 +22,7 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);		
 
+	void circleResolutionChanged(int & circleResolution);
 	void ringButtonPressed();
 
 	bool bHide;
