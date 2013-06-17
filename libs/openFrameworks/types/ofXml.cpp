@@ -84,7 +84,7 @@ int ofXml::getNumChildren() const
     return numberOfChildren;
 }
 
-string ofXml::toString()
+string ofXml::toString() const
 {
     ostringstream stream;
     
@@ -110,7 +110,7 @@ string ofXml::toString()
     return tmp;
 }
 
-void ofXml::addXml( ofXml& xml, bool copyAll ) {
+void ofXml::addXml( const ofXml& xml, bool copyAll ) {
     
     Poco::XML::Node *n = 0;
     if(copyAll) {

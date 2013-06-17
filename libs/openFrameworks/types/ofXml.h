@@ -36,7 +36,7 @@ public:
     const ofXml& operator =( const ofXml& rhs );
     
     bool            addChild( const string& path );
-    void            addXml( ofXml& xml, bool copyAll = false);
+    void            addXml( const ofXml& xml, bool copyAll = false);
 
     string          getValue() const;
 
@@ -69,7 +69,7 @@ public:
     bool            loadFromBuffer( const string& buffer );
 
     
-    string          toString();
+    string          toString() const;
     
     //////////////////////////////////////////////////////////////////
     // please excuse our mess: templated get/set
