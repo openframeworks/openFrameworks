@@ -89,6 +89,7 @@ public:
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
+	void setDepthTest(bool depthTest);
 	void setLineSmoothing(bool smooth);
 	void setBlendMode(ofBlendMode blendMode);
 	void enablePointSprites();

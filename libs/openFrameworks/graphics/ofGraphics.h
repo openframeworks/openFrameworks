@@ -95,6 +95,9 @@ void ofFill();
 ofFillFlag ofGetFill();
 
 void ofSetLineWidth(float lineWidth);
+void ofSetDepthTest(bool depthTest);
+void ofEnableDepthTest();
+void ofDisableDepthTest();
 
 // color options
 void ofSetColor(int r, int g, int b); // 0-255
