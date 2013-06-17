@@ -10,11 +10,12 @@ class ofBaseApp;
 class ofBaseRenderer;
 
 void 		ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode); // this is deprecated, use an ofPtr
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated
 
-void 		ofRunApp(ofPtr<ofBaseApp> OFSA); // this is for deprecated, use an ofPtr
-void 		ofRunApp(ofBaseApp * OFSA = NULL);
+void 		ofRunApp(ofPtr<ofBaseApp> OFSA);
+void 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
+
 
 ofBaseApp * ofGetAppPtr();
 void ofSetAppPtr(ofPtr<ofBaseApp> appPtr);
