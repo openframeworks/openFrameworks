@@ -10,6 +10,7 @@
 
 #include "ofConstants.h"
 #include "ofTypes.h"
+#include "ofPixels.h"
 
 class ofShader;
 class ofGLProgrammableRenderer;
@@ -40,6 +41,45 @@ enum ofPolyRenderMode{
 	OF_MESH_FILL
 };
 
+int ofGetGlInternalFormat(const ofPixels& pix);
+int ofGetGlInternalFormat(const ofShortPixels& pix);
+int ofGetGlInternalFormat(const ofFloatPixels& pix);
+
+//---------------------------------
+// this is helpful for debugging ofTexture
+string ofGetGlInternalFormatName(int glInternalFormat);
+int ofGetGLFormatFromInternal(int glInternalFormat);
+int ofGetGlTypeFromInternal(int glInternalFormat);
+
+template<class T>
+int ofGetGlFormat(const ofPixels_<T> & pixels) {
+	switch(pixels.getNumChannels()) {
+		case 4:
+			return GL_RGBA;
+			break;
+		case 3:
+			return GL_RGB;
+			break;
+		case 2:
+			return GL_LUMINANCE_ALPHA;
+			break;
+		case 1:
+			return GL_LUMINANCE;
+			break;
+
+		default:
+			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized returning glFormat as GL_RGBA";
+			return GL_RGBA;
+			break;
+	}
+}
+
+
+int ofGetGlType(const ofPixels & pixels);
+int ofGetGlType(const ofShortPixels & pixels);
+int ofGetGlType(const ofFloatPixels & pixels);
+
+ofImageType ofGetImageTypeFromGLType(int glType);
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode m);
 
