@@ -241,7 +241,7 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
                                                                                \
     $(eval PATH_OF_ADDON:=$(strip $1))                                         \
                                                                                \
-    $(eval PARSED_ADDON_FRAMEWORKS:=                                           \
+    $(eval PARSED_ADDON_FRAMEWORKS_PATHS:=                                     \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
             $(PATH_OF_ADDON)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
@@ -249,8 +249,6 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
             *.framework,                                                       \
         )                                                                      \
     )                                                                          \
-    $(info ---PARSED_ADDON_FRAMEWORKS for $(PATH_OF_ADDON)---)                 \
-    $(foreach v, $(PARSED_ADDON_FRAMEWORKS),$(info $(v)))                      \
                                                                                \
     $(eval PARSED_ADDON_SHARED_LIBRARIES:=                                     \
         $(call                                                                 \
@@ -260,8 +258,6 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
             *.$(PLATFORM_SHARED_LIBRARY_EXTENSION),                            \
         )                                                                      \
     )                                                                          \
-    $(info ---PARSED_ADDON_SHARED_LIBRARIES for $(PATH_OF_ADDON)---)           \
-    $(foreach v, $(PARSED_ADDON_SHARED_LIBRARIES),$(info $(v)))                \
                                                                                \
     $(eval PARSED_ADDON_STATIC_LIBRARIES:=                                     \
         $(call                                                                 \
@@ -578,19 +574,49 @@ define FUNC_PARSE_ADDON
             $(ADDON_SOURCES) $(ORDERED_ADDON_SOURCES)                          \
         )                                                                      \
     )                                                                          \
-    $(info ---ORDERED_ADDON_SOURCES---)                                        \
-    $(foreach v, $(ORDERED_ADDON_SOURCES),$(info $(v)))                        \
-                                                                               \
-                                                                               \
-                                                                               \
-                                                                               \
                                                                                \
                                                                                \
                                                                                \
     $(call                                                                     \
-        FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES,                                     \
+        FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES,                                   \
         $(PATH_OF_ADDON)                                                       \
     )                                                                          \
+                                                                               \
+    $(eval ORDERED_ADDON_FRAMEWORKS_PATHS :=                                   \
+        $(filter-out                                                           \
+            $(ADDON_EXCLUSIONS),                                               \
+            $(PARSED_ADDON_FRAMEWORKS_PATHS)                                   \
+        )                                                                      \
+    )                                                                          \
+                                                                               \
+    $(eval ORDERED_ADDON_FRAMEWORKS :=                                         \
+        $(ADDON_FRAMEWORKS)                                                    \
+        $(filter-out                                                           \
+            $(ADDON_FRAMEWORKS),                                               \
+            $(basename                                                         \
+                $(notdir                                                       \
+                    $(ORDERED_ADDON_FRAMEWORKS_PATHS)                          \
+                )                                                              \
+            )                                                                  \
+        )                                                                      \
+    )                                                                          \
+                                                                               \
+    $(eval ORDERED_ADDON_FRAMEWORK_SEARCH_PATHS :=                             \
+         $(dir                                                                 \
+            $(ORDERED_ADDON_FRAMEWORKS_PATHS)                                  \
+        )                                                                      \
+    )                                                                          \
+                                                                               \
+                                                                               \
+    $(eval ORDERED_ADDON_SHARED_LIBRARIES :=                                   \
+        $(filter-out                                                           \
+            $(ADDON_EXCLUSIONS),                                               \
+            $(PARSED_ADDON_SHARED_LIBRARIES)                                   \
+        )                                                                      \
+    )                                                                          \
+    $(info ---ORDERED_ADDON_SHARED_LIBRARIES for $(PATH_OF_ADDON)---)                \
+    $(foreach v, $(ORDERED_ADDON_SHARED_LIBRARIES),$(info $(v)))                     \
+                                                                               \
 
 endef
 
@@ -865,7 +891,13 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
             $(PROJECT_ADDON_DEPENDENCIES_ORDERED),                             \
             $(call FUNC_PARSE_ADDON,$(ADDON_TO_PARSE))                         \
         )
+
         
+    # $(info ---ORDERED_ADDON_HEADER_SEARCH_PATHS---)                                        \
+    # $(foreach v, $(ORDERED_ADDON_HEADER_SEARCH_PATHS),$(info $(v)))                        \
+    # $(info ---ORDERED_ADDON_SOURCES---)                                        \
+    # $(foreach v, $(ORDERED_ADDON_SOURCES),$(info $(v)))                        \
+
     endif
 endif
 
