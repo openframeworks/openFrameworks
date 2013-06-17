@@ -6,12 +6,6 @@
 #include "ofConstants.h"
 #include "ofVboMesh.h"
 
-int ofGetGlInternalFormat(const ofPixels& pix);
-int ofGetGlInternalFormat(const ofShortPixels& pix);
-int ofGetGlInternalFormat(const ofFloatPixels& pix);
-void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
-ofImageType ofGetImageTypeFromGLType(int glType);
-
 //set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
 bool ofGetUsingArbTex();
 void ofEnableArbTex();
