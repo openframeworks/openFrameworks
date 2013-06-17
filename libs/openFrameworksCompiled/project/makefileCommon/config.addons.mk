@@ -187,6 +187,7 @@ define FUNC_PARSE_ADDON_TEMPLATE_HEADER_SEARCH_PATHS
             $(PATH_OF_ADDON)/src                                               \
         )                                                                      \
     )                                                                          \
+                                                                               \
 
 endef
 
@@ -198,21 +199,21 @@ endef
 #   When this function finishes, a well-ordered list of sources for
 #   the given addon is available in the following variable:
 #   
-#       PARSED_ADDON_SOURCE_FILES
+#       PARSED_ADDON_SOURCES
 ################################################################################
 
 define FUNC_PARSE_ADDON_TEMPLATE_SOURCES
                                                                                \
     $(eval PATH_OF_ADDON:=$(strip $1))                                         \
                                                                                \
-    $(eval PARSED_ADDON_SOURCE_FILES :=                                        \
+    $(eval PARSED_ADDON_SOURCES :=                                             \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SOURCES,                                       \
             $(PATH_OF_ADDON)/libs                                              \
         )                                                                      \
     )                                                                          \
                                                                                \
-    $(eval PARSED_ADDON_SOURCE_FILES +=                                        \
+    $(eval PARSED_ADDON_SOURCES +=                                             \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SOURCES,                                       \
             $(PATH_OF_ADDON)/src                                               \
@@ -270,8 +271,6 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
             *.$(PLATFORM_STATIC_LIBRARY_EXTENSION),                            \
         )                                                                      \
     )                                                                          \
-    $(info ---PARSED_ADDON_STATIC_LIBRARIES for $(PATH_OF_ADDON)---)           \
-    $(foreach v, $(PARSED_ADDON_STATIC_LIBRARIES),$(info $(v)))                \
 
 endef
 
@@ -555,6 +554,43 @@ define FUNC_PARSE_ADDON
         )                                                                      \
     )                                                                          \
                                                                                \
+                                                                               \
+                                                                               \
+                                                                               \
+                                                                               \
+                                                                               \
+                                                                               \
+    $(call                                                                     \
+        FUNC_PARSE_ADDON_TEMPLATE_SOURCES,                                     \
+        $(PATH_OF_ADDON)                                                       \
+    )                                                                          \
+                                                                               \
+    $(eval ORDERED_ADDON_SOURCES:=                                             \
+        $(filter-out                                                           \
+            $(ADDON_SOURCES),                                                  \
+            $(PARSED_ADDON_SOURCES)                                            \
+        )                                                                      \
+    )                                                                          \
+                                                                               \
+    $(eval ORDERED_ADDON_SOURCES:=                                             \
+        $(filter-out                                                           \
+            $(ADDON_EXCLUSIONS),                                               \
+            $(ADDON_SOURCES) $(ORDERED_ADDON_SOURCES)                          \
+        )                                                                      \
+    )                                                                          \
+    $(info ---ORDERED_ADDON_SOURCES---)                                        \
+    $(foreach v, $(ORDERED_ADDON_SOURCES),$(info $(v)))                        \
+                                                                               \
+                                                                               \
+                                                                               \
+                                                                               \
+                                                                               \
+                                                                               \
+                                                                               \
+    $(call                                                                     \
+        FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES,                                     \
+        $(PATH_OF_ADDON)                                                       \
+    )                                                                          \
 
 endef
 
@@ -837,7 +873,7 @@ endif
 #  DEBUGGING
 ########################################################################
 # print debug information if so instructed
-ifdef MAKEFILE_DEBUG
+ifdef 1
     $(info ---PROJECT_ADDONS_INCLUDES---)
     $(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
     $(info ---PROJECT_ADDONS_EXCLUSIONS---)
