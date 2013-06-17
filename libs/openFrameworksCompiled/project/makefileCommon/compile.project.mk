@@ -132,7 +132,7 @@ endif
 #   This list is built from the platform specific build file.
 ################################################################################
 
-ABIS_TO_COMPILE =
+ABIS_TO_COMPILE :=
 
 # If we are using a Release target ...
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -149,7 +149,7 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
     ifdef ABIS_TO_COMPILE_DEBUG
         ifeq ($(findstring Release,$(TARGET_NAME)),Release)
             ifdef ABIS_TO_COMPILE_RELEASE
-                ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
+                ABIS_TO_COMPILE := $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
             endif
         endif
         ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
@@ -192,18 +192,18 @@ endif
 #   avoid conflict with files of the same name and to improve performance.
 ################################################################################
 
-.PHONY: Release \
-		Debug \
-		ReleaseABI \
-		DebugABI \
-		CleanDebug \
-		CleanRelease \
-		CleanDebugABI \
-		CleanReleaseABI \
-		all \
-		after \
-		clean \
-		help \
+.PHONY: Release                                                                \
+		Debug                                                                  \
+		ReleaseABI                                                             \
+		DebugABI                                                               \
+		CleanDebug                                                             \
+		CleanRelease                                                           \
+		CleanDebugABI                                                          \
+		CleanReleaseABI                                                        \
+		all                                                                    \
+		after                                                                  \
+		clean                                                                  \
+		help                                                                   \
 		run
 
 Release:

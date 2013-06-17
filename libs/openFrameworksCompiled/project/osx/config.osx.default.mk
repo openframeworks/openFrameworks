@@ -47,7 +47,7 @@ PLATFORM_DEFINES:=__MACOSX_CORE__
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_REQUIRED_ADDONS:= ofxGui ofxJSON ofxOsc
+PLATFORM_REQUIRED_ADDONS:= 
 
 ##########################################################################################
 # PLATFORM CFLAGS

@@ -191,7 +191,11 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
     ifdef ABIS_TO_COMPILE_DEBUG
         ifeq ($(findstring Release,$(TARGET_NAME)),Release)
             ifdef ABIS_TO_COMPILE_RELEASE
-                ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
+                ABIS_TO_COMPILE :=                                             \
+                    $(filter-out                                               \
+                        $(ABIS_TO_COMPILE_DEBUG),                              \
+                        $(ABIS_TO_COMPILE_RELEASE)                             \
+                    )
             endif
         endif
         ABIS_TO_COMPILE += $(ABIS_TO_COMPILE_DEBUG)
@@ -217,9 +221,11 @@ endif
 ################################################################################
 
 ifdef ABI
-    PATH_CORE_OBJ_OUPUT = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(ABI)/$(TARGET_NAME)/
+    PATH_CORE_OBJ_OUPUT :=                                                     \
+        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(ABI)/$(TARGET_NAME)/
 else
-    PATH_CORE_OBJ_OUPUT = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(TARGET_NAME)/
+    PATH_CORE_OBJ_OUPUT :=                                                     \
+        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(TARGET_NAME)/
 endif
 
 ################################################################################
@@ -243,15 +249,15 @@ endif
 #
 ################################################################################
 
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(PATH_CORE_OBJ_OUPUT),\
-                                         $(patsubst $(PATH_OF_ROOT)/%.cpp,%.d,\
-                                           $(patsubst $(PATH_OF_ROOT)/%.mm,%.d,\
-                                             $(patsubst $(PATH_OF_ROOT)/%.m,%.d,\
-                                               $(CORE_SOURCE_FILES)\
-                                             )\
-                                           )\
-                                         )\
-                                       )
+OF_CORE_DEPENDENCY_FILES := $(addprefix $(PATH_CORE_OBJ_OUPUT),                \
+                                $(patsubst $(PATH_OF_ROOT)/%.cpp,%.d,          \
+                                    $(patsubst $(PATH_OF_ROOT)/%.mm,%.d,       \
+                                        $(patsubst $(PATH_OF_ROOT)/%.m,%.d,    \
+                                            $(CORE_SOURCE_FILES)               \
+                                        )                                      \
+                                    )                                          \
+                                )                                              \
+                            )
 
 ################################################################################
 # OF_CORE_OBJ_FILES (set immediately)
@@ -274,15 +280,15 @@ OF_CORE_DEPENDENCY_FILES = $(addprefix $(PATH_CORE_OBJ_OUPUT),\
 #
 ################################################################################
 
-OF_CORE_OBJ_FILES = $(addprefix $(PATH_CORE_OBJ_OUPUT),\
-                                  $(patsubst $(PATH_OF_ROOT)/%.cpp,%.o,\
-                                     $(patsubst $(PATH_OF_ROOT)/%.mm,%.o,\
-                                       $(patsubst $(PATH_OF_ROOT)/%.m,%.o,\
-                                         $(CORE_SOURCE_FILES)\
-                                       )\
-                                     )\
-                                  )\
-                                )
+OF_CORE_OBJ_FILES := $(addprefix $(PATH_CORE_OBJ_OUPUT),                       \
+                            $(patsubst $(PATH_OF_ROOT)/%.cpp,%.o,              \
+                                $(patsubst $(PATH_OF_ROOT)/%.mm,%.o,           \
+                                    $(patsubst $(PATH_OF_ROOT)/%.m,%.o,        \
+                                        $(CORE_SOURCE_FILES)                   \
+                                    )                                          \
+                                )                                              \
+                            )                                                  \
+                        )
     
 ################################################################################
 # DEBUG ########################################################################
