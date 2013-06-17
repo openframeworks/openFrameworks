@@ -610,7 +610,7 @@ bool ofXml::loadFromBuffer( const string& buffer )
 }
 
 
-Poco::XML::Element* ofXml::getPocoElement(const string& path)
+Poco::XML::Element* ofXml::getPocoElement(const string& path) const
 {
     string copy = path;
     // does it have an attribute? just in case
@@ -622,6 +622,11 @@ Poco::XML::Element* ofXml::getPocoElement(const string& path)
     return (Poco::XML::Element*) element->getNodeByPath(copy);
     
 }
+
+Poco::XML::Element* ofXml::getPocoElement(const string& path) {
+	return getPocoElement(path);
+}
+
 
 string ofXml::getName() const
 {
@@ -694,9 +699,14 @@ bool ofXml::setTo(const string& path)
     return true;
 }
 
-Poco::XML::Element* ofXml::getPocoElement()
+Poco::XML::Element* ofXml::getPocoElement() const
 {
     return element;
+}
+
+Poco::XML::Element* ofXml::getPocoElement() 
+{
+	return element;
 }
 
 string ofXml::DOMErrorMessage(short msg)

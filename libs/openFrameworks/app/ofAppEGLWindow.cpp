@@ -29,7 +29,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofFileUtils.h"
-#include "ofProgrammableGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 #include <assert.h>
 
 // native events

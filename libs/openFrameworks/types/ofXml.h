@@ -223,6 +223,8 @@ public:
     
     Poco::XML::Element*        getPocoElement();
     Poco::XML::Element*        getPocoElement(const string& path);
+    Poco::XML::Element*        getPocoElement() const;
+    Poco::XML::Element*        getPocoElement(const string& path) const;
     
     Poco::XML::Document*       getPocoDocument();
     Poco::XML::Document*       getPocoDocument() const;
