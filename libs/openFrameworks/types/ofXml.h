@@ -95,7 +95,7 @@ public:
     }
     
     // templated to be anything
-    template <class T> void addValue(const string& path, T data, bool createEntirePath = false)
+    template <class T> bool addValue(const string& path, T data, bool createEntirePath = false)
     {
         stringstream str;
         str << ofToString(data);
@@ -202,8 +202,10 @@ public:
                 ss << element->innerText();
                 ss >> data;
                 return data;
+            } else {
+                ofLog( "Path not found ");
+                return data; // hmm. this could be a problem
             }
-            return ""; // hmm. this could be a problem
         }
         else
         {
