@@ -38,7 +38,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
-	if(key | OF_KEY_MODIFIER){
+	if(key & OF_KEY_MODIFIER){
 		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
 			sprintf(eventString, "keyPressed = (%i) %s", key, ("F" + ofToString(key+1-OF_KEY_F1)).c_str());
 		}else{
@@ -100,7 +100,7 @@ void testApp::keyPressed  (int key){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){ 
-	if(key | OF_KEY_MODIFIER){
+	if(key & OF_KEY_MODIFIER){
 		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
 			sprintf(eventString, "keyReleased = (%i) %s", key, ("F" + ofToString(key+1-OF_KEY_F1)).c_str());
 		}else{
