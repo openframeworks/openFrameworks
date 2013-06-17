@@ -4,7 +4,11 @@
 
 #define GLFW_INCLUDE_NONE
 
+#if (_MSC_VER)
 #include <GLFW/glfw3.h>
+#else
+#include "GLFW/glfw3.h"
+#endif
 
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
