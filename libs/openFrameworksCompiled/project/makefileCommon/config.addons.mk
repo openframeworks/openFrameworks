@@ -465,9 +465,7 @@ endef
 define FUNC_BUILD_ADDON_DEPENDENCY_LIST
     $(eval THIS_ADDON:=$(strip $1))                                            \
                                                                                \
-    $(call                                                                     \
-        FUNC_PARSE_ADDON_CONFIG_MK,$(THIS_ADDON)                               \
-    )                                                                          \
+    $(call FUNC_PARSE_ADDON_CONFIG_MK,$(THIS_ADDON))                           \
                                                                                \
     $(eval ADDON_DEPENDENCIES:=$(strip $(ADDON_DEPENDENCIES)))                 \
                                                                                \
@@ -535,6 +533,7 @@ define FUNC_PARSE_ADDON
     $(call FUNC_PARSE_ADDON_CONFIG_MK,$(THIS_ADDON))                           \
                                                                                \
     $(eval ADDON_HEADER_SEARCH_PATHS:=$(strip $(ADDON_HEADER_SEARCH_PATHS)))   \
+                                                                               \
     $(eval ADDON_EXCLUSIONS:=$(strip $(ADDON_EXCLUSIONS)))                     \
                                                                                \
     $(call                                                                     \
@@ -753,23 +752,23 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 ################################################################################
 # PROJECT_ADDON_DEPENDENCIES_ORDERED (immediately assigned)
 #   Takes a list of addon / depency pairs and does a topological sort using 
-#   tsort.  The format needed by tsort is 
+#   `tsort`.  The format required by `tsort` is: 
 #
 #       ADDON_A ADDON_A_REQUIREMENT ADDON_B ADDON_B_REQUIREMENT ... etc.
 #
-#   To represent a series of relationships like this
+#   Example: To represent a series of relationships like this
 #
 #       ADDON_A requires ADDON_B
 #       ADDON_B requires ADDON_C
-#       ADDON_C requires ADDON_D AND ADDON_E
+#       ADDON_C requires both ADDON_D AND ADDON_E
 #   
-#   We would createa list that looks like this:
+#   We would create a list that looks like this:
 #       
 #       ADDON_A ADDON_B ADDON_B ADDON_C ADDON_C ADDON_D ADDON_C ADDON_E
 #
-#   Thus, when this list of dependecies is sorted with tsort, we will arrive at
-#   a unique list of addons sorted by how much other addons depend upon it.
-#   This will, in effect, allow us to compile our "base" addons earliest.  For
+#   Thus, when this list of dependecies is sorted with `tsort`, we will arrive 
+#   at a unique list of addons sorted by how much other addons depend upon it.
+#   This will in effect, allow us to compile our "base" addons earliest.  For
 #   reference, the tsort output from the list above will be:
 #
 #       ADDON_A
@@ -778,18 +777,18 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 #       ADDON_E
 #       ADDON_D
 #
-#   tsort can handle repeated pairs and an even-numbered, white-space-sperated 
+#   `tsort` can handle repeated pairs and an even-numbered, white-space-sperated 
 #   list of addon names is required.
 #
-#   From the pespective of the compiler, tsort will output a reversed list 
+#   From the pespective of the compiler, `tsort` will output a reversed list 
 #   (i.e. the least-depended-upon addon is first), so in order to get it into
-#   our actual compilation order, we must run the list through:
+#   our actual compilation order, we reverse the sorted list using:
 #   
 #       tail -r
 #   
-#   which will reverse the list.  Finally, in order to bring it back into make
-#   for processing, we swap all `\n` characters for ` ` spaces.  This space-
-#   seperated list can be iterated by make's foreach command.
+#   Finally, in order to bring it back into `make` for processing, we swap 
+#   all `\n` characters for ` ` spaces.  This space-seperated list can be 
+#   iterated by make's `foreach` command.
 #
 ################################################################################
 
@@ -801,8 +800,22 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
                 | tr '\n' ' '                                                  \
             )
 
-        $(info --------------------PROJECT_ADDON_DEPENDENCIES_ORDERED)
-        $(foreach v, $(PROJECT_ADDON_DEPENDENCIES_ORDERED),$(info $(v)))
+################################################################################
+# ADDITIONAL_DEPENDENCIES (immediately assigned)
+#   There are some dependencies that will not be included in the `tsort` list
+#   because they are "independent".  Of course the project requires them 
+#   (because they were listed in a platform-specific config file or 
+#   addons.make).  After determining which addons we need to add to our final
+#   list, we add those ADDITIONAL_DEPENDENCIES to our 
+#   PROJECT_ADDON_DEPENDENCIES_ORDERED list.
+#
+#   Finally we iterate through each of addons listed in the ordered set
+#   (PROJECT_ADDON_DEPENDENCIES_ORDERED) and extract all of their compilation
+#   information using FUNC_PARSE_ADDON.  By parsing each addon in order, we 
+#   are assured that each addon is parsed in the order required by its 
+#   addon_config.mk file.
+#
+################################################################################
 
         ADDITIONAL_DEPENDENCIES :=                                             \
             $(filter-out                                                       \
@@ -810,8 +823,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
                 $(PROJECT_ADDON_DEPENDENCIES)                                  \
             )
 
-        PROJECT_ADDON_DEPENDENCIES_ORDERED :=                                  \
-            $(ADDITIONAL_DEPENDENCIES) $(PROJECT_ADDON_DEPENDENCIES_ORDERED)
+        PROJECT_ADDON_DEPENDENCIES_ORDERED += $(ADDITIONAL_DEPENDENCIES)
 
         $(foreach ADDON_TO_PARSE,                                              \
             $(PROJECT_ADDON_DEPENDENCIES_ORDERED),                             \
