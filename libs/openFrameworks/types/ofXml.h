@@ -203,7 +203,7 @@ public:
                 ss >> data;
                 return data;
             } else {
-                ofLog( "Path not found ");
+                ofLogWarning("ofXml", "Path not found when getting value ");
                 return data; // hmm. this could be a problem
             }
         }
