@@ -897,7 +897,7 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 				int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				X += cps[cy].setWidth * letterSpacing * spaceSize;
 			} else if(cy > -1){
-				shapes.push_back(getCharacterAsPoints(str[index]));
+				shapes.push_back(getCharacterAsPoints((unsigned char)str[index]));
 				shapes.back().translate(ofPoint(X,Y));
 
 				X += cps[cy].setWidth * letterSpacing;
@@ -1158,7 +1158,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 				 X += cps[cy].setWidth * letterSpacing * spaceSize;
 				 //glTranslated(cps[cy].width, 0, 0);
 		  } else if(cy > -1){
-				drawCharAsShape(c[index], X, Y);
+				drawCharAsShape((unsigned char)c[index], X, Y);
 				X += cps[cy].setWidth * letterSpacing;
 				//glTranslated(cps[cy].setWidth, 0, 0);
 		  }
