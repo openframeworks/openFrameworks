@@ -335,6 +335,26 @@ endif
 include $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
 
 ################################################################################
+# PLATFORM_SHARED_LIBRARY_EXTENSION (conditionally set, immediately assigned)
+# PLATFORM_STATIC_LIBRARY_EXTENSION (conditionally set, immediately assigned)
+# PLATFORM_LIBRARY_PREFIX (conditionally set, immediately assigned)
+#   These variables are usually set in the platform specific config file, but
+#   we set them to a default value if they are not already set.
+################################################################################
+
+ifndef PLATFORM_SHARED_LIBRARY_EXTENSION
+    PLATFORM_SHARED_LIBRARY_EXTENSION:=so
+endif
+
+ifndef PLATFORM_STATIC_LIBRARY_EXTENSION
+    PLATFORM_STATIC_LIBRARY_EXTENSION:=a
+endif
+
+ifndef PLATFORM_LIBRARY_PREFIX
+    PLATFORM_LIBRARY_PREFIX:=lib
+endif
+
+################################################################################
 # ABI_LIB_SUBPATH (conditionally set, immediately assigned)
 #   The ABI_LIB_SUBPATH is a subpath used for locating the final static binary
 #   libraries.  If the ABI_PATH variable is NOT set in the platform-specific
