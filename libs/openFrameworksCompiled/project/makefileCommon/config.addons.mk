@@ -13,12 +13,11 @@ EMPTY_SPACE +=
 TRUE := NON_EMPTY_STRING
 FALSE := 
 
-ESCAPED_SPACE := <?--SPACE--?>
-ESCAPED_NEW_LINE := <?--NEW_LINE--?>
 ESCAPED_DELIMITER := <?--DELIMITER--?>
 
 FIND_TYPE_DIRECTORY:=d
 FIND_TYPE_FILE:=f
+
 
 ################################################################################
 # FUNCTION FUNC_DO_NOTHING
@@ -464,59 +463,58 @@ endef
 ################################################################################
 
 define FUNC_BUILD_ADDON_DEPENDENCY_LIST
-                                                                               \
     $(eval THIS_ADDON:=$(strip $1))                                            \
                                                                                \
-    $(call FUNC_PARSE_ADDON_CONFIG_MK,$(THIS_ADDON))                           \
+    $(call                                                                     \
+        FUNC_PARSE_ADDON_CONFIG_MK,$(THIS_ADDON)                               \
+    )                                                                          \
                                                                                \
     $(eval ADDON_DEPENDENCIES:=$(strip $(ADDON_DEPENDENCIES)))                 \
                                                                                \
-    $(if                                                                       \
-        $(ADDON_DEPENDENCIES),                                                 \
-        $(eval ADDON_DEPENDENCIES_ESCAPED_STRING:=                             \
-            $(subst $(EMPTY_SPACE),$(ESCAPED_SPACE),$(THIS_ADDON) $(ADDON_DEPENDENCIES))\
-        )                                                                      \
-        $(eval ADDON_DEPENDENCIES_ESCAPED_STRING:=                             \
-            $(addsuffix                                                        \
-                $(ESCAPED_NEW_LINE),                                           \
-                $(ADDON_DEPENDENCIES_ESCAPED_STRING)                           \
-            )                                                                  \
-        )                                                                      \
-                                                                               \
-        $(if                                                                   \
-            $(PROJECT_ADDON_DEPENDENCIES_ESCAPED_STRINGS),                     \
-            $(eval PROJECT_ADDON_DEPENDENCIES_ESCAPED_STRINGS:=                \
-                $(addsuffix                                                    \
-                    $(ADDON_DEPENDENCIES_ESCAPED_STRING),                      \
-                    $(PROJECT_ADDON_DEPENDENCIES_ESCAPED_STRINGS)              \
-                )                                                              \
-            ),                                                                 \
-            $(eval PROJECT_ADDON_DEPENDENCIES_ESCAPED_STRINGS:=                \
-                $(ADDON_DEPENDENCIES_ESCAPED_STRING)                           \
-            )                                                                  \
-        )                                                                      \
+    $(eval PROJECT_ADDON_DEPENDENCY_STACK:=                                    \
+        $(THIS_ADDON) $(PROJECT_ADDON_DEPENDENCY_STACK)                        \
     )                                                                          \
                                                                                \
     $(foreach ADDON_DEPENDENCY,$(ADDON_DEPENDENCIES),                          \
-        $(info --------------$(ADDON_DEPENDENCY)---------------)               \
+                                                                               \
         $(if                                                                   \
             $(filter                                                           \
                 $(ADDON_DEPENDENCY),                                           \
                 $(PROJECT_ADDON_DEPENDENCIES)                                  \
             ),                                                                 \
             $(call FUNC_DO_NOTHING),                                           \
-            $(eval PROJECT_ADDON_DEPENDENCIES:=                                \
-                $(ADDON_DEPENDENCY) $(PROJECT_ADDON_DEPENDENCIES)              \
-            )                                                                  \
-            $(call                                                             \
-                FUNC_BUILD_ADDON_DEPENDENCY_LIST,                              \
-                $(ADDON_DEPENDENCY)                                            \
-            )                                                                  \
+            $(call FUNC_BUILD_ADDON_DEPENDENCY_LIST, $(ADDON_DEPENDENCY))      \
+        )                                                                      \
+                                                                               \
+        $(eval PROJECT_ADDON_DEPENDENCIES_PAIRS:=                              \
+                $(PROJECT_ADDON_DEPENDENCIES_PAIRS)                            \
+                $(firstword $(PROJECT_ADDON_DEPENDENCY_STACK))                 \
+                $(ADDON_DEPENDENCY))                                           \
+    )                                                                          \
+                                                                               \
+    $(if                                                                       \
+        $(filter                                                               \
+            $(firstword $(PROJECT_ADDON_DEPENDENCY_STACK)),                    \
+            $(PROJECT_ADDON_DEPENDENCIES)                                      \
+        ),                                                                     \
+        $(call FUNC_DO_NOTHING),                                               \
+        $(eval PROJECT_ADDON_DEPENDENCIES:=                                    \
+            $(firstword $(PROJECT_ADDON_DEPENDENCY_STACK))                     \
+            $(PROJECT_ADDON_DEPENDENCIES)                                      \
         )                                                                      \
     )                                                                          \
+                                                                               \
+    $(eval PROJECT_ADDON_DEPENDENCY_STACK:=                                    \
+        $(wordlist 2,                                                          \
+            $(words                                                            \
+                $(PROJECT_ADDON_DEPENDENCY_STACK)                              \
+            ),                                                                 \
+            $(PROJECT_ADDON_DEPENDENCY_STACK)                                  \
+        )                                                                      \
+    )                                                                          \
+                                                                               \
 
 endef
-
 
 ################################################################################
 # FUNCTION FUNC_PARSE_ADDON
@@ -667,7 +665,6 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
         $(PLATFORM_REQUIRED_WITHOUT_ALL_REQUESTED_PROJECT_ADDONS)              \
         $(ALL_REQUESTED_PROJECT_ADDONS)
 
-
 ################################################################################
 # REQUESTED_PROJECT_ADDONS (immediately assigned)
 #   Add platform required addons from the platform-specific configuration file 
@@ -681,11 +678,6 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
             $(ALL_REQUESTED_ADDONS)                                            \
         )
 
-
-    $(info ---REQUESTED_PROJECT_ADDONS---)
-    $(foreach v, $(REQUESTED_PROJECT_ADDONS),$(info $(v)))
-    $(info --------------------)
-
 ################################################################################
 # VALID_REQUESTED_PROJECT_ADDONS (immediately assigned)
 #   Compare the list of addons that we have requested to those that are
@@ -697,12 +689,6 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
             $(REQUESTED_PROJECT_ADDONS),                                       \
             $(ALL_INSTALLED_ADDONS)                                            \
         )
-
-
-
-    $(info ---VALID_REQUESTED_PROJECT_ADDONS---)
-    $(foreach v, $(VALID_REQUESTED_PROJECT_ADDONS),$(info $(v)))
-    $(info --------------------)
 
 ################################################################################
 # INVALID_REQUESTED_PROJECT_ADDONS (immediately assigned)
@@ -724,12 +710,6 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
             $(REQUESTED_PROJECT_ADDONS)                                        \
         )
 
-
-    $(info ---INVALID_REQUESTED_PROJECT_ADDONS---)
-    $(foreach v, $(INVALID_REQUESTED_PROJECT_ADDONS),$(info $(v)))
-    $(info --------------------)
-
-
     $(foreach ADDON_TO_CHECK,$(INVALID_REQUESTED_PROJECT_ADDONS),              \
         $(call                                                                 \
             FUNC_INSTALL_ADDON,                                                \
@@ -741,13 +721,14 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 # PROJECT_ADDONS (immediately assigned)
 #   PROJECT_ADDONS is a list of the addons that will be compiled for this
 #   project.  Theses addon directories will be parsed and compiled.
+#   The addons listed in PROEJCT_ADDONS include ONLY the addons listed in 
+#   the project's addons.make file and the relevant platform-specific config
+#   file (e.g. config.osx.defaul.mk).  This list DOES NOT include the 
+#   dependencies defined in addon_config.mk files.  Those dependecnes will be 
+#   processsed and added below.
 ################################################################################
 
     PROJECT_ADDONS:=$(REQUESTED_PROJECT_ADDONS)
-
-        $(info ---FINAL PROJECT ADDONS TO PROCESS---)
-        $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
-        $(info --------------------)
 
     ############################################################################
     # PROCESS PROJECT ADDONS IF THERE ARE ANY
@@ -756,11 +737,10 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
         # a list of all dependencies, unordered, listed once    
         PROJECT_ADDON_DEPENDENCIES:=
-
-        # an escaped string list for tsort that needs to be collapsed into new lines
-        PROJECT_ADDON_DEPENDENCIES_ESCAPED_STRINGS:=
-
-        PROJECT_ADDON_DEPENDENCIES_ORDERED:=
+        # a list of all dependency pairs
+        PROJECT_ADDON_DEPENDENCIES_PAIRS:=
+        # a variable to keep track of the recursive stack
+        PROJECT_ADDON_DEPENDENCY_STACK:=
 
         $(foreach ADDON_TO_CHECK,$(PROJECT_ADDONS),                            \
             $(call                                                             \
@@ -768,9 +748,6 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
                 $(ADDON_TO_CHECK)                                              \
             )                                                                  \
         )
-
-        $(info --------------------PROJECT_ADDON_DEPENDENCIES)
-        $(foreach v, $(PROJECT_ADDON_DEPENDENCIES),$(info $(v)))
 
 
 ################################################################################
@@ -818,16 +795,14 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
         PROJECT_ADDON_DEPENDENCIES_ORDERED :=                                  \
             $(shell                                                            \
-                echo "$(PROJECT_ADDON_DEPENDENCIES_ESCAPED_STRINGS)"           \
-                | sed 's/$(ESCAPED_NEW_LINE)/\                                 \
-                /g'                                                            \
-                | sed 's/$(ESCAPED_SPACE)/ /g'                                 \
+                echo "$(PROJECT_ADDON_DEPENDENCIES_PAIRS)"                     \
                 | tsort                                                        \
                 | tail -r                                                      \
                 | tr '\n' ' '                                                  \
             )
 
-        ALL_KNOWN_DEPENDENCIES := 
+        $(info --------------------PROJECT_ADDON_DEPENDENCIES_ORDERED)
+        $(foreach v, $(PROJECT_ADDON_DEPENDENCIES_ORDERED),$(info $(v)))
 
         ADDITIONAL_DEPENDENCIES :=                                             \
             $(filter-out                                                       \
@@ -835,16 +810,8 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
                 $(PROJECT_ADDON_DEPENDENCIES)                                  \
             )
 
-        # $(info --------------------ADDITIONAL_DEPENDENCIES)
-        # $(foreach v, $(ADDITIONAL_DEPENDENCIES),$(info $(v)))
-
-        $(info --------------------PROJECT_ADDONS)
-        $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
-
-        PROJECT_ADDON_DEPENDENCIES_ORDERED += $(ADDITIONAL_DEPENDENCIES)
-
-        $(info --------------------PROJECT_ADDON_DEPENDENCIES_ORDERED)
-        $(foreach v, $(PROJECT_ADDON_DEPENDENCIES_ORDERED),$(info $(v)))
+        PROJECT_ADDON_DEPENDENCIES_ORDERED :=                                  \
+            $(ADDITIONAL_DEPENDENCIES) $(PROJECT_ADDON_DEPENDENCIES_ORDERED)
 
         $(foreach ADDON_TO_PARSE,                                              \
             $(PROJECT_ADDON_DEPENDENCIES_ORDERED),                             \
