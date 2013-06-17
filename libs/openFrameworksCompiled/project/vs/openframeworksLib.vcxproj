@@ -125,6 +125,7 @@
     <ClInclude Include="..\..\..\openFrameworks\types\ofPoint.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofRectangle.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofTypes.h" />
+    <ClInclude Include="..\..\..\openFrameworks\types\ofXml.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFileUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofLog.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="..\..\..\openFrameworks\types\ofParameter.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofParameterGroup.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\types\ofXml.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofLog.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofMatrixStack.cpp" />
