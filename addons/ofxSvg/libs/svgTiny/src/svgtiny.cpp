@@ -1181,7 +1181,6 @@ void svgtiny_parse_transform_attributes(Poco::XML::Element *node,
 				&state->ctm.c, &state->ctm.d,
 				&state->ctm.e, &state->ctm.f);
 		//xmlFree(transform);
-        free(transform);
 	}
 }
 
