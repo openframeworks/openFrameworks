@@ -7,6 +7,7 @@
 
 #include "ofMain.h"
 #include "assimp.h"
+#include "ofxAssimpTexture.h"
 
 class aiMesh;
 
@@ -17,11 +18,14 @@ public:
 	ofxAssimpMeshHelper();
     ~ofxAssimpMeshHelper();
     
+    bool hasTexture();
+    ofTexture * getTexturePtr();
+    
     aiMesh * mesh; // pointer to the aiMesh we represent.
 
     ofVbo vbo;
     
-    ofTexture texture;
+    ofxAssimpTexture * assimpTexture;
     vector<ofIndexType> indices;
     
     ofMaterial material;
