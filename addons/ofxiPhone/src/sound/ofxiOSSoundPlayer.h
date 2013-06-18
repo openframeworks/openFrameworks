@@ -1,9 +1,7 @@
 //
 //  ofxiOSSoundPlayer.h
-//  emptyExample
-//
 //  Created by Lukasz Karluk on 14/11/12.
-//
+//  http://julapy.com/blog
 //
 
 #pragma once

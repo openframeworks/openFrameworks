@@ -1,116 +1,154 @@
 #include "testApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){	
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+void testApp::setup(){
+    
+    ofBackground(255);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	
-	//this is to scale down the example for the iphone screen
-	appIphoneScale = 1.0;
-
 	synth.loadSound("sounds/synth.caf");
+    synth.setVolume(0.75);
+    
 	beats.loadSound("sounds/1085.caf");
-	vocals.loadSound("sounds/Violet.caf");
-	synth.setVolume(0.75f);
-	beats.setVolume(0.75f);
-	vocals.setVolume(0.5f);
-	font.loadFont("Sudbury_Basin_3D.ttf", 18);
-	beats.setMultiPlay(false);
-	vocals.setMultiPlay(true);
-	synth.setMultiPlay(true);
-
+    beats.setVolume(0.75);
+    
+    // in iOS, openFrameworks uses ofxiOSSoundPlayer to play sound.
+    // ofxiOSSoundPlayer is a wrapper for AVSoundPlayer which uses AVFoundation to play sound.
+    // you can use AVSoundPlayer directly using objective-c in the same way you use ofxiOSSoundPlayer,
+    // and many of the function names are the same or similar.
+    // the below code demonstrates how the AVSoundPlayer can be used inside your app.
+    
+    vocals = [[AVSoundPlayer alloc] init];
+    [vocals loadWithFile:@"sounds/Violet.caf"];
+    [vocals volume:0.5];
+    
+    font.loadFont("fonts/Sudbury_Basin_3D.ttf", 18);
 }
-
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofBackground(255,255,255);
-	
-	// update the sound playing system:
-	ofSoundUpdate();
+	//
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
-	ofScale(appIphoneScale, appIphoneScale, 1.0);
-
+    
 	char tempStr[255];
 	
-	// draw the background colors:
-	float widthDiv = ofGetWidth() / 3.0f;
+	float sectionWidth = ofGetWidth() / 3.0f;
+
+    // draw the background colors:
 	ofSetHexColor(0xeeeeee);
-	ofRect(0,0,widthDiv,ofGetHeight()); 
+	ofRect(0, 0, sectionWidth, ofGetHeight());
 	ofSetHexColor(0xffffff);
-	ofRect(widthDiv,0,widthDiv,ofGetHeight()); 
+	ofRect(sectionWidth, 0, sectionWidth, ofGetHeight());
 	ofSetHexColor(0xdddddd);
-	ofRect(widthDiv*2,0,widthDiv,ofGetHeight()); 
-	
-
+	ofRect(sectionWidth * 2, 0, sectionWidth, ofGetHeight());
+    
 	//---------------------------------- synth:
-	if (synth.getIsPlaying()) ofSetHexColor(0xFF0000);
-	else ofSetHexColor(0x000000);
-	font.drawString("synth !!", 50,50);
+	if(synth.getIsPlaying()) {
+        ofSetHexColor(0xFF0000);
+    } else {
+        ofSetHexColor(0x000000);
+    }
+	font.drawString("synth !!", 10,50);
 	
-	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play\npct done: %f\nspeed: %f\npan: %f", synth.getPosition(),  synth.getSpeed(), synth.getPan());
-	ofDrawBitmapString(tempStr, 50,ofGetHeight()-50);
-
-
-
+	ofSetColor(0);
+	sprintf(tempStr, "click to play\nposition: %f\nspeed: %f\npan: %f", synth.getPosition(),  synth.getSpeed(), synth.getPan());
+	ofDrawBitmapString(tempStr, 10, ofGetHeight() - 50);
+    
 	//---------------------------------- beats:
-	if (beats.getIsPlaying()) ofSetHexColor(0xFF0000);
-	else ofSetHexColor(0x000000);
-	font.drawString("beats !!", widthDiv+50,50);
-
+	if (beats.getIsPlaying()) {
+        ofSetHexColor(0xFF0000);
+    } else {
+        ofSetHexColor(0x000000);
+    }
+	font.drawString("beats !!", sectionWidth + 10, 50);
+    
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click and drag\npct done: %f\nspeed: %f", beats.getPosition(),  beats.getSpeed());
-	ofDrawBitmapString(tempStr, widthDiv+50,ofGetHeight()-50);
-
+	sprintf(tempStr, "click to play\nposition: %f\nspeed: %f\npan: %f", beats.getPosition(),  beats.getSpeed(), beats.getPan());
+	ofDrawBitmapString(tempStr, sectionWidth + 10, ofGetHeight() - 50);
+    
 	//---------------------------------- vocals:
-	if (vocals.getIsPlaying()) ofSetHexColor(0xFF0000);
-	else ofSetHexColor(0x000000);
-	font.drawString("vocals !!", widthDiv*2+50,50);
-
+	if ([vocals isPlaying]) {
+        ofSetHexColor(0xFF0000);
+    } else {
+        ofSetHexColor(0x000000);
+    }
+	font.drawString("vocals !!", sectionWidth * 2 + 10, 50);
+    
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play (multiplay)\npct done: %f\nspeed: %f", vocals.getPosition(),  vocals.getSpeed());
-	ofDrawBitmapString(tempStr, widthDiv*2+50,ofGetHeight()-50);
-		
+	sprintf(tempStr, "click to play\nposition: %f\nspeed: %f\npan: %f", [vocals position],  [vocals speed], [vocals pan]);
+	ofDrawBitmapString(tempStr, sectionWidth * 2 + 10, ofGetHeight() - 50);
 }
 
 //--------------------------------------------------------------
 void testApp::exit(){
-    
+    [vocals release];
+    vocals = nil;
 }
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
-	if( touch.id == 0 ){
-		float widthStep = ofGetWidth() / 3.0f;
-		if (touch.x < widthStep){
-			float pct = touch.x / widthStep;
-			synth.play();
-			synth.setSpeed( 0.1f + ((float)(ofGetHeight() - touch.y) / (float)ofGetHeight())*10);
-			synth.setPan(pct);
-		} else if (touch.x >= widthStep && touch.x < widthStep*2){
-			beats.play();
-		} else {
-			vocals.play();
-			vocals.setSpeed( 0.1f + ((float)(ofGetHeight() - touch.y) / (float)ofGetHeight())*3);
-			vocals.setPan((float)touch.x / (float)ofGetWidth());	
-		}
-	}
+	if( touch.id != 0 ){
+        return;
+    }
+		
+    float sectionWidth = ofGetWidth() / 3.0f;
+    float speed = ofMap(touch.y, ofGetHeight(), 0, 0.5, 2.0, true);
+    float pan = 0;
+    
+    if (touch.x < sectionWidth){
+        pan = ofMap(touch.x, 0, sectionWidth, -1.0, 1.0, true);
+        
+        synth.play();
+        synth.setSpeed(speed);
+        synth.setPan(pan);
+        
+    } else if(touch.x < sectionWidth * 2) {
+        pan = ofMap(touch.x, sectionWidth, sectionWidth * 2, -1.0, 1.0, true);
+        
+        beats.play();
+        beats.setSpeed(speed);
+        beats.setPan(pan);
+        
+    } else if(touch.x < sectionWidth * 3) {
+        pan = ofMap(touch.x, sectionWidth * 2, sectionWidth * 3, -1.0, 1.0, true);
+        
+        [vocals play];
+        [vocals speed:speed];
+        [vocals pan:pan];
+    }
 }
 
 //--------------------------------------------------------------
 void testApp::touchMoved(ofTouchEventArgs & touch){
-	if( touch.id == 0 ){
-		// continuously control the speed of the beat sample via drag, 
-		// when in the "beat" region:
-		float widthStep = ofGetWidth() / 3.0f;
-		if (touch.x >= widthStep && touch.x < widthStep*2){
-			beats.setSpeed( 0.5f + ((float)(ofGetHeight() - touch.y) / (float)ofGetHeight())*1.0f);
-		} 
-	}
+	if( touch.id != 0 ){
+        return;
+    }
+    
+    float sectionWidth = ofGetWidth() / 3.0f;
+    float speed = ofMap(touch.y, ofGetHeight(), 0, 0.5, 2.0, true);
+    float pan = 0;
+
+    if (touch.x < sectionWidth){
+        pan = ofMap(touch.x, 0, sectionWidth, -1.0, 1.0, true);
+        
+        synth.setSpeed(speed);
+        synth.setPan(pan);
+
+    } else if(touch.x < sectionWidth * 2) {
+        pan = ofMap(touch.x, sectionWidth, sectionWidth * 2, -1.0, 1.0, true);
+        
+        beats.setSpeed(speed);
+        beats.setPan(pan);
+
+    } else if(touch.x < sectionWidth * 3) {
+        pan = ofMap(touch.x, sectionWidth * 2, sectionWidth * 3, -1.0, 1.0, true);
+        
+        [vocals speed:speed];
+        [vocals pan:pan];
+    }
 }
 
 //--------------------------------------------------------------
@@ -120,12 +158,12 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){
-
+    
 }
 
 //--------------------------------------------------------------
 void testApp::touchCancelled(ofTouchEventArgs & touch){
-
+    
 }
 
 //--------------------------------------------------------------

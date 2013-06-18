@@ -1,7 +1,7 @@
 //
 //  AVSoundPlayer.h
-//
 //  Created by lukasz karluk on 14/06/12.
+//  http://julapy.com/blog
 //
 
 #import <Foundation/Foundation.h>
