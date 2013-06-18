@@ -72,10 +72,10 @@ enum ofxiPhoneDeviceType {
 
 
 // possible values for iPhoneSetOrientation or iPhoneGetOrientation
-#define  OFXIPHONE_ORIENTATION_PORTRAIT      OF_ORIENTATION_DEFAULT  // UIDeviceOrientationPortrait
-#define OFXIPHONE_ORIENTATION_UPSIDEDOWN    OF_ORIENTATION_180      // UIDeviceOrientationPortraitUpsideDown
-#define OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT  OF_ORIENTATION_90_RIGHT // UIDeviceOrientationLandscapeRight
-#define OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT  OF_ORIENTATION_90_LEFT  // UIDeviceOrientationLandscapeLeft
+#define OFXIPHONE_ORIENTATION_PORTRAIT          OF_ORIENTATION_DEFAULT  // UIDeviceOrientationPortrait
+#define OFXIPHONE_ORIENTATION_UPSIDEDOWN        OF_ORIENTATION_180      // UIDeviceOrientationPortraitUpsideDown
+#define OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT   OF_ORIENTATION_90_RIGHT // UIDeviceOrientationLandscapeRight
+#define OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT    OF_ORIENTATION_90_LEFT  // UIDeviceOrientationLandscapeLeft
  
 // whether device has audio in
 bool ofxiPhoneHasAudioIn();
@@ -150,10 +150,8 @@ void ofxiPhoneUnlockGLContext();
 void ofxiPhoneEnableLoopInThread();
 
 
-// set orientation of device (affects statusbar, opengl viewport, touch positions)
-void ofxiPhoneSetOrientation(ofOrientation orientation);
-UIDeviceOrientation ofxiPhoneGetOrientation();
-
+OF_DEPRECATED_MSG("ofxiPhoneSetOrientation is deprecated, use ofSetOrientation instead.", void ofxiPhoneSetOrientation(ofOrientation orientation));
+OF_DEPRECATED_MSG("ofxiPhoneGetOrientation is deprecated, use ofGetOrientation instead.", UIDeviceOrientation ofxiPhoneGetOrientation());
 
 //void iPhoneEnableMultitouch();
 

@@ -276,7 +276,7 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 	if( [grabber initCapture:fps capWidth:w capHeight:h] ) {
 		grabber->grabberPtr = this;
 		
-		if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait || ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown) {
+		if(ofGetOrientation() == OF_ORIENTATION_DEFAULT || ofGetOrientation() == OF_ORIENTATION_180) {
 			width = grabber->height;
 			height = grabber->width;
 		}
@@ -323,21 +323,21 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	// Uses the bitmap creation function provided by the Core Graphics framework. 
 	spriteContext = CGBitmapContextCreate(pixelsTmp, width, height, CGImageGetBitsPerComponent(ref), width * 4, CGImageGetColorSpace(ref), kCGImageAlphaPremultipliedLast);
 	
-	if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait) {
+	if(ofGetOrientation() == OF_ORIENTATION_DEFAULT) {
         transform = CGAffineTransformMakeTranslation(0.0, height);
         transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
 			
         CGContextConcatCTM(spriteContext, transform);
         CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
 	}
-	else if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown) {
+	else if(ofGetOrientation() == OF_ORIENTATION_180) {
         transform = CGAffineTransformMakeTranslation(width, 0.0);
         transform = CGAffineTransformRotate(transform, M_PI / 2.0);
         
         CGContextConcatCTM(spriteContext, transform);
         CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
 	}
-	else if(ofxiPhoneGetOrientation() == UIDeviceOrientationLandscapeLeft) {
+	else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
 		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
 	}
 	else { // landscape RIGHT
