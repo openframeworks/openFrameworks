@@ -660,10 +660,10 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 	ofLog(OF_LOG_VERBOSE,"button: %i",button);
 
 	if (state == GLFW_PRESS) {
-		ofNotifyMousePressed(ofAppPtr->mouseX, ofAppPtr->mouseY, button);
+		ofNotifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);
 		instance->buttonPressed=true;
 	} else if (state == GLFW_RELEASE) {
-		ofNotifyMouseReleased(ofAppPtr->mouseX, ofAppPtr->mouseY, button);
+		ofNotifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button);
 		instance->buttonPressed=false;
 	}
 	instance->buttonInUse = button;
@@ -807,16 +807,9 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
-	if(ofAppPtr)ofAppPtr->windowResized(w,h);
 	instance->windowW = w;
 	instance->windowH = h;
-	#ifdef OF_USING_POCO
-		static ofResizeEventArgs resizeEventArgs;
-
-		resizeEventArgs.width = w;
-		resizeEventArgs.height = h;
-		ofNotifyEvent( ofEvents().windowResized, resizeEventArgs );
-	#endif
+	ofNotifyWindowResized(w, h);
 
 	instance->nFramesSinceWindowResized = 0;
 }

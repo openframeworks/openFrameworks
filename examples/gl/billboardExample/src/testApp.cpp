@@ -34,7 +34,7 @@ void testApp::setup() {
 	// load the bilboard shader 
 	// this is used to change the
 	// size of the particle
-	if(ofGetProgrammableGLRenderer()){
+	if(ofGetGLProgrammableRenderer()){
 		billboardShader.load("shadersGL3/Billboard");
 	}else{
 		billboardShader.load("shadersGL2/Billboard");
