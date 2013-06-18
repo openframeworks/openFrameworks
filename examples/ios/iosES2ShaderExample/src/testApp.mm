@@ -1,5 +1,4 @@
 #include "testApp.h"
-#include "ofGLES2Renderer.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){

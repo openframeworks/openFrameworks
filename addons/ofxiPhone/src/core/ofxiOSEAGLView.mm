@@ -163,7 +163,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         es2Renderer->startRender();
     }
 
-    ofViewport(ofRectangle(0, 0, windowSize->x, windowSize->y));
+    ofViewport(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()));
     
     float * bgPtr = ofBgColorPtr();
     bool bClearAuto = ofbClearBg();
