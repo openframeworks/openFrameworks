@@ -549,7 +549,8 @@ bool ofSerial::writeByte(unsigned char singleByte){
 			if ( errno == EAGAIN )
 				return 0;
 			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port, errno %i (%s)", errno, strerror(errno));
-			 return OF_SERIAL_ERROR;
+			 //return OF_SERIAL_ERROR; // this looks wrong.
+			 return false;
 		}
 		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
 
@@ -563,7 +564,8 @@ bool ofSerial::writeByte(unsigned char singleByte){
 		DWORD written = 0;
 		if(!WriteFile(hComm, tmpByte, 1, &written,0)){
 			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
-			 return OF_SERIAL_ERROR;;
+			 //return OF_SERIAL_ERROR; // this looks wrong.
+			 return false;
 		}
 
 		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");

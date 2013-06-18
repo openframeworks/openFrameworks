@@ -251,7 +251,6 @@ static string osxFontPathByName( string fontname ){
 static map<string, string> fonts_table;
 // read font linking information from registry, and store in std::map
 void initWindows(){
-    ofLogError() << "init windows";
 	LONG l_ret;
 
 	const wchar_t *Fonts = L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
