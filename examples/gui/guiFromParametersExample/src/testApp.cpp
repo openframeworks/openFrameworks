@@ -5,7 +5,11 @@
 void testApp::setup(){
 	ofSetVerticalSync(true);
 	
-	gui.setup("panel"); // most of the time you don't need a name
+	// we add this listener before setting up so the initial circle resolution is correct
+	circleResolution.addListener(this, &testApp::circleResolutionChanged);
+	ringButton.addListener(this,&testApp::ringButtonPressed);
+
+	gui.setup("panel"); // most of the time you don't need a name but don't forget to call setup
 	gui.add(filled.set("bFill", true));
 	gui.add(radius.set( "radius", 140, 10, 300 ));
 	gui.add(center.set("center",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
@@ -15,8 +19,6 @@ void testApp::setup(){
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.set("screenSize", ""));
 	
-	ringButton.addListener(this,&testApp::ringButtonPressed);
-
 	bHide = true;
 
 	ring.loadSound("ring.wav");
@@ -28,13 +30,17 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
+void testApp::circleResolutionChanged(int & circleResolution){
+	ofSetCircleResolution(circleResolution);
+}
+
+//--------------------------------------------------------------
 void testApp::ringButtonPressed(){
 	ring.play();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofSetCircleResolution(circleResolution);
 }
 
 //--------------------------------------------------------------
@@ -55,8 +61,6 @@ void testApp::draw(){
 		ofCircle((ofVec2f)center, radius );
 	}
 	
-	// auto draw?
-	// should the gui control hiding?
 	if( bHide ){
 		gui.draw();
 	}

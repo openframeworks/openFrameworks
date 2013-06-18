@@ -95,7 +95,7 @@ public:
     }
     
     // templated to be anything
-    template <class T = string> void addValue(const string& path, T data, bool createEntirePath = false)
+    template <class T> void addValue(const string& path, T data, bool createEntirePath = false)
     {
         stringstream str;
         str << ofToString(data);
@@ -191,7 +191,7 @@ public:
 
     
     // templated to be anything
-    template <class T = string> T getValue(const string& path)
+    template <class T> T getValue(const string& path)
     {
         T data;
         
