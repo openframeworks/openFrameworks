@@ -46,6 +46,7 @@ public:
     bool            setAttribute(const string& path, const string& value);
     map<string, string> getAttributes() const;
     int             getNumChildren() const;
+    int             getNumChildren(const string& path) const;
 
     
     bool            clearAttributes(const string& path);
@@ -67,7 +68,6 @@ public:
     bool            setToPrevSibling();
     
     bool            loadFromBuffer( const string& buffer );
-
     
     string          toString() const;
     

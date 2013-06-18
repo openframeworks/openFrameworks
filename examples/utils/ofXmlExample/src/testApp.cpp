@@ -243,7 +243,7 @@ void testApp::mousePressed(int x, int y, int button){
     
     // use a compound path: STROKE[2] for example to set the current element
     // to the 3rd stroke tag
-    XML.setTo("STROKE[" + ofToString(strokes) + "]");
+    XML.setTo("STROKE[" + ofToString(strokes - 1) + "]");
     
 	xmlStructure	= "<STROKE>\n";
     
@@ -275,9 +275,9 @@ void testApp::mouseReleased(int x, int y, int button){
         
         // now add a RED, GREEN, and BLUE to it.
         
-        XML.setValue("RED", ofToString(red));
-        XML.setValue("GREEN", ofToString(green));
-        XML.setValue("BLUE", ofToString(blue));
+        XML.addValue("RED", ofToString(red));
+        XML.addValue("GREEN", ofToString(green));
+        XML.addValue("BLUE", ofToString(blue));
         
     }
 }
