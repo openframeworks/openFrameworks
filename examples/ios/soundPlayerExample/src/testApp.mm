@@ -6,10 +6,10 @@ void testApp::setup(){
     ofBackground(255);
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	
-	synth.loadSound("sounds/synth.caf");
+	synth.loadSound("sounds/synth.m4a"); // compressed mp3 format.
     synth.setVolume(0.75);
     
-	beats.loadSound("sounds/1085.caf");
+	beats.loadSound("sounds/1085.caf"); // uncompressed ios format.
     beats.setVolume(0.75);
     
     // in iOS, openFrameworks uses ofxiOSSoundPlayer to play sound.
@@ -19,7 +19,7 @@ void testApp::setup(){
     // the below code demonstrates how the AVSoundPlayer can be used inside your app.
     
     vocals = [[AVSoundPlayer alloc] init];
-    [vocals loadWithFile:@"sounds/Violet.caf"];
+    [vocals loadWithFile:@"sounds/Violet.wav"]; // uncompressed wav format.
     [vocals volume:0.5];
     
     font.loadFont("fonts/Sudbury_Basin_3D.ttf", 18);
