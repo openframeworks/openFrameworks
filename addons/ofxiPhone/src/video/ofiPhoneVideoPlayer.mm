@@ -616,17 +616,23 @@ void ofiPhoneVideoPlayer::setFrame(int frame) {
         return;
     }
 
-    return; // not supported yet.
+    [((AVFoundationVideoPlayer *)videoPlayer) setFrame:frame];
 }
 
 //----------------------------------------
 int	ofiPhoneVideoPlayer::getCurrentFrame() {
-    return -1; // not supported yet.
+    if(videoPlayer == NULL){
+        return 0;
+    }
+    return [((AVFoundationVideoPlayer *)videoPlayer) getCurrentFrameNum];
 }
 
 //----------------------------------------
 int	ofiPhoneVideoPlayer::getTotalNumFrames() {
-    return -1; // not supported yet.
+    if(videoPlayer == NULL){
+        return 0;
+    }
+    return [((AVFoundationVideoPlayer *)videoPlayer) getDurationInFrames];
 }
 
 //----------------------------------------
@@ -653,12 +659,14 @@ void ofiPhoneVideoPlayer::firstFrame() {
 
 //----------------------------------------
 void ofiPhoneVideoPlayer::nextFrame() {
-    return; // not supported yet.
+    int nextFrameNum = ofClamp(getCurrentFrame() + 1, 0, getTotalNumFrames());
+    setFrame(nextFrameNum);
 }
 
 //----------------------------------------
 void ofiPhoneVideoPlayer::previousFrame() {
-    return; // not supported yet.
+    int prevFrameNum = ofClamp(getCurrentFrame() - 1, 0, getTotalNumFrames());
+    setFrame(prevFrameNum);
 }
 
 //----------------------------------------
