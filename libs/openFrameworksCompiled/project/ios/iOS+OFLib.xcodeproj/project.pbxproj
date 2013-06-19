@@ -149,9 +149,7 @@
 		E4F76E71176CB27200798745 /* ofVec4f.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DCD176CB27200798745 /* ofVec4f.h */; };
 		E4F76E72176CB27200798745 /* ofVectorMath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DCE176CB27200798745 /* ofVectorMath.h */; };
 		E4F76E73176CB27200798745 /* ofMain.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DCF176CB27200798745 /* ofMain.h */; };
-		E4F76E74176CB27200798745 /* ofBaseSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DD1176CB27200798745 /* ofBaseSoundPlayer.cpp */; };
 		E4F76E75176CB27200798745 /* ofBaseSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DD2176CB27200798745 /* ofBaseSoundPlayer.h */; };
-		E4F76E76176CB27200798745 /* ofBaseSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DD3176CB27200798745 /* ofBaseSoundStream.cpp */; };
 		E4F76E77176CB27200798745 /* ofBaseSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */; };
 		E4F76E80176CB27200798745 /* ofSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */; };
 		E4F76E81176CB27200798745 /* ofSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DDE176CB27200798745 /* ofSoundPlayer.h */; };
@@ -165,7 +163,6 @@
 		E4F76E89176CB27200798745 /* ofParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DE7176CB27200798745 /* ofParameter.h */; };
 		E4F76E8A176CB27200798745 /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DE8176CB27200798745 /* ofParameterGroup.cpp */; };
 		E4F76E8B176CB27200798745 /* ofParameterGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DE9176CB27200798745 /* ofParameterGroup.h */; };
-		E4F76E8C176CB27200798745 /* ofPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DEA176CB27200798745 /* ofPoint.cpp */; };
 		E4F76E8D176CB27200798745 /* ofPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DEB176CB27200798745 /* ofPoint.h */; };
 		E4F76E8E176CB27200798745 /* ofRectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DEC176CB27200798745 /* ofRectangle.cpp */; };
 		E4F76E8F176CB27200798745 /* ofRectangle.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DED176CB27200798745 /* ofRectangle.h */; };
@@ -344,9 +341,7 @@
 		E4F76DCD176CB27200798745 /* ofVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVec4f.h; sourceTree = "<group>"; };
 		E4F76DCE176CB27200798745 /* ofVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVectorMath.h; sourceTree = "<group>"; };
 		E4F76DCF176CB27200798745 /* ofMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMain.h; sourceTree = "<group>"; };
-		E4F76DD1176CB27200798745 /* ofBaseSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundPlayer.cpp; sourceTree = "<group>"; };
 		E4F76DD2176CB27200798745 /* ofBaseSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundPlayer.h; sourceTree = "<group>"; };
-		E4F76DD3176CB27200798745 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
 		E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundStream.h; sourceTree = "<group>"; };
 		E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundPlayer.cpp; sourceTree = "<group>"; };
 		E4F76DDE176CB27200798745 /* ofSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundPlayer.h; sourceTree = "<group>"; };
@@ -360,7 +355,6 @@
 		E4F76DE7176CB27200798745 /* ofParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameter.h; sourceTree = "<group>"; };
 		E4F76DE8176CB27200798745 /* ofParameterGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameterGroup.cpp; sourceTree = "<group>"; };
 		E4F76DE9176CB27200798745 /* ofParameterGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameterGroup.h; sourceTree = "<group>"; };
-		E4F76DEA176CB27200798745 /* ofPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPoint.cpp; sourceTree = "<group>"; };
 		E4F76DEB176CB27200798745 /* ofPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPoint.h; sourceTree = "<group>"; };
 		E4F76DEC176CB27200798745 /* ofRectangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRectangle.cpp; sourceTree = "<group>"; };
 		E4F76DED176CB27200798745 /* ofRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRectangle.h; sourceTree = "<group>"; };
@@ -789,9 +783,7 @@
 		E4F76DD0176CB27200798745 /* sound */ = {
 			isa = PBXGroup;
 			children = (
-				E4F76DD1176CB27200798745 /* ofBaseSoundPlayer.cpp */,
 				E4F76DD2176CB27200798745 /* ofBaseSoundPlayer.h */,
-				E4F76DD3176CB27200798745 /* ofBaseSoundStream.cpp */,
 				E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */,
 				E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */,
 				E4F76DDE176CB27200798745 /* ofSoundPlayer.h */,
@@ -812,7 +804,6 @@
 				E4F76DE7176CB27200798745 /* ofParameter.h */,
 				E4F76DE8176CB27200798745 /* ofParameterGroup.cpp */,
 				E4F76DE9176CB27200798745 /* ofParameterGroup.h */,
-				E4F76DEA176CB27200798745 /* ofPoint.cpp */,
 				E4F76DEB176CB27200798745 /* ofPoint.h */,
 				E4F76DEC176CB27200798745 /* ofRectangle.cpp */,
 				E4F76DED176CB27200798745 /* ofRectangle.h */,
@@ -1043,15 +1034,12 @@
 				E4F76E6B176CB27200798745 /* ofQuaternion.cpp in Sources */,
 				E4F76E6D176CB27200798745 /* ofVec2f.cpp in Sources */,
 				E4F76E70176CB27200798745 /* ofVec4f.cpp in Sources */,
-				E4F76E74176CB27200798745 /* ofBaseSoundPlayer.cpp in Sources */,
-				E4F76E76176CB27200798745 /* ofBaseSoundStream.cpp in Sources */,
 				E4F76E80176CB27200798745 /* ofSoundPlayer.cpp in Sources */,
 				E4F76E82176CB27200798745 /* ofSoundStream.cpp in Sources */,
 				E4F76E84176CB27200798745 /* ofBaseTypes.cpp in Sources */,
 				E4F76E86176CB27200798745 /* ofColor.cpp in Sources */,
 				E4F76E88176CB27200798745 /* ofParameter.cpp in Sources */,
 				E4F76E8A176CB27200798745 /* ofParameterGroup.cpp in Sources */,
-				E4F76E8C176CB27200798745 /* ofPoint.cpp in Sources */,
 				E4F76E8E176CB27200798745 /* ofRectangle.cpp in Sources */,
 				E4F76E92176CB27200798745 /* ofFileUtils.cpp in Sources */,
 				E4F76E94176CB27200798745 /* ofLog.cpp in Sources */,
