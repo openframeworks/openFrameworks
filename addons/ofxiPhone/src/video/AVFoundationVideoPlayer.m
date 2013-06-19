@@ -55,7 +55,7 @@ NSString * const kCurrentItemKey	= @"currentItem";
     CMTime currentTime;
     float volume;
     float speed;
-    float rateBeforeSeek;
+    float frameRate;
 
     NSInteger videoWidth;
     NSInteger videoHeight;
@@ -109,6 +109,7 @@ static const NSString * ItemStatusContext;
         currentTime = kCMTimeZero;
         volume = 1;
         speed = 1;
+        frameRate = 0;
         
         videoWidth = 0;
         videoHeight = 0;
@@ -206,7 +207,6 @@ static const NSString * ItemStatusContext;
             if(status == AVKeyValueStatusLoaded) {
                 
                 duration = [self.asset duration];
-
                 if(CMTimeCompare(duration, kCMTimeZero) == 0) {
                     return; // duration is zero.
                 }
@@ -233,6 +233,12 @@ static const NSString * ItemStatusContext;
                 playerViewFrame.size.width = videoWidth;
                 playerViewFrame.size.height = videoHeight;
                 self.playerView.frame = playerViewFrame;
+                
+                NSArray * videoTracks = [self.asset tracksWithMediaType:AVMediaTypeVideo];
+                if([videoTracks count] > 0) {
+                    AVAssetTrack * track = [videoTracks objectAtIndex:0];
+                    frameRate = track.nominalFrameRate;
+                }
                 
                 //------------------------------------------------------------ create player item.
                 self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
@@ -592,9 +598,26 @@ static const NSString * ItemStatusContext;
     return CMTimeGetSeconds(duration);
 }
 
+- (float)getFrameRate{
+    return frameRate;
+}
+
+- (int)getDurationInFrames{
+    return [self getDurationInSec] * [self getFrameRate];
+}
+
+- (int)getCurrentFrameNum{
+    return [self getCurrentTimeInSec] * [self getFrameRate];
+}
+
 - (void)setPosition:(float)position {
     double time = [self getDurationInSec] * position;
     [self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+}
+
+- (void)setFrame:(int)frame{
+    float position = frame / (float)[self getDurationInFrames];
+    [self setPosition:position];
 }
 
 - (float)getPosition {

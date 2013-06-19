@@ -11,7 +11,7 @@ void testApp::setup(){
 	#ifdef TARGET_OPENGLES
 	shader.load("shaders_gles/noise.vert","shaders_gles/noise.frag");
 	#else
-	if(ofGetProgrammableGLRenderer()){
+	if(ofGetGLProgrammableRenderer()){
 		shader.load("shaders_gl3/noise.vert", "shaders_gl3/noise.frag");
 	}else{
 		shader.load("shaders/noise.vert", "shaders/noise.frag");

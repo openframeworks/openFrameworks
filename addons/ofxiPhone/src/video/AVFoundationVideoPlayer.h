@@ -74,6 +74,10 @@
 - (double)getCurrentTimeInSec;
 - (CMTime)getDuration;
 - (double)getDurationInSec;
+- (int)getDurationInFrames;
+- (int)getCurrentFrameNum;
+- (float)getFrameRate;
+- (void)setFrame:(int)frame;
 - (void)setPosition:(float)position;
 - (float)getPosition;
 - (void)setVolume:(float)volume;
