@@ -297,6 +297,16 @@ void ofFile::copyFrom(const ofFile & mom){
 bool ofFile::openStream(Mode _mode, bool binary){
 	mode = _mode;
 	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
+	switch(_mode) {
+		case WriteOnly:
+		case ReadWrite:
+		case Append:
+			ofFilePath::createEnclosingDirectory(path());
+			break;
+		case Reference:
+		case ReadOnly:
+			break;
+	}
 	switch(_mode){
 	 case Reference:
 		 return true;
@@ -312,11 +322,11 @@ bool ofFile::openStream(Mode _mode, bool binary){
 		 fstream::open(path().c_str(), ios::out | binary_mode);
 		 break;
 
-	 case ReadWrite:
+		case ReadWrite:
 		 fstream::open(path().c_str(), ios_base::in | ios_base::out | binary_mode);
 		 break;
 
-	 case Append:
+		case Append:
 		 fstream::open(path().c_str(), ios::out | ios::app | binary_mode);
 		 break;
 	}
@@ -517,6 +527,7 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		myFile.copyTo(path);
 	}
 	catch(Poco::Exception & except){
@@ -546,6 +557,7 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		myFile.moveTo(path);
 	}
 	catch(Poco::Exception & except){
@@ -576,6 +588,7 @@ bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		myFile.renameTo(path);
 	}
 	catch(Poco::Exception & except){
@@ -1299,6 +1312,12 @@ string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 
 	return myPath.parent().toString();
 }
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::createEnclosingDirectory(string filePath, bool bRelativeToData, bool bRecursive) {
+	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath), bRelativeToData, bRecursive);
+}
+
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
