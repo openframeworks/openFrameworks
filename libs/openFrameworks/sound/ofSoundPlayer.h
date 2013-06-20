@@ -34,8 +34,8 @@ void ofSoundShutdown();
 #endif
 
 #ifdef TARGET_OF_IPHONE
-#include "ofxOpenALSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer
+#include "ofxiOSSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
 #endif
 
 #ifdef TARGET_ANDROID
