@@ -165,4 +165,7 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxLabel.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
 </Project>
