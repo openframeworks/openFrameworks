@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	
 	//this is to scale down the example for the iphone screen
 	appIphoneScale = 0.5;

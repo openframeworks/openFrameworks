@@ -72,7 +72,6 @@
 		E4B27C2E10CBEBAB00536013 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9770E8CC7DD009D7055 /* CoreServices.framework */; };
 		E4B27C3010CBEBAB00536013 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9790E8CC7DD009D7055 /* OpenGL.framework */; };
 		E4B27C3110CBEBAB00536013 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */; };
-		E4B5AE1F12D94F9B00BA355D /* ofQtUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */; };
 		E4B5AE2012D94F9B00BA355D /* ofQuickTimeGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */; };
 		E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */; };
 		E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */; };
@@ -234,9 +233,7 @@
 		E4B27ADC10CBE92A00536013 /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoGrabber.h; path = ../../../openFrameworks/video/ofVideoGrabber.h; sourceTree = SOURCE_ROOT; };
 		E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVideoPlayer.cpp; path = ../../../openFrameworks/video/ofVideoPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E4B27ADE10CBE92A00536013 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoPlayer.h; path = ../../../openFrameworks/video/ofVideoPlayer.h; sourceTree = SOURCE_ROOT; };
-		E4B27C1510CBEB8E00536013 /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = openFrameworks.a; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		E4B5AE1412D94F9B00BA355D /* ofQtUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQtUtils.cpp; path = ../../../openFrameworks/video/ofQtUtils.cpp; sourceTree = SOURCE_ROOT; };
-		E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQtUtils.h; path = ../../../openFrameworks/video/ofQtUtils.h; sourceTree = SOURCE_ROOT; };
+		E4B27C1510CBEB8E00536013 /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworks.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimeGrabber.cpp; path = ../../../openFrameworks/video/ofQuickTimeGrabber.cpp; sourceTree = SOURCE_ROOT; };
 		E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQuickTimeGrabber.h; path = ../../../openFrameworks/video/ofQuickTimeGrabber.h; sourceTree = SOURCE_ROOT; };
 		E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRtAudioSoundStream.h; sourceTree = "<group>"; };
@@ -456,8 +453,6 @@
 				E4B27ADC10CBE92A00536013 /* ofVideoGrabber.h */,
 				E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */,
 				E4B27ADE10CBE92A00536013 /* ofVideoPlayer.h */,
-				E4B5AE1412D94F9B00BA355D /* ofQtUtils.cpp */,
-				E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */,
 				E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */,
 				E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */,
 				E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */,
@@ -633,7 +628,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4B5AE1F12D94F9B00BA355D /* ofQtUtils.h in Headers */,
 				E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */,
 				E4F3BA6812F4C4BF002D19BB /* of3dUtils.h in Headers */,
 				E4F3BA6A12F4C4BF002D19BB /* ofCamera.h in Headers */,
