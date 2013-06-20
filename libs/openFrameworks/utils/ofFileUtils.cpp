@@ -1258,6 +1258,11 @@ string ofFilePath::getPathForDirectory(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::removeTrailingSlash(string path){
+#ifdef TARGET_WIN32
+	if(path.length() > 0 && path[path.length() - 2] == '\\'){
+		path = path.substr(0, path.length() - 2);
+	}
+#endif
 	if(path.length() > 0 && path[path.length() - 1] == '/'){
 		path = path.substr(0, path.length() - 1);
 	}
