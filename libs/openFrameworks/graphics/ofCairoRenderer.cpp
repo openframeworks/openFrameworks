@@ -52,6 +52,17 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 			type = IMAGE;
 		}
 	}
+	
+	if(filename != "") {
+		switch(type) {
+			case PDF:
+			case SVG:
+			case IMAGE:
+				ofFilePath::createEnclosingDirectory(filename);	
+			case FROM_FILE_EXTENSION:
+				break;
+		}
+	}
 
 	switch(type){
 	case PDF:
