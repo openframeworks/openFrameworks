@@ -9,31 +9,9 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 	public:
         ofBaseApp() {
             mouseX = mouseY = 0;
-            ofAddListener(ofEvents().setup,this,&ofBaseApp::setup,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().update,this,&ofBaseApp::update,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().draw,this,&ofBaseApp::draw,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().exit,this,&ofBaseApp::exit,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().windowResized,this,&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().keyPressed,this,&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().keyReleased,this,&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().mouseMoved,this,&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().mouseDragged,this,&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().mousePressed,this,&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
-            ofAddListener(ofEvents().mouseReleased,this,&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
         }
 
 		virtual ~ofBaseApp(){
-            ofRemoveListener(ofEvents().setup,this,&ofBaseApp::setup,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().update,this,&ofBaseApp::update,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().draw,this,&ofBaseApp::draw,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().exit,this,&ofBaseApp::exit,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().windowResized,this,&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().keyPressed,this,&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().keyReleased,this,&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().mouseMoved,this,&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().mouseDragged,this,&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().mousePressed,this,&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
-            ofRemoveListener(ofEvents().mouseReleased,this,&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
 		}
 
 		virtual void setup(){}
@@ -59,7 +37,6 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		
 		int mouseX, mouseY;			// for processing heads
 
-	protected:
 		virtual void setup(ofEventArgs & args){
 			setup();
 		}
@@ -103,6 +80,15 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 			mouseX=mouse.x;
 			mouseY=mouse.y;
 			mouseReleased(mouse.x,mouse.y,mouse.button);
+		}
+		virtual void windowEntry(ofEntryEventArgs & entry){
+			windowEntry(entry.state);
+		}
+		virtual void dragged(ofDragInfo & drag){
+			dragEvent(drag);
+		}
+		virtual void messageReceived(ofMessage & message){
+			gotMessage(message);
 		}
 };
 
