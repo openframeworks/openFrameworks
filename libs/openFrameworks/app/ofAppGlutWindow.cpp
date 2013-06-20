@@ -736,15 +736,18 @@ static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, x, y);
     
-    if(button == GLUT_LEFT_BUTTON) {
-        button = OF_MOUSE_BUTTON_LEFT;
-    } else if(button == GLUT_MIDDLE_BUTTON) {
-        button = OF_MOUSE_BUTTON_MIDDLE;
-    } else if(button == GLUT_RIGHT_BUTTON) {
-        button = OF_MOUSE_BUTTON_RIGHT;
-    } else {
-        ofLogWarning("ofAppGlutWindow::mouse_cb") << "Unmapped glut mouse button: " << button;
-    }
+
+	switch(button){
+	case GLUT_LEFT_BUTTON:
+		button = OF_MOUSE_BUTTON_LEFT;
+		break;
+	case GLUT_RIGHT_BUTTON:
+		button = OF_MOUSE_BUTTON_RIGHT;
+		break;
+	case GLUT_MIDDLE_BUTTON:
+		button = OF_MOUSE_BUTTON_MIDDLE;
+		break;
+	}
     
 	if (ofGetFrameNum() > 0){
 		if (state == GLUT_DOWN) {

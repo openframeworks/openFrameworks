@@ -633,6 +633,15 @@ void ofGLRenderer::setLineWidth(float lineWidth){
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::setDepthTest(bool depthTest){
+	if(depthTest) {
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+	}
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::setLineSmoothing(bool smooth){
 	bSmoothHinted = smooth;
 }

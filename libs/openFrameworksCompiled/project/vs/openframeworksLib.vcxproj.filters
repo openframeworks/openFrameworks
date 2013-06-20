@@ -252,11 +252,20 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\of3dGraphics.h">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h">
-      <Filter>libs\openFrameworks\utils</Filter>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofXml.h">
+      <Filter>libs\openFrameworks\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -291,9 +300,6 @@
       <Filter>libs\openFrameworks\types</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\types\ofColor.cpp">
-      <Filter>libs\openFrameworks\types</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\types\ofPoint.cpp">
       <Filter>libs\openFrameworks\types</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp">
@@ -401,12 +407,6 @@
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.cpp">
-      <Filter>libs\openFrameworks\sound</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp">
-      <Filter>libs\openFrameworks\sound</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
@@ -440,14 +440,23 @@
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLUtils.cpp">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\gl\ofProgrammableGLRenderer.cpp">
-      <Filter>libs\openFrameworks\gl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofMatrixStack.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofRendererCollection.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.cpp">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.cpp">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofXml.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

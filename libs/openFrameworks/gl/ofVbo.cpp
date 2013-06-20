@@ -726,28 +726,31 @@ void ofVbo::bind(){
 		vaoChanged=false;
 	}
 
-	if(bUsingVerts){
-		ofEnableVertices();
-	}else{
-		ofDisableVertices();
-	}
+	ofPtr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		if(bUsingVerts){
+			renderer->enableVertices();
+		}else{
+			renderer->disableVertices();
+		}
 
-	if(bUsingColors) {
-		ofEnableColorCoords();
-	}else{
-		ofDisableColorCoords();
-	}
+		if(bUsingColors) {
+			renderer->enableColors();
+		}else{
+			renderer->disableColors();
+		}
 
-	if(bUsingNormals){
-		ofEnableNormals();
-	}else{
-		ofDisableNormals();
-	}
+		if(bUsingNormals){
+			renderer->enableNormals();
+		}else{
+			renderer->disableNormals();
+		}
 
-	if(bUsingTexCoords) {
-		ofEnableTexCoords();
-	}else{
-		ofDisableTexCoords();
+		if(bUsingTexCoords) {
+			renderer->enableTexCoords();
+		}else{
+			renderer->disableTexCoords();
+		}
 	}
 	bBound   = true;
 }
@@ -759,17 +762,13 @@ void ofVbo::unbind() {
 	}else{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		ofDisableVertices();	// tig: oh dear, finding that bug was painful.
 		if(bUsingColors){
-			ofDisableColorCoords();
 			glDisableClientState(GL_COLOR_ARRAY);
 		}
 		if(bUsingNormals){
-			ofDisableNormals();
 			glDisableClientState(GL_NORMAL_ARRAY);
 		}
 		if(bUsingTexCoords){
-			ofDisableTexCoords();
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 	}

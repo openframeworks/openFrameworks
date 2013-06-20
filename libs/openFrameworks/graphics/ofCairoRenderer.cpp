@@ -608,6 +608,11 @@ void ofCairoRenderer::setLineWidth(float lineWidth){
 	cairo_set_line_width( cr, lineWidth );
 }
 
+//----------------------------------------------------------
+void ofCairoRenderer::setDepthTest(bool depthTest) {
+	// cairo does not do any depth testing
+}
+
 //--------------------------------------------
 void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 	switch (blendMode){
