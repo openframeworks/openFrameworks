@@ -337,21 +337,11 @@ void ofNotifyWindowResized(int width, int height){
 
 //------------------------------------------
 void ofNotifyDragEvent(ofDragInfo info){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->dragEvent(info);
-	}
-	
 	ofNotifyEvent(ofEvents().fileDragEvent, info);
 }
 
 //------------------------------------------
 void ofSendMessage(ofMessage msg){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->gotMessage(msg);
-	}
-	
 	ofNotifyEvent(ofEvents().messageEvent, msg);
 }
 
@@ -364,12 +354,6 @@ void ofSendMessage(string messageString){
 void ofNotifyWindowEntry( int state ) {
 	
 	static ofEntryEventArgs entryArgs;
-
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->windowEntry(state);
-	}
-	
 	entryArgs.state = state;
 	ofNotifyEvent(ofEvents().windowEntered, entryArgs);
 	
