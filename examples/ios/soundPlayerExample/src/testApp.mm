@@ -6,10 +6,10 @@ void testApp::setup(){
     ofBackground(255);
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	
-	synth.loadSound("sounds/synth.m4a"); // compressed mp3 format.
+	synth.loadSound("sounds/synth.mp3"); // compressed mp3 format.
     synth.setVolume(0.75);
     
-	beats.loadSound("sounds/1085.caf"); // uncompressed ios format.
+	beats.loadSound("sounds/1085.caf"); // uncompressed caf format.
     beats.setVolume(0.75);
     
     // in iOS, openFrameworks uses ofxiOSSoundPlayer to play sound.
