@@ -6,7 +6,7 @@ void testApp::setup(){
 	// IMPORTANT!!! if your sound doesn't work in the simulator - read this post - which requires you set the input stream to 24bit!!
 	//	http://www.cocos2d-iphone.org/forum/topic/4159
 
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 
 	ofBackground(255, 255, 255);
 

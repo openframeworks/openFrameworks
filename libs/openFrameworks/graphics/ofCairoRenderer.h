@@ -72,6 +72,7 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setLineWidth(float lineWidth);
+	void setDepthTest(bool depthTest);
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
 	void setSphereResolution(int res);

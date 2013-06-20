@@ -106,6 +106,7 @@ class ofNoopRenderer: public ofBaseRenderer{
 	virtual void setSphereResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
+	virtual void setDepthTest(bool){};
 
 	// color options
 	virtual void setColor(int r, int g, int b){}; // 0-255

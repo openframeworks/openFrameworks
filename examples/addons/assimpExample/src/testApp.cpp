@@ -50,7 +50,7 @@ void testApp::draw(){
     model.drawFaces();
     ofPopMatrix();
 
-   if(ofGetProgrammableGLRenderer()){
+   if(ofGetGLProgrammableRenderer()){
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     }
@@ -76,7 +76,7 @@ void testApp::draw(){
     texture.unbind();
 	ofPopMatrix();
 
-    if(ofGetProgrammableGLRenderer()){
+    if(ofGetGLProgrammableRenderer()){
     	glPopAttrib();
     }
 

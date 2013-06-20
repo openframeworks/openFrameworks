@@ -19,7 +19,7 @@
 #elif defined(TARGET_WIN32)
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
-#include "GL/glfw3native.h"
+#include <GLFW/glfw3native.h>
 #endif
 
 //========================================================================
@@ -658,6 +658,18 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
 	ofLog(OF_LOG_VERBOSE,"button: %i",button);
+
+	switch(button){
+	case GLFW_MOUSE_BUTTON_LEFT:
+		button = OF_MOUSE_BUTTON_LEFT;
+		break;
+	case GLFW_MOUSE_BUTTON_RIGHT:
+		button = OF_MOUSE_BUTTON_RIGHT;
+		break;
+	case GLFW_MOUSE_BUTTON_MIDDLE:
+		button = OF_MOUSE_BUTTON_MIDDLE;
+		break;
+	}
 
 	if (state == GLFW_PRESS) {
 		ofNotifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);

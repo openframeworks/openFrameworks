@@ -516,6 +516,22 @@ void ofSetLineWidth(float lineWidth){
 	currentStyle.lineWidth = lineWidth;
 }
 
+//----------------------------------------------------------
+void ofSetDepthTest(bool depthTest){
+	renderer->setDepthTest(depthTest);
+	currentStyle.depthTest = depthTest;
+}
+
+//----------------------------------------------------------
+void ofEnableDepthTest(){
+	ofSetDepthTest(true);
+}
+
+//----------------------------------------------------------
+void ofDisableDepthTest(){
+	ofSetDepthTest(false);
+}
+
 //----------------------------------------
 void ofSetCurveResolution(int res){
 	shape.setCurveResolution(res);
@@ -652,6 +668,8 @@ void ofSetStyle(ofStyle style){
 
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
+	
+	ofSetDepthTest(style.depthTest);
 
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
