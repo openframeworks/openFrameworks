@@ -76,7 +76,7 @@ public:
 	static string getBaseName(string filePath); // filename without extension
 
 	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);
-	static void createEnclosingDirectory(string filePath, bool bRelativeToData = true, bool bRecursive = true); 
+	static bool createEnclosingDirectory(string filePath, bool bRelativeToData = true, bool bRecursive = true); 
 	static string getCurrentWorkingDirectory();
 	static string join(string path1,string path2);
 	
