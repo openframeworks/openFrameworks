@@ -989,12 +989,6 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 #   list, we add those ADDITIONAL_DEPENDENCIES to our 
 #   PROJECT_ADDON_DEPENDENCIES_ORDERED list.
 #
-#   Finally we iterate through each of addons listed in the ordered set
-#   (PROJECT_ADDON_DEPENDENCIES_ORDERED) and extract all of their compilation
-#   information using FUNC_PARSE_ADDON.  By parsing each addon in order, we 
-#   are assured that each addon is parsed in the order required by its 
-#   addon_config.mk file.
-#
 ################################################################################
 
         ADDITIONAL_DEPENDENCIES :=                                             \
@@ -1005,10 +999,89 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
         PROJECT_ADDON_DEPENDENCIES_ORDERED += $(ADDITIONAL_DEPENDENCIES)
 
+
+
+################################################################################
+#   Finally we iterate through each of addons listed in the ordered set
+#   (PROJECT_ADDON_DEPENDENCIES_ORDERED) and extract all of their compilation
+#   information using FUNC_PARSE_ADDON.  By parsing each addon in order, we 
+#   are assured that each addon is parsed in the order required by its 
+#   addon_config.mk file.
+#
+################################################################################
+        PROJECT_ADDONS_HEADER_SEARCH_PATHS :=
+        PROJECT_ADDONS_SOURCES :=
+        PROJECT_ADDONS_FRAMEWORKS_FULL_PATHS :=
+        PROJECT_ADDONS_FRAMEWORK_SEARCH_PATHS :=
+        PROJECT_ADDONS_FRAMEWORKS :=
+        PROJECT_ADDONS_LIBRARY_SEARCH_PATHS :=
+        PROJECT_ADDONS_SHARED_LIBRARIES_FULL_PATHS :=
+        PROJECT_ADDONS_SHARED_LIBRARIES :=
+        PROJECT_ADDONS_STATIC_LIBRARIES_FULL_PATHS :=
+        PROJECT_ADDONS_STATIC_LIBRARIES :=
+
+        PROJECT_ADDONS_PKG_CONFIG_LIBRARIES :=
+
+        PROJECT_ADDONS_DEFINES :=
+        PROJECT_ADDONS_CFLAGS :=
+        PROJECT_ADDONS_LDFLAGS :=
+        PROJECT_ADDONS_DATA :=
+        PROJECT_ADDONS_EXPORTS :=
+
         $(foreach ADDON_TO_PARSE,                                              \
             $(PROJECT_ADDON_DEPENDENCIES_ORDERED),                             \
             $(call FUNC_PARSE_ADDON,$(ADDON_TO_PARSE))                         \
-        )
+                                                                               \
+            $(eval PROJECT_ADDONS_HEADER_SEARCH_PATHS +=                       \
+                $(ORDERED_ADDON_HEADER_SEARCH_PATHS))                          \
+                                                                               \
+            $(eval PROJECT_ADDONS_SOURCES +=                                   \
+                $(ORDERED_ADDON_SOURCES))                                      \
+                                                                               \
+            $(eval PROJECT_ADDONS_FRAMEWORKS_FULL_PATHS +=                     \
+                $(ORDERED_ADDON_FRAMEWORKS_FULL_PATHS))                        \
+                                                                               \
+            $(eval PROJECT_ADDONS_FRAMEWORK_SEARCH_PATHS +=                    \
+                $(ORDERED_ADDON_FRAMEWORK_SEARCH_PATHS))                       \
+                                                                               \
+            $(eval PROJECT_ADDONS_FRAMEWORKS +=                                \
+                $(ORDERED_ADDON_FRAMEWORKS))                                   \
+                                                                               \
+            $(eval PROJECT_ADDONS_LIBRARY_SEARCH_PATHS +=                      \
+                $(ORDERED_ADDON_LIBRARY_SEARCH_PATHS))                         \
+                                                                               \
+            $(eval PROJECT_ADDONS_SHARED_LIBRARIES_FULL_PATHS +=               \
+                $(ORDERED_ADDON_SHARED_LIBRARIES_FULL_PATHS))                  \
+                                                                               \
+            $(eval PROJECT_ADDONS_SHARED_LIBRARIES +=                          \
+                $(ORDERED_ADDON_SHARED_LIBRARIES))                             \
+                                                                               \
+            $(eval PROJECT_ADDONS_STATIC_LIBRARIES_FULL_PATHS +=               \
+                $(ORDERED_ADDON_STATIC_LIBRARIES_FULL_PATHS))                  \
+                                                                               \
+            $(eval PROJECT_ADDONS_STATIC_LIBRARIES +=                          \
+                $(ORDERED_ADDON_STATIC_LIBRARIES))                             \
+                                                                               \
+            $(eval PROJECT_ADDONS_PKG_CONFIG_LIBRARIES +=                      \
+                $(ADDON_PKG_CONFIG_LIBRARIES))                                 \
+                                                                               \
+            $(eval PROJECT_ADDONS_DEFINES +=                                   \
+                $(ADDON_TO_PARSE)                                              \
+                $(ADDON_DEFINES))                                              \
+                                                                               \
+            $(eval PROJECT_ADDONS_DATA +=                                      \
+                $(ADDON_DATA))                                                 \
+                                                                               \
+            $(eval PROJECT_ADDONS_CFLAGS +=                                    \
+                $(ADDON_CFLAGS))                                               \
+                                                                               \
+            $(eval PROJECT_ADDONS_LDFLAGS +=                                   \
+                $(ADDON_LDFLAGS))                                              \
+                                                                               \
+            $(eval PROJECT_ADDONS_EXPORTS +=                                   \
+                $(ORDERED_ADDON_FRAMEWORKS_FULL_PATHS)                        \
+                $(ORDERED_ADDONS_SHARED_LIBRARIES_FULL_PATHS))                 \
+    )
 
         
     # $(info ---ORDERED_ADDON_HEADER_SEARCH_PATHS---)                                        \
@@ -1023,25 +1096,73 @@ endif
 #  DEBUGGING
 ########################################################################
 # print debug information if so instructed
-ifdef 1
-    $(info ---PROJECT_ADDONS_INCLUDES---)
-    $(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
-    $(info ---PROJECT_ADDONS_EXCLUSIONS---)
-    $(foreach v, $(PROJECT_ADDONS_EXCLUSIONS),$(info $(v)))
+    $(info ---PROJECT_ADDONS_HEADER_SEARCH_PATHS---)
+    $(foreach v, $(PROJECT_ADDONS_HEADER_SEARCH_PATHS),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_SOURCES---)
+    $(foreach v, $(PROJECT_ADDONS_SOURCES),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_FRAMEWORKS_FULL_PATHS---)
+    $(foreach v, $(PROJECT_ADDONS_FRAMEWORKS_FULL_PATHS),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_FRAMEWORK_SEARCH_PATHS---)
+    $(foreach v, $(PROJECT_ADDONS_FRAMEWORK_SEARCH_PATHS),$(info $(v)))
+
     $(info ---PROJECT_ADDONS_FRAMEWORKS---)
     $(foreach v, $(PROJECT_ADDONS_FRAMEWORKS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_SOURCE_FILES---)
-    $(foreach v, $(PROJECT_ADDONS_SOURCE_FILES),$(info $(v)))
-    $(info ---PROJECT_ADDONS_LIBS---)
-    $(foreach v, $(PROJECT_ADDONS_LIBS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_OBJFILES---)
-    $(foreach v, $(PROJECT_ADDONS_OBJFILES),$(info $(v)))
-    $(info ---PROJECT_ADDONS_BASE_CFLAGS---)
-    $(foreach v, $(PROJECT_ADDONS_BASE_CFLAGS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_DEFINES_CFLAGS---)
-    $(foreach v, $(PROJECT_ADDONS_DEFINES_CFLAGS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_INCLUDES_CFLAGS---)
-    $(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_LIBRARY_SEARCH_PATHS---)
+    $(foreach v, $(PROJECT_ADDONS_LIBRARY_SEARCH_PATHS),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_SHARED_LIBRARIES_FULL_PATHS---)
+    $(foreach v, $(PROJECT_ADDONS_SHARED_LIBRARIES_FULL_PATHS),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_SHARED_LIBRARIES---)
+    $(foreach v, $(PROJECT_ADDONS_SHARED_LIBRARIES),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_STATIC_LIBRARIES_FULL_PATHS---)
+    $(foreach v, $(PROJECT_ADDONS_STATIC_LIBRARIES_FULL_PATHS),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_STATIC_LIBRARIES---)
+    $(foreach v, $(PROJECT_ADDONS_STATIC_LIBRARIES),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_PKG_CONFIG_LIBRARIES---)
+    $(foreach v, $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_DEFINES---)
+    $(foreach v, $(PROJECT_ADDONS_DEFINES),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_DATA---)
+    $(foreach v, $(PROJECT_ADDONS_DATA),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_CFLAGS---)
+    $(foreach v, $(PROJECT_ADDONS_CFLAGS),$(info $(v)))
+
     $(info ---PROJECT_ADDONS_LDFLAGS---)
     $(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
+
+    $(info ---PROJECT_ADDONS_EXPORTS---)
+    $(foreach v, $(PROJECT_ADDONS_EXPORTS),$(info $(v)))
+
+ifdef 1
+    # $(info ---PROJECT_ADDONS_INCLUDES---)
+    # $(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_EXCLUSIONS---)
+    # $(foreach v, $(PROJECT_ADDONS_EXCLUSIONS),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_FRAMEWORKS---)
+    # $(foreach v, $(PROJECT_ADDONS_FRAMEWORKS),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_SOURCE_FILES---)
+    # $(foreach v, $(PROJECT_ADDONS_SOURCE_FILES),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_LIBS---)
+    # $(foreach v, $(PROJECT_ADDONS_LIBS),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_OBJFILES---)
+    # $(foreach v, $(PROJECT_ADDONS_OBJFILES),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_BASE_CFLAGS---)
+    # $(foreach v, $(PROJECT_ADDONS_BASE_CFLAGS),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_DEFINES_CFLAGS---)
+    # $(foreach v, $(PROJECT_ADDONS_DEFINES_CFLAGS),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_INCLUDES_CFLAGS---)
+    # $(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
+    # $(info ---PROJECT_ADDONS_LDFLAGS---)
+    # $(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
 endif
