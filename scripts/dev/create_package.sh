@@ -107,11 +107,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "${pkg_platform}"=="vs" ]; then
-        projectGenerator --allexamples --vs2010
-    else
-        projectGenerator --allexamples --${pkg_platform}
-    fi
+    projectGenerator --allexamples --${pkg_platform}
 }
 
 function createPackage {

@@ -99,14 +99,6 @@ bool ofCheckGLExtension(string searchName);
 ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
 
-void ofEnableVertices();
-void ofEnableTexCoords();
-void ofEnableColorCoords();
-void ofEnableNormals();
-void ofDisableVertices();
-void ofDisableTexCoords();
-void ofDisableColorCoords();
-void ofDisableNormals();
 
 #ifndef TARGET_OPENGLES
 	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT

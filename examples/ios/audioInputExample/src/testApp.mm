@@ -11,7 +11,7 @@
 void testApp::setup(){
     ofSetFrameRate(60);
     ofBackground(255);
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 
 	//for some reason on the iphone simulator 256 doesn't work - it comes in as 512!
 	//so we do 512 - otherwise we crash
