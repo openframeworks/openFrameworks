@@ -88,6 +88,7 @@ class ofStyle{
 			rectMode			= OF_RECTMODE_CORNER;
 			drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
 			bgColor.set(200,200,200);
+			depthTest = false;
 		}
 
 		virtual ~ofStyle(){}
@@ -106,6 +107,7 @@ class ofStyle{
 		int sphereResolution;
 		int curveResolution;
 		float lineWidth;
+		bool depthTest;
 };
 
 //----------------------------------------------------------

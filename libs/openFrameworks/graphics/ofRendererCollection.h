@@ -377,6 +377,12 @@ public:
 			 renderers[i]->setLineWidth(lineWidth);
 		 }
 	}
+	
+	void setDepthTest(bool depthTest) {
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->setDepthTest(depthTest);
+		}		
+	}
 
 	void setBlendMode(ofBlendMode blendMode){
 		 for(int i=0;i<(int)renderers.size();i++){

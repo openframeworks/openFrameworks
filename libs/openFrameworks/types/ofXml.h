@@ -46,6 +46,7 @@ public:
     bool            setAttribute(const string& path, const string& value);
     map<string, string> getAttributes() const;
     int             getNumChildren() const;
+    int             getNumChildren(const string& path) const;
 
     
     bool            clearAttributes(const string& path);
@@ -67,7 +68,6 @@ public:
     bool            setToPrevSibling();
     
     bool            loadFromBuffer( const string& buffer );
-
     
     string          toString() const;
     
@@ -95,7 +95,7 @@ public:
     }
     
     // templated to be anything
-    template <class T> void addValue(const string& path, T data, bool createEntirePath = false)
+    template <class T> bool addValue(const string& path, T data, bool createEntirePath = false)
     {
         stringstream str;
         str << ofToString(data);
@@ -202,8 +202,10 @@ public:
                 ss << element->innerText();
                 ss >> data;
                 return data;
+            } else {
+                ofLogWarning("ofXml", "Path not found when getting value ");
+                return data; // hmm. this could be a problem
             }
-            return ""; // hmm. this could be a problem
         }
         else
         {

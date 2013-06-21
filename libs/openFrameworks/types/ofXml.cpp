@@ -84,6 +84,27 @@ int ofXml::getNumChildren() const
     return numberOfChildren;
 }
 
+int ofXml::getNumChildren(const string& path) const
+{
+    int numberOfChildren = 0;
+    Poco::XML::NodeList *list = element->childNodes();
+    int i = 0;
+    
+    while(i < list->length()) {
+        
+        if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
+            string nodeName = list->item(i)->localName();
+            if(path.compare(nodeName) == 0) {
+                numberOfChildren++;
+            }
+        }
+        i++;
+    }
+    
+    return numberOfChildren;
+    
+}
+
 string ofXml::toString() const
 {
     ostringstream stream;
@@ -126,95 +147,6 @@ void ofXml::addXml( const ofXml& xml, bool copyAll ) {
     
 }
 
-/*bool ofXml::addValue(const string& path, const string& value, bool createEntirePath)
-{
-    vector<string> tokens;
-    bool needsTokenizing = false;
-    
-    if(path.find('/') != string::npos) {
-        tokens = tokenize(path, "/");
-    }
-    
-    // is this a tokenized tag?
-    if(tokens.size() > 1)
-    {
-        // don't 'push' down into the new nodes
-        Poco::XML::Element* firstElement, *lastElement;
-        if(element) {
-            lastElement = element;
-        }
-        
-        if(!firstElement) {
-            firstElement = lastElement;
-        }
-        
-        // find the last existing tag
-        int lastExistingTag = tokens.size();
-        
-        for(int i = 0; i < tokens.size(); i++)
-        {
-            Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
-            
-            cout << " creating " << newElement->nodeName() << endl;
-            
-            if(lastElement) {
-                lastElement->appendChild(newElement);
-            }
-            
-            lastElement = newElement;
-        }
-        
-        if(value != "")
-        {
-
-            Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
-            try {
-
-                lastElement->appendChild( text );
-
-            } catch ( DOMException &e ) {
-                stringstream sstream;
-                sstream << " cannot set node value " << DOMErrorMessage(e.code());
-                ofLog(OF_LOG_ERROR, sstream.str());
-                return false;
-            }
-        }
-        
-        if(!element) {
-            element = firstElement;
-            document->appendChild(element);
-        }
-        
-        return true;
-        
-    } else {
-        
-        Poco::XML::Element *newElement = getPocoDocument()->createElement(path);
-        
-        if(value != "") {
-            
-            Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
-            try {
-                newElement->appendChild(text);
-                text->release();
-                
-            } catch ( DOMException &e ) {
-                stringstream sstream;
-                sstream << " cannot set node value " << DOMErrorMessage(e.code());
-                ofLog(OF_LOG_ERROR, sstream.str());
-                return false;
-            }
-        }
-        
-        if(element) {
-            element->appendChild(newElement);
-        } else {
-            element = newElement;
-        }
-        
-    }
-    return true;
-}*/
 
 bool ofXml::addChild( const string& path )
 {
@@ -308,6 +240,18 @@ bool ofXml::setToChild(int index)
     
 }
 
+bool ofXml::setToParent()
+{
+    if(element->parentNode()) {
+        element = (Poco::XML::Element*) element->parentNode();
+    } else {
+        ofLog(OF_LOG_WARNING, "current element has no parent");
+        return false;
+    }
+    return true;
+
+}
+
 bool ofXml::setToParent(int numLevelsUp) {
     if(element) {
         
@@ -370,7 +314,7 @@ bool ofXml::setValue(const string& path, const string& value)
     Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
     
     if(!e) {
-        ofLog(OF_LOG_WARNING, " setValue of " + path + " failed because path doesn't exist");
+        ofLogWarning("ofXml", " setValue of " + path + " failed because path doesn't exist");
         return false;
     }
     
@@ -598,13 +542,25 @@ bool ofXml::loadFromBuffer( const string& buffer )
         document->release();
     }
     
-    document = parser.parseString(buffer);
+    try {
+        document = parser.parseString(buffer);
+    } catch( exception e ) {
+        
+        short msg = atoi(e.what());
+        ofLogWarning("ofXml", DOMErrorMessage(msg));
+        document = 0;
+    }
 
     if(document) {
         element = (Poco::XML::Element*) document->firstChild();
         document->normalize();
         return true;
     }
+
+    document = new Poco::XML::Document();
+    element = (Poco::XML::Element*) document->documentElement();
+    
+    ofLogWarning("ofXml", " Can't create Document ");
     return false;
     
 }
@@ -686,6 +642,17 @@ bool ofXml::setTo(const string& path)
                  return false;
              }
         }
+    }  else if(path.find("//") != string::npos) {
+        
+        // another: we're looking all over
+        Poco::XML::Element* prev = element;
+        element = (Poco::XML::Element*) document->getNodeByPath(path);
+        if(!element) {
+            element = prev;
+            ofLog(OF_LOG_WARNING, "setCurrentElement passed invalid path");
+            return false;
+        }
+        
     } else {
         // another: we're actually looking down into the thing :)
         Poco::XML::Element* prev = element;
@@ -758,5 +725,7 @@ string ofXml::DOMErrorMessage(short msg)
             return "INVALID_ACCESS_ERR";          /// an attempt is made to use an object that is not or is no longer usable
             break;
     }
+    
+    return "DOM ERROR";
     
 }

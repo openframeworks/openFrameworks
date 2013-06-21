@@ -52,6 +52,17 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 			type = IMAGE;
 		}
 	}
+	
+	if(filename != "") {
+		switch(type) {
+			case PDF:
+			case SVG:
+			case IMAGE:
+				ofFilePath::createEnclosingDirectory(filename);	
+			case FROM_FILE_EXTENSION:
+				break;
+		}
+	}
 
 	switch(type){
 	case PDF:
@@ -606,6 +617,11 @@ ofFillFlag ofCairoRenderer::getFillMode(){
 //--------------------------------------------
 void ofCairoRenderer::setLineWidth(float lineWidth){
 	cairo_set_line_width( cr, lineWidth );
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::setDepthTest(bool depthTest) {
+	// cairo does not do any depth testing
 }
 
 //--------------------------------------------
