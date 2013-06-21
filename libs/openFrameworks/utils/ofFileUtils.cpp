@@ -1271,12 +1271,7 @@ string ofFilePath::getPathForDirectory(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::removeTrailingSlash(string path){
-#ifdef TARGET_WIN32
-	if(path.length() > 0 && path[path.length() - 1] == '\\'){
-		path = path.substr(0, path.length() - 1);
-	}
-#endif
-	if(path.length() > 0 && path[path.length() - 1] == '/'){
+	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
 	return path;
@@ -1384,19 +1379,15 @@ string ofFilePath::getCurrentExePath(){
 		return path;
 	#elif defined(TARGET_WIN32)
 		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(
-			nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size())
-			);
-		while(result == executablePath.size()) {
+		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+		for(; result == executablePath.size(); result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()))){
 			executablePath.resize(executablePath.size() * 2);
-			result = ::GetModuleFileNameA(
-				nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size())
-				);
 		}
 		if(result == 0) {
-			ofLogError("getCurrentExePath") << "failure";
+			ofLogError("getCurrentExePath") << "failure of getting current executable path";
+		}else{
+			return string(executablePath.begin(), executablePath.begin() + result);
 		}
-		return string(executablePath.begin(), executablePath.begin() + result);
 	#endif
 	return "";
 }
