@@ -341,6 +341,7 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 	#endif
 	
+	ofFilePath::createEnclosingDirectory(fileName);
 	fileName = ofToDataPath(fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
