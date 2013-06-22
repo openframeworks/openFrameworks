@@ -1,0 +1,240 @@
+#! /bin/bash
+#
+# this is the OpenFrameworks library apothecary,
+# it mixes formulas and potions to buid and update the C/C++ lib dependencies
+#
+# 2013 Dan Wilcox <danomatika@gmail.com>
+#
+# references:
+#  http://stackoverflow.com/questions/12219001/standalone-shell-script-vs-shell-function
+#  http://www.tldp.org/LDP/abs/html/comparison-ops.html
+#  http://tldp.org/LDP/abs/html/fto.html
+#  http://www.developer.com/open/article.php/631241/Linux-Console-Colors--Other-Tricks.htm
+#  http://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
+#
+
+################################################################################
+### VARIABLES
+
+# build settings
+TYPE=`./ostype.sh`
+ARCH=32 # for 32 or 64 bit
+
+# paths relative to ths script
+LIBS_DIR=..
+FORMULAS_DIR=formulas
+CACHE_DIR=cache
+
+# ansi color escape codes
+DEFAULT="\033[0m"
+BOLD="\033[1m"
+RED="\033[31m"
+GREEN="\033[32m"
+
+# used to filter out bad build types
+VALID_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
+
+# nice, detailed help message
+HELP="Usage: apothecary [options] command [libraries]
+
+ this is the OpenFrameworks library apothecary
+ it mixes formulas and potions to build and update OF C/C++ lib dependencies
+
+ Commands:
+  update		download, build, and copy library files
+  clean 		clean the cache
+
+ Options:
+  -t	specify libary type when building, detects type from OS by default
+  	valid types: osx, linux, linux64, vs2010, win_cb, ios, android
+
+  -a	specify architecture, either 32 or 64 (default is 32 bit)
+
+  -h    print this usage guide
+
+ Examples:
+
+  # update all libs in the formulas dir
+  apothecary update
+
+  # update only glew
+  apothecary update glew
+ 
+  # clean all downloaded lib src dirs in the cache
+  apothecary clean
+
+  # clean only assimp & glew
+  apothecary clean assimp glew
+
+  # update freetype for ios 
+  apothecary -t ios freetype
+
+  # update assimp for 64bit OSX (maybe in the future ...)
+  apothecary -t osx -a 64 assimp
+"
+
+################################################################################
+#### PARSE COMMANDLINE
+
+# from http://www.mkssoftware.com/docs/man1/getopts.1.asp
+while getopts t:a: opt ; do
+	case "$opt" in
+		t) # set the library build type
+		   TYPE="$OPTARG" ;;
+		a) # set the architecture
+		   ARCH=$OPTARG ;;
+		[?]) # print help and exit 
+		     echo "$HELP" ; exit 0 ;;
+	esac
+done
+shift $(expr $OPTIND - 1)
+
+# get command
+if [ "$1" != "" ] ; then
+	CMD=$1
+else
+	echo "$HELP"
+	exit 0
+fi
+shift 1
+
+################################################################################
+### FUNCTIONS
+
+# check if a given string matches anything in VALID_TYPES,
+# bool result is set to second argument
+function isValidType() {
+	local i
+	for i in "${VALID_TYPES[@]}" ; do
+		if [ "$i" == "$1" ] ; then
+			eval $2=1
+			return
+		fi
+	done
+	eval $2=0
+}
+
+# update a given library
+function update() {
+
+	# check if the given lib name is even a formula
+	if [ ! -e $FORMULAS_DIR/$1.sh ] ; then
+		echo -e "$BOLD$RED No formula for lib \"$1\"$DEFAULT"
+		return
+	fi
+
+	# load a script & it's function implementations
+	source $FORMULAS_DIR/$1.sh
+
+	### DOWNLOAD
+
+	# download src to cache
+	echo
+	echo -e "$BOLD ----- $1 -----$DEFAULT"
+	echo -e "$BOLD Downloading \"$1\"$DEFAULT"
+	echo
+
+	mkdir -p $CACHE_DIR
+	cd $CACHE_DIR
+
+	if [ -e $1 ] ; then
+		echo -e "... skipping, src dir already exists"
+
+	else
+		download
+		if [ ! -e $1 ] ; then
+			echo -e "$BOLD$RED It looks like downloading failed for \"$1\"$DEFAULT"
+		fi
+	fi
+
+	### BUILD
+
+	# run build command in src dir
+	echo
+	echo -e "$BOLD Building \"$1\"$DEFAULT"
+	echo
+
+	cd $1
+	build
+
+	### COPY
+
+	# dest arg path relative to src dir
+	echo
+	echo -e "$BOLD Copying \"$1\"$DEFAULT"
+	echo
+
+	copy ../../$LIBS_DIR/$1
+	cd ../../
+}
+
+# clean a given library from the cache
+function clean() {
+
+	# check if the given lib name is even a formula
+	if [ ! -e $FORMULAS_DIR/$1.sh ] ; then
+		echo -e "$BOLD$RED No formula for lib \"$1\"$DEFAULT"
+		return
+	fi
+
+	cd $CACHE_DIR
+	rm -rf $1*
+	echo -e "$BOLD$GREEN Cleaned \"$1\" from cache$DEFAULT"
+	cd ../
+}
+
+################################################################################
+### GO
+
+# check if we have a valid build type
+typeIsValid=0 # bool
+isValidType $TYPE typeIsValid
+if [ $typeIsValid == 0 ] ; then
+	echo -e "$BOLD$RED Invalid build type: \"$TYPE\"$DEFAULT"
+	exit 1
+fi
+
+# check if we have a valid arch
+if [ $ARCH != 32 -a $ARCH != 64 ] ; then
+	echo -e "$BOLD$RED Invalid architecture: $ARCH$DEFAULT"
+	exit 1
+fi
+
+# change to the dir of this script
+cd $(dirname $0)
+
+# handle commands
+case "$CMD" in
+	
+	update)
+		# process given libraries
+		if [ $# -gt 0 ] ; then
+			while [ $# -gt 0 ] ; do
+				update $1
+				shift 1
+			done
+
+		else # process all formulas
+			for formula in $( ls -1 $FORMULAS_DIR) ; do
+				update "${formula%.*}" # removes file extension
+			done
+		fi ;;
+
+	clean)
+		# process given libraries
+		if [ $# -gt 0 ] ; then
+			while [ $# -gt 0 ] ; do
+				clean $1
+				shift 1
+			done
+
+		else # process all formulas
+			for formula in $( ls -1 $FORMULAS_DIR) ; do
+				clean "${formula%.*}"
+			done
+		fi ;;
+
+	*) echo -e "$BOLD$RED Unknown command \"$CMD\"$DEFAULT" ;;
+esac
+
+exit 0
