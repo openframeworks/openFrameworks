@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 # this is the OpenFrameworks library apothecary,
-# it mixes formulas and potions to buid and update the C/C++ lib dependencies
+# it mixes formulas and potions to build and update the C/C++ lib dependencies
 #
 # 2013 Dan Wilcox <danomatika@gmail.com>
 #
