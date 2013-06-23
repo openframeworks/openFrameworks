@@ -67,14 +67,16 @@ void testApp::draw(){
     ofMultMatrix(meshHelper.matrix);
     
     ofMaterial & material = meshHelper.material;
-    ofTexture & texture = meshHelper.texture;
-    
-    texture.bind();
+    if(meshHelper.hasTexture()){
+        meshHelper.getTexturePtr()->bind();
+    }
     material.begin();
     mesh.drawWireframe();
     material.end();
-    texture.unbind();
-	ofPopMatrix();
+    if(meshHelper.hasTexture()){
+        meshHelper.getTexturePtr()->unbind();
+    }
+    ofPopMatrix();
 
     if(ofGetGLProgrammableRenderer()){
     	glPopAttrib();
