@@ -43,6 +43,7 @@ HELP="Usage: apothecary [options] command [libraries]
  Commands:
   update		download, build, and copy library files
   clean 		clean the cache
+  dist-clean	clean the cache and lib folder
 
  Options:
   -t	specify libary type when building, detects type from OS by default
@@ -63,8 +64,11 @@ HELP="Usage: apothecary [options] command [libraries]
   # clean all downloaded lib src dirs in the cache
   apothecary clean
 
-  # clean only assimp & glew
+  # clean only assimp & glew in the cache
   apothecary clean assimp glew
+
+  # clean glew fomr the cache and lib folder
+  apothecary dist-clean glew
 
   # update freetype for ios 
   apothecary -t ios freetype
@@ -183,6 +187,26 @@ function clean() {
 	cd ../
 }
 
+# clean a given library from the cache and lib folder
+function dist-clean() {
+
+	# check if the given lib name is even a formula
+	if [ ! -e $FORMULAS_DIR/$1.sh ] ; then
+		echo -e "$BOLD$RED No formula for lib \"$1\"$DEFAULT"
+		return
+	fi
+
+	cd $CACHE_DIR
+	rm -rf $1*
+	echo -e "$BOLD$GREEN Cleaned \"$1\" from cache$DEFAULT"
+	cd ../
+
+	cd $LIBS_DIR
+	rm -rf $1
+	echo -e "$BOLD$GREEN Cleaned \"$1\" from libs folder$DEFAULT"
+	cd ../
+}
+
 ################################################################################
 ### GO
 
@@ -231,6 +255,20 @@ case "$CMD" in
 		else # process all formulas
 			for formula in $( ls -1 $FORMULAS_DIR) ; do
 				clean "${formula%.*}"
+			done
+		fi ;;
+
+	dist-clean)
+		# process given libraries
+		if [ $# -gt 0 ] ; then
+			while [ $# -gt 0 ] ; do
+				dist-clean $1
+				shift 1
+			done
+
+		else # process all formulas
+			for formula in $( ls -1 $FORMULAS_DIR) ; do
+				dist-clean "${formula%.*}"
 			done
 		fi ;;
 
