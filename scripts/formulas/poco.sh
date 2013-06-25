@@ -74,7 +74,9 @@ function build() {
 		# link into universal lib, strip "lib" from filename
 		for lib in $( ls -1 iPhoneSimulator/i386) ; do
 			local renamedLib=$(echo $lib | sed 's|lib||')
-			lipo -c iPhoneOS/armv7/$lib iPhoneOS/armv7s/$lib iPhoneSimulator/i386/$lib -o $renamedLib
+			if [ ! -e $renamedLib ] ; then
+				lipo -c iPhoneOS/armv7/$lib iPhoneOS/armv7s/$lib iPhoneSimulator/i386/$lib -o $renamedLib
+			fi
 		done
 
 	else

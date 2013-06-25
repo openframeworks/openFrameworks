@@ -11,6 +11,7 @@
 #  http://tldp.org/LDP/abs/html/fto.html
 #  http://www.developer.com/open/article.php/631241/Linux-Console-Colors--Other-Tricks.htm
 #  http://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
+#  http://stackoverflow.com/questions/64786/error-handling-in-bash
 #
 
 ################################################################################
@@ -84,6 +85,33 @@ HELP="Usage: apothecary [options] command [libraries]
 "
 
 ################################################################################
+#### SET ERROR HANDLING
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialized variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+# trap the killer signals so that we can exit with a good message.
+trap "printSignal SIGHUP" SIGHUP
+trap "printSignal SIGINT" SIGINT
+trap "printSignal SIGTERM" SIGTERM
+
+printSignal() {
+	echo
+	echo -e "$BOLD$RED Received signal $1 $DEFAULT"
+	exit 1
+}
+
+trap printError ERR
+
+printError() {
+	echo
+	echo -e "$BOLD$RED Received error $DEFAULT"
+	exit 1
+}
+
+################################################################################
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
@@ -154,6 +182,7 @@ function update() {
 		download
 		if [ ! -e $1 ] ; then
 			echo -e "$BOLD$RED It looks like downloading failed for \"$1\"$DEFAULT"
+			exit 1
 		fi
 	fi
 
@@ -166,6 +195,7 @@ function update() {
 
 	cd $1
 	build
+	cd $WD/$CACHE_DIR/$1
 
 	### COPY
 
