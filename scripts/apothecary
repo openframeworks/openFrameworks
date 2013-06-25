@@ -17,7 +17,12 @@
 ### VARIABLES
 
 # build settings
-TYPE=`./ostype.sh`
+OS=`./ostype.sh`
+if [ "$OS" == "windows" ] ; then
+	TYPE=vs2010
+else
+	TYPE=$OS
+fi
 ARCH=32 # for 32 or 64 bit
 
 # paths relative to ths script
@@ -41,15 +46,16 @@ HELP="Usage: apothecary [options] command [libraries]
  it mixes formulas and potions to build and update OF C/C++ lib dependencies
 
  Commands:
-  update		download, build, and copy library files
-  clean 		clean the cache
-  dist-clean	clean the cache and lib folder
+  update			download, build, and copy library files
+  clean 			clean the cache
+  dist-clean		clean the cache and lib folder
 
  Options:
   -t	specify libary type when building, detects type from OS by default
   	valid types: osx, linux, linux64, vs2010, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
+  	note: desktop only, this is ignored when type = ios or android
 
   -h    print this usage guide
 
@@ -67,7 +73,7 @@ HELP="Usage: apothecary [options] command [libraries]
   # clean only assimp & glew in the cache
   apothecary clean assimp glew
 
-  # clean glew fomr the cache and lib folder
+  # clean glew from the cache and lib folder
   apothecary dist-clean glew
 
   # update freetype for ios 
@@ -169,7 +175,10 @@ function update() {
 	echo
 
 	copy ../../$LIBS_DIR/$1
-	cd ../../
+	cd $WD
+
+	echo
+	echo -e "$BOLD$GREEN Finished \"$1\"$DEFAULT"
 }
 
 # clean a given library from the cache
@@ -184,7 +193,7 @@ function clean() {
 	cd $CACHE_DIR
 	rm -rf $1*
 	echo -e "$BOLD$GREEN Cleaned \"$1\" from cache$DEFAULT"
-	cd ../
+	cd $WD
 }
 
 # clean a given library from the cache and lib folder
@@ -199,12 +208,12 @@ function dist-clean() {
 	cd $CACHE_DIR
 	rm -rf $1*
 	echo -e "$BOLD$GREEN Cleaned \"$1\" from cache$DEFAULT"
-	cd ../
+	cd $WD
 
 	cd $LIBS_DIR
 	rm -rf $1
 	echo -e "$BOLD$GREEN Cleaned \"$1\" from libs folder$DEFAULT"
-	cd ../
+	cd $WD
 }
 
 ################################################################################
@@ -226,6 +235,7 @@ fi
 
 # change to the dir of this script
 cd $(dirname $0)
+WD=$(pwd)
 
 # handle commands
 case "$CMD" in

@@ -8,7 +8,7 @@ function lowercase() {
 OS=`lowercase \`uname\``
 
 if [ "$OS" == "windowsnt" ]; then
-	OS=vs2010
+	OS=windows
 elif [ "$OS" == "darwin" ]; then
 	OS=osx
 elif [ "$OS" == "linux" ]; then
