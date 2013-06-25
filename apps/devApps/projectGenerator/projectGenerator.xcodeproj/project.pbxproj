@@ -10,16 +10,15 @@
 		1120712114AE3D360035CB7E /* libpugixml_d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1120712014AE3D360035CB7E /* libpugixml_d.a */; };
 		1120713014AE3D4F0035CB7E /* xcodeProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1120712B14AE3D4F0035CB7E /* xcodeProject.cpp */; };
 		1120713614AE3D840035CB7E /* ofAddon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1120713414AE3D840035CB7E /* ofAddon.cpp */; };
-		113CAA5B14F88EDD00D3906E /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA5714F88EDD00D3906E /* ofAppNoWindow.cpp */; };
 		113CAA5C14F88EDD00D3906E /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA5914F88EDD00D3906E /* Utils.cpp */; };
-		113CAA7314F88F4200D3906E /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA6C14F88F4200D3906E /* tinyxml.cpp */; };
-		113CAA7414F88F4200D3906E /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA6E14F88F4200D3906E /* tinyxmlerror.cpp */; };
-		113CAA7514F88F4200D3906E /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA6F14F88F4200D3906E /* tinyxmlparser.cpp */; };
 		113CAA7614F88F4200D3906E /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA7114F88F4200D3906E /* ofxXmlSettings.cpp */; };
 		116601FE1513758200DE9D73 /* CBWinProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116601FA1513758200DE9D73 /* CBWinProject.cpp */; };
 		116601FF1513758200DE9D73 /* visualStudioProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116601FC1513758200DE9D73 /* visualStudioProject.cpp */; };
 		116EA815150E68B2004EBBD3 /* baseProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116EA814150E68B2004EBBD3 /* baseProject.cpp */; };
 		116EA81D150E7288004EBBD3 /* CBLinuxProject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116EA81B150E7287004EBBD3 /* CBLinuxProject.cpp */; };
+		577F95841779A5A7008BAD97 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 577F95801779A5A7008BAD97 /* tinyxml.cpp */; };
+		577F95851779A5A7008BAD97 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 577F95821779A5A7008BAD97 /* tinyxmlerror.cpp */; };
+		577F95861779A5A7008BAD97 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 577F95831779A5A7008BAD97 /* tinyxmlparser.cpp */; };
 		8BB4FECB16ED09830024D4A8 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BB4FEBA16ED09830024D4A8 /* ofxBaseGui.cpp */; };
 		8BB4FECC16ED09830024D4A8 /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BB4FEBC16ED09830024D4A8 /* ofxButton.cpp */; };
 		8BB4FECD16ED09830024D4A8 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BB4FEBF16ED09830024D4A8 /* ofxGuiGroup.cpp */; };
@@ -29,7 +28,7 @@
 		8BB4FED116ED09830024D4A8 /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BB4FEC716ED09830024D4A8 /* ofxSliderGroup.cpp */; };
 		8BB4FED216ED09830024D4A8 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BB4FEC916ED09830024D4A8 /* ofxToggle.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
-		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
+		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
 		E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
@@ -85,14 +84,8 @@
 		1120712C14AE3D4F0035CB7E /* xcodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xcodeProject.h; sourceTree = "<group>"; };
 		1120713414AE3D840035CB7E /* ofAddon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAddon.cpp; sourceTree = "<group>"; };
 		1120713514AE3D840035CB7E /* ofAddon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAddon.h; sourceTree = "<group>"; };
-		113CAA5714F88EDD00D3906E /* ofAppNoWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppNoWindow.cpp; sourceTree = "<group>"; };
-		113CAA5814F88EDD00D3906E /* ofAppNoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppNoWindow.h; sourceTree = "<group>"; };
 		113CAA5914F88EDD00D3906E /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		113CAA5A14F88EDD00D3906E /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
-		113CAA6C14F88F4200D3906E /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
-		113CAA6D14F88F4200D3906E /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
-		113CAA6E14F88F4200D3906E /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
-		113CAA6F14F88F4200D3906E /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		113CAA7114F88F4200D3906E /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		113CAA7214F88F4200D3906E /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		116601FA1513758200DE9D73 /* CBWinProject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBWinProject.cpp; sourceTree = "<group>"; };
@@ -104,6 +97,10 @@
 		116EA81C150E7288004EBBD3 /* CBLinuxProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBLinuxProject.h; sourceTree = "<group>"; };
 		119B95D714A65CA0001E1E20 /* pugiconfig.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pugiconfig.hpp; sourceTree = "<group>"; };
 		119B95D814A65CA0001E1E20 /* pugixml.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pugixml.hpp; sourceTree = "<group>"; };
+		577F95801779A5A7008BAD97 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = tinyxml/src/tinyxml.cpp; sourceTree = "<group>"; };
+		577F95811779A5A7008BAD97 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = tinyxml/src/tinyxml.h; sourceTree = "<group>"; };
+		577F95821779A5A7008BAD97 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = tinyxml/src/tinyxmlerror.cpp; sourceTree = "<group>"; };
+		577F95831779A5A7008BAD97 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = tinyxml/src/tinyxmlparser.cpp; sourceTree = "<group>"; };
 		8BB4FEBA16ED09830024D4A8 /* ofxBaseGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBaseGui.cpp; sourceTree = "<group>"; };
 		8BB4FEBB16ED09830024D4A8 /* ofxBaseGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBaseGui.h; sourceTree = "<group>"; };
 		8BB4FEBC16ED09830024D4A8 /* ofxButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxButton.cpp; sourceTree = "<group>"; };
@@ -150,7 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
-				E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */,
+				E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
 				E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */,
 				E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */,
@@ -190,8 +187,6 @@
 		113CAA5614F88EDD00D3906E /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				113CAA5714F88EDD00D3906E /* ofAppNoWindow.cpp */,
-				113CAA5814F88EDD00D3906E /* ofAppNoWindow.h */,
 				113CAA5914F88EDD00D3906E /* Utils.cpp */,
 				113CAA5A14F88EDD00D3906E /* Utils.h */,
 			);
@@ -211,10 +206,10 @@
 		113CAA6B14F88F4200D3906E /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				113CAA6C14F88F4200D3906E /* tinyxml.cpp */,
-				113CAA6D14F88F4200D3906E /* tinyxml.h */,
-				113CAA6E14F88F4200D3906E /* tinyxmlerror.cpp */,
-				113CAA6F14F88F4200D3906E /* tinyxmlparser.cpp */,
+				577F95801779A5A7008BAD97 /* tinyxml.cpp */,
+				577F95811779A5A7008BAD97 /* tinyxml.h */,
+				577F95821779A5A7008BAD97 /* tinyxmlerror.cpp */,
+				577F95831779A5A7008BAD97 /* tinyxmlparser.cpp */,
 			);
 			path = libs;
 			sourceTree = "<group>";
@@ -328,7 +323,7 @@
 		E4328144138ABC890047C5CB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E4328148138ABC890047C5CB /* openFrameworksDebug.a */,
+				E4328148138ABC890047C5CB /* openFrameworks.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -432,9 +427,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E4328148138ABC890047C5CB /* openFrameworksDebug.a */ = {
+		E4328148138ABC890047C5CB /* openFrameworks.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
+			name = openFrameworks.a;
 			path = openFrameworksDebug.a;
 			remoteRef = E4328147138ABC890047C5CB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -466,11 +462,7 @@
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
 				1120713014AE3D4F0035CB7E /* xcodeProject.cpp in Sources */,
 				1120713614AE3D840035CB7E /* ofAddon.cpp in Sources */,
-				113CAA5B14F88EDD00D3906E /* ofAppNoWindow.cpp in Sources */,
 				113CAA5C14F88EDD00D3906E /* Utils.cpp in Sources */,
-				113CAA7314F88F4200D3906E /* tinyxml.cpp in Sources */,
-				113CAA7414F88F4200D3906E /* tinyxmlerror.cpp in Sources */,
-				113CAA7514F88F4200D3906E /* tinyxmlparser.cpp in Sources */,
 				113CAA7614F88F4200D3906E /* ofxXmlSettings.cpp in Sources */,
 				116EA815150E68B2004EBBD3 /* baseProject.cpp in Sources */,
 				116EA81D150E7288004EBBD3 /* CBLinuxProject.cpp in Sources */,
@@ -484,6 +476,9 @@
 				8BB4FED016ED09830024D4A8 /* ofxSlider.cpp in Sources */,
 				8BB4FED116ED09830024D4A8 /* ofxSliderGroup.cpp in Sources */,
 				8BB4FED216ED09830024D4A8 /* ofxToggle.cpp in Sources */,
+				577F95841779A5A7008BAD97 /* tinyxml.cpp in Sources */,
+				577F95851779A5A7008BAD97 /* tinyxmlerror.cpp in Sources */,
+				577F95861779A5A7008BAD97 /* tinyxmlparser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
