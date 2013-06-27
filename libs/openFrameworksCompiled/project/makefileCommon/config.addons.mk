@@ -1079,7 +1079,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
                 $(ADDON_LDFLAGS))                                              \
                                                                                \
             $(eval PROJECT_ADDONS_EXPORTS +=                                   \
-                $(ORDERED_ADDON_FRAMEWORKS_FULL_PATHS)                        \
+                $(ORDERED_ADDON_FRAMEWORKS_FULL_PATHS)                         \
                 $(ORDERED_ADDONS_SHARED_LIBRARIES_FULL_PATHS))                 \
     )
 

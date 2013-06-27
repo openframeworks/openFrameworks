@@ -107,9 +107,9 @@ ifndef PLATFORM_LIB_SUBPATH
         else ifeq ($(PLATFORM_ARCH),i686)
             PLATFORM_LIB_SUBPATH=linux
         else
-            $(error \
-                This makefile does not support \
-                your architecture $(PLATFORM_ARCH)\
+            $(error                                                            \
+                This makefile does not support                                 \
+                your architecture $(PLATFORM_ARCH)                             \
             )
         endif
     # check android flavors 
@@ -120,23 +120,23 @@ ifndef PLATFORM_LIB_SUBPATH
         ifeq ($(PLATFORM_ARCH),x86_64)
             # TODO: this will be updated as soon as we support 64bit on OSX 
             # PLATFROM_LIB_SUBPATH=osx64
-            $(error \
-                This makefile does not support your architecture \
-                $(PLATFORM_ARCH). If you are on OSX, perhaps you \
-                meant to specify > "make PLATFORM_ARCH=i386"\
+            $(error                                                            \
+                This makefile does not support your architecture               \
+                $(PLATFORM_ARCH). If you are on OSX, perhaps you               \
+                meant to specify > "make PLATFORM_ARCH=i386"                   \
             )
         else ifeq ($(PLATFORM_ARCH),i386)
             PLATFORM_LIB_SUBPATH=osx
         else
-            $(error \
-                This makefile does not support \
-                your architecture $(PLATFORM_ARCH)\
+            $(error                                                            \
+                This makefile does not support                                 \
+                your architecture $(PLATFORM_ARCH)                             \
             )
         endif
     else
-        $(error \
-            This makefile does not support \
-            your operating system $(PLATFORM_OS)\
+        $(error                                                                \
+            This makefile does not support                                     \
+            your operating system $(PLATFORM_OS)                               \
         )
     endif
 endif
@@ -198,7 +198,7 @@ endif
 #   The standard location for openFrameworks core source and header files.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS
-    PATH_OF_LIBS_OPENFRAMEWORKS:=\
+    PATH_OF_LIBS_OPENFRAMEWORKS:=                                              \
         $(PATH_OF_LIBS)/openFrameworks
 endif
 
@@ -208,7 +208,7 @@ endif
 #   libs will be stored in a platform-based subdirectory.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED:=\
+    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED:=                                     \
         $(PATH_OF_LIBS)/openFrameworksCompiled
 endif
 
@@ -218,7 +218,7 @@ endif
 #   The standard location for openFrameworks project files, including makefiles.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT:=\
+    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT:=                             \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED)/project
 endif
 
@@ -227,7 +227,7 @@ endif
 #   The standard location for openFrameworks shared makefiles.
 ################################################################################
 ifndef PATH_OF_SHARED_MAKEFILES
-    PATH_OF_SHARED_MAKEFILES:=\
+    PATH_OF_SHARED_MAKEFILES:=                                                 \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/makefileCommon
 endif
 
@@ -236,7 +236,7 @@ endif
 #   The standard location for openFrameworks platform-specific makefiles.
 ################################################################################
 ifndef PATH_OF_PLATFORM_MAKEFILES
-    PATH_OF_PLATFORM_MAKEFILES:=\
+    PATH_OF_PLATFORM_MAKEFILES:=                                               \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/$(PLATFORM_LIB_SUBPATH)
 endif
 
@@ -247,7 +247,7 @@ endif
 #   static libraries.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH:=\
+    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH:=            \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED)/lib/$(PLATFORM_LIB_SUBPATH)
 endif
 
@@ -302,18 +302,19 @@ endif
 #
 ################################################################################
 
-AVAILABLE_PLATFORM_VARIANTS:=\
-    $(shell \
-        find $(PATH_OF_PLATFORM_MAKEFILES)/config.*.mk \
-        -maxdepth 1 -type f \
-        | sed -E 's/.*\.([^\.]*)\.mk/\1/'\
+AVAILABLE_PLATFORM_VARIANTS:=                                                  \
+    $(shell                                                                    \
+        find $(PATH_OF_PLATFORM_MAKEFILES)/config.*.mk                         \
+        -maxdepth 1                                                            \
+        -type f                                                                \
+        | sed -E 's/.*\.([^\.]*)\.mk/\1/'                                      \
     )
 
 ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
-    $(error \
-        Platform Variant "$(PLATFORM_VARIANT)" \
-        is not valid. Valid variants include \
-        [$(strip $(AVAILABLE_PLATFORM_VARIANTS))]\
+    $(error                                                                    \
+        Platform Variant "$(PLATFORM_VARIANT)"                                 \
+        is not valid. Valid variants include                                   \
+        [$(strip $(AVAILABLE_PLATFORM_VARIANTS))]                              \
     )
 endif
 
@@ -375,8 +376,8 @@ endif
 ifdef MAKEFILE_DEBUG
     $(info =================config.shared.mk PLATFORM_VARIANT CONFIG===========)
     $(info Available Platform Variants = $(AVAILABLE_PLATFORM_VARIANTS))
-    $(info \
-        Including : \
+    $(info                                                                     \
+        Including :                                                            \
         $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk \
     )
     $(info ABI_PATH=$(ABI_PATH))
@@ -425,11 +426,15 @@ CORE_EXCLUSIONS:=$(strip $(PLATFORM_EXCLUSIONS))
 #
 ################################################################################
 
-ALL_CORE_SOURCE_PATHS:=\
-    $(shell \
-        find $(PATH_OF_LIBS_OPENFRAMEWORKS) \
-        -maxdepth 1 -mindepth 1 -type d \
-        | grep -v "/\.[^\.]"\
+#TODO: SHARE ADDONS SEARCH FUNCTIONS
+
+ALL_CORE_SOURCE_PATHS:=                                                        \
+    $(shell                                                                    \
+        find $(PATH_OF_LIBS_OPENFRAMEWORKS)                                    \
+        -maxdepth 1                                                            \
+        -mindepth 1                                                            \
+        -type d                                                                \
+        | grep -v "/\.[^\.]"                                                   \
     )
 
 ################################################################################
@@ -440,10 +445,10 @@ ALL_CORE_SOURCE_PATHS:=\
 #   all files that are also included in the CORE_EXCLUSIONS list.
 ################################################################################
 
-CORE_SOURCE_PATHS:=\
-    $(filter-out \
-        $(CORE_EXCLUSIONS),\
-        $(ALL_CORE_SOURCE_PATHS)\
+CORE_SOURCE_PATHS:=                                                            \
+    $(filter-out                                                               \
+        $(CORE_EXCLUSIONS),                                                    \
+        $(ALL_CORE_SOURCE_PATHS)                                               \
     )
 
 ################################################################################
@@ -454,8 +459,8 @@ CORE_SOURCE_PATHS:=\
 #   is located in the base folder.
 ################################################################################
 
-CORE_HEADER_SEARCH_PATHS:=\
-    $(PATH_OF_LIBS_OPENFRAMEWORKS) \
+CORE_HEADER_SEARCH_PATHS:=                                                     \
+    $(PATH_OF_LIBS_OPENFRAMEWORKS)                                             \
     $(CORE_SOURCE_PATHS)
 
 ################################################################################
@@ -471,10 +476,11 @@ CORE_HEADER_SEARCH_PATHS:=\
 #
 ################################################################################
 
-ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=\
-    $(shell \
-        find $(PATH_OF_LIBS)/*/include -type d \
-        | grep -v "/\.[^\.]"\
+ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=                                     \
+    $(shell                                                                    \
+        find $(PATH_OF_LIBS)/*/include                                         \
+        -type d                                                                \
+        | grep -v "/\.[^\.]"                                                   \
     )
 
 ################################################################################
@@ -484,10 +490,10 @@ ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=\
 #   the CORE_EXCLUSIONS list.
 ################################################################################
 
-CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=\
-    $(filter-out \
-        $(CORE_EXCLUSIONS),\
-        $(ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS)\
+CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=                                         \
+    $(filter-out                                                               \
+        $(CORE_EXCLUSIONS),                                                    \
+        $(ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS)                            \
     )
 
 ################################################################################
@@ -504,10 +510,10 @@ CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=\
 #   based builds. 
 ################################################################################
 
-CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS:=\
-    $(addprefix \
-        -F, \
-        $(PLATFORM_FRAMEWORK_SEARCH_PATHS)\
+CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS:=                                           \
+    $(addprefix                                                                \
+        -F,                                                                    \
+        $(PLATFORM_FRAMEWORK_SEARCH_PATHS)                                     \
     )
 
 ################################################################################
@@ -516,10 +522,10 @@ CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS:=\
 #   of the PLATFORM_HEADER_SEARCH_PATHS. 
 ################################################################################
 
-CORE_HEADER_SEARCH_PATHS_CFLAGS:=\
-    $(addprefix \
-        -I,\
-        $(PLATFORM_HEADER_SEARCH_PATHS)\
+CORE_HEADER_SEARCH_PATHS_CFLAGS:=                                              \
+    $(addprefix                                                                \
+        -I,                                                                    \
+        $(PLATFORM_HEADER_SEARCH_PATHS)                                        \
     )
 
 ################################################################################
@@ -528,7 +534,7 @@ CORE_HEADER_SEARCH_PATHS_CFLAGS:=\
 #   PLATFORM_PKG_CONFIG_LIBRARIES variable.
 ################################################################################
 
-CORE_PKG_CONFIG_LIBRARIES:=\
+CORE_PKG_CONFIG_LIBRARIES:=                                                    \
     $(PLATFORM_PKG_CONFIG_LIBRARIES)
 
 # TODO: do we need to include this above?
@@ -542,9 +548,9 @@ CORE_PKG_CONFIG_LIBRARIES:=\
 ################################################################################
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-    CORE_HEADER_SEARCH_PATHS_CFLAGS += \
-        $(shell \
-            pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags\
+    CORE_HEADER_SEARCH_PATHS_CFLAGS +=                                         \
+        $(shell                                                                \
+            pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags                 \
         )
 endif
 
@@ -554,10 +560,10 @@ endif
 #   Add them to the CORE_HEADER_SEARCH_PATHS_CFLAGS.
 ################################################################################
 
-CORE_HEADER_SEARCH_PATHS_CFLAGS += \
-    $(addprefix \
-        -I, \
-        $(CORE_THIRD_PARTY_HEADER_SEARCH_PATHS)\
+CORE_HEADER_SEARCH_PATHS_CFLAGS +=                                             \
+    $(addprefix                                                                \
+        -I,                                                                    \
+        $(CORE_THIRD_PARTY_HEADER_SEARCH_PATHS)                                \
     )
 
 ################################################################################
@@ -566,10 +572,10 @@ CORE_HEADER_SEARCH_PATHS_CFLAGS += \
 #   Add them to the CORE_HEADER_SEARCH_PATHS_CFLAGS.
 ################################################################################
 
-CORE_HEADER_SEARCH_PATHS_CFLAGS += \
-    $(addprefix \
-        -I,\
-        $(CORE_HEADER_SEARCH_PATHS)\
+CORE_HEADER_SEARCH_PATHS_CFLAGS +=                                             \
+    $(addprefix                                                                \
+        -I,                                                                    \
+        $(CORE_HEADER_SEARCH_PATHS)                                            \
     )
 
 ################################################################################
@@ -583,10 +589,10 @@ CORE_HEADER_SEARCH_PATHS_CFLAGS += \
 #   Set CORE_DEFINES_CFLAGS to PLATFORM_DEFINES while prepending -D to each.
 ################################################################################
 
-CORE_DEFINES_CFLAGS:=\
-    $(addprefix \
-        -D,\
-        $(PLATFORM_DEFINES)\
+CORE_DEFINES_CFLAGS:=                                                          \
+    $(addprefix                                                                \
+        -D,                                                                    \
+        $(PLATFORM_DEFINES)                                                    \
     )
 
 ################################################################################
@@ -594,7 +600,7 @@ CORE_DEFINES_CFLAGS:=\
 #   Set raw CORE_CFLAGS to raw PLATFORM_CFLAGS.  PLATFORM_CFLAGS include all 
 #   fully qualified CFLAGS. 
 ################################################################################
-CORE_CFLAGS:=\
+CORE_CFLAGS :=                                                                 \
     $(PLATFORM_CFLAGS)
 
 ################################################################################
@@ -619,11 +625,15 @@ CORE_CFLAGS:=\
 #
 ################################################################################
 
-ALL_CORE_SOURCE_FILES:=\
-    $(shell \
-        find $(CORE_SOURCE_PATHS) \
-        -name "*.cpp" -or -name "*.mm" -or -name "*.m" \
-        | grep -v "/\.[^\.]"\
+ALL_CORE_SOURCE_FILES :=                                                       \
+    $(shell                                                                    \
+        find $(CORE_SOURCE_PATHS)                                              \
+        -name "*.cpp"                                                          \
+        -or                                                                    \
+        -name "*.mm"                                                           \
+        -or                                                                    \
+        -name "*.m"                                                            \
+        | grep -v "/\.[^\.]"                                                   \
     )
 
 ################################################################################
@@ -632,10 +642,10 @@ ALL_CORE_SOURCE_FILES:=\
 #   that are included in the CORE_EXCLUSIONS list.
 ################################################################################
 
-CORE_SOURCE_FILES:=\
-    $(filter-out \
-        $(CORE_EXCLUSIONS),\
-        $(ALL_CORE_SOURCE_FILES)\
+CORE_SOURCE_FILES:=                                                            \
+    $(filter-out                                                               \
+        $(CORE_EXCLUSIONS),                                                    \
+        $(ALL_CORE_SOURCE_FILES)                                               \
     )
 
 ################################################################################
