@@ -476,6 +476,7 @@ CORE_HEADER_SEARCH_PATHS:=                                                     \
 #
 ################################################################################
 
+#TODO: SHARE ADDONS SEARCH FUNCTIONS
 ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=                                     \
     $(shell                                                                    \
         find $(PATH_OF_LIBS)/*/include                                         \
@@ -625,6 +626,7 @@ CORE_CFLAGS :=                                                                 \
 #
 ################################################################################
 
+#TODO: SHARE ADDONS SEARCH FUNCTIONS
 ALL_CORE_SOURCE_FILES :=                                                       \
     $(shell                                                                    \
         find $(CORE_SOURCE_PATHS)                                              \
