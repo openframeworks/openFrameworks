@@ -207,7 +207,7 @@ void ofEasyCam::updateMouse(){
 			reset();
 		}
                 
-		if ((bEnableMouseMiddleButton && ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)) || ofGetKeyPressed(doTranslationKey)  || ofGetMousePressed(OF_MOUSE_BUTTON_MIDDLE)){
+		if ((bEnableMouseMiddleButton && ofGetMousePressed(OF_MOUSE_BUTTON_MIDDLE)) || ofGetKeyPressed(doTranslationKey)  || ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)){
 			bDoTranslate = true;
 			bDoRotate = false;
 			bApplyInertia = false;
@@ -246,7 +246,7 @@ void ofEasyCam::updateMouse(){
 				moveX = 0;
 				moveY = 0;
 				moveZ = 0;
-				if (ofGetMousePressed(2)) {
+				if (ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)) {
 					moveZ = mouseVel.y * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;				
 				}else {
 					moveX = -mouseVel.x * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.width;
