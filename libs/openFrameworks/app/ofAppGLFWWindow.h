@@ -115,6 +115,8 @@ private:
 	int 			nFramesSinceWindowResized;
 	bool			bDoubleBuffered;
 
+	int				getCurrentMonitor();
+	
 	static ofAppGLFWWindow	* instance;
 	static ofBaseApp *	ofAppPtr;
 
