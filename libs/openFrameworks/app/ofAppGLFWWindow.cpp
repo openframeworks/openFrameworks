@@ -404,11 +404,35 @@ ofPoint ofAppGLFWWindow::getWindowPosition(){
 }
 
 //------------------------------------------------------------
+
+int ofAppGLFWWindow::getCurrentMonitor(){
+	int numberOfMonitors;
+	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
+
+	int xW;	int yW;
+	glfwGetWindowPos(windowP, &xW, &yW);
+	
+	for (int iC=0; iC < numberOfMonitors; iC++){
+		int xM; int yM;
+		glfwGetMonitorPos(monitors[iC], &xM, &yM);
+		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[iC]);
+		ofRectangle monitorRect(xM, yM, desktopMode->width, desktopMode->height);
+		if (monitorRect.inside(xW, yW)){
+			return iC;
+			break;
+		}
+	}
+	return 0;
+}
+
+
+//------------------------------------------------------------
 ofPoint ofAppGLFWWindow::getScreenSize(){
 	int count;
 	GLFWmonitor** monitors = glfwGetMonitors(&count);
 	if(count>0){
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[0]);
+		int currentMonitor = getCurrentMonitor();
+		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[currentMonitor]);
 		if(desktopMode){
 			if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 				return ofVec3f(desktopMode->width, desktopMode->height,0);
@@ -544,8 +568,34 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 		[cocoaWindow setStyleMask:NSBorderlessWindowMask];
 
-		setWindowShape(getScreenSize().x, getScreenSize().y);
-		setWindowPosition(0,0);
+		int monitorCount;
+		int currentMonitor = getCurrentMonitor();
+		ofVec3f screenSize = getScreenSize();
+
+		if (monitorCount > 1 && currentMonitor < monitorCount){
+			int xpos;
+			int ypos;
+			ofVec3f primaryMonitorOrigin;
+			ofVec3f targetMonitorOrigin;
+
+			GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+			GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+			
+			// tig: Get the origin of the primary monitor, which is vec2(xpos, ypos+height)
+			// Monitors have the origin at the bottom left of the screen.
+			// Then get the origin of the target monitor and calculate how much to offset the
+			// window so that it is pinned to the top left corner of the target monitor,
+			// covering it fully.
+			glfwGetMonitorPos(primaryMonitor, &xpos, &ypos);
+			primaryMonitorOrigin.set(xpos, ypos + glfwGetVideoMode(primaryMonitor)->height);
+			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);
+			targetMonitorOrigin.set(xpos, ypos + glfwGetVideoMode(monitors[currentMonitor])->height);
+			int yDelta =  primaryMonitorOrigin.y - targetMonitorOrigin.y;
+			setWindowPosition(xpos, yDelta);
+		} else {
+			setWindowPosition(0,0);
+		}
+		setWindowShape(screenSize.x, screenSize.y);
 
 		//[cocoaWindow makeFirstResponder: cocoaWindow];
 
