@@ -21,7 +21,7 @@ void testApp::setup(){
     
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 
     glShadeModel(GL_SMOOTH); //some model / light stuff
     light.enable();
