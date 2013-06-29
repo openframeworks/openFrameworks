@@ -751,8 +751,11 @@ void ofSaveFrame(bool bUseViewport){
 //--------------------------------------------------
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
-    string arch = ofSystem("uname -m");
-    if(ofIsStringInString(arch,"x86_64")) {
+	ofSystemArgs args;
+	args.push_back( "-m" );
+	ofSystemResult r = ofSystem("uname", args);
+    string arch = r.getResult();
+    if(Poco::icompare(arch,"x86_64")==0) {
         return OF_TARGET_LINUX64;
     } else if(ofIsStringInString(arch,"armv6l")) {
         return OF_TARGET_LINUXARMV6L;
