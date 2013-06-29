@@ -739,31 +739,6 @@ void ofSaveFrame(bool bUseViewport){
 }
 
 //--------------------------------------------------
-string ofSystem(string command){
-	FILE * ret = NULL;
-#ifdef TARGET_WIN32
-	 ret = _popen(command.c_str(),"r");
-#else 
-	ret = popen(command.c_str(),"r");
-#endif
-	
-	string strret;
-	char c;
-
-	if (ret == NULL){
-		ofLogError() << "ofSystem: error opening return file";
-	}else{
-		do {
-		      c = fgetc (ret);
-		      strret += c;
-		} while (c != EOF);
-		fclose (ret);
-	}
-
-	return strret;
-}
-
-//--------------------------------------------------
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
     string arch = ofSystem("uname -m");
