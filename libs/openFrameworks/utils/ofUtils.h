@@ -196,8 +196,6 @@ string ofToUpper(const string & src);
 string ofVAArgsToString(const char * format, ...);
 string ofVAArgsToString(const char * format, va_list args);
 
-string ofSystem(string command);
-
 ofTargetPlatform ofGetTargetPlatform();
 
 
