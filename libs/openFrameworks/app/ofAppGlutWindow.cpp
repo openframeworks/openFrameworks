@@ -851,7 +851,8 @@ void ofAppGlutWindow::entry_cb( int state ) {
 }
 
 //--------------------------------------
-void ofAppGlutWindow::setChromeWindowWin32(bool titleBar, bool borderFrame){
+void ofAppGlutWindow::setChromeWindow(bool titleBar, bool borderFrame){
+#ifdef TARGET_WIN32
 	if (titleBar) {
 		lStyle = WS_SYSMENU | WS_CAPTION | WS_THICKFRAME;
 	}
@@ -861,4 +862,5 @@ void ofAppGlutWindow::setChromeWindowWin32(bool titleBar, bool borderFrame){
 	else {
 		lStyle = 0;
 	}
+#endif
 }

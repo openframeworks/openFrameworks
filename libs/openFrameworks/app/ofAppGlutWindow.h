@@ -41,8 +41,6 @@ public:
 #ifdef TARGET_LINUX
 	void setWindowIcon(const string & path);
 	void setWindowIcon(const ofPixels & iconPixels);
-#elif defined(TARGET_WIN32)
-	void setChromeWindowWin32(bool titleBar = true, bool borderFrame = true);
 #endif
 
 
@@ -57,6 +55,8 @@ public:
 	int			getHeight();	
 	
 	int			getWindowMode();
+
+	void		setChromeWindow(bool titleBar = true, bool borderFrame = true);
 
 	void		enableSetupScreen();
 	void		disableSetupScreen();
