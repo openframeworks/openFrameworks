@@ -862,5 +862,7 @@ void ofAppGlutWindow::setChromeWindow(bool titleBar, bool borderFrame){
 	else {
 		lStyle = 0;
 	}
+#else
+	ofLogError("setChromeWindow") << "not supported on your plattform";
 #endif
 }
