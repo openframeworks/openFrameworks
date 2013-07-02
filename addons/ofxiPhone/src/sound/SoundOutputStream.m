@@ -48,26 +48,20 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
                                                 AudioBufferList *ioData) {
 
     SoundOutputStream * stream = (SoundOutputStream *)inRefCon;
-    float * scaleBuffer = stream.scaleBuffer;
-    
     AudioBuffer * audioBuffer = &ioData->mBuffers[0];
-    short int * buffer = (short int *)audioBuffer->mData;
+	
+	// clearing the buffer before handing it off to the user
+	// this saves us from horrible noises if the user chooses not to write anything
+	memset(audioBuffer->mData, 0, audioBuffer->mDataByteSize);
     
-    int numOfChannels = audioBuffer->mNumberChannels;
-    int maxBufferSize = MAX_BUFFER_SIZE / numOfChannels;
-    int bufferSize = audioBuffer->mDataByteSize / (numOfChannels * 2);
-    bufferSize = MIN(bufferSize, maxBufferSize);
+    int bufferSize = (audioBuffer->mDataByteSize / sizeof(Float32)) / audioBuffer->mNumberChannels;
+    bufferSize = MIN(bufferSize, MAX_BUFFER_SIZE / audioBuffer->mNumberChannels);
     
     if([stream.delegate respondsToSelector:@selector(soundStreamRequested:output:bufferSize:numOfChannels:)]) {
         [stream.delegate soundStreamRequested:stream
-                                       output:scaleBuffer
+                                       output:audioBuffer->mData
                                    bufferSize:bufferSize
-                                numOfChannels:numOfChannels];
-    }
-    
-    int len = bufferSize * numOfChannels;
-    for(int i=0; i<len; i++) { // truncate to 16bit fixed point data
-        buffer[i] = (int)(scaleBuffer[i] * 32767.f);
+                                numOfChannels:audioBuffer->mNumberChannels];
     }
 	
     return noErr;
@@ -166,15 +160,16 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
     //---------------------------------------------------------- format.
     
     // Describe format
-    AudioStreamBasicDescription audioFormat;
-	audioFormat.mSampleRate = (double)sampleRate;
-	audioFormat.mFormatID = kAudioFormatLinearPCM;
-	audioFormat.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
-	audioFormat.mFramesPerPacket = 1;
-    audioFormat.mChannelsPerFrame = numOfChannels;
-	audioFormat.mBitsPerChannel = 16;
-    audioFormat.mBytesPerPacket = numOfChannels * 2;
-    audioFormat.mBytesPerFrame = numOfChannels * 2;
+    AudioStreamBasicDescription audioFormat = {
+		.mSampleRate       = sampleRate,
+		.mFormatID         = kAudioFormatLinearPCM,
+		.mFormatFlags      = kAudioFormatFlagsNativeFloatPacked,
+		.mFramesPerPacket  = 1,
+		.mChannelsPerFrame = numOfChannels,
+		.mBytesPerFrame    = sizeof(Float32) * numOfChannels,
+		.mBytesPerPacket   = sizeof(Float32) * numOfChannels,
+		.mBitsPerChannel   = sizeof(Float32) * 8
+	};
     
     // Apply format
 	status = AudioUnitSetProperty(audioUnit,

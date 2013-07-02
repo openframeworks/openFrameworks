@@ -35,7 +35,6 @@ typedef enum {
     NSInteger bufferSize;
     NSInteger numOfBuffers;
     AudioUnit audioUnit;
-    float * scaleBuffer;
     BOOL bInterruptedWhileRunning;
 }
 
@@ -46,7 +45,6 @@ typedef enum {
 @property (readonly) NSInteger bufferSize;
 @property (readonly) NSInteger numOfBuffers;
 @property (readonly) AudioUnit audioUnit;
-@property (readonly) float * scaleBuffer;
 @property (assign) BOOL bInterruptedWhileRunning;
 
 - (id)initWithNumOfChannels:(NSInteger)numOfChannels

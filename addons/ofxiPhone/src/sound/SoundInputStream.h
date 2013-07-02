@@ -7,9 +7,7 @@
 #import "SoundStream.h"
 
 @interface SoundInputStream : SoundStream {
-    AudioBufferList * bufferList;
-}
 
-@property (readonly) AudioBufferList * bufferList;
+}
 
 @end
