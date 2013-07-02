@@ -100,6 +100,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
         return;
     }
     
+    ofNotifyExit();
+    
     [activeTouches release];
     
     delete screenSize;
@@ -109,9 +111,25 @@ static ofxiOSEAGLView * _instanceRef = nil;
     delete windowPos;
     windowPos = NULL;
     
+    ofBaseApp * baseAppPtr = ofGetAppPtr();
+    ofRemoveListener(ofEvents().setup,          baseAppPtr, &ofBaseApp::setup,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().update,         baseAppPtr, &ofBaseApp::update,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().draw,           baseAppPtr, &ofBaseApp::draw,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().exit,           baseAppPtr, &ofBaseApp::exit,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().keyPressed,     baseAppPtr, &ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().keyReleased,    baseAppPtr, &ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().mouseMoved,     baseAppPtr, &ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().mouseDragged,   baseAppPtr, &ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().mousePressed,   baseAppPtr, &ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().mouseReleased,  baseAppPtr, &ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().windowResized,  baseAppPtr, &ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().windowEntered,  baseAppPtr, &ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().messageEvent,   baseAppPtr, &ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
+    ofRemoveListener(ofEvents().fileDragEvent,  baseAppPtr, &ofBaseApp::dragged,OF_EVENT_ORDER_APP);
+    
     ofUnregisterTouchEvents(app);
     ofxiPhoneAlerts.removeListener(app);
-    app->exit();
+    
     ofSetAppPtr(ofPtr<ofBaseApp>((app=NULL)));
     
     _instanceRef = nil;
