@@ -21,7 +21,6 @@
 @synthesize bufferSize;
 @synthesize numOfBuffers;
 @synthesize audioUnit;
-@synthesize scaleBuffer;
 @synthesize bInterruptedWhileRunning;
 
 - (id)initWithNumOfChannels:(NSInteger)value0
@@ -34,14 +33,12 @@
         bufferSize = value2;
         numOfBuffers = 1; // always 1.
         audioUnit = nil;
-        scaleBuffer = malloc(sizeof(float) * MAX_BUFFER_SIZE);
         bInterruptedWhileRunning = NO;
     }
     return self;
 }
 
 - (void)dealloc {
-    free(scaleBuffer);
     [super dealloc];
 }
 

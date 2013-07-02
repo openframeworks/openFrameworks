@@ -16,6 +16,18 @@
 
 #import "SoundInputStream.h"
 
+typedef struct {
+	AudioBufferList * bufferList;
+	AudioUnit remoteIO;
+	SoundInputStream * stream;
+}
+SoundInputStreamContext;
+
+@interface SoundInputStream() {
+	SoundInputStreamContext context;
+}
+@end
+
 void soundInputStreamInterruptionListener(void *inRefCon, UInt32 inInterruptionState) {
     SoundInputStream * stream = (SoundInputStream *)inRefCon;
     
@@ -47,8 +59,8 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
                                                UInt32 inNumberFrames,
                                                AudioBufferList *ioData) {
 
-    SoundInputStream * stream = (SoundInputStream *)inRefCon;
-    AudioBufferList * bufferList = stream.bufferList;
+    SoundInputStreamContext * context = (SoundInputStreamContext *)inRefCon;
+	AudioBufferList * bufferList = context->bufferList;
 	AudioBuffer * buffer = &bufferList->mBuffers[0];
 	
 	// make sure our buffer is big enough
@@ -59,32 +71,32 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 		buffer->mData = malloc(necessaryBufferSize);
 	}
 	
-	// we need to store the original buffer size, since AudioUnitRender seems to change
-	// the value of the AudioBufferList's mDataByteSize. We need to write it back later,
-	// or else we'll end up reallocating continuously in the render callback (BAD!)
+	// we need to store the original buffer size, since AudioUnitRender seems to change the value
+	// of the AudioBufferList's mDataByteSize (at least in the simulator). We need to write it back
+	// later, or else we'll end up reallocating continuously in the render callback (BAD!)
 	UInt32 bufferSize = buffer->mDataByteSize;
     
-	OSStatus status = AudioUnitRender(stream.audioUnit,
+	OSStatus status = AudioUnitRender(context->remoteIO,
                                       ioActionFlags,
                                       inTimeStamp,
                                       inBusNumber,
                                       inNumberFrames,
-                                      bufferList);
+                                      context->bufferList);
     
 	if(status != noErr) {
 		@autoreleasepool {
-			if([stream.delegate respondsToSelector:@selector(soundStreamError:error:)]) {
-				[stream.delegate soundStreamError:stream error:@"Could not render input audio samples"];
+			if([context->stream.delegate respondsToSelector:@selector(soundStreamError:error:)]) {
+				[context->stream.delegate soundStreamError:context->stream error:@"Could not render input audio samples"];
 			}
 		}
 		return status;
 	}
 
-    if([stream.delegate respondsToSelector:@selector(soundStreamReceived:input:bufferSize:numOfChannels:)]) {
-        [stream.delegate soundStreamReceived:stream
-                                       input:bufferList->mBuffers[0].mData
-                                  bufferSize:bufferList->mBuffers[0].mDataByteSize / sizeof(Float32)
-                               numOfChannels:bufferList->mBuffers[0].mNumberChannels];
+    if([context->stream.delegate respondsToSelector:@selector(soundStreamReceived:input:bufferSize:numOfChannels:)]) {
+        [context->stream.delegate soundStreamReceived:context->stream
+												input:bufferList->mBuffers[0].mData
+										   bufferSize:bufferList->mBuffers[0].mDataByteSize / sizeof(Float32)
+										numOfChannels:bufferList->mBuffers[0].mNumberChannels];
     }
 	
 	bufferList->mBuffers[0].mDataByteSize = bufferSize;
@@ -94,8 +106,6 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 
 //----------------------------------------------------------------
 @implementation SoundInputStream
-
-@synthesize bufferList;
 
 - (id)initWithNumOfChannels:(NSInteger)value0
              withSampleRate:(NSInteger)value1
@@ -237,9 +247,9 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
     //---------------------------------------------------------- callback.
     
     // input callback
-    AURenderCallbackStruct callback;
-	callback.inputProc = soundInputStreamRenderCallback;
-	callback.inputProcRefCon = self;
+    AURenderCallbackStruct callback = {soundInputStreamRenderCallback, &context};
+	context.remoteIO = self.audioUnit;
+	context.stream = self;
 	status = AudioUnitSetProperty(audioUnit,
                                   kAudioOutputUnitProperty_SetInputCallback,
 								  kAudioUnitScope_Global,
@@ -253,13 +263,13 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
     //---------------------------------------------------------- make buffers.
     
 	UInt32 bufferListSize = offsetof(AudioBufferList, mBuffers[0]) + (sizeof(AudioBuffer) * numOfChannels);
-    bufferList = (AudioBufferList *)malloc(bufferListSize);
-    bufferList->mNumberBuffers = numOfChannels;
+    context.bufferList = (AudioBufferList *)malloc(bufferListSize);
+    context.bufferList->mNumberBuffers = numOfChannels;
     
-	for(int i=0; i<bufferList->mNumberBuffers; i++) {
-        bufferList->mBuffers[i].mNumberChannels = 1;
-        bufferList->mBuffers[i].mDataByteSize = bufferSize * sizeof(Float32);
-        bufferList->mBuffers[i].mData = calloc(bufferSize, sizeof(Float32));
+	for(int i=0; i<context.bufferList->mNumberBuffers; i++) {
+        context.bufferList->mBuffers[i].mNumberChannels = 1;
+        context.bufferList->mBuffers[i].mDataByteSize = bufferSize * sizeof(Float32);
+        context.bufferList->mBuffers[i].mData = calloc(bufferSize, sizeof(Float32));
     }
     
     //---------------------------------------------------------- go!
@@ -287,10 +297,10 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
     audioUnit = nil;
     AudioSessionSetActive(false);
     
-	for(int i=0; i<bufferList->mNumberBuffers; i++) {
-		free(bufferList->mBuffers[i].mData);
+	for(int i=0; i<context.bufferList->mNumberBuffers; i++) {
+		free(context.bufferList->mBuffers[i].mData);
 	}
-    free(bufferList);
+    free(context.bufferList);
 }
 
 @end
