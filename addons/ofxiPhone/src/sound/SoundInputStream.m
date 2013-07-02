@@ -58,6 +58,11 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 		buffer->mDataByteSize = necessaryBufferSize;
 		buffer->mData = malloc(necessaryBufferSize);
 	}
+	
+	// we need to store the original buffer size, since AudioUnitRender seems to change
+	// the value of the AudioBufferList's mDataByteSize. We need to write it back later,
+	// or else we'll end up reallocating continuously in the render callback (BAD!)
+	UInt32 bufferSize = buffer->mDataByteSize;
     
 	OSStatus status = AudioUnitRender(stream.audioUnit,
                                       ioActionFlags,
@@ -81,6 +86,8 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
                                   bufferSize:bufferList->mBuffers[0].mDataByteSize / sizeof(Float32)
                                numOfChannels:bufferList->mBuffers[0].mNumberChannels];
     }
+	
+	bufferList->mBuffers[0].mDataByteSize = bufferSize;
     
 	return noErr;
 }
