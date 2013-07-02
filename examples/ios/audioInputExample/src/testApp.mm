@@ -76,7 +76,7 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::audioIn(float * input, int bufferSize, int nChannels){
-	if(initialBufferSize != bufferSize){
+	if(initialBufferSize < bufferSize){
 		ofLog(OF_LOG_ERROR, "your buffer size was set to %i - but the stream needs a buffer size of %i", initialBufferSize, bufferSize);
 	}	
 
