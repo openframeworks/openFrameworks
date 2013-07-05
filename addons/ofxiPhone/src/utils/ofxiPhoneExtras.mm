@@ -211,30 +211,42 @@ bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 
 //--------------------------------------------------------------
 bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
-	if(!uiImage) return false;
+	if(uiImage == nil) {
+        return false;
+    }
 	
 	CGContextRef spriteContext;
-	CGImageRef	cgImage = uiImage.CGImage;
-
-	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
+	CGImageRef cgImage = uiImage.CGImage;
+	
+	int bytesPerPixel = CGImageGetBitsPerPixel(cgImage)/8;
 	if(bytesPerPixel == 3) bytesPerPixel = 4;
 	
-	int width			= targetWidth > 0 ? targetWidth : CGImageGetWidth(cgImage);
-	int height			= targetHeight > 0 ? targetHeight : CGImageGetHeight(cgImage);
+	int width = targetWidth > 0 ? targetWidth : CGImageGetWidth(cgImage);
+	int height = targetHeight > 0 ? targetHeight : CGImageGetHeight(cgImage);
 	
 	// Allocated memory needed for the bitmap context
-	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
+	GLubyte * pixels = (GLubyte *)malloc(width * height * bytesPerPixel);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 	
-	// Uses the bitmatp creation function provided by the Core Graphics framework. 
-	ofLog(OF_LOG_VERBOSE, "about to CGBitmapContextCreate");
-	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+	// Uses the bitmatp creation function provided by the Core Graphics framework.
+	spriteContext = CGBitmapContextCreate(pixels,
+                                          width,
+                                          height,
+                                          CGImageGetBitsPerComponent(cgImage),
+                                          width * bytesPerPixel,
+                                          colorSpace,
+                                          bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+    CGColorSpaceRelease(colorSpace);
 	
 	if(spriteContext == NULL) {
 		ofLog(OF_LOG_ERROR, "iPhoneUIImageToOFImage - CGBitmapContextCreate returned NULL");
 		free(pixels);
 		return false;
 	}
-
+	
+    CGContextSetBlendMode(spriteContext, kCGBlendModeCopy);
+    
 	// After you create the context, you can draw the sprite image to the context.
 	ofLog(OF_LOG_VERBOSE, "about to CGContextDrawImage");
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
@@ -242,15 +254,6 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
 	ofLog(OF_LOG_VERBOSE, "about to CGContextRelease");
 	CGContextRelease(spriteContext);
-	
-	// vertically flip
-//	GLubyte *pixelsFlipped = (GLubyte *) malloc(width * height * bytesPerPixel);
-//	int numBytesPerRow = width * bytesPerPixel;
-//	for(int y=0; y<height; y++) {
-//		memcpy(pixelsFlipped + (numBytesPerRow * y), pixels + (numBytesPerRow * (height - 1 - y)), numBytesPerRow);
-//	}
-//	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
-//	free(pixelsFlipped);
 	
 	ofImageType ofImageMode;
 	
