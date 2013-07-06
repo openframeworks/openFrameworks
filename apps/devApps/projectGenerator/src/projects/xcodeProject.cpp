@@ -138,6 +138,8 @@ void xcodeProject::setup(){
 
 
 void xcodeProject::saveScheme(){
+
+    cout << " saveScheme start " << projectName << endl; 
 	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
     ofDirectory::removeDirectory(schemeFolder, true);
 	ofDirectory::createDirectory(schemeFolder, false, true);
@@ -152,22 +154,33 @@ void xcodeProject::saveScheme(){
     findandreplaceInTexfile(schemeToR, "emptyExample", projectName);
 	
 	//TODO: do we still need this?
-    string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
-    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
+    //string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
+    //ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
+
+    cout << " saveScheme end " << projectName << endl; 
 }
 
 
 void xcodeProject::saveWorkspaceXML(){
+
+    cout << " saveWorkspaceXML start " << projectName << endl; 
+
 	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
+	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
+
+	ofFile::removeFile(xcodeProjectWorkspace);
 	ofDirectory::removeDirectory(workspaceFolder, true);
 	ofDirectory::createDirectory(workspaceFolder, false, true);
-	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
+
+    cout << " saveWorkspaceXML end " << projectName << endl; 
+
 }
 
 
 bool xcodeProject::createProjectFile(){
+    cout << " saveWorkspaceXML createProjectFile " << projectName << endl; 
 
     // todo: some error checking.
 
@@ -241,6 +254,7 @@ bool xcodeProject::createProjectFile(){
         findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
     }
 
+    cout << " saveWorkspaceXML end " << projectName << endl; 
 
     return true;
 }
@@ -248,6 +262,8 @@ bool xcodeProject::createProjectFile(){
 
 
 void xcodeProject::renameProject(){
+    cout << " renameProject start " << projectName << endl; 
+
     pugi::xpath_node_set uuidSet = doc.select_nodes("//string[contains(.,'emptyExample')]");
     for (pugi::xpath_node_set::const_iterator it = uuidSet.begin(); it != uuidSet.end(); ++it){
         pugi::xpath_node node = *it;
@@ -255,6 +271,8 @@ void xcodeProject::renameProject(){
         findandreplace(val, "emptyExample",  projectName);
         it->node().first_child().set_value(val.c_str());
     }
+
+    cout << " renameProject end " << projectName << endl; 
 }
 
 
@@ -278,10 +296,19 @@ bool xcodeProject::saveProjectFile(){
     renameProject();
 
     // save the project out:
+    
+    cout << " saveProjectFile start" << endl; 
 
     string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
+
+    cout << " doc.save_file " << ofToDataPath(fileName) << endl; 
+
     bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
+
+    cout << " saveProjectFile end" << endl; 
+
     return bOk;
+
 }
 
 
@@ -401,7 +428,7 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
 
 
 void xcodeProject::addSrc(string srcFile, string folder){
-
+    cout << " addSrc start " << endl; 
 
     string buildUUID;
 
@@ -565,6 +592,8 @@ void xcodeProject::addSrc(string srcFile, string folder){
         //nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
 
     }
+
+    cout << " addSrc end " << endl; 
 
     //saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 }
