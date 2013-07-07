@@ -53,6 +53,8 @@ string generateUUID(string input){
 
     const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
     std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+    
+    digestString = digestString.substr(0, 24); 
 
     return digestString;
 }
