@@ -73,6 +73,28 @@ STRINGIFY(
 );
 
 //-----------------------------------------------------------------
+const char PBXFileReferenceXib[] =
+STRINGIFY(
+
+        <key>FILEUUID</key>
+        <dict>
+            <key>lastKnownFileType</key>
+            <string>FILETYPE</string>
+            <key>fileEncoding</key>
+            <string>4</string>
+            <key>isa</key>
+            <string>PBXFileReference</string>
+            <key>name</key>
+            <string>FILENAME</string>
+            <key>path</key>
+            <string>FILEPATH</string>
+            <key>sourceTree</key>
+            <string>SOURCE_ROOT</string>
+        </dict>
+
+);
+
+//-----------------------------------------------------------------
 const char PBXBuildFile[] =
 STRINGIFY(
 
@@ -133,6 +155,7 @@ void xcodeProject::setup(){
 		addonUUID		= "BB16F26B0F2B646B00518274";
 		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
 		resourcesUUID   = "BB24DD8F10DA77E000E9C588";
+        buildPhaseResourcesUUID = "BB24DDCA10DA781C00E9C588"; 
 	}
 }
 
@@ -424,6 +447,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
 
     bool addToResources = true;
     bool addToBuild = true;
+    bool addToBuildResource = false; 
     string fileKind = "file";
     bool bAddFolder = true;
 
@@ -447,6 +471,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
     else if(ext == "xib"){
 		fileKind = "file.xib";
         addToBuild	= false;
+        addToBuildResource = true; 
         addToResources = true;		
     }else if( target == "ios" ){
 		fileKind = "file";	
@@ -463,6 +488,11 @@ void xcodeProject::addSrc(string srcFile, string folder){
     //-----------------------------------------------------------------
 
     string pbxfileref = string(PBXFileReference);
+    if(ext == "xib"){
+        pbxfileref = string(PBXFileReferenceXib);
+    }
+    
+    
     string UUID = generateUUID(srcFile);   // replace with theo's smarter system.
 
     string name, path;
@@ -484,20 +514,29 @@ void xcodeProject::addSrc(string srcFile, string folder){
     // (B) BUILD REF
     //-----------------------------------------------------------------
 
-    if (addToBuild == true){
+    if (addToBuild || addToBuildResource ){
 
         buildUUID = generateUUID(srcFile + "-build");
         string pbxbuildfile = string(PBXBuildFile);
         findandreplace( pbxbuildfile, "FILEUUID", UUID);
         findandreplace( pbxbuildfile, "BUILDUUID", buildUUID);
+        
         fileRefDoc.load_buffer(pbxbuildfile.c_str(), strlen(pbxbuildfile.c_str()));
         doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child().next_sibling());   // UUID FIRST
         doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child());                  // DICT SECOND
 
         // add it to the build array.
-        pugi::xml_node array;
-        findArrayForUUID(buildPhaseUUID, array);    // this is the build array (all build refs get added here)
-        array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
+        if( addToBuildResource ){
+            pugi::xml_node array;
+            findArrayForUUID(buildPhaseResourcesUUID, array);    // this is the build array (all build refs get added here)
+            array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
+        }
+        if( addToBuild ){
+            pugi::xml_node array;
+            findArrayForUUID(buildPhaseUUID, array);    // this is the build array (all build refs get added here)
+            array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
+
+        }
     }
 
     //-----------------------------------------------------------------
