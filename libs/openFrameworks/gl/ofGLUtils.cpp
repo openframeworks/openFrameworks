@@ -14,7 +14,7 @@ int ofGetGlInternalFormat(const ofPixels& pix) {
 		case 3: return GL_RGB8;
 		case 4: return GL_RGBA8;
 		default:
-			if(ofGetGLProgrammableRenderer()){
+			if(ofIsGLProgrammableRenderer()){
 				return GL_RGBA8;
 			}else{
 				return GL_LUMINANCE8;
@@ -25,7 +25,7 @@ int ofGetGlInternalFormat(const ofPixels& pix) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
 		default:
-			if(ofGetGLProgrammableRenderer()){
+			if(ofIsGLProgrammableRenderer()){
 				return GL_RGBA;
 			}else{
 				return GL_LUMINANCE;
@@ -41,7 +41,7 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 		case 3: return GL_RGB16;
 		case 4: return GL_RGBA16;
 		default:
-		if(ofGetGLProgrammableRenderer()){
+		if(ofIsGLProgrammableRenderer()){
 			return GL_RGBA16;
 		}else{
 			return GL_LUMINANCE16;
@@ -421,6 +421,39 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 }
 
 
+int ofGetNumChannelsFromGLFormat(int glFormat){
+	switch(glFormat){
+	case GL_RGB:
+		return 3;
+	case GL_RGBA:
+		return 4;
+	case GL_LUMINANCE:
+		return 1;
+	case GL_LUMINANCE_ALPHA:
+		return 2;
+	default:
+		return 1;
+	}
+}
+
+// Rounds an integer value up to the next multiple of 2,4 and 8.
+#define OF_ROUND_UP_2(num)  (((num)+1)&~1)
+#define OF_ROUND_UP_4(num)  (((num)+3)&~3)
+#define OF_ROUND_UP_8(num)  (((num)+7)&~7)
+
+void ofSetPixelStorei(int w, int bpc, int numChannels){
+	int stride = w * numChannels * bpc;
+    if (OF_ROUND_UP_8 (stride) == stride) {
+        glPixelStorei (GL_UNPACK_ALIGNMENT, 8);
+    } else if (OF_ROUND_UP_4 (stride) == stride) {
+        glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
+    } else if (OF_ROUND_UP_2 (stride) == stride) {
+        glPixelStorei (GL_UNPACK_ALIGNMENT, 2);
+    } else {
+        glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
+    }
+}
+
 bool ofCheckGLExtension(string searchName){
 #ifdef TARGET_OPENGLES
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -439,6 +472,10 @@ ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
 	}else{
 		return ofPtr<ofGLProgrammableRenderer>();
 	}
+}
+
+bool ofIsGLProgrammableRenderer(){
+	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
 }
 
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){

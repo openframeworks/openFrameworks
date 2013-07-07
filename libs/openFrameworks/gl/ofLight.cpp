@@ -403,7 +403,7 @@ void ofLight::onOrientationChanged() {
 	// TODO: (tig) fix this.  this breaks udpate() thread safety (openGL should not be called in update() but only draw() ),
 	// since this method will most likely be called during update()
 	// if the light is parented and the parent node changes orientation during update().
-	
+
 	if(glIndex==-1) return;
 	// if we are a directional light and not positional, update light position (direction)
 	if(isDirectional == true) {
