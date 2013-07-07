@@ -10,10 +10,15 @@
 
 
 
+
+
+ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
+
 void ofGstUtils::startGstMainLoop(){
 	static bool initialized = false;
 	if(!initialized){
-		g_main_loop_new (NULL, FALSE);
+		mainLoop = new ofGstMainLoopThread;
+		mainLoop->start();
 		initialized=true;
 	}
 }
@@ -230,6 +235,8 @@ bool ofGstUtils::startPipeline(){
 		// set the appsink to not emit signals, we are using callbacks instead
 		// and frameByFrame to get buffers by polling instead of callback
 		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
+		//gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
+		//gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
 
 		if(!bFrameByFrame){
 			GstAppSinkCallbacks gstCallbacks;
