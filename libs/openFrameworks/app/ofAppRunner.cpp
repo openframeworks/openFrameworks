@@ -146,7 +146,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 	window = windowPtr;
 
-	if(ofGetGLProgrammableRenderer()){
+	if(ofIsGLProgrammableRenderer()){
         #if defined(TARGET_RASPBERRY_PI)
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)

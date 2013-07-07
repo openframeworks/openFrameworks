@@ -310,7 +310,7 @@ void ofFbo::destroy() {
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	
-	if (!ofGetGLProgrammableRenderer()){
+	if (!ofIsGLProgrammableRenderer()){
 		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
 			ofLogVerbose("ofFbo") << "FBO supported";
 		}else{
@@ -732,7 +732,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 	if(fbo != fboTextures && dirty) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
-		if (!ofGetGLProgrammableRenderer()){
+		if (!ofIsGLProgrammableRenderer()){
 			// save current drawbuffer
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
 		}
@@ -753,7 +753,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 		// restore readbuffer
 		glReadBuffer(readBuffer);
 		
-		if(!ofGetGLProgrammableRenderer()){
+		if(!ofIsGLProgrammableRenderer()){
 		// restore drawbuffer
 			glPopAttrib();
 		}
