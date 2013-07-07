@@ -3,16 +3,105 @@
 # Open Asset Import Library
 # https://github.com/assimp/assimp
 
+VER=3.0
+SUB_VER=1270
+
 # download the source code and unpack it into LIB_NAME
 function download() {
-	git clone https://github.com/assimp/assimp.git
+
+	# stable release
+	curl -LO http://downloads.sourceforge.net/project/assimp/assimp-$VER/assimp--$VER.$SUB_VER-full.zip
+	unzip -oq assimp--$VER.$SUB_VER-full.zip
+	mv assimp--$VER.$SUB_VER-sdk assimp
+	rm assimp*.zip
+
+	# get assimp build scripts for iOS from github,
+	# needed for now as they are not included with release zips
+	if [ "$OS" == "osx" -a  ! -e assimp/port ] ; then
+		git clone https://github.com/assimp/assimp.git assimp-git
+		mkdir assimp/port 
+		cp -vR assimp-git/port/iOS assimp/port
+		rm -rf assimp-git
+
+		# make a backup of the build script
+		cp assimp/port/iOS/build_ios.sh assimp/port/iOS/build_ios.sh.orig
+	fi
 }
 
 # executed inside the build dir
 function build() {
+
 	if [ "$TYPE" == "osx" ] ; then
-		cmake -G 'Unix Makefiles' -DASSIMP_BUILD_STATIC_LIB=1
-		make assimp	
+
+		# warning, assimp on github uses the ASSIMP_ prefix for CMake options ...
+		# these may need to be updated for a new release
+		local buildOpts="--build build/$TYPE -DBUILD_STATIC_LIB=1 -DENABLE_BOOST_WORKAROUND=ON"
+
+		# 32 bit
+		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386" -DCMAKE_CXX_FLAGS="-arch i386" .
+		make assimp
+		mv lib/libassimp.a lib/libassimp-i386.a
+		make clean
+
+		# 64 bit
+		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_CXX_FLAGS="-arch x86_64" .
+		make assimp
+		mv lib/libassimp.a lib/libassimp-x86_64.a
+		make clean
+
+		# link into universal lib
+		lipo -c lib/libassimp-i386.a lib/libassimp-x86_64.a -o lib/libassimp.a
+
+	elif [ "$TYPE" == "linux" ] ; then
+		echo "TODO: linux build here"
+
+	elif [ "$TYPE" == "linux64" ] ; then
+		echo "TODO: linux64 build here"
+
+	elif [ "$TYPE" == "vs2010" ] ; then
+		echo "TODO: vs2010 build here"
+
+	elif [ "$TYPE" == "win_cb" ] ; then
+		echo "TODO: vs2010 build here"
+
+	elif [ "$TYPE" == "ios" ] ; then
+		# ref: http://stackoverflow.com/questions/6691927/how-to-build-assimp-library-for-ios-device-and-simulator-with-boost-library
+
+		# this is basically updating an old build system with correct xcode paths
+		# and armv7s instead of armv6, hopefully the assimp project fixes this
+		# in the future ...
+
+		cd port/iOS
+		cp build_ios.sh.orig build_ios.sh
+
+		# convert the armv6 toolchain to armv7s, the output will say "arm6"
+		# but the arch will build for armv7s
+		sed -i .tmp "s|CMAKE_SYSTEM_PROCESSOR.*\"armv6\"|CMAKE_SYSTEM_PROCESSOR \"armv7s\"|" IPHONEOS_ARM6_TOOLCHAIN.cmake
+		sed -i .tmp "s|armv6|armv7s|" build_ios.sh
+
+		# set SDK and update xcode dev root
+		for toolchain in $( ls -1 *.cmake) ; do
+			sed -i .tmp \
+				-e "s|SDKVER.*\"5.0\"|SDKVER	\"$IOS_SDK_VER\"|" \
+				-e "s|\"/Developer|\"$XCODE_DEV_ROOT|" $toolchain
+		done
+		sed -i .tmp \
+			-e "s|IOS_BASE_SDK=.*|IOS_BASE_SDK=\"$IOS_SDK_VER\"|" \
+			-e "s|IOS_DEPLOY_TGT=.*|IOS_DEPLOY_TGT=\"$IOS_MIN_SDK_VER\"|" \
+			-e "s|=/Developer|=$XCODE_DEV_ROOT|" build_ios.sh
+
+		# fix bad lipo line (due to switch to armv7s)
+		sed -i .tmp 's|lipo.*|lipo -c $lib_arm6 $lib_arm7 $lib_i386 -o $lib|' build_ios.sh
+
+		# fix old var names (missing ASSIMP_ prefix), keep this commented for now
+		# bleeding edge assimp on git uses the ASSIMP_ prefix, so this may need to updated in the future
+		#sed -i .tmp "s|-DENABLE_BOOST_WORKAROUND=|-DASSIMP_ENABLE_BOOST_WORKAROUND=|" build_ios.sh
+		#sed -i .tmp "s|-DBUILD_STATIC_LIB=|-DASSIMP_BUILD_STATIC_LIB=|" build_ios.sh
+
+		build_ios.sh
+	
+	elif [ "$TYPE" == "android" ] ; then
+		echo "TODO: android build here"
 	fi
 }
 
@@ -24,8 +113,14 @@ function copy() {
 	cp -Rv include/assimp/* $1/include
 
 	# libs
-	if [ "$TYPE" == "osx" ] ; then
-		mkdir -p $1/lib/osx
-		cp -Rv lib/libassimp.a $1/lib/osx/assimp.a
+	mkdir -p $1/lib/$TYPE
+	if [ "$TYPE" == "vs2010" ] ; then
+		cp -Rv lib/libassimp.lib $1/lib/$TYPE/assimp.lib
+
+	elif [ "$TYPE" == "ios" ] ; then
+		cp -Rv lib/ios/libassimp.a $1/lib/$TYPE/assimp.a
+
+	else 
+		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	fi
 }

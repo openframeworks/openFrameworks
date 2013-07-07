@@ -17,25 +17,53 @@
 ################################################################################
 ### VARIABLES
 
+### GLOBAL VARS, for access inside formulas
+
 # build settings
 OS=`./ostype.sh`
 if [ "$OS" == "windows" ] ; then
-	TYPE=vs2010
+	TYPE="vs2010"
 else
 	TYPE=$OS
 fi
 ARCH=32 # for 32 or 64 bit
 
-# paths relative to ths script
-LIBS_DIR=..
-FORMULAS_DIR=formulas
-CACHE_DIR=cache
+# xcode/ios specific
+if [ "$OS" == "osx" ] ; then
+	
+	# xcode Developer root
+	XS="xcode-select -print-path" # stupid hack to keep my syntax highlighting from breaking :P
+	XCODE_DEV_ROOT=$($XS)
+	
+	# used when building some libs for osx
+	OSX_SDK_VER=10.8
+	OSX_MIN_SDK_VER=10.6
 
-# ansi color escape codes
-DEFAULT="\033[0m"
-BOLD="\033[1m"
-RED="\033[31m"
-GREEN="\033[32m"
+	# used when building for ios, the sdks you have installed are found in:
+	# $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
+	IOS_SDK_VER=6.1
+	IOS_MIN_SDK_VER=5.1
+fi
+
+# full path to this script's dir
+APOTHECARY_DIR=.
+
+# full path to the dir of the current formula
+FORMULA_DIR=
+
+### PRIVATE VARS, for internal use
+
+# paths relative to ths script
+REL_LIBS_DIR=..
+REL_FORMULAS_DIR=formulas
+REL_CACHE_DIR=cache
+
+# ansi console escape codes
+CON_DEFAULT="\033[0m"
+CON_BOLD="\033[1m"
+CON_RED="\033[31m"
+CON_YELLOW="\033[93m"
+CON_GREEN="\033[32m"
 
 # used to filter out bad build types
 VALID_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
@@ -47,8 +75,8 @@ HELP="Usage: apothecary [options] command [libraries]
  it mixes formulas and potions to build and update OF C/C++ lib dependencies
 
  Commands:
-  update			download, build, and copy library files
-  clean 			clean the cache
+  update		download, build, and copy library files
+  clean 		clean the cache
   dist-clean		clean the cache and lib folder
 
  Options:
@@ -87,49 +115,68 @@ HELP="Usage: apothecary [options] command [libraries]
 ################################################################################
 #### SET ERROR HANDLING
 
+#set -x # run script in debug mode
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
-set -o nounset   ## set -u : exit the script if you try to use an uninitialized variable
-set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
+set -o errexit   # set -e : exit the script if any statement returns a non-true return value
 
-# trap the killer signals so that we can exit with a good message.
-trap "printSignal SIGHUP" SIGHUP
-trap "printSignal SIGINT" SIGINT
-trap "printSignal SIGTERM" SIGTERM
+# trap the killer signals so that we can exit with a good message
+trap "trapSignal SIGHUP" SIGHUP
+trap "trapSignal SIGINT" SIGINT
+trap "trapSignal SIGTERM" SIGTERM
 
-printSignal() {
+trapSignal() {
 	echo
-	echo -e "$BOLD$RED Received signal $1 $DEFAULT"
+	echoError " Received signal $1"
 	exit 1
 }
 
-trap printError ERR
+# trap any script errors and exit
+trap "trapError" ERR
 
-printError() {
+trapError() {
 	echo
-	echo -e "$BOLD$RED Received error $DEFAULT"
+	echoError " ^ Received error ^"
 	exit 1
+}
+
+# console printing functions (with color)
+echoError()		{
+	echo -e "$CON_BOLD$CON_RED$1$CON_DEFAULT"
+}
+echoWarning()	{
+	echo -e "$CON_BOLD$CON_YELLOW$1$CON_DEFAULT"
+}
+echoInfo()		{
+	echo -e "$CON_BOLD$1$CON_DEFAULT"
+}
+echoSuccess()	{
+	echo -e "$CON_BOLD$CON_GREEN$1$CON_DEFAULT"
 }
 
 ################################################################################
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a: opt ; do
+while getopts t:a:h opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
 		a) # set the architecture
 		   ARCH=$OPTARG ;;
+		h) # print help and exit
+		   echo "$HELP" ; exit 0 ;;
 		[?]) # print help and exit 
-		     echo "$HELP" ; exit 0 ;;
+			 echo "$HELP" ; exit 0 ;;
 	esac
 done
 shift $(expr $OPTIND - 1)
 
 # get command
 if [ "$1" != "" ] ; then
-	CMD=$1
+	A_CMD=$1
 else
 	echo "$HELP"
 	exit 0
@@ -155,33 +202,43 @@ function isValidType() {
 # update a given library
 function update() {
 
-	# check if the given lib name is even a formula
-	if [ ! -e $FORMULAS_DIR/$1.sh ] ; then
-		echo -e "$BOLD$RED No formula for lib \"$1\"$DEFAULT"
-		return
+	local formula=$REL_FORMULAS_DIR/$1.sh
+	FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR
+
+	# check if the given lib name is even formula
+	if [ ! -e $REL_FORMULAS_DIR/$1.sh ] ; then
+		
+		# is the given formula a dir?
+		if [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
+			formula=$REL_FORMULAS_DIR/$1/$1.sh
+			FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$1
+		else
+			echoError " No formula for lib \"$1\""
+			exit 1
+		fi
 	fi
 
 	# load a script & it's function implementations
-	source $FORMULAS_DIR/$1.sh
+	source $formula
 
 	### DOWNLOAD
 
 	# download src to cache
 	echo
-	echo -e "$BOLD ----- $1 -----$DEFAULT"
-	echo -e "$BOLD Downloading \"$1\"$DEFAULT"
+	echoInfo " ----- $1 -----"
+	echoInfo " Downloading \"$1\""
 	echo
 
-	mkdir -p $CACHE_DIR
-	cd $CACHE_DIR
+	mkdir -p $REL_CACHE_DIR
+	cd $REL_CACHE_DIR
 
 	if [ -e $1 ] ; then
-		echo -e "... skipping, src dir already exists"
+		echo "... skipping, src dir already exists"
 
 	else
 		download
 		if [ ! -e $1 ] ; then
-			echo -e "$BOLD$RED It looks like downloading failed for \"$1\"$DEFAULT"
+			echoError " It looks like downloading failed for \"$1\""
 			exit 1
 		fi
 	fi
@@ -190,60 +247,60 @@ function update() {
 
 	# run build command in src dir
 	echo
-	echo -e "$BOLD Building \"$1\"$DEFAULT"
+	echoInfo " Building \"$1\""
 	echo
 
 	cd $1
 	build
-	cd $WD/$CACHE_DIR/$1
+	cd $APOTHECARY_DIR/$REL_CACHE_DIR/$1
 
 	### COPY
 
 	# dest arg path relative to src dir
 	echo
-	echo -e "$BOLD Copying \"$1\"$DEFAULT"
+	echoInfo " Copying \"$1\""
 	echo
 
-	copy ../../$LIBS_DIR/$1
-	cd $WD
+	copy ../../$REL_LIBS_DIR/$1
+	cd $APOTHECARY_DIR
 
 	echo
-	echo -e "$BOLD$GREEN Finished \"$1\"$DEFAULT"
+	echoSuccess " Finished \"$1\""
 }
 
 # clean a given library from the cache
 function clean() {
 
 	# check if the given lib name is even a formula
-	if [ ! -e $FORMULAS_DIR/$1.sh ] ; then
-		echo -e "$BOLD$RED No formula for lib \"$1\"$DEFAULT"
-		return
+	if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
+		echoError " No formula for lib \"$1\""
+		exit 1
 	fi
 
-	cd $CACHE_DIR
+	cd $REL_CACHE_DIR
 	rm -rf $1*
-	echo -e "$BOLD$GREEN Cleaned \"$1\" from cache$DEFAULT"
-	cd $WD
+	echoSuccess " Cleaned \"$1\" from cache"
+	cd $APOTHECARY_DIR
 }
 
 # clean a given library from the cache and lib folder
 function dist-clean() {
 
 	# check if the given lib name is even a formula
-	if [ ! -e $FORMULAS_DIR/$1.sh ] ; then
-		echo -e "$BOLD$RED No formula for lib \"$1\"$DEFAULT"
-		return
+	if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
+		echoError " No formula for lib \"$1\""
+		exit 1
 	fi
 
-	cd $CACHE_DIR
+	cd $REL_CACHE_DIR
 	rm -rf $1*
-	echo -e "$BOLD$GREEN Cleaned \"$1\" from cache$DEFAULT"
-	cd $WD
+	echoSuccess " Cleaned \"$1\" from cache"
+	cd $APOTHECARY_DIR
 
-	cd $LIBS_DIR
+	cd $REL_LIBS_DIR
 	rm -rf $1
-	echo -e "$BOLD$GREEN Cleaned \"$1\" from libs folder$DEFAULT"
-	cd $WD
+	echoSuccess " Cleaned \"$1\" from libs folder"
+	cd $APOTHECARY_DIR
 }
 
 ################################################################################
@@ -253,22 +310,22 @@ function dist-clean() {
 typeIsValid=0 # bool
 isValidType $TYPE typeIsValid
 if [ $typeIsValid == 0 ] ; then
-	echo -e "$BOLD$RED Invalid build type: \"$TYPE\"$DEFAULT"
+	echoError " Invalid build type: \"$TYPE\""
 	exit 1
 fi
 
 # check if we have a valid arch
 if [ $ARCH != 32 -a $ARCH != 64 ] ; then
-	echo -e "$BOLD$RED Invalid architecture: $ARCH$DEFAULT"
+	echoError " Invalid architecture: $ARCH"
 	exit 1
 fi
 
 # change to the dir of this script
 cd $(dirname $0)
-WD=$(pwd)
+APOTHECARY_DIR=$(pwd)
 
 # handle commands
-case "$CMD" in
+case "$A_CMD" in
 	
 	update)
 		# process given libraries
@@ -279,8 +336,10 @@ case "$CMD" in
 			done
 
 		else # process all formulas
-			for formula in $( ls -1 $FORMULAS_DIR) ; do
-				update "${formula%.*}" # removes file extension
+			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
+				if [ ! -d $formula ] ; then # ignore directories 
+					update "${formula%.*}" # removes file extension
+				fi
 			done
 		fi ;;
 
@@ -293,7 +352,7 @@ case "$CMD" in
 			done
 
 		else # process all formulas
-			for formula in $( ls -1 $FORMULAS_DIR) ; do
+			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
 				clean "${formula%.*}"
 			done
 		fi ;;
@@ -307,12 +366,12 @@ case "$CMD" in
 			done
 
 		else # process all formulas
-			for formula in $( ls -1 $FORMULAS_DIR) ; do
+			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
 				dist-clean "${formula%.*}"
 			done
 		fi ;;
 
-	*) echo -e "$BOLD$RED Unknown command \"$CMD\"$DEFAULT" ;;
+	*) echoError " Unknown command \"$A_CMD\"" ;;
 esac
 
 exit 0

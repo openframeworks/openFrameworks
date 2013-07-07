@@ -5,15 +5,11 @@
 
 VER=1.4.6
 
-# used when building for ios, the sdks you have installed are found in:
-# /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
-IPHONE_SDK_VER=6.1
-
 # download the source code and unpack it into LIB_NAME
 function download() {
 	git clone https://github.com/pocoproject/poco -b poco-$VER
 	
-	# make backups of the config files since we need to edit them
+	# make backups of the config files since we might need to edit them
 	cd poco
 	cp build/config/iPhone build/config/iPhone.orig
 	cp build/config/iPhoneSimulator build/config/iPhoneSimulator.orig
@@ -24,12 +20,28 @@ function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
-		if [ $ARCH == 32 ] ; then
-			./configure $BUILD_OPTS --config=Darwin32
-		elif [ $ARCH == 64 ] ; then
-			./configure $BUILD_OPTS --config=Darwin64
-		fi
+		
+		# 32 bit
+		./configure $BUILD_OPTS --config=Darwin32
 		make
+
+		# 64 bit
+		./configure $BUILD_OPTS --config=Darwin64
+		make
+
+		cd lib/Darwin
+
+		# delete debug builds
+		rm i386/*d.a x86_64/*d.a
+
+		# link into universal lib, strip "lib" from filename
+		for lib in $( ls -1 i386) ; do
+			local renamedLib=$(echo $lib | sed 's|lib||')
+			if [ ! -e $renamedLib ] ; then
+				lipo -c i386/$lib x86_64/$lib -o $renamedLib
+			fi
+		done
+		
 
 	elif [ "$TYPE" == "vs2010" ] ; then
 		echo "vs2010 build"
@@ -39,43 +51,41 @@ function build() {
 		# maybe --poquito is a good idea?
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC,NetSSL_OpenSSL,Crypto"
 
+		cp build/config/iPhone.orig build/config/iPhone
+		cp build/config/iPhoneSimulator.orig build/config/iPhoneSimulator
+
 		# set SDK
-		sed "s|#.*IPHONE_SDK_VERSION =.*|IPHONE_SDK_VERSION = $IPHONE_SDK_VER|" build/config/iPhone.orig > build/config/iPhone
+		sed -i .tmp "s|#.*IPHONE_SDK_VERSION =.*|IPHONE_SDK_VERSION = $IOS_SDK_VER|" build/config/iPhone
 
 		# fix any xcode path issues (currently fixed in newer poco, done here manually for now)
-		sed 's|= /Developer|= $(shell xcode-select -print-path)|' build/config/iPhone > build/config/iPhone.tmp
-		mv build/config/iPhone.tmp build/config/iPhone
-		sed 's|= /Developer|= $(shell xcode-select -print-path)|' build/config/iPhoneSimulator > build/config/iPhoneSimulator.tmp
-		mv build/config/iPhoneSimulator.tmp build/config/iPhoneSimulator
+		sed -i .tmp 's|= /Developer|= $(shell xcode-select -print-path)|' build/config/iPhone
+		sed -i .tmp 's|= /Developer|= $(shell xcode-select -print-path)|' build/config/iPhoneSimulator
 
 		# armv7
-		sed "s|POCO_TARGET_OSARCH.*?=.*|POCO_TARGET_OSARCH ?= armv7|" build/config/iPhone > build/config/iPhone.tmp
-		mv build/config/iPhone.tmp build/config/iPhone
+		sed -i .tmp "s|POCO_TARGET_OSARCH.*?=.*|POCO_TARGET_OSARCH ?= armv7|" build/config/iPhone
 		./configure $BUILD_OPTS --config=iPhone
 		make
 
 		# armv7s
-		sed "s|POCO_TARGET_OSARCH.*?=.*|POCO_TARGET_OSARCH ?= armv7s|" build/config/iPhone > build/config/iPhone.tmp
-		mv build/config/iPhone.tmp build/config/iPhone
+		sed -i .tmp "s|POCO_TARGET_OSARCH.*?=.*|POCO_TARGET_OSARCH ?= armv7s|" build/config/iPhone
 		./configure $BUILD_OPTS --config=iPhone
 		make
 
 		# simulator
-		sed "s|POCO_TARGET_OSARCH.* = .*|POCO_TARGET_OSARCH = i386|" build/config/iPhoneSimulator.orig > build/config/iPhoneSimulator
+		sed -i .tmp "s|POCO_TARGET_OSARCH.* = .*|POCO_TARGET_OSARCH = i386|" build/config/iPhoneSimulator
 		./configure $BUILD_OPTS --config=iPhoneSimulator
 		make
 
-		# link into universal lib
-		cd lib
+		cd lib/iPhoneOS
 
 		# delete debug builds
-		rm iPhoneOS/armv7/*d.a iPhoneOS/armv7s/*d.a iPhoneSimulator/i386/*d.a
+		rm armv7/*d.a armv7s/*d.a ../iPhoneSimulator/i386/*d.a
 
 		# link into universal lib, strip "lib" from filename
-		for lib in $( ls -1 iPhoneSimulator/i386) ; do
+		for lib in $( ls -1 ../iPhoneSimulator/i386) ; do
 			local renamedLib=$(echo $lib | sed 's|lib||')
 			if [ ! -e $renamedLib ] ; then
-				lipo -c iPhoneOS/armv7/$lib iPhoneOS/armv7s/$lib iPhoneSimulator/i386/$lib -o $renamedLib
+				lipo -c armv7/$lib armv7s/$lib ../iPhoneSimulator/i386/$lib -o $renamedLib
 			fi
 		done
 
@@ -102,27 +112,12 @@ function copy() {
 	cp -Rv Zip/include/Poco/Zip $1/include/Poco
 
 	# libs
-	if [ "$TYPE" == "osx" ] ; then
-		
-		mkdir -p $1/lib/osx
-
-		# choose source dir based on arch type
-		local DIR=lib/Darwin/i386
-		if [ $ARCH == 64 ] ; then
-			DIR=lib/Darwin/x86_64
-		fi
-
-		# delete debug builds
-		rm $DIR/*d.a
-
-		# strip "lib" from filenames and copy
-		for lib in $( ls -1 $DIR) ; do
-			local renamedLib=$(echo $lib | sed 's|lib||')
-			cp -v $DIR/$lib $1/lib/osx/$renamedLib
-		done
+	if [ "$TYPE" == "osx" ] ; then		
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/Darwin/*.a $1/lib/$TYPE
 	
 	elif [ "$TYPE" == "ios" ] ; then
-		mkdir -p $1/lib/ios
-		cp -v lib/*.a $1/lib/ios
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/iPhoneOS/*.a $1/lib/$TYPE
 	fi
 }
