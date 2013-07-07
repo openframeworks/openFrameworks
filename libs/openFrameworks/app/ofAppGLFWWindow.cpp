@@ -488,9 +488,14 @@ int	ofAppGLFWWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
-	glfwSetWindowPos(windowP,x,y);
-	nonFullScreenX=x;
-	nonFullScreenY=y;
+    float bottomY = y + ofGetHeight(); 
+    float shiftY = ofGetScreenHeight()-bottomY; 
+
+	glfwSetWindowPos(windowP,x, shiftY);
+    if( windowMode == OF_WINDOW ){
+        nonFullScreenX=x;
+        nonFullScreenY=y;
+    }
 }
 
 //------------------------------------------------------------
@@ -523,10 +528,19 @@ void ofAppGLFWWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
-	if (fullscreen)
+
+    int curWindowMode  = ofGetWindowMode(); 
+
+	if (fullscreen){
 		windowMode = OF_FULLSCREEN;
-	else
+	}else{
 		windowMode = OF_WINDOW;
+    }
+    
+    bool bChanged = windowMode != curWindowMode; 
+    if( !bChanged ){
+        return; 
+    }
 
 #ifdef TARGET_LINUX
 #include <X11/Xatom.h>
