@@ -641,7 +641,7 @@ void ofAppGlutWindow::display(void){
 	}
 
 
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer()
+	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 	if(renderer){
 		renderer->startRender();
 	}
