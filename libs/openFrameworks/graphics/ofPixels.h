@@ -15,9 +15,6 @@ enum ofInterpolationMethod {
 
 template <typename PixelType>
 class ofPixels_ {
-
-	friend class ofPixelUtils;
-
 public:
 
 	ofPixels_();
@@ -104,12 +101,10 @@ private:
 	void copyFrom( const ofPixels_<SrcType>& mom );
 	
 	PixelType * pixels;
-	int width;
-	int height;
+	int 	width;
+	int 	height;
 
-	int channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
-	//GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
-	//ofImageType imageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+	int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	bool	bAllocated;
 	bool	pixelsOwner;			// if set from external data don't delete it
 
@@ -139,6 +134,8 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	pixelsOwner = false;
 	channels = 0;
 	pixels = NULL;
+	width = 0;
+	height = 0;
 	copyFrom( mom );
 }
 
