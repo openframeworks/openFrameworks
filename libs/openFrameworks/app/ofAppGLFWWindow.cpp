@@ -306,8 +306,10 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
-	if(ofGetGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->startRender();
+
+	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer()
+	if(renderer){
+		renderer->startRender();
 	}
 
 	// set viewport, clear the screen
@@ -363,8 +365,8 @@ void ofAppGLFWWindow::display(void){
 		}
 	#endif
 
-	if(ofGetGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->finishRender();
+	if(renderer){
+		renderer->finishRender();
 	}
 
 	nFramesSinceWindowResized++;
