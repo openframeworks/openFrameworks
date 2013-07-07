@@ -754,6 +754,10 @@ void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget){
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentTextureTarget = textureTarget;
 
+	if(!uniqueShader){
+		beginDefaultShader();
+	}
+
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
 		currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
@@ -764,6 +768,10 @@ void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget){
 void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget){
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentTextureTarget = OF_NO_TEXTURE;
+
+	if(!uniqueShader){
+		beginDefaultShader();
+	}
 
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
