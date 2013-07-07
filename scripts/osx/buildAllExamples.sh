@@ -6,7 +6,7 @@ do
        	continue
     fi
     echo "-----------------------------------------------------------------"
-    echo cleaning ALL examples in $category
+    echo building ALL examples in $category
 
     for example in $( find $category -maxdepth 1 -type d )
     do
@@ -21,25 +21,22 @@ do
        	fi
 
         echo "-----------------------------------------------------------------"
-        echo cleaning $example Debug
-        xcodebuild -configuration Debug -target $(basename $example) -project $example/$(basename $example).xcodeproj clean
+        echo building $example Debug
+        xcodebuild -configuration Debug -target $(basename $example) -project $example/$(basename $example).xcodeproj
         ret=$?
         if [ $ret -ne 0 ]; then
-       	    echo failed cleaning $example Debug
+       	    echo failed building $example Debug
        	    exit
         fi
 
         echo "-----------------------------------------------------------------"
-       	echo cleaning $example Release
-       	xcodebuild -configuration Release -target $(basename $example) -project $example/$(basename $example).xcodeproj clean
+       	echo building $example Release
+       	xcodebuild -configuration Release -target $(basename $example) -project $example/$(basename $example).xcodeproj
        	ret=$?
        	if [ $ret -ne 0 ]; then
-       	    echo failed cleaning $example Release
+       	    echo failed building $example Release
        	    exit
        	fi
-        echo rm -rf $example/build 2> /dev/null
-        rm -rf $example/build 2> /dev/null
-
        	echo "-----------------------------------------------------------------"
        	echo ""
     done
