@@ -5,7 +5,7 @@
 #include "ofGLProgrammableRenderer.h"
 #include <map>
 
-static const string COLOR_ATTRIBUTE="color";
+static const string COLOR_ATTRIBUTE="color_coord";
 static const string POSITION_ATTRIBUTE="position";
 static const string NORMAL_ATTRIBUTE="normal";
 static const string TEXCOORD_ATTRIBUTE="texcoord";
@@ -129,7 +129,7 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 #ifndef TARGET_OPENGLES
 	if(geomName.empty() == false) setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
 #endif
-	if(ofGetGLProgrammableRenderer()){
+	if(ofIsGLProgrammableRenderer()){
 		bindDefaults();
 	}
 	return linkProgram();
@@ -366,8 +366,9 @@ bool ofShader::isLoaded(){
 void ofShader::begin() {
 	if (bLoaded){
 		glUseProgram(program);
-		if(ofGetGLProgrammableRenderer()){
-			ofGetGLProgrammableRenderer()->beginCustomShader(*this);
+		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		if(renderer){
+			renderer->beginCustomShader(*this);
 		}
 	}else{
 		ofLogError() << "trying to begin unloaded shader";
@@ -377,8 +378,9 @@ void ofShader::begin() {
 //--------------------------------------------------------------
 void ofShader::end() {
 	if (bLoaded){
-		if(ofGetGLProgrammableRenderer()){
-			ofGetGLProgrammableRenderer()->endCustomShader();
+		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		if(renderer){
+			renderer->endCustomShader();
 		}else{
 			glUseProgram(0);
 		}
@@ -394,7 +396,7 @@ void ofShader::setUniformTexture(const string & name, ofBaseHasTexture& img, int
 void ofShader::setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation){
 	if(bLoaded) {
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		if (!ofGetGLProgrammableRenderer()){
+		if (!ofIsGLProgrammableRenderer()){
 			glEnable(textureTarget);
 			glBindTexture(textureTarget, textureID);
 			glDisable(textureTarget);
@@ -411,7 +413,7 @@ void ofShader::setUniformTexture(const string & name, ofTexture& tex, int textur
 	if(bLoaded) {
 		ofTextureData texData = tex.getTextureData();
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		if (!ofGetGLProgrammableRenderer()){
+		if (!ofIsGLProgrammableRenderer()){
 			glEnable(texData.textureTarget);
 			glBindTexture(texData.textureTarget, texData.textureID);
 			glDisable(texData.textureTarget);

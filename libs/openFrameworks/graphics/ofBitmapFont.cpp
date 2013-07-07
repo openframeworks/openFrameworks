@@ -323,6 +323,7 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 
 
 #include "ofTexture.h"
+#include "ofGLProgrammableRenderer.h"
 
 static bool				bBitmapTexturePrepared = false;
 static ofTexture		bitmappedFontTexture;
@@ -411,7 +412,7 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		charMesh.getTexCoords()[vC].set(posTexW,texY1);
 		charMesh.getTexCoords()[vC+1].set(posTexW + widthTex,texY1);
 		charMesh.getTexCoords()[vC+2].set(posTexW+widthTex,texY2);
-		
+
 		charMesh.getTexCoords()[vC+3].set(posTexW + widthTex,texY2);
 		charMesh.getTexCoords()[vC+4].set(posTexW,texY2);
 		charMesh.getTexCoords()[vC+5].set(posTexW,texY1);
@@ -447,25 +448,30 @@ void ofDrawBitmapCharacterEnd(){
 		charMesh.getTexCoords().resize(vC);
 		bitmappedFontTexture.bind();
 
-		#ifndef TARGET_OPENGLES
-			if (!ofGetGLProgrammableRenderer()){
+		ofPtr<ofGLProgrammableRenderer> programmableRenderer = ofGetGLProgrammableRenderer();
+
+		if (!programmableRenderer){
+			#ifndef TARGET_OPENGLES
 				// this temporarily enables alpha testing,
 				// which discards pixels unless their alpha is 1.0f
 				glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 				glEnable(GL_ALPHA_TEST);
 				glAlphaFunc(GL_GREATER, 0);
-			} else {
-				// glPush/PopAttrib is deprecated + we are doing the alpha test through a shader
-			}
-		#endif
+			#endif
+		}else{
+			// glPush/PopAttrib is deprecated + we are doing the alpha test through a shader
+			programmableRenderer->setAlphaBitmapText(true);
+		}
 
 		charMesh.draw();
 
-		#ifndef TARGET_OPENGLES
-			if (!ofGetGLProgrammableRenderer()){
+		if (!programmableRenderer){
+			#ifndef TARGET_OPENGLES
 				glPopAttrib();
-			}
-		#endif
+			#endif
+		}else{
+			programmableRenderer->setAlphaBitmapText(false);
+		}
 
 		bitmappedFontTexture.unbind();
 	}
