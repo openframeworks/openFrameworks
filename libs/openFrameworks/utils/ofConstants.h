@@ -604,8 +604,8 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
     #define OF_MOUSE_BUTTON_8      7
     #define OF_MOUSE_BUTTON_LAST   OF_MOUSE_BUTTON_8
     #define OF_MOUSE_BUTTON_LEFT   OF_MOUSE_BUTTON_1
-    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_2
-    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_3
+    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_2
+    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_3
 
 //--------------------------------------------
 //console colors for our logger - shame this doesn't work with the xcode console
