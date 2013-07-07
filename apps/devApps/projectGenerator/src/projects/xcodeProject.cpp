@@ -138,6 +138,7 @@ void xcodeProject::setup(){
 
 
 void xcodeProject::saveScheme(){
+
 	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
     ofDirectory::removeDirectory(schemeFolder, true);
 	ofDirectory::createDirectory(schemeFolder, false, true);
@@ -152,23 +153,27 @@ void xcodeProject::saveScheme(){
     findandreplaceInTexfile(schemeToR, "emptyExample", projectName);
 	
 	//TODO: do we still need this?
-    string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
-    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
+    //string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
+    //ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
+
 }
 
 
 void xcodeProject::saveWorkspaceXML(){
+
 	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
+	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
+
+	ofFile::removeFile(xcodeProjectWorkspace);
 	ofDirectory::removeDirectory(workspaceFolder, true);
 	ofDirectory::createDirectory(workspaceFolder, false, true);
-	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
+
 }
 
 
 bool xcodeProject::createProjectFile(){
-
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
@@ -241,13 +246,13 @@ bool xcodeProject::createProjectFile(){
         findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
     }
 
-
     return true;
 }
 
 
 
 void xcodeProject::renameProject(){
+
     pugi::xpath_node_set uuidSet = doc.select_nodes("//string[contains(.,'emptyExample')]");
     for (pugi::xpath_node_set::const_iterator it = uuidSet.begin(); it != uuidSet.end(); ++it){
         pugi::xpath_node node = *it;
@@ -278,10 +283,12 @@ bool xcodeProject::saveProjectFile(){
     renameProject();
 
     // save the project out:
-
+    
     string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
     bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
+
     return bOk;
+
 }
 
 
@@ -401,7 +408,6 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
 
 
 void xcodeProject::addSrc(string srcFile, string folder){
-
 
     string buildUUID;
 
@@ -621,9 +627,6 @@ void xcodeProject::addInclude(string includeName){
 
 
 void xcodeProject::addLibrary(string libraryName, LibType libType){
-
-    cout << " adding libraryName " << libraryName << endl;
-
 
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'OTHER_LDFLAGS')]/following-sibling::node()[1]");

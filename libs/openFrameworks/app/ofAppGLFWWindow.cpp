@@ -307,7 +307,7 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
 
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer()
+	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 	if(renderer){
 		renderer->startRender();
 	}
