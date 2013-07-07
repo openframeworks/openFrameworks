@@ -152,8 +152,11 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
     
 	// create program if it doesn't exist already
 	checkAndCreateProgram();
+	GLuint clearErrors = glGetError(); //needed for some users to clear gl errors
+    if( clearErrors != GL_NO_ERROR ){
+        ofLog( OF_LOG_VERBOSE, "OpenGL error after checkAndCreateProgram (probably harmless). Error no: " + ofToString(clearErrors) ); 
+    }
 
-	
 	// create shader
 	GLuint shader = glCreateShader(type);
 	if(shader == 0) {
