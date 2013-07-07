@@ -10,6 +10,7 @@ function download() {
 	curl -O http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-$VER.tar.gz
 	tar -xf rtaudio-$VER.tar.gz
 	mv rtaudio-$VER rtaudio
+	rm rtaudio-$VER.tar.gz
 }
 
 # executed inside the build dir

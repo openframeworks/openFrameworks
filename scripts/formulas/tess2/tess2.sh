@@ -10,6 +10,7 @@ function download() {
 	curl -LO https://libtess2.googlecode.com/files/libtess2-$VER.zip
 	unzip -oq libtess2-$VER.zip
 	mv libtess2 tess2
+	rm libtess2-$VER.zip
 }
 
 # executed inside the build dir
