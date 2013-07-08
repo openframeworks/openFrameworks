@@ -127,8 +127,20 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 		}
 	} else {
 		// we're on iOS 5 or lower, need to use the C Audio Session API
+		UInt32 sessionType = kAudioSessionCategory_PlayAndRecord;
+		OSStatus success = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory,
+												   sizeof(sessionType),
+												   &sessionType);
+		
+		if(success != noErr) {
+			if([self.delegate respondsToSelector:@selector(soundStreamError:error:)]) {
+				[self.delegate soundStreamError:self
+										  error:@"Couldn't set audio session category to Play and Record"];
+			}
+		}
+		
 		UInt32 overrideAudioRoute = kAudioSessionOverrideAudioRoute_Speaker;
-		OSStatus success = AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute,
+		success = AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute,
 												   sizeof(UInt32),
 												   &overrideAudioRoute);
 		if(success != noErr) {
