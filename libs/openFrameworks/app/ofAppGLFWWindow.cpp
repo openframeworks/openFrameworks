@@ -770,7 +770,15 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
-	ofLog(OF_LOG_VERBOSE,"button: %i",button);
+	ofLog(OF_LOG_VERBOSE, "button: %i",button);
+
+    //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
+    if( ofGetKeyPressed(OF_KEY_CTRL) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_RIGHT; 
+    }
+    if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_MIDDLE; 
+    }
 
 	switch(button){
 	case GLFW_MOUSE_BUTTON_LEFT:
@@ -886,29 +894,40 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 			key = OF_KEY_INSERT;
 			break;
 		case GLFW_KEY_LEFT_SHIFT:
-			key = OF_KEY_LEFT_SHIFT;
+			key = OF_KEY_SHIFT;
 			break;
 		case GLFW_KEY_LEFT_CONTROL:
-			key = OF_KEY_LEFT_CONTROL;
+			key = OF_KEY_CTRL;
 			break;
 		case GLFW_KEY_LEFT_ALT:
-			key = OF_KEY_LEFT_ALT;
+			key = OF_KEY_ALT;
 			break;
 		case GLFW_KEY_LEFT_SUPER:
 			key = OF_KEY_LEFT_SUPER;
 			break;
 		case GLFW_KEY_RIGHT_SHIFT:
-			key = OF_KEY_RIGHT_SHIFT;
+			key = OF_KEY_SHIFT;
 			break;
 		case GLFW_KEY_RIGHT_CONTROL:
-			key = OF_KEY_RIGHT_CONTROL;
+			key = OF_KEY_CTRL;
 			break;
 		case GLFW_KEY_RIGHT_ALT:
-			key = OF_KEY_RIGHT_ALT;
+			key = OF_KEY_ALT;
 			break;
 		case GLFW_KEY_RIGHT_SUPER:
 			key = OF_KEY_RIGHT_SUPER;
+		case GLFW_KEY_BACKSPACE:
+			key = OF_KEY_BACKSPACE;
 			break;
+		case GLFW_KEY_DELETE:
+			key = OF_KEY_DEL;
+			break;
+		case GLFW_KEY_ENTER:
+			key = OF_KEY_RETURN;
+			break;
+		case GLFW_KEY_KP_ENTER:
+			key = OF_KEY_RETURN;
+			break;            
 		default:
 			break;
 	}
