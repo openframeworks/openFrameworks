@@ -166,7 +166,7 @@ const ofMatrix4x4 & ofMatrixStack::getModelViewMatrix() const{
 	return modelViewMatrix;
 }
 
-const ofMatrix4x4 & ofMatrixStack::getModelViewPorjectionMatrix() const{
+const ofMatrix4x4 & ofMatrixStack::getModelViewProjectionMatrix() const{
 	return modelViewProjectionMatrix;
 }
 
