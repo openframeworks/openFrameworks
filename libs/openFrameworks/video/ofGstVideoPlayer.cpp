@@ -95,41 +95,31 @@ bool ofGstVideoPlayer::loadMovie(string name){
 										"alpha_mask",G_TYPE_INT,0x000000ff,
 										NULL);
 #else
-	int bpp;
 	string mime="video/x-raw";
 	string format;
 	switch(internalPixelFormat){
 	case OF_PIXELS_MONO:
 		format = "GRAY8";
-		bpp = 8;
 		break;
 	case OF_PIXELS_RGB:
 		format = "RGB";
-		bpp = 24;
 		break;
 	case OF_PIXELS_RGBA:
 		format = "RGBA";
-		bpp = 32;
 		break;
 	case OF_PIXELS_BGRA:
 		format = "BGRA";
-		bpp = 32;
+		break;
+	case OF_PIXELS_NV12:
+		format = "NV12";
 		break;
 	default:
 		format = "RGB";
-		bpp=24;
 		break;
 	}
 
 	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
 										"format", G_TYPE_STRING, format.c_str(),
-										/*"bpp", G_TYPE_INT, bpp,
-										"depth", G_TYPE_INT, 24,
-										"endianness",G_TYPE_INT,4321,
-										"red_mask",G_TYPE_INT,0xff0000,
-										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,
-										"alpha_mask",G_TYPE_INT,0x000000ff,*/
 										NULL);
 #endif
 
@@ -163,7 +153,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 
 	videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
-	if(!bIsStream) return allocate(bpp);
+	if(!bIsStream) return allocate(internalPixelFormat);
 	else return true;
 }
 
@@ -172,7 +162,7 @@ void ofGstVideoPlayer::setThreadAppSink(bool threaded){
 }
 
 
-bool ofGstVideoPlayer::allocate(int bpp){
+bool ofGstVideoPlayer::allocate(ofPixelFormat pixelFormat){
 	if(bIsAllocated) return true;
 
 	guint64 durationNanos = videoUtils.getDurationNanos();
@@ -182,7 +172,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 #if GST_VERSION_MAJOR==0
 		int width,height;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-			if(!videoUtils.allocate(width,height,bpp)) return false;
+			if(!videoUtils.allocate(width,height,pixelFormat)) return false;
 		}else{
 			ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
 			return false;
@@ -205,7 +195,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			GstVideoInfo info;
 			gst_video_info_init (&info);
 			if (gst_video_info_from_caps (&info, caps)){
-				if(!videoUtils.allocate(info.width,info.height,bpp)) return false;
+				if(!videoUtils.allocate(info.width,info.height,pixelFormat)) return false;
 			}else{
 				ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
 				return false;
@@ -231,7 +221,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 }
 
 void ofGstVideoPlayer::on_stream_prepared(){
-	if(!bIsAllocated) allocate(24);
+	if(!bIsAllocated) allocate(internalPixelFormat);
 }
 
 int	ofGstVideoPlayer::getCurrentFrame(){
