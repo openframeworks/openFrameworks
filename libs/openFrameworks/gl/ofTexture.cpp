@@ -710,19 +710,19 @@ void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
 }
 
-void ofTexture::generateMipmaps(){
+void ofTexture::generateMipmaps(GLint minFilter = GL_LINEAR_MIPMAP_LINEAR, GLint magFilter = GL_LINEAR){
 	if (ofIsGLProgrammableRenderer()){
 		// tig: add mipmaps (call this method after texture data was changed)
 		// we are not using gluBuild2dMipmaps, but the new openGL core API for mipmaps.
 		// see: https://www.opengl.org/wiki/Common_Mistakes#gluBuild2DMipmaps
-		// also mind that the programmable GL renderer will return GL_*8 as glTypeInternal
+
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		// set up the texture to use mipmapping
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// set up texture hints for mipmapping
+		glTexParameteri( texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
+		glTexParameteri( texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 		glGenerateMipmap(texData.textureTarget);
+		
 		glBindTexture( texData.textureTarget, 0);			// unbind texture
 	}
 }
