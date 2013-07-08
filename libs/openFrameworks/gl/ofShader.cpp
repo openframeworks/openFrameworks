@@ -5,7 +5,7 @@
 #include "ofGLProgrammableRenderer.h"
 #include <map>
 
-static const string COLOR_ATTRIBUTE="color_coord";
+static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
 static const string NORMAL_ATTRIBUTE="normal";
 static const string TEXCOORD_ATTRIBUTE="texcoord";
