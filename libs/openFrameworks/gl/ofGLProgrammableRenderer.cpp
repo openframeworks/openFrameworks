@@ -17,7 +17,7 @@ static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";
 static const string PROJECTION_MATRIX_UNIFORM="projectionMatrix";
 static const string MODELVIEW_PROJECTION_MATRIX_UNIFORM="modelViewProjectionMatrix";
 static const string TEXTURE_MATRIX_UNIFORM="textureMatrix";
-static const string COLOR_UNIFORM="color";
+static const string COLOR_UNIFORM="drawColor";
 
 static const string USE_TEXTURE_UNIFORM="usingTexture";
 static const string USE_COLORS_UNIFORM="usingColors";
@@ -1155,7 +1155,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 static string defaultVertexShader = STRINGIFY(
 		precision lowp float;
 		attribute vec4 position;
-		attribute vec4 color_coord;
+		attribute vec4 color;
 		attribute vec4 normal;
 		attribute vec2 texcoord;
 
@@ -1169,7 +1169,7 @@ static string defaultVertexShader = STRINGIFY(
 
 		void main(){
 			gl_Position = modelViewProjectionMatrix * position;
-			colorVarying = color_coord;
+			colorVarying = color;
 			texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
 		}
 );
@@ -1180,7 +1180,7 @@ static string defaultFragmentShaderTexColor = STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 color;
+		uniform vec4 drawColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
@@ -1197,14 +1197,14 @@ static string defaultFragmentShaderTexNoColor =  STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 color;
+		uniform vec4 drawColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
 		varying vec2 texCoordVarying;
 
 		void main(){
-		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*color;
+		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*drawColor;
         }
 );
 
@@ -1214,7 +1214,7 @@ static string defaultFragmentShaderNoTexColor = STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 color;
+		uniform vec4 drawColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
@@ -1231,14 +1231,14 @@ static string defaultFragmentShaderNoTexNoColor  =  STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 color;
+		uniform vec4 drawColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
 		varying vec2 texCoordVarying;
 
 		void main(){
-		    gl_FragColor = color;
+		    gl_FragColor = drawColor;
         }
 );
 
@@ -1265,7 +1265,7 @@ static string bitmapStringFragmentShader =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform vec4 color;
+		uniform vec4 drawColor;
 
 		varying vec2 texCoordVarying;
 
@@ -1274,7 +1274,7 @@ static string bitmapStringFragmentShader =  STRINGIFY(
 			// We will not write anything to the framebuffer if we have a transparent pixel
 			// This makes sure we don't mess up our depth buffer.
 			if (tex.a < 0.5) discard;
-			gl_FragColor = color * tex;
+			gl_FragColor = drawColor * tex;
 		}
 );
 
@@ -1287,7 +1287,7 @@ static string uniqueVertexShader = STRINGIFY(
 		precision lowp float;
 
 		attribute vec4 position;
-		attribute vec4 color_coord;
+		attribute vec4 color;
 		attribute vec4 normal;
 		attribute vec2 texcoord;
 
@@ -1302,13 +1302,13 @@ static string uniqueVertexShader = STRINGIFY(
 		uniform float usingTexture;
 		uniform float usingColors;
 
-		uniform vec4 color;
+		uniform vec4 drawColor;
 
 		void main(){
 			gl_Position = modelViewProjectionMatrix * position;
 		    if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
-		    if(usingColors>.5) colorVarying = color_coord*color;
-			else colorVarying = color;
+		    if(usingColors>.5) colorVarying = color*drawColor;
+			else colorVarying = drawColor;
 		}
 );
 
@@ -1340,234 +1340,257 @@ static string uniqueFragmentShader = STRINGIFY(
 
 #else
 
+// ----------------------------------------------------------------------
 // tig: GLSL #150 shaders written against spec:
 // http://www.opengl.org/registry/doc/GLSLangSpec.1.50.09.pdf
-// cannot use stringyify here because of the #version in the first line
 
-static string defaultVertexShader =
-"#version 150\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-\n\
-in vec4  position;\n\
-in vec2  texcoord;\n\
-in vec4  color_coord;\n\
-in vec3  normal;\n\
-\n\
-out vec4 colorVarying;\n\
-out vec2 texCoordVarying;\n\
-out vec4 normalVarying;\n\
-\n\
-void main()\n\
-{\n\
-	colorVarying = color_coord;\n\
-	texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
+static string defaultVertexShader = "#version 150\n" STRINGIFY(
 
-static string defaultFragmentShaderTexColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
-}";
+	uniform mat4 projectionMatrix;
+	uniform mat4 modelViewMatrix;
+	uniform mat4 textureMatrix;
+	uniform mat4 modelViewProjectionMatrix;
 
-static string defaultFragmentShaderTexNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
-}";
+	in vec4  position;
+	in vec2  texcoord;
+	in vec4  color_coord;
+	in vec3  normal;
+	 
+	out vec4 colorVarying;
+	out vec2 texCoordVarying;
+	out vec4 normalVarying;
 
-static string defaultFragmentShaderTex2DColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;\n\
-}";
+	void main()
+	{
+		colorVarying = color_coord;
+		texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
+		gl_Position = modelViewProjectionMatrix * position;
+	}
+);
 
-static string defaultFragmentShaderTex2DNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = texture(src_tex_unit0, texCoordVarying) * color;\n\
-}";
+// ----------------------------------------------------------------------
 
-static string defaultFragmentShaderNoTexColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = colorVarying;\n\
-}";
+static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 
-static string defaultFragmentShaderNoTexNoColor ="\n\
-#version 150\n\
-\n\
-uniform sampler2DRect src_tex_unit0;\n\
-uniform float useTexture = 0.0;\n\
-uniform float useColors = 0.0;\n\
-uniform vec4 color = vec4(1.0);\n\
-\n\
-in float depth;\n\
-in vec4 colorVarying;\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main(){\n\
-	fragColor = color;\n\
-}";
+	uniform sampler2DRect src_tex_unit0;
+	uniform float useTexture = 0.0;
+	uniform float useColors = 0.0;
+	uniform vec4 drawColor = vec4(1.0);
 
-static string bitmapStringVertexShader ="\n\
-#version 150\n\
-\n\
-uniform mat4 projectionMatrix;\n\
-uniform mat4 modelViewMatrix;\n\
-uniform mat4 textureMatrix;\
-uniform mat4 modelViewProjectionMatrix;\n\
-\n\
-in vec4  position;\n\
-in vec4  color;\n\
-in vec2  texcoord;\n\
-\n\
-out vec2 texCoordVarying;\n\
-\n\
-void main()\n\
-{\n\
-	texCoordVarying = texcoord;\n\
-	gl_Position = modelViewProjectionMatrix * position;\n\
-}";
+	in float depth;
+	in vec4 colorVarying;
+	in vec2 texCoordVarying;
+																		 
+	out vec4 fragColor;
 
-static string bitmapStringFragmentShader	= "\n\
-#version 150\n\
-\n\
-uniform sampler2D src_tex_unit0;\n\
-uniform vec4 color = vec4(1.0);\n\
-in vec2 texCoordVarying;\n\
-out vec4 fragColor;\n\
-\n\
-void main()\n\
-{\n\
-	\n\
-	vec4 tex = texture(src_tex_unit0, texCoordVarying);\n\
-	// We will not write anything to the framebuffer if we have a transparent pixel\n\
-	// This makes sure we don't mess up our depth buffer.\n\
-	if (tex.a < 0.5) discard;\n\
-	fragColor = color * tex;\n\
-}";
+	void main(){
+		fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;
+	}
+);
 
+// ----------------------------------------------------------------------
+
+static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
+
+	uniform sampler2DRect src_tex_unit0;
+	uniform float useTexture = 0.0;
+	uniform float useColors = 0.0;
+	uniform vec4 drawColor = vec4(1.0);
+
+	in float depth;
+	in vec4 colorVarying;
+	in vec2 texCoordVarying;
+																		   
+	out vec4 fragColor;
+
+	void main(){
+		fragColor = texture(src_tex_unit0, texCoordVarying) * drawColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
+
+	uniform sampler2D src_tex_unit0;
+	uniform float useTexture = 0.0;
+	uniform float useColors = 0.0;
+	uniform vec4 drawColor = vec4(1.0);
+
+	in float depth;
+	in vec4 colorVarying;
+	in vec2 texCoordVarying;
+																		   
+	out vec4 fragColor;
+
+	void main(){
+		fragColor = texture(src_tex_unit0, texCoordVarying) * colorVarying;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
+
+	uniform sampler2D src_tex_unit0;
+	uniform float useTexture = 0.0;
+	uniform float useColors = 0.0;
+	uniform vec4 drawColor = vec4(1.0);
+	
+	in float depth;
+	in vec4 colorVarying;
+	in vec2 texCoordVarying;
+																			 
+	out vec4 fragColor;
+	
+	void main(){
+		fragColor = texture(src_tex_unit0, texCoordVarying) * drawColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
+
+	uniform sampler2DRect src_tex_unit0;
+	uniform float useTexture = 0.0;
+	uniform float useColors = 0.0;
+	uniform vec4 drawColor = vec4(1.0);
+
+	in float depth;
+	in vec4 colorVarying;
+	in vec2 texCoordVarying;
+																			
+	out vec4 fragColor;
+
+	void main(){
+		fragColor = colorVarying;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string defaultFragmentShaderNoTexNoColor = "#version 150\n" STRINGIFY(
+
+	uniform sampler2DRect src_tex_unit0;
+	uniform float useTexture = 0.0;
+	uniform float useColors = 0.0;
+	uniform vec4 drawColor = vec4(1.0);
+
+	in float depth;
+	in vec4 colorVarying;
+	in vec2 texCoordVarying;
+																			 
+	out vec4 fragColor;
+
+	void main(){
+		fragColor = drawColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string bitmapStringVertexShader = "#version 150\n" STRINGIFY(
+
+	uniform mat4 projectionMatrix;
+	uniform mat4 modelViewMatrix;
+	uniform mat4 textureMatrix;
+	uniform mat4 modelViewProjectionMatrix;
+
+	in vec4  position;
+	in vec4  color;
+	in vec2  texcoord;
+
+	out vec2 texCoordVarying;
+
+	void main()
+	{
+		texCoordVarying = texcoord;
+		gl_Position = modelViewProjectionMatrix * position;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string bitmapStringFragmentShader = "#version 150\n" STRINGIFY(
+
+	uniform sampler2D src_tex_unit0;
+	uniform vec4 drawColor = vec4(1.0);
+
+	in vec2 texCoordVarying;
+																	  
+	out vec4 fragColor;
+
+	void main()
+	{
+		
+		vec4 tex = texture(src_tex_unit0, texCoordVarying);
+		// We will not write anything to the framebuffer if we have a transparent pixel
+		// This makes sure we don't mess up our depth buffer.
+		if (tex.a < 0.5) discard;
+		fragColor = drawColor * tex;
+	}
+);
+
+// ----------------------------------------------------------------------
 // changing shaders in raspberry pi is very expensive so we use only one shader there
 // in desktop openGL these are not used but we declare it to avoid more ifdefs
 
-static string uniqueVertexShader = "\n\
-		#version 150\n\
-		\n\
-        \n\
-		in vec4 position;\n\
-		in vec4 color_coord;\n\
-		in vec4 normal;\n\
-		in vec2 texcoord;\n\
-        \n\
-		uniform mat4 modelViewMatrix;\n\
-		uniform mat4 projectionMatrix;\n\
-		uniform mat4 textureMatrix;\n\
-		uniform mat4 modelViewProjectionMatrix;\n\
-        \n\
-		out vec4 colorVarying;\n\
-		out vec2 texCoordVarying;\n\
-        \n\
-		uniform float usingTexture;\n\
-		uniform float usingColors;\n\
-		\n\
-		uniform vec4 color;\n\
-        \n\
-		void main(){\n\
-			gl_Position = modelViewProjectionMatrix * position;\n\
-		    if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;\n\
-		    if(usingColors>.5) colorVarying = color_coord*color;\n\
-			else colorVarying = color;\n\
-		}";
+static string uniqueVertexShader = "#version 150\n" STRINGIFY(
+        
+		uniform mat4 modelViewMatrix;
+		uniform mat4 projectionMatrix;
+		uniform mat4 textureMatrix;
+		uniform mat4 modelViewProjectionMatrix;
+		uniform float usingTexture;
+		uniform float usingColors;
+		uniform vec4 drawColor;
+
+		in vec4 position;
+		in vec4 color;
+		in vec4 normal;
+		in vec2 texcoord;
+        
+		out vec4 colorVarying;
+		out vec2 texCoordVarying;
+        
+		void main(){
+			gl_Position = modelViewProjectionMatrix * position;
+		    if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
+		    if(usingColors>.5) colorVarying = color*drawColor;
+			else colorVarying = drawColor;
+		}
+);
+
+// ----------------------------------------------------------------------
+
+static string uniqueFragmentShader = "#version 150\n" STRINGIFY(
+        
+		uniform sampler2D src_tex_unit0;
+		uniform float usingTexture;
+		uniform float bitmapText;
+        
+		in vec4 colorVarying;
+		in vec2 texCoordVarying;
+        
+        out vec4 fragColor;
+																
+		void main(){
+		    vec4 tex;
+		    if(usingTexture>.5){
+		        tex = texture(src_tex_unit0, texCoordVarying);
+				if(bitmapText>.5 && tex.a < 0.5){
+					discard;
+				}else{
+		            fragColor = colorVarying*tex;
+                }
+		    }else{
+		        fragColor = colorVarying;
+            }
+        }
+);
 
 
-static string uniqueFragmentShader = "\n\
-		#version 150\n\
-		\n\
-        \n\
-		uniform sampler2D src_tex_unit0;\n\
-        \n\
-		uniform float usingTexture;\n\
-		uniform float bitmapText;\n\
-        \n\
-		in vec4 colorVarying;\n\
-		in vec2 texCoordVarying;\n\
-        \n\
-        out vec4 fragColor;\n\
-		void main(){\n\
-		    vec4 tex;\n\
-		    if(usingTexture>.5){\n\
-		        tex = texture(src_tex_unit0, texCoordVarying);\n\
-				if(bitmapText>.5 && tex.a < 0.5){\n\
-					discard;\n\
-				}else{\n\
-		            fragColor = colorVarying*tex;\n\
-                }\n\
-		    }else{\n\
-		        fragColor = colorVarying;\n\
-            }\n\
-        }\n";
 #endif
 
 void ofGLProgrammableRenderer::setup(){
