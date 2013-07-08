@@ -686,10 +686,8 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 		decodebin = "! decodebin ";
 
 	const char * scale = "";
-	int bpp;
 	switch(internalPixelFormat){
 	case OF_PIXELS_MONO:
-		bpp = 8;
 		if(format.format_name!="GRAY8"){
 			scale = "! videoconvert ";
 		}
@@ -698,17 +696,14 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 		if(format.format_name!="RGB"){
 			scale = "! videoconvert ";
 		}
-		bpp = 24;
 		break;
 	case OF_PIXELS_RGBA:
 	case OF_PIXELS_BGRA:
 		if(format.format_name!="RGBA" && format.format_name!="BGRA"){
 			scale = "! videoconvert ";
 		}
-		bpp = 32;
 		break;
 	default:
-		bpp=24;
 		break;
 	}
 
@@ -752,6 +747,22 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 #endif
 
+	int bpp;
+	switch(internalPixelFormat){
+		case OF_PIXELS_MONO:
+			bpp = 8;
+			break;
+		case OF_PIXELS_RGB:
+			bpp = 24;
+			break;
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+			bpp = 32;
+			break;
+		default:
+			bpp=24;
+			break;
+	}
 
 
 	if(	videoUtils.setPipeline(pipeline_string,bpp,false,w,h) ){
