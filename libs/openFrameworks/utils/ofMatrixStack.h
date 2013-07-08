@@ -34,7 +34,7 @@ public:
 
 	const ofMatrix4x4 & getProjectionMatrix() const;
 	const ofMatrix4x4 & getModelViewMatrix() const;
-	const ofMatrix4x4 & getModelViewPorjectionMatrix() const;
+	const ofMatrix4x4 & getModelViewProjectionMatrix() const;
 	const ofMatrix4x4 & getTextureMatrix() const;
 	const ofMatrix4x4 & getCurrentMatrix() const;
 	const ofMatrix4x4 & getProjectionMatrixNoOrientation() const;
