@@ -135,21 +135,14 @@ public:
 
 	ofShader & getCurrentShader();
 
-	void enableVertices();
-	void enableTexCoords();
-	void enableColors();
-	void enableNormals();
-	void disableVertices();
-	void disableTexCoords();
-	void disableColors();
-	void disableNormals();
-
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
 
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
 
+	void setAttributes(bool vertices, bool color, bool tex, bool normals);
+	void setAlphaBitmapText(bool bitmapText);
 
 
 	ofShader & defaultTexColor();
@@ -159,8 +152,10 @@ public:
 	ofShader & defaultNoTexColor();
 	ofShader & defaultNoTexNoColor();
 	ofShader & bitmapStringShader();
+	ofShader & defaultUniqueShader();
     
 private:
+
 
 	ofPolyline circlePolyline;
 	ofVboMesh circleVbo;
@@ -177,14 +172,15 @@ private:
 	void endSmoothing();
 
 	void beginDefaultShader();
-	void uploadAllMatrices();
+	void uploadMatrices();
+	void setDefaultUniforms();
 
     
 	ofMatrixStack matrixStack;
 
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
-    ofFloatColor currentColor;
+    ofColor currentColor;
     
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
@@ -192,9 +188,10 @@ private:
 	
 	ofShader * currentShader;
 
-	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled;
+	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled, bitmapStringEnabled;
 	bool usingCustomShader, settingDefaultShader;
 	int currentTextureTarget;
 
 	bool wrongUseLoggedOnce;
+	bool uniqueShader;
 };

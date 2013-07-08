@@ -772,7 +772,7 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
  
     // loop it!
     while (!terminate) {
-      checkEvents();  
+      checkEvents();
       idle();
       display();
     }
@@ -1180,9 +1180,9 @@ void ofAppEGLWindow::display() {
   ///////////////////////////////////////////////////////////////////////////////////////
   // set viewport, clear the screen
  
-
-  if(ofGetGLProgrammableRenderer()){
-    ofGetGLProgrammableRenderer()->startRender();
+  ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+  if(renderer){
+   renderer->startRender();
   }
 
   ofViewport(0, 0, getWindowWidth(), getWindowHeight());    // used to be glViewport( 0, 0, width, height );
@@ -1234,8 +1234,8 @@ void ofAppEGLWindow::display() {
     }
    }
  
-  if(ofGetGLProgrammableRenderer()) {
-    ofGetGLProgrammableRenderer()->finishRender();
+  if(renderer) {
+    renderer->finishRender();
   }
   
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);

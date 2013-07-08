@@ -315,9 +315,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
 
-	if (!ofGetGLProgrammableRenderer()){
-		enableTextureTarget();
-	}
+	enableTextureTarget();
 
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
@@ -327,10 +325,11 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	if (!ofGetGLProgrammableRenderer()){
+	if (!ofIsGLProgrammableRenderer()){
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		disableTextureTarget();
 	}
+	disableTextureTarget();
+
 
 
 	texData.bAllocated = true;
@@ -339,56 +338,64 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 
 //----------------------------------------------------------
 void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
+	ofSetPixelStorei(w,1,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_BYTE);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
+	ofSetPixelStorei(w,2,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_SHORT);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const float * data, int w, int h, int glFormat){
+	ofSetPixelStorei(w,4,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_FLOAT);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofPixels & pix){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofShortPixels & pix){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofFloatPixels & pix){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofPixels & pix, int glFormat){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofShortPixels & pix, int glFormat){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofFloatPixels & pix, int glFormat){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
-
 
 
 //----------------------------------------------------------
 void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glType){
 
-	if(w < texData.tex_w || h < texData.tex_h) {
-		allocate(w, h, glFormat, glType);
+	if(w > texData.tex_w || h > texData.tex_h) {
+		allocate(w, h, glFormat, glFormat, glType);
 	}
 	
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
@@ -425,11 +432,6 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	
-	//------------------------ likely, we are uploading continuous data
-	GLint prevAlignment;
-	glGetIntegerv(GL_UNPACK_ALIGNMENT, &prevAlignment);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	
 	
 	//Sosolimited: texture compression
 	if (texData.compressionType == OF_COMPRESS_NONE) {
@@ -439,7 +441,8 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		enableTextureTarget();
 
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
- 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
+		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
+		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 
  		disableTextureTarget();
 	} else {
@@ -459,8 +462,6 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 			int next_w = ofNextPow2(texData.width);
 			if ((texData.width - last_w) < (next_w - texData.width)) texData.tex_t = last_w;
 			else texData.tex_t = next_w;
-			
-			//printf("ofTexture::loadData w:%.1f, h:%.1f, tex_t:%.1f, tex_u:%.1f \n", texData.width,texData.height,texData.tex_t,texData.tex_u);
 		}
 #endif
 		enableTextureTarget();
@@ -516,10 +517,6 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		disableTextureTarget();
 		
 	}
-	//------------------------ back to normal.
-	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
-	
-	texData.bFlipTexture = false;
 	
 }
 
@@ -598,15 +595,16 @@ void ofTexture::bind(){
 	if(ofGetUsingNormalizedTexCoords()) {
 		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPushMatrix();
-		ofLoadIdentityMatrix();
+		ofMatrix4x4 m;
 		
 #ifndef TARGET_OPENGLES	
 		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
-			ofScale(texData.width, texData.height, 1.0f);
+			m.makeScaleMatrix(texData.width, texData.height, 1.0f);
 		else 
 #endif			
-			ofScale(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
+			m.makeScaleMatrix(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
 		
+		ofLoadMatrix(m);
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
 }
@@ -745,10 +743,10 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
 	
 	
-	GLfloat px0 = 0.0f;		// up to you to get the aspect ratio right
-	GLfloat py0 = 0.0f;
-	GLfloat px1 = w;
-	GLfloat py1 = h;
+	GLfloat px0 = x;		// up to you to get the aspect ratio right
+	GLfloat py0 = y;
+	GLfloat px1 = w+x;
+	GLfloat py1 = h+y;
 	
 	if (texData.bFlipTexture == ofIsVFlipped()){
 		swap(py0,py1);
@@ -807,13 +805,15 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 	
-	ofPushMatrix();
+	/*if(z>0 || z<0){
+		ofPushMatrix();
 
-	ofTranslate(x,y,z);
-	quad.getVertices()[0].set(px0,py0);
-	quad.getVertices()[1].set(px1,py0);
-	quad.getVertices()[2].set(px1,py1);
-	quad.getVertices()[3].set(px0,py1);
+		ofTranslate(0,0,z);
+	}*/
+	quad.getVertices()[0].set(px0,py0,z);
+	quad.getVertices()[1].set(px1,py0,z);
+	quad.getVertices()[2].set(px1,py1,z);
+	quad.getVertices()[3].set(px0,py1,z);
 	
 	quad.getTexCoords()[0].set(tx0,ty0);
 	quad.getTexCoords()[1].set(tx1,ty0);
@@ -828,8 +828,10 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	bind();
 	quad.draw();
 	unbind();
-	
-	ofPopMatrix();
+
+	/*if(z>0 || z<0){
+		ofPopMatrix();
+	}*/
 	
 }
 
