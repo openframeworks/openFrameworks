@@ -723,7 +723,6 @@ void ofTexture::generateMipmaps(){
 		glTexParameteri( texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri( texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glGenerateMipmap(texData.textureTarget);
-		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
 		glBindTexture( texData.textureTarget, 0);			// unbind texture
 	}
 }
