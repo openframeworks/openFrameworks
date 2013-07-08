@@ -526,7 +526,6 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y){
     #endif 
     
     if( windowMode == OF_WINDOW ){
-        cout << " storing position of " << nonFullScreenX << " " << nonFullScreenY << endl; 
         nonFullScreenX=x;
         nonFullScreenY=y;
     }
@@ -611,9 +610,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	if( windowMode == OF_FULLSCREEN){
         nonFullScreenX = getWindowPosition().x;
         nonFullScreenY = getWindowPosition().y;
-        
-        cout << " getting pos of " << nonFullScreenX << " " << nonFullScreenY << endl; 
-        
+                
 		nonFullScreenW = getWindowSize().x;
 		nonFullScreenH = getWindowSize().y;
 
@@ -642,16 +639,19 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
                     maxHeight = desktopMode->height; 
                 }   
             }
-            
+            //for OS X we need to set this first as the window size affects the window positon 
             setWindowShape(totalWidth, maxHeight);
             setWindowPosition(0, 0);
         }else if (monitorCount > 1 && currentMonitor < monitorCount){
-            //for OS X we need to set this first as the window size affects the window positon 
-            setWindowShape(screenSize.x, screenSize.y);
-        
-			int xpos;
+            int xpos;
 			int ypos;
-			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);            
+			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);        
+
+            //we do this as setWindowShape affects the position of the monitor
+            //normally we would just call setWindowShape first, but on multi monitor you see the window bleed onto the second monitor as it first changes shape and is then repositioned. 
+            //this first moves it over in X, does the screen resize and then by calling it again its set correctly in y. 
+			setWindowPosition(xpos, ypos);            
+            setWindowShape(screenSize.x, screenSize.y);
 			setWindowPosition(xpos, ypos);
 		}else{
             //for OS X we need to set this first as the window size affects the window positon 
@@ -659,6 +659,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			setWindowPosition(0,0);
 		}
 
+        //make sure the window is getting the mouse/key events
+        [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 
 	}else if( windowMode == OF_WINDOW ){
 		SetSystemUIMode(kUIModeNormal,NULL);
@@ -671,12 +673,12 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		// if we have recorded the screen posion, put it there
 		// if not, better to let the system do it (and put it where it wants)
 		if (ofGetFrameNum() > 0){
-            cout << " setting window pos to " << nonFullScreenX << " " << nonFullScreenY << endl; 
 			setWindowPosition(nonFullScreenX,nonFullScreenY);
 		}
 
 		//----------------------------------------------------
-
+        //make sure the window is getting the mouse/key events
+        [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 	}
 #elif defined(TARGET_WIN32)
     if( windowMode == OF_FULLSCREEN){
