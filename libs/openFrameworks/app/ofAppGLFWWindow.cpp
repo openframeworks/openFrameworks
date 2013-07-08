@@ -933,9 +933,8 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 	}
 
 	//GLFW defaults to uppercase - OF users are used to lowercase
-	//if we are uppercase make lowercase
-	// a better approach would be to check if shift keys are held down - and apply based on that
-	if( key >= 65 && key <= 90 ){
+    //we look and see if shift is being held to toggle upper/lowecase 
+	if( key >= 65 && key <= 90 && !ofGetKeyPressed(OF_KEY_SHIFT) ){
 		key += 32;
 	}
 
