@@ -17,7 +17,7 @@ static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";
 static const string PROJECTION_MATRIX_UNIFORM="projectionMatrix";
 static const string MODELVIEW_PROJECTION_MATRIX_UNIFORM="modelViewProjectionMatrix";
 static const string TEXTURE_MATRIX_UNIFORM="textureMatrix";
-static const string COLOR_UNIFORM="drawColor";
+static const string COLOR_UNIFORM="globalColor";
 
 static const string USE_TEXTURE_UNIFORM="usingTexture";
 static const string USE_COLORS_UNIFORM="usingColors";
@@ -1180,7 +1180,7 @@ static string defaultFragmentShaderTexColor = STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 drawColor;
+		uniform vec4 globalColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
@@ -1197,14 +1197,14 @@ static string defaultFragmentShaderTexNoColor =  STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 drawColor;
+		uniform vec4 globalColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
 		varying vec2 texCoordVarying;
 
 		void main(){
-		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*drawColor;
+		    gl_FragColor = texture2D(src_tex_unit0, texCoordVarying)*globalColor;
         }
 );
 
@@ -1214,7 +1214,7 @@ static string defaultFragmentShaderNoTexColor = STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 drawColor;
+		uniform vec4 globalColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
@@ -1231,14 +1231,14 @@ static string defaultFragmentShaderNoTexNoColor  =  STRINGIFY(
 		uniform sampler2D src_tex_unit0;
 		uniform float useTexture;
 		uniform float useColors;
-		uniform vec4 drawColor;
+		uniform vec4 globalColor;
 
 		varying float depth;
 		varying vec4 colorVarying;
 		varying vec2 texCoordVarying;
 
 		void main(){
-		    gl_FragColor = drawColor;
+		    gl_FragColor = globalColor;
         }
 );
 
@@ -1265,7 +1265,7 @@ static string bitmapStringFragmentShader =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform vec4 drawColor;
+		uniform vec4 globalColor;
 
 		varying vec2 texCoordVarying;
 
@@ -1274,7 +1274,7 @@ static string bitmapStringFragmentShader =  STRINGIFY(
 			// We will not write anything to the framebuffer if we have a transparent pixel
 			// This makes sure we don't mess up our depth buffer.
 			if (tex.a < 0.5) discard;
-			gl_FragColor = drawColor * tex;
+			gl_FragColor = globalColor * tex;
 		}
 );
 
@@ -1302,13 +1302,13 @@ static string uniqueVertexShader = STRINGIFY(
 		uniform float usingTexture;
 		uniform float usingColors;
 
-		uniform vec4 drawColor;
+		uniform vec4 globalColor;
 
 		void main(){
 			gl_Position = modelViewProjectionMatrix * position;
 		    if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
-		    if(usingColors>.5) colorVarying = color*drawColor;
-			else colorVarying = drawColor;
+		    if(usingColors>.5) colorVarying = color*globalColor;
+			else colorVarying = globalColor;
 		}
 );
 
@@ -1375,7 +1375,7 @@ static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 	uniform sampler2DRect src_tex_unit0;
 	uniform float useTexture = 0.0;
 	uniform float useColors = 0.0;
-	uniform vec4 drawColor = vec4(1.0);
+	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
 	in vec4 colorVarying;
@@ -1395,7 +1395,7 @@ static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 	uniform sampler2DRect src_tex_unit0;
 	uniform float useTexture = 0.0;
 	uniform float useColors = 0.0;
-	uniform vec4 drawColor = vec4(1.0);
+	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
 	in vec4 colorVarying;
@@ -1404,7 +1404,7 @@ static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 	out vec4 fragColor;
 
 	void main(){
-		fragColor = texture(src_tex_unit0, texCoordVarying) * drawColor;
+		fragColor = texture(src_tex_unit0, texCoordVarying) * globalColor;
 	}
 );
 
@@ -1415,7 +1415,7 @@ static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
 	uniform sampler2D src_tex_unit0;
 	uniform float useTexture = 0.0;
 	uniform float useColors = 0.0;
-	uniform vec4 drawColor = vec4(1.0);
+	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
 	in vec4 colorVarying;
@@ -1435,7 +1435,7 @@ static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 	uniform sampler2D src_tex_unit0;
 	uniform float useTexture = 0.0;
 	uniform float useColors = 0.0;
-	uniform vec4 drawColor = vec4(1.0);
+	uniform vec4 globalColor = vec4(1.0);
 	
 	in float depth;
 	in vec4 colorVarying;
@@ -1444,7 +1444,7 @@ static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 	out vec4 fragColor;
 	
 	void main(){
-		fragColor = texture(src_tex_unit0, texCoordVarying) * drawColor;
+		fragColor = texture(src_tex_unit0, texCoordVarying) * globalColor;
 	}
 );
 
@@ -1455,7 +1455,7 @@ static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
 	uniform sampler2DRect src_tex_unit0;
 	uniform float useTexture = 0.0;
 	uniform float useColors = 0.0;
-	uniform vec4 drawColor = vec4(1.0);
+	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
 	in vec4 colorVarying;
@@ -1475,7 +1475,7 @@ static string defaultFragmentShaderNoTexNoColor = "#version 150\n" STRINGIFY(
 	uniform sampler2DRect src_tex_unit0;
 	uniform float useTexture = 0.0;
 	uniform float useColors = 0.0;
-	uniform vec4 drawColor = vec4(1.0);
+	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
 	in vec4 colorVarying;
@@ -1484,7 +1484,7 @@ static string defaultFragmentShaderNoTexNoColor = "#version 150\n" STRINGIFY(
 	out vec4 fragColor;
 
 	void main(){
-		fragColor = drawColor;
+		fragColor = globalColor;
 	}
 );
 
@@ -1515,7 +1515,7 @@ static string bitmapStringVertexShader = "#version 150\n" STRINGIFY(
 static string bitmapStringFragmentShader = "#version 150\n" STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
-	uniform vec4 drawColor = vec4(1.0);
+	uniform vec4 globalColor = vec4(1.0);
 
 	in vec2 texCoordVarying;
 																	  
@@ -1528,7 +1528,7 @@ static string bitmapStringFragmentShader = "#version 150\n" STRINGIFY(
 		// We will not write anything to the framebuffer if we have a transparent pixel
 		// This makes sure we don't mess up our depth buffer.
 		if (tex.a < 0.5) discard;
-		fragColor = drawColor * tex;
+		fragColor = globalColor * tex;
 	}
 );
 
@@ -1544,7 +1544,7 @@ static string uniqueVertexShader = "#version 150\n" STRINGIFY(
 		uniform mat4 modelViewProjectionMatrix;
 		uniform float usingTexture;
 		uniform float usingColors;
-		uniform vec4 drawColor;
+		uniform vec4 globalColor;
 
 		in vec4 position;
 		in vec4 color;
@@ -1557,8 +1557,8 @@ static string uniqueVertexShader = "#version 150\n" STRINGIFY(
 		void main(){
 			gl_Position = modelViewProjectionMatrix * position;
 		    if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
-		    if(usingColors>.5) colorVarying = color*drawColor;
-			else colorVarying = drawColor;
+		    if(usingColors>.5) colorVarying = color*globalColor;
+			else colorVarying = globalColor;
 		}
 );
 
