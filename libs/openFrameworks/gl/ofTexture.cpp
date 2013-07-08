@@ -710,7 +710,7 @@ void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
 }
 
-void ofTexture::generateMipmaps(GLint minFilter = GL_LINEAR_MIPMAP_LINEAR, GLint magFilter = GL_LINEAR){
+void ofTexture::generateMipmaps(GLint minFilter, GLint magFilter){
 	if (ofIsGLProgrammableRenderer()){
 		// tig: add mipmaps (call this method after texture data was changed)
 		// we are not using gluBuild2dMipmaps, but the new openGL core API for mipmaps.
