@@ -35,6 +35,8 @@ enum ofPixelFormat{
 	OF_PIXELS_UNKOWN
 };
 
+string ofToString(ofPixelFormat pixelFormat);
+
 template <typename PixelType>
 class ofPixels_ {
 public:
@@ -56,9 +58,12 @@ public:
 
 	void set(PixelType val);
 	void set(int channel,PixelType val);
+	void setFromPixels(const PixelType * newPixels,int w, int h, int channels);
 	void setFromPixels(const PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
 	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
+	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
 	void setFromExternalPixels(PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
+	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, int stride);
 	void swap(ofPixels_<PixelType> & pix);
 
@@ -129,7 +134,8 @@ private:
 	int 	width;
 	int 	height;
 
-	int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
+	//int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
+	int 	pixelsSize;
 	bool	bAllocated;
 	bool	pixelsOwner;			// if set from external data don't delete it
 	ofPixelFormat pixelFormat;
@@ -158,7 +164,7 @@ template<typename SrcType>
 ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	bAllocated = false;
 	pixelsOwner = false;
-	channels = 0;
+	pixelsSize = 0;
 	pixels = NULL;
 	width = 0;
 	height = 0;
