@@ -35,12 +35,21 @@ ifndef PLATFORM_OS
     # determine from the uname if not defined manually
     PLATFORM_OS=$(shell uname -s)
 endif
+HOST_OS=$(shell uname -s)
 
 # if not defined, determine this platform's architecture via uname -m
 ifndef PLATFORM_ARCH
     # determine from the uname
     PLATFORM_ARCH=$(shell uname -m)
 endif
+HOST_ARCH=$(shell uname -m)
+
+ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
+	CROSS_COMPILING=1
+endif
+
+$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+$(info PLATFORM_OS=$(PLATFORM_OS))
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
@@ -57,7 +66,7 @@ ifndef PLATFORM_LIB_SUBPATH
         else ifeq ($(PLATFORM_ARCH),i686)
             PLATFORM_LIB_SUBPATH=linux
         else
-            $(error This makefile does not support your architecture)
+            $(error This makefile does not support your architecture $(PLATFORM_ARCH))
         endif
     else ifeq ($(PLATFORM_OS),Android)
         PLATFORM_LIB_SUBPATH=android
