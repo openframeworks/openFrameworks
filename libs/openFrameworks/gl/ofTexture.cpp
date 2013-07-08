@@ -437,14 +437,20 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	if (texData.compressionType == OF_COMPRESS_NONE) {
 		//STANDARD openFrameworks: no compression
 		
-		//update the texture image: 
-		enableTextureTarget();
 
+		if (!ofIsGLProgrammableRenderer()){
+			// no need to update en/disable texture targets
+			// when using the programmable gl renderer here.
+			enableTextureTarget();
+		}
+		
+		//update the texture image:
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 
- 		disableTextureTarget();
+		if (!ofIsGLProgrammableRenderer()){
+			disableTextureTarget();
+		}
 	} else {
 		//SOSOLIMITED: setup mipmaps and use compression
 		//TODO: activate at least mimaps for OPENGL_ES
