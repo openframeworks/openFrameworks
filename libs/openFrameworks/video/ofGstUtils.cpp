@@ -10,10 +10,15 @@
 
 
 
+
+
+ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
+
 void ofGstUtils::startGstMainLoop(){
 	static bool initialized = false;
 	if(!initialized){
-		g_main_loop_new (NULL, FALSE);
+		mainLoop = new ofGstMainLoopThread;
+		mainLoop->start();
 		initialized=true;
 	}
 }
@@ -230,6 +235,8 @@ bool ofGstUtils::startPipeline(){
 		// set the appsink to not emit signals, we are using callbacks instead
 		// and frameByFrame to get buffers by polling instead of callback
 		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
+		//gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
+		//gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
 
 		if(!bFrameByFrame){
 			GstAppSinkCallbacks gstCallbacks;
@@ -739,7 +746,7 @@ void ofGstVideoUtils::update(){
 			if(buffer){
 				if(pixels.isAllocated()){
 					if(prevBuffer) gst_buffer_unref (prevBuffer);
-					pixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+					pixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 					prevBuffer = buffer;
 					bHavePixelsChanged=true;
 				}
@@ -762,7 +769,7 @@ void ofGstVideoUtils::update(){
 					if(prevBuffer) gst_sample_unref (prevBuffer);
 					gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
 					//TODO: stride = mapinfo.size / height;
-					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 					prevBuffer = sample;
 					bHavePixelsChanged=true;
 					gst_buffer_unmap(buffer,&mapinfo);
@@ -785,22 +792,89 @@ float ofGstVideoUtils::getWidth(){
 	return pixels.getWidth();
 }
 
-bool ofGstVideoUtils::setPipeline(string pipeline, int bpp, bool isStream, int w, int h){
+
+#if GST_VERSION_MAJOR>0
+string	ofGstVideoUtils::getGstFormatName(ofPixelFormat format){
+	switch(format){
+	case OF_PIXELS_MONO:
+		return "GRAY8";
+	case OF_PIXELS_RGBA:
+		return "RGBA";
+	case OF_PIXELS_BGRA:
+		return "BGRA";
+	case OF_PIXELS_NV12:
+		return "NV12";
+	case OF_PIXELS_YV12:
+		return "YV12";
+	case OF_PIXELS_I420:
+		return "I420";
+	case OF_PIXELS_YUY2:
+		return "YUY2";
+	case OF_PIXELS_RGB:
+		return "RGB";
+	case OF_PIXELS_BGR:
+		return "BGR";
+	default:
+		return "UNKNOWN";
+	}
+}
+
+GstVideoFormat	ofGstVideoUtils::getGstFormat(ofPixelFormat format){
+	switch(format){
+	case OF_PIXELS_MONO:
+		return GST_VIDEO_FORMAT_GRAY8;
+
+	case OF_PIXELS_RGB:
+		return GST_VIDEO_FORMAT_RGB;
+
+	case OF_PIXELS_BGR:
+		return GST_VIDEO_FORMAT_BGR;
+
+	case OF_PIXELS_RGBA:
+		return GST_VIDEO_FORMAT_RGBA;
+
+	case OF_PIXELS_BGRA:
+		return GST_VIDEO_FORMAT_BGRA;
+
+	case OF_PIXELS_NV12:
+		return GST_VIDEO_FORMAT_NV12;
+
+	case OF_PIXELS_YV12:
+		return GST_VIDEO_FORMAT_YV12;
+
+	case OF_PIXELS_I420:
+		return GST_VIDEO_FORMAT_I420;
+
+	case OF_PIXELS_YUY2:
+		return GST_VIDEO_FORMAT_YUY2;
+
+	case OF_PIXELS_UNKOWN:
+	case OF_PIXELS_RGB565:
+		return GST_VIDEO_FORMAT_UNKNOWN;
+	}
+}
+#endif
+
+bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bool isStream, int w, int h){
 	string caps;
 #if GST_VERSION_MAJOR==0
-	if(bpp==8)
+	switch(pixelFormat){
+	case OF_PIXELS_MONO:
 		caps="video/x-raw-gray, depth=8, bpp=8";
-	else if(bpp==32)
+		break;
+	case OF_PIXELS_RGBA:
 		caps="video/x-raw-rgb, depth=24, bpp=32, endianness=4321, red_mask=0xff0000, green_mask=0x00ff00, blue_mask=0x0000ff, alpha_mask=0x000000ff";
-	else
+		break;
+	case OF_PIXELS_BGRA:
+		caps="video/x-raw-rgb, depth=24, bpp=32, endianness=4321, red_mask=0x0000ff, green_mask=0x00ff00, blue_mask=0xff0000, alpha_mask=0x000000ff";
+		break;
+	case OF_PIXELS_RGB:
+	default:
 		caps="video/x-raw-rgb, depth=24, bpp=24, endianness=4321, red_mask=0xff0000, green_mask=0x00ff00, blue_mask=0x0000ff, alpha_mask=0x000000ff";
+		break;
+	}
 #else
-	if(bpp==8)
-		caps="video/x-raw, format=GRAY8";
-	else if(bpp==32)
-		caps="video/x-raw, format=RGBA";
-	else
-		caps="video/x-raw, format=RGB";
+	caps="video/x-raw, format="+getGstFormatName(pixelFormat);
 #endif
 
 	if(w!=-1 && h!=-1){
@@ -810,16 +884,16 @@ bool ofGstVideoUtils::setPipeline(string pipeline, int bpp, bool isStream, int w
 	gchar* pipeline_string =
 		g_strdup((pipeline + " ! appsink name=ofappsink caps=\"" + caps + "\"").c_str()); // caps=video/x-raw-rgb
 
-	if((isStream && (w==-1 || h==-1)) || allocate(w,h,bpp)){
+	if((isStream && (w==-1 || h==-1)) || allocate(w,h,pixelFormat)){
 		return setPipelineWithSink(pipeline_string,"ofappsink",isStream);
 	}else{
 		return false;
 	}
 }
 
-bool ofGstVideoUtils::allocate(int w, int h, int _bpp){
-	pixels.allocate(w,h,_bpp/8);
-	backPixels.allocate(w,h,_bpp/8);
+bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
+	pixels.allocate(w,h,pixelFormat);
+	backPixels.allocate(w,h,pixelFormat);
 	prevBuffer = 0;
 	pixels.set(0);
 
@@ -830,8 +904,8 @@ bool ofGstVideoUtils::allocate(int w, int h, int _bpp){
 #if GST_VERSION_MAJOR==0
 GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 	guint size = GST_BUFFER_SIZE (_buffer);
-	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+	if(pixels.isAllocated() && pixels.size()!=(int)size){
+		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.size()));
 		gst_buffer_unref (_buffer);
 		return GST_FLOW_ERROR;
 	}
@@ -839,8 +913,8 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 	if(bBackPixelsChanged && buffer) gst_buffer_unref (buffer);
 	if(pixels.isAllocated()){
 		buffer = _buffer;
-		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(prerollEvent,eventPixels);
@@ -859,8 +933,8 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample);
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
-	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+	if(pixels.isAllocated() && pixels.size()!=(int)size){
+		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.size()));
 		gst_sample_unref (sample);
 		return GST_FLOW_ERROR;
 	}
@@ -868,8 +942,8 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	if(pixels.isAllocated()){
 		buffer = sample;
-		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(prerollEvent,eventPixels);
@@ -892,8 +966,8 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
 	guint size;
 
 	size = GST_BUFFER_SIZE (_buffer);
-	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error on new buffer, buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+	if(pixels.isAllocated() && pixels.size()!=(int)size){
+		ofLog(OF_LOG_ERROR, "on_preproll: error on new buffer, buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.size()));
 		gst_buffer_unref (_buffer);
 		return GST_FLOW_ERROR;
 	}
@@ -901,8 +975,8 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
 	if(bBackPixelsChanged && buffer) gst_buffer_unref (buffer);
 	if(pixels.isAllocated()){
 		buffer = _buffer;
-		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(bufferEvent,eventPixels);
@@ -922,8 +996,8 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample);
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
-	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error on new buffer, buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+	if(pixels.isAllocated() && pixels.size()!=(int)size){
+		ofLog(OF_LOG_ERROR, "on_preproll: error on new buffer, buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.size()));
 		gst_sample_unref (sample);
 		return GST_FLOW_ERROR;
 	}
@@ -931,8 +1005,8 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	if(pixels.isAllocated()){
 		buffer = sample;
-		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(bufferEvent,eventPixels);

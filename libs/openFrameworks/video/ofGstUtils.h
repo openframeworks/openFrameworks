@@ -7,10 +7,12 @@
 #include "ofPixels.h"
 #include "ofTypes.h"
 #include "ofEvents.h"
+#include "ofThread.h"
 
 #define GST_DISABLE_DEPRECATED
 #include <gst/gst.h>
 #include <gst/gstpad.h>
+#include <gst/video/video.h>
 
 class ofGstAppSink;
 typedef struct _GstElement GstElement;
@@ -93,6 +95,20 @@ private:
 	float				speed;
 	int64_t				durationNanos;
 	bool				isAppSink;
+
+	class ofGstMainLoopThread: public ofThread{
+		GMainLoop *main_loop;
+	public:
+		void start(){
+			startThread();
+		}
+		void threadedFunction(){
+			main_loop = g_main_loop_new (NULL, FALSE);
+			g_main_loop_run (main_loop);
+		}
+	};
+
+	static ofGstMainLoopThread * mainLoop;
 };
 
 
@@ -109,9 +125,9 @@ public:
 	ofGstVideoUtils();
 	virtual ~ofGstVideoUtils();
 
-	bool 			setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
+	bool 			setPipeline(string pipeline, ofPixelFormat pixelFormat=OF_PIXELS_RGB, bool isStream=false, int w=-1, int h=-1);
 
-	bool 			allocate(int w, int h, int bpp);
+	bool 			allocate(int w, int h, ofPixelFormat pixelFormat);
 
 	bool 			isFrameNew();
 	unsigned char * getPixels();
@@ -122,6 +138,11 @@ public:
 	float 			getWidth();
 
 	void 			close();
+
+#if GST_VERSION_MAJOR>0
+	static string			getGstFormatName(ofPixelFormat format);
+	static GstVideoFormat	getGstFormat(ofPixelFormat format);
+#endif
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff

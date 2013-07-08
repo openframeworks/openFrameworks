@@ -6,7 +6,7 @@ void testApp::setup(){
 	// IMPORTANT!!! if your sound doesn't work in the simulator - read this post - which requires you set the output stream to 24bit 
 	//	http://www.cocos2d-iphone.org/forum/topic/4159
 
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 
 	ofBackground(255, 255, 255);
 
@@ -93,11 +93,11 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::audioOut(float * output, int bufferSize, int nChannels){
 			
-	if( initialBufferSize != bufferSize ){
+	if( initialBufferSize < bufferSize ){
 		ofLog(OF_LOG_ERROR, "your buffer size was set to %i - but the stream needs a buffer size of %i", initialBufferSize, bufferSize);
 		return;
 	}	
-	//pan = 0.5f;
+
 	float leftScale = 1 - pan;
 	float rightScale = pan;
 

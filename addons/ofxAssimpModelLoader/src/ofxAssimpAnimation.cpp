@@ -64,7 +64,7 @@ void ofxAssimpAnimation::update() {
 }
 
 void ofxAssimpAnimation::updateAnimationNodes() {
-	for(int i=0; i<animation->mNumChannels; i++) {
+	for(unsigned int i=0; i<animation->mNumChannels; i++) {
         const aiNodeAnim * channel = animation->mChannels[i];
         aiNode * targetNode = scene->mRootNode->FindNode(channel->mNodeName);
         

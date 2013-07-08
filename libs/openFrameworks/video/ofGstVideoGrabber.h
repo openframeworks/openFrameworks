@@ -59,7 +59,7 @@ public:
 
 	ofGstVideoUtils *	getGstVideoUtils();
 private:
-	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate);
+	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate, ofPixelFormat desiredPixelFormat);
 
 	ofGstCamData		camData;
 	bool				bIsCamera;

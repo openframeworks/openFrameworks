@@ -159,12 +159,17 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	unsigned int channels = (bpp / sizeof(PixelType)) / 8;
 	unsigned int pitch = FreeImage_GetPitch(bmp);
 
+	ofPixelFormat pixFormat;
+	if(channels==1) pixFormat=OF_PIXELS_MONO;
+	if(channels==3) pixFormat=OF_PIXELS_RGB;
+	if(channels==4) pixFormat=OF_PIXELS_RGBA;
+
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 	
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
 	if(bmpBits != NULL) {
-		pix.setFromAlignedPixels((PixelType*) bmpBits, width, height, channels, pitch);
+		pix.setFromAlignedPixels((PixelType*) bmpBits, width, height, pixFormat, pitch);
 	} else {
 		ofLogError() << "ofImage::putBmpIntoPixels() unable to set ofPixels from FIBITMAP";
 	}
@@ -341,6 +346,7 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 	#endif
 	
+	ofFilePath::createEnclosingDirectory(fileName);
 	fileName = ofToDataPath(fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
@@ -836,8 +842,20 @@ ofColor_<PixelType> ofImage_<PixelType>::getColor(int x, int y) const {
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
+void ofImage_<PixelType>::setColor(int x, int y, const ofColor_<PixelType>& color) {
 	pixels.setColor(x, y, color);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::setColor(int index, const ofColor_<PixelType>& color) {
+	pixels.setColor(index, color);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::setColor(const ofColor_<PixelType>& color) {
+	pixels.setColor(color);
 }
 
 //------------------------------------
@@ -1192,13 +1210,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight(){
+float ofImage_<PixelType>::getHeight() {
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth(){
+float ofImage_<PixelType>::getWidth() {
 	return width;
 }
 

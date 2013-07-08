@@ -13,11 +13,32 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
+enum ofPixelFormat{
+	// grayscale
+	OF_PIXELS_MONO = 0,
+
+	// rgb (can be 8,16 or 32 bpp depending on pixeltype)
+	OF_PIXELS_RGB,
+	OF_PIXELS_BGR,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA,
+
+	// rgb 16bit
+	OF_PIXELS_RGB565,
+
+	// yuv
+	OF_PIXELS_NV12,
+	OF_PIXELS_YV12,
+	OF_PIXELS_I420,
+	OF_PIXELS_YUY2,
+
+	OF_PIXELS_UNKOWN
+};
+
+string ofToString(ofPixelFormat pixelFormat);
+
 template <typename PixelType>
 class ofPixels_ {
-
-	friend class ofPixelUtils;
-
 public:
 
 	ofPixels_();
@@ -38,9 +59,12 @@ public:
 	void set(PixelType val);
 	void set(int channel,PixelType val);
 	void setFromPixels(const PixelType * newPixels,int w, int h, int channels);
+	void setFromPixels(const PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
 	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
 	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
+	void setFromExternalPixels(PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
+	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, int stride);
 	void swap(ofPixels_<PixelType> & pix);
 
 	//From ofPixelsUtils
@@ -68,7 +92,9 @@ public:
 
 	int getPixelIndex(int x, int y) const;
 	ofColor_<PixelType> getColor(int x, int y) const;
-	void setColor(int x, int y, ofColor_<PixelType> color);
+	void setColor(int x, int y, const ofColor_<PixelType>& color);
+	void setColor(int index, const ofColor_<PixelType>& color);
+	void setColor(const ofColor_<PixelType>& color);
 
 	const PixelType& operator[](int pos) const;
 	PixelType& operator[](int pos);
@@ -89,6 +115,9 @@ public:
 
 	ofImageType getImageType() const;
 	void setImageType(ofImageType imageType);
+
+	ofPixelFormat getPixelFormat() const;
+
 	void setNumChannels(int numChannels);
 
 	int size() const;
@@ -102,14 +131,14 @@ private:
 	void copyFrom( const ofPixels_<SrcType>& mom );
 	
 	PixelType * pixels;
-	int width;
-	int height;
+	int 	width;
+	int 	height;
 
-	int channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
-	//GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
-	//ofImageType imageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+	//int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
+	int 	pixelsSize;
 	bool	bAllocated;
 	bool	pixelsOwner;			// if set from external data don't delete it
+	ofPixelFormat pixelFormat;
 
 };
 
@@ -120,7 +149,8 @@ typedef ofPixels_<unsigned short> ofShortPixels;
 
 
 typedef ofPixels& ofPixelsRef;
-
+typedef ofFloatPixels& ofFloatPixelsRef;
+typedef ofShortPixels& ofShortPixelsRef;
 
 // sorry for these ones, being templated functions inside a template i needed to do it in the .h
 // they allow to do things like:
@@ -134,8 +164,11 @@ template<typename SrcType>
 ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	bAllocated = false;
 	pixelsOwner = false;
-	channels = 0;
+	pixelsSize = 0;
 	pixels = NULL;
+	width = 0;
+	height = 0;
+	pixelFormat = OF_PIXELS_UNKOWN;
 	copyFrom( mom );
 }
 
