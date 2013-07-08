@@ -37,6 +37,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
+    bMultiWindowFullscreen  = false; 
 
 	nonFullScreenX		= 0;
 	nonFullScreenY		= 0;
@@ -63,7 +64,9 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 
 	glVersionMinor=glVersionMajor=-1;
 	nFramesSinceWindowResized = 0;
-
+    
+    //default to 4 times antialiasing. 
+    setNumSamples(4);
 	iconSet = false;
 
 }
@@ -72,6 +75,11 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setNumSamples(int _samples){
 	samples=_samples;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setMultiDisplayFullscreen(bool bMultiFullscreen){
+    bMultiWindowFullscreen = bMultiFullscreen; 
 }
 
 //------------------------------------------------------------
@@ -397,11 +405,18 @@ ofPoint ofAppGLFWWindow::getWindowSize(){
 
 //------------------------------------------------------------
 ofPoint ofAppGLFWWindow::getWindowPosition(){
-	glfwGetWindowPos(windowP, &nonFullScreenX, &nonFullScreenY);
+    int x, y; 
+	glfwGetWindowPos(windowP, &x, &y);
+    
+    if( windowMode == OF_WINDOW ){
+        nonFullScreenX = x; 
+        nonFullScreenY = y; 
+    }   
+    
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return ofPoint(nonFullScreenX,nonFullScreenY,0);
+		return ofPoint(x,y,0);
 	}else{
-		return ofPoint(nonFullScreenY,nonFullScreenX,0);
+		return ofPoint(x,y,0);
 	}
 }
 
@@ -488,9 +503,32 @@ int	ofAppGLFWWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
-	glfwSetWindowPos(windowP,x,y);
-	nonFullScreenX=x;
-	nonFullScreenY=y;
+    
+    #ifdef TARGET_OSX
+    
+        //On OS X the window coords are bottom left relative.
+        //Also the screen coords are bottom left relative, so we have to do some calculations to get position working top left relative. 
+        //Currently GLFW's glfwSetWindowPos doesn't make OS X calls top left relative, so we have to do it ourselves. 
+        // see: https://github.com/glfw/glfw/issues/85 & https://github.com/openframeworks/openFrameworks/issues/2183 
+         
+        NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+        NSPoint pos;
+        pos.x = x; 
+        pos.y = y; 
+        [cocoaWindow setFrameTopLeftPoint:pos];
+
+        //we have to do this as the screen height can change if the window has moved screens due to the x coord. 
+        //so we adjust it once for x and the call it again, where we can use the correct window to figure out the new y.  
+        pos.y = getScreenSize().y - pos.y; 
+        [cocoaWindow setFrameTopLeftPoint:pos];
+    #else 
+        glfwSetWindowPos(windowP,x,y);
+    #endif 
+    
+    if( windowMode == OF_WINDOW ){
+        nonFullScreenX=x;
+        nonFullScreenY=y;
+    }
 }
 
 //------------------------------------------------------------
@@ -523,10 +561,20 @@ void ofAppGLFWWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
-	if (fullscreen)
+
+    int curWindowMode  = ofGetWindowMode(); 
+
+	if (fullscreen){
 		windowMode = OF_FULLSCREEN;
-	else
+	}else{
 		windowMode = OF_WINDOW;
+    }
+    
+    //we only want to change window mode if the requested window is different to the current one. 
+    bool bChanged = windowMode != curWindowMode; 
+    if( !bChanged ){
+        return; 
+    }
 
 #ifdef TARGET_LINUX
 #include <X11/Xatom.h>
@@ -562,44 +610,57 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	if( windowMode == OF_FULLSCREEN){
         nonFullScreenX = getWindowPosition().x;
         nonFullScreenY = getWindowPosition().y;
+                
 		nonFullScreenW = getWindowSize().x;
 		nonFullScreenH = getWindowSize().y;
 
 		//----------------------------------------------------
 		SetSystemUIMode(kUIModeAllHidden,NULL);
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+
 		[cocoaWindow setStyleMask:NSBorderlessWindowMask];
 
 		int monitorCount;
+        GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+
 		int currentMonitor = getCurrentMonitor();
 		ofVec3f screenSize = getScreenSize();
-
-		if (monitorCount > 1 && currentMonitor < monitorCount){
-			int xpos;
+    
+        if( bMultiWindowFullscreen && monitorCount > 1 ){
+            float totalWidth = 0.0; 
+            float maxHeight  = 0.0; 
+            
+            //lets find the total width of all the monitors
+            //and we'll make the window height the height of the largest monitor. 
+            for(int i = 0; i < monitorCount; i++){
+                const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+                totalWidth += desktopMode->width; 
+                if( i == 0 || desktopMode->height > maxHeight ){
+                    maxHeight = desktopMode->height; 
+                }   
+            }
+            //for OS X we need to set this first as the window size affects the window positon 
+            setWindowShape(totalWidth, maxHeight);
+            setWindowPosition(0, 0);
+        }else if (monitorCount > 1 && currentMonitor < monitorCount){
+            int xpos;
 			int ypos;
-			ofVec3f primaryMonitorOrigin;
-			ofVec3f targetMonitorOrigin;
+			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);        
 
-			GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
-			GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
-			
-			// tig: Get the origin of the primary monitor, which is vec2(xpos, ypos+height)
-			// Monitors have the origin at the bottom left of the screen.
-			// Then get the origin of the target monitor and calculate how much to offset the
-			// window so that it is pinned to the top left corner of the target monitor,
-			// covering it fully.
-			glfwGetMonitorPos(primaryMonitor, &xpos, &ypos);
-			primaryMonitorOrigin.set(xpos, ypos + glfwGetVideoMode(primaryMonitor)->height);
-			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);
-			targetMonitorOrigin.set(xpos, ypos + glfwGetVideoMode(monitors[currentMonitor])->height);
-			int yDelta =  primaryMonitorOrigin.y - targetMonitorOrigin.y;
-			setWindowPosition(xpos, yDelta);
-		} else {
+            //we do this as setWindowShape affects the position of the monitor
+            //normally we would just call setWindowShape first, but on multi monitor you see the window bleed onto the second monitor as it first changes shape and is then repositioned. 
+            //this first moves it over in X, does the screen resize and then by calling it again its set correctly in y. 
+			setWindowPosition(xpos, ypos);            
+            setWindowShape(screenSize.x, screenSize.y);
+			setWindowPosition(xpos, ypos);
+		}else{
+            //for OS X we need to set this first as the window size affects the window positon 
+            setWindowShape(screenSize.x, screenSize.y);
 			setWindowPosition(0,0);
 		}
-		setWindowShape(screenSize.x, screenSize.y);
 
-		//[cocoaWindow makeFirstResponder: cocoaWindow];
+        //make sure the window is getting the mouse/key events
+        [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 
 	}else if( windowMode == OF_WINDOW ){
 		SetSystemUIMode(kUIModeNormal,NULL);
@@ -615,9 +676,9 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			setWindowPosition(nonFullScreenX,nonFullScreenY);
 		}
 
-		//[cocoaWindow makeFirstResponder: cocoaWindow];
 		//----------------------------------------------------
-
+        //make sure the window is getting the mouse/key events
+        [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 	}
 #elif defined(TARGET_WIN32)
     if( windowMode == OF_FULLSCREEN){
