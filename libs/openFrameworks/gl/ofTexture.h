@@ -165,6 +165,7 @@ class ofTexture : public ofBaseDraws {
 	void setTextureMinMagFilter(GLint minFilter, GLint maxFilter);
 
 	void setCompression(ofTexCompression compression);
+	void generateMipmaps();
 
 	bool bAllocated();
 	bool isAllocated();
