@@ -375,13 +375,13 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
+	case OF_PIXELS_RGBA:
 		return GL_RGBA;
 	case OF_PIXELS_MONO:
 		return GL_LUMINANCE;
 	case OF_PIXELS_RGB:
+	case OF_PIXELS_BGR:
 		return GL_RGB;
-	case OF_PIXELS_RGBA:
-		return GL_RGBA;
     case OF_PIXELS_RGB565:
 	#ifdef TARGET_OPENGLES
 		#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
@@ -392,6 +392,12 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	#else
 		return GL_RGB5;
 	#endif
+    case OF_PIXELS_NV12:
+	case OF_PIXELS_YV12:
+	case OF_PIXELS_I420:
+    	return GL_LUMINANCE;
+	case OF_PIXELS_YUY2:
+    	return GL_LUMINANCE_ALPHA;
 	default:
 		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
 		return GL_LUMINANCE;
@@ -410,6 +416,8 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 		return GL_LUMINANCE;
 	case OF_PIXELS_RGB:
 		return GL_RGB;
+	case OF_PIXELS_BGR:
+		return GL_BGR;
 	case OF_PIXELS_RGBA:
 		return GL_RGBA;
     case OF_PIXELS_RGB565:
@@ -418,6 +426,12 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 #else
         return GL_RGB5;
 #endif
+    case OF_PIXELS_NV12:
+	case OF_PIXELS_YV12:
+	case OF_PIXELS_I420:
+    	return GL_LUMINANCE;
+	case OF_PIXELS_YUY2:
+    	return GL_LUMINANCE_ALPHA;
 	default:
 		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
 		return GL_LUMINANCE;

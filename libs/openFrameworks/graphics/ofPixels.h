@@ -13,6 +13,28 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
+enum ofPixelFormat{
+	// grayscale
+	OF_PIXELS_MONO = 0,
+
+	// rgb (can be 8,16 or 32 bpp depending on pixeltype)
+	OF_PIXELS_RGB,
+	OF_PIXELS_BGR,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA,
+
+	// rgb 16bit
+	OF_PIXELS_RGB565,
+
+	// yuv
+	OF_PIXELS_NV12,
+	OF_PIXELS_YV12,
+	OF_PIXELS_I420,
+	OF_PIXELS_YUY2,
+
+	OF_PIXELS_UNKOWN
+};
+
 template <typename PixelType>
 class ofPixels_ {
 public:
@@ -34,10 +56,10 @@ public:
 
 	void set(PixelType val);
 	void set(int channel,PixelType val);
-	void setFromPixels(const PixelType * newPixels,int w, int h, int channels);
+	void setFromPixels(const PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
 	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
-	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
-	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
+	void setFromExternalPixels(PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
+	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, int stride);
 	void swap(ofPixels_<PixelType> & pix);
 
 	//From ofPixelsUtils
@@ -88,6 +110,9 @@ public:
 
 	ofImageType getImageType() const;
 	void setImageType(ofImageType imageType);
+
+	ofPixelFormat getPixelFormat() const;
+
 	void setNumChannels(int numChannels);
 
 	int size() const;
@@ -107,6 +132,7 @@ private:
 	int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	bool	bAllocated;
 	bool	pixelsOwner;			// if set from external data don't delete it
+	ofPixelFormat pixelFormat;
 
 };
 
@@ -136,6 +162,7 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	pixels = NULL;
 	width = 0;
 	height = 0;
+	pixelFormat = OF_PIXELS_UNKOWN;
 	copyFrom( mom );
 }
 
