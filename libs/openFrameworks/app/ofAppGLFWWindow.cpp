@@ -897,22 +897,22 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 			key = OF_KEY_SHIFT;
 			break;
 		case GLFW_KEY_LEFT_CONTROL:
-			key = OF_KEY_CTRL;
+			key = OF_KEY_LEFT_CONTROL;
 			break;
 		case GLFW_KEY_LEFT_ALT:
-			key = OF_KEY_ALT;
+			key = OF_KEY_LEFT_ALT;
 			break;
 		case GLFW_KEY_LEFT_SUPER:
 			key = OF_KEY_LEFT_SUPER;
 			break;
 		case GLFW_KEY_RIGHT_SHIFT:
-			key = OF_KEY_SHIFT;
+			key = OF_KEY_RIGHT_SHIFT;
 			break;
 		case GLFW_KEY_RIGHT_CONTROL:
-			key = OF_KEY_CTRL;
+			key = OF_KEY_RIGHT_CONTROL;
 			break;
 		case GLFW_KEY_RIGHT_ALT:
-			key = OF_KEY_ALT;
+			key = OF_KEY_RIGHT_ALT;
 			break;
 		case GLFW_KEY_RIGHT_SUPER:
 			key = OF_KEY_RIGHT_SUPER;
