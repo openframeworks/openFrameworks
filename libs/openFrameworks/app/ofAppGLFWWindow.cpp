@@ -833,7 +833,15 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
-	ofLog(OF_LOG_VERBOSE,"button: %i",button);
+	ofLog(OF_LOG_VERBOSE, "button: %i",button);
+
+    //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
+    if( ofGetKeyPressed(OF_KEY_CTRL) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_RIGHT; 
+    }
+    if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_MIDDLE; 
+    }
 
 	switch(button){
 	case GLFW_MOUSE_BUTTON_LEFT:
@@ -971,15 +979,26 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 			break;
 		case GLFW_KEY_RIGHT_SUPER:
 			key = OF_KEY_RIGHT_SUPER;
+            break;
+		case GLFW_KEY_BACKSPACE:
+			key = OF_KEY_BACKSPACE;
 			break;
+		case GLFW_KEY_DELETE:
+			key = OF_KEY_DEL;
+			break;
+		case GLFW_KEY_ENTER:
+			key = OF_KEY_RETURN;
+			break;
+		case GLFW_KEY_KP_ENTER:
+			key = OF_KEY_RETURN;
+			break;            
 		default:
 			break;
 	}
 
 	//GLFW defaults to uppercase - OF users are used to lowercase
-	//if we are uppercase make lowercase
-	// a better approach would be to check if shift keys are held down - and apply based on that
-	if( key >= 65 && key <= 90 ){
+    //we look and see if shift is being held to toggle upper/lowecase 
+	if( key >= 65 && key <= 90 && !ofGetKeyPressed(OF_KEY_SHIFT) ){
 		key += 32;
 	}
 
