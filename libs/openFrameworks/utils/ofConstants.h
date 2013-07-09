@@ -545,7 +545,9 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_CTRL			0x0200
 	#define OF_KEY_ALT			0x0300
 	#define OF_KEY_SHIFT		0x0400
-
+	#define OF_KEY_SUPER		0x0500
+    #define OF_KEY_COMMAND      OF_KEY_SUPER
+    
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
 

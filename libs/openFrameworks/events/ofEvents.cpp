@@ -178,6 +178,23 @@ void ofNotifyDraw(){
 void ofNotifyKeyPressed(int key){
 	static ofKeyEventArgs keyEventArgs;
 
+    if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
+        pressedKeys.insert(key);
+        key = OF_KEY_CTRL;
+    }
+    else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+        pressedKeys.insert(key);
+        key = OF_KEY_SHIFT;
+    }
+    else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+        pressedKeys.insert(key);
+        key = OF_KEY_ALT; 
+    }
+    else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+        pressedKeys.insert(key);
+        key = OF_KEY_SUPER; 
+    }
+            
 	pressedKeys.insert(key);
 	keyEventArgs.key = key;
 	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
@@ -194,6 +211,23 @@ void ofNotifyKeyPressed(int key){
 void ofNotifyKeyReleased(int key){
 	static ofKeyEventArgs keyEventArgs;
 
+    if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
+        pressedKeys.erase(key);
+        key = OF_KEY_CTRL;
+    }
+    else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+        pressedKeys.erase(key);
+        key = OF_KEY_SHIFT;
+    }
+    else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+        pressedKeys.erase(key);
+        key = OF_KEY_ALT; 
+    }
+    else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+        pressedKeys.erase(key);
+        key = OF_KEY_SUPER; 
+    }
+    
 	pressedKeys.erase(key);
 	
 	keyEventArgs.key = key;
