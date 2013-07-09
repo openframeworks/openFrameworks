@@ -299,10 +299,27 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	}else
 #endif
 	{
-		//otherwise we need to calculate the next power of 2 for the requested dimensions
+		
+#ifdef TARGET_OPENGLES
+		//for GLES, we need to calculate the next power of 2 for the requested dimensions
 		//ie (320x240) becomes (512x256)
 		texData.tex_w = ofNextPow2(texData.width);
 		texData.tex_h = ofNextPow2(texData.height);
+#else
+		if (ofIsGLProgrammableRenderer()){
+			// we don't need power of two textures anymore with more modern graphics cards,
+			// certainly not with GL3.2 + capable desktop ones. They are perfectly well equipped
+			// to deal with arbitrary texture sizes efficiently:
+			// http://stackoverflow.com/questions/13461808/opengl-power-of-two-textures
+			texData.tex_w = texData.width;
+			texData.tex_h = texData.height;
+		} else {
+			// for backwards-compatibility, we leave the 'classic' next-pow2 path
+			// for the fixed-function renderer
+			texData.tex_w = ofNextPow2(texData.width);
+			texData.tex_h = ofNextPow2(texData.height);
+		}
+#endif
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
