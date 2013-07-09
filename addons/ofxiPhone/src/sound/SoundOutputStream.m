@@ -16,30 +16,6 @@
 
 #import "SoundOutputStream.h"
 
-void soundOutputStreamInterruptionListener(void *inRefCon, UInt32 inInterruptionState) {
-    SoundOutputStream * stream = (SoundOutputStream *)inRefCon;
-    
-	if(inInterruptionState == kAudioSessionBeginInterruption) {
-        if([stream isStreaming]) {
-            stream.bInterruptedWhileRunning = YES;
-        }
-        [stream stop];
-        
-        if([stream.delegate respondsToSelector:@selector(soundStreamBeginInterruption:)]) {
-            [stream.delegate soundStreamBeginInterruption:stream];
-        }
-	} else if(inInterruptionState == kAudioSessionEndInterruption) {
-        if(stream.bInterruptedWhileRunning) {
-            stream.bInterruptedWhileRunning = NO;
-            [stream start];
-        }
-        
-        if([stream.delegate respondsToSelector:@selector(soundStreamEndInterruption:)]) {
-            [stream.delegate soundStreamEndInterruption:stream];
-        }
-    }
-}
-
 static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
                                                 AudioUnitRenderActionFlags *ioActionFlags,
                                                 const AudioTimeStamp *inTimeStamp,
@@ -99,63 +75,34 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
     if([self isStreaming] == YES) {
         return; // already running.
     }
-    
-	OSStatus status = NULL;
-    status = AudioSessionInitialize(NULL, NULL, soundOutputStreamInterruptionListener, self);
-	if([self checkStatus:status] == YES) {
-		//
-	}
-	status = AudioSessionSetActive(true);
-    if([self checkStatus:status] == NO) {
-        //
-    }
-    
-    //---------------------------------------------------------- audio session config.
-    
-    // this is needed to request the bufferSize we want,
-    // otherwise the default bufferSize (usally 1024) will be returned.
-	Float32 preferredBufferLength = bufferSize / (float)sampleRate;
-	status = AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration,
-                                     sizeof(preferredBufferLength),
-                                     &preferredBufferLength);
-	if([self checkStatus:status] == NO) {
-		//
-	}
+	
+	[self configureAudioSession];
     
     //---------------------------------------------------------- audio unit.
-    
+	
 	// Configure the search parameters to find the default playback output unit
 	// (called the kAudioUnitSubType_RemoteIO on iOS but
 	// kAudioUnitSubType_DefaultOutput on Mac OS X)
-	AudioComponentDescription desc;
-	desc.componentType = kAudioUnitType_Output;
-	desc.componentSubType = kAudioUnitSubType_RemoteIO;
-	desc.componentFlags = 0;
-	desc.componentFlagsMask = 0;
-	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+	AudioComponentDescription desc = {
+		.componentType         = kAudioUnitType_Output,
+		.componentSubType      = kAudioUnitSubType_RemoteIO,
+		.componentManufacturer = kAudioUnitManufacturer_Apple
+	};
     
     // get component and get audio units.
 	AudioComponent inputComponent = AudioComponentFindNext(NULL, &desc);
-	status = AudioComponentInstanceNew(inputComponent, &audioUnit);
-	if([self checkStatus:status] == NO) {
-		//
-	}
+	[self checkStatus:AudioComponentInstanceNew(inputComponent, &audioUnit)];
     
     //---------------------------------------------------------- enable io.
     
-    UInt32 on = 1;
-    UInt32 off = 0;
-
     // enable output out of AudioUnit.
-    status = AudioUnitSetProperty(audioUnit,
-                                  kAudioOutputUnitProperty_EnableIO,
-                                  kAudioUnitScope_Output,
-                                  kOutputBus,
-                                  &on,
-                                  sizeof(on));
-    if([self checkStatus:status]) {
-        //
-    }
+	UInt32 on = 1;
+    [self checkStatus:AudioUnitSetProperty(audioUnit,
+										   kAudioOutputUnitProperty_EnableIO,
+										   kAudioUnitScope_Output,
+										   kOutputBus,
+										   &on,
+										   sizeof(on))];
     
     //---------------------------------------------------------- format.
     
@@ -172,42 +119,27 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
 	};
     
     // Apply format
-	status = AudioUnitSetProperty(audioUnit,
-                                  kAudioUnitProperty_StreamFormat,
-                                  kAudioUnitScope_Input,
-                                  kOutputBus,
-                                  &audioFormat,
-                                  sizeof(AudioStreamBasicDescription));
-	if([self checkStatus:status] == NO) {
-        //
-    }
+	[self checkStatus:AudioUnitSetProperty(audioUnit,
+										   kAudioUnitProperty_StreamFormat,
+										   kAudioUnitScope_Input,
+										   kOutputBus,
+										   &audioFormat,
+										   sizeof(AudioStreamBasicDescription))];
     
-    //---------------------------------------------------------- callback.
+    //---------------------------------------------------------- render callback.
     
-    // render callback
-	AURenderCallbackStruct callback;
-	callback.inputProc = soundOutputStreamRenderCallback;
-	callback.inputProcRefCon = self;
-	status = AudioUnitSetProperty(audioUnit,
-                                  kAudioUnitProperty_SetRenderCallback,
-                                  kAudioUnitScope_Global,
-                                  kOutputBus,
-                                  &callback,
-                                  sizeof(callback));
-	if([self checkStatus:status] == NO) {
-        //
-    }
-        
+	AURenderCallbackStruct callback = {soundOutputStreamRenderCallback, self};
+	[self checkStatus:AudioUnitSetProperty(audioUnit,
+										   kAudioUnitProperty_SetRenderCallback,
+										   kAudioUnitScope_Global,
+										   kOutputBus,
+										   &callback,
+										   sizeof(callback))];
+     
     //---------------------------------------------------------- go!
-    status = AudioUnitInitialize(audioUnit);
-    if([self checkStatus:status] == NO) {
-        //
-    }
     
-    status = AudioOutputUnitStart(audioUnit);
-    if([self checkStatus:status] == NO) {
-        //
-    }
+	[self checkStatus:AudioUnitInitialize(audioUnit)];
+    [self checkStatus:AudioOutputUnitStart(audioUnit)];
 }
 
 - (void)stop {
@@ -217,11 +149,10 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
         return;
     }
     
-    AudioOutputUnitStop(audioUnit);
-    AudioUnitUninitialize(audioUnit);
-    AudioComponentInstanceDispose(audioUnit);
+    [self checkStatus:AudioOutputUnitStop(audioUnit)];
+    [self checkStatus:AudioUnitUninitialize(audioUnit)];
+    [self checkStatus:AudioComponentInstanceDispose(audioUnit)];
     audioUnit = nil;
-    AudioSessionSetActive(false);
 }
 
 @end
