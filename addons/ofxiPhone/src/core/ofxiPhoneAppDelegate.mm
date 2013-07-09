@@ -30,6 +30,7 @@
  * ***********************************************************************/ 
 
 #import "ofMain.h"
+#import "ofxiPhoneViewController.h"
 #import "ofxiPhoneAppDelegate.h"
 #import "ofxiPhoneExtras.h"
 #import "ofxiPhoneExternalDisplay.h"
@@ -41,7 +42,14 @@
 @synthesize glViewController;
 @synthesize currentScreenIndex;
 
--(void) applicationDidFinishLaunching:(UIApplication *)application {    
+- (void)dealloc {
+    self.window = nil;
+    self.externalWindow = nil;
+    self.glViewController = nil;
+    [super dealloc];
+}
+
+- (void)applicationDidFinishLaunching:(UIApplication *)application {    
 	
     self.window = [[[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]] autorelease];
 	[self.window makeKeyAndVisible];
@@ -63,12 +71,12 @@
 	//-----
 	
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
-	[[UIApplication sharedApplication] setStatusBarHidden:(iPhoneGetOFWindow()->windowMode == OF_FULLSCREEN) animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:(iPhoneGetOFWindow()->windowMode == OF_FULLSCREEN)];
 	
     // Listen to did rotate event
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 
-    NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
+    NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
     
     [center addObserver:self 
                selector:@selector(receivedRotate:) 
@@ -87,11 +95,8 @@
                selector:@selector(handleScreenModeDidChangeNotification:)
                    name:UIScreenDidDisconnectNotification object:nil];
     
-    /**
-     *  check if app delegate is being extended.
-     *  if not, create a new view controller.
-     */
-    
+    // check if app delegate is being extended.
+    // if not, create a new view controller.
     NSString *appDelegateClassName;
     appDelegateClassName = [[self class] description];
     if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended. 
@@ -99,52 +104,22 @@
                                                                             app:(ofxiPhoneApp *)ofGetAppPtr()] autorelease];
         self.window.rootViewController = self.glViewController;
     }
-    
-	#ifdef __IPHONE_4_3
-
-    /**
-     *  check if external display is connected.
-     *  if so, create an external window for it.
-     */
-    
-    if([[UIScreen screens] count] > 1){
-        [self createExternalWindowWithPreferredMode]; // create external window as soon as external screen is connected to prevent unwanted mirroring.
-        ofxiPhoneExternalDisplay::alertExternalDisplayConnected(); // alert any OF apps listening for a new external device.
-    }
-	
-	#endif
 }
 
-
--(void) receivedRotate:(NSNotification*)notification {
-	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
-    ofLog(OF_LOG_NOTICE, "Device orientation changed to %i", interfaceOrientation);
-	
-	if(interfaceOrientation != UIDeviceOrientationUnknown)
-        ofxiPhoneAlerts.deviceOrientationChanged(interfaceOrientation);
-}
-
--(void) dealloc {
-    self.glViewController = nil;
-    self.window = nil;
-    
-    [super dealloc];
-}
-
--(void) applicationWillResignActive:(UIApplication *)application {
+//------------------------------------------------------------------------------------------- application delegate callbacks.
+- (void)applicationWillResignActive:(UIApplication *)application {
     [ofxiPhoneGetGLView() stopAnimation];
 	
 	ofxiPhoneAlerts.lostFocus();
 }
 
--(void) applicationDidBecomeActive:(UIApplication *)application {
+- (void)applicationDidBecomeActive:(UIApplication *)application {
     [ofxiPhoneGetGLView() startAnimation];
 	
 	ofxiPhoneAlerts.gotFocus();
 }
 
-
--(void) applicationWillTerminate:(UIApplication *)application {
+- (void)applicationWillTerminate:(UIApplication *)application {
     [ofxiPhoneGetGLView() stopAnimation];
 	
     // stop listening for orientation change notifications
@@ -152,7 +127,7 @@
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 }
 
--(void) applicationDidReceiveMemoryWarning:(UIApplication *)application {
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
 	ofxiPhoneAlerts.gotMemoryWarning();
 }
 
@@ -163,6 +138,17 @@
 	return YES;
 }
 
+//------------------------------------------------------------------------------------------- device rotation callback.
+- (void)receivedRotate:(NSNotification*)notification {
+	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
+    ofLog(OF_LOG_NOTICE, "Device orientation changed to %i", interfaceOrientation);
+	
+	if(interfaceOrientation != UIDeviceOrientationUnknown) {
+        ofxiPhoneAlerts.deviceOrientationChanged(interfaceOrientation);
+    }
+}
+
+//------------------------------------------------------------------------------------------- external display.
 #ifdef __IPHONE_4_3
 
 /**
@@ -188,7 +174,7 @@
 }
 
 //-------------------------------------------------------------------------------------------
--(BOOL) createExternalWindowWithPreferredMode {
+- (BOOL)createExternalWindowWithPreferredMode {
     if([[UIScreen screens] count] == 1){
         return NO;
     }
@@ -215,7 +201,7 @@
 
 
 //-------------------------------------------------------------------------------------------
--(BOOL) createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex {
+- (BOOL)createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex {
     if([[UIScreen screens] count] == 1){
         return NO;
     }
@@ -249,7 +235,7 @@
 }
 
 //-------------------------------------------------------------------------------------------
--(BOOL) destroyExternalWindow {
+- (BOOL)destroyExternalWindow {
     if(!self.externalWindow){
         return NO;
     }
@@ -261,7 +247,7 @@
 }
 
 //-------------------------------------------------------------------------------------------
--(BOOL) displayOnScreenWithIndex:(NSInteger)screenIndex 
+- (BOOL)displayOnScreenWithIndex:(NSInteger)screenIndex 
               andScreenModeIndex:(NSInteger)screenModeIndex {
     
     if(screenIndex < 0 || screenIndex > [[UIScreen screens] count]-1){
