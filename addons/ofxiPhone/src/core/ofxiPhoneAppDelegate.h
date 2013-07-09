@@ -32,27 +32,28 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-#import "ofxiPhoneViewController.h"
+
+@class ofxiPhoneViewController;
 
 @interface ofxiPhoneAppDelegate : NSObject <UIApplicationDelegate> {
     NSInteger currentScreenIndex;
 }
 
-@property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) UIWindow *externalWindow;
-@property (nonatomic, retain) ofxiPhoneViewController *glViewController;
+@property (nonatomic, retain) UIWindow * window;
+@property (nonatomic, retain) UIWindow * externalWindow;
+@property (nonatomic, retain) ofxiPhoneViewController * glViewController;
 @property (readonly,  assign) NSInteger currentScreenIndex;
 
--(BOOL) application:(UIApplication*)application 
+- (BOOL)application:(UIApplication*)application
       handleOpenURL:(NSURL*)url;
 
--(void) receivedRotate:(NSNotification*)notification;
+- (void)receivedRotate:(NSNotification*)notification;
 
 #ifdef __IPHONE_4_3
--(BOOL) createExternalWindowWithPreferredMode;
--(BOOL) createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
--(BOOL) destroyExternalWindow;
--(BOOL) displayOnScreenWithIndex:(NSInteger)screenIndex 
+- (BOOL)createExternalWindowWithPreferredMode;
+- (BOOL)createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
+- (BOOL)destroyExternalWindow;
+- (BOOL)displayOnScreenWithIndex:(NSInteger)screenIndex
               andScreenModeIndex:(NSInteger)screenModeIndex;
 #endif
 

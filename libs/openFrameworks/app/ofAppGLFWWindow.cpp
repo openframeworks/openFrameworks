@@ -37,7 +37,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
-    bMultiWindowFullscreen  = false; 
+    bMultiWindowFullscreen  = false;
 
 	nonFullScreenX		= 0;
 	nonFullScreenY		= 0;
@@ -579,10 +579,64 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 #ifdef TARGET_LINUX
 #include <X11/Xatom.h>
 
-	Window nativeWin = glfwGetX11Window(windowP);
+    Window nativeWin = glfwGetX11Window(windowP);
 	Display* display = glfwGetX11Display();
+	int monitorCount;
+	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 
+	if( bMultiWindowFullscreen && monitorCount > 1 ){
+		// find the monitors at the edges of the virtual desktop
+		int minx=numeric_limits<int>::max();
+		int miny=numeric_limits<int>::max();
+		int maxx=numeric_limits<int>::min();
+		int maxy=numeric_limits<int>::min();
+		int x,y,w,h;
+		int monitorLeft=0, monitorRight=0, monitorTop=0, monitorBottom=0;
+        for(int i = 0; i < monitorCount; i++){
+            glfwGetMonitorPos(monitors[i],&x,&y);
+            glfwGetMonitorPhysicalSize(monitors[i],&w,&h);
+            if(x<minx){
+            	monitorLeft = i;
+            	minx = x;
+            }
+            if(y<miny){
+            	monitorTop = i;
+            	miny = y;
+            }
+            if(x+w>maxx){
+            	monitorRight = i;
+            	maxx = x+w;
+            }
+            if(y+h>maxy){
+            	monitorBottom = i;
+            	maxy = y+h;
+            }
 
+        }
+
+        // send fullscreen_monitors event with the edges monitors
+		Atom m_net_fullscreen_monitors= XInternAtom(display, "_NET_WM_FULLSCREEN_MONITORS", false);
+
+		XEvent xev;
+
+		xev.xclient.type = ClientMessage;
+		xev.xclient.serial = 0;
+		xev.xclient.send_event = True;
+		xev.xclient.window = nativeWin;
+		xev.xclient.message_type = m_net_fullscreen_monitors;
+		xev.xclient.format = 32;
+
+		xev.xclient.data.l[0] = monitorTop;
+		xev.xclient.data.l[1] = monitorBottom;
+		xev.xclient.data.l[2] = monitorLeft;
+		xev.xclient.data.l[3] = monitorRight;
+		xev.xclient.data.l[4] = 1;
+		XSendEvent(display, RootWindow(display, DefaultScreen(display)),
+				   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+	}
+
+	// send fullscreen event
 	Atom m_net_state= XInternAtom(display, "_NET_WM_STATE", false);
 	Atom m_net_fullscreen= XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", false);
 
@@ -605,7 +659,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	xev.xclient.data.l[3] = 0;
 	xev.xclient.data.l[4] = 0;
 	XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-	           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+			   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+	// tell the window manager to bypass composition for this window in fullscreen for speed
+	// it'll probably help solving vsync issues
+	Atom m_bypass_compositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
+	unsigned long value = fullscreen ? 1 : 0;
+	XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&value, 1);
+
+	XFlush(display);
+
 #elif defined(TARGET_OSX)
 	if( windowMode == OF_FULLSCREEN){
         nonFullScreenX = getWindowPosition().x;
