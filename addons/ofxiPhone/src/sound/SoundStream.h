@@ -56,5 +56,9 @@ typedef enum {
 - (BOOL)isStreaming;
 
 - (BOOL)checkStatus:(OSStatus)status;
+- (void)reportError:(NSError *)error;
+
+- (void)configureAudioSession;
++ (BOOL)shouldUseAudioSessionNotifications;
 
 @end

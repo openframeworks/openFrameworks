@@ -37,6 +37,8 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+	
+		static bool setMixWithOtherApps(bool bMix);
 		
 	private:
     
