@@ -38,6 +38,14 @@ void testApp::setup(){
 	targetFrequency = 444.0;
 	phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
 	
+	// This call will allow your app's sound to mix with any others that are creating sound
+	// in the background (e.g. the Music app). It should be done before the call to
+	// ofSoundStreamSetup. It sets a category of "play and record" with the "mix with others"
+	// option turned on. There are many other combinations of categories & options that might
+	// suit your app's needs better. See Apple's guide on "Configuring Your Audio Session".
+	
+	// ofxiOSSoundStream::setMixWithOtherApps(true);
+	
 	ofSoundStreamSetup(2, 0, this, sampleRate, initialBufferSize, 4);
 	ofSetFrameRate(60);
 
