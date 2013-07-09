@@ -18,11 +18,11 @@ void ofDisableNormalizedTexCoords();
 
 
 //***** add global functions to override texture settings
-void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureWrap() instead.",void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE));
 bool ofGetUsingCustomTextureWrap();
 void ofRestoreTextureWrap();
 
-void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.", void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR));
 bool ofGetUsingCustomMinMagFilters();
 void ofRestoreMinMagFilters();
 //*****
