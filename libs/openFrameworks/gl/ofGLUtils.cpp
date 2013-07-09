@@ -385,7 +385,7 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
     case OF_PIXELS_RGB565:
 	#ifdef TARGET_OPENGLES
 		#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
-			return GL_RGB565_OES
+			return GL_RGB565_OES;
 		#else
 			return GL_RGB;
 		#endif
