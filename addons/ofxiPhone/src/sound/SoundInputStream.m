@@ -250,7 +250,6 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
     AudioUnitUninitialize(audioUnit);
     AudioComponentInstanceDispose(audioUnit);
     audioUnit = nil;
-    AudioSessionSetActive(false);
     
 	for(int i=0; i<context.bufferList->mNumberBuffers; i++) {
 		free(context.bufferList->mBuffers[i].mData);
