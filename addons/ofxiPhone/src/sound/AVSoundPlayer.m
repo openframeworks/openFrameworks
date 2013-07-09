@@ -223,4 +223,10 @@
     }
 }
 
+- (void) audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags {
+	if(flags == AVAudioSessionInterruptionFlags_ShouldResume) {
+		[self.player play];
+	}
+}
+
 @end

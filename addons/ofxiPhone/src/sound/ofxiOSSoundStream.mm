@@ -10,6 +10,7 @@
 
 #import "SoundInputStream.h"
 #import "SoundOutputStream.h"
+#import <AVFoundation/AVFoundation.h>
 
 //------------------------------------------------------------------------------
 ofxiOSSoundStream::ofxiOSSoundStream() {
@@ -161,4 +162,32 @@ int ofxiOSSoundStream::getSampleRate(){
 //------------------------------------------------------------------------------
 int ofxiOSSoundStream::getBufferSize(){
     return bufferSize;
+}
+
+//------------------------------------------------------------------------------
+bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
+	AVAudioSession * audioSession = [AVAudioSession sharedInstance];
+	bool success = false;
+	
+	if(bMix) {
+		if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
+			if([audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+							 withOptions:AVAudioSessionCategoryOptionMixWithOthers
+								   error:nil]) {
+				success = true;
+			}
+		}
+	} else {
+		// this is the default category + options setup
+		// Note: using a sound input stream will set the category to PlayAndRecord
+		if([audioSession setCategory:AVAudioSessionCategorySoloAmbient error:nil]) {
+			success = true;
+		}
+	}
+	
+	if(!success) {
+		ofLogError() << "couldn't set app audio session category";
+	}
+	
+	return success;
 }
