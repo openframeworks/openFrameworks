@@ -179,15 +179,22 @@ void ofNotifyKeyPressed(int key){
 	static ofKeyEventArgs keyEventArgs;
 
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
-        pressedKeys.insert(OF_KEY_CTRL);
+        pressedKeys.insert(key);
+        key = OF_KEY_CTRL;
     }
-    if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
-        pressedKeys.insert(OF_KEY_SHIFT);
+    else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+        pressedKeys.insert(key);
+        key = OF_KEY_SHIFT;
     }
-    if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT ){
-        pressedKeys.insert(OF_KEY_ALT);
+    else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+        pressedKeys.insert(key);
+        key = OF_KEY_ALT; 
     }
-        
+    else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+        pressedKeys.insert(key);
+        key = OF_KEY_SUPER; 
+    }
+            
 	pressedKeys.insert(key);
 	keyEventArgs.key = key;
 	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
@@ -205,15 +212,22 @@ void ofNotifyKeyReleased(int key){
 	static ofKeyEventArgs keyEventArgs;
 
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
-        pressedKeys.erase(OF_KEY_CTRL);
+        pressedKeys.erase(key);
+        key = OF_KEY_CTRL;
     }
-    if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
-        pressedKeys.erase(OF_KEY_SHIFT);
+    else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+        pressedKeys.erase(key);
+        key = OF_KEY_SHIFT;
     }
-    if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT ){
-        pressedKeys.erase(OF_KEY_ALT);
+    else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+        pressedKeys.erase(key);
+        key = OF_KEY_ALT; 
     }
-
+    else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+        pressedKeys.erase(key);
+        key = OF_KEY_SUPER; 
+    }
+    
 	pressedKeys.erase(key);
 	
 	keyEventArgs.key = key;
