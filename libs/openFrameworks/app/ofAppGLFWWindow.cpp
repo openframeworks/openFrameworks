@@ -37,7 +37,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
-    bMultiWindowFullscreen  = false; 
+    bMultiWindowFullscreen  = false;
 
 	nonFullScreenX		= 0;
 	nonFullScreenY		= 0;
@@ -579,10 +579,64 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 #ifdef TARGET_LINUX
 #include <X11/Xatom.h>
 
-	Window nativeWin = glfwGetX11Window(windowP);
+    Window nativeWin = glfwGetX11Window(windowP);
 	Display* display = glfwGetX11Display();
+	int monitorCount;
+	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 
+	if( bMultiWindowFullscreen && monitorCount > 1 ){
+		// find the monitors at the edges of the virtual desktop
+		int minx=numeric_limits<int>::max();
+		int miny=numeric_limits<int>::max();
+		int maxx=numeric_limits<int>::min();
+		int maxy=numeric_limits<int>::min();
+		int x,y,w,h;
+		int monitorLeft=0, monitorRight=0, monitorTop=0, monitorBottom=0;
+        for(int i = 0; i < monitorCount; i++){
+            glfwGetMonitorPos(monitors[i],&x,&y);
+            glfwGetMonitorPhysicalSize(monitors[i],&w,&h);
+            if(x<minx){
+            	monitorLeft = i;
+            	minx = x;
+            }
+            if(y<miny){
+            	monitorTop = i;
+            	miny = y;
+            }
+            if(x+w>maxx){
+            	monitorRight = i;
+            	maxx = x+w;
+            }
+            if(y+h>maxy){
+            	monitorBottom = i;
+            	maxy = y+h;
+            }
 
+        }
+
+        // send fullscreen_monitors event with the edges monitors
+		Atom m_net_fullscreen_monitors= XInternAtom(display, "_NET_WM_FULLSCREEN_MONITORS", false);
+
+		XEvent xev;
+
+		xev.xclient.type = ClientMessage;
+		xev.xclient.serial = 0;
+		xev.xclient.send_event = True;
+		xev.xclient.window = nativeWin;
+		xev.xclient.message_type = m_net_fullscreen_monitors;
+		xev.xclient.format = 32;
+
+		xev.xclient.data.l[0] = monitorTop;
+		xev.xclient.data.l[1] = monitorBottom;
+		xev.xclient.data.l[2] = monitorLeft;
+		xev.xclient.data.l[3] = monitorRight;
+		xev.xclient.data.l[4] = 1;
+		XSendEvent(display, RootWindow(display, DefaultScreen(display)),
+				   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+	}
+
+	// send fullscreen event
 	Atom m_net_state= XInternAtom(display, "_NET_WM_STATE", false);
 	Atom m_net_fullscreen= XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", false);
 
@@ -605,7 +659,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	xev.xclient.data.l[3] = 0;
 	xev.xclient.data.l[4] = 0;
 	XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-	           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+			   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+	// tell the window manager to bypass composition for this window in fullscreen for speed
+	// it'll probably help solving vsync issues
+	Atom m_bypass_compositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
+	unsigned long value = fullscreen ? 1 : 0;
+	XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&value, 1);
+
+	XFlush(display);
+
 #elif defined(TARGET_OSX)
 	if( windowMode == OF_FULLSCREEN){
         nonFullScreenX = getWindowPosition().x;
@@ -770,7 +833,15 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
-	ofLog(OF_LOG_VERBOSE,"button: %i",button);
+	ofLog(OF_LOG_VERBOSE, "button: %i",button);
+
+    //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
+    if( ofGetKeyPressed(OF_KEY_CTRL) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_RIGHT; 
+    }
+    if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_MIDDLE; 
+    }
 
 	switch(button){
 	case GLFW_MOUSE_BUTTON_LEFT:
@@ -908,15 +979,26 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 			break;
 		case GLFW_KEY_RIGHT_SUPER:
 			key = OF_KEY_RIGHT_SUPER;
+            break;
+		case GLFW_KEY_BACKSPACE:
+			key = OF_KEY_BACKSPACE;
 			break;
+		case GLFW_KEY_DELETE:
+			key = OF_KEY_DEL;
+			break;
+		case GLFW_KEY_ENTER:
+			key = OF_KEY_RETURN;
+			break;
+		case GLFW_KEY_KP_ENTER:
+			key = OF_KEY_RETURN;
+			break;            
 		default:
 			break;
 	}
 
 	//GLFW defaults to uppercase - OF users are used to lowercase
-	//if we are uppercase make lowercase
-	// a better approach would be to check if shift keys are held down - and apply based on that
-	if( key >= 65 && key <= 90 ){
+    //we look and see if shift is being held to toggle upper/lowecase 
+	if( key >= 65 && key <= 90 && !ofGetKeyPressed(OF_KEY_SHIFT) ){
 		key += 32;
 	}
 
