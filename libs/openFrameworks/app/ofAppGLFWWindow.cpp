@@ -213,6 +213,7 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetWindowSizeCallback(windowP, resize_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
+	glfwSetDropCallback(windowP, drop_cb);
 
 #ifdef TARGET_LINUX
     if(!iconSet){
@@ -875,6 +876,19 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 	// ofSendMessage("scroll|"+ofToString(x,5) + "|" + ofToString(y,5));
 }
 
+//------------------------------------------------------------
+void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
+	cout << "drop_cb: " << dropString << endl;
+	string drop = dropString;
+#ifdef TARGET_LINUX
+	ofStringReplace(drop,"file://","");
+	ofStringReplace(drop,"\r","");
+#endif
+	ofDragInfo drag;
+	drag.position.set(ofGetMouseX(),ofGetMouseY());
+	drag.files = ofSplitString(drop,"\n",true);
+	ofNotifyDragEvent(drag);
+}
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods) {
