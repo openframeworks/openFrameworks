@@ -16,7 +16,7 @@ function download() {
 # executed inside the build dir
 function build() {
 	./configure --prefix=$BUILD_DIR --disable-dependency-tracking
-	make
+	make clean; make
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root

@@ -1,7 +1,13 @@
 #! /bin/bash
 #
 # Free Image
+# cross platform image io
 # http://freeimage.sourceforge.net
+#
+# Makefile build system, 
+# some Makefiles are out of date so patching/modification may be required
+
+FORMULA_TYPES=( "osx" "vs2010" "win_cb" "ios" "android" )
 
 VER=3154 # 3.15.4
 
@@ -32,10 +38,12 @@ function build() {
 		make -f Makefile.osx
 
 	elif [ "$TYPE" == "vs2010" ] ; then
-		MSBuild.exe FreeImage.2008.sln
+		#MSBuild.exe FreeImage.2008.sln
+		echoWarning "TODO: vs2010 build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
-		make -f Makefile.minigw
+		#make -f Makefile.minigw
+		echoWarning "TODO: win_cb build"
 
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -65,10 +73,7 @@ function build() {
 		lipo -c Dist/libfreeimage-simulator.a Dist/libfreeimage-armv7.a Dist/libfreeimage-armv7s.a -o Dist/libfreeimage-ios.a
 
 	elif [ "$TYPE" == "android" ] ; then
-		echo "TODO: build for android"
-
-	else
-		echo "build not needed for $TYPE"
+		echoWarning "TODO: android build"
 	fi
 }
 
@@ -93,7 +98,6 @@ function copy() {
 		cp -v Dist/libfreeimage-ios.a $1/lib/$TYPE/freeimage.a
 
 	elif [ "$TYPE" == "android" ] ; then
-		#mkdir -p $1/lib/$TYPE
-		echo "TODO: copy android lib"
+		echoWarning "TODO: copy android lib"
 	fi	
 }

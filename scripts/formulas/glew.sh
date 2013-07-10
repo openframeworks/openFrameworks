@@ -1,17 +1,23 @@
 #! /bin/bash
 #
+# GLEW
 # OpenGL Extensions Wrangler
 # http://glew.sourceforge.net/
+#
+# uses a Makefile build system,
+# use "make glew.lib" to build only the lib without demos/tests
+# the OPT flag is used for CFLAGS (& LDFLAGS I think?)
 
 VER=1.9.0
 
-SUPPORTED_TYPES=( "osx" "vs2010" "win_cb" )
+FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
 
 # download the source code and unpack it into LIB_NAME
 function download() {
 	curl -LO http://downloads.sourceforge.net/project/glew/glew/$VER/glew-$VER.tgz
 	tar -xf glew-$VER.tgz
 	mv glew-$VER glew
+	rm glew-$VER.tgz
 }
 
 # executed inside the build dir
@@ -34,13 +40,11 @@ function build() {
 	elif [ "$TYPE" == "vs2010" ] ; then
 		#cd build/vc10
 		#MSBuild.exe glew_static.vcxproj
-		echo "TODO: windows build here"
+		echoWarning "TODO: build vs2010"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
-		make glew.lib
-
-	else
-		echo "build not needed for $TYPE"
+		#make glew.lib
+		echoWarning "TODO: build win_cb"
 	fi
 }
 

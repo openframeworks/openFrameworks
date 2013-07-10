@@ -1,7 +1,12 @@
 #! /bin/bash
 #
+# tess2
 # Game and tools oriented refactored version of GLU tesselator
 # https://code.google.com/p/libtess2/
+#
+# has no build system, only an old Xcode project
+# we follow the Homebrew approach which is to use CMake via a custom CMakeLists.txt
+# on ios, use some build scripts adapted from the Assimp project
 
 VER=1.0
 
@@ -16,7 +21,7 @@ function download() {
 # executed inside the build dir
 function build() {
 	
-	# use CMake for the build using CMakeLists.txt from HomeBrewsince the original source doesn't have one
+	# use CMake for the build using CMakeLists.txt from HomeBrew since the original source doesn't have one
 	# see : https://github.com/mxcl/homebrew/pull/19634/files
 	cp -v $FORMULA_DIR/CMakeLists.txt .
 	
@@ -40,8 +45,9 @@ function build() {
 		lipo -c libtess2-i386.a libtess2-x86_64.a -o libtess2.a
 
 	elif [ "$TYPE" == "vs2010" ] ; then
-		cmake -G "Visual Studio 10" --build build/$TYPE .
-		echo "TODO: call MSBuild here"
+		#cmake -G "Visual Studio 10" --build build/$TYPE .
+		# call MSBuild on the generated sln here
+		echoWarning "TODO: vs2010 build"
 
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -53,6 +59,9 @@ function build() {
 		cd build/ios
 		chmod +x build_ios.sh
 		build_ios.sh
+
+	elif [ "$TYPE" == "android" ] ; then
+		echoWarning "TODO: android build"
 
 	else 
 		cmake -G "Unix Makefiles" --build build/$TYPE ../../
@@ -74,7 +83,15 @@ function copy() {
 	# lib
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "vs2010" ] ; then 
-		cp -v build/$TYPE/libtess2.lib $1/lib/$TYPE/tess2.lib
+		#cp -v libtess2.lib $1/lib/$TYPE/tess2.lib
+		echoWarning "TODO: copy vs2010 lib"
+
+	elif [ "$TYPE" == "ios" ] ; then 
+		cp -v libtess2.a $1/lib/$TYPE/tess2.a
+
+	elif [ "$TYPE" == "android" ] ; then
+		echoWarning "TODO: copy android lib"
+
 	else
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
 	fi

@@ -1,7 +1,10 @@
 #! /bin/bash
 #
+# KissFFT
 # "Keep It Simple, Stupid" Fast Fourier Transform
 # http://sourceforge.net/projects/kissfft/
+#
+# has a Makefile
 
 VER=130
 VER_UNDERSCORE=1_3_0
@@ -11,16 +14,17 @@ function download() {
 	curl -LO http://downloads.sourceforge.net/project/kissfft/kissfft/v$VER_UNDERSCORE/kiss_fft$VER.tar.gz
 	tar -xf kiss_fft$VER.tar.gz
 	mv kiss_fft$VER kiss
+	rm kiss_fft$VER.tar.gz
 }
 
 # executed inside the build dir
 function build() {
 
 	if [ "$TYPE" == "linux" ] ; then
-		echo "custom gcc stuff here probably"
+		echoWarning "TODO: linux build"
 	
 	elif [ "$TYPE" == "linux64" ] ; then
-		echo "custom gcc stuff here probably"
+		echoWarning "TODO: linux64 build"
 	
 	else
 		echo "build not needed for $TYPE"

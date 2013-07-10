@@ -11,7 +11,6 @@ function download() {
 	tar -xf pixman-$VER.tar.gz
 	mv pixman-$VER pixman
 	rm pixman-$VER.tar.gz
-	exit 0
 }
 
 # executed inside the build dir
@@ -21,7 +20,7 @@ function build() {
 	
 	# only build & install lib, ignore demos/tests
 	cd pixman
-	make
+	make clean; make
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root

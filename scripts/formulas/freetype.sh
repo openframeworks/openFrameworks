@@ -1,7 +1,12 @@
 #! /bin/bash
 #
 # Free Type
+# cross platform ttf/optf font loder
 # http://freetype.org/
+#
+# an autotools project
+
+FORMULA_TYPES=( "osx" "vs2010" "win_cb" "ios" "android" )
 
 VER=2.4.12
 
@@ -32,8 +37,17 @@ function build() {
 		lipo -c libfreetype-i386.a libfreetype-x86_64.a -o libfreetype.a
 	
 	elif [ "$TYPE" == "vs2010" ] ; then
-		echo "vs2010 build here"
+		echoWarning "TODO: build vs2010"
 	
+	elif [ "$TYPE" == "win_cb" ] ; then
+		# configure with arch
+		if [ $ARCH ==  32 ] ; then
+			./configure CFLAGS="-arch i386"
+		elif [ $ARCH == 64 ] ; then
+			./configure CFLAGS="-arch x86_64"
+		fi
+		make clean; make
+
 	elif [ "$TYPE" == "ios" ] ; then
 		# http://shift.net.nz/2010/09/compiling-freetype-for-iphoneios/
 		# http://stackoverflow.com/questions/6425643/compiling-freetype-for-iphone
@@ -64,14 +78,8 @@ function build() {
 		# link into universal lib
 		lipo -create libfreetype-armv7.a libfreetype-armv7s.a libfreetype-i386.a -output libfreetype.a
 
-	else
-		# configure with arch
-		if [ $ARCH ==  32 ] ; then
-			./configure CFLAGS="-arch i386"
-		elif [ $ARCH == 64 ] ; then
-			./configure CFLAGS="-arch x86_64"
-		fi
-		make clean; make
+	elif [ "$TYPE" == "android" ] ; then
+		echoWarning "TODO: build android"
 	fi
 }
 
@@ -87,8 +95,11 @@ function copy() {
 	if [ "$TYPE" == "osx" -o "$TYPE" == "ios" ] ; then
 		cp -v libfreetype.a $1/lib/$TYPE/freetype.a
 	elif [ "$TYPE" == "vs2010" ] ; then
-		echo "copy vs2010 here"
-	else
-		cp -v objs/.libs/libfreetype.a $1/lib/$TYPE/freetype.a
+		echoWarning "TODO: copy vs2010 lib"
+	elif [ "$TYPE" == "win_cb" ] ; then
+		#cp -v objs/.libs/libfreetype.a $1/lib/$TYPE/freetype.a
+		echoWarning "TODO: copy win_cb lib"
+	elif [ "$TYPE" == "android" ] ; then
+		echoWarning "TODO: copy android lib"
 	fi
 }

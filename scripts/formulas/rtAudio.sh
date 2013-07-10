@@ -1,7 +1,12 @@
 #! /bin/bash
 #
+# RtAudio
 # RealTime Audio input/output across Linux, Macintosh OS-X and Windows
 # http://www.music.mcgill.ca/~gary/rtaudio/
+#
+# uses an autotools build system
+
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" )
 
 VER=4.0.12
 
@@ -9,17 +14,12 @@ VER=4.0.12
 function download() {
 	curl -O http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-$VER.tar.gz
 	tar -xf rtaudio-$VER.tar.gz
-	mv rtaudio-$VER rtaudio
+	mv rtaudio-$VER rtAudio
 	rm rtaudio-$VER.tar.gz
 }
 
 # executed inside the build dir
 function build() {
-	
-	if [ "$TYPE" == "ios" -o "$TYPE" == "android" ] ; then
-		echo "build not needed for $TYPE"
-		return
-	fi
 
 	# choose audio api for configure
 	if [ "$TYPE" == "osx" ] ; then
@@ -43,21 +43,17 @@ function build() {
 
 		if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
 			local API="--with-alsa" # jack or pulse as well?
-			echo "TODO: linux build here"
+			echoWarning "TODO: build linux"
 			
 		elif [ "$TYPE" == "vs2010" -o "$TYPE" == "win_cb" ] ; then
 			local API="--with-ds" # asio as well?
-			echo "TODO: windows build here"
+			echoWarning "TODO: build $TYPE"
 		fi
 	fi
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
-	
-	if [ "$TYPE" == "ios" -o "$TYPE" == "android" ] ; then
-		return
-	fi
 
 	# headers
 	mkdir -p $1/include
@@ -67,7 +63,11 @@ function copy() {
 	# libs
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "vs2010" ] ; then
-		echo "TODO: copy for $TYPE"
+		echoWarning "TODO: copy vs2010 lib"
+
+	elif [ "$TYPE" == "win_cb" ] ; then
+		echoWarning "TODO: copy win_cb lib"
+	
 	else
 		cp -v librtaudio.a $1/lib/$TYPE/rtaudio.a
 	fi

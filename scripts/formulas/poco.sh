@@ -1,18 +1,25 @@
 #! /bin/bash
 #
+# Poco
 # C++ with Batteries Included
 # http://pocoproject.org/
+#
+# uses an autotools build system,
+# specify specfic build configs in poco/config using ./configure --config=NAME
 
 VER=1.4.6
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+
 	git clone https://github.com/pocoproject/poco -b poco-$VER
 	
-	# make backups of the config files since we might need to edit them
-	cd poco
-	cp build/config/iPhone build/config/iPhone.orig
-	cp build/config/iPhoneSimulator build/config/iPhoneSimulator.orig
+	# make backups of the ios config files since we need to edit them
+	if [ "$TYPE" == "ios" ] ; then
+		cd poco/build/config
+		cp iPhone iPhone.orig
+		cp iPhoneSimulator iPhoneSimulator.orig
+	fi
 }
 
 # executed inside the build dir
@@ -35,6 +42,7 @@ function build() {
 		rm i386/*d.a x86_64/*d.a
 
 		# link into universal lib, strip "lib" from filename
+		local lib
 		for lib in $( ls -1 i386) ; do
 			local renamedLib=$(echo $lib | sed 's|lib||')
 			if [ ! -e $renamedLib ] ; then
@@ -44,7 +52,7 @@ function build() {
 		
 
 	elif [ "$TYPE" == "vs2010" ] ; then
-		echo "vs2010 build"
+		echoWarning "TODO: vs2010 build"
 	
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -82,6 +90,7 @@ function build() {
 		rm armv7/*d.a armv7s/*d.a ../iPhoneSimulator/i386/*d.a
 
 		# link into universal lib, strip "lib" from filename
+		local lib
 		for lib in $( ls -1 ../iPhoneSimulator/i386) ; do
 			local renamedLib=$(echo $lib | sed 's|lib||')
 			if [ ! -e $renamedLib ] ; then
@@ -90,8 +99,9 @@ function build() {
 		done
 
 	else
-		./configure $BUILD_OPTS
-		make
+		#./configure $BUILD_OPTS
+		#make
+		echoWarning "TODO: $TYPE build"
 	fi
 }
 
@@ -119,5 +129,8 @@ function copy() {
 	elif [ "$TYPE" == "ios" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/iPhoneOS/*.a $1/lib/$TYPE
+
+	else
+		echoWarning "TODO: copy $TYPE lib"
 	fi
 }

@@ -1,7 +1,10 @@
 #! /bin/bash
 #
 # Open Asset Import Library
+# cross platform 3D model loader
 # https://github.com/assimp/assimp
+#
+# uses CMake
 
 VER=3.0
 SUB_VER=1270
@@ -9,33 +12,42 @@ SUB_VER=1270
 # download the source code and unpack it into LIB_NAME
 function download() {
 
-	# stable release
-	curl -LO http://downloads.sourceforge.net/project/assimp/assimp-$VER/assimp--$VER.$SUB_VER-full.zip
-	unzip -oq assimp--$VER.$SUB_VER-full.zip
-	mv assimp--$VER.$SUB_VER-sdk assimp
+	# stable release from source forge
+	curl -LO http://downloads.sourceforge.net/project/assimp/assimp-$VER/assimp--$VER.$SUB_VER-source-only.zip
+	unzip -oq assimp--$VER.$SUB_VER-source-only.zip
+	mv assimp--$VER.$SUB_VER-source-only assimp
 	rm assimp*.zip
 
 	# get assimp build scripts for iOS from github,
 	# needed for now as they are not included with release zips
+	git clone https://github.com/assimp/assimp.git assimp-git
 	if [ "$OS" == "osx" -a  ! -e assimp/port ] ; then
-		git clone https://github.com/assimp/assimp.git assimp-git
+		
 		mkdir assimp/port 
 		cp -vR assimp-git/port/iOS assimp/port
-		rm -rf assimp-git
 
 		# make a backup of the build script
 		cp assimp/port/iOS/build_ios.sh assimp/port/iOS/build_ios.sh.orig
 	fi
+
+	# copy newer source file to fix build issue with llvm on osx
+	# hopefully not necessary with newer versions ...
+	cp assimp-git/code/BoostWorkaround/boost/tuple/tuple.hpp assimp/code/BoostWorkaround/boost/tuple
+	cp assimp-git/code/STEPFile.h assimp/code
+	rm -rf assimp-git
 }
 
 # executed inside the build dir
 function build() {
 
+	# fix bad version # (needed for now), see https://github.com/assimp/assimp/issues/47
+	sed -i .tmp "s|ASSIMP_SV_REVISION 1264|ASSIMP_SV_REVISION $SUB_VER|" CMakeLists.txt
+
 	if [ "$TYPE" == "osx" ] ; then
 
 		# warning, assimp on github uses the ASSIMP_ prefix for CMake options ...
 		# these may need to be updated for a new release
-		local buildOpts="--build build/$TYPE -DBUILD_STATIC_LIB=1 -DENABLE_BOOST_WORKAROUND=ON"
+		local buildOpts="--build build/$TYPE -DBUILD_STATIC_LIB=1 -DENABLE_BOOST_WORKAROUND=1"
 
 		# 32 bit
 		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386" -DCMAKE_CXX_FLAGS="-arch i386" .
@@ -53,16 +65,16 @@ function build() {
 		lipo -c lib/libassimp-i386.a lib/libassimp-x86_64.a -o lib/libassimp.a
 
 	elif [ "$TYPE" == "linux" ] ; then
-		echo "TODO: linux build here"
+		echoWarning "TODO: linux build"
 
 	elif [ "$TYPE" == "linux64" ] ; then
-		echo "TODO: linux64 build here"
+		echoWarning "TODO: linux64 build"
 
 	elif [ "$TYPE" == "vs2010" ] ; then
-		echo "TODO: vs2010 build here"
+		echoWarning "TODO: vs2010 build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
-		echo "TODO: vs2010 build here"
+		echoWarning "TODO: win_cb build"
 
 	elif [ "$TYPE" == "ios" ] ; then
 		# ref: http://stackoverflow.com/questions/6691927/how-to-build-assimp-library-for-ios-device-and-simulator-with-boost-library
@@ -101,7 +113,7 @@ function build() {
 		build_ios.sh
 	
 	elif [ "$TYPE" == "android" ] ; then
-		echo "TODO: android build here"
+		echoWarning "TODO: android build"
 	fi
 }
 

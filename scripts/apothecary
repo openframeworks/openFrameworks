@@ -12,10 +12,18 @@
 #  http://www.developer.com/open/article.php/631241/Linux-Console-Colors--Other-Tricks.htm
 #  http://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
 #  http://stackoverflow.com/questions/64786/error-handling-in-bash
-#
+#  http://www.linuxjournal.com/content/bash-arrays
 
 ################################################################################
 ### GLOBAL VARS, for access inside formulas
+
+### SET IN FORMULA script
+
+# an array of build type strings supported by the forumla (optional)
+# see VALID_TYPES for list of strings, default: VALID_TYPES
+FORMULA_TYPES=
+
+### READ ONLY please!
 
 # build settings
 OS= # compile os ("osx", "windows", "linux")
@@ -48,6 +56,7 @@ IOS_MIN_SDK_VER=5.1
 
 ################################################################################
 ### PRIVATE VARS, for internal use
+### DEFINITELY READ ONLY!
 
 # destination dir for compiled libs
 A_LIBS_DIR=.. # default: relative to script
@@ -66,6 +75,9 @@ CON_GREEN="\033[32m"
 # used to filter out bad build types
 VALID_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
 
+# verbose mode bool
+A_VERBOSE=0
+
 # nice, detailed help message
 HELP="Usage: apothecary [options] command [libraries]
 
@@ -74,19 +86,21 @@ HELP="Usage: apothecary [options] command [libraries]
 
  Commands:
   update		download, build, and copy library files
-  clean 		clean the cache
-  dist-clean		clean the cache and lib folder
+  clean 		clean the build cache
+  dist-clean		clean the build cache and lib folder
 
  Options:
   -t	specify libary type when building, detects type from OS by default
 	valid types: osx, linux, linux64, vs2010, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
-	note: desktop only, this is ignored when type = ios or android
+	note: currently only applies to linux build types (linux & linux64)
 
   -b 	set the lib build dir, default: \$APOTHECARY_DIR/build
 
   -d 	set the compiled libs destination dir, default: OF core libs dir
+
+  -v 	verbose mode, print out some extra info while mixing formulas
 
   -h    print this usage guide
 
@@ -157,12 +171,17 @@ echoInfo()		{
 echoSuccess()	{
 	echo -e "$CON_BOLD$CON_GREEN$1$CON_DEFAULT"
 }
+echoVerbose() {
+	if [ $A_VERBOSE == 1 ] ; then
+		echoInfo "$1"
+	fi
+}
 
 ################################################################################
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a:b:d:h opt ; do
+while getopts t:a:b:d:vh opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
@@ -174,6 +193,8 @@ while getopts t:a:b:d:h opt ; do
 		   A_LIBS_DIR="$OPTARG" ;;
 		h) # print help and exit
 		   echo "$HELP" ; exit 0 ;;
+		v) # verbose mode = true
+		   A_VERBOSE=1 ;;
 		[?]) # print help and exit 
 			 echo "$HELP" ; exit 0 ;;
 	esac
@@ -195,8 +216,21 @@ shift 1
 # check if a given string matches anything in VALID_TYPES,
 # bool result is set to second argument
 function isValidType() {
-	#local i
+	local i
 	for i in "${VALID_TYPES[@]}" ; do
+		if [ "$i" == "$1" ] ; then
+			eval $2=1
+			return
+		fi
+	done
+	eval $2=0
+}
+
+# check if a given string matches anything in FORMULA_TYPES,
+# bool result is set to second argument 
+function isFormulaType() {
+	local i
+	for i in "${FORMULA_TYPES[@]}" ; do
 		if [ "$i" == "$1" ] ; then
 			eval $2=1
 			return
@@ -212,7 +246,7 @@ function update() {
 	FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR
 
 	# is given formula an existing script?
-	if [ -e $1 -a "$1" == "*.sh" ] ; then
+	if [ -e $1 -a "${1##*.}" == "sh" ] ; then
 		local path=$1	
 		case $1 in
 			/*) : ;; # absolute path
@@ -221,10 +255,10 @@ function update() {
 		formula=$path
 		FORMULA_DIR=$(dirname $path)
 	
-	else # formula in formulas dir
+	else # formula in formula's dir
 	
 		# check if the given lib name is even formula
-		if [ ! -e $formula] ; then
+		if [ ! -e $formula ] ; then
 			
 			# is the given formula a dir?
 			if [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
@@ -240,26 +274,38 @@ function update() {
 	# load a script & it's function implementations
 	source $formula
 	formula=$(basename $formula)
-	local lib="${formula%.*}"
+	local currentLib="${formula%.*}"
+
+	# does this formula support the current build type?
+	local bFormulaType=0 # bool
+	isFormulaType $TYPE bFormulaType
+	if [ $bFormulaType == 0 ] ; then
+		echoInfo " Skipping \"$currentLib\": build not needed for type \"$TYPE\""
+		FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
+		return
+	fi
 
 	### DOWNLOAD
 
 	# download src to cache
 	echo
-	echoInfo " ----- $lib -----"
-	echoInfo " Downloading \"$lib\""
+	echoInfo " ----- $currentLib -----"
+	echoVerbose " Formula dir: $FORMULA_DIR"
+	echoVerbose " Formula build types: ${FORMULA_TYPES[*]}"
+	echoInfo " Downloading \"$currentLib\""
 	echo
 
 	mkdir -p $BUILD_DIR
 	cd $BUILD_DIR
 
-	if [ -e $lib ] ; then
+	if [ -e $currentLib ] ; then
 		echo "... skipping, src dir already exists"
 
 	else
 		download
-		if [ ! -e $lib ] ; then
-			echoError " It looks like downloading failed for \"$lib\""
+		cd $BUILD_DIR
+		if [ ! -e $currentLib ] ; then
+			echoError " It looks like downloading failed for \"$currentLib\""
 			exit 1
 		fi
 	fi
@@ -268,28 +314,33 @@ function update() {
 
 	# run build command in src dir
 	echo
-	echoInfo " Building \"$lib\""
+	echoInfo " Building \"$currentLib\""
 	echo
 
-	cd $lib
+	cd $currentLib
 	build
-	cd $BUILD_DIR/$lib
+	cd $BUILD_DIR/$currentLib
 
 	### COPY
 
 	# dest arg path relative to src dir
 	echo
-	echoInfo " Copying \"$lib\""
+	echoInfo " Copying \"$currentLib\""
 	echo
 
 	case $A_LIBS_DIR in
-		/*) copy $A_LIBS_DIR/$lib ;; # absolute path
-		 *) copy $APOTHECARY_DIR/$A_LIBS_DIR/$lib ;; # relative path
+		/*) copy $A_LIBS_DIR/$currentLib ;; # absolute path
+		 *) copy $APOTHECARY_DIR/$A_LIBS_DIR/$currentLib ;; # relative path
 	esac
 	cd $APOTHECARY_DIR
 
 	echo
-	echoSuccess " Finished \"$lib\""
+	echoSuccess " Finished \"$currentLib\""
+
+	### CLEANUP
+
+	# reset to all types
+	FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
 }
 
 # clean a given library from the cache
@@ -302,7 +353,7 @@ function clean() {
 	fi
 
 	cd $REL_BUILD_DIR
-	rm -rfv $1*
+	rm -rf $1*
 	echoSuccess " Cleaned \"$1\" from build cache"
 	cd $APOTHECARY_DIR
 }
@@ -317,12 +368,12 @@ function dist-clean() {
 	fi
 
 	cd $BUILD_DIR
-	rm -rfv $1*
+	rm -rf $1*
 	echoSuccess " Cleaned \"$1\" from build cache"
 	cd $APOTHECARY_DIR
 
 	cd $A_LIBS_DIR
-	rm -rfv $1
+	rm -rf $1
 	echoSuccess " Cleaned \"$1\" from libs folder"
 	cd $APOTHECARY_DIR
 }
@@ -337,13 +388,19 @@ WD=$(pwd)
 cd $(dirname $0)
 APOTHECARY_DIR=$(pwd)
 
-# set OS & build type
+# set OS & build types
 OS=`./ostype.sh`
-if [ "$OS" == "windows" ] ; then
-	TYPE="vs2010"
-else
-	TYPE=$OS
+if [ "$TYPE" == "" ] ; then
+	case "$OS" in
+		windows)
+			TYPE="vs2010" ;;
+		*)
+			TYPE=$OS ;;
+	esac
 fi
+FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
+echoVerbose "Valid build types: ${VALID_TYPES[*]}"
+
 
 # check if we have a valid build type
 typeIsValid=0 # bool
@@ -352,12 +409,14 @@ if [ $typeIsValid == 0 ] ; then
 	echoError " Invalid build type: \"$TYPE\""
 	exit 1
 fi
+echoVerbose "Build type: $TYPE"
 
 # check if we have a valid arch
 if [ $ARCH != 32 -a $ARCH != 64 ] ; then
 	echoError " Invalid architecture: $ARCH"
 	exit 1
 fi
+echoVerbose "Architecture: $ARCH"
 
 # use default build dir?
 if [ "$BUILD_DIR" == "" ] ; then
@@ -375,14 +434,17 @@ else # manually set
 	 	*) BUILD_DIR=$WD/$BUILD_DIR ;; # relative path
 	esac
 fi
+echoVerbose "Build dir: $BUILD_DIR"
 
 # check libs location
 if [ ! -e $A_LIBS_DIR ] ; then
 	echoError " Invalid libs dir: \"$A_LIBS_DIR\""
 	exit 1
 fi
+echoVerbose "Libs destination dir: $A_LIBS_DIR"
 
 # handle commands
+echoVerbose "Running: $A_CMD $@"
 case "$A_CMD" in
 
 	update)
@@ -441,7 +503,9 @@ case "$A_CMD" in
 			done
 		fi ;;
 
-	*) echoError " Unknown command \"$A_CMD\"" ;;
+	*)
+		echoError " Unknown command \"$A_CMD\""
+		exit 1 ;;
 esac
 
 exit 0

@@ -1,7 +1,12 @@
 #! /bin/bash
 #
+# PortAudio
 # Portable Cross-platform Audio I/O
 # http://www.portaudio.com/
+#
+# build not currently needed on any platform
+
+FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
 
 VER=stable_v19_20111121
 
