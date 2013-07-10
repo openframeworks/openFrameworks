@@ -239,6 +239,26 @@ function isFormulaType() {
 	eval $2=0
 }
 
+# execute a given command on a formula and/or formulas
+function doCommand() {
+	
+	local cmd=$1
+	shift 1
+
+	# process given libraries
+	if [ $# -gt 0 ] ; then
+		while [ $# -gt 0 ] ; do
+			$cmd $1
+			shift 1
+		done
+
+	else # process all formulas
+		for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
+			$cmd "${formula%.*}" # removes file extension
+		done
+	fi
+}
+
 # update a given library
 function update() {
 
@@ -444,64 +464,25 @@ fi
 echoVerbose "Libs destination dir: $A_LIBS_DIR"
 
 # handle commands
-echoVerbose "Running: $A_CMD $@"
+echoVerbose "Running: $A_CMD $*"
 case "$A_CMD" in
 
 	update)
-		# process given libraries
-		if [ $# -gt 0 ] ; then
-			while [ $# -gt 0 ] ; do
-				update $1
-				shift 1
-			done
-
-		else # process all formulas
-			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-				#if [ ! -d $formula ] ; then # ignore directories 
-					update "${formula%.*}" # removes file extension
-				#fi
-			done
-		fi ;;
+		doCommand update $@ ;;
 
 	clean)
-
 		if [ ! -e $BUILD_DIR ] ; then
 			echoInfo " Nothing to clean"
 			exit 0
 		fi
-
-		# process given libraries
-		if [ $# -gt 0 ] ; then
-			while [ $# -gt 0 ] ; do
-				clean $1
-				shift 1
-			done
-
-		else # process all formulas
-			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-				clean "${formula%.*}"
-			done
-		fi ;;
+		doCommand clean $@ ;;
 
 	dist-clean)
-
 		if [ ! -e $BUILD_DIR ] ; then
 			echoInfo " Nothing to clean"
 			exit 0
 		fi
-
-		# process given libraries
-		if [ $# -gt 0 ] ; then
-			while [ $# -gt 0 ] ; do
-				dist-clean $1
-				shift 1
-			done
-
-		else # process all formulas
-			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-				dist-clean "${formula%.*}"
-			done
-		fi ;;
+		doCommand dist-clean $@ ;;
 
 	*)
 		echoError " Unknown command \"$A_CMD\""
