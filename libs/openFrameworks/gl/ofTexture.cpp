@@ -318,6 +318,15 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 			bCanDoNPOT = true;
 		}
 #endif
+#ifdef TARGET_LINUX_ARM
+		// this is for RPi, Pandaboard, Beaglebone etc.
+		// we assume the same restrictions apply as in iOS
+		// TODO: check this.
+		if (texData.wrapModeVertical == texData.wrapModeHorizontal == GL_CLAMP_TO_EDGE && texData.minFilter == texData.magFilter == GL_LINEAR ) {
+			bCanDoNPOT = true;
+		}
+#endif
+		
 #endif
 		if (bCanDoNPOT && ofIsGLProgrammableRenderer()){
 			texData.tex_w = texData.width;
