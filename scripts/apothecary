@@ -86,8 +86,15 @@ HELP="Usage: apothecary [options] command [libraries]
 
  Commands:
   update		download, build, and copy library files
-  clean 		clean the build cache
-  dist-clean		clean the build cache and lib folder
+  
+  download 		download the library source
+  build 		build the library
+  copy 			copy library files into the libs dir
+  clean 		clean the library build
+
+  remove		remove the library from the build cache
+  remove-lib		remove the library from the libs dir
+  remove-all		remove the library from the build cache and libs dir
 
  Options:
   -t	specify libary type when building, detects type from OS by default
@@ -112,14 +119,14 @@ HELP="Usage: apothecary [options] command [libraries]
   # update only glew
   apothecary update glew
  
-  # clean all downloaded lib src dirs in the cache
-  apothecary clean
+  # remove all downloaded lib src dirs from the build cache
+  apothecary remove
 
-  # clean only assimp & glew in the cache
-  apothecary clean assimp glew
+  # remove only assimp & glew from the cache
+  apothecary remove assimp glew
 
-  # clean glew from the cache and lib folder
-  apothecary dist-clean glew
+  # remove glew from the build cache and libs dir
+  apothecary remove-all glew
 
   # update freetype for ios 
   apothecary -t ios freetype
@@ -202,10 +209,10 @@ done
 shift $(expr $OPTIND - 1)
 
 # get command
-if [ "$1" != "" ] ; then
+if [ $# -gt 0 ] ; then
 	A_CMD=$1
 else
-	echo "$HELP"
+	echoWarning " Missing command, see help: apothecary -h"
 	exit 0
 fi
 shift 1
@@ -239,7 +246,44 @@ function isFormulaType() {
 	eval $2=0
 }
 
-# execute a given command on a formula and/or formulas
+# checks if a given formula string is a forumla script or exists in the formulas dir,
+# exits with error on failure, sets formula script and parent dir on success
+# args: formula string, formula script, formula script parent dir
+function checkFormula() {
+	local script=$REL_FORMULAS_DIR/$1.sh
+	local path=$APOTHECARY_DIR/$REL_FORMULAS_DIR
+
+	# is given formula an existing script?
+	if [ -e $1 -a "${1##*.}" == "sh" ] ; then
+		local path=$1	
+		case $1 in
+			/*) : ;; # absolute path
+			 *) path=$WD/$1 ;; # relative path
+		esac
+		script=$path
+		path=$(dirname $path)
+	
+	else # formula in formula's dir
+	
+		# check if the given lib name is even formula
+		if [ ! -e $script ] ; then
+			
+			# is the given formula a dir?
+			if [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
+				script=$REL_FORMULAS_DIR/$1/$1.sh
+				path=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$1
+			else
+				echoError " No formula for lib \"$1\""
+				exit 1
+			fi
+		fi
+	fi
+
+	eval $2=$script
+	eval $3=$path
+}
+
+# execute a given command using the formula name
 function doCommand() {
 	
 	local cmd=$1
@@ -252,134 +296,185 @@ function doCommand() {
 			shift 1
 		done
 
-	else # process all formulas
+	else # process all formulas in formulas dir
+		local formula
 		for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
 			$cmd "${formula%.*}" # removes file extension
 		done
 	fi
 }
 
-# update a given library
-function update() {
-
-	local formula=$REL_FORMULAS_DIR/$1.sh
-	FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR
-
-	# is given formula an existing script?
-	if [ -e $1 -a "${1##*.}" == "sh" ] ; then
-		local path=$1	
-		case $1 in
-			/*) : ;; # absolute path
-			 *) path=$WD/$1 ;; # relative path
-		esac
-		formula=$path
-		FORMULA_DIR=$(dirname $path)
+# execute a given command on a formula and/or formulas,
+# checks and sources formula scripts before running
+function doFormulaCommand() {
 	
-	else # formula in formula's dir
-	
-		# check if the given lib name is even formula
-		if [ ! -e $formula ] ; then
-			
-			# is the given formula a dir?
-			if [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
-				formula=$REL_FORMULAS_DIR/$1/$1.sh
-				FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$1
+	local cmd=$1
+	shift 1
+
+	# process given libraries
+	if [ $# -gt 0 ] ; then
+		while [ $# -gt 0 ] ; do
+
+			local formula
+			checkFormula $1 formula FORMULA_DIR
+
+			# load a script & it's function implementations
+			source $formula #
+			formula=$(basename $1)
+			local currentLib="${formula%.*}"
+
+			# does this formula support the current build type?
+			local bFormulaType=0 # bool
+			isFormulaType $TYPE bFormulaType
+			if [ $bFormulaType == 0 ] ; then
+				echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
+				FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
 			else
-				echoError " No formula for lib \"$1\""
-				exit 1
+				# do command
+				$cmd $currentLib
 			fi
-		fi
+
+			shift 1
+
+			# reset to all types
+			FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
+		done
+
+	else # process all formulas in formulas dir
+		local formula
+		for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
+
+			local currentLib="${formula%.*}"
+			checkFormula $currentLib formula FORMULA_DIR
+
+			# load a script & it's function implementations
+			source $formula
+
+			# does this formula support the current build type?
+			local bFormulaType=0 # bool
+			isFormulaType $TYPE bFormulaType
+			if [ $bFormulaType == 0 ] ; then
+				echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
+				FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
+			else
+				# do command
+				$cmd $currentLib 
+			fi
+
+			# reset to all types
+			FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
+		done
 	fi
+}
 
-	# load a script & it's function implementations
-	source $formula
-	formula=$(basename $formula)
-	local currentLib="${formula%.*}"
+# update a given library
+function updateFormula() {
 
-	# does this formula support the current build type?
-	local bFormulaType=0 # bool
-	isFormulaType $TYPE bFormulaType
-	if [ $bFormulaType == 0 ] ; then
-		echoInfo " Skipping \"$currentLib\": build not needed for type \"$TYPE\""
-		FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
-		return
-	fi
-
-	### DOWNLOAD
-
-	# download src to cache
 	echo
-	echoInfo " ----- $currentLib -----"
+	echoInfo " ----- $1 -----"
+
+	# if [ -e $BUILD_DIR/$1 ] ; then
+	# 	cleanFormula $1
+	# fi
+	downloadFormula $1
+	buildFormula $1
+	copyFormula $1
+
+	echo
+	echoSuccess " Finished \"$1\""
+}
+
+# download a given library into the build cache, arg is library name
+function downloadFormula(){
+	
+	echo
+	echoInfo " Downloading \"$1\""
 	echoVerbose " Formula dir: $FORMULA_DIR"
 	echoVerbose " Formula build types: ${FORMULA_TYPES[*]}"
-	echoInfo " Downloading \"$currentLib\""
+	echoVerbose " Build dir: $BUILD_DIR"
 	echo
 
 	mkdir -p $BUILD_DIR
 	cd $BUILD_DIR
 
-	if [ -e $currentLib ] ; then
+	if [ -e $1 ] ; then
 		echo "... skipping, src dir already exists"
-
 	else
 		download
-		cd $BUILD_DIR
-		if [ ! -e $currentLib ] ; then
-			echoError " It looks like downloading failed for \"$currentLib\""
+		if [ ! -e $1 ] ; then
+			echoError " It looks like downloading failed for \"$1\""
 			exit 1
 		fi
 	fi
+	cd $APOTHECARY_DIR
+}
 
-	### BUILD
+# build a given library, arg is library name
+function buildFormula() {
 
 	# run build command in src dir
 	echo
-	echoInfo " Building \"$currentLib\""
+	echoInfo " Building \"$1\""
+	echoVerbose " Lib src dir: $BUILD_DIR/$1"
 	echo
 
-	cd $currentLib
-	build
-	cd $BUILD_DIR/$currentLib
+	if [ ! -e $BUILD_DIR/$1 ] ; then
+		echoError " Lib src dir missing for \"$1\": $BUILD_DIR/$1"
+		echoError " Did you download the formula?"
+		exit 1
+	fi
 
-	### COPY
+	cd $BUILD_DIR/$1
+	build
+	cd $APOTHECARY_DIR
+}
+
+# copy a given library, arg is library name
+function copyFormula() {
 
 	# dest arg path relative to src dir
 	echo
-	echoInfo " Copying \"$currentLib\""
+	echoInfo " Copying \"$1\""
+	echoVerbose " Lib src dir: $BUILD_DIR/$1"
+	echoVerbose " Lib destination dir: $A_LIBS_DIR"
 	echo
 
+	if [ ! -e $BUILD_DIR/$1 ] ; then
+		echoError " Lib src dir missing for \"$1\": $BUILD_DIR/$1"
+		echoError " Did you download the formula?"
+		exit 1
+	fi
+
+	cd $BUILD_DIR/$1
 	case $A_LIBS_DIR in
-		/*) copy $A_LIBS_DIR/$currentLib ;; # absolute path
-		 *) copy $APOTHECARY_DIR/$A_LIBS_DIR/$currentLib ;; # relative path
+		/*) copy $A_LIBS_DIR/$1 ;; # absolute path
+		 *) copy $APOTHECARY_DIR/$A_LIBS_DIR/$1 ;; # relative path
 	esac
 	cd $APOTHECARY_DIR
+}
 
+# clean a given library, arg is library name
+function cleanFormula() {
+	
+	# run build command in src dir
 	echo
-	echoSuccess " Finished \"$currentLib\""
+	echoInfo " Cleaning \"$1\""
+	echoVerbose " Build dir: $BUILD_DIR"
+	echo
 
-	### CLEANUP
-
-	# reset to all types
-	FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
-}
-
-# clean a given library from the cache
-function clean() {
-
-	# check if the given lib name is even a formula
-	if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
-		echoError " No formula for lib \"$1\""
+	if [ ! -e $BUILD_DIR/$1 ] ; then
+		echoError " Lib src dir missing for \"$1\": $BUILD_DIR/$1"
+		echoError " Did you download the formula?"
 		exit 1
 	fi
 
-	cd $REL_BUILD_DIR
-	rm -rf $1*
-	echoSuccess " Cleaned \"$1\" from build cache"
+	cd $BUILD_DIR/$1
+	clean
 	cd $APOTHECARY_DIR
 }
 
-# clean a given library from the cache and lib folder
-function dist-clean() {
+# remove a given library from the cache
+function remove() {
 
 	# check if the given lib name is even a formula
 	if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
@@ -387,16 +482,85 @@ function dist-clean() {
 		exit 1
 	fi
 
+	echoVerbose " Build dir: $BUILD_DIR"
 	cd $BUILD_DIR
-	rm -rf $1*
-	echoSuccess " Cleaned \"$1\" from build cache"
-	cd $APOTHECARY_DIR
-
-	cd $A_LIBS_DIR
-	rm -rf $1
-	echoSuccess " Cleaned \"$1\" from libs folder"
+	if [ ! -e $1* ] ; then
+		echoVerbose " Nothing to remove from build cache: \"$1\""
+	else
+		rm -rf $1*
+		echoSuccess " Removed from build cache: \"$1\""
+	fi
 	cd $APOTHECARY_DIR
 }
+
+# remove a given library from the lib dir
+function remove-lib() {
+
+	# check if the given lib name is even a formula
+	if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
+		echoError " No formula for lib \"$1\""
+		exit 1
+	fi
+
+	echoVerbose " Libs dir: $A_LIBS_DIR"
+	cd $A_LIBS_DIR
+	if [ ! -e $1 ] ; then
+		echoVerbose " Nothing to remove from libs dir: \"$1\""
+	else
+		rm -rf $1
+		echoSuccess " Removed from libs dir: \"$1\""
+	fi
+	cd $APOTHECARY_DIR
+}
+
+# remove a given library from the cache and lib dir
+function remove-all() {
+
+	remove $1
+	remove-lib $1
+	# # check if the given lib name is even a formula
+	# if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
+	# 	echoError " No formula for lib \"$1\""
+	# 	exit 1
+	# fi
+
+	# cd $BUILD_DIR
+	# if [ ! -e $1* ] ; then
+	# 	echoVerbose" Nothing to remove from build cache: \"$1\""
+	# else
+	# 	rm -rf $1*
+	# 	echoSuccess " Removed from build cache: \"$1\""
+	# fi
+	# cd $APOTHECARY_DIR
+
+	# cd $A_LIBS_DIR
+	# if [ ! -e $1 ] ; then
+	# 	echoVerbose " Nothing to remove from libs dir: \"$1\""
+	# else
+	# 	rm -rf $1
+	# 	echoSuccess " Removed from libs dir: \"$1\""
+	# fi
+	# cd $APOTHECARY_DIR
+}
+
+################################################################################
+### FORMULA SCRIPT FUNCTIONS
+
+# basic implementations of the formula script functions,
+# overrriden when sourcing a formula script
+
+function download() {
+	echoWarning " Download function not implemented"
+}
+function build() {
+	echoWarning " Build function not implemented"
+}
+function copy() {
+	echoWarning " Copy function not implemented"
+}
+function clean() {
+	echoWarning " Clean function not implemented"
+} 
 
 ################################################################################
 ### GO
@@ -468,21 +632,40 @@ echoVerbose "Running: $A_CMD $*"
 case "$A_CMD" in
 
 	update)
-		doCommand update $@ ;;
+		doFormulaCommand updateFormula $@ ;;
+
+	download)
+		doFormulaCommand downloadFormula $@ ;;
+
+	build)
+		doFormulaCommand buildFormula $@ ;;
+
+	copy)
+		doFormulaCommand copyFormula $@ ;;
 
 	clean)
-		if [ ! -e $BUILD_DIR ] ; then
-			echoInfo " Nothing to clean"
-			exit 0
-		fi
-		doCommand clean $@ ;;
+		doFormulaCommand cleanFormula $@ ;;
 
-	dist-clean)
+	remove)
 		if [ ! -e $BUILD_DIR ] ; then
-			echoInfo " Nothing to clean"
+			echoInfo " Nothing to remove"
 			exit 0
 		fi
-		doCommand dist-clean $@ ;;
+		doCommand remove $@ ;;
+
+	remove-lib)
+		# if [ ! -e $A_LIBS_DIR ] ; then
+		# 	echoInfo " Nothing to remove"
+		# 	exit 0
+		# fi
+		doCommand remove-lib $@ ;;
+
+	remove-all)
+		# if [ ! -e $BUILD_DIR ] ; then
+		# 	echoInfo " Nothing to remove"
+		# 	exit 0
+		# fi
+		doCommand remove-all $@ ;;
 
 	*)
 		echoError " Unknown command \"$A_CMD\""
