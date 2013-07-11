@@ -504,27 +504,7 @@ int	ofAppGLFWWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
-    
-    #ifdef TARGET_OSX
-    
-        //On OS X the window coords are bottom left relative.
-        //Also the screen coords are bottom left relative, so we have to do some calculations to get position working top left relative. 
-        //Currently GLFW's glfwSetWindowPos doesn't make OS X calls top left relative, so we have to do it ourselves. 
-        // see: https://github.com/glfw/glfw/issues/85 & https://github.com/openframeworks/openFrameworks/issues/2183 
-         
-        NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-        NSPoint pos;
-        pos.x = x; 
-        pos.y = y; 
-        [cocoaWindow setFrameTopLeftPoint:pos];
-
-        //we have to do this as the screen height can change if the window has moved screens due to the x coord. 
-        //so we adjust it once for x and the call it again, where we can use the correct window to figure out the new y.  
-        pos.y = getScreenSize().y - pos.y; 
-        [cocoaWindow setFrameTopLeftPoint:pos];
-    #else 
-        glfwSetWindowPos(windowP,x,y);
-    #endif 
+    glfwSetWindowPos(windowP,x,y);
     
     if( windowMode == OF_WINDOW ){
         nonFullScreenX=x;
