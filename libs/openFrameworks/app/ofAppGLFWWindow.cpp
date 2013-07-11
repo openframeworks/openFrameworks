@@ -131,7 +131,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 //	printf("WINDOW MODE IS %i", screenMode);
 
-	windowMode = screenMode;
+	int requestedMode = screenMode;
 
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
@@ -157,7 +157,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		#endif
 	}
 
-	if(windowMode==OF_GAME_MODE){
+	if(requestedMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>0){
@@ -168,7 +168,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}else{
 		windowP = glfwCreateWindow(w, h, "", NULL, NULL);
-		if(windowMode==OF_FULLSCREEN){
+		if(requestedMode==OF_FULLSCREEN){
 			setFullscreen(true);
 		}
 	}
@@ -176,6 +176,8 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
         ofLogError() << "error creating GLFW window";
         return;
     }
+
+	windowMode = requestedMode;
 
 	setVerticalSync(false);
 	// Set window title
@@ -752,21 +754,50 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 		//----------------------------------------------------
 		HWND hwnd = glfwGetWin32Window(windowP);
-        SetWindowLong(hwnd, GWL_STYLE,
-                  lStyle & ~(WS_CAPTION | WS_THICKFRAME));
-        SetWindowLong(hwnd, GWL_EXSTYLE,
-                  lExStyle & ~(WS_EX_DLGMODALFRAME |
-                  WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
 
-        SetWindowPos(hwnd, NULL, 0, 0,
-                   getScreenSize().x, getScreenSize().y,
-                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		SetWindowLong(hwnd, GWL_EXSTYLE, 0);
+  		SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+  		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+        float fullscreenW = getScreenSize().x;
+        float fullscreenH = getScreenSize().y;
+        
+        if( bMultiWindowFullscreen ){
+        
+            float totalWidth = 0.0; 
+            float maxHeight  = 0.0; 
+            int monitorCount;
+            GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+            
+            //lets find the total width of all the monitors
+            //and we'll make the window height the height of the largest monitor. 
+            for(int i = 0; i < monitorCount; i++){
+                const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+                totalWidth += desktopMode->width; 
+                if( i == 0 || desktopMode->height > maxHeight ){
+                    maxHeight = desktopMode->height; 
+                }   
+            }
+            
+            fullscreenW = totalWidth;
+            fullscreenH = maxHeight; 
+        }
+		
+		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
+
 	}else if( windowMode == OF_WINDOW ){
+
 		HWND hwnd = glfwGetWin32Window(windowP);
-        SetWindowLong(hwnd, GWL_STYLE, lStyle);
-        SetWindowLong(hwnd, GWL_EXSTYLE, lExStyle);
-        setWindowShape(nonFullScreenW,nonFullScreenH);
-        setWindowPosition(nonFullScreenX,nonFullScreenY);
+
+  		DWORD EX_STYLE = WS_EX_OVERLAPPEDWINDOW;
+  		DWORD STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+		
+	  	ChangeDisplaySettings(0, 0);
+		SetWindowLong(hwnd, GWL_EXSTYLE, EX_STYLE);
+		SetWindowLong(hwnd, GWL_STYLE, STYLE);
+  		SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+	  	SetWindowPos(hwnd, HWND_NOTOPMOST, nonFullScreenX, nonFullScreenY, nonFullScreenW, nonFullScreenH, SWP_SHOWWINDOW);
 		//----------------------------------------------------
 	}
 #endif
