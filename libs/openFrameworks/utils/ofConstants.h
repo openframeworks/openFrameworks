@@ -545,7 +545,9 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_CTRL			0x0200
 	#define OF_KEY_ALT			0x0300
 	#define OF_KEY_SHIFT		0x0400
-
+	#define OF_KEY_SUPER		0x0500
+    #define OF_KEY_COMMAND      OF_KEY_SUPER
+    
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
 
@@ -604,8 +606,8 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
     #define OF_MOUSE_BUTTON_8      7
     #define OF_MOUSE_BUTTON_LAST   OF_MOUSE_BUTTON_8
     #define OF_MOUSE_BUTTON_LEFT   OF_MOUSE_BUTTON_1
-    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_2
-    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_3
+    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_2
+    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_3
 
 //--------------------------------------------
 //console colors for our logger - shame this doesn't work with the xcode console

@@ -36,6 +36,8 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
 	pixelsOwner = false;
 	channels = 0;
 	pixels = NULL;
+	width = 0;
+	height = 0;
 	copyFrom( mom );
 }
 
@@ -145,13 +147,6 @@ template<typename PixelType>
 const PixelType * ofPixels_<PixelType>::getPixels() const{
 	return &pixels[0];
 }
-
-
-/*template<typename PixelType>
-void ofPixels_<PixelType>::allocate(int w, int h, int bitsPerPixel){
-	ofImageType type = getImageTypeFromBits(bitsPerPixel);
-	allocate(w,h,type);
-}*/
 
 template<typename PixelType>
 void ofPixels_<PixelType>::allocate(int w, int h, int _channels){

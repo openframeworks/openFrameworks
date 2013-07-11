@@ -26,15 +26,6 @@ enum ofPrimitiveMode{
 	OF_PRIMITIVE_POINTS
 };
 
-//legacy - 
-#define OF_TRIANGLES_MODE 0
-#define OF_TRIANGLE_STRIP_MODE 1
-#define OF_TRIANGLE_FAN_MODE 2
-#define OF_LINES_MODE 3
-#define OF_LINE_STRIP_MODE 4
-#define OF_LINE_LOOP_MODE 5
-#define OF_POINTS_MODE 6
-
 enum ofPolyRenderMode{
 	OF_MESH_POINTS,
 	OF_MESH_WIREFRAME,
@@ -92,12 +83,16 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode);
 
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat);
 int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
+int ofGetNumChannelsFromGLFormat(int glFormat);
+void ofSetPixelStorei(int w, int bpc, int numChannels);
 
 
 bool ofCheckGLExtension(string searchName);
 
 ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
+
+bool ofIsGLProgrammableRenderer();
 
 
 #ifndef TARGET_OPENGLES

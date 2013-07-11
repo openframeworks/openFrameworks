@@ -129,15 +129,6 @@ public:
 
 
 	// gl specifics
-	void enableVertices();
-	void enableTexCoords();
-	void enableColors();
-	void enableNormals();
-	void disableVertices();
-	void disableTexCoords();
-	void disableColors();
-	void disableNormals();
-
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
 
