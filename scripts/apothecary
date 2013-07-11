@@ -515,32 +515,8 @@ function remove-lib() {
 
 # remove a given library from the cache and lib dir
 function remove-all() {
-
 	remove $1
 	remove-lib $1
-	# # check if the given lib name is even a formula
-	# if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
-	# 	echoError " No formula for lib \"$1\""
-	# 	exit 1
-	# fi
-
-	# cd $BUILD_DIR
-	# if [ ! -e $1* ] ; then
-	# 	echoVerbose" Nothing to remove from build cache: \"$1\""
-	# else
-	# 	rm -rf $1*
-	# 	echoSuccess " Removed from build cache: \"$1\""
-	# fi
-	# cd $APOTHECARY_DIR
-
-	# cd $A_LIBS_DIR
-	# if [ ! -e $1 ] ; then
-	# 	echoVerbose " Nothing to remove from libs dir: \"$1\""
-	# else
-	# 	rm -rf $1
-	# 	echoSuccess " Removed from libs dir: \"$1\""
-	# fi
-	# cd $APOTHECARY_DIR
 }
 
 ################################################################################
@@ -654,17 +630,9 @@ case "$A_CMD" in
 		doCommand remove $@ ;;
 
 	remove-lib)
-		# if [ ! -e $A_LIBS_DIR ] ; then
-		# 	echoInfo " Nothing to remove"
-		# 	exit 0
-		# fi
 		doCommand remove-lib $@ ;;
 
 	remove-all)
-		# if [ ! -e $BUILD_DIR ] ; then
-		# 	echoInfo " Nothing to remove"
-		# 	exit 0
-		# fi
 		doCommand remove-all $@ ;;
 
 	*)
