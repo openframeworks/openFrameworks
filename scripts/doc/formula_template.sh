@@ -17,7 +17,7 @@ function download() {
 	echoWarning "TODO: download" # denote unfinished things using echoWarning
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	echoWarning "TODO: $TYPE build"
 }
@@ -25,4 +25,9 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 	echoWarning "TODO: copy"
+}
+
+# executed inside the lib src dir
+function clean() {
+	echoWarning "TODO: clean"
 }

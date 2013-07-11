@@ -20,7 +20,7 @@ function download() {
 	rm glew-$VER.tgz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
@@ -67,5 +67,17 @@ function copy() {
 	elif [ "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/glew32s.lib $1/lib/$TYPE
+	fi
+}
+
+# executed inside the lib src dir
+function clean() {
+
+	if [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean vs2010"
+	
+	else
+		make clean
+		rm -f *.a *.lib
 	fi
 }

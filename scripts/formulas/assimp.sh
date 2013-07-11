@@ -37,7 +37,7 @@ function download() {
 	rm -rf assimp-git
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 
 	# fix bad version # (needed for now), see https://github.com/assimp/assimp/issues/47
@@ -134,5 +134,20 @@ function copy() {
 
 	else 
 		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
+	fi
+}
+
+# executed inside the lib src dir
+function clean() {
+
+	if [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean vs2010"
+
+	elif [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean android"
+
+	else
+		make clean
+		rm -f CMakeCache.txt
 	fi
 }

@@ -16,9 +16,16 @@ function download() {
 	unzip -oq libtess2-$VER.zip
 	mv libtess2 tess2
 	rm libtess2-$VER.zip
+
+	# copy in build script and CMake toolchains adapted from Assimp
+	if [ "$TYPE" == "ios" ] ; then
+		mkdir -p tess2/build
+		cp -Rv $FORMULA_DIR/ios tess2/build
+		chmod +x tess2/build/ios/build_ios.sh
+	fi
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	
 	# use CMake for the build using CMakeLists.txt from HomeBrew since the original source doesn't have one
@@ -50,15 +57,8 @@ function build() {
 		echoWarning "TODO: vs2010 build"
 
 	elif [ "$TYPE" == "ios" ] ; then
-
-		# copy in build script and CMake toolchains adapted from Assimp
-		mkdir -p build
-		cp -Rv $FORMULA_DIR/ios build
-
-		# build fat lib
 		cd build/ios
-		chmod +x build_ios.sh
-		build_ios.sh
+		build_ios.sh # build fat lib
 
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: android build"
@@ -94,5 +94,20 @@ function copy() {
 
 	else
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
+	fi
+}
+
+# executed inside the lib src dir
+function clean() {
+
+	if [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean vs2010"
+	
+	elif [ "$TYPE" == "android" ] ; then
+		echoWarning "TODO: clean android"
+
+	else
+		make clean
+		rm -f CMakeCache.txt *.a *.lib
 	fi
 }

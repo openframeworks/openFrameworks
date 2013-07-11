@@ -13,7 +13,7 @@ function download() {
 	rm pkg-config-$VER.tar.gz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	# setting empty flags so it ignores an existing pkg-config install
 	./configure --prefix=$BUILD_DIR --with-internal-glib GLIB_CFLAGS="" GLIB_LIBS=""
@@ -23,4 +23,10 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 	make install
+}
+
+# executed inside the lib src dir
+function clean() {
+	make uninstall
+	make clean
 }

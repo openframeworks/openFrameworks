@@ -18,7 +18,7 @@ function download() {
 	rm FreeImage"$VER".zip
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
@@ -100,4 +100,18 @@ function copy() {
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: copy android lib"
 	fi	
+}
+
+# executed inside the lib src dir
+function clean() {
+	
+	if [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean vs2010"
+
+	elif [ "$TYPE" == "android" ] ; then
+		echoWarning "TODO: clean android"
+		
+	else
+		make clean
+	fi
 }

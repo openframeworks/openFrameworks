@@ -13,7 +13,7 @@ function download() {
 	rm pixman-$VER.tar.gz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 
 	./configure --prefix=$BUILD_DIR --disable-dependency-tracking --disable-gtk --disable-shared
@@ -33,4 +33,10 @@ function copy() {
 	# pkg-config info
 	cd ../
 	make install-pkgconfigDATA
+}
+
+# executed inside the lib src dir
+function clean() {
+	make uninstall
+	make clean
 }

@@ -13,7 +13,7 @@ function download() {
 	git clone https://github.com/ofTheo/videoInput.git -b update2013
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 
 	cd videoInputSrcAndDemos
@@ -22,6 +22,7 @@ function build() {
 		cd VS-videoInputcompileAsLib
 		# use MSBuild.exe on videoInput.sln
 		echoWarning "TODO: vs2010 build"
+
 	elif [ "$TYPE" == "win_cb" ] ; then
 		cd CodeBlocks-compileAsLib/videoInputLib
 		# run CodeBlocks on videoInputLib.cpb somehow
@@ -32,4 +33,15 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 	echoWarning "TODO: copy"
+}
+
+# executed inside the lib src dir
+function clean() {
+	
+	if [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean vs2010"
+	
+	elif [ "$TYPE" == "win_cb" ] ; then
+		echoWarning "TODO: clean win_cb"
+	fi
 }

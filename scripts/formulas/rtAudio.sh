@@ -18,7 +18,7 @@ function download() {
 	rm rtaudio-$VER.tar.gz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 
 	# choose audio api for configure
@@ -70,5 +70,14 @@ function copy() {
 	
 	else
 		cp -v librtaudio.a $1/lib/$TYPE/rtaudio.a
+	fi
+}
+
+# executed inside the lib src dir
+function clean() {
+	if [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean vs2010"
+	else
+		make clean
 	fi
 }

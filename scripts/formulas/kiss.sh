@@ -17,7 +17,7 @@ function download() {
 	rm kiss_fft$VER.tar.gz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 
 	if [ "$TYPE" == "linux" ] ; then
@@ -53,5 +53,13 @@ function copy() {
 	elif [ "$TYPE" == "linux64" ] ; then
 		mkdir -p $1/lib/linux64
 		cp -v libkiss.a $1/lib/linux64/libkiss.a
+	fi
+}
+
+# executed inside the lib src dir
+function clean() {
+	if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
+		make clean
+		rm -f *.a
 	fi
 }

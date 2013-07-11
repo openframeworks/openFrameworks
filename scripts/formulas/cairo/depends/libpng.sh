@@ -13,7 +13,7 @@ function download() {
 	rm libpng-$VER.tar.gz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	./configure --prefix=$BUILD_DIR --disable-dependency-tracking
 	make clean; make
@@ -22,4 +22,10 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 	make install
+}
+
+# executed inside the lib src dir
+function clean() {
+	make uninstall
+	make clean
 }

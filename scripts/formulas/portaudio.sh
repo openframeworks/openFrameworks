@@ -17,7 +17,7 @@ function download() {
 	rm pa_$VER.tgz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	echo "build not needed for $TYPE"
 }
@@ -28,4 +28,9 @@ function copy() {
 	# headers
 	mkdir -p $1/include
 	cp -Rv include/* $1/include
+}
+
+# executed inside the lib src dir
+function clean() {
+	: # noop
 }

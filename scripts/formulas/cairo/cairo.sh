@@ -7,7 +7,10 @@
 # has an autotools build system and requires pkg-config, libpng, & pixman,
 # dependencies have their own formulas in cairo/depends
 #
-# references: http://www.cairographics.org/end_to_end_build_for_mac_os_x/
+# following http://www.cairographics.org/end_to_end_build_for_mac_os_x,
+# we build and install dependencies into a subfolder of cairo by setting the 
+# prefix (install location) and use a custom copy of pkg-config which returns
+# the dependent lib cflags/ldflags for that prefix (cairo/apothecary-build)
 
 FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
 
@@ -15,22 +18,32 @@ VER=1.12.14
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+
+	# cairo
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
 	rm cairo-$VER.tar.xz
+
+	# dependencies (some commented for now as they might be needed for other platforms)
+	local buildDir=$BUILD_DIR/cairo/apothecary-build
+	mkdir -p $buildDir
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download freetype
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 
 	# build dependencies and install into $BUILD_DIR/cairo/build
-	local buildDir=$(pwd)/apothecary-build
-	mkdir -p $buildDir
+	local buildDir=$BUILD_DIR/cairo/apothecary-build
+	#mkdir -p $buildDir
 	rm -rf $buildDir/bin $buildDir/lib $buildDir/share
 	
 	# build a custom version of pkg-config
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/pkg-config.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir -v update $FORMULA_DIR/depends/pkg-config.sh
 	export PKG_CONFIG=$buildDir/bin/pkg-config
 	export PKG_CONFIG_PATH=$buildDir/lib/pkgconfig
 
@@ -82,4 +95,18 @@ function copy() {
 		cp -v lib/libcairo.a $1/lib/$TYPE/cairo.a
 		cp -v lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
 	fi
+}
+
+# executed inside the lib src dir
+function clean() {
+	
+	# dependencies
+	# don't clean pkg-config as we only need to use the built binary
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean $FORMULA_DIR/depends/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean freetype
+	
+	# cairo
+	make clean
 }

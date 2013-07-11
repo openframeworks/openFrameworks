@@ -18,7 +18,7 @@ function download() {
 	rm freetype*.tar.gz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
@@ -101,5 +101,20 @@ function copy() {
 		echoWarning "TODO: copy win_cb lib"
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: copy android lib"
+	fi
+}
+
+# executed inside the lib src dir
+function clean() {
+
+	if [ "$TYPE" == "vs2010" ] ; then
+		echoWarning "TODO: clean vs2010"
+	
+	elif [ "$TYPE" == "android" ] ; then
+		echoWarning "TODO: clean android"
+	
+	else
+		make clean
+		rm -f *.a *.lib
 	fi
 }

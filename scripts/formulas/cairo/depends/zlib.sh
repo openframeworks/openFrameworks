@@ -13,7 +13,7 @@ function download() {
 	rm zlib-$VER.tar.gz
 }
 
-# executed inside the build dir
+# executed inside the lib src dir
 function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		echo "build not needed for $TYPE"
@@ -29,4 +29,10 @@ function copy() {
 		return
 	fi
 	make install
+}
+
+# executed inside the lib src dir
+function clean() {
+	make uninstall
+	make clean
 }
