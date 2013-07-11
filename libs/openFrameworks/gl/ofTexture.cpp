@@ -69,7 +69,7 @@ void ofRestoreTextureWrap(){
 }
 
 //----------------------------------------------------------
-void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
+void ofSetMinMagFilters(GLfloat minFilter, GLfloat magFilter){
 	bUseCustomMinMagFilters = true;
 	GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
@@ -78,7 +78,7 @@ void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
 	};
 #endif
 	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
 //----------------------------------------------------------
@@ -299,27 +299,39 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	}else
 #endif
 	{
-		
+		// tig: this will guide us in deciding whether we have to scale our texture to
+		// the next power of two dimensions or not. More modern GPUs should have
+		// no problem with NPOT (non-power-of-two) textures, which saves memory
+		// and bandwidth.
+		bool bCanDoNPOT = true;
+
 #ifdef TARGET_OPENGLES
-		//for GLES, we need to calculate the next power of 2 for the requested dimensions
-		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(texData.width);
-		texData.tex_h = ofNextPow2(texData.height);
-#else
-		if (ofIsGLProgrammableRenderer()){
-			// we don't need power of two textures anymore with more modern graphics cards,
-			// certainly not with GL3.2 + capable desktop ones. They are perfectly well equipped
-			// to deal with arbitrary texture sizes efficiently:
-			// http://stackoverflow.com/questions/13461808/opengl-power-of-two-textures
+		// tig: we assume openGLES won't let us have NPOT textures, although there is a
+		// good chance it will.
+		// TODO: find a way to check for this capability.
+		bCanDoNPOT = false;
+#ifdef TARGET_OF_IPHONE
+		// iOS can do NPOT textures,
+		// as long as they don't get fancy with clamping and min/mag filters
+		// http://stackoverflow.com/questions/11069441/non-power-of-two-textures-in-ios
+		if (texData.wrapModeVertical == texData.wrapModeHorizontal == GL_CLAMP_TO_EDGE && texData.minFilter == texData.magFilter == GL_LINEAR ) {
+			bCanDoNPOT = true;
+		}
+#endif
+#endif
+		if (bCanDoNPOT && ofIsGLProgrammableRenderer()){
 			texData.tex_w = texData.width;
 			texData.tex_h = texData.height;
 		} else {
 			// for backwards-compatibility, we leave the 'classic' next-pow2 path
-			// for the fixed-function renderer
+			// for the fixed-function renderer and all other renderers that don't
+			// support this,
+			// for old GLES, we need to calculate the next power of 2 for the requested dimensions
+			// ie (320x240) becomes (512x256)
 			texData.tex_w = ofNextPow2(texData.width);
 			texData.tex_h = ofNextPow2(texData.height);
 		}
-#endif
+
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
@@ -337,17 +349,15 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
 
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, texData.wrapModeHorizontal);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, texData.wrapModeVertical);
 
 	if (!ofIsGLProgrammableRenderer()){
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	}
 	disableTextureTarget();
-
-
 
 	texData.bAllocated = true;
 
@@ -708,17 +718,25 @@ ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
 
 //----------------------------------------------------------
 void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical) {
+	if (wrapModeHorizontal == texData.wrapModeHorizontal && wrapModeVertical == texData.wrapModeVertical) return;
+	// ----------| invariant: either vertical or horizontal wrap mode needs update.
 	bind();
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
+	texData.wrapModeVertical = wrapModeVertical;
+	texData.wrapModeHorizontal = wrapModeHorizontal;
 	unbind();
 }
 
 //----------------------------------------------------------
-void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
+void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
+	if (minFilter == texData.minFilter && magFilter == texData.magFilter) return;
+	// ----------| invariant: either minFilter or magFilter needs update.
 	bind();
-	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
-	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
+	texData.magFilter = magFilter;
+	texData.minFilter = minFilter;
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
 	unbind();
 }
 
@@ -732,15 +750,19 @@ void ofTexture::generateMipmaps(GLint minFilter, GLint magFilter){
 		// tig: add mipmaps (call this method after texture data was changed)
 		// we are not using gluBuild2dMipmaps, but the new openGL core API for mipmaps.
 		// see: https://www.opengl.org/wiki/Common_Mistakes#gluBuild2DMipmaps
+		// see also: http://www.g-truc.net/post-0256.html
 
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+		texData.minFilter = minFilter;
+		texData.magFilter = magFilter;
 
 		// set up texture hints for mipmapping
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
+		glTexParameteri( texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
+		glTexParameteri( texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
 		glGenerateMipmap(texData.textureTarget);
 		
 		glBindTexture( texData.textureTarget, 0);			// unbind texture
+
 	}
 }
 

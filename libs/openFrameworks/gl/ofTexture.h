@@ -22,7 +22,7 @@ OF_DEPRECATED_MSG("Use member function ofTexture::setTextureWrap() instead.",voi
 bool ofGetUsingCustomTextureWrap();
 void ofRestoreTextureWrap();
 
-OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.", void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR));
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.", void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat magFilter = GL_LINEAR));
 bool ofGetUsingCustomMinMagFilters();
 void ofRestoreMinMagFilters();
 //*****
@@ -46,8 +46,6 @@ public:
 		glTypeInternal = GL_RGB;
 		textureTarget = GL_TEXTURE_2D;
 #endif
-
-
 		tex_t = 0;
 		tex_u = 0;
 		tex_w = 0;
@@ -59,6 +57,11 @@ public:
 		compressionType = OF_COMPRESS_NONE;
 		bAllocated = false;
 		bUseExternalTextureID = false;
+		
+		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
+		wrapModeVertical = GL_CLAMP_TO_EDGE;
+		minFilter = GL_LINEAR;
+		magFilter = GL_LINEAR;
 	}
 
 	unsigned int textureID;
@@ -74,7 +77,12 @@ public:
 	bool bFlipTexture;
 	ofTexCompression compressionType;
 	bool bAllocated;
-	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
+	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture.
+	
+	int wrapModeHorizontal;
+	int wrapModeVertical;
+	int minFilter;
+	int magFilter;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
@@ -162,7 +170,7 @@ class ofTexture : public ofBaseDraws {
 	ofPoint getCoordFromPercent(float xPts, float yPts);		
 	
 	void setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical);
-	void setTextureMinMagFilter(GLint minFilter, GLint maxFilter);
+	void setTextureMinMagFilter(GLint minFilter, GLint magFilter);
 
 	void setCompression(ofTexCompression compression);
 	void generateMipmaps(GLint minFilter = GL_LINEAR_MIPMAP_LINEAR, GLint magFilter = GL_LINEAR);
