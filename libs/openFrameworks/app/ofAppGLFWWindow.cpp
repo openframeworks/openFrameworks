@@ -37,6 +37,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
+    bMultiWindowFullscreen  = false;
 
 	nonFullScreenX		= 0;
 	nonFullScreenY		= 0;
@@ -63,7 +64,9 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 
 	glVersionMinor=glVersionMajor=-1;
 	nFramesSinceWindowResized = 0;
-
+    
+    //default to 4 times antialiasing. 
+    setNumSamples(4);
 	iconSet = false;
 
 }
@@ -72,6 +75,11 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setNumSamples(int _samples){
 	samples=_samples;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setMultiDisplayFullscreen(bool bMultiFullscreen){
+    bMultiWindowFullscreen = bMultiFullscreen; 
 }
 
 //------------------------------------------------------------
@@ -123,7 +131,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 //	printf("WINDOW MODE IS %i", screenMode);
 
-	windowMode = screenMode;
+	int requestedMode = screenMode;
 
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
@@ -149,7 +157,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		#endif
 	}
 
-	if(windowMode==OF_GAME_MODE){
+	if(requestedMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>0){
@@ -160,7 +168,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}else{
 		windowP = glfwCreateWindow(w, h, "", NULL, NULL);
-		if(windowMode==OF_FULLSCREEN){
+		if(requestedMode==OF_FULLSCREEN){
 			setFullscreen(true);
 		}
 	}
@@ -168,6 +176,8 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
         ofLogError() << "error creating GLFW window";
         return;
     }
+
+	windowMode = requestedMode;
 
 	setVerticalSync(false);
 	// Set window title
@@ -306,8 +316,10 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
-	if(ofGetGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->startRender();
+
+	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+	if(renderer){
+		renderer->startRender();
 	}
 
 	// set viewport, clear the screen
@@ -363,8 +375,8 @@ void ofAppGLFWWindow::display(void){
 		}
 	#endif
 
-	if(ofGetGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->finishRender();
+	if(renderer){
+		renderer->finishRender();
 	}
 
 	nFramesSinceWindowResized++;
@@ -395,20 +407,51 @@ ofPoint ofAppGLFWWindow::getWindowSize(){
 
 //------------------------------------------------------------
 ofPoint ofAppGLFWWindow::getWindowPosition(){
-	glfwGetWindowPos(windowP, &nonFullScreenX, &nonFullScreenY);
+    int x, y; 
+	glfwGetWindowPos(windowP, &x, &y);
+    
+    if( windowMode == OF_WINDOW ){
+        nonFullScreenX = x; 
+        nonFullScreenY = y; 
+    }   
+    
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return ofPoint(nonFullScreenX,nonFullScreenY,0);
+		return ofPoint(x,y,0);
 	}else{
-		return ofPoint(nonFullScreenY,nonFullScreenX,0);
+		return ofPoint(x,y,0);
 	}
 }
+
+//------------------------------------------------------------
+
+int ofAppGLFWWindow::getCurrentMonitor(){
+	int numberOfMonitors;
+	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
+
+	int xW;	int yW;
+	glfwGetWindowPos(windowP, &xW, &yW);
+	
+	for (int iC=0; iC < numberOfMonitors; iC++){
+		int xM; int yM;
+		glfwGetMonitorPos(monitors[iC], &xM, &yM);
+		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[iC]);
+		ofRectangle monitorRect(xM, yM, desktopMode->width, desktopMode->height);
+		if (monitorRect.inside(xW, yW)){
+			return iC;
+			break;
+		}
+	}
+	return 0;
+}
+
 
 //------------------------------------------------------------
 ofPoint ofAppGLFWWindow::getScreenSize(){
 	int count;
 	GLFWmonitor** monitors = glfwGetMonitors(&count);
 	if(count>0){
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[0]);
+		int currentMonitor = getCurrentMonitor();
+		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[currentMonitor]);
 		if(desktopMode){
 			if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 				return ofVec3f(desktopMode->width, desktopMode->height,0);
@@ -462,9 +505,32 @@ int	ofAppGLFWWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
-	glfwSetWindowPos(windowP,x,y);
-	nonFullScreenX=x;
-	nonFullScreenY=y;
+    
+    #ifdef TARGET_OSX
+    
+        //On OS X the window coords are bottom left relative.
+        //Also the screen coords are bottom left relative, so we have to do some calculations to get position working top left relative. 
+        //Currently GLFW's glfwSetWindowPos doesn't make OS X calls top left relative, so we have to do it ourselves. 
+        // see: https://github.com/glfw/glfw/issues/85 & https://github.com/openframeworks/openFrameworks/issues/2183 
+         
+        NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+        NSPoint pos;
+        pos.x = x; 
+        pos.y = y; 
+        [cocoaWindow setFrameTopLeftPoint:pos];
+
+        //we have to do this as the screen height can change if the window has moved screens due to the x coord. 
+        //so we adjust it once for x and the call it again, where we can use the correct window to figure out the new y.  
+        pos.y = getScreenSize().y - pos.y; 
+        [cocoaWindow setFrameTopLeftPoint:pos];
+    #else 
+        glfwSetWindowPos(windowP,x,y);
+    #endif 
+    
+    if( windowMode == OF_WINDOW ){
+        nonFullScreenX=x;
+        nonFullScreenY=y;
+    }
 }
 
 //------------------------------------------------------------
@@ -497,18 +563,82 @@ void ofAppGLFWWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
-	if (fullscreen)
+
+    int curWindowMode  = ofGetWindowMode(); 
+
+	if (fullscreen){
 		windowMode = OF_FULLSCREEN;
-	else
+	}else{
 		windowMode = OF_WINDOW;
+    }
+    
+    //we only want to change window mode if the requested window is different to the current one. 
+    bool bChanged = windowMode != curWindowMode; 
+    if( !bChanged ){
+        return; 
+    }
 
 #ifdef TARGET_LINUX
 #include <X11/Xatom.h>
 
-	Window nativeWin = glfwGetX11Window(windowP);
+    Window nativeWin = glfwGetX11Window(windowP);
 	Display* display = glfwGetX11Display();
+	int monitorCount;
+	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 
+	if( bMultiWindowFullscreen && monitorCount > 1 ){
+		// find the monitors at the edges of the virtual desktop
+		int minx=numeric_limits<int>::max();
+		int miny=numeric_limits<int>::max();
+		int maxx=numeric_limits<int>::min();
+		int maxy=numeric_limits<int>::min();
+		int x,y,w,h;
+		int monitorLeft=0, monitorRight=0, monitorTop=0, monitorBottom=0;
+        for(int i = 0; i < monitorCount; i++){
+            glfwGetMonitorPos(monitors[i],&x,&y);
+            glfwGetMonitorPhysicalSize(monitors[i],&w,&h);
+            if(x<minx){
+            	monitorLeft = i;
+            	minx = x;
+            }
+            if(y<miny){
+            	monitorTop = i;
+            	miny = y;
+            }
+            if(x+w>maxx){
+            	monitorRight = i;
+            	maxx = x+w;
+            }
+            if(y+h>maxy){
+            	monitorBottom = i;
+            	maxy = y+h;
+            }
 
+        }
+
+        // send fullscreen_monitors event with the edges monitors
+		Atom m_net_fullscreen_monitors= XInternAtom(display, "_NET_WM_FULLSCREEN_MONITORS", false);
+
+		XEvent xev;
+
+		xev.xclient.type = ClientMessage;
+		xev.xclient.serial = 0;
+		xev.xclient.send_event = True;
+		xev.xclient.window = nativeWin;
+		xev.xclient.message_type = m_net_fullscreen_monitors;
+		xev.xclient.format = 32;
+
+		xev.xclient.data.l[0] = monitorTop;
+		xev.xclient.data.l[1] = monitorBottom;
+		xev.xclient.data.l[2] = monitorLeft;
+		xev.xclient.data.l[3] = monitorRight;
+		xev.xclient.data.l[4] = 1;
+		XSendEvent(display, RootWindow(display, DefaultScreen(display)),
+				   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+	}
+
+	// send fullscreen event
 	Atom m_net_state= XInternAtom(display, "_NET_WM_STATE", false);
 	Atom m_net_fullscreen= XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", false);
 
@@ -531,23 +661,71 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	xev.xclient.data.l[3] = 0;
 	xev.xclient.data.l[4] = 0;
 	XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-	           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+			   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+	// tell the window manager to bypass composition for this window in fullscreen for speed
+	// it'll probably help solving vsync issues
+	Atom m_bypass_compositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
+	unsigned long value = fullscreen ? 1 : 0;
+	XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&value, 1);
+
+	XFlush(display);
+
 #elif defined(TARGET_OSX)
 	if( windowMode == OF_FULLSCREEN){
         nonFullScreenX = getWindowPosition().x;
         nonFullScreenY = getWindowPosition().y;
+                
 		nonFullScreenW = getWindowSize().x;
 		nonFullScreenH = getWindowSize().y;
 
 		//----------------------------------------------------
 		SetSystemUIMode(kUIModeAllHidden,NULL);
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+
 		[cocoaWindow setStyleMask:NSBorderlessWindowMask];
 
-		setWindowShape(getScreenSize().x, getScreenSize().y);
-		setWindowPosition(0,0);
+		int monitorCount;
+        GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 
-		//[cocoaWindow makeFirstResponder: cocoaWindow];
+		int currentMonitor = getCurrentMonitor();
+		ofVec3f screenSize = getScreenSize();
+    
+        if( bMultiWindowFullscreen && monitorCount > 1 ){
+            float totalWidth = 0.0; 
+            float maxHeight  = 0.0; 
+            
+            //lets find the total width of all the monitors
+            //and we'll make the window height the height of the largest monitor. 
+            for(int i = 0; i < monitorCount; i++){
+                const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+                totalWidth += desktopMode->width; 
+                if( i == 0 || desktopMode->height > maxHeight ){
+                    maxHeight = desktopMode->height; 
+                }   
+            }
+            //for OS X we need to set this first as the window size affects the window positon 
+            setWindowShape(totalWidth, maxHeight);
+            setWindowPosition(0, 0);
+        }else if (monitorCount > 1 && currentMonitor < monitorCount){
+            int xpos;
+			int ypos;
+			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);        
+
+            //we do this as setWindowShape affects the position of the monitor
+            //normally we would just call setWindowShape first, but on multi monitor you see the window bleed onto the second monitor as it first changes shape and is then repositioned. 
+            //this first moves it over in X, does the screen resize and then by calling it again its set correctly in y. 
+			setWindowPosition(xpos, ypos);            
+            setWindowShape(screenSize.x, screenSize.y);
+			setWindowPosition(xpos, ypos);
+		}else{
+            //for OS X we need to set this first as the window size affects the window positon 
+            setWindowShape(screenSize.x, screenSize.y);
+			setWindowPosition(0,0);
+		}
+
+        //make sure the window is getting the mouse/key events
+        [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 
 	}else if( windowMode == OF_WINDOW ){
 		SetSystemUIMode(kUIModeNormal,NULL);
@@ -563,9 +741,9 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			setWindowPosition(nonFullScreenX,nonFullScreenY);
 		}
 
-		//[cocoaWindow makeFirstResponder: cocoaWindow];
 		//----------------------------------------------------
-
+        //make sure the window is getting the mouse/key events
+        [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 	}
 #elif defined(TARGET_WIN32)
     if( windowMode == OF_FULLSCREEN){
@@ -576,21 +754,50 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 		//----------------------------------------------------
 		HWND hwnd = glfwGetWin32Window(windowP);
-        SetWindowLong(hwnd, GWL_STYLE,
-                  lStyle & ~(WS_CAPTION | WS_THICKFRAME));
-        SetWindowLong(hwnd, GWL_EXSTYLE,
-                  lExStyle & ~(WS_EX_DLGMODALFRAME |
-                  WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
 
-        SetWindowPos(hwnd, NULL, 0, 0,
-                   getScreenSize().x, getScreenSize().y,
-                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		SetWindowLong(hwnd, GWL_EXSTYLE, 0);
+  		SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+  		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+        float fullscreenW = getScreenSize().x;
+        float fullscreenH = getScreenSize().y;
+        
+        if( bMultiWindowFullscreen ){
+        
+            float totalWidth = 0.0; 
+            float maxHeight  = 0.0; 
+            int monitorCount;
+            GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+            
+            //lets find the total width of all the monitors
+            //and we'll make the window height the height of the largest monitor. 
+            for(int i = 0; i < monitorCount; i++){
+                const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+                totalWidth += desktopMode->width; 
+                if( i == 0 || desktopMode->height > maxHeight ){
+                    maxHeight = desktopMode->height; 
+                }   
+            }
+            
+            fullscreenW = totalWidth;
+            fullscreenH = maxHeight; 
+        }
+		
+		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
+
 	}else if( windowMode == OF_WINDOW ){
+
 		HWND hwnd = glfwGetWin32Window(windowP);
-        SetWindowLong(hwnd, GWL_STYLE, lStyle);
-        SetWindowLong(hwnd, GWL_EXSTYLE, lExStyle);
-        setWindowShape(nonFullScreenW,nonFullScreenH);
-        setWindowPosition(nonFullScreenX,nonFullScreenY);
+
+  		DWORD EX_STYLE = WS_EX_OVERLAPPEDWINDOW;
+  		DWORD STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+		
+	  	ChangeDisplaySettings(0, 0);
+		SetWindowLong(hwnd, GWL_EXSTYLE, EX_STYLE);
+		SetWindowLong(hwnd, GWL_STYLE, STYLE);
+  		SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+	  	SetWindowPos(hwnd, HWND_NOTOPMOST, nonFullScreenX, nonFullScreenY, nonFullScreenW, nonFullScreenH, SWP_SHOWWINDOW);
 		//----------------------------------------------------
 	}
 #endif
@@ -657,7 +864,15 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
-	ofLog(OF_LOG_VERBOSE,"button: %i",button);
+	ofLog(OF_LOG_VERBOSE, "button: %i",button);
+
+    //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
+    if( ofGetKeyPressed(OF_KEY_CTRL) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_RIGHT; 
+    }
+    if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
+        button = GLFW_MOUSE_BUTTON_MIDDLE; 
+    }
 
 	switch(button){
 	case GLFW_MOUSE_BUTTON_LEFT:
@@ -795,15 +1010,26 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 			break;
 		case GLFW_KEY_RIGHT_SUPER:
 			key = OF_KEY_RIGHT_SUPER;
+            break;
+		case GLFW_KEY_BACKSPACE:
+			key = OF_KEY_BACKSPACE;
 			break;
+		case GLFW_KEY_DELETE:
+			key = OF_KEY_DEL;
+			break;
+		case GLFW_KEY_ENTER:
+			key = OF_KEY_RETURN;
+			break;
+		case GLFW_KEY_KP_ENTER:
+			key = OF_KEY_RETURN;
+			break;            
 		default:
 			break;
 	}
 
 	//GLFW defaults to uppercase - OF users are used to lowercase
-	//if we are uppercase make lowercase
-	// a better approach would be to check if shift keys are held down - and apply based on that
-	if( key >= 65 && key <= 90 ){
+    //we look and see if shift is being held to toggle upper/lowecase 
+	if( key >= 65 && key <= 90 && !ofGetKeyPressed(OF_KEY_SHIFT) ){
 		key += 32;
 	}
 

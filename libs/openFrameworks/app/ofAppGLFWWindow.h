@@ -76,6 +76,7 @@ public:
 	bool		isWindowActive();
 	bool		isWindowResizeable();
 	void		iconify(bool bIconify);
+    void        setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it. 
 
 private:
 	// callbacks
@@ -114,7 +115,10 @@ private:
 
 	int 			nFramesSinceWindowResized;
 	bool			bDoubleBuffered;
-
+    bool            bMultiWindowFullscreen; 
+    
+	int				getCurrentMonitor();
+	
 	static ofAppGLFWWindow	* instance;
 	static ofBaseApp *	ofAppPtr;
 

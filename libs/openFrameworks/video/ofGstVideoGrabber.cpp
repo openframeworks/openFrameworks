@@ -14,8 +14,7 @@
 //-------------------------------------------------
 
 #ifdef TARGET_LINUX
-// not needed any more, keeping it for compatibility with previous version
-//#define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE
+
 #define PREFER_RGB_OVER_YUV
 #define PREFER_NON_COMPRESSED
 
@@ -687,12 +686,29 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 		decodebin = "! decodebin ";
 
 	const char * scale = "";
-	if(format.format_name!="RGB"){
-		scale = "! videoconvert ";
+	switch(internalPixelFormat){
+	case OF_PIXELS_MONO:
+		if(format.format_name!="GRAY8"){
+			scale = "! videoconvert ";
+		}
+		break;
+	case OF_PIXELS_RGB:
+		if(format.format_name!="RGB"){
+			scale = "! videoconvert ";
+		}
+		break;
+	case OF_PIXELS_RGBA:
+	case OF_PIXELS_BGRA:
+		if(format.format_name!="RGBA" && format.format_name!="BGRA"){
+			scale = "! videoconvert ";
+		}
+		break;
+	default:
+		break;
 	}
 
 	if( w!=format.width || h!=format.height ){
-		scale = "! ffvideoscale method=2 ";
+		scale = "! videoscale method=2 ";
 	}
 
 	string format_str_pipeline;
@@ -731,22 +747,21 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 #endif
 
-
 	int bpp;
 	switch(internalPixelFormat){
-	case OF_PIXELS_MONO:
-		bpp = 8;
-		break;
-	case OF_PIXELS_RGB:
-		bpp = 24;
-		break;
-	case OF_PIXELS_RGBA:
-	case OF_PIXELS_BGRA:
-		bpp = 32;
-		break;
-	default:
-		bpp=24;
-		break;
+		case OF_PIXELS_MONO:
+			bpp = 8;
+			break;
+		case OF_PIXELS_RGB:
+			bpp = 24;
+			break;
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+			bpp = 32;
+			break;
+		default:
+			bpp=24;
+			break;
 	}
 
 

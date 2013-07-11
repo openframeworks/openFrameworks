@@ -16,8 +16,8 @@
 	#include "ofxAndroidSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
 #elif defined(OF_SOUNDSTREAM_IPHONE)
-	#include "ofxiPhoneSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofxiPhoneSoundStream
+	#include "ofxiOSSoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofxiOSSoundStream
 #endif 
 
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
