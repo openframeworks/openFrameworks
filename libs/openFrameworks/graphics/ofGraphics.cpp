@@ -1047,11 +1047,16 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 	ofSetColor(background);
 	ofFill();
 	ofPushMatrix();
-	ofTranslate(x,y,0);
+	
 	if(currentStyle.drawBitmapMode == OF_BITMAPMODE_MODEL) {
+		ofTranslate(x,y,0);
 		ofScale(1,-1,0);
+		ofTranslate(-(padding), + padding - fontSize - 2,0);
+	} else {
+		ofTranslate(x-(padding), y-(padding + fontSize + 2), 0);
+		
 	}
-	ofTranslate(-(padding), -(padding + fontSize + 2),0);
+	
 	ofRect(0, 0, width + 2 * padding, height + 2 * padding);
 	ofPopMatrix();
 	ofSetColor(foreground);
