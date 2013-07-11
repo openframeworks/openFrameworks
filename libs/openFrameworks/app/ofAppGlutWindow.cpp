@@ -52,7 +52,8 @@ static ofBaseApp *  ofAppPtr;
 //------------------------------------------------
 
 static WNDPROC currentWndProc;
-static HWND handle  = NULL;
+static HWND handle = NULL;
+long lStyle = -1;
 
 // This function takes in a wParam from the WM_DROPFILES message and
 // prints all the files to a message box.
@@ -170,6 +171,13 @@ static void fixCloseWindowOnWin32(){
 
 	//tell the window to now use our event handler!
 	SetWindowLongPtr(handle, GWL_WNDPROC, (long)winProc);
+}
+
+//--------------------------------------
+static void customChromeWindowOnWin32(){
+	if (lStyle != -1) {
+		SetWindowLongPtr(handle, GWL_STYLE, lStyle);
+	}
 }
 
 #endif
@@ -308,6 +316,7 @@ void ofAppGlutWindow::initializeWindow(){
         //----------------------
         // this is specific to windows (respond properly to close / destroy)
         fixCloseWindowOnWin32();
+        customChromeWindowOnWin32();
     #endif
 
 #ifdef TARGET_LINUX
@@ -841,4 +850,21 @@ void ofAppGlutWindow::entry_cb( int state ) {
 	
 	ofNotifyWindowEntry( state );
 	
+}
+
+//--------------------------------------
+void ofAppGlutWindow::setChromeWindow(bool titleBar, bool borderFrame){
+#ifdef TARGET_WIN32
+	if (titleBar) {
+		lStyle = WS_SYSMENU | WS_CAPTION | WS_THICKFRAME;
+	}
+	else if (borderFrame) {
+		lStyle = WS_BORDER | WS_THICKFRAME;
+	}
+	else {
+		lStyle = 0;
+	}
+#else
+	ofLogError("setChromeWindow") << "not supported on your platform";
+#endif
 }

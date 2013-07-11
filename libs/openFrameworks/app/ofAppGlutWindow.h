@@ -43,6 +43,7 @@ public:
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
+
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();
 	ofPoint		getScreenSize();
@@ -54,6 +55,8 @@ public:
 	int			getHeight();	
 	
 	int			getWindowMode();
+
+	void		setChromeWindow(bool titleBar = true, bool borderFrame = true);
 
 	void		enableSetupScreen();
 	void		disableSetupScreen();
