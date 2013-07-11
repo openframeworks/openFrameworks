@@ -878,11 +878,9 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
-	cout << "drop_cb: " << dropString << endl;
 	string drop = dropString;
 #ifdef TARGET_LINUX
 	ofStringReplace(drop,"file://","");
-	ofStringReplace(drop,"\r","");
 #endif
 	ofDragInfo drag;
 	drag.position.set(ofGetMouseX(),ofGetMouseY());
