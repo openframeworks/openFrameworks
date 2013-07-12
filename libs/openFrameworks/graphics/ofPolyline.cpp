@@ -162,13 +162,7 @@ void ofPolyline::setCircleResolution(int res){
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
 float ofPolyline::wrapAngle(float angleRadians) {
-    if(angleRadians < 0) {
-        return -1.0f * (angleRadians + M_TWO_PI) * floor(angleRadians/M_TWO_PI);
-    } else if(angleRadians > M_TWO_PI) {
-        return         (angleRadians - M_TWO_PI) * floor(angleRadians/M_TWO_PI);
-    } else {
-        return angleRadians;
-    }
+	return ofWrap(angleRadians, 0.0, TWO_PI);
 }
 
 //----------------------------------------------------------
