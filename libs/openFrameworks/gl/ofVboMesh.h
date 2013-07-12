@@ -26,7 +26,8 @@ public:
     virtual bool usingIndices() const;
 
 	void draw(ofPolyRenderMode drawMode);
-
+	void drawInstanced(ofPolyRenderMode drawMode, int primCount);
+	
 private:
 	void updateVbo();
 	ofVbo vbo;
