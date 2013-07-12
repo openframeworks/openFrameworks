@@ -793,11 +793,11 @@ void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) {
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 #ifdef TARGET_OPENGLES
-		// todo: don't emit warning once OPENGL ES supports instancing, starting with version 3.0
+		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
 		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning() << "Hardware instancing is not supported on OPENGL ES < 3.0";
-		glDrawArraysInstanced(drawMode, first, total, primCount);
+		// glDrawArraysInstanced(drawMode, first, total, primCount);
 #else
 		glDrawArraysInstanced(drawMode, first, total, primCount);
 #endif
@@ -814,11 +814,11 @@ void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) {
 		if(bUsingIndices){
 			if((supportVAOs && hadVAOChnaged) || !supportVAOs) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 #ifdef TARGET_OPENGLES
-			// todo: don't emit warning once OPENGL ES supports instancing, starting with version 3.0
+			// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
 			// unfortunately there is currently no easy way within oF to query the current OpenGL version.
 			// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 			ofLogWarning() << "Hardware instancing is not supported on OPENGL ES < 3.0";
-			glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+			// glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
 #else
 			glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
 #endif
