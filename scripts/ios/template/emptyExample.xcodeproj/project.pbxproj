@@ -141,9 +141,9 @@
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
-				<string>iPhone_Prefix.pch</string>
+				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
-				<string>ofxiphone-Info.plist</string>
+				<string>ofxiOS-Info.plist</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -161,9 +161,9 @@
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
-				<string>iPhone_Prefix.pch</string>
+				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
-				<string>ofxiphone-Info.plist</string>
+				<string>ofxiOS-Info.plist</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -330,7 +330,7 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>path</key>
-			<string>iPhone_Prefix.pch</string>
+			<string>ofxiOS_Prefix.pch</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -467,7 +467,7 @@
 			<key>lastKnownFileType</key>
 			<string>text.plist.xml</string>
 			<key>path</key>
-			<string>ofxiphone-Info.plist</string>
+			<string>ofxiOS-Info.plist</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
