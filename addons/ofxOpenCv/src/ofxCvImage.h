@@ -38,6 +38,7 @@ class ofxCvImage : public ofBaseImage {
     virtual void  clear();
 	virtual float getWidth();        // get width of this image or its ROI width
 	virtual float getHeight();       // get height of this image or its ROI height
+	int getChannels() const	{	return iplchannels;	}
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
     virtual void flagImageChanged();  //mostly used internally
