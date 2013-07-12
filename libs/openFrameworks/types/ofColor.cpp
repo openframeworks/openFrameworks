@@ -150,7 +150,25 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::whea
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::whiteSmoke(0.960784*limit(),0.960784*limit(),0.960784*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yellowGreen(0.603922*limit(),0.803922*limit(),0.196078*limit());
 
+template<typename A, typename B>
+A clampedSubtract(const A& a, const B& b) {
+	A result = a - b;
+	if(result > a) {
+		return numeric_limits<A>::min();
+	} else {
+		return result;
+	}
+}
 
+template<typename A, typename B>
+A clampedAdd(const A& a, const B& b) {
+	A result = a + b;
+	if(result < a) {
+		return numeric_limits<A>::max();
+	} else {
+		return result;
+	}
+}
 
 template<typename PixelType>
 float ofColor_<PixelType>::limit() {
@@ -544,18 +562,41 @@ bool ofColor_<PixelType>::operator != (ofColor_<PixelType> const & color){
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator + (ofColor_<PixelType> const & color) const{
-	return ofColor_<PixelType>( r+color.r, g+color.g, b+color.b ).clamp();
+	ofColor_<PixelType> result(*this);
+	result += color;
+	return result;
 }
 
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator + (float const & val) const{
-	return ofColor_<PixelType>( r+val, g+val, b+val ).clamp();
+	ofColor_<PixelType> result(*this);
+	result += val;
+	return result;
 }
 
 
 template<typename PixelType>
 ofColor_<PixelType> & ofColor_<PixelType>::operator += (ofColor_<PixelType> const & color){
+	r = clampedAdd(r, color.r);
+	g = clampedAdd(g, color.g);
+	b = clampedAdd(b, color.b);
+	this->clamp();
+	return *this;
+}
+
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator += (float const & val){
+	r = clampedAdd(r, val);
+	g = clampedAdd(g, val);
+	b = clampedAdd(b, val);
+	this->clamp();
+	return *this;
+}
+
+template<>
+ofColor_<float> & ofColor_<float>::operator += (ofColor_<float> const & color){
 	r += color.r;
 	g += color.g;
 	b += color.b;
@@ -564,8 +605,8 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator += (ofColor_<PixelType> cons
 }
 
 
-template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator += (float const & val){
+template<>
+ofColor_<float> & ofColor_<float>::operator += (float const & val){
 	r += val;
 	g += val;
 	b += val;
@@ -576,18 +617,42 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator += (float const & val){
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator - (ofColor_<PixelType> const & color) const{
-	return ofColor_<PixelType>( r-color.r, g-color.g, b-color.b ).clamp();
+	ofColor_<PixelType> result(*this);
+	result -= color;
+	return result;
 }
 
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator - (float const & val) const{
-	return ofColor_<PixelType>( r-val, g-val, b-val).clamp();
+	ofColor_<PixelType> result(*this);
+	result -= val;
+	return result;
 }
 
 
 template<typename PixelType>
 ofColor_<PixelType> & ofColor_<PixelType>::operator -= (ofColor_<PixelType> const & color){
+	r = clampedSubtract(r, color.r);
+	g = clampedSubtract(g, color.g);
+	b = clampedSubtract(b, color.b);
+	this->clamp();
+	return *this;
+}
+
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator -= (float const & val){
+	r = clampedSubtract(r, val);
+	g = clampedSubtract(g, val);
+	b = clampedSubtract(b, val);
+	this->clamp();
+	return *this;
+}
+
+
+template<>
+ofColor_<float> & ofColor_<float>::operator -= (ofColor_<float> const & color){
 	r -= color.r;
 	g -= color.g;
 	b -= color.b;
@@ -596,15 +661,14 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator -= (ofColor_<PixelType> cons
 }
 
 
-template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator -= (float const & val){
+template<>
+ofColor_<float> & ofColor_<float>::operator -= (float const & val){
 	r -= val;
 	g -= val;
 	b -= val;
 	this->clamp();
 	return *this;
 }
-
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator * (ofColor_<PixelType> const & color) const{
