@@ -194,7 +194,7 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 
 - (bool) startHeading
 {
-	if([locationManager headingAvailable])
+	if([CLLocationManager headingAvailable])
 	{
 		[locationManager startUpdatingHeading];
 		return true;
@@ -214,7 +214,7 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 
 - (bool) startLocation
 {
-	if([locationManager locationServicesEnabled])
+	if([CLLocationManager locationServicesEnabled])
 	{
 		[locationManager startUpdatingLocation];
 		return true;
@@ -262,7 +262,7 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 		hAccuracy = newLocation.horizontalAccuracy;
 		
 		if (oldLocation != nil) {
-			CLLocationDistance distanceMoved = [newLocation getDistanceFrom:oldLocation];
+			CLLocationDistance distanceMoved = [newLocation distanceFromLocation:oldLocation];
 			distMoved = distanceMoved;
 		}
 	}

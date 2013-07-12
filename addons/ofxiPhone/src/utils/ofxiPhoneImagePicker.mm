@@ -285,7 +285,8 @@ void ofxiPhoneImagePicker::saveImage()
 #ifdef __IPHONE_3_1
 //-------------------------------------------------------------- overlay
 - (BOOL) showCameraOverlay {
-	[self showCameraOverlayWithCustomView:nil];
+	BOOL bOk = [self showCameraOverlayWithCustomView:nil];
+    return bOk;
 }
 
 //--------------------------------------------------------------

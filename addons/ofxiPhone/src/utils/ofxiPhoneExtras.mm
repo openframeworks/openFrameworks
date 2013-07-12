@@ -403,9 +403,8 @@ string ofxNSStringToString(NSString * s) {
 
 //--------------------------------------------------------------
 
-NSString * ofxStringToNSString(string s)
-{
-	return [[[NSString alloc] initWithCString: s.c_str()] autorelease];
+NSString * ofxStringToNSString(string s) {
+	return [NSString stringWithUTF8String:s.c_str()];
 }
 
 //--------------------------------------------------------------
