@@ -6,7 +6,7 @@ precision highp float;
 uniform sampler2D src_tex_unit0;
 uniform float useTexture;
 uniform float useColors;
-uniform vec4 color;
+uniform vec4 globalColor;
 
 varying float depth;
 varying vec4 colorVarying;
@@ -25,7 +25,7 @@ void main(){
 	if(useColors>0.5){
 		c = colorVarying;
 	}else{
-		c = color;
+		c = globalColor;
 	}
 
 	if(mod(xVal, 4.0) > 1.0 && mod(yVal, 4.0) > 1.0){
