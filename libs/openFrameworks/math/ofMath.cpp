@@ -155,8 +155,7 @@ float ofWrap(float value, float from, float to){
 	}
 	float cycle = to - from;
 	if(cycle == 0){
-		ofLogError("ofWrap") << "Wrapping interval is 0, not wrapping!";
-		return value;
+		return to;
 	}
 	return value - cycle * floor((value - from) / cycle);
 }
