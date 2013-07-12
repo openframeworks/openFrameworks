@@ -73,7 +73,7 @@ bool ofVboMesh::usingIndices() const {
 }
 
 
-void ofVboMesh::draw(ofPolyRenderMode drawMode){
+void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount){
 	if(getNumVertices()==0) return;
 	updateVbo();
 	GLuint mode = ofGetGLPrimitiveMode(getMode());
@@ -84,9 +84,17 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(drawMode));
 	if(getNumIndices() && drawMode!=OF_MESH_POINTS){
-		vbo.drawElements(mode,getNumIndices());
+		if (primCount <= 1) {
+			vbo.drawElements(mode,getNumIndices());
+		} else {
+			vbo.drawElementsInstanced(mode,getNumIndices(),primCount);
+		}
 	}else{
-		vbo.draw(mode,0,getNumVertices());
+		if (primCount <= 1) {
+			vbo.draw(mode,0,getNumVertices());
+		} else {
+			vbo.drawInstanced(mode,0,getNumVertices(),primCount);
+		}
 	}
 	if (!ofIsGLProgrammableRenderer()){
 		glPopAttrib();
@@ -108,7 +116,11 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 		}
 	}
 #endif
+}
 
+void ofVboMesh::draw(ofPolyRenderMode drawMode){
+	if(getNumVertices()==0) return;
+	drawInstanced(drawMode, 1);
 }
 
 void ofVboMesh::updateVbo(){
