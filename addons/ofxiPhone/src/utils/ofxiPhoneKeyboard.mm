@@ -99,14 +99,14 @@ void ofxiPhoneKeyboard::setBgColor(int r, int g, int b, int a)
 //--------------------------------------------------------------
 void ofxiPhoneKeyboard::setText(string _text)
 {
-	NSString * text = [[[NSString alloc] initWithCString: _text.c_str()] autorelease];
+	NSString * text = [NSString stringWithUTF8String:_text.c_str()];
 	[keyboard setText:text];
 }
 
 //--------------------------------------------------------------
 void ofxiPhoneKeyboard::setPlaceholder(string _text)
 {
-	NSString * text = [[[NSString alloc] initWithCString: _text.c_str()] autorelease];
+	NSString * text = [NSString stringWithUTF8String:_text.c_str()];
 	[keyboard setPlaceholder:text];
 }
 
