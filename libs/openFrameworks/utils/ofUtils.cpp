@@ -218,7 +218,7 @@ static string & dataPathRoot(){
 	static string * dataPathRoot = new string("../../../data/");
 #elif defined TARGET_ANDROID
 	static string * dataPathRoot = new string("sdcard/");
-#elif defined(TARGET_LINUX)
+#elif defined(TARGET_LINUX) || defined(TARGET_WIN32)
 	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 //#elif defined(TARGET_LINUX_ARM)
 //		static string * dataPathRoot = new string("data/");
@@ -288,8 +288,8 @@ string ofToDataPath(string path, bool makeAbsolute){
         
         #ifdef TARGET_WIN32
             //this is so we can check both "data\" and "data/" on windows
-            std::replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
-            std::replace( dataPath.begin(), dataPath.end(), '\\', '/' );
+            replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
+            replace( dataPath.begin(), dataPath.end(), '\\', '/' );
         #endif // TARGET_WIN32
 
 		//check if absolute path has been passed or if data path has already been applied
@@ -298,7 +298,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 			path = dataPathRoot()+path;
 		}
 
-		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
+		if(makeAbsolute && (path.length()==0 || (path.substr(0,1) != "/" && path.substr(1,1) != ":"))){
 			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 
 			#ifndef TARGET_WIN32
@@ -311,8 +311,6 @@ string ofToDataPath(string path, bool makeAbsolute){
 				char currDir[1024];
 				path = "\\"+path;
 				path = _getcwd(currDir, 1024)+path;
-				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-
 
 			#endif
 
@@ -323,6 +321,10 @@ string ofToDataPath(string path, bool makeAbsolute){
 		}
 
 	}
+	#ifdef TARGET_WIN32
+		replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
+	#endif
+
 	return path;
 }
 
