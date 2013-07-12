@@ -72,6 +72,9 @@ bool ofVboMesh::usingIndices() const {
 	return vbo.getUsingIndices();
 }
 
+ofVbo & ofVboMesh::getVbo() {
+	return vbo;
+};
 
 void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount){
 	if(getNumVertices()==0) return;

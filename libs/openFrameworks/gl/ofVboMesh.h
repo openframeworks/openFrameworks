@@ -28,6 +28,8 @@ public:
 	void draw(ofPolyRenderMode drawMode);
 	void drawInstanced(ofPolyRenderMode drawMode, int primCount);
 	
+	ofVbo & getVbo();
+	
 private:
 	void updateVbo();
 	ofVbo vbo;
