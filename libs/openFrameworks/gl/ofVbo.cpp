@@ -785,6 +785,49 @@ void ofVbo::drawElements(int drawMode, int amt) {
 }
 
 //--------------------------------------------------------------
+// tig: this, being a key feature of OpenGL VBOs, allows to render massive
+// amounts of geometry simultaneously without clogging the memory bus;
+// as discussed in: http://poniesandlight.co.uk/code/ofxVboMeshInstanced/
+void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) {
+	if(bAllocated) {
+		bool wasBinded = bBound;
+		if(!wasBinded) bind();
+#ifdef TARGET_OPENGLES
+		// todo: don't emit warning once OPENGL ES supports instancing, starting with version 3.0
+		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
+		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+		ofLogWarning() << "Hardware instancing is not supported on OPENGL ES < 3.0";
+		glDrawArraysInstanced(drawMode, first, total, primCount);
+#else
+		glDrawArraysInstanced(drawMode, first, total, primCount);
+#endif
+		if(!wasBinded) unbind();
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) {
+	if(bAllocated){
+		bool hadVAOChnaged = vaoChanged;
+		bool wasBinded = bBound;
+		if(!wasBinded) bind();
+		if(bUsingIndices){
+			if((supportVAOs && hadVAOChnaged) || !supportVAOs) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+#ifdef TARGET_OPENGLES
+			// todo: don't emit warning once OPENGL ES supports instancing, starting with version 3.0
+			// unfortunately there is currently no easy way within oF to query the current OpenGL version.
+			// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+			ofLogWarning() << "Hardware instancing is not supported on OPENGL ES < 3.0";
+			glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+#else
+			glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
+#endif
+		}
+		if(!wasBinded) unbind();
+	}
+}
+
+//--------------------------------------------------------------
 void ofVbo::clear(){
 	clearVertices();
 	clearNormals();
