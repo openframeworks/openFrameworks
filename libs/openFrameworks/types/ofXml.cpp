@@ -579,11 +579,6 @@ Poco::XML::Element* ofXml::getPocoElement(const string& path) const
     
 }
 
-Poco::XML::Element* ofXml::getPocoElement(const string& path) {
-	return getPocoElement(path);
-}
-
-
 string ofXml::getName() const
 {
     if(element)
