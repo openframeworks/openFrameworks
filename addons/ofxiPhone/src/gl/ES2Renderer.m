@@ -45,7 +45,8 @@
 
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer {
     [self destroyFramebuffer];
-    [self createFramebuffer:layer];
+    BOOL bOk = [self createFramebuffer:layer];
+    return bOk;
 }
 
 - (BOOL)createFramebuffer:(CAEAGLLayer *)layer {

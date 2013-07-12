@@ -105,7 +105,7 @@ void ofAppiPhoneWindow::startAppWithDelegate(string appDelegateClassName) {
     bAppCreated = true;
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    UIApplicationMain(nil, nil, nil, [[[NSString alloc] initWithCString: appDelegateClassName.c_str()] autorelease]);
+    UIApplicationMain(nil, nil, nil, [NSString stringWithUTF8String:appDelegateClassName.c_str()]);
     [pool release];
 }
 
@@ -157,7 +157,7 @@ void ofAppiPhoneWindow::setWindowTitle(string title) {
 
 
 void ofAppiPhoneWindow::setFullscreen(bool fullscreen) {
-	[[UIApplication sharedApplication] setStatusBarHidden:fullscreen animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
 	
 	if(fullscreen) windowMode		= OF_FULLSCREEN;
 	else windowMode					= OF_WINDOW;

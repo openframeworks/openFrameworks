@@ -40,7 +40,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
         [(AVFoundationVideoPlayer *)videoPlayer setWillBeUpdatedExternally:YES];
     }
     
-    NSString * videoPath = [[[NSString alloc] initWithCString: ofToDataPath(name).c_str()] autorelease];
+    NSString * videoPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
     [(AVFoundationVideoPlayer*)videoPlayer loadWithPath:videoPath];
     
     bResetPixels = true;
@@ -63,6 +63,8 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
         }
     }
 #endif
+    
+    return true;
 }
 
 //----------------------------------------
