@@ -1,0 +1,3 @@
+*.DS_STORE
+*libs
+scripts/apothecary/build

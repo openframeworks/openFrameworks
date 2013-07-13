@@ -3,7 +3,15 @@
 # this is the OpenFrameworks library apothecary,
 # it mixes formulas and potions to build and update the C/C++ lib dependencies
 #
+# formulas are simple scripts which implement the download, build, copy, & clean
+# functions which are in turn called by this script,
+# see docs/formula_template.sh for a bare formula script
+#
+# Core OF lib formulas are located in the formulas dir and addon formulas should
+# be in addons/ofxMyAddon/scripts/formulas 
+#
 # 2013 Dan Wilcox <danomatika@gmail.com>
+# Supported by the CMU Studio for Creative Inquiry: http://studioforcreativeinquiry.org
 #
 # references:
 #  http://stackoverflow.com/questions/12219001/standalone-shell-script-vs-shell-function
@@ -39,6 +47,9 @@ FORMULA_DIR=
 # full path to the download/build dir
 BUILD_DIR=
 
+# full path to the destination dir for compiled libs
+LIBS_DIR=
+
 ### Xcode/ios specific settings
 
 # xcode Developer root
@@ -58,12 +69,14 @@ IOS_MIN_SDK_VER=5.1
 ### PRIVATE VARS, for internal use
 ### DEFINITELY READ ONLY!
 
-# destination dir for compiled libs
-A_LIBS_DIR=.. # default: relative to script
+# has the user set a custom libs dest dir?
+IS_CUSTOM_LIBS_DIR=0
 
 # paths relative to this script
 REL_FORMULAS_DIR=formulas
 REL_BUILD_DIR=build
+REL_LIBS_DIR=../../libs
+REL_ADDONS_DIR=../../addons
 
 # ansi console escape codes
 CON_DEFAULT="\033[0m"
@@ -79,7 +92,7 @@ VALID_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
 A_VERBOSE=0
 
 # nice, detailed help message
-HELP="Usage: apothecary [options] command [libraries]
+HELP="Usage: apothecary [options] command [libraries/addons]
 
  this is the OpenFrameworks library apothecary
  it mixes formulas and potions to build and update OF C/C++ lib dependencies
@@ -101,11 +114,12 @@ HELP="Usage: apothecary [options] command [libraries]
 	valid types: osx, linux, linux64, vs2010, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
-	note: currently only applies to linux build types (linux & linux64)
+	note: not currently needed, reserved for future use
 
   -b 	set the lib build dir, default: \$APOTHECARY_DIR/build
 
-  -d 	set the compiled libs destination dir, default: OF core libs dir
+  -d 	set the compiled libs destination dir,
+  	default: OF core libs dir or addons/addonName/libs for addons
 
   -v 	verbose mode, print out some extra info while mixing formulas
 
@@ -113,13 +127,13 @@ HELP="Usage: apothecary [options] command [libraries]
 
  Examples:
 
-  # update all libs in the formulas dir
+  # update all core libs
   apothecary update
 
   # update only glew
   apothecary update glew
  
-  # remove all downloaded lib src dirs from the build cache
+  # remove all downloaded core lib src dirs from the build cache
   apothecary remove
 
   # remove only assimp & glew from the cache
@@ -133,6 +147,12 @@ HELP="Usage: apothecary [options] command [libraries]
 
   # update assimp for 64bit OSX (maybe in the future ...)
   apothecary -t osx -a 64 assimp
+
+  # update assimp in the ofxAssimpModelLoader addonFormula
+  apothecary update ofxAssimpModelLoader
+
+  # update a formula script manually and set build and lib dest dirs
+  apothecary -b ../build -d ../libs path/to/formula.sh 
 "
 
 ################################################################################
@@ -197,7 +217,7 @@ while getopts t:a:b:d:vh opt ; do
 		b) # set the build dir
 		   BUILD_DIR="$OPTARG" ;;
 		d) # set lib destination dir
-		   A_LIBS_DIR="$OPTARG" ;;
+		   LIBS_DIR="$OPTARG" ;;
 		h) # print help and exit
 		   echo "$HELP" ; exit 0 ;;
 		v) # verbose mode = true
@@ -250,8 +270,8 @@ function isFormulaType() {
 # exits with error on failure, sets formula script and parent dir on success
 # args: formula string, formula script, formula script parent dir
 function checkFormula() {
-	local script=$REL_FORMULAS_DIR/$1.sh
-	local path=$APOTHECARY_DIR/$REL_FORMULAS_DIR
+	local script
+	local parentDir
 
 	# is given formula an existing script?
 	if [ -e $1 -a "${1##*.}" == "sh" ] ; then
@@ -260,27 +280,52 @@ function checkFormula() {
 			/*) : ;; # absolute path
 			 *) path=$WD/$1 ;; # relative path
 		esac
-		script=$path
-		path=$(dirname $path)
+		script=$(basename $path)
+		parentDir=$(dirname $path)
 	
-	else # formula in formula's dir
-	
-		# check if the given lib name is even formula
-		if [ ! -e $script ] ; then
+	# existing formula dir with script?
+	elif [ -e $1 -a -d $1 -a -e $1/$1.sh ] ; then
+		local path=$1/$1.sh	
+		case $1 in
+			/*) : ;; # absolute path
+			 *) path=$WD/$1/$1.sh ;; # relative path
+		esac
+		script=$(basename $path)
+		parentDir=$(dirname $path)
 			
-			# is the given formula a dir?
-			if [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
-				script=$REL_FORMULAS_DIR/$1/$1.sh
-				path=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$1
-			else
-				echoError " No formula for lib \"$1\""
-				exit 1
-			fi
+	# is the given formula name a script in the formulas dir
+	elif [ -e $REL_FORMULAS_DIR/$1.sh ] ; then
+		script=$1.sh
+		parentDir=$APOTHECARY_DIR/$REL_FORMULAS_DIR 
+	
+	# is the given formula a dir?
+	elif [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
+		script=$1.sh
+		parentDir=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$1
+
+	# is the given forumla name an addon (aka starts with "ofx")?
+	#elif [ "$(echo $1 | grep ofx.*)" != "" ] ; then
+	elif [ -e $REL_ADDONS_DIR/$1 ] ; then 
+		
+		echoVerbose " Detected addon: \"$1\""
+
+		# are there formulas in the addon formulas dir?
+		if [ ! -e $REL_ADDONS_DIR/$1/scripts/formulas ] ; then
+			echoError " Addon \"$1\" has no formulas"
+			exit 0
 		fi
+
+		script=
+		parentDir=$REL_ADDONS_DIR/$1/scripts/formulas
+		eval $4=1 # is addon bool
+
+	else
+		echoError " No formula for lib \"$1\""
+		exit 1
 	fi
 
 	eval $2=$script
-	eval $3=$path
+	eval $3=$parentDir
 }
 
 # execute a given command using the formula name
@@ -292,14 +337,46 @@ function doCommand() {
 	# process given libraries
 	if [ $# -gt 0 ] ; then
 		while [ $# -gt 0 ] ; do
-			$cmd $1
+			
+			local formula
+			local currentLib=$1
+			local isAddon=0
+			checkFormula $currentLib formula FORMULA_DIR isAddon
+			
+			if [ $isAddon == 1 ] ; then
+				local addonFormula
+				local tmpLibsDir=$LIBS_DIR
+
+				# set libs dest dir to addon/libs if it hasn't been manually set
+				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+					LIBS_DIR=$APOTHECARY_DIR/$REL_ADDONS_DIR/$1/libs
+				fi
+
+				# process all formulas in scripts/formulas
+				for addonFormula in $( ls -1 $FORMULA_DIR) ; do
+					doCommand $cmd $FORMULA_DIR/$addonFormula
+				done
+
+				# back to default
+				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+					LIBS_DIR=$tmpLibsDir
+				fi
+			
+			else # not an addon
+				$cmd "${formula%.*}"
+			fi
+
 			shift 1
+		
 		done
 
 	else # process all formulas in formulas dir
 		local formula
 		for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-			$cmd "${formula%.*}" # removes file extension
+			local formula
+			local currentLib="${formula%.*}" # removes file extension
+			checkFormula $currentLib formula FORMULA_DIR
+			$cmd $currentLib $formula
 		done
 	fi
 }
@@ -307,7 +384,7 @@ function doCommand() {
 # execute a given command on a formula and/or formulas,
 # checks and sources formula scripts before running
 function doFormulaCommand() {
-	
+
 	local cmd=$1
 	shift 1
 
@@ -316,22 +393,46 @@ function doFormulaCommand() {
 		while [ $# -gt 0 ] ; do
 
 			local formula
-			checkFormula $1 formula FORMULA_DIR
+			local isAddon=0
+			checkFormula $1 formula FORMULA_DIR isAddon
 
-			# load a script & it's function implementations
-			source $formula #
-			formula=$(basename $1)
-			local currentLib="${formula%.*}"
+			if [ $isAddon == 1 ] ; then
+				local addonFormula
+				local tmpLibsDir=$LIBS_DIR
 
-			# does this formula support the current build type?
-			local bFormulaType=0 # bool
-			isFormulaType $TYPE bFormulaType
-			if [ $bFormulaType == 0 ] ; then
-				echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
-				FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
-			else
-				# do command
-				$cmd $currentLib
+				# set libs dest dir to addon/libs if it hasn't been manually set
+				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+					LIBS_DIR=$APOTHECARY_DIR/$REL_ADDONS_DIR/$1/libs
+				fi
+
+				# process all formulas in scripts/formulas
+				for addonFormula in $( ls -1 $FORMULA_DIR) ; do
+					#echo "doFormulaCommand $cmd $FORMULA_DIR/$addonFormula"
+					doFormulaCommand $cmd $FORMULA_DIR/$addonFormula
+				done
+				
+				# back to default
+				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+					LIBS_DIR=$tmpLibsDir
+				fi
+			
+			else # not an addon
+
+				# load a script & it's function implementations
+				source $FORMULA_DIR/$formula #
+				formula=$(basename $1)
+				local currentLib="${formula%.*}"
+
+				# does this formula support the current build type?
+				local bFormulaType=0 # bool
+				isFormulaType $TYPE bFormulaType
+				if [ $bFormulaType == 0 ] ; then
+					echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
+					FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
+				else
+					# do command
+					$cmd $currentLib
+				fi
 			fi
 
 			shift 1
@@ -340,7 +441,9 @@ function doFormulaCommand() {
 			FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
 		done
 
-	else # process all formulas in formulas dir
+	else
+
+		# process all formulas in formulas dir
 		local formula
 		for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
 
@@ -348,7 +451,7 @@ function doFormulaCommand() {
 			checkFormula $currentLib formula FORMULA_DIR
 
 			# load a script & it's function implementations
-			source $formula
+			source $FORMULA_DIR/$formula
 
 			# does this formula support the current build type?
 			local bFormulaType=0 # bool
@@ -436,7 +539,7 @@ function copyFormula() {
 	echo
 	echoInfo " Copying \"$1\""
 	echoVerbose " Lib src dir: $BUILD_DIR/$1"
-	echoVerbose " Lib destination dir: $A_LIBS_DIR"
+	echoVerbose " Lib dest dir: $LIBS_DIR/$1"
 	echo
 
 	if [ ! -e $BUILD_DIR/$1 ] ; then
@@ -445,11 +548,10 @@ function copyFormula() {
 		exit 1
 	fi
 
+	mkdir -p $LIBS_DIR/$1
+
 	cd $BUILD_DIR/$1
-	case $A_LIBS_DIR in
-		/*) copy $A_LIBS_DIR/$1 ;; # absolute path
-		 *) copy $APOTHECARY_DIR/$A_LIBS_DIR/$1 ;; # relative path
-	esac
+	copy $LIBS_DIR/$1
 	cd $APOTHECARY_DIR
 }
 
@@ -459,7 +561,7 @@ function cleanFormula() {
 	# run build command in src dir
 	echo
 	echoInfo " Cleaning \"$1\""
-	echoVerbose " Build dir: $BUILD_DIR"
+	echoVerbose " Lib src dir: $BUILD_DIR/$1"
 	echo
 
 	if [ ! -e $BUILD_DIR/$1 ] ; then
@@ -476,13 +578,7 @@ function cleanFormula() {
 # remove a given library from the cache
 function remove() {
 
-	# check if the given lib name is even a formula
-	if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
-		echoError " No formula for lib \"$1\""
-		exit 1
-	fi
-
-	echoVerbose " Build dir: $BUILD_DIR"
+	echoVerbose " Lib src dir: $BUILD_DIR/$1"
 	cd $BUILD_DIR
 	if [ ! -e $1* ] ; then
 		echoVerbose " Nothing to remove from build cache: \"$1\""
@@ -496,19 +592,13 @@ function remove() {
 # remove a given library from the lib dir
 function remove-lib() {
 
-	# check if the given lib name is even a formula
-	if [ ! -e $REL_FORMULAS_DIR/$1.sh -a ! -e $REL_FORMULAS_DIR/$1 ] ; then
-		echoError " No formula for lib \"$1\""
-		exit 1
-	fi
-
-	echoVerbose " Libs dir: $A_LIBS_DIR"
-	cd $A_LIBS_DIR
+	echoVerbose " Libs dest dir: $LIBS_DIR"
+	cd $LIBS_DIR
 	if [ ! -e $1 ] ; then
-		echoVerbose " Nothing to remove from libs dir: \"$1\""
+		echoVerbose " Nothing to remove from lib dest dir: \"$1\""
 	else
 		rm -rf $1
-		echoSuccess " Removed from libs dir: \"$1\""
+		echoSuccess " Removed from lib dest dir: \"$1\""
 	fi
 	cd $APOTHECARY_DIR
 }
@@ -561,7 +651,6 @@ fi
 FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
 echoVerbose "Valid build types: ${VALID_TYPES[*]}"
 
-
 # check if we have a valid build type
 typeIsValid=0 # bool
 isValidType $TYPE typeIsValid
@@ -582,13 +671,6 @@ echoVerbose "Architecture: $ARCH"
 if [ "$BUILD_DIR" == "" ] ; then
 	BUILD_DIR=$APOTHECARY_DIR/$REL_BUILD_DIR
 else # manually set
-
-	# check build location
-	if [ ! -e $BUILD_DIR ] ; then
-		echoError " Invalid build dir: \"$BUILD_DIR\""
-		exit 1
-	fi
-
 	case $BUILD_DIR in
 		/*) : ;; # absolute path
 	 	*) BUILD_DIR=$WD/$BUILD_DIR ;; # relative path
@@ -596,15 +678,21 @@ else # manually set
 fi
 echoVerbose "Build dir: $BUILD_DIR"
 
-# check libs location
-if [ ! -e $A_LIBS_DIR ] ; then
-	echoError " Invalid libs dir: \"$A_LIBS_DIR\""
-	exit 1
+# use default libs dir?
+if [ "$LIBS_DIR" == "" ] ; then
+	LIBS_DIR=$APOTHECARY_DIR/$REL_LIBS_DIR
+else # manually set
+	case $LIBS_DIR in
+		/*) : ;; # absolute path
+	 	*) LIBS_DIR=$WD/$LIBS_DIR ;; # relative path
+	esac
+	IS_CUSTOM_LIBS_DIR=1
 fi
-echoVerbose "Libs destination dir: $A_LIBS_DIR"
+echoVerbose "Libs dest dir: $LIBS_DIR"
 
 # handle commands
 echoVerbose "Running: $A_CMD $*"
+echoVerbose ""
 case "$A_CMD" in
 
 	update)
