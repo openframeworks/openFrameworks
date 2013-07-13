@@ -149,15 +149,6 @@ class ofColor_{
 	private:
 		template<typename SrcType>
 		void copyFrom(const ofColor_<SrcType> & mom);
-	
-		template<typename SrcType>
-		PixelType clampedSubtract(const PixelType& a, const SrcType& b);
-		template<typename SrcType>
-		PixelType clampedAdd(const PixelType& a, const SrcType& b);
-		template<typename SrcType>
-		PixelType clampedMultiply(const PixelType& a, const SrcType& b);
-		template<typename SrcType>
-		PixelType clampedDivide(const PixelType& a, const SrcType& b);
 };
 
 
@@ -196,29 +187,5 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 			v[i] = mom[i] * factor;
 		}
 	}
-}
-
-template<typename PixelType>
-template<typename SrcType>
-PixelType ofColor_<PixelType>::clampedSubtract(const PixelType& a, const SrcType& b) {
-	return CLAMP((float) a - (float) b, 0, limit());
-}
-
-template<typename PixelType>
-template<typename SrcType>
-PixelType ofColor_<PixelType>::clampedAdd(const PixelType& a, const SrcType& b) {
-	return CLAMP((float) a + (float) b, 0, limit());
-}
-
-template<typename PixelType>
-template<typename SrcType>
-PixelType ofColor_<PixelType>::clampedMultiply(const PixelType& a, const SrcType& b) {
-	return CLAMP((float) a * (float) b, 0, limit());
-}
-
-template<typename PixelType>
-template<typename SrcType>
-PixelType ofColor_<PixelType>::clampedDivide(const PixelType& a, const SrcType& b) {
-	return CLAMP((float) a / (float) b, 0, limit());
 }
 
