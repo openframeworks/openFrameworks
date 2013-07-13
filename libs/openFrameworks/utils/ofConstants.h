@@ -384,7 +384,7 @@ using namespace std;
 #endif
 
 #ifndef CLAMP
-	#define CLAMP(val,min,max) (MAX(MIN(val,max),min))
+	#define CLAMP(val,min,max) ((val) < (min) ? (min) : ((val > max) ? (max) : (val)))
 #endif
 
 #ifndef ABS
