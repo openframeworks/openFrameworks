@@ -151,6 +151,23 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::whit
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yellowGreen(0.603922*limit(),0.803922*limit(),0.196078*limit());
 
 
+template<typename A, typename B>
+A clampedSubtract(const A& a, const B& b) {
+	return CLAMP((float) a - (float) b, 0, ofColor_<A>::limit());
+}
+template<typename A, typename B>
+A clampedAdd(const A& a, const B& b) {
+	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+}
+template<typename A, typename B>
+A clampedDivide(const A& a, const B& b) {
+	return CLAMP((float) a / (float) b, 0, ofColor_<A>::limit());
+}
+template<typename A, typename B>
+A clampedMultiply(const A& a, const B& b) {
+	return CLAMP((float) a * (float) b, 0, ofColor_<A>::limit());
+}
+
 template<typename PixelType>
 float ofColor_<PixelType>::limit() {
 	return numeric_limits<PixelType>::max();
