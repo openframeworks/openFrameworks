@@ -11,6 +11,7 @@
 #define GLFW_EXPOSE_NATIVE_GLX
 #include "glfw3native.h"
 #include <X11/Xatom.h>
+#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
 #include <Cocoa/Cocoa.h>
 #define GLFW_EXPOSE_NATIVE_COCOA
@@ -859,12 +860,14 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
 	string drop = dropString;
-#ifdef TARGET_LINUX
-	ofStringReplace(drop,"file://","");
-#endif
 	ofDragInfo drag;
 	drag.position.set(ofGetMouseX(),ofGetMouseY());
 	drag.files = ofSplitString(drop,"\n",true);
+#ifdef TARGET_LINUX
+	for(int i=0; i<drag.files.size(); i++){
+		drag.files[i] = Poco::URI(drag.files[i]).getPath();
+	}
+#endif
 	ofNotifyDragEvent(drag);
 }
 
