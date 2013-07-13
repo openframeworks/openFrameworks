@@ -12,16 +12,49 @@ void ofxGuiSetBitmapFont(){
 	ofxBaseGui::setUseTTF(false);
 }
 
-const ofColor
+void ofxGuiSetHeaderColor(const ofColor & color){
+	ofxBaseGui::setDefaultHeaderBackgroundColor(color);
+}
+
+void ofxGuiSetBackgroundColor(const ofColor & color){
+	ofxBaseGui::setDefaultBackgroundColor(color);
+}
+
+void ofxGuiSetBorderColor(const ofColor & color){
+	ofxBaseGui::setDefaultBorderColor(color);
+}
+
+void ofxGuiSetTextColor(const ofColor & color){
+	ofxBaseGui::setDefaultTextColor(color);
+}
+
+void ofxGuiSetFillColor(const ofColor & color){
+	ofxBaseGui::setDefaultFillColor(color);
+}
+
+void ofxGuiSetTextPadding(int padding){
+	ofxBaseGui::setDefaultTextPadding(padding);
+}
+
+void ofxGuiSetDefaultWidth(int width){
+	ofxBaseGui::setDefaultWidth(width);
+
+}
+
+void ofxGuiSetDefaultHeight(int height){
+	ofxBaseGui::setDefaultHeight(height);
+}
+
+ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
 ofxBaseGui::borderColor(120,100),
 ofxBaseGui::textColor(255),
 ofxBaseGui::fillColor(128);
 
-const int ofxBaseGui::textPadding = 4;
-const int ofxBaseGui::defaultWidth = 200;
-const int ofxBaseGui::defaultHeight = 18;
+int ofxBaseGui::textPadding = 4;
+int ofxBaseGui::defaultWidth = 200;
+int ofxBaseGui::defaultHeight = 18;
 
 ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
@@ -38,7 +71,7 @@ ofxBaseGui::ofxBaseGui(){
 	thisFillColor=fillColor;
 
 	/*if(!fontLoaded){
-		loadFont(OF_TTF_SANS,10,true,true);
+		loadFont(OF_TTF_MONO,10,true,true);
 		useTTF=false;
 	}*/
 
@@ -52,7 +85,7 @@ void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, boo
 
 void ofxBaseGui::setUseTTF(bool bUseTTF){
 	if(bUseTTF && !fontLoaded){
-		loadFont(OF_TTF_SANS,8,true,true);
+		loadFont(OF_TTF_MONO,10,true,true);
 	}
 	useTTF = bUseTTF;
 }
@@ -97,6 +130,14 @@ ofMesh & ofxBaseGui::getTextMesh(const string & text, float x, float y){
 		return font.getStringMesh(text,x,y);
 	}else{
 		return ofBitmapStringGetMesh(text,x,y);
+	}
+}
+
+ofRectangle ofxBaseGui::getTextBoundingBox(const string & text,float x, float y){
+	if(useTTF){
+		return font.getStringBoundingBox(text,x,y);
+	}else{
+		return ofBitmapStringGetBoundingBox(text,x,y);
 	}
 }
 
@@ -218,6 +259,38 @@ void ofxBaseGui::setTextColor(const ofColor & color){
 void ofxBaseGui::setFillColor(const ofColor & color){
 	generateDraw();
 	thisFillColor = color;
+}
+
+void ofxBaseGui::setDefaultHeaderBackgroundColor(const ofColor & color){
+	headerBackgroundColor = color;
+}
+
+void ofxBaseGui::setDefaultBackgroundColor(const ofColor & color){
+	backgroundColor = color;
+}
+
+void ofxBaseGui::setDefaultBorderColor(const ofColor & color){
+	borderColor = color;
+}
+
+void ofxBaseGui::setDefaultTextColor(const ofColor & color){
+	textColor = color;
+}
+
+void ofxBaseGui::setDefaultFillColor(const ofColor & color){
+	fillColor = color;
+}
+
+void ofxBaseGui::setDefaultTextPadding(int padding){
+	textPadding = padding;
+}
+
+void ofxBaseGui::setDefaultWidth(int width){
+	defaultWidth = width;
+}
+
+void ofxBaseGui::setDefaultHeight(int height){
+	defaultHeight = height;
 }
 
 string ofxBaseGui::saveStencilToHex(ofImage& img) {
