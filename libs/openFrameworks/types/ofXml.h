@@ -109,10 +109,9 @@ public:
     }
     
     // templated to be anything
-    template <class T> bool addValue(const string& path, T data, bool createEntirePath = false)
+    template <class T> bool addValue(const string& path, T data=T(), bool createEntirePath = false)
     {
         string value = ofToString(data);
-        //addValue(path, str.str());
         vector<string> tokens;
         bool needsTokenizing = false;
         
@@ -140,7 +139,7 @@ public:
             {
                 Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
                 
-                cout << " creating " << newElement->nodeName() << endl;
+                //cout << " creating " << newElement->nodeName() << endl;
                 
                 if(lastElement) {
                     lastElement->appendChild(newElement);
@@ -199,7 +198,7 @@ public:
 
     
     // templated to be anything
-    template <class T> T getValue(const string& path) const
+    template <class T> T getValue(const string& path, T returnVal=T()) const
     {
         if(path == "")
         {
@@ -207,7 +206,7 @@ public:
                 return ofFromString<T>(element->innerText());
             } else {
                 ofLogWarning("ofXml", "Path not found when getting value ");
-                return T(); // hmm. this could be a problem
+                return returnVal; // hmm. this could be a problem
             }
         }
         else
