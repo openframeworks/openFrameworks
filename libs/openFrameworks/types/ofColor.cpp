@@ -303,14 +303,8 @@ ofColor_<PixelType>& ofColor_<PixelType>::invert() {
 
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::normalize() {
-	float brightness = getBrightness(); 
-    // avoid division by 0
-    if ( brightness > 0 ) 
-    {
-        r = limit() * (r / brightness);
-        g = limit() * (g / brightness);
-        b = limit() * (b / brightness);
-    }
+	float scaleFactor = getBrightness() / limit();
+	*this /= scaleFactor;
 	return *this;
 }
 
