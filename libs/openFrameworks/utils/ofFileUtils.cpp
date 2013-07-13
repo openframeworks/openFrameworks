@@ -1379,7 +1379,13 @@ string ofFilePath::getCurrentExePath(){
 		return path;
 	#elif defined(TARGET_WIN32)
 		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+    
+        #if (_MSC_VER)
+            DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+        #else
+            DWORD result = ::GetModuleFileNameA(NULL, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+        #endif
+            
 		if(result == 0) {
 			ofLogError("getCurrentExePath") << "failure of getting current executable path";
 		}else{
