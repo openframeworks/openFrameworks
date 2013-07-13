@@ -1,5 +1,5 @@
 #include "ofxBaseGui.h"
-#include "ofxXmlSettings.h"
+#include "ofXml.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
 
@@ -62,7 +62,7 @@ bool ofxBaseGui::useTTF = false;
 
 ofxBaseGui::ofxBaseGui(){
 	currentFrame = ofGetFrameNum();
-	serializer = new ofxXmlSettings;
+	serializer = ofPtr<ofBaseFileSerializer> (new ofXml);
 
 	thisHeaderBackgroundColor=headerBackgroundColor;
 	thisBackgroundColor=backgroundColor;
@@ -153,17 +153,17 @@ void ofxBaseGui::loadFromFile(string filename) {
 }
 
 
-void ofxBaseGui::saveTo(ofBaseFileSerializer& serializer){
+void ofxBaseGui::saveTo(ofBaseSerializer& serializer){
 	serializer.serialize(getParameter());
 }
 
-void ofxBaseGui::loadFrom(ofBaseFileSerializer& serializer){
+void ofxBaseGui::loadFrom(ofBaseSerializer& serializer){
 	serializer.deserialize(getParameter());
 }
 
 
-void ofxBaseGui::setDefaultSerializer(ofBaseFileSerializer& _serializer){
-	serializer = &_serializer;
+void ofxBaseGui::setDefaultSerializer(ofPtr<ofBaseFileSerializer>  _serializer){
+	serializer = _serializer;
 }
 
 string ofxBaseGui::getName(){
