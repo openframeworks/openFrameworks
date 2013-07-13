@@ -107,13 +107,16 @@ void ofURLFileLoader::start() {
 }
 
 void ofURLFileLoader::stop() {
+    lock();
     stopThread();
+    condition.signal();
+    unlock();
 }
 
 void ofURLFileLoader::threadedFunction() {
+	ofLog(OF_LOG_VERBOSE,"starting thread loop ");
 	lock();
 	while( isThreadRunning() == true ){
-    	ofLog(OF_LOG_VERBOSE,"starting thread loop ");
 		if(requests.size()>0){
 	    	ofLog(OF_LOG_VERBOSE,"querying request " + requests.front().name);
 			ofHttpRequest request(requests.front());
