@@ -284,8 +284,8 @@ bool ofXml::setToChild(int index)
 {
     
     if(!element) {
-        if(Poco::XML::Element*) document->documentElement()->firstChild()) {
-            element = Poco::XML::Element*) document->documentElement()->firstChild();
+        if((Poco::XML::Element*) document->documentElement()->firstChild()) {
+            element = (Poco::XML::Element*) document->documentElement()->firstChild();
         } else {
             ofLogWarning() << " setToChild() no element created yet " << endl;
         }
@@ -344,8 +344,9 @@ bool ofXml::setToParent(int numLevelsUp) {
 
 bool ofXml::setToSibling()
 {
+    Poco::XML::Element *node;
     if(element) {
-        Poco::XML::Element *node = (Poco::XML::Element*) element->nextSibling();
+        node = (Poco::XML::Element*) element->nextSibling();
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
@@ -367,8 +368,9 @@ bool ofXml::setToSibling()
 
 bool ofXml::setToPrevSibling()
 {
+    Poco::XML::Element *node;
     if(element) {
-        Poco::XML::Element *node = (Poco::XML::Element*) element->previousSibling();
+        node = (Poco::XML::Element*) element->previousSibling();
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
@@ -389,8 +391,9 @@ bool ofXml::setToPrevSibling()
 
 bool ofXml::setValue(const string& path, const string& value)
 {
+    Poco::XML::Element *e;
     if(element) {
-        Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+        e = (Poco::XML::Element*) element->getNodeByPath(path);
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
@@ -411,8 +414,9 @@ bool ofXml::setValue(const string& path, const string& value)
 
 string ofXml::getAttribute(const string& path) const {
 
+    Poco::XML::Node *e;
     if(element) {
-        Poco::XML::Node *e = element->getNodeByPath(path);
+        e = element->getNodeByPath(path);
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
@@ -426,9 +430,9 @@ string ofXml::getAttribute(const string& path) const {
 
 bool ofXml::clearAttributes(const string& path) 
 {
-    
+    Poco::XML::Element *e;
     if(element) {
-        Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+        e = (Poco::XML::Element*) element->getNodeByPath(path);
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
@@ -480,8 +484,9 @@ bool ofXml::clearContents() {
 
 bool ofXml::clearContents(const string& path) {
     
+    Poco::XML::Element *e;
     if(element) {
-        Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+        e = (Poco::XML::Element*) element->getNodeByPath(path);
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
@@ -501,8 +506,9 @@ bool ofXml::clearContents(const string& path) {
 
 bool ofXml::remove(const string& path) // works for both attributes and tags
 {
+    Poco::XML::Node *node;
     if(element) {
-        Poco::XML::Node *node = element->getNodeByPath(path);
+        node = element->getNodeByPath(path);
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
@@ -518,8 +524,9 @@ bool ofXml::remove(const string& path) // works for both attributes and tags
 
 bool ofXml::exists(const string& path) const // works for both attributes and tags
 {
+    Poco::XML::Node *node;
     if(element) {
-        Poco::XML::Node *node = element->getNodeByPath(path);
+        node = element->getNodeByPath(path);
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
         return false;
