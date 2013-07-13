@@ -15,10 +15,10 @@ public:
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	
-	void setDefaultSerializer(ofBaseFileSerializer& serializer);
+	void setDefaultSerializer(ofPtr<ofBaseFileSerializer> serializer);
 
-	virtual void saveTo(ofBaseFileSerializer& serializer);
-	virtual void loadFrom(ofBaseFileSerializer& serializer);
+	virtual void saveTo(ofBaseSerializer& serializer);
+	virtual void loadFrom(ofBaseSerializer& serializer);
 	
 	string getName();
 	void setName(string name);
@@ -78,7 +78,7 @@ protected:
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
 	static bool useTTF;
-	ofBaseFileSerializer * serializer;
+	ofPtr<ofBaseFileSerializer> serializer;
 
 	static ofColor headerBackgroundColor;
 	static ofColor backgroundColor;

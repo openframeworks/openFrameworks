@@ -25,7 +25,7 @@
 #include <Poco/DOM/NamedNodeMap.h>  
 #include <Poco/DOM/ChildNodesList.h>
 
-class ofXml {
+class ofXml: public ofBaseFileSerializer {
     
 public:
     
@@ -35,10 +35,20 @@ public:
     ofXml( const ofXml& rhs );
     const ofXml& operator =( const ofXml& rhs );
     
+	bool load(const string & path);
+	bool save(const string & path);
+
     bool            addChild( const string& path );
-    void            addXml( const ofXml& xml, bool copyAll = false);
+    void            addXml( ofXml& xml, bool copyAll = false);
 
     string          getValue() const;
+    string          getValue(const string & path) const;
+    int				getIntValue() const;
+    int				getIntValue(const string & path) const;
+    float			getFloatValue() const;
+    float			getFloatValue(const string & path) const;
+    bool			getBoolValue() const;
+    bool			getBoolValue(const string & path) const;
 
     bool            setValue(const string& path, const string& value);
     
@@ -71,6 +81,10 @@ public:
     
     string          toString() const;
     
+    // serializer
+	void serialize(const ofAbstractParameter & parameter);
+	void deserialize(ofAbstractParameter & parameter);
+
     //////////////////////////////////////////////////////////////////
     // please excuse our mess: templated get/set
     //////////////////////////////////////////////////////////////////
@@ -95,12 +109,9 @@ public:
     }
     
     // templated to be anything
-    template <class T> bool addValue(const string& path, T data, bool createEntirePath = false)
+    template <class T> bool addValue(const string& path, T data=T(), bool createEntirePath = false)
     {
-        stringstream str;
-        str << ofToString(data);
-        string value = str.str();
-        //addValue(path, str.str());
+        string value = ofToString(data);
         vector<string> tokens;
         bool needsTokenizing = false;
         
@@ -128,7 +139,7 @@ public:
             {
                 Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
                 
-                cout << " creating " << newElement->nodeName() << endl;
+                //cout << " creating " << newElement->nodeName() << endl;
                 
                 if(lastElement) {
                     lastElement->appendChild(newElement);
@@ -146,9 +157,7 @@ public:
                     lastElement->appendChild( text );
                     
                 } catch ( Poco::XML::DOMException &e ) {
-                    stringstream sstream;
-                    sstream << " cannot set node value " << DOMErrorMessage(e.code());
-                    ofLog(OF_LOG_ERROR, sstream.str());
+                    ofLogError() << " cannot set node value " << DOMErrorMessage(e.code());
                     return false;
                 }
             }
@@ -172,9 +181,7 @@ public:
                     text->release();
                     
                 } catch ( Poco::XML::DOMException &e ) {
-                    stringstream sstream;
-                    sstream << " cannot set node value " << DOMErrorMessage(e.code());
-                    ofLog(OF_LOG_ERROR, sstream.str());
+                    ofLogError() << " cannot set node value " << DOMErrorMessage(e.code());
                     return false;
                 }
             }
@@ -191,51 +198,43 @@ public:
 
     
     // templated to be anything
-    template <class T> T getValue(const string& path)
+    template <class T> T getValue(const string& path, T returnVal=T()) const
     {
-        T data;
-        
         if(path == "")
         {
             if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
-                stringstream ss;
-                ss << element->innerText();
-                ss >> data;
-                return data;
+                return ofFromString<T>(element->innerText());
             } else {
                 ofLogWarning("ofXml", "Path not found when getting value ");
-                return data; // hmm. this could be a problem
+                return returnVal; // hmm. this could be a problem
             }
         }
         else
         {
             Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
             if(e) {
-                stringstream ss;
-                ss << e->innerText();
-                ss >> data;
-                return data;
+                return ofFromString<T>(e->innerText());
             }
         }
         
-        return data;
+        return T();
     }
     
     // these are advanced, you probably don't want to use them
     
     Poco::XML::Element*        getPocoElement();
     Poco::XML::Element*        getPocoElement(const string& path);
-    Poco::XML::Element*        getPocoElement() const;
-    Poco::XML::Element*        getPocoElement(const string& path) const;
+    const Poco::XML::Element*  getPocoElement() const;
+    const Poco::XML::Element*  getPocoElement(const string& path) const;
     
     Poco::XML::Document*       getPocoDocument();
-    Poco::XML::Document*       getPocoDocument() const;
+    const Poco::XML::Document* getPocoDocument() const;
 
        
 protected:
     
     string DOMErrorMessage(short msg);
-    
+
     Poco::XML::Document *document;
     Poco::XML::Element *element;
     
