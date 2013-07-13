@@ -127,6 +127,10 @@ class ofTexture : public ofBaseDraws {
 	void loadData(const ofShortPixels & pix, int glFormat);
 	void loadData(const ofFloatPixels & pix, int glFormat);
 	
+	// in openGL3+ use 1 channel GL_R as luminance instead of red channel
+	void setRGToRGBASwizzles(bool rToRGBSwizzles);
+
+
 	void loadScreenData(int x, int y, int w, int h);
 
 	//the anchor is the point the image is drawn around.

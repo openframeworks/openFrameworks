@@ -75,6 +75,9 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 	if( grabberRunning && bUseTexture ){
 		tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 
 	return grabberRunning;
