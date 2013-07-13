@@ -24,6 +24,17 @@
             [self release];
             return nil;
         }
+        
+        const GLubyte * extensions = glGetString(GL_EXTENSIONS);
+        if(extensions != NULL && fsaaEnabled) {
+            if(strstr((const char*)extensions, "GL_APPLE_framebuffer_multisample")) {
+                fsaaEnabled = true;
+            } else {
+                fsaaEnabled = false;
+            }
+        } else {
+            fsaaEnabled = false;
+        }
     }
 
     return self;
@@ -37,10 +48,27 @@
     [EAGLContext setCurrentContext:context];
 }
 
-
 - (void)finishRender {
+	if(fsaaEnabled) {
+		if(depthEnabled) {
+			GLenum attachments[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, attachments);
+		} else {
+			GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
+			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 1, attachments);
+		}
+        
+		glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
+		glResolveMultisampleFramebufferAPPLE();
+	}
+	
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
     [context presentRenderbuffer:GL_RENDERBUFFER];
+	
+	if(fsaaEnabled) {
+		glBindFramebuffer(GL_FRAMEBUFFER, fsaaFrameBuffer);
+    }
 }
 
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer {
@@ -59,8 +87,36 @@
     [context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
     
+    if(fsaaEnabled) {
+        glGenFramebuffers(1, &fsaaFrameBuffer);
+        glGenRenderbuffers(1, &fsaaColorRenderBuffer);
+    }
+	
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
+	
+	if(fsaaEnabled) {
+		glBindFramebuffer(GL_FRAMEBUFFER, fsaaFrameBuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, fsaaColorRenderBuffer);
+		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, fsaaSamples, GL_RGB5_A1, backingWidth, backingHeight);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, fsaaColorRenderBuffer);
+	}
+	
+	if(depthEnabled) {
+		if(!depthRenderbuffer) {
+			glGenRenderbuffers(1, &depthRenderbuffer);
+        }
+		
+		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+		
+		if(fsaaEnabled) {
+			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, fsaaSamples, GL_DEPTH_COMPONENT16, backingWidth, backingHeight);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+		} else {
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, backingWidth, backingHeight); // GL DEPTH COMPONENT ON THIS LINE ISNT CORRECT POTENTIALLY
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+		}
+	}
     
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         NSLog(@"Failed to make complete framebuffer object %x %ix%i", glCheckFramebufferStatus(GL_FRAMEBUFFER), backingWidth, backingHeight);
@@ -80,6 +136,21 @@
         glDeleteRenderbuffers(1, &colorRenderbuffer);
         colorRenderbuffer = 0;
     }
+    
+	if(depthRenderbuffer) {
+		glDeleteRenderbuffers(1, &depthRenderbuffer);
+		depthRenderbuffer = 0;
+	}
+	
+	if(fsaaFrameBuffer) {
+		glDeleteRenderbuffers(1, &fsaaFrameBuffer);
+		fsaaFrameBuffer = 0;
+	}
+	
+	if(fsaaColorRenderBuffer) {
+		glDeleteRenderbuffers(1, &fsaaColorRenderBuffer);
+		fsaaColorRenderBuffer = 0;
+	}
 }
 
 - (void)dealloc {
