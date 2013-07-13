@@ -149,8 +149,8 @@ void testApp::draw(){
 	// 
 	// 		use sin cos and time to make some spirally shape
 	//
-	glPushMatrix();
-		glTranslatef(100,300,0);
+	ofPushMatrix();
+		ofTranslate(100,300,0);
 		ofSetHexColor(0xff2220);
 		ofFill();
 		ofSetPolyMode(OF_POLY_WINDING_ODD);
@@ -166,7 +166,7 @@ void testApp::draw(){
 			radius 	+= radiusAdder; 
 		}
 		ofEndShape(OF_CLOSE);
-	glPopMatrix();
+	ofPopMatrix();
 	//-------------------------------------
 	
 	//------(f)--------------------------------------
@@ -312,7 +312,7 @@ void testApp::draw(){
 	ofNoFill();
 	
 	
-	glPushMatrix();
+	ofPushMatrix();
 	
 	ofSetPolyMode(OF_POLY_WINDING_ODD);
 	
@@ -335,7 +335,7 @@ void testApp::draw(){
 
 	ofEndShape(true);
 	
-	glTranslatef(100,0,0);
+	ofTranslate(100,0,0);
 	
 	ofSetPolyMode(OF_POLY_WINDING_NONZERO);	
 	ofBeginShape();
@@ -356,7 +356,7 @@ void testApp::draw(){
 		
 	ofEndShape(true);
 	
-	glTranslatef(100,0,0);
+	ofTranslate(100,0,0);
 	ofSetPolyMode(OF_POLY_WINDING_ABS_GEQ_TWO);
 	ofBeginShape();
 		ofVertex(300,500);
@@ -375,7 +375,7 @@ void testApp::draw(){
 		
 	ofEndShape(true);
 	
-	glPopMatrix();
+	ofPopMatrix();
 	//-------------------------------------
 	
 	

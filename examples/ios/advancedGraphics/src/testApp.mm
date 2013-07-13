@@ -87,7 +87,7 @@ void testApp::draw(){
 	ofDisableAlphaBlending();
 
 	if(ofGetWidth() > 480){ // then we are running retina
-		glScalef(2, 2, 0);
+		ofScale(2, 2, 0);
     }
 
 	//---------------------------
@@ -113,12 +113,12 @@ void testApp::draw(){
 	//We only want to rotate the circles
 	//So we use push and pop matrix to
 	//make sure the rotation is contained
-	glPushMatrix();
+	ofPushMatrix();
 		//we position the rotation point
 		//at the location we want it to
 		//spin around .
-		glTranslatef(750, 320, 0);
-		glRotatef(spin, 0, 0, 1);
+		ofTranslate(750, 320, 0);
+		ofRotate(spin, 0, 0, 1);
 
 		//draw a red circle
 		ofSetColor(255,0, 0);
@@ -131,7 +131,7 @@ void testApp::draw(){
 		//draw a blue circle
 		ofSetColor(0, 0, 255);
 		ofCircle(0, 57, 100);
-	glPopMatrix();
+	ofPopMatrix();
 
 
 	//---------------------------------
