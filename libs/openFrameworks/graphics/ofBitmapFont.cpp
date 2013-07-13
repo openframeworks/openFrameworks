@@ -478,3 +478,45 @@ void ofDrawBitmapCharacterEnd(){
 
 }
 
+ofMesh & ofBitmapStringGetMesh(const string & text, int x, int y){
+
+	int len = (int)text.length();
+	//float yOffset = 0;
+	float fontSize = 8.0f;
+	bool bOrigin = false;
+
+	float sx = x;
+	float sy = y-fontSize;
+
+	ofDrawBitmapCharacterStart(text.size());
+
+	for(int c = 0; c < len; c++){
+		if(text[c] == '\n'){
+
+			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sx = x;
+
+			//glRasterPos2f(x,y + (int)yOffset);
+		} else if (text[c] >= 32){
+			// < 32 = control characters - don't draw
+			// solves a bug with control characters
+			// getting drawn when they ought to not be
+			ofDrawBitmapCharacter(text[c], (int)sx, (int)sy);
+
+			sx += fontSize;
+		}
+	}
+	//We do this because its way faster
+	ofDrawBitmapCharacterEnd();
+	charMesh.getVertices().resize(vC);
+	charMesh.getTexCoords().resize(vC);
+	return charMesh;
+
+}
+
+ofTexture & ofBitmapStringGetTextureRef(){
+	if(!bBitmapTexturePrepared){
+		prepareBitmapTexture();
+	}
+	return bitmappedFontTexture;
+}

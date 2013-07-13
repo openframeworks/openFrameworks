@@ -48,6 +48,7 @@ public:
 
 	virtual ofAbstractParameter & getParameter() = 0;
 	static void loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
+	static void setUseTTF(bool bUseTTF);
 
 
 	virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
@@ -58,10 +59,14 @@ protected:
 	virtual void render()=0;
 	bool isGuiDrawing();
 	virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
+	void bindFontTexture();
+	void unbindFontTexture();
+	ofMesh & getTextMesh(const string & text, float x, float y);
 
 	ofRectangle b;
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
+	static bool useTTF;
 	ofBaseFileSerializer * serializer;
 
 	static const ofColor headerBackgroundColor;
