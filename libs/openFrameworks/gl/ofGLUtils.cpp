@@ -183,8 +183,20 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 			case GL_STENCIL_INDEX:
 				return GL_STENCIL_INDEX;
 
+#ifndef TARGET_OPENGLES
+			case GL_R8:
+			case GL_R16:
+			case GL_R32F:
+				return GL_RED;
+
+			case GL_RG8:
+			case GL_RG16:
+			case GL_RG32F:
+				return GL_RG;
+#endif
+
 			default:
-				ofLogError() << "unkonwn internal format returning RGBA for transfer format";
+				ofLogError() << "unkonwn internal format " << glInternalFormat << " returning RGBA for glFormat";
 				return GL_RGBA;
 
 		}
@@ -202,6 +214,8 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RGBA8:
 		case GL_LUMINANCE8:
 		case GL_LUMINANCE8_ALPHA8:
+		case GL_R8:
+		case GL_RG8:
 #endif
 			 return GL_UNSIGNED_BYTE;
 
@@ -211,6 +225,8 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RGBA16:
 		case GL_LUMINANCE16:
 		case GL_LUMINANCE16_ALPHA16:
+		case GL_R16:
+		case GL_RG16:
 #endif
 			return GL_UNSIGNED_SHORT;
 
@@ -220,10 +236,12 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 			 return GL_LUMINANCE;
 
 #ifndef TARGET_OPENGLES
-		case GL_RGB32F_ARB:
-		case GL_RGBA32F_ARB:
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
+		case GL_RGB32F:
+		case GL_RGBA32F:
+		case GL_R32F:
+		case GL_RG32F:
 #endif
 			return GL_FLOAT;
 
@@ -247,7 +265,7 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 			return GL_UNSIGNED_BYTE;
 
 		default:
-			ofLogError() << "unkonwn internal format returning RGBA for transfer format";
+			ofLogError() << "unkonwn internal format " << glInternalFormat << " returning GL_UNSIGNED_BYTE for glType";
 			return GL_UNSIGNED_BYTE;
 
 	}

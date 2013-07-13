@@ -633,6 +633,9 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 	}
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 	update();
 	return bLoadedOk;
@@ -651,6 +654,9 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 	}
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 	update();
 	return bLoadedOk;
@@ -758,6 +764,9 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	// take care of texture allocation --
 	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 	
 	width	= pixels.getWidth();
@@ -891,6 +900,9 @@ void ofImage_<PixelType>::update(){
 		int glTypeInternal = ofGetGlInternalFormat(pixels);
 		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glTypeInternal != glTypeInternal){
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), glTypeInternal);
+			if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+				tex.setRGToRGBASwizzles(true);
+			}
 		}
 		tex.loadData(pixels);
 	}
@@ -1107,6 +1119,9 @@ void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int 
 		if (bUseTexture){
 			tex.clear();
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+			if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+				tex.setRGToRGBASwizzles(true);
+			}
 		}
 	}
 
@@ -1123,6 +1138,9 @@ void ofImage_<PixelType>::rotate90(int nRotations){
 		if (bUseTexture){
 			tex.clear();
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+			if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+				tex.setRGToRGBASwizzles(true);
+			}
 		}
 	}
 	update();
@@ -1200,6 +1218,9 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 		// always reallocate the texture. if ofTexture doesn't need reallocation,
 		// it doesn't have to. but it needs to change the internal format.
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 }
 
