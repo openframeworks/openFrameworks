@@ -116,15 +116,15 @@ void ofxSlider<Type>::generateDraw(){
 template<typename Type>
 void ofxSlider<Type>::generateText(){
 	string valStr = ofToString(value);
-	textMesh = font.getStringMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(font.getStringMesh(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4));
+	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 }
 
 template<>
 void ofxSlider<unsigned char>::generateText(){
 	string valStr = ofToString((int)value);
-	textMesh = font.getStringMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(font.getStringMesh(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4));
+	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 }
 
 template<typename Type>
@@ -139,9 +139,10 @@ void ofxSlider<Type>::render(){
 		ofEnableAlphaBlending();
 	}
 	ofSetColor(thisTextColor);
-	font.getFontTexture().bind();
+
+	bindFontTexture();
 	textMesh.draw();
-	font.getFontTexture().unbind();
+	unbindFontTexture();
 
 	ofSetColor(c);
 	if(blendMode!=OF_BLENDMODE_ALPHA){
