@@ -231,27 +231,19 @@ void ofxGuiGroup::generateDraw(){
 	border.clear();
 	border.setFillColor(ofColor(thisBorderColor,180));
 	border.setFilled(true);
-	border.moveTo(b.x,b.y+ spacingNextElement);
-	border.lineTo(b.x+b.width+1,b.y+ spacingNextElement);
-	border.lineTo(b.x+b.width+1,b.y+b.height+ spacingNextElement);
-	border.lineTo(b.x,b.y+b.height+ spacingNextElement);
-	border.close();
+	border.rectangle(b.x,b.y+ spacingNextElement,b.width+1,b.height);
 
 
 	headerBg.clear();
 	headerBg.setFillColor(thisHeaderBackgroundColor);
 	headerBg.setFilled(true);
-	headerBg.moveTo(b.x,b.y +1 + spacingNextElement);
-	headerBg.lineTo(b.x+b.width,b.y+1+ spacingNextElement);
-	headerBg.lineTo(b.x+b.width,b.y+header+1+ spacingNextElement);
-	headerBg.lineTo(b.x,b.y+header+1+ spacingNextElement);
-	headerBg.close();
+	headerBg.rectangle(b.x,b.y +1 + spacingNextElement, b.width, header);
 
-	textMesh = font.getStringMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
+	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
 	if(minimized){
-		textMesh.append(font.getStringMesh("+", b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement));
+		textMesh.append(getTextMesh("+", b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement));
 	}else{
-		textMesh.append(font.getStringMesh("-", b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement));
+		textMesh.append(getTextMesh("-", b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement));
 	}
 }
 
@@ -265,10 +257,10 @@ void ofxGuiGroup::render(){
 	}
 	ofColor c = ofGetStyle().color;
 	ofSetColor(thisTextColor);
-	font.getFontTexture().bind();
 
+	bindFontTexture();
 	textMesh.draw();
-	font.getFontTexture().unbind();
+	unbindFontTexture();
     
 	if(!minimized){
 		for(int i = 0; i < (int)collection.size(); i++){

@@ -19,3 +19,4 @@ mv ../../../projectGenerator/projectGeneratorSimple ../../../projectGenerator/pr
 sed -i "s/..\/..\/..\/..\//..\//g" ../../../projectGenerator/data/settings/projectGeneratorSettings.xml
 chown -R $ID:$GROUP_ID obj bin
 chown -R $ID:$GROUP_ID ../../../projectGenerator
+chown -R $ID:$GROUP_ID ../../../addons/obj
