@@ -117,14 +117,14 @@ template<typename Type>
 void ofxSlider<Type>::generateText(){
 	string valStr = ofToString(value);
 	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4));
+	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 }
 
 template<>
 void ofxSlider<unsigned char>::generateText(){
 	string valStr = ofToString((int)value);
 	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - valStr.length() * 8, b.y + b.height / 2 + 4));
+	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 }
 
 template<typename Type>

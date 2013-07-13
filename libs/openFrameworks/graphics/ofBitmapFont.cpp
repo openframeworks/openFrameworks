@@ -520,3 +520,18 @@ ofTexture & ofBitmapStringGetTextureRef(){
 	}
 	return bitmappedFontTexture;
 }
+
+
+ofRectangle ofBitmapStringGetBoundingBox(const string & text, int x, int y){
+	const ofMesh & mesh = ofBitmapStringGetMesh(text,x,y);
+	ofVec2f max(numeric_limits<float>::min(),numeric_limits<float>::min());
+	ofVec2f min(numeric_limits<float>::max(),numeric_limits<float>::max());
+	for(int i=0;i< mesh.getNumVertices(); i++){
+		const ofVec3f & p = mesh.getVertex(i);
+		if(p.x<min.x) min.x = p.x;
+		if(p.y<min.y) min.y = p.y;
+		if(p.x>max.x) max.x = p.x;
+		if(p.y>max.y) max.y = p.y;
+	}
+	return ofRectangle(min.x,min.y,max.x-min.x,max.y-min.y);
+}
