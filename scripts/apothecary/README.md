@@ -1,13 +1,13 @@
 Apothecary
 ==========
 
-This is the OpenFrameworks library apothecary. It mixes formulas and potions to build and update the C/C++ lib dependencies.
+This is the [OpenFrameworks](http://openframeworks.cc) library apothecary. It mixes formulas and potions to build and update the C/C++ lib dependencies.
 
 It's basically a simple build system using Bash scripting inspired by [Homebrew](http://mxcl.github.io/homebrew/). Individual libraries are separated into formula scripts which abstract the download, build, copy, and clean actions to increase flexibility and maintainability. The main apothecary script processes these formulas, runs the appropriate actions, and puts things "in the right place".
 
 One advantage to this approach is that the libraries and/or library binaries can be removed from the OF core repository and only built for the distribution zip packages. Git users would simply need to build all the libraries after doing a clone, which is not that much of a stretch since they already have to generate project files using the OF Project Generator.
 
-2013 Dan Wilcox <danomatika@gmail.com>
+2013 Dan Wilcox <danomatika@gmail.com><br>
 Supported by the CMU [Studio for Creative Inquiry](http://studioforcreativeinquiry.org/)
 
 **<span style="color: #F00">This is currently experimental. See the [Apothecary Lib Support spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0Ao8N9g3ekXTydGtzZUxya0IxMTNkdUNiT05laTJieXc&usp=sharing) for current status of the apothecary lib formulas.</span>**
@@ -29,10 +29,10 @@ Quick Start
 
 *Note: Dirs are relative to base OF dir path*
 
-Core OF formulas dir : `scripts/apothecary/formulas`
+Core OF formulas dir : `scripts/apothecary/formulas`<br>
 Addon formulas dir: `addons/ofxAddonName/scripts/formulas`
 
-Default build dir: `scripts/apothecary/build`
+Default build dir: `scripts/apothecary/build`<br>
 Default Core OF libs dest dir: `libs`
 
 Update a library:
@@ -74,7 +74,7 @@ See the built in help for more info:
 * **-a**: specify architecture, either 32 or 64 (default is 32 bit)
   * note: not currently needed, reserved for future use
 
-* **-b**: set the lib build dir, default: \$APOTHECARY_DIR/build
+* **-b**: set the lib build dir, default: $APOTHECARY_DIR/build
 
 * **-d**: set the compiled libs destination dir,
   * default: OF core libs dir or addons/addonName/libs for addons
@@ -85,7 +85,7 @@ See the built in help for more info:
 
 ### Command/Option Order
 
-All options **must* be given before a command or apothecary will return an error.
+All options **must** be given before a command or apothecary will return an error.
 
 Detailed Usage
 --------------
@@ -169,7 +169,7 @@ Returning to cairo, the cairo formula script runs apothecary on it's dependency 
 
 ### Errors
 
-If any errors occur while running apothecary, it tells you in RED printouts and exits with a return code of 1 while successful command results are (sometimes) printed in GREEN and return a 0. This should make it easy to drop apothecary into an existing automated build/scripting system.
+If any errors occur while running apothecary, it tells you in <span style="color: #F00">red printouts</span> and exits with a return code of 1 while successful command results are (sometimes) printed in <span style="color: #008000">green</span> and return a 0. This should make it easy to drop apothecary into an existing automated build/scripting system.
 
 ### Build Types
 
@@ -229,7 +229,7 @@ apothecary shares a number of variables with it's formula scripts when running t
 
 Look inside the apothecary script for more info.
 
-*Note: $FORMULA_TYPES is the **only** writable variable. **Do not** write to any of the other variables or things will probably not work.*
+*Note: $FORMULA_TYPES is the only writable variable. Do not write to any of the other variables or things will probably not work.*
 
 The main variables you will probably use are $FORMULA_TYPE and $TYPE. $FORMULA_TYPE is an array of build types supported by the formula and is used by apothecary to ignore formulas if they don't match the current build type. $TYPE is your bread and butter and you'll use it to determine which build commands to run (ex. make versus MSBuild.exe) and which location to copy to based on the build type.
 
@@ -397,7 +397,7 @@ Bash provides an easy way to debug scripts by `set -x`. Put this command in your
 
 **PLEASE PLEASE PLEASE comment your formulas!** Writing build scripts sucks! Don't make it even more hell for people that have to try and maintain what you've done. Note *any* assumptions you're making **especially** regarding things that may change based on newer releases of a library.
 
-Last, if you write a formula but can't finish/test it on all platforms, etc make a note of this using the `echoWarning` print command. This is a function provided by apothecary that prints text in yellow (caution, right?). Start your info string with with "TODO: ":
+Last, if you write a formula but can't finish/test it on all platforms, etc make a note of this using the `echoWarning` print command. This is a function provided by apothecary that prints text in <span style="color: #FF0">yellow (caution, right?)</span>. Start your info string with with "TODO: ":
 
 	if [ "$TYPE" == "win_cb" ] then ;
 		echoWarning "TODO: build win_cb"

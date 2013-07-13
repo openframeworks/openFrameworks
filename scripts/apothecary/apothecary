@@ -723,6 +723,10 @@ case "$A_CMD" in
 		doCommand remove $@ ;;
 
 	remove-lib)
+		if [ ! -e $LIBS_DIR ] ; then
+			echoInfo " Nothing to remove"
+			exit 0
+		fi
 		doCommand remove-lib $@ ;;
 
 	remove-all)
