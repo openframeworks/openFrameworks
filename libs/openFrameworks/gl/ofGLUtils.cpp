@@ -31,17 +31,9 @@ int ofGetGlInternalFormat(const ofPixels& pix) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
 		case 2:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_RG;
-			}else{
-				return GL_LUMINANCE_ALPHA;
-			}
+			return GL_LUMINANCE_ALPHA;
 		default:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_RED;
-			}else{
-				return GL_LUMINANCE;
-			}
+			return GL_LUMINANCE;
 	}
 #endif
 }
@@ -71,17 +63,9 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
 		case 2:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_RG;
-			}else{
-				return GL_LUMINANCE_ALPHA;
-			}
+			return GL_LUMINANCE_ALPHA;
 		default:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_R;
-			}else{
-				return GL_LUMINANCE;
-			}
+			return GL_LUMINANCE;
 	}
 #endif
 }
@@ -111,17 +95,9 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
 		case 2:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_RG;
-			}else{
-				return GL_LUMINANCE_ALPHA;
-			}
+			return GL_LUMINANCE_ALPHA;
 		default:
-			if(ofGetGLProgrammableRenderer()){
-				return GL_R;
-			}else{
-				return GL_LUMINANCE;
-			}
+			return GL_LUMINANCE;
 	}
 #endif
 }
