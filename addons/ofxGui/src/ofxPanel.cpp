@@ -50,21 +50,13 @@ void ofxPanel::generateDraw(){
 	border.setStrokeColor(thisBorderColor);
 	border.setStrokeWidth(1);
 	border.setFilled(false);
-	border.moveTo(b.x,b.y);
-	border.lineTo(b.x+b.width+1,b.y);
-	border.lineTo(b.x+b.width+1,b.y+b.height-spacingNextElement);
-	border.lineTo(b.x,b.y+b.height-spacingNextElement);
-	border.close();
+	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
 
 
 	headerBg.clear();
 	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
 	headerBg.setFilled(true);
-	headerBg.moveTo(b.x,b.y+1);
-	headerBg.lineTo(b.x+b.width,b.y+1);
-	headerBg.lineTo(b.x+b.width,b.y+header+1);
-	headerBg.lineTo(b.x,b.y+header+1);
-	headerBg.close();
+	headerBg.rectangle(b.x,b.y+1,b.width,header);
 
 	int iconSpacing = 6;
 	loadBox.x = b.x + b.width - (loadIcon.getWidth() + saveIcon.getWidth() + iconSpacing + textPadding);
@@ -74,7 +66,7 @@ void ofxPanel::generateDraw(){
 	saveBox.set(loadBox);
 	saveBox.x += loadIcon.getWidth() + iconSpacing;
 
-	textMesh = font.getStringMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
 }
 
 void ofxPanel::render(){
@@ -87,10 +79,10 @@ void ofxPanel::render(){
 	}
 	ofColor c = ofGetStyle().color;
 	ofSetColor(thisTextColor);
-	font.getFontTexture().bind();
 
+	bindFontTexture();
 	textMesh.draw();
-	font.getFontTexture().unbind();
+	unbindFontTexture();
 
 	loadIcon.draw(loadBox.x, loadBox.y);
 	saveIcon.draw(saveBox.x, saveBox.y);

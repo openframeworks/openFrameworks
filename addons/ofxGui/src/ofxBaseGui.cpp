@@ -1,6 +1,16 @@
 #include "ofxBaseGui.h"
 #include "ofxXmlSettings.h"
 #include "ofImage.h"
+#include "ofBitmapFont.h"
+
+
+void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0){
+	ofxBaseGui::loadFont(fontPath,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
+}
+
+void ofxGuiSetBitmapFont(){
+	ofxBaseGui::setUseTTF(false);
+}
 
 const ofColor
 ofxBaseGui::headerBackgroundColor(64),
@@ -11,10 +21,11 @@ ofxBaseGui::fillColor(128);
 
 const int ofxBaseGui::textPadding = 4;
 const int ofxBaseGui::defaultWidth = 200;
-const int ofxBaseGui::defaultHeight = 16;
+const int ofxBaseGui::defaultHeight = 18;
 
 ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
+bool ofxBaseGui::useTTF = false;
 
 ofxBaseGui::ofxBaseGui(){
 	currentFrame = ofGetFrameNum();
@@ -26,13 +37,24 @@ ofxBaseGui::ofxBaseGui(){
 	thisTextColor=textColor;
 	thisFillColor=fillColor;
 
-	if(!fontLoaded)
-		loadFont(OF_TTF_SANS,8,true,true);
+	/*if(!fontLoaded){
+		loadFont(OF_TTF_SANS,10,true,true);
+		useTTF=false;
+	}*/
+
 }
 
 void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	font.loadFont(filename,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
 	fontLoaded = true;
+	useTTF = true;
+}
+
+void ofxBaseGui::setUseTTF(bool bUseTTF){
+	if(bUseTTF && !fontLoaded){
+		loadFont(OF_TTF_SANS,8,true,true);
+	}
+	useTTF = bUseTTF;
 }
 
 ofxBaseGui::~ofxBaseGui(){
@@ -50,6 +72,31 @@ bool ofxBaseGui::isGuiDrawing(){
 		return false;
 	}else{
 		return true;
+	}
+}
+
+void ofxBaseGui::bindFontTexture(){
+	if(useTTF){
+		font.getFontTexture().bind();
+	}else{
+		ofBitmapStringGetTextureRef().bind();
+	}
+}
+
+void ofxBaseGui::unbindFontTexture(){
+	if(useTTF){
+		font.getFontTexture().unbind();
+	}else{
+		ofBitmapStringGetTextureRef().unbind();
+	}
+}
+
+
+ofMesh & ofxBaseGui::getTextMesh(const string & text, float x, float y){
+	if(useTTF){
+		return font.getStringMesh(text,x,y);
+	}else{
+		return ofBitmapStringGetMesh(text,x,y);
 	}
 }
 
