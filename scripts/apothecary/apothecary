@@ -54,7 +54,7 @@ LIBS_DIR=
 
 # xcode Developer root
 XS="xcode-select -print-path" # stupid hack to keep my syntax highlighting from breaking :P
-XCODE_DEV_ROOT=$($XS)
+XCODE_DEV_ROOT=
 
 # used when building some libs for osx
 OSX_SDK_VER=10.8
@@ -650,6 +650,11 @@ if [ "$TYPE" == "" ] ; then
 fi
 FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
 echoVerbose "Valid build types: ${VALID_TYPES[*]}"
+
+# set xcode dev root on osx
+if [ "$OS" == "osx" ] ; then
+	XCODE_DEV_ROOT=$($XS)
+fi
 
 # check if we have a valid build type
 typeIsValid=0 # bool
