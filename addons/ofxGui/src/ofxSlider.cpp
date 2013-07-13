@@ -102,20 +102,12 @@ void ofxSlider<Type>::generateDraw(){
 
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
-	bg.moveTo(b.x, b.y);
-	bg.lineTo(b.x+b.width,b.y);
-	bg.lineTo(b.x+b.width,b.y+b.height);
-	bg.lineTo(b.x,b.y+b.height);
-	bg.close();
+	bg.rectangle(b);
 
 	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
 	bar.setFillColor(thisFillColor);
 	bar.setFilled(true);
-	bar.moveTo(b.x+1, b.y+1);
-	bar.lineTo(b.x+1+valAsPct,b.y+1);
-	bar.lineTo(b.x+1+valAsPct,b.y+b.height-1);
-	bar.lineTo(b.x+1,b.y+b.height-1);
-	bar.close();
+	bar.rectangle(b.x+1, b.y+1, valAsPct, b.height-2);
 
 	generateText();
 }
