@@ -242,3 +242,7 @@ void ofRemoveURLRequest(int id){
 void ofRemoveAllURLRequests(){
 	getFileLoader().clear();
 }
+
+void ofStopURLLoader(){
+	getFileLoader().stop();
+}
