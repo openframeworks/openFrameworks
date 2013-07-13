@@ -42,6 +42,9 @@ string ofGetGlInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int glInternalFormat);
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
+ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
+ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
+
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {
 	switch(pixels.getNumChannels()) {
@@ -52,10 +55,18 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 			return GL_RGB;
 			break;
 		case 2:
-			return GL_LUMINANCE_ALPHA;
+			if(ofGetGLProgrammableRenderer()){
+				return GL_RG;
+			}else{
+				return GL_LUMINANCE_ALPHA;
+			}
 			break;
 		case 1:
-			return GL_LUMINANCE;
+			if(ofGetGLProgrammableRenderer()){
+				return GL_RED;
+			}else{
+				return GL_LUMINANCE;
+			}
 			break;
 
 		default:
@@ -88,9 +99,6 @@ void ofSetPixelStorei(int w, int bpc, int numChannels);
 
 
 bool ofCheckGLExtension(string searchName);
-
-ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
 
 bool ofIsGLProgrammableRenderer();
 
