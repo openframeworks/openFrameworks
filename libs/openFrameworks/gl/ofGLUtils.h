@@ -55,18 +55,27 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 			return GL_RGB;
 			break;
 		case 2:
+#ifndef TARGET_OPENGLES
 			if(ofGetGLProgrammableRenderer()){
 				return GL_RG;
 			}else{
+#endif
 				return GL_LUMINANCE_ALPHA;
+#ifndef TARGET_OPENGLES
 			}
+#endif
 			break;
+
 		case 1:
+#ifndef TARGET_OPENGLES
 			if(ofGetGLProgrammableRenderer()){
 				return GL_RED;
 			}else{
+#endif
 				return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
 			}
+#endif
 			break;
 
 		default:
