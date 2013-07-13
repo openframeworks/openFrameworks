@@ -151,29 +151,6 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::whit
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yellowGreen(0.603922*limit(),0.803922*limit(),0.196078*limit());
 
 
-// clampedSubtract, clampedAdd, clampedMultiply and clampedDivide are used by
-// ofColor_<unsigned short> and ofColor_<unsigned char>, while ofColor_<float>
-// operators are specialized to use clamp() after doing standard operations.
-template<typename A, typename B>
-A clampedSubtract(const A& a, const B& b) {
-	return CLAMP((float) a - (float) b, numeric_limits<A>::min(), numeric_limits<A>::max());
-}
-
-template<typename A, typename B>
-A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, numeric_limits<A>::min(), numeric_limits<A>::max());
-}
-
-template<typename A, typename B>
-A clampedMultiply(const A& a, const B& b) {
-	return CLAMP((float) a * (float) b, numeric_limits<A>::min(), numeric_limits<A>::max());
-}
-
-template<typename A, typename B>
-A clampedDivide(const A& a, const B& b) {
-	return CLAMP((float) a / (float) b, numeric_limits<A>::min(), numeric_limits<A>::max());
-}
-
 template<typename PixelType>
 float ofColor_<PixelType>::limit() {
 	return numeric_limits<PixelType>::max();
@@ -591,26 +568,6 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator += (float const & val){
 	return *this;
 }
 
-template<>
-ofColor_<float> & ofColor_<float>::operator += (ofColor_<float> const & color){
-	r += color.r;
-	g += color.g;
-	b += color.b;
-	clamp();
-	return *this;
-}
-
-
-template<>
-ofColor_<float> & ofColor_<float>::operator += (float const & val){
-	r += val;
-	g += val;
-	b += val;
-	clamp();
-	return *this;
-}
-
-
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator - (ofColor_<PixelType> const & color) const{
 	ofColor_<PixelType> result(*this);
@@ -641,26 +598,6 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator -= (float const & val){
 	r = clampedSubtract(r, val);
 	g = clampedSubtract(g, val);
 	b = clampedSubtract(b, val);
-	return *this;
-}
-
-
-template<>
-ofColor_<float> & ofColor_<float>::operator -= (ofColor_<float> const & color){
-	r -= color.r;
-	g -= color.g;
-	b -= color.b;
-	clamp();
-	return *this;
-}
-
-
-template<>
-ofColor_<float> & ofColor_<float>::operator -= (float const & val){
-	r -= val;
-	g -= val;
-	b -= val;
-	clamp();
 	return *this;
 }
 
@@ -698,26 +635,6 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator *= (float const & val){
 }
 
 
-template<>
-ofColor_<float> & ofColor_<float>::operator *= (ofColor_<float> const & color){
-	r *= color.r;
-	g *= color.g;
-	b *= color.b;
-	clamp();
-	return *this;
-}
-
-
-template<>
-ofColor_<float> & ofColor_<float>::operator *= (float const & val){
-	r *= val;
-	g *= val;
-	b *= val;
-	clamp();
-	return *this;
-}
-
-
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::operator / (ofColor_<PixelType> const & color) const{
 	ofColor_<PixelType> result(*this);
@@ -748,26 +665,6 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator /= (float const & val){
 	r = clampedDivide(r, val);
 	g = clampedDivide(g, val);
 	b = clampedDivide(b, val);
-	return *this;
-}
-
-
-template<>
-ofColor_<float> & ofColor_<float>::operator /= (ofColor_<float> const & color){
-	r /= color.r;
-	g /= color.g;
-	b /= color.b;
-	clamp();
-	return *this;
-}
-
-
-template<>
-ofColor_<float> & ofColor_<float>::operator /= (float const & val){
-	r /= val;
-	g /= val;
-	b /= val;
-	clamp();
 	return *this;
 }
 
