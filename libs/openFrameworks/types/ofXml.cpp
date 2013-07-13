@@ -1,29 +1,6 @@
 
 #include "ofXml.h"
 
-// templated to be anything
-//template <class T = string> void addValue(const string& path, T data, bool createEntirePath = false);
-
-////----------------------------------------
-//// a pretty useful tokenization system:
-//static vector<string> tokenize(const string & str, const string & delim)
-//{
-//    vector<string> tokens;
-//    
-//    size_t p0 = 0, p1 = string::npos;
-//    while(p0 != string::npos)
-//    {
-//        p1 = str.find_first_of(delim, p0);
-//        if(p1 != p0)
-//        {
-//            string token = str.substr(p0, p1 - p0);
-//            tokens.push_back(token);
-//        }
-//        p0 = str.find_first_not_of(delim, p1);
-//    }
-//    return tokens;
-//}
-
 ofXml::~ofXml() {
     
     if(document) {
@@ -202,8 +179,13 @@ void ofXml::addXml( ofXml& xml, bool copyAll ) {
         }
     }
 
-    // TODO: what if element is 0 here??
-    element->appendChild(n);
+    // we have an element, i.e. the document has child nodes
+    // or we don't, so append it directly to the document
+    if( element ) {
+        element->appendChild(n);
+    } else {
+        document->appendChild(n);
+    }
     
 }
 
@@ -254,14 +236,14 @@ bool ofXml::addChild( const string& path )
 
 string ofXml::getValue() const
 {
-    if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
+    if(element && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
         return element->innerText();
     }
     return "";
 }
 
 string ofXml::getValue(const string & path) const{
-	return getValue<string>(path);
+	return getValue<string>(path, "");
 }
 
 int ofXml::getIntValue() const{
@@ -269,7 +251,7 @@ int ofXml::getIntValue() const{
 }
 
 int	ofXml::getIntValue(const string & path) const{
-	return getValue<int>(path);
+	return getValue<int>(path,0);
 }
 
 float ofXml::getFloatValue() const{
@@ -277,7 +259,7 @@ float ofXml::getFloatValue() const{
 }
 
 float ofXml::getFloatValue(const string & path) const{
-	return getValue<float>(path);
+	return getValue<float>(path,0.0);
 }
 
 bool ofXml::getBoolValue() const{
@@ -285,7 +267,7 @@ bool ofXml::getBoolValue() const{
 }
 
 bool ofXml::getBoolValue(const string & path) const{
-	return getValue<bool>(path);
+	return getValue<bool>(path,false);
 }
 
 
@@ -301,8 +283,12 @@ bool ofXml::reset() {
 bool ofXml::setToChild(int index)
 {
     
-    if(!element) { // not sure how this could happen, but just in case
-        element = (Poco::XML::Element*) document->documentElement()->firstChild();
+    if(!element) {
+        if(Poco::XML::Element*) document->documentElement()->firstChild()) {
+            element = Poco::XML::Element*) document->documentElement()->firstChild();
+        } else {
+            ofLogWarning() << " setToChild() no element created yet " << endl;
+        }
     }
     
     int numberOfChildren = 0;
@@ -358,7 +344,12 @@ bool ofXml::setToParent(int numLevelsUp) {
 
 bool ofXml::setToSibling()
 {
-    Poco::XML::Element *node = (Poco::XML::Element*) element->nextSibling();
+    if(element) {
+        Poco::XML::Element *node = (Poco::XML::Element*) element->nextSibling();
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
     
     // empty space in the XML doc is treated as text nodes. blerg.
     while(node && node->nodeType() == Poco::XML::Node::TEXT_NODE) {
@@ -376,7 +367,12 @@ bool ofXml::setToSibling()
 
 bool ofXml::setToPrevSibling()
 {
-    Poco::XML::Element *node = (Poco::XML::Element*) element->previousSibling();
+    if(element) {
+        Poco::XML::Element *node = (Poco::XML::Element*) element->previousSibling();
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
     
     // empty space in the XML doc is treated as text nodes. blerg.
     while(node && node->nodeType() == Poco::XML::Node::TEXT_NODE) {
@@ -393,7 +389,12 @@ bool ofXml::setToPrevSibling()
 
 bool ofXml::setValue(const string& path, const string& value)
 {
-    Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+    if(element) {
+        Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
     
     if(!e) {
         ofLogWarning("ofXml", " setValue of " + path + " failed because path doesn't exist");
@@ -410,7 +411,13 @@ bool ofXml::setValue(const string& path, const string& value)
 
 string ofXml::getAttribute(const string& path) const {
 
-    Poco::XML::Node *e = element->getNodeByPath(path);
+    if(element) {
+        Poco::XML::Node *e = element->getNodeByPath(path);
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
+    
     if(e) {
         return e->getNodeValue(); // this will be the value of the attribute
     }
@@ -420,7 +427,13 @@ string ofXml::getAttribute(const string& path) const {
 bool ofXml::clearAttributes(const string& path) 
 {
     
-    Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+    if(element) {
+        Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
+    
     if(e) {
         Poco::XML::NamedNodeMap *map = e->attributes();
         
@@ -447,6 +460,7 @@ bool ofXml::clearAttributes()
         map->release();
         return true;
     }
+    ofLog(OF_LOG_WARNING, "No element set yet");
     return false;
 
 }
@@ -466,7 +480,13 @@ bool ofXml::clearContents() {
 
 bool ofXml::clearContents(const string& path) {
     
-    Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+    if(element) {
+        Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
+    
     if(e) {
         Poco::XML::NodeList *list = e->childNodes();
         for( int i = 0; i < (int)list->length(); i++) {
@@ -481,7 +501,12 @@ bool ofXml::clearContents(const string& path) {
 
 bool ofXml::remove(const string& path) // works for both attributes and tags
 {
-    Poco::XML::Node *node = element->getNodeByPath(path);
+    if(element) {
+        Poco::XML::Node *node = element->getNodeByPath(path);
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
     
     if(node) {
         Poco::XML::Node *n = node->parentNode()->removeChild(node);
@@ -493,7 +518,12 @@ bool ofXml::remove(const string& path) // works for both attributes and tags
 
 bool ofXml::exists(const string& path) const // works for both attributes and tags
 {
-    Poco::XML::Node *node = element->getNodeByPath(path);
+    if(element) {
+        Poco::XML::Node *node = element->getNodeByPath(path);
+    } else {
+        ofLog(OF_LOG_WARNING, "No element set yet");
+        return false;
+    }
     
     if(node) {
         return true;
@@ -505,11 +535,17 @@ map<string, string> ofXml::getAttributes() const // works for both attributes an
 {
     
     map<string, string> attrMap;
-    Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
-    for( int i = 0; i < (int)attr->length(); i++) {
-        attrMap[attr->item(i)->nodeName()] = attr->item(i)->nodeValue();
+    
+    if(element){
+    
+        Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
+        for( int i = 0; i < (int)attr->length(); i++) {
+            attrMap[attr->item(i)->nodeName()] = attr->item(i)->nodeValue();
+        }
+    } else {
+        ofLogWarning() << " getAttribute() No element set " << endl;
     }
-    //attr->release();
+
     return attrMap; 
 }
 
@@ -650,6 +686,16 @@ string ofXml::getName() const
 bool ofXml::setTo(const string& path)
 {
     
+    if(!element) {
+        if(document->documentElement()) {
+            element = document->documentElement();
+        } else {
+            ofLog(OF_LOG_WARNING, " empty document ");
+            return false;
+        }
+    }
+        
+    
     // one case: we're at the root, but we don't know it yet:
     if(element == document->documentElement() && element->nodeName() == path ) {
         return true;
@@ -692,7 +738,7 @@ bool ofXml::setTo(const string& path)
             element = (Poco::XML::Element*) parent->getNodeByPath(remainingPath);
              if(!element) {
                  element = prev;
-                 ofLog(OF_LOG_WARNING, "setCurrentElement passed invalid path");
+                 ofLog(OF_LOG_WARNING, "setCurrentElement() passed invalid path");
                  return false;
              }
         }
@@ -703,7 +749,7 @@ bool ofXml::setTo(const string& path)
         element = (Poco::XML::Element*) document->getNodeByPath(path);
         if(!element) {
             element = prev;
-            ofLog(OF_LOG_WARNING, "setCurrentElement passed invalid path");
+            ofLog(OF_LOG_WARNING, "setCurrentElement() passed invalid path");
             return false;
         }
         
@@ -713,7 +759,7 @@ bool ofXml::setTo(const string& path)
         element = (Poco::XML::Element*) element->getNodeByPath(path);
         if(!element) {
             element = prev;
-            ofLog(OF_LOG_WARNING, "setCurrentElement passed invalid path");
+            ofLog(OF_LOG_WARNING, "setCurrentElement() passed invalid path");
             return false;
         }
     }
@@ -738,8 +784,13 @@ Poco::XML::Element* ofXml::getPocoElement(const string& path)
     if(ind != (int)string::npos) {
         copy = path.substr(0, ind);
     }
-
-    return (Poco::XML::Element*) element->getNodeByPath(copy);
+    
+    if(element) {
+        return (Poco::XML::Element*) element->getNodeByPath(copy);
+    } else {
+        ofLogWarning() << " getPocoElement() No element to get yet " << endl;
+        return NULL;
+    }
 
 }
 
@@ -752,7 +803,12 @@ const Poco::XML::Element* ofXml::getPocoElement(const string& path) const
         copy = path.substr(0, ind);
     }
 
-    return (Poco::XML::Element*) element->getNodeByPath(copy);
+    if(element) {
+        return (Poco::XML::Element*) element->getNodeByPath(copy);
+    } else {
+        ofLogWarning() << " getPocoElement() No element to get yet " << endl;
+        return NULL;
+    }
 
 }
 
