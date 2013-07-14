@@ -18,7 +18,7 @@
 int 		ofNextPow2 ( int a );
 void 		ofSeedRandom();
 void 		ofSeedRandom(int val);
-float ofRandom(float max); // random (0 - max)
+float 		ofRandom(float max); // random (0 - max)
 float 		ofRandom(float val0, float val1);		// random (x - y)
 float 		ofRandomf();							// random (-1 - 1)
 float 		ofRandomuf();							// random (0 - 1) 
@@ -39,6 +39,7 @@ float 		ofLerpRadians(float currentAngle, float targetAngle, float pct);
 float 		ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
 float 		ofAngleDifferenceRadians(float currentAngle, float targetAngle);
 float 		ofAngleSumRadians(float currentAngle, float targetAngle);
+float		ofWrap(float value, float from, float to);
 float		ofWrapRadians(float angle, float from = -PI, float to=+PI);
 float		ofWrapDegrees(float angle, float from = -180, float to=+180);
 
@@ -67,3 +68,92 @@ ofPoint 	ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 ofPoint 	ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 ofPoint 	ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 
+template<typename Type>
+Type		ofInterpolateCosine(Type y1, Type y2, float pct);
+template<typename Type>
+Type		ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct);
+template<typename Type>
+Type		ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct);
+template<typename Type>
+Type		ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct);
+template<typename Type>
+Type		ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias);
+
+
+
+
+
+// from http://paulbourke.net/miscellaneous/interpolation/
+//--------------------------------------------------
+template<typename Type>
+Type ofInterpolateCosine(Type y1, Type y2, float pct){
+	float pct2;
+
+	pct2 = (1-cos(pct*PI))/2;
+	return(y1*(1-pct2)+y2*pct2);
+}
+
+// from http://paulbourke.net/miscellaneous/interpolation/
+//--------------------------------------------------
+template<typename Type>
+Type ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct){
+	Type a0,a1,a2,a3;
+	float pct2;
+
+	pct2 = pct*pct;
+	a0 = y3 - y2 - y0 + y1;
+	a1 = y0 - y1 - a0;
+	a2 = y2 - y0;
+	a3 = y1;
+
+	return(a0*pct*pct2+a1*pct2+a2*pct+a3);
+}
+
+// from http://paulbourke.net/miscellaneous/interpolation/
+//--------------------------------------------------
+template<typename Type>
+Type ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct){
+	Type a0,a1,a2,a3;
+	float pct2 = pct*pct;
+	a0 = -0.5*y0 + 1.5*y1 - 1.5*y2 + 0.5*y3;
+	a1 = y0 - 2.5*y1 + 2*y2 - 0.5*y3;
+	a2 = -0.5*y0 + 0.5*y2;
+	a3 = y1;
+	return(a0*pct*pct2 + a1*pct2 + a2*pct +a3);
+}
+
+// from http://musicdsp.org/showArchiveComment.php?ArchiveID=93
+// laurent de soras
+//--------------------------------------------------
+template<typename Type>
+inline Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct){
+	const Type c = (y2 - y0) * 0.5f;
+	const Type v = y1 - y2;
+	const Type w = c + v;
+	const Type a = w + v + (y3 - y1) * 0.5f;
+	const Type b_neg = w + a;
+
+	return ((((a * pct) - b_neg) * pct + c) * pct + y1);
+}
+
+// from http://paulbourke.net/miscellaneous/interpolation/
+//--------------------------------------------------
+template<typename Type>
+Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias){
+	float pct2,pct3;
+	Type m0,m1;
+	Type a0,a1,a2,a3;
+
+	pct2 = pct * pct;
+	pct3 = pct2 * pct;
+	m0  = (y1-y0)*(1+bias)*(1-tension)/2;
+	m0 += (y2-y1)*(1-bias)*(1-tension)/2;
+	m1  = (y2-y1)*(1+bias)*(1-tension)/2;
+	m1 += (y3-y2)*(1-bias)*(1-tension)/2;
+	a0 =  Type(2*pct3 - 3*pct2 + 1);
+	a1 =  Type(pct3 - 2*pct2 + pct);
+	a2 =  Type(pct3 -   pct2);
+	a3 =  Type(-2*pct3 + 3*pct2);
+
+   return(a0*y1+a1*m0+a2*m1+a3*y2);
+}

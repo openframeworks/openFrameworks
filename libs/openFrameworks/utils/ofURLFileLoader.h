@@ -86,13 +86,13 @@ class ofURLFileLoader : public ofThread  {
         int saveAsync(string url, string path);
 		void remove(int id);
 		void clear();
+        void stop();
 
     protected:
 
 		// threading -----------------------------------------------
 		void threadedFunction();
         void start();
-        void stop();
         void update(ofEventArgs & args);  // notify in update so the notification is thread safe
 
     private:

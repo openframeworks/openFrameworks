@@ -69,7 +69,10 @@ bool ofVideoPlayer::loadMovie(string name){
         moviePath = name;
         if(bUseTexture ){
             if(width!=0 && height!=0) {
-                tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+                tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+        			tex.setRGToRGBASwizzles(true);
+        		}
             }
         }
     }
@@ -145,7 +148,7 @@ void ofVideoPlayer::update(){
 			if(playerTex == NULL){
 				unsigned char *pxls = player->getPixels();
 				
-				bool bDiffPixFormat = ( tex.bAllocated() && tex.texData.glTypeInternal != ofGetGLTypeFromPixelFormat(internalPixelFormat) );
+				bool bDiffPixFormat = ( tex.bAllocated() && tex.texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(internalPixelFormat) );
 				
 				//TODO: we might be able to do something smarter here for not re-allocating movies of the same size and type. 
 				if(width==0 || height==0 || bDiffPixFormat ){ //added a check if the pixel format and the texture don't match
@@ -157,20 +160,18 @@ void ofVideoPlayer::update(){
 						if(tex.bAllocated())
 							tex.clear();
 
-						tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+						tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+		        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+		        			tex.setRGToRGBASwizzles(true);
+		        		}
 						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 					}
-				}else{
-					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
+				}else{					
+					tex.loadData(pxls, width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
 				}
 			}
 		}
 	}
-}
-
-//---------------------------------------------------------------------------
-void ofVideoPlayer::idleMovie(){
-	update();
 }
 
 //---------------------------------------------------------------------------
@@ -325,6 +326,9 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 	if(bUse && width!=0 && height!=0 && !tex.isAllocated()){
 		tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 }
 

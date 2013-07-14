@@ -62,7 +62,7 @@ void testApp::draw(){
 		ofSetLineWidth(3);
 					
 			ofBeginShape();
-			for (int i = 0; i < lAudio.size(); i++){
+			for (unsigned int i = 0; i < lAudio.size(); i++){
 				float x =  ofMap(i, 0, lAudio.size(), 0, 900, true);
 				ofVertex(x, 100 -lAudio[i]*180.0f);
 			}
@@ -86,7 +86,7 @@ void testApp::draw(){
 		ofSetLineWidth(3);
 					
 			ofBeginShape();
-			for (int i = 0; i < rAudio.size(); i++){
+			for (unsigned int i = 0; i < rAudio.size(); i++){
 				float x =  ofMap(i, 0, rAudio.size(), 0, 900, true);
 				ofVertex(x, 100 -rAudio[i]*180.0f);
 			}
