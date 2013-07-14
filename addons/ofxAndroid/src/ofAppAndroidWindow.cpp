@@ -41,9 +41,11 @@ static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 static queue<ofTouchEventArgs> touchEventArgsQueue;
 static ofMutex mutex;
 static bool threadedTouchEvents = false;
+static bool appSetup = false;
 
 
 void ofExitCallback();
+void ofGLReadyCallback();
 
 //static ofAppAndroidWindow window;
 
@@ -112,13 +114,29 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 }
 
 void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
-	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer));
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"setupOpenGL: cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(I)V");
+	if(!method){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setupGL method");
+		return;
+	}
+
+	if(ofGetGLProgrammableRenderer())
+		ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,2);
+	else
+		ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,1);
 }
 
 void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
 	if(androidApp){
-		ofxRegisterMultitouch(androidApp);
+		ofRegisterTouchEvents(androidApp);
 	}
 }
 
@@ -191,7 +209,7 @@ void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
 	threadedTouchEvents = threadedEvents;
 }
 
-void reloadTextures(){
+static void reloadGLResources(){
 	ofUpdateBitmapCharacterTexture();
 	ofReloadAllImageTextures();
 	ofReloadAllFontTextures();
@@ -304,35 +322,33 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
-	ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
-	if(!surfaceDestroyed){
-		ofUnloadAllFontTextures();
-		ofPauseVideoGrabbers();
-		if(androidApp){
-			androidApp->unloadTextures();
+	if(appSetup){
+		ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
+		if(!surfaceDestroyed){
+			ofUnloadAllFontTextures();
+			ofPauseVideoGrabbers();
+			if(androidApp){
+				androidApp->unloadTextures();
+			}
 		}
+
+		ofGLReadyCallback();
+
+		reloadGLResources();
+		if(androidApp){
+			androidApp->reloadTextures();
+		}
+		ofSetStyle(ofGetStyle());
+		surfaceDestroyed = false;
+	}else{
+		ofGLReadyCallback();
 	}
-	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
-		renderer->setup();
-	}
-	reloadTextures();
-	if(androidApp){
-		androidApp->reloadTextures();
-	}
-	ofSetStyle(ofGetStyle());
-	surfaceDestroyed = false;
 
 }
 
 void
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
-	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		ofLogNotice() << "OpenGL ES version " << glGetString(GL_VERSION) << endl;
-		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
-		renderer->setup();
-	}
 	ofLog(OF_LOG_NOTICE,"setup");
 	paused = false;
     sWindowWidth  = w;
@@ -395,9 +411,8 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	ofNotifyUpdate();
 
 
-	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
-		renderer->startRender();
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->startRender();
 	}
 	int width, height;
 
@@ -418,9 +433,8 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	if(bSetupScreen) ofSetupScreen();
 	ofNotifyDraw();
 
-	if(ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		ofGLProgrammableRenderer* renderer = (ofGLProgrammableRenderer*)ofGetCurrentRenderer().get();
-		renderer->finishRender();
+	if(ofGetGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->finishRender();
 	}
 
 }
