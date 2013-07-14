@@ -36,7 +36,7 @@ ifeq ($(shell uname),Darwin)
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
 	HOST_PLATFORM = windows
 else
-	HOST_PLATFORM = linux-x86
+	HOST_PLATFORM = linux-$(shell uname -m)
 endif
 
 
@@ -76,7 +76,7 @@ ifndef $(SDK_TARGET)
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.6
+	GCC_VERSION = 4.7
 endif
 
 PROJECT_PATH=$(PWD)

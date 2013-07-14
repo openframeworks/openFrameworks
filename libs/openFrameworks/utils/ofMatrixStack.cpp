@@ -10,7 +10,7 @@
 #include "ofFbo.h"
 
 ofMatrixStack::ofMatrixStack(const ofAppBaseWindow & window)
-:vFlipped(false)
+:vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)
 ,handedness(OF_LEFT_HANDED)
 ,currentFbo(NULL)
