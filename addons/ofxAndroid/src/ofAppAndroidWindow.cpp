@@ -214,6 +214,7 @@ static void reloadGLResources(){
 	ofReloadAllImageTextures();
 	ofReloadAllFontTextures();
 	ofResumeVideoGrabbers();
+	ofResumeVideoPlayers();
 }
 
 extern "C"{
@@ -327,6 +328,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		if(!surfaceDestroyed){
 			ofUnloadAllFontTextures();
 			ofPauseVideoGrabbers();
+			ofPauseVideoPlayers();
 			if(androidApp){
 				androidApp->unloadTextures();
 			}
