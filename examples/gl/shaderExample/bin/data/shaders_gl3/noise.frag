@@ -1,7 +1,7 @@
 #version 150
 
 uniform sampler2D src_tex_unit0;
-uniform vec4 color;
+uniform vec4 globalColor;
 
 in vec2 texCoordVarying;
 
@@ -18,7 +18,7 @@ void main(){
     
 	//we use the mod function to only draw pixels if they are every 2 in x or every 4 in y
 	if( mod(xVal, 2.0) == 0.5 && mod(yVal, 4.0) == 0.5 ){
-		fragColor = color;    
+		fragColor = globalColor;    
     }else{
 		discard;
 	}
