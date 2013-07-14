@@ -11,6 +11,7 @@
 #define GLFW_EXPOSE_NATIVE_GLX
 #include "glfw3native.h"
 #include <X11/Xatom.h>
+#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
 #include <Cocoa/Cocoa.h>
 #define GLFW_EXPOSE_NATIVE_COCOA
@@ -29,7 +30,7 @@ ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
 ofAppGLFWWindow	* ofAppGLFWWindow::instance;
 GLFWwindow* ofAppGLFWWindow::windowP = NULL;
 
-
+void ofGLReadyCallback();
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
@@ -195,7 +196,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
     glfwMakeContextCurrent(windowP);
 
     glfwGetWindowSize(windowP, &windowW, &windowH );
-
+    ofGLReadyCallback();
 
 }
 
@@ -215,6 +216,7 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetWindowSizeCallback(windowP, resize_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
+	glfwSetDropCallback(windowP, drop_cb);
 
 #ifdef TARGET_LINUX
     if(!iconSet){
@@ -505,27 +507,7 @@ int	ofAppGLFWWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
-    
-    #ifdef TARGET_OSX
-    
-        //On OS X the window coords are bottom left relative.
-        //Also the screen coords are bottom left relative, so we have to do some calculations to get position working top left relative. 
-        //Currently GLFW's glfwSetWindowPos doesn't make OS X calls top left relative, so we have to do it ourselves. 
-        // see: https://github.com/glfw/glfw/issues/85 & https://github.com/openframeworks/openFrameworks/issues/2183 
-         
-        NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-        NSPoint pos;
-        pos.x = x; 
-        pos.y = y; 
-        [cocoaWindow setFrameTopLeftPoint:pos];
-
-        //we have to do this as the screen height can change if the window has moved screens due to the x coord. 
-        //so we adjust it once for x and the call it again, where we can use the correct window to figure out the new y.  
-        pos.y = getScreenSize().y - pos.y; 
-        [cocoaWindow setFrameTopLeftPoint:pos];
-    #else 
-        glfwSetWindowPos(windowP,x,y);
-    #endif 
+    glfwSetWindowPos(windowP,x,y);
     
     if( windowMode == OF_WINDOW ){
         nonFullScreenX=x;
@@ -914,6 +896,19 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 	// ofSendMessage("scroll|"+ofToString(x,5) + "|" + ofToString(y,5));
 }
 
+//------------------------------------------------------------
+void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
+	string drop = dropString;
+	ofDragInfo drag;
+	drag.position.set(ofGetMouseX(),ofGetMouseY());
+	drag.files = ofSplitString(drop,"\n",true);
+#ifdef TARGET_LINUX
+	for(int i=0; i<drag.files.size(); i++){
+		drag.files[i] = Poco::URI(drag.files[i]).getPath();
+	}
+#endif
+	ofNotifyDragEvent(drag);
+}
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods) {
