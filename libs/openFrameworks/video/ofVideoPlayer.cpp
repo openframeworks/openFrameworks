@@ -70,6 +70,9 @@ bool ofVideoPlayer::loadMovie(string name){
         if(bUseTexture ){
             if(width!=0 && height!=0) {
                 tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+        			tex.setRGToRGBASwizzles(true);
+        		}
             }
         }
     }
@@ -158,6 +161,9 @@ void ofVideoPlayer::update(){
 							tex.clear();
 
 						tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+		        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+		        			tex.setRGToRGBASwizzles(true);
+		        		}
 						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 					}
 				}else{					
@@ -320,6 +326,9 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 	if(bUse && width!=0 && height!=0 && !tex.isAllocated()){
 		tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 }
 

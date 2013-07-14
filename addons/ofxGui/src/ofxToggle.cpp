@@ -69,11 +69,7 @@ bool ofxToggle::mouseReleased(ofMouseEventArgs & args){
 void ofxToggle::generateDraw(){
 	bg.clear();
 	bg.setFillColor(thisBackgroundColor);
-	bg.moveTo(b.x,b.y);
-	bg.lineTo(b.x+b.width,b.y);
-	bg.lineTo(b.x+b.width,b.y+b.height);
-	bg.lineTo(b.x,b.y+b.height);
-	bg.close();
+	bg.rectangle(b);
 
 	fg.clear();
 	if(value){
@@ -84,11 +80,7 @@ void ofxToggle::generateDraw(){
 		fg.setStrokeWidth(1);
 		fg.setStrokeColor(thisFillColor);
 	}
-	fg.moveTo(b.getPosition()+checkboxRect.getTopLeft());
-	fg.lineTo(b.getPosition()+checkboxRect.getTopRight());
-	fg.lineTo(b.getPosition()+checkboxRect.getBottomRight());
-	fg.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
-	fg.close();
+	fg.rectangle(b.getPosition()+checkboxRect.getTopLeft(),checkboxRect.width,checkboxRect.height);
 
 	cross.clear();
 	cross.setStrokeColor(thisTextColor);
@@ -99,7 +91,7 @@ void ofxToggle::generateDraw(){
 	cross.moveTo(b.getPosition()+checkboxRect.getTopRight());
 	cross.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
 
-	textMesh = font.getStringMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+	textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
 }
 
 void ofxToggle::render(){
@@ -116,9 +108,11 @@ void ofxToggle::render(){
 		ofEnableAlphaBlending();
 	}
 	ofSetColor(thisTextColor);
-	font.getFontTexture().bind();
+
+	bindFontTexture();
 	textMesh.draw();
-	font.getFontTexture().unbind();
+	unbindFontTexture();
+
 	ofSetColor(c);
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableBlendMode(blendMode);

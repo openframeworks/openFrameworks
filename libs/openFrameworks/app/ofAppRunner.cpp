@@ -16,6 +16,8 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
+#include "ofURLFileLoader.h"
+#include "Poco/Net/SSLManager.h"
 
 
 // TODO: closing seems wonky.
@@ -211,9 +213,15 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 //							currently looking at who to turn off
 //							at the end of the application
 
+void ofStopURLLoader();
+
 void ofExitCallback(){
 
 	ofNotifyExit();
+
+	ofRemoveAllURLRequests();
+	ofStopURLLoader();
+	Poco::Net::SSLManager::instance().shutdown();
 
     ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
