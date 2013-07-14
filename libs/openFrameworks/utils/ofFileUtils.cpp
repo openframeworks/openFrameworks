@@ -668,7 +668,7 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 		ofLog(OF_LOG_ERROR, "ofFile::copyFromTo source file/folder doesn't exist: %s", pathSrc.c_str());
 		return false;
 	}
-	
+
 	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
 		if(overwrite){
 			ofFile::removeFile(pathDst, bRelativeToData);
@@ -700,10 +700,10 @@ bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bo
 	}
 
 	if(!ofFile::doesFileExist(pathSrc, bRelativeToData)){
-		ofLog(OF_LOG_ERROR, "ofFile::moveFromTo source file/folder doesn't exist: %s", pathSrc.c_str());	
+		ofLog(OF_LOG_ERROR, "ofFile::moveFromTo source file/folder doesn't exist: %s", pathSrc.c_str());
 		return false;
 	}
-		
+
 	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
 		if(overwrite){
 			ofFile::removeFile(pathDst, bRelativeToData);
@@ -1379,7 +1379,7 @@ string ofFilePath::getCurrentExePath(){
 		return path;
 	#elif defined(TARGET_WIN32)
 		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+		DWORD result = ::GetModuleFileNameA(NULL, &executablePath[0], static_cast<DWORD>(executablePath.size()));
 		if(result == 0) {
 			ofLogError("getCurrentExePath") << "failure of getting current executable path";
 		}else{
