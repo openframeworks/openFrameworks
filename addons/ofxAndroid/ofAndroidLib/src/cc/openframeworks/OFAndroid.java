@@ -46,8 +46,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import cc.openframeworks.OFAndroidWindow;
-
 public class OFAndroid {
 	
 	// List based on http://bit.ly/NpkL4Q
@@ -247,25 +245,9 @@ public class OFAndroid {
 			}
 		}).start();
 		
-		
-		gestureListener = new OFGestureListener(ofActivity);
-        
-        try {
-        	Log.v("OF","trying to find class: "+packageName+".R$layout");
-			Class<?> layout = Class.forName(packageName+".R$layout");
-			View view = ofActivity.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
-			ofActivity.setContentView(view);
-			
-			Class<?> id = Class.forName(packageName+".R$id");
-			mGLView = (OFGLSurfaceView)ofActivity.findViewById(id.getField("of_gl_surface").getInt(null));
-			enableTouchEvents();
-			
-		} catch (Exception e) {
-			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
-	        mGLView = new OFGLSurfaceView(ofActivity);
-	        ofActivity.setContentView(mGLView);
-	        enableTouchEvents();
-		}
+
+    	OFAndroid.init();
+    	
     }
 
 	private void fatalErrorDialog(final String msg){
@@ -934,7 +916,7 @@ public class OFAndroid {
     private static OFAndroidAccelerometer accelerometer;
     private static OFAndroidGPS gps;
     private static OFActivity ofActivity;
-    private OFGestureListener gestureListener;
+    private static OFGestureListener gestureListener;
 	private static String packageName;
 	private static String dataPath;
 	public static boolean unpackingDone;
@@ -956,6 +938,7 @@ public class OFAndroid {
     		Log.i("OF","failed neon detection, loading not-neon library",e);
     		System.loadLibrary("OFAndroidApp");
     	}
+    	Log.i("OF","initializing app");
     }
 
 
@@ -964,14 +947,37 @@ public class OFAndroid {
         return mGLView;
 	}
 	
-	public void disableTouchEvents(){
+	public static void disableTouchEvents(){
         mGLView.setOnClickListener(null); 
         mGLView.setOnTouchListener(null);
 	}
 	
-	public void enableTouchEvents(){
+	public static void enableTouchEvents(){
         mGLView.setOnClickListener(gestureListener); 
         mGLView.setOnTouchListener(gestureListener.touchListener);
+	}
+	
+	public static void setupGL(int version){		
+		gestureListener = new OFGestureListener(ofActivity);
+        OFEGLConfigChooser.setGLESVersion(version);
+        
+        try {
+        	Log.v("OF","trying to find class: "+packageName+".R$layout");
+			Class<?> layout = Class.forName(packageName+".R$layout");
+			View view = ofActivity.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
+			ofActivity.setContentView(view);
+			
+			Class<?> id = Class.forName(packageName+".R$id");
+			mGLView = (OFGLSurfaceView)ofActivity.findViewById(id.getField("of_gl_surface").getInt(null));
+			enableTouchEvents();
+			
+		} catch (Exception e) {
+			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
+	        mGLView = new OFGLSurfaceView(ofActivity);
+	        ofActivity.setContentView(mGLView);
+	        enableTouchEvents();
+		}
+        
 	}
 	
 	/**
