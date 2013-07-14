@@ -7,7 +7,7 @@ void testApp::setup(){
 	camHeight 		= 240;
 	
 	vidGrabber.setVerbose(true);
-	vidGrabber.setDeviceID(1);
+	vidGrabber.setDeviceID(0);
 	vidGrabber.setDesiredFrameRate(60);
 	vidGrabber.initGrabber(camWidth,camHeight);
 	
