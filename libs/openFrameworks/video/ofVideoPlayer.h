@@ -25,6 +25,11 @@
 	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_ANDROID
+	#include "ofxAndroidVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
+#endif
+
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
