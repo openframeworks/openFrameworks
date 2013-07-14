@@ -8,7 +8,7 @@ void testApp::setup(){
 	ofEnableAlphaBlending();
 
 	//we load a font and tell OF to make outlines so we can draw it as GL shapes rather than textures
-	font.loadFont("type/verdana.ttf", 100, true, false, true, 0.4, 72);
+	font.loadFont("type/verdana.ttf", 80, true, false, true, 0.4, 72);
 	shader.load("shaders/noise.vert", "shaders/noise.frag");
 
 	doShader = false;
@@ -23,7 +23,6 @@ void testApp::update(){
 void testApp::draw(){
 
 	ofSetColor(225);
-	ofDrawBitmapString("'s' toggles shader", 10, 20);
 
 	ofSetColor(245, 58, 135);
 	ofFill();

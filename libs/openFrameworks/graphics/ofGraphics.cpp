@@ -235,7 +235,6 @@ void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist
 void ofSetupGraphicDefaults(){
 	renderer->setupGraphicDefaults();
 	ofSetStyle(ofStyle());
-    ofSetOrientation(OF_ORIENTATION_DEFAULT,true);
 }
 
 //----------------------------------------------------------
