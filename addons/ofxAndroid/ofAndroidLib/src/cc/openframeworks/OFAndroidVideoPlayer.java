@@ -1,17 +1,19 @@
 package cc.openframeworks;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Surface;
 
 
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvailableListener {
 	
 	public OFAndroidVideoPlayer(){
@@ -32,7 +34,6 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		
 	}
 	
-	@SuppressLint("NewApi")
 	public void setTexture(int texName) {
 		surfaceTexture = new SurfaceTexture(texName);
 		surfaceTexture.setOnFrameAvailableListener(this);
@@ -40,7 +41,6 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		mediaPlayer.setSurface(surface);
 	}
 	
-	@SuppressLint("NewApi")
 	public void clearTextures() {
 		if(surface != null) {
 			surface.release();
@@ -53,7 +53,6 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		}
 	}
 	
-	@SuppressLint("NewApi")
 	public boolean update() {
 		synchronized(this){
 			if(bIsFrameNew) {
@@ -67,12 +66,10 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		}
 	}
 	
-	@SuppressLint("NewApi")
 	public void getTextureMatrix(float[] mtx) {
 		if(surfaceTexture != null) surfaceTexture.getTransformMatrix(mtx);
 	}
 	
-	@SuppressLint("NewApi")
 	public void loadMovie(String fileName){
 		try {
 			if(mediaPlayer == null) {
@@ -132,7 +129,6 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		bIsPlaying = false;
 	}
 	
-	@SuppressLint("NewApi")
 	void unloadMovie(){
 		if(mediaPlayer!=null){
 			mediaPlayer.setSurface(null);
