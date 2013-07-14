@@ -163,6 +163,9 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	}
 
 	window->setupOpenGL(w, h, screenMode);
+}
+
+void ofGLReadyCallback(){
 
 #ifndef TARGET_OPENGLES
 	glewExperimental = GL_TRUE;
@@ -174,9 +177,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 		return;
 	}
 #endif
-}
 
-void ofGLReadyCallback(){
 	ofLogVerbose()<< "GL ready";
 	ofLogVerbose()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
 	ofLogVerbose()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
