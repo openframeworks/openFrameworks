@@ -168,10 +168,10 @@ endif
 PLATFORM_LDFLAGS =
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
 ifeq ($(HOST_PLATFORM),linux-x86)
-	LDFLAGS += -fuse-ld=gold
+	PLATFORM_LDFLAGS += -fuse-ld=gold
 endif
 
-PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
+PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS

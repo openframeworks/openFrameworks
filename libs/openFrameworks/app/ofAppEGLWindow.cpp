@@ -32,6 +32,9 @@
 #include "ofGLProgrammableRenderer.h"
 #include <assert.h>
 
+
+void ofGLReadyCallback();
+
 // native events
 struct udev*         udev;
 struct udev_device*  dev;
@@ -453,6 +456,7 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
     setupPeripherals();
 
     ofLogNotice("ofAppEGLWindow::setupOpenGL")  << "Peripheral setup complete.";
+    ofGLReadyCallback();
 }
 
 //------------------------------------------------------------
