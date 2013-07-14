@@ -29,7 +29,7 @@ ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
 ofAppGLFWWindow	* ofAppGLFWWindow::instance;
 GLFWwindow* ofAppGLFWWindow::windowP = NULL;
 
-
+void ofGLReadyCallback();
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
@@ -195,7 +195,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
     glfwMakeContextCurrent(windowP);
 
     glfwGetWindowSize(windowP, &windowW, &windowH );
-
+    ofGLReadyCallback();
 
 }
 
