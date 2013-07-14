@@ -174,7 +174,10 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 		return;
 	}
 #endif
+}
 
+void ofGLReadyCallback(){
+	ofLogVerbose()<< "GL ready";
 	ofLogVerbose()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
 	ofLogVerbose()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
 	ofLogVerbose()<< "Version:  "<< (char*)glGetString(GL_VERSION);
@@ -190,7 +193,6 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	ofSetVerticalSync(true);
 	ofEnableAlphaBlending();
 }
-
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
