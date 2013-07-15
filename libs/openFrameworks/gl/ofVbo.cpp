@@ -11,6 +11,7 @@
 #include "ofGLProgrammableRenderer.h"
 
 #include <map>
+#include <set>
 
 bool ofVbo::vaoChecked = false;
 bool ofVbo::supportVAOs = true;
@@ -87,6 +88,28 @@ static void releaseVAO(GLuint id){
 		glDeleteVertexArrays(1, &id);
 	}
 }
+
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+static set<ofVbo*> & allVbos(){
+	static set<ofVbo*> * allVbos = new set<ofVbo*>;
+	return *allVbos;
+}
+
+static void registerVbo(ofVbo*vbo){
+	allVbos().insert(vbo);
+}
+
+static void unregisterVbo(ofVbo*vbo){
+	allVbos().erase(vbo);
+}
+
+void ofRegenerateAllVbos(){
+	set<ofVbo*>::iterator it;
+	for(it=allVbos().begin();it!=allVbos().end();it++){
+		(*it)->clear();
+	}
+}
+#endif
 
 //--------------------------------------------------------------
 ofVbo::ofVbo(){
@@ -301,6 +324,9 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 		vaoChanged=true;
 		glGenBuffers(1, &(vertId));
 		retain(vertId);
+		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+			registerVbo(this);
+		#endif
 	}
 
 	vertUsage = usage;
@@ -311,6 +337,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, vert0x, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 //--------------------------------------------------------------
@@ -851,6 +878,9 @@ void ofVbo::clear(){
 		vaoID=0;
 	}
 	bAllocated		= false;
+	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+		unregisterVbo(this);
+	#endif
 }
 
 
