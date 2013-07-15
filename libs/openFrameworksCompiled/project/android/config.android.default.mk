@@ -17,8 +17,8 @@
 #
 ################################################################################
 
-PLATFORM_SHARED_LIBRARY_EXTENSION:=so
-PLATFORM_STATIC_LIBRARY_EXTENSION:=a
+PLATFORM_SHARED_LIBRARY_EXTENSION := so
+PLATFORM_STATIC_LIBRARY_EXTENSION := a
 
 ################################################################################
 # PLATFORM SPECIFIC CHECKS
@@ -33,22 +33,24 @@ PLATFORM_STATIC_LIBRARY_EXTENSION:=a
 #HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 
 include $(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
-ARCH = android
+# ARCH = android
+
+#TODO: share these platform detection algorithms
 ifeq ($(shell uname),Darwin)
-    HOST_PLATFORM = darwin-x86
+    HOST_PLATFORM := darwin-x86
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
-    HOST_PLATFORM = windows
+    HOST_PLATFORM := windows
 else
-    HOST_PLATFORM = linux-x86
+    HOST_PLATFORM := linux-x86
 endif
 
 
 ifndef ABIS_TO_COMPILE_RELEASE
-    ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon
+    ABIS_TO_COMPILE_RELEASE := armv5 armv7 neon
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
-    ABIS_TO_COMPILE_DEBUG = armv7
+    ABIS_TO_COMPILE_DEBUG := armv7
 endif
 
 
@@ -67,8 +69,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_DEFINES = 
-PLATFORM_DEFINES = ANDROID
+PLATFORM_DEFINES := ANDROID
 
 ifndef $(NDK_PLATFORM)
     NDK_PLATFORM = android-14
@@ -84,34 +85,34 @@ endif
 
 PROJECT_PATH=$(PWD)
 
-TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
-TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
-ANDROID_PREFIX=arm-linux-androideabi-
-SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
-DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
+TOOLCHAIN := arm-linux-androideabi-$(GCC_VERSION)
+TOOLCHAIN_PATH := $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
+ANDROID_PREFIX := arm-linux-androideabi-
+SYSROOT := $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
+DATA_FILES := $(shell find bin/data -type f 2>/dev/null)
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
     ABI_PATH = armeabi-v7a
-    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_RELEASE_TARGET := libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_DEBUG_TARGET := libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
 
 ifeq ($(ABI),armv5)
     ABI_PATH = armeabi
-    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_RELEASE_TARGET := libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_DEBUG_TARGET := libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
 
 ifeq ($(ABI),neon)
     ABI_PATH = armeabi-v7a
-    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
-    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
+    PLATFORM_PROJECT_RELEASE_TARGET := libs/$(ABI_PATH)/libOFAndroidApp_neon.so
+    PLATFORM_PROJECT_DEBUG_TARGET := libs/$(ABI_PATH)/libOFAndroidApp_neon.so
 endif
 
-PLATFORM_CORELIB_RELEASE_TARGET = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/$(ABI)/libopenFrameworks.a
-PLATFORM_CORELIB_DEBUG_TARGET = $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/$(ABI)/libopenFrameworksDebug.a
+PLATFORM_CORELIB_RELEASE_TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/$(ABI)/libopenFrameworks.a
+PLATFORM_CORELIB_DEBUG_TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/$(ABI)/libopenFrameworksDebug.a
 
 
 # add OF_USING_MPG123 define IF we have it defined as a system library
@@ -168,7 +169,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS =
+PLATFORM_LDFLAGS :=
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
 ifeq ($(HOST_PLATFORM),linux-x86)
     LDFLAGS += -fuse-ld=gold
@@ -213,7 +214,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_EXCLUSIONS =
+PLATFORM_EXCLUSIONS :=
 
 # core sources
 PLATFORM_EXCLUSIONS += %.mm
@@ -273,7 +274,7 @@ PROJECT_EXCLUSIONS += ./libs
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS =
+PLATFORM_HEADER_SEARCH_PATHS :=
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" 
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" 
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" 
@@ -302,7 +303,7 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(PATH_OF_ROOT)/addons/ofxAndroid/src"
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARIES = 
+PLATFORM_LIBRARIES := 
 PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 
@@ -314,7 +315,7 @@ PLATFORM_LIBRARIES += c
 PLATFORM_LIBRARIES += gcc
 
 #static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBRARIES =
+PLATFORM_STATIC_LIBRARIES :=
 PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
 PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
 PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
@@ -326,10 +327,10 @@ PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/openssl/lib/$(ABI_LIB_SUBPATH)/libc
 PLATFORM_STATIC_LIBRARIES += $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/libgnustl_static.a
 
 # shared libraries 
-PLATFORM_SHARED_LIBRARIES =
+PLATFORM_SHARED_LIBRARIES :=
 
 #openframeworks core third party
-PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBRARIES :=
 
 # conditionally add mpg123
 #ifeq ($(HAS_SYSTEM_MPG123),0)
@@ -349,7 +350,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS =
+PLATFORM_LIBRARY_SEARCH_PATHS :=
 
 ################################################################################
 # PLATFORM FRAMEWORKS
@@ -380,9 +381,9 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 # PLATFORM CONFIGURATIONS
 # These will override the architecture vars generated by configure.platform.make
 ################################################################################
-#PLATFORM_ARCH =
-#PLATFORM_OS =
-#PLATFORM_LIBRARIES_PATH =
+#PLATFORM_ARCH :=
+#PLATFORM_OS :=
+#PLATFORM_LIBRARIES_PATH :=
 
 ################################################################################
 # PLATFORM CXX
@@ -390,9 +391,9 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
-PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
-PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
-PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
+PLATFORM_CC := $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
+PLATFORM_CXX := $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
+PLATFORM_AR := $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
 afterplatform:$(RESFILE)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi

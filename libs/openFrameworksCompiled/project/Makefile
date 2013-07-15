@@ -22,7 +22,36 @@
 #
 ################################################################################
 
-MAKEFILE_DEBUG:=
+ifndef MAKEFILE_DEBUG
+    MAKEFILE_DEBUG:=
+endif
+
+################################################################################
+# LEGACY_SUPPORT
+#   This variable controls the legacy support mode for the pre-0.8.0 makefile
+#   system.  To enable legacy support, set:
+#  
+#       LEGACY_SUPPORT:=1
+#
+################################################################################
+
+ifndef LEGACY_SUPPORT
+    LEGACY_SUPPORT:=
+endif
+
+
+################################################################################
+# LEGACY_SUPPORT
+#   This variable controls the legacy support mode for the pre-0.8.0 makefile
+#   system.  To enable legacy support, set:
+#  
+#       LEGACY_SUPPORT:=1
+#
+################################################################################
+
+# Call the legacy support file (See file for description)
+# include $(PATH_OF_SHARED_MAKEFILES)/config.legacy.mk
+
 
 ################################################################################
 # PATH_OF_SHARED_MAKEFILES
@@ -38,8 +67,11 @@ MAKEFILE_DEBUG:=
 
 PATH_OF_SHARED_MAKEFILES:=./makefileCommon
 
-# Call the shared configuration file (See file for description)
-include $(PATH_OF_SHARED_MAKEFILES)/config.shared.mk
+# Call the common configuration file (See file for description)
+include $(PATH_OF_SHARED_MAKEFILES)/config.common.mk
+
+# Call the core configuration file (See file for description)
+include $(PATH_OF_SHARED_MAKEFILES)/config.core.mk
 
 # Call the core compilation file (See file for description)
 include $(PATH_OF_SHARED_MAKEFILES)/compile.core.mk

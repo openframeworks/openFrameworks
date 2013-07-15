@@ -20,7 +20,7 @@
 #
 ################################################################################
 
-.DEFAULT_GOAL=all
+.DEFAULT_GOAL := all
 
 ################################################################################
 # PLATFORM_CXX (conditionally set)
@@ -32,11 +32,11 @@
 ################################################################################
 
 ifdef PLATFORM_CXX
-    CXX:=$(PLATFORM_CXX)
+    CXX := $(PLATFORM_CXX)
 endif
 
 ifdef PROJECT_CXX
-    CXX:=$(PROJECT_CXX)
+    CXX := $(PROJECT_CXX)
 endif
 
 ################################################################################
@@ -49,11 +49,11 @@ endif
 ################################################################################
 
 ifdef PLATFORM_CC
-    CC:=$(PLATFORM_CC)
+    CC := $(PLATFORM_CC)
 endif
 
 ifdef PROJECT_CC
-    CC:=$(PROJECT_CC)
+    CC := $(PROJECT_CC)
 endif
 
 ################################################################################
@@ -66,11 +66,11 @@ endif
 ################################################################################
 
 ifdef PLATFORM_AR
-    AR:=$(PLATFORM_AR)
+    AR := $(PLATFORM_AR)
 endif
 
 ifdef PROJECT_AR
-    AR:=$(PROJECT_AR)
+    AR := $(PROJECT_AR)
 endif
 
 ################################################################################
@@ -229,7 +229,7 @@ else
 endif
 
 ################################################################################
-# OF_CORE_DEPENDENCY_FILES (set immediately)
+# CORE_DEPENDENCY_FILES (set immediately)
 #   Create a list of dependency (*.d) files for the compiler. These will be
 #   stored in the PATH_CORE_OBJ_OUTPUT directory. 
 #
@@ -249,18 +249,19 @@ endif
 #
 ################################################################################
 
-OF_CORE_DEPENDENCY_FILES := $(addprefix $(PATH_CORE_OBJ_OUPUT),                \
-                                $(patsubst $(PATH_OF_ROOT)/%.cpp,%.d,          \
-                                    $(patsubst $(PATH_OF_ROOT)/%.mm,%.d,       \
-                                        $(patsubst $(PATH_OF_ROOT)/%.m,%.d,    \
-                                            $(CORE_SOURCE_FILES)               \
-                                        )                                      \
+CORE_DEPENDENCY_FILES :=                                                       \
+                        $(addprefix $(PATH_CORE_OBJ_OUPUT),                    \
+                            $(patsubst $(PATH_OF_ROOT)/%.cpp,%.d,              \
+                                $(patsubst $(PATH_OF_ROOT)/%.mm,%.d,           \
+                                    $(patsubst $(PATH_OF_ROOT)/%.m,%.d,        \
+                                        $(CORE_SOURCE_FILES)                   \
                                     )                                          \
                                 )                                              \
-                            )
+                            )                                                  \
+                        )
 
 ################################################################################
-# OF_CORE_OBJ_FILES (set immediately)
+# CORE_OBJ_FILES (set immediately)
 #   Create a list of object (*.o) files for the compiler. These will be
 #   stored in the PATH_CORE_OBJ_OUTPUT directory. 
 #
@@ -280,15 +281,15 @@ OF_CORE_DEPENDENCY_FILES := $(addprefix $(PATH_CORE_OBJ_OUPUT),                \
 #
 ################################################################################
 
-OF_CORE_OBJ_FILES := $(addprefix $(PATH_CORE_OBJ_OUPUT),                       \
-                            $(patsubst $(PATH_OF_ROOT)/%.cpp,%.o,              \
-                                $(patsubst $(PATH_OF_ROOT)/%.mm,%.o,           \
-                                    $(patsubst $(PATH_OF_ROOT)/%.m,%.o,        \
-                                        $(CORE_SOURCE_FILES)                   \
-                                    )                                          \
+CORE_OBJ_FILES := $(addprefix $(PATH_CORE_OBJ_OUPUT),                          \
+                        $(patsubst $(PATH_OF_ROOT)/%.cpp,%.o,                  \
+                            $(patsubst $(PATH_OF_ROOT)/%.mm,%.o,               \
+                                $(patsubst $(PATH_OF_ROOT)/%.m,%.o,            \
+                                    $(CORE_SOURCE_FILES)                       \
                                 )                                              \
                             )                                                  \
-                        )
+                        )                                                      \
+                    )
     
 ################################################################################
 # DEBUG ########################################################################
@@ -297,11 +298,11 @@ ifdef MAKEFILE_DEBUG
     $(info ========================= compile.core.make flags ==================)
     $(info PATH_CORE_OBJ_OUPUT=$(PATH_CORE_OBJ_OUPUT))
     
-    $(info ---OF_CORE_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
+    $(info ---CORE_DEPENDENCY_FILES---)
+    $(foreach v, $(CORE_DEPENDENCY_FILES),$(info $(v)))
      
-    $(info ---OF_CORE_OBJ_FILES---)
-    $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
+    $(info ---CORE_OBJ_FILES---)
+    $(foreach v, $(CORE_OBJ_FILES),$(info $(v)))
 
     $(info )
 endif
@@ -319,17 +320,17 @@ endif
 #   avoid conflict with files of the same name and to improve performance.
 ################################################################################
 
-.PHONY: Release \
-        Debug \
-        ReleaseABI \
-        DebugABI \
-        CleanDebug \
-        CleanRelease \
-        CleanDebugABI \
-        CleanReleaseABI \
-        all \
-        after \
-        clean \
+.PHONY: Release                                                                \
+        Debug                                                                  \
+        ReleaseABI                                                             \
+        DebugABI                                                               \
+        CleanDebug                                                             \
+        CleanRelease                                                           \
+        CleanDebugABI                                                          \
+        CleanReleaseABI                                                        \
+        all                                                                    \
+        after                                                                  \
+        clean                                                                  \
         help
 
 Release:
@@ -392,14 +393,14 @@ $(PATH_CORE_OBJ_OUPUT)%.o: $(PATH_OF_ROOT)/%.m
 	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PATH_CORE_OBJ_OUPUT)$*.d -MT$(PATH_CORE_OBJ_OUPUT)$*.o -o $@ -c $<
 
 # This target does the linking of the library
-# $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
-# $(OF_CORE_OBJ_FILES) must be processed first.
-$(TARGET) : $(OF_CORE_OBJ_FILES) 
+# $(TARGET) : $(CORE_OBJ_FILES) means that each of the items in the 
+# $(CORE_OBJ_FILES) must be processed first.
+$(TARGET) : $(CORE_OBJ_FILES) 
 	@echo "Creating library " $(TARGET)
 	mkdir -p $(@D)
-	$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
+	$(AR) -cr "$@" $(CORE_OBJ_FILES)
 
--include $(OF_CORE_DEPENDENCY_FILES)
+-include $(CORE_DEPENDENCY_FILES)
 
 # Calls the $(CLEANTARGET) target below.
 clean:

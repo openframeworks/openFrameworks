@@ -3,155 +3,6 @@
 ################################################################################
 
 ################################################################################
-# CONSTANTS
-#   A set of constants that are used for some of the more gnarly make action. 
-################################################################################
-
-EMPTY_SPACE :=
-EMPTY_SPACE += 
-
-TRUE := NON_EMPTY_STRING
-FALSE := 
-
-ESCAPED_DELIMITER := <?--DELIMITER--?>
-
-FIND_TYPE_DIRECTORY:=d
-FIND_TYPE_FILE:=f
-
-################################################################################
-# FUNCTION FUNC_DO_NOTHING
-#   A "do nothing" function sometimes called to help make if/else statements 
-#   more readable. 
-################################################################################
-
-define FUNC_DO_NOTHING
-endef
-
-################################################################################
-# FUNCTION FUNC_REMOVE_DUPLICATE_ADDONS
-#   Define a function to remove duplicates without using $(sort ..), 
-#   because ($sort ...) will place the list in lexicographic order.  In 
-#   many cases we want to respect an existing order.
-#   
-#   This function is not for the faint of heart.
-#
-#   For more information about $(strip ...), $(word, ...), see:
-#
-#       http://www.gnu.org/software/make/manual/html_node/Text-Functions.html
-#
-#   For more information about $(call ...) see:
-#
-#       http://www.gnu.org/software/make/manual/html_node/Call-Function.html
-#
-################################################################################
-
-define FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER
-    $(if $1,                                                                   \
-        $(strip                                                                \
-            $(word 1,$1)                                                       \
-            $(call FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER,$(filter-out $(word 1,$1),$1))\
-        ),                                                                     \
-        $(call FUNC_DO_NOTHING)                                                \
-    )                                                                          \
-
-endef
-
-################################################################################
-# FUNCTION FUNC_RECURSIVE_FIND_SOURCES
-#   A function that will recursively search for source files beginning in a 
-#   given directory.
-#
-#   Example Usage:
-#   
-#       THE_SOURCES_FOUND :=                                                   \
-#                      $(call                                                  \
-#                           FUNC_RECURSIVE_FIND_SOURCES,                       \
-#                           $(DIRECTORY_TO_SEARCH)                             \
-#                       )                                                      \
-#   Steps:
-#
-#   1.  Search the passed directory ($1) for the type file "f" with one of the
-#       listed file extensions:
-#        find $1                                                               
-#           -type f                                                            
-#           -name "*.mm"                                                       
-#           -or                                                                
-#           ...
-#           -name "*.cxx"                                                      
-#
-#   2. Send errors to /dev/null
-#
-#       2> /dev/null
-#
-#   3. Exclude all hidden directories and files.
-#
-#       | grep -v "/\.[^\.]" )
-#
-################################################################################
-
-define FUNC_RECURSIVE_FIND_SOURCES
-    $(shell                                                                    \
-        find $1                                                                \
-            -type f                                                            \
-            -name "*.mm"                                                       \
-            -or                                                                \
-            -name "*.m"                                                        \
-            -or                                                                \
-            -name "*.cpp"                                                      \
-            -or                                                                \
-            -name "*.c"                                                        \
-            -or                                                                \
-            -name "*.cc"                                                       \
-            -or                                                                \
-            -name "*.cxx"                                                      \
-        2> /dev/null                                                           \
-        | grep -v "/\.[^\.]"                                                   \
-    )                                                                          \
-
-endef
-
-################################################################################
-# FUNCTION FUNC_RECURSIVE_FIND_SEARCH_PATHS
-#   A function that will recursively search for header OR library search path 
-#   directories while ignoring framework paths and hidden directories.
-################################################################################
-
-define FUNC_RECURSIVE_FIND_SEARCH_PATHS
-    $(shell                                                                    \
-        find $1                                                                \
-            -type d                                                            \
-            -not                                                               \
-            -path "*.framework*"                                               \
-        2> /dev/null                                                           \
-        | grep -v "/\.[^\.]"                                                   \
-    )                                                                          \
-
-endef
-
-################################################################################
-# FUNCTION FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN
-#   A function that will recursively search for libraries and frameworks and
-#   will ignore anything that is hidden. 
-#   
-#   Arg $1 => the search directory
-#   Arg #2 => the search type (f or d)
-#   Arg #3 => the name pattern
-#
-#   See FUNC_PARSE_ADDON_TEMPLATE_HEADER_SEARCH_PATHS for an example.
-################################################################################
-
-define FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN
-    $(shell                                                                    \
-        find $1                                                                \
-            -type $2                                                           \
-            -name $3                                                           \
-        2> /dev/null                                                           \
-        | grep -v "/\.[^\.]"                                                   \
-    )                                                                          \
-
-endef
-
-################################################################################
 # FUNCTION FUNC_PARSE_ADDON_TEMPLATE_HEADER_SEARCH_PATHS
 #   A function that takes the path of an addon and recursively creates a list 
 #   of header search paths using the standard ofxAddonTemplate structure.
@@ -298,7 +149,7 @@ define FUNC_INSTALL_ADDON
     $(warning --> Did the $(F) file list it?)                                  \
     $(eval F:=$(PATH_OF_ADDONS)/THE_DEPENDENT_ADDON/addon_config.mk)           \
     $(warning --> Did another addon list it as a dependency in its $(F) file?) \
-    $(eval F:=$(PATH_PROJECT_ROOT)/addons.make)                                \
+    $(eval F:=$(PATH_OF_PROJECT_ROOT)/addons.make)                                \
     $(warning --> Your project's $(F) file list it?)                           \
     $(warning )                                                                \
     $(error You must install [$(THIS_ADDON)] in your                           \
@@ -770,7 +621,7 @@ ifdef PLATFORM_REQUIRED_ADDONS
     B_PROCESS_ADDONS = $(TRUE)
 endif
 
-ifeq ($(findstring addons.make,$(wildcard $(PATH_PROJECT_ROOT)/*.make)),addons.make)
+ifeq ($(findstring addons.make,$(wildcard $(PATH_OF_PROJECT_ROOT)/*.make)),addons.make)
     B_PROCESS_ADDONS = $(TRUE)
 endif
 
@@ -796,7 +647,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 # Steps:
 #   1. Use cat to dump the contents of the addons.make file
 #
-#       cat $(PATH_PROJECT_ROOT)/addons.make 2> /dev/null \ ...
+#       cat $(PATH_OF_PROJECT_ROOT)/addons.make 2> /dev/null \ ...
 #
 #   2. Use sed to strip out all comments beginning with #
 #       (NOTE: to escape $ in make, you must use \#)
@@ -815,7 +666,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
     ALL_REQUESTED_PROJECT_ADDONS:=                                             \
         $(shell                                                                \
-            cat $(PATH_PROJECT_ROOT)/addons.make 2> /dev/null                  \
+            cat $(PATH_OF_PROJECT_ROOT)/addons.make 2> /dev/null                  \
             | sed 's/[ ]*\#.*//g'                                              \
             | sed '/^$$/d'                                                     \
         )
@@ -1095,7 +946,7 @@ endif
 ########################################################################
 #  DEBUGGING
 ########################################################################
-# print debug information if so instructed
+# ifdef 
     $(info ---PROJECT_ADDONS_HEADER_SEARCH_PATHS---)
     $(foreach v, $(PROJECT_ADDONS_HEADER_SEARCH_PATHS),$(info $(v)))
 
@@ -1144,25 +995,4 @@ endif
     $(info ---PROJECT_ADDONS_EXPORTS---)
     $(foreach v, $(PROJECT_ADDONS_EXPORTS),$(info $(v)))
 
-ifdef 1
-    # $(info ---PROJECT_ADDONS_INCLUDES---)
-    # $(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_EXCLUSIONS---)
-    # $(foreach v, $(PROJECT_ADDONS_EXCLUSIONS),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_FRAMEWORKS---)
-    # $(foreach v, $(PROJECT_ADDONS_FRAMEWORKS),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_SOURCE_FILES---)
-    # $(foreach v, $(PROJECT_ADDONS_SOURCE_FILES),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_LIBS---)
-    # $(foreach v, $(PROJECT_ADDONS_LIBS),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_OBJFILES---)
-    # $(foreach v, $(PROJECT_ADDONS_OBJFILES),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_BASE_CFLAGS---)
-    # $(foreach v, $(PROJECT_ADDONS_BASE_CFLAGS),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_DEFINES_CFLAGS---)
-    # $(foreach v, $(PROJECT_ADDONS_DEFINES_CFLAGS),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_INCLUDES_CFLAGS---)
-    # $(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
-    # $(info ---PROJECT_ADDONS_LDFLAGS---)
-    # $(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
-endif
+# endif

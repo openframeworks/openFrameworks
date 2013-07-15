@@ -26,7 +26,7 @@
 #
 ################################################################################
 ifndef SHELL
-    SHELL=/bin/sh
+    SHELL := /bin/sh
 endif
 
 ################################################################################
@@ -38,7 +38,7 @@ endif
 #
 ################################################################################
 ifndef PATH_OF_ROOT
-    PATH_OF_ROOT=../../..
+    PATH_OF_ROOT := ../../..
 endif
 
 ################################################################################
@@ -70,15 +70,15 @@ endif
 #
 ################################################################################
 ifndef PLATFORM_VARIANT
-    PLATFORM_VARIANT=default
+    PLATFORM_VARIANT = default
 endif
 
 ifndef PLATFORM_OS
-    PLATFORM_OS=$(shell uname -s)
+    PLATFORM_OS = $(shell uname -s)
 endif
 
 ifndef PLATFORM_ARCH
-    PLATFORM_ARCH=$(shell uname -m)
+    PLATFORM_ARCH = $(shell uname -m)
 endif
 
 ################################################################################
@@ -164,9 +164,9 @@ endif
 ################################################################################
 # PATH_OF_ADDONS (conditionally set, immediately assigned)
 #   The standard location for openFrameworks addons.
-#################################################################################
+################################################################################
 ifndef PATH_OF_ADDONS
-    PATH_OF_ADDONS:=$(PATH_OF_ROOT)/addons
+    PATH_OF_ADDONS := $(PATH_OF_ROOT)/addons
 endif
 
 ################################################################################
@@ -174,7 +174,7 @@ endif
 #   The standard location for openFrameworks examples.
 ################################################################################
 ifndef PATH_OF_EXAMPLES
-    PATH_OF_EXAMPLES:=$(PATH_OF_ROOT)/examples
+    PATH_OF_EXAMPLES := $(PATH_OF_ROOT)/examples
 endif
 
 ################################################################################
@@ -182,7 +182,7 @@ endif
 #   The standard location for openFrameworks apps.
 ################################################################################
 ifndef PATH_OF_APPS
-    PATH_OF_APPS:=$(PATH_OF_ROOT)/apps
+    PATH_OF_APPS := $(PATH_OF_ROOT)/apps
 endif
 
 ################################################################################
@@ -190,7 +190,7 @@ endif
 #   The standard location for openFrameworks core and 3rd party libraries.
 ################################################################################
 ifndef PATH_OF_LIBS
-    PATH_OF_LIBS:=$(PATH_OF_ROOT)/libs
+    PATH_OF_LIBS := $(PATH_OF_ROOT)/libs
 endif
 
 ################################################################################
@@ -198,7 +198,7 @@ endif
 #   The standard location for openFrameworks core source and header files.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS
-    PATH_OF_LIBS_OPENFRAMEWORKS:=                                              \
+    PATH_OF_LIBS_OPENFRAMEWORKS :=                                             \
         $(PATH_OF_LIBS)/openFrameworks
 endif
 
@@ -208,7 +208,7 @@ endif
 #   libs will be stored in a platform-based subdirectory.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED:=                                     \
+    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED :=                                    \
         $(PATH_OF_LIBS)/openFrameworksCompiled
 endif
 
@@ -218,7 +218,7 @@ endif
 #   The standard location for openFrameworks project files, including makefiles.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT:=                             \
+    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT :=                            \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED)/project
 endif
 
@@ -227,7 +227,7 @@ endif
 #   The standard location for openFrameworks shared makefiles.
 ################################################################################
 ifndef PATH_OF_SHARED_MAKEFILES
-    PATH_OF_SHARED_MAKEFILES:=                                                 \
+    PATH_OF_SHARED_MAKEFILES :=                                                \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/makefileCommon
 endif
 
@@ -236,7 +236,7 @@ endif
 #   The standard location for openFrameworks platform-specific makefiles.
 ################################################################################
 ifndef PATH_OF_PLATFORM_MAKEFILES
-    PATH_OF_PLATFORM_MAKEFILES:=                                               \
+    PATH_OF_PLATFORM_MAKEFILES :=                                              \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/$(PLATFORM_LIB_SUBPATH)
 endif
 
@@ -247,7 +247,7 @@ endif
 #   static libraries.
 ################################################################################
 ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH:=            \
+    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH :=           \
         $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED)/lib/$(PLATFORM_LIB_SUBPATH)
 endif
 
@@ -302,7 +302,7 @@ endif
 #
 ################################################################################
 
-AVAILABLE_PLATFORM_VARIANTS:=                                                  \
+AVAILABLE_PLATFORM_VARIANTS :=                                                 \
     $(shell                                                                    \
         find $(PATH_OF_PLATFORM_MAKEFILES)/config.*.mk                         \
         -maxdepth 1                                                            \
@@ -322,7 +322,7 @@ endif
 # CALL THE PLATFORM VARIANT CONFIGURATION FILE
 ################################################################################
 # This section will call the platform-specific configuration file.  
-# Among other variables, the ABI_PATH is specified in the platform specific
+# Among other variables, the PATH_ABI is specified in the platform specific
 # configuration file.  This is important in the case of Android projects in
 # particular where multiple ABIs (application binary interface) are needed.
 #
@@ -344,30 +344,30 @@ include $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_
 ################################################################################
 
 ifndef PLATFORM_SHARED_LIBRARY_EXTENSION
-    PLATFORM_SHARED_LIBRARY_EXTENSION:=so
+    PLATFORM_SHARED_LIBRARY_EXTENSION := so
 endif
 
 ifndef PLATFORM_STATIC_LIBRARY_EXTENSION
-    PLATFORM_STATIC_LIBRARY_EXTENSION:=a
+    PLATFORM_STATIC_LIBRARY_EXTENSION := a
 endif
 
 ifndef PLATFORM_LIBRARY_PREFIX
-    PLATFORM_LIBRARY_PREFIX:=lib
+    PLATFORM_LIBRARY_PREFIX := lib
 endif
 
 ################################################################################
 # ABI_LIB_SUBPATH (conditionally set, immediately assigned)
 #   The ABI_LIB_SUBPATH is a subpath used for locating the final static binary
-#   libraries.  If the ABI_PATH variable is NOT set in the platform-specific
+#   libraries.  If the PATH_ABI variable is NOT set in the platform-specific
 #   configuration file, then ABI_LIB_SUBPATH will simply be equal to 
 #   PLATFORM_LIB_SUBPATH.  Currently Android platforms make use of the 
 #   ABI_LIB_SUBPATH variable.
 ################################################################################
 
-ifdef ABI_PATH
-    ABI_LIB_SUBPATH:=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
+ifdef PATH_ABI
+    ABI_LIB_SUBPATH := $(PLATFORM_LIB_SUBPATH)/$(strip $(PATH_ABI))
 else
-    ABI_LIB_SUBPATH:=$(PLATFORM_LIB_SUBPATH)
+    ABI_LIB_SUBPATH := $(PLATFORM_LIB_SUBPATH)
 endif
 
 ################################################################################
@@ -380,314 +380,238 @@ ifdef MAKEFILE_DEBUG
         Including :                                                            \
         $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk \
     )
-    $(info ABI_PATH=$(ABI_PATH))
+    $(info PATH_ABI=$(PATH_ABI))
     $(info ABI_LIB_SUBPATH=$(ABI_LIB_SUBPATH))
     $(info )
 endif
 ################################################################################
 
 ################################################################################
-# COMPILATION FLAG GENERATION
-################################################################################
-# After calling the platform-specific makefile above, now we can begin creating 
-# all of lists of files and flags for the compiler.
+# CONSTANTS
+#   A set of constants that are used for some of the more gnarly make action. 
 ################################################################################
 
+EMPTY_SPACE :=
+EMPTY_SPACE += 
+
+TRUE := NON_EMPTY_STRING
+FALSE := 
+
+ESCAPED_DELIMITER := <?--DELIMITER--?>
+
+FIND_TYPE_DIRECTORY := d
+FIND_TYPE_FILE := f
+
 ################################################################################
-# CORE_EXCLUSIONS (immediately assigned)
-#   This variable lists the fully qualitied paths to be excluded from the core
-#   compilation.  These exclusions are made on a per-platform-basis.  Thus, we
-#   simply strip out any extra whitespaces ($strip ...) set the 
-#   CORE_EXCLUSIONS equal to the PLATFORM_EXCLUSIONS. 
+# FUNCTION FUNC_DO_NOTHING
+#   A "do nothing" function sometimes called to help make if/else statements 
+#   more readable. 
 ################################################################################
 
-CORE_EXCLUSIONS:=$(strip $(PLATFORM_EXCLUSIONS))
+define FUNC_DO_NOTHING
+endef
 
 ################################################################################
-# ALL_CORE_SOURCE_PATHS (immediately assigned)
-#   The ALL_CORE_SOURCE_PATHS variable is a list of paths locating the core 
-#   openFrameworks header (*.h) and implementation (*.c/cpp/m) files.  We
-#   search the PATH_OF_LIBS_OPENFRAMEWORKS directory for these.
+# FUNCTION FUNC_REMOVE_DUPLICATE_ADDONS
+#   Define a function to remove duplicates without using $(sort ..), 
+#   because ($sort ...) will place the list in lexicographic order.  In 
+#   many cases we want to respect an existing order.
+#   
+#   This function is not for the faint of heart.
 #
-# Steps:
+#   For more information about $(strip ...), $(word, ...), see:
 #
-# 1. Find all of the openFrameworks course source folders.
+#       http://www.gnu.org/software/make/manual/html_node/Text-Functions.html
 #
-#       $(shell find $(PATH_OF_LIBS_OPENFRAMEWORKS) \
+#   For more information about $(call ...) see:
 #
-# 2. Limit the search to directories at a depth of 1, since we keep all oF 
-#    sources files in the base directory.
+#       http://www.gnu.org/software/make/manual/html_node/Call-Function.html
 #
-#       -maxdepth 1 -mindepth 1 -type d \
+################################################################################
+
+define FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER
+    $(if $1,                                                                   \
+        $(strip                                                                \
+            $(word 1,$1)                                                       \
+            $(call FUNC_REMOVE_DUPLICATES_PRESERVE_ORDER,$(filter-out $(word 1,$1),$1))\
+        ),                                                                     \
+        $(call FUNC_DO_NOTHING)                                                \
+    )                                                                          \
+
+endef
+
+################################################################################
+# FUNCTION FUNC_RECURSIVE_FIND_SOURCES
+#   A function that will recursively search for source files beginning in a 
+#   given directory.
 #
-# 3. Exclude all hidden directories and files.
+#   Example Usage:
+#   
+#       THE_SOURCES_FOUND :=                                                   \
+#                      $(call                                                  \
+#                           FUNC_RECURSIVE_FIND_SOURCES,                       \
+#                           $(DIRECTORY_TO_SEARCH)                             \
+#                       )                                                      \
+#   Steps:
+#
+#   1.  Search the passed directory ($1) for the type file "f" with one of the
+#       listed file extensions:
+#        find $1                                                               
+#           -type f                                                            
+#           -name "*.mm"                                                       
+#           -or                                                                
+#           ...
+#           -name "*.S"                                                      
+#
+#   2. Send errors to /dev/null
+#
+#       2> /dev/null
+#
+#   3. Exclude all hidden directories and files.
 #
 #       | grep -v "/\.[^\.]" )
 #
 ################################################################################
 
-#TODO: SHARE ADDONS SEARCH FUNCTIONS
-
-ALL_CORE_SOURCE_PATHS:=                                                        \
+define FUNC_RECURSIVE_FIND_SOURCES
     $(shell                                                                    \
-        find $(PATH_OF_LIBS_OPENFRAMEWORKS)                                    \
-        -maxdepth 1                                                            \
-        -mindepth 1                                                            \
-        -type d                                                                \
+        find $1                                                                \
+            -type f                                                            \
+            -name "*.mm"                                                       \
+            -or                                                                \
+            -name "*.m"                                                        \
+            -or                                                                \
+            -name "*.c"                                                        \
+            -or                                                                \
+            -name "*.cc"                                                       \
+            -or                                                                \
+            -name "*.cpp"                                                      \
+            -or                                                                \
+            -name "*.cxx"                                                      \
+            -or                                                                \
+            -name "*.S"                                                        \
+            -not                                                               \
+            -path "*.framework*"                                               \
+            -not                                                               \
+            -path "*/openFrameworksCompiled/*"                                 \
+        2> /dev/null                                                           \
         | grep -v "/\.[^\.]"                                                   \
-    )
+    )                                                                          \
+
+endef
 
 ################################################################################
-# CORE_SOURCE_PATHS (immediately assigned)
-#   The CORE_SOURCE_PATHS variable FILTERED list of paths locating the core
-#   openFrameworks header (*.h) and implementation (*.c/cpp/m) files.  It is 
-#   the result taking the ALL_CORE_SOURCE_PATHS variable (above) and removing
-#   all files that are also included in the CORE_EXCLUSIONS list.
-################################################################################
-
-CORE_SOURCE_PATHS:=                                                            \
-    $(filter-out                                                               \
-        $(CORE_EXCLUSIONS),                                                    \
-        $(ALL_CORE_SOURCE_PATHS)                                               \
-    )
-
-################################################################################
-# CORE_HEADER_SEARCH_PATHS (immediately assigned)
-#   The CORE_HEADER_SEARCH_PATHS is a list of header search paths that have
-#   been filtered.  They will later be prepended with the compilers -I flag.
-#   $(PATH_OF_LIBS_OPENFRAMEWORKS) is included so we don't miss ofMain.h, which
-#   is located in the base folder.
-################################################################################
-
-CORE_HEADER_SEARCH_PATHS:=                                                     \
-    $(PATH_OF_LIBS_OPENFRAMEWORKS)                                             \
-    $(CORE_SOURCE_PATHS)
-
-################################################################################
-# ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS (immediately assigned)
-#   The ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS is a list of header search 
-#   that belong to various openFrameworks 3rd parth libraries (e.g. Cairo).
+# FUNCTION FUNC_RECURSIVE_FIND_SOURCES
+#   A function that will recursively search for source files beginning in a 
+#   given directory.
 #
-# Steps:
-#   1. Search all paths recursively, looking for directories:
-#       find $(PATH_OF_LIBS)/*/include -type d \
-#   2. Exclude all .hidden directories:
-#       grep -v "/\.[^\.]" will exclude all .hidden folders and files
+#   Example Usage:
+#   
+#       THE_SOURCES_FOUND :=                                                   \
+#                      $(call                                                  \
+#                           FUNC_RECURSIVE_FIND_SOURCES,                       \
+#                           $(DIRECTORY_TO_SEARCH)                             \
+#                       )                                                      \
+#   Steps:
+#
+#   1.  Search the passed directory ($1) for the type file "f" with one of the
+#       listed file extensions:
+#        find $1                                                               
+#           -type f                                                            
+#           -name "*.mm"                                                       
+#           -or                                                                
+#           ...
+#           -name "*.S"                                                      
+#
+#   2. Send errors to /dev/null
+#
+#       2> /dev/null
+#
+#   3. Exclude all hidden directories and files.
+#
+#       | grep -v "/\.[^\.]" )
 #
 ################################################################################
 
-#TODO: SHARE ADDONS SEARCH FUNCTIONS
-ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=                                     \
+define FUNC_NON_RECURSIVE_FIND_SOURCES
     $(shell                                                                    \
-        find $(PATH_OF_LIBS)/*/include                                         \
-        -type d                                                                \
+        find $1                                                                \
+            -maxdepth 1                                                        \
+            -mindepth 1                                                        \
+            -type f                                                            \
+            -name "*.mm"                                                       \
+            -or                                                                \
+            -name "*.m"                                                        \
+            -or                                                                \
+            -name "*.c"                                                        \
+            -or                                                                \
+            -name "*.cc"                                                       \
+            -or                                                                \
+            -name "*.cpp"                                                      \
+            -or                                                                \
+            -name "*.cxx"                                                      \
+            -or                                                                \
+            -name "*.S"                                                        \
+            -not                                                               \
+            -path "*.framework*"                                               \
+            -not                                                               \
+            -path "*/openFrameworksCompiled/*"                                 \
+        2> /dev/null                                                           \
         | grep -v "/\.[^\.]"                                                   \
-    )
+    )                                                                          \
+
+endef
 
 ################################################################################
-# CORE_THIRD_PARTY_HEADER_SEARCH_PATHS (immediately assigned)
-#   The CORE_THIRD_PARTY_HEADER_SEARCH_PATHS is a filtered version of the 
-#   CORE_THIRD_PARTY_HEADER_SEARCH_PATHS list, removing all paths that are in
-#   the CORE_EXCLUSIONS list.
-################################################################################
-
-CORE_THIRD_PARTY_HEADER_SEARCH_PATHS:=                                         \
-    $(filter-out                                                               \
-        $(CORE_EXCLUSIONS),                                                    \
-        $(ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS)                            \
-    )
-
-################################################################################
-# CORE CFLAGS
-################################################################################
-# In this section, we begin building the list of core CFLAGS.
-################################################################################
-
-################################################################################
-# CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS (immediately assigned)
-#   The CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS are generated by prepending -F to 
-#   each of the PLATFORM_FRAMEWORK_SEARCH_PATHS defined in the platform-
-#   specific configuration file.  Usually this is only used for OSX/iOS
-#   based builds. 
-################################################################################
-
-CORE_FRAMEWORK_SEARCH_PATHS_CFLAGS:=                                           \
-    $(addprefix                                                                \
-        -F,                                                                    \
-        $(PLATFORM_FRAMEWORK_SEARCH_PATHS)                                     \
-    )
-
-################################################################################
-# CORE_HEADER_SEARCH_PATHS_CFLAGS (immediately assigned)
-#   The CORE_HEADER_SEARCH_PATHS_CFLAGS are generated by prepending -I to each
-#   of the PLATFORM_HEADER_SEARCH_PATHS. 
-################################################################################
-
-CORE_HEADER_SEARCH_PATHS_CFLAGS:=                                              \
-    $(addprefix                                                                \
-        -I,                                                                    \
-        $(PLATFORM_HEADER_SEARCH_PATHS)                                        \
-    )
-
-################################################################################
-# CORE_PKG_CONFIG_LIBRARIES (immediately assigned)
-#   The CORE_PKG_CONFIG_LIBRARIES are simply set from the 
-#   PLATFORM_PKG_CONFIG_LIBRARIES variable.
-################################################################################
-
-CORE_PKG_CONFIG_LIBRARIES:=                                                    \
-    $(PLATFORM_PKG_CONFIG_LIBRARIES)
-
-# TODO: do we need to include this above?
-#   $(PROJECT_PKG_CONFIG_LIBS)
-
-################################################################################
-# CORE_HEADER_SEARCH_PATHS_CFLAGS (continued)
-#   Acquire relevant CFLAGS from the pkg-config utility for all 
-#   CORE_PKG_CONFIG_LIBRARIES.  Add them to the #
-#   CORE_HEADER_SEARCH_PATHS_CFLAGS.
-################################################################################
-
-ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-    CORE_HEADER_SEARCH_PATHS_CFLAGS +=                                         \
-        $(shell                                                                \
-            pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags                 \
-        )
-endif
-
-################################################################################
-# CORE_HEADER_SEARCH_PATHS_CFLAGS (continued)
-#   Prepend all CORE_THIRD_PARTY_HEADER_SEARCH_PATHS with the -I flag.
-#   Add them to the CORE_HEADER_SEARCH_PATHS_CFLAGS.
-################################################################################
-
-CORE_HEADER_SEARCH_PATHS_CFLAGS +=                                             \
-    $(addprefix                                                                \
-        -I,                                                                    \
-        $(CORE_THIRD_PARTY_HEADER_SEARCH_PATHS)                                \
-    )
-
-################################################################################
-# CORE_HEADER_SEARCH_PATHS_CFLAGS (continued)
-#   Prepend all CORE_HEADER_SEARCH_PATHS with the -I flag.
-#   Add them to the CORE_HEADER_SEARCH_PATHS_CFLAGS.
-################################################################################
-
-CORE_HEADER_SEARCH_PATHS_CFLAGS +=                                             \
-    $(addprefix                                                                \
-        -I,                                                                    \
-        $(CORE_HEADER_SEARCH_PATHS)                                            \
-    )
-
-################################################################################
-# CORE DEFINES CFLAGS
-################################################################################
-# In this section, we gather all of the DEFINES and prepend them with -D
-################################################################################
-
-################################################################################
-# CORE_DEFINES_CFLAGS (immediately assigned)
-#   Set CORE_DEFINES_CFLAGS to PLATFORM_DEFINES while prepending -D to each.
-################################################################################
-
-CORE_DEFINES_CFLAGS:=                                                          \
-    $(addprefix                                                                \
-        -D,                                                                    \
-        $(PLATFORM_DEFINES)                                                    \
-    )
-
-################################################################################
-# CORE_CFLAGS (immediately assigned)
-#   Set raw CORE_CFLAGS to raw PLATFORM_CFLAGS.  PLATFORM_CFLAGS include all 
-#   fully qualified CFLAGS. 
-################################################################################
-CORE_CFLAGS :=                                                                 \
-    $(PLATFORM_CFLAGS)
-
-################################################################################
-# GENERATE A LIST OF ALL CORE SOURCE FILES
-################################################################################
-# In this section, we generate our list of all core source files by 
-# recursively searching the approprate directories.
-################################################################################
-
-################################################################################
-# ALL_CORE_SOURCE_FILES (immediately assigned)
-#   Create a list of all source files found in the CORE_SOURCE_PATHS (defined
-#   above).
-# Steps:
+# FUNCTION FUNC_RECURSIVE_FIND_SEARCH_PATHS
+#   A function that will recursively search for header OR library search path 
+#   directories while ignoring framework paths and hidden directories.
 #
-# 1. Recursively search CORE_SOURCE_PATHS for implementation files:
-#        find $(CORE_SOURCE_PATHS ...
-# 2. Only search for implementation files:
-#       -name "*.cpp" -or -name "*.mm" -or -name "*.m" \
-# 3. Filter out all hidden files and folders:
-#       | grep -v "/\.[^\.]"\
+#   Will also ignore any framework or any file / folder inside the 
+#   openFrameworks path.
 #
 ################################################################################
 
-#TODO: SHARE ADDONS SEARCH FUNCTIONS
-ALL_CORE_SOURCE_FILES :=                                                       \
+define FUNC_RECURSIVE_FIND_SEARCH_PATHS
     $(shell                                                                    \
-        find $(CORE_SOURCE_PATHS)                                              \
-        -name "*.cpp"                                                          \
-        -or                                                                    \
-        -name "*.mm"                                                           \
-        -or                                                                    \
-        -name "*.m"                                                            \
+        find $1                                                                \
+            -type d                                                            \
+            -not                                                               \
+            -path "*.framework*"                                               \
+            -not                                                               \
+            -path "*/openFrameworksCompiled/*"                                 \
+        2> /dev/null                                                           \
         | grep -v "/\.[^\.]"                                                   \
-    )
+    )                                                                          \
+
+endef
 
 ################################################################################
-# CORE_SOURCE_FILES (immediately assigned)
-#   CORE_SOURCE_FILES is a filtered list of source files by removing all files
-#   that are included in the CORE_EXCLUSIONS list.
+# FUNCTION FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN
+#   A function that will recursively search for libraries and frameworks and
+#   will ignore anything that is hidden. 
+#   
+#   Will also ignore any framework or any file / folder inside the 
+#   openFrameworks path.
+#
+#   Arg $1 => the search directory
+#   Arg #2 => the search type (f or d)
+#   Arg #3 => the name pattern
+#
+#   See FUNC_PARSE_ADDON_TEMPLATE_HEADER_SEARCH_PATHS for an example.
 ################################################################################
 
-CORE_SOURCE_FILES:=                                                            \
-    $(filter-out                                                               \
-        $(CORE_EXCLUSIONS),                                                    \
-        $(ALL_CORE_SOURCE_FILES)                                               \
-    )
+define FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN
+    $(shell                                                                    \
+        find $1                                                                \
+            -type $2                                                           \
+            -name $3                                                           \
+            -not                                                               \
+            -path "*/openFrameworksCompiled/*"                                 \
+            -not                                                               \
+            -path "*.framework*"                                               \
+        2> /dev/null                                                           \
+        | grep -v "/\.[^\.]"                                                   \
+    )                                                                          \
 
-################################################################################
-# DEBUG ########################################################################
-################################################################################
-ifdef MAKEFILE_DEBUG
-    $(info ========================= config.shared.mk flags ========================)
-  
-    $(info ---CORE_EXCLUSIONS---)
-    $(foreach v, $(CORE_EXCLUSIONS),$(info $(v)))
-
-    $(info ---ALL_CORE_SOURCE_PATHS---)
-    $(foreach v, $(ALL_CORE_SOURCE_PATHS),$(info $(v)))
-
-    $(info ---CORE_SOURCE_PATHS---)
-    $(foreach v, $(CORE_SOURCE_PATHS),$(info $(v)))
-
-    $(info ---CORE_HEADER_SEARCH_PATHS---)
-    $(foreach v, $(CORE_HEADER_SEARCH_PATHS),$(info $(v)))
-
-    $(info ---ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS---)
-    $(foreach v, $(ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS),$(info $(v)))
-
-    $(info ---CORE_HEADER_SEARCH_PATHS_CFLAGS---)
-    $(foreach v, $(CORE_HEADER_SEARCH_PATHS_CFLAGS),$(info $(v)))
-
-    $(info ---CORE_PKG_CONFIG_LIBRARIES---)
-    $(foreach v, $(CORE_PKG_CONFIG_LIBRARIES),$(info $(v)))
-
-    $(info ---CORE_DEFINES_CFLAGS---)
-    $(foreach v, $(CORE_DEFINES_CFLAGS),$(info $(v)))
-
-    $(info ---CORE_CFLAGS---)
-    $(foreach v, $(CORE_CFLAGS),$(info $(v)))
-
-    $(info ---ALL_CORE_SOURCE_FILES---)
-    $(foreach v, $(ALL_CORE_SOURCE_FILES),$(info $(v)))
-
-    $(info ---CORE_SOURCE_FILES---)
-    $(foreach v, $(CORE_SOURCE_FILES),$(info $(v)))
-
-endif
-################################################################################
+endef
