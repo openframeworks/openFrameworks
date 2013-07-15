@@ -24,12 +24,12 @@ void testApp::draw(){
 	ofRect(100,100,300,300);
 	
 	ofSetHexColor(0xffffff);
-	glPushMatrix();
-		glTranslatef(200,200,0);
-		glRotatef(counter,0,0,1);
+	ofPushMatrix();
+		ofTranslate(200,200,0);
+		ofRotate(counter,0,0,1);
 		ofCircle(0,0,80);
 		ofCircle(100,0,10);	// a small one
-	glPopMatrix();
+	ofPopMatrix();
 	ofSetHexColor(0x333333);
 	ofDrawBitmapString("(a) on screen", 150,200);
 
@@ -49,21 +49,21 @@ void testApp::draw(){
 	// finally, draw that texture on screen, how ever you want
 	// (note: you can even draw the texture before you call loadScreenData, 
 	// in order to make some trails or feedback type effects)
-	glPushMatrix();
+	ofPushMatrix();
 		ofSetHexColor(0xffffff);
-		glTranslatef(550,300,0);
+		ofTranslate(550,300,0);
 		//glRotatef(counter, 0.1f, 0.03f, 0);
 		float width = 200 + 100 * sin(counter/200.0f);
 		float height = 200 + 100 * sin(counter/200.0f);;
 		texScreen.draw(-width/2,-height/2,width,height);
-	glPopMatrix();
+	ofPopMatrix();
 
-	glPushMatrix();
+	ofPushMatrix();
 		ofSetHexColor(0xffffff);
-		glTranslatef(700,210,0);
-		glRotatef(counter, 0.1f, 0.03f, 0);
+		ofTranslate(700,210,0);
+		ofRotate(counter, 0.1f, 0.03f, 0);
 		texScreen.draw(-50,-50,100,100);
-	glPopMatrix();
+	ofPopMatrix();
 
 	ofSetHexColor(0x333333);
 	ofDrawBitmapString("(b) in a texture, very meta!", 500,200);

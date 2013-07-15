@@ -54,13 +54,26 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y) {
 
 //--------------------------------------------------------------
 void testApp::setup() {
+
+    #ifdef TARGET_OPENGLES
+    // While this will will work on normal OpenGL as well, it is 
+    // required for OpenGL ES because ARB textures are not supported.
+    // If this IS set, then we conditionally normalize our 
+    // texture coordinates below.
+    ofEnableNormalizedTexCoords();
+    #endif
+
 	img.loadImage("linzer.png");
 	
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	int skip = 1;	// this controls the resolution of the mesh
+	int skip = 10;	// this controls the resolution of the mesh
+	
 	int width = img.getWidth();
 	int height = img.getHeight();
+
+	ofVec2f imageSize(width,height);
+
 	ofVec3f zero(0, 0, 0);
 	for(int y = 0; y < height - skip; y += skip) {
 		for(int x = 0; x < width - skip; x += skip) {
@@ -82,6 +95,16 @@ void testApp::setup() {
 			// ignore any zero-data (where there is no depth info)
 			if(nw != zero && ne != zero && sw != zero && se != zero) {
 				addFace(mesh, nw, ne, se, sw);
+
+				// Normalize our texture coordinates if normalized 
+				// texture coordinates are currently enabled.
+				if(ofGetUsingNormalizedTexCoords()) {
+					nwi /= imageSize;
+					nei /= imageSize;
+					sei /= imageSize;
+					swi /= imageSize;
+				}
+
 				addTexCoords(mesh, nwi, nei, sei, swi);
 			}
 		}
@@ -97,7 +120,7 @@ void testApp::update() {
 
 //--------------------------------------------------------------
 void testApp::draw() {
-	ofBackground(0);
+	ofBackgroundGradient(ofColor(64), ofColor(0));
 	cam.begin();
 	glEnable(GL_DEPTH_TEST);
 	
@@ -137,7 +160,9 @@ void testApp::draw() {
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	
+	if(key == ' ') {
+		ofToggleFullscreen();
+	}
 }
 
 //--------------------------------------------------------------

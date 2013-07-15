@@ -105,19 +105,32 @@ ofPixelFormat ofDirectShowGrabber::getPixelFormat(){
 }
 
 //--------------------------------------------------------------------
-void ofDirectShowGrabber::listDevices(){
-
-	//---------------------------------
+vector<ofVideoDevice> ofDirectShowGrabber::listDevices(){
+    
+    vector <ofVideoDevice> devices; 
+	
+    //---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
 		ofLog(OF_LOG_NOTICE, "---");
-		VI.listDevices();
-		ofLog(OF_LOG_NOTICE, "---");
+        VI.listDevices();
+        ofLog(OF_LOG_NOTICE, "---");
+        
+		vector <string> devList = VI.getDeviceList(); 
+        
+        for(int i = 0; i < devList.size(); i++){
+            ofVideoDevice vd; 
+            vd.deviceName = devList[i]; 
+            vd.id = i;  
+            vd.bAvailable = true; 
+            devices.push_back(vd); 
+        }
 
 	//---------------------------------
 	#endif
 	//---------------------------------
-
+    
+    return devices;
 }
 
 //--------------------------------------------------------------------

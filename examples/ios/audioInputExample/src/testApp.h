@@ -32,5 +32,6 @@ public:
     int bufferCounter;
 	float * buffer;
 	
+    ofSoundPlayer sound;
 };
 

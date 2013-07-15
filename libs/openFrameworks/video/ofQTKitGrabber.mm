@@ -2,7 +2,7 @@
 #include "ofQTKitGrabber.h"
 #import <QTKit/QTKit.h>
 #import <QuickTime/QuickTime.h>
-
+#import <Accelerate/Accelerate.h>
 
 //This Objective-C class contains all the OS specific
 //Stuff we need for pulling images from a video camera feed
@@ -135,6 +135,9 @@
 
 + (NSArray*) listVideoDevices
 {
+    //create a session for enumerating devices
+    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
+    
 	NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
 							 arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
 	
@@ -147,6 +150,9 @@
 
 + (NSArray*) listAudioDevices
 {
+    //create a session for enumerating devices
+    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
+
 	NSArray* audioDevices = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
 	
     ofLogVerbose("ofQTKitGrabber") << "Listing audio devices:";
@@ -178,7 +184,7 @@
         NSMutableDictionary* pixelBufferAttributes = [NSMutableDictionary dictionary];
         //we can turn capture pixels off if we just want to use this object for recording
         if(_shouldCapturePixels){
-            [pixelBufferAttributes setValue:[NSNumber numberWithInt: kCVPixelFormatType_24RGB]
+            [pixelBufferAttributes setValue:[NSNumber numberWithInt: kCVPixelFormatType_32BGRA]
                                      forKey:(NSString*)kCVPixelBufferPixelFormatTypeKey];
             [pixelBufferAttributes setValue:[NSNumber numberWithBool:YES]
                                      forKey:(NSString*)kCVPixelBufferOpenGLCompatibilityKey];
@@ -512,23 +518,44 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                 width  = CVPixelBufferGetWidth(cvFrame);
                 height = CVPixelBufferGetHeight(cvFrame);
             }
-            
-            size_t dstBytesPerRow = pixels->getWidth() * 3;
+
             CVPixelBufferLockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
-            if (CVPixelBufferGetBytesPerRow(cvFrame) == dstBytesPerRow) {
-                memcpy(pixels->getPixels(), CVPixelBufferGetBaseAddress(cvFrame), pixels->getHeight() * dstBytesPerRow);
+#if( MAC_OS_X_VERSION_10_8 && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8)
+            //fast conversion of BGRA -> RGB introduced in 10.8
+            vImage_Buffer src;
+            src.height = CVPixelBufferGetHeight(cvFrame);
+            src.width = CVPixelBufferGetWidth(cvFrame);
+            src.data = CVPixelBufferGetBaseAddress(cvFrame);
+            src.rowBytes = CVPixelBufferGetBytesPerRow(cvFrame);
+            
+            vImage_Buffer dest;
+            dest.height = height;
+            dest.width = width;
+            dest.rowBytes = width*3;
+            dest.data = pixels->getPixels();
+
+            vImage_Error err = vImageConvert_BGRA8888toRGB888(&src, &dest, kvImageNoFlags);
+            if(err != kvImageNoError){
+                NSLog(@"Error in Pixel Copy vImage_error %ld", err);
             }
-            else {
-                unsigned char *dst = pixels->getPixels();
-                unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(cvFrame);
-                size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(cvFrame);
-                size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
-                for (int y = 0; y < pixels->getHeight(); y++){
-                    memcpy(dst, src, copyBytesPerRow);
-                    dst += dstBytesPerRow;
-                    src += srcBytesPerRow;
-                }
+#else
+            //manually convert BGRA -> RGB
+            int dstBpp = 3;
+            int srcBpp = 4;
+            int dstRowBytes = width*dstBpp;
+            int srcRowBytes = CVPixelBufferGetBytesPerRow(cvFrame);
+            for(int y = 0; y < height; y++){
+                unsigned char* src = ((unsigned char*)CVPixelBufferGetBaseAddress(cvFrame)) + y*srcRowBytes;
+                unsigned char* dst = pixels->getPixels() + y*dstRowBytes;
+                for(int x = 0; x < width; x++){
+                    dst[0] = src[2];
+                    dst[1] = src[1];
+                    dst[2] = src[0];
+                    dst+=dstBpp;
+                    src+=srcBpp;
+                }                    
             }
+#endif
             CVPixelBufferUnlockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
 
             hasNewFrame = NO;
@@ -794,12 +821,19 @@ bool ofQTKitGrabber::hasPreview(){
     return bPreview;
 }
 
-// would be better if listDevices returned a vector of devices too, 
-// but that requires updating the base class...perhaps we could
-// then have a ofBaseDevice class to be used for enumerating any 
-// type of device for video, sound, serial devices etc etc???
-void ofQTKitGrabber::listDevices(){
-    listVideoDevices();
+vector <ofVideoDevice> ofQTKitGrabber::listDevices(){
+    vector <string> devList = listVideoDevices();
+    
+    vector <ofVideoDevice> devices; 
+    for(int i = 0; i < devList.size(); i++){
+        ofVideoDevice vd; 
+        vd.deviceName = devList[i]; 
+        vd.id = i;  
+        vd.bAvailable = true; 
+        devices.push_back(vd); 
+    }
+    
+    return devices; 
 }
 
 //---------------------------------------------------------------------------

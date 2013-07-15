@@ -675,10 +675,11 @@ ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
 }
 
 //----------------------------------------------------------
-ofRectangle& ofRectangle::operator + (const ofPoint & point){
-	x += point.x;
-	y += point.y;
-	return *this;
+ofRectangle ofRectangle::operator + (const ofPoint & point){
+	ofRectangle rect=*this;
+	rect.x += point.x;
+	rect.y += point.y;
+	return rect;
 }
 
 //----------------------------------------------------------
@@ -686,3 +687,18 @@ bool ofRectangle::operator == (const ofRectangle& rect) const {
 	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
 }
 
+//----------------------------------------------------------
+ostream& operator<<(ostream& os, const ofRectangle& rect){
+	os << rect.position << ", " << rect.width << ", " << rect.height;
+	return os;
+}
+
+//----------------------------------------------------------
+istream& operator>>(istream& is, ofRectangle& rect){
+	is >> rect.position;
+	is.ignore(2);
+	is >> rect.width;
+	is.ignore(2);
+	is >> rect.height;
+	return is;
+}
