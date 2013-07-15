@@ -386,7 +386,7 @@ using namespace std;
 #endif
 
 #ifndef CLAMP
-	#define CLAMP(val,min,max) (MAX(MIN(val,max),min))
+	#define CLAMP(val,min,max) ((val) < (min) ? (min) : ((val > max) ? (max) : (val)))
 #endif
 
 #ifndef ABS
@@ -465,7 +465,8 @@ enum ofPixelFormat{
 	OF_PIXELS_RGB,
 	OF_PIXELS_RGBA,
 	OF_PIXELS_BGRA,
-	OF_PIXELS_RGB565
+	OF_PIXELS_RGB565,
+	OF_PIXELS_UNKNOWN
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
