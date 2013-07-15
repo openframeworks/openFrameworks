@@ -2,7 +2,7 @@
 
 //Some helper functions
 //--------------------------------------------------------------
-void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
+void testApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
 	ofVec3f normal = ((b - a).cross(c - a)).normalize();
 	mesh.addNormal(normal);
 	mesh.addVertex(a);
@@ -13,13 +13,13 @@ void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
 }
 
 //--------------------------------------------------------------
-void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
+void testApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-ofVec3f getVertexFromImg(ofFloatImage& img, int x, int y) {
+ofVec3f testApp::getVertexFromImg(ofFloatImage& img, int x, int y) {
 	return ofVec3f(x, y, 100 * img.getColor(x, y).getBrightness());
 }
 

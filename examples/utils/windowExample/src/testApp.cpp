@@ -7,14 +7,14 @@ void testApp::setup(){
 	int screenH = ofGetScreenHeight();
 	ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
 	
-	//load our typeface
+	// load our typeface
 	vagRounded.loadFont("vag.ttf", 16);
 
 	bFullscreen	= 0;
 	
-	//lets set the initial window pos
-	//and background color
-	//ofSetVerticalSync(true);
+	// lets set the initial window pos
+	// and background color
+	// ofSetVerticalSync(true);
 	ofSetFrameRate(60);
 	
 	ofBackground(50,50,50);	
@@ -29,8 +29,8 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 
-	//update our window title with the framerate and the position of the window
-	//[zach fix] ofSetWindowTitle(ofToString(ofGetFrameRate(), 2)+":fps - pos ("+ofToString((int)windowX)+","+ofToString((int)windowY)+")");
+	// update our window title with the framerate and the position of the window
+	// [zach fix] ofSetWindowTitle(ofToString(ofGetFrameRate(), 2)+":fps - pos ("+ofToString((int)windowX)+","+ofToString((int)windowY)+")");
 
 	
 	if(bFullscreen){
@@ -49,21 +49,29 @@ void testApp::update(){
 	if (ballPositionX < 0){
 		ballPositionX = 0;
 		ballVelocityX *= -1;
-		if (!bFullscreen) ofSetWindowPosition(posx-10, posy);
+		if (!bFullscreen){
+			ofSetWindowPosition(posx-10, posy);
+		}
 	} else if (ballPositionX > ofGetWidth()){
 		ballPositionX = ofGetWidth();
 		ballVelocityX *= -1;
-		if (!bFullscreen) ofSetWindowPosition(posx+10, posy);
+		if (!bFullscreen){
+			ofSetWindowPosition(posx+10, posy);
+		}
 	}
 	
 	if (ballPositionY < 0){
 		ballPositionY = 0;
 		ballVelocityY *= -1;
-		if (!bFullscreen) ofSetWindowPosition(posx, posy-10);
+		if (!bFullscreen){
+			ofSetWindowPosition(posx, posy-10);
+		}
 	} else if (ballPositionY > ofGetHeight()){
 		ballPositionY = ofGetHeight();
 		ballVelocityY *= -1;
-		if (!bFullscreen) ofSetWindowPosition(posx, posy+10);
+		if (!bFullscreen){
+			ofSetWindowPosition(posx, posy+10);
+		}
 	}
 	
 }
@@ -74,8 +82,8 @@ void testApp::draw(){
 	
 	ofSetHexColor(0x999999);
 	
-	//lets show our window pos in pixels
-	//macs actually start the Y pos from 40
+	// lets show our window pos in pixels
+	// macs actually start the Y pos from 40
 	vagRounded.drawString("window pos ("+ofToString(ofGetWindowPositionX())+", "+ofToString( ofGetWindowPositionY())+")", 10, 25);
 
 	if(!bFullscreen){
