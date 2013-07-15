@@ -61,8 +61,10 @@ void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
 	}else if(rendererType==ofGLRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_OF_ANDROID)
 	}else if(rendererType==ofCairoRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
+#endif
 	}else{
 		ofLogError() << "renderer type " << rendererType << " not known. Setting a GLRenderer";
 		ofLogError() << "this function only works with core renderers yet, if you want to use a custom renderer";
