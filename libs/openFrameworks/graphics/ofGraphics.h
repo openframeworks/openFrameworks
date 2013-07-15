@@ -12,6 +12,7 @@
 
 
 void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer,bool setDefaults=false);
+void ofSetCurrentRenderer(const string & rendererType,bool setDefaults=false);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
 
 //for pdf screenshot
