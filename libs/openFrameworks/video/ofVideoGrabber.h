@@ -47,7 +47,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
 		ofPtr<ofBaseVideoGrabber> getGrabber();
 
-		void				listDevices();
+		vector<ofVideoDevice> listDevices();
 		bool				isFrameNew();
 		void				update();
 		void				close();	
