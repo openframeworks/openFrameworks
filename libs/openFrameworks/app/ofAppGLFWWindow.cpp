@@ -772,15 +772,17 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		HWND hwnd = glfwGetWin32Window(windowP);
 
   		DWORD EX_STYLE = WS_EX_OVERLAPPEDWINDOW;
-  		DWORD STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+		DWORD STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 		
 	  	ChangeDisplaySettings(0, 0);
 		SetWindowLong(hwnd, GWL_EXSTYLE, EX_STYLE);
 		SetWindowLong(hwnd, GWL_STYLE, STYLE);
   		SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-	  	SetWindowPos(hwnd, HWND_NOTOPMOST, nonFullScreenX, nonFullScreenY, nonFullScreenW, nonFullScreenH, SWP_SHOWWINDOW);
-		//----------------------------------------------------
+		
+		//not sure why this is - but if we don't do this the window shrinks by 4 pixels in x and y 
+		//should look for a better fix. 
+		setWindowPosition(nonFullScreenX-2, nonFullScreenY-2);
+		setWindowShape(nonFullScreenW+4, nonFullScreenH+4);
 	}
 #endif
 }
