@@ -29,10 +29,12 @@ HAS_SYSTEM_GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 
 #check gstreamer version
-ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
-    GST_VERSION = 1.0
-else
-    GST_VERSION = 0.10
+ifndef GST_VERSION
+	ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
+	    GST_VERSION = 1.0
+	else
+	    GST_VERSION = 0.10
+	endif
 endif
 
 ################################################################################
@@ -61,6 +63,7 @@ endif
 ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_DEFINES += OF_USING_MPG123
 endif
+
 
 ################################################################################
 # PLATFORM REQUIRED ADDON
@@ -103,7 +106,7 @@ PLATFORM_CFLAGS += -fexceptions
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS = -Wl,-rpath=./libs
+PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
 
 
@@ -213,6 +216,13 @@ PLATFORM_LIBRARIES =
 ifneq ($(LINUX_ARM),1)
 	PLATFORM_LIBRARIES += glut
 endif
+ifneq ($(PLATFORM_ARCH),armv6l)
+    PLATFORM_LIBRARIES += X11 
+    PLATFORM_LIBRARIES += Xrandr
+    PLATFORM_LIBRARIES += Xxf86vm 
+    PLATFORM_LIBRARIES += Xi 
+endif
+    
 PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
@@ -228,34 +238,37 @@ PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPoco
 PLATFORM_SHARED_LIBRARIES =
 
 #openframeworks core third party
-PLATFORM_PKG_CONFIG_LIBRARIES =
-PLATFORM_PKG_CONFIG_LIBRARIES += cairo
-PLATFORM_PKG_CONFIG_LIBRARIES += zlib
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
-PLATFORM_PKG_CONFIG_LIBRARIES += libudev
-PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
-PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
-PLATFORM_PKG_CONFIG_LIBRARIES += openal
-PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
-PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 
-ifneq ($(LINUX_ARM),1)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gl
-	PLATFORM_PKG_CONFIG_LIBRARIES += glu
-	PLATFORM_PKG_CONFIG_LIBRARIES += glew
-endif
+ifndef CROSS_COMPILING
+	PLATFORM_PKG_CONFIG_LIBRARIES =
+	PLATFORM_PKG_CONFIG_LIBRARIES += cairo
+	PLATFORM_PKG_CONFIG_LIBRARIES += zlib
+	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
+	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
+	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
+	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
+	PLATFORM_PKG_CONFIG_LIBRARIES += libudev
+	PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
+	PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+	PLATFORM_PKG_CONFIG_LIBRARIES += openal
+	PLATFORM_PKG_CONFIG_LIBRARIES += portaudio-2.0
+	PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 
-# conditionally add GTK
-ifeq ($(HAS_SYSTEM_GTK),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
-endif
-
-# conditionally add mpg123
-ifeq ($(HAS_SYSTEM_MPG123),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+	ifneq ($(LINUX_ARM),1)
+		PLATFORM_PKG_CONFIG_LIBRARIES += gl
+		PLATFORM_PKG_CONFIG_LIBRARIES += glu
+		PLATFORM_PKG_CONFIG_LIBRARIES += glew
+	endif
+	
+	# conditionally add GTK
+	ifeq ($(HAS_SYSTEM_GTK),0)
+	    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
+	endif
+	
+	# conditionally add mpg123
+	ifeq ($(HAS_SYSTEM_MPG123),0)
+	    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+	endif
 endif
 
 ################################################################################

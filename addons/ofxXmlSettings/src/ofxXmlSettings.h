@@ -3,7 +3,11 @@
 
 #include "ofMain.h"
 #include <string.h>
+#if (_MSC_VER)
+#include "../libs/tinyxml/src/tinyxml.h"
+#else
 #include "tinyxml.h"
+#endif
 
 using namespace std;
 
@@ -55,8 +59,8 @@ class ofxXmlSettings: public ofBaseFileSerializer{
 		bool saveFile(const string& xmlFile);
 		bool saveFile();
 
-		bool load(string path);
-		bool save(string path);
+		bool load(const string & path);
+		bool save(const string & path);
 
 		void clearTagContents(const string& tag, int which = 0);
 		void removeTag(const string& tag, int which = 0);

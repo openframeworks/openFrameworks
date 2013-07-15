@@ -45,8 +45,10 @@ public:
     ofMaterial material;
     
     // place to store the sides of the box //
-    ofMesh boxSides[ofBoxPrimitive::SIDES_TOTAL];
-    ofMesh deformPlane;
+    ofVboMesh boxSides[ofBoxPrimitive::SIDES_TOTAL];
+    ofVboMesh deformPlane;
+    ofVboMesh topCap, bottomCap, body;
     vector<ofMeshFace> triangles;
     
+
 };

@@ -17,6 +17,7 @@
 #include "ofMesh.h"
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
+#include "ofTypes.h"
 
 class ofAbstractParameter;
 
@@ -29,8 +30,11 @@ typedef ofImage_<unsigned short> ofShortImage;
 
 class ofPath;
 class ofPolyline;
+class ofFbo;
 class of3dPrimitive;
 typedef ofPixels& ofPixelsRef;
+
+bool ofIsVFlipped();
 
 
 //----------------------------------------------------------
@@ -105,6 +109,7 @@ public:
 
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
 typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
+typedef ofBaseHasPixels_<unsigned short> ofBaseHasShortPixels;
 
 //----------------------------------------------------------
 // ofAbstractImage    ->   to be able to put different types of images in vectors...
@@ -125,6 +130,7 @@ public:
 
 typedef ofBaseImage_<unsigned char> ofBaseImage;
 typedef ofBaseImage_<float> ofBaseFloatImage;
+typedef ofBaseImage_<unsigned short> ofBaseShortImage;
 
 //----------------------------------------------------------
 // ofBaseHasSoundStream
@@ -195,7 +201,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual ~ofBaseVideoGrabber();
 
 	//needs implementing
-	virtual void	listDevices() = 0;		
+	virtual vector<ofVideoDevice>	listDevices() = 0;
 	virtual bool	initGrabber(int w, int h) = 0;
 	virtual void	update() = 0;
 	virtual bool	isFrameNew() = 0;
@@ -274,12 +280,13 @@ public:
 //----------------------------------------------------------
 // base renderers
 //----------------------------------------------------------
+class of3dPrimitive;
 
 class ofBaseRenderer{
 public:
 	virtual ~ofBaseRenderer(){}
 
-	virtual string getType()=0;
+	virtual const string & getType()=0;
 
 	virtual void update()=0;
 
@@ -287,8 +294,7 @@ public:
 	virtual void draw(ofPath & shape)=0;
 	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
-	virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType )=0;
-	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
+    virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
@@ -301,13 +307,16 @@ public:
 	// setup matrices and viewport (upto you to push and pop view before and after)
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-	virtual void viewport(ofRectangle viewport){};
-	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
-	virtual void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){};
-	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
-	virtual int getViewportWidth(){return 0;};
-	virtual int getViewportHeight(){return 0;};
+	virtual void viewport(ofRectangle viewport){}
+	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped()){}
+	virtual void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
+	virtual void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){}
+	virtual void setOrientation(ofOrientation orientation, bool vFlip){};
+	virtual ofRectangle getCurrentViewport(){return ofRectangle();}
+	virtual ofRectangle getNativeViewport(){return getCurrentViewport();}
+	virtual int getViewportWidth(){return 0;}
+	virtual int getViewportHeight(){return 0;}
+	virtual bool isVFlipped() const{return true;}
 
 	virtual void setCoordHandedness(ofHandednessType handedness){};
 	virtual ofHandednessType getCoordHandedness(){return OF_LEFT_HANDED;};
@@ -340,10 +349,10 @@ public:
 	virtual void setFillMode(ofFillFlag fill)=0;
 	virtual ofFillFlag getFillMode()=0;
 	virtual void setLineWidth(float lineWidth)=0;
+	virtual void setDepthTest(bool depthTest)=0;
 	virtual void setBlendMode(ofBlendMode blendMode)=0;
 	virtual void setLineSmoothing(bool smooth)=0;
 	virtual void setCircleResolution(int res){};
-	virtual void setSphereResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
 
@@ -382,6 +391,15 @@ public:
 	virtual bool rendersPathPrimitives()=0;
 };
 
+class ofBaseGLRenderer: public ofBaseRenderer{
+public:
+	virtual void setCurrentFBO(ofFbo * fbo)=0;
+
+	virtual void enableTextureTarget(int textureTarget)=0;
+	virtual void disableTextureTarget(int textureTarget)=0;
+};
+
+
 class ofBaseSerializer{
 public:
 	virtual ~ofBaseSerializer(){}
@@ -394,8 +412,8 @@ class ofBaseFileSerializer: public ofBaseSerializer{
 public:
 	virtual ~ofBaseFileSerializer(){}
 
-	virtual bool load(string path)=0;
-	virtual bool save(string path)=0;
+	virtual bool load(const string & path)=0;
+	virtual bool save(const string & path)=0;
 };
 
 

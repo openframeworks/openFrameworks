@@ -14,18 +14,6 @@ endif
 # define the OF_SHARED_MAKEFILES location
 OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
 
-############################## FLAGS ###########################################
-# OF CORE LIBRARIES SEARCH PATHS (-L ...) (not used during core compilation, but 
-#    variables are used during project compilation)
-################################################################################
-
-# generate a list of all third party libs, excluding the compiled openFrameworkslibrary.
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS = $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH) -type d -not -path "*/openFrameworksCompiled/*" | grep -v "/\.[^\.]")
-
-# filter out all excluded paths defined in the platform config files.
-OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS))
-
 
 ################################################################################
 # OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables are 
@@ -85,18 +73,18 @@ endif
 OF_CORE_THIRDPARTY_STATIC_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(OF_CORE_LIBS_PLATFORM_LIBS_STATICS))
 OF_CORE_THIRDPARTY_STATIC_LIBS += $(PLATFORM_STATIC_LIBRARIES)
 
-# add in any libraries that were explicitly listed in the platform config files.
-OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
-
 #TODO what to do with shared libs?
-OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
+OF_CORE_THIRDPARTY_SHARED_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
 
 
 ################################################################################
 # OF PLATFORM LDFLAGS
 ################################################################################
 
-OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS))
+ifeq ($(PLATFORM_OS),Linux) 
+	OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(dir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))
+	OF_CORE_LIBRARY_LDFLAGS += $(addprefix -l,$(patsubst lib%,%,$(basename $(notdir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))))
+endif
 OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 
 
@@ -213,15 +201,21 @@ ifdef B_PROCESS_ADDONS
 endif
 
 # generate the list of core libraries
-# 2. Add all of the third party static libs defined by the platform config files.
+# 1. Add all of the third party static libs defined by the platform config files.
 OF_CORE_LIBS := $(OF_CORE_THIRDPARTY_STATIC_LIBS)
+
 # 2. Add all of the third party shared libs defined by the platform config files.
-OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
+ifneq ($(PLATFORM_OS),Linux)
+	OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
+endif
+OF_CORE_LIBS += $(PLATFORM_SHARED_LIBRARIES)
+
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
 endif
+
 # 4. Add the libraries defined in the platform config files.
 OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 
@@ -317,6 +311,7 @@ OF_PROJECT_DEFINES_CFLAGS = $(addprefix -D,$(OF_PROJECT_DEFINES))
 
 # gather any project CFLAGS
 OF_PROJECT_CFLAGS := $(PROJECT_CFLAGS)
+OF_PROJECT_CFLAGS += $(PROJECT_ADDONS_CFLAGS)
 OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
@@ -334,6 +329,7 @@ OF_PROJECT_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(USER_LDFLAGS) # legacy
 OF_PROJECT_LDFLAGS += $(USER_LIBS)   # legacy
 OF_PROJECT_LDFLAGS += $(OF_PROJECT_LIBS_LDFLAGS)
+OF_PROJECT_LDFLAGS += $(PROJECT_ADDONS_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PLATFORM_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
@@ -390,8 +386,8 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 ALL_LDFLAGS =
 
 # add the include LDFLAGS from Makefiles.examples
-ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 ALL_LDFLAGS += $(PLATFORM_LDFLAGS)
+ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))

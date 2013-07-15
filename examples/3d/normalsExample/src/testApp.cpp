@@ -8,11 +8,11 @@ void testApp::setup(){
     
     glEnable(GL_DEPTH_TEST); //make sure we test depth for 3d
     
-		ofSetVerticalSync(true);
+	ofSetVerticalSync(true);
     ofEnableLighting();
     ofEnableAlphaBlending();
     ofEnableSmoothing();
-    ofEnableBlendMode(ofBlendMode(OF_BLENDMODE_ALPHA));
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
     mesh.addVertex(ofPoint(0,0,0)); // add center vertex
     mesh.addColor(ofColor(137,137,140,255)); // center is same as bg
@@ -81,7 +81,7 @@ void testApp::draw(){
     ofBackgroundGradient(ofColor(65,62,50),ofColor(25,22,10) );
     
     // disable normals if a key is pressed
-    if(ofGetKeyPressed()){
+    if(ofGetKeyPressed() || ofGetMousePressed()){
         mesh.disableNormals();
     }else{
         mesh.enableNormals();
@@ -94,8 +94,10 @@ void testApp::draw(){
     ofSetColor(137,137,140);
     ofFill();
 
+    #ifndef TARGET_OPENGLES
     glEnable(GL_POLYGON_OFFSET_LINE);
     glPolygonOffset(-1,-1);
+    #endif
 
     mesh.drawFaces();
     ofSetColor(255,255,255);
@@ -125,7 +127,7 @@ void testApp::draw(){
     cam.end();
 
     ofSetColor(255,255,255);
-    ofDrawBitmapString("press any key to disable mesh normals", 20,20);
+    ofDrawBitmapString("press any key or mouse button to disable mesh normals", 20,20);
     ofDrawBitmapString("light", cam.worldToScreen(light.getGlobalPosition()) + ofPoint(10,0));
 }
 
