@@ -20,7 +20,7 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 	vboNumNormals = 0;
 }
 
-void ofVboMesh::operator=(const ofMesh & mom)
+/*void ofVboMesh::operator=(const ofMesh & mom)
 {
 	ofMesh(*this) = mom;
 	usage= GL_STATIC_DRAW;
@@ -29,7 +29,7 @@ void ofVboMesh::operator=(const ofMesh & mom)
 	vboNumColors = 0;
 	vboNumTexCoords = 0;
 	vboNumNormals = 0;
-}
+}*/
 
 void ofVboMesh::setUsage(int _usage){
 	usage = _usage;
