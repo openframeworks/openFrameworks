@@ -5,22 +5,29 @@
 #include "ofGLRenderer.h"
 #include "ofPath.h"
 #include "ofRendererCollection.h"
+#include "ofGLProgrammableRenderer.h"
+#include "ofGLRenderer.h"
+#include "ofCairoRenderer.h"
 
-#ifdef TARGET_OSX
-	#include <OpenGL/glu.h>
+
+#ifndef TARGET_LINUX_ARM
+	#ifdef TARGET_OSX
+		#include <OpenGL/glu.h>
+	#endif
+
+	#ifdef TARGET_OPENGLES
+		#include "glu.h"
+	#endif
+
+	#ifdef TARGET_LINUX
+		#include <GL/glu.h>
+	#endif
+
+	#ifdef TARGET_WIN32
+		#include "glu.h"
+	#endif
 #endif
 
-//#ifdef TARGET_OPENGLES
-//	#include "glu.h"
-//#endif
-//
-#ifdef TARGET_LINUX
-	#include <GL/glu.h>
-#endif
-
-#ifdef TARGET_WIN32
-	#include "glu.h"
-#endif
 
 #ifndef TARGET_WIN32
     #define CALLBACK
@@ -33,10 +40,9 @@
 #ifdef TARGET_OSX
 	#include <GLUT/glut.h>
 #endif
-#ifdef TARGET_LINUX
+#if defined( TARGET_LINUX ) && !defined(TARGET_OPENGLES)
 	#include <GL/glut.h>
 #endif
-
 
 
 //style stuff - new in 006
@@ -45,40 +51,50 @@ static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
 static ofPath shape;
-static ofMesh vertexData;
+static ofVboMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
+static ofVboMesh gradientMesh;
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
+
+void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
+	if(rendererType==ofGLProgrammableRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+	}else if(rendererType==ofGLRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
+	}else if(rendererType==ofCairoRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
+#endif
+	}else{
+		ofLogError() << "renderer type " << rendererType << " not known. Setting a GLRenderer";
+		ofLogError() << "this function only works with core renderers yet, if you want to use a custom renderer";
+		ofLogError() << "pass an ofPtr to a new instance of it";
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+	}
+}
+
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_,bool setDefaults){
 	renderer = renderer_;
-	renderer->setupGraphicDefaults();
-
 	if(renderer->rendersPathPrimitives()){
-		shape.setMode(ofPath::PATHS);
+		shape.setMode(ofPath::COMMANDS);
 	}else{
 		shape.setMode(ofPath::POLYLINES);
 	}
 
 	shape.setUseShapeColor(false);
 
-	ofSetStyle(currentStyle);
-	ofBackground(currentStyle.bgColor);
+	if(setDefaults){
+		renderer->setupGraphicDefaults();
+		ofSetStyle(currentStyle);
+		ofBackground(currentStyle.bgColor);
+	}
 }
 
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-ofPtr<ofGLRenderer> ofGetGLRenderer(){
-	if(ofGetCurrentRenderer()->getType()=="GL"){
-		return (ofPtr<ofGLRenderer>&)ofGetCurrentRenderer();
-	}else if(ofGetCurrentRenderer()->getType()=="collection"){
-		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
-	}else{
-		return ofPtr<ofGLRenderer>();
-	}
-}
-
-#ifndef TARGET_OPENGLES 
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IPHONE)
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
@@ -103,7 +119,7 @@ void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectan
 	rendererCollection->renderers.push_back(ofGetGLRenderer());
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
-	ofSetCurrentRenderer(rendererCollection);
+	ofSetCurrentRenderer(rendererCollection,true);
 	bScreenShotStarted = true;
 }
 
@@ -117,7 +133,7 @@ void ofEndSaveScreenAsPDF(){
 			cairoScreenshot.reset();
 		}
 		if( storedRenderer ){
-			ofSetCurrentRenderer(storedRenderer);
+			ofSetCurrentRenderer(storedRenderer,true);
 			storedRenderer.reset();
 		}
 		
@@ -158,6 +174,11 @@ ofRectangle ofGetCurrentViewport(){
 }
 
 //----------------------------------------------------------
+ofRectangle ofGetNativeViewport(){
+	return renderer->getNativeViewport();
+}
+
+//----------------------------------------------------------
 int ofGetViewportWidth(){
 	return renderer->getViewportWidth();
 }
@@ -184,6 +205,11 @@ int ofOrientationToDegrees(ofOrientation orientation){
 }
 
 //----------------------------------------------------------
+bool ofIsVFlipped(){
+	return renderer->isVFlipped();
+}
+
+//----------------------------------------------------------
 void ofSetCoordHandedness(ofHandednessType handedness){
 	renderer->setCoordHandedness(handedness);
 }
@@ -193,14 +219,37 @@ ofHandednessType ofGetCoordHandedness(){
 	return renderer->getCoordHandedness();
 }
 
+
+static bool setupScreenDeprecated=false;
+
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
-	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
+	if(!setupScreenDeprecated){
+		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
+		ofLogError() << "using current orientation and vFlip";
+		setupScreenDeprecated = true;
+	}
+	renderer->setupScreenPerspective(width,height,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
-	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
+	if(!setupScreenDeprecated){
+		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
+		ofLogError() << "using current orientation and vFlip";
+		setupScreenDeprecated = true;
+	}
+	renderer->setupScreenOrtho(width,height,nearDist,farDist);
+}
+
+//----------------------------------------------------------
+void ofSetupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
+	renderer->setupScreenPerspective(width,height, fov,nearDist,farDist);
+}
+
+//----------------------------------------------------------
+void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist){
+	renderer->setupScreenOrtho(width,height,nearDist,farDist);
 }
 
 //----------------------------------------------------------
@@ -295,7 +344,8 @@ void ofMultMatrix (const float *m){
 	renderer->multMatrix(m);
 }
 
-void ofSetMatrixMode (ofMatrixMode matrixMode){
+//----------------------------------------------------------
+void ofSetMatrixMode(ofMatrixMode matrixMode){
 	renderer->matrixMode(matrixMode);
 }
 
@@ -370,53 +420,57 @@ void ofBackground(int r, int g, int b, int a){
 //----------------------------------------------------------
 void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
 	float w = ofGetWidth(), h = ofGetHeight();
-	ofMesh mesh;
-	mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	gradientMesh.clear();
+	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying
 		// it and just adding the colors whenever the function is called.
 		ofVec2f center(w / 2, h / 2);
-		mesh.addVertex(center);
-		mesh.addColor(start);
+		gradientMesh.addVertex(center);
+		gradientMesh.addColor(start);
 		int n = 32; // circular gradient resolution
 		float angleBisector = TWO_PI / (n * 2);
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
 			float theta = i * TWO_PI / n;
-			mesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
-			mesh.addColor(end);
+			gradientMesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
+			gradientMesh.addColor(end);
 		}
 	} else if(mode == OF_GRADIENT_LINEAR) {
-		mesh.addVertex(ofVec2f(0, 0));
-		mesh.addVertex(ofVec2f(w, 0));
-		mesh.addVertex(ofVec2f(w, h));
-		mesh.addVertex(ofVec2f(0, h));
-		mesh.addColor(start);
-		mesh.addColor(start);
-		mesh.addColor(end);
-		mesh.addColor(end);
+		gradientMesh.addVertex(ofVec2f(0, 0));
+		gradientMesh.addVertex(ofVec2f(w, 0));
+		gradientMesh.addVertex(ofVec2f(w, h));
+		gradientMesh.addVertex(ofVec2f(0, h));
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(end);
 	} else if(mode == OF_GRADIENT_BAR) {
-		mesh.addVertex(ofVec2f(w / 2, h / 2));
-		mesh.addVertex(ofVec2f(0, h / 2));
-		mesh.addVertex(ofVec2f(0, 0));
-		mesh.addVertex(ofVec2f(w, 0));
-		mesh.addVertex(ofVec2f(w, h / 2));
-		mesh.addVertex(ofVec2f(w, h));
-		mesh.addVertex(ofVec2f(0, h));
-		mesh.addVertex(ofVec2f(0, h / 2));
-		mesh.addColor(start);
-		mesh.addColor(start);
-		mesh.addColor(end);
-		mesh.addColor(end);
-		mesh.addColor(start);
-		mesh.addColor(end);
-		mesh.addColor(end);
-		mesh.addColor(start);
+		gradientMesh.addVertex(ofVec2f(w / 2, h / 2));
+		gradientMesh.addVertex(ofVec2f(0, h / 2));
+		gradientMesh.addVertex(ofVec2f(0, 0));
+		gradientMesh.addVertex(ofVec2f(w, 0));
+		gradientMesh.addVertex(ofVec2f(w, h / 2));
+		gradientMesh.addVertex(ofVec2f(w, h));
+		gradientMesh.addVertex(ofVec2f(0, h));
+		gradientMesh.addVertex(ofVec2f(0, h / 2));
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(start);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(end);
+		gradientMesh.addColor(start);
 	}
-	glDepthMask(false);
-	mesh.draw();
-	glDepthMask(true);
+	GLboolean depthMaskEnabled;
+	glGetBooleanv(GL_DEPTH_WRITEMASK,&depthMaskEnabled);
+	glDepthMask(GL_FALSE);
+	gradientMesh.draw();
+	if(depthMaskEnabled){
+		glDepthMask(GL_TRUE);
+	}
 }
 
 //----------------------------------------------------------
@@ -456,7 +510,7 @@ void  ofSetRectMode(ofRectMode mode){
 
 //----------------------------------------------------------
 ofRectMode ofGetRectMode(){
-	return 	renderer->getRectMode();
+    return currentStyle.rectMode;
 }
 
 //----------------------------------------------------------
@@ -478,7 +532,7 @@ void ofFill(){
 // Returns OF_FILLED or OF_OUTLINE
 //----------------------------------------------------------
 ofFillFlag ofGetFill(){
-	return renderer->getFillMode();
+    return currentStyle.bFill ? OF_FILLED : OF_OUTLINE;
 }
 
 //----------------------------------------------------------
@@ -486,6 +540,22 @@ void ofSetLineWidth(float lineWidth){
 	shape.setStrokeWidth(lineWidth);
 	renderer->setLineWidth(lineWidth);
 	currentStyle.lineWidth = lineWidth;
+}
+
+//----------------------------------------------------------
+void ofSetDepthTest(bool depthTest){
+	renderer->setDepthTest(depthTest);
+	currentStyle.depthTest = depthTest;
+}
+
+//----------------------------------------------------------
+void ofEnableDepthTest(){
+	ofSetDepthTest(true);
+}
+
+//----------------------------------------------------------
+void ofDisableDepthTest(){
+	ofSetDepthTest(false);
 }
 
 //----------------------------------------
@@ -569,8 +639,7 @@ void ofDisablePointSprites(){
 
 //----------------------------------------------------------
 void ofDisableBlendMode(){
-    glDisable(GL_BLEND);
-	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
+    ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 }
 
 //----------------------------------------------------------
@@ -625,6 +694,8 @@ void ofSetStyle(ofStyle style){
 
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
+	
+	ofSetDepthTest(style.depthTest);
 
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
@@ -751,7 +822,7 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 
 //----------------------------------------------------------
 void ofRect(const ofRectangle & r){
-	ofRect(r.x, r.y, 0.0f, r.width, r.height);
+	ofRect(r.x,r.y,0.0f,r.width, r.height);
 }
 
 //----------------------------------------------------------
@@ -770,46 +841,62 @@ void ofRect(float x,float y,float z,float w,float h){
 }
 
 //----------------------------------------------------------
-void ofRectRounded(const ofRectangle & b,float r){
-	ofRectRounded(b.x, b.y, 0.0f, b.width, b.height, r);
+void ofRectRounded(const ofRectangle & b, float r){
+	ofRectRounded(b,r,r,r,r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(const ofPoint & p,float w,float h,float r){
-	ofRectRounded(p.x, p.y, p.z, w, h, r);
+void ofRectRounded(const ofPoint & p, float w, float h, float r){
+	ofRectRounded(p.x, p.y, p.z, w, h, r,r,r,r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(float x,float y,float w,float h,float r){
-	ofRectRounded(x, y, 0.0f, w, h, r);
+void ofRectRounded(float x, float y, float w, float h, float r){
+	ofRectRounded(x, y, 0.0f, w, h, r,r,r,r);
 }
 
 //----------------------------------------------------------
-void ofRectRounded(float x,float y,float z,float w,float h,float r){
-	float x2 = x + w;
-	float y2 = y + h;
+void ofRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
+                                                        float topRightRadius,
+                                                        float bottomRightRadius,
+                                                        float bottomLeftRadius){
+    ofRectRounded(p.x,p.y,p.z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
 
-	if (r > w || r > h || r <= 0){
-		ofRect(x, y, z, w, h);
-		return;
+//----------------------------------------------------------
+void ofRectRounded(const ofRectangle & b, float topLeftRadius,
+                                          float topRightRadius,
+                                          float bottomRightRadius,
+                                          float bottomLeftRadius) {
+
+	// if the parameter is an ofRectangle we don't do rectMode
+	ofRectRounded(b.x,b.y,0.0f,b.width,b.height,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
+
+
+//----------------------------------------------------------
+void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
+                                                                float topRightRadius,
+                                                                float bottomRightRadius,
+                                                                float bottomLeftRadius) {
+	// respect the current rectmode
+	switch (ofGetRectMode()) {
+		case OF_RECTMODE_CENTER:
+			x -= w / 2.0f;
+			y -= h / 2.0f;
+			break;
+		default:
+			break;
 	}
+    shape.rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+    shape.draw();
 
-	shape.clear();
-	shape.lineTo(x+r, y);
-	shape.bezierTo(x,y, x,y+r, x,y+r);
-	shape.lineTo(x, y2-r);
-	shape.bezierTo(x,y2, x+r,y2, x+r,y2);
-	shape.lineTo(x2-r, y2);
-	shape.bezierTo(x2,y2, x2,y2-r, x2,y2-r);
-	shape.lineTo(x2, y+r);
-	shape.bezierTo(x2,y, x2-r,y, x2-r,y);
-	shape.lineTo(x+r, y);
-	shape.draw();
 }
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	shape.clear();
+    shape.setCurveResolution(currentStyle.curveResolution);
+    shape.clear();
 	shape.curveTo(x0,y0);
 	shape.curveTo(x1,y1);
 	shape.curveTo(x2,y2);
@@ -819,6 +906,7 @@ void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.curveTo(x0,y0,z0);
 	shape.curveTo(x1,y1,z1);
@@ -830,6 +918,7 @@ void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
@@ -838,6 +927,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0,z0);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
@@ -852,13 +942,11 @@ void ofBeginShape(){
 //----------------------------------------------------------
 void ofVertex(float x, float y){
 	shape.lineTo(x,y);
-
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y, float z){
 	shape.lineTo(x,y,z);
-
 }
 
 //---------------------------------------------------
@@ -873,14 +961,10 @@ void ofVertices( const vector <ofPoint> & polyPoints ){
 	}
 }
 
-//----------------------------------------------------------
-void ofVertexes( const vector <ofPoint> & polyPoints ){
-	ofVertices(polyPoints);
-}
-
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-	shape.curveTo(x,y);
+    shape.setCurveResolution(currentStyle.curveResolution);
+    shape.curveTo(x,y);
 }
 
 //---------------------------------------------------
@@ -890,32 +974,32 @@ void ofCurveVertex(float x, float y, float z){
 
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofPoint> & curvePoints){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	for( int k = 0; k < (int)curvePoints.size(); k++){
 		shape.curveTo(curvePoints[k]);
 	}
 }
 
-//----------------------------------------------------------
-void ofCurveVertexes( const vector <ofPoint> & curvePoints){
-	ofCurveVertices(curvePoints);
-}
-
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
 void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(p1, p2, p3);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
@@ -964,11 +1048,11 @@ void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofC
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
 	vector<string> lines = ofSplitString(text, "\n");
 	int maxLineLength = 0;
-	for(int i = 0; i < lines.size(); i++) {
+	for(int i = 0; i < (int)lines.size(); i++) {
 		// tabs are not rendered
 		const string & line(lines[i]);
 		int currentLineLength = 0;
-		for(int j = 0; j < line.size(); j++) {
+		for(int j = 0; j < (int)line.size(); j++) {
 			if (line[j] == '\t') {
 				currentLineLength += 8 - (currentLineLength % 8);
 			} else {
@@ -989,18 +1073,21 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 	ofSetColor(background);
 	ofFill();
 	ofPushMatrix();
-	ofTranslate(x, y, 0);
+	
 	if(currentStyle.drawBitmapMode == OF_BITMAPMODE_MODEL) {
-		ofScale(1, -1, 0);
+		ofTranslate(x,y,0);
+		ofScale(1,-1,0);
+		ofTranslate(-(padding), + padding - fontSize - 2,0);
+	} else {
+		ofTranslate(x-(padding), y-(padding + fontSize + 2), 0);
+		
 	}
-	ofTranslate(-(padding), -(padding + fontSize + 2));
+	
 	ofRect(0, 0, width + 2 * padding, height + 2 * padding);
 	ofPopMatrix();
 	ofSetColor(foreground);
 	ofNoFill();
-	ofPushMatrix();
 	ofDrawBitmapString(text, x, y);
-	ofPopMatrix();
 	glDepthMask(true);
 	ofPopStyle();
 }

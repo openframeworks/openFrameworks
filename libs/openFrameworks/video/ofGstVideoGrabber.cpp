@@ -14,8 +14,7 @@
 //-------------------------------------------------
 
 #ifdef TARGET_LINUX
-// not needed any more, keeping it for compatibility with previous version
-//#define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE
+
 #define PREFER_RGB_OVER_YUV
 #define PREFER_NON_COMPRESSED
 
@@ -192,7 +191,7 @@ static void get_supported_framerates (ofGstVideoFormat &video_format, GstStructu
 		framerate.numerator   = gst_value_get_fraction_numerator (framerates);
 		framerate.denominator = gst_value_get_fraction_denominator (framerates);
 		video_format.framerates.push_back(framerate);
-		ofLog(OF_LOG_NOTICE,"%d/%d ", framerate.numerator,
+		ofLog(OF_LOG_VERBOSE,"%d/%d ", framerate.numerator,
 						framerate.denominator);
 	}else if (GST_VALUE_HOLDS_LIST (framerates)){
 		int num_framerates = gst_value_list_get_size (framerates);
@@ -201,7 +200,7 @@ static void get_supported_framerates (ofGstVideoFormat &video_format, GstStructu
 			framerate.numerator   = gst_value_get_fraction_numerator (value);
 			framerate.denominator = gst_value_get_fraction_denominator (value);
 			video_format.framerates.push_back(framerate);
-			ofLog(OF_LOG_NOTICE,"%d/%d ", framerate.numerator,
+			ofLog(OF_LOG_VERBOSE,"%d/%d ", framerate.numerator,
 							framerate.denominator);
 		}
 	}else if (GST_VALUE_HOLDS_FRACTION_RANGE (framerates)){
@@ -217,7 +216,7 @@ static void get_supported_framerates (ofGstVideoFormat &video_format, GstStructu
 		numerator_max      = gst_value_get_fraction_numerator (fraction_range_max);
 		denominator_max    = gst_value_get_fraction_denominator (fraction_range_max);
 
-		ofLog(OF_LOG_NOTICE,"from %d/%d to %d/%d", numerator_min,
+		ofLog(OF_LOG_VERBOSE,"from %d/%d to %d/%d", numerator_min,
 				denominator_max, numerator_max, denominator_min);
 
 		for (int i = numerator_min; i <= numerator_max; i++){
@@ -228,7 +227,7 @@ static void get_supported_framerates (ofGstVideoFormat &video_format, GstStructu
 			}
 		}
 	}else{
-		ofLog (OF_LOG_WARNING,"unknown GValue type %s for framerates", G_VALUE_TYPE_NAME (framerates));
+		ofLog (OF_LOG_VERBOSE,"unknown GValue type %s for framerates", G_VALUE_TYPE_NAME (framerates));
 	}
 }
 
@@ -278,7 +277,7 @@ static void add_video_format (ofGstDevice &webcam_device,
   ofGstVideoFormat &video_format, GstStructure &format_structure, int desired_framerate)
 {
 
-	ofLog(OF_LOG_NOTICE,"%s %d x %d framerates:",
+	ofLog(OF_LOG_VERBOSE,"%s %d x %d framerates:",
 				video_format.mimetype.c_str(), video_format.width,
 				video_format.height);
 	get_supported_framerates (video_format, format_structure);
@@ -379,7 +378,7 @@ static void add_video_format (ofGstDevice &webcam_device,
   ofGstVideoFormat &video_format, GstStructure &format_structure, int desired_framerate)
 {
 
-	ofLog(OF_LOG_NOTICE,"%s %s %d x %d , videoformat: %d framerates:",
+	ofLog(OF_LOG_VERBOSE,"%s %s %d x %d , videoformat: %d framerates:",
 				video_format.mimetype.c_str(),
 				video_format.format_name.c_str(),
 				video_format.width,
@@ -604,11 +603,37 @@ void ofGstVideoGrabber::setVerbose(bool bVerbose){
 	//else ofLogResetTopicLogLevel("ofGstVideoGrabber");
 }
 
-void ofGstVideoGrabber::listDevices(){
-	if(!camData.bInited) get_video_devices(camData);
-	for(unsigned i=0; i<camData.webcam_devices.size(); i++){
-		cout << "device " << i << ": " + camData.webcam_devices[i].video_device + ": " + camData.webcam_devices[i].product_name << endl;
+ofPixelFormat ofPixelFormatFromGstFormat(string format){
+	switch(gst_video_format_from_string(format.c_str())){
+	case GST_VIDEO_FORMAT_RGB: return OF_PIXELS_RGB;
+	case GST_VIDEO_FORMAT_RGBA: return OF_PIXELS_RGBA;
+	case GST_VIDEO_FORMAT_BGRA: return OF_PIXELS_BGRA;
+	case GST_VIDEO_FORMAT_GRAY8: return OF_PIXELS_MONO;
+	default: return OF_PIXELS_UNKNOWN;
 	}
+}
+
+vector<ofVideoDevice> ofGstVideoGrabber::listDevices(){
+	if(!camData.bInited) get_video_devices(camData);
+	vector<ofVideoDevice> devices(camData.webcam_devices.size());
+	for(unsigned i=0; i<camData.webcam_devices.size(); i++){
+		devices[i].id = i;
+        devices[i].bAvailable = true; 
+		devices[i].deviceName = camData.webcam_devices[i].product_name;
+		devices[i].hardwareName = camData.webcam_devices[i].video_device;
+		devices[i].formats.resize(camData.webcam_devices[i].video_formats.size());
+		for(int j=0;j<camData.webcam_devices[i].video_formats.size();j++){
+			devices[i].formats[j].pixelFormat = ofPixelFormatFromGstFormat(camData.webcam_devices[i].video_formats[j].format_name);
+			devices[i].formats[j].width = camData.webcam_devices[i].video_formats[j].width;
+			devices[i].formats[j].height = camData.webcam_devices[i].video_formats[j].height;
+			devices[i].formats[j].framerates.resize(camData.webcam_devices[i].video_formats[j].framerates.size());
+			for(int k=0;k<camData.webcam_devices[i].video_formats[j].framerates.size();k++){
+				devices[i].formats[j].framerates[k] = float(camData.webcam_devices[i].video_formats[j].framerates[k].numerator)/float(camData.webcam_devices[i].video_formats[j].framerates[k].denominator);
+			}
+		}
+		ofLogVerbose() << "device " << i << ": " + camData.webcam_devices[i].video_device + ": " + camData.webcam_devices[i].product_name;
+	}
+	return devices;
 }
 
 void ofGstVideoGrabber::setDeviceID(int id){
@@ -687,12 +712,29 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 		decodebin = "! decodebin ";
 
 	const char * scale = "";
-	if(format.format_name!="RGB"){
-		scale = "! videoconvert ";
+	switch(internalPixelFormat){
+	case OF_PIXELS_MONO:
+		if(format.format_name!="GRAY8"){
+			scale = "! videoconvert ";
+		}
+		break;
+	case OF_PIXELS_RGB:
+		if(format.format_name!="RGB"){
+			scale = "! videoconvert ";
+		}
+		break;
+	case OF_PIXELS_RGBA:
+	case OF_PIXELS_BGRA:
+		if(format.format_name!="RGBA" && format.format_name!="BGRA"){
+			scale = "! videoconvert ";
+		}
+		break;
+	default:
+		break;
 	}
 
 	if( w!=format.width || h!=format.height ){
-		scale = "! ffvideoscale method=2 ";
+		scale = "! videoscale method=2 ";
 	}
 
 	string format_str_pipeline;
@@ -731,22 +773,21 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 #endif
 
-
 	int bpp;
 	switch(internalPixelFormat){
-	case OF_PIXELS_MONO:
-		bpp = 8;
-		break;
-	case OF_PIXELS_RGB:
-		bpp = 24;
-		break;
-	case OF_PIXELS_RGBA:
-	case OF_PIXELS_BGRA:
-		bpp = 32;
-		break;
-	default:
-		bpp=24;
-		break;
+		case OF_PIXELS_MONO:
+			bpp = 8;
+			break;
+		case OF_PIXELS_RGB:
+			bpp = 24;
+			break;
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+			bpp = 32;
+			break;
+		default:
+			bpp=24;
+			break;
 	}
 
 

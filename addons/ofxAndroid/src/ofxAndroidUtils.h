@@ -50,30 +50,10 @@ void ofxAndroidLaunchBrowser(string url);
 
 void ofxAndroidNotifyLoadPercent(float percent);
 
-//-------------------------------------
-// this functions are only for internal use
-void ofPauseVideoGrabbers();
-void ofResumeVideoGrabbers();
-
-void ofReloadAllImageTextures();
-
-void ofUnloadAllFontTextures();
-void ofReloadAllFontTextures();
-
-void  ofUpdateBitmapCharacterTexture();
-
-void ofxAndroidSoundStreamPause();
-void ofxAndroidSoundStreamResume();
-
 bool ofxAndroidCheckSDCardMounted();
 
 void ofxAndroidEnableMulticast();
 void ofxAndroidDisableMulticast();
-
-//this is just to fix a problem with undefined symbols
-inline void ofFixSoundStreamInclude(){
-	ofSoundStreamClose();
-}
 
 inline void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	jclass javaClass = ofGetJavaOFAndroid();

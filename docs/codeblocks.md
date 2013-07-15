@@ -50,6 +50,6 @@ To create a new project, you could simply use the projectGenerator. [See here ho
 
 **As always have fun!**
 
-[1]: http://www.openframeworks.cc/setup/setup/codeblocks
+[1]: http://www.openframeworks.cc/setup/codeblocks
 [2]: http://www.openframeworks.cc/content/files/codeblocks_additions.zip
 [3]: http://vimeo.com/33985058

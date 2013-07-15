@@ -5,7 +5,7 @@ void testApp::setup(){
 	
 	int screenW = ofGetScreenWidth();
 	int screenH = ofGetScreenHeight();
-	ofSetWindowPosition(screenW/2+300/2, screenH/2+300/2);
+	ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
 	
 	// load our typeface
 	vagRounded.loadFont("vag.ttf", 16);
@@ -63,11 +63,9 @@ void testApp::update(){
 	if (ballPositionY < 0){
 		ballPositionY = 0;
 		ballVelocityY *= -1;
-		ofLogNotice() << posy;
 		if (!bFullscreen){
 			ofSetWindowPosition(posx, posy-10);
 		}
-		ofLogNotice() << ofGetWindowPositionY();
 	} else if (ballPositionY > ofGetHeight()){
 		ballPositionY = ofGetHeight();
 		ballVelocityY *= -1;

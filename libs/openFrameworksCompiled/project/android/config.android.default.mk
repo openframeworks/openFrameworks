@@ -36,7 +36,7 @@ ifeq ($(shell uname),Darwin)
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
 	HOST_PLATFORM = windows
 else
-	HOST_PLATFORM = linux-x86
+	HOST_PLATFORM = linux-$(shell uname -m)
 endif
 
 
@@ -76,7 +76,7 @@ ifndef $(SDK_TARGET)
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.6
+	GCC_VERSION = 4.7
 endif
 
 PROJECT_PATH=$(PWD)
@@ -168,10 +168,10 @@ endif
 PLATFORM_LDFLAGS =
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
 ifeq ($(HOST_PLATFORM),linux-x86)
-	LDFLAGS += -fuse-ld=gold
+	PLATFORM_LDFLAGS += -fuse-ld=gold
 endif
 
-PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined
+PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -224,6 +224,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabb
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofCairoRenderer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
@@ -304,7 +305,7 @@ PLATFORM_LIBRARIES =
 PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 
-#PLATFORM_LIBRARIES += GLESv2 
+PLATFORM_LIBRARIES += GLESv2 
 PLATFORM_LIBRARIES += log 
 PLATFORM_LIBRARIES += dl 
 PLATFORM_LIBRARIES += m 

@@ -81,9 +81,8 @@ void testApp::update(){
 void testApp::drawScene(bool isPreview){
 	
 	glEnable(GL_DEPTH_TEST);
-	
+
 	if (isPreview) {
-		
 		ofPushStyle();
 		ofSetColor(150, 100, 100);
 		ofDrawGrid(1.0f, 5.0f, true);
@@ -104,7 +103,7 @@ void testApp::drawScene(bool isPreview){
 		
 		ofPushStyle();
 		ofNoFill();
-		ofBox(2.0f);
+		ofDrawBox(2.0f);
 		ofPopStyle();
 		
 		headTrackedCamera.restoreTransformGL();
@@ -114,7 +113,7 @@ void testApp::drawScene(bool isPreview){
 		//--
 		//draw window preview
 		//
-		ofMesh window;
+		window.clear();
 		window.addVertex(windowTopLeft);
 		window.addVertex(windowBottomLeft);
 		window.addVertex(windowBottomRight);
@@ -122,7 +121,6 @@ void testApp::drawScene(bool isPreview){
 		window.draw();
 		glPointSize(3.0f);
 		window.drawVertices();
-		
 		//
 		//--
 	}
@@ -154,7 +152,7 @@ void testApp::drawScene(bool isPreview){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
+
 	ofBackgroundGradient(ofColor(50), ofColor(0));
 	//------
 	//draw the scene
