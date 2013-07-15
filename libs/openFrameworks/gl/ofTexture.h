@@ -62,6 +62,8 @@ public:
 		wrapModeVertical = GL_CLAMP_TO_EDGE;
 		minFilter = GL_LINEAR;
 		magFilter = GL_LINEAR;
+
+		useTextureMatrix = false;
 	}
 
 	unsigned int textureID;
@@ -83,6 +85,9 @@ public:
 	int wrapModeVertical;
 	int minFilter;
 	int magFilter;
+	
+	ofMatrix4x4 textureMatrix;
+	bool useTextureMatrix;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
