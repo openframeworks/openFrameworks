@@ -1,1 +1,1 @@
-// openFrameworks is released under the MIT License. See libs/_Licence.txt
+// openFrameworks | MIT License - See LICENSE.md

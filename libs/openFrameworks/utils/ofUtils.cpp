@@ -7,6 +7,7 @@
 #include "Poco/String.h"
 #include "Poco/LocalDateTime.h"
 #include "Poco/DateTimeFormatter.h"
+#include "Poco/URI.h"
 
 #include <cctype> // for toupper
 
@@ -217,8 +218,10 @@ static string & dataPathRoot(){
 	static string * dataPathRoot = new string("../../../data/");
 #elif defined TARGET_ANDROID
 	static string * dataPathRoot = new string("sdcard/");
-#elif defined(TARGET_LINUX)
+#elif defined(TARGET_LINUX) || defined(TARGET_WIN32)
 	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
+//#elif defined(TARGET_LINUX_ARM)
+//		static string * dataPathRoot = new string("data/");
 #else
 	static string * dataPathRoot = new string("data/");
 #endif
@@ -285,8 +288,8 @@ string ofToDataPath(string path, bool makeAbsolute){
         
         #ifdef TARGET_WIN32
             //this is so we can check both "data\" and "data/" on windows
-            std::replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
-            std::replace( dataPath.begin(), dataPath.end(), '\\', '/' );
+            replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
+            replace( dataPath.begin(), dataPath.end(), '\\', '/' );
         #endif // TARGET_WIN32
 
 		//check if absolute path has been passed or if data path has already been applied
@@ -295,21 +298,19 @@ string ofToDataPath(string path, bool makeAbsolute){
 			path = dataPathRoot()+path;
 		}
 
-		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
+		if(makeAbsolute && (path.length()==0 || (path.substr(0,1) != "/" && path.substr(1,1) != ":"))){
 			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 
 			#ifndef TARGET_WIN32
 				char currDir[1024];
 				path = "/"+path;
-                path = getcwd(currDir, 1024)+path;
+				path = getcwd(currDir, 1024)+path;
 
 			#else
 
 				char currDir[1024];
 				path = "\\"+path;
 				path = _getcwd(currDir, 1024)+path;
-				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-
 
 			#endif
 
@@ -320,7 +321,18 @@ string ofToDataPath(string path, bool makeAbsolute){
 		}
 
 	}
+	#ifdef TARGET_WIN32
+		replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
+	#endif
+
 	return path;
+}
+
+
+//----------------------------------------
+template<>
+string ofFromString(const string & value){
+	return value;
 }
 
 //----------------------------------------
@@ -626,53 +638,60 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
-void ofLaunchBrowser(string url){
+void ofLaunchBrowser(string _url, bool uriEncodeQuery){
 
+    Poco::URI uri;
+    
+    try {
+        uri = Poco::URI(_url);
+    } catch(const Poco::SyntaxException& exc) {
+        ofLogError("ofLaunchBrowser") << "Malformed URL: " << _url;
+        return;
+    }
+    
+    if(uriEncodeQuery) {
+        uri.setQuery(uri.getRawQuery()); // URI encodes during set
+    }
+        
 	// http://support.microsoft.com/kb/224816
-
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
-	if(Poco::icompare(url.substr(0,8), "https://") == 0){
-		url.replace(0,5,"https");
-	}
-	else if(Poco::icompare(url.substr(0,7), "http://") == 0){
-		url.replace(0,4,"http");
-	}
-	else{
-		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin with http:// or https://");
+    //   Poco::URI automatically converts the scheme to lower case
+	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
+		ofLogError("ofLaunchBrowser") << "URL must begin with http:// or https://";
 		return;
 	}
 
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", url.c_str(),
+		ShellExecuteA(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#else
-		ShellExecute(NULL, "open", url.c_str(),
+		ShellExecute(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#endif
 	#endif
 
 	#ifdef TARGET_OSX
-		// ok gotta be a better way then this,
-		// this is what I found...
-		string commandStr = "open "+url;
-		system(commandStr.c_str());
+        // could also do with LSOpenCFURLRef
+		string commandStr = "open \"" + uri.toString() + "\"";
+		int ret = system(commandStr.c_str());
+        if(ret!=0) ofLogError("ofLaunchBrowser") << "Could not open browser.";
 	#endif
 
 	#ifdef TARGET_LINUX
-		string commandStr = "xdg-open "+url;
+		string commandStr = "xdg-open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
-		if(ret!=0) ofLog(OF_LOG_ERROR,"ofLaunchBrowser: couldn't open browser");
+		if(ret!=0) ofLogError("ofLaunchBrowser") << "Could not open browser.";
 	#endif
 
 	#ifdef TARGET_OF_IPHONE
-		ofxiPhoneLaunchBrowser(url);
+		ofxiPhoneLaunchBrowser(uri.toString());
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(url);
+		ofxAndroidLaunchBrowser(uri.toString());
 	#endif
 }
 
@@ -756,21 +775,25 @@ string ofSystem(string command){
 //--------------------------------------------------
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
-	if(ofSystem("uname -m").find("x86_64")==0)
-		return OF_TARGET_LINUX64;
-	else
-		return OF_TARGET_LINUX;
+    string arch = ofSystem("uname -m");
+    if(Poco::icompare(arch,"x86_64")==0) {
+        return OF_TARGET_LINUX64;
+    } else if(Poco::icompare(arch,"armv6l")==0) {
+        return OF_TARGET_LINUXARMV6L;
+    } else {
+        return OF_TARGET_LINUX;
+    }
 #elif defined(TARGET_OSX)
-	return OF_TARGET_OSX;
+    return OF_TARGET_OSX;
 #elif defined(TARGET_WIN32)
-	#if (_MSC_VER)
-		return OF_TARGET_WINVS;
-	#else
-		return OF_TARGET_WINGCC;
-	#endif
+    #if (_MSC_VER)
+        return OF_TARGET_WINVS;
+    #else
+        return OF_TARGET_WINGCC;
+    #endif
 #elif defined(TARGET_ANDROID)
-	return OF_TARGET_ANDROID;
+    return OF_TARGET_ANDROID;
 #elif defined(TARGET_OF_IPHONE)
-	return OF_TARGET_IPHONE;
+    return OF_TARGET_IPHONE;
 #endif
 }

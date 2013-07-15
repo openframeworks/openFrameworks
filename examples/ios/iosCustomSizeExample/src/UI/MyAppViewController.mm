@@ -4,6 +4,7 @@
 //
 
 #import "MyAppViewController.h"
+#import "ofxiPhoneViewController.h"
 #import "testApp.h"
 
 @implementation MyAppViewController

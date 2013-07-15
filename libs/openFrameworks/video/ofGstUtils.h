@@ -7,6 +7,7 @@
 #include "ofPixels.h"
 #include "ofTypes.h"
 #include "ofEvents.h"
+#include "ofThread.h"
 
 #define GST_DISABLE_DEPRECATED
 #include <gst/gst.h>
@@ -93,6 +94,20 @@ private:
 	float				speed;
 	int64_t				durationNanos;
 	bool				isAppSink;
+
+	class ofGstMainLoopThread: public ofThread{
+		GMainLoop *main_loop;
+	public:
+		void start(){
+			startThread();
+		}
+		void threadedFunction(){
+			main_loop = g_main_loop_new (NULL, FALSE);
+			g_main_loop_run (main_loop);
+		}
+	};
+
+	static ofGstMainLoopThread * mainLoop;
 };
 
 

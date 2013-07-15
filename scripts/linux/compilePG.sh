@@ -6,7 +6,7 @@ WHO=`who am i`;ID=`echo ${WHO%% *}`
 GROUP_ID=`id --group -n ${ID}`
 
 cd ../../apps/projectGenerator/projectGeneratorSimple
-make Release
+make Debug 
 ret=$?
 if [ $ret -ne 0 ]; then
   echo "there has been a problem compiling the projectGenerator"
@@ -19,3 +19,4 @@ mv ../../../projectGenerator/projectGeneratorSimple ../../../projectGenerator/pr
 sed -i "s/..\/..\/..\/..\//..\//g" ../../../projectGenerator/data/settings/projectGeneratorSettings.xml
 chown -R $ID:$GROUP_ID obj bin
 chown -R $ID:$GROUP_ID ../../../projectGenerator
+chown -R $ID:$GROUP_ID ../../../addons/obj

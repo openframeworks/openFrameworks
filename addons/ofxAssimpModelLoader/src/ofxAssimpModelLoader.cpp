@@ -12,7 +12,7 @@ ofxAssimpModelLoader::ofxAssimpModelLoader(){
 }
 
 ofxAssimpModelLoader::~ofxAssimpModelLoader(){
-    //
+    clear();
 }
 
 //------------------------------------------
@@ -135,7 +135,7 @@ void ofxAssimpModelLoader::loadGLResources(){
     ofLog(OF_LOG_VERBOSE, "loading gl resources");
 
     // create new mesh helpers for each mesh, will populate their data later.
-   // modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
+   modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
 
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
@@ -144,8 +144,8 @@ void ofxAssimpModelLoader::loadGLResources(){
         aiMesh* mesh = scene->mMeshes[i];
 
         // the current meshHelper we will be populating data into.
-        //ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
-        ofxAssimpMeshHelper meshHelper;
+        ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
+        //ofxAssimpMeshHelper meshHelper;
 		
         //meshHelper.texture = NULL;
 
@@ -202,11 +202,36 @@ void ofxAssimpModelLoader::loadGLResources(){
             string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
             string texFile = ofFilePath::getFileName(texPath.data);
             string realPath = modelFolder + relTexPath  + texFile;
-			if(!ofFile::doesFileExist(realPath) || !ofLoadImage(meshHelper.texture,realPath)) {
-                ofLog(OF_LOG_ERROR,string("error loading image ") + file.getFileName() + " " +realPath);
-			}else{
-                ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
-			}
+            
+            if(ofFile::doesFileExist(realPath) == false) {
+                ofLog(OF_LOG_ERROR, string("error loading texture, ") + file.getFileName() + " " + realPath);
+            }
+            
+            ofxAssimpTexture * assimpTexture = NULL;
+            bool bTextureAlreadyExists = false;
+            for(int j=0; j<textures.size(); j++) {
+                assimpTexture = textures[j];
+                if(assimpTexture->getTexturePath() == realPath) {
+                    bTextureAlreadyExists = true;
+                    break;
+                }
+            }
+            if(bTextureAlreadyExists) {
+                meshHelper.assimpTexture = assimpTexture;
+                ofLog(OF_LOG_VERBOSE, string("texture already loaded, ") + file.getFileName() + " " + realPath);
+            } else {
+                ofTexture * texture = new ofTexture();
+                bool bTextureLoadedOk = ofLoadImage(*texture, realPath);
+                if(bTextureLoadedOk) {
+                    textures.push_back(new ofxAssimpTexture(texture, realPath));
+                    assimpTexture = textures.back();
+                    meshHelper.assimpTexture = assimpTexture;
+                    ofLog(OF_LOG_VERBOSE, "texture loaded, width: %f height %f", texture->getWidth(), texture->getHeight());
+                } else {
+                    delete texture;
+                    ofLog(OF_LOG_ERROR, string("error loading texture, ") + file.getFileName() + " " + realPath);
+                }
+            }
         }
 
         meshHelper.mesh = mesh;
@@ -253,7 +278,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 		}
 
         meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
-        modelMeshes.push_back(meshHelper);
+
+        //modelMeshes.push_back(meshHelper);
     }
     
     int numOfAnimations = scene->mNumAnimations;
@@ -291,6 +317,14 @@ void ofxAssimpModelLoader::clear(){
     bUsingColors = true;
     
     currentAnimation = -1;
+    
+    for(int i=0; i<textures.size(); i++) {
+        if(textures[i]->hasTexture()) {
+            ofTexture * tex = textures[i]->getTexturePtr();
+            delete tex;
+        }
+    }
+    textures.clear();
     
     updateModelMatrix();
 }
@@ -636,12 +670,14 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     
     ofPushStyle();
     
-#ifndef TARGET_OPENGLES
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-#endif
-    glEnable(GL_NORMALIZE);
+    if(!ofGetGLProgrammableRenderer()){
+	#ifndef TARGET_OPENGLES
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	#endif
+		glEnable(GL_NORMALIZE);
+    }
     
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
@@ -652,8 +688,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         ofPushMatrix();
         ofMultMatrix(mesh.matrix);
         
-        if(bUsingTextures && mesh.texture.isAllocated()){
-            mesh.texture.bind();
+        if(bUsingTextures){
+            if(mesh.hasTexture()) {
+                ofTexture * tex = mesh.getTexturePtr();
+                if(tex->isAllocated()) {
+                    tex->bind();
+                }
+            }
         }
         
         if(bUsingMaterials){
@@ -684,8 +725,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         }
 #endif
         
-        if(bUsingTextures && mesh.texture.bAllocated()){
-            mesh.texture.unbind();
+        if(bUsingTextures){
+            if(mesh.hasTexture()) {
+                ofTexture * tex = mesh.getTexturePtr();
+                if(tex->isAllocated()) {
+                    tex->unbind();
+                }
+            }
         }
         
         if(bUsingMaterials){
@@ -696,11 +742,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     }
     
     ofPopMatrix();
-    
-#ifndef TARGET_OPENGLES
-    glPopClientAttrib();
-    glPopAttrib();
-#endif
+
+    if(!ofGetGLProgrammableRenderer()){
+	#ifndef TARGET_OPENGLES
+		glPopClientAttrib();
+		glPopAttrib();
+	#endif
+    }
     ofPopStyle();
 }
 
@@ -812,21 +860,26 @@ ofMaterial ofxAssimpModelLoader::getMaterialForMesh(int num){
 ofTexture ofxAssimpModelLoader::getTextureForMesh(string name){
 	for(int i=0; i<(int)modelMeshes.size(); i++){
 		if(string(modelMeshes[i].mesh->mName.data)==name){
-			return modelMeshes[i].texture;
+            if(modelMeshes[i].hasTexture()) {
+                ofTexture * tex = modelMeshes[i].getTexturePtr();
+                return *tex;
+            }
 		}
 	}
 	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
 	return ofTexture();
-
 }
 
 //-------------------------------------------
-ofTexture ofxAssimpModelLoader::getTextureForMesh(int num){
-	if((int)modelMeshes.size()<=num){
-		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
-		return ofTexture();
+ofTexture ofxAssimpModelLoader::getTextureForMesh(int i){
+	if(i < modelMeshes.size()){
+        if(modelMeshes[i].hasTexture()) {
+            ofTexture * tex = modelMeshes[i].getTexturePtr();
+            return *tex;
+        }
 	}
-	return modelMeshes[num].texture;
+    ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(i) + " there's only " + ofToString(scene->mNumMeshes));
+    return ofTexture();
 }
 
 //-------------------------------------------

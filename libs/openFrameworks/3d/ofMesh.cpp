@@ -263,7 +263,7 @@ void ofMesh::removeVertex(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeNormal(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= normals.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove normal out of range of this mesh. Taking no action.");
   }else{
     normals.erase(normals.begin() + index);
@@ -274,7 +274,7 @@ void ofMesh::removeNormal(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeColor(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= colors.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove color out of range of this mesh. Taking no action.");
   }else{
     colors.erase(colors.begin() + index);
@@ -285,7 +285,7 @@ void ofMesh::removeColor(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeTexCoord(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= texCoords.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove texCoord out of range of this mesh. Taking no action.");
   }else{
     texCoords.erase(texCoords.begin() + index);
@@ -296,7 +296,7 @@ void ofMesh::removeTexCoord(ofIndexType index){
 
 //--------------------------------------------------------------
 void ofMesh::removeIndex(ofIndexType index){
-  if(index >= vertices.size()){
+  if(index >= indices.size()){
     ofLog(OF_LOG_ERROR,"Trying to remove index out of range of this mesh. Taking no action.");
   }else{
     indices.erase(indices.begin() + index);
@@ -685,6 +685,7 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
+	if(getNumVertices()==0) return;
 	ofGetCurrentRenderer()->draw(*this,renderType,useColors,useTextures,useNormals);
 }
 
@@ -1601,8 +1602,8 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
                     index3 = (iy+1) * (nr) + (ix+0);
                     
                     mesh.addIndex(index1);
-                    mesh.addIndex(index2);
                     mesh.addIndex(index3);
+                    mesh.addIndex(index2);
                 }
                 
                 if(iy < res-1 ) {
@@ -1612,8 +1613,8 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
                     index3 = (iy+1) * (nr) + (ix+0);
                     
                     mesh.addIndex(index1);
-                    mesh.addIndex(index2);
                     mesh.addIndex(index3);
+                    mesh.addIndex(index2);
                     
                 }
             }
@@ -2140,8 +2141,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < heightSegments-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y)*radiusSegments + x );
                 mesh.addIndex( (y+1)*radiusSegments + x );
+                mesh.addIndex( (y)*radiusSegments + x );
             }
         }
     }
@@ -2188,8 +2189,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < capSegs-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
                 mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
             }
         }
     }

@@ -38,7 +38,7 @@ int     ofGetMonth();
 int     ofGetDay();
 int     ofGetWeekday();
 
-void 	ofLaunchBrowser(string url);
+void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
 
 void	ofEnableDataPath();
 void	ofDisableDataPath();
@@ -123,6 +123,18 @@ string ofToString(const vector<T>& values) {
 	return out.str();
 }
 
+template<class T>
+T ofFromString(const string & value){
+	T data;
+    stringstream ss;
+    ss << value;
+    ss >> data;
+    return data;
+}
+
+template<>
+string ofFromString(const string & value);
+
 template <class T>
 string ofToHex(const T& value) {
 	ostringstream out;
@@ -173,6 +185,7 @@ int ofBinaryToInt(const string& value);
 char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
+
 
 string 	ofGetVersionInfo();
 unsigned int ofGetVersionMajor();

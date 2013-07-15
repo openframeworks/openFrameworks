@@ -1174,14 +1174,13 @@ void svgtiny_parse_transform_attributes(Poco::XML::Element *node,
 	/* parse transform */
 	//transform = (char *) xmlGetProp(node, (const xmlChar *) "transform");
     
-    transform = (char *) node->getChildElement("transform");
+    transform = (char *) node->getAttribute("transform").c_str();
     
 	if (transform) {
 		svgtiny_parse_transform(transform, &state->ctm.a, &state->ctm.b,
 				&state->ctm.c, &state->ctm.d,
 				&state->ctm.e, &state->ctm.f);
 		//xmlFree(transform);
-        free(transform);
 	}
 }
 

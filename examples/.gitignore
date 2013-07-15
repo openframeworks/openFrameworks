@@ -18,8 +18,8 @@ Android.mk
 /*/*/*.xcodeproj
 /*/*/Project.xcconfig
 /*/*/openFrameworks-Info.plist
-/*/*/ofxiphone-Info.plist
-/*/*/iPhone_Prefix.pch
+/*/*/ofxiOS-Info.plist
+/*/*/ofxiOS_Prefix.pch
 /*/*/*/*/Default-568h@2x~iphone.png
 /*/*/*/*/Default.png
 /*/*/*/*/Default@2x.png
@@ -41,6 +41,7 @@ Android.mk
 /*/*/*.vcxproj
 /*/*/*.vcxproj.user
 /*/*/*.vcxproj.filters
+/*/*/icon.rc
 
 #Eclipse
 /*/*/.cproject
