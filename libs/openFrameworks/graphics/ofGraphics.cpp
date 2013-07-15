@@ -342,6 +342,11 @@ float * ofBgColorPtr(){
 }
 
 //----------------------------------------------------------
+ofColor ofGetBackground(){
+	return ofColor(renderer->getBgColor());
+}
+
+//----------------------------------------------------------
 void ofBackground(int brightness, int alpha){
 	ofBackground(brightness, brightness, brightness, alpha);
 }
