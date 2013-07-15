@@ -61,7 +61,7 @@ void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
 	}else if(rendererType==ofGLRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
-#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_OF_ANDROID)
+#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
 	}else if(rendererType==ofCairoRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
 #endif
