@@ -42,7 +42,7 @@ class AVFoundationVideoGrabber;
 -(void)startCapture;
 -(void)stopCapture;
 -(void)lockExposureAndFocus;
--(void)listDevices;
+-(vector <string>)listDevices;
 -(void)setDevice:(int)_device;
 -(void)eraseGrabberPtr;
 
@@ -68,7 +68,7 @@ class AVFoundationVideoGrabber{
 	
 		bool isFrameNew();
 		
-		void listDevices();
+		vector <ofVideoDevice> listDevices();
 		void setDevice(int deviceID);
 		bool setPixelFormat(ofPixelFormat PixelFormat);
 		ofPixelFormat getPixelFormat();
