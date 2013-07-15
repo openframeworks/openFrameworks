@@ -67,6 +67,7 @@ void ofxSimpleSlider::setLabelString (string str){
 //----------------------------------------------------
 void ofxSimpleSlider::draw(ofEventArgs& event){
 	
+	ofPushStyle();
 	ofEnableAlphaBlending();
 	ofDisableSmoothing();
 	ofPushMatrix();
@@ -103,8 +104,6 @@ void ofxSimpleSlider::draw(ofEventArgs& event){
 		ofLine(thumbX,0, thumbX,height); 
 	}
 	
-	
-	
 	// draw numeric value 
 	if (bHasFocus){
 		ofSetColor(0); 
@@ -120,10 +119,8 @@ void ofxSimpleSlider::draw(ofEventArgs& event){
 		ofDrawBitmapString( labelString, 0-labelStringWidth*8-5, height/2 + 4); 
 	}	
 
-	
 	ofPopMatrix();
-	ofSetLineWidth(1.0);
-	ofDisableAlphaBlending();
+	ofPopStyle();
 }
 
 //----------------------------------------------------
