@@ -18,6 +18,11 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+		// helper functions
+		void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c);
+		void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d);
+		ofVec3f getVertexFromImg(ofFloatImage& img, int x, int y);
+
 		ofFloatImage img;
 		ofEasyCam easyCam;
 		ofVboMesh mesh;
