@@ -1019,7 +1019,10 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 			break;
 		case GLFW_KEY_KP_ENTER:
 			key = OF_KEY_RETURN;
-			break;            
+			break;   
+		case GLFW_KEY_TAB:
+			key = OF_KEY_TAB;
+			break;   
 		default:
 			break;
 	}
