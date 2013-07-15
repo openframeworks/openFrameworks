@@ -135,6 +135,9 @@
 
 + (NSArray*) listVideoDevices
 {
+    //create a session for enumerating devices
+    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
+    
 	NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
 							 arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
 	
@@ -147,6 +150,9 @@
 
 + (NSArray*) listAudioDevices
 {
+    //create a session for enumerating devices
+    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
+
 	NSArray* audioDevices = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
 	
     ofLogVerbose("ofQTKitGrabber") << "Listing audio devices:";
@@ -815,12 +821,19 @@ bool ofQTKitGrabber::hasPreview(){
     return bPreview;
 }
 
-// would be better if listDevices returned a vector of devices too, 
-// but that requires updating the base class...perhaps we could
-// then have a ofBaseDevice class to be used for enumerating any 
-// type of device for video, sound, serial devices etc etc???
-void ofQTKitGrabber::listDevices(){
-    listVideoDevices();
+vector <ofVideoDevice> ofQTKitGrabber::listDevices(){
+    vector <string> devList = listVideoDevices();
+    
+    vector <ofVideoDevice> devices; 
+    for(int i = 0; i < devList.size(); i++){
+        ofVideoDevice vd; 
+        vd.deviceName = devList[i]; 
+        vd.id = i;  
+        vd.bAvailable = true; 
+        devices.push_back(vd); 
+    }
+    
+    return devices; 
 }
 
 //---------------------------------------------------------------------------
