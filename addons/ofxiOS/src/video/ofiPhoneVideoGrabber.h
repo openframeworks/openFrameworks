@@ -13,7 +13,7 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	ofiPhoneVideoGrabber();
 	
 	//needs implementing
-	void listDevices();	
+	vector <ofVideoDevice> listDevices();	
 	void getDeviceList(){};
 	bool initGrabber(int w, int h);
 	
