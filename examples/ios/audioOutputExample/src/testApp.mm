@@ -6,7 +6,7 @@ void testApp::setup(){
 	// IMPORTANT!!! if your sound doesn't work in the simulator - read this post - which requires you set the output stream to 24bit 
 	//	http://www.cocos2d-iphone.org/forum/topic/4159
 
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 
 	ofBackground(255, 255, 255);
 
@@ -37,6 +37,14 @@ void testApp::setup(){
 	//we do this because we don't have a mouse move function to work with:
 	targetFrequency = 444.0;
 	phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
+	
+	// This call will allow your app's sound to mix with any others that are creating sound
+	// in the background (e.g. the Music app). It should be done before the call to
+	// ofSoundStreamSetup. It sets a category of "play and record" with the "mix with others"
+	// option turned on. There are many other combinations of categories & options that might
+	// suit your app's needs better. See Apple's guide on "Configuring Your Audio Session".
+	
+	// ofxiOSSoundStream::setMixWithOtherApps(true);
 	
 	ofSoundStreamSetup(2, 0, this, sampleRate, initialBufferSize, 4);
 	ofSetFrameRate(60);
@@ -93,11 +101,11 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::audioOut(float * output, int bufferSize, int nChannels){
 			
-	if( initialBufferSize != bufferSize ){
+	if( initialBufferSize < bufferSize ){
 		ofLog(OF_LOG_ERROR, "your buffer size was set to %i - but the stream needs a buffer size of %i", initialBufferSize, bufferSize);
 		return;
 	}	
-	//pan = 0.5f;
+
 	float leftScale = 1 - pan;
 	float rightScale = pan;
 

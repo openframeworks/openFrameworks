@@ -297,6 +297,16 @@ void ofFile::copyFrom(const ofFile & mom){
 bool ofFile::openStream(Mode _mode, bool binary){
 	mode = _mode;
 	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
+	switch(_mode) {
+		case WriteOnly:
+		case ReadWrite:
+		case Append:
+			ofFilePath::createEnclosingDirectory(path());
+			break;
+		case Reference:
+		case ReadOnly:
+			break;
+	}
 	switch(_mode){
 	 case Reference:
 		 return true;
@@ -312,11 +322,11 @@ bool ofFile::openStream(Mode _mode, bool binary){
 		 fstream::open(path().c_str(), ios::out | binary_mode);
 		 break;
 
-	 case ReadWrite:
+		case ReadWrite:
 		 fstream::open(path().c_str(), ios_base::in | ios_base::out | binary_mode);
 		 break;
 
-	 case Append:
+		case Append:
 		 fstream::open(path().c_str(), ios::out | ios::app | binary_mode);
 		 break;
 	}
@@ -517,6 +527,7 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		myFile.copyTo(path);
 	}
 	catch(Poco::Exception & except){
@@ -546,6 +557,7 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		myFile.moveTo(path);
 	}
 	catch(Poco::Exception & except){
@@ -576,6 +588,7 @@ bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		myFile.renameTo(path);
 	}
 	catch(Poco::Exception & except){
@@ -655,7 +668,7 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 		ofLog(OF_LOG_ERROR, "ofFile::copyFromTo source file/folder doesn't exist: %s", pathSrc.c_str());
 		return false;
 	}
-	
+
 	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
 		if(overwrite){
 			ofFile::removeFile(pathDst, bRelativeToData);
@@ -687,10 +700,10 @@ bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bo
 	}
 
 	if(!ofFile::doesFileExist(pathSrc, bRelativeToData)){
-		ofLog(OF_LOG_ERROR, "ofFile::moveFromTo source file/folder doesn't exist: %s", pathSrc.c_str());	
+		ofLog(OF_LOG_ERROR, "ofFile::moveFromTo source file/folder doesn't exist: %s", pathSrc.c_str());
 		return false;
 	}
-		
+
 	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
 		if(overwrite){
 			ofFile::removeFile(pathDst, bRelativeToData);
@@ -1058,8 +1071,19 @@ void ofDirectory::reset(){
 }
 
 //------------------------------------------------------------------------------------------------------------
+bool natural(const ofFile& a, const ofFile& b) {
+	string aname = a.getBaseName(), bname = b.getBaseName();
+	int aint = ofToInt(aname), bint = ofToInt(bname);
+	if(ofToString(aint) == aname && ofToString(bint) == bname) {
+		return aint < bint;
+	} else {
+		return a < b;
+	}
+}
+
+//------------------------------------------------------------------------------------------------------------
 void ofDirectory::sort(){
-	ofSort(files);
+	ofSort(files, natural);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1247,7 +1271,7 @@ string ofFilePath::getPathForDirectory(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::removeTrailingSlash(string path){
-	if(path.length() > 0 && path[path.length() - 1] == '/'){
+	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
 	return path;
@@ -1288,6 +1312,12 @@ string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 
 	return myPath.parent().toString();
 }
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFilePath::createEnclosingDirectory(string filePath, bool bRelativeToData, bool bRecursive) {
+	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath), bRelativeToData, bRecursive);
+}
+
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
@@ -1332,10 +1362,14 @@ string ofFilePath::join(string path1, string path2){
 string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
-		if (readlink("/proc/self/exe", buff, FILENAME_MAX) == -1){
+		ssize_t size = readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+		if (size == -1){
 			ofLogError("ofFilePath") << "readlink failed with error " << errno;
 		}
-		return buff;
+		else{
+			buff[size] = '\0';
+			return buff;
+		}
 	#elif defined(TARGET_OSX)
 		char path[FILENAME_MAX];
 		uint32_t size = sizeof(path);
@@ -1344,7 +1378,13 @@ string ofFilePath::getCurrentExePath(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-		ofLogError() << "getCurrentExePath() not implemented";
+		vector<char> executablePath(MAX_PATH);
+		DWORD result = ::GetModuleFileNameA(NULL, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+		if(result == 0) {
+			ofLogError("getCurrentExePath") << "failure of getting current executable path";
+		}else{
+			return string(executablePath.begin(), executablePath.begin() + result);
+		}
 	#endif
 	return "";
 }

@@ -6,14 +6,8 @@
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.autotools.core.ErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -21,7 +15,7 @@
 					<folderInfo id="com.android.toolchain.gcc.898517443.1887315853" name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1485392764" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.607397687" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder arguments="" cleanBuildTarget="CleanAndroid" command="make" id="com.android.builder.1043977411" incrementalBuildTarget="AndroidRelease" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
+							<builder cleanBuildTarget="CleanRelease PLATFORM_OS=Android" id="cdt.managedbuild.builder.gnu.cross.983088410" incrementalBuildTarget="Release PLATFORM_OS=Android" managedBuildOn="false" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="com.android.gcc.compiler.1716371911" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.1288876143" superClass="com.android.gcc.inputType"/>
 							</tool>
@@ -38,14 +32,8 @@
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.autotools.core.ErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -53,7 +41,7 @@
 					<folderInfo id="com.android.toolchain.gcc.898517443.1692179379." name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1065244540" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.1950827678" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder arguments="" cleanBuildTarget="CleanAndroid" command="make" id="com.android.builder.1321623372" incrementalBuildTarget="AndroidDebug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
+							<builder cleanBuildTarget="CleanDebug PLATFORM_OS=Android" id="cdt.managedbuild.builder.gnu.cross.1077149429" incrementalBuildTarget="Debug PLATFORM_OS=Android" managedBuildOn="false" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="com.android.gcc.compiler.1704257024" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.431232555" superClass="com.android.gcc.inputType"/>
 							</tool>
@@ -69,10 +57,10 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Release">
+		<configuration configurationName="Default">
 			<resource resourceType="PROJECT" workspacePath="/androidOpenCVFaceExample"/>
 		</configuration>
-		<configuration configurationName="Default">
+		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/androidOpenCVFaceExample"/>
 		</configuration>
 		<configuration configurationName="Debug">

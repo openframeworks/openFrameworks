@@ -48,9 +48,6 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                play();
 		void                stop();
 
-        OF_DEPRECATED_MSG("Use getTexture()->bind() instead. Ensure decodeMode != OF_QTKIT_DECODE_PIXELS_ONLY.", void bind());
-        OF_DEPRECATED_MSG("Use getTexture()->unbind() instead. Ensure decodeMode != OF_QTKIT_DECODE_PIXELS_ONLY.", void unbind());
-
 		bool                isFrameNew(); //returns true if the frame has changed in this update cycle
 
 		// Returns openFrameworks compatible RGBA pixels.

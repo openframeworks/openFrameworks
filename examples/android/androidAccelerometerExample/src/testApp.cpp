@@ -13,25 +13,32 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	accel = ofxAccelerometer.getForce();
-	sprintf(buf[0],"g(x) = %0.2f",accel.x);
-	sprintf(buf[1],"g(y) = %0.2f",accel.y);
-	sprintf(buf[2],"g(z) = %0.2f",accel.z);
+	messages[0] = "g(x) = " + ofToString(accel.x,2);
+	messages[1] = "g(y) = " + ofToString(accel.y,2);
+	messages[2] = "g(z) = " + ofToString(accel.z,2);
 	normAccel = accel.getNormalized();
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	ofSetColor(255,255,0);
-	font.drawString(buf[0],10,24);
+	font.drawString(messages[0],10,font.stringHeight(messages[0])+20);
 	ofSetColor(255,0,255);
-	font.drawString(buf[1],10,font.stringHeight(buf[0])+24);
+	font.drawString(messages[1],10,(font.stringHeight(messages[0])+20)*2);
+	ofSetColor(0,255,255);
+	font.drawString(messages[2],10,(font.stringHeight(messages[0])+20)*3);
 
+	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
 
 	ofSetColor(255,255,0);
 	ofLine(0,0,normAccel.x*ofGetWidth()/2,0);
 	ofSetColor(255,0,255);
 	ofLine(0,0,0,-normAccel.y*ofGetHeight()/2);
+	// we don't draw z as the perspective might be confusing
+	// but it's approximately one when the device is still and parallel
+	// to the ground
+	ofPopMatrix();
 }
 
 //--------------------------------------------------------------

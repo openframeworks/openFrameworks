@@ -35,5 +35,5 @@ class testApp : public ofxAndroidApp{
 
 		ofTrueTypeFont font;
 		ofVec3f accel, normAccel;
-		char buf[3][64];
+		string messages[3];
 };

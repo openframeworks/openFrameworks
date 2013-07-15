@@ -44,7 +44,7 @@ class ofColor_{
         orange,orangeRed,orchid,paleGoldenRod,paleGreen,paleTurquoise,paleVioletRed,papayaWhip,
         peachPuff,peru,pink,plum,powderBlue,purple,rosyBrown,royalBlue,saddleBrown,salmon,
         sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
-        springGreen,steelBlue,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
+        springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
         yellowGreen;
     
 		void set (float _r, float _g, float _b, float _a = limit());
@@ -71,7 +71,7 @@ class ofColor_{
 		void getHsb(float& hue, float& saturation, float& brightness) const;
 		
 		void setHue (float hue);
-		void setSaturation (float saturation);
+		void setSaturation (float saturation); // uses hsb, not hsl. so red desaturated is white, not gray http://en.wikipedia.org/wiki/HSL_and_HSV
 		void setBrightness (float brightness);
 		void setHsb(float hue, float saturation, float brightness, float alpha = limit() );
 		

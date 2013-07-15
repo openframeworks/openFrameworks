@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofRectangle.h"
+
+class ofMesh;
+class ofTexture;
 
 
 /*
@@ -15,5 +19,7 @@
 void ofDrawBitmapCharacterStart(int stringLength);
 void ofDrawBitmapCharacter(int character, int x , int y );
 void ofDrawBitmapCharacterEnd();
-
+ofMesh & ofBitmapStringGetMesh(const string & text, int x, int y);
+ofTexture & ofBitmapStringGetTextureRef();
+ofRectangle ofBitmapStringGetBoundingBox(const string & text, int x, int y);
 

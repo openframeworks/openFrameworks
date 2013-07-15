@@ -36,6 +36,8 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
 	pixelsOwner = false;
 	channels = 0;
 	pixels = NULL;
+	width = 0;
+	height = 0;
 	copyFrom( mom );
 }
 
@@ -145,13 +147,6 @@ template<typename PixelType>
 const PixelType * ofPixels_<PixelType>::getPixels() const{
 	return &pixels[0];
 }
-
-
-/*template<typename PixelType>
-void ofPixels_<PixelType>::allocate(int w, int h, int bitsPerPixel){
-	ofImageType type = getImageTypeFromBits(bitsPerPixel);
-	allocate(w,h,type);
-}*/
 
 template<typename PixelType>
 void ofPixels_<PixelType>::allocate(int w, int h, int _channels){
@@ -271,9 +266,7 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
-	int index = getPixelIndex(x, y);
-
+void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color) {
 	if( channels == 1 ){
 		pixels[index] = color.getBrightness();
 	}else if( channels == 3 ){
@@ -285,6 +278,21 @@ void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 		pixels[index+1] = color.g;
 		pixels[index+2] = color.b;
 		pixels[index+3] = color.a;
+	}
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(int x, int y, const ofColor_<PixelType>& color) {
+	setColor(getPixelIndex(x, y), color);
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
+	int i = 0;
+	while(i < size()) {
+		for(int j = 0; j < channels; j++) {
+			pixels[i++] = color[j];
+		}
 	}
 }
 

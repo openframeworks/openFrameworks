@@ -263,6 +263,215 @@ static FunctionDelegate<TArgs, false> delegate(void (*NotifyMethod)(TArgs&))
 }
 
 
+
+
+
+template <class TObj> 
+class Delegate<TObj,void,true>: public AbstractDelegate<void>
+{
+public:
+	typedef void (TObj::*NotifyMethod)(const void*);
+
+	Delegate(TObj* obj, NotifyMethod method):
+		_receiverObject(obj), 
+		_receiverMethod(method)
+	{
+	}
+
+	Delegate(const Delegate& delegate):
+		AbstractDelegate<void>(delegate),
+		_receiverObject(delegate._receiverObject),
+		_receiverMethod(delegate._receiverMethod)
+	{
+	}
+
+	~Delegate()
+	{
+	}
+	
+	Delegate& operator = (const Delegate& delegate)
+	{
+		if (&delegate != this)
+		{
+			this->_receiverObject = delegate._receiverObject;
+			this->_receiverMethod = delegate._receiverMethod;
+		}
+		return *this;
+	}
+
+	bool notify(const void* sender)
+	{
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverObject)
+		{
+			(_receiverObject->*_receiverMethod)(sender);
+			return true;
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<void>& other) const
+	{
+		const Delegate* pOtherDelegate = reinterpret_cast<const Delegate*>(other.unwrap());
+		return pOtherDelegate && _receiverObject == pOtherDelegate->_receiverObject && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<void>* clone() const
+	{
+		return new Delegate(*this);
+	}
+	
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverObject = 0;
+	}
+
+protected:
+	TObj*        _receiverObject;
+	NotifyMethod _receiverMethod;
+	Mutex        _mutex;
+
+private:
+	Delegate();
+};
+
+
+template <class TObj> 
+class Delegate<TObj, void, false>: public AbstractDelegate<void>
+{
+public:
+	typedef void (TObj::*NotifyMethod)();
+
+	Delegate(TObj* obj, NotifyMethod method):
+		_receiverObject(obj), 
+		_receiverMethod(method)
+	{
+	}
+
+	Delegate(const Delegate& delegate):
+		AbstractDelegate<void>(delegate),
+		_receiverObject(delegate._receiverObject),
+		_receiverMethod(delegate._receiverMethod)
+	{
+	}
+
+	~Delegate()
+	{
+	}
+	
+	Delegate& operator = (const Delegate& delegate)
+	{
+		if (&delegate != this)
+		{
+			this->_pTarget        = delegate._pTarget;
+			this->_receiverObject = delegate._receiverObject;
+			this->_receiverMethod = delegate._receiverMethod;
+		}
+		return *this;
+	}
+
+	bool notify(const void*)
+	{
+		Mutex::ScopedLock lock(_mutex);
+		if (_receiverObject)
+		{
+			(_receiverObject->*_receiverMethod)();
+			return true;
+		}
+		else return false;
+	}
+
+	bool equals(const AbstractDelegate<void>& other) const
+	{
+		const Delegate* pOtherDelegate = reinterpret_cast<const Delegate*>(other.unwrap());
+		return pOtherDelegate && _receiverObject == pOtherDelegate->_receiverObject && _receiverMethod == pOtherDelegate->_receiverMethod;
+	}
+
+	AbstractDelegate<void>* clone() const
+	{
+		return new Delegate(*this);
+	}
+	
+	void disable()
+	{
+		Mutex::ScopedLock lock(_mutex);
+		_receiverObject = 0;
+	}
+
+protected:
+	TObj*        _receiverObject;
+	NotifyMethod _receiverMethod;
+	Mutex        _mutex;
+
+private:
+	Delegate();
+};
+
+
+template <class TObj>
+static Delegate<TObj, void, true> delegate(TObj* pObj, void (TObj::*NotifyMethod)(const void*))
+{
+	return Delegate<TObj, void, true>(pObj, NotifyMethod);
+}
+
+
+template <class TObj>
+static Delegate<TObj, void, false> delegate(TObj* pObj, void (TObj::*NotifyMethod)())
+{
+	return Delegate<TObj, void, false>(pObj, NotifyMethod);
+}
+
+
+template <class TObj>
+static Expire<void> delegate(TObj* pObj, void (TObj::*NotifyMethod)(const void*), Timestamp::TimeDiff expireMillisecs)
+{
+	return Expire<void>(Delegate<TObj, void, true>(pObj, NotifyMethod), expireMillisecs);
+}
+
+
+template <class TObj>
+static Expire<void> delegate(TObj* pObj, void (TObj::*NotifyMethod)(), Timestamp::TimeDiff expireMillisecs)
+{
+	return Expire<void>(Delegate<TObj, void, false>(pObj, NotifyMethod), expireMillisecs);
+}
+
+
+inline Expire<void> delegate(void (*NotifyMethod)(const void*), Timestamp::TimeDiff expireMillisecs)
+{
+	return Expire<void>(FunctionDelegate<void, true, true>(NotifyMethod), expireMillisecs);
+}
+
+
+inline Expire<void> delegate(void (*NotifyMethod)(void*), Timestamp::TimeDiff expireMillisecs)
+{
+	return Expire<void>(FunctionDelegate<void, true, false>(NotifyMethod), expireMillisecs);
+}
+
+
+inline Expire<void> delegate(void (*NotifyMethod)(), Timestamp::TimeDiff expireMillisecs)
+{
+	return Expire<void>(FunctionDelegate<void, false>(NotifyMethod), expireMillisecs);
+}
+
+
+inline FunctionDelegate<void, true, true> delegate(void (*NotifyMethod)(const void*))
+{
+	return FunctionDelegate<void, true, true>(NotifyMethod);
+}
+
+
+inline FunctionDelegate<void, true, false> delegate(void (*NotifyMethod)(void*))
+{
+	return FunctionDelegate<void, true, false>(NotifyMethod);
+}
+
+
+inline FunctionDelegate<void, false> delegate(void (*NotifyMethod)())
+{
+	return FunctionDelegate<void, false>(NotifyMethod);
+}
+
 } // namespace Poco
 
 

@@ -2,14 +2,14 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	
 	bPause	   = false;
 	restLength = 3.0;
 	space      = 4;
 	
 	zoom	   = -500;	
-	zoomTarget = 350;
+	zoomTarget = 200;
 	
 	center.x   = ((GRID_WIDTH-1)  * space) / 2;
 	center.y   = ((GRID_HEIGHT-1) * space) / 2;

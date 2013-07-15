@@ -805,7 +805,6 @@ svgtiny_code svgtiny_parse_poly(Poco::XML::Element *poly,
 	p = (float*) malloc(sizeof p[0] * strlen(s));
 	if (!p) {
         //xmlFree(points);
-        free(points);
 		return svgtiny_OUT_OF_MEMORY;
 	}
 
@@ -834,7 +833,6 @@ svgtiny_code svgtiny_parse_poly(Poco::XML::Element *poly,
 		p[i++] = svgtiny_PATH_CLOSE;
 
 	//xmlFree(points);
-    free(points);
 
 	return svgtiny_add_path(p, i, &state);
 }
@@ -1176,14 +1174,13 @@ void svgtiny_parse_transform_attributes(Poco::XML::Element *node,
 	/* parse transform */
 	//transform = (char *) xmlGetProp(node, (const xmlChar *) "transform");
     
-    transform = (char *) node->getChildElement("transform");
+    transform = (char *) node->getAttribute("transform").c_str();
     
 	if (transform) {
 		svgtiny_parse_transform(transform, &state->ctm.a, &state->ctm.b,
 				&state->ctm.c, &state->ctm.d,
 				&state->ctm.e, &state->ctm.f);
 		//xmlFree(transform);
-        free(transform);
 	}
 }
 
