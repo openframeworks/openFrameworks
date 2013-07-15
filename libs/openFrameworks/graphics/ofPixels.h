@@ -15,9 +15,6 @@ enum ofInterpolationMethod {
 
 template <typename PixelType>
 class ofPixels_ {
-
-	friend class ofPixelUtils;
-
 public:
 
 	ofPixels_();
@@ -68,7 +65,9 @@ public:
 
 	int getPixelIndex(int x, int y) const;
 	ofColor_<PixelType> getColor(int x, int y) const;
-	void setColor(int x, int y, ofColor_<PixelType> color);
+	void setColor(int x, int y, const ofColor_<PixelType>& color);
+	void setColor(int index, const ofColor_<PixelType>& color);
+	void setColor(const ofColor_<PixelType>& color);
 
 	const PixelType& operator[](int pos) const;
 	PixelType& operator[](int pos);
@@ -102,12 +101,10 @@ private:
 	void copyFrom( const ofPixels_<SrcType>& mom );
 	
 	PixelType * pixels;
-	int width;
-	int height;
+	int 	width;
+	int 	height;
 
-	int channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
-	//GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
-	//ofImageType imageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+	int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	bool	bAllocated;
 	bool	pixelsOwner;			// if set from external data don't delete it
 
@@ -120,7 +117,8 @@ typedef ofPixels_<unsigned short> ofShortPixels;
 
 
 typedef ofPixels& ofPixelsRef;
-
+typedef ofFloatPixels& ofFloatPixelsRef;
+typedef ofShortPixels& ofShortPixelsRef;
 
 // sorry for these ones, being templated functions inside a template i needed to do it in the .h
 // they allow to do things like:
@@ -136,6 +134,8 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	pixelsOwner = false;
 	channels = 0;
 	pixels = NULL;
+	width = 0;
+	height = 0;
 	copyFrom( mom );
 }
 

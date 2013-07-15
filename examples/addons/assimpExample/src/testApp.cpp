@@ -21,7 +21,7 @@ void testApp::setup(){
     
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 
     glShadeModel(GL_SMOOTH); //some model / light stuff
     light.enable();
@@ -50,8 +50,10 @@ void testApp::draw(){
     model.drawFaces();
     ofPopMatrix();
 
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+   if(ofGetGLProgrammableRenderer()){
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    }
     glEnable(GL_NORMALIZE);
 
     ofPushMatrix();
@@ -65,16 +67,20 @@ void testApp::draw(){
     ofMultMatrix(meshHelper.matrix);
     
     ofMaterial & material = meshHelper.material;
-    ofTexture & texture = meshHelper.texture;
-    
-    texture.bind();
+    if(meshHelper.hasTexture()){
+        meshHelper.getTexturePtr()->bind();
+    }
     material.begin();
     mesh.drawWireframe();
     material.end();
-    texture.unbind();
-	ofPopMatrix();
+    if(meshHelper.hasTexture()){
+        meshHelper.getTexturePtr()->unbind();
+    }
+    ofPopMatrix();
 
-	glPopAttrib();
+    if(ofGetGLProgrammableRenderer()){
+    	glPopAttrib();
+    }
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
     ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
