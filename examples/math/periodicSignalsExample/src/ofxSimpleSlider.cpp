@@ -5,8 +5,19 @@
  */
 
 #include "ofxSimpleSlider.h"
+
+//----------------------------------------------------
+ofxSimpleSlider::ofxSimpleSlider(){
+	bWasSetup = false;
+}
+
+//----------------------------------------------------
+ofxSimpleSlider::~ofxSimpleSlider(){
+	clear();
+}
+
 //-----------------------------------------------------------------------------------------------------------------------
-void ofxSimpleSlider::setup (float inx, float iny, float inw, float inh, float loVal, float hiVal, float initialValue, bool bVert, bool bDrawNum){
+void ofxSimpleSlider::setup(float inx, float iny, float inw, float inh, float loVal, float hiVal, float initialValue, bool bVert, bool bDrawNum){
 	x = inx;
 	y = iny; 
 	width = inw; 
@@ -25,13 +36,27 @@ void ofxSimpleSlider::setup (float inx, float iny, float inw, float inh, float l
 	
 	labelString = ""; 
 	
-	ofAddListener(ofEvents().draw, this, &ofxSimpleSlider::draw);
-	ofAddListener(ofEvents().mouseMoved, this, &ofxSimpleSlider::mouseMoved);
-	ofAddListener(ofEvents().mousePressed, this, &ofxSimpleSlider::mousePressed);
-	ofAddListener(ofEvents().mouseReleased, this, &ofxSimpleSlider::mouseReleased);
-	ofAddListener(ofEvents().mouseDragged, this, &ofxSimpleSlider::mouseDragged);
+	if(!bWasSetup){
+		ofAddListener(ofEvents().draw, this, &ofxSimpleSlider::draw);
+		ofAddListener(ofEvents().mouseMoved, this, &ofxSimpleSlider::mouseMoved);
+		ofAddListener(ofEvents().mousePressed, this, &ofxSimpleSlider::mousePressed);
+		ofAddListener(ofEvents().mouseReleased, this, &ofxSimpleSlider::mouseReleased);
+		ofAddListener(ofEvents().mouseDragged, this, &ofxSimpleSlider::mouseDragged);
+		bWasSetup = true;
+	}
 }
 
+//----------------------------------------------------
+void ofxSimpleSlider::clear(){
+	if(bWasSetup){
+		ofRemoveListener(ofEvents().draw, this, &ofxSimpleSlider::draw);
+		ofRemoveListener(ofEvents().mouseMoved, this, &ofxSimpleSlider::mouseMoved);
+		ofRemoveListener(ofEvents().mousePressed, this, &ofxSimpleSlider::mousePressed);
+		ofRemoveListener(ofEvents().mouseReleased, this, &ofxSimpleSlider::mouseReleased);
+		ofRemoveListener(ofEvents().mouseDragged, this, &ofxSimpleSlider::mouseDragged);
+	}
+	bWasSetup = false;
+}
 
 //----------------------------------------------------
 void ofxSimpleSlider::setLabelString (string str){
@@ -41,8 +66,8 @@ void ofxSimpleSlider::setLabelString (string str){
 
 //----------------------------------------------------
 void ofxSimpleSlider::draw(ofEventArgs& event){
-	ofPushStyle();
 	
+	ofPushStyle();
 	ofEnableAlphaBlending();
 	ofDisableSmoothing();
 	ofPushMatrix();
@@ -79,8 +104,6 @@ void ofxSimpleSlider::draw(ofEventArgs& event){
 		ofLine(thumbX,0, thumbX,height); 
 	}
 	
-	
-	
 	// draw numeric value 
 	if (bHasFocus){
 		ofSetColor(0); 
@@ -96,9 +119,7 @@ void ofxSimpleSlider::draw(ofEventArgs& event){
 		ofDrawBitmapString( labelString, 0-labelStringWidth*8-5, height/2 + 4); 
 	}	
 
-	
 	ofPopMatrix();
-	
 	ofPopStyle();
 }
 
