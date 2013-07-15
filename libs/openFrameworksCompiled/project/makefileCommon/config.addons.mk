@@ -5,7 +5,7 @@
 
 # parses addons includes, in PARSED_ADDON_INCLUDES receives full PATHS to addons
 define parse_addons_includes
-	$(eval ADDONS_INCLUDES_FILTER = $(addprefix $1/, $(ADDONS_INCLUDES_EXCLUDE))) \
+	$(eval ADDONS_INCLUDES_FILTER = $(addprefix $1/, $(ADDON_INCLUDES_EXCLUDE))) \
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(addsuffix /src, $1)) \
 	$(eval PARSED_ADDONS_SOURCE_INCLUDES = $(shell find $(PARSED_ADDONS_SOURCE_PATHS) -type d 2> /dev/null | grep -v "/\.[^\.]" )) \
 	$(eval PARSED_ADDONS_FILTERED_INCLUDE_PATHS = $(filter-out $(ADDONS_INCLUDES_FILTER),$(PARSED_ADDONS_SOURCE_INCLUDES))) \
@@ -22,7 +22,7 @@ endef
 
 # parses addons sources, in PARSED_ADDON_SOURCES receives full PATHS to addons
 define parse_addons_sources
-	$(eval ADDONS_SOURCES_FILTER = $(addprefix $1/, $(ADDONS_SOURCES_EXCLUDE))) \
+	$(eval ADDONS_SOURCES_FILTER = $(addprefix $1/, $(ADDON_SOURCES_EXCLUDE))) \
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(addsuffix /src, $1)) \
 	$(eval PARSED_ADDONS_OFX_SOURCES = $(shell find $(PARSED_ADDONS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" )) \
 	$(eval PARSED_ADDONS_FILTERED_SOURCE_PATHS = $(filter-out $(ADDONS_SOURCES_FILTER),$(PARSED_ADDONS_OFX_SOURCES))) \
