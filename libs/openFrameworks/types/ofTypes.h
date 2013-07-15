@@ -128,6 +128,7 @@ public:
 	  string deviceName;
 	  string hardwareName;
 	  vector<ofVideoFormat> formats;
+      bool bAvailable;
 };
 
 

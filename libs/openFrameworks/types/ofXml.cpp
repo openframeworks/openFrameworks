@@ -419,7 +419,7 @@ string ofXml::getAttribute(const string& path) const {
         e = element->getNodeByPath(path);
     } else {
         ofLog(OF_LOG_WARNING, "No element set yet");
-        return false;
+        return "";
     }
     
     if(e) {

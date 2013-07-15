@@ -618,6 +618,7 @@ vector<ofVideoDevice> ofGstVideoGrabber::listDevices(){
 	vector<ofVideoDevice> devices(camData.webcam_devices.size());
 	for(unsigned i=0; i<camData.webcam_devices.size(); i++){
 		devices[i].id = i;
+        devices[i].bAvailable = true; 
 		devices[i].deviceName = camData.webcam_devices[i].product_name;
 		devices[i].hardwareName = camData.webcam_devices[i].video_device;
 		devices[i].formats.resize(camData.webcam_devices[i].video_formats.size());
