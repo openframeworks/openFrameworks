@@ -36,6 +36,11 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
+void threadedImageLoaderExample::exit(){
+	loader.stopThread();
+}
+
+//--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
 }

@@ -14,8 +14,8 @@
 class Circle {
 public:
 
-    Circle(){}
-    ~Circle(){}
+    Circle();
+    ~Circle();
     // to be able to broadcast events from a class we must declare the ofEvent object that will be broadcasted.
     // this object can be declared as class variable so events are broadcasted and listened for each specific class instance.
     // the data type of the event, what's declared between the < > can be whatever you want, event a custom class. 
@@ -28,6 +28,7 @@ public:
    
     void setup(int radius, int x, int y, ofColor color);
     void draw();
+    void clear();
     
     //We need to declare all this mouse events methods to be able to listen to mouse events.
     //All this must be declared even if we are just going to use only one of this methods.
@@ -40,6 +41,9 @@ public:
     bool inside(float _x, float _y );
     int radius, x, y;
     ofColor color;
+
+protected:
+    bool bRegisteredEvents;
 };
 
 #endif

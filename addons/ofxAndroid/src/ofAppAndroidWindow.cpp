@@ -209,13 +209,17 @@ void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
 	threadedTouchEvents = threadedEvents;
 }
 
-static void reloadGLResources(){
-	ofUpdateBitmapCharacterTexture();
-	ofReloadAllImageTextures();
-	ofReloadAllFontTextures();
-	ofResumeVideoGrabbers();
-	ofResumeVideoPlayers();
-}
+void ofPauseVideoGrabbers();
+void ofResumeVideoGrabbers();
+
+void ofxAndroidSoundStreamPause();
+void ofxAndroidSoundStreamResume();
+
+void ofPauseVideoPlayers();
+void ofResumeVideoPlayers();
+
+void ofReloadGLResources();
+void ofUnloadAllFontTextures();
 
 extern "C"{
 
@@ -336,7 +340,10 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 
 		ofGLReadyCallback();
 
-		reloadGLResources();
+		ofReloadGLResources();
+		ofResumeVideoGrabbers();
+		ofResumeVideoPlayers();
+
 		if(androidApp){
 			androidApp->reloadTextures();
 		}

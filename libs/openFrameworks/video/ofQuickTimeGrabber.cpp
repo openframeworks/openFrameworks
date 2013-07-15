@@ -246,8 +246,10 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-void ofQuickTimeGrabber::listDevices(){
+vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
 
+    vector <ofVideoDevice> devices; 
+    
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
@@ -259,7 +261,7 @@ void ofQuickTimeGrabber::listDevices(){
 		//if we need to initialize the grabbing component then do it
 		if( bNeedToInitGrabberFirst ){
 			if( !qtInitSeqGrabber() ){
-				return;
+				return devices;
 			}
 		}
 
@@ -316,12 +318,25 @@ void ofQuickTimeGrabber::listDevices(){
 
 					ofLogNotice() << "device[" << deviceCount << "] " << p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
 
+                    ofVideoDevice vd; 
+                    vd.id           = deviceCount; 
+                    vd.deviceName   = p2cstr(pascalName);
+                    vd.bAvailable   = true; 
+                    devices.push_back(vd);
+                    
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
 				ofLogNotice() << "(unavailable) device[" << deviceCount << "] " << p2cstr(pascalName);
+                
+                ofVideoDevice vd;
+                vd.id           = deviceCount; 
+                vd.deviceName   = p2cstr(pascalName);
+                vd.bAvailable   = false; 
+                devices.push_back(vd);
+
 				deviceCount++;
 			}
 		}
@@ -336,6 +351,7 @@ void ofQuickTimeGrabber::listDevices(){
 	#endif
 	//---------------------------------
 
+    return devices; 
 }
 
 //--------------------------------------------------------------------
