@@ -45,21 +45,22 @@ extern "C" {
  */
 /*! @defgroup error Error handling
  */
-/*! @defgroup gamma Gamma ramp support
- */
 /*! @defgroup init Initialization and version information
  */
 /*! @defgroup input Input handling
  */
 /*! @defgroup monitor Monitor handling
+ *
+ *  This is the reference documentation for monitor related functions and types.
+ *  For more information, see the @ref monitor.
  */
 /*! @defgroup time Time input
  */
 /*! @defgroup window Window handling
  *
- *  This is the reference documentation for the window handling API, including
- *  creation, deletion and event polling.  For more information, see the
- *  [article on window handling](@ref window).
+ *  This is the reference documentation for window related functions and types,
+ *  including creation, deletion and event polling.  For more information, see
+ *  the @ref window.
  */
 
 
@@ -225,7 +226,7 @@ extern "C" {
  *  API changes.
  *  @ingroup init
  */
-#define GLFW_VERSION_REVISION       0
+#define GLFW_VERSION_REVISION       2
 /*! @} */
 
 /*! @name Key and button actions
@@ -771,6 +772,20 @@ typedef void (* GLFWkeyfun)(GLFWwindow*,int,int,int,int);
  */
 typedef void (* GLFWcharfun)(GLFWwindow*,unsigned int);
 
+
+/*! @brief The function signature for drop callbacks.
+ *
+ *  This is the function signature for drop callbacks.
+ *
+ *  @param[in] window The window that received the event.
+ *  @param[in] string The string descriptor for the dropped object.
+ *
+ *  @sa glfwSetDropCallback
+ *
+ *  @ingroup input
+ */
+typedef void (* GLFWdropfun)(GLFWwindow*,const char*);
+
 /*! @brief The function signature for monitor configuration callbacks.
  *
  *  This is the function signature for monitor configuration callback functions.
@@ -818,7 +833,7 @@ typedef struct
  *
  *  @sa glfwGetGammaRamp glfwSetGammaRamp
  *
- *  @ingroup gamma
+ *  @ingroup monitor
  */
 typedef struct
 {
@@ -1119,12 +1134,12 @@ GLFWAPI const GLFWvidmode* glfwGetVideoMode(GLFWmonitor* monitor);
 /*! @brief Generates a gamma ramp and sets it for the specified monitor.
  *
  *  This function generates a 256-element gamma ramp from the specified exponent
- *  and then calls @ref glfwSetGamma with it.
+ *  and then calls @ref glfwSetGammaRamp with it.
  *
  *  @param[in] monitor The monitor whose gamma ramp to set.
  *  @param[in] gamma The desired exponent.
  *
- *  @ingroup gamma
+ *  @ingroup monitor
  */
 GLFWAPI void glfwSetGamma(GLFWmonitor* monitor, float gamma);
 
@@ -1138,7 +1153,7 @@ GLFWAPI void glfwSetGamma(GLFWmonitor* monitor, float gamma);
  *  @note The value arrays of the returned ramp are allocated and freed by GLFW.
  *  You should not free them yourself.
  *
- *  @ingroup gamma
+ *  @ingroup monitor
  */
 GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
 
@@ -1151,7 +1166,7 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
  *
  *  @note Gamma ramp sizes other than 256 are not supported by all hardware.
  *
- *  @ingroup gamma
+ *  @ingroup monitor
  */
 GLFWAPI void glfwSetGammaRamp(GLFWmonitor* monitor, const GLFWgammaramp* ramp);
 
@@ -1207,10 +1222,16 @@ GLFWAPI void glfwWindowHint(int target, int hint);
  *  attributes of the created window and context, use queries like @ref
  *  glfwGetWindowAttrib and @ref glfwGetWindowSize.
  *
+ *  To create a full screen window, you need to specify the monitor to use.  If
+ *  no monitor is specified, windowed mode will be used.  Unless you have a way
+ *  for the user to choose a specific monitor, it is recommended that you pick
+ *  the primary monitor.  For more information on how to retrieve monitors, see
+ *  @ref monitor_monitors.
+ *
  *  To create the window at a specific position, make it initially invisible
  *  using the `GLFW_VISIBLE` window hint, set its position and then show it.
  *
- *  If a fullscreen window is active, the screensaver is prohibited from
+ *  If a full screen window is active, the screensaver is prohibited from
  *  starting.
  *
  *  @param[in] width The desired width, in screen coordinates, of the window.
@@ -1688,7 +1709,7 @@ GLFWAPI void glfwPollEvents(void);
 /*! @brief Waits until events are pending and processes them.
  *
  *  This function puts the calling thread to sleep until at least one event has
- *  been received.  Once one or more events have been recevied, it behaves as if
+ *  been received.  Once one or more events have been received, it behaves as if
  *  @ref glfwPollEvents was called, i.e. the events are processed and the
  *  function then returns immediately.  Processing events will cause the window
  *  and input callbacks associated with those events to be called.
@@ -1976,6 +1997,22 @@ GLFWAPI GLFWcursorenterfun glfwSetCursorEnterCallback(GLFWwindow* window, GLFWcu
  */
 GLFWAPI GLFWscrollfun glfwSetScrollCallback(GLFWwindow* window, GLFWscrollfun cbfun);
 
+/*! @brief Sets the drop callback.
+ *
+ *  This function sets the drop callback of the specified window, which is
+ *  called when an object is dropped over the window.
+ *
+ *
+ *  @param[in] window The window whose callback to set.
+ *  @param[in] cbfun The new drop callback, or `NULL` to remove the currently
+ *  set callback.
+ *  @return The previously set callback, or `NULL` if no callback was set or an
+ *  error occurred.
+ *
+ *  @ingroup input
+ */
+GLFWAPI GLFWdropfun glfwSetDropCallback(GLFWwindow* window, GLFWdropfun cbfun);
+
 /*! @brief Returns whether the specified joystick is present.
  *
  *  This function returns whether the specified joystick is present.
@@ -2006,14 +2043,14 @@ GLFWAPI int glfwJoystickPresent(int joy);
  */
 GLFWAPI const float* glfwGetJoystickAxes(int joy, int* count);
 
-/*! @brief Returns the values of all buttons of the specified joystick.
+/*! @brief Returns the state of all buttons of the specified joystick.
  *
- *  This function returns the values of all buttons of the specified joystick.
+ *  This function returns the state of all buttons of the specified joystick.
  *
  *  @param[in] joy The joystick to query.
  *  @param[out] count Where to store the size of the returned array.  This is
  *  set to zero if an error occurred.
- *  @return An array of axis values, or `NULL` if the joystick is not present.
+ *  @return An array of button states, or `NULL` if the joystick is not present.
  *
  *  @note The returned array is allocated and freed by GLFW.  You should not
  *  free it yourself.

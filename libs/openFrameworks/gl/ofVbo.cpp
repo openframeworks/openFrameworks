@@ -652,7 +652,7 @@ void ofVbo::bind(){
 				glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 				glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertStride, 0);
 			}
-		}else{
+		}else if(supportVAOs){
 			if(!programmable){
 				glDisableClientState(GL_VERTEX_ARRAY);
 			}else{
@@ -669,7 +669,7 @@ void ofVbo::bind(){
 				glEnableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
 				glVertexAttribPointer(ofShader::COLOR_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, colorStride, 0);
 			}
-		}else{
+		}else if(supportVAOs){
 			if(!programmable){
 				glDisableClientState(GL_COLOR_ARRAY);
 			}else{
@@ -682,7 +682,7 @@ void ofVbo::bind(){
 			if(!programmable){
 				glEnableClientState(GL_NORMAL_ARRAY);
 				glNormalPointer(GL_FLOAT, normalStride, 0);
-			}else{
+			}else if(supportVAOs){
 				// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
 				// normalized while being uploaded to GPU memory.
 				// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
@@ -693,7 +693,7 @@ void ofVbo::bind(){
 				glEnableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
 				glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, normalStride, 0);
 			}
-		}else{
+		}else if(supportVAOs){
 			if(!programmable){
 				glDisableClientState(GL_NORMAL_ARRAY);
 			}else{
@@ -710,7 +710,7 @@ void ofVbo::bind(){
 				glEnableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 				glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, texCoordStride, 0);
 			}
-		}else{
+		}else if(supportVAOs){
 			if(!programmable){
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			}else{
@@ -743,14 +743,26 @@ void ofVbo::unbind() {
 	}else{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		if(bUsingColors){
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-		if(bUsingNormals){
-			glDisableClientState(GL_NORMAL_ARRAY);
-		}
-		if(bUsingTexCoords){
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		if(ofGetGLProgrammableRenderer()){
+			if(bUsingColors){
+				glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
+			}
+			if(bUsingNormals){
+				glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
+			}
+			if(bUsingTexCoords){
+				glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
+			}
+		}else{
+			if(bUsingColors){
+				glDisableClientState(GL_COLOR_ARRAY);
+			}
+			if(bUsingNormals){
+				glDisableClientState(GL_NORMAL_ARRAY);
+			}
+			if(bUsingTexCoords){
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
 		}
 	}
 	bBound   = false;

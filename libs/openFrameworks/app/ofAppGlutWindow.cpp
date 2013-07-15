@@ -22,6 +22,8 @@
 	#include "ofImage.h"
 #endif
 
+void ofGLReadyCallback();
+
 
 // glut works with static callbacks UGH, so we need static variables here:
 
@@ -275,6 +277,7 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	windowW = glutGet(GLUT_WINDOW_WIDTH);
 	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 
+	ofGLReadyCallback();
 }
 
 //------------------------------------------------------------

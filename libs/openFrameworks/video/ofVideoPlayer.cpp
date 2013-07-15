@@ -1,5 +1,6 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
+#include "ofGraphics.h"
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
@@ -54,12 +55,12 @@ ofPixelFormat ofVideoPlayer::getPixelFormat(){
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
-	#ifndef TARGET_ANDROID
+	//#ifndef TARGET_ANDROID
 		if( player == NULL ){
 			setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 			player->setPixelFormat(internalPixelFormat);
 		}
-	#endif
+	//#endif
 	
 	bool bOk = player->loadMovie(name);
 	width	 = player->getWidth();
@@ -354,7 +355,7 @@ void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y){
-	getTextureReference().draw(_x, _y);
+	draw(_x, _y, width, height);
 }
 
 //------------------------------------

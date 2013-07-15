@@ -1,23 +1,10 @@
 #include "ofMain.h"
 #include "testApp.h"
-#ifdef TARGET_ANDROID
-	#include "ofAppAndroidWindow.h"
-	#include "ofGLES2Renderer.h"
-#else
-	#include "ofAppGlutWindow.h"
-#endif
-
-
+#include "ofGLProgrammableRenderer.h"
 
 int main(){
-
-#ifdef TARGET_ANDROID
-	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLES2Renderer()));
-	ofAppAndroidWindow *window = new ofAppAndroidWindow;
-#else
-	ofAppGlutWindow *window = new ofAppGlutWindow;
-#endif
-	ofSetupOpenGL(window, 1024,768, OF_WINDOW);			// <-------- setup the GL context
+	ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer()));
+	ofSetupOpenGL(1024,768, OF_WINDOW);			// <-------- setup the GL context
 
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN

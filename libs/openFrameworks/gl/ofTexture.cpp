@@ -306,7 +306,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
-		texData.textureTarget = GL_TEXTURE_2D;
+		//texData.textureTarget = GL_TEXTURE_2D;
 	}
 
 	// attempt to free the previous bound texture, if we can:
@@ -652,6 +652,12 @@ void ofTexture::bind(){
 		ofLoadMatrix(m);
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
+	if(texData.useTextureMatrix){
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		if(!ofGetUsingNormalizedTexCoords()) ofPushMatrix();
+		ofMultMatrix(texData.textureMatrix);
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+	}
 }
 
 //----------------------------------------------------------
@@ -660,7 +666,7 @@ void ofTexture::unbind(){
 	glBindTexture( texData.textureTarget, 0);
 	disableTextureTarget();
 
-	if(ofGetUsingNormalizedTexCoords()) {
+	if(texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
 		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPopMatrix();
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
@@ -844,7 +850,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	
 	ofPoint topLeft = getCoordFromPoint(sx, sy);
 	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
-	
+
 	GLfloat tx0 = topLeft.x + offsetw;
 	GLfloat ty0 = topLeft.y + offseth;
 	GLfloat tx1 = bottomRight.x - offsetw;
