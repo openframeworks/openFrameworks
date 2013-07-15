@@ -7,6 +7,7 @@
 
 #pragma once
 
+void ofGLReadyCallback();
 void ofPauseVideoGrabbers();
 void ofResumeVideoGrabbers();
 void ofReloadAllImageTextures();
