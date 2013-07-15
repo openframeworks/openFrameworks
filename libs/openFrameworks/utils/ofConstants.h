@@ -545,6 +545,7 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
+    #define OF_KEY_TAB          9
 	#define OF_KEY_CTRL			0x0200
 	#define OF_KEY_ALT			0x0300
 	#define OF_KEY_SHIFT		0x0400
