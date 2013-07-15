@@ -157,14 +157,18 @@
 	return currentFrame;
 }
 
--(void)listDevices{
+-(vector <string>)listDevices{
+    vector <string> deviceNames;
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
-		 cout<<"Device "<<i<<": "<<ofxNSStringToString(captureDevice.localizedName)<<endl;
+        deviceNames.push_back(ofxNSStringToString(captureDevice.localizedName));
+		 ofLogNotice("Device: ") <<i<<": "<<deviceNames.back()<<endl;
 		i++;
     }
+    return deviceNames; 
 }
+
 -(void)setDevice:(int)_device{
 	device = _device;
 }
@@ -371,8 +375,19 @@ bool AVFoundationVideoGrabber::isFrameNew()
 	return newFrame;
 }
 
-void AVFoundationVideoGrabber::listDevices() {
-	[grabber listDevices];
+vector <ofVideoDevice> AVFoundationVideoGrabber::listDevices() {
+	vector <string> devList = [grabber listDevices];
+    
+    vector <ofVideoDevice> devices; 
+    for(int i = 0; i < devList.size(); i++){
+        ofVideoDevice vd; 
+        vd.deviceName = devList[i]; 
+        vd.id = i;  
+        vd.bAvailable = true; 
+        devices.push_back(vd); 
+    }
+    
+    return devices; 
 }
 
 void AVFoundationVideoGrabber::setDevice(int deviceID) {
