@@ -113,10 +113,11 @@ ofPixelFormat ofVideoGrabber::getPixelFormat(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::listDevices(){
-	if(	grabber != NULL ){
-		grabber->listDevices();
+vector<ofVideoDevice> ofVideoGrabber::listDevices(){
+	if( grabber == NULL ){
+		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
+	return grabber->listDevices();
 }
 
 //--------------------------------------------------------------------
