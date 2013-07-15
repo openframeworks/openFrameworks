@@ -6,7 +6,10 @@ void testApp::setup(){
 	camWidth 		= 320;	// try to grab at this size. 
 	camHeight 		= 240;
 	
-	vidGrabber.setVerbose(true);
+	vector<ofVideoDevice> devices = vidGrabber.listDevices();
+	for(int i=0;i<devices.size();i++){
+		cout << devices[i].id << ": " << devices[i].deviceName << endl;
+	}
 	vidGrabber.setDeviceID(0);
 	vidGrabber.setDesiredFrameRate(60);
 	vidGrabber.initGrabber(camWidth,camHeight);
