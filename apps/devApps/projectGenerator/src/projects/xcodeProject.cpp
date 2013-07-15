@@ -227,8 +227,8 @@ bool xcodeProject::createProjectFile(){
 		}
 
     }else{
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiOS-Info.plist"),projectDir, true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiOS_Prefix.pch"),projectDir, true, true);
 
 		ofDirectory binDirectory(ofFilePath::join(projectDir, "bin"));
 		if (!binDirectory.exists()){

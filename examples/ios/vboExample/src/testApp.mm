@@ -9,7 +9,7 @@ void testApp::setup(){
 	space      = 4;
 	
 	zoom	   = -500;	
-	zoomTarget = 350;
+	zoomTarget = 200;
 	
 	center.x   = ((GRID_WIDTH-1)  * space) / 2;
 	center.y   = ((GRID_HEIGHT-1) * space) / 2;

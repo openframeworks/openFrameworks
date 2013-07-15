@@ -344,7 +344,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
-		texData.textureTarget = GL_TEXTURE_2D;
+		//texData.textureTarget = GL_TEXTURE_2D;
 	}
 
 	// attempt to free the previous bound texture, if we can:
@@ -370,6 +370,51 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 
 	texData.bAllocated = true;
 
+}
+
+
+void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
+#ifndef TARGET_OPENGLES
+	enableTextureTarget();
+
+	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	if(rToRGBSwizzles){
+		if(texData.glTypeInternal==GL_R8 ||
+				texData.glTypeInternal==GL_R16 ||
+				texData.glTypeInternal==GL_R32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
+
+		}else if(texData.glTypeInternal==GL_RG8 ||
+				texData.glTypeInternal==GL_RG16 ||
+				texData.glTypeInternal==GL_RG32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_A, GL_GREEN);
+		}
+	}else{
+		if(texData.glTypeInternal==GL_R8 ||
+				texData.glTypeInternal==GL_R16 ||
+				texData.glTypeInternal==GL_R32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+
+		}else if(texData.glTypeInternal==GL_RG8 ||
+				texData.glTypeInternal==GL_RG16 ||
+				texData.glTypeInternal==GL_RG32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
+		}
+	}
+
+	glBindTexture( texData.textureTarget, 0);
+	disableTextureTarget();
+#endif
 }
 
 //----------------------------------------------------------
@@ -649,6 +694,12 @@ void ofTexture::bind(){
 		ofLoadMatrix(m);
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
+	if(texData.useTextureMatrix){
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		if(!ofGetUsingNormalizedTexCoords()) ofPushMatrix();
+		ofMultMatrix(texData.textureMatrix);
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+	}
 }
 
 //----------------------------------------------------------
@@ -657,7 +708,7 @@ void ofTexture::unbind(){
 	glBindTexture( texData.textureTarget, 0);
 	disableTextureTarget();
 
-	if(ofGetUsingNormalizedTexCoords()) {
+	if(texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
 		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPopMatrix();
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
@@ -870,7 +921,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	
 	ofPoint topLeft = getCoordFromPoint(sx, sy);
 	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
-	
+
 	GLfloat tx0 = topLeft.x + offsetw;
 	GLfloat ty0 = topLeft.y + offseth;
 	GLfloat tx1 = bottomRight.x - offsetw;

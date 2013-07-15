@@ -59,13 +59,14 @@ void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, b
 	}else{
 		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
 	}
-	if(vertexData.getNumColors()){
+
+	if(vertexData.getNumColors() && useColors){
 		glDisableClientState(GL_COLOR_ARRAY);
 	}
-	if(vertexData.getNumNormals()){
+	if(vertexData.getNumNormals() && useNormals){
 		glDisableClientState(GL_NORMAL_ARRAY);
 	}
-	if(vertexData.getNumTexCoords()){
+	if(vertexData.getNumTexCoords() && useTextures){
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 }

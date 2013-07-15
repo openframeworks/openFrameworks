@@ -5,6 +5,7 @@ attribute vec2 texcoord;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
+uniform mat4 modelViewProjectionMatrix;
 
 varying vec4 colorVarying;
 varying vec2 texCoordVarying;
@@ -50,7 +51,7 @@ float noise(vec2 coord,float d){
 
 void main(){
 	//get our current vertex position so we can modify it
-	vec4 pos = projectionMatrix * modelViewMatrix * position;
+	vec4 pos = modelViewProjectionMatrix * position;
 	
 	//generate some noise values based on vertex position and the time value which comes in from our OF app
 	float noiseAmntX = noise( vec2(-timeValX + pos.x / 1000.0, 100.0), 20.0 );

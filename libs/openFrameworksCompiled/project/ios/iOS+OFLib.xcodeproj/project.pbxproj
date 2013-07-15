@@ -589,7 +589,7 @@
 			children = (
 				E485F8111363242100E939D3 /* ofxMultiTouch */,
 				BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */,
-				BB24E02310DA7C6100E9C588 /* ofxiPhone */,
+				BB24E02310DA7C6100E9C588 /* ofxiOS */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -615,13 +615,13 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		BB24E02310DA7C6100E9C588 /* ofxiPhone */ = {
+		BB24E02310DA7C6100E9C588 /* ofxiOS */ = {
 			isa = PBXGroup;
 			children = (
 				BB24E02810DA7C6100E9C588 /* src */,
 			);
-			name = ofxiPhone;
-			path = ../../../../addons/ofxiPhone;
+			name = ofxiOS;
+			path = ../../../../addons/ofxiOS;
 			sourceTree = SOURCE_ROOT;
 		};
 		BB24E02810DA7C6100E9C588 /* src */ = {

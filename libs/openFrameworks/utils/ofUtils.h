@@ -123,6 +123,18 @@ string ofToString(const vector<T>& values) {
 	return out.str();
 }
 
+template<class T>
+T ofFromString(const string & value){
+	T data;
+    stringstream ss;
+    ss << value;
+    ss >> data;
+    return data;
+}
+
+template<>
+string ofFromString(const string & value);
+
 template <class T>
 string ofToHex(const T& value) {
 	ostringstream out;

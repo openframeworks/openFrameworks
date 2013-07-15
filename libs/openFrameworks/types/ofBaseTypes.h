@@ -411,8 +411,8 @@ class ofBaseFileSerializer: public ofBaseSerializer{
 public:
 	virtual ~ofBaseFileSerializer(){}
 
-	virtual bool load(string path)=0;
-	virtual bool save(string path)=0;
+	virtual bool load(const string & path)=0;
+	virtual bool save(const string & path)=0;
 };
 
 

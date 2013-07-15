@@ -262,9 +262,6 @@ void testApp::draw() {
     
     
     // Cylinder //
-    
-    ofMesh topCap, bottomCap, body;
-    
     if(mode == 3) {
         topCap      = cylinder.getTopCapMesh();
         bottomCap   = cylinder.getBottomCapMesh();

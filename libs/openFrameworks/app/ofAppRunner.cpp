@@ -16,6 +16,8 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
+#include "ofURLFileLoader.h"
+#include "Poco/Net/SSLManager.h"
 
 
 // TODO: closing seems wonky.
@@ -161,6 +163,9 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	}
 
 	window->setupOpenGL(w, h, screenMode);
+}
+
+void ofGLReadyCallback(){
 
 #ifndef TARGET_OPENGLES
 	glewExperimental = GL_TRUE;
@@ -173,6 +178,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	}
 #endif
 
+	ofLogVerbose()<< "GL ready";
 	ofLogVerbose()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
 	ofLogVerbose()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
 	ofLogVerbose()<< "Version:  "<< (char*)glGetString(GL_VERSION);
@@ -188,7 +194,6 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	ofSetVerticalSync(true);
 	ofEnableAlphaBlending();
 }
-
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
@@ -211,9 +216,15 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 //							currently looking at who to turn off
 //							at the end of the application
 
+void ofStopURLLoader();
+
 void ofExitCallback(){
 
 	ofNotifyExit();
+
+	ofRemoveAllURLRequests();
+	ofStopURLLoader();
+	Poco::Net::SSLManager::instance().shutdown();
 
     ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
