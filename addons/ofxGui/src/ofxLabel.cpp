@@ -28,22 +28,17 @@ void ofxLabel::generateDraw(){
 
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
-	bg.moveTo(b.x, b.y);
-	bg.lineTo(b.x+b.width,b.y);
-	bg.lineTo(b.x+b.width,b.y+b.height);
-	bg.lineTo(b.x,b.y+b.height);
-	bg.close();
+	bg.rectangle(b);
 
     string name;
     if(!getName().empty()){
     	name = getName() + ": ";
     }
-	textMesh = font.getStringMesh(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
+
+    textMesh = getTextMesh(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
 }
 
-void ofxLabel::draw() {
-    currentFrame = ofGetFrameNum();
-
+void ofxLabel::render() {
 	ofColor c = ofGetStyle().color;
 
 	bg.draw();
@@ -53,10 +48,10 @@ void ofxLabel::draw() {
 		ofEnableAlphaBlending();
 	}
     ofSetColor(textColor);
-    font.getFontTexture().bind();
+
+    bindFontTexture();
     textMesh.draw();
-    font.getFontTexture().unbind();
-    //font.drawString(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
+    unbindFontTexture();
 
     ofSetColor(c);
 	if(blendMode!=OF_BLENDMODE_ALPHA){

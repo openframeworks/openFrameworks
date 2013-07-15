@@ -6,7 +6,7 @@ int main(){
 	
 	iOSWindow->enableAntiAliasing(4);
 	
-	iOSWindow->enableRetinaSupport();
+	iOSWindow->enableRetina();
 	
 	ofSetupOpenGL(iOSWindow, 480, 320, OF_FULLSCREEN);
 	ofRunApp(new testApp);

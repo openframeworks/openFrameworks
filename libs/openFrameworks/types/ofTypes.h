@@ -86,8 +86,13 @@ class ofStyle{
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
-			drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
+			#ifdef TARGET_OPENGLES
+				drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
+			#else
+				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
+			#endif
 			bgColor.set(200,200,200);
+			depthTest = false;
 		}
 
 		virtual ~ofStyle(){}
@@ -106,6 +111,7 @@ class ofStyle{
 		int sphereResolution;
 		int curveResolution;
 		float lineWidth;
+		bool depthTest;
 };
 
 //----------------------------------------------------------

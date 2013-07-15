@@ -17,10 +17,11 @@ bool visualStudioProject::createProjectFile(){
     string solution = ofFilePath::join(projectDir,projectName + ".sln");
 	string filters = ofFilePath::join(projectDir, projectName + ".vcxproj.filters");
 
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project,false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),user, false, true);
-    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),solution, false, true);
-	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.filters"),filters, false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.vcxproj"),project,false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.vcxproj.user"),user, false, true);
+    ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.sln"),solution, false, true);
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.vcxproj.filters"),filters, false, true);
+	ofFile::copyFromTo(ofFilePath::join(templatePath,"icon.rc"), projectDir + "icon.rc", false, true);
 
 	ofFile filterFile(filters);
 	string temp = filterFile.readToBuffer();
@@ -28,8 +29,8 @@ bool visualStudioProject::createProjectFile(){
 	if (result.status==pugi::status_ok) ofLogVerbose() << "loaded filter ";
 	else ofLogVerbose() << "problem loading filter ";
 
-    findandreplaceInTexfile(solution,"emptyExample_vs2010",projectName);
-    findandreplaceInTexfile(user,"emptyExample_vs2010",projectName);
+    findandreplaceInTexfile(solution,"emptyExample",projectName);
+    findandreplaceInTexfile(user,"emptyExample",projectName);
     findandreplaceInTexfile(project,"emptyExample",projectName);
 
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));

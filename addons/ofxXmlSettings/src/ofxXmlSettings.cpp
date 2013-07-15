@@ -102,12 +102,12 @@ bool ofxXmlSettings::saveFile(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::load(string path){
+bool ofxXmlSettings::load(const string & path){
 	return loadFile(path);
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::save(string path){
+bool ofxXmlSettings::save(const string & path){
 	return saveFile(path);
 }
 
