@@ -196,6 +196,7 @@ ofVbo::ofVbo(const ofVbo & mom){
 
 ofVbo & ofVbo::operator=(const ofVbo& mom){
 	if(&mom==this) return *this;
+	clear();
 	bUsingVerts = mom.bUsingVerts;
 	bUsingTexCoords = mom.bUsingTexCoords;
 	bUsingColors = mom.bUsingColors;

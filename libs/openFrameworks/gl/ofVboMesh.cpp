@@ -23,6 +23,7 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 void ofVboMesh::operator=(const ofMesh & mom)
 {
 	((ofMesh&)(*this)) = mom;
+	cout << vbo.getVertId() << endl;
 }
 
 void ofVboMesh::setUsage(int _usage){
