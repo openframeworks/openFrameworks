@@ -2081,11 +2081,6 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
         
     }
     
-    cout << "ofMesh :: cylinder : ------------------------- " << endl;
-    for(int i = 0; i < mesh.getNumIndices(); i++ ) {
-        cout << i << " index = " << mesh.getIndex( i ) << endl;
-    }
-    
     return mesh;
 }
 
