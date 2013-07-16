@@ -148,19 +148,25 @@ float ofLerp(float start, float stop, float amt) {
 	return start + (stop-start) * amt;
 }
 
-//--------------------------------------------------
-float ofWrapRadians(float angle, float from, float to){
-	while (angle > to ) angle -= TWO_PI;
-	while (angle < from ) angle += TWO_PI;
-	return angle;
+float ofWrap(float value, float from, float to){
+	// algorithm from http://stackoverflow.com/a/5852628/599884
+	if(from > to){
+		swap(from, to);
+	}
+	float cycle = to - from;
+	if(cycle == 0){
+		return to;
+	}
+	return value - cycle * floor((value - from) / cycle);
 }
 
+//--------------------------------------------------
+float ofWrapRadians(float angle, float from, float to){
+	return ofWrap(angle, from, to);
+}
 
 float ofWrapDegrees(float angle, float from, float to){
-	while (angle > to ) angle-=360;
-	while (angle < from ) angle+=360;
-	return angle;
-
+	return ofWrap(angle, from, to);
 }
 
 //--------------------------------------------------
@@ -307,3 +313,5 @@ float ofAngleDifferenceDegrees(float currentAngle, float targetAngle) {
 float ofAngleDifferenceRadians(float currentAngle, float targetAngle) {
 	return  ofWrapRadians(targetAngle - currentAngle);
 }
+
+

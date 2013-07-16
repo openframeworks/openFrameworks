@@ -11,13 +11,25 @@ ofNode::ofNode() :
 }
 
 //----------------------------------------
-void ofNode::setParent(ofNode& parent) {
-	this->parent = &parent;
+void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
+    if(bMaintainGlobalTransform) {
+        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+        this->parent = &parent;
+        setTransformMatrix(globalTransform);
+    } else {
+        this->parent = &parent;
+    }
 }
 
 //----------------------------------------
-void ofNode::clearParent() {
-	this->parent = NULL;
+void ofNode::clearParent(bool bMaintainGlobalTransform) {
+    if(bMaintainGlobalTransform) {
+        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+        this->parent = NULL;
+        setTransformMatrix(globalTransform);
+    } else {
+        this->parent = NULL;
+    }
 }
 
 //----------------------------------------
@@ -232,7 +244,7 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 }
 
 //----------------------------------------
-void ofNode::lookAt(ofNode& lookAtNode, const ofVec3f& upVector) {
+void ofNode::lookAt(const ofNode& lookAtNode, const ofVec3f& upVector) {
 	lookAt(lookAtNode.getGlobalPosition(), upVector);
 }
 
@@ -303,9 +315,10 @@ ofQuaternion ofNode::getGlobalOrientation() const {
 }
 
 //----------------------------------------
-//ofVec3f getGlobalScale() {
-//	return 
-//}
+ofVec3f ofNode::getGlobalScale() const {
+	if(parent) return getScale()*parent->getGlobalScale();
+	else return getScale();
+}
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
@@ -341,13 +354,14 @@ void ofNode::draw() {
 
 //----------------------------------------
 void ofNode::transformGL() const {
-	glPushMatrix();
-	glMultMatrixf(getGlobalTransformMatrix().getPtr());
+	ofPushMatrix();
+	ofMultMatrix( getGlobalTransformMatrix() );
+	//glMultMatrixf( getGlobalTransformMatrix().getPtr() );
 }
 
 //----------------------------------------
 void ofNode::restoreTransformGL() const {
-	glPopMatrix();
+	ofPopMatrix();
 }
 
 //----------------------------------------

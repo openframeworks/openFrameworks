@@ -9,6 +9,7 @@ class testApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+		void exit();
 		
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -21,7 +22,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
 		
 		ofxThreadedImageLoader loader;
-		vector<ofImage*> images;
+		vector<ofImage> images;
 		int total;
 	
 };

@@ -126,11 +126,11 @@ void testApp::draw(){
     ofDisableLighting();
     
 	ofSetColor( pointLight.getDiffuseColor() );
-	if(bPointLight) pointLight.customDraw();
+	if(bPointLight) pointLight.draw();
     
     ofSetColor(255, 255, 255);
 	ofSetColor( spotLight.getDiffuseColor() );
-	if(bSpotLight) spotLight.customDraw();
+	if(bSpotLight) spotLight.draw();
 	
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("Point Light On (1) : "+ofToString(bPointLight) +"\n"+

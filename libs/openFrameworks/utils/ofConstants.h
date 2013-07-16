@@ -1,8 +1,11 @@
 #pragma once
+		#include <stdint.h>
 
 //-------------------------------
-#define OF_VERSION	7
-#define OF_VERSION_MINOR 1
+#define OF_VERSION_MAJOR 0
+#define OF_VERSION_MINOR 7
+#define OF_VERSION_PATCH 4
+
 //-------------------------------
 
 enum ofLoopType{
@@ -18,7 +21,9 @@ enum ofTargetPlatform{
 	OF_TARGET_IPHONE,
 	OF_TARGET_ANDROID,
 	OF_TARGET_LINUX,
-	OF_TARGET_LINUX64
+	OF_TARGET_LINUX64,
+	OF_TARGET_LINUXARMV6L, // arm v6 little endian
+	OF_TARGET_LINUXARMV7L, // arm v7 little endian
 };
 
 // Cross-platform deprecation warning
@@ -57,9 +62,13 @@ enum ofTargetPlatform{
 	#else
 		#define TARGET_OSX
 	#endif
-#elif defined (ANDROID)
+#elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
+#elif defined(__ARMEL__)
+	#define TARGET_LINUX
+	#define TARGET_OPENGLES
+	#define TARGET_LINUX_ARM
 #else
 	#define TARGET_LINUX
 #endif
@@ -71,7 +80,7 @@ enum ofTargetPlatform{
 	//this is for TryEnterCriticalSection
 	//http://www.zeroc.com/forums/help-center/351-ice-1-2-tryentercriticalsection-problem.html
 	#ifndef _WIN32_WINNT
-		#   define _WIN32_WINNT 0x400
+		#define _WIN32_WINNT 0x500
 	#endif
 	#define WIN32_LEAN_AND_MEAN
 
@@ -89,14 +98,15 @@ enum ofTargetPlatform{
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
 		#include <stdint.h>
-		#pragma warning(disable : 4068)     // unknown pragmas
-		#pragma warning(disable : 4101)     // unreferenced local variable
-		#pragma	warning(disable : 4312)		// type cast conversion (in qt vp)
-		#pragma warning(disable : 4311)		// type cast pointer truncation (qt vp)
+		#include <functional>
 		#pragma warning(disable : 4018)		// signed/unsigned mismatch (since vector.size() is a size_t)
+		#pragma warning(disable : 4068)		// unknown pragmas
+		#pragma warning(disable : 4101)		// unreferenced local variable
 		#pragma warning(disable : 4267)		// conversion from size_t to Size warning... possible loss of data
+		#pragma warning(disable : 4311)		// type cast pointer truncation (qt vp)
+		#pragma warning(disable : 4312)		// type cast conversion (in qt vp)
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
-		#pragma warning(disable : 4099)		// for debug, PDB 'vc80.pdb' was not found with...
+		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
 	#endif
 
 	#define TARGET_LITTLE_ENDIAN			// intel cpu
@@ -136,11 +146,28 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_LINUX
+
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-		#include <GL/glew.h>
-		#include <GL/gl.h>
-		#include <GL/glx.h>
+
+    #ifdef TARGET_LINUX_ARM
+    	#ifdef TARGET_RASPBERRY_PI
+        	#include "bcm_host.h"
+        #endif
+       
+		#include "GLES/gl.h"
+		#include "GLES/glext.h" 
+		#include "GLES2/gl2.h"
+		#include "GLES2/gl2ext.h"
+		
+		#define EGL_EGLEXT_PROTOTYPES
+		#include "EGL/egl.h"
+		#include "EGL/eglext.h"
+    #else // normal linux
+        #include <GL/glew.h>
+        #include <GL/gl.h>
+        #include <GL/glx.h>
+    #endif
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
@@ -154,13 +181,16 @@ enum ofTargetPlatform{
         #define B14400	14400
         #define B28800	28800
 
-
 #endif
 
 
 #ifdef TARGET_OF_IPHONE
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
+
+	#import <OpenGLES/ES2/gl.h>
+	#import <OpenGLES/ES2/glext.h>
+
 	
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
@@ -172,11 +202,14 @@ enum ofTargetPlatform{
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
 
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
 #ifdef TARGET_OPENGLES
-	#include "glu.h"
+//	#include "glu.h"
 	//typedef GLushort ofIndexType ;
 #else
 	//typedef GLuint ofIndexType;
@@ -204,8 +237,12 @@ typedef TESSindex ofIndexType;
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
 	#elif defined(TARGET_OSX)
-
-		#define OF_VIDEO_CAPTURE_QUICKTIME
+		//on 10.6 and below we can use the old grabber
+		#ifndef MAC_OS_X_VERSION_10_7
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#else
+			#define OF_VIDEO_CAPTURE_QTKIT
+        #endif
 
 	#elif defined (TARGET_WIN32)
 
@@ -238,9 +275,18 @@ typedef TESSindex ofIndexType;
 #if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
+	#elif defined(TARGET_ANDROID)
+		#define OF_VIDEO_PLAYER_ANDROID
 	#else
 		#ifdef TARGET_OF_IPHONE
 			#define OF_VIDEO_PLAYER_IPHONE
+        #elif defined(TARGET_OSX)
+			//for 10.7 and 10.8 users we use QTKit for 10.6 users we use QuickTime
+			#ifndef MAC_OS_X_VERSION_10_7
+				#define OF_VIDEO_PLAYER_QUICKTIME
+			#else
+				#define OF_VIDEO_PLAYER_QTKIT
+			#endif
 		#elif !defined(TARGET_ANDROID)
 			#define OF_VIDEO_PLAYER_QUICKTIME
 		#endif
@@ -300,6 +346,7 @@ typedef ofBaseApp ofSimpleApp;
 #include <iomanip>  //for setprecision
 #include <fstream>
 #include <algorithm>
+#include <cfloat>
 using namespace std;
 
 #ifndef PI
@@ -339,7 +386,7 @@ using namespace std;
 #endif
 
 #ifndef CLAMP
-	#define CLAMP(val,min,max) (MAX(MIN(val,max),min))
+	#define CLAMP(val,min,max) ((val) < (min) ? (min) : ((val > max) ? (max) : (val)))
 #endif
 
 #ifndef ABS
@@ -357,9 +404,53 @@ enum ofWindowMode{
  	OF_GAME_MODE	= 2
 };
 
+enum ofAspectRatioMode {
+    OF_ASPECT_RATIO_IGNORE            = 0,
+    OF_ASPECT_RATIO_KEEP              = 1,
+    OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
+};
+
+enum ofAlignVert {
+    OF_ALIGN_VERT_IGNORE   = 0x0000,
+    OF_ALIGN_VERT_TOP      = 0x0010,
+    OF_ALIGN_VERT_BOTTOM   = 0x0020,
+    OF_ALIGN_VERT_CENTER   = 0x0040,
+};
+
+enum ofAlignHorz {
+    OF_ALIGN_HORZ_IGNORE   = 0x0000,
+    OF_ALIGN_HORZ_LEFT     = 0x0001,
+    OF_ALIGN_HORZ_RIGHT    = 0x0002,
+    OF_ALIGN_HORZ_CENTER   = 0x0004,
+};
+
 enum ofRectMode{
 	OF_RECTMODE_CORNER=0,
  	OF_RECTMODE_CENTER=1
+};
+
+enum ofScaleMode{
+    // ofScaleMode can usually be interpreted as a concise combination of
+    // an ofAspectRatioMode, an ofAlignVert and an ofAlignHorz.
+    
+    // fits the SUBJECT rect INSIDE the TARGET rect.
+    // Preserves SUBJECTS's aspect ratio.
+    // Final Subject's Area <= Target's Area.
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_FIT     = 0,
+    // FILLS the TARGET rect with the SUBJECT rect.
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area >= Target's Area.
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_FILL    = 1,
+    // Preserves the SUBJECT's aspect ratio.
+    // Subject's Area is Unchanged
+    // Subject's Center == Target's Center
+    OF_SCALEMODE_CENTER  = 2, // centers the subject
+    // Can CHANGE the SUBJECT's aspect ratio.
+    // Subject's Area == Target's Area
+    // Subject's Center == Target's Center
+ 	OF_SCALEMODE_STRETCH_TO_FILL = 3, // simply matches the target dims
 };
 
 enum ofImageType{
@@ -374,7 +465,8 @@ enum ofPixelFormat{
 	OF_PIXELS_RGB,
 	OF_PIXELS_RGBA,
 	OF_PIXELS_BGRA,
-	OF_PIXELS_RGB565
+	OF_PIXELS_RGB565,
+	OF_PIXELS_UNKNOWN
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
@@ -433,6 +525,7 @@ enum ofPolyWindingMode{
 
 enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
+enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
 
 //--------------------------------------------
 //
@@ -452,10 +545,13 @@ enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
+    #define OF_KEY_TAB          9
 	#define OF_KEY_CTRL			0x0200
 	#define OF_KEY_ALT			0x0300
 	#define OF_KEY_SHIFT		0x0400
-
+	#define OF_KEY_SUPER		0x0500
+    #define OF_KEY_COMMAND      OF_KEY_SUPER
+    
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
 
@@ -492,9 +588,30 @@ enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-
+	#define OF_KEY_LEFT_SHIFT	(109 | OF_KEY_MODIFIER)
+	#define OF_KEY_LEFT_CONTROL	(110 | OF_KEY_MODIFIER)
+	#define OF_KEY_LEFT_ALT		(111 | OF_KEY_MODIFIER)
+	#define OF_KEY_LEFT_SUPER	(112 | OF_KEY_MODIFIER)
+	#define OF_KEY_RIGHT_SHIFT	(113 | OF_KEY_MODIFIER)
+	#define OF_KEY_RIGHT_CONTROL (114 | OF_KEY_MODIFIER)
+	#define OF_KEY_RIGHT_ALT	(115 | OF_KEY_MODIFIER)
+	#define OF_KEY_RIGHT_SUPER	(116 | OF_KEY_MODIFIER)
+	#define OF_KEY_LEFT_COMMAND OF_KEY_LEFT_SUPER
+	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
 // not sure what to do in the case of non-glut apps....
 
+    #define OF_MOUSE_BUTTON_1      0
+    #define OF_MOUSE_BUTTON_2      1
+    #define OF_MOUSE_BUTTON_3      2
+    #define OF_MOUSE_BUTTON_4      3
+    #define OF_MOUSE_BUTTON_5      4
+    #define OF_MOUSE_BUTTON_6      5
+    #define OF_MOUSE_BUTTON_7      6
+    #define OF_MOUSE_BUTTON_8      7
+    #define OF_MOUSE_BUTTON_LAST   OF_MOUSE_BUTTON_8
+    #define OF_MOUSE_BUTTON_LEFT   OF_MOUSE_BUTTON_1
+    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_2
+    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_3
 
 //--------------------------------------------
 //console colors for our logger - shame this doesn't work with the xcode console
@@ -534,4 +651,9 @@ enum ofDrawBitmapMode{
 	OF_BITMAPMODE_VIEWPORT,
 	OF_BITMAPMODE_MODEL,
 	OF_BITMAPMODE_MODEL_BILLBOARD
+};
+
+enum ofTextEncoding{
+	OF_ENCODING_UTF8,
+	OF_ENCODING_ISO_8859_15
 };

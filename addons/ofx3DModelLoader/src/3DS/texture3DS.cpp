@@ -78,7 +78,12 @@ texture3DS::texture3DS(string filename, const int textureId){
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     // Upload texture to card with bound texture ID
+#ifdef TARGET_OPENGLES
+    glTexParameterf(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, fileFormat, GL_UNSIGNED_BYTE, flippedPixels);
+#else
     gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat, m_width, m_height, fileFormat, GL_UNSIGNED_BYTE, flippedPixels);
+#endif
 
     ofLog(OF_LOG_NOTICE, "texture3DS Texture %s loaded", filename.c_str());
 }

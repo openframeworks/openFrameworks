@@ -56,7 +56,7 @@ bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 	}
 
 	jstring javaFileName = ofGetJNIEnv()->NewStringUTF(ofToDataPath(fileName,true).c_str());
-	env->CallVoidMethod(javaSoundPlayer,javaLoadMethod,javaFileName,stream);
+	env->CallVoidMethod(javaSoundPlayer,javaLoadMethod,javaFileName,stream?1:0);
 	env->DeleteLocalRef((jobject)javaFileName);
 	return true;
 }
@@ -209,7 +209,7 @@ void ofxAndroidSoundPlayer::setPaused(bool bP){
 		return;
 	}
 
-	env->CallVoidMethod(javaSoundPlayer,javaPausedMethod,bP);
+	env->CallVoidMethod(javaSoundPlayer,javaPausedMethod,bP?1:0);
 
 }
 
@@ -231,7 +231,7 @@ void ofxAndroidSoundPlayer::setLoop(bool bLp){
 		return;
 	}
 
-	env->CallVoidMethod(javaSoundPlayer,javaLoopMethod,bLp);
+	env->CallVoidMethod(javaSoundPlayer,javaLoopMethod,bLp?1:0);
 
 }
 
@@ -253,7 +253,7 @@ void ofxAndroidSoundPlayer::setMultiPlay(bool bMp){
 		return;
 	}
 
-	env->CallVoidMethod(javaSoundPlayer,javaMultiplayMethod,bMp);
+	env->CallVoidMethod(javaSoundPlayer,javaMultiplayMethod,bMp?1:0);
 
 }
 

@@ -62,16 +62,16 @@ int ofSaveURLAsync(string url, string path);
 void ofRemoveURLRequest(int id);
 void ofRemoveAllURLRequests();
 
-extern ofEvent<ofHttpResponse> ofURLResponseEvent;
+ofEvent<ofHttpResponse> & ofURLResponseEvent();
 
 template<class T>
 void ofRegisterURLNotification(T * obj){
-	ofAddListener(ofURLResponseEvent,obj,&T::urlResponse);
+	ofAddListener(ofURLResponseEvent(),obj,&T::urlResponse);
 }
 
 template<class T>
 void ofUnregisterURLNotification(T * obj){
-	ofRemoveListener(ofURLResponseEvent,obj,&T::urlResponse);
+	ofRemoveListener(ofURLResponseEvent(),obj,&T::urlResponse);
 }
 
 
@@ -86,13 +86,13 @@ class ofURLFileLoader : public ofThread  {
         int saveAsync(string url, string path);
 		void remove(int id);
 		void clear();
+        void stop();
 
     protected:
 
 		// threading -----------------------------------------------
 		void threadedFunction();
         void start();
-        void stop();
         void update(ofEventArgs & args);  // notify in update so the notification is thread safe
 
     private:

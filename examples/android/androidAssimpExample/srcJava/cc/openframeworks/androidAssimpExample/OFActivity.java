@@ -1,6 +1,5 @@
 package cc.openframeworks.androidAssimpExample;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -8,7 +7,7 @@ import android.view.MenuItem;
 import cc.openframeworks.OFAndroid;
 
 
-public class OFActivity extends Activity{
+public class OFActivity extends cc.openframeworks.OFActivity{
 
 	@Override
     public void onCreate(Bundle savedInstanceState)

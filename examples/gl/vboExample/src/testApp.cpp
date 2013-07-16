@@ -12,27 +12,27 @@
  vertices, or texture coordinates.
  */
 //--------------------------------------------------------------
-void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
+void testApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
 	mesh.addVertex(a);
 	mesh.addVertex(b);
 	mesh.addVertex(c);
 }
 
 //--------------------------------------------------------------
-void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
+void testApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c) {
+void testApp::addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c) {
 	mesh.addTexCoord(a);
 	mesh.addTexCoord(b);
 	mesh.addTexCoord(c);
 }
 
 //--------------------------------------------------------------
-void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
+void testApp::addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
 	addTexCoords(mesh, a, b, c);
 	addTexCoords(mesh, a, c, d);
 }
@@ -42,7 +42,7 @@ void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
  a 3d point from the current x,y image position.
  */
 //--------------------------------------------------------------
-ofVec3f getVertexFromImg(ofImage& img, int x, int y) {
+ofVec3f testApp::getVertexFromImg(ofImage& img, int x, int y) {
 	ofColor color = img.getColor(x, y);
 	if(color.a > 0) {
 		float z = ofMap(color.a, 0, 255, -480, 480);
@@ -54,13 +54,26 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y) {
 
 //--------------------------------------------------------------
 void testApp::setup() {
+
+    #ifdef TARGET_OPENGLES
+    // While this will will work on normal OpenGL as well, it is 
+    // required for OpenGL ES because ARB textures are not supported.
+    // If this IS set, then we conditionally normalize our 
+    // texture coordinates below.
+    ofEnableNormalizedTexCoords();
+    #endif
+
 	img.loadImage("linzer.png");
 	
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	int skip = 1;	// this controls the resolution of the mesh
+	int skip = 10;	// this controls the resolution of the mesh
+	
 	int width = img.getWidth();
 	int height = img.getHeight();
+
+	ofVec2f imageSize(width,height);
+
 	ofVec3f zero(0, 0, 0);
 	for(int y = 0; y < height - skip; y += skip) {
 		for(int x = 0; x < width - skip; x += skip) {
@@ -82,6 +95,16 @@ void testApp::setup() {
 			// ignore any zero-data (where there is no depth info)
 			if(nw != zero && ne != zero && sw != zero && se != zero) {
 				addFace(mesh, nw, ne, se, sw);
+
+				// Normalize our texture coordinates if normalized 
+				// texture coordinates are currently enabled.
+				if(ofGetUsingNormalizedTexCoords()) {
+					nwi /= imageSize;
+					nei /= imageSize;
+					sei /= imageSize;
+					swi /= imageSize;
+				}
+
 				addTexCoords(mesh, nwi, nei, sei, swi);
 			}
 		}
@@ -97,7 +120,7 @@ void testApp::update() {
 
 //--------------------------------------------------------------
 void testApp::draw() {
-	ofBackground(0);
+	ofBackgroundGradient(ofColor(64), ofColor(0));
 	cam.begin();
 	glEnable(GL_DEPTH_TEST);
 	
@@ -137,7 +160,9 @@ void testApp::draw() {
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	
+	if(key == ' ') {
+		ofToggleFullscreen();
+	}
 }
 
 //--------------------------------------------------------------

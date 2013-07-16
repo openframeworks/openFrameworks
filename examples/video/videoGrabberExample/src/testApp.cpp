@@ -6,11 +6,25 @@ void testApp::setup(){
 	camWidth 		= 320;	// try to grab at this size. 
 	camHeight 		= 240;
 	
-	vidGrabber.setVerbose(true);
+    //we can now get back a list of devices. 
+	vector<ofVideoDevice> devices = vidGrabber.listDevices();
+	
+    for(int i = 0; i < devices.size(); i++){
+		cout << devices[i].id << ": " << devices[i].deviceName; 
+        if( devices[i].bAvailable ){
+            cout << endl;
+        }else{
+            cout << " - unavailable " << endl; 
+        }
+	}
+    
+	vidGrabber.setDeviceID(0);
+	vidGrabber.setDesiredFrameRate(60);
 	vidGrabber.initGrabber(camWidth,camHeight);
 	
 	videoInverted 	= new unsigned char[camWidth*camHeight*3];
 	videoTexture.allocate(camWidth,camHeight, GL_RGB);	
+	ofSetVerticalSync(true);
 }
 
 
@@ -49,6 +63,10 @@ void testApp::keyPressed  (int key){
 	// use alt-tab to navigate to the settings
 	// window. we are working on a fix for this...
 	
+	// Video settings no longer works in 10.7
+	// You'll need to compile with the 10.6 SDK for this
+    // For Xcode 4.4 and greater, see this forum post on instructions on installing the SDK
+    // http://forum.openframeworks.cc/index.php?topic=10343        
 	if (key == 's' || key == 'S'){
 		vidGrabber.videoSettings();
 	}
