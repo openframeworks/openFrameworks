@@ -672,23 +672,39 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 		int currentMonitor = getCurrentMonitor();
 		ofVec3f screenSize = getScreenSize();
-    
+
+		NSArray * screens = [NSScreen screens];
+		ofRectangle total;
+
         if( bMultiWindowFullscreen && monitorCount > 1 ){
             float totalWidth = 0.0; 
             float maxHeight  = 0.0; 
-            
             //lets find the total width of all the monitors
-            //and we'll make the window height the height of the largest monitor. 
+            //and we'll make the window height the height of the largest monitor.
             for(int i = 0; i < monitorCount; i++){
-                const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
-                totalWidth += desktopMode->width; 
+
+				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+                totalWidth += desktopMode->width;
                 if( i == 0 || desktopMode->height > maxHeight ){
-                    maxHeight = desktopMode->height; 
-                }   
+                    maxHeight = desktopMode->height;
+                }
+
+				int x, y;
+				int w, h;
+				glfwGetMonitorPos(*(monitors + i), &x, &y);
+				ofRectangle screen = ofRectangle( x, y, desktopMode->width, desktopMode->height );
+				//cout << "s: " << screen << endl;
+				total = total.getUnion(screen);
+
             }
-            //for OS X we need to set this first as the window size affects the window positon 
-            setWindowShape(totalWidth, maxHeight);
-            setWindowPosition(0, 0);
+            //for OS X we need to set this first as the window size affects the window positon
+			//printf("ORIGIN: %f %f \n", total.x, total.y);
+			//printf("SHAPE: %f %f \n", total.width, total.height);
+			setWindowShape(total.width, total.height);
+			setWindowPosition(total.x, total.y);
+
+			//ofVec2f p = getWindowPosition();
+			//cout << p << endl;
         }else if (monitorCount > 1 && currentMonitor < monitorCount){
             int xpos;
 			int ypos;
