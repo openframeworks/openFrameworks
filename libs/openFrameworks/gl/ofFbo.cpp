@@ -225,6 +225,7 @@ ofFbo::ofFbo(const ofFbo & mom){
 
 ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
+	destroy();
 	settings = mom.settings;
 	isBound = mom.isBound;
 	bIsAllocated = mom.bIsAllocated;
@@ -465,7 +466,7 @@ void ofFbo::allocate(Settings _settings) {
 
 	// now create all textures and color buffers
 	if(settings.colorFormats.size() > 0) {
-		for(int i=0; i<settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
+		for(int i=0; i<(int)settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
 	}
 	else if(settings.numColorbuffers > 0) {
 		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
@@ -522,7 +523,7 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	textures.push_back(tex);
 	
-	settings.colorFormats.reserve(attachmentPoint + 1);
+	settings.colorFormats.resize(attachmentPoint + 1);
 	settings.colorFormats[attachmentPoint] = internalFormat;
 	settings.numColorbuffers = settings.colorFormats.size();
 
