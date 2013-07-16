@@ -380,6 +380,7 @@ static void prepareBitmapTexture(){
 		bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
 
 		charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+		charMesh.setUsage(GL_STREAM_DRAW);
 		
 	}
 
