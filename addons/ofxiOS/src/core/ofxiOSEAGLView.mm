@@ -50,12 +50,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
         _instanceRef = self;
         
         if(rendererVersion == ESRendererVersion_20) {
-            if(ofAppiPhoneWindow::getInstance()->isRendererES20() == false) {
+            if(ofAppiPhoneWindow::getInstance()->isRendererES2() == false) {
                 ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
             }
             ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
         } else if(rendererVersion == ESRendererVersion_11) {
-            if(ofAppiPhoneWindow::getInstance()->isRendererES11() == false) {
+            if(ofAppiPhoneWindow::getInstance()->isRendererES1() == false) {
                 ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
             }
         }

@@ -78,10 +78,10 @@ public:
     virtual void setVerticalSync(bool enabled);
 		
     //-------------------------------------------- ios config.
-    bool enableRendererES20();
-    bool enableRendererES11();
-    bool isRendererES20();
-    bool isRendererES11();
+    bool enableRendererES2();
+    bool enableRendererES1();
+    bool isRendererES2();
+    bool isRendererES1();
     
     bool enableRetina();
     bool disableRetina();
