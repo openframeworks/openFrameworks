@@ -1353,7 +1353,7 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 
 	in vec4  position;
 	in vec2  texcoord;
-	in vec4  color_coord;
+	in vec4  color;
 	in vec3  normal;
 	 
 	out vec4 colorVarying;
@@ -1362,7 +1362,7 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 
 	void main()
 	{
-		colorVarying = color_coord;
+		colorVarying = color;
 		texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
 		gl_Position = modelViewProjectionMatrix * position;
 	}
