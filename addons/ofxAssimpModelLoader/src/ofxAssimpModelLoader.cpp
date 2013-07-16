@@ -80,6 +80,7 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 
 // automatic destruction on app exit makes the app crash because of some bug in assimp
 // this is a hack to clear every object on the exit callback of the application
+// FIXME: review when there's an update of assimp
 //-------------------------------------------
 void ofxAssimpModelLoader::onAppExit(ofEventArgs & args){
 	clear();
