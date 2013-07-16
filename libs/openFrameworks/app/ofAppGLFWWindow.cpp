@@ -65,9 +65,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 
 	glVersionMinor=glVersionMajor=-1;
 	nFramesSinceWindowResized = 0;
-    
-    //default to 4 times antialiasing. 
-    setNumSamples(4);
+	
 	iconSet = false;
 
 }
