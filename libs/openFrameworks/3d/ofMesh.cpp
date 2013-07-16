@@ -1108,7 +1108,7 @@ void ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
         getColors().resize( getNumVertices() );
     }
     
-    for(int i = startIndex; i < endIndex; i++) {
+    for(int i = startIndex; i <= endIndex; i++) {
         setColor( getIndex(i), color);
     }
 }
@@ -1125,8 +1125,7 @@ ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex ) const {
     }
     
     if( endIndex < 0 || endIndex >= getNumIndices() ) {
-        // set to the total, because the vector assign does not include the last element //
-        endVertIndex = getNumVertices();
+        endVertIndex = getNumVertices()-1;
     } else {
         endVertIndex = getIndex( endIndex );
     }
@@ -1139,30 +1138,30 @@ ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertInd
     ofMesh mesh;
     mesh.setMode( getMode() );
     
-    mesh.getVertices().assign( getVertices().begin()+startVertIndex, getVertices().begin()+endVertIndex );
+    mesh.getVertices().assign( getVertices().begin()+startVertIndex, getVertices().begin()+endVertIndex+1 );
 
     if( hasColors() ) {
         vector<ofFloatColor> colors;
-        mesh.getColors().assign( getColors().begin()+startVertIndex, getColors().begin()+endVertIndex );
+        mesh.getColors().assign( getColors().begin()+startVertIndex, getColors().begin()+endVertIndex+1 );
         if( usingColors()) mesh.enableColors();
         else mesh.disableColors();
     }
     
     if( hasTexCoords() ) {
-        mesh.getTexCoords().assign( getTexCoords().begin()+startVertIndex, getTexCoords().begin()+endVertIndex );
+        mesh.getTexCoords().assign( getTexCoords().begin()+startVertIndex, getTexCoords().begin()+endVertIndex+1 );
         if( usingTextures() ) mesh.enableTextures();
         else mesh.disableTextures();
     }
     
     if( hasNormals() ) {
-        mesh.getNormals().assign( getNormals().begin()+startVertIndex, getNormals().begin()+endVertIndex );
+        mesh.getNormals().assign( getNormals().begin()+startVertIndex, getNormals().begin()+endVertIndex+1 );
         if( usingNormals() ) mesh.enableNormals();
         else mesh.disableNormals();
     }
     
     int offsetIndex = getIndex(startIndex);
     bool bFoundLessThanZero = false;
-    for(int i = startIndex; i < endIndex; i++) {
+    for(int i = startIndex; i <= endIndex; i++) {
         int index = getIndex(i) - offsetIndex;
         if(index < 0) {
             index = 0;
