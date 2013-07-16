@@ -2,12 +2,10 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	ofSetLogLevel(OF_LOG_VERBOSE);
 	image.loadImage("images/bikers.jpg");
 	ofBackground(255,255,255);
 	ofSetColor(255,255,255);
 }
-
 
 //--------------------------------------------------------------
 void testApp::update(){
@@ -29,27 +27,71 @@ void testApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-	ofLog(OF_LOG_WARNING,"%i,%i",x,y);
-}
-
-//--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
-	
-}
-
-//--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
-	
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::touchDown(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchMoved(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchUp(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchDoubleTap(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::pause(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::stop(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::resume(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::reloadTextures(){
+
+}
+
+//--------------------------------------------------------------
+bool testApp::backPressed(){
+	return false;
+}
+
+//--------------------------------------------------------------
+void testApp::okPressed(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::cancelPressed(){
+
+}

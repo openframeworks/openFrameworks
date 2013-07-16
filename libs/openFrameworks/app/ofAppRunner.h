@@ -7,13 +7,15 @@
 
 class ofAppBaseWindow;
 class ofBaseApp;
+class ofBaseRenderer;
 
 void 		ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode); // this is deprecated, use an ofPtr
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated
 
-void 		ofRunApp(ofPtr<ofBaseApp> OFSA); // this is for deprecated, use an ofPtr
-void 		ofRunApp(ofBaseApp * OFSA = NULL);
+void 		ofRunApp(ofPtr<ofBaseApp> OFSA);
+void 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
+
 
 ofBaseApp * ofGetAppPtr();
 void ofSetAppPtr(ofPtr<ofBaseApp> appPtr);
@@ -22,12 +24,13 @@ void		ofExit(int status=0);
 
 //-------------------------- time
 float 		ofGetFrameRate();
+float 		ofGetTargetFrameRate();
 int			ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
 void		ofSleepMillis(int millis);
 double		ofGetLastFrameTime();
 
-void		ofSetOrientation(ofOrientation orientation);
+void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);
 ofOrientation			ofGetOrientation();
 
 //-------------------------- cursor
@@ -46,6 +49,7 @@ int 		ofGetWindowHeight();
 bool		ofDoesHWOrientation();
 ofPoint		ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
+ofAppBaseWindow * ofGetWindowPtr();
 
 void 		ofSetWindowPosition(int x, int y);
 void 		ofSetWindowShape(int width, int height);

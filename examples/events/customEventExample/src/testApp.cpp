@@ -91,7 +91,7 @@ void testApp::update() {
         bugs.push_back(newBug);
     }
     
-    for(int i=0; i<bugs.size(); i++) {
+    for(unsigned int i=0; i<bugs.size(); i++) {
         
         bugs[i].update();
         
@@ -111,7 +111,7 @@ void testApp::update() {
     ofRemove(bugs, shouldRemoveBug);
     
     // update the bullets
-    for(int i=0; i<bullets.size(); i++) {
+    for(unsigned int i=0; i<bullets.size(); i++) {
         bullets[i].update();
     } 
     
@@ -121,8 +121,8 @@ void testApp::update() {
     
     // did we hit a bug loop we are checking to see if a bullet
     // hits a bug. if so we are going to launch an event for the game
-    for(int i=0; i<bullets.size(); i++) {
-        for(int j=0; j<bugs.size(); j++) {
+    for(unsigned int i=0; i<bullets.size(); i++) {
+        for(unsigned int j=0; j<bugs.size(); j++) {
             
             ofVec2f a       = bullets[i].pos;
             ofVec2f b       = bugs[j].pos;
@@ -148,19 +148,19 @@ void testApp::update() {
 void testApp::draw(){
     
     // draw the bug holes
-    for(int i=0; i<holes.size(); i++) {
+    for(unsigned int i=0; i<holes.size(); i++) {
         ofSetColor(100);
         ofCircle(holes[i], 10);
         ofSetColor(40);
         ofCircle(holes[i], 7);
     }
     
-    for(int i=0; i<bugs.size(); i++) {
+    for(unsigned int i=0; i<bugs.size(); i++) {
         bugs[i].draw();
     }
     
     // draw the bullets
-    for(int i=0; i<bullets.size(); i++) {
+    for(unsigned int i=0; i<bullets.size(); i++) {
         bullets[i].draw();
     }
     

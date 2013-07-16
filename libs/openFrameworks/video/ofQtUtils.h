@@ -19,6 +19,8 @@
 	//#include <MoviesFormat.h>
 #endif
 
+#ifndef MAC_OS_X_VERSION_10_7
+
 //p2cstr depreciation fix - thanks pickard!
 #ifdef TARGET_OSX
 	#define p2cstr(aStr) CFStringGetCStringPtr(CFStringCreateWithPascalString(NULL, aStr, kCFStringEncodingMacRoman),kCFStringEncodingMacRoman)
@@ -50,5 +52,7 @@ void            MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRat
 	OSErr	GetSettingsPreference(CFStringRef inKey, UserData *outUserData);
 	OSErr	SaveSettingsPreference(CFStringRef inKey, UserData inUserData);
 #endif
+
+#endif //OS 10.7 guard
 
 #endif

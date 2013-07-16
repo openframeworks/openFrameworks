@@ -1,2 +1,0 @@
-ofxSvg
-ofxXmlSettings

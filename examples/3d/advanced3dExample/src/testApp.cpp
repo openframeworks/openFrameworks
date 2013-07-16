@@ -292,7 +292,7 @@ void testApp::drawScene(int iCameraDraw){
 		//  from the inverseCameraMatrix object
 		//  to OpenGL, and apply that matrix to
 		//  the current OpenGL transform
-		glMultMatrixf(inverseCameraMatrix.getPtr());
+		ofMultMatrix( inverseCameraMatrix );
 
 		//
 		//--

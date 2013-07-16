@@ -5,15 +5,25 @@
 #include "ofGraphics.h"
 #include <set>
 
-// core events instance & arguments
-#ifdef OF_USING_POCO
-	ofCoreEvents & ofEvents(){
-		static ofCoreEvents * events = new ofCoreEvents;
-		return *events;
-	}
+static const double MICROS_TO_SEC = .000001;
+static const double MICROS_TO_MILLIS = .001;
 
-	ofEventArgs voidEventArgs;
-#endif
+static unsigned long long   timeThen = 0, oneSec = 0;
+static float    			targetRate = 0;
+static float				fps = 60;
+static unsigned long long	microsForFrame = 0;
+static unsigned long long	lastFrameTime = 0;
+static bool      			bFrameRateSet = 0;
+static int      			nFramesForFPS = 0;
+static int      			nFrameCount	  = 0;
+
+// core events instance & arguments
+ofCoreEvents & ofEvents(){
+	static ofCoreEvents * events = new ofCoreEvents;
+	return *events;
+}
+
+ofEventArgs voidEventArgs;
 
 
 static int	currentMouseX=0, currentMouseY=0;
@@ -24,6 +34,42 @@ static set<int> pressedKeys;
 
 static bool bEscQuits = true;
 
+
+//--------------------------------------
+void ofSetFrameRate(int _targetRate){
+	// given this FPS, what is the amount of millis per frame
+	// that should elapse?
+
+	// --- > f / s
+
+	if (_targetRate == 0){
+		bFrameRateSet = false;
+	}else{
+		bFrameRateSet	= true;
+		targetRate		= _targetRate;
+		microsForFrame	= 1000000.0 / (double)targetRate;
+	}
+}
+
+//--------------------------------------
+float ofGetFrameRate(){
+	return fps;
+}
+
+//--------------------------------------
+float ofGetTargetFrameRate(){
+	return targetRate;
+}
+
+//--------------------------------------
+double ofGetLastFrameTime(){
+	return lastFrameTime*MICROS_TO_SEC;
+}
+
+//--------------------------------------
+int ofGetFrameNum(){
+	return nFrameCount;
+}
 
 //--------------------------------------
 bool ofGetMousePressed(int button){ //by default any button
@@ -71,57 +117,87 @@ void exitApp(){
 
 //------------------------------------------
 void ofNotifySetup(){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	
-	if(ofAppPtr){
-		ofAppPtr->setup();
-	}
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents().setup, voidEventArgs );
-	#endif
+	ofNotifyEvent( ofEvents().setup, voidEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyUpdate(){
+	// calculate sleep time to adjust to target fps
+	unsigned long long timeNow = ofGetElapsedTimeMicros();
+	if (nFrameCount != 0 && bFrameRateSet == true){
+		unsigned long long diffMicros = timeNow - timeThen;
+		if(diffMicros < microsForFrame){
+			unsigned long long waitMicros = microsForFrame - diffMicros;
+			#ifdef TARGET_WIN32
+				Sleep(waitMicros*MICROS_TO_MILLIS);
+			#else
+				usleep(waitMicros);
+			#endif
+		}
+	}
+
+	// calculate fps
+	timeNow = ofGetElapsedTimeMicros();
+
+	if(nFrameCount==0){
+		timeThen = timeNow;
+		if(bFrameRateSet)	fps = targetRate;
+	}else{
+		unsigned long long oneSecDiff = timeNow-oneSec;
+
+		if( oneSecDiff  >= 1000000 ){
+			fps = nFramesForFPS/(oneSecDiff*MICROS_TO_SEC);
+			oneSec  = timeNow;
+			nFramesForFPS = 0;
+		}else{
+			fps = fps*.99 + nFramesForFPS/(oneSecDiff*MICROS_TO_SEC)*.01;
+		}
+		nFramesForFPS++;
+
+
+		lastFrameTime 	= timeNow-timeThen;
+		timeThen    	= timeNow;
+	}
+
+	// update renderer, application and notify update event
 	ofGetCurrentRenderer()->update();
 
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	
-	if(ofAppPtr){
-		ofAppPtr->update();
-	}
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents().update, voidEventArgs );
-	#endif
+	ofNotifyEvent( ofEvents().update, voidEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyDraw(){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	
-	if(ofAppPtr){
-		ofAppPtr->draw();
-	}
-	#ifdef OF_USING_POCO
+	if(ofGetCurrentRenderer()){
 		ofNotifyEvent( ofEvents().draw, voidEventArgs );
-	#endif
+	}
+
+	nFrameCount++;
 }
 
 //------------------------------------------
 void ofNotifyKeyPressed(int key){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofKeyEventArgs keyEventArgs;
 
+    if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
+        pressedKeys.insert(key);
+        key = OF_KEY_CTRL;
+    }
+    else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+        pressedKeys.insert(key);
+        key = OF_KEY_SHIFT;
+    }
+    else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+        pressedKeys.insert(key);
+        key = OF_KEY_ALT; 
+    }
+    else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+        pressedKeys.insert(key);
+        key = OF_KEY_SUPER; 
+    }
+            
 	pressedKeys.insert(key);
-
-	if(ofAppPtr){
-		ofAppPtr->keyPressed(key);
-	}
-	
-	#ifdef OF_USING_POCO
-		keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
-	#endif
+	keyEventArgs.key = key;
+	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
 	
 	
 	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
@@ -133,24 +209,66 @@ void ofNotifyKeyPressed(int key){
 
 //------------------------------------------
 void ofNotifyKeyReleased(int key){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofKeyEventArgs keyEventArgs;
 
+    if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
+        pressedKeys.erase(key);
+        key = OF_KEY_CTRL;
+    }
+    else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+        pressedKeys.erase(key);
+        key = OF_KEY_SHIFT;
+    }
+    else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+        pressedKeys.erase(key);
+        key = OF_KEY_ALT; 
+    }
+    else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+        pressedKeys.erase(key);
+        key = OF_KEY_SUPER; 
+    }
+    
 	pressedKeys.erase(key);
-
-	if(ofAppPtr){
-		ofAppPtr->keyReleased(key);
-	}
 	
-	#ifdef OF_USING_POCO
-		keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
-	#endif
+	keyEventArgs.key = key;
+	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
+}
+
+
+//------------------------------------------
+void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent){
+	switch(keyEvent.type){
+		case ofKeyEventArgs::Pressed:
+			ofNotifyKeyPressed(keyEvent.key);
+			break;
+		case ofKeyEventArgs::Released:
+			ofNotifyKeyReleased(keyEvent.key);
+			break;
+		
+	}
+}
+
+//------------------------------------------
+void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent){
+	switch(mouseEvent.type){
+		case ofMouseEventArgs::Moved:
+			ofNotifyMouseMoved(mouseEvent.x,mouseEvent.y);
+			break;
+		case ofMouseEventArgs::Dragged:
+			ofNotifyMouseDragged(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			break;
+		case ofMouseEventArgs::Pressed:
+			ofNotifyMousePressed(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			break;
+		case ofMouseEventArgs::Released:
+			ofNotifyMouseReleased(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			break;
+		
+	}
 }
 
 //------------------------------------------
 void ofNotifyMousePressed(int x, int y, int button){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
     if( bPreMouseNotSet ){
 		previousMouseX	= x;
@@ -165,23 +283,15 @@ void ofNotifyMousePressed(int x, int y, int button){
 	currentMouseY = y;
 	pressedMouseButtons.insert(button);
 
-	if(ofAppPtr){
-		ofAppPtr->mousePressed(x,y,button);
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
 
-	#ifdef OF_USING_POCO
-		mouseEventArgs.x = x;
-		mouseEventArgs.y = y;
-		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEvents().mousePressed, mouseEventArgs );
-	#endif
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+	mouseEventArgs.button = button;
+	ofNotifyEvent( ofEvents().mousePressed, mouseEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyMouseReleased(int x, int y, int button){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
 
 	if( bPreMouseNotSet ){
@@ -197,24 +307,14 @@ void ofNotifyMouseReleased(int x, int y, int button){
 	currentMouseY = y;
 	pressedMouseButtons.erase(button);
 
-	if(ofAppPtr){
-		ofAppPtr->mouseReleased(x,y,button);
-		ofAppPtr->mouseReleased();
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
-
-	#ifdef OF_USING_POCO
-		mouseEventArgs.x = x;
-		mouseEventArgs.y = y;
-		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEvents().mouseReleased, mouseEventArgs );
-	#endif
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+	mouseEventArgs.button = button;
+	ofNotifyEvent( ofEvents().mouseReleased, mouseEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyMouseDragged(int x, int y, int button){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
 
 	if( bPreMouseNotSet ){
@@ -228,24 +328,15 @@ void ofNotifyMouseDragged(int x, int y, int button){
 
 	currentMouseX = x;
 	currentMouseY = y;
-	
-	if(ofAppPtr){
-		ofAppPtr->mouseDragged(x,y,button);
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
 
-	#ifdef OF_USING_POCO
-		mouseEventArgs.x = x;
-		mouseEventArgs.y = y;
-		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEvents().mouseDragged, mouseEventArgs );
-	#endif
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+	mouseEventArgs.button = button;
+	ofNotifyEvent( ofEvents().mouseDragged, mouseEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyMouseMoved(int x, int y){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofMouseEventArgs mouseEventArgs;
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
@@ -258,69 +349,34 @@ void ofNotifyMouseMoved(int x, int y){
 
 	currentMouseX = x;
 	currentMouseY = y;
-	
-	if(ofAppPtr){
-		ofAppPtr->mouseMoved(x,y);
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-	}
 
-	#ifdef OF_USING_POCO
-		mouseEventArgs.x = x;
-		mouseEventArgs.y = y;
-		ofNotifyEvent( ofEvents().mouseMoved, mouseEventArgs );
-	#endif
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+	ofNotifyEvent( ofEvents().mouseMoved, mouseEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyExit(){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->exit();
-	}
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents().exit, voidEventArgs );
-	#endif
+	ofNotifyEvent( ofEvents().exit, voidEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyWindowResized(int width, int height){
 	static ofResizeEventArgs resizeEventArgs;
-
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->windowResized(width, height);
-	}
 	
-	#ifdef OF_USING_POCO
-		resizeEventArgs.width	= width;
-		resizeEventArgs.height	= height;
-		ofNotifyEvent( ofEvents().windowResized, resizeEventArgs );
-	#endif
+	resizeEventArgs.width	= width;
+	resizeEventArgs.height	= height;
+	ofNotifyEvent( ofEvents().windowResized, resizeEventArgs );
 }
 
 //------------------------------------------
 void ofNotifyDragEvent(ofDragInfo info){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->dragEvent(info);
-	}
-	
-	#ifdef OF_USING_POCO
-		ofNotifyEvent(ofEvents().fileDragEvent, info);
-	#endif
+	ofNotifyEvent(ofEvents().fileDragEvent, info);
 }
 
 //------------------------------------------
 void ofSendMessage(ofMessage msg){
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->gotMessage(msg);
-	}
-	
-	#ifdef OF_USING_POCO
-		ofNotifyEvent(ofEvents().messageEvent, msg);
-	#endif
+	ofNotifyEvent(ofEvents().messageEvent, msg);
 }
 
 //------------------------------------------
@@ -332,15 +388,7 @@ void ofSendMessage(string messageString){
 void ofNotifyWindowEntry( int state ) {
 	
 	static ofEntryEventArgs entryArgs;
-
-	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	if(ofAppPtr){
-		ofAppPtr->windowEntry(state);
-	}
-	
-#ifdef OF_USING_POCO
 	entryArgs.state = state;
 	ofNotifyEvent(ofEvents().windowEntered, entryArgs);
-#endif
 	
 }

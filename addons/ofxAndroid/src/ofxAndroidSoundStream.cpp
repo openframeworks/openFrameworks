@@ -188,6 +188,13 @@ int ofxAndroidSoundStream::getNumOutputChannels(){
 	return outChannels;
 }
 
+int ofxAndroidSoundStream::getSampleRate(){
+	return sampleRate;
+}
+
+int ofxAndroidSoundStream::getBufferSize(){
+	return inBufferSize;
+}
 
 void ofxAndroidSoundStream::pause(){
 	isPaused = true;

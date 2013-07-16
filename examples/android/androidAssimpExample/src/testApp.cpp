@@ -3,7 +3,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    ofSetLogLevel(OF_LOG_VERBOSE);    
+	ofSetLogLevel(OF_LOG_VERBOSE);
 	
     // we need GL_TEXTURE_2D for our models coords.
     ofDisableArbTex();
@@ -82,41 +82,73 @@ void testApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void testApp::windowResized(int w, int h){
+	model.calculateDimensions();
+	model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.5 , 0);
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(int x, int y, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
+void testApp::touchMoved(int x, int y, int id){
 	bAnimateMouse = true;
 	animationTime = float(y)/float(ofGetHeight());
 }
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
+void testApp::touchUp(int x, int y, int id){
 	bAnimateMouse = false;
+}
+
+//--------------------------------------------------------------
+void testApp::touchDoubleTap(int x, int y, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
-	model.calculateDimensions();
-	model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.5 , 0);
+void testApp::touchCancelled(int x, int y, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
+void testApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::pause(){
 
 }
 
+//--------------------------------------------------------------
+void testApp::stop(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::resume(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::reloadTextures(){
+
+}
+
+//--------------------------------------------------------------
+bool testApp::backPressed(){
+	return false;
+}
+
+//--------------------------------------------------------------
+void testApp::okPressed(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::cancelPressed(){
+
+}

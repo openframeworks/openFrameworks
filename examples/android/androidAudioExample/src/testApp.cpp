@@ -61,7 +61,17 @@ void testApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(int x, int y, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchMoved(int x, int y, int id){
 	int width = ofGetWidth();
 	pan = (float)x / (float)width;
 	float height = (float)ofGetHeight();
@@ -71,24 +81,60 @@ void testApp::mouseMoved(int x, int y ){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
-	
-}
-
-//--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
+void testApp::touchUp(int x, int y, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
+void testApp::touchDoubleTap(int x, int y, int id){
 
 }
 
 //--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
+void testApp::touchCancelled(int x, int y, int id){
 
 }
+
+//--------------------------------------------------------------
+void testApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
+
+}
+
+//--------------------------------------------------------------
+void testApp::pause(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::stop(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::resume(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::reloadTextures(){
+
+}
+
+//--------------------------------------------------------------
+bool testApp::backPressed(){
+	return false;
+}
+
+//--------------------------------------------------------------
+void testApp::okPressed(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::cancelPressed(){
+
+}
+
 
 void testApp::audioRequested(float * output,int bufferSize,int nChannels){
 	//pan = 0.5f;

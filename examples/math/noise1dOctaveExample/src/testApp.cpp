@@ -63,7 +63,6 @@ void testApp::setupMultibandNoiseDemo(){
 		}
 		
 		float sliderX = stripXPos+stripWidth+yMargin;
-		float sliderY = stripYPos;
 		float sliderAmount = noiseAmounts[i]; //1.0 / (powf(2.0, i));
 		sliderGroup[i].setup(sliderX, stripYPos, 16,stripHeight, 0.00, 1.0, sliderAmount, true,true);
 		stripYPos += stripHeight + yMargin;
@@ -164,7 +163,6 @@ void testApp::renderMultibandNoiseDemo(){
 //--------------------------------------------------------------
 void testApp::render1DNoiseStrip (float x, float y, float width, float height, float dt, float *data){
 	
-	float now = ofGetElapsedTimef();
 	ofPushMatrix();
 	ofDisableSmoothing();
 	ofEnableAlphaBlending();

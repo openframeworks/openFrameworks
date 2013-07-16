@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
+#import "AVSoundPlayer.h"
 
 class testApp : public ofxiPhoneApp{
 	
@@ -11,27 +12,23 @@ class testApp : public ofxiPhoneApp{
         void update();
         void draw();
         void exit();
-    
+	
         void touchDown(ofTouchEventArgs & touch);
         void touchMoved(ofTouchEventArgs & touch);
         void touchUp(ofTouchEventArgs & touch);
         void touchDoubleTap(ofTouchEventArgs & touch);
         void touchCancelled(ofTouchEventArgs & touch);
-	
+
         void lostFocus();
         void gotFocus();
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
-		
-        ofSoundPlayer beats;
+    
         ofSoundPlayer synth;
-        ofSoundPlayer vocals;
-
+        ofSoundPlayer beats;
+        AVSoundPlayer * vocals;
+    
         ofTrueTypeFont font;
-        float synthPosition;
-
-        float appIphoneScale;
-
 };
 
 

@@ -13,7 +13,8 @@
 extern "C"{
 void
 Java_cc_openframeworks_OFAndroidAccelerometer_updateAccelerometer( JNIEnv*  env, jobject  thiz, jfloat x, jfloat y, jfloat z ){
-	ofxAccelerometer.update(-x,-y,-z);
+	// android reports these in m/s^2, but ofxAccelerometer expects g's (1g = gravity = 9.81m/s^2)
+	ofxAccelerometer.update(-x/9.81,-y/9.81,-z/9.81);
 }
 }
 

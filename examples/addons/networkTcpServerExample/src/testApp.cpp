@@ -37,7 +37,7 @@ void testApp::draw(){
 	ofSetHexColor(0xDDDDDD);
 
 	//for each connected client lets get the data being sent and lets print it to the screen
-	for(int i = 0; i < TCP.getLastID(); i++){
+	for(unsigned int i = 0; i < (unsigned int)TCP.getLastID(); i++){
 
 		if( !TCP.isClientConnected(i) )continue;
 

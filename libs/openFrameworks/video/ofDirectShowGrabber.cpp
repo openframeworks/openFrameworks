@@ -88,20 +88,49 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 
 }
 
-//--------------------------------------------------------------------
-void ofDirectShowGrabber::listDevices(){
+//---------------------------------------------------------------------------
+bool ofDirectShowGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	//note as we only support RGB we are just confirming that this pixel format is supported
+	if( pixelFormat == OF_PIXELS_RGB ){
+		return true;
+	}
+	ofLogWarning("ofDirectShowGrabber") << "requested pixel format not supported" << endl;
+	return false;
+}
 
-	//---------------------------------
+//---------------------------------------------------------------------------
+ofPixelFormat ofDirectShowGrabber::getPixelFormat(){
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	return OF_PIXELS_RGB;
+}
+
+//--------------------------------------------------------------------
+vector<ofVideoDevice> ofDirectShowGrabber::listDevices(){
+    
+    vector <ofVideoDevice> devices; 
+	
+    //---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
 		ofLog(OF_LOG_NOTICE, "---");
-		VI.listDevices();
-		ofLog(OF_LOG_NOTICE, "---");
+        VI.listDevices();
+        ofLog(OF_LOG_NOTICE, "---");
+        
+		vector <string> devList = VI.getDeviceList(); 
+        
+        for(int i = 0; i < devList.size(); i++){
+            ofVideoDevice vd; 
+            vd.deviceName = devList[i]; 
+            vd.id = i;  
+            vd.bAvailable = true; 
+            devices.push_back(vd); 
+        }
 
 	//---------------------------------
 	#endif
 	//---------------------------------
-
+    
+    return devices;
 }
 
 //--------------------------------------------------------------------

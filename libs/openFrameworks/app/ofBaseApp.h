@@ -11,7 +11,8 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
             mouseX = mouseY = 0;
         }
 
-		virtual ~ofBaseApp(){}
+		virtual ~ofBaseApp(){
+		}
 
 		virtual void setup(){}
 		virtual void update(){}
@@ -35,6 +36,60 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void windowEntry ( int state ) { }
 		
 		int mouseX, mouseY;			// for processing heads
+
+		virtual void setup(ofEventArgs & args){
+			setup();
+		}
+		virtual void update(ofEventArgs & args){
+			update();
+		}
+		virtual void draw(ofEventArgs & args){
+			draw();
+		}
+		virtual void exit(ofEventArgs & args){
+			exit();
+		}
+
+		virtual void windowResized(ofResizeEventArgs & resize){
+			windowResized(resize.width,resize.height);
+		}
+
+		virtual void keyPressed( ofKeyEventArgs & key ){
+			keyPressed(key.key);
+		}
+		virtual void keyReleased( ofKeyEventArgs & key ){
+			keyReleased(key.key);
+		}
+
+		virtual void mouseMoved( ofMouseEventArgs & mouse ){
+			mouseX=mouse.x;
+			mouseY=mouse.y;
+			mouseMoved(mouse.x,mouse.y);
+		}
+		virtual void mouseDragged( ofMouseEventArgs & mouse ){
+			mouseX=mouse.x;
+			mouseY=mouse.y;
+			mouseDragged(mouse.x,mouse.y,mouse.button);
+		}
+		virtual void mousePressed( ofMouseEventArgs & mouse ){
+			mouseX=mouse.x;
+			mouseY=mouse.y;
+			mousePressed(mouse.x,mouse.y,mouse.button);
+		}
+		virtual void mouseReleased(ofMouseEventArgs & mouse){
+			mouseX=mouse.x;
+			mouseY=mouse.y;
+			mouseReleased(mouse.x,mouse.y,mouse.button);
+		}
+		virtual void windowEntry(ofEntryEventArgs & entry){
+			windowEntry(entry.state);
+		}
+		virtual void dragged(ofDragInfo & drag){
+			dragEvent(drag);
+		}
+		virtual void messageReceived(ofMessage & message){
+			gotMessage(message);
+		}
 };
 
 

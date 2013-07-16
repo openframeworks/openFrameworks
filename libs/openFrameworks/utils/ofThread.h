@@ -127,6 +127,9 @@ class ofThread : protected Poco::Runnable{
 		/// returns true if this the currently active thread
 		bool isCurrentThread();
 		
+
+		Poco::Thread & getPocoThread();
+
 		/// returns true if the main app thread is the currently active thread
 		static bool isMainThread();
 		

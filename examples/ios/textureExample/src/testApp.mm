@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	
 	w = 250;
 	h = 200;
@@ -68,7 +68,7 @@ void testApp::draw(){
 
 	ofScale(0.6, 0.6, 1.0);
 
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	
 	texGray.draw(100,100,w,h);
 	texColor.draw(350,300,w,h);

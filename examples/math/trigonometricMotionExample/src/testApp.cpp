@@ -38,10 +38,10 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	
-	for (int i=0; i<horizontalOscilators.size(); i++) {
+	for (unsigned int i=0; i<horizontalOscilators.size(); i++) {
 		horizontalOscilators[i].update();
 	}
-	for (int i=0; i<verticalOscilators.size(); i++) {
+	for (unsigned int i=0; i<verticalOscilators.size(); i++) {
 		verticalOscilators[i].update();
 	}
 	
@@ -87,7 +87,7 @@ void testApp::draw(){
 	float vertWave = 0;
 	
 	//here we go through all the horizontal oscillators
-	for (int i=0; i<horizontalOscilators.size(); i++) {
+	for (unsigned int i=0; i<horizontalOscilators.size(); i++) {
 		ofSetColor(255, 127+i, 0,150);
 		horizontalOscilators[i].draw(); //we draw each oscillator
 		horWave += horizontalOscilators[i].waveSin;
@@ -95,7 +95,7 @@ void testApp::draw(){
 		// This is what is creates all the crazy motion that we get.
 	}
 	//the same as above but for vertical oscillators
-	for (int i=0; i<verticalOscilators.size(); i++) {
+	for (unsigned int i=0; i<verticalOscilators.size(); i++) {
 		ofSetColor(0, 127+i, 255, 150);
 		verticalOscilators[i].draw();
 		vertWave += verticalOscilators[i].waveSin;
@@ -191,7 +191,7 @@ void testApp::mouseDragged(int x, int y, int button){
 void testApp::mousePressed(int x, int y, int button){
 	
 	if (y< TOP_MARGIN && x>LEFT_MARGIN) {
-		for (int i = 0; i < horizontalOscilators.size(); i++) {//this goes through the horizontal oscillators checking if anyone has been clicked over.
+		for (unsigned int i = 0; i < horizontalOscilators.size(); i++) {//this goes through the horizontal oscillators checking if anyone has been clicked over.
 			if(horizontalOscilators[i].checkOver(x, y)){
 				setPressedOscilator(i, true);
 				break;
@@ -202,7 +202,7 @@ void testApp::mousePressed(int x, int y, int button){
 			horizontalOscilators.back().setup(x, y);
 		}
 	}else if(y>TOP_MARGIN && x<LEFT_MARGIN){
-		for (int i = 0; i < verticalOscilators.size(); i++) {
+		for (unsigned int i = 0; i < verticalOscilators.size(); i++) {
 			if(verticalOscilators[i].checkOver(x, y)){
 				setPressedOscilator(i, false);	
 				break;

@@ -341,6 +341,7 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 	#endif
 	
+	ofFilePath::createEnclosingDirectory(fileName);
 	fileName = ofToDataPath(fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
@@ -528,9 +529,6 @@ ofImage_<PixelType>::ofImage_(){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 }
 
 //----------------------------------------------------------
@@ -545,9 +543,6 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	setFromPixels(pix);
 }
@@ -563,9 +558,6 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	loadImage(file);
 }
@@ -581,9 +573,6 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	registerImage(this);
-#endif
 
 	loadImage(filename);
 }
@@ -600,6 +589,9 @@ ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<PixelType>& m
 //----------------------------------------------------------
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	clear();
 	clone(mom);
 	update();
@@ -609,10 +601,6 @@ ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
 template<typename PixelType>
 ofImage_<PixelType>::~ofImage_(){
 	clear();
-
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
-	unregisterImage(this);
-#endif
 }
 
 
@@ -634,6 +622,9 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(string fileName){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
@@ -642,6 +633,9 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 	}
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 	update();
 	return bLoadedOk;
@@ -649,6 +643,9 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	bool bLoadedOk = ofLoadImage(pixels, buffer);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
@@ -657,6 +654,9 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 	}
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 	update();
 	return bLoadedOk;
@@ -756,11 +756,17 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	if (width == w && height == h && newType == type){
 		return;
 	}
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	registerImage(this);
+#endif
 	pixels.allocate(w, h, newType);
 
 	// take care of texture allocation --
 	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 	
 	width	= pixels.getWidth();
@@ -773,7 +779,9 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::clear(){
-
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	unregisterImage(this);
+#endif
 	pixels.clear();
 	if(bUseTexture)	tex.clear();
 
@@ -838,8 +846,20 @@ ofColor_<PixelType> ofImage_<PixelType>::getColor(int x, int y) const {
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
+void ofImage_<PixelType>::setColor(int x, int y, const ofColor_<PixelType>& color) {
 	pixels.setColor(x, y, color);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::setColor(int index, const ofColor_<PixelType>& color) {
+	pixels.setColor(index, color);
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::setColor(const ofColor_<PixelType>& color) {
+	pixels.setColor(color);
 }
 
 //------------------------------------
@@ -880,6 +900,9 @@ void ofImage_<PixelType>::update(){
 		int glTypeInternal = ofGetGlInternalFormat(pixels);
 		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glTypeInternal != glTypeInternal){
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), glTypeInternal);
+			if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+				tex.setRGToRGBASwizzles(true);
+			}
 		}
 		tex.loadData(pixels);
 	}
@@ -1096,6 +1119,9 @@ void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int 
 		if (bUseTexture){
 			tex.clear();
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+			if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+				tex.setRGToRGBASwizzles(true);
+			}
 		}
 	}
 
@@ -1112,6 +1138,9 @@ void ofImage_<PixelType>::rotate90(int nRotations){
 		if (bUseTexture){
 			tex.clear();
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+			if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+				tex.setRGToRGBASwizzles(true);
+			}
 		}
 	}
 	update();
@@ -1189,18 +1218,21 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 		// always reallocate the texture. if ofTexture doesn't need reallocation,
 		// it doesn't have to. but it needs to change the internal format.
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		if(ofGetGLProgrammableRenderer() && (pixels.getNumChannels()==1 || pixels.getNumChannels()==2)){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight(){
+float ofImage_<PixelType>::getHeight() {
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth(){
+float ofImage_<PixelType>::getWidth() {
 	return width;
 }
 

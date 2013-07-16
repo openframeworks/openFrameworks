@@ -122,8 +122,9 @@ ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 	releaseJavaObject();
 }
 
-void ofxAndroidVideoGrabber::listDevices(){
 
+vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices(){
+	return vector<ofVideoDevice>();
 }
 
 bool ofxAndroidVideoGrabber::isFrameNew(){
@@ -242,8 +243,9 @@ float ofxAndroidVideoGrabber::getWidth(){
 	return pixels.getWidth();
 }
 
-void ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	return true;
 }
 
 ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat(){

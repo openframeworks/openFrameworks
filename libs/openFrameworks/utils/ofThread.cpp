@@ -16,8 +16,9 @@ ofThread::ofThread(){
 } 
 
 //------------------------------------------------- 
-ofThread::~ofThread(){ 
-   stopThread();
+ofThread::~ofThread(){
+   //by passing true we're also telling the thread to stop 
+   waitForThread(true);
 } 
 
 //------------------------------------------------- 
@@ -131,7 +132,10 @@ void ofThread::waitForThread(bool stop){
 			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the thread";
 			return;
 		}
-		thread.join();
+        //wait for 10 seconds for thread to finish 
+		if( !thread.tryJoin(10000) ){
+            ofLogError( thread.name() ) << "unable to end/join thread " << endl; 
+        }
    }
 }
 
@@ -150,6 +154,11 @@ bool ofThread::isCurrentThread(){
 	if(ofThread::getCurrentThread() == this)
 		return true;
 	return false;
+}
+
+//-------------------------------------------------
+Poco::Thread & ofThread::getPocoThread(){
+	return thread;
 }
 
 //-------------------------------------------------

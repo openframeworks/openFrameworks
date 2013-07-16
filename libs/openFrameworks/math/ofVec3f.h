@@ -82,7 +82,7 @@ public:
     ofVec3f& operator/=( const float f );
 	
 	friend ostream& operator<<(ostream& os, const ofVec3f& vec);
-	friend istream& operator>>(istream& is, const ofVec3f& vec);
+	friend istream& operator>>(istream& is, ofVec3f& vec);
 	
     //Scale
     //
@@ -167,7 +167,8 @@ public:
     // Length
     //
     float length() const;
-    float squareLength() const;
+    float lengthSquared() const;
+
     /**
 	 * Angle (deg) between two vectors.
 	 * This is an unsigned relative angle from 0 to 180.
@@ -209,9 +210,6 @@ public:
 	
     // getPerpendicular
     ofVec3f perpendiculared( const ofVec3f& vec ) const;
-	
-    // squareLength
-    OF_DEPRECATED_MSG("Use ofVec3f::squareLength() instead.", float lengthSquared() const);
     
     // use getMapped
     ofVec3f  mapped( const ofVec3f& origin,
@@ -1016,10 +1014,6 @@ inline float ofVec3f::length() const {
 }
 
 inline float ofVec3f::lengthSquared() const {
-	return squareLength();
-}
-
-inline float ofVec3f::squareLength() const {
 	return (float)(x*x + y*y + z*z);
 }
 
