@@ -8,9 +8,10 @@
 #pragma once
 
 void ofGLReadyCallback();
-void ofPauseVideoGrabbers();
-void ofResumeVideoGrabbers();
-void ofReloadAllImageTextures();
-void ofUnloadAllFontTextures();
-void ofReloadAllFontTextures();
+void ofReloadGLResources();
+
 void ofUpdateBitmapCharacterTexture();
+void ofReloadAllImageTextures();
+void ofReloadAllFontTextures();
+void ofUnloadAllFontTextures();
+void ofRegenerateAllVbos();
