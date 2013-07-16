@@ -122,8 +122,9 @@ ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 	releaseJavaObject();
 }
 
-void ofxAndroidVideoGrabber::listDevices(){
 
+vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices(){
+	return vector<ofVideoDevice>();
 }
 
 bool ofxAndroidVideoGrabber::isFrameNew(){

@@ -20,6 +20,11 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 	vboNumNormals = 0;
 }
 
+void ofVboMesh::operator=(const ofMesh & mom)
+{
+	((ofMesh&)(*this)) = mom;
+}
+
 void ofVboMesh::setUsage(int _usage){
 	usage = _usage;
 }

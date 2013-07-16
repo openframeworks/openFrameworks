@@ -26,6 +26,27 @@ public:
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow(){}
 
+
+	// window settings, this functions can be called from main before calling ofSetupOpenGL
+#ifdef TARGET_LINUX
+	void setWindowIcon(const string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
+#endif
+	void 		setNumSamples(int samples);
+	void 		setDoubleBuffering(bool doubleBuff);
+	void 		setColorBits(int r, int g, int b);
+	void		setAlphaBits(int a);
+	void		setDepthBits(int depth);
+	void		setStencilBits(int stencil);
+	void		listVideoModes();
+	bool		isWindowIconified();
+	bool		isWindowActive();
+	bool		isWindowResizeable();
+	void		iconify(bool bIconify);
+    void        setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it.
+
+
+    // this functions are only meant to be called from inside OF don't call them from your code
 	void setOpenGLVersion(int major, int minor);
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
@@ -41,10 +62,6 @@ public:
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
 	ofVec3f 	getWindowPosition();
-#ifdef TARGET_LINUX
-	void setWindowIcon(const string & path);
-	void setWindowIcon(const ofPixels & iconPixels);
-#endif
 
 	void setWindowTitle(string title);
 	void setWindowPosition(int x, int y);
@@ -62,21 +79,6 @@ public:
 	void		disableSetupScreen();
 
 	void		setVerticalSync(bool bSync);
-
-
-	//GLFW specifics
-	void 		setNumSamples(int samples);
-	void 		setDoubleBuffering(bool doubleBuff);
-	void 		setColorBits(int r, int g, int b);
-	void		setAlphaBits(int a);
-	void		setDepthBits(int depth);
-	void		setStencilBits(int stencil);
-	void		listVideoModes();
-	bool		isWindowIconified();
-	bool		isWindowActive();
-	bool		isWindowResizeable();
-	void		iconify(bool bIconify);
-    void        setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it. 
 
 private:
 	// callbacks
