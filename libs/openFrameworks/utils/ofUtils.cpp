@@ -212,120 +212,109 @@ void ofDisableDataPath(){
 }
 
 //--------------------------------------------------
-//use ofSetDataPathRoot() to override this
-static string & dataPathRoot(){
+string defaultDataPath(){
 #if defined TARGET_OSX
-	static string * dataPathRoot = new string("../../../data/");
+	return string("../../../data/");
 #elif defined TARGET_ANDROID
-	static string * dataPathRoot = new string("sdcard/");
+	return string("sdcard/");
 #elif defined(TARGET_LINUX) || defined(TARGET_WIN32)
-	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
-//#elif defined(TARGET_LINUX_ARM)
-//		static string * dataPathRoot = new string("data/");
+	return string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 #else
-	static string * dataPathRoot = new string("data/");
+	return string("data/");
 #endif
-	return *dataPathRoot;
-}
-
-static bool & isDataPathSet(){
-	static bool * dataPathSet = new bool(false);
-	return * dataPathSet;
 }
 
 //--------------------------------------------------
-void ofSetDataPathRoot(string newRoot){
-	string newPath = "";
+static Poco::Path & defaultWorkingDirectory(){
+	static Poco::Path * defaultWorkingDirectory = new Poco::Path();
+	return * defaultWorkingDirectory;
+}
 
-	#ifdef TARGET_OSX
-		#ifndef TARGET_OF_IPHONE
-			char path[MAXPATHLEN];
-			uint32_t size = sizeof(path);
+//--------------------------------------------------
+static Poco::Path & dataPathRoot(){
+	static Poco::Path * dataPathRoot = new Poco::Path(defaultDataPath());
+	return *dataPathRoot;
+}
 
-			if (_NSGetExecutablePath(path, &size) == 0){
-				//printf("executable path is %s\n", path);
-				string pathStr = string(path);
+//--------------------------------------------------
+Poco::Path getWorkingDir(){
+	char charWorkingDir[MAXPATHLEN];
+	getcwd(charWorkingDir, MAXPATHLEN);
+	return Poco::Path(charWorkingDir);	
+}
 
-				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
-				//checked with spaces too!
-
-				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
-
-				newPath = "";
-
-				for(int i = 0; i < pathBrokenUp.size()-1; i++){
-					newPath += pathBrokenUp[i];
-					newPath += "/";
-				}
-
-				//cout << newPath << endl;   // some sanity checks here
-				//system( "pwd" );
-
-				chdir ( newPath.c_str() );
-				//system("pwd");
-			}else{
-				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
-			}
-		#endif
+//--------------------------------------------------
+void ofSetWorkingDirectoryToDefault(){
+#ifdef TARGET_OSX
+	#ifndef TARGET_OF_IPHONE
+		string newPath = "";
+		char path[MAXPATHLEN];
+		uint32_t size = sizeof(path);
+		
+		if (_NSGetExecutablePath(path, &size) == 0){
+			Poco::Path classPath(path);
+			classPath.makeParent();
+			chdir( classPath.toString().c_str() );
+		}else{
+			ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
+		}
 	#endif
+#endif
+
+	defaultWorkingDirectory() = getWorkingDir();
+	defaultWorkingDirectory().makeAbsolute();
+}
 	
-	dataPathRoot() = newRoot;
-	isDataPathSet() = true;
+//--------------------------------------------------
+void ofSetDataPathRoot(string newRoot){
+	dataPathRoot() = Poco::Path(newRoot);
 }
 
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
+	if (!enableDataPath)
+		return path;
 	
-	if (!isDataPathSet())
-		ofSetDataPathRoot(dataPathRoot());
-	
-	if( enableDataPath ){
-
-        //we create dataPath as a string for the check, on windows we modify it to check both types of slashes
-        //however we use the original value from dataPathRoot() to prepend the string if needed.  
-        string dataPath = dataPathRoot(); 
-        string enclosingFolder = path.substr(0,dataPath.length());
-        
-        #ifdef TARGET_WIN32
-            //this is so we can check both "data\" and "data/" on windows
-            replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
-            replace( dataPath.begin(), dataPath.end(), '\\', '/' );
-        #endif // TARGET_WIN32
-
-		//check if absolute path has been passed or if data path has already been applied
-		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" && enclosingFolder != dataPath)){
-			path = dataPathRoot()+path;
-		}
-
-		if(makeAbsolute && (path.length()==0 || (path.substr(0,1) != "/" && path.substr(1,1) != ":"))){
-			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
-
-			#ifndef TARGET_WIN32
-				char currDir[1024];
-				path = "/"+path;
-				path = getcwd(currDir, 1024)+path;
-
-			#else
-
-				char currDir[1024];
-				path = "\\"+path;
-				path = _getcwd(currDir, 1024)+path;
-
-			#endif
-
-
-			#else
-				//do we need iphone specific code here?
-			#endif
-		}
-
+	// if our Current Working Directory has changed (e.g. file open dialog)
+	if (defaultWorkingDirectory().toString() != getWorkingDir().toString()) {
+		// change our cwd back to where it was on app load
+		chdir(defaultWorkingDirectory().toString().c_str());
 	}
-	#ifdef TARGET_WIN32
-		replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-	#endif
-
-	return path;
+	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
+	
+	Poco::Path const  & dataPath(dataPathRoot());
+	Poco::Path inputPath(path);
+	Poco::Path outputPath;
+	
+	// if path is already absolute, just return it
+	if (inputPath.isAbsolute()) {
+		return path;
+	}
+	
+	// here we check whether path already refers to the data folder by looking for common elements
+	// if the path begins with the full contents of dataPathRoot then the data path has already been added
+	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
+	string strippedDataPath = dataPath.toString();
+	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
+	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
+	
+	if (inputPath.toString().find(strippedDataPath) != 0) {
+		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
+		outputPath = dataPath;
+		outputPath.resolve(inputPath);
+	} else {
+		// inputPath already contains data path, so no need to change
+		outputPath = inputPath;
+	}
+	
+	// finally, if we do want an absolute path and we don't already have one
+	if (makeAbsolute) {
+		// then we return the absolute form of the path
+		return outputPath.absolute().toString();
+	} else {
+		// or output the relative path
+		return outputPath.toString();
+	}
 }
 
 
