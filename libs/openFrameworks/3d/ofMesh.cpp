@@ -1849,7 +1849,16 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
         }
     }
     
-    
+	// tig: flip face(=triangle) winding order, so that we are consistent with all other ofPrimitives.
+	// i wish there was a more elegant way to do this, but anything happening before "split vertices"
+	// makes things very, very complicated.
+	
+	for (int i = 0; i < faces.size(); i+=3) {
+		ofIndexType tmpI = faces[i+1];
+		faces[i+1] = faces[i+2];
+		faces[i+2] = tmpI;
+	}
+
     ofMesh sphere;
     
     sphere.addIndices( faces );
