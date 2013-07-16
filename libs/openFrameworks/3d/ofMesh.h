@@ -143,6 +143,7 @@ public:
     void append(ofMesh & mesh);
     
     void setColorForIndices( int startIndex, int endIndex, ofColor color );
+    ofMesh getMeshForIndices( int startIndex, int endIndex ) const;
     ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
     void mergeDuplicateVertices();
     // return a list of triangles that do not share vertices or indices //
