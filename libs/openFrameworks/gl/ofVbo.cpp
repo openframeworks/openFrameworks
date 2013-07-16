@@ -111,6 +111,8 @@ void ofRegenerateAllVbos(){
 }
 #endif
 
+
+
 //--------------------------------------------------------------
 ofVbo::ofVbo(){
 	bUsingVerts = false;
@@ -295,7 +297,7 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride) {
 
 #ifdef TARGET_OPENGLES
-	if(!vaoChecked){
+	if(vaosEnabled && !vaoChecked){
 		if(ofGetGLProgrammableRenderer()){
 			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
 			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
@@ -661,7 +663,7 @@ void ofVbo::bind(){
 				retainVAO(vaoID);
 			}else{
 				supportVAOs = false;
-				ofLogWarning() << "error allocating VAO, disabling VAO support";
+				ofLogVerbose() << "error allocating VAO, disabling VAO support";
 			}
 		}
 
@@ -710,7 +712,7 @@ void ofVbo::bind(){
 			if(!programmable){
 				glEnableClientState(GL_NORMAL_ARRAY);
 				glNormalPointer(GL_FLOAT, normalStride, 0);
-			}else if(supportVAOs){
+			}else{
 				// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
 				// normalized while being uploaded to GPU memory.
 				// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
@@ -951,7 +953,19 @@ int ofVbo::getNumIndices() const {
 }
 
 //--------------------------------------------------------------
-
 int ofVbo::getNumVertices() const {
 	return totalVerts;
+}
+
+
+//--------------------------------------------------------------
+void ofVbo::disableVAOs(){
+	supportVAOs = false;
+	vaoChecked = true;
+}
+
+//--------------------------------------------------------------
+void ofVbo::enableVAOs(){
+	supportVAOs = true;
+	vaoChecked = false;
 }
