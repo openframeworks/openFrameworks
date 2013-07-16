@@ -1114,6 +1114,26 @@ void ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
 }
 
 //----------------------------------------------------------
+ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex ) const {
+    int startVertIndex  = 0;
+    int endVertIndex    = 0;
+    
+    if(startIndex < 0 || startIndex >= getNumIndices() ) {
+        startVertIndex = 0;
+    } else {
+        startVertIndex = getIndex( startIndex );
+    }
+    
+    if( endIndex < 0 || endIndex >= getNumIndices() ) {
+        // set to the total, because the vector assign does not include the last element //
+        endVertIndex = getNumVertices();
+    } else {
+        endVertIndex = getIndex( endIndex );
+    }
+    return getMeshForIndices(startIndex, endIndex, startVertIndex, endVertIndex );
+}
+
+//----------------------------------------------------------
 ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const{
     
     ofMesh mesh;
@@ -2059,6 +2079,11 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
         
         vertOffset = mesh.getNumVertices();
         
+    }
+    
+    cout << "ofMesh :: cylinder : ------------------------- " << endl;
+    for(int i = 0; i < mesh.getNumIndices(); i++ ) {
+        cout << i << " index = " << mesh.getIndex( i ) << endl;
     }
     
     return mesh;
