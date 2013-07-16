@@ -1,6 +1,7 @@
 package cc.openframeworks;
 
 import java.util.List;
+import java.util.*;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -12,9 +13,20 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+
+interface OFAndroidAccelerometerListener {
+    public void updateAccelerometerValues(float x, float y, float z);
+} 
+
 public class OFAndroidAccelerometer extends OFAndroidObject {
+	
 	private SensorManager sensorManager;
     private Sensor accelerometer;
+    
+    List<OFAndroidAccelerometerListener> listeners = new ArrayList<OFAndroidAccelerometerListener>();
+    public void addOFAndroidAccelerometerListener(OFAndroidAccelerometerListener toAdd){
+        listeners.add(toAdd);
+    }
     
     OFAndroidAccelerometer(SensorManager sensorManager){
         this.sensorManager = sensorManager;
@@ -74,6 +86,10 @@ public class OFAndroidAccelerometer extends OFAndroidObject {
 	    	
 			updateAccelerometer(x, y,
 			          event.values[2]);
+			
+			for (OFAndroidAccelerometerListener hl : listeners) 
+				hl.updateAccelerometerValues(event.values[0],event.values[1],event.values[2]);
+		
 		}
 		 
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {}
