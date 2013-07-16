@@ -226,8 +226,8 @@ string defaultDataPath(){
 
 //--------------------------------------------------
 static Poco::Path & defaultWorkingDirectory(){
-	static Poco::Path defaultWorkingDirectory;
-	return defaultWorkingDirectory;
+	static Poco::Path * defaultWorkingDirectory = new Poco::Path();
+	return * defaultWorkingDirectory;
 }
 
 //--------------------------------------------------
