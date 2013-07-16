@@ -94,6 +94,10 @@ public:
 	int getNumVertices() const;
 	int getNumIndices() const;
 	
+
+	static void disableVAOs();
+	static void enableVAOs();
+
 private:
 	GLuint vaoID;
 	bool vaoChanged;
