@@ -68,7 +68,7 @@ void testApp::draw(){
 
 	ofScale(0.6, 0.6, 1.0);
 
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	
 	texGray.draw(100,100,w,h);
 	texColor.draw(350,300,w,h);

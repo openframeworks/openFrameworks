@@ -159,12 +159,13 @@ void ofDrawRotationAxes(float radius, float stripWidth, int circleRes){
 		axisZMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
 	}
 	
-	glEnable(GL_DEPTH_TEST);
+	ofPushStyle();
+	ofEnableDepthTest();
 	axisXMesh.draw();
 	axisYMesh.draw();
 	axisZMesh.draw();
 	ofDrawAxis(radius);
-	glDisable(GL_DEPTH_TEST);
+	ofPopStyle();
 	
 }
 

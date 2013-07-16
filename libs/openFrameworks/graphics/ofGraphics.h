@@ -142,6 +142,7 @@ void ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_COR
 
 // bg color
 float * ofBgColorPtr();
+ofColor ofGetBackground();
 void ofBackground(int r, int g, int b, int a=255);
 void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);

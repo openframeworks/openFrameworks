@@ -307,7 +307,7 @@
 				ofLogError("ofQTKitGrabber") << "Failed to add the video device input. Error: " << [[error localizedDescription] UTF8String];
 			}
 			else{
-				ofLogVerbose("ofQTKitGrabber") << "Attached video device" << [_selectedVideoDevice.description UTF8String] << ".";
+				ofLogVerbose("ofQTKitGrabber") << "Attached video device: " << [_selectedVideoDevice.description UTF8String] << ".";
 			}
 		}
 		else {

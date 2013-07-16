@@ -8,6 +8,7 @@ public:
 	using ofMesh::draw;
 	ofVboMesh();
 	ofVboMesh(const ofMesh & mom);
+	void operator=(const ofMesh & mom);
 	void setUsage(int usage);
 
     void enableColors();
