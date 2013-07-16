@@ -225,7 +225,7 @@ ofFbo::ofFbo(const ofFbo & mom){
 
 ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
-	clear();
+	destroy();
 	settings = mom.settings;
 	isBound = mom.isBound;
 	bIsAllocated = mom.bIsAllocated;
@@ -466,7 +466,7 @@ void ofFbo::allocate(Settings _settings) {
 
 	// now create all textures and color buffers
 	if(settings.colorFormats.size() > 0) {
-		for(int i=0; i<settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
+		for(int i=0; i<(int)settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
 	}
 	else if(settings.numColorbuffers > 0) {
 		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
