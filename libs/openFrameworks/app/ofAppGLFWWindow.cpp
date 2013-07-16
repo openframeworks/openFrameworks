@@ -681,7 +681,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			for(int i = 0; i < monitorCount; i++){
 				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
 				int x, y, w, h;
-				glfwGetMonitorPos(*(monitors + i), &x, &y);
+				glfwGetMonitorPos(monitors[i], &x, &y);
 				ofRectangle screen = ofRectangle( x, y, desktopMode->width, desktopMode->height );
 				allScreensSpace = allScreensSpace.getUnion(screen);
 			}
