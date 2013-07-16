@@ -676,18 +676,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		ofRectangle allScreensSpace;
 
         if( bMultiWindowFullscreen && monitorCount > 1 ){
-            float totalWidth = 0.0; 
-            float maxHeight  = 0.0; 
-            //lets find the total width of all the monitors
-            //and we'll make the window height the height of the largest monitor.
-            for(int i = 0; i < monitorCount; i++){
+
+			//calc the sum Rect of all the monitors
+			for(int i = 0; i < monitorCount; i++){
 				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
 				int x, y, w, h;
 				glfwGetMonitorPos(*(monitors + i), &x, &y);
 				ofRectangle screen = ofRectangle( x, y, desktopMode->width, desktopMode->height );
 				allScreensSpace = allScreensSpace.getUnion(screen);
-            }
-            //for OS X we need to set this first as the window size affects the window positon
+			}
+			//for OS X we need to set this first as the window size affects the window positon
 			setWindowShape(allScreensSpace.width, allScreensSpace.height);
 			setWindowPosition(allScreensSpace.x, allScreensSpace.y);
 
