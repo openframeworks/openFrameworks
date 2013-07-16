@@ -7,9 +7,11 @@
 
 #pragma once
 
-void ofPauseVideoGrabbers();
-void ofResumeVideoGrabbers();
-void ofReloadAllImageTextures();
-void ofUnloadAllFontTextures();
-void ofReloadAllFontTextures();
+void ofGLReadyCallback();
+void ofReloadGLResources();
+
 void ofUpdateBitmapCharacterTexture();
+void ofReloadAllImageTextures();
+void ofReloadAllFontTextures();
+void ofUnloadAllFontTextures();
+void ofRegenerateAllVbos();

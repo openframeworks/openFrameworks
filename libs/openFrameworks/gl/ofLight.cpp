@@ -160,6 +160,8 @@ ofLight::ofLight(const ofLight & mom){
 //----------------------------------------
 ofLight & ofLight::operator=(const ofLight & mom){
 	if(&mom == this) return *this;
+	release(*this);
+
 	ambientColor = mom.ambientColor;
 	diffuseColor = mom.diffuseColor;
 	specularColor = mom.specularColor;

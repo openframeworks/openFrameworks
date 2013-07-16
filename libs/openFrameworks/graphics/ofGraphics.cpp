@@ -7,7 +7,9 @@
 #include "ofRendererCollection.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
+#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
 #include "ofCairoRenderer.h"
+#endif
 
 
 #ifndef TARGET_LINUX_ARM

@@ -34,65 +34,72 @@
 
 #import "ofAppBaseWindow.h"
 
-class ofAppiPhoneWindow : public ofAppBaseWindow{
+class ofAppiPhoneWindow : public ofAppBaseWindow {
 public:
+    
+    static ofAppiPhoneWindow * getInstance();
 	
 	ofAppiPhoneWindow();
-	virtual ~ofAppiPhoneWindow(){};
-	
-	virtual void		setupOpenGL(int w, int h, int screenMode);
-	virtual void		initializeWindow();
-	virtual void		runAppViaInfiniteLoop(ofBaseApp * appPtr);
-    virtual void        startAppWithDelegate(string appDelegateClassName);
-	
-	virtual void		hideCursor() {};
-	virtual void		showCursor() {};
+	virtual ~ofAppiPhoneWindow();
     
-	virtual void		setWindowPosition(int x, int y) {};
-	virtual void		setWindowShape(int w, int h) {};
+	virtual void setupOpenGL(int w, int h, int screenMode);
+	virtual void initializeWindow();
+	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+    virtual void startAppWithDelegate(string appDelegateClassName);
+	
+	virtual void hideCursor();
+	virtual void showCursor();
+    
+	virtual void setWindowPosition(int x, int y);
+	virtual void setWindowShape(int w, int h);
 		
-	virtual ofPoint		getWindowPosition();
-	virtual ofPoint		getWindowSize();
-	virtual ofPoint		getScreenSize();
-	
-	virtual int			getWidth();
-	virtual int			getHeight();
-	
-	virtual void		setWindowTitle(string title);
-	
-	virtual int			getWindowMode();
-	
-	virtual void		setFullscreen(bool fullscreen);
-	virtual void		toggleFullscreen();
-	
-	virtual void		enableSetupScreen();
-	virtual void		disableSetupScreen();
-    virtual bool        isSetupScreenEnabled();
-	
-	void				setOrientation(ofOrientation orientation);
-	ofOrientation		getOrientation();
-	void				rotateXY(float &x, float &y);		// updates
-	
-    bool                enableRetina();
-    bool                disableRetina();
-    bool                isRetinaEnabled();
-    bool                isRetinaSupportedOnDevice();
+	virtual ofPoint getWindowPosition();
+	virtual ofPoint getWindowSize();
+	virtual ofPoint getScreenSize();
     
-    bool                enableDepthBuffer();
-    bool                disableDepthBuffer();
-    bool                isDepthBufferEnabled();
+	virtual void setOrientation(ofOrientation orientation);
+	virtual ofOrientation getOrientation();
+    virtual bool doesHWOrientation();
+	
+	virtual int getWidth();
+	virtual int getHeight();
+	
+	virtual void setWindowTitle(string title);
+	
+	virtual int getWindowMode();
+	
+	virtual void setFullscreen(bool fullscreen);
+	virtual void toggleFullscreen();
+	
+	virtual void enableSetupScreen();
+	virtual void disableSetupScreen();
+    virtual bool isSetupScreenEnabled();
     
-    bool                enableAntiAliasing(int samples);
-    bool                disableAntiAliasing();
-    bool                isAntiAliasingEnabled();
-    int					getAntiAliasingSampleCount();
-	
-	void timerLoop();
-	int					windowMode;
-	
-	static ofAppiPhoneWindow* getInstance();
+    virtual void setVerticalSync(bool enabled);
+		
+    //-------------------------------------------- ios config.
+    bool enableRendererES2();
+    bool enableRendererES1();
+    bool isRendererES2();
+    bool isRendererES1();
+    
+    bool enableRetina();
+    bool disableRetina();
+    bool isRetinaEnabled();
+    bool isRetinaSupportedOnDevice();
+    
+    bool enableDepthBuffer();
+    bool disableDepthBuffer();
+    bool isDepthBufferEnabled();
+    
+    bool enableAntiAliasing(int samples);
+    bool disableAntiAliasing();
+    bool isAntiAliasingEnabled();
+    int getAntiAliasingSampleCount();
 	
 protected:
+    
+    int windowMode;
 
 	bool bEnableSetupScreen;
 	ofOrientation orientation;
