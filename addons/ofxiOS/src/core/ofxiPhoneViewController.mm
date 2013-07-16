@@ -4,8 +4,6 @@
 //
 
 #import "ofxiPhoneViewController.h"
-
-#import "ofBaseApp.h"
 #import "ofxiOSEAGLView.h"
 
 @interface ofxiPhoneViewController() <EAGLViewDelegate> {
