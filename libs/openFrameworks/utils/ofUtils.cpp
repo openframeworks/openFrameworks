@@ -232,8 +232,8 @@ static Poco::Path & defaultWorkingDirectory(){
 
 //--------------------------------------------------
 static Poco::Path & dataPathRoot(){
-	static Poco::Path dataPathRoot(defaultDataPath());
-	return dataPathRoot;
+	static Poco::Path * dataPathRoot = new Poco::Path(defaultDataPath());
+	return *dataPathRoot;
 }
 
 //--------------------------------------------------
