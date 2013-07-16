@@ -672,23 +672,23 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 		int currentMonitor = getCurrentMonitor();
 		ofVec3f screenSize = getScreenSize();
-    
+
+		ofRectangle allScreensSpace;
+
         if( bMultiWindowFullscreen && monitorCount > 1 ){
-            float totalWidth = 0.0; 
-            float maxHeight  = 0.0; 
-            
-            //lets find the total width of all the monitors
-            //and we'll make the window height the height of the largest monitor. 
-            for(int i = 0; i < monitorCount; i++){
-                const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
-                totalWidth += desktopMode->width; 
-                if( i == 0 || desktopMode->height > maxHeight ){
-                    maxHeight = desktopMode->height; 
-                }   
-            }
-            //for OS X we need to set this first as the window size affects the window positon 
-            setWindowShape(totalWidth, maxHeight);
-            setWindowPosition(0, 0);
+
+			//calc the sum Rect of all the monitors
+			for(int i = 0; i < monitorCount; i++){
+				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+				int x, y;
+				glfwGetMonitorPos(monitors[i], &x, &y);
+				ofRectangle screen = ofRectangle( x, y, desktopMode->width, desktopMode->height );
+				allScreensSpace = allScreensSpace.getUnion(screen);
+			}
+			//for OS X we need to set this first as the window size affects the window positon
+			setWindowShape(allScreensSpace.width, allScreensSpace.height);
+			setWindowPosition(allScreensSpace.x, allScreensSpace.y);
+
         }else if (monitorCount > 1 && currentMonitor < monitorCount){
             int xpos;
 			int ypos;
@@ -1019,7 +1019,10 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 			break;
 		case GLFW_KEY_KP_ENTER:
 			key = OF_KEY_RETURN;
-			break;            
+			break;   
+		case GLFW_KEY_TAB:
+			key = OF_KEY_TAB;
+			break;   
 		default:
 			break;
 	}

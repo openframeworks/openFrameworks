@@ -29,34 +29,28 @@
  *
  * ***********************************************************************/ 
 
-#import "ofAppiPhoneWindow.h"
-
-#import <UIKit/UIKit.h>
-
 #import "ofMain.h"
+#import "ofGLProgrammableRenderer.h"
+#import "ofAppiPhoneWindow.h"
 #import "ofxiOSEAGLView.h"
 
-// use for checking if stuff has been initialized
-#define NOT_INITIALIZED			-1000000
-
-static bool bAppCreated = false;
-
-static ofAppiPhoneWindow *_instance = NULL;
-
-ofAppiPhoneWindow* ofAppiPhoneWindow::getInstance() {
+//----------------------------------------------------------------------------------- instance.
+static ofAppiPhoneWindow * _instance = NULL;
+ofAppiPhoneWindow * ofAppiPhoneWindow::getInstance() {
 	return _instance;
 }
 
-
-/******** Constructor ************/
-
+//----------------------------------------------------------------------------------- constructor / destructor.
 ofAppiPhoneWindow::ofAppiPhoneWindow() {
-	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::ofAppiPhoneWindow()");
-	if(_instance == NULL) _instance = this;
-	else ofLog(OF_LOG_ERROR, "Instanciating ofAppiPhoneWindow more than once! how come?");
+	if(_instance == NULL) {
+        _instance = this;
+    } else {
+        ofLog(OF_LOG_ERROR, "ofAppiPhoneWindow::ofAppiPhoneWindow() - instanciated more than once.");
+    }
 
-	bEnableSetupScreen = true;
+    windowMode = OF_FULLSCREEN;
     
+	bEnableSetupScreen = true;
     orientation = OF_ORIENTATION_DEFAULT;
 
 	bRetinaEnabled = false;
@@ -67,41 +61,28 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
     antiAliasingSamples = 0;
 }
 
-/******** Initialization methods ************/
-
-void ofAppiPhoneWindow::setupOpenGL(int w, int h, int screenMode) {
-	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::setupOpenGL()");
-	
-	windowMode = screenMode;	// use this as flag for displaying status bar or not
-
-	ofDisableTextureEdgeHack();
-	
-	
-	// w & h are ignored, currently Apple don't allow windows which aren't fullscreen
-	// DO NOTHING ELSE, opengl will be setup by the app which creates an opengl view
+ofAppiPhoneWindow::~ofAppiPhoneWindow() {
+    //
 }
 
+//----------------------------------------------------------------------------------- opengl setup.
+void ofAppiPhoneWindow::setupOpenGL(int w, int h, int screenMode) {
+	windowMode = screenMode; // use this as flag for displaying status bar or not
+}
 
 void ofAppiPhoneWindow::initializeWindow() {
-	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::initializeWindow()");
-	// DO NOTHING, window will be created when the app is launched
+    //
 }
 
-
-void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
-	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
-	
-    if (bAppCreated) {  // app already created, do nothing.
-        return;
-    }
-    
-    startAppWithDelegate( "ofxiPhoneAppDelegate" );
+void ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
+    startAppWithDelegate("ofxiPhoneAppDelegate");
 }
 
 void ofAppiPhoneWindow::startAppWithDelegate(string appDelegateClassName) {
-    if( bAppCreated )
+    static bool bAppCreated = false;
+    if(bAppCreated == true) {
         return;
-    
+    }
     bAppCreated = true;
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -109,17 +90,24 @@ void ofAppiPhoneWindow::startAppWithDelegate(string appDelegateClassName) {
     [pool release];
 }
 
-/******** Set Window properties ************/
 
-void setWindowPosition(int x, int y) {
-	// DO NOTHING, you're not really allowed to play with window for now
+//----------------------------------------------------------------------------------- cursor.
+void ofAppiPhoneWindow::hideCursor() {
+    // not supported on iOS.
 }
 
-void setWindowShape(int w, int h) {
-	// DO NOTHING, you're not really allowed to play with window for now
+void ofAppiPhoneWindow::showCursor() {
+    // not supported on iOS.
 }
 
-/******** Get Window/Screen properties ************/
+//----------------------------------------------------------------------------------- window / screen properties.
+void ofAppiPhoneWindow::setWindowPosition(int x, int y) {
+	// not supported on iOS.
+}
+
+void ofAppiPhoneWindow::setWindowShape(int w, int h) {
+	// not supported on iOS.
+}
 
 ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 	return *[[ofxiOSEAGLView getInstance] getWindowPosition];
@@ -151,39 +139,8 @@ int	ofAppiPhoneWindow::getWindowMode() {
 	return windowMode;
 }
 
-
-void ofAppiPhoneWindow::setWindowTitle(string title) {
-}
-
-
-void ofAppiPhoneWindow::setFullscreen(bool fullscreen) {
-    [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
-	
-	if(fullscreen) windowMode		= OF_FULLSCREEN;
-	else windowMode					= OF_WINDOW;
-}
-
-void ofAppiPhoneWindow::toggleFullscreen() {
-	if(windowMode == OF_FULLSCREEN) setFullscreen(false);
-	else setFullscreen(true);
-}
-
-
-void ofAppiPhoneWindow::enableSetupScreen(){
-	bEnableSetupScreen = true;
-};
-
-void ofAppiPhoneWindow::disableSetupScreen(){
-	bEnableSetupScreen = false;
-};
-
-bool ofAppiPhoneWindow::isSetupScreenEnabled() {
-    return bEnableSetupScreen;
-}
-
+//----------------------------------------------------------------------------------- orientation.
 void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
-
-	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::setOrientation: " + ofToString(orientation));
 	switch (orientation) {
 		case OF_ORIENTATION_DEFAULT:
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait];
@@ -195,46 +152,86 @@ void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];
 			break;
 		case OF_ORIENTATION_90_LEFT:
-			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];			
+			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];
             break;
 	}
 	
 	this->orientation = orientation;
 }
 
-
 ofOrientation ofAppiPhoneWindow::getOrientation() {
 	return orientation;
 }
 
-void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
-	float savedX;
-	switch(orientation) {
-		case OF_ORIENTATION_180:
-			x = getWidth() - x;
-			y = getHeight() - y;
-			break;
-			
-		case OF_ORIENTATION_90_LEFT:
-			savedX = x;
-			x = y;
-			y = getHeight() - savedX;
-			break;
-			
-		case OF_ORIENTATION_90_RIGHT:
-			savedX = x;
-			x = getWidth() - y;
-			y = savedX;
-			break;
-			
-		case OF_ORIENTATION_DEFAULT:
-		default:
-			break;
-			
-	}
+bool ofAppiPhoneWindow::doesHWOrientation() {
+    return false;
 }
 
-//-------------------------------------------------------- retina.
+//-----------------------------------------------------------------------------------
+void ofAppiPhoneWindow::setWindowTitle(string title) {
+    // not supported on iOS.
+}
+
+void ofAppiPhoneWindow::setFullscreen(bool fullscreen) {
+    [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
+	if(fullscreen) {
+        windowMode = OF_FULLSCREEN;
+    } else {
+        windowMode = OF_WINDOW;
+    }
+}
+
+void ofAppiPhoneWindow::toggleFullscreen() {
+	if(windowMode == OF_FULLSCREEN) {
+        setFullscreen(false);
+    } else {
+        setFullscreen(true);
+    }
+}
+
+//-----------------------------------------------------------------------------------
+bool ofAppiPhoneWindow::enableRendererES2() {
+    if(isRendererES2() == true) {
+        return false;
+    }
+    ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
+    return true;
+}
+
+bool ofAppiPhoneWindow::enableRendererES1() {
+    if(isRendererES1() == true) {
+        return false;
+    }
+    ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+    return true;
+}
+
+bool ofAppiPhoneWindow::isRendererES2() {
+    return (ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE);
+}
+
+bool ofAppiPhoneWindow::isRendererES1() {
+    return (ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE);
+}
+
+//-----------------------------------------------------------------------------------
+void ofAppiPhoneWindow::enableSetupScreen() {
+	bEnableSetupScreen = true;
+};
+
+void ofAppiPhoneWindow::disableSetupScreen() {
+	bEnableSetupScreen = false;
+};
+
+bool ofAppiPhoneWindow::isSetupScreenEnabled() {
+    return bEnableSetupScreen;
+}
+
+void ofAppiPhoneWindow::setVerticalSync(bool enabled) {
+    // not supported on iOS.
+}
+
+//----------------------------------------------------------------------------------- retina.
 bool ofAppiPhoneWindow::enableRetina() {
     if(isRetinaSupportedOnDevice()) {
         bRetinaEnabled = true;
@@ -268,7 +265,7 @@ bool ofAppiPhoneWindow::isRetinaSupportedOnDevice() {
     return bRetinaSupportedOnDevice;
 }
 
-//-------------------------------------------------------- depth buffer.
+//----------------------------------------------------------------------------------- depth buffer.
 bool ofAppiPhoneWindow::enableDepthBuffer() {
     return (bDepthEnabled = true);
 }
@@ -281,7 +278,7 @@ bool ofAppiPhoneWindow::isDepthBufferEnabled() {
     return bDepthEnabled;
 }
 
-//-------------------------------------------------------- anti aliasing.
+//----------------------------------------------------------------------------------- anti aliasing.
 bool ofAppiPhoneWindow::enableAntiAliasing(int samples) {
 	antiAliasingSamples = samples;
     return (bAntiAliasingEnabled = true);
@@ -297,9 +294,4 @@ bool ofAppiPhoneWindow::isAntiAliasingEnabled() {
 
 int	ofAppiPhoneWindow::getAntiAliasingSampleCount() {
     return antiAliasingSamples;
-}
-
-//-------------------------------------------------------- timer loop.
-void ofAppiPhoneWindow::timerLoop() {
-    // all the timerLoop logic has been moved into [ofxiOSEAGLView drawView]
 }
