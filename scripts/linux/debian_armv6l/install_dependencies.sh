@@ -3,7 +3,7 @@ apt-get update
 GSTREAMER_VERSION=0.10
 GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
 
-echo "detectiing latest gstreamer version"
+echo "detecting latest gstreamer version"
 apt-cache show -n libgstreamer1.0-dev
 exit_code=$?
 if [ $exit_code != 0 ]; then
