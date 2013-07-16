@@ -75,8 +75,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
         ofxiPhoneAlerts.addListener(app);
 
         ofDisableTextureEdgeHack();
-        ofUpdateBitmapCharacterTexture();
+
         ofGLReadyCallback();
+        ofReloadGLResources();
         
         bInit = YES;
     }
