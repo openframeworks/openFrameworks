@@ -680,7 +680,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			//calc the sum Rect of all the monitors
 			for(int i = 0; i < monitorCount; i++){
 				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
-				int x, y, w, h;
+				int x, y;
 				glfwGetMonitorPos(monitors[i], &x, &y);
 				ofRectangle screen = ofRectangle( x, y, desktopMode->width, desktopMode->height );
 				allScreensSpace = allScreensSpace.getUnion(screen);
