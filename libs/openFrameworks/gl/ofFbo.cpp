@@ -225,6 +225,7 @@ ofFbo::ofFbo(const ofFbo & mom){
 
 ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
+	clear();
 	settings = mom.settings;
 	isBound = mom.isBound;
 	bIsAllocated = mom.bIsAllocated;
