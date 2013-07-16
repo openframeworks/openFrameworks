@@ -114,6 +114,24 @@ class ofStyle{
 		bool depthTest;
 };
 
+class ofVideoFormat{
+public:
+	  ofPixelFormat pixelFormat;
+	  int    width;
+	  int    height;
+	  vector<float> framerates;
+};
+
+class ofVideoDevice{
+public:
+	  int id;
+	  string deviceName;
+	  string hardwareName;
+	  vector<ofVideoFormat> formats;
+      bool bAvailable;
+};
+
+
 //----------------------------------------------------------
 // ofPtr
 //----------------------------------------------------------

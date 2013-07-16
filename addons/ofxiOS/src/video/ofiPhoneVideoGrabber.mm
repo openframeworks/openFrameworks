@@ -8,8 +8,8 @@ ofiPhoneVideoGrabber::ofiPhoneVideoGrabber() {
 }
 
 //needs implementing
-void ofiPhoneVideoGrabber::listDevices() {
-	grabber->listDevices();
+vector <ofVideoDevice> ofiPhoneVideoGrabber::listDevices() {
+	return grabber->listDevices();
 }
 
 bool ofiPhoneVideoGrabber::initGrabber(int w, int h) {
