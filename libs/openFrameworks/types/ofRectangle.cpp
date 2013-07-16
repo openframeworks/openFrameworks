@@ -689,7 +689,7 @@ bool ofRectangle::operator == (const ofRectangle& rect) const {
 
 //----------------------------------------------------------
 ostream& operator<<(ostream& os, const ofRectangle& rect){
-	os << rect.x << ", " << rect.x << ", " << rect.width << ", " << rect.height;
+	os << rect.position << ", " << rect.width << ", " << rect.height;
 	return os;
 }
 
