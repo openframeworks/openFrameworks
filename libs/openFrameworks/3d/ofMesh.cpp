@@ -1854,9 +1854,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
 	// makes things very, very complicated.
 	
 	for (int i = 0; i < faces.size(); i+=3) {
-		ofIndexType tmpI = faces[i+1];
-		faces[i+1] = faces[i+2];
-		faces[i+2] = tmpI;
+		std::swap(faces[i+1], faces[i+2]);
 	}
 
     ofMesh sphere;
