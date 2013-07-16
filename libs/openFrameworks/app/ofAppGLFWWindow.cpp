@@ -673,8 +673,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		int currentMonitor = getCurrentMonitor();
 		ofVec3f screenSize = getScreenSize();
 
-		NSArray * screens = [NSScreen screens];
-		ofRectangle total;
+		ofRectangle allScreensSpace;
 
         if( bMultiWindowFullscreen && monitorCount > 1 ){
             float totalWidth = 0.0; 
@@ -682,29 +681,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
             //lets find the total width of all the monitors
             //and we'll make the window height the height of the largest monitor.
             for(int i = 0; i < monitorCount; i++){
-
 				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
-                totalWidth += desktopMode->width;
-                if( i == 0 || desktopMode->height > maxHeight ){
-                    maxHeight = desktopMode->height;
-                }
-
-				int x, y;
-				int w, h;
+				int x, y, w, h;
 				glfwGetMonitorPos(*(monitors + i), &x, &y);
 				ofRectangle screen = ofRectangle( x, y, desktopMode->width, desktopMode->height );
-				//cout << "s: " << screen << endl;
-				total = total.getUnion(screen);
-
+				allScreensSpace = allScreensSpace.getUnion(screen);
             }
             //for OS X we need to set this first as the window size affects the window positon
-			//printf("ORIGIN: %f %f \n", total.x, total.y);
-			//printf("SHAPE: %f %f \n", total.width, total.height);
-			setWindowShape(total.width, total.height);
-			setWindowPosition(total.x, total.y);
+			setWindowShape(allScreensSpace.width, allScreensSpace.height);
+			setWindowPosition(allScreensSpace.x, allScreensSpace.y);
 
-			//ofVec2f p = getWindowPosition();
-			//cout << p << endl;
         }else if (monitorCount > 1 && currentMonitor < monitorCount){
             int xpos;
 			int ypos;
