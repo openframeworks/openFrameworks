@@ -116,6 +116,8 @@ void ofRunApp(ofBaseApp * OFSA){
 
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
+	ofSetWorkingDirectoryToDefault();
+	
 
     ofAddListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
