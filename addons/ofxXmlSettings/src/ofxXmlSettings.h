@@ -4,7 +4,7 @@
 #include "ofMain.h"
 #include <string.h>
 #if (_MSC_VER)
-#include "../libs/tinyxml/src/tinyxml.h"
+#include "../libs/tinyxml.h"
 #else
 #include "tinyxml.h"
 #endif
