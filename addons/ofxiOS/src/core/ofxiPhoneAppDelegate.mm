@@ -30,8 +30,8 @@
  * ***********************************************************************/ 
 
 #import "ofMain.h"
-#import "ofxiPhoneViewController.h"
 #import "ofxiPhoneAppDelegate.h"
+#import "ofxiPhoneViewController.h"
 #import "ofxiPhoneExtras.h"
 #import "ofxiPhoneExternalDisplay.h"
 
@@ -71,7 +71,7 @@
 	//-----
 	
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
-    [[UIApplication sharedApplication] setStatusBarHidden:(iPhoneGetOFWindow()->windowMode == OF_FULLSCREEN)];
+    [[UIApplication sharedApplication] setStatusBarHidden:(ofxiPhoneGetOFWindow()->getWindowMode() == OF_FULLSCREEN)];
 	
     // Listen to did rotate event
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -97,8 +97,7 @@
     
     // check if app delegate is being extended.
     // if not, create a new view controller.
-    NSString *appDelegateClassName;
-    appDelegateClassName = [[self class] description];
+    NSString * appDelegateClassName = [[self class] description];
     if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended. 
         self.glViewController = [[[ofxiPhoneViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds] 
                                                                             app:(ofxiPhoneApp *)ofGetAppPtr()] autorelease];

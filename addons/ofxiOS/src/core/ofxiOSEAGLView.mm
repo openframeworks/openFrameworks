@@ -33,13 +33,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
     
-    ESRendererVersion version = ESRendererVersion_11;
-    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
-        version = ESRendererVersion_20;
+    ESRendererVersion preferedRendererVersion = ESRendererVersion_11;
+    if(ofIsGLProgrammableRenderer()) {
+        preferedRendererVersion = ESRendererVersion_20;
     }
     
     self = [self initWithFrame:frame
-           andPreferedRenderer:version
+           andPreferedRenderer:preferedRendererVersion
                       andDepth:ofAppiPhoneWindow::getInstance()->isDepthBufferEnabled()
                          andAA:ofAppiPhoneWindow::getInstance()->isAntiAliasingEnabled()
                  andNumSamples:ofAppiPhoneWindow::getInstance()->getAntiAliasingSampleCount()
@@ -50,14 +50,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
         _instanceRef = self;
         
         if(rendererVersion == ESRendererVersion_20) {
-            if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
-                ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
-            } else {
+            if(ofAppiPhoneWindow::getInstance()->isRendererES2() == false) {
                 ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
-                ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
             }
+            ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
         } else if(rendererVersion == ESRendererVersion_11) {
-            if(ofGetCurrentRenderer()->getType() != "GL") {
+            if(ofAppiPhoneWindow::getInstance()->isRendererES1() == false) {
                 ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
             }
         }
@@ -75,8 +73,11 @@ static ofxiOSEAGLView * _instanceRef = nil;
         }
         ofRegisterTouchEvents(app);
         ofxiPhoneAlerts.addListener(app);
-        
-        ofUpdateBitmapCharacterTexture();
+
+        ofDisableTextureEdgeHack();
+
+        ofGLReadyCallback();
+        ofReloadGLResources();
         
         bInit = YES;
     }
@@ -129,8 +130,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     ofUnregisterTouchEvents(app);
     ofxiPhoneAlerts.removeListener(app);
-    
-    ofSetAppPtr(ofPtr<ofBaseApp>((app=NULL)));
+    ofSetAppPtr(ofPtr<ofBaseApp>((app = NULL)));
     
     _instanceRef = nil;
     
@@ -166,7 +166,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     // we want to notifyResized at the end of layoutSubviews.
 }
 
-- (void) drawView {
+- (void)drawView {
     
     ofNotifyUpdate();
     
@@ -176,7 +176,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     [self startRender];
     
     ofGLProgrammableRenderer * es2Renderer = NULL;
-    if(ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
+    if(ofIsGLProgrammableRenderer()) {
         es2Renderer = (ofGLProgrammableRenderer *)(ofGetCurrentRenderer().get());
         es2Renderer->startRender();
     }
@@ -237,8 +237,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		
 		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
 		touchPoint.y *= scaleFactor;
-		
-		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
+		touchPoint = [self orientateTouchPoint:touchPoint];
 		
 		if( touchIndex==0 ){
 			ofNotifyMousePressed(touchPoint.x, touchPoint.y, 0);
@@ -271,8 +270,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		
 		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
 		touchPoint.y *= scaleFactor;
-		
-		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
+		touchPoint = [self orientateTouchPoint:touchPoint];
 		
 		if( touchIndex==0 ){
 			ofNotifyMouseDragged(touchPoint.x, touchPoint.y, 0);			
@@ -305,8 +303,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		
 		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
 		touchPoint.y *= scaleFactor;
-		
-		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
+		touchPoint = [self orientateTouchPoint:touchPoint];
 		
 		if( touchIndex==0 ){
 			ofNotifyMouseReleased(touchPoint.x, touchPoint.y, 0);						
@@ -338,8 +335,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		
 		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
 		touchPoint.y *= scaleFactor;
-		
-		ofAppiPhoneWindow::getInstance()->rotateXY(touchPoint.x, touchPoint.y);
+		touchPoint = [self orientateTouchPoint:touchPoint];
 		
 		ofTouchEventArgs touchArgs;
 		touchArgs.numTouches = [[event touchesForView:self] count];
@@ -350,6 +346,36 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	}
 	
 	[self touchesEnded:touches withEvent:event];
+}
+
+//------------------------------------------------------
+- (CGPoint)orientateTouchPoint:(CGPoint)touchPoint {
+    
+    ofOrientation orientation = ofGetOrientation();
+    CGPoint touchPointOriented = CGPointZero;
+    
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			touchPointOriented.x = ofGetWidth() - touchPoint.x;
+			touchPointOriented.y = ofGetHeight() - touchPoint.y;
+			break;
+			
+		case OF_ORIENTATION_90_LEFT:
+			touchPointOriented.x = touchPoint.y;
+			touchPointOriented.y = ofGetHeight() - touchPoint.x;
+			break;
+			
+		case OF_ORIENTATION_90_RIGHT:
+			touchPointOriented.x = ofGetWidth() - touchPoint.y;
+			touchPointOriented.y = touchPoint.x;
+			break;
+			
+		case OF_ORIENTATION_DEFAULT:
+		default:
+            touchPointOriented = touchPoint;
+			break;
+	}
+    return touchPointOriented;
 }
 
 @end
