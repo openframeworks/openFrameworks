@@ -5,6 +5,12 @@
 #include "ofGLRenderer.h"
 #include "ofPath.h"
 #include "ofRendererCollection.h"
+#include "ofGLProgrammableRenderer.h"
+#include "ofGLRenderer.h"
+#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
+#include "ofCairoRenderer.h"
+#endif
+
 
 #ifndef TARGET_LINUX_ARM
 	#ifdef TARGET_OSX
@@ -50,6 +56,24 @@ static ofPath shape;
 static ofVboMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
 static ofVboMesh gradientMesh;
+
+
+void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
+	if(rendererType==ofGLProgrammableRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+	}else if(rendererType==ofGLRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
+	}else if(rendererType==ofCairoRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
+#endif
+	}else{
+		ofLogError() << "renderer type " << rendererType << " not known. Setting a GLRenderer";
+		ofLogError() << "this function only works with core renderers yet, if you want to use a custom renderer";
+		ofLogError() << "pass an ofPtr to a new instance of it";
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+	}
+}
 
 void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_,bool setDefaults){
 	renderer = renderer_;
@@ -367,6 +391,11 @@ bool ofbClearBg(){
 //----------------------------------------------------------
 float * ofBgColorPtr(){
 	return &renderer->getBgColor().r;
+}
+
+//----------------------------------------------------------
+ofColor ofGetBackground(){
+	return ofColor(renderer->getBgColor());
 }
 
 //----------------------------------------------------------

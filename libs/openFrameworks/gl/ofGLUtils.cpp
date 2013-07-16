@@ -531,3 +531,18 @@ ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
 		return ofPtr<ofGLRenderer>();
 	}
 }
+
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+void ofUpdateBitmapCharacterTexture();
+void ofReloadAllImageTextures();
+void ofReloadAllFontTextures();
+void ofRegenerateAllVbos();
+
+void ofReloadGLResources(){
+	ofUpdateBitmapCharacterTexture();
+	ofReloadAllImageTextures();
+	ofReloadAllFontTextures();
+	ofRegenerateAllVbos();
+}
+#endif
+

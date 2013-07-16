@@ -386,7 +386,7 @@ using namespace std;
 #endif
 
 #ifndef CLAMP
-	#define CLAMP(val,min,max) (MAX(MIN(val,max),min))
+	#define CLAMP(val,min,max) ((val) < (min) ? (min) : ((val > max) ? (max) : (val)))
 #endif
 
 #ifndef ABS
@@ -465,7 +465,8 @@ enum ofPixelFormat{
 	OF_PIXELS_RGB,
 	OF_PIXELS_RGBA,
 	OF_PIXELS_BGRA,
-	OF_PIXELS_RGB565
+	OF_PIXELS_RGB565,
+	OF_PIXELS_UNKNOWN
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
@@ -544,6 +545,7 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
+    #define OF_KEY_TAB          9
 	#define OF_KEY_CTRL			0x0200
 	#define OF_KEY_ALT			0x0300
 	#define OF_KEY_SHIFT		0x0400
