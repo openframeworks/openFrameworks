@@ -190,27 +190,27 @@ void ofAppiPhoneWindow::toggleFullscreen() {
 }
 
 //-----------------------------------------------------------------------------------
-bool ofAppiPhoneWindow::enableRendererES20() {
-    if(isRendererES20() == true) {
+bool ofAppiPhoneWindow::enableRendererES2() {
+    if(isRendererES2() == true) {
         return false;
     }
     ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
     return true;
 }
 
-bool ofAppiPhoneWindow::enableRendererES11() {
-    if(isRendererES11() == true) {
+bool ofAppiPhoneWindow::enableRendererES1() {
+    if(isRendererES1() == true) {
         return false;
     }
     ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
     return true;
 }
 
-bool ofAppiPhoneWindow::isRendererES20() {
+bool ofAppiPhoneWindow::isRendererES2() {
     return (ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE);
 }
 
-bool ofAppiPhoneWindow::isRendererES11() {
+bool ofAppiPhoneWindow::isRendererES1() {
     return (ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE);
 }
 
