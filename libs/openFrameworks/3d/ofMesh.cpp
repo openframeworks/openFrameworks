@@ -1141,9 +1141,18 @@ ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertInd
     }
     
     int offsetIndex = getIndex(startIndex);
+    bool bFoundLessThanZero = false;
     for(int i = startIndex; i < endIndex; i++) {
         int index = getIndex(i) - offsetIndex;
+        if(index < 0) {
+            index = 0;
+            bFoundLessThanZero = true;
+        }
         mesh.addIndex( index );
+    }
+    
+    if(bFoundLessThanZero) {
+        ofLogWarning( "ofMesh :: getMeshForIndices : found some indices less than 0, setting them to 0"  );
     }
     
     return mesh;
@@ -2141,8 +2150,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < heightSegments-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y+1)*radiusSegments + x );
                 mesh.addIndex( (y)*radiusSegments + x );
+                mesh.addIndex( (y+1)*radiusSegments + x );
             }
         }
     }
@@ -2189,8 +2198,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < capSegs-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
                 mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
             }
         }
     }
