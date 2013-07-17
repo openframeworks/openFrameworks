@@ -310,7 +310,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 	}
 #else
 	if(!vaoChecked){
-		supportVAOs = glewIsSupported("GL_ARB_vertex_array_object");
+		supportVAOs = ofGetGLProgrammableRenderer() || glewIsSupported("GL_ARB_vertex_array_object");
 		vaoChecked = true;
 	}
 #endif
@@ -710,7 +710,7 @@ void ofVbo::bind(){
 			if(!programmable){
 				glEnableClientState(GL_NORMAL_ARRAY);
 				glNormalPointer(GL_FLOAT, normalStride, 0);
-			}else if(supportVAOs){
+			}else{
 				// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
 				// normalized while being uploaded to GPU memory.
 				// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
@@ -836,7 +836,7 @@ void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) {
 		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
 		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawINstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
 		// glDrawArraysInstanced(drawMode, first, total, primCount);
 #else
 		glDrawArraysInstanced(drawMode, first, total, primCount);
@@ -951,7 +951,19 @@ int ofVbo::getNumIndices() const {
 }
 
 //--------------------------------------------------------------
-
 int ofVbo::getNumVertices() const {
 	return totalVerts;
+}
+
+
+//--------------------------------------------------------------
+void ofVbo::disableVAOs(){
+	supportVAOs = false;
+	vaoChecked = true;
+}
+
+//--------------------------------------------------------------
+void ofVbo::enableVAOs(){
+	supportVAOs = true;
+	vaoChecked = false;
 }

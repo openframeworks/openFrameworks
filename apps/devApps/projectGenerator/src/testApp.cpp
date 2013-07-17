@@ -70,6 +70,7 @@ void testApp::setup(){
 	examplesPanel.add(linuxcbToggle.setup("linux CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX));
 	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX64));
 	examplesPanel.add(linuxarmv6lcbToggle.setup("linuxarmv6l CB projects",ofGetTargetPlatform()==OF_TARGET_LINUXARMV6L));
+	examplesPanel.add(linuxarmv7lcbToggle.setup("linuxarmv7l CB projects",ofGetTargetPlatform()==OF_TARGET_LINUXARMV7L));
 	examplesPanel.add(osxToggle.setup("osx projects",ofGetTargetPlatform()==OF_TARGET_OSX));
 	examplesPanel.add(iosToggle.setup("ios projects",ofGetTargetPlatform()==OF_TARGET_IPHONE));
 
@@ -120,6 +121,10 @@ void testApp::setupForTarget(int targ){
             project = new CBLinuxProject;
             target = "linuxarmv6l";
             break;
+        case OF_TARGET_LINUXARMV7L:
+            project = new CBLinuxProject;
+            target = "linuxarmv7l";
+            break;
     }
 }
 
@@ -136,6 +141,7 @@ void testApp::generateExamplesCB(bool & pressed){
 	if( linuxcbToggle )         targetsToMake.push_back(OF_TARGET_LINUX);
 	if( linux64cbToggle )       targetsToMake.push_back(OF_TARGET_LINUX64);
 	if( linuxarmv6lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV6L);
+	if( linuxarmv7lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV7L);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
@@ -220,6 +226,7 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
 	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 	if( linuxarmv6lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV6L);
+	if( linuxarmv7lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV7L);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: makeNewProjectViaDialog - must specifiy a project to generate " <<endl;
@@ -265,6 +272,7 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 	if( linuxcbToggle )	targetsToMake.push_back(OF_TARGET_LINUX);
 	if( linux64cbToggle )	targetsToMake.push_back(OF_TARGET_LINUX64);
 	if( linuxarmv6lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV6L);
+	if( linuxarmv7lcbToggle )	targetsToMake.push_back(OF_TARGET_LINUXARMV7L);
 
 	if( targetsToMake.size() == 0 ){
 		cout << "Error: updateProjectViaDialog - must specifiy a project to generate " <<endl;

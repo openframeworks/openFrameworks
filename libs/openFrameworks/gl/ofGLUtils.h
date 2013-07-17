@@ -154,9 +154,11 @@ bool ofIsGLProgrammableRenderer();
 	#ifdef GL_DEPTH_COMPONENT32_OES
         #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
     #endif
-	#ifdef TARGET_OF_IPHONE
-    	#define GL_UNSIGNED_INT                                 GL_UNSIGNED_INT_OES
-	#endif
+    #ifdef TARGET_OF_IPHONE
+        #ifndef GL_UNSIGNED_INT
+            #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES
+        #endif
+    #endif
 #endif
 
 #endif /* OFGLUTILS_H_ */
