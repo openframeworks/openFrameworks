@@ -15,10 +15,10 @@ apt-get update
 GSTREAMER_VERSION=0.10
 GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
 
-echo "detectiing latest gstreamer version"
+echo "detecting latest gstreamer version"
 apt-cache show -n libgstreamer1.0-dev
 exit_code=$?
-if [ $exit_code != 0 ]; then
+if [ $exit_code == 0 ]; then
     echo selecting gstreamer 1.0
     GSTREAMER_VERSION=1.0
     GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-libav
@@ -28,7 +28,7 @@ fi
 echo "installing OF dependencies"
 apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libgtk2.0-dev python-lxml python-argparse libfreetype6-dev portaudio19-dev libssl-dev
 exit_code=$?
-if [ "$RET" -neq "0" ]; then
+if [ $exit_code != 0 ]; then
     echo "error installing dependencies, there could be an error with your internet connection"
     echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
 	exit $exit_code

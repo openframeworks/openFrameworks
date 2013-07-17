@@ -29,6 +29,9 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     ofBuffer buffer = file.readToBuffer();
     
     bool bOk = loadModel(buffer, optimize, file.getExtension().c_str());
+
+	ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
+
     return bOk;
 }
 
@@ -63,11 +66,24 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 			ofLog(OF_LOG_VERBOSE, "no animations");
 
 		}
+
+		ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
+
+
 		return true;
 	}else{
 		ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
+		clear();
 		return false;
 	}
+}
+
+// automatic destruction on app exit makes the app crash because of some bug in assimp
+// this is a hack to clear every object on the exit callback of the application
+// FIXME: review when there's an update of assimp
+//-------------------------------------------
+void ofxAssimpModelLoader::onAppExit(ofEventArgs & args){
+	clear();
 }
 
 //-------------------------------------------
@@ -331,6 +347,7 @@ void ofxAssimpModelLoader::clear(){
 
 //------------------------------------------- update.
 void ofxAssimpModelLoader::update() {
+	if(!scene) return;
     updateAnimations();
     updateMeshes(scene->mRootNode, ofMatrix4x4());
     if(hasAnimations() == false) {

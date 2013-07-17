@@ -60,7 +60,7 @@ class testApp : public ofBaseApp{
         ofxButton createProject, updateProject, createAndOpen, changeOFRoot;
 
 		ofxPanel examplesPanel;
-		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle, linux64cbToggle,linuxarmv6lcbToggle;
+		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle, linux64cbToggle,linuxarmv6lcbToggle,linuxarmv7lcbToggle;
 		ofxButton generateButton;
 #endif
 };

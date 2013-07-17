@@ -178,6 +178,10 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 
+ifeq ($(USE_FMOD),0)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+endif
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
