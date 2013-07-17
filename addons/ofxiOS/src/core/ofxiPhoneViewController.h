@@ -11,7 +11,11 @@ class ofxiPhoneApp;
 @interface ofxiPhoneViewController : UIViewController
 
 @property (nonatomic, retain) ofxiOSEAGLView * glView;
+@property (nonatomic, readonly) UIInterfaceOrientation currentInterfaceOrientation;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app;
+
+- (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+                            animated:(BOOL)animated;
 
 @end

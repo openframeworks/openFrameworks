@@ -30,6 +30,7 @@ class ofVec3f;
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)app;
 - (void)setup;
+- (void)updateDimensions;
 - (void)destroy;
 
 @end
