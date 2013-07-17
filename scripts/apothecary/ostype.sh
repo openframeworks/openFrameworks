@@ -7,12 +7,12 @@ function lowercase() {
 
 OS=`lowercase \`uname\``
 
-if [ "$OS" == "windowsnt" ]; then
-	OS=windows
-elif [ "$OS" == "darwin" ]; then
-	OS=osx
+if [ "$OS" == "darwin" ]; then
+	OS="osx"
+elif [ "$OS" == "windowsnt" -o "${OS:0:5}" == "mingw" ] ; then
+	OS="windows"
 elif [ "$OS" == "linux" ]; then
-	OS=linux
+	OS="linux"
 fi
 
-echo $OS
+echo "$OS"
