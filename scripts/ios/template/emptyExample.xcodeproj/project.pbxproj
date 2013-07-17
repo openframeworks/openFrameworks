@@ -42,9 +42,13 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>BB24DDCA10DA781C00E9C588</string>
 				<string>E41D3ED713B38FB500A75A5D</string>
 				<string>E41D3EE613B3906D00A75A5D</string>
+				<string>678E130817951530005B6D19</string>
+				<string>678E130A17951536005B6D19</string>
+				<string>678E130C1795153C005B6D19</string>
+				<string>678E130E17951540005B6D19</string>
+				<string>678E131017951549005B6D19</string>
 			</array>
 			<key>isa</key>
 			<string>PBXResourcesBuildPhase</string>
@@ -283,6 +287,11 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>678E130917951536005B6D19</string>
+				<string>678E130717951530005B6D19</string>
+				<string>678E130B1795153C005B6D19</string>
+				<string>678E130D17951540005B6D19</string>
+				<string>678E130F17951549005B6D19</string>
 				<string>E4D8936A11527B74007E1F53</string>
 				<string>BB24E1F710DAA51900E9C588</string>
 				<string>BB16F26B0F2B646B00518274</string>
@@ -371,6 +380,106 @@
 		<dict>
 			<key>fileRef</key>
 			<string>53F323EA10A20EDB00E0DAE4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130717951530005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Icon@2x.png</string>
+			<key>path</key>
+			<string>bin/data/Icon@2x.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130817951530005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130717951530005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130917951536005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Icon.png</string>
+			<key>path</key>
+			<string>bin/data/Icon.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130A17951536005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130917951536005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130B1795153C005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Default.png</string>
+			<key>path</key>
+			<string>bin/data/Default.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130C1795153C005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130B1795153C005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130D17951540005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Default@2x.png</string>
+			<key>path</key>
+			<string>bin/data/Default@2x.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130E17951540005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130D17951540005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130F17951549005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Default-568h@2x~iphone.png</string>
+			<key>path</key>
+			<string>bin/data/Default-568h@2x~iphone.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E131017951549005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130F17951549005B6D19</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -470,13 +579,6 @@
 			<string>ofxiOS-Info.plist</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BB24DDCA10DA781C00E9C588</key>
-		<dict>
-			<key>fileRef</key>
-			<string>BB24DDC910DA781C00E9C588</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>BB24E1F710DAA51900E9C588</key>
 		<dict>

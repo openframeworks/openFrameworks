@@ -225,26 +225,26 @@ all:
 #This rule does the compilation
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
 	@echo "Compiling" $<
-	mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(@D)
+	@$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.mm
 	@echo "Compiling" $<
-	mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(@D)
+	@$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.m
 	@echo "Compiling" $<
-	mkdir -p $(@D)
-	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(@D)
+	@$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 # this target does the linking of the library
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
 # $(OF_CORE_OBJ_FILES) must be processed first  
 $(TARGET) : $(OF_CORE_OBJ_FILES) 
 	@echo "Creating library " $(TARGET)
-	mkdir -p $(@D)
-	$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
+	@mkdir -p $(@D)
+	@$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
 
 -include $(OF_CORE_DEPENDENCY_FILES)
 

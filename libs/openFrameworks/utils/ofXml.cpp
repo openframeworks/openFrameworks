@@ -43,7 +43,7 @@ bool ofXml::load(const string & path){
 
 bool ofXml::save(const string & path){
     ofBuffer buffer(toString());
-    ofFile file(path, ofFile::ReadWrite);
+    ofFile file(path, ofFile::WriteOnly);
     return file.writeFromBuffer(buffer);
 }
 
