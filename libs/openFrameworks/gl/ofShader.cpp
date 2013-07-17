@@ -65,7 +65,7 @@ static void releaseProgram(GLuint id){
 			getProgramIds().erase(id);
 		}
 	}else{
-		ofLogWarning("ofShader") << "releaseProgram(): something's wrong here, releasing unknown program " << id;
+		ofLogWarning("ofShader") << "releaseProgram(): something's wrong here, releasing unknown program id " << id;
 		glDeleteProgram(id);
 	}
 }
@@ -724,8 +724,9 @@ void ofShader::printActiveUniforms() {
 		GLsizei length;
 		glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
 		line << "[" << i << "] ";
-		for(int j = 0; j < length; j++)
+		for(int j = 0; j < length; j++) {
 			line << uniformName[j];
+		}
 		line << " @ index " << getUniformLocation(uniformName);
 		ofLogNotice("ofxShader") << line.str();
 		line.str("");
@@ -750,8 +751,9 @@ void ofShader::printActiveAttributes() {
 		GLsizei length;
 		glGetActiveAttrib(program, i, attributeMaxLength, &length, &count, &type, attributeName);
 		line << " [" << i << "] ";
-		for(int j = 0; j < length; j++)
-			line <<attributeName[j];
+		for(int j = 0; j < length; j++) {
+			line << attributeName[j];
+		}
 		line << " @ index " << getAttributeLocation(attributeName);
 		ofLogNotice("ofxShader") << line.str();
 		line.str("");

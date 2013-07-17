@@ -51,10 +51,11 @@ float * ofFmodSoundGetSpectrum(int nBands){
 
 	// 	check what the user wants vs. what we can do:
 	if (nBands > 8192){
-		ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): requested number of bands " << nBands << " > maximum of 8192, using 8192";
+		ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): requested number of bands " << nBands << ", using maximum of 8192";
 		nBands = 8192;
 	} else if (nBands <= 0){
-		ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): requested number of bands " << nBands << " < minimum of 1, using 1";
+		ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): requested number of bands " << nBands << ", using minimum of 1";
+		nBands = 1;
 		return fftInterpValues_;
 	}
 

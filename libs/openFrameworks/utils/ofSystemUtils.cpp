@@ -477,11 +477,11 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//ofLogNotice("ofSystemutils") << "ofSytemSaveDialog(): NavCreatePutFileDialog returned " << err;
 
 	err = NavDialogRun(dialog);
-	//fLogNotice("ofSystemutils") << "ofSytemSaveDialog(): NavDialogRun returned " << err;
+	//ofLogNotice("ofSystemutils") << "ofSytemSaveDialog(): NavDialogRun returned " << err;
 
 	NavUserAction action;
 	action = NavDialogGetUserAction( dialog );
-	//fLogNotice("ofSystemutils") << "ofSytemSaveDialog(): got action " << action;
+	//ofLogNotice("ofSystemutils") << "ofSytemSaveDialog(): got action " << action;
 	if (action == kNavUserActionNone || action == kNavUserActionCancel) {
 
 		return results;

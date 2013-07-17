@@ -30,7 +30,7 @@ bool ofQTKitPlayer::loadMovie(string path){
 //--------------------------------------------------------------------
 bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
-		ofLogError("ofQTKitPlayer") << "loadMovie(): invalid ofQTKitDecodeMode mode: " << mode;
+		ofLogError("ofQTKitPlayer") << "loadMovie(): unknown ofQTKitDecodeMode mode";
 		return false;
 	}
 	
@@ -358,7 +358,7 @@ ofLoopType ofQTKitPlayer::getLoopState(){
     	state = OF_LOOP_PALINDROME;
 	}
 	else{
-		ofLogError("ofQTKitPlayer") << "Invalid loop state " << state;
+		ofLogError("ofQTKitPlayer") << "unknown loop state";
 	}
 	
 	return state;

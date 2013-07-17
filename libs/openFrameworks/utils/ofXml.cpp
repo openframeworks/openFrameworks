@@ -55,22 +55,22 @@ void ofXml::serialize(const ofAbstractParameter & parameter){
 		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
 		if(!exists(name)){
 			addChild(name);
-			ofLogVerbose("ofxXml") << "creating group " << name;
+			ofLogVerbose("ofXml") << "creating group " << name;
 		}
 		setTo(name);
-		ofLogVerbose("ofxXml") << "group " << name;
+		ofLogVerbose("ofXml") << "group " << name;
 		for(int i=0;i<group.size();i++){
 			serialize(group.get(i));
 		}
-		ofLogVerbose("ofxXml") << "end group " << name;
+		ofLogVerbose("ofXml") << "end group " << name;
 		setToParent();
 	}else{
 		string value = parameter.toString();
 		if(!exists(name)){
 			addChild(name);
-			ofLogVerbose("ofxXml") << "creating tag " << name;
+			ofLogVerbose("ofXml") << "creating tag " << name;
 		}
-		ofLogVerbose("ofxXml") << "setting tag " << name << ": " << value;
+		ofLogVerbose("ofXml") << "setting tag " << name << ": " << value;
 		setValue(name,value);
 	}
 }
@@ -150,7 +150,7 @@ string ofXml::toString() const
         try {
             writer.writeNode( stream, getPocoDocument() );
         } catch( exception e ) {
-            ofLogError("ofxXml") << "toString(): " << e.what();
+            ofLogError("ofXml") << "toString(): " << e.what();
         }
     } else if(element){
         element->normalize();
@@ -276,7 +276,7 @@ bool ofXml::reset() {
         element = document->documentElement();
         return true;
     }
-    ofLogWarning("ofxXml") << "reset(): no element set yet";
+    ofLogWarning("ofXml") << "reset(): no element set yet";
     return false;
 }
 
@@ -287,7 +287,7 @@ bool ofXml::setToChild(int index)
         if((Poco::XML::Element*) document->documentElement()->firstChild()) {
             element = (Poco::XML::Element*) document->documentElement()->firstChild();
         } else {
-            ofLogWarning("ofxXml") << "setToChild(): no element created yet";
+            ofLogWarning("ofXml") << "setToChild(): no element created yet";
         }
     }
     
@@ -313,7 +313,7 @@ bool ofXml::setToParent()
     if(element->parentNode()) {
         element = (Poco::XML::Element*) element->parentNode();
     } else {
-        ofLogWarning("ofxXml") << "setToParent(): current element has no parent";
+        ofLogWarning("ofXml") << "setToParent(): current element has no parent";
         return false;
     }
     return true;
@@ -328,7 +328,7 @@ bool ofXml::setToParent(int numLevelsUp) {
             if(element->parentNode()) {
                 element = (Poco::XML::Element*) element->parentNode();
             } else {
-                ofLogWarning("ofxXml") << "setToParent(): too many parents: " << numLevelsUp;
+                ofLogWarning("ofXml") << "setToParent(): too many parents: " << numLevelsUp;
                 return false;
             }
             i++;
@@ -337,7 +337,7 @@ bool ofXml::setToParent(int numLevelsUp) {
         return true;
     }
     
-    ofLogWarning("ofxXml") << "setToParent(): no element set yet";
+    ofLogWarning("ofXml") << "setToParent(): no element set yet";
     return false;
     
 }
@@ -348,7 +348,7 @@ bool ofXml::setToSibling()
     if(element) {
         node = (Poco::XML::Element*) element->nextSibling();
     } else {
-        ofLogWarning("ofxXml") << "setToSibling() << no element set yet";
+        ofLogWarning("ofXml") << "setToSibling() << no element set yet";
         return false;
     }
     
@@ -372,7 +372,7 @@ bool ofXml::setToPrevSibling()
     if(element) {
         node = (Poco::XML::Element*) element->previousSibling();
     } else {
-        ofLogWarning("ofxXml") << "setToPrevSibling(): no element set yet";
+        ofLogWarning("ofXml") << "setToPrevSibling(): no element set yet";
         return false;
     }
     
@@ -395,7 +395,7 @@ bool ofXml::setValue(const string& path, const string& value)
     if(element) {
         e = (Poco::XML::Element*) element->getNodeByPath(path);
     } else {
-        ofLogWarning("ofxXml") << "setValue(): no element set yet";
+        ofLogWarning("ofXml") << "setValue(): no element set yet";
         return false;
     }
     
@@ -418,7 +418,7 @@ string ofXml::getAttribute(const string& path) const {
     if(element) {
         e = element->getNodeByPath(path);
     } else {
-        ofLogWarning("ofxXml") << "getAttribute(): no element set yet";
+        ofLogWarning("ofXml") << "getAttribute(): no element set yet";
         return "";
     }
     
@@ -434,7 +434,7 @@ bool ofXml::clearAttributes(const string& path)
     if(element) {
         e = (Poco::XML::Element*) element->getNodeByPath(path);
     } else {
-        ofLogWarning("ofxXml") << "clearAttributes(): no element set yet";
+        ofLogWarning("ofXml") << "clearAttributes(): no element set yet";
         return false;
     }
     
@@ -464,7 +464,7 @@ bool ofXml::clearAttributes()
         map->release();
         return true;
     }
-    ofLogWarning("ofxXml") << "clearAttributes(): no element set yet";
+    ofLogWarning("ofXml") << "clearAttributes(): no element set yet";
     return false;
 
 }
@@ -488,7 +488,7 @@ bool ofXml::clearContents(const string& path) {
     if(element) {
         e = (Poco::XML::Element*) element->getNodeByPath(path);
     } else {
-        ofLogWarning("ofxXml") << "clearContents(): no element set yet";
+        ofLogWarning("ofXml") << "clearContents(): no element set yet";
         return false;
     }
     
@@ -510,7 +510,7 @@ bool ofXml::remove(const string& path) // works for both attributes and tags
     if(element) {
         node = element->getNodeByPath(path);
     } else {
-        ofLogWarning("ofxXml") << "remove(): no element set yet";
+        ofLogWarning("ofXml") << "remove(): no element set yet";
         return false;
     }
     
@@ -528,7 +528,7 @@ bool ofXml::exists(const string& path) const // works for both attributes and ta
     if(element) {
         node = element->getNodeByPath(path);
     } else {
-        ofLogWarning("ofxXml") << "exists(): no element set yet";
+        ofLogWarning("ofXml") << "exists(): no element set yet";
         return false;
     }
     
@@ -550,7 +550,7 @@ map<string, string> ofXml::getAttributes() const // works for both attributes an
             attrMap[attr->item(i)->nodeName()] = attr->item(i)->nodeValue();
         }
     } else {
-        ofLogWarning("ofxXml") << "getAttribute(): no element set";
+        ofLogWarning("ofXml") << "getAttribute(): no element set";
     }
 
     return attrMap; 
@@ -672,10 +672,10 @@ bool ofXml::loadFromBuffer( const string& buffer )
     	return true;
     } catch( exception e ) {
         short msg = atoi(e.what());
-        ofLogError("ofxXml") << "loadFromBuffer(): " << DOMErrorMessage(msg);
+        ofLogError("ofXml") << "loadFromBuffer(): " << DOMErrorMessage(msg);
         document = new Poco::XML::Document;
         element = document->documentElement();
-        //ofLogNotice("ofxXml") << "element " << element;
+        //ofLogNotice("ofXml") << "element " << element;
         return false;
     }
 }
@@ -697,7 +697,7 @@ bool ofXml::setTo(const string& path)
         if(document->documentElement()) {
             element = document->documentElement();
         } else {
-            ofLogWarning("ofxXml") << "setTo(): empty document";
+            ofLogWarning("ofXml") << "setTo(): empty document";
             return false;
         }
     }
@@ -708,7 +708,7 @@ bool ofXml::setTo(const string& path)
         return true;
     }
     
-    //ofLogNotice("ofxXml") << path << " " << path.find("../");
+    //ofLogNotice("ofXml") << path << " " << path.find("../");
     
     // another: let's go up a little
     if( path.find("../") != string::npos)
@@ -731,7 +731,7 @@ bool ofXml::setTo(const string& path)
             ++count;
         }
         
-        //ofLogNotice("ofxXml") << (count * 3) << " " << path.size();
+        //ofLogNotice("ofXml") << (count * 3) << " " << path.size();
         
         if( (count * 3) > (int)path.size() - 1 ) {
             
@@ -745,7 +745,7 @@ bool ofXml::setTo(const string& path)
             element = (Poco::XML::Element*) parent->getNodeByPath(remainingPath);
              if(!element) {
                  element = prev;
-                 ofLogWarning("ofxXml") << "setCurrentElement(): passed invalid path \"" << remainingPath << "\"";
+                 ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << remainingPath << "\"";
                  return false;
              }
         }
@@ -756,7 +756,7 @@ bool ofXml::setTo(const string& path)
         element = (Poco::XML::Element*) document->getNodeByPath(path);
         if(!element) {
             element = prev;
-            ofLogWarning("ofxXml") << "setCurrentElement(): passed invalid path \"" << path << "\"";
+            ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << path << "\"";
             return false;
         }
         
@@ -766,7 +766,7 @@ bool ofXml::setTo(const string& path)
         element = (Poco::XML::Element*) element->getNodeByPath(path);
         if(!element) {
             element = prev;
-            ofLogWarning("ofxXml") << "setCurrentElement(): passed invalid path \"" << path << "\"";
+            ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << path << "\"";
             return false;
         }
     }
@@ -795,7 +795,7 @@ Poco::XML::Element* ofXml::getPocoElement(const string& path)
     if(element) {
         return (Poco::XML::Element*) element->getNodeByPath(copy);
     } else {
-        ofLogWarning("ofxXml") << "getPocoElement(): no element to get yet ";
+        ofLogWarning("ofXml") << "getPocoElement(): no element to get yet ";
         return NULL;
     }
 
@@ -813,7 +813,7 @@ const Poco::XML::Element* ofXml::getPocoElement(const string& path) const
     if(element) {
         return (Poco::XML::Element*) element->getNodeByPath(copy);
     } else {
-        ofLogWarning("ofxXml") << "getPocoElement(): no element to get yet ";
+        ofLogWarning("ofXml") << "getPocoElement(): no element to get yet ";
         return NULL;
     }
 

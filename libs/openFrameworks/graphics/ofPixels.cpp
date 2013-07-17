@@ -190,7 +190,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 			imgType = OF_IMAGE_GRAYSCALE;
 			break;
 		default:
-			ofLogError("ofPixels") << "allocate(): pixel format " << format << " not supported, not allocating";
+			ofLogError("ofPixels") << "allocate(): unknown pixel format, not allocating";
 			return;
 			break;
 
@@ -211,7 +211,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofImageType type){
 		allocate(w,h,4);
 		break;
 	default:
-		ofLogError("ofPixels") << "allocate(): image type " << type << " not supported, not allocating";
+		ofLogError("ofPixels") << "allocate(): unknown image type, not allocating";
 		break;
 
 	}
