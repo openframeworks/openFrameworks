@@ -85,10 +85,10 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
 	case FROM_FILE_EXTENSION:
-		ofLogFatalError("ofCairoRenderer") << "Type not determined from file extension!";
+		ofLogFatalError("ofCairoRenderer") << "setup(): couldn't determine type from extension for filename: \"" << _filename << "\"!";
 		break;
 	default:
-		ofLogError("ofCairoRenderer") << "Unknown type encountered!";
+		ofLogError("ofCairoRenderer") << "setup(): encountered unknown type for filename \"" << _filename << "\"";
 		break;
 	}
 
@@ -383,7 +383,7 @@ void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures,
 
 void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
     if(useColors || useTextures || useNormals){
-        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
+        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
     }
 	draw(vertexData,false,false,false);
 }
@@ -392,7 +392,7 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
 void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
     
     if(model.hasScaling()) {
-        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
+        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support scaling";
         //glEnable( GL_NORMALIZE );
         //glPushMatrix();
         //ofVec3f scale = model.getScale();
@@ -570,7 +570,7 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 		break;
 	case OF_IMAGE_UNDEFINED:
 	default:
-		ofLog(OF_LOG_ERROR,"ofCairoRenderer: trying to render undefined type image");
+		ofLogError("ofCairoRenderer") << "draw(): trying to draw undefined image type " << pix.getImageType();
 		popMatrix();
 		return;
 		break;
@@ -1188,7 +1188,7 @@ void ofCairoRenderer::setSphereResolution(int res) {
 		ndiv2 = -ndiv2;
 	}
 	if (n < 4) {
-		ofLogWarning() << "ofCairoRenderer::setSphereResolution(): sphere resolution is too low!";
+		ofLogWarning("ofCairoRenderer") << "setSphereResolution(): ignoring low sphere resolution: " << n;
 	}
 	
 	t2=phi1;
@@ -1313,14 +1313,14 @@ void ofCairoRenderer::setCairoMatrix(){
 
 ofPixels & ofCairoRenderer::getImageSurfacePixels(){
 	if(type!=IMAGE){
-		ofLogError() << "ofCairoRenderer: can only get pixels from image surface";
+		ofLogError("ofCairoRenderer") << "getImageSurfacePixels(): can only get pixels from image surface";
 	}
 	return imageBuffer;
 }
 
 ofBuffer & ofCairoRenderer::getContentBuffer(){
 	if(filename!="" || (type!=SVG && type!=PDF)){
-		ofLogError() << "ofCairoRenderer: can only get buffer from memory allocated renderer for svg or pdf";
+		ofLogError("ofCairoRenderer") << "getContentBuffer(): can only get buffer from memory allocated renderer for svg or pdf";
 	}
 	return streamBuffer;
 }

@@ -243,7 +243,7 @@ void ofSetDataPathRoot(string newRoot){
 			uint32_t size = sizeof(path);
 
 			if (_NSGetExecutablePath(path, &size) == 0){
-				//printf("executable path is %s\n", path);
+				//ofLogNotice("ofUtils") << "ofSetDataPathRoot(): executable path is " << path;
 				string pathStr = string(path);
 
 				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
@@ -258,13 +258,13 @@ void ofSetDataPathRoot(string newRoot){
 					newPath += "/";
 				}
 
-				//cout << newPath << endl;   // some sanity checks here
+				//ofLogNotice("ofUtils") << "ofSetDataPathRoot(): newPath is \"" << newPath << "\"";   // some sanity checks here
 				//system( "pwd" );
 
 				chdir ( newPath.c_str() );
 				//system("pwd");
 			}else{
-				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
+				ofLogFatalError("ofUtils") << "ofSetDataPathRoot(): path buffer too small, need size " << size;
 			}
 		#endif
 	#endif
@@ -645,7 +645,7 @@ void ofLaunchBrowser(string _url, bool uriEncodeQuery){
     try {
         uri = Poco::URI(_url);
     } catch(const Poco::SyntaxException& exc) {
-        ofLogError("ofLaunchBrowser") << "Malformed URL: " << _url;
+        ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << _url << "\": " << exc.displayText();
         return;
     }
     
@@ -658,7 +658,7 @@ void ofLaunchBrowser(string _url, bool uriEncodeQuery){
 	//   some platforms, like Android, require urls to start with lower-case http/https
     //   Poco::URI automatically converts the scheme to lower case
 	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
-		ofLogError("ofLaunchBrowser") << "URL must begin with http:// or https://";
+		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
 		return;
 	}
 
@@ -677,13 +677,17 @@ void ofLaunchBrowser(string _url, bool uriEncodeQuery){
         // could also do with LSOpenCFURLRef
 		string commandStr = "open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
-        if(ret!=0) ofLogError("ofLaunchBrowser") << "Could not open browser.";
+        if(ret!=0) {
+			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
+		}
 	#endif
 
 	#ifdef TARGET_LINUX
 		string commandStr = "xdg-open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
-		if(ret!=0) ofLogError("ofLaunchBrowser") << "Could not open browser.";
+		if(ret!=0) {
+			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
+		}
 	#endif
 
 	#ifdef TARGET_OF_IPHONE
@@ -760,7 +764,7 @@ string ofSystem(string command){
 	char c;
 
 	if (ret == NULL){
-		ofLogError() << "ofSystem: error opening return file";
+		ofLogError("ofUtils") << "ofSystem(): error opening return file for command \"" << command  << "\"";
 	}else{
 		do {
 		      c = fgetc (ret);
