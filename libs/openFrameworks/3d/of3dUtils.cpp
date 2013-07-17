@@ -8,15 +8,15 @@ void ofDrawAxis(float size) {
 
 	// draw x axis
 	ofSetColor(ofColor::red);
-	ofLine(0, 0, 0, size, 0, 0);
+	ofDrawLine(0, 0, 0, size, 0, 0);
 	
 	// draw y axis
 	ofSetColor(ofColor::green);
-	ofLine(0, 0, 0, 0, size, 0);
+	ofDrawLine(0, 0, 0, 0, size, 0);
 
 	// draw z axis
 	ofSetColor(ofColor::blue);
-	ofLine(0, 0, 0, 0, 0, size);
+	ofDrawLine(0, 0, 0, 0, 0, size);
 	
 	ofPopStyle();
 }
@@ -87,9 +87,9 @@ void ofDrawGridPlane(float scale, float ticks, bool labels) {
 			else
 				ofSetLineWidth(1);
 			if (iDimension==0)
-				ofLine(0, yz, -scale, 0, yz, scale);
+				ofDrawLine(0, yz, -scale, 0, yz, scale);
 			else
-				ofLine(0, -scale, yz, 0, scale, yz);
+				ofDrawLine(0, -scale, yz, 0, scale, yz);
 		}
 	}
 	ofPopStyle();
@@ -116,7 +116,7 @@ void ofDrawGridPlane(float scale, float ticks, bool labels) {
 void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	
 	//draw line
-	ofLine(start, end);
+	ofDrawLine(start, end);
 	
 	//draw cone
 	ofMatrix4x4 mat;
