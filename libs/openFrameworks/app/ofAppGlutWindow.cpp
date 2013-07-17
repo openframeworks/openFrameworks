@@ -69,7 +69,7 @@ void HandleFiles(WPARAM wParam)
 
 	POINT pt;
 	DragQueryPoint(hDrop, &pt);
-	//printf("%i %i \n", pt.x, pt.y);
+	//ofLogNotice("ofAppGlutWindow") << "drag point: " << pt.x << pt.y;
 
 	ofDragInfo info;
 	info.position.x = pt.x;
@@ -269,7 +269,7 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
     	glutGameModeString(gameStr);
 
     	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
-    		ofLog(OF_LOG_ERROR,"game mode error: selected format (%s) not available \n", gameStr);
+    		ofLogError("ofAppGlutWindow") << "setupOpenGL(): selected game mode format " << gameStr << " not available";
     	}
     	// start fullscreen game mode
     	glutEnterGameMode();

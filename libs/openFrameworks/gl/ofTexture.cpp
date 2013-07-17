@@ -136,7 +136,7 @@ static void release(GLuint id){
 				getTexturesIndex().erase(id);
 			}
 		}else{
-			ofLog(OF_LOG_ERROR, "trying to delete a non indexed texture, something weird is happening. Deleting anyway");
+			ofLogError("ofTexture") << "release(): something's wrong here, releasing unknown texture id " << id;
 			glDeleteTextures(1, (GLuint *)&id);
 		}
 	}
@@ -186,7 +186,7 @@ bool ofTexture::isAllocated(){
 //----------------------------------------------------------
 ofTextureData& ofTexture::getTextureData(){
 	if(!texData.bAllocated){
-		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
+		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
 	return texData;
@@ -194,7 +194,7 @@ ofTextureData& ofTexture::getTextureData(){
 
 const ofTextureData& ofTexture::getTextureData() const {
 	if(!texData.bAllocated){
-		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
+		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
 	return texData;
@@ -284,7 +284,7 @@ void ofTexture::allocate(const ofTextureData & textureData){
 
 void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pixelType){
 	if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
-		ofLogError() << "ofTexture::allocate - the ofTextureData structure passed must be set with a width and height.";
+		ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
 		return;
 	}
 
@@ -575,7 +575,8 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.bFlipTexture = true;
 	
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. not uploading...");
+		ofLogError("ofTexture") << "loadScreenData(): " << w << "x" << h << " image data too big for "
+		<< texData.tex_w << "x " << texData.tex_h << " allocated texture, not uploading";
 		return;
 	}
 	
