@@ -33,6 +33,8 @@
 #import "ofGLProgrammableRenderer.h"
 #import "ofAppiPhoneWindow.h"
 #import "ofxiOSEAGLView.h"
+#import "ofxiPhoneAppDelegate.h"
+#import "ofxiPhoneViewController.h"
 
 //----------------------------------------------------------------------------------- instance.
 static ofAppiPhoneWindow * _instance = NULL;
@@ -52,6 +54,7 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
     
 	bEnableSetupScreen = true;
     orientation = OF_ORIENTATION_DEFAULT;
+    bHardwareOrientation = false;
 
 	bRetinaEnabled = false;
     bRetinaSupportedOnDevice = false;
@@ -122,14 +125,14 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 }
 
 int ofAppiPhoneWindow::getWidth(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+	if(bHardwareOrientation == true || orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180){
 		return (int)getWindowSize().x;
 	}
 	return (int)getWindowSize().y;
 }
 
 int ofAppiPhoneWindow::getHeight(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+	if(bHardwareOrientation == true || orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180){
 		return (int)getWindowSize().y;
 	}
 	return (int)getWindowSize().x;
@@ -141,20 +144,41 @@ int	ofAppiPhoneWindow::getWindowMode() {
 
 //----------------------------------------------------------------------------------- orientation.
 void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
-	switch (orientation) {
-		case OF_ORIENTATION_DEFAULT:
-			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait];
-			break;
-		case OF_ORIENTATION_180:
-			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown];
-			break;
-		case OF_ORIENTATION_90_RIGHT:
-			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];
-			break;
-		case OF_ORIENTATION_90_LEFT:
-			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];
-            break;
-	}
+    if(bHardwareOrientation == true) {
+        ofxiPhoneAppDelegate * appDelegate = (ofxiPhoneAppDelegate *)[UIApplication sharedApplication].delegate;
+        ofxiPhoneViewController * glViewController = appDelegate.glViewController;
+        switch (orientation) {
+            case OF_ORIENTATION_DEFAULT:
+                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:YES];
+                break;
+            case OF_ORIENTATION_180:
+                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown animated:YES];
+                break;
+            case OF_ORIENTATION_90_RIGHT:
+                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeLeft animated:YES];
+                break;
+            case OF_ORIENTATION_90_LEFT:
+                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight animated:YES];
+                break;
+            case OF_ORIENTATION_UNKNOWN:
+                return;
+        }
+    } else {
+        switch (orientation) {
+            case OF_ORIENTATION_DEFAULT:
+                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait];
+                break;
+            case OF_ORIENTATION_180:
+                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown];
+                break;
+            case OF_ORIENTATION_90_RIGHT:
+                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];
+                break;
+            case OF_ORIENTATION_90_LEFT:
+                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];
+                break;
+        }
+    }
 	
 	this->orientation = orientation;
 }
@@ -164,7 +188,7 @@ ofOrientation ofAppiPhoneWindow::getOrientation() {
 }
 
 bool ofAppiPhoneWindow::doesHWOrientation() {
-    return false;
+    return bHardwareOrientation;
 }
 
 //-----------------------------------------------------------------------------------
@@ -187,6 +211,15 @@ void ofAppiPhoneWindow::toggleFullscreen() {
     } else {
         setFullscreen(true);
     }
+}
+
+//-----------------------------------------------------------------------------------
+bool ofAppiPhoneWindow::enableHardwareOrientation() {
+    return (bHardwareOrientation = true);
+}
+
+bool ofAppiPhoneWindow::disableHardwareOrientation() {
+    return (bHardwareOrientation = false);
 }
 
 //-----------------------------------------------------------------------------------

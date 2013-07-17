@@ -22,6 +22,7 @@
 	int fsaaSamples;
 	bool depthEnabled;
 	bool retinaEnabled;
+    bool bResize;
 }
 
 - (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;

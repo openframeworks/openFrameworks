@@ -22,6 +22,7 @@
 	int fsaaSamples;
 	bool depthEnabled;
 	bool retinaEnabled;
+    bool bResize;
 }
 
 - (void) startRender;

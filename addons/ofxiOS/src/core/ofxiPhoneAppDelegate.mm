@@ -140,8 +140,6 @@
 //------------------------------------------------------------------------------------------- device rotation callback.
 - (void)receivedRotate:(NSNotification*)notification {
 	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
-    ofLog(OF_LOG_NOTICE, "Device orientation changed to %i", interfaceOrientation);
-	
 	if(interfaceOrientation != UIDeviceOrientationUnknown) {
         ofxiPhoneAlerts.deviceOrientationChanged(interfaceOrientation);
     }
