@@ -64,7 +64,7 @@ void ofExitCallback();
 
 	static bool bExitCalled = false;
 	void sighandler(int sig) {
-		ofLogVerbose("ofAppRunner") << "sighandler : Signal handled " << sig;
+		ofLogVerbose("ofAppRunner") << "sighandler caught: " << sig;
 		if(!bExitCalled) {
 			bExitCalled = true;
 			exitApp();
@@ -175,16 +175,16 @@ void ofGLReadyCallback(){
 	if (GLEW_OK != err)
 	{
 		/* Problem: glewInit failed, something is seriously wrong. */
-		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
+		ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
 		return;
 	}
 #endif
 
-	ofLogVerbose()<< "GL ready";
-	ofLogVerbose()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
-	ofLogVerbose()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
-	ofLogVerbose()<< "Version:  "<< (char*)glGetString(GL_VERSION);
-	ofLogVerbose()<< "GLSL:     "<< (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	ofLogVerbose("ofAppRunner") << "GL ready";
+	ofLogVerbose("ofAppRunner") << "Vendor:   " << (char*)glGetString(GL_VENDOR);
+	ofLogVerbose("ofAppRunner") << "Renderer: " << (char*)glGetString(GL_RENDERER);
+	ofLogVerbose("ofAppRunner") << "Version:  " << (char*)glGetString(GL_VERSION);
+	ofLogVerbose("ofAppRunner") << "GLSL:     " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 
     if(ofGetGLProgrammableRenderer()){
     	ofGetGLProgrammableRenderer()->setup();

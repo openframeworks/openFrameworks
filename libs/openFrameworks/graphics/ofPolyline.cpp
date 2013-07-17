@@ -480,12 +480,11 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) const {
 //----------------------------------------------------------
 ofPolyline ofPolyline::getResampledByCount(int count) const {
 	float perimeter = getPerimeter();
-    if(count < 2) {
-        ofLogWarning() << "ofPolyline::getResampledByCount less than two points makes no sense! returning original poly";
-        return *this;
-    } else {
-        return ofPolyline::getResampledBySpacing(perimeter / (count-1));
+	if(count < 2) {
+		ofLogWarning("ofPolyline") << "getResampledByCount(): requested " << count <<" points, using minimum count of 2 ";
+		count = 2;
     }
+	return ofPolyline::getResampledBySpacing(perimeter / (count-1));
 }
 
 //----------------------------------------------------------

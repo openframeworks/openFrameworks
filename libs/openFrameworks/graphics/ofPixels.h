@@ -34,9 +34,9 @@ public:
 
 	void set(PixelType val);
 	void set(int channel,PixelType val);
-	void setFromPixels(const PixelType * newPixels,int w, int h, int channels);
-	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
-	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
+	void setFromPixels(const PixelType * newPixels, int w, int h, int channels);
+	void setFromPixels(const PixelType * newPixels, int w, int h, ofImageType type);
+	void setFromExternalPixels(PixelType * newPixels, int w, int h, int channels);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
 	void swap(ofPixels_<PixelType> & pix);
 
