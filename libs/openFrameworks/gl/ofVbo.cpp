@@ -297,7 +297,7 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride) {
 
 #ifdef TARGET_OPENGLES
-	if(vaosEnabled && !vaoChecked){
+	if(!vaoChecked){
 		if(ofGetGLProgrammableRenderer()){
 			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
 			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
