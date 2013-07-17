@@ -650,7 +650,7 @@ vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() {
 //--------------------------------------------------------------
 ofMesh ofCylinderPrimitive::getCylinderMesh() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLogWarning("ofCylinderPrimitive") << "etCylinderMesh(): must be in triangle strip mode";
+        ofLogWarning("ofCylinderPrimitive") << "setCylinderMesh(): must be in triangle strip mode";
         return ofMesh();
     }
     return getMesh().getMeshForIndices( strides[1][0], strides[1][0]+strides[1][1],
