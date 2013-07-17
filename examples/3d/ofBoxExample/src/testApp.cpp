@@ -57,12 +57,12 @@ void testApp::draw(){
 		ofLogo.bind();
 		ofFill();
 		ofSetColor(255);
-		ofBox(boxSize);
+		ofDrawBox(boxSize);
 		ofLogo.unbind();
 		
 		ofNoFill();
 		ofSetColor(ofColor::fromHsb(sinf(t) * 128 + 128, 255, 255));
-		ofBox(boxSize * 1.1f);
+		ofDrawBox(boxSize * 1.1f);
 		
 		ofPopMatrix();
 	}
