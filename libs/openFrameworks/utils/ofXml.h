@@ -139,7 +139,7 @@ public:
             {
                 Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
                 
-                //cout << " creating " << newElement->nodeName() << endl;
+                //ofLogVerbose("ofxXml") << "addValue(): creating " << newElement->nodeName();
                 
                 if(lastElement) {
                     lastElement->appendChild(newElement);
@@ -157,7 +157,7 @@ public:
                     lastElement->appendChild( text );
                     
                 } catch ( Poco::XML::DOMException &e ) {
-                    ofLogError() << " cannot set node value " << DOMErrorMessage(e.code());
+                    ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
                     return false;
                 }
             }
@@ -181,7 +181,7 @@ public:
                     text->release();
                     
                 } catch ( Poco::XML::DOMException &e ) {
-                    ofLogError() << " cannot set node value " << DOMErrorMessage(e.code());
+                    ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
                     return false;
                 }
             }
@@ -205,7 +205,7 @@ public:
             if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
                 return ofFromString<T>(element->innerText());
             } else {
-                ofLogWarning("ofXml", "Path not found when getting value ");
+                ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
                 return returnVal; // hmm. this could be a problem
             }
         }

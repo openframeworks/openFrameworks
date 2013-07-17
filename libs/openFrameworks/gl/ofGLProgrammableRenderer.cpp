@@ -91,7 +91,7 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, bool useColors, bool us
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
 	if(!wrongUseLoggedOnce){
-		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
+		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
 		wrongUseLoggedOnce = true;
 	}
 	// tig: note that there was a lot of code duplication going on here.
@@ -166,7 +166,7 @@ void ofGLProgrammableRenderer::draw( of3dPrimitive& model, ofPolyRenderMode rend
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 	if(!wrongUseLoggedOnce){
-		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
+		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
 		wrongUseLoggedOnce = true;
 	}
 	if(!poly.getVertices().empty()) {
@@ -218,7 +218,7 @@ void ofGLProgrammableRenderer::draw(ofImage & image, float x, float y, float z, 
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -231,7 +231,7 @@ void ofGLProgrammableRenderer::draw(ofFloatImage & image, float x, float y, floa
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -244,7 +244,7 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -632,7 +632,8 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth){
 	// use geometry shaders to draw lines of varying thickness...
 	
 #ifndef TARGET_OPENGLES
-	//ofLogVerbose() << "glLineWidth has no effect in openGL3.2+\nUse a geometry shader to generate thick lines.";
+	//ofLogVerbose("ofGLProgrammableRenderer") << "setLineWidth(): has no effect in OpenGL 3.2+;
+	//<< "use a geometry shader to generate thick lines";
 #else
 	glLineWidth(lineWidth);
 #endif
@@ -868,7 +869,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
-	//cout << "end custom shader" << endl;
+	//ofLogNotice("ofGLProgrammableRenderer") << "end custom shader";
 	usingCustomShader = false;
 	if(uniqueShader) beginDefaultShader();
 }

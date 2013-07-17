@@ -79,7 +79,7 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 			break;
 
 		default:
-			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized returning glFormat as GL_RGBA";
+			ofLogError("ofGLUtils") << "ofGetGlFormatAndType(): internal format not recognized, returning GL_RGBA";
 			return GL_RGBA;
 			break;
 	}

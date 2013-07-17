@@ -28,7 +28,7 @@ ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 	if( player != NULL ){
 		if( player->isLoaded() ){
-			ofLogWarning("ofVideoPlayer") << "setPixelFormat - can't be called on a movie that is already loaded ";
+			ofLogWarning("ofVideoPlayer") << "setPixelFormat(): can't set pixel format of a loaded movie";
 			internalPixelFormat = player->getPixelFormat(); 
 			return false;
 		}else{
@@ -206,8 +206,8 @@ void ofVideoPlayer::stop(){
 void ofVideoPlayer::setVolume(float volume){
 	if( player != NULL ){
 		if ( volume > 1.0f ){
-			ofLogWarning("ofVideoPlayer") << "*** the range of setVolume changed with oF0072 from int [0..100] to float [0..1].";
-			ofLogWarning("ofVideoPlayer") << "*** limiting input volume " << volume << " to 1.0f.";
+			ofLogWarning("ofVideoPlayer") << "setVolume(): range changed with oF0072 from int [0..100] to float [0..1]";
+			ofLogWarning("ofVideoPlayer") << "setVolume(): limiting input volume " << volume << " to 1.0f";
 			volume = 1.0f;
 		}
 		player->setVolume(volume);
