@@ -210,7 +210,7 @@ void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const 
 	out << "[";
 	// only print the module name if it's not "OF"
 	if(module != "OF") {
-		out << module << ":";
+		out << module << " ";
 	}
 	out << ofGetLogLevelName(level) << "] " << message << endl;
 }	
@@ -228,7 +228,7 @@ void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, con
 	FILE* out = logLevel < OF_LOG_ERROR ? stdout : stderr;
 	fprintf(out, "[");
 	if(module != "OF") {
-		fprintf(out, "%s:", module.c_str());
+		fprintf(out, "%s ", module.c_str());
 	}
 	fprintf(out, "%s] ", ofGetLogLevelName(logLevel).c_str());
 	vfprintf(out, format, args);
@@ -259,7 +259,7 @@ void ofFileLoggerChannel::setFile(const string & path,bool append){
 }
 
 void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
-	file << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
+	file << module << " " << ofGetLogLevelName(level) << ": " << message << endl;
 }
 
 void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
@@ -270,6 +270,6 @@ void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const 
 }
 
 void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
-	file << module << ": " << ofGetLogLevelName(logLevel) << ": ";
+	file << module << " " << ofGetLogLevelName(logLevel) << ": ";
 	file << ofVAArgsToString(format,args) << endl;
 }
