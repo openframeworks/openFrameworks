@@ -112,7 +112,7 @@ static void releaseFB(GLuint id){
 			glDeleteFramebuffers(1, &id);
 		}
 	}else{
-		ofLogWarning("ofFbo") << "releaseFB(): something's wrong here, releasing unknown FB id " << id;
+		ofLogWarning("ofFbo") << "releaseFB(): something's wrong here, releasing unknown frame buffer id " << id;
 		glDeleteFramebuffers(1, &id);
 	}
 }
@@ -140,7 +140,7 @@ static void releaseRB(GLuint id){
 			glDeleteRenderbuffers(1, &id);
 		}
 	}else{
-		ofLogWarning("ofFbo") << "releaseRB(): something's wrong here, releasing unknown RB id " << id;
+		ofLogWarning("ofFbo") << "releaseRB(): something's wrong here, releasing unknown render buffer id " << id;
 		glDeleteRenderbuffers(1, &id);
 	}
 }
@@ -313,9 +313,9 @@ bool ofFbo::checkGLSupport() {
 	
 	if (!ofIsGLProgrammableRenderer()){
 		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
-			ofLogVerbose("ofFbo") << "Frame Buffer Object supported";
+			ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 		}else{
-			ofLogError("ofFbo") << "Frame Buffer Object not supported by this graphics card";
+			ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
 			return false;
 		}
 	}
@@ -331,9 +331,9 @@ bool ofFbo::checkGLSupport() {
 #else
 
 	if(ofGetGLProgrammableRenderer() || ofCheckGLExtension("GL_OES_framebuffer_object")){
-		ofLogVerbose("ofFbo") << "Frame Buffer Object supported";
+		ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 	}else{
-		ofLogError("ofFbo") << "Frame Buffer Object not supported by this graphics card";
+		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
 		return false;
 	}
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -374,7 +374,7 @@ void ofFbo::allocate(Settings _settings) {
 	if(_settings.width == 0) _settings.width = ofGetWidth();
 	if(_settings.height == 0) _settings.height = ofGetHeight();
 	if(_settings.numSamples > maxSamples() && maxSamples() > -1) {
-		ofLogWarning("ofFbo") << "allocate(): clamping numSamples " << _settings.numSamples << " to maxSamples " << maxSamples() << " for fbo " << fbo;
+		ofLogWarning("ofFbo") << "allocate(): clamping numSamples " << _settings.numSamples << " to maxSamples " << maxSamples() << " for frame buffer object" << fbo;
 		_settings.numSamples = maxSamples();
 	}
 	settings = _settings;
@@ -387,7 +387,7 @@ void ofFbo::allocate(Settings _settings) {
 	bind();
 
 	if(settings.depthStencilAsTexture && settings.numSamples){
-		ofLogWarning("ofFbo") << "allocate(): multisampling not supported with depthStencilAsTexture, setting 0 samples for fbo " << fbo;
+		ofLogWarning("ofFbo") << "allocate(): multisampling not supported with depthStencilAsTexture, setting 0 samples for frame buffer object " << fbo;
 		settings.numSamples = 0;
 	}
 
@@ -472,7 +472,7 @@ void ofFbo::allocate(Settings _settings) {
 		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
 	}
 	else {
-		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for fbo " << fbo;
+		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
 	}
 
 
@@ -848,7 +848,7 @@ bool ofFbo::checkStatus() {
 
 ofTexture & ofFbo::getDepthTexture(){
 	if(!settings.depthStencilAsTexture){
-		ofLogError("ofFbo") << "getDepthTexture(): fbo " << fbo << " not allocated with depthStencilAsTexture";
+		ofLogError("ofFbo") << "getDepthTexture(): frame buffer object " << fbo << " not allocated with depthStencilAsTexture";
 	}
 	return depthBufferTex;
 }

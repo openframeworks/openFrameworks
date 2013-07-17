@@ -58,7 +58,7 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 			}
 	}
 #else
-	ofLogWarning("ofGLUtils") << "ofGetGlInternalFormat(): 16bit textures not supported in OpenGL ES";
+	ofLogWarning("ofGLUtils") << "ofGetGlInternalFormat(): 16bit textures are not supported in OpenGL ES";
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;

@@ -60,7 +60,7 @@ static void release(GLuint id){
 			getIds().erase(id);
 		}
 	}else{
-		ofLogWarning("ofVbo") << "release(): something's wrong here, releasing VBO unknown id " << id;
+		ofLogWarning("ofVbo") << "release(): something's wrong here, releasing unkown vertex buffer object id " << id;
 		glDeleteBuffers(1, &id);
 	}
 }
@@ -84,7 +84,7 @@ static void releaseVAO(GLuint id){
 			getVAOIds().erase(id);
 		}
 	}else{
-		ofLogWarning("ofVbo") << "releaseVAO(): something's wrong here, releasing unknown VAO id " << id;
+		ofLogWarning("ofVbo") << "releaseVAO(): something's wrong here, releasing unknown vertex array object id " << id;
 		glDeleteVertexArrays(1, &id);
 	}
 }
@@ -316,7 +316,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 #endif
 
 	if(vert0x == NULL) {
-		ofLogWarning("ofVbo") << "setVertexData(): bad data, ignoring NULL vertex float pointer";
+		ofLogWarning("ofVbo") << "setVertexData(): bad data, ignoring NULL vertex float *";
 		return;	
 	}
 	if(vertId==0) {
@@ -349,7 +349,7 @@ void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
 //--------------------------------------------------------------
 void ofVbo::setColorData(const float * color0r, int total, int usage, int stride) {
 	if(color0r == NULL) {
-		ofLogWarning("ofVbo") << "setColorData(): bad data, ignoring NULL color float";
+		ofLogWarning("ofVbo") << "setColorData(): bad data, ignoring NULL color float *";
 		return;	
 	}
 	if(colorId==0) {
@@ -373,7 +373,7 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 //--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
 	if(normal0x == NULL) {
-		ofLogWarning("ofVbo") << "setNormalData(): bad data, ignoring NULL normal float pointer";
+		ofLogWarning("ofVbo") << "setNormalData(): bad data, ignoring NULL normal float *";
 		return;	
 	}
 	if(normalId==0) {
@@ -397,7 +397,7 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
 	if(texCoord0x == NULL) {
-		ofLogWarning("ofVbo") << "setTexCoordData(): bad data, ignoring NULL tex coord float pointer";
+		ofLogWarning("ofVbo") << "setTexCoordData(): bad data, ignoring NULL tex coord float *";
 		return;	
 	}
 	if(texCoordId==0) {
@@ -417,7 +417,7 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int 
 //--------------------------------------------------------------
 void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 	if(indices == NULL){
-		ofLogWarning("ofVbo") << "setIndexData(): bad data, ignoring NULL indices float pointer";
+		ofLogWarning("ofVbo") << "setIndexData(): bad data, ignoring NULL indices float *";
 		return;
 	}
 	if(indexId==0){
@@ -436,7 +436,7 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
 	if(attrib0x == NULL){
-		ofLogWarning("ofVbo") << "setAttributeData(): bad data, ignoring NULL attribute float pointer";
+		ofLogWarning("ofVbo") << "setAttributeData(): bad data, ignoring NULL attribute float *";
 		return;
 	}
 

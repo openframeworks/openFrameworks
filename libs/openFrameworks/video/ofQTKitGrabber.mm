@@ -965,3 +965,7 @@ bool ofQTKitGrabber::confirmInit(){
 	}
 	return isInited;
 }
+
+void ofQTKitGrabber::setDesiredFrameRate(int framerate){
+	ofLogWarning("ofQTKitGrabber") << "setDesiredFrameRate(): cannot set framerate for QTKitGrabber";
+}

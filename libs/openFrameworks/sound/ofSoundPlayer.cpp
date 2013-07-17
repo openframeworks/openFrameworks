@@ -42,7 +42,7 @@ float * ofSoundGetSpectrum(int nBands){
 	#elif defined(OF_SOUND_PLAYER_OPENAL)
 		return ofOpenALSoundPlayer::getSystemSpectrum(nBands);
 	#else
-		ofLogError("ofSoundPlayer") << "ofSoundGetSpectrum(): returning NULL, no implemented?";
+		ofLogError("ofSoundPlayer") << "ofSoundGetSpectrum(): not implemented, returning NULL";
 		return NULL;
 	#endif
 }

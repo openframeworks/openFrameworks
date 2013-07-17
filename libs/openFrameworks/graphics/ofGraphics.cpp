@@ -620,7 +620,6 @@ void ofSetHexColor(int hexColor){
 	ofSetColor(r,g,b);
 }
 
-
 //----------------------------------------------------------
 
 void ofEnableBlendMode(ofBlendMode blendMode){
