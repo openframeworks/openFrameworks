@@ -252,7 +252,7 @@ void ofMatrixStack::popMatrix(){
 		textureMatrix = textureMatrixStack.top();
 		textureMatrixStack.pop();
 	} else {
-		ofLogWarning() << "ofxGL3Renderer: Empty matrix stack, cannot pop any further.";
+		ofLogWarning("ofMatrixStack") << "popMatrix(): empty matrix stack, cannot pop any further";
 	}
 	updatedRelatedMatrices();
 }
@@ -263,35 +263,45 @@ void ofMatrixStack::clearStacks(){
 		modelViewMatrixStack.pop();
 		tmpCounter++;
 	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on modelView matrix stack. Check if modelview matrix push() and pop() pair up properly.";
-
+	if (tmpCounter > 0 ){
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra modelview matrices on the stack, did you forget to pop somewhere?";
+	}
+	
 	tmpCounter = 0;
 	while (!projectionMatrixStack.empty()){
 		projectionMatrixStack.pop();
 		tmpCounter++;
 	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on projection matrix stack. Check if projection matrix push() and pop() pair up properly.";
+	if (tmpCounter > 0 ){
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra projection matrices on the stack, did you forget to pop somewhere?";
+	}
 
 	tmpCounter = 0;
 	while (!textureMatrixStack.empty()){
 		textureMatrixStack.pop();
 		tmpCounter++;
 	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched matrices on texture matrix stack. Check if texture matrix push() and pop() pair up properly.";
+	if (tmpCounter > 0 ){
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra texture matrices on the stack, did you forget to pop somewhere?";
+	}
 
 	tmpCounter = 0;
 	while (!viewportHistory.empty()){
 		viewportHistory.pop();
 		tmpCounter++;
 	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched viewports on viewport history. Check if pushView() and popView() pair up properly.";
+	if (tmpCounter > 0 ){
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra viewports on the stack, did you forget to popView() somewhere?";
+	}
 
 	tmpCounter = 0;
 	while (!orientationStack.empty()){
 		orientationStack.pop();
 		tmpCounter++;
 	}
-	if (tmpCounter > 0 ) ofLogWarning() << "Found " << tmpCounter << " unmatched orientation on orientation history. Check if pushView() and popView() pair up properly.";
+	if (tmpCounter > 0 ){
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra orientations on the stack, did you forget to popView() somewhere?";
+	}
 }
 
 void ofMatrixStack::translate(float x, float y, float z){

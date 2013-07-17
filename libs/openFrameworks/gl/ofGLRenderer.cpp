@@ -198,7 +198,7 @@ void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, flo
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLRenderer") << "drawing an unallocated texture";
 		}
 	}
 }
@@ -210,7 +210,7 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -222,7 +222,7 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -718,12 +718,11 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 		#ifndef TARGET_OPENGLES
 			glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
 		#else
-			ofLog(OF_LOG_WARNING, "OF_BLENDMODE_SUBTRACT not currently supported on OpenGL/ES");
+			ofLogWarning("ofGLRenderer") << "OF_BLENDMODE_SUBTRACT not currently supported on OpenGL ES";
 		#endif
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			break;
 		}
-
 
 		default:
 			break;

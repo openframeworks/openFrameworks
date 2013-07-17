@@ -109,7 +109,7 @@ void ofSetEscapeQuitsApp(bool bQuitOnEsc){
 }
 
 void exitApp(){
-	ofLog(OF_LOG_VERBOSE,"OF app is being terminated!");
+	ofLogVerbose("ofEvents") << "OF app is being terminated!";
 	OF_EXIT_APP(0);
 }
 

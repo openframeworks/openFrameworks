@@ -474,14 +474,14 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	err = NavCreatePutFileDialog(&options, '.mov', 'Moov', NULL, NULL, &dialog);
 
-	//printf("NavCreatePutFileDialog returned %i\n", err );
+	//ofLogNotice("ofSystemutils") << "ofSytemSaveDialog(): NavCreatePutFileDialog returned " << err;
 
 	err = NavDialogRun(dialog);
-	//printf("NavDialogRun returned %i\n", err );
+	//fLogNotice("ofSystemutils") << "ofSytemSaveDialog(): NavDialogRun returned " << err;
 
 	NavUserAction action;
 	action = NavDialogGetUserAction( dialog );
-	//printf("got action %i\n", action);
+	//fLogNotice("ofSystemutils") << "ofSytemSaveDialog(): got action " << action;
 	if (action == kNavUserActionNone || action == kNavUserActionCancel) {
 
 		return results;
@@ -494,7 +494,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 		return results;
 
 	if ( reply.replacing ) {
-		ofLog(OF_LOG_WARNING, "ofSystemSaveDialog: need to replace");
+		ofLogWarning("ofSystemUtils") << "ofSystemSaveDialog(): replacing dialog";
 	}
 
 	AEKeyword keyword;
@@ -504,7 +504,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	err = AEGetNthPtr(&(reply.selection), 1, typeFSRef, &keyword, &actual_type,
 					  &output_dir, sizeof(output_file), &actual_size);
 
-	//printf("AEGetNthPtr returned %i\n", err );
+	//ofLogNotice("ofSystemUtils") << "ofSystemSaveDialog(): AEGetNthPtr returned " << err;
 
 
 	CFURLRef cfUrl = CFURLCreateFromFSRef( kCFAllocatorDefault, &output_dir );
@@ -532,7 +532,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	results.filePath = finalURL.c_str();
 
-	//printf("url %s\n", finalURL.c_str());
+	//ofLogNotice("ofSystemUtils") << "ofSystemSaveDialog(): url " << finalURL;
 
 	// cleanup dialog
 	NavDialogDispose(dialog);
