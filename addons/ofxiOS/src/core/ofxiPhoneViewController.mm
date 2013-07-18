@@ -65,7 +65,7 @@
     // so now that glView is ready, we rotate it to the pendingInterfaceOrientation.
     
     bReadyToRotate = YES;
-    [self rotateToInterfaceOrientation:pendingInterfaceOrientation animated:YES];
+    [self rotateToInterfaceOrientation:pendingInterfaceOrientation animated:NO];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
