@@ -661,7 +661,7 @@ void ofVbo::bind(){
 				retainVAO(vaoID);
 			}else{
 				supportVAOs = false;
-				ofLogWarning("ofVbo") << "bind(): error allocating VAO, disabling VAO support";
+				ofLogVerbose("ofVbo") << "bind(): error allocating VAO, disabling VAO support";
 			}
 		}
 
