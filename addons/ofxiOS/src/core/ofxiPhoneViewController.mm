@@ -246,10 +246,6 @@
     return UIInterfaceOrientationMaskPortrait; // default.
 }
 
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return currentInterfaceOrientation;
-}
-
 - (BOOL)shouldAutorotate {
     return YES;
 }
