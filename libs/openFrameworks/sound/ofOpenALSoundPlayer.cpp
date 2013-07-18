@@ -929,7 +929,7 @@ void ofOpenALSoundPlayer::runWindow(vector<float> & signal){
 
 // ----------------------------------------------------------------------------
 // from http://devmaster.net/posts/2893/openal-lesson-6-advanced-loading-and-error-handles
-static string getALErrorString(int error) {
+string ofOpenALSoundPlayer::getALErrorString(int error) {
 	switch(error) {
         case AL_NO_ERROR:
             return "AL_NO_ERROR";
@@ -943,11 +943,13 @@ static string getALErrorString(int error) {
             return "AL_INVALID_OPERATION";
         case AL_OUT_OF_MEMORY:
             return "AL_OUT_OF_MEMORY";
+        default:
+        	return "AL_UNKNOWN_ERROR";
     };
 }
 
 #ifdef OF_USING_MPG123
-static string getMpg123EncodingString(int encoding) {
+ofOpenALSoundPlayer::string getMpg123EncodingString(int encoding) {
 	switch(encoding) {
 		case MPG123_ENC_16:
 			return "MPG123_ENC_16";
