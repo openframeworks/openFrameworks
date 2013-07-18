@@ -176,7 +176,7 @@ endif
 ################################################################################
 
 ifeq ($(findstring ABI,$(MAKECMDGOALS)),ABI)
-    include $(PATH_OF_SHARED_MAKEFILES)/config.project.mk
+    include $(OF_SHARED_MAKEFILES_PATH)/config.project.mk
     -include $(OF_PROJECT_DEPENDENCY_FILES)
 endif
 
@@ -268,37 +268,37 @@ endif
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
-$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PATH_OF_PROJECT_ROOT)/%.m
+$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT_PATH)/%.m
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PATH_OF_PROJECT_ROOT)/%.mm
+$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT_PATH)/%.mm
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PATH_OF_PROJECT_ROOT)/%.cpp
+$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT_PATH)/%.cpp
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PATH_OF_PROJECT_ROOT)/%.cxx
+$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT_PATH)/%.cxx
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
-$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PATH_OF_PROJECT_ROOT)/%.cc
+$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT_PATH)/%.cc
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 	
-$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PATH_OF_PROJECT_ROOT)/%.c
+$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT_PATH)/%.c
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 	
-$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PATH_OF_PROJECT_ROOT)/%.S
+$(PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT_PATH)/%.S
 	@echo "Compiling" $<
 	mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<

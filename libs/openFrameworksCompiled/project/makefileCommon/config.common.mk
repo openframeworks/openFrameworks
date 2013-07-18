@@ -162,11 +162,11 @@ endif
 ################################################################################
 
 ################################################################################
-# PATH_OF_ADDONS (conditionally set, immediately assigned)
+# OF_ADDONS_PATH (conditionally set, immediately assigned)
 #   The standard location for openFrameworks addons.
 ################################################################################
-ifndef PATH_OF_ADDONS
-    PATH_OF_ADDONS := $(PATH_OF_ROOT)/addons
+ifndef OF_ADDONS_PATH
+    OF_ADDONS_PATH := $(PATH_OF_ROOT)/addons
 endif
 
 ################################################################################
@@ -256,7 +256,7 @@ endif
 ################################################################################
 ifdef MAKEFILE_DEBUG
     $(info =================config.shared.mk PATHS=============================)
-    $(info PATH_OF_ADDONS=$(PATH_OF_ADDONS))
+    $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
     $(info PATH_OF_EXAMPLES=$(PATH_OF_EXAMPLES))
     $(info PATH_OF_APPS=$(PATH_OF_APPS))
     $(info PATH_OF_LIBS=$(PATH_OF_LIBS))

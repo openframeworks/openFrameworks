@@ -149,7 +149,7 @@ define FUNC_INSTALL_ADDON
     $(warning --> Did the $(F) file list it?)                                  \
     $(eval F:=$(PATH_OF_ADDONS)/THE_DEPENDENT_ADDON/addon_config.mk)           \
     $(warning --> Did another addon list it as a dependency in its $(F) file?) \
-    $(eval F:=$(PATH_OF_PROJECT_ROOT)/addons.make)                                \
+    $(eval F:=$(PROJECT_ROOT_PATH)/addons.make)                                \
     $(warning --> Your project's $(F) file list it?)                           \
     $(warning )                                                                \
     $(error You must install [$(THIS_ADDON)] in your                           \
@@ -622,11 +622,11 @@ ifdef PLATFORM_REQUIRED_ADDONS
     B_PROCESS_ADDONS = $(TRUE)
 endif
 
-ifeq ($(findstring addons.make,$(wildcard $(PATH_OF_PROJECT_ROOT)/*.make)),addons.make)
+ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT_PATH)/*.make)),addons.make)
     B_PROCESS_ADDONS = $(TRUE)
 endif
 
-$(info 10238012983012983012983120983190238 $(B_PROCESS_ADDONS) $(PATH_OF_PROJECT_ROOT))
+$(info 10238012983012983012983120983190238 $(B_PROCESS_ADDONS) $(PROJECT_ROOT_PATH))
 
 ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
@@ -650,7 +650,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 # Steps:
 #   1. Use cat to dump the contents of the addons.make file
 #
-#       cat $(PATH_OF_PROJECT_ROOT)/addons.make 2> /dev/null \ ...
+#       cat $(PROJECT_ROOT_PATH)/addons.make 2> /dev/null \ ...
 #
 #   2. Use sed to strip out all comments beginning with #
 #       (NOTE: to escape $ in make, you must use \#)
@@ -669,7 +669,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
     ALL_REQUESTED_PROJECT_ADDONS:=                                             \
         $(shell                                                                \
-            cat $(PATH_OF_PROJECT_ROOT)/addons.make 2> /dev/null               \
+            cat $(PROJECT_ROOT_PATH)/addons.make 2> /dev/null               \
             | sed 's/[ ]*\#.*//g'                                              \
             | sed '/^$$/d'                                                     \
         )

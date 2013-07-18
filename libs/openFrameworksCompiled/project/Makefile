@@ -50,11 +50,11 @@ endif
 ################################################################################
 
 # Call the legacy support file (See file for description)
-# include $(PATH_OF_SHARED_MAKEFILES)/config.legacy.mk
+# include $(OF_SHARED_MAKEFILES_PATH)/config.legacy.mk
 
 
 ################################################################################
-# PATH_OF_SHARED_MAKEFILES
+# OF_SHARED_MAKEFILES_PATH
 #   A path pointing to the location of all of the shared makefiles.  These 
 #   files are usually located here:
 #  
@@ -65,13 +65,13 @@ endif
 #
 ################################################################################
 
-PATH_OF_SHARED_MAKEFILES:=./makefileCommon
+OF_SHARED_MAKEFILES_PATH:=./makefileCommon
 
 # Call the common configuration file (See file for description)
-include $(PATH_OF_SHARED_MAKEFILES)/config.common.mk
+include $(OF_SHARED_MAKEFILES_PATH)/config.common.mk
 
 # Call the core configuration file (See file for description)
-include $(PATH_OF_SHARED_MAKEFILES)/config.core.mk
+include $(OF_SHARED_MAKEFILES_PATH)/config.core.mk
 
 # Call the core compilation file (See file for description)
-include $(PATH_OF_SHARED_MAKEFILES)/compile.core.mk
+include $(OF_SHARED_MAKEFILES_PATH)/compile.core.mk
