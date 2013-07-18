@@ -89,10 +89,15 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofNotifySetup();
 
-    ofLogNotice()<<	"***\n***\n*** ofAppNoWindow running a headless openFrameworks app\n"
-			"***\n*** keyboard input works here\n"
-			"***\n*** press Esc or Ctrl-C to quit\n"
-			"***\n";
+    ofLogNotice("ofAppNoWindow")
+		<< "***" << endl
+		<< "***" << endl
+		<< "*** running a headless (no window) app" << endl
+		<< "***" << endl
+		<< "*** keyboard input works here" << endl
+		<< "***"<< endl
+		<< "*** press Esc or Ctrl-C to quit" << endl
+		<< "***" << endl;
 	while (true)
 	{
         /// listen for escape
@@ -111,7 +116,7 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			}
 			else if ( key == /* ctrl-c */ 3 )
 			{
-				ofLogNotice()<<	"Ctrl-C pressed\n";
+				ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
 				OF_EXIT_APP(0);
 			}
 			else
@@ -141,7 +146,7 @@ void ofAppNoWindow::exitApp(){
 //		ofNotifyEvent( ofEvents.exit, voidEventArgs );
 //	#endif
 
-	ofLog(OF_LOG_VERBOSE,"No Window OF app is being terminated!");
+	ofLogVerbose("ofAppNoWindow") << "terminating headless (no window) app!";
 
 
 #if defined TARGET_OSX || defined TARGET_LINUX

@@ -79,7 +79,7 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 			break;
 
 		default:
-			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized returning glFormat as GL_RGBA";
+			ofLogError("ofGLUtils") << "ofGetGlFormatAndType(): internal format not recognized, returning GL_RGBA";
 			return GL_RGBA;
 			break;
 	}
@@ -154,9 +154,11 @@ bool ofIsGLProgrammableRenderer();
 	#ifdef GL_DEPTH_COMPONENT32_OES
         #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
     #endif
-	#ifdef TARGET_OF_IPHONE
-    	#define GL_UNSIGNED_INT                                 GL_UNSIGNED_INT_OES
-	#endif
+    #ifdef TARGET_OF_IPHONE
+        #ifndef GL_UNSIGNED_INT
+            #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES
+        #endif
+    #endif
 #endif
 
 #endif /* OFGLUTILS_H_ */

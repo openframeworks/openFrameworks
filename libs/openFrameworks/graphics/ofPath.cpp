@@ -449,7 +449,7 @@ ofPolyline & ofPath::lastPolyline(){
 //----------------------------------------------------------
 vector<ofPath::Command> & ofPath::getCommands(){
 	if(mode==POLYLINES){
-		ofLog(OF_LOG_WARNING,"trying to get path commands from shape with polylines only");
+		ofLogWarning("ofPath") << "getCommands(): trying to get path commands from shape with polylines only";
 	}
 	return commands;
 }
@@ -457,7 +457,7 @@ vector<ofPath::Command> & ofPath::getCommands(){
 //----------------------------------------------------------
 const vector<ofPath::Command> & ofPath::getCommands() const{
 	if(mode==POLYLINES){
-		ofLog(OF_LOG_WARNING,"trying to get path commands from shape with polylines only");
+		ofLogWarning("ofPath") << "getCommands(): trying to get path commands from shape with polylines only";
 	}
 	return commands;
 }

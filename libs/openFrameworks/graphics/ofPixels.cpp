@@ -75,13 +75,13 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, int channels){
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, int channels){
 	allocate(w, h, channels);
 	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type){
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, ofImageType type){
 	allocate(w,h,type);
 	switch(type){
 	case OF_IMAGE_GRAYSCALE:
@@ -94,13 +94,13 @@ void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int 
 		setFromPixels(newPixels,w,h,4);
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+		ofLogError("ofPixels") << "setFromPixels(): image type " << type << " not supported, not copying";
 		break;
 	}
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, int h, int _channels){
+void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, int w, int h, int _channels){
 	clear();
 	channels = _channels;
 	width= w;
@@ -190,7 +190,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 			imgType = OF_IMAGE_GRAYSCALE;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"ofPixels: format not supported, not allocating");
+			ofLogError("ofPixels") << "allocate(): unknown pixel format, not allocating";
 			return;
 			break;
 
@@ -211,7 +211,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofImageType type){
 		allocate(w,h,4);
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+		ofLogError("ofPixels") << "allocate(): unknown image type, not allocating";
 		break;
 
 	}
@@ -789,7 +789,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			//----------------------------------------
 		case OF_INTERPOLATE_BILINEAR:
 			// not implemented yet
-			ofLogError(" Bilinear resize not implemented ");
+			ofLogError("ofPixels") << "resizeTo(): bilinear resize not implemented, not resizing";
 			break;
 
 			//----------------------------------------

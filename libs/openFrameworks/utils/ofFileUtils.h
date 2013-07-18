@@ -176,7 +176,7 @@ public:
 	
 	// this can be used to read the whole stream into an output stream. ie:
 	// it's equivalent to rdbuf() just here to make it easier to use
-	// cout << file.getFileBuffer() << endl;
+	// ofLogNotice() << file.getFileBuffer();
 	// write_file << file.getFileBuffer();
 	filebuf * getFileBuffer() const;
 	
