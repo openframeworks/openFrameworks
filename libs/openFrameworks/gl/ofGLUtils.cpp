@@ -90,7 +90,7 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 			}
 	}
 #else
-	ofLogWarning("ofGLUtils") << << "ofGetGlInternalFormat(): float textures not supported in OpenGL ES";
+	ofLogWarning("ofGLUtils") << "ofGetGlInternalFormat(): float textures not supported in OpenGL ES";
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
