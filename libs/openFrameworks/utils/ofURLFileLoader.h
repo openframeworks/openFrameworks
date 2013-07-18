@@ -12,7 +12,9 @@
 
 class ofHttpRequest{
 public:
-	ofHttpRequest(){};
+	ofHttpRequest()
+	:saveTo(false)
+	,id(nextID++){};
 
 	ofHttpRequest(string url,string name,bool saveTo=false)
 	:url(url)
