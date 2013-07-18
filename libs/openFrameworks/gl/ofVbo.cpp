@@ -60,7 +60,7 @@ static void release(GLuint id){
 			getIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVbo: releasing id not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofVbo") << "release(): something's wrong here, releasing unkown vertex buffer object id " << id;
 		glDeleteBuffers(1, &id);
 	}
 }
@@ -84,7 +84,7 @@ static void releaseVAO(GLuint id){
 			getVAOIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVbo: releasing VAO id not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofVbo") << "releaseVAO(): something's wrong here, releasing unknown vertex array object id " << id;
 		glDeleteVertexArrays(1, &id);
 	}
 }
@@ -110,8 +110,6 @@ void ofRegenerateAllVbos(){
 	}
 }
 #endif
-
-
 
 //--------------------------------------------------------------
 ofVbo::ofVbo(){
@@ -253,7 +251,7 @@ void ofVbo::setMesh(const ofMesh & mesh, int usage){
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals){
 	if(mesh.getVertices().empty()){
-		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
+		ofLogWarning("ofVbo") << "setMesh(): ignoring mesh with no vertices";
 		return;
 	}
 	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
@@ -297,7 +295,7 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride) {
 
 #ifdef TARGET_OPENGLES
-	if(vaosEnabled && !vaoChecked){
+	if(!vaoChecked){
 		if(ofGetGLProgrammableRenderer()){
 			glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
 			glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
@@ -318,7 +316,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 #endif
 
 	if(vert0x == NULL) {
-		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
+		ofLogWarning("ofVbo") << "setVertexData(): bad data, ignoring NULL vertex float *";
 		return;	
 	}
 	if(vertId==0) {
@@ -351,7 +349,7 @@ void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
 //--------------------------------------------------------------
 void ofVbo::setColorData(const float * color0r, int total, int usage, int stride) {
 	if(color0r == NULL) {
-		ofLog(OF_LOG_WARNING,"ofVbo: bad color data!\n");
+		ofLogWarning("ofVbo") << "setColorData(): bad data, ignoring NULL color float *";
 		return;	
 	}
 	if(colorId==0) {
@@ -375,7 +373,7 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 //--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
 	if(normal0x == NULL) {
-		ofLog(OF_LOG_WARNING,"ofVbo: bad normal data!\n");
+		ofLogWarning("ofVbo") << "setNormalData(): bad data, ignoring NULL normal float *";
 		return;	
 	}
 	if(normalId==0) {
@@ -399,7 +397,7 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
 	if(texCoord0x == NULL) {
-		ofLog(OF_LOG_WARNING,"ofVbo: bad texCoord data!\n");
+		ofLogWarning("ofVbo") << "setTexCoordData(): bad data, ignoring NULL tex coord float *";
 		return;	
 	}
 	if(texCoordId==0) {
@@ -419,7 +417,7 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int 
 //--------------------------------------------------------------
 void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 	if(indices == NULL){
-		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
+		ofLogWarning("ofVbo") << "setIndexData(): bad data, ignoring NULL indices float *";
 		return;
 	}
 	if(indexId==0){
@@ -438,7 +436,7 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
 	if(attrib0x == NULL){
-		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
+		ofLogWarning("ofVbo") << "setAttributeData(): bad data, ignoring NULL attribute float *";
 		return;
 	}
 
@@ -663,7 +661,7 @@ void ofVbo::bind(){
 				retainVAO(vaoID);
 			}else{
 				supportVAOs = false;
-				ofLogVerbose() << "error allocating VAO, disabling VAO support";
+				ofLogWarning("ofVbo") << "bind(): error allocating VAO, disabling VAO support";
 			}
 		}
 
@@ -838,7 +836,7 @@ void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) {
 		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
 		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning() << "Hardware instancing is not supported on OPENGL ES < 3.0";
+		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
 		// glDrawArraysInstanced(drawMode, first, total, primCount);
 #else
 		glDrawArraysInstanced(drawMode, first, total, primCount);
@@ -859,7 +857,7 @@ void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) {
 			// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
 			// unfortunately there is currently no easy way within oF to query the current OpenGL version.
 			// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-			ofLogWarning() << "Hardware instancing is not supported on OPENGL ES < 3.0";
+			ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
 			// glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
 #else
 			glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);

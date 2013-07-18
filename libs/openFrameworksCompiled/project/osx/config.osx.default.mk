@@ -25,11 +25,9 @@
 #   core source code.
 ##########################################################################################
 
-PLATFORM_PROJECT_DEBUG_BIN_NAME=bin/$(APPNAME)_debug.app
-PLATFORM_PROJECT_DEBUG_TARGET=bin/$(APPNAME)_debug
-PLATFORM_PROJECT_RELEASE_BIN_NAME=bin/$(APPNAME).app
-PLATFORM_PROJECT_RELEASE_TARGET=bin/$(APPNAME)
-PLATFORM_RUN_COMMAND = open
+PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug
+PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
+PLATFORM_RUN_COMMAND = cd bin/$(BIN_NAME).app/Contents/MacOS/;./$(BIN_NAME)
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -113,7 +111,7 @@ endif
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
-PLATFORM_CFLAGS += -Os
+#PLATFORM_CFLAGS += -Os
 
 PLATFORM_CFLAGS += -arch i386
 
@@ -169,7 +167,7 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE =
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -346,52 +344,51 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 
 
 afterplatform: $(TARGET_NAME)
-	@rm -rf $(BIN_NAME)
-	@mkdir -p $(BIN_NAME)
-	@mkdir -p $(BIN_NAME)/Contents
-	@mkdir -p $(BIN_NAME)/Contents/MacOS
-	@mkdir -p $(BIN_NAME)/Contents/Resources
+	@rm -rf bin/$(BIN_NAME).app
+	@mkdir -p bin/$(BIN_NAME).app
+	@mkdir -p bin/$(BIN_NAME).app/Contents
+	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
+	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 	
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > $(BIN_NAME)/Contents/Info.plist
-	@echo '!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '<plist version="1.0">' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '<dict>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>CFBundleGetInfoString</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>CFBundleExecutable</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>CFBundleIdentifier</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <string>com.your-company-name.www</string>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>CFBundleName</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> $(BIN_NAME)/Contents/Info.plist
-	#@echo '  <key>CFBundleIconFile</key>' >> $(BIN_NAME)/Contents/Info.plist
-	#@echo '  <string>foo.icns</string>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>CFBundleShortVersionString</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <string>0.01</string>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <string>6.0</string>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>CFBundlePackageType</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <string>APPL</string>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>IFMajorVersion</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <integer>0</integer>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <key>IFMinorVersion</key>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '  <integer>1</integer>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '</dict>' >> $(BIN_NAME)/Contents/Info.plist
-	@echo '</plist>' >> $(BIN_NAME)/Contents/Info.plist
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>bin/$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>bin/$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>com.your-company-name.www</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>bin/$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	
 	@echo TARGET=$(TARGET)
 	
 	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib $(TARGET)
 	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
 	
-	@mv $(TARGET) $(BIN_NAME)/Contents/MacOS
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/MacOS
+	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
+	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
 	
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
 	@echo
-	@echo "     open $(BIN_NAME)"
+	@echo "     cd bin/$(BIN_NAME).app/Contents/MacOS/"
+	@echo "     ./$(BIN_NAME)"
 	@echo "     "
 	@echo "     - or -"
 	@echo "     "

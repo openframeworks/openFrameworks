@@ -222,7 +222,7 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) {
         }
         normalsMesh.draw();
     } else {
-        ofLog(OF_LOG_WARNING, "of3dPrimitive :: drawNormals()") << " : mesh normals are disabled";
+        ofLogWarning("of3dPrimitive") << "drawNormals(): mesh normals are disabled";
     }
     
     
@@ -603,7 +603,7 @@ void ofCylinderPrimitive::setMode( ofPrimitiveMode mode ) {
 //--------------------------------------------------------------
 void ofCylinderPrimitive::setTopCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "setTopCapColor(): must be in triangle strip mode";
     }
     getMesh().setColorForIndices( strides[0][0], strides[0][0]+strides[0][1], color );
 }
@@ -611,7 +611,7 @@ void ofCylinderPrimitive::setTopCapColor( ofColor color ) {
 //--------------------------------------------------------------
 void ofCylinderPrimitive::setCylinderColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "setCylinderMode(): must be in triangle strip mode";
     }
     getMesh().setColorForIndices( strides[1][0], strides[1][0]+strides[1][1], color );
 }
@@ -619,7 +619,7 @@ void ofCylinderPrimitive::setCylinderColor( ofColor color ) {
 //--------------------------------------------------------------
 void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "setBottomCapColor(): must be in triangle strip mode";
     }
     getMesh().setColorForIndices( strides[2][0], strides[2][0]+strides[2][1], color );
 }
@@ -632,7 +632,7 @@ vector<ofIndexType> ofCylinderPrimitive::getTopCapIndices() {
 //--------------------------------------------------------------
 ofMesh ofCylinderPrimitive::getTopCapMesh() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "getTopCapMesh(): must be in triangle strip mode";
         return ofMesh();
     }
     return getMesh().getMeshForIndices( strides[0][0], strides[0][0]+strides[0][1],
@@ -642,7 +642,7 @@ ofMesh ofCylinderPrimitive::getTopCapMesh() {
 //--------------------------------------------------------------
 vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "getCylinderIndices(): must be in triangle strip mode";
     }
     return of3dPrimitive::getIndices( strides[1][0], strides[1][0] + strides[1][1] );
 }
@@ -650,7 +650,7 @@ vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() {
 //--------------------------------------------------------------
 ofMesh ofCylinderPrimitive::getCylinderMesh() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "setCylinderMesh(): must be in triangle strip mode";
         return ofMesh();
     }
     return getMesh().getMeshForIndices( strides[1][0], strides[1][0]+strides[1][1],
@@ -660,7 +660,7 @@ ofMesh ofCylinderPrimitive::getCylinderMesh() {
 //--------------------------------------------------------------
 vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "getBottomCapIndices(): must be in triangle strip mode";
     }
     return of3dPrimitive::getIndices( strides[2][0], strides[2][0] + strides[2][1] );
 }
@@ -668,7 +668,7 @@ vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() {
 //--------------------------------------------------------------
 ofMesh ofCylinderPrimitive::getBottomCapMesh() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofCylinderPrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofCylinderPrimitive") << "getBottomCapMesh(): must be in triangle strip mode";
         return ofMesh();
     }
     return getMesh().getMeshForIndices( strides[2][0], strides[2][0]+strides[2][1],
@@ -812,7 +812,7 @@ void ofConePrimitive::setHeight(float _height) {
 //--------------------------------------------------------------
 void ofConePrimitive::setTopColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofConePrimitive") << "setTopColor(): must be in triangle strip mode";
     }
     getMesh().setColorForIndices( strides[0][0], strides[0][0]+strides[0][1], color );
 }
@@ -820,7 +820,7 @@ void ofConePrimitive::setTopColor( ofColor color ) {
 //--------------------------------------------------------------
 void ofConePrimitive::setCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofConePrimitive") << "setCapColor(): must be in triangle strip mode";
     }
     getMesh().setColorForIndices( strides[1][0], strides[1][0]+strides[1][1], color );
 }
@@ -828,7 +828,7 @@ void ofConePrimitive::setCapColor( ofColor color ) {
 //--------------------------------------------------------------
 vector<ofIndexType> ofConePrimitive::getConeIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofConePrimitive") << "getConeIndices(): must be in triangle strip mode";
     }
     return of3dPrimitive::getIndices(strides[0][0], strides[0][0]+strides[0][1]);
 }
@@ -841,7 +841,7 @@ ofMesh ofConePrimitive::getConeMesh() {
     int startVertIndex  = vertices[0][0];
     int endVertIndex    = startVertIndex + vertices[0][1];
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofConePrimitive") << "getConeMesh(): must be in triangle strip mode";
         return ofMesh();
     }
     return getMesh().getMeshForIndices( startIndex, endIndex, startVertIndex, endVertIndex );
@@ -850,7 +850,7 @@ ofMesh ofConePrimitive::getConeMesh() {
 //--------------------------------------------------------------
 vector<ofIndexType> ofConePrimitive::getCapIndices() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofConePrimitive") << "getCapIndices(): must be in triangle strip mode";
     }
     return of3dPrimitive::getIndices( strides[1][0], strides[1][0] + strides[1][1] );
 }
@@ -863,7 +863,7 @@ ofMesh ofConePrimitive::getCapMesh() {
     int startVertIndex  = vertices[1][0];
     int endVertIndex    = startVertIndex + vertices[1][1];
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
-        ofLog(OF_LOG_WARNING) << "ofConePrimitive : must be in triangle strip mode" << endl;
+        ofLogWarning("ofConePrimitive") << "getCapMesh(): must be in triangle strip mode";
         return ofMesh();
     }
     return getMesh().getMeshForIndices( startIndex, endIndex, startVertIndex, endVertIndex );
@@ -1011,7 +1011,7 @@ void ofBoxPrimitive::resizeToTexture( ofTexture& inTexture ) {
 vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) {
     
     if(sideIndex < 0 || sideIndex >= SIDES_TOTAL) {
-        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getSideIndices : faceIndex out of bounds, returning SIDE_FRONT ";
+        ofLogWarning("ofBoxPrimitive") << "getSideIndices(): faceIndex out of bounds, returning SIDE_FRONT";
         sideIndex = SIDE_FRONT;
     }
     
@@ -1022,7 +1022,7 @@ vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) {
 ofMesh ofBoxPrimitive::getSideMesh( int sideIndex ) {
     
     if(sideIndex < 0 || sideIndex > SIDES_TOTAL) {
-        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: getSideMesh : faceIndex out of bounds, using SIDE_FRONT ";
+        ofLogWarning("ofBoxPrimitive") << "getSideMesh(): faceIndex out of bounds, using SIDE_FRONT";
         sideIndex = SIDE_FRONT;
     }
     int startIndex  = strides[sideIndex][0];
@@ -1069,7 +1069,7 @@ void ofBoxPrimitive::setMode( ofPrimitiveMode mode ) {
 //--------------------------------------------------------------
 void ofBoxPrimitive::setSideColor( int sideIndex, ofColor color ) {
     if(sideIndex < 0 || sideIndex >= SIDES_TOTAL) {
-        ofLog(OF_LOG_WARNING) << "ofBoxPrimitive :: setSideColor : sideIndex out of bounds, setting SIDE_FRONT ";
+        ofLogWarning("ofBoxPrimitive") << "setSideColor(): sideIndex out of bounds, setting SIDE_FRONT";
         sideIndex = SIDE_FRONT;
     }
     getMesh().setColorForIndices( strides[sideIndex][0], strides[sideIndex][0]+strides[sideIndex][1], color );

@@ -100,7 +100,7 @@ static void release(ofLight & light){
 			getIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofLight: releasing id not found, this shouldn't be happening releasing anyway");
+		ofLogWarning("ofLight") << "release(): something's wrong here, releasing unknown light id " << id;
 		lastRef=true;
 	}
 	if(lastRef){
@@ -189,7 +189,7 @@ void ofLight::setup() {
 			}
 		}
 		if( !bLightFound ){
-			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
+			ofLogError("ofLight") << "setup(): couldn't get active GL light, maximum number of "<< OF_MAX_LIGHTS << " reached";
 		}
         if(bLightFound) {
             // run this the first time, since it was not found before //
@@ -270,7 +270,7 @@ void ofLight::setSpotlightCutOff( float spotCutOff ) {
 //----------------------------------------
 float ofLight::getSpotlightCutOff() {
     if(!getIsSpotlight()) {
-        ofLog(OF_LOG_WARNING, "ofLight :: getSpotlightCutOff : this light is not a spot light");
+        ofLogWarning("ofLight") << "getSpotlightCutOff(): light " << glIndex << " is not a spot light";
     }
     return spotCutOff;
 }
@@ -284,7 +284,7 @@ void ofLight::setSpotConcentration( float exponent ) {
 //----------------------------------------
 float ofLight::getSpotConcentration() {
     if(!getIsSpotlight()) {
-        ofLog(OF_LOG_WARNING, "ofLight :: getSpotConcentration : this light is not a spot light");
+        ofLogWarning("ofLight") << "getSpotConcentration(): light " << glIndex << " is not a spot light";
     }
     return exponent;
 }
