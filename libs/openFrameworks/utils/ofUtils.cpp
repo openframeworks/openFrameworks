@@ -279,6 +279,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 		return path;
 	
 	// if our Current Working Directory has changed (e.g. file open dialog)
+#ifndef TARGET_ANDROID
 	if (defaultWorkingDirectory().toString() != getWorkingDir().toString()) {
 		// change our cwd back to where it was on app load
 		int ret = chdir(defaultWorkingDirectory().toString().c_str());
@@ -286,6 +287,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory().toString();
 		}
 	}
+#endif
 	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 	
 	Poco::Path const  & dataPath(dataPathRoot());
