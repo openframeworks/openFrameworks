@@ -21,15 +21,17 @@ public:
 
 	void setUpdateOnReleaseOnly(bool bUpdateOnReleaseOnly);
 
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
+
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
 		value.addListener(listener,method);
 	}
 
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
 		value.removeListener(listener,method);
 	}
+
 
 
 	double operator=(Type v);
