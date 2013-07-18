@@ -498,15 +498,42 @@ void ofSetPixelStorei(int w, int bpc, int numChannels){
     }
 }
 
-bool ofCheckGLExtension(string searchName){
-#ifdef TARGET_OPENGLES
+vector<string> ofGLSupportedExtensions(){
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
-	vector<string> extensionsList = ofSplitString(extensions," ");
+	return ofSplitString(extensions," ");
+}
+
+bool ofGLCheckExtension(string searchName){
+#ifdef TARGET_OPENGLES
+	vector<string> extensionsList = ofGLSupportedExtensions();
 	set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 	return extensionsSet.find(searchName)!=extensionsSet.end();
 #else
 	return glewGetExtension(searchName.c_str());
+#endif
+}
+
+bool ofGLSupportsNPOTTextures(){
+#ifndef TARGET_OPENGLES
+	return GL_ARB_texture_rectangle;
+#else
+	static bool npotChecked = false;
+	static bool npotSupported = false;
+	if(!npotChecked){
+		vector<string> extensionsList = ofGLSupportedExtensions();
+		set<string> extensionsSet;
+		extensionsSet.insert(extensionsList.begin(),extensionsList.end());
+
+		npotSupported = extensionsSet.find("GL_OES_texture_npot")!=extensionsSet.end() ||
+				extensionsSet.find("APPLE_texture_2D_limited_npot")!=extensionsSet.end() ||
+				extensionsSet.find("GL_NV_texture_npot_2D_mipmap")!=extensionsSet.end() ||
+				extensionsSet.find("GL_IMG_texture_npot")!=extensionsSet.end() ||
+				extensionsSet.find("GL_ARB_texture_non_power_of_two")!=extensionsSet.end();
+		npotChecked = true;
+	}
+
+	return npotSupported;
 #endif
 }
 
