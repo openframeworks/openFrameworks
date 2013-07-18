@@ -34,7 +34,7 @@ void ofGLReadyCallback();
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
-	ofLog(OF_LOG_VERBOSE,"creating glfw window");
+	ofLogVerbose("ofAppGLFWWindow") << "creating GLFW window";
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
@@ -126,11 +126,11 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 
 	if(!glfwInit( )){
-		ofLog(OF_LOG_ERROR,"cannot init GLFW");
+		ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
 		return;
 	}
 
-//	printf("WINDOW MODE IS %i", screenMode);
+//	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
 	int requestedMode = screenMode;
 
@@ -164,7 +164,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		if(count>0){
 			windowP = glfwCreateWindow(w, h, "", monitors[0], NULL);
 		}else{
-			ofLogError() << "can't find any monitor";
+			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
 			return;
 		}
 	}else{
@@ -174,7 +174,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}
     if(!windowP) {
-        ofLogError() << "error creating GLFW window";
+        ofLogError("ofAppGLFWWindow") << "couldn't create window";
         return;
     }
 
@@ -811,7 +811,7 @@ ofOrientation ofAppGLFWWindow::getOrientation(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::exitApp(){
-	ofLog(OF_LOG_VERBOSE,"GLFW app is being terminated!");
+	ofLogVerbose("ofAppGLFWWindow") << "terminating GLFW app!";
 
 	// Terminate GLFW
 	glfwTerminate();
@@ -848,7 +848,7 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
-	ofLog(OF_LOG_VERBOSE, "button: %i",button);
+	ofLogVerbose("ofAppGLFWWindow") << "mouse button: " << button;
 
     //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
     if( ofGetKeyPressed(OF_KEY_CTRL) && button == GLFW_MOUSE_BUTTON_LEFT){
@@ -915,7 +915,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods) {
 
-	ofLog(OF_LOG_VERBOSE,"key: %i, state: %i",key,action);
+	ofLogVerbose("ofAppGLFWWindow") << "key: " << key << " state: " << action;
 
 	switch (key) {
 		case GLFW_KEY_ESCAPE:
@@ -1066,7 +1066,8 @@ void ofAppGLFWWindow::listVideoModes(){
 	int numModes;
 	const GLFWvidmode * vidModes = glfwGetVideoModes(NULL, &numModes );
 	for(int i=0; i<numModes; i++){
-		printf("%i x %i %ibits",vidModes[i].width,vidModes[i].height,vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits);
+		ofLogNotice() << vidModes[i].width << " x " << vidModes[i].height
+		<< vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits << "bit";
 	}
 }
 
