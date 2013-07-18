@@ -933,7 +933,7 @@ int ofPolyline::getWrappedIndex(int index) const {
     if(points.empty()) return 0;
     
     if(index < 0) return isClosed() ? (index + points.size()) % points.size() : 0;
-    if(index > points.size()-1) return isClosed() ? index % points.size() : points.size() - 1;
+    if(index > int(points.size())-1) return isClosed() ? index % points.size() : points.size() - 1;
     return index;
 }
 
@@ -993,8 +993,7 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         ofVec3f tangent;
 
         float length = 0;
-        bool bFlipNormal = false;
-        for(int i=0; i<points.size(); i++) {
+        for(int i=0; i<(int)points.size(); i++) {
             lengths[i] = length;
 
             calcData(i, tangent, angle, rotation, normal);

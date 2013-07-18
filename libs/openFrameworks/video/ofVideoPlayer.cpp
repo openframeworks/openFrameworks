@@ -4,9 +4,11 @@
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
-	bUseTexture					= true;
-	playerTex					= NULL;
+	bUseTexture			= true;
+	playerTex			= NULL;
 	internalPixelFormat = OF_PIXELS_RGB;
+	height 				= 0;
+	width 				= 0;
 }
 
 //---------------------------------------------------------------------------

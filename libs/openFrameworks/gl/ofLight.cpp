@@ -155,6 +155,11 @@ ofLight::ofLight(const ofLight & mom){
 	isDirectional	= mom.isDirectional;
 	isSpotlight		= mom.isSpotlight;
 	lightType		= mom.lightType;
+	exponent		= mom.exponent;
+	attenuation_constant = mom.attenuation_constant;
+	spotCutOff 		= mom.spotCutOff;
+	attenuation_linear = mom.attenuation_linear;
+	attenuation_quadratic = mom.attenuation_quadratic;
 }
 
 //----------------------------------------
@@ -172,6 +177,11 @@ ofLight & ofLight::operator=(const ofLight & mom){
 	isDirectional	= mom.isDirectional;
 	isSpotlight		= mom.isSpotlight;
 	lightType		= mom.lightType;
+	exponent		= mom.exponent;
+	attenuation_constant = mom.attenuation_constant;
+	spotCutOff 		= mom.spotCutOff;
+	attenuation_linear = mom.attenuation_linear;
+	attenuation_quadratic = mom.attenuation_quadratic;
 	return *this;
 }
 
