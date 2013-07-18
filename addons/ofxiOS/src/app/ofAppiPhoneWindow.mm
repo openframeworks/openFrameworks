@@ -144,43 +144,31 @@ int	ofAppiPhoneWindow::getWindowMode() {
 
 //----------------------------------------------------------------------------------- orientation.
 void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
+    this->orientation = orientation;
+    
+    UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
+    switch (orientation) {
+        case OF_ORIENTATION_DEFAULT:
+            interfaceOrientation = UIInterfaceOrientationPortrait;
+            break;
+        case OF_ORIENTATION_180:
+            interfaceOrientation = UIInterfaceOrientationPortraitUpsideDown;
+            break;
+        case OF_ORIENTATION_90_RIGHT:
+            interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
+            break;
+        case OF_ORIENTATION_90_LEFT:
+            interfaceOrientation = UIInterfaceOrientationLandscapeRight;
+            break;
+    }
+    
     if(bHardwareOrientation == true) {
         ofxiPhoneAppDelegate * appDelegate = (ofxiPhoneAppDelegate *)[UIApplication sharedApplication].delegate;
         ofxiPhoneViewController * glViewController = appDelegate.glViewController;
-        switch (orientation) {
-            case OF_ORIENTATION_DEFAULT:
-                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:YES];
-                break;
-            case OF_ORIENTATION_180:
-                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown animated:YES];
-                break;
-            case OF_ORIENTATION_90_RIGHT:
-                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeLeft animated:YES];
-                break;
-            case OF_ORIENTATION_90_LEFT:
-                [glViewController rotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight animated:YES];
-                break;
-            case OF_ORIENTATION_UNKNOWN:
-                return;
-        }
+        [glViewController rotateToInterfaceOrientation:interfaceOrientation animated:YES];
     } else {
-        switch (orientation) {
-            case OF_ORIENTATION_DEFAULT:
-                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait];
-                break;
-            case OF_ORIENTATION_180:
-                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown];
-                break;
-            case OF_ORIENTATION_90_RIGHT:
-                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];
-                break;
-            case OF_ORIENTATION_90_LEFT:
-                [[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];
-                break;
-        }
+        [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation];
     }
-	
-	this->orientation = orientation;
 }
 
 ofOrientation ofAppiPhoneWindow::getOrientation() {
