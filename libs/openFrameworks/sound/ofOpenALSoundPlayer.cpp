@@ -752,7 +752,7 @@ void ofOpenALSoundPlayer::setLoop(bool bLp){
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::setMultiPlay(bool bMp){
 	if(isStreaming && bMp){
-		ofLogWarning("ofOpenALSoundPlayer") << "setMultiPlay(): sorry, no support for multiplay streams");
+		ofLogWarning("ofOpenALSoundPlayer") << "setMultiPlay(): sorry, no support for multiplay streams";
 		return;
 	}
 	bMultiPlay = bMp;		// be careful with this...
@@ -929,7 +929,7 @@ void ofOpenALSoundPlayer::runWindow(vector<float> & signal){
 
 // ----------------------------------------------------------------------------
 // from http://devmaster.net/posts/2893/openal-lesson-6-advanced-loading-and-error-handles
-static string getALErrorString(ALEnum error) {
+static string getALErrorString(int error) {
 	switch(error) {
         case AL_NO_ERROR:
             return "AL_NO_ERROR";
@@ -947,12 +947,12 @@ static string getALErrorString(ALEnum error) {
 }
 
 #ifdef OF_USING_MPG123
-static string getMpg123EncodingString(mpg123_enc_enum encoding) {
+static string getMpg123EncodingString(int encoding) {
 	switch(encoding) {
 		case MPG123_ENC_16:
 			return "MPG123_ENC_16";
-		case MPG123_ENC_24:
-			return "MPG123_ENC_24";
+		// case MPG123_ENC_24:
+		// 	return "MPG123_ENC_24";
 		case MPG123_ENC_32:
 			return "MPG123_ENC_32";
 		case MPG123_ENC_8:
@@ -969,8 +969,8 @@ static string getMpg123EncodingString(mpg123_enc_enum encoding) {
 			return "MPG123_ENC_SIGNED";
 		case MPG123_ENC_SIGNED_16:
 			return "MPG123_ENC_SIGNED_16";
-		case MPG123_ENC_SIGNED_24:
-			return "MPG123_ENC_SIGNED_24";
+		// case MPG123_ENC_SIGNED_24:
+		// 	return "MPG123_ENC_SIGNED_24";
 		case MPG123_ENC_SIGNED_32:
 			return "MPG123_ENC_SIGNED_32";
 		case MPG123_ENC_SIGNED_8:
@@ -979,8 +979,8 @@ static string getMpg123EncodingString(mpg123_enc_enum encoding) {
 			return "MPG123_ENC_ULAW_8";
 		case MPG123_ENC_UNSIGNED_16:
 			return "MPG123_ENC_UNSIGNED_16";
-		case MPG123_ENC_UNSIGNED_24:
-			return "MPG123_ENC_UNSIGNED_24";
+		// case MPG123_ENC_UNSIGNED_24:
+		// 	return "MPG123_ENC_UNSIGNED_24";
 		case MPG123_ENC_UNSIGNED_32:
 			return "MPG123_ENC_UNSIGNED_32";
 		case MPG123_ENC_UNSIGNED_8:
