@@ -42,9 +42,15 @@ void ofxPanel::loadIcons(){
 	saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
 	loadStencilFromHex(loadIcon, loadIconData);
 	loadStencilFromHex(saveIcon, saveIconData);
+
+	// FIXME: load/save icons on gles look really bad
+#ifdef TARGET_OPENGLES
+	loadIcon.getTextureReference().setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+	saveIcon.getTextureReference().setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+#else
 	loadIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 	saveIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-
+#endif
 }
 
 void ofxPanel::generateDraw(){
