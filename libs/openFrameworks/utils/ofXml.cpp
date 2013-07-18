@@ -724,7 +724,7 @@ bool ofXml::setTo(const string& path)
     {
         
         Poco::XML::Element* prev = element;
-        Poco::XML::Element* parent;
+        Poco::XML::Element* parent = NULL;
         int count = 0;
         size_t offset;
         for (offset = path.find("../");
