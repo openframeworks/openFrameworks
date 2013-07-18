@@ -401,6 +401,7 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 		if(fabs(topLeftRadius) >= FLT_EPSILON) {
 			arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
 		}
+		close();
 
 	}
 }
