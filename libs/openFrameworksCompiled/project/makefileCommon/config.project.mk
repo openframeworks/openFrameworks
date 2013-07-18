@@ -21,13 +21,13 @@ ifndef PATH_OF_ROOT
 endif
 
 ################################################################################
-# PATH_OF_PROJECT_ROOT (conditionally set)
-#   The PATH_OF_PROJECT_ROOT is used throughout the script to locate the project
+# PROJECT_ROOT_PATH (conditionally set)
+#   The PROJECT_ROOT_PATH is used throughout the script to locate the project
 #   root folder.
 ################################################################################
 
-ifndef PATH_OF_PROJECT_ROOT
-    PATH_OF_PROJECT_ROOT := .
+ifndef PROJECT_ROOT_PATH
+    PROJECT_ROOT_PATH := .
 endif
 
 
@@ -43,7 +43,7 @@ endif
 
 
 
-    # PATH_OF_PROJECT_ROOT := .
+    # PROJECT_ROOT_PATH := .
 
     # PROJECT_DEPENDENCIES:=
     # PROJECT_DEPENDENCIES_ESCAPED_STRING:=
@@ -74,17 +74,17 @@ endif
     # PROJECT_CXX := 
     # PROJECT_CC := 
 
-    $(call FUNC_PARSE_AND_EVALUATE_CONFIG_MK,$(PATH_OF_PROJECT_ROOT)/project_config.mk)
+    $(call FUNC_PARSE_AND_EVALUATE_CONFIG_MK,$(PROJECT_ROOT_PATH)/project_config.mk)
 
     $(info ---PROJECT_ADDON_DEPENDENCIES---)
     $(foreach v, $(PROJECT_ADDON_DEPENDENCIES),$(info $(v)))
 
     # Call the addons configuration file (See file for description)
-    include $(PATH_OF_SHARED_MAKEFILES)/config.addons.mk
+    include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
 
 
-    $(info ---PATH_OF_PROJECT_ROOT---)
-    $(foreach v, $(PATH_OF_PROJECT_ROOT),$(info $(v)))
+    $(info ---PROJECT_ROOT_PATH---)
+    $(foreach v, $(PROJECT_ROOT_PATH),$(info $(v)))
 
     # $(info ---PROJECT_APPNAME---)
     # $(foreach v, $(PROJECT_APPNAME),$(info $(v)))
@@ -132,24 +132,24 @@ endif
 # PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 
 # # add defaults here TODO: should these always be 
-# PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/bin  # exactly this path
-# PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/bin% # any children of this path
-# PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/obj
-# PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/obj%
-# PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/.git
-# PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/.git%
+# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/bin  # exactly this path
+# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/bin% # any children of this path
+# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/obj
+# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/obj%
+# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/.git
+# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/.git%
 
 # # A pattern can contain only one TRAILING %. This is a "feature" in GNU Make.
 # # As a consequence of this "feature" $(filter ...) and $(filter-out ...) 
 # # cannot match substrings in our exclusions.  For example, the following will 
 # # not be matched as one might expect with normal wildcards / regex patterns:
 # #
-# # PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/%.xcodeproj 
-# # PROJECT_EXCLUSIONS += $(PATH_OF_PROJECT_ROOT)/%.xcodeproj/%
+# # PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/%.xcodeproj 
+# # PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/%.xcodeproj/%
 # #
 # # GNU make does allow us to do something like this though:
 # # In this case, we look for all paths that have the pattern:
-# #     $(PATH_OF_PROJECT_ROOT)/*.xcodeproj (here * works as expected)
+# #     $(PROJECT_ROOT_PATH)/*.xcodeproj (here * works as expected)
 # # and then it appends a % (the make pattern matcher) ONLY to the end of each
 # # of the paths discovered by the $(wildcard ...) function.  The output of
 # # this function is now compatible with GNU Make $(filter ...) and $(filter-out).
@@ -158,7 +158,7 @@ endif
 #     $(addsuffix                                                                \
 #         %,                                                                     \
 #         $(wildcard                                                             \
-#             $(PATH_OF_PROJECT_ROOT)/*.xcodeproj                                   \
+#             $(PROJECT_ROOT_PATH)/*.xcodeproj                                   \
 #         )                                                                      \
 #     )
 
@@ -173,7 +173,7 @@ endif
 # # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # ALL_PROJECT_SOURCE_PATHS :=                                                 \
 #     $(shell                                                                    \
-#         find $(PATH_OF_PROJECT_ROOT)                                              \
+#         find $(PROJECT_ROOT_PATH)                                              \
 #         -mindepth 1                                                            \
 #         -type d                                                                \
 #         | grep -v "/\.[^\.]"                                                   \
@@ -444,7 +444,7 @@ endif
 #                             )                                                  \
 #                         )
 
-# PROJECT_OBJS := $(subst $(PATH_OF_PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
+# PROJECT_OBJS := $(subst $(PROJECT_ROOT_PATH)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
 
 # PROJECT_DEPS :=                                                             \
 #     $(patsubst                                                                 \
