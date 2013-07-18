@@ -353,7 +353,7 @@ static string linuxFontPathByName(string fontname){
 	if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
 		filename = (const char*)file;
 	}else{
-		ofLogError() << "linuxFontPathByName(): couldn't find font match for " \"" << fontname << "\"";
+		ofLogError() << "linuxFontPathByName(): couldn't find font match for \"" << fontname << "\"";
 		return "";
 	}
 	return filename;
