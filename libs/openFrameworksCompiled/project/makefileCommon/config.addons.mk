@@ -195,6 +195,7 @@ endef
 ################################################################################
 
 define FUNC_PARSE_ADDON_CONFIG_MK
+    $(info FUNC_PARSE_ADDON_CONFIG_MK++++====FUNC_PARSE_ADDON_CONFIG_MK) \
                                                                                \
     $(eval THIS_ADDON:=$(strip $1))                                            \
     $(eval PATH_OF_ADDON:=$(addprefix $(PATH_OF_ADDONS)/,$(THIS_ADDON)))       \
@@ -625,6 +626,8 @@ ifeq ($(findstring addons.make,$(wildcard $(PATH_OF_PROJECT_ROOT)/*.make)),addon
     B_PROCESS_ADDONS = $(TRUE)
 endif
 
+$(info 10238012983012983012983120983190238 $(B_PROCESS_ADDONS) $(PATH_OF_PROJECT_ROOT))
+
 ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
 ################################################################################
@@ -666,10 +669,13 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
     ALL_REQUESTED_PROJECT_ADDONS:=                                             \
         $(shell                                                                \
-            cat $(PATH_OF_PROJECT_ROOT)/addons.make 2> /dev/null                  \
+            cat $(PATH_OF_PROJECT_ROOT)/addons.make 2> /dev/null               \
             | sed 's/[ ]*\#.*//g'                                              \
             | sed '/^$$/d'                                                     \
         )
+
+    # addons can alls 
+    ALL_REQUESTED_ADDONS += $(PROJECT_ADDON_DEPENDENCIES)
 
 ################################################################################
 # PLATFORM_REQUIRED_WITHOUT_ALL_REQUESTED_PROJECT_ADDONS (immediately assigned)

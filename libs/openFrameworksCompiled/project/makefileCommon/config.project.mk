@@ -37,136 +37,96 @@ endif
 
 
 ################################################################################
-# FUNCTION FUNC_PARSE_ADDON_CONFIG_MK
-#   A function that is parses and evaluates all of the variables present in a
-#   given addon's addon_config.mk file.
-#
-#   All variables present within the addon_config.mk file are available after
-#   this function is called for the addon that was last parsed.
-#
-#   This function pushes GNU Make to do things that it didn't sign up for 30
-#   years ago.
-#
-#   Basic steps:
-#
-#   1. Read the addon_config.mk file for the addon listed in $(THIS_ADDON)
-#   
-#   2. Read each line of the addon by converting \n to \t since makefiles 
-#   treat \n as spaces.
-#   
-#   3. Convert spaces to $(ESCAPED_DELIMITER) so the foreach works for each 
-#   line instead of each word.
-# 
-#   4. Convert each $(ESCAPED_DELIMITER) back to a to space inside the loop.
-#   
-#   5. If the line matches common: or platform: set the $(PROCESS_NEXT) flag to 
-#   $(TRUE).
-#
-#   6. If the line matches %: but it's not common: or platform: set 
-#   the $(PROCESS_NEXT) flag to $(FALSE).
-#
-#   7. If the $(PROCESS_NEXT) is equal to $(TRUE), evaluate the line 
-#   ($(eval ...)) the line to put the variable in the makefile space.
-#   
-#   8. Finally, throw an error if the addon listed itself as a dependency.
-#
+# FUNCTION FUNC_PARSE_PROJECT_CONFIG_MK
+
 ################################################################################
 
-# define FUNC_PARSE_PROJECT_CONFIG_MK
-#                                                                                \
-#     $(eval THIS_PROJECT:=$(strip $1))                                            \
-    
-#     $(eval PATH_OF_PROJECT:=$(addprefix $(PATH_OF_ADDONS)/,$(THIS_ADDON)))       \
-#                                                                                \
-#     $(eval PROJECT_DEPENDENCIES:=)                                               \
-#     $(eval PROJECT_DEPENDENCIES_ESCAPED_STRING:=)                                \
-#                                                                                \
-#     $(eval PROJECT_HEADER_SEARCH_PATHS:=)                                        \
-#     $(eval PROJECT_LIBRARY_SEARCH_PATHS:=)                                       \
-#     $(eval PROJECT_FRAMEWORK_SEARCH_PATHS:=)                                     \
-#                                                                                \
-#     $(eval PROJECT_SOURCES:=)                                                    \
-#                                                                                \
-#     $(eval PROJECT_STATIC_LIBRARIES:=)                                           \
-#     $(eval PROJECT_SHARED_LIBRARIES:=)                                           \
-#     $(eval PROJECT_PKG_CONFIG_LIBRARIES:=)                                       \
-#     $(eval PROJECT_FRAMEWORKS:=)                                                 \
-#                                                                                \
-#     $(eval PROJECT_DEFINES:=)                                                    \
-#                                                                                \
-#     $(eval PROJECT_CFLAGS:=)                                                     \
-#     $(eval PROJECT_LDFLAGS:=)                                                    \
-#                                                                                \
-#     $(eval PROJECT_DATA:=)                                                       \
-#                                                                                \
-#     $(eval PROJECT_EXCLUSIONS:=)                                                 \
-#                                                                                \
-#     $(eval PROJECT_EXPORTS:=)                                                    \
-#                                                                                \
-#     $(eval PROCESS_NEXT:=$(FALSE))                                             \
-#                                                                                \
-#     $(if                                                                       \
-#         $(wildcard                                                             \
-#             $(PATH_OF_PROJECT)/project_config.mk                                   \
-#         ),                                                                     \
-#                                                                                \
-#         $(foreach VAR_LINE,                                                    \
-#             $(subst $(EMPTY_SPACE),$(ESCAPED_DELIMITER),                       \
-#                 $(shell                                                        \
-#                     cat $(PATH_OF_ADDON)/project_config.mk                       \
-#                     | tr '\n' '\t'                                             \
-#                 )                                                              \
-#             ),                                                                 \
-#                                                                                \
-#             $(eval UNESCAPED_VAR_LINE:=                                        \
-#                 $(strip                                                        \
-#                     $(subst                                                    \
-#                         $(ESCAPED_DELIMITER),                                  \
-#                         $(EMPTY_SPACE),                                        \
-#                         $(VAR_LINE)                                            \
-#                     )                                                          \
-#                 )                                                              \
-#             )                                                                  \
-#                                                                                \
-#             $(if                                                               \
-#                 $(filter                                                       \
-#                     $(PROCESS_NEXT),                                           \
-#                     $(TRUE)                                                    \
-#                 ),                                                             \
-#                 $(eval $(UNESCAPED_VAR_LINE)),                                 \
-#                 $(call FUNC_DO_NOTHING)                                        \
-#             )                                                                  \
-#                                                                                \
-#             $(if                                                               \
-#                 $(filter                                                       \
-#                     %:,                                                        \
-#                     $(UNESCAPED_VAR_LINE)                                      \
-#                 ),                                                             \
-#                 $(if                                                           \
-#                     $(filter                                                   \
-#                         common:,                                               \
-#                         $(UNESCAPED_VAR_LINE)                                  \
-#                     ),                                                         \
-#                     $(eval PROCESS_NEXT:=$(TRUE)),                             \
-#                     $(if                                                       \
-#                         $(filter                                               \
-#                             $(ABI_LIB_SUBPATH):,                               \
-#                             $(UNESCAPED_VAR_LINE)                              \
-#                         ),                                                     \
-#                         $(eval PROCESS_NEXT:=$(TRUE)),                         \
-#                         $(eval PROCESS_NEXT:=$(FALSE))                         \
-#                     )                                                          \
-#                 )                                                              \
-#             )                                                                  \
-#         )                                                                      \
-#     )                                                                          \
-#                                                                                \
-# endef
 
 
+    # PATH_OF_PROJECT_ROOT := .
+
+    # PROJECT_DEPENDENCIES:=
+    # PROJECT_DEPENDENCIES_ESCAPED_STRING:=
+
+    # PROJECT_HEADER_SEARCH_PATHS:=
+    # PROJECT_LIBRARY_SEARCH_PATHS:=
+    # PROJECT_FRAMEWORK_SEARCH_PATHS:=
+                                    
+    # PROJECT_SOURCES:=
+
+    # PROJECT_STATIC_LIBRARIES:=
+    # PROJECT_SHARED_LIBRARIES:=
+    # PROJECT_PKG_CONFIG_LIBRARIES:=
+    # PROJECT_FRAMEWORKS:=
+
+    # PROJECT_DEFINES:=
+
+    # PROJECT_CFLAGS:=
+    # PROJECT_LDFLAGS:=
+
+    # PROJECT_DATA:=
+
+    # PROJECT_EXCLUSIONS:=
+
+    # PROJECT_EXPORTS:=
+
+    # PROJECT_DATA_PATH := project_data_path
+    # PROJECT_CXX := 
+    # PROJECT_CC := 
+
+    $(call FUNC_PARSE_AND_EVALUATE_CONFIG_MK,$(PATH_OF_PROJECT_ROOT)/project_config.mk)
+
+    $(info ---PROJECT_ADDON_DEPENDENCIES---)
+    $(foreach v, $(PROJECT_ADDON_DEPENDENCIES),$(info $(v)))
+
+    # Call the addons configuration file (See file for description)
+    include $(PATH_OF_SHARED_MAKEFILES)/config.addons.mk
 
 
+    $(info ---PATH_OF_PROJECT_ROOT---)
+    $(foreach v, $(PATH_OF_PROJECT_ROOT),$(info $(v)))
 
+    # $(info ---PROJECT_APPNAME---)
+    # $(foreach v, $(PROJECT_APPNAME),$(info $(v)))
+
+
+    # $(info ---PROJECT_ADDON_DEPENDENCIES---)
+    # $(foreach v, $(PROJECT_ADDON_DEPENDENCIES),$(info $(v)))
+    # $(info ---PROJECT_DEPENDENCIES_ESCAPED_STRING---)
+    $(foreach v, $(PROJECT_DEPENDENCIES_ESCAPED_STRING),$(info $(v)))
+    $(info ---PROJECT_HEADER_SEARCH_PATHS---)
+    $(foreach v, $(PROJECT_HEADER_SEARCH_PATHS),$(info $(v)))
+    $(info ---PROJECT_LIBRARY_SEARCH_PATHS---)
+    $(foreach v, $(PROJECT_LIBRARY_SEARCH_PATHS),$(info $(v)))
+    $(info ---PROJECT_LIBRARY_SEARCH_PATHS---)
+    $(foreach v, $(PROJECT_LIBRARY_SEARCH_PATHS),$(info $(v)))
+    # $(info ---PROJECT_FRAMEWORK_SEARCH_PATHS---)
+    # $(foreach v, $(PROJECT_FRAMEWORK_SEARCH_PATHS),$(info $(v)))
+    # $(info ---PROJECT_SOURCES---)
+    # $(foreach v, $(PROJECT_SOURCES),$(info $(v)))
+    # $(info ---PROJECT_STATIC_LIBRARIES---)
+    # $(foreach v, $(PROJECT_SHARED_LIBRARIES),$(info $(v)))
+    # $(info ---PROJECT_SHARED_LIBRARIES---)
+    # $(foreach v, $(PROJECT_SHARED_LIBRARIES),$(info $(v)))
+    # $(info ---PROJECT_PKG_CONFIG_LIBRARIES---)
+    # $(foreach v, $(PROJECT_PKG_CONFIG_LIBRARIES),$(info $(v)))
+    # $(info ---PROJECT_FRAMEWORKS---)
+    # $(foreach v, $(PROJECT_FRAMEWORKS),$(info $(v)))
+
+    # $(info ---PROJECT_CFLAGS---)
+    # $(foreach v, $(PROJECT_CFLAGS),$(info $(v)))
+    # $(info ---PROJECT_LDFLAGS---)
+    # $(foreach v, $(PROJECT_LDFLAGS),$(info $(v)))
+    # $(info ---PROJECT_DATA---)
+    # $(foreach v, $(PROJECT_DATA),$(info $(v)))
+    # $(info ---PROJECT_DEFINES---)
+    # $(foreach v, $(PROJECT_DEFINES),$(info $(v)))
+    # $(info ---PROJECT_EXCLUSIONS---)
+    # $(foreach v, $(PROJECT_EXCLUSIONS),$(info $(v)))
+    # $(info ---PROJECT_EXPORTS---)
+    # $(foreach v, $(PROJECT_EXPORTS),$(info $(v)))
+    # $(info ---PROCESS_NEXT---)
+    # $(foreach v, $(PROCESS_NEXT),$(info $(v)))
 
 
 # PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))

@@ -2,6 +2,7 @@
 
 PLATFORM_SHARED_LIBRARY_EXTENSION:=dylib
 PLATFORM_STATIC_LIBRARY_EXTENSION:=a
+PLATFORM_LIBRARY_PREFIX:=
 
 ################################################################################
 # PLATFORM SPECIFIC CHECKS
@@ -12,10 +13,10 @@ PLATFORM_STATIC_LIBRARY_EXTENSION:=a
 #   ifdefs within the openFrameworks core source code.
 ################################################################################
 
-PLATFORM_PROJECT_DEBUG_BIN_NAME:=bin/$(APPNAME)_debug.app
-PLATFORM_PROJECT_DEBUG_TARGET:=bin/$(APPNAME)_debug
-PLATFORM_PROJECT_RELEASE_BIN_NAME:=bin/$(APPNAME).app
-PLATFORM_PROJECT_RELEASE_TARGET:=bin/$(APPNAME)
+PLATFORM_PROJECT_DEBUG_BIN_NAME:=bin/$(PROJECT_APPNAME)_debug.app
+PLATFORM_PROJECT_DEBUG_TARGET:=bin/$(PROJECT_APPNAME)_debug
+PLATFORM_PROJECT_RELEASE_BIN_NAME:=bin/$(PROJECT_APPNAME).app
+PLATFORM_PROJECT_RELEASE_TARGET:=bin/$(PROJECT_APPNAME)
 PLATFORM_RUN_COMMAND:=open
 
 ##########################################################################################

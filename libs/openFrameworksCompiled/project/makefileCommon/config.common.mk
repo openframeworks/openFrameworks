@@ -319,23 +319,6 @@ ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
 endif
 
 ################################################################################
-# CALL THE PLATFORM VARIANT CONFIGURATION FILE
-################################################################################
-# This section will call the platform-specific configuration file.  
-# Among other variables, the PATH_ABI is specified in the platform specific
-# configuration file.  This is important in the case of Android projects in
-# particular where multiple ABIs (application binary interface) are needed.
-#
-# See the documentation inside any of the files with the format:
-#
-#     $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk 
-#
-################################################################################
-
-# include the platform specific user and platform configuration files
-include $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
-
-################################################################################
 # PLATFORM_SHARED_LIBRARY_EXTENSION (conditionally set, immediately assigned)
 # PLATFORM_STATIC_LIBRARY_EXTENSION (conditionally set, immediately assigned)
 # PLATFORM_LIBRARY_PREFIX (conditionally set, immediately assigned)
@@ -354,6 +337,23 @@ endif
 ifndef PLATFORM_LIBRARY_PREFIX
     PLATFORM_LIBRARY_PREFIX := lib
 endif
+
+################################################################################
+# CALL THE PLATFORM VARIANT CONFIGURATION FILE
+################################################################################
+# This section will call the platform-specific configuration file.  
+# Among other variables, the PATH_ABI is specified in the platform specific
+# configuration file.  This is important in the case of Android projects in
+# particular where multiple ABIs (application binary interface) are needed.
+#
+# See the documentation inside any of the files with the format:
+#
+#     $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk 
+#
+################################################################################
+
+# include the platform specific user and platform configuration files
+include $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
 
 ################################################################################
 # ABI_LIB_SUBPATH (conditionally set, immediately assigned)
@@ -612,6 +612,83 @@ define FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN
             -path "*.framework*"                                               \
         2> /dev/null                                                           \
         | grep -v "/\.[^\.]"                                                   \
+    )                                                                          \
+
+endef
+
+################################################################################
+# FUNCTION FUNC_PARSE_AND_EVALUATE_CONFIG_MK
+#   A function that will parse and evaluate *_config.mk files.  It is used
+#   for parsing both addon_config.mk and project_config.mk files.
+#
+#   Arg $1 => the path of the *_config.mk file
+#       (e.g. ./project_config.mk)
+#
+################################################################################
+
+define FUNC_PARSE_AND_EVALUATE_CONFIG_MK
+                                                                               \
+    $(eval CONFIG_MK_PATH:=$(strip $1))                                        \
+                                                                               \
+    $(if                                                                       \
+        $(wildcard                                                             \
+            $(CONFIG_MK_PATH)                                                  \
+        ),                                                                     \
+                                                                               \
+        $(foreach VAR_LINE,                                                    \
+            $(subst $(EMPTY_SPACE),$(ESCAPED_DELIMITER),                       \
+                $(shell                                                        \
+                    cat $(CONFIG_MK_PATH)                                      \
+                    | tr '\n' '\t'                                             \
+                )                                                              \
+            ),                                                                 \
+                                                                               \
+            $(eval UNESCAPED_VAR_LINE:=                                        \
+                $(strip                                                        \
+                    $(subst                                                    \
+                        $(ESCAPED_DELIMITER),                                  \
+                        $(EMPTY_SPACE),                                        \
+                        $(VAR_LINE)                                            \
+                    )                                                          \
+                )                                                              \
+            )                                                                  \
+                                                                               \
+            $(if                                                               \
+                $(filter                                                       \
+                    $(PROCESS_NEXT),                                           \
+                    $(TRUE)                                                    \
+                ),                                                             \
+                $(eval $(UNESCAPED_VAR_LINE)),                                 \
+                $(call FUNC_DO_NOTHING)                                        \
+            )                                                                  \
+                                                                               \
+            $(if                                                               \
+                $(filter                                                       \
+                    %:,                                                        \
+                    $(UNESCAPED_VAR_LINE)                                      \
+                ),                                                             \
+                $(if                                                           \
+                    $(filter                                                   \
+                        common:,                                               \
+                        $(UNESCAPED_VAR_LINE)                                  \
+                    ),                                                         \
+                    $(eval PROCESS_NEXT:=$(TRUE)),                             \
+                    $(if                                                       \
+                        $(filter                                               \
+                            $(ABI_LIB_SUBPATH):,                               \
+                            $(UNESCAPED_VAR_LINE)                              \
+                        ),                                                     \
+                        $(eval PROCESS_NEXT:=$(TRUE)),                         \
+                        $(eval PROCESS_NEXT:=$(FALSE))                         \
+                    )                                                          \
+                )                                                              \
+            )                                                                  \
+        ),                                                                     \
+        $(if                                                                   \
+            $(MAKEFILE_DEBUG),                                                 \
+            $(call FUNC_DO_NOTHING),                                           \
+            $(info $(CONFIG_MK_PATH) not found.  Using default.)               \
+        )                                                                      \
     )                                                                          \
 
 endef

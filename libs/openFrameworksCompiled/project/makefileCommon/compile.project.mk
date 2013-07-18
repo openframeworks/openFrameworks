@@ -23,13 +23,13 @@
 .DEFAULT_GOAL=Release
 
 ################################################################################
-# APPNAME (conditionally set)
+# PROJECT_APPNAME (conditionally set)
 #   The name of the executable.  If not set previously, set it to the name of
 #   the current project directory.
 ################################################################################
 
-ifndef APPNAME
-    APPNAME := $(shell basename `pwd`)
+ifndef PROJECT_APPNAME
+    PROJECT_APPNAME := $(shell basename `pwd`)
 endif
 
 ################################################################################
@@ -61,13 +61,13 @@ ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
     endif
 
     ifndef PLATFORM_PROJECT_DEBUG_TARGET
-        TARGET:=bin/$(APPNAME)_debug
+        TARGET:=bin/$(PROJECT_APPNAME)_debug
     else
         TARGET:=$(PLATFORM_PROJECT_DEBUG_TARGET)
     endif
 
     ifndef PLATFORM_PROJECT_DEBUG_BIN_NAME
-        BIN_NAME:=$(APPNAME)_debug
+        BIN_NAME:=$(PROJECT_APPNAME)_debug
     else
         BIN_NAME:=$(PLATFORM_PROJECT_DEBUG_BIN_NAME)
     endif
@@ -80,13 +80,13 @@ else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
     endif
 
     ifndef PLATFORM_PROJECT_RELEASE_TARGET
-        TARGET:=bin/$(APPNAME)
+        TARGET:=bin/$(PROJECT_APPNAME)
     else
         TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
     endif
 
     ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
-        BIN_NAME:=$(APPNAME)
+        BIN_NAME:=$(PROJECT_APPNAME)
     else
         BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
     endif
@@ -94,12 +94,12 @@ else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 else ifeq ($(MAKECMDGOALS),run)
     TARGET_NAME:=Release
     ifndef PLATFORM_PROJECT_RELEASE_TARGET
-        TARGET:=bin/$(APPNAME)
+        TARGET:=bin/$(PROJECT_APPNAME)
     else
         TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
     endif
     ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
-        BIN_NAME:=$(APPNAME)
+        BIN_NAME:=$(PROJECT_APPNAME)
     else
         BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
     endif
@@ -113,13 +113,13 @@ else ifeq ($(MAKECMDGOALS),)
     endif
 
     ifndef PLATFORM_PROJECT_RELEASE_TARGET
-        TARGET:=bin/$(APPNAME)
+        TARGET:=bin/$(PROJECT_APPNAME)
     else
         TARGET:=$(PLATFORM_PROJECT_RELEASE_TARGET)
     endif
 
     ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
-        BIN_NAME:=$(APPNAME)
+        BIN_NAME:=$(PROJECT_APPNAME)
     else
         BIN_NAME:=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
     endif
@@ -158,7 +158,7 @@ endif
 
 # If we are doing a clean release ...
 ifeq ($(MAKECMDGOALS),clean)
-    TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+    TARGET = bin/$(PROJECT_APPNAME)_debug bin/$(PROJECT_APPNAME)
     TARGET_NAME = Release
 endif
 
@@ -211,7 +211,7 @@ Release:
 	@$(MAKE) --no-print-directory -C $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
 	@echo
 	@echo
-	@echo Compiling $(APPNAME) for Release
+	@echo Compiling $(PROJECT_APPNAME) for Release
 ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) --no-print-directory ReleaseABI
 else
@@ -227,7 +227,7 @@ Debug:
 	$(MAKE) --no-print-directory -C $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 	@echo
 	@echo
-	@echo Compiling $(APPNAME) for Debug
+	@echo Compiling $(PROJECT_APPNAME) for Debug
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) --no-print-directory DebugABI
 else
