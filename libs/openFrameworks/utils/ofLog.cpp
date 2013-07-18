@@ -207,12 +207,12 @@ string ofGetLogLevelName(ofLogLevel level){
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
 	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
 	ostream& out = level < OF_LOG_ERROR ? cout : cerr;
-	out << "[";
+	out << "[" << ofGetLogLevelName(level);
 	// only print the module name if it's not "OF"
 	if(module != "OF") {
-		out << module << " ";
+		out << " " << module;
 	}
-	out << ofGetLogLevelName(level) << "] " << message << endl;
+	out << "] " << message << endl;
 }	
 
 void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
@@ -226,11 +226,11 @@ void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, con
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
 	FILE* out = logLevel < OF_LOG_ERROR ? stdout : stderr;
-	fprintf(out, "[");
+	fprintf(out, "[%s", ofGetLogLevelName(logLevel).c_str());
 	if(module != "OF") {
-		fprintf(out, "%s ", module.c_str());
+		fprintf(out, " %s", module.c_str());
 	}
-	fprintf(out, "%s] ", ofGetLogLevelName(logLevel).c_str());
+	fprintf(out, "] ");
 	vfprintf(out, format, args);
 	fprintf(out, "\n");
 }
@@ -259,7 +259,7 @@ void ofFileLoggerChannel::setFile(const string & path,bool append){
 }
 
 void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
-	file << module << " " << ofGetLogLevelName(level) << ": " << message << endl;
+	file << ofGetLogLevelName(level) << " " << module << ": " << message << endl;
 }
 
 void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
@@ -270,6 +270,6 @@ void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const 
 }
 
 void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
-	file << module << " " << ofGetLogLevelName(logLevel) << ": ";
+	file << ofGetLogLevelName(logLevel) << " " << module << ": ";
 	file << ofVAArgsToString(format,args) << endl;
 }
