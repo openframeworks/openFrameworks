@@ -43,14 +43,8 @@ void ofxPanel::loadIcons(){
 	loadStencilFromHex(loadIcon, loadIconData);
 	loadStencilFromHex(saveIcon, saveIconData);
 
-	// FIXME: load/save icons on gles look really bad
-#ifdef TARGET_OPENGLES
-	loadIcon.getTextureReference().setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
-	saveIcon.getTextureReference().setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
-#else
 	loadIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 	saveIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-#endif
 }
 
 void ofxPanel::generateDraw(){
@@ -95,8 +89,13 @@ void ofxPanel::render(){
 	textMesh.draw();
 	unbindFontTexture();
 
+	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+	ofDisableTextureEdgeHack();
 	loadIcon.draw(loadBox);
 	saveIcon.draw(saveBox);
+	if(texHackEnabled){
+		ofEnableTextureEdgeHack();
+	}
 
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->draw();
