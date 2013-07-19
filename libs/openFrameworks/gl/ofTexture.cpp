@@ -204,6 +204,11 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 }
 
 //---------------------------------
+bool ofGetUsingTextureEdgeHack() {
+    return bTexHackEnabled;
+}
+
+//---------------------------------
 void ofEnableTextureEdgeHack(){
 	bTexHackEnabled = true;
 }
