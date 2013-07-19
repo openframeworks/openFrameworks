@@ -1179,8 +1179,8 @@ static string defaultFragmentShaderTexColor = STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1196,8 +1196,8 @@ static string defaultFragmentShaderTexNoColor =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1213,8 +1213,8 @@ static string defaultFragmentShaderNoTexColor = STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1230,8 +1230,8 @@ static string defaultFragmentShaderNoTexNoColor  =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1374,8 +1374,8 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1394,8 +1394,8 @@ static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1414,8 +1414,8 @@ static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1434,8 +1434,8 @@ static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 	
 	in float depth;
@@ -1454,8 +1454,8 @@ static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1474,8 +1474,8 @@ static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
 static string defaultFragmentShaderNoTexNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
