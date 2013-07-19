@@ -31,5 +31,6 @@ class ofVec3f;
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)app;
 - (void)setup;
 - (void)destroy;
+- (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
 
 @end
