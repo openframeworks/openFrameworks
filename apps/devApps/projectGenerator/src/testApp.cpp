@@ -128,10 +128,9 @@ void testApp::setupForTarget(int targ){
     }
 }
 
-void testApp::generateExamplesCB(bool & pressed){
+void testApp::generateExamplesCB(){
 
 #ifndef COMMAND_LINE_ONLY
-	if (pressed == false) return; // don't do this again on the mouseup.
 
 	targetsToMake.clear();
 	if( osxToggle )		targetsToMake.push_back(OF_TARGET_OSX);
@@ -306,36 +305,32 @@ ofFileDialogResult testApp::updateProjectViaDialog(){
 
 }
 
-void testApp::createProjectPressed(bool & pressed){
-	if(!pressed) makeNewProjectViaDialog();
+void testApp::createProjectPressed(){
+	makeNewProjectViaDialog();
 }
 
-void testApp::updateProjectPressed(bool & pressed){
-	if(!pressed) updateProjectViaDialog();
+void testApp::updateProjectPressed(){
+	updateProjectViaDialog();
 }
 
-void testApp::createAndOpenPressed(bool & pressed){
-	if(!pressed){
-		ofFileDialogResult res = makeNewProjectViaDialog();
-		if(res.bSuccess){
-			#ifdef TARGET_LINUX
-				system(("/usr/bin/codeblocks " + ofFilePath::join(res.filePath, res.fileName+".workspace ") + "&").c_str());
-			#elif defined(TARGET_OSX)
-				system(("open " + ofFilePath::join(res.filePath, res.fileName+".xcodeproj ") + "&").c_str());
-			#elif defined(TARGET_WIN32)
-				system(("open " + ofFilePath::join(res.filePath, res.fileName+".workspace ") + "&").c_str());
-			#endif
-		}
+void testApp::createAndOpenPressed(){
+	ofFileDialogResult res = makeNewProjectViaDialog();
+	if(res.bSuccess){
+		#ifdef TARGET_LINUX
+			system(("/usr/bin/codeblocks " + ofFilePath::join(res.filePath, res.fileName+".workspace ") + "&").c_str());
+		#elif defined(TARGET_OSX)
+			system(("open " + ofFilePath::join(res.filePath, res.fileName+".xcodeproj ") + "&").c_str());
+		#elif defined(TARGET_WIN32)
+			system(("open " + ofFilePath::join(res.filePath, res.fileName+".workspace ") + "&").c_str());
+		#endif
 	}
 }
 
-void testApp::changeOFRootPressed(bool & pressed){
-	if(!pressed){
-		askOFRoot();
-		cout << getOFRootFromConfig()<<endl;
-		setOFRoot(getOFRootFromConfig());
-		setupDrawableOFPath();
-	}
+void testApp::changeOFRootPressed(){
+	askOFRoot();
+	cout << getOFRootFromConfig()<<endl;
+	setOFRoot(getOFRootFromConfig());
+	setupDrawableOFPath();
 }
 
 
