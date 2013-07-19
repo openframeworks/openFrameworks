@@ -42,9 +42,9 @@ void ofxPanel::loadIcons(){
 	saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
 	loadStencilFromHex(loadIcon, loadIconData);
 	loadStencilFromHex(saveIcon, saveIconData);
+
 	loadIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 	saveIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-
 }
 
 void ofxPanel::generateDraw(){
@@ -89,8 +89,13 @@ void ofxPanel::render(){
 	textMesh.draw();
 	unbindFontTexture();
 
+	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+	ofDisableTextureEdgeHack();
 	loadIcon.draw(loadBox);
 	saveIcon.draw(saveBox);
+	if(texHackEnabled){
+		ofEnableTextureEdgeHack();
+	}
 
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->draw();

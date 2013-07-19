@@ -75,23 +75,13 @@ public:
 
 	virtual string toString() const;
 
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
 		ofAddListener(obj->changedE,listener,method);
 	}
 
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
-		ofRemoveListener(obj->changedE,listener,method);
-	}
-
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(const void*, ParameterType&)){
-		ofAddListener(obj->changedE,listener,method);
-	}
-
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(const void*, ParameterType&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
 		ofRemoveListener(obj->changedE,listener,method);
 	}
 

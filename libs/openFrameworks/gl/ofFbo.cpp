@@ -312,7 +312,7 @@ bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	
 	if (!ofIsGLProgrammableRenderer()){
-		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
+		if(ofGLCheckExtension("GL_EXT_framebuffer_object")){
 			ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 		}else{
 			ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
@@ -330,7 +330,7 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(ofGetGLProgrammableRenderer() || ofCheckGLExtension("GL_OES_framebuffer_object")){
+	if(ofGetGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 	}else{
 		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";

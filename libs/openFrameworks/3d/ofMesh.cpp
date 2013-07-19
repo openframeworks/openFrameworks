@@ -1822,7 +1822,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
     
     /// Step 4 : fix texcoords
     // find vertices to split
-    std::vector<int> indexToSplit;
+    std::vector<unsigned int> indexToSplit;
     
     for (unsigned int i=0;i<faces.size()/3;i++)
     {
@@ -1856,7 +1856,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
     //split vertices
     for (unsigned short i=0;i<indexToSplit.size();i++)
     {
-        int index = indexToSplit[i];
+        unsigned int index = indexToSplit[i];
         //duplicate vertex
         ofVec3f v = vertices[index];
         ofVec2f t = texCoords[index] + ofVec2f(1.f, 0.f);
@@ -1882,7 +1882,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
 	// i wish there was a more elegant way to do this, but anything happening before "split vertices"
 	// makes things very, very complicated.
 	
-	for (int i = 0; i < faces.size(); i+=3) {
+	for (int i = 0; i < (int)faces.size(); i+=3) {
 		std::swap(faces[i+1], faces[i+2]);
 	}
 
