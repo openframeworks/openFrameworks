@@ -22,6 +22,7 @@ public:
     void gotFocus();
     void gotMemoryWarning();
     void deviceOrientationChanged(int newOrientation);
+    void windowResized(int w, int h);
     
     void rotateToPortrait();
     void rotateToPortraitUpSideDown();

@@ -143,8 +143,15 @@ int	ofAppiPhoneWindow::getWindowMode() {
 }
 
 //----------------------------------------------------------------------------------- orientation.
-void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
-    this->orientation = orientation;
+void ofAppiPhoneWindow::setOrientation(ofOrientation toOrientation) {
+    if(orientation == toOrientation) {
+        return;
+    }
+    bool bOrientationPortraitOne = (orientation == OF_ORIENTATION_DEFAULT) || (orientation == OF_ORIENTATION_180);
+    bool bOrientationPortraitTwo = (toOrientation == OF_ORIENTATION_DEFAULT) || (toOrientation == OF_ORIENTATION_180);
+    bool bResized = bOrientationPortraitOne != bOrientationPortraitTwo;
+
+    orientation = toOrientation;
     
     UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
     switch (orientation) {
@@ -161,13 +168,18 @@ void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
             interfaceOrientation = UIInterfaceOrientationLandscapeRight;
             break;
     }
+
+    ofxiPhoneAppDelegate * appDelegate = (ofxiPhoneAppDelegate *)[UIApplication sharedApplication].delegate;
+    ofxiPhoneViewController * glViewController = appDelegate.glViewController;
+    ofxiOSEAGLView * glView = glViewController.glView;
     
     if(bHardwareOrientation == true) {
-        ofxiPhoneAppDelegate * appDelegate = (ofxiPhoneAppDelegate *)[UIApplication sharedApplication].delegate;
-        ofxiPhoneViewController * glViewController = appDelegate.glViewController;
         [glViewController rotateToInterfaceOrientation:interfaceOrientation animated:YES];
     } else {
         [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation];
+        if(bResized == true) {
+            [glView layoutSubviews]; // calling layoutSubviews so window resize notification is fired.
+        }
     }
 }
 
