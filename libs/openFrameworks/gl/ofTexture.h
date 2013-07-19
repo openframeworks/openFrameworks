@@ -88,6 +88,7 @@ public:
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
 //enabled by default
+bool ofGetUsingTextureEdgeHack();
 void ofEnableTextureEdgeHack();
 void ofDisableTextureEdgeHack();
 
