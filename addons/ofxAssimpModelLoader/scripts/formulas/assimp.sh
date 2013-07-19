@@ -25,6 +25,7 @@ function download() {
 		
 		mkdir assimp/port 
 		cp -vR assimp-git/port/iOS assimp/port
+		chmod +x assimp/port/iOS/build_ios.sh
 
 		# make a backup of the build script
 		cp assimp/port/iOS/build_ios.sh assimp/port/iOS/build_ios.sh.orig
@@ -110,7 +111,7 @@ function build() {
 		#sed -i .tmp "s|-DENABLE_BOOST_WORKAROUND=|-DASSIMP_ENABLE_BOOST_WORKAROUND=|" build_ios.sh
 		#sed -i .tmp "s|-DBUILD_STATIC_LIB=|-DASSIMP_BUILD_STATIC_LIB=|" build_ios.sh
 
-		build_ios.sh
+		./build_ios.sh
 	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: android build"

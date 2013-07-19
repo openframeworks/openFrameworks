@@ -58,7 +58,7 @@ function build() {
 
 	elif [ "$TYPE" == "ios" ] ; then
 		cd build/ios
-		build_ios.sh # build fat lib
+		./build_ios.sh # build fat lib
 
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: android build"
