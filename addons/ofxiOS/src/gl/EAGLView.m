@@ -177,10 +177,7 @@
 }
 	
 - (void)layoutSubviews{
-    NSLog(@"layoutSubviews");
-    
-    UIScreen *currentScreen;
-    currentScreen = self.window.screen;
+    UIScreen * currentScreen = self.window.screen;
     if(!currentScreen){
         currentScreen = [UIScreen mainScreen];
     }

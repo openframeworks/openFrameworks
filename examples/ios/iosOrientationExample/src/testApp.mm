@@ -197,3 +197,9 @@ void testApp::deviceOrientationChanged(int newOrientation){
         ofSetOrientation((ofOrientation)newOrientation);
     }
 }
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h) {
+    //
+}
+

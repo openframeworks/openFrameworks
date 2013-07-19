@@ -147,7 +147,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)layoutSubviews {
     [super layoutSubviews];
     [self updateDimensions];
+    
     [super notifyResized];
+    ofNotifyWindowResized(ofGetWidth(), ofGetHeight());
 }
 
 - (void)updateDimensions {
