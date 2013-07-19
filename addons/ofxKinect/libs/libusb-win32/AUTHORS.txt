@@ -1,0 +1,16 @@
+
+Library, Test Programs:
+
+Stephan Meyer, <ste_meyer@web.de>
+Johannes Erdfelt, <johannes@erdfelt.com>
+Thomas Sailer, <sailer@ife.ee.ethz.ch>
+
+Drivers, Installer:
+
+Stephan Meyer, <ste_meyer@web.de>
+Travis Robinson, <libusbdotnet@gmail.com>
+
+Testing, Technical support:
+
+Xiaofan Chen, <xiaofanc@gmail.com>
+
