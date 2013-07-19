@@ -216,6 +216,36 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 //------------------------------------------------------
+- (CGPoint)orientateTouchPoint:(CGPoint)touchPoint {
+    
+    ofOrientation orientation = ofGetOrientation();
+    CGPoint touchPointOriented = CGPointZero;
+    
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			touchPointOriented.x = ofGetWidth() - touchPoint.x;
+			touchPointOriented.y = ofGetHeight() - touchPoint.y;
+			break;
+			
+		case OF_ORIENTATION_90_LEFT:
+			touchPointOriented.x = touchPoint.y;
+			touchPointOriented.y = ofGetHeight() - touchPoint.x;
+			break;
+			
+		case OF_ORIENTATION_90_RIGHT:
+			touchPointOriented.x = ofGetWidth() - touchPoint.y;
+			touchPointOriented.y = touchPoint.x;
+			break;
+			
+		case OF_ORIENTATION_DEFAULT:
+		default:
+            touchPointOriented = touchPoint;
+			break;
+	}
+    return touchPointOriented;
+}
+
+//------------------------------------------------------
 - (void)touchesBegan:(NSSet *)touches 
            withEvent:(UIEvent *)event{
     
@@ -348,34 +378,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	[self touchesEnded:touches withEvent:event];
 }
 
-//------------------------------------------------------
-- (CGPoint)orientateTouchPoint:(CGPoint)touchPoint {
-    
-    ofOrientation orientation = ofGetOrientation();
-    CGPoint touchPointOriented = CGPointZero;
-    
-	switch(orientation) {
-		case OF_ORIENTATION_180:
-			touchPointOriented.x = ofGetWidth() - touchPoint.x;
-			touchPointOriented.y = ofGetHeight() - touchPoint.y;
-			break;
-			
-		case OF_ORIENTATION_90_LEFT:
-			touchPointOriented.x = touchPoint.y;
-			touchPointOriented.y = ofGetHeight() - touchPoint.x;
-			break;
-			
-		case OF_ORIENTATION_90_RIGHT:
-			touchPointOriented.x = ofGetWidth() - touchPoint.y;
-			touchPointOriented.y = touchPoint.x;
-			break;
-			
-		case OF_ORIENTATION_DEFAULT:
-		default:
-            touchPointOriented = touchPoint;
-			break;
-	}
-    return touchPointOriented;
-}
+
 
 @end
