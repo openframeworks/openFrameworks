@@ -526,7 +526,7 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-		if(ofGetGLProgrammableRenderer()){
+		if(!ofGetGLProgrammableRenderer()){
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
 #ifndef TARGET_OPENGLES		
