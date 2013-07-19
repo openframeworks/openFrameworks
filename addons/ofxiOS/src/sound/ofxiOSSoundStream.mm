@@ -186,7 +186,7 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
 	}
 	
 	if(!success) {
-		ofLogError() << "couldn't set app audio session category";
+		ofLogError("ofxiOSSoundStream") << "setMixWithOtherApps(): couldn't set app audio session category";
 	}
 	
 	return success;

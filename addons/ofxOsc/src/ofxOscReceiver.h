@@ -26,9 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef _ofxOscRECEIVER_H
-#define _ofxOscRECEIVER_H
+#pragma once
 
 #include <deque>
 #include "ofMain.h"
@@ -106,5 +104,3 @@ private:
 	bool socketHasShutdown;
 
 };
-
-#endif

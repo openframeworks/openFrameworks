@@ -1,5 +1,4 @@
-#ifndef _OFX_TCP_SERVER_
-#define _OFX_TCP_SERVER_
+#pragma once
 
 #include "ofConstants.h"
 #include "ofThread.h"
@@ -99,9 +98,3 @@ class ofxTCPServer : public ofThread{
 		string			messageDelimiter;
 
 };
-
-
-#endif
-
-
-
