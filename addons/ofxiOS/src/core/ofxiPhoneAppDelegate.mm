@@ -66,7 +66,7 @@
 	// append data
 	//path.append( "/data/" ); // ZACH
 	path.append( "/" ); // ZACH
-	ofLog(OF_LOG_VERBOSE, "setting data path root to " + path);
+	ofLogVerbose("ofxiPhoneAppDelegate") << "setting data path root: \"" << path << "\"";
 	ofSetDataPathRoot( path );
 	//-----
 	
@@ -140,7 +140,7 @@
 //------------------------------------------------------------------------------------------- device rotation callback.
 - (void)receivedRotate:(NSNotification*)notification {
 	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
-    ofLog(OF_LOG_NOTICE, "Device orientation changed to %i", interfaceOrientation);
+    ofLogVerbose("ofxiPhoneAppDelegate") << "device orientation changed to " << interfaceOrientation;
 	
 	if(interfaceOrientation != UIDeviceOrientationUnknown) {
         ofxiPhoneAlerts.deviceOrientationChanged(interfaceOrientation);
