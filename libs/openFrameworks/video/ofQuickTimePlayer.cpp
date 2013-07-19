@@ -26,12 +26,12 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 		FSRef 		fsref;
 		result = FSPathMakeRef((const UInt8*)path, &fsref, &isdir);
 		if (result) {
-			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSPathMakeRef failed: OSErr " << result);
+			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSPathMakeRef failed: OSErr " << result;
 			return false;
 		}
 		result = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &theFSSpec, NULL);
 		if (result) {
-			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSGetCatalogInfo failed: OSErr ", result);
+			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSGetCatalogInfo failed: OSErr ", result;
 			return false;
 		}
 	#endif
