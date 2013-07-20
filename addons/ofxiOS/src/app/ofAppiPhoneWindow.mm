@@ -55,6 +55,7 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	bEnableSetupScreen = true;
     orientation = OF_ORIENTATION_DEFAULT;
     bHardwareOrientation = false;
+    bOrientationIsAnimated = false;
 
 	bRetinaEnabled = false;
     bRetinaSupportedOnDevice = false;
@@ -174,9 +175,9 @@ void ofAppiPhoneWindow::setOrientation(ofOrientation toOrientation) {
     ofxiOSEAGLView * glView = glViewController.glView;
     
     if(bHardwareOrientation == true) {
-        [glViewController rotateToInterfaceOrientation:interfaceOrientation animated:YES];
+        [glViewController rotateToInterfaceOrientation:interfaceOrientation animated:bOrientationIsAnimated];
     } else {
-        [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation];
+        [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:bOrientationIsAnimated];
         if(bResized == true) {
             [glView layoutSubviews]; // calling layoutSubviews so window resize notification is fired.
         }
@@ -220,6 +221,14 @@ bool ofAppiPhoneWindow::enableHardwareOrientation() {
 
 bool ofAppiPhoneWindow::disableHardwareOrientation() {
     return (bHardwareOrientation = false);
+}
+
+bool ofAppiPhoneWindow::enableOrientationAnimation() {
+    return (bOrientationIsAnimated = true);
+}
+
+bool ofAppiPhoneWindow::disableOrientationAnimation() {
+    return (bOrientationIsAnimated = false);
 }
 
 //-----------------------------------------------------------------------------------
