@@ -905,7 +905,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
 	drag.position.set(ofGetMouseX(),ofGetMouseY());
 	drag.files = ofSplitString(drop,"\n",true);
 #ifdef TARGET_LINUX
-	for(int i=0; i<drag.files.size(); i++){
+	for(int i=0; i<(int)drag.files.size(); i++){
 		drag.files[i] = Poco::URI(drag.files[i]).getPath();
 	}
 #endif

@@ -25,6 +25,11 @@ void ofDisableTextureEdgeHack(){
 }
 
 //---------------------------------
+bool ofIsTextureEdgeHackEnabled(){
+	return bTexHackEnabled;
+}
+
+//---------------------------------
 bool ofGetUsingNormalizedTexCoords(){
 	return bUsingNormalizedTexCoords;
 }
@@ -291,22 +296,30 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	texData = textureData;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle ){
-		texData.tex_t = texData.width;
-		texData.tex_u = texData.height;
+	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
+		texData.tex_w = texData.width;
+		texData.tex_h = texData.height;
 		texData.tex_w = texData.width;
 		texData.tex_h = texData.height;		
 	}else
 #endif
 	{
-		//otherwise we need to calculate the next power of 2 for the requested dimensions
-		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(texData.width);
-		texData.tex_h = ofNextPow2(texData.height);
+		if(ofGLSupportsNPOTTextures()){
+			texData.tex_w = texData.width;
+			texData.tex_h = texData.height;
+		}else{
+			//otherwise we need to calculate the next power of 2 for the requested dimensions
+			//ie (320x240) becomes (512x256)
+			texData.tex_w = ofNextPow2(texData.width);
+			texData.tex_h = ofNextPow2(texData.height);
+		}
+
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
-		//texData.textureTarget = GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
+		if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB ) texData.textureTarget = GL_TEXTURE_2D;
+#endif
 	}
 
 	// attempt to free the previous bound texture, if we can:
@@ -513,7 +526,9 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		if(!ofGetGLProgrammableRenderer()){
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		}
 #ifndef TARGET_OPENGLES		
 		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
 #endif

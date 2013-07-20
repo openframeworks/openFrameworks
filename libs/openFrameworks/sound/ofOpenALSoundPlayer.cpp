@@ -25,6 +25,71 @@ void ofOpenALSoundUpdate(){
 	alcProcessContext(ofOpenALSoundPlayer::alContext);
 }
 
+// ----------------------------------------------------------------------------
+// from http://devmaster.net/posts/2893/openal-lesson-6-advanced-loading-and-error-handles
+static string getALErrorString(ALenum error) {
+	switch(error) {
+        case AL_NO_ERROR:
+            return "AL_NO_ERROR";
+        case AL_INVALID_NAME:
+            return "AL_INVALID_NAME";
+        case AL_INVALID_ENUM:
+            return "AL_INVALID_ENUM";
+        case AL_INVALID_VALUE:
+            return "AL_INVALID_VALUE";
+        case AL_INVALID_OPERATION:
+            return "AL_INVALID_OPERATION";
+        case AL_OUT_OF_MEMORY:
+            return "AL_OUT_OF_MEMORY";
+    };
+	return "UNKWOWN_ERROR";
+}
+
+#ifdef OF_USING_MPG123
+static string getMpg123EncodingString(int encoding) {
+	switch(encoding) {
+		case MPG123_ENC_16:
+			return "MPG123_ENC_16";
+		case MPG123_ENC_24:
+			return "MPG123_ENC_24";
+		case MPG123_ENC_32:
+			return "MPG123_ENC_32";
+		case MPG123_ENC_8:
+			return "MPG123_ENC_8";
+		case MPG123_ENC_ALAW_8:
+			return "MPG123_ENC_ALAW_8";
+		case MPG123_ENC_FLOAT:
+			return "MPG123_ENC_FLOAT";
+		case MPG123_ENC_FLOAT_32:
+			return "MPG123_ENC_FLOAT_32";
+		case MPG123_ENC_FLOAT_64:
+			return "MPG123_ENC_FLOAT_64";
+		case MPG123_ENC_SIGNED:
+			return "MPG123_ENC_SIGNED";
+		case MPG123_ENC_SIGNED_16:
+			return "MPG123_ENC_SIGNED_16";
+		case MPG123_ENC_SIGNED_24:
+			return "MPG123_ENC_SIGNED_24";
+		case MPG123_ENC_SIGNED_32:
+			return "MPG123_ENC_SIGNED_32";
+		case MPG123_ENC_SIGNED_8:
+			return "MPG123_ENC_SIGNED_8";
+		case MPG123_ENC_ULAW_8:
+			return "MPG123_ENC_ULAW_8";
+		case MPG123_ENC_UNSIGNED_16:
+			return "MPG123_ENC_UNSIGNED_16";
+		case MPG123_ENC_UNSIGNED_24:
+			return "MPG123_ENC_UNSIGNED_24";
+		case MPG123_ENC_UNSIGNED_32:
+			return "MPG123_ENC_UNSIGNED_32";
+		case MPG123_ENC_UNSIGNED_8:
+			return "MPG123_ENC_UNSIGNED_8";
+		default:
+			return "MPG123_ENC_ANY";
+	}
+}
+#endif
+
 #define BUFFER_STREAM_SIZE 4096
 
 // now, the individual sound player:
@@ -159,9 +224,9 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(string path,vector<short> & buffer,vect
 		return false;
 	}
 
-	int encoding;
+	mpg123_enc_enum encoding;
 	long int rate;
-	mpg123_getformat(f,&rate,&channels,&encoding);
+	mpg123_getformat(f,&rate,&channels,(int*)&encoding);
 	if(encoding!=MPG123_ENC_SIGNED_16){
 		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): " << getMpg123EncodingString(encoding)
 			<< " encoding for \"" << path << "\"" << " unsupported, expecting MPG123_ENC_SIGNED_16";
@@ -264,7 +329,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(string path,vector<short> & buffer,vector
 		}
 
 		long int rate;
-		mpg123_getformat(mp3streamf,&rate,&channels,&stream_encoding);
+		mpg123_getformat(mp3streamf,&rate,&channels,(int*)&stream_encoding);
 		if(stream_encoding!=MPG123_ENC_SIGNED_16){
 			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): " << getMpg123EncodingString(stream_encoding)
 			<< " encoding for \"" << path << "\"" << " unsupported, expecting MPG123_ENC_SIGNED_16";
@@ -752,7 +817,7 @@ void ofOpenALSoundPlayer::setLoop(bool bLp){
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::setMultiPlay(bool bMp){
 	if(isStreaming && bMp){
-		ofLogWarning("ofOpenALSoundPlayer") << "setMultiPlay(): sorry, no support for multiplay streams");
+		ofLogWarning("ofOpenALSoundPlayer") << "setMultiPlay(): sorry, no support for multiplay streams";
 		return;
 	}
 	bMultiPlay = bMp;		// be careful with this...
@@ -927,68 +992,5 @@ void ofOpenALSoundPlayer::runWindow(vector<float> & signal){
 		signal[i] *= window[i];
 }
 
-// ----------------------------------------------------------------------------
-// from http://devmaster.net/posts/2893/openal-lesson-6-advanced-loading-and-error-handles
-static string getALErrorString(ALEnum error) {
-	switch(error) {
-        case AL_NO_ERROR:
-            return "AL_NO_ERROR";
-        case AL_INVALID_NAME:
-            return "AL_INVALID_NAME";
-        case AL_INVALID_ENUM:
-            return "AL_INVALID_ENUM";
-        case AL_INVALID_VALUE:
-            return "AL_INVALID_VALUE";
-        case AL_INVALID_OPERATION:
-            return "AL_INVALID_OPERATION";
-        case AL_OUT_OF_MEMORY:
-            return "AL_OUT_OF_MEMORY";
-    };
-}
-
-#ifdef OF_USING_MPG123
-static string getMpg123EncodingString(mpg123_enc_enum encoding) {
-	switch(encoding) {
-		case MPG123_ENC_16:
-			return "MPG123_ENC_16";
-		case MPG123_ENC_24:
-			return "MPG123_ENC_24";
-		case MPG123_ENC_32:
-			return "MPG123_ENC_32";
-		case MPG123_ENC_8:
-			return "MPG123_ENC_8";
-		case MPG123_ENC_ALAW_8:
-			return "MPG123_ENC_ALAW_8";
-		case MPG123_ENC_FLOAT:
-			return "MPG123_ENC_FLOAT";
-		case MPG123_ENC_FLOAT_32:
-			return "MPG123_ENC_FLOAT_32";
-		case MPG123_ENC_FLOAT_64:
-			return "MPG123_ENC_FLOAT_64";
-		case MPG123_ENC_SIGNED:
-			return "MPG123_ENC_SIGNED";
-		case MPG123_ENC_SIGNED_16:
-			return "MPG123_ENC_SIGNED_16";
-		case MPG123_ENC_SIGNED_24:
-			return "MPG123_ENC_SIGNED_24";
-		case MPG123_ENC_SIGNED_32:
-			return "MPG123_ENC_SIGNED_32";
-		case MPG123_ENC_SIGNED_8:
-			return "MPG123_ENC_SIGNED_8";
-		case MPG123_ENC_ULAW_8:
-			return "MPG123_ENC_ULAW_8";
-		case MPG123_ENC_UNSIGNED_16:
-			return "MPG123_ENC_UNSIGNED_16";
-		case MPG123_ENC_UNSIGNED_24:
-			return "MPG123_ENC_UNSIGNED_24";
-		case MPG123_ENC_UNSIGNED_32:
-			return "MPG123_ENC_UNSIGNED_32";
-		case MPG123_ENC_UNSIGNED_8:
-			return "MPG123_ENC_UNSIGNED_8";
-		default:
-			return "MPG123_ENC_ANY";
-	}
-}
-#endif
 
 #endif

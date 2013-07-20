@@ -106,8 +106,9 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
 int ofGetNumChannelsFromGLFormat(int glFormat);
 void ofSetPixelStorei(int w, int bpc, int numChannels);
 
-
-bool ofCheckGLExtension(string searchName);
+vector<string> ofGLSupportedExtensions();
+bool ofGLCheckExtension(string searchName);
+bool ofGLSupportsNPOTTextures();
 
 bool ofIsGLProgrammableRenderer();
 

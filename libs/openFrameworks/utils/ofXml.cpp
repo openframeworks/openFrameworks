@@ -404,12 +404,21 @@ bool ofXml::setValue(const string& path, const string& value)
         return false;
     }
     
+    if(!e->firstChild()){
+    	Poco::XML::Text *node = getPocoDocument()->createTextNode(ofToString(value));
+    	e->appendChild(node);
+    	node->release();
+        return true;
+    }
+
     if(e->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
         Poco::XML::Text *node = getPocoDocument()->createTextNode(ofToString(value));
         e->replaceChild( (Poco::XML::Node*) node, e->firstChild()); // swap out
         node->release();
+        return true;
+    }else{
+    	return false;
     }
-    return true;
 }
 
 string ofXml::getAttribute(const string& path) const {
@@ -715,7 +724,7 @@ bool ofXml::setTo(const string& path)
     {
         
         Poco::XML::Element* prev = element;
-        Poco::XML::Element* parent;
+        Poco::XML::Element* parent = NULL;
         int count = 0;
         size_t offset;
         for (offset = path.find("../");
