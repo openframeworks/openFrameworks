@@ -888,6 +888,7 @@ void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRad
 		default:
 			break;
 	}
+	shape.clear();
     shape.rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
     shape.draw();
 

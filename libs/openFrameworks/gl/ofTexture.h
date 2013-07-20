@@ -84,6 +84,7 @@ public:
 //enabled by default
 void ofEnableTextureEdgeHack();
 void ofDisableTextureEdgeHack();
+bool ofIsTextureEdgeHackEnabled();
 
 class ofTexture : public ofBaseDraws {
 	public :

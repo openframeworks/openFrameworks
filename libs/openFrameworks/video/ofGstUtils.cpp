@@ -636,6 +636,9 @@ GstElement 	* ofGstUtils::getSink(){
 	return gstSink;
 }
 
+GstElement 	* ofGstUtils::getGstElementByName(const string & name){
+	return gst_bin_get_by_name(GST_BIN(gstPipeline),name.c_str());
+}
 
 void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;

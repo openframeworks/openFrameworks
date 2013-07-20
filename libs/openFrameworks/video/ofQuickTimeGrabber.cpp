@@ -95,7 +95,7 @@ bool ofQuickTimeGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	if( pixelFormat == OF_PIXELS_RGB ){
 		return true;
 	}
-	ofLogWarning("ofQuickTimeGrabber") << "setPixelFormat(): requested pixel format " << pixelFormat " not supported";
+	ofLogWarning("ofQuickTimeGrabber") << "setPixelFormat(): requested pixel format " << pixelFormat << " not supported";
 	return false;
 }
 
@@ -265,7 +265,7 @@ vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
 			}
 		}
 
-		ofLogNotice() << "-------------------------------------";
+		ofLogNotice("ofQuickTimeGrabber") << "-------------------------------------";
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -290,7 +290,7 @@ vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
 		//this needs to be the same in our init grabber method so that we select the device we ask for
 		int deviceCount = 0;
 
-		ofLogNotice() << "listing available capture devices";
+		ofLogNotice("ofQuickTimeGrabber") << "listing available capture devices";
 		for(int i = 0 ; i < (*deviceList)->count ; ++i)
 		{
 			SGDeviceName nameRec;
@@ -329,7 +329,7 @@ vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
 				}
 
 			}else{
-				ofLogNotice() << "(unavailable) device [" << deviceCount << "] " << p2cstr(pascalName);
+				ofLogNotice("ofQuickTimeGrabber") << "(unavailable) device [" << deviceCount << "] " << p2cstr(pascalName);
                 
                 ofVideoDevice vd;
                 vd.id           = deviceCount; 
@@ -340,7 +340,7 @@ vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
 				deviceCount++;
 			}
 		}
-		ofLogNotice() << "-------------------------------------";
+		ofLogNotice("ofQuickTimeGrabber") << "-------------------------------------";
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
@@ -753,7 +753,7 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 						//so we return false - and try one more time without a preference
 						if( didWeChooseADevice ){
 							ofLogWarning("ofQuickTimeGrabber") << "problems setting device [" << deviceNumber << "] "
-							<< p2cstr(pascalName) << " - " << p2cstr(pascalNameInput)) << " *****";
+							<< p2cstr(pascalName) << " - " << p2cstr(pascalNameInput) << " *****";
 							return false;
 						}else{
 							ofLogWarning("ofQuickTimeGrabber") << "unable to open device, trying next device";
