@@ -188,104 +188,6 @@ void ofSystemAlertDialog(string errorMessage){
 	#endif
 }
 
-
-//----------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------       OSX
-//----------------------------------------------------------------------------------------
-#ifdef TARGET_OSX
-//---------------------------------------------------------------------
-
-pascal void modernEventProc(NavEventCallbackMessage callBackSelector,
-                            NavCBRecPtr callBackParms, void* callBackUD)
-{
-    switch(callBackSelector)
-    {
-        case kNavCBStart:
-        {
-			string defaultPath = *(string*)callBackUD;
-			if(defaultPath!=""){
-				OSErr err;
-
-				//  get an FSRef for the starting location
-				FSRef srcRef;
-				FSPathMakeRef((const UInt8*)ofToDataPath(defaultPath).c_str(), &srcRef, NULL);
-
-				//  make an AEDesc out of it.
-				AEDesc theDesc;
-				err = AECreateDesc(typeFSRef, &srcRef, sizeof (FSRef), &theDesc);
-
-				//  set it.
-				err = NavCustomControl ( callBackParms->context, kNavCtlSetLocation, (void*)&theDesc);
-			}
-        }
-			break;
-    }
-}
-
-// Gets a file to open from the user. Caller must release the CFURLRef.
-CFURLRef GetOpenFileFromUser(bool bFolder, string defaultPath)
-{
-	NavDialogCreationOptions dialogOptions;
-	NavDialogRef dialog;
-	NavReplyRecord replyRecord;
-	CFURLRef fileAsCFURLRef = NULL;
-	FSRef fileAsFSRef;
-	OSStatus status;
-
-	// Get the standard set of defaults
-	status = NavGetDefaultDialogCreationOptions(&dialogOptions);
-
-	require_noerr( status, CantGetNavOptions );
-
-	// Make the window app-wide modal
-	dialogOptions.modality = kWindowModalityAppModal;
-	dialogOptions.optionFlags != kNavAllowOpenPackages;
-
-	// Create the dialog
-	if( bFolder ){
-		status = NavCreateChooseFolderDialog(&dialogOptions, &modernEventProc, NULL, &defaultPath, &dialog);
-	}else{
-		status = NavCreateGetFileDialog(&dialogOptions, NULL, &modernEventProc, NULL, NULL, &defaultPath, &dialog);
-	}
-
-	require_noerr( status, CantCreateDialog );
-
-	// Show it
-	status = NavDialogRun(dialog);
-	require_noerr( status, CantRunDialog );
-
-	// Get the reply
-	status = NavDialogGetReply(dialog, &replyRecord);
-	require( ((status == noErr) || (status == userCanceledErr)), CantGetReply );
-
-	// If the user clicked "Cancel", just bail
-	if ( status == userCanceledErr ) goto UserCanceled;
-
-	// Get the file
-	//TODO: for multiple files - 1 specifies index
-	status = AEGetNthPtr(&(replyRecord.selection), 1, typeFSRef, NULL, NULL, &fileAsFSRef, sizeof(FSRef), NULL);
-	require_noerr( status, CantExtractFSRef );
-
-	// Convert it to a CFURL
-	fileAsCFURLRef = CFURLCreateFromFSRef(NULL, &fileAsFSRef);
-
-	// Cleanup
-CantExtractFSRef:
-UserCanceled:
-	verify_noerr( NavDisposeReply(&replyRecord) );
-CantGetReply:
-CantRunDialog:
-	NavDialogDispose(dialog);
-CantCreateDialog:
-CantGetNavOptions:
-    return fileAsCFURLRef;
-}
-#endif
-//----------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------
-
-
 //----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
 //---------------------------------------------------------------------
@@ -315,26 +217,28 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
-	CFURLRef cfUrl = GetOpenFileFromUser(bFolderSelection,defaultPath);
-
-	CFStringRef cfString = NULL;
-
-	if ( cfUrl != NULL ){
-		cfString = CFURLCopyFileSystemPath( cfUrl, kCFURLPOSIXPathStyle );
-		CFRelease( cfUrl );
-
-		// copy from a CFString into a local c string (http://www.carbondev.com/site/?page=CStrings+)
-		const int kBufferSize = MAXPATHLEN;
-
-		char fileUrl[kBufferSize];
-		Boolean bool1 = CFStringGetCString(cfString,fileUrl,kBufferSize,kCFStringEncodingMacRoman);
-
-		//char fileName[kBufferSize];
-		//Boolean bool2 = CFStringGetCString(reply.saveFileName,fileName,kBufferSize,kCFStringEncodingMacRoman);
-
-		// append strings together
-		CFRelease(cfString);
-		results.filePath = fileUrl;
+	
+	NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
+	[loadDialog setAllowsMultipleSelection:NO];
+	[loadDialog setCanChooseDirectories:bFolderSelection];
+	[loadDialog setResolvesAliases:YES];
+	
+	if(!windowTitle.empty()) {
+		[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
+	}
+	
+	if(!defaultPath.empty()) {
+		NSString * s = [NSString stringWithUTF8String:defaultPath.c_str()];
+		s = [[s stringByExpandingTildeInPath] stringByResolvingSymlinksInPath];
+		NSURL * defaultPathUrl = [NSURL fileURLWithPath:s];
+		[loadDialog setDirectoryURL:defaultPathUrl];
+	}
+	
+	NSInteger buttonClicked = [loadDialog runModal];
+	
+	if(buttonClicked == NSFileHandlingPanelOKButton) {
+		NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
+		results.filePath = string([[selectedFileURL path] UTF8String]);
 	}
 
 #endif
