@@ -31,16 +31,16 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
  
 		void setupForTarget(int targ);
-        void generateExamplesCB(bool & pressed); //stupid as its a button 
+        void generateExamplesCB();
 		void generateExamples();
 		
         ofFileDialogResult makeNewProjectViaDialog();
         ofFileDialogResult updateProjectViaDialog();
 
-        void createProjectPressed(bool & pressed);
-        void updateProjectPressed(bool & pressed);
-        void createAndOpenPressed(bool & pressed);
-        void changeOFRootPressed(bool & pressed);
+        void createProjectPressed();
+        void updateProjectPressed();
+        void createAndOpenPressed();
+        void changeOFRootPressed();
 		
 		void setupDrawableOFPath();
 		

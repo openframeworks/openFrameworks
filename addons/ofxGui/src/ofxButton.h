@@ -25,8 +25,6 @@ public:
 		ofRemoveListener(triggerEvent,listener,method);
 	}
 
-	using ofxToggle::addListener;
-	using ofxToggle::removeListener;
 private:
 	ofEvent<void> triggerEvent;
 	void valueChanged(bool & v);

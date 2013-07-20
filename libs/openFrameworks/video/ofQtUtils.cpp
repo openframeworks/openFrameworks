@@ -25,8 +25,8 @@ void initializeQuicktime(){
 		#endif
 		myErr = EnterMovies ();
 		if (myErr != noErr){
-			ofLogFatalError("ofQtUtils.h") << "------------------------------------------------------");
-			ofLogFatalError("ofQtUtils.h") << "sorry, there is a problem initing quicktime... exiting");
+			ofLogFatalError("ofQtUtils.h") << "------------------------------------------------------";
+			ofLogFatalError("ofQtUtils.h") << "sorry, there is a problem initing quicktime... exiting";
 			OF_EXIT_APP(0);
 		}
 

@@ -30,8 +30,6 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     
     bool bOk = loadModel(buffer, optimize, file.getExtension().c_str());
 
-	ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
-
     return bOk;
 }
 
@@ -343,6 +341,7 @@ void ofxAssimpModelLoader::clear(){
     textures.clear();
     
     updateModelMatrix();
+    ofRemoveListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
 }
 
 //------------------------------------------- update.
