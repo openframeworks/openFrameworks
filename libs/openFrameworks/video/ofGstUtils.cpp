@@ -228,6 +228,12 @@ bool ofGstUtils::startPipeline(){
 		bLoaded = true;
 	}
 
+	bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+
+	if(bus){
+		gst_bus_add_watch (bus, (GstBusFunc) busFunction, this);
+	}
+
 
 
 	if(isAppSink){
@@ -257,7 +263,6 @@ bool ofGstUtils::startPipeline(){
 		setSpeed(1.0);
 	}
 
-	ofAddListener(ofEvents().update,this,&ofGstUtils::update);
 
 	return true;
 }
@@ -458,16 +463,12 @@ void ofGstUtils::close(){
 		gst_element_get_state(gstPipeline,NULL,NULL,2*GST_SECOND);
 		// gst_object_unref(gstSink); this crashes, why??
 
-		ofEventArgs args;
-		update(args);
-
 		gst_object_unref(gstPipeline);
 		gstPipeline = NULL;
 		gstSink = NULL;
 	}
 
 	bLoaded = false;
-	ofRemoveListener(ofEvents().update,this,&ofGstUtils::update);
 }
 
 static string getName(GstState state){
@@ -487,145 +488,139 @@ static string getName(GstState state){
 	}
 }
 
-void ofGstUtils::update(ofEventArgs & args){
-	gstHandleMessage();
+bool ofGstUtils::busFunction(GstBus * bus, GstMessage * message, ofGstUtils * gstUtils){
+	return gstUtils->gstHandleMessage(bus,message);
 }
 
-void ofGstUtils::gstHandleMessage(){
-	GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(gstPipeline));
-	while(gst_bus_have_pending(bus)) {
-		GstMessage* msg = gst_bus_pop(bus);
-		if(appsink && appsink->on_message(msg)) continue;
+bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
+	if(appsink && appsink->on_message(msg)) return true;
 
-		ofLogVerbose() << "GStreamer: Got " << GST_MESSAGE_TYPE_NAME(msg) << " message from " << GST_MESSAGE_SRC_NAME(msg);
+	ofLogVerbose() << "GStreamer: Got " << GST_MESSAGE_TYPE_NAME(msg) << " message from " << GST_MESSAGE_SRC_NAME(msg);
 
-		switch (GST_MESSAGE_TYPE (msg)) {
+	switch (GST_MESSAGE_TYPE (msg)) {
 
-			case GST_MESSAGE_BUFFERING:
-				gint pctBuffered;
-				gst_message_parse_buffering(msg,&pctBuffered);
-				ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
-				/*if(pctBuffered<100){
-					gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
-				}else if(!bPaused){
-					gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
-				}*/
-			break;
+		case GST_MESSAGE_BUFFERING:
+			gint pctBuffered;
+			gst_message_parse_buffering(msg,&pctBuffered);
+			ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
+			/*if(pctBuffered<100){
+				gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
+			}else if(!bPaused){
+				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
+			}*/
+		break;
 
 #if GST_VERSION_MAJOR==0
-			case GST_MESSAGE_DURATION:{
-				GstFormat format=GST_FORMAT_TIME;
-				gst_element_query_duration(gstPipeline,&format,&durationNanos);
-			}break;
+		case GST_MESSAGE_DURATION:{
+			GstFormat format=GST_FORMAT_TIME;
+			gst_element_query_duration(gstPipeline,&format,&durationNanos);
+		}break;
 #else
-			case GST_MESSAGE_DURATION_CHANGED:
-				gst_element_query_duration(gstPipeline,GST_FORMAT_TIME,&durationNanos);
-				break;
+		case GST_MESSAGE_DURATION_CHANGED:
+			gst_element_query_duration(gstPipeline,GST_FORMAT_TIME,&durationNanos);
+			break;
 
 #endif
 
-			case GST_MESSAGE_STATE_CHANGED:{
-				GstState oldstate, newstate, pendstate;
-				gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
-				if(isStream && newstate==GST_STATE_PAUSED && !bPlaying ){
-					bLoaded = true;
-					bPlaying = true;
-					if(!bPaused){
-						cout << "setting stream pipeline to play " << endl;
-						play();
+		case GST_MESSAGE_STATE_CHANGED:{
+			GstState oldstate, newstate, pendstate;
+			gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
+			if(isStream && newstate==GST_STATE_PAUSED && !bPlaying ){
+				bLoaded = true;
+				bPlaying = true;
+				if(!bPaused){
+					cout << "setting stream pipeline to play " << endl;
+					play();
+				}
+			}
+			ofLogVerbose() << "GStreamer: " << GST_MESSAGE_SRC_NAME(msg) << " state changed from " << getName(oldstate) + " to " + getName(newstate) + " (" + getName(pendstate) + ")";
+		}break;
+
+		case GST_MESSAGE_ASYNC_DONE:
+			ofLog(OF_LOG_VERBOSE,"GStreamer: async done");
+		break;
+
+		case GST_MESSAGE_ERROR: {
+			GError *err;
+			gchar *debug;
+			gst_message_parse_error(msg, &err, &debug);
+
+			ofLog(OF_LOG_ERROR, "GStreamer Plugin: Embedded video playback halted; module %s reported: %s",
+				  gst_element_get_name(GST_MESSAGE_SRC (msg)), err->message);
+
+			g_error_free(err);
+			g_free(debug);
+
+			gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+
+		}break;
+
+		case GST_MESSAGE_EOS:
+			ofLog(OF_LOG_VERBOSE,"GStreamer: end of the stream.");
+			bIsMovieDone = true;
+
+			if(appsink && !isAppSink) appsink->on_eos();
+
+			switch(loopMode){
+
+				case OF_LOOP_NORMAL:{
+					GstFormat format = GST_FORMAT_TIME;
+					GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
+					gint64 pos;
+#if GST_VERSION_MAJOR==0
+					gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
+#else
+					gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
+#endif
+					if(!gst_element_seek(GST_ELEMENT(gstPipeline),
+										speed,
+										format,
+										flags,
+										GST_SEEK_TYPE_SET,
+										0,
+										GST_SEEK_TYPE_SET,
+										durationNanos)) {
+						ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
 					}
-				}
-				ofLogVerbose() << "GStreamer: " << GST_MESSAGE_SRC_NAME(msg) << " state changed from " << getName(oldstate) + " to " + getName(newstate) + " (" + getName(pendstate) + ")";
-			}break;
+				}break;
 
-			case GST_MESSAGE_ASYNC_DONE:
-				ofLog(OF_LOG_VERBOSE,"GStreamer: async done");
-			break;
-
-			case GST_MESSAGE_ERROR: {
-				GError *err;
-				gchar *debug;
-				gst_message_parse_error(msg, &err, &debug);
-
-				ofLog(OF_LOG_ERROR, "GStreamer Plugin: Embedded video playback halted; module %s reported: %s",
-					  gst_element_get_name(GST_MESSAGE_SRC (msg)), err->message);
-
-				g_error_free(err);
-				g_free(debug);
-
-				gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
-
-			}break;
-
-			case GST_MESSAGE_EOS:
-				ofLog(OF_LOG_VERBOSE,"GStreamer: end of the stream.");
-				bIsMovieDone = true;
-				
-				if(appsink && !isAppSink) appsink->on_eos();
-
-				switch(loopMode){
-
-					case OF_LOOP_NORMAL:{
-						GstFormat format = GST_FORMAT_TIME;
-						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
-						gint64 pos;
+				case OF_LOOP_PALINDROME:{
+					GstFormat format = GST_FORMAT_TIME;
+					GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
+					gint64 pos;
 #if GST_VERSION_MAJOR==0
-						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
+					gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
 #else
-						gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
+					gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
 #endif
-						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
-											speed,
-											format,
-											flags,
-											GST_SEEK_TYPE_SET,
-											0,
-											GST_SEEK_TYPE_SET,
-											durationNanos)) {
-							ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
-						}
-					}break;
+					float loopSpeed;
+					if(pos>0)
+						loopSpeed=-speed;
+					else
+						loopSpeed=speed;
+					if(!gst_element_seek(GST_ELEMENT(gstPipeline),
+										loopSpeed,
+										GST_FORMAT_UNDEFINED,
+										flags,
+										GST_SEEK_TYPE_NONE,
+										0,
+										GST_SEEK_TYPE_NONE,
+										0)) {
+						ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
+					}
+				}break;
 
-					case OF_LOOP_PALINDROME:{
-						GstFormat format = GST_FORMAT_TIME;
-						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
-						gint64 pos;
-#if GST_VERSION_MAJOR==0
-						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
-#else
-						gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
-#endif
-						float loopSpeed;
-						if(pos>0)
-							loopSpeed=-speed;
-						else
-							loopSpeed=speed;
-						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
-											loopSpeed,
-											GST_FORMAT_UNDEFINED,
-											flags,
-											GST_SEEK_TYPE_NONE,
-											0,
-											GST_SEEK_TYPE_NONE,
-											0)) {
-							ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
-						}
-					}break;
+				default:
+				break;
+			}
 
-					default:
-					break;
-				}
+		break;
 
-			break;
-
-			default:
-				ofLogVerbose() << "GStreamer: unhandled message from " << GST_MESSAGE_SRC_NAME(msg);
-			break;
-		}
-		gst_message_unref(msg);
+		default:
+			ofLogVerbose() << "GStreamer: unhandled message from " << GST_MESSAGE_SRC_NAME(msg);
+		break;
 	}
-
-	gst_object_unref(GST_OBJECT(bus));
+	return true;
 }
 
 GstElement 	* ofGstUtils::getPipeline(){

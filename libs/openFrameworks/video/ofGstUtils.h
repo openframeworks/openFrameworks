@@ -78,8 +78,8 @@ protected:
 	bool				isStream;
 
 private:
-	void 				gstHandleMessage();
-	void				update(ofEventArgs & args);
+	static bool			busFunction(GstBus * bus, GstMessage * message, ofGstUtils * app);
+	bool				gstHandleMessage(GstBus * bus, GstMessage * message);
 	bool				startPipeline();
 
 	bool 				bPlaying;
@@ -109,6 +109,7 @@ private:
 	};
 
 	static ofGstMainLoopThread * mainLoop;
+	GstBus * bus;
 };
 
 
