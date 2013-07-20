@@ -19,14 +19,12 @@
 
 #ifdef TARGET_OSX
 	// ofSystemUtils.cpp is configured to build as
-	// objective-c++ so as able to use NSAutoreleasePool.
+	// objective-c++ so as able to use Cocoa dialog panels
 	// This is done with this compiler flag
 	//		-x objective-c++
 	// http://www.yakyak.org/viewtopic.php?p=1475838&sid=1e9dcb5c9fd652a6695ac00c5e957822#p1475838
 
-	#include <Carbon/Carbon.h>
-	#include <sys/param.h> // for MAXPATHLEN
-	#include <Cocoa/Cocoa.h>  // for NSAutoreleasePool
+	#include <Cocoa/Cocoa.h>
 #endif
 
 #ifdef TARGET_WIN32
@@ -358,85 +356,15 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
 
-	short fRefNumOut;
-	FSRef output_file;
-	OSStatus err;
-
-	NavDialogCreationOptions options;
-	NavGetDefaultDialogCreationOptions( &options );
-
-	options.optionFlags = kNavNoTypePopup + kNavSupportPackages + kNavAllowOpenPackages;
-	options.modality = kWindowModalityAppModal;
-
-	options.optionFlags = kNavDefaultNavDlogOptions;
-	options.message = CFStringCreateWithCString(NULL, messageName.c_str(), kCFStringEncodingASCII);;
-	options.saveFileName = CFStringCreateWithCString(NULL, defaultName.c_str(), kCFStringEncodingASCII);
-	NavDialogRef dialog;
-
-	err = NavCreatePutFileDialog(&options, '.mov', 'Moov', NULL, NULL, &dialog);
-
-	//ofLogNotice("ofSystemutils") << "ofSytemSaveDialog(): NavCreatePutFileDialog returned " << err;
-
-	err = NavDialogRun(dialog);
-	//ofLogNotice("ofSystemutils") << "ofSytemSaveDialog(): NavDialogRun returned " << err;
-
-	NavUserAction action;
-	action = NavDialogGetUserAction( dialog );
-	//ofLogNotice("ofSystemutils") << "ofSytemSaveDialog(): got action " << action;
-	if (action == kNavUserActionNone || action == kNavUserActionCancel) {
-
-		return results;
+	NSSavePanel * saveDialog = [NSSavePanel savePanel];
+	[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
+	[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
+	
+	NSInteger buttonClicked = [saveDialog runModal];
+	
+	if(buttonClicked == NSFileHandlingPanelOKButton){
+		results.filePath = string([[[saveDialog URL] path] UTF8String]);
 	}
-
-	// get dialog reply
-	NavReplyRecord reply;
-	err = NavDialogGetReply(dialog, &reply);
-	if ( err != noErr )
-		return results;
-
-	if ( reply.replacing ) {
-		ofLogWarning("ofSystemUtils") << "ofSystemSaveDialog(): replacing dialog";
-	}
-
-	AEKeyword keyword;
-	DescType actual_type;
-	Size actual_size;
-	FSRef output_dir;
-	err = AEGetNthPtr(&(reply.selection), 1, typeFSRef, &keyword, &actual_type,
-					  &output_dir, sizeof(output_file), &actual_size);
-
-	//ofLogNotice("ofSystemUtils") << "ofSystemSaveDialog(): AEGetNthPtr returned " << err;
-
-
-	CFURLRef cfUrl = CFURLCreateFromFSRef( kCFAllocatorDefault, &output_dir );
-	CFStringRef cfString = NULL;
-	if ( cfUrl != NULL )
-	{
-		cfString = CFURLCopyFileSystemPath( cfUrl, kCFURLPOSIXPathStyle );
-		CFRelease( cfUrl );
-	}
-
-	// copy from a CFString into a local c string (http://www.carbondev.com/site/?page=CStrings+)
-	const int kBufferSize = 255;
-
-	char folderURL[kBufferSize];
-	Boolean bool1 = CFStringGetCString(cfString,folderURL,kBufferSize,kCFStringEncodingMacRoman);
-
-	char fileName[kBufferSize];
-	Boolean bool2 = CFStringGetCString(reply.saveFileName,fileName,kBufferSize,kCFStringEncodingMacRoman);
-
-	// append strings together
-
-	string url1 = folderURL;
-	string url2 = fileName;
-	string finalURL = url1 + "/" + url2;
-
-	results.filePath = finalURL.c_str();
-
-	//ofLogNotice("ofSystemUtils") << "ofSystemSaveDialog(): url " << finalURL;
-
-	// cleanup dialog
-	NavDialogDispose(dialog);
 
 #endif
 	//----------------------------------------------------------------------------------------
