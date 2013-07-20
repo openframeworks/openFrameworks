@@ -54,6 +54,7 @@ public:
 
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
+	GstElement 	* getGstElementByName(const string & name);
 	unsigned long getMinLatencyNanos();
 	unsigned long getMaxLatencyNanos();
 
