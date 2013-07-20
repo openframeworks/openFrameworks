@@ -80,6 +80,9 @@ public:
     //-------------------------------------------- ios config.
     bool enableHardwareOrientation();
     bool disableHardwareOrientation();
+
+    bool enableOrientationAnimation();
+    bool disableOrientationAnimation();
     
     bool enableRendererES2();
     bool enableRendererES1();
@@ -107,6 +110,7 @@ protected:
 	bool bEnableSetupScreen;
 	ofOrientation orientation;
     bool bHardwareOrientation;
+    bool bOrientationIsAnimated;
 	
     bool bRetinaEnabled;
     bool bRetinaSupportedOnDevice;
