@@ -264,8 +264,8 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h">
       <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\types\ofXml.h">
-      <Filter>libs\openFrameworks\types</Filter>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h">
+      <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -455,8 +455,8 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\types\ofXml.cpp">
-      <Filter>libs\openFrameworks\types</Filter>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp">
+      <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
