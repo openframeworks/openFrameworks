@@ -521,7 +521,7 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 	#ifdef TARGET_WIN32
 		DWORD nRead = 0;
 		if (!ReadFile(hComm,buffer,length,&nRead,0)){
-			ofLogError("ofSerial") << "readBytes(): couldn't read from port");
+			ofLogError("ofSerial") << "readBytes(): couldn't read from port";
 			return OF_SERIAL_ERROR;
 		}
 		return (int)nRead;
@@ -567,7 +567,7 @@ bool ofSerial::writeByte(unsigned char singleByte){
 			 return false;
 		}
 
-		ofLogVerbose("ofSerial") << "wrote byte");
+		ofLogVerbose("ofSerial") << "wrote byte";
 
 		return ((int)written > 0 ? true : false);
 	#endif
