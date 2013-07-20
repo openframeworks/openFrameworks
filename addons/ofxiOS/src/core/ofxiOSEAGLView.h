@@ -32,5 +32,6 @@ class ofVec3f;
 - (void)setup;
 - (void)updateDimensions;
 - (void)destroy;
+- (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
 
 @end

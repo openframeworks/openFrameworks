@@ -3,6 +3,7 @@ package cc.openframeworks;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
@@ -292,10 +293,14 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void onDrawFrame(GL10 gl) {
-    	if(setup && OFAndroid.unpackingDone)
+    	if(setup && OFAndroid.unpackingDone){
     		OFAndroid.render();
-    	else if(!setup && OFAndroid.unpackingDone)
+    	}else if(!setup && OFAndroid.unpackingDone){
     		setup();
+    	}else{
+    		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    		gl.glClearColor(.5f, .5f, .5f, 1.f);	
+    	}
     }
 
     private static boolean setup;

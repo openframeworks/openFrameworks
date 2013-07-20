@@ -103,11 +103,6 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 
 		bool readFile(string fileName,vector<short> & buffer);
 		bool stream(string fileName, vector<short> & buffer);
-		
-		static string getALErrorString(ALEnum error);
-#ifdef OF_USING_MPG123
-		static string getMpg123EncodingString(mpg123_enc_enum encoding);
-#endif
 
 		bool isStreaming;
 		bool bMultiPlay;
@@ -148,8 +143,8 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		size_t stream_samples_read;
 #ifdef OF_USING_MPG123
 		mpg123_handle * mp3streamf;
-#endif
 		int stream_encoding;
+#endif
 		int mp3_buffer_size;
 		int stream_subformat;
 		double stream_scale;
