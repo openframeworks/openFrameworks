@@ -163,12 +163,14 @@ void ofSystemAlertDialog(string errorMessage){
 
 
 	#ifdef TARGET_OSX
+		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 		NSAlert *alertDialog = [NSAlert alertWithMessageText:[NSString stringWithUTF8String:errorMessage.c_str()]
 											   defaultButton:nil
 											 alternateButton:nil
 												 otherButton:nil
 								   informativeTextWithFormat:@""];
 		[alertDialog runModal];
+		[pool drain];
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
@@ -213,6 +215,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
 	
+	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 	[loadDialog setAllowsMultipleSelection:NO];
 	[loadDialog setCanChooseDirectories:bFolderSelection];
@@ -235,6 +238,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
 		results.filePath = string([[selectedFileURL path] UTF8String]);
 	}
+	[pool drain];
 
 #endif
 	//----------------------------------------------------------------------------------------
@@ -356,6 +360,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
 
+	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	NSSavePanel * saveDialog = [NSSavePanel savePanel];
 	[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
 	[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
@@ -365,6 +370,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	if(buttonClicked == NSFileHandlingPanelOKButton){
 		results.filePath = string([[[saveDialog URL] path] UTF8String]);
 	}
+	[pool drain];
 
 #endif
 	//----------------------------------------------------------------------------------------
