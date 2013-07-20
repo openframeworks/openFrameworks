@@ -78,6 +78,12 @@ public:
     virtual void setVerticalSync(bool enabled);
 		
     //-------------------------------------------- ios config.
+    bool enableHardwareOrientation();
+    bool disableHardwareOrientation();
+
+    bool enableOrientationAnimation();
+    bool disableOrientationAnimation();
+    
     bool enableRendererES2();
     bool enableRendererES1();
     bool isRendererES2();
@@ -103,6 +109,8 @@ protected:
 
 	bool bEnableSetupScreen;
 	ofOrientation orientation;
+    bool bHardwareOrientation;
+    bool bOrientationIsAnimated;
 	
     bool bRetinaEnabled;
     bool bRetinaSupportedOnDevice;

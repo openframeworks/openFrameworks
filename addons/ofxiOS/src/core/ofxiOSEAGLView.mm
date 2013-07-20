@@ -147,12 +147,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)layoutSubviews {
     [super layoutSubviews];
     [self updateDimensions];
+    
     [super notifyResized];
+    ofNotifyWindowResized(ofGetWidth(), ofGetHeight());
 }
 
 - (void)updateDimensions {
     windowPos->set(self.frame.origin.x * scaleFactor, self.frame.origin.y * scaleFactor, 0);
-    windowSize->set(self.frame.size.width * scaleFactor, self.frame.size.height * scaleFactor, 0);
+    windowSize->set(self.bounds.size.width * scaleFactor, self.bounds.size.height * scaleFactor, 0);
     
     UIScreen * currentScreen = self.window.screen;  // current screen is the screen that GLView is attached to.
     if(!currentScreen) {                            // if GLView is not attached, assume to be main device screen.
@@ -213,6 +215,36 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)notifyDraw {
     // blank this.
     // we want to notifyDraw at the end of drawView.
+}
+
+//------------------------------------------------------
+- (CGPoint)orientateTouchPoint:(CGPoint)touchPoint {
+    
+    ofOrientation orientation = ofGetOrientation();
+    CGPoint touchPointOriented = CGPointZero;
+    
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			touchPointOriented.x = ofGetWidth() - touchPoint.x;
+			touchPointOriented.y = ofGetHeight() - touchPoint.y;
+			break;
+			
+		case OF_ORIENTATION_90_LEFT:
+			touchPointOriented.x = touchPoint.y;
+			touchPointOriented.y = ofGetHeight() - touchPoint.x;
+			break;
+			
+		case OF_ORIENTATION_90_RIGHT:
+			touchPointOriented.x = ofGetWidth() - touchPoint.y;
+			touchPointOriented.y = touchPoint.x;
+			break;
+			
+		case OF_ORIENTATION_DEFAULT:
+		default:
+            touchPointOriented = touchPoint;
+			break;
+	}
+    return touchPointOriented;
 }
 
 //------------------------------------------------------
@@ -348,34 +380,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	[self touchesEnded:touches withEvent:event];
 }
 
-//------------------------------------------------------
-- (CGPoint)orientateTouchPoint:(CGPoint)touchPoint {
-    
-    ofOrientation orientation = ofGetOrientation();
-    CGPoint touchPointOriented = CGPointZero;
-    
-	switch(orientation) {
-		case OF_ORIENTATION_180:
-			touchPointOriented.x = ofGetWidth() - touchPoint.x;
-			touchPointOriented.y = ofGetHeight() - touchPoint.y;
-			break;
-			
-		case OF_ORIENTATION_90_LEFT:
-			touchPointOriented.x = touchPoint.y;
-			touchPointOriented.y = ofGetHeight() - touchPoint.x;
-			break;
-			
-		case OF_ORIENTATION_90_RIGHT:
-			touchPointOriented.x = ofGetWidth() - touchPoint.y;
-			touchPointOriented.y = touchPoint.x;
-			break;
-			
-		case OF_ORIENTATION_DEFAULT:
-		default:
-            touchPointOriented = touchPoint;
-			break;
-	}
-    return touchPointOriented;
-}
+
 
 @end
