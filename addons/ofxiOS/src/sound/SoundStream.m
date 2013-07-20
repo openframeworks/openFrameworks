@@ -36,14 +36,21 @@
         audioUnit = nil;
         bInterruptedWhileRunning = NO;
 		
+    #ifdef __IPHONE_6_0
 		if([SoundStream shouldUseAudioSessionNotifications]) {
 			[[NSNotificationCenter defaultCenter] addObserver:self
 													 selector:@selector(handleInterruption:)
 														 name:AVAudioSessionInterruptionNotification
 													   object:nil];
 		} else {
-			[[AVAudioSession sharedInstance] setDelegate:self];
+     #endif
+    
+        [[AVAudioSession sharedInstance] setDelegate:self];
+    
+    #ifdef __IPHONE_6_0
 		}
+    #endif 
+    
     }
     return self;
 }
@@ -51,13 +58,21 @@
 - (void)dealloc {
     [super dealloc];
 	
+    #ifdef __IPHONE_6_0
 	if([SoundStream shouldUseAudioSessionNotifications]) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 														name:AVAudioSessionInterruptionNotification
 													  object:nil];
 	} else {
+    #endif
+    
 		[[AVAudioSession sharedInstance] setDelegate:nil];
-	}
+	
+    
+    #ifdef __IPHONE_6_0
+    }
+    #endif
+    
 }
 
 - (void)start {
@@ -113,13 +128,15 @@
 #pragma mark - Interruptions
 
 - (void) handleInterruption:(NSNotification *)notification {
-	NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
-	
-	if(interruptionType == AVAudioSessionInterruptionTypeBegan) {
-        [self beginInterruption];
-	} else if(interruptionType == AVAudioSessionInterruptionTypeEnded) {
-        [self endInterruption];
-    }
+    #ifdef __IPHONE_6_0
+        NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+        
+        if(interruptionType == AVAudioSessionInterruptionTypeBegan) {
+            [self beginInterruption];
+        } else if(interruptionType == AVAudioSessionInterruptionTypeEnded) {
+            [self endInterruption];
+        }
+    #endif
 }
 
 - (void)beginInterruption {
