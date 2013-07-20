@@ -179,46 +179,20 @@ void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel){
 	ofLog::setChannel(loggerChannel);
 }
 
-string ofGetLogLevelName(ofLogLevel level){
+string ofGetLogLevelName(ofLogLevel level, bool pad){
 	switch(level){
 		case OF_LOG_VERBOSE:
 			return "verbose";
 		case OF_LOG_NOTICE:
-			return "notice";
+			return pad ? "notice " : "notice";
 		case OF_LOG_WARNING:
 			return "warning";
 		case OF_LOG_ERROR:
-			return "error";
+			return pad ? " error " : "error";
 		case OF_LOG_FATAL_ERROR:
-			return "fatal";
+			return pad ? " fatal " : "fatal";
 		case OF_LOG_SILENT:
-			return "silent";
-		default:
-			return "";
-	}
-}
-
-// to help make log level strings the same length, kept hidden for now
-static string namePrePadding(ofLogLevel level){
-	switch(level){
-		case OF_LOG_ERROR:
-			return " ";
-		case OF_LOG_FATAL_ERROR:
-			return " ";
-		default:
-			return "";
-	}
-}
-
-// to help make log level strings the same length, kept hidden for now
-static string namePostPadding(ofLogLevel level){
-	switch(level){
-		case OF_LOG_NOTICE:
-			return " ";
-		case OF_LOG_ERROR:
-			return " ";
-		case OF_LOG_FATAL_ERROR:
-			return " ";
+			return pad ? "silent " : "silent";
 		default:
 			return "";
 	}
@@ -227,7 +201,7 @@ static string namePostPadding(ofLogLevel level){
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
 	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
 	ostream& out = level < OF_LOG_ERROR ? cout : cerr;
-	out << "[" << namePrePadding(level) << ofGetLogLevelName(level) << namePostPadding(level) << "] ";
+	out << "[" << ofGetLogLevelName(level, true)  << "] ";
 	// only print the module name if it's not "OF"
 	if(module != "OF") {
 		out << module << ": ";
@@ -246,7 +220,7 @@ void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const 
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
 	FILE* out = level < OF_LOG_ERROR ? stdout : stderr;
-	fprintf(out, "[%s%s%s] ", namePrePadding(level).c_str(), ofGetLogLevelName(level).c_str(), namePostPadding(level).c_str());
+	fprintf(out, "[%s] ", ofGetLogLevelName(level, true).c_str());
 	if(module != "OF") {
 		fprintf(out, "%s: ", module.c_str());
 	}
@@ -278,7 +252,7 @@ void ofFileLoggerChannel::setFile(const string & path,bool append){
 }
 
 void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
-	file << "[" << namePrePadding(level) << ofGetLogLevelName(level) << namePostPadding(level) << "] ";
+	file << "[" << ofGetLogLevelName(level, true) << "] ";
 	if(module != "OF"){
 		file << module << ": ";
 	}
@@ -293,7 +267,7 @@ void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const cha
 }
 
 void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const char* format, va_list args){
-	file << "[" << namePrePadding(level) << ofGetLogLevelName(level) << namePostPadding(level) << "] ";
+	file << "[" << ofGetLogLevelName(level, true) << "] ";
 	if(module != "OF"){
 		file << module << ": ";
 	}

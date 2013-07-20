@@ -11,22 +11,25 @@ enum ofLogLevel{
 	OF_LOG_ERROR,
 	OF_LOG_FATAL_ERROR,
 	OF_LOG_SILENT	// this one is special and should always be last,
-					// set ofSetLogLevel to OF_SILENT to not recieve any messages
+					// set ofSetLogLevel to OF_SILENT to not receive any messages
 };
-
-
-class ofBaseLoggerChannel;
 
 //--------------------------------------------------
 void ofSetLogLevel(ofLogLevel level);
 void ofSetLogLevel(string module, ofLogLevel level);
 ofLogLevel ofGetLogLevel();
 
-void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel);
-string ofGetLogLevelName(ofLogLevel level);
+/// get log level name as a string
+/// set pad to true if you want all log level names to be the same length
+string ofGetLogLevelName(ofLogLevel level, bool pad=false);
+
+//--------------------------------------------------
+class ofBaseLoggerChannel;
 
 void ofLogToFile(const string & path, bool append=false);
 void ofLogToConsole();
+
+void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel);
 
 //------------------------------------------------------------------------------
 /// \class ofLog
@@ -142,6 +145,11 @@ class ofLogFatalError : public ofLog{
 		ofLogFatalError(const string & module, const string & message);
 };
 
+//--------------------------------------------------------------
+///
+/// \section Logger Channels
+/// swappable logging destinations, derive your own for custom logging
+///
 class ofBaseLoggerChannel{
 public:
 	virtual ~ofBaseLoggerChannel(){};
