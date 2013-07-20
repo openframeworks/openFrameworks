@@ -165,15 +165,12 @@ void ofSystemAlertDialog(string errorMessage){
 
 
 	#ifdef TARGET_OSX
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];  // The StandardAlert requires a NSAutoreleasePool to avoid memory leaks
-
-		CFStringRef msgStrRef = CFStringCreateWithCString(NULL, errorMessage.c_str(), kCFStringEncodingASCII);
-		DialogRef theItem;
-		DialogItemIndex itemIndex;
-		CreateStandardAlert(kAlertNoteAlert, msgStrRef, NULL, NULL, &theItem);
-		RunStandardAlert(theItem, NULL, &itemIndex);
-
-		[pool drain];
+		NSAlert *alertDialog = [NSAlert alertWithMessageText:[NSString stringWithUTF8String:errorMessage.c_str()]
+											   defaultButton:nil
+											 alternateButton:nil
+												 otherButton:nil
+								   informativeTextWithFormat:@""];
+		[alertDialog runModal];
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
