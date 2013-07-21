@@ -113,7 +113,6 @@ public:
     {
         string value = ofToString(data);
         vector<string> tokens;
-        bool needsTokenizing = false;
         
         if(path.find('/') != string::npos) {
             tokens = tokenize(path, "/");
@@ -123,7 +122,7 @@ public:
         if(tokens.size() > 1)
         {
             // don't 'push' down into the new nodes
-            Poco::XML::Element* firstElement, *lastElement;
+            Poco::XML::Element* firstElement=NULL, *lastElement=NULL;
             if(element) {
                 lastElement = element;
             }
@@ -132,10 +131,7 @@ public:
                 firstElement = lastElement;
             }
             
-            // find the last existing tag
-            int lastExistingTag = tokens.size();
-            
-            for(int i = 0; i < tokens.size(); i++)
+            for(int i = 0; i < (int)tokens.size(); i++)
             {
                 Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
                 
