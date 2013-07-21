@@ -2,16 +2,7 @@
 #include "ofXml.h"
 
 ofXml::~ofXml() {
-    
-    if(document) {
-        document->release();
-        document = 0;
-    }
-    
-    if(element) {
-        element->release();
-        element = 0;
-    }
+	close();
 }
 
 ofXml::ofXml( const ofXml& rhs ) {
@@ -510,6 +501,19 @@ bool ofXml::clearContents(const string& path) {
         return true;
     }
     return false;
+}
+
+
+void ofXml::close(){
+    if(document) {
+        document->release();
+        document = 0;
+    }
+
+    if(element) {
+        element->release();
+        element = 0;
+    }
 }
 
 

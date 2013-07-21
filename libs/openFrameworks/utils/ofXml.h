@@ -63,6 +63,7 @@ public:
     bool            clearAttributes();
     bool            clearContents(const string& path);
     bool            clearContents();
+    void			close();
     
     bool            remove(const string& path); // works for both attributes and tags
     bool            exists(const string& path) const; // works for both attributes and tags
