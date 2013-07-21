@@ -15,8 +15,9 @@ ofXml::ofXml( const ofXml& rhs ) {
 }
 
 const ofXml& ofXml::operator =( const ofXml& rhs ) {
-	if(document) document->release();
-	if(element)  element->release();
+	if(&rhs==this) return this;
+
+	releaseAll();
 
     document = (Poco::XML::Document*) rhs.document->cloneNode(true);
     element = document->documentElement();
