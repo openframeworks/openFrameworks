@@ -13,12 +13,7 @@ void testApp::setup(){
 	//we load our settings file
 	//if it doesn't exist we can still make one
 	//by hitting the 's' key
-    
-    // make a buffer to load our object
-    ofBuffer buffer = ofBufferFromFile("mySettings.xml");
-    
-    // now get everything from the buffer and put it into the XML
-	if( XML.loadFromBuffer(buffer.getText()) ){
+	if( XML.load("mySettings.xml") ){
 		message = "mySettings.xml loaded!";
 	}else{
     
@@ -153,10 +148,7 @@ void testApp::keyPressed  (int key){
     //no data gets saved unless you hit the s key
     if(key == 's')
     {
-        ofBuffer buffer(XML.toString());
-        ofFile file("mySettings.xml", ofFile::ReadWrite);
-        file.writeFromBuffer(buffer);
-        file.close();
+        XML.save("mySettings.xml");
 
         message = "settings saved to xml!";
     }

@@ -171,7 +171,7 @@ public:
 
 	//helper functions to read/write a whole file to/from an ofBuffer
 	ofBuffer readToBuffer();
-	bool writeFromBuffer(ofBuffer & buffer);
+	bool writeFromBuffer(const ofBuffer & buffer);
 
 	
 	// this can be used to read the whole stream into an output stream. ie:
