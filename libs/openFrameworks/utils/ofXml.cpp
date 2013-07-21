@@ -15,7 +15,7 @@ ofXml::ofXml( const ofXml& rhs ) {
 }
 
 const ofXml& ofXml::operator =( const ofXml& rhs ) {
-	if(&rhs==this) return this;
+	if(&rhs==this) return *this;
 
 	releaseAll();
 
