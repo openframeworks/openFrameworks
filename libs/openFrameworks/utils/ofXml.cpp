@@ -543,6 +543,18 @@ bool ofXml::remove(const string& path) // works for both attributes and tags
     return false;
 }
 
+
+void ofXml::remove(){
+	Poco::XML::Node * parent = element->parentNode();
+	if(parent){
+		parent->removeChild(element);
+		element->release();
+		element = (Poco::XML::Element*)parent;
+	}else{
+		clear();
+	}
+}
+
 bool ofXml::exists(const string& path) const // works for both attributes and tags
 {
     Poco::XML::Node *node;
