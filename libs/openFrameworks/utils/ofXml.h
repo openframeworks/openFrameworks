@@ -62,7 +62,10 @@ public:
     bool            removeAttributes(); // removes attributes for the element ofXml is pointing to
     bool            removeContents(const string& path); // removes the path passed as parameter
     bool            removeContents(); // removes the childs of the current element
-    bool            remove(const string& path); // works for both attributes and tags
+    bool            remove(const string& path); // removes both attributes and tags for the passed path
+    void            remove(); // removes the current element and all its children,
+    						  // the current element will point to it's parent afterwards
+    						  // if the current element is the document root this will act as clear()
 
     bool            exists(const string& path) const; // works for both attributes and tags
     
