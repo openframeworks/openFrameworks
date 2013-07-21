@@ -431,7 +431,7 @@ string ofXml::getAttribute(const string& path) const {
     return "";
 }
 
-bool ofXml::clearAttributes(const string& path) 
+bool ofXml::removeAttributes(const string& path) 
 {
     Poco::XML::Element *e;
     if(element) {
@@ -454,7 +454,7 @@ bool ofXml::clearAttributes(const string& path)
     return false;
 }
 
-bool ofXml::clearAttributes()
+bool ofXml::removeAttributes()
 {
 
     if(element) {
@@ -472,7 +472,7 @@ bool ofXml::clearAttributes()
 
 }
 
-bool ofXml::clearContents() {
+bool ofXml::removeContents() {
     if(element)
     {
         Poco::XML::NodeList *list = element->childNodes();
@@ -485,7 +485,7 @@ bool ofXml::clearContents() {
     return false;
 }
 
-bool ofXml::clearContents(const string& path) {
+bool ofXml::removeContents(const string& path) {
     
     Poco::XML::Element *e;
     if(element) {
@@ -507,7 +507,7 @@ bool ofXml::clearContents(const string& path) {
 }
 
 
-void ofXml::close(){
+void ofXml::clear(){
 	releaseAll();
     document = new Poco::XML::Document(); // we create this so that they can be merged later
     element = document->documentElement();
@@ -541,6 +541,18 @@ bool ofXml::remove(const string& path) // works for both attributes and tags
         return true;
     }
     return false;
+}
+
+
+void ofXml::remove(){
+	Poco::XML::Node * parent = element->parentNode();
+	if(parent){
+		parent->removeChild(element);
+		element->release();
+		element = (Poco::XML::Element*)parent;
+	}else{
+		clear();
+	}
 }
 
 bool ofXml::exists(const string& path) const // works for both attributes and tags
