@@ -23,7 +23,7 @@ class testApp : public ofBaseApp{
 		int 				snapCounter;
 		char 				snapString[255];
 		ofImage 			img;
-		ofTrueTypeFont		cooper;
+		ofFont		cooper;
 		bool 				bSnapshot;		
 		float 				phase;
 		

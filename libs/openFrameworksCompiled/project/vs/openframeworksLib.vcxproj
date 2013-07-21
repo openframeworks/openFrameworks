@@ -99,7 +99,7 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofPolyline.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofRendererCollection.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofTessellator.h" />
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofFont.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMath.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix3x3.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix4x4.h" />
@@ -177,7 +177,7 @@
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPolyline.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofRendererCollection.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofTessellator.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofFont.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMath.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix3x3.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix4x4.cpp" />

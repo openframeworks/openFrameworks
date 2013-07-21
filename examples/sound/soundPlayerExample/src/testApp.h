@@ -23,7 +23,7 @@ class testApp : public ofBaseApp{
 		ofSoundPlayer  synth;
 		ofSoundPlayer  vocals;
 
-		ofTrueTypeFont	font;
+		ofFont	font;
 		float 			synthPosition;
 		
 };

@@ -30,7 +30,7 @@ class testApp : public ofxiPhoneApp{
         void deviceOrientationChanged(int newOrientation);
 
 		ofxXmlSettings XML;
-		ofTrueTypeFont TTF;
+		ofFont TTF;
 
 		string xmlStructure;
 		string message;

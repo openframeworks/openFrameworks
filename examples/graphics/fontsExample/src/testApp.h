@@ -23,12 +23,12 @@ class testApp : public ofBaseApp{
 		bool bFirst;
 		string typeStr;
 		
-		ofTrueTypeFont  franklinBook14;
-		ofTrueTypeFont	verdana14;
-		ofTrueTypeFont	verdana30;
+		ofFont  franklinBook14;
+		ofFont	verdana14;
+		ofFont	verdana30;
 		
-		ofTrueTypeFont  franklinBook14A;
-		ofTrueTypeFont	verdana14A;
+		ofFont  franklinBook14A;
+		ofFont	verdana14A;
 
 };
 

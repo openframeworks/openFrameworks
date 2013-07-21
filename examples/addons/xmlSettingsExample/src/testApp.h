@@ -24,7 +24,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
 
 		ofxXmlSettings XML;
-		ofTrueTypeFont TTF;
+		ofFont TTF;
 
 		string xmlStructure;
 		string message;

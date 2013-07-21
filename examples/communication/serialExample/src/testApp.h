@@ -19,7 +19,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofTrueTypeFont		font;
+		ofFont		font;
 
 		bool		bSendSerialMessage;			// a flag for sending serial
 		char		bytesRead[3];				// data from serial, we will be trying to read 3

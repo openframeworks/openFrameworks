@@ -15,7 +15,7 @@
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofTrueTypeFont.h"
+#include "ofFont.h"
 #include "ofURLFileLoader.h"
 #include "Poco/Net/SSLManager.h"
 
@@ -262,7 +262,7 @@ void ofExitCallback(){
 
 	//------------------------
 	// try to close free type:
-	ofTrueTypeFont::finishLibraries();
+	ofFont::finishLibraries();
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);

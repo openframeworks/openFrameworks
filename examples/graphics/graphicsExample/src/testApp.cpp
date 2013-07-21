@@ -35,7 +35,7 @@ void testApp::draw(){
 	// use the bitMap type
 	// note, this can be slow on some graphics cards
 	// because it is using glDrawPixels which varies in
-	// speed from system to system.  try using ofTrueTypeFont
+	// speed from system to system.  try using ofFont
 	// if this bitMap type slows you down.
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("circle", 75,500);

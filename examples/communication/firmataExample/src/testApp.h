@@ -24,8 +24,8 @@ public:
 	void gotMessage(ofMessage msg);
 
 	ofImage				bgImage;
-	ofTrueTypeFont		font;
-    ofTrueTypeFont      smallFont;
+	ofFont		font;
+    ofFont      smallFont;
 	ofArduino	ard;
 	bool		bSetupArduino;			// flag variable for setting up arduino once
     

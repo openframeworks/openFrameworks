@@ -23,7 +23,7 @@ class testApp : public ofxiPhoneApp, ofxiPhoneMapKitListener{
         void deviceOrientationChanged(int newOrientation);
 	
         // font for writing latitude longitude info
-        ofTrueTypeFont font;
+        ofFont font;
 	
         // instance of ofxiPhoneMapKit
         // all MapKit related functionality is through this object

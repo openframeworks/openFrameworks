@@ -22,8 +22,8 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
 
 		ofxUDPManager udpConnection;
-		ofTrueTypeFont  mono;
-		ofTrueTypeFont  monosm;
+		ofFont  mono;
+		ofFont  monosm;
 
 		vector<ofPoint> stroke;
 };

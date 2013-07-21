@@ -21,7 +21,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 				
 		float 			counter;
-		ofTrueTypeFont 	vagRounded;
+		ofFont 	vagRounded;
 		char eventString[255];
 		char timeString[255];
 };

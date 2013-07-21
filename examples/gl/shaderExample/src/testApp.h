@@ -20,7 +20,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofTrueTypeFont font;
+		ofFont font;
 		ofShader shader;
 		bool doShader;
 };

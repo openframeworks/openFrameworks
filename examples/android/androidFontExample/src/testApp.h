@@ -31,5 +31,5 @@ class testApp : public ofxAndroidApp{
 		void okPressed();
 		void cancelPressed();
 
-		ofTrueTypeFont font;
+		ofFont font;
 };

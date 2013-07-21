@@ -266,10 +266,10 @@
 		<Unit filename="../../../openFrameworks/graphics/ofTessellator.h">
 			<Option virtualFolder="openframeworks/graphics/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/graphics/ofTrueTypeFont.cpp">
+		<Unit filename="../../../openFrameworks/graphics/ofFont.cpp">
 			<Option virtualFolder="openframeworks/graphics/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/graphics/ofTrueTypeFont.h">
+		<Unit filename="../../../openFrameworks/graphics/ofFont.h">
 			<Option virtualFolder="openframeworks/graphics/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/math/ofMath.cpp">

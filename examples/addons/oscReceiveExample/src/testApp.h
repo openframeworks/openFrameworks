@@ -24,7 +24,7 @@ class testApp : public ofBaseApp {
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		ofTrueTypeFont font;
+		ofFont font;
 		ofxOscReceiver receiver;
 
 		int current_msg_string;

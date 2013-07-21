@@ -33,7 +33,7 @@ class testApp : public ofxAndroidApp{
 		void okPressed();
 		void cancelPressed();
 
-		ofTrueTypeFont font;
+		ofFont font;
 		ofVec3f accel, normAccel;
 		string messages[3];
 };

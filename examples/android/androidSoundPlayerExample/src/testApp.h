@@ -34,5 +34,5 @@ class testApp : public ofxAndroidApp{
 		ofSoundPlayer  synth;
 		ofSoundPlayer  vocals;
 
-		ofTrueTypeFont	font;
+		ofFont	font;
 };

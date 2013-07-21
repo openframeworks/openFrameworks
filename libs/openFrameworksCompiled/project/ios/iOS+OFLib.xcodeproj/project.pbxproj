@@ -142,8 +142,8 @@
 		E4F76E60176CB27200798745 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DBB176CB27200798745 /* ofRendererCollection.h */; };
 		E4F76E61176CB27200798745 /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DBC176CB27200798745 /* ofTessellator.cpp */; };
 		E4F76E62176CB27200798745 /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DBD176CB27200798745 /* ofTessellator.h */; };
-		E4F76E63176CB27200798745 /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DBE176CB27200798745 /* ofTrueTypeFont.cpp */; };
-		E4F76E64176CB27200798745 /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DBF176CB27200798745 /* ofTrueTypeFont.h */; };
+		E4F76E63176CB27200798745 /* ofFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DBE176CB27200798745 /* ofFont.cpp */; };
+		E4F76E64176CB27200798745 /* ofFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DBF176CB27200798745 /* ofFont.h */; };
 		E4F76E65176CB27200798745 /* ofMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DC1176CB27200798745 /* ofMath.cpp */; };
 		E4F76E66176CB27200798745 /* ofMath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DC2176CB27200798745 /* ofMath.h */; };
 		E4F76E67176CB27200798745 /* ofMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DC3176CB27200798745 /* ofMatrix3x3.cpp */; };
@@ -344,8 +344,8 @@
 		E4F76DBB176CB27200798745 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		E4F76DBC176CB27200798745 /* ofTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTessellator.cpp; sourceTree = "<group>"; };
 		E4F76DBD176CB27200798745 /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTessellator.h; sourceTree = "<group>"; };
-		E4F76DBE176CB27200798745 /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTrueTypeFont.cpp; sourceTree = "<group>"; };
-		E4F76DBF176CB27200798745 /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTrueTypeFont.h; sourceTree = "<group>"; };
+		E4F76DBE176CB27200798745 /* ofFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFont.cpp; sourceTree = "<group>"; };
+		E4F76DBF176CB27200798745 /* ofFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFont.h; sourceTree = "<group>"; };
 		E4F76DC1176CB27200798745 /* ofMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMath.cpp; sourceTree = "<group>"; };
 		E4F76DC2176CB27200798745 /* ofMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMath.h; sourceTree = "<group>"; };
 		E4F76DC3176CB27200798745 /* ofMatrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMatrix3x3.cpp; sourceTree = "<group>"; };
@@ -781,8 +781,8 @@
 				E4F76DBB176CB27200798745 /* ofRendererCollection.h */,
 				E4F76DBC176CB27200798745 /* ofTessellator.cpp */,
 				E4F76DBD176CB27200798745 /* ofTessellator.h */,
-				E4F76DBE176CB27200798745 /* ofTrueTypeFont.cpp */,
-				E4F76DBF176CB27200798745 /* ofTrueTypeFont.h */,
+				E4F76DBE176CB27200798745 /* ofFont.cpp */,
+				E4F76DBF176CB27200798745 /* ofFont.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -913,7 +913,7 @@
 				E4F76E5E176CB27200798745 /* ofPolyline.h in Headers */,
 				E4F76E60176CB27200798745 /* ofRendererCollection.h in Headers */,
 				E4F76E62176CB27200798745 /* ofTessellator.h in Headers */,
-				E4F76E64176CB27200798745 /* ofTrueTypeFont.h in Headers */,
+				E4F76E64176CB27200798745 /* ofFont.h in Headers */,
 				E4F76E66176CB27200798745 /* ofMath.h in Headers */,
 				E4F76E68176CB27200798745 /* ofMatrix3x3.h in Headers */,
 				E4F76E6A176CB27200798745 /* ofMatrix4x4.h in Headers */,
@@ -1062,7 +1062,7 @@
 				E4F76E5D176CB27200798745 /* ofPolyline.cpp in Sources */,
 				E4F76E5F176CB27200798745 /* ofRendererCollection.cpp in Sources */,
 				E4F76E61176CB27200798745 /* ofTessellator.cpp in Sources */,
-				E4F76E63176CB27200798745 /* ofTrueTypeFont.cpp in Sources */,
+				E4F76E63176CB27200798745 /* ofFont.cpp in Sources */,
 				E4F76E65176CB27200798745 /* ofMath.cpp in Sources */,
 				E4F76E67176CB27200798745 /* ofMatrix3x3.cpp in Sources */,
 				E4F76E69176CB27200798745 /* ofMatrix4x4.cpp in Sources */,

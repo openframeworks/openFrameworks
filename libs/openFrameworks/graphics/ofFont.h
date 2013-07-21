@@ -32,13 +32,13 @@ const static string OF_TTF_SANS = "sans-serif";
 const static string OF_TTF_SERIF = "serif";
 const static string OF_TTF_MONO = "monospace";
 
-class ofTrueTypeFont{
+class ofFont{
 
 public:
 
 
-	ofTrueTypeFont();
-	virtual ~ofTrueTypeFont();
+	ofFont();
+	virtual ~ofFont();
 	
 	//set the default dpi for all typefaces.
 	static void setGlobalDpi(int newDpi);
@@ -128,4 +128,4 @@ private:
 	friend void ofExitCallback();
 };
 
-
+OF_DEPRECATED_MSG("ofTrueTypeFont is deprecated, use ofFont instead", typedef ofFont ofTrueTypeFont);

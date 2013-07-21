@@ -24,8 +24,8 @@ class testApp : public ofBaseApp{
 		ofxTCPClient tcpClient;
 		string msgTx, msgRx;
 
-		ofTrueTypeFont  mono;
-		ofTrueTypeFont  monosm;
+		ofFont  mono;
+		ofFont  monosm;
 
 		float counter;
 		int connectTime;
