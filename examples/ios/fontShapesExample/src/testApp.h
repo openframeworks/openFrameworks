@@ -23,8 +23,8 @@ class testApp : public ofxiPhoneApp{
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
 
-        ofTrueTypeFont testFont;
-        ofTrueTypeFont testFont2;
+        ofFont testFont;
+        ofFont testFont2;
         ofTTFCharacter testChar;
 
         int letter;

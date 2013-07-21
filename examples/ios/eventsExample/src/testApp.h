@@ -24,7 +24,7 @@ class testApp : public ofxiPhoneApp{
         void deviceOrientationChanged(int newOrientation);
 
         float counter;
-        ofTrueTypeFont vagRounded;
+        ofFont vagRounded;
         char eventString[255];
         char timeString[255];
 

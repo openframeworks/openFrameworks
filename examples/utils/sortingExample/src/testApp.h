@@ -32,7 +32,7 @@ public:
     static bool removeWordIf(LyricWord &wrd);
     
     
-    ofTrueTypeFont      font;
+    ofFont      font;
     string              sortTypeInfo;
     vector <LyricWord>  words;
 };

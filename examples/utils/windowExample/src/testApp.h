@@ -20,7 +20,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofTrueTypeFont 	vagRounded;
+		ofFont 	vagRounded;
 		
 		bool  	bFullscreen;
 		

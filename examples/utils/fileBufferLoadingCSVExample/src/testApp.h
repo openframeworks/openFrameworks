@@ -27,5 +27,5 @@ class testApp : public ofBaseApp{
 		MorseCodePlayer player;
 		MorseCodeSymbol currentSymbol;
 	
-		ofTrueTypeFont font;
+		ofFont font;
 };

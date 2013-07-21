@@ -26,7 +26,7 @@ class testApp : public ofBaseApp{
 		vector <ofImage> images;
 		vector <ofPoint> boxTrail;
 		
-		ofTrueTypeFont font;
+		ofFont font;
 		
 		bool						oneShot;
 		bool						pdfRendering;

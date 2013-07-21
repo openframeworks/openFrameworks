@@ -28,5 +28,5 @@ class testApp : public ofBaseApp{
 		ofParameter<bool> vSync;
 		ofxXmlSettings settings;
 		CirclesRenderer renderer1,renderer2;
-		ofTrueTypeFont font;
+		ofFont font;
 };

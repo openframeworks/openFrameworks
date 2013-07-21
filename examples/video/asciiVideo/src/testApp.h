@@ -25,7 +25,7 @@ class testApp : public ofBaseApp{
 		int 				camHeight;
     
         string asciiCharacters;
-        ofTrueTypeFont  font;
+        ofFont  font;
     
     
 };

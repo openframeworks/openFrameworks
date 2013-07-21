@@ -9,7 +9,7 @@ void testApp::setup(){
 	//Path to the comma delimited file
 	string filePath = "morse.csv";
 	
-	//Use a ofTrueTypeFont for scalable text
+	//Use a ofFont for scalable text
 	font.loadFont("frabk.ttf", 122);
 	
 	//Load file placed in bin/data

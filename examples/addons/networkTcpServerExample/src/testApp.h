@@ -23,8 +23,8 @@ class testApp : public ofBaseApp{
 
 		ofxTCPServer TCP;
 
-		ofTrueTypeFont  mono;
-		ofTrueTypeFont  monosm;
+		ofFont  mono;
+		ofFont  monosm;
 
 		vector <string> storeText;
 };

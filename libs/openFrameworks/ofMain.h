@@ -57,7 +57,7 @@
 #include "ofPolyline.h"
 #include "ofRendererCollection.h"
 #include "ofTessellator.h"
-#include "ofTrueTypeFont.h"
+#include "ofFont.h"
 
 //--------------------------
 // app

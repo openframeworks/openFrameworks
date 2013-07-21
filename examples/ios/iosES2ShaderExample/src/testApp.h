@@ -25,7 +25,7 @@ class testApp : public ofxiPhoneApp{
 
         ofShader shader;
         bool bUseShader;
-		ofTrueTypeFont font;
+		ofFont font;
         ofPoint mousePoint;
 };
 

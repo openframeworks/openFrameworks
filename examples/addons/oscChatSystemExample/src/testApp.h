@@ -34,8 +34,8 @@ class testApp : public ofBaseApp {
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		ofTrueTypeFont font; // standard font
-		ofTrueTypeFont titleFont; // font for some info in the title line
+		ofFont font; // standard font
+		ofFont titleFont; // font for some info in the title line
 
 		//----------------------------------------
 		// Client side:

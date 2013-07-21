@@ -28,7 +28,7 @@ class testApp : public ofxiPhoneApp{
         ofSoundPlayer beats;
         AVSoundPlayer * vocals;
     
-        ofTrueTypeFont font;
+        ofFont font;
 };
 
 

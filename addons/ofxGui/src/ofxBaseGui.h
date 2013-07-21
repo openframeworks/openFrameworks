@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofParameter.h"
-#include "ofTrueTypeFont.h"
+#include "ofFont.h"
 
 class ofxBaseGui{
 public:
@@ -75,7 +75,7 @@ protected:
 	ofRectangle getTextBoundingBox(const string & text,float x, float y);
 
 	ofRectangle b;
-	static ofTrueTypeFont font;
+	static ofFont font;
 	static bool fontLoaded;
 	static bool useTTF;
 	ofPtr<ofBaseFileSerializer> serializer;

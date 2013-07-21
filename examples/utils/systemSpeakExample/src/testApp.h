@@ -23,7 +23,7 @@ public:
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-    ofTrueTypeFont font;
+    ofFont font;
     vector <string> words;
     int step;
     

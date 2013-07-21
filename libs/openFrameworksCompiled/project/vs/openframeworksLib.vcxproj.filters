@@ -195,7 +195,7 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofTessellator.h">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.h">
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofFont.h">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h">
@@ -386,7 +386,7 @@
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofTessellator.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.cpp">
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofFont.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp">
