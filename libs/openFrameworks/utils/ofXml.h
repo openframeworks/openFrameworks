@@ -58,16 +58,16 @@ public:
     int             getNumChildren() const;
     int             getNumChildren(const string& path) const;
 
-    
-    bool            removeAttributes(const string& path);
-    bool            removeAttributes();
-    bool            removeContents(const string& path);
-    bool            removeContents();
-    void			clear();
-    
+    bool            removeAttributes(const string& path); // removes attributes for the passed path
+    bool            removeAttributes(); // removes attributes for the element ofXml is pointing to
+    bool            removeContents(const string& path); // removes the path passed as parameter
+    bool            removeContents(); // removes the childs of the current element
     bool            remove(const string& path); // works for both attributes and tags
+
     bool            exists(const string& path) const; // works for both attributes and tags
     
+    void			clear();  // clears the full document and points the current element to the root
+
     string          getName() const;
     bool            reset();
 
