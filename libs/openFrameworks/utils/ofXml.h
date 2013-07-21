@@ -59,11 +59,11 @@ public:
     int             getNumChildren(const string& path) const;
 
     
-    bool            clearAttributes(const string& path);
-    bool            clearAttributes();
-    bool            clearContents(const string& path);
-    bool            clearContents();
-    void			close();
+    bool            removeAttributes(const string& path);
+    bool            removeAttributes();
+    bool            removeContents(const string& path);
+    bool            removeContents();
+    void			clear();
     
     bool            remove(const string& path); // works for both attributes and tags
     bool            exists(const string& path) const; // works for both attributes and tags
