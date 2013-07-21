@@ -2,7 +2,7 @@
 #include "ofXml.h"
 
 ofXml::~ofXml() {
-	close();
+	releaseAll();
 }
 
 ofXml::ofXml( const ofXml& rhs ) {
@@ -505,6 +505,12 @@ bool ofXml::clearContents(const string& path) {
 
 
 void ofXml::close(){
+	releaseAll();
+    document = new Poco::XML::Document(); // we create this so that they can be merged later
+    element = document->documentElement();
+}
+
+void ofXml::releaseAll(){
     if(document) {
         document->release();
         document = 0;
@@ -515,7 +521,6 @@ void ofXml::close(){
         element = 0;
     }
 }
-
 
 bool ofXml::remove(const string& path) // works for both attributes and tags
 {

@@ -229,7 +229,7 @@ public:
 
        
 protected:
-    
+    void releaseAll();
     string DOMErrorMessage(short msg);
 
     Poco::XML::Document *document;
