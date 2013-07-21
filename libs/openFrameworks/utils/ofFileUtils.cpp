@@ -391,15 +391,14 @@ ofBuffer ofFile::readToBuffer(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::writeFromBuffer(ofBuffer & buffer){
+bool ofFile::writeFromBuffer(const ofBuffer & buffer){
 	if(myFile.path() == ""){
 		return false;
 	}
 	if(!isWriteMode()){
 		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file \"" << myFile.path() << "\"";
 	}
-	*this << buffer;
-	return true;
+	return buffer.writeTo(*this);
 }
 
 //------------------------------------------------------------------------------------------------------------
