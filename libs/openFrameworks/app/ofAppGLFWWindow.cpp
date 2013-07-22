@@ -1131,11 +1131,11 @@ EGLSurface ofAppGLFWWindow::getEGLSurface(){
 #endif
 
 #if defined(TARGET_OSX)
-id ofAppGLFWWindow::getNSGLContext(){
+void * ofAppGLFWWindow::getNSGLContext(){
 	return glfwGetNSGLContext(windowP);
 }
 
-id ofAppGLFWWindow::getCocoaWindow(){
+void * ofAppGLFWWindow::getCocoaWindow(){
 	return glfwGetCocoaWindow(windowP);
 }
 #endif
