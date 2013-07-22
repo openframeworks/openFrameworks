@@ -382,7 +382,7 @@ static void add_video_format (ofGstDevice &webcam_device,
 	ofLogVerbose("ofGstVideoGrabber") << "add_video_format(): "
 				<< video_format.mimetype << " " << video_format.format_name
 				<< video_format.width << "x" << video_format.height << " "
-				<< "videoformat: " << gst_video_format_from_string(video_format.format_name)
+				<< "videoformat: " << gst_video_format_from_string(video_format.format_name.c_str())
 				<< " framerates: ";
 	get_supported_framerates (video_format, format_structure);
 	find_framerate (video_format, desired_framerate);
@@ -553,7 +553,7 @@ static void get_device_data (ofGstDevice &webcam_device, int desired_framerate)
 		g_object_get (G_OBJECT (src), "device-name", &name, (void*)NULL);
 
 		ofLogVerbose("ofGstVideoGrabber") << "get_device_data(): device: " 
-			<< name==NULL?"":name << "(" << webcam_device.video_device. << ")";
+			<< (name==NULL?"":name) << "(" << webcam_device.video_device << ")";
 		GstPad     *pad  = gst_element_get_static_pad (src, "src");
 		GstCaps    *caps = gst_pad_get_allowed_caps (pad);
 		gst_object_unref (pad);
@@ -602,8 +602,8 @@ ofPixelFormat ofGstVideoGrabber::getPixelFormat(){
 }
 
 void ofGstVideoGrabber::setVerbose(bool bVerbose){
-	if(bVerbose) ofLogSetTopicLogLevel("ofGstVideoGrabber", OF_LOG_VERBOSE);
-	else ofLogResetTopicLogLevel("ofGstVideoGrabber");
+	if(bVerbose) ofSetLogLevel("ofGstVideoGrabber", OF_LOG_VERBOSE);
+	else ofSetLogLevel("ofGstVideoGrabber",OF_LOG_NOTICE);
 }
 
 ofPixelFormat ofPixelFormatFromGstFormat(string format){
@@ -686,7 +686,7 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 
 	ofGstVideoFormat & format = selectFormat(w, h, attemptFramerate);
-	ofLogNotice("ofGstVideoGrabber") << "initGrabber(): selected device: " << camData.webcam_devices[deviceID].product_name);
+	ofLogNotice("ofGstVideoGrabber") << "initGrabber(): selected device: " << camData.webcam_devices[deviceID].product_name;
 	ofLogNotice("ofGstVideoGrabber") << "initGrabber(): selected format: " << format.width << "x" << format.height
 		<< " " << format.mimetype << " " << format.format_name << " framerate: " << format.choosen_framerate.numerator << "/" << format.choosen_framerate.denominator;
 

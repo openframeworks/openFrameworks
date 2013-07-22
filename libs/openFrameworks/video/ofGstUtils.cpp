@@ -521,18 +521,18 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 
 #endif
 
-			case GST_MESSAGE_STATE_CHANGED:{
-				GstState oldstate, newstate, pendstate;
-				gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
-				if(isStream && newstate==GST_STATE_PAUSED && !bPlaying ){
-					bLoaded = true;
-					bPlaying = true;
-					if(!bPaused){
-						ofLogVerbose("ofGstUtils") << "gstHandleMessage(): setting stream pipeline to play";
-						play();
-					}
+		case GST_MESSAGE_STATE_CHANGED:{
+			GstState oldstate, newstate, pendstate;
+			gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
+			if(isStream && newstate==GST_STATE_PAUSED && !bPlaying ){
+				bLoaded = true;
+				bPlaying = true;
+				if(!bPaused){
+					ofLogVerbose("ofGstUtils") << "gstHandleMessage(): setting stream pipeline to play";
+					play();
 				}
 			}
+
 			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): " << GST_MESSAGE_SRC_NAME(msg) << " state changed from "
 					<< getName(oldstate) << " to " << getName(newstate) << " (" + getName(pendstate) << ")";
 		}break;
