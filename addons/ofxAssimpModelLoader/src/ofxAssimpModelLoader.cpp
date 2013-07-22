@@ -19,12 +19,12 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     file.open(modelName);
     if(!file.exists()) {
-        ofLog(OF_LOG_VERBOSE, "%s is not found.", modelName.c_str());
+        ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): model does not exist: \"" << modelName << "\"";
         return false;
     }
 
-    ofLog(OF_LOG_VERBOSE, "loading model %s", file.getFileName().c_str());
-    ofLog(OF_LOG_VERBOSE, "loading from folder %s", file.getEnclosingDirectory().c_str());
+    ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading \"" << file.getFileName()
+		<< "\" from \"" << file.getEnclosingDirectory() << "\"";
     
     ofBuffer buffer = file.readToBuffer();
     
@@ -59,10 +59,9 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
         update();
 
 		if(getAnimationCount())
-			ofLog(OF_LOG_VERBOSE, "scene has animations");
+			ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): scene has " << getAnimationCount() << "animations";
 		else {
-			ofLog(OF_LOG_VERBOSE, "no animations");
-
+			ofLogVerbose("ofxAssimpModelLoader") << "loadMode(): no animations";
 		}
 
 		ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
@@ -70,7 +69,7 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 
 		return true;
 	}else{
-		ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
+		ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (string) aiGetErrorString();
 		clear();
 		return false;
 	}
@@ -100,7 +99,8 @@ void ofxAssimpModelLoader::setNormalizationFactor(float factor){
 //-------------------------------------------
 void ofxAssimpModelLoader::calculateDimensions(){
 	if(!scene) return;
-	ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes & %i animations", scene->mNumMeshes, scene->mNumAnimations);
+	ofLogVerbose("ofxAssimpModelLoader") << "calculateDimensions(): inited scene with "
+		<< scene->mNumMeshes << " meshes & " << scene->mNumAnimations << " animations";
 
 	getBoundingBoxWithMinVector(&scene_min, &scene_max);
 	scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
@@ -146,14 +146,14 @@ void ofxAssimpModelLoader::optimizeScene(){
 //-------------------------------------------
 void ofxAssimpModelLoader::loadGLResources(){
 
-    ofLog(OF_LOG_VERBOSE, "loading gl resources");
+	ofLogVerbose("ofxAssimpModelLoader") << "loadGLResources(): starting";
 
     // create new mesh helpers for each mesh, will populate their data later.
-   modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
+    modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
 
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
-        ofLog(OF_LOG_VERBOSE, "loading mesh %u", i);
+        ofLogVerbose("ofxAssimpModelLoader") << "loadGLResources(): loading mesh " << i;
         // current mesh we are introspecting
         aiMesh* mesh = scene->mMeshes[i];
 
@@ -211,14 +211,15 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
-            ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
+            ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading image from \"" << texPath.data << "\"";
             string modelFolder = file.getEnclosingDirectory();
             string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
             string texFile = ofFilePath::getFileName(texPath.data);
             string realPath = modelFolder + relTexPath  + texFile;
             
             if(ofFile::doesFileExist(realPath) == false) {
-                ofLog(OF_LOG_ERROR, string("error loading texture, ") + file.getFileName() + " " + realPath);
+                ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
+					<< file.getFileName() + "\" in \"" << realPath << "\"";
             }
             
             ofxAssimpTexture * assimpTexture = NULL;
@@ -232,7 +233,8 @@ void ofxAssimpModelLoader::loadGLResources(){
             }
             if(bTextureAlreadyExists) {
                 meshHelper.assimpTexture = assimpTexture;
-                ofLog(OF_LOG_VERBOSE, string("texture already loaded, ") + file.getFileName() + " " + realPath);
+                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: \""
+					<< file.getFileName() + "\" from \"" << realPath << "\"";
             } else {
                 ofTexture * texture = new ofTexture();
                 bool bTextureLoadedOk = ofLoadImage(*texture, realPath);
@@ -240,10 +242,12 @@ void ofxAssimpModelLoader::loadGLResources(){
                     textures.push_back(new ofxAssimpTexture(texture, realPath));
                     assimpTexture = textures.back();
                     meshHelper.assimpTexture = assimpTexture;
-                    ofLog(OF_LOG_VERBOSE, "texture loaded, width: %f height %f", texture->getWidth(), texture->getHeight());
+                    ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture loaded, dimensions: "
+						<< texture->getWidth() << "x" << texture->getHeight();
                 } else {
                     delete texture;
-                    ofLog(OF_LOG_ERROR, string("error loading texture, ") + file.getFileName() + " " + realPath);
+                    ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: \""
+						<< file.getFileName() + "\" from \"" << realPath << "\"";
                 }
             }
         }
@@ -302,13 +306,13 @@ void ofxAssimpModelLoader::loadGLResources(){
         animations.push_back(ofxAssimpAnimation(scene, animation));
     }
 
-    ofLog(OF_LOG_VERBOSE, "finished loading gl resources");
+    ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
 }
 
 //-------------------------------------------
 void ofxAssimpModelLoader::clear(){
 
-    ofLog(OF_LOG_VERBOSE, "deleting gl resources");
+    ofLogVerbose("ofxAssimpModelLoader") << "clear(): deleting GL resources";
 
     // clear out everything.
     modelMeshes.clear();
@@ -796,7 +800,7 @@ ofMesh ofxAssimpModelLoader::getMesh(string name){
 	}
 
 	if(!aim){
-		ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+		ofLogError("ofxAssimpModelLoader") <<"getMesh(): couldn't find mesh: \"" << name << "\"";
 		return ofm;
 	}
 
@@ -808,7 +812,8 @@ ofMesh ofxAssimpModelLoader::getMesh(string name){
 ofMesh ofxAssimpModelLoader::getMesh(int num){
 	ofMesh ofm;
 	if((int)scene->mNumMeshes<=num){
-		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		ofLogError("ofxAssimpModelLoader") << "getMesh(): mesh id " << num
+		<< " out of range for total num meshes: " << scene->mNumMeshes;
 		return ofm;
 	}
 
@@ -831,7 +836,7 @@ ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
 		}
 	}
 
-	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	ofLogError("ofxAssimpModelLoader") << "getCurrentAnimatedMesh(): couldn't find mesh: \"" + name << "\"";
 	return ofMesh();
 
 }
@@ -839,7 +844,8 @@ ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
 //-------------------------------------------
 ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(int num){
 	if((int)modelMeshes.size()<=num){
-		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		ofLogError("ofxAssimpModelLoader") << "getCurrentAnimatedMesh(): mesh id: " << num
+			<< "out of range for total num meshes: " << scene->mNumMeshes;
 		return ofMesh();
 	}
 	if(!modelMeshes[num].validCache){
@@ -859,14 +865,15 @@ ofMaterial ofxAssimpModelLoader::getMaterialForMesh(string name){
 			return modelMeshes[i].material;
 		}
 	}
-	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	ofLogError("ofxAssimpModelLoader") << "getMaterialForMesh(): couldn't find mesh: \"" + name << "\"";
 	return ofMaterial();
 }
 
 //-------------------------------------------
 ofMaterial ofxAssimpModelLoader::getMaterialForMesh(int num){
 	if((int)modelMeshes.size()<=num){
-		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		ofLogError("ofxAssimpModelLoader") << "getMaterialForMesh(): mesh id: " << num
+			<< "out of range for total num meshes: " << scene->mNumMeshes;
 		return ofMaterial();
 	}
 	return modelMeshes[num].material;
@@ -882,7 +889,7 @@ ofTexture ofxAssimpModelLoader::getTextureForMesh(string name){
             }
 		}
 	}
-	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	ofLogError("ofxAssimpModelLoader") << "getTextureForMesh(): couldn't find mesh: \"" + name << "\"";
 	return ofTexture();
 }
 
@@ -894,7 +901,8 @@ ofTexture ofxAssimpModelLoader::getTextureForMesh(int i){
             return *tex;
         }
 	}
-    ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(i) + " there's only " + ofToString(scene->mNumMeshes));
+    ofLogError("ofxAssimpModelLoader") << "getTextureForMesh(): mesh id: " << i
+			<< "out of range for total num meshes: " << scene->mNumMeshes;
     return ofTexture();
 }
 

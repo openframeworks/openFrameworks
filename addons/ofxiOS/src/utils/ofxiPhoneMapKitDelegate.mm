@@ -40,14 +40,13 @@
 -(id)initWithMapKit:(ofxiPhoneMapKit*)mk {
 	if(self = [super init]) {
 		mapKit = mk;
-		ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKitDelegate::initWithMapKit");
-
+		ofLogVerbose("ofxiPhoneMapKitDelegate") << "initWithMapKit";
 	}
 	return self;
 }
 
 -(void)dealloc {
-	ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKitDelegate::dealloc");
+	ofLogVerbose("ofxiPhoneMapKitDelegate") << "dealloc";
 	[super dealloc];
 }
 
@@ -69,7 +68,7 @@
 }
 
 - (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error {
-	ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKitDelegate::mapViewDidFailLoadingMap");
+	ofLogVerbose("ofxiPhoneMapKitDelegate") << "mapViewDidFailLoadingMap";
 	string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
 	mapKit->errorLoadingMap(s);
 }

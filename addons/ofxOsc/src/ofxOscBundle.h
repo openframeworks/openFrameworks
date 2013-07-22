@@ -26,8 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _OFXOSCBUNDLE_H
-#define _OFXOSCBUNDLE_H
+#pragma once
 
 #include <vector>
 #include "ofxOscMessage.h"
@@ -61,7 +60,3 @@ private:
 	std::vector< ofxOscMessage > messages;
 	std::vector< ofxOscBundle > bundles;
 };
-
-
-#endif
-
