@@ -928,19 +928,18 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
     int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
-    
-	if (!((width == _w) && (height == _h))){
-		resize(_w, _h);
-	}
+
 
 	#ifndef TARGET_OPENGLES
     
-    _y = sh - _y;
-    _y -= _h; // top, bottom issues
+    if(ofIsVFlipped()){
+		_y = sh - _y;
+		_y -= _h; // top, bottom issues
+    }
     
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(_x, _y, _w, _h, ofGetGlInternalFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
+    glReadPixels(_x, _y, _w, _h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
     glPopClientAttrib();
     
 	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
@@ -968,10 +967,12 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     int numRGBA         = numPixels*4;
     GLubyte *bufferRGBA = (GLubyte *) malloc(numRGBA);
 
-    if(ofGetOrientation() == OF_ORIENTATION_DEFAULT) {
-        
-        _y = sh - _y;   // screen is flipped vertically.
-        _y -= _h;
+    if(ofGetOrientation() == OF_ORIENTATION_DEFAULT || ofDoesHWOrientation()) {
+
+        if(ofIsVFlipped()){
+			_y = sh - _y;   // screen is flipped vertically.
+			_y -= _h;
+        }
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -989,9 +990,11 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         }
     }
     else if(ofGetOrientation() == OF_ORIENTATION_180) {
-        
-        _x = sw - _x;   // screen is flipped horizontally.
-        _x -= _w;
+
+        if(ofIsVFlipped()){
+			_x = sw - _x;   // screen is flipped horizontally.
+			_x -= _w;
+        }
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -1010,13 +1013,18 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     }
     else if(ofGetOrientation() == OF_ORIENTATION_90_RIGHT) {
         
-        int tempW = _w;     // swap width and height.
-        _w = _h;
-        _h = tempW;
+        swap(_w,_h);
+        swap(_x,_y);
+
+
+        if(!ofIsVFlipped()){
+			_x = sw - _x;   // screen is flipped horizontally.
+			_x -= _w;
+
+			_y = sh - _y;   // screen is flipped vertically.
+			_y -= _h;
+        }
         
-        int tempY = _y;     // swap x and y.
-        _y = _x;
-        _x = tempY;
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -1035,19 +1043,17 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     }
     else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
         
-        int tempW = _w; // swap width and height.
-        _w = _h;
-        _h = tempW;
+        swap(_w,_h)
         
-        int tempY = _y; // swap x and y.
-        _y = _x;
-        _x = tempY;
-        
-        _x = sw - _x;   // screen is flipped horizontally.
-        _x -= _w;
-        
-        _y = sh - _y;   // screen is flipped vertically.
-        _y -= _h;
+        swap(_x,y);
+
+        if(ofIsVFlipped()){
+			_x = sw - _x;   // screen is flipped horizontally.
+			_x -= _w;
+
+			_y = sh - _y;   // screen is flipped vertically.
+			_y -= _h;
+        }
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -1065,8 +1071,8 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         }
     }
     
-    free(bufferRGBA);    
-    
+    free(bufferRGBA);
+
     #endif
 
 	update();
