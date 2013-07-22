@@ -177,18 +177,27 @@ void ofNotifyDraw(){
 //------------------------------------------
 void ofNotifyKeyPressed(int key){
 	static ofKeyEventArgs keyEventArgs;
-
+	// FIXME: modifiers are being reported twice, for generic and for left/right
+	// add operators to the arguments class so it can be checked for both
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
         pressedKeys.insert(OF_KEY_CONTROL);
+    	keyEventArgs.key = OF_KEY_CONTROL;
+        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
         pressedKeys.insert(OF_KEY_SHIFT);
+    	keyEventArgs.key = OF_KEY_SHIFT;
+        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
         pressedKeys.insert(OF_KEY_ALT);
+    	keyEventArgs.key = OF_KEY_ALT;
+        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
         pressedKeys.insert(OF_KEY_SUPER);
+    	keyEventArgs.key = OF_KEY_SUPER;
+        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
             
 	pressedKeys.insert(key);
@@ -208,17 +217,27 @@ void ofNotifyKeyPressed(int key){
 void ofNotifyKeyReleased(int key){
 	static ofKeyEventArgs keyEventArgs;
 
+	// FIXME: modifiers are being reported twice, for generic and for left/right
+	// add operators to the arguments class so it can be checked for both
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
         pressedKeys.erase(OF_KEY_CONTROL);
+    	keyEventArgs.key = OF_KEY_CONTROL;
+    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
         pressedKeys.erase(OF_KEY_SHIFT);
+    	keyEventArgs.key = OF_KEY_SHIFT;
+    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
         pressedKeys.erase(OF_KEY_ALT);
+    	keyEventArgs.key = OF_KEY_ALT;
+    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
         pressedKeys.erase(OF_KEY_SUPER);
+    	keyEventArgs.key = OF_KEY_SUPER;
+    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
     
 	pressedKeys.erase(key);
