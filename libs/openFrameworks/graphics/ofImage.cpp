@@ -819,7 +819,7 @@ ofTexture & ofImage_<PixelType>::getTextureReference(){
 	// it should be the responsibility of anything using getTextureReference()
 	// to check that it's allocated
 	if(!tex.bAllocated() ){
-		ofLogWarning("ofImage") << "getTextureReference(): texture is not allocated");
+		ofLogWarning("ofImage") << "getTextureReference(): texture is not allocated";
 	}
 	*/
 	return tex;
