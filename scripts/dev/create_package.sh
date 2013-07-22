@@ -362,6 +362,12 @@ function createPackage {
 	else
     	rm -Rf win_cb vs osx ios
 	fi
+	
+    #delete omap4 scripts for non armv7l
+	if [ "$pkg_platform" = "linux64" || "$pkg_platform" = "linux" || "$pkg_platform" = "linuxarmv6l" ]; then
+	    rm -Rf linux/ubuntu-omap4
+	fi
+	
 	if [ "$pkg_platform" == "ios" ]; then
 		rm -Rf osx
 	fi
