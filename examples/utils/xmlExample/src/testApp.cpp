@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
-    
+    ofDisableAntiAliasing();
 	//-----------
 	//the string is printed at the top of the app
 	//to give the user some feedback
