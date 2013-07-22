@@ -111,7 +111,7 @@ class ofStyle{
 		int sphereResolution;
 		int curveResolution;
 		float lineWidth;
-		bool depthTest;
+		//bool depthTest; removed since it'll break old projects setting depth test through glEnable
 };
 
 class ofVideoFormat{
