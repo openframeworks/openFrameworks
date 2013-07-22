@@ -546,7 +546,7 @@ void ofSetLineWidth(float lineWidth){
 //----------------------------------------------------------
 void ofSetDepthTest(bool depthTest){
 	renderer->setDepthTest(depthTest);
-	currentStyle.depthTest = depthTest;
+	//currentStyle.depthTest = depthTest;
 }
 
 //----------------------------------------------------------
