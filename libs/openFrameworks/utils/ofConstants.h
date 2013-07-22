@@ -3,8 +3,8 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 7
-#define OF_VERSION_PATCH 4
+#define OF_VERSION_MINOR 8
+#define OF_VERSION_PATCH 0
 
 //-------------------------------
 
