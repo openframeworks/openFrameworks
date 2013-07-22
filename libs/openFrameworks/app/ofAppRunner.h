@@ -78,8 +78,8 @@ void 		ofSetVerticalSync(bool bSync);
 #endif
 
 #if defined(TARGET_OSX)
-	id ofGetNSGLContext();
-	id ofGetCocoaWindow();
+	void * ofGetNSGLContext();
+	void * ofGetCocoaWindow();
 #endif
 
 #if defined(TARGET_WIN32)
