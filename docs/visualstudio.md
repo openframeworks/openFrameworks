@@ -7,7 +7,16 @@ Installation
 ------------
 To getting started with openFrameworks and Visual Studio, you need to have Visual Studio 2012 installed.
 Any version should work, Express included.  
-See [setup guide](http://openframeworks.cc/setup/vs) for more detailed instructions.
+There are many versions of Visual Studio. If you don't know which one to install, then we recommend Visual Studio 2012 Express for Desktop. 
+Each generation of Visual Studio (i.e. 2008, 2010, 2012) comes with a different C++ compiler (a compiler is what makes your c++ code into an executable that you can run). 
+Generally, projects created in different generations of Visual Studio are not compatible with each other, but you can upgrade files from old generations to new generations.  
+
+**See [setup guide](http://openframeworks.cc/setup/vs) for more detailed instructions.**
+
+_Visual Studio Express is a special version of Visual Studio which is free to download and use indefinitely. There appears to be no restriction of commercial use for Visual Studio Express 
+versions, but Express versions have a reduced feature set whilst sharing the same compiler and general interface of the more premium versions (e.g. Professsional, Premium, Ultimate, etc). 
+The premium versions are only really recommended for more commercial oF users, for students who can otherwise get these versions for free, or for users who know for definite that they need 
+the premium features which aren't available in the Express distributions._
 
 Creating a new openFrameworks project
 -------------------------------------
