@@ -112,9 +112,9 @@ vector<ofVideoDevice> ofDirectShowGrabber::listDevices(){
     //---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
-		ofLogNotice() << "---");
+		ofLogNotice() << "---";
         VI.listDevices();
-        ofLogNotice() << "---");
+        ofLogNotice() << "---";
         
 		vector <string> devList = VI.getDeviceList(); 
         
