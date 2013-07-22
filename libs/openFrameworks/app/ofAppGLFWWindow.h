@@ -96,8 +96,8 @@ public:
 #endif
 
 #if defined(TARGET_OSX)
-	id 			getNSGLContext();
-	id 			getCocoaWindow();
+	void *		getNSGLContext();
+	void *		getCocoaWindow();
 #endif
 
 #if defined(TARGET_WIN32)
