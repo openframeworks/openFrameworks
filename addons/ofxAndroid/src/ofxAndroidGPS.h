@@ -21,5 +21,3 @@ template<class Listener>
 void ofUnregisterGPSEvent(Listener * listener){
 	ofRemoveListener(ofxAndroidGPS::locationChangedE,listener,&Listener::locationChanged);
 }
-
-
