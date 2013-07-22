@@ -673,6 +673,16 @@ void ofSetPolyMode(ofPolyWindingMode mode){
 }
 
 //----------------------------------------
+void ofEnableAntiAliasing(){
+	renderer->enableAntiAliasing();
+}
+
+//----------------------------------------
+void ofDisableAntiAliasing(){
+	renderer->disableAntiAliasing();
+}
+
+//----------------------------------------
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
