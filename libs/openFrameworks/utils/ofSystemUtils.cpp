@@ -4,6 +4,7 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
+#include "ofAppRunner.h"
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -60,7 +61,15 @@ std::wstring convertNarrowToWide( const std::string& as ){
     return ret;
 }
 
+#endif
 
+#if defined( TARGET_OSX )
+static void restoreAppWindowFocus(){
+	NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+	if(appWindow) {
+		[appWindow makeKeyAndOrderFront:nil];
+	}
+}
 #endif
 
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
@@ -170,6 +179,7 @@ void ofSystemAlertDialog(string errorMessage){
 												 otherButton:nil
 								   informativeTextWithFormat:@""];
 		[alertDialog runModal];
+		restoreAppWindowFocus();
 		[pool drain];
 	#endif
 
@@ -233,6 +243,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	}
 	
 	NSInteger buttonClicked = [loadDialog runModal];
+	restoreAppWindowFocus();
 	
 	if(buttonClicked == NSFileHandlingPanelOKButton) {
 		NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
@@ -366,6 +377,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
 	
 	NSInteger buttonClicked = [saveDialog runModal];
+	restoreAppWindowFocus();
 	
 	if(buttonClicked == NSFileHandlingPanelOKButton){
 		results.filePath = string([[[saveDialog URL] path] UTF8String]);
