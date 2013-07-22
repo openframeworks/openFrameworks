@@ -713,6 +713,17 @@ void ofGLProgrammableRenderer::enablePointSprites(){
 void ofGLProgrammableRenderer::disablePointSprites(){
 }
 
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableAntiAliasing(){
+	glEnable(GL_MULTISAMPLE);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableAntiAliasing(){
+	glDisable(GL_MULTISAMPLE);
+}
+
 //----------------------------------------------------------
 ofShader & ofGLProgrammableRenderer::getCurrentShader(){
 	return *currentShader;

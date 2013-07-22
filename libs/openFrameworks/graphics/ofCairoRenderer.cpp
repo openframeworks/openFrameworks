@@ -93,7 +93,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	}
 
 	cr = cairo_create(surface);
-	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_BEST);
 	viewportRect = _viewport;
 	viewport(viewportRect);
 	page = 0;
@@ -1230,6 +1230,16 @@ void ofCairoRenderer::setSphereResolution(int res) {
 			idivn += unodivn;
 		}
 	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::enableAntiAliasing(){
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_BEST);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::disableAntiAliasing(){
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_NONE);
 }
 
 //----------------------------------------------------------
