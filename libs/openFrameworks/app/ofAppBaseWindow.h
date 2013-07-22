@@ -48,27 +48,27 @@ public:
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	virtual Display* getX11Display(){return NULL;}
-	Window  getX11Window() {return 0;}
+	virtual Window  getX11Window() {return 0;}
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
-	GLXContext getGLXContext() {return 0;};
+	virtual GLXContext getGLXContext(){return 0};
 #endif
 
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
-	EGLDisplay getEGLDisplay(){return 0;}
-	EGLContext getEGLContext(){return 0;}
-	EGLSurface getEGLSurface(){return 0;}
+	virtual EGLDisplay getEGLDisplay(){return 0;}
+	virtual EGLContext getEGLContext(){return 0;}
+	virtual EGLSurface getEGLSurface(){return 0;}
 #endif
 
 #if defined(TARGET_OSX)
-	id getNSGLContext(){return 0;}
-	id getCocoaWindow(){return 0;}
+	virtual void * getNSGLContext(){return NULL;}
+	virtual void * getCocoaWindow(){return NULL;}
 #endif
 
 #if defined(TARGET_WIN32)
-	HGLRC getWGLContext(){return 0;}
-	HWND getWin32Window(){return 0;}
+	virtual HGLRC getWGLContext(){return 0;}
+	virtual HWND getWin32Window(){return 0;}
 #endif
 };
 
