@@ -852,13 +852,15 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
 	ofLogVerbose("ofAppGLFWWindow") << "mouse button: " << button;
 
+#ifdef TARGET_OSX
     //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
-    if( ofGetKeyPressed(OF_KEY_CTRL) && button == GLFW_MOUSE_BUTTON_LEFT){
+    if( ofGetKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
         button = GLFW_MOUSE_BUTTON_RIGHT; 
     }
     if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
         button = GLFW_MOUSE_BUTTON_MIDDLE; 
     }
+#endif
 
 	switch(button){
 	case GLFW_MOUSE_BUTTON_LEFT:

@@ -146,7 +146,7 @@ void ofxiPhoneUnlockGLContext() {
 //--------------------------------------------------------------
 void ofxiPhoneEnableLoopInThread() {
 //	[ofxiPhoneGetAppDelegate() enableLoopInThread];
-	ofLog(OF_LOG_WARNING, "ofxiPhoneEnableLoopInThread is not used anymore. CADisplayLink provides better animation loop");
+	ofLogWarning("ofxiPhoneExtras") << "ofxiPhoneEnableLoopInThread() is deprecated, CADisplayLink provides better animation loop";
 }
 
 
@@ -240,7 +240,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
     CGColorSpaceRelease(colorSpace);
 	
 	if(spriteContext == NULL) {
-		ofLog(OF_LOG_ERROR, "iPhoneUIImageToOFImage - CGBitmapContextCreate returned NULL");
+		ofLogError("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): CGBitmapContextCreate returned NULL";
 		free(pixels);
 		return false;
 	}
@@ -248,11 +248,11 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
     CGContextSetBlendMode(spriteContext, kCGBlendModeCopy);
     
 	// After you create the context, you can draw the sprite image to the context.
-	ofLog(OF_LOG_VERBOSE, "about to CGContextDrawImage");
+	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextDrawImage";
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
 	
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
-	ofLog(OF_LOG_VERBOSE, "about to CGContextRelease");
+	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextRelease";
 	CGContextRelease(spriteContext);
 	
 	ofImageType ofImageMode;
@@ -269,7 +269,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 			ofImageMode = OF_IMAGE_COLOR_ALPHA; break;
 	}
 			
-	ofLog(OF_LOG_VERBOSE, "about to setFromPixels");
+	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to setFromPixels";
 	outImage.setFromPixels(pixels, width, height, ofImageMode, true);
 
 	free(pixels);
@@ -293,21 +293,21 @@ bool ofxiPhoneUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int ta
 	// Allocated memory needed for the bitmap context
 	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
 	
-	// Uses the bitmatp creation function provided by the Core Graphics framework. 
+	// Uses the bitmap creation function provided by the Core Graphics framework. 
 	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
 	
 	if(spriteContext == NULL) {
-		ofLog(OF_LOG_ERROR, "iPhoneUIImageToOFImage - CGBitmapContextCreate returned NULL");
+		ofLogError("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): CGBitmapContextCreate returned NULL";
 		free(pixels);
 		return false;
 	}
 
 	// After you create the context, you can draw the sprite image to the context.
-	ofLog(OF_LOG_VERBOSE, "about to CGContextDrawImage");
+	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextDrawImage";
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
 	
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
-	ofLog(OF_LOG_VERBOSE, "about to CGContextRelease");
+	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextRelease";
 	CGContextRelease(spriteContext);
 		
 	int glMode;
@@ -351,7 +351,7 @@ bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 	spriteContext = CGBitmapContextCreate(pixelsTmp, w, h, CGImageGetBitsPerComponent(ref), w * bytesPerPixel, CGImageGetColorSpace(ref), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
 	
 	if(spriteContext == NULL) {
-		ofLog(OF_LOG_ERROR, "convertCGImageToPixels - CGBitmapContextCreate returned NULL");
+		ofLogError("ofxiPhoneExtras") << "ofxiPhoneCGImageToPixels(): CGBitmapContextCreate returned NULL";
 		free(pixelsTmp);
 		return false;
 	}
@@ -375,7 +375,7 @@ bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 		
 	}
 	long now = ofGetElapsedTimeMillis();
-	printf("elapsed = %d\n", (now-then));
+	ofLogNotice("ofxiPhoneExtras") << "ofxiPhoneCGImageToPixels(): elapsed " << now-then;
 	*/
 	
 	// Step through both source and destination 4 bytes at a time.
@@ -435,7 +435,7 @@ void ofxiPhoneLaunchBrowser(string url) {
 
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-	ofLog(OF_LOG_VERBOSE, "Save finished");
+	ofLogVerbose("ofxiPhoneExtras") << "didFinishSavingWithError: save finished";
 
 	if([delegate respondsToSelector: @selector(saveComplete)]) {
         [delegate performSelector:@selector(saveComplete)];

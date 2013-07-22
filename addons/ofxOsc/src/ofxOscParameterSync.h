@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFXOSCPARAMETERSYNC_H_
-#define OFXOSCPARAMETERSYNC_H_
+#pragma once
 
 #include "ofxOscSender.h"
 #include "ofxOscReceiver.h"
@@ -29,5 +28,3 @@ private:
 	ofParameterGroup * syncGroup;
 	bool updatingParameter;
 };
-
-#endif /* OFXOSCPARAMETERSYNC_H_ */

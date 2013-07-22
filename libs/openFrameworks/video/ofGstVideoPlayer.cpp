@@ -43,7 +43,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	}else{
 		bIsStream		= true;
 	}
-	ofLog(OF_LOG_VERBOSE,"loading "+name);
+	ofLogVerbose("ofGstVideoPlayer") << "loadMovie(): loading \"" << name << "\"";
 
 	ofGstUtils::startGstMainLoop();
 
@@ -184,7 +184,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
 			if(!videoUtils.allocate(width,height,bpp)) return false;
 		}else{
-			ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
+			ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 			return false;
 		}
 
@@ -195,9 +195,9 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			fps_n = gst_value_get_fraction_numerator (framerate);
 			fps_d = gst_value_get_fraction_denominator (framerate);
 			nFrames = (float)(durationNanos / GST_SECOND) * (float)fps_n/(float)fps_d;
-			ofLog(OF_LOG_VERBOSE,"ofGstUtils: framerate: %i/%i",fps_n,fps_d);
+			ofLogVerbose("ofGstVideoPlayer") << "allocate(): framerate: " << fps_n << "/" << fps_d;
 		}else{
-			ofLog(OF_LOG_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
+			ofLogWarning("ofGstVideoPlayer") << "allocate(): cannot get framerate, frame seek won't work";
 		}
 		bIsAllocated = true;
 #else
@@ -207,7 +207,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			if (gst_video_info_from_caps (&info, caps)){
 				if(!videoUtils.allocate(info.width,info.height,bpp)) return false;
 			}else{
-				ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
+				ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 				return false;
 			}
 
@@ -217,13 +217,13 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			gst_caps_unref(caps);
 			bIsAllocated = true;
 		}else{
-			ofLog(OF_LOG_ERROR,"GStreamer: cannot get pipeline caps");
+			ofLogError("ofGstVideoPlayer") << "allocate(): cannot get pipeline caps";
 			bIsAllocated = false;
 		}
 #endif
 		gst_object_unref(GST_OBJECT(pad));
 	}else{
-		ofLog(OF_LOG_ERROR,"GStreamer: cannot get sink pad");
+		ofLogError("ofGstVideoPlayer") << "allocate(): cannot get sink pad";
 		bIsAllocated = false;
 	}
 
