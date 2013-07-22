@@ -2,16 +2,7 @@
 #include "ofXml.h"
 
 ofXml::~ofXml() {
-    
-    if(document) {
-        document->release();
-        document = 0;
-    }
-    
-    if(element) {
-        element->release();
-        element = 0;
-    }
+	releaseAll();
 }
 
 ofXml::ofXml( const ofXml& rhs ) {
@@ -24,6 +15,9 @@ ofXml::ofXml( const ofXml& rhs ) {
 }
 
 const ofXml& ofXml::operator =( const ofXml& rhs ) {
+	if(&rhs==this) return *this;
+
+	releaseAll();
 
     document = (Poco::XML::Document*) rhs.document->cloneNode(true);
     element = document->documentElement();
@@ -437,7 +431,7 @@ string ofXml::getAttribute(const string& path) const {
     return "";
 }
 
-bool ofXml::clearAttributes(const string& path) 
+bool ofXml::removeAttributes(const string& path) 
 {
     Poco::XML::Element *e;
     if(element) {
@@ -460,7 +454,7 @@ bool ofXml::clearAttributes(const string& path)
     return false;
 }
 
-bool ofXml::clearAttributes()
+bool ofXml::removeAttributes()
 {
 
     if(element) {
@@ -478,7 +472,7 @@ bool ofXml::clearAttributes()
 
 }
 
-bool ofXml::clearContents() {
+bool ofXml::removeContents() {
     if(element)
     {
         Poco::XML::NodeList *list = element->childNodes();
@@ -491,7 +485,7 @@ bool ofXml::clearContents() {
     return false;
 }
 
-bool ofXml::clearContents(const string& path) {
+bool ofXml::removeContents(const string& path) {
     
     Poco::XML::Element *e;
     if(element) {
@@ -513,6 +507,24 @@ bool ofXml::clearContents(const string& path) {
 }
 
 
+void ofXml::clear(){
+	releaseAll();
+    document = new Poco::XML::Document(); // we create this so that they can be merged later
+    element = document->documentElement();
+}
+
+void ofXml::releaseAll(){
+    if(document) {
+        document->release();
+        document = 0;
+    }
+
+    if(element) {
+        element->release();
+        element = 0;
+    }
+}
+
 bool ofXml::remove(const string& path) // works for both attributes and tags
 {
     Poco::XML::Node *node;
@@ -529,6 +541,18 @@ bool ofXml::remove(const string& path) // works for both attributes and tags
         return true;
     }
     return false;
+}
+
+
+void ofXml::remove(){
+	Poco::XML::Node * parent = element->parentNode();
+	if(parent){
+		parent->removeChild(element);
+		element->release();
+		element = (Poco::XML::Element*)parent;
+	}else{
+		clear();
+	}
 }
 
 bool ofXml::exists(const string& path) const // works for both attributes and tags

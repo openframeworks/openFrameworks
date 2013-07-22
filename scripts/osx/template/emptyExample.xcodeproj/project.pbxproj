@@ -636,10 +636,6 @@
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
 				<string>NONE</string>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h</string>
 				<key>ICON</key>
 				<string>$(ICON_NAME_DEBUG)</string>
 				<key>ICON_FILE</key>
@@ -742,10 +738,6 @@
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
 				<string>NONE</string>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h</string>
 				<key>ICON</key>
 				<string>$(ICON_NAME_RELEASE)</string>
 				<key>ICON_FILE</key>

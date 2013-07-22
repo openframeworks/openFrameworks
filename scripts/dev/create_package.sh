@@ -156,16 +156,28 @@ function createPackage {
 		rm -Rf video
 	fi 
 	
-	#delete drag & drop examples in linux, still not working
-	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
-	    rm -Rf utils/dragDropExample
+	#delete osx examples in linux
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ] || [ "$pkg_platform" == "linuxarmv6" ] || [ "$pkg_platform" == "linuxarmv7" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
+	fi
+	
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
+	    rm -Rf gles
+	fi
+	
+	if [ "$pkg_platform" == "linuxarmv6" ] || [ "$pkg_platform" == "linuxarmv7" ]; then
+	    rm -Rf gl/glInfoExample
 	fi
 	
 	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
+	    rm -Rf gles
+	fi
+	
+	if [ "$pkg_platform" == "osx" ]; then
+	    rm -Rf gles
 	fi
     
 	
@@ -183,8 +195,16 @@ function createPackage {
         otherplatforms="linux linuxarmv6 linuxarmv7 osx win_cb vs ios android"
     fi
 
+    if [ "$pkg_platform" = "linuxarmv6" ]; then
+        otherplatforms="linux64 linux linuxarmv7 osx win_cb vs ios android"
+    fi
+    
+    if [ "$pkg_platform" = "linuxarmv7" ]; then
+        otherplatforms="linux64 linux linuxarmv6 osx win_cb vs ios android"
+    fi
+    
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 win_cb vs ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
@@ -232,13 +252,12 @@ function createPackage {
 	fi
 	
 	# linux remove other platform projects from PG source and copy ofxGui
-	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6" ] || [ "$pkg_platform" = "linuxarmv7" ]; then
 		cd apps/projectGenerator/projectGeneratorSimple
 		deleteCodeblocks
 		deleteVS
 		deleteXcode
 		rm -Rf .git*
-		cp -R $pkg_ofroot/addons/ofxGui src/
 	fi
 
     #delete libraries for other platforms
@@ -253,7 +272,7 @@ function createPackage {
     done
     if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
-    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6" ] || [ "$pkg_platform" = "linuxarmv7" ]; then
         rm -Rf $libsnotinlinux
     elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs" ]; then
         rm -Rf $libsnotinwindows
@@ -275,7 +294,6 @@ function createPackage {
     
 	#delete ofxSynth addon, still not stable
 	rm -Rf ofxSynth
-	rm -Rf ofxGui
     
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
@@ -284,6 +302,7 @@ function createPackage {
 	#delete ofxiPhone in non ios
 	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxiPhone
+		rm -Rf ofxiOS
 	fi
 	
 	#delete ofxMultiTouch & ofxAccelerometer in non mobile
@@ -293,7 +312,7 @@ function createPackage {
 	fi
 
 	#delete eclipse projects
-	if [ "$pkg_platform" != "android" ]; then
+	if [ "$pkg_platform" != "android" && "$pkg_platform" != "linux" && "$pkg_platform" != "linux64" && "$pkg_platform" != "linuxarmv6" && "$pkg_platform" != "linuxarmv7"]; then
 		cd ${pkg_ofroot}
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings
@@ -385,7 +404,7 @@ function createPackage {
     
     #choose readme
     cd $pkg_ofroot
-    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
+    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6" ] || [ "$platform" = "linuxarmv7" ]; then
         cp docs/linux.md INSTALL.md
     fi
     

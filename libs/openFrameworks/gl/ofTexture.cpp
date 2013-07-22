@@ -265,6 +265,27 @@ void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtention){
 }
 
 //----------------------------------------------------------
+void ofTexture::allocate(const ofShortPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtention){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofFloatPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention, int glFormat, int pixelType){
 	texData.width = w;
 	texData.height = h;
