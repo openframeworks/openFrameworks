@@ -695,7 +695,7 @@ void ofSetStyle(ofStyle style){
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
 	
-	ofSetDepthTest(style.depthTest);
+	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
 
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
