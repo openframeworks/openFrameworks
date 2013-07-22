@@ -6,7 +6,7 @@
 #include <set>
 
 static const double MICROS_TO_SEC = .000001;
-//static const double MICROS_TO_MILLIS = .001;
+static const double MICROS_TO_MILLIS = .001;
 
 static unsigned long long   timeThen = 0, oneSec = 0;
 static float    			targetRate = 0;

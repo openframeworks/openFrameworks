@@ -2,11 +2,12 @@
 #include "ofEvents.h"
 
 #include "ofBaseApp.h"
-#include "ofMain.h"
 #include "ofGLProgrammableRenderer.h"
+#include "ofAppRunner.h"
 
 #ifdef TARGET_LINUX
 #include "ofIcon.h"
+#include "ofImage.h"
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_GLX
 #include "glfw3native.h"
@@ -546,7 +547,7 @@ void ofAppGLFWWindow::disableSetupScreen(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
-    int curWindowMode  = ofGetWindowMode(); 
+    int curWindowMode  = windowMode;
 
 	if (fullscreen){
 		windowMode = OF_FULLSCREEN;
