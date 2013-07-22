@@ -175,7 +175,6 @@ void ofVboMesh::updateVbo(){
 				vbo.setColorData(getColorsPointer(),getNumColors(),usage);
 				vboNumColors = getNumColors();
 			}else{
-				vbo.enableColors();
 				vbo.updateColorData(getColorsPointer(),getNumColors());
 			}
 		}
@@ -188,7 +187,6 @@ void ofVboMesh::updateVbo(){
 				vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
 				vboNumNormals = getNumNormals();
 			}else{
-				vbo.enableNormals();
 				vbo.updateNormalData(getNormalsPointer(),getNumNormals());
 			}
 		}
@@ -201,7 +199,6 @@ void ofVboMesh::updateVbo(){
 				vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
 				vboNumTexCoords = getNumTexCoords();
 			}else{
-				vbo.enableTexCoords();
 				vbo.updateTexCoordData(getTexCoordsPointer(),getNumTexCoords());
 			}
 		}
@@ -214,7 +211,6 @@ void ofVboMesh::updateVbo(){
 				vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
 				vboNumIndices = getNumIndices();
 			}else{
-				vbo.enableIndices();
 				vbo.updateIndexData(getIndexPointer(),getNumIndices());
 			}
 		}
