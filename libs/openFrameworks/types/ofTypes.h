@@ -92,7 +92,7 @@ class ofStyle{
 				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
 			#endif
 			bgColor.set(200,200,200);
-			depthTest = false;
+			//depthTest = false;
 		}
 
 		virtual ~ofStyle(){}
