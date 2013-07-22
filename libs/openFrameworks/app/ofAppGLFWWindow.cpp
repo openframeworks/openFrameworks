@@ -15,6 +15,7 @@
 #include "Poco/URI.h"
 #elif defined(TARGET_OSX)
 #include <Cocoa/Cocoa.h>
+#include <Carbon/Carbon.h>
 #define GLFW_EXPOSE_NATIVE_COCOA
 #define GLFW_EXPOSE_NATIVE_NSGL
 #include "GLFW/glfw3native.h"
