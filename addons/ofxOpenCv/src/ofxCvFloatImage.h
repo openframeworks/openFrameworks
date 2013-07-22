@@ -8,9 +8,7 @@
 *
 */
 
-
-#ifndef OFX_CV_FLOAT_IMAGE_H
-#define OFX_CV_FLOAT_IMAGE_H
+#pragma once
 
 
 #include "ofxCvImage.h"
@@ -159,9 +157,3 @@ class ofxCvFloatImage : public ofxCvImage {
     float scaleMax;
     
 };
-
-
-
-#endif
-
-

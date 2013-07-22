@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFXANDROIDAPP_H_
-#define OFXANDROIDAPP_H_
+#pragma once
 
 #include "ofBaseApp.h"
 #include "ofEvents.h"
@@ -69,6 +68,3 @@ public:
 	virtual void cancelPressed(){};
 	virtual void networkConnected(bool connected){};
 };
-
-
-#endif /* OFXANDROIDAPP_H_ */

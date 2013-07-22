@@ -5,8 +5,8 @@
  *      Author: arturo
  */
 
-#ifndef OFXANDROIDVIBRATOR_H_
-#define OFXANDROIDVIBRATOR_H_
+#pragma once
+
 #include <jni.h>
 #include "ofConstants.h"
 
@@ -21,5 +21,3 @@ private:
 	static jobject getVibratorService();
 	static jmethodID getVibratorMethodID(string name, string signature);
 };
-
-#endif /* OFXANDROIDVIBRATOR_H_ */

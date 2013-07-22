@@ -410,7 +410,7 @@ void ofxiPhoneKeyboard::updateOrientation()
     NSMutableString *newValue = [[textField.text mutableCopy] autorelease];
     [newValue replaceCharactersInRange:range withString:string];
 	
-	cout<<[newValue length]<<" "<<fieldLength;
+	ofLogVerbose("ofxiPhoneKeyboard") << "shouldChangeCharactersInRange: " << [newValue length] << " " << fieldLength;
 	
 	if(fieldLength != -1)
 	{

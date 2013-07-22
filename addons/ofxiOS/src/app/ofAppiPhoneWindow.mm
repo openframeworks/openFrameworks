@@ -47,7 +47,7 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	if(_instance == NULL) {
         _instance = this;
     } else {
-        ofLog(OF_LOG_ERROR, "ofAppiPhoneWindow::ofAppiPhoneWindow() - instanciated more than once.");
+        ofLogError("ofAppiPhoneWindow") << "instanciated more than once";
     }
 
     windowMode = OF_FULLSCREEN;

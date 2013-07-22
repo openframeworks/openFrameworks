@@ -171,7 +171,7 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 			p << message.getArgAsString( i ).c_str();
 		else
 		{
-			ofLogError() << "bad argument type" + ofToString(message.getArgType( i ));
+			ofLogError("ofxOscSender") << "appendMessage(): bad argument type " << message.getArgType( i );
 			assert( false );
 		}
 	}

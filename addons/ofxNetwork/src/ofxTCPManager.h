@@ -1,6 +1,4 @@
-#ifndef  ___ofxTCPManager__H__
-#define  ___ofxTCPManager__H__
-
+#pragma once
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Original author: ???????? we think Christian Naglhofer
@@ -226,5 +224,3 @@ private:
   bool m_closing;
 
 };
-
-#endif // ___ofxTCPManager__H__

@@ -17,7 +17,7 @@ static set<ofxAndroidVideoPlayer*> & all_videoplayers(){
 }
 
 void ofPauseVideoPlayers(){
-	ofLog(OF_LOG_NOTICE,"ofVideoPlayer: releasing textures");
+	ofLogVerbose("ofxAndroidVideoPlayer") << "ofPauseVideoPlayers(): releasing textures";
 	set<ofxAndroidVideoPlayer*>::iterator it;
 	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
 		(*it)->unloadTexture();
@@ -25,12 +25,12 @@ void ofPauseVideoPlayers(){
 }
 
 void ofResumeVideoPlayers(){
-	ofLog(OF_LOG_NOTICE,"ofVideoPlayer: trying to allocate textures");
+	ofLogVerbose("ofxAndroidVideoPlayer") << "ofResumeVideoPlayers(): trying to allocate textures";
 	set<ofxAndroidVideoPlayer*>::iterator it;
 	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
 		(*it)->reloadTexture();
 	}
-	ofLog(OF_LOG_NOTICE,"ofVideoPlayer: textures allocated");
+	ofLogVerbose("ofxAndroidVideoPlayer") << "ofResumeVideoPlayers(): textures allocated";
 }
 
 //---------------------------------------------------------------------------
@@ -53,12 +53,12 @@ void ofxAndroidVideoPlayer::reloadTexture(){
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "reloadTexture(): couldn't get environment using GetEnv()";
 		return;
 	}
 	jmethodID javasetTexture = env->GetMethodID(javaClass,"setTexture","(I)V");
 	if(!javasetTexture){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setTexture for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "reloadTexture(): couldn't get java setTexture for VideoPlayer";
 		return;
 	}
 	env->CallVoidMethod(javaVideoPlayer,javasetTexture,texture.getTextureData().textureID);
@@ -77,26 +77,26 @@ ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "constructor: couldn't get environment using GetEnv()";
 		return;
 	}
 	jclass localClass = env->FindClass("cc/openframeworks/OFAndroidVideoPlayer");
 	javaClass = (jclass) env->NewGlobalRef(localClass);
 
 	if(!javaClass){
-		ofLog(OF_LOG_ERROR,"Failed to get the java class for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "constructor: couldn't get java class for VideoPlayer";
 		return;
 	}
 
 	jmethodID constructor = env->GetMethodID(javaClass,"<init>","()V");
 	if(!constructor){
-		ofLog(OF_LOG_ERROR,"Failed to get the java constructor for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "constructor: couldn't get java constructor for VideoPlayer";
 		return;
 	}
 
 	javaVideoPlayer = env->NewObject(javaClass,constructor);
 	if(!javaVideoPlayer){
-		ofLog(OF_LOG_ERROR,"Failed to create java VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "constructor: couldn't create java VideoPlayer";
 		return;
 	}
 
@@ -124,14 +124,14 @@ ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
 bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot load sound, java soundVideoPlayer object not created";
+		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): java soundVideoPlayer not loaded";
 		return false;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaLoadMethod = env->GetMethodID(javaClass,"loadMovie","(Ljava/lang/String;)V");
 	if(!javaLoadMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java loadVideo for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): couldn't get java loadVideo for VideoPlayer";
 		return false;
 	}
 
@@ -141,14 +141,14 @@ bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 
 	jmethodID javaGetWidthMethod = env->GetMethodID(javaClass,"getWidth","()I");
 	if(!javaGetWidthMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getWidth for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): couldn't get java getWidth for VideoPlayer";
 		return false;
 	}
 	width = env->CallIntMethod(javaVideoPlayer, javaGetWidthMethod);
 
 	jmethodID javaGetHeightMethod = env->GetMethodID(javaClass,"getHeight","()I");
 	if(!javaGetHeightMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getHeight for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): couldn't get java getHeight for VideoPlayer";
 		return false;
 	}
 	height = env->CallIntMethod(javaVideoPlayer, javaGetHeightMethod);
@@ -170,7 +170,7 @@ bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 	texture.texData.bAllocated = true;
 	reloadTexture();
 
-	ofLog() << "ofxAndroidVideoPlayer :: Movie size: "<< width <<"," << height;
+	oofLogVerbose("ofxAndroidVideoPlayer") << "loadMovie(): movie size: "<< width << "x" << height;
 
 	return true;
 
@@ -187,14 +187,14 @@ void ofxAndroidVideoPlayer::update(){
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaUpdate = env->GetMethodID(javaClass,"update","()Z");
 	if(!javaUpdate){
-		ofLog(OF_LOG_ERROR,"Failed to get the java update for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java update for VideoPlayer";
 		return;
 	}
 	bIsFrameNew = env->CallBooleanMethod(javaVideoPlayer,javaUpdate);
 
 	jmethodID javaGetTextureMatrix = env->GetMethodID(javaClass,"getTextureMatrix","([F)V");
 	if(!javaGetTextureMatrix){
-		ofLog(OF_LOG_ERROR,"Failed to get the java javaGetTextureMatrix for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
 		return;
 	}
 	env->CallVoidMethod(javaVideoPlayer,javaGetTextureMatrix,matrixJava);
@@ -221,7 +221,7 @@ void ofxAndroidVideoPlayer::play(){
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaPlay = env->GetMethodID(javaClass,"play","()V");
 	if(!javaPlay){
-		ofLog(OF_LOG_ERROR,"Failed to get the java play for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "play(): couldn't get java play for VideoPlayer";
 		return;
 	}
 	env->CallVoidMethod(javaVideoPlayer,javaPlay);
@@ -234,7 +234,7 @@ void ofxAndroidVideoPlayer::stop(){
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaStop = env->GetMethodID(javaClass,"stop","()V");
 	if(!javaStop){
-		ofLog(OF_LOG_ERROR,"Failed to get the java stop for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "stop(): couldn't get java stop for VideoPlayer";
 		return;
 	}
 	env->CallVoidMethod(javaVideoPlayer,javaStop);
@@ -246,19 +246,19 @@ void ofxAndroidVideoPlayer::stop(){
 bool ofxAndroidVideoPlayer::isPaused(){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get paused state on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "isPaused(): java VideoPlayer not loaded";
 		return 0;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "isPaused(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaIsPausedMethod = env->GetMethodID(javaClass,"isPaused","()Z");
 	if(!javaIsPausedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java isPaused for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "isPaused(): couldn't get java isPaused for VideoPlayer";
 		return 0;
 	}
 
@@ -271,19 +271,19 @@ bool ofxAndroidVideoPlayer::isPaused(){
 bool ofxAndroidVideoPlayer::isLoaded(){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get loaded state on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "isLoaded(): java VideoPlayer not loaded";
 		return 0;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "isLoaded(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaIsLoadedMethod = env->GetMethodID(javaClass,"isLoaded","()Z");
 	if(!javaIsLoadedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java isLoaded for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "isLoaded(): couldn't get java isLoaded for VideoPlayer";
 		return 0;
 	}
 
@@ -295,19 +295,19 @@ bool ofxAndroidVideoPlayer::isLoaded(){
 bool ofxAndroidVideoPlayer::isPlaying(){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get playing state on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "isPlaying(): java VideoPlayer not loaded";
 		return 0;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "isPlaying(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaIsPlayingMethod = env->GetMethodID(javaClass,"isPlaying","()Z");
 	if(!javaIsPlayingMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java isPlaying for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "isPlaying(): couldn't get the java isPlaying for VideoPlayer";
 		return 0;
 	}
 
@@ -334,19 +334,19 @@ float ofxAndroidVideoPlayer::getHeight(){
 float ofxAndroidVideoPlayer::getPosition(){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get position on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "getPosition(): java VideoPlayer not loaded";
 		return 0.;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "getPosition(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaGetPositionMethod = env->GetMethodID(javaClass,"getPosition","()F");
 	if(!javaGetPositionMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getPosition for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "getPosition(): couldn't get java getPosition for VideoPlayer";
 		return 0;
 	}
 
@@ -358,19 +358,19 @@ float ofxAndroidVideoPlayer::getPosition(){
 float ofxAndroidVideoPlayer::getDuration(){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get duration on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "getDuration(): java VideoPlayer not loaded";
 		return 0.;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "getDuration(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaGetDurationMethod = env->GetMethodID(javaClass,"getDuration","()F");
 	if(!javaGetDurationMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getDuration for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "getDuration(): couldn't get java getDuration for VideoPlayer";
 		return 0;
 	}
 
@@ -382,19 +382,19 @@ float ofxAndroidVideoPlayer::getDuration(){
 bool ofxAndroidVideoPlayer::getIsMovieDone(){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get movieDone state on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "getIsMovieDone(): java VideoPlayer not loaded";
 		return 0;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "getIsMovieDone(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaIsMovieDoneMethod = env->GetMethodID(javaClass,"isMovieDone","()Z");
 	if(!javaIsMovieDoneMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java isMovieDone for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "getIsMovieDone(): couldn't get java isMovieDone for VideoPlayer";
 		return 0;
 	}
 
@@ -406,19 +406,19 @@ bool ofxAndroidVideoPlayer::getIsMovieDone(){
 void ofxAndroidVideoPlayer::setPosition(float pct){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot set position on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "setPosition(): java VideoPlayer not loaded";
 		return;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "setPosition(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaSetPositionMethod = env->GetMethodID(javaClass,"setPosition","(F)V");
 	if(!javaSetPositionMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setPosition for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "setPosition(): couldn't get java setPosition for VideoPlayer";
 		return;
 	}
 
@@ -430,19 +430,19 @@ void ofxAndroidVideoPlayer::setPosition(float pct){
 void ofxAndroidVideoPlayer::setPaused(bool bPause){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot set pause on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "setPaused(): java VideoPlayer not loaded";
 		return;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "setPaused(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaPausedMethod = env->GetMethodID(javaClass,"setPaused","(Z)V");
 	if(!javaPausedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setPaused for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "setPaused(): coulnd't get java setPaused for VideoPlayer";
 		return;
 	}
 
@@ -454,18 +454,18 @@ void ofxAndroidVideoPlayer::setPaused(bool bPause){
 void ofxAndroidVideoPlayer::setVolume(float vol){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot set volume on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "setVolume(): java VideoPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "setVolume(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"setVolume","(F)V");
 	if(!javaVolumeMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setVolume for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "setVolume(): couldn't get java setVolume for VideoPlayer";
 		return;
 	}
 
@@ -477,18 +477,18 @@ void ofxAndroidVideoPlayer::setVolume(float vol){
 void ofxAndroidVideoPlayer::setLoopState(ofLoopType state){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot set loop state on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "setLoopState(): java VideoPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "setLoopState(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaLoopStateMethod = env->GetMethodID(javaClass,"setLoopState","(Z)V");
 	if(!javaLoopStateMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java LoopState for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "setLoopState(): couldn't get java LoopState for VideoPlayer";
 		return;
 	}
 
@@ -498,7 +498,7 @@ void ofxAndroidVideoPlayer::setLoopState(ofLoopType state){
 			break;
 		case OF_LOOP_PALINDROME:
 			// TODO Palindrome loop not implemented
-			ofLog(OF_LOG_ERROR,"OF_LOOP_PALINDROME not implemented");
+			ofLogError("ofxAndroidVideoPlayer") << "setLoopState(): OF_LOOP_PALINDROME not implemented";
 			break;
 		case OF_LOOP_NONE:
 			default:
@@ -512,18 +512,18 @@ void ofxAndroidVideoPlayer::setLoopState(ofLoopType state){
 ofLoopType ofxAndroidVideoPlayer::getLoopState(){
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get loop state on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "getLoopState(): java VideoPlayer not loaded";
 		return OF_LOOP_NONE;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "getLoopState(): couldn't get environment using GetEnv()";
 		return OF_LOOP_NONE;
 	}
 
 	jmethodID javaGetLoopStateMethod = env->GetMethodID(javaClass,"getLoopState","()Z");
 	if(!javaGetLoopStateMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java GetLoopState for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "getLoopState(): couldn't get java GetLoopState for VideoPlayer";
 		return OF_LOOP_NONE;
 	}
 
@@ -543,19 +543,19 @@ ofLoopType ofxAndroidVideoPlayer::getLoopState(){
 int ofxAndroidVideoPlayer::getCurrentFrame() {
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get duration on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "getCurrentFrame(): java VideoPlayer not loaded";
 		return 0.;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "getCurrentFrame(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaGetCurrentFrame = env->GetMethodID(javaClass,"getCurrentFrame","()I");
 	if(!javaGetCurrentFrame){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getCurrentFrame for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "getCurrentFrame(): couldn't get java getCurrentFrame for VideoPlayer";
 		return 0;
 	}
 
@@ -570,19 +570,19 @@ int ofxAndroidVideoPlayer::getCurrentFrame() {
 int ofxAndroidVideoPlayer::getTotalNumFrames() {
 
 	if(!javaVideoPlayer){
-		ofLogError() << "cannot get duration on an unloaded video player";
+		ofLogError("ofxAndroidVideoPlayer") << "getTotalNumFrames(): java VideoPlayer not loaded";
 		return 0.;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidVideoPlayer") << "getTotalNumFrames(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaGetTotalNumFrames = env->GetMethodID(javaClass,"getTotalNumFrames","()I");
 	if(!javaGetTotalNumFrames){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getTotalNumFrames for VideoPlayer");
+		ofLogError("ofxAndroidVideoPlayer") << "getTotalNumFrames(): couldn't get java getTotalNumFrames for VideoPlayer";
 		return 0;
 	}
 
