@@ -268,6 +268,17 @@ EGLContext ofAppEGLWindow::getEglContext() const {
   return eglContext;
 }
 
+#ifndef TARGET_RASPBERRY_PI
+//------------------------------------------------------------
+Display* ofAppEGLWindow::getX11Display(){
+	return x11Display;
+}
+
+//------------------------------------------------------------
+Window ofAppEGLWindow::getX11Window(){
+	return x11Window;
+}
+#endif
 //------------------------------------------------------------
 EGLConfig ofAppEGLWindow::getEglConfig() const {
   return eglConfig;

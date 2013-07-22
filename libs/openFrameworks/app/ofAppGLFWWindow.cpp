@@ -1098,3 +1098,55 @@ void ofAppGLFWWindow::iconify(bool bIconify){
 	else
 		glfwRestoreWindow(windowP);
 }
+
+
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+Display* ofAppGLFWWindow::getX11Display(){
+	return glfwGetX11Display();
+}
+
+Window ofAppGLFWWindow::getX11Window(){
+	return glfwGetX11Window(windowP);
+}
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+GLXContext ofAppGLFWWindow::getGLXContext(){
+	return glfwGetGLXContext(windowP);
+}
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+EGLDisplay ofAppGLFWWindow::getEGLDisplay(){
+	return glfwGetEGLDisplay();
+}
+
+EGLContext ofAppGLFWWindow::getEGLContext(){
+	return glfwGetEGLContext(windowP);
+}
+
+EGLSurface ofAppGLFWWindow::getEGLSurface(){
+	return glfwGetEGLSurface(windowP);
+}
+#endif
+
+#if defined(TARGET_OSX)
+id ofAppGLFWWindow::getNSGLContext(){
+	return glfwGetNSGLContext(windowP);
+}
+
+id ofAppGLFWWindow::getCocoaWindow(){
+	return glfwGetCocoaWindow(windowP);
+}
+#endif
+
+#if defined(TARGET_WIN32)
+HGLRC ofAppGLFWWindow::getWGLContext(){
+	return glfwGetWGLContext(windowP);
+}
+
+HWND ofAppGLFWWindow::getWin32Window(){
+	return glfwGetWin32Window(windowP);
+}
+
+#endif
