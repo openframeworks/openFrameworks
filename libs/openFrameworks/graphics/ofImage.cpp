@@ -1043,9 +1043,9 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     }
     else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
         
-        swap(_w,_h)
+        swap(_w, _h);
         
-        swap(_x,y);
+        swap(_x, _y);
 
         if(ofIsVFlipped()){
 			_x = sw - _x;   // screen is flipped horizontally.
