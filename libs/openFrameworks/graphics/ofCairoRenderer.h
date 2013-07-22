@@ -76,6 +76,8 @@ public:
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
 	void setSphereResolution(int res);
+	void enableAntiAliasing();
+	void disableAntiAliasing();
 
 	//our openGL wrappers
 	void pushMatrix();
