@@ -1,5 +1,4 @@
-#ifndef __ofxXmlSettings__
-#define __ofxXmlSettings__
+#pragma once
 
 #include "ofMain.h"
 #include <string.h>
@@ -170,7 +169,4 @@ class ofxXmlSettings: public ofBaseFileSerializer{
         bool readIntAttribute(const string& tag, const string& attribute, int& valueString, int which);
         bool readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which);
         bool readStringAttribute(const string& tag, const string& attribute, string& outValue, int which);
-};
-
-#endif
-
+};   

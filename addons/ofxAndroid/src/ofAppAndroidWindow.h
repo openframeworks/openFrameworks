@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFAPPANDROIDWINDOW_H_
-#define OFAPPANDROIDWINDOW_H_
+#pragma once
 
 #include "ofAppBaseWindow.h"
 
@@ -50,5 +49,3 @@ public:
 	void	setThreadedEvents(bool threadedEvents);
 
 };
-
-#endif /* OFAPPANDROIDWINDOW_H_ */

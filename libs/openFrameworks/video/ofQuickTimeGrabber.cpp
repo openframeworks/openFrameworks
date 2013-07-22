@@ -715,7 +715,7 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 				//if we didn't specifiy a device then we will try all devices till one works!
 				if( deviceCount == deviceNumber || !didWeChooseADevice ){
 					ofLogNotice("ofQuickTimeGrabber") << "attempting to open device [" << deviceCount << "] "
-					<< p2cstr(pascalName) << " - " << p2cstr(pascalNameInput) ;
+					<< p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
 
 					OSErr err1 = SGSetChannelDevice(gVideoChannel, pascalName);
 					OSErr err2 = SGSetChannelDeviceInput(gVideoChannel, j);
