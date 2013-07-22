@@ -420,8 +420,8 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
-			fontname = "Helvetica";
-			fontID = 3;
+			fontname = "Helvetica Neue";
+			fontID = 4;
 		}else if(fontname==OF_TTF_SERIF){
 			fontname = "Times New Roman";
 		}else if(fontname==OF_TTF_MONO){
