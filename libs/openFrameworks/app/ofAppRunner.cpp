@@ -468,3 +468,53 @@ int ofGetWindowMode(){
 void ofSetVerticalSync(bool bSync){
 	window->setVerticalSync(bSync);
 }
+
+//-------------------------- native window handles
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+Display* ofGetX11Display(){
+	return window->getX11Display();
+}
+
+Window  ofGetX11Window(){
+	return window->getX11Window();
+}
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+GLXContext ofGetGLXContext(){
+	return window->getGLXContext();
+}
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+EGLDisplay ofGetEGLDisplay(){
+	return window->getEGLDisplay();
+}
+
+EGLContext ofGetEGLContext(){
+	return window->getEGLContext();
+}
+EGLSurface ofGetEGLSurface(){
+	return window->getEGLSurface();
+}
+#endif
+
+#if defined(TARGET_OSX)
+id ofGetNSGLContext(){
+	return window->getNSGLContext();
+}
+
+id ofGetCocoaWindow(){
+	return window->getCocoaWindow();
+}
+#endif
+
+#if defined(TARGET_WIN32)
+HGLRC ofGetWGLContext(){
+	return window->getWGLContext();
+}
+
+HWND ofGetWin32Window(){
+	return window->getWin32Window();
+}
+#endif

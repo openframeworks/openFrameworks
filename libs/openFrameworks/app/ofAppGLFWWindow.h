@@ -80,6 +80,31 @@ public:
 
 	void		setVerticalSync(bool bSync);
 
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+	Display* 	getX11Display();
+	Window  	getX11Window();
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+	GLXContext 	getGLXContext();
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+	EGLDisplay 	getEGLDisplay();
+	EGLContext 	getEGLContext();
+	EGLSurface 	getEGLSurface();
+#endif
+
+#if defined(TARGET_OSX)
+	id 			getNSGLContext();
+	id 			getCocoaWindow();
+#endif
+
+#if defined(TARGET_WIN32)
+	HGLRC 		getWGLContext();
+	HWND 		getWin32Window();
+#endif
+
 private:
 	// callbacks
 	void			display(void);
