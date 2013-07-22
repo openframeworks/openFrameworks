@@ -32,6 +32,10 @@
 static ofPtr<ofBaseApp>				OFSAptr;
 static ofPtr<ofAppBaseWindow> 		window;
 
+static bool bAntiAliasingRequestSet = false; 
+static bool bAntiAliasingEnabled = false;
+static int  numSamplesAntiAliasing = 2; 
+
 //#define USE_PROGRAMMABLE_GL
 
 //========================================================================
@@ -138,6 +142,19 @@ void ofRunApp(ofBaseApp * OFSA){
 }
 
 //--------------------------------------
+void  ofEnableAntiAliasing(int requestedSamples){
+    bAntiAliasingRequestSet = true; 
+    bAntiAliasingEnabled = true; 
+    numSamplesAntiAliasing = requestedSamples;  
+}
+
+//--------------------------------------
+void  ofDisableAntiAliasing(){
+    bAntiAliasingRequestSet = true; 
+    bAntiAliasingEnabled = false; 
+}
+
+//--------------------------------------
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
     if(!ofGetCurrentRenderer()) {
 	#ifdef USE_PROGRAMMABLE_GL
@@ -149,6 +166,14 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
     }
 
 	window = windowPtr;
+    
+    if( bAntiAliasingRequestSet ){
+        if( bAntiAliasingEnabled ){
+            window->enableAntiAliasing(numSamplesAntiAliasing); 
+        }else{
+            window->disableAntiAliasing(); 
+        }
+    }
 
 	if(ofIsGLProgrammableRenderer()){
         #if defined(TARGET_RASPBERRY_PI)

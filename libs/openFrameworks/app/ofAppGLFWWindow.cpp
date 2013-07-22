@@ -74,7 +74,17 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 
 }
 
+//------------------------------------------------------------
+void ofAppGLFWWindow::enableAntiAliasing(int requestedNumSamples){
+    //for glfw we just pass this through. 
+    setNumSamples(requestedNumSamples);
+}
 
+//------------------------------------------------------------
+void ofAppGLFWWindow::disableAntiAliasing(){
+    setNumSamples(0);
+}
+    
 //------------------------------------------------------------
 void ofAppGLFWWindow::setNumSamples(int _samples){
 	samples=_samples;

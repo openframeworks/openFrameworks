@@ -2,6 +2,7 @@
 
 #include "ofPoint.h"
 #include "ofTypes.h"
+#include "ofLog.h"
 
 class ofBaseApp;
 
@@ -15,6 +16,14 @@ public:
 	virtual void setupOpenGL(int w, int h, int screenMode) {}
 	virtual void initializeWindow() {}
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
+    
+    virtual void enableAntiAliasing(int requestedNumSamples){
+        ofLogWarning("ofAppBaseWindow") << " enableAntiAliasing is not implemented for your window " << endl; 
+    }
+    
+    virtual void disableAntiAliasing(){
+        ofLogWarning("ofAppBaseWindow") << " disableAntiAliasing is not implemented for your window " << endl; 
+    }
 
 	virtual void hideCursor() {}
 	virtual void showCursor() {}
