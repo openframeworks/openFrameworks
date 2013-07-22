@@ -561,7 +561,6 @@ bool ofXml::exists(const string& path) const // works for both attributes and ta
     if(element) {
         node = element->getNodeByPath(path);
     } else {
-        ofLogWarning("ofXml") << "exists(): no element set yet";
         return false;
     }
     
