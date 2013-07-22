@@ -163,7 +163,7 @@
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back(ofxNSStringToString(captureDevice.localizedName));
-		 ofLogNotice("Device: ") <<i<<": "<<deviceNames.back()<<endl;
+		 ofLogNotice() << "Device: " << i << ": " << deviceNames.back();
 		i++;
     }
     return deviceNames; 

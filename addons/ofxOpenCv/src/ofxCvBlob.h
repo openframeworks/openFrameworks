@@ -9,10 +9,7 @@
 *
 */
 
-
-#ifndef OFX_CV_BLOB_H
-#define OFX_CV_BLOB_H
-
+#pragma once
 
 #include "ofxCvConstants.h"
 
@@ -51,8 +48,3 @@ class ofxCvBlob {
             ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
         }
 };
-
-
-#endif
-
-
