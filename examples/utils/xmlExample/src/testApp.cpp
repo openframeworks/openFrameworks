@@ -34,6 +34,9 @@ void testApp::setup(){
     
 	//read the colors from XML or, if they don't exist, because we've
     // loaded them from elsewhere, let's just make some stuff up
+
+    //the double forward slash //RED means: search from the root of the xml for a tag could RED
+    //otherwise the search would be relative to where you are in the xml structure. // = absolute
     if(XML.exists("//RED")) {
         red	= XML.getValue<int>("//RED");
     } else {
@@ -225,6 +228,11 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
+    
+    //lets clear everything on mouse pressed so we save just one stroke. 
+    dragPts.clear();
+    XML.clear();
+    XML.addChild("DRAWING");
 
 	// let's go back to the root (this is the same thing as reset() btw)
     XML.setTo("//DRAWING");
