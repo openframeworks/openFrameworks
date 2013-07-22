@@ -77,9 +77,9 @@ void 		ofSetVerticalSync(bool bSync);
 	EGLSurface ofGetEGLSurface();
 #endif
 
-#if defined(TARGET_OSX)
-	id ofGetNSGLContext();
-	id ofGetCocoaWindow();
+#if defined(TARGET_OSX) && defined(__OBJC__)
+	void * ofGetNSGLContext();
+	void * ofGetCocoaWindow();
 #endif
 
 #if defined(TARGET_WIN32)
