@@ -619,7 +619,7 @@ bool ofAppEGLWindow::createSurface() {
         switch(error) {
             case EGL_BAD_MATCH:
                 ofLogError("ofAppEGLWindow") << "createSurface(): error creating surface: EGL_BAD_MATCH " << eglErrorString(error);  
-                ofLogError("ofAppEGLWindow") << "createSurface(): check window and EGLConfig attributes to determine compatibility, " 
+                ofLogError("ofAppEGLWindow") << "createSurface(): check window and EGLConfig attributes to determine compatibility, ";
                 ofLogError("ofAppEGLWindow") << "createSurface(): or verify that the EGLConfig supports rendering to a window";
                  break;
             case EGL_BAD_CONFIG:
