@@ -327,7 +327,7 @@ static void add_video_format (ofGstDevice &webcam_device,
 				webcam_device.video_formats[i] = video_format;
 #endif
 			}else{
-				ofLog(OF_LOG_VERBOSE,"add_video_format(): already added, skipping";
+				ofLogVerbose("ofGstVideoGrabber") << "add_video_format(): already added, skipping";
 			}
 		}else{
 			if(fabs(new_framerate - desired_framerate) < fabs(curr_framerate - desired_framerate) ){
