@@ -500,11 +500,11 @@ EGLSurface ofGetEGLSurface(){
 #endif
 
 #if defined(TARGET_OSX)
-id ofGetNSGLContext(){
+void * ofGetNSGLContext(){
 	return window->getNSGLContext();
 }
 
-id ofGetCocoaWindow(){
+void * ofGetCocoaWindow(){
 	return window->getCocoaWindow();
 }
 #endif
