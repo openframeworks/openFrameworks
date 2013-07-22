@@ -138,13 +138,13 @@ void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glEnable( GL_NORMALIZE );
     }
-    
+
     model.getMesh().draw(renderType);
-    
+
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glDisable( GL_NORMALIZE );
     }
-    
+
 }
 
 //----------------------------------------------------------
@@ -758,12 +758,12 @@ void ofGLRenderer::disablePointSprites(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::enableAntialiasing(){
+void ofGLRenderer::enableAntiAliasing(){
 	glEnable(GL_MULTISAMPLE);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::disableAntialiasing(){
+void ofGLRenderer::disableAntiAliasing(){
 	glDisable(GL_MULTISAMPLE);
 }
 
@@ -987,7 +987,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 			dScreen.y += rViewport.y;
 			dScreen.y *= rViewport.height;
-			
+
 			if (dScreen.z >= 1) return;
 
 
