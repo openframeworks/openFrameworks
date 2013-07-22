@@ -200,6 +200,24 @@ ofAppGlutWindow::ofAppGlutWindow(){
 //lets you enable alpha blending using a display string like:
 // "rgba double samples>=4 depth" ( mac )
 // "rgb double depth alpha samples>=4" ( some pcs )
+
+//------------------------------------------------------------
+void ofAppGlutWindow::enableAntiAliasing(int requestedNumSamples){
+    string displayStr = "rgba";
+    #ifndef TARGET_OSX
+        displayStr = "rgb"
+    #endif
+    
+    displayStr += " double depth samples>=" + ofToString(requestedNumSamples);
+     
+    setGlutDisplayString(displayStr);
+}
+
+//------------------------------------------------------------
+void ofAppGlutWindow::disableAntiAliasing(){
+    setGlutDisplayString("");
+}
+
 //------------------------------------------------------------
  void ofAppGlutWindow::setGlutDisplayString(string displayStr){
 	displayString = displayStr;

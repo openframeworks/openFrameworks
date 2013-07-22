@@ -32,6 +32,11 @@ public:
 	void setWindowIcon(const string & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
+
+    //call before ofSetupOpenGL
+    void        enableAntiAliasing(int requestedNumSamples);
+    void        disableAntiAliasing();
+
 	void 		setNumSamples(int samples);
 	void 		setDoubleBuffering(bool doubleBuff);
 	void 		setColorBits(int r, int g, int b);

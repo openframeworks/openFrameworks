@@ -9,6 +9,11 @@ class ofAppBaseWindow;
 class ofBaseApp;
 class ofBaseRenderer;
 
+
+//call before window is setup. requestedSamples will be set if supported, otherwise default AA sampling will occur. 
+void        ofEnableAntiAliasing(int requestedSamples);
+void        ofDisableAntiAliasing(); 
+
 void 		ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated

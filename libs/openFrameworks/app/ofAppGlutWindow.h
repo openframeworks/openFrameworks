@@ -26,6 +26,10 @@ public:
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 	
+    //call before ofSetupOpenGL
+    void enableAntiAliasing(int requestedNumSamples);
+    void disableAntiAliasing();
+    
 	//note if you fail to set a compatible string the app will not launch
 	void setGlutDisplayString(string str);
 
