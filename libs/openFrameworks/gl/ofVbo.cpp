@@ -768,6 +768,19 @@ void ofVbo::bind(){
 void ofVbo::unbind() {
 	if(supportVAOs){
 		glBindVertexArray(0);
+		if(!ofGetGLProgrammableRenderer()){
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			if(bUsingColors){
+				glDisableClientState(GL_COLOR_ARRAY);
+			}
+			if(bUsingNormals){
+				glDisableClientState(GL_NORMAL_ARRAY);
+			}
+			if(bUsingTexCoords){
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
+		}
 	}else{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
