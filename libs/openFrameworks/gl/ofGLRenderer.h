@@ -77,7 +77,7 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
-	
+
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();
@@ -94,6 +94,8 @@ public:
 	void setBlendMode(ofBlendMode blendMode);
 	void enablePointSprites();
 	void disablePointSprites();
+	void enableAntiAliasing();
+	void disableAntiAliasing();
 
 	// color options
 	void setColor(int r, int g, int b); // 0-255
