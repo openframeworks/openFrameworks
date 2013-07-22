@@ -58,8 +58,9 @@ void ofxSynthSampler::setFrequencySyncToLength(int length){
 	currentFrequency = sample.length/(float)length;
 }
 void ofxSynthSampler::loadFile(string file){
-	printf("sampleload test: %i\n",sample.load(ofToDataPath(file)));
-	printf("Summary:\n%s", sample.getSummary());
+	ofLogNotice("ofxSynthSampler") << "loadFile(): sampleload test: " << sample.load(ofToDataPath(file));
+	ofLogNotice("ofxSynthSampler") << "loadFile(): summary:";
+	ofLogNotice("ofxSynthSampler") << "loadFile(): " << sample.getSummary();
 }
 
 /* ============================ */
@@ -81,7 +82,7 @@ bool ofxSynthSample::read(){
 	result = inFile;
 
 	if (inFile) {
-		printf("Reading wav file...\n"); // for debugging only
+		ofLogNotice("ofxSynthSampler") << "read(): reading wav file..."; // for debugging only
 		
 		inFile.seekg(4, ios::beg);
 		inFile.read( (char*) &myChunkSize, 4 ); // read the ChunkSize
@@ -106,17 +107,17 @@ bool ofxSynthSample::read(){
 		int filePos = 36;
 		bool found = false;
 		while(!found && !inFile.eof()) {
-			cout << "count" << endl;
+			ofLogNotice("ofxSynthSampler") << "read(): count";
 			inFile.seekg(filePos, ios::beg);
 			inFile.read((char*) &chunkID, sizeof(char) * 4);
 			inFile.seekg(filePos + 4, ios::beg);
 			inFile.read( (char*) &myDataSize, sizeof(int) ); // read the size of the data
 			filePos += 8;
 			if (chunkID[0] == 'd' && chunkID[1] == 'a' && chunkID[2] == 't' && chunkID[3] == 'a') {
-				printf("found at: %i\n", filePos);
+				ofLogNotice("ofxSynthSampler") << "read(): found at: " << filePos;
 				found = true;
 			}else{
-				printf("chunkid: %s\n", chunkID);
+				ofLogNotice("ofxSynthSampler") << "read(): chunkid: " << chunkID;
 				filePos += myDataSize;
 			}
 		}
@@ -128,17 +129,17 @@ bool ofxSynthSample::read(){
 		
 		// read the data chunk
 		myData = (char*) malloc(myDataSize * sizeof(char));
-		printf("myDataSize %i\n", myDataSize);
+		ofLogNotice("ofxSynthSampler") << "read(): myDataSize " << myDataSize;
 		
 		inFile.seekg(filePos, ios::beg);
-		printf("filePos:%i\n", filePos);
+		ofLogNotice("ofxSynthSampler") << "read(): filePos: " << filePos;
 		if ( (inFile.rdstate() & ifstream::eofbit ) != 0 )
-			cerr << "error 1'\n";
+			ofLogError("ofxSynthSampler") << "read(): error 1";
 
 		inFile.read(myData, myDataSize);
 		
 		if ( (inFile.rdstate() & ifstream::eofbit ) != 0 )
-			cerr << "error 2'\n";
+			ofLogError("ofxSynthSampler") << "read(): error 2";
 
 		length=myDataSize*(0.5/myChannels);
 		
@@ -152,14 +153,12 @@ char * ofxSynthSample::getSummary()
 {
 	char *summary = new char[250];
 	sprintf(summary, " Format: %d\n Channels: %d\n SampleRate: %d\n ByteRate: %d\n BlockAlign: %d\n BitsPerSample: %d\n DataSize: %d\n", myFormat, myChannels, mySampleRate, myByteRate, myBlockAlign, myBitsPerSample, myDataSize);
-	cout << myDataSize;
 	return summary;
 }
 void ofxSynthSample::getLength() {
 	length=myDataSize*0.5;	
 }
-//better cubic inerpolation. Cobbled together from various (pd externals, yehar, other places).
-//better cubic inerpolation. Cobbled together from various (pd externals, yehar, other places).
+// better cubic inerpolation. Cobbled together from various (pd externals, yehar, other places)
 double ofxSynthSample::play4(double frequency, double start, double end) {
 	double remainder;
 	double a,b,c,d,a1,a2,a3;
@@ -237,7 +236,7 @@ double ofxSynthSample::play4(double frequency, double start, double end) {
 double ofxSynthSample::play(double frequency, double start, double end) {
 	double remainder;
 //	long length=myDataSize;
-//	printf("position: %f\n", position);
+//	ofLogNotice("ofxSynthSampler") << "play(): position: " << position;
 	if (end>=length) end=length-1;
 	long a,b;
 	short* buffer = (short *)myData;

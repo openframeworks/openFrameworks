@@ -89,7 +89,7 @@ void ofxiOSSoundPlayer::setLoop(bool bLoop) {
 }
 
 void ofxiOSSoundPlayer::setMultiPlay(bool bMultiPlay) {
-    ofLog(OF_LOG_NOTICE, "ofxiOSSoundPlayer::setMultiPlay() - multi play is not currently supported.");
+    ofLogNotice("ofxiOSSoundPlayer") << "setMultiPlay(): sorry, no support for multiplay streams";
     if(soundPlayer == NULL) {
         return;
     }

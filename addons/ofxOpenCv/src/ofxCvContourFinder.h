@@ -7,9 +7,7 @@
 *
 */
 
-#ifndef OFX_CV_CONTOUR_FINDER
-#define OFX_CV_CONTOUR_FINDER
-
+#pragma once
 
 
 #include "ofxCvConstants.h"
@@ -67,7 +65,3 @@ class ofxCvContourFinder : public ofBaseDraws {
     virtual void reset();
 
 };
-
-
-
-#endif

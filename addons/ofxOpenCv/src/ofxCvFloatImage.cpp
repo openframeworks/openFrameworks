@@ -21,7 +21,7 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
         allocate( (int)mom.getWidth(), (int)mom.getHeight() );
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
-        ofLog(OF_LOG_NOTICE, "in ofxCvFloatImage copy constructor, mom not allocated");
+        ofLogNotice("ofxCvFloatImage") << "copy constructor: source image not allocated";
     }
 }
 
@@ -82,7 +82,7 @@ void ofxCvFloatImage::convertGrayToFloat( IplImage* grayImg, IplImage* floatImg 
 //-------------------------------------------------------------------------------------
 void ofxCvFloatImage::set(float value){
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in set, image needs to be allocated");	
+		ofLogError("ofxCvFloatImage") << "set(): image not allocated";
 		return;	
 	}
 	cvSet(cvImage, cvScalar(value));
@@ -92,7 +92,7 @@ void ofxCvFloatImage::set(float value){
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator *= ( float scalar ){
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in *=, image needs to be allocated");	
+		ofLogError("ofxCvFloatImage") << "operator*=: image not allocated";	
 		return;	
 	}
     ofRectangle roi = getROI();
@@ -107,7 +107,7 @@ void ofxCvFloatImage::operator *= ( float scalar ){
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator /= ( float scalar ){
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in /=, image needs to be allocated");	
+		ofLogError("ofxCvFloatImage") << "operator/=: image not allocated";	
 		return;	
 	}
     scalar = 1.0 / scalar;
@@ -124,11 +124,17 @@ void ofxCvFloatImage::operator /= ( float scalar ){
 void ofxCvFloatImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 	if( w == 0 || h == 0 ){
-		ofLog(OF_LOG_ERROR, "in setFromPixels, w and h cannot = 0");
+		ofLogError("ofxCvFloatImage") << "setFromPixels(): width and height are zero";
 		return;
 	}
     if( !bAllocated || w != width || h != height ) {
-		ofLog(OF_LOG_NOTICE, "in setFromPixels, reallocating to match dimensions");	
+		if ( !bAllocated ){
+			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): allocating to match dimensions: "
+				<< width << " " << height;
+		}else{
+			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): reallocating to match dimensions: "
+				<< width << " " << height;
+		}
 		allocate(w,h);
 	}
 
@@ -148,7 +154,7 @@ void ofxCvFloatImage::setFromPixels( const unsigned char* _pixels, int w, int h 
         setROI(lastROI);
         flagImageChanged();
     } else {
-        ofLog(OF_LOG_ERROR, "in setFromPixels, size mismatch");
+        ofLogError("ofxCvFloatImage") << "setFromPixels(): image size mismatch";
     }
 }
 
@@ -156,11 +162,17 @@ void ofxCvFloatImage::setFromPixels( const unsigned char* _pixels, int w, int h 
 void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 	if( w == 0 || h == 0 ){
-		ofLog(OF_LOG_ERROR, "in setFromPixels, w and h cannot = 0");
+		ofLogError("ofxCvFloatImage") << "setFromPixels(): width and height are zero";
 		return;
 	}
     if( !bAllocated || w != width || h != height ) {
-		ofLog(OF_LOG_NOTICE, "in setFromPixels, reallocating to match dimensions");	
+		if ( !bAllocated ){
+			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): allocating to match dimensions: "
+				<< width << " " << height;
+		}else{
+			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): reallocating to match dimensions: "
+				<< width << " " << height;
+		}
 		allocate(w,h);
 	}
 
@@ -173,18 +185,18 @@ void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
         }
         flagImageChanged();
     } else {
-        ofLog(OF_LOG_ERROR, "in setFromPixels, size mismatch");
+        ofLogError("ofxCvFloatImage") << "setFromPixels(): image size mismatch";
     }
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
 	if( w == 0 || h == 0 ){
-		ofLog(OF_LOG_ERROR, "in setFromPixels, w and h cannot = 0");
+		ofLogError("ofxCvFloatImage") << "setRoiFromPixels(): width and height are zero";
 		return;
 	}
    	if(!bAllocated){
-		ofLog(OF_LOG_ERROR, "in setRoiFromPixels, image is not allocated");
+		ofLogError("ofxCvFloatImage") << "setRoiFromPixels(): image not allocated";
 		return;
 	} 
 	
@@ -206,18 +218,19 @@ void ofxCvFloatImage::setRoiFromPixels( const unsigned char* _pixels, int w, int
         convertGrayToFloat(cvGrayscaleImage, cvImage);
         flagImageChanged();
     } else {
-        ofLog(OF_LOG_ERROR, "in setRoiFromPixels, ROI mismatch");
+        ofLogError("ofxCvFloatImage") << "setRoiFromPixels(): region of interest width and/or height are zero: "
+			<< iRoi.width << " " << iRoi.height;
     }
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::setRoiFromPixels( float* _pixels, int w, int h ) {
    	if( w == 0 || h == 0 ){
-		ofLog(OF_LOG_ERROR, "in setFromPixels, w and h cannot = 0");
+		ofLogError("ofxCvFloatImage") << "setRoiFromPixels(): width and height are zero";
 		return;
 	}
    	if(!bAllocated){
-		ofLog(OF_LOG_ERROR, "in setRoiFromPixels, image is not allocated");
+		ofLogError("ofxCvFloatImage") << "setRoiFromPixels(): image not allocated";
 		return;
 	} 
 	
@@ -234,7 +247,8 @@ void ofxCvFloatImage::setRoiFromPixels( float* _pixels, int w, int h ) {
         }
         flagImageChanged();
     } else {
-        ofLog(OF_LOG_ERROR, "in setRoiFromPixels, ROI mismatch");
+        ofLogError("ofxCvFloatImage") << "setRoiFromPixels(): region of interest width and/or height are zero: "
+			<< iRoi.width << " " << iRoi.height;
     }
 }
 
@@ -253,11 +267,13 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
 	if( mom.getWidth() == 0 || mom.getHeight() == 0 ){
-		ofLog(OF_LOG_ERROR, "in =, mom width or height is 0");	
+		ofLogError("ofxCvFloatImage") << "operator=: source width and/or height are zero: "
+			<< mom.getWidth() << " " << mom.getHeight();
 		return;	
 	}
 	if( !bAllocated ){
-		ofLog(OF_LOG_NOTICE, "in =, allocating to match dimensions");		
+		ofLogNotice("ofxCvFloatImage") << "operator=: allocating to match dimensions: "
+			<< mom.getWidth() << " " << mom.getHeight();
 		allocate(mom.getWidth(), mom.getHeight());
 	}	
 	
@@ -265,7 +281,7 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
         convertGrayToFloat(mom.getCvImage(), cvImage);
         flagImageChanged();
 	} else {
-        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
+        ofLogError("ofxCvFloatImage") << "operator=: region of interest mismatch";
 	}
 }
 
@@ -275,11 +291,13 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& _mom ) {
     ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom);
 	
 	if( mom.getWidth() == 0 || mom.getHeight() == 0 ){
-		ofLog(OF_LOG_ERROR, "in =, mom width or height is 0");	
+		ofLogError("ofxCvFloatImage") << "operator=: source width and/or height are zero: "
+			<< mom.getWidth() << " " << mom.getHeight();	
 		return;	
 	}
 	if( !bAllocated ){
-		ofLog(OF_LOG_NOTICE, "in =, allocating to match dimensions");		
+		ofLogNotice("ofxCvFloatImage") << "operator=: allocating to match dimensions: "
+			<< mom.getWidth() << " " << mom.getHeight();
 		allocate(mom.getWidth(), mom.getHeight());
 	}
 		
@@ -293,22 +311,24 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& _mom ) {
         convertGrayToFloat(cvGrayscaleImage, cvImage);
         flagImageChanged();
 	} else {
-        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
+        ofLogError("ofxCvFloatImage") << "operator=: region of interest mismatch";
 	}
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
     if(this != &_mom) {  //check for self-assignment
-        // cast non-const,  no worries, we will reverse any chages
+        // cast non-const,  no worries, we will reverse any changes
         ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom);
 
 		if( mom.getWidth() == 0 || mom.getHeight() == 0 ){
-			ofLog(OF_LOG_ERROR, "in =, mom width or height is 0");	
+			ofLogError("ofxCvFloatImage") << "operator=: source width and/or height are zero:"
+				<< mom.getWidth() << " " << mom.getHeight();	
 			return;	
 		}
 		if( !bAllocated ){
-			ofLog(OF_LOG_NOTICE, "in =, allocating to match dimensions");		
+			ofLogNotice("ofxCvFloatImage") << "operator=: allocating to match dimensions: "
+				<< mom.getWidth() << " " << mom.getHeight();
 			allocate(mom.getWidth(), mom.getHeight());
 		}
 			
@@ -324,24 +344,26 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
             }
             flagImageChanged();
         } else {
-            ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
+            ofLogError("ofxCvFloatImage") << "operator=: region of interest mismatch";
         }
     } else {
-        ofLog(OF_LOG_WARNING, "in =, you are assigning a ofxCvFloatImage to itself");
+        ofLogWarning("ofxCvFloatImage") << "operator=: assigning image to itself, not copying";
     }
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator = ( const ofxCvShortImage& _mom ) {
-    // cast non-const,  no worries, we will reverse any chages
+    // cast non-const,  no worries, we will reverse any changes
     ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom);
 	
 	if( mom.getWidth() == 0 || mom.getHeight() == 0 ){
-		ofLog(OF_LOG_ERROR, "in =, mom width or height is 0");	
+		ofLogError("ofxCvFloatImage") << "operator=: source width and/or height are zero:"
+			<< mom.getWidth() << " " << mom.getHeight();
 		return;	
 	}
 	if( !bAllocated ){
-		ofLog(OF_LOG_NOTICE, "in =, allocating to match dimensions");		
+		ofLogNotice("ofxCvFloatImage") << "operator=: allocating to match dimensions: "
+			<< mom.getWidth() << " " << mom.getHeight();
 		allocate(mom.getWidth(), mom.getHeight());
 	}
 		
@@ -350,7 +372,7 @@ void ofxCvFloatImage::operator = ( const ofxCvShortImage& _mom ) {
                   0, 65535.0f, getNativeScaleMin(), getNativeScaleMax() );
         flagImageChanged();
     } else {
-        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
+        ofLogError("ofxCvFloatImage") << "operator=: region of interest mismatch";
     }
 }
 
@@ -362,11 +384,12 @@ void ofxCvFloatImage::operator = ( const IplImage* _mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator *= ( ofxCvImage& mom ) {
 	if( mom.getWidth() == 0 || mom.getHeight() == 0 ){
-		ofLog(OF_LOG_ERROR, "in *=, mom width or height is 0");	
+		ofLogError("ofxCvFloatImage") << "operator*=: source width and/or height are zero:"
+			<< mom.getWidth() << " " << mom.getHeight();	
 		return;	
 	}
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in *=, image is not allocated");		
+		ofLogError("ofxCvFloatImage") << "operator*=: image not allocated";		
 		return;	
 	}
 		
@@ -376,21 +399,22 @@ void ofxCvFloatImage::operator *= ( ofxCvImage& mom ) {
             swapTemp();
             flagImageChanged();
         } else {
-            ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");
+            ofLogError("ofxCvFloatImage") << "operator*=: region of interest mismatch";
         }
 	} else {
-        ofLog(OF_LOG_ERROR, "in *=, images need to have matching type");
+        ofLogError("ofxCvFloatImage") << "operator*=: type mismatch";
 	}
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator &= ( ofxCvImage& mom ) {
 	if( mom.getWidth() == 0 || mom.getHeight() == 0 ){
-		ofLog(OF_LOG_ERROR, "in &=, mom width or height is 0");	
+		ofLogError("ofxCvFloatImage") << "operator &=: source width and/or height are zero:"
+			<< mom.getWidth() << " " << mom.getHeight();
 		return;	
 	}
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in &=, image is not allocated");		
+		ofLogError("ofxCvFloatImage") << "operator&=: image not allocated";
 		return;	
 	}
 
@@ -401,10 +425,10 @@ void ofxCvFloatImage::operator &= ( ofxCvImage& mom ) {
             swapTemp();
             flagImageChanged();
         } else {
-            ofLog(OF_LOG_ERROR, "in &=, ROI mismatch");
+            ofLogError("ofxCvFloatImage") << "operator&=: region of interest mismatch";
         }
 	} else {
-        ofLog(OF_LOG_ERROR, "in &=, images need to have matching type");
+        ofLogError("ofxCvFloatImage") << "operator&=: images type mismatch";
 	}
 }
 
@@ -412,11 +436,12 @@ void ofxCvFloatImage::operator &= ( ofxCvImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 	if( mom.getWidth() == 0 || mom.getHeight() == 0 ){
-		ofLog(OF_LOG_ERROR, "in addWeighted, mom width or height is 0");	
+		ofLogError("ofxCvFloatImage") << "addWeighted(): source width and/or height are zero:"
+			<< mom.getWidth() << " " << mom.getHeight();
 		return;	
 	}
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in addWeighted, image is not allocated");		
+		ofLogError("ofxCvFloatImage") << "addWeighted(): image not allocated";
 		return;	
 	}
 	
@@ -425,7 +450,7 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
         cvAddWeighted( cvImageTemp, f, cvImage, 1.0f-f,0, cvImage );
         flagImageChanged();
     } else {
-        ofLog(OF_LOG_ERROR, "in addWeighted, ROI mismatch");
+        ofLogError("ofxCvFloatImage") << "addWeighted(): region of interest mismatch";
     }
 }
 
@@ -436,7 +461,7 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 //--------------------------------------------------------------------------------
 IplImage*  ofxCvFloatImage::getCv8BitsImage() {
 	if( !bAllocated ){
-		ofLog(OF_LOG_WARNING, "in getCv8BitsImage, image is not allocated");		
+		ofLogWarning("ofxCvFloatImage") << "getCv8BitsImage(): image not allocated";
 	}
 		
 	if(bPixelsDirty) {
@@ -456,7 +481,7 @@ IplImage*  ofxCvFloatImage::getCv8BitsImage() {
 //--------------------------------------------------------------------------------
 IplImage*  ofxCvFloatImage::getCv8BitsRoiImage() {
 	if( !bAllocated ){
-		ofLog(OF_LOG_WARNING, "in getCv8BitsRoiImage, image is not allocated");		
+		ofLogWarning("ofxCvFloatImage") << "getCv8BitsRoiImage(): image not allocated";
 	}
 	
 	if(bPixelsDirty) {
@@ -475,7 +500,7 @@ IplImage*  ofxCvFloatImage::getCv8BitsRoiImage() {
 //--------------------------------------------------------------------------------
 float*  ofxCvFloatImage::getPixelsAsFloats(){
 	if( !bAllocated ){
-		ofLog(OF_LOG_WARNING, "in getPixelsAsFloats, image is not allocated");		
+		ofLogWarning("ofxCvFloatImage") << "getPixelsAsFloats(): image not allocated";
 	}
 	
 	return getFloatPixelsRef().getPixels();
@@ -483,7 +508,7 @@ float*  ofxCvFloatImage::getPixelsAsFloats(){
 //--------------------------------------------------------------------------------
 ofFloatPixels &	ofxCvFloatImage::getFloatPixelsRef(){
 	if( !bAllocated ){
-		ofLog(OF_LOG_WARNING, "in getPixelsAsFloats, image is not allocated");		
+		ofLogWarning("ofxCvFloatImage") << "getPixelsAsFloats(): image not allocated";
 	} else if(bFloatPixelsDirty) {
         if(  cvImage->width*cvImage->depth/8 == cvImage->widthStep ){
         	floatPixels.setFromExternalPixels((float*)cvImage->imageData,width,height,1);
@@ -498,7 +523,7 @@ ofFloatPixels &	ofxCvFloatImage::getFloatPixelsRef(){
 //--------------------------------------------------------------------------------
 float*  ofxCvFloatImage::getRoiPixelsAsFloats(){
 	if( !bAllocated ){
-		ofLog(OF_LOG_WARNING, "in getRoiPixelsAsFloats, image is not allocated");		
+		ofLogWarning("ofxCvFloatImage") << "getRoiPixelsAsFloats(): image not allocated";
 	}
 	
 	return getRoiFloatPixelsRef().getPixels();
@@ -507,7 +532,7 @@ float*  ofxCvFloatImage::getRoiPixelsAsFloats(){
 //--------------------------------------------------------------------------------
 ofFloatPixels &	ofxCvFloatImage::getRoiFloatPixelsRef(){
 	if( !bAllocated ){
-		ofLog(OF_LOG_WARNING, "in getRoiFloatPixelsRef, image is not allocated");		
+		ofLogWarning("ofxCvFloatImage") << "getRoiFloatPixelsRef(): image not allocated";
 	} else if(bFloatPixelsDirty) {
 		ofRectangle roi = getROI();
 		float * roi_ptr = (float*)cvImage->imageData + ((int)(roi.y)*cvImage->widthStep/(cvImage->depth/8)) + (int)roi.x;
@@ -527,7 +552,7 @@ ofFloatPixels &	ofxCvFloatImage::getRoiFloatPixelsRef(){
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::contrastStretch() {
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in contrastStretch, image is not allocated");		
+		ofLogError("ofxCvFloatImage") << "contrastStretch(): image not allocated";		
 		return;	
 	}
 	
@@ -540,7 +565,7 @@ void ofxCvFloatImage::contrastStretch() {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::convertToRange(float min, float max ){
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in convertToRange, image is not allocated");		
+		ofLogError("ofxCvFloatImage") << "convertToRange(): image not allocated";		
 		return;	
 	}
 	
@@ -555,7 +580,7 @@ void ofxCvFloatImage::convertToRange(float min, float max ){
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::resize( int w, int h ) {
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in resize, image is not allocated");		
+		ofLogError("ofxCvFloatImage") << "resize(): image not allocated";		
 		return;	
 	}
 	
@@ -573,12 +598,12 @@ void ofxCvFloatImage::resize( int w, int h ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
 	if( !bAllocated ){
-		ofLog(OF_LOG_ERROR, "in scaleIntoMe, image needs to be allocated");	
+		ofLogError("ofxCvFloatImage") << "scaleIntoMe(): image not allocated";	
 		return;	
 	}
 	
 	if( !mom.bAllocated ){
-		ofLog(OF_LOG_ERROR, "in scaleIntoMe, mom needs to be allocated");	
+		ofLogError("ofxCvFloatImage") << "scaleIntoMe(): source image not allocated";
 		return;	
 	}
 	
@@ -597,13 +622,13 @@ void ofxCvFloatImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            ofLog(OF_LOG_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
+            ofLogWarning("ofxCvFloatImage") << "scaleIntoMe(): setting interpolationMethod to CV_INTER_NN";
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         flagImageChanged();
 
     } else {
-        ofLog(OF_LOG_ERROR, "in scaleIntoMe, mom image type has to match");
+        ofLogError("ofxCvFloatImage") << "scaleIntoMe(): type mismatch with source image";
     }
 }

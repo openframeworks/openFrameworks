@@ -22,27 +22,27 @@ jobject ofxAndroidVibrator::getVibratorService(){
 	jobject activity = ofGetOFActivityObject();
 	jclass contextClass = ofGetJNIEnv()->FindClass("android/content/Context");
 	if(!contextClass){
-		ofLogError() << "can't get Context class";
+		ofLogError("ofxAndroidVibrator") << "getVibratorService(): couldn't get Context class";
 		return 0;
 	}
 	jmethodID method = ofGetJNIEnv()->GetMethodID(contextClass,"getSystemService","(Ljava/lang/String;)Ljava/lang/Object;");
 	if(!method){
-		ofLogError() << "getSystemService not found";
+		ofLogError("ofxAndroidVibrator") << "getVibratorService(): getSystemService not found";
 		return 0;
 	}
 	jfieldID vibratorServiceField = ofGetJNIEnv()->GetStaticFieldID(contextClass,"VIBRATOR_SERVICE","Ljava/lang/String;");
 	if(!vibratorServiceField){
-		ofLogError() << "VIBRATOR_SERVICE id not found";
+		ofLogError("ofxAndroidVibrator") << "getVibratorService(): VIBRATOR_SERVICE id not found";
 		return 0;
 	}
 	jstring vibratorServiceStr = (jstring)ofGetJNIEnv()->GetStaticObjectField(contextClass,vibratorServiceField);
 	if(!vibratorServiceStr){
-		ofLogError() << "can't get VIBRATOR_SERVICE value";
+		ofLogError("ofxAndroidVibrator") << "getVibratorService(): couldn't get VIBRATOR_SERVICE value";
 		return 0;
 	}
 	jobject vibratorService = ofGetJNIEnv()->CallObjectMethod(activity,method,vibratorServiceStr);
 	if(!vibratorService){
-		ofLogError() << "can't call getSystemService";
+		ofLogError("ofxAndroidVibrator") << "getVibratorService(): couldn't call getSystemService";
 		return 0;
 	}
 
@@ -52,7 +52,7 @@ jobject ofxAndroidVibrator::getVibratorService(){
 jmethodID ofxAndroidVibrator::getVibratorMethodID(string name, string signature){
 	jclass vibratorClass = ofGetJNIEnv()->FindClass("android/os/Vibrator");
 	if(!vibratorClass){
-		ofLogError() << "can't get Vibrator class";
+		ofLogError("ofxAndroidVibrator") << "getVibratorMethodID(): couldn't get Vibrator class";
 		return 0;
 	}
 	return ofGetJNIEnv()->GetMethodID(vibratorClass,name.c_str(),signature.c_str());
@@ -63,7 +63,7 @@ void ofxAndroidVibrator::vibrate(unsigned long milliseconds){
 
 	jmethodID vibrateMethod = getVibratorMethodID("vibrate","(J)V");
 	if(!vibrateMethod){
-		ofLogError() << "can't get vibrate method";
+		ofLogError("ofxAndroidVibrator") << "vibrate(): couldn't get vibrate method";
 		return;
 	}
 	ofGetJNIEnv()->CallVoidMethod(vibratorService,vibrateMethod,(jlong)milliseconds);
@@ -74,7 +74,7 @@ void ofxAndroidVibrator::stop(){
 
 	jmethodID vibrateMethod = getVibratorMethodID("cancel","()V");
 	if(!vibrateMethod){
-		ofLogError() << "can't get cancel method";
+		ofLogError("ofxAndroidVibrator") << "stop(): couldn't get cancel method";
 		return;
 	}
 	ofGetJNIEnv()->CallVoidMethod(vibratorService,vibrateMethod);

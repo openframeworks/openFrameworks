@@ -45,9 +45,8 @@ ofxiPhoneMapKit::~ofxiPhoneMapKit() {
 
 
 void ofxiPhoneMapKit::open() {
-	ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKit::open()");
 	if(!isOpen()) {
-		ofLog(OF_LOG_VERBOSE, "   alloc MKMapView");
+		ofLogVerbose("ofxiPhoneMapKit") << "open(): initing MKMapView";
 		mapView	= [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, ofGetWidth(), ofGetHeight())];
 		mapView.delegate = nil;
         [ofxiPhoneGetGLParentView() addSubview:mapView];
@@ -56,8 +55,8 @@ void ofxiPhoneMapKit::open() {
 
 
 void ofxiPhoneMapKit::close() {
-	ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKit::close()");
     if(isOpen()) {
+		ofLogVerbose("ofxiPhoneMapKit") << "close(): releasing MKMapView";
         mapView.delegate = nil;
         [mapView removeFromSuperview];
         [mapView release];
@@ -111,7 +110,7 @@ void ofxiPhoneMapKit::_setRegion(CLLocationCoordinate2D center, MKCoordinateSpan
 
 void ofxiPhoneMapKit::setType(ofxiPhoneMapKitType type) {
     if(isOpen()) {
-        ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKit::setType");
+        ofLogVerbose("ofxiPhoneMapKit") << "setType(): setting map type: " << (int) type;
         mapView.mapType = type;
     }
 }
@@ -216,8 +215,7 @@ MKCoordinateSpan ofxiPhoneMapKit::makeMKCoordinateSpan(double latitudeDelta, dou
 
 void ofxiPhoneMapKit::addListener(ofxiPhoneMapKitListener* o) {
     if(isOpen()) {
-        ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKit::addListener()");
-        
+        ofLogVerbose("ofxiPhoneMapKit") << "addListener(): adding ofxiPhoneMapKitDelegate";
         if(mapView.delegate == nil) {
             mapView.delegate = [[ofxiPhoneMapKitDelegate alloc] initWithMapKit:this];
         }
@@ -226,7 +224,7 @@ void ofxiPhoneMapKit::addListener(ofxiPhoneMapKitListener* o) {
 }
 
 void ofxiPhoneMapKit::removeListener(ofxiPhoneMapKitListener* o) {
-	ofLog(OF_LOG_VERBOSE, "ofxiPhoneMapKit::removeListener()");
+	ofLogVerbose("ofxiPhoneMapKit") << "removingListener(): removing ofxiPhoneMapKitDelegate";
 	listeners.remove(o);
 }
 
