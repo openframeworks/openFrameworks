@@ -1430,11 +1430,11 @@ void ofAppEGLWindow::readNativeUDevEvents() {
         dev = udev_monitor_receive_device(mon);
         if (dev) {
             // TODO: finish auto connect
-            ofLogNotice() << "Got device");
-            ofLogNotice() << "   node: %s\n", udev_device_get_devnode(dev));
-            ofLogNotice() << "   subsystem: %s\n", udev_device_get_subsystem(dev));
-            ofLogNotice() << "   devtype: %s\n", udev_device_get_devtype(dev));
-            ofLogNotice() << "   action: %s\n", udev_device_get_action(dev));
+            ofLogNotice() << "Got device";
+            ofLogNotice() << "   node: %s\n", udev_device_get_devnode(dev);
+            ofLogNotice() << "   subsystem: %s\n", udev_device_get_subsystem(dev);
+            ofLogNotice() << "   devtype: %s\n", udev_device_get_devtype(dev);
+            ofLogNotice() << "   action: %s\n", udev_device_get_action(dev);
             udev_device_unref(dev);
         }
         else {
