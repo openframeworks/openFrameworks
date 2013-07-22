@@ -410,6 +410,18 @@ public:
 		 }
 	}
 
+	void enableAntialiasing(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->enableAntiAliasing();
+		 }
+	}
+
+	void disableAntialiasing(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->disableAntiAliasing();
+		 }
+	}
+
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
 		 for(int i=0;i<(int)renderers.size();i++){

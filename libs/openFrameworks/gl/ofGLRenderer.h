@@ -94,6 +94,8 @@ public:
 	void setBlendMode(ofBlendMode blendMode);
 	void enablePointSprites();
 	void disablePointSprites();
+	void enableAntialiasing();
+	void disableAntialiasing();
 
 	// color options
 	void setColor(int r, int g, int b); // 0-255
