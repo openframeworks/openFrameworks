@@ -364,8 +364,13 @@ function createPackage {
 	fi
 	
     #delete omap4 scripts for non armv7l
-	if [ "$pkg_platform" = "linux64" || "$pkg_platform" = "linux" || "$pkg_platform" = "linuxarmv6l" ]; then
+	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
 	    rm -Rf linux/ubuntu-omap4
+	fi
+	
+    #delete armv6 scripts for non armv6l
+	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
+	    rm -Rf linux/debian_armv6l
 	fi
 	
 	if [ "$pkg_platform" == "ios" ]; then
