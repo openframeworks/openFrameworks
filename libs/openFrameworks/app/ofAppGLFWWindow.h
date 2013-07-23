@@ -28,10 +28,6 @@ public:
 
 
 	// window settings, this functions can be called from main before calling ofSetupOpenGL
-#ifdef TARGET_LINUX
-	void setWindowIcon(const string & path);
-	void setWindowIcon(const ofPixels & iconPixels);
-#endif
 	void 		setNumSamples(int samples);
 	void 		setDoubleBuffering(bool doubleBuff);
 	void 		setColorBits(int r, int g, int b);
@@ -118,6 +114,10 @@ private:
 	static void 	drop_cb(GLFWwindow* windowP_, const char* dropString);
 	static void 	exitApp();
 
+#ifdef TARGET_LINUX
+	void setWindowIcon(const string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
+#endif
 
 	//utils
 	int				samples;
