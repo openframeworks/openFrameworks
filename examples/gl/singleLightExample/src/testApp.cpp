@@ -66,7 +66,7 @@ void testApp::update() {
 void testApp::draw() {
     
     ofSetColor(pointLight.getDiffuseColor());
-    ofSphere(pointLight.getPosition(), 20.f);
+    ofDrawSphere(pointLight.getPosition(), 20.f);
     
     // enable lighting //
     ofEnableLighting();
@@ -85,7 +85,7 @@ void testApp::draw() {
         float angle = TWO_PI / (float)numSpheres * i;
         float x = cos(angle) * radius;
         float y = sin(angle) * radius;
-        ofSphere(x, y, -200, sphereRadius);
+        ofDrawSphere(x, y, -200, sphereRadius);
     }
     ofPopMatrix();
 	material.end();
