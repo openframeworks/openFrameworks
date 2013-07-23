@@ -93,7 +93,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	int64_t				durationNanos;
+	gint64				durationNanos;
 	bool				isAppSink;
 
 	class ofGstMainLoopThread: public ofThread{
