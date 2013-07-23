@@ -142,6 +142,10 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	glfwWindowHint(GLFW_ALPHA_BITS, aBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
+#ifdef TARGET_LINUX
+	// start the window hidden so we can set the icon before it shows
+	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
+#endif
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS,bDoubleBuffered?1:0);
 #endif
@@ -171,6 +175,20 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}else{
 		windowP = glfwCreateWindow(w, h, "", NULL, NULL);
+		#ifdef TARGET_LINUX
+			if(!iconSet){
+				ofPixels iconPixels;
+				#ifdef DEBUG
+					iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
+					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+				#else
+					iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+				#endif
+				setWindowIcon(iconPixels);
+				glfwShowWindow(windowP);
+			}
+		#endif
 		if(requestedMode==OF_FULLSCREEN){
 			setFullscreen(true);
 		}
@@ -220,19 +238,6 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb);
 
-#ifdef TARGET_LINUX
-    if(!iconSet){
-		ofPixels iconPixels;
-		#ifdef DEBUG
-			iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-		#else
-			iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-		#endif
-		setWindowIcon(iconPixels);
-    }
-#endif
 }
 
 #ifdef TARGET_LINUX
@@ -247,7 +252,7 @@ void ofAppGLFWWindow::setWindowIcon(const string & path){
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
 	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
-	unsigned long * buffer = new unsigned long[2+iconPixels.getWidth()*iconPixels.getHeight()];
+	unsigned long * buffer = new unsigned long[length];
 	buffer[0]=iconPixels.getWidth();
 	buffer[1]=iconPixels.getHeight();
 	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
