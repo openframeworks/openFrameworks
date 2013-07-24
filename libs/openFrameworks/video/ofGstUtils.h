@@ -54,6 +54,7 @@ public:
 
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
+	GstElement 	* getGstElementByName(const string & name);
 	unsigned long getMinLatencyNanos();
 	unsigned long getMaxLatencyNanos();
 
@@ -77,8 +78,8 @@ protected:
 	bool				isStream;
 
 private:
-	void 				gstHandleMessage();
-	void				update(ofEventArgs & args);
+	static bool			busFunction(GstBus * bus, GstMessage * message, ofGstUtils * app);
+	bool				gstHandleMessage(GstBus * bus, GstMessage * message);
 	bool				startPipeline();
 
 	bool 				bPlaying;
@@ -92,7 +93,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	int64_t				durationNanos;
+	gint64				durationNanos;
 	bool				isAppSink;
 
 	class ofGstMainLoopThread: public ofThread{
@@ -108,6 +109,7 @@ private:
 	};
 
 	static ofGstMainLoopThread * mainLoop;
+	GstBus * bus;
 };
 
 

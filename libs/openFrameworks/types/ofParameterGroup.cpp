@@ -127,7 +127,7 @@ ofParameterGroup ofParameterGroup::getGroup(int pos) const{
 		if(getType(pos)==typeid(ofParameterGroup).name()){
 			return *static_cast<ofParameterGroup* >(obj->parameters[pos]);
 		}else{
-			ofLogError() << "ofParameterGroup::get asked for bad type, returning empty";
+			ofLogError("ofParameterGroup") << "get(): bad type for pos " << pos << ", returning empty group";
 			return ofParameterGroup();
 		}
 	}

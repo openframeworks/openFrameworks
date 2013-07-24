@@ -42,7 +42,7 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 
 		if (bChooseDevice){
 			device = deviceID;
-			ofLog(OF_LOG_NOTICE, "choosing %i", deviceID);
+			ofLogNotice("ofDirectShowGrabber") << "initGrabber(): choosing " << deviceID;
 		} else {
 			device = 0;
 		}
@@ -76,8 +76,8 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 			pixels.allocate(width, height, 3);
 			return true;
 		} else {
-			ofLog(OF_LOG_ERROR, "error allocating a video device");
-			ofLog(OF_LOG_ERROR, "please check your camera with AMCAP or other software");
+			ofLogError("ofDirectShowGrabber") << "initGrabber(): error allocating a video device";
+			ofLogError("ofDirectShowGrabber") << "initGrabber(): please check your camera with AMCAP or other software";
 			bGrabberInited = false;
 			return false;
 		}
@@ -94,7 +94,7 @@ bool ofDirectShowGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	if( pixelFormat == OF_PIXELS_RGB ){
 		return true;
 	}
-	ofLogWarning("ofDirectShowGrabber") << "requested pixel format not supported" << endl;
+	ofLogWarning("ofDirectShowGrabber") << "setPixelFormat(): requested pixel format not supported";
 	return false;
 }
 
@@ -112,9 +112,9 @@ vector<ofVideoDevice> ofDirectShowGrabber::listDevices(){
     //---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
-		ofLog(OF_LOG_NOTICE, "---");
+		ofLogNotice() << "---";
         VI.listDevices();
-        ofLog(OF_LOG_NOTICE, "---");
+        ofLogNotice() << "---";
         
 		vector <string> devList = VI.getDeviceList(); 
         

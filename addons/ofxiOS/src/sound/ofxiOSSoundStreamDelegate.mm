@@ -63,20 +63,20 @@
 - (void)soundStreamBeginInterruption:(id)sender {
     NSString * streamType = [[sender class] description];
     NSString * errorMessage = [NSString stringWithFormat:@"%@ :: Begin Interruption", streamType];
-    ofLog(OF_LOG_VERBOSE, [errorMessage UTF8String]);
+    ofLogVerbose("ofxiOSSoundStreamDelegate") << [errorMessage UTF8String];
 }
 
 - (void)soundStreamEndInterruption:(id)sender {
     NSString * streamType = [[sender class] description];
     NSString * errorMessage = [NSString stringWithFormat:@"%@ :: End Interruption", streamType];
-    ofLog(OF_LOG_VERBOSE, [errorMessage UTF8String]);
+    ofLogVerbose("ofxiOSSoundStreamDelegate") << [errorMessage UTF8String];
 }
 
 - (void)soundStreamError:(id)sender
                    error:(NSString *)error {
     NSString * streamType = [[sender class] description];
     NSString * errorMessage = [NSString stringWithFormat:@"%@ :: %@", streamType, error];
-    ofLog(OF_LOG_ERROR, [errorMessage UTF8String]);
+    ofLogVerbose("ofxiOSSoundStreamDelegate") << [errorMessage UTF8String];
 }
 
 @end

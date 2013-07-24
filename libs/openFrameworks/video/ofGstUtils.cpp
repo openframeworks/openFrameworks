@@ -97,7 +97,7 @@ ofGstUtils::ofGstUtils() {
 	if(!gst_inited){
 		gst_init (NULL, NULL);
 		gst_inited=true;
-		ofLog(OF_LOG_VERBOSE,"ofGstUtils: gstreamer inited");
+		ofLogVerbose("ofGstUtils") << "gstreamer inited";
 	}
 	if(!plugin_registered){
 		gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
@@ -148,16 +148,16 @@ bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isSt
 	GError * error = NULL;
 	gstPipeline = gst_parse_launch (pipeline_string, &error);
 
-	ofLog(OF_LOG_NOTICE, "gstreamer pipeline: %s", pipeline_string);
+	ofLogNotice("ofGstUtils") << "setPipelineWithSink(): gstreamer pipeline: " << pipeline_string;
 	if(error!=NULL){
-		ofLog(OF_LOG_ERROR,"couldnt create pipeline: " + string(error->message));
+		ofLogError("ofGstUtils") << "setPipelineWithSink(): couldn't create pipeline: " << error->message;
 		return false;
 	}
 
 	gstSink = gst_bin_get_by_name(GST_BIN(gstPipeline),sinkname.c_str());
 
 	if(!gstSink){
-		ofLogError() << "couldn't get sink from string pipeline";
+		ofLogError("ofGstUtils") << "setPipelineWithSink(): couldn't get sink from string pipeline";
 	}
 
 	return setPipelineWithSink(gstPipeline,gstSink,isStream);
@@ -201,19 +201,17 @@ bool ofGstUtils::startPipeline(){
 
 
 	if(gst_element_set_state (GST_ELEMENT(gstPipeline), GST_STATE_READY) ==	GST_STATE_CHANGE_FAILURE) {
-		ofLog(OF_LOG_ERROR, "GStreamer: unable to set pipeline to ready\n");
-
+		ofLogError("ofGstUtils") << "startPipeline(): unable to set pipeline to ready";
 		return false;
 	}
 	if(gst_element_get_state (GST_ELEMENT(gstPipeline), NULL, NULL, 10 * GST_SECOND)==GST_STATE_CHANGE_FAILURE){
-		ofLog(OF_LOG_ERROR, "GStreamer: unable to get pipeline to ready\n");
+		ofLogError("ofGstUtils") << "startPipeline(): unable to get pipeline ready status";
 		return false;
 	}
 
 	// pause the pipeline
 	if(gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED) ==	GST_STATE_CHANGE_FAILURE) {
-		ofLog(OF_LOG_ERROR, "GStreamer: unable to set pipeline to paused\n");
-
+		ofLogError("ofGstUtils") << "startPipeline(): unable to pause pipeline";
 		return false;
 	}
 
@@ -221,17 +219,23 @@ bool ofGstUtils::startPipeline(){
 	if(!isStream){
 		GstState state = GST_STATE_PAUSED;
 		if(gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND)==GST_STATE_CHANGE_FAILURE){
-			ofLog(OF_LOG_ERROR, "GStreamer: unable to get pipeline to paused\n");
+			ofLogError("ofGstUtils") << "startPipeline(): unable to get pipeline paused state";
 			return false;
 		}
 		bPlaying = true;
 		bLoaded = true;
 	}
 
+	bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+
+	if(bus){
+		gst_bus_add_watch (bus, (GstBusFunc) busFunction, this);
+	}
+
 
 
 	if(isAppSink){
-		ofLogVerbose() << "attaching callbacks";
+		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
 		// set the appsink to not emit signals, we are using callbacks instead
 		// and frameByFrame to get buffers by polling instead of callback
 		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
@@ -257,7 +261,6 @@ bool ofGstUtils::startPipeline(){
 		setSpeed(1.0);
 	}
 
-	ofAddListener(ofEvents().update,this,&ofGstUtils::update);
 
 	return true;
 }
@@ -311,12 +314,12 @@ float ofGstUtils::getPosition(){
 #if GST_VERSION_MAJOR==0
 		GstFormat format=GST_FORMAT_TIME;
 		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos)){
-			ofLog(OF_LOG_VERBOSE,"GStreamer: cannot query position");
+			ofLogVerbose("ofGstUtils") << "getPosition(): couldn't query position";
 			return -1;
 		}
 #else
 		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),GST_FORMAT_TIME,&pos)){
-			ofLog(OF_LOG_VERBOSE,"GStreamer: cannot query position");
+			ofLogVerbose("ofGstUtils") << "getPosition(): couldn't query position";
 			return -1;
 		}
 #endif
@@ -339,10 +342,10 @@ int64_t ofGstUtils::getDurationNanos(){
 
 #if GST_VERSION_MAJOR==0
 	if(!gst_element_query_duration(getPipeline(),&format,&durationNanos))
-		ofLog(OF_LOG_WARNING,"GStreamer: cannot query time duration");
+		ofLogWarning("ofGstUtils") << "getDurationNanos(): couldn't query time duration";
 #else
 	if(!gst_element_query_duration(getPipeline(),format,&durationNanos))
-		ofLog(OF_LOG_WARNING,"GStreamer: cannot query time duration");
+		ofLogWarning("ofGstUtils") << "getDurationNanos(): couldn't query time duration";
 #endif
 	return durationNanos;
 
@@ -375,7 +378,7 @@ void ofGstUtils::setPosition(float pct){
 				pos,
 				GST_SEEK_TYPE_SET,
 				-1)) {
-		ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
+		ofLogWarning("ofGstUtils") << "setPosition(): unable to seek";
 		}
 	}else{
 		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
@@ -384,7 +387,7 @@ void ofGstUtils::setPosition(float pct){
 				0,
 				GST_SEEK_TYPE_SET,
 				pos)) {
-		ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
+		ofLogWarning("ofGstUtils") << "setPosition(): unable to seek";
 		}
 	}
 }
@@ -409,12 +412,12 @@ void ofGstUtils::setSpeed(float _speed){
 	}
 #if GST_VERSION_MAJOR==0
 	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos) || pos<0){
-		//ofLog(OF_LOG_ERROR,"GStreamer: cannot query position");
+		//ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
 		return;
 	}
 #else
 	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos) || pos<0){
-		//ofLog(OF_LOG_ERROR,"GStreamer: cannot query position");
+		//ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
 		return;
 	}
 #endif
@@ -432,7 +435,7 @@ void ofGstUtils::setSpeed(float _speed){
 				pos,
 				GST_SEEK_TYPE_SET,
 				-1)) {
-		ofLog(OF_LOG_WARNING,"GStreamer: unable to change speed");
+			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}else{
 		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
@@ -441,11 +444,11 @@ void ofGstUtils::setSpeed(float _speed){
 				0,
 				GST_SEEK_TYPE_SET,
 				pos)) {
-		ofLog(OF_LOG_WARNING,"GStreamer: unable to change speed");
+			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}
 
-	ofLog(OF_LOG_VERBOSE,"Gstreamer: speed change to %f", speed);
+	ofLogVerbose("ofGstUtils") << "setSpeed(): speed changed to " << speed;
 
 }
 
@@ -458,16 +461,12 @@ void ofGstUtils::close(){
 		gst_element_get_state(gstPipeline,NULL,NULL,2*GST_SECOND);
 		// gst_object_unref(gstSink); this crashes, why??
 
-		ofEventArgs args;
-		update(args);
-
 		gst_object_unref(gstPipeline);
 		gstPipeline = NULL;
 		gstSink = NULL;
 	}
 
 	bLoaded = false;
-	ofRemoveListener(ofEvents().update,this,&ofGstUtils::update);
 }
 
 static string getName(GstState state){
@@ -487,145 +486,143 @@ static string getName(GstState state){
 	}
 }
 
-void ofGstUtils::update(ofEventArgs & args){
-	gstHandleMessage();
+bool ofGstUtils::busFunction(GstBus * bus, GstMessage * message, ofGstUtils * gstUtils){
+	return gstUtils->gstHandleMessage(bus,message);
 }
 
-void ofGstUtils::gstHandleMessage(){
-	GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(gstPipeline));
-	while(gst_bus_have_pending(bus)) {
-		GstMessage* msg = gst_bus_pop(bus);
-		if(appsink && appsink->on_message(msg)) continue;
+bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
+	if(appsink && appsink->on_message(msg)) return true;
 
-		ofLogVerbose() << "GStreamer: Got " << GST_MESSAGE_TYPE_NAME(msg) << " message from " << GST_MESSAGE_SRC_NAME(msg);
+		ofLogVerbose("ofGstUtils") << "gstHandleMessage(): got " << GST_MESSAGE_TYPE_NAME(msg)
+			<< " message from " << GST_MESSAGE_SRC_NAME(msg);
 
-		switch (GST_MESSAGE_TYPE (msg)) {
+	switch (GST_MESSAGE_TYPE (msg)) {
 
-			case GST_MESSAGE_BUFFERING:
-				gint pctBuffered;
-				gst_message_parse_buffering(msg,&pctBuffered);
-				ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
-				/*if(pctBuffered<100){
-					gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
-				}else if(!bPaused){
-					gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
-				}*/
-			break;
+		case GST_MESSAGE_BUFFERING:
+			gint pctBuffered;
+			gst_message_parse_buffering(msg,&pctBuffered);
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): buffering " << pctBuffered;
+			/*if(pctBuffered<100){
+				gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
+			}else if(!bPaused){
+				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
+			}*/
+		break;
 
 #if GST_VERSION_MAJOR==0
-			case GST_MESSAGE_DURATION:{
-				GstFormat format=GST_FORMAT_TIME;
-				gst_element_query_duration(gstPipeline,&format,&durationNanos);
-			}break;
+		case GST_MESSAGE_DURATION:{
+			GstFormat format=GST_FORMAT_TIME;
+			gst_element_query_duration(gstPipeline,&format,&durationNanos);
+		}break;
 #else
-			case GST_MESSAGE_DURATION_CHANGED:
-				gst_element_query_duration(gstPipeline,GST_FORMAT_TIME,&durationNanos);
-				break;
+		case GST_MESSAGE_DURATION_CHANGED:
+			gst_element_query_duration(gstPipeline,GST_FORMAT_TIME,&durationNanos);
+			break;
 
 #endif
 
-			case GST_MESSAGE_STATE_CHANGED:{
-				GstState oldstate, newstate, pendstate;
-				gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
-				if(isStream && newstate==GST_STATE_PAUSED && !bPlaying ){
-					bLoaded = true;
-					bPlaying = true;
-					if(!bPaused){
-						cout << "setting stream pipeline to play " << endl;
-						play();
-					}
+		case GST_MESSAGE_STATE_CHANGED:{
+			GstState oldstate, newstate, pendstate;
+			gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
+			if(isStream && newstate==GST_STATE_PAUSED && !bPlaying ){
+				bLoaded = true;
+				bPlaying = true;
+				if(!bPaused){
+					ofLogVerbose("ofGstUtils") << "gstHandleMessage(): setting stream pipeline to play";
+					play();
 				}
-				ofLogVerbose() << "GStreamer: " << GST_MESSAGE_SRC_NAME(msg) << " state changed from " << getName(oldstate) + " to " + getName(newstate) + " (" + getName(pendstate) + ")";
-			}break;
+			}
 
-			case GST_MESSAGE_ASYNC_DONE:
-				ofLog(OF_LOG_VERBOSE,"GStreamer: async done");
-			break;
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): " << GST_MESSAGE_SRC_NAME(msg) << " state changed from "
+					<< getName(oldstate) << " to " << getName(newstate) << " (" + getName(pendstate) << ")";
+		}break;
 
-			case GST_MESSAGE_ERROR: {
-				GError *err;
-				gchar *debug;
-				gst_message_parse_error(msg, &err, &debug);
+		case GST_MESSAGE_ASYNC_DONE:
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): async done";
+		break;
 
-				ofLog(OF_LOG_ERROR, "GStreamer Plugin: Embedded video playback halted; module %s reported: %s",
-					  gst_element_get_name(GST_MESSAGE_SRC (msg)), err->message);
+		case GST_MESSAGE_ERROR: {
+			GError *err;
+			gchar *debug;
+			gst_message_parse_error(msg, &err, &debug);
 
-				g_error_free(err);
-				g_free(debug);
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
+				<< gst_element_get_name(GST_MESSAGE_SRC (msg)) << "  reported: " << err->message;
 
-				gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+			g_error_free(err);
+			g_free(debug);
 
-			}break;
+			gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+
+		}break;
 
 			case GST_MESSAGE_EOS:
-				ofLog(OF_LOG_VERBOSE,"GStreamer: end of the stream.");
+				ofLogVerbose("ofGstUtils") << "gstHandleMessage(): end of the stream";
 				bIsMovieDone = true;
-				
-				if(appsink && !isAppSink) appsink->on_eos();
 
-				switch(loopMode){
 
-					case OF_LOOP_NORMAL:{
-						GstFormat format = GST_FORMAT_TIME;
-						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
-						gint64 pos;
+			if(appsink && !isAppSink) appsink->on_eos();
+
+			switch(loopMode){
+
+				case OF_LOOP_NORMAL:{
+					GstFormat format = GST_FORMAT_TIME;
+					GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
+					gint64 pos;
 #if GST_VERSION_MAJOR==0
-						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
+					gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
 #else
-						gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
+					gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
 #endif
-						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
-											speed,
-											format,
-											flags,
-											GST_SEEK_TYPE_SET,
-											0,
-											GST_SEEK_TYPE_SET,
-											durationNanos)) {
-							ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
-						}
-					}break;
+					if(!gst_element_seek(GST_ELEMENT(gstPipeline),
+										speed,
+										format,
+										flags,
+										GST_SEEK_TYPE_SET,
+										0,
+										GST_SEEK_TYPE_SET,
+										durationNanos)) {
+						ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
+					}
+				}break;
 
-					case OF_LOOP_PALINDROME:{
-						GstFormat format = GST_FORMAT_TIME;
-						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
-						gint64 pos;
+				case OF_LOOP_PALINDROME:{
+					GstFormat format = GST_FORMAT_TIME;
+					GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
+					gint64 pos;
 #if GST_VERSION_MAJOR==0
-						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
+					gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
 #else
-						gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
+					gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
 #endif
-						float loopSpeed;
-						if(pos>0)
-							loopSpeed=-speed;
-						else
-							loopSpeed=speed;
-						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
-											loopSpeed,
-											GST_FORMAT_UNDEFINED,
-											flags,
-											GST_SEEK_TYPE_NONE,
-											0,
-											GST_SEEK_TYPE_NONE,
-											0)) {
-							ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
-						}
-					}break;
+					float loopSpeed;
+					if(pos>0)
+						loopSpeed=-speed;
+					else
+						loopSpeed=speed;
+					if(!gst_element_seek(GST_ELEMENT(gstPipeline),
+										loopSpeed,
+										GST_FORMAT_UNDEFINED,
+										flags,
+										GST_SEEK_TYPE_NONE,
+										0,
+										GST_SEEK_TYPE_NONE,
+										0)) {
+						ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
+					}
+				}break;
 
-					default:
-					break;
-				}
+				default:
+				break;
+			}
 
-			break;
+		break;
 
-			default:
-				ofLogVerbose() << "GStreamer: unhandled message from " << GST_MESSAGE_SRC_NAME(msg);
-			break;
-		}
-		gst_message_unref(msg);
+		default:
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): unhandled message from " << GST_MESSAGE_SRC_NAME(msg);
+		break;
 	}
-
-	gst_object_unref(GST_OBJECT(bus));
+	return true;
 }
 
 GstElement 	* ofGstUtils::getPipeline(){
@@ -636,6 +633,9 @@ GstElement 	* ofGstUtils::getSink(){
 	return gstSink;
 }
 
+GstElement 	* ofGstUtils::getGstElementByName(const string & name){
+	return gst_bin_get_by_name(GST_BIN(gstPipeline),name.c_str());
+}
 
 void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;
@@ -778,7 +778,7 @@ void ofGstVideoUtils::update(){
 		}
 #endif
 	}else{
-		ofLog(OF_LOG_WARNING,"ofGstVideoUtils not loaded");
+		ofLogWarning("ofGstVideoUtils") << "update(): ofGstVideoUtils not loaded";
 	}
 	bIsFrameNew = bHavePixelsChanged;
 	bHavePixelsChanged = false;
@@ -838,7 +838,8 @@ bool ofGstVideoUtils::allocate(int w, int h, int _bpp){
 GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 	guint size = GST_BUFFER_SIZE (_buffer);
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+		ofLogError("ofGstVideoUtils") << "preproll_cb(): error preroll buffer size: " << size
+			<< "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
 		gst_buffer_unref (_buffer);
 		return GST_FLOW_ERROR;
 	}
@@ -855,7 +856,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
 		}else{
-			ofLog(OF_LOG_WARNING,"received a preroll without allocation");
+			ofLogError("ofGstVideoUtils") << "preroll_cb(): received a preroll without allocation";
 		}
 		mutex.unlock();
 	}
@@ -867,7 +868,8 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+		ofLogError("ofGstVideoUtils") << "preproll_cb(): error preroll buffer size: " << size
+			<< "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
 		gst_sample_unref (sample);
 		return GST_FLOW_ERROR;
 	}
@@ -884,7 +886,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
 		}else{
-			ofLog(OF_LOG_WARNING,"received a preroll without allocation");
+			ofLogWarning("ofGstVideoUtils") << "preroll_cb(): received a preroll without allocation";
 		}
 		mutex.unlock();
 	}
@@ -900,7 +902,8 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
 
 	size = GST_BUFFER_SIZE (_buffer);
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error on new buffer, buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+		ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size
+			<< " != init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
 		gst_buffer_unref (_buffer);
 		return GST_FLOW_ERROR;
 	}
@@ -917,7 +920,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
 		}else{
-			ofLog(OF_LOG_WARNING,"received a preroll without allocation");
+			ofLogWarning("ofGSstVideoUtils") << "buffer_cb(): received a preroll without allocation";
 		}
 		mutex.unlock();
 	}
@@ -930,7 +933,8 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLog(OF_LOG_ERROR, "on_preproll: error on new buffer, buffer size: " + ofToString(size) + "!= init size: " + ofToString(pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()));
+		ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size
+			<< "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
 		gst_sample_unref (sample);
 		return GST_FLOW_ERROR;
 	}
@@ -947,7 +951,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
 		}else{
-			ofLog(OF_LOG_WARNING,"received a preroll without allocation");
+			ofLogWarning("ofGstVideoUtils") << "buffer_cb(): received a preroll without allocation";
 		}
 		mutex.unlock();
 	}

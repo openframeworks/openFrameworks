@@ -116,6 +116,7 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 	AVAudioSession * audioSession = [AVAudioSession sharedInstance];
 	NSError * err = nil;
 	
+    #ifdef __IPHONE_6_0
 	// need to configure set the audio category, and override to it route the audio to the speaker
 	if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
 		// we're on iOS 6 or greater, so use the AVFoundation API
@@ -126,6 +127,7 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 			err = nil;
 		}
 	} else {
+    #endif
 		// we're on iOS 5 or lower, need to use the C Audio Session API
 		UInt32 sessionType = kAudioSessionCategory_PlayAndRecord;
 		OSStatus success = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory,
@@ -148,7 +150,9 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 				[self.delegate soundStreamError:self error:@"Couldn't override audio route"];
 			}
 		}
+    #ifdef __IPHONE_6_0
 	}
+    #endif 
     
     //---------------------------------------------------------- audio unit.
     

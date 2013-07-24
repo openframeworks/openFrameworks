@@ -22,15 +22,16 @@ public:
 	virtual void loadFrom(ofBaseSerializer& serializer){};
 
 
-    template<class ListenerClass>
-    void addListener(ListenerClass * listener, void ( ListenerClass::*method )(string&)){
-        label.addListener(listener,method);
-    }
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
+		label.addListener(listener,method);
+	}
 
-    template<class ListenerClass>
-    void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(string&)){
-        label.removeListener(listener,method);
-    }
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
+		label.removeListener(listener,method);
+	}
+
 
     string operator=(string v) { label = v; return v; }
     operator const string & ()       { return label; }

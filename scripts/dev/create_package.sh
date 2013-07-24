@@ -15,11 +15,11 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6" ] && [ "$platform" != "linuxarmv7" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, linuxarmv6, linuxarmv7, vs, osx, android, ios, all
+    echo win_cb, linux, linux64, linuxarmv6l, linuxarmv7l, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -156,16 +156,28 @@ function createPackage {
 		rm -Rf video
 	fi 
 	
-	#delete drag & drop examples in linux, still not working
-	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
-	    rm -Rf utils/dragDropExample
+	#delete osx examples in linux
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ] || [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
+	fi
+	
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
+	    rm -Rf gles
+	fi
+	
+	if [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
+	    rm -Rf gl/glInfoExample
 	fi
 	
 	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
+	    rm -Rf gles
+	fi
+	
+	if [ "$pkg_platform" == "osx" ]; then
+	    rm -Rf gles
 	fi
     
 	
@@ -176,31 +188,39 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 linuxarmv6 linuxarmv7 osx win_cb vs ios android"
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux linuxarmv6 linuxarmv7 osx win_cb vs ios android"
+        otherplatforms="linux linuxarmv6l linuxarmv7l osx win_cb vs ios android"
     fi
 
+    if [ "$pkg_platform" = "linuxarmv6l" ]; then
+        otherplatforms="linux64 linux linuxarmv7l osx win_cb vs ios android"
+    fi
+    
+    if [ "$pkg_platform" = "linuxarmv7l" ]; then
+        otherplatforms="linux64 linux linuxarmv6l osx win_cb vs ios android"
+    fi
+    
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 win_cb vs ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 osx vs ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "vs" ]; then
-        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 osx win_cb ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 win_cb vs android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 linuxarmv6 linuxarmv7 osx win_cb vs ios"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb vs ios"
     fi
     
     
@@ -232,13 +252,12 @@ function createPackage {
 	fi
 	
 	# linux remove other platform projects from PG source and copy ofxGui
-	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
 		cd apps/projectGenerator/projectGeneratorSimple
 		deleteCodeblocks
 		deleteVS
 		deleteXcode
 		rm -Rf .git*
-		cp -R $pkg_ofroot/addons/ofxGui src/
 	fi
 
     #delete libraries for other platforms
@@ -253,7 +272,7 @@ function createPackage {
     done
     if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
-    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         rm -Rf $libsnotinlinux
     elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs" ]; then
         rm -Rf $libsnotinwindows
@@ -275,7 +294,6 @@ function createPackage {
     
 	#delete ofxSynth addon, still not stable
 	rm -Rf ofxSynth
-	rm -Rf ofxGui
     
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
@@ -284,6 +302,7 @@ function createPackage {
 	#delete ofxiPhone in non ios
 	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxiPhone
+		rm -Rf ofxiOS
 	fi
 	
 	#delete ofxMultiTouch & ofxAccelerometer in non mobile
@@ -293,7 +312,7 @@ function createPackage {
 	fi
 
 	#delete eclipse projects
-	if [ "$pkg_platform" != "android" ]; then
+	if [ "$pkg_platform" != "android" && "$pkg_platform" != "linux" && "$pkg_platform" != "linux64" && "$pkg_platform" != "linuxarmv6l" && "$pkg_platform" != "linuxarmv7l"]; then
 		cd ${pkg_ofroot}
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings
@@ -338,11 +357,22 @@ function createPackage {
 
     #delete scripts
     cd $pkg_ofroot/scripts
-	if [ "$pkg_platform" != "linux64" ]; then
+	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
     	rm -Rf $otherplatforms
 	else
     	rm -Rf win_cb vs osx ios
 	fi
+	
+    #delete omap4 scripts for non armv7l
+	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
+	    rm -Rf linux/ubuntu-omap4
+	fi
+	
+    #delete armv6 scripts for non armv6l
+	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
+	    rm -Rf linux/debian_armv6l
+	fi
+	
 	if [ "$pkg_platform" == "ios" ]; then
 		rm -Rf osx
 	fi
@@ -385,7 +415,7 @@ function createPackage {
     
     #choose readme
     cd $pkg_ofroot
-    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
+    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ]; then
         cp docs/linux.md INSTALL.md
     fi
     
@@ -419,7 +449,7 @@ function createPackage {
     fi
     
     #create compressed package
-    if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ]; then
+    if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
         tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release

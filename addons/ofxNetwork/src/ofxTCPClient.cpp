@@ -25,17 +25,17 @@ ofxTCPClient::~ofxTCPClient(){
 
 //--------------------------
 void ofxTCPClient::setVerbose(bool _verbose){
-    ofLog(OF_LOG_WARNING, "ofxTCPClient: setVerbose is deprecated replaced for OF_LOG_WARNING and OF_LOG_ERROR");
+    ofLogWarning("ofxTCPClient") << "setVerbose(): is deprecated, replaced by ofLogWarning and ofLogError";
 }
 
 //--------------------------
 bool ofxTCPClient::setup(string ip, int _port, bool blocking){
 
 	if( !TCPClient.Create() ){
-		ofLog(OF_LOG_ERROR, "ofxTCPClient: Create() failed");
+		ofLogError("ofxTCPClient") << "setup(): couldn't create client";
 		return false;
 	}else if( !TCPClient.Connect((char *)ip.c_str(), _port) ){
-		ofLog(OF_LOG_ERROR, "ofxTCPClient: Connect(" + ip + ofToString( _port) + ") failed");
+		ofLogError("ofxTCPClient") << "setup(): couldn't connect to " << ip << " " << _port;
 		TCPClient.Close(); //we free the connection
 		return false;
 	}
@@ -74,7 +74,7 @@ bool ofxTCPClient::close(){
 	if( connected ){
 
 		if( !TCPClient.Close() ){
-			ofLog(OF_LOG_ERROR, "ofxTCPClient: Close() failed");
+			ofLogError("ofxTCPClient") << "close(): couldn't close client";
 			return false;
 		}else{
 			connected = false;
@@ -101,18 +101,18 @@ bool ofxTCPClient::send(string message){
 	// if sending from here and receiving from receiveRaw or
 	// other applications
 	if(!connected){
-		ofLog(OF_LOG_WARNING, "ofxTCPClient: trying to send while not connected");
+		ofLogWarning("ofxTCPClient") << "send(): not connected, call setup() first";
 		return false;
 	}
 	message = partialPrevMsg + message + messageDelimiter;
 	message += (char)0; //for flash
 	int ret = TCPClient.SendAll( message.c_str(), message.length() );
 	if( ret == 0 ){
-		ofLog(OF_LOG_WARNING, "ofxTCPClient: other side disconnected");
+		ofLogWarning("ofxTCPClient") << "send(): client disconnected";
 		close();
 		return false;
 	}else if(ret<0){
-		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendAll() failed");
+		ofLogError("ofxTCPClient") << "send(): sending failed";
 		return false;
 	}else if(ret<(int)message.length()){
 		// in case of partial send, store the
@@ -136,7 +136,7 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 	// if sending from here and receiving from receiveRaw or
 	// other applications
 	if(!connected){
-		ofLog(OF_LOG_WARNING, "ofxTCPClient: trying to send while not connected");
+		ofLogWarning("ofxTCPClient") << "sendRawMsg(): not connected, call setup() first";
 		return false;
 	}
 	tmpBuffSend.append(msg,size);
@@ -144,11 +144,11 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 
 	int ret = TCPClient.SendAll( tmpBuffSend.getBinaryBuffer(), tmpBuffSend.size() );
 	if( ret == 0 ){
-		ofLog(OF_LOG_WARNING, "ofxTCPClient: other side disconnected");
+		ofLogWarning("ofxTCPClient") << "sendRawMsg(): client disconnected";
 		close();
 		return false;
 	}else if(ret<0){
-		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendAll() failed");
+		ofLogError("ofxTCPClient") << "sendRawMsg(): sending failed";
 		return false;
 	}else if(ret<size){
 		// in case of partial send, store the
@@ -168,7 +168,7 @@ bool ofxTCPClient::sendRaw(string message){
 	if( message.length() == 0) return false;
 
 	if( !TCPClient.SendAll(message.c_str(), message.length()) ){
-		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendRawBytes() failed");
+		ofLogError("ofxTCPClient") << "sendRawBytes(): sending failed";
 		close();
 		return false;
 	}else{
@@ -181,7 +181,7 @@ bool ofxTCPClient::sendRawBytes(const char* rawBytes, const int numBytes){
 	if( numBytes <= 0) return false;
 
 	if( !TCPClient.SendAll(rawBytes, numBytes) ){
-		ofLog(OF_LOG_ERROR, "ofxTCPClient: sendRawBytes() failed");
+		ofLogError("ofxTCPClient") << "sendRawBytes(): sending failed";
 		close();
 		return false;
 	}else{

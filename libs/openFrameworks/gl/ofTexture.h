@@ -84,6 +84,7 @@ public:
 //enabled by default
 void ofEnableTextureEdgeHack();
 void ofDisableTextureEdgeHack();
+bool ofIsTextureEdgeHackEnabled();
 
 class ofTexture : public ofBaseDraws {
 	public :
@@ -112,6 +113,10 @@ class ofTexture : public ofBaseDraws {
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention, int glFormat, int pixelType); //lets you overide the default OF texture type
 	virtual void allocate(const ofPixels& pix);
 	virtual void allocate(const ofPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofShortPixels& pix);
+	virtual void allocate(const ofShortPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofFloatPixels& pix);
+	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
 
 	void setUseExternalTextureID(GLuint externTexID); //allows you to point ofTexture's texture id to an externally allocated id. 

@@ -1,5 +1,4 @@
-#ifndef OFX_CV_CONSTANTS_H
-#define OFX_CV_CONSTANTS_H
+#pragma once
 
 #ifdef MIN 
 	#undef MIN
@@ -16,5 +15,3 @@ enum ofxCvRoiMode {
     OFX_CV_ROI_MODE_INTERSECT,
     OFX_CV_ROI_MODE_NONINTERSECT
 };
-
-#endif

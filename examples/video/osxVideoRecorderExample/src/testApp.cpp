@@ -44,7 +44,7 @@ void testApp::setup(){
     // vidRecorder->setVideoCodec(videoCodecs[2]);
 	
     // 5. Initialize the grabber.
-    vidGrabber.initGrabber(1280,720);
+    vidGrabber.initGrabber(1280, 720);
 
     // If desired, you can disable the preview video.  This can
     // help help speed up recording and remove recording glitches.
@@ -64,7 +64,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	
-	ofBackground(60,60,60);
+	ofBackground(60, 60, 60);
 	
 	vidGrabber.update();
     
@@ -75,8 +75,8 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofRectangle previewWindow(20,20,640,480);
-    ofRectangle playbackWindow(20+640,20,640,480);
+    ofRectangle previewWindow(20, 20, 640, 480);
+    ofRectangle playbackWindow(20+640, 20, 640, 480);
 
     // draw the background boxes
     ofPushStyle();
@@ -138,7 +138,7 @@ void testApp::draw(){
     ofSetColor(255);
     ofDrawBitmapString("' ' space bar to toggle recording", 680, 540);
     ofDrawBitmapString("'v' switches video device", 680, 560);
-    ofDrawBitmapString("'a' swiches audio device", 680, 580);
+    ofDrawBitmapString("'a' switches audio device", 680, 580);
     
     //draw video device selection
     ofDrawBitmapString("VIDEO DEVICE", 20, 540);
