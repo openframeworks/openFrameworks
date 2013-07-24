@@ -14,7 +14,7 @@ void testApp::setup(){
 
 	gui.loadFromFile("settings.xml");
 
-	font.loadFont(OF_TTF_SANS,9,true,true);
+	font.loadFont("Regular",9,true,true);
 	ofEnableAlphaBlending();
 }
 

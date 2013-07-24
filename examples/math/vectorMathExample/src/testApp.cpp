@@ -109,14 +109,19 @@ void testApp::draw(){
 
 
      ofSetColor(50,50,255);
-     glBegin(GL_LINES);
-        glVertex3f(xAxisMin.x, xAxisMin.y, xAxisMin.z);
-        glVertex3f(xAxisMax.x, xAxisMax.y, xAxisMax.z);
-        glVertex3f(yAxisMin.x, yAxisMin.y, yAxisMin.z);
-        glVertex3f(yAxisMax.x, yAxisMax.y, yAxisMax.z);
-        glVertex3f(zAxisMin.x, zAxisMin.y, zAxisMin.z);
-        glVertex3f(zAxisMax.x, zAxisMax.y, zAxisMax.z);
-     glEnd();
+     ofNoFill();
+     ofBeginShape();
+        ofVertex(xAxisMin.x, xAxisMin.y, xAxisMin.z);
+        ofVertex(xAxisMax.x, xAxisMax.y, xAxisMax.z);
+     ofEndShape();
+     ofBeginShape();
+        ofVertex(yAxisMin.x, yAxisMin.y, yAxisMin.z);
+        ofVertex(yAxisMax.x, yAxisMax.y, yAxisMax.z);
+     ofEndShape();
+     ofBeginShape();
+        ofVertex(zAxisMin.x, zAxisMin.y, zAxisMin.z);
+        ofVertex(zAxisMax.x, zAxisMax.y, zAxisMax.z);
+     ofEndShape();
 
 
     if (bDrawnAnything == false){

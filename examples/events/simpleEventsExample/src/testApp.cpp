@@ -38,7 +38,6 @@ void testApp::draw(){
     
     
     ofCircle(clickedPoint, 10);
-    glDisable(GL_ARB_multisample);
     ofPopStyle();
     string msg = "by clicking on any circle the background is changed. Global event\n";
     msg += "by clicking over the red circle the  little black circle will be positioned at the click point.\n";
