@@ -79,7 +79,7 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
+#PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
 
 ################################################################################
 # PLATFORM CFLAGS
@@ -121,6 +121,7 @@ PLATFORM_CFLAGS += -pipe
 
 # raspberry pi specific
 PLATFORM_LIBRARIES += GLESv2
+PLATFORM_LIBRARIES += GLESv1_CM
 PLATFORM_LIBRARIES += EGL
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
@@ -175,5 +176,69 @@ PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
 ################################################################################
 
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
-
-
+$(info $(PLATFORM_ARCH))
+ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
+	#TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin
+	TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
+	#GCC_PREFIX =arm-bcm2708hardfp-linux-gnueabi
+	GCC_PREFIX=arm-linux-gnueabihf
+    PLATFORM_CXX = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-g++
+	PLATFORM_CC = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-gcc
+	PLATFORM_AR = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ar
+	PLATFORM_LD = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ld
+	
+	SYSROOT=$(RPI_ROOT)
+	#$(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/
+	
+	# Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
+	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
+	
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/gstreamer-$(GST_VERSION)
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/glib-2.0
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/arm-linux-gnueabihf/glib-2.0/include
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/libxml2
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/gtk-2.0
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/pango-1.0
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/arm-linux-gnueabihf/gtk-2.0/include
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/gdk-pixbuf-2.0
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/atk-1.0
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/freetype2
+	
+	#PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/arm-linux-gnueabihf/gstreamer
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
+	
+	#PLATFORM_CFLAGS += -pthread -I/usr/include/cairo -I/usr/include/glib-2.0 -I/usr/lib/arm-linux-gnueabihf/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12 -I/usr/include/gstreamer-0.10 -I/usr/include/libxml2
+	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -pthread 
+	
+	
+	PLATFORM_LIBRARIES += cairo 
+	PLATFORM_LIBRARIES += z 
+	PLATFORM_LIBRARIES += gstapp-$(GST_VERSION)
+	PLATFORM_LIBRARIES += gstvideo-$(GST_VERSION)
+	PLATFORM_LIBRARIES += gstbase-$(GST_VERSION) 
+	PLATFORM_LIBRARIES += gstreamer-$(GST_VERSION) 
+	PLATFORM_LIBRARIES += gobject-2.0 
+	PLATFORM_LIBRARIES += gmodule-2.0 
+	PLATFORM_LIBRARIES += gthread-2.0 
+	PLATFORM_LIBRARIES += glib-2.0 
+	PLATFORM_LIBRARIES += rt 
+	PLATFORM_LIBRARIES += udev 
+	PLATFORM_LIBRARIES += freetype 
+	PLATFORM_LIBRARIES += sndfile 
+	PLATFORM_LIBRARIES += openal 
+	PLATFORM_LIBRARIES += portaudio 
+	PLATFORM_LIBRARIES += asound 
+	PLATFORM_LIBRARIES += m 
+	PLATFORM_LIBRARIES += pthread 
+	PLATFORM_LIBRARIES += ssl 
+	PLATFORM_LIBRARIES += crypto 
+	PLATFORM_LIBRARIES += fontconfig 
+	PLATFORM_LIBRARIES += X11 
+	PLATFORM_LIBRARIES += pcre
+	PLATFORM_LIBRARIES += dl
+endif

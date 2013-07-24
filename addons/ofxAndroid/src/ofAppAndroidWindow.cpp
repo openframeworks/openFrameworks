@@ -57,11 +57,11 @@ JNIEnv * ofGetJNIEnv(){
 	JNIEnv *env;
 	JavaVM * vm = ofGetJavaVMPtr();
 	if(!vm){
-		ofLog(OF_LOG_ERROR,"couldn't get java vm");
+		ofLogError("ofAppAndroidWindow") << "couldn't get java virtual machine";
 		return NULL;
 	}
 	if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofAppAndroidWindow") << "couldn't get environment using GetEnv()";
 		return NULL;
 	}
 	return env;
@@ -80,7 +80,7 @@ jobject ofGetOFActivityObject(){
 
 	jfieldID ofActivityID = env->GetStaticFieldID(OFAndroid,"ofActivity","Lcc/openframeworks/OFActivity;");
 	if(!ofActivityID){
-		ofLogError() << "Failed to get field ID for ofActivity";
+		ofLogError("ofAppAndroidWindow") << "couldn't get field ID for ofActivity";
 		return NULL;
 	}
 
@@ -117,13 +117,13 @@ void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"setupOpenGL: cannot find OFAndroid java class");
+		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(I)V");
 	if(!method){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setupGL method");
+		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid setupGL method";
 		return;
 	}
 
@@ -166,13 +166,13 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"setOrientation: cannot find OFAndroid java class");
+		ofLogError("ofAppAndroidWindow") << "setOrientation(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID setScreenOrientation = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setScreenOrientation","(I)V");
 	if(!setScreenOrientation){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setScreenOrientation method");
+		ofLogError("ofAppAndroidWindow") << "setOrientation(): couldn't find OFAndroid setScreenOrientation method";
 		return;
 	}
 	if(orientation==OF_ORIENTATION_UNKNOWN)
@@ -189,13 +189,13 @@ void ofAppAndroidWindow::setFullscreen(bool fullscreen){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"setFullscreen: cannot find OFAndroid java class");
+		ofLogError("ofAppAndroidWindow") << "setFullscreen(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID setFullscreen = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setFullscreen","(Z)V");
 	if(!setFullscreen){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setFullscreen method");
+		ofLogError("ofAppAndroidWindow") << "setFullScreen(): couldn't find OFAndroid setFullscreen method";
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setFullscreen,fullscreen);
@@ -229,7 +229,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 	ofJavaVM = vm;
 	ofLog(OF_LOG_NOTICE,"JNI_OnLoad called");
 	if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofAppAndroidWindow") << "failed to get environment using GetEnv()";
 		return -1;
 	}
 	return JNI_VERSION_1_4;
@@ -240,10 +240,10 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
-	__android_log_print(ANDROID_LOG_INFO,"OF",("Setting app dir name to: " + string(mfile)).c_str());
+	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile)).c_str() + "\"");
     ofSetDataPathRoot(string(mfile)+"/");
     string appname = env->GetStringUTFChars(app_name, &iscopy);
-    __android_log_print(ANDROID_LOG_INFO,"OF",("app name: " + appname).c_str());
+    __android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("app name: " + appname).c_str());
     if(appname!=""){
 		string resources_name = ofToLower(appname + "resources.zip");
 		ofFile resources(resources_name);
@@ -251,7 +251,7 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 		jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
 		jmethodID onLoadPercent = ofGetJNIEnv()->GetMethodID(activityClass,"onLoadPercent","(F)V");
 		if(resources.exists()){
-			__android_log_print(ANDROID_LOG_DEBUG,"OF",("uncompressing " + resources.getAbsolutePath()).c_str());
+			__android_log_print(ANDROID_LOG_DEBUG,"ofAppAndroidWindow",("uncompressing " + resources.getAbsolutePath()).c_str());
 			unzFile zip = unzOpen(resources.getAbsolutePath().c_str());
 			char current_dir[1000];
 			getcwd(current_dir,1000);
@@ -261,7 +261,7 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 		    unz_global_info gi;
 		    int err = unzGetGlobalInfo (zip,&gi);
 		    if (err!=UNZ_OK){
-		    	__android_log_print(ANDROID_LOG_ERROR,"OF","error %d with zipfile in unzGetGlobalInfo \n",err);
+		    	__android_log_print(ANDROID_LOG_ERROR,"ofAppAndroidWindow","error %d with zipfile in unzGetGlobalInfo\n",err);
 		    }else{
 
 				for (uLong i=0;i<gi.number_entry;i++){
@@ -274,7 +274,7 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 			resources.remove();
 		}else{
 			ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat).80f);
-			__android_log_print(ANDROID_LOG_DEBUG,"OF",("no resources found in " + resources.getAbsolutePath()).c_str());
+			__android_log_print(ANDROID_LOG_DEBUG,"ofAppAndroidWindow",("no resources found in " + resources.getAbsolutePath()).c_str());
 		}
     }
 }
@@ -317,7 +317,7 @@ Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz ){
 	surfaceDestroyed = true;
-	ofLog(OF_LOG_NOTICE,"onSurfaceDestroyed");
+	ofLogNotice("ofAppAndroidWindow") << "onSurfaceDestroyed";
 	ofUnloadAllFontTextures();
 	ofPauseVideoGrabbers();
 	if(androidApp){
@@ -328,7 +328,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	if(appSetup){
-		ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
+		ofLogNotice("ofAppAndroidWindow") << "onSurfaceCreated";
 		if(!surfaceDestroyed){
 			ofUnloadAllFontTextures();
 			ofPauseVideoGrabbers();
@@ -358,7 +358,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
-	ofLog(OF_LOG_NOTICE,"setup");
+	ofLogNotice("ofAppAndroidWindow") << "setup";
 	paused = false;
     sWindowWidth  = w;
     sWindowHeight = h;
@@ -370,7 +370,7 @@ Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jin
 {
     sWindowWidth  = w;
     sWindowHeight = h;
-    ofLog(OF_LOG_NOTICE,"resize %i,%i",w,h);
+    ofLogNotice("ofAppAndroidWindow") << "resize " << w << "x" << h;
     ofNotifyWindowResized(w,h);
 }
 
@@ -557,7 +557,7 @@ Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyC
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onBackPressed(){
-	ofLog(OF_LOG_VERBOSE,"back pressed");
+	ofLogVerbose("ofAppAndroidWindow") << "back pressed";
 	if(androidApp) return androidApp->backPressed();
 	else return false;
 }

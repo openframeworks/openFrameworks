@@ -7,7 +7,9 @@
 #include "ofRendererCollection.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
+#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
 #include "ofCairoRenderer.h"
+#endif
 
 
 #ifndef TARGET_LINUX_ARM
@@ -66,9 +68,8 @@ void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
 #endif
 	}else{
-		ofLogError() << "renderer type " << rendererType << " not known. Setting a GLRenderer";
-		ofLogError() << "this function only works with core renderers yet, if you want to use a custom renderer";
-		ofLogError() << "pass an ofPtr to a new instance of it";
+		ofLogError("ofGraphics") << "ofSetCurrentRenderer(): unknown renderer type " << rendererType << ", setting an ofGLRenderer";
+		ofLogError("ofGraphics") << "if you want to use a custom renderer, pass an ofPtr to a new instance of it";
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
 	}
 }
@@ -225,8 +226,8 @@ static bool setupScreenDeprecated=false;
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
 	if(!setupScreenDeprecated){
-		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
-		ofLogError() << "using current orientation and vFlip";
+		ofLogError("ofGraphics") << "ofSetupScreenPerspective() with orientation and vflip is deprecated,";
+		ofLogError("ofGraphics") << "set them with ofSetOrientation() before calling ofSetupScreenPerspective()";
 		setupScreenDeprecated = true;
 	}
 	renderer->setupScreenPerspective(width,height,fov,nearDist,farDist);
@@ -235,8 +236,8 @@ void ofSetupScreenPerspective(float width, float height, ofOrientation orientati
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
 	if(!setupScreenDeprecated){
-		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
-		ofLogError() << "using current orientation and vFlip";
+		ofLogError("ofGraphics") << "ofSetupScreenOrtho() with orientation and vflip is deprecated,";
+		ofLogError("ofGraphics") << "set them with ofSetOrientation() before calling ofSetupScreenPerspective()";
 		setupScreenDeprecated = true;
 	}
 	renderer->setupScreenOrtho(width,height,nearDist,farDist);
@@ -392,6 +393,11 @@ float * ofBgColorPtr(){
 }
 
 //----------------------------------------------------------
+ofColor ofGetBackground(){
+	return ofColor(renderer->getBgColor());
+}
+
+//----------------------------------------------------------
 void ofBackground(int brightness, int alpha){
 	ofBackground(brightness, brightness, brightness, alpha);
 }
@@ -540,7 +546,7 @@ void ofSetLineWidth(float lineWidth){
 //----------------------------------------------------------
 void ofSetDepthTest(bool depthTest){
 	renderer->setDepthTest(depthTest);
-	currentStyle.depthTest = depthTest;
+	//currentStyle.depthTest = depthTest;
 }
 
 //----------------------------------------------------------
@@ -601,7 +607,7 @@ void ofSetColor(int r, int g, int b, int a){
 //----------------------------------------------------------
 void ofSetColor(int gray){
 	if( gray > 255 ){
-		ofLog(OF_LOG_WARNING, "ofSetColor(int hexColor) - has changed to ofSetColor(int gray) - perhaps you want ofSetHexColor instead?\n" );
+		ofLogWarning("ofGraphics") << "ofSetColor(): gray value > 255, perhaps you want ofSetHexColor(int hexColor) instead?";
 	}
 	ofSetColor(gray, gray, gray);
 }
@@ -613,7 +619,6 @@ void ofSetHexColor(int hexColor){
 	int b = (hexColor >> 0) & 0xff;
 	ofSetColor(r,g,b);
 }
-
 
 //----------------------------------------------------------
 
@@ -668,6 +673,16 @@ void ofSetPolyMode(ofPolyWindingMode mode){
 }
 
 //----------------------------------------
+void ofEnableAntiAliasing(){
+	renderer->enableAntiAliasing();
+}
+
+//----------------------------------------
+void ofDisableAntiAliasing(){
+	renderer->disableAntiAliasing();
+}
+
+//----------------------------------------
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
@@ -690,7 +705,7 @@ void ofSetStyle(ofStyle style){
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
 	
-	ofSetDepthTest(style.depthTest);
+	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
 
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
@@ -732,7 +747,7 @@ void ofPushStyle(){
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.pop_back();
 		//should we warn here?
-		//ofLog(OF_LOG_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code!", OF_MAX_STYLE_HISTORY);
+		//ofLogWarning("ofGraphics") "ofPushStyle(): maximum number of style pushes << " OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?"
 	}
 }
 
@@ -883,6 +898,7 @@ void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRad
 		default:
 			break;
 	}
+	shape.clear();
     shape.rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
     shape.draw();
 

@@ -43,7 +43,7 @@ ofURLFileLoader::ofURLFileLoader() {
 			factoryLoaded = true;
 		}
 		catch (Poco::SystemException & PS) {
-			ofLog(OF_LOG_ERROR, "Got exception in url ofURLFileloader");
+			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
 		}
 	}
 }
@@ -87,7 +87,7 @@ void ofURLFileLoader::remove(int id){
 			return;
 		}
 	}
-	ofLogError() << "trying to remove request " <<  id << " not found";
+	ofLogError("ofURLFileLoader") << "remove(): request " <<  id << " not found";
 }
 
 void ofURLFileLoader::clear(){
@@ -101,7 +101,7 @@ void ofURLFileLoader::start() {
 		ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
         startThread(true, false);   // blocking, verbose
     }else{
-    	ofLog(OF_LOG_VERBOSE,"signaling new request condition");
+    	ofLogVerbose("ofURLFileLoader") << "start(): signaling new request condition";
     	condition.signal();
     }
 }
@@ -114,11 +114,11 @@ void ofURLFileLoader::stop() {
 }
 
 void ofURLFileLoader::threadedFunction() {
-	ofLog(OF_LOG_VERBOSE,"starting thread loop ");
+	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): starting thread";
 	lock();
 	while( isThreadRunning() == true ){
 		if(requests.size()>0){
-	    	ofLog(OF_LOG_VERBOSE,"querying request " + requests.front().name);
+	    	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): querying request " << requests.front().name;
 			ofHttpRequest request(requests.front());
 			unlock();
 
@@ -129,19 +129,21 @@ void ofURLFileLoader::threadedFunction() {
 				// double-check that the request hasn't been removed from the queue
 				if( (requests.size()==0) || (requests.front().getID()!=request.getID()) ){
 					// this request has been removed from the queue
-					ofLog(OF_LOG_VERBOSE,"request " + requests.front().name + " is missing from the queue, must have been removed/cancelled" );
+					ofLogVerbose("ofURLFileLoader") << "threadedFunction(): request " << requests.front().name
+					<< " is missing from the queue, must have been removed/cancelled";
 				}
 				else{
-					ofLog(OF_LOG_VERBOSE,"got response to request " + requests.front().name + " status "+ofToString(response.status) );
+					ofLogVerbose("ofURLFileLoader") << "threadedFunction(): got response to request "
+					<< requests.front().name << " status " <<response.status;
 					responses.push(response);
 					requests.pop_front();
 				}
 			}else{
 				responses.push(response);
-		    	ofLog(OF_LOG_VERBOSE,"failed getting request " + requests.front().name);
+		    	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): failed getting request " << requests.front().name;
 			}
 		}else{
-			ofLog(OF_LOG_VERBOSE,"stopping on no requests condition");
+			ofLogVerbose("ofURLFileLoader") << "threadedFunction(): stopping on no requests condition";
 			condition.wait(mutex);
 		}
 	}
@@ -191,15 +193,15 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		}
 
 	} catch (const Exception& exc) {
-        ofLog(OF_LOG_ERROR, "ofURLFileLoader " + exc.displayText());
+        ofLogError("ofURLFileLoader") << "handleRequest(): "+ exc.displayText();
 
         return ofHttpResponse(request,-1,exc.displayText());
 
     } catch (...) {
-    	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception");
+    	return ofHttpResponse(request,-1,"ofURLFileLoader: fatal error, couldn't catch Exception");
     }
 
-	return ofHttpResponse(request,-1,"ofURLFileLoader fatal error, couldn't catch Exception");
+	return ofHttpResponse(request,-1,"ofURLFileLoader: fatal error, couldn't catch Exception");
 	
 }	
 
@@ -207,7 +209,7 @@ void ofURLFileLoader::update(ofEventArgs & args){
 	lock();
 	while(!responses.empty()){
 		ofHttpResponse response(responses.front());
-		ofLog(OF_LOG_VERBOSE,"ofURLLoader::update: new response " +response.request.name);
+		ofLogVerbose("ofURLLoader") << "update(): new response " << response.request.name;
 		responses.pop();
 		unlock();
 		ofNotifyEvent(ofURLResponseEvent(),response);

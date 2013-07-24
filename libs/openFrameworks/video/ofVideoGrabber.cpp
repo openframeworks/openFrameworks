@@ -21,6 +21,8 @@ ofVideoGrabber::ofVideoGrabber(){
 	RequestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
 	desiredFramerate 	= -1;
+	height				= 0;
+	width				= 0;
 
 #ifdef TARGET_ANDROID
 	if(!ofxAndroidInitGrabber(this)) return;
@@ -87,7 +89,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 	if( grabber != NULL ){
 		if( grabberRunning ){
-			ofLogWarning("ofVideoGrabber") << "setPixelFormat - can't be called while the grabber is running ";
+			ofLogWarning("ofVideoGrabber") << "setPixelFormat(): can't set pixel format while grabber is running";
 			internalPixelFormat = grabber->getPixelFormat(); 
 			return false;
 		}else{
@@ -131,7 +133,7 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 void ofVideoGrabber::setDeviceID(int _deviceID){
 	RequestedDeviceID = _deviceID;
 	if( bInitialized ){
-		ofLog(OF_LOG_WARNING, "call setDeviceID before grabber is started!");
+		ofLogWarning("ofxVideoGrabber") << "setDeviceID(): can't set device while grabber is running";
 	}
 }
 

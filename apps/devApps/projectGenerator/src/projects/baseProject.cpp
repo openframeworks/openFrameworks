@@ -80,7 +80,7 @@ bool baseProject::create(string path){
 //			}
 //		}
 
-#ifdef TARGET_LINUX
+#ifdef TARGET_LINUX || TARGET_OSX
     		parseAddons();
 #endif
         // get a unique list of the paths that are needed for the includes.

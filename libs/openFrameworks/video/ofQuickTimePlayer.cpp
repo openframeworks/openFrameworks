@@ -16,8 +16,7 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 	#ifdef TARGET_WIN32
 		result = NativePathNameToFSSpec (path, &theFSSpec, 0);
 		if (result != noErr) {
-			ofLog(OF_LOG_ERROR,"NativePathNameToFSSpec failed %d", result);
-			ofLog(OF_LOG_ERROR,"Error loading movie");
+			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, NativePathNameToFSSpec failed: OSErr " << result;
 			return false;
 		}
 
@@ -27,14 +26,12 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 		FSRef 		fsref;
 		result = FSPathMakeRef((const UInt8*)path, &fsref, &isdir);
 		if (result) {
-			ofLog(OF_LOG_ERROR,"FSPathMakeRef failed %d", result);
-			ofLog(OF_LOG_ERROR,"Error loading movie");
+			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSPathMakeRef failed: OSErr " << result;
 			return false;
 		}
 		result = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &theFSSpec, NULL);
 		if (result) {
-			ofLog(OF_LOG_ERROR,"FSGetCatalogInfo failed %d", result);
-			ofLog(OF_LOG_ERROR,"Error loading movie");
+			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSGetCatalogInfo failed: OSErr ", result;
 			return false;
 		}
 	#endif
@@ -48,11 +45,11 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 		if (result == noErr){
 			CloseMovieFile (movieResFile);
 		} else {
-			ofLog(OF_LOG_ERROR,"NewMovieFromFile failed %d", result);
+			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, NewMovieFromFile failed: OSErr " << result;
 			return false;
 		}
 	} else {
-		ofLog(OF_LOG_ERROR,"OpenMovieFile failed %d", result);
+		ofLogError("ofQuickTimePlayer") << "createMovoeFromPath(): couldn't load movie, OpenMovieFile failed: OSErr " << result;
 		return false;
 	}
 
@@ -67,7 +64,10 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	OSErr err;
 
 	urlDataRef = NewHandle(strlen(url) + 1);
-	if ( ( err = MemError()) != noErr){ ofLog(OF_LOG_ERROR,"createMovieFromURL: error creating url handle"); return false;}
+	if ( ( err = MemError()) != noErr){
+		ofLogError("ofQuickTimePlayer") << "createMovieFromURL(): couldn't create url handle from \"" << urlIn << "\": OSErr " << err;
+		return false;
+	}
 
 	BlockMoveData(url, *urlDataRef, strlen(url) + 1);
 
@@ -75,7 +75,7 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	DisposeHandle(urlDataRef);
 
 	if(err != noErr){
-		ofLog(OF_LOG_ERROR,"createMovieFromURL: error loading url");
+		ofLogError("ofQuickTimePlayer") << "createMovieFromURL(): couldn't load url \"" << urlIn << "\": OSErr " << err;
 		return false;
 	}else{
 		return true;
@@ -425,7 +425,7 @@ void ofQuickTimePlayer::start(){
 //--------------------------------------------------------
 void ofQuickTimePlayer::play(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer::play - movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "play(): movie not loaded";
 		return;
 	}
 
@@ -460,7 +460,7 @@ void ofQuickTimePlayer::play(){
 //--------------------------------------------------------
 void ofQuickTimePlayer::stop(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "stop(): movie not loaded";
 		return;
 	}
 	
@@ -482,7 +482,7 @@ void ofQuickTimePlayer::stop(){
 //--------------------------------------------------------
 void ofQuickTimePlayer::setVolume(float volume){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "setVolume(): movie not loaded";
 		return;
 	}
 	
@@ -554,7 +554,7 @@ ofLoopType ofQuickTimePlayer::getLoopState(){
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::setPosition(float pct){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "setPosition(): movie not loaded";
 		return;
 	}
 
@@ -579,7 +579,7 @@ void ofQuickTimePlayer::setPosition(float pct){
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::setFrame(int frame){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "setFrame(): movie not loaded";
 		return;
 	}
 	
@@ -622,7 +622,7 @@ void ofQuickTimePlayer::setFrame(int frame){
 //---------------------------------------------------------------------------
 float ofQuickTimePlayer::getDuration(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "getDuration(): movie not loaded";
 		return 0.0;
 	}
 	
@@ -641,7 +641,7 @@ float ofQuickTimePlayer::getDuration(){
 //---------------------------------------------------------------------------
 float ofQuickTimePlayer::getPosition(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "getPosition(): movie not loaded";
 		return 0.0;
 	}
 	
@@ -664,7 +664,7 @@ float ofQuickTimePlayer::getPosition(){
 //---------------------------------------------------------------------------
 int ofQuickTimePlayer::getCurrentFrame(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "getCurrentFrame(): movie not loaded";
 		return 0;
 	}
 	
@@ -698,7 +698,7 @@ bool ofQuickTimePlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	if( pixelFormat == OF_PIXELS_RGB ){
 		return true;
 	}
-	ofLogWarning("ofQuickTimePlayer") << "requested pixel format not supported" << endl;
+	ofLogWarning("ofQuickTimePlayer") << "setPixelFormat(): requested pixel format " << pixelFormat << " not supported, expecting OF_PIXELS_RGB";
 	return false;
 }
 
@@ -712,7 +712,7 @@ ofPixelFormat ofQuickTimePlayer::getPixelFormat(){
 //---------------------------------------------------------------------------
 bool ofQuickTimePlayer::getIsMovieDone(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "getIsMovieDone(): movie not loaded";
 		return false;
 	}
 	
@@ -732,7 +732,7 @@ bool ofQuickTimePlayer::getIsMovieDone(){
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::firstFrame(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "firstFrame(): movie not loaded";
 		return;
 	}
 	
@@ -751,7 +751,7 @@ void ofQuickTimePlayer::firstFrame(){
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::nextFrame(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "nextFrame(): movie not loaded";
 		return;
 	}
 	
@@ -769,7 +769,7 @@ void ofQuickTimePlayer::nextFrame(){
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::previousFrame(){
 	if( !isLoaded() ){
-		ofLog(OF_LOG_ERROR, "ofQuickTimePlayer: movie not loaded!");
+		ofLogError("ofQuickTimePlayer") << "previousFrame(): movie not loaded";
 		return;
 	}
 	

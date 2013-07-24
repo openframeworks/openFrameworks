@@ -9,7 +9,7 @@
 <a href="versions/nightly/of_latest_osx_nightly.zip">osx</a><br/>
 <a href="versions/nightly/of_latest_ios_nightly.zip">iOS</a><br/>
 <a href="versions/nightly/of_latest_android_nightly.tar.gz">android</a><br/>
-<a href="versions/nightly/of_latest_linuxarmv6_nightly.tar.gz">linuxarmv6</a><br/>
-<a href="versions/nightly/of_latest_linuxarmv7_nightly.tar.gz">linuxarmv7</a><br/>
+<a href="versions/nightly/of_latest_linuxarmv6l_nightly.tar.gz">linuxarmv6</a><br/>
+<a href="versions/nightly/of_latest_linuxarmv7l_nightly.tar.gz">linuxarmv7</a><br/>
 
 <p>Nightly builds are generated only whenever there's a new commit</p>

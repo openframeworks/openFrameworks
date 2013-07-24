@@ -26,12 +26,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _OFXOSC_H
-#define _OFXOSC_H
+#pragma once
 
 #include "ofxOscArg.h"
 #include "ofxOscMessage.h"
 #include "ofxOscSender.h"
 #include "ofxOscReceiver.h"
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _OFX_TCP_CLIENT_
-#define _OFX_TCP_CLIENT_
+#pragma once
 
 #include "ofConstants.h"
 #include "ofxTCPManager.h"
@@ -107,8 +106,3 @@ private:
 		string 			partialPrevMsg;
 		string			messageDelimiter;
 };
-
-#endif
-
-
-

@@ -92,7 +92,7 @@ FREE_IMAGE_TYPE getFreeImageType(ofShortPixels& pix) {
 		case 3: return FIT_RGB16;
 		case 4: return FIT_RGBA16;
 		default:
-			ofLogError() << "Unkown freeimage type for" << pix.getNumChannels() << "channels";
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }
@@ -103,7 +103,7 @@ FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
 		case 3: return FIT_RGBF;
 		case 4: return FIT_RGBAF;
 		default:
-			ofLogError() << "Unkown freeimage type for" << pix.getNumChannels() << "channels";
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }
@@ -130,7 +130,7 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 			dst += dstStride;
 		}
 	} else {
-		ofLogError() << "ofImage::getBmpFromPixels() unable to get FIBITMAP from ofPixels";
+		ofLogError("ofImage") << "getBmpFromPixels(): unable to get FIBITMAP from ofPixels";
 	}
 	
 	// ofPixels are top left, FIBITMAP is bottom left
@@ -166,7 +166,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	if(bmpBits != NULL) {
 		pix.setFromAlignedPixels((PixelType*) bmpBits, width, height, channels, pitch);
 	} else {
-		ofLogError() << "ofImage::putBmpIntoPixels() unable to set ofPixels from FIBITMAP";
+		ofLogError("ofImage") << "putBmpIntoPixels(): unable to set ofPixels from FIBITMAP";
 	}
 	
 	if(bmpConverted != NULL) {
@@ -227,14 +227,14 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
-		ofLog(OF_LOG_ERROR, "couldn't create memory handle!");
+		ofLogError("ofImage") << "loadImage(): couldn't laod image from ofBuffer, opening FreeImage memory failed";
 		return false;
 	}
 
 	//get the file type!
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem);
 	if( fif == -1 ){
-		ofLog(OF_LOG_ERROR, "unable to guess format", fif);
+		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, unable to guess image format from memory";
 		return false;
 		FreeImage_CloseMemory(hmem);
 	}
@@ -323,7 +323,7 @@ template<typename PixelType>
 static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (pix.isAllocated() == false){
-		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
+		ofLogError("ofImage") << "saveImage(): couldn't save \"" << fileName << "\", pixels are not allocated";
 		return;
 	}
 
@@ -362,7 +362,8 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 			FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
-				ofLogWarning() << "ofImageCompressionType only applies to JPEG images, ignoring value";
+				ofLogWarning("ofImage") << "saveImage(): ofImageCompressionType only applies to JPEGs,"
+					<< " ignoring value for \" "<< fileName << "\"";
 			}
 			
 			if (fif == FIF_GIF) {
@@ -407,12 +408,12 @@ void ofSaveImage(ofShortPixels & pix, string fileName, ofImageQualityType qualit
 //----------------------------------------------------------------
 template<typename PixelType>
 static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
-	//thanks to alvaro casinelli for the implementation
+	// thanks to alvaro casinelli for the implementation
 
 	ofInitFreeImage();
 
 	if (pix.isAllocated() == false){
-		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
+		ofLogError("ofImage","saveImage(): couldn't save to ofBuffer, pixels are not allocated");
 		return;
 	}
 
@@ -476,7 +477,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		   //
 		   unsigned char *mem_buffer = NULL;
 		   if (!FreeImage_AcquireMemory(hmem, &mem_buffer, &size_in_bytes))
-				   cout << "Error aquiring compressed image from memory" << endl;
+				   ofLogError("ofImage") << "saveImage(): couldn't save to ofBuffer, aquiring compressed image from memory failed";
 
 		   /*
 			  Now, before closing the memory stream, copy the content of mem_buffer
@@ -627,7 +628,7 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 #endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName);
 	if (!bLoadedOk) {
-		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
+		ofLogError("ofImage") << "loadImage(): couldn't load image from \"" << fileName << "\"";
 		clear();
 		return false;
 	}
@@ -648,7 +649,7 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 #endif
 	bool bLoadedOk = ofLoadImage(pixels, buffer);
 	if (!bLoadedOk) {
-		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
+		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer";
 		clear();
 		return false;
 	}
@@ -680,8 +681,8 @@ void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType comp
 	ofSaveImage(pixels,file.getAbsolutePath(),compressionLevel);
 }
 
-//we could cap these values - but it might be more useful
-//to be able to set anchor points outside the image
+// we could cap these values - but it might be more useful
+// to be able to set anchor points outside the image
 
 //----------------------------------------------------------
 template<typename PixelType>
@@ -811,14 +812,14 @@ ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 }
 
 //------------------------------------
-//for getting a reference to the texture
+// for getting a reference to the texture
 template<typename PixelType>
 ofTexture & ofImage_<PixelType>::getTextureReference(){
 /*
 	// it should be the responsibility of anything using getTextureReference()
 	// to check that it's allocated
 	if(!tex.bAllocated() ){
-		ofLog(OF_LOG_WARNING, "ofImage - getTextureReference - texture is not allocated");
+		ofLogWarning("ofImage") << "getTextureReference(): texture is not allocated";
 	}
 	*/
 	return tex;
@@ -927,19 +928,18 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
     int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
-    
-	if (!((width == _w) && (height == _h))){
-		resize(_w, _h);
-	}
+
 
 	#ifndef TARGET_OPENGLES
     
-    _y = sh - _y;
-    _y -= _h; // top, bottom issues
+    if(ofIsVFlipped()){
+		_y = sh - _y;
+		_y -= _h; // top, bottom issues
+    }
     
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(_x, _y, _w, _h, ofGetGlInternalFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
+    glReadPixels(_x, _y, _w, _h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
     glPopClientAttrib();
     
 	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
@@ -960,17 +960,19 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     int sw = ofGetViewportWidth();
     int numPixels   = width*height;
     if( numPixels == 0 ){
-        ofLog(OF_LOG_ERROR, "grabScreen width or height is 0 - returning");
+        ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << width << "x" << height;
         return;
     }
     
     int numRGBA         = numPixels*4;
     GLubyte *bufferRGBA = (GLubyte *) malloc(numRGBA);
 
-    if(ofGetOrientation() == OF_ORIENTATION_DEFAULT) {
-        
-        _y = sh - _y;   // screen is flipped vertically.
-        _y -= _h;
+    if(ofGetOrientation() == OF_ORIENTATION_DEFAULT || ofDoesHWOrientation()) {
+
+        if(ofIsVFlipped()){
+			_y = sh - _y;   // screen is flipped vertically.
+			_y -= _h;
+        }
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -988,9 +990,11 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         }
     }
     else if(ofGetOrientation() == OF_ORIENTATION_180) {
-        
-        _x = sw - _x;   // screen is flipped horizontally.
-        _x -= _w;
+
+        if(ofIsVFlipped()){
+			_x = sw - _x;   // screen is flipped horizontally.
+			_x -= _w;
+        }
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -1009,13 +1013,18 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     }
     else if(ofGetOrientation() == OF_ORIENTATION_90_RIGHT) {
         
-        int tempW = _w;     // swap width and height.
-        _w = _h;
-        _h = tempW;
+        swap(_w,_h);
+        swap(_x,_y);
+
+
+        if(!ofIsVFlipped()){
+			_x = sw - _x;   // screen is flipped horizontally.
+			_x -= _w;
+
+			_y = sh - _y;   // screen is flipped vertically.
+			_y -= _h;
+        }
         
-        int tempY = _y;     // swap x and y.
-        _y = _x;
-        _x = tempY;
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -1034,19 +1043,17 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     }
     else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
         
-        int tempW = _w; // swap width and height.
-        _w = _h;
-        _h = tempW;
+        swap(_w, _h);
         
-        int tempY = _y; // swap x and y.
-        _y = _x;
-        _x = tempY;
-        
-        _x = sw - _x;   // screen is flipped horizontally.
-        _x -= _w;
-        
-        _y = sh - _y;   // screen is flipped vertically.
-        _y -= _h;
+        swap(_x, _y);
+
+        if(ofIsVFlipped()){
+			_x = sw - _x;   // screen is flipped horizontally.
+			_x -= _w;
+
+			_y = sh - _y;   // screen is flipped vertically.
+			_y -= _h;
+        }
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
@@ -1064,8 +1071,8 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         }
     }
     
-    free(bufferRGBA);    
-    
+    free(bufferRGBA);
+
     #endif
 
 	update();
@@ -1201,7 +1208,7 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
 			break;
 		default:
-			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
+			ofLogError("ofImage") << "changeTypeOfPixels(): unknown image type: " << newType;
 			break;
 	}
 	

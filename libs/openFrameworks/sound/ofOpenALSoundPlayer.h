@@ -143,8 +143,8 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		size_t stream_samples_read;
 #ifdef OF_USING_MPG123
 		mpg123_handle * mp3streamf;
-#endif
 		int stream_encoding;
+#endif
 		int mp3_buffer_size;
 		int stream_subformat;
 		double stream_scale;

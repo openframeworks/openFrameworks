@@ -46,5 +46,29 @@ public:
 	
 	virtual void	setVerticalSync(bool enabled){};
 
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+	virtual Display* getX11Display(){return NULL;}
+	virtual Window  getX11Window() {return 0;}
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+	virtual GLXContext getGLXContext(){return 0;}
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+	virtual EGLDisplay getEGLDisplay(){return 0;}
+	virtual EGLContext getEGLContext(){return 0;}
+	virtual EGLSurface getEGLSurface(){return 0;}
+#endif
+
+#if defined(TARGET_OSX)
+	virtual void * getNSGLContext(){return NULL;}
+	virtual void * getCocoaWindow(){return NULL;}
+#endif
+
+#if defined(TARGET_WIN32)
+	virtual HGLRC getWGLContext(){return 0;}
+	virtual HWND getWin32Window(){return 0;}
+#endif
 };
 

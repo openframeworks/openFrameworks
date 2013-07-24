@@ -18,15 +18,16 @@ public:
 	virtual bool mouseReleased(ofMouseEventArgs & args);
 	
 
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
 		value.addListener(listener,method);
 	}
 
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
 		value.removeListener(listener,method);
 	}
+
 
 
 	bool operator=(bool v);

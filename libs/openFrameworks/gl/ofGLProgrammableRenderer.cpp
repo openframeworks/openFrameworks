@@ -91,7 +91,7 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, bool useColors, bool us
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
 	if(!wrongUseLoggedOnce){
-		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
+		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
 		wrongUseLoggedOnce = true;
 	}
 	// tig: note that there was a lot of code duplication going on here.
@@ -166,7 +166,7 @@ void ofGLProgrammableRenderer::draw( of3dPrimitive& model, ofPolyRenderMode rend
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 	if(!wrongUseLoggedOnce){
-		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
+		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
 		wrongUseLoggedOnce = true;
 	}
 	if(!poly.getVertices().empty()) {
@@ -218,7 +218,7 @@ void ofGLProgrammableRenderer::draw(ofImage & image, float x, float y, float z, 
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -231,7 +231,7 @@ void ofGLProgrammableRenderer::draw(ofFloatImage & image, float x, float y, floa
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -244,7 +244,7 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -632,7 +632,8 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth){
 	// use geometry shaders to draw lines of varying thickness...
 	
 #ifndef TARGET_OPENGLES
-	//ofLogVerbose() << "glLineWidth has no effect in openGL3.2+\nUse a geometry shader to generate thick lines.";
+	//ofLogVerbose("ofGLProgrammableRenderer") << "setLineWidth(): has no effect in OpenGL 3.2+;
+	//<< "use a geometry shader to generate thick lines";
 #else
 	glLineWidth(lineWidth);
 #endif
@@ -710,6 +711,17 @@ void ofGLProgrammableRenderer::enablePointSprites(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites(){
+}
+
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableAntiAliasing(){
+	glEnable(GL_MULTISAMPLE);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableAntiAliasing(){
+	glDisable(GL_MULTISAMPLE);
 }
 
 //----------------------------------------------------------
@@ -868,7 +880,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
-	//cout << "end custom shader" << endl;
+	//ofLogNotice("ofGLProgrammableRenderer") << "end custom shader";
 	usingCustomShader = false;
 	if(uniqueShader) beginDefaultShader();
 }
@@ -1178,8 +1190,8 @@ static string defaultFragmentShaderTexColor = STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1195,8 +1207,8 @@ static string defaultFragmentShaderTexNoColor =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1212,8 +1224,8 @@ static string defaultFragmentShaderNoTexColor = STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1229,8 +1241,8 @@ static string defaultFragmentShaderNoTexNoColor  =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1353,7 +1365,7 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 
 	in vec4  position;
 	in vec2  texcoord;
-	in vec4  color_coord;
+	in vec4  color;
 	in vec3  normal;
 	 
 	out vec4 colorVarying;
@@ -1362,7 +1374,7 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 
 	void main()
 	{
-		colorVarying = color_coord;
+		colorVarying = color;
 		texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
 		gl_Position = modelViewProjectionMatrix * position;
 	}
@@ -1373,8 +1385,8 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1393,8 +1405,8 @@ static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1413,8 +1425,8 @@ static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1433,8 +1445,8 @@ static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 	
 	in float depth;
@@ -1453,8 +1465,8 @@ static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1473,8 +1485,8 @@ static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
 static string defaultFragmentShaderNoTexNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;

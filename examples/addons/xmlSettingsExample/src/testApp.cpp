@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
+    ofDisableAntiAliasing();
 
 	//-----------
 	//the string is printed at the top of the app
@@ -227,7 +228,10 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
+    
+    //reset so we don't store extra tags
+    XML.clear();
+    
 	//we can also add tags with the same name.
 	//here we are just adding an empty tag
 	//and when the user drags their mouse

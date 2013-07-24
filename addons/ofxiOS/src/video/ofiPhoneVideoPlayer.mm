@@ -167,7 +167,7 @@ void ofiPhoneVideoPlayer::update() {
 //----------------------------------------
 void ofiPhoneVideoPlayer::play() {
     if(videoPlayer == NULL) {
-        ofLog(OF_LOG_WARNING, "ofiPhoneVideoPlayer::play() - video needs to be first loaded.");
+        ofLogWarning("ofiPhoneVideoPlayer") << "play(): video not loaded";
     }
     
 	[(AVFoundationVideoPlayer *)videoPlayer play];
@@ -440,7 +440,9 @@ ofTexture * ofiPhoneVideoPlayer::getTexture() {
         
         if([(AVFoundationVideoPlayer *)videoPlayer getWidth] > maxTextureSize || 
            [(AVFoundationVideoPlayer *)videoPlayer getHeight] > maxTextureSize) {
-            ofLog(OF_LOG_WARNING, "ofiPhoneVideoPlayer::getTexture() - video image is bigger then supported texture size");
+            ofLogWarning("ofiPhoneVideoPlayer") << "getTexture(): "
+				<< [(AVFoundationVideoPlayer *)videoPlayer getWidth] << "x" << [(AVFoundationVideoPlayer *)videoPlayer getHeight]
+				<< " video image is bigger then max supported texture size " << maxTextureSize;
             return NULL;
         }
         
@@ -582,8 +584,7 @@ void ofiPhoneVideoPlayer::setVolume(float volume) {
         return;
     }
 	if ( volume > 1.0f ){
-		ofLogWarning("ofiPhoneVideoPlayer") << "*** the range of setVolume changed with oF0072 from int [0..100] to float [0..1].";
-		ofLogWarning("ofiPhoneVideoPlayer") << "*** limiting input volume " << volume << " to 1.0f.";
+		ofLogWarning("ofiPhoneVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
 		volume = 1.0f;
 	}
     [((AVFoundationVideoPlayer *)videoPlayer) setVolume:volume];    
