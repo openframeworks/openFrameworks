@@ -50,8 +50,10 @@ static string getMpg123EncodingString(int encoding) {
 	switch(encoding) {
 		case MPG123_ENC_16:
 			return "MPG123_ENC_16";
+#if MPG123_API_VERSION>=36
 		case MPG123_ENC_24:
 			return "MPG123_ENC_24";
+#endif
 		case MPG123_ENC_32:
 			return "MPG123_ENC_32";
 		case MPG123_ENC_8:
@@ -68,8 +70,10 @@ static string getMpg123EncodingString(int encoding) {
 			return "MPG123_ENC_SIGNED";
 		case MPG123_ENC_SIGNED_16:
 			return "MPG123_ENC_SIGNED_16";
+#if MPG123_API_VERSION>=36
 		case MPG123_ENC_SIGNED_24:
 			return "MPG123_ENC_SIGNED_24";
+#endif
 		case MPG123_ENC_SIGNED_32:
 			return "MPG123_ENC_SIGNED_32";
 		case MPG123_ENC_SIGNED_8:
@@ -78,8 +82,10 @@ static string getMpg123EncodingString(int encoding) {
 			return "MPG123_ENC_ULAW_8";
 		case MPG123_ENC_UNSIGNED_16:
 			return "MPG123_ENC_UNSIGNED_16";
+#if MPG123_API_VERSION>=36
 		case MPG123_ENC_UNSIGNED_24:
 			return "MPG123_ENC_UNSIGNED_24";
+#endif
 		case MPG123_ENC_UNSIGNED_32:
 			return "MPG123_ENC_UNSIGNED_32";
 		case MPG123_ENC_UNSIGNED_8:

@@ -316,9 +316,9 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 #endif
 
 
-	//FIXME: hack to make vbos work under raspberry
+	//FIXME: hack to make vbos work under opengles
 	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_OPENGLES
 	if(!ofIsGLProgrammableRenderer()){
 		usage = GL_STATIC_DRAW;
 	}
@@ -361,9 +361,9 @@ void ofVbo::setColorData(const float * color0r, int total, int usage, int stride
 		ofLogWarning("ofVbo") << "setColorData(): bad data, ignoring NULL color float *";
 		return;	
 	}
-	//FIXME: hack to make vbos work under raspberry
+	//FIXME: hack to make vbos work under opengles
 	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_OPENGLES
 	if(!ofIsGLProgrammableRenderer()){
 		usage = GL_STATIC_DRAW;
 	}
@@ -392,9 +392,9 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stri
 		ofLogWarning("ofVbo") << "setNormalData(): bad data, ignoring NULL normal float *";
 		return;	
 	}
-	//FIXME: hack to make vbos work under raspberry
+	//FIXME: hack to make vbos work under opengles
 	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_OPENGLES
 	if(!ofIsGLProgrammableRenderer()){
 		usage = GL_STATIC_DRAW;
 	}
@@ -423,9 +423,9 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int 
 		ofLogWarning("ofVbo") << "setTexCoordData(): bad data, ignoring NULL tex coord float *";
 		return;	
 	}
-	//FIXME: hack to make vbos work under raspberry
+	//FIXME: hack to make vbos work under opengles
 	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_OPENGLES
 	if(!ofIsGLProgrammableRenderer()){
 		usage = GL_STATIC_DRAW;
 	}
@@ -450,9 +450,9 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 		ofLogWarning("ofVbo") << "setIndexData(): bad data, ignoring NULL indices float *";
 		return;
 	}
-	//FIXME: hack to make vbos work under raspberry
+	//FIXME: hack to make vbos work under opengles
 	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_OPENGLES
 	if(!ofIsGLProgrammableRenderer()){
 		usage = GL_STATIC_DRAW;
 	}
@@ -477,9 +477,9 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 		return;
 	}
 
-	//FIXME: hack to make vbos work under raspberry
+	//FIXME: hack to make vbos work under opengles
 	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_OPENGLES
 	if(!ofIsGLProgrammableRenderer()){
 		usage = GL_STATIC_DRAW;
 	}
@@ -811,7 +811,7 @@ void ofVbo::bind(){
 void ofVbo::unbind() {
 	if(supportVAOs){
 		glBindVertexArray(0);
-		if(!ofGetGLProgrammableRenderer()){
+		if(!ofIsGLProgrammableRenderer()){
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			if(bUsingColors){
@@ -827,7 +827,7 @@ void ofVbo::unbind() {
 	}else{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		if(ofGetGLProgrammableRenderer()){
+		if(ofIsGLProgrammableRenderer()){
 			if(bUsingColors){
 				glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
 			}

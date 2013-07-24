@@ -63,6 +63,7 @@ void 		ofSetVerticalSync(bool bSync);
 
 //-------------------------- native window handles
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#include <X11/Xlib.h>
 	Display* ofGetX11Display();
 	Window  ofGetX11Window();
 #endif

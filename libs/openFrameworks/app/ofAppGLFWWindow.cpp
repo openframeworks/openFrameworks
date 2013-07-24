@@ -6,23 +6,27 @@
 #include "ofAppRunner.h"
 
 #ifdef TARGET_LINUX
-#include "ofIcon.h"
-#include "ofImage.h"
-#define GLFW_EXPOSE_NATIVE_X11
-#define GLFW_EXPOSE_NATIVE_GLX
-#include "GLFW/glfw3native.h"
-#include <X11/Xatom.h>
-#include "Poco/URI.h"
+	#include "ofIcon.h"
+	#include "ofImage.h"
+	#define GLFW_EXPOSE_NATIVE_X11
+	#ifndef TARGET_OPENGLES
+		#define GLFW_EXPOSE_NATIVE_GLX
+	#else
+		#define GLFW_EXPOSE_NATIVE_EGL
+	#endif
+	#include "GLFW/glfw3native.h"
+	#include <X11/Xatom.h>
+	#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
-#include <Cocoa/Cocoa.h>
-#include <Carbon/Carbon.h>
-#define GLFW_EXPOSE_NATIVE_COCOA
-#define GLFW_EXPOSE_NATIVE_NSGL
-#include "GLFW/glfw3native.h"
+	#include <Cocoa/Cocoa.h>
+	#include <Carbon/Carbon.h>
+	#define GLFW_EXPOSE_NATIVE_COCOA
+	#define GLFW_EXPOSE_NATIVE_NSGL
+	#include "GLFW/glfw3native.h"
 #elif defined(TARGET_WIN32)
-#define GLFW_EXPOSE_NATIVE_WIN32
-#define GLFW_EXPOSE_NATIVE_WGL
-#include <GLFW/glfw3native.h>
+	#define GLFW_EXPOSE_NATIVE_WIN32
+	#define GLFW_EXPOSE_NATIVE_WGL
+	#include <GLFW/glfw3native.h>
 #endif
 
 //========================================================================
@@ -136,6 +140,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	int requestedMode = screenMode;
 
+	cout << "setting hints" << endl;
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
 	glfwWindowHint(GLFW_BLUE_BITS, bBits);
@@ -175,6 +180,9 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}else{
 		windowP = glfwCreateWindow(w, h, "", NULL, NULL);
+		if(!windowP){
+			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
+		}
 		#ifdef TARGET_LINUX
 			if(!iconSet){
 				ofPixels iconPixels;
