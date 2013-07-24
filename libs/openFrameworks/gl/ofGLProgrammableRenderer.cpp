@@ -1116,6 +1116,8 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	//We do this because its way faster
 	ofDrawBitmapCharacterStart(textString.size());
 
+	int column = 0;
+
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
@@ -1126,7 +1128,13 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 				sx = 0;
 			}
 
-			//glRasterPos2f(x,y + (int)yOffset);
+			column = 0;
+		} else if (textString[c] == '\t'){
+			//move the cursor to the position of the next tab
+			//8 is the default tab spacing in osx terminal and windows	 command line
+			int out = column + 8 - (column % 8);
+			sx += fontSize * (out-column);
+			column = out;
 		} else if (textString[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
@@ -1134,6 +1142,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
 
 			sx += fontSize;
+			column++;
 		}
 	}
 	//We do this because its way faster
