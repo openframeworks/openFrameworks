@@ -10,7 +10,7 @@
 #include "ofImage.h"
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_GLX
-#include "glfw3native.h"
+#include "GLFW/glfw3native.h"
 #include <X11/Xatom.h>
 #include "Poco/URI.h"
 #elif defined(TARGET_OSX)
