@@ -3,6 +3,10 @@
 #include "ofPoint.h"
 #include "ofTypes.h"
 
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#include <X11/Xlib.h>
+#endif
+
 class ofBaseApp;
 
 class ofAppBaseWindow{
