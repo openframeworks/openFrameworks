@@ -416,7 +416,7 @@ EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
 EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
   if(!isWindowInited) {
     ofLogWarning("ofAppEGLWindow") << "getNativeDisplay(): window not initialized, returning NULL";
-    return NULL;
+    return 0;
   }
 
   if(isUsingX11) {
@@ -426,7 +426,7 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
     return (EGLNativeDisplayType)NULL;
         #else
     ofLogNotice("ofAppEGLWindow") << "getNativeDisplay(): no native window type for this system, perhaps try X11?";
-    return NULL;
+    return 0;
         #endif
   }
 }
@@ -499,7 +499,7 @@ bool ofAppEGLWindow::createSurface() {
 
     EGLint result;
 
-    if(display==NULL){
+    if(display==0){
       eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     }else{
       eglDisplay = eglGetDisplay(display);
