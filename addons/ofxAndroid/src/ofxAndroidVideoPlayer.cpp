@@ -170,7 +170,7 @@ bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 	texture.texData.bAllocated = true;
 	reloadTexture();
 
-	oofLogVerbose("ofxAndroidVideoPlayer") << "loadMovie(): movie size: "<< width << "x" << height;
+	ofLogVerbose("ofxAndroidVideoPlayer") << "loadMovie(): movie size: "<< width << "x" << height;
 
 	return true;
 
