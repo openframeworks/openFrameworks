@@ -339,7 +339,7 @@ void ofUpdateBitmapCharacterTexture(){
 static ofPixels myLetterPixels;
 static float widthTex = 8.0f/256.0f;
 static float heightTex = 14.0f/256.0f;
-static ofVboMesh charMesh;
+static ofMesh charMesh;
 static int vC = 0;
 
 //---------------------------------------------------------------------
@@ -380,7 +380,6 @@ static void prepareBitmapTexture(){
 		bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
 
 		charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
-		charMesh.setUsage(GL_STREAM_DRAW);
 		
 	}
 
