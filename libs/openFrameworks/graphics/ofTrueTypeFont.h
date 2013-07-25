@@ -107,7 +107,7 @@ protected:
 
 	ofTexture texAtlas;
 	bool binded;
-	ofVboMesh stringQuads;
+	ofMesh stringQuads;
 
 private:
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
