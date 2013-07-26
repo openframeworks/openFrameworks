@@ -105,26 +105,30 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), vertexData.getVerticesPointer());
 	
-	if(vertexData.getNumNormals() && useNormals){
+	useNormals &= (vertexData.getNumNormals()>0);
+	if(useNormals){
 		glEnableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
 		glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, sizeof(ofVec3f), vertexData.getNormalsPointer());
 	}else{
 		glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
 	}
 	
-	if(vertexData.getNumColors() && useColors){
+	useColors &= (vertexData.getNumColors()>0);
+	if(useColors){
 		glEnableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
 		glVertexAttribPointer(ofShader::COLOR_ATTRIBUTE, 4,GL_FLOAT, GL_FALSE, sizeof(ofFloatColor), vertexData.getColorsPointer());
 	}else{
 		glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
 	}
 
-	if(vertexData.getNumTexCoords() && useTextures){
+	useTextures &= (vertexData.getNumTexCoords()>0);
+	if(useTextures){
 		glEnableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(ofVec2f), vertexData.getTexCoordsPointer());
 	}else{
 		glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 	}
+
 
 	setAttributes(true,useColors,useTextures,useNormals);
 
@@ -177,8 +181,6 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 #endif
 	
 	if (bSmoothHinted) endSmoothing();
-	
-	//finishPrimitiveDraw();
 }
 
 //----------------------------------------------------------
@@ -204,7 +206,7 @@ void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 
 	setAttributes(true,false,false,false);
 
-	GLenum drawMode = GL_LINES;
+	GLenum drawMode = poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP;
 
 	glDrawArrays(drawMode, 0, poly.size());
 
@@ -917,7 +919,6 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
-	//ofLogNotice("ofGLProgrammableRenderer") << "end custom shader";
 	usingCustomShader = false;
 	if(uniqueShader) beginDefaultShader();
 }
