@@ -165,6 +165,7 @@ private:
 	ofMesh triangleMesh;
 	ofMesh rectMesh;
 	ofMesh lineMesh;
+	ofVbo meshVbo;
 #else
 	ofVboMesh circleMesh;
 	ofVboMesh triangleMesh;
