@@ -316,18 +316,6 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 #endif
 
 
-	//FIXME: hack to make vbos work under opengles
-	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_OPENGLES
-	if(!ofIsGLProgrammableRenderer()){
-		usage = GL_STATIC_DRAW;
-	}
-#endif
-
-	if(vert0x == NULL) {
-		ofLogWarning("ofVbo") << "setVertexData(): bad data, ignoring NULL vertex float *";
-		return;	
-	}
 	if(vertId==0) {
 		bAllocated  = true;
 		bUsingVerts = true;
@@ -357,17 +345,6 @@ void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setColorData(const float * color0r, int total, int usage, int stride) {
-	if(color0r == NULL) {
-		ofLogWarning("ofVbo") << "setColorData(): bad data, ignoring NULL color float *";
-		return;	
-	}
-	//FIXME: hack to make vbos work under opengles
-	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_OPENGLES
-	if(!ofIsGLProgrammableRenderer()){
-		usage = GL_STATIC_DRAW;
-	}
-#endif
 	if(colorId==0) {
 		glGenBuffers(1, &(colorId));
 		retain(colorId);
@@ -388,17 +365,6 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
-	if(normal0x == NULL) {
-		ofLogWarning("ofVbo") << "setNormalData(): bad data, ignoring NULL normal float *";
-		return;	
-	}
-	//FIXME: hack to make vbos work under opengles
-	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_OPENGLES
-	if(!ofIsGLProgrammableRenderer()){
-		usage = GL_STATIC_DRAW;
-	}
-#endif
 	if(normalId==0) {
 		glGenBuffers(1, &(normalId));
 		retain(normalId);
@@ -419,17 +385,6 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
-	if(texCoord0x == NULL) {
-		ofLogWarning("ofVbo") << "setTexCoordData(): bad data, ignoring NULL tex coord float *";
-		return;	
-	}
-	//FIXME: hack to make vbos work under opengles
-	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_OPENGLES
-	if(!ofIsGLProgrammableRenderer()){
-		usage = GL_STATIC_DRAW;
-	}
-#endif
 	if(texCoordId==0) {
 		glGenBuffers(1, &(texCoordId));
 		retain(texCoordId);
@@ -446,17 +401,6 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int 
 
 //--------------------------------------------------------------
 void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
-	if(indices == NULL){
-		ofLogWarning("ofVbo") << "setIndexData(): bad data, ignoring NULL indices float *";
-		return;
-	}
-	//FIXME: hack to make vbos work under opengles
-	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_OPENGLES
-	if(!ofIsGLProgrammableRenderer()){
-		usage = GL_STATIC_DRAW;
-	}
-#endif
 	if(indexId==0){
 		glGenBuffers(1, &(indexId));
 		retain(indexId);
@@ -472,18 +416,6 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
-	if(attrib0x == NULL){
-		ofLogWarning("ofVbo") << "setAttributeData(): bad data, ignoring NULL attribute float *";
-		return;
-	}
-
-	//FIXME: hack to make vbos work under opengles
-	// vbos with usage!=GL_STATIC_DRAW don't seem to work without gles2
-#ifdef TARGET_OPENGLES
-	if(!ofIsGLProgrammableRenderer()){
-		usage = GL_STATIC_DRAW;
-	}
-#endif
 	if(attributeIds.find(location)==attributeIds.end()){
 		glGenBuffers(1, &(attributeIds[location]));
 		retain(attributeIds[location]);
