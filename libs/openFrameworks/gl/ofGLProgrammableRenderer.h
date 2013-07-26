@@ -160,12 +160,19 @@ private:
 
 
 	ofPolyline circlePolyline;
-	ofVboMesh circleVbo;
-	ofVboMesh triangleVbo;
-	ofVboMesh rectVbo;
-	ofVboMesh lineVbo;
-	ofVbo vertexDataVbo;
+#ifdef TAREGET_OPENGLES
+	ofMesh circleMesh;
+	ofMesh triangleMesh;
+	ofMesh rectMesh;
+	ofMesh lineMesh;
+#else
+	ofVboMesh circleMesh;
+	ofVboMesh triangleMesh;
+	ofVboMesh rectMesh;
+	ofVboMesh lineMesh;
 	ofVbo meshVbo;
+	ofVbo vertexDataVbo;
+#endif
 
 	void uploadCurrentMatrix();
 
