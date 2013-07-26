@@ -1677,6 +1677,12 @@ void ofGLProgrammableRenderer::setup(){
 		bitmapStringShader().bindDefaults();
 		bitmapStringShader().linkProgram();
 	}
+
+
+	circleVbo.setUsage(GL_STREAM_DRAW);
+	triangleVbo.setUsage(GL_STREAM_DRAW);
+	rectVbo.setUsage(GL_STREAM_DRAW);
+	lineVbo.setUsage(GL_STREAM_DRAW);
 }
 
 
