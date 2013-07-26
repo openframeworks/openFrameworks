@@ -267,7 +267,11 @@ void ofxAssimpModelLoader::loadGLResources(){
         int usage;
         if(getAnimationCount()){
 #ifndef TARGET_OPENGLES
-        	usage = GL_STREAM_DRAW;
+        	if(!ofIsGLProgrammableRenderer()){
+        		usage = GL_STATIC_DRAW;
+        	}else{
+        		usage = GL_STREAM_DRAW;
+        	}
 #else
         	usage = GL_DYNAMIC_DRAW;
 #endif

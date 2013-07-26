@@ -53,7 +53,6 @@ static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
 static ofPath shape;
-static ofVboMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
 static ofVboMesh gradientMesh;
 
@@ -423,6 +422,11 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 	float w = ofGetWidth(), h = ofGetHeight();
 	gradientMesh.clear();
 	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+#ifdef TARGET_OPENGLES
+	if(ofIsGLProgrammableRenderer()) gradientMesh.setUsage(GL_STREAM_DRAW);
+#else
+	gradientMesh.setUsage(GL_STREAM_DRAW);
+#endif
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying
 		// it and just adding the colors whenever the function is called.

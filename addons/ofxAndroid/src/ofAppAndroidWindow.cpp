@@ -240,7 +240,7 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
-	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile)).c_str() + "\"");
+	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
     ofSetDataPathRoot(string(mfile)+"/");
     string appname = env->GetStringUTFChars(app_name, &iscopy);
     __android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("app name: " + appname).c_str());
