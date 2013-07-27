@@ -113,6 +113,28 @@ win_cb:
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_gpu231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_ts231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libzlib.a
+
+vs:
+	ADDON_LIBS =
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_legacy245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_haartraining_engine.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_calib3d245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_features2d245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_objdetect245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_imgproc245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_video245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_highgui245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_ml245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_core245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_flann245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_contrib245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_gpu245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_ts245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_photo245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_nonfree245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_stitching245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/opencv_superres245.lib
+	ADDON_LIBS += libs/opencv/lib/vs/zlib.lib
 	
 linuxarmv6l:
 	ADDON_LIBS =
