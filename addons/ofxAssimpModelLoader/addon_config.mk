@@ -61,6 +61,8 @@ common:
 	# ADDON_LIBS_EXCLUDE =
 	
 linuxarmv6l:
-	ADDON_LDFLAGS = -lassimp
+	ADDON_PKG_CONFIG_LIBRARIES = assimp
+	ADDON_LIBS_EXCLUDE = libs/assimp
+	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
 	
 	
