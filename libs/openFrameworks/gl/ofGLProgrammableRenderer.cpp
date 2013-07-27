@@ -793,10 +793,10 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 
 	bool usingTexture = tex & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
-		currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
+		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
 	if(wasColorsEnabled!=color){
-		currentShader->setUniform1f(USE_COLORS_UNIFORM,color);
+		if(currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM,color);
 	}
 }
 
@@ -811,7 +811,7 @@ void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget){
 
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
-		currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
+		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
 }
 
@@ -826,7 +826,7 @@ void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget){
 
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
-		currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
+		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
 }
 
@@ -861,7 +861,8 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 }
 
 void ofGLProgrammableRenderer::beginDefaultShader(){
-	if(usingCustomShader) return;
+	if(usingCustomShader)	return;
+
 	ofShader * nextShader = NULL;
 
 	if(!uniqueShader){
