@@ -59,9 +59,9 @@ static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
 //----------------------------------------------------------
 static void renderCached3dPrimitive( ofMesh& model ) {
     if(ofGetFill() == OF_OUTLINE) {
-        model.draw(OF_MESH_WIREFRAME);
+        ofGetCurrentRenderer()->draw(model,OF_MESH_WIREFRAME,false,false,true);
     } else {
-        model.draw(OF_MESH_FILL);
+        ofGetCurrentRenderer()->draw(model,OF_MESH_FILL,false,false,true);
     }
 }
 
@@ -346,7 +346,7 @@ ofVec3f ofGetBoxResolution() {
 void ofDrawBox( float x, float y, float z, float width, float height, float depth) {
 	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
     ofPushMatrix();
-    ofTranslate(x, y, z);
+    ofTranslate(x,y,z);
     ofScale(width,height,depth);
     renderCached3dPrimitive( mesh );
     ofPopMatrix();
