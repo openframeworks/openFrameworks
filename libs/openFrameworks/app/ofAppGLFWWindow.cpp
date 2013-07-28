@@ -140,7 +140,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	int requestedMode = screenMode;
 
-	cout << "setting hints" << endl;
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
 	glfwWindowHint(GLFW_BLUE_BITS, bBits);
