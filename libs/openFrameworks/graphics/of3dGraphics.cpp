@@ -8,7 +8,7 @@
 
 #include "of3dGraphics.h"
 #include "ofGraphics.h"
-#include "of3dPrimitives.h"
+#include "ofVboMesh.h"
 #include <map>
 
 
@@ -21,53 +21,43 @@ enum of3dPrimitiveType {
     OF_3D_PRIMITIVE_CYLINDER
 };
 
-//----------------------------------------------------------
-static map<of3dPrimitiveType, of3dPrimitive*>& getCached3dPrimitives() {
-    static map<of3dPrimitiveType, of3dPrimitive*>* primitives = new map<of3dPrimitiveType, of3dPrimitive*>;
-    return *primitives;
-}
 
 //----------------------------------------------------------
 static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
     switch (type) {
-        case OF_3D_PRIMITIVE_PLANE:
-            if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                getCached3dPrimitives().insert( make_pair(type, new ofPlanePrimitive(1.0f, 1.0f, 6, 4)));
-            }
-            break;
-        case OF_3D_PRIMITIVE_SPHERE:
-            if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                getCached3dPrimitives().insert( make_pair(type, new ofSpherePrimitive(1.0f, 20)));
-            }
-            break;
-        case OF_3D_PRIMITIVE_ICO_SPHERE:
-            if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                getCached3dPrimitives().insert( make_pair(type, new ofIcoSpherePrimitive(1.0f, 2)));
-            }
-            break;
-        case OF_3D_PRIMITIVE_BOX:
-            if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                getCached3dPrimitives().insert(make_pair(type, new  ofBoxPrimitive( 1.f, 1.f, 1.f )  ));
-            }
-            break;
-        case OF_3D_PRIMITIVE_CONE:
-            if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end()) {
-                getCached3dPrimitives().insert(make_pair(type, new ofConePrimitive( 1.f, 1.f, 9, 3, 2)));
-            }
-            break;
-        case OF_3D_PRIMITIVE_CYLINDER:
-            if(getCached3dPrimitives().find(type) == getCached3dPrimitives().end() ) {
-                getCached3dPrimitives().insert( make_pair(type, new ofCylinderPrimitive(1.f, 1.f, 8, 4, 2, true)));
-            }
-            break;
-        default:
-            break;
+        case OF_3D_PRIMITIVE_PLANE:{
+        	static ofPlanePrimitive * plane = new ofPlanePrimitive(1.0f, 1.0f, 6, 4);
+        	return *plane;
+        }break;
+        case OF_3D_PRIMITIVE_SPHERE:{
+        	static ofSpherePrimitive * sphere = new ofSpherePrimitive(1.0f, 20);
+        	return *sphere;
+        }break;
+        case OF_3D_PRIMITIVE_ICO_SPHERE:{
+        	static ofIcoSpherePrimitive * icosphere = new ofIcoSpherePrimitive(1.0f, 2);
+        	return *icosphere;
+        }break;
+        case OF_3D_PRIMITIVE_BOX:{
+        	static ofBoxPrimitive * box = new  ofBoxPrimitive( 1.f, 1.f, 1.f );
+        	return *box;
+        }break;
+        case OF_3D_PRIMITIVE_CONE:{
+        	static ofConePrimitive * cone = new ofConePrimitive( 1.f, 1.f, 9, 3, 2 );
+        	return *cone;
+        }break;
+        case OF_3D_PRIMITIVE_CYLINDER:{
+        	static ofCylinderPrimitive * cylinder = new ofCylinderPrimitive(1.f, 1.f, 8, 4, 2, true);
+        	return *cylinder;
+        }break;
+        default:{
+        	static of3dPrimitive * primitive = new of3dPrimitive;
+        	return * primitive;
+        }break;
     }
-    return *getCached3dPrimitives().find(type)->second;
 }
 
 //----------------------------------------------------------
-static void renderCached3dPrimitive( of3dPrimitive& model ) {
+static void renderCached3dPrimitive( ofMesh& model ) {
     if(ofGetFill() == OF_OUTLINE) {
         model.draw(OF_MESH_WIREFRAME);
     } else {
@@ -95,9 +85,11 @@ void ofDrawPlane(float x, float y, float width, float height) {
 
 //----------------------------------------------------------
 void ofDrawPlane(float x, float y, float z, float width, float height) {
+    ofMesh & plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE ).getMesh();
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofDrawPlane(width, height);
+    ofScale(width,height,1.0);
+    renderCached3dPrimitive( plane );
     ofPopMatrix();
 }
 
@@ -108,9 +100,11 @@ void ofDrawPlane(ofPoint& position, float width, float height) {
 
 //----------------------------------------------------------
 void ofDrawPlane( float width, float height ) {
-    of3dPrimitive& plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE );
-    plane.setScale( width, height, 1.0 );
+    ofMesh & plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE ).getMesh();
+    ofPushMatrix();
+    ofScale(width,height,1.0);
     renderCached3dPrimitive( plane );
+    ofPopMatrix();
 }
 
 
@@ -129,9 +123,11 @@ int ofGetSphereResolution() {
 
 //----------------------------------------------------------
 void ofDrawSphere(float x, float y, float z, float radius) {
+	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE ).getMesh();
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofDrawSphere(radius);
+    ofScale(radius,radius,radius);
+    renderCached3dPrimitive( sphere );
     ofPopMatrix();
 }
 
@@ -147,9 +143,11 @@ void ofDrawSphere(const ofPoint& position, float radius) {
 
 //----------------------------------------------------------
 void ofDrawSphere(float radius) {
-    of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE );
-    sphere.setScale( radius, radius, radius );
+	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE ).getMesh();
+    ofPushMatrix();
+    ofScale(radius,radius,radius);
     renderCached3dPrimitive( sphere );
+    ofPopMatrix();
 }
 
 // Deprecated methods - for compatability with previous versions of OF //
@@ -189,9 +187,11 @@ int ofGetIcoSphereResolution() {
 
 //----------------------------------------------------------
 void ofDrawIcoSphere(float x, float y, float z, float radius) {
+	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE ).getMesh();
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofDrawIcoSphere(radius);
+    ofScale(radius,radius,radius);
+    renderCached3dPrimitive( sphere );
     ofPopMatrix();
 }
 
@@ -207,9 +207,11 @@ void ofDrawIcoSphere(const ofPoint& position, float radius) {
 
 //----------------------------------------------------------
 void ofDrawIcoSphere(float radius) {
-    of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE );
-    sphere.setScale( radius );
+	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE ).getMesh();
+    ofPushMatrix();
+    ofScale(radius,radius,radius);
     renderCached3dPrimitive( sphere );
+    ofPopMatrix();
 }
 
 
@@ -233,9 +235,11 @@ void ofDrawCylinder(float x, float y, float radius, float height) {
 
 //----------------------------------------------------------
 void ofDrawCylinder(float x, float y, float z, float radius, float height) {
+	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER ).getMesh();
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofDrawCylinder(radius, height);
+    ofScale(radius,radius,radius);
+    renderCached3dPrimitive( mesh );
     ofPopMatrix();
 }
 
@@ -246,9 +250,11 @@ void ofDrawCylinder(const ofPoint& position, float radius, float height) {
 
 //----------------------------------------------------------
 void ofDrawCylinder(float radius, float height) {
-    of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER );
-    mesh.setScale( radius, height, radius );
+	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER ).getMesh();
+    ofPushMatrix();
+    ofScale(radius,radius,radius);
     renderCached3dPrimitive( mesh );
+    ofPopMatrix();
 }
 
 
@@ -268,9 +274,11 @@ ofVec3f ofGetConeResolution() {
 
 //----------------------------------------------------------
 void ofDrawCone(float x, float y, float z, float radius, float height) {
+	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofDrawCone(radius, height);
+    ofScale(radius,radius,radius);
+    renderCached3dPrimitive( mesh );
     ofPopMatrix();
 }
 
@@ -286,9 +294,11 @@ void ofDrawCone(const ofPoint& position, float radius, float height) {
 
 //----------------------------------------------------------
 void ofDrawCone(float radius, float height) {
-    of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE );
-    mesh.setScale( radius, height, radius );
+	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
+    ofPushMatrix();
+    ofScale(radius,radius,radius);
     renderCached3dPrimitive( mesh );
+    ofPopMatrix();
 }
 
 //----------------------------------------------------------
@@ -334,9 +344,11 @@ ofVec3f ofGetBoxResolution() {
 
 //----------------------------------------------------------
 void ofDrawBox( float x, float y, float z, float width, float height, float depth) {
+	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
     ofPushMatrix();
     ofTranslate(x, y, z);
-    ofDrawBox( width, height, depth );
+    ofScale(width,height,depth);
+    renderCached3dPrimitive( mesh );
     ofPopMatrix();
 }
 
@@ -362,9 +374,11 @@ void ofDrawBox(float size) {
 
 //----------------------------------------------------------
 void ofDrawBox( float width, float height, float depth ) {
-    of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX );
-    mesh.setScale( width, height, depth );
+	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
+    ofPushMatrix();
+    ofScale(width,height,depth);
     renderCached3dPrimitive( mesh );
+    ofPopMatrix();
 }
 
 // deprecated methods //
