@@ -1,4 +1,5 @@
 #include "ofRtAudioSoundStream.h"
+#include "ofConstants.h"
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 #include "ofSoundStream.h"
@@ -90,7 +91,11 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-		audio = ofPtr<RtAudio>(new RtAudio());
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+		audio = ofPtr<RtAudio>(new RtAudio(RtAudio::LINUX_PULSE));
+#else
+		audio = ofPtr<RtAudio>(new RtAudio);
+#endif
 	}	catch (RtError &error) {
 		error.printMessage();
 		return false;

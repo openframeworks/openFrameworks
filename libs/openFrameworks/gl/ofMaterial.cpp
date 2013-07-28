@@ -37,23 +37,23 @@ void ofMaterial::setShininess(float nShininess) {
 	shininess = nShininess;
 }
 
-float ofMaterial::getShininess(){
+float &ofMaterial::getShininess(){
 	return shininess;
 }
 
-ofFloatColor ofMaterial::getDiffuseColor() {
+ofFloatColor &ofMaterial::getDiffuseColor() {
 	return diffuse;
 }
 
-ofFloatColor ofMaterial::getAmbientColor() {
+ofFloatColor &ofMaterial::getAmbientColor() {
 	return ambient;
 }
 
-ofFloatColor ofMaterial::getSpecularColor() {
+ofFloatColor &ofMaterial::getSpecularColor() {
 	return specular;
 }
 
-ofFloatColor ofMaterial::getEmissiveColor() {
+ofFloatColor &ofMaterial::getEmissiveColor() {
 	return emissive;
 }
 
