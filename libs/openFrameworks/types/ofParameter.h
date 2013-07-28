@@ -91,7 +91,6 @@ public:
 
 	void makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom);
 
-protected:
 	virtual ofReadOnlyParameter<ParameterType,Friend> & operator=(const ofReadOnlyParameter<ParameterType,Friend> & v);
 	virtual const ParameterType & operator=(const ParameterType & v);
 
@@ -122,7 +121,7 @@ protected:
 	template<typename OtherType>
 	ofReadOnlyParameter<ParameterType,Friend> & operator>>=(const OtherType & v);
 
-
+protected:
 	virtual ofReadOnlyParameter<ParameterType,Friend> & set(ParameterType v);
 	virtual ofReadOnlyParameter<ParameterType,Friend> & set(string name, ParameterType value);
 	virtual ofReadOnlyParameter<ParameterType,Friend> & set(string name, ParameterType value, ParameterType min, ParameterType max);
