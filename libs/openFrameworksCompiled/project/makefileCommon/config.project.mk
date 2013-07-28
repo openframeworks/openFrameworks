@@ -212,8 +212,13 @@ OF_CORE_LIBS += $(PLATFORM_SHARED_LIBRARIES)
 
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
+$(info CORE_PKG_CONFIG_LIBRARIES=$(CORE_PKG_CONFIG_LIBRARIES))
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	ifeq ($(CROSS_COMPILING),1)
+		OF_CORE_LIBS += $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	else
+		OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	endif
 endif
 
 # 4. Add the libraries defined in the platform config files.
@@ -221,7 +226,11 @@ OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 
 # add the list of addon includes
 ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)" --cflags)
+	ifeq ($(CROSS_COMPILING),1)
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+	else
+		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+	endif
 endif
 
 ################################################################################
