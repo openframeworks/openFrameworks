@@ -28,11 +28,11 @@ public:
 	void setEmissiveColor(ofFloatColor oEmmisive);
 	void setShininess(float nShininess);
 
-	ofFloatColor &getDiffuseColor();
-	ofFloatColor &getAmbientColor();
-	ofFloatColor &getSpecularColor();
-	ofFloatColor &getEmissiveColor();
-	float &getShininess();
+	ofFloatColor getDiffuseColor();
+	ofFloatColor getAmbientColor();
+	ofFloatColor getSpecularColor();
+	ofFloatColor getEmissiveColor();
+	float getShininess();
 	
 	// apply the material
 	virtual void begin();
