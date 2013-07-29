@@ -199,49 +199,22 @@ bool compare_cps(const charProps & c1, const charProps & c2){
 
 #ifdef TARGET_OSX
 static string osxFontPathByName( string fontname ){
-    FSRef ref;
-    unsigned char path[2048];
+	CFStringRef targetName = CFStringCreateWithCString(NULL, fontname.c_str(), kCFStringEncodingUTF8);
+	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
+	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
+	string fontPath = "";
+	
+	if(targetURL) {
+		UInt8 buffer[PATH_MAX];
+		CFURLGetFileSystemRepresentation(targetURL, true, buffer, PATH_MAX);
+		fontPath = string((char *)buffer);
+		CFRelease(targetURL);
+	}
+	
+	CFRelease(targetName);
+	CFRelease(targetDescriptor);
 
-    CFStringRef  cfFontName;
-    ATSFontRef   atsFontRef;
-
-
-    if( fontname == "" )
-        return "";
-
-    cfFontName = CFStringCreateWithCString( kCFAllocatorDefault, fontname.c_str(), kCFStringEncodingUTF8 );
-
-    atsFontRef = ATSFontFindFromName( cfFontName, kATSOptionFlagsIncludeDisabledMask );
-
-    if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL ){
-        atsFontRef = ATSFontFamilyFindFromName( cfFontName, kATSOptionFlagsDefault );
-
-        if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
-        {
-            atsFontRef = ATSFontFindFromPostScriptName( cfFontName, kATSOptionFlagsDefault );
-
-            if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
-            {
-                ofLogError("ofTrueTypeFont") << "osxFontPathByName(): couldn't find path \"" << fontname << "\"";
-                CFRelease( cfFontName );
-                return "";
-            }
-        }
-    }
-    CFRelease( cfFontName );
-
-    if (ATSFontGetFileReference( atsFontRef, &ref ) != noErr){
-        ofLogError("ofTrueTypeFont") << "osxFontPathByName(): couldn't get file ref for path \"" << fontname << "\"";
-        return "";
-    }
-
-    if (FSRefMakePath(&ref, path, sizeof(path)) != noErr){
-        ofLogError("ofTrueTypeFont") << "osxFontPathByName(): failure when getting path \"" << fontname << "\" from FSRef";
-        return "";
-    }
-
-
-    return (char*)path;
+	return fontPath;
 }
 #endif
 
@@ -411,7 +384,6 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	border			= 3;
 	//visibleBorder	= 2;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
-	stringQuads.setUsage(GL_STREAM_DRAW);
 	binded = false;
 }
 
@@ -447,8 +419,8 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
-			fontname = "Helvetica";
-			fontID = 3;
+			fontname = "Helvetica Neue";
+			fontID = 4;
 		}else if(fontname==OF_TTF_SERIF){
 			fontname = "Times New Roman";
 		}else if(fontname==OF_TTF_MONO){

@@ -154,7 +154,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
         #if defined(TARGET_RASPBERRY_PI)
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,1);
+			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,0);
 		#elif defined(TARGET_LINUX) || defined(TARGET_OSX)
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
 		#endif
@@ -468,3 +468,53 @@ int ofGetWindowMode(){
 void ofSetVerticalSync(bool bSync){
 	window->setVerticalSync(bSync);
 }
+
+//-------------------------- native window handles
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+Display* ofGetX11Display(){
+	return window->getX11Display();
+}
+
+Window  ofGetX11Window(){
+	return window->getX11Window();
+}
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+GLXContext ofGetGLXContext(){
+	return window->getGLXContext();
+}
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+EGLDisplay ofGetEGLDisplay(){
+	return window->getEGLDisplay();
+}
+
+EGLContext ofGetEGLContext(){
+	return window->getEGLContext();
+}
+EGLSurface ofGetEGLSurface(){
+	return window->getEGLSurface();
+}
+#endif
+
+#if defined(TARGET_OSX)
+void * ofGetNSGLContext(){
+	return window->getNSGLContext();
+}
+
+void * ofGetCocoaWindow(){
+	return window->getCocoaWindow();
+}
+#endif
+
+#if defined(TARGET_WIN32)
+HGLRC ofGetWGLContext(){
+	return window->getWGLContext();
+}
+
+HWND ofGetWin32Window(){
+	return window->getWin32Window();
+}
+#endif

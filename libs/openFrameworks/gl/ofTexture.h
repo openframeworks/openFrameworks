@@ -198,5 +198,5 @@ protected:
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-	ofVboMesh quad;
+	ofMesh quad;
 };

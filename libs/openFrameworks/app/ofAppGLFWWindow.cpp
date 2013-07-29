@@ -2,25 +2,31 @@
 #include "ofEvents.h"
 
 #include "ofBaseApp.h"
-#include "ofMain.h"
 #include "ofGLProgrammableRenderer.h"
+#include "ofAppRunner.h"
 
 #ifdef TARGET_LINUX
-#include "ofIcon.h"
-#define GLFW_EXPOSE_NATIVE_X11
-#define GLFW_EXPOSE_NATIVE_GLX
-#include "glfw3native.h"
-#include <X11/Xatom.h>
-#include "Poco/URI.h"
+	#include "ofIcon.h"
+	#include "ofImage.h"
+	#define GLFW_EXPOSE_NATIVE_X11
+	#ifndef TARGET_OPENGLES
+		#define GLFW_EXPOSE_NATIVE_GLX
+	#else
+		#define GLFW_EXPOSE_NATIVE_EGL
+	#endif
+	#include "GLFW/glfw3native.h"
+	#include <X11/Xatom.h>
+	#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
-#include <Cocoa/Cocoa.h>
-#define GLFW_EXPOSE_NATIVE_COCOA
-#define GLFW_EXPOSE_NATIVE_NSGL
-#include "GLFW/glfw3native.h"
+	#include <Cocoa/Cocoa.h>
+	#include <Carbon/Carbon.h>
+	#define GLFW_EXPOSE_NATIVE_COCOA
+	#define GLFW_EXPOSE_NATIVE_NSGL
+	#include "GLFW/glfw3native.h"
 #elif defined(TARGET_WIN32)
-#define GLFW_EXPOSE_NATIVE_WIN32
-#define GLFW_EXPOSE_NATIVE_WGL
-#include <GLFW/glfw3native.h>
+	#define GLFW_EXPOSE_NATIVE_WIN32
+	#define GLFW_EXPOSE_NATIVE_WGL
+	#include <GLFW/glfw3native.h>
 #endif
 
 //========================================================================
@@ -140,6 +146,10 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	glfwWindowHint(GLFW_ALPHA_BITS, aBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
+#ifdef TARGET_LINUX
+	// start the window hidden so we can set the icon before it shows
+	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
+#endif
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS,bDoubleBuffered?1:0);
 #endif
@@ -169,6 +179,23 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}else{
 		windowP = glfwCreateWindow(w, h, "", NULL, NULL);
+		if(!windowP){
+			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
+		}
+		#ifdef TARGET_LINUX
+			if(!iconSet){
+				ofPixels iconPixels;
+				#ifdef DEBUG
+					iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
+					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+				#else
+					iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+				#endif
+				setWindowIcon(iconPixels);
+				glfwShowWindow(windowP);
+			}
+		#endif
 		if(requestedMode==OF_FULLSCREEN){
 			setFullscreen(true);
 		}
@@ -218,19 +245,6 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb);
 
-#ifdef TARGET_LINUX
-    if(!iconSet){
-		ofPixels iconPixels;
-		#ifdef DEBUG
-			iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-		#else
-			iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-		#endif
-		setWindowIcon(iconPixels);
-    }
-#endif
 }
 
 #ifdef TARGET_LINUX
@@ -244,62 +258,20 @@ void ofAppGLFWWindow::setWindowIcon(const string & path){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
-
-	GLXDrawable m_window = glfwGetX11Window(windowP);
-	Display* m_display = glfwGetX11Display();
-
-	int attributes[40];
-	int i=0;
-	attributes[i++] = GLX_RGBA;
-	attributes[i++] = GLX_DOUBLEBUFFER;
-	attributes[i++] = GLX_RED_SIZE; attributes[i++] = 1;
-	attributes[i++] = GLX_BLUE_SIZE; attributes[i++] = 1;
-	attributes[i++] = GLX_GREEN_SIZE; attributes[i++] = 1;
-	attributes[i++] = GLX_DEPTH_SIZE; attributes[i++] = 1;
-	attributes[i] = None;
-
-	XVisualInfo * m_visual = glXChooseVisual(m_display, DefaultScreen(m_display), attributes);
-	XWMHints *xwmhints = XAllocWMHints();
-	XImage *x_image, *mask_image;
-	Pixmap icon_pixmap, mask_pixmap;
-	icon_pixmap = XCreatePixmap(m_display, m_window, iconPixels.getWidth(), iconPixels.getHeight(), 24);
-	mask_pixmap = XCreatePixmap(m_display, m_window, iconPixels.getHeight(), iconPixels.getHeight(), 1);
-	GC gc_icon = XCreateGC(m_display, icon_pixmap, 0, NULL);
-	GC gc_mask = XCreateGC(m_display, mask_pixmap, 0, NULL);
-
-	x_image = XCreateImage( m_display, m_visual->visual, 24, ZPixmap, 0, NULL, iconPixels.getWidth(), iconPixels.getHeight(), 32, 0 );
-	mask_image = XCreateImage( m_display, m_visual->visual, 1, ZPixmap, 0, NULL, iconPixels.getWidth(), iconPixels.getHeight(), 8, 0);
-
-	x_image->data = (char *)malloc(x_image->bytes_per_line * iconPixels.getHeight());
-	mask_image->data = (char *)malloc( mask_image->bytes_per_line * iconPixels.getHeight());
-
-	/* copy the OF icon into the XImage */
-	int px, py;
-	for (px=0; px<iconPixels.getWidth(); px++) {
-		for (py=0; py<iconPixels.getHeight(); py++) {
-			/* mask out pink */
-			int i = py*iconPixels.getWidth()*4+px*4;
-			XPutPixel(x_image, px, py, (iconPixels[i]<<16)+(iconPixels[i+1]<<8)+iconPixels[i+2] );
-			XPutPixel(mask_image, px, py, iconPixels[i+3] );
-		}
+	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
+	unsigned long * buffer = new unsigned long[length];
+	buffer[0]=iconPixels.getWidth();
+	buffer[1]=iconPixels.getHeight();
+	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
+		buffer[i+2] = iconPixels[i*4+3]<<24;
+		buffer[i+2] += iconPixels[i*4]<<16;
+		buffer[i+2] += iconPixels[i*4+1]<<8;
+		buffer[i+2] += iconPixels[i*4];
 	}
 
-	XPutImage(m_display, icon_pixmap, gc_icon, x_image, 0, 0, 0, 0, iconPixels.getWidth(), iconPixels.getHeight());
-	XPutImage(m_display, mask_pixmap, gc_mask, mask_image, 0, 0, 0, 0, iconPixels.getWidth(), iconPixels.getHeight());
-
-	// Now the pixmap is ok to assign to the window as a hint
-	xwmhints->icon_pixmap = icon_pixmap;
-	xwmhints->icon_mask = mask_pixmap;
-	XFreeGC (m_display, gc_icon);
-	XFreeGC (m_display, gc_mask);
-	XDestroyImage( x_image ); /* frees x_image->data too */
-	XDestroyImage( mask_image );
-
-	xwmhints->initial_state = NormalState;
-	xwmhints->input= True;
-	xwmhints->flags= InputHint|IconPixmapHint|IconMaskHint|StateHint;
-	XSetWMHints(m_display, m_window, xwmhints );
-	XFree(xwmhints);
+	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
+						 PropModeReplace,  (const unsigned char*)buffer,  length);
+	XFlush(getX11Display());
 }
 #endif
 
@@ -546,7 +518,7 @@ void ofAppGLFWWindow::disableSetupScreen(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
-    int curWindowMode  = ofGetWindowMode(); 
+    int curWindowMode  = windowMode;
 
 	if (fullscreen){
 		windowMode = OF_FULLSCREEN;
@@ -850,13 +822,15 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
 	ofLogVerbose("ofAppGLFWWindow") << "mouse button: " << button;
 
+#ifdef TARGET_OSX
     //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
-    if( ofGetKeyPressed(OF_KEY_CTRL) && button == GLFW_MOUSE_BUTTON_LEFT){
+    if( ofGetKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
         button = GLFW_MOUSE_BUTTON_RIGHT; 
     }
     if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
         button = GLFW_MOUSE_BUTTON_MIDDLE; 
     }
+#endif
 
 	switch(button){
 	case GLFW_MOUSE_BUTTON_LEFT:
@@ -1094,3 +1068,55 @@ void ofAppGLFWWindow::iconify(bool bIconify){
 	else
 		glfwRestoreWindow(windowP);
 }
+
+
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+Display* ofAppGLFWWindow::getX11Display(){
+	return glfwGetX11Display();
+}
+
+Window ofAppGLFWWindow::getX11Window(){
+	return glfwGetX11Window(windowP);
+}
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+GLXContext ofAppGLFWWindow::getGLXContext(){
+	return glfwGetGLXContext(windowP);
+}
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+EGLDisplay ofAppGLFWWindow::getEGLDisplay(){
+	return glfwGetEGLDisplay();
+}
+
+EGLContext ofAppGLFWWindow::getEGLContext(){
+	return glfwGetEGLContext(windowP);
+}
+
+EGLSurface ofAppGLFWWindow::getEGLSurface(){
+	return glfwGetEGLSurface(windowP);
+}
+#endif
+
+#if defined(TARGET_OSX)
+void * ofAppGLFWWindow::getNSGLContext(){
+	return glfwGetNSGLContext(windowP);
+}
+
+void * ofAppGLFWWindow::getCocoaWindow(){
+	return glfwGetCocoaWindow(windowP);
+}
+#endif
+
+#if defined(TARGET_WIN32)
+HGLRC ofAppGLFWWindow::getWGLContext(){
+	return glfwGetWGLContext(windowP);
+}
+
+HWND ofAppGLFWWindow::getWin32Window(){
+	return glfwGetWin32Window(windowP);
+}
+
+#endif

@@ -18,7 +18,7 @@ GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
 echo "detecting latest gstreamer version"
 apt-cache show -n libgstreamer1.0-dev
 exit_code=$?
-if [ $exit_code == 0 ]; then
+if [ $exit_code = 0 ]; then
     echo selecting gstreamer 1.0
     GSTREAMER_VERSION=1.0
     GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-libav
@@ -43,16 +43,3 @@ if [ $exit_code != 0 ]; then
 	exit $exit_code
 fi
 
-
-cd ..
-./compileOF.sh
-exit_code=$?
-if [ $exit_code != 0 ]; then
-  exit $exit_code
-fi
-
-./compilePG.sh
-exit_code=$?
-if [ $exit_code != 0 ]; then
-  exit $exit_code
-fi

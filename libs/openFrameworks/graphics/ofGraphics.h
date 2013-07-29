@@ -124,6 +124,10 @@ void ofDisableAlphaBlending();
 void ofEnableSmoothing();
 void ofDisableSmoothing();
 
+// antialiasing
+void ofEnableAntiAliasing();
+void ofDisableAntiAliasing();
+
 // drawing style - combines color, fill, blending and smoothing
 ofStyle ofGetStyle();
 void ofSetStyle(ofStyle style);

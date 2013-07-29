@@ -26,9 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef _ofxOscMESSAGE_H
-#define _ofxOscMESSAGE_H
+#pragma once
 
 #include "ofxOscArg.h"
 #include <vector>
@@ -94,5 +92,3 @@ private:
 
 
 };
-
-#endif

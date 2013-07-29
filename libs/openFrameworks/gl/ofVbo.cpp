@@ -315,10 +315,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 	}
 #endif
 
-	if(vert0x == NULL) {
-		ofLogWarning("ofVbo") << "setVertexData(): bad data, ignoring NULL vertex float *";
-		return;	
-	}
+
 	if(vertId==0) {
 		bAllocated  = true;
 		bUsingVerts = true;
@@ -332,7 +329,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 
 	vertUsage = usage;
 	vertSize = numCoords;
-	vertStride = stride;
+	vertStride = stride==0?3*sizeof(float):stride;
 	totalVerts = total;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
@@ -348,17 +345,13 @@ void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setColorData(const float * color0r, int total, int usage, int stride) {
-	if(color0r == NULL) {
-		ofLogWarning("ofVbo") << "setColorData(): bad data, ignoring NULL color float *";
-		return;	
-	}
 	if(colorId==0) {
 		glGenBuffers(1, &(colorId));
 		retain(colorId);
 		enableColors();
 	}
 	colorUsage = usage;
-	colorStride = stride;
+	colorStride = stride==0?4*sizeof(float):stride;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, colorId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, color0r, usage);
@@ -372,17 +365,13 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
-	if(normal0x == NULL) {
-		ofLogWarning("ofVbo") << "setNormalData(): bad data, ignoring NULL normal float *";
-		return;	
-	}
 	if(normalId==0) {
 		glGenBuffers(1, &(normalId));
 		retain(normalId);
 		enableNormals();
 	}
 	normUsage = usage;
-	normalStride = stride;
+	normalStride = stride==0?3*sizeof(float):stride;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, normalId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, normal0x, usage);
@@ -396,17 +385,13 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
-	if(texCoord0x == NULL) {
-		ofLogWarning("ofVbo") << "setTexCoordData(): bad data, ignoring NULL tex coord float *";
-		return;	
-	}
 	if(texCoordId==0) {
 		glGenBuffers(1, &(texCoordId));
 		retain(texCoordId);
 		enableTexCoords();
 	}
 	texUsage = usage;
-	texCoordStride = stride;
+	texCoordStride = stride==0?2*sizeof(float):stride;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, texCoord0x, usage);
@@ -416,10 +401,6 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int 
 
 //--------------------------------------------------------------
 void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
-	if(indices == NULL){
-		ofLogWarning("ofVbo") << "setIndexData(): bad data, ignoring NULL indices float *";
-		return;
-	}
 	if(indexId==0){
 		glGenBuffers(1, &(indexId));
 		retain(indexId);
@@ -435,11 +416,6 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
-	if(attrib0x == NULL){
-		ofLogWarning("ofVbo") << "setAttributeData(): bad data, ignoring NULL attribute float *";
-		return;
-	}
-
 	if(attributeIds.find(location)==attributeIds.end()){
 		glGenBuffers(1, &(attributeIds[location]));
 		retain(attributeIds[location]);
@@ -661,13 +637,12 @@ void ofVbo::bind(){
 				retainVAO(vaoID);
 			}else{
 				supportVAOs = false;
-				ofLogWarning("ofVbo") << "bind(): error allocating VAO, disabling VAO support";
+				ofLogVerbose("ofVbo") << "bind(): error allocating VAO, disabling VAO support";
 			}
 		}
 
 		glBindVertexArray(vaoID);
 	}
-
 
 	if(vaoChanged || !supportVAOs){
 		bool programmable = ofIsGLProgrammableRenderer();
@@ -768,10 +743,23 @@ void ofVbo::bind(){
 void ofVbo::unbind() {
 	if(supportVAOs){
 		glBindVertexArray(0);
+		if(!ofIsGLProgrammableRenderer()){
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			if(bUsingColors){
+				glDisableClientState(GL_COLOR_ARRAY);
+			}
+			if(bUsingNormals){
+				glDisableClientState(GL_NORMAL_ARRAY);
+			}
+			if(bUsingTexCoords){
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
+		}
 	}else{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		if(ofGetGLProgrammableRenderer()){
+		if(ofIsGLProgrammableRenderer()){
 			if(bUsingColors){
 				glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
 			}

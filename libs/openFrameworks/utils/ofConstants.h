@@ -3,8 +3,8 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 7
-#define OF_VERSION_PATCH 4
+#define OF_VERSION_MINOR 8
+#define OF_VERSION_PATCH 0
 
 //-------------------------------
 
@@ -296,9 +296,7 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------ soundstream
 // check if any soundstream api is defined from the compiler
 #if !defined(OF_SOUNDSTREAM_PORTAUDIO) && !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID)
-	#ifdef TARGET_LINUX
-		#define OF_SOUNDSTREAM_PORTAUDIO
-	#elif defined(TARGET_WIN32) || defined(TARGET_OSX)
+	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
 		#define OF_SOUNDSTREAM_RTAUDIO
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
@@ -546,10 +544,6 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
     #define OF_KEY_TAB          9
-	#define OF_KEY_CTRL			0x0200
-	#define OF_KEY_ALT			0x0300
-	#define OF_KEY_SHIFT		0x0400
-	#define OF_KEY_SUPER		0x0500
     #define OF_KEY_COMMAND      OF_KEY_SUPER
     
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
@@ -588,14 +582,18 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_SHIFT	(109 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_CONTROL	(110 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_ALT		(111 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_SUPER	(112 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_SHIFT	(113 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_CONTROL (114 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_ALT	(115 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_SUPER	(116 | OF_KEY_MODIFIER)
+	#define OF_KEY_CONTROL		(0x200 | OF_KEY_MODIFIER)
+	#define OF_KEY_ALT			(0x400 | OF_KEY_MODIFIER)
+	#define OF_KEY_SHIFT		(0x800 | OF_KEY_MODIFIER)
+	#define OF_KEY_SUPER		(0x1000 | OF_KEY_MODIFIER)
+	#define OF_KEY_LEFT_SHIFT	(0x1 | OF_KEY_SHIFT)
+	#define OF_KEY_RIGHT_SHIFT	(0x2 | OF_KEY_SHIFT)
+	#define OF_KEY_LEFT_CONTROL	(0x1 | OF_KEY_CONTROL)
+	#define OF_KEY_RIGHT_CONTROL (0x2 | OF_KEY_CONTROL)
+	#define OF_KEY_LEFT_ALT		(0x1 | OF_KEY_ALT)
+	#define OF_KEY_RIGHT_ALT	(0x2 | OF_KEY_ALT)
+	#define OF_KEY_LEFT_SUPER	(0x1 | OF_KEY_SUPER)
+	#define OF_KEY_RIGHT_SUPER	(0x2 | OF_KEY_SUPER)
 	#define OF_KEY_LEFT_COMMAND OF_KEY_LEFT_SUPER
 	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
 // not sure what to do in the case of non-glut apps....

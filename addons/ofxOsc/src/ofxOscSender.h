@@ -26,10 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-
-#ifndef _ofxOscSENDER_H
-#define _ofxOscSENDER_H
+#pragma once
 
 /**
 
@@ -78,5 +75,3 @@ private:
 
 	UdpTransmitSocket* socket;
 };
-
-#endif

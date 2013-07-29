@@ -355,6 +355,8 @@ public:
 	virtual void setCircleResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
+	virtual void enableAntiAliasing(){};
+	virtual void disableAntiAliasing(){};
 
 	// color options
 	virtual void setColor(int r, int g, int b){}; // 0-255

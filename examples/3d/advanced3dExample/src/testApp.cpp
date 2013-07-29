@@ -305,7 +305,7 @@ void testApp::drawScene(int iCameraDraw){
 
 		ofNoFill();
 		// i.e. a box -1, -1, -1 to +1, +1, +1
-		ofBox(0, 0, 0, 2.0f);
+		ofDrawBox(0, 0, 0, 2.0f);
 		//
 		//--
 

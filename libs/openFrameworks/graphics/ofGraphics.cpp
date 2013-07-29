@@ -53,7 +53,6 @@ static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
 static ofPath shape;
-static ofVboMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
 static ofVboMesh gradientMesh;
 
@@ -423,6 +422,11 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 	float w = ofGetWidth(), h = ofGetHeight();
 	gradientMesh.clear();
 	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+#ifdef TARGET_OPENGLES
+	if(ofIsGLProgrammableRenderer()) gradientMesh.setUsage(GL_STREAM_DRAW);
+#else
+	gradientMesh.setUsage(GL_STREAM_DRAW);
+#endif
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying
 		// it and just adding the colors whenever the function is called.
@@ -546,7 +550,7 @@ void ofSetLineWidth(float lineWidth){
 //----------------------------------------------------------
 void ofSetDepthTest(bool depthTest){
 	renderer->setDepthTest(depthTest);
-	currentStyle.depthTest = depthTest;
+	//currentStyle.depthTest = depthTest;
 }
 
 //----------------------------------------------------------
@@ -673,6 +677,16 @@ void ofSetPolyMode(ofPolyWindingMode mode){
 }
 
 //----------------------------------------
+void ofEnableAntiAliasing(){
+	renderer->enableAntiAliasing();
+}
+
+//----------------------------------------
+void ofDisableAntiAliasing(){
+	renderer->disableAntiAliasing();
+}
+
+//----------------------------------------
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
@@ -695,7 +709,7 @@ void ofSetStyle(ofStyle style){
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
 	
-	ofSetDepthTest(style.depthTest);
+	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
 
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
