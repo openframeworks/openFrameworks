@@ -137,6 +137,7 @@ PLATFORM_CFLAGS += -gdwarf-2
 endif
 
 PLATFORM_CFLAGS += -x objective-c++
+PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
 
 
 ################################################################################
@@ -190,8 +191,8 @@ PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
@@ -295,6 +296,8 @@ ifneq ($(MAC_OS_SDK),10.6)
 PLATFORM_FRAMEWORKS += CoreVideo
 PLATFORM_FRAMEWORKS += Cocoa
 endif
+
+PLATFORM_FRAMEWORKS += GStreamer
 
 ##########################################################################################
 # PLATFORM FRAMEWORK SEARCH PATHS
