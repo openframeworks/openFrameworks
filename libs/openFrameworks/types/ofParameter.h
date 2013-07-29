@@ -53,10 +53,6 @@ private:
 };
 
 
-template <class T>
-struct FriendMaker {typedef T Type;};
-
-
 template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
@@ -447,6 +443,11 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom)
 	obj = mom.obj;
 }
 
+
+
+template <typename T>
+struct FriendMaker {typedef T Type;};
+
 template<typename ParameterType,typename Friend>
 class ofReadOnlyParameter: public ofAbstractParameter{
 public:
@@ -474,7 +475,7 @@ public:
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method);
 
-private:
+protected:
 	void setName(string name);
 	void enableEvents();
 	void disableEvents();
@@ -516,6 +517,7 @@ private:
 
 
 	ofReadOnlyParameter<ParameterType,Friend>& set(ParameterType v);
+	
 	ofReadOnlyParameter<ParameterType,Friend>& set(string name, ParameterType value);
 	ofReadOnlyParameter<ParameterType,Friend>& set(string name, ParameterType value, ParameterType min, ParameterType max);
 
@@ -526,14 +528,7 @@ private:
 
 
 	ofParameter<ParameterType> parameter;
-	// friending a typedef is a c++11 feature and not supported by all compilers
-	// difference compilers also require different syntax. for more discussion see
-	// https://github.com/openframeworks/openFrameworks/issues/1924
-#if defined(TARGET_OF_IPHONE) || (_MSC_VER)
-	friend typename FriendMaker<Friend>::Type;
-#elif ((__GNUC__ == 4 && __GNUC_MINOR__ > 2) || __GNUC__ > 4) || defined(__clang__)
-	friend class FriendMaker<Friend>::Type;
-#endif
+	
 	friend class ofParameterGroup;
 };
 
