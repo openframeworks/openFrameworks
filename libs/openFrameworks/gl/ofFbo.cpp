@@ -674,19 +674,10 @@ ofTexture& ofFbo::getTextureReference(){
 
 ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
 	updateTexture(attachmentPoint);
-	ofTexture & ref = textures[attachmentPoint];
-
-	//TODO: this should be cached!!!!
-    if( ref.texData.textureTarget == GL_TEXTURE_2D ){
-        ref.texData.tex_t = ofMap(ref.getWidth(), 0, ofNextPow2(ref.getWidth()), 0, 1, true);
-        ref.texData.tex_u = ofMap(ref.getHeight(), 0, ofNextPow2(ref.getHeight()), 0, 1, true);
-    }else{
-    	ref.texData.tex_t = ref.getWidth();
-    	ref.texData.tex_u = ref.getHeight();
-    }
     
-    return ref;
+    return textures[attachmentPoint];
 }
+
 void ofFbo::setAnchorPercent(float xPct, float yPct){
 	getTextureReference().setAnchorPercent(xPct, yPct);
 }
@@ -698,7 +689,6 @@ void ofFbo::setAnchorPoint(float x, float y){
 void ofFbo::resetAnchor(){
 	getTextureReference().resetAnchor();
 }
-
 
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
 	if(!bIsAllocated) return;
