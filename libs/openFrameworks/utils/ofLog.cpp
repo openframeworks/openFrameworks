@@ -54,8 +54,8 @@ ofLog::ofLog(){
 }
 		
 //--------------------------------------------------
-ofLog::ofLog(ofLogLevel level){
-	level = level;
+ofLog::ofLog(ofLogLevel _level){
+	level = _level;
 	module = "";
 	bPrinted = false;
 }
