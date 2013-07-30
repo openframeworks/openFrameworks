@@ -642,7 +642,7 @@ void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 }
 
 unsigned long ofGstUtils::getMinLatencyNanos(){
-	GstClockTime minlat, maxlat;
+	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
 		 gboolean live;
@@ -653,7 +653,7 @@ unsigned long ofGstUtils::getMinLatencyNanos(){
 }
 
 unsigned long ofGstUtils::getMaxLatencyNanos(){
-	GstClockTime minlat, maxlat;
+	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
 		 gboolean live;
