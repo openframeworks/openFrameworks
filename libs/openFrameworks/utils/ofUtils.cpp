@@ -279,7 +279,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 		return path;
 	
 	// if our Current Working Directory has changed (e.g. file open dialog)
-#ifndef TARGET_ANDROID
+#ifdef TARGET_WIN32
 	if (defaultWorkingDirectory().toString() != getWorkingDir().toString()) {
 		// change our cwd back to where it was on app load
 		int ret = chdir(defaultWorkingDirectory().toString().c_str());
