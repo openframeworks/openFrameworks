@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 
-class testApp : public ofxiPhoneApp{
+class testApp : public ofxiOSApp{
 	
     public:
         void setup();
@@ -24,7 +24,7 @@ class testApp : public ofxiPhoneApp{
         void gotMemoryWarning();
         void deviceOrientationChanged(int newOrientation);
 	
-        ofxiPhoneCoreLocation * coreLocation;
+        ofxiOSCoreLocation * coreLocation;
 	
         float heading;
 	

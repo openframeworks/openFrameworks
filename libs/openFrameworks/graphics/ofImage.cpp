@@ -5,7 +5,7 @@
 #include "ofGraphics.h"
 #include "FreeImage.h"
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 #include <set>
 	// android destroys the opengl context on screen orientation change
 	// or when the application runs in the background so we need to reload
@@ -590,7 +590,7 @@ ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<PixelType>& m
 //----------------------------------------------------------
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
 	clear();
@@ -623,7 +623,7 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(string fileName){
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName);
@@ -644,7 +644,7 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
 	bool bLoadedOk = ofLoadImage(pixels, buffer);
@@ -757,7 +757,7 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	if (width == w && height == h && newType == type){
 		return;
 	}
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
 	pixels.allocate(w, h, newType);
@@ -780,7 +780,7 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::clear(){
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	unregisterImage(this);
 #endif
 	pixels.clear();

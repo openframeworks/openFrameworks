@@ -15,7 +15,7 @@ void ImageApp::setup() {
 	ofBackground(127);
     
     int fontSize = 8;
-    if (ofxiPhoneGetOFWindow()->isRetinaSupportedOnDevice())
+    if (ofxiOSGetOFWindow()->isRetinaSupportedOnDevice())
         fontSize *= 2;
     
     font.loadFont("fonts/mono0755.ttf", fontSize);

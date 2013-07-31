@@ -1,4 +1,9 @@
 /***********************************************************************
+
+ ofxiOS.h
+ Contains core functionality for iPhone / iPod Touch
+ Any .cpp files that include this needs to be renamed to .mm (to support Objective C++)
+ -----------------------------------------------------------------------
  
  Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
  *** The Mega Super Awesome Visuals Company ***
@@ -27,62 +32,14 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
+ * ----------------------------------------------------------------------- */ 
 
+#pragma once
+
+#import <OpenGLES/ES1/gl.h>
+#import <OpenGLES/ES1/glext.h>
 
 #import "ofxAccelerometer.h"
-#import "ofMain.h"
-#import <UIKit/UIKit.h>
+#import "ofxiOSAlerts.h"
+#import "ofxiOSApp.h"
 
-/************ Interface for iPhone Accelerometer Delegate ************/
-@interface ofxIPhoneAccelerometerDelegate : NSObject <UIAccelerometerDelegate> {
-}
-
-@end
-
-// define instance of delegate 
-static ofxIPhoneAccelerometerDelegate* iPhoneAccelerometerDelegate;
-
-
-
-/************ Impementation of standard C++ accel interface tailored for iPhone ************/
-// call this to setup the accelerometer
-void ofxAccelerometerHandler::setup() {
-	ofLogVerbose("ofxAccelerometer") << "setup(): initing iPhoneAccelerometerDelegate";
-	[iPhoneAccelerometerDelegate release];		// in case we've already called it for some reason
-	iPhoneAccelerometerDelegate = [[ofxIPhoneAccelerometerDelegate alloc] init];
-//	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications]; 
-
-#if TARGET_IPHONE_SIMULATOR
-	update(1, 0, 0);
-#endif
-}
-	
-// call this when accelerometer is no longer needed
-void ofxAccelerometerHandler::exit() {
-	ofLogVerbose("ofxAccelerometer") << "exit(): releasing iPhoneAccelerometerDelegate";
-	[iPhoneAccelerometerDelegate release];
-}
-
-
-
-
-
-/************ Implementation of iPhone Accelerometer Delegate ************/
-@implementation ofxIPhoneAccelerometerDelegate
-
--(ofxIPhoneAccelerometerDelegate*) init {
-	if(self = 	[super init]) {
-		UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];
-		accelerometer.delegate = self;
-		accelerometer.updateInterval = 1.0f/60.0f;
-	}
-	return self;
-}
-
-
--(void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration*)accel {
-	ofxAccelerometer.update(accel.x, accel.y, accel.z);
-}
-
-@end

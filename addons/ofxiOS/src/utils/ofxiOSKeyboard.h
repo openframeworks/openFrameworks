@@ -1,6 +1,5 @@
 /*
  *  ofIphoneKeyboard.h
- *  iPhone UIKeyboard Example
  *
  *  Created by Zach Gage on 3/1/09.
  *  Copyright 2009 stfj. All rights reserved.
@@ -9,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "ofMain.h"
-#import "ofxiPhoneExtras.h"
+#import "ofxiOSExtras.h"
 #pragma once
 
-@interface ofxiPhoneKeyboardDelegate : NSObject <UITextFieldDelegate>
+@interface ofxiOSKeyboardDelegate : NSObject <UITextFieldDelegate>
 {
 	UITextField*			_textField;
 	bool					open;
@@ -45,13 +44,15 @@
 
 @end
 
-class ofxiPhoneKeyboard 
+#define ofxiPhoneKeyboardDelegate ofxiOSKeyboardDelegate
+
+class ofxiOSKeyboard 
 {
 	
 public:
 	
-	ofxiPhoneKeyboard(int _x, int _y, int _w, int _h);
-	~ofxiPhoneKeyboard();
+	ofxiOSKeyboard(int _x, int _y, int _w, int _h);
+	~ofxiOSKeyboard();
 	
 	void setVisible(bool visible);
 	
@@ -75,6 +76,9 @@ public:
 	
 protected:
 	
-	ofxiPhoneKeyboardDelegate *	keyboard;
+	ofxiOSKeyboardDelegate *	keyboard;
 	int x,y,w,h;
 };
+
+#define ofxiPhoneKeyboard ofxiOSKeyboard
+

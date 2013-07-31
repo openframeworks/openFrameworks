@@ -15,7 +15,7 @@
 #elif defined(OF_SOUNDSTREAM_ANDROID)
 	#include "ofxAndroidSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
-#elif defined(OF_SOUNDSTREAM_IPHONE)
+#elif defined(OF_SOUNDSTREAM_IOS)
 	#include "ofxiOSSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxiOSSoundStream
 #endif 

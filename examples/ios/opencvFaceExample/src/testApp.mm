@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
+	ofxiOSSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
 	
 	finder.setup("haarcascade_frontalface_default.xml");
 	
