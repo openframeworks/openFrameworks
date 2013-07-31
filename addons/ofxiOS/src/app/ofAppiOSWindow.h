@@ -120,7 +120,7 @@ protected:
 	int antiAliasingSamples;
 };
 
-#define ofAppiPhoneWindow ofAppiOSWindow
+OF_DEPRECATED_MSG("ofAppiPhoneWindow is deprecated, use ofAppiOSWindow instead.", typedef ofAppiOSWindow ofAppiPhoneWindow);
 
 
 
