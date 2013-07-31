@@ -305,6 +305,7 @@ void ofxKinect::update() {
 		tryCount = 0;
 		if(this->lock()) {
 			depthPixelsRaw = depthPixelsRawBack;
+			bNeedsUpdateDepth = false;
 			this->unlock();
 
 			updateDepthPixels();
