@@ -339,83 +339,16 @@ function checkFormula() {
 	eval $3=$parentDir
 }
 
-# execute a given command using the formula name
-function doCommand() {
-	
-	local cmd=$1
-	shift 1
-
-	# process given lib targets
-	while [ $# -gt 0 ] ; do
-
-		# process all formulas in formulas dir
-		if [ "$1" == "core" ] ; then
-			local formula
-			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-				doCommand $cmd "${formula%.*}" # remove exntension
-			done
-
-		# process all addons in the addons dir
-		elif [ "$1" == "addons" ] ; then
-			local addon
-			for addon in $(ls -1 $REL_ADDONS_DIR) ; do
-				if [ -d $REL_ADDONS_DIR/$addon ] ; then
-					doCommand $cmd $addon
-				fi
-			done
-
-		else # process given lib or addon
-
-			local formula
-			local isAddon=0
-			checkFormula $1 formula FORMULA_DIR isAddon
-
-			if [ $isAddon == 1 ] ; then
-				local tmpLibsDir=$LIBS_DIR
-
-				# are there formulas in the addon formulas dir?
-				if [ "$FORMULA_DIR" != "" ] ; then					
-
-					# set libs dest dir to addon/libs if it hasn't been manually set
-					if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
-						LIBS_DIR=$APOTHECARY_DIR/$REL_ADDONS_DIR/$1/libs
-					fi
-
-					# process all formulas in scripts/formulas
-					local addonFormula
-					for addonFormula in $( ls -1 $FORMULA_DIR) ; do
-						doCommand $cmd $FORMULA_DIR/$addonFormula
-					done
-					
-					# back to default
-					if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
-						LIBS_DIR=$tmpLibsDir
-					fi
-				else
-					echoInfo " Skipping addon \"$1\": no formulas found"					
-				fi
-			
-			else # not an addon
-
-				formula=$(basename $1)
-				local currentLib="${formula%.*}"
-
-				# do command
-				$cmd $currentLib
-			fi
-		fi
-
-		shift 1
-
-	done
-}
-
 # execute a given command on a formula and/or formulas,
-# checks and sources formula scripts before running
-function doFormulaCommand() {
+# checks and sources formula scripts before running based on first arg:
+# $1 = bool, should source this formula
+# $2 = command
+# $3 = "core", "addons", list of library/addon names, script file to run, etc
+function doCommand() {
 
-	local cmd=$1
-	shift 1
+	local shouldSource=$1
+	local cmd=$2
+	shift 2
 
 	# process given lib targets
 	while [ $# -gt 0 ] ; do
@@ -424,7 +357,7 @@ function doFormulaCommand() {
 		if [ "$1" == "core" ] ; then
 			local formula
 			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-				doFormulaCommand $cmd "${formula%.*}" # remove exntension
+				doCommand $shouldSource $cmd "${formula%.*}" # remove extension
 			done
 
 		# process all addons in the addons dir
@@ -432,7 +365,7 @@ function doFormulaCommand() {
 			local addon
 			for addon in $(ls -1 $REL_ADDONS_DIR) ; do
 				if [ -d $REL_ADDONS_DIR/$addon ] ; then
-					doFormulaCommand $cmd $addon
+					doCommand $shouldSource $cmd $addon
 				fi
 			done
 
@@ -456,7 +389,7 @@ function doFormulaCommand() {
 					# process all formulas in scripts/formulas
 					local addonFormula
 					for addonFormula in $( ls -1 $FORMULA_DIR) ; do
-						doFormulaCommand $cmd $FORMULA_DIR/$addonFormula
+						doCommand $shouldSource $cmd $FORMULA_DIR/$addonFormula
 					done
 					
 					# back to default
@@ -470,15 +403,22 @@ function doFormulaCommand() {
 			else # not an addon
 
 				# load a script & it's function implementations
-				source $FORMULA_DIR/$formula
+				if [ $shouldSource == 1 ] ; then
+					source $FORMULA_DIR/$formula
+				fi
 				formula=$(basename $1)
 				local currentLib="${formula%.*}"
 
-				# does this formula support the current build type?
-				local bFormulaType=0 # bool
-				isFormulaType $TYPE bFormulaType
-				if [ $bFormulaType == 0 ] ; then
-					echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
+				if [ $shouldSource == 1 ] ; then
+					# does this formula support the current build type?
+					local bFormulaType=0 # bool
+					isFormulaType $TYPE bFormulaType
+					if [ $bFormulaType == 0 ] ; then
+						echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
+					else
+						# do command
+						$cmd $currentLib
+					fi
 				else
 					# do command
 					$cmd $currentLib
@@ -724,36 +664,36 @@ echoVerbose "Running: $A_CMD $*"
 case "$A_CMD" in
 
 	update)
-		doFormulaCommand updateFormula $@ ;;
+		doCommand 1 updateFormula $@ ;;
 
 	download)
-		doFormulaCommand downloadFormula $@ ;;
+		doCommand 1 downloadFormula $@ ;;
 
 	build)
-		doFormulaCommand buildFormula $@ ;;
+		doCommand 1 buildFormula $@ ;;
 
 	copy)
-		doFormulaCommand copyFormula $@ ;;
+		doCommand 1 copyFormula $@ ;;
 
 	clean)
-		doFormulaCommand cleanFormula $@ ;;
+		doCommand 1 cleanFormula $@ ;;
 
 	remove)
 		if [ ! -e $BUILD_DIR ] ; then
 			echoInfo " Nothing to remove"
 			exit 0
 		fi
-		doCommand remove $@ ;;
+		doCommand 0 remove $@ ;;
 
 	remove-lib)
 		if [ ! -e $LIBS_DIR ] ; then
 			echoInfo " Nothing to remove"
 			exit 0
 		fi
-		doCommand remove-lib $@ ;;
+		doCommand 0 remove-lib $@ ;;
 
 	remove-all)
-		doCommand remove-all $@ ;;
+		doCommand 0 remove-all $@ ;;
 
 	*)
 		echoError " Unknown command \"$A_CMD\""
