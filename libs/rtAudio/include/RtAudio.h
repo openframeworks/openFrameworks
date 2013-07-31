@@ -10,7 +10,7 @@
     RtAudio WWW site: http://www.music.mcgill.ca/~gary/rtaudio/
 
     RtAudio: realtime audio i/o C++ classes
-    Copyright (c) 2001-2009 Gary P. Scavone
+    Copyright (c) 2001-2013 Gary P. Scavone
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation files
@@ -42,14 +42,15 @@
   \file RtAudio.h
  */
 
-// RtAudio: Version 4.0.6
-
 #ifndef __RTAUDIO_H
 #define __RTAUDIO_H
 
 #include <string>
 #include <vector>
 #include "RtError.h"
+
+// RtAudio version
+static const std::string VERSION( "4.0.12" );
 
 /*! \typedef typedef unsigned long RtAudioFormat;
     \brief RtAudio data format type.
@@ -62,7 +63,7 @@
 
     - \e RTAUDIO_SINT8:   8-bit signed integer.
     - \e RTAUDIO_SINT16:  16-bit signed integer.
-    - \e RTAUDIO_SINT24:  Upper 3 bytes of 32-bit signed integer.
+    - \e RTAUDIO_SINT24:  24-bit signed integer.
     - \e RTAUDIO_SINT32:  32-bit signed integer.
     - \e RTAUDIO_FLOAT32: Normalized between plus/minus 1.0.
     - \e RTAUDIO_FLOAT64: Normalized between plus/minus 1.0.
@@ -70,7 +71,7 @@
 typedef unsigned long RtAudioFormat;
 static const RtAudioFormat RTAUDIO_SINT8 = 0x1;    // 8-bit signed integer.
 static const RtAudioFormat RTAUDIO_SINT16 = 0x2;   // 16-bit signed integer.
-static const RtAudioFormat RTAUDIO_SINT24 = 0x4;   // Lower 3 bytes of 32-bit signed integer.
+static const RtAudioFormat RTAUDIO_SINT24 = 0x4;   // 24-bit signed integer.
 static const RtAudioFormat RTAUDIO_SINT32 = 0x8;   // 32-bit signed integer.
 static const RtAudioFormat RTAUDIO_FLOAT32 = 0x10; // Normalized between plus/minus 1.0.
 static const RtAudioFormat RTAUDIO_FLOAT64 = 0x20; // Normalized between plus/minus 1.0.
@@ -84,6 +85,7 @@ static const RtAudioFormat RTAUDIO_FLOAT64 = 0x20; // Normalized between plus/mi
     - \e RTAUDIO_NONINTERLEAVED:   Use non-interleaved buffers (default = interleaved).
     - \e RTAUDIO_MINIMIZE_LATENCY: Attempt to set stream parameters for lowest possible latency.
     - \e RTAUDIO_HOG_DEVICE:       Attempt grab device for exclusive use.
+    - \e RTAUDIO_ALSA_USE_DEFAULT: Use the "default" PCM device (ALSA only).
 
     By default, RtAudio streams pass and receive audio data from the
     client in an interleaved format.  By passing the
@@ -111,12 +113,17 @@ static const RtAudioFormat RTAUDIO_FLOAT64 = 0x20; // Normalized between plus/mi
 
     If the RTAUDIO_SCHEDULE_REALTIME flag is set, RtAudio will attempt 
     to select realtime scheduling (round-robin) for the callback thread.
+
+    If the RTAUDIO_ALSA_USE_DEFAULT flag is set, RtAudio will attempt to
+    open the "default" PCM device when using the ALSA API. Note that this
+    will override any specified input or output device id.
 */
 typedef unsigned int RtAudioStreamFlags;
 static const RtAudioStreamFlags RTAUDIO_NONINTERLEAVED = 0x1;    // Use non-interleaved buffers (default = interleaved).
 static const RtAudioStreamFlags RTAUDIO_MINIMIZE_LATENCY = 0x2;  // Attempt to set stream parameters for lowest possible latency.
 static const RtAudioStreamFlags RTAUDIO_HOG_DEVICE = 0x4;        // Attempt grab device and prevent use by others.
 static const RtAudioStreamFlags RTAUDIO_SCHEDULE_REALTIME = 0x8; // Try to select realtime scheduling for callback thread.
+static const RtAudioStreamFlags RTAUDIO_ALSA_USE_DEFAULT = 0x10; // Use the "default" PCM device (ALSA only).
 
 /*! \typedef typedef unsigned long RtAudioStreamStatus;
     \brief RtAudio stream status (over- or underflow) flags.
@@ -178,6 +185,12 @@ typedef int (*RtAudioCallback)( void *outputBuffer, void *inputBuffer,
                                 RtAudioStreamStatus status,
                                 void *userData );
 
+//! RtAudio error callback function prototype.
+/*!
+    \param type Type of error.
+    \param errorText Error description.
+ */
+typedef void (*RtAudioErrorCallback)( RtError::Type type, const std::string &errorText );
 
 // **************************************************************** //
 //
@@ -202,6 +215,7 @@ class RtAudio
   enum Api {
     UNSPECIFIED,    /*!< Search for a working compiled API. */
     LINUX_ALSA,     /*!< The Advanced Linux Sound Architecture API. */
+    LINUX_PULSE,    /*!< The Linux PulseAudio API. */
     LINUX_OSS,      /*!< The Linux Open Sound System API. */
     UNIX_JACK,      /*!< The Jack Low-Latency Audio Server API. */
     MACOSX_CORE,    /*!< Macintosh OS-X Core Audio API. */
@@ -248,6 +262,7 @@ class RtAudio
     - \e RTAUDIO_MINIMIZE_LATENCY:  Attempt to set stream parameters for lowest possible latency.
     - \e RTAUDIO_HOG_DEVICE:        Attempt grab device for exclusive use.
     - \e RTAUDIO_SCHEDULE_REALTIME: Attempt to select realtime scheduling for callback thread.
+    - \e RTAUDIO_ALSA_USE_DEFAULT:  Use the "default" PCM device (ALSA only).
 
     By default, RtAudio streams pass and receive audio data from the
     client in an interleaved format.  By passing the
@@ -276,7 +291,11 @@ class RtAudio
     If the RTAUDIO_SCHEDULE_REALTIME flag is set, RtAudio will attempt 
     to select realtime scheduling (round-robin) for the callback thread.
     The \c priority parameter will only be used if the RTAUDIO_SCHEDULE_REALTIME
-    flag is set. It defines the thread's realtime priority. 
+    flag is set. It defines the thread's realtime priority.
+
+    If the RTAUDIO_ALSA_USE_DEFAULT flag is set, RtAudio will attempt to
+    open the "default" PCM device when using the ALSA API. Note that this
+    will override any specified input or output device id.
 
     The \c numberOfBuffers parameter can be used to control stream
     latency in the Windows DirectSound, Linux OSS, and Linux Alsa APIs
@@ -292,7 +311,7 @@ class RtAudio
     RtAudio with Jack, each instance must have a unique client name.
   */
   struct StreamOptions {
-    RtAudioStreamFlags flags;      /*!< A bit-mask of stream flags (RTAUDIO_NONINTERLEAVED, RTAUDIO_MINIMIZE_LATENCY, RTAUDIO_HOG_DEVICE). */
+    RtAudioStreamFlags flags;      /*!< A bit-mask of stream flags (RTAUDIO_NONINTERLEAVED, RTAUDIO_MINIMIZE_LATENCY, RTAUDIO_HOG_DEVICE, RTAUDIO_ALSA_USE_DEFAULT). */
     unsigned int numberOfBuffers;  /*!< Number of stream buffers. */
     std::string streamName;        /*!< A stream name (currently used only in Jack). */
     int priority;                  /*!< Scheduling priority of callback thread (only used with flag RTAUDIO_SCHEDULE_REALTIME). */
@@ -301,6 +320,9 @@ class RtAudio
     StreamOptions()
     : flags(0), numberOfBuffers(0), priority(0) {}
   };
+
+  //! A static function to determine the current RtAudio version.
+  static std::string getVersion( void ) { return VERSION; } 
 
   //! A static function to determine the available compiled audio APIs.
   /*!
@@ -409,12 +431,14 @@ class RtAudio
            chosen.  If the RTAUDIO_MINIMIZE_LATENCY flag bit is set, the
            lowest allowable value is used.  The actual value used is
            returned via the structure argument.  The parameter is API dependent.
+    \param errorCallback A client-defined function that will be invoked
+           when an error has occured.
   */
   void openStream( RtAudio::StreamParameters *outputParameters,
                    RtAudio::StreamParameters *inputParameters,
                    RtAudioFormat format, unsigned int sampleRate,
                    unsigned int *bufferFrames, RtAudioCallback callback,
-                   void *userData = NULL, RtAudio::StreamOptions *options = NULL );
+                   void *userData = NULL, RtAudio::StreamOptions *options = NULL, RtAudioErrorCallback errorCallback = NULL );
 
   //! A function that closes a stream and frees any associated stream memory.
   /*!
@@ -498,7 +522,7 @@ class RtAudio
   typedef unsigned long ThreadHandle;
   typedef CRITICAL_SECTION StreamMutex;
 
-#elif defined(__LINUX_ALSA__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) || defined(__MACOSX_CORE__)
+#elif defined(__LINUX_ALSA__) || defined(__LINUX_PULSE__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) || defined(__MACOSX_CORE__)
   // Using pthread library for various flavors of unix.
   #include <pthread.h>
 
@@ -521,12 +545,15 @@ struct CallbackInfo {
   ThreadHandle thread;
   void *callback;
   void *userData;
+  void *errorCallback;
   void *apiInfo;   // void pointer for API specific callback information
   bool isRunning;
+  bool doRealtime;
+  int priority;
 
   // Default constructor.
   CallbackInfo()
-    :object(0), callback(0), userData(0), apiInfo(0), isRunning(false) {}
+  :object(0), callback(0), userData(0), errorCallback(0), apiInfo(0), isRunning(false), doRealtime(false) {}
 };
 
 // **************************************************************** //
@@ -539,9 +566,39 @@ struct CallbackInfo {
 // Note that RtApi is an abstract base class and cannot be
 // explicitly instantiated.  The class RtAudio will create an
 // instance of an RtApi subclass (RtApiOss, RtApiAlsa,
-// RtApiJack, RtApiCore, RtApiAl, RtApiDs, or RtApiAsio).
+// RtApiJack, RtApiCore, RtApiDs, or RtApiAsio).
 //
 // **************************************************************** //
+
+#pragma pack(push, 1)
+class S24 {
+
+ protected:
+  unsigned char c3[3];
+
+ public:
+  S24() {}
+
+  S24& operator = ( const int& i ) {
+    c3[0] = (i & 0x000000ff);
+    c3[1] = (i & 0x0000ff00) >> 8;
+    c3[2] = (i & 0x00ff0000) >> 16;
+    return *this;
+  }
+
+  S24( const S24& v ) { *this = v; }
+  S24( const double& d ) { *this = (int) d; }
+  S24( const float& f ) { *this = (int) f; }
+  S24( const signed short& s ) { *this = (int) s; }
+  S24( const char& c ) { *this = (int) c; }
+
+  int asInt() {
+    int i = c3[0] | (c3[1] << 8) | (c3[2] << 16);
+    if (i & 0x800000) i |= ~0xffffff;
+    return i;
+  }
+};
+#pragma pack(pop)
 
 #if defined( HAVE_GETTIMEOFDAY )
   #include <sys/time.h>
@@ -564,7 +621,8 @@ public:
                    RtAudio::StreamParameters *inputParameters,
                    RtAudioFormat format, unsigned int sampleRate,
                    unsigned int *bufferFrames, RtAudioCallback callback,
-                   void *userData, RtAudio::StreamOptions *options );
+                   void *userData, RtAudio::StreamOptions *options,
+                   RtAudioErrorCallback errorCallback );
   virtual void closeStream( void );
   virtual void startStream( void ) = 0;
   virtual void stopStream( void ) = 0;
@@ -572,9 +630,9 @@ public:
   long getStreamLatency( void );
   unsigned int getStreamSampleRate( void );
   virtual double getStreamTime( void );
-  bool isStreamOpen( void ) const { return stream_.state != STREAM_CLOSED; };
-  bool isStreamRunning( void ) const { return stream_.state == STREAM_RUNNING; };
-  void showWarnings( bool value ) { showWarnings_ = value; };
+  bool isStreamOpen( void ) const { return stream_.state != STREAM_CLOSED; }
+  bool isStreamRunning( void ) const { return stream_.state == STREAM_RUNNING; }
+  void showWarnings( bool value ) { showWarnings_ = value; }
 
 
 protected:
@@ -586,6 +644,7 @@ protected:
 
   enum StreamState {
     STREAM_STOPPED,
+    STREAM_STOPPING,
     STREAM_RUNNING,
     STREAM_CLOSED = -50
   };
@@ -640,6 +699,7 @@ protected:
       :apiHandle(0), deviceBuffer(0) { device[0] = 11111; device[1] = 11111; }
   };
 
+  typedef S24 Int24;
   typedef signed short Int16;
   typedef signed int Int32;
   typedef float Float32;
@@ -711,7 +771,7 @@ inline void RtAudio :: abortStream( void ) { return rtapi_->abortStream(); }
 inline bool RtAudio :: isStreamOpen( void ) const throw() { return rtapi_->isStreamOpen(); }
 inline bool RtAudio :: isStreamRunning( void ) const throw() { return rtapi_->isStreamRunning(); }
 inline long RtAudio :: getStreamLatency( void ) { return rtapi_->getStreamLatency(); }
-inline unsigned int RtAudio :: getStreamSampleRate( void ) { return rtapi_->getStreamSampleRate(); };
+inline unsigned int RtAudio :: getStreamSampleRate( void ) { return rtapi_->getStreamSampleRate(); }
 inline double RtAudio :: getStreamTime( void ) { return rtapi_->getStreamTime(); }
 inline void RtAudio :: showWarnings( bool value ) throw() { rtapi_->showWarnings( value ); }
 
@@ -727,7 +787,7 @@ public:
 
   RtApiCore();
   ~RtApiCore();
-  RtAudio::Api getCurrentApi( void ) { return RtAudio::MACOSX_CORE; };
+  RtAudio::Api getCurrentApi( void ) { return RtAudio::MACOSX_CORE; }
   unsigned int getDeviceCount( void );
   RtAudio::DeviceInfo getDeviceInfo( unsigned int device );
   unsigned int getDefaultOutputDevice( void );
@@ -765,7 +825,7 @@ public:
 
   RtApiJack();
   ~RtApiJack();
-  RtAudio::Api getCurrentApi( void ) { return RtAudio::UNIX_JACK; };
+  RtAudio::Api getCurrentApi( void ) { return RtAudio::UNIX_JACK; }
   unsigned int getDeviceCount( void );
   RtAudio::DeviceInfo getDeviceInfo( unsigned int device );
   void closeStream( void );
@@ -798,7 +858,7 @@ public:
 
   RtApiAsio();
   ~RtApiAsio();
-  RtAudio::Api getCurrentApi( void ) { return RtAudio::WINDOWS_ASIO; };
+  RtAudio::Api getCurrentApi( void ) { return RtAudio::WINDOWS_ASIO; }
   unsigned int getDeviceCount( void );
   RtAudio::DeviceInfo getDeviceInfo( unsigned int device );
   void closeStream( void );
@@ -834,7 +894,7 @@ public:
 
   RtApiDs();
   ~RtApiDs();
-  RtAudio::Api getCurrentApi( void ) { return RtAudio::WINDOWS_DS; };
+  RtAudio::Api getCurrentApi( void ) { return RtAudio::WINDOWS_DS; }
   unsigned int getDeviceCount( void );
   unsigned int getDefaultOutputDevice( void );
   unsigned int getDefaultInputDevice( void );
@@ -856,6 +916,7 @@ public:
   bool coInitialized_;
   bool buffersRolling;
   long duplexPrerollBytes;
+  std::vector<struct DsDevice> dsDevices;
   bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
@@ -872,7 +933,7 @@ public:
 
   RtApiAlsa();
   ~RtApiAlsa();
-  RtAudio::Api getCurrentApi() { return RtAudio::LINUX_ALSA; };
+  RtAudio::Api getCurrentApi() { return RtAudio::LINUX_ALSA; }
   unsigned int getDeviceCount( void );
   RtAudio::DeviceInfo getDeviceInfo( unsigned int device );
   void closeStream( void );
@@ -898,6 +959,38 @@ public:
 
 #endif
 
+#if defined(__LINUX_PULSE__)
+
+class RtApiPulse: public RtApi
+{
+public:
+  ~RtApiPulse();
+  RtAudio::Api getCurrentApi() { return RtAudio::LINUX_PULSE; }
+  unsigned int getDeviceCount( void );
+  RtAudio::DeviceInfo getDeviceInfo( unsigned int device );
+  void closeStream( void );
+  void startStream( void );
+  void stopStream( void );
+  void abortStream( void );
+
+  // This function is intended for internal use only.  It must be
+  // public because it is called by the internal callback handler,
+  // which is not a member of RtAudio.  External use of this function
+  // will most likely produce highly undesireable results!
+  void callbackEvent( void );
+
+  private:
+
+  std::vector<RtAudio::DeviceInfo> devices_;
+  void saveDeviceInfo( void );
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+                        unsigned int firstChannel, unsigned int sampleRate,
+                        RtAudioFormat format, unsigned int *bufferSize,
+                        RtAudio::StreamOptions *options );
+};
+
+#endif
+
 #if defined(__LINUX_OSS__)
 
 class RtApiOss: public RtApi
@@ -906,7 +999,7 @@ public:
 
   RtApiOss();
   ~RtApiOss();
-  RtAudio::Api getCurrentApi() { return RtAudio::LINUX_OSS; };
+  RtAudio::Api getCurrentApi() { return RtAudio::LINUX_OSS; }
   unsigned int getDeviceCount( void );
   RtAudio::DeviceInfo getDeviceInfo( unsigned int device );
   void closeStream( void );
@@ -936,21 +1029,21 @@ class RtApiDummy: public RtApi
 {
 public:
 
-  RtApiDummy() { errorText_ = "RtApiDummy: This class provides no functionality."; error( RtError::WARNING ); };
-  RtAudio::Api getCurrentApi( void ) { return RtAudio::RTAUDIO_DUMMY; };
-  unsigned int getDeviceCount( void ) { return 0; };
-  RtAudio::DeviceInfo getDeviceInfo( unsigned int device ) { RtAudio::DeviceInfo info; return info; };
-  void closeStream( void ) {};
-  void startStream( void ) {};
-  void stopStream( void ) {};
-  void abortStream( void ) {};
+  RtApiDummy() { errorText_ = "RtApiDummy: This class provides no functionality."; error( RtError::WARNING ); }
+  RtAudio::Api getCurrentApi( void ) { return RtAudio::RTAUDIO_DUMMY; }
+  unsigned int getDeviceCount( void ) { return 0; }
+  RtAudio::DeviceInfo getDeviceInfo( unsigned int /*device*/ ) { RtAudio::DeviceInfo info; return info; }
+  void closeStream( void ) {}
+  void startStream( void ) {}
+  void stopStream( void ) {}
+  void abortStream( void ) {}
 
   private:
 
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
-                        unsigned int firstChannel, unsigned int sampleRate,
-                        RtAudioFormat format, unsigned int *bufferSize,
-                        RtAudio::StreamOptions *options ) { return false; };
+  bool probeDeviceOpen( unsigned int /*device*/, StreamMode /*mode*/, unsigned int /*channels*/, 
+                        unsigned int /*firstChannel*/, unsigned int /*sampleRate*/,
+                        RtAudioFormat /*format*/, unsigned int * /*bufferSize*/,
+                        RtAudio::StreamOptions * /*options*/ ) { return false; }
 };
 
 #endif

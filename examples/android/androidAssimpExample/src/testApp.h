@@ -35,9 +35,11 @@ class testApp : public ofxAndroidApp{
 
 		bool bAnimate;
 		bool bAnimateMouse;
-		float animationTime;
+        float animationPosition;
         ofxAssimpModelLoader model;
         ofLight	light;
 
+        ofMesh mesh;
         bool loaded;
+        int currentModel;
 };

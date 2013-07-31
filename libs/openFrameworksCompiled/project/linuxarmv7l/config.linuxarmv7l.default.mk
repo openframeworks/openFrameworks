@@ -69,3 +69,28 @@ PLATFORM_CFLAGS += -pipe
 PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
 PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
 PLATFORM_PKG_CONFIG_LIBRARIES += egl
+
+ifeq ($(CROSS_COMPILING),1)
+	GCC_PREFIX=arm-linux-gnueabihf
+    PLATFORM_CXX = $(GCC_PREFIX)-g++
+	PLATFORM_CC = $(GCC_PREFIX)-gcc
+	PLATFORM_AR = $(GCC_PREFIX)-ar
+	PLATFORM_LD = $(GCC_PREFIX)-ld
+	
+	# Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
+	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
+	
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.6/
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
+	
+	
+	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
+	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib
+	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib/arm-linux-gnueabihf
+	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib
+	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib/arm-linux-gnueabihf
+	
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	
+	PLATFORM_LIBRARIES += dl
+endif
