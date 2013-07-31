@@ -12,6 +12,13 @@
 #include "ofParameter.h"
 #include "ofMain.h"
 
+class CirclesRenderer;
+
+template<typename ParameterType>
+class ofCirclesRendererParam: public ofReadOnlyParameter<ParameterType,CirclesRenderer>{
+    friend class CirclesRenderer;
+};
+
 class CirclesRenderer {
 public:
 	CirclesRenderer();
@@ -26,7 +33,7 @@ public:
 
 	ofParameter<ofColor> color;
 
-	ofReadOnlyParameter<int,CirclesRenderer> frameNum;
+	ofCirclesRendererParam<int> frameNum;
 };
 
 #endif /* CIRCLESRENDERER_H_ */

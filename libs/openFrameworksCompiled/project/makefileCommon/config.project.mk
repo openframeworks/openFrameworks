@@ -212,8 +212,13 @@ OF_CORE_LIBS += $(PLATFORM_SHARED_LIBRARIES)
 
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
+$(info CORE_PKG_CONFIG_LIBRARIES=$(CORE_PKG_CONFIG_LIBRARIES))
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	ifeq ($(CROSS_COMPILING),1)
+		OF_CORE_LIBS += $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	else
+		OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	endif
 endif
 
 # 4. Add the libraries defined in the platform config files.
@@ -221,7 +226,11 @@ OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 
 # add the list of addon includes
 ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)" --cflags)
+	ifeq ($(CROSS_COMPILING),1)
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+	else
+		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+	endif
 endif
 
 ################################################################################
@@ -310,14 +319,16 @@ OF_PROJECT_DEFINES_CFLAGS = $(addprefix -D,$(OF_PROJECT_DEFINES))
 ################################################################################
 
 # gather any project CFLAGS
-OF_PROJECT_CFLAGS := $(PROJECT_CFLAGS)
+OF_PROJECT_CFLAGS = $(OF_CORE_BASE_CFLAGS)
+OF_PROJECT_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
+OF_PROJECT_CFLAGS += $(PROJECT_CFLAGS)
 OF_PROJECT_CFLAGS += $(PROJECT_ADDONS_CFLAGS)
 OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_CORE_BASE_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
+
+OF_PROJECT_CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
 
 
 ################################################################################
@@ -375,8 +386,16 @@ ALL_CFLAGS =
 # add the CFLAGS from Makefiles.examples
 ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
 
+# clean it
+ALL_CXXFLAGS =
+# add the CFLAGS from Makefiles.examples
+ALL_CXXFLAGS += $(OF_PROJECT_CXXFLAGS)
+
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
+
+# clean up all extra whitespaces in the CFLAGS
+CXXFLAGS = $(strip $(ALL_CXXFLAGS))
 
 ################################################################################
 # LDFLAGS

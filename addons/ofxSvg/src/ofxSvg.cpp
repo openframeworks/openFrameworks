@@ -80,14 +80,13 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	if(shape->fill != svgtiny_TRANSPARENT){
 		path.setFilled(true);
 		path.setFillHexColor(shape->fill);
-	}
+		path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+    }
 
 	if(shape->stroke != svgtiny_TRANSPARENT){
 		path.setStrokeWidth(shape->stroke_width);
 		path.setStrokeHexColor(shape->stroke);
 	}
-
-	path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 
 	for(int i = 0; i < (int)shape->path_length;){
 		if(p[i] == svgtiny_PATH_MOVE){

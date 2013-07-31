@@ -296,9 +296,7 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------ soundstream
 // check if any soundstream api is defined from the compiler
 #if !defined(OF_SOUNDSTREAM_PORTAUDIO) && !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID)
-	#ifdef TARGET_LINUX
-		#define OF_SOUNDSTREAM_PORTAUDIO
-	#elif defined(TARGET_WIN32) || defined(TARGET_OSX)
+	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
 		#define OF_SOUNDSTREAM_RTAUDIO
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID

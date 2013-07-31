@@ -93,11 +93,10 @@ bool ofxUDPManager::Bind(unsigned short usPort)
 	saServer.sin_addr.s_addr = INADDR_ANY;
 	//Port MUST	be in Network Byte Order
 	saServer.sin_port =	htons(usPort);
+	int ret = ::bind(m_hSocket,(struct sockaddr*)&saServer,sizeof(struct sockaddr));
+	if(ret == -1) ofxNetworkCheckError();
 
-	int	ret	= bind(m_hSocket,(struct sockaddr*)&saServer,sizeof(struct sockaddr));
-	if(ret==-1)  ofxNetworkCheckError();
-
-	return (ret	== 0);
+	return (ret == 0);
 }
 
 //--------------------------------------------------------------------------------

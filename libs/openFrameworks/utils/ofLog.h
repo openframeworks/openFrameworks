@@ -98,6 +98,8 @@ class ofLog{
 		void _log(ofLogLevel level, const string & module, const string & message);
 		bool checkLog(ofLogLevel level, const string & module);
 	
+		static ofPtr<ofBaseLoggerChannel> channel;	///< the message destination
+	
 	private:
 		std::ostringstream message;	///< temp buffer
 		
@@ -106,7 +108,6 @@ class ofLog{
 		ofLog(ofLog const&) {}        					// not defined, not copyable
 		ofLog& operator=(ofLog& from) {return *this;}	// not defined, not assignable
 		
-		static ofPtr<ofBaseLoggerChannel> channel;	///< the message destination
 		static string padding;						///< the padding between ostream calls
 };
 
@@ -117,32 +118,37 @@ class ofLog{
 ///
 class ofLogVerbose : public ofLog{
 	public:
-		ofLogVerbose(const string &module="OF");
+		ofLogVerbose(const string &module="");
 		ofLogVerbose(const string & module, const string & message);
+		ofLogVerbose(const string & module, const char* format, ...);
 };
 
 class ofLogNotice : public ofLog{
 	public:
-		ofLogNotice(const string & module="OF");
+		ofLogNotice(const string & module="");
 		ofLogNotice(const string & module, const string & message);
+		ofLogNotice(const string & module, const char* format, ...);
 };
 
 class ofLogWarning : public ofLog{
 	public:
-		ofLogWarning(const string & module="OF");
+		ofLogWarning(const string & module="");
 		ofLogWarning(const string & module, const string & message);
+		ofLogWarning(const string & module, const char* format, ...);
 };
 
 class ofLogError : public ofLog{
 	public:
-		ofLogError(const string & module="OF");
+		ofLogError(const string & module="");
 		ofLogError(const string & module, const string & message);
+		ofLogError(const string & module, const char* format, ...);
 };
 
 class ofLogFatalError : public ofLog{
 	public:
-		ofLogFatalError(const string & module="OF");
+		ofLogFatalError(const string & module="");
 		ofLogFatalError(const string & module, const string & message);
+		ofLogFatalError(const string & module, const char* format, ...);
 };
 
 //--------------------------------------------------------------

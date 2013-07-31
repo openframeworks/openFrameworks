@@ -136,7 +136,11 @@ PLATFORM_CFLAGS += -Wno-invalid-offsetof
 PLATFORM_CFLAGS += -gdwarf-2
 endif
 
-PLATFORM_CFLAGS += -x objective-c++
+PLATFORM_CXXFLAGS += -x objective-c++
+
+ifeq ($(USE_GST),1)
+PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
+endif
 
 
 ################################################################################
@@ -190,9 +194,11 @@ PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
+ifneq ($(USE_GST),1)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
+endif
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
 
@@ -291,9 +297,14 @@ PLATFORM_FRAMEWORKS += CoreServices
 PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += QuickTime
 PLATFORM_FRAMEWORKS += IOKit
+PLATFORM_FRAMEWORKS += Cocoa
+
 ifneq ($(MAC_OS_SDK),10.6)
 PLATFORM_FRAMEWORKS += CoreVideo
-PLATFORM_FRAMEWORKS += Cocoa
+endif
+
+ifeq ($(USE_GST),1)
+PLATFORM_FRAMEWORKS += GStreamer
 endif
 
 ##########################################################################################
