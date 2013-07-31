@@ -6,11 +6,11 @@ class AVFoundationVideoGrabber;
 
 #include "ofVideoGrabber.h"
 
-class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
+class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	
 	public :
 	
-	ofiPhoneVideoGrabber();
+	ofxiOSVideoGrabber();
 	
 	//needs implementing
 	vector <ofVideoDevice> listDevices();	
@@ -46,3 +46,5 @@ protected:
 };
 
 #endif
+
+#define ofxiPhoneVideoGrabber ofxiOSVideoGrabber

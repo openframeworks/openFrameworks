@@ -13,15 +13,15 @@
 
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 
 #if defined  __arm__
 
 class AVFoundationVideoGrabber;
 
 
-@interface iPhoneVideoGrabber : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate> {
+@interface iOSVideoGrabber : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate> {
 
 	@public
 	
@@ -98,7 +98,7 @@ class AVFoundationVideoGrabber{
 		
 		int fps;
 		ofTexture tex;
-		iPhoneVideoGrabber * grabber;
+		iOSVideoGrabber * grabber;
 		GLubyte *pixelsTmp;
 };
 

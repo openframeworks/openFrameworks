@@ -1,6 +1,6 @@
 /***********************************************************************
  
- Copyright (c) 2008, 2009, Zach Gage, stfj
+ Copyright (c) 2008, 2009, Memo Akten, www.memo.tv, Douglas Edric Stanley, www.abstractmachine.net
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of stfj nor the names of its contributors 
+ *     * Neither the name of MSA Visuals nor the names of its contributors 
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
  *
@@ -28,18 +28,27 @@
  *
  * ***********************************************************************/ 
 
-#pragma once
-#include "ofMain.h"
+#include <Availability.h>
+#ifdef __IPHONE_3_0
+
+#import <MapKit/MapKit.h>
+
+class ofxiOSMapKit;
+
+@interface ofxiOSMapKitDelegate : NSObject <MKMapViewDelegate> {
+	ofxiOSMapKit*					mapKit;
+}
+
+-(id)initWithMapKit:(ofxiOSMapKit*)mk;
+-(void)dealloc;
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated;
+- (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated;
+- (void)mapViewWillStartLoadingMap:(MKMapView *)mapView;
+- (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView;
+- (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error;
+
+@end
 
 
-/****** protocol, delegate, interface, whatever you want to call it ******/
-class ofxiPhoneAlertsListener {
-public:
-	virtual ~ofxiPhoneAlertsListener() {}				
-	
-	virtual void lostFocus(){};
-	virtual void gotFocus(){};
-	virtual void gotMemoryWarning(){};
-    virtual void deviceOrientationChanged(int newOrientation){};
-	virtual void launchedWithURL(string url){};
-};
+#endif

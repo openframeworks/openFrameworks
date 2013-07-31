@@ -89,7 +89,7 @@ static void releaseVAO(GLuint id){
 	}
 }
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 static set<ofVbo*> & allVbos(){
 	static set<ofVbo*> * allVbos = new set<ofVbo*>;
 	return *allVbos;
@@ -322,7 +322,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 		vaoChanged=true;
 		glGenBuffers(1, &(vertId));
 		retain(vertId);
-		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 			registerVbo(this);
 		#endif
 	}
@@ -867,7 +867,7 @@ void ofVbo::clear(){
 		vaoID=0;
 	}
 	bAllocated		= false;
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		unregisterVbo(this);
 	#endif
 }

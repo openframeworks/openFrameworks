@@ -1,6 +1,6 @@
 /***********************************************************************
  
- Copyright (c) 2008, 2009, Memo Akten, www.memo.tv, Douglas Edric Stanley, www.abstractmachine.net
+ Copyright (c) 2008, 2009, Zach Gage, stfj
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of MSA Visuals nor the names of its contributors 
+ *     * Neither the name of stfj nor the names of its contributors 
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
  *
@@ -28,18 +28,20 @@
  *
  * ***********************************************************************/ 
 
-
 #pragma once
+#include "ofMain.h"
 
 
 /****** protocol, delegate, interface, whatever you want to call it ******/
-
-class ofxiPhoneMapKitListener { 
+class ofxiOSAlertsListener {
 public:
-    virtual ~ofxiPhoneMapKitListener() {};
-	virtual void regionWillChange(bool animated) {}
-	virtual void regionDidChange(bool animated) {}
-	virtual void willStartLoadingMap() {}
-	virtual void didFinishLoadingMap() {}
-	virtual void errorLoadingMap(string errorDescription) {}
+	virtual ~ofxiOSAlertsListener() {}				
+	
+	virtual void lostFocus(){};
+	virtual void gotFocus(){};
+	virtual void gotMemoryWarning(){};
+    virtual void deviceOrientationChanged(int newOrientation){};
+	virtual void launchedWithURL(string url){};
 };
+
+#define ofxiPhoneAlertsListener ofxiOSAlertsListener

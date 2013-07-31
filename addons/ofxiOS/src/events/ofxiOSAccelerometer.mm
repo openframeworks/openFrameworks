@@ -1,6 +1,7 @@
 /***********************************************************************
  
- Copyright (c) 2008, 2009, Memo Akten, www.memo.tv, Douglas Edric Stanley, www.abstractmachine.net
+ Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
+ *** The Mega Super Awesome Visuals Company ***
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,53 +29,60 @@
  *
  * ***********************************************************************/ 
 
-#include <Availability.h>
-#ifdef __IPHONE_3_0
+
+#import "ofxAccelerometer.h"
+#import "ofMain.h"
+#import <UIKit/UIKit.h>
+
+/************ Interface for iPhone Accelerometer Delegate ************/
+@interface ofxiOSAccelerometerDelegate : NSObject <UIAccelerometerDelegate> {
+}
+
+@end
+
+// define instance of delegate 
+static ofxiOSAccelerometerDelegate* iOSAccelerometerDelegate;
 
 
-#import "ofxiPhoneMapKitDelegate.h"
-#import "ofxiPhoneMapKit.h"
 
-@implementation ofxiPhoneMapKitDelegate
+/************ Impementation of standard C++ accel interface tailored for iPhone ************/
+// call this to setup the accelerometer
+void ofxAccelerometerHandler::setup() {
+	ofLogVerbose("ofxAccelerometer") << "setup(): initing iPhoneAccelerometerDelegate";
+	[iOSAccelerometerDelegate release];		// in case we've already called it for some reason
+	iOSAccelerometerDelegate = [[ofxiOSAccelerometerDelegate alloc] init];
+//	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications]; 
 
--(id)initWithMapKit:(ofxiPhoneMapKit*)mk {
-	if(self = [super init]) {
-		mapKit = mk;
-		ofLogVerbose("ofxiPhoneMapKitDelegate") << "initWithMapKit";
+#if TARGET_IPHONE_SIMULATOR
+	update(1, 0, 0);
+#endif
+}
+	
+// call this when accelerometer is no longer needed
+void ofxAccelerometerHandler::exit() {
+	ofLogVerbose("ofxAccelerometer") << "exit(): releasing iPhoneAccelerometerDelegate";
+	[iOSAccelerometerDelegate release];
+}
+
+
+
+
+
+/************ Implementation of iPhone Accelerometer Delegate ************/
+@implementation ofxiOSAccelerometerDelegate
+
+-(ofxiOSAccelerometerDelegate*) init {
+	if(self = 	[super init]) {
+		UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];
+		accelerometer.delegate = self;
+		accelerometer.updateInterval = 1.0f/60.0f;
 	}
 	return self;
 }
 
--(void)dealloc {
-	ofLogVerbose("ofxiPhoneMapKitDelegate") << "dealloc";
-	[super dealloc];
+
+-(void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration*)accel {
+	ofxAccelerometer.update(accel.x, accel.y, accel.z);
 }
-
-
-- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-	mapKit->regionDidChange(animated);
-}
-
-- (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
-	mapKit->regionWillChange(animated);
-}
-
-- (void)mapViewWillStartLoadingMap:(MKMapView *)mapView {
-	mapKit->willStartLoadingMap();
-}
-
-- (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView {
-	mapKit->didFinishLoadingMap();
-}
-
-- (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error {
-	ofLogVerbose("ofxiPhoneMapKitDelegate") << "mapViewDidFailLoadingMap";
-	string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
-	mapKit->errorLoadingMap(s);
-}
-
-
 
 @end
-
-#endif

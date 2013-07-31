@@ -58,6 +58,7 @@ enum ofTargetPlatform{
 
 	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
+        #define TARGET_OF_IOS
 		#define TARGET_OPENGLES
 	#else
 		#define TARGET_OSX
@@ -184,7 +185,7 @@ enum ofTargetPlatform{
 #endif
 
 
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_OF_IOS
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
 
@@ -263,7 +264,7 @@ typedef TESSindex ofIndexType;
 
 		#define OF_VIDEO_CAPTURE_ANDROID
 
-	#elif defined(TARGET_OF_IPHONE)
+	#elif defined(TARGET_OF_IOS)
 
 		#define OF_VIDEO_CAPTURE_IPHONE
 
@@ -278,7 +279,7 @@ typedef TESSindex ofIndexType;
 	#elif defined(TARGET_ANDROID)
 		#define OF_VIDEO_PLAYER_ANDROID
 	#else
-		#ifdef TARGET_OF_IPHONE
+		#ifdef TARGET_OF_IOS
 			#define OF_VIDEO_PLAYER_IPHONE
         #elif defined(TARGET_OSX)
 			//for 10.7 and 10.8 users we use QTKit for 10.6 users we use QuickTime
@@ -308,7 +309,7 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------ soundplayer
 // check if any soundplayer api is defined from the compiler
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL)
-  #ifdef TARGET_OF_IPHONE
+  #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
   #elif defined TARGET_LINUX
   	#define OF_SOUND_PLAYER_OPENAL
