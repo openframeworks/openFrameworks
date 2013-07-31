@@ -39,7 +39,6 @@ function build() {
 
 	# build dependencies and install into $BUILD_DIR/cairo/build
 	local buildDir=$BUILD_DIR/cairo/apothecary-build
-	#mkdir -p $buildDir
 	rm -rf $buildDir/bin $buildDir/lib $buildDir/share
 	
 	# build a custom version of pkg-config
@@ -100,6 +99,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 	
+	local buildDir=$BUILD_DIR/cairo/apothecary-build
+
 	# dependencies
 	# don't clean pkg-config as we only need to use the built binary
 	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean $FORMULA_DIR/depends/zlib.sh
