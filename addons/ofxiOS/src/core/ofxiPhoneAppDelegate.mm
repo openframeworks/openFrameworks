@@ -27,7 +27,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
+ * ***********************************************************************/
 
 #import "ofMain.h"
 #import "ofxiPhoneAppDelegate.h"
@@ -49,7 +49,7 @@
     [super dealloc];
 }
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {    
+- (void)applicationDidFinishLaunching:(UIApplication *)application {
 	
     self.window = [[[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]] autorelease];
 	[self.window makeKeyAndVisible];
@@ -75,33 +75,81 @@
 	
     // Listen to did rotate event
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-
+    
     NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
     
-    [center addObserver:self 
-               selector:@selector(receivedRotate:) 
-                   name:UIDeviceOrientationDidChangeNotification 
+    [center addObserver:self
+               selector:@selector(receivedRotate:)
+                   name:UIDeviceOrientationDidChangeNotification
                  object:nil];
     
-    [center addObserver:self 
+    [center addObserver:self
                selector:@selector(handleScreenConnectNotification:)
                    name:UIScreenDidConnectNotification object:nil];
     
-    [center addObserver:self 
+    [center addObserver:self
                selector:@selector(handleScreenDisconnectNotification:)
                    name:UIScreenDidDisconnectNotification object:nil];
-
-    [center addObserver:self 
+    
+    [center addObserver:self
                selector:@selector(handleScreenModeDidChangeNotification:)
                    name:UIScreenDidDisconnectNotification object:nil];
+    
+    
+    bool bDoesHWOrientation = ofxiPhoneGetOFWindow()->doesHWOrientation();
+    
+    int iOrient  = [[UIApplication sharedApplication] statusBarOrientation];
+    // is the os version less than 6.0? 
+    if( [[[UIDevice currentDevice] systemVersion] compare:@"6.0" options:NSNumericSearch] == NSOrderedAscending ) {
+        iOrient = [[UIDevice currentDevice] orientation];
+    }
+    
+    BOOL bIsPortrait = UIInterfaceOrientationIsPortrait( iOrient );
     
     // check if app delegate is being extended.
     // if not, create a new view controller.
     NSString * appDelegateClassName = [[self class] description];
-    if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended. 
-        self.glViewController = [[[ofxiPhoneViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds] 
-                                                                            app:(ofxiPhoneApp *)ofGetAppPtr()] autorelease];
+    if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended.
+        CGRect frame = [[UIScreen mainScreen] bounds];
+        
+        if( (!bIsPortrait && bDoesHWOrientation)) {
+            float tWidth    = frame.size.width;
+            float tHeight   = frame.size.height;
+            frame.size.width    = tHeight;
+            frame.size.height   = tWidth;
+        }
+        
+        self.glViewController = [[[ofxiPhoneViewController alloc] initWithFrame:frame app:(ofxiPhoneApp *)ofGetAppPtr()] autorelease];
+        
+        if(!bDoesHWOrientation) {
+            [self.glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
+        }
+        
         self.window.rootViewController = self.glViewController;
+        
+        
+        if(bDoesHWOrientation) {
+            // update the window orientation based on the orientation of the device //
+            ofOrientation newOrient         = OF_ORIENTATION_DEFAULT;
+            iOrient                         = self.glViewController.currentInterfaceOrientation;
+            switch (iOrient) {
+                case UIInterfaceOrientationPortrait:
+                    newOrient = OF_ORIENTATION_DEFAULT;
+                    break;
+                case UIInterfaceOrientationPortraitUpsideDown:
+                    newOrient = OF_ORIENTATION_180;
+                    break;
+                case UIInterfaceOrientationLandscapeLeft:
+                    newOrient = OF_ORIENTATION_90_RIGHT;
+                    break;
+                case UIInterfaceOrientationLandscapeRight:
+                    newOrient = OF_ORIENTATION_90_LEFT;
+                    break;
+            }
+            
+            ofxiPhoneGetOFWindow()->setOrientation( newOrient );
+        }
+        
     }
 }
 

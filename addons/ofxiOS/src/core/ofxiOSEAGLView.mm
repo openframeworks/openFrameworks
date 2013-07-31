@@ -220,6 +220,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
 //------------------------------------------------------
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint {
     
+    if(ofAppiPhoneWindow::getInstance()->doesHWOrientation()) {
+        return touchPoint;
+    }
+    
     ofOrientation orientation = ofGetOrientation();
     CGPoint touchPointOriented = CGPointZero;
     
