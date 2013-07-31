@@ -18,13 +18,17 @@ enum ofTargetPlatform{
 	OF_TARGET_OSX,
 	OF_TARGET_WINGCC,
 	OF_TARGET_WINVS,
-	OF_TARGET_IPHONE,
+	OF_TARGET_IOS,
 	OF_TARGET_ANDROID,
 	OF_TARGET_LINUX,
 	OF_TARGET_LINUX64,
 	OF_TARGET_LINUXARMV6L, // arm v6 little endian
 	OF_TARGET_LINUXARMV7L, // arm v7 little endian
 };
+
+#ifndef OF_TARGET_IPHONE
+    #define OF_TARGET_IPHONE OF_TARGET_IOS
+#endif 
 
 // Cross-platform deprecation warning
 #ifdef __GNUC__
@@ -232,7 +236,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------ capture
 // check if any video capture system is already defined from the compiler
-#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IPHONE)
+#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
 	#ifdef TARGET_LINUX
 
 		#define OF_VIDEO_CAPTURE_GSTREAMER
@@ -266,21 +270,21 @@ typedef TESSindex ofIndexType;
 
 	#elif defined(TARGET_OF_IOS)
 
-		#define OF_VIDEO_CAPTURE_IPHONE
+		#define OF_VIDEO_CAPTURE_IOS
 
 	#endif
 #endif
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
 	#elif defined(TARGET_ANDROID)
 		#define OF_VIDEO_PLAYER_ANDROID
 	#else
 		#ifdef TARGET_OF_IOS
-			#define OF_VIDEO_PLAYER_IPHONE
+			#define OF_VIDEO_PLAYER_IOS
         #elif defined(TARGET_OSX)
 			//for 10.7 and 10.8 users we use QTKit for 10.6 users we use QuickTime
 			#ifndef MAC_OS_X_VERSION_10_7
@@ -302,7 +306,7 @@ typedef TESSindex ofIndexType;
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
 	#else
-		#define OF_SOUNDSTREAM_IPHONE
+		#define OF_SOUNDSTREAM_IOS
 	#endif
 #endif
 
