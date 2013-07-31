@@ -7,7 +7,7 @@
 #include "ofRendererCollection.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
-#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
 #include "ofCairoRenderer.h"
 #endif
 
@@ -62,7 +62,7 @@ void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
 	}else if(rendererType==ofGLRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
-#if !defined(TARGET_OF_IPHONE) && !defined(TARGET_ANDROID)
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
 	}else if(rendererType==ofCairoRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
 #endif
@@ -94,7 +94,7 @@ ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IPHONE)
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------

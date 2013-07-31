@@ -30,12 +30,12 @@
  * ***********************************************************************/
 
 #import "ofMain.h"
-#import "ofxiPhoneAppDelegate.h"
-#import "ofxiPhoneViewController.h"
-#import "ofxiPhoneExtras.h"
-#import "ofxiPhoneExternalDisplay.h"
+#import "ofxiOSAppDelegate.h"
+#import "ofxiOSViewController.h"
+#import "ofxiOSExtras.h"
+#import "ofxiOSExternalDisplay.h"
 
-@implementation ofxiPhoneAppDelegate
+@implementation ofxiOSAppDelegate
 
 @synthesize window;
 @synthesize externalWindow;
@@ -66,12 +66,12 @@
 	// append data
 	//path.append( "/data/" ); // ZACH
 	path.append( "/" ); // ZACH
-	ofLogVerbose("ofxiPhoneAppDelegate") << "setting data path root: \"" << path << "\"";
+	ofLogVerbose("ofxiOSAppDelegate") << "setting data path root: \"" << path << "\"";
 	ofSetDataPathRoot( path );
 	//-----
 	
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
-    [[UIApplication sharedApplication] setStatusBarHidden:(ofxiPhoneGetOFWindow()->getWindowMode() == OF_FULLSCREEN)];
+    [[UIApplication sharedApplication] setStatusBarHidden:(ofxiOSGetOFWindow()->getWindowMode() == OF_FULLSCREEN)];
 	
     // Listen to did rotate event
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -96,7 +96,7 @@
                    name:UIScreenDidDisconnectNotification object:nil];
     
     
-    bool bDoesHWOrientation = ofxiPhoneGetOFWindow()->doesHWOrientation();
+    bool bDoesHWOrientation = ofxiOSGetOFWindow()->doesHWOrientation();
     
     int iOrient  = [[UIApplication sharedApplication] statusBarOrientation];
     // is the os version less than 6.0? 
@@ -109,7 +109,7 @@
     // check if app delegate is being extended.
     // if not, create a new view controller.
     NSString * appDelegateClassName = [[self class] description];
-    if ([appDelegateClassName isEqualToString:@"ofxiPhoneAppDelegate"]) { // app delegate is not being extended.
+    if ([appDelegateClassName isEqualToString:@"ofxiOSAppDelegate"]) { // app delegate is not being extended.
         CGRect frame = [[UIScreen mainScreen] bounds];
         
         if( (!bIsPortrait && bDoesHWOrientation)) {
@@ -119,7 +119,7 @@
             frame.size.height   = tWidth;
         }
         
-        self.glViewController = [[[ofxiPhoneViewController alloc] initWithFrame:frame app:(ofxiPhoneApp *)ofGetAppPtr()] autorelease];
+        self.glViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
         
         if(!bDoesHWOrientation) {
             [self.glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
@@ -147,7 +147,7 @@
                     break;
             }
             
-            ofxiPhoneGetOFWindow()->setOrientation( newOrient );
+            ofxiOSGetOFWindow()->setOrientation( newOrient );
         }
         
     }
@@ -155,19 +155,19 @@
 
 //------------------------------------------------------------------------------------------- application delegate callbacks.
 - (void)applicationWillResignActive:(UIApplication *)application {
-    [ofxiPhoneGetGLView() stopAnimation];
+    [ofxiOSGetGLView() stopAnimation];
 	
-	ofxiPhoneAlerts.lostFocus();
+	ofxiOSAlerts.lostFocus();
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    [ofxiPhoneGetGLView() startAnimation];
+    [ofxiOSGetGLView() startAnimation];
 	
-	ofxiPhoneAlerts.gotFocus();
+	ofxiOSAlerts.gotFocus();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    [ofxiPhoneGetGLView() stopAnimation];
+    [ofxiOSGetGLView() stopAnimation];
 	
     // stop listening for orientation change notifications
     [[NSNotificationCenter defaultCenter] removeObserver: self];
@@ -175,13 +175,13 @@
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-	ofxiPhoneAlerts.gotMemoryWarning();
+	ofxiOSAlerts.gotMemoryWarning();
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
 	NSString *urlData = [url absoluteString];
 	const char * response = [urlData UTF8String];
-	ofxiPhoneAlerts.launchedWithURL(response);
+	ofxiOSAlerts.launchedWithURL(response);
 	return YES;
 }
 
@@ -195,9 +195,9 @@
 //------------------------------------------------------------------------------------------- device rotation callback.
 - (void)receivedRotate:(NSNotification*)notification {
 	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
-    ofLogVerbose("ofxiPhoneAppDelegate") << "device orientation changed to " << interfaceOrientation;
+    ofLogVerbose("ofxiOSAppDelegate") << "device orientation changed to " << interfaceOrientation;
 	if(interfaceOrientation != UIDeviceOrientationUnknown) {
-        ofxiPhoneAlerts.deviceOrientationChanged(interfaceOrientation);
+        ofxiOSAlerts.deviceOrientationChanged(interfaceOrientation);
     }
 }
 
@@ -214,12 +214,12 @@
 
 - (void)handleScreenConnectNotification:(NSNotification*)aNotification {
     [self createExternalWindowWithPreferredMode]; // create external window as soon as external screen is connected to prevent unwanted mirroring.
-    ofxiPhoneExternalDisplay::alertExternalDisplayConnected(); // alert any OF apps listening for a new external device.
+    ofxiOSExternalDisplay::alertExternalDisplayConnected(); // alert any OF apps listening for a new external device.
 }
 
 - (void)handleScreenDisconnectNotification:(NSNotification*)aNotification {
     [self destroyExternalWindow];
-    ofxiPhoneExternalDisplay::alertExternalDisplayDisconnected();
+    ofxiOSExternalDisplay::alertExternalDisplayDisconnected();
 }
 
 - (void)handleScreenModeDidChangeNotification:(NSNotification*)aNotification {
@@ -313,7 +313,7 @@
         return NO; // already displaying on this screen.
     }
     
-    ofxiOSEAGLView * glView = ofxiPhoneGetGLView();
+    ofxiOSEAGLView * glView = ofxiOSGetGLView();
     
     if(screenIndex > 0){ // display on external screen.
         
@@ -332,7 +332,7 @@
         }
     }
     
-    ofxiPhoneExternalDisplay::alertExternalDisplayChanged();
+    ofxiOSExternalDisplay::alertExternalDisplayChanged();
     
     return YES;
 }

@@ -1,7 +1,6 @@
 /***********************************************************************
  
- Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
- *** The Mega Super Awesome Visuals Company ***
+ Copyright (c) 2008, 2009, Memo Akten, www.memo.tv, Douglas Edric Stanley, www.abstractmachine.net
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,38 +31,17 @@
 
 #pragma once
 
-#include "ofMain.h"
-#include "ofxMultiTouchListener.h"
 
-class ofxMultiTouchHandler : public ofxMultiTouchListener {
+/****** protocol, delegate, interface, whatever you want to call it ******/
+
+class ofxiOSMapKitListener { 
 public:
-	void addListener(ofxMultiTouchListener* o) {
-//		listeners.push_back(o);
-//		o->registerTouchEvents();
-		ofAddListener(ofEvents().touchDown, o, &ofxMultiTouchListener::_touchDown);
-		ofAddListener(ofEvents().touchUp, o, &ofxMultiTouchListener::_touchUp);
-		ofAddListener(ofEvents().touchMoved, o, &ofxMultiTouchListener::_touchMoved);
-		ofAddListener(ofEvents().touchDoubleTap, o, &ofxMultiTouchListener::_touchDoubleTap);
-		ofAddListener(ofEvents().touchCancelled, o, &ofxMultiTouchListener::_touchCancelled);
-	}
-	
-	void removeListener(ofxMultiTouchListener* o) {
-//		listeners.remove(o);
-//		o->unregisterTouchEvents();
-		ofRemoveListener(ofEvents().touchDown, o, &ofxMultiTouchListener::_touchDown);
-		ofRemoveListener(ofEvents().touchUp, o, &ofxMultiTouchListener::_touchUp);
-		ofRemoveListener(ofEvents().touchMoved, o, &ofxMultiTouchListener::_touchMoved);
-		ofRemoveListener(ofEvents().touchDoubleTap, o, &ofxMultiTouchListener::_touchDoubleTap);
-		ofRemoveListener(ofEvents().touchCancelled, o, &ofxMultiTouchListener::_touchCancelled);
-	}
-	
-	
+    virtual ~ofxiOSMapKitListener() {};
+	virtual void regionWillChange(bool animated) {}
+	virtual void regionDidChange(bool animated) {}
+	virtual void willStartLoadingMap() {}
+	virtual void didFinishLoadingMap() {}
+	virtual void errorLoadingMap(string errorDescription) {}
 };
 
-class ofxiOSApp;
-
-void ofxRegisterMultitouch(ofxiOSApp * app);
-void ofxUnregisterMultitouch(ofxiOSApp * app);
-
-extern ofxMultiTouchHandler ofxMultiTouch;
-
+#define ofxiPhoneMapKitListener ofxiOSMapKitListener

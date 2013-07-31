@@ -4,7 +4,7 @@
 //
 
 #import "MyAppViewController.h"
-#import "ofxiPhoneViewController.h"
+#import "ofxiOSViewController.h"
 #import "testApp.h"
 
 @implementation MyAppViewController
@@ -108,12 +108,12 @@
     [self launchApp:new testApp() withFrame:appFrame andTitle:@"long"];
 }
 
-- (void)launchApp:(ofxiPhoneApp *)app 
+- (void)launchApp:(ofxiOSApp *)app 
         withFrame:(CGRect)frame 
          andTitle:(NSString *)title
 {
-    ofxiPhoneViewController *viewController;
-    viewController = [[[ofxiPhoneViewController alloc] initWithFrame:frame
+    ofxiOSViewController *viewController;
+    viewController = [[[ofxiOSViewController alloc] initWithFrame:frame
                                                                  app:app] autorelease];
     
     [self.navigationController pushViewController:viewController animated:YES];

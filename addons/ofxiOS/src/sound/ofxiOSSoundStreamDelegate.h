@@ -19,3 +19,5 @@ class ofBaseSoundOutput;
 
 
 @end
+
+#define ofxiPhoneSoundStreamDelegate ofxiOSSoundStreamDelegate

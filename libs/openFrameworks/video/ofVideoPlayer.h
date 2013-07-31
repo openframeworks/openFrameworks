@@ -20,9 +20,9 @@
 	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
 #endif
 
-#ifdef OF_VIDEO_PLAYER_IPHONE
-	#include "ofiPhoneVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer
+#ifdef OF_VIDEO_PLAYER_IOS
+	#include "ofxiOSVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_ANDROID

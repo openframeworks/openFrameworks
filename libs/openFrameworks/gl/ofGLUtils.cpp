@@ -559,7 +559,7 @@ ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
 	}
 }
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 void ofUpdateBitmapCharacterTexture();
 void ofReloadAllImageTextures();
 void ofReloadAllFontTextures();

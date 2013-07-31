@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 #include "ofxOsc.h"
 
 #define HOST "localhost"
 #define PORT 12345
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiOSApp {
 
 	public:
 		void setup();

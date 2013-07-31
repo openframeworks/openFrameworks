@@ -28,7 +28,7 @@
 
 //--------------------------
 // communication
-#if !defined( TARGET_OF_IPHONE ) & !defined(TARGET_ANDROID)
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID)
 	#include "ofSerial.h"
 	#include "ofArduino.h"
 #endif
@@ -47,7 +47,7 @@
 
 //--------------------------
 // graphics
-#if !defined( TARGET_OF_IPHONE ) & !defined(TARGET_ANDROID)
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID)
 #include "ofCairoRenderer.h"
 #endif
 #include "ofGraphics.h"
