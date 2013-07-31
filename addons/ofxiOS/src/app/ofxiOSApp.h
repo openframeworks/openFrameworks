@@ -1,5 +1,5 @@
 /*
- *  ofxiPhoneApp.h
+ *  ofxiOSApp.h
  *  MSA Labs Vol. 1
  *
  *  Created by Mehmet Akten on 14/07/2009.
@@ -11,10 +11,10 @@
 
 #include "ofMain.h"
 #include "ofEvents.h"
-#include "ofxiPhoneAlerts.h"
+#include "ofxiOSAlerts.h"
 #include "ofxMultiTouch.h"
 
-class ofxiPhoneApp : public ofSimpleApp, public ofxiPhoneAlertsListener, public ofxMultiTouchListener {
+class ofxiOSApp : public ofSimpleApp, public ofxiOSAlertsListener, public ofxMultiTouchListener {
 	
 public:
 	virtual void setup() {};
@@ -50,3 +50,4 @@ public:
 
 };
 
+#define ofxiPhoneApp ofxiOSApp

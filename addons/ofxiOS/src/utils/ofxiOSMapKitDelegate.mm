@@ -1,7 +1,6 @@
 /***********************************************************************
  
- Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
- *** The Mega Super Awesome Visuals Company ***
+ Copyright (c) 2008, 2009, Memo Akten, www.memo.tv, Douglas Edric Stanley, www.abstractmachine.net
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,33 +28,53 @@
  *
  * ***********************************************************************/ 
 
-#pragma once
+#include <Availability.h>
+#ifdef __IPHONE_3_0
 
-#import <UIKit/UIKit.h>
 
-@class ofxiPhoneViewController;
+#import "ofxiOSMapKitDelegate.h"
+#import "ofxiOSMapKit.h"
 
-@interface ofxiPhoneAppDelegate : NSObject <UIApplicationDelegate> {
-    NSInteger currentScreenIndex;
+@implementation ofxiOSMapKitDelegate
+
+-(id)initWithMapKit:(ofxiOSMapKit*)mk {
+	if(self = [super init]) {
+		mapKit = mk;
+		ofLogVerbose("ofxiOSMapKitDelegate") << "initWithMapKit";
+	}
+	return self;
 }
 
-@property (nonatomic, retain) UIWindow * window;
-@property (nonatomic, retain) UIWindow * externalWindow;
-@property (nonatomic, retain) ofxiPhoneViewController * glViewController;
-@property (readonly,  assign) NSInteger currentScreenIndex;
+-(void)dealloc {
+	ofLogVerbose("ofxiOSMapKitDelegate") << "dealloc";
+	[super dealloc];
+}
 
-- (BOOL)application:(UIApplication*)application
-      handleOpenURL:(NSURL*)url;
 
-- (void)receivedRotate:(NSNotification*)notification;
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+	mapKit->regionDidChange(animated);
+}
 
-#ifdef __IPHONE_4_3
-- (BOOL)createExternalWindowWithPreferredMode;
-- (BOOL)createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
-- (BOOL)destroyExternalWindow;
-- (BOOL)displayOnScreenWithIndex:(NSInteger)screenIndex
-              andScreenModeIndex:(NSInteger)screenModeIndex;
-#endif
+- (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
+	mapKit->regionWillChange(animated);
+}
+
+- (void)mapViewWillStartLoadingMap:(MKMapView *)mapView {
+	mapKit->willStartLoadingMap();
+}
+
+- (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView {
+	mapKit->didFinishLoadingMap();
+}
+
+- (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error {
+	ofLogVerbose("ofxiOSMapKitDelegate") << "mapViewDidFailLoadingMap";
+	string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
+	mapKit->errorLoadingMap(s);
+}
+
+
 
 @end
 
+#endif

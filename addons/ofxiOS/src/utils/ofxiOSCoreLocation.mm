@@ -1,5 +1,5 @@
 /*
- *  ofxiPhoneCoreLocation.cpp
+ *  ofxiOSCoreLocation.cpp
  *  iPhone CoreLocation Example
  *
  *  Created by Zach Gage on 3/1/09.
@@ -17,127 +17,127 @@
  *
  */
 
-#import "ofxiPhoneCoreLocation.h"
+#import "ofxiOSCoreLocation.h"
 
 //C++ class implementations
 
 //--------------------------------------------------------------
-ofxiPhoneCoreLocation::ofxiPhoneCoreLocation()
+ofxiOSCoreLocation::ofxiOSCoreLocation()
 {
-	coreLoc = [[ofxiPhoneCoreLocationDelegate alloc] init];
+	coreLoc = [[ofxiOSCoreLocationDelegate alloc] init];
 }
 
 //--------------------------------------------------------------
-ofxiPhoneCoreLocation::~ofxiPhoneCoreLocation()
+ofxiOSCoreLocation::~ofxiOSCoreLocation()
 {
 	[coreLoc release];
 }
 
 //--------------------------------------------------------------
 
-bool ofxiPhoneCoreLocation::startHeading()
+bool ofxiOSCoreLocation::startHeading()
 {
 	return [coreLoc startHeading];
 }
 
 //--------------------------------------------------------------
 
-void ofxiPhoneCoreLocation::stopHeading()
+void ofxiOSCoreLocation::stopHeading()
 {
 	[coreLoc stopHeading];
 }
 
 //--------------------------------------------------------------
-bool ofxiPhoneCoreLocation::startLocation()
+bool ofxiOSCoreLocation::startLocation()
 {
 	return [coreLoc startLocation];
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneCoreLocation::stopLocation()
+void ofxiOSCoreLocation::stopLocation()
 {
 	[coreLoc stopLocation];
 }
 
 //--------------------------------------------------------------
-bool ofxiPhoneCoreLocation::startMonitoringSignificantLocationChanges() {
+bool ofxiOSCoreLocation::startMonitoringSignificantLocationChanges() {
   return [coreLoc startMonitoringSignificantLocationChanges];
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneCoreLocation::stopMonitoringSignificantLocationChanges() {
+void ofxiOSCoreLocation::stopMonitoringSignificantLocationChanges() {
   [coreLoc stopMonitoringSignificantLocationChanges];
 }
 
 //--------------------------------------------------------------
 
-double ofxiPhoneCoreLocation::getLatitude()
+double ofxiOSCoreLocation::getLatitude()
 {
 	return [coreLoc lat];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getLongitude()
+double ofxiOSCoreLocation::getLongitude()
 {
 	return [coreLoc lng];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getLocationAccuracy()
+double ofxiOSCoreLocation::getLocationAccuracy()
 {
 	return [coreLoc hAccuracy];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getAltitude()
+double ofxiOSCoreLocation::getAltitude()
 {
 	return [coreLoc alt];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getAltitudeAccuracy()
+double ofxiOSCoreLocation::getAltitudeAccuracy()
 {
 	return [coreLoc vAccuracy];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getDistMoved()
+double ofxiOSCoreLocation::getDistMoved()
 {
 	return [coreLoc distMoved];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getCompassX()
+double ofxiOSCoreLocation::getCompassX()
 {
 	return [coreLoc x];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getCompassY()
+double ofxiOSCoreLocation::getCompassY()
 {
 	return [coreLoc y];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getCompassZ()
+double ofxiOSCoreLocation::getCompassZ()
 {
 	return [coreLoc z];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getMagneticHeading()
+double ofxiOSCoreLocation::getMagneticHeading()
 {
 	return [coreLoc magneticHeading];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getTrueHeading()
+double ofxiOSCoreLocation::getTrueHeading()
 {
 	return [coreLoc trueHeading];
 }
 
 //--------------------------------------------------------------
-double ofxiPhoneCoreLocation::getHeadingAccuracy()
+double ofxiOSCoreLocation::getHeadingAccuracy()
 {
 	return [coreLoc headingAccuracy];
 }
@@ -148,7 +148,7 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 
 // CLASS IMPLEMENTATIONS--------------objc------------------------
 //----------------------------------------------------------------
-@implementation ofxiPhoneCoreLocationDelegate
+@implementation ofxiOSCoreLocationDelegate
 
 //--------------------------------------------------------------
 //create getter/setter functions for these variables

@@ -1,6 +1,7 @@
 /***********************************************************************
  
- Copyright (c) 2008, 2009, Memo Akten, www.memo.tv, Douglas Edric Stanley, www.abstractmachine.net
+ Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
+ *** The Mega Super Awesome Visuals Company ***
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,27 +29,35 @@
  *
  * ***********************************************************************/ 
 
-#include <Availability.h>
-#ifdef __IPHONE_3_0
+#pragma once
 
-#import <MapKit/MapKit.h>
+#import <UIKit/UIKit.h>
 
-class ofxiPhoneMapKit;
+@class ofxiOSViewController;
 
-@interface ofxiPhoneMapKitDelegate : NSObject <MKMapViewDelegate> {
-	ofxiPhoneMapKit*					mapKit;
+@interface ofxiOSAppDelegate : NSObject <UIApplicationDelegate> {
+    NSInteger currentScreenIndex;
 }
 
--(id)initWithMapKit:(ofxiPhoneMapKit*)mk;
--(void)dealloc;
+@property (nonatomic, retain) UIWindow * window;
+@property (nonatomic, retain) UIWindow * externalWindow;
+@property (nonatomic, retain) ofxiOSViewController * glViewController;
+@property (readonly,  assign) NSInteger currentScreenIndex;
 
-- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated;
-- (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated;
-- (void)mapViewWillStartLoadingMap:(MKMapView *)mapView;
-- (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView;
-- (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error;
+- (BOOL)application:(UIApplication*)application
+      handleOpenURL:(NSURL*)url;
+
+- (void)receivedRotate:(NSNotification*)notification;
+
+#ifdef __IPHONE_4_3
+- (BOOL)createExternalWindowWithPreferredMode;
+- (BOOL)createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
+- (BOOL)destroyExternalWindow;
+- (BOOL)displayOnScreenWithIndex:(NSInteger)screenIndex
+              andScreenModeIndex:(NSInteger)screenModeIndex;
+#endif
 
 @end
 
+#define ofxiPhoneAppDelegate ofxiOSAppDelegate
 
-#endif

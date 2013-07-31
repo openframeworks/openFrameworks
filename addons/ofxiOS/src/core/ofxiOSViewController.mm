@@ -1,14 +1,14 @@
 //
-//  ofxiPhoneViewController.m
+//  ofxiOSViewController.m
 //  Created by lukasz karluk on 12/12/11.
 //
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "ofxiPhoneViewController.h"
+#import "ofxiOSViewController.h"
 #import "ofxiOSEAGLView.h"
 
-@interface ofxiPhoneViewController() <EAGLViewDelegate> {
+@interface ofxiOSViewController() <EAGLViewDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
     UIInterfaceOrientation pendingInterfaceOrientation;
     BOOL bReadyToRotate;
@@ -16,11 +16,11 @@
 }
 @end
 
-@implementation ofxiPhoneViewController
+@implementation ofxiOSViewController
 
 @synthesize glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app {
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
     if((self = [super init])) {
         currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
         bReadyToRotate  = NO;
@@ -47,7 +47,7 @@
     
     // glView is added here because if it is added inside initWithFrame,
     // it automatically triggers viewDidLoad, before initWithFrame has had a chance to return.
-    // so now when we call setup in our OF app, a reference to ofxiPhoneViewController will exists.
+    // so now when we call setup in our OF app, a reference to ofxiOSViewController will exists.
     
     [self.view addSubview:self.glView];
     [self.glView setup];
@@ -242,19 +242,19 @@
     }
     switch (currentInterfaceOrientation) {
         case UIInterfaceOrientationPortrait:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortrait %i", currentInterfaceOrientation);
+//            NSLog(@"ofxiOSViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortrait %i", currentInterfaceOrientation);
             return UIInterfaceOrientationPortrait;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortraitUpsideDown %i", currentInterfaceOrientation);
+//            NSLog(@"ofxiOSViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortraitUpsideDown %i", currentInterfaceOrientation);
             return UIInterfaceOrientationPortraitUpsideDown;
             break;
         case UIInterfaceOrientationLandscapeLeft:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationMaskLandscapeLeft %i", currentInterfaceOrientation);
+//            NSLog(@"ofxiOSViewController :: supportedInterfaceOrientations : UIInterfaceOrientationMaskLandscapeLeft %i", currentInterfaceOrientation);
             return UIInterfaceOrientationLandscapeLeft;
             break;
         case UIInterfaceOrientationLandscapeRight:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationLandscapeRight %i", currentInterfaceOrientation);
+//            NSLog(@"ofxiOSViewController :: supportedInterfaceOrientations : UIInterfaceOrientationLandscapeRight %i", currentInterfaceOrientation);
             return UIInterfaceOrientationLandscapeRight;
             break;
         default:
@@ -264,7 +264,9 @@
 }
 
 - (BOOL)shouldAutorotate {
-    return YES;
+    NSLog(@"ofxiOSViewController :: shouldAutorotate - FIX ME!!! TEMP Hack");
+    //NOTE: this was set to YES - but had to set to NO to not crash in simulator
+    return NO;
 }
 
 @end
