@@ -12,6 +12,7 @@
     UIInterfaceOrientation currentInterfaceOrientation;
     UIInterfaceOrientation pendingInterfaceOrientation;
     BOOL bReadyToRotate;
+    BOOL bFirstUpdate;
 }
 @end
 
@@ -22,7 +23,8 @@
 - (id)initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app {
     if((self = [super init])) {
         currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
-        bReadyToRotate = NO;
+        bReadyToRotate  = NO;
+        bFirstUpdate    = NO;
         
         self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
         self.glView.delegate = self;
@@ -99,14 +101,30 @@
     return currentInterfaceOrientation;
 }
 
+- (float)rotationForOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    if (interfaceOrientation == UIInterfaceOrientationPortrait) {
+        return 0;           // 0 degrees.
+    } else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        return M_PI * 0.5;  // 90 degrees.
+    } else if (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+        return M_PI;        // 180 degrees.
+    } else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        return M_PI * 1.5;  // 270 degrees.
+    } else {
+        return 0;
+    }
+}
+
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                             animated:(BOOL)animated {
     if(bReadyToRotate == NO) {
         pendingInterfaceOrientation = interfaceOrientation;
-        return;
+        bFirstUpdate    = YES;
+        // TODO: test in less than 6.0 //
+//        return;
     }
     
-    if(currentInterfaceOrientation == interfaceOrientation) {
+    if(currentInterfaceOrientation == interfaceOrientation && !bFirstUpdate) {
         return;
     }
     
@@ -127,8 +145,8 @@
         bounds.size.height = screenSize.width;
     }
     
-    float rot1 = [self rotationForOrinetation:currentInterfaceOrientation];
-    float rot2 = [self rotationForOrinetation:interfaceOrientation];
+    float rot1 = [self rotationForOrientation:currentInterfaceOrientation];
+    float rot2 = [self rotationForOrientation:interfaceOrientation];
     float rot3 = rot2 - rot1;
     CGAffineTransform rotate = CGAffineTransformMakeRotation(rot3);
     rotate = CGAffineTransformConcat(rotate, self.glView.transform);
@@ -152,23 +170,11 @@
     }
     
     currentInterfaceOrientation = interfaceOrientation;
+    bFirstUpdate = NO;
     
     [self.glView updateDimensions];
 }
 
-- (float)rotationForOrinetation:(UIInterfaceOrientation)interfaceOrientation {
-    if (interfaceOrientation == UIInterfaceOrientationPortrait) {
-        return 0;           // 0 degrees.
-    } else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-        return M_PI * 0.5;  // 90 degrees.
-    } else if (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
-        return M_PI;        // 180 degrees.
-    } else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
-        return M_PI * 1.5;  // 270 degrees.
-    } else {
-        return 0;
-    }
-}
 
 //-------------------------------------------------------------- orientation callbacks.
 // http://developer.apple.com/library/ios/#featuredarticles/ViewControllerPGforiPhoneOS/RespondingtoDeviceOrientationChanges/RespondingtoDeviceOrientationChanges.html
@@ -222,28 +228,39 @@
 
 //-------------------------------------------------------------- iOS5 and earlier.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+    if(pendingInterfaceOrientation >= 0 && !bReadyToRotate) {
+        currentInterfaceOrientation = pendingInterfaceOrientation;
+    }
+    if(!bReadyToRotate) return YES;
     return (toInterfaceOrientation == currentInterfaceOrientation);
 }
 
 //-------------------------------------------------------------- iOS6.
 - (NSUInteger)supportedInterfaceOrientations {
+    if(pendingInterfaceOrientation >= 0 && !bReadyToRotate) {
+        currentInterfaceOrientation = pendingInterfaceOrientation;
+    }
     switch (currentInterfaceOrientation) {
         case UIInterfaceOrientationPortrait:
-            return UIInterfaceOrientationMaskPortrait;
+//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortrait %i", currentInterfaceOrientation);
+            return UIInterfaceOrientationPortrait;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
-            return UIInterfaceOrientationMaskPortraitUpsideDown;
+//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortraitUpsideDown %i", currentInterfaceOrientation);
+            return UIInterfaceOrientationPortraitUpsideDown;
             break;
         case UIInterfaceOrientationLandscapeLeft:
-            return UIInterfaceOrientationMaskLandscapeLeft;
+//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationMaskLandscapeLeft %i", currentInterfaceOrientation);
+            return UIInterfaceOrientationLandscapeLeft;
             break;
         case UIInterfaceOrientationLandscapeRight:
-            return UIInterfaceOrientationMaskLandscapeRight;
+//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationLandscapeRight %i", currentInterfaceOrientation);
+            return UIInterfaceOrientationLandscapeRight;
             break;
         default:
             break;
     }
-    return UIInterfaceOrientationMaskPortrait; // default.
+    return -1; // defaults to orientations selected in the .plist file ('Supported Interface Orientations' in the XCode Project)
 }
 
 - (BOOL)shouldAutorotate {
