@@ -797,6 +797,6 @@ ofTargetPlatform ofGetTargetPlatform(){
 #elif defined(TARGET_ANDROID)
     return OF_TARGET_ANDROID;
 #elif defined(TARGET_OF_IOS)
-    return OF_TARGET_IPHONE;
+    return OF_TARGET_IOS;
 #endif
 }

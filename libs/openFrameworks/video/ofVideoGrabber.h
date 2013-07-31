@@ -7,7 +7,7 @@
 #include "ofTypes.h"
 
 
-#ifdef OF_VIDEO_CAPTURE_IPHONE
+#ifdef OF_VIDEO_CAPTURE_IOS
 	#include "ofxiOSVideoGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofxiOSVideoGrabber
 #endif

@@ -1,6 +1,5 @@
 /*
  *  ofIphoneKeyboard.h
- *  iPhone UIKeyboard Example
  *
  *  Created by Zach Gage on 3/1/09.
  *  Copyright 2009 stfj. All rights reserved.
