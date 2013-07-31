@@ -275,6 +275,7 @@ OF_CORE_DEFINES_CFLAGS=$(addprefix -D,$(PLATFORM_DEFINES))
 
 # gather any platform CFLAGS
 OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
+OF_CORE_BASE_CXXFLAGS=$(PLATFORM_CXXFLAGS)
 
 
 ################################################################################
