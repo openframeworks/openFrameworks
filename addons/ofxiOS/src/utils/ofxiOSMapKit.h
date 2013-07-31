@@ -36,25 +36,25 @@
 
 #include "ofMain.h"
 #include <MapKit/MapKit.h>
-#include "ofxiPhoneMapKitListener.h"
+#include "ofxiOSMapKitListener.h"
 #include <list>
 
 // these are the types you can set for the map
-enum ofxiPhoneMapKitType {
-	OFXIPHONE_MAPKIT_MAP		= MKMapTypeStandard,
-	OFXIPHONE_MAPKIT_SATELLITE	= MKMapTypeSatellite,
-	OFXIPHONE_MAPKIT_HYRBID		= MKMapTypeHybrid
+enum ofxiOSMapKitType {
+	ofxiOS_MAPKIT_MAP		= MKMapTypeStandard,
+	ofxiOS_MAPKIT_SATELLITE	= MKMapTypeSatellite,
+	ofxiOS_MAPKIT_HYRBID		= MKMapTypeHybrid
 };
 
 
 // this is a type, similar to ofPoint, but with better precision for storing latitude and longitude
 typedef CLLocationCoordinate2D ofxMapKitLocation;
 
-class ofxiPhoneMapKit : public ofxiPhoneMapKitListener {
+class ofxiOSMapKit : public ofxiOSMapKitListener {
 public:
 	
-	ofxiPhoneMapKit();
-	virtual ~ofxiPhoneMapKit();
+	ofxiOSMapKit();
+	virtual ~ofxiOSMapKit();
 	
 	
 	// open the mapview
@@ -82,8 +82,8 @@ public:
 	// set center (latidude, longitude) and span (in meters)
 	void setRegionWithMeters(double latitude, double longitude, double metersLatitude, double metersLongitude, bool animated = true);
 	
-	// set the map type (see ofxiPhoneMapKitType above)
-	void setType(ofxiPhoneMapKitType type = OFXIPHONE_MAPKIT_MAP);
+	// set the map type (see ofxiOSMapKitType above)
+	void setType(ofxiOSMapKitType type = ofxiOS_MAPKIT_MAP);
 	
 	// set whether user location is visible on the map (as a blue dot)
 	void setShowUserLocation(bool b);
@@ -125,8 +125,8 @@ public:
 	// returns whether the map is open or not
 	bool isOpen();
 	
-	void addListener(ofxiPhoneMapKitListener* l);	
-	void removeListener(ofxiPhoneMapKitListener* l);
+	void addListener(ofxiOSMapKitListener* l);	
+	void removeListener(ofxiOSMapKitListener* l);
 
 	void regionWillChange(bool animated);
 	void regionDidChange(bool animated);
@@ -141,12 +141,15 @@ public:
 protected:
 	
 	MKMapView	*mapView;
-	std::list<ofxiPhoneMapKitListener*> listeners;
+	std::list<ofxiOSMapKitListener*> listeners;
 	
 	CLLocationCoordinate2D makeCLLocation(double latitude, double longitude);
 	MKCoordinateSpan makeMKCoordinateSpan(double latitudeDelta, double longitudeDelta);
 	
 	void _setRegion(CLLocationCoordinate2D center, MKCoordinateSpan span, bool animated);
 };
+
+#define ofxiPhoneMapKit ofxiOSMapKit
+
 
 #endif

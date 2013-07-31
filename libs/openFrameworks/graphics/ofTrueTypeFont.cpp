@@ -168,7 +168,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 	return charOutlines;
 }
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	#include <set>
 	static set<ofTrueTypeFont*> & all_fonts(){
 		static set<ofTrueTypeFont*> *all_fonts = new set<ofTrueTypeFont*>;
@@ -370,7 +370,7 @@ void ofTrueTypeFont::finishLibraries(){
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		all_fonts().insert(this);
 	#endif
 	//cps				= NULL;
@@ -394,7 +394,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 		unloadTextures();
 	}
 
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		all_fonts().erase(this);
 	#endif
 }

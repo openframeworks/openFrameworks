@@ -8,9 +8,9 @@
 #import "ofxiOSEAGLView.h"
 
 #import "ofMain.h"
-#import "ofAppiPhoneWindow.h"
+#import "ofAppiOSWindow.h"
 #import "ofGLProgrammableRenderer.h"
-#import "ofxiPhoneApp.h"
+#import "ofxiOSApp.h"
 #import "ofxiOSExtensions.h"
 
 static ofxiOSEAGLView * _instanceRef = nil;
@@ -31,7 +31,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     return _instanceRef;
 }
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)appPtr {
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
     
     ESRendererVersion preferedRendererVersion = ESRendererVersion_11;
     if(ofIsGLProgrammableRenderer()) {
@@ -40,22 +40,22 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     self = [self initWithFrame:frame
            andPreferedRenderer:preferedRendererVersion
-                      andDepth:ofAppiPhoneWindow::getInstance()->isDepthBufferEnabled()
-                         andAA:ofAppiPhoneWindow::getInstance()->isAntiAliasingEnabled()
-                 andNumSamples:ofAppiPhoneWindow::getInstance()->getAntiAliasingSampleCount()
-                     andRetina:ofAppiPhoneWindow::getInstance()->isRetinaEnabled()];
+                      andDepth:ofAppiOSWindow::getInstance()->isDepthBufferEnabled()
+                         andAA:ofAppiOSWindow::getInstance()->isAntiAliasingEnabled()
+                 andNumSamples:ofAppiOSWindow::getInstance()->getAntiAliasingSampleCount()
+                     andRetina:ofAppiOSWindow::getInstance()->isRetinaEnabled()];
     
     if(self) {
         
         _instanceRef = self;
         
         if(rendererVersion == ESRendererVersion_20) {
-            if(ofAppiPhoneWindow::getInstance()->isRendererES2() == false) {
+            if(ofAppiOSWindow::getInstance()->isRendererES2() == false) {
                 ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
             }
             ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
         } else if(rendererVersion == ESRendererVersion_11) {
-            if(ofAppiPhoneWindow::getInstance()->isRendererES1() == false) {
+            if(ofAppiOSWindow::getInstance()->isRendererES1() == false) {
                 ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
             }
         }
@@ -72,7 +72,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
             ofRunApp(ofPtr<ofBaseApp>(app));    // this case occurs when app is created in main().
         }
         ofRegisterTouchEvents(app);
-        ofxiPhoneAlerts.addListener(app);
+        ofxiOSAlerts.addListener(app);
 
         ofDisableTextureEdgeHack();
 
@@ -129,7 +129,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     ofRemoveListener(ofEvents().fileDragEvent,  baseAppPtr, &ofBaseApp::dragged,OF_EVENT_ORDER_APP);
     
     ofUnregisterTouchEvents(app);
-    ofxiPhoneAlerts.removeListener(app);
+    ofxiOSAlerts.removeListener(app);
     ofSetAppPtr(ofPtr<ofBaseApp>((app = NULL)));
     
     _instanceRef = nil;
@@ -192,7 +192,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     
-    if(ofAppiPhoneWindow::getInstance()->isSetupScreenEnabled()) {
+    if(ofAppiOSWindow::getInstance()->isSetupScreenEnabled()) {
         ofSetupScreen();
     }
     
@@ -220,7 +220,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 //------------------------------------------------------
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint {
     
-    if(ofAppiPhoneWindow::getInstance()->doesHWOrientation()) {
+    if(ofAppiOSWindow::getInstance()->doesHWOrientation()) {
         return touchPoint;
     }
     

@@ -4,7 +4,7 @@
 //========================================================================
 int main( ){
 
-	ofAppiPhoneWindow * window = new ofAppiPhoneWindow();
+	ofAppiOSWindow * window = new ofAppiOSWindow();
     window->enableRetina();
 	window->enableDepthBuffer();
 	ofSetupOpenGL(window, 1024,768, OF_FULLSCREEN);			// <-------- setup the GL context

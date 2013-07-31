@@ -1,9 +1,9 @@
 #include "ofMain.h"
 #include "testApp.h"
-#include "ofAppiPhoneWindow.h"
+#include "ofAppiOSWindow.h"
 
 int main() {
-    ofAppiPhoneWindow * window = new ofAppiPhoneWindow();
+    ofAppiOSWindow * window = new ofAppiOSWindow();
     window->enableHardwareOrientation();
     window->enableOrientationAnimation();
 

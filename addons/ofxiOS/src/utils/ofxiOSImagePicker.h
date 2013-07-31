@@ -1,6 +1,5 @@
 /*
- *  ofxiPhoneImagePicker.h
- *  iPhone UIImagePicker Example 
+ *  ofxiOSImagePicker.h
  *
  *  Created by Zach Gage on 3/1/09.
  *  Copyright 2009 stfj. All rights reserved.
@@ -32,7 +31,7 @@ public:
 @end
 
 //-----------------------------------------------------------
-@interface ofxiPhoneImagePickerDelegate : NSObject <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface ofxiOSImagePickerDelegate : NSObject <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 {
 
 	UIImagePickerController*			_imagePicker;
@@ -87,14 +86,16 @@ public:
 
 @end
 
+#define ofxiPhoneImagePickerDelegate ofxiOSImagePickerDelegate
 
-class ofxiPhoneImagePicker : public canLoadPixels
+
+class ofxiOSImagePicker : public canLoadPixels
 {
 	
 public:
 	
-	ofxiPhoneImagePicker();
-	~ofxiPhoneImagePicker();
+	ofxiOSImagePicker();
+	~ofxiOSImagePicker();
 	
 	bool openCamera(int camera=0); // 0 for rear, 1 for front
 	bool openLibrary();
@@ -138,5 +139,7 @@ public:
 	
 protected:
 	
-	ofxiPhoneImagePickerDelegate *	imagePicker;
+	ofxiOSImagePickerDelegate *	imagePicker;
 };
+
+#define ofxiPhoneImagePicker ofxiOSImagePicker; 

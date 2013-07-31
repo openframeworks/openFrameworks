@@ -30,24 +30,24 @@
 
 #pragma once
 
-#import "ofxiPhoneAlertsListener.h"
+#import "ofxiOSAlertsListener.h"
 #import <list>
 
-class ofxiPhoneAlertsHandler : public ofxiPhoneAlertsListener {
+class ofxiOSAlertsHandler : public ofxiOSAlertsListener {
 public:
-	void addListener(ofxiPhoneAlertsListener* o) {
+	void addListener(ofxiOSAlertsListener* o) {
 		listeners.push_back(o);
 	}
 	
-	void removeListener(ofxiPhoneAlertsListener* o) {
+	void removeListener(ofxiOSAlertsListener* o) {
 		listeners.remove(o);
 	}
 	
 	//alerts engine will call this when the program loses focus (e.g. the user receives a text message or phone call, or turns off the display)
 	void lostFocus()
 	{
-		for(std::list<ofxiPhoneAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiPhoneAlertsListener* o = *it;
+		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+			ofxiOSAlertsListener* o = *it;
 			o->lostFocus();
 		}
 	}
@@ -55,8 +55,8 @@ public:
 	//alerts engine will call this when the program regains focus
 	void gotFocus()
 	{
-		for(std::list<ofxiPhoneAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiPhoneAlertsListener* o = *it;
+		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+			ofxiOSAlertsListener* o = *it;
 			o->gotFocus();
 		}
 	}
@@ -64,8 +64,8 @@ public:
 	//alerts engine will call this when the program receives a memory warning 
 	void gotMemoryWarning()
 	{
-		for(std::list<ofxiPhoneAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiPhoneAlertsListener* o = *it;
+		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+			ofxiOSAlertsListener* o = *it;
 			o->gotMemoryWarning();
 		}
 	}
@@ -73,8 +73,8 @@ public:
     //alerts engine will call this when the program receives an orientation changed notification 
 	void deviceOrientationChanged(int newOrientation)
     {
-		for(std::list<ofxiPhoneAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiPhoneAlertsListener* o = *it;
+		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+			ofxiOSAlertsListener* o = *it;
 			o->deviceOrientationChanged(newOrientation);
 		}
 	}
@@ -82,17 +82,21 @@ public:
 	//alerts engine will call this when the program is launched with a url
 	void launchedWithURL(string url)
 	{
-		for(std::list<ofxiPhoneAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiPhoneAlertsListener* o = *it;
+		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+			ofxiOSAlertsListener* o = *it;
 			o->launchedWithURL(url);
 		}
 	}
 	
 	
 protected:
-	std::list<ofxiPhoneAlertsListener*> listeners;
+	std::list<ofxiOSAlertsListener*> listeners;
 	
 };
 
-extern ofxiPhoneAlertsHandler ofxiPhoneAlerts;
+#define ofxiPhoneAlerts ofxiOSAlerts
+
+extern ofxiOSAlertsHandler ofxiOSAlerts;
+
+#define ofxiPhoneAlertsHandler ofxiOSAlertsHandler
 
