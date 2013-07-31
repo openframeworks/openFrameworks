@@ -3,8 +3,8 @@
 //  Created by lukasz karluk on 8/02/12.
 //
 
-#import "ofxiPhoneViewController.h"
+#import "ofxiOSViewController.h"
 
-@interface ImageAppViewController : ofxiPhoneViewController
+@interface ImageAppViewController : ofxiOSViewController
 
 @end

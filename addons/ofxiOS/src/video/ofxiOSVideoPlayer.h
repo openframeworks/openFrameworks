@@ -1,5 +1,4 @@
-#ifndef _OF_IPHONE_VIDEO_PLAYER
-#define _OF_IPHONE_VIDEO_PLAYER
+#pragma once
 
 #include "ofPixels.h"
 #include "ofBaseTypes.h"
@@ -7,12 +6,12 @@
 
 #include "ofVideoPlayer.h"
 
-class ofiPhoneVideoPlayer : public ofBaseVideoPlayer {
+class ofxiOSVideoPlayer : public ofBaseVideoPlayer {
 	
 public:
 	
-	ofiPhoneVideoPlayer();
-	~ofiPhoneVideoPlayer();
+	ofxiOSVideoPlayer();
+	~ofxiOSVideoPlayer();
 	    
     bool loadMovie(string name);
     void close();
@@ -80,4 +79,5 @@ protected:
 	ofTexture videoTexture;
 };
 
-#endif
+#define ofxiPhoneVideoPlayer ofxiOSVideoPlayer
+

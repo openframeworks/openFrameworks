@@ -1,11 +1,11 @@
 #pragma once
 
 
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 #include "ofxGui.h"
 
-class testApp : public ofxiPhoneApp{
+class testApp : public ofxiOSApp{
 	
     public:
         void setup();

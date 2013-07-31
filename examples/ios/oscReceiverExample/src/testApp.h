@@ -1,15 +1,15 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 #include "ofxOsc.h"
 
 // listen on port 12345
 #define PORT 12345
 #define NUM_MSG_STRINGS 20
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiOSApp {
 
 	public:
 		void setup();

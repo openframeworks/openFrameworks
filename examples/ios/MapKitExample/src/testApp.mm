@@ -44,15 +44,15 @@ void testApp::setup(){
 	// note this could affect performance quite seriously
 	
 	// add OpenGL View main window.
-    ofxiPhoneSendGLViewToFront();
+    ofxiOSSendGLViewToFront();
 	
 	// OpenGL View is now in front of mapview, but it isn't transparent, so we can't see the map
 	// Make the map transparent so we can see the mapview in undrawn areas
-	ofxiPhoneSetGLViewTransparent(true);
+	ofxiOSSetGLViewTransparent(true);
 	
 	// Now that the OpenGL view is in front of the mapview, it will receive all the touch events, so we cannot interact with the map
 	// So disable interaction with the OpenGL view (testApp::touchXXXXX will not be called)
-	ofxiPhoneSetGLViewUserInteraction(false);
+	ofxiOSSetGLViewUserInteraction(false);
 }
 
 

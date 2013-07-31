@@ -1,6 +1,5 @@
 /*
  *  ofIphoneCoreLocation.h
- *  iPhone CoreLocation Example
  *
  *  Created by Zach Gage on 3/1/09.
  *  Copyright 2009 stfj. All rights reserved.
@@ -12,7 +11,7 @@
 #import "ofMain.h"
 #pragma once
 
-@interface ofxiPhoneCoreLocationDelegate : NSObject <CLLocationManagerDelegate>
+@interface ofxiOSCoreLocationDelegate : NSObject <CLLocationManagerDelegate>
 {
 	CLLocationManager *locationManager;
 	
@@ -69,13 +68,16 @@
 
 @end
 
-class ofxiPhoneCoreLocation
+#define ofxiPhoneCoreLocationDelegate ofxiOSCoreLocationDelegate
+
+
+class ofxiOSCoreLocation
 {
 		
 	public:
 		
-		ofxiPhoneCoreLocation();
-		~ofxiPhoneCoreLocation();	
+		ofxiOSCoreLocation();
+		~ofxiOSCoreLocation();	
 		
 		bool startHeading();
 		void stopHeading();
@@ -101,5 +103,8 @@ class ofxiPhoneCoreLocation
 		
 	protected:
 	
-		ofxiPhoneCoreLocationDelegate *	coreLoc;
+		ofxiOSCoreLocationDelegate *	coreLoc;
 };
+
+#define ofxiPhoneCoreLocation ofxiOSCoreLocation
+
