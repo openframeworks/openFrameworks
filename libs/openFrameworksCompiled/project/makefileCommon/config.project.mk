@@ -328,6 +328,8 @@ OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 
+OF_PROJECT_CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
+
 
 ################################################################################
 # PROJECT LDLAGS
@@ -384,8 +386,16 @@ ALL_CFLAGS =
 # add the CFLAGS from Makefiles.examples
 ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
 
+# clean it
+ALL_CXXFLAGS =
+# add the CFLAGS from Makefiles.examples
+ALL_CXXFLAGS += $(OF_PROJECT_CXXFLAGS)
+
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
+
+# clean up all extra whitespaces in the CFLAGS
+CXXFLAGS = $(strip $(ALL_CXXFLAGS))
 
 ################################################################################
 # LDFLAGS

@@ -136,7 +136,7 @@ PLATFORM_CFLAGS += -Wno-invalid-offsetof
 PLATFORM_CFLAGS += -gdwarf-2
 endif
 
-PLATFORM_CFLAGS += -x objective-c++
+PLATFORM_CXXFLAGS += -x objective-c++
 
 ifeq ($(USE_GST),1)
 PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
