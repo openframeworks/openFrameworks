@@ -5,27 +5,20 @@ void testApp::setup(){
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
-	keyboard = new ofxiOSKeyboard(0,52,320,32);
-	keyboard->setVisible(true);
-	keyboard->setBgColor(255, 255, 255, 255);
-	keyboard->setFontColor(0,0,0, 255);
-	keyboard->setFontSize(26);
+	//If you want a landscape oreintation 
+	//iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	
+	ofBackground(127,127,127);
 }
-
 
 //--------------------------------------------------------------
 void testApp::update(){
- 
+
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){	
-	ofSetColor(180, 180, 180, 255);
-	ofDrawBitmapString("tap the textfield to open the keyboard", 2, 10);
-
-	ofSetColor(20, 160, 240, 255);
-	ofDrawBitmapString("text entered = "+  keyboard->getText() , 2, 70);
-
+void testApp::draw(){
+	
 }
 
 //--------------------------------------------------------------
@@ -35,17 +28,7 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
-	
-	if (touch.id == 1){
-		
-		if(!keyboard->isKeyboardShowing()){
-			keyboard->openKeyboard();
-			keyboard->setVisible(true);
-		} else{
-			keyboard->setVisible(false);
-		}	
-		
-	}
+
 }
 
 //--------------------------------------------------------------
@@ -60,7 +43,7 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -85,6 +68,5 @@ void testApp::gotMemoryWarning(){
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
-    
-}
 
+}

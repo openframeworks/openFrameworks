@@ -7,7 +7,7 @@ void testApp::setup(){
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
-	coreLocation = new ofxiPhoneCoreLocation();
+	coreLocation = new ofxiOSCoreLocation();
 	hasCompass = coreLocation->startHeading();
 	hasGPS = coreLocation->startLocation();
 	

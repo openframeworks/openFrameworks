@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 #include "ofMain.h"
 
 #include "ofxAssimpModelLoader.h"
 #include "ofVboMesh.h"
 
-class testApp : public ofxiPhoneApp{
+class testApp : public ofxiOSApp{
 
 	public:
 

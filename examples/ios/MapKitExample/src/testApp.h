@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOSExtras.h"
 
-class testApp : public ofxiPhoneApp, ofxiPhoneMapKitListener{
+class testApp : public ofxiOSApp, ofxiOSMapKitListener{
 	
     public:
         void setup();
@@ -25,9 +25,9 @@ class testApp : public ofxiPhoneApp, ofxiPhoneMapKitListener{
         // font for writing latitude longitude info
         ofTrueTypeFont font;
 	
-        // instance of ofxiPhoneMapKit
+        // instance of ofxiOSMapKit
         // all MapKit related functionality is through this object
-        ofxiPhoneMapKit mapKit;
+        ofxiOSMapKit mapKit;
 	
         // optional callbacks for Map related events
         void regionWillChange(bool animated);

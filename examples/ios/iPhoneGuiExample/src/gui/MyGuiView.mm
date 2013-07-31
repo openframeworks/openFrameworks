@@ -7,7 +7,7 @@
 //
 
 #import "MyGuiView.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOSExtras.h"
 
 
 @implementation MyGuiView

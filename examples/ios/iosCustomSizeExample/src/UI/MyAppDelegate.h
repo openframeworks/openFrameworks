@@ -3,9 +3,9 @@
 //  Created by lukasz karluk on 12/12/11.
 //
 
-#import "ofxiPhoneAppDelegate.h"
+#import "ofxiOSAppDelegate.h"
 
-@interface MyAppDelegate : ofxiPhoneAppDelegate {
+@interface MyAppDelegate : ofxiOSAppDelegate {
     //
 }
 
