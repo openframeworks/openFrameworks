@@ -103,6 +103,8 @@ public:
 
 	/// is the current frame new?
 	bool isFrameNew();
+	bool isFrameNewVideo();
+	bool isFrameNewDepth();
 
 	/// updates the pixel buffers and textures
 	///
@@ -373,9 +375,8 @@ private:
 	void updateDepthLookupTable();
 	void updateDepthPixels();
 
-	bool bIsFrameNew;
-	bool bNeedsUpdate;
-	bool bUpdateTex;
+	bool bIsFrameNewVideo, bIsFrameNewDepth;
+	bool bNeedsUpdateVideo, bNeedsUpdateDepth;
 	bool bGrabVideo;
 	bool bUseRegistration;
 	bool bNearWhite;
