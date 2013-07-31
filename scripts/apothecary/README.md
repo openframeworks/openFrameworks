@@ -35,21 +35,25 @@ Addon formulas dir: `addons/ofxAddonName/scripts/formulas`
 Default build dir: `scripts/apothecary/build`<br>
 Default Core OF libs dest dir: `libs`
 
-Update a library:
+Update a core library:
 
 	apothecary update libName
+
+Update all core libraries:
+
+	apothecary update core
 
 Update an addon:
 
 	apothecary update addonName
 
-Update all core libraries:
+Update all add ons:
 
-	apothecary update
+	apothecary update addons
 
 Update all core libraries for iOS (on OSX only):
 
-	apothecary -t ios update
+	apothecary -t ios update core
 
 See the built in help for more info:
 
@@ -94,7 +98,7 @@ Detailed Usage
 
 Your interface to the build system is the `apothecary` script:
 
-	apothecary [options] command [libraries/addons]
+	apothecary [options] command core/addons/libName/addonName
 
 You can run it from any location, but it's probably easiest to change to this directory:
 
@@ -122,9 +126,13 @@ apothecary can also accept Core OF lib & addon names in a list:
 
 	apothecary update poco tess2 ofxAssimpModelLoader
 
-Running a command with an empty list process **all** Core OF libs:
+Running a command with "core" as the target processes **all** Core OF libs:
 
-	apothecary update
+	apothecary update core
+	
+Running a command with "addons" as the target processes **all** addons:
+
+    apothecary update addons
 
 ### Script/Directory Paths
 
@@ -215,6 +223,14 @@ apothecary is simple and uses the filename (minus extension) of the formula scri
 **All formula scripts must have the ".sh" extension.**
 
 If you have a more advanced/complicated formula (see cairo & FreeImage), you can use a formula directory which is basically a directory that contains a formula script with the same name (plus ".sh" extension). So for cairo, we have `cairo/cairo.sh` and any other dependency scripts/files are contained within the `cairo` dir.
+
+#### Addons
+
+Addon formulas should be placed in a `scripts/formulas` directory inside the add-on directory. For ofxAssimpModelLoader, this is:
+
+    addons/ofxAssimpModelLoader/scripts/formulas
+    
+When apothecary detects an addon, it sets the lib install directory to the `libs` directory inside the addon and then runs all formulas found in the addon's formal dir. 
 
 ### Variables
 

@@ -92,7 +92,7 @@ VALID_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
 A_VERBOSE=0
 
 # nice, detailed help message
-HELP="Usage: apothecary [options] command [libraries/addons]
+HELP="Usage: apothecary [options] command core/addons/libName/addonName
 
  this is the OpenFrameworks library apothecary
  it mixes formulas and potions to build and update OF C/C++ lib dependencies
@@ -127,14 +127,14 @@ HELP="Usage: apothecary [options] command [libraries/addons]
 
  Examples:
 
-  # update all core libs
-  apothecary update
+  # update all core libs and addon libs
+  apothecary update core addons
 
   # update only glew
   apothecary update glew
  
   # remove all downloaded core lib src dirs from the build cache
-  apothecary remove
+  apothecary remove core
 
   # remove only assimp & glew from the cache
   apothecary remove assimp glew
