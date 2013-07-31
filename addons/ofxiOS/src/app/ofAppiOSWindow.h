@@ -34,13 +34,13 @@
 
 #import "ofAppBaseWindow.h"
 
-class ofAppiPhoneWindow : public ofAppBaseWindow {
+class ofAppiOSWindow : public ofAppBaseWindow {
 public:
     
-    static ofAppiPhoneWindow * getInstance();
+    static ofAppiOSWindow * getInstance();
 	
-	ofAppiPhoneWindow();
-	virtual ~ofAppiPhoneWindow();
+	ofAppiOSWindow();
+	virtual ~ofAppiOSWindow();
     
 	virtual void setupOpenGL(int w, int h, int screenMode);
 	virtual void initializeWindow();
@@ -119,6 +119,8 @@ protected:
 	bool bAntiAliasingEnabled;
 	int antiAliasingSamples;
 };
+
+OF_DEPRECATED_MSG("ofAppiPhoneWindow is deprecated, use ofAppiOSWindow instead.", typedef ofAppiOSWindow ofAppiPhoneWindow);
 
 
 

@@ -109,7 +109,7 @@ void testApp::draw(){
     int y = ofGetHeight() * 0.1;
     int p = 16;
 
-    if(ofxiPhoneExternalDisplay::isDisplayingOnDeviceScreen()){
+    if(ofxiOSExternalDisplay::isDisplayingOnDeviceScreen()){
         ofDrawBitmapString("DISPLAYING ON DEVICE SCREEN", (int)(ofGetWidth()*0.5-110), (int)(ofGetHeight()* 0.5));
         
         int buttonX;
@@ -141,7 +141,7 @@ void testApp::draw(){
         ofSetColor(ofColor::black);
         buttonX = buttonMirrorDisplayRect.x + 35;
         buttonY = (int)buttonMirrorDisplayRect.y + buttonMirrorDisplayRect.height * 0.5 + 5;
-        string mirrorMode = ofxiPhoneExternalDisplay::isMirroring() ? "OFF" : "ON";
+        string mirrorMode = ofxiOSExternalDisplay::isMirroring() ? "OFF" : "ON";
         ofDrawBitmapString("MIRROR " + mirrorMode, buttonX, buttonY);
         
         ofSetColor(ofColor::white);
@@ -173,8 +173,8 @@ void testApp::presentExternalDisplayPopup(){
                                             cancelButtonTitle:@"Cancel" 
                                             otherButtonTitles:nil] retain];
     
-    vector<ofxiPhoneExternalDisplayMode> displayModes;
-    displayModes = ofxiPhoneExternalDisplay::getExternalDisplayModes();
+    vector<ofxiOSExternalDisplayMode> displayModes;
+    displayModes = ofxiOSExternalDisplay::getExternalDisplayModes();
     
     [alert addButtonWithTitle:@"Preferred Mode"];
     
@@ -220,7 +220,7 @@ void testApp::popupDismissed(){
 void testApp::touchDown(ofTouchEventArgs & touch){
     
     if(buttonExternalDisplayRect.inside(touch.x, touch.y)){
-        if(ofxiPhoneExternalDisplay::isExternalScreenConnected()){
+        if(ofxiOSExternalDisplay::isExternalScreenConnected()){
             presentExternalDisplayPopup();
         } else {
             presentExternalDisplayNotFoundPopup();
@@ -228,11 +228,11 @@ void testApp::touchDown(ofTouchEventArgs & touch){
     }
 
     if(buttonMirrorDisplayRect.inside(touch.x, touch.y)){
-        if(ofxiPhoneExternalDisplay::isExternalScreenConnected()){
-            if(ofxiPhoneExternalDisplay::isMirroring()){
-                ofxiPhoneExternalDisplay::mirrorOff();
+        if(ofxiOSExternalDisplay::isExternalScreenConnected()){
+            if(ofxiOSExternalDisplay::isMirroring()){
+                ofxiOSExternalDisplay::mirrorOff();
             } else {
-                if(!ofxiPhoneExternalDisplay::mirrorOn()){
+                if(!ofxiOSExternalDisplay::mirrorOn()){
                     presentMirroringFailedPopup();
                 }
                     
@@ -297,16 +297,16 @@ void testApp::externalDisplayDisconnected(){
 //--------------------------------------------------------------
 void testApp::externalDisplayChanged(){
     ofLogVerbose("external display changed.");
-    if(ofxiPhoneExternalDisplay::isDisplayingOnDeviceScreen()){
+    if(ofxiOSExternalDisplay::isDisplayingOnDeviceScreen()){
         if(viewController){
             [viewController.view removeFromSuperview];
             [viewController release];
             viewController = nil;
         }
-    } else if(ofxiPhoneExternalDisplay::isDisplayingOnExternalScreen()) {
+    } else if(ofxiOSExternalDisplay::isDisplayingOnExternalScreen()) {
         if(!viewController){
             viewController = [[[MyViewController alloc] init] retain];
-            [ofxiPhoneGetAppDelegate().window addSubview:viewController.view];  // add to device window.
+            [ofxiOSGetAppDelegate().window addSubview:viewController.view];  // add to device window.
         }
     }
 }

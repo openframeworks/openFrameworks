@@ -1,5 +1,5 @@
 //
-//  ofxiPhoneExternalDisplay.h
+//  ofxiOSExternalDisplay.h
 //
 //  Created by lukasz karluk on 21/03/12.
 //  http://julapy.com
@@ -11,13 +11,13 @@
 
 #ifdef __IPHONE_4_3
 
-struct ofxiPhoneExternalDisplayMode{
+struct ofxiOSExternalDisplayMode{
     int width;
     int height;
     float pixelAspectRatio;
 };
 
-class ofxiPhoneExternalDisplay {
+class ofxiOSExternalDisplay {
     
 public:
     
@@ -27,8 +27,8 @@ public:
     static void alertExternalDisplayChanged();
     
     //-------------------------------------------------------
-    static vector<ofxiPhoneExternalDisplayMode> getExternalDisplayModes();
-    static bool displayOnExternalScreen(ofxiPhoneExternalDisplayMode externalDisplayMode);
+    static vector<ofxiOSExternalDisplayMode> getExternalDisplayModes();
+    static bool displayOnExternalScreen(ofxiOSExternalDisplayMode externalDisplayMode);
     static bool displayOnExternalScreenWithPreferredDisplayMode();
     static bool displayOnDeviceScreen();
     static bool mirrorOn();
@@ -41,8 +41,8 @@ public:
     static bool isMirroring();
  
     //-------------------------------------------------------
-    ofxiPhoneExternalDisplay();
-    ~ofxiPhoneExternalDisplay();
+    ofxiOSExternalDisplay();
+    ~ofxiOSExternalDisplay();
     
     //-------------------------------------------------------
 	virtual void externalDisplayConnected(){}
@@ -52,3 +52,5 @@ public:
 };
 
 #endif
+
+#define ofxiPhoneExternalDisplay ofxiOSExternalDisplay

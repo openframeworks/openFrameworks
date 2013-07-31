@@ -7,7 +7,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
-#include "ofxiPhoneExtras.h"
+#include "ofxiOSExtras.h"
 
 //#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_3_2
 
@@ -16,7 +16,7 @@
 
 #if defined  __arm__
 
-@implementation iPhoneVideoGrabber
+@implementation iOSVideoGrabber
 
 @synthesize captureSession	= _captureSession;
 
@@ -88,7 +88,7 @@
 		width	= 480;
 		height	= 360;	
 		
-		if(ofxiPhoneGetDeviceRevision() == OFXIPHONE_DEVICE_IPHONE_3G) {
+		if(ofxiOSGetDeviceRevision() == ofxiOS_DEVICE_IPHONE_3G) {
 			width = 400;
 			height = 304;
 		}
@@ -248,7 +248,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 AVFoundationVideoGrabber::AVFoundationVideoGrabber(){
 	fps		= 60;
-	grabber = [iPhoneVideoGrabber alloc];
+	grabber = [iOSVideoGrabber alloc];
 	pixels	= NULL;
 	
 	internalGlDataType = GL_RGB;

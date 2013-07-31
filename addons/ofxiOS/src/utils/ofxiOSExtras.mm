@@ -30,20 +30,20 @@
  * ***********************************************************************/ 
 
 
-#import "ofxiPhoneExtras.h"
+#import "ofxiOSExtras.h"
 
 //--------------------------------------------------------------
-ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
+ofxiOSDeviceType ofxiOSGetDeviceType() {
     NSString * dev = [[[UIDevice currentDevice] model] lowercaseString];    
-    if( [dev hasPrefix:@"iphone"] ) return OFXIPHONE_DEVICE_IPHONE;
-    if( [dev hasPrefix:@"ipad"] ) return OFXIPHONE_DEVICE_IPAD;
-    if( [dev hasPrefix:@"ipod"] ) return OFXIPHONE_DEVICE_IPODTOUCH;
-    return OFXIPHONE_UNKNOWN_DEVICE;   //this would need to be declared 
+    if( [dev hasPrefix:@"iphone"] ) return ofxiOS_DEVICE_IPHONE;
+    if( [dev hasPrefix:@"ipad"] ) return ofxiOS_DEVICE_IPAD;
+    if( [dev hasPrefix:@"ipod"] ) return ofxiOS_DEVICE_IPODTOUCH;
+    return ofxiOS_UNKNOWN_DEVICE;   //this would need to be declared 
 }
 
 
 //--------------------------------------------------------------
-string ofxiPhoneGetDeviceRevision() {
+string ofxiOSGetDeviceRevision() {
 	size_t size;
     sysctlbyname("hw.machine", NULL, &size, NULL, 0);
 	
@@ -63,113 +63,113 @@ string ofxiPhoneGetDeviceRevision() {
 }
 
 //--------------------------------------------------------------
-UIWindow *ofxiPhoneGetUIWindow() {
+UIWindow *ofxiOSGetUIWindow() {
 	return [[UIApplication sharedApplication] keyWindow];
 }
 
 
 //--------------------------------------------------------------
-ofxiOSEAGLView *ofxiPhoneGetGLView() {
+ofxiOSEAGLView *ofxiOSGetGLView() {
 	return [ofxiOSEAGLView getInstance];
 }
 
 //--------------------------------------------------------------
-UIView * ofxiPhoneGetGLParentView() {
-	return ofxiPhoneGetGLView().superview;
+UIView * ofxiOSGetGLParentView() {
+	return ofxiOSGetGLView().superview;
 }
 
 //--------------------------------------------------------------
-ofAppiPhoneWindow* ofxiPhoneGetOFWindow() {
-	return ofAppiPhoneWindow::getInstance();
+ofAppiOSWindow* ofxiOSGetOFWindow() {
+	return ofAppiOSWindow::getInstance();
 }
 
 
 //--------------------------------------------------------------
-ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate() {
+ofxiOSAppDelegate *ofxiOSGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
 }
 
 //--------------------------------------------------------------
-ofxiPhoneViewController *ofxiPhoneGetViewController() {
-	return [ofxiPhoneGetAppDelegate() glViewController];
+ofxiOSViewController *ofxiOSGetViewController() {
+	return [ofxiOSGetAppDelegate() glViewController];
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneSendGLViewToFront() {
-	[ofxiPhoneGetGLView().superview bringSubviewToFront:ofxiPhoneGetGLView()];
-}
-
-
-//--------------------------------------------------------------
-void ofxiPhoneSendGLViewToBack() {
-	[ofxiPhoneGetGLView().superview sendSubviewToBack:ofxiPhoneGetGLView()];
+void ofxiOSSendGLViewToFront() {
+	[ofxiOSGetGLView().superview bringSubviewToFront:ofxiOSGetGLView()];
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneSetGLViewTransparent(bool b) {
-	ofxiPhoneGetGLView().layer.opaque = !b;
+void ofxiOSSendGLViewToBack() {
+	[ofxiOSGetGLView().superview sendSubviewToBack:ofxiOSGetGLView()];
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneSetGLViewUserInteraction(bool b) {
-	ofxiPhoneGetGLView().userInteractionEnabled = b;
+void ofxiOSSetGLViewTransparent(bool b) {
+	ofxiOSGetGLView().layer.opaque = !b;
+}
+
+
+//--------------------------------------------------------------
+void ofxiOSSetGLViewUserInteraction(bool b) {
+	ofxiOSGetGLView().userInteractionEnabled = b;
 }
 
 
 
 //--------------------------------------------------------------
-void ofxiPhoneEnableIdleTimer() {
+void ofxiOSEnableIdleTimer() {
 	[UIApplication sharedApplication].idleTimerDisabled = false;
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneDisableIdleTimer() {
+void ofxiOSDisableIdleTimer() {
 	[UIApplication sharedApplication].idleTimerDisabled = true;
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneLockGLContext() {
-	[ofxiPhoneGetGLView() lockGL];
+void ofxiOSLockGLContext() {
+	[ofxiOSGetGLView() lockGL];
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneUnlockGLContext() {
-	[ofxiPhoneGetGLView() unlockGL];
+void ofxiOSUnlockGLContext() {
+	[ofxiOSGetGLView() unlockGL];
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneEnableLoopInThread() {
-//	[ofxiPhoneGetAppDelegate() enableLoopInThread];
-	ofLogWarning("ofxiPhoneExtras") << "ofxiPhoneEnableLoopInThread() is deprecated, CADisplayLink provides better animation loop";
+void ofxiOSEnableLoopInThread() {
+//	[ofxiOSGetAppDelegate() enableLoopInThread];
+	ofLogWarning("ofxiOSExtras") << "ofxiOSEnableLoopInThread() is deprecated, CADisplayLink provides better animation loop";
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneSetOrientation(ofOrientation orientation) {
+void ofxiOSSetOrientation(ofOrientation orientation) {
     ofSetOrientation(orientation);
 }
 
 
 //--------------------------------------------------------------
-UIDeviceOrientation ofxiPhoneGetOrientation() {
+UIDeviceOrientation ofxiOSGetOrientation() {
     return (UIDeviceOrientation)ofGetOrientation();
 }
 
 
 //--------------------------------------------------------------
-bool ofxiPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
-	return ofxiPhoneUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
+bool ofxiOSBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
+	return ofxiOSUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
 }
 
 
 //--------------------------------------------------------------
-bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
+bool ofxiOSUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 	if(!uiImage) return false;
 	
 	CGImageRef cgImage;
@@ -210,7 +210,7 @@ bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 
 
 //--------------------------------------------------------------
-bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
+bool ofxiOSUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
 	if(uiImage == nil) {
         return false;
     }
@@ -240,7 +240,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
     CGColorSpaceRelease(colorSpace);
 	
 	if(spriteContext == NULL) {
-		ofLogError("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): CGBitmapContextCreate returned NULL";
+		ofLogError("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): CGBitmapContextCreate returned NULL";
 		free(pixels);
 		return false;
 	}
@@ -248,11 +248,11 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
     CGContextSetBlendMode(spriteContext, kCGBlendModeCopy);
     
 	// After you create the context, you can draw the sprite image to the context.
-	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextDrawImage";
+	ofLogVerbose("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): about to CGContextDrawImage";
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
 	
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
-	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextRelease";
+	ofLogVerbose("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): about to CGContextRelease";
 	CGContextRelease(spriteContext);
 	
 	ofImageType ofImageMode;
@@ -269,7 +269,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 			ofImageMode = OF_IMAGE_COLOR_ALPHA; break;
 	}
 			
-	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to setFromPixels";
+	ofLogVerbose("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): about to setFromPixels";
 	outImage.setFromPixels(pixels, width, height, ofImageMode, true);
 
 	free(pixels);
@@ -278,7 +278,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 }
 
 //--------------------------------------------------------------
-bool ofxiPhoneUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targetWidth, int targetHeight) {
+bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targetWidth, int targetHeight) {
 	if(!uiImage) return false;
 	
 	CGContextRef spriteContext;
@@ -297,17 +297,17 @@ bool ofxiPhoneUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int ta
 	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
 	
 	if(spriteContext == NULL) {
-		ofLogError("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): CGBitmapContextCreate returned NULL";
+		ofLogError("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): CGBitmapContextCreate returned NULL";
 		free(pixels);
 		return false;
 	}
 
 	// After you create the context, you can draw the sprite image to the context.
-	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextDrawImage";
+	ofLogVerbose("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): about to CGContextDrawImage";
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
 	
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
-	ofLogVerbose("ofxiPhoneExtras") << "iPhoneUIImageToOFImage(): about to CGContextRelease";
+	ofLogVerbose("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): about to CGContextRelease";
 	CGContextRelease(spriteContext);
 		
 	int glMode;
@@ -334,7 +334,7 @@ bool ofxiPhoneUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int ta
 
 //--------------------------------------------------------------
 
-bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
+bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 	
 	CGContextRef spriteContext;
 	
@@ -351,7 +351,7 @@ bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 	spriteContext = CGBitmapContextCreate(pixelsTmp, w, h, CGImageGetBitsPerComponent(ref), w * bytesPerPixel, CGImageGetColorSpace(ref), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
 	
 	if(spriteContext == NULL) {
-		ofLogError("ofxiPhoneExtras") << "ofxiPhoneCGImageToPixels(): CGBitmapContextCreate returned NULL";
+		ofLogError("ofxiOSExtras") << "ofxiOSCGImageToPixels(): CGBitmapContextCreate returned NULL";
 		free(pixelsTmp);
 		return false;
 	}
@@ -375,7 +375,7 @@ bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 		
 	}
 	long now = ofGetElapsedTimeMillis();
-	ofLogNotice("ofxiPhoneExtras") << "ofxiPhoneCGImageToPixels(): elapsed " << now-then;
+	ofLogNotice("ofxiOSExtras") << "ofxiOSCGImageToPixels(): elapsed " << now-then;
 	*/
 	
 	// Step through both source and destination 4 bytes at a time.
@@ -397,19 +397,19 @@ bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 
 //--------------------------------------------------------------
 
-string ofxNSStringToString(NSString * s) {
+string ofxiOSNSStringToString(NSString * s) {
 	return string([s UTF8String]);
 }
 
 //--------------------------------------------------------------
 
-NSString * ofxStringToNSString(string s) {
+NSString * ofxiOSStringToNSString(string s) {
 	return [NSString stringWithUTF8String:s.c_str()];
 }
 
 //--------------------------------------------------------------
 
-string ofxiPhoneGetDocumentsDirectory()
+string ofxiOSGetDocumentsDirectory()
 {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	return ofxNSStringToString([paths objectAtIndex:0]) + "/";
@@ -417,11 +417,11 @@ string ofxiPhoneGetDocumentsDirectory()
 
 //--------------------------------------------------------------
 
-void ofxiPhoneLaunchBrowser(string url) {
+void ofxiOSLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
-/******************** ofxiPhoneScreenGrab *********************/
+/******************** ofxiOSScreenGrab *********************/
 
 @interface SaveDelegate : NSObject {
 	id delegate;
@@ -435,7 +435,7 @@ void ofxiPhoneLaunchBrowser(string url) {
 
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-	ofLogVerbose("ofxiPhoneExtras") << "didFinishSavingWithError: save finished";
+	ofLogVerbose("ofxiOSExtras") << "didFinishSavingWithError: save finished";
 
 	if([delegate respondsToSelector: @selector(saveComplete)]) {
         [delegate performSelector:@selector(saveComplete)];
@@ -460,12 +460,12 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 }
 
 
-void ofxiPhoneScreenGrab(id delegate) {
+void ofxiOSScreenGrab(id delegate) {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	
 	//fix from: http://forum.openframeworks.cc/index.php/topic,6092.15.html
 	//TODO: look and see if we need to take rotation into account 
-    if(ofxiPhoneGetOFWindow()->isRetinaEnabled()) {
+    if(ofxiOSGetOFWindow()->isRetinaEnabled()) {
         float f_scale = [[UIScreen mainScreen] scale];
         rect.size.width *= f_scale;
         rect.size.height *= f_scale;

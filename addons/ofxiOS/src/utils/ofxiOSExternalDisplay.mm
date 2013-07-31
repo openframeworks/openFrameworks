@@ -1,39 +1,39 @@
 //
-//  ofxiPhoneExternalDisplay.cpp
+//  ofxiOSExternalDisplay.cpp
 //
 //  Created by lukasz karluk on 22/03/12.
 //  http://julapy.com
 //
 
-#include "ofxiPhoneExternalDisplay.h"
-#include "ofxiPhoneAppDelegate.h"
+#include "ofxiOSExternalDisplay.h"
+#include "ofxiOSAppDelegate.h"
 
 #ifdef __IPHONE_4_3
 
 //-----------------------------------------------------------------------------------------
-static vector<ofxiPhoneExternalDisplay *> externalDisplayListeners;
+static vector<ofxiOSExternalDisplay *> externalDisplayListeners;
 
-void ofxiPhoneExternalDisplay::alertExternalDisplayConnected(){
+void ofxiOSExternalDisplay::alertExternalDisplayConnected(){
     for(int i = 0; i < externalDisplayListeners.size(); i++){
         externalDisplayListeners[i]->externalDisplayConnected();
     }
 }
 
-void ofxiPhoneExternalDisplay::alertExternalDisplayDisconnected(){
+void ofxiOSExternalDisplay::alertExternalDisplayDisconnected(){
     for(int i = 0; i < externalDisplayListeners.size(); i++){
         externalDisplayListeners[i]->externalDisplayDisconnected();
     }
 }
 
-void ofxiPhoneExternalDisplay::alertExternalDisplayChanged(){
+void ofxiOSExternalDisplay::alertExternalDisplayChanged(){
     for(int i = 0; i < externalDisplayListeners.size(); i++){
         externalDisplayListeners[i]->externalDisplayChanged();
     }
 }
 
 //-----------------------------------------------------------------------------------------
-vector<ofxiPhoneExternalDisplayMode> ofxiPhoneExternalDisplay::getExternalDisplayModes(){
-    vector<ofxiPhoneExternalDisplayMode> externalDislayModes;
+vector<ofxiOSExternalDisplayMode> ofxiOSExternalDisplay::getExternalDisplayModes(){
+    vector<ofxiOSExternalDisplayMode> externalDislayModes;
     if([[UIScreen screens] count] == 1){ // no external displays connected.
         return externalDislayModes;
     }
@@ -42,7 +42,7 @@ vector<ofxiPhoneExternalDisplayMode> ofxiPhoneExternalDisplay::getExternalDispla
     
     for(int i = 0; i < [[externalScreen availableModes] count]; i++){
         UIScreenMode * screenMode = [[externalScreen availableModes] objectAtIndex:i];
-        externalDislayModes.push_back(ofxiPhoneExternalDisplayMode());
+        externalDislayModes.push_back(ofxiOSExternalDisplayMode());
         externalDislayModes.back().width = screenMode.size.width;
         externalDislayModes.back().height = screenMode.size.height;
         externalDislayModes.back().pixelAspectRatio = screenMode.pixelAspectRatio;
@@ -50,7 +50,7 @@ vector<ofxiPhoneExternalDisplayMode> ofxiPhoneExternalDisplay::getExternalDispla
     return externalDislayModes;
 }
 
-bool ofxiPhoneExternalDisplay::displayOnExternalScreen(ofxiPhoneExternalDisplayMode externalDisplayMode){
+bool ofxiOSExternalDisplay::displayOnExternalScreen(ofxiOSExternalDisplayMode externalDisplayMode){
     if([[UIScreen screens] count] == 1){ // no external displays connected.
         return false;
     }
@@ -63,7 +63,7 @@ bool ofxiPhoneExternalDisplay::displayOnExternalScreen(ofxiPhoneExternalDisplayM
             screenMode.size.height == externalDisplayMode.height &&
             screenMode.pixelAspectRatio == externalDisplayMode.pixelAspectRatio){
            
-            ofxiPhoneAppDelegate * appDelegate;
+            ofxiOSAppDelegate * appDelegate;
             appDelegate = [[UIApplication sharedApplication] delegate];
             
             bool bOk = [appDelegate displayOnScreenWithIndex:1 andScreenModeIndex:i];
@@ -74,7 +74,7 @@ bool ofxiPhoneExternalDisplay::displayOnExternalScreen(ofxiPhoneExternalDisplayM
     return false;
 }
 
-bool ofxiPhoneExternalDisplay::displayOnExternalScreenWithPreferredDisplayMode(){
+bool ofxiOSExternalDisplay::displayOnExternalScreenWithPreferredDisplayMode(){
     if([[UIScreen screens] count] == 1){ // no external displays connected.
         return false;
     }
@@ -94,23 +94,23 @@ bool ofxiPhoneExternalDisplay::displayOnExternalScreenWithPreferredDisplayMode()
         return false;
     }
     
-    ofxiPhoneAppDelegate * appDelegate;
+    ofxiOSAppDelegate * appDelegate;
     appDelegate = [[UIApplication sharedApplication] delegate];
     
     bool bOk = [appDelegate displayOnScreenWithIndex:1 andScreenModeIndex:i];
     return bOk;
 }
 
-bool ofxiPhoneExternalDisplay::displayOnDeviceScreen(){
-    ofxiPhoneAppDelegate * appDelegate;
+bool ofxiOSExternalDisplay::displayOnDeviceScreen(){
+    ofxiOSAppDelegate * appDelegate;
     appDelegate = [[UIApplication sharedApplication] delegate];
     
     bool bOk = [appDelegate displayOnScreenWithIndex:0 andScreenModeIndex:0];
     return bOk;
 }
 
-bool ofxiPhoneExternalDisplay::mirrorOn(){
-    ofxiPhoneAppDelegate * appDelegate;
+bool ofxiOSExternalDisplay::mirrorOn(){
+    ofxiOSAppDelegate * appDelegate;
     appDelegate = [[UIApplication sharedApplication] delegate];
 
     if([[UIScreen screens] count] == 1){
@@ -130,8 +130,8 @@ bool ofxiPhoneExternalDisplay::mirrorOn(){
     return bMirroring;
 }
 
-bool ofxiPhoneExternalDisplay::mirrorOff(){
-    ofxiPhoneAppDelegate * appDelegate;
+bool ofxiOSExternalDisplay::mirrorOff(){
+    ofxiOSAppDelegate * appDelegate;
     appDelegate = [[UIApplication sharedApplication] delegate];
 
     if([[UIScreen screens] count] == 1){
@@ -146,23 +146,23 @@ bool ofxiPhoneExternalDisplay::mirrorOff(){
 }
 
 //-----------------------------------------------------------------------------------------
-bool ofxiPhoneExternalDisplay::isDisplayingOnExternalScreen(){
-    ofxiPhoneAppDelegate * appDelegate;
+bool ofxiOSExternalDisplay::isDisplayingOnExternalScreen(){
+    ofxiOSAppDelegate * appDelegate;
     appDelegate = [[UIApplication sharedApplication] delegate];
     return (appDelegate.currentScreenIndex == 1);
 }
 
-bool ofxiPhoneExternalDisplay::isDisplayingOnDeviceScreen(){
-    ofxiPhoneAppDelegate * appDelegate;
+bool ofxiOSExternalDisplay::isDisplayingOnDeviceScreen(){
+    ofxiOSAppDelegate * appDelegate;
     appDelegate = [[UIApplication sharedApplication] delegate];
     return (appDelegate.currentScreenIndex == 0);
 }
 
-bool ofxiPhoneExternalDisplay::isExternalScreenConnected(){
+bool ofxiOSExternalDisplay::isExternalScreenConnected(){
     return ([[UIScreen screens] count] > 1);
 }
 
-bool ofxiPhoneExternalDisplay::isMirroring(){
+bool ofxiOSExternalDisplay::isMirroring(){
     if([[UIScreen screens] count] == 1){
         return false;
     }
@@ -170,11 +170,11 @@ bool ofxiPhoneExternalDisplay::isMirroring(){
 }
 
 //-----------------------------------------------------------------------------------------
-ofxiPhoneExternalDisplay::ofxiPhoneExternalDisplay(){
+ofxiOSExternalDisplay::ofxiOSExternalDisplay(){
     externalDisplayListeners.push_back(this);
 }
 
-ofxiPhoneExternalDisplay::~ofxiPhoneExternalDisplay(){
+ofxiOSExternalDisplay::~ofxiOSExternalDisplay(){
     for(int i = 0; i < externalDisplayListeners.size(); i++){
         if(externalDisplayListeners[i]==this){
             externalDisplayListeners.erase(externalDisplayListeners.begin() + i);

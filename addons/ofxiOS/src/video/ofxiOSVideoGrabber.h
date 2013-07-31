@@ -1,16 +1,16 @@
-#ifndef _OF_IPHONE_VIDEO_GRABBER
-#define _OF_IPHONE_VIDEO_GRABBER
+#ifndef _OF_IOS_VIDEO_GRABBER
+#define _OF_IOS_VIDEO_GRABBER
 
 
 class AVFoundationVideoGrabber;
 
 #include "ofVideoGrabber.h"
 
-class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
+class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	
 	public :
 	
-	ofiPhoneVideoGrabber();
+	ofxiOSVideoGrabber();
 	
 	//needs implementing
 	vector <ofVideoDevice> listDevices();	
@@ -46,3 +46,5 @@ protected:
 };
 
 #endif
+
+#define ofxiPhoneVideoGrabber ofxiOSVideoGrabber

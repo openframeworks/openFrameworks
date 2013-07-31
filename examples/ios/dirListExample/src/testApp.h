@@ -2,10 +2,10 @@
 #define _TEST_APP
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiOSApp {
 
 	public:
 
