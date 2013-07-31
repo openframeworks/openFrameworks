@@ -45,7 +45,7 @@ bool testApp::removeWordIf(LyricWord &wrd) {
 void testApp::setup() {
     
     // load the font
-    font.loadFont("Helvetica.dfont", 9);
+    font.loadFont("sans-serif", 10);
     sortTypeInfo = "no sort";
     words.clear();
     
