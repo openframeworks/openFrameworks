@@ -233,9 +233,15 @@ if [ $# -gt 0 ] ; then
 	A_CMD=$1
 else
 	echoWarning " Missing command, see help: apothecary -h"
-	exit 0
+	exit 1
 fi
 shift 1
+
+# check for arguments
+if [ $# -lt 1 ] ; then
+	echoWarning " Missing lib build target (maybe you wanted \"core\"), see help: apothecary -h"
+	exit 1
+fi
 
 ################################################################################
 ### FUNCTIONS
@@ -268,7 +274,11 @@ function isFormulaType() {
 
 # checks if a given formula string is a forumla script or exists in the formulas dir,
 # exits with error on failure, sets formula script and parent dir on success
-# args: formula string, formula script, formula script parent dir
+#
+# sets isAddon arg if given string is an addon in the addons dir, script & parent dir
+# will be empty if the addon does not contain any formulas
+#
+# args: formula string, formula script, formula script parent dir, isAddon bool
 function checkFormula() {
 	local script
 	local parentDir
@@ -293,37 +303,38 @@ function checkFormula() {
 		script=$(basename $path)
 		parentDir=$(dirname $path)
 			
-	# is the given formula name a script in the formulas dir
+	# is the given formula name a script in the formulas dir?
 	elif [ -e $REL_FORMULAS_DIR/$1.sh ] ; then
 		script=$1.sh
 		parentDir=$APOTHECARY_DIR/$REL_FORMULAS_DIR 
 	
-	# is the given formula a dir?
+	# is the given formula dir in the formuals a dir?
 	elif [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
 		script=$1.sh
 		parentDir=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$1
 
-	# is the given forumla name an addon (aka starts with "ofx")?
-	#elif [ "$(echo $1 | grep ofx.*)" != "" ] ; then
+	# is the given formula name an addon in the addons dir?
 	elif [ -e $REL_ADDONS_DIR/$1 ] ; then 
 		
 		echoVerbose " Detected addon: \"$1\""
 
 		# are there formulas in the addon formulas dir?
-		if [ ! -e $REL_ADDONS_DIR/$1/scripts/formulas ] ; then
-			echoError " Addon \"$1\" has no formulas"
-			exit 0
+		if [ -e $REL_ADDONS_DIR/$1/scripts/formulas ] ; then
+			script=
+			parentDir=$REL_ADDONS_DIR/$1/scripts/formulas
+		else
+			script=
+			parentDir=""
 		fi
-
-		script=
-		parentDir=$REL_ADDONS_DIR/$1/scripts/formulas
-		eval $4=1 # is addon bool
+		eval $4=1
 
 	else
 		echoError " No formula for lib \"$1\""
 		exit 1
 	fi
 
+	#echoVerbose " checkFormula script: $script"
+	#echoVerbose " checkFormula script parent dir: $parentDir"
 	eval $2=$script
 	eval $3=$parentDir
 }
@@ -334,51 +345,69 @@ function doCommand() {
 	local cmd=$1
 	shift 1
 
-	# process given libraries
-	if [ $# -gt 0 ] ; then
-		while [ $# -gt 0 ] ; do
-			
+	# process given lib targets
+	while [ $# -gt 0 ] ; do
+
+		# process all formulas in formulas dir
+		if [ "$1" == "core" ] ; then
 			local formula
-			local currentLib=$1
+			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
+				doCommand $cmd "${formula%.*}" # remove exntension
+			done
+
+		# process all addons in the addons dir
+		elif [ "$1" == "addons" ] ; then
+			local addon
+			for addon in $(ls -1 $REL_ADDONS_DIR) ; do
+				if [ -d $REL_ADDONS_DIR/$addon ] ; then
+					doCommand $cmd $addon
+				fi
+			done
+
+		else # process given lib or addon
+
+			local formula
 			local isAddon=0
-			checkFormula $currentLib formula FORMULA_DIR isAddon
-			
+			checkFormula $1 formula FORMULA_DIR isAddon
+
 			if [ $isAddon == 1 ] ; then
-				local addonFormula
 				local tmpLibsDir=$LIBS_DIR
 
-				# set libs dest dir to addon/libs if it hasn't been manually set
-				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
-					LIBS_DIR=$APOTHECARY_DIR/$REL_ADDONS_DIR/$1/libs
-				fi
+				# are there formulas in the addon formulas dir?
+				if [ "$FORMULA_DIR" != "" ] ; then					
 
-				# process all formulas in scripts/formulas
-				for addonFormula in $( ls -1 $FORMULA_DIR) ; do
-					doCommand $cmd $FORMULA_DIR/$addonFormula
-				done
+					# set libs dest dir to addon/libs if it hasn't been manually set
+					if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+						LIBS_DIR=$APOTHECARY_DIR/$REL_ADDONS_DIR/$1/libs
+					fi
 
-				# back to default
-				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
-					LIBS_DIR=$tmpLibsDir
+					# process all formulas in scripts/formulas
+					local addonFormula
+					for addonFormula in $( ls -1 $FORMULA_DIR) ; do
+						doCommand $cmd $FORMULA_DIR/$addonFormula
+					done
+					
+					# back to default
+					if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+						LIBS_DIR=$tmpLibsDir
+					fi
+				else
+					echoInfo " Skipping addon \"$1\": no formulas found"					
 				fi
 			
 			else # not an addon
-				$cmd "${formula%.*}"
+
+				formula=$(basename $1)
+				local currentLib="${formula%.*}"
+
+				# do command
+				$cmd $currentLib
 			fi
+		fi
 
-			shift 1
-		
-		done
+		shift 1
 
-	else # process all formulas in formulas dir
-		local formula
-		for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-			local formula
-			local currentLib="${formula%.*}" # removes file extension
-			checkFormula $currentLib formula FORMULA_DIR
-			$cmd $currentLib $formula
-		done
-	fi
+	done
 }
 
 # execute a given command on a formula and/or formulas,
@@ -388,38 +417,60 @@ function doFormulaCommand() {
 	local cmd=$1
 	shift 1
 
-	# process given libraries
-	if [ $# -gt 0 ] ; then
-		while [ $# -gt 0 ] ; do
+	# process given lib targets
+	while [ $# -gt 0 ] ; do
+
+		# process all formulas in formulas dir
+		if [ "$1" == "core" ] ; then
+			local formula
+			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
+				doFormulaCommand $cmd "${formula%.*}" # remove exntension
+			done
+
+		# process all addons in the addons dir
+		elif [ "$1" == "addons" ] ; then
+			local addon
+			for addon in $(ls -1 $REL_ADDONS_DIR) ; do
+				if [ -d $REL_ADDONS_DIR/$addon ] ; then
+					doFormulaCommand $cmd $addon
+				fi
+			done
+
+		else # process given lib or addon
 
 			local formula
 			local isAddon=0
 			checkFormula $1 formula FORMULA_DIR isAddon
 
 			if [ $isAddon == 1 ] ; then
-				local addonFormula
 				local tmpLibsDir=$LIBS_DIR
 
-				# set libs dest dir to addon/libs if it hasn't been manually set
-				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
-					LIBS_DIR=$APOTHECARY_DIR/$REL_ADDONS_DIR/$1/libs
-				fi
+				# are there formulas in the addon formulas dir?
+				if [ "$FORMULA_DIR" != "" ] ; then					
 
-				# process all formulas in scripts/formulas
-				for addonFormula in $( ls -1 $FORMULA_DIR) ; do
-					#echo "doFormulaCommand $cmd $FORMULA_DIR/$addonFormula"
-					doFormulaCommand $cmd $FORMULA_DIR/$addonFormula
-				done
-				
-				# back to default
-				if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
-					LIBS_DIR=$tmpLibsDir
+					# set libs dest dir to addon/libs if it hasn't been manually set
+					if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+						LIBS_DIR=$APOTHECARY_DIR/$REL_ADDONS_DIR/$1/libs
+					fi
+
+					# process all formulas in scripts/formulas
+					local addonFormula
+					for addonFormula in $( ls -1 $FORMULA_DIR) ; do
+						doFormulaCommand $cmd $FORMULA_DIR/$addonFormula
+					done
+					
+					# back to default
+					if [ $IS_CUSTOM_LIBS_DIR == 0 ] ; then
+						LIBS_DIR=$tmpLibsDir
+					fi
+				else
+					echoInfo " Skipping addon \"$1\": no formulas found"					
 				fi
 			
 			else # not an addon
 
 				# load a script & it's function implementations
-				source $FORMULA_DIR/$formula #
+				source $FORMULA_DIR/$formula
 				formula=$(basename $1)
 				local currentLib="${formula%.*}"
 
@@ -428,46 +479,19 @@ function doFormulaCommand() {
 				isFormulaType $TYPE bFormulaType
 				if [ $bFormulaType == 0 ] ; then
 					echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
-					FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
 				else
 					# do command
 					$cmd $currentLib
 				fi
 			fi
+		fi
 
-			shift 1
+		shift 1
 
-			# reset to all types
-			FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
-		done
+		# reset to all types
+		FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
 
-	else
-
-		# process all formulas in formulas dir
-		local formula
-		for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
-
-			local currentLib="${formula%.*}"
-			checkFormula $currentLib formula FORMULA_DIR
-
-			# load a script & it's function implementations
-			source $FORMULA_DIR/$formula
-
-			# does this formula support the current build type?
-			local bFormulaType=0 # bool
-			isFormulaType $TYPE bFormulaType
-			if [ $bFormulaType == 0 ] ; then
-				echoInfo " Skipping \"$currentLib\": $cmd not needed for type \"$TYPE\""
-				FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
-			else
-				# do command
-				$cmd $currentLib 
-			fi
-
-			# reset to all types
-			FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
-		done
-	fi
+	done
 }
 
 # update a given library
@@ -697,7 +721,6 @@ echoVerbose "Libs dest dir: $LIBS_DIR"
 
 # handle commands
 echoVerbose "Running: $A_CMD $*"
-echoVerbose ""
 case "$A_CMD" in
 
 	update)
