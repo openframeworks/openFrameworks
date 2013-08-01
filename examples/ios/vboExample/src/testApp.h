@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 
 #define GRID_WIDTH  16
 #define GRID_HEIGHT 16
 #define LENGTH		2 * 8
 
-class testApp : public ofxiPhoneApp{
+class testApp : public ofxiOSApp{
 	
     public:
         void setup();

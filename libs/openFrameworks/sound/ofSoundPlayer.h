@@ -33,7 +33,7 @@ void ofSoundShutdown();
 #define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
 #endif
 
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_OF_IOS
 #include "ofxiOSSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
 #endif

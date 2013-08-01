@@ -8,14 +8,14 @@
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
 
-class ofxiPhoneApp;
+class ofxiOSApp;
 class ofVec3f;
 
 @interface ofxiOSEAGLView : EAGLView {
 
 @protected
     NSMutableDictionary	* activeTouches;
-    ofxiPhoneApp * app;
+    ofxiOSApp * app;
     
 	ofVec3f * screenSize;   // because ofVec3f is forward declared,
 	ofVec3f * windowSize;   // these values have to be pointers.
@@ -28,10 +28,12 @@ class ofVec3f;
 
 + (ofxiOSEAGLView *) getInstance;
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiPhoneApp *)app;
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app;
 - (void)setup;
 - (void)updateDimensions;
 - (void)destroy;
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
 
 @end
+
+#define ofxiPhoneEAGLView ofxiOSEAGLView

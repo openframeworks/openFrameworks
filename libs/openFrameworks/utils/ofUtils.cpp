@@ -21,12 +21,12 @@
 #endif
 
 
-#if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
+#if defined(TARGET_OF_IOS) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include <sys/time.h>
 #endif
 
 #ifdef TARGET_OSX
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OF_IOS
 		#include <mach-o/dyld.h>
 		#include <sys/param.h> // for MAXPATHLEN
 	#endif
@@ -40,8 +40,8 @@
 
 #endif
 
-#ifdef TARGET_OF_IPHONE
-#include "ofxiPhoneExtras.h"
+#ifdef TARGET_OF_IOS
+#include "ofxiOSExtras.h"
 #endif
 
 #ifdef TARGET_ANDROID
@@ -249,7 +249,7 @@ Poco::Path getWorkingDir(){
 //--------------------------------------------------
 void ofSetWorkingDirectoryToDefault(){
 #ifdef TARGET_OSX
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OF_IOS
 		string newPath = "";
 		char path[MAXPATHLEN];
 		uint32_t size = sizeof(path);
@@ -687,8 +687,8 @@ void ofLaunchBrowser(string _url, bool uriEncodeQuery){
 		}
 	#endif
 
-	#ifdef TARGET_OF_IPHONE
-		ofxiPhoneLaunchBrowser(uri.toString());
+	#ifdef TARGET_OF_IOS
+		ofxiOSLaunchBrowser(uri.toString());
 	#endif
 
 	#ifdef TARGET_ANDROID
@@ -796,7 +796,7 @@ ofTargetPlatform ofGetTargetPlatform(){
     #endif
 #elif defined(TARGET_ANDROID)
     return OF_TARGET_ANDROID;
-#elif defined(TARGET_OF_IPHONE)
-    return OF_TARGET_IPHONE;
+#elif defined(TARGET_OF_IOS)
+    return OF_TARGET_IOS;
 #endif
 }

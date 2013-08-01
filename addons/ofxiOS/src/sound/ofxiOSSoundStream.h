@@ -55,4 +55,4 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
         int numOfBuffers;
 };
 
-
+#define ofxiPhoneSoundStream ofxiOSSoundStream
