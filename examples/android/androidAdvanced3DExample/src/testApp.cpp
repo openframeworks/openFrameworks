@@ -43,7 +43,7 @@ void testApp::setup(){
 	ofSetVerticalSync(true);
 	ofBackground(70, 70, 70);
 	ofEnableSmoothing();
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	
 	
 	/////////////////////
@@ -138,12 +138,12 @@ void testApp::draw(){
 	// BACKGROUND HIGHLIGHT
 	//////////////////////////
 	//
-	glDisable(GL_DEPTH_TEST);
+	ofDisableDepthTest();
 	ofPushStyle();
 	ofSetColor(100, 100, 100);
 	ofRect(viewGrid[iMainCamera]);
 	ofPopStyle();
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	//
 	//////////////////////////
 	

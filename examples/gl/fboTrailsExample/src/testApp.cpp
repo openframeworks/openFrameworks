@@ -96,7 +96,7 @@ void testApp::drawFboTest(){
 	ofPushMatrix();
 		ofTranslate(200,200,0);
 		ofRotate(ofGetElapsedTimef()*30, 1,0,0.5);
-		ofBox(0,0, 100);
+		ofDrawBox(0,0, 100);
 	ofPopMatrix();
 
 	//also draw based on our mouse position
