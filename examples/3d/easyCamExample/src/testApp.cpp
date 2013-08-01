@@ -6,7 +6,7 @@ void testApp::setup(){
 	
 	// this uses depth information for occlusion
 	// rather than always drawing things on top of each other
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	
 	// this sets the camera's distance from the object
 	cam.setDistance(100);

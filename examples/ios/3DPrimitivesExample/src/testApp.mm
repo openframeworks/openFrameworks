@@ -73,7 +73,7 @@ void testApp::draw(){
 	float spinX = sin(ofGetElapsedTimef()*.35f);
     float spinY = cos(ofGetElapsedTimef()*.075f);
     
-    glEnable(GL_DEPTH_TEST);
+    ofEnableDepthTest();
     
     ofEnableLighting();
     pointLight.enable();
@@ -372,7 +372,7 @@ void testApp::draw(){
         cone.drawNormals(20);
     }
     
-    glDisable(GL_DEPTH_TEST);
+    ofDisableDepthTest();
     
     ofFill();
     ofSetColor(255, 255, 255);
