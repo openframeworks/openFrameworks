@@ -881,9 +881,12 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 
 	int len = (int)textString.length();
-	//float yOffset = 0;
 	float fontSize = 8.0f;
-	bool bOrigin = false;
+	int newLineDirection = 1.0f;
+
+	if(!ofIsVFlipped()){
+		newLineDirection  = -1;
+	}
 
 	float sx = 0;
 	float sy = -fontSize;
@@ -1029,7 +1032,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sy += fontSize*1.7*newLineDirection;
 			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
 			} else {
