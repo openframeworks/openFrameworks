@@ -875,8 +875,8 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 	}
 	mutex.lock();
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
+	buffer = sample;
 	if(pixels.isAllocated()){
-		buffer = sample;
 		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
 		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
 		bBackPixelsChanged=true;
@@ -940,8 +940,8 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	}
 	mutex.lock();
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
+	buffer = sample;
 	if(pixels.isAllocated()){
-		buffer = sample;
 		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
 		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
 		bBackPixelsChanged=true;
