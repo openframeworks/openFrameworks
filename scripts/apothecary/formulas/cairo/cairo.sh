@@ -42,7 +42,7 @@ function build() {
 	rm -rf $buildDir/bin $buildDir/lib $buildDir/share
 	
 	# build a custom version of pkg-config
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir -v update $FORMULA_DIR/depends/pkg-config.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/pkg-config.sh
 	export PKG_CONFIG=$buildDir/bin/pkg-config
 	export PKG_CONFIG_PATH=$buildDir/lib/pkgconfig
 
