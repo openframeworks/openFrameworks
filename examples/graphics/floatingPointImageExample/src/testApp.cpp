@@ -64,9 +64,9 @@ void testApp::draw(){
 		ofRotateX(60);
 		ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2, 0);
 		ofSetColor(255);
-		glEnable(GL_DEPTH_TEST);
+		ofEnableDepthTest();
 		mesh.draw();
-		glDisable(GL_DEPTH_TEST);
+		ofDisableDepthTest();
 	easyCam.end();
 }
 

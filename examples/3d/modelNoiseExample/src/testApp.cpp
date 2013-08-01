@@ -25,7 +25,7 @@ void testApp::setup(){
     ofDisableArbTex();
 	
 	//this makes sure that the back of the model doesn't show through the front
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 
 	//now we load our model
 	model.loadModel("dog/dog.3ds");

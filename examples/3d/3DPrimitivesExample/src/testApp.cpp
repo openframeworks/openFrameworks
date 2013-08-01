@@ -81,7 +81,7 @@ void testApp::draw() {
         spinX = spinY = 0.0f;
     }
     
-    glEnable(GL_DEPTH_TEST);
+    ofEnableDepthTest();
     
     ofEnableLighting();
     pointLight.enable();
@@ -383,7 +383,7 @@ void testApp::draw() {
         cone.drawAxes(cone.getHeight()+30);
     }
     
-    glDisable(GL_DEPTH_TEST);
+    ofDisableDepthTest();
     
     ofFill();
     
