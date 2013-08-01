@@ -167,9 +167,9 @@ void testApp::drawPointCloud() {
 	// the projected points are 'upside down' and 'backwards' 
 	ofScale(1, -1, -1);
 	ofTranslate(0, 0, -1000); // center the points a bit
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	mesh.drawVertices();
-	glDisable(GL_DEPTH_TEST);
+	ofDisableDepthTest();
 	ofPopMatrix();
 }
 

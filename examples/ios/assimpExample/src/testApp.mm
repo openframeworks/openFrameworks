@@ -8,7 +8,7 @@ void testApp::setup(){
     
     ofDisableArbTex(); // we need GL_TEXTURE_2D for our models coords.
     
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
     
     glShadeModel(GL_SMOOTH); //some model / light stuff
     light.enable();
@@ -73,7 +73,7 @@ void testApp::draw(){
 	//note we have to enable depth buffer in main.mm
 	//see: window->enableDepthBuffer(); in main.mm
 
-	glEnable(GL_DEPTH_TEST);	
+	ofDisableDepthTest();
     ofPushMatrix();
     ofTranslate(model.getPosition().x, model.getPosition().y, 0);
     ofRotate(-mouseX, 0, 1, 0);

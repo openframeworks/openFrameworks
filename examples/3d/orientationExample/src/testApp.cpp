@@ -81,7 +81,7 @@ void testApp::draw(){
 	ofTranslate(current.x, current.y, current.z);
 	rotateToNormal(current - previous);
 	ofSetColor(255);
-	ofBox(32);
+	ofDrawBox(32);
 	ofDrawAxis(32);
 	
 	easyCam.end();
