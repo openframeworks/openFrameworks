@@ -160,7 +160,7 @@ private:
 
 
 	ofPolyline circlePolyline;
-#ifdef TAREGET_OPENGLES
+#ifdef TARGET_OPENGLES
 	ofMesh circleMesh;
 	ofMesh triangleMesh;
 	ofMesh rectMesh;
