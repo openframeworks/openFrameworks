@@ -2,6 +2,7 @@
 #include "ofNode.h"
 #include "ofMath.h"
 #include "ofLog.h"
+#include "of3dGraphics.h"
 
 ofNode::ofNode() : 
 	parent(NULL) {
@@ -350,6 +351,12 @@ void ofNode::draw() {
 	transformGL();
 	customDraw();
 	restoreTransformGL();
+}
+
+//----------------------------------------
+void ofNode::customDraw() {
+	ofDrawBox(10);
+	ofDrawAxis(20);
 }
 
 //----------------------------------------
