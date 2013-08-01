@@ -11,7 +11,7 @@ void testApp::setup(){
 	ofBackground(255,255,255);
 
     //some model / light stuff
-    glEnable (GL_DEPTH_TEST);
+    ofEnableDepthTest();
     glShadeModel (GL_SMOOTH);
 
     /* initialize lighting */

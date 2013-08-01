@@ -6,7 +6,7 @@ void testApp::setup(){
 
 	// this uses depth information for occlusion
 	// rather than always drawing things on top of each other
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	
 	// ofBox uses texture coordinates from 0-1, so you can load whatever
 	// sized images you want and still use them to texture your box

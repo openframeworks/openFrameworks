@@ -97,11 +97,11 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	//we have to disable depth testing to draw the video frame
-	glDisable(GL_DEPTH_TEST);	
+	ofDisableDepthTest();
 //	vidGrabber.draw(20,20);
 	
 	//but we want to enable it to show the mesh
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	cam.begin();		
 
 	//You can either draw the mesh or the wireframe

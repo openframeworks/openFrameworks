@@ -30,7 +30,7 @@ void testApp::reset() {
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	ofSetVerticalSync(true);
 	ofEnableLighting();
 	

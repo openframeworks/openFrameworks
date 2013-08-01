@@ -26,7 +26,7 @@ void testApp::setup() {
 		}
 	}
 
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
 	glPointSize(3); // make the points bigger
 }

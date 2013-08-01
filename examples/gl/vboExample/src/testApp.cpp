@@ -122,7 +122,7 @@ void testApp::update() {
 void testApp::draw() {
 	ofBackgroundGradient(ofColor(64), ofColor(0));
 	cam.begin();
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	
 	ofRotateY(ofGetElapsedTimef() * 30); // slowly rotate the model
 	
@@ -148,7 +148,7 @@ void testApp::draw() {
 	}
 	img.unbind();
 	
-	glDisable(GL_DEPTH_TEST);
+	ofDisableDepthTest();
 	cam.end();
 	
 	// draw the framerate in the top left corner
