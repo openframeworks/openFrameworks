@@ -53,7 +53,9 @@ ofAppiOSWindow::ofAppiOSWindow() {
     windowMode = OF_FULLSCREEN;
     
 	bEnableSetupScreen = true;
-    orientation = OF_ORIENTATION_DEFAULT;
+//    orientation = OF_ORIENTATION_DEFAULT;
+    orientation = OF_ORIENTATION_UNKNOWN;
+    
     bHardwareOrientation = false;
     bOrientationIsAnimated = false;
 
