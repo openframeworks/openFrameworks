@@ -33,6 +33,8 @@ int main(  int argc, char *argv[]  ){
 					app->targetsToMake.push_back( OF_TARGET_LINUX64 );
 				}else if(arg=="linuxarmv6l"){
 					app->targetsToMake.push_back( OF_TARGET_LINUXARMV6L );
+				}else if(arg=="linuxarmv7l"){
+					app->targetsToMake.push_back( OF_TARGET_LINUXARMV7L );
 				}else if(arg=="win_cb"){
 					app->targetsToMake.push_back( OF_TARGET_WINGCC );
 				}else if(arg=="vs"){
@@ -48,6 +50,7 @@ int main(  int argc, char *argv[]  ){
 					app->targetsToMake.push_back( OF_TARGET_LINUX );
 					app->targetsToMake.push_back( OF_TARGET_LINUX64 );
 					app->targetsToMake.push_back( OF_TARGET_LINUXARMV6L );
+					app->targetsToMake.push_back( OF_TARGET_LINUXARMV7L );
 					app->targetsToMake.push_back( OF_TARGET_WINGCC );
 					app->targetsToMake.push_back( OF_TARGET_WINVS );
 					app->targetsToMake.push_back( OF_TARGET_OSX );
@@ -64,6 +67,7 @@ int main(  int argc, char *argv[]  ){
 					cout << "--linux: generate linux project files" << endl;
 					cout << "--linux64: generate linux 64bits project files" << endl;
 					cout << "--linuxarmv6l: generate linux armv6l project files" << endl;
+					cout << "--linuxarmv7l: generate linux armv7l project files" << endl;
 					cout << "--ios: generate iOS project files" << endl;
 					cout << "--allplatforms: generate project files for all platforms" << endl;
 					cout << "--allexamples: generate project files for all examples. [pathToExample] is not needed in this case." << endl;

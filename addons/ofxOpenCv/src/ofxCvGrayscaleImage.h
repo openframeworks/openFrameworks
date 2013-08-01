@@ -7,9 +7,7 @@
 *
 */
 
-
-#ifndef OFX_CV_GRAYSCALE_IMAGE_H
-#define OFX_CV_GRAYSCALE_IMAGE_H
+#pragma once
 
 #include "ofxCvImage.h"
 #include "ofxCvBlob.h"
@@ -157,8 +155,3 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     void init();
     
 };
-
-
-
-#endif
-

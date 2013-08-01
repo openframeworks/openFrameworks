@@ -12,7 +12,9 @@
 
 class ofHttpRequest{
 public:
-	ofHttpRequest(){};
+	ofHttpRequest()
+	:saveTo(false)
+	,id(nextID++){};
 
 	ofHttpRequest(string url,string name,bool saveTo=false)
 	:url(url)
@@ -79,7 +81,7 @@ class ofURLFileLoader : public ofThread  {
 
     public:
 
-        ofURLFileLoader();
+        ofURLFileLoader();	
         ofHttpResponse get(string url);
         int getAsync(string url, string name=""); // returns id
         ofHttpResponse saveTo(string url, string path);

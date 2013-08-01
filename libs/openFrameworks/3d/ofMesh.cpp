@@ -253,7 +253,7 @@ void ofMesh::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType ind
 //--------------------------------------------------------------
 void ofMesh::removeVertex(ofIndexType index){
   if(index >= vertices.size()){
-    ofLog(OF_LOG_ERROR,"Trying to remove vertex out of range of this mesh. Taking no action.");
+    ofLogError("ofMesh") << "removeVertex(): ignoring out of range index " << index << ", number of vertices is" << vertices.size();
   }else{
     vertices.erase(vertices.begin() + index);
     bVertsChanged = true;
@@ -264,7 +264,7 @@ void ofMesh::removeVertex(ofIndexType index){
 //--------------------------------------------------------------
 void ofMesh::removeNormal(ofIndexType index){
   if(index >= normals.size()){
-    ofLog(OF_LOG_ERROR,"Trying to remove normal out of range of this mesh. Taking no action.");
+	ofLogError("ofMesh") << "removeNormal(): ignoring out of range index " << index << ", number of normals is" << normals.size();
   }else{
     normals.erase(normals.begin() + index);
     bNormalsChanged = true;
@@ -275,7 +275,7 @@ void ofMesh::removeNormal(ofIndexType index){
 //--------------------------------------------------------------
 void ofMesh::removeColor(ofIndexType index){
   if(index >= colors.size()){
-    ofLog(OF_LOG_ERROR,"Trying to remove color out of range of this mesh. Taking no action.");
+	ofLogError("ofMesh") << "removeColor(): ignoring out of range index " << index << ", number of colors is" << colors.size();
   }else{
     colors.erase(colors.begin() + index);
     bColorsChanged = true;
@@ -286,7 +286,7 @@ void ofMesh::removeColor(ofIndexType index){
 //--------------------------------------------------------------
 void ofMesh::removeTexCoord(ofIndexType index){
   if(index >= texCoords.size()){
-    ofLog(OF_LOG_ERROR,"Trying to remove texCoord out of range of this mesh. Taking no action.");
+	ofLogError("ofMesh") << "removeTexCoord(): ignoring out of range index " << index << ", number of tex coords is" << texCoords.size();
   }else{
     texCoords.erase(texCoords.begin() + index);
     bTexCoordsChanged = true;
@@ -297,7 +297,7 @@ void ofMesh::removeTexCoord(ofIndexType index){
 //--------------------------------------------------------------
 void ofMesh::removeIndex(ofIndexType index){
   if(index >= indices.size()){
-    ofLog(OF_LOG_ERROR,"Trying to remove index out of range of this mesh. Taking no action.");
+	ofLogError("ofMesh") << "removeIndex(): ignoring out of range index " << index << ", number of indices is" << indices.size();
   }else{
     indices.erase(indices.begin() + index);
     bIndicesChanged = true;
@@ -557,7 +557,7 @@ vector<int>& ofPrimitive::getFace(int faceNum){
 //--------------------------------------------------------------
 ofVec3f ofMesh::getCentroid() const {
 	if(vertices.size() == 0) {
-		ofLogWarning() << "Called ofMesh::getCentroid() on mesh with zero vertices, returned ofPoint(0, 0, 0)";
+		ofLogWarning("ofMesh") << "getCentroid(): mesh has no vertices, returning ofPoint(0, 0, 0)";
 		return ofPoint(0, 0, 0);
 	}
 
@@ -891,7 +891,7 @@ void ofMesh::load(string path){
 				goto clean;
 			}
 			if(!data.hasVertices()){
-				ofLogWarning() << "mesh without vertices";
+				ofLogWarning("ofMesh") << "load(): mesh loaded from \"" << path << "\" has no vertices";
 			}
 			if(orderVertices==-1) orderVertices=9999;
 			if(orderIndices==-1) orderIndices=9999;
@@ -989,8 +989,8 @@ void ofMesh::load(string path){
 
 	return;
 	clean:
-	ofLogError() << lineNum << ":" << error;
-	ofLogError() << "\"" << line << "\"";
+	ofLogError("ofMesh") << "load(): " << lineNum << ":" << error;
+	ofLogError("ofMesh") << "load(): \"" << line << "\"";
 	data = backup;
 }
 
@@ -1114,6 +1114,26 @@ void ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
 }
 
 //----------------------------------------------------------
+ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex ) const {
+    int startVertIndex  = 0;
+    int endVertIndex    = 0;
+    
+    if(startIndex < 0 || startIndex >= getNumIndices() ) {
+        startVertIndex = 0;
+    } else {
+        startVertIndex = getIndex( startIndex );
+    }
+    
+    if( endIndex < 0 || endIndex >= getNumIndices() ) {
+        // set to the total, because the vector assign does not include the last element //
+        endVertIndex = getNumVertices();
+    } else {
+        endVertIndex = getIndex( endIndex );
+    }
+    return getMeshForIndices(startIndex, endIndex, startVertIndex, endVertIndex );
+}
+
+//----------------------------------------------------------
 ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const{
     
     ofMesh mesh;
@@ -1141,9 +1161,18 @@ ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertInd
     }
     
     int offsetIndex = getIndex(startIndex);
+    bool bFoundLessThanZero = false;
     for(int i = startIndex; i < endIndex; i++) {
         int index = getIndex(i) - offsetIndex;
+        if(index < 0) {
+            index = 0;
+            bFoundLessThanZero = true;
+        }
         mesh.addIndex( index );
+    }
+    
+    if(bFoundLessThanZero) {
+        ofLogWarning( "ofMesh :: getMeshForIndices : found some indices less than 0, setting them to 0"  );
     }
     
     return mesh;
@@ -1211,7 +1240,7 @@ void ofMesh::mergeDuplicateVertices() {
             ptCreated[index] = true;
         }
         
-        //cout << "["<<i<<"]: old " << index << " --> " << oldIndexNewIndex[index] << endl;
+        //ofLogNotice("ofMesh") << "[" << i << "]: old " << index << " --> " << oldIndexNewIndex[index];
         newIndexes.push_back( oldIndexNewIndex[index] );
     }
     
@@ -1274,7 +1303,7 @@ const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
 			}
 
 		} else {
-			ofLog( OF_LOG_WARNING, "ofMesh :: getUniqueFaces : only works with mode == OF_PRIMITIVE_TRIANGLES" );
+			ofLogWarning("ofMesh") << "getUniqueFaces(): only works with primitive mode OF_PRIMITIVE_TRIANGLES";
 		}
 
 		bFacesDirty = false;
@@ -1321,7 +1350,7 @@ vector<ofVec3f> ofMesh::getFaceNormals( bool perVertex ) const{
 //----------------------------------------------------------
 void ofMesh::setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
     if(tris.empty()) {
-        ofLogWarning( "ofMesh :: setFromTriangles : tris is equal to zero" );
+        ofLogWarning("ofMesh") << "setFromTriangles(): ignoring empty tris vector";
         return;
     }
     
@@ -1406,7 +1435,7 @@ void ofMesh::smoothNormals( float angle ) {
         // string of vertex in 3d space to triangle index //
         map<string, vector<int> > vertHash;
         
-//        cout << "ofMesh :: smoothNormals num verts = " << verts.size() << " tris size = " << triangles.size() << endl;
+		//ofLogNotice("ofMesh") << "smoothNormals(): num verts = " << verts.size() << " tris size = " << triangles.size();
         
         string xStr, yStr, zStr;
         
@@ -1432,7 +1461,7 @@ void ofMesh::smoothNormals( float angle ) {
         
 //        for( map<string, vector<int> >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
 //            //for( map<string, int >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
-//            cout << "ofMesh :: SmoothNormals : "<<it->first<<"  num = " << it->second.size() << endl;
+//            ofLogNotice("ofMesh") << "smoothNormals(): " << it->first << "  num = " << it->second.size();
 //        }
         
         
@@ -1469,7 +1498,7 @@ void ofMesh::smoothNormals( float angle ) {
             }
         }
         
-        //cout << "SmoothNormals - Setting from triangles " << endl;
+        //ofLogNotice("ofMesh") << "smoothNormals(): setting from triangles ";
         setFromTriangles( triangles );
         
     }
@@ -1481,7 +1510,7 @@ ofMesh ofMesh::plane(float width, float height, int columns, int rows, ofPrimiti
     ofMesh mesh;
     
     if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
-        ofLog( OF_LOG_WARNING ) << "ofGetPlaneMesh :: mode not supported, setting to OF_PRIMITIVE_TRIANGLES";
+        ofLogWarning("ofMesh") << "ofGetPlaneMesh(): primtive mode " << mode << " not supported, setting to OF_PRIMITIVE_TRIANGLES";
         mode = OF_PRIMITIVE_TRIANGLES;
     }
     
@@ -1793,7 +1822,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
     
     /// Step 4 : fix texcoords
     // find vertices to split
-    std::vector<int> indexToSplit;
+    std::vector<unsigned int> indexToSplit;
     
     for (unsigned int i=0;i<faces.size()/3;i++)
     {
@@ -1827,7 +1856,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
     //split vertices
     for (unsigned short i=0;i<indexToSplit.size();i++)
     {
-        int index = indexToSplit[i];
+        unsigned int index = indexToSplit[i];
         //duplicate vertex
         ofVec3f v = vertices[index];
         ofVec2f t = texCoords[index] + ofVec2f(1.f, 0.f);
@@ -1849,7 +1878,14 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
         }
     }
     
-    
+	// tig: flip face(=triangle) winding order, so that we are consistent with all other ofPrimitives.
+	// i wish there was a more elegant way to do this, but anything happening before "split vertices"
+	// makes things very, very complicated.
+	
+	for (int i = 0; i < (int)faces.size(); i+=3) {
+		std::swap(faces[i+1], faces[i+2]);
+	}
+
     ofMesh sphere;
     
     sphere.addIndices( faces );
@@ -2141,8 +2177,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < heightSegments-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y+1)*radiusSegments + x );
                 mesh.addIndex( (y)*radiusSegments + x );
+                mesh.addIndex( (y+1)*radiusSegments + x );
             }
         }
     }
@@ -2189,8 +2225,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     } else {
         for(int y = 0; y < capSegs-1; y++) {
             for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
                 mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
             }
         }
     }

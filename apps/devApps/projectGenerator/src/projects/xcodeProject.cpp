@@ -195,6 +195,14 @@ void xcodeProject::saveWorkspaceXML(){
 
 }
 
+void xcodeProject::saveMakefile(){
+    string makefile = ofFilePath::join(projectDir,"Makefile");
+    ofFile::copyFromTo(templatePath + "Makefile", makefile);
+
+    string configmake = ofFilePath::join(projectDir,"config.make");
+    ofFile::copyFromTo(templatePath + "config.make", configmake);
+}
+
 
 bool xcodeProject::createProjectFile(){
     // todo: some error checking.
@@ -258,6 +266,7 @@ bool xcodeProject::createProjectFile(){
 
     saveWorkspaceXML();
     saveScheme();
+    saveMakefile();
 
     // make everything relative the right way.
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));

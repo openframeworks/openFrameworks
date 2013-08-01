@@ -46,10 +46,15 @@ HOST_ARCH=$(shell uname -m)
 
 ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
 	CROSS_COMPILING=1
+else
+	CROSS_COMPILING=0
 endif
 
 $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
 $(info PLATFORM_OS=$(PLATFORM_OS))
+$(info HOST_ARCH=$(HOST_ARCH))
+$(info HOST_OS=$(HOST_OS))
+$(info CROSS_COMPILING=$(CROSS_COMPILING))
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
@@ -245,7 +250,11 @@ CORE_PKG_CONFIG_LIBRARIES =
 CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+	ifeq ($(CROSS_COMPILING),1)
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+	else
+		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+	endif
 endif
 
 # 3. Add all of the standard OF third party library headers (these have already been filtered above according to the platform config files)
@@ -266,6 +275,7 @@ OF_CORE_DEFINES_CFLAGS=$(addprefix -D,$(PLATFORM_DEFINES))
 
 # gather any platform CFLAGS
 OF_CORE_BASE_CFLAGS=$(PLATFORM_CFLAGS)
+OF_CORE_BASE_CXXFLAGS=$(PLATFORM_CXXFLAGS)
 
 
 ################################################################################

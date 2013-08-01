@@ -339,7 +339,7 @@ void ofUpdateBitmapCharacterTexture(){
 static ofPixels myLetterPixels;
 static float widthTex = 8.0f/256.0f;
 static float heightTex = 14.0f/256.0f;
-static ofVboMesh charMesh;
+static ofMesh charMesh;
 static int vC = 0;
 
 //---------------------------------------------------------------------
@@ -349,7 +349,7 @@ static void prepareBitmapTexture(){
 	
 	if (!bBitmapTexturePrepared){
 		myLetterPixels.allocate(16*16, 16*16, 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
-
+        myLetterPixels.set(0);
 
 		bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
 		

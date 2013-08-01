@@ -53,7 +53,7 @@ void testApp::touchDown(ofTouchEventArgs & touch){
 	if(touch.id == 1){
 		
         if(!camera) {
-            camera = new ofxiPhoneImagePicker();
+            camera = new ofxiOSImagePicker();
             camera->setMaxDimension(MAX(ofGetWidth(), ofGetHeight())); // max the photo taken at the size of the screen.
             camera->openCamera();
 //            camera->showCameraOverlay();

@@ -15,17 +15,16 @@ public:
 	virtual bool mousePressed(ofMouseEventArgs & args);
 	virtual bool mouseDragged(ofMouseEventArgs & args);
 
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )()){
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
 		ofAddListener(triggerEvent,listener,method);
 	}
 
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )()){
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
 		ofRemoveListener(triggerEvent,listener,method);
 	}
-	using ofxToggle::addListener;
-	using ofxToggle::removeListener;
+
 private:
 	ofEvent<void> triggerEvent;
 	void valueChanged(bool & v);

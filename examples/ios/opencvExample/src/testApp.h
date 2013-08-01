@@ -2,8 +2,8 @@
 
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 
 
 //ON IPHONE NOTE INCLUDE THIS BEFORE ANYTHING ELSE
@@ -12,7 +12,7 @@
 //warning video player doesn't currently work - use live video only
 //#define _USE_LIVE_VIDEO
 
-class testApp : public ofxiPhoneApp{
+class testApp : public ofxiOSApp{
 	
 	public:
 		

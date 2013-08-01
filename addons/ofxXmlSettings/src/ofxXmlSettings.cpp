@@ -212,7 +212,7 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 		level++;
 		return true;
 	}else{
-        ofLog( OF_LOG_ERROR, "pushTag - <" + tag + "> tag not found");
+        ofLogError("ofxXmlSettings") << "pushTag(): tag \"" << tag << "\" not found";
 	}
 
 	return false;

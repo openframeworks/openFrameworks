@@ -327,7 +327,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
 
-			ofRectangle minButton(b.x+b.width-textPadding-10,b.y,10,header);
+			ofRectangle minButton(b.x+b.width-textPadding*3,b.y,textPadding*3,header);
 			if(minButton.inside(mx,my)){
 				minimized = !minimized;
 				if(minimized){

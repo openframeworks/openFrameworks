@@ -18,6 +18,7 @@
 class ofMaterial {
 public:
 	ofMaterial();
+	virtual ~ofMaterial(){};
 	
 	// set colors
 	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);

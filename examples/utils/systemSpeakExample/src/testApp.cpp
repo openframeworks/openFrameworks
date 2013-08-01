@@ -71,6 +71,12 @@ void testApp::draw() {
 }
 
 //--------------------------------------------------------------
+void testApp::exit() {
+    // stop the thread on exit
+    waitForThread(true);
+}
+
+//--------------------------------------------------------------
 void testApp::keyPressed(int key) {
     if(key == 'r') {
         bRandomVoice = !bRandomVoice;
