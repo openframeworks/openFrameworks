@@ -22,7 +22,7 @@ void testApp::setup(){
 	}
 	
 	doShader = true;	
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 }
 
 //--------------------------------------------------------------

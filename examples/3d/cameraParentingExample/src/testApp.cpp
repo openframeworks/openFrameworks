@@ -1,6 +1,4 @@
 #include "testApp.h"
-#include "ofCamera.h"
-//#include "ofMeshNode.h"
 
 #define kMoveInc 10
 #define kRotInc 5
@@ -32,7 +30,7 @@ void testApp::reset() {
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 	ofSetVerticalSync(true);
 	ofEnableLighting();
 	
@@ -272,11 +270,7 @@ void testApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-	// static float px = -1;
-	// if(doMouseOrbit) {
-	// if(px>=0) orbitRadius += x - px;
-	// px = x;
-	// }
+
 }
 
 //--------------------------------------------------------------
