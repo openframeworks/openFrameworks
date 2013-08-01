@@ -811,15 +811,19 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	v1		= cps[c].v1;
 
 	x1		= cps[c].x1+x;
-	y1		= cps[c].y1+y;
+	y1		= cps[c].y1;
 	x2		= cps[c].x2+x;
-	y2		= cps[c].y2+y;
+	y2		= cps[c].y2;
 
 	int firstIndex = stringQuads.getVertices().size();
 
 	if(!ofIsVFlipped()){
-		swap(v1,v2);
+       y1 *= -1;
+       y2 *= -1;  
 	}
+
+    y1 += y;
+    y2 += y; 
 
 	stringQuads.addVertex(ofVec3f(x1,y1));
 	stringQuads.addVertex(ofVec3f(x2,y1));
