@@ -5,7 +5,7 @@ void testApp::setup(){
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
-	keyboard = new ofxiPhoneKeyboard(0,52,320,32);
+	keyboard = new ofxiOSKeyboard(0,52,320,32);
 	keyboard->setVisible(true);
 	keyboard->setBgColor(255, 255, 255, 255);
 	keyboard->setFontColor(0,0,0, 255);

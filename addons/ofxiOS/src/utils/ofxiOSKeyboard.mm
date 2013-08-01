@@ -1,5 +1,5 @@
 /*
- *  ofxiPhoneKeyboard.cpp
+ *  ofxiOSKeyboard.cpp
  *  iPhone UIKeyboard Example
  *
  *  Created by Zach Gage on 3/1/09.
@@ -7,14 +7,14 @@
  *
  */
 
-#import "ofxiPhoneKeyboard.h"
+#import "ofxiOSKeyboard.h"
 
 //C++ class implementations
 
 //--------------------------------------------------------------
-ofxiPhoneKeyboard::ofxiPhoneKeyboard(int _x, int _y, int _w, int _h)
+ofxiOSKeyboard::ofxiOSKeyboard(int _x, int _y, int _w, int _h)
 {
-	keyboard = [[ofxiPhoneKeyboardDelegate alloc] 
+	keyboard = [[ofxiOSKeyboardDelegate alloc] 
 				init:	_x 
 				y:		_y 
 				width:	_w 
@@ -26,14 +26,14 @@ ofxiPhoneKeyboard::ofxiPhoneKeyboard(int _x, int _y, int _w, int _h)
 }
 
 //--------------------------------------------------------------
-ofxiPhoneKeyboard::~ofxiPhoneKeyboard()
+ofxiOSKeyboard::~ofxiOSKeyboard()
 {
 	[keyboard release];
 }
 
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setVisible(bool visible)
+void ofxiOSKeyboard::setVisible(bool visible)
 {
 	if(visible)
 	{
@@ -46,18 +46,18 @@ void ofxiPhoneKeyboard::setVisible(bool visible)
 	
 }
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::makeSecure()
+void ofxiOSKeyboard::makeSecure()
 {
 	[keyboard makeSecure];
 }
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setMaxChars(int max)
+void ofxiOSKeyboard::setMaxChars(int max)
 {
 	[keyboard setFieldLength:max];
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setPosition(int _x, int _y)
+void ofxiOSKeyboard::setPosition(int _x, int _y)
 {
 	x=_x;
 	y=_y;
@@ -65,7 +65,7 @@ void ofxiPhoneKeyboard::setPosition(int _x, int _y)
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setSize(int _w, int _h)
+void ofxiOSKeyboard::setSize(int _w, int _h)
 {
 	w = _w;
 	h = _h;
@@ -73,13 +73,13 @@ void ofxiPhoneKeyboard::setSize(int _w, int _h)
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setFontSize(int ptSize)
+void ofxiOSKeyboard::setFontSize(int ptSize)
 {
 	[keyboard setFontSize: ptSize];
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setFontColor(int r, int g, int b, int a)
+void ofxiOSKeyboard::setFontColor(int r, int g, int b, int a)
 {
 	[keyboard setFontColorRed: r 
 						green: g 
@@ -88,7 +88,7 @@ void ofxiPhoneKeyboard::setFontColor(int r, int g, int b, int a)
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setBgColor(int r, int g, int b, int a)
+void ofxiOSKeyboard::setBgColor(int r, int g, int b, int a)
 {
 	[keyboard setBgColorRed: r 
 					  green: g 
@@ -97,21 +97,21 @@ void ofxiPhoneKeyboard::setBgColor(int r, int g, int b, int a)
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setText(string _text)
+void ofxiOSKeyboard::setText(string _text)
 {
 	NSString * text = [NSString stringWithUTF8String:_text.c_str()];
 	[keyboard setText:text];
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneKeyboard::setPlaceholder(string _text)
+void ofxiOSKeyboard::setPlaceholder(string _text)
 {
 	NSString * text = [NSString stringWithUTF8String:_text.c_str()];
 	[keyboard setPlaceholder:text];
 }
 
 //--------------------------------------------------------------
-string ofxiPhoneKeyboard::getText()
+string ofxiOSKeyboard::getText()
 {
 	if([keyboard getText] == nil)
 	{
@@ -124,7 +124,7 @@ string ofxiPhoneKeyboard::getText()
 }
 
 //--------------------------------------------------------------
-string ofxiPhoneKeyboard::getLabelText()
+string ofxiOSKeyboard::getLabelText()
 {
 	if([keyboard getLabelText] == nil)
 	{
@@ -136,17 +136,17 @@ string ofxiPhoneKeyboard::getLabelText()
 	}
 }
 
-void ofxiPhoneKeyboard::openKeyboard()
+void ofxiOSKeyboard::openKeyboard()
 {
 	[keyboard openKeyboard];
 }
 
-bool ofxiPhoneKeyboard::isKeyboardShowing()
+bool ofxiOSKeyboard::isKeyboardShowing()
 {
 	return [keyboard isKeyboardShowing];
 }
 
-void ofxiPhoneKeyboard::updateOrientation()
+void ofxiOSKeyboard::updateOrientation()
 {
 	[keyboard updateOrientation];
 }
@@ -155,7 +155,7 @@ void ofxiPhoneKeyboard::updateOrientation()
 
 // CLASS IMPLEMENTATIONS--------------objc------------------------
 //----------------------------------------------------------------
-@implementation ofxiPhoneKeyboardDelegate
+@implementation ofxiOSKeyboardDelegate
 
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
@@ -301,7 +301,7 @@ void ofxiPhoneKeyboard::updateOrientation()
 //--------------------------------------------------------------
 - (void) showText
 {
-	[ofxiPhoneGetGLParentView() addSubview:_textField];
+	[ofxiOSGetGLParentView() addSubview:_textField];
 }
 
 //--------------------------------------------------------------
@@ -410,7 +410,7 @@ void ofxiPhoneKeyboard::updateOrientation()
     NSMutableString *newValue = [[textField.text mutableCopy] autorelease];
     [newValue replaceCharactersInRange:range withString:string];
 	
-	ofLogVerbose("ofxiPhoneKeyboard") << "shouldChangeCharactersInRange: " << [newValue length] << " " << fieldLength;
+	ofLogVerbose("ofxiOSKeyboard") << "shouldChangeCharactersInRange: " << [newValue length] << " " << fieldLength;
 	
 	if(fieldLength != -1)
 	{

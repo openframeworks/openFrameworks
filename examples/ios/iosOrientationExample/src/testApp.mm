@@ -1,5 +1,5 @@
 #include "testApp.h"
-#include "ofAppiPhoneWindow.h"
+#include "ofAppiOSWindow.h"
 #import "ActionSheetDelegateForOF.h"
 
 //--------------------------------------------------------------
@@ -76,7 +76,7 @@ void testApp::draw(){
     string currentOrientation = "";
     string currentOrientationSyntax = "";
     
-    switch (ofxiPhoneGetOrientation()) {
+    switch (ofxiOSGetOrientation()) {
         case OF_ORIENTATION_DEFAULT:
             currentOrientation = "Portrait";
             currentOrientationSyntax = "OF_ORIENTATION_DEFAULT";
@@ -153,7 +153,7 @@ void testApp::touchDown(ofTouchEventArgs & touch) {
                                      otherButtonTitles:@"Portrait", @"Portrait Upside Down", @"Landscape Left", @"Landscape Right", autoTitle, nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     actionSheet.delegate = [[ActionSheetDelegateForOF alloc] initWithApp:this];
-    [actionSheet showInView:ofxiPhoneGetGLParentView()];
+    [actionSheet showInView:ofxiOSGetGLParentView()];
 }
 
 //--------------------------------------------------------------

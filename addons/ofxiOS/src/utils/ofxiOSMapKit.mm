@@ -31,32 +31,32 @@
 #include <Availability.h>
 #ifdef __IPHONE_3_0
 
-#include "ofxiPhoneMapKit.h"
-#include "ofxiPhoneExtras.h"
-#include "ofxiPhoneMapKitDelegate.h"
+#include "ofxiOSMapKit.h"
+#include "ofxiOSExtras.h"
+#include "ofxiOSMapKitDelegate.h"
 
-ofxiPhoneMapKit::ofxiPhoneMapKit() {
+ofxiOSMapKit::ofxiOSMapKit() {
 	mapView = nil;
 }
 
-ofxiPhoneMapKit::~ofxiPhoneMapKit() {
+ofxiOSMapKit::~ofxiOSMapKit() {
 	close();
 }
 
 
-void ofxiPhoneMapKit::open() {
+void ofxiOSMapKit::open() {
 	if(!isOpen()) {
-		ofLogVerbose("ofxiPhoneMapKit") << "open(): initing MKMapView";
+		ofLogVerbose("ofxiOSMapKit") << "open(): initing MKMapView";
 		mapView	= [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, ofGetWidth(), ofGetHeight())];
 		mapView.delegate = nil;
-        [ofxiPhoneGetGLParentView() addSubview:mapView];
+        [ofxiOSGetGLParentView() addSubview:mapView];
 	}
 }
 
 
-void ofxiPhoneMapKit::close() {
+void ofxiOSMapKit::close() {
     if(isOpen()) {
-		ofLogVerbose("ofxiPhoneMapKit") << "close(): releasing MKMapView";
+		ofLogVerbose("ofxiOSMapKit") << "close(): releasing MKMapView";
         mapView.delegate = nil;
         [mapView removeFromSuperview];
         [mapView release];
@@ -64,12 +64,12 @@ void ofxiPhoneMapKit::close() {
     }
 }
 
-bool ofxiPhoneMapKit::isOpen() {
+bool ofxiOSMapKit::isOpen() {
     return (mapView != nil);
 }
 
 
-void ofxiPhoneMapKit::setCenter(double latitude, double longitude, bool animated) {
+void ofxiOSMapKit::setCenter(double latitude, double longitude, bool animated) {
     if(isOpen()) {
         CLLocationCoordinate2D center = makeCLLocation(latitude, longitude);
         [mapView setCenterCoordinate:center animated:animated];
@@ -77,69 +77,69 @@ void ofxiPhoneMapKit::setCenter(double latitude, double longitude, bool animated
 }
 
 
-void ofxiPhoneMapKit::setSpan(double latitudeDelta, double longitudeDelta, bool animated) {
+void ofxiOSMapKit::setSpan(double latitudeDelta, double longitudeDelta, bool animated) {
     if(isOpen()) {
         _setRegion(mapView.region.center, makeMKCoordinateSpan(latitudeDelta, longitudeDelta), animated);
     }
 }
 
-void ofxiPhoneMapKit::setSpanWithMeters(double metersLatitude, double metersLongitude, bool animated) {
+void ofxiOSMapKit::setSpanWithMeters(double metersLatitude, double metersLongitude, bool animated) {
     if(isOpen()) {
         CLLocationCoordinate2D currentCenter = mapView.region.center;
         _setRegion(currentCenter, MKCoordinateRegionMakeWithDistance(currentCenter, metersLatitude, metersLongitude).span, animated);
     }
 }
 
-void ofxiPhoneMapKit::setRegion(double latitude, double longitude, double latitudeDelta, double longitudeDelta, bool animated) {
+void ofxiOSMapKit::setRegion(double latitude, double longitude, double latitudeDelta, double longitudeDelta, bool animated) {
 	_setRegion( makeCLLocation(latitude, longitude), makeMKCoordinateSpan(latitudeDelta, longitudeDelta), animated);
 }
 
 
-void ofxiPhoneMapKit::setRegionWithMeters(double latitude, double longitude, double metersLatitude, double metersLongitude, bool animated) {
+void ofxiOSMapKit::setRegionWithMeters(double latitude, double longitude, double metersLatitude, double metersLongitude, bool animated) {
 	CLLocationCoordinate2D newCenter = makeCLLocation(latitude, longitude);
 	_setRegion(newCenter, MKCoordinateRegionMakeWithDistance(newCenter, metersLatitude, metersLongitude).span, animated);
 }
 
 
-void ofxiPhoneMapKit::_setRegion(CLLocationCoordinate2D center, MKCoordinateSpan span, bool animated) {
+void ofxiOSMapKit::_setRegion(CLLocationCoordinate2D center, MKCoordinateSpan span, bool animated) {
     if(isOpen()) {
         MKCoordinateRegion currentRegion = { center, span };
         [mapView setRegion:currentRegion animated:animated];
     }
 }
 
-void ofxiPhoneMapKit::setType(ofxiPhoneMapKitType type) {
+void ofxiOSMapKit::setType(ofxiOSMapKitType type) {
     if(isOpen()) {
-        ofLogVerbose("ofxiPhoneMapKit") << "setType(): setting map type: " << (int) type;
+        ofLogVerbose("ofxiOSMapKit") << "setType(): setting map type: " << (int) type;
         mapView.mapType = type;
     }
 }
 
-void ofxiPhoneMapKit::setShowUserLocation(bool b) {
+void ofxiOSMapKit::setShowUserLocation(bool b) {
     if(isOpen()) {
         mapView.showsUserLocation = b;
     }
 }
 
-void ofxiPhoneMapKit::setAllowUserInteraction(bool b) {
+void ofxiOSMapKit::setAllowUserInteraction(bool b) {
     if(isOpen()) {
         mapView.userInteractionEnabled = b;
     }
 }
 
-void ofxiPhoneMapKit::setAllowZoom(bool b) {
+void ofxiOSMapKit::setAllowZoom(bool b) {
     if(isOpen()) {
         mapView.zoomEnabled = b;
     }
 }
 
-void ofxiPhoneMapKit::setAllowScroll(bool b) {
+void ofxiOSMapKit::setAllowScroll(bool b) {
     if(isOpen()) {
         mapView.scrollEnabled = b;
     }
 }
 
-bool ofxiPhoneMapKit::isUserOnScreen() {
+bool ofxiOSMapKit::isUserOnScreen() {
     if(isOpen()) {
         return mapView.userLocationVisible;
     } else {
@@ -148,7 +148,7 @@ bool ofxiPhoneMapKit::isUserOnScreen() {
 }
 
 
-CLLocationCoordinate2D ofxiPhoneMapKit::getCenterLocation() {
+CLLocationCoordinate2D ofxiOSMapKit::getCenterLocation() {
     if(isOpen()) {
         return mapView.centerCoordinate;
     } else {
@@ -158,7 +158,7 @@ CLLocationCoordinate2D ofxiPhoneMapKit::getCenterLocation() {
 
 
 // convert location (latitude, longitude) to screen coordinates (i.e. pixels)
-ofPoint ofxiPhoneMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
+ofPoint ofxiOSMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
     if(isOpen()) {
         CGPoint cgPoint = [mapView convertCoordinate:makeCLLocation(latitude, longitude) toPointToView:nil];
         return ofPoint(cgPoint.x, cgPoint.y);
@@ -168,7 +168,7 @@ ofPoint ofxiPhoneMapKit::getScreenCoordinatesForLocation(double latitude, double
 }
 
 
-ofxMapKitLocation ofxiPhoneMapKit::getLocationForScreenCoordinates(float x, float y) {
+ofxMapKitLocation ofxiOSMapKit::getLocationForScreenCoordinates(float x, float y) {
     if(isOpen()) {
         return [mapView convertPoint:CGPointMake(x, y) toCoordinateFromView:nil];
     } else {
@@ -179,7 +179,7 @@ ofxMapKitLocation ofxiPhoneMapKit::getLocationForScreenCoordinates(float x, floa
 
 
 // convert location (latitude, longitude) and span (in degrees) to screen coordinates (i.e. pixels)
-ofRectangle ofxiPhoneMapKit::getScreenRectForRegion(double latitude, double latitudeDelta, double longitudeDelta) {
+ofRectangle ofxiOSMapKit::getScreenRectForRegion(double latitude, double latitudeDelta, double longitudeDelta) {
 	ofRectangle r;
 	//	- (CGRect)convertRegion:(MKCoordinateRegion)region toRectToView:(UIView *)view
 	//	CGRect	cgRect = [mapView convertRegion:
@@ -188,7 +188,7 @@ ofRectangle ofxiPhoneMapKit::getScreenRectForRegion(double latitude, double lati
 
 
 // convert location (latitude, longitude) and span (in meters) to screen coordinates (i.e. pixels)
-ofRectangle ofxiPhoneMapKit::getScreenRectForRegionWithMeters(double latitude, double longitude, double metersLatitude, double metersLongitude) {
+ofRectangle ofxiOSMapKit::getScreenRectForRegionWithMeters(double latitude, double longitude, double metersLatitude, double metersLongitude) {
 	ofRectangle r;
 	return r;
 }
@@ -199,7 +199,7 @@ ofRectangle ofxiPhoneMapKit::getScreenRectForRegionWithMeters(double latitude, d
 #define MAX_LATITUDE	89.999
 #define MAX_LONGITUDE	179.999
 
-CLLocationCoordinate2D ofxiPhoneMapKit::makeCLLocation(double latitude, double longitude) {
+CLLocationCoordinate2D ofxiOSMapKit::makeCLLocation(double latitude, double longitude) {
 	CLLocationCoordinate2D center = { 
 		CLAMP(latitude, -MAX_LATITUDE, MAX_LATITUDE),
 		CLAMP(longitude, -MAX_LONGITUDE, MAX_LONGITUDE)		
@@ -207,60 +207,60 @@ CLLocationCoordinate2D ofxiPhoneMapKit::makeCLLocation(double latitude, double l
 	return center;
 }
 
-MKCoordinateSpan ofxiPhoneMapKit::makeMKCoordinateSpan(double latitudeDelta, double longitudeDelta) {
+MKCoordinateSpan ofxiOSMapKit::makeMKCoordinateSpan(double latitudeDelta, double longitudeDelta) {
 	MKCoordinateSpan span = { latitudeDelta, longitudeDelta };
 	return span;
 }
 
 
-void ofxiPhoneMapKit::addListener(ofxiPhoneMapKitListener* o) {
+void ofxiOSMapKit::addListener(ofxiOSMapKitListener* o) {
     if(isOpen()) {
-        ofLogVerbose("ofxiPhoneMapKit") << "addListener(): adding ofxiPhoneMapKitDelegate";
+        ofLogVerbose("ofxiOSMapKit") << "addListener(): adding ofxiOSMapKitDelegate";
         if(mapView.delegate == nil) {
-            mapView.delegate = [[ofxiPhoneMapKitDelegate alloc] initWithMapKit:this];
+            mapView.delegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
         }
         listeners.push_back(o);
     }
 }
 
-void ofxiPhoneMapKit::removeListener(ofxiPhoneMapKitListener* o) {
-	ofLogVerbose("ofxiPhoneMapKit") << "removingListener(): removing ofxiPhoneMapKitDelegate";
+void ofxiOSMapKit::removeListener(ofxiOSMapKitListener* o) {
+	ofLogVerbose("ofxiOSMapKit") << "removingListener(): removing ofxiOSMapKitDelegate";
 	listeners.remove(o);
 }
 
-void ofxiPhoneMapKit::regionWillChange(bool animated) {
-	for(std::list<ofxiPhoneMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-		ofxiPhoneMapKitListener* o = *it;
+void ofxiOSMapKit::regionWillChange(bool animated) {
+	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+		ofxiOSMapKitListener* o = *it;
 		o->regionWillChange(animated);
 	}
 }
 
-void ofxiPhoneMapKit::regionDidChange(bool animated) {
-	for(std::list<ofxiPhoneMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-		ofxiPhoneMapKitListener* o = *it;
+void ofxiOSMapKit::regionDidChange(bool animated) {
+	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+		ofxiOSMapKitListener* o = *it;
 		o->regionDidChange(animated);
 	}
 }
 
-void ofxiPhoneMapKit::willStartLoadingMap() {
-	for(std::list<ofxiPhoneMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-		ofxiPhoneMapKitListener* o = *it;
+void ofxiOSMapKit::willStartLoadingMap() {
+	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+		ofxiOSMapKitListener* o = *it;
 		o->willStartLoadingMap();
 	}
 }
 
 
-void ofxiPhoneMapKit::didFinishLoadingMap() {
-	for(std::list<ofxiPhoneMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-		ofxiPhoneMapKitListener* o = *it;
+void ofxiOSMapKit::didFinishLoadingMap() {
+	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+		ofxiOSMapKitListener* o = *it;
 		o->didFinishLoadingMap();
 	}
 }
 
 
-void ofxiPhoneMapKit::errorLoadingMap(string errorDescription) {
-	for(std::list<ofxiPhoneMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-		ofxiPhoneMapKitListener* o = *it;
+void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
+	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+		ofxiOSMapKitListener* o = *it;
 		o->errorLoadingMap(errorDescription);
 	}
 }

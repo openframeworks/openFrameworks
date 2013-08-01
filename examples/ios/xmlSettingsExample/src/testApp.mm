@@ -17,7 +17,7 @@ void testApp::setup(){
 	//but when we save we are saving to the documents folder which is the only place we have write access to
 	//thats why we check if the file exists in the documents folder. 
 	
-	if( XML.loadFile(ofxiPhoneGetDocumentsDirectory() + "mySettings.xml") ){
+	if( XML.loadFile(ofxiOSGetDocumentsDirectory() + "mySettings.xml") ){
 		message = "mySettings.xml loaded from documents folder!";
 	}else if( XML.loadFile("mySettings.xml") ){
 		message = "mySettings.xml loaded from data folder!";
@@ -238,7 +238,7 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 	XML.setValue("BACKGROUND:COLOR:GREEN", green);
 	XML.setValue("BACKGROUND:COLOR:BLUE", blue);
 
-	XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
+	XML.saveFile( ofxiOSGetDocumentsDirectory() + "mySettings.xml" );
 	message = "mySettings.xml saved to app documents folder";
 }
 

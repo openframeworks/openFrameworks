@@ -3,8 +3,8 @@
 //  Created by lukasz karluk on 8/02/12.
 //
 
-#import "ofxiPhoneViewController.h"
+#import "ofxiOSViewController.h"
 
-@interface CircleAppViewController : ofxiPhoneViewController
+@interface CircleAppViewController : ofxiOSViewController
 
 @end

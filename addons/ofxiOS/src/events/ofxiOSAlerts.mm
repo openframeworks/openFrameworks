@@ -28,7 +28,7 @@
  *
  * ***********************************************************************/ 
 
-#include "ofxiPhoneAlerts.h"
+#include "ofxiOSAlerts.h"
 
-ofxiPhoneAlertsHandler ofxiPhoneAlerts;
+ofxiOSAlertsHandler ofxiOSAlerts;
 

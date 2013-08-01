@@ -1,5 +1,5 @@
 /*
- *  ofxiPhoneImagePicker.cpp
+ *  ofxiOSImagePicker.cpp
  *  iPhone UIImagePicker Example
  *
  *  Created by Zach Gage on 3/1/09.
@@ -7,14 +7,14 @@
  *
  */
 
-#import "ofxiPhoneImagePicker.h"
+#import "ofxiOSImagePicker.h"
 
 //C++ class implementations
 
 //--------------------------------------------------------------
-ofxiPhoneImagePicker::ofxiPhoneImagePicker()
+ofxiOSImagePicker::ofxiOSImagePicker()
 {
-	imagePicker = [[ofxiPhoneImagePickerDelegate alloc] initWithPicker:this];
+	imagePicker = [[ofxiOSImagePickerDelegate alloc] initWithPicker:this];
 	cameraIsAvailable = [imagePicker isCameraAvailable];
 	photoLibraryIsAvailable = [imagePicker isPhotoLibraryAvailable];
 	savedPhotosIsAvailable = [imagePicker isSavedPhotosAvailable];
@@ -28,7 +28,7 @@ ofxiPhoneImagePicker::ofxiPhoneImagePicker()
 }
 
 //--------------------------------------------------------------
-ofxiPhoneImagePicker::~ofxiPhoneImagePicker(){
+ofxiOSImagePicker::~ofxiOSImagePicker(){
 	[imagePicker release];
 	if( pixels != NULL ){
 		delete[] pixels;
@@ -37,52 +37,52 @@ ofxiPhoneImagePicker::~ofxiPhoneImagePicker(){
 }
 
 //--------------------------------------------------------------
-void ofxiPhoneImagePicker::setMaxDimension(int _maxDimension)
+void ofxiOSImagePicker::setMaxDimension(int _maxDimension)
 {
 	maxDimension = _maxDimension;
 	[imagePicker setMaxDimension: maxDimension];
 }
 
 //----------------------------------------------------------------
-bool ofxiPhoneImagePicker::openCamera(int camera)
+bool ofxiOSImagePicker::openCamera(int camera)
 {
 	return [imagePicker openCamera:camera];
 }
 #ifdef __IPHONE_3_1
 //----------------------------------------------------------------
-bool ofxiPhoneImagePicker::showCameraOverlay() {
+bool ofxiOSImagePicker::showCameraOverlay() {
 	return [imagePicker showCameraOverlay];
 }
 
 //----------------------------------------------------------------
-bool ofxiPhoneImagePicker::showCameraOverlayWithCustomView(UIView * view) {
+bool ofxiOSImagePicker::showCameraOverlayWithCustomView(UIView * view) {
     return [imagePicker showCameraOverlayWithCustomView:view];
 }
 
 //----------------------------------------------------------------
-void ofxiPhoneImagePicker::hideCameraOverlay()
+void ofxiOSImagePicker::hideCameraOverlay()
 {
 	[imagePicker hideCameraOverlay];
 }
 #endif
 //----------------------------------------------------------------
-bool ofxiPhoneImagePicker::openLibrary()
+bool ofxiOSImagePicker::openLibrary()
 {
 	return [imagePicker openLibrary];
 }
 //----------------------------------------------------------------
-bool ofxiPhoneImagePicker::openSavedPhotos()
+bool ofxiOSImagePicker::openSavedPhotos()
 {
 	return [imagePicker openSavedPhotos];
 }
 
 //----------------------------------------------------------------
-void ofxiPhoneImagePicker::close() {
+void ofxiOSImagePicker::close() {
     [imagePicker close];
 }
 
 //----------------------------------------------------------------
-int ofxiPhoneImagePicker::getOrientation()
+int ofxiOSImagePicker::getOrientation()
 {
 	switch( [imagePicker getImageOrientation] )
 	{
@@ -105,13 +105,13 @@ int ofxiPhoneImagePicker::getOrientation()
 	}
 }
 #ifdef __IPHONE_3_1
-void ofxiPhoneImagePicker::takePicture()
+void ofxiOSImagePicker::takePicture()
 {
 	[imagePicker takePicture];
 }
 #endif
 //----------------------------------------------------------------
-void ofxiPhoneImagePicker::loadPixels()
+void ofxiOSImagePicker::loadPixels()
 {	
 	// load image texture
 	CGImageRef photo;
@@ -157,7 +157,7 @@ void ofxiPhoneImagePicker::loadPixels()
 	
 }
 //----------------------------------------------------------------
-void ofxiPhoneImagePicker::saveImage()
+void ofxiOSImagePicker::saveImage()
 {
 	[imagePicker saveImageToPhotoAlbum];
 }
@@ -166,7 +166,7 @@ void ofxiPhoneImagePicker::saveImage()
 
 // CLASS IMPLEMENTATIONS--------------objc------------------------
 //----------------------------------------------------------------
-@implementation ofxiPhoneImagePickerDelegate
+@implementation ofxiOSImagePickerDelegate
 
 - (id) initWithPicker:(canLoadPixels *) _picker
 {

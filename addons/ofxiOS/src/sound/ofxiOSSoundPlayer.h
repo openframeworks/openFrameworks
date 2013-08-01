@@ -42,3 +42,5 @@ protected:
     void * soundPlayer;
     
 };
+
+#define ofxiPhoneSoundPlayer ofxiOSSoundPlayer

@@ -1,5 +1,5 @@
-#import "ofiPhoneVideoPlayer.h"
-#import "ofxiPhoneExtras.h"
+#import "ofxiOSVideoPlayer.h"
+#import "ofxiOSExtras.h"
 #import "AVFoundationVideoPlayer.h"
 
 #ifdef __IPHONE_5_0
@@ -7,7 +7,7 @@ CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
 #endif
 
-ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
+ofxiOSVideoPlayer::ofxiOSVideoPlayer() {
 	videoPlayer = NULL;
 	pixelsRGB = NULL;
 	pixelsRGBA = NULL;
@@ -28,12 +28,12 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 }
 
 //----------------------------------------
-ofiPhoneVideoPlayer::~ofiPhoneVideoPlayer() {
+ofxiOSVideoPlayer::~ofxiOSVideoPlayer() {
 	close();
 }
 
 //----------------------------------------
-bool ofiPhoneVideoPlayer::loadMovie(string name) {
+bool ofxiOSVideoPlayer::loadMovie(string name) {
 	
     if(!videoPlayer) {
         videoPlayer = [[AVFoundationVideoPlayer alloc] init];
@@ -54,7 +54,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
         if(_videoTextureCache == NULL) {
             CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, 
                                                         NULL, 
-                                                        ofxiPhoneGetGLView().context,
+                                                        ofxiOSGetGLView().context,
                                                         NULL, 
                                                         &_videoTextureCache);
             if(err) {
@@ -68,7 +68,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::close() {
+void ofxiOSVideoPlayer::close() {
 	if(videoPlayer != NULL) {
 		
 		if(pixelsRGBA != NULL) {
@@ -116,7 +116,7 @@ void ofiPhoneVideoPlayer::close() {
 }
 
 //----------------------------------------
-bool ofiPhoneVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
+bool ofxiOSVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
 	if(_internalPixelFormat == OF_PIXELS_RGB) {
 		internalPixelFormat = _internalPixelFormat;
 		internalGLFormat = GL_RGB;
@@ -135,12 +135,12 @@ bool ofiPhoneVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
 
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofiPhoneVideoPlayer::getPixelFormat(){
+ofPixelFormat ofxiOSVideoPlayer::getPixelFormat(){
 	return internalPixelFormat;
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::update() {
+void ofxiOSVideoPlayer::update() {
     
     bFrameNew = false; // default.
     
@@ -165,16 +165,16 @@ void ofiPhoneVideoPlayer::update() {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::play() {
+void ofxiOSVideoPlayer::play() {
     if(videoPlayer == NULL) {
-        ofLogWarning("ofiPhoneVideoPlayer") << "play(): video not loaded";
+        ofLogWarning("ofxiOSVideoPlayer") << "play(): video not loaded";
     }
     
 	[(AVFoundationVideoPlayer *)videoPlayer play];
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::stop() {
+void ofxiOSVideoPlayer::stop() {
     if(videoPlayer == NULL) {
         return;
     }
@@ -184,7 +184,7 @@ void ofiPhoneVideoPlayer::stop() {
 }		
 
 //----------------------------------------
-bool ofiPhoneVideoPlayer::isFrameNew() {
+bool ofxiOSVideoPlayer::isFrameNew() {
 	if(videoPlayer != NULL) {
 		return bFrameNew;
 	}	
@@ -192,7 +192,7 @@ bool ofiPhoneVideoPlayer::isFrameNew() {
 }
 
 //----------------------------------------
-unsigned char * ofiPhoneVideoPlayer::getPixels() {
+unsigned char * ofxiOSVideoPlayer::getPixels() {
     
 	if(isLoaded())
 	{
@@ -301,7 +301,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 	return NULL;
 }
 
-void ofiPhoneVideoPlayer::updatePixelsToRGB () {
+void ofxiOSVideoPlayer::updatePixelsToRGB () {
     if(!bUpdatePixelsToRgb) {
         return;
     }
@@ -321,13 +321,13 @@ void ofiPhoneVideoPlayer::updatePixelsToRGB () {
 }
 
 //----------------------------------------
-ofPixelsRef ofiPhoneVideoPlayer::getPixelsRef() {
+ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() {
     static ofPixels dummy;
     return dummy;
 }
 
 //----------------------------------------
-ofTexture * ofiPhoneVideoPlayer::getTexture() {
+ofTexture * ofxiOSVideoPlayer::getTexture() {
     
     if(!isLoaded()) {
         return &videoTexture;
@@ -440,7 +440,7 @@ ofTexture * ofiPhoneVideoPlayer::getTexture() {
         
         if([(AVFoundationVideoPlayer *)videoPlayer getWidth] > maxTextureSize || 
            [(AVFoundationVideoPlayer *)videoPlayer getHeight] > maxTextureSize) {
-            ofLogWarning("ofiPhoneVideoPlayer") << "getTexture(): "
+            ofLogWarning("ofxiOSVideoPlayer") << "getTexture(): "
 				<< [(AVFoundationVideoPlayer *)videoPlayer getWidth] << "x" << [(AVFoundationVideoPlayer *)videoPlayer getHeight]
 				<< " video image is bigger then max supported texture size " << maxTextureSize;
             return NULL;
@@ -476,7 +476,7 @@ ofTexture * ofiPhoneVideoPlayer::getTexture() {
 }
 
 //----------------------------------------
-float ofiPhoneVideoPlayer::getWidth() {
+float ofxiOSVideoPlayer::getWidth() {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -485,7 +485,7 @@ float ofiPhoneVideoPlayer::getWidth() {
 }
 
 //----------------------------------------
-float ofiPhoneVideoPlayer::getHeight() {
+float ofxiOSVideoPlayer::getHeight() {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -494,7 +494,7 @@ float ofiPhoneVideoPlayer::getHeight() {
 }
 
 //----------------------------------------
-bool ofiPhoneVideoPlayer::isPaused() {
+bool ofxiOSVideoPlayer::isPaused() {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -503,7 +503,7 @@ bool ofiPhoneVideoPlayer::isPaused() {
 }
 
 //----------------------------------------
-bool ofiPhoneVideoPlayer::isLoaded() {
+bool ofxiOSVideoPlayer::isLoaded() {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -512,7 +512,7 @@ bool ofiPhoneVideoPlayer::isLoaded() {
 }
 
 //----------------------------------------
-bool ofiPhoneVideoPlayer::isPlaying() {
+bool ofxiOSVideoPlayer::isPlaying() {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -521,7 +521,7 @@ bool ofiPhoneVideoPlayer::isPlaying() {
 }
 
 //----------------------------------------
-float ofiPhoneVideoPlayer::getPosition() {
+float ofxiOSVideoPlayer::getPosition() {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -530,7 +530,7 @@ float ofiPhoneVideoPlayer::getPosition() {
 }
 
 //----------------------------------------
-float ofiPhoneVideoPlayer::getSpeed() {
+float ofxiOSVideoPlayer::getSpeed() {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -539,7 +539,7 @@ float ofiPhoneVideoPlayer::getSpeed() {
 }
 
 //----------------------------------------
-float ofiPhoneVideoPlayer::getDuration() {
+float ofxiOSVideoPlayer::getDuration() {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -548,7 +548,7 @@ float ofiPhoneVideoPlayer::getDuration() {
 }
 
 //----------------------------------------
-bool ofiPhoneVideoPlayer::getIsMovieDone() {
+bool ofxiOSVideoPlayer::getIsMovieDone() {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -557,7 +557,7 @@ bool ofiPhoneVideoPlayer::getIsMovieDone() {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::setPaused(bool bPause) {
+void ofxiOSVideoPlayer::setPaused(bool bPause) {
     if(videoPlayer == NULL) {
         return;
     }
@@ -570,7 +570,7 @@ void ofiPhoneVideoPlayer::setPaused(bool bPause) {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::setPosition(float pct) {
+void ofxiOSVideoPlayer::setPosition(float pct) {
     if(videoPlayer == NULL) {
         return;
     }
@@ -579,19 +579,19 @@ void ofiPhoneVideoPlayer::setPosition(float pct) {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::setVolume(float volume) {
+void ofxiOSVideoPlayer::setVolume(float volume) {
     if(videoPlayer == NULL) {
         return;
     }
 	if ( volume > 1.0f ){
-		ofLogWarning("ofiPhoneVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
+		ofLogWarning("ofxiOSVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
 		volume = 1.0f;
 	}
     [((AVFoundationVideoPlayer *)videoPlayer) setVolume:volume];    
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::setLoopState(ofLoopType state) {
+void ofxiOSVideoPlayer::setLoopState(ofLoopType state) {
     if(videoPlayer == NULL) {
         return;
     }
@@ -605,7 +605,7 @@ void ofiPhoneVideoPlayer::setLoopState(ofLoopType state) {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::setSpeed(float speed) {
+void ofxiOSVideoPlayer::setSpeed(float speed) {
     if(videoPlayer == NULL) {
         return;
     }
@@ -614,7 +614,7 @@ void ofiPhoneVideoPlayer::setSpeed(float speed) {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::setFrame(int frame) {
+void ofxiOSVideoPlayer::setFrame(int frame) {
     if(videoPlayer == NULL) {
         return;
     }
@@ -623,7 +623,7 @@ void ofiPhoneVideoPlayer::setFrame(int frame) {
 }
 
 //----------------------------------------
-int	ofiPhoneVideoPlayer::getCurrentFrame() {
+int	ofxiOSVideoPlayer::getCurrentFrame() {
     if(videoPlayer == NULL){
         return 0;
     }
@@ -631,7 +631,7 @@ int	ofiPhoneVideoPlayer::getCurrentFrame() {
 }
 
 //----------------------------------------
-int	ofiPhoneVideoPlayer::getTotalNumFrames() {
+int	ofxiOSVideoPlayer::getTotalNumFrames() {
     if(videoPlayer == NULL){
         return 0;
     }
@@ -639,7 +639,7 @@ int	ofiPhoneVideoPlayer::getTotalNumFrames() {
 }
 
 //----------------------------------------
-ofLoopType	ofiPhoneVideoPlayer::getLoopState() {
+ofLoopType	ofxiOSVideoPlayer::getLoopState() {
     if(videoPlayer == NULL) {
         return OF_LOOP_NONE;
     }
@@ -652,7 +652,7 @@ ofLoopType	ofiPhoneVideoPlayer::getLoopState() {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::firstFrame() {
+void ofxiOSVideoPlayer::firstFrame() {
     if(videoPlayer == NULL) {
         return;
     }
@@ -661,18 +661,18 @@ void ofiPhoneVideoPlayer::firstFrame() {
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::nextFrame() {
+void ofxiOSVideoPlayer::nextFrame() {
     int nextFrameNum = ofClamp(getCurrentFrame() + 1, 0, getTotalNumFrames());
     setFrame(nextFrameNum);
 }
 
 //----------------------------------------
-void ofiPhoneVideoPlayer::previousFrame() {
+void ofxiOSVideoPlayer::previousFrame() {
     int prevFrameNum = ofClamp(getCurrentFrame() - 1, 0, getTotalNumFrames());
     setFrame(prevFrameNum);
 }
 
 //----------------------------------------
-void * ofiPhoneVideoPlayer::getAVFoundationVideoPlayer() {
+void * ofxiOSVideoPlayer::getAVFoundationVideoPlayer() {
     return videoPlayer;
 }
