@@ -256,19 +256,19 @@
     switch (currentInterfaceOrientation) {
         case UIInterfaceOrientationPortrait:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortrait %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskPortrait;
+            return UIInterfaceOrientationPortrait;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortraitUpsideDown %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskPortraitUpsideDown;
+            return UIInterfaceOrientationPortraitUpsideDown;
             break;
         case UIInterfaceOrientationLandscapeLeft:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationMaskLandscapeLeft %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskLandscapeLeft;
+            return UIInterfaceOrientationLandscapeLeft;
             break;
         case UIInterfaceOrientationLandscapeRight:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationLandscapeRight %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskLandscapeRight;
+            return UIInterfaceOrientationLandscapeRight;
             break;
         default:
             break;
