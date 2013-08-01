@@ -1025,13 +1025,15 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 
 	int len = (int)textString.length();
-	//float yOffset = 0;
 	float fontSize = 8.0f;
-	bool bOrigin = false;
+	int newLineDirection = 1.0f;
 
 	float sx = 0;
 	float sy = -fontSize;
 
+	if(!ofIsVFlipped()){
+		newLineDirection  = -1;
+	}
 
 	///////////////////////////
 	// APPLY TRANSFORM / VIEW
@@ -1160,7 +1162,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sy += fontSize*1.7*newLineDirection;
 			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
 			} else {

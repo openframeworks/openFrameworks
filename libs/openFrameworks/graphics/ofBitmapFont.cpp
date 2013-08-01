@@ -404,8 +404,9 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		float texY1 = posTexH;
 		float texY2 = posTexH+heightTex;
 
+		int yOffset = 14;
 		if(!ofIsVFlipped()){
-			swap(texY1,texY2);
+			yOffset *= -1;
 		}
 
 
@@ -419,10 +420,10 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 
 		charMesh.getVertices()[vC].set(x,y);
 		charMesh.getVertices()[vC+1].set(x+8,y);
-		charMesh.getVertices()[vC+2].set(x+8,y+14);
+		charMesh.getVertices()[vC+2].set(x+8,y+yOffset);
 
-		charMesh.getVertices()[vC+3].set(x+8,y+14);
-		charMesh.getVertices()[vC+4].set(x,y+14);
+		charMesh.getVertices()[vC+3].set(x+8,y+yOffset);
+		charMesh.getVertices()[vC+4].set(x,y+yOffset);
 		charMesh.getVertices()[vC+5].set(x,y);
 			
 		vC += 6;
