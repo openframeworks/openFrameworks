@@ -431,6 +431,12 @@
 		<Unit filename="../../../openFrameworks/utils/ofUtils.h">
 			<Option virtualFolder="openframeworks/utils/" />
 		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofXml.cpp">
+			<Option virtualFolder="openframeworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofXml.h">
+			<Option virtualFolder="openframeworks/utils/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/video/ofDirectShowGrabber.cpp">
 			<Option virtualFolder="openframeworks/video/" />
 		</Unit>
