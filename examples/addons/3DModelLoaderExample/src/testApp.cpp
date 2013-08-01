@@ -13,7 +13,7 @@ void testApp::setup(){
 	ofSetVerticalSync(true);
 
     //some model / light stuff
-    glEnable (GL_DEPTH_TEST);
+    ofEnableDepthTest();
     glShadeModel (GL_SMOOTH);
 
     /* initialize lighting */
