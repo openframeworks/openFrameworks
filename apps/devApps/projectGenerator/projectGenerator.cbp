@@ -71,7 +71,7 @@
 			<Add directory="src/addons" />
 			<Add directory="src/projects" />
 			<Add directory="src/utils" />
-			<Add directory="../../../addons/ofxXmlSettings/libs/tinyxml/src" />
+			<Add directory="../../../addons/ofxXmlSettings/libs/" />
 			<Add directory="../../../addons/ofxXmlSettings/src" />
 			<Add directory="../../../addons/ofxGui/src" />
 		</Compiler>
@@ -138,10 +138,10 @@
 		<Unit filename="../../../addons/ofxGui/src/ofxSliderGroup.h" />
 		<Unit filename="../../../addons/ofxGui/src/ofxToggle.cpp" />
 		<Unit filename="../../../addons/ofxGui/src/ofxToggle.h" />
-		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml/src/tinyxml.cpp" />
-		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml/src/tinyxml.h" />
-		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml/src/tinyxmlerror.cpp" />
-		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml/src/tinyxmlparser.cpp" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.cpp" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.h" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp" />
 		<Unit filename="../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp" />
 		<Unit filename="../../../addons/ofxXmlSettings/src/ofxXmlSettings.h" />
 		<Unit filename="../../../libs/openFrameworks/types/ofXml.h" />
