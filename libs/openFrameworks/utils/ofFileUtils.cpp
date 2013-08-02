@@ -1411,7 +1411,7 @@ string ofFilePath::getCurrentExePath(){
 	#elif defined(TARGET_OSX)
 		char path[FILENAME_MAX];
 		uint32_t size = sizeof(path);
-		if(_NSGetExecutablePath(path, &size) == 0){
+		if(_NSGetExecutablePath(path, &size) != 0){
 			ofLogError("ofFilePath") << "getCurrentExePath(): path buffer too small, need size " <<  size;
 		}
 		return path;
