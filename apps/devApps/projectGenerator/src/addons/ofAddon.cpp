@@ -251,7 +251,7 @@ void ofAddon::parseConfig(){
 		Poco::trimInPlace(line);
 
 		// discard comments
-		if(line[0]=='#'){
+		if(!line[0] || line[0]=='#'){
 			continue;
 		}
 
