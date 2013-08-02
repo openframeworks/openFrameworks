@@ -17,6 +17,9 @@ class ofxSVG {
 		}
 		void load(string path);
 		void draw();
+    
+	    void setUseShapeColor(bool useColor);
+    	bool getUseShapeColor() const;
 
 		int getNumPath(){
 			return paths.size();
@@ -28,6 +31,7 @@ class ofxSVG {
 	private:
 
 		float width, height;
+	    bool bUseShapeColor;
 
 		vector <ofPath> paths;
 
