@@ -14,6 +14,8 @@
 #include <map>
 
 
+static bool normalsEnabled=false;
+
 //----------------------------------------
 void ofEnableLighting() {
 	glEnable(GL_LIGHTING);
@@ -21,11 +23,21 @@ void ofEnableLighting() {
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 #endif
 	glEnable(GL_COLOR_MATERIAL);
+
+	// FIXME: we do this so the 3d ofDraw* functions work with lighting
+	// but if someone enables it between ofEnableLighting it'll be disabled
+	// on ofDisableLighting. by now it seems the best option to not loose
+	// performance when drawing lots of primitives
+	normalsEnabled = glIsEnabled( GL_NORMALIZE );
+	glEnable(GL_NORMALIZE);
 }
 
 //----------------------------------------
 void ofDisableLighting() {
 	glDisable(GL_LIGHTING);
+	if(!normalsEnabled){
+		glDisable(GL_NORMALIZE);
+	}
 }
 
 //----------------------------------------
