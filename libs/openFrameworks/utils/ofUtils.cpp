@@ -568,6 +568,20 @@ bool ofIsStringInString(string haystack, string needle){
 	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
 }
 
+int ofStringTimesInString(string haystack, string needle){
+	const size_t step = needle.size();
+
+	size_t count(0);
+	size_t pos(0) ;
+
+	while( (pos=haystack.find(needle, pos)) != std::string::npos) {
+		pos +=step;
+		++count ;
+	}
+
+	return count;
+}
+
 //--------------------------------------------------
 string ofToLower(const string & src){
 	string dst(src);
