@@ -994,8 +994,9 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 	int newLineDirection		= 1;
 
 	if(!ofIsVFlipped()){
-		int lines = ofStringTimesInString(c,"\n");
-		Y = lines*lineHeight;
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(c,"\n");
+		//Y = lines*lineHeight;
 		newLineDirection = -1;
 	}
 

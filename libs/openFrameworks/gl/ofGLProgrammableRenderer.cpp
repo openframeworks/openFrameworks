@@ -1034,8 +1034,9 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 	if(!ofIsVFlipped()){
 		newLineDirection  = -1;
-		int lines = ofStringTimesInString(textString,"\n");
-		y = lines*lineHeight;
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(textString,"\n");
+		//y = lines*lineHeight;
 	}
 
 	if(!ofIsVFlipped()){
