@@ -508,6 +508,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	if(bMakeContours){
 		charOutlines.clear();
 		charOutlines.assign(nCharacters, ofTTFCharacter());
+		charOutlinesNonVFlipped.assign(nCharacters, ofTTFCharacter());
 	}
 
 	vector<ofPixels> expanded_data(nCharacters);
@@ -555,9 +556,19 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
+
+			charOutlinesNonVFlipped[i] = charOutlines[i];
+			charOutlinesNonVFlipped[i].translate(ofVec3f(0,cps[i].height));
+			charOutlinesNonVFlipped[i].scale(1,-1);
+
+
 			if(simplifyAmt>0)
 				charOutlines[i].simplify(simplifyAmt);
 			charOutlines[i].getTessellation();
+
+			if(simplifyAmt>0)
+				charOutlinesNonVFlipped[i].simplify(simplifyAmt);
+			charOutlinesNonVFlipped[i].getTessellation();
 		}
 
 
@@ -635,7 +646,6 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 		areaSum += (cps[i].width+border*2)*(cps[i].height+border*2);
 	}
-
 
 	vector<charProps> sortedCopy = cps;
 	sort(sortedCopy.begin(),sortedCopy.end(),&compare_cps);
@@ -780,7 +790,7 @@ float ofTrueTypeFont::getSpaceSize(){
 }
 
 //------------------------------------------------------------------
-ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
+ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip){
 	if( bMakeContours == false ){
 		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
 		return ofTTFCharacter();
@@ -792,7 +802,11 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
         return ofTTFCharacter();
     }
     
-    return charOutlines[character - NUM_CHARACTER_TO_START];
+    if(vflip){
+    	return charOutlines[character - NUM_CHARACTER_TO_START];
+    }else{
+    	return charOutlinesNonVFlipped[character - NUM_CHARACTER_TO_START];
+    }
 }
 
 //-----------------------------------------------------------
@@ -844,7 +858,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 }
 
 //-----------------------------------------------------------
-vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
+vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip){
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
 		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(str,o);
@@ -861,6 +875,14 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 	GLint		index	= 0;
 	GLfloat		X		= 0;
 	GLfloat		Y		= 0;
+	int newLineDirection		= 1;
+
+	if(vflip){
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(c,"\n");
+		//Y = lines*lineHeight;
+		newLineDirection = -1;
+	}
 
 
 	int len = (int)str.length();
@@ -869,13 +891,13 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
 		if (cy < nCharacters){ 			// full char set or not?
 			if (str[index] == '\n') {
-				Y += lineHeight;
+				Y += lineHeight*newLineDirection;
 				X = 0 ; //reset X Pos back to zero
 			}else if (str[index] == ' ') {
 				int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				X += cps[cy].setWidth * letterSpacing * spaceSize;
 			} else if(cy > -1){
-				shapes.push_back(getCharacterAsPoints((unsigned char)str[index]));
+				shapes.push_back(getCharacterAsPoints((unsigned char)str[index],vflip));
 				shapes.back().translate(ofPoint(X,Y));
 
 				X += cps[cy].setWidth * letterSpacing;
@@ -895,9 +917,15 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	}
 	//-----------------------
 
-	ofTTFCharacter & charRef = charOutlines[c - NUM_CHARACTER_TO_START];
-	charRef.setFilled(ofGetStyle().bFill);
-	charRef.draw(x,y);
+	if(ofIsVFlipped()){
+		ofTTFCharacter & charRef = charOutlines[c - NUM_CHARACTER_TO_START];
+		charRef.setFilled(ofGetStyle().bFill);
+		charRef.draw(x,y);
+	}else{
+		ofTTFCharacter & charRef = charOutlinesNonVFlipped[c - NUM_CHARACTER_TO_START];
+		charRef.setFilled(ofGetStyle().bFill);
+		charRef.draw(x,y);
+	}
 }
 
 //-----------------------------------------------------------
@@ -1129,6 +1157,14 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
+	int newLineDirection		= 1;
+
+	if(!ofIsVFlipped()){
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(c,"\n");
+		//Y = lines*lineHeight;
+		newLineDirection = -1;
+	}
 
 	int len = (int)c.length();
 
@@ -1137,7 +1173,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y += lineHeight;
+				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
