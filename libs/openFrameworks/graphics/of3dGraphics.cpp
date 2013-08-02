@@ -292,7 +292,7 @@ ofVec3f ofGetConeResolution() {
 void ofDrawCone(float x, float y, float z, float radius, float height) {
 	static ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
-	m.translate(x,y,z);
+	if (x != 0 || y != 0 || z != 0 ) m.translate(x,y,z);
 	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
@@ -312,13 +312,7 @@ void ofDrawCone(const ofPoint& position, float radius, float height) {
 
 //----------------------------------------------------------
 void ofDrawCone(float radius, float height) {
-	static ofMatrix4x4 m;
-	m.makeScaleMatrix(radius,height,radius);
-	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
-    ofPushMatrix();
-    ofMultMatrix(m);
-    renderCached3dPrimitive( mesh );
-    ofPopMatrix();
+	ofDrawCone(0,0,0,radius,height);
 }
 
 //----------------------------------------------------------
