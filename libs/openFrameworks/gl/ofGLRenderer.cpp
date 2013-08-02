@@ -134,16 +134,20 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 
 //----------------------------------------------------------
 void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
-    bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
+	// FIXME: we don't need this anymore since GL_NORMALIZE is enabled on lighting
+	// leaving it comented just in case. it's also safe to remove this method completely
+	// from the renderers hierarchy
+
+    /*bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glEnable( GL_NORMALIZE );
-    }
+    }*/
 
     model.getMesh().draw(renderType);
 
-    if(model.hasScaling() && model.hasNormalsEnabled()) {
+    /*if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glDisable( GL_NORMALIZE );
-    }
+    }*/
 
 }
 
