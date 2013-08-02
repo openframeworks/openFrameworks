@@ -991,10 +991,14 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
-	int			yDirection = 1;
+	int newLineDirection		= 1;
+
 	if(!ofIsVFlipped()){
-		yDirection = -1;
+		int lines = ofStringTimesInString(c,"\n");
+		Y = lines*lineHeight;
+		newLineDirection = -1;
 	}
+
 	int len = (int)c.length();
 
 	while(index < len){
@@ -1002,7 +1006,7 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y += lineHeight*yDirection;
+				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
