@@ -7,9 +7,6 @@
 //========================================================================
 int main(  int argc, char *argv[]  ){
 
-   
-    cout << "In main." << endl;
-    
     cout << "ofGetTargetPlatform=" << ofGetTargetPlatform() << endl;
     
 #ifdef TARGET_LINUX
