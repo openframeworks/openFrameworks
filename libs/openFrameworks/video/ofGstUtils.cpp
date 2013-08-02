@@ -154,10 +154,12 @@ bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isSt
 		return false;
 	}
 
-	gstSink = gst_bin_get_by_name(GST_BIN(gstPipeline),sinkname.c_str());
+	if(sinkname!=""){
+		gstSink = gst_bin_get_by_name(GST_BIN(gstPipeline),sinkname.c_str());
 
-	if(!gstSink){
-		ofLogError("ofGstUtils") << "setPipelineWithSink(): couldn't get sink from string pipeline";
+		if(!gstSink){
+			ofLogError("ofGstUtils") << "setPipelineWithSink(): couldn't get sink from string pipeline";
+		}
 	}
 
 	return setPipelineWithSink(gstPipeline,gstSink,isStream);
