@@ -113,7 +113,7 @@ win_cb:
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_gpu231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_ts231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libzlib.a
-	
+
 linuxarmv6l:
 	ADDON_LIBS =
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_legacy.a
