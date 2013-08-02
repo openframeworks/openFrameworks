@@ -671,9 +671,9 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
 		swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
-		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getPixels());
 		kinect->bNeedsUpdateDepth = true;
 		kinect->unlock();
+		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getPixels());
     }
 }
 
@@ -685,9 +685,9 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
 		swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
-		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getPixels());
 		kinect->bNeedsUpdateVideo = true;
 		kinect->unlock();
+		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getPixels());
 	}
 }
 
