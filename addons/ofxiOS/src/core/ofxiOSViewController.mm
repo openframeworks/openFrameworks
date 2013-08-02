@@ -249,6 +249,7 @@
 }
 
 //-------------------------------------------------------------- iOS6.
+#ifdef __IPHONE_6_0
 - (NSUInteger)supportedInterfaceOrientations {
     if(pendingInterfaceOrientation >= 0 && !bReadyToRotate) {
         currentInterfaceOrientation = pendingInterfaceOrientation;
@@ -256,29 +257,29 @@
     switch (currentInterfaceOrientation) {
         case UIInterfaceOrientationPortrait:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortrait %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationPortrait;
+            return UIInterfaceOrientationMaskPortrait;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortraitUpsideDown %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationPortraitUpsideDown;
+            return UIInterfaceOrientationMaskPortraitUpsideDown;
             break;
         case UIInterfaceOrientationLandscapeLeft:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationMaskLandscapeLeft %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationLandscapeLeft;
+            return UIInterfaceOrientationMaskLandscapeLeft;
             break;
         case UIInterfaceOrientationLandscapeRight:
 //            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationLandscapeRight %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationLandscapeRight;
+            return UIInterfaceOrientationMaskLandscapeRight;
             break;
         default:
             break;
     }
-    return -1; // defaults to orientations selected in the .plist file ('Supported Interface Orientations' in the XCode Project)
+    // defaults to orientations selected in the .plist file ('Supported Interface Orientations' in the XCode Project)
+    return -1; 
 }
+#endif
 
 - (BOOL)shouldAutorotate {
-//    NSLog(@"ofxiOSViewController :: shouldAutorotate - FIX ME!!! TEMP Hack");
-    //NOTE: this was set to YES - but had to set to NO to not crash in simulator
     return YES;
 }
 
