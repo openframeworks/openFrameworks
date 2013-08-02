@@ -57,14 +57,14 @@ void ofxSVG::draw(){
 }
 
 void ofxSVG::setUseShapeColor(bool useColor){
-    bUseShapeColor = useColor;
-    for (vector<ofPath>::iterator p = paths.begin(); p != paths.end(); p++){
-        p->setUseShapeColor(useColor);
-    }
+	bUseShapeColor = useColor;
+	for (vector<ofPath>::iterator p = paths.begin(); p != paths.end(); p++){
+		p->setUseShapeColor(useColor);
+	}
 }
 
 bool ofxSVG::getUseShapeColor() const{
-    return bUseShapeColor;
+	return bUseShapeColor;
 }
 
 

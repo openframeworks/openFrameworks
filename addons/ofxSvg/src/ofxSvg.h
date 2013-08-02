@@ -31,7 +31,7 @@ class ofxSVG {
 	private:
 
 		float width, height;
-	    bool bUseShapeColor;
+		bool bUseShapeColor;
 
 		vector <ofPath> paths;
 
