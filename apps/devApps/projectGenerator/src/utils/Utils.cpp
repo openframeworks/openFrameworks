@@ -483,7 +483,7 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 	addonsmake >> addonsmakebuff;
 	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
         string line = addonsmakebuff.getNextLine();
-		if(line!=""){
+		if(line!="" && line[0] != '#'){
 			addons.push_back(line);
 		}
 	}
