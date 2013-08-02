@@ -387,7 +387,10 @@ void ofLight::customDraw() {
     } else if (getIsSpotlight()) {
         float coneHeight = (sin(spotCutOff*DEG_TO_RAD) * 30.f) + 1;
         float coneRadius = (cos(spotCutOff*DEG_TO_RAD) * 30.f) + 8;
-        ofDrawCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
+		ofPushMatrix();
+		ofRotate(-90, 1, 0, 0);
+		ofDrawCone(0, -(coneHeight*.5), 0, coneHeight, coneRadius);
+		ofPopMatrix();
     } else {
         ofDrawBox(10);
     }
