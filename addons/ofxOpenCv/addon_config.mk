@@ -114,23 +114,6 @@ win_cb:
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_ts231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libzlib.a
 
-vs:
-	ADDON_LIBS =
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_legacy231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_haartraining_engine.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_calib3d231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_features2d231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_objdetect231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_imgproc231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_video231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_highgui231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_ml231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_core231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_flann231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_contrib231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/opencv_gpu231.lib
-	ADDON_LIBS += libs/opencv/lib/vs/zlib.lib
-	
 linuxarmv6l:
 	ADDON_LIBS =
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_legacy.a
