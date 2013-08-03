@@ -104,7 +104,7 @@ void testApp::setupForTarget(int targ){
             target = "vs";
             break;
         case OF_TARGET_IPHONE:
-            project = new xcodeProject();
+            project = new xcodeProject;
             target = "ios";
             break;
         case OF_TARGET_ANDROID:
