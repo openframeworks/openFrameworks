@@ -173,8 +173,13 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
             break;
     }
 
-    ofxiOSAppDelegate * appDelegate = (ofxiOSAppDelegate *)[UIApplication sharedApplication].delegate;
-    ofxiOSViewController * glViewController = appDelegate.glViewController;
+    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
+    if([appDelegate respondsToSelector:@selector(glViewController)] == NO) {
+        // check app delegate has glViewController,
+        // otherwise calling glViewController will cause a crash.
+        return;
+    }
+    ofxiOSViewController * glViewController = ((ofxiOSAppDelegate *)appDelegate).glViewController;
     ofxiOSEAGLView * glView = glViewController.glView;
     
     if(bHardwareOrientation == true) {

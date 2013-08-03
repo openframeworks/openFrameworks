@@ -14,6 +14,8 @@
 #include <map>
 
 
+static bool normalsEnabled=false;
+
 //----------------------------------------
 void ofEnableLighting() {
 	glEnable(GL_LIGHTING);
@@ -21,11 +23,21 @@ void ofEnableLighting() {
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 #endif
 	glEnable(GL_COLOR_MATERIAL);
+
+	// FIXME: we do this so the 3d ofDraw* functions work with lighting
+	// but if someone enables it between ofEnableLighting it'll be disabled
+	// on ofDisableLighting. by now it seems the best option to not loose
+	// performance when drawing lots of primitives
+	normalsEnabled = glIsEnabled( GL_NORMALIZE );
+	glEnable(GL_NORMALIZE);
 }
 
 //----------------------------------------
 void ofDisableLighting() {
 	glDisable(GL_LIGHTING);
+	if(!normalsEnabled){
+		glDisable(GL_NORMALIZE);
+	}
 }
 
 //----------------------------------------
@@ -387,7 +399,10 @@ void ofLight::customDraw() {
     } else if (getIsSpotlight()) {
         float coneHeight = (sin(spotCutOff*DEG_TO_RAD) * 30.f) + 1;
         float coneRadius = (cos(spotCutOff*DEG_TO_RAD) * 30.f) + 8;
-        ofDrawCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
+		ofPushMatrix();
+		ofRotate(-90, 1, 0, 0);
+		ofDrawCone(0, -(coneHeight*.5), 0, coneHeight, coneRadius);
+		ofPopMatrix();
     } else {
         ofDrawBox(10);
     }
