@@ -333,6 +333,12 @@ string ofFromString(const string & value){
 }
 
 //----------------------------------------
+template<>
+const char * ofFromString(const string & value){
+	return value.c_str();
+}
+
+//----------------------------------------
 template <>
 string ofToHex(const string& value) {
 	ostringstream out;

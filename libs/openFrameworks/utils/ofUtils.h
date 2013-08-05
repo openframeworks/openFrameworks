@@ -138,6 +138,9 @@ T ofFromString(const string & value){
 template<>
 string ofFromString(const string & value);
 
+template<>
+const char * ofFromString(const string & value);
+
 template <class T>
 string ofToHex(const T& value) {
 	ostringstream out;
