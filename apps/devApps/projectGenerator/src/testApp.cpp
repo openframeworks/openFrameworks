@@ -52,7 +52,18 @@ void testApp::setup(){
     	}
     }
 
-    panelOptions.setup("","settings.xml",ofGetWidth()-panelAddons.getWidth()-10,120);
+	examplesPanel.setup("generate examples", "examples.xml", panelAddons.getWidth()+200, 10);
+	examplesPanel.add(generateButton.setup("<--Generate"));
+	examplesPanel.add(wincbToggle.setup("win CB projects",ofGetTargetPlatform()==OF_TARGET_WINGCC,300));
+	examplesPanel.add(winvsToggle.setup("win VS projects", ofGetTargetPlatform()==OF_TARGET_WINVS,300));
+	examplesPanel.add(linuxcbToggle.setup("linux CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX,300));
+	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX64,300));
+	examplesPanel.add(linuxarmv6lcbToggle.setup("linuxarmv6l CB projects",ofGetTargetPlatform()==OF_TARGET_LINUXARMV6L,300));
+	examplesPanel.add(linuxarmv7lcbToggle.setup("linuxarmv7l CB projects",ofGetTargetPlatform()==OF_TARGET_LINUXARMV7L,300));
+	examplesPanel.add(osxToggle.setup("osx projects",ofGetTargetPlatform()==OF_TARGET_OSX,300));
+	examplesPanel.add(iosToggle.setup("ios projects",ofGetTargetPlatform()==OF_TARGET_IPHONE,300));
+
+	panelOptions.setup("","settings.xml",panelAddons.getWidth()+200,examplesPanel.getHeight() + 100);
     panelOptions.add(createProject.setup("create project",300));
     panelOptions.add(updateProject.setup("update project",300));
     panelOptions.add(createAndOpen.setup("create and open project",300));
@@ -62,17 +73,6 @@ void testApp::setup(){
     updateProject.addListener(this,&testApp::updateProjectPressed);
     createAndOpen.addListener(this,&testApp::createAndOpenPressed);
     changeOFRoot.addListener(this,&testApp::changeOFRootPressed);
-
-	examplesPanel.setup("generate examples", "examples.xml", 400, 10);
-	examplesPanel.add(generateButton.setup("<--Generate"));
-	examplesPanel.add(wincbToggle.setup("win CB projects",ofGetTargetPlatform()==OF_TARGET_WINGCC));
-	examplesPanel.add(winvsToggle.setup("win VS projects", ofGetTargetPlatform()==OF_TARGET_WINVS));
-	examplesPanel.add(linuxcbToggle.setup("linux CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX));
-	examplesPanel.add(linux64cbToggle.setup("linux64 CB projects",ofGetTargetPlatform()==OF_TARGET_LINUX64));
-	examplesPanel.add(linuxarmv6lcbToggle.setup("linuxarmv6l CB projects",ofGetTargetPlatform()==OF_TARGET_LINUXARMV6L));
-	examplesPanel.add(linuxarmv7lcbToggle.setup("linuxarmv7l CB projects",ofGetTargetPlatform()==OF_TARGET_LINUXARMV7L));
-	examplesPanel.add(osxToggle.setup("osx projects",ofGetTargetPlatform()==OF_TARGET_OSX));
-	examplesPanel.add(iosToggle.setup("ios projects",ofGetTargetPlatform()==OF_TARGET_IPHONE));
 
 	generateButton.addListener(this,&testApp::generateExamplesCB);
 
