@@ -25,7 +25,7 @@ MAJOR CHANGES
 	+ programmable GL renderer (ability to use OpenGL 3+ / GLES 2.0)
 	 linux support for ARM devices (e.g. Raspberry Pi)
 	+ ofXml, a full xml parser. NOTE: ofXML is still in development, more convenience functions will be added in future releases. 
-	+ ofParameter
+	+ ofParameter, allows for datatypes to have names, default values and ranges, check out the examples! 
 	+ 4x anti-aliasing is now on by default (osx/linux/win)
 	+ ofxKinect and ofxGui as core addons
 	+ new module-based logging system
