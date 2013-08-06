@@ -24,9 +24,9 @@ MAJOR CHANGES
 -------------
 	+ programmable GL renderer (ability to use OpenGL 3+ / GLES 2.0)
 	 linux support for ARM devices (e.g. Raspberry Pi)
-	+ ofXml, a full xml parser. NOTE: ofXML is still in development, more convienience functions will be added in future releases. 
+	+ ofXml, a full xml parser. NOTE: ofXML is still in development, more convenience functions will be added in future releases. 
 	+ ofParameter
-	+ 4x anti-aliasing is now on by default (osx/nix/win)
+	+ 4x anti-aliasing is now on by default (osx/linux/win)
 	+ ofxKinect and ofxGui as core addons
 	+ new module-based logging system
 	+ apps now get special keys, shift/super/alt/ctrl etc
@@ -50,6 +50,14 @@ removed functions which were deprecated in 0072:
 	- ofGraphics: ofVertexes and ofCurveVertexes
 	- ofQTKitPlayer::bind() and ofQTKitPlayer::unbind()
 	- ofAppiPhoneWindow::enableRetinaSupport(), isRetinaSupported(), isDepthEnabled()
+
+deprecated in this release:
+	/ ofBox, ofCone, ofSphere deprecated in favour of ofDrawBox and ofDrawSphere
+	/ ofxiPhoneSetOrientation and ofxiPhoneGetOrientation -> ofSet/GetOrientation
+	/ ofxOpenALSoundPlayer
+	/ ofSetupScreenPerspective(), ofSetupScreenOrtho() don't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them
+	/ ofPath::set/getArcResolution -> set/getCircleResolution
+	
 
 CORE
 ----
@@ -127,11 +135,11 @@ CORE
         / fixed bug where ofTrueTypeFont::drawStringAsShapes didn't respect spaceSize and letterSpacing
         / fixed getHex and setHex for ofFloatColor and ofShortColor
         / fixed infinite recursion bug in ofCairoRenderer::background(float)
-        / ofBox and ofSphere deprecated in favour of ofDrawBox and ofDrawSphere
+        / ofBox, ofCone, ofSphere deprecated in favour of ofDrawBox and ofDrawSphere
 ### Math
-        + generic wrapping function float ofWrap(float value, float from, float to)
         + 1D interpolation functions: ofCosine|Cubic|Catmull|HermiteInterpolate
-        / ofWrapDegrees, ofWrapRadians only wrap this function, don't enforce a 360°/2Pi cycle anymore.
+        + generic wrapping function float ofWrap(float value, float from, float to)
+        / ofWrapDegrees, ofWrapRadians only wrap the new ofWrap, don't enforce a 360°/2Pi cycle anymore.
         / ofxVectorMath now included in core (as ofVectorMath)
 
 ### GL
