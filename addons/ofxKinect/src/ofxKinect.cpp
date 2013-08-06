@@ -106,9 +106,11 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	// allocate
 	depthPixelsRaw.allocate(width, height, 1);
 	depthPixelsRawBack.allocate(width, height, 1);
+	depthPixelsRawIntra.allocate(width, height, 1);
 
 	videoPixels.allocate(width, height, videoBytesPerPixel);
 	videoPixelsBack.allocate(width, height, videoBytesPerPixel);
+	videoPixelsIntra.allocate(width, height, videoBytesPerPixel);
 
 	depthPixels.allocate(width, height, 1);
 	distancePixels.allocate(width, height, 1);
@@ -190,6 +192,8 @@ bool ofxKinect::open(int id) {
 	bGotData = false;
 
 	freenect_set_user(kinectDevice, this);
+	freenect_set_depth_buffer(kinectDevice, depthPixelsRawBack.getPixels());
+	freenect_set_video_buffer(kinectDevice, videoPixelsBack.getPixels());
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
 
@@ -287,7 +291,7 @@ void ofxKinect::update() {
 		bGotData = true;
 		tryCount = 0;
 		if(this->lock()) {
-			videoPixels = videoPixelsBack;
+			swap(videoPixels,videoPixelsIntra);
 			bNeedsUpdateVideo = false;
 			this->unlock();
 		}
@@ -304,7 +308,7 @@ void ofxKinect::update() {
 		bGotData = true;
 		tryCount = 0;
 		if(this->lock()) {
-			depthPixelsRaw = depthPixelsRawBack;
+			swap(depthPixelsRaw, depthPixelsRawIntra);
 			bNeedsUpdateDepth = false;
 			this->unlock();
 
@@ -666,9 +670,10 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		kinect->depthPixelsRawBack.setFromPixels((unsigned short*) depth, width, height, 1);
+		swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
 		kinect->bNeedsUpdateDepth = true;
 		kinect->unlock();
+		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getPixels());
     }
 }
 
@@ -679,10 +684,10 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
-		kinect->videoPixelsBack.setFromPixels((unsigned char*)video, width, height, curMode.data_bits_per_pixel/8);
+		swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
 		kinect->bNeedsUpdateVideo = true;
 		kinect->unlock();
+		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getPixels());
 	}
 }
 
