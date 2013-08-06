@@ -52,6 +52,7 @@ removed functions which were deprecated in 0072:
 	- ofAppiPhoneWindow::enableRetinaSupport(), isRetinaSupported(), isDepthEnabled()
 
 deprecated in this release:
+
 	/ ofBox, ofCone, ofSphere deprecated in favour of ofDrawBox and ofDrawSphere
 	/ ofxiPhoneSetOrientation and ofxiPhoneGetOrientation -> ofSet/GetOrientation
 	/ ofxOpenALSoundPlayer
