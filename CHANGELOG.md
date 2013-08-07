@@ -1,12 +1,12 @@
 ------------------------------------------------------------------------------
 ```
-       /'___\      /'__`\    /'_ `\     /'__`\   
-  ___ /\ \__/     /\ \/\ \  /\ \ \ \   /\ \/\ \  
- / __`\ \ ,__\    \ \ \ \ \ \/_> _ <_  \ \ \ \ \ 
-/\ \ \ \ \ \_/     \ \ \_\ \__/\ \ \ \__\ \ \_\ \
-\ \____/\ \_\       \ \____/\_\ \____/\_\\ \____/
- \/___/  \/_/        \/___/\/_/\/___/\/_/ \/___/ 
-                                                                         
+  .oooo.        .ooooo.         .oooo.   
+ d8P'`Y8b      d88'   `8.      d8P'`Y8b  
+888    888     Y88..  .8'     888    888 
+888    888      `88888b.      888    888 
+888    888     .8'  ``88b     888    888 
+`88b  d88' .o. `8.   .88P .o. `88b  d88' 
+ `Y8bd8P'  Y8P  `boood8'  Y8P  `Y8bd8P'
 ```
 ------------------------------------------------------------------------------
 OF 0.8.0
@@ -270,16 +270,13 @@ EXAMPLES
 
 ---------------------------------------------------------------
 
-        ________________/\\\\\\\\\\\\\\\_________/\\\\\\\___________/\\\\\\\\\\\\\\\_____________/\\\____        
-	 _______________\/\\\///////////________/\\\/////\\\________\/////////////\\\___________/\\\\\____       
-	  _______________\/\\\__________________/\\\____\//\\\__________________/\\\/__________/\\\/\\\____      
-	   _____/\\\\\____\/\\\\\\\\\\\_________\/\\\_____\/\\\________________/\\\/___________/\\\/\/\\\____     
-		___/\\\///\\\__\/\\\///////__________\/\\\_____\/\\\______________/\\\/___________/\\\/__\/\\\____    
-		 __/\\\__\//\\\_\/\\\_________________\/\\\_____\/\\\____________/\\\/___________/\\\\\\\\\\\\\\\\_   
-		  _\//\\\__/\\\__\/\\\_________________\//\\\____/\\\___________/\\\/____________\///////////\\\//__  
-		   __\///\\\\\/___\/\\\__________________\///\\\\\\\/____/\\\__/\\\/________/\\\___________\/\\\____ 
-			____\/////_____\///_____ _______________\///////_____\///__\///__________\///____________\///_____
-
+  .oooo.        ooooooooo           .o   
+ d8P'`Y8b      d"""""""8'         .d88   
+888    888           .8'        .d'888   
+888    888          .8'       .d'  888   
+888    888         .8'        88ooo888oo 
+`88b  d88' .o.    .8'     .o.      888   
+ `Y8bd8P'  Y8P   .8'      Y8P     o888o  
 
 ------------------------------------------------------------------------------
 OF 0.7.4
@@ -300,7 +297,7 @@ New Codeblocks (windows):
 For 0.7.4 we updated all core libraries to work against the new version of codeblocks, which itself uses a new version of GCC.  Anyone using codeblocks on windows will need to update to 12.11, because these libraries will not work with older versions of codeblocks. 
 
 System Libraries (linux):
-Linux now uses some system libraries instead of including them in the core.  Please ensure you have installed the system dependencies for your OS.  You can install the system dependencies by executing the install_dependencies.sh script in  $OF_ROOT/scripts/linux/DISTRO/install_dependencies.sh, where DISTRO is your running linux distribution.  Currently oF has install scripts for Debian, Ubuntu, ArchLinux, and Fedora.
+Linux now uses some system libraries instead of including them in the core.  Please ensure you have installed the system dependencies for your OS.  You can install the system dependencies by executing the install_dependencies.sh script in  $OF_ROOT/scripts/linux/DISTRO/install_dependencies.sh, where DISTRO is your running linux distribution.  Currently OF has install scripts for Debian, Ubuntu, ArchLinux, and Fedora.
 
 New versioning system:
 From now on, OF version are numbered Major.Minor.Patch (e.g. 0.7.4). See Utils section and readme.md for details.
