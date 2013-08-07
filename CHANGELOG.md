@@ -84,6 +84,9 @@ CORE
 			
 	ofNode
                 / ofNode::setParent() and clearParent() now accept a flag which allow nodes to maintain their global position
+                
+        ofCamera
+        	+ ofCamera::setVFlipped/ofCamera::isVFlipped
         
 ### App
         + ofAppGLFWWindow::setMultiDisplayFullscreen(bool) 
@@ -98,6 +101,7 @@ CORE
 ### Events
         + ofAddListener now has an optional param for listener priority
         + event listeners can now return a bool to indicate whether an event should be marked as attended
+        + support for modificator keys: control, alt and shift (only glfw)
  
 ### Graphics
 
@@ -145,10 +149,12 @@ CORE
         + ofSetDepthTest(), ofEnableDepthTest(), ofDisableDepthTest()
         + ofEnableAntiAliasing() / ofDisableAntiAliasing(), to toggle antialiasing on runtime. NOTE: needs to be enabled in the window. 
         + ofShader support for #pragma includes
+        + ofVbo support for VAOs
         / ofVbo and ofVboMesh accessors marked const
         / ofTexture::loadData will now reallocate if necessary
         / fixed ofLight global position and orientation issues when parented
         / fixed some private members of the gl renderer not being initialized
+        / fixed the logic of vflip, handedness and orientation
 
 ### Sound
         + ofSoundStream: getters for sampleRate, bufferSize and numChannels
@@ -207,6 +213,7 @@ PLATFORM SPECIFIC
 ### Linux
         / Add glfw3.0 for Linux 32bit
         + core support for armv6 and armv7
+	+ drag & drop is now supported on linux through glfw
 
 ### Windows
         + Visual Studio 2012 support (drop support for earlier VS versions)
