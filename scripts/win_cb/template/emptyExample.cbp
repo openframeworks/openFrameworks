@@ -52,6 +52,7 @@
 			<Add directory="..\..\..\libs\videoInput\include" />
 			<Add directory="..\..\..\libs\glew\include" />
 			<Add directory="..\..\..\libs\glut\include" />
+			<Add directory="..\..\..\libs\glfw\include" />
 			<Add directory="..\..\..\libs\openFrameworks" />
 			<Add directory="..\..\..\libs\openFrameworks\3d" />
 			<Add directory="..\..\..\libs\openFrameworks\app" />
