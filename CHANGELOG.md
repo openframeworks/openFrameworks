@@ -213,7 +213,7 @@ PLATFORM SPECIFIC
 ### Linux
         / Add glfw3.0 for Linux 32bit
         + core support for armv6 and armv7
-	+ drag & drop is now supported on linux through glfw
+        + drag & drop is now supported on linux through glfw
 
 ### Windows
         + Visual Studio 2012 support (drop support for earlier VS versions)
