@@ -1,15 +1,291 @@
-	________________/\\\\\\\\\\\\\\\_________/\\\\\\\___________/\\\\\\\\\\\\\\\_____________/\\\____        
-	 _______________\/\\\///////////________/\\\/////\\\________\/////////////\\\___________/\\\\\____       
-	  _______________\/\\\__________________/\\\____\//\\\__________________/\\\/__________/\\\/\\\____      
-	   _____/\\\\\____\/\\\\\\\\\\\_________\/\\\_____\/\\\________________/\\\/___________/\\\/\/\\\____     
-		___/\\\///\\\__\/\\\///////__________\/\\\_____\/\\\______________/\\\/___________/\\\/__\/\\\____    
-		 __/\\\__\//\\\_\/\\\_________________\/\\\_____\/\\\____________/\\\/___________/\\\\\\\\\\\\\\\\_   
-		  _\//\\\__/\\\__\/\\\_________________\//\\\____/\\\___________/\\\/____________\///////////\\\//__  
-		   __\///\\\\\/___\/\\\__________________\///\\\\\\\/____/\\\__/\\\/________/\\\___________\/\\\____ 
-			____\/////_____\///_____ _______________\///////_____\///__\///__________\///____________\///_____
+```
+_______/\\\\\_______/\\\\\\\\\\\\\\\_______________/\\\\\\\______________/\\\\\\\\\______________/\\\\\\\____        
+ _____/\\\///\\\____\/\\\///////////______________/\\\/////\\\__________/\\\///////\\\__________/\\\/////\\\__       
+  ___/\\\/__\///\\\__\/\\\________________________/\\\____\//\\\________\/\\\_____\/\\\_________/\\\____\//\\\_      
+   __/\\\______\//\\\_\/\\\\\\\\\\\_______________\/\\\_____\/\\\________\///\\\\\\\\\/_________\/\\\_____\/\\\_     
+    _\/\\\_______\/\\\_\/\\\///////________________\/\\\_____\/\\\_________/\\\///////\\\________\/\\\_____\/\\\_    
+     _\//\\\______/\\\__\/\\\_______________________\/\\\_____\/\\\________/\\\______\//\\\_______\/\\\_____\/\\\_   
+      __\///\\\__/\\\____\/\\\_______________________\//\\\____/\\\________\//\\\______/\\\________\//\\\____/\\\__  
+       ____\///\\\\\/_____\/\\\________________________\///\\\\\\\/____/\\\__\///\\\\\\\\\/____/\\\__\///\\\\\\\/___ 
+        ______\/////_______\///___________________________\///////_____\///_____\/////////_____\///_____\///////_____
+```
 
+OF 0.8.0
+========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
 
 ------------------------------------------------------------------------------
+
+
+MAJOR CHANGES
+-------------
+	+ programmable GL renderer (ability to use OpenGL 3+ / GLES 2.0)
+	 linux support for ARM devices (e.g. Raspberry Pi)
+	+ ofXml, a full xml parser. NOTE: ofXML is still in development, more convenience functions will be added in future releases. 
+	+ ofParameter, allows for datatypes to have names, default values and ranges, check out the examples! 
+	+ 4x anti-aliasing is now on by default (osx/linux/win)
+	+ ofxKinect and ofxGui as core addons
+	+ new module-based logging system
+	+ apps now get special keys, shift/super/alt/ctrl etc
+	+ debug and release icons for all apps
+	+ textures and text are now correctly flipped when in ofCamera view. NOTE: this might mean that some projects which are manually flipping textures might see those textures inverted
+	+ OpenGL ES 2.0 support on ofxiOS 
+	+ support for Visual Studio 2012 (drop support for earlier VS versions)
+	/ changed default window manager from GLUT to GLFW
+	/ vsync and alpha blending now on by default
+	/ new documentation structure and now written in Markdown
+	/ ofxiPhone completely renamed to ofxiOS 
+
+DEPRECATIONS & REMOVALS
+-----------------------
+removed functions which were deprecated in 0072:
+
+	- ofVec*f::squareLength()
+	- ofVideoGrabber::grabFrame()
+	- ofVideoPlayer::idleMovie()
+	- ofPolyline::addVertexes
+	- ofGraphics: ofVertexes and ofCurveVertexes
+	- ofQTKitPlayer::bind() and ofQTKitPlayer::unbind()
+	- ofAppiPhoneWindow::enableRetinaSupport(), isRetinaSupported(), isDepthEnabled()
+
+deprecated in this release:
+
+	/ ofBox, ofCone, ofSphere deprecated in favour of ofDrawBox and ofDrawSphere
+	/ ofxiPhoneSetOrientation and ofxiPhoneGetOrientation -> ofSet/GetOrientation
+	/ ofxOpenALSoundPlayer
+	/ ofSetupScreenPerspective(), ofSetupScreenOrtho() don't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them
+	/ ofPath::set/getArcResolution -> set/getCircleResolution
+	
+
+CORE
+----
+### 3d
+	 
+	of3dPrimitive
+                + ofPlanePrimitive
+                + ofSpherePrimitive
+                + ofIcoSpherePrimitive
+                + ofCylinderPrimitive
+                + ofConePrimitive
+                + ofBoxPrimitive
+   
+	ofMesh
+                + ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color )
+                + ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex );
+                + ofMesh::mergeDuplicateVertices()
+                + vector<ofMeshFace> & ofMesh::getUniqueFaces()
+                + vector<ofVec3f> ofMesh::getFaceNormals( bool perVertex )
+                + ofMesh::setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal )
+                + smoothNormals( float angle )
+                + get meshes for primitives: plane, sphere, icosphere, cylinder, cone, box
+                + ofMeshFace class with additional functions like getFaceNormal()
+                / fixed bug where it was assumed the count of vertices / normals / indices / colours / texCoords was the same
+
+			
+	ofNode
+                / ofNode::setParent() and clearParent() now accept a flag which allow nodes to maintain their global position
+                
+        ofCamera
+        	+ ofCamera::setVFlipped/ofCamera::isVFlipped
+        
+### App
+        + ofAppGLFWWindow::setMultiDisplayFullscreen(bool) 
+        + ofEnable/DisableAntiAliasing that works at runtime
+        + ofGetOrientation() and ofSetOrientation()
+        + OF_KEY_TAB
+        / fixed bug where ofAppGlutWindow in fullscreen would report incorrect window size on the first frame
+
+### Communication
+        + HTTPS support
+
+### Events
+        + ofAddListener now has an optional param for listener priority
+        + event listeners can now return a bool to indicate whether an event should be marked as attended
+        + support for modificator keys: control, alt and shift (only glfw)
+ 
+### Graphics
+
+	of3DGraphics
+                + normalized texture coords by default
+                + added get / set functions for setting resolutions for new primitives
+                + ofDrawPlane
+                + ofDrawIcoSphere
+                + ofDrawCylinder
+                + ofDrawCone
+                / functions like ofBox and ofSphere merged into of3dGraphics
+
+	ofPolyline
+                + resample a single point anywhere along an ofPolyline
+                + cache and get normals, lengths, curvature, and rotation vector at any point
+                + find the nearest index at a given length along the path
+                + insert a vertex at any given point
+                + required utils and mods to make the above possible
+
+	ofTrueTypeFont
+                + support for iso8859-1 on utf-8 encoded files
+                + loading of system fonts by name
+                + defaults for system fonts (OF_TTF_SANS, OF_TTF_SERIF and OF_TTF_MONO)
+
+        + ofGetBackground()
+        + ofColor::blueSteel
+        + ofShortPixelsRef and ofFloatPixelsRef
+        + ofPixels::setColor(ofColor) and ofImage::setColor(ofColor)
+        / ofColor fix for colors wrapping. 
+        / ofPath refactored to be easier to integrate into other graphics libraries
+        / ofDrawBitmapStringHighlight now modifies less GL state
+        / ofDrawBitmapString now properly interprets tabs
+        / fixed bug where ofTrueTypeFont::drawStringAsShapes didn't respect spaceSize and letterSpacing
+        / fixed getHex and setHex for ofFloatColor and ofShortColor
+        / fixed infinite recursion bug in ofCairoRenderer::background(float)
+        / ofBox, ofCone, ofSphere deprecated in favour of ofDrawBox and ofDrawSphere
+### Math
+        + 1D interpolation functions: ofCosine|Cubic|Catmull|HermiteInterpolate
+        + generic wrapping function float ofWrap(float value, float from, float to)
+        / ofWrapDegrees, ofWrapRadians only wrap the new ofWrap, don't enforce a 360°/2Pi cycle anymore.
+        / ofxVectorMath now included in core (as ofVectorMath)
+
+### GL
+        + ability to draw instanced geometry using ofVbo::drawInstanced()
+        + ofSetDepthTest(), ofEnableDepthTest(), ofDisableDepthTest()
+        + ofEnableAntiAliasing() / ofDisableAntiAliasing(), to toggle antialiasing on runtime. NOTE: needs to be enabled in the window. 
+        + ofShader support for #pragma includes
+        + ofVbo support for VAOs
+        / ofVbo and ofVboMesh accessors marked const
+        / ofTexture::loadData will now reallocate if necessary
+        / fixed ofLight global position and orientation issues when parented
+        / fixed some private members of the gl renderer not being initialized
+        / fixed the logic of vflip, handedness and orientation
+
+### Sound
+        + ofSoundStream: getters for sampleRate, bufferSize and numChannels
+
+### Types
+        + ofScopedLock (typedef for Poco::FastMutex::ScopedLock)
+        + ofBaseHasShortPixels and ofBaseShortImage
+        / typedefs that create compilation errors in C++11 now avoided
+
+### Utils
+        + ofGetVersionMajor(), ofGetVersionMinor(), ofGetVersionPatch()
+        + ofSerial::isInitialized()
+        / ofLog level & module header now more compact & readable, fixed bug where the default "OF" module was being printed to log files
+        / ofFile now creates missing directories when saving
+        / ofDirectory listings now properly interpret numerical file names (so "2.jpg" will show up before "10.jpg")
+        / fixed bug where ofURLFileLoader wouldn't unlock mutex when request pool is empty
+        / ofThread now waits during destructor, with a timeout of 10 seconds
+	
+### Video	
+        / ofVideoGrabber::listDevices() now returns a vector<ofVideoDevice>
+
+PLATFORM SPECIFIC
+-----------------
+### Android
+        + support for choosing GLES renderer at runtime
+        + ofxAndroidVibrator
+        + ofxAndroidVideoPlayer
+        / fixed bug where app width and height weren't set before calling setup() 
+        / fixed bug in onTouchMoved where historical event calls were being given incorrect arguments
+
+### Mac OS X
+        + default app icons
+        + makefile support
+        / Xcode now shows more compilation warnings
+        / template project file has been updated
+        / file dialogs now resolve alias files
+
+### iOS
+        + launch images and icons for iPhone5 and retina iPad
+        + ofxiOSSoundStream::setMixWithOtherApps() allows other apps' sound to play in the background
+        + ofiPhoneVideoPlayer::setFrame, getCurrentFrame, getTotalNumFrames, etc
+        + option to enable hardware orientation in ofAppiOSWindow 
+        + ofxiOSSoundPlayer as default sound player (based on AVAudioPlayer)
+        / ofxiPhone renamed to ofxiOS
+        / ofxiPhoneSoundStream refactored and renamed to ofxiOSSoundStream
+        / ofCamera now behaves correctly according to device orientation
+        / app now unregisters for ofEvents on exit
+        / external display mirror mode is now default
+        / fixed some functions which were not properly returning BOOL
+        / fixed bug where sound stream would not resume after interruptions
+        / fixed bug where converting a UIImage to an ofImage would pull in a bit of garbage memory
+        / ofxiOS-Info.plist no longer being copied into project bundle
+        / deprecated ofxiPhoneSetOrientation and ofxiPhoneGetOrientation
+        / deprecated ofxOpenALSoundPlayer
+
+### Linux
+        / Add glfw3.0 for Linux 32bit
+        + core support for armv6 and armv7
+        + drag & drop is now supported on linux through glfw
+
+### Windows
+        + Visual Studio 2012 support (drop support for earlier VS versions)
+        + added ability to get current .exe path
+        / ofSerial can now connect to COM ports higher than COM9
+        / capitalized target names ("Debug" and "Release")
+        / added "compile C as C++" flag for VS project template
+ 
+CORE ADDONS
+-----------
+### All addons
+        - install.xml removed in favour of addons_config.mk
+
+### ofxKinect
+        + isFrameNewVideo(), isFrameNewDepth()
+
+### ofxOpenCV
+
+### ofxAssimpModelLoader
+        / loader now caches repeated textures
+        / fixed crash where a scene is released while the application is exiting
+
+### ofxTCP
+        / ofxTCPServer now thread-safe
+
+### ofxSvg
+        / fixed bug where transform attribute was ignored
+        / fixed bug where non-allocated memory was being free()d
+
+### ofxOsc
+        / ofxOscMessage accessors marked const
+
+### ofxGui
+        + added a new GUI addon using ofXml
+
+PROJECT GENERATOR
+-----------------
+### project generator (simple)
+        / fixed issue where xibs weren't being properly handled in iOS projects
+
+EXAMPLES
+--------
+
+### All Platforms
+        + gui examples, demonstrating ofParameter and ofxGui
+        + vboMeshDrawInstanced demonstrates instanced drawing
+        + 3DPrimitives example
+        / many general bugfixes
+        / many examples reworked to demonstrate better threading practices
+
+### Android
+        + ofxGui example
+        / all examples now have WRITE_EXTERNAL_STORAGE permission
+
+### iOS
+        + ofxGui example
+        - OpenAlExample
+
+---------------------------------------------------------------
+
+	  .oooo.        ooooooooo           .o   
+	 d8P'`Y8b      d"""""""8'         .d88   
+	888    888           .8'        .d'888   
+	888    888          .8'       .d'  888   
+	888    888         .8'        88ooo888oo 
+	`88b  d88' .o.    .8'     .o.      888   
+	 `Y8bd8P'  Y8P   .8'      Y8P     o888o  
+
 OF 0.7.4
 ========
  
@@ -28,7 +304,7 @@ New Codeblocks (windows):
 For 0.7.4 we updated all core libraries to work against the new version of codeblocks, which itself uses a new version of GCC.  Anyone using codeblocks on windows will need to update to 12.11, because these libraries will not work with older versions of codeblocks. 
 
 System Libraries (linux):
-Linux now uses some system libraries instead of including them in the core.  Please ensure you have installed the system dependencies for your OS.  You can install the system dependencies by executing the install_dependencies.sh script in  $OF_ROOT/scripts/linux/DISTRO/install_dependencies.sh, where DISTRO is your running linux distribution.  Currently oF has install scripts for Debian, Ubuntu, ArchLinux, and Fedora.
+Linux now uses some system libraries instead of including them in the core.  Please ensure you have installed the system dependencies for your OS.  You can install the system dependencies by executing the install_dependencies.sh script in  $OF_ROOT/scripts/linux/DISTRO/install_dependencies.sh, where DISTRO is your running linux distribution.  Currently OF has install scripts for Debian, Ubuntu, ArchLinux, and Fedora.
 
 New versioning system:
 From now on, OF version are numbered Major.Minor.Patch (e.g. 0.7.4). See Utils section and readme.md for details.
