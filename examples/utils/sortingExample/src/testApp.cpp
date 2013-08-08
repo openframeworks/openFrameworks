@@ -44,18 +44,23 @@ bool testApp::removeWordIf(LyricWord &wrd) {
 //--------------------------------------------------------------
 void testApp::setup() {
     
+    ofTrueTypeFont::setGlobalDpi(96);
+
     // load the font
-    font.loadFont("sans-serif", 10);
+    font.loadFont("sans-serif", 11);
     sortTypeInfo = "no sort";
     words.clear();
     
-
     // load the txt document into a ofBuffer 
-    ofBuffer buffer = ofBufferFromFile("notoriousbig.txt");
+    ofBuffer buffer = ofBufferFromFile("freshprince.txt");
     string   content = buffer.getText();
     
     
     // take the content and split it up by spaces
+    // we need to also turn new lines into spaces so we can seperate words on new lines as well 
+    ofStringReplace(content, "\r", " ");
+    ofStringReplace(content, "\n", " ");
+
     vector <string> splitString = ofSplitString(content, " ", true, true);
     
     // copy over the words to our object
@@ -121,7 +126,8 @@ void testApp::update() {
 
 //--------------------------------------------------------------
 void testApp::draw() {
-    
+
+    ofSetColor(50);
     
     ofPushMatrix();
     ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
