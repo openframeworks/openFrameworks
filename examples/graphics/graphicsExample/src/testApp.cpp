@@ -67,17 +67,9 @@ void testApp::draw(){
 	//---------------------------  lines
 	// a bunch of red lines, make them smooth if the flag is set
 
-	if (bSmooth){
-		ofEnableSmoothing();
-	}
-
 	ofSetHexColor(0xFF0000);
 	for (int i = 0; i < 20; i++){
 		ofLine(600,300 + (i*5),800, 250 + (i*10));
-	}
-
-	if (bSmooth){
-		ofDisableSmoothing();
 	}
 
 	ofSetHexColor(0x000000);
@@ -90,6 +82,11 @@ void testApp::draw(){
 void testApp::keyPressed  (int key){
 	if (key == 's'){
 		bSmooth = !bSmooth;
+        if (bSmooth){
+            ofEnableAntiAliasing(); 
+        }else{
+            ofDisableAntiAliasing(); 
+        }
 	}
 }
 
