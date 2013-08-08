@@ -3,6 +3,9 @@
 #   This file is where we make project specific configurations.
 ################################################################################
 
+# deactivate FMOD so the app can be run from anywhere on linux
+USE_FMOD=0
+
 ################################################################################
 # OF ROOT
 #   The location of your root openFrameworks installation
