@@ -154,6 +154,8 @@ function createPackage {
 		rm -Rf sound
 		rm -Rf utils
 		rm -Rf video
+		rm -Rf gles
+		rm -Rf gui
 	fi 
 	
 	#delete osx examples in linux
