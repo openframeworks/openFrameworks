@@ -11,8 +11,6 @@
  *
  */
 
-
-
 //--------------------------------------------------------------
 void testApp::setup(){
 	
@@ -64,9 +62,14 @@ void testApp::update(){
 		
 		ofLogNotice() << "Reloading Shader.";
 		mShdInstanced = ofPtr<ofShader>(new ofShader());
-		// most of the instanced drawing magic happens in the shader:
+		// most of the instanced drawing magic happens in the shaders:
+#ifdef USE_PROGRAMMABLE_GL
+		// if we are using programmable GL, we load the GLSL version 150 shader pair.
 		mShdInstanced->load("shaders/instanced.vert", "shaders/instanced.frag");
-		
+#else
+		// if we are using fixed function GL, we load the GLSL version 120 shader pair.
+		mShdInstanced->load("shaders/instanced_120.vert", "shaders/instanced_120.frag");
+#endif
 		GLint err = glGetError();
 		if (err != GL_NO_ERROR){
 			ofLogNotice() << "Load Shader came back with GL error:	" << err;

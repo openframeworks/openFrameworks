@@ -1,17 +1,25 @@
 #include "ofMain.h"
 #include "testApp.h"
+
+
+// by default this example will run in OpenGL 2.0, see testApp.h for running it
+// in OpenGL 3.2
+
+#ifdef USE_PROGRAMMABLE_GL
+// tig: using the programmable GL renderer is more fun, since we can use GLSL 150 =)
+// define USE_PROGRAMMABLE_GL in testApp.h to run this example in OpenGL 3.2 if your
+// system provides it...
 #include "ofGLProgrammableRenderer.h"
+#endif
 
 //========================================================================
 int main( ){
 	
-	// tig: we are using the programmable GL renderer for this, it's more fun to write shaders in GLSL 150 =)
-	// but note that it should be no problem to backport the shaders to GLSL 120.
-	// For legacy shaders, see also: http://poniesandlight.co.uk/code/ofxVboMeshInstanced/
 	
+#ifdef USE_PROGRAMMABLE_GL
 	ofPtr<ofBaseRenderer> renderer(new ofGLProgrammableRenderer(false));
 	ofSetCurrentRenderer(renderer, false);
-	
+#endif
 	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
 
 	// this kicks off the running of my app
