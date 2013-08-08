@@ -312,7 +312,7 @@ function createPackage {
 	fi
 
 	#delete eclipse projects
-	if [ "$pkg_platform" != "android" && "$pkg_platform" != "linux" && "$pkg_platform" != "linux64" && "$pkg_platform" != "linuxarmv6l" && "$pkg_platform" != "linuxarmv7l"]; then
+	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
 		cd ${pkg_ofroot}
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings
