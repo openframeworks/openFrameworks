@@ -18,7 +18,8 @@ enum of3dPrimitiveType {
     OF_3D_PRIMITIVE_ICO_SPHERE,
 	OF_3D_PRIMITIVE_BOX,
 	OF_3D_PRIMITIVE_CONE,
-    OF_3D_PRIMITIVE_CYLINDER
+    OF_3D_PRIMITIVE_CYLINDER,
+    OF_3D_PRIMITIVE_BOX_WIREFRAME
 };
 
 
@@ -48,6 +49,65 @@ static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
         case OF_3D_PRIMITIVE_CYLINDER:{
         	static ofCylinderPrimitive * cylinder = new ofCylinderPrimitive(1.f, 1.f, 8, 4, 2, true);
         	return *cylinder;
+        }break;
+            // special case for rendering with lines, so the triangles are not visible //
+        case OF_3D_PRIMITIVE_BOX_WIREFRAME: {
+            static ofBoxPrimitive * boxWireframe = new ofBoxPrimitive( 1.f, 1.f, 1.f );
+            ofMesh* boxWireframeMesh = boxWireframe->getMeshPtr();
+            boxWireframeMesh->clear();
+            boxWireframeMesh->setMode( OF_PRIMITIVE_LINES );
+            
+            boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, -.5));
+            boxWireframeMesh->addVertex(ofVec3f(.5, -.5, -.5));
+            boxWireframeMesh->addVertex(ofVec3f(.5, .5, -.5));
+            boxWireframeMesh->addVertex(ofVec3f(-.5, .5, -.5));
+            
+            boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, .5));
+            boxWireframeMesh->addVertex(ofVec3f(.5, -.5, .5));
+            boxWireframeMesh->addVertex(ofVec3f(.5, .5, .5));
+            boxWireframeMesh->addVertex(ofVec3f(-.5, .5, .5));
+            
+            // front face
+            boxWireframeMesh->addIndex(0);
+            boxWireframeMesh->addIndex(1);
+            
+            boxWireframeMesh->addIndex(1);
+            boxWireframeMesh->addIndex(2);
+            
+            boxWireframeMesh->addIndex(2);
+            boxWireframeMesh->addIndex(3);
+            
+            boxWireframeMesh->addIndex(3);
+            boxWireframeMesh->addIndex(0);
+            
+            // back face
+            boxWireframeMesh->addIndex(4);
+            boxWireframeMesh->addIndex(5);
+            
+            boxWireframeMesh->addIndex(5);
+            boxWireframeMesh->addIndex(6);
+            
+            boxWireframeMesh->addIndex(6);
+            boxWireframeMesh->addIndex(7);
+            
+            boxWireframeMesh->addIndex(7);
+            boxWireframeMesh->addIndex(4);
+            
+            
+            boxWireframeMesh->addIndex(0);
+            boxWireframeMesh->addIndex(4);
+            
+            boxWireframeMesh->addIndex(1);
+            boxWireframeMesh->addIndex(5);
+            
+            boxWireframeMesh->addIndex(2);
+            boxWireframeMesh->addIndex(6);
+            
+            boxWireframeMesh->addIndex(3);
+            boxWireframeMesh->addIndex(7);
+            
+            
+            return * boxWireframe;
         }break;
         default:{
         	static of3dPrimitive * primitive = new of3dPrimitive;
@@ -367,10 +427,16 @@ void ofDrawBox( float x, float y, float z, float width, float height, float dept
 	static ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,depth);
 	m.translate(x,y,z);
-	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
+	
     ofPushMatrix();
     ofMultMatrix(m);
-    renderCached3dPrimitive( mesh );
+    if(ofGetFill() == OF_FILLED) {
+    	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
+        renderCached3dPrimitive( mesh );
+    } else {
+        ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME ).getMesh();
+        renderCached3dPrimitive( mesh );
+    }
     ofPopMatrix();
 }
 
@@ -398,10 +464,15 @@ void ofDrawBox(float size) {
 void ofDrawBox( float width, float height, float depth ) {
 	static ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,depth);
-	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
-    renderCached3dPrimitive( mesh );
+    if(ofGetFill() == OF_FILLED) {
+    	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
+        renderCached3dPrimitive( mesh );
+    } else {
+        ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME ).getMesh();
+        renderCached3dPrimitive( mesh );
+    }
     ofPopMatrix();
 }
 
