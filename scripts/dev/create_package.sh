@@ -169,7 +169,24 @@ function createPackage {
 	fi
 	
 	if [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
+	    rm -Rf addons/3DModelLoaderExample
+        rm -Rf addons/allAddonsExample
+        rm -Rf addons/assimpExample
+        rm -Rf addons/kinectExample
+        rm -Rf addons/vectorGraphicsExample
+        
 	    rm -Rf gl/glInfoExample
+        rm -Rf gl/alphaMaskingShaderExample
+        rm -Rf gl/billboardExample
+        rm -Rf gl/billboardRotationExample
+        rm -Rf gl/multiLightExample
+        rm -Rf gl/multiTextureShaderExample
+        rm -Rf gl/pointsAsTextures
+    fi
+    
+    if [ "$pkg_platform" == "linuxarmv6l" ]; then
+        rm -Rf utils/dragDropExample
+        rm -Rf utils/fileOpenSaveDialogExample
 	fi
 	
 	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs" ]; then
