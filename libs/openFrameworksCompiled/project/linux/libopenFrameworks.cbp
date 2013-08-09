@@ -22,8 +22,12 @@
 				<Option compiler="gcc" />
 			</Target>
 		</Build>
-		<Unit filename="../../../openFrameworks/3d/of3dPrimitives.cpp" />
-		<Unit filename="../../../openFrameworks/3d/of3dPrimitives.h" />
+		<Unit filename="../../../openFrameworks/3d/of3dPrimitives.cpp">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/of3dPrimitives.h">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/3d/of3dUtils.cpp">
 			<Option virtualFolder="openFrameworks/3d/" />
 		</Unit>
@@ -57,18 +61,30 @@
 		<Unit filename="../../../openFrameworks/app/ofAppBaseWindow.h">
 			<Option virtualFolder="openFrameworks/app/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/app/ofAppEGLWindow.cpp" />
-		<Unit filename="../../../openFrameworks/app/ofAppEGLWindow.h" />
-		<Unit filename="../../../openFrameworks/app/ofAppGLFWWindow.cpp" />
-		<Unit filename="../../../openFrameworks/app/ofAppGLFWWindow.h" />
+		<Unit filename="../../../openFrameworks/app/ofAppEGLWindow.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppEGLWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppGLFWWindow.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppGLFWWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/app/ofAppGlutWindow.cpp">
 			<Option virtualFolder="openFrameworks/app/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/app/ofAppGlutWindow.h">
 			<Option virtualFolder="openFrameworks/app/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/app/ofAppNoWindow.cpp" />
-		<Unit filename="../../../openFrameworks/app/ofAppNoWindow.h" />
+		<Unit filename="../../../openFrameworks/app/ofAppNoWindow.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppNoWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/app/ofAppRunner.cpp">
 			<Option virtualFolder="openFrameworks/app/" />
 		</Unit>
@@ -78,7 +94,9 @@
 		<Unit filename="../../../openFrameworks/app/ofBaseApp.h">
 			<Option virtualFolder="openFrameworks/app/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/app/ofIcon.h" />
+		<Unit filename="../../../openFrameworks/app/ofIcon.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/communication/ofArduino.cpp">
 			<Option virtualFolder="openFrameworks/communication/" />
 		</Unit>
@@ -91,7 +109,9 @@
 		<Unit filename="../../../openFrameworks/communication/ofSerial.h">
 			<Option virtualFolder="openFrameworks/communication/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/events/ofDelegate.h" />
+		<Unit filename="../../../openFrameworks/events/ofDelegate.h">
+			<Option virtualFolder="openFrameworks/events/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/events/ofEventUtils.h">
 			<Option virtualFolder="openFrameworks/events/" />
 		</Unit>
@@ -119,7 +139,9 @@
 		<Unit filename="../../../openFrameworks/gl/ofGLRenderer.h">
 			<Option virtualFolder="openFrameworks/gl/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/gl/ofGLUtils.cpp" />
+		<Unit filename="../../../openFrameworks/gl/ofGLUtils.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/gl/ofGLUtils.h">
 			<Option virtualFolder="openFrameworks/gl/" />
 		</Unit>
@@ -159,8 +181,12 @@
 		<Unit filename="../../../openFrameworks/gl/ofVboMesh.h">
 			<Option virtualFolder="openFrameworks/gl/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/graphics/of3dGraphics.cpp" />
-		<Unit filename="../../../openFrameworks/graphics/of3dGraphics.h" />
+		<Unit filename="../../../openFrameworks/graphics/of3dGraphics.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/of3dGraphics.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/graphics/ofBitmapFont.cpp">
 			<Option virtualFolder="openFrameworks/graphics/" />
 		</Unit>
@@ -203,7 +229,9 @@
 		<Unit filename="../../../openFrameworks/graphics/ofPolyline.h">
 			<Option virtualFolder="openFrameworks/graphics/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/graphics/ofRendererCollection.cpp" />
+		<Unit filename="../../../openFrameworks/graphics/ofRendererCollection.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/graphics/ofRendererCollection.h">
 			<Option virtualFolder="openFrameworks/graphics/" />
 		</Unit>
@@ -264,20 +292,18 @@
 		<Unit filename="../../../openFrameworks/ofMain.h">
 			<Option virtualFolder="openFrameworks/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/sound/ofBaseSoundPlayer.cpp">
-			<Option virtualFolder="openFrameworks/sound/" />
-		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofBaseSoundPlayer.h">
-			<Option virtualFolder="openFrameworks/sound/" />
-		</Unit>
-		<Unit filename="../../../openFrameworks/sound/ofBaseSoundStream.cpp">
 			<Option virtualFolder="openFrameworks/sound/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofBaseSoundStream.h">
 			<Option virtualFolder="openFrameworks/sound/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/sound/ofFmodSoundPlayer.cpp" />
-		<Unit filename="../../../openFrameworks/sound/ofFmodSoundPlayer.h" />
+		<Unit filename="../../../openFrameworks/sound/ofFmodSoundPlayer.cpp">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofFmodSoundPlayer.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofOpenALSoundPlayer.cpp">
 			<Option virtualFolder="openFrameworks/sound/" />
 		</Unit>
@@ -320,10 +346,18 @@
 		<Unit filename="../../../openFrameworks/types/ofColor.h">
 			<Option virtualFolder="openFrameworks/types/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/types/ofParameter.cpp" />
-		<Unit filename="../../../openFrameworks/types/ofParameter.h" />
-		<Unit filename="../../../openFrameworks/types/ofParameterGroup.cpp" />
-		<Unit filename="../../../openFrameworks/types/ofParameterGroup.h" />
+		<Unit filename="../../../openFrameworks/types/ofParameter.cpp">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofParameter.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofParameterGroup.cpp">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofParameterGroup.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/types/ofPoint.cpp">
 			<Option virtualFolder="openFrameworks/types/" />
 		</Unit>
@@ -354,8 +388,12 @@
 		<Unit filename="../../../openFrameworks/utils/ofLog.h">
 			<Option virtualFolder="openFrameworks/utils/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/utils/ofMatrixStack.cpp" />
-		<Unit filename="../../../openFrameworks/utils/ofMatrixStack.h" />
+		<Unit filename="../../../openFrameworks/utils/ofMatrixStack.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofMatrixStack.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/utils/ofNoise.h">
 			<Option virtualFolder="openFrameworks/utils/" />
 		</Unit>
@@ -383,8 +421,12 @@
 		<Unit filename="../../../openFrameworks/utils/ofUtils.h">
 			<Option virtualFolder="openFrameworks/utils/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/utils/ofXml.cpp" />
-		<Unit filename="../../../openFrameworks/utils/ofXml.h" />
+		<Unit filename="../../../openFrameworks/utils/ofXml.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofXml.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/video/ofGstUtils.cpp">
 			<Option virtualFolder="openFrameworks/video/" />
 		</Unit>
