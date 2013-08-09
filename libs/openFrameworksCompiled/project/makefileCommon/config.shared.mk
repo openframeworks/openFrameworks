@@ -50,11 +50,11 @@ else
 	CROSS_COMPILING=0
 endif
 
-$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
-$(info PLATFORM_OS=$(PLATFORM_OS))
-$(info HOST_ARCH=$(HOST_ARCH))
-$(info HOST_OS=$(HOST_OS))
-$(info CROSS_COMPILING=$(CROSS_COMPILING))
+#$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+#$(info PLATFORM_OS=$(PLATFORM_OS))
+#$(info HOST_ARCH=$(HOST_ARCH))
+#$(info HOST_OS=$(HOST_OS))
+#$(info CROSS_COMPILING=$(CROSS_COMPILING))
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
@@ -81,6 +81,7 @@ ifndef PLATFORM_LIB_SUBPATH
         $(error This makefile does not support your operating system)
     endif
 endif
+
 
 # TODO: add appropriate list of platform suffixes
 # these variables will actually be used during compilation
@@ -180,6 +181,9 @@ ifdef MAKEFILE_DEBUG
 endif
 
 
+ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
+$(error This package doesn't support your platform, probably you downloaded the wrong package?)
+endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
 AVAILABLE_PLATFORM_VARIANTS=$(shell find $(OF_PLATFORM_MAKEFILES)/config.*.mk -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.mk/\1/' )
@@ -249,7 +253,11 @@ OF_CORE_INCLUDES_CFLAGS = $(addprefix -I,$(PLATFORM_HEADER_SEARCH_PATHS))
 CORE_PKG_CONFIG_LIBRARIES =
 CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
+
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
+	ifneq ($(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
+$(error couldn't find some pkg-config packages, did you run the latest install_dependencies.sh?)
+	endif
 	ifeq ($(CROSS_COMPILING),1)
 		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
 	else
