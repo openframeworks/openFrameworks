@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofQTKitPlayer.h"
 
 class testApp : public ofBaseApp {
 
