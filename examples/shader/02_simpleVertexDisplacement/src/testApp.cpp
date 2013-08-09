@@ -2,36 +2,38 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+    shader.load("gl3/shader.vert", "gl3/shader.frag");
+    plane.set(800, 600, 50, 50);
     
-#ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
-#else
-	if(ofIsGLProgrammableRenderer()){
-		shader.load("shadersGL3/shader");
-	}else{
-		shader.load("shadersGL2/shader");
-	}
-#endif
+    drawWires = false;
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    //
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofSetColor(255);
-    
     shader.begin();
+    shader.setUniform1f("time", ofGetElapsedTimef());
     
-    ofRect(0, 0, ofGetWidth(), ofGetHeight());
+    ofRotate(rotation, 1, 0, 0);
+    ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
+
+    if(drawWires) {
+        plane.drawWireframe();
+    } else {
+        plane.draw();
+    }
     
     shader.end();
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+    
+    drawWires = !drawWires;
 
 }
 
@@ -42,7 +44,7 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y){
-
+    rotation = 45 + (-60 * ( (float) y / ofGetHeight()));
 }
 
 //--------------------------------------------------------------

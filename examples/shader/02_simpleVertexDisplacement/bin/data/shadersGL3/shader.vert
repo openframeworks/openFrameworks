@@ -11,6 +11,6 @@ uniform float time;
 void main()
 {
 	vec4 modifiedPosition = modelViewProjectionMatrix * position;
-	modifiedPosition.y += (sin(modifiedPosition.x + time) * 100);
+	modifiedPosition.y += (sin(time + (modifiedPosition.x/100)) * 100 );
 	gl_Position = modifiedPosition;
 }
