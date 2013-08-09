@@ -1,6 +1,5 @@
-#version 150
 
-out vec4 outputColor;
+precision highp float;
 
 void main()
 {
@@ -16,5 +15,5 @@ void main()
 	float g = gl_FragCoord.y / windowHeight;
 	float b = 1.0;
 	float a = 1.0;
-	outputColor = vec4(r, g, b, a);
+	gl_FragColor = vec4(r, g, b, a);
 }
