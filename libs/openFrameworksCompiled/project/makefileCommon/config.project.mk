@@ -212,7 +212,6 @@ OF_CORE_LIBS += $(PLATFORM_SHARED_LIBRARIES)
 
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
-$(info CORE_PKG_CONFIG_LIBRARIES=$(CORE_PKG_CONFIG_LIBRARIES))
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 	ifeq ($(CROSS_COMPILING),1)
 		OF_CORE_LIBS += $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
