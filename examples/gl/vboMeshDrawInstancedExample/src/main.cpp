@@ -17,7 +17,7 @@ int main( ){
 	
 if( glDrawElementsInstanced == 0 ){
     ofLogFatalError("App") << " glDrawElementsInstanced is needed for this example but it is not supported by your graphics card. Exiting App.";
-    return;  
+    return -1;  
 }
 	
 #ifdef USE_PROGRAMMABLE_GL
