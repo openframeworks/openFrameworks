@@ -33,6 +33,7 @@ MAJOR CHANGES
 	+ apps now get special keys, shift/super/alt/ctrl etc
 	+ debug and release icons for all apps
 	+ textures and text are now correctly flipped when in ofCamera view. NOTE: this might mean that some projects which are manually flipping textures might see those textures inverted
+	+ orientation affects ofCamera. NOTE: old projects correcting this manually will break.
 	+ OpenGL ES 2.0 support on ofxiOS 
 	+ support for Visual Studio 2012 (drop support for earlier VS versions)
 	/ changed default window manager from GLUT to GLFW
