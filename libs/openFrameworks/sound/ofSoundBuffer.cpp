@@ -463,9 +463,9 @@ void ofSoundBuffer::normalize(float level){
 	}
 }
 
-void ofSoundBuffer::fillWithNoise(){
+void ofSoundBuffer::fillWithNoise(float amplitude){
 	for ( unsigned i=0; i<size(); i++ ) {
-		buffer[i] = ofRandom(-1, 1);
+		buffer[i] = ofRandom(-amplitude, amplitude);
 	}
 }
 

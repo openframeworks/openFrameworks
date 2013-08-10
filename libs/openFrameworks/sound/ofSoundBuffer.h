@@ -164,11 +164,11 @@ public:
 	float getRMSAmplitude();
 	float getRMSAmplitudeChannel(unsigned int channel);
 	
-	/// fills the buffer with random noise between -1 and 1. useful for debugging.
-	void fillWithNoise();
+	/// fills the buffer with random noise between -amplitude and amplitude. useful for debugging.
+	void fillWithNoise(float amplitude = 1);
 	
 	/// fills the buffer with a sine wave. useful for debugging.
-	float fillWithTone( float pitchHz, float phase=0 );
+	float fillWithTone( float pitchHz = 440., float phase=0 );
 	
 	/// amplifies samples so that the maximum amplitude is equal to 'level'
 	void normalize(float level = 1);
