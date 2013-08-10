@@ -25,8 +25,17 @@
 	#include <mpg123.h>
 #endif
 #include "ofSoundBuffer.h"
+#ifdef OF_USING_LAD
 #include "audiodecoder.h"
-
+#endif
+enum ofID3Tag{
+    OF_ID3_TITLE,
+    OF_ID3_ALBUM,
+    OF_ID3_ARTIST,
+    OF_ID3_TIME,
+    OF_ID3_TRACK
+};
+//*/
 class ofSoundFile {
 public:
 	ofSoundFile();
@@ -45,7 +54,11 @@ public:
 	int getNumChannels();
 	unsigned long getDuration(); // millisecs
 	int getSampleRate();
-
+    unsigned long getNumSamples();
+    int getBitDepth();
+    bool isCompressed();
+    string getID3Tag(ofID3Tag tag);
+    
 private:
 	
 	bool sfReadFile(ofSoundBuffer & buffer);
@@ -81,8 +94,10 @@ private:
 	int channels;
 	float duration; //in secs
 	unsigned int samples;
+    int bitDepth;
 	int samplerate;
 	string path;
+    bool bCompressed;
 };
 
 #endif /* OFSOUNDFILE_H_ */

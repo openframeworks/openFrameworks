@@ -181,11 +181,11 @@ public:
 	void set(float * source, unsigned int nFrames, unsigned int nChannels);
 
 	friend class ofBaseSoundStream;
-	
+	vector<float> & getBuffer();
 protected:
 	
 	/// return the underlying buffer. careful!
-	vector<float> & getBuffer();
+	
 	
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.

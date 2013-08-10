@@ -14,6 +14,7 @@ bool ofSoundFile::mpg123Inited = false;
 #endif
 
 ofSoundFile::ofSoundFile() {
+    bCompressed =false;
 #ifdef OF_USING_SNDFILE
 	sndFile = NULL;
 #endif
@@ -40,6 +41,7 @@ bool ofSoundFile::open(string _path){
 
 	bool result = false;
 	if(ofFilePath::getFileExt(path)=="mp3"){
+        bCompressed=true;
 		#ifdef OF_USING_MPG123
 			result = mpg123Open(path);
 		#elif defined (OF_USING_LAD)
@@ -67,7 +69,7 @@ bool ofSoundFile::ladOpen(string path){
 	channels = audioDecoder->channels();
 	samplerate = audioDecoder->sampleRate();
 	duration = audioDecoder->duration();
-	
+	bitDepth = 16;// get the real shit.
 	return result == AUDIODECODER_OK;
 }
 #endif
@@ -102,6 +104,8 @@ bool ofSoundFile::mpg123Open(string path){
 	mpg123_seek(mp3File,0,SEEK_END);
 	samples = mpg123_tell(mp3File);
 	mpg123_seek(mp3File,0,SEEK_SET);
+    
+    bitDepth = 16; //TODO:get real bitdepth;.
 }
 #endif
 
@@ -131,6 +135,7 @@ bool ofSoundFile::sfOpen(string path){
 	channels = sfInfo.channels;
 	samples = sfInfo.frames;
 	samplerate = sfInfo.samplerate;
+    bitDepth = 16; //fix
 }
 #endif
 
@@ -158,6 +163,7 @@ void ofSoundFile::close(){
 	duration = 0; //in secs
 	samplerate = 0;
 	samples = 0;
+    bitDepth = 0;
 }
 
 
@@ -171,6 +177,20 @@ unsigned long ofSoundFile::getDuration(){
 
 int ofSoundFile::getSampleRate(){
 	return samplerate;
+}
+unsigned long ofSoundFile::getNumSamples(){
+    return samples;
+}
+int ofSoundFile::getBitDepth(){
+    ofLogWarning() << "bit Depth retrival not implemented yet!";
+    return bitDepth;
+}
+bool ofSoundFile::isCompressed(){
+    return bCompressed;
+}
+string ofSoundFile::getID3Tag(ofID3Tag tag){
+    ofLogWarning() << "ID3 tag not implemented yet. :(";
+    return "";
 }
 
 bool ofSoundFile::readTo(ofSoundBuffer & buffer, unsigned int _samples){
