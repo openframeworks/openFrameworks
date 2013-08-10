@@ -157,7 +157,7 @@ public:
 	void resampleTo(ofSoundBuffer & outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop=false, InterpolationAlgorithm algorithm=defaultAlgorithm);
 	
 	/// copy the requested channel of our data to outBuffer. resize outBuffer to fit.
-	void getChannel(ofSoundBuffer & outBuffer, int sourceChannel) const;
+	void getChannel(ofSoundBuffer & outBuffer, int sourceChannel);
 	/// copy data from inBuffer to the given channel. resize ourselves to match inBuffer's getNumFrames().
 	void setChannel(const ofSoundBuffer & inBuffer, int channel);
 

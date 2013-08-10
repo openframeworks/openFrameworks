@@ -43,8 +43,8 @@ vector<float> & ofSoundBuffer::getBuffer(){
 }
 
 
-unsigned long ofSoundBuffer::getDuration() const{
-	return bufferSize()/samplerate;
+unsigned long ofSoundBuffer::getDurationMS() const{
+	return getNumFrames()/samplerate;
 }
 
 void ofSoundBuffer::setNumChannels(int _channels){
@@ -123,7 +123,7 @@ void ofSoundBuffer::stereoPan(float left, float right){
 		return;
 	}
 	float * bufferPtr = &buffer[0];
-	for(unsigned int i=0;i<bufferSize();i++){
+	for(unsigned int i=0;i<getNumFrames();i++){
 		*bufferPtr++ *= left;
 		*bufferPtr++ *= right;
 	}
@@ -284,7 +284,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer & resBuffer, unsigned int fro
 	if(end>=buffer.size()-2*channels){
 		to = numFrames-to;
 		if(loop){
-			intPosition %= bufferSize();
+			intPosition %= getNumFrames();
 			for(unsigned int i=0;i<to;i++){
 				intPosition *= channels;
 				for(int j=0;j<channels;j++){
@@ -396,11 +396,11 @@ void ofSoundBuffer::resampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, u
 
 void ofSoundBuffer::resample(float speed, InterpolationAlgorithm algorithm){
 	ofSoundBuffer resampled;
-	resampleTo(resampled,0,bufferSize()*speed,false,algorithm);
+	resampleTo(resampled,0,getNumFrames()*speed,false,algorithm);
 	*this = resampled;
 }
 
-void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int sourceChannel) const{
+void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int sourceChannel) {
 	if ( sourceChannel>=channels ){
 		ofLogWarning("ofSoundBuffer") << "getChannel requested channel " << sourceChannel << " but we only have " << channels << " channels. clamping channel to " << channels-1;
 		sourceChannel = channels-1;
@@ -417,8 +417,9 @@ void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int sourceChannel) 
 		// fetch samples from only one channel
 		targetBuffer.resize(getNumFrames());
 		const float * bufferPtr = &this->buffer[0];
-		for(unsigned int i=0;i<bufferSize();i++){
-			buffer[i] = *bufferPtr;
+		for(unsigned int i=0;i<getNumFrames();i++){
+			float whatevs = *bufferPtr;
+			buffer[i] = whatevs;
 			bufferPtr+=channels;
 		}
 	}
@@ -450,10 +451,10 @@ float ofSoundBuffer::getRMSAmplitude(){
 float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
 	if(channel>getNumChannels()-1) return 0;
 	float rmsAmplitude  = 0;
-	for(unsigned int i=0;i<bufferSize();i++){
+	for(unsigned int i=0;i<getNumFrames();i++){
 		rmsAmplitude += abs(buffer[i*getNumChannels()+channel]);
 	}
-	rmsAmplitude /= float(bufferSize());
+	rmsAmplitude /= float(getNumFrames());
 	return rmsAmplitude;
 }
 

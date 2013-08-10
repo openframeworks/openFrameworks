@@ -9,12 +9,9 @@
 #include "ofSoundUtils.h"
 #include <float.h>
 
-ofSoundStream ofBasicSoundPlayer::stream;
-ofSoundMixer ofBasicSoundPlayer::mixer;
-bool ofBasicSoundPlayer::initialized = false;
-int ofBasicSoundPlayer::samplerate = 44100;
-int ofBasicSoundPlayer::bufferSize = 256;
-int ofBasicSoundPlayer::channels = 2;
+int ofBasicSoundPlayer::maxSoundsTotal=128;
+int ofBasicSoundPlayer::maxSoundsPerPlayer=16;
+
 
 ofBasicSoundPlayer::ofBasicSoundPlayer() {
 	volume = 1;
@@ -29,36 +26,44 @@ ofBasicSoundPlayer::ofBasicSoundPlayer() {
 	volumesLeft.resize(1,1);
 	volumesRight.resize(1,1);
 	pan = 0;
+	maxSounds = maxSoundsPerPlayer;
 }
 
 ofBasicSoundPlayer::~ofBasicSoundPlayer() {
-	// TODO Auto-generated destructor stub
+	unloadSound();
 }
 
 
 
-void ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
+bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
+	
 	ofLogNotice() << "loading " << fileName;
-	if(!initialized){
-		mixer.setup(bufferSize,channels,samplerate);
-		stream.setup(channels,0,samplerate,bufferSize,4);
-		stream.setOutput(&mixer);
-		initialized = true;
-	}
-	ofLogNotice() << "adding output to mixer ";
-	mixer.addSoundOutput(*this,volume);
+
 	ofLogNotice() << "opening file ";
 	bIsLoaded = soundFile.open(fileName);
-	if(!_stream){
+	if(!bIsLoaded) return false;
+
+	streaming = _stream;
+	if ( streaming ){
+		speed = 1;
+	}
+	
+	if(!streaming){
 		ofLogNotice() << "reading whole file ";
 		soundFile.readTo(buffer);
-	}else{
-		ofLogNotice() << "resizing buffer ";
-		buffer.resize(bufferSize*channels,0);
-	}
+	}// else, buffer will be resized on audioOutBuffersChanged
 
-	ofLogNotice() << "finish loading " << fileName;
-	streaming = _stream;
+	return true;
+}
+
+void ofBasicSoundPlayer::audioOutBuffersChanged(int nFrames, int nChannels, int sampleRate){
+	if(streaming){
+		ofLogNotice() << "resizing buffer ";
+		buffer.resize(nFrames*nChannels,0);
+	}
+	playerNumFrames = nFrames;
+	playerNumChannels = nChannels;
+	playerSampleRate = sampleRate;
 }
 
 void ofBasicSoundPlayer::unloadSound(){
@@ -115,8 +120,12 @@ void ofBasicSoundPlayer::setPan(float _pan){
 }
 
 void ofBasicSoundPlayer::setSpeed(float spd){
+	if ( streaming && fabsf(spd-1.0f)<FLT_EPSILON ){
+		ofLogWarning("ofBasicSoundPlayer") << "setting speed is not supported on streaming sounds";
+		return;
+	}
 	speed = spd;
-	relativeSpeed.back() = speed*(double(soundFile.getSampleRate())/double(samplerate));
+	relativeSpeed.back() = speed*(double(soundFile.getSampleRate())/double(playerSampleRate));
 }
 
 void ofBasicSoundPlayer::setPaused(bool bP){
@@ -138,20 +147,20 @@ void ofBasicSoundPlayer::setMultiPlay(bool bMp){
 }
 
 void ofBasicSoundPlayer::setPosition(float pct){
-	positions.back() = pct*buffer.bufferSize();
+	positions.back() = pct*buffer.getNumFrames();
 }
 
 void ofBasicSoundPlayer::setPositionMS(int ms){
-	setPosition(float(ms)/float(buffer.getDuration()));
+	setPosition(float(ms)/float(buffer.getDurationMS()));
 }
 
 
 float ofBasicSoundPlayer::getPosition(){
-	return float(positions.back())/float(buffer.bufferSize());
+	return float(positions.back())/float(buffer.getNumFrames());
 }
 
 int ofBasicSoundPlayer::getPositionMS(){
-	return buffer.getDuration() * getPosition();
+	return float(positions.back())*1000./buffer.getSampleRate();
 }
 
 bool ofBasicSoundPlayer::getIsPlaying(){
@@ -174,15 +183,21 @@ float ofBasicSoundPlayer::getVolume(){
 	return volume;
 }
 
-void ofBasicSoundPlayer::updatePositions(int bufferSize){
+unsigned long ofBasicSoundPlayer::getDurationMS(){
+	return buffer.getDurationMS();
+}
+
+void ofBasicSoundPlayer::updatePositions(int nFrames){
 	for(int i=0;i<(int)positions.size();i++){
 		// update positions
 		positions[i] += nFrames*relativeSpeed[i];
 		if(loop){
-			positions[i] %= buffer.bufferSize();
+			positions[i] %= buffer.getNumFrames();
 		}else{
-			positions[i] = ofClamp(positions[i],0,buffer.bufferSize());
-			if(positions[i]==buffer.bufferSize()){
+			positions[i] = ofClamp(positions[i],0,buffer.getNumFrames());
+			// finished?
+			if(positions[i]==buffer.getNumFrames()){
+				// yes: remove multiplay instances
 				if(positions.size()>1){
 					positions.erase(positions.begin()+i);
 					relativeSpeed.erase(relativeSpeed.begin()+i);
@@ -199,7 +214,11 @@ void ofBasicSoundPlayer::updatePositions(int bufferSize){
 	}
 }
 
-void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int deviceID, long unsigned long tickCount){
+void ofBasicSoundPlayer::audioOut(ofSoundBuffer& outputBuffer){
+	
+	int nFrames = outputBuffer.getNumFrames();
+	int nChannels = outputBuffer.getNumChannels();
+	
 	if(isPlaying){
 		if(streaming){
 			int samplesRead = soundFile.readTo(buffer,nFrames);
@@ -213,22 +232,38 @@ void ofBasicSoundPlayer::audioOut(float * output, int bSize, int nChannels, int 
 				buffer.copyTo(outputBuffer);
 			}
 		}else{
-			//assert( resampledBuffer.size() == bufferSize );
 			for(int i=0;i<(int)positions.size();i++){
+				//assert( resampledBuffer.getNumFrames() == bufferSize*relativeSpeed[i] );
 				if(abs(relativeSpeed[i] - 1)<FLT_EPSILON){
-					buffer.copyTo(resampledBuffer,bufferSize,channels,positions[i],loop);
+					buffer.copyTo(resampledBuffer,nFrames,nChannels,positions[i],loop);
 				}else{
-					buffer.resampleTo(resampledBuffer,positions[i],bufferSize,relativeSpeed[i],loop);
+					buffer.resampleTo(resampledBuffer,positions[i],nFrames,relativeSpeed[i],loop);
 				}
 				resampledBuffer.stereoPan(volumesLeft[i],volumesRight[i]);
 				newBufferE.notify(this,resampledBuffer);
 				resampledBuffer.addTo(outputBuffer,0,loop);
 			}
-			updatePositions(bufferSize);
-		}
-	}else{
-		for(int i=0;i<bufferSize*nChannels;i++){
-			output[i] = 0;
+			updatePositions(nFrames);
 		}
 	}
+}
+
+ofSoundBuffer & ofBasicSoundPlayer::getCurrentBuffer(){
+	if(streaming){
+		return buffer;
+	}else{
+		return resampledBuffer;
+	}
+}
+
+void ofBasicSoundPlayer::setMaxSoundsTotal(int max){
+	maxSoundsTotal = max;
+}
+
+void ofBasicSoundPlayer::setMaxSoundsPerPlayer(int max){
+	maxSoundsPerPlayer = max;
+}
+
+void ofBasicSoundPlayer::setMaxSounds(int max){
+	maxSounds = max;
 }
