@@ -631,7 +631,7 @@ void xcodeProject::addInclude(string includeName){
 
 
 
-    char query[255];
+    char query[256];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'HEADER_SEARCH_PATHS')]/following-sibling::node()[1]");
     pugi::xpath_node_set headerArray = doc.select_nodes(query);
 
@@ -646,7 +646,6 @@ void xcodeProject::addInclude(string includeName){
     } else {
 
         //printf("we don't have HEADER_SEARCH_PATHS, so we're adding them... and calling this function again \n");
-        query[255];
         sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'buildSettings')]/following-sibling::node()[1]");
         pugi::xpath_node_set dictArray = doc.select_nodes(query);
 
