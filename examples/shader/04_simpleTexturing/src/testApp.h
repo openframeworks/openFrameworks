@@ -24,4 +24,5 @@ class testApp : public ofBaseApp{
     ofPlanePrimitive plane;
     bool drawWires;
     ofImage img;
+    int rotation;
 };
