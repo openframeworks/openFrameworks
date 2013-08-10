@@ -58,9 +58,9 @@ endif
 #   A path pointing to the location of all of the shared makefiles.  These 
 #   files are usually located here:
 #  
-#    $(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
+#    $(OF_PATH)/libs/openFrameworksCompiled/project/makefileCommon
 #
-#   We set a relative directory below because variables like $(PATH_OF_ROOT)
+#   We set a relative directory below because variables like $(OF_PATH)
 #   may still be undefined when this Makefile is executed.
 #
 ################################################################################

@@ -6,11 +6,11 @@
 #   required for the compilation of the core libraries, addons and projects. 
 #   This file is referenced by the core makefile:
 #
-#      $(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/Makefile
+#      $(OF_PATH)/libs/openFrameworksCompiled/project/Makefile
 #
 #   and also the project makefile:
 #    
-#      $(PATH_OF_PROJECT)/Makefile
+#      $(PROJECT_PATH)/Makefile
 #
 #   Many of the shared variables produced by this file can be set by the user
 #   before this files is called.  See below for examples.
@@ -38,13 +38,13 @@ CORE_EXCLUSIONS := $(strip $(PLATFORM_EXCLUSIONS))
 # ALL_CORE_SOURCE_PATHS (immediately assigned)
 #   The ALL_CORE_SOURCE_PATHS variable is a list of paths locating the core 
 #   openFrameworks header (*.h) and implementation (*.c/cpp/m) files.  We
-#   search the PATH_OF_LIBS_OPENFRAMEWORKS directory for these.
+#   search the OF_LIBS_OPENFRAMEWORKS_PATH directory for these.
 #
 # Steps:
 #
 # 1. Find all of the openFrameworks course source folders.
 #
-#       $(shell find $(PATH_OF_LIBS_OPENFRAMEWORKS) \
+#       $(shell find $(OF_LIBS_OPENFRAMEWORKS_PATH) \
 #
 # 2. Limit the search to directories at a depth of 1, since we keep all oF 
 #    sources files in the base directory.
@@ -61,7 +61,7 @@ CORE_EXCLUSIONS := $(strip $(PLATFORM_EXCLUSIONS))
 #TODO: combine ALL and filtered
 ALL_CORE_SOURCE_PATHS :=                                                       \
     $(shell                                                                    \
-        find $(PATH_OF_LIBS_OPENFRAMEWORKS)                                    \
+        find $(OF_LIBS_OPENFRAMEWORKS_PATH)                                    \
         -maxdepth 1                                                            \
         -mindepth 1                                                            \
         -type d                                                                \
@@ -86,12 +86,12 @@ CORE_SOURCE_PATHS :=                                                           \
 # CORE_HEADER_SEARCH_PATHS (immediately assigned)
 #   The CORE_HEADER_SEARCH_PATHS is a list of header search paths that have
 #   been filtered.  They will later be prepended with the compilers -I flag.
-#   $(PATH_OF_LIBS_OPENFRAMEWORKS) is included so we don't miss ofMain.h, which
+#   $(OF_LIBS_OPENFRAMEWORKS_PATH) is included so we don't miss ofMain.h, which
 #   is located in the base folder.
 ################################################################################
 
 CORE_HEADER_SEARCH_PATHS :=                                                    \
-    $(PATH_OF_LIBS_OPENFRAMEWORKS)                                             \
+    $(OF_LIBS_OPENFRAMEWORKS_PATH)                                             \
     $(CORE_SOURCE_PATHS)
 
 ################################################################################
@@ -101,7 +101,7 @@ CORE_HEADER_SEARCH_PATHS :=                                                    \
 #
 # Steps:
 #   1. Search all paths recursively, looking for directories:
-#       find $(PATH_OF_LIBS)/*/include -type d \
+#       find $(OF_LIBS_PATH)/*/include -type d \
 #   2. Exclude all .hidden directories:
 #       grep -v "/\.[^\.]" will exclude all .hidden folders and files
 #
@@ -111,7 +111,7 @@ CORE_HEADER_SEARCH_PATHS :=                                                    \
 #TODO: combine ALL and filtered
 ALL_CORE_THIRD_PARTY_HEADER_SEARCH_PATHS :=                                    \
     $(shell                                                                    \
-        find $(PATH_OF_LIBS)/*/include                                         \
+        find $(OF_LIBS_PATH)/*/include                                         \
         -type d                                                                \
         | grep -v "/\.[^\.]"                                                   \
     )
@@ -141,7 +141,7 @@ CORE_THIRD_PARTY_HEADER_SEARCH_PATHS :=                                        \
 # 1. Generate a list of all third party library paths available for the 
 #    for the current ABI_LIB_SUBPATH:
 #
-#       find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH) ...
+#       find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH) ...
 #
 # 2. Remove any paths that used for the core openFrameworks compilation
 #
@@ -166,7 +166,7 @@ CORE_THIRD_PARTY_HEADER_SEARCH_PATHS :=                                        \
 #TODO: combine ALL and filtered
 ALL_CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS :=                                   \
     $(shell                                                                    \
-        find $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH)                          \
+        find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)                          \
         -type d                                                                \
         -not                                                                   \
         -path "*/openFrameworksCompiled/*"                                     \
@@ -208,7 +208,7 @@ CORE_THIRD_PARTY_LIBRARY_SEARCH_PATHS :=                                       \
 ALL_CORE_THIRD_PARTY_STATIC_LIBRARIES :=                                       \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
-            $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH),                          \
+            $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH),                          \
             $(FIND_TYPE_FILE),                                                 \
             *.$(PLATFORM_STATIC_LIBRARY_EXTENSION),                            \
         )                                                                      \
@@ -242,7 +242,7 @@ CORE_THIRD_PARTY_STATIC_LIBRARIES :=                                           \
 ALL_CORE_THIRD_PARTY_SHARED_LIBRARIES :=                                       \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
-            $(PATH_OF_LIBS)/*/lib/$(ABI_LIB_SUBPATH),                          \
+            $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH),                          \
             $(FIND_TYPE_FILE),                                                 \
             *.$(PLATFORM_SHARED_LIBRARY_EXTENSION),                            \
         )                                                                      \

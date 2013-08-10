@@ -122,13 +122,13 @@ ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
         TARGET += $(PLATFORM_CORELIB_DEBUG_TARGET)
     else
-        TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
+        TARGET += $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
     endif
     
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
         TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
-        TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
+        TARGET += $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
     endif
     
     TARGET_NAME := 
@@ -141,7 +141,7 @@ else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
         TARGET := $(PLATFORM_CORELIB_DEBUG_TARGET)
     else
-        TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
+        TARGET := $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
     endif
 
 # check to see if any part of our target includes the String "Release"
@@ -152,7 +152,7 @@ else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
         TARGET := $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
-        TARGET := $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
+        TARGET := $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
     endif
     
 else ifeq ($(MAKECMDGOALS),after)
@@ -165,7 +165,7 @@ else ## why doesn't make allow for easy logical operators?
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
         TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
-        TARGET += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
+        TARGET += $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
     endif
  endif
 
@@ -222,10 +222,10 @@ endif
 
 ifdef ABI
     PATH_CORE_OBJ_OUPUT :=                                                     \
-        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(ABI)/$(TARGET_NAME)/
+        $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(ABI)/$(TARGET_NAME)/
 else
     PATH_CORE_OBJ_OUPUT :=                                                     \
-        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(TARGET_NAME)/
+        $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/obj/$(TARGET_NAME)/
 endif
 
 ################################################################################
@@ -237,9 +237,9 @@ endif
 #
 # 1. Create a list of .d dependency files based on the current list of source
 #    files by substituting their paths with the new path.
-#     $(patsubst $(PATH_OF_ROOT)/%.cpp,%.d,\
-#       $(patsubst $(PATH_OF_ROOT)/%.mm,%.d,\
-#        $(patsubst $(PATH_OF_ROOT)/%.m,%.d,\
+#     $(patsubst $(OF_PATH)/%.cpp,%.d,\
+#       $(patsubst $(OF_PATH)/%.mm,%.d,\
+#        $(patsubst $(OF_PATH)/%.m,%.d,\
 #           $(CORE_SOURCE_FILES)\
 #         )\
 #       )\
@@ -251,9 +251,9 @@ endif
 
 CORE_DEPENDENCY_FILES :=                                                       \
                         $(addprefix $(PATH_CORE_OBJ_OUPUT),                    \
-                            $(patsubst $(PATH_OF_ROOT)/%.cpp,%.d,              \
-                                $(patsubst $(PATH_OF_ROOT)/%.mm,%.d,           \
-                                    $(patsubst $(PATH_OF_ROOT)/%.m,%.d,        \
+                            $(patsubst $(OF_PATH)/%.cpp,%.d,              \
+                                $(patsubst $(OF_PATH)/%.mm,%.d,           \
+                                    $(patsubst $(OF_PATH)/%.m,%.d,        \
                                         $(CORE_SOURCE_FILES)                   \
                                     )                                          \
                                 )                                              \
@@ -269,9 +269,9 @@ CORE_DEPENDENCY_FILES :=                                                       \
 #
 # 1. Create a list of .o object files based on the current list of source
 #    files by substituting their paths with the new path.
-#      $(patsubst $(PATH_OF_ROOT)/%.cpp,%.o,\
-#       $(patsubst $(PATH_OF_ROOT)/%.mm,%.o,\
-#         $(patsubst $(PATH_OF_ROOT)/%.m,%.o,\
+#      $(patsubst $(OF_PATH)/%.cpp,%.o,\
+#       $(patsubst $(OF_PATH)/%.mm,%.o,\
+#         $(patsubst $(OF_PATH)/%.m,%.o,\
 #           $(CORE_SOURCE_FILES)\
 #         )\
 #       )\
@@ -282,9 +282,9 @@ CORE_DEPENDENCY_FILES :=                                                       \
 ################################################################################
 
 CORE_OBJ_FILES := $(addprefix $(PATH_CORE_OBJ_OUPUT),                          \
-                        $(patsubst $(PATH_OF_ROOT)/%.cpp,%.o,                  \
-                            $(patsubst $(PATH_OF_ROOT)/%.mm,%.o,               \
-                                $(patsubst $(PATH_OF_ROOT)/%.m,%.o,            \
+                        $(patsubst $(OF_PATH)/%.cpp,%.o,                  \
+                            $(patsubst $(OF_PATH)/%.mm,%.o,               \
+                                $(patsubst $(OF_PATH)/%.m,%.o,            \
                                     $(CORE_SOURCE_FILES)                       \
                                 )                                              \
                             )                                                  \
@@ -373,21 +373,21 @@ all:
 
 # This rule compiles any items that match *.cpp
 # If the object directory doesn't exist, it is created.
-$(PATH_CORE_OBJ_OUPUT)%.o: $(PATH_OF_ROOT)/%.cpp 
+$(PATH_CORE_OBJ_OUPUT)%.o: $(OF_PATH)/%.cpp 
 	@echo "Compiling *.cpp" $<
 	mkdir -p $(@D)
 	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PATH_CORE_OBJ_OUPUT)$*.d -MT$(PATH_CORE_OBJ_OUPUT)$*.o -o $@ -c $<
 
 # This rule compiles any items that match *.mm
 # If the object directory doesn't exist, it is created.
-$(PATH_CORE_OBJ_OUPUT)%.o: $(PATH_OF_ROOT)/%.mm
+$(PATH_CORE_OBJ_OUPUT)%.o: $(OF_PATH)/%.mm
 	@echo "Compiling *.mm " $<
 	mkdir -p $(@D)
 	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PATH_CORE_OBJ_OUPUT)$*.d -MT$(PATH_CORE_OBJ_OUPUT)$*.o -o $@ -c $<
 
 # This rule compiles any items that match *.m
 # If the object directory doesn't exist, it is created.
-$(PATH_CORE_OBJ_OUPUT)%.o: $(PATH_OF_ROOT)/%.m
+$(PATH_CORE_OBJ_OUPUT)%.o: $(OF_PATH)/%.m
 	@echo "Compiling *.m  " $<
 	mkdir -p $(@D)
 	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(PATH_CORE_OBJ_OUPUT)$*.d -MT$(PATH_CORE_OBJ_OUPUT)$*.o -o $@ -c $<

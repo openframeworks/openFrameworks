@@ -154,7 +154,7 @@ PLATFORM_CFLAGS += -x objective-c++
 PLATFORM_LDFLAGS :=
 PLATFORM_LDFLAGS += -arch i386
 # TODO: can we put this in the PLATFORM_FRAMEWORK_SEARCH_PATHS
-# PLATFORM_LDFLAGS += -F$(PATH_OF_LIBS)/glut/lib/osx/
+# PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 
 ################################################################################
@@ -198,28 +198,28 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG := -g3
 PLATFORM_EXCLUSIONS =
 
 # core sources
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstVideoGrabber.cpp
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofGstVideoPlayer.cpp
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
 # third party
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/videoInput/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/quicktime/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -331,7 +331,7 @@ endif
 PLATFORM_FRAMEWORK_SEARCH_PATHS := 
 PLATFORM_FRAMEWORK_SEARCH_PATHS += /System/Library/Frameworks
 PLATFORM_FRAMEWORK_SEARCH_PATHS += $(MAC_OS_SDK_ROOT)/System/Library/Frameworks
-PLATFORM_FRAMEWORK_SEARCH_PATHS += $(PATH_OF_LIBS)/glut/lib/osx/
+PLATFORM_FRAMEWORK_SEARCH_PATHS += $(OF_LIBS_PATH)/glut/lib/osx/
 
 ################################################################################
 # LOW LEVEL CONFIGURATION BELOW
@@ -399,13 +399,13 @@ afterplatform: $(TARGET_NAME)
 	
 	# libfmodex ... blah
 	@install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib $(TARGET)
-	@cp $(PATH_OF_LIBS)/fmodex/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/MacOS
+	@cp $(OF_LIBS_PATH)/fmodex/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/MacOS
 	
 	# frameworks to be copied
 	@echo $(OF_PROJECT_FRAMEWORKS_EXPORTS)
 	# aaa
 
-	@cp -r $(PATH_OF_LIBS)/glut/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/Frameworks
+	@cp -r $(OF_LIBS_PATH)/glut/lib/$(ABI_LIB_SUBPATH)/* $(BIN_NAME)/Contents/Frameworks
 
 	# move the target executable into the bundle
 	@mv $(TARGET) $(BIN_NAME)/Contents/MacOS

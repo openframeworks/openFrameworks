@@ -148,30 +148,30 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 PLATFORM_EXCLUSIONS :=
 
 # core sources
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofQuickTimePlayer.cpp
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 
 ifeq ($(LINUX_ARM),1)
-    PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppGlutWindow.cpp
+    PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 else
-    PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/openFrameworks/app/ofAppEGLWindow.cpp
+    PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
 
 # third party
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glew/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glu/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/Poco/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/poco/include/CppUnit/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/quicktime/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/videoInput/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/freetype/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/FreeImage/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/assimp/%
-PLATFORM_EXCLUSIONS += $(PATH_OF_LIBS)/glut/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/glu/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
+PLATFORM_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -214,12 +214,12 @@ PLATFORM_LIBRARIES += freeimage
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
-PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(PATH_OF_LIBS)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =

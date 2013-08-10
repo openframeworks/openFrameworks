@@ -6,11 +6,11 @@
 #   required for the compilation of the core libraries, addons and projects. 
 #   This file is referenced by the core makefile:
 #
-#      $(PATH_OF_ROOT)/libs/openFrameworksCompiled/project/Makefile
+#      $(OF_PATH)/libs/openFrameworksCompiled/project/Makefile
 #
 #   and also the project makefile:
 #    
-#      $(PATH_OF_PROJECT)/Makefile
+#      $(PROJECT_PATH)/Makefile
 #
 #   Many of the shared variables produced by this file can be set by the user
 #   before this files is called.  See below for examples.
@@ -30,15 +30,15 @@ ifndef SHELL
 endif
 
 ################################################################################
-# PATH_OF_ROOT (conditionally set)
-#   The PATH_OF_ROOT is used throughout the script to locate the root folder 
+# OF_PATH (conditionally set)
+#   The OF_PATH is used throughout the script to locate the root folder 
 #   of the openFrameworks installation directory.  This variable is often set
-#   within custom project files such as $(PATH_OF_PROJECT)/config.make when
+#   within custom project files such as $(PROJECT_PATH)/config.make when
 #   a project is in a non-standard location.
 #
 ################################################################################
-ifndef PATH_OF_ROOT
-    PATH_OF_ROOT := ../../..
+ifndef OF_PATH
+    OF_PATH := ../../..
 endif
 
 ################################################################################
@@ -157,7 +157,7 @@ endif
 # PATH GENERATION
 ################################################################################
 # The following section builds common paths required for compilation.  This
-# section relies heavily upon the PATH_OF_ROOT variable.  In most cases
+# section relies heavily upon the OF_PATH variable.  In most cases
 # these paths can be manually overriden as make variables.
 ################################################################################
 
@@ -166,89 +166,89 @@ endif
 #   The standard location for openFrameworks addons.
 ################################################################################
 ifndef OF_ADDONS_PATH
-    OF_ADDONS_PATH := $(PATH_OF_ROOT)/addons
+    OF_ADDONS_PATH := $(OF_PATH)/addons
 endif
 
 ################################################################################
-# PATH_OF_EXAMPLES (conditionally set, immediately assigned)
+# OF_EXAMPLES_PATH (conditionally set, immediately assigned)
 #   The standard location for openFrameworks examples.
 ################################################################################
-ifndef PATH_OF_EXAMPLES
-    PATH_OF_EXAMPLES := $(PATH_OF_ROOT)/examples
+ifndef OF_EXAMPLES_PATH
+    OF_EXAMPLES_PATH := $(OF_PATH)/examples
 endif
 
 ################################################################################
-# PATH_OF_APPS (conditionally set, immediately assigned)
+# OF_APPS_PATH (conditionally set, immediately assigned)
 #   The standard location for openFrameworks apps.
 ################################################################################
-ifndef PATH_OF_APPS
-    PATH_OF_APPS := $(PATH_OF_ROOT)/apps
+ifndef OF_APPS_PATH
+    OF_APPS_PATH := $(OF_PATH)/apps
 endif
 
 ################################################################################
-# PATH_OF_LIBS (conditionally set, immediately assigned)
+# OF_LIBS_PATH (conditionally set, immediately assigned)
 #   The standard location for openFrameworks core and 3rd party libraries.
 ################################################################################
-ifndef PATH_OF_LIBS
-    PATH_OF_LIBS := $(PATH_OF_ROOT)/libs
+ifndef OF_LIBS_PATH
+    OF_LIBS_PATH := $(OF_PATH)/libs
 endif
 
 ################################################################################
-# PATH_OF_LIBS_OPENFRAMEWORKS (conditionally set, immediately assigned)
+# OF_LIBS_OPENFRAMEWORKS_PATH (conditionally set, immediately assigned)
 #   The standard location for openFrameworks core source and header files.
 ################################################################################
-ifndef PATH_OF_LIBS_OPENFRAMEWORKS
-    PATH_OF_LIBS_OPENFRAMEWORKS :=                                             \
-        $(PATH_OF_LIBS)/openFrameworks
+ifndef OF_LIBS_OPENFRAMEWORKS_PATH
+    OF_LIBS_OPENFRAMEWORKS_PATH :=                                             \
+        $(OF_LIBS_PATH)/openFrameworks
 endif
 
 ################################################################################
-# PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED (conditionally set, immediately assigned)
+# OF_LIBS_OPENFRAMEWORKSCOMPILED_PATH (conditionally set, immediately assigned)
 #   The standard base location for the compiled openFrameworks static libs
 #   libs will be stored in a platform-based subdirectory.
 ################################################################################
-ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED :=                                    \
-        $(PATH_OF_LIBS)/openFrameworksCompiled
+ifndef OF_LIBS_OPENFRAMEWORKSCOMPILED_PATH
+    OF_LIBS_OPENFRAMEWORKSCOMPILED_PATH :=                                    \
+        $(OF_LIBS_PATH)/openFrameworksCompiled
 endif
 
 ################################################################################
-# PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT
+# OF_LIBS_OPENFRAMEWORKSCOMPILED_PROJECT_PATH
 #       (conditionally set, immediately assigned)
 #   The standard location for openFrameworks project files, including makefiles.
 ################################################################################
-ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT :=                            \
-        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED)/project
+ifndef OF_LIBS_OPENFRAMEWORKSCOMPILED_PROJECT_PATH
+    OF_LIBS_OPENFRAMEWORKSCOMPILED_PROJECT_PATH :=                            \
+        $(OF_LIBS_OPENFRAMEWORKSCOMPILED_PATH)/project
 endif
 
 ################################################################################
-# PATH_OF_SHARED_MAKEFILES (conditionally set, immediately assigned)
+# OF_SHARED_MAKEFILES_PATH (conditionally set, immediately assigned)
 #   The standard location for openFrameworks shared makefiles.
 ################################################################################
-ifndef PATH_OF_SHARED_MAKEFILES
-    PATH_OF_SHARED_MAKEFILES :=                                                \
-        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/makefileCommon
+ifndef OF_SHARED_MAKEFILES_PATH
+    OF_SHARED_MAKEFILES_PATH :=                                                \
+        $(OF_LIBS_OPENFRAMEWORKSCOMPILED_PROJECT_PATH)/makefileCommon
 endif
 
 ################################################################################
-# PATH_OF_PLATFORM_MAKEFILES (conditionally set, immediately assigned)
+# OF_PLATFORM_MAKEFILES_PATH (conditionally set, immediately assigned)
 #   The standard location for openFrameworks platform-specific makefiles.
 ################################################################################
-ifndef PATH_OF_PLATFORM_MAKEFILES
-    PATH_OF_PLATFORM_MAKEFILES :=                                              \
-        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT)/$(PLATFORM_LIB_SUBPATH)
+ifndef OF_PLATFORM_MAKEFILES_PATH
+    OF_PLATFORM_MAKEFILES_PATH :=                                              \
+        $(OF_LIBS_OPENFRAMEWORKSCOMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)
 endif
 
 ################################################################################
-# PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH
+# OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH
 #        (conditionally set, immediately assigned)
 #   The standard location for openFrameworks core platform-specific compiled
 #   static libraries.
 ################################################################################
-ifndef PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH
-    PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH :=           \
-        $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED)/lib/$(PLATFORM_LIB_SUBPATH)
+ifndef OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH
+    OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH :=           \
+        $(OF_LIBS_OPENFRAMEWORKSCOMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)
 endif
 
 ################################################################################
@@ -257,15 +257,15 @@ endif
 ifdef MAKEFILE_DEBUG
     $(info =================config.shared.mk PATHS=============================)
     $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-    $(info PATH_OF_EXAMPLES=$(PATH_OF_EXAMPLES))
-    $(info PATH_OF_APPS=$(PATH_OF_APPS))
-    $(info PATH_OF_LIBS=$(PATH_OF_LIBS))
-    $(info PATH_OF_LIBS_OPENFRAMEWORKS=$(PATH_OF_LIBS_OPENFRAMEWORKS))
-    $(info PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED=$(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED))
-    $(info PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT=$(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_PROJECT))
-    $(info PATH_OF_SHARED_MAKEFILES=$(PATH_OF_SHARED_MAKEFILES))
-    $(info PATH_OF_PLATFORM_MAKEFILES=$(PATH_OF_PLATFORM_MAKEFILES))
-    $(info PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH=$(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH))
+    $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
+    $(info OF_APPS_PATH=$(OF_APPS_PATH))
+    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
+    $(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
+    $(info OF_LIBS_OPENFRAMEWORKSCOMPILED_PATH=$(OF_LIBS_OPENFRAMEWORKSCOMPILED_PATH))
+    $(info OF_LIBS_OPENFRAMEWORKSCOMPILED_PROJECT_PATH=$(OF_LIBS_OPENFRAMEWORKSCOMPILED_PROJECT_PATH))
+    $(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
+    $(info OF_PLATFORM_MAKEFILES_PATH=$(OF_PLATFORM_MAKEFILES_PATH))
+    $(info OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH=$(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH))
     $(info )
 endif
 ################################################################################
@@ -288,7 +288,7 @@ endif
 #   shell command.  Steps:
 #
 #   1. Use the "find" command to locate all matching files
-#       find $(PATH_OF_PLATFORM_MAKEFILES)/config.*.mk \
+#       find $(OF_PLATFORM_MAKEFILES_PATH)/config.*.mk \
 #   2. Limit the search to the single folder and only find files
 #       -maxdepth 1 -type f \
 #   3. Extract the variant type name from the file by piping the results into
@@ -304,7 +304,7 @@ endif
 
 AVAILABLE_PLATFORM_VARIANTS :=                                                 \
     $(shell                                                                    \
-        find $(PATH_OF_PLATFORM_MAKEFILES)/config.*.mk                         \
+        find $(OF_PLATFORM_MAKEFILES_PATH)/config.*.mk                         \
         -maxdepth 1                                                            \
         -type f                                                                \
         | sed -E 's/.*\.([^\.]*)\.mk/\1/'                                      \
@@ -342,30 +342,30 @@ endif
 # CALL THE PLATFORM VARIANT CONFIGURATION FILE
 ################################################################################
 # This section will call the platform-specific configuration file.  
-# Among other variables, the PATH_ABI is specified in the platform specific
+# Among other variables, the ABI_PATH is specified in the platform specific
 # configuration file.  This is important in the case of Android projects in
 # particular where multiple ABIs (application binary interface) are needed.
 #
 # See the documentation inside any of the files with the format:
 #
-#     $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk 
+#     $(OF_PLATFORM_MAKEFILES_PATH)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk 
 #
 ################################################################################
 
 # include the platform specific user and platform configuration files
-include $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
+include $(OF_PLATFORM_MAKEFILES_PATH)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
 
 ################################################################################
 # ABI_LIB_SUBPATH (conditionally set, immediately assigned)
 #   The ABI_LIB_SUBPATH is a subpath used for locating the final static binary
-#   libraries.  If the PATH_ABI variable is NOT set in the platform-specific
+#   libraries.  If the ABI_PATH variable is NOT set in the platform-specific
 #   configuration file, then ABI_LIB_SUBPATH will simply be equal to 
 #   PLATFORM_LIB_SUBPATH.  Currently Android platforms make use of the 
 #   ABI_LIB_SUBPATH variable.
 ################################################################################
 
-ifdef PATH_ABI
-    ABI_LIB_SUBPATH := $(PLATFORM_LIB_SUBPATH)/$(strip $(PATH_ABI))
+ifdef ABI_PATH
+    ABI_LIB_SUBPATH := $(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
 else
     ABI_LIB_SUBPATH := $(PLATFORM_LIB_SUBPATH)
 endif
@@ -378,9 +378,9 @@ ifdef MAKEFILE_DEBUG
     $(info Available Platform Variants = $(AVAILABLE_PLATFORM_VARIANTS))
     $(info                                                                     \
         Including :                                                            \
-        $(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk \
+        $(OF_PLATFORM_MAKEFILES_PATH)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk \
     )
-    $(info PATH_ABI=$(PATH_ABI))
+    $(info ABI_PATH=$(ABI_PATH))
     $(info ABI_LIB_SUBPATH=$(ABI_LIB_SUBPATH))
     $(info )
 endif

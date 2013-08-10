@@ -9,25 +9,25 @@
 ################################################################################
 
 ################################################################################
-# PATH_OF_ROOT (conditionally set)
-#   The PATH_OF_ROOT is used throughout the script to locate the root folder 
+# OF_PATH (conditionally set)
+#   The OF_PATH is used throughout the script to locate the root folder 
 #   of the openFrameworks installation directory.  This variable is often set
-#   within custom project files such as $(PATH_OF_PROJECT)/config.make when
+#   within custom project files such as $(PROJECT_PATH)/config.make when
 #   a project is in a non-standard location.
 ################################################################################
 
-ifndef PATH_OF_ROOT
-    PATH_OF_ROOT := ../../..
+ifndef OF_PATH
+    OF_PATH := ../../..
 endif
 
 ################################################################################
-# PROJECT_ROOT_PATH (conditionally set)
-#   The PROJECT_ROOT_PATH is used throughout the script to locate the project
+# PROJECT_PATH (conditionally set)
+#   The PROJECT_PATH is used throughout the script to locate the project
 #   root folder.
 ################################################################################
 
-ifndef PROJECT_ROOT_PATH
-    PROJECT_ROOT_PATH := .
+ifndef PROJECT_PATH
+    PROJECT_PATH := .
 endif
 
 
@@ -43,7 +43,7 @@ endif
 
 
 
-    # PROJECT_ROOT_PATH := .
+    # PROJECT_PATH := .
 
     # PROJECT_DEPENDENCIES:=
     # PROJECT_DEPENDENCIES_ESCAPED_STRING:=
@@ -74,7 +74,7 @@ endif
     # PROJECT_CXX := 
     # PROJECT_CC := 
 
-    $(call FUNC_PARSE_AND_EVALUATE_CONFIG_MK,$(PROJECT_ROOT_PATH)/project_config.mk)
+    $(call FUNC_PARSE_AND_EVALUATE_CONFIG_MK,$(PROJECT_PATH)/project_config.mk)
 
     $(info ---PROJECT_ADDON_DEPENDENCIES---)
     $(foreach v, $(PROJECT_ADDON_DEPENDENCIES),$(info $(v)))
@@ -83,8 +83,8 @@ endif
     include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
 
 
-    $(info ---PROJECT_ROOT_PATH---)
-    $(foreach v, $(PROJECT_ROOT_PATH),$(info $(v)))
+    $(info ---PROJECT_PATH---)
+    $(foreach v, $(PROJECT_PATH),$(info $(v)))
 
     # $(info ---PROJECT_APPNAME---)
     # $(foreach v, $(PROJECT_APPNAME),$(info $(v)))
@@ -132,24 +132,24 @@ endif
 # PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 
 # # add defaults here TODO: should these always be 
-# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/bin  # exactly this path
-# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/bin% # any children of this path
-# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/obj
-# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/obj%
-# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/.git
-# PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/.git%
+# PROJECT_EXCLUSIONS += $(PROJECT_PATH)/bin  # exactly this path
+# PROJECT_EXCLUSIONS += $(PROJECT_PATH)/bin% # any children of this path
+# PROJECT_EXCLUSIONS += $(PROJECT_PATH)/obj
+# PROJECT_EXCLUSIONS += $(PROJECT_PATH)/obj%
+# PROJECT_EXCLUSIONS += $(PROJECT_PATH)/.git
+# PROJECT_EXCLUSIONS += $(PROJECT_PATH)/.git%
 
 # # A pattern can contain only one TRAILING %. This is a "feature" in GNU Make.
 # # As a consequence of this "feature" $(filter ...) and $(filter-out ...) 
 # # cannot match substrings in our exclusions.  For example, the following will 
 # # not be matched as one might expect with normal wildcards / regex patterns:
 # #
-# # PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/%.xcodeproj 
-# # PROJECT_EXCLUSIONS += $(PROJECT_ROOT_PATH)/%.xcodeproj/%
+# # PROJECT_EXCLUSIONS += $(PROJECT_PATH)/%.xcodeproj 
+# # PROJECT_EXCLUSIONS += $(PROJECT_PATH)/%.xcodeproj/%
 # #
 # # GNU make does allow us to do something like this though:
 # # In this case, we look for all paths that have the pattern:
-# #     $(PROJECT_ROOT_PATH)/*.xcodeproj (here * works as expected)
+# #     $(PROJECT_PATH)/*.xcodeproj (here * works as expected)
 # # and then it appends a % (the make pattern matcher) ONLY to the end of each
 # # of the paths discovered by the $(wildcard ...) function.  The output of
 # # this function is now compatible with GNU Make $(filter ...) and $(filter-out).
@@ -158,7 +158,7 @@ endif
 #     $(addsuffix                                                                \
 #         %,                                                                     \
 #         $(wildcard                                                             \
-#             $(PROJECT_ROOT_PATH)/*.xcodeproj                                   \
+#             $(PROJECT_PATH)/*.xcodeproj                                   \
 #         )                                                                      \
 #     )
 
@@ -173,7 +173,7 @@ endif
 # # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # ALL_PROJECT_SOURCE_PATHS :=                                                 \
 #     $(shell                                                                    \
-#         find $(PROJECT_ROOT_PATH)                                              \
+#         find $(PROJECT_PATH)                                              \
 #         -mindepth 1                                                            \
 #         -type d                                                                \
 #         | grep -v "/\.[^\.]"                                                   \
@@ -382,7 +382,7 @@ endif
 #     ifdef PLATFORM_CORELIB_DEBUG_TARGET
 #     	TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
 #     else
-#     	TARGET_LIBS += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
+#     	TARGET_LIBS += $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworksDebug.a
 #     endif
 # endif
 
@@ -396,7 +396,7 @@ endif
 #     ifdef PLATFORM_CORELIB_RELEASE_TARGET
 #     	TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
 #     else
-#     	TARGET_LIBS += $(PATH_OF_LIBS_OPENFRAMEWORKS_COMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
+#     	TARGET_LIBS += $(OF_LIBS_OPENFRAMEWORKSCOMPILED_LIB_PLATFORM_LIB_SUBPATH)/libopenFrameworks.a
 #     endif
 # endif
 
@@ -444,7 +444,7 @@ endif
 #                             )                                                  \
 #                         )
 
-# PROJECT_OBJS := $(subst $(PROJECT_ROOT_PATH)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
+# PROJECT_OBJS := $(subst $(PROJECT_PATH)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES))))
 
 # PROJECT_DEPS :=                                                             \
 #     $(patsubst                                                                 \
@@ -477,8 +477,8 @@ endif
 #         $(PROJECT_ADDONS_OBJ_FILES),                                        \
 #         $(eval                                                                 \
 #             PROJECT_ADDONS_OBJS +=                                          \
-#                 $(patsubst $(PATH_OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(PATH_OF_ROOT)/addons/,,$(addon_obj))))/%, \
-#                 $(PATH_OF_ROOT)/addons/$(PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(PATH_OF_ROOT)/addons/,,$(addon_obj))))/%, \
+#                 $(patsubst $(OF_PATH)/addons/$(word 1, $(subst /, ,$(subst $(OF_PATH)/addons/,,$(addon_obj))))/%, \
+#                 $(OF_PATH)/addons/$(PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(OF_PATH)/addons/,,$(addon_obj))))/%, \
 #                                           $(addon_obj))) \
 # )
 

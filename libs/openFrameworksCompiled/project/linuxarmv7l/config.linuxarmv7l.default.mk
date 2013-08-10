@@ -5,7 +5,7 @@
 #   be defined as variants. For instance, normally this file will be located in 
 #   a platform specific subpath such as 
 #
-#        $(PATH_OF_ROOT)/libs/openFrameworksComplied/linux64
+#        $(OF_PATH)/libs/openFrameworksComplied/linux64
 #
 #   This file will then be a generic platform file like:
 #

@@ -15,26 +15,26 @@
 
 define FUNC_PARSE_ADDON_TEMPLATE_HEADER_SEARCH_PATHS
                                                                                \
-    $(eval PATH_OF_ADDON:=$(strip $1))                                         \
+    $(eval ADDON_PATH:=$(strip $1))                                         \
                                                                                \
     $(eval PARSED_ADDON_HEADER_SEARCH_PATHS:=                                  \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SEARCH_PATHS,                                  \
-            $(PATH_OF_ADDON)/libs/*/src                                        \
+            $(ADDON_PATH)/libs/*/src                                        \
         )                                                                      \
     )                                                                          \
                                                                                \
     $(eval PARSED_ADDON_HEADER_SEARCH_PATHS +=                                 \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SEARCH_PATHS,                                  \
-            $(PATH_OF_ADDON)/libs/*/include                                    \
+            $(ADDON_PATH)/libs/*/include                                    \
         )                                                                      \
     )                                                                          \
                                                                                \
     $(eval PARSED_ADDON_HEADER_SEARCH_PATHS +=                                 \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SEARCH_PATHS,                                  \
-            $(PATH_OF_ADDON)/src                                               \
+            $(ADDON_PATH)/src                                               \
         )                                                                      \
     )                                                                          \
                                                                                \
@@ -54,19 +54,19 @@ endef
 
 define FUNC_PARSE_ADDON_TEMPLATE_SOURCES
                                                                                \
-    $(eval PATH_OF_ADDON:=$(strip $1))                                         \
+    $(eval ADDON_PATH:=$(strip $1))                                         \
                                                                                \
     $(eval PARSED_ADDON_SOURCES :=                                             \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SOURCES,                                       \
-            $(PATH_OF_ADDON)/libs                                              \
+            $(ADDON_PATH)/libs                                              \
         )                                                                      \
     )                                                                          \
                                                                                \
     $(eval PARSED_ADDON_SOURCES +=                                             \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SOURCES,                                       \
-            $(PATH_OF_ADDON)/src                                               \
+            $(ADDON_PATH)/src                                               \
         )                                                                      \
     )                                                                          \
 
@@ -91,12 +91,12 @@ endef
 
 define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
                                                                                \
-    $(eval PATH_OF_ADDON:=$(strip $1))                                         \
+    $(eval ADDON_PATH:=$(strip $1))                                         \
                                                                                \
     $(eval PARSED_ADDON_FRAMEWORKS_FULL_PATHS:=                                \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
-            $(PATH_OF_ADDON)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
+            $(ADDON_PATH)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
             $(FIND_TYPE_DIRECTORY),                                            \
             *.framework                                                        \
         )                                                                      \
@@ -105,7 +105,7 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
     $(eval PARSED_ADDON_LIBRARY_SEARCH_PATHS:=                                 \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_SEARCH_PATHS,                                  \
-            $(PATH_OF_ADDON)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
+            $(ADDON_PATH)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
             $(FIND_TYPE_DIRECTORY)                                             \
         )                                                                      \
     )                                                                          \
@@ -113,7 +113,7 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
     $(eval PARSED_ADDON_SHARED_LIBRARIES_FULL_PATHS:=                          \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
-            $(PATH_OF_ADDON)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
+            $(ADDON_PATH)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
             $(FIND_TYPE_FILE),                                                 \
             $(PLATFORM_LIBRARY_PREFIX)*.$(PLATFORM_SHARED_LIBRARY_EXTENSION),  \
         )                                                                      \
@@ -122,7 +122,7 @@ define FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES
     $(eval PARSED_ADDON_STATIC_LIBRARIES_FULL_PATHS:=                          \
         $(call                                                                 \
             FUNC_RECURSIVE_FIND_LIBRARIES_WITH_TYPE_AND_NAME_PATTERN,          \
-            $(PATH_OF_ADDON)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
+            $(ADDON_PATH)/libs/*/lib/$(ABI_LIB_SUBPATH),                    \
             $(FIND_TYPE_FILE),                                                 \
             $(PLATFORM_LIBRARY_PREFIX)*.$(PLATFORM_STATIC_LIBRARY_EXTENSION)   \
         )                                                                      \
@@ -145,15 +145,15 @@ define FUNC_INSTALL_ADDON
     $(warning An addon called [$(THIS_ADDON)] is required for this project     \
         but was not found!)                                                    \
     $(warning Where was it required?:)                                         \
-    $(eval F:=$(PATH_OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk)\
+    $(eval F:=$(OF_PLATFORM_MAKEFILES_PATH)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk)\
     $(warning --> Did the $(F) file list it?)                                  \
-    $(eval F:=$(PATH_OF_ADDONS)/THE_DEPENDENT_ADDON/addon_config.mk)           \
+    $(eval F:=$(OF_ADDONS_PATH)/THE_DEPENDENT_ADDON/addon_config.mk)           \
     $(warning --> Did another addon list it as a dependency in its $(F) file?) \
-    $(eval F:=$(PROJECT_ROOT_PATH)/addons.make)                                \
+    $(eval F:=$(PROJECT_PATH)/addons.make)                                \
     $(warning --> Your project's $(F) file list it?)                           \
     $(warning )                                                                \
     $(error You must install [$(THIS_ADDON)] in your                           \
-        $(PATH_OF_ADDONS) directory or modify                                  \
+        $(OF_ADDONS_PATH) directory or modify                                  \
         your configuration to continue)                                        \
 
 endef
@@ -198,7 +198,7 @@ define FUNC_PARSE_ADDON_CONFIG_MK
     $(info FUNC_PARSE_ADDON_CONFIG_MK++++====FUNC_PARSE_ADDON_CONFIG_MK) \
                                                                                \
     $(eval THIS_ADDON:=$(strip $1))                                            \
-    $(eval PATH_OF_ADDON:=$(addprefix $(PATH_OF_ADDONS)/,$(THIS_ADDON)))       \
+    $(eval ADDON_PATH:=$(addprefix $(OF_ADDONS_PATH)/,$(THIS_ADDON)))       \
                                                                                \
     $(eval ADDON_DEPENDENCIES:=)                                               \
     $(eval ADDON_DEPENDENCIES_ESCAPED_STRING:=)                                \
@@ -239,13 +239,13 @@ define FUNC_PARSE_ADDON_CONFIG_MK
                                                                                \
     $(if                                                                       \
         $(wildcard                                                             \
-            $(PATH_OF_ADDON)/addon_config.mk                                   \
+            $(ADDON_PATH)/addon_config.mk                                   \
         ),                                                                     \
                                                                                \
         $(foreach VAR_LINE,                                                    \
             $(subst $(EMPTY_SPACE),$(ESCAPED_DELIMITER),                       \
                 $(shell                                                        \
-                    cat $(PATH_OF_ADDON)/addon_config.mk                       \
+                    cat $(ADDON_PATH)/addon_config.mk                       \
                     | tr '\n' '\t'                                             \
                 )                                                              \
             ),                                                                 \
@@ -454,7 +454,7 @@ define FUNC_PARSE_ADDON
                                                                                \
     $(eval THIS_ADDON:=$(strip $1))                                            \
                                                                                \
-    $(eval PATH_OF_ADDON:=$(addprefix $(PATH_OF_ADDONS)/,$(THIS_ADDON)))       \
+    $(eval ADDON_PATH:=$(addprefix $(OF_ADDONS_PATH)/,$(THIS_ADDON)))       \
                                                                                \
     $(call FUNC_PARSE_ADDON_CONFIG_MK,$(THIS_ADDON))                           \
                                                                                \
@@ -464,7 +464,7 @@ define FUNC_PARSE_ADDON
                                                                                \
     $(call                                                                     \
         FUNC_PARSE_ADDON_TEMPLATE_HEADER_SEARCH_PATHS,                         \
-        $(PATH_OF_ADDON)                                                       \
+        $(ADDON_PATH)                                                       \
     )                                                                          \
                                                                                \
     $(eval ORDERED_ADDON_HEADER_SEARCH_PATHS:=                                 \
@@ -480,7 +480,7 @@ define FUNC_PARSE_ADDON
                                                                                \
     $(call                                                                     \
         FUNC_PARSE_ADDON_TEMPLATE_SOURCES,                                     \
-        $(PATH_OF_ADDON)                                                       \
+        $(ADDON_PATH)                                                       \
     )                                                                          \
                                                                                \
     $(eval ORDERED_ADDON_SOURCES:=                                             \
@@ -496,7 +496,7 @@ define FUNC_PARSE_ADDON
                                                                                \
     $(call                                                                     \
         FUNC_PARSE_ADDON_TEMPLATE_LIBRARIES,                                   \
-        $(PATH_OF_ADDON)                                                       \
+        $(ADDON_PATH)                                                       \
     )                                                                          \
                                                                                \
     $(eval ORDERED_ADDON_FRAMEWORKS_FULL_PATHS :=                              \
@@ -611,7 +611,7 @@ endef
 # Addons will be compiled for a given project IF an addons.make file listing 
 # the requested addons is defined OR the platform-specific configuration file
 # has set the PLATFORM_REQUIRED_ADDONS variable.  In either case, the requested
-# addons will be validated against the addons located in the PATH_OF_ADDONS 
+# addons will be validated against the addons located in the OF_ADDONS_PATH 
 # folder.
 #
 ################################################################################
@@ -622,11 +622,11 @@ ifdef PLATFORM_REQUIRED_ADDONS
     B_PROCESS_ADDONS = $(TRUE)
 endif
 
-ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT_PATH)/*.make)),addons.make)
+ifeq ($(findstring addons.make,$(wildcard $(PROJECT_PATH)/*.make)),addons.make)
     B_PROCESS_ADDONS = $(TRUE)
 endif
 
-$(info 10238012983012983012983120983190238 $(B_PROCESS_ADDONS) $(PROJECT_ROOT_PATH))
+$(info 10238012983012983012983120983190238 $(B_PROCESS_ADDONS) $(PROJECT_PATH))
 
 ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
@@ -636,12 +636,12 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
 ################################################################################
 # ALL_INSTALLED_ADDONS
-#   Create a list of every addon installed in the PATH_OF_ADDONS directory.
+#   Create a list of every addon installed in the OF_ADDONS_PATH directory.
 #   Remove all paths to leave us with a list of addon names.
 ################################################################################
 
     ALL_INSTALLED_ADDONS :=                                                    \
-        $(subst $(PATH_OF_ADDONS)/,,$(wildcard $(PATH_OF_ADDONS)/*))
+        $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
 
 ################################################################################
 # ALL_REQUESTED_PROJECT_ADDONS (immediately assigned)
@@ -650,7 +650,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 # Steps:
 #   1. Use cat to dump the contents of the addons.make file
 #
-#       cat $(PROJECT_ROOT_PATH)/addons.make 2> /dev/null \ ...
+#       cat $(PROJECT_PATH)/addons.make 2> /dev/null \ ...
 #
 #   2. Use sed to strip out all comments beginning with #
 #       (NOTE: to escape $ in make, you must use \#)
@@ -669,7 +669,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 
     ALL_REQUESTED_PROJECT_ADDONS:=                                             \
         $(shell                                                                \
-            cat $(PROJECT_ROOT_PATH)/addons.make 2> /dev/null               \
+            cat $(PROJECT_PATH)/addons.make 2> /dev/null               \
             | sed 's/[ ]*\#.*//g'                                              \
             | sed '/^$$/d'                                                     \
         )
@@ -717,7 +717,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 ################################################################################
 # VALID_REQUESTED_PROJECT_ADDONS (immediately assigned)
 #   Compare the list of addons that we have requested to those that are
-#   located in the PATH_OF_ADDONS folder listed in ALL_INSTALLED_ADDONS
+#   located in the OF_ADDONS_PATH folder listed in ALL_INSTALLED_ADDONS
 ################################################################################
 
     VALID_REQUESTED_PROJECT_ADDONS:=                                           \
@@ -729,7 +729,7 @@ ifeq ($(B_PROCESS_ADDONS),$(TRUE))
 ################################################################################
 # INVALID_REQUESTED_PROJECT_ADDONS (immediately assigned)
 #   Compare the list of addons that we have requested to the those that are
-#   located in the PATH_OF_ADDONS folder listed in ALL_INSTALLED_ADDONS
+#   located in the OF_ADDONS_PATH folder listed in ALL_INSTALLED_ADDONS
 #
 #   If any invalid addons are found, we list them.
 #
