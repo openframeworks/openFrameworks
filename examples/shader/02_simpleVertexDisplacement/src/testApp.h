@@ -21,6 +21,4 @@ class testApp : public ofBaseApp{
 
     ofShader shader;
     ofPlanePrimitive plane;
-    bool drawWires;
-    float rotation;
 };
