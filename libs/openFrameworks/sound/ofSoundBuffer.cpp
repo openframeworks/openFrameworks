@@ -59,8 +59,6 @@ void ofSoundBuffer::setSampleRate(int rate){
 void ofSoundBuffer::resize(unsigned int samples, float val){
 	buffer.resize(samples,val);
 	checkSizeAndChannelsConsistency("resize(samples,val)");
-
-
 }
 
 void ofSoundBuffer::clear(){
@@ -150,7 +148,6 @@ void ofSoundBuffer::addTo(ofSoundBuffer & soundBuffer, unsigned int nFrames, uns
 void ofSoundBuffer::addTo(ofSoundBuffer & outBuffer, unsigned int fromFrame, bool loop) const{
 	addTo(&outBuffer[0],outBuffer.getNumFrames(),outBuffer.getNumChannels(),fromFrame,loop);
 }
-
 
 void ofSoundBuffer::copyTo(float * out, unsigned int nFrames, unsigned int outChannels,unsigned int fromFrame, bool loop) const{
 	// figure out how many frames we can copy before we need to stop or loop
@@ -243,9 +240,8 @@ void ofSoundBuffer::addTo(float * out, unsigned int nFrames, unsigned int outCha
 	}
 }
 
-
 // based on maximilian optimized for performance.
-// might loose 1 or 2 samples when it reaches the end of the buffer
+// might lose 1 or 2 samples when it reaches the end of the buffer
 void ofSoundBuffer::linearResampleTo(ofSoundBuffer & resBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop){
 	resBuffer.resize((unsigned int)numFrames*channels);
 	resBuffer.setNumChannels(channels);
@@ -272,7 +268,6 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer & resBuffer, unsigned int fro
 	for(unsigned int i=0;i<to;i++){
 		intPosition *= channels;
 		for(int j=0;j<channels;j++){
-			//*resBufferPtr++ = ((1-remainder) * buffer[intPosition+channels] +  remainder * buffer[intPosition+2*channels]);
 			a = buffer[intPosition];
 			b = buffer[intPosition+channels];
 			*resBufferPtr++ = ofLerp(a,b,remainder);
@@ -303,7 +298,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer & resBuffer, unsigned int fro
 }
 
 // based on maximilian optimized for performance.
-// might loose 1 to 3 samples when it reaches the end of the buffer
+// might lose 1 to 3 samples when it reaches the end of the buffer
 void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer & resBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop){
 	resBuffer.resize((unsigned int)numFrames*channels,0);
 	resBuffer.setNumChannels(channels);
@@ -382,7 +377,6 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer & resBuffer, unsigned int fr
 	}
 }
 
-
 void ofSoundBuffer::resampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop, InterpolationAlgorithm algorithm){
 	switch(algorithm){
 	case Linear:
@@ -458,16 +452,24 @@ float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
 	return rmsAmplitude;
 }
 
+void ofSoundBuffer::normalize(float level){
+	float maxAmplitude = 0;
+	for(unsigned i = 0; i < size(); i++) {
+		maxAmplitude = max(maxAmplitude, abs(buffer[i]));
+	}
+	float normalizationFactor = level/maxAmplitude;
+	for(unsigned i = 0; i < size(); i++) {
+		buffer[i] *= normalizationFactor;
+	}
+}
 
-void ofSoundBuffer::fillWithNoise()
-{
+void ofSoundBuffer::fillWithNoise(){
 	for ( unsigned i=0; i<size(); i++ ) {
 		buffer[i] = ofRandom(-1, 1);
 	}
 }
 
-float ofSoundBuffer::fillWithTone( float pitchHz, float phase )
-{
+float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
 	float step = TWO_PI*(pitchHz/samplerate);
 	for ( unsigned i=0; i<size()/channels; i++ ) {
 		unsigned int base = i*channels;
@@ -476,5 +478,4 @@ float ofSoundBuffer::fillWithTone( float pitchHz, float phase )
 		phase += step;
 	}
 	return phase;
-	
 }

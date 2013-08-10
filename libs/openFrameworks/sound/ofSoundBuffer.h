@@ -164,8 +164,14 @@ public:
 	float getRMSAmplitude();
 	float getRMSAmplitudeChannel(unsigned int channel);
 	
+	/// fills the buffer with random noise between -1 and 1. useful for debugging.
 	void fillWithNoise();
+	
+	/// fills the buffer with a sine wave. useful for debugging.
 	float fillWithTone( float pitchHz, float phase=0 );
+	
+	/// amplifies samples so that the maximum amplitude is equal to 'level'
+	void normalize(float level = 1);
 	
 	/// return the total number of samples in this buffer (==getNumFrames()*getNumChannels())
 	unsigned long size() const { return buffer.size(); }
@@ -181,12 +187,10 @@ public:
 	void set(float * source, unsigned int nFrames, unsigned int nChannels);
 
 	friend class ofBaseSoundStream;
-	vector<float> & getBuffer();
 protected:
 	
 	/// return the underlying buffer. careful!
-	
-	
+	vector<float> & getBuffer();
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
 	bool checkSizeAndChannelsConsistency( string function="" );  
