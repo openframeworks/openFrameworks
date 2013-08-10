@@ -4,13 +4,19 @@
 uniform mat4 modelViewProjectionMatrix;
 in vec4 position;
 
-// this is going to be passed in our program
+// the time value is passed into the shader by the OF app.
 uniform float time;
 
 
 void main()
 {
-	vec4 modifiedPosition = modelViewProjectionMatrix * position;
-	modifiedPosition.y += (sin(time + (modifiedPosition.x/100)) * 100 );
+    // the sine wave travels along the x-axis (across the screen),
+    // so we use the x coordinate of each vertex for the calculation,
+    // but we displace all the vertex along the y axis (up the screen)/
+    float displacementHeight = 100;
+    float displacementY = sin(time + (position.x / 100.0)) * displacementHeight;
+	
+    vec4 modifiedPosition = modelViewProjectionMatrix * position;
+	modifiedPosition.y += displacementY;
 	gl_Position = modifiedPosition;
 }
