@@ -4,18 +4,17 @@
 void testApp::setup(){
 	renderer1.setup("renderer1");
 	renderer2.setup("renderer2");
-	gui.setup("settings","settings.xml");
 
-	// by setting the listener before the param values
-	// the listener method will get called on gui.add
-	vSync.addListener(this,&testApp::vSyncChanged);
-	gui.add(vSync.set("vSync",true));
-	gui.add(renderer1.parameters);
-	gui.add(renderer2.parameters);
+	parameters.setName("settings");
+	parameters.add(vSync.set("vSync",true));
+	parameters.add(renderer1.parameters);
+	parameters.add(renderer2.parameters);
+
+	gui.setup(parameters);
 
 	gui.loadFromFile("settings.xml");
 
-	font.loadFont(OF_TTF_SANS,9,true,true);
+	font.loadFont("Regular",9,true,true);
 	ofEnableAlphaBlending();
 }
 
@@ -45,9 +44,12 @@ void testApp::draw(){
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 	if(key=='s'){
-		settings.serialize(renderer1.parameters);
-		settings.serialize(renderer2.parameters);
-		settings.saveFile("settings.xml");
+		settings.serialize(parameters);
+		settings.save("settings.xml");
+	}
+	if(key=='l'){
+		settings.load("settings.xml");
+		settings.deserialize(parameters);
 	}
 	if(key=='o'){
 		cout << renderer1.parameters;

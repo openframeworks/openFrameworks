@@ -37,7 +37,7 @@ void testApp::draw(){
 	
 	//apply the quaternion's rotation to the viewport and draw the sphere
 	ofRotate(angle, axis.x, axis.y, axis.z);  
-	ofSphere(0, 0, 0, 200);
+	ofDrawSphere(0, 0, 0, 200);
 	
 	ofPopMatrix();  
 }

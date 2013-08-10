@@ -28,10 +28,6 @@ public:
 
 
 	// window settings, this functions can be called from main before calling ofSetupOpenGL
-#ifdef TARGET_LINUX
-	void setWindowIcon(const string & path);
-	void setWindowIcon(const ofPixels & iconPixels);
-#endif
 	void 		setNumSamples(int samples);
 	void 		setDoubleBuffering(bool doubleBuff);
 	void 		setColorBits(int r, int g, int b);
@@ -80,6 +76,31 @@ public:
 
 	void		setVerticalSync(bool bSync);
 
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+	Display* 	getX11Display();
+	Window  	getX11Window();
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+	GLXContext 	getGLXContext();
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+	EGLDisplay 	getEGLDisplay();
+	EGLContext 	getEGLContext();
+	EGLSurface 	getEGLSurface();
+#endif
+
+#if defined(TARGET_OSX)
+	void *		getNSGLContext();
+	void *		getCocoaWindow();
+#endif
+
+#if defined(TARGET_WIN32)
+	HGLRC 		getWGLContext();
+	HWND 		getWin32Window();
+#endif
+
 private:
 	// callbacks
 	void			display(void);
@@ -93,6 +114,10 @@ private:
 	static void 	drop_cb(GLFWwindow* windowP_, const char* dropString);
 	static void 	exitApp();
 
+#ifdef TARGET_LINUX
+	void setWindowIcon(const string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
+#endif
 
 	//utils
 	int				samples;

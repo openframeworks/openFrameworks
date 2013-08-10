@@ -112,7 +112,7 @@ static void releaseFB(GLuint id){
 			glDeleteFramebuffers(1, &id);
 		}
 	}else{
-		ofLogWarning("ofFbo") << "releasing id not found, this shouldn't be happening releasing anyway";
+		ofLogWarning("ofFbo") << "releaseFB(): something's wrong here, releasing unknown frame buffer id " << id;
 		glDeleteFramebuffers(1, &id);
 	}
 }
@@ -140,7 +140,7 @@ static void releaseRB(GLuint id){
 			glDeleteRenderbuffers(1, &id);
 		}
 	}else{
-		ofLogWarning("ofFbo") << "releasing id not found, this shouldn't be happening releasing anyway";
+		ofLogWarning("ofFbo") << "releaseRB(): something's wrong here, releasing unknown render buffer id " << id;
 		glDeleteRenderbuffers(1, &id);
 	}
 }
@@ -312,10 +312,10 @@ bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	
 	if (!ofIsGLProgrammableRenderer()){
-		if(ofCheckGLExtension("GL_EXT_framebuffer_object")){
-			ofLogVerbose("ofFbo") << "FBO supported";
+		if(ofGLCheckExtension("GL_EXT_framebuffer_object")){
+			ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 		}else{
-			ofLogError("ofFbo") << "FBO not supported by this graphics card";
+			ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
 			return false;
 		}
 	}
@@ -330,10 +330,10 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(ofGetGLProgrammableRenderer() || ofCheckGLExtension("GL_OES_framebuffer_object")){
-		ofLogVerbose("ofFbo") << "FBO supported";
+	if(ofGetGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
+		ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 	}else{
-		ofLogError("ofFbo") << "FBO not supported by this graphics card";
+		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
 		return false;
 	}
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -374,7 +374,7 @@ void ofFbo::allocate(Settings _settings) {
 	if(_settings.width == 0) _settings.width = ofGetWidth();
 	if(_settings.height == 0) _settings.height = ofGetHeight();
 	if(_settings.numSamples > maxSamples() && maxSamples() > -1) {
-		ofLogWarning("ofFbo") << "clamping numSamples (" << _settings.numSamples << ") to maxSamples (" << maxSamples() << ")";
+		ofLogWarning("ofFbo") << "allocate(): clamping numSamples " << _settings.numSamples << " to maxSamples " << maxSamples() << " for frame buffer object" << fbo;
 		_settings.numSamples = maxSamples();
 	}
 	settings = _settings;
@@ -387,7 +387,7 @@ void ofFbo::allocate(Settings _settings) {
 	bind();
 
 	if(settings.depthStencilAsTexture && settings.numSamples){
-		ofLogWarning("ofFbo") << "multisampling not supported with depth as texture, setting 0 samples";
+		ofLogWarning("ofFbo") << "allocate(): multisampling not supported with depthStencilAsTexture, setting 0 samples for frame buffer object " << fbo;
 		settings.numSamples = 0;
 	}
 
@@ -399,7 +399,7 @@ void ofFbo::allocate(Settings _settings) {
 	}
     if( settings.depthStencilAsTexture ){
         settings.depthStencilAsTexture = false;
-        ofLogWarning("ofFbo") << "ofFbo::Settings depthStencilAsTexture is not available for iOS" << endl;
+        ofLogWarning("ofFbo") << "allocate(): depthStencilAsTexture is not available for iOS";
     }
 #endif
     
@@ -460,7 +460,7 @@ void ofFbo::allocate(Settings _settings) {
 	#else
 		fboTextures = fbo;
 		if(settings.numSamples){
-			ofLogWarning("ofFbo") << "multisampling not supported in opengles";
+			ofLogWarning("ofFbo") << "allocate(): multisampling not supported in OpenGL ES";
 		}
 	#endif
 
@@ -472,7 +472,7 @@ void ofFbo::allocate(Settings _settings) {
 		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
 	}
 	else {
-		ofLogWarning("ofFbo") << "no color buffers specified";
+		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
 	}
 
 
@@ -519,7 +519,6 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 
-	ofLogVerbose() << "framebuffertexture2d";
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	textures.push_back(tex);
 	
@@ -620,7 +619,7 @@ void ofFbo::setActiveDrawBuffer(int i){
         GLenum e = GL_COLOR_ATTACHMENT0 + i;
         glDrawBuffer(e);
     }else{
-        ofLogWarning("ofFbo") << "trying to activate texture " << i << " for drawing that is out of the range (0->" << getNumTextures() << ") of allocated textures for this fbo.";
+		ofLogWarning("ofFbo") << "setActiveDrawBuffer(): fbo " << fbo << " couldn't set texture " << i << ", only " << getNumTextures() << "allocated";
     }
 #endif
 }
@@ -635,7 +634,7 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
             GLenum e = GL_COLOR_ATTACHMENT0 + id;
             attachments.push_back(e);
         }else{
-            ofLogWarning("ofFbo") << "trying to activate texture " << id << " for drawing that is out of the range (0->" << getNumTextures() << ") of allocated textures for this fbo.";
+            ofLogWarning("ofFbo") << "setActiveDrawBuffers(): fbo " << fbo << " couldn't set texture " << i << ", only " << getNumTextures() << "allocated";
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
@@ -651,7 +650,7 @@ void ofFbo::activateAllDrawBuffers(){
             GLenum e = GL_COLOR_ATTACHMENT0 + i;
             attachments.push_back(e);
         }else{
-            ofLogWarning("ofFbo") << "trying to activate texture " << i << " for drawing that is out of the range (0->" << getNumTextures() << ") of allocated textures for this fbo.";
+            ofLogWarning("ofFbo") << "activateAllDrawBuffers(): fbo " << fbo << " couldn't set texture " << i << ", only " << getNumTextures() << "allocated";
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
@@ -675,19 +674,10 @@ ofTexture& ofFbo::getTextureReference(){
 
 ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
 	updateTexture(attachmentPoint);
-	ofTexture & ref = textures[attachmentPoint];
-
-	//TODO: this should be cached!!!!
-    if( ref.texData.textureTarget == GL_TEXTURE_2D ){
-        ref.texData.tex_t = ofMap(ref.getWidth(), 0, ofNextPow2(ref.getWidth()), 0, 1, true);
-        ref.texData.tex_u = ofMap(ref.getHeight(), 0, ofNextPow2(ref.getHeight()), 0, 1, true);
-    }else{
-    	ref.texData.tex_t = ref.getWidth();
-    	ref.texData.tex_u = ref.getHeight();
-    }
     
-    return ref;
+    return textures[attachmentPoint];
 }
+
 void ofFbo::setAnchorPercent(float xPct, float yPct){
 	getTextureReference().setAnchorPercent(xPct, yPct);
 }
@@ -699,7 +689,6 @@ void ofFbo::setAnchorPoint(float x, float y){
 void ofFbo::resetAnchor(){
 	getTextureReference().resetAnchor();
 }
-
 
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
 	if(!bIsAllocated) return;
@@ -849,7 +838,7 @@ bool ofFbo::checkStatus() {
 
 ofTexture & ofFbo::getDepthTexture(){
 	if(!settings.depthStencilAsTexture){
-		ofLogError("ofFbo") << "fbo not allocated with depthAsTexture";
+		ofLogError("ofFbo") << "getDepthTexture(): frame buffer object " << fbo << " not allocated with depthStencilAsTexture";
 	}
 	return depthBufferTex;
 }

@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFANDROIDUTILS_H_
-#define OFANDROIDUTILS_H_
+#pragma once
 
 #include <jni.h>
 #include "ofxAndroidApp.h"
@@ -79,4 +78,3 @@ public:
 };
 
 ofxAndroidEventsClass & ofxAndroidEvents();
-#endif /* OFANDROIDUTILS_H_ */

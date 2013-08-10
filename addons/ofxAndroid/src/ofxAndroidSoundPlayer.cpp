@@ -6,27 +6,27 @@
 ofxAndroidSoundPlayer::ofxAndroidSoundPlayer(){
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "constructor: failed to get environment using GetEnv()";
 		return;
 	}
 	jclass localClass = env->FindClass("cc/openframeworks/OFAndroidSoundPlayer");
 	javaClass = (jclass) env->NewGlobalRef(localClass);
 
 	if(!javaClass){
-		ofLog(OF_LOG_ERROR,"Failed to get the java class for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "constructor: couldn't get java class for SoundPlayer";
 		return;
 	}
 
 
 	jmethodID constructor = env->GetMethodID(javaClass,"<init>","()V");
 	if(!constructor){
-		ofLog(OF_LOG_ERROR,"Failed to get the java constructor for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "constructor: couldn't get java constructor for SoundPlayer";
 		return;
 	}
 
 	javaSoundPlayer = env->NewObject(javaClass,constructor);
 	if(!javaSoundPlayer){
-		ofLog(OF_LOG_ERROR,"Failed to create java SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "constructor: couldn't create java SoundPlayer";
 		return;
 	}
 
@@ -44,14 +44,14 @@ ofxAndroidSoundPlayer::~ofxAndroidSoundPlayer(){
 //------------------------------------------------------------
 bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot load sound, java soundPlayer object not created";
+		ofLogError("ofxAndroidSoundPlayer") << "loadSound(): java SoundPlayer not loaded";
 		return false;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaLoadMethod = env->GetMethodID(javaClass,"loadSound","(Ljava/lang/String;Z)V");
 	if(!javaLoadMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java loadSound for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "loadSound(): couldn't get java loadSound for SoundPlayer";
 		return false;
 	}
 
@@ -64,17 +64,18 @@ bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::unloadSound(){
 	if(!javaSoundPlayer){
+		ofLogError("ofxAndroidSoundPlayer") << "unloadSound(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "unloadSound(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaUnloadMethod = env->GetMethodID(javaClass,"unloadSound","()V");
 	if(!javaUnloadMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java unloadSound for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "unloadSound(): couldn't get java unloadSound for SoundPlayer";
 		return;
 	}
 
@@ -84,18 +85,18 @@ void ofxAndroidSoundPlayer::unloadSound(){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::play(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot play on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "play(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "play(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaPlayMethod = env->GetMethodID(javaClass,"play","()V");
 	if(!javaPlayMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java play for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "play(): couldn't get java play for SoundPlayer";
 		return;
 	}
 
@@ -106,18 +107,18 @@ void ofxAndroidSoundPlayer::play(){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::stop(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot stop on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "stop(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "stop(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaStopMethod = env->GetMethodID(javaClass,"stop","()V");
 	if(!javaStopMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java play for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "stop(): couldn't get java play for SoundPlayer";
 		return;
 	}
 
@@ -128,18 +129,18 @@ void ofxAndroidSoundPlayer::stop(){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setVolume(float vol){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set volume on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setVolume(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setVolume(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"setVolume","(F)V");
 	if(!javaVolumeMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setVolume for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setVolume(): couldn't get java setVolume for SoundPlayer";
 		return;
 	}
 
@@ -150,18 +151,18 @@ void ofxAndroidSoundPlayer::setVolume(float vol){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setPan(float vol){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set pan on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setPan(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setPan(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaPanMethod = env->GetMethodID(javaClass,"setPan","(F)V");
 	if(!javaPanMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setPan for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setPan(): couldn't get java setPan for SoundPlayer";
 		return;
 	}
 
@@ -172,18 +173,18 @@ void ofxAndroidSoundPlayer::setPan(float vol){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setSpeed(float spd){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set spped on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setSpeed(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setSpeed(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaSpeedMethod = env->GetMethodID(javaClass,"setSpeed","(F)V");
 	if(!javaSpeedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setSpeed for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setSpeed(): couldn't get java setSpeed for SoundPlayer";
 		return;
 	}
 
@@ -194,18 +195,18 @@ void ofxAndroidSoundPlayer::setSpeed(float spd){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setPaused(bool bP){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set pause on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setPaused(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setPaused(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaPausedMethod = env->GetMethodID(javaClass,"setPaused","(Z)V");
 	if(!javaPausedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setPaused for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setPaused(): couldn't get java setPaused for SoundPlayer";
 		return;
 	}
 
@@ -216,18 +217,18 @@ void ofxAndroidSoundPlayer::setPaused(bool bP){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setLoop(bool bLp){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set loop on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setLoop(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setLoop(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaLoopMethod = env->GetMethodID(javaClass,"setLoop","(Z)V");
 	if(!javaLoopMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setLoop for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setLoop(): couldn't get java setLoop for SoundPlayer";
 		return;
 	}
 
@@ -238,18 +239,18 @@ void ofxAndroidSoundPlayer::setLoop(bool bLp){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setMultiPlay(bool bMp){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set multiplay on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setMultiPlay(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setMultiPlay(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaMultiplayMethod = env->GetMethodID(javaClass,"setMultiPlay","(Z)V");
 	if(!javaMultiplayMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setMultiPlay for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setMultiPlay(): couldn't get java setMultiPlay for SoundPlayer";
 		return;
 	}
 
@@ -260,18 +261,18 @@ void ofxAndroidSoundPlayer::setMultiPlay(bool bMp){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setPosition(float pct){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set position on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setPosition(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setPosition(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaPositionMethod = env->GetMethodID(javaClass,"setPosition","(F)V");
 	if(!javaPositionMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setPosition for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setPosition(): couldn't get java setPosition for SoundPlayer";
 		return;
 	}
 
@@ -281,18 +282,18 @@ void ofxAndroidSoundPlayer::setPosition(float pct){
 //------------------------------------------------------------
 void ofxAndroidSoundPlayer::setPositionMS(int ms){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot set positionMS on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "setPositionMS(): java SoundPlayer not loaded";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "setPositionMS(): couldn't get environment using GetEnv()";
 		return;
 	}
 
 	jmethodID javaPositionMethod = env->GetMethodID(javaClass,"setPositionMS","(I)V");
 	if(!javaPositionMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java setPositionMS for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "setPositionMS(): couldn't get java setPositionMS for SoundPlayer";
 		return;
 	}
 
@@ -303,18 +304,18 @@ void ofxAndroidSoundPlayer::setPositionMS(int ms){
 //------------------------------------------------------------
 float ofxAndroidSoundPlayer::getPosition(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot query position on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "getPosition(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "getPosition(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaPositionMethod = env->GetMethodID(javaClass,"getPosition","()F");
 	if(!javaPositionMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getPosition for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "getPosition(): couldn't get java getPosition for SoundPlayer";
 		return 0;
 	}
 
@@ -324,18 +325,18 @@ float ofxAndroidSoundPlayer::getPosition(){
 //------------------------------------------------------------
 int ofxAndroidSoundPlayer::getPositionMS(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot query positionMS on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "getPositionMS(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "getPositionMS(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaPositionMethod = env->GetMethodID(javaClass,"getPositionMS","()I");
 	if(!javaPositionMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getPositionMS for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "getPositionMS(): couldn't get java getPositionMS for SoundPlayer";
 		return 0;
 	}
 
@@ -346,18 +347,18 @@ int ofxAndroidSoundPlayer::getPositionMS(){
 //------------------------------------------------------------
 bool ofxAndroidSoundPlayer::getIsPlaying(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot query playing on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "getIsPlaying(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "getIsPlaying(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaIsPlayingMethod = env->GetMethodID(javaClass,"getIsPlaying","()Z");
 	if(!javaIsPlayingMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getIsPlaying for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "getIsPlaying(): couldn't get java getIsPlaying for SoundPlayer";
 		return 0;
 	}
 
@@ -368,18 +369,18 @@ bool ofxAndroidSoundPlayer::getIsPlaying(){
 //------------------------------------------------------------
 float ofxAndroidSoundPlayer::getSpeed(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot query speed on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "getSpeed(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "getSpeed(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaSpeedMethod = env->GetMethodID(javaClass,"getSpeed","()F");
 	if(!javaSpeedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getSpeed for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "getSpeed(): couldn't get java getSpeed for SoundPlayer";
 		return 0;
 	}
 
@@ -390,18 +391,18 @@ float ofxAndroidSoundPlayer::getSpeed(){
 //------------------------------------------------------------
 float ofxAndroidSoundPlayer::getPan(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot query pan on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "getPan(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "getPan(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaPanMethod = env->GetMethodID(javaClass,"getPan","()F");
 	if(!javaPanMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getPan for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "getPan(): couldn't get java getPan for SoundPlayer";
 		return 0;
 	}
 
@@ -412,18 +413,18 @@ float ofxAndroidSoundPlayer::getPan(){
 //------------------------------------------------------------
 bool ofxAndroidSoundPlayer::getIsPaused(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot query paused on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "getIsPaused(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "getIsPaused(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaPausedMethod = env->GetMethodID(javaClass,"getIsPaused","()Z");
 	if(!javaPausedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getIsPaused for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "getIsPaused(): couldn't get java getIsPaused for SoundPlayer";
 		return 0;
 	}
 
@@ -433,18 +434,18 @@ bool ofxAndroidSoundPlayer::getIsPaused(){
 
 float ofxAndroidSoundPlayer::getVolume(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot get volume on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "getVolume(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "getVolume(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"getVolume","(V)F");
 	if(!javaVolumeMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java getVolume for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "getVolume(): couldn't get java getVolume for SoundPlayer";
 		return 0;
 	}
 
@@ -454,18 +455,18 @@ float ofxAndroidSoundPlayer::getVolume(){
 
 bool ofxAndroidSoundPlayer::isLoaded(){
 	if(!javaSoundPlayer){
-		ofLogError() << "cannot get loaded state on an unloaded sound player";
+		ofLogError("ofxAndroidSoundPlayer") << "isLoaded(): java SoundPlayer not loaded";
 		return 0;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundPlayer") << "isLoaded(): couldn't get environment using GetEnv()";
 		return 0;
 	}
 
 	jmethodID javaIsLoadedMethod = env->GetMethodID(javaClass,"isLoaded","(V)Z");
 	if(!javaIsLoadedMethod){
-		ofLog(OF_LOG_ERROR,"Failed to get the java isLoaded for SoundPlayer");
+		ofLogError("ofxAndroidSoundPlayer") << "isLoaded(): couldn't get java isLoaded for SoundPlayer";
 		return 0;
 	}
 

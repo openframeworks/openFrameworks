@@ -159,59 +159,58 @@ void ofVboMesh::updateVbo(){
 			if(getNumVertices()==0){
 				vbo.clearVertices();
 				vboNumVerts = getNumVertices();
-			}else if(vboNumVerts!=getNumVertices()){
+			}else if(vboNumVerts<getNumVertices()){
 				vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
 				vboNumVerts = getNumVertices();
 			}else{
 				vbo.updateVertexData(getVerticesPointer(),getNumVertices());
 			}
 		}
+
 		if(haveColorsChanged()){
 			if(getNumColors()==0){
 				vbo.clearColors();
 				vboNumColors = getNumColors();
-			}else if(vboNumColors!=getNumColors()){
+			}else if(vboNumColors<getNumColors()){
 				vbo.setColorData(getColorsPointer(),getNumColors(),usage);
 				vboNumColors = getNumColors();
 			}else{
-				vbo.enableColors();
 				vbo.updateColorData(getColorsPointer(),getNumColors());
-
 			}
 		}
+
 		if(haveNormalsChanged()){
 			if(getNumNormals()==0){
 				vbo.clearNormals();
 				vboNumNormals = getNumNormals();
-			}else if(vboNumNormals!=getNumNormals()){
+			}else if(vboNumNormals<getNumNormals()){
 				vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
 				vboNumNormals = getNumNormals();
 			}else{
-				vbo.enableNormals();
 				vbo.updateNormalData(getNormalsPointer(),getNumNormals());
 			}
 		}
+
 		if(haveTexCoordsChanged()){
 			if(getNumTexCoords()==0){
 				vbo.clearTexCoords();
 				vboNumTexCoords = getNumTexCoords();
-			}else if(vboNumTexCoords!=getNumTexCoords()){
+			}else if(vboNumTexCoords<getNumTexCoords()){
 				vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
 				vboNumTexCoords = getNumTexCoords();
 			}else{
-				vbo.enableTexCoords();
 				vbo.updateTexCoordData(getTexCoordsPointer(),getNumTexCoords());
 			}
 		}
+
 		if(haveIndicesChanged()){
 			if(getNumIndices()==0){
 				vbo.clearIndices();
 				vboNumIndices = getNumIndices();
-			}else if(vboNumIndices!=getNumIndices()){
+			}else if(vboNumIndices<getNumIndices()){
 				vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
 				vboNumIndices = getNumIndices();
 			}else{
-				vbo.enableIndices();
 				vbo.updateIndexData(getIndexPointer(),getNumIndices());
 			}
 		}

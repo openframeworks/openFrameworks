@@ -73,6 +73,15 @@ void testApp::setup(){
     ofClear(0, 0, 0, 255);
     renderFBO.end();
 
+
+    mesh.setMode(OF_PRIMITIVE_POINTS);
+    for(int x = 0; x < textureRes; x++){
+        for(int y = 0; y < textureRes; y++){
+            mesh.addVertex(ofVec3f(x,y));
+            mesh.addTexCoord(ofVec2f(x, y));
+        }
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -152,14 +161,8 @@ void testApp::update(){
     ofPushStyle();
     ofEnableBlendMode( OF_BLENDMODE_ADD );
     ofSetColor(255);
-    
-    glBegin( GL_POINTS );
-    for(int x = 0; x < textureRes; x++){
-        for(int y = 0; y < textureRes; y++){
-            glVertex2d(x,y);
-            glTexCoord2i(x, y);
-        }
-    }
+
+    mesh.draw();
     
     ofDisableBlendMode();
     glEnd();

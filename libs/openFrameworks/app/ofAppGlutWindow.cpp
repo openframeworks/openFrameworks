@@ -20,6 +20,7 @@
 	#include <GL/glut.h>
 	#include "ofIcon.h"
 	#include "ofImage.h"
+	#include <X11/Xatom.h>
 #endif
 
 void ofGLReadyCallback();
@@ -69,7 +70,7 @@ void HandleFiles(WPARAM wParam)
 
 	POINT pt;
 	DragQueryPoint(hDrop, &pt);
-	//printf("%i %i \n", pt.x, pt.y);
+	//ofLogNotice("ofAppGlutWindow") << "drag point: " << pt.x << pt.y;
 
 	ofDragInfo info;
 	info.position.x = pt.x;
@@ -269,7 +270,7 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
     	glutGameModeString(gameStr);
 
     	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
-    		ofLog(OF_LOG_ERROR,"game mode error: selected format (%s) not available \n", gameStr);
+    		ofLogError("ofAppGlutWindow") << "setupOpenGL(): selected game mode format " << gameStr << " not available";
     	}
     	// start fullscreen game mode
     	glutEnterGameMode();
@@ -341,58 +342,21 @@ void ofAppGlutWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
 	Display *m_display = glXGetCurrentDisplay();
 	GLXDrawable m_window = glXGetCurrentDrawable();
-	int attributes[40];
-	int i=0;
-	attributes[i++] = GLX_RGBA;
-	attributes[i++] = GLX_DOUBLEBUFFER;
-	attributes[i++] = GLX_RED_SIZE; attributes[i++] = 1;
-	attributes[i++] = GLX_BLUE_SIZE; attributes[i++] = 1;
-	attributes[i++] = GLX_GREEN_SIZE; attributes[i++] = 1;
-	attributes[i++] = GLX_DEPTH_SIZE; attributes[i++] = 1;
-	attributes[i] = None;
-
-	XVisualInfo * m_visual = glXChooseVisual(m_display, DefaultScreen(m_display), attributes);
-	XWMHints *xwmhints = XAllocWMHints();
-	XImage *x_image, *mask_image;
-	Pixmap icon_pixmap, mask_pixmap;
-	icon_pixmap = XCreatePixmap(m_display, m_window, iconPixels.getWidth(), iconPixels.getHeight(), 24);
-	mask_pixmap = XCreatePixmap(m_display, m_window, iconPixels.getHeight(), iconPixels.getHeight(), 1);
-	GC gc_icon = XCreateGC(m_display, icon_pixmap, 0, NULL);
-	GC gc_mask = XCreateGC(m_display, mask_pixmap, 0, NULL);
-
-	x_image = XCreateImage( m_display, m_visual->visual, 24, ZPixmap, 0, NULL, iconPixels.getWidth(), iconPixels.getHeight(), 32, 0 );
-	mask_image = XCreateImage( m_display, m_visual->visual, 1, ZPixmap, 0, NULL, iconPixels.getWidth(), iconPixels.getHeight(), 8, 0);
-
-	x_image->data = (char *)malloc(x_image->bytes_per_line * iconPixels.getHeight());
-	mask_image->data = (char *)malloc( mask_image->bytes_per_line * iconPixels.getHeight());
-
-	/* copy the OF icon into the XImage */
-	int px, py;
-	for (px=0; px<iconPixels.getWidth(); px++) {
-		for (py=0; py<iconPixels.getHeight(); py++) {
-			/* mask out pink */
-			int i = py*iconPixels.getWidth()*4+px*4;
-			XPutPixel(x_image, px, py, (iconPixels[i]<<16)+(iconPixels[i+1]<<8)+iconPixels[i+2] );
-			XPutPixel(mask_image, px, py, iconPixels[i+3] );
-		}
+	iconSet = true;
+	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
+	unsigned long * buffer = new unsigned long[length];
+	buffer[0]=iconPixels.getWidth();
+	buffer[1]=iconPixels.getHeight();
+	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
+		buffer[i+2] = iconPixels[i*4+3]<<24;
+		buffer[i+2] += iconPixels[i*4]<<16;
+		buffer[i+2] += iconPixels[i*4+1]<<8;
+		buffer[i+2] += iconPixels[i*4];
 	}
 
-	XPutImage(m_display, icon_pixmap, gc_icon, x_image, 0, 0, 0, 0, iconPixels.getWidth(), iconPixels.getHeight());
-	XPutImage(m_display, mask_pixmap, gc_mask, mask_image, 0, 0, 0, 0, iconPixels.getWidth(), iconPixels.getHeight());
-
-	// Now the pixmap is ok to assign to the window as a hint
-	xwmhints->icon_pixmap = icon_pixmap;
-	xwmhints->icon_mask = mask_pixmap;
-	XFreeGC (m_display, gc_icon);
-	XFreeGC (m_display, gc_mask);
-	XDestroyImage( x_image ); /* frees x_image->data too */
-	XDestroyImage( mask_image );
-
-	xwmhints->initial_state = NormalState;
-	xwmhints->input= True;
-	xwmhints->flags= InputHint|IconPixmapHint|IconMaskHint|StateHint;
-	XSetWMHints(m_display, m_window, xwmhints );
-	XFree(xwmhints);
+	XChangeProperty(m_display, m_window, XInternAtom(m_display, "_NET_WM_ICON", False), XA_CARDINAL, 32,
+						 PropModeReplace,  (const unsigned char*)buffer,  length);
+	XFlush(m_display);
 }
 #endif
 

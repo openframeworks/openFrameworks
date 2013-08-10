@@ -36,10 +36,10 @@ bool ofIsVFlipped();
 void ofSetupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
 void ofSetupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
 
-OF_DEPRECATED_MSG("ofSetupScreenPerspective doesn't accept orientation and vflip parameters anymore, use ofSetOrientation to specify them",
+OF_DEPRECATED_MSG("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
 		void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0)
 );
-OF_DEPRECATED_MSG("ofSetupScreenOrtho doesn't accept orientation and vflip parameters anymore, use ofSetOrientation to specify them",
+OF_DEPRECATED_MSG("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
 		void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1)
 );
 
@@ -123,6 +123,10 @@ void ofDisableAlphaBlending();
 // smooth 
 void ofEnableSmoothing();
 void ofDisableSmoothing();
+
+// antialiasing
+void ofEnableAntiAliasing();
+void ofDisableAntiAliasing();
 
 // drawing style - combines color, fill, blending and smoothing
 ofStyle ofGetStyle();

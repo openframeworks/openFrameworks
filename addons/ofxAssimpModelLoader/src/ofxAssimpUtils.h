@@ -79,7 +79,7 @@ static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper *
     
 	for (int i=0; i <(int) aim->mNumFaces;i++){
 		if(aim->mFaces[i].mNumIndices>3){
-			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
+			ofLogWarning("ofxAssimpUtils") << "aiMeshToOfMesh(): non triangular face found: model face " << i;
 		}
 		for (int j=0; j<(int)aim->mFaces[i].mNumIndices; j++){
 			ofm.addIndex(aim->mFaces[i].mIndices[j]);
