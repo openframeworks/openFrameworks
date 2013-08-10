@@ -15,7 +15,6 @@
 #include "ofThread.h"
 #include "ofSoundFile.h"
 #include "ofSoundStream.h"
-#include "ofSoundMixer.h"
 #include "ofEvents.h"
 
 class ofBasicSoundPlayer: public ofBaseSoundPlayer, public ofBaseSoundOutput {

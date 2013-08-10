@@ -28,6 +28,10 @@
 		668FE69617B6142000FE3F40 /* ofBasicSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE69417B6142000FE3F40 /* ofBasicSoundPlayer.h */; };
 		668FE69917B6146F00FE3F40 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */; };
 		668FE69A17B6146F00FE3F40 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */; };
+		668FE69D17B617B600FE3F40 /* ofSoundUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */; };
+		668FE69E17B617B600FE3F40 /* ofSoundUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE69C17B617B600FE3F40 /* ofSoundUtils.h */; };
+		668FE6A117B617D700FE3F40 /* ofSoundFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69F17B617D600FE3F40 /* ofSoundFile.cpp */; };
+		668FE6A217B617D700FE3F40 /* ofSoundFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE6A017B617D600FE3F40 /* ofSoundFile.h */; };
 		67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
 		772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
 		772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
@@ -181,6 +185,10 @@
 		668FE69417B6142000FE3F40 /* ofBasicSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBasicSoundPlayer.h; sourceTree = "<group>"; };
 		668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
+		668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUtils.cpp; sourceTree = "<group>"; };
+		668FE69C17B617B600FE3F40 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
+		668FE69F17B617D600FE3F40 /* ofSoundFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundFile.cpp; sourceTree = "<group>"; };
+		668FE6A017B617D600FE3F40 /* ofSoundFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundFile.h; sourceTree = "<group>"; };
 		67D96B941651AF6D00D5242D /* ofGLUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLUtils.cpp; path = gl/ofGLUtils.cpp; sourceTree = "<group>"; };
 		772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOpenALSoundPlayer.h; sourceTree = "<group>"; };
@@ -520,6 +528,10 @@
 		E4F3BA7B12F4C4C9002D19BB /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				668FE69F17B617D600FE3F40 /* ofSoundFile.cpp */,
+				668FE6A017B617D600FE3F40 /* ofSoundFile.h */,
+				668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */,
+				668FE69C17B617B600FE3F40 /* ofSoundUtils.h */,
 				668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */,
 				668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */,
 				668FE69317B6142000FE3F40 /* ofBasicSoundPlayer.cpp */,
@@ -715,6 +727,8 @@
 				27DEA3121796F578000A9E90 /* ofXml.h in Headers */,
 				668FE69617B6142000FE3F40 /* ofBasicSoundPlayer.h in Headers */,
 				668FE69A17B6146F00FE3F40 /* ofSoundBuffer.h in Headers */,
+				668FE69E17B617B600FE3F40 /* ofSoundUtils.h in Headers */,
+				668FE6A217B617D700FE3F40 /* ofSoundFile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -839,6 +853,8 @@
 				27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */,
 				668FE69517B6142000FE3F40 /* ofBasicSoundPlayer.cpp in Sources */,
 				668FE69917B6146F00FE3F40 /* ofSoundBuffer.cpp in Sources */,
+				668FE69D17B617B600FE3F40 /* ofSoundUtils.cpp in Sources */,
+				668FE6A117B617D700FE3F40 /* ofSoundFile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
