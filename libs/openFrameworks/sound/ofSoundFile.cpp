@@ -25,6 +25,7 @@ bool ofSaveSound(ofSoundBuffer &buff,  string path){
     return false;
 }
 //--------------------------------------------------------------
+
 #ifdef OF_USING_MPG123
 bool ofSoundFile::mpg123Inited = false;
 #endif
@@ -48,6 +49,7 @@ ofSoundFile::ofSoundFile() {
 #endif
 	close();
 }
+
 //--------------------------------------------------------------
 ofSoundFile::ofSoundFile(string path) {
     ofSoundFile();
@@ -61,7 +63,6 @@ ofSoundFile::~ofSoundFile() {
 //--------------------------------------------------------------
 bool ofSoundFile::loadSound(string _path){
  	path = ofToDataPath(_path);
-    
 	bool result = false;
 	if(ofFilePath::getFileExt(path)=="mp3"){
         bCompressed=true;

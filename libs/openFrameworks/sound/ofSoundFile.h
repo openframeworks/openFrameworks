@@ -37,13 +37,13 @@ enum ofID3Tag{
 };
 
 bool ofLoadSound(ofSoundBuffer &buff, string path);
-
 bool ofSaveSound(ofSoundBuffer &buff,  string path);
 
 class ofSoundFile {
 public:
 	ofSoundFile();
     ofSoundFile(string path);
+
 	virtual ~ofSoundFile();
 
 	bool open(string path);
@@ -57,7 +57,6 @@ public:
 	bool readTo(ofSoundBuffer & buffer, unsigned int samples=0);//roy: this method name is a bit confusing. I'd rather change it.
 	/// seek to the requested sample index
 	bool seekTo(unsigned int sample);
-
 
 	int getNumChannels();
 	unsigned long getDuration(); // millisecs
@@ -78,8 +77,8 @@ private:
 	bool mpg123Open(string path);
 	bool ladOpen(string path);
 	
-
-
+	void initDecodeLib();
+	
 #ifdef OF_USING_SNDFILE
 	// soundfilelib info
 	SNDFILE* sndFile;
@@ -97,7 +96,6 @@ private:
 #ifdef OF_USING_LAD
 	AudioDecoder* audioDecoder;
 #endif
-
 
 	// common info
 	int channels;

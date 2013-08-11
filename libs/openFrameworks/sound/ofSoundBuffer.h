@@ -197,9 +197,7 @@ protected:
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
 	bool checkSizeAndChannelsConsistency( string function="" );  
-	
-	void linearResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
-	void hermiteResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
+
 	vector<float> buffer;
 	int channels;
 	int samplerate;
