@@ -242,7 +242,7 @@ void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
 
 	tex.clear();
 	bUseTexture = nonConst.isUsingTexture();
-	if (bUseTexture == true){
+	if (bUseTexture == true && nonConst.getTextureReference().isAllocated()){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 

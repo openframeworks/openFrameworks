@@ -25,7 +25,7 @@ void main()
 	vec4 modifiedPosition = modelViewProjectionMatrix * position;
 	modifiedPosition.y += (sin(time + (modifiedPosition.x/100)) * 100 );
 
-    varyingtexcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy *
+    varyingtexcoord = (textureMatrix * vec4(texcoord.x,texcoord.y,0,1)).xy *
         (1 + sin(time)/8);
     
 	gl_Position = modifiedPosition;
