@@ -61,6 +61,9 @@ class ofSoundMixer: public ofSoundObject{
     string getChannelLabel(int channelNumber);
     bool channelExists(int channelNumber);
     bool channelExists(string label);
+    
+     void audioOut(ofSoundBuffer &output);
+    
 protected:
     vector<ofSoundMixerChannelStrip>channels;
     float masterPan;

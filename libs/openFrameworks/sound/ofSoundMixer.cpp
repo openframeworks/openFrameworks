@@ -174,4 +174,19 @@ bool ofSoundMixer::channelExists(string label){
     return false;
 }
 
+// this pulls the audio through from earlier links in the chain
+void ofSoundMixer::audioOut(ofSoundBuffer &output) {
+	if(channels.size()>0) {
+        for(int i = 0; i < channels.size(); i++){
+            ofSoundBuffer tempBuffer;
+            tempBuffer = output;
+            channels[i].source->audioOut(tempBuffer);
+            tempBuffer*=channels[i].vol;
+            tempBuffer.stereoPan(channels[i].pan, 1 - channels[i].pan);
+            tempBuffer.addTo(output);
+        }
+	}
+}
+
+
 
