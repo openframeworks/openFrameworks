@@ -1,133 +1,86 @@
 #include "testApp.h"
 
-#define STRINGIFY(A) #A
-
 //--------------------------------------------------------------
 void testApp::setup(){
-    ofEnableAlphaBlending();
-    int camWidth 		= 320;	// try to grab at this size. 
-	int camHeight 		= 240;
-    
-    vidGrabber.setVerbose(true);
-	vidGrabber.initGrabber(camWidth,camHeight);
-    
-    fingerMovie.loadMovie("movie.mov");
-	fingerMovie.play();
-    
-    logoImg.loadImage("image.jpg");
-    multimaskImg.loadImage("mask.jpg");
-    
-    fbo.allocate(camWidth,camHeight);
-    maskFbo.allocate(camWidth,camHeight);
-    
-    //ofSetWindowShape(camWidth, camHeight*2);
-    
-    // There are 3 of ways of loading a shader:
-    //
-    //  1 - Using just the name of the shader and ledding ofShader look for .frag and .vert: 
-    //      Ex.: shader.load( "myShader");
-    //
-    //  2 - Giving the right file names for each one: 
-    //      Ex.: shader.load( "myShader.vert","myShader.frag");
-    //
-    //  3 - And the third one is passing the shader programa on a single string;
-    //      In this particular example we are using STRINGIFY which is a handy macro
-    string shaderProgram = STRINGIFY(
-                                     uniform sampler2DRect tex0;
-                                     uniform sampler2DRect tex1;
-                                     uniform sampler2DRect tex2;
-                                     uniform sampler2DRect maskTex;
 
-                                     void main (void){
-                                         vec2 pos = gl_TexCoord[0].st;
-                                         
-                                         vec4 rTxt = texture2DRect(tex0, pos);
-                                         vec4 gTxt = texture2DRect(tex1, pos);
-                                         vec4 bTxt = texture2DRect(tex2, pos);
-                                         vec4 mask = texture2DRect(maskTex, pos);
-                                         
-                                         vec4 color = vec4(0,0,0,0);
-                                         color = mix(color, rTxt, mask.r );
-                                         color = mix(color, gTxt, mask.g );
-                                         color = mix(color, bTxt, mask.b );
-                                         
-                                         gl_FragColor = color;
-                                     }
-                                     );
+#ifdef TARGET_OPENGLES
+	shader.load("shadersES2/shader");
+#else
+	if(ofIsGLProgrammableRenderer()){
+		shader.load("shadersGL3/shader");
+	}else{
+		shader.load("shadersGL2/shader");
+	}
+#endif
     
-    shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram);
-    shader.linkProgram(); 
+    int camWidth = 320;
+	int camHeight = 240;
     
-    // Let's clear the FBOs
-    // otherwise it will bring some junk with it from the memory    
-    fbo.begin();
-    ofClear(0,0,0,255);
-    fbo.end();
+    camera.setVerbose(false);
+	camera.initGrabber(camWidth, camHeight);
     
-    maskFbo.begin();
-    ofClear(0,0,0,255);
-    maskFbo.end();
+    movie.loadMovie("movie.mov");
+	movie.play();
+    
+    image.loadImage("image.jpg");
+    imageMask.loadImage("mask.jpg");
+    
+    fbo.allocate(camWidth, camHeight);
+    maskFbo.allocate(camWidth, camHeight);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    vidGrabber.update();
-    fingerMovie.update();
-        
-    // This just 
-    maskFbo.begin();
-    ofClear(255, 0, 0,255);
-    multimaskImg.draw( mouseX-multimaskImg.getWidth()*0.5, 0 );
-    maskFbo.end();
-    
-    // MULTITEXTURE MIXING FBO
-    //
-    fbo.begin();
-    ofClear(0, 0, 0,255);
-    shader.begin();
-    // Pass the video texture
-    shader.setUniformTexture("tex0", vidGrabber.getTextureReference() , 1 );
-    // Pass the image texture
-    shader.setUniformTexture("tex1", logoImg, 2 );
-    // Pass the movie texture
-    shader.setUniformTexture("tex2", fingerMovie.getTextureReference() , 3 );
-    // Pass the mask texture
-    shader.setUniformTexture("maskTex", maskFbo.getTextureReference() , 4 );
-    
-    // We are using this image just as a frame where the pixels can be arrange
-    // this could be a mesh also. 
-    // Comment "shader.setUniformTexture("maskTex", maskFbo.getTextureReference() , 4 );" to se how there is two ways
-    // of passing a texture to the shader
-    // 
-    maskFbo.draw(0,0);
-    
-    shader.end();
-    fbo.end();
-
-    ofSetWindowTitle( ofToString( ofGetFrameRate()));
+    camera.update();
+    movie.update();
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofBackground(ofColor::gray);
     
-    // draw everything
+    //------------------------------------------- draw to mask fbo.
+    maskFbo.begin();
+
+    ofClear(255, 0, 0, 255);
+    
+    float imageMaskX = mouseX / (float)ofGetWidth();
+    imageMaskX = ofClamp(imageMaskX, 0, 1);
+    imageMaskX = -(imageMask.getWidth() - maskFbo.getWidth()) * imageMaskX;
+    imageMask.draw(imageMaskX, 0);
+    
+    maskFbo.end();
+    
+    //------------------------------------------- draw to final fbo.
+    fbo.begin();
+    ofClear(0, 0, 0,255);
+    
+    shader.begin();
+    shader.setUniformTexture("tex0", camera.getTextureReference(), 1);
+    shader.setUniformTexture("tex1", image, 2);
+    shader.setUniformTexture("tex2", movie.getTextureReference(), 3);
+    shader.setUniformTexture("imageMask", maskFbo.getTextureReference(), 4);
+    
+    // we are drawing this fbo so it is used just as a frame.
+    maskFbo.draw(0, 0);
+    
+    shader.end();
+    fbo.end();
+    
+    //------------------------------------------- 
     ofSetColor(255);
-    vidGrabber.draw(5,5,320,240);
+    camera.draw(5,5,320,240);
     ofSetColor(ofColor::red);
     ofDrawBitmapString("RED", 5+30, 5+30);
     
     ofSetColor(255);
-    logoImg.draw(320+10,5,320,240);
+    image.draw(320+10,5,320,240);
     ofSetColor(ofColor::green);
     ofDrawBitmapString("GREEN", 320+10+30,5+30);
-
     
     ofSetColor(255);
-    fingerMovie.draw(320*2+15,5,320,240);
+    movie.draw(320*2+15,5,320,240);
     ofSetColor(ofColor::blue);
     ofDrawBitmapString("BLUE", 320*2+5+30,5+30);
-    
     
     ofSetColor(255);
     maskFbo.draw(320+10,240+10,320,240);

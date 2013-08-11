@@ -4,11 +4,21 @@ in vec2 texCoordVarying;
 out vec4 outputColor;
 
 uniform sampler2DRect tex0;
+uniform sampler2DRect tex1;
+uniform sampler2DRect tex2;
 uniform sampler2DRect imageMask;
 
 void main()
 {
-    vec4 texel0 = texture(tex0, texCoordVarying);
-    vec4 texel1 = texture(imageMask, texCoordVarying);
-    outputColor = vec4(texel0.rgb, texel0.a * texel1.a);
+    vec4 rTxt = texture(tex0, texCoordVarying);
+    vec4 gTxt = texture(tex1, texCoordVarying);
+    vec4 bTxt = texture(tex2, texCoordVarying);
+    vec4 mask = texture(imageMask, texCoordVarying);
+    
+    vec4 color = vec4(0, 0, 0, 0);
+    color = mix(color, rTxt, mask.r);
+    color = mix(color, gTxt, mask.g);
+    color = mix(color, bTxt, mask.b);
+    
+    outputColor = color;
 }

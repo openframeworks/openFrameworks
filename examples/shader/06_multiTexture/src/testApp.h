@@ -20,13 +20,14 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-	
-    ofImage     logoImg;
-    ofImage     multimaskImg;
-    ofVideoPlayer 		fingerMovie;
-    ofVideoGrabber 		vidGrabber;
+
+	ofShader shader;
     
-    ofFbo       fbo;
-    ofFbo       maskFbo;
-    ofShader    shader;
+    ofImage image;
+    ofImage imageMask;
+    ofVideoPlayer movie;
+    ofVideoGrabber camera;
+    
+    ofFbo fbo;
+    ofFbo maskFbo;
 };
