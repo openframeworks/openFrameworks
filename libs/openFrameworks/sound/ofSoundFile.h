@@ -35,18 +35,26 @@ enum ofID3Tag{
     OF_ID3_TIME,
     OF_ID3_TRACK
 };
-//*/
+
+bool ofLoadSound(ofSoundBuffer &buff, string path);
+
+bool ofSaveSound(ofSoundBuffer &buff,  string path);
+
 class ofSoundFile {
 public:
 	ofSoundFile();
+    ofSoundFile(string path);
 	virtual ~ofSoundFile();
 
 	bool open(string path);
 	void close();
 
+    bool loadSound(string _path);
+    bool saveSound(string _path);
+    
 	/// read file to buffer. 
 	/// if samples is 0, resize the buffer to fit the entire file, otherwise just read the requested number of samples.
-	bool readTo(ofSoundBuffer & buffer, unsigned int samples=0);
+	bool readTo(ofSoundBuffer & buffer, unsigned int samples=0);//roy: this method name is a bit confusing. I'd rather change it.
 	/// seek to the requested sample index
 	bool seekTo(unsigned int sample);
 
@@ -58,6 +66,7 @@ public:
     int getBitDepth();
     bool isCompressed();
     string getID3Tag(ofID3Tag tag);
+    bool isLoaded();
     
 private:
 	
@@ -98,6 +107,7 @@ private:
 	int samplerate;
 	string path;
     bool bCompressed;
+    bool bLoaded;
 };
 
 #endif /* OFSOUNDFILE_H_ */

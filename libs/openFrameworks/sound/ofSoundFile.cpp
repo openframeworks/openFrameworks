@@ -1,4 +1,4 @@
-/*
+ /*
  * ofSoundFile.cpp
  *
  *  Created on: 25/07/2012
@@ -9,12 +9,30 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
+//--------------------------------------------------------------
+bool ofLoadSound(ofSoundBuffer &buff, string path){
+    ofSoundFile sf(path);
+    if(sf.isLoaded()){
+        sf.readTo(buff);
+        return true;
+    }else{
+        return false;
+    }
+}
+//--------------------------------------------------------------
+bool ofSaveSound(ofSoundBuffer &buff,  string path){
+    //IMPLEMENT!!!!!
+    return false;
+}
+//--------------------------------------------------------------
 #ifdef OF_USING_MPG123
 bool ofSoundFile::mpg123Inited = false;
 #endif
 
+//--------------------------------------------------------------
 ofSoundFile::ofSoundFile() {
     bCompressed =false;
+    bLoaded =  false;
 #ifdef OF_USING_SNDFILE
 	sndFile = NULL;
 #endif
@@ -30,36 +48,50 @@ ofSoundFile::ofSoundFile() {
 #endif
 	close();
 }
-
+//--------------------------------------------------------------
+ofSoundFile::ofSoundFile(string path) {
+    ofSoundFile();
+    this->loadSound(path);
+}
+//--------------------------------------------------------------
 ofSoundFile::~ofSoundFile() {
 	close();
 }
 
-
-bool ofSoundFile::open(string _path){
-	path = ofToDataPath(_path);
-
+//--------------------------------------------------------------
+bool ofSoundFile::loadSound(string _path){
+ 	path = ofToDataPath(_path);
+    
 	bool result = false;
 	if(ofFilePath::getFileExt(path)=="mp3"){
         bCompressed=true;
-		#ifdef OF_USING_MPG123
-			result = mpg123Open(path);
-		#elif defined (OF_USING_LAD)
-			result = ladOpen(path);
-		#else
-			ofLogError() << "mp3 files not supported" << endl;
-		#endif
+#ifdef OF_USING_MPG123
+        result = mpg123Open(path);
+#elif defined (OF_USING_LAD)
+        result = ladOpen(path);
+#else
+        ofLogError() << "mp3 files not supported" << endl;
+#endif
 	}else{
-		#ifdef OF_USING_LAD
-			result = ladOpen(path);
-		#else
-			result = sfOpen(path);
-		#endif
+#ifdef OF_USING_LAD
+        result = ladOpen(path);
+#else
+        result = sfOpen(path);
+#endif
 	}
 	duration = float(samples/channels) / float(samplerate);
-	return result;
+    bLoaded = result;
+	return result;   
 }
-
+//--------------------------------------------------------------
+OF_DEPRECATED_MSG("Use ofSoundFile::loadSound(string path) instead",bool ofSoundFile::open(string _path){
+    loadSound(_path));
+}
+//--------------------------------------------------------------
+bool ofSoundFile::saveSound(string path){
+ofLogWarning() << "saveSound still not implemented!";
+}
+//--------------------------------------------------------------                  
 #ifdef OF_USING_LAD
 bool ofSoundFile::ladOpen(string path){
 	audioDecoder = new AudioDecoder(ofToDataPath(path));
@@ -74,7 +106,7 @@ bool ofSoundFile::ladOpen(string path){
 }
 #endif
 
-
+//--------------------------------------------------------------
 #ifdef OF_USING_MPG123
 bool ofSoundFile::mpg123Open(string path){
 	int err;
@@ -108,7 +140,7 @@ bool ofSoundFile::mpg123Open(string path){
     bitDepth = 16; //TODO:get real bitdepth;.
 }
 #endif
-
+//--------------------------------------------------------------
 #ifdef OF_USING_SNDFILE
 bool ofSoundFile::sfOpen(string path){
 
@@ -138,7 +170,7 @@ bool ofSoundFile::sfOpen(string path){
     bitDepth = 16; //fix
 }
 #endif
-
+//--------------------------------------------------------------
 void ofSoundFile::close(){
 #ifdef OF_USING_SNDFILE
 	if(sndFile){
@@ -165,34 +197,41 @@ void ofSoundFile::close(){
 	samples = 0;
     bitDepth = 0;
 }
-
-
+//--------------------------------------------------------------
+bool ofSoundFile::isLoaded(){
+    return bLoaded;
+}
+//--------------------------------------------------------------                  
 int ofSoundFile::getNumChannels(){
 	return channels;
 }
-
+//--------------------------------------------------------------
 unsigned long ofSoundFile::getDuration(){
 	return duration*1000;
 }
-
+//--------------------------------------------------------------
 int ofSoundFile::getSampleRate(){
 	return samplerate;
 }
+//--------------------------------------------------------------                  
 unsigned long ofSoundFile::getNumSamples(){
     return samples;
 }
+//--------------------------------------------------------------                  
 int ofSoundFile::getBitDepth(){
     ofLogWarning() << "bit Depth retrival not implemented yet!";
     return bitDepth;
 }
+//--------------------------------------------------------------
 bool ofSoundFile::isCompressed(){
     return bCompressed;
 }
-string ofSoundFile::getID3Tag(ofID3Tag tag){
+//--------------------------------------------------------------
+                  string ofSoundFile::getID3Tag(ofID3Tag tag){
     ofLogWarning() << "ID3 tag not implemented yet. :(";
     return "";
 }
-
+//--------------------------------------------------------------
 bool ofSoundFile::readTo(ofSoundBuffer & buffer, unsigned int _samples){
 	buffer.setNumChannels(channels);
 	buffer.setSampleRate(samplerate);
@@ -229,7 +268,7 @@ bool ofSoundFile::readTo(ofSoundBuffer & buffer, unsigned int _samples){
 #endif
 	return false;
 }
-
+//--------------------------------------------------------------
 bool ofSoundFile::seekTo(unsigned int sample){
 	sample = min(samples,sample);
 #ifdef OF_USING_SNDFILE
@@ -246,7 +285,7 @@ bool ofSoundFile::seekTo(unsigned int sample){
 	
 	return true; //TODO: check errors
 }
-
+//--------------------------------------------------------------
 #ifdef OF_USING_SNDFILE
 bool ofSoundFile::sfReadFile(ofSoundBuffer & buffer){
 	samples_read = sf_read_float (sndFile, &buffer[0], buffer.size());
@@ -262,7 +301,7 @@ bool ofSoundFile::sfReadFile(ofSoundBuffer & buffer){
 	return true;
 }
 #endif
-
+//--------------------------------------------------------------
 #ifdef OF_USING_LAD
 bool ofSoundFile::ladReadFile(ofSoundBuffer &buffer){
 	
