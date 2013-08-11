@@ -84,12 +84,13 @@ bool ofSoundFile::loadSound(string _path){
 	return result;   
 }
 //--------------------------------------------------------------
-OF_DEPRECATED_MSG("Use ofSoundFile::loadSound(string path) instead",bool ofSoundFile::open(string _path){
-    loadSound(_path));
+bool ofSoundFile::open(string _path){
+    return loadSound(_path);
 }
 //--------------------------------------------------------------
 bool ofSoundFile::saveSound(string path){
-ofLogWarning() << "saveSound still not implemented!";
+	ofLogWarning() << "saveSound still not implemented!";
+	return false;
 }
 //--------------------------------------------------------------                  
 #ifdef OF_USING_LAD
