@@ -159,6 +159,9 @@
 		E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */; };
 		E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */; };
 		E7F985E315E0DC6A003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985E115E0DC54003869B5 /* Accelerate.framework */; };
+		EAD7A82C17B65B49007DA66D /* ofSoundObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EAD7A82A17B65B49007DA66D /* ofSoundObject.cpp */; };
+		EAD7A82D17B65B49007DA66D /* ofSoundObject.h in Headers */ = {isa = PBXBuildFile; fileRef = EAD7A82B17B65B49007DA66D /* ofSoundObject.h */; };
+		EAD7A82F17B663DC007DA66D /* ofBaseSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EAD7A82E17B663DC007DA66D /* ofBaseSoundStream.cpp */; };
 		FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */; };
 		FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */; };
 /* End PBXBuildFile section */
@@ -332,6 +335,9 @@
 		E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitPlayer.h; sourceTree = "<group>"; };
 		E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofQTKitPlayer.mm; sourceTree = "<group>"; };
 		E7F985E115E0DC54003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		EAD7A82A17B65B49007DA66D /* ofSoundObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundObject.cpp; sourceTree = "<group>"; };
+		EAD7A82B17B65B49007DA66D /* ofSoundObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundObject.h; sourceTree = "<group>"; };
+		EAD7A82E17B663DC007DA66D /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
 		FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitMovieRenderer.h; sourceTree = "<group>"; };
 		FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofQTKitMovieRenderer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -528,26 +534,29 @@
 		E4F3BA7B12F4C4C9002D19BB /* sound */ = {
 			isa = PBXGroup;
 			children = (
-				668FE69F17B617D600FE3F40 /* ofSoundFile.cpp */,
-				668FE6A017B617D600FE3F40 /* ofSoundFile.h */,
-				668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */,
-				668FE69C17B617B600FE3F40 /* ofSoundUtils.h */,
-				668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */,
-				668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */,
+				E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */,
+				EAD7A82E17B663DC007DA66D /* ofBaseSoundStream.cpp */,
+				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
 				668FE69317B6142000FE3F40 /* ofBasicSoundPlayer.cpp */,
 				668FE69417B6142000FE3F40 /* ofBasicSoundPlayer.h */,
-				E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */,
-				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
 				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
 				E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */,
 				772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */,
 				772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */,
 				E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */,
 				E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */,
+				668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */,
+				668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */,
+				668FE69F17B617D600FE3F40 /* ofSoundFile.cpp */,
+				668FE6A017B617D600FE3F40 /* ofSoundFile.h */,
+				EAD7A82A17B65B49007DA66D /* ofSoundObject.cpp */,
+				EAD7A82B17B65B49007DA66D /* ofSoundObject.h */,
 				E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */,
 				E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */,
 				E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */,
 				E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */,
+				668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */,
+				668FE69C17B617B600FE3F40 /* ofSoundUtils.h */,
 			);
 			name = sound;
 			path = ../../../openFrameworks/sound;
@@ -729,6 +738,7 @@
 				668FE69A17B6146F00FE3F40 /* ofSoundBuffer.h in Headers */,
 				668FE69E17B617B600FE3F40 /* ofSoundUtils.h in Headers */,
 				668FE6A217B617D700FE3F40 /* ofSoundFile.h in Headers */,
+				EAD7A82D17B65B49007DA66D /* ofSoundObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -855,6 +865,8 @@
 				668FE69917B6146F00FE3F40 /* ofSoundBuffer.cpp in Sources */,
 				668FE69D17B617B600FE3F40 /* ofSoundUtils.cpp in Sources */,
 				668FE6A117B617D700FE3F40 /* ofSoundFile.cpp in Sources */,
+				EAD7A82C17B65B49007DA66D /* ofSoundObject.cpp in Sources */,
+				EAD7A82F17B663DC007DA66D /* ofBaseSoundStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

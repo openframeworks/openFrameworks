@@ -31,7 +31,7 @@ class ofPASoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
-	
+		int getDeviceID() { return deviceID; }
 		
 	private:
 		long unsigned long	tickCount;

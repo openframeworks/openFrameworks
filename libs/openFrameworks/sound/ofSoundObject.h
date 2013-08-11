@@ -3,6 +3,7 @@
 
 #include "ofMain.h"
 
+
 /**
  * ofSoundObject is a node in your dsp chain. It can have one input, 
  * and one output. If it doesn't have an input, it's the beginning
@@ -22,17 +23,16 @@ public:
 
 	
 	/// This is the method you implement to process the signal from inputs to outputs.
-	virtual void process(float *in, float *out, int length, int numChannels) {
+	virtual void process(ofSoundBuffer &input, ofSoundBuffer &output) {
 		// default behaviour is pass-through.
-		memcpy(out, in, length*numChannels*sizeof(float));
+		input.copyTo(output);
 	}
-	
 	
 	
 	/// this pulls the audio through from earlier links in the chain.
 	/// you can override this to add more interesting functionality
 	/// like signal splitters, sidechains etc.
-	virtual void audioOut(float *out, int length, int numChannels);
+	virtual void audioOut(ofSoundBuffer &output);
 	
 	
 protected:
@@ -47,9 +47,8 @@ private:
 	// this lets that be set under the hood via connectTo()
 	void setInput(ofSoundObject *obj);
 	
-	// this won't be needed with ofSoundBuffer, but it's just
 	// a spare buffer to pass from one sound object to another
-	float in_[8192];
+	ofSoundBuffer workingBuffer;
 	
 };
 
@@ -61,15 +60,11 @@ private:
 class ofSoundInput: public ofBaseSoundInput, public ofSoundObject {
 public:
 	ofSoundInput();
-	// copy audio in to internal buffer - parameters will
-	// be replaced by ofSoundBuffer
-	void audioIn(float *in, int length, int numChannels);
-	void audioOut(float *out, int length, int numChannels);
+	void audioIn(ofSoundBuffer &input);
+	void audioOut(ofSoundBuffer &output);
 	
 private:
-	float *buff;
-	int length;
-	int numChannels;
+	ofSoundBuffer inputBuffer;
 };
 
 
@@ -77,9 +72,4 @@ private:
  * This class represents the output in your dsp chain.
  */
 class ofSoundOutput: public ofSoundObject {};
-
-
-
-
-
 

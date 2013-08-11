@@ -24,35 +24,39 @@ void ofSoundObject::setInput(ofSoundObject *obj) {
 
 
 // this pulls the audio through from earlier links in the chain
-void ofSoundObject::audioOut(float *out, int length, int numChannels) {
+void ofSoundObject::audioOut(ofSoundBuffer &output) {
 	if(inputObject!=NULL) {
-		inputObject->audioOut(in_, length, numChannels);
+		
+		if(workingBuffer.size()!=output.size()) {
+			workingBuffer.resize(output.size());
+		}
+		
+		inputObject->audioOut(workingBuffer);
 	}
-	this->process(in_, out, length, numChannels);
+	this->process(workingBuffer, output);
 }
+
 
 
 
 ofSoundInput::ofSoundInput() {
-	buff = NULL;
+}
+
+	
+// copy audio in to internal buffer
+void ofSoundInput::audioIn(ofSoundBuffer &input) {
+	if(inputBuffer.size()!=input.size()) {
+		inputBuffer.resize(input.size());
+	}
+	input.copyTo(inputBuffer);
 }
 	
-// copy audio in to internal buffer - parameters will
-// be replaced by ofSoundBuffer
-void ofSoundInput::audioIn(float *in, int length, int numChannels) {
-	if(buff==NULL) buff = new float[length * numChannels];
-	memcpy(buff, in, length*sizeof(float)*numChannels);
-	this->length = length;
-	this->numChannels = numChannels;
-}
-	
-void ofSoundInput::audioOut(float *out, int length, int numChannels) {
+void ofSoundInput::audioOut(ofSoundBuffer &output) {
 	
 	// there should be an ofLogWarning() here to say
 	// that the number of channels doesn't match
-	assert(length==this->length);
-	assert(numChannels==this->numChannels);
-	
-	
-	memcpy(out, buff, length * numChannels * sizeof(float));
+	assert(output.getNumFrames()==inputBuffer.getNumFrames());
+	inputBuffer.copyTo(output);
 }
+
+
