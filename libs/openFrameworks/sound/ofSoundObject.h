@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "ofMain.h"
-
+//#include "ofMain.h"
+#include "ofBaseTypes.h"
 
 /**
  * ofSoundObject is a node in your dsp chain. It can have one input, 

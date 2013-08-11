@@ -3,8 +3,7 @@
 //  openFrameworksLib
 //
 //  Created by Roy Macdonald on 8/11/13.
-//  Copyright (c) 2013 micasa. All rights reserved.
-//
+//  Of dev con '13 YCAM
 
 #ifndef openFrameworksLib_ofSoundMixer_h
 #define openFrameworksLib_ofSoundMixer_h
@@ -13,21 +12,19 @@
 
 class ofSoundMixerChannelStrip{//if you want to have a fancier mixer you can extend this class
 public:
-    ofSoundMixerChannelStrip();
+    ofSoundMixerChannelStrip(){}
     ofSoundMixerChannelStrip(string lbl ="",float vl =1.0f, float pn = 0.5f):vol(vl), pan(pn), label(lbl){}
     ~ofSoundMixerChannelStrip(){}
     
     float vol, pan;
-    ofBaseSoundOutput *source;
+    ofSoundObject * source;
     string label;
 };
 
 class ofSoundMixer: public ofSoundObject{
     ofSoundMixer();
     ~ofSoundMixer();
-    //void connectTo(ofBaseSoundOutput &output);
-    //void disconnect();
-    ofSoundMixerChannelStrip& add(ofBaseSoundOutput &newSoundSource, string label ="");
+    ofSoundMixerChannelStrip& add(ofSoundObject &newSoundSource, string label ="");
     ofSoundMixerChannelStrip& newChannel(string label);
     //volume range 0.0 to 1.0
     float getChannelVolume(int channelNumber);

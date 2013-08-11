@@ -1,18 +1,10 @@
 
-//
-//  ofSoundMixer.cpp
-//  openFrameworksLib
-//
-//  Created by Roy Macdonald on 8/11/13.
-//  Of dev con '13 YCAM
-//
-
 #include "ofSoundMixer.h"
 ofSoundMixer::ofSoundMixer(){}
 ofSoundMixer::~ofSoundMixer(){}
 //void connectTo(ofBaseSoundOutput &output);
 //void disconnect();
-ofSoundMixerChannelStrip& ofSoundMixer::add(ofBaseSoundOutput &newSoundSource, string label){
+ofSoundMixerChannelStrip& ofSoundMixer::add(ofSoundObject &newSoundSource, string label){
     newChannel(label);
     channels.back().source = &newSoundSource;
     return channels.back();
