@@ -37,5 +37,5 @@ void main()
 	}
 
 	// finally set the pos to be that actual position rendered
-	gl_Position = pos * modelViewProjectionMatrix;
+	gl_Position = modelViewProjectionMatrix * pos;
 }
