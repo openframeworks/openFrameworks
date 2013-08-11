@@ -449,6 +449,8 @@
 				<string>NO</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.6</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -503,6 +505,8 @@
 				<string>NO</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.6</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
