@@ -13,20 +13,17 @@ in vec4 normal;
 in vec2 texcoord;
 // this is the end of the default functionality
 
-// this is something we're creating
+// this is something we're creating for this shader
 out vec2 varyingtexcoord;
 
-// this is going to be passed in our program
-uniform float time;
-
+// this is coming from our C++ code
+uniform float mouseX;
 
 void main()
 {
-	vec4 modifiedPosition = modelViewProjectionMatrix * position;
-	modifiedPosition.y += (sin(time + (modifiedPosition.x/100)) * 100 );
+    // here we move the texture coordinates
+    varyingtexcoord = vec2(texcoord.x + mouseX, texcoord.y);
 
-    varyingtexcoord = (textureMatrix * vec4(texcoord.x,texcoord.y,0,1)).xy *
-        (1 + sin(time)/8);
-    
-	gl_Position = modifiedPosition;
+    // send the vertices to the fragment shader
+	gl_Position = modelViewProjectionMatrix * position;
 }
