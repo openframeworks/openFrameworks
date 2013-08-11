@@ -182,9 +182,10 @@ function createPackage {
         rm -Rf gl/multiLightExample
         rm -Rf gl/multiTextureShaderExample
         rm -Rf gl/pointsAsTextures
-        rm -Rf gl/modelNoiseExample
         rm -Rf gl/gpuParticleSystemExample
         rm -Rf gl/vboMeshDrawInstancedExample
+        
+        rm -Rf 3d/modelNoiseExample
     fi
     
     if [ "$pkg_platform" == "linuxarmv6l" ]; then
