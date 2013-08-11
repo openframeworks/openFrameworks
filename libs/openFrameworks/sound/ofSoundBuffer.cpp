@@ -252,7 +252,7 @@ void ofSoundBuffer::resampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, u
 
 void ofSoundBuffer::resample(float speed, InterpolationAlgorithm algorithm){
 	ofSoundBuffer resampled;
-	resampleTo(resampled,0,getNumFrames(),speed,false,algorithm);
+	resampleTo(resampled, 0, ceilf(getNumFrames() / speed), speed, false, algorithm);
 	*this = resampled;
 }
 

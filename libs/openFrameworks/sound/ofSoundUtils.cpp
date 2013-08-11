@@ -6,6 +6,22 @@
  */
 
 #include "ofSoundUtils.h"
+#include "ofLog.h"
+
+bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &out, unsigned int numFrames) {
+	unsigned int totalOutBufferSize = numFrames * in.getNumChannels();
+	
+	if(totalOutBufferSize < out.getBuffer().max_size()) {
+		out.resize(totalOutBufferSize,0);
+	} else {
+		ofLogError("ofSoundUtils") << "resampling would create a buffer size of " << totalOutBufferSize << " (too large for std::vector)";
+		return false;
+	}
+	
+	out.setNumChannels(in.getNumChannels());
+	out.setSampleRate(in.getSampleRate());
+	return true;
+}
 
 // based on maximilian optimized for performance.
 // might lose 1 or 2 samples when it reaches the end of the buffer
@@ -13,10 +29,12 @@ void ofResampleLinear(const ofSoundBuffer &inBuffer, ofSoundBuffer &outBuffer, u
 	
 	int inChannels = inBuffer.getNumChannels();
 	unsigned long inFrames = inBuffer.getNumFrames();
+	bool bufferReady = prepareBufferForResampling(inBuffer, outBuffer, numFrames);
 	
-	outBuffer.resize((unsigned int)numFrames * inBuffer.getNumChannels());
-	outBuffer.setNumChannels(inChannels);
-	outBuffer.setSampleRate(inBuffer.getSampleRate());
+	if(!bufferReady) {
+		outBuffer = inBuffer;
+		return;
+	}
 	
 	unsigned int start = fromFrame;
 	unsigned int end = start*inChannels + double(numFrames*inChannels)*speed;
@@ -25,17 +43,18 @@ void ofResampleLinear(const ofSoundBuffer &inBuffer, ofSoundBuffer &outBuffer, u
 	float increment = speed;
 	unsigned int copySize = inChannels*sizeof(float);
 	unsigned int to;
-	float a,b;
 	
 	if(end<inBuffer.size()-2*inChannels){
 		to = numFrames;
 	}else if(fromFrame+2>inFrames){
 		to = 0;
 	}else{
-		to = float(inFrames-2-fromFrame)/speed;
+		to = ceil(float(inFrames-2-fromFrame)/speed);
 	}
+	
 	float remainder = position - intPosition;
 	float * resBufferPtr = &outBuffer[0];
+	float a, b;
 	
 	for(unsigned int i=0;i<to;i++){
 		intPosition *= inChannels;
@@ -75,10 +94,13 @@ void ofResampleHermite(const ofSoundBuffer &inBuffer, ofSoundBuffer &outBuffer, 
 	
 	int inChannels = inBuffer.getNumChannels();
 	unsigned long inFrames = inBuffer.getNumFrames();
+	bool bufferReady = prepareBufferForResampling(inBuffer, outBuffer, numFrames);
 	
-	outBuffer.resize((unsigned int)numFrames*inChannels,0);
-	outBuffer.setNumChannels(inChannels);
-	outBuffer.setSampleRate(inBuffer.getSampleRate());
+	if(!bufferReady) {
+		outBuffer = inBuffer;
+		return;
+	}
+	
 	unsigned int start = fromFrame;
 	unsigned int end = start*inChannels + double(numFrames*inChannels)*speed;
 	double position = start;
