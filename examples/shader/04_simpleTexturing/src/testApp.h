@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofGlProgrammableRenderer.h"
 
 class testApp : public ofBaseApp{
 	public:
