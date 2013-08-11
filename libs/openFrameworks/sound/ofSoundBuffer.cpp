@@ -42,7 +42,6 @@ vector<float> & ofSoundBuffer::getBuffer(){
 	return buffer;
 }
 
-
 unsigned long ofSoundBuffer::getDurationMS() const{
 	return getNumFrames()/samplerate;
 }
@@ -412,8 +411,7 @@ void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int sourceChannel) 
 		targetBuffer.resize(getNumFrames());
 		const float * bufferPtr = &this->buffer[0];
 		for(unsigned int i=0;i<getNumFrames();i++){
-			float whatevs = *bufferPtr;
-			buffer[i] = whatevs;
+			buffer[i] = *bufferPtr;
 			bufferPtr+=channels;
 		}
 	}
@@ -461,6 +459,40 @@ void ofSoundBuffer::normalize(float level){
 	for(unsigned i = 0; i < size(); i++) {
 		buffer[i] *= normalizationFactor;
 	}
+}
+
+bool ofSoundBuffer::trimSilence(float threshold, bool trimStart, bool trimEnd) {
+	if(buffer.empty()) {
+		ofLogVerbose("ofSoundBuffer") << "attempted to trim empty buffer";
+		return true;
+	}
+	size_t firstNonSilence = 0;
+	size_t lastNonSilence = buffer.size() - 1;
+	if(trimStart) {
+		for(size_t i = 0; i < buffer.size(); ++i) {
+			if(abs(buffer[i]) > threshold) {
+				firstNonSilence = i;
+				break;
+			}
+		}
+	}
+	if(trimEnd) {
+		for(size_t i = lastNonSilence; i > firstNonSilence; --i) {
+			if(abs(buffer[i]) > threshold) {
+				lastNonSilence = i;
+				break;
+			}
+		}
+	}
+	firstNonSilence -= firstNonSilence % getNumChannels();
+	lastNonSilence  -= lastNonSilence  % getNumChannels();
+	if(trimEnd) {
+		buffer.erase(buffer.begin() + lastNonSilence, buffer.end());
+	}
+	if(trimStart) {
+		buffer.erase(buffer.begin(), buffer.begin() + firstNonSilence);
+	}
+	return checkSizeAndChannelsConsistency("trimSilence");
 }
 
 void ofSoundBuffer::fillWithNoise(float amplitude){

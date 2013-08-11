@@ -173,6 +173,9 @@ public:
 	/// amplifies samples so that the maximum amplitude is equal to 'level'
 	void normalize(float level = 1);
 	
+	/// removes initial / ending silence from the buffer
+	bool trimSilence(float threshold = 0.0001, bool trimStart = true, bool trimEnd = true);
+	
 	/// return the total number of samples in this buffer (==getNumFrames()*getNumChannels())
 	unsigned long size() const { return buffer.size(); }
 	/// resize this buffer to exactly this many samples. it's up to you make sure samples matches the channel count.
