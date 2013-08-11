@@ -393,10 +393,6 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 	}
 		
 	if (character < 128) {		
-		//TODO: look into a better fix. 
-		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position. 
-		//3 pixel adjustment corrects that. 
-		y -= 3;
 
 		float posTexW = (float)(character % 16)/16.0f;
 		float posTexH = ((int)(character / 16.0f))/16.0f;
@@ -404,8 +400,16 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		float texY1 = posTexH;
 		float texY2 = posTexH+heightTex;
 
+		//TODO: look into a better fix.
+		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position.
+		//3 pixel adjustment corrects that when y is flpped 5 when it's not.
+		int yOffset = 14;
 		if(!ofIsVFlipped()){
-			swap(texY1,texY2);
+			y += 5;
+			y += yOffset;
+			yOffset *= -1;
+		}else{
+			y -= 3;
 		}
 
 
@@ -419,10 +423,10 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 
 		charMesh.getVertices()[vC].set(x,y);
 		charMesh.getVertices()[vC+1].set(x+8,y);
-		charMesh.getVertices()[vC+2].set(x+8,y+14);
+		charMesh.getVertices()[vC+2].set(x+8,y+yOffset);
 
-		charMesh.getVertices()[vC+3].set(x+8,y+14);
-		charMesh.getVertices()[vC+4].set(x,y+14);
+		charMesh.getVertices()[vC+3].set(x+8,y+yOffset);
+		charMesh.getVertices()[vC+4].set(x,y+yOffset);
 		charMesh.getVertices()[vC+5].set(x,y);
 			
 		vC += 6;

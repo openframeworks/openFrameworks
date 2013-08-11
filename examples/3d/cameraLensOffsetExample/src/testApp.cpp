@@ -80,7 +80,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::drawScene(bool isPreview){
 	
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
 
 	if (isPreview) {
 		ofPushStyle();
@@ -147,7 +147,7 @@ void testApp::drawScene(bool isPreview){
 	ofEndShape(false);
 	ofPopStyle();
 	
-	glDisable(GL_DEPTH_TEST);
+	ofDisableDepthTest();
 }
 
 //--------------------------------------------------------------

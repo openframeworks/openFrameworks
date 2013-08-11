@@ -156,10 +156,11 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 #else
 
 	// OpenGL
+	/*  some things are internally still using ofMesh
 	if(!wrongUseLoggedOnce){
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh";
 		wrongUseLoggedOnce = true;
-	}
+	}*/
 	
 	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
 
@@ -190,10 +191,11 @@ void ofGLProgrammableRenderer::draw( of3dPrimitive& model, ofPolyRenderMode rend
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofPolyline & poly){
+	/*  some things are internally still using ofPolyline
 	if(!wrongUseLoggedOnce){
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
 		wrongUseLoggedOnce = true;
-	}
+	}*/
 	if(poly.getVertices().empty()) return;
 
 	// use smoothness, if requested:
@@ -1025,13 +1027,23 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 
 	int len = (int)textString.length();
-	//float yOffset = 0;
 	float fontSize = 8.0f;
-	bool bOrigin = false;
+	float lineHeight = fontSize*1.7f;
+	int newLineDirection = 1.0f;
 
 	float sx = 0;
 	float sy = -fontSize;
 
+	if(!ofIsVFlipped()){
+		newLineDirection  = -1;
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(textString,"\n");
+		//y = lines*lineHeight;
+	}
+
+	if(!ofIsVFlipped()){
+		newLineDirection  = -1;
+	}
 
 	///////////////////////////
 	// APPLY TRANSFORM / VIEW
@@ -1160,7 +1172,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sy += lineHeight*newLineDirection;
 			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
 			} else {

@@ -368,6 +368,8 @@ private:
 
 	freenect_device* kinectDevice;      ///< kinect device handle
 
+	ofShortPixels depthPixelsRawIntra;	///< depth back
+	ofPixels videoPixelsIntra;			///< rgb back
 	ofShortPixels depthPixelsRawBack;	///< depth back
 	ofPixels videoPixelsBack;			///< rgb back
 

@@ -155,7 +155,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,0);
-		#elif defined(TARGET_LINUX) || defined(TARGET_OSX)
+		#elif !defined(TARGET_OPENGLES)
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
 		#endif
 	}else{

@@ -154,6 +154,8 @@ function createPackage {
 		rm -Rf sound
 		rm -Rf utils
 		rm -Rf video
+		rm -Rf gles
+		rm -Rf gui
 	fi 
 	
 	#delete osx examples in linux
@@ -167,7 +169,28 @@ function createPackage {
 	fi
 	
 	if [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
+	    rm -Rf addons/3DModelLoaderExample
+        rm -Rf addons/allAddonsExample
+        rm -Rf addons/assimpExample
+        rm -Rf addons/kinectExample
+        rm -Rf addons/vectorGraphicsExample
+        
 	    rm -Rf gl/glInfoExample
+        rm -Rf gl/alphaMaskingShaderExample
+        rm -Rf gl/billboardExample
+        rm -Rf gl/billboardRotationExample
+        rm -Rf gl/multiLightExample
+        rm -Rf gl/multiTextureShaderExample
+        rm -Rf gl/pointsAsTextures
+        rm -Rf gl/gpuParticleSystemExample
+        rm -Rf gl/vboMeshDrawInstancedExample
+        
+        rm -Rf 3d/modelNoiseExample
+    fi
+    
+    if [ "$pkg_platform" == "linuxarmv6l" ]; then
+        rm -Rf utils/dragDropExample
+        rm -Rf utils/fileOpenSaveDialogExample
 	fi
 	
 	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs" ]; then
@@ -312,7 +335,7 @@ function createPackage {
 	fi
 
 	#delete eclipse projects
-	if [ "$pkg_platform" != "android" && "$pkg_platform" != "linux" && "$pkg_platform" != "linux64" && "$pkg_platform" != "linuxarmv6l" && "$pkg_platform" != "linuxarmv7l"]; then
+	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
 		cd ${pkg_ofroot}
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings

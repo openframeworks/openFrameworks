@@ -5,7 +5,7 @@ void testApp::setup(){
     ofSetVerticalSync(true);
 	ofSetFrameRate(60);
 	ofBackground(10, 10, 10);
-	glEnable(GL_DEPTH_TEST);
+	ofEnableDepthTest();
     
     // turn on smooth lighting //
     bSmoothLighting     = true;

@@ -333,6 +333,12 @@ string ofFromString(const string & value){
 }
 
 //----------------------------------------
+template<>
+const char * ofFromString(const string & value){
+	return value.c_str();
+}
+
+//----------------------------------------
 template <>
 string ofToHex(const string& value) {
 	ostringstream out;
@@ -566,6 +572,20 @@ void ofStringReplace(string& input, string searchStr, string replaceStr){
 //--------------------------------------------------
 bool ofIsStringInString(string haystack, string needle){
 	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
+}
+
+int ofStringTimesInString(string haystack, string needle){
+	const size_t step = needle.size();
+
+	size_t count(0);
+	size_t pos(0) ;
+
+	while( (pos=haystack.find(needle, pos)) != std::string::npos) {
+		pos +=step;
+		++count ;
+	}
+
+	return count;
 }
 
 //--------------------------------------------------

@@ -134,16 +134,20 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 
 //----------------------------------------------------------
 void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
-    bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
+	// FIXME: we don't need this anymore since GL_NORMALIZE is enabled on lighting
+	// leaving it comented just in case. it's also safe to remove this method completely
+	// from the renderers hierarchy
+
+    /*bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
     if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glEnable( GL_NORMALIZE );
-    }
+    }*/
 
     model.getMesh().draw(renderType);
 
-    if(model.hasScaling() && model.hasNormalsEnabled()) {
+    /*if(model.hasScaling() && model.hasNormalsEnabled()) {
         if(!normalsEnabled) glDisable( GL_NORMALIZE );
-    }
+    }*/
 
 }
 
@@ -881,9 +885,16 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 
 	int len = (int)textString.length();
-	//float yOffset = 0;
 	float fontSize = 8.0f;
-	bool bOrigin = false;
+	float lineHeight = fontSize*1.7f;
+	int newLineDirection = 1.0f;
+
+	if(!ofIsVFlipped()){
+		newLineDirection  = -1;
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(textString,"\n");
+		//y = lines*lineHeight;
+	}
 
 	float sx = 0;
 	float sy = -fontSize;
@@ -1029,7 +1040,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sy += lineHeight*newLineDirection;
 			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
 			} else {

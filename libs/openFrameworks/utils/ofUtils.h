@@ -138,6 +138,9 @@ T ofFromString(const string & value){
 template<>
 string ofFromString(const string & value);
 
+template<>
+const char * ofFromString(const string & value);
+
 template <class T>
 string ofToHex(const T& value) {
 	ostringstream out;
@@ -204,6 +207,7 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 string ofJoinString(vector <string> stringElements, const string & delimiter);
 void ofStringReplace(string& input, string searchStr, string replaceStr);
 bool ofIsStringInString(string haystack, string needle);
+int ofStringTimesInString(string haystack, string needle);
 
 string ofToLower(const string & src);
 string ofToUpper(const string & src);
