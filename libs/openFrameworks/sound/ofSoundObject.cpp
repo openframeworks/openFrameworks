@@ -14,12 +14,37 @@ ofSoundObject::ofSoundObject() {
 
 ofSoundObject &ofSoundObject::connectTo(ofSoundObject &soundObject) {
 	soundObject.setInput(this);
+	
+	// if we find an infinite loop, we want to disconnect and provide an error
+	if(!checkForInfiniteLoops()) {
+		ofLogError("ofSoundObject") << "There's an infinite loop in your chain of ofSoundObjects";
+		soundObject.setInput(NULL);
+	}
 	return soundObject;
 }
 
 void ofSoundObject::setInput(ofSoundObject *obj) {
 	inputObject = obj;
 }
+
+
+ofSoundObject *ofSoundObject::getInputObject() {
+	return inputObject;
+}
+
+bool ofSoundObject::checkForInfiniteLoops() {
+	
+	ofSoundObject *prev = inputObject;
+	
+	// move up the dsp chain until we find ourselves or the beginning of the chain (input==NULL)
+	while(prev!=this && prev!=NULL) {
+		prev = prev->getInputObject();
+	}
+	
+	// if we found ourselves, return false (to indicate there's an infinite loop)
+	return (prev==NULL);
+}
+
 
 
 

@@ -35,14 +35,22 @@ public:
 	/// like signal splitters, sidechains etc.
 	virtual void audioOut(ofSoundBuffer &output);
 	
-	
+	/// this checks the dsp chain to ensure there are no infinite loops
+	/// - might want to override this if you make a splitter
+	/// returns true if there are no infinite loops.
+	virtual bool checkForInfiniteLoops();
+
 protected:
-	// this is the previous dsp object in the chain
-	// that feeds this one with input.
-	ofSoundObject *inputObject;
+	
+	ofSoundObject *getInputObject();
 	
 private:
 	
+	// this is the previous dsp object in the chain
+	// that feeds this one with input.
+	ofSoundObject *inputObject;
+
+
 	// ofSoundObjects reference their source, not their destination
 	// because it's not needed in a pullthrough audio architecture.
 	// this lets that be set under the hood via connectTo()
