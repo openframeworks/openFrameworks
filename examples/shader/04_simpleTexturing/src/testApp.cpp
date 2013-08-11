@@ -11,9 +11,9 @@ void testApp::setup(){
     plane.mapTexCoordsFromTexture(img.getTextureReference());
 }
 
+
 //--------------------------------------------------------------
 void testApp::update(){
-
 }
 
 //--------------------------------------------------------------
