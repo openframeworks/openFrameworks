@@ -1,18 +1,14 @@
-#ifdef GL_ES
-// define default precision for float, vec, mat.
-precision highp float;
-#endif
 
-uniform sampler2D tex0;
-uniform sampler2D maskTex;
-uniform vec4 globalColor;
+precision highp float;
 
 varying vec2 texCoordVarying;
 
-void main (void)
+uniform sampler2D tex0;
+uniform sampler2D imageMask;
+
+void main()
 {
-	vec2 pos = texCoordVarying;
-	vec3 src = texture2D(tex0, pos).rgb;
-	float mask = texture2D(maskTex, pos).r;
-	gl_FragColor = vec4( src , mask);
+    vec4 texel0 = texture2D(tex0, texCoordVarying);
+    vec4 texel1 = texture2D(imageMask, texCoordVarying);
+    gl_FragColor = vec4(texel0.rgb, texel0.a * texel1.a);
 }
