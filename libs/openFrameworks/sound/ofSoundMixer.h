@@ -12,7 +12,7 @@
 
 class ofSoundMixerChannelStrip{//if you want to have a fancier mixer you can extend this class
 public:
-    ofSoundMixerChannelStrip(){}
+   // ofSoundMixerChannelStrip(){}
     ofSoundMixerChannelStrip(string lbl ="",float vl =1.0f, float pn = 0.5f):vol(vl), pan(pn), label(lbl){}
     ~ofSoundMixerChannelStrip(){}
     
@@ -21,9 +21,10 @@ public:
     string label;
 };
 
-class ofSoundMixer: public ofSoundObject{
-    ofSoundMixer();
-    ~ofSoundMixer();
+class ofSoundMixer: public ofSoundObject {
+public:
+    ofSoundMixer(){}
+    ~ofSoundMixer(){}
     ofSoundMixerChannelStrip& add(ofSoundObject &newSoundSource, string label ="");
     ofSoundMixerChannelStrip& newChannel(string label);
     //volume range 0.0 to 1.0

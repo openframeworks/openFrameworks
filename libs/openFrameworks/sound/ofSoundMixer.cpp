@@ -1,7 +1,7 @@
 
 #include "ofSoundMixer.h"
-ofSoundMixer::ofSoundMixer(){}
-ofSoundMixer::~ofSoundMixer(){}
+//ofSoundMixer::ofSoundMixer(){}
+//ofSoundMixer::~ofSoundMixer(){}
 //void connectTo(ofBaseSoundOutput &output);
 //void disconnect();
 ofSoundMixerChannelStrip& ofSoundMixer::add(ofSoundObject &newSoundSource, string label){
@@ -26,7 +26,7 @@ ofBaseSoundOutput& ofSoundMixer::getChannelStripSource(int channelNumber, bool c
     if (channelExists(channelNumber)) {
         return *channels[channelNumber].source;
     }else{
-        return NULL;
+        //return NULL;
     }
 }
 
@@ -38,7 +38,7 @@ ofBaseSoundOutput& ofSoundMixer::getChannelStripSource(string label, bool create
         if (createNewUnfound) {
             return *newChannel(label).source;
         }else{
-            return NULL;
+            //return NULL;
         }
     }
 }
@@ -47,7 +47,7 @@ ofSoundMixerChannelStrip& ofSoundMixer::getChannelStrip(int channelNumber){
     if (channelExists(channelNumber)) {
         return channels[channelNumber];
     }else{
-        return NULL;
+        //return NULL;
     }
 }
 ofSoundMixerChannelStrip& ofSoundMixer::getChannelStrip(string label){
@@ -55,7 +55,7 @@ ofSoundMixerChannelStrip& ofSoundMixer::getChannelStrip(string label){
     if (n >- 1) {
         return channels[n];
     }else{
-        return NULL;
+        //return NULL;
     }
 }
 
