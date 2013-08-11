@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    shader.load("gl3/shader.vert", "gl3/shader.frag");
+    shader.load("shadersGL3/shader.vert", "shadersGL3/shader.frag");
 
     drawWires = false;
     
@@ -11,9 +11,9 @@ void testApp::setup(){
     plane.mapTexCoordsFromTexture(img.getTextureReference());
 }
 
+
 //--------------------------------------------------------------
 void testApp::update(){
-
 }
 
 //--------------------------------------------------------------
