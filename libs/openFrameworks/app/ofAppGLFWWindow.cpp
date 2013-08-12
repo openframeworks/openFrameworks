@@ -1046,6 +1046,16 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 }
 
 //------------------------------------------------------------
+void ofAppGLFWWindow::setClipboardString(const string& text) {
+    glfwSetClipboardString(ofAppGLFWWindow::windowP, text.c_str());
+}
+
+//------------------------------------------------------------
+string ofAppGLFWWindow::getClipboardString() {
+    return glfwGetClipboardString(ofAppGLFWWindow::windowP);
+}
+
+//------------------------------------------------------------
 void ofAppGLFWWindow::listVideoModes(){
 	int numModes;
 	const GLFWvidmode * vidModes = glfwGetVideoModes(NULL, &numModes );
