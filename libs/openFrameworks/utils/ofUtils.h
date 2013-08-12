@@ -11,6 +11,8 @@
 
 #include "Poco/Path.h"
 
+#include "unicode/utf8.h" // icu
+
 int 	ofNextPow2(int input);
 
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
