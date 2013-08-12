@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1997-2011, International Business Machines
+*   Copyright (C) 1997-2013, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -39,7 +39,7 @@ U_CDECL_BEGIN
  * @see u_getUnicodeVersion
  * @stable ICU 2.0
  */
-#define U_UNICODE_VERSION "6.1"
+#define U_UNICODE_VERSION "6.2"
 
 /**
  * \file
@@ -550,23 +550,19 @@ typedef enum UProperty {
     UCHAR_UPPERCASE_MAPPING=0x400C,
     /** One more than the last constant for string Unicode properties. @stable ICU 2.4 */
     UCHAR_STRING_LIMIT=0x400D,
-
-#ifndef U_HIDE_DRAFT_API
     /** Provisional property Script_Extensions (new in Unicode 6.0).
         As a provisional property, it may be modified or removed
         in future versions of the Unicode Standard, and thus in ICU.
         Some characters are commonly used in multiple scripts.
         For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
         Corresponds to uscript_hasScript and uscript_getScriptExtensions in uscript.h.
-        @draft ICU 4.6 */
+        @stable ICU 4.6 */
     UCHAR_SCRIPT_EXTENSIONS=0x7000,
-    /** First constant for Unicode properties with unusual value types. @draft ICU 4.6 */
+    /** First constant for Unicode properties with unusual value types. @stable ICU 4.6 */
     UCHAR_OTHER_PROPERTY_START=UCHAR_SCRIPT_EXTENSIONS,
     /** One more than the last constant for Unicode properties with unusual value types.
-     * @draft ICU 4.6 */
+     * @stable ICU 4.6 */
     UCHAR_OTHER_PROPERTY_LIMIT=0x7001,
-#endif  /* U_HIDE_DRAFT_API */
-
     /** Represents a nonexistent or invalid property or property value. @stable ICU 2.4 */
     UCHAR_INVALID_CODE = -1
 } UProperty;
@@ -1461,14 +1457,16 @@ typedef enum UEastAsianWidth {
 typedef enum UCharNameChoice {
     /** Unicode character name (Name property). @stable ICU 2.0 */
     U_UNICODE_CHAR_NAME,
+#ifndef U_HIDE_DEPRECATED_API 
     /**
      * The Unicode_1_Name property value which is of little practical value.
      * Beginning with ICU 49, ICU APIs return an empty string for this name choice.
      * @deprecated ICU 49
      */
     U_UNICODE_10_CHAR_NAME,
+#endif  /* U_HIDE_DEPRECATED_API */
     /** Standard or synthetic character name. @stable ICU 2.0 */
-    U_EXTENDED_CHAR_NAME,
+    U_EXTENDED_CHAR_NAME = U_UNICODE_CHAR_NAME+2,
     /** Corrected name from NameAliases.txt. @stable ICU 4.4 */
     U_CHAR_NAME_ALIAS,
     /** @stable ICU 2.0 */
@@ -1650,7 +1648,8 @@ typedef enum UGraphemeClusterBreak {
     U_GCB_V = 9,                /*[V]*/
     U_GCB_SPACING_MARK = 10,    /*[SM]*/ /* from here on: new in Unicode 5.1/ICU 4.0 */
     U_GCB_PREPEND = 11,         /*[PP]*/
-    U_GCB_COUNT = 12
+    U_GCB_REGIONAL_INDICATOR = 12,  /*[RI]*/ /* new in Unicode 6.2/ICU 50 */
+    U_GCB_COUNT = 13
 } UGraphemeClusterBreak;
 
 /**
@@ -1680,7 +1679,8 @@ typedef enum UWordBreakValues {
     U_WB_LF = 10,               /*[LF]*/
     U_WB_MIDNUMLET =11,         /*[MB]*/
     U_WB_NEWLINE =12,           /*[NL]*/
-    U_WB_COUNT = 13
+    U_WB_REGIONAL_INDICATOR = 13,   /*[RI]*/ /* new in Unicode 6.2/ICU 50 */
+    U_WB_COUNT = 14
 } UWordBreakValues;
 
 /**
@@ -1768,7 +1768,8 @@ typedef enum ULineBreak {
     U_LB_CLOSE_PARENTHESIS = 36, /*[CP]*/ /* new in Unicode 5.2/ICU 4.4 */
     U_LB_CONDITIONAL_JAPANESE_STARTER = 37,/*[CJ]*/ /* new in Unicode 6.1/ICU 49 */
     U_LB_HEBREW_LETTER = 38,     /*[HL]*/ /* new in Unicode 6.1/ICU 49 */
-    U_LB_COUNT = 39
+    U_LB_REGIONAL_INDICATOR = 39,/*[RI]*/ /* new in Unicode 6.2/ICU 50 */
+    U_LB_COUNT = 40
 } ULineBreak;
 
 /**
@@ -2656,6 +2657,7 @@ u_charName(UChar32 code, UCharNameChoice nameChoice,
            char *buffer, int32_t bufferLength,
            UErrorCode *pErrorCode);
 
+#ifndef U_HIDE_DEPRECATED_API 
 /**
  * Returns an empty string.
  * Used to return the ISO 10646 comment for a character.
@@ -2678,6 +2680,7 @@ U_STABLE int32_t U_EXPORT2
 u_getISOComment(UChar32 c,
                 char *dest, int32_t destCapacity,
                 UErrorCode *pErrorCode);
+#endif  /* U_HIDE_DEPRECATED_API */
 
 /**
  * Find a Unicode character by its name and return its code point value.

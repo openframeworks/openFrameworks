@@ -1,6 +1,6 @@
 /*
 ***************************************************************************
-*   Copyright (C) 1999-2012 International Business Machines Corporation   *
+*   Copyright (C) 1999-2013 International Business Machines Corporation   *
 *   and others. All rights reserved.                                      *
 ***************************************************************************
 
@@ -654,7 +654,7 @@ public:
      * @param status     Receives errors detected by this function.
      * @return           *this
      *
-     * @draft ICU 49
+     * @stable ICU 49
      */
     virtual RuleBasedBreakIterator &refreshInputText(UText *input, UErrorCode &status);
 

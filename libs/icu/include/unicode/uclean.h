@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-* Copyright (C) 2001-2011, International Business Machines
+* Copyright (C) 2001-2012, International Business Machines
 *                Corporation and others. All Rights Reserved.
 ******************************************************************************
 *   file name:  uclean.h
@@ -148,8 +148,6 @@ typedef void U_CALLCONV UMtxFn   (const void *context, UMTX  *mutex);
   *  directly access system functions for mutex operations
   *  This function can only be used when ICU is in an initial, unused state, before
   *  u_init() has been called.
-  *  This function may be used even when ICU has been built without multi-threaded
-  *  support  (see ICU_USE_THREADS pre-processor variable, umutex.h)
   *  @param context This pointer value will be saved, and then (later) passed as
   *                 a parameter to the user-supplied mutex functions each time they
   *                 are called. 

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2008-2012, International Business Machines Corporation and
+* Copyright (C) 2008-2013, International Business Machines Corporation and
 * others. All Rights Reserved.
 *******************************************************************************
 *
@@ -26,6 +26,7 @@
 #if !UCONFIG_NO_FORMATTING
 
 #include "unicode/format.h"
+#include "unicode/upluralrules.h"
 
 /**
  * Value returned by PluralRules::getUniqueKeywordValue() when there is no
@@ -183,8 +184,9 @@ public:
     static PluralRules* U_EXPORT2 createDefaultRules(UErrorCode& status);
 
     /**
-     * Provides access to the predefined <code>PluralRules</code> for a given
+     * Provides access to the predefined cardinal-number <code>PluralRules</code> for a given
      * locale.
+     * Same as forLocale(locale, UPLURAL_TYPE_CARDINAL, status).
      *
      * @param locale  The locale for which a <code>PluralRules</code> object is
      *                returned.
@@ -198,6 +200,26 @@ public:
      * @stable ICU 4.0
      */
     static PluralRules* U_EXPORT2 forLocale(const Locale& locale, UErrorCode& status);
+
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Provides access to the predefined <code>PluralRules</code> for a given
+     * locale and the plural type.
+     *
+     * @param locale  The locale for which a <code>PluralRules</code> object is
+     *                returned.
+     * @param type    The plural type (e.g., cardinal or ordinal).
+     * @param status  Output param set to success/failure code on exit, which
+     *                must not indicate a failure before the function call.
+     * @return        The predefined <code>PluralRules</code> object pointer for
+     *                this locale. If there's no predefined rules for this locale,
+     *                the rules for the closest parent in the locale hierarchy
+     *                that has one will  be returned.  The final fallback always
+     *                returns the default 'other' rules.
+     * @draft ICU 50
+     */
+    static PluralRules* U_EXPORT2 forLocale(const Locale& locale, UPluralType type, UErrorCode& status);
+#endif /* U_HIDE_DRAFT_API */
 
     /**
      * Given a number, returns the keyword of the first rule that applies to
@@ -359,7 +381,7 @@ private:
     void getNextLocale(const UnicodeString& localeData, int32_t* curIndex, UnicodeString& localeName);
     void addRules(RuleChain& rules);
     int32_t getNumberValue(const UnicodeString& token) const;
-    UnicodeString getRuleFromResource(const Locale& locale, UErrorCode& status);
+    UnicodeString getRuleFromResource(const Locale& locale, UPluralType type, UErrorCode& status);
 
     static const int32_t MAX_SAMPLES = 3;
 

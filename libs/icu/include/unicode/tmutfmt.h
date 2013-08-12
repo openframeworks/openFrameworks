@@ -45,7 +45,7 @@ typedef enum UTimeUnitFormatStyle UTimeUnitFormatStyle; /**< @stable ICU 4.8 */
 U_NAMESPACE_BEGIN
 
 class Hashtable;
-
+class UVector;
 
 /**
  * Format or parse a TimeUnitAmount, using plural rules for the units where available.
@@ -229,7 +229,8 @@ private:
     void initDataMembers(UErrorCode& status);
 
     // initialize fTimeUnitToCountToPatterns from current locale's resource.
-    void readFromCurrentLocale(UTimeUnitFormatStyle style, const char* key, UErrorCode& status);
+    void readFromCurrentLocale(UTimeUnitFormatStyle style, const char* key, const UVector& pluralCounts,
+                               UErrorCode& status);
 
     // check completeness of fTimeUnitToCountToPatterns against all time units,
     // and all plural rules, fill in fallback as necessary.

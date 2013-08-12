@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2011, International Business Machines
+*   Copyright (C) 2002-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -251,7 +251,7 @@ typedef struct USerializedSet {
  * @stable ICU 4.2
  */
 U_STABLE USet* U_EXPORT2
-uset_openEmpty();
+uset_openEmpty(void);
 
 /**
  * Creates a USet object that contains the range of characters

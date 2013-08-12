@@ -159,7 +159,7 @@ typedef enum {
     UCNV_CESU8,
     /** @stable ICU 2.4 */
     UCNV_IMAP_MAILBOX,
-    /** @draft ICU 4.8 */
+    /** @stable ICU 4.8 */
     UCNV_COMPOUND_TEXT,
 
     /* Number of converter types for which we have conversion routines. */
@@ -2019,7 +2019,7 @@ ucnv_toUCountPending(const UConverter* cnv, UErrorCode* status);
  * @return TRUE if the converter is fixed-width
  * @stable ICU 4.8
  */
-U_DRAFT UBool U_EXPORT2
+U_STABLE UBool U_EXPORT2
 ucnv_isFixedWidth(UConverter *cnv, UErrorCode *status);
 
 #endif

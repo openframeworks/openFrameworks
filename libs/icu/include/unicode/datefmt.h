@@ -507,9 +507,6 @@ public:
      *                  last character successfully parsed. If the
      *                  source is not parsed successfully, this param
      *                  will remain unchanged.
-     * @return          A newly created Formattable* object, or NULL
-     *                  on failure.  The caller owns this and should
-     *                  delete it when done.
      * @stable ICU 2.0
      */
     virtual void parseObject(const UnicodeString& source,

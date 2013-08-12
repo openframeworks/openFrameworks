@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-* Copyright (C) 1997-2012, International Business Machines Corporation and others.
+* Copyright (C) 1997-2013, International Business Machines Corporation and others.
 * All Rights Reserved.
 ********************************************************************************
 *
@@ -71,6 +71,9 @@ class StringEnumeration;
  *    cout << " Example 1: " << myString << endl;
  * \endcode
  * </pre>
+ * Note that there are additional factory methods within subclasses of
+ * NumberFormat.
+ * <P>
  * If you are formatting multiple numbers, it is more efficient to get
  * the format and use it multiple times so that the system doesn't
  * have to fetch the information about the local language and country
@@ -359,6 +362,24 @@ public:
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const = 0;
     /**
+     * Format a double number. By default, the parent function simply
+     * calls the base class and does not return an error status.
+     * Therefore, the status may be ignored in some subclasses.
+     *
+     * @param number    The value to be formatted.
+     * @param appendTo  Output parameter to receive result.
+     *                  Result is appended to existing contents.
+     * @param pos       On input: an alignment field, if desired.
+     *                  On output: the offsets of the alignment field.
+     * @param status    error status
+     * @return          Reference to 'appendTo' parameter.
+     * @internal
+     */
+    virtual UnicodeString& format(double number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  UErrorCode &status) const;
+    /**
      * Format a double number. Subclasses must implement
      * this method.
      *
@@ -391,6 +412,24 @@ public:
     virtual UnicodeString& format(int32_t number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const = 0;
+
+    /**
+     * Format a long number. Concrete subclasses may override
+     * this function to provide status return.
+     *
+     * @param number    The value to be formatted.
+     * @param appendTo  Output parameter to receive result.
+     *                  Result is appended to existing contents.
+     * @param pos       On input: an alignment field, if desired.
+     *                  On output: the offsets of the alignment field.
+     * @param status the output status.
+     * @return          Reference to 'appendTo' parameter.
+     * @internal
+    */
+    virtual UnicodeString& format(int32_t number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  UErrorCode &status) const;
 
     /**
      * Format an int32 number. Subclasses must implement
@@ -426,6 +465,24 @@ public:
     virtual UnicodeString& format(int64_t number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const;
+
+    /**
+     * Format an int64 number. (Not abstract to retain compatibility
+     * with earlier releases, however subclasses should override this
+     * method as it just delegates to format(int32_t number...);
+     *
+     * @param number    The value to be formatted.
+     * @param appendTo  Output parameter to receive result.
+     *                  Result is appended to existing contents.
+     * @param pos       On input: an alignment field, if desired.
+     *                  On output: the offsets of the alignment field.
+     * @return          Reference to 'appendTo' parameter.
+     * @internal
+    */
+    virtual UnicodeString& format(int64_t number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  UErrorCode& status) const;
     /**
      * Format an int64 number. Subclasses must implement
      * this method.
@@ -543,8 +600,6 @@ public:
     * @param parsePosition  The position to start parsing at on input.
     *                       On output, moved to after the last successfully
     *                       parse character. On parse failure, does not change.
-    * @return               A Formattable object of numeric type.  The caller
-    *                       owns this an must delete it.  NULL on failure.
     * @stable ICU 2.0
     */
     virtual void parse(const UnicodeString& text,
@@ -561,16 +616,13 @@ public:
      *                      If parse fails, return contents are undefined.
      * @param status        Output parameter set to a failure error code
      *                      when a failure occurs.
-     * @return              A Formattable object of numeric type.  The caller
-     *                      owns this an must delete it.  NULL on failure.
      * @see                 NumberFormat::isParseIntegerOnly
      * @stable ICU 2.0
      */
-    virtual void parse( const UnicodeString& text,
-                        Formattable& result,
-                        UErrorCode& status) const;
+    virtual void parse(const UnicodeString& text,
+                       Formattable& result,
+                       UErrorCode& status) const;
 
-/* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
     /**
      * Parses text from the given string as a currency amount.  Unlike
      * the parse() method, this method will attempt to parse a generic
@@ -588,7 +640,7 @@ public:
      * @return     if parse succeeds, a pointer to a newly-created CurrencyAmount
      *             object (owned by the caller) containing information about
      *             the parsed currency; if parse fails, this is NULL.
-     * @draft ICU 49
+     * @stable ICU 49
      */
     virtual CurrencyAmount* parseCurrency(const UnicodeString& text,
                                           ParsePosition& pos) const;
@@ -932,6 +984,19 @@ protected:
      * @internal
      */
     virtual void getEffectiveCurrency(UChar* result, UErrorCode& ec) const;
+
+#ifndef U_HIDE_INTERNAL_API
+    /**
+     * Creates the specified number format style of the desired locale.
+     * If mustBeDecimalFormat is TRUE, then the returned pointer is
+     * either a DecimalFormat or it is NULL.
+     * @internal
+     */
+    static NumberFormat* makeInstance(const Locale& desiredLocale,
+                                      UNumberFormatStyle style,
+                                      UBool mustBeDecimalFormat,
+                                      UErrorCode& errorCode);
+#endif  /* U_HIDE_INTERNAL_API */
 
 private:
 

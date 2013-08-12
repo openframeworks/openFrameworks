@@ -20,6 +20,11 @@
 #include "unicode/ucharstrie.h"
 #include "unicode/unistr.h"
 
+/**
+ * \file
+ * \brief C++ API: Builder for icu::UCharsTrie
+ */
+
 U_NAMESPACE_BEGIN
 
 class UCharsTrieElement;

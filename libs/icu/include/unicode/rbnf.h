@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2012, International Business Machines Corporation and others.
+* Copyright (C) 1997-2013, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -970,7 +970,7 @@ public:
      * symbolsToAdopt; the client must not delete it.
      *
      * @param symbolsToAdopt DecimalFormatSymbols to be adopted.
-     * @draft ICU 49
+     * @stable ICU 49
      */
     virtual void adoptDecimalFormatSymbols(DecimalFormatSymbols* symbolsToAdopt);
 
@@ -981,7 +981,7 @@ public:
      * deleting it.
      *
      * @param symbols DecimalFormatSymbols.
-     * @draft ICU 49
+     * @stable ICU 49
      */
     virtual void setDecimalFormatSymbols(const DecimalFormatSymbols& symbols);
 

@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (c) 1997-2012, International Business Machines Corporation
+* Copyright (c) 1997-2013, International Business Machines Corporation
 * and others. All Rights Reserved.
 **************************************************************************
 *
@@ -133,7 +133,6 @@ public:
      */
     virtual ~TimeZone();
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Returns the "unknown" time zone.
      * It behaves like the GMT/UTC time zone but has the
@@ -144,10 +143,9 @@ public:
      * @see UCAL_UNKNOWN_ZONE_ID
      * @see createTimeZone
      * @see getGMT
-     * @draft ICU 49
+     * @stable ICU 49
      */
     static const TimeZone& U_EXPORT2 getUnknown();
-#endif  /* U_HIDE_DRAFT_API */
 
     /**
      * The GMT (=UTC) time zone has a raw offset of zero and does not use daylight

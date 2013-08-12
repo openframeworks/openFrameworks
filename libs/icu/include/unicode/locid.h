@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1996-2012, International Business Machines
+*   Copyright (C) 1996-2013, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -40,6 +40,8 @@
  * \file
  * \brief C++ API: Locale ID object.
  */
+
+U_NAMESPACE_BEGIN
 
 /**
  * A <code>Locale</code> object represents a specific geographical, political,
@@ -177,7 +179,6 @@
  * @stable ICU 2.0
  * @see ResourceBundle
  */
-U_NAMESPACE_BEGIN
 class U_COMMON_API Locale : public UObject {
 public:
     /** Useful constant for the Root locale. @stable ICU 4.4 */
@@ -449,7 +450,6 @@ public:
      */
     int32_t getKeywordValue(const char* keywordName, char *buffer, int32_t bufferCapacity, UErrorCode &status) const;
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Sets the value for a keyword.
      *
@@ -459,10 +459,9 @@ public:
      *  that keyword does not exist.
      * @param status Returns any error information while performing this operation.
      *
-     * @draft ICU 49
+     * @stable ICU 49
      */
     void setKeywordValue(const char* keywordName, const char* keywordValue, UErrorCode &status);
-#endif  /* U_HIDE_DRAFT_API */
 
     /**
      * returns the locale's three-letter language code, as specified
@@ -738,7 +737,7 @@ private:
      * A friend to allow the default locale to be set by either the C or C++ API.
      * @internal
      */
-    friend void locale_set_default_internal(const char *);
+    friend Locale *locale_set_default_internal(const char *, UErrorCode& status);
 };
 
 inline UBool

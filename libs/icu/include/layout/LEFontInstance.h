@@ -1,7 +1,7 @@
 
 /*
  *
- * (C) Copyright IBM Corp. 1998-2007 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2012 - All Rights Reserved
  *
  */
 
@@ -164,6 +164,25 @@ public:
      * @stable ICU 2.8
      */
     virtual const void *getFontTable(LETag tableTag) const = 0;
+
+    /**
+     * This method reads a table from the font. Note that in general,
+     * it only makes sense to call this method on an <code>LEFontInstance</code>
+     * which represents a physical font - i.e. one which has been returned by
+     * <code>getSubFont()</code>. This is because each subfont in a composite font
+     * will have different tables, and there's no way to know which subfont to access.
+     *
+     * Subclasses which represent composite fonts should always return <code>NULL</code>.
+     * 
+     * This version sets a length, for range checking.
+     *
+     * @param tableTag - the four byte table tag. (e.g. 'cmap') 
+     * @param length - ignored on entry, on exit will be the length of the table if known, or -1 if unknown.
+     * @return the address of the table in memory, or <code>NULL</code>
+     *         if the table doesn't exist.
+     * @internal
+     */
+    virtual const void* getFontTable(LETag tableTag, size_t &length) const { length=-1; return getFontTable(tableTag); }  /* -1 = unknown length */
 
     /**
      * This method is used to determine if the font can
