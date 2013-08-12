@@ -25,6 +25,9 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
     
+    // draw a white rectangle for background.
+    ofRect(0, 0, image.getWidth(), image.getHeight());
+    
     shader.begin();
     shader.setUniformTexture("imageMask", imageMask.getTextureReference(), 1);
 
