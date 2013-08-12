@@ -29,7 +29,7 @@
 
 uniform vec4 globalColor = vec4(1.0);
 uniform	sampler2D tex0;			// we use this to sample depth data for our boxes.
-uniform float timeValue=0.0;	// we get this from our testApp, it's a time value moving from 0 to 1 every 30 seconds
+uniform float timeValue=0.0;	// we get this from our ofApp, it's a time value moving from 0 to 1 every 30 seconds
 
 varying vec4 colorVarying;
 
