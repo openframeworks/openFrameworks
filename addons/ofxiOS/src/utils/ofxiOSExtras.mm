@@ -421,6 +421,15 @@ void ofxiOSLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
+//--------------------------------------------------------------
+void ofxiOSSetClipboardString(string clipboardString) {
+    [UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:clipboardString.c_str()];
+}
+
+string ofxiOSGetClipboardString() {
+    return [[UIPasteboard generalPasteboard].string UTF8String];
+}
+
 /******************** ofxiOSScreenGrab *********************/
 
 @interface SaveDelegate : NSObject {
