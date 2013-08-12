@@ -67,10 +67,10 @@ namespace ofxCv {
 				defect[1] = cur->depth_point->y;
 				defect[2] = (cur->start->x + cur->end->x) / 2;
 				defect[3] = (cur->start->y + cur->end->y) / 2;
-        convexityDefects.push_back(defect);
+				convexityDefects.push_back(defect);
 			}
 			cvReleaseMemStorage(&storage);
-    }
+		}
 		return convexityDefects;
 	}
 	

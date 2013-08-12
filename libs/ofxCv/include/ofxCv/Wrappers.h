@@ -12,6 +12,7 @@
  - threshold, normalize, invert, lerp
  - bitwise_and, bitwise_or, bitwise_xor
  - max, min, multiply, divide, add, subtract, absdiff
+ - erode, dilate
  
  image transformation:
  - rotate, resize, warpPerspective
@@ -126,6 +127,34 @@ cv::name(xMat, yMat, resultMat);\
 	template <class SD>
 	void threshold(SD& srcDst, float thresholdValue, bool invert = false) {
 		ofxCv::threshold(srcDst, srcDst, thresholdValue, invert);
+	}
+	
+	// erode out of place
+	template <class S, class D>
+	void erode(S& src, D& dst, int iterations = 1) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		cv::erode(srcMat, dstMat, Mat(), cv::Point(-1, -1), iterations);
+	}
+	
+	// erode in place
+	template <class SD>
+	void erode(SD& srcDst, int iterations = 1) {
+		ofxCv::erode(srcDst, srcDst, iterations);
+	}
+	
+	// dilate out of place
+	template <class S, class D>
+	void dilate(S& src, D& dst, int iterations = 1) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		cv::dilate(srcMat, dstMat, Mat(), cv::Point(-1, -1), iterations);
+	}
+	
+	// dilate in place
+	template <class SD>
+	void dilate(SD& srcDst, int iterations = 1) {
+		ofxCv::dilate(srcDst, srcDst, iterations);
 	}
 	
 	// automatic threshold (grayscale 8-bit only) out of place
