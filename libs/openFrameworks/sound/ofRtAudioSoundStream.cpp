@@ -55,7 +55,9 @@ void ofRtAudioSoundStream::listDevices(){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setDeviceID(int _deviceID){
-	//deviceID = _deviceID;
+	if(audio) {
+		ofLogError("ofRtAudioSoundStream") << "setDeviceID must be called before setup";
+	}
     inDeviceID = outDeviceID = _deviceID;
 }
 

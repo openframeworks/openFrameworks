@@ -219,6 +219,9 @@ void ofPASoundStream::listDevices(){
 
 
 void ofPASoundStream::setDeviceID(int _deviceID){
+	if(audio) {
+		ofLogError("ofPASoundStream") << "setDeviceID must be called before setup";
+	}
 	deviceID = _deviceID;
 }
 
