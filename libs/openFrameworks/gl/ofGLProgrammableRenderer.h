@@ -146,7 +146,6 @@ public:
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-
 	ofShader & defaultTexColor();
 	ofShader & defaultTexNoColor();
 	ofShader & defaultTex2DColor();
