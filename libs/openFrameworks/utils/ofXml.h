@@ -31,7 +31,8 @@ public:
     
     ofXml();
     ~ofXml();
-    
+
+    ofXml( const string & path );
     ofXml( const ofXml& rhs );
     const ofXml& operator =( const ofXml& rhs );
     
