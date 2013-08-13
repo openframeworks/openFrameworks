@@ -5,6 +5,12 @@ ofXml::~ofXml() {
 	releaseAll();
 }
 
+ofXml::ofXml( const string & path ) {
+    document = new Poco::XML::Document(); // we create this so that they can be merged later
+    element = document->documentElement();
+    load(path);
+}
+
 ofXml::ofXml( const ofXml& rhs ) {
 
     document = new Poco::XML::Document();

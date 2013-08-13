@@ -32,6 +32,8 @@ CORE
 ### Sound
 ### Types
 ### Utils
+	+ ofXml(const& string) constructor added
+
 ### Video	
 
 PLATFORM SPECIFIC
