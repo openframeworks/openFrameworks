@@ -1006,9 +1006,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>testApp.h</string>
+			<string>ofApp.h</string>
 			<key>path</key>
-			<string>src/testApp.h</string>
+			<string>src/ofApp.h</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -1021,9 +1021,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.cpp.objcpp</string>
 			<key>name</key>
-			<string>testApp.mm</string>
+			<string>ofApp.mm</string>
 			<key>path</key>
-			<string>src/testApp.mm</string>
+			<string>src/ofApp.mm</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
