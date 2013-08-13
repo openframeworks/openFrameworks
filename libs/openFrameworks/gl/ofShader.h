@@ -130,11 +130,7 @@ public:
 		POSITION_ATTRIBUTE=0,  // tig: was =1, and BOY, what a performance hog this was!!! see: http://www.chromium.org/nativeclient/how-tos/3d-tips-and-best-practices
 		COLOR_ATTRIBUTE,
 		NORMAL_ATTRIBUTE,
-		TEXCOORD_ATTRIBUTE,
-        /*MATERIAL_SHININESS_ATTRIBUTE,
-        MATERIAL_SPECULAR_ATTRIBUTE,
-        MATERIAL_DIFFUSE_ATTRIBUTE,
-        MATERIAL_AMBIENT_ATTRIBUTE*/
+		TEXCOORD_ATTRIBUTE
 	};
 
 
