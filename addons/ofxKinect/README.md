@@ -37,7 +37,7 @@ An example project is provided in the `examples/addons/kinectExample` in your Op
 
 ### OSX
 
-Xcode4: Open the Xcode project, select the "kinectExample Debug" scheme, and hit "Run".
+Open the Xcode project, select the "kinectExample Debug" scheme, and hit "Run".
 
 ### Linux
 
@@ -55,7 +55,7 @@ cd bin
 ./example_debug
 </pre>
 
-Also, you can add a set of udev rules which allow you to run a kinect app without root privileges:
+Also, you can add a set of udev rules which allow you to run a Kinect app without root privileges:
 
    sudo libs\libfreenect\platform\linux\udev\51-kinect.rules /etc/udev/rules.d
 
@@ -87,7 +87,7 @@ As of OF 0.8.0, you can also create a new ofxKinect project using the ProjectGen
 
 ### Mac (Xcode):
 
-Rename the project in Xcode (do not rename the .xcodeproj file in Finder!): Slow double click the project name and rename (Xcode4)
+Rename the project in Xcode (do not rename the .xcodeproj file in Finder!): Slow double click the project name and rename
 
 ### Codeblocks (Win & Linux):
 
@@ -95,7 +95,7 @@ Close Codeblocks and rename the *.cbp and *.workspace files to the same name as 
 
 ### Windows (Visual Studio):
 
-Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project broswer and select "Rename ...".
+Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project browser and select "Rename ...".
 
 Adding ofxKinect to an Existing Project
 ---------------------------------------
@@ -108,7 +108,7 @@ openFrameworks/addons/ofxKinect/src
 </pre>
 as well as search paths for the addons (ofxOpenCv) and libs (freenect, libusb) required by ofxKinect.
 
-Don't forget to include the ofxOpenCv addon sources and oepncv libraries.
+Don't forget to include the ofxOpenCv addon sources and opencv libraries.
 
 ### Mac (Xcode):
 
@@ -118,9 +118,9 @@ In the Xcode project browser:
   * create a new group "ofxKinect"
   * drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
 * add a search path to the libusb headers: `../../../addons/ofxKinect/libs/libusb/include/libusb-1.0` to your project Target build settings
-  * Xcode4: add the lib path to your Project.xconfig, see the example
+  * add the lib path to your Project.xconfig, see the example
 * add the path to the libusb precompiled library: `../../../addons/ofxKinect/libs/libusb-1.0/lib/osx/usb-1.0.a`
-  * Xcode4: add the lib path to your Project.xconfig, see the example
+  * add the lib path to your Project.xconfig, see the example
   
 ### Linux (Makefiles & Codeblocks):
 
@@ -166,7 +166,7 @@ Edit the Makefile config files:
 	* right-click on your project in the project tree
 	* select "Build options..."
 	* make sure the project name is selected in the tree (not release or debug)
-	* select the "Search diectories" tab, click add the search paths:
+	* select the "Search directories" tab, click add the search paths:
 	<pre>
 	..\\..\\..\addons\ofxKinect\src
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\src
@@ -188,9 +188,9 @@ Edit the Makefile config files:
 Notes
 -----
 
-### Using multiple kinects
+### Using multiple Kinects
 
-ofxKinect supports multiple kinects, however stability is based on the bandwidth of your usb hardware. If you only require the depth image, it is recommended to disable the video grabbing of the rgb/ir images from your devices:
+ofxKinect supports multiple Kinects, however stability is based on the bandwidth of your usb hardware. If you only require the depth image, it is recommended to disable the video grabbing of the rgb/ir images from your devices:
 <pre>
 kinect.init(false, false);  // disable video image (faster fps)
 </pre>
