@@ -94,11 +94,11 @@ Also, you can add a set of udev rules which allow you to run a kinect app withou
 
 ### Windows
 
-Precompiled libfreenect Kinect drivers and libusb-win32 libs are included for Windows.
+Precompiled libfreenect drivers and libusb-win32 libs are included for Windows.
 
 Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
 <pre>
-libs/libfreenect/platform/windows/inf
+ofxKinect/libs/libfreenect/platform/windows/inf
 </pre>
 
 You may need to manually update each driver individually if you've plugged it in before. ofxKinect will not work if the drivers are not installed.
