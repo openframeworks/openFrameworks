@@ -31,7 +31,8 @@ public:
     
     ofXml();
     ~ofXml();
-    
+
+    ofXml( const string & path );
     ofXml( const ofXml& rhs );
     const ofXml& operator =( const ofXml& rhs );
     
@@ -58,6 +59,7 @@ public:
     int             getNumChildren() const;
     int             getNumChildren(const string& path) const;
 
+    bool            removeAttribute(const string& path);
     bool            removeAttributes(const string& path); // removes attributes for the passed path
     bool            removeAttributes(); // removes attributes for the element ofXml is pointing to
     bool            removeContents(const string& path); // removes the path passed as parameter

@@ -1,13 +1,13 @@
 #include "ofMain.h"
-#include "testApp.h"
+#include "ofApp.h"
 
 
-// by default this example will run in OpenGL 2.0, see testApp.h for running it
+// by default this example will run in OpenGL 2.0, see ofApp.h for running it
 // in OpenGL 3.2
 
 #ifdef USE_PROGRAMMABLE_GL
 // tig: using the programmable GL renderer is more fun, since we can use GLSL 150 =)
-// define USE_PROGRAMMABLE_GL in testApp.h to run this example in OpenGL 3.2 if your
+// define USE_PROGRAMMABLE_GL in ofApp.h to run this example in OpenGL 3.2 if your
 // system provides it...
 #include "ofGLProgrammableRenderer.h"
 #endif
@@ -29,6 +29,6 @@ if( glDrawElementsInstanced == 0 ){
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:
-	ofRunApp(new testApp());
+	ofRunApp(new ofApp());
 
 }
