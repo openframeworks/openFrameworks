@@ -1,5 +1,5 @@
 #include "ofMain.h"
-#include "testApp.h"
+#include "ofApp.h"
 #include "ofAppGlutWindow.h"
 #include "ofAppNoWindow.h"
 
@@ -16,11 +16,11 @@ int main(  int argc, char *argv[]  ){
 	if(argc==1){
 		ofAppGlutWindow window;
 		ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
-		ofRunApp( new testApp());
+		ofRunApp( new ofApp());
 	}else{
 		ofAppNoWindow window;
 		ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
-		testApp * app = new testApp;
+		ofApp * app = new ofApp;
 		app->buildAllExamples = false;
 		app->projectPath = "";
 		for(int i=1;i<argc;i++){
@@ -101,7 +101,7 @@ int main(  int argc, char *argv[]  ){
     cout << "IN HERE!!" << endl;
     ofAppGlutWindow window;
     ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
-    testApp * app = new testApp;
+    ofApp * app = new ofApp;
     app->buildAllExamples = false;
     ofRunApp( app );
     

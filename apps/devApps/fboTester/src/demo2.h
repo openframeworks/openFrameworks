@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "testApp.h"
+#include "ofApp.h"
 
 
-void testApp::demo2_setup() {
+void ofApp::demo2_setup() {
 	ofLog(OF_LOG_NOTICE, "demo2_setup | useMSAA: " + useMSAA);
 	demoMode = 2;
 	
@@ -18,7 +18,7 @@ void testApp::demo2_setup() {
 	fbo.allocate(s);
 }
 
-void testApp::demo2_draw() {
+void ofApp::demo2_draw() {
 	// draw scene into fbo
 	fbo.begin();
 
