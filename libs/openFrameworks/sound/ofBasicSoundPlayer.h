@@ -44,6 +44,7 @@ public:
 	float getPan();
 	bool isLoaded();
 	float getVolume();
+	bool getIsLooping();
 	unsigned long getDurationMS();
 
 	ofSoundBuffer & getCurrentBuffer();

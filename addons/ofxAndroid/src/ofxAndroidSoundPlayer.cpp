@@ -31,6 +31,8 @@ ofxAndroidSoundPlayer::ofxAndroidSoundPlayer(){
 	}
 
 	javaSoundPlayer = (jobject)env->NewGlobalRef(javaSoundPlayer);
+	
+	looping = false;
 }
 
 //------------------------------------------------------------
@@ -233,7 +235,7 @@ void ofxAndroidSoundPlayer::setLoop(bool bLp){
 	}
 
 	env->CallVoidMethod(javaSoundPlayer,javaLoopMethod,bLp?1:0);
-
+	looping = bLp;
 }
 
 //------------------------------------------------------------
@@ -364,6 +366,11 @@ bool ofxAndroidSoundPlayer::getIsPlaying(){
 
 	return env->CallBooleanMethod(javaSoundPlayer,javaIsPlayingMethod);
 
+}
+
+//------------------------------------------------------------
+bool ofxAndroidSoundPlayer::getIsLooping(){
+	return looping;
 }
 
 //------------------------------------------------------------

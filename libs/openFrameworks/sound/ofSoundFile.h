@@ -13,7 +13,7 @@
 #if defined (TARGET_OSX) || defined (TARGET_WIN32)
 	// libaudiodecoder
 	#define OF_USING_LAD
-#else
+#elif defined (TARGET_LINUX)
 	// libsndfile
 	#define OF_USING_SNDFILE
 #endif

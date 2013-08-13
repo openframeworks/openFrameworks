@@ -167,6 +167,10 @@ bool ofBasicSoundPlayer::getIsPlaying(){
 	return isPlaying;
 }
 
+bool ofBasicSoundPlayer::getIsLooping(){
+	return loop;
+}
+
 float ofBasicSoundPlayer::getSpeed(){
 	return speed;
 }

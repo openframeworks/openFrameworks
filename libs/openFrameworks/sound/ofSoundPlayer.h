@@ -17,7 +17,6 @@ void ofSoundShutdown();
 #include "ofBaseTypes.h"
 #include "ofBaseSoundPlayer.h"
 
-
 #ifdef OF_SOUND_PLAYER_QUICKTIME
 #include "ofQuicktimeSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer
@@ -77,6 +76,7 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		float getSpeed();
 		float getPan();
 		float getVolume();
+		bool getIsLooping();
 
 		bool isLoaded(); 		
 

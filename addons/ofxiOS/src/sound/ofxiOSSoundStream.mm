@@ -165,6 +165,11 @@ int ofxiOSSoundStream::getBufferSize(){
 }
 
 //------------------------------------------------------------------------------
+int ofxiOSSoundStream::getDeviceID(){
+    return 0;
+}
+
+//------------------------------------------------------------------------------
 bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
 	AVAudioSession * audioSession = [AVAudioSession sharedInstance];
 	bool success = false;
