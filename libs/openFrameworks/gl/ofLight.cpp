@@ -45,9 +45,6 @@ void ofDisableLighting() {
 void ofEnableSeparateSpecularLight(){
 #ifndef TARGET_OPENGLES
 	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
-
-#elif
-
 #endif
 }
 
@@ -56,10 +53,6 @@ void ofDisableSeparateSpecularLight(){
     
 #ifndef TARGET_OPENGLES
 	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SINGLE_COLOR);
-
-#elif
-
-
 #endif
 }
 
@@ -311,11 +304,6 @@ float ofLight::getSpotlightCutOff() {
 void ofLight::setSpotConcentration( float exponent ) {
     this->exponent = CLAMP(exponent, 0, 128);
 	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_EXPONENT, this->exponent);
-
-////////////////////////////////////////////////////////////////////////
-
-
-
 }
 
 //----------------------------------------

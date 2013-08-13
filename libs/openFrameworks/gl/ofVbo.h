@@ -108,9 +108,6 @@ private:
 	GLuint colorId;
 	GLuint normalId;
 	GLuint texCoordId;
-    
-    // new materials
-    GLuint shininessId, specularId, diffuseId, ambientId;
 
 	bool bAllocated;
 
