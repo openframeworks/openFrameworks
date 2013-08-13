@@ -80,7 +80,9 @@ void ofSoundInput::audioOut(ofSoundBuffer &output) {
 	
 	// there should be an ofLogWarning() here to say
 	// that the number of channels doesn't match
-	assert(output.getNumFrames()==inputBuffer.getNumFrames());
+	if(!output.getNumFrames()==inputBuffer.getNumFrames()) {
+		ofLogWarning("ofSoundInput") << "buffer size mismatch (in: " << inputBuffer.getNumFrames() << " out: " << output.getNumFrames() << ")";
+	}
 	inputBuffer.copyTo(output);
 }
 
