@@ -7,6 +7,7 @@
  *
  */
 
+
 #include "ofLight.h"
 #include "ofConstants.h"
 #include "ofLog.h"
@@ -44,13 +45,21 @@ void ofDisableLighting() {
 void ofEnableSeparateSpecularLight(){
 #ifndef TARGET_OPENGLES
 	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+
+#elif
+
 #endif
 }
 
 //----------------------------------------
 void ofDisableSeparateSpecularLight(){
+    
 #ifndef TARGET_OPENGLES
 	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SINGLE_COLOR);
+
+#elif
+
+
 #endif
 }
 
@@ -69,6 +78,7 @@ void ofSetSmoothLighting(bool b) {
 void ofSetGlobalAmbientColor(const ofColor& c) {
 	GLfloat cc[] = {c.r/255.f, c.g/255.f, c.b/255.f, c.a/255.f};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, cc);
+
 }
 
 //----------------------------------------
@@ -301,6 +311,11 @@ float ofLight::getSpotlightCutOff() {
 void ofLight::setSpotConcentration( float exponent ) {
     this->exponent = CLAMP(exponent, 0, 128);
 	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_EXPONENT, this->exponent);
+
+////////////////////////////////////////////////////////////////////////
+
+
+
 }
 
 //----------------------------------------
@@ -334,6 +349,7 @@ void ofLight::setAttenuation( float constant, float linear, float quadratic ) {
 	glLightf(GL_LIGHT0 + glIndex, GL_CONSTANT_ATTENUATION, attenuation_constant);
 	glLightf(GL_LIGHT0 + glIndex, GL_LINEAR_ATTENUATION, attenuation_linear);
 	glLightf(GL_LIGHT0 + glIndex, GL_QUADRATIC_ATTENUATION, attenuation_quadratic);
+
 }
 
 //----------------------------------------
@@ -423,6 +439,8 @@ void ofLight::onPositionChanged() {
 		GLfloat cc[] = {getGlobalPosition().x, getGlobalPosition().y, getGlobalPosition().z, 1};
 		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
 	}
+
+
 }
 
 //----------------------------------------
