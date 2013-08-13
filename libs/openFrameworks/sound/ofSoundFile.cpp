@@ -20,69 +20,18 @@ bool ofLoadSound(ofSoundBuffer &buff, string path){
     }
 }
 //--------------------------------------------------------------
-bool ofSaveSound(ofSoundBuffer &buff,  string path){
-    ofFile f(path);
-	if(ofToLower(f.getExtension())!="wav") {
-		path += ".wav";
-		ofLogWarning() << "Can only write wav files - will save file as " << path;
-	}
-	
-	fstream file(ofToDataPath(path).c_str(), ios::out | ios::binary);
 
-	short myFormat = 1;
-	
-	int mySubChunk1Size = 16;
-	
-	
-	int bitsPerSample = 16; // assume 16 bit pcm
-	
-	int myByteRate = buff.getSampleRate() * buff.getNumChannels() * bitsPerSample/8;
-	short myBlockAlign = buff.getNumChannels() * bitsPerSample/8;
-	
-	int myChunkSize = 36 + buff.size()*bitsPerSample/8;
-	int myDataSize = buff.size()*bitsPerSample/8;
-	
-	int channels = buff.getNumChannels();
-	int samplerate = buff.getSampleRate();
-	// write the wav file per the wav file format
-	file.seekp (0, ios::beg);
-	file.write ("RIFF", 4);
-	file.write ((char*) &myChunkSize, 4);
-	file.write ("WAVE", 4);
-	file.write ("fmt ", 4);
-	file.write ((char*) &mySubChunk1Size, 4);
-	file.write ((char*) &myFormat, 2); // should be 1 for PCM
-	file.write ((char*) &channels, 2); // # channels (1 or 2)
-	file.write ((char*) &samplerate, 4); // 44100
-	file.write ((char*) &myByteRate, 4); //
-	file.write ((char*) &myBlockAlign, 2);
-	file.write ((char*) &bitsPerSample, 2); //16
-	file.write ("data", 4);
-	file.write ((char*) &myDataSize, 4);
-	
-	
-	
-	// write 4096 bytes at a time.
-	int WRITE_BUFF_SIZE = 4096;
-	
-	short writeBuff[WRITE_BUFF_SIZE];
-	int pos = 0;
-	while(pos<buff.size()) {
-		int len = MIN(WRITE_BUFF_SIZE, buff.size()-pos);
-		for(int i = 0; i < len; i++) {
-			writeBuff[i] = (int)(buff[pos]*32760.f);
-			pos++;
-		}
-		file.write ((char*)writeBuff, len*bitsPerSample/8);
-	}
-	
-	
-	
-	file.close();
-	
-	
-	return true;
-	
+// for now this only write 16 bit PCM WAV files.
+// It can't really live in ofSoundFile yet because
+// ofSoundFile doesn't hold a complete representation
+// the sound file that can be written to disk. You'd
+// need something that would let you stream the data to
+// it via writeTo() or similar. Doesn't really fit wtih
+// the current model.
+bool ofSaveSound(ofSoundBuffer &buff,  string path){
+    
+	ofSoundFile soundFile;
+	return soundFile.saveSound(path, buff);
 }
 //--------------------------------------------------------------
 
@@ -151,10 +100,78 @@ bool ofSoundFile::open(string _path){
     return loadSound(_path);
 }
 //--------------------------------------------------------------
-bool ofSoundFile::saveSound(string path){
-	ofLogWarning() << "saveSound still not implemented! - Please use ofSaveSound()";
-
-	return false;
+bool ofSoundFile::saveSound(string path, ofSoundBuffer &buff){
+	
+	
+	// check that we're writing a wav and complain if the file extension is wrong.
+	ofFile f(path);
+	if(ofToLower(f.getExtension())!="wav") {
+		path += ".wav";
+		ofLogWarning() << "Can only write wav files - will save file as " << path;
+	}
+	
+	fstream file(ofToDataPath(path).c_str(), ios::out | ios::binary);
+	if(!file.is_open()) {
+		ofLogError() << "Error opening sound file '" << path << "' for writing";
+		return false;
+	}
+	
+	
+	// write a wav header
+	short myFormat = 1; // for pcm
+	
+	int mySubChunk1Size = 16;
+	
+	int bitsPerSample = 16; // assume 16 bit pcm
+	
+	int myByteRate = buff.getSampleRate() * buff.getNumChannels() * bitsPerSample/8;
+	short myBlockAlign = buff.getNumChannels() * bitsPerSample/8;
+	
+	int myChunkSize = 36 + buff.size()*bitsPerSample/8;
+	int myDataSize = buff.size()*bitsPerSample/8;
+	
+	int channels = buff.getNumChannels();
+	int samplerate = buff.getSampleRate();
+	// write the wav file per the wav file format
+	file.seekp (0, ios::beg);
+	file.write ("RIFF", 4);
+	file.write ((char*) &myChunkSize, 4);
+	file.write ("WAVE", 4);
+	file.write ("fmt ", 4);
+	file.write ((char*) &mySubChunk1Size, 4);
+	file.write ((char*) &myFormat, 2); // should be 1 for PCM
+	file.write ((char*) &channels, 2); // # channels (1 or 2)
+	file.write ((char*) &samplerate, 4); // 44100
+	file.write ((char*) &myByteRate, 4); //
+	file.write ((char*) &myBlockAlign, 2);
+	file.write ((char*) &bitsPerSample, 2); //16
+	file.write ("data", 4);
+	file.write ((char*) &myDataSize, 4);
+	
+	
+	
+	// write 4096 bytes of data at a time.
+	#define WRITE_BUFF_SIZE  4096
+	
+	
+	// shorts to 
+	short writeBuff[WRITE_BUFF_SIZE];
+	int pos = 0;
+	while(pos<buff.size()) {
+		int len = MIN(WRITE_BUFF_SIZE, buff.size()-pos);
+		for(int i = 0; i < len; i++) {
+			writeBuff[i] = (int)(buff[pos]*32767.f);
+			pos++;
+		}
+		file.write ((char*)writeBuff, len*bitsPerSample/8);
+	}
+	
+	
+	
+	file.close();
+	
+	
+	return true;
 }
 
 

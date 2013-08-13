@@ -39,6 +39,7 @@ enum ofID3Tag{
 bool ofLoadSound(ofSoundBuffer &buff, string path);
 bool ofSaveSound(ofSoundBuffer &buff,  string path);
 
+
 class ofSoundFile {
 public:
 	ofSoundFile();
@@ -50,7 +51,7 @@ public:
 	void close();
 
     bool loadSound(string _path);
-    bool saveSound(string _path);
+    bool saveSound(string _path, ofSoundBuffer &buff);
     
 	/// read file to buffer. 
 	/// if samples is 0, resize the buffer to fit the entire file, otherwise just read the requested number of samples.
