@@ -8,7 +8,7 @@ MIT License.
 For information on usage and redistribution, and for a DISCLAIMER OF ALL
 WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
-See https://github.com/ofTheo/ofxKinect for documentation as well as the [OF forums](http://forum.openframeworks.cc/index.php).
+See https://github.com/openframeworks/openFrameworks/tree/master/addons/ofxKinect for documentation as well as the [OF forums](http://forum.openframeworks.cc/index.php).
 
 This project uses [libfreenect](https://github.com/OpenKinect/libfreenect), copyrighted by the Open Kinect Project using the Apache License v2. See the file "APACHE20" in libs/libfreenect.
 
@@ -26,44 +26,11 @@ If you have an Xbox Kinect model 1473+ or Kinect4Windows device and want to use 
 
 In the meantime, we suggest you get the *original* Xbox Kinect model 1414 and keep those new toys away from an XBox ...
 
-Installation
-------------
-
-To use ofxKinect, first you need to download and install [Open Frameworks](https://github.com/openframeworks/openFrameworks).
-
-To get a copy of the repository you can download the source from [http://github.com/ofTheo/ofxKinect](http://github.com/ofTheo/ofxKinect/) or, alternatively, you can use git clone:
-<pre>
-git clone git://github.com/ofTheo/ofxKinect.git
-</pre>
-
-The addon should sit in `openFrameworks/addons/ofxKinect/`.
-
-#### Which version to use?
-
-If you are using a stable version (0062, 007, ...) of OpenFrameworks then you want to use a git tag of ofxKinect for that version. You can select the tag in the Github menu or clone and check it out using git.
-
-For example, the following commands will clone ofxKinect and switch to the OF 0062 tagged version:
-<pre>
-git clone git://github.com/ofTheo/ofxKinect.git
-cd ofxKinect
-git checkout 0062
-</pre>
-
-#### Using the latest ofxKinect
-
-The master branch of ofxKinect will work with the current master of OpenFrameworks and can be considered unstable. The develop branch is used for testing new features and bugfixes before they are applied to master.
-
-If you want to work with the latest unstable (still in development) ofxKinect, download the source from the develop branch [https://github.com/ofTheo/ofxKinect/tree/develop](https://github.com/ofTheo/ofxKinect/tree/develop) or via git clone:
-<pre>
-git clone git://github.com/ofTheo/ofxKinect.git -b develop
-</pre> 
-
-Warning: The develop branch will be in flux, so don't be surprised if things do not always work as expected!
 
 Running the Example Project
 ---------------------------
 
-An exmaple project is provided in the `kinectExample` folder. As of OF 0.8.0, ofxKinect no longer ships with the platform poject files. Simply use the OpenFrameworks ProjectGenerator in `apps/projectGenerator` to generate the Xcode, VS2012, CodeBlocks projects and/or Makefiles by pointing it to the `kinectExample` folder and making sure to include the following addons:
+An example project is provided in the `examples/addons/kinectExample` in your OpenFrameworks distribution. If you've downloaded/cloned OF from Github, use the OpenFrameworks ProjectGenerator in `apps/projectGenerator` to generate the Xcode, VS2012, CodeBlocks projects and/or Makefiles by pointing it to the `kinectExample` folder and making sure to include the following addons:
 
 * ofxKinect (duh)
 * ofxOpenCv (for blob tracking in the example, not required by ofxKinect itself.)
@@ -110,11 +77,13 @@ How to Create a New ofxKinect Project
 
 To develop your own project based on ofxKinect, simply copy the example project and rename it. You probably want to put it in your apps folder, for example, after copying:
 
-`openFrameworks/addons/ofxKinect/kinectExample/ => openFrameworks/apps/myApps/example/`
+`openFrameworks/examples/addons/kinectExample/ => openFrameworks/apps/myApps/kinectProject/`
 
 Then after renaming:
 
 `openFrameworks/apps/myApps/myKinectProject/`
+
+As of OF 0.8.0, you can also create a new ofxKinect project using the ProjectGenerator, found in `openFrameworks/apps/projectGenerator`.
 
 ### Mac (Xcode):
 
@@ -130,6 +99,8 @@ Close Visual Studio and rename the *.sln file. Open the solution, right click on
 
 Adding ofxKinect to an Existing Project
 ---------------------------------------
+
+**As of OF 0.8.0, you can use the OF ProjectGenerator to create ofxKinect projects. The following instructions are for setting up the project files manually.**
 
 If you want to add ofxKinect to another project, you need to make sure you include the src folder and the :
 <pre>
@@ -229,7 +200,4 @@ For Kinect4Windows, Microsoft states that only 2 Kinects can be supported on the
 Developing ofxKinect
 --------------------
 
-Feel free to log bug reports and issues to the ofxKinect Github page: https://github.com/ofTheo/ofxKinect/issues
-
-If you wish to help in ofxKinect dvelopment, please refer to the wiki: https://github.com/ofTheo/ofxKinect/wiki/Developing-ofxKinect
-
+Feel free to log bug reports and issues to the openFrameworks Github page: https://github.com/openframeworks/openFrameworks
