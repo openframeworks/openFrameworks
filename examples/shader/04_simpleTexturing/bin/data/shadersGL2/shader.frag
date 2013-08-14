@@ -3,8 +3,9 @@
 // this is how we receive the texture
 uniform sampler2DRect tex0;
 
+varying vec2 texCoordVarying;
+
 void main()
 {
-    vec4 src = texture2DRect(tex0, gl_TexCoord[0].st);
-    gl_FragColor = src;
+    gl_FragColor = texture2DRect(tex0, texCoordVarying);
 }
