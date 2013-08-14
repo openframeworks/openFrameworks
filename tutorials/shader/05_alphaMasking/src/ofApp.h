@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class testApp : public ofBaseApp{
+class ofApp : public ofBaseApp{
 	public:
 		
 	void setup();
@@ -20,13 +20,6 @@ class testApp : public ofBaseApp{
 	void gotMessage(ofMessage msg);
 
     ofShader shader;
-    
-    ofImage backgroundImage;
-    ofImage foregroundImage;
-    ofImage brushImage;
-    
-    ofFbo maskFbo;
-    ofFbo fbo;
-    
-    bool bBrushDown;
+    ofImage image;
+    ofImage imageMask;
 };
