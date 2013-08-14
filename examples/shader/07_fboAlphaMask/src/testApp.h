@@ -19,14 +19,14 @@ class testApp : public ofBaseApp{
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-    ofImage     srcImg;
-    ofImage     dstImg;
-    ofImage     brushImg;
+    ofShader shader;
     
-    ofFbo       maskFbo;
-    ofFbo       fbo;
+    ofImage backgroundImage;
+    ofImage foregroundImage;
+    ofImage brushImage;
     
-    ofShader    shader;
-
-    bool        bBrushDown;
+    ofFbo maskFbo;
+    ofFbo fbo;
+    
+    bool bBrushDown;
 };
