@@ -1,5 +1,5 @@
 #include "ofMain.h"
-#include "testApp.h"
+#include "ofApp.h"
 
 int main(){
 	ofAppiOSWindow * iOSWindow = new ofAppiOSWindow();
@@ -8,5 +8,5 @@ int main(){
 	iOSWindow->enableRetina();
 	
 	ofSetupOpenGL(iOSWindow, 480, 320, OF_FULLSCREEN);
-	ofRunApp(new testApp);
+	ofRunApp(new ofApp);
 }
