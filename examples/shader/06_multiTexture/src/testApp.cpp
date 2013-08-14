@@ -22,7 +22,7 @@ void testApp::setup(){
     movie.loadMovie("movie.mov");
 	movie.play();
     
-    image.loadImage("image.jpg");
+    image.loadImage("img.jpg");
     imageMask.loadImage("mask.jpg");
     
     fbo.allocate(camWidth, camHeight);
