@@ -3,7 +3,7 @@
 
 // comment out the line below if you want to use a fixed pipeline opengl renderer,
 // otherwise leave this line uncommented if you want to use a programmable pipeline opengl renderer.
-//#define USE_PROGRAMMABLE_RENDERER
+#define USE_PROGRAMMABLE_RENDERER
 
 #ifdef USE_PROGRAMMABLE_RENDERER
 #include "ofGLProgrammableRenderer.h"

@@ -2,14 +2,18 @@
 // these are for the programmable pipeline system
 uniform mat4 modelViewProjectionMatrix;
 attribute vec4 position;
+attribute vec2 texcoord;
 
-// this is going to be passed in our program
-uniform float time;
+varying vec2 texCoordVarying;
 
+// PLEASE NOTE.
+// texture2D() is not supported in vertex ES2 shaders.
+// so unfortunately on ES2, we can not sample the texture,
+// and displace the mesh.
+// Please see GL2 and GL3 examples for displacement mapping.
 
 void main()
 {
-	vec4 modifiedPosition = modelViewProjectionMatrix * position;
-	modifiedPosition.y += (sin(modifiedPosition.x + time) * 100);
-	gl_Position = modifiedPosition;
+    texCoordVarying = texcoord;
+	gl_Position = modelViewProjectionMatrix * position;
 }

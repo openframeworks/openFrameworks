@@ -3,12 +3,12 @@
 // these are from the programmable pipeline system
 uniform mat4 modelViewProjectionMatrix;
 in vec4 position;
-in vec4 color;
 in vec2 texcoord;
-out vec2 varyingtexcoord;
 
 // this is how we receive the texture
 uniform sampler2DRect tex0;
+
+out vec2 texCoordVarying;
 
 void main()
 {
@@ -30,5 +30,5 @@ void main()
     gl_Position = modifiedPosition;
 
     // pass the texture coordinates to the fragment shader
-    varyingtexcoord = texcoord;
+    texCoordVarying = texcoord;
 }
