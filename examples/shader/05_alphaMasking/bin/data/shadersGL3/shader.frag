@@ -1,10 +1,11 @@
 #version 150
 
-in vec2 texCoordVarying;
-out vec4 outputColor;
-
 uniform sampler2DRect tex0;
 uniform sampler2DRect imageMask;
+
+in vec2 texCoordVarying;
+
+out vec4 outputColor;
 
 void main()
 {
