@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class testApp : public ofBaseApp{
+class ofApp : public ofBaseApp{
 	public:
 		
 	void setup();
@@ -21,5 +21,4 @@ class testApp : public ofBaseApp{
 
     ofShader shader;
     ofPlanePrimitive plane;
-    ofImage img;
 };

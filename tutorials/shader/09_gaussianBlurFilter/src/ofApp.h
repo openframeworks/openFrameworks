@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class testApp : public ofBaseApp{
+class ofApp : public ofBaseApp{
 	public:
 		
 	void setup();
@@ -19,6 +19,11 @@ class testApp : public ofBaseApp{
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-    ofShader shader;
-    ofPlanePrimitive plane;
+    ofShader shaderBlurX;
+    ofShader shaderBlurY;
+
+    ofFbo fboBlurOnePass;
+    ofFbo fboBlurTwoPass;
+    
+    ofImage image;
 };
