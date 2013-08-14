@@ -1,10 +1,10 @@
 #version 120
 
-varying vec2 texCoordVarying;
-
 uniform sampler2DRect tex0;
 
 uniform float blurAmnt;
+
+varying vec2 texCoordVarying;
 
 void main()
 {

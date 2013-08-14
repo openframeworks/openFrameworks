@@ -1,11 +1,11 @@
 
 precision highp float;
 
-varying vec2 texCoordVarying;
-
 uniform sampler2D tex0;
 
 uniform float blurAmnt;
+
+varying vec2 texCoordVarying;
 
 void main()
 {
@@ -16,7 +16,7 @@ void main()
     color += 3.0 * texture2D(tex0, texCoordVarying + vec2(blurAmnt * -2.0, 0.0));
     color += 4.0 * texture2D(tex0, texCoordVarying + vec2(blurAmnt * -1.0, 0.0));
     
-    color += 5.0 * texture2D(tex0, texCoordVarying + vec2(blurAmnt, 0));
+    color += 5.0 * texture2D(tex0, texCoordVarying + vec2(blurAmnt, 0.0));
 	
     color += 4.0 * texture2D(tex0, texCoordVarying + vec2(blurAmnt * 1.0, 0.0));
     color += 3.0 * texture2D(tex0, texCoordVarying + vec2(blurAmnt * 2.0, 0.0));
