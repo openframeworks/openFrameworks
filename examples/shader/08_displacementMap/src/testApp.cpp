@@ -44,8 +44,9 @@ void testApp::draw(){
     // so we can just go ahead and access it there.
     img.getTextureReference().bind();
     
-    ofPushMatrix();
     shader.begin();
+
+    ofPushMatrix();
     
     // translate plane into center screen.
     float tx = ofGetWidth() / 2;
@@ -59,8 +60,9 @@ void testApp::draw(){
 
     plane.drawWireframe();
     
-    shader.end();
     ofPopMatrix();
+    
+    shader.end();
 
     ofSetColor(ofColor::white);
     img.draw(0, 0);

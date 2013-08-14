@@ -1,12 +1,13 @@
 #version 120
 
-varying vec4 globalColor;
 uniform sampler2DRect tex0;
+
+varying vec2 texCoordVarying;
 
 void main()
 {
     // get the texture coordinates
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    texCoordVarying = gl_MultiTexCoord0.xy;
 
     // get the position of the vertex relative to the modelViewProjectionMatrix
     vec4 position = ftransform();
@@ -17,7 +18,7 @@ void main()
     
     // here we get the red channel value from the texture
     // to use it as vertical displacement
-    float displacementY = texture2DRect(tex0, gl_TexCoord[0].st).x;
+    float displacementY = texture2DRect(tex0, texCoordVarying).x;
 		
     // use the displacement we created from the texture data
     // to modify the vertex position
