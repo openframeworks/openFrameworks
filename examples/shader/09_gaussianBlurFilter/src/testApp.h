@@ -19,6 +19,11 @@ class testApp : public ofBaseApp{
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-    ofShader shader;
+    ofShader shaderBlurX;
+    ofShader shaderBlurY;
+
+    ofFbo fboBlurOnePass;
+    ofFbo fboBlurTwoPass;
+    
     ofImage image;
 };

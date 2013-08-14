@@ -4,16 +4,22 @@
 void testApp::setup(){
     
 #ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
+    shaderBlurX.load("shadersES2/shaderBlurX");
+    shaderBlurY.load("shadersES2/shaderBlurY");
 #else
 	if(ofIsGLProgrammableRenderer()){
-		shader.load("shadersGL3/shader");
+		shaderBlurX.load("shadersGL3/shaderBlurX");
+        shaderBlurY.load("shadersGL3/shaderBlurY");
 	}else{
-		shader.load("shadersGL2/shader");
+		shaderBlurX.load("shadersGL2/shaderBlurX");
+        shaderBlurY.load("shadersGL2/shaderBlurY");
 	}
 #endif
 
     image.loadImage("img.jpg");
+    
+    fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
+    fboBlurTwoPass.allocate(image.getWidth(), image.getHeight());
 }
 
 //--------------------------------------------------------------
@@ -24,14 +30,35 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
     
-    float blurX = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
+    float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
     
-    shader.begin();
-    shader.setUniform1f("blurAmnt", blurX);
+    //----------------------------------------------------------
+    fboBlurOnePass.begin();
+    
+    shaderBlurX.begin();
+    shaderBlurX.setUniform1f("blurAmnt", blur);
 
     image.draw(0, 0);
     
-    shader.end();
+    shaderBlurX.end();
+    
+    fboBlurOnePass.end();
+    
+    //----------------------------------------------------------
+    fboBlurTwoPass.begin();
+    
+    shaderBlurY.begin();
+    shaderBlurY.setUniform1f("blurAmnt", blur);
+    
+    fboBlurOnePass.draw(0, 0);
+    
+    shaderBlurY.end();
+    
+    fboBlurTwoPass.end();
+    
+    //----------------------------------------------------------
+    ofSetColor(ofColor::white);
+    fboBlurTwoPass.draw(0, 0);
 }
 
 //--------------------------------------------------------------
