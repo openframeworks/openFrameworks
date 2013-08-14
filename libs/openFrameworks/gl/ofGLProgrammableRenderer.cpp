@@ -156,10 +156,11 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 #else
 
 	// OpenGL
+	/*  some things are internally still using ofMesh
 	if(!wrongUseLoggedOnce){
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh";
 		wrongUseLoggedOnce = true;
-	}
+	}*/
 	
 	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
 
@@ -190,10 +191,11 @@ void ofGLProgrammableRenderer::draw( of3dPrimitive& model, ofPolyRenderMode rend
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofPolyline & poly){
+	/*  some things are internally still using ofPolyline
 	if(!wrongUseLoggedOnce){
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
 		wrongUseLoggedOnce = true;
-	}
+	}*/
 	if(poly.getVertices().empty()) return;
 
 	// use smoothness, if requested:

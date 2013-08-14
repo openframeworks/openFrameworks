@@ -190,6 +190,9 @@ string ofxiOSGetDocumentsDirectory();
 // opens url in safari.
 void ofxiOSLaunchBrowser(string url);
 
+void ofxiOSSetClipboardString(string clipboardString);
+string ofxiOSGetClipboardString();
+
 //-------------------------------------------------------------------------------
 // backwards compatibility
 //

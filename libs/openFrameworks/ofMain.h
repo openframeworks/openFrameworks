@@ -44,6 +44,8 @@
 #include "ofTexture.h"
 #include "ofVbo.h"
 #include "ofVboMesh.h"
+#include "ofGLProgrammableRenderer.h"
+#include "ofGLRenderer.h"
 
 //--------------------------
 // graphics
