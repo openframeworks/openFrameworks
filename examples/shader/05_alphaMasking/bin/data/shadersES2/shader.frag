@@ -1,10 +1,10 @@
 
 precision highp float;
 
-varying vec2 texCoordVarying;
-
 uniform sampler2D tex0;
 uniform sampler2D imageMask;
+
+varying vec2 texCoordVarying;
 
 void main()
 {
