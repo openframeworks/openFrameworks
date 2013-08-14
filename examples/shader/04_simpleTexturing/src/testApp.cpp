@@ -13,8 +13,11 @@ void testApp::setup() {
 #endif
 
     img.loadImage("img.jpg");
+
     plane.set(800, 600, 10, 10);
-    plane.mapTexCoordsFromTexture(img.getTextureReference());
+    plane.mapTexCoords(0, 0, img.getWidth(), img.getHeight());
+    ofVec4f tcoords = plane.getTexCoords();
+    plane.mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 
@@ -36,7 +39,13 @@ void testApp::draw() {
     shader.begin();
     
     // get mouse position relative to center of screen
-    float mousePosition = ofMap(mouseX, 0, ofGetWidth(), plane.getWidth(), -plane.getWidth(), true);
+    float mousePosition = ofMap(mouseX, 0, ofGetWidth(), 1.0, -1.0, true);
+#ifndef TARGET_OPENGLES
+    // when texture coordinates are normalised, they are always between 0 and 1.
+    // in GL2 and GL3 the texture coordinates are not normalised,
+    // so we have to multiply the normalised mouse position by the plane width.
+    mousePosition *= plane.getWidth();
+#endif
 
     shader.setUniform1f("mouseX", mousePosition);
 
