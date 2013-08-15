@@ -35,7 +35,7 @@ void ofApp::setup(){
 	
 	// set other optional parameters
 	mapKit.setShowUserLocation(true);
-	mapKit.setType(OFXIPHONE_MAPKIT_HYRBID);
+	mapKit.setType(ofxiOS_MAPKIT_HYRBID);
 //	mapKit.setAllowZoom(false);
 //	mapKit.setAllowScroll(false);
 //	mapKit.setAllowUserInteraction(false);
