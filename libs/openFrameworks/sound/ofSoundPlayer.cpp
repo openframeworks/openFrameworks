@@ -50,6 +50,15 @@ float * ofSoundGetSpectrum(int nBands){
 //---------------------------------------------------------------------------
 ofSoundPlayer::ofSoundPlayer (){
 	player	= ofPtr<OF_SOUND_PLAYER_TYPE>(new OF_SOUND_PLAYER_TYPE);
+#ifdef OF_SOUND_PLAYER_QUICKTIME
+    
+#elif defined( OF_SOUND_PLAYER_FMOD )
+    cout << "OF_SOUND_PLAYER_FMOD" << endl;        
+#elif defined( OF_SOUND_PLAYER_OPENAL )
+    cout << "OF_SOUND_PLAYER_OPENAL" << endl;    
+#else
+    cout << "ofBasicSoundPlayer" << endl;
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -118,7 +127,14 @@ void ofSoundPlayer::setPaused(bool bP){
 		player->setPaused(bP);
 	}
 }
-
+//--------------------------------------------------------------------
+bool ofSoundPlayer::getIsLooping(){
+	if( player != NULL ){
+		return player->getIsLooping();
+	}else{
+        return false;
+    }
+}
 //--------------------------------------------------------------------
 void ofSoundPlayer::setLoop(bool bLp){
 	if( player != NULL ){

@@ -311,6 +311,10 @@ bool ofSoundFile::isCompressed(){
     return bCompressed;
 }
 //--------------------------------------------------------------
+string ofSoundFile::getPath(){
+    return path;
+}
+//--------------------------------------------------------------
                   string ofSoundFile::getID3Tag(ofID3Tag tag){
     ofLogWarning() << "ID3 tag not implemented yet. :(";
     return "";

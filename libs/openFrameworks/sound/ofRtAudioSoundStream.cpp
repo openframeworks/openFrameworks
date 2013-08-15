@@ -78,6 +78,16 @@ void ofRtAudioSoundStream::setInput(ofBaseSoundInput * soundInput){
 void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	soundOutputPtr		= soundOutput;
 }
+//------------------------------------------------------------------------------
+ofBaseSoundInput * ofRtAudioSoundStream::getInput(){
+	return soundInputPtr;
+}
+
+//------------------------------------------------------------------------------
+ofBaseSoundOutput * ofRtAudioSoundStream::getOutput(){
+	return soundOutputPtr;
+}
+
 
 //------------------------------------------------------------------------------
 bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){

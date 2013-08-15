@@ -67,6 +67,7 @@ public:
     bool isCompressed();
     string getID3Tag(ofID3Tag tag);
     bool isLoaded();
+    string getPath();
     
 private:
 	

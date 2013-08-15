@@ -18,6 +18,8 @@ class ofPASoundStream : public ofBaseSoundStream{
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
+        ofBaseSoundInput * getInput();
+        ofBaseSoundOutput * getOutput();
 		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		

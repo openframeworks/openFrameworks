@@ -1,9 +1,11 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
+#include "ofSoundMixer.h"
 
-ofSoundStream soundStreamInput;
-ofSoundStream soundStreamOutput;	
-
+static ofSoundStream globalSoundStream;	
+ofSoundStream & ofGetSoundStream(){
+    return globalSoundStream;
+}
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
 	if( appPtr == NULL ){
@@ -19,30 +21,30 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate,
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-	soundStreamOutput.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+   globalSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+    if (globalSoundStream.getOutput() != &ofGetSystemSoundMixer() ) {
+        globalSoundStream.setOutput(&ofGetSystemSoundMixer());
+    }
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-	soundStreamOutput.stop();
-	soundStreamInput.stop();
+	globalSoundStream.stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-	soundStreamOutput.start();
-	soundStreamInput.start();
+	globalSoundStream.start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-	soundStreamOutput.close();
-	soundStreamInput.close();
+	globalSoundStream.close();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamListDevices(){
-	soundStreamOutput.listDevices();
+	globalSoundStream.listDevices();
 }
 
 //------------------------------------------------------------
@@ -97,7 +99,22 @@ void ofSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 		soundStream->setOutput(soundOutput);
 	}
 }
-
+//------------------------------------------------------------
+ofBaseSoundInput * ofSoundStream::getInput(){
+    if( soundStream ){
+		return soundStream->getInput();
+	}else{
+        return NULL;
+    }
+}
+//------------------------------------------------------------
+ofBaseSoundOutput * ofSoundStream::getOutput(){
+    if( soundStream ){
+		return soundStream->getOutput();
+	}else{
+        return NULL;
+    }
+}
 //------------------------------------------------------------
 bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if( soundStream ){

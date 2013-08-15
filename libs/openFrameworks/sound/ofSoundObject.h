@@ -1,7 +1,7 @@
 
 #pragma once
 
-//#include "ofMain.h"
+#include "ofConstants.h"
 #include "ofBaseTypes.h"
 
 
@@ -21,8 +21,8 @@ public:
 
 	/// Connects the output of this ofSoundObject to the input of the parameter ofSoundObject
 	ofSoundObject &connectTo(ofSoundObject &soundObject);
-
-
+    void disconnect();
+    void disconnectInput(ofSoundObject * input);
 	/// This is the method you implement to process the signal from inputs to outputs.
 	virtual void process(ofSoundBuffer &input, ofSoundBuffer &output) {
 		// default behaviour is pass-through.
@@ -39,22 +39,20 @@ public:
 	/// - might want to override this if you make a splitter
 	/// returns true if there are no infinite loops.
 	virtual bool checkForInfiniteLoops();
-
-protected:
-
 	ofSoundObject *getInputObject();
-
-private:
+protected:
 
 	// this is the previous dsp object in the chain
 	// that feeds this one with input.
 	ofSoundObject *inputObject;
+    ofSoundObject *outputObjectRef;
+    virtual void setInput(ofSoundObject *obj);
 
+private:
 
 	// ofSoundObjects reference their source, not their destination
 	// because it's not needed in a pullthrough audio architecture.
 	// this lets that be set under the hood via connectTo()
-	void setInput(ofSoundObject *obj);
 
 	// a spare buffer to pass from one sound object to another
 	ofSoundBuffer workingBuffer;

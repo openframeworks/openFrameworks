@@ -18,7 +18,7 @@
 #include "ofEvents.h"
 #include "ofSoundObject.h"
 
-class ofBasicSoundPlayer: public ofBaseSoundPlayer, public ofBaseSoundOutput {
+class ofBasicSoundPlayer: public ofBaseSoundPlayer, public ofSoundObject {//public ofBaseSoundOutput {
 public:
 	ofBasicSoundPlayer();
 	virtual ~ofBasicSoundPlayer();
