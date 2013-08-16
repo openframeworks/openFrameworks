@@ -84,6 +84,12 @@ public:
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
 	
+	// read-only access to current matrix stack 
+	const ofMatrixStack & getMatrixStack() const;
+	const ofMatrix4x4 & getModelViewMatrix() const;
+	const ofMatrix4x4 & getProjectionMatrix() const;
+	const ofMatrix4x4 & getModelViewProjectionMatrix() const;
+	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();

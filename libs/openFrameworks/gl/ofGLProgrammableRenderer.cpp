@@ -530,6 +530,26 @@ void ofGLProgrammableRenderer::multMatrix (const float *m){
 }
 
 //----------------------------------------------------------
+const ofMatrixStack & ofGLProgrammableRenderer::getMatrixStack() const {
+	return matrixStack;
+}
+
+//----------------------------------------------------------
+const ofMatrix4x4 & ofGLProgrammableRenderer::getModelViewMatrix() const {
+	return matrixStack.getModelViewMatrix();
+}
+
+//----------------------------------------------------------
+const ofMatrix4x4 & ofGLProgrammableRenderer::getModelViewProjectionMatrix() const {
+	return matrixStack.getModelViewProjectionMatrix();
+}
+
+//----------------------------------------------------------
+const ofMatrix4x4 & ofGLProgrammableRenderer::getProjectionMatrix() const {
+	return matrixStack.getProjectionMatrix();
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 	if(!currentShader) return;
 	// uploads the current matrix to the current shader.
