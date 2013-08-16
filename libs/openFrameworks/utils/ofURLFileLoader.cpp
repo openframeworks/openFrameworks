@@ -1,18 +1,4 @@
-#include "Poco/Net/HTTPSession.h"
-#include "Poco/Net/HTTPClientSession.h"
-#include "Poco/Net/HTTPSClientSession.h"
-#include "Poco/Net/HTTPRequest.h"
-#include "Poco/Net/HTTPResponse.h"
-#include "Poco/StreamCopier.h"
-#include "Poco/Path.h"
-#include "Poco/URI.h"
-#include "Poco/Exception.h"
-#include "Poco/URIStreamOpener.h"
-#include "Poco/Net/HTTPStreamFactory.h"
-#include "Poco/Net/HTTPSStreamFactory.h"
-#include "Poco/Net/SSLManager.h"
-#include "Poco/Net/KeyConsoleHandler.h"
-#include "Poco/Net/ConsoleCertificateHandler.h"
+
 
 #include "ofURLFileLoader.h"
 #include "ofAppRunner.h"
@@ -64,6 +50,17 @@ int ofURLFileLoader::getAsync(string url, string name){
 	return request.getID();
 }
 
+int ofURLFileLoader::getAsync(ofHttpRequest req){
+    if(req.url != ""){
+        if(req.name=="") req.name = req.url;
+        lock();
+        requests.push_back(req);
+        unlock();
+        start();
+        return req.getID();
+    }
+    return -1;
+}
 
 ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
     ofHttpRequest request(url,path,true);
@@ -97,7 +94,7 @@ void ofURLFileLoader::clear(){
 }
 
 void ofURLFileLoader::start() {
-     if (isThreadRunning() == false){
+    if (isThreadRunning() == false){
 		ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
         startThread(true, false);   // blocking, verbose
     }else{
@@ -121,9 +118,9 @@ void ofURLFileLoader::threadedFunction() {
 	    	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): querying request " << requests.front().name;
 			ofHttpRequest request(requests.front());
 			unlock();
-
+            
 			ofHttpResponse response(handleRequest(request));
-
+            
 			lock();
 			if(response.status!=-1){
 				// double-check that the request hasn't been removed from the queue
@@ -154,22 +151,66 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
-
-		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
-		HTTPResponse res;
+        
+        
+		HTTPRequest req(request.method, path, HTTPMessage::HTTP_1_1);
+        HTMLForm form;
+        bool usesForm = false;
+        if(request.header.size() > 0){
+            map<string, string>::iterator iter;
+            for(iter = request.header.begin(); iter != request.header.end(); iter++){
+                req.add(iter->first, iter->second);
+            }
+        }
+        
+        if(request.files.size() > 0 || request.data.size() > 0){
+            usesForm = true;
+            // create the form data to send
+            if(request.files.size()>0)
+                form.setEncoding(HTMLForm::ENCODING_MULTIPART);
+            else
+                form.setEncoding(HTMLForm::ENCODING_URL);
+            
+            map<string, string>::iterator dataIter;
+            for(dataIter = request.data.begin(); dataIter != request.data.end(); dataIter++){
+                form.add(dataIter->first, dataIter->second);
+            }
+            map<string, string>::iterator fileIter;
+            for(fileIter = request.files.begin(); fileIter!=request.files.end(); fileIter++){
+                string fileName = fileIter->second.substr(fileIter->second.find_last_of('/')+1);
+                cout << "adding file: " << fileName << " path: " << fileIter->second << endl;
+                form.addPart(fileIter->first,new FilePartSource(fileIter->second));
+            }
+            
+            form.prepareSubmit(req);
+        }
+        
+        
+        HTTPResponse res;
 		ofPtr<HTTPSession> session;
 		istream * rs;
 		if(uri.getScheme()=="https"){
-			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
+            //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
 			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
 			httpsSession->setTimeout(Poco::Timespan(20,0));
-			httpsSession->sendRequest(req);
+            if(usesForm){
+                ofLog()<<"sendForm"<<endl;
+                form.write(httpsSession->sendRequest(req));
+            }else{
+                httpsSession->sendRequest(req);
+            }
 			rs = &httpsSession->receiveResponse(res);
 			session = ofPtr<HTTPSession>(httpsSession);
 		}else{
 			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
 			httpSession->setTimeout(Poco::Timespan(20,0));
-			httpSession->sendRequest(req);
+            httpSession->setProxyHost("127.0.0.1");
+            httpSession->setProxyPort(8888);
+            if(usesForm){
+                form.write(httpSession->sendRequest(req));
+            }else{
+                httpSession->sendRequest(req);
+            }
 			rs = &httpSession->receiveResponse(res);
 			session = ofPtr<HTTPSession>(httpSession);
 		}
@@ -191,19 +232,19 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 			}
 			return ofHttpResponse(request,res.getStatus(),res.getReason());
 		}
-
+        
 	} catch (const Exception& exc) {
         ofLogError("ofURLFileLoader") << "handleRequest(): "+ exc.displayText();
-
+        
         return ofHttpResponse(request,-1,exc.displayText());
-
+        
     } catch (...) {
     	return ofHttpResponse(request,-1,"ofURLFileLoader: fatal error, couldn't catch Exception");
     }
-
+    
 	return ofHttpResponse(request,-1,"ofURLFileLoader: fatal error, couldn't catch Exception");
 	
-}	
+}
 
 void ofURLFileLoader::update(ofEventArgs & args){
 	lock();
@@ -216,7 +257,7 @@ void ofURLFileLoader::update(ofEventArgs & args){
 		lock();
 	}
 	unlock();
-
+    
 }
 
 static ofURLFileLoader & getFileLoader(){
@@ -230,6 +271,11 @@ ofHttpResponse ofLoadURL(string url){
 
 int ofLoadURLAsync(string url, string name){
 	return getFileLoader().getAsync(url,name);
+}
+
+int ofLoadRequestAsync(ofHttpRequest req){
+    ofLog()<<req.name<<endl;
+    return getFileLoader().getAsync(req);
 }
 
 ofHttpResponse ofSaveURLTo(string url, string path){
