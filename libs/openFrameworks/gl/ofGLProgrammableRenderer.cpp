@@ -923,7 +923,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
 	usingCustomShader = false;
-	if(uniqueShader) beginDefaultShader();
+	if(!uniqueShader) beginDefaultShader();
 }
 
 //----------------------------------------------------------
