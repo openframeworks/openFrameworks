@@ -27,7 +27,7 @@ public:
 	string				url;
 	string				name;
     string              method;
-    
+    string              host;
 	bool				saveTo;
     
     int getID(){return id;}
@@ -36,7 +36,6 @@ public:
     void addData(string key, string value){data.insert(make_pair(key, value));}
     void addFile(string key, string path){files.insert(make_pair(key, path));}
     void setUserAgent(string value){header.insert(make_pair("User-Agent", value));}
-    
     static string OF_HTTP_GET;
 	static string OF_HTTP_HEAD;
 	static string OF_HTTP_PUT;

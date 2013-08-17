@@ -185,6 +185,8 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		if (path.empty()) path = "/";
         
 		HTTPRequest req(request.method, path, HTTPMessage::HTTP_1_1);
+        if(request.host != "")
+            req.setHost(request.host);
         bool usesForm = false;
         if(request.header.size() > 0){
             map<string, string>::iterator iter;
@@ -218,7 +220,6 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             map<string, string>::iterator fileIter;
             for(fileIter = request.files.begin(); fileIter!=request.files.end(); fileIter++){
                 string fileName = fileIter->second.substr(fileIter->second.find_last_of('/')+1);
-                cout << "adding file: " << fileName << " path: " << fileIter->second << endl;
                 form.addPart(fileIter->first,new FilePartSource(fileIter->second));
             }
             
