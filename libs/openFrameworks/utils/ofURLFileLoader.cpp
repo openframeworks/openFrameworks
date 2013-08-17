@@ -4,14 +4,35 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-using namespace Poco::Net;
+#include "Poco/Net/HTTPSession.h"
+#include "Poco/Net/HTTPClientSession.h"
+#include "Poco/Net/HTTPSClientSession.h"
 
+#include "Poco/Net/HTTPResponse.h"
+#include "Poco/Net/HTMLForm.h"
+#include "Poco/Net/HTTPBasicCredentials.h"
+#include "Poco/Net/FilePartSource.h"
+#include "Poco/StreamCopier.h"
+#include "Poco/Path.h"
+#include "Poco/URI.h"
+#include "Poco/Exception.h"
+#include "Poco/URIStreamOpener.h"
+#include "Poco/Net/HTTPStreamFactory.h"
+#include "Poco/Net/HTTPSStreamFactory.h"
+#include "Poco/Net/SSLManager.h"
+#include "Poco/Net/KeyConsoleHandler.h"
+#include "Poco/Net/ConsoleCertificateHandler.h"
+
+using namespace Poco::Net;
 using namespace Poco;
 
 #include "ofConstants.h"
 
 static bool factoryLoaded = false;
 int	ofHttpRequest::nextID = 0;
+
+
+
 ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	static ofEvent<ofHttpResponse> * event = new ofEvent<ofHttpResponse>;
 	return *event;
@@ -36,6 +57,7 @@ ofURLFileLoader::ofURLFileLoader() {
 
 ofHttpResponse ofURLFileLoader::get(string url) {
     ofHttpRequest request(url,url);
+    request.setMethod(HTTPRequest::HTTP_GET);
     return handleRequest(request);
 }
 
@@ -43,6 +65,7 @@ ofHttpResponse ofURLFileLoader::get(string url) {
 int ofURLFileLoader::getAsync(string url, string name){
 	if(name=="") name=url;
 	ofHttpRequest request(url,name);
+    request.setMethod(HTTPRequest::HTTP_GET);
 	lock();
 	requests.push_back(request);
 	unlock();
@@ -163,6 +186,16 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             }
         }
         
+        
+        if(request.cookies.size() > 0){
+            NameValueCollection cookies;
+            map<string, string>::iterator cookieIter;
+            for(cookieIter = request.cookies.begin(); cookieIter != request.cookies.end(); cookieIter++){
+                cookies.add(cookieIter->first, cookieIter->second);
+            }
+            req.setCookies(cookies);
+        }
+        
         if(request.files.size() > 0 || request.data.size() > 0){
             usesForm = true;
             // create the form data to send
@@ -193,24 +226,21 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
 			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
 			httpsSession->setTimeout(Poco::Timespan(20,0));
-            if(usesForm){
-                ofLog()<<"sendForm"<<endl;
+            if(usesForm)
                 form.write(httpsSession->sendRequest(req));
-            }else{
+            else
                 httpsSession->sendRequest(req);
-            }
+            
 			rs = &httpsSession->receiveResponse(res);
 			session = ofPtr<HTTPSession>(httpsSession);
 		}else{
 			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
 			httpSession->setTimeout(Poco::Timespan(20,0));
-            httpSession->setProxyHost("127.0.0.1");
-            httpSession->setProxyPort(8888);
-            if(usesForm){
+            if(usesForm)
                 form.write(httpSession->sendRequest(req));
-            }else{
+            else
                 httpSession->sendRequest(req);
-            }
+            
 			rs = &httpSession->receiveResponse(res);
 			session = ofPtr<HTTPSession>(httpSession);
 		}

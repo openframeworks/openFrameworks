@@ -8,26 +8,8 @@
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 
-#include "Poco/Condition.h"
-#include "Poco/Net/HTTPSession.h"
-#include "Poco/Net/HTTPClientSession.h"
-#include "Poco/Net/HTTPSClientSession.h"
 #include "Poco/Net/HTTPRequest.h"
-#include "Poco/Net/HTTPResponse.h"
-#include "Poco/Net/HTMLForm.h"
-#include "Poco/Net/HTTPBasicCredentials.h"
-#include "Poco/Net/FilePartSource.h"
-#include "Poco/StreamCopier.h"
-#include "Poco/Path.h"
-#include "Poco/URI.h"
-#include "Poco/Exception.h"
-#include "Poco/URIStreamOpener.h"
-#include "Poco/Net/HTTPStreamFactory.h"
-#include "Poco/Net/HTTPSStreamFactory.h"
-#include "Poco/Net/SSLManager.h"
-#include "Poco/Net/KeyConsoleHandler.h"
-#include "Poco/Net/ConsoleCertificateHandler.h"
-
+#include "Poco/Condition.h"
 
 
 class ofHttpRequest{
@@ -45,34 +27,27 @@ public:
 	string				url;
 	string				name;
     string              method;
+    string              host;
+    
+    map<string, string> cookies;
     map<string, string> header;
     map<string, string> files;
     map<string, string> data;
 	bool				saveTo;
     
     int getID(){return id;}
-    void setMethod(string method){this->method = method;}
-    void addKeyValues(string key, string value){
-        string & foo = header[key];
-        foo = value;
-    }
-    void addData(string key, string value){
-        string & foo = data[key];
-        foo = value;
-    }
-    void addFile(string key, string path){
-        string & foo = files[key];
-        foo = path;
-    }
-    string HTTP_GET = Poco::Net::HTTPRequest::HTTP_GET;
-	string HTTP_HEAD = Poco::Net::HTTPRequest::HTTP_HEAD;
-	string HTTP_PUT = Poco::Net::HTTPRequest::HTTP_PUT;
-    string HTTP_POST = Poco::Net::HTTPRequest::HTTP_POST;
-    string HTTP_OPTIONS = Poco::Net::HTTPRequest::HTTP_OPTIONS;
-    string HTTP_DELETE = Poco::Net::HTTPRequest::HTTP_DELETE;
-    string HTTP_TRACE = Poco::Net::HTTPRequest::HTTP_TRACE;
-    string HTTP_CONNECT = Poco::Net::HTTPRequest::HTTP_CONNECT;
     
+    void setMethod(string method){this->method = method;}
+    
+    void addCookie(string key, string value){cookies.insert(make_pair(key, value));}
+    
+    void addHeader(string key, string value){header.insert(make_pair(key, value));}
+    
+    void addData(string key, string value){data.insert(make_pair(key, value));}
+    
+    void addFile(string key, string path){files.insert(make_pair(key, path));}
+    
+        
 private:
 	int					id;
 	static int			nextID;
