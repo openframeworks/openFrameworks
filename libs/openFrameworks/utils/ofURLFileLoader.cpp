@@ -3,11 +3,11 @@
 #include "ofURLFileLoader.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
-
+#include "ofConstants.h"
 #include "Poco/Net/HTTPSession.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPSClientSession.h"
-
+#include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPResponse.h"
 #include "Poco/Net/HTMLForm.h"
 #include "Poco/Net/HTTPBasicCredentials.h"
@@ -26,7 +26,15 @@
 using namespace Poco::Net;
 using namespace Poco;
 
-#include "ofConstants.h"
+
+string ofHttpRequest::OF_HTTP_HEAD = HTTPRequest::HTTP_HEAD;
+string ofHttpRequest::OF_HTTP_PUT = HTTPRequest::HTTP_PUT;
+string ofHttpRequest::OF_HTTP_POST =  HTTPRequest::HTTP_POST;
+string ofHttpRequest::OF_HTTP_OPTIONS = HTTPRequest::HTTP_OPTIONS;
+string ofHttpRequest::OF_HTTP_DELETE = HTTPRequest::HTTP_DELETE;
+string ofHttpRequest::OF_HTTP_TRACE = HTTPRequest::HTTP_TRACE;
+string ofHttpRequest::OF_HTTP_CONNECT =  HTTPRequest::HTTP_CONNECT;
+string ofHttpRequest::OF_HTTP_GET = HTTPRequest::HTTP_GET;
 
 static bool factoryLoaded = false;
 int	ofHttpRequest::nextID = 0;
@@ -57,7 +65,7 @@ ofURLFileLoader::ofURLFileLoader() {
 
 ofHttpResponse ofURLFileLoader::get(string url) {
     ofHttpRequest request(url,url);
-    request.setMethod(HTTPRequest::HTTP_GET);
+    request.method = ofHttpRequest::OF_HTTP_GET;
     return handleRequest(request);
 }
 
@@ -65,7 +73,7 @@ ofHttpResponse ofURLFileLoader::get(string url) {
 int ofURLFileLoader::getAsync(string url, string name){
 	if(name=="") name=url;
 	ofHttpRequest request(url,name);
-    request.setMethod(HTTPRequest::HTTP_GET);
+    request.method = ofHttpRequest::OF_HTTP_GET;
 	lock();
 	requests.push_back(request);
 	unlock();
@@ -92,6 +100,7 @@ ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
 
 int ofURLFileLoader::saveAsync(string url, string path){
 	ofHttpRequest request(url,path,true);
+    request.method=ofHttpRequest::OF_HTTP_GET;
 	lock();
 	requests.push_back(request);
 	unlock();
@@ -175,9 +184,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
         
-        
 		HTTPRequest req(request.method, path, HTTPMessage::HTTP_1_1);
-        HTMLForm form;
         bool usesForm = false;
         if(request.header.size() > 0){
             map<string, string>::iterator iter;
@@ -185,7 +192,6 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
                 req.add(iter->first, iter->second);
             }
         }
-        
         
         if(request.cookies.size() > 0){
             NameValueCollection cookies;
@@ -196,6 +202,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             req.setCookies(cookies);
         }
         
+        HTMLForm form;
         if(request.files.size() > 0 || request.data.size() > 0){
             usesForm = true;
             // create the form data to send
