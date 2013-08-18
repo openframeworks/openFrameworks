@@ -27,7 +27,6 @@ public:
 	string				url;
 	string				name;
     string              method;
-    string              host;
 	bool				saveTo;
     
     int getID(){return id;}
@@ -84,6 +83,7 @@ public:
 ofHttpResponse ofLoadURL(string url);
 int ofLoadURLAsync(string url, string name=""); // returns id
 int ofLoadRequestAsync(ofHttpRequest req);
+ofHttpResponse ofLoadRequest(ofHttpRequest req);
 ofHttpResponse ofSaveURLTo(string url, string path);
 int ofSaveURLAsync(string url, string path);
 void ofRemoveURLRequest(int id);
@@ -108,6 +108,7 @@ public:
     
     ofURLFileLoader();
     ofHttpResponse get(string url);
+    ofHttpResponse get(ofHttpRequest request);
     int getAsync(string url, string name=""); // returns id
     int getAsync(ofHttpRequest req);
     ofHttpResponse saveTo(string url, string path);

@@ -69,6 +69,10 @@ ofHttpResponse ofURLFileLoader::get(string url) {
     return handleRequest(request);
 }
 
+ofHttpResponse ofURLFileLoader::get(ofHttpRequest request){
+    return handleRequest(request);
+}
+
 
 int ofURLFileLoader::getAsync(string url, string name){
 	if(name=="") name=url;
@@ -185,8 +189,6 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		if (path.empty()) path = "/";
         
 		HTTPRequest req(request.method, path, HTTPMessage::HTTP_1_1);
-        if(request.host != "")
-            req.setHost(request.host);
         bool usesForm = false;
         if(request.header.size() > 0){
             map<string, string>::iterator iter;
@@ -311,9 +313,12 @@ int ofLoadURLAsync(string url, string name){
 	return getFileLoader().getAsync(url,name);
 }
 
-int ofLoadRequestAsync(ofHttpRequest req){
-    ofLog()<<req.name<<endl;
-    return getFileLoader().getAsync(req);
+int ofLoadRequestAsync(ofHttpRequest request){
+    return getFileLoader().getAsync(request);
+}
+
+ofHttpResponse ofLoadRequest(ofHttpRequest request){
+    return getFileLoader().get(request);
 }
 
 ofHttpResponse ofSaveURLTo(string url, string path){
