@@ -14,7 +14,7 @@ public:
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
-	bool isAllocated();
+	bool isAllocated() const;
 
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);
@@ -24,7 +24,7 @@ public:
 	void resetAnchor();
 
 	void setDefaultTextureIndex(int defaultTexture);
-	int getDefaultTextureIndex();
+	int getDefaultTextureIndex() const;
 
 	ofTexture & getTextureReference();
 	ofTexture & getTextureReference(int attachmentPoint);
@@ -38,26 +38,26 @@ public:
 	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0);
 	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0);
 
-	float getWidth();
-	float getHeight();
+	float getWidth() const;
+	float getHeight() const;
 
 	// advanced functions
 	void bind();
 	void unbind();
 
-	bool checkStatus();
+	bool checkStatus() const;
 	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
 	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment );
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment, GLenum transferFormat, GLenum transferType );
 	
-	int	getNumTextures();
+	int	getNumTextures() const;
 
 	void setActiveDrawBuffer(int i);
 	void setActiveDrawBuffers(const vector<int>& i);
 	void activateAllDrawBuffers();
 
-	GLuint getFbo();	// returns GLuint of Fbo for advanced actions
+	GLuint getFbo() const;	// returns GLuint of Fbo for advanced actions
 
 
 	static bool	checkGLSupport();
@@ -65,8 +65,8 @@ public:
 	static int maxDrawBuffers();		// return max simultaneous draw buffers
 	static int maxSamples();			// return max MSAA samples
 
-	GLuint getDepthBuffer(){ return depthBuffer; }
-	GLuint getStencilBuffer(){ return stencilBuffer; }
+	GLuint getDepthBuffer() const { return depthBuffer; }
+	GLuint getStencilBuffer() const { return stencilBuffer; }
 
 	struct Settings {
 		int		width;					// width of images attached to fbo
