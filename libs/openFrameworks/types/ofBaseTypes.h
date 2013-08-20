@@ -56,8 +56,8 @@ public:
 		draw(point.x, point.y, w, h);
 	}
 	
-	virtual float getHeight()=0;
-	virtual float getWidth()=0;
+	virtual float getHeight() const = 0;
+	virtual float getWidth() const = 0;
 	
 	virtual void setAnchorPercent(float xPct, float yPct){};
 	virtual void setAnchorPoint(float x, float y){};
