@@ -39,6 +39,7 @@ class ofTextureData {
 public:
 	ofTextureData() {
 		textureID = 0;
+        
 #ifndef TARGET_OPENGLES
 		glTypeInternal = GL_RGB8;
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
@@ -46,7 +47,6 @@ public:
 		glTypeInternal = GL_RGB;
 		textureTarget = GL_TEXTURE_2D;
 #endif
-
 
 		tex_t = 0;
 		tex_u = 0;
@@ -87,7 +87,7 @@ void ofDisableTextureEdgeHack();
 bool ofIsTextureEdgeHackEnabled();
 
 class ofTexture : public ofBaseDraws {
-	public :
+	public:
 
 	ofTexture();
 	ofTexture(const ofTexture & mom);
@@ -159,13 +159,13 @@ class ofTexture : public ofBaseDraws {
 	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
-	void readToPixels(ofPixels & pixels);
-	void readToPixels(ofShortPixels & pixels);
-	void readToPixels(ofFloatPixels & pixels);
+	void readToPixels(ofPixels & pixels) const;
+	void readToPixels(ofShortPixels & pixels) const;
+	void readToPixels(ofFloatPixels & pixels) const;
 
 	//for the advanced user who wants to draw textures in their own way
-	void bind();
-	void unbind();
+	void bind() const;
+	void unbind() const;
 	
 	// these are helpers to allow you to get points for the texture ala "glTexCoordf" 
 	// but are texture type independent. 
@@ -178,8 +178,8 @@ class ofTexture : public ofBaseDraws {
 
 	void setCompression(ofTexCompression compression);
 
-	bool bAllocated();
-	bool isAllocated();
+	bool bAllocated() const;
+	bool isAllocated() const;
 
 	ofTextureData& getTextureData();
 	const ofTextureData& getTextureData() const;
@@ -188,13 +188,13 @@ class ofTexture : public ofBaseDraws {
 	// for backwards compatibility
 	ofTextureData texData;
 
-	float getHeight();
-	float getWidth();
+	float getHeight() const;
+	float getWidth() const;
 
 protected:
 	void loadData(const void * data, int w, int h, int glFormat, int glType);
-	void enableTextureTarget();
-	void disableTextureTarget();
+	void enableTextureTarget() const;
+	void disableTextureTarget() const;
 
 	ofPoint anchor;
 	bool bAnchorIsPct;

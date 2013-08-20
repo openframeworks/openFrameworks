@@ -185,11 +185,11 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
-		float 				getHeight();
-		float 				getWidth();
+		float 				getHeight() const;
+		float 				getWidth() const;
 		
-		bool 				bAllocated() {return pixels.isAllocated();};	// legacy function
-		bool 				isAllocated() {return pixels.isAllocated();};
+		bool 				bAllocated() const {return pixels.isAllocated();};	// legacy function
+		bool 				isAllocated() const {return pixels.isAllocated();};
 
 		void				reloadTexture();
 
