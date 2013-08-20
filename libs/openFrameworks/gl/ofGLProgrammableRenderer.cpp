@@ -776,7 +776,7 @@ void ofGLProgrammableRenderer::setAlphaBitmapText(bool bitmapText){
 	bitmapStringEnabled = bitmapText;
 
 	if(wasBitmapStringEnabled!=bitmapText){
-		currentShader->setUniform1f(BITMAP_STRING_UNIFORM,bitmapText);
+		if(currentShader) currentShader->setUniform1f(BITMAP_STRING_UNIFORM,bitmapText);
 	}
 }
 
@@ -923,7 +923,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
 	usingCustomShader = false;
-	if(uniqueShader) beginDefaultShader();
+	if(!uniqueShader) beginDefaultShader();
 }
 
 //----------------------------------------------------------

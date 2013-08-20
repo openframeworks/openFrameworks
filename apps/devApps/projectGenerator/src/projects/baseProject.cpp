@@ -53,10 +53,10 @@ bool baseProject::create(string path){
 #else
             splitFromLast(fileNames[i], "/", first, last);
 #endif
-            if (fileNames[i] != "src/testApp.cpp" &&
-                fileNames[i] != "src/testApp.h" &&
+            if (fileNames[i] != "src/ofApp.cpp" &&
+                fileNames[i] != "src/ofApp.h" &&
                 fileNames[i] != "src/main.cpp" &&
-                fileNames[i] != "src/testApp.mm" &&
+                fileNames[i] != "src/ofApp.mm" &&
                 fileNames[i] != "src/main.mm"){
                 addSrc(fileNames[i], first);
             }
@@ -71,9 +71,9 @@ bool baseProject::create(string path){
 //				string first, last;
 //				splitFromLast(fileNames[i], "/", first, last);
 //				if (fileNames[i] != "Default.png" &&
-//					fileNames[i] != "src/testApp.h" &&
+//					fileNames[i] != "src/ofApp.h" &&
 //					fileNames[i] != "src/main.cpp" &&
-//					fileNames[i] != "src/testApp.mm" &&
+//					fileNames[i] != "src/ofApp.mm" &&
 //					fileNames[i] != "src/main.mm"){
 //					addSrc(fileNames[i], first);
 //				}

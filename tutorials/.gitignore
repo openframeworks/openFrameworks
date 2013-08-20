@@ -1,0 +1,64 @@
+android/*/test link
+android/*/gen
+android/*/res/raw
+libOFAndroidApp.so
+libOFAndroidApp_neon.so
+gdbserver
+gdb.setup
+libneondetection.so
+Application.mk
+Android.mk
+
+*/*/bin/*
+!*/*/bin/data/
+
+# IDE-specific ignore patterns
+
+#XCode
+/*/*/*.xcodeproj
+/*/*/Project.xcconfig
+/*/*/openFrameworks-Info.plist
+/*/*/ofxiOS-Info.plist
+/*/*/ofxiOS_Prefix.pch
+/*/*/*/*/Default-568h@2x~iphone.png
+/*/*/*/*/Default.png
+/*/*/*/*/Default@2x.png
+/*/*/*/*/Default@2x~ipad.png
+/*/*/*/*/Default@2x~iphone.png
+/*/*/*/*/Default~ipad.png
+/*/*/*/*/Default~iphone.png
+/*/*/*/*/Icon-72.png
+/*/*/*/*/Icon-72@2x.png
+/*/*/*/*/Icon.png
+/*/*/*/*/Icon@2x.png
+
+#Code::Blocks
+/*/*/*.cbp
+/*/*/*.workspace
+
+#Visual Studio
+/*/*/*.sln
+/*/*/*.vcxproj
+/*/*/*.vcxproj.user
+/*/*/*.vcxproj.filters
+/*/*/icon.rc
+
+#Eclipse
+/*/*/.cproject
+/*/*/.project
+/*/*/.settings/
+
+# OS-specific ignore patterns
+
+#Linux
+/*/*/Makefile
+/*/*/config.make
+# Leave Android files in until project generation works
+!/android/*/Makefile
+!/android/*/config.make
+
+#Android
+/*/*/test link
+!/android/*/.cproject
+!/android/*/.project
+!/android/*/.settings

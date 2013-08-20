@@ -35,6 +35,7 @@
 #import "ofxiOSEAGLView.h"
 #import "ofxiOSAppDelegate.h"
 #import "ofxiOSViewController.h"
+#import "ofxiOSExtras.h"
 
 //----------------------------------------------------------------------------------- instance.
 static ofAppiOSWindow * _instance = NULL;
