@@ -4,11 +4,13 @@
 #include <queue>
 #include <map>
 
+
 #include "ofThread.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
-#include "Poco/Condition.h"
 
+#include "Poco/Condition.h"
+#include "Poco/Net/HTTPRequest.h"
 
 class ofHttpRequest{
     
@@ -35,16 +37,8 @@ public:
     void addData(string key, string value){data.insert(make_pair(key, value));}
     void addFile(string key, string path){files.insert(make_pair(key, path));}
     void setUserAgent(string value){header.insert(make_pair("User-Agent", value));}
-    static string OF_HTTP_GET;
-	static string OF_HTTP_HEAD;
-	static string OF_HTTP_PUT;
-	static string OF_HTTP_POST;
-	static string OF_HTTP_OPTIONS;
-	static string OF_HTTP_DELETE;
-	static string OF_HTTP_TRACE;
-	static string OF_HTTP_CONNECT;
     
-
+    
     map<string, string> cookies;
     map<string, string> header;
     map<string, string> files;
