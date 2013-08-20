@@ -1,5 +1,5 @@
 #include "ofMain.h"
-#include "testApp.h"
+#include "ofApp.h"
 #include "ofAppiOSWindow.h"
 
 int main() {
@@ -8,5 +8,5 @@ int main() {
     window->enableOrientationAnimation();
 
 	ofSetupOpenGL(window, 1024,768, OF_FULLSCREEN);
-	ofRunApp(new testApp);
+	ofRunApp(new ofApp);
 }
