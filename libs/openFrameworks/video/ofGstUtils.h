@@ -52,11 +52,11 @@ public:
 	void 	setFrameByFrame(bool bFrameByFrame);
 	bool	isFrameByFrame() const;
 
-	GstElement 	* getPipeline();
-	GstElement 	* getSink();
-	GstElement 	* getGstElementByName(const string & name);
-	unsigned long getMinLatencyNanos();
-	unsigned long getMaxLatencyNanos();
+	GstElement 	* getPipeline() const;
+	GstElement 	* getSink() const;
+	GstElement 	* getGstElementByName(const string & name) const;
+	unsigned long getMinLatencyNanos() const;
+	unsigned long getMaxLatencyNanos() const;
 
 	virtual void close();
 
@@ -93,7 +93,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	gint64				durationNanos;
+	mutable gint64      durationNanos;
 	bool				isAppSink;
 
 	class ofGstMainLoopThread: public ofThread{
@@ -130,13 +130,13 @@ public:
 
 	bool 			allocate(int w, int h, int bpp);
 
-	bool 			isFrameNew();
+	bool 			isFrameNew() const;
 	unsigned char * getPixels();
 	ofPixelsRef		getPixelsRef();
 	void 			update();
 
-	float 			getHeight();
-	float 			getWidth();
+	float 			getHeight() const;
+	float 			getWidth() const;
 
 	void 			close();
 

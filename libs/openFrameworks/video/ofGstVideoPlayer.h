@@ -11,48 +11,48 @@ public:
 
 	/// needs to be called before loadMovie
 	bool 	setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat	getPixelFormat();
+	ofPixelFormat	getPixelFormat() const;
 	
 	bool 	loadMovie(string uri);
 
 	void 	update();
 
-	int		getCurrentFrame();
-	int		getTotalNumFrames();
+	int		getCurrentFrame() const;
+	int		getTotalNumFrames() const;
 
 	void 	firstFrame();
 	void 	nextFrame();
 	void 	previousFrame();
 	void 	setFrame(int frame);  // frame 0 = first frame...
 
-	bool	isStream();
+	bool	isStream() const;
 
 	void 	play();
 	void 	stop();
 	void 	setPaused(bool bPause);
-	bool 	isPaused();
-	bool 	isLoaded();
-	bool 	isPlaying();
+	bool 	isPaused() const;
+	bool 	isLoaded() const;
+	bool 	isPlaying() const;
 
-	float	getPosition();
-	float 	getSpeed();
-	float 	getDuration();
-	bool  	getIsMovieDone();
+	float	getPosition() const;
+	float 	getSpeed() const;
+	float 	getDuration() const;
+	bool  	getIsMovieDone() const;
 
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	ofLoopType 	getLoopState();
+	ofLoopType 	getLoopState() const;
 	void 	setSpeed(float speed);
 	void 	close();
 
-	bool 			isFrameNew();
+	bool 			isFrameNew() const;
 
 	unsigned char * getPixels();
 	ofPixelsRef		getPixelsRef();
 
-	float 			getHeight();
-	float 			getWidth();
+	float 			getHeight() const;
+	float 			getWidth() const;
 
 	void setFrameByFrame(bool frameByFrame);
 	void setThreadAppSink(bool threaded);

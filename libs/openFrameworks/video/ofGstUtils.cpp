@@ -192,7 +192,7 @@ void ofGstUtils::setFrameByFrame(bool _bFrameByFrame){
 	}
 }
 
-bool ofGstUtils::isFrameByFrame(){
+bool ofGstUtils::isFrameByFrame() const {
 	return bFrameByFrame;
 }
 
@@ -310,7 +310,7 @@ void ofGstUtils::stop(){
 	bPaused = true;
 }
 
-float ofGstUtils::getPosition(){
+float ofGstUtils::getPosition() const {
 	if(gstPipeline){
 		gint64 pos=0;
 #if GST_VERSION_MAJOR==0
@@ -331,15 +331,15 @@ float ofGstUtils::getPosition(){
 	}
 }
 
-float ofGstUtils::getSpeed(){
+float ofGstUtils::getSpeed() const {
 	return speed;
 }
 
-float ofGstUtils::getDuration(){
+float ofGstUtils::getDuration() const {
 	return (float)getDurationNanos()/(float)GST_SECOND;
 }
 
-int64_t ofGstUtils::getDurationNanos(){
+int64_t ofGstUtils::getDurationNanos() const {
 	GstFormat format = GST_FORMAT_TIME;
 
 #if GST_VERSION_MAJOR==0
@@ -353,7 +353,7 @@ int64_t ofGstUtils::getDurationNanos(){
 
 }
 
-bool  ofGstUtils::getIsMovieDone(){
+bool  ofGstUtils::getIsMovieDone() const {
 	if(isAppSink){
 		return gst_app_sink_is_eos(GST_APP_SINK(gstSink));
 	}else{
@@ -627,15 +627,15 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 	return true;
 }
 
-GstElement 	* ofGstUtils::getPipeline(){
+GstElement 	* ofGstUtils::getPipeline() const {
 	return gstPipeline;
 }
 
-GstElement 	* ofGstUtils::getSink(){
+GstElement 	* ofGstUtils::getSink() const {
 	return gstSink;
 }
 
-GstElement 	* ofGstUtils::getGstElementByName(const string & name){
+GstElement 	* ofGstUtils::getGstElementByName(const string & name) const {
 	return gst_bin_get_by_name(GST_BIN(gstPipeline),name.c_str());
 }
 
@@ -643,7 +643,7 @@ void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;
 }
 
-unsigned long ofGstUtils::getMinLatencyNanos(){
+unsigned long ofGstUtils::getMinLatencyNanos() const {
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
@@ -654,7 +654,7 @@ unsigned long ofGstUtils::getMinLatencyNanos(){
 	return minlat;
 }
 
-unsigned long ofGstUtils::getMaxLatencyNanos(){
+unsigned long ofGstUtils::getMaxLatencyNanos() const {
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
@@ -708,7 +708,7 @@ void ofGstVideoUtils::close(){
 	buffer = 0;
 }
 
-bool ofGstVideoUtils::isFrameNew(){
+bool ofGstVideoUtils::isFrameNew() const {
 	return bIsFrameNew;
 }
 
@@ -786,11 +786,11 @@ void ofGstVideoUtils::update(){
 	bHavePixelsChanged = false;
 }
 
-float ofGstVideoUtils::getHeight(){
+float ofGstVideoUtils::getHeight() const {
 	return pixels.getHeight();
 }
 
-float ofGstVideoUtils::getWidth(){
+float ofGstVideoUtils::getWidth() const {
 	return pixels.getWidth();
 }
 
