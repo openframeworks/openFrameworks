@@ -48,7 +48,7 @@ bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoPlayer::getPixelFormat(){
+ofPixelFormat ofVideoPlayer::getPixelFormat() const {
 	if( player != NULL ){
 		internalPixelFormat = player->getPixelFormat();
 	}
@@ -84,7 +84,7 @@ bool ofVideoPlayer::loadMovie(string name){
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath(){
+string ofVideoPlayer::getMoviePath() const {
     return moviePath;	
 }
 
@@ -131,7 +131,7 @@ ofTexture & ofVideoPlayer::getTextureReference(){
 
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::isFrameNew(){
+bool ofVideoPlayer::isFrameNew() const {
 	if( player != NULL ){
 		return player->isFrameNew();
 	}
@@ -223,7 +223,8 @@ void ofVideoPlayer::setLoopState(ofLoopType state){
 	}
 }
 
-ofLoopType ofVideoPlayer::getLoopState(){
+//---------------------------------------------------------------------------
+ofLoopType ofVideoPlayer::getLoopState() const {
 	if( player != NULL ){
 		return player->getLoopState();
 	}else{
@@ -247,7 +248,7 @@ void ofVideoPlayer::setFrame(int frame){
 
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getDuration(){
+float ofVideoPlayer::getDuration() const {
 	if( player != NULL ){
 		return player->getDuration();
 	}
@@ -256,7 +257,7 @@ float ofVideoPlayer::getDuration(){
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getPosition(){
+float ofVideoPlayer::getPosition() const {
 	if( player != NULL ){
 		return player->getPosition();
 	}
@@ -264,7 +265,7 @@ float ofVideoPlayer::getPosition(){
 }
 
 //---------------------------------------------------------------------------
-int ofVideoPlayer::getCurrentFrame(){
+int ofVideoPlayer::getCurrentFrame() const {
 	if( player != NULL ){
 		return player->getCurrentFrame();
 	}
@@ -273,7 +274,7 @@ int ofVideoPlayer::getCurrentFrame(){
 
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::getIsMovieDone(){
+bool ofVideoPlayer::getIsMovieDone() const {
 	if( player != NULL ){
 		return player->getIsMovieDone();
 	}
@@ -309,7 +310,7 @@ void ofVideoPlayer::setSpeed(float _speed){
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getSpeed(){
+float ofVideoPlayer::getSpeed() const {
 	if( player != NULL ){
 		return player->getSpeed();
 	}
@@ -360,7 +361,7 @@ void ofVideoPlayer::draw(float _x, float _y){
 }
 
 //------------------------------------
-int ofVideoPlayer::getTotalNumFrames(){
+int ofVideoPlayer::getTotalNumFrames() const {
 	if( player != NULL ){
 		return player->getTotalNumFrames();
 	}
@@ -368,7 +369,7 @@ int ofVideoPlayer::getTotalNumFrames(){
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getWidth(){
+float ofVideoPlayer::getWidth() const {
 	if(	player != NULL ){
 		width = player->getWidth();
 	}
@@ -376,7 +377,7 @@ float ofVideoPlayer::getWidth(){
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getHeight(){
+float ofVideoPlayer::getHeight() const {
 	if(	player != NULL ){
 		height = player->getHeight();
 	}
@@ -384,7 +385,7 @@ float ofVideoPlayer::getHeight(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPaused(){
+bool ofVideoPlayer::isPaused() const {
 	if(	player != NULL ){
 		return player->isPaused();
 	}
@@ -392,7 +393,7 @@ bool ofVideoPlayer::isPaused(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isLoaded(){
+bool ofVideoPlayer::isLoaded() const {
 	if(	player != NULL ){
 		return player->isLoaded();
 	}
@@ -400,7 +401,7 @@ bool ofVideoPlayer::isLoaded(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPlaying(){
+bool ofVideoPlayer::isPlaying() const {
 	if(	player != NULL ){
 		return player->isPlaying();
 	}

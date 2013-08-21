@@ -18,18 +18,18 @@ public:
     void update();
 	
 	bool			setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 	getPixelFormat();
+	ofPixelFormat 	getPixelFormat() const;
 	
     void play();
     void stop();
 	
-    bool isFrameNew();
+    bool isFrameNew() const;
     unsigned char * getPixels();
     ofPixelsRef	getPixelsRef();
     ofTexture *	getTexture();
 	
-    float getWidth();
-    float getHeight();
+    float getWidth() const;
+    float getHeight() const;
 	
     bool isPaused();
     bool isLoaded();

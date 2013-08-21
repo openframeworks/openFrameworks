@@ -46,25 +46,25 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 }
 
 //---------------------------------------------------------------------------
-float ofBaseVideoPlayer::getPosition(){
+float ofBaseVideoPlayer::getPosition() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getPosition() not implemented";
 	return 0.0;
 }
 
 //---------------------------------------------------------------------------
-float ofBaseVideoPlayer::getSpeed(){
+float ofBaseVideoPlayer::getSpeed() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getSpeed() not implemented";
 	return 0.0;
 }
 
 //---------------------------------------------------------------------------
-float ofBaseVideoPlayer::getDuration(){
+float ofBaseVideoPlayer::getDuration() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getDuration() not implemented";
 	return 0.0;
 }
 
 //---------------------------------------------------------------------------
-bool ofBaseVideoPlayer::getIsMovieDone(){
+bool ofBaseVideoPlayer::getIsMovieDone() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getIsMovieDone() not implemented";
 	return false;
 }
@@ -100,19 +100,19 @@ void ofBaseVideoPlayer::setFrame(int frame){
 }
 
 //---------------------------------------------------------------------------
-int	ofBaseVideoPlayer::getCurrentFrame(){
+int	ofBaseVideoPlayer::getCurrentFrame() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getCurrentFrame() not implemented";
 	return 0;
 }
 
 //---------------------------------------------------------------------------
-int	ofBaseVideoPlayer::getTotalNumFrames(){
+int	ofBaseVideoPlayer::getTotalNumFrames() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getTotalNumFrames() not implemented";
 	return 0;
 }
 
 //---------------------------------------------------------------------------
-ofLoopType ofBaseVideoPlayer::getLoopState(){
+ofLoopType ofBaseVideoPlayer::getLoopState() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getLoopState() not implemented";
 	return OF_LOOP_NONE;
 }
@@ -137,7 +137,7 @@ void ofBaseVideoPlayer::previousFrame(){
 //	ofLogWarning("ofBaseVideoPlayer") << "setPixelFormat() not implemented";
 //}
 //---------------------------------------------------------------------------
-//ofPixelFormat ofBaseVideoPlayer::getPixelFormat(){
+//ofPixelFormat ofBaseVideoPlayer::getPixelFormat() const {
 //	ofLogWarning("ofBaseVideoPlayer") << "getPixelFormat() not implemented";
 //	return OF_PIXELS_RGB;
 //}

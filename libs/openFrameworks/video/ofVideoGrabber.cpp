@@ -38,7 +38,7 @@ ofVideoGrabber::~ofVideoGrabber(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber){
+void ofVideoGrabber::setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber) const {
 	grabber = newGrabber;
 }
 
@@ -107,7 +107,7 @@ bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoGrabber::getPixelFormat(){
+ofPixelFormat ofVideoGrabber::getPixelFormat() const {
 	if( grabber != NULL ){
 		internalPixelFormat = grabber->getPixelFormat();
 	}
@@ -115,7 +115,7 @@ ofPixelFormat ofVideoGrabber::getPixelFormat(){
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofVideoGrabber::listDevices(){
+vector<ofVideoDevice> ofVideoGrabber::listDevices() const {
 	if( grabber == NULL ){
 		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
@@ -165,7 +165,7 @@ ofTexture & ofVideoGrabber::getTextureReference(){
 }
 
 //---------------------------------------------------------------------------
-bool  ofVideoGrabber::isFrameNew(){
+bool  ofVideoGrabber::isFrameNew() const {
 	if(	grabber != NULL ){
 		return grabber->isFrameNew();
 	}
@@ -231,7 +231,7 @@ void ofVideoGrabber::draw(float _x, float _y){
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getHeight(){
+float ofVideoGrabber::getHeight() const {
 	if(	grabber != NULL ){
 		height = grabber->getHeight();
 	}
@@ -239,7 +239,7 @@ float ofVideoGrabber::getHeight(){
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getWidth(){
+float ofVideoGrabber::getWidth() const {
 	if(	grabber != NULL ){
 		width = grabber->getWidth();
 	}
@@ -247,6 +247,6 @@ float ofVideoGrabber::getWidth(){
 }
 
 //----------------------------------------------------------
-bool ofVideoGrabber::isInitialized(){
+bool ofVideoGrabber::isInitialized() const {
 	return bInitialized;
 }
