@@ -33,24 +33,24 @@ public:
 	void 	play();
 	void 	stop();
 	void 	setPaused(bool bPause);
-	bool 	isPaused(){return bPaused;}
-	bool 	isLoaded(){return bLoaded;}
-	bool 	isPlaying(){return bPlaying;}
+	bool 	isPaused() const {return bPaused;}
+	bool 	isLoaded() const {return bLoaded;}
+	bool 	isPlaying() const {return bPlaying;}
 
-	float	getPosition();
-	float 	getSpeed();
-	float 	getDuration();
-	int64_t  getDurationNanos();
-	bool  	getIsMovieDone();
+	float	getPosition() const;
+	float 	getSpeed() const;
+	float 	getDuration() const;
+	int64_t  getDurationNanos() const;
+	bool  	getIsMovieDone() const;
 
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	ofLoopType	getLoopState(){return loopMode;}
+	ofLoopType	getLoopState() const {return loopMode;}
 	void 	setSpeed(float speed);
 
 	void 	setFrameByFrame(bool bFrameByFrame);
-	bool	isFrameByFrame();
+	bool	isFrameByFrame() const;
 
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();

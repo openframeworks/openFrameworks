@@ -25,61 +25,61 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 	    bool            initGrabber(int w, int h);
 	    //initGrabberNoPreview if you want to only use this grabber for recording
 	    bool            initGrabberWithoutPreview();
-		bool            isFrameNew();
+		bool            isFrameNew() const;
 		void            update();
-		float           getWidth();
-		float           getHeight();
+		float           getWidth() const;
+		float           getHeight() const;
 		unsigned char * getPixels();
 		ofPixelsRef     getPixelsRef();
 		void            setVerbose(bool bTalkToMe);
 
-		vector <ofVideoDevice> listDevices(); 
-		vector <string> & listAudioDevices();
-		vector <string> & listVideoDevices();
+		vector <ofVideoDevice> listDevices() const;
+		vector <string> & listAudioDevices() const;
+		vector <string> & listVideoDevices() const;
 
 		bool            initRecording();
-		vector <string> & listVideoCodecs();
-		vector <string> & listAudioCodecs();
+		vector <string> & listVideoCodecs() const;
+		vector <string> & listAudioCodecs() const;
 		void            setVideoCodec(string videoCodecIDString);
 		void            setAudioCodec(string audioCodecIDString);
 		void            setUseAudio(bool bUseAudio);
 		void            startRecording(string filePath);
 		void            stopRecording();
-		bool            isRecording();
-	    bool            isRecordingReady();
-		bool            isReady();
+		bool            isRecording() const;
+	    bool            isRecordingReady() const;
+		bool            isReady() const;
 
 		void            close();
 
 		void            setDeviceID(int videoDeviceID);
 		void            setDeviceID(string videoDeviceIDString);
-		int             getDeviceID();
+		int             getDeviceID() const;
 
 		void            setVideoDeviceID(int videoDeviceID);
 		void            setVideoDeviceID(string videoDeviceIDString);
-		int             getVideoDeviceID();
+		int             getVideoDeviceID() const;
 
 		void            setAudioDeviceID(int audioDeviceID);
 		void            setAudioDeviceID(string audioDeviceIDString);
-		int             getAudioDeviceID();
+		int             getAudioDeviceID() const;
 
 		void            setDesiredFrameRate(int framerate);
 		bool            setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat   getPixelFormat();
-	    bool			hasPreview();
+		ofPixelFormat   getPixelFormat() const;
+	    bool			hasPreview() const;
 		void            videoSettings();
 
 		ofEvent<ofVideoSavedEventArgs> videoSavedEvent;
 	protected:
 
-		bool confirmInit();
+		bool confirmInit() const;
 		ofPixelFormat pixelFormat;
 	    ofPixels pixels;
     
-		vector <string>  videoDeviceVec;
-		vector <string>  audioDeviceVec;
-		vector <string>  videoCodecsVec;
-		vector <string>  audioCodecsVec;
+		mutable vector <string>  videoDeviceVec;
+		mutable vector <string>  audioDeviceVec;
+		mutable vector <string>  videoCodecsVec;
+		mutable vector <string>  audioCodecsVec;
 
 		int videoDeviceID;
 		int audioDeviceID;

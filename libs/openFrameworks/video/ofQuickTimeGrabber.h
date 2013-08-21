@@ -20,13 +20,13 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		ofQuickTimeGrabber();
 		virtual ~ofQuickTimeGrabber();
 
-        vector<ofVideoDevice>	listDevices();
+        vector<ofVideoDevice>	listDevices() const;
 		bool					initGrabber(int w, int h);
 		void					update();
-		bool					isFrameNew();
+		bool					isFrameNew() const;
 
 		bool					setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat			getPixelFormat();
+		ofPixelFormat			getPixelFormat() const;
 
 		unsigned char			* getPixels();
 		ofPixelsRef		 		getPixelsRef();
@@ -36,8 +36,8 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 
 		void					videoSettings();
 		
-		float					getWidth();
-		float					getHeight();
+		float					getWidth() const;
+		float					getHeight() const;
 
 		void					setVerbose(bool bTalkToMe);
 		void					setDeviceID(int _deviceID);
