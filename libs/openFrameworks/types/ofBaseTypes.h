@@ -180,7 +180,7 @@ class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew() const = 0;
-	virtual void close()=0;
+	virtual void close() = 0;
 };
 
 
