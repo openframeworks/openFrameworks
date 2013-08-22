@@ -71,8 +71,6 @@ ifeq ($(strip $(shell cat /opt/vc/include/interface/vmcs_host/vc_dispmanx.h | gr
 PLATFORM_DEFINES += USE_DISPMANX_TRANSFORM_T
 endif
 
-$(info $(PLATFORM_DEFINES))
-
 ################################################################################
 # PLATFORM REQUIRED ADDONS
 #   This is a list of addons required for this platform.  This list is used to 
