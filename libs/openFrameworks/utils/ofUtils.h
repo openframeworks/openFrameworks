@@ -39,6 +39,7 @@ int     ofGetMonth();
 int     ofGetDay();
 int     ofGetWeekday();
 
+bool	ofLaunchDefaultApp(string path);
 void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
 
 void	ofEnableDataPath();

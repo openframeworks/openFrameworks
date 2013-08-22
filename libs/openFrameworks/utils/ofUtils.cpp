@@ -655,6 +655,40 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
+bool ofLaunchDefaultApp(string path){
+	path = ofToDataPath(path);
+	
+#ifdef TARGET_WIN32
+	string commandStr = "start \"" + path + "\"";
+	int ret = system(commandStr.c_str());
+	if(ret!=0) {
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, commandStr \"" << commandStr << "\"";
+		return false;
+	}
+#endif
+	
+#ifdef TARGET_OSX
+	string commandStr = "open \"" + path + "\"";
+	int ret = system(commandStr.c_str());
+	if(ret!=0) {
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, commandStr \"" << commandStr << "\"";
+		return false;
+	}
+#endif
+	
+#ifdef TARGET_LINUX
+	string commandStr = "xdg-open \"" + path + "\"";
+	int ret = system(commandStr.c_str());
+	if(ret!=0) {
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, commandStr \"" << commandStr << "\"";
+		return false;
+	}
+#endif
+	
+	return true;
+}
+
+//--------------------------------------------------
 void ofLaunchBrowser(string _url, bool uriEncodeQuery){
 
     Poco::URI uri;
