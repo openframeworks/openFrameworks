@@ -96,7 +96,7 @@ class ofThread : protected Poco::Runnable{
 		/// not sleeping the thread means the thread will take 100% of the cpu
 		/// while it's waiting and will impact performance of your app 
 		///
-		void sleep(int sleepMS);
+		void sleep(long sleepMS);
 		
 		/// tell the thread to give up the cpu to other threads
 		///
