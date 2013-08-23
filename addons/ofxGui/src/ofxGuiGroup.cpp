@@ -68,6 +68,9 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 		}else if(type==typeid(ofParameter<ofFloatColor>).name()){
 			ofParameter<ofFloatColor> p = _parameters.getFloatColor(i);
 			add(p);
+		}else if(type==typeid(ofParameter<string>).name()){
+        		ofParameter<string> p = _parameters.getString(i);
+			add(p);
 		}else if(type==typeid(ofParameterGroup).name()){
 			ofParameterGroup p = _parameters.getGroup(i);
 			ofxGuiGroup * panel = new ofxGuiGroup(p);
