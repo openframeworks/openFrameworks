@@ -23,11 +23,10 @@ public:
 
 	ofShader shader;
     
-    ofImage image;
+    ofImage greenOF;
     ofImage imageMask;
     ofVideoPlayer movie;
     ofVideoGrabber camera;
     
     ofFbo fbo;
-    ofFbo maskFbo;
 };
