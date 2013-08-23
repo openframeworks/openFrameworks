@@ -117,7 +117,7 @@ void ofThread::stopThread(){
 }
 
 //-------------------------------------------------
-void ofThread::waitForThread(bool stop){
+void ofThread::waitForThread(bool stop, long waitMS){
 	if(thread.isRunning()){
 		
 		// tell thread to stop
@@ -132,8 +132,8 @@ void ofThread::waitForThread(bool stop){
 			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the thread";
 			return;
 		}
-        //wait for 10 seconds for thread to finish 
-		if( !thread.tryJoin(10000) ){
+        //wait for "waitMS" milliseconds for thread to finish 
+		if( !thread.tryJoin(waitMS) ){
             ofLogError( thread.name() ) << "unable to end/join thread " << endl; 
         }
    }
