@@ -64,7 +64,7 @@ class ofThread : protected Poco::Runnable{
 		/// set stop to false if you have already signalled the thread to exit 
 		/// by calling stopThread() and only need to wait for it to finish
 		///
-		void waitForThread(bool stop = true);
+		void waitForThread(bool stop = true, long waitMS = 10000);
 		
 		/// tell the thread to sleep for a certain amount of milliseconds
 		///
