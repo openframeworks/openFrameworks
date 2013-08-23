@@ -140,7 +140,7 @@ void ofThread::waitForThread(bool stop, long waitMS){
 }
 
 //-------------------------------------------------
-void ofThread::sleep(int sleepMS){
+void ofThread::sleep(long sleepMS){
 	Poco::Thread::sleep(sleepMS);
 }
 
