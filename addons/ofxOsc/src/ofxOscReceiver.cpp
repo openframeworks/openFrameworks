@@ -231,7 +231,7 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 		ofAbstractParameter * p = &parameter;
 		getNextMessage(&msg);
 		vector<string> address = ofSplitString(msg.getAddress(),"/",true);
-		for(int i=0;i<address.size();i++){
+		for(unsigned int i=0;i<address.size();i++){
 			if(address[i]==p->getName()){
 				if(p->type()==typeid(ofParameterGroup).name()){
 					if(address.size()>=i+1){
