@@ -47,12 +47,13 @@ ofxOscSender::~ofxOscSender()
 		shutdown();
 }
 
-void ofxOscSender::setup( std::string hostname, int port )
+void ofxOscSender::setup( std::string hostname, int port, bool enableBroadcast )
 {
 	if ( socket )
 		shutdown();
 	
 	socket = new UdpTransmitSocket( IpEndpointName( hostname.c_str(), port ) );
+	setEnableBroadcast( enableBroadcast );
 }
 
 void ofxOscSender::shutdown()
@@ -60,6 +61,11 @@ void ofxOscSender::shutdown()
 	if ( socket )
 		delete socket;
 	socket = NULL;
+}
+
+void ofxOscSender::setEnableBroadcast(bool enableBroadcast)
+{
+	socket->SetEnableBroadcast(enableBroadcast);
 }
 
 void ofxOscSender::sendBundle( ofxOscBundle& bundle )

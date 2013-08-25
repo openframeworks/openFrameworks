@@ -54,7 +54,8 @@ public:
 	~ofxOscReceiver();
 
 	/// listen_port is the port to listen for messages on
-	void setup( int listen_port );
+	/// allowReuse allows multiple receivers to listen on the same port if true
+	void setup( int listen_port, bool allowReuse = false );
 
 	/// returns true if there are any messages waiting for collection
 	bool hasWaitingMessages();
@@ -72,6 +73,14 @@ protected:
 private:
 	// shutdown the listener
 	void shutdown();
+	/// Enable multiple listeners for a single port on same network interface
+	///
+	/// Attention: If multiple receivers listen at one port, all receivers will
+	/// get the message only if the sender has Broadcast enabled, otherwise
+	/// only one receiver will get the message.
+	/// Results may vary depending on platform, see oscpack UdpSocket.h for more
+	/// detailed information
+	void setAllowReuse(bool allowReuse);
 
 	// start the listening thread
 #ifdef TARGET_WIN32
