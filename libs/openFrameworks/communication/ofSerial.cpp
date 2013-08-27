@@ -372,7 +372,7 @@ bool ofSerial::setup(string portName, int baud){
 		tcsetattr(fd,TCSANOW,&options);
 
 		bInited = true;
-		ofLogNotice("ofSerial") << "opened " << portName << "sucessfully @ " << baud << " bps";
+		ofLogNotice("ofSerial") << "opened " << portName << " sucessfully @ " << baud << " bps";
 
 	    return true;
 	//---------------------------------------------
