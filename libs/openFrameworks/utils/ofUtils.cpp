@@ -656,10 +656,7 @@ string ofVAArgsToString(const char * format, va_list args){
 
 //--------------------------------------------------
 bool ofLaunchDefaultApp(const string& path){
-	string commandStr;
-
 #ifdef TARGET_WIN32
-
 	int ret;
 	#if (_MSC_VER)
 	// microsoft visual studio yaks about strings, wide chars, unicode, etc
@@ -679,20 +676,17 @@ bool ofLaunchDefaultApp(const string& path){
 	}
 
 	return true;
-
 #elif defined TARGET_OSX || defined TARGET_LINUX
-
 	if (!ofFile::doesFileExist(path))
 	{
 		ofLogError("ofUtils") << "ofLaunchDefaultApp(): file not found, path \"" << path << "\"";
 		return false;
 	}
 
-	string commandStr;
 	#if defined TARGET_OSX
-	commandStr = "open";
+	string commandStr = "open";
 	#elif defined TARGET_LINUX
-	commandStr = "xdg-open";
+	string commandStr = "xdg-open";
 	#endif
 
 	commandStr += " \"" + ofToDataPath(path) + "\"";
@@ -703,7 +697,6 @@ bool ofLaunchDefaultApp(const string& path){
 	}
 
 	return true;
-
 #endif
 	
 	return false;
