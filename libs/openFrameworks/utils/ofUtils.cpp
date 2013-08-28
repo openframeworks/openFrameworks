@@ -659,7 +659,7 @@ bool ofLaunchDefaultApp(string path){
 	path = ofToDataPath(path);
 	
 #ifdef TARGET_WIN32
-	string commandStr = "start \"" + path + "\"";
+	string commandStr = "explorer.exe \"" + path + "\"";
 	int ret = system(commandStr.c_str());
 	if(ret!=0) {
 		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, commandStr \"" << commandStr << "\"";
