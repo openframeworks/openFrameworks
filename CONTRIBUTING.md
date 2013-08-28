@@ -86,6 +86,7 @@ This granularity makes the code easier to deal with in cases where some things h
 #### Submitting the pull request
 
 - Submit your pull request to the __`master`__ branch of openFrameworks (which you branched off from), _not_ the `stable` branch.
+- All pull requests that contain changes that need to be in the changelog **must include relevant additions to `CHANGELOG.md`**. Use previous entries as a guide for style/indentation/etc.
 - In the comments field on your new pull request, enter a description of everything that the code in the pull request does. 
   - This description is the first contact most of the core team will have with your code, so you should use it to explain why your pull request is awesome and we should accept it. 
   - Reference any issues or bugs in the [oF issue tracker](github.com/openframeworks/openFrameworks/issues) that are relevant to your pull request using `#issue number` notation, eg to reference issue __1234__ write `#1234`.
