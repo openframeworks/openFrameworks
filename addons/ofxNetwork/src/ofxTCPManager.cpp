@@ -142,10 +142,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
   return ret;
 }
 
-/*
-    Trent: adding a timeout for connection.
-    - based on http://stackoverflow.com/questions/2597608/c-socket-connection-timeout
- */
+
 //--------------------------------------------------------------------------------
 bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 {
