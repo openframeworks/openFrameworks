@@ -655,36 +655,32 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
-bool ofLaunchDefaultApp(string path){
-	path = ofToDataPath(path);
+bool ofLaunchDefaultApp(const string& path){
+	string commandStr;
 	
 #ifdef TARGET_WIN32
-	string commandStr = "explorer.exe \"" + path + "\"";
+	commandStr = "explorer.exe";
+#elif defined TARGET_OSX
+	commandStr = "open";
+#elif defined TARGET_LINUX
+	commandStr = "xdg-open";
+#else
+	return false;
+#endif
+	
+	if (!ofFile::doesFileExist(path))
+	{
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): file not found, path \"" << path << "\"";
+		return false;
+	}
+	
+	commandStr += " \"" + ofToDataPath(path) + "\"";
 	int ret = system(commandStr.c_str());
 	if(ret!=0) {
 		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, commandStr \"" << commandStr << "\"";
 		return false;
 	}
-#endif
-	
-#ifdef TARGET_OSX
-	string commandStr = "open \"" + path + "\"";
-	int ret = system(commandStr.c_str());
-	if(ret!=0) {
-		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, commandStr \"" << commandStr << "\"";
-		return false;
-	}
-#endif
-	
-#ifdef TARGET_LINUX
-	string commandStr = "xdg-open \"" + path + "\"";
-	int ret = system(commandStr.c_str());
-	if(ret!=0) {
-		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, commandStr \"" << commandStr << "\"";
-		return false;
-	}
-#endif
-	
+
 	return true;
 }
 
