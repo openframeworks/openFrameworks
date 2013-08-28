@@ -180,17 +180,13 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
             socklen_t len = sizeof so_error;
             getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, &so_error, &len);
             if (so_error == 0) {
-                ofLog() << "OK! tcp";;
                 return true;
             } 
         }
     }
     
-    if(!ret) ofxNetworkCheckError();
-    
+    if(!ret) ofxNetworkCheckError();    
 	return ret;
-    //ofLog() << "FAILED! tcp";
-    //return false;
 }
 
 //--------------------------------------------------------------------------------
