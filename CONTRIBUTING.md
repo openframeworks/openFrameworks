@@ -6,7 +6,8 @@ This document outlines the procedures and what to expect when contributing a bug
 If you want to contribute documentation have a look at the [ofSite git repository](https://github.com/openframeworks/ofSite). 
 To contribute tutorials or help documents, get in touch with one of the _Tutorial leaders_, [Diederick Huijbers](http://www.roxlu.com/) (roxlu) or [Jeff Crouse](http://www.jeffcrouse.info/) (jefftimesten).
 
-Please follow these guidelines before submitting a bug report, feature request or pull request.
+**Please read** and **follow these guidelines** before submitting a bug report, feature request or pull request.
+It really helps us efficiently process your contribution!
 
 Jump to: [report a bug](#bug-reports), [request a feature](#feature-requests), [contribute code](#contributing-code).
 
@@ -16,7 +17,8 @@ We love hearing about bugs! It's how we get them fixed.
 
 - If you notice something odd happening, try to make it happen again (reproduce it). 
 - If you can reproduce it, try to figure out if it's caused by your code or by openFrameworks. 
-- If it looks like it's caused by openFrameworks (or if you're not sure), submit a bug report to the [issue tracker](github.com/openframeworks/openFrameworks/issues). 
+- If it's caused by openFrameworks, make sure it **still occurs in the current development version** (where we continually fix problems) by checking out with git or [downloading](https://github.com/openframeworks/openFrameworks/archive/master.zip) the current `master` branch of OF.
+- If it looks like it's caused by openFrameworks (or if you're not sure) and still occurs on the current `master` branch, submit a bug report to the [issue tracker](github.com/openframeworks/openFrameworks/issues).
   - **Search the issue tracker** to make sure your problem has not been reported yet. If you find a relevant bug, comment there, even if it's an old or closed one! 
   - Only if you don't find a relevant issue, open a new issue. A new issue does not generate more exposure/visibility than commenting on an existing one.
   - Make sure you give it a good title! 
@@ -24,7 +26,7 @@ We love hearing about bugs! It's how we get them fixed.
     - Examples of bad titles: _problem with ofRectangle_ or _can't set color_
     - Examples of good titles: _ofRectangle crashes if width is 0_ or _ofSetColor doesn't work with ofPath objects_.
   - In the description, include the following details:
-    0. relevant system information such as which openFrameworks version, operating system, and IDE you are using,
+    0. **relevant system information** such as which openFrameworks version, operating system, and IDE you are using,
     1. what you were doing when you noticed the bug,
     2. what you expected to happen,
     3. what actually happened, and
@@ -44,7 +46,7 @@ Feature requests are therefore mostly a way of us discussing/feeling out togethe
 This can sometimes involve a lot of discussion, as everyone uses openFrameworks differently.
 
 Feature requests are created as Github Issues, just like bugs. 
-Feature requests are also where code that you or anyone else would like to include in a future pull request is discussed before being written. 
+Feature requests are also where code that you or anyone else would like to include in a future pull request is **discussed before being implemented!**
 If you're writing code to add a new feature that you think would be awesome to have in the core, that's great! 
 But please make sure it's been discussed as a feature request _before_ you submit your pull request, as that increases the chances that your pull request will be accepted. 
 
@@ -64,25 +66,27 @@ If you are submitting a new feature, it's best if the feature has been discussed
 
 - Please read the [code style guidelines](https://github.com/openframeworks/openFrameworks/wiki/oF-code-style) and make sure your code confirms to them.
 If in doubt, try and match the style and practices you find in the code you are working with.
-- Please write descriptive commit messages for each of the commits that you make. 
+- Please write _descriptive commit messages_ for each of the commits that you make.
 They don't have to be in-depth, just a brief summary of what the commit contains. A page describing how well-written commit messages look like can be found [here](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
-
 
 #### Organising your code
 
-- Remember, _commit early, commit often_ - use commits to isolate small subsets of code. 
-This granularity makes the code easier to deal with in cases where some things have to be modified/isolated/removed from the pull request.
-- Submit from a dedicated branch on your own repository, which should be only about a single topic or area of openFrameworks. 
+
+- Submit from a dedicated branch on your own repository **branched off from current `master`**. Your branch should be only about a single topic or area of openFrameworks. 
 If you have multiple things to submit, make separate branches for each topic and submit multiple pull requests. 
 (This makes it easier to review different parts of your code separately, and get it into the core faster.)
-- The branch name should start with either __Feature-__ for features or __Bugfix-__ for bug fixes.
-  - For example, if your patch adds code to draw ellipses, your branch should be called something like __Feature-draw-ellipses__.
+- The branch name should start with either __feature-__ for features or __fugfix-__ for bug fixes.
+  - For example, if your patch adds code to draw ellipses, your branch should be called something like __feature-draw-ellipses__.
+  - Remember, _commit early, commit often_ - use commits to isolate small subsets of code. 
+This granularity makes the code easier to deal with in cases where some things have to be modified/isolated/removed from the pull request.
+- When you commit your files and you find you can't do that without using `git add -f/--force`, this is because of the existing gitignore patterns. _Think about if those files really should be in the repo in the first place_. Then, instead of force-adding files which really should be in the repo (i.e. incorrectly match a gitignore pattern), correct the gitignore pattern (ask for help if necessary) and commit normally.
 - Don't mix code style/formatting changes with bugfixes or features. They should be separate commits or better still, separate branches and separate pull requests.
 - If you are able to do so, test your code on different platforms before submitting it, but at least test it on your platform to make sure it doesn't break anything.
 
 #### Submitting the pull request
 
-- Submit your pull request to the __develop__ branch of openFrameworks, _not_ the master branch.
+- Submit your pull request to the __`master`__ branch of openFrameworks (which you branched off from), _not_ the `stable` branch.
+- All pull requests that contain changes that need to be in the changelog **must include relevant additions to `CHANGELOG.md`**. Use previous entries as a guide for style/indentation/etc.
 - In the comments field on your new pull request, enter a description of everything that the code in the pull request does. 
   - This description is the first contact most of the core team will have with your code, so you should use it to explain why your pull request is awesome and we should accept it. 
   - Reference any issues or bugs in the [oF issue tracker](github.com/openframeworks/openFrameworks/issues) that are relevant to your pull request using `#issue number` notation, eg to reference issue __1234__ write `#1234`.
