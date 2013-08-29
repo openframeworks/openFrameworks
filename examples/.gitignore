@@ -1,18 +1,13 @@
-android/*/test link
-android/*/gen
-android/*/res/raw
-libOFAndroidApp.so
-libOFAndroidApp_neon.so
-gdbserver
-gdb.setup
-libneondetection.so
-Application.mk
-Android.mk
+#########################
+# core examples
+#########################
 
 */*/bin/*
 !*/*/bin/data/
 
-# IDE-specific ignore patterns
+#########################
+# IDE
+#########################
 
 #XCode
 /*/*/*.xcodeproj
@@ -20,17 +15,8 @@ Android.mk
 /*/*/openFrameworks-Info.plist
 /*/*/ofxiOS-Info.plist
 /*/*/ofxiOS_Prefix.pch
-/*/*/*/*/Default-568h@2x~iphone.png
-/*/*/*/*/Default.png
-/*/*/*/*/Default@2x.png
-/*/*/*/*/Default@2x~ipad.png
-/*/*/*/*/Default@2x~iphone.png
-/*/*/*/*/Default~ipad.png
-/*/*/*/*/Default~iphone.png
-/*/*/*/*/Icon-72.png
-/*/*/*/*/Icon-72@2x.png
-/*/*/*/*/Icon.png
-/*/*/*/*/Icon@2x.png
+/*/*/*/*/Default*.png
+/*/*/*/*/Icon*.png
 
 #Code::Blocks
 /*/*/*.cbp
@@ -48,7 +34,9 @@ Android.mk
 /*/*/.project
 /*/*/.settings/
 
-# OS-specific ignore patterns
+#########################
+# operating system
+#########################
 
 #Linux
 /*/*/Makefile
@@ -58,6 +46,17 @@ Android.mk
 !/android/*/config.make
 
 #Android
+android/*/test link
+android/*/gen
+android/*/res/raw
+libOFAndroidApp.so
+libOFAndroidApp_neon.so
+gdbserver
+gdb.setup
+libneondetection.so
+Application.mk
+Android.mk
+
 /*/*/test link
 !/android/*/.cproject
 !/android/*/.project
