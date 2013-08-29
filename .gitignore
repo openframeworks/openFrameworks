@@ -1,5 +1,7 @@
 
-# OF-specific ignore patterns
+#########################
+# openFrameworks patterns
+#########################
 
 openFrameworks.a
 openFrameworksDebug.a
@@ -15,7 +17,9 @@ apps/*
 
 #also, see examples/.gitignore
 
-# Some general ignore patterns
+#########################
+# general
+#########################
 
 [Bb]uild/
 [Oo]bj/
@@ -27,8 +31,13 @@ apps/*
 *.pyc
 .svn/
 *.log
+*.cpp.eep
+*.cpp.elf
+*.cpp.hex
 
-# IDE-specific ignore patterns
+#########################
+# IDE
+#########################
 
 #XCode
 *.pbxuser
@@ -58,7 +67,9 @@ ipch/
 local.properties
 .externalToolBuilders
 
-# OS-specific ignore patterns
+#########################
+# operating system
+#########################
 
 #Linux
 *~
@@ -83,6 +94,9 @@ Desktop.ini
 .csettings
 /libs/openFrameworksCompiled/project/android/paths.make
 
-# Miscellaneous
+#########################
+# miscellaneous
+#########################
+
 .mailmap
 
