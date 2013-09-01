@@ -4,7 +4,7 @@ EMAILMESSAGE="/tmp/emailmessage.txt"
 #EMAIL="of-dev@dev.openframeworks.cc"
 EMAIL="arturo@openframeworks.cc"
 SUBJECT="errors building OF"
-FROM="ci@openframeworks.cc"
+FROM="ofadmin@ci.openframeworks.cc"
 errors=0
 
 function generateLog {
@@ -51,6 +51,7 @@ function generateLog {
 echo "To: ${EMAIL}" >> $EMAILMESSAGE
 echo "Subject: ${SUBJECT}" >> $EMAILMESSAGE
 echo "The following errors were found while compiling the master branch of openFrameworks" >> $EMAILMESSAGE
+echo "." >> $EMAILMESSAGE
 echo >> $EMAILMESSAGE
 
 cd $(cat ~/.ofprojectgenerator/config)
@@ -108,7 +109,7 @@ echo '</html>' >> /var/www/ofbuild.html
 
 
 if [ $errors -eq 1 ]; then
-    /usr/sbin/ssmtp ${EMAIL} -f${FROM} < $EMAILMESSAGE
+    /usr/sbin/sendmail ${EMAIL} -f${FROM} < $EMAILMESSAGE
 fi
 
 rm $EMAILMESSAGE
