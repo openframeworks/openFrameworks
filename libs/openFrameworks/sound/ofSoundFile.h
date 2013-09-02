@@ -17,49 +17,55 @@
 	#define OF_USING_SNDFILE // libsndfile
 #endif
 
-#ifdef OF_USING_SNDFILE
+#if defined (OF_USING_SNDFILE)
 	#include <sndfile.h>
-#endif
-#ifdef OF_USING_MPG123
+#elif defined (OF_USING_MPG123)
 	#include <mpg123.h>
+#elif defined (OF_USING_LAD)
+	#include "audiodecoder.h"
 #endif
 
-#ifdef OF_USING_LAD
-#include "audiodecoder.h"
-#endif
-
+/// reads a sound file into an ofSoundBuffer.
+/// encoding support varies by platform.
+/// Windows and OSX use libaudiodecoder for decoding, Linux uses libsndfile
 bool ofLoadSound(ofSoundBuffer &buffer, string path);
+
+/// writes an ofSoundBuffer as a 16-bit PCM WAV file.
 bool ofSaveSound(const ofSoundBuffer &buffer, string path);
 
 class ofSoundFile {
 public:
 	ofSoundFile();
-    ofSoundFile(string path);
+	ofSoundFile(string path);
 
 	virtual ~ofSoundFile();
-
-	bool open(string path);
 	void close();
 
-    bool loadSound(string _path);
-    bool saveSound(string _path, const ofSoundBuffer &buffer);
-    
-	/// read file to buffer. 
-	/// if samples is 0, resize the buffer to fit the entire file, otherwise just read the requested number of samples.
+	/// opens a sound file for reading with readTo().
+	/// encoding support varies by platform.
+	/// Windows and OSX use libaudiodecoder for decoding, Linux uses libsndfile
+	bool loadSound(string _path);
+	
+	/// writes an ofSoundBuffer as a 16-bit PCM WAV file
+	bool saveSound(string _path, const ofSoundBuffer &buffer);
+
+	/// reads a file into an ofSoundBuffer.
+	/// by default, this will resize the buffer to fit the entire file.
+	/// supplying a "samples" argument will read only the given number of samples
 	bool readTo(ofSoundBuffer &buffer, unsigned int samples = 0);
 	
 	/// seek to the sample at the requested index
 	bool seekTo(unsigned int sampleIndex);
 
+	/// returns sound file duration in milliseconds
+	unsigned long getDuration();
 	int getNumChannels();
-	unsigned long getDuration(); // millisecs
 	int getSampleRate();
-    unsigned long getNumSamples();
-    int getBitDepth();
-    bool isCompressed();
-    bool isLoaded();
-    string getPath();
-    
+	unsigned long getNumSamples();
+	bool isCompressed();
+	bool isLoaded();
+	string getPath();
+
 private:
 	
 	bool sfReadFile(ofSoundBuffer & buffer);
@@ -94,11 +100,10 @@ private:
 	int channels;
 	float duration; //in secs
 	unsigned int samples;
-    int bitDepth;
 	int samplerate;
 	string path;
-    bool bCompressed;
-    bool bLoaded;
+	bool bCompressed;
+	bool bLoaded;
 };
 
 #endif /* OFSOUNDFILE_H_ */

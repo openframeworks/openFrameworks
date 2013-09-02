@@ -44,7 +44,7 @@ bool ofBasicSoundPlayer::loadSound(string fileName, bool _stream){
 	ofLogNotice() << "loading " << fileName;
 
 	ofLogNotice() << "opening file ";
-	bIsLoaded = soundFile.open(fileName);
+	bIsLoaded = soundFile.loadSound(fileName);
 	if(!bIsLoaded) return false;
 
 	streaming = _stream;

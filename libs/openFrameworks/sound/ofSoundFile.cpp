@@ -19,8 +19,8 @@ bool ofLoadSound(ofSoundBuffer &buff, string path){
         return false;
     }
 }
-//--------------------------------------------------------------
 
+//--------------------------------------------------------------
 // for now this only write 16 bit PCM WAV files.
 // It can't really live in ofSoundFile yet because
 // ofSoundFile doesn't hold a complete representation
@@ -29,11 +29,9 @@ bool ofLoadSound(ofSoundBuffer &buff, string path){
 // it via writeTo() or similar. Doesn't really fit wtih
 // the current model.
 bool ofSaveSound(ofSoundBuffer &buff,  string path){
-    
 	ofSoundFile soundFile;
 	return soundFile.saveSound(path, buff);
 }
-//--------------------------------------------------------------
 
 #ifdef OF_USING_MPG123
 bool ofSoundFile::mpg123Inited = false;
@@ -66,7 +64,7 @@ ofSoundFile::ofSoundFile() {
 //--------------------------------------------------------------
 ofSoundFile::ofSoundFile(string path) {
     ofSoundFile();
-    this->loadSound(path);
+    loadSound(path);
 }
 
 //--------------------------------------------------------------
@@ -99,11 +97,6 @@ bool ofSoundFile::loadSound(string _path){
 	}
 	bLoaded = result;
 	return result;   
-}
-
-//--------------------------------------------------------------
-bool ofSoundFile::open(string _path){
-    return loadSound(_path);
 }
 
 //--------------------------------------------------------------
@@ -175,7 +168,6 @@ bool ofSoundFile::ladOpen(string path){
 	channels = audioDecoder->channels();
 	samplerate = audioDecoder->sampleRate();
 	duration = audioDecoder->duration();
-	bitDepth = 16;// get the real shit.
 	return result == AUDIODECODER_OK;
 }
 #endif
@@ -271,7 +263,6 @@ void ofSoundFile::close(){
 	duration = 0; //in secs
 	samplerate = 0;
 	samples = 0;
-    bitDepth = 0;
 }
 
 //--------------------------------------------------------------
@@ -297,12 +288,6 @@ int ofSoundFile::getSampleRate(){
 //--------------------------------------------------------------
 unsigned long ofSoundFile::getNumSamples(){
     return samples;
-}
-
-//--------------------------------------------------------------
-int ofSoundFile::getBitDepth(){
-    ofLogWarning() << "bit Depth retrival not implemented yet!";
-    return bitDepth;
 }
 
 //--------------------------------------------------------------
