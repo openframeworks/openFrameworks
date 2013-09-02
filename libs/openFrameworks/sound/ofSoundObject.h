@@ -1,9 +1,11 @@
-
 #pragma once
 
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 
+// this #define is for use by addon writers, to conditionally support sound objects in addons
+// (while allowing backwards compatibility with previous versions of openFrameworks)
+#define OF_SOUND_OBJECT
 
 /**
  * ofSoundObject is a node in your dsp chain. It can have one input,
@@ -12,12 +14,8 @@
  */
 class ofSoundObject: public ofBaseSoundOutput {
 public:
-
-
 	ofSoundObject();
 	virtual ~ofSoundObject() {}
-
-
 
 	/// Connects the output of this ofSoundObject to the input of the parameter ofSoundObject
 	ofSoundObject &connectTo(ofSoundObject &soundObject);
@@ -29,7 +27,6 @@ public:
 		input.copyTo(output);
 	}
 
-
 	/// this pulls the audio through from earlier links in the chain.
 	/// you can override this to add more interesting functionality
 	/// like signal splitters, sidechains etc.
@@ -40,8 +37,8 @@ public:
 	/// returns true if there are no infinite loops.
 	virtual bool checkForInfiniteLoops();
 	ofSoundObject *getInputObject();
-protected:
 
+protected:
 	// this is the previous dsp object in the chain
 	// that feeds this one with input.
 	ofSoundObject *inputObject;
@@ -49,17 +46,13 @@ protected:
     virtual void setInput(ofSoundObject *obj);
 
 private:
-
 	// ofSoundObjects reference their source, not their destination
 	// because it's not needed in a pullthrough audio architecture.
 	// this lets that be set under the hood via connectTo()
 
 	// a spare buffer to pass from one sound object to another
 	ofSoundBuffer workingBuffer;
-
 };
-
-
 
 /**
  * This class represents input from the sound card in your dsp chain.
@@ -74,7 +67,6 @@ public:
 private:
 	ofSoundBuffer inputBuffer;
 };
-
 
 /**
  * This class represents the output in your dsp chain.
