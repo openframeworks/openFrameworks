@@ -41,14 +41,17 @@ bool ofSoundFile::mpg123Inited = false;
 
 //--------------------------------------------------------------
 ofSoundFile::ofSoundFile() {
-    bCompressed =false;
-    bLoaded =  false;
+    bCompressed = false;
+    bLoaded = false;
+
 #ifdef OF_USING_SNDFILE
 	sndFile = NULL;
 #endif
+	
 #ifdef OF_USING_LAD
 	audioDecoder = NULL;
 #endif
+
 #ifdef OF_USING_MPG123
 	mp3File = NULL;
 	if(!mpg123Inited){
@@ -56,6 +59,7 @@ ofSoundFile::ofSoundFile() {
 		mpg123Inited = true;
 	}
 #endif
+	
 	close();
 }
 
@@ -64,6 +68,7 @@ ofSoundFile::ofSoundFile(string path) {
     ofSoundFile();
     this->loadSound(path);
 }
+
 //--------------------------------------------------------------
 ofSoundFile::~ofSoundFile() {
 	close();
@@ -95,14 +100,14 @@ bool ofSoundFile::loadSound(string _path){
 	bLoaded = result;
 	return result;   
 }
+
 //--------------------------------------------------------------
 bool ofSoundFile::open(string _path){
     return loadSound(_path);
 }
+
 //--------------------------------------------------------------
-bool ofSoundFile::saveSound(string path, ofSoundBuffer &buff){
-	
-	
+bool ofSoundFile::saveSound(string path, const ofSoundBuffer &buff){
 	// check that we're writing a wav and complain if the file extension is wrong.
 	ofFile f(path);
 	if(ofToLower(f.getExtension())!="wav") {
@@ -116,23 +121,17 @@ bool ofSoundFile::saveSound(string path, ofSoundBuffer &buff){
 		return false;
 	}
 	
-	
 	// write a wav header
 	short myFormat = 1; // for pcm
-	
 	int mySubChunk1Size = 16;
-	
 	int bitsPerSample = 16; // assume 16 bit pcm
-	
 	int myByteRate = buff.getSampleRate() * buff.getNumChannels() * bitsPerSample/8;
 	short myBlockAlign = buff.getNumChannels() * bitsPerSample/8;
-	
 	int myChunkSize = 36 + buff.size()*bitsPerSample/8;
 	int myDataSize = buff.size()*bitsPerSample/8;
-	
 	int channels = buff.getNumChannels();
 	int samplerate = buff.getSampleRate();
-	// write the wav file per the wav file format
+	
 	file.seekp (0, ios::beg);
 	file.write ("RIFF", 4);
 	file.write ((char*) &myChunkSize, 4);
@@ -148,13 +147,9 @@ bool ofSoundFile::saveSound(string path, ofSoundBuffer &buff){
 	file.write ("data", 4);
 	file.write ((char*) &myDataSize, 4);
 	
+	// write the wav file per the wav file format, 4096 bytes of data at a time.
+	#define WRITE_BUFF_SIZE 4096
 	
-	
-	// write 4096 bytes of data at a time.
-	#define WRITE_BUFF_SIZE  4096
-	
-	
-	// shorts to 
 	short writeBuff[WRITE_BUFF_SIZE];
 	int pos = 0;
 	while(pos<buff.size()) {
@@ -163,17 +158,12 @@ bool ofSoundFile::saveSound(string path, ofSoundBuffer &buff){
 			writeBuff[i] = (int)(buff[pos]*32767.f);
 			pos++;
 		}
-		file.write ((char*)writeBuff, len*bitsPerSample/8);
+		file.write((char*)writeBuff, len*bitsPerSample/8);
 	}
 	
-	
-	
 	file.close();
-	
-	
 	return true;
 }
-
 
 //--------------------------------------------------------------                  
 #ifdef OF_USING_LAD
@@ -224,6 +214,7 @@ bool ofSoundFile::mpg123Open(string path){
     bitDepth = 16; //TODO:get real bitdepth;.
 }
 #endif
+
 //--------------------------------------------------------------
 #ifdef OF_USING_SNDFILE
 bool ofSoundFile::sfOpen(string path){
@@ -254,6 +245,7 @@ bool ofSoundFile::sfOpen(string path){
     bitDepth = 16; //fix
 }
 #endif
+
 //--------------------------------------------------------------
 void ofSoundFile::close(){
 #ifdef OF_USING_SNDFILE
@@ -281,44 +273,48 @@ void ofSoundFile::close(){
 	samples = 0;
     bitDepth = 0;
 }
+
 //--------------------------------------------------------------
 bool ofSoundFile::isLoaded(){
     return bLoaded;
 }
-//--------------------------------------------------------------                  
+
+//--------------------------------------------------------------
 int ofSoundFile::getNumChannels(){
 	return channels;
 }
+
 //--------------------------------------------------------------
 unsigned long ofSoundFile::getDuration(){
 	return duration*1000;
 }
+
 //--------------------------------------------------------------
 int ofSoundFile::getSampleRate(){
 	return samplerate;
 }
-//--------------------------------------------------------------                  
+
+//--------------------------------------------------------------
 unsigned long ofSoundFile::getNumSamples(){
     return samples;
 }
-//--------------------------------------------------------------                  
+
+//--------------------------------------------------------------
 int ofSoundFile::getBitDepth(){
     ofLogWarning() << "bit Depth retrival not implemented yet!";
     return bitDepth;
 }
+
 //--------------------------------------------------------------
 bool ofSoundFile::isCompressed(){
     return bCompressed;
 }
+
 //--------------------------------------------------------------
 string ofSoundFile::getPath(){
     return path;
 }
-//--------------------------------------------------------------
-                  string ofSoundFile::getID3Tag(ofID3Tag tag){
-    ofLogWarning() << "ID3 tag not implemented yet. :(";
-    return "";
-}
+
 //--------------------------------------------------------------
 bool ofSoundFile::readTo(ofSoundBuffer & buffer, unsigned int _samples){
 	buffer.setNumChannels(channels);

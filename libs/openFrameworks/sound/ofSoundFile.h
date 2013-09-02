@@ -9,13 +9,12 @@
 #define OFSOUNDFILE_H_
 
 #include "ofConstants.h"
+#include "ofSoundBuffer.h"
 
 #if defined (TARGET_OSX) || defined (TARGET_WIN32)
-	// libaudiodecoder
-	#define OF_USING_LAD
+	#define OF_USING_LAD // libaudiodecoder
 #elif defined (TARGET_LINUX)
-	// libsndfile
-	#define OF_USING_SNDFILE
+	#define OF_USING_SNDFILE // libsndfile
 #endif
 
 #ifdef OF_USING_SNDFILE
@@ -24,21 +23,13 @@
 #ifdef OF_USING_MPG123
 	#include <mpg123.h>
 #endif
-#include "ofSoundBuffer.h"
+
 #ifdef OF_USING_LAD
 #include "audiodecoder.h"
 #endif
-enum ofID3Tag{
-    OF_ID3_TITLE,
-    OF_ID3_ALBUM,
-    OF_ID3_ARTIST,
-    OF_ID3_TIME,
-    OF_ID3_TRACK
-};
 
-bool ofLoadSound(ofSoundBuffer &buff, string path);
-bool ofSaveSound(ofSoundBuffer &buff,  string path);
-
+bool ofLoadSound(ofSoundBuffer &buffer, string path);
+bool ofSaveSound(const ofSoundBuffer &buffer, string path);
 
 class ofSoundFile {
 public:
@@ -51,13 +42,14 @@ public:
 	void close();
 
     bool loadSound(string _path);
-    bool saveSound(string _path, ofSoundBuffer &buff);
+    bool saveSound(string _path, const ofSoundBuffer &buffer);
     
 	/// read file to buffer. 
 	/// if samples is 0, resize the buffer to fit the entire file, otherwise just read the requested number of samples.
-	bool readTo(ofSoundBuffer & buffer, unsigned int samples=0);//roy: this method name is a bit confusing. I'd rather change it.
-	/// seek to the requested sample index
-	bool seekTo(unsigned int sample);
+	bool readTo(ofSoundBuffer &buffer, unsigned int samples = 0);
+	
+	/// seek to the sample at the requested index
+	bool seekTo(unsigned int sampleIndex);
 
 	int getNumChannels();
 	unsigned long getDuration(); // millisecs
@@ -65,7 +57,6 @@ public:
     unsigned long getNumSamples();
     int getBitDepth();
     bool isCompressed();
-    string getID3Tag(ofID3Tag tag);
     bool isLoaded();
     string getPath();
     
