@@ -1,6 +1,5 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
-#include "ofSoundMixer.h"
 
 static ofSoundStream globalSoundStream;	
 ofSoundStream & ofGetSoundStream(){

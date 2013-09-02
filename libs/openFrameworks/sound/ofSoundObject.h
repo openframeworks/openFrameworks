@@ -73,3 +73,39 @@ private:
  */
 class ofSoundOutput: public ofSoundObject {};
 
+/**
+ * This class represents a simple mixer which adds together the output
+ * of multiple chains of ofSoundObjects
+ */
+class ofSoundMixer: public ofSoundObject {
+public:
+	ofSoundMixer();
+	virtual ~ofSoundMixer();
+
+	ofPtr<ofBaseSoundOutput> getChannelSource(int channelNumber);
+	int getNumChannels();
+
+	/// sets output volume multiplier.
+	/// a volume of 1 means "full volume", 0 is muted.
+	void setMasterVolume(float vol);
+	float getMasterVolume();
+
+	/// sets output stereo panning.
+	/// 0.5 is center panned, 0 is full left and 1 is full right.
+	/// panning is disabled for non-stereo sound.
+	void  setMasterPan(float pan);
+	float getMasterPan();
+
+	void audioOut(ofSoundBuffer &output);
+	bool isConnectedTo(ofSoundObject& obj);
+
+protected:
+	void disconnectInput(ofSoundObject * input);
+	vector<ofSoundObject*>channels;
+	float masterPan;
+	float masterVolume;
+	void setInput(ofSoundObject *obj);
+};
+
+/// returns a reference to the global sound mixer
+ofSoundMixer &ofGetSystemSoundMixer();

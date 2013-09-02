@@ -7,7 +7,6 @@
 
 #include "ofBasicSoundPlayer.h"
 #include "ofSoundUtils.h"
-#include "ofSoundMixer.h"
 #include "ofSoundStream.h"
 #include <float.h>
 

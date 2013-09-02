@@ -72,7 +72,6 @@
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
 #include "ofSoundBuffer.h"
-#include "ofSoundMixer.h"
 #if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID)
 #include "ofSoundFile.h"
 #include "ofBasicSoundPlayer.h"
