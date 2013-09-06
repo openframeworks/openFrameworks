@@ -255,6 +255,7 @@ CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
+$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
 	ifneq ($(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
 $(error couldn't find some pkg-config packages, did you run the latest install_dependencies.sh?)
 	endif
