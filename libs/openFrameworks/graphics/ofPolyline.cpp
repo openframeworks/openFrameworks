@@ -162,13 +162,7 @@ void ofPolyline::setCircleResolution(int res){
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
 float ofPolyline::wrapAngle(float angleRadians) {
-    if(angleRadians < 0) {
-        return -1.0f * (angleRadians + M_TWO_PI) * floor(angleRadians/M_TWO_PI);
-    } else if(angleRadians > M_TWO_PI) {
-        return         (angleRadians - M_TWO_PI) * floor(angleRadians/M_TWO_PI);
-    } else {
-        return angleRadians;
-    }
+	return ofWrap(angleRadians, 0.0, TWO_PI);
 }
 
 //----------------------------------------------------------
@@ -486,12 +480,11 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) const {
 //----------------------------------------------------------
 ofPolyline ofPolyline::getResampledByCount(int count) const {
 	float perimeter = getPerimeter();
-    if(count < 2) {
-        ofLogWarning() << "ofPolyline::getResampledByCount less than two points makes no sense! returning original poly";
-        return *this;
-    } else {
-        return ofPolyline::getResampledBySpacing(perimeter / (count-1));
+	if(count < 2) {
+		ofLogWarning("ofPolyline") << "getResampledByCount(): requested " << count <<" points, using minimum count of 2 ";
+		count = 2;
     }
+	return ofPolyline::getResampledBySpacing(perimeter / (count-1));
 }
 
 //----------------------------------------------------------
@@ -940,7 +933,7 @@ int ofPolyline::getWrappedIndex(int index) const {
     if(points.empty()) return 0;
     
     if(index < 0) return isClosed() ? (index + points.size()) % points.size() : 0;
-    if(index > points.size()-1) return isClosed() ? index % points.size() : points.size() - 1;
+    if(index > int(points.size())-1) return isClosed() ? index % points.size() : points.size() - 1;
     return index;
 }
 
@@ -1000,8 +993,7 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         ofVec3f tangent;
 
         float length = 0;
-        bool bFlipNormal = false;
-        for(int i=0; i<points.size(); i++) {
+        for(int i=0; i<(int)points.size(); i++) {
             lengths[i] = length;
 
             calcData(i, tangent, angle, rotation, normal);

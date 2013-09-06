@@ -52,7 +52,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			int endPos = face->glyph->outline.contours[k]+1;
 
 			if(printVectorInfo){
-				ofLog(OF_LOG_NOTICE, "--NEW CONTOUR\n");
+				ofLogNotice("ofTrueTypeFont") << "--NEW CONTOUR";
 			}
 
 			//vector <ofPoint> testOutline;
@@ -63,18 +63,18 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 				if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_ON ){
 					lastPoint.set((float)vec[j].x, (float)-vec[j].y, 0);
 					if(printVectorInfo){
-						ofLog(OF_LOG_NOTICE, "flag[%i] is set to 1 - regular point - %f %f", j, lastPoint.x, lastPoint.y);
+						ofLogNotice("ofTrueTypeFont") << "flag[" << j << "] is set to 1 - regular point - " << lastPoint.x <<  lastPoint.y;
 					}
 					charOutlines.lineTo(lastPoint/64);
 
 				}else{
 					if(printVectorInfo){
-						ofLog(OF_LOG_NOTICE, "flag[%i] is set to 0 - control point", j);
+						ofLogNotice("ofTrueTypeFont") << "flag[" << j << "] is set to 0 - control point";
 					}
 
 					if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_CUBIC ){
 						if(printVectorInfo){
-							ofLog(OF_LOG_NOTICE, "- bit 2 is set to 2 - CUBIC");
+							ofLogNotice("ofTrueTypeFont") << "- bit 2 is set to 2 - CUBIC";
 						}
 
 						int prevPoint = j-1;
@@ -106,8 +106,8 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 						ofPoint conicPoint( (float)vec[j].x,  -(float)vec[j].y );
 
 						if(printVectorInfo){
-							ofLog(OF_LOG_NOTICE, "- bit 2 is set to 0 - conic- ");
-							ofLog(OF_LOG_NOTICE, "--- conicPoint point is %f %f", conicPoint.x, conicPoint.y);
+							ofLogNotice("ofTrueTypeFont") << "- bit 2 is set to 0 - conic- ";
+							ofLogNotice("ofTrueTypeFont") << "--- conicPoint point is " << conicPoint.x << conicPoint.y;
 						}
 
 						//If the first point is connic and the last point is connic then we need to create a virutal point which acts as a wrap around
@@ -119,8 +119,8 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 								lastPoint = (conicPoint + lastConnic) / 2;
 
 								if(printVectorInfo){
-									ofLog(OF_LOG_NOTICE, "NEED TO MIX WITH LAST");
-									ofLog(OF_LOG_NOTICE, "last is %f %f", lastPoint.x, lastPoint.y);
+									ofLogNotice("ofTrueTypeFont") << "NEED TO MIX WITH LAST";
+									ofLogNotice("ofTrueTypeFont") << "last is " << lastPoint.x << " " << lastPoint.y;
 								}
 							}
 						}
@@ -135,7 +135,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 						ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );
 
 						if(printVectorInfo){
-							ofLog(OF_LOG_NOTICE, "--- last point is %f %f", lastPoint.x, lastPoint.y);
+							ofLogNotice("ofTrueTypeFont") << "--- last point is " << lastPoint.x << " " <<  lastPoint.y;
 						}
 
 						bool nextIsConnic = (  FT_CURVE_TAG( tags[nextIndex] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[nextIndex]) != FT_CURVE_TAG_CUBIC );
@@ -144,11 +144,11 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 						if( nextIsConnic ){
 							nextPoint = (conicPoint + nextPoint) / 2;
 							if(printVectorInfo){
-								ofLog(OF_LOG_NOTICE, "|_______ double connic!");
+								ofLogNotice("ofTrueTypeFont") << "|_______ double connic!";
 							}
 						}
 						if(printVectorInfo){
-							ofLog(OF_LOG_NOTICE, "--- next point is %f %f", nextPoint.x, nextPoint.y);
+							ofLogNotice("ofTrueTypeFont") << "--- next point is " << nextPoint.x << " " << nextPoint.y;
 						}
 
 						//quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
@@ -168,7 +168,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 	return charOutlines;
 }
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	#include <set>
 	static set<ofTrueTypeFont*> & all_fonts(){
 		static set<ofTrueTypeFont*> *all_fonts = new set<ofTrueTypeFont*>;
@@ -199,49 +199,22 @@ bool compare_cps(const charProps & c1, const charProps & c2){
 
 #ifdef TARGET_OSX
 static string osxFontPathByName( string fontname ){
-    FSRef ref;
-    unsigned char path[2048];
+	CFStringRef targetName = CFStringCreateWithCString(NULL, fontname.c_str(), kCFStringEncodingUTF8);
+	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
+	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
+	string fontPath = "";
+	
+	if(targetURL) {
+		UInt8 buffer[PATH_MAX];
+		CFURLGetFileSystemRepresentation(targetURL, true, buffer, PATH_MAX);
+		fontPath = string((char *)buffer);
+		CFRelease(targetURL);
+	}
+	
+	CFRelease(targetName);
+	CFRelease(targetDescriptor);
 
-    CFStringRef  cfFontName;
-    ATSFontRef   atsFontRef;
-
-
-    if( fontname == "" )
-        return "";
-
-    cfFontName = CFStringCreateWithCString( kCFAllocatorDefault, fontname.c_str(), kCFStringEncodingUTF8 );
-
-    atsFontRef = ATSFontFindFromName( cfFontName, kATSOptionFlagsIncludeDisabledMask );
-
-    if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL ){
-        atsFontRef = ATSFontFamilyFindFromName( cfFontName, kATSOptionFlagsDefault );
-
-        if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
-        {
-            atsFontRef = ATSFontFindFromPostScriptName( cfFontName, kATSOptionFlagsDefault );
-
-            if ( atsFontRef == 0 || atsFontRef == 0xFFFFFFFFUL )
-            {
-                ofLogError() << "couldn't find " << fontname;
-                CFRelease( cfFontName );
-                return "";
-            }
-        }
-    }
-    CFRelease( cfFontName );
-
-    if (ATSFontGetFileReference( atsFontRef, &ref ) != noErr){
-        ofLogError() << "couldn't get file ref for " << fontname ;
-        return "";
-    }
-
-    if (FSRefMakePath(&ref, path, sizeof(path)) != noErr){
-        ofLogError(  "failure when getting path from FSRef" );
-        return "";
-    }
-
-
-    return (char*)path;
+	return fontPath;
 }
 #endif
 
@@ -258,7 +231,7 @@ void initWindows(){
 	HKEY key_ft;
 	l_ret = RegOpenKeyExW(HKEY_LOCAL_MACHINE, Fonts, 0, KEY_QUERY_VALUE, &key_ft);
 	if (l_ret != ERROR_SUCCESS){
-	    ofLogError() << "couldn't find register key";
+	    ofLogError("ofTrueTypeFont") << "initWindows(): couldn't find fonts registery key";
         return;
 	}
 
@@ -272,13 +245,13 @@ void initWindows(){
 
 	l_ret = RegQueryInfoKeyW(key_ft, NULL, NULL, NULL, NULL, NULL, NULL, &value_count, NULL, &max_data_len, NULL, NULL);
 	if(l_ret != ERROR_SUCCESS){
-	    ofLogError() << "couldn't query register for fonts";
+	    ofLogError("ofTrueTypeFont") << "initWindows(): couldn't query registery for fonts";
         return;
 	}
 
 	// no font installed
 	if (value_count == 0){
-	    ofLogError() << "couldn't find any fonts in register";
+	    ofLogError("ofTrueTypeFont") << "initWindows(): couldn't find any fonts in registery";
         return;
 	}
 
@@ -301,7 +274,7 @@ void initWindows(){
 
 			l_ret = RegEnumValueW(key_ft, i, value_name, &name_len, NULL, NULL, value_data, &data_len);
 			if(l_ret != ERROR_SUCCESS){
-			     ofLogError() << "couldn't read registry key for a font type";
+			     ofLogError("ofTrueTypeFont") << "initWindows(): couldn't read registry key for font type";
 			     continue;
 			}
 
@@ -337,7 +310,7 @@ static string linuxFontPathByName(string fontname){
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
 	if(!ret){
-		ofLogError() << "couldn't find font file or system font with name " << fontname;
+		ofLogError() << "linuxFontPathByName(): couldn't find font file or system font with name \"" << fontname << "\"";
 		return "";
 	}
 	FcDefaultSubstitute(pattern);
@@ -346,14 +319,14 @@ static string linuxFontPathByName(string fontname){
 	fontMatch = FcFontMatch(0,pattern,&result);
 
 	if(!fontMatch){
-		ofLogError() << "couldn't match font file or system font with name " << fontname;
+		ofLogError() << "linuxFontPathByName(): couldn't match font file or system font with name \"" << fontname << "\"";
 		return "";
 	}
 	FcChar8	*file;
 	if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
 		filename = (const char*)file;
 	}else{
-		ofLogError() << "couldn't find font match for " << fontname;
+		ofLogError() << "linuxFontPathByName(): couldn't find font match for \"" << fontname << "\"";
 		return "";
 	}
 	return filename;
@@ -366,7 +339,7 @@ bool ofTrueTypeFont::initLibraries(){
 	    err = FT_Init_FreeType( &library );
 
 	    if (err){
-			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error initializing freetype lib: FT_Error = %d", err);
+			ofLogError("ofTrueTypeFont") << "loadFont(): couldn't initialize Freetype lib: FT_Error " << err;
 			return false;
 		}
 #ifdef TARGET_LINUX
@@ -397,7 +370,7 @@ void ofTrueTypeFont::finishLibraries(){
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		all_fonts().insert(this);
 	#endif
 	//cps				= NULL;
@@ -421,7 +394,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 		unloadTextures();
 	}
 
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		all_fonts().erase(this);
 	#endif
 }
@@ -446,8 +419,8 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
-			fontname = "Helvetica";
-			fontID = 3;
+			fontname = "Helvetica Neue";
+			fontID = 4;
 		}else if(fontname==OF_TTF_SERIF){
 			fontname = "Times New Roman";
 		}else if(fontname==OF_TTF_MONO){
@@ -465,10 +438,10 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
         filename = winFontPathByName(fontname);
 #endif
 		if(filename == "" ){
-			ofLogError() << "couldn't find font " << fontname;
+			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
 			return false;
 		}
-		ofLogVerbose() << fontname << " not a file in data loading system font from " << filename;
+		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
 	}
 	FT_Error err;
 	err = FT_New_Face( library, filename.c_str(), fontID, &face );
@@ -476,7 +449,7 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
 		if(err == 1) errorString = "INVALID FILENAME";
-		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - %s: %s: FT_Error = %d", errorString.c_str(), fontname.c_str(), err);
+		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
 		return false;
 	}
 
@@ -524,7 +497,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 	//------------------------------------------------------
 	//kerning would be great to support:
-	//ofLog(OF_LOG_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
+	//ofLogNotice("ofTrueTypeFont") << "FT_HAS_KERNING ? " <<  FT_HAS_KERNING(face);
 	//------------------------------------------------------
 
 	nCharacters = (bFullCharacterSet ? 256 : 128) - NUM_CHARACTER_TO_START;
@@ -535,6 +508,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	if(bMakeContours){
 		charOutlines.clear();
 		charOutlines.assign(nCharacters, ofTTFCharacter());
+		charOutlinesNonVFlipped.assign(nCharacters, ofTTFCharacter());
 	}
 
 	vector<ofPixels> expanded_data(nCharacters);
@@ -551,7 +525,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
 		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), FT_LOAD_DEFAULT );
         if(err){
-			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error with FT_Load_Glyph %i: FT_Error = %d", i, err);
+			ofLogError("ofTrueTypeFont") << "loadFont(): FT_Load_Glyph failed for char " << i << ": FT_Error " << err;
 
 		}
 
@@ -577,14 +551,24 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 		if(bMakeContours){
 			if(printVectorInfo){
-				ofLog(OF_LOG_NOTICE, "\n\ncharacter %c:", char(i+NUM_CHARACTER_TO_START));
+				ofLogNotice("ofTrueTypeFont") <<  "character " << char(i+NUM_CHARACTER_TO_START);
 			}
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
+
+			charOutlinesNonVFlipped[i] = charOutlines[i];
+			charOutlinesNonVFlipped[i].translate(ofVec3f(0,cps[i].height));
+			charOutlinesNonVFlipped[i].scale(1,-1);
+
+
 			if(simplifyAmt>0)
 				charOutlines[i].simplify(simplifyAmt);
 			charOutlines[i].getTessellation();
+
+			if(simplifyAmt>0)
+				charOutlinesNonVFlipped[i].simplify(simplifyAmt);
+			charOutlinesNonVFlipped[i].getTessellation();
 		}
 
 
@@ -663,13 +647,12 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		areaSum += (cps[i].width+border*2)*(cps[i].height+border*2);
 	}
 
-
 	vector<charProps> sortedCopy = cps;
 	sort(sortedCopy.begin(),sortedCopy.end(),&compare_cps);
 
 	// pack in a texture, algorithm to calculate min w/h from
 	// http://upcommons.upc.edu/pfc/bitstream/2099.1/7720/1/TesiMasterJonas.pdf
-	//cout << areaSum << endl;
+	//ofLogNotice("ofTrueTypeFont") << "loadFont(): areaSum: " << areaSum
 
 	bool packed = false;
 	float alpha = logf(areaSum)*1.44269;
@@ -807,25 +790,30 @@ float ofTrueTypeFont::getSpaceSize(){
 }
 
 //------------------------------------------------------------------
-ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
+ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip){
 	if( bMakeContours == false ){
-		ofLog(OF_LOG_ERROR, "getCharacterAsPoints: contours not created,  call loadFont with makeContours set to true" );
-            return ofTTFCharacter();
+		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
+		return ofTTFCharacter();
 	}
     if (character - NUM_CHARACTER_TO_START >= nCharacters || character < NUM_CHARACTER_TO_START){
-        ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (character + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+        ofLogError("ofxTrueTypeFont") << "getCharacterAsPoint(): char " << character + NUM_CHARACTER_TO_START
+		<< " not allocated: line " << __LINE__ << " in " << __FILE__;
         
         return ofTTFCharacter();
     }
     
-    return charOutlines[character - NUM_CHARACTER_TO_START];
+    if(vflip){
+    	return charOutlines[character - NUM_CHARACTER_TO_START];
+    }else{
+    	return charOutlinesNonVFlipped[character - NUM_CHARACTER_TO_START];
+    }
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 	if (c >= nCharacters){
-		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+		//ofLogError("ofTrueTypeFont") << "drawChar(): char " << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
 		return;
 	}
 
@@ -837,15 +825,19 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	v1		= cps[c].v1;
 
 	x1		= cps[c].x1+x;
-	y1		= cps[c].y1+y;
+	y1		= cps[c].y1;
 	x2		= cps[c].x2+x;
-	y2		= cps[c].y2+y;
+	y2		= cps[c].y2;
 
 	int firstIndex = stringQuads.getVertices().size();
 
 	if(!ofIsVFlipped()){
-		swap(v1,v2);
+       y1 *= -1;
+       y2 *= -1;  
 	}
+
+    y1 += y;
+    y2 += y; 
 
 	stringQuads.addVertex(ofVec3f(x1,y1));
 	stringQuads.addVertex(ofVec3f(x2,y1));
@@ -866,7 +858,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 }
 
 //-----------------------------------------------------------
-vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
+vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip){
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
 		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(str,o);
@@ -876,13 +868,21 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 	vector<ofTTFCharacter> shapes;
 
 	if (!bLoadedOk){
-		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+		ofLogError("ofxTrueTypeFont") << "getStringAsPoints(): font not allocated: line " << __LINE__ << " in " << __FILE__;
 		return shapes;
 	};
 
 	GLint		index	= 0;
 	GLfloat		X		= 0;
 	GLfloat		Y		= 0;
+	int newLineDirection		= 1;
+
+	if(vflip){
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(c,"\n");
+		//Y = lines*lineHeight;
+		newLineDirection = -1;
+	}
 
 
 	int len = (int)str.length();
@@ -891,13 +891,13 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
 		if (cy < nCharacters){ 			// full char set or not?
 			if (str[index] == '\n') {
-				Y += lineHeight;
+				Y += lineHeight*newLineDirection;
 				X = 0 ; //reset X Pos back to zero
 			}else if (str[index] == ' ') {
 				int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				X += cps[cy].setWidth * letterSpacing * spaceSize;
 			} else if(cy > -1){
-				shapes.push_back(getCharacterAsPoints((unsigned char)str[index]));
+				shapes.push_back(getCharacterAsPoints((unsigned char)str[index],vflip));
 				shapes.back().translate(ofPoint(X,Y));
 
 				X += cps[cy].setWidth * letterSpacing;
@@ -912,14 +912,20 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	if (c - NUM_CHARACTER_TO_START >= nCharacters || c < NUM_CHARACTER_TO_START){
-		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+		//ofLogError("ofTrueTypeFont") << "drawCharAsShape(): char " << << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
 		return;
 	}
 	//-----------------------
 
-	ofTTFCharacter & charRef = charOutlines[c - NUM_CHARACTER_TO_START];
-	charRef.setFilled(ofGetStyle().bFill);
-	charRef.draw(x,y);
+	if(ofIsVFlipped()){
+		ofTTFCharacter & charRef = charOutlines[c - NUM_CHARACTER_TO_START];
+		charRef.setFilled(ofGetStyle().bFill);
+		charRef.draw(x,y);
+	}else{
+		ofTTFCharacter & charRef = charOutlinesNonVFlipped[c - NUM_CHARACTER_TO_START];
+		charRef.setFilled(ofGetStyle().bFill);
+		charRef.draw(x,y);
+	}
 }
 
 //-----------------------------------------------------------
@@ -934,7 +940,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     ofRectangle myRect;
 
     if (!bLoadedOk){
-    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::getStringBoundingBox - font not allocated");
+    	ofLogError("ofTrueTypeFont") << "getStringBoundingBox(): font not allocated";
     	return myRect;
     }
 
@@ -1013,6 +1019,15 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
+	int newLineDirection		= 1;
+
+	if(!ofIsVFlipped()){
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(c,"\n");
+		//Y = lines*lineHeight;
+		newLineDirection = -1;
+	}
+
 	int len = (int)c.length();
 
 	while(index < len){
@@ -1020,7 +1035,7 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y += lineHeight;
+				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
@@ -1059,7 +1074,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	}
 	
 	if (!bLoadedOk){
-		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawString - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+		ofLogError("ofTrueTypeFont") << "drawString(): font not allocated: line " << __LINE__ << " in " << __FILE__;
 		return;
 	};
 	
@@ -1123,13 +1138,13 @@ void ofTrueTypeFont::unbind(){
 void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
     if (!bLoadedOk){
-    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+    	ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
     	return;
     };
 
 	//----------------------- error checking
 	if (!bMakeContours){
-		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : contours not created for this font - call loadFont with makeContours set to true");
+		ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): contours not created for this font, call loadFont() with makeContours set to true";
 		return;
 	}
 
@@ -1142,6 +1157,14 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
+	int newLineDirection		= 1;
+
+	if(!ofIsVFlipped()){
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(c,"\n");
+		//Y = lines*lineHeight;
+		newLineDirection = -1;
+	}
 
 	int len = (int)c.length();
 
@@ -1150,7 +1173,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y += lineHeight;
+				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {

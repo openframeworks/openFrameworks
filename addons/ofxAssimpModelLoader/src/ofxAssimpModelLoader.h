@@ -114,6 +114,7 @@ class ofxAssimpModelLoader{
          
     protected:
     
+		void onAppExit(ofEventArgs & args);
         void updateAnimations();
         void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
         void updateBones();

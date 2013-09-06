@@ -102,12 +102,12 @@ bool ofxXmlSettings::saveFile(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::load(string path){
+bool ofxXmlSettings::load(const string & path){
 	return loadFile(path);
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::save(string path){
+bool ofxXmlSettings::save(const string & path){
 	return saveFile(path);
 }
 
@@ -212,7 +212,7 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 		level++;
 		return true;
 	}else{
-        ofLog( OF_LOG_ERROR, "pushTag - <" + tag + "> tag not found");
+        ofLogError("ofxXmlSettings") << "pushTag(): tag \"" << tag << "\" not found";
 	}
 
 	return false;

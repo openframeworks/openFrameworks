@@ -67,7 +67,7 @@ void swarm::customDraw(){
 		ofPushStyle();
 		ofSetColor(particles[i].color);
 
-		ofSphere(particles[i].position, 1.0);
+		ofDrawSphere(particles[i].position, 1.0);
 
 		ofPopStyle();
 	}
@@ -82,7 +82,7 @@ void swarm::customDraw(){
 
 	// Render light as white sphere
 	ofSetColor(255, 255, 255);
-	ofSphere(light.getPosition(), 2.0);
+	ofDrawSphere(light.getPosition(), 2.0);
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL);
 	ofDrawBitmapString(" light", particles[0].position);
 	ofPopStyle();

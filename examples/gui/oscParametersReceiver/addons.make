@@ -1,3 +1,2 @@
 ofxOsc
 ofxGui
-ofxXmlSettings

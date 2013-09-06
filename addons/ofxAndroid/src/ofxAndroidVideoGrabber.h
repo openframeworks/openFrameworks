@@ -10,6 +10,7 @@
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 #include "ofEvents.h"
+#include "ofTypes.h"
 
 class ofxAndroidVideoGrabber: public ofBaseVideoGrabber{
 public:
@@ -17,7 +18,7 @@ public:
 	~ofxAndroidVideoGrabber();
 
 	//needs implementing
-	void	listDevices();
+	vector<ofVideoDevice>	listDevices();
 	bool	initGrabber(int w, int h);
 
 	bool	isFrameNew();

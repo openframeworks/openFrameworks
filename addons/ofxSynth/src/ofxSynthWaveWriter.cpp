@@ -9,17 +9,16 @@ bool ofxSynthWaveWriter::startWriting(string filename){
 	buf = (unsigned char*) malloc( buf_size * sizeof *buf );
 	if ( !buf ){
 		writing = false;
-		ofLog(OF_LOG_ERROR, "cannot write file, out of memory");
+		ofLogError("ofxSynthWaveWriter") << "startWriting(): cannot write file, out of memory";
 		return false;
 	}
 	
 	file = fopen( ofToDataPath(filename).c_str(), "wb" );
 	if ( !file ){
 		writing = false;
-		ofLog(OF_LOG_ERROR, "cannot open file");
+		ofLogError("ofxSynthWaveWriter") << "startWriting(): couldn't open file";
 		return false;
 	}
-	cout << buf_size;
 	setvbuf( file, 0, _IOFBF, 32 * 1024L );
 }
 
@@ -45,7 +44,7 @@ void ofxSynthWaveWriter::process( float* input, float *output, int numFrames, in
 void ofxSynthWaveWriter::flush(){
 	if ( buf_pos && !fwrite( buf, buf_pos, 1, file ) ){
 		writing = false;
-		ofLog(OF_LOG_ERROR, "cannot write to file");
+		ofLogError("ofxSynthWaveWriter") << "flush(): couldn't write to file";
 	}
 	buf_pos = 0;
 }
@@ -61,8 +60,6 @@ void ofxSynthWaveWriter::stopWriting(){
 		long rs = wav_header_size - 8 + ds;
 		int frame_size = numChannels * sizeof (char*);
 		long bps = rate * frame_size;
-		cout << rs << endl;
-		cout << buf_pos << endl;
 		writing = false;
 		unsigned char header [wav_header_size] =
 		{

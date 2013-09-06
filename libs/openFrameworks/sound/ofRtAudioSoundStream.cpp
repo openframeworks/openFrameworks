@@ -1,4 +1,5 @@
 #include "ofRtAudioSoundStream.h"
+#include "ofConstants.h"
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 #include "ofSoundStream.h"
@@ -44,12 +45,11 @@ void ofRtAudioSoundStream::listDevices(){
 			error.printMessage();
 			break;
 		}
-		std::cout << "device = " << i << " (" << info.name << ")\n";
-		if (info.isDefaultInput) std::cout << "----* default ----* \n";
-		std::cout << "maximum output channels = " << info.outputChannels << "\n";
-		std::cout << "maximum input channels = " << info.inputChannels << "\n";
-		std::cout << "-----------------------------------------\n";
-
+		ofLogNotice("ofRtAudioSoundStream") << "device " << i << " " << info.name << "";
+		if (info.isDefaultInput) ofLogNotice("ofRtAudioSoundStream") << "----* default ----*";
+		ofLogNotice("ofRtAudioSoundStream") << "maximum output channels " << info.outputChannels;
+		ofLogNotice("ofRtAudioSoundStream") << "maximum input channels " << info.inputChannels;
+		ofLogNotice("ofRtAudioSoundStream") << "-----------------------------------------";
 	}
 }
 
@@ -91,7 +91,11 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-		audio = ofPtr<RtAudio>(new RtAudio());
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+		audio = ofPtr<RtAudio>(new RtAudio(RtAudio::LINUX_PULSE));
+#else
+		audio = ofPtr<RtAudio>(new RtAudio);
+#endif
 	}	catch (RtError &error) {
 		error.printMessage();
 		return false;
@@ -211,7 +215,9 @@ int ofRtAudioSoundStream::getBufferSize(){
 int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data){
 	ofRtAudioSoundStream * rtStreamPtr = (ofRtAudioSoundStream *)data;
 	
-	if ( status ) std::cout << "Stream over/underflow detected." << std::endl;
+	if ( status ) {
+		ofLogWarning("ofRtAudioSoundStream") << "stream over/underflow detected";
+	}
 
 	// 	rtAudio uses a system by which the audio
 	// 	can be of different formats

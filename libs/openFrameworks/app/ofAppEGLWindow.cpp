@@ -32,6 +32,9 @@
 #include "ofGLProgrammableRenderer.h"
 #include <assert.h>
 
+
+void ofGLReadyCallback();
+
 // native events
 struct udev*         udev;
 struct udev_device*  dev;
@@ -161,22 +164,22 @@ static const struct {
 static const char* eglErrorString(EGLint err) {
     string str;
     switch (err) {
-        CASE_STR(EGL_SUCCESS, "No error");
-        CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialised");
-        CASE_STR(EGL_BAD_ACCESS, "Access violation");
-        CASE_STR(EGL_BAD_ALLOC, "Could not allocate resources");
-        CASE_STR(EGL_BAD_ATTRIBUTE, "Invalid attribute");
-        CASE_STR(EGL_BAD_CONTEXT, "Invalid context specified");
-        CASE_STR(EGL_BAD_CONFIG, "Invald frame buffer configuration specified");
-        CASE_STR(EGL_BAD_CURRENT_SURFACE, "Current window, pbuffer or pixmap surface is no longer valid");
-        CASE_STR(EGL_BAD_DISPLAY, "Invalid display specified");
-        CASE_STR(EGL_BAD_SURFACE, "Invalid surface specified");
-        CASE_STR(EGL_BAD_MATCH, "Bad argument match");
-        CASE_STR(EGL_BAD_PARAMETER, "Invalid paramater");
-        CASE_STR(EGL_BAD_NATIVE_PIXMAP, "Invalid NativePixmap");
-        CASE_STR(EGL_BAD_NATIVE_WINDOW, "Invalid NativeWindow");
+        CASE_STR(EGL_SUCCESS, "no error");
+        CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
+        CASE_STR(EGL_BAD_ACCESS, "access violation");
+        CASE_STR(EGL_BAD_ALLOC, "could not allocate resources");
+        CASE_STR(EGL_BAD_ATTRIBUTE, "invalid attribute");
+        CASE_STR(EGL_BAD_CONTEXT, "invalid context specified");
+        CASE_STR(EGL_BAD_CONFIG, "invald frame buffer configuration specified");
+        CASE_STR(EGL_BAD_CURRENT_SURFACE, "current window, pbuffer or pixmap surface is no longer valid");
+        CASE_STR(EGL_BAD_DISPLAY, "invalid display specified");
+        CASE_STR(EGL_BAD_SURFACE, "invalid surface specified");
+        CASE_STR(EGL_BAD_MATCH, "bad argument match");
+        CASE_STR(EGL_BAD_PARAMETER, "invalid paramater");
+        CASE_STR(EGL_BAD_NATIVE_PIXMAP, "invalid NativePixmap");
+        CASE_STR(EGL_BAD_NATIVE_WINDOW, "invalid NativeWindow");
         CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
-        default: str = "Unknown error " + err; break;
+        default: str = "unknown error " + err; break;
     }
     return str.c_str();
 }
@@ -265,6 +268,17 @@ EGLContext ofAppEGLWindow::getEglContext() const {
   return eglContext;
 }
 
+#ifndef TARGET_RASPBERRY_PI
+//------------------------------------------------------------
+Display* ofAppEGLWindow::getX11Display(){
+	return x11Display;
+}
+
+//------------------------------------------------------------
+Window ofAppEGLWindow::getX11Window(){
+	return x11Window;
+}
+#endif
 //------------------------------------------------------------
 EGLConfig ofAppEGLWindow::getEglConfig() const {
   return eglConfig;
@@ -332,7 +346,7 @@ void ofAppEGLWindow::init(Settings _settings) {
         isUsingX11 = true;
         if(!bIsX11Available) {
             isUsingX11 = false;
-            ofLogError("ofAppEGLWindow") << "X11 Window requested, but X11 is not available.";
+            ofLogError("ofAppEGLWindow") << "init(): X11 window requested, but X11 is not available";
         }
     }
 
@@ -341,7 +355,7 @@ void ofAppEGLWindow::init(Settings _settings) {
     #ifdef TARGET_RASPBERRY_PI
     if(isUsingX11) {
         isUsingX11 = false;
-        ofLogWarning("ofAppEGLWindow") << "I'm sorry, I know you wanted X11, but it's not availble on RPI yet.  Using a native window instead.";
+        ofLogWarning("ofAppEGLWindow") << "init(): X11 not availble on RPI yet, using a native window instead";
     }
     #endif
     ////////////////
@@ -382,7 +396,7 @@ void ofAppEGLWindow::exitNative() {
 //------------------------------------------------------------
 EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
   if(!isWindowInited) {
-    ofLogNotice("ofAppEGLWindow::getNativeDisplay") << "Window is not initialized, returning NULL.";
+    ofLogWarning("ofAppEGLWindow") << "getNativeDisplay(): window not initialized, returning NULL";
     return NULL;
   }
 
@@ -392,7 +406,7 @@ EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
         #ifdef TARGET_RASPBERRY_PI
     return (EGLNativeWindowType)&dispman_native_window;
         #else
-    ofLogNotice("ofAppEGLWindow::getNativeWindow") << "There is no native window type for this system. Perhaps try X11?";
+    ofLogNotice("ofAppEGLWindow") << "getNativeWindow(): no native window type for this system, perhaps try X11?";
     return NULL;
         #endif
   }
@@ -401,8 +415,8 @@ EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
 //------------------------------------------------------------
 EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
   if(!isWindowInited) {
-    ofLogNotice("ofAppEGLWindow::getNativeDisplay") << "Window is not initialized, returning NULL.";
-    return NULL;
+    ofLogWarning("ofAppEGLWindow") << "getNativeDisplay(): window not initialized, returning NULL";
+    return 0;
   }
 
   if(isUsingX11) {
@@ -411,8 +425,8 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
         #ifdef TARGET_RASPBERRY_PI
     return (EGLNativeDisplayType)NULL;
         #else
-    ofLogNotice("ofAppEGLWindow::getNativeDisplay") << "There is no native window type for this system. Perhaps try X11?";
-    return NULL;
+    ofLogNotice("ofAppEGLWindow") << "getNativeDisplay(): no native window type for this system, perhaps try X11?";
+    return 0;
         #endif
   }
 }
@@ -437,7 +451,7 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
     bNewScreenMode = false;
 
     if(windowMode == OF_GAME_MODE) {
-       ofLogWarning("ofAppEGLWindow") << "OF_GAME_MODE not supported, using OF_WINDOW.";
+       ofLogWarning("ofAppEGLWindow") << "setupOpenGL(): OF_GAME_MODE not supported, using OF_WINDOW";
        startRect = nonFullscreenWindowRect;
     } else if(windowMode == OF_FULLSCREEN) {
        startRect = getScreenRect();
@@ -447,12 +461,13 @@ void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
     isSurfaceInited = createSurface();
 
     if(!isWindowInited) {
-      ofLogError("ofAppEGLWindow::setupOpenGL")  << "Screen creation failed, window not inited.";
+      ofLogError("ofAppEGLWindow")  << "setupOpenGL(): screen creation failed, window not inited";
     }
     
     setupPeripherals();
 
-    ofLogNotice("ofAppEGLWindow::setupOpenGL")  << "Peripheral setup complete.";
+    ofLogNotice("ofAppEGLWindow")  << "setupOpenGL(): peripheral setup complete";
+    ofGLReadyCallback();
 }
 
 //------------------------------------------------------------
@@ -462,12 +477,12 @@ void ofAppEGLWindow::setupPeripherals() {
         mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
         MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
         mouseCursor.update();
-        ofLogNotice("ofAppEGLWindow::setupPeripherals") << "Peripheral setup complete.";
+        ofLogNotice("ofAppEGLWindow") << "setupPeripherals(): peripheral setup complete";
         setupNativeEvents();
-        ofLogNotice("ofAppEGLWindow::setupPeripherals") << "Native event setup complete.";
+        ofLogNotice("ofAppEGLWindow") << "setupPeripherals(): native event setup complete";
 
     } else {
-        ofLogNotice("ofAppEGLWindow::setupPeripherals") << "Peripherals not supported on X11";
+        ofLogError("ofAppEGLWindow") << "setupPeripherals(): peripherals not supported on X11";
     }
 }
 
@@ -477,24 +492,24 @@ bool ofAppEGLWindow::createSurface() {
   EGLNativeWindowType nativeWindow = getNativeWindow();
   EGLNativeDisplayType display = getNativeDisplay();
 
-  ofLogNotice("ofAppEGLWindow::createSurface") << "Setting up EGL Display";
+  ofLogNotice("ofAppEGLWindow") << "createSurface(): setting up EGL Display";
     // get an EGL eglDisplay connection
     
     isSurfaceInited = false;
 
     EGLint result;
 
-    if(display==NULL){
+    if(display==0){
       eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     }else{
       eglDisplay = eglGetDisplay(display);
     }
 
     if(eglDisplay == EGL_NO_DISPLAY) {
-     ofLogError("ofAppEGLWindow::createSurface") << "eglGetDisplay returned: " << eglDisplay;
+      ofLogNotice("ofAppEGLWindow") << "createSurface(): eglGetDisplay returned: " << eglDisplay;
      return false;
     }else{
-      ofLogNotice("ofAppEGLWindow::createSurface") << "EGL Display correctly set.";
+      ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL Display correctly set";
     }
 
     // initialize the EGL eglDisplay connection
@@ -504,15 +519,15 @@ bool ofAppEGLWindow::createSurface() {
 
     if(result == EGL_BAD_DISPLAY) {
 //  eglDisplay is not an EGL connection
-        ofLogError("ofAppEGLWindow::createSurface") << "eglInitialize returned EGL_BAD_DISPLAY";
+        ofLogError("ofAppEGLWindow") << "createSurface(): eglInitialize returned EGL_BAD_DISPLAY";
         return false;
     } else if(result == EGL_NOT_INITIALIZED) {
         // eglDisplay cannot be intitialized
-        ofLogError("ofAppEGLWindow::createSurface") << "eglInitialize returned EGL_NOT_INITIALIZED";
+        ofLogError("ofAppEGLWindow") << "createSurface(): eglInitialize returned EGL_NOT_INITIALIZED";
         return false;
     } else if(result == EGL_FALSE) {
         // eglinitialize was not initialiezd
-        ofLogError("ofAppEGLWindow::createSurface") << "eglInitialize returned EGL_FALSE";
+        ofLogError("ofAppEGLWindow") << "createSurface(): eglInitialize returned EGL_FALSE";
         return false;
     } else {
         // result == EGL_TRUE
@@ -523,19 +538,19 @@ bool ofAppEGLWindow::createSurface() {
     int glesVersionForContext;
 
     if(ofGetCurrentRenderer()) {
-      ofLogNotice("ofAppEGLWindow::createSurface") << "ofGetCurrentRenderer()->getType()=" << ofGetCurrentRenderer()->getType();
+      ofLogNotice("ofAppEGLWindow") << "createSurface(): current renderer type: " << ofGetCurrentRenderer()->getType();
     } else {
-      ofLogNotice("ofAppEGLWindow::createSurface") << "No current render selected.";
+      ofLogNotice("ofAppEGLWindow") << "createSurface(): no current renderer selected";
     }
 
     if(this->glesVersion==2){
       glesVersion = EGL_OPENGL_ES2_BIT;
       glesVersionForContext = 2;
-        ofLogNotice("ofAppEGLWindow::createSurface") << "GLES2 Renderer detected.";
+        ofLogNotice("ofAppEGLWindow") << "createSurface(): GLES2 renderer detected";
     }else{
       glesVersion = EGL_OPENGL_ES_BIT;
       glesVersionForContext = 1;
-      ofLogNotice("ofAppEGLWindow::createSurface") << "Default Renderer detected.";
+      ofLogNotice("ofAppEGLWindow") << "createSurface(): default renderer detected";
     }
     
     ofEGLAttributeListIterator iter, iterEnd;
@@ -570,12 +585,12 @@ bool ofAppEGLWindow::createSurface() {
 
     if(result == EGL_FALSE) {
         EGLint error = eglGetError();
-        ofLogError("ofAppEGLWindow::createSurface") << "Error finding valid configuration based on settings : " << eglErrorString(error);
+        ofLogError("ofAppEGLWindow") << "createSurface(): error finding valid configuration based on settings: " << eglErrorString(error);
         return false;
     }
 
     if(num_configs <= 0 || eglConfig == NULL) {
-        ofLogError("ofAppEGLWindow::createSurface") << "No matching configs were found (num_configs=" << num_configs<< ").";
+        ofLogError("ofAppEGLWindow") << "createSurface(): no matching configs were found, num_configs: " << num_configs;
         return false;
     }
 
@@ -603,39 +618,39 @@ bool ofAppEGLWindow::createSurface() {
         EGLint error = eglGetError();
         switch(error) {
             case EGL_BAD_MATCH:
-                ofLogError("ofAppEGLWindow::createSurface") << "Error creating surface: EGL_BAD_MATCH (" << eglErrorString(error) << ") " 
-                << " Check window and EGLConfig attributes to determine compatibility, " 
-                << "or verify that the EGLConfig supports rendering to a window.";
+                ofLogError("ofAppEGLWindow") << "createSurface(): error creating surface: EGL_BAD_MATCH " << eglErrorString(error);  
+                ofLogError("ofAppEGLWindow") << "createSurface(): check window and EGLConfig attributes to determine compatibility, ";
+                ofLogError("ofAppEGLWindow") << "createSurface(): or verify that the EGLConfig supports rendering to a window";
                  break;
             case EGL_BAD_CONFIG:
-                ofLogError("ofAppEGLWindow::createSurface") << "Error creating surface: EGL_BAD_CONFIG (" << eglErrorString(error) << ") "
-                << "Verify that provided EGLConfig is valid.";
+                ofLogError("ofAppEGLWindow") << "createSurface(): error creating surface: EGL_BAD_CONFIG " << eglErrorString(error);
+                ofLogError("ofAppEGLWindow") << "createSurface(): verify that provided EGLConfig is valid";
                  break;
             case EGL_BAD_NATIVE_WINDOW:
-                ofLogError("ofAppEGLWindow::createSurface") << "Error creating surface: EGL_BAD_NATIVE_WINDOW (" << eglErrorString(error) << ") "
-                << "Verify that provided EGLNativeWindow is valid.";
+                ofLogError("ofAppEGLWindow") << "createSurface(): error creating surface: EGL_BAD_NATIVE_WINDOW " << eglErrorString(error);
+                ofLogError("ofAppEGLWindow") << "createSurface(): verify that provided EGLNativeWindow is valid";
                  break;
             case EGL_BAD_ALLOC:
-                ofLogError("ofAppEGLWindow::createSurface") << "Error creating surface: EGL_BAD_ALLOC (" << eglErrorString(error) << ") "
-                << "Not enough resources available.";
+                ofLogError("ofAppEGLWindow") << "createSurface(): error creating surface: EGL_BAD_ALLOC " << eglErrorString(error);
+                ofLogError("ofAppEGLWindow") << "createSurface(): not enough resources available";
                  break;
              default:
-              ofLogError("ofAppEGLWindow::createSurface") << "Error creating surface: << " << error << "(" << eglErrorString(error) << ") ";
+              ofLogError("ofAppEGLWindow") << "createSurface(): error creating surface: << " << error << eglErrorString(error);
            } 
 
         return false;
     }else{
-        ofLogNotice("ofAppEGLWindow::createSurface") << "Surface created correctly";
+        ofLogNotice("ofAppEGLWindow") << "createSurface(): surface created correctly";
     }
 
   // get an appropriate EGL frame buffer configuration
   result = eglBindAPI(EGL_OPENGL_ES_API);
 
   if(result == EGL_FALSE) {
-      ofLogError("ofAppEGLWindow::createSurface") << "Error binding API (" << eglErrorString(eglGetError()) << ") ";
+      ofLogError("ofAppEGLWindow") << "createSurface(): error binding API: " << eglErrorString(eglGetError());
       return false;
   }else{
-      ofLogNotice("ofAppEGLWindow::createSurface") << "API Binded correctly";
+      ofLogNotice("ofAppEGLWindow") << "createSurface(): API bound correctly";
   }
 
   // create an EGL rendering eglContext  
@@ -652,10 +667,10 @@ bool ofAppEGLWindow::createSurface() {
     if(eglContext == EGL_NO_CONTEXT) {
        EGLint error = eglGetError();
        if(error == EGL_BAD_CONFIG) {
-            ofLogError("ofAppEGLWindow::createSurface") << "Error creating context.  EGL_BAD_CONFIG (" << eglErrorString(error) << ") ";
+            ofLogError("ofAppEGLWindow") << "createSurface(): error creating context: EGL_BAD_CONFIG " << eglErrorString(error);
             return false;
        } else {
-            ofLogError("ofAppEGLWindow::createSurface") << "Error creating context. " << error <<  " (" << eglErrorString(error) << ")";
+            ofLogError("ofAppEGLWindow") << "createSurface(): error creating context: " << error << " " << eglErrorString(error);
             return false;
        }
     }
@@ -668,7 +683,7 @@ bool ofAppEGLWindow::createSurface() {
 
     if(eglContext == EGL_FALSE) {
         EGLint error = eglGetError();
-        ofLogError("ofAppEGLWindow::createSurface") << "Error making current. (" << eglErrorString(error) << ") ";
+        ofLogError("ofAppEGLWindow") << "createSurface(): couldn't making current surface: " << eglErrorString(error);
         return false;
     }
 
@@ -680,17 +695,17 @@ bool ofAppEGLWindow::createSurface() {
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
 
-    ofLogNotice("ofAppEGLWindow::createSurface") << "-----EGL-----";
-    ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_VERSION_MAJOR = " << eglVersionMajor;
-    ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_VERSION_MINOR = " << eglVersionMinor;
-    ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_CLIENT_APIS = " << eglQueryString(eglDisplay, EGL_CLIENT_APIS);
-    ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_VENDOR = "  << eglQueryString(eglDisplay, EGL_VENDOR);
-    ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_VERSION = " << eglQueryString(eglDisplay, EGL_VERSION);
-    ofLogNotice("ofAppEGLWindow::createSurface") << "EGL_EXTENSIONS = " << eglQueryString(eglDisplay, EGL_EXTENSIONS);
-    ofLogNotice("ofAppEGLWindow::createSurface") << "GL_RENDERER = " << glGetString(GL_RENDERER);
-    ofLogNotice("ofAppEGLWindow::createSurface") << "GL_VERSION  = " << glGetString(GL_VERSION);
-    ofLogNotice("ofAppEGLWindow::createSurface") << "GL_VENDOR   = " << glGetString(GL_VENDOR);
-    ofLogNotice("ofAppEGLWindow::createSurface") << "-------------";
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): -----EGL-----";
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VERSION_MAJOR = " << eglVersionMajor;
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VERSION_MINOR = " << eglVersionMinor;
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_CLIENT_APIS = " << eglQueryString(eglDisplay, EGL_CLIENT_APIS);
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VENDOR = "  << eglQueryString(eglDisplay, EGL_VENDOR);
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VERSION = " << eglQueryString(eglDisplay, EGL_VERSION);
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_EXTENSIONS = " << eglQueryString(eglDisplay, EGL_EXTENSIONS);
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): GL_RENDERER = " << glGetString(GL_RENDERER);
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): GL_VERSION  = " << glGetString(GL_VERSION);
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): GL_VENDOR   = " << glGetString(GL_VENDOR);
+    ofLogNotice("ofAppEGLWindow") << "createSurface(): -------------";
 
     isSurfaceInited = true;
 
@@ -700,7 +715,7 @@ bool ofAppEGLWindow::createSurface() {
 //------------------------------------------------------------
 bool ofAppEGLWindow::destroySurface() {
     if(isSurfaceInited) {
-        ofLogNotice("ofAppEGLWindow::destroySurface") << "Destroying EGL Surface.";
+        ofLogNotice("ofAppEGLWindow") << "destroySurface(): destroying EGL surface";
         eglSwapBuffers(eglDisplay, eglSurface);
         eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglDestroySurface(eglDisplay, eglSurface);
@@ -717,7 +732,7 @@ bool ofAppEGLWindow::destroySurface() {
         
         return true;
     } else {
-        ofLogError("ofAppEGLWindow::destroySurface") << "Attempted to destroy uninitialized window.";
+        ofLogError("ofAppEGLWindow") << "destroySurface(): attempted to destroy uninitialized window";
         return false;
     }
 }
@@ -744,12 +759,12 @@ bool ofAppEGLWindow::destroyWindow() {
                 dispman_display = DISPMANX_NO_HANDLE;
               }
           #else
-            ofLogNotice("ofAppEGLWindow::destroyWindow") << "There is no native window type for this system. Perhaps try X11?";
+            ofLogNotice("ofAppEGLWindow") << "destroyWindow(): no native window type for this system, perhaps try X11?";
           #endif
       }
 
     } else {
-        ofLogNotice("ofAppEGLWindow::destroyWindow") << "Destroying 'uninited' Native window, but not implemented yet.";
+        ofLogNotice("ofAppEGLWindow") << "destroyWindow(): destroying (uninited) native window (not implemented yet)";
     }
 
     return true;
@@ -763,12 +778,12 @@ void ofAppEGLWindow::initializeWindow() {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
-   ofLogNotice("ofAppEGLWindow::runAppViaInfiniteLoop") << "Entering infinite loop.";
+   ofLogNotice("ofAppEGLWindow") << "runAppViaInfiniteLoop(): entering infinite loop";
 
     ofAppPtr = appPtr; // make a local copy
  
     ofNotifySetup();
-    ofLogNotice("ofAppEGLWindow::runAppViaInfiniteLoop") << "ofNotifySetup() complete.";
+    ofLogNotice("ofAppEGLWindow") << "runAppViaInfiniteLoop(): setting up notifications complete";
  
     // loop it!
     while (!terminate) {
@@ -777,7 +792,7 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
       display();
     }
 
-    ofLogNotice("ofAppEGLWindow::runAppViaInfiniteLoop") << "Exiting infinite loop.";
+    ofLogNotice("ofAppEGLWindow") << "runAppViaInfiniteLoop(): exiting infinite loop";
 }
 
 //------------------------------------------------------------
@@ -799,7 +814,7 @@ void ofAppEGLWindow::destroyNativeEvents() {
 //------------------------------------------------------------
 void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
     if(!isWindowInited) {
-      ofLogError("ofAppEGLWindow::setWindowRect") << "Window not inited.";
+      ofLogError("ofAppEGLWindow") << "setWindowRect(): window not inited";
       return;
     }
 
@@ -816,9 +831,9 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
                                       (unsigned int)newRect.width,
                                       (unsigned int)newRect.height);
           if(ret == BadValue) {
-            ofLogError("ofAppEGLWindow::setWindowRect") << "XMoveResizeWindow returned BadValue.";
+            ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadValue";
           } else if(ret == BadWindow) {
-            ofLogError("ofAppEGLWindow::setWindowRect") << "XMoveResizeWindow returned BadWindow.";
+            ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadWindow";
           } else {
             // all is good
             currentWindowRect = newRect;
@@ -848,9 +863,13 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
                                                 &dst_rect,
                                                 &src_rect,
                                                 0, // mask (we aren't changing it here)
-                                                (VC_IMAGE_TRANSFORM_T)0); // we aren't changing it here
+          #ifdef USE_DISPMANX_TRANSFORM_T
+                                                (DISPMANX_TRANSFORM_T)0);
+          #else
+                                                (VC_IMAGE_TRANSFORM_T)0);
+          #endif
 
-          vc_dispmanx_update_submit_sync(dispman_update);
+	  vc_dispmanx_update_submit_sync(dispman_update);
 
           // next time swapBuffers is called, it will be resized based on this eglwindow size data
           dispman_native_window.element = dispman_element;
@@ -860,7 +879,7 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
           currentWindowRect = newRect;
 
           #else
-            ofLogError("ofAppEGLWindow::createEGLWindow") << "There is no native window type for this system. Perhaps try X11?";
+            ofLogError("ofAppEGLWindow") << "createEGLWindow(): no native window type for this system, perhaps try X11?";
           #endif
         }
 
@@ -882,7 +901,7 @@ bool ofAppEGLWindow::createWindow(const ofRectangle& requestedWindowRect) {
     #ifdef TARGET_RASPBERRY_PI
       return createRPiNativeWindow(requestedWindowRect);
     #else
-      ofLogError("ofAppEGLWindow::createEGLWindow") << "There is no native window type for this system. Perhaps try X11?";
+      ofLogError("ofAppEGLWindow") << "createEGLWindow(): no native window type for this system, perhaps try X11?";
       return false;
     #endif
   }
@@ -951,7 +970,7 @@ void ofAppEGLWindow::showCursor(){
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setWindowTitle(string title) {
-    ofLogNotice("ofAppEGLWindow") << "setWindowTitle() not implemented.";
+    ofLogNotice("ofAppEGLWindow") << "setWindowTitle(): not implemented";
 }
 
 //------------------------------------------------------------
@@ -975,18 +994,18 @@ ofPoint ofAppEGLWindow::getScreenSize(){
       screenWidth  = XWidthOfScreen(x11Screen);
       screenHeight = XHeightOfScreen(x11Screen);
     } else {
-        ofLogError("ofAppEGLWindow::getScreenSize") << "Tried to get display size, but failed.  x11Screen is not inited.";
+        ofLogError("ofAppEGLWindow") << "getScreenSize(): tried to get display size but failed, x11Screen is not inited";
     }
 
   } else {
     #ifdef TARGET_RASPBERRY_PI
       int success = graphics_get_display_size(settings.screenNum, &screenWidth, &screenHeight);
       if(success < 0) {
-        ofLogError("ofAppEGLWindow::getScreenSize") << "Tried to get display size, but failed.";
+        ofLogError("ofAppEGLWindow") << "getScreenSize(): tried to get display size but failed";
       }
 
     #else
-      ofLogError("ofAppEGLWindow::getScreenSize") << "There is no native window type for this system. Perhaps try X11?";
+      ofLogError("ofAppEGLWindow") << "getScreenSize(): no native window type for this system, perhaps try X11?";
     #endif
 
   }
@@ -1028,7 +1047,7 @@ bool ofAppEGLWindow::doesHWOrientation() {
 //------------------------------------------------------------
 void ofAppEGLWindow::setWindowPosition(int x, int y){
   if(!isWindowInited) {
-    ofLogError("ofAppEGLWindow::setWindowPosition") << "Window not inited.";
+    ofLogError("ofAppEGLWindow") << "setWindowPosition(): window not inited";
     return;
   }
 
@@ -1038,9 +1057,9 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
                            x,
                            y);
     if(ret == BadValue) {
-      ofLogError("ofAppEGLWindow::setWindowPosition") << "XMoveWindow returned BadValue.";
+      ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadValue";
     } else if(ret == BadWindow) {
-      ofLogError("ofAppEGLWindow::setWindowPosition") << "XMoveWindow returned BadWindow.";
+      ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadWindow";
     } else {
       currentWindowRect.x = x;
       currentWindowRect.y = y;
@@ -1070,7 +1089,11 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
                                           &dst_rect,
                                           NULL,
                                           0,
+    #ifdef USE_DISPMANX_TRANSFORM_T
+                                          (DISPMANX_TRANSFORM_T)0);
+    #else
                                           (VC_IMAGE_TRANSFORM_T)0);
+    #endif
 
     vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1079,7 +1102,7 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
     nonFullscreenWindowRect = currentWindowRect;
 
   #else
-    ofLogError("ofAppEGLWindow::setWindowPosition") << "There is no native window type for this system. Perhaps try X11?";
+    ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
   #endif
   }
 
@@ -1088,7 +1111,7 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 //------------------------------------------------------------
 void ofAppEGLWindow::setWindowShape(int w, int h){
     if(!isWindowInited) {
-    ofLogError("ofAppEGLWindow::setWindowPosition") << "Window not inited.";
+    ofLogError("ofAppEGLWindow") << "setWindowPosition(): window not inited";
     return;
   }
 
@@ -1098,9 +1121,9 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
                            (unsigned int)w,
                            (unsigned int)h);
     if(ret == BadValue) {
-      ofLogError("ofAppEGLWindow::setWindowPosition") << "XMoveWindow returned BadValue.";
+      ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadValue";
     } else if(ret == BadWindow) {
-      ofLogError("ofAppEGLWindow::setWindowPosition") << "XMoveWindow returned BadWindow.";
+      ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadWindow";
     } else {
       currentWindowRect.width = w;
       currentWindowRect.height = h;
@@ -1111,7 +1134,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
     setWindowRect(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
     nonFullscreenWindowRect = currentWindowRect;
   #else
-    ofLogError("ofAppEGLWindow::setWindowPosition") << "There is no native window type for this system. Perhaps try X11?";
+    ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
   #endif
   }
 }
@@ -1241,7 +1264,7 @@ void ofAppEGLWindow::display() {
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
   if(!success) {
        GLint error = eglGetError();
-       ofLogNotice("ofAppEGLWindow::display") << "Failure at eglSwapBuffers" << eglErrorString(error);
+       ofLogNotice("ofAppEGLWindow") << "display(): eglSwapBuffers failed: " << eglErrorString(error);
   }
 
   nFramesSinceWindowResized++;
@@ -1287,9 +1310,9 @@ void ofAppEGLWindow::setupNativeUDev() {
  
     udev = udev_new(); // create new udev object
     if(!udev) {
-        ofLogError("ofAppEGLWindow") << "setupUDev() : Can't create udev object.";
+        ofLogError("ofAppEGLWindow") << "setupNativeUDev(): couldn't create udev object";
     } else {
-        ofLogNotice("ofAppEGLWindow") << "setupUDev() : Created udev object.";
+        ofLogNotice("ofAppEGLWindow") << "setupNativeUDev(): created udev object";
         // setup udev to monitor for input devices
         mon = udev_monitor_new_from_netlink(udev, "udev");
         // just listen for input devices
@@ -1300,7 +1323,7 @@ void ofAppEGLWindow::setupNativeUDev() {
     }
 
     if(udev_fd < 0) {
-        ofLogError("ofAppEGLWindow") << "setupUDev() : did not create udev object. udev_fd < 0";
+        ofLogError("ofAppEGLWindow") << "setupNativeUDev(): did not create udev object, udev_fd < 0";
     }
 
 }
@@ -1322,23 +1345,23 @@ void ofAppEGLWindow::setupNativeMouse() {
         devicePathBuffer.append("/dev/input/by-path/");
         devicePathBuffer.append(eps[0]->d_name);
         mouse_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
-        ofLogNotice("ofAppEGLWindow") << "setupMouse() : mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupMouse(): mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
     } else {
-        ofLogNotice("ofAppEGLWindow") << "setupMouse() : Unabled to find mouse.";
+        ofLogNotice("ofAppEGLWindow") << "setupMouse(): unabled to find mouse";
     }
 
     if (mouse_fd >= 0) {
         char deviceNameBuffer[256] = "Unknown Device";
         ioctl(mouse_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-        ofLogNotice("ofAppEGLWindow") << "setupMouse() : mouse device name = " << deviceNameBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupMouse(): mouse device name = " << deviceNameBuffer;
     } else {
-        ofLogError("ofAppEGLWindow") << "setupMouse() : did not open mouse.";
+        ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse";
     }
 
     mb.mouseButtonState = 0;
 
     if(mouse_fd < 0) {
-        ofLogError("ofAppEGLWindow") << "setupMouse() : did not open mouse. mouse_fd < 0";
+        ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse, mouse_fd < 0";
     }
 
 }
@@ -1354,15 +1377,15 @@ void ofAppEGLWindow::setupNativeKeyboard() {
         devicePathBuffer.append("/dev/input/by-path/");
         devicePathBuffer.append(eps[0]->d_name);
         keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
-        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard_fd= " <<  keyboard_fd << " devicePath=" << devicePathBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd= " <<  keyboard_fd << " devicePath=" << devicePathBuffer;
     } else {
-        ofLogWarning("ofAppEGLWindow") << "setupKeyboard() : Unabled to find keyboard.";
+        ofLogWarning("ofAppEGLWindow") << "setupKeyboard(): unabled to find keyboard";
     }
 
     if (keyboard_fd >= 0) {
         char deviceNameBuffer[256] = "Unknown Device";
         ioctl(keyboard_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-        ofLogNotice("ofAppEGLWindow") << "setupKeyboard() : keyboard device name = " << deviceNameBuffer;
+        ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard device name = " << deviceNameBuffer;
     
 
         // save current terminal settings
@@ -1374,14 +1397,14 @@ void ofAppEGLWindow::setupNativeKeyboard() {
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
 
     } else {
-        ofLogError("ofAppEGLWindow") << "setupKeyboard() : did not open keyboard.";
+        ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard";
     }
 
     kb.shiftPressed = false;
     kb.capsLocked = false;
     
     if(keyboard_fd < 0) {
-        ofLogError("ofAppEGLWindow") << "setupKeyboard() : did not open keyboard. keyboard_fd < 0";
+        ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd < 0";
     }
 }
 
@@ -1399,7 +1422,7 @@ void ofAppEGLWindow::destroyNativeKeyboard() {
     if (keyboard_fd >= 0) {
       tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
     } else {
-      ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard() : unable to reset terminal";
+      ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard(): unable to reset terminal";
     }
 }
 
@@ -1426,16 +1449,15 @@ void ofAppEGLWindow::readNativeUDevEvents() {
         dev = udev_monitor_receive_device(mon);
         if (dev) {
             // TODO: finish auto connect
-            // TODO: update ofLog
-            printf("Got Device\n");
-            printf("   Node: %s\n", udev_device_get_devnode(dev));
-            printf("   Subsystem: %s\n", udev_device_get_subsystem(dev));
-            printf("   Devtype: %s\n", udev_device_get_devtype(dev));
-            printf("   Action: %s\n", udev_device_get_action(dev));
+            ofLogNotice() << "Got device";
+            ofLogNotice() << "   node: %s\n", udev_device_get_devnode(dev);
+            ofLogNotice() << "   subsystem: %s\n", udev_device_get_subsystem(dev);
+            ofLogNotice() << "   devtype: %s\n", udev_device_get_devtype(dev);
+            ofLogNotice() << "   action: %s\n", udev_device_get_action(dev);
             udev_device_unref(dev);
         }
         else {
-            printf("No Device from receive_device(). An error occured.\n");
+            ofLogNotice("ofAppEGLWindow") << "readNativeUDevEvents(): device returned by receive_device() is NULL";
         }                   
     }
 }
@@ -1599,17 +1621,17 @@ void ofAppEGLWindow::readNativeKeyboardEvents() {
                         pushKeyEvent = true;
                     }
                 } else {
-                    ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents() : input_event.code is outside of our small range.";
+                    ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents(): input_event.code is outside of our small range";
                 }
             }
         } else if(ev.type == EV_MSC) {
             // EV_MSC events are used for input and output events that 
             // do not fall under other categories.
-            // ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents() : EV_MSC";
+            // ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents(): EV_MSC";
         } else if(ev.type == EV_SYN ) {
             // EV_SYN Used as markers to separate events. Events may be 
             // separated in time or in space, such as with the multitouch protocol.
-            // ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents() : EV_SYN";
+            // ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents(): EV_SYN";
         } else {
             // unhandled type
         }
@@ -1667,7 +1689,7 @@ void ofAppEGLWindow::readNativeMouseEvents() {
                     axisValuePending = true;
                     break;
                 default:
-                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : Unknown mouse axis (perhaps it's the scroll wheel?)";
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?)";
                     break;
              }
 
@@ -1685,7 +1707,7 @@ void ofAppEGLWindow::readNativeMouseEvents() {
                     mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
                     pushMouseEvent = true;
                 } else { // unknown
-                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_MIDDLE) {
                 if(ev.value == 0) { // release
@@ -1699,7 +1721,7 @@ void ofAppEGLWindow::readNativeMouseEvents() {
                     mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
                     pushMouseEvent = true;
                 } else { // unknown
-                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.value = " << ev.value;
                 }
             } else if(ev.code == BTN_RIGHT) {
                 if(ev.value == 0) { // release
@@ -1713,10 +1735,10 @@ void ofAppEGLWindow::readNativeMouseEvents() {
                     mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
                     pushMouseEvent = true;
                 } else {
-                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.value = " << ev.value;
+                    ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.value = " << ev.value;
                 }
             } else {
-                ofLogNotice("ofAppEGLWindow") << "readMouseEvents() : EV_KEY : Unknown ev.code = " << ev.code;
+                ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.code = " << ev.code;
             }
             // not sure why we are getting that event here
         } else if(ev.type == EV_MSC) {
@@ -1744,7 +1766,7 @@ void ofAppEGLWindow::readNativeMouseEvents() {
                 axisValuePending = false;
             }
 
-            //ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_SYN";
+            //ofLogVerbose("ofAppEGLWindow") << "readMouseEvents(): EV_SYN";
         } else {
             // unhandled type
         }
@@ -1792,8 +1814,8 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
   // screen size, or start outside of it.
   ofRectangle windowRect = screenRect.getIntersection(requestedWindowRect);
 
-  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "screenRect.width==" << screenRect.width << ", screenRect.height=" << screenRect.height;
-  ofLogNotice("ofAppEGLWindow::setupRPiNativeWindow") << "windowRect.width==" << windowRect.width << ", windowRect.height=" << windowRect.height;
+  ofLogNotice("ofAppEGLWindow") << "setupRPiNativeWindow(): screenRect: " << screenRect.width << "x" << screenRect.height;
+  ofLogNotice("ofAppEGLWindow") << "setupRPiNativeWindow(): windowRect: " << windowRect.width << "x" << windowRect.height;
 
 //////////////////////////
     VC_RECT_T dst_rect;
@@ -1843,10 +1865,10 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
                                                 );
 
     if(dispman_element == DISPMANX_NO_HANDLE) {
-      ofLogError("ofAppEGLWindow::setupRPiNativeWindow") << "dispman_element == DISPMANX_NO_HANDLE";
+      ofLogError("ofAppEGLWindow") << "setupRPiNativeWindow(): dispman_element == DISPMANX_NO_HANDLE";
       return false;
     } else if(dispman_element == (unsigned)DISPMANX_INVALID) {
-      ofLogError("ofAppEGLWindow::setupRPiNativeWindow") << "dispman_element == DISPMANX_INVALID";
+      ofLogError("ofAppEGLWindow") << "setupRPiNativeWindow(): dispman_element == DISPMANX_INVALID";
       return false;
     }
 
@@ -1898,7 +1920,7 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
   // Initializes the display and screen
   x11Display = XOpenDisplay( 0 );
   if (!x11Display) {
-    ofLogError("ofAppEGLWindow")<< "Unable to open X display.";
+    ofLogError("ofAppEGLWindow") << "unable to open X display";
     return false;
   }
  
@@ -1918,7 +1940,7 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
                     x11Visual);
 
   if (!x11Visual) {
-    ofLogError("ofAppEGLWindow") << "Unable to acquire XVisualInfo.";
+    ofLogError("ofAppEGLWindow") << "unable to acquire XVisualInfo";
     return false;
   }
 

@@ -37,7 +37,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	if( _viewport.width == 0 || _viewport.height == 0 ){
 		_viewport.set(0, 0, ofGetWidth(), ofGetHeight());
 	}
-	
+
 	filename = _filename;
 	type = _type;
 	streamBuffer.clear();
@@ -52,13 +52,13 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 			type = IMAGE;
 		}
 	}
-	
+
 	if(filename != "") {
 		switch(type) {
 			case PDF:
 			case SVG:
 			case IMAGE:
-				ofFilePath::createEnclosingDirectory(filename);	
+				ofFilePath::createEnclosingDirectory(filename);
 			case FROM_FILE_EXTENSION:
 				break;
 		}
@@ -85,10 +85,10 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
 	case FROM_FILE_EXTENSION:
-		ofLogFatalError("ofCairoRenderer") << "Type not determined from file extension!";
+		ofLogFatalError("ofCairoRenderer") << "setup(): couldn't determine type from extension for filename: \"" << _filename << "\"!";
 		break;
 	default:
-		ofLogError("ofCairoRenderer") << "Unknown type encountered!";
+		ofLogError("ofCairoRenderer") << "setup(): encountered unknown type for filename \"" << _filename << "\"";
 		break;
 	}
 
@@ -320,7 +320,7 @@ void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures,
 		draw(indexedMesh, useColors, useTextures, useNormals);
 		return;
 	}
-	
+
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());
 	cairo_new_path(cr);
@@ -383,30 +383,30 @@ void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures,
 
 void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
     if(useColors || useTextures || useNormals){
-        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
+        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
     }
 	draw(vertexData,false,false,false);
 }
 
 //----------------------------------------------------------
 void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
-    
+
     if(model.hasScaling()) {
-        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support scaling");
+        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support scaling";
         //glEnable( GL_NORMALIZE );
         //glPushMatrix();
         //ofVec3f scale = model.getScale();
         //glScalef( scale.x, scale.y, scale.z);
     }
-    
+
     ofMesh& mesh = model.getMesh();
     draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
-    
+
     if(model.hasScaling()) {
         //glPopMatrix();
         //glDisable( GL_NORMALIZE );
     }
-    
+
 }
 
 void ofCairoRenderer::draw(ofPath::Command & command){
@@ -507,7 +507,7 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 		raw.cropTo(cropped, sx, sy, sw, sh);
 	}
 	ofPixelsRef pix = shouldCrop ? cropped : raw;
-	
+
 	pushMatrix();
 	translate(x,y,z);
 	scale(w/pix.getWidth(),h/pix.getHeight());
@@ -570,7 +570,7 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 		break;
 	case OF_IMAGE_UNDEFINED:
 	default:
-		ofLog(OF_LOG_ERROR,"ofCairoRenderer: trying to render undefined type image");
+		ofLogError("ofCairoRenderer") << "draw(): trying to draw undefined image type " << pix.getImageType();
 		popMatrix();
 		return;
 		break;
@@ -814,13 +814,13 @@ void ofCairoRenderer::multMatrix (const float * m){
 
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
     if(!surface || !cr) return;
-    
+
     // we can only do Z-axis rotations via cairo_matrix_rotate.
     if(vecZ == 1.0f) {
         cairo_matrix_rotate(getCairoMatrix(),degrees*DEG_TO_RAD);
         setCairoMatrix();
     }
-    
+
     if(!b3D) return;
     modelView.glRotate(degrees,vecX,vecY,vecZ);
 }
@@ -958,9 +958,9 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
 	projection.makeOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
-	
+
 	modelView.makeIdentityMatrix();
-	
+
 	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
 	switch(orientation) {
 		case OF_ORIENTATION_180:
@@ -1003,7 +1003,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist
 				modelView.glTranslate(-width,-height,0);
 			}
 			break;
-	}	
+	}
 };
 
 ofRectangle ofCairoRenderer::getCurrentViewport(){
@@ -1154,14 +1154,14 @@ void ofCairoRenderer::setSphereResolution(int res) {
 	int n = res * 2;
 	float ndiv2=(float)n/2;
 	int stripVerts = (ndiv2*((n+1)*2));
-	
+
 	if((int)sphereVerts.size() != stripVerts ) {
 		sphereVerts.clear();
 		sphereVerts.resize( (ndiv2*((n+1)*2)) );
 	} else {
 		return;
 	}
-	
+
 	/*
 	 Original code by Paul Bourke
 	 A more efficient contribution by Federico Dosil (below)
@@ -1169,34 +1169,34 @@ void ofCairoRenderer::setSphereResolution(int res) {
 	 Use CCW facet ordering
 	 http://paulbourke.net/texture_colour/texturemap/
 	 */
-	
+
 	float theta2 = TWO_PI;
 	float phi1 = -HALF_PI;
 	float phi2 = HALF_PI;
 	float radius = 1.f; // normalize the verts //
-	
+
 	int i, j;
 	float j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
 	cte3 = (theta2)/n;
 	cte1 = (phi2-phi1)/ndiv2;
 	dosdivn = 2*unodivn;
 	ofVec3f e,p,e2,p2;
-	
+
 	// Handle special cases //
 	if (n < 0){
 		n = -n;
 		ndiv2 = -ndiv2;
 	}
 	if (n < 4) {
-		ofLogWarning() << "ofCairoRenderer::setSphereResolution(): sphere resolution is too low!";
+		ofLogWarning("ofCairoRenderer") << "setSphereResolution(): ignoring low sphere resolution: " << n;
 	}
-	
+
 	t2=phi1;
 	cost2=cos(phi1);
 	j1divn=0;
-	
+
 	int cindex = 0; // current index //
-	
+
 	for (j=0;j<ndiv2;j++) {
 		t1 = t2;
 		t2 += cte1;
@@ -1207,7 +1207,7 @@ void ofCairoRenderer::setSphereResolution(int res) {
 		e2.y = sin(t2);
 		p.y = radius * e.y;
 		p2.y = radius * e2.y;
-		
+
 		idivn=0;
 		j1divn+=dosdivn;
 		for (i=0;i<=n;i++) {
@@ -1216,20 +1216,30 @@ void ofCairoRenderer::setSphereResolution(int res) {
 			e.z = cost1 * sin(t3);
 			p.x = radius * e.x;
 			p.z = radius * e.z;
-			
+
 			cindex = (j * (n+1) + i) * 2;
 			sphereVerts[cindex].set(p.x,p.y,p.z);
-			
+
 			e2.x = cost2 * cos(t3);
 			e2.z = cost2 * sin(t3);
 			p2.x = radius * e2.x;
 			p2.z = radius * e2.z;
 			cindex = (j * (n+1) + i) * 2 + 1;
 			sphereVerts[cindex].set(p2.x,p2.y,p2.z);
-			
+
 			idivn += unodivn;
 		}
 	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::enableAntiAliasing(){
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::disableAntiAliasing(){
+	cairo_set_antialias(cr,CAIRO_ANTIALIAS_NONE);
 }
 
 //----------------------------------------------------------
@@ -1237,30 +1247,30 @@ void ofCairoRenderer::drawSphere(float x, float y, float z, float radius) {
 	int n = ofGetStyle().sphereResolution * 2;
 	float ndiv2=(float)n/2;
 	int cindex = 0;
-	
+
 	if(sphereVerts.size() < 1) {
 		// double check to make sure that setSphereResolution has been called at least once //
 		setSphereResolution( ofGetStyle().sphereResolution );
 	}
-	
+
 	spherePoints.resize( (n+1) * 2 );
-	
+
 	ofVec3f sp;
 	int i, j;
 	for (j=0;j<ndiv2;j++) {
 		for (i=0;i<=n;i++) {
 			cindex = (j * (n+1) + i) * 2;
 			sp = sphereVerts[cindex] * radius;
-			
+
 			spherePoints[i*2+0].set( sp.x+x, sp.y+y, sp.z+z );
-			
+
 			cindex = (j * (n+1) + i) * 2 + 1;
 			sp = sphereVerts[cindex] * radius;
 			spherePoints[i*2+1].set( sp.x+x, sp.y+y, sp.z+z );
 		}
 		draw(spherePoints, OF_PRIMITIVE_TRIANGLE_STRIP);
 	}
-	
+
 }
 
 //----------------------------------------------------------
@@ -1313,14 +1323,14 @@ void ofCairoRenderer::setCairoMatrix(){
 
 ofPixels & ofCairoRenderer::getImageSurfacePixels(){
 	if(type!=IMAGE){
-		ofLogError() << "ofCairoRenderer: can only get pixels from image surface";
+		ofLogError("ofCairoRenderer") << "getImageSurfacePixels(): can only get pixels from image surface";
 	}
 	return imageBuffer;
 }
 
 ofBuffer & ofCairoRenderer::getContentBuffer(){
 	if(filename!="" || (type!=SVG && type!=PDF)){
-		ofLogError() << "ofCairoRenderer: can only get buffer from memory allocated renderer for svg or pdf";
+		ofLogError("ofCairoRenderer") << "getContentBuffer(): can only get buffer from memory allocated renderer for svg or pdf";
 	}
 	return streamBuffer;
 }

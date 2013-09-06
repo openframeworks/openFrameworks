@@ -20,6 +20,7 @@ protected:
 	void render();
 	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
+	void loadIcons();
 private:
 	ofRectangle loadBox, saveBox;
 	static ofImage loadIcon, saveIcon;

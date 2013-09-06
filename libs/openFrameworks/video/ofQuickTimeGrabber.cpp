@@ -95,7 +95,7 @@ bool ofQuickTimeGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	if( pixelFormat == OF_PIXELS_RGB ){
 		return true;
 	}
-	ofLogWarning("ofQuickTimeGrabber") << "requested pixel format not supported" << endl;
+	ofLogWarning("ofQuickTimeGrabber") << "setPixelFormat(): requested pixel format " << pixelFormat << " not supported";
 	return false;
 }
 
@@ -114,7 +114,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 
 		//---------------------------------- 1 - open the sequence grabber
 		if( !qtInitSeqGrabber() ){
-			ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: unable to initialize the seq grabber");
+			ofLogError("ofQuickTimeGrabber") << "initGrabber(): unable to initialize the seq grabber";
 			return false;
 		}
 
@@ -152,7 +152,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		if(didWeChooseADevice){
 			deviceIsSelected = qtSelectDevice(deviceID, true);
 			if(!deviceIsSelected && bVerbose)
-				ofLog(OF_LOG_WARNING, "ofQuickTimeGrabber: unable to open device[%i] - will attempt other devices", deviceID);
+				ofLogError("ofQuickTimeGrabber") << "initGrabber(): unable to open device[" << deviceID << "], will attempt other devices";
 		}
 
 		//if we couldn't select our required device
@@ -212,12 +212,12 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		if( attemptFramerate >= 0 ){
 			err = SGSetFrameRate(gVideoChannel, IntToFixed(attemptFramerate) );
 			if ( err != noErr ){
-				ofLog(OF_LOG_ERROR,"ofQuickTimeGrabber: initGrabber error setting framerate to %i", attemptFramerate);
+				ofLogError("ofQuickTimeGrabber") << "initGrabber: couldn't setting framerate to " << attemptFramerate << ": OSStatus " << err;
 			}		
 		}
 		
-		ofLog(OF_LOG_NOTICE,"end setup ofQuickTimeGrabber");
-		ofLog(OF_LOG_NOTICE,"-------------------------------------\n");
+		ofLogNotice("ofQuickTimeGrabber") << "           inited grabbed            ";
+		ofLogNotice("ofQuickTimeGrabber") << "-------------------------------------";
 
 		// we are done
 		return true;
@@ -226,8 +226,8 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		//--------------------- (bail) something's wrong -----
 		bail:
 
-			ofLog(OF_LOG_ERROR, "***** ofQuickTimeGrabber error *****");
-			ofLog(OF_LOG_ERROR, "-------------------------------------\n");
+			ofLogError("ofQuickTimeGrabber") << "***** ofQuickTimeGrabber error *****";
+			ofLogError("ofQuickTimeGrabber") << "------------------------------------";
 
 			//if we don't close this - it messes up the next device!
 			if(bSgInited) qtCloseSeqGrabber();
@@ -246,8 +246,10 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-void ofQuickTimeGrabber::listDevices(){
+vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
 
+    vector <ofVideoDevice> devices; 
+    
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
@@ -259,11 +261,11 @@ void ofQuickTimeGrabber::listDevices(){
 		//if we need to initialize the grabbing component then do it
 		if( bNeedToInitGrabberFirst ){
 			if( !qtInitSeqGrabber() ){
-				return;
+				return devices;
 			}
 		}
 
-		ofLog(OF_LOG_NOTICE,"-------------------------------------");
+		ofLogNotice("ofQuickTimeGrabber") << "-------------------------------------";
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -288,7 +290,7 @@ void ofQuickTimeGrabber::listDevices(){
 		//this needs to be the same in our init grabber method so that we select the device we ask for
 		int deviceCount = 0;
 
-		ofLog(OF_LOG_NOTICE, "listing available capture devices");
+		ofLogNotice("ofQuickTimeGrabber") << "listing available capture devices";
 		for(int i = 0 ; i < (*deviceList)->count ; ++i)
 		{
 			SGDeviceName nameRec;
@@ -314,18 +316,31 @@ void ofQuickTimeGrabber::listDevices(){
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
 					}
 
-					ofLogNotice() << "device[" << deviceCount << "] " << p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
+					ofLogNotice() << "device [" << deviceCount << "] " << p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
 
+                    ofVideoDevice vd; 
+                    vd.id           = deviceCount; 
+                    vd.deviceName   = p2cstr(pascalName);
+                    vd.bAvailable   = true; 
+                    devices.push_back(vd);
+                    
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
-				ofLogNotice() << "(unavailable) device[" << deviceCount << "] " << p2cstr(pascalName);
+				ofLogNotice("ofQuickTimeGrabber") << "(unavailable) device [" << deviceCount << "] " << p2cstr(pascalName);
+                
+                ofVideoDevice vd;
+                vd.id           = deviceCount; 
+                vd.deviceName   = p2cstr(pascalName);
+                vd.bAvailable   = false; 
+                devices.push_back(vd);
+
 				deviceCount++;
 			}
 		}
-		ofLog(OF_LOG_NOTICE,"-------------------------------------");
+		ofLogNotice("ofQuickTimeGrabber") << "-------------------------------------";
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
@@ -336,6 +351,7 @@ void ofQuickTimeGrabber::listDevices(){
 	#endif
 	//---------------------------------
 
+    return devices; 
 }
 
 //--------------------------------------------------------------------
@@ -437,19 +453,19 @@ void ofQuickTimeGrabber::videoSettings(void){
 		// Get our current state
 		err = SGGetChannelBounds (gVideoChannel, &curBounds);
 		if (err != noErr){
-			ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error in SGGetChannelBounds");
+			ofLogError("ofQuickTimeGrabber") << "videoSettings(): couldn't get get channel bounds: ComponentResult " << err;
 			return;
 		}
 		err = SGGetVideoRect (gVideoChannel, &curVideoRect);
 		if (err != noErr){
-			ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error in SGGetVideoRect");
+			ofLogError("ofQuickTimeGrabber") << "videoSettings(): couldn't get video rect: ComponentResult " << err;
 			return;
 		}
 
 		// Pause
 		err = SGPause (gSeqGrabber, true);
 		if (err != noErr){
-			ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error in SGPause");
+			ofLogError("ofQuickTimeGrabber") << "videoSettings(): couldn't set pause: ComponentResult " << err;
 			return;
 		}
 
@@ -460,7 +476,7 @@ void ofQuickTimeGrabber::videoSettings(void){
 			static SGModalFilterUPP gSeqGrabberModalFilterUPP = NewSGModalFilterUPP(SeqGrabberModalFilterUPP);
 			ComponentResult result = SGSettingsDialog(gSeqGrabber,  gVideoChannel, 0, nil, 0, gSeqGrabberModalFilterUPP, nil);
 			if (result != noErr){
-				ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error in  dialogue");
+				ofLogError("ofQuickTimeGrabber") << "videoSettings(): settings dialog error: ComponentResult " << err;
 				return;
 			}
 
@@ -494,7 +510,7 @@ bool ofQuickTimeGrabber::saveSettings(){
 		// get the SGChannel settings cofigured by the user
 		err = SGGetChannelSettings(gSeqGrabber, gVideoChannel, &mySGVideoSettings, 0);
 		if ( err != noErr ){
-			ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error getting camera settings %i",err);
+			ofLogError("ofQuickTimeGrabber") << "saveSettings(): couldn't get camera settings: ComponentResult " << err;
 			return false;
 		}
 		string pref = "ofVideoSettings-"+deviceName;
@@ -530,17 +546,17 @@ bool ofQuickTimeGrabber::loadSettings(){
       // Get our current state
       err = SGGetChannelBounds (gVideoChannel, &curBounds);
       if (err != noErr){
-         ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error in SGGetChannelBounds");
+        ofLogError("ofQuickTimeGrabber") << "loadSettings(): couldn't set channel bounds: ComponentResult " << err;
       }
       err = SGGetVideoRect (gVideoChannel, &curVideoRect);
       if (err != noErr){
-         ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error in SGGetVideoRect");
+         ofLogError("ofQuickTimeGrabber") << "loadSettings(): couldn't set video rect: ComponentResult " << err;
       }
 
       // use the saved settings preference to configure the SGChannel
       err = SGSetChannelSettings(gSeqGrabber, gVideoChannel, mySGVideoSettings, 0);
       if ( err != noErr ) {
-         ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error applying stored settings %i", err);
+         ofLogError("ofQuickTimeGrabber") << "loadSettings(): couldn't set channel settings: ComponentResult " << err;
          return false;
       }
       DisposeUserData(mySGVideoSettings);
@@ -548,13 +564,13 @@ bool ofQuickTimeGrabber::loadSettings(){
       // Pause
       err = SGPause (gSeqGrabber, true);
       if (err != noErr){
-         ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: error in SGPause");
+         ofLogError("ofQuickTimeGrabber") << "loadSettings(): couldn't set pause: ComponentResult " << err;
       }
       SGSetChannelBounds(gVideoChannel, &videoRect);
       SGPause (gSeqGrabber, false);
 
    }else{
-      ofLog(OF_LOG_WARNING, "ofQuickTimeGrabber: no camera settings to load");
+      ofLogWarning("ofQuickTimeGrabber") << "loadSettings(): no camera settings to load";
       return false;
    }
    return true;
@@ -588,7 +604,7 @@ bool ofQuickTimeGrabber::qtInitSeqGrabber(){
 			// -----------------------------------------
 
 			if (sgCompID == NULL){
-				ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: findNextComponent did not return a valid component");
+				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): findNextComponent did not return a valid component";
 				return false;
 			}
 
@@ -596,19 +612,19 @@ bool ofQuickTimeGrabber::qtInitSeqGrabber(){
 
 			err = GetMoviesError();
 			if (gSeqGrabber == NULL || err) {
-				ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: can't get default sequence grabber component");
+				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): couldn't get default sequence grabber component: OSErr " << err;
 				return false;
 			}
 
 			err = SGInitialize(gSeqGrabber);
 			if (err != noErr) {
-				ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: can't initialize sequence grabber component");
+				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): can't initialize sequence grabber component: OSErr " << err;
 				return false;
 			}
 
 			err = SGSetDataRef(gSeqGrabber, 0, 0, seqGrabDontMakeMovie);
 			if (err != noErr) {
-				ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: can't set the destination data reference");
+				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): can't set the destination data reference: OSErr " << err;
 				return false;
 			}
 
@@ -616,13 +632,14 @@ bool ofQuickTimeGrabber::qtInitSeqGrabber(){
 			// this took a long time to figure out.
 			err = SGSetGWorld(gSeqGrabber, 0, 0);
 			if (err != noErr) {
-				ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: setting up the gworld");
+				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): setting up the gworld: OSErr " << err;
 				return false;
 			}
 
 			err = SGNewChannel(gSeqGrabber, VideoMediaType, &(gVideoChannel));
 			if (err != noErr) {
-				ofLog(OF_LOG_ERROR, "error: creating a channel.  Check if you have any qt capable cameras attached");
+				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): couldn't create a new channel: OSErr " << err;
+				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): check if you have any qt capable cameras attached";
 				return false;
 			}
 
@@ -664,7 +681,7 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 
 	int numDevices = (*deviceList)->count;
 	if(numDevices == 0){
-		ofLog(OF_LOG_ERROR, "ofQuickTimeGrabber: no catpure devices found");
+		ofLogError("ofQuickTimeGrabber") << "no capture devices found";
 		return false;
 	}
 
@@ -697,7 +714,8 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 				//if the device number matches we try and setup the device
 				//if we didn't specifiy a device then we will try all devices till one works!
 				if( deviceCount == deviceNumber || !didWeChooseADevice ){
-					ofLog(OF_LOG_NOTICE, "ofQuickTimeGrabber: attempting to open device[%i] %s   -   %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+					ofLogNotice("ofQuickTimeGrabber") << "attempting to open device [" << deviceCount << "] "
+					<< p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
 
 					OSErr err1 = SGSetChannelDevice(gVideoChannel, pascalName);
 					OSErr err2 = SGSetChannelDeviceInput(gVideoChannel, j);
@@ -720,9 +738,13 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 						deviceName  += "-";
 						deviceName +=  (char *)p2cstr(pascalNameInput);
 
-						if(successLevel == 2)ofLog(OF_LOG_NOTICE, "ofQuickTimeGrabber: device opened successfully");
-						else ofLog(OF_LOG_WARNING, "ofQuickTimeGrabber: device opened with some paramater errors - should be fine though!");
-
+						if(successLevel == 2){
+							ofLogNotice("ofQuickTimeGrabber") << "device " << deviceName << " opened successfully";
+						}
+						else{
+							ofLogWarning("ofQuickTimeGrabber") << "device " << deviceName << " opened with some paramater errors, should be fine though!";
+						}
+						
 						//no need to keep searching - return that we have opened a device!
 						return true;
 
@@ -730,10 +752,11 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 						//if we selected a device in particular but failed we want to go through the whole list again - starting from 0 and try any device.
 						//so we return false - and try one more time without a preference
 						if( didWeChooseADevice ){
-							ofLog(OF_LOG_WARNING, "ofQuickTimeGrabber: problems setting device[%i] %s - %s *****", deviceNumber, p2cstr(pascalName), p2cstr(pascalNameInput));
+							ofLogWarning("ofQuickTimeGrabber") << "problems setting device [" << deviceNumber << "] "
+							<< p2cstr(pascalName) << " - " << p2cstr(pascalNameInput) << " *****";
 							return false;
 						}else{
-							ofLog(OF_LOG_WARNING, "ofQuickTimeGrabber: unable to open device, trying next device");
+							ofLogWarning("ofQuickTimeGrabber") << "unable to open device, trying next device";
 						}
 					}
 
@@ -743,7 +766,7 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 				deviceCount++;
 			}
 		}else{
-			//ofLog(OF_LOG_ERROR, "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
+			//ofLogError("ofQuickTimeGrabber") <<  "(unavailable) device [" << deviceCount << "] " << p2cstr(pascalName);
 			deviceCount++;
 		}
 	}

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofGstUtils.h"
+#include "ofTypes.h"
+
 
 struct ofGstFramerate{
   int numerator;
@@ -40,7 +42,7 @@ public:
 	
 	void videoSettings(){};//TODO: what is this??
 
-	void listDevices();
+	vector<ofVideoDevice> listDevices();
 	void setDeviceID(int id);
 	void setDesiredFrameRate(int framerate);
 	bool initGrabber(int w, int h);

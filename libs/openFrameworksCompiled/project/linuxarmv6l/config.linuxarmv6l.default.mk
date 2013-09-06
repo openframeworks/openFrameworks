@@ -65,6 +65,12 @@ PLATFORM_DEFINES += HAVE_LIBBCM_HOST
 PLATFORM_DEFINES += USE_EXTERNAL_LIBBCM_HOST
 PLATFORM_DEFINES += USE_VCHIQ_ARM
 
+# Fix for firmware update @
+# https://github.com/Hexxeh/rpi-firmware/commit/ca3703d2d282ac96a97650e2e496276727e1b65b
+ifeq ($(strip $(shell cat /opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
+PLATFORM_DEFINES += USE_DISPMANX_TRANSFORM_T
+endif
+
 ################################################################################
 # PLATFORM REQUIRED ADDONS
 #   This is a list of addons required for this platform.  This list is used to 
@@ -93,7 +99,6 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 
 PLATFORM_CFLAGS += -march=armv6
 PLATFORM_CFLAGS += -mfpu=vfp
-#PLATFORM_CFLAGS += -marm
 PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
@@ -178,7 +183,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
 
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 $(info $(PLATFORM_ARCH))
-ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
+ifeq ($(CROSS_COMPILING),1)
 	#TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin
 	TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
 	#GCC_PREFIX =arm-bcm2708hardfp-linux-gnueabi
@@ -199,47 +204,19 @@ ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
 	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
 	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/
 	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/gstreamer-$(GST_VERSION)
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/glib-2.0
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/arm-linux-gnueabihf/glib-2.0/include
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/libxml2
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/gtk-2.0
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/pango-1.0
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/arm-linux-gnueabihf/gtk-2.0/include
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/gdk-pixbuf-2.0
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/atk-1.0
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/freetype2
 	
-	#PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/arm-linux-gnueabihf/gstreamer
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 	
-	#PLATFORM_CFLAGS += -pthread -I/usr/include/cairo -I/usr/include/glib-2.0 -I/usr/lib/arm-linux-gnueabihf/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12 -I/usr/include/gstreamer-0.10 -I/usr/include/libxml2
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -pthread 
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib/arm-linux-gnueabihf
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib/arm-linux-gnueabihf
 	
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	
-	PLATFORM_LIBRARIES += cairo 
-	PLATFORM_LIBRARIES += z 
-	PLATFORM_LIBRARIES += gstapp-$(GST_VERSION)
-	PLATFORM_LIBRARIES += gstvideo-$(GST_VERSION)
-	PLATFORM_LIBRARIES += gstbase-$(GST_VERSION) 
-	PLATFORM_LIBRARIES += gstreamer-$(GST_VERSION) 
-	PLATFORM_LIBRARIES += gobject-2.0 
-	PLATFORM_LIBRARIES += gmodule-2.0 
-	PLATFORM_LIBRARIES += gthread-2.0 
-	PLATFORM_LIBRARIES += glib-2.0 
-	PLATFORM_LIBRARIES += rt 
-	PLATFORM_LIBRARIES += udev 
-	PLATFORM_LIBRARIES += freetype 
-	PLATFORM_LIBRARIES += sndfile 
-	PLATFORM_LIBRARIES += openal 
-	PLATFORM_LIBRARIES += portaudio 
-	PLATFORM_LIBRARIES += asound 
-	PLATFORM_LIBRARIES += m 
-	PLATFORM_LIBRARIES += pthread 
-	PLATFORM_LIBRARIES += ssl 
-	PLATFORM_LIBRARIES += crypto 
-	PLATFORM_LIBRARIES += fontconfig 
-	PLATFORM_LIBRARIES += X11 
 	PLATFORM_LIBRARIES += pcre
+	PLATFORM_LIBRARIES += rt 
+	PLATFORM_LIBRARIES += X11 
 	PLATFORM_LIBRARIES += dl
 endif

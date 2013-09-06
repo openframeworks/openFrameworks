@@ -339,7 +339,7 @@ void ofUpdateBitmapCharacterTexture(){
 static ofPixels myLetterPixels;
 static float widthTex = 8.0f/256.0f;
 static float heightTex = 14.0f/256.0f;
-static ofVboMesh charMesh;
+static ofMesh charMesh;
 static int vC = 0;
 
 //---------------------------------------------------------------------
@@ -349,7 +349,7 @@ static void prepareBitmapTexture(){
 	
 	if (!bBitmapTexturePrepared){
 		myLetterPixels.allocate(16*16, 16*16, 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
-
+        myLetterPixels.set(0);
 
 		bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
 		
@@ -393,10 +393,6 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 	}
 		
 	if (character < 128) {		
-		//TODO: look into a better fix. 
-		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position. 
-		//3 pixel adjustment corrects that. 
-		y -= 3;
 
 		float posTexW = (float)(character % 16)/16.0f;
 		float posTexH = ((int)(character / 16.0f))/16.0f;
@@ -404,8 +400,16 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		float texY1 = posTexH;
 		float texY2 = posTexH+heightTex;
 
+		//TODO: look into a better fix.
+		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position.
+		//3 pixel adjustment corrects that when y is flpped 5 when it's not.
+		int yOffset = 14;
 		if(!ofIsVFlipped()){
-			swap(texY1,texY2);
+			y += 5;
+			y += yOffset;
+			yOffset *= -1;
+		}else{
+			y -= 3;
 		}
 
 
@@ -419,10 +423,10 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 
 		charMesh.getVertices()[vC].set(x,y);
 		charMesh.getVertices()[vC+1].set(x+8,y);
-		charMesh.getVertices()[vC+2].set(x+8,y+14);
+		charMesh.getVertices()[vC+2].set(x+8,y+yOffset);
 
-		charMesh.getVertices()[vC+3].set(x+8,y+14);
-		charMesh.getVertices()[vC+4].set(x,y+14);
+		charMesh.getVertices()[vC+3].set(x+8,y+yOffset);
+		charMesh.getVertices()[vC+4].set(x,y+yOffset);
 		charMesh.getVertices()[vC+5].set(x,y);
 			
 		vC += 6;
@@ -478,3 +482,60 @@ void ofDrawBitmapCharacterEnd(){
 
 }
 
+ofMesh & ofBitmapStringGetMesh(const string & text, int x, int y){
+
+	int len = (int)text.length();
+	//float yOffset = 0;
+	float fontSize = 8.0f;
+	bool bOrigin = false;
+
+	float sx = x;
+	float sy = y-fontSize;
+
+	ofDrawBitmapCharacterStart(text.size());
+
+	for(int c = 0; c < len; c++){
+		if(text[c] == '\n'){
+
+			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sx = x;
+
+			//glRasterPos2f(x,y + (int)yOffset);
+		} else if (text[c] >= 32){
+			// < 32 = control characters - don't draw
+			// solves a bug with control characters
+			// getting drawn when they ought to not be
+			ofDrawBitmapCharacter(text[c], (int)sx, (int)sy);
+
+			sx += fontSize;
+		}
+	}
+	//We do this because its way faster
+	ofDrawBitmapCharacterEnd();
+	charMesh.getVertices().resize(vC);
+	charMesh.getTexCoords().resize(vC);
+	return charMesh;
+
+}
+
+ofTexture & ofBitmapStringGetTextureRef(){
+	if(!bBitmapTexturePrepared){
+		prepareBitmapTexture();
+	}
+	return bitmappedFontTexture;
+}
+
+
+ofRectangle ofBitmapStringGetBoundingBox(const string & text, int x, int y){
+	const ofMesh & mesh = ofBitmapStringGetMesh(text,x,y);
+	ofVec2f max(numeric_limits<float>::min(),numeric_limits<float>::min());
+	ofVec2f min(numeric_limits<float>::max(),numeric_limits<float>::max());
+	for(int i=0;i< mesh.getNumVertices(); i++){
+		const ofVec3f & p = mesh.getVertex(i);
+		if(p.x<min.x) min.x = p.x;
+		if(p.y<min.y) min.y = p.y;
+		if(p.x>max.x) max.x = p.x;
+		if(p.y>max.y) max.y = p.y;
+	}
+	return ofRectangle(min.x,min.y,max.x-min.x,max.y-min.y);
+}

@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFXNETWORKUTILS_H_
-#define OFXNETWORKUTILS_H_
+#pragma once
 
 #include <cerrno>
 #include "ofConstants.h"
@@ -49,85 +48,85 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 	case 0:
 		break;
 	case EBADF:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EBADF: invalid socket");
+		ofLogError("ofxNetwork") << file << ": " << line << " EBADF: invalid socket";
 		break;
 	case ECONNRESET:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ECONNRESET: connection closed by peer");
+		ofLogError("ofxNetwork") << file << ": " << line << " ECONNRESET: connection closed by peer";
 		break;
 	case EINTR:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EINTR: receive interrupted by a signal, before any data available");
+		ofLogError("ofxNetwork") << file << ": " << line << " EINTR: receive interrupted by a signal, before any data available";
 		break;
 	case ENOTCONN:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ENOTCONN: trying to receive before establishing a connection");
+		ofLogError("ofxNetwork") << file << ": " << line << " ENOTCONN: trying to receive before establishing a connection";
 		break;
 	case ENOTSOCK:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ENOTSOCK: socket argument is not a socket");
+		ofLogError("ofxNetwork") << file << ": " << line << " ENOTSOCK: socket argument is not a socket";
 		break;
 	case EOPNOTSUPP:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EOPNOTSUPP: specified flags not valid for this socket");
+		ofLogError("ofxNetwork") << file << ": " << line << " EOPNOTSUPP: specified flags not valid for this socket";
 		break;
 	case ETIMEDOUT:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ETIMEDOUT: timeout");
+		ofLogError("ofxNetwork") << file << ": " << line << " ETIMEDOUT: timeout";
 		break;
 	case EIO:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EIO: io error");
+		ofLogError("ofxNetwork") << file << ": " << line << " EIO: io error";
 		break;
 	case ENOBUFS:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ENOBUFS: insufficient buffers to complete the operation");
+		ofLogError("ofxNetwork") << file << ": " << line << " ENOBUFS: insufficient buffers to complete the operation";
 		break;
 	case ENOMEM:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ENOMEM: insufficient memory to complete the request");
+		ofLogError("ofxNetwork") << file << ": " << line << " ENOMEM: insufficient memory to complete the request";
 		break;
 	case EADDRNOTAVAIL:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EADDRNOTAVAIL: the specified address is not available on the remote machine");
+		ofLogError("ofxNetwork") << file << ": " << line << " EADDRNOTAVAIL: the specified address is not available on the remote machine";
 		break;
 	case EAFNOSUPPORT:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EAFNOSUPPORT: the namespace of the addr is not supported by this socket");
+		ofLogError("ofxNetwork") << file << ": " << line << " EAFNOSUPPORT: the namespace of the addr is not supported by this socket";
 		break;
 	case EISCONN:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EISCONN: the socket is already connected");
+		ofLogError("ofxNetwork") << file << ": " << line << " EISCONN: the socket is already connected";
 		break;
 	case ECONNREFUSED:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ECONNREFUSED: the server has actively refused to establish the connection");
+		ofLogError("ofxNetwork") << file << ": " << line << " ECONNREFUSED: the server has actively refused to establish the connection";
 		break;
 	case ENETUNREACH:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ENETUNREACH: the network of the given addr isn't reachable from this host");
+		ofLogError("ofxNetwork") << file << ": " << line << " ENETUNREACH: the network of the given addr isn't reachable from this host";
 		break;
 	case EADDRINUSE:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EADDRINUSE: the socket address of the given addr is already in use");
+		ofLogError("ofxNetwork") << file << ": " << line << " EADDRINUSE: the socket address of the given addr is already in use";
 		break;
 	case EINPROGRESS:
-		ofLog(OF_LOG_WARNING,"ofxNetwork:"+file+": " +line+" EINPROGRESS: the socket is non-blocking and the connection could not be established immediately" );
+		ofLogWarning("ofxNetwork") << file << ": " << line << " EINPROGRESS: the socket is non-blocking and the connection could not be established immediately";
 		break;
 	case EALREADY:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EALREADY: the socket is non-blocking and already has a pending connection in progress");
+		ofLogError("ofxNetwork") << file << ": " << line << " EALREADY: the socket is non-blocking and already has a pending connection in progress";
 		break;
 	case ENOPROTOOPT:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ENOPROTOOPT: The optname doesn't make sense for the given level.");
+		ofLogError("ofxNetwork") << file << ": " << line << " ENOPROTOOPT: the optname doesn't make sense for the given level";
 		break;
 	case EPROTONOSUPPORT:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EPROTONOSUPPORT: The protocol or style is not supported by the namespace specified.");
+		ofLogError("ofxNetwork") << file << ": " << line << " EPROTONOSUPPORT: the protocol or style is not supported by the namespace specified";
 		break;
 	case EMFILE:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EMFILE: The process already has too many file descriptors open.");
+		ofLogError("ofxNetwork") << file << ": " << line << " EMFILE: the process already has too many file descriptors open";
 		break;
 	case ENFILE:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" ENFILE: The system already has too many file descriptors open.");
+		ofLogError("ofxNetwork") << file << ": " << line << " ENFILE: the system already has too many file descriptors open";
 		break;
 	case EACCES:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EACCES: The process does not have the privilege to create a socket of the specified 	 style or protocol.");
+		ofLogError("ofxNetwork") << file << ": " << line << " EACCES: the process does not have the privilege to create a socket of the specified style or protocol";
 		break;
 	case EMSGSIZE:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EMSGSIZE: The socket type requires that the message be sent atomically, but the message is too large for this to be possible.");
+		ofLogError("ofxNetwork") << file << ": " << line << " EMSGSIZE: the socket type requires that the message be sent atomically, but the message is too large for this to be possible";
 		break;
 	case EPIPE:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EPIPE: This socket was connected but the connection is now broken.");
+		ofLogError("ofxNetwork") << file << ": " << line << " EPIPE: this socket was connected but the connection is now broken";
 		break;
 	case EINVAL:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EINVAL: Invalid argument");
+		ofLogError("ofxNetwork") << file << ": " << line << " EINVAL: invalid argument";
 		break;
 	case EAGAIN:
-		//ofLog(OF_LOG_VERBOSE,"ofxNetwork:"+file+": " +line+" EAGAIN: try again");
+		//ofLogError("ofxNetwork") << file << ": " << line << " EAGAIN: try again";
 		break;
 #ifdef TARGET_WIN32
 	case WSAEWOULDBLOCK:
@@ -135,12 +134,9 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 		break;
 #endif
 	default:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" unknown error: " + ofToString(err) + " see errno.h for description of the error");
+		ofLogError("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
 		break;
 	}
 
 	return err;
 }
-
-
-#endif /* OFXNETWORKUTILS_H_ */

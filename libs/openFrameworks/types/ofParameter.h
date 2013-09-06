@@ -7,6 +7,9 @@
 template<typename ParameterType>
 class ofParameter;
 
+template<typename ParameterType, typename Friend>
+class ofReadOnlyParameter;
+
 class ofParameterGroup;
 
 class ofAbstractParameter{
@@ -50,48 +53,34 @@ private:
 };
 
 
-template <class T>
-struct FriendMaker {typedef T Type;};
-
-
-template<typename ParameterType,typename Friend>
-class ofReadOnlyParameter: public ofAbstractParameter{
+template<typename ParameterType>
+class ofParameter: public ofAbstractParameter{
 public:
-	ofReadOnlyParameter();
-	ofReadOnlyParameter(ParameterType v);
-	ofReadOnlyParameter(string name, ParameterType v);
-	ofReadOnlyParameter(string name, ParameterType v, ParameterType min, ParameterType max);
+	ofParameter();
+	ofParameter(ParameterType v);
+	ofParameter(string name, ParameterType v);
+	ofParameter(string name, ParameterType v, ParameterType min, ParameterType max);
 
-	virtual const ParameterType & get() const;
-	virtual const ParameterType * operator->() const;
-	virtual operator const ParameterType & () const;
+	const ParameterType & get() const;
+	const ParameterType * operator->() const;
+	operator const ParameterType & () const;
 
-	virtual void setName(string name);
-	virtual string getName() const;
+	void setName(string name);
+	string getName() const;
 
-	virtual ParameterType getMin();
+	ParameterType getMin();
 
-	virtual ParameterType getMax();
+	ParameterType getMax();
 
-	virtual string toString() const;
+	string toString() const;
 
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
 		ofAddListener(obj->changedE,listener,method);
 	}
 
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
-		ofRemoveListener(obj->changedE,listener,method);
-	}
-
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(const void*, ParameterType&)){
-		ofAddListener(obj->changedE,listener,method);
-	}
-
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(const void*, ParameterType&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
 		ofRemoveListener(obj->changedE,listener,method);
 	}
 
@@ -99,50 +88,50 @@ public:
 	void disableEvents();
 	bool isSerializable() const;
 
-	void makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom);
+	void makeReferenceTo(ofParameter<ParameterType> mom);
 
-protected:
-	virtual ofReadOnlyParameter<ParameterType,Friend> & operator=(const ofReadOnlyParameter<ParameterType,Friend> & v);
-	virtual const ParameterType & operator=(const ParameterType & v);
+	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
+	const ParameterType & operator=(const ParameterType & v);
 
 	ParameterType operator++(int v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator++();
+	ofParameter<ParameterType> & operator++();
 
 	ParameterType operator--(int v);
-	ofReadOnlyParameter<ParameterType,Friend> & operator--();
+	ofParameter<ParameterType> & operator--();
 
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator+=(const OtherType & v);
+	ofParameter<ParameterType> & operator+=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator-=(const OtherType & v);
+	ofParameter<ParameterType> & operator-=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator*=(const OtherType & v);
+	ofParameter<ParameterType> & operator*=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator/=(const OtherType & v);
+	ofParameter<ParameterType> & operator/=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator%=(const OtherType & v);
+	ofParameter<ParameterType> & operator%=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator&=(const OtherType & v);
+	ofParameter<ParameterType> & operator&=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator|=(const OtherType & v);
+	ofParameter<ParameterType> & operator|=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator^=(const OtherType & v);
+	ofParameter<ParameterType> & operator^=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator<<=(const OtherType & v);
+	ofParameter<ParameterType> & operator<<=(const OtherType & v);
 	template<typename OtherType>
-	ofReadOnlyParameter<ParameterType,Friend> & operator>>=(const OtherType & v);
+	ofParameter<ParameterType> & operator>>=(const OtherType & v);
 
 
-	virtual ofReadOnlyParameter<ParameterType,Friend> & set(ParameterType v);
-	virtual ofReadOnlyParameter<ParameterType,Friend> & set(string name, ParameterType value);
-	virtual ofReadOnlyParameter<ParameterType,Friend> & set(string name, ParameterType value, ParameterType min, ParameterType max);
+	ofParameter<ParameterType> & set(ParameterType v);
+	ofParameter<ParameterType> & set(string name, ParameterType value);
+	ofParameter<ParameterType> & set(string name, ParameterType value, ParameterType min, ParameterType max);
 
-	virtual void setMin(ParameterType min);
-	virtual void setMax(ParameterType max);
+	void setMin(ParameterType min);
+	void setMax(ParameterType max);
 
-	virtual void fromString(string str);
+	void fromString(string str);
 
-
+	void setSerializable(bool serializable);
+private:
 	class Value{
 	public:
 		Value()
@@ -176,65 +165,56 @@ protected:
 		bool serializable;
 	};
 	ofPtr<Value> obj;
-	void (ofReadOnlyParameter<ParameterType,Friend>::*setMethod)(ParameterType v);
+	void (ofParameter<ParameterType>::*setMethod)(ParameterType v);
 
 	void eventsSetValue(ParameterType v);
 	void noEventsSetValue(ParameterType v);
 
-	void setSerializable(bool serializable);
 
-	// friending a typedef is a c++11 feature and not supported by all compilers
-	// difference compilers also require different syntax. for more discussion see
-	// https://github.com/openframeworks/openFrameworks/issues/1924
-#if defined(TARGET_OF_IPHONE) || (_MSC_VER) || defined(__clang__)
-	friend typename FriendMaker<Friend>::Type;
-#elif ((__GNUC__ == 4 && __GNUC_MINOR__ > 2) || __GNUC__ > 4)
-	friend class FriendMaker<Friend>::Type;
-#endif
 };
 
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter()
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter()
 :obj(new Value)
-,setMethod(&ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue){}
+,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ParameterType v)
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(ParameterType v)
 :obj(ofPtr<Value>(new Value(v)))
-,setMethod(&ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue) {}
+,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v)
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
 :obj(ofPtr<Value>(new Value(name, v)))
-,setMethod(&ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue){}
+,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v, ParameterType min, ParameterType max)
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
 :obj(ofPtr<Value>(new Value(name, v, min, max)))
-,setMethod(&ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue){}
+,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator=(const ofReadOnlyParameter<ParameterType,Friend> & v){
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator=(const ofParameter<ParameterType> & v){
 	set(v);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
-inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::operator=(const ParameterType & v){
+template<typename ParameterType>
+inline const ParameterType & ofParameter<ParameterType>::operator=(const ParameterType & v){
 	set(v);
 	return obj->value;
 }
 
-template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(ParameterType v){
+template<typename ParameterType>
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(ParameterType v){
 	(this->*setMethod)(v);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(string name, ParameterType value, ParameterType min, ParameterType max){
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, ParameterType value, ParameterType min, ParameterType max){
 	setName(name);
 	set(value);
 	setMin(min);
@@ -242,24 +222,24 @@ ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Fr
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(string name, ParameterType value){
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, ParameterType value){
 	setName(name);
 	set(value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
-inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::get() const{
+template<typename ParameterType>
+inline const ParameterType & ofParameter<ParameterType>::get() const{
 	return obj->value;
 }
-template<typename ParameterType,typename Friend>
-inline const ParameterType * ofReadOnlyParameter<ParameterType,Friend>::operator->() const{
+template<typename ParameterType>
+inline const ParameterType * ofParameter<ParameterType>::operator->() const{
 	return &obj->value;
 }
 
-template<typename ParameterType,typename Friend>
-inline void ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue(ParameterType v){
+template<typename ParameterType>
+inline void ofParameter<ParameterType>::eventsSetValue(ParameterType v){
 	if(obj->bInNotify) {
 		noEventsSetValue(v);
 		return;
@@ -271,65 +251,65 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue(ParameterT
 	obj->bInNotify = false;
 }
 
-template<typename ParameterType,typename Friend>
-inline void ofReadOnlyParameter<ParameterType,Friend>::noEventsSetValue(ParameterType v){
+template<typename ParameterType>
+inline void ofParameter<ParameterType>::noEventsSetValue(ParameterType v){
 	obj->value = v;
 }
 
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::setSerializable(bool serializable){
+template<typename ParameterType>
+void ofParameter<ParameterType>::setSerializable(bool serializable){
 	obj->serializable = serializable;
 }
 
-template<typename ParameterType,typename Friend>
-bool ofReadOnlyParameter<ParameterType,Friend>::isSerializable() const{
+template<typename ParameterType>
+bool ofParameter<ParameterType>::isSerializable() const{
 	return obj->serializable;
 }
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::setMin(ParameterType min){
+template<typename ParameterType>
+void ofParameter<ParameterType>::setMin(ParameterType min){
 	obj->min = min;
 }
 
-template<typename ParameterType,typename Friend>
-ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMin(){
+template<typename ParameterType>
+ParameterType ofParameter<ParameterType>::getMin(){
 	return obj->min;
 }
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::setMax(ParameterType max){
+template<typename ParameterType>
+void ofParameter<ParameterType>::setMax(ParameterType max){
 	obj->max = max;
 }
 
-template<typename ParameterType,typename Friend>
-ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMax(){
+template<typename ParameterType>
+ParameterType ofParameter<ParameterType>::getMax(){
 	return obj->max;
 }
 
-template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend>::operator const ParameterType & () const{
+template<typename ParameterType>
+inline ofParameter<ParameterType>::operator const ParameterType & () const{
 	return obj->value;
 }
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::setName(string _name){
+template<typename ParameterType>
+void ofParameter<ParameterType>::setName(string _name){
 	obj->name = _name;
 }
 
-template<typename ParameterType,typename Friend>
-string ofReadOnlyParameter<ParameterType,Friend>::getName() const{
+template<typename ParameterType>
+string ofParameter<ParameterType>::getName() const{
 	return obj->name;
 }
 
-template<typename ParameterType,typename Friend>
-string ofReadOnlyParameter<ParameterType,Friend>::toString() const{
+template<typename ParameterType>
+string ofParameter<ParameterType>::toString() const{
 	return ofToString(obj->value);
 }
 
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::fromString(string str){
+template<typename ParameterType>
+void ofParameter<ParameterType>::fromString(string str){
 	ParameterType v;
 	stringstream sstr;
 	sstr << str;
@@ -338,181 +318,470 @@ void ofReadOnlyParameter<ParameterType,Friend>::fromString(string str){
 }
 
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::enableEvents(){
-	setMethod = &ofReadOnlyParameter<ParameterType,Friend>::eventsSetValue;
+template<typename ParameterType>
+void ofParameter<ParameterType>::enableEvents(){
+	setMethod = &ofParameter<ParameterType>::eventsSetValue;
 }
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::disableEvents(){
-	setMethod = &ofReadOnlyParameter<ParameterType,Friend>::noEventsSetValue;
+template<typename ParameterType>
+void ofParameter<ParameterType>::disableEvents(){
+	setMethod = &ofParameter<ParameterType>::noEventsSetValue;
 }
 
-template<typename ParameterType,typename Friend>
-ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator++(int v){
+template<typename ParameterType>
+ParameterType ofParameter<ParameterType>::operator++(int v){
 	ParameterType r = obj->value;
 	obj->value++;
 	set(obj->value);
 	return r;
 }
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator++(){
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator++(){
 	++obj->value;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
-ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator--(int v){
+template<typename ParameterType>
+ParameterType ofParameter<ParameterType>::operator--(int v){
 	ParameterType r = obj->value;
 	obj->value--;
 	set(obj->value);
 	return r;
 }
 
-template<typename ParameterType,typename Friend>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator--(){
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator--(){
 	--obj->value;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator+=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator+=(const OtherType & v){
 	obj->value+=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator-=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator-=(const OtherType & v){
 	obj->value-=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator*=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator*=(const OtherType & v){
 	obj->value*=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator/=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator/=(const OtherType & v){
 	obj->value/=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator%=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator%=(const OtherType & v){
 	obj->value%=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator&=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator&=(const OtherType & v){
 	obj->value&=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator|=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator|=(const OtherType & v){
 	obj->value|=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator^=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator^=(const OtherType & v){
 	obj->value^=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator<<=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator<<=(const OtherType & v){
 	obj->value<<=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
+template<typename ParameterType>
 template<typename OtherType>
-ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator>>=(const OtherType & v){
+ofParameter<ParameterType> & ofParameter<ParameterType>::operator>>=(const OtherType & v){
 	obj->value>>=v;
 	set(obj->value);
 	return *this;
 }
 
-template<typename ParameterType,typename Friend>
-void ofReadOnlyParameter<ParameterType,Friend>::makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom){
+template<typename ParameterType>
+void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom){
 	obj = mom.obj;
 }
 
-template<typename ParameterType>
-class ofParameter: public ofReadOnlyParameter<ParameterType,ofAbstractParameter>{
+
+
+template <typename T>
+struct FriendMaker {typedef T Type;};
+
+template<typename ParameterType,typename Friend>
+class ofReadOnlyParameter: public ofAbstractParameter{
 public:
-	ofParameter()
-	:ofReadOnlyParameter<ParameterType,ofAbstractParameter>(){};
+	ofReadOnlyParameter();
+	ofReadOnlyParameter(ofParameter<ParameterType> & p);
+	ofReadOnlyParameter(ParameterType v);
+	ofReadOnlyParameter(string name, ParameterType v);
+	ofReadOnlyParameter(string name, ParameterType v, ParameterType min, ParameterType max);
 
-	ofParameter(ParameterType v)
-	:ofReadOnlyParameter<ParameterType,ofAbstractParameter>(v){};
+	const ParameterType & get() const;
+	const ParameterType * operator->() const;
+	operator const ParameterType & () const;
 
-	ofParameter(string name, ParameterType v)
-	:ofReadOnlyParameter<ParameterType,ofAbstractParameter>(name,v){};
+	string getName() const;
 
-	ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
-	:ofReadOnlyParameter<ParameterType,ofAbstractParameter>(name,v,min,max){};
+	ParameterType getMin();
 
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::setName;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::setMin;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::setMax;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::fromString;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::get;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator->;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator const ParameterType &;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator++;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator--;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator+=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator-=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator*=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator/=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator%=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator&=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator|=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator^=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator<<=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::operator>>=;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::setSerializable;
-	using ofReadOnlyParameter<ParameterType,ofAbstractParameter>::isSerializable;
+	ParameterType getMax();
+
+	string toString() const;
+
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method);
+
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method);
+
+protected:
+	void setName(string name);
+	void enableEvents();
+	void disableEvents();
+	bool isSerializable() const;
+
+	void makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom);
+	void makeReferenceTo(ofParameter<ParameterType> mom);
+
+	ofReadOnlyParameter<ParameterType,Friend> & operator=(const ofReadOnlyParameter<ParameterType,Friend>& v);
+	ofReadOnlyParameter<ParameterType,Friend> & operator=(const ofParameter<ParameterType>& v);
+	const ParameterType & operator=(const ParameterType & v);
+
+	ParameterType operator++(int v);
+	ofReadOnlyParameter<ParameterType,Friend>& operator++();
+
+	ParameterType operator--(int v);
+	ofReadOnlyParameter<ParameterType,Friend>& operator--();
+
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator+=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator-=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator*=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator/=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator%=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator&=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator|=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator^=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator<<=(const OtherType & v);
+	template<typename OtherType>
+	ofReadOnlyParameter<ParameterType,Friend>& operator>>=(const OtherType & v);
 
 
-	inline ofParameter<ParameterType> & set(ParameterType v){
-		ofReadOnlyParameter<ParameterType,ofAbstractParameter>::set(v);
-		return *this;
-	}
-	inline ofParameter<ParameterType> & set(string name, ParameterType value){
-		ofReadOnlyParameter<ParameterType,ofAbstractParameter>::set(name,value);
-		return *this;
-	}
-	inline ofParameter<ParameterType> & set(string name, ParameterType value, ParameterType min, ParameterType max){
-		ofReadOnlyParameter<ParameterType,ofAbstractParameter>::set(name,value,min,max);
-		return *this;
-	}
+	ofReadOnlyParameter<ParameterType,Friend>& set(ParameterType v);
+	
+	ofReadOnlyParameter<ParameterType,Friend>& set(string name, ParameterType value);
+	ofReadOnlyParameter<ParameterType,Friend>& set(string name, ParameterType value, ParameterType min, ParameterType max);
 
+	void setMin(ParameterType min);
+	void setMax(ParameterType max);
+
+	void fromString(string str);
+
+
+	ofParameter<ParameterType> parameter;
+	
+	friend class ofParameterGroup;
 };
+
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(){};
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofParameter<ParameterType> & p)
+:parameter(p){}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ParameterType v)
+:parameter(v){};
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v)
+:parameter(name,v){};
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v, ParameterType min, ParameterType max)
+:parameter(name,v,min,max){}
+
+
+template<typename ParameterType,typename Friend>
+inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::get() const{
+	return parameter.get();
+}
+
+template<typename ParameterType,typename Friend>
+inline const ParameterType * ofReadOnlyParameter<ParameterType,Friend>::operator->() const{
+	return &parameter.get();
+}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::operator const ParameterType & () const{
+	return parameter.get();
+}
+
+
+template<typename ParameterType,typename Friend>
+inline string ofReadOnlyParameter<ParameterType,Friend>::getName() const{
+	return parameter.getName();
+}
+
+
+template<typename ParameterType,typename Friend>
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMin(){
+	return parameter.getMin();
+}
+
+
+template<typename ParameterType,typename Friend>
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMax(){
+	return parameter.getMax();
+}
+
+
+template<typename ParameterType,typename Friend>
+inline string ofReadOnlyParameter<ParameterType,Friend>::toString() const{
+	return parameter.toString();
+}
+
+
+template<typename ParameterType,typename Friend>
+template<class ListenerClass, typename ListenerMethod>
+inline void ofReadOnlyParameter<ParameterType,Friend>::addListener(ListenerClass * listener, ListenerMethod method){
+	parameter.addListener(listener,method);
+}
+
+
+template<typename ParameterType,typename Friend>
+template<class ListenerClass, typename ListenerMethod>
+inline void ofReadOnlyParameter<ParameterType,Friend>::removeListener(ListenerClass * listener, ListenerMethod method){
+	parameter.removeListener(listener,method);
+}
+
+
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::setName(string name){
+	parameter.setName(name);
+}
+
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::enableEvents(){
+	parameter.enableEvents();
+}
+
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::disableEvents(){
+	parameter.disableEvents();
+}
+
+template<typename ParameterType,typename Friend>
+inline bool ofReadOnlyParameter<ParameterType,Friend>::isSerializable() const{
+	return parameter.isSerializable();
+}
+
+
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom){
+	parameter.makeReferenceTo(mom.parameter);
+}
+
+template<typename ParameterType,typename Friend>
+void ofReadOnlyParameter<ParameterType,Friend>::makeReferenceTo(ofParameter<ParameterType> mom){
+	parameter.makeReferenceTo(mom);
+}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator=(const ofReadOnlyParameter<ParameterType,Friend> & v){
+	parameter = v.parameter;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator=(const ofParameter<ParameterType>& v){
+	parameter = v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::operator=(const ParameterType & v){
+	parameter = v;
+	return v;
+}
+
+
+template<typename ParameterType,typename Friend>
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator++(int v){
+	return parameter++;
+}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator++(){
+	return ++parameter;
+}
+
+
+template<typename ParameterType,typename Friend>
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator--(int v){
+	return parameter--;
+}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator--(){
+	return --parameter;
+}
+
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator+=(const OtherType & v){
+	parameter+=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator-=(const OtherType & v){
+	parameter-=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator*=(const OtherType & v){
+	parameter*=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator/=(const OtherType & v){
+	parameter/=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator%=(const OtherType & v){
+	parameter%=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator&=(const OtherType & v){
+	parameter&=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator|=(const OtherType & v){
+	parameter|=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator^=(const OtherType & v){
+	parameter^=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator<<=(const OtherType & v){
+	parameter<<=v;
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+template<typename OtherType>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::operator>>=(const OtherType & v){
+	parameter>>=v;
+	return *this;
+}
+
+
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(ParameterType v){
+	parameter.set(v);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(string name, ParameterType value){
+	parameter.set(name,value);
+	return *this;
+}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(string name, ParameterType value, ParameterType min, ParameterType max){
+	parameter.set(name,value,min,max);
+	return *this;
+}
+
+
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::setMin(ParameterType min){
+	parameter.setMin(min);
+}
+
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::setMax(ParameterType max){
+	parameter.setMax(max);
+}
+
+
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(string str){
+	parameter.fromString(str);
+}

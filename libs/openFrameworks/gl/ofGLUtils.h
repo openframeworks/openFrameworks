@@ -42,6 +42,9 @@ string ofGetGlInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int glInternalFormat);
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
+ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
+ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
+
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {
 	switch(pixels.getNumChannels()) {
@@ -52,14 +55,31 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 			return GL_RGB;
 			break;
 		case 2:
-			return GL_LUMINANCE_ALPHA;
+#ifndef TARGET_OPENGLES
+			if(ofGetGLProgrammableRenderer()){
+				return GL_RG;
+			}else{
+#endif
+				return GL_LUMINANCE_ALPHA;
+#ifndef TARGET_OPENGLES
+			}
+#endif
 			break;
+
 		case 1:
-			return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+			if(ofGetGLProgrammableRenderer()){
+				return GL_RED;
+			}else{
+#endif
+				return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+			}
+#endif
 			break;
 
 		default:
-			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized returning glFormat as GL_RGBA";
+			ofLogError("ofGLUtils") << "ofGetGlFormatAndType(): internal format not recognized, returning GL_RGBA";
 			return GL_RGBA;
 			break;
 	}
@@ -86,11 +106,9 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
 int ofGetNumChannelsFromGLFormat(int glFormat);
 void ofSetPixelStorei(int w, int bpc, int numChannels);
 
-
-bool ofCheckGLExtension(string searchName);
-
-ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
+vector<string> ofGLSupportedExtensions();
+bool ofGLCheckExtension(string searchName);
+bool ofGLSupportsNPOTTextures();
 
 bool ofIsGLProgrammableRenderer();
 
@@ -137,9 +155,11 @@ bool ofIsGLProgrammableRenderer();
 	#ifdef GL_DEPTH_COMPONENT32_OES
         #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
     #endif
-	#ifdef TARGET_OF_IPHONE
-    	#define GL_UNSIGNED_INT                                 GL_UNSIGNED_INT_OES
-	#endif
+    #ifdef TARGET_OF_IOS
+        #ifndef GL_UNSIGNED_INT
+            #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES
+        #endif
+    #endif
 #endif
 
 #endif /* OFGLUTILS_H_ */

@@ -17,8 +17,6 @@ ofThread::ofThread(){
 
 //------------------------------------------------- 
 ofThread::~ofThread(){
-   //by passing true we're also telling the thread to stop 
-   waitForThread(true);
 } 
 
 //------------------------------------------------- 

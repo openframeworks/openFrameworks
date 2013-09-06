@@ -101,6 +101,8 @@ public:
 	void setBlendMode(ofBlendMode blendMode);
 	void enablePointSprites();
 	void disablePointSprites();
+	void enableAntiAliasing();
+	void disableAntiAliasing();
     
 	// color options
 	void setColor(int r, int g, int b); // 0-255
@@ -144,7 +146,6 @@ public:
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-
 	ofShader & defaultTexColor();
 	ofShader & defaultTexNoColor();
 	ofShader & defaultTex2DColor();
@@ -158,12 +159,20 @@ private:
 
 
 	ofPolyline circlePolyline;
-	ofVboMesh circleVbo;
-	ofVboMesh triangleVbo;
-	ofVboMesh rectVbo;
-	ofVboMesh lineVbo;
-	ofVbo vertexDataVbo;
+#ifdef TARGET_OPENGLES
+	ofMesh circleMesh;
+	ofMesh triangleMesh;
+	ofMesh rectMesh;
+	ofMesh lineMesh;
 	ofVbo meshVbo;
+#else
+	ofVboMesh circleMesh;
+	ofVboMesh triangleMesh;
+	ofVboMesh rectMesh;
+	ofVboMesh lineMesh;
+	ofVbo meshVbo;
+	ofVbo vertexDataVbo;
+#endif
 
 	void uploadCurrentMatrix();
 

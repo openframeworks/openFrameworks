@@ -68,6 +68,9 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 		}else if(type==typeid(ofParameter<ofFloatColor>).name()){
 			ofParameter<ofFloatColor> p = _parameters.getFloatColor(i);
 			add(p);
+		}else if(type==typeid(ofParameter<string>).name()){
+        		ofParameter<string> p = _parameters.getString(i);
+			add(p);
 		}else if(type==typeid(ofParameterGroup).name()){
 			ofParameterGroup p = _parameters.getGroup(i);
 			ofxGuiGroup * panel = new ofxGuiGroup(p);
@@ -231,27 +234,19 @@ void ofxGuiGroup::generateDraw(){
 	border.clear();
 	border.setFillColor(ofColor(thisBorderColor,180));
 	border.setFilled(true);
-	border.moveTo(b.x,b.y+ spacingNextElement);
-	border.lineTo(b.x+b.width+1,b.y+ spacingNextElement);
-	border.lineTo(b.x+b.width+1,b.y+b.height+ spacingNextElement);
-	border.lineTo(b.x,b.y+b.height+ spacingNextElement);
-	border.close();
+	border.rectangle(b.x,b.y+ spacingNextElement,b.width+1,b.height);
 
 
 	headerBg.clear();
 	headerBg.setFillColor(thisHeaderBackgroundColor);
 	headerBg.setFilled(true);
-	headerBg.moveTo(b.x,b.y +1 + spacingNextElement);
-	headerBg.lineTo(b.x+b.width,b.y+1+ spacingNextElement);
-	headerBg.lineTo(b.x+b.width,b.y+header+1+ spacingNextElement);
-	headerBg.lineTo(b.x,b.y+header+1+ spacingNextElement);
-	headerBg.close();
+	headerBg.rectangle(b.x,b.y +1 + spacingNextElement, b.width, header);
 
-	textMesh = font.getStringMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
+	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
 	if(minimized){
-		textMesh.append(font.getStringMesh("+", b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement));
+		textMesh.append(getTextMesh("+", b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement));
 	}else{
-		textMesh.append(font.getStringMesh("-", b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement));
+		textMesh.append(getTextMesh("-", b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement));
 	}
 }
 
@@ -265,10 +260,10 @@ void ofxGuiGroup::render(){
 	}
 	ofColor c = ofGetStyle().color;
 	ofSetColor(thisTextColor);
-	font.getFontTexture().bind();
 
+	bindFontTexture();
 	textMesh.draw();
-	font.getFontTexture().unbind();
+	unbindFontTexture();
     
 	if(!minimized){
 		for(int i = 0; i < (int)collection.size(); i++){
@@ -335,7 +330,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
 
-			ofRectangle minButton(b.x+b.width-textPadding-10,b.y,10,header);
+			ofRectangle minButton(b.x+b.width-textPadding*3,b.y,textPadding*3,header);
 			if(minButton.inside(mx,my)){
 				minimized = !minimized;
 				if(minimized){

@@ -216,7 +216,7 @@ void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int 
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type){
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, ofImageType type){
 	allocate(w,h,type);
 	setFromPixels(newPixels,w,h,ofPixelFormatFromImageType(type));
 }
@@ -344,7 +344,7 @@ void ofPixels_<PixelType>::swapRgb(){
 	}
 	break;
 	default:
-		ofLogWarning() << "rgb swap not supported for this pixel format";
+		ofLogWarning("ofPixels") << "rgb swap not supported for this pixel format";
 		break;
 	}
 }
@@ -471,7 +471,7 @@ void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color)
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UNKOWN:
-			ofLogWarning() << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
+			ofLogWarning("ofPixels") << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
 			break;
 	}
 }
@@ -528,7 +528,7 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UNKOWN:
-			ofLogWarning() << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
+			ofLogWarning("ofPixels") << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
 			break;
 	}
 }
@@ -1045,7 +1045,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			//----------------------------------------
 		case OF_INTERPOLATE_BILINEAR:
 			// not implemented yet
-			ofLogError(" Bilinear resize not implemented ");
+			ofLogError("ofPixels") << "resizeTo(): bilinear resize not implemented, not resizing";
 			break;
 
 			//----------------------------------------
