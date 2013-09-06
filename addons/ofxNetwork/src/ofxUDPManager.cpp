@@ -93,11 +93,10 @@ bool ofxUDPManager::Bind(unsigned short usPort)
 	saServer.sin_addr.s_addr = INADDR_ANY;
 	//Port MUST	be in Network Byte Order
 	saServer.sin_port =	htons(usPort);
+	int ret = ::bind(m_hSocket,(struct sockaddr*)&saServer,sizeof(struct sockaddr));
+	if(ret == -1) ofxNetworkCheckError();
 
-	int	ret	= bind(m_hSocket,(struct sockaddr*)&saServer,sizeof(struct sockaddr));
-	if(ret==-1)  ofxNetworkCheckError();
-
-	return (ret	== 0);
+	return (ret == 0);
 }
 
 //--------------------------------------------------------------------------------
@@ -106,7 +105,7 @@ bool ofxUDPManager::BindMcast(char *pMcast, unsigned short usPort)
 	// bind to port
 	if (!Bind(usPort))
 	{
-		ofLog(OF_LOG_WARNING, "can't bind to port \n");
+		ofLogWarning("ofxUDPManager") << "BindMcast(): couldn't bind to port " << usPort;
 		return false;
 	}
 
@@ -140,7 +139,7 @@ bool ofxUDPManager::Connect(const char *pHost, unsigned short usPort)
 	saClient.sin_family= AF_INET; // host byte order
 	saClient.sin_port  = htons(usPort);	// short, network byte order
 	//	saClient.sin_addr  = *((struct g_addr *)he->h_addr_list);
-	//cout << inet_addr( pHost ) << endl;
+	//ofLogNotice("ofxUDPManager") << "Connect(): connected to " << inet_addr( pHost );
 	//saClient.sin_addr.s_addr= inet_addr( pHost );
 	//saClient.sin_addr = *((struct in_addr *)he->h_addr);
 	memcpy((char *) &saClient.sin_addr.s_addr,
@@ -159,7 +158,7 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	if (!Bind(usPort))
 	{
 #ifdef _DEBUG
-		printf("Binding socket failed! Error: %d", WSAGetLastError());
+		ofLogError("ofxUDPManager") << "ConnectMcast(): couldn't bind to " << usPort<< ", err " << WSAGetLastError();
 #endif
 		return false;
 	}
@@ -168,14 +167,14 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	if (!SetTTL(1))
 	{
 #ifdef _DEBUG
-		printf("SetTTL failed. Continue anyway. Error: %d", WSAGetLastError());
+		ofLogWarning("ofxUDPManager") << "ConnectMcast(): couldn't set TTL: err " << WSAGetLastError() << ", contining anyway";
 #endif
 	}
 
 	if (!Connect(pMcast, usPort))
 	{
 #ifdef _DEBUG
-		printf("Connecting socket failed! Error: %d", WSAGetLastError ());
+		ofLogError("ofxUDPManager") << " ConnectMcast(): couldn't connect to socket: err " << WSAGetLastError();
 #endif
 		return false;
 	}
@@ -260,7 +259,7 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 {
 	if (m_hSocket == INVALID_SOCKET){
-		printf("INVALID_SOCKET");
+		ofLogError("ofxUDPManager") << "INVALID_SOCKET";
 		return(SOCKET_ERROR);
 
 	}
@@ -290,13 +289,13 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 
 	if (ret	> 0)
 	{
-				//printf("\nreceived from: %s\n",	inet_ntoa((in_addr)saClient.sin_addr));
+		//ofLogNotice("ofxUDPManager") << "received from: " << inet_ntoa((in_addr)saClient.sin_addr);
 		canGetRemoteAddress= true;
 	}
 	else
 	{
 		ofxNetworkCheckError();
-				//printf("\nreceived from: ????\n");
+		//ofLogNotice("ofxUDPManager") << "received from: ????";
 		canGetRemoteAddress= false;
 	}
 
@@ -460,7 +459,7 @@ int ofxUDPManager::GetTTL()
 	if (getsockopt(m_hSocket, IPPROTO_IP, IP_MULTICAST_TTL, (char FAR *) &nTTL, &nSize) == SOCKET_ERROR)
 	{
 #ifdef _DEBUG
-		printf("getsockopt failed! Error: %d", WSAGetLastError());
+		ofLogError("ofxUDPManager") << "GetTTL(): getsockopt failed: err " << WSAGetLastError();
 #endif
 		ofxNetworkCheckError();
 		return -1;
@@ -478,7 +477,7 @@ bool ofxUDPManager::SetTTL(int nTTL)
 	if (setsockopt(m_hSocket, IPPROTO_IP, IP_MULTICAST_TTL, (char FAR *)&nTTL, sizeof (int)) == SOCKET_ERROR)
 	{
 #ifdef _DEBUG
-		printf("setsockopt failed! Error: %d", WSAGetLastError());
+		ofLogError("ofxUDPManager") << "SetTTL(): setsockopt failed: err " << WSAGetLastError();
 #endif
 		ofxNetworkCheckError();
 		return false;

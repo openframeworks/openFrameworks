@@ -5,6 +5,12 @@
 #include "ofGLRenderer.h"
 #include "ofPath.h"
 #include "ofRendererCollection.h"
+#include "ofGLProgrammableRenderer.h"
+#include "ofGLRenderer.h"
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
+#include "ofCairoRenderer.h"
+#endif
+
 
 #ifndef TARGET_LINUX_ARM
 	#ifdef TARGET_OSX
@@ -47,9 +53,25 @@ static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
 static ofPath shape;
-static ofVboMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
 static ofVboMesh gradientMesh;
+
+
+void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
+	if(rendererType==ofGLProgrammableRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+	}else if(rendererType==ofGLRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
+	}else if(rendererType==ofCairoRenderer::TYPE){
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
+#endif
+	}else{
+		ofLogError("ofGraphics") << "ofSetCurrentRenderer(): unknown renderer type " << rendererType << ", setting an ofGLRenderer";
+		ofLogError("ofGraphics") << "if you want to use a custom renderer, pass an ofPtr to a new instance of it";
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+	}
+}
 
 void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_,bool setDefaults){
 	renderer = renderer_;
@@ -72,7 +94,7 @@ ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IPHONE)
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
@@ -203,8 +225,8 @@ static bool setupScreenDeprecated=false;
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
 	if(!setupScreenDeprecated){
-		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
-		ofLogError() << "using current orientation and vFlip";
+		ofLogError("ofGraphics") << "ofSetupScreenPerspective() with orientation and vflip is deprecated,";
+		ofLogError("ofGraphics") << "set them with ofSetOrientation() before calling ofSetupScreenPerspective()";
 		setupScreenDeprecated = true;
 	}
 	renderer->setupScreenPerspective(width,height,fov,nearDist,farDist);
@@ -213,8 +235,8 @@ void ofSetupScreenPerspective(float width, float height, ofOrientation orientati
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
 	if(!setupScreenDeprecated){
-		ofLogError() << "ofSetupScreenPerspective/Ortho with orientation and vflip is deprecated use ofSetOrientation to specify orientation and vflip";
-		ofLogError() << "using current orientation and vFlip";
+		ofLogError("ofGraphics") << "ofSetupScreenOrtho() with orientation and vflip is deprecated,";
+		ofLogError("ofGraphics") << "set them with ofSetOrientation() before calling ofSetupScreenPerspective()";
 		setupScreenDeprecated = true;
 	}
 	renderer->setupScreenOrtho(width,height,nearDist,farDist);
@@ -235,7 +257,6 @@ void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist
 void ofSetupGraphicDefaults(){
 	renderer->setupGraphicDefaults();
 	ofSetStyle(ofStyle());
-    ofSetOrientation(OF_ORIENTATION_DEFAULT,true);
 }
 
 //----------------------------------------------------------
@@ -371,6 +392,11 @@ float * ofBgColorPtr(){
 }
 
 //----------------------------------------------------------
+ofColor ofGetBackground(){
+	return ofColor(renderer->getBgColor());
+}
+
+//----------------------------------------------------------
 void ofBackground(int brightness, int alpha){
 	ofBackground(brightness, brightness, brightness, alpha);
 }
@@ -396,6 +422,11 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 	float w = ofGetWidth(), h = ofGetHeight();
 	gradientMesh.clear();
 	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+#ifdef TARGET_OPENGLES
+	if(ofIsGLProgrammableRenderer()) gradientMesh.setUsage(GL_STREAM_DRAW);
+#else
+	gradientMesh.setUsage(GL_STREAM_DRAW);
+#endif
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying
 		// it and just adding the colors whenever the function is called.
@@ -519,7 +550,7 @@ void ofSetLineWidth(float lineWidth){
 //----------------------------------------------------------
 void ofSetDepthTest(bool depthTest){
 	renderer->setDepthTest(depthTest);
-	currentStyle.depthTest = depthTest;
+	//currentStyle.depthTest = depthTest;
 }
 
 //----------------------------------------------------------
@@ -580,7 +611,7 @@ void ofSetColor(int r, int g, int b, int a){
 //----------------------------------------------------------
 void ofSetColor(int gray){
 	if( gray > 255 ){
-		ofLog(OF_LOG_WARNING, "ofSetColor(int hexColor) - has changed to ofSetColor(int gray) - perhaps you want ofSetHexColor instead?\n" );
+		ofLogWarning("ofGraphics") << "ofSetColor(): gray value > 255, perhaps you want ofSetHexColor(int hexColor) instead?";
 	}
 	ofSetColor(gray, gray, gray);
 }
@@ -592,7 +623,6 @@ void ofSetHexColor(int hexColor){
 	int b = (hexColor >> 0) & 0xff;
 	ofSetColor(r,g,b);
 }
-
 
 //----------------------------------------------------------
 
@@ -647,6 +677,16 @@ void ofSetPolyMode(ofPolyWindingMode mode){
 }
 
 //----------------------------------------
+void ofEnableAntiAliasing(){
+	renderer->enableAntiAliasing();
+}
+
+//----------------------------------------
+void ofDisableAntiAliasing(){
+	renderer->disableAntiAliasing();
+}
+
+//----------------------------------------
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
@@ -669,7 +709,7 @@ void ofSetStyle(ofStyle style){
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
 	
-	ofSetDepthTest(style.depthTest);
+	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
 
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
@@ -711,7 +751,7 @@ void ofPushStyle(){
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.pop_back();
 		//should we warn here?
-		//ofLog(OF_LOG_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code!", OF_MAX_STYLE_HISTORY);
+		//ofLogWarning("ofGraphics") "ofPushStyle(): maximum number of style pushes << " OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?"
 	}
 }
 
@@ -862,6 +902,7 @@ void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRad
 		default:
 			break;
 	}
+	shape.clear();
     shape.rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
     shape.draw();
 
@@ -1022,11 +1063,11 @@ void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofC
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
 	vector<string> lines = ofSplitString(text, "\n");
 	int maxLineLength = 0;
-	for(int i = 0; i < lines.size(); i++) {
+	for(int i = 0; i < (int)lines.size(); i++) {
 		// tabs are not rendered
 		const string & line(lines[i]);
 		int currentLineLength = 0;
-		for(int j = 0; j < line.size(); j++) {
+		for(int j = 0; j < (int)line.size(); j++) {
 			if (line[j] == '\t') {
 				currentLineLength += 8 - (currentLineLength % 8);
 			} else {
@@ -1047,20 +1088,21 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 	ofSetColor(background);
 	ofFill();
 	ofPushMatrix();
-	ofMatrix4x4 m;
-	m.makeTranslationMatrix(x,y,0);
+	
 	if(currentStyle.drawBitmapMode == OF_BITMAPMODE_MODEL) {
-		m.scale(1,-1,0);
+		ofTranslate(x,y,0);
+		ofScale(1,-1,0);
+		ofTranslate(-(padding), + padding - fontSize - 2,0);
+	} else {
+		ofTranslate(x-(padding), y-(padding + fontSize + 2), 0);
+		
 	}
-	m.translate(-(padding), -(padding + fontSize + 2),0);
-	ofLoadMatrix(m);
+	
 	ofRect(0, 0, width + 2 * padding, height + 2 * padding);
 	ofPopMatrix();
 	ofSetColor(foreground);
 	ofNoFill();
-
 	ofDrawBitmapString(text, x, y);
-
 	glDepthMask(true);
 	ofPopStyle();
 }

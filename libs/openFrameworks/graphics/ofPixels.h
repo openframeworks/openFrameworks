@@ -13,28 +13,6 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
-enum ofPixelFormat{
-	// grayscale
-	OF_PIXELS_MONO = 0,
-
-	// rgb (can be 8,16 or 32 bpp depending on pixeltype)
-	OF_PIXELS_RGB,
-	OF_PIXELS_BGR,
-	OF_PIXELS_RGBA,
-	OF_PIXELS_BGRA,
-
-	// rgb 16bit
-	OF_PIXELS_RGB565,
-
-	// yuv
-	OF_PIXELS_NV12,
-	OF_PIXELS_YV12,
-	OF_PIXELS_I420,
-	OF_PIXELS_YUY2,
-
-	OF_PIXELS_UNKOWN
-};
-
 string ofToString(ofPixelFormat pixelFormat);
 
 template <typename PixelType>
@@ -192,7 +170,7 @@ void ofPixels_<PixelType>::copyFrom(const ofPixels_<SrcType> & mom){
 		if(sizeof(SrcType) == sizeof(float)) {
 			// coming from float we need a special case to clamp the values
 			for(int i = 0; i < mom.size(); i++){
-				pixels[i] = ofClamp(mom[i], 0, 1) * factor;
+				pixels[i] = CLAMP(mom[i], 0, 1) * factor;
 			}
 		} else{
 			// everything else is a straight scaling

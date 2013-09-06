@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSExtras.h"
 
-class SquareApp : public ofxiPhoneApp {
+class SquareApp : public ofxiOSApp {
 	
 public:
     

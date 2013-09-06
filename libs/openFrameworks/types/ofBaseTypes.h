@@ -17,6 +17,7 @@
 #include "ofMesh.h"
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
+#include "ofTypes.h"
 
 class ofAbstractParameter;
 
@@ -200,7 +201,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual ~ofBaseVideoGrabber();
 
 	//needs implementing
-	virtual void	listDevices() = 0;		
+	virtual vector<ofVideoDevice>	listDevices() = 0;
 	virtual bool	initGrabber(int w, int h) = 0;
 	virtual void	update() = 0;
 	virtual bool	isFrameNew() = 0;
@@ -354,6 +355,8 @@ public:
 	virtual void setCircleResolution(int res){};
 	virtual void enablePointSprites(){};
 	virtual void disablePointSprites(){};
+	virtual void enableAntiAliasing(){};
+	virtual void disableAntiAliasing(){};
 
 	// color options
 	virtual void setColor(int r, int g, int b){}; // 0-255
@@ -411,8 +414,8 @@ class ofBaseFileSerializer: public ofBaseSerializer{
 public:
 	virtual ~ofBaseFileSerializer(){}
 
-	virtual bool load(string path)=0;
-	virtual bool save(string path)=0;
+	virtual bool load(const string & path)=0;
+	virtual bool save(const string & path)=0;
 };
 
 

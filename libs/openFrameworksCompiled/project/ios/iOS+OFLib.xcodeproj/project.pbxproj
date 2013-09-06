@@ -14,48 +14,57 @@
 		15594F1015C55AC900727FF2 /* ES1Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F0915C55AC900727FF2 /* ES1Renderer.h */; };
 		15594F1115C55AC900727FF2 /* ES2Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F0A15C55AC900727FF2 /* ES2Renderer.h */; };
 		15594F1215C55AC900727FF2 /* ESRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F0B15C55AC900727FF2 /* ESRenderer.h */; };
-		15594F7715C5696D00727FF2 /* ofxiPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F7615C5696D00727FF2 /* ofxiPhone.h */; };
-		15594F8115C5697C00727FF2 /* ofAppiPhoneWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F7815C5697C00727FF2 /* ofAppiPhoneWindow.mm */; };
-		15594F8515C5697C00727FF2 /* ofAppiPhoneWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F7C15C5697C00727FF2 /* ofAppiPhoneWindow.h */; };
-		15594F8715C5697C00727FF2 /* ofxiPhoneApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F7E15C5697C00727FF2 /* ofxiPhoneApp.h */; };
+		15594F8115C5697C00727FF2 /* ofAppiOSWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F7815C5697C00727FF2 /* ofAppiOSWindow.mm */; };
+		15594F8515C5697C00727FF2 /* ofAppiOSWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F7C15C5697C00727FF2 /* ofAppiOSWindow.h */; };
+		15594F8715C5697C00727FF2 /* ofxiOSApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F7E15C5697C00727FF2 /* ofxiOSApp.h */; };
 		15594F9115C56A8A00727FF2 /* ofxiOSEAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8B15C56A8A00727FF2 /* ofxiOSEAGLView.mm */; };
-		15594F9215C56A8A00727FF2 /* ofxiPhoneAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8C15C56A8A00727FF2 /* ofxiPhoneAppDelegate.mm */; };
-		15594F9315C56A8A00727FF2 /* ofxiPhoneViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8D15C56A8A00727FF2 /* ofxiPhoneViewController.mm */; };
+		15594F9215C56A8A00727FF2 /* ofxiOSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */; };
+		15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */; };
 		15594F9415C56A8A00727FF2 /* ofxiOSEAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */; };
-		15594F9515C56A8A00727FF2 /* ofxiPhoneAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8F15C56A8A00727FF2 /* ofxiPhoneAppDelegate.h */; };
-		15594F9615C56A8A00727FF2 /* ofxiPhoneViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F9015C56A8A00727FF2 /* ofxiPhoneViewController.h */; };
+		15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */; };
+		15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */; };
 		15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */; };
 		15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */; };
 		15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */; };
 		15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */; };
-		15594FAB15C56C9500727FF2 /* ofxiPhoneAccelerometer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA715C56C9500727FF2 /* ofxiPhoneAccelerometer.mm */; };
-		15594FAC15C56C9500727FF2 /* ofxiPhoneAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA815C56C9500727FF2 /* ofxiPhoneAlerts.mm */; };
-		15594FAD15C56C9500727FF2 /* ofxiPhoneAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA915C56C9500727FF2 /* ofxiPhoneAlerts.h */; };
-		15594FAE15C56C9500727FF2 /* ofxiPhoneAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FAA15C56C9500727FF2 /* ofxiPhoneAlertsListener.h */; };
-		15594FBE15C56D1E00727FF2 /* ofxiPhoneCoreLocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FAF15C56D1E00727FF2 /* ofxiPhoneCoreLocation.mm */; };
-		15594FBF15C56D1E00727FF2 /* ofxiPhoneExternalDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB015C56D1E00727FF2 /* ofxiPhoneExternalDisplay.mm */; };
-		15594FC015C56D1E00727FF2 /* ofxiPhoneExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB115C56D1E00727FF2 /* ofxiPhoneExtras.mm */; };
-		15594FC115C56D1E00727FF2 /* ofxiPhoneImagePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB215C56D1E00727FF2 /* ofxiPhoneImagePicker.mm */; };
-		15594FC215C56D1E00727FF2 /* ofxiPhoneKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB315C56D1E00727FF2 /* ofxiPhoneKeyboard.mm */; };
-		15594FC315C56D1E00727FF2 /* ofxiPhoneMapKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB415C56D1E00727FF2 /* ofxiPhoneMapKit.mm */; };
-		15594FC415C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB515C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.mm */; };
-		15594FC515C56D1E00727FF2 /* ofxiPhoneCoreLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB615C56D1E00727FF2 /* ofxiPhoneCoreLocation.h */; };
-		15594FC615C56D1E00727FF2 /* ofxiPhoneExternalDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB715C56D1E00727FF2 /* ofxiPhoneExternalDisplay.h */; };
-		15594FC715C56D1E00727FF2 /* ofxiPhoneExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB815C56D1E00727FF2 /* ofxiPhoneExtras.h */; };
-		15594FC815C56D1E00727FF2 /* ofxiPhoneImagePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB915C56D1E00727FF2 /* ofxiPhoneImagePicker.h */; };
-		15594FC915C56D1E00727FF2 /* ofxiPhoneKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBA15C56D1E00727FF2 /* ofxiPhoneKeyboard.h */; };
-		15594FCA15C56D1E00727FF2 /* ofxiPhoneMapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBB15C56D1E00727FF2 /* ofxiPhoneMapKit.h */; };
-		15594FCB15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBC15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h */; };
-		15594FCC15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBD15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h */; };
-		1594366415CF5F420087B684 /* ofiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366015CF5F420087B684 /* ofiPhoneVideoGrabber.mm */; };
-		1594366515CF5F420087B684 /* ofiPhoneVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofiPhoneVideoPlayer.mm */; };
-		1594366615CF5F420087B684 /* ofiPhoneVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366215CF5F420087B684 /* ofiPhoneVideoGrabber.h */; };
-		1594366715CF5F420087B684 /* ofiPhoneVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366315CF5F420087B684 /* ofiPhoneVideoPlayer.h */; };
+		15594FAB15C56C9500727FF2 /* ofxiOSAccelerometer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA715C56C9500727FF2 /* ofxiOSAccelerometer.mm */; };
+		15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */; };
+		15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */; };
+		15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */; };
+		15594FBE15C56D1E00727FF2 /* ofxiOSCoreLocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FAF15C56D1E00727FF2 /* ofxiOSCoreLocation.mm */; };
+		15594FBF15C56D1E00727FF2 /* ofxiOSExternalDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB015C56D1E00727FF2 /* ofxiOSExternalDisplay.mm */; };
+		15594FC015C56D1E00727FF2 /* ofxiOSExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB115C56D1E00727FF2 /* ofxiOSExtras.mm */; };
+		15594FC115C56D1E00727FF2 /* ofxiOSImagePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB215C56D1E00727FF2 /* ofxiOSImagePicker.mm */; };
+		15594FC215C56D1E00727FF2 /* ofxiOSKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB315C56D1E00727FF2 /* ofxiOSKeyboard.mm */; };
+		15594FC315C56D1E00727FF2 /* ofxiOSMapKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB415C56D1E00727FF2 /* ofxiOSMapKit.mm */; };
+		15594FC415C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FB515C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm */; };
+		15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB615C56D1E00727FF2 /* ofxiOSCoreLocation.h */; };
+		15594FC615C56D1E00727FF2 /* ofxiOSExternalDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB715C56D1E00727FF2 /* ofxiOSExternalDisplay.h */; };
+		15594FC715C56D1E00727FF2 /* ofxiOSExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB815C56D1E00727FF2 /* ofxiOSExtras.h */; };
+		15594FC815C56D1E00727FF2 /* ofxiOSImagePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FB915C56D1E00727FF2 /* ofxiOSImagePicker.h */; };
+		15594FC915C56D1E00727FF2 /* ofxiOSKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBA15C56D1E00727FF2 /* ofxiOSKeyboard.h */; };
+		15594FCA15C56D1E00727FF2 /* ofxiOSMapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBB15C56D1E00727FF2 /* ofxiOSMapKit.h */; };
+		15594FCB15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBC15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h */; };
+		15594FCC15C56D1E00727FF2 /* ofxiOSMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBD15C56D1E00727FF2 /* ofxiOSMapKitListener.h */; };
+		1594366415CF5F420087B684 /* ofxiOSVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366015CF5F420087B684 /* ofxiOSVideoGrabber.mm */; };
+		1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */; };
+		1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */; };
+		1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */; };
 		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
 		53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338D12DF8F5000C622CE /* CoreAudio.framework */; };
 		53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338F12DF8F5000C622CE /* CoreMedia.framework */; };
 		53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA339112DF8F5000C622CE /* CoreVideo.framework */; };
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
+		66EA462B17A6D396009BB12A /* ofxOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */; };
+		66EA462C17A6D396009BB12A /* ofxOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */; };
+		66EA462D17A6D396009BB12A /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66EA462917A6D396009BB12A /* SoundEngine.cpp */; };
+		66EA462E17A6D396009BB12A /* SoundEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 66EA462A17A6D396009BB12A /* SoundEngine.h */; };
+		671C0AF41770246200DF03B3 /* AVSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 671C0AF01770246200DF03B3 /* AVSoundPlayer.h */; };
+		671C0AF51770246200DF03B3 /* AVSoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 671C0AF11770246200DF03B3 /* AVSoundPlayer.m */; };
+		671C0AF61770246200DF03B3 /* ofxiOSSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 671C0AF21770246200DF03B3 /* ofxiOSSoundPlayer.h */; };
+		671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */; };
+		67509ABC17979781003A3A29 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67509ABA17979781003A3A29 /* ofXml.cpp */; };
+		67509ABD17979781003A3A29 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = 67509ABB17979781003A3A29 /* ofXml.h */; };
 		678C3D23176F04F800D1CC68 /* ofxiOSSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D19176F04F800D1CC68 /* ofxiOSSoundStream.h */; };
 		678C3D24176F04F800D1CC68 /* ofxiOSSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D1A176F04F800D1CC68 /* ofxiOSSoundStream.mm */; };
 		678C3D25176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D1B176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h */; };
@@ -66,10 +75,7 @@
 		678C3D2A176F04F800D1CC68 /* SoundOutputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D20176F04F800D1CC68 /* SoundOutputStream.m */; };
 		678C3D2B176F04F800D1CC68 /* SoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D21176F04F800D1CC68 /* SoundStream.h */; };
 		678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D22176F04F800D1CC68 /* SoundStream.m */; };
-		671C0AF41770246200DF03B3 /* AVSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 671C0AF01770246200DF03B3 /* AVSoundPlayer.h */; };
-		671C0AF51770246200DF03B3 /* AVSoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 671C0AF11770246200DF03B3 /* AVSoundPlayer.m */; };
-		671C0AF61770246200DF03B3 /* ofxiOSSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 671C0AF21770246200DF03B3 /* ofxiOSSoundPlayer.h */; };
-		671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */; };
+		860B024D17A96D840032B827 /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 860B024C17A96D840032B827 /* ofxiOS.h */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
 		BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -205,43 +211,42 @@
 		15594F0915C55AC900727FF2 /* ES1Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES1Renderer.h; sourceTree = "<group>"; };
 		15594F0A15C55AC900727FF2 /* ES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES2Renderer.h; sourceTree = "<group>"; };
 		15594F0B15C55AC900727FF2 /* ESRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESRenderer.h; sourceTree = "<group>"; };
-		15594F7615C5696D00727FF2 /* ofxiPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhone.h; sourceTree = "<group>"; };
-		15594F7815C5697C00727FF2 /* ofAppiPhoneWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAppiPhoneWindow.mm; sourceTree = "<group>"; };
-		15594F7C15C5697C00727FF2 /* ofAppiPhoneWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppiPhoneWindow.h; sourceTree = "<group>"; };
-		15594F7E15C5697C00727FF2 /* ofxiPhoneApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneApp.h; sourceTree = "<group>"; };
+		15594F7815C5697C00727FF2 /* ofAppiOSWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAppiOSWindow.mm; sourceTree = "<group>"; };
+		15594F7C15C5697C00727FF2 /* ofAppiOSWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppiOSWindow.h; sourceTree = "<group>"; };
+		15594F7E15C5697C00727FF2 /* ofxiOSApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSApp.h; sourceTree = "<group>"; };
 		15594F8B15C56A8A00727FF2 /* ofxiOSEAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSEAGLView.mm; sourceTree = "<group>"; };
-		15594F8C15C56A8A00727FF2 /* ofxiPhoneAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneAppDelegate.mm; sourceTree = "<group>"; };
-		15594F8D15C56A8A00727FF2 /* ofxiPhoneViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneViewController.mm; sourceTree = "<group>"; };
+		15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAppDelegate.mm; sourceTree = "<group>"; };
+		15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSViewController.mm; sourceTree = "<group>"; };
 		15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSEAGLView.h; sourceTree = "<group>"; };
-		15594F8F15C56A8A00727FF2 /* ofxiPhoneAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneAppDelegate.h; sourceTree = "<group>"; };
-		15594F9015C56A8A00727FF2 /* ofxiPhoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneViewController.h; sourceTree = "<group>"; };
+		15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAppDelegate.h; sourceTree = "<group>"; };
+		15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSViewController.h; sourceTree = "<group>"; };
 		15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
 		15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
 		15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
-		15594FA715C56C9500727FF2 /* ofxiPhoneAccelerometer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneAccelerometer.mm; sourceTree = "<group>"; };
-		15594FA815C56C9500727FF2 /* ofxiPhoneAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneAlerts.mm; sourceTree = "<group>"; };
-		15594FA915C56C9500727FF2 /* ofxiPhoneAlerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneAlerts.h; sourceTree = "<group>"; };
-		15594FAA15C56C9500727FF2 /* ofxiPhoneAlertsListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneAlertsListener.h; sourceTree = "<group>"; };
-		15594FAF15C56D1E00727FF2 /* ofxiPhoneCoreLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneCoreLocation.mm; sourceTree = "<group>"; };
-		15594FB015C56D1E00727FF2 /* ofxiPhoneExternalDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneExternalDisplay.mm; sourceTree = "<group>"; };
-		15594FB115C56D1E00727FF2 /* ofxiPhoneExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneExtras.mm; sourceTree = "<group>"; };
-		15594FB215C56D1E00727FF2 /* ofxiPhoneImagePicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneImagePicker.mm; sourceTree = "<group>"; };
-		15594FB315C56D1E00727FF2 /* ofxiPhoneKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneKeyboard.mm; sourceTree = "<group>"; };
-		15594FB415C56D1E00727FF2 /* ofxiPhoneMapKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneMapKit.mm; sourceTree = "<group>"; };
-		15594FB515C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneMapKitDelegate.mm; sourceTree = "<group>"; };
-		15594FB615C56D1E00727FF2 /* ofxiPhoneCoreLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneCoreLocation.h; sourceTree = "<group>"; };
-		15594FB715C56D1E00727FF2 /* ofxiPhoneExternalDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneExternalDisplay.h; sourceTree = "<group>"; };
-		15594FB815C56D1E00727FF2 /* ofxiPhoneExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneExtras.h; sourceTree = "<group>"; };
-		15594FB915C56D1E00727FF2 /* ofxiPhoneImagePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneImagePicker.h; sourceTree = "<group>"; };
-		15594FBA15C56D1E00727FF2 /* ofxiPhoneKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneKeyboard.h; sourceTree = "<group>"; };
-		15594FBB15C56D1E00727FF2 /* ofxiPhoneMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKit.h; sourceTree = "<group>"; };
-		15594FBC15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitDelegate.h; sourceTree = "<group>"; };
-		15594FBD15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitListener.h; sourceTree = "<group>"; };
-		1594366015CF5F420087B684 /* ofiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofiPhoneVideoGrabber.mm; sourceTree = "<group>"; };
-		1594366115CF5F420087B684 /* ofiPhoneVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofiPhoneVideoPlayer.mm; sourceTree = "<group>"; };
-		1594366215CF5F420087B684 /* ofiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofiPhoneVideoGrabber.h; sourceTree = "<group>"; };
-		1594366315CF5F420087B684 /* ofiPhoneVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofiPhoneVideoPlayer.h; sourceTree = "<group>"; };
+		15594FA715C56C9500727FF2 /* ofxiOSAccelerometer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAccelerometer.mm; sourceTree = "<group>"; };
+		15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAlerts.mm; sourceTree = "<group>"; };
+		15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlerts.h; sourceTree = "<group>"; };
+		15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlertsListener.h; sourceTree = "<group>"; };
+		15594FAF15C56D1E00727FF2 /* ofxiOSCoreLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreLocation.mm; sourceTree = "<group>"; };
+		15594FB015C56D1E00727FF2 /* ofxiOSExternalDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSExternalDisplay.mm; sourceTree = "<group>"; };
+		15594FB115C56D1E00727FF2 /* ofxiOSExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSExtras.mm; sourceTree = "<group>"; };
+		15594FB215C56D1E00727FF2 /* ofxiOSImagePicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSImagePicker.mm; sourceTree = "<group>"; };
+		15594FB315C56D1E00727FF2 /* ofxiOSKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSKeyboard.mm; sourceTree = "<group>"; };
+		15594FB415C56D1E00727FF2 /* ofxiOSMapKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSMapKit.mm; sourceTree = "<group>"; };
+		15594FB515C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSMapKitDelegate.mm; sourceTree = "<group>"; };
+		15594FB615C56D1E00727FF2 /* ofxiOSCoreLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreLocation.h; sourceTree = "<group>"; };
+		15594FB715C56D1E00727FF2 /* ofxiOSExternalDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSExternalDisplay.h; sourceTree = "<group>"; };
+		15594FB815C56D1E00727FF2 /* ofxiOSExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSExtras.h; sourceTree = "<group>"; };
+		15594FB915C56D1E00727FF2 /* ofxiOSImagePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSImagePicker.h; sourceTree = "<group>"; };
+		15594FBA15C56D1E00727FF2 /* ofxiOSKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSKeyboard.h; sourceTree = "<group>"; };
+		15594FBB15C56D1E00727FF2 /* ofxiOSMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSMapKit.h; sourceTree = "<group>"; };
+		15594FBC15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSMapKitDelegate.h; sourceTree = "<group>"; };
+		15594FBD15C56D1E00727FF2 /* ofxiOSMapKitListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSMapKitListener.h; sourceTree = "<group>"; };
+		1594366015CF5F420087B684 /* ofxiOSVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSVideoGrabber.mm; sourceTree = "<group>"; };
+		1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSVideoPlayer.mm; sourceTree = "<group>"; };
+		1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSVideoGrabber.h; sourceTree = "<group>"; };
+		1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSVideoPlayer.h; sourceTree = "<group>"; };
 		15BC775215A5C31F00772525 /* ofxiOSExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOSExtensions.h; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -253,6 +258,16 @@
 		53DA339112DF8F5000C622CE /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
+		66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOpenALSoundPlayer.h; sourceTree = "<group>"; };
+		66EA462917A6D396009BB12A /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundEngine.cpp; sourceTree = "<group>"; };
+		66EA462A17A6D396009BB12A /* SoundEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundEngine.h; sourceTree = "<group>"; };
+		671C0AF01770246200DF03B3 /* AVSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVSoundPlayer.h; sourceTree = "<group>"; };
+		671C0AF11770246200DF03B3 /* AVSoundPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVSoundPlayer.m; sourceTree = "<group>"; };
+		671C0AF21770246200DF03B3 /* ofxiOSSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSSoundPlayer.h; sourceTree = "<group>"; };
+		671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSSoundPlayer.mm; sourceTree = "<group>"; };
+		67509ABA17979781003A3A29 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
+		67509ABB17979781003A3A29 /* ofXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofXml.h; sourceTree = "<group>"; };
 		678C3D19176F04F800D1CC68 /* ofxiOSSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSSoundStream.h; sourceTree = "<group>"; };
 		678C3D1A176F04F800D1CC68 /* ofxiOSSoundStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSSoundStream.mm; sourceTree = "<group>"; };
 		678C3D1B176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSSoundStreamDelegate.h; sourceTree = "<group>"; };
@@ -263,15 +278,11 @@
 		678C3D20176F04F800D1CC68 /* SoundOutputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundOutputStream.m; sourceTree = "<group>"; };
 		678C3D21176F04F800D1CC68 /* SoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundStream.h; sourceTree = "<group>"; };
 		678C3D22176F04F800D1CC68 /* SoundStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundStream.m; sourceTree = "<group>"; };
-		671C0AF01770246200DF03B3 /* AVSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVSoundPlayer.h; sourceTree = "<group>"; };
-		671C0AF11770246200DF03B3 /* AVSoundPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVSoundPlayer.m; sourceTree = "<group>"; };
-		671C0AF21770246200DF03B3 /* ofxiOSSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSSoundPlayer.h; sourceTree = "<group>"; };
-		671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSSoundPlayer.mm; sourceTree = "<group>"; };
+		860B024C17A96D840032B827 /* ofxiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiOS_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24E01D10DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
-		BB24E01E10DA7C6100E9C588 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		BB24E01F10DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		BB24E02110DA7C6100E9C588 /* ofxAccelerometer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAccelerometer.cpp; sourceTree = "<group>"; };
 		BB24E02210DA7C6100E9C588 /* ofxAccelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAccelerometer.h; sourceTree = "<group>"; };
@@ -424,9 +435,9 @@
 		15594EFE15C55A5700727FF2 /* app */ = {
 			isa = PBXGroup;
 			children = (
-				15594F7C15C5697C00727FF2 /* ofAppiPhoneWindow.h */,
-				15594F7815C5697C00727FF2 /* ofAppiPhoneWindow.mm */,
-				15594F7E15C5697C00727FF2 /* ofxiPhoneApp.h */,
+				15594F7C15C5697C00727FF2 /* ofAppiOSWindow.h */,
+				15594F7815C5697C00727FF2 /* ofAppiOSWindow.mm */,
+				15594F7E15C5697C00727FF2 /* ofxiOSApp.h */,
 			);
 			path = app;
 			sourceTree = "<group>";
@@ -434,10 +445,10 @@
 		15594EFF15C55A5700727FF2 /* events */ = {
 			isa = PBXGroup;
 			children = (
-				15594FA915C56C9500727FF2 /* ofxiPhoneAlerts.h */,
-				15594FA815C56C9500727FF2 /* ofxiPhoneAlerts.mm */,
-				15594FAA15C56C9500727FF2 /* ofxiPhoneAlertsListener.h */,
-				15594FA715C56C9500727FF2 /* ofxiPhoneAccelerometer.mm */,
+				15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */,
+				15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */,
+				15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */,
+				15594FA715C56C9500727FF2 /* ofxiOSAccelerometer.mm */,
 			);
 			path = events;
 			sourceTree = "<group>";
@@ -459,10 +470,10 @@
 		15594F0115C55A5700727FF2 /* sound */ = {
 			isa = PBXGroup;
 			children = (
-				15594F9915C56B8700727FF2 /* ofxOpenALSoundPlayer.h */,
-				15594F9715C56B8700727FF2 /* ofxOpenALSoundPlayer.cpp */,
-				15594F9A15C56B8700727FF2 /* SoundEngine.h */,
-				15594F9815C56B8700727FF2 /* SoundEngine.cpp */,
+				66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */,
+				66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */,
+				66EA462917A6D396009BB12A /* SoundEngine.cpp */,
+				66EA462A17A6D396009BB12A /* SoundEngine.h */,
 				678C3D19176F04F800D1CC68 /* ofxiOSSoundStream.h */,
 				678C3D1A176F04F800D1CC68 /* ofxiOSSoundStream.mm */,
 				678C3D1B176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h */,
@@ -477,8 +488,6 @@
 				671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */,
 				671C0AF01770246200DF03B3 /* AVSoundPlayer.h */,
 				671C0AF11770246200DF03B3 /* AVSoundPlayer.m */,
-				1594366915CF5F650087B684 /* ofxiPhoneSoundStream.h */,
-				1594366815CF5F650087B684 /* ofxiPhoneSoundStream.mm */,
 			);
 			path = sound;
 			sourceTree = "<group>";
@@ -486,21 +495,21 @@
 		15594F0215C55A5700727FF2 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				15594FB815C56D1E00727FF2 /* ofxiPhoneExtras.h */,
-				15594FB115C56D1E00727FF2 /* ofxiPhoneExtras.mm */,
-				15594FB715C56D1E00727FF2 /* ofxiPhoneExternalDisplay.h */,
-				15594FB015C56D1E00727FF2 /* ofxiPhoneExternalDisplay.mm */,
-				15594FB615C56D1E00727FF2 /* ofxiPhoneCoreLocation.h */,
-				15594FAF15C56D1E00727FF2 /* ofxiPhoneCoreLocation.mm */,
-				15594FB915C56D1E00727FF2 /* ofxiPhoneImagePicker.h */,
-				15594FB215C56D1E00727FF2 /* ofxiPhoneImagePicker.mm */,
-				15594FBA15C56D1E00727FF2 /* ofxiPhoneKeyboard.h */,
-				15594FB315C56D1E00727FF2 /* ofxiPhoneKeyboard.mm */,
-				15594FBB15C56D1E00727FF2 /* ofxiPhoneMapKit.h */,
-				15594FB415C56D1E00727FF2 /* ofxiPhoneMapKit.mm */,
-				15594FBC15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h */,
-				15594FB515C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.mm */,
-				15594FBD15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h */,
+				15594FB815C56D1E00727FF2 /* ofxiOSExtras.h */,
+				15594FB115C56D1E00727FF2 /* ofxiOSExtras.mm */,
+				15594FB715C56D1E00727FF2 /* ofxiOSExternalDisplay.h */,
+				15594FB015C56D1E00727FF2 /* ofxiOSExternalDisplay.mm */,
+				15594FB615C56D1E00727FF2 /* ofxiOSCoreLocation.h */,
+				15594FAF15C56D1E00727FF2 /* ofxiOSCoreLocation.mm */,
+				15594FB915C56D1E00727FF2 /* ofxiOSImagePicker.h */,
+				15594FB215C56D1E00727FF2 /* ofxiOSImagePicker.mm */,
+				15594FBA15C56D1E00727FF2 /* ofxiOSKeyboard.h */,
+				15594FB315C56D1E00727FF2 /* ofxiOSKeyboard.mm */,
+				15594FBB15C56D1E00727FF2 /* ofxiOSMapKit.h */,
+				15594FB415C56D1E00727FF2 /* ofxiOSMapKit.mm */,
+				15594FBC15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h */,
+				15594FB515C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm */,
+				15594FBD15C56D1E00727FF2 /* ofxiOSMapKitListener.h */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -512,10 +521,10 @@
 				15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */,
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
-				1594366315CF5F420087B684 /* ofiPhoneVideoPlayer.h */,
-				1594366115CF5F420087B684 /* ofiPhoneVideoPlayer.mm */,
-				1594366215CF5F420087B684 /* ofiPhoneVideoGrabber.h */,
-				1594366015CF5F420087B684 /* ofiPhoneVideoGrabber.mm */,
+				1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */,
+				1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */,
+				1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */,
+				1594366015CF5F420087B684 /* ofxiOSVideoGrabber.mm */,
 			);
 			path = video;
 			sourceTree = "<group>";
@@ -523,10 +532,10 @@
 		15594F8A15C56A4E00727FF2 /* core */ = {
 			isa = PBXGroup;
 			children = (
-				15594F8F15C56A8A00727FF2 /* ofxiPhoneAppDelegate.h */,
-				15594F8C15C56A8A00727FF2 /* ofxiPhoneAppDelegate.mm */,
-				15594F9015C56A8A00727FF2 /* ofxiPhoneViewController.h */,
-				15594F8D15C56A8A00727FF2 /* ofxiPhoneViewController.mm */,
+				15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */,
+				15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */,
+				15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */,
+				15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */,
 				15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */,
 				15594F8B15C56A8A00727FF2 /* ofxiOSEAGLView.mm */,
 			);
@@ -536,7 +545,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -589,7 +598,7 @@
 			children = (
 				E485F8111363242100E939D3 /* ofxMultiTouch */,
 				BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */,
-				BB24E02310DA7C6100E9C588 /* ofxiPhone */,
+				BB24E02310DA7C6100E9C588 /* ofxiOS */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -598,7 +607,6 @@
 			isa = PBXGroup;
 			children = (
 				BB24E01D10DA7C6100E9C588 /* changelog.txt */,
-				BB24E01E10DA7C6100E9C588 /* install.xml */,
 				BB24E01F10DA7C6100E9C588 /* LICENSE.txt */,
 				BB24E02010DA7C6100E9C588 /* src */,
 			);
@@ -615,19 +623,19 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		BB24E02310DA7C6100E9C588 /* ofxiPhone */ = {
+		BB24E02310DA7C6100E9C588 /* ofxiOS */ = {
 			isa = PBXGroup;
 			children = (
 				BB24E02810DA7C6100E9C588 /* src */,
 			);
-			name = ofxiPhone;
-			path = ../../../../addons/ofxiPhone;
+			name = ofxiOS;
+			path = ../../../../addons/ofxiOS;
 			sourceTree = SOURCE_ROOT;
 		};
 		BB24E02810DA7C6100E9C588 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				15594F7615C5696D00727FF2 /* ofxiPhone.h */,
+				860B024C17A96D840032B827 /* ofxiOS.h */,
 				15BC775215A5C31F00772525 /* ofxiOSExtensions.h */,
 				15594EFE15C55A5700727FF2 /* app */,
 				15594F8A15C56A4E00727FF2 /* core */,
@@ -861,6 +869,8 @@
 				E4F76DFD176CB27200798745 /* ofURLFileLoader.h */,
 				E4F76DFE176CB27200798745 /* ofUtils.cpp */,
 				E4F76DFF176CB27200798745 /* ofUtils.h */,
+				67509ABA17979781003A3A29 /* ofXml.cpp */,
+				67509ABB17979781003A3A29 /* ofXml.h */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -952,34 +962,36 @@
 				15594F1015C55AC900727FF2 /* ES1Renderer.h in Headers */,
 				15594F1115C55AC900727FF2 /* ES2Renderer.h in Headers */,
 				15594F1215C55AC900727FF2 /* ESRenderer.h in Headers */,
-				15594F7715C5696D00727FF2 /* ofxiPhone.h in Headers */,
-				15594F8515C5697C00727FF2 /* ofAppiPhoneWindow.h in Headers */,
-				15594F8715C5697C00727FF2 /* ofxiPhoneApp.h in Headers */,
+				15594F8515C5697C00727FF2 /* ofAppiOSWindow.h in Headers */,
+				15594F8715C5697C00727FF2 /* ofxiOSApp.h in Headers */,
 				15594F9415C56A8A00727FF2 /* ofxiOSEAGLView.h in Headers */,
-				15594F9515C56A8A00727FF2 /* ofxiPhoneAppDelegate.h in Headers */,
-				15594F9615C56A8A00727FF2 /* ofxiPhoneViewController.h in Headers */,
+				15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */,
+				15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */,
 				15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */,
 				15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */,
-				15594FAD15C56C9500727FF2 /* ofxiPhoneAlerts.h in Headers */,
-				15594FAE15C56C9500727FF2 /* ofxiPhoneAlertsListener.h in Headers */,
-				15594FC515C56D1E00727FF2 /* ofxiPhoneCoreLocation.h in Headers */,
-				15594FC615C56D1E00727FF2 /* ofxiPhoneExternalDisplay.h in Headers */,
-				15594FC715C56D1E00727FF2 /* ofxiPhoneExtras.h in Headers */,
-				15594FC815C56D1E00727FF2 /* ofxiPhoneImagePicker.h in Headers */,
-				15594FC915C56D1E00727FF2 /* ofxiPhoneKeyboard.h in Headers */,
-				15594FCA15C56D1E00727FF2 /* ofxiPhoneMapKit.h in Headers */,
-				15594FCB15C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.h in Headers */,
-				15594FCC15C56D1E00727FF2 /* ofxiPhoneMapKitListener.h in Headers */,
-				1594366615CF5F420087B684 /* ofiPhoneVideoGrabber.h in Headers */,
-				1594366715CF5F420087B684 /* ofiPhoneVideoPlayer.h in Headers */,
+				15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */,
+				15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */,
+				15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */,
+				15594FC615C56D1E00727FF2 /* ofxiOSExternalDisplay.h in Headers */,
+				15594FC715C56D1E00727FF2 /* ofxiOSExtras.h in Headers */,
+				15594FC815C56D1E00727FF2 /* ofxiOSImagePicker.h in Headers */,
+				15594FC915C56D1E00727FF2 /* ofxiOSKeyboard.h in Headers */,
+				15594FCA15C56D1E00727FF2 /* ofxiOSMapKit.h in Headers */,
+				15594FCB15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h in Headers */,
+				15594FCC15C56D1E00727FF2 /* ofxiOSMapKitListener.h in Headers */,
+				1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */,
+				1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */,
 				678C3D23176F04F800D1CC68 /* ofxiOSSoundStream.h in Headers */,
 				678C3D25176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h in Headers */,
 				678C3D27176F04F800D1CC68 /* SoundInputStream.h in Headers */,
 				678C3D29176F04F800D1CC68 /* SoundOutputStream.h in Headers */,
 				678C3D2B176F04F800D1CC68 /* SoundStream.h in Headers */,
-				1594366B15CF5F650087B684 /* ofxiPhoneSoundStream.h in Headers */,
 				671C0AF41770246200DF03B3 /* AVSoundPlayer.h in Headers */,
 				671C0AF61770246200DF03B3 /* ofxiOSSoundPlayer.h in Headers */,
+				67509ABD17979781003A3A29 /* ofXml.h in Headers */,
+				66EA462C17A6D396009BB12A /* ofxOpenALSoundPlayer.h in Headers */,
+				66EA462E17A6D396009BB12A /* SoundEngine.h in Headers */,
+				860B024D17A96D840032B827 /* ofxiOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1000,7 +1012,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1090,31 +1102,33 @@
 				15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */,
 				15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */,
 				15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */,
-				15594F8115C5697C00727FF2 /* ofAppiPhoneWindow.mm in Sources */,
+				15594F8115C5697C00727FF2 /* ofAppiOSWindow.mm in Sources */,
 				15594F9115C56A8A00727FF2 /* ofxiOSEAGLView.mm in Sources */,
-				15594F9215C56A8A00727FF2 /* ofxiPhoneAppDelegate.mm in Sources */,
-				15594F9315C56A8A00727FF2 /* ofxiPhoneViewController.mm in Sources */,
+				15594F9215C56A8A00727FF2 /* ofxiOSAppDelegate.mm in Sources */,
+				15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */,
 				15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */,
 				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */,
-				15594FAB15C56C9500727FF2 /* ofxiPhoneAccelerometer.mm in Sources */,
-				15594FAC15C56C9500727FF2 /* ofxiPhoneAlerts.mm in Sources */,
-				15594FBE15C56D1E00727FF2 /* ofxiPhoneCoreLocation.mm in Sources */,
-				15594FBF15C56D1E00727FF2 /* ofxiPhoneExternalDisplay.mm in Sources */,
-				15594FC015C56D1E00727FF2 /* ofxiPhoneExtras.mm in Sources */,
-				15594FC115C56D1E00727FF2 /* ofxiPhoneImagePicker.mm in Sources */,
-				15594FC215C56D1E00727FF2 /* ofxiPhoneKeyboard.mm in Sources */,
-				15594FC315C56D1E00727FF2 /* ofxiPhoneMapKit.mm in Sources */,
-				15594FC415C56D1E00727FF2 /* ofxiPhoneMapKitDelegate.mm in Sources */,
-				1594366415CF5F420087B684 /* ofiPhoneVideoGrabber.mm in Sources */,
-				1594366515CF5F420087B684 /* ofiPhoneVideoPlayer.mm in Sources */,
+				15594FAB15C56C9500727FF2 /* ofxiOSAccelerometer.mm in Sources */,
+				15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */,
+				15594FBE15C56D1E00727FF2 /* ofxiOSCoreLocation.mm in Sources */,
+				15594FBF15C56D1E00727FF2 /* ofxiOSExternalDisplay.mm in Sources */,
+				15594FC015C56D1E00727FF2 /* ofxiOSExtras.mm in Sources */,
+				15594FC115C56D1E00727FF2 /* ofxiOSImagePicker.mm in Sources */,
+				15594FC215C56D1E00727FF2 /* ofxiOSKeyboard.mm in Sources */,
+				15594FC315C56D1E00727FF2 /* ofxiOSMapKit.mm in Sources */,
+				15594FC415C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm in Sources */,
+				1594366415CF5F420087B684 /* ofxiOSVideoGrabber.mm in Sources */,
+				1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */,
 				678C3D24176F04F800D1CC68 /* ofxiOSSoundStream.mm in Sources */,
 				678C3D26176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.mm in Sources */,
 				678C3D28176F04F800D1CC68 /* SoundInputStream.m in Sources */,
 				678C3D2A176F04F800D1CC68 /* SoundOutputStream.m in Sources */,
 				678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */,
-				1594366A15CF5F650087B684 /* ofxiPhoneSoundStream.mm in Sources */,
 				671C0AF51770246200DF03B3 /* AVSoundPlayer.m in Sources */,
 				671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */,
+				67509ABC17979781003A3A29 /* ofXml.cpp in Sources */,
+				66EA462B17A6D396009BB12A /* ofxOpenALSoundPlayer.cpp in Sources */,
+				66EA462D17A6D396009BB12A /* SoundEngine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1140,7 +1154,7 @@
 					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
 					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
-				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Debug";
+				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Debug";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 			};
@@ -1164,7 +1178,7 @@
 					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
 					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
-				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Release";
+				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Release";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;

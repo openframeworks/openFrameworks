@@ -33,10 +33,10 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(bool useShapeColor)
 {
 	bBackgroundAuto = true;
 
-	lineVbo.getVertices().resize(2);
-	lineVbo.setMode(OF_PRIMITIVE_LINES);
-	triangleVbo.getVertices().resize(3);
-	rectVbo.getVertices().resize(4);
+	lineMesh.getVertices().resize(2);
+	lineMesh.setMode(OF_PRIMITIVE_LINES);
+	triangleMesh.getVertices().resize(3);
+	rectMesh.getVertices().resize(4);
 
 
     rectMode = OF_RECTMODE_CORNER;
@@ -90,52 +90,80 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, bool useColors, bool us
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
-	if(!wrongUseLoggedOnce){
-		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
-		wrongUseLoggedOnce = true;
-	}
-	// tig: note that there was a lot of code duplication going on here.
-	// using ofVbo's draw methods, to keep stuff DRY
-
 	if (vertexData.getVertices().empty()) return;
-	
-	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
 	
 	
 	// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
 	// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer. Whereas
 	// gles2.0 doesn't allow for a polygonmode.
+	// Also gles2 still supports vertex array syntax for uploading data to attributes and it seems to be faster than
+	// vbo's for meshes that are updated frequently so let's use that instead
+	
+	if (bSmoothHinted) startSmoothing();
 
-	
 #ifdef TARGET_OPENGLES
+	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
+	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), vertexData.getVerticesPointer());
 	
-	// GLES 
+	useNormals &= (vertexData.getNumNormals()>0);
+	if(useNormals){
+		glEnableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
+		glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, sizeof(ofVec3f), vertexData.getNormalsPointer());
+	}else{
+		glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
+	}
 	
+	useColors &= (vertexData.getNumColors()>0);
+	if(useColors){
+		glEnableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
+		glVertexAttribPointer(ofShader::COLOR_ATTRIBUTE, 4,GL_FLOAT, GL_FALSE, sizeof(ofFloatColor), vertexData.getColorsPointer());
+	}else{
+		glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
+	}
+
+	useTextures &= (vertexData.getNumTexCoords()>0);
+	if(useTextures){
+		glEnableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
+		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(ofVec2f), vertexData.getTexCoordsPointer());
+	}else{
+		glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
+	}
+
+
+	setAttributes(true,useColors,useTextures,useNormals);
+
 	GLenum drawMode;
 	switch(renderType){
-		case OF_MESH_POINTS:
-			drawMode = GL_POINTS;
-			break;
-		case OF_MESH_WIREFRAME:
-			drawMode = GL_LINES;
-			break;
-		case OF_MESH_FILL:
-			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-			break;
-		default:
-			// use the current fill mode to tell.
-			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-			break;
+	case OF_MESH_POINTS:
+		drawMode = GL_POINTS;
+		break;
+	case OF_MESH_WIREFRAME:
+		drawMode = GL_LINES;
+		break;
+	case OF_MESH_FILL:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
+	default:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
 	}
-	if(vertexData.hasIndices()){
-		meshVbo.drawElements(drawMode, meshVbo.getNumIndices());
-	} else {
-		meshVbo.draw(drawMode, 0, meshVbo.getNumVertices());
+
+	if(vertexData.getNumIndices()){
+		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+	}else{
+		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
 #else
 
 	// OpenGL
+	/*  some things are internally still using ofMesh
+	if(!wrongUseLoggedOnce){
+		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh";
+		wrongUseLoggedOnce = true;
+	}*/
 	
+	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
+
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	if(meshVbo.getUsingIndices()) {
 		meshVbo.drawElements(ofGetGLPrimitiveMode(vertexData.getMode()), meshVbo.getNumIndices());
@@ -154,8 +182,6 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 #endif
 	
 	if (bSmoothHinted) endSmoothing();
-	
-	//finishPrimitiveDraw();
 }
 
 //----------------------------------------------------------
@@ -165,20 +191,35 @@ void ofGLProgrammableRenderer::draw( of3dPrimitive& model, ofPolyRenderMode rend
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofPolyline & poly){
+	/*  some things are internally still using ofPolyline
 	if(!wrongUseLoggedOnce){
-		ofLogWarning() << "drawing ofMesh or ofPolyline directly is deprecated, use an ofVboMesh or ofPath";
+		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
 		wrongUseLoggedOnce = true;
-	}
-	if(!poly.getVertices().empty()) {
-		// use smoothness, if requested:
-		if (bSmoothHinted) startSmoothing();
+	}*/
+	if(poly.getVertices().empty()) return;
 
-		vertexDataVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
-		vertexDataVbo.draw(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+	// use smoothness, if requested:
+	if (bSmoothHinted) startSmoothing();
 
-		// use smoothness, if requested:
-		if (bSmoothHinted) endSmoothing();
-	}
+#ifdef TARGET_OPENGLES
+
+	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
+	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &poly[0]);
+
+	setAttributes(true,false,false,false);
+
+	GLenum drawMode = poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP;
+
+	glDrawArrays(drawMode, 0, poly.size());
+
+#else
+
+	vertexDataVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
+	vertexDataVbo.draw(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+
+#endif
+	// use smoothness, if requested:
+	if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
@@ -218,7 +259,7 @@ void ofGLProgrammableRenderer::draw(ofImage & image, float x, float y, float z, 
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -231,7 +272,7 @@ void ofGLProgrammableRenderer::draw(ofFloatImage & image, float x, float y, floa
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -244,7 +285,7 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
-			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
 	}
 }
@@ -394,7 +435,7 @@ void ofGLProgrammableRenderer::setCircleResolution(int res){
 	if((int)circlePolyline.size()!=res+1){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
-		circleVbo.getVertices() = circlePolyline.getVertices();
+		circleMesh.getVertices() = circlePolyline.getVertices();
 	}
 }
 
@@ -632,7 +673,8 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth){
 	// use geometry shaders to draw lines of varying thickness...
 	
 #ifndef TARGET_OPENGLES
-	//ofLogVerbose() << "glLineWidth has no effect in openGL3.2+\nUse a geometry shader to generate thick lines.";
+	//ofLogVerbose("ofGLProgrammableRenderer") << "setLineWidth(): has no effect in OpenGL 3.2+;
+	//<< "use a geometry shader to generate thick lines";
 #else
 	glLineWidth(lineWidth);
 #endif
@@ -712,6 +754,17 @@ void ofGLProgrammableRenderer::enablePointSprites(){
 void ofGLProgrammableRenderer::disablePointSprites(){
 }
 
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableAntiAliasing(){
+	glEnable(GL_MULTISAMPLE);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableAntiAliasing(){
+	glDisable(GL_MULTISAMPLE);
+}
+
 //----------------------------------------------------------
 ofShader & ofGLProgrammableRenderer::getCurrentShader(){
 	return *currentShader;
@@ -723,7 +776,7 @@ void ofGLProgrammableRenderer::setAlphaBitmapText(bool bitmapText){
 	bitmapStringEnabled = bitmapText;
 
 	if(wasBitmapStringEnabled!=bitmapText){
-		currentShader->setUniform1f(BITMAP_STRING_UNIFORM,bitmapText);
+		if(currentShader) currentShader->setUniform1f(BITMAP_STRING_UNIFORM,bitmapText);
 	}
 }
 
@@ -742,10 +795,10 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 
 	bool usingTexture = tex & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
-		currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
+		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
 	if(wasColorsEnabled!=color){
-		currentShader->setUniform1f(USE_COLORS_UNIFORM,color);
+		if(currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM,color);
 	}
 }
 
@@ -760,7 +813,7 @@ void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget){
 
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
-		currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
+		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
 }
 
@@ -775,7 +828,7 @@ void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget){
 
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	if(wasUsingTexture!=usingTexture){
-		currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
+		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
 }
 
@@ -810,7 +863,8 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 }
 
 void ofGLProgrammableRenderer::beginDefaultShader(){
-	if(usingCustomShader) return;
+	if(usingCustomShader)	return;
+
 	ofShader * nextShader = NULL;
 
 	if(!uniqueShader){
@@ -868,20 +922,19 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
-	//cout << "end custom shader" << endl;
 	usingCustomShader = false;
-	if(uniqueShader) beginDefaultShader();
+	if(!uniqueShader) beginDefaultShader();
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
-	lineVbo.getVertices()[0].set(x1,y1,z1);
-	lineVbo.getVertices()[1].set(x2,y2,z2);
+	lineMesh.getVertices()[0].set(x1,y1,z1);
+	lineMesh.getVertices()[1].set(x2,y2,z2);
     
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
     
-	lineVbo.draw();
+	lineMesh.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted) endSmoothing();
@@ -890,22 +943,22 @@ void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w, float h) {
 	if (rectMode == OF_RECTMODE_CORNER){
-		rectVbo.getVertices()[0].set(x,y,z);
-		rectVbo.getVertices()[1].set(x+w, y, z);
-		rectVbo.getVertices()[2].set(x+w, y+h, z);
-		rectVbo.getVertices()[3].set(x, y+h, z);
+		rectMesh.getVertices()[0].set(x,y,z);
+		rectMesh.getVertices()[1].set(x+w, y, z);
+		rectMesh.getVertices()[2].set(x+w, y+h, z);
+		rectMesh.getVertices()[3].set(x, y+h, z);
 	}else{
-		rectVbo.getVertices()[0].set(x-w/2.0f, y-h/2.0f, z);
-		rectVbo.getVertices()[1].set(x+w/2.0f, y-h/2.0f, z);
-		rectVbo.getVertices()[2].set(x+w/2.0f, y+h/2.0f, z);
-		rectVbo.getVertices()[3].set(x-w/2.0f, y+h/2.0f, z);
+		rectMesh.getVertices()[0].set(x-w/2.0f, y-h/2.0f, z);
+		rectMesh.getVertices()[1].set(x+w/2.0f, y-h/2.0f, z);
+		rectMesh.getVertices()[2].set(x+w/2.0f, y+h/2.0f, z);
+		rectMesh.getVertices()[3].set(x-w/2.0f, y+h/2.0f, z);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	rectVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
-	rectVbo.draw();
+	rectMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
+	rectMesh.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -913,15 +966,15 @@ void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w,
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-	triangleVbo.getVertices()[0].set(x1,y1,z1);
-	triangleVbo.getVertices()[1].set(x2,y2,z2);
-	triangleVbo.getVertices()[2].set(x3,y3,z3);
+	triangleMesh.getVertices()[0].set(x1,y1,z1);
+	triangleMesh.getVertices()[1].set(x2,y2,z2);
+	triangleMesh.getVertices()[2].set(x3,y3,z3);
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	triangleVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
-	triangleVbo.draw();
+	triangleMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
+	triangleMesh.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -931,14 +984,14 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radius){
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
-		circleVbo.getVertices()[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
+		circleMesh.getVertices()[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	circleVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	circleVbo.draw();
+	circleMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+	circleMesh.draw();
 	
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -950,14 +1003,14 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	float radiusY = height*0.5;
 	vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
-		circleVbo.getVertices()[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
+		circleMesh.getVertices()[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
 	}
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
 
-	circleVbo.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	circleVbo.draw();
+	circleMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+	circleMesh.draw();
     
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
@@ -974,13 +1027,23 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 
 	int len = (int)textString.length();
-	//float yOffset = 0;
 	float fontSize = 8.0f;
-	bool bOrigin = false;
+	float lineHeight = fontSize*1.7f;
+	int newLineDirection = 1.0f;
 
 	float sx = 0;
 	float sy = -fontSize;
 
+	if(!ofIsVFlipped()){
+		newLineDirection  = -1;
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(textString,"\n");
+		//y = lines*lineHeight;
+	}
+
+	if(!ofIsVFlipped()){
+		newLineDirection  = -1;
+	}
 
 	///////////////////////////
 	// APPLY TRANSFORM / VIEW
@@ -1104,17 +1167,25 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	//We do this because its way faster
 	ofDrawBitmapCharacterStart(textString.size());
 
+	int column = 0;
+
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
 
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sy += lineHeight*newLineDirection;
 			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
 			} else {
 				sx = 0;
 			}
 
-			//glRasterPos2f(x,y + (int)yOffset);
+			column = 0;
+		} else if (textString[c] == '\t'){
+			//move the cursor to the position of the next tab
+			//8 is the default tab spacing in osx terminal and windows	 command line
+			int out = column + 8 - (column % 8);
+			sx += fontSize * (out-column);
+			column = out;
 		} else if (textString[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
@@ -1122,6 +1193,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
 
 			sx += fontSize;
+			column++;
 		}
 	}
 	//We do this because its way faster
@@ -1178,8 +1250,8 @@ static string defaultFragmentShaderTexColor = STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1195,8 +1267,8 @@ static string defaultFragmentShaderTexNoColor =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1212,8 +1284,8 @@ static string defaultFragmentShaderNoTexColor = STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1229,8 +1301,8 @@ static string defaultFragmentShaderNoTexNoColor  =  STRINGIFY(
 		precision lowp float;
 
 		uniform sampler2D src_tex_unit0;
-		uniform float useTexture;
-		uniform float useColors;
+		uniform float usingTexture;
+		uniform float usingColors;
 		uniform vec4 globalColor;
 
 		varying float depth;
@@ -1353,7 +1425,7 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 
 	in vec4  position;
 	in vec2  texcoord;
-	in vec4  color_coord;
+	in vec4  color;
 	in vec3  normal;
 	 
 	out vec4 colorVarying;
@@ -1362,7 +1434,7 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 
 	void main()
 	{
-		colorVarying = color_coord;
+		colorVarying = color;
 		texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
 		gl_Position = modelViewProjectionMatrix * position;
 	}
@@ -1373,8 +1445,8 @@ static string defaultVertexShader = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1393,8 +1465,8 @@ static string defaultFragmentShaderTexColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1413,8 +1485,8 @@ static string defaultFragmentShaderTexNoColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1433,8 +1505,8 @@ static string defaultFragmentShaderTex2DColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 	
 	in float depth;
@@ -1453,8 +1525,8 @@ static string defaultFragmentShaderTex2DNoColor = "#version 150\n" STRINGIFY(
 static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1473,8 +1545,8 @@ static string defaultFragmentShaderNoTexColor = "#version 150\n" STRINGIFY (
 static string defaultFragmentShaderNoTexNoColor = "#version 150\n" STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
-	uniform float useTexture = 0.0;
-	uniform float useColors = 0.0;
+	uniform float usingTexture = 0.0;
+	uniform float usingColors = 0.0;
 	uniform vec4 globalColor = vec4(1.0);
 
 	in float depth;
@@ -1656,6 +1728,13 @@ void ofGLProgrammableRenderer::setup(){
 		bitmapStringShader().bindDefaults();
 		bitmapStringShader().linkProgram();
 	}
+
+#ifndef TARGET_OPENGLES
+	circleMesh.setUsage(GL_STREAM_DRAW);
+	triangleMesh.setUsage(GL_STREAM_DRAW);
+	rectMesh.setUsage(GL_STREAM_DRAW);
+	lineMesh.setUsage(GL_STREAM_DRAW);
+#endif
 }
 
 

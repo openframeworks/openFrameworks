@@ -417,6 +417,9 @@ string getOFRoot(){
 	return ofFilePath::removeTrailingSlash(OFRoot);
 }
 
+string getAddonsRoot(){
+	return ofFilePath::join(getOFRoot(), "addons");
+}
 
 void setOFRoot(string path){
 	OFRoot = path;

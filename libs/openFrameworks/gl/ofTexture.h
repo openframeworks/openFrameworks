@@ -59,6 +59,7 @@ public:
 		compressionType = OF_COMPRESS_NONE;
 		bAllocated = false;
 		bUseExternalTextureID = false;
+		useTextureMatrix = false;
 	}
 
 	unsigned int textureID;
@@ -75,12 +76,15 @@ public:
 	ofTexCompression compressionType;
 	bool bAllocated;
 	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
+	ofMatrix4x4 textureMatrix;
+	bool useTextureMatrix;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
 //enabled by default
 void ofEnableTextureEdgeHack();
 void ofDisableTextureEdgeHack();
+bool ofIsTextureEdgeHackEnabled();
 
 class ofTexture : public ofBaseDraws {
 	public :
@@ -109,6 +113,10 @@ class ofTexture : public ofBaseDraws {
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention, int glFormat, int pixelType); //lets you overide the default OF texture type
 	virtual void allocate(const ofPixels& pix);
 	virtual void allocate(const ofPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofShortPixels& pix);
+	virtual void allocate(const ofShortPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofFloatPixels& pix);
+	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
 
 	void setUseExternalTextureID(GLuint externTexID); //allows you to point ofTexture's texture id to an externally allocated id. 
@@ -127,6 +135,10 @@ class ofTexture : public ofBaseDraws {
 	void loadData(const ofShortPixels & pix, int glFormat);
 	void loadData(const ofFloatPixels & pix, int glFormat);
 	
+	// in openGL3+ use 1 channel GL_R as luminance instead of red channel
+	void setRGToRGBASwizzles(bool rToRGBSwizzles);
+
+
 	void loadScreenData(int x, int y, int w, int h);
 
 	//the anchor is the point the image is drawn around.
@@ -186,5 +198,5 @@ protected:
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-	ofVboMesh quad;
+	ofMesh quad;
 };

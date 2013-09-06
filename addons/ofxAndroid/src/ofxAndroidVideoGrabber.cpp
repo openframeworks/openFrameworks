@@ -28,7 +28,7 @@ static jclass getJavaClass(){
 	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
 
 	if(javaClass==NULL){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidVideoGrabber java class");
+		ofLogError("ofxAndroidVideoGrabber") << "couldn't find OFAndroidVideoGrabber java class";
 	}
 
 	return javaClass;
@@ -36,7 +36,7 @@ static jclass getJavaClass(){
 
 bool ofxAndroidInitGrabber(ofVideoGrabber * grabber){
 	if(instances.size()>0){
-		ofLog(OF_LOG_ERROR,"ofVideoGrabber: This version is limited to 1 camera at the same time");
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): grabbing from multiple cameras not currently supported";
 		return false;
 	}
 
@@ -47,7 +47,7 @@ bool ofxAndroidInitGrabber(ofVideoGrabber * grabber){
 
 	jmethodID videoGrabberConstructor = env->GetMethodID(javaClass,"<init>","()V");
 	if(!videoGrabberConstructor){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidVideoGrabber constructor");
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't find OFAndroidVideoGrabber constructor";
 		return false;
 	}
 
@@ -57,7 +57,7 @@ bool ofxAndroidInitGrabber(ofVideoGrabber * grabber){
 		cameraId = env->CallIntMethod(javaObject,javaCameraId);
 		instances[cameraId]=grabber;
 	}else{
-		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber camera id");
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber camera id";
 		return false;
 	}
 	return true;
@@ -70,7 +70,7 @@ bool ofxAndroidCloseGrabber(ofVideoGrabber * grabber){
 
 void ofPauseVideoGrabbers(){
 	paused = true;
-	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: releasing textures");
+	ofLogVerbose("ofxAndroidVideoGrabber") << "ofPauseVideoGrabbers(): releasing textures";
 	map<int,ofVideoGrabber*>::iterator it;
 	for(it=instances.begin(); it!=instances.end(); it++){
 		it->second->getTextureReference().texData.textureID=0;
@@ -78,12 +78,12 @@ void ofPauseVideoGrabbers(){
 }
 
 void ofResumeVideoGrabbers(){
-	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: trying to allocate textures");
+	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): trying to allocate textures";
 	map<int,ofVideoGrabber*>::iterator it;
 	for(it=instances.begin(); it!=instances.end(); it++){
 		it->second->getTextureReference().allocate(it->second->getWidth(),it->second->getHeight(),GL_RGB);
 	}
-	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: textures allocated");
+	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): textures allocated";
 	paused = false;
 }
 
@@ -92,7 +92,7 @@ static void InitConvertTable();
 jobject getCamera(JNIEnv *env, jclass javaClass, jint id){
 	jmethodID getInstanceMethod = env->GetStaticMethodID(javaClass,"getInstance","(I)Lcc/openframeworks/OFAndroidVideoGrabber;");
 	if(!getInstanceMethod){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidVideoGrabber getInstance method");
+		ofLogError("ofxAndroidVideoGrabber") << "getCamera(): couldn't find OFAndroidVideoGrabber getInstance method";
 		return NULL;
 	}
 	return env->CallStaticObjectMethod(javaClass,getInstanceMethod,id);
@@ -122,8 +122,9 @@ ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 	releaseJavaObject();
 }
 
-void ofxAndroidVideoGrabber::listDevices(){
 
+vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices(){
+	return vector<ofVideoDevice>();
 }
 
 bool ofxAndroidVideoGrabber::isFrameNew(){
@@ -132,12 +133,12 @@ bool ofxAndroidVideoGrabber::isFrameNew(){
 
 void ofxAndroidVideoGrabber::update(){
 	if(paused){
-		//ofLog(OF_LOG_WARNING,"ofVideoGrabber paused cannot grab frame");
+		//ofLogWarning("ofxAndroidVideoGrabber") << "update(): couldn't grab frame, movie is paused";
 		return;
 	}
-	//ofLog(OF_LOG_NOTICE,"updating camera");
+	//ofLogVerbose("ofxAndroidVideoGrabber") << "update(): updating camera";
 	if(bGrabberInited && newPixels){
-		//ofLog(OF_LOG_NOTICE,"new pixels");
+		//ofLogVerbose("ofxAndroidVideoGrabber") << "update(): new pixels";
 		newPixels = false;
 		bIsFrameNew = true;
 	}else{
@@ -151,11 +152,11 @@ void ofxAndroidVideoGrabber::close(){
 
 bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	if(instances.find(cameraId)==instances.end()){
-		ofLog(OF_LOG_ERROR,"ofVideoGrabber: Cannot initialize more than one instance in this version");
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): multiple grabber instances not currently supported";
 		return false;
 	}
 	if(bGrabberInited){
-		ofLog(OF_LOG_ERROR,"ofVideoGrabber: Camera already initialized");
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): camera already initialized";
 		return false;
 	}
 
@@ -169,15 +170,15 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	if(camera && javaInitGrabber){
 		env->CallVoidMethod(camera,javaInitGrabber,w,h,attemptFramerate);
 	}else{
-		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber init grabber method");
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
 		return false;
 	}
 
-	//ofLog(OF_LOG_NOTICE,"new frame callback size: " + ofToString((int)width) + "," + ofToString((int)height));
+	//ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): new frame callback size: " << (int) width << "x" << (int) height;
 	pixels.allocate(w,h,getPixelFormat());
 	bGrabberInited = true;
 
-	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: Camera initialized correctly");
+	ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): camera initialized correctly";
 	paused = false;
 	return true;
 }
@@ -209,7 +210,7 @@ void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 	if(camera && javasetDeviceID){
 		env->CallVoidMethod(camera,javasetDeviceID,_deviceID);
 	}else{
-		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber setDeviceID method");
+		ofLogError("ofxAndroidVideoGrabber") << "setDeviceID(): couldn't get OFAndroidVideoGrabber setDeviceID method";
 		return;
 	}
 }
@@ -225,7 +226,7 @@ bool ofxAndroidVideoGrabber::setAutoFocus(bool autofocus){
 	if(camera && javasetAutoFocus){
 		return env->CallBooleanMethod(camera,javasetAutoFocus,autofocus);
 	}else{
-		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber setAutoFocus method");
+		ofLogError("ofxAndroidVideoGrabber") << "setAutoFocus(): couldn't get OFAndroidVideoGrabber setAutoFocus method";
 		return false;
 	}
 }
@@ -490,9 +491,9 @@ void ConvertYUV2toRGB565_2(unsigned char *src0,unsigned char *src1,unsigned char
 extern "C"{
 jint
 Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thiz, jbyteArray array, jint width, jint height){
-	//ofLog(OF_LOG_NOTICE,"new pixels callback");
+	//oofLogVerbose("ofxAndroidVideoGrabber") << "new pixels callback";
 	if(ofGetAppPtr()!=NULL){
-		//ofLog(OF_LOG_NOTICE,"gettings pixels app not null");
+		//ofLogVerbose("ofxAndroidVideoGrabber") << "gettings pixels app not null";
 		buffer = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
 		if(!buffer) return 1;
 
@@ -529,7 +530,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		num_frames ++;
 		if(ofGetSystemTime() - time_prev_out > 5000){
 			time_prev_out = ofGetSystemTime();
-			ofLog(OF_LOG_NOTICE,"avg time: %f" , float(acc_time)/float(num_frames));
+			ofLogNotice("ofxAndroidVideoGrabber") << "avg time: " << float(acc_time)/float(num_frames);
 		}*/
 
 		env->ReleasePrimitiveArrayCritical(array,buffer,0);

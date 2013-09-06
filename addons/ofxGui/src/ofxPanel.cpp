@@ -23,26 +23,28 @@ ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x
 
 ofxPanel * ofxPanel::setup(string collectionName, string filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		unsigned char loadIconData[] = {0x38,0x88,0xa,0x6,0x7e,0x60,0x50,0x11,0x1c};
-		unsigned char saveIconData[] = {0xff,0x4a,0x95,0xea,0x15,0xa8,0x57,0xa9,0x7f};
-		loadIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
-		saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
-		loadStencilFromHex(loadIcon, loadIconData);
-		loadStencilFromHex(saveIcon, saveIconData);
+		loadIcons();
 	}
 	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
 }
 
 ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, string filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		unsigned char loadIconData[] = {0x38,0x88,0xa,0x6,0x7e,0x60,0x50,0x11,0x1c};
-		unsigned char saveIconData[] = {0xff,0x4a,0x95,0xea,0x15,0xa8,0x57,0xa9,0x7f};
-		loadIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
-		saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
-		loadStencilFromHex(loadIcon, loadIconData);
-		loadStencilFromHex(saveIcon, saveIconData);
+		loadIcons();
 	}
 	return (ofxPanel*)ofxGuiGroup::setup(parameters,filename,x,y);
+}
+
+void ofxPanel::loadIcons(){
+	unsigned char loadIconData[] = {0x38,0x88,0xa,0x6,0x7e,0x60,0x50,0x11,0x1c};
+	unsigned char saveIconData[] = {0xff,0x4a,0x95,0xea,0x15,0xa8,0x57,0xa9,0x7f};
+	loadIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
+	saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
+	loadStencilFromHex(loadIcon, loadIconData);
+	loadStencilFromHex(saveIcon, saveIconData);
+
+	loadIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+	saveIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 }
 
 void ofxPanel::generateDraw(){
@@ -50,31 +52,26 @@ void ofxPanel::generateDraw(){
 	border.setStrokeColor(thisBorderColor);
 	border.setStrokeWidth(1);
 	border.setFilled(false);
-	border.moveTo(b.x,b.y);
-	border.lineTo(b.x+b.width+1,b.y);
-	border.lineTo(b.x+b.width+1,b.y+b.height-spacingNextElement);
-	border.lineTo(b.x,b.y+b.height-spacingNextElement);
-	border.close();
+	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
 
 
 	headerBg.clear();
 	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
 	headerBg.setFilled(true);
-	headerBg.moveTo(b.x,b.y+1);
-	headerBg.lineTo(b.x+b.width,b.y+1);
-	headerBg.lineTo(b.x+b.width,b.y+header+1);
-	headerBg.lineTo(b.x,b.y+header+1);
-	headerBg.close();
+	headerBg.rectangle(b.x,b.y+1,b.width,header);
 
-	int iconSpacing = 6;
-	loadBox.x = b.x + b.width - (loadIcon.getWidth() + saveIcon.getWidth() + iconSpacing + textPadding);
-	loadBox.y = b.y + header / 2 - loadIcon.getHeight() / 2;
-	loadBox.width = loadIcon.getWidth();
-	loadBox.height = loadIcon.getHeight();
+	float iconHeight = header*.5;
+	float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
+	int iconSpacing = iconWidth*.5;
+
+	loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
+	loadBox.y = b.y + header / 2. - iconHeight / 2.;
+	loadBox.width = iconWidth;
+	loadBox.height = iconHeight;
 	saveBox.set(loadBox);
-	saveBox.x += loadIcon.getWidth() + iconSpacing;
+	saveBox.x += iconWidth + iconSpacing;
 
-	textMesh = font.getStringMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
 }
 
 void ofxPanel::render(){
@@ -87,13 +84,18 @@ void ofxPanel::render(){
 	}
 	ofColor c = ofGetStyle().color;
 	ofSetColor(thisTextColor);
-	font.getFontTexture().bind();
 
+	bindFontTexture();
 	textMesh.draw();
-	font.getFontTexture().unbind();
+	unbindFontTexture();
 
-	loadIcon.draw(loadBox.x, loadBox.y);
-	saveIcon.draw(saveBox.x, saveBox.y);
+	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+	ofDisableTextureEdgeHack();
+	loadIcon.draw(loadBox);
+	saveIcon.draw(saveBox);
+	if(texHackEnabled){
+		ofEnableTextureEdgeHack();
+	}
 
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->draw();

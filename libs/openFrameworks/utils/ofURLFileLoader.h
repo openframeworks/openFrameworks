@@ -12,7 +12,9 @@
 
 class ofHttpRequest{
 public:
-	ofHttpRequest(){};
+	ofHttpRequest()
+	:saveTo(false)
+	,id(nextID++){};
 
 	ofHttpRequest(string url,string name,bool saveTo=false)
 	:url(url)
@@ -79,20 +81,20 @@ class ofURLFileLoader : public ofThread  {
 
     public:
 
-        ofURLFileLoader();
+        ofURLFileLoader();	
         ofHttpResponse get(string url);
         int getAsync(string url, string name=""); // returns id
         ofHttpResponse saveTo(string url, string path);
         int saveAsync(string url, string path);
 		void remove(int id);
 		void clear();
+        void stop();
 
     protected:
 
 		// threading -----------------------------------------------
 		void threadedFunction();
         void start();
-        void stop();
         void update(ofEventArgs & args);  // notify in update so the notification is thread safe
 
     private:

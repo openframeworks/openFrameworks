@@ -9,9 +9,7 @@ void ofxSVG::load(string path){
 	path = ofToDataPath(path);
 
 	if(path.compare("") == 0){
-		stringstream ss;
-		ss << path << " does not exist " << endl;
-		ofLog(OF_LOG_ERROR, ss.str());
+		ofLogError("ofxSVG") << "load(): path does not exist: \"" << path << "\"";
 		return;
 	}
 
@@ -22,29 +20,29 @@ void ofxSVG::load(string path){
 	svgtiny_code code = svgtiny_parse(diagram, buffer.getText().c_str(), size, path.c_str(), 0, 0);
 
 	if(code != svgtiny_OK){
-		ofLogError() << "svgtiny_parse failed: ";
+		string msg;
 		switch(code){
 		 case svgtiny_OUT_OF_MEMORY:
-			 ofLogError() << "svgtiny_OUT_OF_MEMORY";
+			 msg = "svgtiny_OUT_OF_MEMORY";
 			 break;
 
 		 case svgtiny_LIBXML_ERROR:
-			 ofLogError() << "svgtiny_LIBXML_ERROR";
+			 msg = "svgtiny_LIBXML_ERROR";
 			 break;
 
 		 case svgtiny_NOT_SVG:
-			 ofLogError() << "svgtiny_NOT_SVG";
+			 msg = "svgtiny_NOT_SVG";
 			 break;
 
 		 case svgtiny_SVG_ERROR:
-			 ofLogError() << "svgtiny_SVG_ERROR: line " << diagram->error_line << ": " << diagram->error_message;
+			 msg = "svgtiny_SVG_ERROR: line " + ofToString(diagram->error_line) + ": " + diagram->error_message;
 			 break;
 
 		 default:
-			 ofLogError() << "unknown svgtiny_code " << code;
+			 msg = "unknown svgtiny_code " + ofToString(code);
 			 break;
 		}
-		ofLogError() << endl;
+		ofLogError("ofxSVG") << "load(): couldn't parse \"" << path << "\": " << msg;
 	}
 
 	setupDiagram(diagram);
@@ -69,7 +67,7 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 			paths.push_back(ofPath());
 			setupShape(&diagram->shape[i],paths.back());
 		}else if(diagram->shape[i].text){
-			ofLogWarning() << "text: not implemented yet";
+			ofLogWarning("ofxSVG") << "setupDiagram(): text: not implemented yet";
 		}
 	}
 }
@@ -82,14 +80,13 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	if(shape->fill != svgtiny_TRANSPARENT){
 		path.setFilled(true);
 		path.setFillHexColor(shape->fill);
-	}
+		path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+    }
 
 	if(shape->stroke != svgtiny_TRANSPARENT){
 		path.setStrokeWidth(shape->stroke_width);
 		path.setStrokeHexColor(shape->stroke);
 	}
-
-	path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 
 	for(int i = 0; i < (int)shape->path_length;){
 		if(p[i] == svgtiny_PATH_MOVE){
@@ -112,7 +109,7 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 			i += 7;
 		}
 		else{
-			ofLogError() << "SVG parse error";
+			ofLogError("ofxSVG") << "setupShape(): SVG parse error";
 			i += 1;
 		}
 	}

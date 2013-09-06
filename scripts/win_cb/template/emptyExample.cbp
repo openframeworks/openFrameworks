@@ -52,6 +52,7 @@
 			<Add directory="..\..\..\libs\videoInput\include" />
 			<Add directory="..\..\..\libs\glew\include" />
 			<Add directory="..\..\..\libs\glut\include" />
+			<Add directory="..\..\..\libs\glfw\include" />
 			<Add directory="..\..\..\libs\openFrameworks" />
 			<Add directory="..\..\..\libs\openFrameworks\3d" />
 			<Add directory="..\..\..\libs\openFrameworks\app" />
@@ -76,9 +77,7 @@
 			<Add library="..\..\..\libs\cairo\lib\win_cb\libpixman-1.a" />
 			<Add library="..\..\..\libs\freetype\lib\win_cb\libfreetype.a" />
 			<Add library="..\..\..\libs\glut\lib\win_cb\libglut.a" />			
-			<Add library="..\..\..\libs\glfw\lib\win_cb\libglfw3.a" />		
-			<Add library="..\..\..\libs\glfw\lib\win_cb\glfw3dll.a" />	
-			<Add library="..\..\..\libs\glfw\lib\win_cb\glfw3.dll" />
+			<Add library="..\..\..\libs\glfw\lib\win_cb\libglfw3.a" />	
 			<Add library="..\..\..\libs\videoInput\lib\win_cb\videoInputLib.a" />
 			<Add library="..\..\..\libs\fmodex\lib\win_cb\libfmodex.a" />
 			<Add library="..\..\..\libs\glew\lib\win_cb\glew32s.lib" />
@@ -122,10 +121,10 @@
 		<Unit filename="src\main.cpp">
 			<Option virtualFolder="src" />
 		</Unit>
-		<Unit filename="src\testApp.cpp">
+		<Unit filename="src\ofApp.cpp">
 			<Option virtualFolder="src" />
 		</Unit>
-		<Unit filename="src\testApp.h">
+		<Unit filename="src\ofApp.h">
 			<Option virtualFolder="src" />
 		</Unit>
 		<Extensions>

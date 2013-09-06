@@ -1,11 +1,14 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
+#include "ofGraphics.h"
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
-	bUseTexture					= true;
-	playerTex					= NULL;
+	bUseTexture			= true;
+	playerTex			= NULL;
 	internalPixelFormat = OF_PIXELS_RGB;
+	height 				= 0;
+	width 				= 0;
 }
 
 //---------------------------------------------------------------------------
@@ -27,7 +30,7 @@ ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 	if( player != NULL ){
 		if( player->isLoaded() ){
-			ofLogWarning("ofVideoPlayer") << "setPixelFormat - can't be called on a movie that is already loaded ";
+			ofLogWarning("ofVideoPlayer") << "setPixelFormat(): can't set pixel format of a loaded movie";
 			internalPixelFormat = player->getPixelFormat(); 
 			return false;
 		}else{
@@ -54,12 +57,12 @@ ofPixelFormat ofVideoPlayer::getPixelFormat(){
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
-	#ifndef TARGET_ANDROID
+	//#ifndef TARGET_ANDROID
 		if( player == NULL ){
 			setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 			player->setPixelFormat(internalPixelFormat);
 		}
-	#endif
+	//#endif
 	
 	bool bOk = player->loadMovie(name);
 	width	 = player->getWidth();
@@ -70,6 +73,9 @@ bool ofVideoPlayer::loadMovie(string name){
         if(bUseTexture ){
             if(width!=0 && height!=0) {
                 tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+        			tex.setRGToRGBASwizzles(true);
+        		}
             }
         }
     }
@@ -158,6 +164,9 @@ void ofVideoPlayer::update(){
 							tex.clear();
 
 						tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+		        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+		        			tex.setRGToRGBASwizzles(true);
+		        		}
 						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 					}
 				}else{					
@@ -199,8 +208,7 @@ void ofVideoPlayer::stop(){
 void ofVideoPlayer::setVolume(float volume){
 	if( player != NULL ){
 		if ( volume > 1.0f ){
-			ofLogWarning("ofVideoPlayer") << "*** the range of setVolume changed with oF0072 from int [0..100] to float [0..1].";
-			ofLogWarning("ofVideoPlayer") << "*** limiting input volume " << volume << " to 1.0f.";
+			ofLogWarning("ofVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
 			volume = 1.0f;
 		}
 		player->setVolume(volume);
@@ -320,6 +328,9 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 	if(bUse && width!=0 && height!=0 && !tex.isAllocated()){
 		tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 }
 
@@ -345,7 +356,7 @@ void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y){
-	getTextureReference().draw(_x, _y);
+	draw(_x, _y, width, height);
 }
 
 //------------------------------------

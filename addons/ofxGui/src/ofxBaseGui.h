@@ -15,10 +15,10 @@ public:
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	
-	void setDefaultSerializer(ofBaseFileSerializer& serializer);
+	void setDefaultSerializer(ofPtr<ofBaseFileSerializer> serializer);
 
-	virtual void saveTo(ofBaseFileSerializer& serializer);
-	virtual void loadFrom(ofBaseFileSerializer& serializer);
+	virtual void saveTo(ofBaseSerializer& serializer);
+	virtual void loadFrom(ofBaseSerializer& serializer);
 	
 	string getName();
 	void setName(string name);
@@ -46,8 +46,19 @@ public:
 	void setTextColor(const ofColor & color);
 	void setFillColor(const ofColor & color);
 
+	static void setDefaultHeaderBackgroundColor(const ofColor & color);
+	static void setDefaultBackgroundColor(const ofColor & color);
+	static void setDefaultBorderColor(const ofColor & color);
+	static void setDefaultTextColor(const ofColor & color);
+	static void setDefaultFillColor(const ofColor & color);
+
+	static void setDefaultTextPadding(int padding);
+	static void setDefaultWidth(int width);
+	static void setDefaultHeight(int height);
+
 	virtual ofAbstractParameter & getParameter() = 0;
 	static void loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
+	static void setUseTTF(bool bUseTTF);
 
 
 	virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
@@ -58,17 +69,22 @@ protected:
 	virtual void render()=0;
 	bool isGuiDrawing();
 	virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
+	void bindFontTexture();
+	void unbindFontTexture();
+	ofMesh & getTextMesh(const string & text, float x, float y);
+	ofRectangle getTextBoundingBox(const string & text,float x, float y);
 
 	ofRectangle b;
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
-	ofBaseFileSerializer * serializer;
+	static bool useTTF;
+	ofPtr<ofBaseFileSerializer> serializer;
 
-	static const ofColor headerBackgroundColor;
-	static const ofColor backgroundColor;
-	static const ofColor borderColor;
-	static const ofColor textColor;
-	static const ofColor fillColor;
+	static ofColor headerBackgroundColor;
+	static ofColor backgroundColor;
+	static ofColor borderColor;
+	static ofColor textColor;
+	static ofColor fillColor;
 
 	ofColor thisHeaderBackgroundColor;
 	ofColor thisBackgroundColor;
@@ -76,9 +92,9 @@ protected:
 	ofColor thisTextColor;
 	ofColor thisFillColor;
 
-	static const int textPadding;
-	static const int defaultWidth;
-	static const int defaultHeight;
+	static int textPadding;
+	static int defaultWidth;
+	static int defaultHeight;
 
 	static string saveStencilToHex(ofImage& img);
 	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;

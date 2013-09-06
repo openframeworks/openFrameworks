@@ -195,6 +195,14 @@ void xcodeProject::saveWorkspaceXML(){
 
 }
 
+void xcodeProject::saveMakefile(){
+    string makefile = ofFilePath::join(projectDir,"Makefile");
+    ofFile::copyFromTo(templatePath + "Makefile", makefile);
+
+    string configmake = ofFilePath::join(projectDir,"config.make");
+    ofFile::copyFromTo(templatePath + "config.make", configmake);
+}
+
 
 bool xcodeProject::createProjectFile(){
     // todo: some error checking.
@@ -227,8 +235,8 @@ bool xcodeProject::createProjectFile(){
 		}
 
     }else{
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiOS-Info.plist"),projectDir, true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiOS_Prefix.pch"),projectDir, true, true);
 
 		ofDirectory binDirectory(ofFilePath::join(projectDir, "bin"));
 		if (!binDirectory.exists()){
@@ -258,6 +266,7 @@ bool xcodeProject::createProjectFile(){
 
     saveWorkspaceXML();
     saveScheme();
+    saveMakefile();
 
     // make everything relative the right way.
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
@@ -622,7 +631,7 @@ void xcodeProject::addInclude(string includeName){
 
 
 
-    char query[255];
+    char query[256];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'HEADER_SEARCH_PATHS')]/following-sibling::node()[1]");
     pugi::xpath_node_set headerArray = doc.select_nodes(query);
 
@@ -637,7 +646,6 @@ void xcodeProject::addInclude(string includeName){
     } else {
 
         //printf("we don't have HEADER_SEARCH_PATHS, so we're adding them... and calling this function again \n");
-        query[255];
         sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'buildSettings')]/following-sibling::node()[1]");
         pugi::xpath_node_set dictArray = doc.select_nodes(query);
 

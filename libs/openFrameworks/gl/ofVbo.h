@@ -76,6 +76,10 @@ public:
 	
 	void draw(int drawMode, int first, int total);
 	void drawElements(int drawMode, int amt);
+	
+	void drawInstanced(int drawMode, int first, int total, int primCount);
+	void drawElementsInstanced(int drawMode, int amt, int primCount);
+	
 	void bind();
 	void unbind();
 
@@ -90,6 +94,10 @@ public:
 	int getNumVertices() const;
 	int getNumIndices() const;
 	
+
+	static void disableVAOs();
+	static void enableVAOs();
+
 private:
 	GLuint vaoID;
 	bool vaoChanged;

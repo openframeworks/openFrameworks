@@ -3,8 +3,8 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 7
-#define OF_VERSION_PATCH 4
+#define OF_VERSION_MINOR 8
+#define OF_VERSION_PATCH 0
 
 //-------------------------------
 
@@ -18,13 +18,17 @@ enum ofTargetPlatform{
 	OF_TARGET_OSX,
 	OF_TARGET_WINGCC,
 	OF_TARGET_WINVS,
-	OF_TARGET_IPHONE,
+	OF_TARGET_IOS,
 	OF_TARGET_ANDROID,
 	OF_TARGET_LINUX,
 	OF_TARGET_LINUX64,
 	OF_TARGET_LINUXARMV6L, // arm v6 little endian
 	OF_TARGET_LINUXARMV7L, // arm v7 little endian
 };
+
+#ifndef OF_TARGET_IPHONE
+    #define OF_TARGET_IPHONE OF_TARGET_IOS
+#endif 
 
 // Cross-platform deprecation warning
 #ifdef __GNUC__
@@ -58,6 +62,7 @@ enum ofTargetPlatform{
 
 	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
+        #define TARGET_OF_IOS
 		#define TARGET_OPENGLES
 	#else
 		#define TARGET_OSX
@@ -184,7 +189,7 @@ enum ofTargetPlatform{
 #endif
 
 
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_OF_IOS
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
 
@@ -231,7 +236,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------ capture
 // check if any video capture system is already defined from the compiler
-#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IPHONE)
+#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
 	#ifdef TARGET_LINUX
 
 		#define OF_VIDEO_CAPTURE_GSTREAMER
@@ -263,21 +268,23 @@ typedef TESSindex ofIndexType;
 
 		#define OF_VIDEO_CAPTURE_ANDROID
 
-	#elif defined(TARGET_OF_IPHONE)
+	#elif defined(TARGET_OF_IOS)
 
-		#define OF_VIDEO_CAPTURE_IPHONE
+		#define OF_VIDEO_CAPTURE_IOS
 
 	#endif
 #endif
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
+	#elif defined(TARGET_ANDROID)
+		#define OF_VIDEO_PLAYER_ANDROID
 	#else
-		#ifdef TARGET_OF_IPHONE
-			#define OF_VIDEO_PLAYER_IPHONE
+		#ifdef TARGET_OF_IOS
+			#define OF_VIDEO_PLAYER_IOS
         #elif defined(TARGET_OSX)
 			//for 10.7 and 10.8 users we use QTKit for 10.6 users we use QuickTime
 			#ifndef MAC_OS_X_VERSION_10_7
@@ -294,21 +301,19 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------ soundstream
 // check if any soundstream api is defined from the compiler
 #if !defined(OF_SOUNDSTREAM_PORTAUDIO) && !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID)
-	#ifdef TARGET_LINUX
-		#define OF_SOUNDSTREAM_PORTAUDIO
-	#elif defined(TARGET_WIN32) || defined(TARGET_OSX)
+	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
 		#define OF_SOUNDSTREAM_RTAUDIO
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
 	#else
-		#define OF_SOUNDSTREAM_IPHONE
+		#define OF_SOUNDSTREAM_IOS
 	#endif
 #endif
 
 //------------------------------------------------ soundplayer
 // check if any soundplayer api is defined from the compiler
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL)
-  #ifdef TARGET_OF_IPHONE
+  #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
   #elif defined TARGET_LINUX
   	#define OF_SOUND_PLAYER_OPENAL
@@ -384,7 +389,7 @@ using namespace std;
 #endif
 
 #ifndef CLAMP
-	#define CLAMP(val,min,max) (MAX(MIN(val,max),min))
+	#define CLAMP(val,min,max) ((val) < (min) ? (min) : ((val > max) ? (max) : (val)))
 #endif
 
 #ifndef ABS
@@ -534,10 +539,9 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
-	#define OF_KEY_CTRL			0x0200
-	#define OF_KEY_ALT			0x0300
-	#define OF_KEY_SHIFT		0x0400
-
+    #define OF_KEY_TAB          9
+    #define OF_KEY_COMMAND      OF_KEY_SUPER
+    
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
 
@@ -574,14 +578,18 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_SHIFT	(109 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_CONTROL	(110 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_ALT		(111 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_SUPER	(112 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_SHIFT	(113 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_CONTROL (114 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_ALT	(115 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT_SUPER	(116 | OF_KEY_MODIFIER)
+	#define OF_KEY_CONTROL		(0x200 | OF_KEY_MODIFIER)
+	#define OF_KEY_ALT			(0x400 | OF_KEY_MODIFIER)
+	#define OF_KEY_SHIFT		(0x800 | OF_KEY_MODIFIER)
+	#define OF_KEY_SUPER		(0x1000 | OF_KEY_MODIFIER)
+	#define OF_KEY_LEFT_SHIFT	(0x1 | OF_KEY_SHIFT)
+	#define OF_KEY_RIGHT_SHIFT	(0x2 | OF_KEY_SHIFT)
+	#define OF_KEY_LEFT_CONTROL	(0x1 | OF_KEY_CONTROL)
+	#define OF_KEY_RIGHT_CONTROL (0x2 | OF_KEY_CONTROL)
+	#define OF_KEY_LEFT_ALT		(0x1 | OF_KEY_ALT)
+	#define OF_KEY_RIGHT_ALT	(0x2 | OF_KEY_ALT)
+	#define OF_KEY_LEFT_SUPER	(0x1 | OF_KEY_SUPER)
+	#define OF_KEY_RIGHT_SUPER	(0x2 | OF_KEY_SUPER)
 	#define OF_KEY_LEFT_COMMAND OF_KEY_LEFT_SUPER
 	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
 // not sure what to do in the case of non-glut apps....
@@ -627,6 +635,29 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_CONSOLE_COLOR_WHITE (37)
 
 #endif
+
+
+enum ofPixelFormat{
+	// grayscale
+	OF_PIXELS_MONO = 0,
+
+	// rgb (can be 8,16 or 32 bpp depending on pixeltype)
+	OF_PIXELS_RGB,
+	OF_PIXELS_BGR,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA,
+
+	// rgb 16bit
+	OF_PIXELS_RGB565,
+
+	// yuv
+	OF_PIXELS_NV12,
+	OF_PIXELS_YV12,
+	OF_PIXELS_I420,
+	OF_PIXELS_YUY2,
+
+	OF_PIXELS_UNKOWN
+};
 
 
 //--------------------------------------------

@@ -44,6 +44,7 @@ ALL_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
 ALL_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
+CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
 
 ################################################################################
 # COMPILER OPTIMIZATIONS and TARGET GENERATION
@@ -225,25 +226,25 @@ all:
 #This rule does the compilation
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
 	@echo "Compiling" $<
-	mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(@D)
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.mm
 	@echo "Compiling" $<
-	mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(@D)
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.m
 	@echo "Compiling" $<
-	mkdir -p $(@D)
-	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(@D)
+	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
 # this target does the linking of the library
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
 # $(OF_CORE_OBJ_FILES) must be processed first  
 $(TARGET) : $(OF_CORE_OBJ_FILES) 
 	@echo "Creating library " $(TARGET)
-	mkdir -p $(@D)
+	@mkdir -p $(@D)
 	$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
 
 -include $(OF_CORE_DEPENDENCY_FILES)

@@ -16,6 +16,8 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
+#include "ofURLFileLoader.h"
+#include "Poco/Net/SSLManager.h"
 
 
 // TODO: closing seems wonky.
@@ -36,8 +38,8 @@ static ofPtr<ofAppBaseWindow> 		window;
 // default windowing
 #ifdef TARGET_NODISPLAY
 	#include "ofAppNoWindow.h"
-#elif defined(TARGET_OF_IPHONE)
-	#include "ofAppiPhoneWindow.h"
+#elif defined(TARGET_OF_IOS)
+	#include "ofAppiOSWindow.h"
 #elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
 #elif defined(TARGET_RASPBERRY_PI)
@@ -62,7 +64,7 @@ void ofExitCallback();
 
 	static bool bExitCalled = false;
 	void sighandler(int sig) {
-		ofLogVerbose("ofAppRunner") << "sighandler : Signal handled " << sig;
+		ofLogVerbose("ofAppRunner") << "sighandler caught: " << sig;
 		if(!bExitCalled) {
 			bExitCalled = true;
 			exitApp();
@@ -114,6 +116,8 @@ void ofRunApp(ofBaseApp * OFSA){
 
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
+	ofSetWorkingDirectoryToDefault();
+	
 
     ofAddListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -150,8 +154,8 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
         #if defined(TARGET_RASPBERRY_PI)
 			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,1);
-		#elif defined(TARGET_LINUX) || defined(TARGET_OSX)
+			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,0);
+		#elif !defined(TARGET_OPENGLES)
 			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
 		#endif
 	}else{
@@ -161,6 +165,9 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	}
 
 	window->setupOpenGL(w, h, screenMode);
+}
+
+void ofGLReadyCallback(){
 
 #ifndef TARGET_OPENGLES
 	glewExperimental = GL_TRUE;
@@ -168,15 +175,16 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	if (GLEW_OK != err)
 	{
 		/* Problem: glewInit failed, something is seriously wrong. */
-		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
+		ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
 		return;
 	}
 #endif
 
-	ofLogVerbose()<< "Vendor:   "<< (char*)glGetString(GL_VENDOR);
-	ofLogVerbose()<< "Renderer: "<< (char*)glGetString(GL_RENDERER);
-	ofLogVerbose()<< "Version:  "<< (char*)glGetString(GL_VERSION);
-	ofLogVerbose()<< "GLSL:     "<< (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	ofLogVerbose("ofAppRunner") << "GL ready";
+	ofLogVerbose("ofAppRunner") << "Vendor:   " << (char*)glGetString(GL_VENDOR);
+	ofLogVerbose("ofAppRunner") << "Renderer: " << (char*)glGetString(GL_RENDERER);
+	ofLogVerbose("ofAppRunner") << "Version:  " << (char*)glGetString(GL_VERSION);
+	ofLogVerbose("ofAppRunner") << "GLSL:     " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 
     if(ofGetGLProgrammableRenderer()){
     	ofGetGLProgrammableRenderer()->setup();
@@ -189,13 +197,12 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	ofEnableAlphaBlending();
 }
 
-
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_NODISPLAY
 		window = ofPtr<ofAppBaseWindow>(new ofAppNoWindow());
-	#elif defined(TARGET_OF_IPHONE)
-		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
+	#elif defined(TARGET_OF_IOS)
+		window = ofPtr<ofAppBaseWindow>(new ofAppiOSWindow());
 	#elif defined(TARGET_ANDROID)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
 	#elif defined(TARGET_RASPBERRY_PI)
@@ -211,9 +218,15 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 //							currently looking at who to turn off
 //							at the end of the application
 
+void ofStopURLLoader();
+
 void ofExitCallback(){
 
 	ofNotifyExit();
+
+	ofRemoveAllURLRequests();
+	ofStopURLLoader();
+	Poco::Net::SSLManager::instance().shutdown();
 
     ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -455,3 +468,53 @@ int ofGetWindowMode(){
 void ofSetVerticalSync(bool bSync){
 	window->setVerticalSync(bSync);
 }
+
+//-------------------------- native window handles
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+Display* ofGetX11Display(){
+	return window->getX11Display();
+}
+
+Window  ofGetX11Window(){
+	return window->getX11Window();
+}
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+GLXContext ofGetGLXContext(){
+	return window->getGLXContext();
+}
+#endif
+
+#if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
+EGLDisplay ofGetEGLDisplay(){
+	return window->getEGLDisplay();
+}
+
+EGLContext ofGetEGLContext(){
+	return window->getEGLContext();
+}
+EGLSurface ofGetEGLSurface(){
+	return window->getEGLSurface();
+}
+#endif
+
+#if defined(TARGET_OSX)
+void * ofGetNSGLContext(){
+	return window->getNSGLContext();
+}
+
+void * ofGetCocoaWindow(){
+	return window->getCocoaWindow();
+}
+#endif
+
+#if defined(TARGET_WIN32)
+HGLRC ofGetWGLContext(){
+	return window->getWGLContext();
+}
+
+HWND ofGetWin32Window(){
+	return window->getWin32Window();
+}
+#endif

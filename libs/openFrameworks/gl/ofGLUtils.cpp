@@ -13,9 +13,15 @@ int ofGetGlInternalFormat(const ofPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB8;
 		case 4: return GL_RGBA8;
+		case 2:
+			if(ofIsGLProgrammableRenderer()){
+				return GL_RG8;
+			}else{
+				return GL_LUMINANCE_ALPHA;
+			}
 		default:
 			if(ofIsGLProgrammableRenderer()){
-				return GL_RGBA8;
+				return GL_R8;
 			}else{
 				return GL_LUMINANCE8;
 			}
@@ -24,12 +30,10 @@ int ofGetGlInternalFormat(const ofPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
+		case 2:
+			return GL_LUMINANCE_ALPHA;
 		default:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_RGBA;
-			}else{
-				return GL_LUMINANCE;
-			}
+			return GL_LUMINANCE;
 	}
 #endif
 }
@@ -40,19 +44,28 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB16;
 		case 4: return GL_RGBA16;
+		case 2:
+			if(ofIsGLProgrammableRenderer()){
+				return GL_RG16;
+			}else{
+				return GL_LUMINANCE16_ALPHA16;
+			}
 		default:
-		if(ofIsGLProgrammableRenderer()){
-			return GL_RGBA16;
-		}else{
-			return GL_LUMINANCE16;
-		}
+			if(ofIsGLProgrammableRenderer()){
+				return GL_R16;
+			}else{
+				return GL_LUMINANCE16;
+			}
 	}
 #else
-	ofLogWarning()<< "16bit textures not supported in GLES";
+	ofLogWarning("ofGLUtils") << "ofGetGlInternalFormat(): 16bit textures are not supported in OpenGL ES";
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
-		default: return GL_LUMINANCE;
+		case 2:
+			return GL_LUMINANCE_ALPHA;
+		default:
+			return GL_LUMINANCE;
 	}
 #endif
 }
@@ -61,21 +74,30 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 #ifndef TARGET_OPENGLES
 	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB32F_ARB;
-		case 4: return GL_RGBA32F_ARB;
+		case 3: return GL_RGB32F;
+		case 4: return GL_RGBA32F;
+		case 2:
+			if(ofIsGLProgrammableRenderer()){
+				return GL_RG32F;
+			}else{
+				return GL_LUMINANCE_ALPHA32F_ARB;
+			}
 		default:
-		if(ofGetGLProgrammableRenderer()){
-			return GL_RGBA32F_ARB;
-		}else{
-			return GL_LUMINANCE32F_ARB;
-		}
+			if(ofGetGLProgrammableRenderer()){
+				return GL_R32F;
+			}else{
+				return GL_LUMINANCE32F_ARB;
+			}
 	}
 #else
-	ofLogWarning()<< "float textures not supported in GLES";
+	ofLogWarning("ofGLUtils") << "ofGetGlInternalFormat(): float textures not supported in OpenGL ES";
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
-		default: return GL_LUMINANCE;
+		case 2:
+			return GL_LUMINANCE_ALPHA;
+		default:
+			return GL_LUMINANCE;
 	}
 #endif
 }
@@ -161,8 +183,20 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 			case GL_STENCIL_INDEX:
 				return GL_STENCIL_INDEX;
 
+#ifndef TARGET_OPENGLES
+			case GL_R8:
+			case GL_R16:
+			case GL_R32F:
+				return GL_RED;
+
+			case GL_RG8:
+			case GL_RG16:
+			case GL_RG32F:
+				return GL_RG;
+#endif
+
 			default:
-				ofLogError() << "unkonwn internal format returning RGBA for transfer format";
+				ofLogError("ofGLUtils") << "ofGetGLFormatFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_RGBA";
 				return GL_RGBA;
 
 		}
@@ -180,6 +214,8 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RGBA8:
 		case GL_LUMINANCE8:
 		case GL_LUMINANCE8_ALPHA8:
+		case GL_R8:
+		case GL_RG8:
 #endif
 			 return GL_UNSIGNED_BYTE;
 
@@ -189,6 +225,8 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RGBA16:
 		case GL_LUMINANCE16:
 		case GL_LUMINANCE16_ALPHA16:
+		case GL_R16:
+		case GL_RG16:
 #endif
 			return GL_UNSIGNED_SHORT;
 
@@ -198,10 +236,12 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 			 return GL_LUMINANCE;
 
 #ifndef TARGET_OPENGLES
-		case GL_RGB32F_ARB:
-		case GL_RGBA32F_ARB:
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
+		case GL_RGB32F:
+		case GL_RGBA32F:
+		case GL_R32F:
+		case GL_RG32F:
 #endif
 			return GL_FLOAT;
 
@@ -225,7 +265,7 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 			return GL_UNSIGNED_BYTE;
 
 		default:
-			ofLogError() << "unkonwn internal format returning RGBA for transfer format";
+			ofLogError("ofGLUtils") << "ofGetGlTypeFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_UNSIGNED_BYTE";
 			return GL_UNSIGNED_BYTE;
 
 	}
@@ -279,7 +319,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode m){
 			return GL_FILL;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"asked for unsupported or non existant poly mode " + ofToString(m) + " returning GL_FILL");
+			ofLogError("ofGLUtils") << "ofGetGLPolyMode(): unknown OF poly mode " << ofToString(m) << ", returning GL_FILL";
 			return GL_FILL;
 			break;
 	}
@@ -301,7 +341,7 @@ ofPolyRenderMode ofGetOFPolyMode(GLuint m){
 			return OF_MESH_FILL;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"asked for non existant glPolygonMode " + ofToString(m) + " returning OF_MESH_FILL");
+			ofLogError("ofGLUtils") << "ofGetOFPolyMode(): unknown GL poly mode " << ofToString(m) << ", returning OF_MESH_FILL";
 			return OF_MESH_FILL;
 			break;
 	}
@@ -335,7 +375,7 @@ GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 			return GL_POINTS;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"asked for unsupported or non existant primitive mode " + ofToString(mode) + " returning GL_TRIANGLES");
+			ofLogError("ofGLUtils") << "ofGetGLPrimitiveMode(): unknown OF primitive mode " << ofToString(mode) << ", returning GL_TRIANGLES";
 			return GL_TRIANGLES;
 			break;
 	}
@@ -365,7 +405,7 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 			return OF_PRIMITIVE_POINTS;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"asked for non existant primitive mode " + ofToString(mode) + " returning OF_PRIMITIVE_TRIANGLES");
+			ofLogError("ofGLUtils") << "ofGetOFPrimitiveMode(): unknown GL primitive mode " << ofToString(mode) << ", returning OF_PRIMITIVE_TRIANGLES";
 			return OF_PRIMITIVE_TRIANGLES;
 			break;
 	}
@@ -399,7 +439,7 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_YUY2:
     	return GL_LUMINANCE_ALPHA;
 	default:
-		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
+		ofLogError("ofGLUtils") << "ofGetGLInternalFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
 		return GL_LUMINANCE;
 	}
 }
@@ -437,7 +477,7 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_YUY2:
     	return GL_LUMINANCE_ALPHA;
 	default:
-		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
+		ofLogError("ofGLUtils") << "ofGetGLTypeFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
 		return GL_LUMINANCE;
 	}
 }
@@ -476,15 +516,42 @@ void ofSetPixelStorei(int w, int bpc, int numChannels){
     }
 }
 
-bool ofCheckGLExtension(string searchName){
-#ifdef TARGET_OPENGLES
+vector<string> ofGLSupportedExtensions(){
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
-	vector<string> extensionsList = ofSplitString(extensions," ");
+	return ofSplitString(extensions," ");
+}
+
+bool ofGLCheckExtension(string searchName){
+#ifdef TARGET_OPENGLES
+	vector<string> extensionsList = ofGLSupportedExtensions();
 	set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 	return extensionsSet.find(searchName)!=extensionsSet.end();
 #else
 	return glewGetExtension(searchName.c_str());
+#endif
+}
+
+bool ofGLSupportsNPOTTextures(){
+#ifndef TARGET_OPENGLES
+	return GL_ARB_texture_rectangle;
+#else
+	static bool npotChecked = false;
+	static bool npotSupported = false;
+	if(!npotChecked){
+		vector<string> extensionsList = ofGLSupportedExtensions();
+		set<string> extensionsSet;
+		extensionsSet.insert(extensionsList.begin(),extensionsList.end());
+
+		npotSupported = extensionsSet.find("GL_OES_texture_npot")!=extensionsSet.end() ||
+				extensionsSet.find("APPLE_texture_2D_limited_npot")!=extensionsSet.end() ||
+				extensionsSet.find("GL_NV_texture_npot_2D_mipmap")!=extensionsSet.end() ||
+				extensionsSet.find("GL_IMG_texture_npot")!=extensionsSet.end() ||
+				extensionsSet.find("GL_ARB_texture_non_power_of_two")!=extensionsSet.end();
+		npotChecked = true;
+	}
+
+	return npotSupported;
 #endif
 }
 
@@ -509,3 +576,18 @@ ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
 		return ofPtr<ofGLRenderer>();
 	}
 }
+
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+void ofUpdateBitmapCharacterTexture();
+void ofReloadAllImageTextures();
+void ofReloadAllFontTextures();
+void ofRegenerateAllVbos();
+
+void ofReloadGLResources(){
+	ofUpdateBitmapCharacterTexture();
+	ofReloadAllImageTextures();
+	ofReloadAllFontTextures();
+	ofRegenerateAllVbos();
+}
+#endif
+

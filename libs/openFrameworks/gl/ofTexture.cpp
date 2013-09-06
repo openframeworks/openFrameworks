@@ -25,6 +25,11 @@ void ofDisableTextureEdgeHack(){
 }
 
 //---------------------------------
+bool ofIsTextureEdgeHackEnabled(){
+	return bTexHackEnabled;
+}
+
+//---------------------------------
 bool ofGetUsingNormalizedTexCoords(){
 	return bUsingNormalizedTexCoords;
 }
@@ -136,7 +141,7 @@ static void release(GLuint id){
 				getTexturesIndex().erase(id);
 			}
 		}else{
-			ofLog(OF_LOG_ERROR, "trying to delete a non indexed texture, something weird is happening. Deleting anyway");
+			ofLogError("ofTexture") << "release(): something's wrong here, releasing unknown texture id " << id;
 			glDeleteTextures(1, (GLuint *)&id);
 		}
 	}
@@ -186,7 +191,7 @@ bool ofTexture::isAllocated(){
 //----------------------------------------------------------
 ofTextureData& ofTexture::getTextureData(){
 	if(!texData.bAllocated){
-		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
+		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
 	return texData;
@@ -194,7 +199,7 @@ ofTextureData& ofTexture::getTextureData(){
 
 const ofTextureData& ofTexture::getTextureData() const {
 	if(!texData.bAllocated){
-		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
+		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
 	return texData;
@@ -260,6 +265,27 @@ void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtention){
 }
 
 //----------------------------------------------------------
+void ofTexture::allocate(const ofShortPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtention){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofFloatPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention, int glFormat, int pixelType){
 	texData.width = w;
 	texData.height = h;
@@ -284,29 +310,37 @@ void ofTexture::allocate(const ofTextureData & textureData){
 
 void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pixelType){
 	if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
-		ofLogError() << "ofTexture::allocate - the ofTextureData structure passed must be set with a width and height.";
+		ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
 		return;
 	}
 
 	texData = textureData;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle ){
-		texData.tex_t = texData.width;
-		texData.tex_u = texData.height;
+	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
+		texData.tex_w = texData.width;
+		texData.tex_h = texData.height;
 		texData.tex_w = texData.width;
 		texData.tex_h = texData.height;		
 	}else
 #endif
 	{
-		//otherwise we need to calculate the next power of 2 for the requested dimensions
-		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(texData.width);
-		texData.tex_h = ofNextPow2(texData.height);
+		if(ofGLSupportsNPOTTextures()){
+			texData.tex_w = texData.width;
+			texData.tex_h = texData.height;
+		}else{
+			//otherwise we need to calculate the next power of 2 for the requested dimensions
+			//ie (320x240) becomes (512x256)
+			texData.tex_w = ofNextPow2(texData.width);
+			texData.tex_h = ofNextPow2(texData.height);
+		}
+
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
-		texData.textureTarget = GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
+		if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB ) texData.textureTarget = GL_TEXTURE_2D;
+#endif
 	}
 
 	// attempt to free the previous bound texture, if we can:
@@ -334,6 +368,51 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 
 	texData.bAllocated = true;
 
+}
+
+
+void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
+#ifndef TARGET_OPENGLES
+	enableTextureTarget();
+
+	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	if(rToRGBSwizzles){
+		if(texData.glTypeInternal==GL_R8 ||
+				texData.glTypeInternal==GL_R16 ||
+				texData.glTypeInternal==GL_R32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
+
+		}else if(texData.glTypeInternal==GL_RG8 ||
+				texData.glTypeInternal==GL_RG16 ||
+				texData.glTypeInternal==GL_RG32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_A, GL_GREEN);
+		}
+	}else{
+		if(texData.glTypeInternal==GL_R8 ||
+				texData.glTypeInternal==GL_R16 ||
+				texData.glTypeInternal==GL_R32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+
+		}else if(texData.glTypeInternal==GL_RG8 ||
+				texData.glTypeInternal==GL_RG16 ||
+				texData.glTypeInternal==GL_RG32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
+		}
+	}
+
+	glBindTexture( texData.textureTarget, 0);
+	disableTextureTarget();
+#endif
 }
 
 //----------------------------------------------------------
@@ -468,7 +547,9 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		if(!ofGetGLProgrammableRenderer()){
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		}
 #ifndef TARGET_OPENGLES		
 		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
 #endif
@@ -530,7 +611,8 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.bFlipTexture = true;
 	
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. not uploading...");
+		ofLogError("ofTexture") << "loadScreenData(): " << w << "x" << h << " image data too big for "
+		<< texData.tex_w << "x " << texData.tex_h << " allocated texture, not uploading";
 		return;
 	}
 	
@@ -607,6 +689,12 @@ void ofTexture::bind(){
 		ofLoadMatrix(m);
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
+	if(texData.useTextureMatrix){
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		if(!ofGetUsingNormalizedTexCoords()) ofPushMatrix();
+		ofMultMatrix(texData.textureMatrix);
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+	}
 }
 
 //----------------------------------------------------------
@@ -615,7 +703,7 @@ void ofTexture::unbind(){
 	glBindTexture( texData.textureTarget, 0);
 	disableTextureTarget();
 
-	if(ofGetUsingNormalizedTexCoords()) {
+	if(texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
 		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPopMatrix();
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
@@ -751,13 +839,13 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	if (texData.bFlipTexture == ofIsVFlipped()){
 		swap(py0,py1);
 	}
-	
+
 	// for rect mode center, let's do this:
 	if (ofGetRectMode() == OF_RECTMODE_CENTER){
-		px0 = -w/2;
-		py0 = -h/2;
-		px1 = +w/2;
-		py1 = +h/2;
+		px0 -= w/2;
+		py0 -= h/2;
+		px1 -= w/2;
+		py1 -= h/2;
 	}
 	
 	//we translate our drawing points by our anchor point.
@@ -791,7 +879,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat offsetw = 0.0f;
 	GLfloat offseth = 0.0f;
 	
-	if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
+	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
 		offseth = 1.0f / (texData.tex_h);
 	}
@@ -799,7 +887,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	
 	ofPoint topLeft = getCoordFromPoint(sx, sy);
 	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
-	
+
 	GLfloat tx0 = topLeft.x + offsetw;
 	GLfloat ty0 = topLeft.y + offseth;
 	GLfloat tx1 = bottomRight.x - offsetw;

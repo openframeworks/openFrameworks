@@ -4,13 +4,13 @@
 //
 
 #import "TriangleAppViewController.h"
-#import "ofxiPhoneExtras.h"
+#import "ofxiOSExtras.h"
 
 @implementation TriangleAppViewController
 
-- (id) initWithFrame:(CGRect)frame app:(ofxiPhoneApp *)app {
+- (id) initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
     
-    ofxiPhoneGetOFWindow()->setOrientation( OF_ORIENTATION_DEFAULT );   //-- default portait orientation.    
+    ofxiOSGetOFWindow()->setOrientation( OF_ORIENTATION_DEFAULT );   //-- default portait orientation.    
     
     return self = [super initWithFrame:frame app:app];
 }

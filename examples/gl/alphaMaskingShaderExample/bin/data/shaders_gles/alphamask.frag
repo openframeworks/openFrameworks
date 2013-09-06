@@ -5,7 +5,7 @@ precision highp float;
 
 uniform sampler2D tex0;
 uniform sampler2D maskTex;
-uniform vec4 color;
+uniform vec4 globalColor;
 
 varying vec2 texCoordVarying;
 
