@@ -757,3 +757,32 @@ string ofSystemTextBoxDialog(string question, string text){
 
 	return text;
 }
+
+ofColor ofSystemColorDialog() {
+	ofColor colorResult;
+
+#ifdef TARGET_WIN32
+	CHOOSECOLOR cc;
+	static COLORREF acrCustClr[16];
+	HBRUSH hbrush;
+	static DWORD rgbCurrent;
+
+	ZeroMemory(&cc, sizeof(cc));
+	cc.lStructSize = sizeof(cc);
+	cc.hwndOwner = GetForegroundWindow();
+	cc.lpCustColors = (LPDWORD) acrCustClr;
+	cc.rgbResult = rgbCurrent;
+	cc.Flags = CC_FULLOPEN | CC_RGBINIT;
+ 
+	if (ChooseColor(&cc)==TRUE) {
+		hbrush = CreateSolidBrush(cc.rgbResult);
+		rgbCurrent = cc.rgbResult; 
+	}
+
+	colorResult.b = (rgbCurrent >> 16) & 0xff;
+	colorResult.g = (rgbCurrent >> 8) & 0xff;
+	colorResult.r = rgbCurrent & 0xff;
+#endif
+
+	return colorResult;
+}
