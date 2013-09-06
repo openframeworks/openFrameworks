@@ -9,7 +9,7 @@
 # IDE
 #########################
 
-#XCode
+# XCode
 /*/*/*.xcodeproj
 /*/*/Project.xcconfig
 /*/*/openFrameworks-Info.plist
@@ -18,18 +18,18 @@
 /*/*/*/*/Default*.png
 /*/*/*/*/Icon*.png
 
-#Code::Blocks
+# Code::Blocks
 /*/*/*.cbp
 /*/*/*.workspace
 
-#Visual Studio
+# Visual Studio
 /*/*/*.sln
 /*/*/*.vcxproj
 /*/*/*.vcxproj.user
 /*/*/*.vcxproj.filters
 /*/*/icon.rc
 
-#Eclipse
+# Eclipse
 /*/*/.cproject
 /*/*/.project
 /*/*/.settings/
@@ -38,26 +38,24 @@
 # operating system
 #########################
 
-#Linux
+# Linux
 /*/*/Makefile
 /*/*/config.make
 # Leave Android files in until project generation works
 !/android/*/Makefile
 !/android/*/config.make
 
-#Android
+# Android
 android/*/test link
 android/*/gen
 android/*/res/raw
-libOFAndroidApp.so
-libOFAndroidApp_neon.so
+libOFAndroidApp*.so
 gdbserver
 gdb.setup
 libneondetection.so
 Application.mk
 Android.mk
 
-/*/*/test link
 !/android/*/.cproject
 !/android/*/.project
 !/android/*/.settings

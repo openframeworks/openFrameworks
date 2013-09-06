@@ -1,4 +1,3 @@
-
 #########################
 # openFrameworks patterns
 #########################
@@ -10,15 +9,15 @@ openFrameworksUniversal.a
 libs/openFrameworksCompiled/lib/*/*
 !libs/openFrameworksCompiled/lib/*/.gitkeep
 
-#rule to avoid non-official addons going into git
-#see addons/.gitignore
+# rule to avoid non-official addons going into git
+# see addons/.gitignore
 addons/*
 
-#rule to avoid non-official apps going into git
-#see apps/.gitignore
+# rule to avoid non-official apps going into git
+# see apps/.gitignore
 apps/*
 
-#also, see examples/.gitignore
+# also, see examples/.gitignore
 
 #########################
 # general
@@ -42,21 +41,21 @@ apps/*
 # IDE
 #########################
 
-#XCode
+# XCode
 *.pbxuser
 *.perspective
 *.perspectivev3
 *.mode1v3
 *.mode2v3
-#XCode 4
+# XCode 4
 xcuserdata
 *.xcworkspace
 
-#Code::Blocks
+# Code::Blocks
 *.depend
 *.layout
 
-#Visual Studio
+# Visual Studio
 *.sdf
 *.opensdf
 *.suo
@@ -65,7 +64,7 @@ xcuserdata
 *.aps
 ipch/
 
-#Eclipse
+# Eclipse
 .metadata
 local.properties
 .externalToolBuilders
@@ -74,26 +73,26 @@ local.properties
 # operating system
 #########################
 
-#Linux
+# Linux
 *~
 # KDE
 .directory
 .AppleDouble
 
-#OSX
+# OSX
 .DS_Store
 *.swp
 *~.nib
 # Thumbnails
 ._*
 
-#Windows
+# Windows
 # Windows image file caches
 Thumbs.db
 # Folder config file
 Desktop.ini
 
-#Android
+# Android
 .csettings
 /libs/openFrameworksCompiled/project/android/paths.make
 
