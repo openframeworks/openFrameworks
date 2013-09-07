@@ -782,6 +782,8 @@ ofColor ofSystemColorDialog() {
 	colorResult.b = (rgbCurrent >> 16) & 0xff;
 	colorResult.g = (rgbCurrent >> 8) & 0xff;
 	colorResult.r = rgbCurrent & 0xff;
+#else
+	ofLogWarning("ofSystemUtils") << "ofSystemColorDialog() not implemented";
 #endif
 
 	return colorResult;
