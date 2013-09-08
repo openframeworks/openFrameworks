@@ -126,7 +126,7 @@ void ofParameterGroup::add(ofParameter<ParameterType> & param){
 	ofParameter<ParameterType> * p = new ofParameter<ParameterType>;
 	p->makeReferenceTo(param);
 	obj->parameters.push_back(p);
-	obj->parametersIndex[p->getName()] = obj->parameters.size()-1;
+	obj->parametersIndex[p->getEscapedName()] = obj->parameters.size()-1;
 	p->setParent(this);
 }
 
@@ -135,7 +135,7 @@ void ofParameterGroup::add(ofReadOnlyParameter<ParameterType,Friend> & param){
 	ofReadOnlyParameter<ParameterType,Friend> * p = new ofReadOnlyParameter<ParameterType,Friend>;
 	p->makeReferenceTo(param);
 	obj->parameters.push_back(p);
-	obj->parametersIndex[p->getName()] = obj->parameters.size()-1;
+	obj->parametersIndex[p->getEscapedName()] = obj->parameters.size()-1;
 	p->setParent(this);
 }
 #endif /* OFXPARAMETERGROUP_H_ */
