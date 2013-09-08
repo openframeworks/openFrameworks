@@ -19,7 +19,7 @@ public:
 	ofParameterGroup();
 
 	template<typename ParameterType>
-	void add(ofParameter<ParameterType> & param);
+	void add(ofParameter<ParameterType> param);
 
 	template<typename ParameterType,typename Friend>
 	void add(ofReadOnlyParameter<ParameterType,Friend> & param);
@@ -122,7 +122,7 @@ ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
 }
 
 template<class ParameterType>
-void ofParameterGroup::add(ofParameter<ParameterType> & param){
+void ofParameterGroup::add(ofParameter<ParameterType> param){
 	ofParameter<ParameterType> * p = new ofParameter<ParameterType>;
 	p->makeReferenceTo(param);
 	obj->parameters.push_back(p);
