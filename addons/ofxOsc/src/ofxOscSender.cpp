@@ -118,7 +118,7 @@ void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractPara
 		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
 		for(int i=0;i<group.size();i++){
 			const ofAbstractParameter & p = group[i];
-			appendParameter(bundle,p,address+group.getName()+"/");
+			appendParameter(bundle,p,address+group.getEscapedName()+"/");
 		}
 		_bundle.addBundle(bundle);
 	}else{
@@ -129,7 +129,7 @@ void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractPara
 }
 
 void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address){
-	msg.setAddress(address+parameter.getName());
+	msg.setAddress(address+parameter.getEscapedName());
 	if(parameter.type()==typeid(ofParameter<int>).name()){
 		msg.addIntArg(parameter.cast<int>());
 	}else if(parameter.type()==typeid(ofParameter<float>).name()){
