@@ -22,12 +22,12 @@ namespace ofxCv {
 	void Flow::calcOpticalFlow(ofPixelsRef lastImage, ofPixelsRef currentImage){
 		last = lastImage;
 		last.setImageType(OF_IMAGE_GRAYSCALE); //force to gray
+
+		curr.setFromPixels(currentImage);
+		curr.setImageType(OF_IMAGE_GRAYSCALE);
 		
 		calcFlow(); //will call concrete implementation
 		hasFlow = true;
-		
-		curr.setFromPixels(currentImage);
-		curr.setImageType(OF_IMAGE_GRAYSCALE);
 	}
 	
 	//you can add subsequent images this way without having to store 
