@@ -5,7 +5,7 @@
 
 // this #define is for use by addon writers, to conditionally support sound objects in addons
 // (while allowing backwards compatibility with previous versions of openFrameworks)
-#define OF_SOUND_OBJECT
+#define OF_SOUND_OBJECT_AVAILABLE
 
 /**
  * ofSoundObject is a node in your dsp chain. It can have one input,
