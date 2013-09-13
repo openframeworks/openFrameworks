@@ -24,8 +24,6 @@
 		2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
-		668FE69517B6142000FE3F40 /* ofBasicSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69317B6142000FE3F40 /* ofBasicSoundPlayer.cpp */; };
-		668FE69617B6142000FE3F40 /* ofBasicSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE69417B6142000FE3F40 /* ofBasicSoundPlayer.h */; };
 		668FE69917B6146F00FE3F40 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */; };
 		668FE69A17B6146F00FE3F40 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */; };
 		668FE69D17B617B600FE3F40 /* ofSoundUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */; };
@@ -184,8 +182,6 @@
 		2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
-		668FE69317B6142000FE3F40 /* ofBasicSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBasicSoundPlayer.cpp; sourceTree = "<group>"; };
-		668FE69417B6142000FE3F40 /* ofBasicSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBasicSoundPlayer.h; sourceTree = "<group>"; };
 		668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
 		668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUtils.cpp; sourceTree = "<group>"; };
@@ -537,8 +533,6 @@
 				E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */,
 				EAD7A82E17B663DC007DA66D /* ofBaseSoundStream.cpp */,
 				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
-				668FE69317B6142000FE3F40 /* ofBasicSoundPlayer.cpp */,
-				668FE69417B6142000FE3F40 /* ofBasicSoundPlayer.h */,
 				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
 				E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */,
 				772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */,
@@ -734,7 +728,6 @@
 				22246D98176C9AA0008A8AF4 /* ofAppGlutWindow.h in Headers */,
 				E495DF7E178896A900994238 /* ofAppNoWindow.h in Headers */,
 				27DEA3121796F578000A9E90 /* ofXml.h in Headers */,
-				668FE69617B6142000FE3F40 /* ofBasicSoundPlayer.h in Headers */,
 				668FE69A17B6146F00FE3F40 /* ofSoundBuffer.h in Headers */,
 				668FE69E17B617B600FE3F40 /* ofSoundUtils.h in Headers */,
 				668FE6A217B617D700FE3F40 /* ofSoundFile.h in Headers */,
@@ -861,7 +854,6 @@
 				22246D97176C9AA0008A8AF4 /* ofAppGlutWindow.cpp in Sources */,
 				E495DF7D178896A900994238 /* ofAppNoWindow.cpp in Sources */,
 				27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */,
-				668FE69517B6142000FE3F40 /* ofBasicSoundPlayer.cpp in Sources */,
 				668FE69917B6146F00FE3F40 /* ofSoundBuffer.cpp in Sources */,
 				668FE69D17B617B600FE3F40 /* ofSoundUtils.cpp in Sources */,
 				668FE6A117B617D700FE3F40 /* ofSoundFile.cpp in Sources */,

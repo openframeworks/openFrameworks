@@ -33,9 +33,6 @@ void ofSoundShutdown();
 #include "ofxiOSSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
 
-#else
-#include "ofBasicSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofBasicSoundPlayer
 #endif
 
 #ifdef TARGET_ANDROID
