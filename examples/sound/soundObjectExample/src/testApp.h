@@ -25,12 +25,7 @@ public:
 
 	ofSoundStream soundStream;
 	
-	// to make a dsp chain, you need to create at least an ofSoundOutput object
-	// and attach it to an ofSoundStream with soundStream.setOutput
-	ofSoundInput input;
-	ofSoundOutput output;
-	
-	
+	// these are all subclasses of ofSoundObject
 	NoiseGenerator noise;
 	LowPassFilter filter;
 	DigitalDelay delay;

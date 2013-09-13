@@ -1,29 +1,28 @@
 #include "testApp.h"
 
 
-
-
 //--------------------------------------------------------------
 void testApp::setup(){
 
 	delay.setFeedback(0.8);
 	delay.setDelay(8192);
-	// connect each object to the next in a chain, finishing with the output.
-	noise.connectTo(filter).connectTo(delay).connectTo(output);
 	
-	soundStream.setup(2, 2, 44100, 64, 1);
-	soundStream.setOutput(&output);
+	// connect each object to the next in a chain, finishing with the global sound mixer.
+	noise.connectTo(filter).connectTo(delay).connectTo(ofGetSystemSoundMixer());
+
+	soundStream.setup(2, 0, 44100, 64, 1);
+	soundStream.setOutput(&ofGetSystemSoundMixer());
 	
 	font.loadFont(OF_TTF_SANS, 12);
 	ofBackground(0);
 }
 
 
-
 //--------------------------------------------------------------
 void testApp::update(){
 
 }
+
 
 //--------------------------------------------------------------
 void testApp::draw(){
@@ -41,15 +40,6 @@ void testApp::draw(){
 	ofPopMatrix();
 }
 
-//--------------------------------------------------------------
-void testApp::keyPressed(int key){
-	
-}
-
-//--------------------------------------------------------------
-void testApp::keyReleased(int key){
-
-}
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
@@ -63,6 +53,16 @@ void testApp::mouseMoved(int x, int y ){
 	
 	delayFeedback = ofMap(y, 0, ofGetHeight(), 0.99, 0.1, true);
 	delay.setFeedback(delayFeedback);
+}
+
+//--------------------------------------------------------------
+void testApp::keyPressed(int key){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
