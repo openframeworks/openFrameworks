@@ -28,7 +28,7 @@ bool ofLoadSound(ofSoundBuffer &buff, string path){
 // need something that would let you stream the data to
 // it via writeTo() or similar. Doesn't really fit wtih
 // the current model.
-bool ofSaveSound(ofSoundBuffer &buff,  string path){
+bool ofSaveSound(const ofSoundBuffer &buff,  string path){
 	ofSoundFile soundFile;
 	return soundFile.saveSound(path, buff);
 }
