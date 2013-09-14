@@ -54,6 +54,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level1</WarningLevel>
       <BrowseInformation>true</BrowseInformation>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
