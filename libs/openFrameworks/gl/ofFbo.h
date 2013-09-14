@@ -16,6 +16,7 @@ public:
 	void allocate(Settings settings = Settings());
 	bool isAllocated();
 
+	using ofBaseDraws::draw;
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);
 
