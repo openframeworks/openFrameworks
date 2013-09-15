@@ -2,6 +2,17 @@
 
 ofxCv represents an alternative approach to wrapping OpenCV for openFrameworks. It is designed for openFrameworks 007+ compatibility only. My first goal is to have a complete substitute for ofxOpenCv, at which point I will start versioning releases. Until then, I don't recommend that anyone use it as it will be undergoing irregular massive rehauling.
 
+# Installation
+
+Either clone out the source code using git:
+
+	> cd openFrameworks/addons/
+	> git clone https://github.com/kylemcdonald/ofxCv.git
+
+Or download the source from GitHub [here](https://github.com/kylemcdonald/ofxCv/archive/master.zip), unzip the folder, rename it from `ofxCv-master` to `ofxCv` and place it in your `openFrameworks/addons` folder.
+
+You don't need to move any of the examples anywhere, you can run them in place.
+
 # Goals
 
 ofxCv has a few goals driving its development.
