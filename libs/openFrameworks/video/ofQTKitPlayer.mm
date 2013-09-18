@@ -34,6 +34,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode, bool
 		return false;
 	}
     
+    // resize handlers
     bExpectResize = expectResize;
     bReizeHappened = false;
 	
@@ -228,6 +229,10 @@ void ofQTKitPlayer::update() {
         }
     }
     [pool release];
+}
+
+bool ofQTKitPlayer::getResizeHappened() {
+    return bReizeHappened;
 }
 
 //--------------------------------------------------------------------

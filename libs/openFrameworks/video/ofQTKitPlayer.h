@@ -110,6 +110,8 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                nextFrame();
 		void                previousFrame();
     
+        // enables us to wait in app until resize has happened
+        // only after that get actual movie size ans start to draw
         bool                getResizeHappened();
 
 	protected:
