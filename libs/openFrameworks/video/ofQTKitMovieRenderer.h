@@ -34,6 +34,11 @@
 	BOOL loadedFirstFrame;
 	NSArray* frameTimeValues;
 	NSCondition* synchronousSeekLock;
+    
+    BOOL bExpectResize;
+    BOOL bRenderResizeHappened;
+    NSSize movieSizeRenderStartup;
+    NSSize movieSizeRenderResize;
 }
 
 @property (nonatomic, readonly) NSSize movieSize;
@@ -60,10 +65,16 @@
 @property (nonatomic, readonly) GLuint textureID;
 @property (nonatomic, readonly) GLenum textureTarget;
 
+// resize handlers
+@property (nonatomic, readonly) BOOL bExpectResize;
+@property (nonatomic, readonly) BOOL bRenderResizeHappened;
+@property (nonatomic, readonly) NSSize movieSizeRenderStartup;
+@property (nonatomic, readonly) NSSize movieSizeRenderResize;
+
 - (NSDictionary *)pixelBufferAttributes;
 
 - (void)draw:(NSRect)drawRect;
-- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha;
+- (BOOL)loadMovie:(NSString *)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels allowAlpha:(BOOL)useAlpha expectResize:(BOOL)doExpectResize;
 - (BOOL)update;
 
 - (void)bindTexture;

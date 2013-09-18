@@ -28,11 +28,14 @@ bool ofQTKitPlayer::loadMovie(string path){
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
+bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode, bool expectResize) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
 		ofLogError("ofQTKitPlayer") << "loadMovie(): unknown ofQTKitDecodeMode mode";
 		return false;
 	}
+    
+    bExpectResize = expectResize;
+    bReizeHappened = false;
 	
 	if(isLoaded()){
 		close(); //auto released 
@@ -41,9 +44,9 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     decodeMode = mode;
-	bool useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
-	bool usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
-	bool useAlpha = (pixelFormat == OF_PIXELS_RGBA);
+	useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
+	usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
+	useAlpha = (pixelFormat == OF_PIXELS_RGBA);
 
     bool isURL = false;
 	
@@ -61,7 +64,8 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 								pathIsURL:isURL
 							 allowTexture:useTexture 
 							  allowPixels:usePixels
-                               allowAlpha:useAlpha];
+                               allowAlpha:useAlpha
+                             expectResize:expectResize];
 	
 	if(success){
 		moviePlayer.synchronousSeek = bSynchronousSeek;
@@ -211,6 +215,18 @@ void ofQTKitPlayer::update() {
 	if (bNewFrame) {
 		bHavePixelsChanged = true;
 	}
+    // handle resize
+    if(bExpectResize && !bReizeHappened) {
+        if([moviePlayer bRenderResizeHappened]) {
+            std::cout << "ofQTKitPlayer player got that render resize happened" << std::endl;
+            // we need to reallocate pizels to the new size
+            if(usePixels) {
+                pixels.clear();
+                reallocatePixels();
+            }
+            bReizeHappened = true;
+        }
+    }
     [pool release];
 }
 
