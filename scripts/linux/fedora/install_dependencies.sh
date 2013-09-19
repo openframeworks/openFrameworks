@@ -10,7 +10,7 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
-yum install freeglut-devel alsa-lib-devel libXmu-devel libXxf86vm-devel gcc-c++ libraw1394-devel gstreamer-devel gstreamer-plugins-base-devel libudev-devel libtheora-devel libvorbis-devel openal-soft-devel libsndfile-devel python-lxml gstreamer-devel glew-devel flac-devel freeimage-devel cairo-devel jack-audio-connection-kit-devel portaudio-devel pulse-devel
+yum install freeglut-devel alsa-lib-devel libXmu-devel libXxf86vm-devel gcc-c++ libraw1394-devel gstreamer-devel gstreamer-plugins-base-devel libudev-devel libtheora-devel libvorbis-devel openal-soft-devel libsndfile-devel python-lxml gstreamer-devel glew-devel flac-devel freeimage-devel cairo-devel jack-audio-connection-kit-devel portaudio-devel pulseaudio-libs-devel openssl-devel
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
