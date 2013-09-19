@@ -20,7 +20,8 @@ public:
 	/// Connects the output of this ofSoundObject to the input of the parameter ofSoundObject
 	ofSoundObject &connectTo(ofSoundObject &soundObject);
     void disconnect();
-    void disconnectInput(ofSoundObject * input);
+	virtual void disconnectInput(ofSoundObject * input);
+
 	/// This is the method you implement to process the signal from inputs to outputs.
 	virtual void process(ofSoundBuffer &input, ofSoundBuffer &output) {
 		// default behaviour is pass-through.

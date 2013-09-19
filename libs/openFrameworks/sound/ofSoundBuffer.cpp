@@ -271,10 +271,10 @@ void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int sourceChannel) 
 		copyTo(targetBuffer,getNumFrames(),1,0);
 	}else{
 		// fetch samples from only one channel
-		targetBuffer.resize(getNumFrames());
+		targetBuffer.resize(getNumFrames()/getNumChannels());
 		const float * bufferPtr = &this->buffer[0];
-		for(unsigned int i=0;i<getNumFrames();i++){
-			buffer[i] = *bufferPtr;
+		for(unsigned int i=0;i<targetBuffer.getNumFrames();i++){
+			targetBuffer[i] = *bufferPtr;
 			bufferPtr+=channels;
 		}
 	}
