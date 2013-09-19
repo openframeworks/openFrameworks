@@ -121,6 +121,7 @@ bool ofIsGLProgrammableRenderer();
 		#define GL_UNSIGNED_INT_24_8						GL_UNSIGNED_INT_24_8_EXT
 	#endif
 #else
+    // ES1 - check if GL_FRAMEBUFFER is defined, if not assume ES1 is running.
 	#ifndef GL_FRAMEBUFFER
 		#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_OES
 		#define GL_RENDERBUFFER									GL_RENDERBUFFER_OES
@@ -146,6 +147,14 @@ bool ofIsGLProgrammableRenderer();
 		#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_OES
 		#define GL_DEPTH_COMPONENT16							GL_DEPTH_COMPONENT16_OES
 	#endif
+
+    // ES2 + ES3 - GL_STENCIL_INDEX has been removed from gl header, and now replaced with GL_STENCIL_INDEX8.
+    #ifndef GL_STENCIL_INDEX
+        #ifdef GL_STENCIL_INDEX8
+            #define GL_STENCIL_INDEX                        GL_STENCIL_INDEX8
+        #endif
+    #endif
+
 	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
 	#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_OES
 

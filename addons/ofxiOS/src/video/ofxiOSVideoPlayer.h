@@ -70,7 +70,6 @@ protected:
     bool bUpdatePixelsToRgb;
     bool bUpdateTexture;
     bool bTextureCacheSupported;
-    bool bTextureHack;
 	
 	GLubyte * pixelsRGB;
     GLubyte * pixelsRGBA;
