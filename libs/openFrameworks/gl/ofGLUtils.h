@@ -151,7 +151,7 @@ bool ofIsGLProgrammableRenderer();
     // ES2 + ES3 - GL_STENCIL_INDEX has been removed from gl header, and now replaced with GL_STENCIL_INDEX8.
     #ifndef GL_STENCIL_INDEX
         #ifdef GL_STENCIL_INDEX8
-            #define GL_STENCIL_INDEX                        GL_STENCIL_INDEX8;
+            #define GL_STENCIL_INDEX                        GL_STENCIL_INDEX8
         #endif
     #endif
 
