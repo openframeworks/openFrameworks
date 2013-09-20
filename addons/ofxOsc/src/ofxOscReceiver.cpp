@@ -232,9 +232,9 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 		getNextMessage(&msg);
 		vector<string> address = ofSplitString(msg.getAddress(),"/",true);
 		for(int i=0;i<address.size();i++){
-			if(address[i]==p->getName()){
+			if(address[i]==p->getEscapedName()){
 				if(p->type()==typeid(ofParameterGroup).name()){
-					if(address.size()>=i+1){
+					if(address.size()>i+1 && static_cast<ofParameterGroup*>(p)->contains(address[i+1])){
 						p = &static_cast<ofParameterGroup*>(p)->get(address[i+1]);
 					}
 				}else if(p->type()==typeid(ofParameter<int>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){

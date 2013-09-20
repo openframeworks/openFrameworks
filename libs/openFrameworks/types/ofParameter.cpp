@@ -67,7 +67,7 @@ vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
 	if(getParent()){
 		hierarchy = getParent()->getGroupHierarchyNames();
 	}
-	hierarchy.push_back(getName());
+	hierarchy.push_back(getEscapedName());
 	return hierarchy;
 }
 
