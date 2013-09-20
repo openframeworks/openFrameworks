@@ -542,13 +542,13 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator = (float const & val){
 
 template<typename PixelType>
 bool ofColor_<PixelType>::operator == (ofColor_<PixelType> const & color){
-	return (r == color.r) && (g == color.g) && (b == color.b);
+	return (r == color.r) && (g == color.g) && (b == color.b) && (a == color.a);
 }
 
 
 template<typename PixelType>
 bool ofColor_<PixelType>::operator != (ofColor_<PixelType> const & color){
-	return (r != color.r) || (g != color.g) || (b != color.b);
+	return (r != color.r) || (g != color.g) || (b != color.b) || (a != color.a);
 }
 
 
