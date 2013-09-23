@@ -53,10 +53,8 @@ function build() {
 	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
 		
-		# tig: osx libraries in openFrameworks/master are currently "lean" 32 bit libraries.
-
-		# for the moment, we aim to replicate this, as it otherwise would 
-		# double distributable file size.
+		# @tgfrerer: osx libraries in openFrameworks/master are currently "lean" 32 bit libraries.
+		# so we omit the 64 bit compilation target for now.
 
 		# 32 bit
 		./configure $BUILD_OPTS --config=Darwin32-clang-libc++
