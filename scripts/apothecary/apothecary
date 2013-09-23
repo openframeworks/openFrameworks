@@ -86,7 +86,7 @@ CON_YELLOW="\033[93m"
 CON_GREEN="\033[32m"
 
 # used to filter out bad build types
-VALID_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
+VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
 
 # verbose mode bool
 A_VERBOSE=0

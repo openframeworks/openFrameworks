@@ -26,7 +26,7 @@ function download() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL"
 		
 		# 32 bit
 		./configure $BUILD_OPTS --config=Darwin32
@@ -49,7 +49,33 @@ function build() {
 				lipo -c i386/$lib x86_64/$lib -o $renamedLib
 			fi
 		done
+
+	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
 		
+		# tig: osx libraries in openFrameworks/master are currently "lean" 32 bit libraries.
+
+		# for the moment, we aim to replicate this, as it otherwise would 
+		# double distributable file size.
+
+		# 32 bit
+		./configure $BUILD_OPTS --config=Darwin32-clang-libc++
+		make -j 8
+
+		cd lib/Darwin
+
+		# delete debug builds
+		rm i386/*d.a
+
+		# link into universal lib, strip "lib" from filename
+		local lib
+		for lib in $( ls -1 i386) ; do
+			local renamedLib=$(echo $lib | sed 's|lib||')
+			if [ ! -e $renamedLib ] ; then
+				#lipo -c i386/$lib x86_64/$lib -o $renamedLib
+				libtool -static -o $renamedLib i386/$lib
+			fi
+		done	
 
 	elif [ "$TYPE" == "vs2010" ] ; then
 		echoWarning "TODO: vs2010 build"
@@ -128,7 +154,11 @@ function copy() {
 	if [ "$TYPE" == "osx" ] ; then		
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Darwin/*.a $1/lib/$TYPE
-	
+
+	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/Darwin/*.a $1/lib/$TYPE
+
 	elif [ "$TYPE" == "ios" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/iPhoneOS/*.a $1/lib/$TYPE
