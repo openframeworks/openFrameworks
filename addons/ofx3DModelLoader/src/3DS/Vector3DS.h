@@ -7,7 +7,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 
 class Vector3DS{
