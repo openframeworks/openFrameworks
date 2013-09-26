@@ -1,7 +1,8 @@
-diff -rupN ../Poco-o/AbstractDelegate.h ./AbstractDelegate.h
---- ../Poco-o/AbstractDelegate.h	2013-09-23 14:46:58.000000000 +0100
-+++ ./AbstractDelegate.h	2013-09-23 14:57:00.000000000 +0100
-@@ -85,6 +85,45 @@ public:
+Only in work-Poco/: .DS_Store
+diff -ru Poco/AbstractDelegate.h work-Poco/AbstractDelegate.h
+--- Poco/AbstractDelegate.h	2013-09-26 16:11:44.000000000 +0100
++++ work-Poco/AbstractDelegate.h	2013-09-26 16:00:50.000000000 +0100
+@@ -85,6 +85,44 @@
  	}
  };
  
@@ -43,25 +44,13 @@ diff -rupN ../Poco-o/AbstractDelegate.h ./AbstractDelegate.h
 +		return this;
 +	}
 +};
-+
  
  } // namespace Poco
  
-diff -rupN ../Poco-o/AbstractEvent.h ./AbstractEvent.h
---- ../Poco-o/AbstractEvent.h	2013-09-23 14:46:58.000000000 +0100
-+++ ./AbstractEvent.h	2013-09-23 15:02:11.000000000 +0100
-@@ -171,9 +171,7 @@ class AbstractEvent
- 	/// to create the PriorityDelegate.
- {
- public:
--	typedef TArgs Args;
--
--	AbstractEvent(): 
-+	AbstractEvent():
- 		_executeAsync(this, &AbstractEvent::executeAsyncImpl),
- 		_enabled(true)
- 	{
-@@ -346,6 +344,296 @@ private:
+diff -ru Poco/AbstractEvent.h work-Poco/AbstractEvent.h
+--- Poco/AbstractEvent.h	2013-09-26 16:11:44.000000000 +0100
++++ work-Poco/AbstractEvent.h	2013-09-26 16:06:19.000000000 +0100
+@@ -346,6 +346,296 @@
  	AbstractEvent& operator = (const AbstractEvent& other);
  };
  
@@ -358,67 +347,561 @@ diff -rupN ../Poco-o/AbstractEvent.h ./AbstractEvent.h
  
  } // namespace Poco
  
-diff -rupN ../Poco-o/Net/X509Certificate.h ./Net/X509Certificate.h
---- ../Poco-o/Net/X509Certificate.h	2013-09-23 14:46:58.000000000 +0100
-+++ ./Net/X509Certificate.h	2013-09-23 15:03:15.000000000 +0100
-@@ -47,6 +47,9 @@
- #include "Poco/SharedPtr.h"
- #include <set>
- 
-+#ifdef verify 
-+#undef verify 
-+#endif
- 
- namespace Poco {
- namespace Net {
-diff -rupN ../Poco-o/NotificationStrategy.h ./NotificationStrategy.h
---- ../Poco-o/NotificationStrategy.h	2013-09-23 14:46:58.000000000 +0100
-+++ ./NotificationStrategy.h	2013-09-23 15:02:58.000000000 +0100
-@@ -80,6 +80,40 @@ public:
- 		/// Returns false if the strategy contains at least one delegate.
+diff -ru Poco/FunctionPriorityDelegate.h work-Poco/FunctionPriorityDelegate.h
+--- Poco/FunctionPriorityDelegate.h	2013-09-26 16:11:44.000000000 +0100
++++ work-Poco/FunctionPriorityDelegate.h	2013-09-26 16:02:50.000000000 +0100
+@@ -260,6 +260,214 @@
  };
  
-+template <class TDelegate> 
-+class NotificationStrategy<void,TDelegate>
-+	/// The interface that all notification strategies must implement.
-+	/// 
-+	/// Note: Event is based on policy-driven design, so every strategy implementation
-+	/// must provide all the methods from this interface (otherwise: compile errors)
-+	/// but does not need to inherit from NotificationStrategy.
+ 
++template <>
++class FunctionPriorityDelegate<void,true,true>: public AbstractPriorityDelegate<void>
++	/// Wraps a freestanding function or static member function
++	/// for use as a PriorityDelegate.
 +{
 +public:
-+	NotificationStrategy()
++	typedef void (*NotifyMethod)(const void*);
++
++	FunctionPriorityDelegate(NotifyMethod method, int prio):
++		AbstractPriorityDelegate<void>(prio),
++		_receiverMethod(method)
 +	{
 +	}
 +
-+	virtual ~NotificationStrategy()
++	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
++		AbstractPriorityDelegate<void>(delegate),
++		_receiverMethod(delegate._receiverMethod)
 +	{
 +	}
 +
-+	virtual void notify(const void* sender) = 0;
-+		/// Sends a notification to all registered delegates.
++	FunctionPriorityDelegate& operator = (const FunctionPriorityDelegate& delegate)
++	{
++		if (&delegate != this)
++		{
++			this->_receiverMethod = delegate._receiverMethod;
++			this->_priority       = delegate._priority;
++		}
++		return *this;
++	}
 +
-+	virtual void add(const TDelegate& delegate) = 0;
-+		/// Adds a delegate to the strategy.
++	~FunctionPriorityDelegate()
++	{
++	}
 +
-+	virtual void remove(const TDelegate& delegate) = 0;
-+		/// Removes a delegate from the strategy, if found.
-+		/// Does nothing if the delegate has not been added.
++	bool notify(const void* sender)
++	{
++		Mutex::ScopedLock lock(_mutex);
++		if (_receiverMethod)
++		{
++			(*_receiverMethod)(sender);
++			return true;
++		}
++		else return false;
++	}
 +
-+	virtual void clear() = 0;
-+		/// Removes all delegates from the strategy.
++	bool equals(const AbstractDelegate<void>& other) const
++	{
++		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
++		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
++	}
 +
-+	virtual bool empty() const = 0;
-+		/// Returns false if the strategy contains at least one delegate.
++	AbstractDelegate<void>* clone() const
++	{
++		return new FunctionPriorityDelegate(*this);
++	}
++
++	void disable()
++	{
++		Mutex::ScopedLock lock(_mutex);
++		_receiverMethod = 0;
++	}
++
++protected:
++	NotifyMethod _receiverMethod;
++	Mutex _mutex;
++
++private:
++	FunctionPriorityDelegate();
 +};
 +
- 
++
++template <>
++class FunctionPriorityDelegate<void, true, false>: public AbstractPriorityDelegate<void>
++{
++public:
++	typedef void (*NotifyMethod)(void*);
++
++	FunctionPriorityDelegate(NotifyMethod method, int prio):
++		AbstractPriorityDelegate<void>(prio),
++		_receiverMethod(method)
++	{
++	}
++
++	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
++		AbstractPriorityDelegate<void>(delegate),
++		_receiverMethod(delegate._receiverMethod)
++	{
++	}
++
++	FunctionPriorityDelegate& operator = (const FunctionPriorityDelegate& delegate)
++	{
++		if (&delegate != this)
++		{
++			this->_receiverMethod = delegate._receiverMethod;
++			this->_priority       = delegate._priority;
++		}
++		return *this;
++	}
++
++	~FunctionPriorityDelegate()
++	{
++	}
++
++	bool notify(const void* sender)
++	{
++		Mutex::ScopedLock lock(_mutex);
++		if (_receiverMethod)
++		{
++			(*_receiverMethod)(const_cast<void*>(sender));
++			return true;
++		}
++		else return false;
++	}
++
++	bool equals(const AbstractDelegate<void>& other) const
++	{
++		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
++		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
++	}
++
++	AbstractDelegate<void>* clone() const
++	{
++		return new FunctionPriorityDelegate(*this);
++	}
++
++	void disable()
++	{
++		Mutex::ScopedLock lock(_mutex);
++		_receiverMethod = 0;
++	}
++
++protected:
++	NotifyMethod _receiverMethod;
++	Mutex _mutex;
++
++private:
++	FunctionPriorityDelegate();
++};
++
++
++template <>
++class FunctionPriorityDelegate<void, false>: public AbstractPriorityDelegate<void>
++{
++public:
++	typedef void (*NotifyMethod)();
++
++	FunctionPriorityDelegate(NotifyMethod method, int prio):
++		AbstractPriorityDelegate<void>(prio),
++		_receiverMethod(method)
++	{
++	}
++
++	FunctionPriorityDelegate(const FunctionPriorityDelegate& delegate):
++		AbstractPriorityDelegate<void>(delegate),
++		_receiverMethod(delegate._receiverMethod)
++	{
++	}
++
++	FunctionPriorityDelegate& operator = (const FunctionPriorityDelegate& delegate)
++	{
++		if (&delegate != this)
++		{
++			this->_receiverMethod = delegate._receiverMethod;
++			this->_priority       = delegate._priority;
++		}
++		return *this;
++	}
++
++	~FunctionPriorityDelegate()
++	{
++	}
++
++	bool notify(const void* sender)
++	{
++		Mutex::ScopedLock lock(_mutex);
++		if (_receiverMethod)
++		{
++			(*_receiverMethod)();
++			return true;
++		}
++		else return false;
++	}
++
++	bool equals(const AbstractDelegate<void>& other) const
++	{
++		const FunctionPriorityDelegate* pOtherDelegate = dynamic_cast<const FunctionPriorityDelegate*>(other.unwrap());
++		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverMethod == pOtherDelegate->_receiverMethod;
++	}
++
++	AbstractDelegate<void>* clone() const
++	{
++		return new FunctionPriorityDelegate(*this);
++	}
++
++	void disable()
++	{
++		Mutex::ScopedLock lock(_mutex);
++		_receiverMethod = 0;
++	}
++
++protected:
++	NotifyMethod _receiverMethod;
++	Mutex _mutex;
++
++private:
++	FunctionPriorityDelegate();
++};
++
  } // namespace Poco
  
-diff -rupN ../Poco-o/PriorityStrategy.h ./PriorityStrategy.h
---- ../Poco-o/PriorityStrategy.h	2013-09-23 14:46:58.000000000 +0100
-+++ ./PriorityStrategy.h	2013-09-23 15:02:58.000000000 +0100
-@@ -135,7 +135,80 @@ protected:
+ 
+diff -ru Poco/Net/X509Certificate.h work-Poco/Net/X509Certificate.h
+--- Poco/Net/X509Certificate.h	2013-09-26 16:11:44.000000000 +0100
++++ work-Poco/Net/X509Certificate.h	2013-09-26 16:03:48.000000000 +0100
+@@ -87,7 +87,9 @@
+ 
+ 	~X509Certificate();
+ 		/// Destroys the X509Certificate.
+-
++#ifdef verify
++#undef verify
++#endif
+ 	bool verify(const std::string& hostName) const;
+ 		/// Verifies the validity of the certificate against the host name.
+ 		///
+diff -ru Poco/PriorityDelegate.h work-Poco/PriorityDelegate.h
+--- Poco/PriorityDelegate.h	2013-09-26 16:11:44.000000000 +0100
++++ work-Poco/PriorityDelegate.h	2013-09-26 16:04:35.000000000 +0100
+@@ -198,6 +198,152 @@
+ };
+ 
+ 
++template <class TObj>
++class PriorityDelegate<TObj, void, true>: public AbstractPriorityDelegate<void>
++{
++public:
++	typedef void (TObj::*NotifyMethod)(const void*);
++
++	PriorityDelegate(TObj* obj, NotifyMethod method, int prio):
++		AbstractPriorityDelegate<void>(prio),
++		_receiverObject(obj),
++		_receiverMethod(method)
++	{
++	}
++
++	PriorityDelegate(const PriorityDelegate& delegate):
++		AbstractPriorityDelegate<void>(delegate),
++		_receiverObject(delegate._receiverObject),
++		_receiverMethod(delegate._receiverMethod)
++	{
++	}
++
++	PriorityDelegate& operator = (const PriorityDelegate& delegate)
++	{
++		if (&delegate != this)
++		{
++			this->_pTarget        = delegate._pTarget;
++			this->_receiverObject = delegate._receiverObject;
++			this->_receiverMethod = delegate._receiverMethod;
++			this->_priority       = delegate._priority;
++		}
++		return *this;
++	}
++
++	~PriorityDelegate()
++	{
++	}
++
++	bool notify(const void* sender)
++	{
++		Mutex::ScopedLock lock(_mutex);
++		if (_receiverObject)
++		{
++			(_receiverObject->*_receiverMethod)(sender);
++			return true;
++		}
++		else return false;
++	}
++
++	bool equals(const AbstractDelegate<void>& other) const
++	{
++		const PriorityDelegate* pOtherDelegate = dynamic_cast<const PriorityDelegate*>(other.unwrap());
++		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverObject == pOtherDelegate->_receiverObject && _receiverMethod == pOtherDelegate->_receiverMethod;
++	}
++
++	AbstractDelegate<void>* clone() const
++	{
++		return new PriorityDelegate(*this);
++	}
++
++	void disable()
++	{
++		Mutex::ScopedLock lock(_mutex);
++		_receiverObject = 0;
++	}
++
++protected:
++	TObj*        _receiverObject;
++	NotifyMethod _receiverMethod;
++	Mutex _mutex;
++
++private:
++	PriorityDelegate();
++};
++
++template <class TObj>
++class PriorityDelegate<TObj, void, false>: public AbstractPriorityDelegate<void>
++{
++public:
++	typedef void (TObj::*NotifyMethod)();
++
++	PriorityDelegate(TObj* obj, NotifyMethod method, int prio):
++		AbstractPriorityDelegate<void>(prio),
++		_receiverObject(obj),
++		_receiverMethod(method)
++	{
++	}
++
++	PriorityDelegate(const PriorityDelegate& delegate):
++		AbstractPriorityDelegate<void>(delegate),
++		_receiverObject(delegate._receiverObject),
++		_receiverMethod(delegate._receiverMethod)
++	{
++	}
++
++	PriorityDelegate& operator = (const PriorityDelegate& delegate)
++	{
++		if (&delegate != this)
++		{
++			this->_pTarget        = delegate._pTarget;
++			this->_receiverObject = delegate._receiverObject;
++			this->_receiverMethod = delegate._receiverMethod;
++			this->_priority       = delegate._priority;
++		}
++		return *this;
++	}
++
++	~PriorityDelegate()
++	{
++	}
++
++	bool notify(const void* sender)
++	{
++		Mutex::ScopedLock lock(_mutex);
++		if (_receiverObject)
++		{
++			(_receiverObject->*_receiverMethod)();
++			return true;
++		}
++		return false;
++	}
++
++	bool equals(const AbstractDelegate<void>& other) const
++	{
++		const PriorityDelegate* pOtherDelegate = dynamic_cast<const PriorityDelegate*>(other.unwrap());
++		return pOtherDelegate && this->priority() == pOtherDelegate->priority() && _receiverObject == pOtherDelegate->_receiverObject && _receiverMethod == pOtherDelegate->_receiverMethod;
++	}
++
++	AbstractDelegate<void>* clone() const
++	{
++		return new PriorityDelegate(*this);
++	}
++
++	void disable()
++	{
++		Mutex::ScopedLock lock(_mutex);
++		_receiverObject = 0;
++	}
++
++protected:
++	TObj*        _receiverObject;
++	NotifyMethod _receiverMethod;
++	Mutex _mutex;
++
++private:
++	PriorityDelegate();
++};
++
+ template <class TObj, class TArgs>
+ static PriorityDelegate<TObj, TArgs, true> priorityDelegate(TObj* pObj, void (TObj::*NotifyMethod)(const void*, TArgs&), int prio)
+ {
+@@ -268,6 +414,73 @@
+ }
+ 
+ 
++
++
++
++template <class TObj>
++static PriorityDelegate<TObj, void, true> priorityDelegate(TObj* pObj, void (TObj::*NotifyMethod)(const void*), int prio)
++{
++	return PriorityDelegate<TObj, void, true>(pObj, NotifyMethod, prio);
++}
++
++
++template <class TObj>
++static PriorityDelegate<TObj, void, false> priorityDelegate(TObj* pObj, void (TObj::*NotifyMethod)(), int prio)
++{
++	return PriorityDelegate<TObj, void, false>(pObj, NotifyMethod, prio);
++}
++
++
++template <class TObj>
++static PriorityExpire<void> priorityDelegate(TObj* pObj, void (TObj::*NotifyMethod)(const void*), int prio, Timestamp::TimeDiff expireMilliSec)
++{
++	return PriorityExpire<void>(PriorityDelegate<TObj, void, true>(pObj, NotifyMethod, prio), expireMilliSec);
++}
++
++
++template <class TObj>
++static PriorityExpire<void> priorityDelegate(TObj* pObj, void (TObj::*NotifyMethod)(), int prio, Timestamp::TimeDiff expireMilliSec)
++{
++	return PriorityExpire<void>(PriorityDelegate<TObj, void, false>(pObj, NotifyMethod, prio), expireMilliSec);
++}
++
++
++inline PriorityExpire<void> priorityDelegate(void (*NotifyMethod)(const void*), int prio, Timestamp::TimeDiff expireMilliSec)
++{
++	return PriorityExpire<void>(FunctionPriorityDelegate<void, true, true>(NotifyMethod, prio), expireMilliSec);
++}
++
++
++inline PriorityExpire<void> priorityDelegate(void (*NotifyMethod)(void*), int prio, Timestamp::TimeDiff expireMilliSec)
++{
++	return PriorityExpire<void>(FunctionPriorityDelegate<void, true, false>(NotifyMethod, prio), expireMilliSec);
++}
++
++
++inline PriorityExpire<void> priorityDelegate(void (*NotifyMethod)(), int prio, Timestamp::TimeDiff expireMilliSec)
++{
++	return PriorityExpire<void>(FunctionPriorityDelegate<void, false>(NotifyMethod, prio), expireMilliSec);
++}
++
++
++inline FunctionPriorityDelegate<void, true, true> priorityDelegate(void (*NotifyMethod)(const void*), int prio)
++{
++	return FunctionPriorityDelegate<void, true, true>(NotifyMethod, prio);
++}
++
++
++inline FunctionPriorityDelegate<void, true, false> priorityDelegate(void (*NotifyMethod)(void*), int prio)
++{
++	return FunctionPriorityDelegate<void, true, false>(NotifyMethod, prio);
++}
++
++
++inline FunctionPriorityDelegate<void, false> priorityDelegate(void (*NotifyMethod)(), int prio)
++{
++	return FunctionPriorityDelegate<void, false>(NotifyMethod, prio);
++}
++
++
+ } // namespace Poco
+ 
+ 
+diff -ru Poco/PriorityExpire.h work-Poco/PriorityExpire.h
+--- Poco/PriorityExpire.h	2013-09-26 16:11:44.000000000 +0100
++++ work-Poco/PriorityExpire.h	2013-09-26 16:02:21.000000000 +0100
+@@ -129,7 +129,85 @@
+ 	PriorityExpire();
+ };
+ 
++template <>
++class PriorityExpire<void>: public AbstractPriorityDelegate<void>
++	/// Decorator for AbstractPriorityDelegate adding automatic
++	/// expiring of registrations to AbstractPriorityDelegate.
++{
++public:
++	PriorityExpire(const AbstractPriorityDelegate<void>& p, Timestamp::TimeDiff expireMilliSec):
++		AbstractPriorityDelegate<void>(p),
++		_pDelegate(static_cast<AbstractPriorityDelegate<void>*>(p.clone())),
++		_expire(expireMilliSec*1000)
++	{
++	}
+ 
++	PriorityExpire(const PriorityExpire& expire):
++		AbstractPriorityDelegate<void>(expire),
++		_pDelegate(static_cast<AbstractPriorityDelegate<void>*>(expire._pDelegate->clone())),
++		_expire(expire._expire),
++		_creationTime(expire._creationTime)
++	{
++	}
++
++	~PriorityExpire()
++	{
++		delete _pDelegate;
++	}
++
++	PriorityExpire& operator = (const PriorityExpire& expire)
++	{
++		if (&expire != this)
++		{
++			delete this->_pDelegate;
++			this->_pDelegate    = static_cast<AbstractPriorityDelegate<void>*>(expire._pDelegate->clone());
++			this->_expire       = expire._expire;
++			this->_creationTime = expire._creationTime;
++		}
++		return *this;
++	}
++
++	bool notify(const void* sender)
++	{
++		if (!expired())
++			return this->_pDelegate->notify(sender);
++		else
++			return false;
++	}
++
++	bool equals(const AbstractDelegate<void>& other) const
++	{
++		return other.equals(*_pDelegate);
++	}
++
++	AbstractPriorityDelegate<void>* clone() const
++	{
++		return new PriorityExpire(*this);
++	}
++
++	void disable()
++	{
++		_pDelegate->disable();
++	}
++
++	const AbstractPriorityDelegate<void>* unwrap() const
++	{
++		return this->_pDelegate;
++	}
++
++protected:
++	bool expired() const
++	{
++		return _creationTime.isElapsed(_expire);
++	}
++
++	AbstractPriorityDelegate<void>* _pDelegate;
++	Timestamp::TimeDiff _expire;
++	Timestamp _creationTime;
++
++private:
++	PriorityExpire();
++};
+ } // namespace Poco
+ 
+ 
+diff -ru Poco/PriorityStrategy.h work-Poco/PriorityStrategy.h
+--- Poco/PriorityStrategy.h	2013-09-26 16:11:44.000000000 +0100
++++ work-Poco/PriorityStrategy.h	2013-09-26 16:02:39.000000000 +0100
+@@ -135,7 +135,80 @@
  	Delegates _delegates;
  };
  
