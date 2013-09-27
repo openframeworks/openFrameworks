@@ -7,7 +7,7 @@
 # Makefile build system, 
 # some Makefiles are out of date so patching/modification may be required
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "osx-clang-libc++" "vs2010" "win_cb" "ios" "android" )
 
 VER=3154 # 3.15.4
 
@@ -37,6 +37,28 @@ function build() {
 
 		make -f Makefile.osx
 
+	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
+
+		# patch Makefile.osx,
+		# use "# patched" string to determine if patch was applied
+		if grep -Fq "# patched" Makefile.osx ; then
+			: # noop, skip if patch was already applied
+		else
+			patch -p1 -u < $FORMULA_DIR/Makefile.osx-clang-libc++.patch
+		fi
+
+		
+		# @tgfrerer patch FreeImage source - clang is much less forgiving about
+		# type overruns and missing standard header files. 
+		# this patch replicates gcc's behaviour
+		patch -p1 -u  < $FORMULA_DIR/freeimage.osx-clang-libc++.source.patch
+
+		# set SDK
+		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
+		sed -i tmp "s|MACOSX_MIN_SDK =.*|MACOSX_MIN_SDK = $OSX_MIN_SDK_VER|" Makefile.osx
+
+		make -j -f Makefile.osx
+	
 	elif [ "$TYPE" == "vs2010" ] ; then
 		#MSBuild.exe FreeImage.2008.sln
 		echoWarning "TODO: vs2010 build"
@@ -85,7 +107,7 @@ function copy() {
 	cp -v Dist/*.h $1/include
 
 	# lib
-	if [ "$TYPE" == "osx" ] ; then
+	if [ "$TYPE" == "osx" -o "osx-clang-libc++" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 
