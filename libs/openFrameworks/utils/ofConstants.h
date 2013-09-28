@@ -226,10 +226,9 @@ typedef TESSindex ofIndexType;
 
 #ifndef __MWERKS__
 #include <cstdlib>
-#define OF_EXIT_APP(val)		std::exit(val);
-#else
-#define OF_EXIT_APP(val)		std::exit(val);
 #endif
+
+#define OF_EXIT_APP(val)		std::exit(val);
 
 
 
