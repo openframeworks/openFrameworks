@@ -18,13 +18,17 @@ ofxPanel::ofxPanel()
 ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y)
 : ofxGuiGroup(parameters, filename, x, y)
 , bGrabbed(false){
-	this->registerMouseEvents();
+}
+
+ofxPanel::~ofxPanel(){
+	unregisterMouseEvents();
 }
 
 ofxPanel * ofxPanel::setup(string collectionName, string filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
+	registerMouseEvents();
 	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
 }
 
@@ -32,6 +36,7 @@ ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, string filename,
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
+	registerMouseEvents();
 	return (ofxPanel*)ofxGuiGroup::setup(parameters,filename,x,y);
 }
 
