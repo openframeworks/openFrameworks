@@ -318,6 +318,10 @@ void ofxGuiGroup::registerMouseEvents(){
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 }
 
+void ofxGuiGroup::unregisterMouseEvents(){
+	ofUnregisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+}
+
 bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
     
 	if( !isGuiDrawing() ){
